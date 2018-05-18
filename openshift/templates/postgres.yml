@@ -34,7 +34,7 @@ parameters:
   displayName: PostgreSQL Database Name
   name: POSTGRESQL_DATABASE
   required: true
-  value: "queue-management"
+  value: "queue_management"
 - description: 'Volume space available for data, e.g. 512Mi, 2Gi.'
   displayName: Volume Capacity
   name: VOLUME_CAPACITY
@@ -79,6 +79,9 @@ objects:
   kind: PersistentVolumeClaim
   metadata:
     name: '${DATABASE_SERVICE_NAME}-data'
+    annotations:
+      volume.beta.kubernetes.io/storage-class: gluster-file
+      volume.beta.kubernetes.io/storage-provisioner: kubernetes.io/glusterfs
   spec:
     accessModes:
       - ReadWriteOnce
@@ -134,10 +137,10 @@ objects:
           resources:
             requests:
               cpu: 100m
-              memory: 250Mi
+              memory: 256Mi
             limits:
-              cpu: 500m
-              memory: 1Gi
+              cpu: 200m
+              memory: 512Mi
           terminationMessagePath: /dev/termination-log
           volumeMounts:
           - mountPath: /var/lib/pgsql/data

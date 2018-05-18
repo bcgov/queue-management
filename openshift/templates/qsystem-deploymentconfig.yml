@@ -2,7 +2,7 @@
 kind: Template
 apiVersion: v1
 metadata:
-  name: queue-management-api-deploymentconfig-template
+  name: queue-management-api
 parameters:
 - name: API_NAME
   description: "Name of the flask application"
@@ -52,7 +52,7 @@ objects:
           kind: ImageStreamTag
           name: "${API_NAME}:latest"
     - type: ConfigChange
-    replicas: 2
+    replicas: 3
     selector:
       name: "${API_NAME}"
     template:
@@ -61,8 +61,6 @@ objects:
         labels:
           name: "${API_NAME}"
       spec:
-        nodeSelector:
-          region: primary
         containers:
         - name: "${API_NAME}"
           image: ""
@@ -96,13 +94,27 @@ objects:
                 name: "postgresql-secrets"
                 key: database-password
           - name: DATABASE_NAME
-            value: "queue-management-api"
+            valueFrom:
+              secretKeyRef:
+                name: "postgresql-secrets"
+                key: database-name
           - name: DATABASE_HOST
             value: "postgresql"
+          - name: APP_CONFIG
+            value: gunicorn_config.py
+          - name: FLASK_CONFIGURATION
+            value: development
+          - name: APP_MODULE
+            value: wsgi
+          - name: REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: "redis-secrets"
+                key: database-password
           resources:
             requests:
               cpu: 100m
               memory: 256Mi
             limits:
-              cpu: 500m
+              cpu: 200m
               memory: 512Mi

@@ -27,10 +27,8 @@ objects:
     source:
       type: Git
       git:
-        uri: git@bitbucket.org:srumsby/qsystem.git
-        ref: master
-      sourceSecret:
-        name: bitbucket-authentication
+        uri: https://github.com/sjrumsby/queue-management.git
+        ref: proof-of-concept
       contextDir: api
     strategy:
       type: Source

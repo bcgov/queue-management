@@ -18,7 +18,7 @@ objects:
   metadata:
     annotations:
       template.openshift.io/expose-password: "{.data['database-password']}"
-    name: "${DATABASE_SERVICE_NAME}"
+    name: "${DATABASE_SERVICE_NAME}-secrets"
   stringData:
     database-password: "${REDIS_PASSWORD}"
 - apiVersion: v1
@@ -43,7 +43,7 @@ objects:
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
-    name: "${DATABASE_SERVICE_NAME}"
+    name: "${DATABASE_SERVICE_NAME}-data"
   spec:
     accessModes:
     - ReadWriteOnce
@@ -74,7 +74,7 @@ objects:
             valueFrom:
               secretKeyRef:
                 key: database-password
-                name: "${DATABASE_SERVICE_NAME}"
+                name: "${DATABASE_SERVICE_NAME}-secrets"
           image: " "
           imagePullPolicy: IfNotPresent
           livenessProbe:
@@ -96,8 +96,12 @@ objects:
             initialDelaySeconds: 5
             timeoutSeconds: 1
           resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
             limits:
-              memory: "${MEMORY_LIMIT}"
+              cpu: 200m
+              memory: 512Mi
           securityContext:
             capabilities: {}
             privileged: false
@@ -110,7 +114,7 @@ objects:
         volumes:
         - name: "${DATABASE_SERVICE_NAME}-data"
           persistentVolumeClaim:
-            claimName: "${DATABASE_SERVICE_NAME}"
+            claimName: "${DATABASE_SERVICE_NAME}-data"
     triggers:
     - imageChangeParams:
         automatic: true
@@ -125,11 +129,6 @@ objects:
     - type: ConfigChange
   status: {}
 parameters:
-- description: Maximum amount of memory the container can use.
-  displayName: Memory Limit
-  name: MEMORY_LIMIT
-  required: true
-  value: 512Mi
 - description: The OpenShift Namespace where the ImageStream resides.
   displayName: Namespace
   name: NAMESPACE
