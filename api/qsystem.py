@@ -23,7 +23,7 @@ login_manager = LoginManager()
 login_manager.init_app(application)
 login_manager.login_view = 'login'
 
-api = Api(application, prefix='/api/v1')
+api = Api(application, prefix='/api/v1', doc='/api')
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 

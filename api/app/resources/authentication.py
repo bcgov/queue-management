@@ -5,7 +5,7 @@ from app import models
 from qsystem import application, login_manager
 
 # somewhere to login
-@application.route("/login/", methods=["GET", "POST"])
+@application.route("/api/login/", methods=["GET", "POST"])
 def login():
     if request.method == 'POST':
         #Username and password can either be JSON or form based
@@ -45,7 +45,7 @@ def login():
         </form>
         ''')
 
-@application.route("/logout/")
+@application.route("/api/logout/")
 @login_required
 def logout():
     logout_user()
