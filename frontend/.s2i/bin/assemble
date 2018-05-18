@@ -22,10 +22,17 @@ if [ "$(ls /tmp/artifacts/ 2>/dev/null)" ]; then
   mv /tmp/artifacts/. ./
 fi
 
+echo "---> Build Vue app"
+npm install
+npm run build
+
 echo "---> Copying repository content into place..."
-echo "Contents of /tmp/src:"
-find /tmp/src -print
-cp -Rf /tmp/src/* /var/www/html
+echo "Contents of /tmp/dist:"
+find /tmp/dist -print
+
+#Clean up content to keep image small
+cp -Rf node_modules
+cp -Rf /tmp/src/dist/* /var/www/html
 
 # (through detective work, we discovered that additional source image content is placed in /tmp/build/inputs by s2i)
 # the bit below allows additional content that originates from one or more additional source images to be added to the output image
