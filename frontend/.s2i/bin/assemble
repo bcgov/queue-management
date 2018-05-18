@@ -1,0 +1,45 @@
+#!/bin/sh -e
+#
+# S2I assemble script for the 's2i-caddy' image.
+# The 'assemble' script builds your application source so that it is ready to run.
+#
+# For more information refer to the documentation:
+#	https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
+#
+
+echo "---> This is the test assemble file"
+
+if [[ "$1" == "-h" ]]; then
+	# If the 's2i-caddy' assemble script is executed with '-h' flag,
+	# print the usage.
+	exec /usr/libexec/s2i/usage
+fi
+
+# Restore artifacts from the previous build (if they exist).
+#
+if [ "$(ls /tmp/artifacts/ 2>/dev/null)" ]; then
+  echo "---> Restoring build artifacts..."
+  mv /tmp/artifacts/. ./
+fi
+
+echo "---> Copying repository content into place..."
+echo "Contents of /tmp/src:"
+find /tmp/src -print
+cp -Rf /tmp/src/* /var/www/html
+
+# (through detective work, we discovered that additional source image content is placed in /tmp/build/inputs by s2i)
+# the bit below allows additional content that originates from one or more additional source images to be added to the output image
+if [ -d /tmp/build/inputs ]; then
+    echo "Additional image content found..."
+    echo "---> Copying additional image content into place..."
+    cp -Rf /tmp/build/inputs/* /var/www/html
+else
+    echo "No additional image content found."
+fi
+
+if [[ -e "/var/www/html/Caddyfile" ]]; then
+    echo "Replacing default Caddyfile..."
+    cat /var/www/html/Caddyfile > /etc/Caddyfile
+else
+    echo "Using default Caddyfile."
+fi
