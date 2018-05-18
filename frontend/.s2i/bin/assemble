@@ -23,10 +23,9 @@ if [ "$(ls /tmp/artifacts/ 2>/dev/null)" ]; then
 fi
 
 echo "---> Build Vue app"
-cd /tmp/src
+cd /tmp
 pwd
 ls -la
-ls -la *
 
 npm install
 npm run build
@@ -36,7 +35,7 @@ echo "Contents of /tmp/dist:"
 find /tmp/dist -print
 
 #Clean up content to keep image small
-cp -Rf node_modules
+rm -Rf node_modules
 cp -Rf /tmp/src/dist/* /var/www/html
 
 # (through detective work, we discovered that additional source image content is placed in /tmp/build/inputs by s2i)
