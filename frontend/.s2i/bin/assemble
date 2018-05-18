@@ -23,6 +23,7 @@ if [ "$(ls /tmp/artifacts/ 2>/dev/null)" ]; then
 fi
 
 echo "---> Build Vue app"
+cd /tmp/src
 pwd
 ls -la
 ls -la *
