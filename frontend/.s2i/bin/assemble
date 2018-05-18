@@ -23,6 +23,11 @@ if [ "$(ls /tmp/artifacts/ 2>/dev/null)" ]; then
 fi
 
 echo "---> Build Vue app"
+whoami
+pwd
+ls -la
+ls -la *
+
 npm install
 npm run build
 
