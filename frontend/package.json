@@ -5,6 +5,7 @@
   "author": "Scott Rumsby <scott.rumsby@gmail.com>",
   "private": true,
   "scripts": {
+    "localhost": "node build/localhost-server.js",
     "dev": "node build/dev-server.js",
     "start": "node build/dev-server.js",
     "build": "node build/build.js",
