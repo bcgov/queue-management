@@ -1,0 +1,52 @@
+---
+kind: Template
+apiVersion: v1
+metadata:
+  name: queue-management-api-buildconfig-template
+objects:
+- kind: ImageStream
+  apiVersion: v1
+  metadata:
+    name: queue-management-api
+    annotations:
+      description: "Keeps track of changes in the application image"
+    labels:
+      app: queue-management-api
+- kind: BuildConfig
+  apiVersion: v1
+  metadata:
+    name: queue-management-api
+    labels:
+      app: queue-management-api
+  spec:
+    triggers:
+    - type: ImageChange
+      imageChange: {}
+    - type: ConfigChange
+    runPolicy: Serial
+    source:
+      type: Git
+      git:
+        uri: git@bitbucket.org:srumsby/qsystem.git
+        ref: master
+      sourceSecret:
+        name: bitbucket-authentication
+      contextDir: api
+    strategy:
+      type: Source
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          namespace: openshift
+          name: python:latest
+    output:
+      to:
+        kind: ImageStreamTag
+        name: queue-management-api:latest
+    resources: {}
+    postCommit: {}
+    nodeSelector: 
+    successfulBuildsHistoryLimit: 5
+    failedBuildsHistoryLimit: 5
+  status:
+    lastVersion: 0

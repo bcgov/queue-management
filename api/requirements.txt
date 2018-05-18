@@ -1,0 +1,13 @@
+gunicorn
+Flask
+Flask-Migrate
+Flask-Moment
+Flask-RESTplus
+Flask-Script
+Flask-SQLAlchemy
+eventlet
+flask-cors
+flask-login
+flask-socketio
+psycopg2-binary
+redis
