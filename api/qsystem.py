@@ -11,6 +11,10 @@ from config import configure_app
 db = SQLAlchemy()
 
 application = Flask(__name__, instance_relative_config=True)
+
+#Make sure we 404 when the trailing slash is not present on ALL routes
+application.url_map.strict_slashes = True
+
 configure_app(application)
 socketio = SocketIO(engineio_logger=True)
 socketio.init_app(application, async_mode='eventlet', message_queue=application.config['REDIS_QUEUE_URL'])
