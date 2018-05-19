@@ -16,6 +16,8 @@ socketio = SocketIO(engineio_logger=True)
 socketio.init_app(application, async_mode='eventlet', message_queue=application.config['REDIS_QUEUE_URL'])
 db.init_app(application)
 
+print(application.config)
+
 CORS(application, supports_credentials=True, origins=application.config['CORS_ALLOWED_ORIGINS'])
 
 login_manager = LoginManager()

@@ -32,7 +32,6 @@ class DevelopmentConfig(BaseConfig):
     REDIS_DEBUG = True
     TESTING = False
     ENV = 'dev'
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///db.sqlite3'
     SECRET_KEY = 'a9eec0e0-23b7-4788-9a92-318347b9a39f'
     REDIS_PASSWORD = os.getenv('REDIS_PASSWORD', '')
     REDIS_QUEUE_URL = 'redis://:{password}@redis:6379/'.format(password=REDIS_PASSWORD)
