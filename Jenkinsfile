@@ -68,16 +68,16 @@ podTemplate(
 
             echo ">>> image_hash: $IMAGE_HASH"
 
-            openshiftTag destStream: 'queue-management-caddy-frontend', 
+            openshiftTag destStream: 'queue-management-frontend', 
                          verbose: 'true', 
                          destTag: 'dev', 
-                         srcStream: 'queue-management-caddy-frontend', 
+                         srcStream: 'queue-management-frontend', 
                          srcTag: "${IMAGE_HASH}"
 
             // Sleep to ensure that the deployment has started when we begin the verification stage
             sleep 5
 
-            openshiftVerifyDeployment depCfg: 'queue-management-caddy-frontend', 
+            openshiftVerifyDeployment depCfg: 'queue-management-frontend', 
                                       namespace: 'servicebc-cfms-dev', 
                                       replicaCount: 3, 
                                       verbose: 'false', 
