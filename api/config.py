@@ -16,7 +16,6 @@ class BaseConfig(object):
     LOGGING_LOCATION = "logs/qsystem.log"
     LOGGING_LEVEL = DEBUG
     LOGGING_FORMAT = '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
-    APPLICATION_ROOT = '/api'
 
 class LocalConfig(BaseConfig):
     DEBUG = True
