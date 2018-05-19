@@ -2,15 +2,15 @@
   <div v-if="!this.$store.state.isLoggedIn">
     <b-form-input v-model="username"
                   type="text"
-                  placeholder="Enter your name"/>
+                  placeholder="Username"/>
     <b-form-input v-model="password"
                   type="password"
-                  placeholder="password"/>
+                  placeholder="Password"/>
     <b-button @click="postLogin()">Login</b-button>
   </div>
 </template>
 
-<script>
+<script type="text/javascript">
 export default {
   name: 'Login',
   data() {
@@ -21,13 +21,15 @@ export default {
   },
   methods: {
     postLogin() {
-      let url = 'http://qsystem-dev.apps.olivewoodsoftware.com/login/'
+      let url = process.env.API_URL + "/api/login/"
       let data = {
         username: this.username,
         password: this.password
       }
-      this.$axios.post(url, data)
-        .then( () => {
+      this.$axios.post(url, data, {
+        withCredentials: true
+      })
+      .then( () => {
           this.$store.commit('logIn')
         })
     }

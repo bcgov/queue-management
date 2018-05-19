@@ -1,17 +1,24 @@
 <template>
-  <div>
-    <p> {{ this.$store.state.count }} </p>
-    <b-form-input v-model="name"
-                  type="text"
-                  placeholder="Enter your name"/>
-    <b-button variant="warning" @click="buttonClick()">Add Client</b-button>
-    <p> You have typed: {{name}}</p>
+  <div id="app" class="container">
+    <div class="row">
+      <div class="col-lg-8">
+        <h1>Queue Management</h1>
+      </div>
+      <div class="col-lg-4">
+        <Login></Login>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import Login from './Login';
+
 export default {
-  name: 'App',
+  name: 'app',
+  components: {
+    Login
+  },
   data() {
     return {
       isConnected: false,
