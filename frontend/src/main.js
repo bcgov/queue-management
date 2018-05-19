@@ -14,7 +14,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 Vue.prototype.$axios = axios
 
 Vue.use(BootstrapVue)
-//Vue.use(VueSocketio, process.env.API_URL)
+Vue.use(VueSocketio, process.env.API_URL)
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
@@ -23,7 +23,6 @@ new Vue({
   store,
   created() {
     let url  = process.env.API_URL + "/api/v1/users/me/"
-    console.log(url)
     this.$axios.get(url, {withCredentials: true})
       .then( () => {
         this.$store.commit('logIn')
