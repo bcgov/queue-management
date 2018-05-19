@@ -13,6 +13,34 @@ parameters:
   description: "The exposed hostname that will route to the Vue application"
   value: "frontend-servicebc-cfms-dev.pathfinder.gov.bc.ca"
 objects:
+- kind: Service
+  apiVersion: v1
+  metadata:
+    name: "${NAME}"
+    creationTimestamp: 
+    labels:
+      app: "${NAME}"
+  spec:
+    ports:
+    - name: web
+      protocol: TCP
+      port: 2015
+      targetPort: 2015
+    selector:
+      app: "${NAME}"
+    type: ClusterIP
+    sessionAffinity: None
+- kind: Route
+  apiVersion: v1
+  metadata:
+    name: "${NAME}"
+  spec:
+    host: "${APPLICATION_DOMAIN}"
+    to:
+      kind: Service
+      name: "${NAME}"
+    tls:
+      termination: edge
 - kind: DeploymentConfig
   apiVersion: v1
   metadata:
@@ -39,7 +67,8 @@ objects:
         - "${NAME}"
         from:
           kind: ImageStreamTag
-          name: "${NAME}:latest"
+          namespace: servicebc-cfms-tools
+          name: "${NAME}:dev"
     replicas: 3
     revisionHistoryLimit: 10
     test: false
@@ -56,9 +85,27 @@ objects:
         containers:
         - name: "${NAME}"
           image: " "
+          args:
+            -  "/tmp/scripts/run"
           ports:
           - containerPort: 2015
             protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 3
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 2015
+            timeoutSeconds: 3
+          livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 3
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 2015
+            timeoutSeconds: 3
           resources: {}
           terminationMessagePath: "/dev/termination-log"
           terminationMessagePolicy: File
@@ -68,30 +115,3 @@ objects:
         dnsPolicy: ClusterFirst
         securityContext: {}
         schedulerName: default-scheduler
-- kind: Service
-  apiVersion: v1
-  metadata:
-    name: "${NAME}"
-    creationTimestamp: 
-    labels:
-      app: "${NAME}"
-  spec:
-    ports:
-    - name: 2015-tcp
-      protocol: TCP
-      port: 2015
-      targetPort: 2015
-    selector:
-      app: "${NAME}"
-      deploymentconfig: "${NAME}"
-    type: ClusterIP
-    sessionAffinity: None
-- kind: Route
-  apiVersion: v1
-  metadata:
-    name: "${NAME}"
-  spec:
-    host: "${APPLICATION_DOMAIN}"
-    to:
-      kind: Service
-      name: "${NAME}"

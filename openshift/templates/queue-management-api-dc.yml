@@ -33,6 +33,8 @@ objects:
     to:
       kind: Service
       name: "${API_NAME}"
+    tls:
+      termination: edge
 - kind: DeploymentConfig
   apiVersion: v1
   metadata:
@@ -47,10 +49,12 @@ objects:
     - type: ImageChange
       imageChangeParams:
         automatic: true
-        containerNames: [ "${API_NAME}" ]
+        containerNames: 
+          - "${API_NAME}"
         from:
           kind: ImageStreamTag
-          name: "${API_NAME}:latest"
+          namespace: servicebc-cfms-tools
+          name: "${API_NAME}:dev"
     - type: ConfigChange
     replicas: 3
     selector:
