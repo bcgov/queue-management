@@ -48,7 +48,7 @@ podTemplate(
                          srcStream: 'queue-management-api', 
                          srcTag: "${IMAGE_HASH}"
 
-            #Sleep to ensure that the deployment has started when we begin the verification stage
+            // Sleep to ensure that the deployment has started when we begin the verification stage
             sleep 5
 
             openshiftVerifyDeployment depCfg: 'queue-management-api', 
