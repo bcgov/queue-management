@@ -30,8 +30,8 @@ podTemplate(
             echo ">>> building intermediate image: queue-management-npm-build <<<"
             openshiftBuild bldCfg: 'queue-management-npm-build', showBuildLogs: 'true'
 
-            echo ">>> building final image: queue-management-caddy-frontend <<<"
-            openshiftBuild bldCfg: 'queue-management-caddy-frontend', showBuildLogs: 'true'
+            echo ">>> building final image: queue-management-frontend <<<"
+            openshiftBuild bldCfg: 'queue-management-frontend', showBuildLogs: 'true'
         }
         stage('Deploy API'){
             echo ">>> get api image hash <<<"
@@ -60,9 +60,9 @@ podTemplate(
             echo ">>> deployment complete <<<"
         }
         stage('Deploy Frontend'){
-            echo ">>> get caddy image hash <<<"
+            echo ">>> get frontend image hash <<<"
             IMAGE_HASH = sh (
-                script: 'oc get istag queue-management-caddy-frontend:latest -o template --template="{{.image.dockerImageReference}}"|awk -F ":" \'{print $3}\'',
+                script: 'oc get istag queue-management-frontend:latest -o template --template="{{.image.dockerImageReference}}"|awk -F ":" \'{print $3}\'',
                 returnStdout: true
             ).trim()
 
