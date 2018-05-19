@@ -37,7 +37,7 @@ class DevelopmentConfig(BaseConfig):
     REDIS_QUEUE_URL = 'redis://:{password}@redis:6379/'.format(password=REDIS_PASSWORD)
     SESSION_COOKIE_DOMAIN = '.pathfinder.gov.bc.ca/'
     REMEMBER_COOKIE_DURATION = 86400
-    CORS_ALLOWED_ORIGINS = ["https://frontend-servicebc-cfms-dev.pathfinder.gov.bc.ca/"]
+    CORS_ALLOWED_ORIGINS = ["https://frontend-servicebc-cfms-dev.pathfinder.gov.bc.ca"]
 
     # POSTGRESQL
     DB_USER = os.getenv('DATABASE_USERNAME', '')

@@ -26,7 +26,7 @@ login_manager.login_view = 'login'
 
 api = Api(application, prefix='/api/v1', doc='/api/')
 
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
+logging.basicConfig(format=application.config['LOGGING_FORMAT'], level=logging.INFO)
 
 import app.resources.authentication
 import app.resources.clients
