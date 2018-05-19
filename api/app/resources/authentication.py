@@ -1,4 +1,4 @@
-from flask import redirect, request, Response, abort
+from flask import redirect, request, Response, abort, url_for
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user 
 
 from app import models
@@ -29,12 +29,20 @@ def login():
 
         if password == user.password:
             login_user(user)
-            return redirect("/api/")
+            if application.config['USE_HTTPS']:
+                url = url_for("doc", _external=True, _scheme="https")
+            else:
+                url = url_for("doc")
+            return redirect(url)
         else:
             return abort(401)
     else:
         if current_user.is_authenticated:
-            return redirect("/api/")
+            if application.config['USE_HTTPS']:
+                url = url_for("doc", _external=True, _scheme="https")
+            else:
+                url = url_for("doc")
+            return redirect(url)
             
         return Response('''
         <form action="" method="post">

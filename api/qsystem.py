@@ -24,7 +24,7 @@ login_manager = LoginManager()
 login_manager.init_app(application)
 login_manager.login_view = 'login'
 
-api = Api(application, prefix='/api/v1', doc='/api/')
+api = Api(application, prefix='/api/v1', doc='/')
 
 logging.basicConfig(format=application.config['LOGGING_FORMAT'], level=logging.INFO)
 

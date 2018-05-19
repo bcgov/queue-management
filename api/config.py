@@ -16,6 +16,7 @@ class BaseConfig(object):
     LOGGING_LOCATION = "logs/qsystem.log"
     LOGGING_LEVEL = DEBUG
     LOGGING_FORMAT = '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
+    APPLICATION_ROOT = '/api'
 
 class LocalConfig(BaseConfig):
     DEBUG = True
@@ -26,6 +27,7 @@ class LocalConfig(BaseConfig):
     SECRET_KEY = 'a9eec0e0-23b7-4788-9a92-318347b9a39f'
     REDIS_QUEUE_URL = ''
     CORS_ALLOWED_ORIGINS = ["http://localhost:8080"]
+    USE_HTTPS = False
 
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
@@ -38,6 +40,7 @@ class DevelopmentConfig(BaseConfig):
     SESSION_COOKIE_DOMAIN = '.pathfinder.gov.bc.ca/'
     REMEMBER_COOKIE_DURATION = 86400
     CORS_ALLOWED_ORIGINS = ["https://frontend-servicebc-cfms-dev.pathfinder.gov.bc.ca"]
+    USE_HTTPS = True
 
     # POSTGRESQL
     DB_USER = os.getenv('DATABASE_USERNAME', '')

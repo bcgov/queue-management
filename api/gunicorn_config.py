@@ -5,5 +5,5 @@ threads = int(os.environ.get('GUNICORN_THREADS', '1'))
 
 worker_class = 'eventlet'
 worker_connections = 200
-timeout = 30
-keepalive = 2
+timeout = 60
+keepalive = 20
