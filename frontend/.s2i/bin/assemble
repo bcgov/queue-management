@@ -4,8 +4,10 @@ echo "Before assembling"
 /usr/libexec/s2i/assemble
 rc=$?
 
+echo "Assembly complete... return code: $rc"
+
 if [ $rc -eq 0 ]; then
-    npm install
+    echo "Assembly succeeded... build application"
     npm run build
 else
     echo "After failed assembling"
