@@ -1,38 +1,14 @@
 #!/bin/bash
+echo "Before assembling"
 
-set -e
+/usr/libexec/s2i/assemble
+rc=$?
 
-source ${HTTPD_CONTAINER_SCRIPTS_PATH}/common.sh
+if [ $rc -eq 0 ]; then
+    npm install
+    npm run build
+else
+    echo "After failed assembling"
+fi
 
-config_s2i() {
-  echo "HTTPD_APP_ROOT: ${HTTPD_APP_ROOT}"
-  echo "HTTPD_DATA_ORIG_PATH: ${HTTPD_DATA_ORIG_PATH}"
-  echo "HTTPD_VAR_PATH: ${HTTPD_VAR_PATH}"
-  echo "DOCUMENTROOT: ${DOCUMENTROOT}"
-  echo "HTTPD_MAIN_CONF_PATH: ${HTTPD_MAIN_CONF_PATH}"
-  sed -i -e "s%^DocumentRoot \"${HTTPD_DATA_ORIG_PATH}/html\"%DocumentRoot \"${HTTPD_APP_ROOT}/src/${DOCUMENTROOT}\"%" ${HTTPD_MAIN_CONF_PATH}/httpd.conf
-  sed -i -e "s%^<Directory \"${HTTPD_DATA_ORIG_PATH}/html\"%<Directory \"${HTTPD_APP_ROOT}/src\"%" ${HTTPD_MAIN_CONF_PATH}/httpd.conf
-  sed -i -e "s%^<Directory \"${HTTPD_VAR_PATH}/html\"%<Directory \"${HTTPD_APP_ROOT}/src\"%" ${HTTPD_MAIN_CONF_PATH}/httpd.conf
-  echo "IncludeOptional ${HTTPD_CONFIGURATION_PATH}/*.conf" >> ${HTTPD_MAIN_CONF_PATH}/httpd.conf && \
-  head -n151 ${HTTPD_MAIN_CONF_PATH}/httpd.conf | tail -n1 | grep "AllowOverride All" || exit
-}
-
-install_npm() {
-  npm install
-  npm run build
-  rm -rf node_modules
-}
-
-echo "---> Enabling s2i support in httpd24 image"
-
-config_s2i
-
-echo "---> Installing application source"
-cp -Rf /tmp/src/. ./
-
-install_npm
-
-process_extending_files ${HTTPD_APP_ROOT}/src/httpd-post-assemble/ ${HTTPD_CONTAINER_SCRIPTS_PATH}/post-assemble/
-
-# Fix source directory permissions
-fix-permissions ./
+exit $rc
