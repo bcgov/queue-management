@@ -36,7 +36,7 @@ class DevelopmentConfig(BaseConfig):
     SECRET_KEY = 'a9eec0e0-23b7-4788-9a92-318347b9a39f'
     REDIS_PASSWORD = os.getenv('REDIS_PASSWORD', '')
     REDIS_QUEUE_URL = 'redis://:{password}@redis:6379/'.format(password=REDIS_PASSWORD)
-    SESSION_COOKIE_DOMAIN = '.pathfinder.gov.bc.ca/'
+    SESSION_COOKIE_DOMAIN = '.pathfinder.gov.bc.ca'
     REMEMBER_COOKIE_DURATION = 86400
     CORS_ALLOWED_ORIGINS = ["https://frontend-servicebc-cfms-dev.pathfinder.gov.bc.ca"]
     USE_HTTPS = True
