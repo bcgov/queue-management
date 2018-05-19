@@ -25,6 +25,7 @@ class LocalConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///db.sqlite3'
     SECRET_KEY = 'a9eec0e0-23b7-4788-9a92-318347b9a39f'
     REDIS_QUEUE_URL = ''
+    CORS_ALLOWED_ORIGINS = ["http://localhost:8080"]
 
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
@@ -35,8 +36,9 @@ class DevelopmentConfig(BaseConfig):
     SECRET_KEY = 'a9eec0e0-23b7-4788-9a92-318347b9a39f'
     REDIS_PASSWORD = os.getenv('REDIS_PASSWORD', '')
     REDIS_QUEUE_URL = 'redis://:{password}@redis:6379/'.format(password=REDIS_PASSWORD)
-    SESSION_COOKIE_DOMAIN = 'qsystem-dev.apps.olivewoodsoftware.com'
+    SESSION_COOKIE_DOMAIN = '.pathfinder.gov.bc.ca/'
     REMEMBER_COOKIE_DURATION = 86400
+    CORS_ALLOWED_ORIGINS = ["https://frontend-servicebc-cfms-dev.pathfinder.gov.bc.ca/"]
 
     # POSTGRESQL
     DB_USER = os.getenv('DATABASE_USERNAME', '')

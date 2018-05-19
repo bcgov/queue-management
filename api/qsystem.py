@@ -16,14 +16,13 @@ socketio = SocketIO(engineio_logger=True)
 socketio.init_app(application, async_mode='eventlet', message_queue=application.config['REDIS_QUEUE_URL'])
 db.init_app(application)
 
-origins = ["http://localhost:8080"]
-CORS(application, supports_credentials=True, origins=origins)
+CORS(application, supports_credentials=True, origins=application.config['CORS_ALLOWED_ORIGINS'])
 
 login_manager = LoginManager()
 login_manager.init_app(application)
 login_manager.login_view = 'login'
 
-api = Api(application, prefix='/api/v1', doc='/api')
+api = Api(application, prefix='/api/v1', doc='/api/')
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
@@ -34,10 +33,3 @@ import app.resources.notes
 import app.resources.offices
 import app.resources.users
 import app.resources.websocket
-
-@application.before_request
-def before_request():
-    session.permanent = True
-    application.permanent_session_lifetime = datetime.timedelta(days=7)
-    session.modified = True
-    g.user = current_user

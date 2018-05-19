@@ -9,7 +9,6 @@ from qsystem import application, login_manager
 def login():
     if request.method == 'POST':
         #Username and password can either be JSON or form based
-        print ("request.content_type")
         if "application/json" in request.content_type:
             print("Parsing JSON")
             data = request.get_json()
@@ -30,12 +29,12 @@ def login():
 
         if password == user.password:
             login_user(user)
-            return redirect("/")
+            return redirect("/api/")
         else:
             return abort(401)
     else:
         if current_user.is_authenticated:
-            return redirect("/")
+            return redirect("/api/")
             
         return Response('''
         <form action="" method="post">
