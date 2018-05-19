@@ -1,45 +1,33 @@
-#!/bin/sh -e
-#
-# S2I assemble script for the 's2i-caddy' image.
-# The 'assemble' script builds your application source so that it is ready to run.
-#
-# For more information refer to the documentation:
-#	https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
-#
+#!/bin/bash
 
-echo "---> This is the test assemble file"
+set -e
 
-if [[ "$1" == "-h" ]]; then
-	# If the 's2i-caddy' assemble script is executed with '-h' flag,
-	# print the usage.
-	exec /usr/libexec/s2i/usage
-fi
+source ${HTTPD_CONTAINER_SCRIPTS_PATH}/common.sh
 
-# Restore artifacts from the previous build (if they exist).
-#
-if [ "$(ls /tmp/artifacts/ 2>/dev/null)" ]; then
-  echo "---> Restoring build artifacts..."
-  mv /tmp/artifacts/. ./
-fi
+config_s2i() {
+  sed -i -e "s%^DocumentRoot \"${HTTPD_DATA_ORIG_PATH}/html\"%DocumentRoot \"${HTTPD_APP_ROOT}/src/${DOCUMENTROOT}\"%" ${HTTPD_MAIN_CONF_PATH}/httpd.conf
+  sed -i -e "s%^<Directory \"${HTTPD_DATA_ORIG_PATH}/html\"%<Directory \"${HTTPD_APP_ROOT}/src\"%" ${HTTPD_MAIN_CONF_PATH}/httpd.conf
+  sed -i -e "s%^<Directory \"${HTTPD_VAR_PATH}/html\"%<Directory \"${HTTPD_APP_ROOT}/src\"%" ${HTTPD_MAIN_CONF_PATH}/httpd.conf
+  echo "IncludeOptional ${HTTPD_CONFIGURATION_PATH}/*.conf" >> ${HTTPD_MAIN_CONF_PATH}/httpd.conf && \
+  head -n151 ${HTTPD_MAIN_CONF_PATH}/httpd.conf | tail -n1 | grep "AllowOverride All" || exit
+}
 
-echo "---> Copying repository content into place..."
-echo "Contents of /tmp/dist:"
-find /tmp/src/dist -print
-cp -Rf /tmp/src/dist/* /var/www/html
+install_npm() {
+  npm install
+  npm run build
+  rm -rf node_modules
+}
 
-# (through detective work, we discovered that additional source image content is placed in /tmp/build/inputs by s2i)
-# the bit below allows additional content that originates from one or more additional source images to be added to the output image
-if [ -d /tmp/build/inputs ]; then
-    echo "Additional image content found..."
-    echo "---> Copying additional image content into place..."
-    cp -Rf /tmp/build/inputs/* /var/www/html
-else
-    echo "No additional image content found."
-fi
+echo "---> Enabling s2i support in httpd24 image"
 
-if [[ -e "/var/www/html/Caddyfile" ]]; then
-    echo "Replacing default Caddyfile..."
-    cat /var/www/html/Caddyfile > /etc/Caddyfile
-else
-    echo "Using default Caddyfile."
-fi
+config_s2i
+
+echo "---> Installing application source"
+cp -Rf /tmp/src/. ./
+
+install_npm
+
+process_extending_files ${HTTPD_APP_ROOT}/src/httpd-post-assemble/ ${HTTPD_CONTAINER_SCRIPTS_PATH}/post-assemble/
+
+# Fix source directory permissions
+fix-permissions ./
