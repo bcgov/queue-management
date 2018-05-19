@@ -13,6 +13,10 @@ config_s2i() {
 }
 
 install_npm() {
+  ls -lh /opt
+  ls -lh /opt/app-root
+  ls -lh /opt/app-root/src
+  ls -lh /opt/app-root/src/build
   npm install
   npm run build
   rm -rf node_modules
