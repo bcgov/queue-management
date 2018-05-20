@@ -22,6 +22,27 @@ podTemplate(
             echo "checking out source"
             checkout scm
         }
+        stage('SonarQube Analysis') {
+          echo ">>> Performing static analysis <<<"
+          SONARQUBE_PWD = sh (
+            script: 'oc env dc/sonarqube --list | awk  -F  "=" \'/SONARQUBE_ADMINPW/{print $2}\'',
+            returnStdout: true
+          ).trim()
+
+          SONARQUBE_URL = sh (
+            script: 'oc get routes -o wide --no-headers | awk \'/sonarqube/{ print match($0,/edge/) ?  "https://"$2 : "http://"$2 }\'',
+            returnStdout: true
+          ).trim()
+
+          echo "PWD: ${SONARQUBE_PWD}"
+          echo "URL: ${SONARQUBE_URL}"
+          
+          dir('api') {
+            sh (
+              returnStdout: true, 
+              script: "./gradlew sonarqube -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.verbose=true --stacktrace --info  -Dsonar.sources=.."
+           }
+        }
         stage('Build API') {
             echo ">>> building queue-management-api <<<"
             openshiftBuild bldCfg: 'queue-management-api', showBuildLogs: 'true'
