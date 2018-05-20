@@ -13,6 +13,7 @@ sonarqube {
         property "sonar.sources", "./api"
         property "sonar.exclusions", "**/test_*.py"
         property "sonar.lanuage", "py"
+        property "sonar.verbose", "true"
         property "sourceEncoding", "UTF-8"
         property "sonar.python.coveragePlugin","cobertura"
         property "sonar.jacoco.reportPath", "${project.buildDir}/jacoco/test.exec"
