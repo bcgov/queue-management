@@ -30,6 +30,7 @@ objects:
     name: "${API_NAME}"
   spec:
     host: "${API_APPLICATION_DOMAIN}"
+    path: /api
     to:
       kind: Service
       name: "${API_NAME}"

@@ -11,7 +11,7 @@ parameters:
   value: queue-management-frontend
 - name: APPLICATION_DOMAIN
   description: "The exposed hostname that will route to the Vue application"
-  value: "frontend-servicebc-cfms-dev.pathfinder.gov.bc.ca"
+  value: "servicebc-cfms-dev.pathfinder.gov.bc.ca"
 objects:
 - kind: Service
   apiVersion: v1
