@@ -1,6 +1,7 @@
 import geb.spock.GebReportingSpec
 
 import pages.MainPage
+import modules.LoginModule
 
 import spock.lang.Unroll
 import spock.lang.Title
@@ -12,8 +13,10 @@ class FlowSpecs extends GebReportingSpec {
     def "Ensure page loads" () {
         given: "I navigate to the App"
             to MainPage
+        when: "At the home page"
+            at MainPage
         then: "Login button is present"
-            LoginButton
+            LoginButton.displayed
     }
 
     @Unroll
@@ -21,9 +24,7 @@ class FlowSpecs extends GebReportingSpec {
         given: "I navigate to the App"
             to MainPage
         when: "I fill in and submit the form"
-            MainPage.UsernameInput.value("vancouver1")
-            MainPage.PasswordInput.value("vancouver1")
-            MainPage.LoginButton.click()
+            login("vancouver1", "vancouver1")
         then: "Login form is no longer present"
             !LoginButton.displayed
     }

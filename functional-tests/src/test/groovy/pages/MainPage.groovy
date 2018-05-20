@@ -8,4 +8,11 @@ class MainPage extends Page {
         PasswordInput { $('input[id = "login-password"]') }
         LoginButton { $('button[id = "login-button"]') }
     }
+
+    Boolean login(String username, String password) {
+        UsernameInput.value(username)
+        PasswordInput.value(password)
+        LoginButton.click()
+        return true
+    }
 }
