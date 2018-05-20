@@ -7,16 +7,20 @@ class User(UserMixin, db.Model):
 
     model = api.model('User', {
         'id': fields.String,
+        'first_name': fields.String,
+        'last_name': fields.String,
         'username': fields.String,
         'office_id': fields.String,
         'office.name': fields.String
     })
 
-    id        = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username  = db.Column(db.String(80), nullable=False)
-    password  = db.Column(db.String, nullable=False)
-    office_id = db.Column(db.Integer, db.ForeignKey('offices.id'))
-    office    = db.relationship("Office", back_populates="users")
+    id         = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    first_name =db.Column(db.String(80), nullable=True)
+    last_name  = db.Column(db.String(80), nullable=True)
+    username   = db.Column(db.String(80), nullable=False)
+    password   = db.Column(db.String, nullable=False)
+    office_id  = db.Column(db.Integer, db.ForeignKey('offices.id'))
+    office     = db.relationship("Office", back_populates="users")
 
     def __repr__(self):
         return '<User %r>' % self.username

@@ -13,7 +13,7 @@ def get_redirect_url():
     return url
 
 # somewhere to login
-@application.route("/api/login/", methods=["GET"])
+@application.route("/api/v1/login/", methods=["GET"])
 def login_get():
     if current_user.is_authenticated:
         return redirect(get_redirect_url())
@@ -26,7 +26,7 @@ def login_get():
     </form>
     ''')
 
-@application.route("/api/login/", methods=["POST"])
+@application.route("/api/v1/login/", methods=["POST"])
 def login_post():
     if "application/json" in request.content_type:
         print("Parsing JSON")
@@ -52,7 +52,7 @@ def login_post():
     else:
         return abort(401)
 
-@application.route("/api/logout/")
+@application.route("/api/v1/logout/")
 @login_required
 def logout():
     logout_user()
