@@ -22,7 +22,7 @@ new Vue({
   el: '#app',
   store,
   created() {
-    let url  = process.env.API_URL + "/api/v1/users/me/"
+    let url  = process.env.API_URL + "/users/me/"
     this.$axios.get(url, {withCredentials: true})
       .then( () => {
         this.$store.commit('logIn')

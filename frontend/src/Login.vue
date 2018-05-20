@@ -25,7 +25,7 @@ export default {
   },
   methods: {
     postLogin() {
-      let url = process.env.API_URL + "/api/login/"
+      let url = process.env.API_URL + "/login/"
       let data = {
         username: this.username,
         password: this.password
