@@ -29,30 +29,30 @@ class Bootstrap(Command):
 
         db.session.flush()
 
-        vancouverUser1 = models.User("vancouver1", "vancouver1", office1.id)
-        vancouverUser2 = models.User("vancouver2", "vancouver2", office1.id)
-        vancouverUser3 = models.User("vancouver3", "vancouver3", office1.id)
+        vancouver_user1 = models.User("vancouver1", "vancouver1", office1.id)
+        vancouver_user2 = models.User("vancouver2", "vancouver2", office1.id)
+        vancouver_user3 = models.User("vancouver3", "vancouver3", office1.id)
 
-        princeGeorgeUser1 = models.User("princegeorge1", "princegeorge1", office2.id)
-        princeGeorgeUser2 = models.User("princegeorge2", "princegeorge2", office2.id)
-        princeGeorgeUser3 = models.User("princegeorge3", "princegeorge3", office2.id)
+        prince_george_user1 = models.User("princegeorge1", "princegeorge1", office2.id)
+        prince_george_user2 = models.User("princegeorge2", "princegeorge2", office2.id)
+        prince_george_user3 = models.User("princegeorge3", "princegeorge3", office2.id)
 
-        vernonUser1 = models.User("vernon1", "vernon1", office3.id)
-        vernonUser2 = models.User("vernon2", "vernon2", office3.id)
-        vernonUser3 = models.User("vernon3", "vernon3", office3.id)
+        vernon_user1 = models.User("vernon1", "vernon1", office3.id)
+        vernon_user2 = models.User("vernon2", "vernon2", office3.id)
+        vernon_user3 = models.User("vernon3", "vernon3", office3.id)
 
 
-        db.session.add(vancouverUser1)
-        db.session.add(vancouverUser2)
-        db.session.add(vancouverUser3)
+        db.session.add(vancouver_user1)
+        db.session.add(vancouver_user2)
+        db.session.add(vancouver_user3)
 
-        db.session.add(princeGeorgeUser1)
-        db.session.add(princeGeorgeUser2)
-        db.session.add(princeGeorgeUser3)
+        db.session.add(prince_george_user1)
+        db.session.add(prince_george_user2)
+        db.session.add(prince_george_user3)
 
-        db.session.add(vernonUser1)
-        db.session.add(vernonUser2)
-        db.session.add(vernonUser3)
+        db.session.add(vernon_user1)
+        db.session.add(vernon_user2)
+        db.session.add(vernon_user3)
 
         db.session.commit()
 

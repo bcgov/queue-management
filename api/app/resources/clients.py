@@ -61,7 +61,7 @@ class ClientDetail(Resource):
     @login_required
     def destroy(self, id):
         try:
-            client = Client.query.filter_by(id=id).first().delete()
+            Client.query.filter_by(id=id).first().delete()
 
             emit('update_customer_list', {})
             return '', 204

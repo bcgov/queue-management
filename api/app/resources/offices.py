@@ -55,7 +55,7 @@ class OfficeDetail(Resource):
     @login_required
     def destroy(self, id):
         try:
-            office = Office.query.filter_by(id=id).first().delete()
+            Office.query.filter_by(id=id).first().delete()
             
             return '', 204
         except exc.SQLAlchemyError as e:
