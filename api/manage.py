@@ -1,6 +1,6 @@
 """Manage the database and some other items required to run the API"""
 from flask_script import Command, Manager, Option # class for handling a set of commands
-from flask_migrate import Migrate, MigrateCommand
+from flask_migrate import Migrate, MigrateCommand, upgrade
 from qsystem import db, application
 from app import models
 import logging
@@ -79,7 +79,12 @@ class CreateUser(Command):
         db.session.add(user)
         db.session.commit()
 
+class MigrateWrapper(Command):
+    def run(self):
+        upgrade()	
+
 manager.add_command('db', MigrateCommand)
+manager.add_command('migrate', MigrateWrapper())
 manager.add_command('bootstrap', Bootstrap())
 manager.add_command('fetch', FetchData())
 manager.add_command('create_user', CreateUser())
