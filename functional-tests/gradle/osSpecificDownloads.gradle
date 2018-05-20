@@ -1,0 +1,59 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+import org.apache.commons.io.FileUtils
+
+buildscript {
+	repositories {
+		jcenter()
+	}
+	dependencies {
+		classpath "commons-io:commons-io:2.5"
+	}
+}
+
+task downloadIeDriver {
+	def outputFile = file("$buildDir/webdriver/iedriver.zip")
+	inputs.property("ieDriverVersion", ieDriverVersion)
+	outputs.file(outputFile)
+
+	doLast {
+		def driverOsFilenamePart
+		if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+			driverOsFilenamePart = "win32"
+		} else if (Os.isFamily(Os.FAMILY_MAC)) {
+			driverOsFilenamePart = "mac64"
+		} else if (Os.isFamily(Os.FAMILY_UNIX)) {
+			driverOsFilenamePart = Os.isArch("amd64") ? "linux64" : "linux32"
+		}
+		//FileUtils.copyURLToFile(new URL("http://selenium-release.storage.googleapis.com/${ieDriverVersion}/IEDriverServer_${driverOsFilenamePart}_${seleniumVersion}.zip"), outputFile)
+		FileUtils.copyURLToFile(new URL("http://selenium-release.storage.googleapis.com/3.6/IEDriverServer_Win32_3.6.0.zip"), outputFile)
+	}
+}
+
+task unzipIeDriver(type: Copy) {
+	def outputDir = file("$buildDir/webdriver/iedriver")
+	dependsOn downloadIeDriver
+	outputs.dir(outputDir)
+
+	from(zipTree(downloadIeDriver.outputs.files.singleFile))
+	into(outputDir)
+}
+
+task downloadEdgeDriver {
+	def outputFile = file("$buildDir/webdriver/MicrosoftWebDriver.exe")
+	inputs.property("edgeDriverVersion", seleniumVersion)
+	outputs.file(outputFile)
+
+	doLast {
+		//FileUtils.copyURLToFile(new URL("http://selenium-release.storage.googleapis.com/${ieDriverVersion}/IEDriverServer_${driverOsFilenamePart}_${seleniumVersion}.zip"), outputFile)
+		FileUtils.copyURLToFile(new URL("https://download.microsoft.com/download/D/4/1/D417998A-58EE-4EFE-A7CC-39EF9E020768/MicrosoftWebDriver.exe"), outputFile)
+	}
+}
+
+task unzipEdgeDriver(type: Copy) {
+	def outputDir = file("$buildDir/webdriver/edgedriver")
+	dependsOn downloadEdgeDriver
+	outputs.dir(outputDir)
+
+	from(downloadEdgeDriver.outputs.files.singleFile)
+	into(outputDir)
+}
