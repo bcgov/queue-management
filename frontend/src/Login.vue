@@ -1,12 +1,16 @@
 <template>
-  <div v-if="!this.$store.state.isLoggedIn">
+  <div v-if="!this.$store.state.isLoggedIn"
+       id="login-form">
     <b-form-input v-model="username"
+                  id="login-username"
                   type="text"
                   placeholder="Username"/>
     <b-form-input v-model="password"
+                  id="login-password"
                   type="password"
                   placeholder="Password"/>
-    <b-button @click="postLogin()">Login</b-button>
+    <b-button @click="postLogin()"
+              id="login-button">Login</b-button>
   </div>
 </template>
 
