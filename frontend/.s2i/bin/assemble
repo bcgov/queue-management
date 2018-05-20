@@ -1,8 +1,8 @@
 #!/bin/bash
 echo "Before assembling"
 
-/usr/libexec/s2i/assemble
-rc=$?
+#/usr/libexec/s2i/assemble
+#rc=$?
 
 echo "Assembly complete... return code: $rc"
 
