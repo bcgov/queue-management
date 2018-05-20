@@ -36,12 +36,13 @@ podTemplate(
 
           echo "PWD: ${SONARQUBE_PWD}"
           echo "URL: ${SONARQUBE_URL}"
-          
+
           dir('api') {
             sh (
               returnStdout: true, 
               script: "./gradlew sonarqube -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.verbose=true --stacktrace --info  -Dsonar.sources=.."
-           }
+            )
+          }
         }
         stage('Build API') {
             echo ">>> building queue-management-api <<<"
