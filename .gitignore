@@ -9,7 +9,6 @@ __pycache__/
 # Distribution / packaging
 .Python
 build/
-!frontend/build
 develop-eggs/
 dist/
 downloads/
@@ -104,5 +103,7 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-# Node things
+# Project specific include/excludes
+!frontend/build
 node_modules/
+sonar-runner/.gradle
