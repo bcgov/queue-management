@@ -39,7 +39,7 @@ class DevelopmentConfig(BaseConfig):
     SESSION_COOKIE_DOMAIN = '.pathfinder.gov.bc.ca'
     REMEMBER_COOKIE_DURATION = 86400
     CORS_ALLOWED_ORIGINS = [
-        "https://frontend-servicebc-cfms-dev.pathfinder.gov.bc.ca",
+        "https://servicebc-cfms-dev.pathfinder.gov.bc.ca/",
         "http://localhost:8080"
     ]
     USE_HTTPS = True
