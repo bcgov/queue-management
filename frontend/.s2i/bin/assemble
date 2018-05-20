@@ -1,0 +1,13 @@
+#!/bin/bash
+echo "Before assembling"
+
+/usr/libexec/s2i/assemble
+rc=$?
+
+if [ $rc -eq 0 ]; then
+    npm run build
+else
+    echo "After failed assembling"
+fi
+
+exit $rc
