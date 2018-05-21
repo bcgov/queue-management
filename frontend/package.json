@@ -20,6 +20,8 @@
     "bootstrap-vue": "latest",
     "es6-promise": "^4.2.4",
     "popper.js": "^1.12.9",
+    "socket.io": "^2.1.1",
+    "socket.io-client": "^2.1.1",
     "vue": "^2.5.2",
     "vue-socket.io": "^2.1.1-b",
     "vuex": "^3.0.1"

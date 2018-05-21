@@ -10,7 +10,7 @@ export const store = new Vuex.Store({
   mutations: {
   	increment: state => state.count++,
     decrement: state => state.count--,
-    logIn: state => state.isLoggedIn = true
+    logIn: state => state.isLoggedIn = true,
     logOut: state => state.isLoggedIn = false
   }
 })

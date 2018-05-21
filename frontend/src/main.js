@@ -2,7 +2,6 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import BootstrapVue from 'bootstrap-vue'
-import VueSocketio from 'vue-socket.io'
 import 'es6-promise/auto'
 import App from './App'
 import axios from 'axios'
@@ -14,7 +13,15 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 Vue.prototype.$axios = axios
 
 Vue.use(BootstrapVue)
-Vue.use(VueSocketio, process.env.API_URL)
+
+import VueSocketio from 'vue-socket.io';
+import io from 'socket.io-client';
+const socket = io(process.env.API_URL, {
+  path: '/api/v1/socket.io'
+});
+
+Vue.use(VueSocketio, socket)
+
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */

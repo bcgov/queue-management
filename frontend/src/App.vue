@@ -31,12 +31,6 @@ export default {
     connect() {
       this.isConnected = true;
       console.log('socket connected');
-    },
-    customEmit(val) {
-      console.log('this method fired by socket server. eg: io.emit("customEmit", data)');
-    },
-    messageChannel(data) {
-      this.socketMessage = data;
     }
   },
   methods: {
