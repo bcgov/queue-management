@@ -14,7 +14,7 @@
   </div>
   <div v-else>
     <b-button @click="logout()"
-              id="login-button">Logout</b-button>
+              id="logout-button">Logout</b-button>
   </div>
 </template>
 

@@ -16,6 +16,6 @@ class FlowSpecs extends GebReportingSpec {
         when: "I fill in and submit the form"
             loginModule.login("vancouver1", "vancouver1")
         then: "Login form is no longer present"
-            loginModule.logoutButton.present
+            waitFor { loginModule.logoutButton.present }
     }
 }
