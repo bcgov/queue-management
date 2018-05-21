@@ -5,7 +5,7 @@ echo "Before assembling"
 rc=$?
 
 if [ $rc -eq 0 ]; then
-    npm run build
+    npm run build:dev
 else
     echo "After failed assembling"
 fi
