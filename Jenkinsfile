@@ -129,7 +129,7 @@ podTemplate(
                         command: '',
                         args: '${computer.jnlpmac} ${computer.name}',
                         envVars: [
-                            envVar(key:'BASEURL', value: 'https://frontend-servicebc-cfms-dev.pathfinder.gov.bc.ca/')
+                            envVar(key:'BASEURL', value: 'https://servicebc-cfms-dev.pathfinder.gov.bc.ca/')
                         ]
                     )
                 ]
