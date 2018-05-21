@@ -17,7 +17,7 @@ application.url_map.strict_slashes = True
 
 configure_app(application)
 socketio = SocketIO(engineio_logger=True)
-socketio.init_app(application, async_mode='eventlet', message_queue=application.config['REDIS_QUEUE_URL'])
+socketio.init_app(application, async_mode='eventlet', message_queue=application.config['REDIS_QUEUE_URL'], path="/api/v1/socket.io")
 db.init_app(application)
 
 print(application.config)
