@@ -13,15 +13,15 @@ import spock.lang.Unroll
 class LoginModule extends Module {
 
     static content = {
-        UsernameInput { $('input[id = "login-username"]') }
-        PasswordInput { $('input[id = "login-password"]') }
-        LoginButton { $('button[id = "login-button"]') }
+        usernameInput { $('input', id: "login-username") }
+        passwordInput { $('input', id: "login-password") }
+        loginButton { $('button', id: "login-button") }
+        logoutButton { $('button', id: "logout-button") }
     }
 
-    Boolean login(String username, String password) {
-        UsernameInput.value(username)
-        PasswordInput.value(password)
-        LoginButton.click()
-        return true
+    void login(String username, String password) {
+        usernameInput.value(username)
+        passwordInput.value(password)
+        loginButton.click()
     }
 }

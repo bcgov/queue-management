@@ -9,8 +9,12 @@
                   id="login-password"
                   type="password"
                   placeholder="Password"/>
-    <b-button @click="postLogin()"
+    <b-button @click="login()"
               id="login-button">Login</b-button>
+  </div>
+  <div v-else>
+    <b-button @click="logout()"
+              id="login-button">Logout</b-button>
   </div>
 </template>
 
@@ -24,7 +28,7 @@ export default {
     }
   },
   methods: {
-    postLogin() {
+    login() {
       let url = process.env.API_URL + "/login/"
       let data = {
         username: this.username,
@@ -34,8 +38,17 @@ export default {
         withCredentials: true
       })
       .then( () => {
-          this.$store.commit('logIn')
-        })
+        this.$store.commit('logIn')
+      })
+    },
+    logout() {
+      let url = process.env.API_URL + "/login/"
+      this.$axios.get(url, {
+        withCredentials: true
+      })
+      .then( () => {
+        this.$store.commit('logOut')
+      })
     }
   }
 }

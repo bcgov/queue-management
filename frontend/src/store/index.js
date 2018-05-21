@@ -11,5 +11,6 @@ export const store = new Vuex.Store({
   	increment: state => state.count++,
     decrement: state => state.count--,
     logIn: state => state.isLoggedIn = true
+    logOut: state => state.isLoggedIn = false
   }
 })
