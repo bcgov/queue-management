@@ -5,31 +5,17 @@ plugins {
   id "org.sonarqube" version "2.6.2"
 }
 
-sonarqubePython {
+sonarqube {
     properties {
-        property "sonar.projectName", "Queue Management API"
-        property "sonar.projectKey", "org.sonarqube:queue-management-api"
+        property "sonar.projectName", "Queue Management"
+        property "sonar.projectKey", "org.sonarqube:queue-management"
         property "sonar.projectBaseDir", "../"
-        property "sonar.sources", "./api"
+        property "sonar.sources", "./api,./frontend/src"
         property "sonar.exclusions", "**/test_*.py"
-        property "sonar.lanuage", "py"
         property "sonar.verbose", "true"
         property "sourceEncoding", "UTF-8"
         property "sonar.python.coveragePlugin","cobertura"
-        property "sonar.jacoco.reportPath", "${project.buildDir}/jacoco/ps-test.exec"
-    }
-}
-
-sonarqubeJavascript {
-    properties {
-        property "sonar.projectName", "Queue Management Frontend"
-        property "sonar.projectKey", "org.sonarqube:queue-management-frontend"
-        property "sonar.projectBaseDir", "../"
-        property "sonar.sources", "./frontend/src"
-        property "sonar.lanuage", "js"
-        property "sonar.verbose", "true"
-        property "sourceEncoding", "UTF-8"
-        property "sonar.jacoco.reportPath", "${project.buildDir}/jacoco/js-test.exec"
+        property "sonar.jacoco.reportPath", "${project.buildDir}/jacoco/test.exec"
     }
 }
 

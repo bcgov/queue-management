@@ -40,11 +40,7 @@ podTemplate(
           dir('sonar-runner') {
             sh (
               returnStdout: true, 
-              script: "./gradlew sonarqubePython -Dsonar.host.url=${SONARQUBE_URL} --stacktrace --info"
-            )
-            sh (
-              returnStdout: true, 
-              script: "./gradlew sonarqubeJavascript -Dsonar.host.url=${SONARQUBE_URL} --stacktrace --info"
+              script: "./gradlew sonarqube -Dsonar.host.url=${SONARQUBE_URL} --stacktrace --info"
             )
           }
         }
