@@ -37,7 +37,7 @@ class ClientList(Resource):
             client = Client(name=name, office_id=current_user.office_id)
             db.session.add(client)
 
-            emit('update_customer_list', {}, namespace="/{office}".format(office=current_user.office_id))
+            emit('update_customer_list', {}, room="{office}".format(office=current_user.office_id))
             return client, 201
         except exc.SQLAlchemyError as e:
             print(e)
@@ -52,7 +52,7 @@ class ClientDetail(Resource):
         try:
             client = Client.query.filter_by(id=id).first()
 
-            emit('update_customer_list', {}, namespace="/{office}".format(office=current_user.office_id))
+            emit('update_customer_list', {}, room="{office}".format(office=current_user.office_id))
             return client, 200
         except exc.SQLAlchemyError as e:
             print(e)
@@ -63,7 +63,7 @@ class ClientDetail(Resource):
         try:
             Client.query.filter_by(id=id).first().delete()
 
-            emit('update_customer_list', {}, namespace="/{office}".format(office=current_user.office_id))
+            emit('update_customer_list', {}, room="{office}".format(office=current_user.office_id))
             return '', 204
         except exc.SQLAlchemyError as e:
             print(e)
