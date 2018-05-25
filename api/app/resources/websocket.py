@@ -6,7 +6,10 @@ from qsystem import socketio
 
 @socketio.on('my event')
 def test_message(message):
+	print("Receiving message")
+	print(message)
     emit('my response', {'data': 'got it!', 'count': message['count']})
+    print("Pinging back")
 
 @socketio.on('join')
 def join_room(message):    
