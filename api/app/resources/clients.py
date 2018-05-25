@@ -1,9 +1,8 @@
 from flask import request, jsonify, g
 from flask_login import current_user
 from flask_restplus import Resource
-from flask_socketio import emit
 from sqlalchemy import text, exc
-from qsystem import api, db
+from qsystem import api, db, socketio
 
 from app.auth import login_required
 from app.models import Client
@@ -35,8 +34,10 @@ class ClientList(Resource):
         try:
             client = Client(name=name, office_id=current_user.office_id)
             db.session.add(client)
+            db.session.flush()
+            db.session.commit()
 
-            emit('update_customer_list', {}, room="{office}".format(office=current_user.office_id))
+            socketio.emit('update_customer_list', {}, room="{office}".format(office=current_user.office_id))
             return client, 201
         except exc.SQLAlchemyError as e:
             print(e)
@@ -58,11 +59,13 @@ class ClientDetail(Resource):
             return {"message": "api is down"}, 500
 
     @login_required
-    def destroy(self, id):
+    def delete(self, id):
         try:
-            Client.query.filter_by(id=id).first().delete()
+            client = Client.query.filter_by(id=id).first()
+            db.session.delete(client)
+            db.session.commit()
 
-            emit('update_customer_list', {}, room="{office}".format(office=current_user.office_id))
+            socketio.emit('update_customer_list', {}, room="{office}".format(office=current_user.office_id))
             return '', 204
         except exc.SQLAlchemyError as e:
             print(e)
