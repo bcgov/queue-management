@@ -109,8 +109,12 @@ podTemplate(
         }
     }
     def owaspPodLabel = "owasp-zap-${UUID.randomUUID().toString()}"
-    podTemplate(label: owaspPodLabel, name: owaspPodLabel, serviceAccount: 'jenkins', cloud: 'openshift', containers: [
-        containerTemplate(
+    podTemplate(
+        label: owaspPodLabel, 
+        name: owaspPodLabel, 
+        serviceAccount: 'jenkins', 
+        cloud: 'openshift', 
+        containers: [ containerTemplate(
             name: 'jnlp',
             image: '172.50.0.2:5000/openshift/jenkins-slave-zap',
             resourceRequestCpu: '500m',
@@ -120,8 +124,8 @@ podTemplate(
             workingDir: '/home/jenkins',
             command: '',
             args: '${computer.jnlpmac} ${computer.name}'
-        )
-    ]) {
+        )]
+    ) {
          stage('ZAP Security Scan') {
                 node(owaspPodLabel) {
                     sleep 60
@@ -139,6 +143,12 @@ podTemplate(
                         reportTitles: 'ZAP Baseline Scan'
                     ])
                     echo "Return value is: ${retVal}"
+
+                    script {
+                        if (retVal != 0) {
+                            currentBuild.result = 'UNSTABLE'
+                        }
+                    }
               }
          }
     }
