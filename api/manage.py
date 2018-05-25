@@ -81,7 +81,7 @@ class CreateUser(Command):
 
 class MigrateWrapper(Command):
     def run(self):
-        upgrade()	
+        upgrade()
 
 manager.add_command('db', MigrateCommand)
 manager.add_command('migrate', MigrateWrapper())

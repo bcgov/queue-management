@@ -17,4 +17,4 @@ def join_room(message):
         emit('joined', {'data': "{user} has joined the room".format(user=current_user.username)})
     else:
         print ("Join failed as user is not authed")
-    	emit('join_fail', {'data': "{user} failed to join the room".format(user=current_user.username)})
+        emit('join_fail', {'data': "{user} failed to join the room".format(user=current_user.username)})
