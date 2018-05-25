@@ -7,8 +7,6 @@ def login_required(f):
     """
     @wraps(f)
     def wrap(*args, **kwargs):
-        print(current_user)
-        print(current_user.is_authenticated)
         if current_user and current_user.is_authenticated:
             return f(*args, **kwargs)
 
