@@ -37,7 +37,8 @@ class ClientList(Resource):
             db.session.flush()
             db.session.commit()
 
-            socketio.emit('update_customer_list', {}, room="{office}".format(office=current_user.office_id))
+            print ("Emitting out to room: " + current_user.office_id)
+            socketio.emit('update_customer_list', {"data": "test"}, room="{office}".format(office=current_user.office_id))
             return client, 201
         except exc.SQLAlchemyError as e:
             print(e)
@@ -65,7 +66,7 @@ class ClientDetail(Resource):
             db.session.delete(client)
             db.session.commit()
 
-            socketio.emit('update_customer_list', {}, room="{office}".format(office=current_user.office_id))
+            socketio.emit('update_customer_list', {"data": "test"}, room="{office}".format(office=current_user.office_id))
             return '', 204
         except exc.SQLAlchemyError as e:
             print(e)

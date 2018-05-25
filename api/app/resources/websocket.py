@@ -9,9 +9,12 @@ def test_message(message):
     emit('my response', {'data': 'got it!', 'count': message['count']})
 
 @socketio.on('join')
-def join_room(message):
+def join_room(message):    
+    print("Received request to join room")
     if current_user.is_authenticated:
+        print("{user} is attempting to join room: {room}".format(user=current_user.username, room=current_user.office_id))
         join_room(current_user.office_id)
         emit('joined', {'data': "{user} has joined the room".format(user=current_user.username)})
     else:
+        print ("Join failed as user is not authed")
     	emit('join_fail', {'data': "{user} failed to join the room".format(user=current_user.username)})
