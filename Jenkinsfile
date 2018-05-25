@@ -161,6 +161,7 @@ podTemplate(
 
             script {
                 if (retVal != 0) {
+                    echo "MARKING BUILD AS UNSTABLE"
                     currentBuild.result = 'UNSTABLE'
                 }
             }
