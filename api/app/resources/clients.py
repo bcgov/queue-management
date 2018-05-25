@@ -25,10 +25,9 @@ class ClientList(Resource):
 
     @api.marshal_with(Client.model)
     @login_required
-    def post(self, data):
+    def post(self):
         json_input = request.get_json()
         name = json_input.get('name', None)
-        office_id = json_input.get('office_id', None)
 
         if name == None:
             return {"message": "name is required"}, 400
