@@ -17,7 +17,7 @@ def on_join(message):
     print(message)
     if current_user.is_authenticated:
         print("{user} is attempting to join room: {room}".format(user=current_user.username, room=current_user.office_id))
-        join_room("vancouver")
+        join_room(current_user.office_id)
         emit('joinRoomSuccess', {'data': "{user} has joined the room".format(user=current_user.username)})
     else:
         print ("Join failed as user is not authed")
