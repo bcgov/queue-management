@@ -12,7 +12,7 @@ def test_message(message):
     print("Pinging back")
 
 @socketio.on('joinRoom')
-def join_room(message):    
+def on_join(message):    
     print("Received request to join room")
     print(message)
     if current_user.is_authenticated:
