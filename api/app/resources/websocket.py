@@ -29,7 +29,7 @@ def ping_room(message):
     print(message)
     if current_user.is_authenticated:
         print("{user} is attempting to ping room: {room}".format(user=current_user.username, room=current_user.office_id))
-        emit('ping_room', {'data': "{user} has pinged the room".format(user=current_user.username), room=current_user.office_id})
+        emit('ping_room', {'data': "{user} has pinged the room".format(user=current_user.username)}, room=current_user.office_id)
     else:
         print ("Join failed as user is not authed")
         emit('joinRoomFail', {'data': "{user} failed to join the room".format(user=current_user.username)})
