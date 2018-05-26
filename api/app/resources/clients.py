@@ -63,7 +63,8 @@ class ClientDetail(Resource):
     def delete(self, id):
         try:
             client = Client.query.filter_by(id=id).first()
-            db.session.delete(client)
+            db.session.delete(client, synchronize_session='fetch')
+            db.session.flush()
             db.session.commit()
 
             socketio.emit('update_customer_list', {"data": "test"}, room=current_user.office_id)
