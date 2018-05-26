@@ -6,6 +6,12 @@
       </div>
       <div class="col-lg-4">
         <Login></Login>
+        <b-button @click="sendJoinRoomEvent()"
+              id="login-button">Join Room</b-button>
+        <b-button @click="sendMyEvent()"
+              id="login-button">Send Event</b-button>
+        <b-button @click="pingRoom()"
+              id="login-button">Ping Room</b-button>
       </div>
     </div>
   </div>
@@ -31,21 +37,41 @@ export default {
     connect() {
       this.isConnected = true;
       console.log('socket connected');
+    },
+    disconnect() {
+      console.log("Disconnected")
+    },
+    joinRoomSuccess() {
+      console.log("Success")
+    },
+    joinRoomFail() {
+      console.log("Fail")
+    },
+    myResponse() {
+      console.log("Does this work")
+    },
+    update_customer_list() {
+      console.log("Received update customer")
+    },
+    ping_room() {
+    console.log("ping_room")
     }
   },
   methods: {
+    sendJoinRoomEvent() {
+      this.$socket.emit('joinRoom', {data: 'This is a test every 3s', count: 0, "office_id": "vancouver" })
+    },
+    sendMyEvent() {
+      this.$socket.emit('myEvent', {data: 'This is a test every 3s', count: 0, "office_id": "vancouver" })
+    },
+    pingRoom() {
+      this.$socket.emit('pingRoom', {data: 'This is a ping test' })
+    },
     sendLogIn() {
       this.$store.commit('logIn')
     },
     pingServer(val) {
       this.$socket.emit('PING')
-    },
-    buttonClick() {
-      let url  = 'http://qsystem-dev.apps.olivewoodsoftware.com/api/v1/users/me/'
-      this.$axios.get(url)
-      .then( () => {
-        this.$store.commit('logIn')
-      })
     }
   }
 }

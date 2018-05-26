@@ -16,9 +16,7 @@ Vue.use(BootstrapVue)
 
 import VueSocketio from 'vue-socket.io';
 import io from 'socket.io-client';
-const socket = io(process.env.API_URL, {
-  path: '/api/v1/socket.io'
-});
+const socket = io("https://servicebc-cfms-api-dev.pathfinder.gov.bc.ca");
 
 Vue.use(VueSocketio, socket)
 
