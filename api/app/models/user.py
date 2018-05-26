@@ -18,7 +18,7 @@ class User(UserMixin, db.Model):
     first_name =db.Column(db.String(80), nullable=True)
     last_name  = db.Column(db.String(80), nullable=True)
     username   = db.Column(db.String(80), nullable=False)
-    password   = db.Column(db.String, nullable=False)
+    password   = db.Column(db.String(80), nullable=False)
     office_id  = db.Column(db.Integer, db.ForeignKey('offices.id'))
     office     = db.relationship("Office", back_populates="users")
 
