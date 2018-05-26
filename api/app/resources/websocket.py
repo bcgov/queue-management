@@ -25,7 +25,7 @@ def on_join(message):
 
 @socketio.on('pingRoom')
 def ping_room(message):
-	print("Received request to ping room")
+    print("Received request to ping room")
     print(message)
     if current_user.is_authenticated:
         print("{user} is attempting to ping room: {room}".format(user=current_user.username, room=current_user.office_id))
