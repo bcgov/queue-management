@@ -1,63 +1,36 @@
 <template>
-  <div id="app" class="container">
-    <div class="row">
-      <div class="col-lg-8">
+  <b-container>
+    <b-row>
+      <b-col cols="10">
+        <img src='./assets/bcid.jpg'/>
         <h1>Queue Management</h1>
-      </div>
-      <div class="col-lg-4">
+        <Socket/>
+      
+      </b-col>
+      <b-col cols="2">
         <Login></Login>
-      </div>
-    </div>
-  </div>
+      </b-col>
+    </b-row>
+      <Controls v-if="this.$store.state.isLoggedIn"/>
+  </b-container>
 </template>
 
 <script>
-import Login from './Login';
+  import Login from './Login';
+  import Socket from './Socket'
+  import Controls from './Controls'
+  import ClientTable from './ClientTable'
+  import ClientInput from './ClientInput'
 
-export default {
-  name: 'app',
-  components: {
-    Login
-  },
-  data() {
-    return {
-      isConnected: false,
-      isLoggedIn: false,
-      socketMessage: 'heh',
-      name: ''
-    }
-  },
-  sockets: {
-    connect() {
-      this.isConnected = true;
-      console.log('socket connected');
-    }
-  },
-  methods: {
-    sendLogIn() {
-      this.$store.commit('logIn')
-    },
-    pingServer(val) {
-      this.$socket.emit('PING')
-    },
-    buttonClick() {
-      let url  = 'http://qsystem-dev.apps.olivewoodsoftware.com/api/v1/users/me/'
-      this.$axios.get(url)
-      .then( () => {
-        this.$store.commit('logIn')
-      })
+  export default {
+    name: 'app',
+    components: {
+      Login,
+      Socket,
+      Controls
     }
   }
-}
+
 </script>
 
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+

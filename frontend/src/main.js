@@ -1,5 +1,3 @@
-// The Vue build version to load with the `import` command
-// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import BootstrapVue from 'bootstrap-vue'
 import 'es6-promise/auto'
@@ -10,17 +8,15 @@ import { store } from './store/'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
-Vue.prototype.$axios = axios
+
+const axiosInstance = axios.create({
+    baseURL: process.env.API_URL,
+    withCredentials: true
+})
+
+Vue.prototype.$axios = axiosInstance
 
 Vue.use(BootstrapVue)
-
-import VueSocketio from 'vue-socket.io';
-import io from 'socket.io-client';
-const socket = io(process.env.API_URL, {
-  path: '/api/v1/socket.io'
-});
-
-Vue.use(VueSocketio, socket)
 
 Vue.config.productionTip = false
 
@@ -29,10 +25,16 @@ new Vue({
   el: '#app',
   store,
   created() {
-    let url  = process.env.API_URL + "/users/me/"
-    this.$axios.get(url, {withCredentials: true})
+    const io = require('socket.io-client')
+    const socket = io(process.env.API_URL)
+    let url  = "/users/me/"
+    this.$axios.get(url)
       .then( () => {
         this.$store.commit('logIn')
+        this.$store.commit('setUser', {
+          username: response.data.username,
+          office_id: response.data.office_id
+        })
       })
   },
   template: '<App />',

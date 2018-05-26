@@ -29,38 +29,35 @@ export default {
   },
   methods: {
     login() {
-      let url = process.env.API_URL + "/login/"
+      let url = "/login/"
       let data = {
         username: this.username,
         password: this.password
       }
-      this.$axios.post(url, data, {
-        withCredentials: true
-      })
-      .then( () => {
-        this.$store.commit('logIn')
-      })
+      
+      this.$axios.post(url, data)
+        .finally( () => {
+          this.verifyLogin()
+        })
     },
     logout() {
-      let url = process.env.API_URL + "/login/"
-      this.$axios.get(url, {
-        withCredentials: true
-      })
+      let url = "/logout/"
+      this.$axios.get(url)
       .then( () => {
         this.$store.commit('logOut')
       })
+    },
+    verifyLogin() {
+      let url  = "/users/me/"
+      this.$axios.get(url)
+        .then( response => {
+          this.$store.commit('logIn')
+          this.$store.commit('setUser', {
+            username: response.data.username,
+            office_id: response.data.office_id
+          })
+        })
     }
   }
 }
 </script>
-
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
