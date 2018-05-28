@@ -45,7 +45,7 @@ new Vue({
           name: response.data.username,
           office_id: response.data.office_id
         }
-        console.log(user)
+        this.$root.$emit('socketConnect')
         this.$store.commit('logIn')
         this.$store.commit('setUser', user)
         })
