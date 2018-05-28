@@ -33,17 +33,13 @@ limitations under the License.*/
 </template>
 
 <script>
-  import Delete from './delete'
 
   export default {
     name: 'ClientTable',
-    components: { Delete },
     data() {
+      let length = this.$store.state.items.length
       return {
-        totalRows() {
-          let items = this.$store.state.items
-          return items.length
-        },
+        totalRows: length,
         fields: [
           {key: 'name', sortable: true},
           {key: 'id', sortable: true}
