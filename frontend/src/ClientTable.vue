@@ -23,6 +23,13 @@ limitations under the License.*/
              :fields="fields"
              :sort-by.sync="sortBy"
              :sort-desc.sync="sortDesc">
+             <template slot="actions" slot-scope="row">
+        <!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
+        <b-button size="sm" @click.stop="deleteCustomer(row.item)" class="mr-1">
+          Delete
+        </b-button>
+
+      </template>
     </b-table>
       <b-pagination :total-rows="totalRows"
                     :per-page="perPage"
@@ -33,17 +40,17 @@ limitations under the License.*/
 </template>
 
 <script>
-  import Delete from './delete'
 
   export default {
     name: 'ClientTable',
-    components: { Delete },
     data() {
+      let length = this.$store.state.items.length
       return {
-        totalRows: this.$store.state.items.length,
+        totalRows: length,
         fields: [
           {key: 'name', sortable: true},
-          {key: 'id', sortable: true}
+          {key: 'id', sortable: true},
+          {key: 'actions', label:'Actions'}
         ],
         sortBy: 'id',
         currentPage: 1,
@@ -53,6 +60,14 @@ limitations under the License.*/
     },
     created() {
       this.$store.dispatch('getAllClients')
+    },
+    methods: {
+      deleteCustomer(item) {
+        let id = item.id
+        let url = `/clients/${id}/`
+        this.$axios.delete(url)
+        console.log(`delete id ${id}`)
+      }
     }
   }
 </script>

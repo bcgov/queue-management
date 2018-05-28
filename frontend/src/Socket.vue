@@ -16,12 +16,12 @@ limitations under the License.*/
 
 <template>
 
-  <SocketStatus v-if="this.$store.state.isLoggedIn" :button-style="buttonStyle" :socket-message="socketMessage" />
+  <SocketStatus :button-style="buttonStyle" :socket-message="socketMessage" />
 
 </template>
 
 <script>
-  import SocketStatus from './socketstatus'
+  import SocketStatus from './SocketStatus'
   var io = require('socket.io-client')
   var socket
 
@@ -35,46 +35,61 @@ limitations under the License.*/
       }
     },
     mounted() {
-      this.connect()
-      socket.on('connect',()=>{this.onConnect()})
-      socket.on('disconnect',()=>{this.onDisconnect()})
-      socket.on('reconnecting',()=>{this.onReconnecting()})
-      socket.on('update_customer_list',()=>{
-        this.$store.dispatch('getAllClients')
-      })
+      this.$root.$on('socketConnect', () => {
+        this.connect()
+        })
+      this.$root.$on('socketDisconnect', () => {
+        this.close()
+        })
     },
     methods: {
       connect() {
         socket = io(process.env.SOCKET_URL)
-        this.socketMessage = 'establishing'
-        this.buttonStyle = 'info'
+        console.log('socket attempting to connect')
+        this.addListeners()
+      },
+      close() {
+        socket.close()
+        console.log('socket session closed')
+      },
+      addListeners() {
+        socket.on('connect',()=>{this.onConnect()})
+        socket.on('disconnect',()=>{this.onDisconnect()})
+        socket.on('reconnecting',()=>{this.onReconnecting()})
+        socket.on('update_customer_list',()=>{
+          console.log('socket received: "updatecustomerlist"')
+          this.$store.dispatch('getAllClients')
+        })
       },
       join() {
         socket.emit('joinRoom',{count:0}, ()=>{console.log('socket emit: "joinRoom"')}
         )
         socket.on('joinRoomSuccess',
-          ()=>{console.log('socket: "joinRoomSuccess"')}
+          ()=>{console.log('socket received: "joinRoomSuccess"')}
         )
         socket.on('joinRoomFail',
-         ()=>{console.log('socket: "joinRoomFailed"')}
+         ()=>{console.log('socket received: "joinRoomFailed"')}
         )
       },
       onConnect() {
         this.socketConnected = true
         this.buttonStyle = 'success'
         this.socketMessage = 'connected'
+        console.log('socket connected')
         this.join()
       },
       onDisconnect() {
         this.socketConnected = false
         this.buttonStyle = 'danger'
         this.socketMessage = 'disconnected'
-        socket = io(process.env.API_URL)
+        console.log('socket disconnected')
+        socket = io(process.env.SOCKET_URL)
       },
       onReconnecting() {
         this.socketConnected = false
         this.buttonStyle = 'warning'
         this.socketMessage = 'connecting'
+        console.log('socket reconnecting')
       }
     },
     components: { SocketStatus }
