@@ -7,12 +7,11 @@ plugins {
 
 sonarqube {
     properties {
-        property "sonar.projectName", "Queue Management API"
-        property "sonar.projectKey", "org.sonarqube:queue-management-api"
+        property "sonar.projectName", "Queue Management"
+        property "sonar.projectKey", "org.sonarqube:queue-management"
         property "sonar.projectBaseDir", "../"
-        property "sonar.sources", "./api"
+        property "sonar.sources", "./api,./frontend/src"
         property "sonar.exclusions", "**/test_*.py"
-        property "sonar.lanuage", "py"
         property "sonar.verbose", "true"
         property "sourceEncoding", "UTF-8"
         property "sonar.python.coveragePlugin","cobertura"

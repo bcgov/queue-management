@@ -9,5 +9,6 @@ eventlet
 flask-cors
 flask-login
 flask-socketio
+mysqlclient
 psycopg2-binary
 redis

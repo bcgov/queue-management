@@ -107,4 +107,7 @@ venv.bak/
 !frontend/build
 node_modules/
 functional-tests/.gradle
+owasp/.gradle
+owasp/dependency-check
+owasp/dependency-check-report.html
 sonar-runner/.gradle

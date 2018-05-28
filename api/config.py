@@ -39,23 +39,24 @@ class DevelopmentConfig(BaseConfig):
     SESSION_COOKIE_DOMAIN = '.pathfinder.gov.bc.ca'
     REMEMBER_COOKIE_DURATION = 86400
     CORS_ALLOWED_ORIGINS = [
-        "https://servicebc-cfms-dev.pathfinder.gov.bc.ca/",
+        "https://servicebc-cfms-dev.pathfinder.gov.bc.ca",
         "http://localhost:8080"
     ]
     USE_HTTPS = True
 
-    # POSTGRESQL
+    DB_ENGINE = os.getenv('DATABASE_ENGINE', 'mysql')
     DB_USER = os.getenv('DATABASE_USERNAME', '')
     DB_PASSWORD = os.getenv('DATABASE_PASSWORD','')
     DB_NAME = os.getenv('DATABASE_NAME','')
     DB_HOST = os.getenv('DATABASE_HOST','')
-    DB_PORT = os.getenv('DATABASE_PORT','5432')
-    SQLALCHEMY_DATABASE_URI = 'postgresql://{user}:{password}@{host}:{port}/{name}'.format(
-         user=DB_USER,
-         password=DB_PASSWORD,
-         host=DB_HOST,
-         port=int(DB_PORT),
-         name=DB_NAME,
+    DB_PORT = os.getenv('DATABASE_PORT','3306')
+    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}'.format(
+        engine=DB_ENGINE,
+        user=DB_USER,
+        password=DB_PASSWORD,
+        host=DB_HOST,
+        port=int(DB_PORT),
+        name=DB_NAME,
     )
 
 def configure_app(app):

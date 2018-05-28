@@ -9,7 +9,7 @@ parameters:
   value: "queue-management-api"
 - name: API_APPLICATION_DOMAIN
   description: "The exposed hostname that will route to the Flask service"
-  value: "servicebc-cfms-dev.pathfinder.gov.bc.ca"
+  value: "servicebc-cfms-api-dev.pathfinder.gov.bc.ca"
 objects:
 - kind: Service
   apiVersion: v1
