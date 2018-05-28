@@ -16,7 +16,7 @@ class ClientList(Resource):
     @login_required
     def get(self):
         try:
-            clients = Client.query.filter(office_id=current_user.office_id)
+            clients = Client.query.filter_by(office_id=current_user.office_id)
             return clients, 200
         except exc.SQLAlchemyError as e:
             print(e)
