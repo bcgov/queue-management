@@ -60,7 +60,7 @@ class ClientDetail(Resource):
     @login_required
     def delete(self, id):
         try:
-            Client.query.filter_by(id=id, office_id=current_user.office_id)).delete()
+            Client.query.filter_by(id=id, office_id=current_user.office_id).delete()
             db.session.commit()
 
             socketio.emit('update_customer_list', {"data": "test"}, room=current_user.office_id)
