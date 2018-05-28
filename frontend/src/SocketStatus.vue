@@ -15,37 +15,19 @@ limitations under the License.*/
 
 
 <template>
-  <b-container>
-    <b-row align-v="end">
-      <b-col cols="9">
-        <h1>
-          <img src='./assets/bcid.jpg'/>
-          Queue Management
-        </h1>
-        <Socket/>
-      </b-col>
-      <b-col cols="3">
-        <Login></Login>
-      </b-col>
-    </b-row>
-      <Controls v-if="this.$store.state.isLoggedIn"/>
-  </b-container>
+  <h6>
+    Socket Connection:
+    <b-badge :variant="buttonStyle">
+      {{ socketMessage }}
+    </b-badge>
+  </h6>
 </template>
 
 <script>
-  import Login from './login';
-  import Socket from './socket'
-  import Controls from './controls'
-
   export default {
-    name: 'App',
-    components: {
-      Login,
-      Socket,
-      Controls
-    }
+    name: 'SocketStatus',
+    props: [ 'buttonStyle', 'socketMessage' ]
   }
-
 </script>
 
 

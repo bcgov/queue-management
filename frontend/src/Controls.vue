@@ -15,34 +15,28 @@ limitations under the License.*/
 
 
 <template>
-  <b-container>
-    <b-row align-v="end">
-      <b-col cols="9">
-        <h1>
-          <img src='./assets/bcid.jpg'/>
-          Queue Management
-        </h1>
-        <Socket/>
-      </b-col>
-      <b-col cols="3">
-        <Login></Login>
-      </b-col>
-    </b-row>
-      <Controls v-if="this.$store.state.isLoggedIn"/>
-  </b-container>
+  <b-row align-v="center">
+    <b-col cols="6">
+      <ClientTable />
+    </b-col>
+    <b-col cols="2" />
+    <b-col cols="4">
+      <ClientInput />
+    </b-col>
+  </b-row>
 </template>
 
 <script>
-  import Login from './login';
-  import Socket from './socket'
-  import Controls from './controls'
+  import ClientTable from './clienttable'
+  import ClientInput from './clientinput'
+  import Delete from './delete'
 
   export default {
-    name: 'App',
+    name: 'Controls',
     components: {
-      Login,
-      Socket,
-      Controls
+      ClientTable,
+      ClientInput,
+      Delete
     }
   }
 

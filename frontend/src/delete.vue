@@ -15,37 +15,33 @@ limitations under the License.*/
 
 
 <template>
-  <b-container>
-    <b-row align-v="end">
-      <b-col cols="9">
-        <h1>
-          <img src='./assets/bcid.jpg'/>
-          Queue Management
-        </h1>
-        <Socket/>
-      </b-col>
-      <b-col cols="3">
-        <Login></Login>
-      </b-col>
-    </b-row>
-      <Controls v-if="this.$store.state.isLoggedIn"/>
-  </b-container>
+  <div>
+    <b-form-input v-model="id"
+                  id="client_id"
+                  type="text"
+                  placeholder="id"
+                  />
+    <b-button @click="buttonClick()">
+      delete id
+    </b-button>
+  </div>
 </template>
 
 <script>
-  import Login from './login';
-  import Socket from './socket'
-  import Controls from './controls'
-
   export default {
-    name: 'App',
-    components: {
-      Login,
-      Socket,
-      Controls
+    name: 'Delete',
+    data() {
+      return {
+        id: ''
+      }
+    },
+    methods: {
+      buttonClick() {
+        let url = `/clients/${this.id}/`
+        this.$axios.delete(url)
+      }
     }
   }
-
 </script>
 
 
