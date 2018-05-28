@@ -12,8 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
 
-
-
 import Vue from 'vue'
 import App from './App'
 import { store } from './store/'
@@ -24,6 +22,8 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 Vue.use(BootstrapVue)
 
 import 'es6-promise/auto'
+require('es6-promise').polyfill()
+
 import axios from 'axios'
 const axiosInstance = axios.create({
   baseURL: process.env.API_URL,
