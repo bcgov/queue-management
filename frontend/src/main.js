@@ -15,7 +15,7 @@ limitations under the License.*/
 
 
 import Vue from 'vue'
-import App from './app'
+import App from './App'
 import { store } from './store/'
 
 import BootstrapVue from 'bootstrap-vue'

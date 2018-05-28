@@ -21,7 +21,7 @@ limitations under the License.*/
 </template>
 
 <script>
-  import SocketStatus from './socketstatus'
+  import SocketStatus from './SocketStatus'
   var io = require('socket.io-client')
   var socket
 

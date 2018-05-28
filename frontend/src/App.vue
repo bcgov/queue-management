@@ -33,9 +33,9 @@ limitations under the License.*/
 </template>
 
 <script>
-  import Login from './login';
-  import Socket from './socket'
-  import Controls from './controls'
+  import Login from './Login';
+  import Socket from './Socket'
+  import Controls from './Controls'
 
   export default {
     name: 'App',
