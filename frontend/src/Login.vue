@@ -61,6 +61,7 @@ export default {
       let url = "/logout/"
       this.$axios.get(url)
       .then( () => {
+        this.$root.$emit('socketDisconnect')
         this.$store.commit('logOut')
       })
     },
@@ -68,6 +69,7 @@ export default {
       let url  = "/users/me/"
       this.$axios.get(url)
         .then( response => {
+          this.$root.$emit('socketConnect')
           this.$store.commit('logIn')
           this.$store.commit('setUser', {
             name: response.data.username,
