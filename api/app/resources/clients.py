@@ -16,6 +16,15 @@ class ClientList(Resource):
     @login_required
     def get(self):
         try:
+            print repr(current_user.office_id)
+            print repr(current_user)
+            allClients = Client.query.all()
+
+            if len(allClients) > 0:
+                print repr(allClients[0].office_id)
+            else:
+                print("Clients are null")
+                
             clients = Client.query.filter_by(office_id=current_user.office_id)
             return clients, 200
         except exc.SQLAlchemyError as e:
