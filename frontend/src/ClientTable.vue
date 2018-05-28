@@ -40,7 +40,10 @@ limitations under the License.*/
     components: { Delete },
     data() {
       return {
-        totalRows: this.$store.state.items.length,
+        totalRows() {
+          let items = this.$store.state.items
+          return items.length
+        },
         fields: [
           {key: 'name', sortable: true},
           {key: 'id', sortable: true}

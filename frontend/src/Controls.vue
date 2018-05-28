@@ -27,16 +27,14 @@ limitations under the License.*/
 </template>
 
 <script>
-  import ClientTable from './clienttable'
-  import ClientInput from './clientinput'
-  import Delete from './delete'
+  import ClientTable from './ClientTable'
+  import ClientInput from './ClientInput'
 
   export default {
     name: 'Controls',
     components: {
       ClientTable,
-      ClientInput,
-      Delete
+      ClientInput
     }
   }
 
