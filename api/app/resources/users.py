@@ -17,8 +17,6 @@ class UserMe(Resource):
     @login_required
     def get(self):
         try:
-            print(current_user)
-            print(current_user.office)
             return current_user, 200
         except exc.SQLAlchemyError as e:
             print(e)

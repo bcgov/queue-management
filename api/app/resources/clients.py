@@ -1,9 +1,8 @@
 from flask import request, jsonify, g
 from flask_login import current_user
 from flask_restplus import Resource
-from flask_socketio import emit
 from sqlalchemy import text, exc
-from qsystem import api, db
+from qsystem import api, db, socketio
 
 from app.auth import login_required
 from app.models import Client
@@ -25,10 +24,9 @@ class ClientList(Resource):
 
     @api.marshal_with(Client.model)
     @login_required
-    def post(self, data):
+    def post(self):
         json_input = request.get_json()
         name = json_input.get('name', None)
-        office_id = json_input.get('office_id', None)
 
         if name == None:
             return {"message": "name is required"}, 400
@@ -36,8 +34,9 @@ class ClientList(Resource):
         try:
             client = Client(name=name, office_id=current_user.office_id)
             db.session.add(client)
+            db.session.commit()
 
-            emit('update_customer_list', {}, namespace="/{office}".format(office=current_user.office_id))
+            socketio.emit('update_customer_list', {"data": "test"}, room=current_user.office_id)
             return client, 201
         except exc.SQLAlchemyError as e:
             print(e)
@@ -50,20 +49,21 @@ class ClientDetail(Resource):
     @login_required
     def get(self, id):
         try:
-            client = Client.query.filter_by(id=id).first()
+            client = Client.query.filter_by(id=id).first_or_404()
 
-            emit('update_customer_list', {}, namespace="/{office}".format(office=current_user.office_id))
+            emit('update_customer_list', {}, room="{office}".format(office=current_user.office_id))
             return client, 200
         except exc.SQLAlchemyError as e:
             print(e)
             return {"message": "api is down"}, 500
 
     @login_required
-    def destroy(self, id):
+    def delete(self, id):
         try:
-            Client.query.filter_by(id=id).first().delete()
+            Client.query.filter_by(id=id).delete()
+            db.session.commit()
 
-            emit('update_customer_list', {}, namespace="/{office}".format(office=current_user.office_id))
+            socketio.emit('update_customer_list', {"data": "test"}, room=current_user.office_id)
             return '', 204
         except exc.SQLAlchemyError as e:
             print(e)

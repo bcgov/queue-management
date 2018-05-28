@@ -23,6 +23,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 Vue.use(BootstrapVue)
 
+<<<<<<< HEAD
 import 'es6-promise/auto'
 import axios from 'axios'
 const axiosInstance = axios.create({
@@ -30,6 +31,13 @@ const axiosInstance = axios.create({
   withCredentials: true
 })
 Vue.prototype.$axios = axiosInstance
+=======
+import VueSocketio from 'vue-socket.io';
+import io from 'socket.io-client';
+const socket = io("https://servicebc-cfms-api-dev.pathfinder.gov.bc.ca");
+
+Vue.use(VueSocketio, socket)
+>>>>>>> upstream/proof-of-concept
 
 Vue.config.productionTip = false
 
