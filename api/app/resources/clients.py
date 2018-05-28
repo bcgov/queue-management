@@ -25,7 +25,10 @@ class ClientList(Resource):
             else:
                 print("Clients are null")
 
-            clients = Client.query.filter_by(office_id=current_user.office_id)
+            clients = Client.query.filter_by(office_id=current_user.office_id).all()
+
+            print(len(clients))
+            print(clients)
             return clients, 200
         except exc.SQLAlchemyError as e:
             print(e)
