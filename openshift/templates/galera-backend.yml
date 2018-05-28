@@ -1,0 +1,151 @@
+---
+kind: Template
+apiVersion: v1
+metadata:
+  name: galera-backend
+  annotations:
+    description: OpenShift MariaDB Galera Cluster Backend
+    iconClass: icon-python
+    tags: database,mysql,replication,mariadb,galera,nfs
+parameters:
+- name: APP_NAME
+  description: "Name of the galera cluster"
+  value: "galera-backend"
+- name: MYSQL_SERVICE_NAME
+  description: Service name for the MariaDB service
+  value: mysql
+- name: GALERA_PETSET_NAME
+  description: PetSet name
+  value: mysql
+- name: NUMBER_OF_GALERA_MEMBERS
+  description: Number of Galera Nodes
+  value: "3"
+  required: true
+- name: VOLUME_PV_NAME
+  description: Volume PV basename. If the name is "datadir", it you need to create datadir-GALERA_PETSET_NAME-number
+  value: datadir
+  required: true
+- name: VOLUME_CAPACITY
+  description: Volume space available for data, e.g. 512Mi, 2Gi.
+  required: true
+  value: 2Gi
+- name: MYSQL_USER
+  description: The username that clients will use to connect to the server
+  generate: expression
+  from: "user[a-z0-9]{3}"
+- name: MYSQL_PASSWORD
+  description: The password for the MYSQL_USER
+  generate: expression
+  from: "[a-zA-Z0-9]{16}"
+- name: MYSQL_DATABASE
+  description: The name of the database that will be created and replicated
+  value: queue_management
+- name: MYSQL_ROOT_PASSWORD
+  description: The password for the root user
+  generate: expression
+  from: "[a-zA-Z0-9]{16}"
+objects:
+- kind: Secret
+  apiVersion: v1
+  metadata:
+    name: "${APP_NAME}-secrets"
+  stringData:
+    mysql-database: "${MYSQL_DATABASE}"
+    mysql-user: "${MYSQL_USER}"
+    mysql-password: "${MYSQL_PASSWORD}"
+    mysql-root-password: "${MYSQL_ROOT_PASSWORD}"
+- kind: Service
+  apiVersion: v1
+  metadata:
+    annotations:
+      service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+    name: "${MYSQL_SERVICE_NAME}"
+    labels:
+      app: "${GALERA_PETSET_NAME}"
+  spec:
+    ports:
+    - port: 3306
+      name: "${GALERA_PETSET_NAME}"
+    clusterIP: None
+    selector:
+      app: "${GALERA_PETSET_NAME}"
+- kind: StatefulSet
+  apiVersion: apps/v1beta1
+  metadata:
+    name: "${GALERA_PETSET_NAME}"
+  spec:
+    serviceName: "${MYSQL_SERVICE_NAME}"
+    replicas: "${NUMBER_OF_GALERA_MEMBERS}"
+    template:
+      metadata:
+        labels:
+          app: "${GALERA_PETSET_NAME}"
+        annotations:
+          pod.alpha.kubernetes.io/initialized: "true"
+      spec:
+        containers:
+        - name: "${GALERA_PETSET_NAME}"
+          image: adfinissygroup/k8s-mariadb-galera-centos:v003
+          imagePullPolicy: IfNotPresent
+          ports:
+          - containerPort: 3306
+            name: mysql
+          - containerPort: 4444
+            name: sst
+          - containerPort: 4567
+            name: replication
+          - containerPort: 4568
+            name: ist
+          readinessProbe:
+            exec:
+              command:
+              - /usr/share/container-scripts/mysql/readiness-probe.sh
+            initialDelaySeconds: 15
+            timeoutSeconds: 5
+          volumeMounts:
+          - name: "${VOLUME_PV_NAME}"
+            mountPath: /var/lib/mysql
+            subPath: data
+          env:
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: MYSQL_USER
+            valueFrom:
+              secretKeyRef:
+                name: "${APP_NAME}-secrets"
+                key: mysql-user
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: "${APP_NAME}-secrets"
+                key: mysql-password
+          - name: MYSQL_DATABASE
+            valueFrom:
+              secretKeyRef:
+                name: "${APP_NAME}-secrets"
+                key: mysql-database
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: "${APP_NAME}-secrets"
+                key: mysql-root-password
+          - name: GALERA_PETSET_NAME
+            value: "${GALERA_PETSET_NAME}"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 200m
+              memory: 512Mi
+    volumeClaimTemplates:
+    - metadata:
+        name: "${VOLUME_PV_NAME}"
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: "${VOLUME_CAPACITY}"

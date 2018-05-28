@@ -1,0 +1,121 @@
+{
+    "kind": "Template",
+    "apiVersion": "v1",
+    "name": "crunchy-postgres",
+    "labels": {
+        "template": "crunchy-postgres"
+    },
+    "metadata": {
+        "name": "crunchy-postgres",
+        "creationTimestamp": null,
+        "annotations": {
+            "description": "Crunchy PostgreSQL primary database with scalable synchronous read replicas.",
+            "iconClass": "icon-postgresql",
+            "tags": "database,postgresql",
+            "openshift.io/documentation-url": "https://github.com/CrunchyData/crunchy-containers/tree/master/docs",
+            "openshift.io/long-description": "Crunchy PostgreSQL primary database with scalable synchronous read replicas.",
+            "openshift.io/provider-display-name": "Crunchy Data",
+            "openshift.io/support-url": "https://github.com/CrunchyData/crunchy-containers"
+        }
+    },
+    "objects": [
+        {
+            "kind": "DeploymentConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "crunchy-watch",
+                "labels": {
+                    "name": "crunchy-watch"
+                }
+            },
+            "spec": {
+                "replicas": 1,
+                "strategy": {
+                    "resources": {},
+                    "type": "Recreate"
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "app": "crunchy-watch",
+                            "deploymentconfig": "crunchy-watch",
+                            "name": "crunchy-watch",
+                            "template": "crunchy-watch" 
+                        }
+                    },
+                    "spec": {
+                        "serviceAccount": "pg-watcher",
+                        "containers": [{
+                            "name": "crunchy-watch",
+                            "image": "${CCP_IMAGE_PREFIX}/crunchy-watch:${CCP_IMAGE_TAG}",
+                            "env": [{
+                                "name": "CRUNCHY_WATCH_PLATFORM",
+                                "value": "openshift"
+                            }, {
+                                "name": "CRUNCHY_WATCH_OPENSHIFT_PROJECT",
+                                "value": "servicebc-cfms-dev"
+                            }, {
+                                "name": "CRUNCHY_WATCH_OPENSHIFT_FAILOVER_STRATEGY",
+                                "value": "latest"
+                            }, {
+                                "name": "CRUNCHY_WATCH_PRIMARY",
+                                "value": "crunchy-postgres-primary"
+                            }, {
+                                "name": "CRUNCHY_WATCH_PRIMARY_PORT",
+                                "value": "5432"
+                            }, {
+                                "name": "CRUNCHY_WATCH_REPLICA",
+                                "value": "crunchy-postgres-replica"
+                            }, {
+                                "name": "CRUNCHY_WATCH_REPLICA_PORT",
+                                "value": "5432"
+                            }, {
+                                "name": "CRUNCHY_WATCH_HEALTHCHECK_INTERVAL",
+                                "value": "3s"
+                            }, {
+                                "name": "CRUNCHY_DEBUG",
+                                "value": "true"
+                            }, {
+                                "name": "CRUNCHY_WATCH_USERNAME",
+                                "valueFrom": {
+                                    "secretKeyRef": {
+                                        "name": "crunchy-postgres",
+                                        "key": "PG_PRIMARY_USER"
+                                    }
+                                }
+                            }, {
+                                "name": "CRUNCHY_WATCH_PASSWORD",
+                                "valueFrom": {
+                                    "secretKeyRef": {
+                                        "name": "crunchy-postgres",
+                                        "key": "PG_PRIMARY_PASSWORD"
+                                    }
+                                }
+                            }, {
+                                "name": "CRUNCHY_WATCH_DATABASE",
+                                "value": "queue_management"
+                            }]
+                        }]
+                    }
+                }
+            }
+        }
+    ],
+    "parameters": [
+        {
+            "displayName": "Container Image Tag",
+            "name": "CCP_IMAGE_TAG",
+            "value": "centos7-10.4-1.8.3",
+            "description": "Image version to pull",
+            "required": true
+        },
+        {
+            "displayName": "Container Image Repository",
+            "name": "CCP_IMAGE_PREFIX",
+            "value": "crunchydata",
+            "description": "Repository prefix to pull the container image from",
+            "required": true
+        }
+    ]
+}
