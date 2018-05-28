@@ -16,7 +16,7 @@ class ClientList(Resource):
     @login_required
     def get(self):
         try:
-            clients = Client.query.all()
+            clients = Client.query.filter(office_id=current_user.office_id)
             return clients, 200
         except exc.SQLAlchemyError as e:
             print(e)
@@ -49,7 +49,7 @@ class ClientDetail(Resource):
     @login_required
     def get(self, id):
         try:
-            client = Client.query.filter_by(id=id).first_or_404()
+            client = Client.query.filter_by(id=id, office_id=current_user.office_id).first_or_404()
 
             emit('update_customer_list', {}, room="{office}".format(office=current_user.office_id))
             return client, 200
@@ -60,7 +60,7 @@ class ClientDetail(Resource):
     @login_required
     def delete(self, id):
         try:
-            Client.query.filter_by(id=id).delete()
+            Client.query.filter_by(id=id, office_id=current_user.office_id)).delete()
             db.session.commit()
 
             socketio.emit('update_customer_list', {"data": "test"}, room=current_user.office_id)
