@@ -3,5 +3,7 @@ var prodEnv = require('./prod.env')
 
 module.exports = merge(prodEnv, {
   NODE_ENV: '"localhost"',
-  API_URL: '"https://servicebc-cfms-dev.pathfinder.gov.bc.ca/api/v1"'
+  API_URL: '"https://servicebc-cfms-api-dev.pathfinder.gov.bc.ca/api/v1"',
+  SOCKET_URL: '"https://servicebc-cfms-api-dev.pathfinder.gov.bc.ca"'
+
 })
