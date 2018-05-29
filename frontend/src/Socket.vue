@@ -47,11 +47,11 @@ limitations under the License.*/
       connect() {
         this.preventReconnect = false
         socket = io(process.env.SOCKET_URL)
+        socket.on('connect',()=>{this.onConnect()})
+        socket.on('disconnect',()=>{this.onDisconnect()})
         console.log('socket attempting to connect')
       },
       addListeners() {
-        socket.on('connect',()=>{this.onConnect()})
-        socket.on('disconnect',()=>{this.onDisconnect()})
         socket.on('reconnecting',()=>{this.onReconnecting()})
         socket.on('joinRoomSuccess',()=>{this.onJoinRoom(true)})
         socket.on('joinRoomFail',()=>{this.onJoinRoom(false)})
