@@ -29,12 +29,10 @@ def login_get():
 @application.route("/api/v1/login/", methods=["POST"])
 def login_post():
     if "application/json" in request.content_type:
-        print("Parsing JSON")
         data = request.get_json()
         username = data.get("username")
         password = data.get("password")
     else:
-        print("Parsing form-data")
         username = request.form.get('username')
         password = request.form.get('password')
 
