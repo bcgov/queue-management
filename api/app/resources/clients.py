@@ -1,4 +1,4 @@
-from flask import request, jsonify, g
+from flask import abort, request, jsonify, g
 from flask_login import current_user
 from flask_restplus import Resource
 from sqlalchemy import text, exc
@@ -20,7 +20,7 @@ class ClientList(Resource):
             return clients, 200
         except exc.SQLAlchemyError as e:
             print(e)
-            return {"message": "api is down", "error": e}, 500
+            abort(500, sql_error=e)
 
     @api.marshal_with(Client.model)
     @login_required
@@ -40,7 +40,7 @@ class ClientList(Resource):
             return client, 201
         except exc.SQLAlchemyError as e:
             print(e)
-            return {"message": "api is down", "error": e}, 500 
+            abort(500, sql_error=e)
 
 @api.route("/clients/<int:id>/")
 class ClientDetail(Resource):
@@ -55,7 +55,7 @@ class ClientDetail(Resource):
             return client, 200
         except exc.SQLAlchemyError as e:
             print(e)
-            return {"message": "api is down", "error": e}, 500
+            abort(500, sql_error=e)
 
     @login_required
     def delete(self, id):
@@ -67,4 +67,5 @@ class ClientDetail(Resource):
             return '', 204
         except exc.SQLAlchemyError as e:
             print(e)
-            return {"message": "api is down", "error": e}, 500
+            abort(500, sql_error=e)
+
