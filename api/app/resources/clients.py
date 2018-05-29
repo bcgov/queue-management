@@ -1,6 +1,6 @@
-from flask import abort, request, jsonify, g
+from flask import request, jsonify, g
 from flask_login import current_user
-from flask_restplus import Resource
+from flask_restplus import Resource, abort
 from sqlalchemy import text, exc
 from qsystem import api, db, socketio
 
