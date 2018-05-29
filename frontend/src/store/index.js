@@ -12,10 +12,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
 
-import Vue from 'vue'
-import axios from 'axios'
+import Vue from 'vue';
+import Vuex from 'vuex';
 
-require('Vuex')
+import axios from 'axios'
 
 const axiosInst = axios.create({
   baseURL: process.env.API_URL,
