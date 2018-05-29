@@ -7,6 +7,7 @@ from flask_restplus import Api
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO
 from config import configure_app
+from sqlalchemy.exc import SQLAlchemyError
 
 db = SQLAlchemy()
 
@@ -37,3 +38,13 @@ import app.resources.notes
 import app.resources.offices
 import app.resources.users
 import app.resources.websocket
+
+@api.errorhandler(SQLAlchemyError)
+@application.errorhandler(SQLAlchemyError)
+def error_handler(e):
+    '''Default error handler'''
+    print("======================")
+    print(e)
+    print("======================")
+    return {"message": str(e), "sql_error": str(e)}, 500
+
