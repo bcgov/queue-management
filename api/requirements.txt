@@ -1,14 +1,15 @@
-gunicorn
 Flask
 Flask-Migrate
 Flask-Moment
 Flask-RESTplus
 Flask-Script
 Flask-SQLAlchemy
+cockroachdb
 eventlet
 flask-cors
 flask-login
 flask-socketio
+gunicorn
 mysqlclient
 psycopg2-binary
 redis
