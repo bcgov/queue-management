@@ -51,7 +51,6 @@ limitations under the License.*/
         socket.on('disconnect',()=>{this.onDisconnect()})
         console.log('socket attempting to connect')
         this.addListeners()
-
       },
       addListeners() {
         socket.on('reconnecting',()=>{this.onReconnecting()})
