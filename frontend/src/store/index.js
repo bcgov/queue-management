@@ -15,7 +15,10 @@ limitations under the License.*/
 import Vue from 'vue';
 import Vuex from 'vuex';
 
+import Vue from 'vue'
+import 'es6-promise/auto'
 import axios from 'axios'
+import Vuex from 'vuex'
 
 const axiosInst = axios.create({
   baseURL: process.env.API_URL,
@@ -67,16 +70,24 @@ export const store = new Vuex.Store({
 
   mutations: {
     logIn: state => state.isLoggedIn = true,
+
     logOut: state => state.isLoggedIn = false,
-    updateList(state,payload) {
+
+    updateList(state, payload) {
+      if (state.items.length < 1) {
+        state.items = payload
+      } else if (state.items.length > 1) {
       state.items = []
       state.items = payload
+      }
     },
+
     setUser(state, payload) {
       let keys = Object.keys(payload)
       keys.forEach( key => {
         state.user[key] = payload[key]
       })
     }
+
   }
 })

@@ -29,67 +29,76 @@ limitations under the License.*/
     name: 'Socket',
     data() {
       return {
-        socketConnected: false,
         buttonStyle: 'danger',
-        socketMessage: 'disconnected'
+        socketMessage: 'disconnected',
+        preventReconnect: false
       }
     },
     mounted() {
       this.$root.$on('socketConnect', () => {
         this.connect()
-        })
+      })
+
       this.$root.$on('socketDisconnect', () => {
         this.close()
-        })
+      })
     },
     methods: {
       connect() {
+        this.preventReconnect = false
         socket = io(process.env.SOCKET_URL)
         console.log('socket attempting to connect')
         this.addListeners()
-      },
-      close() {
-        socket.close()
-        console.log('socket session closed')
       },
       addListeners() {
         socket.on('connect',()=>{this.onConnect()})
         socket.on('disconnect',()=>{this.onDisconnect()})
         socket.on('reconnecting',()=>{this.onReconnecting()})
-        socket.on('update_customer_list',()=>{
-          console.log('socket received: "updatecustomerlist"')
-          this.$store.dispatch('getAllClients')
-        })
+        socket.on('joinRoomSuccess',()=>{this.onJoinRoom(true)})
+        socket.on('joinRoomFail',()=>{this.onJoinRoom(false)})
+        socket.on('update_customer_list',()=>{this.onUpdateCustomerList()})
+        console.log('socket: listeners added')
       },
       join() {
         socket.emit('joinRoom',{count:0}, ()=>{console.log('socket emit: "joinRoom"')}
         )
-        socket.on('joinRoomSuccess',
-          ()=>{console.log('socket received: "joinRoomSuccess"')}
-        )
-        socket.on('joinRoomFail',
-         ()=>{console.log('socket received: "joinRoomFailed"')}
-        )
       },
       onConnect() {
-        this.socketConnected = true
+        this.addListeners()
         this.buttonStyle = 'success'
         this.socketMessage = 'connected'
         console.log('socket connected')
         this.join()
       },
       onDisconnect() {
-        this.socketConnected = false
         this.buttonStyle = 'danger'
         this.socketMessage = 'disconnected'
         console.log('socket disconnected')
-        socket = io(process.env.SOCKET_URL)
+        if (!this.preventReconnect) {
+          socket.open(process.env.SOCKET_URL)
+        }
       },
       onReconnecting() {
-        this.socketConnected = false
         this.buttonStyle = 'warning'
         this.socketMessage = 'connecting'
         console.log('socket reconnecting')
+      },
+      onJoinRoom(success) {
+        if (success) {
+          console.log('socket received: "joinRoomSuccess"')
+        } else if (!success) {
+          console.log('socket received: "joinRoomFailed"')
+          this.join()
+        }
+      },
+      onUpdateCustomerList() {
+          console.log('socket received: "updatecustomerlist"')
+          this.$store.dispatch('getAllClients')
+      },
+      close() {
+        this.preventReconnect = true
+        socket.close()
+        console.log('socket session closed')
       }
     },
     components: { SocketStatus }

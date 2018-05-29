@@ -53,7 +53,10 @@ export default {
       }
 
       this.$axios.post(url, data)
-        .finally( () => {
+        .then( () => {
+          this.verifyLogin()
+        })
+        .catch( () => {
           this.verifyLogin()
         })
     },

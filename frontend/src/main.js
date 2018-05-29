@@ -13,16 +13,15 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 
 import Vue from 'vue'
+import 'es6-promise/auto'
 import App from './App'
 import { store } from './store/'
+
 
 import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 Vue.use(BootstrapVue)
-
-import 'es6-promise/auto'
-require('es6-promise').polyfill()
 
 import axios from 'axios'
 const axiosInstance = axios.create({
