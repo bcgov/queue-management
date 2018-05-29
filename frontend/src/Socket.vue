@@ -48,7 +48,6 @@ limitations under the License.*/
         this.preventReconnect = false
         socket = io(process.env.SOCKET_URL)
         console.log('socket attempting to connect')
-        this.addListeners()
       },
       addListeners() {
         socket.on('connect',()=>{this.onConnect()})
