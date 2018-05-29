@@ -20,7 +20,7 @@ class ClientList(Resource):
             return clients, 200
         except exc.SQLAlchemyError as e:
             print(e)
-            return {"message": "api is down"}, 500
+            return {"message": "api is down", "error": e}, 500
 
     @api.marshal_with(Client.model)
     @login_required
@@ -40,7 +40,7 @@ class ClientList(Resource):
             return client, 201
         except exc.SQLAlchemyError as e:
             print(e)
-            return {"message": "api is down"}, 500 
+            return {"message": "api is down", "error": e}, 500 
 
 @api.route("/clients/<int:id>/")
 class ClientDetail(Resource):
@@ -55,7 +55,7 @@ class ClientDetail(Resource):
             return client, 200
         except exc.SQLAlchemyError as e:
             print(e)
-            return {"message": "api is down"}, 500
+            return {"message": "api is down", "error": e}, 500
 
     @login_required
     def delete(self, id):
@@ -67,4 +67,4 @@ class ClientDetail(Resource):
             return '', 204
         except exc.SQLAlchemyError as e:
             print(e)
-            return {"message": "api is down"}, 500
+            return {"message": "api is down", "error": e}, 500
