@@ -13,6 +13,7 @@ def on_join(message):
     if current_user.is_authenticated:
         join_room(current_user.office_id)
         emit('joinRoomSuccess', {'data': "{user} has joined the room".format(user=current_user.username)})
+        emit('update_customer_list', {"data": "test"}, room=current_user.office_id)
     else:
         emit('joinRoomFail', {'data': "{user} failed to join the room".format(user=current_user.username)})
 
