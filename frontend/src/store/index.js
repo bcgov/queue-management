@@ -74,13 +74,9 @@ export const store = new Vuex.Store({
     logOut: state => state.isLoggedIn = false,
 
     updateList(state, payload) {
-      if (state.items.length < 1) {
-        state.items = payload
-      } else if (state.items.length > 1) {
       state.items = []
       state.items = payload
-      }
-    },
+      },
 
     setUser(state, payload) {
       let keys = Object.keys(payload)
@@ -88,6 +84,5 @@ export const store = new Vuex.Store({
         state.user[key] = payload[key]
       })
     }
-
-  }
-})
+}
+  })
