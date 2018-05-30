@@ -34,9 +34,7 @@ class DevelopmentConfig(BaseConfig):
     TESTING = False
     ENV = 'dev'
     SECRET_KEY = 'a9eec0e0-23b7-4788-9a92-318347b9a39f'
-    REDIS_PASSWORD = os.getenv('REDIS_PASSWORD', '')
-    REDIS_QUEUE_URL = 'redis://:{password}@redis:6379/'.format(password=REDIS_PASSWORD)
-    ACTIVE_MQ_URL = 'amqp://active-mq-amq-amqp:5672'
+
     SESSION_COOKIE_DOMAIN = '.pathfinder.gov.bc.ca'
     REMEMBER_COOKIE_DURATION = 86400
     CORS_ALLOWED_ORIGINS = [
@@ -45,12 +43,23 @@ class DevelopmentConfig(BaseConfig):
     ]
     USE_HTTPS = True
 
-    DB_ENGINE = os.getenv('DATABASE_ENGINE', 'mysql')
+    ACTIVE_MQ_USER = os.getenv('ACTIVE_MQ_USER', '')
+    ACTIVE_MQ_PASSWORD = os.getenv('ACTIVE_MQ_PASSWORD', '')
+    ACTIVE_MQ_HOST = os.getenv('ACTIVE_MQ_HOST', '')
+    ACTIVE_MQ_PORT = os.getenv('ACTIVE_MQ_PORT', '5672')
+    ACTIVE_MQ_URL = 'amqp://{amq_user}:{amq_password}@{amq_host}:{amq_port}'.format(
+        amq_user=ACTIVE_MQ_USER,
+        amq_password=ACTIVE_MQ_PASSWORD,
+        amq_host=ACTIVE_MQ_HOST,
+        amq_port=ACTIVE_MQ_PORT
+    )
+
+    DB_ENGINE = os.getenv('DATABASE_ENGINE', '')
     DB_USER = os.getenv('DATABASE_USERNAME', '')
     DB_PASSWORD = os.getenv('DATABASE_PASSWORD','')
     DB_NAME = os.getenv('DATABASE_NAME','')
     DB_HOST = os.getenv('DATABASE_HOST','')
-    DB_PORT = os.getenv('DATABASE_PORT','3306')
+    DB_PORT = os.getenv('DATABASE_PORT','')
     SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}'.format(
         engine=DB_ENGINE,
         user=DB_USER,
