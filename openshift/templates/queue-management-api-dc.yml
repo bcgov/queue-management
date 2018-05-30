@@ -40,6 +40,8 @@ objects:
   apiVersion: v1
   metadata:
     name: "${API_NAME}"
+    labels:
+      app: queue-management
     annotations:
       description: "Defines how to deploy the application server"
       template.alpha.openshift.io/wait-for-ready: "true"

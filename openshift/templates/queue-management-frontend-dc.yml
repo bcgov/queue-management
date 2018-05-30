@@ -47,7 +47,7 @@ objects:
     name: "${NAME}"
     creationTimestamp: 
     labels:
-      app: "${NAME}"
+      app: queue-management
   spec:
     strategy:
       type: Rolling
