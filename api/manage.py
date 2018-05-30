@@ -25,9 +25,9 @@ class Bootstrap(Command):
         office4 = models.Office("Kamloops")
         office5 = models.Office("Kelowna")
         office6 = models.Office("Victoria")
-        office6 = models.Office("Port Alberni")
-        office6 = models.Office("Summerland")
-        office6 = models.Office("Kitimat")
+        office7 = models.Office("Port Alberni")
+        office8 = models.Office("Summerland")
+        office9 = models.Office("Kitimat")
 
         db.session.add(office1)
         db.session.add(office2)
