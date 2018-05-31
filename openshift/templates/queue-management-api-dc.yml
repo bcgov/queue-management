@@ -111,7 +111,7 @@ objects:
           - name: APP_CONFIG
             value: gunicorn_config.py
           - name: FLASK_CONFIGURATION
-            value: development
+            value: "${FLASK_CONFIGURATION}"
           - name: APP_MODULE
             value: wsgi
           - name: ACTIVE_MQ_HOST
