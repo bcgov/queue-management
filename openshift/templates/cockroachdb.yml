@@ -139,7 +139,7 @@ objects:
               cpu: 100m
               memory: 256Mi
             limits:
-              cpu: 500m
+              cpu: 250m
               memory: 1024Mi
           command:
             - "/bin/bash"
@@ -198,6 +198,13 @@ objects:
       command:
       - sleep
       - "2147483648" # 2^31
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          cpu: 100m
+          memory: 512Mi
     # This pod isn't doing anything important, so don't bother waiting to terminate it.
     terminationGracePeriodSeconds: 0
     volumes:

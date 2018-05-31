@@ -83,6 +83,13 @@ objects:
             value: rabbit@$(MY_POD_IP)
           - name: RABBITMQ_USE_LONGNAME
             value: "true"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 100m
+              memory: 512Mi
           image: "${APPLICATION_NAME}:${RABBITMQ_VERSION}"
           imagePullPolicy: Always
           name: "${APPLICATION_NAME}"
