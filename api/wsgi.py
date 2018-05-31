@@ -3,8 +3,6 @@ import eventlet
 #Monkey patch to allow for async actions (aka multiple workers)
 eventlet.monkey_patch()
 
-print("Hello!")
-
 from qsystem import application, socketio
 
 if __name__ == "__main__":

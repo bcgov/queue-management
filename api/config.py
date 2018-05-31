@@ -12,21 +12,20 @@ class BaseConfig(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     TESTING = True,
     DEBUG = True
-    REDIS_DEBUG = False
     LOGGING_LOCATION = "logs/qsystem.log"
     LOGGING_LEVEL = DEBUG
     LOGGING_FORMAT = '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
 
 class LocalConfig(BaseConfig):
     DEBUG = True
-    REDIS_DEBUG = True
     TESTING = False
     ENV = 'dev'
     SQLALCHEMY_DATABASE_URI = 'sqlite:///db.sqlite3'
+    ACTIVE_MQ_URL = ''
     SECRET_KEY = 'a9eec0e0-23b7-4788-9a92-318347b9a39f'
-    REDIS_QUEUE_URL = 'redis://:foobared@localhost:6379/'
     CORS_ALLOWED_ORIGINS = ["http://localhost:8080"]
     USE_HTTPS = False
+    SQLALCHEMY_ECHO=True
 
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
@@ -65,9 +64,14 @@ class DevelopmentConfig(BaseConfig):
         user=DB_USER,
         password=DB_PASSWORD,
         host=DB_HOST,
-        port=int(DB_PORT),
+        port=DB_PORT,
         name=DB_NAME,
     )
+
+    if os.getenv('SQLALCHEMY_ECHO', "False") == "True":
+        SQLALCHEMY_ECHO=True
+    else:
+        SQLALCHEMY_ECHO=False
 
 def configure_app(app):
     config_name = os.getenv('FLASK_CONFIGURATION', 'default')
