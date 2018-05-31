@@ -22,20 +22,6 @@ podTemplate(
             echo "checking out source"
             checkout scm
         }
-        stage('Dependency check') {
-            dir('owasp') {
-                sh './dependency-check/bin/dependency-check.sh --project "Queue Management" --scan ../frontend/package.json --enableExperimental --enableRetired'
-                sh 'rm -rf ./dependency-check/data/'
-                publishHTML (target: [
-                    allowMissing: false,
-                    alwaysLinkToLastBuild: false,
-                    keepAll: true,
-                    reportDir: './',
-                    reportFiles: 'dependency-check-report.html',
-                    reportName: "OWASP Dependency Check Report"
-                ])
-            }
-        }
         stage('SonarQube Analysis') {
           echo ">>> Performing static analysis <<<"
           SONARQUBE_PWD = sh (
@@ -120,6 +106,20 @@ podTemplate(
                                       verifyReplicaCount: 'false'
 
             echo ">>> deployment complete <<<"
+        }
+        stage('Dependency check') {
+            dir('owasp') {
+                sh './dependency-check/bin/dependency-check.sh --project "Queue Management" --scan ../frontend/package.json --enableExperimental --enableRetired'
+                sh 'rm -rf ./dependency-check/data/'
+                publishHTML (target: [
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: false,
+                    keepAll: true,
+                    reportDir: './',
+                    reportFiles: 'dependency-check-report.html',
+                    reportName: "OWASP Dependency Check Report"
+                ])
+            }
         }
     }
 }
