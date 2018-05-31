@@ -23,3 +23,6 @@ class Client(db.Model):
 
     def json(self):
         return {"name": self.name, "office_id": self.office_id}
+
+    def save_to_db(self, session):
+        session.add(self)
