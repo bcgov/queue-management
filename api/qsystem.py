@@ -40,11 +40,18 @@ import app.resources.users
 import app.resources.websocket
 
 @api.errorhandler(SQLAlchemyError)
+def error_handler(e):
+    '''Default error handler'''
+    print("======================")
+    print(e)
+    print("======================")
+    return {"message": str(e)}, 500
+
 @application.errorhandler(SQLAlchemyError)
 def error_handler(e):
     '''Default error handler'''
     print("======================")
     print(e)
     print("======================")
-    return {"message": str(e), "sql_error": str(e)}, 500
+    return "error"
 
