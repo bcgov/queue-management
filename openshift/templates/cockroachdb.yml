@@ -185,12 +185,12 @@ objects:
 - apiVersion: v1
   kind: Pod
   metadata:
-    name: cockroachdb-client
+    name: cockroach-client
     labels:
-      app: cockroachdb
+      app: cockroach-client
   spec:
     containers:
-    - name: cockroachdb-client
+    - name: cockroach-client
       image: cockroachdb/cockroach:v2.0.2
       imagePullPolicy: IfNotPresent
       # Keep a pod open indefinitely so kubectl exec can be used to get a shell to it
