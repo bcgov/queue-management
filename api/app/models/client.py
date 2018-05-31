@@ -26,3 +26,4 @@ class Client(db.Model):
 
     def save_to_db(self, session):
         session.add(self)
+        session.commit()

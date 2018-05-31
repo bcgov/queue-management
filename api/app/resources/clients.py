@@ -33,7 +33,7 @@ class ClientList(Resource):
         run_transaction(sessionmaker, client.save_to_db)
 
         socketio.emit('update_customer_list', {"data": "test"}, room=current_user.office_id)
-        return '', 201
+        return client, 201
 
 @api.route("/clients/<int:id>/")
 class ClientDetail(Resource):
