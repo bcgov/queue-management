@@ -6,10 +6,16 @@ metadata:
 parameters:
 - name: API_NAME
   description: "Name of the flask application"
+  required: true
   value: "queue-management-api"
 - name: API_APPLICATION_DOMAIN
   description: "The exposed hostname that will route to the Flask service"
+  required: true
   value: "servicebc-cfms-api-dev.pathfinder.gov.bc.ca"
+- name: FLASK_CONFIGURATION
+  description: "The configuration object that should be loaded for this deployment. Only development exists currently"
+  required: true
+  value: development
 objects:
 - kind: Service
   apiVersion: v1
@@ -90,34 +96,32 @@ objects:
               port: 8080
             timeoutSeconds: 3
           env:
+          - name: DATABASE_ENGINE
+            value: "cockroachdb"
           - name: DATABASE_USERNAME
-            valueFrom:
-              secretKeyRef:
-                name: "postgresql-secrets"
-                key: database-user
-          - name: DATABASE_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: "postgresql-secrets"
-                key: database-password
-          - name: DATABASE_NAME
-            valueFrom:
-              secretKeyRef:
-                name: "postgresql-secrets"
-                key: database-name
+            value: "queue_user"
           - name: DATABASE_HOST
-            value: "postgresql"
+            value: "cockroachdb-public"
+          - name: DATABASE_PORT
+            value: 26257
+          - name: DATABASE_NAME
+            value: "queue_management"
+          - name: SQLALCHEMY_ECHO
+            value: "False"
           - name: APP_CONFIG
             value: gunicorn_config.py
           - name: FLASK_CONFIGURATION
             value: development
           - name: APP_MODULE
             value: wsgi
-          - name: REDIS_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: "redis-secrets"
-                key: database-password
+          - name: ACTIVE_MQ_HOST
+            value: rabbitmq
+          - name: ACTIVE_MQ_PORT
+            value: 5672
+          - name: ACTIVE_MQ_USER
+            value: guest
+          - name: ACTIVE_MQ_PASSWORD
+            value: guest
           resources:
             requests:
               cpu: 100m
