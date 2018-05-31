@@ -1,0 +1,131 @@
+---
+kind: Template
+apiVersion: v1
+metadata:
+  name: queue-management-api
+parameters:
+- name: API_NAME
+  description: "Name of the flask application"
+  required: true
+  value: "queue-management-api"
+- name: API_APPLICATION_DOMAIN
+  description: "The exposed hostname that will route to the Flask service"
+  required: true
+  value: "servicebc-cfms-api-dev.pathfinder.gov.bc.ca"
+- name: FLASK_CONFIGURATION
+  description: "The configuration object that should be loaded for this deployment. Only development exists currently"
+  required: true
+  value: development
+objects:
+- kind: Service
+  apiVersion: v1
+  metadata:
+    name: "${API_NAME}"
+    annotations:
+      description: "Exposes and load balances the api pods"
+  spec:
+    ports:
+    - name: web
+      port: 8080
+      targetPort: 8080
+    selector:
+      name: "${API_NAME}"
+- kind: Route
+  apiVersion: v1
+  metadata:
+    name: "${API_NAME}"
+  spec:
+    host: "${API_APPLICATION_DOMAIN}"
+    path: /api
+    to:
+      kind: Service
+      name: "${API_NAME}"
+    tls:
+      termination: edge
+- kind: DeploymentConfig
+  apiVersion: v1
+  metadata:
+    name: "${API_NAME}"
+    labels:
+      app: queue-management
+    annotations:
+      description: "Defines how to deploy the application server"
+      template.alpha.openshift.io/wait-for-ready: "true"
+  spec:
+    strategy:
+      type: Rolling
+    triggers:
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames: 
+          - "${API_NAME}"
+        from:
+          kind: ImageStreamTag
+          namespace: servicebc-cfms-tools
+          name: "${API_NAME}:dev"
+    - type: ConfigChange
+    replicas: 3
+    selector:
+      name: "${API_NAME}"
+    template:
+      metadata:
+        name: "${API_NAME}"
+        labels:
+          name: "${API_NAME}"
+      spec:
+        containers:
+        - name: "${API_NAME}"
+          image: ""
+          ports:
+          - containerPort: 8080
+          readinessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 3
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 8080
+            timeoutSeconds: 3
+          livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 3
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 8080
+            timeoutSeconds: 3
+          env:
+          - name: DATABASE_ENGINE
+            value: "cockroachdb"
+          - name: DATABASE_USERNAME
+            value: "queue_user"
+          - name: DATABASE_HOST
+            value: "cockroachdb-public"
+          - name: DATABASE_PORT
+            value: 26257
+          - name: DATABASE_NAME
+            value: "queue_management"
+          - name: SQLALCHEMY_ECHO
+            value: "False"
+          - name: APP_CONFIG
+            value: gunicorn_config.py
+          - name: FLASK_CONFIGURATION
+            value: "${FLASK_CONFIGURATION}"
+          - name: APP_MODULE
+            value: wsgi
+          - name: ACTIVE_MQ_HOST
+            value: rabbitmq
+          - name: ACTIVE_MQ_PORT
+            value: 5672
+          - name: ACTIVE_MQ_USER
+            value: guest
+          - name: ACTIVE_MQ_PASSWORD
+            value: guest
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 200m
+              memory: 512Mi

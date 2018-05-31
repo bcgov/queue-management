@@ -1,0 +1,64 @@
+// Uses DSL plugins resolution introduced in Gradle 2.1
+plugins {
+  id "java"
+  id "jacoco"
+  id "org.sonarqube" version "2.6.1"
+  id "org.owasp.dependencycheck" version "3.1.2"
+}
+
+sonarqube {
+    properties {
+        property "sonar.host.url","https://sonarqube-devex-platform-tools.pathfinder.gov.bc.ca"
+        property "sonar.projectName", "Devex - OWASP"
+        property "sonar.projectKey", "org.sonarqube:bcgov-devex-owasp"
+        property "sonar.projectBaseDir", "../"
+        property "sonar.sources", "."
+        property "sonar.language", "js"
+        //property "sonar.tests", "test"
+        property "sourceEncoding", "UTF-8"
+        property "sonar.python.coveragePlugin","cobertura"
+        property "sonar.jacoco.reportPath", "${project.buildDir}/jacoco/test.exec"
+        property "sonar.dependencyCheck.reportPath", "${project.buildDir}/dependency-check-report.xml"
+        property "sonar.dependencyCheck.htmlReportPath", "${project.buildDir}/dependency-check-report.html"
+        property "sonar.dependencyCheck.severity.critical", "7.0"
+        property "sonar.dependencyCheck.severity.major", "4.0"
+    }
+}
+
+allprojects {
+  def env = System.getenv()
+  TimeZone.getTimeZone('UTC')
+  Date date= new Date()
+  String newdate=date.format("YYYYMMDD")
+  ext.baseVersion = newdate + "." + env['BUILD_NUMBER']
+  ext.snapshotVersion = false
+
+  group = "org.sonarqube"
+  version = "$baseVersion" + (snapshotVersion ? "-SNAPSHOT" : "")
+}
+
+test {
+  ignoreFailures = true
+}
+
+dependencies {
+    // https://mvnrepository.com/artifact/junit/junit
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    // compile 'org.owasp:dependency-check-gradle:3.1.2'
+}
+
+repositories {
+  repositories {
+    maven {
+      url "https://mvnrepository.com"
+    }
+    maven {
+      url "http://repo1.maven.org/maven2/"
+    }
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+}
+
+// apply plugin: 'org.owasp.dependencycheck'

@@ -1,0 +1,182 @@
+---
+kind: Template
+apiVersion: v1
+metadata:
+  name: queue-management-chained-build
+  annotations:
+    description: ''
+    tags: queue-management,python
+    iconClass: icon-python
+labels:
+  template: python
+parameters:
+- name: S2I_NAMESPACE
+  displayName: Namespace
+  description: The OpenShift Namespace where the S2I ImageStream resides.
+  value: openshift
+- name: SOURCE_REPOSITORY_URL
+  displayName: Git Repository URL
+  description: The URL of the repository with your application source code.
+  value: https://github.com/sjrumsby/queue-management.git
+- name: SOURCE_REPOSITORY_REF
+  displayName: Git Reference
+  description: Set this to a branch name, tag or other ref of your repository if you are not using the default branch.
+  value: proof-of-concept
+objects: 
+- kind: ImageStream
+  apiVersion: v1
+  metadata:
+    name: queue-management-api
+    annotations:
+      description: "Keeps track of changes in the application image"
+    labels:
+      app: queue-management-api
+- kind: ImageStream
+  apiVersion: v1
+  metadata:
+    name: queue-management-frontend-build
+    annotations:
+      description: "Keeps track of changes in the application image"
+    labels:
+      app: queue-management-frontend-build
+- kind: ImageStream
+  apiVersion: v1
+  metadata:
+    name: queue-management-frontend
+    annotations:
+      description: "Keeps track of changes in the application image"
+    labels:
+      app: queue-management-frontend
+- kind: BuildConfig
+  apiVersion: v1
+  metadata:
+    name: queue-management-api
+    labels:
+      app: queue-management-api
+  spec:
+    triggers:
+    - type: ImageChange
+      imageChange: {}
+    - type: ConfigChange
+    runPolicy: Serial
+    source:
+      type: Git
+      git:
+        uri: "${SOURCE_REPOSITORY_URL}"
+        ref: "${SOURCE_REPOSITORY_REF}"
+      contextDir: api
+    strategy:
+      type: Source
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          namespace: openshift
+          name: python:latest
+    output:
+      to:
+        kind: ImageStreamTag
+        name: queue-management-api:latest
+    resources: {}
+    postCommit: {}
+    nodeSelector: 
+    successfulBuildsHistoryLimit: 5
+    failedBuildsHistoryLimit: 5
+  status:
+    lastVersion: 0
+- kind: BuildConfig
+  apiVersion: v1
+  metadata:
+    name: queue-management-npm-build
+    labels:
+      app: queue-management-npm-build
+  spec:
+    triggers:
+    - type: ImageChange
+      imageChange: {}
+    - type: ConfigChange
+    runPolicy: Serial
+    source:
+      type: Git
+      git:
+        uri: "${SOURCE_REPOSITORY_URL}"
+        ref: "${SOURCE_REPOSITORY_REF}"
+      contextDir: frontend
+    strategy:
+      type: Source
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          namespace: openshift
+          name: nodejs:6
+    output:
+      to:
+        kind: ImageStreamTag
+        name: queue-management-frontend-build:latest
+    resources: {}
+    postCommit: {}
+    nodeSelector: 
+    successfulBuildsHistoryLimit: 5
+    failedBuildsHistoryLimit: 5
+- kind: BuildConfig
+  apiVersion: v1
+  metadata:
+    name: queue-management-frontend
+    labels:
+      app: queue-management-frontend
+  spec:
+    triggers:
+    - type: ImageChange
+      imageChange: {}
+    - type: ConfigChange
+    runPolicy: Serial
+    source:
+      type: Dockerfile
+      dockerfile: "FROM bcgov-s2i-caddy\nCOPY dist /var/www/html/"
+      images:
+        - from: 
+            kind: ImageStreamTag
+            name: queue-management-frontend-build:latest
+          paths:
+            - sourcePath: "/opt/app-root/src/dist"
+              destinationDir: "./"
+    strategy:
+      type: Docker
+      dockerStrategy:
+        from:
+          kind: ImageStreamTag
+          namespace: openshift
+          name: bcgov-s2i-caddy:latest
+    output:
+      to:
+        kind: ImageStreamTag
+        name: queue-management-frontend:latest
+    resources: {}
+    postCommit: {}
+    nodeSelector: 
+    successfulBuildsHistoryLimit: 5
+    failedBuildsHistoryLimit: 5
+- kind: BuildConfig
+  apiVersion: v1
+  metadata:
+    name: queue-management-pipeline
+    creationTimestamp: 
+    labels:
+      app: queue-management-pipeline
+      name: queue-management-pipeline
+  spec:
+    runPolicy: Parallel
+    source:
+      type: Git
+      git:
+        uri: "${SOURCE_REPOSITORY_URL}"
+        ref: "${SOURCE_REPOSITORY_REF}"
+    strategy:
+      type: JenkinsPipeline
+      jenkinsPipelineStrategy:
+        jenkinsfilePath: Jenkinsfile
+    output: {}
+    resources: {}
+    postCommit: {}
+    nodeSelector: 
+  status:
+    lastVersion: 0
