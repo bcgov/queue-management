@@ -4,6 +4,6 @@ from sqlalchemy.ext.declarative import declared_attr
 
 class MyBase(object):
 
-	@declared_attr
-	def __tablename__(cls):
-		return cls.__name__.lower()
+    @declared_attr
+    def __tablename__(cls):
+        return cls.__name__.lower()
