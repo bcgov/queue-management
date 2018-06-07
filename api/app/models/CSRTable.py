@@ -31,6 +31,7 @@ class CSRTable(MyBase, Base, db.model):
     def __repr__(self, username):
         return '<CSR User: %r>' % self.username
 
+    # TODO redo init function to include kwargs
     def __init__ (self, csr_id, username, password, office_id_in_now, role_id, qt_xn_csr_now, receptionist_now, deleted,
                  csr_state_id_now):
         self.csr_id = csr_id

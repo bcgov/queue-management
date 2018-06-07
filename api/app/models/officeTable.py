@@ -19,6 +19,7 @@ class OfficeTable(MyBase, Base, db.model):
     def __repr__(self, office_name):
         return '<Office: %r>' % self.office_name
 
+    # TODO redo init function to include kwargs
     def __init__(self, office_id, office_name, sb_id, deleted):
         self.office_id = office_id
         self.office_name = office_name
