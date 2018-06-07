@@ -112,5 +112,6 @@ owasp/.gradle
 owasp/dependency-check
 owasp/dependency-check-report.html
 sonar-runner/.gradle
-.DS_Store
 
+#models
+/api/app/models/.DS_Store
