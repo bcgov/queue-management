@@ -65,7 +65,10 @@ limitations under the License.*/
       deleteCustomer(item) {
         let id = item.id
         let url = `/clients/${id}/`
-        this.$axios.delete(url)
+        this.$axios.delete(url, { headers: {
+            "Authorization": `Bearer ${localStorage.getItem("token")}`
+          }
+        })
         console.log(`delete id ${id}`)
       }
     }

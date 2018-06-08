@@ -94,6 +94,7 @@ limitations under the License.*/
             console.log('keycloak: initialized and authorized')
             this.setUser()
             this.setTokenToLocalStorage()
+            this.$root.$emit('socketConnect')
           } else if (!authenticated) {
             console.log('keycloak: initialized but not authorized')
           }
@@ -101,7 +102,6 @@ limitations under the License.*/
 
         this.$keycloak.onAuthSuccess = () => {
           console.log('keycloak: authorized')
-          this.$root.$emit('socketConnect')
           this.$store.commit('logIn')
           this.setUser()
           this.setTokenToLocalStorage()
@@ -116,6 +116,8 @@ limitations under the License.*/
         this.$keycloak.onAuthRefreshSuccess = () => {
           console.log('keycloak: token refresh success')
           this.setTokenToLocalStorage()
+          var that = this;
+          //setTimeout(function(){ that.$root.$emit('socketConnect') }, 3000);
         }
       },
       
@@ -131,6 +133,7 @@ limitations under the License.*/
           localStorage.removeItem("refreshToken")
         }
         localStorage.setItem("token", token)
+        document.cookie = "oidc-jwt=" + this.$keycloak.token
         localStorage.setItem("tokenExp", tokenExpiry)
         localStorage.setItem("refreshToken", refreshToken)
 

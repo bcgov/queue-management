@@ -1,25 +1,40 @@
-from flask_login import current_user
+from flask import request, g
 from flask_socketio import emit, join_room
+from jose import jwt
 
-from app.models import Client
-from qsystem import socketio
+from app.models import User
+from qsystem import oidc, socketio
 
 @socketio.on('myEvent')
 def test_message(message):
     emit('myResponse', {'data': 'got it!', 'count': message['count']})
 
 @socketio.on('joinRoom')
-def on_join(message):    
-    if current_user.is_authenticated:
-        join_room(current_user.office_id)
-        emit('joinRoomSuccess', {'data': "{user} has joined the room".format(user=current_user.username)})
-        emit('update_customer_list', {"data": "test"}, room=current_user.office_id)
-    else:
-        emit('joinRoomFail', {'data': "{user} failed to join the room".format(user=current_user.username)})
+def on_join(message):
+    cookie = request.cookies.get("oidc-jwt", None)
+    if cookie == None:
+        print("cookie is none")
+        emit('joinRoomFail', {})
+        return
 
-@socketio.on('pingRoom')
-def ping_room(message):
-    if current_user.is_authenticated:
-        emit('ping_room', {'data': "{user} has pinged the room".format(user=current_user.username)}, room=current_user.office_id)
+    print(cookie)
+
+    if not oidc.validate_token(cookie):
+        print("Cookie failed validation")
+        emit('joinRoomFail', {})
+        return
+
+    print("Validated")
+
+    claims = unverified_claims = jwt.get_unverified_claims(cookie)
+    print(claims)
+
+    username = claims["preferred_username"]
+    user = User.query.filter_by(username=username).first()
+    print (user)
+    if user:
+        join_room(user.office_id)
+        emit('joinRoomSuccess', {})
+        emit('update_customer_list', {}, room=user.office_id)
     else:
-        emit('joinRoomFail', {'data': "{user} failed to join the room".format(user=current_user.username)})
+        emit('joinRoomFail', {})

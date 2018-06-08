@@ -46,7 +46,9 @@ limitations under the License.*/
     methods: {
       connect() {
         this.preventReconnect = false
-        socket = io(process.env.SOCKET_URL)
+        socket = io(process.env.SOCKET_URL, {
+          path: '/api/v1/socket.io'
+        })
         socket.on('connect',()=>{this.onConnect()})
         socket.on('disconnect',()=>{this.onDisconnect()})
         console.log('socket attempting to connect')
@@ -89,7 +91,6 @@ limitations under the License.*/
           console.log('socket received: "joinRoomSuccess"')
         } else if (!success) {
           console.log('socket received: "joinRoomFailed"')
-          this.join()
         }
       },
       onUpdateCustomerList() {

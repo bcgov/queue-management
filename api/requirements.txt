@@ -1,6 +1,7 @@
 Flask
 Flask-Migrate
 Flask-Moment
+Flask-OIDC
 Flask-RESTplus
 Flask-Script
 Flask-SQLAlchemy
@@ -12,3 +13,4 @@ flask-socketio
 gunicorn
 kombu
 psycopg2-binary
+python-jose

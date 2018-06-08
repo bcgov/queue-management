@@ -3,7 +3,6 @@ from flask_restplus import Resource
 from sqlalchemy import text, exc
 from qsystem import api, db
 
-from app.auth import login_required
 from app.models import Office
 
 import logging
@@ -12,7 +11,6 @@ import logging
 class OfficeList(Resource):
 
     @api.marshal_with(Office.model)
-    @login_required
     def get(self):
         try:
             offices = Office.query.all()
@@ -22,7 +20,6 @@ class OfficeList(Resource):
             return {"message": "api is down"}, 500
 
     @api.marshal_with(Office.model)
-    @login_required
     def post(self, data):
         json_input = request.get_json()
         name = json_input.get('name', None)
@@ -42,7 +39,6 @@ class OfficeList(Resource):
 class OfficeDetail(Resource):
     
     @api.marshal_with(Office.model)
-    @login_required
     def get(self, id):
         try:
             office = Office.query.filter_by(id=id).first()
@@ -52,7 +48,6 @@ class OfficeDetail(Resource):
             print(e)
             return {"message": "api is down"}, 500
 
-    @login_required
     def destroy(self, id):
         try:
             Office.query.filter_by(id=id).first().delete()
