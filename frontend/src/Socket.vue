@@ -60,6 +60,8 @@ limitations under the License.*/
         console.log('socket: listeners added')
       },
       join() {
+        console.log(socket.connected)
+
         socket.emit('joinRoom',{count:0}, ()=>{console.log('socket emit: "joinRoom"')}
         )
       },

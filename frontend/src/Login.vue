@@ -15,71 +15,154 @@ limitations under the License.*/
 
 
 <template>
-  <div v-if="!this.$store.state.isLoggedIn"
-       id="login-form">
-    <b-form-input v-model="username"
-                  id="login-username"
-                  type="text"
-                  placeholder="Username"/>
-    <b-form-input v-model="password"
-                  id="login-password"
-                  type="password"
-                  placeholder="Password"/>
-    <b-button @click="login()"
-              id="login-button">Login</b-button>
+  
+  <div id="login-form">
+    <b-button v-show="!this.$store.state.isLoggedIn"
+              @click="login()"
+              id="login-button">
+                Login
+    </b-button>
+
+      <div v-show="this.$store.state.isLoggedIn">
+        <h6>Logged in as: {{ this.$store.state.user }}</h6>
+          <b-button @click="logout()"
+              id="logout-button"
+              >
+              Logout
+          </b-button>
+      </div>
   </div>
-  <div v-else>
-    <h6>Logged in as: {{  this.$store.state.user.name }}</h6>
-    <b-button @click="logout()"
-              id="logout-button">Logout</b-button>
-  </div>
+  
 </template>
 
-<script type="text/javascript">
-export default {
-  name: 'Login',
-  data() {
-    return {
-      username: '',
-      password: ''
-    }
-  },
-  methods: {
-    login() {
-      let url = "/login/"
-      let data = {
-        username: this.username,
-        password: this.password
-      }
+<script>
 
-      this.$axios.post(url, data)
-        .then( () => {
-          this.verifyLogin()
-        })
-        .catch( () => {
-          this.verifyLogin()
-        })
+
+  export default {
+    name: 'Login',
+    created() {
+      this.setupKeycloakCallbacks()
+      this.initLocalStorage()
     },
-    logout() {
-      let url = "/logout/"
-      this.$axios.get(url)
-      .then( () => {
-        this.$root.$emit('socketDisconnect')
-        this.$store.commit('logOut')
-      })
-    },
-    verifyLogin() {
-      let url  = "/users/me/"
-      this.$axios.get(url)
-        .then( response => {
+    methods: {
+      
+      initLocalStorage() {
+        if(localStorage.token) {
+          console.log('tokens found in localStorage')
+          let tokenExp = localStorage.tokenExp
+          let timeUntilExp = Math.round(tokenExp - new Date().getTime() / 1000)
+          if (timeUntilExp > 30) {
+            this.$keycloak.init(
+              {
+                responseMode: 'fragment',
+                flow: 'standard',
+                refreshToken: localStorage.refreshToken,
+                token: localStorage.token
+              }
+            )
+            .success( () => {
+              console.log('Init Success w. stored tokens')
+              this.refreshToken(9999)
+              this.setTokenToLocalStorage()
+            })
+            .error( () => {
+              console.log('Init Error.  Retrying without stored tokens.')
+              this.init()
+            })
+          } else {
+            console.log('Init Error.  Retrying without stored tokens.')
+            this.init()
+          }
+        } else if (!localStorage.token) {
+          console.log('Could not locate any stored tokens')
+          this.init()
+        }
+      },
+      
+      init() {
+        this.$keycloak.init(
+          {
+            responseMode: 'fragment',
+            flow: 'standard'
+          }
+        )
+      },
+      
+      setupKeycloakCallbacks(authenticated) {
+        this.$keycloak.onReady = (authenticated) => {
+          if (authenticated) {
+            console.log('keycloak: initialized and authorized')
+            this.setUser()
+            this.setTokenToLocalStorage()
+          } else if (!authenticated) {
+            console.log('keycloak: initialized but not authorized')
+          }
+        }
+
+        this.$keycloak.onAuthSuccess = () => {
+          console.log('keycloak: authorized')
           this.$root.$emit('socketConnect')
           this.$store.commit('logIn')
-          this.$store.commit('setUser', {
-            name: response.data.username,
-            office_id: response.data.office_id
-          })
+          this.setUser()
+          this.setTokenToLocalStorage()
+        }
+
+        this.$keycloak.onAuthLogout = () => {
+          console.log('keycloak: logged out')
+          this.$root.$emit('socketDisconnect')
+          this.$store.commit('logOut')
+        }
+
+        this.$keycloak.onAuthRefreshSuccess = () => {
+          console.log('keycloak: token refresh success')
+          this.setTokenToLocalStorage()
+        }
+      },
+      
+      setTokenToLocalStorage() {
+        let tokenParsed = this.$keycloak.tokenParsed
+        let token = this.$keycloak.token
+        let refreshToken = this.$keycloak.refreshToken
+        let tokenExpiry = tokenParsed.exp
+        
+        if (localStorage.token) {
+          localStorage.removeItem("token")
+          localStorage.removeItem("tokenExp")
+          localStorage.removeItem("refreshToken")
+        }
+        localStorage.setItem("token", token)
+        localStorage.setItem("tokenExp", tokenExpiry)
+        localStorage.setItem("refreshToken", refreshToken)
+
+        console.log('localStorage: acquired new tokens')
+      },
+      
+      setUser() {
+        let name = this.$keycloak.tokenParsed.name
+        this.$store.commit('setUser', name)
+      },
+      
+      login() {
+        this.$keycloak.login()
+      },
+      
+      logout() {
+        this.$keycloak.logout()
+        localStorage.removeItem("token")
+      },
+      
+      refreshToken(minValidity) {
+        this.$keycloak.updateToken(minValidity).success(refreshed => {
+          if (refreshed) {
+            console.log(this.$keycloak.tokenParsed)
+          } else {
+            console.log('Token not refreshed, valid for ' + Math.round(this.$keycloak.tokenParsed.exp + this.$keycloak.timeSkew - new Date().getTime() / 1000) + ' seconds')
+          }
+        }).error( () => {
+          output('Failed to refresh token')
         })
+      }
     }
   }
-}
+  
 </script>

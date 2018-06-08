@@ -12,13 +12,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
 
+
+
 import Vue from 'vue'
 import 'es6-promise/auto'
+import axios from 'axios'
 import Vuex from 'vuex'
 
-import axios from 'axios'
-
-const axiosInst = axios.create({
+var axiosInstance = axios.create({
   baseURL: process.env.API_URL,
   withCredentials: true
 })
@@ -30,15 +31,15 @@ export const store = new Vuex.Store({
   state: {
     isLoggedIn: false,
     items: [],
-    user: {}
+    user: null,
   },
-
-////////ACTIONS////////////
   actions: {
-
     getAllClients(context) {
       let url = "/clients/"
-      axiosInst.get(url)
+      axiosInstance.get(url, { headers: {
+        "Accept": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem("token")}`
+      }})
         .then( response => {
           let list = response.data.map(d=>
             ({name:d.name, id:d.id})
@@ -46,26 +47,17 @@ export const store = new Vuex.Store({
         context.commit('updateList', list)
         })
     },
-
-    pushNewClient(context) {
-      let url = "/clients/"
-      axiosInst.get(url)
-      .then( response => {
-        let list = response.data
-        let newCst = this.getters.filterNewClient(list)
-        context.commit('updateList', newCst)
-      })
-    },
-
     postClient(context, payload) {
       let clientObject = {
         name: payload.name
       }
       let url = "/clients/"
-      axiosInst.post(url, clientObject)
+      axiosInstance.post(url, clientObject, { headers: {
+        "Accept": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem("token")}`
+      }})
     }
   },
-
   mutations: {
     logIn: state => state.isLoggedIn = true,
 
@@ -77,10 +69,7 @@ export const store = new Vuex.Store({
       },
 
     setUser(state, payload) {
-      let keys = Object.keys(payload)
-      keys.forEach( key => {
-        state.user[key] = payload[key]
-      })
+      state.user = payload
     }
 }
   })
