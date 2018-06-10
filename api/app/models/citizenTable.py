@@ -29,9 +29,9 @@ class CitizenTable(MyBase, Base, db.model):
         return '<Citizen: %r>' % self.citizen_name
 
     # TODO redo init function to include kwargs
-    def __init__(self, citizen_name, office_id, ticket_number, citizen_name, citizen_comments, qt_xn_citizen, 
+    def __init__(self, citizen_id, office_id, ticket_number, citizen_name, citizen_comments, qt_xn_citizen, 
                 cs_id_now):
-        self.citizen_name = citizen_name
+        self.citizen_id = citizen_name
         self.office_id = office_id
         self.ticket_number = ticket_number
         self.citizen_name = citizen_name
@@ -39,8 +39,8 @@ class CitizenTable(MyBase, Base, db.model):
         self.qt_xn_citizen = qt_xn_citizen
         self.cs_id_now = cs_id_now
 
-    def json(self, citizen_name, office_id, ticket_number, citizen_name, citizen_comments, qt_xn_citizen, 
+    def json(self, citizen_id, office_id, ticket_number, citizen_name, citizen_comments, qt_xn_citizen, 
             cs_id_now):
-        return {"citizen_name" : self.citizen_name, "office_id" : self.office_id, "ticket_number" : self.ticket_number,
+        return {"citizen_id" : self.citizen_name, "office_id" : self.office_id, "ticket_number" : self.ticket_number,
                 "citizen_name" : citizen_name, "citizen_comments" : self.citizen_comments, 
                 "qt_xn_citizen" : self.qt_xn_citizen, "cs_id_now" : self.cs_id_now}
