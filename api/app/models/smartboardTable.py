@@ -10,7 +10,7 @@ class SmartBoardTable(MyBase, Base, db.model):
         type = fields.String
         })
 
-    sb_id = db.Column(db.BigInteger)
+    sb_id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
     type = db.Column(db.String(45))
 
     def __repr__(self, type):
