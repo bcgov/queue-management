@@ -2,6 +2,7 @@ from flask_restplus import fields
 from qsystem import api, db
 from base import Base 
 
+# TODO Please review the valid state table to see for testing
 class PeriodStateTable(MyBase, Base, db.model):
 
     model = api.model('PeriodStateTable' {
