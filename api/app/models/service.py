@@ -29,21 +29,28 @@ class Service(Base):
     def __repr__(self, service_name):
         return '<Service Name: %r>' % self.service_name
 
-    def __init__(self, service_id, service_code, service_name, service_desc, parent_id, 
-                deleted, prefix, display_dashboard, actual_service)
-        self.service_id         = service_id
-        self.service_code       = service_code
-        self.service_name       = service_name
-        self.service_desc       = service_desc
-        self.parent_id          = parent_id
-        self.deleted            = deleted
-        self.prefix             = prefix
-        self.display_dashboard  = display_dashboard
-        self.actual_service     = actual_service
+    args = {'service_id': 'service_id',
+            'service_code': 'service_code',
+            'service_name': 'service_name',
+            'service_desc': 'service_desc',
+            'parent_id': 'parent_id',
+            'deleted': 'deleted',
+            'prefix': 'prefix',
+            'display_dashboard': 'display_dashboard',
+            'actual_service': 'actual_service'}
 
-    def json(json, service_id, service_code, service_name, service_desc, parent_id, deleted, 
-            prefix, display_dashboard, actual_service)
-        return {"service_id" : self.service_id, 
+    def __init__(self, **args)
+        self.service_id         = args['service_id']
+        self.service_code       = args['service_code']
+        self.service_name       = args['service_name']
+        self.service_desc       = args['service_desc']
+        self.parent_id          = args['parent_id']
+        self.deleted            = args['deleted']
+        self.prefix             = args['prefix']
+        self.display_dashboard  = args['display_dashboard']
+        self.actual_service     = args['actual_service']
+
+    json_args = {"service_id" : self.service_id, 
                 "service_code" : self.service_code, 
                 "service_name" : self.service_name,
                 "service_desc" : self.service_desc, 
@@ -52,3 +59,6 @@ class Service(Base):
                 "prefix" : self.prefix, 
                 "display_dashboard" : self.display_dashboard, 
                 "actual_service" : self.actual_service}
+
+    def json(self, json_args)
+        return json_args
