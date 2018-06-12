@@ -4,7 +4,7 @@ from base import Base
 
 class CitizenState(Base):
 
-    model = api.model('CitizenStateTable' {
+    model = api.model('CitizenState' {
         'cs_id' : fields.Integer,
         'cs_state_name' : fields.String,
         'cs_state_desc' : fields.String
