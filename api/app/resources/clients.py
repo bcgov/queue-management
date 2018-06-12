@@ -1,5 +1,5 @@
 from flask import request, jsonify, g
-from flask_restplus import Resource, abort
+from flask_restplus import Resource
 import sqlalchemy.orm
 from qsystem import api, db, oidc, socketio
 
@@ -13,14 +13,12 @@ import logging
 @api.route("/clients/")
 class ClientList(Resource):
 
-    @api.marshal_with(Client.model)
     @oidc.accept_token(require_token=True)
     def get(self):
         user = User.query.filter_by(username=g.oidc_token_info['username']).first()
         clients = Client.query.filter_by(office_id=user.office_id).all()
-        return clients, 200
+        return api.marshal(clients, Client.model), 200
 
-    @api.marshal_with(Client.model)
     @oidc.accept_token(require_token=True)
     def post(self):
         user = User.query.filter_by(username=g.oidc_token_info['username']).first()
@@ -40,14 +38,13 @@ class ClientList(Resource):
 @api.route("/clients/<int:id>/")
 class ClientDetail(Resource):
     
-    @api.marshal_with(Client.model)
     @oidc.accept_token(require_token=True)
     def get(self, id):
         user = User.query.filter_by(username=g.oidc_token_info['username']).first()
         client = Client.query.filter_by(id=id, office_id=user.office_id).first_or_404()
 
         emit('update_customer_list', {}, room="{office}".format(office=user.office_id))
-        return client, 200
+        return api.marshal(clients, Client.model), 200
 
     @oidc.accept_token(require_token=True)
     def delete(self, id):
