@@ -28,23 +28,31 @@ class Citizen(Base):
     def __repr__(self, citizen_name):
         return '<Citizen: %r>' % self.citizen_name
 
-    # TODO redo init function to include kwargs
-    def __init__(self, citizen_id, office_id, ticket_number, citizen_name, citizen_comments, 
-                qt_xn_citizen, cs_id_now):
-        self.citizen_id         = citizen_name
-        self.office_id          = office_id
-        self.ticket_number      = ticket_number
-        self.citizen_name       = citizen_name
-        self.citizen_comments   = citizen_comments
-        self.qt_xn_citizen      = qt_xn_citizen
-        self.cs_id_now          = cs_id_now
+    args = {'citizen_id': 'citizen_id',
+            'office_id': 'office_id',
+            'ticket_number': 'ticket_number',
+            'citizen_name': 'citizen_name',
+            'citizen_comments': 'citizen_comments',
+            'qt_xn_citizen': 'qt_xn_citizen',
+            'cs_id_now': 'cs_id_now'}
 
-    def json(self, citizen_id, office_id, ticket_number, citizen_name, citizen_comments, 
-            qt_xn_citizen, cs_id_now):
-        return {"citizen_id" : self.citizen_name, 
+    # TODO redo init function to include kwargs
+    def __init__(self, **args):
+        self.citizen_id         = args['citizen_name']
+        self.office_id          = args['office_id']
+        self.ticket_number      = args['ticket_number']
+        self.citizen_name       = args['citizen_name']
+        self.citizen_comments   = args['citizen_comments']
+        self.qt_xn_citizen      = args['qt_xn_citizen']
+        self.cs_id_now          = args['cs_id_now']
+
+    json_args = {"citizen_id" : self.citizen_name, 
                 "office_id" : self.office_id, 
                 "ticket_number" : self.ticket_number,
                 "citizen_name" : citizen_name, 
                 "citizen_comments" : self.citizen_comments, 
                 "qt_xn_citizen" : self.qt_xn_citizen, 
                 "cs_id_now" : self.cs_id_now}
+
+    def json(self, json_args):
+        return json_args
