@@ -28,7 +28,7 @@ db.init_app(application)
 
 CORS(application, supports_credentials=True, origins=application.config['CORS_ALLOWED_ORIGINS'])
 
-api = Api(application, prefix='/api/v1', doc='/')
+api = Api(application, prefix='/api/v1', doc='/api/v1/')
 
 oidc = OpenIDConnect(application)
 
