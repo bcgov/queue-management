@@ -36,21 +36,28 @@ class Period(Base):
     def __repr__(self, period_id):
         return '<Period: %r>' % self.period_id
 
-    def __init__(self, period_id, sr_id, csr_id, reception_csr, channel_id, ps_id, time_start, 
-                time_end, accurate_time):
-        self.period_id      = period_id
-        self.sr_id          = sr_id
-        self.csr_id         = csr_id
-        self.reception_csr  = reception_csr
-        self.channel_id     = channel_id
-        self.ps_id          = ps_id
-        self.time_start     = time_start    
-        self.time_end       = time_end
-        self.accurate_time  = accurate_time
+    args = {'period_id': 'period_id',
+            'sr_id': 'sr_id',
+            'csr_id': 'csr_id',
+            'reception_csr': 'reception_csr',
+            'channel_id': 'channel_id',
+            'ps_id': 'ps_id',
+            'time_start': 'time_start',
+            'time_end': 'time_end',
+            'accurate_time': 'accurate_time'}
 
-    def json(self, period_id, sr_id, csr_id, reception_csr, channel_id, ps_id, time_start, 
-            time_end, accurate_time):
-        return {"period_id" : self.period_id, 
+    def __init__(self, **args):
+        self.period_id      = args['period_id']
+        self.sr_id          = args['sr_id']
+        self.csr_id         = args['csr_id']
+        self.reception_csr  = args['reception_csr']
+        self.channel_id     = args['channel_id']
+        self.ps_id          = args['ps_id']
+        self.time_start     = args['time_start']    
+        self.time_end       = args['time_end']
+        self.accurate_time  = args['accurate_time']
+
+    json_args = {"period_id" : self.period_id, 
                 "sr_id" : self.sr_id, 
                 "csr_id" : self.csr_id, 
                 "reception_csr" : self.reception_csr, 
@@ -59,3 +66,6 @@ class Period(Base):
                 "time_start" : self.time_start, 
                 "time_end" : self.time_end, 
                 "accurate_time" : self.accurate_time} 
+
+    def json(self, json_args):
+        return json_args
