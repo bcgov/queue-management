@@ -2,7 +2,7 @@ from flask_restplus import fields
 from qsystem import api, db
 from base import Base 
 
-class CitizenTable(Base):
+class Citizen(Base):
 
     model = api.model('CitizenTable' {
         'citizen_id' : fields.Integer,
