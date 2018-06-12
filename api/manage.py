@@ -20,8 +20,10 @@ class Bootstrap(Command):
         print("Starting to bootstrap data")
 
         office1 = models.Office("Summerland")
+        office2 = models.Office("Test Office")
 
         db.session.add(office1)
+        db.session.add(office2)
         db.session.flush()
 
         adamkroon = models.User("adamkroon", office1.id)
@@ -30,11 +32,16 @@ class Bootstrap(Command):
         scottrumsby = models.User("scottrumsby", office1.id)
         seanrumsby = models.User("seanrumsby", office1.id)
 
+        cfms_postman_operator = models.User("cfms-postman-operator", office2.id)
+        cfms_postman_non_operator = models.User("cfms-postman-non-operator", office2.id)
+
         db.session.add(adamkroon)
         db.session.add(cdmcinto)
         db.session.add(kgillani)
         db.session.add(scottrumsby)
         db.session.add(seanrumsby)
+        db.session.add(cfms_postman_operator)
+        db.session.add(cfms_postman_non_operator)
 
         db.session.commit()
 
