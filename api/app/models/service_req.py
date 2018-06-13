@@ -13,12 +13,14 @@ class ServiceReq(Base):
         })
 
     sr_id       = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
-    citizen_id  = db.Column(db.BigInteger)
+    citizen_id  = db.Column(db.BigInteger, ForeignKey('citizen.citizen_id'))
     quantity    =  db.Column(db.Integer)
-    service_id  = db.Column(db.BigInteger)
-    sr_state_id = db.Column(db.BigInteger)
+    service_id  = db.Column(db.BigInteger, ForeignKey('service.service_id'))
+    sr_state_id = db.Column(db.BigInteger, ForeignKey('srstate.sr_state_id'))
 
-    # TODO is repr needed for testing?
+    citizen     = db.relationship("Citizen")
+    service     = db.relationship("Service")
+    sr_state    = db.relationship("SR_State") 
 
     def __init__(self, sr_id, citizen_id, quantity, service_id, sr_state_id):
         self.sr_id          = sr_id
