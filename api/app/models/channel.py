@@ -1,10 +1,10 @@
 from flask_restplus import fields
 from qsystem import api, db
-from base import Base 
+from .base import Base 
 
 class Channel(Base):
 
-    model = api.model('Channel' {
+    model = api.model('Channel', {
         'channel_id' : fields.Integer,
         'channel_name' : fields.String
         })

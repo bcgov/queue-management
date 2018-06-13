@@ -2,7 +2,7 @@ from flask_restplus import fields
 from qsystem import api, db
 from sqlalchemy.ext.declarative import declared_attr
 
-class Base(object, db.Model):
+class Base(db.Model, object):
 
     @declared_attr
     def __tablename__(cls):

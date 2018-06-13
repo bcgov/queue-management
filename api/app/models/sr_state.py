@@ -1,10 +1,10 @@
 from flask_restplus import fields
 from qsystem import api, db
-from base import Base 
+from .base import Base 
 
 class SRState(Base, db.model):
 
-    model = api.model('SRState' {
+    model = api.model('SRState', {
         'sr_state_id' : fields.Integer,
         'sr_code' : fields.String,
         'sr_state_desc' fields,String

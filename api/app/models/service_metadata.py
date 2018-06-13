@@ -1,16 +1,16 @@
 from flask_restplus import fields
 from qsystem import api, db
-from base import Base 
+from .base import Base 
 
 class ServiceMetaData(Base):
 
-    model = api.model('ServiceMetaData' {
+    model = api.model('ServiceMetaData', {
         'service_id' : fields.Integer,
         'metadata_id' : fields.Integer
         })
 
-    service_id  = db.Column(db.BigInteger)
-    metadata_id = db.Column(db.BigInteger)
+    service_id  = db.Column(db.BigInteger, primary_key=True, ForeignKey('service.service_id'))
+    metadata_id = db.Column(db.BigInteger, primary_key=True, ForeignKey('metadata.metadata_id'))
 
     # TODO do this need repr for testing?
 

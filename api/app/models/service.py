@@ -1,10 +1,10 @@
 from flask_restplus import fields
 from qsystem import api, db
-from base import Base 
+from .base import Base 
 
 class Service(Base):
 
-    model = api.model('Service' {
+    model = api.model('Service', {
         'service_id' : fields.Integer,
         'service_code' : fields.String,
         'service_name' : fields.String,
@@ -20,7 +20,8 @@ class Service(Base):
     service_code        = db.Columm(db.String(50))
     service_name        = db.Columm(db.String(500))
     service_desc        = db.Column(db.String(2000))
-    parent_id           = db.Column(db.BigInteger)
+    # TODO - CFMS Data Dictionary says parent_ID is a FK to service_id. Please review.
+    parent_id           = db.Column(db.BigInteger, ForeignKey('service_id'))
     deleted             = db.Column(db.DateTime, nullable=True)
     prefix              = db.Columm(db.String(10))
     display_dashboard   = db.Columm(db.Integer)

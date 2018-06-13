@@ -1,10 +1,10 @@
 from flask_restplus import fields
 from qsystem import api, db
-from base import Base 
+from .base import Base 
 
 class ServiceReq(Base):
 
-    model = api.model('ServiceReq' {
+    model = api.model('ServiceReq', {
         'sr_id' : fields.Integer,
         'citizen_id' : fields.Integer,
         'quantity' : fields.Integer,

@@ -1,11 +1,11 @@
 from flask_restplus import fields
 from qsystem import api, db
-from base import Base 
+from .base import Base 
 
 # TODO Please review the valid state table to see for testing
 class PeriodState(Base):
 
-    model = api.model('PeriodState' {
+    model = api.model('PeriodState', {
         'ps_id' : fields.Integer,
         'ps_name' : fields.String,
         'ps_desc' : fields.String,

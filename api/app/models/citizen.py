@@ -1,10 +1,10 @@
 from flask_restplus import fields
 from qsystem import api, db
-from base import Base 
+from .base import Base 
 
 class Citizen(Base):
 
-    model = api.model('Citizen' {
+    model = api.model('Citizen', {
         'citizen_id' : fields.Integer,
         'office_id' : fields.Integer,
         'ticket_number' : fields.Integer,
@@ -15,15 +15,16 @@ class Citizen(Base):
         })
 
     citizen_id          = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
-    # TODO foreign key check to office table
-    office_id           = db.Column(db.BigInteger)
-    # TODO unique value
+    office_id           = db.Column(db.BigInteger, ForeignKey('office.office_id'))
     ticket_number       = db.Column(String(50))
     citizen_name        = db.Column(String(150))
     citizen_comments    = db.Column(String(1000))
-    # TODO find a better way to represent tinyint(1) than Integer
     qt_xn_citizen       = db.Column(Integer)
+    # TODO - CFMS Data Dictionary says that cs_id_now exists on citizen state table, 
+    # however it does not. Please review.
     cs_id_now           = db.Column(BigInteger)
+
+    office = db.relationship('Office')
 
     def __repr__(self, citizen_name):
         return '<Citizen: %r>' % self.citizen_name

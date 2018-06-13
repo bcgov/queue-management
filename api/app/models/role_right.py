@@ -1,10 +1,10 @@
 from flask_restplus import fields
 from qsystem import api, db
-from base import Base 
+from .base import Base 
 
 class RoleRight(Base):
 
-    model = api.model('RoleRight' {
+    model = api.model('RoleRight', {
         'role_id' : fields.Integer,
         'right_id' : fields.Integer
         })

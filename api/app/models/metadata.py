@@ -1,10 +1,10 @@
 from flask_restplus import fields
 from qsystem import api, db
-from base import Base 
+from .base import Base 
 
 class MetaData(Base):
 
-    model = api.model('MetaData' {
+    model = api.model('MetaData', {
         'metadata_id' : fields.Integer,
         'meta_text' : fields.String
         })

@@ -1,10 +1,10 @@
 from flask_restplus import fields
 from qsystem import api, db
-from base import Base 
+from .base import Base 
 
 class Right(Base):
 
-    model = api.model('Right' {
+    model = api.model('Right', {
         'right_id' : fields.Integer,
         'right_code' : fields.String,
         'right_desc' : fields.String

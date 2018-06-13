@@ -1,10 +1,10 @@
 from flask_restplus import fields
 from qsystem import api, db
-from base import Base 
+from .base import Base 
 
 class OfficeService(Base):
 
-    model = api.model('OfficeService' {
+    model = api.model('OfficeService', {
         'office_id' : fields.Integer,
         'service_id' : fields.Integer
         })
