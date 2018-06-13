@@ -22,7 +22,7 @@ class CSR(Base):
     # TODO CFMS Data dictionary says office_id_in_now is on the office table, however
     # it is now. Please review
     office_id_in_now    = db.Column(db.BigInteger)
-    role_id             = db.Column(db.BigInteger, ForeignKey('role.role_id'))
+    role_id             = db.Column(db.BigInteger, db.ForeignKey('role.role_id'))
     qt_xn_csr_now       = db.Column(db.Binary)
     receptionist_now    = db.Column(db.Integer)
     deleted             = db.Column(db.DateTime, nullable=True)

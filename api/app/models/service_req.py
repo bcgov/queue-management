@@ -13,10 +13,10 @@ class ServiceReq(Base):
         })
 
     sr_id       = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
-    citizen_id  = db.Column(db.BigInteger, ForeignKey('citizen.citizen_id'))
+    citizen_id  = db.Column(db.BigInteger, db.ForeignKey('citizen.citizen_id'))
     quantity    =  db.Column(db.Integer)
-    service_id  = db.Column(db.BigInteger, ForeignKey('service.service_id'))
-    sr_state_id = db.Column(db.BigInteger, ForeignKey('srstate.sr_state_id'))
+    service_id  = db.Column(db.BigInteger, db.ForeignKey('service.service_id'))
+    sr_state_id = db.Column(db.BigInteger, db.ForeignKey('srstate.sr_state_id'))
 
     citizen     = db.relationship("Citizen")
     service     = db.relationship("Service")

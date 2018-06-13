@@ -21,7 +21,7 @@ class Service(Base):
     service_name        = db.Columm(db.String(500))
     service_desc        = db.Column(db.String(2000))
     # TODO - CFMS Data Dictionary says parent_ID is a FK to service_id. Please review.
-    parent_id           = db.Column(db.BigInteger, ForeignKey('service_id'))
+    parent_id           = db.Column(db.BigInteger, db.ForeignKey('service_id'))
     deleted             = db.Column(db.DateTime, nullable=True)
     prefix              = db.Columm(db.String(10))
     display_dashboard   = db.Columm(db.Integer)

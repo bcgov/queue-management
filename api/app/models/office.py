@@ -13,7 +13,7 @@ class Office(Base):
 
     office_id   = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
     office_name = db.Column(db.String(100))
-    sb_id       = db.Column(db.BigInteger, ForeignKey('smartboard.sb_id'))
+    sb_id       = db.Column(db.BigInteger, db.ForeignKey('smartboard.sb_id'))
     deleted     = db.Column(db.DateTime, nullable=True)
 
     def __repr__(self, office_name):

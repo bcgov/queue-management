@@ -15,7 +15,7 @@ class Citizen(Base):
         })
 
     citizen_id          = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
-    office_id           = db.Column(db.BigInteger, ForeignKey('office.office_id'))
+    office_id           = db.Column(db.BigInteger, db.ForeignKey('office.office_id'))
     ticket_number       = db.Column(String(50))
     citizen_name        = db.Column(String(150))
     citizen_comments    = db.Column(String(1000))
