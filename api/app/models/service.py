@@ -9,7 +9,7 @@ class Service(Base):
         'service_id' : fields.Integer,
         'service_code' : fields.String,
         'service_name' : fields.String,
-        'service_desc' : feilds.String,
+        'service_desc' : fields.String,
         'parent_id' : fields.Integer,
         'deleted' : fields.String,
         'prefix' : fields.String,
@@ -17,16 +17,16 @@ class Service(Base):
         'actual_service' : fields.Integer
         })
 
-    service_id          = db.Columm(db.BigInteger, primary_key=True, autoincrement=True)
-    service_code        = db.Columm(db.String(50))
-    service_name        = db.Columm(db.String(500))
+    service_id          = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
+    service_code        = db.Column(db.String(50))
+    service_name        = db.Column(db.String(500))
     service_desc        = db.Column(db.String(2000))
     # TODO - CFMS Data Dictionary says parent_ID is a FK to service_id. Please review.
     parent_id           = db.Column(db.BigInteger, db.ForeignKey('service_id'))
     deleted             = db.Column(db.DateTime, nullable=True)
-    prefix              = db.Columm(db.String(10))
-    display_dashboard   = db.Columm(db.Integer)
-    actual_service      = db.Columm(db.Integer)
+    prefix              = db.Column(db.String(10))
+    display_dashboard   = db.Column(db.Integer)
+    actual_service      = db.Column(db.Integer)
 
     def __repr__(self, service_name):
         return '<Service Name: %r>' % self.service_name
