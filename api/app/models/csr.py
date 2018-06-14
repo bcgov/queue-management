@@ -57,15 +57,23 @@ class CSR(Base):
         self.deleted            = args['deleted']
         self.csr_state_id_now   = args['csr_state_id_now']
 
-    json_args = {"csr_id" : self.csr_id, 
-                "username" : self.username, 
-                "password" : self.password, 
-                "office_id_in_now" : office_id_in_now, 
-                "role_id" : self.role_id, 
-                "qt_xn_csr_now" : self.qt_xn_csr_now, 
-                "receptionist_now" : self.receptionist_now, 
-                "deleted" : self.deleted, 
-                "csr_state_id_now" : self.csr_state_id_now}
+    json_args = {'csr_id': "csr_id",
+                 'username': "username",
+                 'password': "password",
+                 'office_id_in_now': "office_id_in_now",
+                 'role_id': "role_id",
+                 'qt_xn_csr_now': "qt_xn_csr_now",
+                 'receptionist_now': "receptionist_now",
+                 'deleted': "deleted",
+                 'csr_state_id_now': "csr_state_id_now"}
 
-    def json(self, json_args):
-        return json_args
+    def json(self, **json_args):
+        return {json_args['csr_id']: self.csr_id,
+                json_args['username']: self.username,
+                json_args['password']: self.password,
+                json_args['office_id_in_now']: self.office_id_in_now,
+                json_args['role_id']: self.role_id,
+                json_args['qt_xn_csr_now']: self.qt_xn_csr_now,
+                json_args['receptionist_now']: self.receptionist_now,
+                json_args['deleted'], self.deleted,
+                json_args['csr_state_id_now'], self.csr_state_id_now}
