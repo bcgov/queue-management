@@ -10,8 +10,8 @@ class ServiceMetaData(Base):
         'metadata_id' : fields.Integer
         })
 
-    service_id  = db.Column(db.BigInteger, primary_key=True, db.ForeignKey('service.service_id'))
-    metadata_id = db.Column(db.BigInteger, primary_key=True, db.ForeignKey('metadata.metadata_id'))
+    service_id  = db.Column(db.BigInteger, db.ForeignKey('service.service_id'), primary_key=True)
+    metadata_id = db.Column(db.BigInteger, db.ForeignKey('metadata.metadata_id'), primary_key=True)
 
     # TODO do this need repr for testing?
 
