@@ -1,6 +1,7 @@
 from flask_restplus import fields
 from qsystem import api, db
 from .base import Base 
+from sqlalchemy import BigInteger, String
 
 class Right(Base):
 
