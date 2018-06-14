@@ -12,7 +12,7 @@ class Client(db.Model):
 
     id        = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name      = db.Column(db.String(80), nullable=False)
-    office_id = db.Column(db.Integer, db.ForeignKey('offices.id'))
+    office_id = db.Column(db.Integer, db.ForeignKey('office.office_id'))
 
     def __repr__(self):
         return '<Client %r>' % self.name

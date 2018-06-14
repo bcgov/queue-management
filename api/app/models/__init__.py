@@ -6,7 +6,6 @@ from .client import Client
 from .csr import CSR
 from .csr_state import CSRState 
 from .metadata import MetaData
-from .note import Note
 from .office import Office
 from .office_service import OfficeService
 from .period import Period
