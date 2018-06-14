@@ -48,13 +48,19 @@ class Citizen(Base):
         self.qt_xn_citizen      = args['qt_xn_citizen']
         self.cs_id_now          = args['cs_id_now']
 
-    json_args = {"citizen_id" : self.citizen_name, 
-                "office_id" : self.office_id, 
-                "ticket_number" : self.ticket_number,
-                "citizen_name" : citizen_name, 
-                "citizen_comments" : self.citizen_comments, 
-                "qt_xn_citizen" : self.qt_xn_citizen, 
-                "cs_id_now" : self.cs_id_now}
+    json_args = {'citizen_id': "citizen_id",
+                 'office_id': "office_id",
+                 'ticket_number': "ticket_number",
+                 'citizen_name': "citizen_name",
+                 'citizen_comments': "citizen_comments",
+                 'qt_xn_citizen': "qt_xn_citizen",
+                 'cs_id_now': "qt_xn_citizen"}
 
-    def json(self, json_args):
-        return json_args
+    def json(self, **json_args):
+        return {json_args['citizen_id']: self.citizen_id,
+                json_args['office_id']: self.office_id,
+                json_args['ticket_number']: self.ticket_number,
+                json_args['citizen_name']: self.citizen_name,
+                json_args['citizen_comments']: self.citizen_comments,
+                json_args['qt_xn_citizen']: self.qt_xn_citizen,
+                json_args['cs_id_now']: self.cs_id_now}
