@@ -56,15 +56,23 @@ class Period(Base):
         self.time_end       = args['time_end']
         self.accurate_time  = args['accurate_time']
 
-    json_args = {"period_id" : self.period_id, 
-                "sr_id" : self.sr_id, 
-                "csr_id" : self.csr_id, 
-                "reception_csr" : self.reception_csr, 
-                "channel_id" : self.channel_id, 
-                "ps_id" : self.ps_id, 
-                "time_start" : self.time_start, 
-                "time_end" : self.time_end, 
-                "accurate_time" : self.accurate_time} 
+    json_args = {'period_id': "period_id", 
+                'sr_id': "sr_id", 
+                'csr_id': "csr_id", 
+                'reception_csr' : "reception_csr", 
+                'channel_id' : "channel_id", 
+                'ps_id' : "ps_id", 
+                'time_start' : "time_start", 
+                'time_end' : "time_end", 
+                'accurate_time' : "accurate_time"} 
 
-    def json(self, json_args):
-        return json_args
+    def json(self, **json_args):
+        return {json_args['period_id']: self.period_id,
+                json_args['sr_id']: self.sr_id,
+                json_args['csr_id']: self.csr_id,
+                json_args['reception_csr']: self.reception_csr,
+                json_args['channel_id']: self.channel_id,
+                json_args['ps_id']: self.ps_id,
+                json_args['time_start']: self.time_start,
+                json_args['time_end']: self.time_end,
+                json_args['accurate_time']: self.accurate_time}
