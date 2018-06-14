@@ -76,4 +76,4 @@ class CSR(Base):
                 json_args['qt_xn_csr_now']: self.qt_xn_csr_now,
                 json_args['receptionist_now']: self.receptionist_now,
                 json_args['deleted']: self.deleted,
-                json_args['csr_state_id_now'], self.csr_state_id_now}
+                json_args['csr_state_id_now']: self.csr_state_id_now}
