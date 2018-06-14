@@ -12,7 +12,7 @@ class Citizen(Base):
         'citizen_name' : fields.String,
         'citizen_comments' : fields.String,
         'qt_xn_citizen' : fields.Integer,
-        'cs_id_now' : fields.Integer
+        'cs_id' : fields.Integer
         })
 
     citizen_id          = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
@@ -21,9 +21,8 @@ class Citizen(Base):
     citizen_name        = db.Column(String(150))
     citizen_comments    = db.Column(String(1000))
     qt_xn_citizen       = db.Column(Integer)
-    # TODO - CFMS Data Dictionary says that cs_id_now exists on citizen state table, 
-    # however it does not. Please review.
-    cs_id_now           = db.Column(BigInteger)
+    cs_id               = db.Column(BigInteger, db.ForeignKey('citizen_state.cs_id'), 
+                                   primary_key=True)
 
     office = db.relationship('Office')
 
@@ -36,7 +35,7 @@ class Citizen(Base):
             'citizen_name': 'citizen_name',
             'citizen_comments': 'citizen_comments',
             'qt_xn_citizen': 'qt_xn_citizen',
-            'cs_id_now': 'cs_id_now'}
+            'cs_id': 'cs_id'}
 
     # TODO redo init function to include kwargs
     def __init__(self, **args):
@@ -46,7 +45,7 @@ class Citizen(Base):
         self.citizen_name       = args['citizen_name']
         self.citizen_comments   = args['citizen_comments']
         self.qt_xn_citizen      = args['qt_xn_citizen']
-        self.cs_id_now          = args['cs_id_now']
+        self.cs_id              = args['cs_id']
 
     json_args = {'citizen_id': "citizen_id",
                  'office_id': "office_id",
@@ -54,7 +53,7 @@ class Citizen(Base):
                  'citizen_name': "citizen_name",
                  'citizen_comments': "citizen_comments",
                  'qt_xn_citizen': "qt_xn_citizen",
-                 'cs_id_now': "qt_xn_citizen"}
+                 'cs_id': "cs_id"}
 
     def json(self, **json_args):
         return {json_args['citizen_id']: self.citizen_id,
@@ -63,4 +62,4 @@ class Citizen(Base):
                 json_args['citizen_name']: self.citizen_name,
                 json_args['citizen_comments']: self.citizen_comments,
                 json_args['qt_xn_citizen']: self.qt_xn_citizen,
-                json_args['cs_id_now']: self.cs_id_now}
+                json_args['cs_id']: self.cs_id}

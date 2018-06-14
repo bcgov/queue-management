@@ -14,22 +14,20 @@ class CSR(Base):
         'qt_xn_csr_now' : fields.Integer,
         'receptionist_now' : fields.Integer,
         'deleted' : fields.String,
-        'csr_state_id_now' : fields.Integer
+        'csr_state_id' : fields.Integer
     })
 
     csr_id              = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
     username            = db.Column(db.String(150))
     password            = db.Column(db.String(45), nullable=False)
-    # TODO CFMS Data dictionary says office_id_in_now is on the office table, however
-    # it is now. Please review
-    office_id_in_now    = db.Column(db.BigInteger)
+    office_id           = db.Column(db.BigInteger, db.ForeignKey('office.office_id'), 
+                                    primary_key=True)
     role_id             = db.Column(db.BigInteger, db.ForeignKey('role.role_id'))
     qt_xn_csr_now       = db.Column(db.Binary)
     receptionist_now    = db.Column(db.Integer)
     deleted             = db.Column(db.DateTime, nullable=True)
-    # TODO CFMS Data dictionary says csr_state_id_now is on the office table, however
-    # it is now. Please review
-    csr_state_id_now    = db.Column(db.BigInteger)
+    csr_state_id        = db.Column(db.BigInteger, db.ForeignKey('csr_state.csr_state_id'), 
+                                    primary_key=True)
 
     role = db.relationship("Role")
 
