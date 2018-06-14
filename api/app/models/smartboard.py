@@ -5,9 +5,8 @@ from .base import Base
 class SmartBoard(Base):
 
     model = api.model ('SmartBoard', {
-        sb_id : fields.Integer,
-        # TODO is type a reserved word that we need to change the column name for?
-        type : fields.String
+        'sb_id' : fields.Integer,
+        'type' : fields.String
         })
 
     sb_id   = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
