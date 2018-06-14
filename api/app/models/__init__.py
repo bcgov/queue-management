@@ -17,6 +17,6 @@ from .role_right import RoleRight
 from .service_metadata import ServiceMetaData
 from .service import Service
 from .service_req import ServiceReq
-from .smartboard import Smartboard
+from .smartboard import SmartBoard
 from .sr_state import SRState
 from .user import User

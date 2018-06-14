@@ -3,12 +3,12 @@ from qsystem import api, db
 from .base import Base 
 from sqlalchemy import BigInteger, String
 
-class SRState(Base, db.model):
+class SRState(Base):
 
     model = api.model('SRState', {
         'sr_state_id' : fields.Integer,
         'sr_code' : fields.String,
-        'sr_state_desc' fields,String
+        'sr_state_desc': fields.String
         })
 
     sr_state_id     = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
