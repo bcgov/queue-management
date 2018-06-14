@@ -1,6 +1,6 @@
 from flask_restplus import fields
 from qsystem import api, db
-from base import Base 
+from .base import Base 
 
 class Channel(Base):
 
