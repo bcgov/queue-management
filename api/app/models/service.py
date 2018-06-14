@@ -41,7 +41,7 @@ class Service(Base):
             'display_dashboard': 'display_dashboard',
             'actual_service': 'actual_service'}
 
-    def __init__(self, **args)
+    def __init__(self, **args):
         self.service_id         = args['service_id']
         self.service_code       = args['service_code']
         self.service_name       = args['service_name']
@@ -52,15 +52,23 @@ class Service(Base):
         self.display_dashboard  = args['display_dashboard']
         self.actual_service     = args['actual_service']
 
-    json_args = {"service_id" : self.service_id, 
-                "service_code" : self.service_code, 
-                "service_name" : self.service_name,
-                "service_desc" : self.service_desc, 
-                "parent_id" : self.parent_id, 
-                "deleted" : self.deleted, 
-                "prefix" : self.prefix, 
-                "display_dashboard" : self.display_dashboard, 
-                "actual_service" : self.actual_service}
+    json_args = {'service_id': "service_id", 
+                 'service_code': "service_code", 
+                 'service_name': "service_name",
+                 'service_desc': "service_desc", 
+                 'parent_id': "parent_id", 
+                 'deleted': "deleted", 
+                 'prefix': "prefix", 
+                 'display_dashboard': "display_dashboard", 
+                 'actual_service': "actual_service"}
 
-    def json(self, json_args)
-        return json_args
+    def json(self, **json_args):
+        return {json_args['service_id']: self.service_id,
+                json_args['service_code']: self.service_code,
+                json_args['service_name']: self.service_name,
+                json_args['service_desc']: self.service_desc,
+                json_args['parent_id']: self.parent_id,
+                json_args['deleted']: self.deleted,
+                json_args['prefix']: self.prefix,
+                json_args['display_dashboard']: self.display_dashboard,
+                json_args['actual_service']: self.actual_service}
