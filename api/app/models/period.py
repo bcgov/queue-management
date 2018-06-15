@@ -18,19 +18,19 @@ class Period(Base):
         })
 
     period_id       = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
-    sr_id           = db.Column(db.BigInteger, db.ForeignKey('service_req.sr_id'))
+    sr_id           = db.Column(db.BigInteger, db.ForeignKey('servicereq.sr_id'))
     csr_id          = db.Column(db.BigInteger, db.ForeignKey('csr.csr_id'))
     reception_csr   = db.Column(Integer)
     channel_id      = db.Column(db.BigInteger, db.ForeignKey('channel.channel_id'))
-    ps_id           = db.Column(db.BigInteger, db.ForeignKey('period_state.ps_id'))
+    ps_id           = db.Column(db.BigInteger, db.ForeignKey('periodstate.ps_id'))
     time_start      = db.Column(db.DateTime)
     time_end        = db.Column(db.DateTime)
     accurate_time   = db.Column(db.Integer)
 
-    sr = db.relationship("Service_req")
+    sr = db.relationship("ServiceReq")
     csr = db.relationship("CSR")
     channel = db.relationship("Channel")
-    ps = db.relationship("PS")
+    ps = db.relationship("PeriodState")
 
     def __repr__(self, period_id):
         return '<Period: %r>' % self.period_id

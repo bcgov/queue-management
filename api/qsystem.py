@@ -35,6 +35,7 @@ oidc = OpenIDConnect(application)
 logging.basicConfig(format=application.config['LOGGING_FORMAT'], level=logging.INFO)
 
 import app.resources.clients
+import app.resources.citizen
 import app.resources.health
 import app.resources.offices
 import app.resources.users

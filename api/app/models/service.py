@@ -3,6 +3,13 @@ from qsystem import api, db
 from .base import Base 
 from sqlalchemy import BigInteger, Integer, String, DateTime
 
+service_metadata  = db.Table('ServiceMetaData',
+                        db.Column('service_id', db.BigInteger, 
+                                  db.ForeignKey('service.service_id'), primary_key=True),
+                        db.Column('metadata_id', db.BigInteger,
+                                  db.ForeignKey('metadata.metadata_id'), primary_key=True)
+)
+
 class Service(Base):
 
     model = api.model('Service', {
@@ -22,7 +29,7 @@ class Service(Base):
     service_name        = db.Column(db.String(500))
     service_desc        = db.Column(db.String(2000))
     # TODO - CFMS Data Dictionary says parent_ID is a FK to service_id. Please review.
-    parent_id           = db.Column(db.BigInteger, db.ForeignKey('service_id'))
+    parent_id           = db.Column(db.BigInteger, db.ForeignKey('service.service_id'))
     deleted             = db.Column(db.DateTime, nullable=True)
     prefix              = db.Column(db.String(10))
     display_dashboard   = db.Column(db.Integer)

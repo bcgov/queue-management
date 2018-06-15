@@ -3,6 +3,13 @@ from qsystem import api, db
 from .base import Base 
 from sqlalchemy import BigInteger, Integer, String, DateTime
 
+office_service = db.Table('OfficeService',
+                 db.Column('office_id', db.BigInteger, 
+                            db.ForeignKey('office.office_id'), primary_key=True),
+                 db.Column('service_id', db.BigInteger,
+                            db.ForeignKey('service.service_id'), primary_key=True)
+)
+
 class Office(Base):
 
     model = api.model('Office', {
@@ -18,16 +25,15 @@ class Office(Base):
     office_number   = db.Column(db.Integer)
     sb_id           = db.Column(db.BigInteger, db.ForeignKey('smartboard.sb_id'))
     deleted         = db.Column(db.DateTime, nullable=True)
+    users           = db.relationship("User")
 
     def __repr__(self, office_name):
         return '<Office: %r>' % self.office_name
 
-    def __init__(self, office_id, office_name, office_number, sb_id, deleted):
-        self.office_id      = office_id
+    def __init__(self, office_name, office_number, sb_id):
         self.office_name    = office_name
         self.office_number  = office_number
         self.sb_id          = sb_id
-        self.deleted        = deleted
 
     def json(self, office_id, office_name, office_number, sb_id, deleted):
         return {"office_id" : self.office_id, 

@@ -16,8 +16,7 @@ class SmartBoard(Base):
     def __repr__(self, type):
         return '<Smartboard Type: %r>' % self.type
 
-    def __init__(self, sb_id, type):
-        self.sb_id  = sb_id
+    def __init__(self, type):
         self.type   = type
 
     def json(self, sb_id, type):

@@ -21,16 +21,14 @@ class Citizen(Base):
     citizen_name        = db.Column(String(150))
     citizen_comments    = db.Column(String(1000))
     qt_xn_citizen       = db.Column(Integer)
-    cs_id               = db.Column(BigInteger, db.ForeignKey('citizen_state.cs_id'), 
-                                   primary_key=True)
+    cs_id               = db.Column(BigInteger, db.ForeignKey('citizenstate.cs_id'))
 
     office = db.relationship('Office')
 
     def __repr__(self, citizen_name):
         return '<Citizen: %r>' % self.citizen_name
 
-    args = {'citizen_id': 'citizen_id',
-            'office_id': 'office_id',
+    args = {'office_id': 'office_id',
             'ticket_number': 'ticket_number',
             'citizen_name': 'citizen_name',
             'citizen_comments': 'citizen_comments',
@@ -39,7 +37,6 @@ class Citizen(Base):
 
     # TODO redo init function to include kwargs
     def __init__(self, **args):
-        self.citizen_id         = args['citizen_name']
         self.office_id          = args['office_id']
         self.ticket_number      = args['ticket_number']
         self.citizen_name       = args['citizen_name']

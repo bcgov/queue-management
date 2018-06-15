@@ -15,25 +15,34 @@ class Bootstrap(Command):
         models.Client.query.delete()
         models.User.query.delete()
         models.Office.query.delete()
+        models.SmartBoard.query.delete()
+        models.Citizen.query.delete()
+        models.CitizenState.query.delete()
         db.session.commit()
 
         print("Starting to bootstrap data")
 
-        office1 = models.Office("Summerland")
-        office2 = models.Office("Test Office")
+        smartboard1 = models.SmartBoard("Test")
+
+        db.session.add(smartboard1)
+        db.session.flush()
+
+        office1 = models.Office("Summerland", 1, smartboard1.sb_id)
+
+        office2 = models.Office("Test Office", 2, smartboard1.sb_id)
 
         db.session.add(office1)
         db.session.add(office2)
         db.session.flush()
 
-        adamkroon = models.User("adamkroon", office1.id)
-        cdmcinto = models.User("cdmcinto", office1.id)
-        kgillani = models.User("kgillani", office1.id)
-        scottrumsby = models.User("scottrumsby", office1.id)
-        seanrumsby = models.User("seanrumsby", office1.id)
+        adamkroon = models.User("adamkroon", office1.office_id)
+        cdmcinto = models.User("cdmcinto", office1.office_id)
+        kgillani = models.User("kgillani", office1.office_id)
+        scottrumsby = models.User("scottrumsby", office1.office_id)
+        seanrumsby = models.User("seanrumsby", office1.office_id)
 
-        cfms_postman_operator = models.User("cfms-postman-operator", office2.id)
-        cfms_postman_non_operator = models.User("cfms-postman-non-operator", office2.id)
+        cfms_postman_operator = models.User("cfms-postman-operator", office2.office_id)
+        cfms_postman_non_operator = models.User("cfms-postman-non-operator", office2.office_id)
 
         db.session.add(adamkroon)
         db.session.add(cdmcinto)
@@ -43,6 +52,26 @@ class Bootstrap(Command):
         db.session.add(cfms_postman_operator)
         db.session.add(cfms_postman_non_operator)
 
+        db.session.commit()
+
+        cs1 = models.CitizenState(
+            cs_state_name="Test",
+            cs_state_desc="Blah"
+        )
+
+        db.session.add(cs1)
+        db.session.flush()
+
+        john = models.Citizen(
+        office_id = office1.office_id,
+        ticket_number = "1",
+        citizen_name = "John",
+        citizen_comments = "Blorp",
+        qt_xn_citizen = 0,
+        cs_id = cs1.cs_id        
+        )
+
+        db.session.add(john)
         db.session.commit()
 
 class FetchData(Command):

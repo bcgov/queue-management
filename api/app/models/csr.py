@@ -20,14 +20,12 @@ class CSR(Base):
     csr_id              = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
     username            = db.Column(db.String(150))
     password            = db.Column(db.String(45), nullable=False)
-    office_id           = db.Column(db.BigInteger, db.ForeignKey('office.office_id'), 
-                                    primary_key=True)
+    office_id           = db.Column(db.BigInteger, db.ForeignKey('office.office_id'))
     role_id             = db.Column(db.BigInteger, db.ForeignKey('role.role_id'))
     qt_xn_csr_now       = db.Column(db.Binary)
     receptionist_now    = db.Column(db.Integer)
     deleted             = db.Column(db.DateTime, nullable=True)
-    csr_state_id        = db.Column(db.BigInteger, db.ForeignKey('csr_state.csr_state_id'), 
-                                    primary_key=True)
+    csr_state_id        = db.Column(db.BigInteger, db.ForeignKey('csrstate.csr_state_id'))
 
     role = db.relationship("Role")
 

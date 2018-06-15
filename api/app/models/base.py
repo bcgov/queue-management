@@ -19,4 +19,5 @@ class Base(db.Model, object):
         run_transaction(sessionmaker, self.save_to_db)
 
     def get_by_id(self, id):
-        run_transaction(self.query.get(id))
+        sessionmaker = sqlalchemy.orm.sessionmaker(db.engine)
+        run_transaction(sessionmaker, self.query.get(id))

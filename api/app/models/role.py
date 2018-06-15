@@ -3,6 +3,13 @@ from qsystem import api, db
 from .base import Base 
 from sqlalchemy import BigInteger, String
 
+role_right  = db.Table('RoleRight',
+                        db.Column('role_id', db.BigInteger, 
+                                  db.ForeignKey('role.role_id'), primary_key=True),
+                        db.Column('right_id', db.BigInteger,
+                                  db.ForeignKey('right.right_id'), primary_key=True)
+)
+
 class Role(Base):
 
     model = api.model('Role', {

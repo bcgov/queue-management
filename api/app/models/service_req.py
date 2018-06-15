@@ -21,7 +21,7 @@ class ServiceReq(Base):
 
     citizen     = db.relationship("Citizen")
     service     = db.relationship("Service")
-    sr_state    = db.relationship("SR_State") 
+    sr_state    = db.relationship("SRState") 
 
     def __init__(self, sr_id, citizen_id, quantity, service_id, sr_state_id):
         self.sr_id          = sr_id
