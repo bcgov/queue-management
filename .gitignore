@@ -113,4 +113,4 @@ owasp/dependency-check
 owasp/dependency-check-report.html
 sonar-runner/.gradle
 .DS_Store
-
+/.idea
