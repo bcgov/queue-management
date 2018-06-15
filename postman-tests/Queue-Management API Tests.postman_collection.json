@@ -656,7 +656,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "cdd16320-1100-4bfc-ac6c-4e37bc93f59a",
+								"id": "16bad6b3-95f7-49cc-8b72-ca1ea8e9f2d1",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD",
@@ -681,7 +681,7 @@
 									"}",
 									"",
 									"//  Test the authenticate response.",
-									"describe('Testing clients endpoint, valid authentication', function() {",
+									"describe('Testing deleting all clients, listing first', function() {",
 									"   it('Response statusCode should be 200', function() {",
 									"     response.should.have.status(200);",
 									"   });",
@@ -701,8 +701,6 @@
 									"   });",
 									"});",
 									"",
-									"//  ",
-									"",
 									"//  Create a list of client IDs.",
 									"var citizenIds = [];",
 									"",
@@ -713,12 +711,16 @@
 									"    tests[testTitle] = tv4.validate(citizen, schema);",
 									"});",
 									"",
-									"//  Set the current_client, to be deleted.",
-									"postman.setEnvironmentVariable(\"current_client\", citizenIds.shift());",
-									"postman.setEnvironmentVariable(\"current_queue\", JSON.stringify(citizenIds));",
+									"//  Delete citizens, if there are any.",
+									"if (citizenIds.length > 0) {",
 									"",
-									"//  Set the next request to execute.",
-									"postman.setNextRequest(\"Delete client queue item\");",
+									"    //  Set the current_client, to be deleted.",
+									"    postman.setEnvironmentVariable(\"current_client\", citizenIds.shift());",
+									"    postman.setEnvironmentVariable(\"current_queue\", JSON.stringify(citizenIds));",
+									"",
+									"    //  Set the next request to execute.",
+									"    postman.setNextRequest(\"Delete next client\");",
+									"}",
 									""
 								]
 							}
@@ -747,7 +749,7 @@
 					"response": []
 				},
 				{
-					"name": "Delete client queue item",
+					"name": "Delete next client",
 					"event": [
 						{
 							"listen": "prerequest",
@@ -764,13 +766,13 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "4b5d87a3-e805-470e-a3ce-a6e1c581687a",
+								"id": "59469be4-15c7-4aa6-9bcc-cb80cdffbded",
 								"type": "text/javascript",
 								"exec": [
 									"// Install postmanBDD",
 									"eval(globals.postmanBDD);",
 									"",
-									"var title = \"Testing clearing queue: Citizen \" + postman.getEnvironmentVariable(\"current_client\");",
+									"var title = \"Testing delete queue: Citizen \" + pm.environment.get(\"current_client\");",
 									"",
 									"// Test the authenticate response.",
 									"describe(title, function() {",
@@ -793,7 +795,7 @@
 									"    postman.setEnvironmentVariable(\"current_queue\", JSON.stringify(citizenIds));",
 									"",
 									"    //  Delete the next citizen.",
-									"    postman.setNextRequest(\"Delete client queue item\");",
+									"    postman.setNextRequest(\"Delete next client\");",
 									"}",
 									""
 								]
@@ -837,7 +839,7 @@
 			"description": "Test all the clients endpoints",
 			"item": [
 				{
-					"name": "Delete client",
+					"name": "Verify client queue empty",
 					"event": [
 						{
 							"listen": "prerequest",
@@ -854,113 +856,29 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "1d908d2a-965c-437c-885f-4c990d54738f",
+								"id": "1c14ca65-564e-479f-8b35-1e50b0f2f8c5",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD",
-									"//  eval(globals.postmanBDD);",
+									"eval(globals.postmanBDD);",
 									"",
 									"//  Test the authenticate response.",
-									"// describe('Testing clients endpoint, valid authentication', function() {",
-									"//   it('Response statusCode should be 200', function() {",
-									"//      response.should.have.status(200);",
-									"//   });",
-									"//   it('Response header should have Content-Type of application/json', function() {",
-									"//     response.should.have.header('content-type', 'application/json');",
-									"//   });",
-									"//   it('Response body be in JSON format', function() {",
-									"//       response.should.be.json; ",
-									"//   });",
-									"//   it(\"Response should have 'id', 'name' and 'office_id' properties\", function() {",
-									"//       var jsonData = response.body;",
-									"//       if (jsonData.length !== 0) {",
-									"//           var firstClient = jsonData[0];",
-									"//           firstClient.should.have.property(\"id\");",
-									"//           firstClient.should.have.property(\"name\");",
-									"//           firstClient.should.have.property(\"office_id\");",
-									"//       }",
-									"//   });",
-									"// });",
-									""
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{token}}"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json, text/plain, */*"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{url}}clients/{{current_client}}/",
-							"host": [
-								"{{url}}clients"
-							],
-							"path": [
-								"{{current_client}}",
-								""
-							]
-						},
-						"description": "Get a list of clients in the queue"
-					},
-					"response": []
-				},
-				{
-					"name": "List client",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "becda71c-71d6-4d2f-bad5-1a7a17da6128",
-								"type": "text/javascript",
-								"exec": [
-									"//  Ensure the client is logged in.",
-									"eval(environment.auth_script);",
-									""
-								]
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"id": "3e3e6527-0cea-47c2-8121-75d03dc41dab",
-								"type": "text/javascript",
-								"exec": [
-									"// //  Install postmanBDD",
-									"// eval(globals.postmanBDD);",
-									"",
-									"// //  Test the authenticate response.",
-									"// describe('Testing clients endpoint, valid authentication', function() {",
-									"//   it('Response statusCode should be 200', function() {",
-									"//      response.should.have.status(200);",
-									"//   });",
-									"//   it('Response header should have Content-Type of application/json', function() {",
-									"//     response.should.have.header('content-type', 'application/json');",
-									"//   });",
-									"//   it('Response body be in JSON format', function() {",
-									"//       response.should.be.json; ",
-									"//   });",
-									"//   it(\"Response should have 'id', 'name' and 'office_id' properties\", function() {",
-									"//       var jsonData = response.body;",
-									"//       if (jsonData.length !== 0) {",
-									"//           var firstClient = jsonData[0];",
-									"//           firstClient.should.have.property(\"id\");",
-									"//           firstClient.should.have.property(\"name\");",
-									"//           firstClient.should.have.property(\"office_id\");",
-									"//       }",
-									"//   });",
-									"// });",
+									"describe('Testing clients endpoint, valid authentication', function() {",
+									"  it('Response statusCode should be 200', function() {",
+									"     response.should.have.status(200);",
+									"  });",
+									"  it('Response header should have Content-Type of application/json', function() {",
+									"    response.should.have.header('content-type', 'application/json');",
+									"  });",
+									"  it('Response body be in JSON format', function() {",
+									"      response.should.be.json; ",
+									"  });",
+									"  it(\"Citizen queue should be empty\", function() {",
+									"      var jsonData = response.body;",
+									"      //response.body.length.should.equal(0);",
+									"      jsonData.length.should.equal(0);",
+									"  });",
+									"});",
 									""
 								]
 							}
@@ -983,12 +901,11 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}clients/{{current_client}}/",
+							"raw": "{{url}}clients/",
 							"host": [
 								"{{url}}clients"
 							],
 							"path": [
-								"{{current_client}}",
 								""
 							]
 						},
@@ -997,7 +914,7 @@
 					"response": []
 				},
 				{
-					"name": "Add client",
+					"name": "Add client queue driver",
 					"event": [
 						{
 							"listen": "prerequest",
@@ -1014,33 +931,121 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "2aa4ed6a-dfd0-4821-b81c-5b67f13303fc",
+								"id": "989cd2d1-1354-4231-98eb-537493b31e66",
 								"type": "text/javascript",
 								"exec": [
-									"// //  Install postmanBDD",
-									"// eval(globals.postmanBDD);",
+									"//  Install postmanBDD",
+									"eval(globals.postmanBDD);",
 									"",
-									"// //  Test the authenticate response.",
-									"// describe('Testing clients endpoint, valid authentication', function() {",
-									"//   it('Response statusCode should be 200', function() {",
-									"//      response.should.have.status(200);",
-									"//   });",
-									"//   it('Response header should have Content-Type of application/json', function() {",
-									"//     response.should.have.header('content-type', 'application/json');",
-									"//   });",
-									"//   it('Response body be in JSON format', function() {",
-									"//       response.should.be.json; ",
-									"//   });",
-									"//   it(\"Response should have 'id', 'name' and 'office_id' properties\", function() {",
-									"//       var jsonData = response.body;",
-									"//       if (jsonData.length !== 0) {",
-									"//           var firstClient = jsonData[0];",
-									"//           firstClient.should.have.property(\"id\");",
-									"//           firstClient.should.have.property(\"name\");",
-									"//           firstClient.should.have.property(\"office_id\");",
-									"//       }",
-									"//   });",
-									"// });",
+									"//  Create a list of client to add for testing.",
+									"var addCitizens = JSON.parse(pm.environment.get(\"client_add_tests\"));",
+									"var citizenNames = [];",
+									"",
+									"//  Loop to do tests, gather IDs.",
+									"addCitizens.forEach(function(citizen) {",
+									"    citizenNames.push(citizen.name);",
+									"});",
+									"",
+									"//  Set the next client to be added.",
+									"pm.environment.set(\"current_add_name\", citizenNames.shift());",
+									"pm.environment.set(\"current_add_left\", JSON.stringify(citizenNames));",
+									"",
+									"//  Initialize variables, store in the environment.",
+									"var newQueueNames = [];",
+									"var newQueueIds = [];",
+									"var newQueueLength = 0;",
+									"pm.environment.set(\"current_queue_names\", JSON.stringify(newQueueNames));",
+									"pm.environment.set(\"current_queue_ids\", JSON.stringify(newQueueIds));",
+									"pm.environment.set(\"current_queue_length\", newQueueLength);",
+									"",
+									"//  Set the next request to execute.",
+									"postman.setNextRequest(\"Add next client\");",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json, text/plain, */*"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}clients/",
+							"host": [
+								"{{url}}clients"
+							],
+							"path": [
+								""
+							]
+						},
+						"description": "Get a list of clients in the queue"
+					},
+					"response": []
+				},
+				{
+					"name": "Add next client",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "5b7bbcb0-9b12-43f7-bc77-478e78298f8a",
+								"type": "text/javascript",
+								"exec": [
+									"//  Ensure the user is logged in.",
+									"eval(environment.auth_script);",
+									"",
+									"var nextCitizen = pm.environment.get(\"current_add_name\");",
+									"var citizenData = {",
+									"    \"name\" : nextCitizen",
+									"}",
+									"pm.environment.set(\"putBody\", JSON.stringify(citizenData));"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "249ba122-6249-4149-851a-440b81d64e80",
+								"type": "text/javascript",
+								"exec": [
+									"//  Install postmanBDD",
+									"eval(globals.postmanBDD);",
+									"",
+									"//  Test the authenticate response.",
+									"describe('Adding client to queue', function() {",
+									"  it('Response statusCode should be 200', function() {",
+									"     response.should.have.status(200);",
+									"  });",
+									"  it('Response header should have Content-Type of application/json', function() {",
+									"    response.should.have.header('content-type', 'application/json');",
+									"  });",
+									"  it('Response body be in JSON format', function() {",
+									"      response.should.be.json; ",
+									"  });",
+									"});",
+									"",
+									"//  Update names and IDs now in the queue.",
+									"var newQueueNames = JSON.parse(pm.environment.get(\"current_queue_names\"));",
+									"newQueueNames.push(pm.environment.get(\"current_add_name\"));",
+									"pm.environment.set(\"current_queue_names\", JSON.stringify(newQueueNames));",
+									"var newQueueLength = pm.environment.get(\"current_queue_length\");",
+									"newQueueLength = newQueueLength + 1;",
+									"pm.environment.set(\"current_queue_length\", newQueueLength);",
+									"",
+									"//  Get the list of citizens still needing to be added to the queue.",
+									"var addCitizens = JSON.parse(pm.environment.get(\"current_add_left\"));",
 									""
 								]
 							}
@@ -1055,17 +1060,265 @@
 							},
 							{
 								"key": "Accept",
-								"value": "application/json"
+								"value": "application/json, text/plain, */*"
 							},
 							{
 								"key": "Content-Type",
-								"value": "application/json;charset=UTF-8"
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\" : \"New Client from Postman\"\n}"
+							"raw": "{{putBody}}"
 						},
+						"url": {
+							"raw": "{{url}}clients/",
+							"host": [
+								"{{url}}clients"
+							],
+							"path": [
+								""
+							]
+						},
+						"description": "Get a list of clients in the queue"
+					},
+					"response": []
+				},
+				{
+					"name": "Verify client added",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "becda71c-71d6-4d2f-bad5-1a7a17da6128",
+								"type": "text/javascript",
+								"exec": [
+									"//  Ensure the client is logged in.",
+									"eval(environment.auth_script);",
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "fce3190a-e4de-413d-99ee-05082987b706",
+								"type": "text/javascript",
+								"exec": [
+									"//  Install postmanBDD",
+									"eval(globals.postmanBDD);",
+									"",
+									"//  Get variables for checking.",
+									"var jsonData = response.body;",
+									"var newQueueNames = JSON.parse(pm.environment.get(\"current_queue_names\"));",
+									"var newQueueIds = JSON.parse(pm.environment.get(\"current_queue_ids\"));",
+									"var newQueueLength = pm.environment.get(\"current_queue_length\");",
+									"",
+									"//  Test the authenticate response.",
+									"describe('Testing clients endpoint, valid authentication', function() {",
+									"  it('Response statusCode should be 200', function() {",
+									"     response.should.have.status(200);",
+									"  });",
+									"  it('Response header should have Content-Type of application/json', function() {",
+									"    response.should.have.header('content-type', 'application/json');",
+									"  });",
+									"  it('Response body should be in JSON format', function() {",
+									"      response.should.be.json; ",
+									"  });",
+									"  it(\"Citizen queue should have \" + newQueueLength + \" people in it\", function() {",
+									"      jsonData.length.should.equal(newQueueLength);",
+									"  });",
+									"});",
+									"",
+									"//  Create a list of client IDs.",
+									"var listQueueNames = [];",
+									"var listQueueIds = [];",
+									"var listQueueFound = [];",
+									"",
+									"//  Loop to do tests, gather IDs.",
+									"jsonData.forEach(function(citizen) {",
+									"    listQueueNames.push(citizen.name);",
+									"    listQueueIds.push(citizen.id);",
+									"    listQueueFound.push(0);",
+									"});",
+									"",
+									"//  Ensure each citizen you expect to find is in the list.",
+									"newQueueNames.forEach(function(expectName) {",
+									"",
+									"    //  Look up name.",
+									"    var position = listQueueNames.indexOf(expectName);",
+									"    ",
+									"    //  Name was found.",
+									"    if (position > -1) {",
+									"        ",
+									"        //  If position greater than length of new QueueIds, add the Queue ID.",
+									"        if (newQueueIds.length <= position) {",
+									"            newQueueIds.push(listQueueIds[position]);",
+									"        }",
+									"        ",
+									"        //  Get ids.",
+									"        var listId = listQueueIds[position];",
+									"        var expectId = newQueueIds[position];",
+									"        ",
+									"        //  Make sure ID matches.",
+									"        var testTitle = \"Citizen \" + expectName + \": added and list IDs match\";",
+									"        pm.test(testTitle, function() {",
+									"            pm.expect(listId).to.equal(expectId);",
+									"        });",
+									"        ",
+									"        if (listId === expectId) {",
+									"            listQueueFound[position] = 1;",
+									"        }",
+									"    }",
+									"});",
+									"",
+									"//  Update the list of new queue IDS.",
+									"pm.environment.set(\"current_queue_ids\", JSON.stringify(newQueueIds));",
+									"",
+									"//  Get the list of citizens still needing to be added to the queue.",
+									"var addCitizens = JSON.parse(pm.environment.get(\"current_add_left\"));",
+									"",
+									"//  See if more IDs to clear.",
+									"if (addCitizens.length > 0) {",
+									"",
+									"    //  Set the next current_client to be deleted.",
+									"    pm.environment.set(\"current_add_name\", addCitizens.shift());",
+									"    pm.environment.set(\"current_add_left\", JSON.stringify(addCitizens));",
+									"",
+									"    //  Add the next citizen.",
+									"    postman.setNextRequest(\"Add next client\");",
+									"}",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json, text/plain, */*"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}clients/",
+							"host": [
+								"{{url}}clients"
+							],
+							"path": [
+								""
+							]
+						},
+						"description": "Get a list of clients in the queue"
+					},
+					"response": []
+				},
+				{
+					"name": "List client queue driver",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "becda71c-71d6-4d2f-bad5-1a7a17da6128",
+								"type": "text/javascript",
+								"exec": [
+									"//  Ensure the client is logged in.",
+									"eval(environment.auth_script);",
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "3b3859ff-164d-45cf-8148-5cb733db1fd7",
+								"type": "text/javascript",
+								"exec": [
+									"//  Install postmanBDD",
+									"eval(globals.postmanBDD);",
+									"",
+									"//  Get json return data.",
+									"var jsonData = response.body;",
+									"",
+									"var schema = {",
+									"    \"properties\" : {",
+									"        \"id\" : {",
+									"            \"type\" : \"string\"",
+									"        },",
+									"        \"name\" : {",
+									"            \"type\" : \"string\"",
+									"        },",
+									"        \"office_id\" : {",
+									"            \"type\" : \"string\"",
+									"        }",
+									"    },",
+									"    \"required\" : [\"id\", \"name\", \"office_id\"]",
+									"}",
+									"",
+									"//  Test the authenticate response.",
+									"describe('Testing listing all clients, individually, listing all first', function() {",
+									"   it('Response statusCode should be 200', function() {",
+									"     response.should.have.status(200);",
+									"   });",
+									"   it('Response header should have Content-Type of application/json', function() {",
+									"    response.should.have.header('content-type', 'application/json');",
+									"   });",
+									"   it('Response body be in JSON format', function() {",
+									"      response.should.be.json; ",
+									"   });",
+									"   it(\"Response should have 'id', 'name' and 'office_id' properties\", function() {",
+									"       if (jsonData.length !== 0) {",
+									"           var firstClient = jsonData[0];",
+									"           firstClient.should.have.property(\"id\");",
+									"           firstClient.should.have.property(\"name\");",
+									"           firstClient.should.have.property(\"office_id\");",
+									"       }",
+									"   });",
+									"});",
+									"",
+									"//  Create a list of client IDs.",
+									"var citizenIds = [];",
+									"",
+									"//  Loop to do tests, gather IDs.",
+									"jsonData.forEach(function(citizen) {",
+									"    var testTitle = \"Citizen \" + citizen.id + \" conforms to schema\";",
+									"    citizenIds.push(citizen.id);",
+									"    tests[testTitle] = tv4.validate(citizen, schema);",
+									"});",
+									"",
+									"//  Delete citizens, if there are any.",
+									"if (citizenIds.length > 0) {",
+									"",
+									"    //  Set the current_client, to be deleted.",
+									"    postman.setEnvironmentVariable(\"current_client\", citizenIds.shift());",
+									"    postman.setEnvironmentVariable(\"current_queue\", JSON.stringify(citizenIds));",
+									"",
+									"    //  Set the next request to execute.",
+									"    postman.setNextRequest(\"List next client\");",
+									"}",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {},
 						"url": {
 							"raw": "{{url}}clients/",
 							"host": [
