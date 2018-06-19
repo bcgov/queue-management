@@ -14,14 +14,14 @@ def on_join(message):
     cookie = request.cookies.get("oidc-jwt", None)
     if cookie == None:
         print("cookie is none")
-        emit('joinRoomFail', {})
+        emit('joinRoomFail', { "sucess": False })
         return
 
     print(cookie)
 
     if not oidc.validate_token(cookie):
         print("Cookie failed validation")
-        emit('joinRoomFail', {})
+        emit('joinRoomFail', { "sucess": False })
         return
 
     print("Validated")
@@ -33,8 +33,11 @@ def on_join(message):
     user = User.query.filter_by(username=username).first()
     print (user)
     if user:
+        print("Joining room")
         join_room(user.office_id)
-        emit('joinRoomSuccess', {})
-        emit('update_customer_list', {}, room=user.office_id)
+        emit('joinRoomSuccess', { "sucess": True })
+        emit('update_customer_list', { "sucess": True }, room=user.office_id)
+        print("Success")
     else:
-        emit('joinRoomFail', {})
+        print("Fail")
+        emit('joinRoomFail', { "sucess": False })
