@@ -12,5 +12,7 @@ flask-login
 flask-socketio
 gunicorn
 kombu
+marshmallow
 psycopg2-binary
 python-jose
+
