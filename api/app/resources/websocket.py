@@ -2,7 +2,7 @@ from flask import request, g
 from flask_socketio import emit, join_room
 from jose import jwt
 
-#from app.models import User
+from app.models import CSR
 from qsystem import oidc, socketio
 
 @socketio.on('myEvent')
@@ -30,13 +30,12 @@ def on_join(message):
     print(claims)
 
     username = claims["preferred_username"]
-    user = User.query.filter_by(username=username).first()
-    print (user)
-    if user:
+    csr = CSR.query.filter_by(username=username).first()
+    if csr:
         print("Joining room")
-        join_room(user.office_id)
+        join_room(csr.office_id)
         emit('joinRoomSuccess', { "sucess": True })
-        emit('update_customer_list', { "sucess": True }, room=user.office_id)
+        emit('update_customer_list', { "sucess": True }, room=csr.office_id)
         print("Success")
     else:
         print("Fail")
