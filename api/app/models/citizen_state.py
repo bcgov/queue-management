@@ -20,9 +20,8 @@ class CitizenState(Base):
     def __repr__(self, cs_state_name):
         return '<CS State Name: %r>' % self.cs_state_name
 
-    def __init__(self,cs_state_name, cs_state_desc):
-        self.cs_state_name = cs_state_name
-        self.cs_state_desc = cs_state_desc
+    def __init__(self, **kwargs):
+        super(CitizenState, self).__init__(**kwargs)
 
     def json(self, cs_id, cs_state_name, cs_state_desc):
         return {"cs_id" : self.cs_id, 

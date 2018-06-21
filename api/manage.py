@@ -12,31 +12,51 @@ class Bootstrap(Command):
 
     def run(self):
         print("Clearing out all models")
-        models.Client.query.delete()
-        models.User.query.delete()
+        #models.Client.query.delete()
+        #models.User.query.delete()
         models.Citizen.query.delete()
         models.CitizenState.query.delete()
         models.Channel.query.delete()
         models.Service.query.filter_by(actual_service=1).delete()
         models.Service.query.delete()
+        models.CSR.query.delete()
+        models.CSRState.query.delete()
         models.Office.query.delete()
         models.SmartBoard.query.delete()
+        models.Role.query.delete()
         db.session.commit()
 
         print("Starting to bootstrap data")
 
-        smartboard1 = models.SmartBoard("Test")
+        smartboard1 = models.SmartBoard(type="Test")
 
         db.session.add(smartboard1)
         db.session.flush()
 
-        office1 = models.Office("Summerland", 1, smartboard1.sb_id)
+        office1 = models.Office(
+            office_name="Summerland", 
+            office_number=1, 
+            sb_id=smartboard1.sb_id
+        )
 
-        office2 = models.Office("Victoria", 2, smartboard1.sb_id)
 
-        office3 = models.Office("Vernon", 3, smartboard1.sb_id)
+        office2 = models.Office(
+            office_name="Victoria", 
+            office_number=2, 
+            sb_id=smartboard1.sb_id
+        )
 
-        office4 = models.Office("Test Office", 4, smartboard1.sb_id)
+        office3 = models.Office(
+            office_name="Vernon", 
+            office_number=3, 
+            sb_id=smartboard1.sb_id
+        )
+
+        office4 = models.Office(
+            office_name="Test Office", 
+            office_number=4, 
+            sb_id=smartboard1.sb_id
+        )
 
         db.session.add(office1)
         db.session.add(office2)
@@ -172,22 +192,118 @@ class Bootstrap(Command):
         office4.services.append(service8)
         office4.services.append(service9)
 
-        adamkroon = models.User("adamkroon", office1.office_id)
-        cdmcinto = models.User("cdmcinto", office1.office_id)
-        kgillani = models.User("kgillani", office1.office_id)
-        scottrumsby = models.User("scottrumsby", office1.office_id)
-        seanrumsby = models.User("seanrumsby", office1.office_id)
+        role1 = models.Role(
+            role_code="GA",
+            role_desc="GA"
+        )
 
-        cfms_postman_operator = models.User("cfms-postman-operator", office2.office_id)
-        cfms_postman_non_operator = models.User("cfms-postman-non-operator", office2.office_id)
+        role2 = models.Role(
+            role_code="CSR",
+            role_desc="CSR"
+        )
+
+        db.session.add(role1)
+        db.session.add(role2)
+        db.session.commit()
+
+        csr_state1 = models.CSRState(
+            csr_state_name="Logout",
+            csr_state_desc="Logging out"
+        )
+
+        csr_state2 = models.CSRState(
+            csr_state_name="Login",
+            csr_state_desc="Logging in"
+        )
+
+        csr_state3 = models.CSRState(
+            csr_state_name="Break",
+            csr_state_desc="Currently on break"
+        )
+
+        csr_state4 = models.CSRState(
+            csr_state_name="Serving",
+            csr_state_desc="Serving a citizen"
+        )
+
+        csr_state5 = models.CSRState(
+            csr_state_name="Back Office",
+            csr_state_desc="Currently in back office"
+        )
+
+        db.session.add(csr_state1)
+        db.session.add(csr_state2)
+        db.session.add(csr_state3)
+        db.session.add(csr_state4)
+        db.session.add(csr_state5)
+        db.session.commit()
+
+
+        adamkroon = models.CSR(
+            username="adamkroon", 
+            password="123", 
+            office_id=office1.office_id,
+            role_id=role2.role_id,
+            qt_xn_csr_now=1,
+            receptionist_now=1,
+            deleted=None,
+            csr_state_id=csr_state1.csr_state_id
+            )
+
+        cdmcinto = models.CSR(
+            username="cdmcinto",
+            password="123",
+            office_id=office2.office_id,
+            role_id=role1.role_id,
+            qt_xn_csr_now=1,
+            receptionist_now=1,
+            deleted=None,
+            csr_state_id=csr_state2.csr_state_id
+        )
+
+        kgillani = models.CSR(
+            username="kgillani",
+            password="234",
+            office_id=office1.office_id,
+            role_id=role2.role_id,
+            qt_xn_csr_now=1,
+            receptionist_now=1,
+            deleted=None,
+            csr_state_id=csr_state3.csr_state_id
+        )
+
+        scottrumsby = models.CSR(
+            username="scottrumsby",
+            password="345",
+            office_id=office4.office_id,
+            role_id= role1.role_id,
+            qt_xn_csr_now=1,
+            receptionist_now=1,
+            deleted=None,
+            csr_state_id=csr_state4.csr_state_id
+        )
+
+        seanrumsby = models.CSR(
+            username="seanrumsby",
+            password="456",
+            office_id=office3.office_id,
+            role_id=role2.role_id,
+            qt_xn_csr_now=1,
+            receptionist_now=1,
+            deleted=None,
+            csr_state_id=csr_state5.csr_state_id
+        )
+
+        #cfms_postman_operator = models.User("cfms-postman-operator", office2.office_id)
+        #cfms_postman_non_operator = models.User("cfms-postman-non-operator", office2.office_id)
 
         db.session.add(adamkroon)
         db.session.add(cdmcinto)
         db.session.add(kgillani)
         db.session.add(scottrumsby)
         db.session.add(seanrumsby)
-        db.session.add(cfms_postman_operator)
-        db.session.add(cfms_postman_non_operator)
+        #db.session.add(cfms_postman_operator)
+        #db.session.add(cfms_postman_non_operator)
 
         db.session.commit()
 
@@ -200,20 +316,27 @@ class Bootstrap(Command):
         db.session.flush()
 
         john = models.Citizen(
-        office_id = office1.office_id,
-        ticket_number = "1",
-        citizen_name = "John",
-        citizen_comments = "Blorp",
-        qt_xn_citizen = 0,
-        cs_id = cs1.cs_id
+            office_id = office1.office_id,
+            ticket_number = "1",
+            citizen_name = "John",
+            citizen_comments = "Blorp",
+            qt_xn_citizen = 0,
+            cs_id = cs1.cs_id
         )
 
         db.session.add(john)
         db.session.commit()
 
-        channel1 = models.Channel("In Person")
-        channel2 = models.Channel("Telephone")
-        channel3 = models.Channel("Email")
+        channel1 = models.Channel(
+            channel_name="In Person"
+        )
+
+        channel2 = models.Channel(
+            channel_name="Telephone"
+        )
+        channel3 = models.Channel(
+            channel_name="Email"
+        )
 
         db.session.add(channel1)
         db.session.add(channel2)

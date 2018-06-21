@@ -33,10 +33,8 @@ class Office(Base):
     def __repr__(self, office_name):
         return '<Office: %r>' % self.office_name
 
-    def __init__(self, office_name, office_number, sb_id):
-        self.office_name    = office_name
-        self.office_number  = office_number
-        self.sb_id          = sb_id
+    def __init__(self, **kwargs):
+        super(Office, self).__init__(**kwargs)
 
     def json(self, office_id, office_name, office_number, sb_id, deleted):
         return {"office_id" : self.office_id, 

@@ -30,15 +30,8 @@ class Period(Base):
     def __repr__(self, period_id):
         return '<Period: %r>' % self.period_id
 
-    def __init__(self, **args):
-        self.sr_id          = args.get("sr_id")
-        self.csr_id         = args.get("csr_id")
-        self.reception_csr  = args.get("reception_csr")
-        self.channel_id     = args.get("channel_id")
-        self.ps_id          = args.get("ps_id")
-        self.time_start     = args.get("time_start")    
-        self.time_end       = args.get("time_end")
-        self.accurate_time  = args.get("accurate_time")
+    def __init__(self, **kwargs):
+        super(Period, self).__init__(**kwargs)
 
     def json(self, **json_args):
         return {json_args['period_id']: self.period_id,

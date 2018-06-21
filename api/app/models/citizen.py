@@ -28,13 +28,8 @@ class Citizen(Base):
     def __repr__(self, citizen_name):
         return '<Citizen: %r>' % self.citizen_name
 
-    def __init__(self, **args):
-        self.office_id          = args.get("office_id")
-        self.ticket_number      = args.get("ticket_number")
-        self.citizen_name       = args.get("citizen_name")
-        self.citizen_comments   = args.get("citizen_comments")
-        self.qt_xn_citizen      = args.get("qt_xn_citizen")
-        self.cs_id              = args.get("cs_id")
+    def __init__(self, **kwargs):
+        super(Citizen, self).__init__(**kwargs)
 
     def json(self, **json_args):
         return {json_args['citizen_id']: self.citizen_id,

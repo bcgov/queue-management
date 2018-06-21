@@ -21,9 +21,8 @@ class Right(Base):
     def __repr__(self, right_code):
         return '<Right Code: %r>' % self.right_code
 
-    def __init__(self, right_code, right_desc):
-        self.right_code = right_code
-        self.right_desc = right_desc
+    def __init__(self, **kwargs):
+        super(Right, self).__init__(**kwargs)
 
     def json(self, right_id, right_code, right_desc):
         return {"right_id" : self.right_id, 

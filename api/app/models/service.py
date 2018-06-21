@@ -37,24 +37,15 @@ class Service(Base):
 
     offices             = db.relationship("Office", secondary=Office.office_service, back_populates="services")
     service_reqs        = db.relationship('ServiceReq', backref='service', lazy=False)
-    Services            = db.relationship('Service', backref='parent', lazy=False)
+    #services            = db.relationship('Service', backref='parent', lazy=False)
     # meta data is a reserved sqlalchemy keyword
-    metadatas            = db.relationship("Metadata", secondary=service_metadata, back_populates="services")
-
-
+    #metadatas           = db.relationship("Metadata", secondary=service_metadata, back_populates="services")
 
     def __repr__(self, service_name):
         return '<Service Name: %r>' % self.service_name
 
-    def __init__(self, **args):
-        self.service_code       = args.get("service_code")
-        self.service_name       = args.get("service_name")
-        self.service_desc       = args.get("service_desc")
-        self.parent_id          = args.get("parent_id")
-        self.deleted            = args.get("deleted")
-        self.prefix             = args.get("prefix")
-        self.display_dashboard  = args.get("display_dashboard")
-        self.actual_service     = args.get("actual_service")
+    def __init__(self, **kwargs):
+        super(Service, self).__init__(**kwargs)
 
     def json(self, **json_args):
         return {json_args['service_id']: self.service_id,

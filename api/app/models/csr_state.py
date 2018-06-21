@@ -20,10 +20,8 @@ class CSRState(Base):
     def __repr__(self, csr_state_name):
         return '<CSR State Name %r >' % self.csr_state_name
 
-    def __init__(self, csr_state_name, csr_state_desc):
-
-        self.csr_state_name = csr_state_name
-        self.csr_state_desc = csr_state_desc
+    def __init__(self, **kwargs):
+        super(CSRState, self).__init__(**kwargs)
 
     def json(self, csr_state_id, csr_state_name, csr_state_desc):
         return {"csr_state_id" : self.csr_state_id, 
