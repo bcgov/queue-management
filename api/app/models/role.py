@@ -25,7 +25,7 @@ class Role(Base):
     role_desc   = db.Column(db.String(1000))
 
     roles       = db.relationship('CSR', backref='role', lazy=False)
-    rights      = db.relationship("Right", secondary=role_right, back_populates="roles")
+    #rights      = db.relationship("Right", secondary=role_right, back_populates="roles")
 
     def __repr__(self, role_code):
         return '<Role Code: %r>' % self.role_code

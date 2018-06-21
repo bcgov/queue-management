@@ -2,7 +2,7 @@ from flask import request, g
 from flask_socketio import emit, join_room
 from jose import jwt
 
-from app.models import User
+#from app.models import User
 from qsystem import oidc, socketio
 
 @socketio.on('myEvent')

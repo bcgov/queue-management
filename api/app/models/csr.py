@@ -9,7 +9,7 @@ class CSR(Base):
         'csr_id': fields.Integer,
         'username': fields.String,
         'password': fields.String,
-        'office_id_in_now': fields.Integer,
+        'office_id': fields.Integer,
         'role_id': fields.String,
         'qt_xn_csr_now': fields.Integer,
         'receptionist_now': fields.Integer,
@@ -23,7 +23,7 @@ class CSR(Base):
     password            = db.Column(db.String(45), nullable=False)
     office_id           = db.Column(db.Integer, db.ForeignKey('office.office_id'))
     role_id             = db.Column(db.Integer, db.ForeignKey('role.role_id'))
-    qt_xn_csr_now       = db.Column(db.Binary)
+    qt_xn_csr_now       = db.Column(db.Integer)
     receptionist_now    = db.Column(db.Integer)
     deleted             = db.Column(db.DateTime, nullable=True)
     csr_state_id        = db.Column(db.Integer, db.ForeignKey('csrstate.csr_state_id'))
@@ -40,7 +40,7 @@ class CSR(Base):
         return {json_args['csr_id']: self.csr_id,
                 json_args['username']: self.username,
                 json_args['password']: self.password,
-                json_args['office_id_in_now']: self.office_id_in_now,
+                json_args['office_id']: self.office_id_in_now,
                 json_args['role_id']: self.role_id,
                 json_args['qt_xn_csr_now']: self.qt_xn_csr_now,
                 json_args['receptionist_now']: self.receptionist_now,

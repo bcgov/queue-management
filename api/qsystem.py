@@ -34,8 +34,12 @@ oidc = OpenIDConnect(application)
 
 logging.basicConfig(format=application.config['LOGGING_FORMAT'], level=logging.INFO)
 
-import app.models
-import app.resources
+import app.resources.categories
+import app.resources.channels
+import app.resources.citizens
+import app.resources.health
+import app.resources.services
+import app.resources.websocket
 
 @api.errorhandler(SQLAlchemyError)
 def error_handler(e):

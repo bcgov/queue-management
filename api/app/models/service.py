@@ -37,9 +37,9 @@ class Service(Base):
 
     offices             = db.relationship("Office", secondary=Office.office_service, back_populates="services")
     service_reqs        = db.relationship('ServiceReq', backref='service', lazy=False)
-    Services            = db.relationship('Service', backref='parent', lazy=False)
+    #services            = db.relationship('Service', backref='parent', lazy=False)
     # meta data is a reserved sqlalchemy keyword
-    metadatas           = db.relationship("Metadata", secondary=service_metadata, back_populates="services")
+    #metadatas           = db.relationship("Metadata", secondary=service_metadata, back_populates="services")
 
     def __repr__(self, service_name):
         return '<Service Name: %r>' % self.service_name

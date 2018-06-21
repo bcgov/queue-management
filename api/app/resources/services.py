@@ -10,10 +10,10 @@ import logging
 from sqlalchemy import exc
 
 # LIST Services
-@api.route("/services/")
+@api.route("/services/", methods=["GET"])
 class Services(Resource):
 
-    #@oidc.accept_token(require_token=True)
+    @oidc.accept_token(require_token=True)
     def get(self):
         if request.args.get('office_id'):
             try:

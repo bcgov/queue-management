@@ -9,10 +9,10 @@ import logging
 from sqlalchemy import exc
 
 # LIST Service Catagories Specifically
-@api.route("/channels/")
+@api.route("/channels/", methods=["GET"])
 class Channels(Resource):
 
-    #@oidc.accept_token(require_token=True)
+    @oidc.accept_token(require_token=True)
     def get(self):
         try:
             channels = Channel.query.all()
