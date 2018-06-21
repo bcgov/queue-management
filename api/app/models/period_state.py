@@ -6,28 +6,15 @@ from sqlalchemy import BigInteger, Integer, String
 # TODO Please review the valid state table to see for testing
 class PeriodState(Base):
 
-    model = api.model('PeriodState', {
-        'ps_id': fields.Integer,
-        'ps_name': fields.String,
-        'ps_desc': fields.String,
-        'ps_number': fields.Integer
-        })
+    ps_id           = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    ps_name         = db.Column(db.String(100), nullable=False)
+    ps_desc         = db.Column(db.String(1000), nullable=False)
+    ps_number       = db.Column(db.Integer, nullable=False)
 
-    ps_id   = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    ps_name = db.Column(db.String(100))
-    ps_desc = db.Column(db.String(1000))
-    ps_name = db.Column(db.Integer)
-
-    periods = db.relationship('Period', backref='period_state', lazy=False)
+    periods         = db.relationship('Period', backref='period_state', lazy=False)
 
     def __repr__(self, ps_name):
         return '<Period State Name: %r>' % self.ps_name
 
     def __init__(self, **kwargs):
         super(PeriodState, self).__init__(**kwargs)
-
-    def json(self, ps_id, ps_name, ps_desc, ps_number):
-        return {"ps_id" : self.ps_id, 
-                "ps_name" : self.ps_name, 
-                "ps_desc" : self.ps_desc, 
-                "ps_number" : self.ps_number}

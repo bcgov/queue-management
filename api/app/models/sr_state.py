@@ -5,15 +5,9 @@ from sqlalchemy import BigInteger, String
 
 class SRState(Base):
 
-    model = api.model('SRState', {
-        'sr_state_id': fields.Integer,
-        'sr_code': fields.String,
-        'sr_state_desc': fields.String
-        })
-
-    sr_state_id     = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    sr_code         = db.Column(db.String(100))
-    sr_state_desc   = db.Column(db.String(1000))
+    sr_state_id     = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    sr_code         = db.Column(db.String(100), nullable=False)
+    sr_state_desc   = db.Column(db.String(1000), nullable=False)
 
     service_reqs    = db.relationship('ServiceReq', backref='sr_state', lazy=False)
 
@@ -22,8 +16,3 @@ class SRState(Base):
 
     def __init__(self, **kwargs):
         super(SRState, self).__init__(**kwargs)
-
-    def json(self, sr_state_id, sr_code, sr_state_desc):
-        return {"sr_state_id" : self.sr_state_id, 
-                "sr_code" : self.sr_code, 
-                "sr_state_desc" : self.sr_state_desc}
