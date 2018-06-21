@@ -80,6 +80,4 @@ class CitizenDetail(Resource):
             return {"message": "Citizen could not be found"}, 404
 
         #CS ID is the only thing that can change here, find out how it transitions ie//logic or input provided
-
-
         return
