@@ -1,17 +1,16 @@
 from flask_restplus import fields
 from qsystem import api, db
 from .base import Base 
-#
-from app.models import Right
+from app.models import Permission
 from sqlalchemy import BigInteger, String
 
 class Role(Base):
 
-    role_right  = db.Table('role_right',
-                            db.Column('role_id', db.Integer, 
-                                      db.ForeignKey('role.role_id'), primary_key=True),
-                            db.Column('right_id', db.Integer,
-                                      db.ForeignKey('right.right_id'), primary_key=True)
+    role_permission     = db.Table('role_permission',
+                                    db.Column('role_id', db.Integer, 
+                                            db.ForeignKey('role.role_id'), primary_key=True),
+                                    db.Column('permission_id', db.Integer,
+                                            db.ForeignKey('permission.permission_id'), primary_key=True)
     )
 
     model = api.model('Role', {

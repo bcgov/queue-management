@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: d5ef6d68c1ce
+Revision ID: 4ba1d579e452
 Revises: 
-Create Date: 2018-06-20 21:14:38.320365
+Create Date: 2018-06-20 21:55:56.941195
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'd5ef6d68c1ce'
+revision = '4ba1d579e452'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -46,11 +46,11 @@ def upgrade():
     sa.Column('ps_name', sa.Integer(), nullable=True),
     sa.PrimaryKeyConstraint('ps_id')
     )
-    op.create_table('right',
-    sa.Column('right_id', sa.Integer(), nullable=False),
-    sa.Column('right_code', sa.String(length=100), nullable=True),
-    sa.Column('right_desc', sa.String(length=1000), nullable=True),
-    sa.PrimaryKeyConstraint('right_id')
+    op.create_table('permission',
+    sa.Column('permission_id', sa.Integer(), nullable=False),
+    sa.Column('permission_code', sa.String(length=100), nullable=True),
+    sa.Column('permission_desc', sa.String(length=1000), nullable=True),
+    sa.PrimaryKeyConstraint('permission_id')
     )
     op.create_table('role',
     sa.Column('role_id', sa.Integer(), nullable=False),
@@ -91,12 +91,12 @@ def upgrade():
     sa.ForeignKeyConstraint(['sb_id'], ['smartboard.sb_id'], ),
     sa.PrimaryKeyConstraint('office_id')
     )
-    op.create_table('role_right',
+    op.create_table('role_permission',
     sa.Column('role_id', sa.Integer(), nullable=False),
-    sa.Column('right_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['right_id'], ['right.right_id'], ),
+    sa.Column('permission_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['permission_id'], ['permission.permission_id'], ),
     sa.ForeignKeyConstraint(['role_id'], ['role.role_id'], ),
-    sa.PrimaryKeyConstraint('role_id', 'right_id')
+    sa.PrimaryKeyConstraint('role_id', 'permission_id')
     )
     op.create_table('service_metadata',
     sa.Column('service_id', sa.Integer(), nullable=False),
@@ -177,13 +177,13 @@ def downgrade():
     op.drop_table('csr')
     op.drop_table('citizen')
     op.drop_table('service_metadata')
-    op.drop_table('role_right')
+    op.drop_table('role_permission')
     op.drop_table('office')
     op.drop_table('srstate')
     op.drop_table('smartboard')
     op.drop_table('service')
     op.drop_table('role')
-    op.drop_table('right')
+    op.drop_table('permission')
     op.drop_table('periodstate')
     op.drop_table('metadata')
     op.drop_table('csrstate')

@@ -8,7 +8,7 @@ from .metadata import MetaData
 from .office import Office
 from .period import Period
 from .period_state import PeriodState
-from .right import Right
+from .permission import Permission
 from .role import Role
 from .service import Service
 from .service_req import ServiceReq
