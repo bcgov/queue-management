@@ -39,6 +39,7 @@ import app.resources.channels
 import app.resources.citizens
 import app.resources.health
 import app.resources.services
+import app.resources.slack
 import app.resources.websocket
 
 @api.errorhandler(SQLAlchemyError)

@@ -35,7 +35,7 @@ export const store = new Vuex.Store({
   },
   actions: {
     getAllClients(context) {
-      let url = "/clients/"
+      let url = "/citizens/"
       axiosInstance.get(url, { headers: {
         "Accept": "application/json",
         "Authorization": `Bearer ${localStorage.getItem("token")}`
@@ -51,12 +51,22 @@ export const store = new Vuex.Store({
       let clientObject = {
         name: payload.name
       }
-      let url = "/clients/"
+      let url = "/citizens/"
       axiosInstance.post(url, clientObject, { headers: {
         "Accept": "application/json",
         "Authorization": `Bearer ${localStorage.getItem("token")}`
       }})
-    }
+    },
+    messageSlack(context, payload) {
+      let slackObject = {
+        slack_message: payload.slack_message
+      }
+      let url = "/slack/"
+      axiosInstance.post(url, slackObject, { headers: {
+        "Accept": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem("token")}`
+      }})
+    },
   },
   mutations: {
     logIn: state => state.isLoggedIn = true,
