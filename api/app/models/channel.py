@@ -13,13 +13,13 @@ class Channel(Base):
     channel_id      = db.Column(db.Integer, primary_key=True, autoincrement=True)
     channel_name    = db.Column(db.String(100))
 
-    periods = db.relationship('Period', backref='channel', lazy=False)
+    periods         = db.relationship('Period', backref='channel', lazy=False)
 
     def __repr__(self, channel_name):
         return '<Channel Name: %r>' %  self.channel_name
 
-    def __init__(self, channel_name):
-        self.channel_name   = channel_name
+    def __init__(self, **kwargs):
+        super(Channel, self).__init__(**kwargs)
 
     def __json__(self, channel_id, channel_name):
         return {"channel_id" : self.channel_id, 

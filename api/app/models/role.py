@@ -27,13 +27,11 @@ class Role(Base):
     roles       = db.relationship('CSR', backref='role', lazy=False)
     rights      = db.relationship("Right", secondary=role_right, back_populates="roles")
 
-
     def __repr__(self, role_code):
         return '<Role Code: %r>' % self.role_code
 
-    def __init__(self, role_code, role_desc):
-        self.role_code  = role_code
-        self.role_desc  = role_desc
+    def __init__(self, **kwargs):
+        super(Role, self).__init__(**kwargs)
 
     def json(self, role_id, role_code, role_desc):
         return {"role_id" : self.role_id, 

@@ -33,15 +33,8 @@ class CSR(Base):
     def __repr__(self, username):
         return '<CSR User: %r>' % self.username
 
-    def __init__(self, **args):
-        self.username           = args.get("username")
-        self.password           = args.get("password")
-        self.office_id_in_now   = args.get("office_id_in_now")
-        self.role_id            = args.get("role_id")
-        self.qt_xn_csr_now      = args.get("qt_xn_csr_now")
-        self.receptionist_now   = args.get("receptionist_now")
-        self.deleted            = args.get("deleted")
-        self.csr_state_id_now   = args.get("csr_state_id_now")
+    def __init__(self, **kwargs):
+        super(CSR, self).__init__(**kwargs)
 
     def json(self, **json_args):
         return {json_args['csr_id']: self.csr_id,

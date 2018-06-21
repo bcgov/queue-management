@@ -23,10 +23,8 @@ class PeriodState(Base):
     def __repr__(self, ps_name):
         return '<Period State Name: %r>' % self.ps_name
 
-    def __init__(self, ps_name, ps_desc, ps_number):
-        self.ps_name    = ps_name
-        self.ps_desc    = ps_desc
-        self.ps_number  = ps_number
+    def __init__(self, **kwargs):
+        super(PeriodState, self).__init__(**kwargs)
 
     def json(self, ps_id, ps_name, ps_desc, ps_number):
         return {"ps_id" : self.ps_id, 

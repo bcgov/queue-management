@@ -20,9 +20,8 @@ class SRState(Base):
     def __repr__(self, sr_code):
         return '<SR Code: %r>' % self.sr_code   
 
-    def __init__(self, sr_code, sr_state_desc):
-        self.sr_code        = sr_code
-        self.sr_state_desc  = sr_state_desc
+    def __init__(self, **kwargs):
+        super(SRState, self).__init__(**kwargs)
 
     def json(self, sr_state_id, sr_code, sr_state_desc):
         return {"sr_state_id" : self.sr_state_id, 

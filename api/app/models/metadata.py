@@ -19,8 +19,8 @@ class MetaData(Base):
     def __repr__(self, meta_text):
         return '<Meta Text: %r>' % self.meta_text
 
-    def __init__(self, meta_text):
-        self.meta_text      = meta_text
+    def __init__(self, **kwargs):
+        super(MetaData, self).__init__(**kwargs)
 
     def json(self, metadata_id, meta_text):
         return {"metadata_id" : self.metadata_id, 
