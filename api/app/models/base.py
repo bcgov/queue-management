@@ -11,21 +11,17 @@ class Base(db.Model, object):
         return cls.__name__.lower()
 
     def save_to_db(self, session):
-        print ("Saving to db!")
         session.add(self)
 
     def save(self):
-        print ("saving!")
         run_transaction(sessionmaker, self.save_to_db)
     
     @classmethod
     def get_by_id(cls, id):
         
         def callback(session):
-
             obj = session.query(cls).get(id)
             session.expunge(obj)
-
             return obj
 
         return run_transaction(sessionmaker, callback)
