@@ -13,6 +13,7 @@ flask-socketio
 gunicorn
 kombu
 marshmallow
+marshmallow-sqlalchemy
 psycopg2-binary
 python-jose
 
