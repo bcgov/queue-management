@@ -17,11 +17,12 @@ class Base(db.Model, object):
         run_transaction(sessionmaker, self.save_to_db)
     
     @classmethod
-    def get_by_id(cls, id):
-        
+    def get_by_id(cls, id, remove_from_session=False):
+
         def callback(session):
             obj = session.query(cls).get(id)
-            session.expunge(obj)
+            if remove_from_session:
+                session.expunge(obj)
             return obj
 
         return run_transaction(sessionmaker, callback)
