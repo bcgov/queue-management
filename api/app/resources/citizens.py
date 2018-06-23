@@ -16,10 +16,10 @@ class CitizenList(Resource):
     citizen_schema = CitizenSchema()
     citizens_schema = CitizenSchema(many=True)
 
-    #@oidc.accept_token(require_token=True)
+    @oidc.accept_token(require_token=True)
     def get(self):
         try:
-            csr = CSR.query.filter_by(username='adamkroon').first()
+            csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
             citizens = Citizen.query.filter_by(office_id=csr.office_id).all()
             result = self.citizens_schema.dump(citizens)
             return jsonify({'citizens': result})
@@ -27,14 +27,14 @@ class CitizenList(Resource):
             print (e)
             return {"message": "api is down"}, 500
 
-    #@oidc.accept_token(require_token=True)
+    @oidc.accept_token(require_token=True)
     def post(self):
         json_data = request.get_json()
 
         if not json_data:
             return {"message": "No input data received for creating citizen"}, 400
         
-        csr = CSR.query.filter_by(username='adamkroon').first()
+        csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
 
         try:
             data = self.citizen_schema.load(json_data).data
@@ -58,14 +58,15 @@ class CitizenList(Resource):
 class CitizenDetail(Resource):
     
     citizen_schema = CitizenSchema()
-    #@oidc.accept_token(require_token=True)
+    @oidc.accept_token(require_token=True)
     def get(self, id):
         try:
-            csr = CSR.query.filter_by(username='adamkroon').first()
+            csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
             citizen = Citizen.get_by_id(id)
             result = self.citizen_schema.dump(citizen)
             return jsonify({'citizen': result})
         except exc.SQLAlchemyError as e:
+            print (e)
             return {"message": "api is down"}, 500
 
     def put(self, id):
@@ -74,8 +75,8 @@ class CitizenDetail(Resource):
         if not json_data:
             return {"message": "No input data received for creating citizen"}, 400
         
-        csr = CSR.query.filter_by(username='adamkroon').first()
-        citizen = Citizen.get_by_id(id)
+        csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        citizen = Citizen.get_by_id(id, True)
         
         try:
             data = self.citizen_schema.load(json_data, instance=citizen, partial=True).data
