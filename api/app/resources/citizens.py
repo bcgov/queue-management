@@ -69,6 +69,7 @@ class CitizenDetail(Resource):
             print (e)
             return {"message": "api is down"}, 500
 
+    @oidc.accept_token(require_token=True)
     def put(self, id):
         json_data = request.get_json()
         
