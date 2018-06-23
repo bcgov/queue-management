@@ -14,7 +14,7 @@ class PeriodState(Base):
     periods         = db.relationship('Period', backref='period_state', lazy=False)
 
     def __repr__(self, ps_name):
-        return '<Period State Name: %r>' % self.ps_name
+        return '<Period State Name:(name={self.ps_name!r})>'.format(self=self)
 
     def __init__(self, **kwargs):
         super(PeriodState, self).__init__(**kwargs)

@@ -20,8 +20,8 @@ class Role(Base):
     roles       = db.relationship('CSR', backref='role', lazy=False)
     #rights      = db.relationship("Right", secondary=role_right, back_populates="roles")
 
-    def __repr__(self, role_code):
-        return '<Role Code: %r>' % self.role_code
+    def __repr__(self):
+        return '<Role Code:(name={self.role_code!r})>'.format(self=self)
 
     def __init__(self, **kwargs):
         super(Role, self).__init__(**kwargs)

@@ -11,8 +11,8 @@ class SRState(Base):
 
     service_reqs    = db.relationship('ServiceReq', backref='sr_state', lazy=False)
 
-    def __repr__(self, sr_code):
-        return '<SR Code: %r>' % self.sr_code   
+    def __repr__(self):
+        return '<SR State Code:(name={self.sr_code!r})>'.format(self=self)   
 
     def __init__(self, **kwargs):
         super(SRState, self).__init__(**kwargs)

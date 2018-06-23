@@ -11,8 +11,8 @@ class CitizenState(Base):
 
     citizens        = db.relationship('Citizen', backref='citizen_state', lazy=False)
 
-    def __repr__(self, cs_state_name):
-        return '<CS State Name: %r>' % self.cs_state_name
+    def __repr__(self):
+        return '<Citizen State Name:(name={self.cs_state_name!r})>'.format(self=self)
 
     def __init__(self, **kwargs):
         super(CitizenState, self).__init__(**kwargs)

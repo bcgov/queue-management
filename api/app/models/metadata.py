@@ -11,8 +11,8 @@ class MetaData(Base):
 
     #services        = db.relationship("Service", secondary=Service.service_metadata, back_populates="metadata")
 
-    def __repr__(self, meta_text):
-        return '<Meta Text: %r>' % self.meta_text
+    def __repr__(self):
+        return '<Meta Data:(name={self.meta_text!r})>'.format(self=self)
 
     def __init__(self, **kwargs):
         super(MetaData, self).__init__(**kwargs)

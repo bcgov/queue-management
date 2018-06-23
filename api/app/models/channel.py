@@ -10,8 +10,8 @@ class Channel(Base):
 
     periods         = db.relationship('Period', backref='channel', lazy=False)
 
-    def __repr__(self, channel_name):
-        return '<Channel Name: %r>' %  self.channel_name
+    def __repr__(self):
+        return '<Channel Name:(name={self.channel_name!r})>'.format(self=self)
 
     def __init__(self, **kwargs):
         super(Channel, self).__init__(**kwargs)

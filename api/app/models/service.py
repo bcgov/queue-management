@@ -29,8 +29,8 @@ class Service(Base):
     # meta data is a reserved sqlalchemy keyword
     #metadatas           = db.relationship("Metadata", secondary=service_metadata, back_populates="services")
 
-    def __repr__(self, service_name):
-        return '<Service Name: %r>' % self.service_name
+    def __repr__(self):
+        return '<Service Name:(name={self.service_name!r})>'.format(self=self)
 
     def __init__(self, **kwargs):
         super(Service, self).__init__(**kwargs)

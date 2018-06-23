@@ -5,8 +5,8 @@ d           = db.Column(db.Integer, db.ForeignKey('smartboard.sb_id'), nullable=
     offices         = db.relationship('CSR', backref='office', lazy=False)
     citizens        = db.relationship('Citizen', backref='office', lazy=False)
 
-    def __repr__(self, office_name):
-        return '<Office: %r>' % self.office_name
+    def __repr__(self):
+        return '<Office Name:(name={self.office_name!r})>'.format(self=self)
 
     def __init__(self, **kwargs):
         super(Office, self).__init__(**kwargs)

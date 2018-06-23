@@ -15,8 +15,8 @@ class Period(Base):
     time_end            = db.Column(db.DateTime, nullable=True)
     accurate_time_ind   = db.Column(db.Integer, nullable=False)
 
-    def __repr__(self, period_id):
-        return '<Period: %r>' % self.period_id
+    def __repr__(self):
+        return '<Period id:(name={self.period_id!r})>'.format(self=self)
 
     def __init__(self, **kwargs):
         super(Period, self).__init__(**kwargs)

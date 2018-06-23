@@ -13,7 +13,7 @@ class Permission(Base):
     #roles        = db.relationship("Role", secondary=Role.role_right, back_populates="rights")
 
     def __repr__(self, permission_code):
-        return '<Permission Code: %r>' % self.permission_code
+        return '<Permission Code:(name={self.permission_code!r})>'.format(self=self)
 
     def __init__(self, **kwargs):
         super(Permission, self).__init__(**kwargs)
