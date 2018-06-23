@@ -8,17 +8,23 @@ from app.models import Office
 from cockroachdb.sqlalchemy import run_transaction
 import logging
 from sqlalchemy import exc
+from app.schemas import ServiceSchema
 
 @api.route("/services/", methods=["GET"])
 class Services(Resource):
 
-    @oidc.accept_token(require_token=True)
+    service_schema = ServiceSchema(many=True)
+    services_schema =  ServiceSchema(many=True)
+
+    #@oidc.accept_token(require_token=True)
     def get(self):
         if request.args.get('office_id'):
             try:
                 office_id = int(request.args['office_id'])
                 office = Office.query.get(office_id)
                 services = office.services
+                result = self.service_schema.dump(services)
+                return jsonify({'services': result})
             except exc.SQLAlchemyError as e:
                 print (e)
                 return {"message": "api is down"}, 500
@@ -27,8 +33,10 @@ class Services(Resource):
         else:    
             try:
                 services = Service.query.all()
+                result = self.services_schema.dump(services)
+                return jsonify({'services': result})
             except exc.SQLAlchemyError as e:
                 print (e)
                 return {"message": "api is down"}, 500
 
-        return api.marshal(services, Service.model), 200
+        #return api.marshal(services, Service.model), 200

@@ -7,14 +7,18 @@ from app.models import Service
 from cockroachdb.sqlalchemy import run_transaction
 import logging
 from sqlalchemy import exc
+from app.schemas import ServiceSchema
 
 @api.route("/categories/", methods=["GET"])
-class Catagories(Resource):
+class Categories(Resource):
+
+    categories_schema = ServiceSchema(many=True) 
 
     @oidc.accept_token(require_token=True)
     def get(self):
         try:
-            services = Service.query.filter_by(actual_service=0).all()
-            return api.marshal(services, Service.model), 200
+            services = Service.query.filter_by(actual_service_ind=0).all()
+            result =  self.categories_schema.dump(services)
+            return jsonify({'categories': result})
         except exc.SQLAlchemyError as e:
             return {"message": "api is down"}, 500
