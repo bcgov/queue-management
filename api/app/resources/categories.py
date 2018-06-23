@@ -8,7 +8,6 @@ from cockroachdb.sqlalchemy import run_transaction
 import logging
 from sqlalchemy import exc
 
-# LIST Service Catagories Specifically
 @api.route("/categories/", methods=["GET"])
 class Catagories(Resource):
 

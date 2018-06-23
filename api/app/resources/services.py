@@ -9,7 +9,6 @@ from cockroachdb.sqlalchemy import run_transaction
 import logging
 from sqlalchemy import exc
 
-# LIST Services
 @api.route("/services/", methods=["GET"])
 class Services(Resource):
 

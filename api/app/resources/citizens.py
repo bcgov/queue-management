@@ -3,21 +3,26 @@ from flask_restplus import Resource
 import sqlalchemy.orm
 from qsystem import api, db, oidc, socketio
 from app.auth import required_scope
-from app.models import Citizen, CSR
+from app.models import Citizen, CSR, CitizenState
 from cockroachdb.sqlalchemy import run_transaction
 import logging
 from marshmallow import ValidationError, pre_load
+from app.schemas import CitizenSchema
 from sqlalchemy import exc
 
 @api.route("/citizens/", methods=['GET', 'POST'])
 class CitizenList(Resource):
+
+    citizen_schema = CitizenSchema()
+    citizens_schema = CitizenSchema(many=True)
 
     @oidc.accept_token(require_token=True)
     def get(self):
         try:
             csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
             citizens = Citizen.query.filter_by(office_id=csr.office_id).all()
-            return api.marshal(citizens, Citizen.model), 200
+            result = self.citizens_schema.dump(citizens)
+            return jsonify({'citizens': result})
         except exc.SQLAlchemyError as e:
             print (e)
             return {"message": "api is down"}, 500
@@ -25,59 +30,60 @@ class CitizenList(Resource):
     @oidc.accept_token(require_token=True)
     def post(self):
         json_data = request.get_json()
+
         if not json_data:
             return {"message": "No input data received for creating citizen"}, 400
         
+        csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+
         try:
-            data = Citizen.load(json_data)
+            data = self.citizen_schema.load(json_data).data
+
+            if data['office_id'] != csr.office_id:
+                raise ValidationError("Office id is incorrect")
+
         except ValidationError as err:
             return {"message": err.messages}, 422
 
-        citizen_id          = data['citizen_id']
-        office_id           = data['office_id']
-        ticket_number       = data['ticket_number']
-        citizen_name        = data['citizen_name']
-        citizen_comments    = data['citizen_comments']
-        qt_xn_citizen       = data['qt_xn_citizen']
-        cs_id               = data['cs_id']
+        citizen_state = CitizenState.query.filter_by(cs_state_name="Active").first()
 
-        citizen = Citizen.query.filter_by(citizen_id=citizen_id)
+        data['cs_id'] = citizen_state.cs_id
 
-        if citizen is None:
-            citizen = Citizen(office_id=office_id,
-                              ticket_number=ticket_number,
-                              citizen_name=citizen_name,
-                              citizen_comments=citizen_comments,
-                              qt_xn_citizen=qt_xn_citizen,
-                              cs_id=cs_id)
-            sessionmaker = sqlalchemy.orm.sessionmaker(db.engine)
-            run_transaction(sessionmaker, Citizen.save)
-            #socketio.emit?
-            return {"message": "Citizen successfully created."}, 201
-        else:
-            return {"message": "Citizen already exists"}, 409
+        citizen = Citizen(**data)
+        citizen.save()
 
-    #def post_invite_citizen(self):
-        #return
+        return {"message": "Citizen successfully created."}, 201
 
-# LIST Specific Customer
-@api.route("/citizens/${citizenID}/", methods=["GET"])
+@api.route("/citizens/<int:id>/", methods=["GET","PUT"])
 class CitizenDetail(Resource):
     
-    #@oidc.accept_token(require_token=True)
-    def get_single_citizen(self, id):
+    citizen_schema = CitizenSchema()
+    @oidc.accept_token(require_token=True)
+    def get(self, id):
         try:
             csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
-            citizens = Citizen.query.filter_by(office_id=csr['office_id']).get(id)
-            return api.marshal(citizen, Citizen.model), 200
-        except exc.SQLAlchemy as e:
+            citizen = Citizen.get_by_id(id)
+            result = self.citizen_schema.dump(citizen)
+            return jsonify({'citizen': result})
+        except exc.SQLAlchemyError as e:
+            print (e)
             return {"message": "api is down"}, 500
 
-    def put_single_citizen(self, id):
+    def put(self, id):
+        json_data = request.get_json()
+        
+        if not json_data:
+            return {"message": "No input data received for creating citizen"}, 400
+        
+        csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        citizen = Citizen.get_by_id(id, True)
+        
         try:
-            citizen = Citizen.get(id)
-        except Citizen.DoesNotExist:
-            return {"message": "Citizen could not be found"}, 404
+            data = self.citizen_schema.load(json_data, instance=citizen, partial=True).data
 
-        #CS ID is the only thing that can change here, find out how it transitions ie//logic or input provided
-        return
+        except ValidationError as err:
+            return {"message": err.messages}, 422
+
+        citizen.save()
+
+        return {"message": "Citizen successfully created."}, 201

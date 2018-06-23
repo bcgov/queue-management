@@ -10,8 +10,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from app.patches.flask_oidc_patched import OpenIDConnect
 from app.exceptions import AuthError
-
-db = SQLAlchemy()
+import sqlalchemy.orm 
 
 application = Flask(__name__, instance_relative_config=True)
 
@@ -19,8 +18,12 @@ application = Flask(__name__, instance_relative_config=True)
 application.url_map.strict_slashes = True
 configure_app(application)
 
+db = SQLAlchemy(application)
+sessionmaker = sqlalchemy.orm.sessionmaker(db.engine)
 socketio = SocketIO(engineio_logger=True)
+
 if application.config['ACTIVE_MQ_URL'] != None:
+
     socketio.init_app(application, async_mode='eventlet', message_queue=application.config['ACTIVE_MQ_URL'], path='/api/v1/socket.io')
 else:  
     socketio.init_app(application, path='/api/v1/socket.io')
