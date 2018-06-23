@@ -6,16 +6,20 @@ from app.auth import required_scope
 from app.models import Channel
 from cockroachdb.sqlalchemy import run_transaction
 import logging
+from app.schemas import ChannelSchema
 from sqlalchemy import exc
 
-# LIST Service Catagories Specifically
 @api.route("/channels/", methods=["GET"])
-class Channels(Resource):
+class ChannelList(Resource):
 
-    @oidc.accept_token(require_token=True)
+    channels_schema =  ChannelSchema(many=True)
+
+    #@oidc.accept_token(require_token=True)
     def get(self):
         try:
             channels = Channel.query.all()
-            return api.marshal(channels, Channel.model), 200
+            result = self.channels_schema.dump(channels)
+
+            return jsonify({'channels': result})
         except exc.SQLAlchemyError as e:
             return {"message": "api is down"}, 500
