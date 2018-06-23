@@ -17,7 +17,7 @@ class Bootstrap(Command):
         models.Citizen.query.delete()
         models.CitizenState.query.delete()
         models.Channel.query.delete()
-        models.Service.query.filter_by(actual_service=1).delete()
+        models.Service.query.filter_by(actual_service_ind=1).delete()
         models.Service.query.delete()
         models.CSR.query.delete()
         models.CSRState.query.delete()
@@ -28,7 +28,7 @@ class Bootstrap(Command):
 
         print("Starting to bootstrap data")
 
-        smartboard1 = models.SmartBoard(type="Test")
+        smartboard1 = models.SmartBoard(sb_type="Test")
 
         db.session.add(smartboard1)
         db.session.flush()
@@ -65,18 +65,33 @@ class Bootstrap(Command):
         db.session.flush()
 
         category1 = models.Service(
+            service_code = "abc123",
             service_name = "Licenses",
-            actual_service = 0
+            service_desc = "Licenses - this is a description",
+            #parent_id = 1,
+            prefix = "L",
+            display_dashboard_ind = 0,
+            actual_service_ind = 0
         )
 
         category2 = models.Service(
+            service_code = "abc1234",
             service_name = "Taxes",
-            actual_service = 0
+            service_desc = "Taxes - this is a description",
+            #parent_id = 2,
+            prefix = "T",
+            display_dashboard_ind = 0,
+            actual_service_ind = 0
         )
 
         category3 = models.Service(
+            service_code = "abc1235",
             service_name = "ICBC",
-            actual_service = 0
+            service_desc = "ICBC - this is a description",
+            #parent_id = 2,
+            prefix = "I",
+            display_dashboard_ind = 0,
+            actual_service_ind = 0
         )
 
         db.session.add(category1)
@@ -86,56 +101,92 @@ class Bootstrap(Command):
 
         service1 = models.Service(
             service_name = "Fishing",
+            service_desc = "Fishing - this is a description",
             parent_id = category1.service_id,
-            actual_service = 1
+            service_code = "abc1236",
+            prefix = "F",
+            display_dashboard_ind = 1,
+            actual_service_ind = 1
         )
 
         service2 = models.Service(
             service_name = "Hunting",
+            service_desc = "Hunting - this is a description",
             parent_id = category1.service_id,
-            actual_service = 1
+            service_code = "abc1237",
+            prefix = "H",
+            display_dashboard_ind = 1,
+            actual_service_ind = 1
         )
 
         service3 = models.Service(
             service_name = "Gold Mining",
+            service_desc = "Gold Mining - this is a description",
             parent_id = category1.service_id,
-            actual_service = 1
+            service_code = "abc1238",
+            prefix = "G",
+            display_dashboard_ind = 1,
+            actual_service_ind = 1
         )
 
         service4 = models.Service(
             service_name = "Property Taxes",
+            service_desc = "Property Taxes - this is a description",
             parent_id = category2.service_id,
-            actual_service = 1
+            service_code = "abc1239",
+            prefix = "P",
+            display_dashboard_ind = 1,
+            actual_service_ind = 1
         )
 
         service5 = models.Service(
             service_name = "MSP",
+            service_desc = "MSP - this is a description",
             parent_id = category2.service_id,
-            actual_service = 1
+            service_code = "abc12310",
+            prefix = "M",
+            display_dashboard_ind = 1,
+            actual_service_ind = 1
         )
 
         service6 = models.Service(
             service_name = "Class 5 Test",
+            service_desc = "Class 5 Test - this is a description",
             parent_id = category3.service_id,
-            actual_service = 1
+            service_code = "abc12311",
+            prefix = "C",
+            display_dashboard_ind = 1,
+            actual_service_ind = 1
         )
 
         service7 = models.Service(
             service_name = "Speeding Ticket",
+            service_desc = "Speeding Ticket - this is a description",
             parent_id = category3.service_id,
-            actual_service = 1
+            service_code = "abc12312",
+            prefix = "S",
+            display_dashboard_ind = 1,
+            actual_service_ind = 1
         )
 
         service8 = models.Service(
             service_name = "Class 6 Test",
+            service_desc = "Class 6 Test - this is a description",
             parent_id = category3.service_id,
-            actual_service = 1
+            service_code = "abc12313",
+            prefix = "C",
+            display_dashboard_ind = 1,
+            actual_service_ind = 1
         )
 
         service9 = models.Service(
             service_name = "DUI",
+            service_desc = "DUI - this is a description",
             parent_id = category3.service_id,
-            actual_service = 1
+            service_code = "abc12314",
+            prefix = "D",
+            display_dashboard_ind = 1,
+            actual_service_ind = 1
         )
 
         db.session.add(service1)
@@ -240,56 +291,51 @@ class Bootstrap(Command):
 
 
         adamkroon = models.CSR(
-            username="adamkroon", 
-            password="123", 
+            username="adamkroon",  
             office_id=office1.office_id,
             role_id=role2.role_id,
-            qt_xn_csr_now=1,
-            receptionist_now=1,
+            qt_xn_csr_ind=1,
+            receptionist_ind=1,
             deleted=None,
             csr_state_id=csr_state1.csr_state_id
             )
 
         cdmcinto = models.CSR(
             username="cdmcinto",
-            password="123",
             office_id=office2.office_id,
             role_id=role1.role_id,
-            qt_xn_csr_now=1,
-            receptionist_now=1,
+            qt_xn_csr_ind=1,
+            receptionist_ind=1,
             deleted=None,
             csr_state_id=csr_state2.csr_state_id
         )
 
         kgillani = models.CSR(
             username="kgillani",
-            password="234",
             office_id=office1.office_id,
             role_id=role2.role_id,
-            qt_xn_csr_now=1,
-            receptionist_now=1,
+            qt_xn_csr_ind=1,
+            receptionist_ind=1,
             deleted=None,
             csr_state_id=csr_state3.csr_state_id
         )
 
         scottrumsby = models.CSR(
             username="scottrumsby",
-            password="345",
             office_id=office4.office_id,
             role_id= role1.role_id,
-            qt_xn_csr_now=1,
-            receptionist_now=1,
+            qt_xn_csr_ind=1,
+            receptionist_ind=1,
             deleted=None,
             csr_state_id=csr_state4.csr_state_id
         )
 
         seanrumsby = models.CSR(
             username="seanrumsby",
-            password="456",
             office_id=office3.office_id,
             role_id=role2.role_id,
-            qt_xn_csr_now=1,
-            receptionist_now=1,
+            qt_xn_csr_ind=1,
+            receptionist_ind=1,
             deleted=None,
             csr_state_id=csr_state5.csr_state_id
         )
@@ -308,11 +354,23 @@ class Bootstrap(Command):
         db.session.commit()
 
         cs1 = models.CitizenState(
-            cs_state_name="Test",
-            cs_state_desc="Blah"
+            cs_state_name="Active",
+            cs_state_desc="Citizen is active"
+        )
+
+        cs2 = models.CitizenState(
+            cs_state_name="Received Services",
+            cs_state_desc="Citizen has received services"
+        )
+
+        cs3 = models.CitizenState(
+            cs_state_name="Left before receiving services",
+            cs_state_desc="Citizen is now gone"
         )
 
         db.session.add(cs1)
+        db.session.add(cs2)
+        db.session.add(cs3)
         db.session.flush()
 
         john = models.Citizen(
@@ -320,8 +378,9 @@ class Bootstrap(Command):
             ticket_number = "1",
             citizen_name = "John",
             citizen_comments = "Blorp",
-            qt_xn_citizen = 0,
-            cs_id = cs1.cs_id
+            qt_xn_citizen_ind = 0,
+            cs_id = cs1.cs_id,
+            start_time  = '2018-06-23 10:22:30'
         )
 
         db.session.add(john)
