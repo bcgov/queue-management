@@ -16,7 +16,7 @@ class Services(Resource):
     service_schema = ServiceSchema(many=True)
     services_schema =  ServiceSchema(many=True)
 
-    #@oidc.accept_token(require_token=True)
+    @oidc.accept_token(require_token=True)
     def get(self):
         if request.args.get('office_id'):
             try:
@@ -25,9 +25,11 @@ class Services(Resource):
                 services = office.services
                 result = self.service_schema.dump(services)
                 return jsonify({'services': result})
+
             except exc.SQLAlchemyError as e:
                 print (e)
                 return {"message": "api is down"}, 500
+
             except ValueError as e:
                 return {"message": "office_id must be an integer."}, 400
         else:    
@@ -35,8 +37,7 @@ class Services(Resource):
                 services = Service.query.all()
                 result = self.services_schema.dump(services)
                 return jsonify({'services': result})
+                
             except exc.SQLAlchemyError as e:
                 print (e)
                 return {"message": "api is down"}, 500
-
-        #return api.marshal(services, Service.model), 200

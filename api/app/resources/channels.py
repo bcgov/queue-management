@@ -19,7 +19,8 @@ class ChannelList(Resource):
         try:
             channels = Channel.query.all()
             result = self.channels_schema.dump(channels)
-
             return jsonify({'channels': result})
+
         except exc.SQLAlchemyError as e:
+            print (e)
             return {"message": "api is down"}, 500

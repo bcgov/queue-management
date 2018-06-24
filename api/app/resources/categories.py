@@ -20,5 +20,7 @@ class Categories(Resource):
             services = Service.query.filter_by(actual_service_ind=0).all()
             result =  self.categories_schema.dump(services)
             return jsonify({'categories': result})
+
         except exc.SQLAlchemyError as e:
+            print (e)
             return {"message": "api is down"}, 500

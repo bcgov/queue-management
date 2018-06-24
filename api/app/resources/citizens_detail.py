@@ -14,7 +14,7 @@ from sqlalchemy import exc
 class CitizenDetail(Resource):
     
     citizen_schema = CitizenSchema()
-    
+
     @oidc.accept_token(require_token=True)
     def get(self, id):
         try:
@@ -22,6 +22,7 @@ class CitizenDetail(Resource):
             citizen = Citizen.get_by_id(id)
             result = self.citizen_schema.dump(citizen)
             return jsonify({'citizen': result})
+
         except exc.SQLAlchemyError as e:
             print (e)
             return {"message": "api is down"}, 500
@@ -43,5 +44,4 @@ class CitizenDetail(Resource):
             return {"message": err.messages}, 422
 
         citizen.save()
-
         return {"message": "Citizen successfully created."}, 201
