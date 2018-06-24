@@ -21,7 +21,8 @@ from app.models import Citizen, CSR, CitizenState
 from cockroachdb.sqlalchemy import run_transaction
 import logging
 from marshmallow import ValidationError, pre_load
-from app.schemas import CitizenSchema
+from app.models import ServiceReq
+from app.schemas import CitizenSchema, ServiceReqSchema
 from sqlalchemy import exc
 
 @api.route("/citizens/<int:id>/", methods=["GET","PUT"])
@@ -48,7 +49,7 @@ class CitizenDetail(Resource):
         json_data = request.get_json()
         
         if not json_data:
-            return {'message': 'No input data received for creating citizen'}, 400
+            return {'message': 'No input data received for updating citizen'}, 400
         
         #csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
         csr = CSR.query.filter_by(username='adamkroon').first()
@@ -65,3 +66,22 @@ class CitizenDetail(Resource):
         result = self.citizen_schema.dump(citizen)
 
         return {'citizen': result.data, 'errors': result.errors}, 200
+
+@api.route("/citizens/<int:id>/service_requests/", methods=["GET"])
+class CitizenServiceRequests(Resource):
+
+    service_requests_schema = ServiceReqSchema(many=True)
+
+    #@oidc.accept_token(require_token=True)
+    def get(self, id):
+        try:
+            #csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+            csr = CSR.query.filter_by(username='adamkroon').first()
+            citizen = Citizen.query.get(id)
+            result = self.service_requests_schema.dump(citizen.service_reqs)
+            return {'service_requests': result.data,
+                    'errors': result.errors}
+
+        except exc.SQLAlchemyError as e:
+            print (e)
+            return {'message': 'API is down'}, 500
