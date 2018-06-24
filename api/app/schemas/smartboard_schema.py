@@ -12,16 +12,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
 from app.models import SmartBoard
-from qsystem import db
+from qsystem import ma
 
-class SmartBoardSchema(ModelSchema):
+class SmartBoardSchema(ma.ModelSchema):
 
     class Meta:
         model = SmartBoard
-        sqla_session = db.session
 
     sb_id       = fields.Int()
     sb_type     = fields.Str()

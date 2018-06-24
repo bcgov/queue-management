@@ -14,7 +14,6 @@ limitations under the License.'''
 
 from flask import request, jsonify, g
 from flask_restplus import Resource
-import sqlalchemy.orm
 from qsystem import api, db, oidc, socketio
 from app.auth import required_scope
 from app.models import Citizen, CSR, CitizenState
@@ -23,7 +22,6 @@ import logging
 from marshmallow import ValidationError, pre_load
 from app.schemas import CitizenSchema
 from sqlalchemy import exc
-from sqlalchemy.orm import scoped_session, sessionmaker
 
 @api.route("/citizens/", methods=['GET', 'POST'])
 class CitizenList(Resource):
@@ -38,8 +36,7 @@ class CitizenList(Resource):
             csr = CSR.query.filter_by(username='adamkroon').first()
             citizens = Citizen.query.filter_by(office_id=csr.office_id).all()
             result = self.citizens_schema.dump(citizens)
-            return {'citizens': result.data,
-                    'errors': result.errors}, 200
+            return {'citizens': result.data, 'errors': result.errors}, 200
 
         except exc.SQLAlchemyError as e:
             print (e)
@@ -47,15 +44,13 @@ class CitizenList(Resource):
 
     #@oidc.accept_token(require_token=True)
     def post(self):
-        Session = scoped_session(sessionmaker(bind=db.engine))
-
         json_data = request.get_json()
         
         #csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
         csr = CSR.query.filter_by(username='adamkroon').first()
 
         try:
-           citizen = self.citizen_schema.load(json_data, session=Session).data
+           citizen = self.citizen_schema.load(json_data).data
            citizen.office_id = csr.office_id
 
         except ValidationError as err:
@@ -64,7 +59,8 @@ class CitizenList(Resource):
 
         citizen_state = CitizenState.query.filter_by(cs_state_name="Active").first()
         citizen.cs_id = citizen_state.cs_id
-        citizen.save()
+        db.session.add(citizen)
+        db.session.commit()
+        result = self.citizen_schema.dump(citizen)
 
-        return {'message': 'Citizen successfully created.'}, 201
-
+        return {'citizen': result.data, 'errors': result.errors}, 201

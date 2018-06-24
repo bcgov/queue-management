@@ -12,17 +12,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
 from app.models import Period
 from app.schemas import PeriodStateSchema, ChannelSchema
-from qsystem import db
+from qsystem import ma
 
-class PeriodSchema(ModelSchema):
+class PeriodSchema(ma.ModelSchema):
 
     class Meta:
         model = Period
-        sqla_session = db.session
 
     period_id           = fields.Int()
     sr_id               = fields.Int()

@@ -12,17 +12,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
 from app.models import ServiceReq
 from app.schemas import PeriodSchema, SRStateSchema, ServiceSchema
-from qsystem import db
+from qsystem import ma
 
-class ServiceReqSchema(ModelSchema):
+class ServiceReqSchema(ma.ModelSchema):
 
     class Meta:
         model = ServiceReq
-        sqla_session = db.session
 
     sr_id       = fields.Int()
     citizen_id  = fields.Int()

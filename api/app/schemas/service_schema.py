@@ -12,17 +12,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
 from app.models import Service
 from app.schemas import OfficeSchema
-from qsystem import db
+from qsystem import ma
 
-class ServiceSchema(ModelSchema):
+class ServiceSchema(ma.ModelSchema):
 
     class Meta:
         model = Service
-        sqla_session = db.session
 
     service_id              = fields.Int(dump_only=True)
     service_code            = fields.Str(dump_only=True)

@@ -12,16 +12,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
 from app.models import Channel
-from qsystem import db
+from qsystem import ma
 
-class ChannelSchema(ModelSchema):
+class ChannelSchema(ma.ModelSchema):
 
     class Meta:
         model = Channel
-        sqla_session = db.session
 
     channel_id      = fields.Int(dump_only=True)
     channel_name    = fields.Str()

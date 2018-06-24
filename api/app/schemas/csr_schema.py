@@ -12,16 +12,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
 from app.models import CSR
-from qsystem import db
+from qsystem import ma
 
-class CSRSchema(ModelSchema):
+class CSRSchema(ma.ModelSchema):
 
     class Meta:
         model = CSR
-        sqla_session = db.session
 
     csr_id              = fields.Int()
     username            = fields.Str()

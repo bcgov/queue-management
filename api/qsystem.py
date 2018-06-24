@@ -2,6 +2,7 @@ import datetime
 import logging
 from flask import Flask, g, session
 from flask_cors import CORS
+from flask_marshmallow import Marshmallow
 from flask_restplus import Api
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO
@@ -20,18 +21,18 @@ application = Flask(__name__, instance_relative_config=True)
 application.url_map.strict_slashes = True
 configure_app(application)
 
-
-
 db = SQLAlchemy(application)
+db.init_app(application)
 sessionmaker = sessionmaker(db.engine)
-session = scoped_session(sessionmaker())
+
+ma = Marshmallow(application)
+
 socketio = SocketIO(engineio_logger=True)
 
 if application.config['ACTIVE_MQ_URL'] != None:
     socketio.init_app(application, async_mode='eventlet', message_queue=application.config['ACTIVE_MQ_URL'], path='/api/v1/socket.io')
 else:  
     socketio.init_app(application, path='/api/v1/socket.io')
-db.init_app(application)
 
 CORS(application, supports_credentials=True, origins=application.config['CORS_ALLOWED_ORIGINS'])
 

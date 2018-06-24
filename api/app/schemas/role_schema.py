@@ -12,16 +12,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
 from app.models import Role
-from qsystem import db
+from qsystem import ma
 
-class RoleSchema(ModelSchema):
+class RoleSchema(ma.ModelSchema):
 
     class Meta:
         model = Role
-        sqla_session = db.session
 
     role_id     = fields.Int()
     role_code   = fields.Str()

@@ -12,16 +12,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
 from app.models import SRState
-from qsystem import db
+from qsystem import ma
 
-class SRStateSchema(ModelSchema):
+class SRStateSchema(ma.ModelSchema):
 
     class Meta:
         model = SRState
-        sqla_session = db.session
 
     sr_state_id     = fields.Int()
     sr_code         = fields.Str()

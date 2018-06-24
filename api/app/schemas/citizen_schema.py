@@ -12,17 +12,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
 from app.models import Citizen
 from app.schemas import ServiceReqSchema, CitizenStateSchema, OfficeSchema
-from qsystem import session
+from qsystem import ma
 
-class CitizenSchema(ModelSchema):
+class CitizenSchema(ma.ModelSchema):
 
     class Meta:
         model = Citizen
-        sqla_session = session
 
     citizen_id          = fields.Int(dump_only=True)
     office_id           = fields.Int()
@@ -34,4 +32,4 @@ class CitizenSchema(ModelSchema):
     start_time          = fields.DateTime(dump_only=True)
     service_reqs        = fields.Nested(ServiceReqSchema, many=True)
     cs                  = fields.Nested(CitizenStateSchema, exclude=('citizens', 'state_citizens'))
-    #office              = fields.Nested(OfficeSchema, exclude=('citizens', 'csrs', 'services'))
+    office              = fields.Nested(OfficeSchema, exclude=('citizens', 'csrs', 'services'))

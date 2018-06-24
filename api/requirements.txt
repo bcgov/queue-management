@@ -9,6 +9,7 @@ cockroachdb
 eventlet
 flask-cors
 flask-login
+flask_marshmallow
 flask-socketio
 gunicorn
 kombu

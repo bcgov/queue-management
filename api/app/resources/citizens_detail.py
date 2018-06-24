@@ -34,13 +34,12 @@ class CitizenDetail(Resource):
         try:
             #csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
             csr = CSR.query.filter_by(username='adamkroon').first()
-            citizen = Citizen.get_by_id(id)
+            citizen = Citizen.query.get(id)
             result = self.citizen_schema.dump(citizen)
             return {'citizen': result.data,
                     'errors': result.errors}
 
         except exc.SQLAlchemyError as e:
-            print ("Hello.")
             print (e)
             return {'message': 'API is down'}, 500
 
@@ -53,13 +52,16 @@ class CitizenDetail(Resource):
         
         #csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
         csr = CSR.query.filter_by(username='adamkroon').first()
-        citizen = Citizen.get_by_id(id, True)
+        citizen = Citizen.query.get(id)
         
         try:
-            data = self.citizen_schema.load(json_data, instance=citizen, partial=True).data
+            citizen = self.citizen_schema.load(json_data, instance=citizen, partial=True).data
 
         except ValidationError as err:
             return {'message': err.messages}, 422
 
-        citizen.save()
-        return {'message': 'Citizen successfully created.'}, 201
+        db.session.add(citizen)
+        db.session.commit()
+        result = self.citizen_schema.dump(citizen)
+
+        return {'citizen': result.data, 'errors': result.errors}, 200

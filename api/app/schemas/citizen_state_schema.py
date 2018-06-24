@@ -12,16 +12,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
 from app.models import CitizenState
-from qsystem import db
+from qsystem import ma
 
-class CitizenStateSchema(ModelSchema):
+class CitizenStateSchema(ma.ModelSchema):
 
     class Meta:
         model = CitizenState
-        sqla_session = db.session
 
     cs_id           = fields.Int()
     cs_state_name   = fields.Str()
