@@ -24,12 +24,26 @@ import logging
 from sqlalchemy import exc
 from app.schemas import ServiceReqSchema
 
-@api.route("/services_requests/", methods=["POST", "PUT"])
+@api.route("/services_requests/", methods=["GET", "POST", "PUT"])
 class ServiceRequests(Resource):
 
     service_requests_schema = ServiceRequestSchema(many=True)
 
-    @oidc.accept_token(require_token=True)
+    #@oidc.accept_token(require_token=True)
+    def get(self):
+        try:
+            csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+            citizens = Citizen.query.filter_by(office_id=csr.office_id).all()
+            result = self.citizens_schema.dump(citizens)
+            return {'citizens': result.data,
+                    'errors': result.errors}, 200
+
+        except exc.SQLAlchemyError as e:
+            print (e)
+            return {'message': 'API is down'}, 500
+
+
+    #@oidc.accept_token(require_token=True)
     def post(self):
         json_data = request.get_json()
 

@@ -29,27 +29,30 @@ class CitizenDetail(Resource):
     
     citizen_schema = CitizenSchema()
 
-    @oidc.accept_token(require_token=True)
+    #@oidc.accept_token(require_token=True)
     def get(self, id):
         try:
-            csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+            #csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+            csr = CSR.query.filter_by(username='adamkroon').first()
             citizen = Citizen.get_by_id(id)
             result = self.citizen_schema.dump(citizen)
             return {'citizen': result.data,
                     'errors': result.errors}
 
         except exc.SQLAlchemyError as e:
+            print ("Hello.")
             print (e)
             return {'message': 'API is down'}, 500
 
-    @oidc.accept_token(require_token=True)
+    #@oidc.accept_token(require_token=True)
     def put(self, id):
         json_data = request.get_json()
         
         if not json_data:
             return {'message': 'No input data received for creating citizen'}, 400
         
-        csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        #csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        csr = CSR.query.filter_by(username='adamkroon').first()
         citizen = Citizen.get_by_id(id, True)
         
         try:

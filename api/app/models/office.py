@@ -32,7 +32,7 @@ class Office(Base):
     sb_id           = db.Column(db.Integer, db.ForeignKey('smartboard.sb_id'))
     deleted         = db.Column(db.DateTime, nullable=True)
 
-    services        = db.relationship("Service", secondary=office_service, back_populates="offices")
+    services        = db.relationship("Service", secondary=office_service)
     csrs            = db.relationship('CSR', backref='office', lazy='joined')
     citizens        = db.relationship('Citizen', backref='office', lazy='joined')
 

@@ -14,6 +14,7 @@ limitations under the License.'''
 
 from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
+from app.models import Channel
 from qsystem import db
 
 class ChannelSchema(ModelSchema):

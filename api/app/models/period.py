@@ -29,8 +29,8 @@ class Period(Base):
     time_end            = db.Column(db.DateTime, nullable=True)
     accurate_time_ind   = db.Column(db.Integer, nullable=False)
 
-    period_state        = db.relationship("PeriodState", backref=db.backref("periods", lazy=False))
-    channel             = db.relationship("Channel", backref=db.backref("periods", lazy=False))
+    period_state        = db.relationship("PeriodState", backref=db.backref("state_periods", lazy=False))
+    channel             = db.relationship("Channel", backref=db.backref("channel_periods", lazy=False))
 
     def __repr__(self):
         return '<Period id:(name={self.period_id!r})>'.format(self=self)

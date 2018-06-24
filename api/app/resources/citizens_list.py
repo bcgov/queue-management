@@ -23,6 +23,7 @@ import logging
 from marshmallow import ValidationError, pre_load
 from app.schemas import CitizenSchema
 from sqlalchemy import exc
+from sqlalchemy.orm import scoped_session, sessionmaker
 
 @api.route("/citizens/", methods=['GET', 'POST'])
 class CitizenList(Resource):
@@ -30,10 +31,11 @@ class CitizenList(Resource):
     citizen_schema = CitizenSchema()
     citizens_schema = CitizenSchema(many=True)
 
-    @oidc.accept_token(require_token=True)
+    #@oidc.accept_token(require_token=True)
     def get(self):
         try:
-            csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+            #csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+            csr = CSR.query.filter_by(username='adamkroon').first()
             citizens = Citizen.query.filter_by(office_id=csr.office_id).all()
             result = self.citizens_schema.dump(citizens)
             return {'citizens': result.data,
@@ -43,27 +45,25 @@ class CitizenList(Resource):
             print (e)
             return {'message': 'API is down'}, 500
 
-    @oidc.accept_token(require_token=True)
+    #@oidc.accept_token(require_token=True)
     def post(self):
-        json_data = request.get_json()
+        Session = scoped_session(sessionmaker(bind=db.engine))
 
-        if not json_data:
-            return {'message': 'No input data received for creating citizen'}, 400
+        json_data = request.get_json()
         
-        csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        #csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        csr = CSR.query.filter_by(username='adamkroon').first()
 
         try:
-            data = self.citizen_schema.load(json_data).data
-            if data['office_id'] != csr.office_id:
-                raise ValidationError("Office id is incorrect")
+           citizen = self.citizen_schema.load(json_data, session=Session).data
+           citizen.office_id = csr.office_id
 
         except ValidationError as err:
             print (err)
-            return {'message': err.messages}, 422
+            return {"message": err.messages}, 422
 
         citizen_state = CitizenState.query.filter_by(cs_state_name="Active").first()
-        data['cs_id'] = citizen_state.cs_id
-        citizen = Citizen(**data)
+        citizen.cs_id = citizen_state.cs_id
         citizen.save()
 
         return {'message': 'Citizen successfully created.'}, 201

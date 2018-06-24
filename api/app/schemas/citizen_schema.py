@@ -16,13 +16,13 @@ from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
 from app.models import Citizen
 from app.schemas import ServiceReqSchema, CitizenStateSchema, OfficeSchema
-from qsystem import db
+from qsystem import session
 
 class CitizenSchema(ModelSchema):
 
     class Meta:
         model = Citizen
-        sqla_session = db.session
+        sqla_session = session
 
     citizen_id          = fields.Int(dump_only=True)
     office_id           = fields.Int()
@@ -32,6 +32,6 @@ class CitizenSchema(ModelSchema):
     qt_xn_citizen_ind   = fields.Int()
     cs_id               = fields.Int()
     start_time          = fields.DateTime(dump_only=True)
-    service_reqs        = fields.nested(ServiceReqSchema)
-    cs                  = fields.nested(CitizenStateSchema)
-    office              = fields.nested(OfficeSchema)
+    service_reqs        = fields.Nested(ServiceReqSchema)
+    cs                  = fields.Nested(CitizenStateSchema, exclude=('citizens', 'state_citizens'))
+    #office              = fields.Nested(OfficeSchema, exclude=('citizens', 'csrs', 'services'))

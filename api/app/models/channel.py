@@ -22,7 +22,7 @@ class Channel(Base):
     channel_id      = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     channel_name    = db.Column(db.String(100), nullable=False)
 
-    periods         = db.relationship('Period', backref='channel', lazy=False)
+    #periods         = db.relationship('Period', backref='channel', lazy=False)
 
     def __repr__(self):
         return '<Channel Name:(name={self.channel_name!r})>'.format(self=self)

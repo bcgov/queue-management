@@ -28,7 +28,7 @@ class Categories(Resource):
 
     categories_schema = ServiceSchema(many=True) 
 
-    @oidc.accept_token(require_token=True)
+    #@oidc.accept_token(require_token=True)
     def get(self):
         try:
             services = Service.query.filter_by(actual_service_ind=0).all()

@@ -15,6 +15,7 @@ limitations under the License.'''
 from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
 from app.models import Service
+from app.schemas import OfficeSchema
 from qsystem import db
 
 class ServiceSchema(ModelSchema):
