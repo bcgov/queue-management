@@ -33,7 +33,8 @@ class ChannelList(Resource):
         try:
             channels = Channel.query.all()
             result = self.channels_schema.dump(channels)
-            return jsonify({'channels': result})
+            return {'channels': result.data,
+                    'errors': result.errors}, 200
 
         except exc.SQLAlchemyError as e:
             print (e)

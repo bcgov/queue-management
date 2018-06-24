@@ -35,18 +35,19 @@ class CitizenDetail(Resource):
             csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
             citizen = Citizen.get_by_id(id)
             result = self.citizen_schema.dump(citizen)
-            return jsonify({'citizen': result})
+            return {'citizen': result.data,
+                    'errors': result.errors}
 
         except exc.SQLAlchemyError as e:
             print (e)
-            return {"message": "api is down"}, 500
+            return {'message': 'API is down'}, 500
 
     @oidc.accept_token(require_token=True)
     def put(self, id):
         json_data = request.get_json()
         
         if not json_data:
-            return {"message": "No input data received for creating citizen"}, 400
+            return {'message': 'No input data received for creating citizen'}, 400
         
         csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
         citizen = Citizen.get_by_id(id, True)
@@ -55,7 +56,7 @@ class CitizenDetail(Resource):
             data = self.citizen_schema.load(json_data, instance=citizen, partial=True).data
 
         except ValidationError as err:
-            return {"message": err.messages}, 422
+            return {'message': err.messages}, 422
 
         citizen.save()
-        return {"message": "Citizen successfully created."}, 201
+        return {'message': 'Citizen successfully created.'}, 201

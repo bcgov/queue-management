@@ -38,20 +38,22 @@ class Services(Resource):
                 office = Office.query.get(office_id)
                 services = office.services
                 result = self.service_schema.dump(services)
-                return jsonify({'services': result})
+                return {'services': result.data,
+                        'errors': result.errors}
 
             except exc.SQLAlchemyError as e:
                 print (e)
-                return {"message": "api is down"}, 500
+                return {'message': 'API is down'}, 500
 
             except ValueError as e:
-                return {"message": "office_id must be an integer."}, 400
+                return {'message': 'office_id must be an integer.'}, 400
         else:    
             try:
                 services = Service.query.all()
                 result = self.services_schema.dump(services)
-                return jsonify({'services': result})
+                return {'services': result.data,
+                        'errors': result.errors}
 
             except exc.SQLAlchemyError as e:
                 print (e)
-                return {"message": "api is down"}, 500
+                return {'message': 'api is down'}, 500

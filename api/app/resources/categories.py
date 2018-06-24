@@ -33,8 +33,9 @@ class Categories(Resource):
         try:
             services = Service.query.filter_by(actual_service_ind=0).all()
             result =  self.categories_schema.dump(services)
-            return jsonify({'categories': result})
+            return {'categories': result.data, 
+                    'errors': result.errors}, 200
 
         except exc.SQLAlchemyError as e:
             print (e)
-            return {"message": "api is down"}, 500
+            return {"message": "API is down"}, 500
