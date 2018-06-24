@@ -29,6 +29,9 @@ class Citizen(Base):
     start_time          = db.Column(db.DateTime, default=datetime.now(), nullable=False)
 
     service_reqs        = db.relationship('ServiceReq', backref='citizen', lazy=False)
+    cs                  = db.relationship('CitizenState', backref=db.backref("citizens", lazy="joined"))
+    office              = db.relationship('Office', backref=db.backref("citizens", lazy=False))
+
 
     def __repr__(self):
         return '<Citizen Name:(name={self.citizen_name!r})>'.format(self=self)

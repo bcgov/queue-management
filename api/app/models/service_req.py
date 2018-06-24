@@ -26,6 +26,8 @@ class ServiceReq(Base):
     sr_state_id = db.Column(db.Integer, db.ForeignKey('srstate.sr_state_id'), nullable=False)
 
     periods     = db.relationship('Period', backref='service_req', lazy=False)
+    sr_state    = db.relationship('SRState', backref=db.backref("service_req", lazy=False))
+    service     = db.relationship('Service', backref=db.backref("service_req", lazy=False))
 
     def __init__(self, **kwargs):
         super(ServiceReq, self).__init__(**kwargs)
