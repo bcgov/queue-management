@@ -1,3 +1,17 @@
+'''Copyright 2018 Province of British Columbia
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.'''
+
 from flask_restplus import fields
 from qsystem import api, db
 from .base import Base 
@@ -14,7 +28,10 @@ class Citizen(Base):
     cs_id               = db.Column(db.BigInteger, db.ForeignKey('citizenstate.cs_id'), nullable=False)
     start_time          = db.Column(db.DateTime, default=datetime.now(), nullable=False)
 
-    service_reqs        = db.relationship('ServiceReq', backref='citizen', lazy=False)
+    #service_reqs        = db.relationship('ServiceReq', backref='citizen', lazy=False)
+    cs                  = db.relationship('CitizenState', backref=db.backref("state_citizens", lazy="joined"))
+    #office              = db.relationship('Office', backref=db.backref("citizens", lazy=False))
+
 
     def __repr__(self):
         return '<Citizen Name:(name={self.citizen_name!r})>'.format(self=self)

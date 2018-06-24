@@ -14,14 +14,15 @@ limitations under the License.'''
 
 from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
-from app.models import Channel
+from app.models import CSRState
 from qsystem import db
 
-class ChannelSchema(ModelSchema):
+class CSRStateSchema(ModelSchema):
 
     class Meta:
-        model = Channel
+        model = CSRState
         sqla_session = db.session
 
-    channel_id      = fields.Int(dump_only=True)
-    channel_name    = fields.Str()
+    csr_state_id    = fields.Int()
+    csr_state_name  = fields.Str()
+    csr_state_desc  = fields.Str()

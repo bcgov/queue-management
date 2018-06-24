@@ -14,14 +14,24 @@ limitations under the License.'''
 
 from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
-from app.models import Channel
+from app.models import Period
+from app.schemas import PeriodStateSchema, ChannelSchema
 from qsystem import db
 
-class ChannelSchema(ModelSchema):
+class PeriodSchema(ModelSchema):
 
     class Meta:
-        model = Channel
+        model = Period
         sqla_session = db.session
 
-    channel_id      = fields.Int(dump_only=True)
-    channel_name    = fields.Str()
+    period_id           = fields.Int()
+    sr_id               = fields.Int()
+    csr_id              = fields.Int()
+    reception_csr_ind   = fields.Int()
+    channel_id          = fields.Int()
+    ps_id               = fields.Int()
+    time_start          = fields.DateTime()
+    time_end            = fields.DateTime()
+    accurate_time_ind   = fields.Integer()
+    period_state        = fields.Nested(PeriodStateSchema)
+    channel             = fields.Nested(ChannelSchema)

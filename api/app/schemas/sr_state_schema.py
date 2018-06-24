@@ -14,14 +14,15 @@ limitations under the License.'''
 
 from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
-from app.models import Channel
+from app.models import SRState
 from qsystem import db
 
-class ChannelSchema(ModelSchema):
+class SRStateSchema(ModelSchema):
 
     class Meta:
-        model = Channel
+        model = SRState
         sqla_session = db.session
 
-    channel_id      = fields.Int(dump_only=True)
-    channel_name    = fields.Str()
+    sr_state_id     = fields.Int()
+    sr_code         = fields.Str()
+    sr_state_desc   = fields.Str()

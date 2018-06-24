@@ -14,14 +14,21 @@ limitations under the License.'''
 
 from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
-from app.models import Channel
+from app.models import ServiceReq
+from app.schemas import PeriodSchema, SRStateSchema, ServiceSchema
 from qsystem import db
 
-class ChannelSchema(ModelSchema):
+class ServiceReqSchema(ModelSchema):
 
     class Meta:
-        model = Channel
+        model = ServiceReq
         sqla_session = db.session
 
-    channel_id      = fields.Int(dump_only=True)
-    channel_name    = fields.Str()
+    sr_id       = fields.Int()
+    citizen_id  = fields.Int()
+    quantity    = fields.Int()
+    service_id  = fields.Int()
+    sr_state_id = fields.Int()
+    periods     = fields.Nested(PeriodSchema)
+    sr_state    = fields.Nested(SRStateSchema)
+    service     = fields.Nested(ServiceSchema)

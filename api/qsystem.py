@@ -10,7 +10,9 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from app.patches.flask_oidc_patched import OpenIDConnect
 from app.exceptions import AuthError
-import sqlalchemy.orm 
+
+from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 
 application = Flask(__name__, instance_relative_config=True)
 
@@ -18,12 +20,14 @@ application = Flask(__name__, instance_relative_config=True)
 application.url_map.strict_slashes = True
 configure_app(application)
 
+
+
 db = SQLAlchemy(application)
-sessionmaker = sqlalchemy.orm.sessionmaker(db.engine)
+sessionmaker = sessionmaker(db.engine)
+session = scoped_session(sessionmaker())
 socketio = SocketIO(engineio_logger=True)
 
 if application.config['ACTIVE_MQ_URL'] != None:
-
     socketio.init_app(application, async_mode='eventlet', message_queue=application.config['ACTIVE_MQ_URL'], path='/api/v1/socket.io')
 else:  
     socketio.init_app(application, path='/api/v1/socket.io')
@@ -39,7 +43,8 @@ logging.basicConfig(format=application.config['LOGGING_FORMAT'], level=logging.I
 
 import app.resources.categories
 import app.resources.channels
-import app.resources.citizens
+import app.resources.citizens_list
+import app.resources.citizens_detail
 import app.resources.health
 import app.resources.services
 import app.resources.slack

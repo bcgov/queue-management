@@ -14,14 +14,14 @@ limitations under the License.'''
 
 from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
-from app.models import Channel
+from app.models import MetaData
 from qsystem import db
 
-class ChannelSchema(ModelSchema):
+class MetaDataSchema(ModelSchema):
 
     class Meta:
-        model = Channel
+        model = MetaData
         sqla_session = db.session
 
-    channel_id      = fields.Int(dump_only=True)
-    channel_name    = fields.Str()
+    metadata_id     = fields.Int()
+    meta_text       = fields.Str()

@@ -14,14 +14,15 @@ limitations under the License.'''
 
 from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
-from app.models import Channel
+from app.models import CitizenState
 from qsystem import db
 
-class ChannelSchema(ModelSchema):
+class CitizenStateSchema(ModelSchema):
 
     class Meta:
-        model = Channel
+        model = CitizenState
         sqla_session = db.session
 
-    channel_id      = fields.Int(dump_only=True)
-    channel_name    = fields.Str()
+    cs_id           = fields.Int()
+    cs_state_name   = fields.Str()
+    cs_state_desc   = fields.Str()

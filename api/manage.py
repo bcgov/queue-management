@@ -4,6 +4,7 @@ from flask_migrate import Migrate, MigrateCommand, upgrade
 from qsystem import db, application
 from app import models
 import logging
+from datetime import datetime
 
 migrate = Migrate(application, db)
 manager = Manager(application)
@@ -380,7 +381,7 @@ class Bootstrap(Command):
             citizen_comments = "Blorp",
             qt_xn_citizen_ind = 0,
             cs_id = cs1.cs_id,
-            start_time  = '2018-06-23 10:22:30'
+            start_time  = datetime.now()
         )
 
         db.session.add(john)

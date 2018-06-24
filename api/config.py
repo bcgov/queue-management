@@ -36,20 +36,6 @@ class LocalConfig(BaseConfig):
 
     SLACK_URL = os.getenv('SLACK_URL')
 
-    DB_ENGINE = os.getenv('DATABASE_ENGINE', 'cockroachdb')
-    DB_USER = os.getenv('DATABASE_USERNAME', 'qsystem')
-    DB_PASSWORD = os.getenv('DATABASE_PASSWORD','')
-    DB_NAME = os.getenv('DATABASE_NAME','queue_management')
-    DB_HOST = os.getenv('DATABASE_HOST','localhost')
-    DB_PORT = os.getenv('DATABASE_PORT','26257')
-    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}'.format(
-        engine=DB_ENGINE,
-        user=DB_USER,
-        password=DB_PASSWORD,
-        host=DB_HOST,
-        port=DB_PORT,
-        name=DB_NAME,
-    )
 
 class DevelopmentConfig(BaseConfig):
     DEBUG = True

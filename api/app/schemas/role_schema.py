@@ -14,14 +14,15 @@ limitations under the License.'''
 
 from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
-from app.models import Channel
+from app.models import Role
 from qsystem import db
 
-class ChannelSchema(ModelSchema):
+class RoleSchema(ModelSchema):
 
     class Meta:
-        model = Channel
+        model = Role
         sqla_session = db.session
 
-    channel_id      = fields.Int(dump_only=True)
-    channel_name    = fields.Str()
+    role_id     = fields.Int()
+    role_code   = fields.Str()
+    role_desc   = fields.Str()
