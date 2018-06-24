@@ -19,6 +19,10 @@ from qsystem import db
 
 class PeriodStateSchema(ModelSchema):
 
+    class Meta:
+        model = PeriodState
+        sqla_session = db.session
+
     ps_id           = fields.Int()
     ps_name         = fields.Str()
     ps_desc         = fields.Str()

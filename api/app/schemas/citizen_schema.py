@@ -15,6 +15,7 @@ limitations under the License.'''
 from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
 from app.models import Citizen
+from app.schemas import ServiceReqSchema, CitizenStateSchema, OfficeSchema
 from qsystem import db
 
 class CitizenSchema(ModelSchema):
@@ -31,3 +32,6 @@ class CitizenSchema(ModelSchema):
     qt_xn_citizen_ind   = fields.Int()
     cs_id               = fields.Int()
     start_time          = fields.DateTime(dump_only=True)
+    service_reqs        = fields.nested(ServiceReqSchema)
+    cs                  = fields.nested(CitizenStateSchema)
+    office              = fields.nested(OfficeSchema)

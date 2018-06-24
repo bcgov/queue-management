@@ -19,6 +19,10 @@ from qsystem import db
 
 class CitizenStateSchema(ModelSchema):
 
+    class Meta:
+        model = CitizenState
+        sqla_session = db.session
+
     cs_id           = fields.Int()
     cs_state_name   = fields.Str()
     cs_state_desc   = fields.Str()

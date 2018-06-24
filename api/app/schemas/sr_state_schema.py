@@ -19,6 +19,10 @@ from qsystem import db
 
 class SRStateSchema(ModelSchema):
 
+    class Meta:
+        model = SRState
+        sqla_session = db.session
+
     sr_state_id     = fields.Int()
     sr_code         = fields.Str()
     sr_state_desc   = fields.Str()

@@ -19,6 +19,10 @@ from qsystem import db
 
 class RoleSchema(ModelSchema):
 
+    class Meta:
+        model = Role
+        sqla_session = db.session
+
     role_id     = fields.Int()
     role_code   = fields.Str()
     role_desc   = fields.Str()

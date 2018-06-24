@@ -15,12 +15,20 @@ limitations under the License.'''
 from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
 from app.models import ServiceReq
+from app.schemas import PeriodSchema, SRStateSchema, ServiceSchema
 from qsystem import db
 
 class ServiceReqSchema(ModelSchema):
+
+    class Meta:
+        model = ServiceReq
+        sqla_session = db.session
 
     sr_id       = fields.Int()
     citizen_id  = fields.Int()
     quantity    = fields.Int()
     service_id  = fields.Int()
     sr_state_id = fields.Int()
+    periods     = fields.nested(PeriodSchema)
+    sr_state    = fields.nested(SRStateSchema)
+    service     = fields.nested(ServiceSchema)

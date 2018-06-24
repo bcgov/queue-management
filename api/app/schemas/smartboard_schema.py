@@ -19,5 +19,9 @@ from qsystem import db
 
 class SmartBoardSchema(ModelSchema):
 
+    class Meta:
+        model = SmartBoard
+        sqla_session = db.session
+
     sb_id       = fields.Int()
     sb_type     = fields.Str()

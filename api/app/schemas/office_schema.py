@@ -19,6 +19,10 @@ from qsystem import db
 
 class OfficeSchema(ModelSchema):
 
+    class Meta:
+        model = Office
+        sqla_session = db.session
+
     office_id       = fields.Int()
     office_name     = fields.Str()
     office_number   = fields.Int()

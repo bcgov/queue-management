@@ -19,6 +19,10 @@ from qsystem import db
 
 class PermissionSchema(ModelSchema):
 
+    class Meta:
+        model = Permission
+        sqla_session = db.session
+
     permission_id    = fields.Int()
     permission_code  = fields.Str()
     permission_desc  = fields.Str()

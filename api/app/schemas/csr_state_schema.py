@@ -19,6 +19,10 @@ from qsystem import db
 
 class CSRStateSchema(ModelSchema):
 
+    class Meta:
+        model = CSRState
+        sqla_session = db.session
+
     csr_state_id    = fields.Int()
     csr_state_name  = fields.Str()
     csr_state_desc  = fields.Str()

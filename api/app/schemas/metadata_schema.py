@@ -19,5 +19,9 @@ from qsystem import db
 
 class MetaDataSchema(ModelSchema):
 
+    class Meta:
+        model = MetaData
+        sqla_session = db.session
+
     metadata_id     = fields.Int()
     meta_text       = fields.Str()

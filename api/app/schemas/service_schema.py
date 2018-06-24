@@ -19,6 +19,10 @@ from qsystem import db
 
 class ServiceSchema(ModelSchema):
 
+    class Meta:
+        model = Service
+        sqla_session = db.session
+
     service_id              = fields.Int(dump_only=True)
     service_code            = fields.Str(dump_only=True)
     service_name            = fields.Str(dump_only=True)

@@ -19,6 +19,10 @@ from qsystem import db
 
 class CSRSchema(ModelSchema):
 
+    class Meta:
+        model = CSR
+        sqla_session = db.session
+
     csr_id              = fields.Int()
     username            = fields.Str()
     office_id           = fields.Int()
