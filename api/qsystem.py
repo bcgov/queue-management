@@ -39,7 +39,8 @@ logging.basicConfig(format=application.config['LOGGING_FORMAT'], level=logging.I
 
 import app.resources.categories
 import app.resources.channels
-import app.resources.citizens
+import app.resources.citizens_list
+import app.resources.citizens_detail
 import app.resources.health
 import app.resources.services
 import app.resources.slack
