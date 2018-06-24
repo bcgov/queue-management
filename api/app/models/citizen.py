@@ -21,7 +21,7 @@ class Citizen(Base):
 
     citizen_id          = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     office_id           = db.Column(db.Integer, db.ForeignKey('office.office_id'), nullable=False)
-    ticket_number       = db.Column(db.String(50), nullable=False)
+    ticket_number       = db.Column(db.String(50), nullable=True)
     citizen_name        = db.Column(db.String(150), nullable=True)
     citizen_comments    = db.Column(db.String(1000), nullable=True)
     qt_xn_citizen_ind   = db.Column(db.Integer, default=0, nullable=False)
@@ -39,3 +39,5 @@ class Citizen(Base):
     def __init__(self, **kwargs):
         super(Citizen, self).__init__(**kwargs)
         self.ticket_number = 'A1'
+
+    #def getActiveServiceRequest():

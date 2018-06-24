@@ -48,7 +48,8 @@ import app.resources.citizens_list
 import app.resources.citizens_detail
 import app.resources.health
 import app.resources.services
-import app.resources.service_requests
+import app.resources.service_requests_list
+import app.resources.service_requests_detail
 import app.resources.slack
 import app.resources.websocket
 

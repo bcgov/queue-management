@@ -31,3 +31,7 @@ class ServiceReq(Base):
 
     def __init__(self, **kwargs):
         super(ServiceReq, self).__init__(**kwargs)
+
+    #def getActiveServicePeriod():
+
+    #def getTicketNumber():

@@ -17,21 +17,22 @@ from flask_restplus import Resource
 import sqlalchemy.orm
 from qsystem import api, db, oidc, socketio
 from app.auth import required_scope
-from app.models import ServiceReq
-from app.models import Citizen
+from app.models import ServiceReq, Citizen, CSR
 from cockroachdb.sqlalchemy import run_transaction
 import logging
 from sqlalchemy import exc
+from app.models import ServiceReq
 from app.schemas import ServiceReqSchema
+from marshmallow import ValidationError
 
 @api.route("/service_requests/", methods=["POST"])
-class ServiceRequests(Resource):
+class ServiceRequestsList(Resource):
 
     service_requests_schema = ServiceReqSchema(many=True)
     service_request_schema = ServiceReqSchema()
 
-    #@oidc.accept_token(require_token=True)
-    '''def get(self):
+    '''#@oidc.accept_token(require_token=True)
+    def get(self):
         try:
             csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
             citizens = Citizen.query.filter_by(office_id=csr.office_id).all()
@@ -52,6 +53,7 @@ class ServiceRequests(Resource):
             return {"message": "No input data received for creating citizen"}, 400
         
         #csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        csr = CSR.query.filter_by(username='adamkroon').first()
 
         try:
             service_request = self.service_request_schema.load(json_data).data
