@@ -29,6 +29,6 @@ class ServiceReqSchema(ModelSchema):
     quantity    = fields.Int()
     service_id  = fields.Int()
     sr_state_id = fields.Int()
-    periods     = fields.Nested(PeriodSchema)
+    periods     = fields.Nested(PeriodSchema, many=True)
     sr_state    = fields.Nested(SRStateSchema)
     service     = fields.Nested(ServiceSchema)

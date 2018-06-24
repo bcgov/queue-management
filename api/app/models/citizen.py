@@ -28,7 +28,7 @@ class Citizen(Base):
     cs_id               = db.Column(db.BigInteger, db.ForeignKey('citizenstate.cs_id'), nullable=False)
     start_time          = db.Column(db.DateTime, default=datetime.now(), nullable=False)
 
-    #service_reqs        = db.relationship('ServiceReq', backref='citizen', lazy=False)
+    service_reqs        = db.relationship('ServiceReq', backref='citizen', lazy="joined")
     cs                  = db.relationship('CitizenState', backref=db.backref("state_citizens", lazy="joined"))
     #office              = db.relationship('Office', backref=db.backref("citizens", lazy=False))
 

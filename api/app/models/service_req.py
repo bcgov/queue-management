@@ -21,13 +21,13 @@ class ServiceReq(Base):
 
     sr_id       = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     citizen_id  = db.Column(db.Integer, db.ForeignKey('citizen.citizen_id'), nullable=False)
-    quantity    = db.Column(db.Integer, nullable=False)
+    quantity    = db.Column(db.Integer, default=1, nullable=False)
     service_id  = db.Column(db.Integer, db.ForeignKey('service.service_id'), nullable=False)
     sr_state_id = db.Column(db.Integer, db.ForeignKey('srstate.sr_state_id'), nullable=False)
 
     periods     = db.relationship('Period', backref=db.backref("request_periods", lazy=False))
     sr_state    = db.relationship('SRState', backref=db.backref("request_states", lazy=False))
-    service     = db.relationship('Service', backref=db.backref("request_services", lazy=False))
+    service     = db.relationship('Service')
 
     def __init__(self, **kwargs):
         super(ServiceReq, self).__init__(**kwargs)

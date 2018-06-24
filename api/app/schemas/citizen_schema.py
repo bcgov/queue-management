@@ -32,6 +32,6 @@ class CitizenSchema(ModelSchema):
     qt_xn_citizen_ind   = fields.Int()
     cs_id               = fields.Int()
     start_time          = fields.DateTime(dump_only=True)
-    service_reqs        = fields.Nested(ServiceReqSchema)
+    service_reqs        = fields.Nested(ServiceReqSchema, many=True)
     cs                  = fields.Nested(CitizenStateSchema, exclude=('citizens', 'state_citizens'))
     #office              = fields.Nested(OfficeSchema, exclude=('citizens', 'csrs', 'services'))

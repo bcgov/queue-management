@@ -24,13 +24,14 @@ import logging
 from sqlalchemy import exc
 from app.schemas import ServiceReqSchema
 
-@api.route("/services_requests/", methods=["GET", "POST", "PUT"])
+@api.route("/service_requests/", methods=["POST"])
 class ServiceRequests(Resource):
 
-    service_requests_schema = ServiceRequestSchema(many=True)
+    service_requests_schema = ServiceReqSchema(many=True)
+    service_request_schema = ServiceReqSchema()
 
     #@oidc.accept_token(require_token=True)
-    def get(self):
+    '''def get(self):
         try:
             csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
             citizens = Citizen.query.filter_by(office_id=csr.office_id).all()
@@ -40,7 +41,7 @@ class ServiceRequests(Resource):
 
         except exc.SQLAlchemyError as e:
             print (e)
-            return {'message': 'API is down'}, 500
+            return {'message': 'API is down'}, 500'''
 
 
     #@oidc.accept_token(require_token=True)
@@ -50,15 +51,14 @@ class ServiceRequests(Resource):
         if not json_data:
             return {"message": "No input data received for creating citizen"}, 400
         
-        csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        #csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
 
         try:
-            data = self.service_requests_schema.load(json_data).data
+            service_request = self.service_request_schema.load(json_data).data
 
         except ValidationError as err:
             return {"message": err.messages}, 422
 
-        # DO WORK HERE
-        citizen = 
+        service_request.save()
 
         return {"message": "Service Request successfully created."}, 201
