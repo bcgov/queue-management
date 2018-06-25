@@ -72,6 +72,16 @@ class ServiceRequestsList(Resource):
             accurate_time_ind = 1
         )
 
+        service_count = ServiceReq.query.all() \
+                .join(ServiceReq.citizen, aliased=True) \
+                .filter(Citizen.start_time >= datetime.now().strftime("%Y-%m-%d")) \
+                .filter_by(office_id=csr.office_id) \
+                .join(ServiceReg.service, aliased=True) \
+                .filter_by(prefix=service_request.service.prefix) \
+                .count()
+
+        service_request.citizen.ticket_number = service_request.service.prefix + str(service_count)
+
         db.session.add(ticket_create_period)
         db.session.commit()
 

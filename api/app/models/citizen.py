@@ -28,7 +28,7 @@ class Citizen(Base):
     cs_id               = db.Column(db.BigInteger, db.ForeignKey('citizenstate.cs_id'), nullable=False)
     start_time          = db.Column(db.DateTime, nullable=False)
 
-    service_reqs        = db.relationship('ServiceReq', backref='citizen', lazy="joined")
+    service_reqs        = db.relationship('ServiceReq')
     cs                  = db.relationship('CitizenState')
 
     def __repr__(self):
@@ -36,7 +36,6 @@ class Citizen(Base):
 
     def __init__(self, **kwargs):
         super(Citizen, self).__init__(**kwargs)
-        self.ticket_number = 'A1'
 
     def get_active_service_request(self):
         for sr in self.service_reqs:
@@ -46,11 +45,9 @@ class Citizen(Base):
         return None
 
     def get_service_start_time(self):
-        print(self.service_reqs)
         # If a service request already exists, then the start time for the next 
         # service should be the end time of the previous service request
         if len(self.service_reqs) >= 2:
-            print (self.service_reqs[-2].periods)
             return self.service_reqs[-2].periods[-1].time_end
         else:
             return self.start_time

@@ -119,7 +119,7 @@ class Bootstrap(Command):
             service_desc = "Hunting - this is a description",
             parent_id = category1.service_id,
             service_code = "abc1237",
-            prefix = "H",
+            prefix = "G",
             display_dashboard_ind = 1,
             actual_service_ind = 1
         )
