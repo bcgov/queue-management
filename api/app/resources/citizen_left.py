@@ -30,12 +30,12 @@ class CitizenLeft(Resource):
     service_request_schema = ServiceReqSchema(many=True)
     citizen_schema = CitizenSchema()
 
-    #@oidc.accept_token(require_token=True)
+    @oidc.accept_token(require_token=True)
     def post(self, id):
         json_data = request.get_json()
         
-        #csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
-        csr = CSR.query.filter_by(username='adamkroon').first()
+        csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        #csr = CSR.query.filter_by(username='adamkroon').first()
         citizen = Citizen.query.get(id) 
 
         sr_state = SRState.query.filter_by(sr_code="Complete").first()

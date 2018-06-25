@@ -28,7 +28,7 @@ class ChannelList(Resource):
 
     channels_schema =  ChannelSchema(many=True)
 
-    #@oidc.accept_token(require_token=True)
+    @oidc.accept_token(require_token=True)
     def get(self):
         try:
             channels = Channel.query.all()

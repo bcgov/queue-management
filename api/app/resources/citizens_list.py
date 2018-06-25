@@ -29,11 +29,11 @@ class CitizenList(Resource):
     citizen_schema = CitizenSchema()
     citizens_schema = CitizenSchema(many=True)
 
-    #@oidc.accept_token(require_token=True)
+    @oidc.accept_token(require_token=True)
     def get(self):
         try:
-            #csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
-            csr = CSR.query.filter_by(username='adamkroon').first()
+            csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+            #csr = CSR.query.filter_by(username='adamkroon').first()
             citizens = Citizen.query.filter_by(office_id=csr.office_id).all()
             result = self.citizens_schema.dump(citizens)
             return {'citizens': result.data, 'errors': result.errors}, 200
@@ -42,12 +42,12 @@ class CitizenList(Resource):
             print (e)
             return {'message': 'API is down'}, 500
 
-    #@oidc.accept_token(require_token=True)
+    @oidc.accept_token(require_token=True)
     def post(self):
         json_data = request.get_json()
         
-        #csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
-        csr = CSR.query.filter_by(username='adamkroon').first()
+        csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        #csr = CSR.query.filter_by(username='adamkroon').first()
 
         try:
            citizen = self.citizen_schema.load(json_data).data

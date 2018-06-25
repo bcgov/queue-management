@@ -32,15 +32,15 @@ class ServiceRequestsList(Resource):
     channel_schema = ChannelSchema()
     service_request_schema = ServiceReqSchema()
 
-    #@oidc.accept_token(require_token=True)
+    @oidc.accept_token(require_token=True)
     def post(self):
         json_data = request.get_json()
 
         if not json_data:
             return {"message": "No input data received for creating citizen"}, 400
         
-        #csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
-        csr = CSR.query.filter_by(username='adamkroon').first()
+        csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        #csr = CSR.query.filter_by(username='adamkroon').first()
 
         try:
             service_request = self.service_request_schema.load(json_data['service_request']).data

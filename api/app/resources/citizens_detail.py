@@ -30,11 +30,11 @@ class CitizenDetail(Resource):
     
     citizen_schema = CitizenSchema()
 
-    #@oidc.accept_token(require_token=True)
+    @oidc.accept_token(require_token=True)
     def get(self, id):
         try:
-            #csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
-            csr = CSR.query.filter_by(username='adamkroon').first()
+            csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+            #csr = CSR.query.filter_by(username='adamkroon').first()
             citizen = Citizen.query.get(id)
             result = self.citizen_schema.dump(citizen)
             return {'citizen': result.data,
@@ -44,15 +44,15 @@ class CitizenDetail(Resource):
             print (e)
             return {'message': 'API is down'}, 500
 
-    #@oidc.accept_token(require_token=True)
+    @oidc.accept_token(require_token=True)
     def put(self, id):
         json_data = request.get_json()
         
         if not json_data:
             return {'message': 'No input data received for updating citizen'}, 400
         
-        #csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
-        csr = CSR.query.filter_by(username='adamkroon').first()
+        csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        #csr = CSR.query.filter_by(username='adamkroon').first()
         citizen = Citizen.query.get(id)
         
         try:
@@ -72,10 +72,10 @@ class CitizenAddToQueue(Resource):
 
     citizen_schema = CitizenSchema()
 
-    #@oidc.accept_token(require_token=True)
+    @oidc.accept_token(require_token=True)
     def post(self, id):
-        #csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
-        csr = CSR.query.filter_by(username='adamkroon').first()
+        csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        #csr = CSR.query.filter_by(username='adamkroon').first()
         citizen = Citizen.query.get(id)
         active_service_request = citizen.get_active_service_request()
 
@@ -94,10 +94,10 @@ class CitizenInvite(Resource):
 
     citizen_schema = CitizenSchema()
 
-    #@oidc.accept_token(require_token=True)
+    @oidc.accept_token(require_token=True)
     def post(self, id):
-        #csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
-        csr = CSR.query.filter_by(username='adamkroon').first()
+        csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        #csr = CSR.query.filter_by(username='adamkroon').first()
         citizen = Citizen.query.get(id)
         active_service_request = citizen.get_active_service_request()
 
@@ -116,10 +116,10 @@ class CitizenBeginService(Resource):
 
     citizen_schema = CitizenSchema()
 
-    #@oidc.accept_token(require_token=True)
+    @oidc.accept_token(require_token=True)
     def post(self, id):
-        #csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
-        csr = CSR.query.filter_by(username='adamkroon').first()
+        csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        #csr = CSR.query.filter_by(username='adamkroon').first()
         citizen = Citizen.query.get(id)
         active_service_request = citizen.get_active_service_request()
 
@@ -138,10 +138,10 @@ class CitizenFinishService(Resource):
 
     citizen_schema = CitizenSchema()
 
-    #@oidc.accept_token(require_token=True)
+    @oidc.accept_token(require_token=True)
     def post(self, id):
-        #csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
-        csr = CSR.query.filter_by(username='adamkroon').first()
+        csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        #csr = CSR.query.filter_by(username='adamkroon').first()
         citizen = Citizen.query.get(id)
         active_service_request = citizen.get_active_service_request()
 
@@ -162,10 +162,10 @@ class CitizenPlaceOnHold(Resource):
 
     citizen_schema = CitizenSchema()
 
-    #@oidc.accept_token(require_token=True)
+    @oidc.accept_token(require_token=True)
     def post(self, id):
-        #csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
-        csr = CSR.query.filter_by(username='adamkroon').first()
+        csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        #csr = CSR.query.filter_by(username='adamkroon').first()
         citizen = Citizen.query.get(id)
         active_service_request = citizen.get_active_service_request()
 
@@ -184,11 +184,11 @@ class CitizenServiceRequests(Resource):
 
     service_requests_schema = ServiceReqSchema(many=True)
 
-    #@oidc.accept_token(require_token=True)
+    @oidc.accept_token(require_token=True)
     def get(self, id):
         try:
-            #csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
-            csr = CSR.query.filter_by(username='adamkroon').first()
+            csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+            #csr = CSR.query.filter_by(username='adamkroon').first()
             citizen = Citizen.query.get(id)
             result = self.service_requests_schema.dump(citizen.service_reqs)
             return {'service_requests': result.data,

@@ -30,7 +30,7 @@ class Services(Resource):
     service_schema = ServiceSchema(many=True)
     services_schema =  ServiceSchema(many=True)
 
-    #@oidc.accept_token(require_token=True)
+    @oidc.accept_token(require_token=True)
     def get(self):
         if request.args.get('office_id'):
             try:
