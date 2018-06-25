@@ -16,7 +16,7 @@ from flask_restplus import fields
 from qsystem import api, db
 from .base import Base 
 from sqlalchemy import BigInteger, Integer
-from app.models import Period
+from app.models import Period, PeriodState
 from datetime import datetime
 
 class ServiceReq(Base):
@@ -41,12 +41,14 @@ class ServiceReq(Base):
         active_period.time_end = datetime.now()
         db.session.add(active_period)
 
+        period_state_invite = PeriodState.query.filter_by(ps_name="Invited").first()
+
         new_period = Period(
             sr_id = self.sr_id,
             csr_id = csr.csr_id,
             reception_csr_ind = csr.receptionist_ind,
             channel_id = active_period.channel_id,
-            ps_id = 4,
+            ps_id = period_state_invite.ps_id,
             time_start = datetime.now(),
             accurate_time_ind = 1
         )
@@ -58,12 +60,14 @@ class ServiceReq(Base):
         active_period.time_end = datetime.now()
         db.session.add(active_period)
 
+        period_state_waiting = PeriodState.query.filter_by(ps_name="Waiting").first()
+
         new_period = Period(
             sr_id = self.sr_id,
             csr_id = csr.csr_id,
             reception_csr_ind = csr.receptionist_ind,
             channel_id = active_period.channel_id,
-            ps_id = 1,
+            ps_id = period_state_waiting.ps_id,
             time_start = datetime.now(),
             accurate_time_ind = 1
         )
@@ -75,12 +79,14 @@ class ServiceReq(Base):
         active_period.time_end = datetime.now()
         db.session.add(active_period)
 
+        period_state_being_served = PeriodState.query.filter_by(ps_name="Being Served").first()
+
         new_period = Period(
             sr_id = self.sr_id,
             csr_id = csr.csr_id,
             reception_csr_ind = csr.receptionist_ind,
             channel_id = active_period.channel_id,
-            ps_id = 7,
+            ps_id = period_state_being_served.ps_id,
             time_start = datetime.now(),
             accurate_time_ind = 1
         )
@@ -92,12 +98,14 @@ class ServiceReq(Base):
         active_period.time_end = datetime.now()
         db.session.add(active_period)
 
+        period_state_on_hold = PeriodState.query.filter_by(ps_name="On hold").first()
+
         new_period = Period(
             sr_id = self.sr_id,
             csr_id = csr.csr_id,
             reception_csr_ind = csr.receptionist_ind,
             channel_id = active_period.channel_id,
-            ps_id = 11,
+            ps_id = period_state_on_hold.ps_id,
             time_start = datetime.now(),
             accurate_time_ind = 1
         )
@@ -108,7 +116,3 @@ class ServiceReq(Base):
         active_period = self.get_active_period()
         active_period.time_end = datetime.now()
         db.session.add(active_period)
-
-    #def getActiveServicePeriod():
-
-    #def getTicketNumber():
