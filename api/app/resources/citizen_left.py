@@ -23,6 +23,7 @@ from marshmallow import ValidationError, pre_load
 from app.schemas import CitizenSchema, ServiceReqSchema
 from app.models import CitizenState, SRState, Service
 from sqlalchemy import exc
+from datetime import datetime
 
 @api.route("/citizens/<int:id>/citizen_left/", methods=['POST'])
 class CitizenLeft(Resource):
@@ -45,13 +46,14 @@ class CitizenLeft(Resource):
             service_request.sr_state_id = sr_state.sr_state_id
 
             for p in service_request.periods:
-                if p.end_time is None:
-                    p.end_time = datetime.now()
+                if p.time_end is None:
+                    p.time_end = datetime.now()
                     
                     db.session.add(p)
 
-        citizen.citizen_state = CitizenState.query.filter_by(cs_state_name='Left before receiving services').first()
+        citizen.cs = CitizenState.query.filter_by(cs_state_name='Left before receiving services').first()
         
+        db.session.add(citizen)
         db.session.add(service_request)
         db.session.commit()
         result = self.citizen_schema.dump(citizen)
