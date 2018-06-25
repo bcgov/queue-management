@@ -16,6 +16,8 @@ from flask_restplus import fields
 from qsystem import api, db
 from .base import Base 
 from sqlalchemy import BigInteger, Integer
+from app.models import Period
+from datetime import datetime
 
 class ServiceReq(Base):
 
@@ -26,11 +28,86 @@ class ServiceReq(Base):
     sr_state_id = db.Column(db.Integer, db.ForeignKey('srstate.sr_state_id'), nullable=False)
 
     periods     = db.relationship('Period', backref=db.backref("request_periods", lazy=False))
-    sr_state    = db.relationship('SRState', backref=db.backref("request_states", lazy=False))
-    service     = db.relationship('Service')
+    sr_state    = db.relationship('SRState')
 
     def __init__(self, **kwargs):
         super(ServiceReq, self).__init__(**kwargs)
+
+    def get_active_period(self):
+        return self.periods[-1]
+
+    def invite(self, csr):
+        active_period = self.get_active_period()
+        active_period.time_end = datetime.now()
+        db.session.add(active_period)
+
+        new_period = Period(
+            sr_id = self.sr_id,
+            csr_id = csr.csr_id,
+            reception_csr_ind = csr.receptionist_ind,
+            channel_id = active_period.channel_id,
+            ps_id = 4,
+            time_start = datetime.now(),
+            accurate_time_ind = 1
+        )
+
+        db.session.add(new_period)
+
+    def add_to_queue(self, csr):
+        active_period = self.get_active_period()
+        active_period.time_end = datetime.now()
+        db.session.add(active_period)
+
+        new_period = Period(
+            sr_id = self.sr_id,
+            csr_id = csr.csr_id,
+            reception_csr_ind = csr.receptionist_ind,
+            channel_id = active_period.channel_id,
+            ps_id = 1,
+            time_start = datetime.now(),
+            accurate_time_ind = 1
+        )
+
+        db.session.add(new_period)
+
+    def begin_service(self, csr):
+        active_period = self.get_active_period()
+        active_period.time_end = datetime.now()
+        db.session.add(active_period)
+
+        new_period = Period(
+            sr_id = self.sr_id,
+            csr_id = csr.csr_id,
+            reception_csr_ind = csr.receptionist_ind,
+            channel_id = active_period.channel_id,
+            ps_id = 7,
+            time_start = datetime.now(),
+            accurate_time_ind = 1
+        )
+
+        db.session.add(new_period)
+
+    def place_on_hold(self, csr):
+        active_period = self.get_active_period()
+        active_period.time_end = datetime.now()
+        db.session.add(active_period)
+
+        new_period = Period(
+            sr_id = self.sr_id,
+            csr_id = csr.csr_id,
+            reception_csr_ind = csr.receptionist_ind,
+            channel_id = active_period.channel_id,
+            ps_id = 11,
+            time_start = datetime.now(),
+            accurate_time_ind = 1
+        )
+
+        db.session.add(new_period)
+
+    def finish_service(self, csr):
+        active_period = self.get_active_period()
+        active_period.time_end = datetime.now()
+        db.session.add(active_period)
 
     #def getActiveServicePeriod():
 

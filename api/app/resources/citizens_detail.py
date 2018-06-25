@@ -63,8 +63,120 @@ class CitizenDetail(Resource):
 
         db.session.add(citizen)
         db.session.commit()
-        result = self.citizen_schema.dump(citizen)
 
+        result = self.citizen_schema.dump(citizen)
+        return {'citizen': result.data, 'errors': result.errors}, 200
+
+@api.route("/citizens/<int:id>/add_to_queue/", methods=["POST"])
+class CitizenAddToQueue(Resource):
+
+    citizen_schema = CitizenSchema()
+
+    #@oidc.accept_token(require_token=True)
+    def post(self, id):
+        #csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        csr = CSR.query.filter_by(username='adamkroon').first()
+        citizen = Citizen.query.get(id)
+        active_service_request = citizen.get_active_service_request()
+
+        if active_service_request == None:
+            return {"message": "Citizen has no active service requests"}
+
+        active_service_request.add_to_queue(csr)
+
+        db.session.commit()
+
+        result = self.citizen_schema.dump(citizen)
+        return {'citizen': result.data, 'errors': result.errors}, 200
+
+@api.route("/citizens/<int:id>/invite/", methods=["POST"])
+class CitizenInvite(Resource):
+
+    citizen_schema = CitizenSchema()
+
+    #@oidc.accept_token(require_token=True)
+    def post(self, id):
+        #csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        csr = CSR.query.filter_by(username='adamkroon').first()
+        citizen = Citizen.query.get(id)
+        active_service_request = citizen.get_active_service_request()
+
+        if active_service_request == None:
+            return {"message": "Citizen has no active service requests"}
+
+        active_service_request.invite(csr)
+
+        db.session.commit()
+
+        result = self.citizen_schema.dump(citizen)
+        return {'citizen': result.data, 'errors': result.errors}, 200
+
+@api.route("/citizens/<int:id>/begin_service/", methods=["POST"])
+class CitizenBeginService(Resource):
+
+    citizen_schema = CitizenSchema()
+
+    #@oidc.accept_token(require_token=True)
+    def post(self, id):
+        #csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        csr = CSR.query.filter_by(username='adamkroon').first()
+        citizen = Citizen.query.get(id)
+        active_service_request = citizen.get_active_service_request()
+
+        if active_service_request == None:
+            return {"message": "Citizen has no active service requests"}
+
+        active_service_request.begin_service(csr)
+
+        db.session.commit()
+
+        result = self.citizen_schema.dump(citizen)
+        return {'citizen': result.data, 'errors': result.errors}, 200
+
+@api.route("/citizens/<int:id>/finish_service/", methods=["POST"])
+class CitizenFinishService(Resource):
+
+    citizen_schema = CitizenSchema()
+
+    #@oidc.accept_token(require_token=True)
+    def post(self, id):
+        #csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        csr = CSR.query.filter_by(username='adamkroon').first()
+        citizen = Citizen.query.get(id)
+        active_service_request = citizen.get_active_service_request()
+
+        if active_service_request == None:
+            return {"message": "Citizen has no active service requests"}
+
+        active_service_request.finish_service(csr)
+        citizen_state = CitizenState.query.filter_by(cs_state_name="Received Services").first()
+        citizen.cs_id = citizen_state.cs_id
+
+        db.session.commit()
+
+        result = self.citizen_schema.dump(citizen)
+        return {'citizen': result.data, 'errors': result.errors}, 200
+
+@api.route("/citizens/<int:id>/place_on_hold/", methods=["POST"])
+class CitizenPlaceOnHold(Resource):
+
+    citizen_schema = CitizenSchema()
+
+    #@oidc.accept_token(require_token=True)
+    def post(self, id):
+        #csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        csr = CSR.query.filter_by(username='adamkroon').first()
+        citizen = Citizen.query.get(id)
+        active_service_request = citizen.get_active_service_request()
+
+        if active_service_request == None:
+            return {"message": "Citizen has no active service requests"}
+
+        active_service_request.place_on_hold(csr)
+
+        db.session.commit()
+
+        result = self.citizen_schema.dump(citizen)
         return {'citizen': result.data, 'errors': result.errors}, 200
 
 @api.route("/citizens/<int:id>/service_requests/", methods=["GET"])

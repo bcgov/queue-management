@@ -25,8 +25,6 @@ class PeriodState(Base):
     ps_desc         = db.Column(db.String(1000), nullable=False)
     ps_number       = db.Column(db.Integer, nullable=False)
 
-    periods         = db.relationship('Period', backref='state_periods', lazy=False)
-
     def __repr__(self, ps_name):
         return '<Period State Name:(name={self.ps_name!r})>'.format(self=self)
 

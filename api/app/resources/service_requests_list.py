@@ -14,6 +14,7 @@ limitations under the License.'''
 
 from flask import request, jsonify, g
 from flask_restplus import Resource
+from datetime import datetime
 import sqlalchemy.orm
 from qsystem import api, db, oidc, socketio
 from app.auth import required_scope
@@ -21,14 +22,14 @@ from app.models import ServiceReq, Citizen, CSR
 from cockroachdb.sqlalchemy import run_transaction
 import logging
 from sqlalchemy import exc
-from app.models import ServiceReq
-from app.schemas import ServiceReqSchema
+from app.models import Channel, Period, ServiceReq, SRState
+from app.schemas import ChannelSchema, ServiceReqSchema
 from marshmallow import ValidationError
 
 @api.route("/service_requests/", methods=["POST"])
 class ServiceRequestsList(Resource):
 
-    service_requests_schema = ServiceReqSchema(many=True)
+    channel_schema = ChannelSchema()
     service_request_schema = ServiceReqSchema()
 
     #@oidc.accept_token(require_token=True)
@@ -42,11 +43,34 @@ class ServiceRequestsList(Resource):
         csr = CSR.query.filter_by(username='adamkroon').first()
 
         try:
-            service_request = self.service_request_schema.load(json_data).data
+            service_request = self.service_request_schema.load(json_data['service_request']).data
+            channel_id = json_data['channel_id']
 
         except ValidationError as err:
             return {"message": err.messages}, 422
+        except KeyError as err:
+            return {"message": err.messages}
 
-        service_request.save()
+        channel = Channel.query.get(channel_id)
+        active_sr_state = SRState.query.filter_by(sr_code='Active').first()
+        service_request.channel = channel
+        service_request.sr_state = active_sr_state
+
+        db.session.add(service_request)
+        db.session.flush()
+
+        ticket_create_period = Period(
+            sr_id = service_request.sr_id,
+            csr_id = csr.csr_id,
+            reception_csr_ind = csr.receptionist_ind,
+            channel_id = channel.channel_id,
+            ps_id = 2,
+            time_start = service_request.citizen.start_time,
+            time_end = datetime.now(),
+            accurate_time_ind = 1
+        )
+
+        db.session.add(ticket_create_period)
+        db.session.commit()
 
         return {"message": "Service Request successfully created."}, 201

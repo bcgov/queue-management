@@ -29,9 +29,6 @@ class Citizen(Base):
     start_time          = db.Column(db.DateTime, default=datetime.now(), nullable=False)
 
     service_reqs        = db.relationship('ServiceReq', backref='citizen', lazy="joined")
-    cs                  = db.relationship('CitizenState', backref=db.backref("state_citizens", lazy="joined"))
-    #office              = db.relationship('Office', backref=db.backref("citizens", lazy=False))
-
 
     def __repr__(self):
         return '<Citizen Name:(name={self.citizen_name!r})>'.format(self=self)
@@ -40,4 +37,9 @@ class Citizen(Base):
         super(Citizen, self).__init__(**kwargs)
         self.ticket_number = 'A1'
 
-    #def getActiveServiceRequest():
+    def get_active_service_request(self):
+        for sr in self.service_reqs:
+            if sr.sr_state.sr_code == 'Active':
+                return sr
+
+        return None

@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from marshmallow import fields
 from app.models import ServiceReq
-from app.schemas import PeriodSchema, SRStateSchema, ServiceSchema
+from app.schemas import PeriodSchema, PeriodStateSchema, SRStateSchema, ServiceSchema
 from qsystem import ma
 
 class ServiceReqSchema(ma.ModelSchema):
@@ -27,6 +27,7 @@ class ServiceReqSchema(ma.ModelSchema):
     quantity    = fields.Int()
     service_id  = fields.Int()
     sr_state_id = fields.Int()
-    periods     = fields.Nested(PeriodSchema, many=True)
+    periods     = fields.Nested(PeriodSchema, many=True, exclude=('state_periods','request_periods',))
     sr_state    = fields.Nested(SRStateSchema)
     service     = fields.Nested(ServiceSchema)
+    period_state = fields.Nested(PeriodStateSchema)

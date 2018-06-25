@@ -23,8 +23,6 @@ class SRState(Base):
     sr_code         = db.Column(db.String(100), nullable=False)
     sr_state_desc   = db.Column(db.String(1000), nullable=False)
 
-    service_reqs    = db.relationship('ServiceReq', backref=db.backref('state_requests', lazy=False))
-
     def __repr__(self):
         return '<SR State Code:(name={self.sr_code!r})>'.format(self=self)   
 

@@ -23,8 +23,6 @@ class CitizenState(Base):
     cs_state_name   = db.Column(db.String(100), nullable=False)
     cs_state_desc   = db.Column(db.String(1000), nullable=False)
 
-    citizens        = db.relationship('Citizen', backref='citizen_state', lazy=False)
-
     def __repr__(self):
         return '<Citizen State Name:(name={self.cs_state_name!r})>'.format(self=self)
 

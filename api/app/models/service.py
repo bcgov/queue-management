@@ -37,11 +37,6 @@ class Service(Base):
     display_dashboard_ind   = db.Column(db.Integer, nullable=False)
     actual_service_ind      = db.Column(db.Integer, nullable=False)
 
-    #service_reqs            = db.relationship('ServiceReq', backref='service_requests', lazy=False)
-    #services            = db.relationship('Service', backref='parent', lazy=False)
-    # meta data is a reserved sqlalchemy keyword
-    #metadatas           = db.relationship("Metadata", secondary=service_metadata, back_populates="services")
-
     def __repr__(self):
         return '<Service Name:(name={self.service_name!r})>'.format(self=self)
 
