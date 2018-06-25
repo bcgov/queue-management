@@ -21,7 +21,7 @@ from app.models import Citizen, CSR, CitizenState
 from cockroachdb.sqlalchemy import run_transaction
 import logging
 from marshmallow import ValidationError, pre_load
-from app.models import ServiceReq
+from app.models import ServiceReq, SRState
 from app.schemas import CitizenSchema, ServiceReqSchema
 from sqlalchemy import exc
 
@@ -77,6 +77,7 @@ class CitizenAddToQueue(Resource):
         csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
         #csr = CSR.query.filter_by(username='adamkroon').first()
         citizen = Citizen.query.get(id)
+
         active_service_request = citizen.get_active_service_request()
 
         if active_service_request == None:
@@ -84,6 +85,10 @@ class CitizenAddToQueue(Resource):
 
         active_service_request.add_to_queue(csr)
 
+        pending_service_state = SRState.query.filter_by(sr_code='Pending').first()
+        active_service_request.sr_state_id = pending_service_state.sr_state_id
+
+        db.session.add(active_service_request)
         db.session.commit()
 
         result = self.citizen_schema.dump(citizen)
@@ -106,6 +111,10 @@ class CitizenInvite(Resource):
 
         active_service_request.invite(csr)
 
+        pending_service_state = SRState.query.filter_by(sr_code='Pending').first()
+        active_service_request.sr_state_id = pending_service_state.sr_state_id
+
+        db.session.add(active_service_request)
         db.session.commit()
 
         result = self.citizen_schema.dump(citizen)
@@ -127,7 +136,10 @@ class CitizenBeginService(Resource):
             return {"message": "Citizen has no active service requests"}
 
         active_service_request.begin_service(csr)
+        pending_service_state = SRState.query.filter_by(sr_code='Active').first()
+        active_service_request.sr_state_id = pending_service_state.sr_state_id
 
+        db.session.add(active_service_request)
         db.session.commit()
 
         result = self.citizen_schema.dump(citizen)
@@ -152,6 +164,10 @@ class CitizenFinishService(Resource):
         citizen_state = CitizenState.query.filter_by(cs_state_name="Received Services").first()
         citizen.cs_id = citizen_state.cs_id
 
+        pending_service_state = SRState.query.filter_by(sr_code='Complete').first()
+        active_service_request.sr_state_id = pending_service_state.sr_state_id
+
+        db.session.add(active_service_request)
         db.session.commit()
 
         result = self.citizen_schema.dump(citizen)
@@ -173,7 +189,10 @@ class CitizenPlaceOnHold(Resource):
             return {"message": "Citizen has no active service requests"}
 
         active_service_request.place_on_hold(csr)
+        pending_service_state = SRState.query.filter_by(sr_code='Active').first()
+        active_service_request.sr_state_id = pending_service_state.sr_state_id
 
+        db.session.add(active_service_request)
         db.session.commit()
 
         result = self.citizen_schema.dump(citizen)

@@ -29,6 +29,7 @@ class Citizen(Base):
     start_time          = db.Column(db.DateTime, default=datetime.now(), nullable=False)
 
     service_reqs        = db.relationship('ServiceReq', backref='citizen', lazy="joined")
+    cs                  = db.relationship('CitizenState')
 
     def __repr__(self):
         return '<Citizen Name:(name={self.citizen_name!r})>'.format(self=self)
@@ -39,7 +40,7 @@ class Citizen(Base):
 
     def get_active_service_request(self):
         for sr in self.service_reqs:
-            if sr.sr_state.sr_code == 'Active':
+            if sr.sr_state.sr_code != 'Complete':
                 return sr
 
         return None
