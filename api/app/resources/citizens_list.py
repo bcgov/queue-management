@@ -22,6 +22,7 @@ import logging
 from marshmallow import ValidationError, pre_load
 from app.schemas import CitizenSchema
 from sqlalchemy import exc
+from datetime import datetime
 
 @api.route("/citizens/", methods=['GET', 'POST'])
 class CitizenList(Resource):
@@ -52,6 +53,7 @@ class CitizenList(Resource):
         try:
            citizen = self.citizen_schema.load(json_data).data
            citizen.office_id = csr.office_id
+           citizen.start_time = datetime.now()
 
         except ValidationError as err:
             print (err)

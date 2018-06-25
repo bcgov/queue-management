@@ -22,7 +22,7 @@ from app.models import ServiceReq, Citizen, CSR
 from cockroachdb.sqlalchemy import run_transaction
 import logging
 from sqlalchemy import exc
-from app.models import Channel, Period, ServiceReq, SRState
+from app.models import Channel, Period, PeriodState, ServiceReq, SRState
 from app.schemas import ChannelSchema, ServiceReqSchema
 from marshmallow import ValidationError
 
@@ -59,13 +59,15 @@ class ServiceRequestsList(Resource):
         db.session.add(service_request)
         db.session.flush()
 
+        period_state_ticket_creation = PeriodState.query.filter_by(ps_name="Ticket Creation").first()
+
         ticket_create_period = Period(
             sr_id = service_request.sr_id,
             csr_id = csr.csr_id,
             reception_csr_ind = csr.receptionist_ind,
             channel_id = channel.channel_id,
-            ps_id = 2,
-            time_start = service_request.citizen.start_time,
+            ps_id = period_state_ticket_creation.ps_id,
+            time_start = service_request.citizen.get_service_start_time(),
             time_end = datetime.now(),
             accurate_time_ind = 1
         )
