@@ -18,6 +18,10 @@ class Bootstrap(Command):
         models.Citizen.query.delete()
         models.CitizenState.query.delete()
         models.Channel.query.delete()
+        models.Period.query.delete()
+        models.PeriodState.query.delete()
+        models.SRState.query.delete()
+        models.ServiceReq.query.delete()
         models.Service.query.filter_by(actual_service_ind=1).delete()
         models.Service.query.delete()
         models.CSR.query.delete()
@@ -426,19 +430,6 @@ class Bootstrap(Command):
         db.session.add(cs2)
         db.session.add(cs3)
         db.session.flush()
-
-        john = models.Citizen(
-            office_id = office1.office_id,
-            ticket_number = "1",
-            citizen_name = "John",
-            citizen_comments = "Blorp",
-            qt_xn_citizen_ind = 0,
-            cs_id = cs1.cs_id,
-            start_time  = datetime.now()
-        )
-
-        db.session.add(john)
-        db.session.commit()
 
         channel1 = models.Channel(
             channel_name="In Person"
