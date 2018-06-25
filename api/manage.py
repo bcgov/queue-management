@@ -244,6 +244,59 @@ class Bootstrap(Command):
         office4.services.append(service8)
         office4.services.append(service9)
 
+        sr_state1 = models.SRState(
+            sr_code="Pending",
+            sr_state_desc="Service Request is pending."
+        )
+
+        sr_state2 = models.SRState(
+            sr_code="Active",
+            sr_state_desc="Service Request is active."
+        )
+
+        sr_state3 = models.SRState(
+            sr_code="Complete",
+            sr_state_desc="Service Request is complete."
+        )
+
+        db.session.add(sr_state1)
+        db.session.add(sr_state2)
+        db.session.add(sr_state3)
+        db.session.commit()
+
+        period_state1 = models.PeriodState(
+            ps_name="Waiting",
+            ps_desc="Waiting in line to see a CSR, after a ticket has been created for them. The time they are in this state is the Citizen Wait Time",
+            ps_number=1
+        )
+        period_state2 = models.PeriodState(
+            ps_name="Ticket Creation",
+            ps_desc="A receptionist is creating a service request / ticket for the citizen. This is the first state a citizen will be in. The time they are in this state is the CSR prep time.",
+            ps_number=2
+        )
+        period_state3 = models.PeriodState(
+            ps_name="Invited",
+            ps_desc="Has been called from the waiting area to be served. The time they are in this state is the time it takes them to walk from the waiting area, to the CSR, until the CSR starts to serve them.",
+            ps_number=4
+        )
+        period_state4 = models.PeriodState(
+            ps_name="Being Served",
+            ps_desc="Is being servbed by a CSR. The time they are in this state is the Service time.",
+            ps_number=7
+        )
+        period_state5 = models.PeriodState(
+            ps_name="On hold",
+            ps_desc="Has been placed on hold be a csr. The time they are in this state is the Hold time",
+            ps_number=11
+        )
+
+        db.session.add(period_state1)
+        db.session.add(period_state2)
+        db.session.add(period_state3)
+        db.session.add(period_state4)
+        db.session.add(period_state5)
+        db.session.commit()
+
         role1 = models.Role(
             role_code="GA",
             role_desc="GA"

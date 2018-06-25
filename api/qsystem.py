@@ -46,6 +46,7 @@ import app.resources.categories
 import app.resources.channels
 import app.resources.citizens_list
 import app.resources.citizens_detail
+import app.resources.citizen_left
 import app.resources.health
 import app.resources.services
 import app.resources.service_requests_list
