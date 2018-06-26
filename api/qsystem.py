@@ -44,9 +44,15 @@ logging.basicConfig(format=application.config['LOGGING_FORMAT'], level=logging.I
 
 import app.resources.categories
 import app.resources.channels
-import app.resources.citizens_list
-import app.resources.citizens_detail
-import app.resources.citizen_left
+import app.resources.citizen.citizens_list
+import app.resources.citizen.citizens_detail
+import app.resources.citizen.citizen_add_to_queue.py
+import app.resources.citizen.citizen_begin_service.py
+import app.resources.citizen.citizen_finish_service.py
+import app.resources.citizen.citizen_invite.py
+import app.resources.citizen.citizen_left.py
+import app.resources.citizen.citizen_place_on_hold.py
+import app.resources.citizen.citizen_service_requests
 import app.resources.health
 import app.resources.services
 import app.resources.service_requests_list
