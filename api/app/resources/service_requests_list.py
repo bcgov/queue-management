@@ -72,11 +72,11 @@ class ServiceRequestsList(Resource):
             accurate_time_ind = 1
         )
 
-        service_count = ServiceReq.query.all() \
+        service_count = ServiceReq.query \
                 .join(ServiceReq.citizen, aliased=True) \
                 .filter(Citizen.start_time >= datetime.now().strftime("%Y-%m-%d")) \
                 .filter_by(office_id=csr.office_id) \
-                .join(ServiceReg.service, aliased=True) \
+                .join(ServiceReq.service, aliased=True) \
                 .filter_by(prefix=service_request.service.prefix) \
                 .count()
 

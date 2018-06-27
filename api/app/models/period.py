@@ -30,6 +30,7 @@ class Period(Base):
     accurate_time_ind   = db.Column(db.Integer, nullable=False)
 
     ps                  = db.relationship("PeriodState")
+    sr                  = db.relationship('ServiceReq')
     channel             = db.relationship("Channel")
 
     def __repr__(self):

@@ -26,7 +26,7 @@ from app.schemas import CitizenSchema, ServiceReqSchema
 from sqlalchemy import exc
 
 @api.route("/citizens/<int:id>/invite/", methods=["POST"])
-class CitizenInvite(Resource):
+class CitizenSpecificInvite(Resource):
 
     citizen_schema = CitizenSchema()
 
