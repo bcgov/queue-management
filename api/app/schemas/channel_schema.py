@@ -16,10 +16,11 @@ from marshmallow import fields
 from app.models import Channel
 from qsystem import ma
 
+
 class ChannelSchema(ma.ModelSchema):
 
     class Meta:
         model = Channel
 
-    channel_id      = fields.Int(dump_only=True)
-    channel_name    = fields.Str()
+    channel_id = fields.Int(dump_only=True)
+    channel_name = fields.Str()

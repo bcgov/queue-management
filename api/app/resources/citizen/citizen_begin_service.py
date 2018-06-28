@@ -12,18 +12,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask import request, jsonify, g
+from flask import g
 from flask_restplus import Resource
-import sqlalchemy.orm
-from qsystem import api, db, oidc, socketio
-from app.auth import required_scope
-from app.models import Citizen, CSR, CitizenState
-from cockroachdb.sqlalchemy import run_transaction
-import logging
-from marshmallow import ValidationError, pre_load
-from app.models import ServiceReq, SRState
-from app.schemas import CitizenSchema, ServiceReqSchema
-from sqlalchemy import exc
+from qsystem import api, db, oidc
+from app.models import Citizen, CSR
+from app.models import SRState
+from app.schemas import CitizenSchema
+
 
 @api.route("/citizens/<int:id>/begin_service/", methods=["POST"])
 class CitizenBeginService(Resource):
@@ -33,11 +28,10 @@ class CitizenBeginService(Resource):
     @oidc.accept_token(require_token=True)
     def post(self, id):
         csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
-        #csr = CSR.query.filter_by(username='adamkroon').first()
-        citizen = Citizen.query.get(id)
+        citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first_or_404()
         active_service_request = citizen.get_active_service_request()
 
-        if active_service_request == None:
+        if active_service_request is None:
             return {"message": "Citizen has no active service requests"}
 
         active_service_request.begin_service(csr)

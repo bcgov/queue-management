@@ -12,19 +12,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask_restplus import fields
-from qsystem import api, db
-from .base import Base 
-from sqlalchemy import BigInteger, String
+from .base import Base
+from qsystem import db
+
 
 class SRState(Base):
 
-    sr_state_id     = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    sr_code         = db.Column(db.String(100), nullable=False)
-    sr_state_desc   = db.Column(db.String(1000), nullable=False)
+    sr_state_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    sr_code = db.Column(db.String(100), nullable=False)
+    sr_state_desc = db.Column(db.String(1000), nullable=False)
 
     def __repr__(self):
-        return '<SR State Code:(name={self.sr_code!r})>'.format(self=self)   
+        return '<SR State Code:(name={self.sr_code!r})>'.format(self=self)
 
     def __init__(self, **kwargs):
         super(SRState, self).__init__(**kwargs)

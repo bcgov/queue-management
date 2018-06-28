@@ -16,13 +16,14 @@ from marshmallow import fields
 from app.models import Office
 from qsystem import ma
 
+
 class OfficeSchema(ma.ModelSchema):
 
     class Meta:
         model = Office
 
-    office_id       = fields.Int()
-    office_name     = fields.Str()
-    office_number   = fields.Int()
-    sb_id           = fields.Int()
-    deleted         = fields.DateTime()
+    office_id = fields.Int()
+    office_name = fields.Str()
+    office_number = fields.Int()
+    sb_id = fields.Int()
+    deleted = fields.DateTime()

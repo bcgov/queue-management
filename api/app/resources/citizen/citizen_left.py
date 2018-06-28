@@ -12,18 +12,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask import request, jsonify, g
+from flask import request, g
 from flask_restplus import Resource
-from qsystem import api, db, oidc, socketio
-from app.auth import required_scope
+from qsystem import api, db, oidc
 from app.models import Citizen, CSR, CitizenState
-from cockroachdb.sqlalchemy import run_transaction
-import logging
-from marshmallow import ValidationError, pre_load
 from app.schemas import CitizenSchema, ServiceReqSchema
-from app.models import CitizenState, SRState, Service
-from sqlalchemy import exc
+from app.models import SRState
 from datetime import datetime
+
 
 @api.route("/citizens/<int:id>/citizen_left/", methods=['POST'])
 class CitizenLeft(Resource):
@@ -33,12 +29,9 @@ class CitizenLeft(Resource):
 
     @oidc.accept_token(require_token=True)
     def post(self, id):
-        json_data = request.get_json()
-        
-        csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
-        #csr = CSR.query.filter_by(username='adamkroon').first()
-        citizen = Citizen.query.get(id) 
 
+        csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first_or_404()
         sr_state = SRState.query.filter_by(sr_code="Complete").first()
 
         for service_request in citizen.service_reqs:
@@ -48,11 +41,11 @@ class CitizenLeft(Resource):
             for p in service_request.periods:
                 if p.time_end is None:
                     p.time_end = datetime.now()
-                    
+
                     db.session.add(p)
 
         citizen.cs = CitizenState.query.filter_by(cs_state_name='Left before receiving services').first()
-        
+
         db.session.add(citizen)
         db.session.add(service_request)
         db.session.commit()

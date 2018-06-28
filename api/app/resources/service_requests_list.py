@@ -12,19 +12,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask import request, jsonify, g
+from flask import request, g
 from flask_restplus import Resource
 from datetime import datetime
-import sqlalchemy.orm
-from qsystem import api, db, oidc, socketio
-from app.auth import required_scope
-from app.models import ServiceReq, Citizen, CSR
-from cockroachdb.sqlalchemy import run_transaction
-import logging
-from sqlalchemy import exc
-from app.models import Channel, Period, PeriodState, ServiceReq, SRState
+from qsystem import api, db, oidc
+from app.models import Citizen, Channel, CSR, Period, PeriodState, ServiceReq, SRState
 from app.schemas import ChannelSchema, ServiceReqSchema
 from marshmallow import ValidationError
+
 
 @api.route("/service_requests/", methods=["POST"])
 class ServiceRequestsList(Resource):
@@ -38,9 +33,8 @@ class ServiceRequestsList(Resource):
 
         if not json_data:
             return {"message": "No input data received for creating citizen"}, 400
-        
+
         csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
-        #csr = CSR.query.filter_by(username='adamkroon').first()
 
         try:
             service_request = self.service_request_schema.load(json_data['service_request']).data
@@ -62,14 +56,14 @@ class ServiceRequestsList(Resource):
         period_state_ticket_creation = PeriodState.query.filter_by(ps_name="Ticket Creation").first()
 
         ticket_create_period = Period(
-            sr_id = service_request.sr_id,
-            csr_id = csr.csr_id,
-            reception_csr_ind = csr.receptionist_ind,
-            channel_id = channel.channel_id,
-            ps_id = period_state_ticket_creation.ps_id,
-            time_start = service_request.citizen.get_service_start_time(),
-            time_end = datetime.now(),
-            accurate_time_ind = 1
+            sr_id=service_request.sr_id,
+            csr_id=csr.csr_id,
+            reception_csr_ind=csr.receptionist_ind,
+            channel_id=channel.channel_id,
+            ps_id=period_state_ticket_creation.ps_id,
+            time_start=service_request.citizen.get_service_start_time(),
+            time_end=datetime.now(),
+            accurate_time_ind=1
         )
 
         service_count = ServiceReq.query \

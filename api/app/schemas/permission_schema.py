@@ -16,11 +16,12 @@ from marshmallow import fields
 from app.models import Permission
 from qsystem import ma
 
+
 class PermissionSchema(ma.ModelSchema):
 
     class Meta:
         model = Permission
 
-    permission_id    = fields.Int()
-    permission_code  = fields.Str()
-    permission_desc  = fields.Str()
+    permission_id = fields.Int()
+    permission_code = fields.Str()
+    permission_desc = fields.Str()

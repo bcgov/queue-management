@@ -12,21 +12,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask import request, jsonify, g
+
 from flask_restplus import Resource
-import sqlalchemy.orm
-from qsystem import api, db, oidc, socketio
-from app.auth import required_scope
+from qsystem import api, oidc
 from app.models import Channel
-from cockroachdb.sqlalchemy import run_transaction
-import logging
 from app.schemas import ChannelSchema
 from sqlalchemy import exc
+
 
 @api.route("/channels/", methods=["GET"])
 class ChannelList(Resource):
 
-    channels_schema =  ChannelSchema(many=True)
+    channels_schema = ChannelSchema(many=True)
 
     @oidc.accept_token(require_token=True)
     def get(self):

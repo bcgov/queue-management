@@ -12,24 +12,24 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask_restplus import fields
-from qsystem import api, db
-from .base import Base 
-from datetime import datetime
+
+from qsystem import db
+from .base import Base
+
 
 class Citizen(Base):
 
-    citizen_id          = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    office_id           = db.Column(db.Integer, db.ForeignKey('office.office_id'), nullable=False)
-    ticket_number       = db.Column(db.String(50), nullable=True)
-    citizen_name        = db.Column(db.String(150), nullable=True)
-    citizen_comments    = db.Column(db.String(1000), nullable=True)
-    qt_xn_citizen_ind   = db.Column(db.Integer, default=0, nullable=False)
-    cs_id               = db.Column(db.BigInteger, db.ForeignKey('citizenstate.cs_id'), nullable=False)
-    start_time          = db.Column(db.DateTime, nullable=False)
+    citizen_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    office_id = db.Column(db.Integer, db.ForeignKey('office.office_id'), nullable=False)
+    ticket_number = db.Column(db.String(50), nullable=True)
+    citizen_name = db.Column(db.String(150), nullable=True)
+    citizen_comments = db.Column(db.String(1000), nullable=True)
+    qt_xn_citizen_ind = db.Column(db.Integer, default=0, nullable=False)
+    cs_id = db.Column(db.BigInteger, db.ForeignKey('citizenstate.cs_id'), nullable=False)
+    start_time = db.Column(db.DateTime, nullable=False)
 
-    service_reqs        = db.relationship('ServiceReq')
-    cs                  = db.relationship('CitizenState')
+    service_reqs = db.relationship('ServiceReq')
+    cs = db.relationship('CitizenState')
 
     def __repr__(self):
         return '<Citizen Name:(name={self.citizen_name!r})>'.format(self=self)
@@ -45,7 +45,7 @@ class Citizen(Base):
         return None
 
     def get_service_start_time(self):
-        # If a service request already exists, then the start time for the next 
+        # If a service request already exists, then the start time for the next
         # service should be the end time of the previous service request
         if len(self.service_reqs) >= 2:
             return self.service_reqs[-2].periods[-1].time_end

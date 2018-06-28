@@ -16,11 +16,12 @@ from marshmallow import fields
 from app.models import CitizenState
 from qsystem import ma
 
+
 class CitizenStateSchema(ma.ModelSchema):
 
     class Meta:
         model = CitizenState
 
-    cs_id           = fields.Int()
-    cs_state_name   = fields.Str()
-    cs_state_desc   = fields.Str()
+    cs_id = fields.Int()
+    cs_state_name = fields.Str()
+    cs_state_desc = fields.Str()

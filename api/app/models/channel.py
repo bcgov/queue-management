@@ -12,17 +12,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask_restplus import fields
-from qsystem import api, db
-from .base import Base 
-from sqlalchemy import BigInteger, String
+from qsystem import db
+from .base import Base
+
 
 class Channel(Base):
 
-    channel_id      = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    channel_name    = db.Column(db.String(100), nullable=False)
+    channel_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    channel_name = db.Column(db.String(100), nullable=False)
 
-    #periods         = db.relationship('Period', backref='channel', lazy=False)
+    # periods         = db.relationship('Period', backref='channel', lazy=False)
 
     def __repr__(self):
         return '<Channel Name:(name={self.channel_name!r})>'.format(self=self)

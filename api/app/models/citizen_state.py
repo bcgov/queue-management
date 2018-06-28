@@ -12,16 +12,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask_restplus import fields
-from qsystem import api, db
-from .base import Base 
-from sqlalchemy import BigInteger, String
+
+from qsystem import db
+from .base import Base
+
 
 class CitizenState(Base):
 
-    cs_id           = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    cs_state_name   = db.Column(db.String(100), nullable=False)
-    cs_state_desc   = db.Column(db.String(1000), nullable=False)
+    cs_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    cs_state_name = db.Column(db.String(100), nullable=False)
+    cs_state_desc = db.Column(db.String(1000), nullable=False)
 
     def __repr__(self):
         return '<Citizen State Name:(name={self.cs_state_name!r})>'.format(self=self)

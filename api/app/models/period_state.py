@@ -12,18 +12,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask_restplus import fields
-from qsystem import api, db
-from .base import Base 
-from sqlalchemy import BigInteger, Integer, String
+from qsystem import db
+from .base import Base
 
-# TODO Please review the valid state table to see for testing
+
 class PeriodState(Base):
 
-    ps_id           = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    ps_name         = db.Column(db.String(100), nullable=False)
-    ps_desc         = db.Column(db.String(1000), nullable=False)
-    ps_number       = db.Column(db.Integer, nullable=False)
+    ps_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    ps_name = db.Column(db.String(100), nullable=False)
+    ps_desc = db.Column(db.String(1000), nullable=False)
+    ps_number = db.Column(db.Integer, nullable=False)
 
     def __repr__(self, ps_name):
         return '<Period State Name:(name={self.ps_name!r})>'.format(self=self)

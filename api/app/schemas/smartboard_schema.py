@@ -16,10 +16,11 @@ from marshmallow import fields
 from app.models import SmartBoard
 from qsystem import ma
 
+
 class SmartBoardSchema(ma.ModelSchema):
 
     class Meta:
         model = SmartBoard
 
-    sb_id       = fields.Int()
-    sb_type     = fields.Str()
+    sb_id = fields.Int()
+    sb_type = fields.Str()
