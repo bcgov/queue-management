@@ -46,7 +46,7 @@ class Services(Resource):
                 return {'message': 'office_id must be an integer.'}, 400
         else:
             try:
-                services = Service.query.all()
+                services = Service.query.filter_by(actual_service=1).all()
                 result = self.services_schema.dump(services)
                 return {'services': result.data,
                         'errors': result.errors}
