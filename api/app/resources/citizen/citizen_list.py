@@ -32,9 +32,11 @@ class CitizenList(Resource):
     def get(self):
         try:
             csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
-            citizens = Citizen.query.filter_by(office_id=csr.office_id).all()
+            active_state = CitizenState.query.filter_by(cs_state_name="Active")
+            citizens = Citizen.query.filter_by(office_id=csr.office_id, cs_id=active_state.cs_id).all()
             result = self.citizens_schema.dump(citizens)
-            return {'citizens': result.data, 'errors': result.errors}, 200
+            return {'citizens': result.data,
+                    'errors': result.errors}, 200
 
         except exc.SQLAlchemyError as e:
             print(e)
