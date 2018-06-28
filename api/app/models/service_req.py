@@ -12,25 +12,25 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask_restplus import fields
-from qsystem import api, db
+
+from qsystem import db
 from .base import Base 
-from sqlalchemy import BigInteger, Integer
 from app.models import Period, PeriodState
 from datetime import datetime
 
+
 class ServiceReq(Base):
 
-    sr_id       = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    citizen_id  = db.Column(db.Integer, db.ForeignKey('citizen.citizen_id'), nullable=False)
-    quantity    = db.Column(db.Integer, default=1, nullable=False)
-    service_id  = db.Column(db.Integer, db.ForeignKey('service.service_id'), nullable=False)
+    sr_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    citizen_id = db.Column(db.Integer, db.ForeignKey('citizen.citizen_id'), nullable=False)
+    quantity = db.Column(db.Integer, default=1, nullable=False)
+    service_id = db.Column(db.Integer, db.ForeignKey('service.service_id'), nullable=False)
     sr_state_id = db.Column(db.Integer, db.ForeignKey('srstate.sr_state_id'), nullable=False)
 
-    periods     = db.relationship('Period', backref=db.backref("request_periods", lazy=False))
-    sr_state    = db.relationship('SRState')
-    citizen     = db.relationship('Citizen')
-    service     = db.relationship('Service')
+    periods = db.relationship('Period', backref=db.backref("request_periods", lazy=False))
+    sr_state = db.relationship('SRState')
+    citizen = db.relationship('Citizen')
+    service = db.relationship('Service')
 
     def __init__(self, **kwargs):
         super(ServiceReq, self).__init__(**kwargs)
@@ -46,13 +46,13 @@ class ServiceReq(Base):
         period_state_invite = PeriodState.query.filter_by(ps_name="Invited").first()
 
         new_period = Period(
-            sr_id = self.sr_id,
-            csr_id = csr.csr_id,
-            reception_csr_ind = csr.receptionist_ind,
-            channel_id = active_period.channel_id,
-            ps_id = period_state_invite.ps_id,
-            time_start = datetime.now(),
-            accurate_time_ind = 1
+            sr_id=self.sr_id,
+            csr_id=csr.csr_id,
+            reception_csr_ind=csr.receptionist_ind,
+            channel_id=active_period.channel_id,
+            ps_id=period_state_invite.ps_id,
+            time_start=datetime.now(),
+            accurate_time_ind=1
         )
 
         db.session.add(new_period)
@@ -65,13 +65,13 @@ class ServiceReq(Base):
         period_state_waiting = PeriodState.query.filter_by(ps_name="Waiting").first()
 
         new_period = Period(
-            sr_id = self.sr_id,
-            csr_id = csr.csr_id,
-            reception_csr_ind = csr.receptionist_ind,
-            channel_id = active_period.channel_id,
-            ps_id = period_state_waiting.ps_id,
-            time_start = datetime.now(),
-            accurate_time_ind = 1
+            sr_id=self.sr_id,
+            csr_id=csr.csr_id,
+            reception_csr_ind=csr.receptionist_ind,
+            channel_id=active_period.channel_id,
+            ps_id=period_state_waiting.ps_id,
+            time_start=datetime.now(),
+            accurate_time_ind=1
         )
 
         db.session.add(new_period)
@@ -84,13 +84,13 @@ class ServiceReq(Base):
         period_state_being_served = PeriodState.query.filter_by(ps_name="Being Served").first()
 
         new_period = Period(
-            sr_id = self.sr_id,
-            csr_id = csr.csr_id,
-            reception_csr_ind = csr.receptionist_ind,
-            channel_id = active_period.channel_id,
-            ps_id = period_state_being_served.ps_id,
-            time_start = datetime.now(),
-            accurate_time_ind = 1
+            sr_id=self.sr_id,
+            csr_id=csr.csr_id,
+            reception_csr_ind=csr.receptionist_ind,
+            channel_id=active_period.channel_id,
+            ps_id=period_state_being_served.ps_id,
+            time_start=datetime.now(),
+            accurate_time_ind=1
         )
 
         db.session.add(new_period)
@@ -103,13 +103,13 @@ class ServiceReq(Base):
         period_state_on_hold = PeriodState.query.filter_by(ps_name="On hold").first()
 
         new_period = Period(
-            sr_id = self.sr_id,
-            csr_id = csr.csr_id,
-            reception_csr_ind = csr.receptionist_ind,
-            channel_id = active_period.channel_id,
-            ps_id = period_state_on_hold.ps_id,
-            time_start = datetime.now(),
-            accurate_time_ind = 1
+            sr_id=self.sr_id,
+            csr_id=csr.csr_id,
+            reception_csr_ind=csr.receptionist_ind,
+            channel_id=active_period.channel_id,
+            ps_id=period_state_on_hold.ps_id,
+            time_start=datetime.now(),
+            accurate_time_ind=1
         )
 
         db.session.add(new_period)

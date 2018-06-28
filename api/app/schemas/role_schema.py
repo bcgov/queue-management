@@ -16,11 +16,12 @@ from marshmallow import fields
 from app.models import Role
 from qsystem import ma
 
+
 class RoleSchema(ma.ModelSchema):
 
     class Meta:
         model = Role
 
-    role_id     = fields.Int()
-    role_code   = fields.Str()
-    role_desc   = fields.Str()
+    role_id = fields.Int()
+    role_code = fields.Str()
+    role_desc = fields.Str()

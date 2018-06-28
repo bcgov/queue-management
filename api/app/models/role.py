@@ -12,27 +12,22 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask_restplus import fields
-from qsystem import api, db
-from .base import Base 
-from app.models import Permission
-from sqlalchemy import BigInteger, String
+
+from qsystem import db
+from .base import Base
+
 
 class Role(Base):
 
-    role_permission     = db.Table('role_permission',
-                                    db.Column('role_id', db.Integer, 
-                                            db.ForeignKey('role.role_id'), primary_key=True, nullable=False),
-                                    db.Column('permission_id', db.Integer,
-                                            db.ForeignKey('permission.permission_id'), primary_key=True, nullable=False)
-    )
+    role_permission = db.Table('role_permission',
+            db.Column('role_id', db.Integer, db.ForeignKey('role.role_id'), primary_key=True, nullable=False),
+            db.Column('permission_id', db.Integer, db.ForeignKey('permission.permission_id'), primary_key=True, nullable=False))
 
-    role_id     = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    role_code   = db.Column(db.String(100))
-    role_desc   = db.Column(db.String(1000))
+    role_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    role_code = db.Column(db.String(100))
+    role_desc = db.Column(db.String(1000))
 
-    roles       = db.relationship('CSR', backref='role', lazy=False)
-    #rights      = db.relationship("Right", secondary=role_right, back_populates="roles")
+    roles = db.relationship('CSR', backref='role', lazy=False)
 
     def __repr__(self):
         return '<Role Code:(name={self.role_code!r})>'.format(self=self)

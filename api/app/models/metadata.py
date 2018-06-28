@@ -12,18 +12,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask_restplus import fields
-from qsystem import api, db
-from .base import Base 
-#from app.models import Service
-from sqlalchemy import BigInteger, String
+
+from qsystem import db
+from .base import Base
+# from app.models import Service
+
 
 class MetaData(Base):
 
-    metadata_id     = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    meta_text       = db.Column(db.String(100), nullable=False)
+    metadata_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    meta_text = db.Column(db.String(100), nullable=False)
 
-    #services        = db.relationship("Service", secondary=Service.service_metadata, back_populates="metadata")
+    # services        = db.relationship("Service", secondary=Service.service_metadata, back_populates="metadata")
 
     def __repr__(self):
         return '<Meta Data:(name={self.meta_text!r})>'.format(self=self)

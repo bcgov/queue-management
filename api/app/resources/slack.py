@@ -1,16 +1,24 @@
-from flask import request, jsonify, g
+'''Copyright 2018 Province of British Columbia
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.'''
+
+from flask import request
 from flask_restplus import Resource
-import sqlalchemy.orm
-from qsystem import application, api, db, oidc, socketio
-from app.auth import required_scope
-from app.models import Citizen, CSR
-from cockroachdb.sqlalchemy import run_transaction
-import logging
-from marshmallow import ValidationError, pre_load
-from sqlalchemy import exc
+from qsystem import application, api, oidc
 import json
 import urllib.request
 import urllib.parse
+
 
 @api.route("/slack/", methods=['POST'])
 class Slack(Resource):
@@ -36,12 +44,16 @@ class Slack(Resource):
         params = json.dumps(slack_json_data).encode('utf8')
 
         req = urllib.request.Request(
-            url=application.config['SLACK_URL'], 
+            url=application.config['SLACK_URL'],
             data=params,
             headers={'content-type': 'application/json'}
         )
 
         resp = urllib.request.urlopen(req)
 
-        print(req)
-        print(resp)
+        if resp.getcode() == 200:
+            return {"status": "success"}, 200
+        else:
+            return {"status": "error", "http_code": resp.getcode()}, 400
+
+        return {"message": "Success"}, 200

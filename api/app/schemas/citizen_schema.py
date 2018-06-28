@@ -17,19 +17,20 @@ from app.models import Citizen
 from app.schemas import ServiceReqSchema, CitizenStateSchema, OfficeSchema
 from qsystem import ma
 
+
 class CitizenSchema(ma.ModelSchema):
 
     class Meta:
         model = Citizen
 
-    citizen_id          = fields.Int(dump_only=True)
-    office_id           = fields.Int()
-    ticket_number       = fields.Str(dump_only=True)
-    citizen_name        = fields.Str()
-    citizen_comments    = fields.Str()
-    qt_xn_citizen_ind   = fields.Int()
-    cs_id               = fields.Int()
-    start_time          = fields.DateTime(dump_only=True)
-    service_reqs        = fields.Nested(ServiceReqSchema, many=True, exclude=('citizen',))
-    cs                  = fields.Nested(CitizenStateSchema, exclude=('citizens', 'state_citizens'))
-    office              = fields.Nested(OfficeSchema, exclude=('citizens', 'csrs', 'services'))
+    citizen_id = fields.Int(dump_only=True)
+    office_id = fields.Int()
+    ticket_number = fields.Str(dump_only=True)
+    citizen_name = fields.Str()
+    citizen_comments = fields.Str()
+    qt_xn_citizen_ind = fields.Int()
+    cs_id = fields.Int()
+    start_time = fields.DateTime(dump_only=True)
+    service_reqs = fields.Nested(ServiceReqSchema, many=True, exclude=('citizen'))
+    cs = fields.Nested(CitizenStateSchema, exclude=('citizens', 'state_citizens'))
+    office = fields.Nested(OfficeSchema, exclude=('citizens', 'csrs', 'services'))

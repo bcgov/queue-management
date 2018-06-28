@@ -12,17 +12,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask import request, jsonify, g
+from flask import request, g
 from flask_restplus import Resource
-import sqlalchemy.orm
-from qsystem import api, db, oidc, socketio
-from app.auth import required_scope
-from app.models import ServiceReq, Citizen, CSR
-from cockroachdb.sqlalchemy import run_transaction
-import logging
-from sqlalchemy import exc
+from qsystem import api, db, oidc
+from app.models import ServiceReq, CSR
 from app.schemas import ServiceReqSchema
 from marshmallow import ValidationError
+
 
 @api.route("/service_requests/<int:id>/", methods=["PUT"])
 class ServiceRequestsDetail(Resource):
@@ -30,17 +26,18 @@ class ServiceRequestsDetail(Resource):
     service_requests_schema = ServiceReqSchema(many=True)
     service_request_schema = ServiceReqSchema()
 
-    #@oidc.accept_token(require_token=True)
+    @oidc.accept_token(require_token=True)
     def put(self, id):
         json_data = request.get_json()
-        
+
         if not json_data:
             return {'message': 'No input data received for updating citizen'}, 400
-        
-        #csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
-        csr = CSR.query.filter_by(username='adamkroon').first()
-        service_request = ServiceReq.query.get(id)
-        
+
+        csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+
+        service_request = ServiceReq.query.filter_by(sr_id=id) \
+                .join(ServiceReq.citizen, aliased=True) \
+                .filter_by(office_id=csr.office_id).first()
         try:
             service_request = self.service_request_schema.load(json_data, instance=service_request, partial=True).data
 
@@ -50,6 +47,7 @@ class ServiceRequestsDetail(Resource):
         db.session.add(service_request)
         db.session.commit()
 
-        return {'message': 'Service successfully created.'}, 201
+        result = self.service_request_schema.dump(service_request)
 
-
+        return {'service_request': result.data,
+                'errors': result.errors}, 201

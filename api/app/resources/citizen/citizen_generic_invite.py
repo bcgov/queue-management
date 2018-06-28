@@ -12,17 +12,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask import request, jsonify, g
+from flask import g
 from flask_restplus import Resource
-from qsystem import api, db, oidc, socketio
-from app.auth import required_scope
-from app.models import Citizen, CSR, CitizenState, Period, PeriodState, ServiceReq, SRState
-from cockroachdb.sqlalchemy import run_transaction
-import logging
-from marshmallow import ValidationError, pre_load
+from qsystem import api, db, oidc
+from app.models import CSR, CitizenState, Period, PeriodState, ServiceReq, SRState
 from app.schemas import CitizenSchema
-from sqlalchemy import exc
-from datetime import datetime
+
 
 @api.route("/citizens/invite/", methods=['POST'])
 class CitizenGenericInvite(Resource):
@@ -32,10 +27,8 @@ class CitizenGenericInvite(Resource):
 
     @oidc.accept_token(require_token=True)
     def post(self):
-        json_data = request.get_json()
-        
+
         csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
-        #csr = CSR.query.filter_by(username='adamkroon').first()
 
         active_citizen_state = CitizenState.query.filter_by(cs_state_name='Active').first()
         waiting_period_state = PeriodState.query.filter_by(ps_name='Waiting').first()
@@ -44,31 +37,31 @@ class CitizenGenericInvite(Resource):
 
         if csr.qt_xn_csr_ind:
             period = Period.query.filter(Period.time_end.is_(None)) \
-            .filter_by(ps_id=waiting_period_state.ps_id) \
-            .join(Period.sr, aliased=True) \
-            .join(ServiceReq.citizen, aliased=True) \
-            .filter_by(qt_xn_citizen_ind=1,  cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
-            .first()
+                .filter_by(ps_id=waiting_period_state.ps_id) \
+                .join(Period.sr, aliased=True) \
+                .join(ServiceReq.citizen, aliased=True) \
+                .filter_by(qt_xn_citizen_ind=1,  cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
+                .first()
         else:
             period = Period.query.filter(Period.time_end.is_(None)) \
-            .filter_by(ps_id=waiting_period_state.ps_id) \
-            .join(Period.sr, aliased=True) \
-            .join(ServiceReq.citizen, aliased=True) \
-            .filter_by(qt_xn_citizen_ind=0,  cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
-            .first()
+                .filter_by(ps_id=waiting_period_state.ps_id) \
+                .join(Period.sr, aliased=True) \
+                .join(ServiceReq.citizen, aliased=True) \
+                .filter_by(qt_xn_citizen_ind=0,  cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
+                .first()
 
         if period is not None:
             citizen = period.sr.citizen
 
-        #Either no quick txn citizens for the quick txn csr, or vice versa
+        # Either no quick txn citizens for the quick txn csr, or vice versa
         if citizen is None:
             print("3")
             period = Period.query.filter(Period.time_end.is_(None)) \
-            .filter_by(ps_id=waiting_period_state.ps_id) \
-            .join(Period.sr, aliased=True) \
-            .join(ServiceReq.citizen, aliased=True) \
-            .filter_by(cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
-            .first()
+                .filter_by(ps_id=waiting_period_state.ps_id) \
+                .join(Period.sr, aliased=True) \
+                .join(ServiceReq.citizen, aliased=True) \
+                .filter_by(cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
+                .first()
 
             if period is not None:
                 citizen = period.sr.citizen
@@ -86,4 +79,5 @@ class CitizenGenericInvite(Resource):
         db.session.commit()
 
         result = self.citizen_schema.dump(citizen)
-        return {'citizen': result.data, 'errors': result.errors}, 200
+        return {'citizen': result.data,
+                'errors': result.errors}, 200

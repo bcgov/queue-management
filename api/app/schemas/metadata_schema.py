@@ -16,10 +16,11 @@ from marshmallow import fields
 from app.models import MetaData
 from qsystem import ma
 
+
 class MetaDataSchema(ma.ModelSchema):
 
     class Meta:
         model = MetaData
 
-    metadata_id     = fields.Int()
-    meta_text       = fields.Str()
+    metadata_id = fields.Int()
+    meta_text = fields.Str()

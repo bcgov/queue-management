@@ -12,19 +12,19 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask_restplus import fields
-from qsystem import api, db
-from .base import Base 
-#from app.models import Role
-from sqlalchemy import BigInteger, String
+
+from qsystem import db
+from .base import Base
+# from app.models import Role
+
 
 class Permission(Base):
 
-    permission_id    = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    permission_code  = db.Column(db.String(100), nullable=False)
-    permission_desc  = db.Column(db.String(1000), nullable=False)
+    permission_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    permission_code = db.Column(db.String(100), nullable=False)
+    permission_desc = db.Column(db.String(1000), nullable=False)
 
-    #roles        = db.relationship("Role", secondary=Role.role_right, back_populates="rights")
+    # roles        = db.relationship("Role", secondary=Role.role_right, back_populates="rights")
 
     def __repr__(self, permission_code):
         return '<Permission Code:(name={self.permission_code!r})>'.format(self=self)

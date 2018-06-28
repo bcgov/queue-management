@@ -12,18 +12,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask import request, jsonify, g
+from flask import g
 from flask_restplus import Resource
-import sqlalchemy.orm
-from qsystem import api, db, oidc, socketio
-from app.auth import required_scope
-from app.models import Citizen, CSR, CitizenState
-from cockroachdb.sqlalchemy import run_transaction
-import logging
-from marshmallow import ValidationError, pre_load
-from app.models import ServiceReq, SRState
-from app.schemas import CitizenSchema, ServiceReqSchema
+from qsystem import api, oidc
+from app.models import Citizen, CSR
+from app.schemas import ServiceReqSchema
 from sqlalchemy import exc
+
 
 @api.route("/citizens/<int:id>/service_requests/", methods=["GET"])
 class CitizenServiceRequests(Resource):
@@ -34,12 +29,12 @@ class CitizenServiceRequests(Resource):
     def get(self, id):
         try:
             csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
-            #csr = CSR.query.filter_by(username='adamkroon').first()
-            citizen = Citizen.query.get(id)
+
+            citizen = Citizen.query.filter_by(office_id=csr.office_id).first_or_404()
             result = self.service_requests_schema.dump(citizen.service_reqs)
             return {'service_requests': result.data,
                     'errors': result.errors}
 
         except exc.SQLAlchemyError as e:
-            print (e)
+            print(e)
             return {'message': 'API is down'}, 500
