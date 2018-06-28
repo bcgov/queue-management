@@ -79,4 +79,7 @@ class ServiceRequestsList(Resource):
         db.session.add(ticket_create_period)
         db.session.commit()
 
-        return {"message": "Service Request successfully created."}, 201
+        result = self.service_request_schema.dump(service_request)
+
+        return {'service_request': result.data,
+                'errors': result.errors}, 201

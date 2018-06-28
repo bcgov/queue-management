@@ -36,5 +36,5 @@ class CitizenServiceRequests(Resource):
                     'errors': result.errors}
 
         except exc.SQLAlchemyError as e:
-            print (e)
+            print(e)
             return {'message': 'API is down'}, 500

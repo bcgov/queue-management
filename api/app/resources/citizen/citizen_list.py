@@ -32,7 +32,7 @@ class CitizenList(Resource):
     def get(self):
         try:
             csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
-            active_state = CitizenState.query.filter_by(cs_state_name="Active")
+            active_state = CitizenState.query.filter_by(cs_state_name="Active").first()
             citizens = Citizen.query.filter_by(office_id=csr.office_id, cs_id=active_state.cs_id).all()
             result = self.citizens_schema.dump(citizens)
             return {'citizens': result.data,
@@ -63,4 +63,5 @@ class CitizenList(Resource):
         db.session.commit()
         result = self.citizen_schema.dump(citizen)
 
-        return {'citizen': result.data, 'errors': result.errors}, 201
+        return {'citizen': result.data,
+                'errors': result.errors}, 201

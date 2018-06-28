@@ -45,5 +45,5 @@ class CitizenFinishService(Resource):
         db.session.commit()
 
         result = self.citizen_schema.dump(citizen)
-        return {'citizen': result.data, 'errors': result.errors}, 200
-    
+        return {'citizen': result.data,
+                'errors': result.errors}, 200

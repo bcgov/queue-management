@@ -47,4 +47,7 @@ class ServiceRequestsDetail(Resource):
         db.session.add(service_request)
         db.session.commit()
 
-        return {'message': 'Service successfully created.'}, 201
+        result = self.service_request_schema.dump(service_request)
+
+        return {'service_request': result.data,
+                'errors': result.errors}, 201

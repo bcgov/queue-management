@@ -51,5 +51,9 @@ class Slack(Resource):
 
         resp = urllib.request.urlopen(req)
 
-        print(req)
-        print(resp)
+        if resp.getcode() == 200:
+            return {"status": "success"}, 200
+        else:
+            return {"status": "error", "http_code": resp.getcode()}, 400
+
+        return {"message": "Success"}, 200
