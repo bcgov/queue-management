@@ -15,7 +15,6 @@ limitations under the License.'''
 from flask_restplus import fields
 from qsystem import api, db
 from .base import Base
-# from app.models import Role
 
 
 class Permission(Base):
@@ -29,8 +28,6 @@ class Permission(Base):
     permission_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     permission_code = db.Column(db.String(100))
     permission_desc = db.Column(db.String(1000))
-
-    # roles        = db.relationship("Role", secondary=Role.role_right, back_populates="rights")
 
     def __repr__(self, permission_code):
         return '<Permission Code: %r>' % self.permission_code

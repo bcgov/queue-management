@@ -39,13 +39,6 @@ def required_scope(required_scope):
     token = get_token_auth_header()
     unverified_claims = jwt.get_unverified_claims(token)
 
-    if unverified_claims.get("scope"):
-        pass
-        token_scopes = unverified_claims["scope"].split()
-        for token_scope in token_scopes:
-            if token_scope == required_scope:
-                return True
-
     if unverified_claims.get('realm_access'):
         roles = unverified_claims.get('realm_access').get('roles')
         if roles and required_scope in roles:

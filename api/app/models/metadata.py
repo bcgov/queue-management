@@ -15,15 +15,12 @@ limitations under the License.'''
 
 from qsystem import db
 from .base import Base
-# from app.models import Service
 
 
 class MetaData(Base):
 
     metadata_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     meta_text = db.Column(db.String(100), nullable=False)
-
-    # services        = db.relationship("Service", secondary=Service.service_metadata, back_populates="metadata")
 
     def __repr__(self):
         return '<Meta Data:(name={self.meta_text!r})>'.format(self=self)
