@@ -13,8 +13,6 @@ class Bootstrap(Command):
 
     def run(self):
         print("Clearing out all models")
-        #models.Client.query.delete()
-        #models.User.query.delete()
         models.Citizen.query.delete()
         models.CitizenState.query.delete()
         models.Channel.query.delete()
@@ -73,7 +71,6 @@ class Bootstrap(Command):
             service_code = "abc123",
             service_name = "Licenses",
             service_desc = "Licenses - this is a description",
-            #parent_id = 1,
             prefix = "L",
             display_dashboard_ind = 0,
             actual_service_ind = 0
@@ -83,7 +80,6 @@ class Bootstrap(Command):
             service_code = "abc1234",
             service_name = "Taxes",
             service_desc = "Taxes - this is a description",
-            #parent_id = 2,
             prefix = "T",
             display_dashboard_ind = 0,
             actual_service_ind = 0
@@ -93,7 +89,6 @@ class Bootstrap(Command):
             service_code = "abc1235",
             service_name = "ICBC",
             service_desc = "ICBC - this is a description",
-            #parent_id = 2,
             prefix = "I",
             display_dashboard_ind = 0,
             actual_service_ind = 0
@@ -398,16 +393,11 @@ class Bootstrap(Command):
             csr_state_id=csr_state5.csr_state_id
         )
 
-        #cfms_postman_operator = models.User("cfms-postman-operator", office2.office_id)
-        #cfms_postman_non_operator = models.User("cfms-postman-non-operator", office2.office_id)
-
         db.session.add(adamkroon)
         db.session.add(cdmcinto)
         db.session.add(kgillani)
         db.session.add(scottrumsby)
         db.session.add(seanrumsby)
-        #db.session.add(cfms_postman_operator)
-        #db.session.add(cfms_postman_non_operator)
 
         db.session.commit()
 

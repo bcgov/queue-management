@@ -79,15 +79,9 @@ def error_handler(e):
 
 @api.errorhandler(AuthError)
 def handle_auth_error(ex):
-    # response = jsonify(ex.error)
-    # response.status_code = ex.status_code
-    # return response, 401
     return {}, 401
 
 @application.errorhandler(AuthError)
 def handle_auth_error(ex):
-    # response = jsonify(ex.error)
-    # response.status_code = ex.status_code
-    # return response, 401
     return {}, 401
 
