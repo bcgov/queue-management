@@ -30,7 +30,7 @@ class CitizenServiceRequests(Resource):
         try:
             csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
 
-            citizen = Citizen.query.filter_by(office_id=csr.office_id).first_or_404()
+            citizen = Citizen.query.filter_by(id=id).first_or_404()
             result = self.service_requests_schema.dump(citizen.service_reqs)
             return {'service_requests': result.data,
                     'errors': result.errors}

@@ -43,13 +43,14 @@ class CitizenLeft(Resource):
                     p.time_end = datetime.now()
 
                     db.session.add(p)
+                    
+            db.session.add(service_request)
 
         citizen.cs = CitizenState.query.filter_by(cs_state_name='Left before receiving services').first()
 
         db.session.add(citizen)
-        db.session.add(service_request)
         db.session.commit()
         result = self.citizen_schema.dump(citizen)
 
         return {'citizen': result.data,
-                'errors': result.errors}, 201
+                'errors': result.errors}, 200
