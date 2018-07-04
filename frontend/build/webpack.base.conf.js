@@ -18,6 +18,7 @@ module.exports = {
       ? config.build.assetsPublicPath
       : config.dev.assetsPublicPath
   },
+  externals: { Keycloak: 'Keycloak' },
   resolve: {
     extensions: ['.js', '.vue', '.json'],
     alias: {

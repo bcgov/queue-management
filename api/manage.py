@@ -4,6 +4,7 @@ from flask_migrate import Migrate, MigrateCommand, upgrade
 from qsystem import db, application
 from app import models
 import logging
+from datetime import datetime
 
 migrate = Migrate(application, db)
 manager = Manager(application)
@@ -12,107 +13,428 @@ class Bootstrap(Command):
 
     def run(self):
         print("Clearing out all models")
-        models.Client.query.delete()
-        models.User.query.delete()
+        models.Citizen.query.delete()
+        models.CitizenState.query.delete()
+        models.Channel.query.delete()
+        models.Period.query.delete()
+        models.PeriodState.query.delete()
+        models.SRState.query.delete()
+        models.ServiceReq.query.delete()
+        models.Service.query.filter_by(actual_service_ind=1).delete()
+        models.Service.query.delete()
+        models.CSR.query.delete()
+        models.CSRState.query.delete()
         models.Office.query.delete()
+        models.SmartBoard.query.delete()
+        models.Role.query.delete()
         db.session.commit()
 
         print("Starting to bootstrap data")
 
-        office1 = models.Office("Vancouver")
-        office2 = models.Office("Prince George")
-        office3 = models.Office("Vernon")
-        office4 = models.Office("Kamloops")
-        office5 = models.Office("Kelowna")
-        office6 = models.Office("Victoria")
-        office7 = models.Office("Port Alberni")
-        office8 = models.Office("Summerland")
-        office9 = models.Office("Kitimat")
+        smartboard1 = models.SmartBoard(sb_type="Test")
+
+        db.session.add(smartboard1)
+        db.session.flush()
+
+        office1 = models.Office(
+            office_name="Summerland", 
+            office_number=1, 
+            sb_id=smartboard1.sb_id
+        )
+
+
+        office2 = models.Office(
+            office_name="Victoria", 
+            office_number=2, 
+            sb_id=smartboard1.sb_id
+        )
+
+        office3 = models.Office(
+            office_name="Vernon", 
+            office_number=3, 
+            sb_id=smartboard1.sb_id
+        )
+
+        office4 = models.Office(
+            office_name="Test Office", 
+            office_number=4, 
+            sb_id=smartboard1.sb_id
+        )
 
         db.session.add(office1)
         db.session.add(office2)
         db.session.add(office3)
         db.session.add(office4)
-        db.session.add(office5)
-        db.session.add(office6)
-        db.session.add(office7)
-        db.session.add(office8)
-        db.session.add(office9)
-
         db.session.flush()
 
-        vancouver_user1 = models.User("vancouver1", "vancouver1", office1.id)
-        vancouver_user2 = models.User("vancouver2", "vancouver2", office1.id)
-        vancouver_user3 = models.User("vancouver3", "vancouver3", office1.id)
+        category1 = models.Service(
+            service_code = "abc123",
+            service_name = "Licenses",
+            service_desc = "Licenses - this is a description",
+            prefix = "L",
+            display_dashboard_ind = 0,
+            actual_service_ind = 0
+        )
 
-        prince_george_user1 = models.User("princegeorge1", "princegeorge1", office2.id)
-        prince_george_user2 = models.User("princegeorge2", "princegeorge2", office2.id)
-        prince_george_user3 = models.User("princegeorge3", "princegeorge3", office2.id)
+        category2 = models.Service(
+            service_code = "abc1234",
+            service_name = "Taxes",
+            service_desc = "Taxes - this is a description",
+            prefix = "T",
+            display_dashboard_ind = 0,
+            actual_service_ind = 0
+        )
 
-        vernon_user1 = models.User("vernon1", "vernon1", office3.id)
-        vernon_user2 = models.User("vernon2", "vernon2", office3.id)
-        vernon_user3 = models.User("vernon3", "vernon3", office3.id)
+        category3 = models.Service(
+            service_code = "abc1235",
+            service_name = "ICBC",
+            service_desc = "ICBC - this is a description",
+            prefix = "I",
+            display_dashboard_ind = 0,
+            actual_service_ind = 0
+        )
 
-        kamloops1 = models.User("kamloops1", "kamloops1", office4.id)
-        kamloops2 = models.User("kamloops2", "kamloops2", office4.id)
-        kamloops3 = models.User("kamloops3", "kamloops3", office4.id)
+        db.session.add(category1)
+        db.session.add(category2)
+        db.session.add(category3)
+        db.session.flush()
 
-        kelowna1 = models.User("kelowna1", "kelowna1", office5.id)
-        kelowna2 = models.User("kelowna2", "kelowna2", office5.id)
-        kelowna3 = models.User("kelowna3", "kelowna3", office5.id)
+        service1 = models.Service(
+            service_name = "Fishing",
+            service_desc = "Fishing - this is a description",
+            parent_id = category1.service_id,
+            service_code = "abc1236",
+            prefix = "F",
+            display_dashboard_ind = 1,
+            actual_service_ind = 1
+        )
 
-        victoria1 = models.User("victoria1", "victoria1", office6.id)
-        victoria2 = models.User("victoria2", "victoria2", office6.id)
-        victoria3 = models.User("victoria3", "victoria3", office6.id)
+        service2 = models.Service(
+            service_name = "Hunting",
+            service_desc = "Hunting - this is a description",
+            parent_id = category1.service_id,
+            service_code = "abc1237",
+            prefix = "G",
+            display_dashboard_ind = 1,
+            actual_service_ind = 1
+        )
 
-        port_alberni1 = models.User("port_alberni1", "port_alberni1", office7.id)
-        port_alberni2 = models.User("port_alberni2", "port_alberni2", office7.id)
-        port_alberni3 = models.User("port_alberni3", "port_alberni3", office7.id)
+        service3 = models.Service(
+            service_name = "Gold Mining",
+            service_desc = "Gold Mining - this is a description",
+            parent_id = category1.service_id,
+            service_code = "abc1238",
+            prefix = "G",
+            display_dashboard_ind = 1,
+            actual_service_ind = 1
+        )
 
-        summerland1 = models.User("summerland1", "summerland1", office8.id)
-        summerland2 = models.User("summerland2", "summerland2", office8.id)
-        summerland3 = models.User("summerland3", "summerland3", office8.id)
+        service4 = models.Service(
+            service_name = "Property Taxes",
+            service_desc = "Property Taxes - this is a description",
+            parent_id = category2.service_id,
+            service_code = "abc1239",
+            prefix = "P",
+            display_dashboard_ind = 1,
+            actual_service_ind = 1
+        )
 
-        kitimat1 = models.User("kitimat1", "kitimat1", office9.id)
-        kitimat2 = models.User("kitimat2", "kitimat2", office9.id)
-        kitimat3 = models.User("kitimat3", "kitimat3", office9.id)
+        service5 = models.Service(
+            service_name = "MSP",
+            service_desc = "MSP - this is a description",
+            parent_id = category2.service_id,
+            service_code = "abc12310",
+            prefix = "M",
+            display_dashboard_ind = 1,
+            actual_service_ind = 1
+        )
 
-        db.session.add(vancouver_user1)
-        db.session.add(vancouver_user2)
-        db.session.add(vancouver_user3)
+        service6 = models.Service(
+            service_name = "Class 5 Test",
+            service_desc = "Class 5 Test - this is a description",
+            parent_id = category3.service_id,
+            service_code = "abc12311",
+            prefix = "C",
+            display_dashboard_ind = 1,
+            actual_service_ind = 1
+        )
 
-        db.session.add(prince_george_user1)
-        db.session.add(prince_george_user2)
-        db.session.add(prince_george_user3)
+        service7 = models.Service(
+            service_name = "Speeding Ticket",
+            service_desc = "Speeding Ticket - this is a description",
+            parent_id = category3.service_id,
+            service_code = "abc12312",
+            prefix = "S",
+            display_dashboard_ind = 1,
+            actual_service_ind = 1
+        )
 
-        db.session.add(vernon_user1)
-        db.session.add(vernon_user2)
-        db.session.add(vernon_user3)
+        service8 = models.Service(
+            service_name = "Class 6 Test",
+            service_desc = "Class 6 Test - this is a description",
+            parent_id = category3.service_id,
+            service_code = "abc12313",
+            prefix = "C",
+            display_dashboard_ind = 1,
+            actual_service_ind = 1
+        )
 
-        db.session.add(kamloops1)
-        db.session.add(kamloops2)
-        db.session.add(kamloops3)
+        service9 = models.Service(
+            service_name = "DUI",
+            service_desc = "DUI - this is a description",
+            parent_id = category3.service_id,
+            service_code = "abc12314",
+            prefix = "D",
+            display_dashboard_ind = 1,
+            actual_service_ind = 1
+        )
 
-        db.session.add(kelowna1)
-        db.session.add(kelowna2)
-        db.session.add(kelowna3)
+        db.session.add(service1)
+        db.session.add(service2)
+        db.session.add(service3)
+        db.session.add(service4)
+        db.session.add(service5)
+        db.session.add(service6)
+        db.session.add(service7)
+        db.session.add(service8)
+        db.session.add(service9)
+        db.session.commit()
 
-        db.session.add(victoria1)
-        db.session.add(victoria2)
-        db.session.add(victoria3)
+        office1.services.append(category1)
+        office1.services.append(category2)
+        office1.services.append(category3)
+        office1.services.append(service1)
+        office1.services.append(service2)
+        office1.services.append(service3)
+        office1.services.append(service4)
+        office1.services.append(service5)
+        office1.services.append(service6)
+        office1.services.append(service7)
+        office1.services.append(service8)
+        office1.services.append(service9)
 
-        db.session.add(port_alberni1)
-        db.session.add(port_alberni2)
-        db.session.add(port_alberni3)
+        office2.services.append(category2)
+        office2.services.append(category3)
+        office2.services.append(service4)
+        office2.services.append(service5)
+        office2.services.append(service6)
+        office2.services.append(service7)
+        office2.services.append(service8)
+        office2.services.append(service9)
 
-        db.session.add(summerland1)
-        db.session.add(summerland2)
-        db.session.add(summerland3)
+        office3.services.append(category1)
+        office3.services.append(category2)
+        office3.services.append(service1)
+        office3.services.append(service2)
+        office3.services.append(service3)
+        office3.services.append(service4)
+        office3.services.append(service5)
 
-        db.session.add(kitimat1)
-        db.session.add(kitimat2)
-        db.session.add(kitimat3)
+        office4.services.append(category1)
+        office4.services.append(category2)
+        office4.services.append(category3)
+        office4.services.append(service1)
+        office4.services.append(service2)
+        office4.services.append(service3)
+        office4.services.append(service4)
+        office4.services.append(service5)
+        office4.services.append(service6)
+        office4.services.append(service7)
+        office4.services.append(service8)
+        office4.services.append(service9)
 
+        sr_state1 = models.SRState(
+            sr_code="Pending",
+            sr_state_desc="Service Request is pending."
+        )
+
+        sr_state2 = models.SRState(
+            sr_code="Active",
+            sr_state_desc="Service Request is active."
+        )
+
+        sr_state3 = models.SRState(
+            sr_code="Complete",
+            sr_state_desc="Service Request is complete."
+        )
+
+        db.session.add(sr_state1)
+        db.session.add(sr_state2)
+        db.session.add(sr_state3)
+        db.session.commit()
+
+        period_state1 = models.PeriodState(
+            ps_name="Waiting",
+            ps_desc="Waiting in line to see a CSR, after a ticket has been created for them. The time they are in this state is the Citizen Wait Time",
+            ps_number=1
+        )
+        period_state2 = models.PeriodState(
+            ps_name="Ticket Creation",
+            ps_desc="A receptionist is creating a service request / ticket for the citizen. This is the first state a citizen will be in. The time they are in this state is the CSR prep time.",
+            ps_number=2
+        )
+        period_state3 = models.PeriodState(
+            ps_name="Invited",
+            ps_desc="Has been called from the waiting area to be served. The time they are in this state is the time it takes them to walk from the waiting area, to the CSR, until the CSR starts to serve them.",
+            ps_number=4
+        )
+        period_state4 = models.PeriodState(
+            ps_name="Being Served",
+            ps_desc="Is being servbed by a CSR. The time they are in this state is the Service time.",
+            ps_number=7
+        )
+        period_state5 = models.PeriodState(
+            ps_name="On hold",
+            ps_desc="Has been placed on hold be a csr. The time they are in this state is the Hold time",
+            ps_number=11
+        )
+
+        db.session.add(period_state1)
+        db.session.add(period_state2)
+        db.session.add(period_state3)
+        db.session.add(period_state4)
+        db.session.add(period_state5)
+        db.session.commit()
+
+        role1 = models.Role(
+            role_code="GA",
+            role_desc="GA"
+        )
+
+        role2 = models.Role(
+            role_code="CSR",
+            role_desc="CSR"
+        )
+
+        db.session.add(role1)
+        db.session.add(role2)
+        db.session.commit()
+
+        csr_state1 = models.CSRState(
+            csr_state_name="Logout",
+            csr_state_desc="Logging out"
+        )
+
+        csr_state2 = models.CSRState(
+            csr_state_name="Login",
+            csr_state_desc="Logging in"
+        )
+
+        csr_state3 = models.CSRState(
+            csr_state_name="Break",
+            csr_state_desc="Currently on break"
+        )
+
+        csr_state4 = models.CSRState(
+            csr_state_name="Serving",
+            csr_state_desc="Serving a citizen"
+        )
+
+        csr_state5 = models.CSRState(
+            csr_state_name="Back Office",
+            csr_state_desc="Currently in back office"
+        )
+
+        db.session.add(csr_state1)
+        db.session.add(csr_state2)
+        db.session.add(csr_state3)
+        db.session.add(csr_state4)
+        db.session.add(csr_state5)
+        db.session.commit()
+
+
+        adamkroon = models.CSR(
+            username="adamkroon",  
+            office_id=office1.office_id,
+            role_id=role2.role_id,
+            qt_xn_csr_ind=1,
+            receptionist_ind=1,
+            deleted=None,
+            csr_state_id=csr_state1.csr_state_id
+            )
+
+        cdmcinto = models.CSR(
+            username="cdmcinto",
+            office_id=office2.office_id,
+            role_id=role1.role_id,
+            qt_xn_csr_ind=1,
+            receptionist_ind=1,
+            deleted=None,
+            csr_state_id=csr_state2.csr_state_id
+        )
+
+        kgillani = models.CSR(
+            username="kgillani",
+            office_id=office1.office_id,
+            role_id=role2.role_id,
+            qt_xn_csr_ind=1,
+            receptionist_ind=1,
+            deleted=None,
+            csr_state_id=csr_state3.csr_state_id
+        )
+
+        scottrumsby = models.CSR(
+            username="scottrumsby",
+            office_id=office4.office_id,
+            role_id= role1.role_id,
+            qt_xn_csr_ind=1,
+            receptionist_ind=1,
+            deleted=None,
+            csr_state_id=csr_state4.csr_state_id
+        )
+
+        seanrumsby = models.CSR(
+            username="seanrumsby",
+            office_id=office3.office_id,
+            role_id=role2.role_id,
+            qt_xn_csr_ind=1,
+            receptionist_ind=1,
+            deleted=None,
+            csr_state_id=csr_state5.csr_state_id
+        )
+
+        db.session.add(adamkroon)
+        db.session.add(cdmcinto)
+        db.session.add(kgillani)
+        db.session.add(scottrumsby)
+        db.session.add(seanrumsby)
+
+        db.session.commit()
+
+        cs1 = models.CitizenState(
+            cs_state_name="Active",
+            cs_state_desc="Citizen is active"
+        )
+
+        cs2 = models.CitizenState(
+            cs_state_name="Received Services",
+            cs_state_desc="Citizen has received services"
+        )
+
+        cs3 = models.CitizenState(
+            cs_state_name="Left before receiving services",
+            cs_state_desc="Citizen is now gone"
+        )
+
+        db.session.add(cs1)
+        db.session.add(cs2)
+        db.session.add(cs3)
+        db.session.flush()
+
+        channel1 = models.Channel(
+            channel_name="In Person"
+        )
+
+        channel2 = models.Channel(
+            channel_name="Telephone"
+        )
+        channel3 = models.Channel(
+            channel_name="Email"
+        )
+
+        db.session.add(channel1)
+        db.session.add(channel2)
+        db.session.add(channel3)
         db.session.commit()
 
 class FetchData(Command):

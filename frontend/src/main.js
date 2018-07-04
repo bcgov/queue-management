@@ -17,16 +17,26 @@ import 'es6-promise/auto'
 import App from './App'
 import { store } from './store/'
 
+
+
 import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 Vue.use(BootstrapVue)
 
+import 'es6-promise/auto'
 import axios from 'axios'
-const axiosInstance = axios.create({
+
+require('Keycloak')
+var keycloak = Keycloak(process.env.KEYCLOAK_JSON_URL)
+console.log(process.env.KEYCLOAK_JSON_URL)
+
+export const axiosInstance = axios.create({
   baseURL: process.env.API_URL,
   withCredentials: true
 })
+
+Vue.prototype.$keycloak = keycloak
 Vue.prototype.$axios = axiosInstance
 
 Vue.config.productionTip = false
@@ -35,19 +45,6 @@ Vue.config.productionTip = false
 new Vue({
   el: '#app',
   store,
-  created() {
-    let url  = "/users/me/"
-    this.$axios.get(url)
-      .then( response => {
-        let user = {
-          name: response.data.username,
-          office_id: response.data.office_id
-        }
-        this.$root.$emit('socketConnect')
-        this.$store.commit('logIn')
-        this.$store.commit('setUser', user)
-        })
-      },
   template: '<App />',
   components: { App }
 })

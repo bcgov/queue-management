@@ -16,17 +16,25 @@ class BaseConfig(object):
     LOGGING_LEVEL = DEBUG
     LOGGING_FORMAT = '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
 
+    SECRET_KEY = os.getenv('SECRET_KEY','d3a728fc-0671-4c08-82fe-602c695450cf')
+    OIDC_OPENID_REALM = os.getenv('OIDC_OPENID_REALM','nest')
+    OIDC_CLIENT_SECRETS = os.getenv('OIDC_SECRETS_FILE','client_secrets/secrets.json')
+    OIDC_USER_INFO_ENABLED = True
+    OIDC_SCOPES = ['openid', 'email', 'profile']
+
 class LocalConfig(BaseConfig):
     DEBUG = True
     TESTING = False
     ENV = 'dev'
     SQLALCHEMY_DATABASE_URI = 'sqlite:///db.sqlite3'
-    ACTIVE_MQ_URL = 'amqp://guest:guest@localhost:5672'
-    # ACTIVE_MQ_URL = ''
+    ACTIVE_MQ_URL = ''      #'amqp://guest:guest@localhost:5672'
     SECRET_KEY = 'a9eec0e0-23b7-4788-9a92-318347b9a39f'
     CORS_ALLOWED_ORIGINS = ["http://localhost:8080"]
     USE_HTTPS = False
-    SQLALCHEMY_ECHO=True
+    SQLALCHEMY_ECHO=False
+
+    SLACK_URL = os.getenv('SLACK_URL')
+
 
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
@@ -68,6 +76,8 @@ class DevelopmentConfig(BaseConfig):
         port=DB_PORT,
         name=DB_NAME,
     )
+
+    SLACK_URL = os.getenv('SLACK_URL')
 
     if os.getenv('SQLALCHEMY_ECHO', "False") == "True":
         SQLALCHEMY_ECHO=True

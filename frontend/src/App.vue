@@ -12,8 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
 
-
-
 <template>
   <b-container>
     <b-row align-v="end">
@@ -29,22 +27,20 @@ limitations under the License.*/
       </b-col>
     </b-row>
       <Controls v-if="this.$store.state.isLoggedIn"/>
+      <SlackMessage v-if="this.$store.state.isLoggedIn"/>
   </b-container>
 </template>
 
 <script>
-  import Login from './Login';
-  import Socket from './Socket'
-  import Controls from './Controls'
+import Controls from './Controls'
+import Login from './Login'
+import Socket from './Socket'
+import SlackMessage from './SlackMessage'
 
-  export default {
-    name: 'App',
-    components: {
-      Login,
-      Socket,
-      Controls
-    }
-  }
+export default {
+  name: 'App',
+  components: { Login, Socket, Controls, SlackMessage },
+}
 
 </script>
 

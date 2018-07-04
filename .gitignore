@@ -105,6 +105,7 @@ venv.bak/
 
 # Project specific include/excludes
 !frontend/build
+api/client_secrets/secrets.json
 node_modules/
 functional-tests/.gradle
 owasp/.gradle

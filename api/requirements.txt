@@ -1,6 +1,7 @@
 Flask
 Flask-Migrate
 Flask-Moment
+Flask-OIDC
 Flask-RESTplus
 Flask-Script
 Flask-SQLAlchemy
@@ -8,7 +9,12 @@ cockroachdb
 eventlet
 flask-cors
 flask-login
+flask_marshmallow
 flask-socketio
 gunicorn
 kombu
+marshmallow
+marshmallow-sqlalchemy
 psycopg2-binary
+python-jose
+
