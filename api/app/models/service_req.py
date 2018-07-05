@@ -27,8 +27,8 @@ class ServiceReq(Base):
     service_id = db.Column(db.Integer, db.ForeignKey('service.service_id'), nullable=False)
     sr_state_id = db.Column(db.Integer, db.ForeignKey('srstate.sr_state_id'), nullable=False)
 
-    periods = db.relationship('Period', backref=db.backref("request_periods", lazy=False))
-    sr_state = db.relationship('SRState')
+    periods = db.relationship('Period', backref=db.backref("request_periods", lazy=False), lazy='joined')
+    sr_state = db.relationship('SRState', lazy='joined')
     citizen = db.relationship('Citizen')
     service = db.relationship('Service')
 

@@ -28,9 +28,9 @@ class Period(Base):
     time_end = db.Column(db.DateTime, nullable=True)
     accurate_time_ind = db.Column(db.Integer, nullable=False)
 
-    ps = db.relationship("PeriodState")
+    ps = db.relationship("PeriodState", lazy='joined')
     sr = db.relationship('ServiceReq')
-    channel = db.relationship("Channel")
+    channel = db.relationship("Channel", lazy='joined')
 
     def __repr__(self):
         return '<Period id:(name={self.period_id!r})>'.format(self=self)
