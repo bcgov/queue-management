@@ -30,7 +30,7 @@ class ServiceReq(Base):
     periods = db.relationship('Period', backref=db.backref("request_periods", lazy=False), lazy='joined')
     sr_state = db.relationship('SRState', lazy='joined')
     citizen = db.relationship('Citizen')
-    service = db.relationship('Service')
+    service = db.relationship('Service', lazy='joined')
 
     def __init__(self, **kwargs):
         super(ServiceReq, self).__init__(**kwargs)

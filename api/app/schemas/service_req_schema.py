@@ -30,5 +30,4 @@ class ServiceReqSchema(ma.ModelSchema):
     sr_state_id = fields.Int()
     periods = fields.Nested(PeriodSchema, many=True, exclude=('state_periods', 'request_periods',))
     sr_state = fields.Nested(SRStateSchema)
-    service = fields.Nested(ServiceSchema)
-    period_state = fields.Nested(PeriodStateSchema)
+    service = fields.Nested(ServiceSchema, exclude=('office_services',))

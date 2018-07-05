@@ -30,6 +30,7 @@ class Citizen(Base):
 
     service_reqs = db.relationship('ServiceReq', lazy='joined')
     cs = db.relationship('CitizenState', lazy='joined')
+    office = db.relationship('Office', lazy='joined')
 
     def __repr__(self):
         return '<Citizen Name:(name={self.citizen_name!r})>'.format(self=self)
