@@ -29,7 +29,6 @@ class ServiceReqSchema(ma.ModelSchema):
     quantity = fields.Int()
     periods = fields.Nested(PeriodSchema, many=True, exclude=('state_periods', 'request_periods',))
     sr_state = fields.Nested(SRStateSchema)
-    service = fields.Nested(ServiceSchema)
     channel = fields.Nested(ChannelSchema)
     period_state = fields.Nested(PeriodStateSchema)
     service = fields.Nested(ServiceSchema, exclude=('office_services',))
