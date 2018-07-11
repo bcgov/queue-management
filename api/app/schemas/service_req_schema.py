@@ -23,11 +23,8 @@ class ServiceReqSchema(ma.ModelSchema):
     class Meta:
         model = ServiceReq
 
-    sr_id = fields.Int()
     citizen_id = fields.Int()
     quantity = fields.Int()
-    service_id = fields.Int()
-    sr_state_id = fields.Int()
     periods = fields.Nested(PeriodSchema, many=True, exclude=('state_periods', 'request_periods',))
-    sr_state = fields.Nested(SRStateSchema)
+    sr_state = fields.Nested(SRStateSchema, exclude=('sr_state_desc',))
     service = fields.Nested(ServiceSchema, exclude=('office_services',))

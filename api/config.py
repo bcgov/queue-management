@@ -31,8 +31,7 @@ class LocalConfig(BaseConfig):
     SECRET_KEY = 'a9eec0e0-23b7-4788-9a92-318347b9a39f'
     CORS_ALLOWED_ORIGINS = ["http://localhost:8080"]
     USE_HTTPS = False
-    SQLALCHEMY_ECHO=False
-
+    SQLALCHEMY_ECHO = True
     SLACK_URL = os.getenv('SLACK_URL')
 
 
