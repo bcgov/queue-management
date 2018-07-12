@@ -21,12 +21,13 @@ class ServiceSchema(ma.ModelSchema):
 
     class Meta:
         model = Service
+        include_fk = True
 
     service_id = fields.Int(dump_only=True)
     service_code = fields.Str(dump_only=True)
     service_name = fields.Str(dump_only=True)
     service_desc = fields.Str(dump_only=True)
-    parent_id = fields.Int(dump_only=True)
+    parent = fields.Nested('self', only=('service_id', 'service_name',))
     deleted = fields.DateTime(dump_only=True)
     prefix = fields.Str(dump_only=True)
     display_dashboard_ind = fields.Int(dump_only=True)
