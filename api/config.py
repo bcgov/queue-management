@@ -28,6 +28,7 @@ class LocalConfig(BaseConfig):
     ENV = 'dev'
     SQLALCHEMY_DATABASE_URI = 'sqlite:///db.sqlite3'
     ACTIVE_MQ_URL = ''      #'amqp://guest:guest@localhost:5672'
+    CORS_ALLOWED_ORIGINS = ["http://localhost:8080"]
     SECRET_KEY = 'a9eec0e0-23b7-4788-9a92-318347b9a39f'
     USE_HTTPS = False
     SQLALCHEMY_ECHO = True

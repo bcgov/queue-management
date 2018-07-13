@@ -1,6 +1,7 @@
 import datetime
 import logging
 from flask import Flask, g, session
+from flask_cors import CORS
 from flask_marshmallow import Marshmallow
 from flask_restplus import Api
 from flask_sqlalchemy import SQLAlchemy
@@ -31,6 +32,9 @@ if application.config['ACTIVE_MQ_URL'] != None:
     socketio.init_app(application, async_mode='eventlet', message_queue=application.config['ACTIVE_MQ_URL'], path='/api/v1/socket.io')
 else:  
     socketio.init_app(application, path='/api/v1/socket.io')
+
+if application.config['CORS_ALLOWED_ORIGINS'] != None:
+    CORS(application, supports_credentials=True, origins=application.config['CORS_ALLOWED_ORIGINS'])
 
 api = Api(application, prefix='/api/v1', doc='/api/v1/')
 
