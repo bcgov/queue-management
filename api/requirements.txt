@@ -7,7 +7,6 @@ Flask-Script
 Flask-SQLAlchemy
 cockroachdb
 eventlet
-flask-cors
 flask-login
 flask_marshmallow
 flask-socketio

@@ -23,7 +23,6 @@ configure_app(application)
 
 db = SQLAlchemy(application)
 db.init_app(application)
-sessionmaker = sessionmaker(db.engine)
 
 ma = Marshmallow(application)
 
@@ -33,8 +32,6 @@ if application.config['ACTIVE_MQ_URL'] != None:
     socketio.init_app(application, async_mode='eventlet', message_queue=application.config['ACTIVE_MQ_URL'], path='/api/v1/socket.io')
 else:  
     socketio.init_app(application, path='/api/v1/socket.io')
-
-CORS(application, supports_credentials=True, origins=application.config['CORS_ALLOWED_ORIGINS'])
 
 api = Api(application, prefix='/api/v1', doc='/api/v1/')
 
