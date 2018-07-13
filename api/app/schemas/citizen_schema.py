@@ -22,6 +22,7 @@ class CitizenSchema(ma.ModelSchema):
 
     class Meta:
         model = Citizen
+        exclude = ('office_citizens','office',)
 
     citizen_id = fields.Int(dump_only=True)
     office_id = fields.Int()

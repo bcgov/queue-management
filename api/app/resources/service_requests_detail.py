@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from flask import request, g
 from flask_restplus import Resource
-from qsystem import api, db, oidc
+from qsystem import api, api_call_with_retry, db, oidc
 from app.models import ServiceReq, CSR
 from app.schemas import ServiceReqSchema
 from marshmallow import ValidationError
@@ -27,6 +27,7 @@ class ServiceRequestsDetail(Resource):
     service_request_schema = ServiceReqSchema()
 
     @oidc.accept_token(require_token=True)
+    @api_call_with_retry
     def put(self, id):
         json_data = request.get_json()
 

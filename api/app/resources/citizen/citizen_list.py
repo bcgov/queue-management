@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from flask import request, g
 from flask_restplus import Resource
-from qsystem import api, db, oidc
+from qsystem import api, api_call_with_retry, db, oidc
 from app.models import Citizen, CSR, CitizenState
 from marshmallow import ValidationError
 from app.schemas import CitizenSchema
@@ -43,6 +43,7 @@ class CitizenList(Resource):
             return {'message': 'API is down'}, 500
 
     @oidc.accept_token(require_token=True)
+    @api_call_with_retry
     def post(self):
         json_data = request.get_json()
 

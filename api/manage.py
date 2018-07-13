@@ -393,11 +393,33 @@ class Bootstrap(Command):
             csr_state_id=csr_state5.csr_state_id
         )
 
+        cfms_postman_operator = models.CSR(
+            username="cfms-postman-operator",
+            office_id=office4.office_id,
+            role_id=role2.role_id,
+            qt_xn_csr_ind=1,
+            receptionist_ind=1,
+            deleted=None,
+            csr_state_id=csr_state5.csr_state_id
+        )
+
+        cfms_postman_nonoperator = models.CSR(
+            username="cfms-postman-nonoperator",
+            office_id=office4.office_id,
+            role_id=role2.role_id,
+            qt_xn_csr_ind=1,
+            receptionist_ind=1,
+            deleted=None,
+            csr_state_id=csr_state5.csr_state_id
+        )
+
         db.session.add(adamkroon)
         db.session.add(cdmcinto)
         db.session.add(kgillani)
         db.session.add(scottrumsby)
         db.session.add(seanrumsby)
+        db.session.add(cfms_postman_operator)
+        db.session.add(cfms_postman_nonoperator)
 
         db.session.commit()
 

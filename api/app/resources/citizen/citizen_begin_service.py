@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from flask import g
 from flask_restplus import Resource
-from qsystem import api, db, oidc
+from qsystem import api, api_call_with_retry, db, oidc
 from app.models import Citizen, CSR
 from app.models import SRState
 from app.schemas import CitizenSchema
@@ -26,6 +26,7 @@ class CitizenBeginService(Resource):
     citizen_schema = CitizenSchema()
 
     @oidc.accept_token(require_token=True)
+    @api_call_with_retry
     def post(self, id):
         csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
         citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first_or_404()

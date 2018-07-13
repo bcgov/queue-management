@@ -15,8 +15,8 @@ limitations under the License.'''
 from flask import request, g
 from flask_restplus import Resource
 from datetime import datetime
-from qsystem import api, db, oidc
-from app.models import Citizen, Channel, CSR, Period, PeriodState, ServiceReq, SRState
+from qsystem import api, api_call_with_retry, db, oidc
+from app.models import Citizen, Channel, CSR, Period, PeriodState, Service, ServiceReq, SRState
 from app.schemas import ChannelSchema, ServiceReqSchema
 from marshmallow import ValidationError
 
@@ -28,6 +28,7 @@ class ServiceRequestsList(Resource):
     service_request_schema = ServiceReqSchema()
 
     @oidc.accept_token(require_token=True)
+    @api_call_with_retry
     def post(self):
         json_data = request.get_json()
 
@@ -47,34 +48,34 @@ class ServiceRequestsList(Resource):
             return {"message": str(err)}
 
         active_sr_state = SRState.query.filter_by(sr_code='Active').first()
+        citizen = Citizen.query.get(service_request.citizen_id)
+        service = Service.query.get(service_request.service_id)
         service_request.sr_state = active_sr_state
-
-        db.session.add(service_request)
-        db.session.flush()
 
         period_state_ticket_creation = PeriodState.query.filter_by(ps_name="Ticket Creation").first()
 
         ticket_create_period = Period(
-            sr_id=service_request.sr_id,
             csr_id=csr.csr_id,
             reception_csr_ind=csr.receptionist_ind,
             ps_id=period_state_ticket_creation.ps_id,
-            time_start=service_request.citizen.get_service_start_time(),
+            time_start=citizen.get_service_start_time(),
             time_end=datetime.now(),
             accurate_time_ind=1
         )
+        service_request.periods.append(ticket_create_period)
 
         service_count = ServiceReq.query \
                 .join(ServiceReq.citizen, aliased=True) \
-                .filter(Citizen.start_time >= datetime.now().strftime("%Y-%m-%d")) \
+                .filter(Citizen.start_time >= citizen.start_time.strftime("%Y-%m-%d")) \
                 .filter_by(office_id=csr.office_id) \
                 .join(ServiceReq.service, aliased=True) \
-                .filter_by(prefix=service_request.service.prefix) \
+                .filter_by(prefix=service.prefix) \
                 .count()
 
-        service_request.citizen.ticket_number = service_request.service.prefix + str(service_count)
+        citizen.ticket_number = service.prefix + str(service_count)
 
-        db.session.add(ticket_create_period)
+        db.session.add(service_request)
+        db.session.add(citizen)
         db.session.commit()
 
         result = self.service_request_schema.dump(service_request)

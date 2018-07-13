@@ -31,9 +31,8 @@ class LocalConfig(BaseConfig):
     CORS_ALLOWED_ORIGINS = ["http://localhost:8080"]
     SECRET_KEY = 'a9eec0e0-23b7-4788-9a92-318347b9a39f'
     USE_HTTPS = False
-    SQLALCHEMY_ECHO = True
+    SQLALCHEMY_ECHO = False
     SLACK_URL = os.getenv('SLACK_URL')
-
 
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
@@ -45,6 +44,8 @@ class DevelopmentConfig(BaseConfig):
     SESSION_COOKIE_DOMAIN = '.pathfinder.gov.bc.ca'
     REMEMBER_COOKIE_DURATION = 86400
     USE_HTTPS = True
+
+    CORS_ALLOWED_ORIGINS = [""]
 
     ACTIVE_MQ_USER = os.getenv('ACTIVE_MQ_USER', '')
     ACTIVE_MQ_PASSWORD = os.getenv('ACTIVE_MQ_PASSWORD', '')

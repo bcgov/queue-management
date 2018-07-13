@@ -7,12 +7,17 @@ from flask_oidc import OpenIDConnect as OriginalOIDC, _json_loads
 from flask import request, session, redirect, url_for, g, current_app
 from base64 import b64encode, urlsafe_b64encode, urlsafe_b64decode
 from six.moves.urllib.parse import urlencode
+from qsystem import cache
+import time
 
 import httplib2
 import logging
 
 class OpenIDConnect(OriginalOIDC):
+
+    @cache.memoize(timeout=60)
     def _get_token_info(self, token):
+        start_time = time.time()
         # We hardcode to use client_secret_post, because that's what the Google
         # oauth2client library defaults to
         request = {'token': token}
@@ -40,6 +45,9 @@ class OpenIDConnect(OriginalOIDC):
         resp, content = httplib2.Http(disable_ssl_certificate_validation=True).request(
             self.client_secrets['token_introspection_uri'], 'POST',
             urlencode(request), headers=headers)
+
+        total_time = time.time() - start_time
+        print ("Sending request to OIDC server in %.3fs" % total_time)
 
         # TODO: Cache this reply
         return _json_loads(content)
