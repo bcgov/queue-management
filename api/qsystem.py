@@ -11,6 +11,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.patches.flask_oidc_patched import OpenIDConnect
 from app.exceptions import AuthError
 
+from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
 application = Flask(__name__, instance_relative_config=True)
