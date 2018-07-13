@@ -51,7 +51,6 @@ class ServiceReq(Base):
             sr_id=self.sr_id,
             csr_id=csr.csr_id,
             reception_csr_ind=csr.receptionist_ind,
-            channel_id=active_period.channel_id,
             ps_id=period_state_invite.ps_id,
             time_start=datetime.now(),
             accurate_time_ind=1
@@ -70,7 +69,6 @@ class ServiceReq(Base):
             sr_id=self.sr_id,
             csr_id=csr.csr_id,
             reception_csr_ind=csr.receptionist_ind,
-            channel_id=active_period.channel_id,
             ps_id=period_state_waiting.ps_id,
             time_start=datetime.now(),
             accurate_time_ind=1
@@ -89,7 +87,6 @@ class ServiceReq(Base):
             sr_id=self.sr_id,
             csr_id=csr.csr_id,
             reception_csr_ind=csr.receptionist_ind,
-            channel_id=active_period.channel_id,
             ps_id=period_state_being_served.ps_id,
             time_start=datetime.now(),
             accurate_time_ind=1
@@ -108,7 +105,6 @@ class ServiceReq(Base):
             sr_id=self.sr_id,
             csr_id=csr.csr_id,
             reception_csr_ind=csr.receptionist_ind,
-            channel_id=active_period.channel_id,
             ps_id=period_state_on_hold.ps_id,
             time_start=datetime.now(),
             accurate_time_ind=1
