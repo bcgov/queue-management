@@ -1,7 +1,6 @@
 import datetime
 import logging
 from flask import Flask, g, session
-from flask_cors import CORS
 from flask_marshmallow import Marshmallow
 from flask_restplus import Api
 from flask_sqlalchemy import SQLAlchemy
@@ -12,7 +11,6 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.patches.flask_oidc_patched import OpenIDConnect
 from app.exceptions import AuthError
 
-from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
 application = Flask(__name__, instance_relative_config=True)
