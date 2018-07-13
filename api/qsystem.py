@@ -1,7 +1,6 @@
 import datetime
 import logging
 from flask import Flask, g, session
-from flask_cors import CORS
 from flask_marshmallow import Marshmallow
 from flask_restplus import Api
 from flask_sqlalchemy import SQLAlchemy
