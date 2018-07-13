@@ -28,8 +28,9 @@ class Citizen(Base):
     cs_id = db.Column(db.BigInteger, db.ForeignKey('citizenstate.cs_id'), nullable=False)
     start_time = db.Column(db.DateTime, nullable=False)
 
-    service_reqs = db.relationship('ServiceReq')
-    cs = db.relationship('CitizenState')
+    service_reqs = db.relationship('ServiceReq', lazy='joined')
+    cs = db.relationship('CitizenState', lazy='joined')
+    office = db.relationship('Office', lazy='joined')
 
     def __repr__(self):
         return '<Citizen Name:(name={self.citizen_name!r})>'.format(self=self)

@@ -30,8 +30,7 @@ class LocalConfig(BaseConfig):
     ACTIVE_MQ_URL = ''      #'amqp://guest:guest@localhost:5672'
     SECRET_KEY = 'a9eec0e0-23b7-4788-9a92-318347b9a39f'
     USE_HTTPS = False
-    SQLALCHEMY_ECHO=False
-
+    SQLALCHEMY_ECHO = True
     SLACK_URL = os.getenv('SLACK_URL')
 
 
