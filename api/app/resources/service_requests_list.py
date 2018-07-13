@@ -32,22 +32,21 @@ class ServiceRequestsList(Resource):
         json_data = request.get_json()
 
         if not json_data:
-            return {"message": "No input data received for creating citizen"}, 400
+            return {"message": "No input data received for creating service request"}, 400
 
         csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
 
         try:
             service_request = self.service_request_schema.load(json_data['service_request']).data
-            channel_id = json_data['channel_id']
+            print(service_request)
 
         except ValidationError as err:
             return {"message": err.messages}, 422
         except KeyError as err:
-            return {"message": err.messages}
+            print (err)
+            return {"message": str(err)}
 
-        channel = Channel.query.get(channel_id)
         active_sr_state = SRState.query.filter_by(sr_code='Active').first()
-        service_request.channel = channel
         service_request.sr_state = active_sr_state
 
         db.session.add(service_request)
@@ -59,7 +58,6 @@ class ServiceRequestsList(Resource):
             sr_id=service_request.sr_id,
             csr_id=csr.csr_id,
             reception_csr_ind=csr.receptionist_ind,
-            channel_id=channel.channel_id,
             ps_id=period_state_ticket_creation.ps_id,
             time_start=service_request.citizen.get_service_start_time(),
             time_end=datetime.now(),

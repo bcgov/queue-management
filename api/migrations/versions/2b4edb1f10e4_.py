@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: cb273ec081b1
+Revision ID: 2b4edb1f10e4
 Revises: 
-Create Date: 2018-06-24 18:12:49.762157
+Create Date: 2018-07-12 17:03:19.492941
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'cb273ec081b1'
+revision = '2b4edb1f10e4'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -144,8 +144,10 @@ def upgrade():
     sa.Column('sr_id', sa.Integer(), nullable=False),
     sa.Column('citizen_id', sa.Integer(), nullable=False),
     sa.Column('quantity', sa.Integer(), nullable=False),
+    sa.Column('channel_id', sa.Integer(), nullable=False),
     sa.Column('service_id', sa.Integer(), nullable=False),
     sa.Column('sr_state_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['channel_id'], ['channel.channel_id'], ),
     sa.ForeignKeyConstraint(['citizen_id'], ['citizen.citizen_id'], ),
     sa.ForeignKeyConstraint(['service_id'], ['service.service_id'], ),
     sa.ForeignKeyConstraint(['sr_state_id'], ['srstate.sr_state_id'], ),
@@ -156,12 +158,10 @@ def upgrade():
     sa.Column('sr_id', sa.Integer(), nullable=False),
     sa.Column('csr_id', sa.Integer(), nullable=False),
     sa.Column('reception_csr_ind', sa.Integer(), nullable=False),
-    sa.Column('channel_id', sa.Integer(), nullable=False),
     sa.Column('ps_id', sa.Integer(), nullable=False),
     sa.Column('time_start', sa.DateTime(), nullable=False),
     sa.Column('time_end', sa.DateTime(), nullable=True),
     sa.Column('accurate_time_ind', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['channel_id'], ['channel.channel_id'], ),
     sa.ForeignKeyConstraint(['csr_id'], ['csr.csr_id'], ),
     sa.ForeignKeyConstraint(['ps_id'], ['periodstate.ps_id'], ),
     sa.ForeignKeyConstraint(['sr_id'], ['servicereq.sr_id'], ),
