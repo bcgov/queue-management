@@ -51,6 +51,7 @@ limitations under the License.*/
           console.log('tokens found in localStorage')
           let tokenExp = localStorage.tokenExp
           let timeUntilExp = Math.round(tokenExp - new Date().getTime() / 1000)
+          this.$store.commit('setBearer', localStorage.token)
           if (timeUntilExp > 30) {
             this.$keycloak.init(
               {
@@ -136,6 +137,7 @@ limitations under the License.*/
         document.cookie = "oidc-jwt=" + this.$keycloak.token
         localStorage.setItem("tokenExp", tokenExpiry)
         localStorage.setItem("refreshToken", refreshToken)
+        this.$store.commit('setBearer', this.$keycloak.token)
 
         console.log('localStorage: acquired new tokens')
       },

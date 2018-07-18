@@ -20,6 +20,10 @@ limitations under the License.*/
           <img src='./assets/bcid.jpg'/>
           Queue Management
         </h1>
+        <b-button @click="showModal()">
+          show modal
+        </b-button>
+        <AddCitizen />
         <Socket/>
       </b-col>
       <b-col cols="3">
@@ -36,10 +40,17 @@ import Controls from './Controls'
 import Login from './Login'
 import Socket from './Socket'
 import SlackMessage from './SlackMessage'
+import AddCitizen from './add-citizen/add-citizen'
 
 export default {
   name: 'App',
-  components: { Login, Socket, Controls, SlackMessage },
+  components: { Login, Socket, Controls, SlackMessage, AddCitizen },
+  methods: {
+    showModal() {
+      console.log('this part worked')
+      this.$store.dispatch('addCitizen')
+    }
+  }
 }
 
 </script>

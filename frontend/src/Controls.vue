@@ -17,7 +17,7 @@ limitations under the License.*/
 <template>
   <b-row align-v="center">
     <b-col cols="6">
-      <ClientTable />
+      <Dash />
     </b-col>
     <b-col cols="2" />
     <b-col cols="4">
@@ -27,13 +27,13 @@ limitations under the License.*/
 </template>
 
 <script>
-  import ClientTable from './ClientTable'
+  import Dash from './dash'
   import ClientInput from './ClientInput'
 
   export default {
     name: 'Controls',
     components: {
-      ClientTable,
+      Dash,
       ClientInput
     }
   }
