@@ -32,7 +32,7 @@ export const store = new Vuex.Store({
       descending:false,
       perpage:''
     },
-    items: [],
+    citizens: [],
     user: null,
     addCitizenModal: {
       visible: false,
@@ -115,6 +115,13 @@ export const store = new Vuex.Store({
       let { formData } = context.state.addCitizenModal
       let { citizen_id } = formData.citizen
       
+      let qt_xn_citizen_ind
+      if (formData.quick) {
+        qt_xn_citizen_ind = 1
+      } else {
+        qt_xn_citizen_ind = 0
+      }
+      
       let citizen = {
         citizen_comments: formData.comments
       }
@@ -122,7 +129,8 @@ export const store = new Vuex.Store({
         service_id: formData.service,
         citizen_id,
         quantity: payload,
-        channel_id: formData.channel
+        channel_id: formData.channel,
+        qt_xn_citizen_ind
       }
     
       Axios(context).put(`/citizens/${citizen_id}/`,citizen)
@@ -214,9 +222,8 @@ export const store = new Vuex.Store({
       let url = "/citizens/"
       Axios(context).get(url)
         .then( response => {
-          console.log(response.data)
-          let { clients } = response.data
-        context.commit('updateList', clients)
+          console.log(response.data.citizens)
+        context.commit('updateList', response.data.citizens)
         })
         .catch(error => {
           console.log('error @ store.actions.getAllClients')
@@ -317,8 +324,8 @@ export const store = new Vuex.Store({
       state.addCitizenModal.visible = payload
     },
     updateList(state, payload) {
-      state.items = []
-      state.items = payload
+      state.citizens = []
+      state.citizens = payload
     },
     updateDash(state, payload) {
       Vue.set(

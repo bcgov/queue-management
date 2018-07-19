@@ -15,8 +15,7 @@ limitations under the License.*/
 
 
 <template>
-  
-  <div id="login-form">
+  <b-col id="login-form">
     <b-button v-show="!this.$store.state.isLoggedIn"
               @click="login()"
               id="login-button">
@@ -31,13 +30,10 @@ limitations under the License.*/
               Logout
           </b-button>
       </div>
-  </div>
-  
+  </b-col>
 </template>
 
 <script>
-
-
   export default {
     name: 'Login',
     created() {
@@ -45,7 +41,6 @@ limitations under the License.*/
       this.initLocalStorage()
     },
     methods: {
-      
       initLocalStorage() {
         if(localStorage.token) {
           console.log('tokens found in localStorage')
@@ -169,5 +164,4 @@ limitations under the License.*/
       }
     }
   }
-  
 </script>

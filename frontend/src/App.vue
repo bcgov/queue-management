@@ -13,46 +13,18 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 
 <template>
-  <b-container>
-    <b-row align-v="end">
-      <b-col cols="9">
-        <h1>
-          <img src='./assets/bcid.jpg'/>
-          Queue Management
-        </h1>
-        <b-button @click="showModal()">
-          show modal
-        </b-button>
-        <AddCitizen />
-        <Socket/>
-      </b-col>
-      <b-col cols="3">
-        <Login></Login>
-      </b-col>
-    </b-row>
-      <Controls v-if="this.$store.state.isLoggedIn"/>
-      <SlackMessage v-if="this.$store.state.isLoggedIn"/>
-  </b-container>
+  <div id="App">
+    <Dash />
+  </div>
 </template>
 
 <script>
-import Controls from './Controls'
-import Login from './Login'
-import Socket from './Socket'
-import SlackMessage from './SlackMessage'
-import AddCitizen from './add-citizen/add-citizen'
+import Dash from './dash'
 
 export default {
   name: 'App',
-  components: { Login, Socket, Controls, SlackMessage, AddCitizen },
-  methods: {
-    showModal() {
-      console.log('this part worked')
-      this.$store.dispatch('addCitizen')
-    }
-  }
+  components: { Dash }
 }
-
 </script>
 
 

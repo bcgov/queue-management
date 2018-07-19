@@ -27,6 +27,7 @@ class Period(Base):
     time_end = db.Column(db.DateTime, nullable=True)
     accurate_time_ind = db.Column(db.Integer, nullable=False)
 
+    csr = db.relationship("CSR", lazy='joined')
     ps = db.relationship("PeriodState", lazy='joined')
     sr = db.relationship("ServiceReq", lazy='joined')
 

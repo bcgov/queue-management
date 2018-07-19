@@ -15,24 +15,16 @@ limitations under the License.*/
 
 
 <template>
-  <b-row align-v="center">
-    <b-col cols="6">
-    </b-col>
-    <b-col cols="2" />
-    <b-col cols="4">
-      <ClientInput />
-    </b-col>
-  </b-row>
+  <b-col>
+    <b-button>Invite Citizen</b-button>
+    <b-button>Serve Now</b-button>
+  </b-col>
 </template>
 
 <script>
-  import ClientInput from './ClientInput'
 
   export default {
-    name: 'Controls',
-    components: {
-      ClientInput
-    }
+    name: 'ClientService',
   }
 
 </script>

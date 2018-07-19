@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from marshmallow import fields
 from app.models import Period
-from app.schemas import PeriodStateSchema, ChannelSchema
+from app.schemas import ChannelSchema, CSRSchema, PeriodStateSchema
 from qsystem import ma
 
 
@@ -32,3 +32,4 @@ class PeriodSchema(ma.ModelSchema):
     time_end = fields.DateTime()
     accurate_time_ind = fields.Integer()
     ps = fields.Nested(PeriodStateSchema, exclude=('ps_desc', 'ps_number',))
+    csr = fields.Nested(CSRSchema)
