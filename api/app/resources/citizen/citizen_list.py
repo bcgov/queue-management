@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from flask import request, g
 from flask_restplus import Resource
-from qsystem import api, api_call_with_retry, db, oidc
+from qsystem import api, api_call_with_retry, db, oidc, socketio
 from app.models import Citizen, CSR, CitizenState
 from marshmallow import ValidationError
 from app.schemas import CitizenSchema
@@ -62,6 +62,8 @@ class CitizenList(Resource):
         citizen.cs_id = citizen_state.cs_id
         db.session.add(citizen)
         db.session.commit()
+
+        socketio.emit('update_customer_list', {}, room=csr.office_id)
         result = self.citizen_schema.dump(citizen)
 
         return {'citizen': result.data,
