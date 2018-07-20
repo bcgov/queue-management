@@ -84,6 +84,7 @@ import app.resources.citizen.citizen_list
 import app.resources.citizen.citizen_place_on_hold
 import app.resources.citizen.citizen_service_requests
 import app.resources.citizen.citizen_specific_invite
+import app.resources.csrs
 import app.resources.health
 import app.resources.services
 import app.resources.service_requests_list

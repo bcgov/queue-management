@@ -21,6 +21,7 @@ class OfficeSchema(ma.ModelSchema):
 
     class Meta:
         model = Office
+        exclude = ('citizens', 'csrs', 'deleted', 'services',)
 
     office_id = fields.Int()
     office_name = fields.Str()

@@ -32,4 +32,4 @@ class PeriodSchema(ma.ModelSchema):
     time_end = fields.DateTime()
     accurate_time_ind = fields.Integer()
     ps = fields.Nested(PeriodStateSchema, exclude=('ps_desc', 'ps_number',))
-    csr = fields.Nested(CSRSchema)
+    csr = fields.Nested(CSRSchema, exclude=('office',))
