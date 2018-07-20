@@ -14,6 +14,7 @@ limitations under the License.'''
 
 from marshmallow import fields
 from app.models import Office
+from app.schemas import SmartBoardSchema
 from qsystem import ma
 
 
@@ -28,3 +29,5 @@ class OfficeSchema(ma.ModelSchema):
     office_number = fields.Int()
     sb_id = fields.Int()
     deleted = fields.DateTime()
+
+    sb = fields.Nested(SmartBoardSchema)

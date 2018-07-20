@@ -33,6 +33,7 @@ class Office(Base):
     services = db.relationship("Service", secondary='office_service')
     csrs = db.relationship('CSR', backref='office')
     citizens = db.relationship('Citizen', backref='office_citizens')
+    sb = db.relationship('SmartBoard')
 
     def __repr__(self):
         return '<Office Name:(name={self.office_name!r})>'.format(self=self)

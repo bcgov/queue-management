@@ -31,34 +31,38 @@ class Bootstrap(Command):
 
         print("Starting to bootstrap data")
 
-        smartboard1 = models.SmartBoard(sb_type="Test")
+        smartboard1 = models.SmartBoard(sb_type="nocallbyticket")
+        smartboard2 = models.SmartBoard(sb_type="callbynumber")
+        smartboard3 = models.SmartBoard(sb_type="callbyname")
 
         db.session.add(smartboard1)
+        db.session.add(smartboard2)
+        db.session.add(smartboard3)
         db.session.flush()
 
         office1 = models.Office(
             office_name="Summerland", 
             office_number=1, 
-            sb_id=smartboard1.sb_id
+            sb_id=smartboard2.sb_id
         )
 
 
         office2 = models.Office(
             office_name="Victoria", 
             office_number=2, 
-            sb_id=smartboard1.sb_id
+            sb_id=smartboard2.sb_id
         )
 
         office3 = models.Office(
             office_name="Vernon", 
             office_number=3, 
-            sb_id=smartboard1.sb_id
+            sb_id=smartboard2.sb_id
         )
 
         office4 = models.Office(
             office_name="Test Office", 
             office_number=4, 
-            sb_id=smartboard1.sb_id
+            sb_id=smartboard2.sb_id
         )
 
         db.session.add(office1)
