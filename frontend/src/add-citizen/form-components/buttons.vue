@@ -1,23 +1,22 @@
 <template>
-
       <b-form-group>
         <template v-if="office == 1">
           <div id="button_group_1">
             <b-button @click="addQueue">Add to queue</b-button>
             <b-button @click="beginService">Begin service</b-button>
-            <b-button>Cancel</b-button>
+            <b-button @click="closeModal">Cancel</b-button>
           </div>
         </template>
         <template v-else-if="office == 2">
           <div id="button_group_2">
             <b-button @click="beginService">Apply</b-button>
-            <b-button>Cancel</b-button>
+            <b-button @click="closeModal">Cancel</b-button>
           </div>
         </template>
         <template v-else-if="office == 3">
           <div id="button_group_3">
             <b-button @click="beginService">Begin service</b-button>
-            <b-button>Cancel</b-button>
+            <b-button @click="closeModal">Cancel</b-button>
           </div>
         </template>
       </b-form-group>
@@ -50,6 +49,10 @@
       },
       addQueue() {
         this.$store.dispatch('putCitizenInQueue')
+      },
+      closeModal() {
+        console.log('humbug')
+        this.$store.dispatch('closeModalEarly')
       }
     }
   }

@@ -1,23 +1,29 @@
 <template>
-  <div id='modal_form_filters'
-       style="padding-top:12px"
-       >
-    <label>Type service here</label>
-    <b-form inline class="pb-2">
-      <b-input id="add_citizen_search_input"
-               v-model="search" 
-               size="sm"
-               class="w-50 px-1"
-               placeholder="Filter by name"
-               />
-      <b-select id="add_citizen_catagories_select"
-                :options="categories_options" 
-                v-model="category"
-                size="sm"
-                class="w-50 px-1"
-                placeholder="Filter by category"
-                />
-    </b-form>
+  <div>
+  <b-form-row>
+    <b-col class="px-0 pb-0 pt-1 m-0">
+      <label>Type service here</label>
+    </b-col>
+  </b-form-row>
+  <b-form-row>
+    <b-col class="px-0 pb-1 pt-0 m-0">
+        <b-input id="add_citizen_search_input"
+                 v-model="search" 
+                 size="sm"
+                 placeholder="Filter by name"
+                 />
+    </b-col>
+    <b-col class="px-0 pb-1 pt-0 m-0">
+        <b-select id="add_citizen_catagories_select"
+                  :options="categories_options" 
+                  v-model="category"
+                  size="sm"
+                  placeholder="Filter by category"
+                  />
+
+    </b-col>
+  </b-form-row>
+    
   </div>
 </template>
 
@@ -28,7 +34,6 @@
     name: 'Filters',
     computed: {
       ...mapGetters(['categories_options', 'form_data']),
-      
       search: {
         get() { return this.form_data.search },
         set(value) {
@@ -44,3 +49,6 @@
     }
   }
 </script>
+
+<style scoped>
+</style>

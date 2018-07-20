@@ -1,16 +1,20 @@
 <template>
-  <b-form-group label="Channels"
-                class="mt-1 mb-0 pt-0"
-                
-                >
-    <b-select id="add_citizen_channels_select"
-              :options="channel_options" 
-              v-model="channel"
-              size="sm"
-              class="w-50 pt-0 pb-1 *-border-red"
-              placeholder="Select delivery channel"
-              />
-  </b-form-group>
+  <div>
+  <b-form-row>
+    <b-col class="px-0 pb-0 pt-2 m-0" cols="2">
+      <label>Channel</label>
+    </b-col>
+    <b-col class="px-0 pb-0 pt-2 m-0">
+      <b-select id="add_citizen_channels_select"
+                :options="channel_options" 
+                v-model="channel"
+                size="sm"
+                label="Channels"
+                placeholder="Select delivery channel"
+                />
+    </b-col>
+  </b-form-row>
+</div>
 </template>
 
 <script>
@@ -20,14 +24,13 @@
     name: 'Channel',
     data() {
       return {
-        t: 'true',
-        f: 'false',
+        t: true,
+        f: false,
         state: 'invalid'
       }
     },
     computed: {
       ...mapGetters(['channel_options', 'form_data']),
-      
       channel: {
         get() { return this.form_data.channel },
         set(value) {

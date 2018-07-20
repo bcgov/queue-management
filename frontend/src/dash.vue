@@ -21,9 +21,11 @@ limitations under the License.*/
       <AddCitizen />
       <Login />
     </b-row>
+    <b-row no-gutters>
       <b-col>
-        Waiting {{ queueLength }}
+        Citizens Waiting: {{ queueLength }}
       </b-col>
+    </b-row>
     <b-row>
       <DashTable />
     </b-row>
@@ -34,13 +36,14 @@ limitations under the License.*/
       <b-col/>
       <b-col/>
     </b-row>
-    <b-row>
+    <b-row :no-gutters="t">
       <b-col>
-        Citizens on Hold
+        Citizens on Hold: 0
       </b-col>
     </b-row>
     <b-row>
       <b-col>
+        <DashHoldTable v-if="f"/>
       </b-col>
     </b-row>
   </b-container>
@@ -53,6 +56,7 @@ import Login from './Login'
 import AddCitizen from './add-citizen/add-citizen'
 import Socket from './Socket'
 import DashTable from './dash-table'
+import DashHoldTable from './dash-hold-table'
 
   export default {
     name: 'Dash',
@@ -61,9 +65,10 @@ import DashTable from './dash-table'
       ClientService, 
       Login,
       Socket,
-      DashTable
+      DashTable,
+      DashHoldTable
     },
-    created() {
+    mounted() {
       this.$store.dispatch('getAllClients')
     },
     data() {
@@ -77,11 +82,15 @@ import DashTable from './dash-table'
         get() { return this.dash_status.sort },
         set(value) { this.$store.commit('updateDash'),{type:'sortby',value}}
       },
-      ...mapState(['citizens']),
+      ...mapState({
+        citizens(state) {
+          let filtered = state.citizens.filter(ctzn=>
+            ctzn.service_reqs.length > 0
+          )
+        return filtered
+        }
+      }),
       ...mapGetters(['dash_status']),
-      queueLength() {
-        return citizens.length()
-      },
       queueLength() {
         return this.citizens.length
       },

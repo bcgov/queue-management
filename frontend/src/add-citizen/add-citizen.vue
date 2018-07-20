@@ -1,9 +1,22 @@
 
 
 <template>
-  <b-col>
+  <b-col >
     <b-button @click="clickModal">Add Citizen</b-button>
-    <b-modal id="add_citizen_modal" v-model="showModal" title="Search Screen" size="lg">
+    <b-modal id="add_citizen_modal" 
+             :visible="showModal" 
+             size="lg"
+             no-close-on-backdrop
+             no-close-on-esc
+             class="m-0 p-0"
+             >
+        <template slot="modal-header">
+          <b-form-row>
+            <b-col no-gutters class="p-0 m-0">
+          <h6>Search Screen</h6>
+        </b-col>
+      </b-form-row>
+        </template>
         <template slot="modal-footer" style="v-l">
             <b-form-group label="Quick Txn?">
                 <b-form-checkbox v-model="quickTrans" id="add_citizen_quick_checkbox" />
@@ -37,16 +50,16 @@ export default {
         get() { return this.form_data.quick },
         set(value) { this.updateModalForm({type:'quick',value}) }
       },
-      showModal: {
-        get() { return this.addCitizenModal.visible },
-        set(value) { this.toggleAddCitizen(value) }
+      showModal() {
+        return this.addCitizenModal.visible
       }
     },
     methods: {
       ...mapMutations(['toggleAddCitizen','updateModalForm']),
       ...mapActions(['addCitizen']),
+      ...mapMutations(['toggleAddCitizen']),
       clickModal() {
-        let value = !this.showModal
+        this.toggleAddCitizen(true)
         this.addCitizen()
       }
     }

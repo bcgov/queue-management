@@ -15,11 +15,11 @@ limitations under the License.*/
 
 
 <template>
-  <div id='client-table'>
-    <b-table :small='t'
+  <div id='client-hold-table'>
+    <b-table small
              :items="citizens"
              :fields="fields"
-             :fixed='t'
+             bordered
              >
       <template slot='qt_xn_citizen_ind' slot-scope='data'>
         {{ (data.item.qt_xn_citizen_ind===0) ?
@@ -38,7 +38,7 @@ limitations under the License.*/
   import { mapState, mapGetters } from 'vuex'
 
   export default {
-    name: 'DashTable',
+    name: 'DashHoldTable',
     data() {
       return {
         t:true,

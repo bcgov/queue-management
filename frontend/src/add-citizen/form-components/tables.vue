@@ -1,14 +1,17 @@
 <template>
-  <b-container style="
+  <b-form-row>
+    <b-col class="px-0 pb-0 pt-0 m-0">
+  <div style="
          border: 1px solid silver;
          border-radius: 6px;
+         margin: 0 px;
          padding: 6px;
        ">
-    <b-row>
-      <b-col />
-      <b-col />
-    </b-row>
-    <b-row>
+    <b-form-row>
+      <b-col class="pl-3">Service</b-col>
+      <b-col class="pl-0">Category</b-col>
+    </b-form-row>
+    <b-form-row>
       <b-col>
         <div id="innertable"
              style="height: 200px; 
@@ -23,15 +26,9 @@
                    :striped="f"
                    :fixed="t"
                    id="table2"
-                   thead-class="theadhidden"
+                   :thstyle="thstyle"
                    @row-clicked="rowClicked"
                    > 
-            <template slot="HEAD_service_name" slot-scope="data">
-              <div style="display: none">lala</div>
-            </template>
-            <template slot="HEAD_parent.service_name" slot-scope="data">
-              <div style="display: none">lala</div>
-            </template>
             <template slot="service_name" slot-scope="data">
               {{data.item.service_name}}
               <div style="display: none">
@@ -43,8 +40,10 @@
           </b-table>
         </div>
       </b-col>
-    </b-row>
-  </b-container>
+    </b-form-row>
+  </div>
+  </b-col>
+</b-form-row>
 </template>
 
 <script>
@@ -54,19 +53,24 @@
     name: 'Tables',
     data() {
       return {
-        selectedRow:'',
+        thstyle: {
+          display: 'none',
+          hidden: true
+        },
         f:false,
         t:true,
         fields: [
           {
             key: 'service_name',
             label: 'Service',
-            sortable: false
+            sortable: false,
+            thStyle:{display: 'none'}
           },
           {
             key: 'parent.service_name',
             label: 'Category',
-            sortable: false
+            sortable: false,
+            thStyle:{display: 'none'}
           }
         ]
       }
@@ -74,6 +78,9 @@
     computed: {
       ...mapState(['addCitizenModal']),
       ...mapGetters(['index','form_data']),
+      selectedRow() {
+        return this.addCitizenModal.formData.service
+      },
       filter() {
         return this.form_data.search
       },
@@ -105,7 +112,5 @@
 </script
 
 <style>
-.theadhidden {
-  display: none;
-}
+
 </style>

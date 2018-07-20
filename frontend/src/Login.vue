@@ -23,7 +23,8 @@ limitations under the License.*/
     </b-button>
 
       <div v-show="this.$store.state.isLoggedIn">
-        <h6>Logged in as: {{ this.$store.state.user }}</h6>
+        <h6>User: {{ this.$store.state.user.username }}</h6>
+        <h6>Office: {{ this.$store.state.user.office.office_name }}</h6>
           <b-button @click="logout()"
               id="logout-button"
               >
@@ -87,30 +88,27 @@ limitations under the License.*/
       setupKeycloakCallbacks(authenticated) {
         this.$keycloak.onReady = (authenticated) => {
           if (authenticated) {
-            console.log('keycloak: initialized and authorized')
-            this.setUser()
-            this.setTokenToLocalStorage()
-            this.$root.$emit('socketConnect')
+            console.log('keycloak: "onReady" and authenticated')
+            this.$store.dispatch('setBearer', this.$keycloak.token)
           } else if (!authenticated) {
-            console.log('keycloak: initialized but not authorized')
+            console.log('keycloak: "onReady" but not authenticated')
           }
         }
 
         this.$keycloak.onAuthSuccess = () => {
-          console.log('keycloak: authorized')
-          this.$store.commit('logIn')
-          this.setUser()
+          console.log('keycloak: "onAuthSuccess"')
           this.setTokenToLocalStorage()
+          this.$root.$emit('socketConnect')
         }
 
         this.$keycloak.onAuthLogout = () => {
-          console.log('keycloak: logged out')
+          console.log('keycloak: "onAuthLogout"')
           this.$root.$emit('socketDisconnect')
           this.$store.commit('logOut')
         }
 
         this.$keycloak.onAuthRefreshSuccess = () => {
-          console.log('keycloak: token refresh success')
+          console.log('keycloak: "onAuthRefreshSuccess"')
           this.setTokenToLocalStorage()
           var that = this;
           //setTimeout(function(){ that.$root.$emit('socketConnect') }, 3000);
@@ -132,14 +130,8 @@ limitations under the License.*/
         document.cookie = "oidc-jwt=" + this.$keycloak.token
         localStorage.setItem("tokenExp", tokenExpiry)
         localStorage.setItem("refreshToken", refreshToken)
-        this.$store.commit('setBearer', this.$keycloak.token)
 
         console.log('localStorage: acquired new tokens')
-      },
-      
-      setUser() {
-        let name = this.$keycloak.tokenParsed.name
-        this.$store.commit('setUser', name)
       },
       
       login() {
@@ -149,6 +141,8 @@ limitations under the License.*/
       logout() {
         this.$keycloak.logout()
         localStorage.removeItem("token")
+        localStorage.removeItem("tokenExp")
+        localStorage.removeItem("refreshToken")
       },
       
       refreshToken(minValidity) {
