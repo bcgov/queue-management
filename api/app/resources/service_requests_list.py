@@ -53,7 +53,8 @@ class ServiceRequestsList(Resource):
 
         if citizen is None:
             return {"message": "No matching citizen found for citizen_id"}, 400
-        if service in None:
+
+        if service is None:
             return {"message": "No matching citizen found for citizen_id"}, 400
 
         service_request.sr_state = active_sr_state
