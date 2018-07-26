@@ -50,6 +50,12 @@ class ServiceRequestsList(Resource):
         active_sr_state = SRState.query.filter_by(sr_code='Active').first()
         citizen = Citizen.query.get(service_request.citizen_id)
         service = Service.query.get(service_request.service_id)
+
+        if citizen is None:
+            return {"message": "No matching citizen found for citizen_id"}, 400
+        if service in None:
+            return {"message": "No matching citizen found for citizen_id"}, 400
+
         service_request.sr_state = active_sr_state
 
         period_state_ticket_creation = PeriodState.query.filter_by(ps_name="Ticket Creation").first()
