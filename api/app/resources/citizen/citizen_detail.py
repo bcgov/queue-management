@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from flask import request, g
 from flask_restplus import Resource
-from qsystem import api, api_call_with_retry, db, oidc
+from qsystem import api, api_call_with_retry, db, oidc, socketio
 from app.models import Citizen, CSR
 from marshmallow import ValidationError
 from app.schemas import CitizenSchema
