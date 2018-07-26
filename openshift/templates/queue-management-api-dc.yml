@@ -16,7 +16,29 @@ parameters:
   description: "The configuration object that should be loaded for this deployment. Only development exists currently"
   required: true
   value: development
+- name: API_IMAGE_TAG
+  description: The tag to use when deploying
+  required: true
+  default: dev
+- description: The password for the app to connect to percona with
+  name: MYSQL_PASSWORD
+  required: true
+  value: ""
+- description: The username for the app to connect to percona with
+  name: MYSQL_USUER
+  required: true
+  value: ""
 objects:
+- kind: Secret
+  apiVersion: v1
+  metadata:
+    name: "${API_NAME}-secrets"
+    annotations:
+      template.openshift.io/expose-username: "{.data['database-user']}"
+      template.openshift.io/expose-password: "{.data['database-password']}"
+  stringData:
+    database-user: "${MYSQL_USER}"
+    database-password: "${MYSQL_PASSWORD}"
 - kind: Service
   apiVersion: v1
   metadata:
@@ -63,7 +85,7 @@ objects:
         from:
           kind: ImageStreamTag
           namespace: servicebc-cfms-tools
-          name: "${API_NAME}:dev"
+          name: "${API_NAME}:${API_IMAGE_TAG}"
     - type: ConfigChange
     replicas: 3
     selector:
@@ -97,13 +119,21 @@ objects:
             timeoutSeconds: 3
           env:
           - name: DATABASE_ENGINE
-            value: "cockroachdb"
+            value: "mysql"
           - name: DATABASE_USERNAME
-            value: "queue_user"
+            valueFrom:
+              secretKeyRef:
+                name: "${API_NAME}-secrets"
+                key: database-user
+          - name: DATABASE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: "${API_NAME}-secrets"
+                key: database-password
           - name: DATABASE_HOST
-            value: "cockroachdb-public"
+            value: "percona"
           - name: DATABASE_PORT
-            value: 26257
+            value: 3306
           - name: DATABASE_NAME
             value: "queue_management"
           - name: SQLALCHEMY_ECHO
@@ -118,13 +148,9 @@ objects:
             value: rabbitmq
           - name: ACTIVE_MQ_PORT
             value: 5672
-          - name: ACTIVE_MQ_USER
-            value: guest
-          - name: ACTIVE_MQ_PASSWORD
-            value: guest
           resources:
             requests:
-              cpu: 100m
+              cpu: 200m
               memory: 256Mi
             limits:
               cpu: 200m

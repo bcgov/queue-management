@@ -1,0 +1,130 @@
+---
+kind: Template
+apiVersion: v1
+metadata:
+  name: percona
+objects:
+- apiVersion: v1
+  kind: Secret
+  metadata:
+    name: percona-passwords
+  type: Opaque
+  data:
+    root: "${MYSQL_ROOT_PASSWORD}"
+    clustercheck: "${MYSQL_CLUSTER_CHECK_PASSWORD}"
+- apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: percona
+    labels:
+      app: percona
+  data:
+    extra.cnf: |
+      [mysqld]
+      innodb-buffer-pool-size=512M
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+    name: percona
+    labels:
+      app: percona
+  spec:
+    ports:
+    - port: 3306
+      name: mysql-port
+    clusterIP: None
+    selector:
+      app: percona
+- apiVersion: apps/v1beta1
+  kind: StatefulSet
+  metadata:
+    name: percona
+  spec:
+    selector:
+      matchLabels:
+        app: percona
+    serviceName: "percona"
+    replicas: 3
+    template:
+      metadata:
+        labels:
+          app: percona
+      spec:
+        containers:
+        - name: mysql
+          image:  perconalab/pxc-openshift
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 3306
+            name: mysql
+          - containerPort: 4444
+            name: sst
+          - containerPort: 4567
+            name: replication
+          - containerPort: 4568
+            name: ist
+          readinessProbe:
+            exec:
+              command:
+              - /usr/bin/clustercheck.sh
+            initialDelaySeconds: 15
+            timeoutSeconds: 15
+            periodSeconds: 30
+            failureThreshold: 5
+          livenessProbe:
+            exec:
+              command:
+              - /usr/bin/clustercheck.sh
+            initialDelaySeconds: 300
+            timeoutSeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: 500m
+              memory: 2Gi
+          volumeMounts:
+          - name: datadir
+            mountPath: /var/lib/mysql
+            subPath: data
+          - name: config-volume
+            mountPath: /etc/mysql/conf.d/
+          env:
+            - name: MYSQL_FORCE_INIT
+              value: "1"
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: percona-passwords
+                  key: root
+            - name: CLUSTERCHECK_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: percona-passwords
+                  key: clustercheck
+        volumes:
+        - name: config-volume
+          configMap:
+            name: mysql
+            optional: true
+    volumeClaimTemplates:
+    - metadata:
+        name: datadir
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 5Gi
+parameters:
+- description: The root password for percona.
+  name: MYSQL_ROOT_PASSWORD
+  required: true
+  value: ""
+- description: The password used for clusterchecking.
+  name: MYSQL_CLUSTER_CHECK_PASSWORD
+  required: true
+  value: ""
