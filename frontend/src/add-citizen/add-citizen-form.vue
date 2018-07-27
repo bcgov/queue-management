@@ -1,24 +1,26 @@
 <template>
-  <b-container fluid>
-    <b-form id="add_citizen_form">
-      <template v-if="reception == 0">
-        <div id='location-config1'>
+  <div class="add_citizen_template">
+    <template v-if="reception == 0">
+      <b-container fluid class="add_citizen_template">
+        <b-form>
           <Comments />
           <Channel />
           <Filters />
           <Tables />
-        </div>
-      </template>
-      <template v-else-if="reception == 1">
-        <div id='location-config3'>
+        </b-form>
+      </b-container>
+    </template>
+    <template v-else-if="reception == 1">
+      <b-container fluid class="add_citizen_template">
+        <b-form>
+          <Comments />
+          <Channel />
           <Filters />
           <Tables />
-          <Channel />
-          <Comments />
-        </div>
-      </template>
-    </b-form>
-  </b-container>
+        </b-form>
+      </b-container>
+    </template>
+  </div>
 </template>
 
 <script>
@@ -43,3 +45,13 @@ export default {
   }
 }
 </script>
+
+<style>
+  .add_citizen_template div {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+  .add_citizen_form_table {
+    border-bottom: 1px solid darkgrey;
+  }
+</style>

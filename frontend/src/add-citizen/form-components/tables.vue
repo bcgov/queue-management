@@ -1,17 +1,16 @@
 <template>
-  <b-form-row>
-    <b-col class="px-0 pb-0 pt-0 m-0">
-  <div style="
-         border: 1px solid silver;
-         border-radius: 6px;
-         margin: 0 px;
-         padding: 6px;
-       ">
-    <b-form-row>
-      <b-col class="pl-3">Service</b-col>
-      <b-col class="pl-0">Category</b-col>
+  <b-container fluid 
+               class="mt-1 add_citizen_form"
+               style="border: 1px solid silver;
+                      border-radius: 6px;
+                      margin: 0 px;
+                      padding: 6px;"
+                      >
+    <b-form-row no-gutters class="add_citizen_form_table">
+      <b-col class="ml-2">Service</b-col>
+      <b-col>Category</b-col>
     </b-form-row>
-    <b-form-row>
+    <b-form-row no-gutters>
       <b-col>
         <div id="innertable"
              style="height: 200px; 
@@ -28,11 +27,12 @@
                    id="table2"
                    :thstyle="thstyle"
                    @row-clicked="rowClicked"
+                   class="add_citizen_categories_table"
                    > 
             <template slot="service_name" slot-scope="data">
               {{data.item.service_name}}
               <div style="display: none">
-               {{ (data.item.service_id==selectedRow) ?
+               {{ (data.item.service_id==form_data.service) ?
                     (data.item._rowVariant='active') :
                       (data.item._rowVariant='') }}
               </div>
@@ -41,7 +41,7 @@
         </div>
       </b-col>
     </b-form-row>
-  </div>
+  </b-container>
   </b-col>
 </b-form-row>
 </template>
@@ -78,9 +78,6 @@
     computed: {
       ...mapState(['addCitizenModal']),
       ...mapGetters(['index','form_data']),
-      selectedRow() {
-        return this.addCitizenModal.formData.service
-      },
       filter() {
         return this.form_data.search
       },
@@ -112,5 +109,7 @@
 </script
 
 <style>
-
+.add_citizen_categories_table {
+  padding: 0px;
+}
 </style>

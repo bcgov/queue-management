@@ -1,38 +1,51 @@
 
 
 <template>
-  <b-col >
-    <b-button @click="clickModal">Add Citizen</b-button>
     <b-modal id="add_citizen_modal" 
-             :visible="showModal" 
+             :visible="showAddModal" 
              size="lg"
+             hide-header	
+             hide-footer
              no-close-on-backdrop
              no-close-on-esc
              class="m-0 p-0"
              >
-        <template slot="modal-header">
-          <b-form-row>
-            <b-col no-gutters class="p-0 m-0">
-          <h6>Search Screen</h6>
-        </b-col>
-      </b-form-row>
-        </template>
-        <template slot="modal-footer" style="v-l">
-            <b-form-group label="Quick Txn?">
-                <b-form-checkbox v-model="quickTrans" id="add_citizen_quick_checkbox" />
-            </b-form-group>
-            <Buttons />
-            </b-form>
-        </template>
-        <AddCitizenForm />
+             
+       <div style="display: flex; flex-direction: row; justify-content: space-between" class="modal_header">
+         <div><h5>Search Screen</h5></div>
+         <div>
+           <b-button-close size="lg" 
+                           @click="cancelAddCitizensModal" 
+                           />
+         </div>
+         
+       </div>
+       <b-alert :show="dismissCountDown"
+                style="h-align: center"
+                variant="danger"
+                @dismissed="dismissCountDown=0"
+                @dismiss-count-down="countDownChanged">
+         {{this.$store.state.alertMessage}}
+       </b-alert>
+      <AddCitizenForm />
+      <b-container class="mt-3 pr-3">
+        
+        <b-row align-v="center" align-h="end">
+          <b-col cols="auto" class="p-0">Quick Txn?</b-col>
+          <b-col cols="1">
+            <b-form-checkbox v-model="quickTrans"/>
+          </b-col>
+        <Buttons />
+      </b-row>
+      </b-container>
+      
     </b-modal>
-  </b-col>
 </template>
 
 <script>
 
 import {
-    mapState, mapGetters, mapMutations, mapActions
+  mapState, mapGetters, mapMutations, mapActions
 }
 from 'vuex'
 import Buttons from './form-components/buttons'
@@ -43,24 +56,39 @@ export default {
     components: {
         AddCitizenForm, Buttons
     },
+    mounted() {
+      this.$root.$on('showAddMessage', () => {
+        this.showAlert()
+      })
+    },
+    
+    data() {
+      return {
+        dismissSecs: 5,
+        dismissCountDown: 0
+      }
+    },
+    
     computed: {
-      ...mapState(['addCitizenModal']),
+      ...mapState(['addCitizenModal', 'showAddModal']),
       ...mapGetters(['form_data']),
+      
       quickTrans: {
         get() { return this.form_data.quick },
         set(value) { this.updateModalForm({type:'quick',value}) }
-      },
-      showModal() {
-        return this.addCitizenModal.visible
       }
     },
+    
     methods: {
-      ...mapMutations(['toggleAddCitizen','updateModalForm']),
-      ...mapActions(['addCitizen']),
-      ...mapMutations(['toggleAddCitizen']),
-      clickModal() {
-        this.toggleAddCitizen(true)
-        this.addCitizen()
+      ...mapActions(['cancelAddCitizensModal']),
+      ...mapMutations(['updateModalForm']),
+      
+      countDownChanged (dismissCountDown) {
+        this.dismissCountDown = dismissCountDown
+      },
+      
+      showAlert () {
+        this.dismissCountDown = this.dismissSecs
       }
     }
   }

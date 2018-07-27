@@ -19,7 +19,7 @@ limitations under the License.*/
 </template>
 
 <script>
-import Dash from './dash'
+import Dash from './serve-citizen/dash'
 
 export default {
   name: 'App',

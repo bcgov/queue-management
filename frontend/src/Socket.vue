@@ -95,7 +95,7 @@ limitations under the License.*/
       },
       onUpdateCustomerList() {
           console.log('socket received: "updatecustomerlist"')
-          this.$store.dispatch('getAllClients')
+          this.$store.dispatch('getAllCitizens')
       },
       close() {
         this.preventReconnect = true

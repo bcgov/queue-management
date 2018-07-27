@@ -1,20 +1,20 @@
 <template>
-  <div>
-  <b-form-row>
-    <b-col class="px-0 pb-0 pt-2 m-0" cols="2">
-      <label>Channel</label>
-    </b-col>
-    <b-col class="px-0 pb-0 pt-2 m-0">
-      <b-select id="add_citizen_channels_select"
-                :options="channel_options" 
-                v-model="channel"
-                size="sm"
-                label="Channels"
-                placeholder="Select delivery channel"
-                />
-    </b-col>
-  </b-form-row>
-</div>
+  <b-container fluid class="add_citizen_form mt-2">
+    <b-form-row no-gutters>
+      <b-col cols="auto">
+        <label>Channel</label>
+      </b-col>
+      <b-col>
+        <b-select id="add_citizen_channels_select"
+                  :options="channel_options" 
+                  v-model="channel"
+                  size="sm"
+                  label="Channels"
+                  placeholder="Select delivery channel"
+                  />
+      </b-col>
+    </b-form-row>
+  </b-container>
 </template>
 
 <script>

@@ -22,24 +22,37 @@ limitations under the License.*/
                 Login
     </b-button>
 
-      <div v-show="this.$store.state.isLoggedIn">
-        <h6>User: {{ this.$store.state.user.username }}</h6>
-        <h6>Office: {{ this.$store.state.user.office.office_name }}</h6>
+      <div v-show="this.$store.state.isLoggedIn"
+           style="display: flex; flex-direction: row; justify-content: space-between"
+           >
+        <div style="padding-right: 20px">
+          <h6>User: {{ this.$store.state.user.username }}</h6>
+          <h6>Office: {{ this.$store.state.user.office.office_name }}</h6>
+        </div>
+        <div>
           <b-button @click="logout()"
               id="logout-button"
               >
               Logout
           </b-button>
+          <b-form-checkbox :checked="quick_trans_status">Quick Txn</b-form-checkbox>
+        </div>
       </div>
   </b-col>
 </template>
 
 <script>
+import _ from 'lodash'
+import { mapGetters } from 'vuex'
+
   export default {
     name: 'Login',
     created() {
       this.setupKeycloakCallbacks()
-      this.initLocalStorage()
+      _.defer(this.initLocalStorage)
+    },
+    computed: {
+      ...mapGetters(['quick_trans_status'])
     },
     methods: {
       initLocalStorage() {
@@ -54,7 +67,8 @@ limitations under the License.*/
                 responseMode: 'fragment',
                 flow: 'standard',
                 refreshToken: localStorage.refreshToken,
-                token: localStorage.token
+                token: localStorage.token,
+                tokenExp: localStorage.tokenExp
               }
             )
             .success( () => {
@@ -89,7 +103,7 @@ limitations under the License.*/
         this.$keycloak.onReady = (authenticated) => {
           if (authenticated) {
             console.log('keycloak: "onReady" and authenticated')
-            this.$store.dispatch('setBearer', this.$keycloak.token)
+            this.$store.dispatch('logIn', this.$keycloak.token)
           } else if (!authenticated) {
             console.log('keycloak: "onReady" but not authenticated')
           }
@@ -97,6 +111,7 @@ limitations under the License.*/
 
         this.$keycloak.onAuthSuccess = () => {
           console.log('keycloak: "onAuthSuccess"')
+          this.$store.dispatch('logIn', this.$keycloak.token)
           this.setTokenToLocalStorage()
           this.$root.$emit('socketConnect')
         }
@@ -110,8 +125,6 @@ limitations under the License.*/
         this.$keycloak.onAuthRefreshSuccess = () => {
           console.log('keycloak: "onAuthRefreshSuccess"')
           this.setTokenToLocalStorage()
-          var that = this;
-          //setTimeout(function(){ that.$root.$emit('socketConnect') }, 3000);
         }
       },
       

@@ -55,15 +55,17 @@ limitations under the License.*/
         ]
       }
     },
+    
     computed: {
       ...mapState(['citizens'])
-    },
+    },    
     methods: {
       formatTime(data) {
         let date = new Date(data)
         let display = date.toLocaleTimeString()
         return display
       },
+      
       formatQuick(data) {
         
       }

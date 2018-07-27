@@ -1,58 +1,79 @@
 <template>
-      <b-form-group>
-        <template v-if="office == 1">
-          <div id="button_group_1">
-            <b-button @click="addQueue">Add to queue</b-button>
+  <b-form-row>
+      <b-col align-h="end">
+        <template v-if="setup === reception">
+          <b-form-group>
+            <b-button @click="addToQueue">Add to queue</b-button>
             <b-button @click="beginService">Begin service</b-button>
-            <b-button @click="closeModal">Cancel</b-button>
-          </div>
+            <b-button @click="cancelAddCitizensModal">Cancel</b-button>
+          </b-form-group>
         </template>
-        <template v-else-if="office == 2">
-          <div id="button_group_2">
+        <template v-else-if="setup == serve_now">
+          <b-form-group>
             <b-button @click="beginService">Apply</b-button>
-            <b-button @click="closeModal">Cancel</b-button>
-          </div>
+            <b-button @click="cancelAddCitizensModal">Cancel</b-button>
+          </b-form-group>
         </template>
-        <template v-else-if="office == 3">
-          <div id="button_group_3">
+        <template v-else-if="setup === non_reception">
+          <b-form-group>
             <b-button @click="beginService">Begin service</b-button>
-            <b-button @click="closeModal">Cancel</b-button>
-          </div>
+            <b-button @click="cancelAddCitizensModal">Cancel</b-button>
+          </b-form-group>
         </template>
-      </b-form-group>
+      </b-col>
+    </b-form-row>
 </template>
 
 <script>
+  import { mapGetters, mapActions } from 'vuex'
   
   export default {
     name: 'Buttons',
     data() {
       return {
-        notice: 'ddfdffds ssssss'
+        non_reception: 'non_reception',
+        serve_now: 'serve_now',
+        reception: 'reception'
       }
     },
     computed: {
-      office() {
-        return this.$store.state.userOfficeType
-      },
-      ready() {
-        return this.$store.getters.add_citizen_form_ready
-      }
+      ...mapGetters({
+        form_data: 'form_data', 
+        setup: 'search_screen_setup'
+      })
     },
     methods: {
-      beginService() {
-        if (this.ready) {
-          this.$store.dispatch('putCitizenInService')
-        } else if (!this.ready) {
-          this.notice = 'some warning'
+      ...mapActions([
+        'clickBeginService',
+        'clickAddToQueue',
+        'cancelAddCitizensModal'
+      ]),
+      addToQueue() {
+        if (this.form_data.service === '') {
+          this.$store.commit('setModalAlert', 'You must select a service')
+          this.$root.$emit('showAddMessage')
+          return null
         }
+        if (this.form_data.channel === '') {
+          this.$store.commit('setModalAlert', 'You must select a channel')
+          this.$root.$emit('showAddMessage')
+          return null
+        }
+        this.clickAddToQueue()
       },
-      addQueue() {
-        this.$store.dispatch('putCitizenInQueue')
-      },
-      closeModal() {
-        console.log('humbug')
-        this.$store.dispatch('closeModalEarly')
+      
+      beginService() {
+        if (this.form_data.service === '') {
+          this.$store.commit('setModalAlert', 'You must select a service')
+          this.$root.$emit('showAddMessage')
+          return null
+        }
+        if (this.form_data.channel === '') {
+          this.$store.commit('setModalAlert', 'You must select a channel')
+          this.$root.$emit('showAddMessage')
+          return null
+        }
+        this.clickBeginService()
       }
     }
   }

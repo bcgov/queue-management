@@ -17,11 +17,13 @@ limitations under the License.*/
 <template>
   <div id='client-table'>
     <b-table small
+             head-variant="light"
              :items="citizens"
              :fields="fields"
              outlined
              hover
-             striped
+             fixed
+             @row-clicked="rowClicked"
              class="p-0 m-0"
              thead-tr-class="dashtabletrthead"
              >
@@ -39,7 +41,7 @@ limitations under the License.*/
 </template>
 
 <script>
-  import { mapState, mapGetters } from 'vuex'
+  import { mapState, mapGetters, mapActions } from 'vuex'
 
   export default {
     name: 'DashTable',
@@ -49,36 +51,41 @@ limitations under the License.*/
         f:false,
         fields: [
           {key: 'qt_xn_citizen_ind', label: 'Q. Txn', sortable: false},
+          {key: 'citizen_id', tdClass: 'd-none', thClass:'d-none'},
           {key: 'start_time', label: 'Time', sortable: true},
           {key: 'ticket_number', label: 'Ticket', sortable: false},
           {key: 'service_reqs[0].periods[0].csr.username', label: 'Served By', sortable: false},
           {key: 'service_reqs[0].service.parent.service_name', label: 'Category', sortable: false},
           {key: 'service_reqs[0].service.service_name', label: 'Service', sortable: false},
-          {key: 'service_reqs[0].periods[0].ps.ps_name', label: 'State', sortable: false},
           {key: 'citizen_comments', label: 'Comments', sortable: false}
         ]
       }
     },
     computed: {
-      ...mapState({
-        citizens(state) {
-          let filtered = state.citizens.filter(ctzn=>
-            ctzn.service_reqs.length > 0
-          )
-        return filtered
-        }
-      })
+      ...mapState(['serveButtonDisabled']),
+      ...mapGetters(['filtered_citizens']),
+      citizens() {
+        return this.filtered_citizens
+      }
     },
     methods: {
+      ...mapActions(['postInvite','clickDashTableRow']),
       formatTime(data) {
         let date = new Date(data)
-        let display = date.toLocaleTimeString()
-        return display
-      }
+        return date.toLocaleTimeString()
+      },
+      rowClicked(item, index) {
+        console.log(item)
+        if (this.$store.state.serveButtonDisabled==false) {
+          console.log('true')
+          this.$store.commit('setAlert', 'You are already serving a citizen.  Click Serve Now to resume.')
+        } else if (this.$store.state.serveButtonDisabled==true) {
+          this.clickDashTableRow(item.citizen_id)
+        }
+      }   
     }
   }
-</script>
-
+</script>   
 <style scoped>
   .dashtabletrthead {
     color: red;

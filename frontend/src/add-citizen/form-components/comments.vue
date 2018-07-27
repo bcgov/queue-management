@@ -1,21 +1,21 @@
 <template>
-  <div>
-    <b-form-row>
-      <b-col class="px-0 pb-0 pt-0 m-0">
+  <b-container fluid class="add_citizen_form">
+    <b-form-row no-gutters>
+      <b-col>
         <label>Comments</label>
       </b-col>
     </b-form-row>
-    <b-form-row>
-      <b-col class="px-0 pb-0 pt-0 m-0">
+    <b-form-row no-gutters>
+      <b-col>
         <b-textarea id="add_citizen_comment_textarea"
                     v-model="comments"
                     :rows="4"
                     size="sm"
-                    placeholder="add comments here..."
+                    placeholder="add comments here"
                     />
       </b-col>
     </b-form-row>
-  </div>
+  </b-container>
 </template>
 
 <script>

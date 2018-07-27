@@ -1,30 +1,28 @@
 <template>
-  <div>
-  <b-form-row>
-    <b-col class="px-0 pb-0 pt-1 m-0">
-      <label>Type service here</label>
-    </b-col>
-  </b-form-row>
-  <b-form-row>
-    <b-col class="px-0 pb-1 pt-0 m-0">
-        <b-input id="add_citizen_search_input"
-                 v-model="search" 
-                 size="sm"
-                 placeholder="Filter by name"
-                 />
-    </b-col>
-    <b-col class="px-0 pb-1 pt-0 m-0">
-        <b-select id="add_citizen_catagories_select"
-                  :options="categories_options" 
-                  v-model="category"
-                  size="sm"
-                  placeholder="Filter by category"
-                  />
-
-    </b-col>
-  </b-form-row>
-    
-  </div>
+  <b-container class="add_citizen_form mt-2">
+    <b-form-row no-gutters>
+      <b-col>
+        <label>Type service here</label>
+      </b-col>
+    </b-form-row>
+    <b-form-row no-gutters>
+      <b-col>
+          <b-input id="add_citizen_search_input"
+                   v-model="search" 
+                   size="sm"
+                   placeholder="Filter by name"
+                   />
+      </b-col>
+      <b-col>
+          <b-select id="add_citizen_catagories_select"
+                    :options="categories_options" 
+                    v-model="category"
+                    size="sm"
+                    placeholder="Filter by category"
+                    />
+      </b-col>
+    </b-form-row>
+  </b-container>
 </template>
 
 <script>
@@ -51,4 +49,8 @@
 </script>
 
 <style scoped>
+  b-col {
+    padding: 0px;
+    margin: 0px;
+  }
 </style>
