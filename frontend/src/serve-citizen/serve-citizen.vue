@@ -28,7 +28,7 @@
               <b-button  @click="clickServiceBeginService" :disabled="serveBeginServiceDisabled">
                 Begin Service
               </b-button>
-              <b-button  @click="clickCitizenLeft" :disabled="serveCitizenLeftDisabled">
+              <b-button  @click="clickCitizenLeft">
                 Citizen Left
               </b-button>
               <b-button  @click="clickReturnToQueue" :disabled="serveReturnQueueDisabled">
@@ -80,7 +80,7 @@
         <b-row no-gutters>
           <b-col cols="2" />
           <b-col cols="3">
-            <b-button v-if="f" class="w-75">
+            <b-button @click="clickHold" :disabled="finishDisabled" class="w-75">
               Place on Hold
             </b-button>
           </b-col>
@@ -163,7 +163,8 @@ export default {
       'clickServiceBeginService',
       'clickServiceModalClose',
       'clickFinishService',
-      'clickReturnToQueue'
+      'clickReturnToQueue',
+      'clickHold'
     ]),
     ...mapMutations(
       {

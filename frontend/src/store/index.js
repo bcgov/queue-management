@@ -77,6 +77,7 @@ export const store = new Vuex.Store({
     showAddModal: false,
     showServiceModal: false,
     citizens: [],
+    hold: [],
     services: null,
     categories: [],
     channels: [],
@@ -90,21 +91,27 @@ export const store = new Vuex.Store({
     serveBeginServiceDisabled: false,
     serveCitizenLeftDisabled: false,
     serveReturnQueueDisabled: false,
-    finishDisabled: false
+    finishDisabled: true
   },
 
   getters: {
+    on_hold(state) {
+      let { citizens } = state
+      
+      if (citizens.length === 0) {
+        return []
+      }
+      let filter0 = citizens.filter(c=>c.service_reqs.length >= 1)
+      return filter0.filter(c=>c.service_reqs[0].periods.some(p=>p.time_end == null && p.ps.ps_name === 'On hold'))
+    },
+    
     filtered_citizens(state) {
       let { citizens } = state
       
       if (citizens.length === 0) {
         return []
       }
-      console.log('cit')
-      console.log(citizens)
       let filter0 = citizens.filter(c=>c.service_reqs.length >= 1)
-      console.log('0')
-      console.log(filter0)
       return filter0.filter(c=>c.service_reqs[0].periods.some(p=>p.time_end == null && p.ps.ps_name === 'Waiting'))
     },
     
@@ -294,9 +301,22 @@ export const store = new Vuex.Store({
     
     clickReturnToQueue(context) {
       let {citizen_id} = context.state.invitedCitizen
-      context.dispatch('postAddToQueue', citizen_id).then( () => {
-        context.commit('toggleServiceModal', false)
-        context.commit('resetInvitedCitizen')
+      context.dispatch('putCitizenFromService').then( resp=>{
+        context.dispatch('postAddToQueue', citizen_id).then( () => {
+          context.commit('toggleServiceModal', false)
+          context.commit('resetInvitedCitizen')
+        })
+      })
+    },
+    
+    clickHold(context) {
+      let { citizen_id } = context.state.invitedCitizen
+      context.dispatch('putCitizenFromService').then( resp => {
+        context.dispatch('postHold', citizen_id).then( resp=> {
+          context.commit('toggleServiceModal', false)
+          context.commit('enableServiceButtons')
+          context.commit('disableFinish')
+        })
       })
     },
     
@@ -309,7 +329,17 @@ export const store = new Vuex.Store({
       context.dispatch('postInvite', citizen_id).then( resp => {
         context.commit('setInvitedCitizen', resp.data.citizen)
         context.commit('toggleServiceModal', true)
+        context.commit('enableServiceButtons')
         context.commit('disableFinish')
+      })
+    },
+    
+    clickHoldTableRow(context, citizen_id) {
+      context.dispatch('postBeginService', citizen_id).then( resp => {
+        context.commit('setInvitedCitizen', resp.data.citizen)
+        context.commit('toggleServiceModal', true)
+        context.commit('disableServiceButtons')
+        context.commit('enableFinish')
       })
     },
     
@@ -347,6 +377,25 @@ export const store = new Vuex.Store({
       Axios(context).get(`/citizens/${citizen_id}/`)
     },
 
+    putCitizenFromService(context) {
+      let { citizen_comments } = context.state.invitedCitizen
+      let { citizen_id } = context.state.invitedCitizen
+    
+      let citizen = {
+        citizen_comments,
+        citizen_id
+      }
+      
+      return new Promise((resolve, reject) => { 
+        let url = `/citizens/${citizen_id}/`
+        Axios(context).put(url,citizen).then(resp=>{ 
+          resolve(resp)
+        }, error => {
+          reject(error)
+        })
+      })
+    },
+    
     putCitizen(context) {
       let { formData } = context.state.addCitizenModal
       let { citizen_id } = formData.citizen
@@ -379,6 +428,17 @@ export const store = new Vuex.Store({
       return new Promise((resolve, reject) => { 
         let url = `/citizens/${citizen_id}/`
         Axios(context).put(url,citizen).then(resp=>{ 
+          resolve(resp)
+        }, error => {
+          reject(error)
+        })
+      })
+    },
+    
+    postHold(context, citizen_id) {
+      return new Promise((resolve, reject) => {
+        let url = `/citizens/${citizen_id}/place_on_hold/`
+        Axios(context).post(url).then(resp=>{
           resolve(resp)
         }, error => {
           reject(error)

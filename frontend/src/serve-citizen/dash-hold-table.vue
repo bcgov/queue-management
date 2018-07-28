@@ -17,9 +17,14 @@ limitations under the License.*/
 <template>
   <div id='client-hold-table'>
     <b-table small
-             :items="citizens"
+             head-variant="light"
+             :items="on_hold"
              :fields="fields"
-             bordered
+             outlined
+             hover
+             fixed
+             @row-clicked="rowClicked"
+             class="p-0 m-0"
              >
       <template slot='qt_xn_citizen_ind' slot-scope='data'>
         {{ (data.item.qt_xn_citizen_ind===0) ?
@@ -35,7 +40,7 @@ limitations under the License.*/
 </template>
 
 <script>
-  import { mapState, mapGetters } from 'vuex'
+  import { mapState, mapGetters, mapActions } from 'vuex'
 
   export default {
     name: 'DashHoldTable',
@@ -45,30 +50,36 @@ limitations under the License.*/
         f:false,
         fields: [
           {key: 'qt_xn_citizen_ind', label: 'Q. Txn', sortable: false},
-          {key: 'start_time', label: 'Time', sortable: false},
+          {key: 'citizen_id', tdClass: 'd-none', thClass:'d-none'},
+          {key: 'start_time', label: 'Time', sortable: true},
           {key: 'ticket_number', label: 'Ticket', sortable: false},
-          {key: 'office_citizens', label: 'Served By', sortable: false},
+          {key: 'service_reqs[0].periods[0].csr.username', label: 'Served By', sortable: false},
           {key: 'service_reqs[0].service.parent.service_name', label: 'Category', sortable: false},
           {key: 'service_reqs[0].service.service_name', label: 'Service', sortable: false},
-          {key: 'cs.cs_state_name', label: 'State', sortable: false},
           {key: 'citizen_comments', label: 'Comments', sortable: false}
         ]
       }
     },
     
     computed: {
-      ...mapState(['citizens'])
+      ...mapState(['citizens']),
+      ...mapGetters(['on_hold'])
     },    
     methods: {
+      ...mapActions(['clickHoldTableRow']),
       formatTime(data) {
         let date = new Date(data)
         let display = date.toLocaleTimeString()
         return display
       },
       
-      formatQuick(data) {
-        
-      }
+      rowClicked(item, index) {
+        if (this.$store.state.serveButtonDisabled==false) {
+          this.$store.commit('setAlert', 'You are already serving a citizen.  Click Serve Now to resume.')
+        } else if (this.$store.state.serveButtonDisabled==true) {
+          this.clickHoldTableRow(item.citizen_id)
+        }
+      }   
     }
   }
 </script>

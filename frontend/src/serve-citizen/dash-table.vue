@@ -25,7 +25,6 @@ limitations under the License.*/
              fixed
              @row-clicked="rowClicked"
              class="p-0 m-0"
-             thead-tr-class="dashtabletrthead"
              >
       <template slot='qt_xn_citizen_ind' slot-scope='data'>
         {{ (data.item.qt_xn_citizen_ind===0) ?
@@ -75,9 +74,7 @@ limitations under the License.*/
         return date.toLocaleTimeString()
       },
       rowClicked(item, index) {
-        console.log(item)
         if (this.$store.state.serveButtonDisabled==false) {
-          console.log('true')
           this.$store.commit('setAlert', 'You are already serving a citizen.  Click Serve Now to resume.')
         } else if (this.$store.state.serveButtonDisabled==true) {
           this.clickDashTableRow(item.citizen_id)
@@ -86,8 +83,3 @@ limitations under the License.*/
     }
   }
 </script>   
-<style scoped>
-  .dashtabletrthead {
-    color: red;
-  }
-</style>
