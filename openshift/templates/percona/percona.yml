@@ -12,7 +12,8 @@ objects:
   data:
     root: "${MYSQL_ROOT_PASSWORD}"
     clustercheck: "${MYSQL_CLUSTER_CHECK_PASSWORD}"
-    monitor: "${MYSQL_MONITOR_PASSWORD}"
+    monitor: "${MONITOR_PASSWORD}"
+    xtrabackup: "${XTRABACKUP_PASSWORD}"
 - apiVersion: v1
   kind: ConfigMap
   metadata:
@@ -107,11 +108,16 @@ objects:
                 secretKeyRef:
                   name: percona-passwords
                   key: clustercheck
-            - name: MYSQL_MONITOR_PASSWORD
+            - name: MONITOR_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: percona-passwords
                   key: monitor
+            - name: XTRABACKUP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: xtrabackup
+                  name: percona-passwords
         volumes:
         - name: config-volume
           configMap:
@@ -135,6 +141,10 @@ parameters:
   required: true
   value: ""
 - description: The password used for monitoring.
-  name: MYSQL_MONITOR_PASSWORD
+  name: MONITOR_PASSWORD
+  required: true
+  value: ""
+- description: The password used for xtrabackup.
+  name: XTRABACKUP_PASSWORD
   required: true
   value: ""
