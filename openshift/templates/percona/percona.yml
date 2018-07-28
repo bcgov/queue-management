@@ -107,6 +107,11 @@ objects:
                 secretKeyRef:
                   name: percona-passwords
                   key: clustercheck
+            - name: MYSQL_MONITOR_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: percona-passwords
+                  key: monitor
         volumes:
         - name: config-volume
           configMap:
