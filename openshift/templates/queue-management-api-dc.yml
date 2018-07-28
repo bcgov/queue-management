@@ -25,7 +25,7 @@ parameters:
   required: true
   value: ""
 - description: The username for the app to connect to percona with
-  name: MYSQL_USUER
+  name: MYSQL_USER
   required: true
   value: ""
 objects:
@@ -133,7 +133,7 @@ objects:
           - name: DATABASE_HOST
             value: "percona"
           - name: DATABASE_PORT
-            value: 3306
+            value: "3306"
           - name: DATABASE_NAME
             value: "queue_management"
           - name: SQLALCHEMY_ECHO
@@ -147,7 +147,7 @@ objects:
           - name: ACTIVE_MQ_HOST
             value: rabbitmq
           - name: ACTIVE_MQ_PORT
-            value: 5672
+            value: "5672"
           resources:
             requests:
               cpu: 200m
