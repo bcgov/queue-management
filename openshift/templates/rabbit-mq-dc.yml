@@ -106,8 +106,8 @@ objects:
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
           volumeMounts:
-          - name: mnesia
-            mountPath: /var/lib/rabbitmq/mnesia
+          - name: "${APPLICATION_NAME}"
+            mountPath: "/var/lib/rabbitmq/${APPLICATION_NAME}"
         dnsPolicy: ClusterFirst
         restartPolicy: Always
         schedulerName: default-scheduler
