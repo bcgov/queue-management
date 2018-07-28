@@ -11,7 +11,7 @@ parameters:
 - name: API_APPLICATION_DOMAIN
   description: "The exposed hostname that will route to the Flask service"
   required: true
-  value: "servicebc-cfms-api-dev.pathfinder.gov.bc.ca"
+  value: "servicebc-cfms-dev.pathfinder.gov.bc.ca"
 - name: FLASK_CONFIGURATION
   description: "The configuration object that should be loaded for this deployment. Only development exists currently"
   required: true
@@ -19,26 +19,8 @@ parameters:
 - name: API_IMAGE_TAG
   description: The tag to use when deploying
   required: true
-  default: dev
-- description: The password for the app to connect to percona with
-  name: MYSQL_PASSWORD
-  required: true
-  value: ""
-- description: The username for the app to connect to percona with
-  name: MYSQL_USER
-  required: true
-  value: ""
+  value: "dev"
 objects:
-- kind: Secret
-  apiVersion: v1
-  metadata:
-    name: "${API_NAME}-secrets"
-    annotations:
-      template.openshift.io/expose-username: "{.data['database-user']}"
-      template.openshift.io/expose-password: "{.data['database-password']}"
-  stringData:
-    database-user: "${MYSQL_USER}"
-    database-password: "${MYSQL_PASSWORD}"
 - kind: Service
   apiVersion: v1
   metadata:
@@ -63,6 +45,7 @@ objects:
       kind: Service
       name: "${API_NAME}"
     tls:
+      insecureEdgeTerminationPolicy: Redirect
       termination: edge
 - kind: DeploymentConfig
   apiVersion: v1
@@ -123,19 +106,22 @@ objects:
           - name: DATABASE_USERNAME
             valueFrom:
               secretKeyRef:
-                name: "${API_NAME}-secrets"
-                key: database-user
+                name: "percona-passwords"
+                key: mysql_user
           - name: DATABASE_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: "${API_NAME}-secrets"
-                key: database-password
+                name: "percona-passwords"
+                key: mysql_password
+          - name: DATABASE_NAME
+            valueFrom:
+              secretKeyRef:
+                name: "percona-passwords"
+                key: mysql_database
           - name: DATABASE_HOST
             value: "percona"
           - name: DATABASE_PORT
             value: "3306"
-          - name: DATABASE_NAME
-            value: "queue_management"
           - name: SQLALCHEMY_ECHO
             value: "False"
           - name: APP_CONFIG
@@ -155,3 +141,12 @@ objects:
             limits:
               cpu: 200m
               memory: 512Mi
+          volumeMounts:
+            - mountPath: /opt/app-root/src/client_secrets
+              name: oidc-secrets-o6ya6
+              readOnly: true
+        volumes:
+          - configMap:
+              defaultMode: 420
+              name: oidc-secrets
+            name: oidc-secrets-o6ya6

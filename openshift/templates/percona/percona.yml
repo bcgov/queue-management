@@ -8,12 +8,23 @@ objects:
   kind: Secret
   metadata:
     name: percona-passwords
+    annotations:
+      template.openshift.io/base64-expose-root: "{.data['root']}"
+      template.openshift.io/base64-expose-clustercheck: "{.data['clustercheck']}"
+      template.openshift.io/base64-expose-monitor: "{.data['monitor']}"
+      template.openshift.io/base64-expose-xtrabackup: "{.data['xtrabackup']}"
+      template.openshift.io/expose-mysql_user: "{.data['mysql_user']}"
+      template.openshift.io/expose-mysql_password: "{.data['mysql_password']}"
+      template.openshift.io/expose-mysql_database: "{.data['mysql_database']}"
   type: Opaque
-  data:
+  stringData:
     root: "${MYSQL_ROOT_PASSWORD}"
     clustercheck: "${MYSQL_CLUSTER_CHECK_PASSWORD}"
     monitor: "${MONITOR_PASSWORD}"
     xtrabackup: "${XTRABACKUP_PASSWORD}"
+    mysql_user: "${MYSQL_USER}"
+    mysql_password: "${MYSQL_PASSWORD}"
+    mysql_database: "${MYSQL_DATABASE}"
 - apiVersion: v1
   kind: ConfigMap
   metadata:
@@ -118,6 +129,21 @@ objects:
                 secretKeyRef:
                   key: xtrabackup
                   name: percona-passwords
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  key: mysql_user
+                  name: percona-passwords
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: mysql_password
+                  name: percona-passwords
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  key: mysql_database
+                  name: percona-passwords
         volumes:
         - name: config-volume
           configMap:
@@ -135,16 +161,33 @@ parameters:
 - description: The root password for percona.
   name: MYSQL_ROOT_PASSWORD
   required: true
-  value: ""
+  generate: expression
+  from: "[a-zA-Z0-9]{16}"
 - description: The password used for clusterchecking.
   name: MYSQL_CLUSTER_CHECK_PASSWORD
   required: true
-  value: ""
+  generate: expression
+  from: "[a-zA-Z0-9]{16}"
 - description: The password used for monitoring.
   name: MONITOR_PASSWORD
   required: true
-  value: ""
+  value: "monitor"
 - description: The password used for xtrabackup.
   name: XTRABACKUP_PASSWORD
   required: true
-  value: ""
+  generate: expression
+  from: "[a-zA-Z0-9]{16}"
+- description: The password used for xtrabackup.
+  name: MYSQL_USER
+  required: true
+  generate: expression
+  from: "user[a-zA-Z0-9]{3}"
+- description: The password used for xtrabackup.
+  name: MYSQL_PASSWORD
+  required: true
+  generate: expression
+  from: "[a-zA-Z0-9]{16}"
+- description: The password used for xtrabackup.
+  name: MYSQL_DATABASE
+  required: true
+  value: "queue_management"

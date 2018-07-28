@@ -44,6 +44,7 @@ objects:
       kind: Service
       name: "${NAME}"
     tls:
+      insecureEdgeTerminationPolicy: Redirect
       termination: edge
 - kind: DeploymentConfig
   apiVersion: v1
@@ -110,7 +111,6 @@ objects:
             tcpSocket:
               port: 2015
             timeoutSeconds: 3
-          resources: {}
           terminationMessagePath: "/dev/termination-log"
           terminationMessagePolicy: File
           imagePullPolicy: Always

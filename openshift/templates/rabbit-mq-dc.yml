@@ -102,7 +102,6 @@ objects:
             protocol: TCP
           - containerPort: 5672
             protocol: TCP
-          resources: {}
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
           volumeMounts:
