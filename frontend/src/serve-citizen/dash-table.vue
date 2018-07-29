@@ -22,9 +22,8 @@ limitations under the License.*/
              :fields="fields"
              outlined
              hover
-             fixed
              @row-clicked="rowClicked"
-             class="p-0 m-0"
+             class="p-0 m-0 w-100"
              >
       <template slot='qt_xn_citizen_ind' slot-scope='data'>
         {{ (data.item.qt_xn_citizen_ind===0) ?
@@ -49,14 +48,14 @@ limitations under the License.*/
         t:true,
         f:false,
         fields: [
-          {key: 'qt_xn_citizen_ind', label: 'Q. Txn', sortable: false},
-          {key: 'citizen_id', tdClass: 'd-none', thClass:'d-none'},
-          {key: 'start_time', label: 'Time', sortable: true},
-          {key: 'ticket_number', label: 'Ticket', sortable: false},
-          {key: 'service_reqs[0].periods[0].csr.username', label: 'Served By', sortable: false},
-          {key: 'service_reqs[0].service.parent.service_name', label: 'Category', sortable: false},
-          {key: 'service_reqs[0].service.service_name', label: 'Service', sortable: false},
-          {key: 'citizen_comments', label: 'Comments', sortable: false}
+          {key: 'qt_xn_citizen_ind', label: 'Q. Txn', sortable: false, tdClass:'col-1', thClass:'col-1'},
+          {key: 'citizen_id', tdClass: 'd-none', thClass:'d-none', tdClass:'col-2', thClass:'col-2'},
+          {key: 'start_time', label: 'Time', sortable: true, tdClass:'col-3', thClass:'col-3'},
+          {key: 'ticket_number', label: 'Ticket', sortable: false, tdClass:'col-4', thClass:'col-4'},
+          {key: 'service_reqs[0].periods[0].csr.username', label: 'Served By', sortable: false, tdClass:'col-5', thClass:'col-5'},
+          {key: 'service_reqs[0].service.parent.service_name', label: 'Category', sortable: false, tdClass:'col-6', thClass:'col-6'},
+          {key: 'service_reqs[0].service.service_name', label: 'Service', sortable: false, tdClass:'col-7', thClass:'col-7'},
+          {key: 'citizen_comments', label: 'Comments', sortable: false, tdClass:'col-8', thClass:'col-8'}
         ]
       }
     },
@@ -82,4 +81,33 @@ limitations under the License.*/
       }   
     }
   }
-</script>   
+</script>  
+<style>
+  .col-1 {
+    width: 7%;
+  }
+  .col-2 {
+    width: 9%;
+  }
+  .col-3 {
+    width: 10%;
+  }
+  .col-4 {
+    width: 6%;
+  }
+  .col-5 {
+    width: 14%;
+  }
+  .col-6 {
+    width: 10%;
+  }
+  .col-7 {
+    width: 14%;
+  }
+  .col-8 {
+    width: 28%;
+  }
+  
+  
+
+</style>

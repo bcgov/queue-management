@@ -12,7 +12,7 @@
              >
              
        <div style="display: flex; flex-direction: row; justify-content: space-between" class="modal_header">
-         <div><h5>Search Screen</h5></div>
+         <div><h5>{{modalTitle}}</h5></div>
          <div>
            <b-button-close size="lg" 
                            @click="cancelAddCitizensModal" 
@@ -71,7 +71,15 @@ export default {
     
     computed: {
       ...mapState(['addCitizenModal', 'showAddModal']),
-      ...mapGetters(['form_data']),
+      ...mapGetters(['form_data', 'add_modal_setup']),
+      
+      modalTitle() {
+        if (this.add_modal_setup === 'edit_mode') {
+          return 'Edit Service'
+        } else {
+          return 'Search Screen'
+        }
+      },
       
       quickTrans: {
         get() { return this.form_data.quick },

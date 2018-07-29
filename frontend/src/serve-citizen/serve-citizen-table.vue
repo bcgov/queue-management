@@ -30,7 +30,7 @@
                    
                  </template>
                  <template slot="editBut" slot-scope="row">
-                   <b-button @click="editButton">
+                   <b-button @click="clickEdit">
                      edit
                    </b-button>
                  </template>
@@ -68,12 +68,11 @@ export default {
       }
     },
     methods: {
+      ...mapActions(['clickEdit']),
+
       formatTime(data) {
         let time = new Date(data)
         return time.toLocaleTimeString()
-    },
-      editButton(item, index, event) {
-        this.$store.commit('editServicesFromServe')
       }
     }
   }

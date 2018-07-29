@@ -60,8 +60,8 @@ limitations under the License.*/
       </b-col>
     </b-row>
       
-    <b-row no-gutters v-if="isLoggedIn">
-      <b-col>
+    <b-row no-gutters v-if="isLoggedIn" class="mt-2">
+      <b-col class="m-2">
         Citizens Waiting: {{ queueLength }}
       </b-col>
     </b-row>

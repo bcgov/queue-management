@@ -1,6 +1,6 @@
 <template>
   <div class="add_citizen_template">
-    <template v-if="reception == 0">
+    <template v-if="add_modal_setup === 'non-reception'">
       <b-container fluid class="add_citizen_template">
         <b-form>
           <Comments />
@@ -10,10 +10,19 @@
         </b-form>
       </b-container>
     </template>
-    <template v-else-if="reception == 1">
+    <template v-else-if="add_modal_setup === 'reception'">
       <b-container fluid class="add_citizen_template">
         <b-form>
           <Comments />
+          <Channel />
+          <Filters />
+          <Tables />
+        </b-form>
+      </b-container>
+    </template>
+    <template v-else-if="add_modal_setup === 'edit_mode'">
+      <b-container fluid class="add_citizen_template">
+        <b-form>
           <Channel />
           <Filters />
           <Tables />
@@ -24,6 +33,8 @@
 </template>
 
 <script>
+import {mapGetters} from 'vuex'
+
 import Comments from './form-components/comments'
 import Channel from './form-components/channel'
 import Filters from './form-components/filters'
@@ -38,12 +49,10 @@ export default {
     Tables
   },
   computed: {
-    reception() {
-      let ind = this.$store.state.user.receptionist_ind
-      return ind
+    ...mapGetters(['add_modal_setup'])
     }
   }
-}
+
 </script>
 
 <style>
