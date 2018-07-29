@@ -64,12 +64,6 @@ objects:
         intervalSeconds: 1
         timeoutSeconds: 60
         maxUnavailable: 1
-        post:
-          execNewPod:
-            command:
-              - python manage.py db upgrade
-            containerName: queue-management-api
-          failurePolicy: Abort
     triggers:
     - type: ImageChange
       imageChangeParams:
