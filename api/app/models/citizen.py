@@ -46,9 +46,14 @@ class Citizen(Base):
         return None
 
     def get_service_start_time(self):
+        time_end = self.start_time
+
         # If a service request already exists, then the start time for the next
         # service should be the end time of the previous service request
-        if len(self.service_reqs) >= 2:
-            return self.service_reqs[-2].periods[-1].time_end
-        else:
-            return self.start_time
+        for s in self.service_reqs:
+            sorted_periods = sorted(s.periods, key=lambda p: p.time_start)
+
+            if sorted_periods[-1].time_end > time_end:
+                time_end = sorted_periods[-1].time_end
+
+        return time_end
