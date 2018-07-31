@@ -16,28 +16,30 @@ limitations under the License.*/
 
 <template>
   <b-col id="login-form">
-    <b-button v-show="!this.$store.state.isLoggedIn"
-              @click="login()"
-              id="login-button">
-                Login
-    </b-button>
+    <div v-show="!this.$store.state.isLoggedIn">
+      <b-button @click="login()"
+                id="login-button"
+                style="padding-top: 10px"
+                class="btn btn-link">Login</b-button>
+    </div>
 
-      <div v-show="this.$store.state.isLoggedIn"
-           style="display: flex; flex-direction: row; justify-content: space-between"
-           >
-        <div style="padding-right: 20px">
-          <h6>User: {{ this.$store.state.user.username }}</h6>
-          <h6>Office: {{ this.$store.state.user.office.office_name }}</h6>
-        </div>
-        <div>
-          <b-button @click="logout()"
-              id="logout-button"
-              >
-              Logout
-          </b-button>
-          <b-form-checkbox :checked="quick_trans_status">Quick Txn</b-form-checkbox>
-        </div>
+    <div v-show="this.$store.state.isLoggedIn"
+         style="display: flex; flex-direction: row; justify-content: space-between">
+      <div style="padding-right: 20px">
+        <b-form-checkbox :checked="quick_trans_status"
+                         class="navbar-label">Quick Txn</b-form-checkbox>
       </div>
+      <div style="padding-right: 20px">
+        <label class="navbar-label">User: {{ this.$store.state.user.username }}</label>
+        <label class="navbar-label">Office: {{ this.$store.state.user.office.office_name }}</label>
+      </div>
+      <div style="padding-top: 5px">
+        <b-button v-show="this.$store.state.isLoggedIn"
+                  @click="logout()"
+                  id="logout-button"
+                  class="btn btn-secondary">Logout</b-button>
+      </div>
+    </div>
   </b-col>
 </template>
 
@@ -89,7 +91,7 @@ import { mapGetters } from 'vuex'
           this.init()
         }
       },
-      
+
       init() {
         this.$keycloak.init(
           {
@@ -98,7 +100,7 @@ import { mapGetters } from 'vuex'
           }
         )
       },
-      
+
       setupKeycloakCallbacks(authenticated) {
         this.$keycloak.onReady = (authenticated) => {
           if (authenticated) {
@@ -127,13 +129,13 @@ import { mapGetters } from 'vuex'
           this.setTokenToLocalStorage()
         }
       },
-      
+
       setTokenToLocalStorage() {
         let tokenParsed = this.$keycloak.tokenParsed
         let token = this.$keycloak.token
         let refreshToken = this.$keycloak.refreshToken
         let tokenExpiry = tokenParsed.exp
-        
+
         if (localStorage.token) {
           localStorage.removeItem("token")
           localStorage.removeItem("tokenExp")
@@ -146,18 +148,18 @@ import { mapGetters } from 'vuex'
 
         console.log('localStorage: acquired new tokens')
       },
-      
+
       login() {
         this.$keycloak.login()
       },
-      
+
       logout() {
         this.$keycloak.logout()
         localStorage.removeItem("token")
         localStorage.removeItem("tokenExp")
         localStorage.removeItem("refreshToken")
       },
-      
+
       refreshToken(minValidity) {
         this.$keycloak.updateToken(minValidity).success(refreshed => {
           if (refreshed) {
@@ -172,3 +174,20 @@ import { mapGetters } from 'vuex'
     }
   }
 </script>
+
+<style>
+.custom-control-label::after, .custom-control-label::before {
+  top: 3px;
+}
+
+.navbar-label {
+  color: white;
+  margin-bottom: 0px;
+  float: left;
+  clear: both;
+}
+
+.navbar-brand {
+  font-size: 1rem;
+}
+</style>

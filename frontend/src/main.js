@@ -29,7 +29,7 @@ import axios from 'axios'
 
 require('Keycloak')
 var keycloak = Keycloak(process.env.KEYCLOAK_JSON_URL)
-console.log(process.env.KEYCLOAK_JSON_URL)
+import './assets/css/bc-gov-style.css'
 
 export const axiosInstance = axios.create({
   baseURL: process.env.API_URL,

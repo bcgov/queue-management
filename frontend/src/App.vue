@@ -14,16 +14,20 @@ limitations under the License.*/
 
 <template>
   <div id="App">
+    <Header />
     <Dash />
+    <Socket v-show="f" />
   </div>
 </template>
 
 <script>
 import Dash from './serve-citizen/dash'
+import Header from './layout/header'
+import Socket from './Socket'
 
 export default {
   name: 'App',
-  components: { Dash }
+  components: { Dash, Header, Socket }
 }
 </script>
 

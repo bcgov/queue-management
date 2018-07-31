@@ -24,102 +24,88 @@ limitations under the License.*/
              @dismiss-count-down="countDownChanged">
       {{this.$store.state.alertMessage}}
     </b-alert>
-    
-    <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: flex-start" class="modal-header">
-      <div>
-        <b-button class="m-1" 
-                  @click="invite"
-                  :disabled="inviteButtonDisabled"
-                  >
-          Invite
-        </b-button>
-        <b-button class="m-1" 
-                  @click="clickServeNow" 
-                  :disabled="serveButtonDisabled"
-                  >
-          Serve Now
-        </b-button>
-      </div>
-      <div>
-        <b-button class="m-1" 
-                  @click="addCitizen"
-                  :disabled="addCitizenDisabled"
-                  >Add Citizen</b-button>
-        <b-button class="m-1" v-if="f" :disabled="backOfficeDisabled">Back Office</b-button>
-      </div>
-      <div>
-        <Login />
-      </div>
-    </div>
-  <b-container fluid>
-    
-    <b-row>
-      <b-col>
-        <ServeCitizen v-if="isLoggedIn"/>
-        <AddCitizen v-if="isLoggedIn"/>
-      </b-col>
-    </b-row>
-      
-    <b-row no-gutters v-if="isLoggedIn" class="mt-2">
-      <b-col class="m-2">
-        Citizens Waiting: {{ queueLength }}
-      </b-col>
-    </b-row>
-    
-    <b-row no-gutters v-if="isLoggedIn">
-      <DashTable />
-    </b-row>
-    
-    <b-row no-gutters>
-      <b-col>
-        <Socket v-show="f" />
-      </b-col>
-      <b-col/>
-      <b-col/>
-    </b-row>
-    
-    <b-row no-gutters v-if="isLoggedIn">
-      <b-col> 
-        Citizens on Hold: {{on_hold.length   }}
-      </b-col>
-    </b-row>
-    
-    <b-row v-if="isLoggedIn">
-      <b-col>
-        <DashHoldTable />
-      </b-col>
-    </b-row>
-  </b-container>
-</div>
+
+    <b-container fluid>
+      <b-row>
+        <b-col style="padding-top: 10px">
+          <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: flex-start">
+            <div>
+              <b-button class="m-1 btn-primary"
+                        @click="invite"
+                        :disabled="inviteButtonDisabled">Invite</b-button>
+              <b-button class="m-1 btn-primary"
+                        @click="clickServeNow"
+                        :disabled="serveButtonDisabled">Serve Now</b-button>
+            </div>
+            <div>
+              <b-button class="m-1 btn-primary"
+                        @click="addCitizen"
+                        :disabled="addCitizenDisabled">Add Citizen</b-button>
+              <b-button class="m-1" v-if="f" :disabled="backOfficeDisabled">Back Office</b-button>
+            </div>
+          </div>
+        </b-col>
+        <b-col />
+      </b-row>
+    </b-container>
+    <b-container fluid v-if="isLoggedIn">
+      <b-row>
+        <b-col>
+          <ServeCitizen />
+          <AddCitizen />
+        </b-col>
+      </b-row>
+
+      <b-row no-gutters class="mt-2">
+        <b-col class="m-2">
+          Citizens Waiting: {{ queueLength }}
+        </b-col>
+      </b-row>
+
+      <b-row no-gutters>
+        <b-col style="height: 250px; overflow-y: scroll; overflow: scroll; margin-bottom: 1em; border: 1px solid;" xl="11">
+          <DashTable />
+        </b-col>
+      </b-row>
+
+      <b-row no-gutters>
+        <b-col>
+          Citizens on Hold: {{on_hold.length}}
+        </b-col>
+      </b-row>
+
+      <b-row no-gutters>
+        <b-col style="height: 250px; overflow-y: scroll; overflow: scroll; border: 1px solid;" xl="11">
+          <DashHoldTable />
+        </b-col>
+      </b-row>
+    </b-container>
+  </div>
 </template>
 
 <script>
 import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
-import Login from './../Login'
 import AddCitizen from './../add-citizen/add-citizen'
-import Socket from './../Socket'
 import DashTable from './dash-table'
 import DashHoldTable from './dash-hold-table'
 import ServeCitizen from './serve-citizen'
 
   export default {
     name: 'Dash',
-    
-    components: { 
-      AddCitizen,  
-      Login,
-      Socket,
+
+    components: {
+      AddCitizen,
       DashTable,
       DashHoldTable,
       ServeCitizen
     },
-    
+
     mounted() {
       this.$root.$on('showMessage', () => {
         this.showAlert()
       })
     },
-    
+
     data() {
       return {
         enbleServe: true,
@@ -129,10 +115,10 @@ import ServeCitizen from './serve-citizen'
         citizencount: this.queueLength
       }
     },
-    
+
     computed: {
       ...mapState([
-        'isLoggedIn', 
+        'isLoggedIn',
         'inviteButtonDisabled',
         'serveButtonDisabled',
         'addCitizenDisabled',
@@ -140,22 +126,22 @@ import ServeCitizen from './serve-citizen'
         'dismissCountDown'
       ]),
       ...mapGetters(['filtered_citizens', 'on_hold']),
-      
+
       queueLength() {
         return this.filtered_citizens.length
       }
-    }, 
-    
+    },
+
     methods: {
       ...mapMutations(['setAlert']),
       ...mapActions([
-        'clickInvite', 
-        'addCitizen', 
+        'clickInvite',
+        'addCitizen',
         'clickServiceModalClose',
         'clickCitizenLeft',
         'clickServeNow'
-      ]),      
-      
+      ]),
+
       invite() {
         if (this.queueLength === 0) {
           this.setAlert('The are currently no citizens to invite.')
@@ -163,11 +149,11 @@ import ServeCitizen from './serve-citizen'
           this.clickInvite()
         }
       },
-      
+
       toggleModal() {
         this.toggleServeNow(true)
       },
-      
+
       countDownChanged(dismissCountDown) {
         this.$store.commit('dismissCountDown', dismissCountDown)
       }

@@ -16,16 +16,15 @@ limitations under the License.*/
 
 <template>
   <div id='client-hold-table'>
-    <b-table small
-             head-variant="light"
-             :items="on_hold"
+    <b-table :items="on_hold"
              :fields="fields"
+             head-variant="light"
+             small
              outlined
              hover
              fixed
              @row-clicked="rowClicked"
-             class="p-0 m-0"
-             >
+             class="p-0 m-0">
       <template slot='qt_xn_citizen_ind' slot-scope='data'>
         {{ (data.item.qt_xn_citizen_ind===0) ?
              ('No') :
@@ -60,11 +59,11 @@ limitations under the License.*/
         ]
       }
     },
-    
+
     computed: {
       ...mapState(['citizens']),
       ...mapGetters(['on_hold'])
-    },    
+    },
     methods: {
       ...mapActions(['clickHoldTableRow']),
       formatTime(data) {
@@ -72,14 +71,14 @@ limitations under the License.*/
         let display = date.toLocaleTimeString()
         return display
       },
-      
+
       rowClicked(item, index) {
         if (this.$store.state.serveButtonDisabled==false) {
           this.$store.commit('setAlert', 'You are already serving a citizen.  Click Serve Now to resume.')
         } else if (this.$store.state.serveButtonDisabled==true) {
           this.clickHoldTableRow(item.citizen_id)
         }
-      }   
+      }
     }
   }
 </script>

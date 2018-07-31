@@ -1,46 +1,37 @@
 
 
-<template>  
-  <b-container class="mt-4">
-    <b-row>
-      <b-col>
-        <b-table :fields="fields"
-                 :items="items"
-                 head-variant="light"
-                 small
-                 fixed
-                 bordered
-                 style="text-align: center"
-                 >
-                 <template slot="start_time" slot-scope="data">
-                   {{ formatTime(data.item.start_time) }}
-                 </template>
-                 <template slot="quantity" slot-scope="data">
-                   
-                   <div style="display: none">
-                   {{text1=data.item.service_reqs[0].quantity}}
-                 </div>
-                   <div class="w-100">
-                   <b-form-input v-model="text1"
-                                 type="text"
-                                 size="sm"
-                                 class="w-25 mx-auto"
-                                 ></b-form-input>
-                               </div>
-                   
-                 </template>
-                 <template slot="editBut" slot-scope="row">
-                   <b-button @click="clickEdit">
-                     edit
-                   </b-button>
-                 </template>
-            
-        </b-table>
-      </b-col>
-    </b-row>
-  </b-container>
+<template>
+  <b-table :fields="fields"
+           :items="items"
+           head-variant="light"
+           small
+           outlined
+           hover
+           fixed
+           bordered
+           style="text-align: center"
+           class="p-0 m-0">
+    <template slot="start_time" slot-scope="data">
+      {{ formatTime(data.item.start_time) }}
+    </template>
+    <template slot="quantity" slot-scope="data">
+      <div style="display: none">
+        {{text1=data.item.service_reqs[0].quantity}}
+      </div>
+      <div class="w-100">
+        <b-form-input v-model="text1"
+                      type="text"
+                      size="sm"
+                      class="w-25 mx-auto"></b-form-input>
+      </div>
+    </template>
+    <template slot="editBut" slot-scope="row">
+      <b-button @click="clickEdit" >
+        edit
+      </b-button>
+    </template>
+  </b-table>
 </template>
-?:  
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
