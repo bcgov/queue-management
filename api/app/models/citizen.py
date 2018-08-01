@@ -53,7 +53,7 @@ class Citizen(Base):
         for s in self.service_reqs:
             sorted_periods = sorted(s.periods, key=lambda p: p.time_start)
 
-            if sorted_periods[-1].time_end > time_end:
+            if len(sorted_periods) > 0 and sorted_periods[-1].time_end is not None and sorted_periods[-1].time_end > time_end:
                 time_end = sorted_periods[-1].time_end
 
         return time_end
