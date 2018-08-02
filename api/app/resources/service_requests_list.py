@@ -60,7 +60,7 @@ class ServiceRequestsList(Resource):
         service_request.sr_state = active_sr_state
 
         # Only add ticket creation period and ticket number if it's their first service_request
-        if citizen.service_reqs > 1:
+        if len(citizen.service_reqs) > 1:
             period_state_ticket_creation = PeriodState.query.filter_by(ps_name="Ticket Creation").first()
 
             ticket_create_period = Period(
