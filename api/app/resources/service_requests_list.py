@@ -16,7 +16,7 @@ from flask import request, g
 from flask_restplus import Resource
 from datetime import datetime
 from qsystem import api, api_call_with_retry, db, oidc
-from app.models import Citizen, Channel, CSR, Period, PeriodState, Service, ServiceReq, SRState
+from app.models import Citizen, CitizenState, Channel, CSR, Period, PeriodState, Service, ServiceReq, SRState
 from app.schemas import ChannelSchema, ServiceReqSchema
 from marshmallow import ValidationError
 
@@ -39,7 +39,6 @@ class ServiceRequestsList(Resource):
 
         try:
             service_request = self.service_request_schema.load(json_data['service_request']).data
-            print(service_request)
 
         except ValidationError as err:
             return {"message": err.messages}, 422
@@ -48,6 +47,7 @@ class ServiceRequestsList(Resource):
             return {"message": str(err)}
 
         active_sr_state = SRState.query.filter_by(sr_code='Active').first()
+        citizen_state = CitizenState.query.filter_by(cs_state_name="Active").first()
         citizen = Citizen.query.get(service_request.citizen_id)
         service = Service.query.get(service_request.service_id)
 
@@ -59,27 +59,42 @@ class ServiceRequestsList(Resource):
 
         service_request.sr_state = active_sr_state
 
-        period_state_ticket_creation = PeriodState.query.filter_by(ps_name="Ticket Creation").first()
+        # Only add ticket creation period and ticket number if it's their first service_request
+        if citizen.service_reqs > 1:
+            period_state_ticket_creation = PeriodState.query.filter_by(ps_name="Ticket Creation").first()
 
-        ticket_create_period = Period(
-            csr_id=csr.csr_id,
-            reception_csr_ind=csr.receptionist_ind,
-            ps_id=period_state_ticket_creation.ps_id,
-            time_start=citizen.get_service_start_time(),
-            time_end=datetime.now(),
-            accurate_time_ind=1
-        )
-        service_request.periods.append(ticket_create_period)
+            ticket_create_period = Period(
+                csr_id=csr.csr_id,
+                reception_csr_ind=csr.receptionist_ind,
+                ps_id=period_state_ticket_creation.ps_id,
+                time_start=citizen.get_service_start_time(),
+                time_end=datetime.now(),
+                accurate_time_ind=1
+            )
+            service_request.periods.append(ticket_create_period)
 
-        service_count = ServiceReq.query \
-                .join(ServiceReq.citizen, aliased=True) \
-                .filter(Citizen.start_time >= citizen.start_time.strftime("%Y-%m-%d")) \
-                .filter_by(office_id=csr.office_id) \
-                .join(ServiceReq.service, aliased=True) \
-                .filter_by(prefix=service.prefix) \
-                .count()
+            service_count = ServiceReq.query \
+                    .join(ServiceReq.citizen, aliased=True) \
+                    .filter(Citizen.start_time >= citizen.start_time.strftime("%Y-%m-%d")) \
+                    .filter_by(office_id=csr.office_id) \
+                    .join(ServiceReq.service, aliased=True) \
+                    .filter_by(prefix=service.prefix) \
+                    .count()
 
-        citizen.ticket_number = service.prefix + str(service_count)
+            citizen.ticket_number = service.prefix + str(service_count)
+        else:
+            period_state_being_served = PeriodState.query.filter_by(ps_name="Being Served").first()
+
+            ticket_create_period = Period(
+                csr_id=csr.csr_id,
+                reception_csr_ind=csr.receptionist_ind,
+                ps_id=period_state_being_served.ps_id,
+                time_start=datetime.now(),
+                accurate_time_ind=1
+            )
+            service_request.periods.append(ticket_create_period)
+
+        citizen.cs_id = citizen_state.cs_id
 
         db.session.add(service_request)
         db.session.add(citizen)
