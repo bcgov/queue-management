@@ -34,7 +34,7 @@
       channel: {
         get() { return this.form_data.channel },
         set(value) {
-          this.$store.commit('updateModalForm',{type: 'channel', value})
+          this.$store.commit('updateAddModalForm',{type: 'channel', value})
         }
       }
     }

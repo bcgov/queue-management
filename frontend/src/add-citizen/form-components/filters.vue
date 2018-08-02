@@ -35,13 +35,13 @@
       search: {
         get() { return this.form_data.search },
         set(value) {
-          this.$store.commit('updateModalForm',{type: 'search', value})
+          this.$store.commit('updateAddModalForm',{type: 'search', value})
         }
       },
       category: {
         get() { return this.form_data.category },
         set(value) {
-          this.$store.commit('updateModalForm',{type: 'category', value})
+          this.$store.commit('updateAddModalForm',{type: 'category', value})
         }
       }
     }

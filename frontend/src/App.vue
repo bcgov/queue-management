@@ -16,7 +16,7 @@ limitations under the License.*/
   <div id="App">
     <Header />
     <Dash />
-    <Socket v-show="f" />
+    <Socket v-show="1===2" />
   </div>
 </template>
 

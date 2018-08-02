@@ -28,7 +28,7 @@
       comments: {
         get() { return this.form_data.comments },
         set(value) {
-          this.$store.commit('updateModalForm',{type: 'comments', value})
+          this.$store.commit('updateAddModalForm',{type: 'comments', value})
         }
       }
     }

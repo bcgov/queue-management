@@ -69,11 +69,11 @@ export default {
     },
 
     computed: {
-      ...mapState(['addCitizenModal', 'showAddModal']),
-      ...mapGetters(['form_data', 'add_modal_setup']),
-
+      ...mapState(['addCitizenModal', 'showAddModal', 'addModalSetup']),
+      ...mapGetters(['form_data']),
+      
       modalTitle() {
-        if (this.add_modal_setup === 'edit_mode') {
+        if (this.addModalSetup === 'edit_mode') {
           return 'Edit Service'
         } else {
           return 'Add Citizen'
@@ -82,13 +82,13 @@ export default {
 
       quickTrans: {
         get() { return this.form_data.quick },
-        set(value) { this.updateModalForm({type:'quick',value}) }
+        set(value) { this.updateAddModalForm({type:'quick',value}) }
       }
     },
 
     methods: {
       ...mapActions(['cancelAddCitizensModal']),
-      ...mapMutations(['updateModalForm']),
+      ...mapMutations(['updateAddModalForm']),
 
       countDownChanged (dismissCountDown) {
         this.dismissCountDown = dismissCountDown

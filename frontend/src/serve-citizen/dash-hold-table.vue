@@ -61,11 +61,11 @@ limitations under the License.*/
     },
 
     computed: {
-      ...mapState(['citizens']),
+      ...mapState(['citizens','citizenInvited']),
       ...mapGetters(['on_hold'])
     },
     methods: {
-      ...mapActions(['clickHoldTableRow']),
+      ...mapActions(['clickRowHoldQueue']),
       formatTime(data) {
         let date = new Date(data)
         let display = date.toLocaleTimeString()
@@ -73,10 +73,10 @@ limitations under the License.*/
       },
 
       rowClicked(item, index) {
-        if (this.$store.state.serveButtonDisabled==false) {
-          this.$store.commit('setAlert', 'You are already serving a citizen.  Click Serve Now to resume.')
-        } else if (this.$store.state.serveButtonDisabled==true) {
-          this.clickHoldTableRow(item.citizen_id)
+        if (this.citizenInvited===true) {
+          this.$store.commit('setMainAlert', 'You are already serving a citizen.  Click Serve Now to resume.')
+        } else if (this.citizenInvited===false) {
+          this.clickRowHoldQueue(item.citizen_id)
         }
       }
     }

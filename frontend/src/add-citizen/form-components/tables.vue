@@ -102,7 +102,7 @@
       rowClicked(item, index) {
         let id = item.service_id
         this.selectedRow = id
-        this.$store.commit('updateModalForm', {type:'service',value:id})
+        this.$store.commit('updateAddModalForm', {type:'service',value:id})
       }
     }
   }

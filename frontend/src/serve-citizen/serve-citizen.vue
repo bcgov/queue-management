@@ -2,7 +2,7 @@
 
 <template>
     <b-modal id="serve_citizen_modal"
-             :visible="this.$store.state.showServiceModal"
+             :visible="showServiceModal"
              size="lg"
              hide-header
              hide-footer
@@ -23,11 +23,11 @@
             <div>Channels: <strong>{{channel.channel_name}}</strong></div>
             <div class="pt-3">
               <b-button @click="clickServiceBeginService"
-                        :disabled="serveBeginServiceDisabled"
+                        :disabled="serviceBegun===true"
                         class="btn-primary"
                         id="serve-citizen-begin-service-button">Begin Service</b-button>
               <b-button @click="clickReturnToQueue"
-                        :disabled="serveReturnQueueDisabled"
+                        :disabled="serviceBegun===true"
                         class="btn-primary"
                         id="serve-citizen-return-to-queue-button">Return to Queue</b-button>
               <b-button @click="clickCitizenLeft"
@@ -49,18 +49,15 @@
         </b-row>
       </b-container>
       <ServeCitizenTable/>
+      
       <b-container fluid
                    id="serve-light-inner-container"
                    class="pt-3 mt-3 mb-4">
         <b-row no-gutters>
-          <b-col cols="2"/>
-          <b-col cols="3"><b-form-select v-model="selected"
-                                         :options="options"
-                                         v-if="f" />
-          </b-col>
-          <b-col cols="2"/>
-          <b-col cols="3" style="align: right">
-            <b-button v-if="f" class="w-75">Add Next Service</b-button>
+          <b-col cols="7"/>
+        
+          <b-col cols="auto" style="align: right">
+            <b-button class="w-100" @click="clickAddService" :disabled="serviceBegun===false">Add Next Service</b-button>
           </b-col>
           <b-col cols="2"/>
         </b-row>
@@ -73,17 +70,16 @@
           <b-col cols="2" />
           <b-col cols="3">
             <b-button @click="clickHold"
-                      :disabled="finishDisabled"
+                      :disabled="serviceBegun===false"
                       class="w-75 btn-primary"
                       id="serve-citizen-place-on-hold-button">Place on Hold</b-button>
           </b-col>
           <b-col cols="2" />
           <b-col cols="3">
-            <b-button @click="clickFinishService"
-                      :disabled="finishDisabled"
-                      class="w-75 btn-primary"
+            <b-button @click="clickServiceFinish"
+                      :disabled="serviceBegun===false"
+                      class="w-75 btn-primary" 
                       id="serve-citizen-finish-button">Finish</b-button>
-
           </b-col>
           <b-col cols="2" />
         </b-row>
@@ -96,7 +92,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 import ServeCitizenTable from './serve-citizen-table'
 
 export default {
@@ -114,70 +110,44 @@ export default {
     ...mapState([
       'showServiceModal',
       'invitedCitizen',
-      'serveBeginServiceDisabled',
-      'serveCitizenLeftDisabled',
-      'serveReturnQueueDisabled',
-      'finishDisabled'
+      'serviceBegun'
     ]),
 
     citizen() {
-    return this.invitedCitizen
-  },
+      return this.invitedCitizen
+    },
 
     comments: {
       get() { return this.citizen.citizen_comments },
       set(value) {
         this.$store.commit('editInvitedCitizen',{type:'citizen_comments',value})
-      }},
-      options() {
-        let { service_reqs } = this.citizen
-
-        if (service_reqs.length === 1 || !service_reqs) {
-          return [{text:'no other services', value: null}]
-        } else if (service_reqs.length > 1) {
-          let array_options = service_reqs.map(req =>
-          ({text:req.service.service_name, value:req.service.service_name})
-        )
-        return array_options
-        }
-      },
-
-    channel() {
-      if (this.citizen) {
-        return this.citizen.service_reqs[0].channel
-      } else {
-        return ''
       }
-    }},
+    },
+    
+   channel() {
+     if (
+       !this.citizen ||
+       !this.citizen.service_reqs ||
+       this.citizen.service_reqs.length === 0 
+     ) {
+       return ''
+     }
+     return this.citizen.service_reqs[0].channel
+   }
+  },
 
   methods: {
     ...mapActions([
       'clickCitizenLeft',
-      'postBeginService',
-      'editServiceButton',
       'clickServiceBeginService',
-      'clickServiceModalClose',
-      'clickFinishService',
+      'clickServiceFinish',
       'clickReturnToQueue',
-      'clickHold'
+      'clickHold',
+      'clickAddService'
     ]),
-    ...mapMutations(
-      {
-        toggleService: 'toggleServiceModal',
-        editServices: 'editServicesFromServe',
-        toggleAdd: 'toggleAddCitizen'
-      }
-    ),
-
+    
     closeWindow() {
       this.$store.dispatch('clickServiceModalClose')
-    },
-    beginService(item, index) {
-      this.postBeginService()
-      this.toggleService(false)
-    },
-    clickEdit() {
-      this.editServices()
     }
   }
 }

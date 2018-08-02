@@ -60,7 +60,7 @@ limitations under the License.*/
       }
     },
     computed: {
-      ...mapState(['serveButtonDisabled']),
+      ...mapState(['citizenInvited']),
       ...mapGetters(['filtered_citizens']),
       citizens() {
         return this.filtered_citizens
@@ -73,9 +73,9 @@ limitations under the License.*/
         return date.toLocaleTimeString()
       },
       rowClicked(item, index) {
-        if (this.$store.state.serveButtonDisabled==false) {
-          this.$store.commit('setAlert', 'You are already serving a citizen.  Click Serve Now to resume.')
-        } else if (this.$store.state.serveButtonDisabled==true) {
+        if (this.citizenInvited===true) {
+          this.$store.commit('setMainAlert', 'You are already serving a citizen.  Click Serve Now to resume.')
+        } else if (this.citizenInvited===false) {
           this.clickDashTableRow(item.citizen_id)
         }
       }   

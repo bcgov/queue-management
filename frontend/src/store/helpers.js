@@ -14,16 +14,26 @@ export function Axios(context) {
 }
 
 export const invitedCitizen = {
-  ticket_number: null,
-  service_reqs: [
-    {
-      start_time: null,
-      channel: {
-        channel_name: null,
-        channel_id: null
+    citizen_comments: null,
+    ticket_number: null,
+    citizen_id: null,
+    qt_xn_citizen_ind: null,
+    start_time: null,
+    service_reqs: [
+      {
+        start_time: null,
+        service: {
+          parrent: {}
+        },
+        service_id: null,
+        sr_id: null,
+        channel: {
+          channel_name: null,
+          channel_id: null
+        }
       }
-    }
-  ]
+    ]
+
 }
 
 export const formData = {
