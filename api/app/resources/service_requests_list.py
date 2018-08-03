@@ -47,6 +47,7 @@ class ServiceRequestsList(Resource):
             return {"message": str(err)}
 
         active_sr_state = SRState.query.filter_by(sr_code='Active').first()
+        complete_sr_state = SRState.query.filter_by(sr_code='Complete').first()
         citizen_state = CitizenState.query.filter_by(cs_state_name="Active").first()
         citizen = Citizen.query.get(service_request.citizen_id)
         service = Service.query.get(service_request.service_id)
@@ -57,10 +58,17 @@ class ServiceRequestsList(Resource):
         if service is None:
             return {"message": "No matching citizen found for citizen_id"}, 400
 
+        # Find the currently active service_request and close it (if it exists)
+        for req in citizen.service_reqs:
+            if req.sr_state_id == active_sr_state.sr_state_id:
+                req.sr_state_id = complete_sr_state.sr_state_id
+                req.finish_service(csr)
+                db.session.add(req)
+
         service_request.sr_state = active_sr_state
 
         # Only add ticket creation period and ticket number if it's their first service_request
-        if len(citizen.service_reqs) <= 1:
+        if len(citizen.service_reqs) == 0:
             period_state_ticket_creation = PeriodState.query.filter_by(ps_name="Ticket Creation").first()
 
             ticket_create_period = Period(

@@ -12,12 +12,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+from datetime import datetime
 from flask import request, g
 from flask_restplus import Resource
+from marshmallow import ValidationError
+
 from qsystem import api, api_call_with_retry, db, oidc
 from app.models import CSR, Period, PeriodState, ServiceReq, SRState
 from app.schemas import ServiceReqSchema
-from marshmallow import ValidationError
 
 
 @api.route("/service_requests/<int:id>/", methods=["PUT"])
@@ -62,7 +64,7 @@ class ServiceRequestActivate(Resource):
 
     @oidc.accept_token(require_token=True)
     @api_call_with_retry
-    def put(self, id):
+    def post(self, id):
 
         csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
 
@@ -86,7 +88,7 @@ class ServiceRequestActivate(Resource):
         period_state_being_served = PeriodState.query.filter_by(ps_name="Being Served").first()
 
         new_period = Period(
-            sr_id=self.sr_id,
+            sr_id=service_request.sr_id,
             csr_id=csr.csr_id,
             reception_csr_ind=csr.receptionist_ind,
             ps_id=period_state_being_served.ps_id,
