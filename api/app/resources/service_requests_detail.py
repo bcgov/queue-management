@@ -15,7 +15,7 @@ limitations under the License.'''
 from flask import request, g
 from flask_restplus import Resource
 from qsystem import api, api_call_with_retry, db, oidc
-from app.models import CSR, ServiceReq, SRState
+from app.models import CSR, Period, PeriodState, ServiceReq, SRState
 from app.schemas import ServiceReqSchema
 from marshmallow import ValidationError
 
@@ -73,12 +73,28 @@ class ServiceRequestActivate(Resource):
         active_service_state = SRState.query.filter_by(sr_code='Active').first()
         complete_service_state = SRState.query.filter_by(sr_code='Complete').first()
 
+        # Find the currently active service_request and close it
         for req in service_request.citizen.service_reqs:
-            req.sr_state_id = complete_service_state.sr_state_id
-            db.session.add(req)
+            if req.sr_state_id == active_service_state.sr_state_id:
+                req.sr_state_id = complete_service_state.sr_state_id
+                req.finish_service(csr)
+                db.session.add(req)
 
+        # Then set the requested service to active
         service_request.sr_state_id = active_service_state.sr_state_id
 
+        period_state_being_served = PeriodState.query.filter_by(ps_name="Being Served").first()
+
+        new_period = Period(
+            sr_id=self.sr_id,
+            csr_id=csr.csr_id,
+            reception_csr_ind=csr.receptionist_ind,
+            ps_id=period_state_being_served.ps_id,
+            time_start=datetime.now(),
+            accurate_time_ind=1
+        )
+
+        db.session.add(new_period)
         db.session.add(service_request)
         db.session.commit()
 
