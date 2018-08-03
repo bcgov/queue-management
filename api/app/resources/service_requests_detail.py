@@ -15,7 +15,7 @@ limitations under the License.'''
 from flask import request, g
 from flask_restplus import Resource
 from qsystem import api, api_call_with_retry, db, oidc
-from app.models import ServiceReq, CSR
+from app.models import CSR, ServiceReq, SRState
 from app.schemas import ServiceReqSchema
 from marshmallow import ValidationError
 
@@ -38,7 +38,7 @@ class ServiceRequestsDetail(Resource):
 
         service_request = ServiceReq.query.filter_by(sr_id=id) \
                 .join(ServiceReq.citizen, aliased=True) \
-                .filter_by(office_id=csr.office_id).first()
+                .filter_by(office_id=csr.office_id).first_or_404()
         try:
             service_request = self.service_request_schema.load(json_data, instance=service_request, partial=True).data
 
@@ -51,4 +51,38 @@ class ServiceRequestsDetail(Resource):
         result = self.service_request_schema.dump(service_request)
 
         return {'service_request': result.data,
-                'errors': result.errors}, 201
+                'errors': result.errors}, 200
+
+
+@api.route("/service_requests/<int:id>/activate/", methods=["POST"])
+class ServiceRequestActivate(Resource):
+
+    service_requests_schema = ServiceReqSchema(many=True)
+    service_request_schema = ServiceReqSchema()
+
+    @oidc.accept_token(require_token=True)
+    @api_call_with_retry
+    def put(self, id):
+
+        csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+
+        service_request = ServiceReq.query.filter_by(sr_id=id) \
+            .join(ServiceReq.citizen, aliased=True) \
+            .filter_by(office_id=csr.office_id).first_or_404()
+
+        active_service_state = SRState.query.filter_by(sr_code='Active').first()
+        complete_service_state = SRState.query.filter_by(sr_code='Complete').first()
+
+        for req in service_request.citizen.service_reqs:
+            req.sr_state_id = complete_service_state.sr_state_id
+            db.session.add(req)
+
+        service_request.sr_state_id = active_service_state.sr_state_id
+
+        db.session.add(service_request)
+        db.session.commit()
+
+        result = self.service_request_schema.dump(service_request)
+
+        return {'service_request': result.data,
+                'errors': result.errors}, 200
