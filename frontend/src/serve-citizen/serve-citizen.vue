@@ -24,12 +24,15 @@
             <div class="pt-3">
               <b-button @click="clickServiceBeginService"
                         :disabled="serveBeginServiceDisabled"
-                        class="btn-primary">Begin Service</b-button>
+                        class="btn-primary"
+                        id="serve-citizen-begin-service-button">Begin Service</b-button>
               <b-button @click="clickReturnToQueue"
                         :disabled="serveReturnQueueDisabled"
-                        class="btn-primary">Return to Queue</b-button>
+                        class="btn-primary"
+                        id="serve-citizen-return-to-queue-button">Return to Queue</b-button>
               <b-button @click="clickCitizenLeft"
-                        class="btn-danger">Citizen Left</b-button>
+                        class="btn-danger"
+                        id="serve-citizen-citizen-left-button">Citizen Left</b-button>
             </div>
           </b-col>
           <b-col cols="6" style="text-align: left" class="pr-2">
@@ -71,13 +74,16 @@
           <b-col cols="3">
             <b-button @click="clickHold"
                       :disabled="finishDisabled"
-                      class="w-75 btn-primary">Place on Hold</b-button>
+                      class="w-75 btn-primary"
+                      id="serve-citizen-place-on-hold-button">Place on Hold</b-button>
           </b-col>
           <b-col cols="2" />
           <b-col cols="3">
             <b-button @click="clickFinishService"
                       :disabled="finishDisabled"
-                      class="w-75 btn-primary" >Finish</b-button>
+                      class="w-75 btn-primary"
+                      id="serve-citizen-finish-button">Finish</b-button>
+
           </b-col>
           <b-col cols="2" />
         </b-row>

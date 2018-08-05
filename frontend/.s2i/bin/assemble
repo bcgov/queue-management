@@ -6,8 +6,10 @@ rc=$?
 
 if [ $rc -eq 0 ]; then
     npm run build:dev
-else
-    echo "After failed assembling"
+    rc=$?
+    if [ $rc -eq 0 ]; then
+      npm test
+    fi
 fi
 
 exit $rc

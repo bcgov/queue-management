@@ -3,21 +3,21 @@
       <b-col align-h="end">
         <template v-if="setup === 'reception' ">
           <b-form-group>
-            <b-button @click="addToQueue" class="btn-primary">Add to queue</b-button>
-            <b-button @click="beginService" class="btn-primary">Begin service</b-button>
-            <b-button @click="cancelAddCitizensModal" class="btn-secondary">Cancel</b-button>
+            <b-button @click="addToQueue" class="btn-primary" id="add-citizen-add-to-queue">Add to queue</b-button>
+            <b-button @click="beginService" class="btn-primary" id="add-citizen-begin-service">Begin service</b-button>
+            <b-button @click="cancelAddCitizensModal" class="btn-secondary" id="add-citizen-cancel">Cancel</b-button>
           </b-form-group>
         </template>
         <template v-else-if="setup == 'edit_mode' ">
           <b-form-group>
-            <b-button @click="clickEditApply" class="btn-primary">Apply</b-button>
-            <b-button @click="clickEditCancel" class="btn-secondary">Cancel</b-button>
+            <b-button @click="clickEditApply" class="btn-primary" id="add-citizen-apply">Apply</b-button>
+            <b-button @click="clickEditCancel" class="btn-secondary" id="add-citizen-cancel">Cancel</b-button>
           </b-form-group>
         </template>
         <template v-else-if="setup === 'non_reception' ">
           <b-form-group>
-            <b-button @click="beginService" class="btn-primary">Begin service</b-button>
-            <b-button @click="cancelAddCitizensModal" class="btn-secondary">Cancel</b-button>
+            <b-button @click="beginService" class="btn-primary" id="add-citizen-begin-service">Begin service</b-button>
+            <b-button @click="cancelAddCitizensModal" class="btn-secondary" id="add-citizen-cancel">Cancel</b-button>
           </b-form-group>
         </template>
       </b-col>

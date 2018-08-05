@@ -30,7 +30,7 @@ limitations under the License.*/
                          class="navbar-label">Quick Txn</b-form-checkbox>
       </div>
       <div style="padding-right: 20px">
-        <label class="navbar-label">User: {{ this.$store.state.user.username }}</label>
+        <label class="navbar-label navbar-user">User: {{ this.$store.state.user.username }}</label>
         <label class="navbar-label">Office: {{ this.$store.state.user.office.office_name }}</label>
       </div>
       <div style="padding-top: 5px">

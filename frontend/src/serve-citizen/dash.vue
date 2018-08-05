@@ -32,15 +32,18 @@ limitations under the License.*/
             <div>
               <b-button class="m-1 btn-primary"
                         @click="invite"
-                        :disabled="inviteButtonDisabled">Invite</b-button>
+                        :disabled="inviteButtonDisabled"
+                        id="invite-citizen-button">Invite</b-button>
               <b-button class="m-1 btn-primary"
                         @click="clickServeNow"
-                        :disabled="serveButtonDisabled">Serve Now</b-button>
+                        :disabled="serveButtonDisabled"
+                        id="serve-citizen-button">Serve Now</b-button>
             </div>
             <div>
               <b-button class="m-1 btn-primary"
                         @click="addCitizen"
-                        :disabled="addCitizenDisabled">Add Citizen</b-button>
+                        :disabled="addCitizenDisabled"
+                        id="add-citizen-button">Add Citizen</b-button>
               <b-button class="m-1" v-if="f" :disabled="backOfficeDisabled">Back Office</b-button>
             </div>
           </div>
@@ -57,7 +60,7 @@ limitations under the License.*/
       </b-row>
 
       <b-row no-gutters class="mt-2">
-        <b-col class="m-2">
+        <b-col class="m-2" id="citizen-wait-count">
           Citizens Waiting: {{ queueLength }}
         </b-col>
       </b-row>
@@ -69,7 +72,7 @@ limitations under the License.*/
       </b-row>
 
       <b-row no-gutters>
-        <b-col>
+        <b-col id="citizen-hold-count">
           Citizens on Hold: {{on_hold.length}}
         </b-col>
       </b-row>

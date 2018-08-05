@@ -23,42 +23,6 @@ podTemplate(
             checkout scm
         }
         
-        stage('Newman Tests') {
-            dir('api/postman') {
-                sh "ls -alh"
-
-                sh (
-                  returnStdout: true,
-                  script: "npm init -y"
-                )
-
-                sh (
-                  returnStdout: true,
-                  script: "npm install newman"
-                )
-
-                PASSWORD = sh (
-                    script: 'oc describe configmap postman-passwords | awk  -F  "=" \'/^password_qtxn/{print $2}\'',
-                    returnStdout: true
-                ).trim()
-
-                PASSWORD_NONQTXN = sh (
-                    script: 'oc describe configmap postman-passwords | awk  -F  "=" \'/^password_nonqtxn/{print $2}\'',
-                    returnStdout: true
-                ).trim()
-
-                CLIENT_SECRET = sh (
-                    script: 'oc describe configmap postman-passwords | awk  -F  "=" \'/^client_secret/{print $2}\'',
-                    returnStdout: true
-                ).trim()
-
-                sh (
-                    returnStdout: true,
-                    script: "./node_modules/newman/bin/newman.js run postman_tests.json -e postman_env.json --global-var 'password=${PASSWORD}' --global-var 'password_nonqtxn=${PASSWORD_NONQTXN}' --global-var 'client_secret=${CLIENT_SECRET}'"
-                )
-            }
-        }
-
         stage('SonarQube Analysis') {
           echo ">>> Performing static analysis <<<"
           SONARQUBE_PWD = sh (
@@ -81,7 +45,6 @@ podTemplate(
             )
           }
         }
-        /*
         stage('Dependency check') {
             dir('owasp') {
                 sh './dependency-check/bin/dependency-check.sh --project "Queue Management" --scan ../frontend/package.json --enableExperimental --enableRetired'
@@ -158,10 +121,45 @@ podTemplate(
                                       verifyReplicaCount: 'false'
 
             echo ">>> deployment complete <<<"
-        }*/
+        }
+        stage('Newman Tests') {
+            dir('api/postman') {
+                sh "ls -alh"
+
+                sh (
+                  returnStdout: true,
+                  script: "npm init -y"
+                )
+
+                sh (
+                  returnStdout: true,
+                  script: "npm install newman"
+                )
+
+                PASSWORD = sh (
+                    script: 'oc describe configmap postman-passwords | awk  -F  "=" \'/^password_qtxn/{print $2}\'',
+                    returnStdout: true
+                ).trim()
+
+                PASSWORD_NONQTXN = sh (
+                    script: 'oc describe configmap postman-passwords | awk  -F  "=" \'/^password_nonqtxn/{print $2}\'',
+                    returnStdout: true
+                ).trim()
+
+                CLIENT_SECRET = sh (
+                    script: 'oc describe configmap postman-passwords | awk  -F  "=" \'/^client_secret/{print $2}\'',
+                    returnStdout: true
+                ).trim()
+
+                sh (
+                    returnStdout: true,
+                    script: "./node_modules/newman/bin/newman.js run postman_tests.json -e postman_env.json --global-var 'password=${PASSWORD}' --global-var 'password_nonqtxn=${PASSWORD_NONQTXN}' --global-var 'client_secret=${CLIENT_SECRET}'"
+                )
+            }
+        }
     }
 }
-/*
+
 def owaspPodLabel = "owasp-zap-${UUID.randomUUID().toString()}"
 podTemplate(
     label: owaspPodLabel, 
@@ -207,4 +205,3 @@ podTemplate(
         }
     }
 }
-*/
