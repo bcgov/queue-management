@@ -34,6 +34,15 @@ limitations under the License.*/
       <template slot='start_time' slot-scope='data'>
         {{ formatTime(data.item.start_time) }}
       </template>
+      <template slot='csr' slot-scope='data'>
+      {{ showCSR(data.item.citizen_id) }}
+      </template>
+      <template slot='category' slot-scope='data'>
+        {{ showCategory(data.item.citizen_id) }}
+      </template>
+      <template slot='service' slot-scope='data'>
+        {{ showService(data.item.citizen_id) }}
+      </template>
     </b-table>
   </div>
 </template>
@@ -49,21 +58,21 @@ limitations under the License.*/
         f:false,
         fields: [
           {key: 'qt_xn_citizen_ind', label: 'Q. Txn', sortable: false, tdClass:'col-1', thClass:'col-1'},
-          {key: 'citizen_id', tdClass: 'd-none', thClass:'d-none', tdClass:'col-2', thClass:'col-2'},
-          {key: 'start_time', label: 'Time', sortable: true, tdClass:'col-3', thClass:'col-3'},
-          {key: 'ticket_number', label: 'Ticket', sortable: false, tdClass:'col-4', thClass:'col-4'},
-          {key: 'service_reqs[0].periods[0].csr.username', label: 'Served By', sortable: false, tdClass:'col-5', thClass:'col-5'},
-          {key: 'service_reqs[0].service.parent.service_name', label: 'Category', sortable: false, tdClass:'col-6', thClass:'col-6'},
-          {key: 'service_reqs[0].service.service_name', label: 'Service', sortable: false, tdClass:'col-7', thClass:'col-7'},
+          {key: 'citizen_id', thClass:'d-none', tdClass:'d-none' },
+          {key: 'start_time', label: 'Time', sortable: true, tdClass: 'col-2', thClass: 'col-2'},
+          {key: 'ticket_number', label: 'Ticket', sortable: false, tdClass: 'col-3', thClass: 'col-3'},
+          {key: 'csr', label: 'Served By', sortable: false, tdClass:'col-5', thClass:'col-5'},
+          {key: 'category', label: 'Category', sortable: false, tdClass:'col-6', thClass:'col-6'},
+          {key: 'service', label: 'Service', sortable: false, tdClass:'col-7', thClass:'col-7'},
           {key: 'citizen_comments', label: 'Comments', sortable: false, tdClass:'col-8', thClass:'col-8'}
         ]
       }
     },
     computed: {
-      ...mapState(['citizenInvited']),
-      ...mapGetters(['filtered_citizens']),
+      ...mapState(['citizenInvited', 'serviceModalForm']),
+      ...mapGetters(['citizens_queue', 'active_service_id']),
       citizens() {
-        return this.filtered_citizens
+        return this.citizens_queue
       }
     },
     methods: {
@@ -78,7 +87,30 @@ limitations under the License.*/
         } else if (this.citizenInvited===false) {
           this.clickDashTableRow(item.citizen_id)
         }
-      }   
+      },
+      showCSR(id) {
+        let service = this.active_service_id(id) 
+        if (!service) {
+          return null
+        }
+        let n = service.periods.findIndex(p => p.time_end === null)
+        return service.periods[n].csr.username
+      },
+      showCategory(id) {
+        let service = this.active_service_id(id)
+        if (!service) {
+          return null
+        }
+        return service.service.parent.service_name
+      },
+      showService(id) {
+        let service = this.active_service_id(id)
+        console.log(service)
+        if (!service) {
+          return null
+        }
+        return service.service.service_name
+      }
     }
   }
 </script>  

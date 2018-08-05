@@ -41,7 +41,7 @@ limitations under the License.*/
             </div>
             <div>
               <b-button class="m-1 btn-primary"
-                        @click="addCitizen"
+                        @click="clickAddCitizen""
                         :disabled="citizenInvited===true"
                         id="add-citizen-button">Add Citizen</b-button>
               <b-button class="m-1" v-if="f" :disabled="citizenInvited===true">Back Office</b-button>
@@ -72,8 +72,8 @@ limitations under the License.*/
       </b-row>
 
       <b-row no-gutters>
-        <b-col id="citizen-hold-count">
-          Citizens on Hold: {{on_hold.length}}
+        <b-col>
+          Citizens on Hold: {{on_hold_queue.length}}
         </b-col>
       </b-row>
 
@@ -125,10 +125,10 @@ import ServeCitizen from './serve-citizen'
         'citizenInvited',
         'dismissCountDown'
       ]),
-      ...mapGetters(['filtered_citizens', 'on_hold']),
+      ...mapGetters(['citizens_queue', 'on_hold_queue']),
 
       queueLength() {
-        return this.filtered_citizens.length
+        return this.citizens_queue.length
       }
     },
 
@@ -136,10 +136,11 @@ import ServeCitizen from './serve-citizen'
       ...mapMutations(['setMainAlert']),
       ...mapActions([
         'clickInvite',
-        'addCitizen',
+        'clickAddCitizen',
         'clickServiceModalClose',
         'clickCitizenLeft',
-        'clickServeNow'
+        'clickServeNow',
+        'clickBackOffice'
       ]),
 
       invite() {

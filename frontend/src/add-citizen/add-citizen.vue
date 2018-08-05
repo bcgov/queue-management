@@ -32,7 +32,7 @@
         <b-row align-v="center" align-h="end">
           <b-col cols="auto" class="p-0">Quick Txn?</b-col>
           <b-col cols="1">
-            <b-form-checkbox v-model="quickTrans"/>
+            <b-form-checkbox v-model="quickTrans" value="1" unchecked-value="0"/>
           </b-col>
         <Buttons />
       </b-row>

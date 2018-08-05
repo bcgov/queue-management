@@ -20,7 +20,7 @@ limitations under the License.*/
       <b-button @click="login()"
                 id="login-button"
                 style="padding-top: 10px"
-                class="btn btn-link">Login</b-button>
+                class="btn btn-secondary">Login</b-button>
     </div>
 
     <div v-show="this.$store.state.isLoggedIn"
