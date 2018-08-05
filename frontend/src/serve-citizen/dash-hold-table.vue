@@ -22,7 +22,6 @@ limitations under the License.*/
              small
              outlined
              hover
-             fixed
              @row-clicked="rowClicked"
              class="p-0 m-0">
              <template slot='qt_xn_citizen_ind' slot-scope='data'>

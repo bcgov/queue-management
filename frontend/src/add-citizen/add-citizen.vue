@@ -1,7 +1,7 @@
 
 
 <template>
-    <b-modal id="add_citizen_modal"
+    <b-modal 
              :visible="showAddModal"
              size="lg"
              hide-header
@@ -99,5 +99,14 @@ export default {
       }
     }
   }
-
 </script>
+<style>
+  
+  .disabled {
+    background-color: #8e9399 !important;
+    color: Gainsboro !important;
+  }
+  .disabled:hover {
+    background-color: #8e9399 !important;
+  }
+</style>

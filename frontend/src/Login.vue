@@ -61,7 +61,6 @@ import { mapGetters } from 'vuex'
         if(localStorage.token) {
           let tokenExp = localStorage.tokenExp
           let timeUntilExp = Math.round(tokenExp - new Date().getTime() / 1000)
-          this.$store.commit('setBearer', localStorage.token)
           if (timeUntilExp > 30) {
             this.$keycloak.init({
                 responseMode: 'fragment',
@@ -75,6 +74,7 @@ import { mapGetters } from 'vuex'
               //Set a timer to auto-refresh the token
               setInterval(() => { this.refreshToken(300); }, 60*1000)
               this.setTokenToLocalStorage()
+              this.$store.commit('setBearer', localStorage.token)
             })
             .error( () => {
               this.init()
@@ -112,11 +112,13 @@ import { mapGetters } from 'vuex'
 
         this.$keycloak.onAuthLogout = () => {
           this.$root.$emit('socketDisconnect')
+          this.$store.commit('setBearer', null)
           this.$store.commit('logOut')
         }
 
         this.$keycloak.onAuthRefreshSuccess = () => {
           this.setTokenToLocalStorage()
+          this.$store.commit('setBearer', this.$keycloak.token)
         }
       },
 

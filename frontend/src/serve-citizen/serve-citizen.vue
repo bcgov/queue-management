@@ -1,16 +1,8 @@
 
 
 <template>
-    <b-modal id="serve_citizen_modal"
-             :visible="showServiceModal"
-             size="lg"
-             hide-header
-             hide-footer
-             no-close-on-backdrop
-             no-close-on-esc
-             @show="resetChecked()"
-             class="m-0 p-0 serve-table">
-
+  <div id="serveModal" class="serve-modal" v-bind:style="{ display: showServiceModal }">
+    <div class="serve-modal-content">
      <div style="display: flex; flex-direction: row; justify-content: space-between" class="modal_header">
        <div><h5>Serve Citizen</h5></div>
        <div><b-button-close size="lg" @click="closeWindow" /></div>
@@ -102,6 +94,102 @@
         </b-row>
       </b-container>
   </b-modal>
+       <b-row no-gutters class="p-2">
+         <b-col col cols="4">
+           <div><h6>Ticket #: <strong>{{citizen.ticket_number}}</strong></h6></div>
+           <div><h6>Channel: <strong>{{channel.channel_name}}</strong></h6></div>
+         
+         </b-col>
+         <b-col cols="auto" class="ml-3 mr-2">
+           <h6>Comments</h6>
+         </b-col>
+         <b-col col cols="*" style="text-align: left" class="pr-2">
+           <div>
+             <b-textarea id="serve_comment_textarea"
+                         v-model="comments"
+                         :rows="4"
+                         size="sm"/>
+           </div>
+         </b-col>
+       </b-row>
+       <b-row>
+         <b-col>
+           <div class="pt-3" style="display: flex; flex-direction: row; justify-content: space-between;">
+             <div>
+             <b-button @click="clickServiceBeginService"
+                       :disabled="serviceBegun===true"
+                       class="btn-primary serve-btn"
+                       id="serve-citizen-begin-service-button">Begin Service</b-button>
+             <b-button @click="clickReturnToQueue"
+                       :disabled="serviceBegun===true"
+                       class="btn-primary serve-btn"
+                       id="serve-citizen-return-to-queue-button">Return to Queue</b-button>
+             </div>
+             <div>
+             <b-button @click="clickCitizenLeft"
+                       class="btn-danger serve-btn"
+                       id="serve-citizen-citizen-left-button">Citizen Left</b-button>
+             </div>
+           </div>
+         </b-col>
+       </b-row>
+     </b-container>
+     <ServeCitizenTable/>
+
+     <b-container fluid
+                  id="serve-light-inner-container"
+                  class="pt-3 pb-3">
+       <b-row no-gutters>
+         <b-col cols="7"/>
+       
+         <b-col cols="auto" style="align: right">
+           <b-button class="w-100 btn-primary serve-btn" @click="clickAddService" :disabled="serviceBegun===false">
+             Add Next Service
+           </b-button>
+         </b-col>
+         <b-col cols="2"/>
+       </b-row>
+     </b-container>
+
+     <div>
+     <b-container fluid
+                  id="serve-citizen-modal-footer"
+                  class="pt-3">
+       <b-row no-gutters align-h="center">
+         <b-col cols="2" />
+         <b-col cols="3">
+           <b-button @click="clickHold"
+                     :disabled="serviceBegun===false"
+                     class="w-100 btn-primary serve-btn"
+                     id="serve-citizen-place-on-hold-button">Place on Hold</b-button>
+         </b-col>
+         <b-col cols="2" />
+         <b-col cols="3">
+           <b-button @click="serviceFinish"
+                     :disabled="serviceBegun===false"
+                     class="w-100 btn-primary serve-btn" 
+                     id="serve-citizen-finish-button">
+                       Finish
+                   </b-button>
+           <div v-if="serviceBegun===true" class="px-3 pt-1">
+             <b-form-checkbox v-model="checked" 
+                              value="yes"
+                              unchecked-value="no"
+                              >
+               <span style="font-size: 17px;">Inaccurate Time</span>
+             </b-form-checkbox>
+           </div>
+         </b-col>
+         <b-col cols="2" />
+       </b-row>
+       <b-row no-gutters>
+         <b-col cols="11"/>
+         <b-col cols="1" class="mb-2 pt-3"><b-button size="sm" id="serve-citizen-footer-button" v-if="f">Feedback</b-button></b-col>
+       </b-row>
+     </b-container>
+   </div>
+  </div>
+</div>
 </template>
 
 <script>
@@ -115,6 +203,7 @@ export default {
   },
   data() {
     return {
+      showModal: 'block',
       selected: '',
       f: false,
       t: true,
@@ -127,6 +216,8 @@ export default {
       'serviceBegun',
       'serviceModalForm'
     ]),
+    
+    ...mapGetters(['invited_citizen', 'active_service', 'invited_service_reqs']),
 
     ...mapGetters(['invited_citizen', 'active_service', 'invited_service_reqs']),
 
@@ -149,7 +240,7 @@ export default {
         })
       }
     },
-
+    
     channel() {
       if (!this.active_service) {
         return {channel_name: '', channel_id: ''}
@@ -191,31 +282,45 @@ export default {
 }
 
 </script>
+
 <style>
-
-#serve_citizen_modal > div > div {
-  width: 1200px !important;
-  left: -200px;
-  v-align: top;
+  .serve-modal {
+    position: fixed; 
+    z-index: 1; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgb(0,0,0); 
+    background-color: rgba(0,0,0,0.4); 
+    transition: display 1s;
 }
 
-#serve-outer-container {
+.serve-modal-content {
+    background-color: #fefefe;
+    margin-right: auto; 
+    margin-left: auto;
+    margin-top: 1%;
+    border-radius: 5px;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; 
+    
+}
+
+#serve-citizen-modal-top {
   border: 1px solid grey;
-  border-radius: 5px 5px 0px 0px;
+
   background-color: WhiteSmoke;
 }
 
-#add-citizen-modal-footer {
+#serve-citizen-modal-footer {
   border: 1px solid grey;
-  border-radius: 0px 0px 9px 9px;
   background-color: WhiteSmoke;
 }
-.disabled {
-  background-color: #8e9399 !important;
-  color: Gainsboro !important;
+strong {
+  color: blue;
+  font-size: 21px;
 }
-.disabled:hover {
-  background-color: #8e9399 !important;
-}
-
 </style>

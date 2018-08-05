@@ -15,7 +15,6 @@ limitations under the License.*/
 
 
 <template>
-  <div id='client-table'>
     <b-table small
              head-variant="light"
              :items="citizens"
@@ -44,7 +43,6 @@ limitations under the License.*/
         {{ showService(data.item.citizen_id) }}
       </template>
     </b-table>
-  </div>
 </template>
 
 <script>
@@ -114,8 +112,3 @@ limitations under the License.*/
     }
   }
 </script>  
-<style>
-
-  
-
-</style>
