@@ -30,7 +30,7 @@ class CitizenPlaceOnHold(Resource):
     def post(self, id):
         csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
 
-        citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first_or_404()
+        citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
         active_service_request = citizen.get_active_service_request()
 
         if active_service_request is None:

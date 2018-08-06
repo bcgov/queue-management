@@ -56,7 +56,6 @@ class CitizenGenericInvite(Resource):
 
         # Either no quick txn citizens for the quick txn csr, or vice versa
         if citizen is None:
-            print("3")
             period = Period.query.filter(Period.time_end.is_(None)) \
                 .filter_by(ps_id=waiting_period_state.ps_id) \
                 .join(Period.sr, aliased=True) \

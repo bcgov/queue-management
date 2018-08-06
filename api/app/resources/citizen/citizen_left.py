@@ -32,7 +32,7 @@ class CitizenLeft(Resource):
     def post(self, id):
 
         csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
-        citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first_or_404()
+        citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
         sr_state = SRState.query.filter_by(sr_code="Complete").first()
 
         for service_request in citizen.service_reqs:

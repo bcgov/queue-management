@@ -30,7 +30,7 @@ class CitizenDetail(Resource):
     def get(self, id):
         try:
             csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
-            citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first_or_404()
+            citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
             result = self.citizen_schema.dump(citizen)
             return {'citizen': result.data,
                     'errors': result.errors}
@@ -48,7 +48,7 @@ class CitizenDetail(Resource):
             return {'message': 'No input data received for updating citizen'}, 400
 
         csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
-        citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first_or_404()
+        citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
 
         try:
             citizen = self.citizen_schema.load(json_data, instance=citizen, partial=True).data
