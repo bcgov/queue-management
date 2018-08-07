@@ -45,7 +45,7 @@ class ServiceReq(Base):
     def invite(self, csr):
         active_period = self.get_active_period()
         active_period.time_end = datetime.now()
-        db.session.add(active_period)
+        # db.session.add(active_period)
 
         period_state_invite = PeriodState.query.filter_by(ps_name="Invited").first()
 
@@ -58,12 +58,12 @@ class ServiceReq(Base):
             accurate_time_ind=1
         )
 
-        db.session.add(new_period)
+        self.periods.append(new_period)
 
     def add_to_queue(self, csr):
         active_period = self.get_active_period()
         active_period.time_end = datetime.now()
-        db.session.add(active_period)
+        #db.session.add(active_period)
 
         period_state_waiting = PeriodState.query.filter_by(ps_name="Waiting").first()
 
@@ -75,13 +75,12 @@ class ServiceReq(Base):
             time_start=datetime.now(),
             accurate_time_ind=1
         )
-
-        db.session.add(new_period)
+        self.periods.append(new_period)
 
     def begin_service(self, csr):
         active_period = self.get_active_period()
         active_period.time_end = datetime.now()
-        db.session.add(active_period)
+        # db.session.add(active_period)
 
         period_state_being_served = PeriodState.query.filter_by(ps_name="Being Served").first()
 
@@ -94,12 +93,12 @@ class ServiceReq(Base):
             accurate_time_ind=1
         )
 
-        db.session.add(new_period)
+        self.periods.append(new_period)
 
     def place_on_hold(self, csr):
         active_period = self.get_active_period()
         active_period.time_end = datetime.now()
-        db.session.add(active_period)
+        # db.session.add(active_period)
 
         period_state_on_hold = PeriodState.query.filter_by(ps_name="On hold").first()
 
@@ -112,9 +111,9 @@ class ServiceReq(Base):
             accurate_time_ind=1
         )
 
-        db.session.add(new_period)
+        self.periods.append(new_period)
 
     def finish_service(self, csr):
         active_period = self.get_active_period()
         active_period.time_end = datetime.now()
-        db.session.add(active_period)
+        # db.session.add(active_period)
