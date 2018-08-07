@@ -15,13 +15,9 @@ limitations under the License.*/
 
 
 <template>
-
-  <SocketStatus :button-style="buttonStyle" :socket-message="socketMessage" />
-
 </template>
 
 <script>
-  import SocketStatus from './SocketStatus'
   var io = require('socket.io-client')
   var socket
 
@@ -63,7 +59,6 @@ limitations under the License.*/
       },
       join() {
         console.log(socket.connected)
-
         socket.emit('joinRoom',{count:0}, ()=>{console.log('socket emit: "joinRoom"')}
         )
       },
@@ -94,7 +89,7 @@ limitations under the License.*/
         }
       },
       onUpdateCustomerList() {
-          console.log('socket received: "updatecustomerlist"')
+          console.log('socket received: "updateCustomerList"')
           this.$store.dispatch('getAllCitizens')
       },
       close() {
@@ -103,7 +98,7 @@ limitations under the License.*/
         console.log('socket session closed')
       }
     },
-    components: { SocketStatus }
+    components: { }
   }
 </script>
 

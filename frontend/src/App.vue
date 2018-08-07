@@ -30,5 +30,3 @@ export default {
   components: { Dash, Header, Socket }
 }
 </script>
-
-

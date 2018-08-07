@@ -50,13 +50,13 @@
         </b-row>
       </b-container>
       <ServeCitizenTable/>
-      
+
       <b-container fluid
                    id="serve-light-inner-container"
                    class="pt-3 mt-3 mb-4">
         <b-row no-gutters>
           <b-col cols="7"/>
-        
+
           <b-col cols="auto" style="align: right">
             <b-button class="w-100 btn-primary serve-btn" @click="clickAddService" :disabled="serviceBegun===false">
               Add Next Service
@@ -81,12 +81,12 @@
           <b-col cols="3">
             <b-button @click="serviceFinish"
                       :disabled="serviceBegun===false"
-                      class="w-75 btn-primary serve-btn" 
+                      class="w-75 btn-primary serve-btn"
                       id="serve-citizen-finish-button">
                         Finish
                     </b-button>
             <div v-if="serviceBegun===true" class="px-3 pt-1">
-              <b-form-checkbox v-model="checked" 
+              <b-form-checkbox v-model="checked"
                                value="yes"
                                unchecked-value="no"
                                >
@@ -127,10 +127,11 @@ export default {
       'serviceBegun',
       'serviceModalForm'
     ]),
-    
+
     ...mapGetters(['invited_citizen', 'active_service', 'invited_service_reqs']),
 
     citizen() {
+      console.log(this.invited_citizen)
       if (!this.invited_citizen) {
         return {ticket_number: ''}
       }
@@ -192,8 +193,6 @@ export default {
 </script>
 <style>
 
-
-
 #serve_citizen_modal > div > div {
   width: 1200px !important;
   left: -200px;
@@ -205,8 +204,6 @@ export default {
   border-radius: 5px 5px 0px 0px;
   background-color: WhiteSmoke;
 }
-
-
 
 #add-citizen-modal-footer {
   border: 1px solid grey;

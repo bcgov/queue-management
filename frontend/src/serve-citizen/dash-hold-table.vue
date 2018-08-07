@@ -76,8 +76,8 @@ limitations under the License.*/
       ...mapState(['citizens','citizenInvited']),
       ...mapGetters([
         'on_hold_queue',
-        'citizens_queue', 
-        'active_service', 
+        'citizens_queue',
+        'active_service',
         'active_index',
         'active_service_id'
       ])
@@ -98,7 +98,7 @@ limitations under the License.*/
         }
       },
       showCSR(id) {
-        let service = this.active_service_id(id) 
+        let service = this.active_service_id(id)
         if (!service) {
           return null
         }
@@ -114,7 +114,6 @@ limitations under the License.*/
       },
       showService(id) {
         let service = this.active_service_id(id)
-        console.log(service)
         if (!service) {
           return null
         }

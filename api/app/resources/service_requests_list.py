@@ -56,7 +56,7 @@ class ServiceRequestsList(Resource):
             return {"message": "No matching citizen found for citizen_id"}, 400
 
         if service is None:
-            return {"message": "No matching citizen found for citizen_id"}, 400
+            return {"message": "No matching service found for service_id"}, 400
 
         # Find the currently active service_request and close it (if it exists)
         for req in citizen.service_reqs:

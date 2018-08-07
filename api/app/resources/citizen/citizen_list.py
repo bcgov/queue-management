@@ -33,7 +33,8 @@ class CitizenList(Resource):
         try:
             csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
             active_state = CitizenState.query.filter_by(cs_state_name="Active").first()
-            citizens = Citizen.query.filter_by(office_id=csr.office_id, cs_id=active_state.cs_id).all()
+            citizens = Citizen.query.filter_by(office_id=csr.office_id, cs_id=active_state.cs_id) \
+                .join(Citizen.service_reqs).all()
             result = self.citizens_schema.dump(citizens)
             return {'citizens': result.data,
                     'errors': result.errors}, 200

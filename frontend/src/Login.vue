@@ -59,73 +59,63 @@ import { mapGetters } from 'vuex'
     methods: {
       initLocalStorage() {
         if(localStorage.token) {
-          console.log('tokens found in localStorage')
           let tokenExp = localStorage.tokenExp
           let timeUntilExp = Math.round(tokenExp - new Date().getTime() / 1000)
           this.$store.commit('setBearer', localStorage.token)
           if (timeUntilExp > 30) {
-            this.$keycloak.init(
-              {
+            this.$keycloak.init({
                 responseMode: 'fragment',
                 flow: 'standard',
                 refreshToken: localStorage.refreshToken,
                 token: localStorage.token,
                 tokenExp: localStorage.tokenExp
-              }
-            )
+            })
             .success( () => {
-              console.log('Init Success w. stored tokens')
-              this.refreshToken(9999)
+
+              //Set a timer to auto-refresh the token
+              setInterval(() => { this.refreshToken(300); }, 60*1000)
               this.setTokenToLocalStorage()
             })
             .error( () => {
-              console.log('Init Error.  Retrying without stored tokens.')
               this.init()
             })
           } else {
-            console.log('Init Error.  Retrying without stored tokens.')
             this.init()
           }
         } else if (!localStorage.token) {
-          console.log('Could not locate any stored tokens')
           this.init()
         }
       },
 
       init() {
-        this.$keycloak.init(
-          {
+        this.$keycloak.init({
             responseMode: 'fragment',
             flow: 'standard'
           }
-        )
+        ).success( () => {
+          setInterval(() => { this.refreshToken(300); }, 60*1000)
+        })
       },
 
       setupKeycloakCallbacks(authenticated) {
         this.$keycloak.onReady = (authenticated) => {
           if (authenticated) {
-            console.log('keycloak: "onReady" and authenticated')
             this.$store.dispatch('logIn', this.$keycloak.token)
-          } else if (!authenticated) {
-            console.log('keycloak: "onReady" but not authenticated')
           }
         }
 
         this.$keycloak.onAuthSuccess = () => {
-          console.log('keycloak: "onAuthSuccess"')
           this.$store.dispatch('logIn', this.$keycloak.token)
           this.setTokenToLocalStorage()
           this.$root.$emit('socketConnect')
         }
 
         this.$keycloak.onAuthLogout = () => {
-          console.log('keycloak: "onAuthLogout"')
           this.$root.$emit('socketDisconnect')
           this.$store.commit('logOut')
         }
 
         this.$keycloak.onAuthRefreshSuccess = () => {
-          console.log('keycloak: "onAuthRefreshSuccess"')
           this.setTokenToLocalStorage()
         }
       },
@@ -145,8 +135,6 @@ import { mapGetters } from 'vuex'
         document.cookie = "oidc-jwt=" + this.$keycloak.token
         localStorage.setItem("tokenExp", tokenExpiry)
         localStorage.setItem("refreshToken", refreshToken)
-
-        console.log('localStorage: acquired new tokens')
       },
 
       login() {
