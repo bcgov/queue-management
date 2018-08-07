@@ -43,10 +43,6 @@ class CitizenLeft(Resource):
                 if p.time_end is None:
                     p.time_end = datetime.now()
 
-                    db.session.add(p)
-                    
-            db.session.add(service_request)
-
         citizen.cs = CitizenState.query.filter_by(cs_state_name='Left before receiving services').first()
 
         db.session.add(citizen)

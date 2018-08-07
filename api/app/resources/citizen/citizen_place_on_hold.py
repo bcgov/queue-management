@@ -40,7 +40,7 @@ class CitizenPlaceOnHold(Resource):
         pending_service_state = SRState.query.filter_by(sr_code='Active').first()
         active_service_request.sr_state_id = pending_service_state.sr_state_id
 
-        db.session.add(active_service_request)
+        db.session.add(citizen)
         db.session.commit()
 
         socketio.emit('update_customer_list', {}, room=csr.office_id)
