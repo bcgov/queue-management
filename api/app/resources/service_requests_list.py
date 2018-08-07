@@ -15,7 +15,7 @@ limitations under the License.'''
 from flask import request, g
 from flask_restplus import Resource
 from datetime import datetime
-from qsystem import api, api_call_with_retry, db, oidc
+from qsystem import api, api_call_with_retry, db, oidc, socketio
 from app.models import Citizen, CitizenState, Channel, CSR, Period, PeriodState, Service, ServiceReq, SRState
 from app.schemas import ChannelSchema, ServiceReqSchema
 from marshmallow import ValidationError
@@ -108,6 +108,11 @@ class ServiceRequestsList(Resource):
         db.session.add(citizen)
         db.session.commit()
 
+        print (len(citizen.service_reqs))
+        # We only need to send the socket emission for creating multiple service reqs
+        if len(citizen.service_reqs) >= 2:
+            print("Emiting")
+            socketio.emit('update_customer_list', {}, room=csr.office_id)
         result = self.service_request_schema.dump(service_request)
 
         return {'service_request': result.data,

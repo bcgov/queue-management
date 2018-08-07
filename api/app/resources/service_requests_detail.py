@@ -17,7 +17,7 @@ from flask import request, g
 from flask_restplus import Resource
 from marshmallow import ValidationError
 
-from qsystem import api, api_call_with_retry, db, oidc
+from qsystem import api, api_call_with_retry, db, oidc, socketio
 from app.models import CSR, Period, PeriodState, ServiceReq, SRState
 from app.schemas import ServiceReqSchema
 
@@ -100,6 +100,7 @@ class ServiceRequestActivate(Resource):
         db.session.add(service_request)
         db.session.commit()
 
+        socketio.emit('update_customer_list', {}, room=csr.office_id)
         result = self.service_request_schema.dump(service_request)
 
         return {'service_request': result.data,

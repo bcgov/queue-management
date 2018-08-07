@@ -91,6 +91,7 @@ export const store = new Vuex.Store({
 
     invited_service_reqs: (state, getters) => {
       let { service_citizen } = state.serviceModalForm
+      console.log(service_citizen)
 
       if (!service_citizen || !service_citizen.service_reqs || service_citizen.service_reqs.length === 0) {
         return []
@@ -200,22 +201,23 @@ export const store = new Vuex.Store({
             if (citizen.service_reqs.length > 0) {
               if (citizen.service_reqs[0].periods.length > 0) {
                 let activePeriod = citizen.service_reqs[0].periods[citizen.service_reqs[0].periods.length - 1]
+                console.log(activePeriod.time_end)
+                console.log(activePeriod.ps.ps_name)
 
-                if (activePeriod.csr.username === this.state.user.username) {
+                if (["Invited", "Being Served"].includes(activePeriod.ps.ps_name)
+                  && activePeriod.csr.username === this.state.user.username) {
                   citizenFound = true
+                  console.log("Found citizen")
+                  console.log(this.state.serviceModalForm.service_citizen)
 
                   if (activePeriod.ps.ps_name === "Invited") {
-                    if (!this.state.serviceModalForm.service_citizen) {
-                      context.commit('setServiceModalForm', citizen)
-                    }
+                    context.commit('setServiceModalForm', citizen)
                     context.commit('toggleServiceModal', true)
                     context.commit('toggleBegunStatus', false)
                     context.commit('toggleInvitedStatus', true)
                     context.commit('resetAddModalForm')
                   } else if (activePeriod.ps.ps_name === "Being Served") {
-                    if (!this.state.serviceModalForm.service_citizen) {
-                      context.commit('setServiceModalForm', citizen)
-                    }
+                    context.commit('setServiceModalForm', citizen)
                     context.commit('toggleServiceModal', true)
                     context.commit('toggleBegunStatus', true)
                     context.commit('toggleInvitedStatus', false)
@@ -903,8 +905,24 @@ export const store = new Vuex.Store({
 
     setServiceModalForm(state, payload) {
 
+      let current_comments = state.serviceModalForm.citizen_comments
+      let current_citizen_comments = ''
+      let citizen_comments = ''
+
+
+      if (state.serviceModalForm.service_citizen) {
+        current_citizen_comments = state.serviceModalForm.service_citizen.citizen_comments
+      }
+
+      //If we've updated the comments, keep our changes on refresh
+      if (current_citizen_comments !== current_comments) {
+        citizen_comments = current_comments
+      } else {
+        citizen_comments = payload.citizen_comments
+      }
+
       let data = {
-        citizen_comments: payload.citizen_comments,
+        citizen_comments: citizen_comments,
         citizen_id: payload.citizen_id,
         quick: payload.qt_xn_citizen_ind,
         service_citizen: payload

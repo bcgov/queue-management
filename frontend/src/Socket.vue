@@ -25,9 +25,7 @@ limitations under the License.*/
     name: 'Socket',
     data() {
       return {
-        buttonStyle: 'danger',
-        socketMessage: 'disconnected',
-        preventReconnect: false
+        reconnectInterval: null
       }
     },
     mounted() {
@@ -41,7 +39,6 @@ limitations under the License.*/
     },
     methods: {
       connect() {
-        this.preventReconnect = false
         socket = io(process.env.SOCKET_URL, {
           path: '/api/v1/socket.io'
         })
@@ -63,22 +60,20 @@ limitations under the License.*/
         )
       },
       onConnect() {
-        this.buttonStyle = 'success'
-        this.socketMessage = 'connected'
         console.log('socket connected')
+        clearInterval(this.reconnectInterval)
         this.join()
       },
       onDisconnect() {
-        this.buttonStyle = 'danger'
-        this.socketMessage = 'disconnected'
         console.log('socket disconnected')
-        if (!this.preventReconnect) {
+
+        // Try to reconnect every second
+        this.reconnectInterval = setInterval( () => {
+          console.log("Reconnecting")
           socket.open(process.env.SOCKET_URL)
-        }
+        }, 1000);
       },
       onReconnecting() {
-        this.buttonStyle = 'warning'
-        this.socketMessage = 'connecting'
         console.log('socket reconnecting')
       },
       onJoinRoom(success) {
@@ -93,7 +88,6 @@ limitations under the License.*/
           this.$store.dispatch('getAllCitizens')
       },
       close() {
-        this.preventReconnect = true
         socket.close()
         console.log('socket session closed')
       }
