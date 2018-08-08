@@ -1,16 +1,16 @@
 """empty message
 
-Revision ID: fdbab666def6
+Revision ID: 755d0f8eded1
 Revises: 
-Create Date: 2018-07-28 15:20:58.255438
+Create Date: 2018-08-07 18:43:26.606504
 
 """
 from alembic import op
 import sqlalchemy as sa
-
+from sqlalchemy.dialects import mysql
 
 # revision identifiers, used by Alembic.
-revision = 'fdbab666def6'
+revision = '755d0f8eded1'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -159,8 +159,8 @@ def upgrade():
     sa.Column('csr_id', sa.Integer(), nullable=False),
     sa.Column('reception_csr_ind', sa.Integer(), nullable=False),
     sa.Column('ps_id', sa.Integer(), nullable=False),
-    sa.Column('time_start', sa.DateTime(), nullable=False),
-    sa.Column('time_end', sa.DateTime(), nullable=True),
+    sa.Column('time_start', mysql.DATETIME(fsp=6), nullable=False),
+    sa.Column('time_end', mysql.DATETIME(fsp=6), nullable=True),
     sa.Column('accurate_time_ind', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['csr_id'], ['csr.csr_id'], ),
     sa.ForeignKeyConstraint(['ps_id'], ['periodstate.ps_id'], ),

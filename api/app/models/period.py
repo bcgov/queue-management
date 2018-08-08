@@ -15,6 +15,8 @@ limitations under the License.'''
 from qsystem import db
 from .base import Base
 
+from sqlalchemy.dialects.mysql.types import DATETIME
+
 
 class Period(Base):
 
@@ -23,8 +25,8 @@ class Period(Base):
     csr_id = db.Column(db.Integer, db.ForeignKey('csr.csr_id'), nullable=False)
     reception_csr_ind = db.Column(db.Integer, nullable=False)
     ps_id = db.Column(db.Integer, db.ForeignKey('periodstate.ps_id'), nullable=False)
-    time_start = db.Column(db.DateTime, nullable=False)
-    time_end = db.Column(db.DateTime, nullable=True)
+    time_start = db.Column(DATETIME(fsp=6), nullable=False)
+    time_end = db.Column(DATETIME(fsp=6), nullable=True)
     accurate_time_ind = db.Column(db.Integer, nullable=False)
 
     csr = db.relationship("CSR", lazy='joined')

@@ -411,7 +411,7 @@ class Bootstrap(Command):
             username="cfms-postman-nonoperator",
             office_id=office4.office_id,
             role_id=role2.role_id,
-            qt_xn_csr_ind=1,
+            qt_xn_csr_ind=0,
             receptionist_ind=1,
             deleted=None,
             csr_state_id=csr_state5.csr_state_id
