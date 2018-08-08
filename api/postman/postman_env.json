@@ -1,0 +1,239 @@
+{
+  "id": "02cbb0f5-4fb2-4a0c-8f92-a3dd5747360f",
+  "name": "queue-management-dev-NoPw",
+  "values": [
+    {
+      "value": "https://servicebc-cfms-dev.pathfinder.gov.bc.ca/api/v1/",
+      "key": "url",
+      "enabled": true
+    },
+    {
+      "value": "https://dev-sso.pathfinder.gov.bc.ca",
+      "key": "auth_url",
+      "enabled": true
+    },
+    {
+      "value": "cfms-DEV",
+      "key": "clientid",
+      "enabled": true
+    },
+    {
+      "value": "cfms-postman-operator",
+      "key": "userid",
+      "enabled": true
+    },
+    {
+      "value": "nest",
+      "key": "realm",
+      "enabled": true
+    },
+    {
+      "value": "auth_url = pm.environment.get(\"auth_url\");\nrealm = pm.environment.get(\"realm\");\nclientid = pm.environment.get(\"clientid\");\nuserid = pm.environment.get(\"userid\");\npassword = pm.environment.get(\"password\");\nclient_secret = pm.environment.get(\"client_secret\");\n\n",
+      "key": "auth_script",
+      "enabled": true
+    },
+    {
+      "value": "auth_url = pm.environment.get(\"auth_url\");\nrealm = pm.environment.get(\"realm\");\nclientid = pm.environment.get(\"clientid\");\nuserid = pm.environment.get(\"userid\");\npassword = pm.environment.get(\"password\");\nclient_secret = pm.environment.get(\"client_secret\");\n\nconst echoPostRequest = {\n  url: authurl + '/auth/realms/' + realm + '/protocol/openid-connect/token',\n  method: 'POST',\n  header: 'Content-Type:application/x-www-form-urlencoded',\n  body: {\n    mode: 'raw',\n    raw: 'grant_type=password&client_id=' + clientid \n         + '&username=' + userid \n         + '&password=' + password\n         + '&client_secret=' + client_secret\n  }\n};\n\npm.sendRequest(echoPostRequest, function (err, res) {\n    if (err) { console.log(err); }\n    else {\n      var jsonData = res.json();\n      pm.environment.set(\"token\", jsonData.access_token);\n      pm.environment.set(\"refresh_token\", jsonData.refresh_token);\n      pm.environment.set(\"token_expires\", Date.now()+(jsonData.expires_in * 1000));\n      pm.environment.set(\"refresh_token_expires\", Date.now()+(jsonData.refresh_expires_in * 1000));\n    }\n    //console.log(err ? err : res.json());\n});",
+      "key": "auth_token_script",
+      "enabled": true
+    },
+    {
+      "value": "auth_url = pm.environment.get(\"auth_url\");\nrealm = pm.environment.get(\"realm\");\nclientid = pm.environment.get(\"clientid\");\nrefresh_token = pm.environment.get(\"refresh_token\");\nclient_secret = pm.environment.get(\"client_secret\");\n\nconst echoPostRequest = {\n  url: authurl +'/auth/realms/' +realm + '/protocol/openid-connect/token',\n  method: 'POST',\n  header: 'Content-Type:application/x-www-form-urlencoded',\n  body: {\n    mode: 'raw',\n    raw: 'grant_type=refresh_token&client_id=' + clientid \n         + '&refresh_token=' + refresh_token \n         + '&client_secret=' + client_secret\n  }\n};\n\npm.sendRequest(echoPostRequest, function (err, res) {\n    var jsonData = res.json();\n    pm.environment.set(\"token\", jsonData.access_token);\n    pm.environment.set(\"refresh_token\", jsonData.refresh_token);\n    pm.environment.set(\"token_expires\", Date.now()+(jsonData.expires_in * 1000));\n    pm.environment.set(\"refresh_token_expires\", Date.now()+(jsonData.refresh_expires_in * 1000));\n\n    console.log(err ? err : res.json());\n});",
+      "key": "auth_refresh_script",
+      "enabled": true
+    },
+    {
+      "value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJEeEJ2b2dvUG1Lc0dFZnlkdnRVandDUF9sV18wd1V2b1NzV3F6NVFtRlFFIn0.eyJqdGkiOiJkNWY5NTY5YS1hMzY2LTQxYjktYjczNi0wMzJkZDU2NzJmMDciLCJleHAiOjE1MzM3NTgwNjUsIm5iZiI6MCwiaWF0IjoxNTMzNzU2MjY1LCJpc3MiOiJodHRwczovL2Rldi1zc28ucGF0aGZpbmRlci5nb3YuYmMuY2EvYXV0aC9yZWFsbXMvbmVzdCIsImF1ZCI6ImNmbXMtREVWIiwic3ViIjoiNjhhMjJlMGQtYmZjNi00MTk3LWFiODYtNDE2ZjY3ZTJiZTI4IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiY2Ztcy1ERVYiLCJhdXRoX3RpbWUiOjAsInNlc3Npb25fc3RhdGUiOiI3YTU4ZTU0NC01Y2FiLTQ5MTItODVhZC0xYzIyZDM0NDVkYWYiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbIioiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImNmbXNfb3BlcmF0b3IiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sIm5hbWUiOiJDRk1TIFBvc3RtYW4gT3BlcmF0b3IiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJjZm1zLXBvc3RtYW4tb3BlcmF0b3IiLCJnaXZlbl9uYW1lIjoiQ0ZNUyBQb3N0bWFuIiwiZmFtaWx5X25hbWUiOiJPcGVyYXRvciJ9.Y6WSkOw6XbWtObcRZ-B0vUvNn1K9l_DAc6wgGEaWGlVdobvSjYzXNlR4o92YZvXe124q9SeC0xhBFIpR5CxaFChqZkJqVcHC45pByMhzYelMG_IgB2AY8FaI_XluGc1_LQDg33NToYIwFOdOPOek-pRiEhMadVRCce0-1ePumH6xYMLUwHZb-tecYBPScfDoXatEBnDYH3OISTvst3ZUmO-sQ2zQD4g4RxWkgGJwSXymeI1fcnO7nF6oEHH8fNW8pnYCHqKmbwVD3dk9YsF_ZCN7ybGvaO6-z9hoHrQVTHagqlLobnzuDO4QIveCDQotf9gEC6cbaZVfgW3SIVYJKA",
+      "key": "token",
+      "enabled": true
+    },
+    {
+      "value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJEeEJ2b2dvUG1Lc0dFZnlkdnRVandDUF9sV18wd1V2b1NzV3F6NVFtRlFFIn0.eyJqdGkiOiIyZmEwMjY0Ni05YTU1LTQwYjYtYWUyZi1kMGMxOWNiYzM1YWUiLCJleHAiOjE1MzM3NjM0NjUsIm5iZiI6MCwiaWF0IjoxNTMzNzU2MjY1LCJpc3MiOiJodHRwczovL2Rldi1zc28ucGF0aGZpbmRlci5nb3YuYmMuY2EvYXV0aC9yZWFsbXMvbmVzdCIsImF1ZCI6ImNmbXMtREVWIiwic3ViIjoiNjhhMjJlMGQtYmZjNi00MTk3LWFiODYtNDE2ZjY3ZTJiZTI4IiwidHlwIjoiUmVmcmVzaCIsImF6cCI6ImNmbXMtREVWIiwiYXV0aF90aW1lIjowLCJzZXNzaW9uX3N0YXRlIjoiN2E1OGU1NDQtNWNhYi00OTEyLTg1YWQtMWMyMmQzNDQ1ZGFmIiwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImNmbXNfb3BlcmF0b3IiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX19.a3GptBSr3I9EO4agZnkK-jk_dpm2QXGs5tgENYNKOesBqq5aCAElFcI5uJOe0DmnKvExghRp2aHoiEEcRjj6QUgg2W9PFliJQ07KTWo0-mC9_BAuoW2ATd3Dla1rbB7PPI6lAeqjFT_ulqdhTZRRF_s5sLCxoar7KJUVv5VkYZGW3-tvzewCZj04fILANoRcOx2BbyfIZwcm65fYP5lttgRySNlOyQzwCPl0-hCJqaAZJ3EABoEAQd6WNS6lyrLSQbqn9_vW89puZOY_tLIw3aTt4DEgQaosK4G366NaF5zp4CvJ2vrbD0hXeP__R5fGHWfzSJFb_7IJEiHFaPZfFQ",
+      "key": "refresh_token",
+      "enabled": true
+    },
+    {
+      "value": 1533758048306,
+      "key": "token_expires",
+      "enabled": true
+    },
+    {
+      "value": 1533763448306,
+      "key": "refresh_token_expires",
+      "enabled": true
+    },
+    {
+      "value": "\"\"",
+      "key": "current_queue",
+      "enabled": true
+    },
+    {
+      "value": "[ { \"name\" : \"Postman test client #1\" }, { \"name\" : \"Postman test client #2\" }, { \"name\" : \"Postman test client #3\" }, { \"name\" : \"Postman test client #4\" } ]",
+      "key": "client_add_tests",
+      "enabled": true
+    },
+    {
+      "value": "[\"Postman test client #2\",\"Postman test client #3\",\"Postman test client #4\"]",
+      "key": "current_add_left",
+      "enabled": true
+    },
+    {
+      "value": "Postman test client #1",
+      "key": "current_add_name",
+      "enabled": true
+    },
+    {
+      "value": "{\"citizen_name\":\"Test Postman Citizen\",\"citizen_comments\":\"Postman Citizen here for MSP\"}",
+      "key": "putBody",
+      "enabled": true
+    },
+    {
+      "value": "//  Test the authenticate response.\ndescribe('Basic response tests', function() {\n    it('Response time should be below 1000ms', function() {\n        pm.response.responseTime.should.be.below(1000);\n    });\n    it('Response statusCode should be 200 OK', function() {\n        response.should.have.status(200);\n    });\n    it('Response header should have Content-Type of application/json', function() {\n        response.should.have.header('content-type', 'application/json');\n    });\n    it('Response body be in JSON format', function() {\n        response.should.be.json; \n    });\n});\n",
+      "key": "basic_response_test",
+      "enabled": true
+    },
+    {
+      "value": "//  Test the authenticate response.\ndescribe('Create response tests', function() {\n    it('Response time should be below 20000ms', function() {\n        pm.response.responseTime.should.be.below(20000);\n    });\n    it('Response statusCode should be 201 CREATED', function() {\n        response.should.have.status(201);\n    });\n    it('Response header should have Content-Type of application/json', function() {\n        response.should.have.header('content-type', 'application/json');\n    });\n    it('Response body be in JSON format', function() {\n        response.should.be.json; \n    });\n});",
+      "key": "create_response_test",
+      "enabled": true
+    },
+    {
+      "value": "//  Test the authenticate response.\ndescribe('Complex response tests', function() {\n    it('Response time should be below 25000ms', function() {\n        pm.response.responseTime.should.be.below(25000);\n    });\n    it('Response statusCode should be 200 OK', function() {\n        response.should.have.status(200);\n    });\n    it('Response header should have Content-Type of application/json', function() {\n        response.should.have.header('content-type', 'application/json');\n    });\n    it('Response body be in JSON format', function() {\n        response.should.be.json; \n    });\n});\n",
+      "key": "complex_response_test",
+      "enabled": true
+    },
+    {
+      "value": "var schema = {\n    \"properties\" : {\n        \"start_time\" : {\n            \"type\" : \"string\"\n        },\n        \"citizen_name\" : {\n            \"type\" : [\"string\", \"null\"]\n        },\n        \"citizen_id\" : {\n            \"type\" : [\"number\", \"object\"]\n        },\n        \"qt_xn_citizen_ind\" : {\n            \"type\" : \"number\"\n        },\n        \"ticket_number\" : {\n            \"type\" : [\"string\", \"null\"]\n        },\n        \"service_reqs\" : {\n            \"type\" : \"array\"\n        },\n        \"office_id\" : {\n            \"type\" : [\"object\", \"number\"]\n        },\n        \"cs\" : {\n            \"type\" : \"object\"\n        },\n        \"citizen_comments\" : {\n            \"type\" : [\"string\", \"null\"]\n        },\n        \n    },\n    \"required\" : [\"start_time\", \"citizen_name\", \"citizen_id\",\n                  \"qt_xn_citizen_ind\", \"ticket_number\", \"service_reqs\",\n                  \"office_id\", \"cs\", \"citizen_comments\"]\n};\n\n//  Declare, initialize variables.\nvar allElements = null;\n\nif (jsonData.hasOwnProperty(\"citizens\")) {\n\tallElements = jsonData.citizens;\n};\n\nif (jsonData.hasOwnProperty(\"citizen\")) {\n\tallElements = [];\n\tallElements.push(jsonData.citizen);\n};\n\nvar elementCount = 0;\n\n//  If there are some citizens, proceed with tests.\nif (allElements !== null) {\n\n    //  Loop to validate schema of each channel, create list of citizen ids.\n    allElements.forEach(function(element) {\n        elementCount ++;\n        var testTitle = \"Citizen (\" + elementCount + \"): \" + element.citizen_id + \" - \";\n        tests[testTitle + \"conforms to schema\"] = tv4.validate(element, schema);\n\n        //  Test the authenticate response.\n        describe(\"--> \" + testTitle + \"fields have valid values\", function() {\n            it('qt_xn_citizen_ind must be 0 or 1', function() {\n                element.qt_xn_citizen_ind.should.be.within(0,1);\n            });\n        });\n    });\n};",
+      "key": "citizen_response_test",
+      "enabled": true
+    },
+    {
+      "value": "//  Declare and initialize variables.\nvar elementCount = 0;\nvar srCount = 0;\nvar isFirstCitizen = true;\n\n\n//  Loop to create list of active citizen ids.\nallElements.forEach(function(element) {\n    srCount = element.service_reqs.length;\n\n    //  If citizen active, add to the list.\n    if (element.cs.cs_state_name === \"Active\") {\n        //console.log(\"Citizen (\" + elementCount + \") \" + element.citizen_id +\n        //    \" Active: SRCount = \" + srCount);\n        citizenIds.push(element.citizen_id);\n\n        //  Save the first citizen.\n        if (isFirstCitizen) {\n            currentCitizen = element;\n            isFirstCitizen = false;\n        }\n    }\n        \n    //  Increment count.\n    elementCount++;\n});",
+      "key": "get_active_citizens_test",
+      "enabled": true
+    },
+    {
+      "value": "Test Postman Citizen",
+      "key": "citizen_name",
+      "enabled": true
+    },
+    {
+      "value": "Postman Citizen here for MSP",
+      "key": "citizen_comment",
+      "enabled": true
+    },
+    {
+      "value": "3",
+      "key": "citizen_quantity",
+      "enabled": true
+    },
+    {
+      "value": "24",
+      "key": "service_MSP_id",
+      "enabled": true
+    },
+    {
+      "value": "21",
+      "key": "service_PropTax_id",
+      "enabled": true
+    },
+    {
+      "value": "6",
+      "key": "channel_telephone_id",
+      "enabled": true
+    },
+    {
+      "value": "var schema = {\n    \"properties\" : {\n        \"sr_id\" : {\n            \"type\" : [\"object\", \"number\"]\n        },\n        \"sr_state\" : {\n            \"type\" : \"object\"\n        },\n        \"periods\" : {\n            \"type\" : \"array\"\n        },\n        \"service\" : {\n            \"type\" : \"object\"\n        },\n        \"citizen\" : {\n            \"type\" : [\"object\", \"number\"]\n        },\n        \"quantity\" : {\n            \"type\" : \"number\"\n        },\n        \"service_id\" : {\n            \"type\" : [\"object\", \"number\"]\n        },\n        \"citizen_id\" : {\n            \"type\" : [\"object\", \"number\"]\n        },\n        \"channel\" : {\n        \t\"type\" : \"object\"\n        },\n        \"channel_id\" : {\n        \t\"type\" : [\"object\", \"number\"]\n        }\n        \n    },\n    \"required\" : [\n    \t\"sr_id\", \"sr_state\", \"periods\", \"service\", \"citizen\", \"quantity\",\n    \t\"service_id\", \"citizen_id\", \"channel\", \"channel_id\"\n    ]\n};\n\n//  Declare, initialize variables.\nvar allElements = null;\n\nif (jsonData.hasOwnProperty(\"service_requests\")) {\n\tallElements = jsonData.service_requests;\n};\n\nif (jsonData.hasOwnProperty(\"service_request\")) {\n    allElements = [];\n\tallElements.push(jsonData.service_request);\n}\n\nvar elementCount = 0;\n\n//  If there are some service requests, proceed with tests.\nif (allElements !== null) {\n\n    //  Loop to validate schema of each service request.\n    allElements.forEach(function(element) {\n        elementCount ++;\n        var testTitle = \"Service Request (\" + elementCount + \"): \" + element.sr_id + \" - \";\n        tests[testTitle + \"conforms to schema\"] = tv4.validate(element, schema);\n    });\n};",
+      "key": "service_response_test",
+      "enabled": true
+    },
+    {
+      "value": "1542",
+      "key": "current_sr_id",
+      "enabled": true
+    },
+    {
+      "value": "5",
+      "key": "citizen_quantity_update",
+      "enabled": true
+    },
+    {
+      "value": "9",
+      "key": "channel_email_id",
+      "enabled": true
+    },
+    {
+      "value": "auth_url = pm.environment.get(\"auth_url\");\nrealm = pm.environment.get(\"realm\");\nclientid = pm.environment.get(\"clientid\");\nuserid = pm.environment.get(\"userid\");\npassword = pm.environment.get(\"password\");\nclient_secret = pm.environment.get(\"client_secret\");\n\nconst echoPostRequest = {\n  url: auth_url + '/auth/realms/' + realm + '/protocol/openid-connect/token',\n  method: 'POST',\n  header: 'Content-Type:application/x-www-form-urlencoded',\n  body: {\n    mode: 'raw',\n    raw: 'grant_type=password&client_id=' + clientid \n          + '&username=' + userid \n          + '&password=' + password\n          + '&client_secret=' + client_secret\n  }\n};\npm.sendRequest(echoPostRequest, function (err, res) {\n    var jsonData = res.json();\n    if (jsonData.hasOwnProperty('access_token')) {\n    \tpm.environment.set(\"token\", jsonData.access_token);\n\t    pm.environment.set(\"refresh_token\", jsonData.refresh_token);\n\t    console.log(err ? err : res.json());\n\t} else {\n\t    pm.environment.set(\"token\", 0);\n\t    pm.environment.set(\"refresh_token\", 0);\n\t    pm.environment.set(\"token_expires\", 0);\n\t    pm.environment.set(\"refresh_token_expires\", 0);\n\t}\n});",
+      "key": "auth_first",
+      "enabled": true
+    },
+    {
+      "value": "Test Postman Citizen here for QTxn",
+      "key": "citizen_name_quick",
+      "enabled": true
+    },
+    {
+      "value": "Postman citizen wants to pay taxes quickly",
+      "key": "citizen_comment_quick",
+      "enabled": true
+    },
+    {
+      "value": "1578",
+      "key": "first_client",
+      "enabled": true
+    },
+    {
+      "value": "cfms-postman-non-operator",
+      "key": "userid_nonqtxn",
+      "enabled": true
+    },
+    {
+      "value": "auth_url = pm.environment.get(\"auth_url\");\nrealm = pm.environment.get(\"realm\");\nclientid = pm.environment.get(\"clientid\");\nuserid = pm.environment.get(\"userid_nonqtxn\");\npassword = pm.environment.get(\"password_nonqtxn\");\nclient_secret = pm.environment.get(\"client_secret\");\n\nconst echoPostRequest = {\n  url: auth_url + '/auth/realms/' + realm + '/protocol/openid-connect/token',\n  method: 'POST',\n  header: 'Content-Type:application/x-www-form-urlencoded',\n  body: {\n    mode: 'raw',\n    raw: 'grant_type=password&client_id=' + clientid \n          + '&username=' + userid \n          + '&password=' + password\n          + '&client_secret=' + client_secret\n  }\n};\npm.sendRequest(echoPostRequest, function (err, res) {\n    var jsonData = res.json();\n    if (jsonData.hasOwnProperty('access_token')) {\n    \tpm.environment.set(\"token_nonqtxn\", jsonData.access_token);\n\t    pm.environment.set(\"refresh_token_nonqtxn\", jsonData.refresh_token);\n\t    console.log(err ? err : res.json());\n\t} else {\n\t    pm.environment.set(\"token_nonqtxn\", 0);\n\t    pm.environment.set(\"refresh_token_nonqtxn\", 0);\n\t    pm.environment.set(\"token_expires_nonqtxn\", 0);\n\t    pm.environment.set(\"refresh_token_expires_nonqtxn\", 0);\n\t}\n});",
+      "key": "auth_first_nonqtxn",
+      "enabled": true
+    },
+    {
+      "value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJEeEJ2b2dvUG1Lc0dFZnlkdnRVandDUF9sV18wd1V2b1NzV3F6NVFtRlFFIn0.eyJqdGkiOiIxMmI1NmY4Mi1iODVmLTQ1NDctOTg0Ni01MTMyMTZhZjhmYjAiLCJleHAiOjE1MzM3NTgwNjksIm5iZiI6MCwiaWF0IjoxNTMzNzU2MjY5LCJpc3MiOiJodHRwczovL2Rldi1zc28ucGF0aGZpbmRlci5nb3YuYmMuY2EvYXV0aC9yZWFsbXMvbmVzdCIsImF1ZCI6ImNmbXMtREVWIiwic3ViIjoiNjMxOTU3OWUtNGE1Ny00MmE2LWI1ZGUtZWViNGQ1MjQ3YWYwIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiY2Ztcy1ERVYiLCJhdXRoX3RpbWUiOjAsInNlc3Npb25fc3RhdGUiOiIwMmZmNmVjMi1iZTkwLTRhOTktYjg3Zi1kZjM4MmFiYTMzYmUiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbIioiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImNmbXNfbm9ub3BlcmF0b3IiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sIm5hbWUiOiJDRk1TIFBvc3RtYW4gTm9uIE9wZXJhdG9yIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiY2Ztcy1wb3N0bWFuLW5vbi1vcGVyYXRvciIsImdpdmVuX25hbWUiOiJDRk1TIFBvc3RtYW4iLCJmYW1pbHlfbmFtZSI6Ik5vbiBPcGVyYXRvciJ9.Vi6YIitMVxQJ_mAAFMFrCwUYLfCepNJsK90Y1qEmaY2SZsAA_Vw-7LpfUFGSyXE0rItRGR_kJZTUqwmRwpjGb2OBTnzvffQvE0V31lOykVMg6ZYOcp8eK3jBEDW0OxArfE0G2tBrAYLjYU2L0Q8yW02QZ9t0P1hN_3YI4CTX1RAaPwQ0HbkVNvtaQ5KdGk0cQZsC7anHD9CiiLOU7dZzKUrrIoZsSDfb1r7INRN7qDv1ghRz35yrsp4e-BPEPPsdSj7omVaYU8t75V8Eym8csRrxaQ274RT7lE1hyvroi471MXFtCo73pR3BxCTx7S-WwOQ9gnUWltegLnHCAkjapw",
+      "key": "token_nonqtxn",
+      "enabled": true
+    },
+    {
+      "value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJEeEJ2b2dvUG1Lc0dFZnlkdnRVandDUF9sV18wd1V2b1NzV3F6NVFtRlFFIn0.eyJqdGkiOiJiZjU2YTE4OS0xYTZjLTQyNWItYTZlYS0wM2JmZDJlOThlYTUiLCJleHAiOjE1MzM3NjM0NjksIm5iZiI6MCwiaWF0IjoxNTMzNzU2MjY5LCJpc3MiOiJodHRwczovL2Rldi1zc28ucGF0aGZpbmRlci5nb3YuYmMuY2EvYXV0aC9yZWFsbXMvbmVzdCIsImF1ZCI6ImNmbXMtREVWIiwic3ViIjoiNjMxOTU3OWUtNGE1Ny00MmE2LWI1ZGUtZWViNGQ1MjQ3YWYwIiwidHlwIjoiUmVmcmVzaCIsImF6cCI6ImNmbXMtREVWIiwiYXV0aF90aW1lIjowLCJzZXNzaW9uX3N0YXRlIjoiMDJmZjZlYzItYmU5MC00YTk5LWI4N2YtZGYzODJhYmEzM2JlIiwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImNmbXNfbm9ub3BlcmF0b3IiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX19.bQUYIpXiYCHf99QVrnDRkeCWPHY_-oZkMosVQlTgDQxF9CukKXUZwsD7AfBOwiQvxuId9C8HHYXgVmQmB-HUF-ut8v2fvWCuVweSPTU-597a6LjhcVFYtJcnr9eFWoFqtYh8-pjrJ3DMv4qHoNhkc1xjRnaw_YwipMLXQGyTxcZvlKA09nkFcj9YcXowsAlQH1PouEC0gN_5GiH4RSLZPpThgHshg3pVacSj5dcdKHMc43zsowIXhzB8GoJ_G9qq8HVFMVeXt4zzLSZNDurdCyoFYVOU5TCyBFsyzUHW_bsAxKt7WiiGW99O5KYbh8gAW7FU3aL3doXGC0YyLAWJ2g",
+      "key": "refresh_token_nonqtxn",
+      "enabled": true
+    },
+    {
+      "value": 1533758048813,
+      "key": "token_expires_nonqtxn",
+      "enabled": true
+    },
+    {
+      "value": 1533763448813,
+      "key": "refresh_token_expires_nonqtxn",
+      "enabled": true
+    },
+    {
+      "value": "1578",
+      "key": "current_client",
+      "enabled": true
+    },
+    {
+      "value": "https://servicebc-cfms-dev.pathfinder.gov.bc.ca/api/v1/",
+      "key": "url_dev",
+      "enabled": true
+    },
+    {
+      "value": "http://localhost:5000/api/v1/",
+      "key": "url_local",
+      "enabled": true
+    },
+    {
+      "value": "1581",
+      "key": "second_client",
+      "enabled": true
+    }
+  ],
+  "_postman_variable_scope": "environment",
+  "_postman_exported_at": "2018-08-08T20:21:39.062Z",
+  "_postman_exported_using": "Postman/6.2.3"
+}
