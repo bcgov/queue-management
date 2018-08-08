@@ -15,7 +15,7 @@ limitations under the License.'''
 from flask import g
 from flask_restplus import Resource
 from qsystem import api, api_call_with_retry, db, oidc, socketio
-from app.models import CSR, CitizenState, Period, PeriodState, ServiceReq, SRState
+from app.models import Citizen, CSR, CitizenState, Period, PeriodState, ServiceReq, SRState
 from app.schemas import CitizenSchema
 
 
@@ -37,34 +37,25 @@ class CitizenGenericInvite(Resource):
         citizen = None
 
         if csr.qt_xn_csr_ind:
-            period = Period.query.filter(Period.time_end.is_(None)) \
+            citizen = Citizen.query.filter_by(qt_xn_citizen_ind=1, cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
+                .join(Citizen.service_reqs) \
+                .join(ServiceReq.periods) \
                 .filter_by(ps_id=waiting_period_state.ps_id) \
-                .join(Period.sr, aliased=True) \
-                .join(ServiceReq.citizen, aliased=True) \
-                .filter_by(qt_xn_citizen_ind=1,  cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
                 .first()
         else:
-            period = Period.query.filter(Period.time_end.is_(None)) \
+            citizen = Citizen.query.filter_by(qt_xn_citizen_ind=0, cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
+                .join(Citizen.service_reqs) \
+                .join(ServiceReq.periods) \
                 .filter_by(ps_id=waiting_period_state.ps_id) \
-                .join(Period.sr, aliased=True) \
-                .join(ServiceReq.citizen, aliased=True) \
-                .filter_by(qt_xn_citizen_ind=0,  cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
                 .first()
-
-        if period is not None:
-            citizen = period.sr.citizen
 
         # Either no quick txn citizens for the quick txn csr, or vice versa
         if citizen is None:
-            period = Period.query.filter(Period.time_end.is_(None)) \
+            citizen = Citizen.query.filter_by(cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
+                .join(Citizen.service_reqs) \
+                .join(ServiceReq.periods) \
                 .filter_by(ps_id=waiting_period_state.ps_id) \
-                .join(Period.sr, aliased=True) \
-                .join(ServiceReq.citizen, aliased=True) \
-                .filter_by(cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
                 .first()
-
-            if period is not None:
-                citizen = period.sr.citizen
 
         if citizen is None:
             return {"message": "There is no citizen to invite"}, 400

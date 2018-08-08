@@ -23,7 +23,7 @@ class PeriodState(Base):
     ps_desc = db.Column(db.String(1000), nullable=False)
     ps_number = db.Column(db.Integer, nullable=False)
 
-    def __repr__(self, ps_name):
+    def __repr__(self):
         return '<Period State Name:(name={self.ps_name!r})>'.format(self=self)
 
     def __init__(self, **kwargs):
