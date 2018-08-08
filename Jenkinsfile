@@ -38,7 +38,7 @@ podTemplate(
                 )
 
                 PASSWORD = sh (
-                    script: 'oc describe configmap postman-passwords | awk  -F  "=" \'/^password/{print $2}\'',
+                    script: 'oc describe configmap postman-passwords | awk  -F  "=" \'/^password_qtxn/{print $2}\'',
                     returnStdout: true
                 ).trim()
 
