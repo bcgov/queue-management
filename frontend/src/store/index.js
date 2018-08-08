@@ -153,21 +153,21 @@ export const store = new Vuex.Store({
 
     categories_options: (state, getters) => {
       let opts = state.categories
-      let qry = getters.form_data.search.toUpperCase()
-      let filteredOpts
-
-      if (getters.form_data.search.length > 1) {
-        filteredOpts = opts.filter(opt =>
-          opt.service_name.toUpperCase().search(qry) != -1)
-      } else {
-        filteredOpts = opts
-      }
-      let mappedOpts = filteredOpts.map(opt =>
+      let mappedOpts = opts.map(opt =>
           ({value: opt.service_id, text: opt.service_name})
         )
-      let blankOpt = [{value:'', text:''}]
-      let finalOpts = blankOpt.concat(mappedOpts)
-      return finalOpts
+      let blankOpt = [{value:'', text:'Categories'}]
+      return blankOpt.concat(mappedOpts)
+    },
+    
+    filtered_services: (state, getters) => {
+      let services = state.services
+
+      if (getters.form_data.category != '') {
+        return services.filter(service=>service.parent.service_id === getters.form_data.category)
+      } else {
+        return services
+      }
     },
 
     quick_trans_status(state) {
@@ -203,26 +203,26 @@ export const store = new Vuex.Store({
                 console.log(activePeriod.time_end)
                 console.log(activePeriod.ps.ps_name)
 
-                if (["Invited", "Being Served"].includes(activePeriod.ps.ps_name)
+                if ((["Invited", "Being Served"].indexOf(activePeriod.ps.ps_name) > -1) 
                   && activePeriod.csr.username === this.state.user.username) {
                   citizenFound = true
                   console.log("Found citizen")
                   console.log(this.state.serviceModalForm.service_citizen)
-
+d
                   if (activePeriod.ps.ps_name === "Invited") {
                     context.commit('setServiceModalForm', citizen)
-                    context.commit('toggleServiceModal', true)
+                    context.commit('toggleServiceModal', 'block')
                     context.commit('toggleBegunStatus', false)
                     context.commit('toggleInvitedStatus', true)
                     context.commit('resetAddModalForm')
                   } else if (activePeriod.ps.ps_name === "Being Served") {
                     context.commit('setServiceModalForm', citizen)
-                    context.commit('toggleServiceModal', true)
+                    context.commit('toggleServiceModal', 'block')
                     context.commit('toggleBegunStatus', true)
                     context.commit('toggleInvitedStatus', false)
                     context.commit('resetAddModalForm')
                   } else {
-                    context.commit('toggleServiceModal', false)
+                    context.commit('toggleServiceModal', 'none')
                     context.commit('toggleBegunStatus', false)
                     context.commit('toggleInvitedStatus', false)
                     context.commit('resetAddModalForm')
@@ -240,7 +240,7 @@ export const store = new Vuex.Store({
               citizen_comments: '',
               activeQuantity: 1
             })
-            context.commit('toggleServiceModal', false)
+            context.commit('toggleServiceModal', 'none')
             context.commit('toggleBegunStatus', false)
             context.commit('toggleInvitedStatus', false)
           }
@@ -383,7 +383,7 @@ export const store = new Vuex.Store({
       context.dispatch('putCitizen').then( () => {
         context.dispatch('postServiceReq').then( () => {
           context.commit('toggleAddModal', false)
-          context.commit('toggleServiceModal', true)
+          context.commit('toggleServiceModal', 'block')
           context.dispatch('toggleModalBack')
           context.commit('resetAddModalForm')
           context.commit('editServiceModalForm', {
@@ -402,7 +402,7 @@ export const store = new Vuex.Store({
           context.dispatch('setServedCitizenId', citizen_id).then( () => {
             context.dispatch('postBeginService', citizen_id).then( () => {
               context.commit('toggleAddModal', false)
-              context.commit('toggleServiceModal', true)
+              context.commit('toggleServiceModal', 'block')
               context.commit('toggleBegunStatus', true)
               context.commit('toggleInvitedStatus', false)
               context.commit('resetAddModalForm')
@@ -446,7 +446,7 @@ export const store = new Vuex.Store({
     clickDashTableRow(context, citizen_id) {
       context.dispatch('postInvite', citizen_id).then( resp => {
         context.commit('setServiceModalForm', resp.data.citizen)
-        context.commit('toggleServiceModal', true)
+        context.commit('toggleServiceModal', 'block')
         context.commit('toggleBegunStatus', false)
         context.commit('toggleInvitedStatus', true)
         context.dispatch('resetQuantity')
@@ -476,7 +476,7 @@ export const store = new Vuex.Store({
           context.commit('toggleAddModal', false)
           context.dispatch('toggleModalBack')
           context.commit('resetAddModalForm')
-          context.commit('toggleServiceModal', true)
+          context.commit('toggleServiceModal', 'block')
         })
       })
     },
@@ -540,7 +540,7 @@ export const store = new Vuex.Store({
     clickRowHoldQueue(context, citizen_id) {
       context.dispatch('postBeginService', citizen_id).then( resp => {
         context.commit('setServiceModalForm', resp.data.citizen)
-        context.commit('toggleServiceModal', true)
+        context.commit('toggleServiceModal', 'block')
         context.commit('toggleBegunStatus', true)
         context.commit('toggleInvitedStatus', false)
         context.dispatch('resetQuantity')
@@ -706,8 +706,11 @@ export const store = new Vuex.Store({
             data.qt_xn_citizen_ind = quick
           }
         }
-        if (compareCitizen.citizen_comments != citizen_comments) {
+        if (citizen_comments && citizen_comments != compareCitizen.citizen_comments) {
           data.citizen_comments = citizen_comments
+        }
+        if (!citizen_comments && compareCitizen.citizen_comments) {
+          data.citizen_comments = ''
         }
       } else {
         let { form_data } = context.getters

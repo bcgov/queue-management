@@ -9,6 +9,7 @@
              no-close-on-backdrop
              no-close-on-esc
              class="m-0 p-0"
+             @shown="focusref()"
              >
 
        <div style="display: flex; flex-direction: row; justify-content: space-between" class="modal_header">
@@ -37,7 +38,6 @@
         <Buttons />
       </b-row>
       </b-container>
-
     </b-modal>
 </template>
 
@@ -92,6 +92,10 @@ export default {
 
       countDownChanged (dismissCountDown) {
         this.dismissCountDown = dismissCountDown
+      },
+      
+      focusref() {
+        this.$root.$emit('focusinput')
       },
 
       showAlert () {

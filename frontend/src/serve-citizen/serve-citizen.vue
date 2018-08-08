@@ -8,97 +8,12 @@
        <div><b-button-close size="lg" @click="closeWindow" /></div>
      </div>
 
-      <b-container id="serve-outer-container"
-                   fluid>
-        <b-row no-gutters class="p-2">
-          <b-col cols="6">
-            <div>Ticket #: <strong>{{citizen.ticket_number}}</strong></div>
-            <div>Channels: <strong>{{channel.channel_name}}</strong></div>
-            <div class="pt-3">
-              <b-button @click="clickServiceBeginService"
-                        :disabled="serviceBegun===true"
-                        class="btn-primary serve-btn"
-                        id="serve-citizen-begin-service-button">Begin Service</b-button>
-              <b-button @click="clickReturnToQueue"
-                        :disabled="serviceBegun===true"
-                        class="btn-primary serve-btn"
-                        id="serve-citizen-return-to-queue-button">Return to Queue</b-button>
-              <b-button @click="clickCitizenLeft"
-                        class="btn-danger serve-btn"
-                        id="serve-citizen-citizen-left-button">Citizen Left</b-button>
-            </div>
-          </b-col>
-          <b-col cols="6" style="text-align: left" class="pr-2">
-            <div>
-              <label>Comments</label>
-            </div>
-            <div>
-              <b-textarea id="serve_comment_textarea"
-                          v-model="comments"
-                          :rows="4"
-                          size="sm"/>
-            </div>
-          </b-col>
-        </b-row>
-      </b-container>
-      <ServeCitizenTable/>
-
-      <b-container fluid
-                   id="serve-light-inner-container"
-                   class="pt-3 mt-3 mb-4">
-        <b-row no-gutters>
-          <b-col cols="7"/>
-
-          <b-col cols="auto" style="align: right">
-            <b-button class="w-100 btn-primary serve-btn" @click="clickAddService" :disabled="serviceBegun===false">
-              Add Next Service
-            </b-button>
-          </b-col>
-          <b-col cols="2"/>
-        </b-row>
-      </b-container>
-
-      <b-container fluid
-                   id="add-citizen-modal-footer"
-                   class="pt-3 mt-5">
-        <b-row no-gutters align-h="center">
-          <b-col cols="2" />
-          <b-col cols="3">
-            <b-button @click="clickHold"
-                      :disabled="serviceBegun===false"
-                      class="w-100 btn-primary serve-btn"
-                      id="serve-citizen-place-on-hold-button">Place on Hold</b-button>
-          </b-col>
-          <b-col cols="2" />
-          <b-col cols="3">
-            <b-button @click="serviceFinish"
-                      :disabled="serviceBegun===false"
-                      class="w-100 btn-primary serve-btn"
-                      id="serve-citizen-finish-button">
-                        Finish
-                    </b-button>
-            <div v-if="serviceBegun===true" class="px-3 pt-1">
-              <b-form-checkbox v-model="checked"
-                               value="yes"
-                               unchecked-value="no"
-                               >
-                <span style="font-size: 17px;">Innacurate Time</span>
-              </b-form-checkbox>
-            </div>
-          </b-col>
-          <b-col cols="2" />
-        </b-row>
-        <b-row no-gutters>
-          <b-col cols="11"/>
-          <b-col cols="1" class="mb-2 pt-3"><b-button size="sm" id="serve-citizen-footer-button" v-if="f">Feedback</b-button></b-col>
-        </b-row>
-      </b-container>
-  </b-modal>
+      <b-container class="pb-3" id="serve-citizen-modal-top" fluid>
        <b-row no-gutters class="p-2">
          <b-col col cols="4">
            <div><h6>Ticket #: <strong>{{citizen.ticket_number}}</strong></h6></div>
            <div><h6>Channel: <strong>{{channel.channel_name}}</strong></h6></div>
-         
+
          </b-col>
          <b-col cols="auto" class="ml-3 mr-2">
            <h6>Comments</h6>
@@ -108,7 +23,8 @@
              <b-textarea id="serve_comment_textarea"
                          v-model="comments"
                          :rows="4"
-                         size="sm"/>
+                         size="sm"
+                         />
            </div>
          </b-col>
        </b-row>
@@ -219,10 +135,7 @@ export default {
     
     ...mapGetters(['invited_citizen', 'active_service', 'invited_service_reqs']),
 
-    ...mapGetters(['invited_citizen', 'active_service', 'invited_service_reqs']),
-
     citizen() {
-      console.log(this.invited_citizen)
       if (!this.invited_citizen) {
         return {ticket_number: ''}
       }
@@ -283,7 +196,7 @@ export default {
 
 </script>
 
-<style>
+<style scoped>
   .serve-modal {
     position: fixed; 
     z-index: 1; 
@@ -311,7 +224,6 @@ export default {
 
 #serve-citizen-modal-top {
   border: 1px solid grey;
-
   background-color: WhiteSmoke;
 }
 

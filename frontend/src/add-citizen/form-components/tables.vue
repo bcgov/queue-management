@@ -1,23 +1,32 @@
 <template>
   <b-container fluid 
                class="mt-1 add_citizen_form"
-               style="border: 1px solid silver;
-                      border-radius: 6px;
+               style="border: 1px solid dimgrey;
                       margin: 0 px;
-                      padding: 6px;"
+                      padding-left: 0px
+                      padding-right: 0px;
+                      padding-bottom: 7px;"
                       >
-    <b-form-row no-gutters class="add_citizen_form_table">
-      <b-col class="ml-2">Service</b-col>
-      <b-col>Category</b-col>
+    <b-form-row no-gutters class="m-0" 
+                style="background-color: #f0f2f8;
+                       border-top: 2px solid white;
+                       border-bottom: 2px solid #e6e9ed;
+                       height: 35px;
+                       padding-top: 7px;
+                       padding-left: 0px;"
+                       >
+      <b-col class="m-0 p-0">&nbsp&nbspService</b-col>
+      <b-col class="m-0 p-0">Category</b-col>
     </b-form-row>
     <b-form-row no-gutters>
       <b-col>
         <div id="innertable"
              style="height: 200px; 
                     overflow-y: scroll;
-                    margin: 4px;"
+                    margin: 0px;
+                    background-color: #fcfcfc"
                     >
-          <b-table :items="services" 
+          <b-table :items="filtered_services" 
                    :fields="fields"
                    :filter="filter"
                    :small="t"
@@ -25,12 +34,14 @@
                    :striped="f"
                    :fixed="t"
                    id="table2"
-                   :thstyle="thstyle"
                    @row-clicked="rowClicked"
                    class="add_citizen_categories_table"
                    > 
             <template slot="service_name" slot-scope="data">
-              {{data.item.service_name}}
+              
+              <div v-b-popover.hover.left="{content: data.item.service_desc}" variant="primary">
+               {{data.item.service_name}}
+              </div>
               <div style="display: none">
                {{ (data.item.service_id==form_data.service) ?
                     (data.item._rowVariant='active') :
@@ -53,10 +64,6 @@
     name: 'Tables',
     data() {
       return {
-        thstyle: {
-          display: 'none',
-          hidden: true
-        },
         f:false,
         t:true,
         fields: [
@@ -64,38 +71,29 @@
             key: 'service_name',
             label: 'Service',
             sortable: false,
-            thStyle:{display: 'none'}
+            thClass: 'd-none'
           },
           {
             key: 'parent.service_name',
             label: 'Category',
             sortable: false,
-            thStyle:{display: 'none'}
+            thClass: 'd-none'
+          },
+          {
+            key: 'service_desc',
+            label: 'Description',
+            sortable: false,
+            thClass: 'd-none',
+            tdClass: 'd-none'
           }
         ]
       }
     },
     computed: {
       ...mapState(['addCitizenModal']),
-      ...mapGetters(['index','form_data']),
-      filter() {
+      ...mapGetters(['form_data', 'filtered_services']),
+      filter(value) {
         return this.form_data.search
-      },
-      index() {
-        return this.index
-      },
-      services() {
-        if (this.$store.state.services) {
-          let category = this.form_data.category
-          if (category === '') {
-            return this.$store.state.services
-          } else if (category) {
-            let services = this.$store.state.services.filter(
-              srv => srv.parent.service_id === category
-            )
-            return services
-          } 
-        }
       }
     },
     methods: {

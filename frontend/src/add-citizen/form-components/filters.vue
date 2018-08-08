@@ -7,11 +7,11 @@
     </b-form-row>
     <b-form-row no-gutters>
       <b-col>
-          <b-input id="add_citizen_search_input"
-                   v-model="search" 
-                   size="sm"
-                   placeholder="Filter by name"
-                   />
+          <input ref="inputref"
+                 class="form-control"
+                 style="height: 38px; font-size: 15px"
+                 v-model="search"
+                />
       </b-col>
       <b-col>
           <b-select id="add_citizen_catagories_select"
@@ -30,6 +30,9 @@
   
   export default {
     name: 'Filters',
+    mounted() {
+      this.$root.$on('focusinput', () => {this.$refs.inputref.focus()})
+    },
     computed: {
       ...mapGetters(['categories_options', 'form_data']),
       search: {
@@ -43,6 +46,11 @@
         set(value) {
           this.$store.commit('updateAddModalForm',{type: 'category', value})
         }
+      }
+    },
+    methods: {
+      focus() {
+        this.$refs.inputref.focus()
       }
     }
   }
