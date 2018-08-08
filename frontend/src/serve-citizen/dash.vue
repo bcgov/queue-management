@@ -66,7 +66,7 @@ limitations under the License.*/
       </b-row>
 
       <b-row no-gutters>
-        <b-col style="height: 250px; overflow-y: scroll; overflow: scroll; margin-bottom: 1em; border: 1px solid;" xl="11">
+        <b-col style="height: 250px; overflow-y: scroll; overflow: scroll; margin-bottom: 1em; border: 1px solid;" xl="12">
           <DashTable />
         </b-col>
       </b-row>
@@ -78,7 +78,7 @@ limitations under the License.*/
       </b-row>
 
       <b-row no-gutters>
-        <b-col style="height: 250px; overflow-y: scroll; overflow: scroll; border: 1px solid;" xl="11">
+        <b-col style="height: 250px; overflow-y: scroll; overflow: scroll; border: 1px solid;" xl="12">
           <DashHoldTable />
         </b-col>
       </b-row>

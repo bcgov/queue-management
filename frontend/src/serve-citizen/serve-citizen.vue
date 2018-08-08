@@ -74,14 +74,14 @@
           <b-col cols="3">
             <b-button @click="clickHold"
                       :disabled="serviceBegun===false"
-                      class="w-75 btn-primary serve-btn"
+                      class="w-100 btn-primary serve-btn"
                       id="serve-citizen-place-on-hold-button">Place on Hold</b-button>
           </b-col>
           <b-col cols="2" />
           <b-col cols="3">
             <b-button @click="serviceFinish"
                       :disabled="serviceBegun===false"
-                      class="w-75 btn-primary serve-btn"
+                      class="w-100 btn-primary serve-btn"
                       id="serve-citizen-finish-button">
                         Finish
                     </b-button>

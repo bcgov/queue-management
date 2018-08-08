@@ -38,7 +38,7 @@ class ServiceReq(Base):
         super(ServiceReq, self).__init__(**kwargs)
 
     def get_active_period(self):
-        sorted_periods = sorted(self.periods, key=lambda p: p.time_start)
+        sorted_periods = sorted(self.periods, key=lambda p: p.period_id)
 
         return sorted_periods[-1]
 

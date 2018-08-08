@@ -60,14 +60,14 @@ limitations under the License.*/
         t:true,
         f:false,
         fields: [
-          {key: 'qt_xn_citizen_ind', label: 'Q. Txn', sortable: false, tdClass:'col-1', thClass:'col-1'},
+          {key: 'qt_xn_citizen_ind', label: 'Q. Txn', sortable: false, thStyle: 'width: 6%'},
           {key: 'citizen_id', thClass:'d-none', tdClass:'d-none' },
-          {key: 'start_time', label: 'Time', sortable: true, tdClass: 'col-2', thClass: 'col-2'},
-          {key: 'ticket_number', label: 'Ticket', sortable: false, tdClass: 'col-3', thClass: 'col-3'},
-          {key: 'csr', label: 'Served By', sortable: false, tdClass:'col-5', thClass:'col-5'},
-          {key: 'category', label: 'Category', sortable: false, tdClass:'col-6', thClass:'col-6'},
-          {key: 'service', label: 'Service', sortable: false, tdClass:'col-7', thClass:'col-7'},
-          {key: 'citizen_comments', label: 'Comments', sortable: false, tdClass:'col-8', thClass:'col-8'}
+          {key: 'start_time', label: 'Time', sortable: true, thStyle: 'width: 10%'},
+          {key: 'ticket_number', label: 'Ticket', sortable: false, thStyle: 'width: 6%'},
+          {key: 'csr', label: 'Served By', sortable: false, thStyle: 'width: 10%'},
+          {key: 'category', label: 'Category', sortable: false, thStyle: 'width: 17%'},
+          {key: 'service', label: 'Service', sortable: false, thStyle: 'width: 17%'},
+          {key: 'citizen_comments', label: 'Comments', sortable: false, thStyle: 'width: 27%'}
         ]
       }
     },

@@ -17,7 +17,7 @@ limitations under the License.*/
 import Vue from 'vue'
 import 'es6-promise/auto'
 import Vuex from 'vuex'
-import { Axios } from './helpers'
+import { Axios, formData, invitedCitizen } from './helpers'
 
 
 Vue.use(Vuex)
@@ -809,6 +809,17 @@ export const store = new Vuex.Store({
       }
       context.commit('setAddModalData', data)
     },
+    
+    setInvitedCitizen(context, payload) {
+      let index = payload.service_reqs.findIndex(sr=>sr.periods.time_end == null)
+      context.commit('switchReqs', index)
+      context.commit('setInvitedCitizen', payload)
+      let data = {
+        comments: payload.citizen_comments,
+        quantity: payload.service_reqs[index].quantity
+      }
+      context.commit('setFormCheckData', data)
+    },
 
     setServedCitizenId(context, payload) {
       let data = {
@@ -865,15 +876,22 @@ export const store = new Vuex.Store({
     },
 
     resetAddModalForm(state) {
-      let form_data = state.addModalForm
-
-      let keys = Object.keys(form_data)
+      let keys = Object.keys(state.addModalForm)
+      
       keys.forEach( key => {
-        Vue.set(
-          state.addModalForm,
-          key,
-          ''
-        )
+        if (key != 'quick') {
+          Vue.set(
+            state.addModalForm,
+            key,
+            ''
+          )
+        } else if (key === quick) {
+          Vue.set(
+            state.addModalForm,
+            key,
+            0
+          )
+        }
       })
     },
 
