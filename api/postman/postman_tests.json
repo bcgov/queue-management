@@ -7,11 +7,11 @@
 	},
 	"item": [
 		{
-			"_postman_id": "33da3879-fc66-49ab-ba18-426b53f38fb2",
+			"_postman_id": "5f57b4fc-6a04-4693-b08f-271e2508b4f0",
 			"name": "Setup",
 			"item": [
 				{
-					"_postman_id": "ba2e123b-9d92-433a-a6b8-bc973af5030f",
+					"_postman_id": "9c5863a5-8580-4f09-a0b6-dab6ac5978c5",
 					"name": "Install Postman BDD",
 					"event": [
 						{
@@ -64,7 +64,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "8d9ad125-7676-4627-a897-c3fd70092f2d",
+					"_postman_id": "fcdc5607-5263-4550-a750-f0fbae9d494c",
 					"name": "CFMS-Install-Auth-First",
 					"event": [
 						{
@@ -102,7 +102,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "5095619a-bb58-4a72-9c23-1aece636d443",
+					"_postman_id": "7d774525-3a40-4feb-9c79-3062ef25768f",
 					"name": "CFMS-Install-Auth-NonQTxn",
 					"event": [
 						{
@@ -140,7 +140,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "976219f2-c399-41ff-9950-269273cda693",
+					"_postman_id": "a84b611f-487b-480f-aa3e-4d71370214fa",
 					"name": "CFMS-Install-Auth-Script",
 					"event": [
 						{
@@ -178,7 +178,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "8407b9c5-3e54-45d5-b184-1bf0b7254f9f",
+					"_postman_id": "e17c3a51-e6e4-4f7a-bb20-6dfd49ad8d63",
 					"name": "CFMS-Install-AuthToken-Script",
 					"event": [
 						{
@@ -216,7 +216,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "152408a7-6ecc-4330-96e2-c59e9d16cd5a",
+					"_postman_id": "d182c5a4-f82c-486c-bed7-1ef94928e136",
 					"name": "CFMS-Install-AuthRefresh-Script",
 					"event": [
 						{
@@ -254,7 +254,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "e26db6c1-506b-46f7-aea8-b6d95895cfb2",
+					"_postman_id": "392e8372-2914-431d-b0e5-517656eea464",
 					"name": "CFMS-Install-Basic-Response-Tests",
 					"event": [
 						{
@@ -292,7 +292,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "9d39a7f5-751e-42e0-b0fa-6e50c1ad3fc8",
+					"_postman_id": "d2347891-ce68-4386-96ac-1c776f26d0c5",
 					"name": "CFMS-Install-Complex-Response-Tests",
 					"event": [
 						{
@@ -330,7 +330,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "99fadb11-cf9d-45be-8b11-3373b75b7a74",
+					"_postman_id": "e9835475-5f48-4c97-8f61-6226ce10a0fa",
 					"name": "CFMS-Install-Create-Response-Tests",
 					"event": [
 						{
@@ -368,7 +368,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "d132d1de-8af5-49ac-8036-244271f834a5",
+					"_postman_id": "26229e63-aa52-4f7e-9ce6-1c50ce72d7f5",
 					"name": "CFMS-Install-Citizen-Response-Tests",
 					"event": [
 						{
@@ -406,7 +406,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "545411b6-ef93-42f6-83b2-ad2b296af8ef",
+					"_postman_id": "ead356d6-5037-4569-85df-2a855d27024d",
 					"name": "CFMS-Install-Service-Response-Tests",
 					"event": [
 						{
@@ -444,7 +444,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "430d31cb-92f0-476b-bc3c-372844c05873",
+					"_postman_id": "bde430f0-6e7c-4ce1-9855-27eef7057a5d",
 					"name": "CFMS-Install-Get-Active-Citizens-Tests",
 					"event": [
 						{
@@ -485,11 +485,11 @@
 			"description": "This folder performs basic authentication features."
 		},
 		{
-			"_postman_id": "a1586b77-6828-4a3c-be71-af030556521e",
+			"_postman_id": "6e65c0aa-81fe-4cdb-a17f-6befc9683bc5",
 			"name": "Check app health",
 			"item": [
 				{
-					"_postman_id": "5cc199ff-91c6-48e2-b609-45ae5b754095",
+					"_postman_id": "f18d63ef-a25a-41a7-bf84-364cea84e0ca",
 					"name": "Check the healthz endpoint",
 					"event": [
 						{
@@ -553,7 +553,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "78db5cc7-1eee-4e14-8fd5-1c9dc6ebf61c",
+					"_postman_id": "7d894d79-e36b-4e97-b672-deca82f1e7af",
 					"name": "Check the readyz endpoint",
 					"event": [
 						{
@@ -620,11 +620,11 @@
 			"description": "Checks the application health by calling the healthz and readyz endpoints"
 		},
 		{
-			"_postman_id": "30397281-5b4f-40ba-a58d-4b1569caefec",
+			"_postman_id": "0ba84967-3e55-4cc5-ad07-d226b97834ca",
 			"name": "Check user login",
 			"item": [
 				{
-					"_postman_id": "96804346-bcc5-4119-8e78-0577c13cbb1a",
+					"_postman_id": "fbc63f68-7a0d-4f07-8184-8b72c26e7d21",
 					"name": "Authenticate default QTxn user",
 					"event": [
 						{
@@ -706,7 +706,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "e570d008-9559-40ed-9bda-6d04f387e3f7",
+					"_postman_id": "2a65d250-dc47-4371-88bf-49f82e367712",
 					"name": "Authenticate NonQTxn user",
 					"event": [
 						{
@@ -790,11 +790,11 @@
 			]
 		},
 		{
-			"_postman_id": "3395df52-af13-4e37-8174-76a4f30023ff",
+			"_postman_id": "4087f5a5-a1d7-4314-9305-3e2a52ba92d6",
 			"name": "Check channels",
 			"item": [
 				{
-					"_postman_id": "19787d7d-462f-46f2-bb41-6a43879ac977",
+					"_postman_id": "9e2bb59b-b311-42bb-b777-88d4a7a6355c",
 					"name": "Get channels",
 					"event": [
 						{
@@ -895,11 +895,11 @@
 			]
 		},
 		{
-			"_postman_id": "da0a1e3a-9d8b-42c7-9e3c-c87b235000db",
+			"_postman_id": "2629b1ec-28e5-4683-bcca-c75fd72e6a6c",
 			"name": "Check services",
 			"item": [
 				{
-					"_postman_id": "7ff02ba9-9d26-4d70-82b4-ddeb7b3163f8",
+					"_postman_id": "3755ca66-2e5a-4b1f-b558-379cc7393642",
 					"name": "Get services",
 					"event": [
 						{
@@ -1051,11 +1051,11 @@
 			]
 		},
 		{
-			"_postman_id": "feac9c85-056f-41cc-8a09-a0cfd370665a",
+			"_postman_id": "0920fe3e-7abb-4e96-8876-02cb1d9ceefd",
 			"name": "Check token handling",
 			"item": [
 				{
-					"_postman_id": "2057c102-4160-433a-b094-7e7198d63715",
+					"_postman_id": "114078ec-56d4-47e1-b5a8-3d00da3b49ee",
 					"name": "Get client list no token",
 					"event": [
 						{
@@ -1124,7 +1124,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "a829073a-44a7-457c-b97f-1602f03b43e0",
+					"_postman_id": "1c269165-8c23-40b0-acc6-780d60e749b7",
 					"name": "Get client list invalid token",
 					"event": [
 						{
@@ -1194,7 +1194,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "919b1216-a4c1-4c45-bfb4-62f60c126a6a",
+					"_postman_id": "31cd700f-9dd6-40a9-aef3-4ff5ec587ba3",
 					"name": "Get client list valid token",
 					"event": [
 						{
@@ -1269,11 +1269,11 @@
 			]
 		},
 		{
-			"_postman_id": "3990b8b5-bafe-4af0-8204-be48ea6a22d3",
+			"_postman_id": "90652eda-4636-4d33-b6a2-f6bf4f4e1e3f",
 			"name": "Clear queue for tests",
 			"item": [
 				{
-					"_postman_id": "264dc146-ea64-49a3-92eb-0bb336b6fc0e",
+					"_postman_id": "a3bcf677-1e36-4f76-a3a5-806dd5e4f34d",
 					"name": "Delete citizen queue driver",
 					"event": [
 						{
@@ -1372,7 +1372,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "76e1fcb1-5bf3-4d6a-9a92-8db91279a9c3",
+					"_postman_id": "eab1ff73-9e49-4cb3-b34b-4b76a8dd9f3c",
 					"name": "Next citizen finish service",
 					"event": [
 						{
@@ -1465,7 +1465,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "c3dfeccd-97fb-4ee8-9bee-350454523785",
+					"_postman_id": "cc250f8e-e104-49ee-9e41-1f52956ebe1f",
 					"name": "Next citizen citizen left",
 					"event": [
 						{
@@ -1559,7 +1559,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "951bf375-a47b-4045-8d50-8f6445249e54",
+					"_postman_id": "39b2a849-0016-489b-94c9-b960cc29bbb3",
 					"name": "Temporary add MSP service request",
 					"event": [
 						{
@@ -1680,7 +1680,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "51ca7897-9084-45c7-9f8d-08db5dc76857",
+					"_postman_id": "3a96d38e-92de-46c1-bc81-d95c1ea51a7d",
 					"name": "End clear queue via healthz endpoint",
 					"event": [
 						{
@@ -1746,11 +1746,11 @@
 			]
 		},
 		{
-			"_postman_id": "577ba994-0c78-4e44-a059-9646cdcabfdd",
+			"_postman_id": "3fdf45ca-057d-4cc6-8474-72e543db9de3",
 			"name": "Check citizen through queue",
 			"item": [
 				{
-					"_postman_id": "4791ba5d-fae1-464c-80db-287530abbf10",
+					"_postman_id": "2e584fcb-493f-4b28-a3d0-57d55f4ab803",
 					"name": "Check no citizens",
 					"event": [
 						{
@@ -1834,7 +1834,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "8c2a0369-66d3-4273-ae19-c356a478931a",
+					"_postman_id": "683d9960-6cc7-49a9-9695-7950d707431f",
 					"name": "Create citizen",
 					"event": [
 						{
@@ -1931,7 +1931,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "fc377805-08dc-40b6-a805-16e99c69d26c",
+					"_postman_id": "42645f01-4392-4ad6-a2c5-c7906a261cb5",
 					"name": "Edit specific citizen",
 					"event": [
 						{
@@ -1959,7 +1959,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "9960546d-e2a4-4100-8d16-e0910ad1c793",
+								"id": "ac5ea979-5ecb-4ff1-810d-c78ce7122abb",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -1987,8 +1987,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name\"));",
-									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
+									"    // var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name\"));",
+									"    // var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
 									"",
 									"//     //  Perform tests.",
 									"//     describe(\"Check for correct citizen updates\", function() {",
@@ -2044,7 +2044,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "3a33fc1e-c2c0-4ca5-8d2b-3ac840001412",
+					"_postman_id": "f568f808-4fb1-4691-854f-6d2563cf4a10",
 					"name": "Add property tax via phone service request",
 					"event": [
 						{
@@ -2105,7 +2105,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "eba9da4b-7941-425a-82f8-bef2014fbc9d",
+					"_postman_id": "afe0a410-59ba-483e-ba10-2dac6edb4dcf",
 					"name": "List specific citizen",
 					"event": [
 						{
@@ -2229,7 +2229,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "cb395f31-6b11-459f-9aca-a81578cd79c9",
+					"_postman_id": "004d3174-ac3b-4943-84ad-ad8fec493205",
 					"name": "Add citizen to queue",
 					"event": [
 						{
@@ -2366,7 +2366,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "392d2486-6de3-4272-b40f-54d34b0913fd",
+					"_postman_id": "ec37e8ac-f85e-41e2-9f6a-4a9320c8e7b1",
 					"name": "Invite specific citizen",
 					"event": [
 						{
@@ -2503,7 +2503,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "4a0973ef-97c9-40f3-969c-52ef89c5e199",
+					"_postman_id": "e9ff7550-7363-4238-96ca-25eb15af1daa",
 					"name": "Begin serving citizen",
 					"event": [
 						{
@@ -2640,7 +2640,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "401172e2-d334-4fd9-aa69-649f1554058a",
+					"_postman_id": "b723eec4-29f4-4dd5-a855-56ea7074a985",
 					"name": "Finish serving citizen",
 					"event": [
 						{
