@@ -1,6 +1,6 @@
 {
-  "id": "acffe477-fb53-4e8e-8b5d-151687797747",
-  "name": "queue-management-dev-NoPw",
+  "id": "3bdd95fe-76f8-4799-9fdb-ff156d9096c1",
+  "name": "queue-management-dev",
   "values": [
     {
       "value": "https://servicebc-cfms-dev.pathfinder.gov.bc.ca/api/v1/",
@@ -43,22 +43,22 @@
       "enabled": true
     },
     {
-      "value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJEeEJ2b2dvUG1Lc0dFZnlkdnRVandDUF9sV18wd1V2b1NzV3F6NVFtRlFFIn0.eyJqdGkiOiJlMmFiNjIyMC1mOWY1LTQyNjUtODViNi01NzY3ZjcxY2FjZDMiLCJleHAiOjE1MzM4MzU5OTMsIm5iZiI6MCwiaWF0IjoxNTMzODM0MTkzLCJpc3MiOiJodHRwczovL2Rldi1zc28ucGF0aGZpbmRlci5nb3YuYmMuY2EvYXV0aC9yZWFsbXMvbmVzdCIsImF1ZCI6ImNmbXMtREVWIiwic3ViIjoiNjhhMjJlMGQtYmZjNi00MTk3LWFiODYtNDE2ZjY3ZTJiZTI4IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiY2Ztcy1ERVYiLCJhdXRoX3RpbWUiOjAsInNlc3Npb25fc3RhdGUiOiI0NzJiZTNiMC05ZWRlLTRhOWMtYTY1YS05MjY2ZGZmZWRlNTciLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbIioiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImNmbXNfb3BlcmF0b3IiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sIm5hbWUiOiJDRk1TIFBvc3RtYW4gT3BlcmF0b3IiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJjZm1zLXBvc3RtYW4tb3BlcmF0b3IiLCJnaXZlbl9uYW1lIjoiQ0ZNUyBQb3N0bWFuIiwiZmFtaWx5X25hbWUiOiJPcGVyYXRvciJ9.RQcmxRjJ48ejJZg9rq1EGCIzSz1slFuKDbtbEOgANdwarNlSQW_l2iIk9Km2dgQRQ938_Wl21D9d0aLImu8yusq3WcS73pxk7MpUeiY_PEVeAGByTaY21ZIAHl8elIJ6-a3Du6tPsqfMDpS72fXshhCgUX9vrK6NgOBguegq-U78R9Q52mCrlsxNJW3IjcaqLqjZxMi1xfyObvf47PYmATFSXCmJXYRkzVHYtZ70-E6EXteKjDDAP1rs6Vap5kxEMTQSdkYQLPFw-ooxGL2ezSuJ3h4194lCyedlA78vlEqZJ0e5DwcSS2L3C8ec_VN7bTsubpsyg8zHKFBRujSibg",
+      "value": 0,
       "key": "token",
       "enabled": true
     },
     {
-      "value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJEeEJ2b2dvUG1Lc0dFZnlkdnRVandDUF9sV18wd1V2b1NzV3F6NVFtRlFFIn0.eyJqdGkiOiJlODdjZTZjZi0zOGQxLTRiYjctYmI0My1mNWM3OTcwNzkxNDciLCJleHAiOjE1MzM4NDEzOTMsIm5iZiI6MCwiaWF0IjoxNTMzODM0MTkzLCJpc3MiOiJodHRwczovL2Rldi1zc28ucGF0aGZpbmRlci5nb3YuYmMuY2EvYXV0aC9yZWFsbXMvbmVzdCIsImF1ZCI6ImNmbXMtREVWIiwic3ViIjoiNjhhMjJlMGQtYmZjNi00MTk3LWFiODYtNDE2ZjY3ZTJiZTI4IiwidHlwIjoiUmVmcmVzaCIsImF6cCI6ImNmbXMtREVWIiwiYXV0aF90aW1lIjowLCJzZXNzaW9uX3N0YXRlIjoiNDcyYmUzYjAtOWVkZS00YTljLWE2NWEtOTI2NmRmZmVkZTU3IiwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImNmbXNfb3BlcmF0b3IiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX19.WvbJnWp_Jzt_cEWKXoy9XW9SFiIxJ0RwZJK7lHiZqSjEJDHTZi7CChoepIgUuJmJ3IsMzaGRrTu2thngzGEvm2g8oF3LKiH6uiCNCWk4jklmnG09S4bLEo1VmukKOwyLUFomye0zuC85I3TM_KOtE0638-Gs5CMCNCa-ruT45XROYO2OfO-t-J52Cytvr7d-929GRpS0oSxS-pwll85VAWUKtcXvo6g91K9FjQUjrkkGbJ5vOSyy1FOn_Bh3tgAY7IyZrMiYY2hy2JgTBBACGar7Axb5Xo_YEiF3KeOslbZe--emlMrmGB4Ged2YZtufvqxJZNunBzuzVzF3-YGzXg",
+      "value": 0,
       "key": "refresh_token",
       "enabled": true
     },
     {
-      "value": 1533835973821,
+      "value": 0,
       "key": "token_expires",
       "enabled": true
     },
     {
-      "value": 1533841373821,
+      "value": 0,
       "key": "refresh_token_expires",
       "enabled": true
     },
@@ -158,7 +158,7 @@
       "enabled": true
     },
     {
-      "value": "auth_url = pm.environment.get(\"auth_url\");\nrealm = pm.environment.get(\"realm\");\nclientid = pm.environment.get(\"clientid\");\nuserid = pm.environment.get(\"userid\");\npassword = pm.environment.get(\"password\");\nclient_secret = pm.environment.get(\"client_secret\");\n\nconst echoPostRequest = {\n  url: auth_url + '/auth/realms/' + realm + '/protocol/openid-connect/token',\n  method: 'POST',\n  header: 'Content-Type:application/x-www-form-urlencoded',\n  body: {\n    mode: 'raw',\n    raw: 'grant_type=password&client_id=' + clientid \n          + '&username=' + userid \n          + '&password=' + password\n          + '&client_secret=' + client_secret\n  }\n};\npm.sendRequest(echoPostRequest, function (err, res) {\n    var jsonData = res.json();\n    if (jsonData.hasOwnProperty('access_token')) {\n    \tpm.environment.set(\"token\", jsonData.access_token);\n\t    pm.environment.set(\"refresh_token\", jsonData.refresh_token);\n\t    console.log(err ? err : res.json());\n\t} else {\n\t    pm.environment.set(\"token\", 0);\n\t    pm.environment.set(\"refresh_token\", 0);\n\t    pm.environment.set(\"token_expires\", 0);\n\t    pm.environment.set(\"refresh_token_expires\", 0);\n\t}\n});",
+      "value": "auth_url = pm.environment.get(\"auth_url\");\nrealm = pm.environment.get(\"realm\");\nclientid = pm.environment.get(\"clientid\");\nuserid = pm.environment.get(\"userid\");\npassword = pm.globals.get(\"password\");\nclient_secret = pm.globals.get(\"client_secret\");\n\nconst echoPostRequest = {\n  url: auth_url + '/auth/realms/' + realm + '/protocol/openid-connect/token',\n  method: 'POST',\n  header: 'Content-Type:application/x-www-form-urlencoded',\n  body: {\n    mode: 'raw',\n    raw: 'grant_type=password&client_id=' + clientid \n          + '&username=' + userid \n          + '&password=' + password\n          + '&client_secret=' + client_secret\n  }\n};\npm.sendRequest(echoPostRequest, function (err, res) {\n    var jsonData = res.json();\n    if (jsonData.hasOwnProperty('access_token')) {\n    \tpm.environment.set(\"token\", jsonData.access_token);\n\t    pm.environment.set(\"refresh_token\", jsonData.refresh_token);\n\t    console.log(err ? err : res.json());\n\t} else {\n\t    pm.environment.set(\"token\", 0);\n\t    pm.environment.set(\"refresh_token\", 0);\n\t    pm.environment.set(\"token_expires\", 0);\n\t    pm.environment.set(\"refresh_token_expires\", 0);\n\t}\n});",
       "key": "auth_first",
       "enabled": true
     },
@@ -229,6 +229,6 @@
     }
   ],
   "_postman_variable_scope": "environment",
-  "_postman_exported_at": "2018-08-09T18:42:39.779Z",
+  "_postman_exported_at": "2018-08-09T21:31:58.964Z",
   "_postman_exported_using": "Postman/6.2.3"
 }
