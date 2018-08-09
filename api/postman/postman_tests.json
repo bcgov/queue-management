@@ -7,11 +7,11 @@
 	},
 	"item": [
 		{
-			"_postman_id": "952428b3-14e0-4a78-8ff4-88a2488ea2e7",
+			"_postman_id": "f36bb4d7-bb08-44a9-8cf5-476f0b7fccc0",
 			"name": "Setup",
 			"item": [
 				{
-					"_postman_id": "ad17c16a-12df-4540-aba7-40783cb76cb5",
+					"_postman_id": "8c1551a3-00a0-4a27-bb5d-4ce51a556ab5",
 					"name": "Install Postman BDD",
 					"event": [
 						{
@@ -64,7 +64,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "a2717d56-b56f-4b38-8e1b-6ffbc2a404fd",
+					"_postman_id": "bdf1273d-e479-4e22-b398-9ed227a898c5",
 					"name": "CFMS-Install-Auth-First",
 					"event": [
 						{
@@ -102,7 +102,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "dacca6f4-c8a6-4b2a-890f-21930cffe810",
+					"_postman_id": "e0c820bb-f49f-4d4f-8d9e-10282c89f1f9",
 					"name": "CFMS-Install-Auth-NonQTxn",
 					"event": [
 						{
@@ -140,7 +140,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "9b5b1281-0730-4e2f-8f61-2fa3cc188ee0",
+					"_postman_id": "5c89be17-8287-4487-ab8a-72d4aec57eba",
 					"name": "CFMS-Install-Auth-Script",
 					"event": [
 						{
@@ -178,7 +178,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "1fca2095-0bc2-4498-a230-9ddffe39249c",
+					"_postman_id": "51bb691a-aa22-4d52-aa56-97bb13d83d94",
 					"name": "CFMS-Install-AuthToken-Script",
 					"event": [
 						{
@@ -216,7 +216,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "40ed46b4-fcea-478f-a1ab-cfc38b8d6dba",
+					"_postman_id": "1206ff69-55f9-4c52-9354-f6e3731f6516",
 					"name": "CFMS-Install-AuthRefresh-Script",
 					"event": [
 						{
@@ -254,7 +254,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "bb34df64-5199-4c00-ae1e-562d0df805d1",
+					"_postman_id": "0a5d651e-d234-4b32-8e4c-63671f78c37d",
 					"name": "CFMS-Install-Basic-Response-Tests",
 					"event": [
 						{
@@ -292,7 +292,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "b64654c7-e90b-4921-b3c9-8c7e4c745786",
+					"_postman_id": "37d8dc6e-af01-4a49-8d75-687d73c3b8f1",
 					"name": "CFMS-Install-Complex-Response-Tests",
 					"event": [
 						{
@@ -330,7 +330,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "3a371dcf-1668-44c9-b94c-5ad3bbdaa1d3",
+					"_postman_id": "28053a9c-569c-433e-a907-7a52f0d8c5bc",
 					"name": "CFMS-Install-Create-Response-Tests",
 					"event": [
 						{
@@ -368,7 +368,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "0baeb631-9703-4369-bee5-4a04856f8041",
+					"_postman_id": "968a17ff-94f4-4c68-aef0-438804e5d06f",
 					"name": "CFMS-Install-Citizen-Response-Tests",
 					"event": [
 						{
@@ -406,7 +406,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "475211a8-8bed-4c4b-8e4a-98acd5493615",
+					"_postman_id": "dc16476b-63ff-4a4d-98db-78b39301942c",
 					"name": "CFMS-Install-Service-Response-Tests",
 					"event": [
 						{
@@ -444,7 +444,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "07dc0084-69e1-48e2-8784-07a1773a42d8",
+					"_postman_id": "408283b4-92e1-4cf5-888b-a1c06526e896",
 					"name": "CFMS-Install-Get-Active-Citizens-Tests",
 					"event": [
 						{
@@ -485,11 +485,11 @@
 			"description": "This folder performs basic authentication features."
 		},
 		{
-			"_postman_id": "420b2f14-c4c1-4eb7-b213-ef43ee14c5c2",
+			"_postman_id": "9e975d14-b1f0-4e5b-ad16-121b1734c489",
 			"name": "Check app health",
 			"item": [
 				{
-					"_postman_id": "74adbf2b-8694-46b8-9ec2-fac61b852229",
+					"_postman_id": "a8b652c8-9080-42f1-bb9f-bdb178a0af9b",
 					"name": "Check the healthz endpoint",
 					"event": [
 						{
@@ -553,7 +553,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "c7446948-e81a-4cf3-9c3b-bdfa29c063f2",
+					"_postman_id": "f7916c94-9913-4124-a1d1-7889afae809a",
 					"name": "Check the readyz endpoint",
 					"event": [
 						{
@@ -620,11 +620,11 @@
 			"description": "Checks the application health by calling the healthz and readyz endpoints"
 		},
 		{
-			"_postman_id": "c6a64d78-233c-4a1f-b39b-9ec3f7943163",
+			"_postman_id": "0de96558-1b28-41bf-9eb9-a26f85083def",
 			"name": "Check user login",
 			"item": [
 				{
-					"_postman_id": "045e73fc-a66f-4d7a-9cb6-9c2882b30dd6",
+					"_postman_id": "334c8a4e-5ac3-4165-845f-d035b52ce1d5",
 					"name": "Authenticate default QTxn user",
 					"event": [
 						{
@@ -706,7 +706,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "1412768e-81d7-49fd-9608-d6b3e48fa19b",
+					"_postman_id": "885ce0d9-7329-4f65-afac-65322f84d1be",
 					"name": "Authenticate NonQTxn user",
 					"event": [
 						{
@@ -790,11 +790,11 @@
 			]
 		},
 		{
-			"_postman_id": "49133307-d581-41a5-89fc-4bc9f91ebbe0",
+			"_postman_id": "5b76d887-6054-4765-94b6-0dd9d3f487e4",
 			"name": "Check channels",
 			"item": [
 				{
-					"_postman_id": "278df08a-784f-4811-afe6-8b571c0242ed",
+					"_postman_id": "d097193c-5de8-465a-a5af-bf0a3efffca6",
 					"name": "Get channels",
 					"event": [
 						{
@@ -895,11 +895,11 @@
 			]
 		},
 		{
-			"_postman_id": "793acb7f-2061-42ab-bc54-f33189a1f386",
+			"_postman_id": "198ead74-0646-47aa-9d4e-f8960e795b9f",
 			"name": "Check categories",
 			"item": [
 				{
-					"_postman_id": "6ea72a8a-5e40-4360-9d04-fddbc8c682cb",
+					"_postman_id": "7e343853-f309-45dc-9d4e-c861826e6c18",
 					"name": "Get categories",
 					"event": [
 						{
@@ -1014,11 +1014,11 @@
 			]
 		},
 		{
-			"_postman_id": "57defd51-6a3c-4542-a471-f1f56752f421",
+			"_postman_id": "a72fb805-2593-48a0-a075-563c7ff8d5da",
 			"name": "Check services",
 			"item": [
 				{
-					"_postman_id": "4fb8ecbb-6915-4bcc-87ba-82117a508d77",
+					"_postman_id": "2aca6e37-1f31-4dd6-bb2b-65d82da3bf91",
 					"name": "Get services",
 					"event": [
 						{
@@ -1170,11 +1170,11 @@
 			]
 		},
 		{
-			"_postman_id": "3ada515f-3d9f-46a6-98bf-edd215a81735",
+			"_postman_id": "6f329a72-634a-4e8c-9e1c-da1452c2492e",
 			"name": "Check token handling",
 			"item": [
 				{
-					"_postman_id": "2aa976f0-c4a7-4e7c-884f-36108f867a7e",
+					"_postman_id": "88c2cb26-ddd2-4005-8a4f-7985ad157216",
 					"name": "Get client list no token",
 					"event": [
 						{
@@ -1243,7 +1243,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "963d9683-e0ef-405a-9799-0165d82b115a",
+					"_postman_id": "a8412524-40b9-4574-a6ab-98d1dabe5371",
 					"name": "Get client list invalid token",
 					"event": [
 						{
@@ -1313,7 +1313,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "4e2a96ca-2eb6-4af3-85da-6960aa621947",
+					"_postman_id": "d9486cf0-581e-4f19-913e-43852ab34b16",
 					"name": "Get client list valid token",
 					"event": [
 						{
@@ -1388,11 +1388,11 @@
 			]
 		},
 		{
-			"_postman_id": "6914e47b-be6b-4c0c-9e31-2eb4b697da34",
+			"_postman_id": "11e19f79-b8e7-4873-9925-ed2ef84df6f1",
 			"name": "Clear queue for tests",
 			"item": [
 				{
-					"_postman_id": "3d8abc32-d599-4482-b754-f008f7b2e558",
+					"_postman_id": "8ab03fef-3a1c-40aa-ace8-858a8dd78c24",
 					"name": "Delete citizen queue driver",
 					"event": [
 						{
@@ -1496,7 +1496,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "9d0086b6-9077-4b86-97e0-7addcd9c1fe6",
+					"_postman_id": "e955606f-8d38-4511-b883-c0cbb642b7cf",
 					"name": "Next citizen finish service",
 					"event": [
 						{
@@ -1589,7 +1589,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "36b34f7d-8619-4276-94c5-b125cd82ca12",
+					"_postman_id": "24c2c15e-4047-4dd1-9513-782c2bb27d53",
 					"name": "Next citizen citizen left",
 					"event": [
 						{
@@ -1683,7 +1683,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "0b70987c-6161-40d6-b050-62fabd180c5b",
+					"_postman_id": "aae7ac33-2db2-4260-b437-9e7256fe3fec",
 					"name": "Temporary add MSP service request",
 					"event": [
 						{
@@ -1804,7 +1804,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "70f6bf86-cb82-494c-a04c-94776b988ac6",
+					"_postman_id": "cca832fd-2f4e-41fe-9bae-1c2751f66f93",
 					"name": "End clear queue via healthz endpoint",
 					"event": [
 						{
@@ -1870,11 +1870,11 @@
 			]
 		},
 		{
-			"_postman_id": "748a414d-7c6c-4629-a795-f18fdecb9079",
+			"_postman_id": "b70561ef-4b2a-4c33-9089-d3d1a637b144",
 			"name": "Check citizen through queue",
 			"item": [
 				{
-					"_postman_id": "a3faaf1d-9038-4c45-9e02-45673fcffc31",
+					"_postman_id": "f7289591-a0a9-4b55-a6f4-e6a8e5e7a19f",
 					"name": "Check no citizens",
 					"event": [
 						{
@@ -1958,7 +1958,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "0c599563-61a0-4297-b2c5-71fce7885f6d",
+					"_postman_id": "7eb7fba2-0de8-4ecd-a766-ecbdaad765e7",
 					"name": "Create citizen",
 					"event": [
 						{
@@ -2055,35 +2055,35 @@
 					"response": []
 				},
 				{
-					"_postman_id": "8660cc3d-10f9-4494-893b-e25dd3428961",
+					"_postman_id": "1bf8d0b7-79ff-44ff-94ab-f9670310fb8b",
 					"name": "Edit specific citizen",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "fb5c9709-886d-4de4-ba32-d608cbdd2a23",
+								"id": "b72e7756-5de1-4a13-9609-8917ea63dee7",
 								"type": "text/javascript",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
 									"",
-									"//  Get data, create JSON body.",
-									"var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"var citizenComments = postman.getEnvironmentVariable(\"citizen_comment\");",
-									"var bodyData = {",
-									"    \"citizen_name\" : citizenName,",
-									"    \"citizen_comments\" : citizenComments",
-									"}",
+									"// //  Get data, create JSON body.",
+									"// var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
+									"// var citizenComments = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"// var bodyData = {",
+									"//     \"citizen_name\" : citizenName,",
+									"//     \"citizen_comments\" : citizenComments",
+									"// }",
 									"",
-									"//  Store the data in an environment variable.",
-									"postman.setEnvironmentVariable(\"putBody\", JSON.stringify(bodyData));"
+									"// //  Store the data in an environment variable.",
+									"// postman.setEnvironmentVariable(\"putBody\", JSON.stringify(bodyData));"
 								]
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
-								"id": "42e2f2d3-3f1f-4d20-a70c-66c747847024",
+								"id": "73110fdd-6476-403d-b6c9-c108032fbd66",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -2111,8 +2111,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
 									"",
 									"    //  Perform tests.",
 									"    describe(\"Check for correct citizen updates\", function() {",
@@ -2151,7 +2151,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{{putBody}}"
+							"raw": "{\n\t\"citizen_name\" : {{citizen_name}},\n    \"citizen_comments\" : {{citizen_comment}}\n}"
 						},
 						"url": {
 							"raw": "{{url}}citizens/{{current_client}}/",
@@ -2168,7 +2168,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "985cf350-2df4-460c-bb60-a7230d9f840b",
+					"_postman_id": "14be6893-4a25-4189-9bab-4ea9e6d9ed68",
 					"name": "Add property tax via phone service request",
 					"event": [
 						{
@@ -2229,7 +2229,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "bdc7ce3d-ab65-48e4-b982-f73a44039c53",
+					"_postman_id": "bf9b5ee5-b525-48db-ab62-e673f89aceb1",
 					"name": "List specific citizen",
 					"event": [
 						{
@@ -2247,7 +2247,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "ea616132-f547-4bf6-97c2-cfd6344116b4",
+								"id": "66ca9683-be00-478b-92c0-6ac698d9088b",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -2274,8 +2274,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_PropTax_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_telephone_id\"));",
@@ -2353,7 +2353,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "36a079ee-72dd-44e8-ac75-0d7d2736d623",
+					"_postman_id": "4a3b994e-6e22-49eb-8760-35ae0fd29848",
 					"name": "Add citizen to queue",
 					"event": [
 						{
@@ -2371,7 +2371,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "6f45f3b6-ff05-42f1-ba92-b52e2483b654",
+								"id": "8a294876-edfa-4d5b-ada4-399f5339cd8f",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -2398,8 +2398,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_PropTax_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_telephone_id\"));",
@@ -2490,7 +2490,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "c153fb90-4713-4dad-ae95-fcc5149c9054",
+					"_postman_id": "a9dc6b57-2f25-472d-b1d3-a42fee1ebc67",
 					"name": "Invite specific citizen",
 					"event": [
 						{
@@ -2508,7 +2508,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "0637dd27-7f6b-4648-8852-3dc5a2a26610",
+								"id": "7884b553-77a8-46e6-a1de-d8bee02ca6ff",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -2535,8 +2535,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_PropTax_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_telephone_id\"));",
@@ -2627,7 +2627,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "5de0dcd7-d4dc-49b5-be13-716710191ef4",
+					"_postman_id": "f1ae1973-3618-41cd-8189-e7e078d27958",
 					"name": "Begin serving citizen",
 					"event": [
 						{
@@ -2645,7 +2645,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "63ec5076-6d06-4808-be2f-00aafcb37f52",
+								"id": "1b1f7f66-04cd-4f10-bfa2-c4f3fffe8715",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -2672,8 +2672,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_PropTax_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_telephone_id\"));",
@@ -2764,7 +2764,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "2570a50d-55e8-4b1a-871f-2a53d523583c",
+					"_postman_id": "450e7ba4-c7b6-4468-b1f1-da0aa58e4ad1",
 					"name": "Finish serving citizen",
 					"event": [
 						{
@@ -2782,7 +2782,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "e89fa5c0-e21c-4c9c-826e-7e57f7e9adc3",
+								"id": "717581c1-04ab-4b48-b3b5-75ca3ccda53e",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -2806,8 +2806,8 @@
 									"if (allElements !== null) {",
 									"",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_PropTax_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_telephone_id\"));",
@@ -2896,11 +2896,11 @@
 			]
 		},
 		{
-			"_postman_id": "f1d000f7-d79b-42c5-bdba-726545e10405",
+			"_postman_id": "197652e9-06cb-45e0-88c6-629d1c6cd154",
 			"name": "Check citizen begin-hold-finish",
 			"item": [
 				{
-					"_postman_id": "1974b48d-1f0d-4ee4-b985-f62cc130f9da",
+					"_postman_id": "b9e08e38-6f2d-47f6-bf88-823ffa4a1cc1",
 					"name": "Check no citizens",
 					"event": [
 						{
@@ -2984,7 +2984,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "064571e3-6396-4283-987f-74a7d87457cf",
+					"_postman_id": "4e4027be-d0ca-43e0-80b5-a13f5f670a9b",
 					"name": "Create citizen",
 					"event": [
 						{
@@ -3081,35 +3081,35 @@
 					"response": []
 				},
 				{
-					"_postman_id": "acf9a6bd-8ed7-41e8-9d57-c66741fda887",
+					"_postman_id": "b4629aac-637a-48e2-b383-6b223ea96735",
 					"name": "Edit specific citizen",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "fb5c9709-886d-4de4-ba32-d608cbdd2a23",
+								"id": "ce732be5-38a3-4825-90d1-4d52babf8917",
 								"type": "text/javascript",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
 									"",
-									"//  Get data, create JSON body.",
-									"var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"var citizenComments = postman.getEnvironmentVariable(\"citizen_comment\");",
-									"var bodyData = {",
-									"    \"citizen_name\" : citizenName,",
-									"    \"citizen_comments\" : citizenComments",
-									"}",
+									"// //  Get data, create JSON body.",
+									"// var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
+									"// var citizenComments = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"// var bodyData = {",
+									"//     \"citizen_name\" : citizenName,",
+									"//     \"citizen_comments\" : citizenComments",
+									"// }",
 									"",
-									"//  Store the data in an environment variable.",
-									"postman.setEnvironmentVariable(\"putBody\", JSON.stringify(bodyData));"
+									"// //  Store the data in an environment variable.",
+									"// postman.setEnvironmentVariable(\"putBody\", JSON.stringify(bodyData));"
 								]
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
-								"id": "38819cbb-3af9-45e1-99e7-89da8cfdec74",
+								"id": "13828662-748d-4b3f-9ead-454e795f1f01",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -3137,8 +3137,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
 									"",
 									"    //  Perform tests.",
 									"    describe(\"Check for correct citizen information applied\", function() {",
@@ -3177,7 +3177,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{{putBody}}"
+							"raw": "{\n\t\"citizen_name\" : {{citizen_name}},\n    \"citizen_comments\" : {{citizen_comment}}\n}"
 						},
 						"url": {
 							"raw": "{{url}}citizens/{{current_client}}/",
@@ -3194,7 +3194,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "da29077f-04a1-46e9-a47c-4c994b310dc9",
+					"_postman_id": "f0cefa7f-fa2f-48f7-ae8a-e5bf312f01d8",
 					"name": "Add property tax via phone service request",
 					"event": [
 						{
@@ -3255,7 +3255,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "b0583aec-cb4a-40aa-9c83-b1d8645a7c8b",
+					"_postman_id": "0bd4f2b1-a9d4-4908-b60e-e406250f707d",
 					"name": "List specific citizen",
 					"event": [
 						{
@@ -3273,7 +3273,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "b6981b2c-07d0-4eaf-84fb-ed6d3b188f39",
+								"id": "2a57d1b2-9d0c-4e07-ad20-d4dde457f9d1",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -3300,8 +3300,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_PropTax_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_telephone_id\"));",
@@ -3379,7 +3379,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "c5820e68-e8cf-4d09-94bb-e3bde99bc7c9",
+					"_postman_id": "1495babc-64d3-4691-9ddc-72303fb4adac",
 					"name": "Begin serving citizen",
 					"event": [
 						{
@@ -3397,7 +3397,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "0b0564b3-3345-49be-b6c8-bbde838197b2",
+								"id": "4550a6b7-560d-48bf-bfc9-41453a8defec",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -3424,8 +3424,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_PropTax_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_telephone_id\"));",
@@ -3516,7 +3516,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "fc3d92d9-0ed5-409c-8347-0a2e77b0df42",
+					"_postman_id": "8e8d08b8-761f-47df-b948-6e9ef2e07c2e",
 					"name": "Place citizen on hold",
 					"event": [
 						{
@@ -3534,7 +3534,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "4f717059-b63d-4a2d-bfc7-635dc365fef8",
+								"id": "dd51a48d-2e1e-47fd-978f-507b77a7901f",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -3561,8 +3561,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_PropTax_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_telephone_id\"));",
@@ -3653,7 +3653,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "32af5115-3362-4436-87c3-54974e394cd6",
+					"_postman_id": "9821962a-452a-4502-b1eb-516a98160ae2",
 					"name": "Get service requests",
 					"event": [
 						{
@@ -3789,7 +3789,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "88982a82-9862-4ba9-81fd-29b9703615cc",
+					"_postman_id": "e94fad52-1036-4709-a95c-f7b0aef8d585",
 					"name": "Call citizen from hold",
 					"event": [
 						{
@@ -3807,7 +3807,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "801ba203-d619-487c-9297-31d02299d6eb",
+								"id": "66563797-2a92-4dbd-946e-7232dcac8260",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -3834,8 +3834,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_PropTax_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_telephone_id\"));",
@@ -3926,7 +3926,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "e3bffee0-56db-41d9-b89d-2ce09a1453ef",
+					"_postman_id": "5ddcf5dd-1ae2-465e-af5f-06b3cd0d0f2d",
 					"name": "Finish serving citizen",
 					"event": [
 						{
@@ -3944,7 +3944,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "7dc8bcad-7255-4f74-ae76-2ffe22d15dd9",
+								"id": "0f78735c-0c8d-4904-8474-46b3e24fe216",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -3973,8 +3973,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_PropTax_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_telephone_id\"));",
@@ -4054,11 +4054,11 @@
 			]
 		},
 		{
-			"_postman_id": "361d5ba4-e05c-4f57-8778-b92d8af06b91",
+			"_postman_id": "f9820c29-3431-4726-89a1-0c5ce7b60aba",
 			"name": "Check citizen leave after create",
 			"item": [
 				{
-					"_postman_id": "d727ed3b-53ad-47fe-a250-43d564f7ba02",
+					"_postman_id": "6c61e225-8d6c-49d1-bbcc-5b9a8a28d2f0",
 					"name": "Check no citizens",
 					"event": [
 						{
@@ -4142,7 +4142,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "0d525810-ca2d-46e1-9bc4-5af943a27123",
+					"_postman_id": "c413860b-d195-4f5c-9809-fd6fdb2beb98",
 					"name": "Create citizen",
 					"event": [
 						{
@@ -4239,7 +4239,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "8067ed3a-b773-4007-8dd2-766fa5571467",
+					"_postman_id": "7be2a6c1-f6b6-4d99-9099-32e1a33e6352",
 					"name": "Citizen left",
 					"event": [
 						{
@@ -4355,11 +4355,11 @@
 			]
 		},
 		{
-			"_postman_id": "d05ce944-9368-46f4-95d2-c30bc4162592",
+			"_postman_id": "5e43c00a-d990-4d5d-b91e-a5ee6d92b1cc",
 			"name": "Check citizen leave after waiting",
 			"item": [
 				{
-					"_postman_id": "89c99e15-a629-4857-b351-628f882dce05",
+					"_postman_id": "b4988bed-f007-494d-8767-b95abb5fb8a8",
 					"name": "Check no citizens",
 					"event": [
 						{
@@ -4443,7 +4443,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "85128308-2c28-40e7-ad7e-c056a7f1384a",
+					"_postman_id": "c6daa03b-d788-4839-b66c-73503f4c312d",
 					"name": "Create citizen",
 					"event": [
 						{
@@ -4540,35 +4540,35 @@
 					"response": []
 				},
 				{
-					"_postman_id": "5d621eb1-cad6-4271-a298-4563bc800f2a",
+					"_postman_id": "eec2029b-6061-4557-991c-5d1c463f5bab",
 					"name": "Edit specific citizen",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "fb5c9709-886d-4de4-ba32-d608cbdd2a23",
+								"id": "f26eaedb-5d41-4dcc-b856-aec599440601",
 								"type": "text/javascript",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
 									"",
-									"//  Get data, create JSON body.",
-									"var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"var citizenComments = postman.getEnvironmentVariable(\"citizen_comment\");",
-									"var bodyData = {",
-									"    \"citizen_name\" : citizenName,",
-									"    \"citizen_comments\" : citizenComments",
-									"}",
+									"// //  Get data, create JSON body.",
+									"// var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
+									"// var citizenComments = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"// var bodyData = {",
+									"//     \"citizen_name\" : citizenName,",
+									"//     \"citizen_comments\" : citizenComments",
+									"// }",
 									"",
-									"//  Store the data in an environment variable.",
-									"postman.setEnvironmentVariable(\"putBody\", JSON.stringify(bodyData));"
+									"// //  Store the data in an environment variable.",
+									"// postman.setEnvironmentVariable(\"putBody\", JSON.stringify(bodyData));"
 								]
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
-								"id": "42e2f2d3-3f1f-4d20-a70c-66c747847024",
+								"id": "e0b48324-0ca2-4b2e-88ef-cbfbe10b5fb7",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -4596,8 +4596,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
 									"",
 									"    //  Perform tests.",
 									"    describe(\"Check for correct citizen updates\", function() {",
@@ -4636,7 +4636,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{{putBody}}"
+							"raw": "{\n\t\"citizen_name\" : {{citizen_name}},\n    \"citizen_comments\" : {{citizen_comment}}\n}"
 						},
 						"url": {
 							"raw": "{{url}}citizens/{{current_client}}/",
@@ -4653,7 +4653,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "86addd21-7592-4795-9e8e-e2eae32bb2b6",
+					"_postman_id": "d7034059-6a38-48b9-a662-6bd501463705",
 					"name": "Add property tax via phone service request",
 					"event": [
 						{
@@ -4714,7 +4714,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "3f913e13-053f-4b26-abcb-c6d63c1e115b",
+					"_postman_id": "580f1916-14bf-4bcb-956c-129d14b140cc",
 					"name": "List specific citizen",
 					"event": [
 						{
@@ -4732,7 +4732,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "bc7ad4ba-930a-452d-9388-a6d0c60d6c80",
+								"id": "1176fcca-52ff-4e13-b4a4-775ad324a4c6",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -4759,8 +4759,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_PropTax_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_telephone_id\"));",
@@ -4838,7 +4838,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "72fcb3f7-d5ed-432e-89c4-db1a2c3c82cb",
+					"_postman_id": "e10ad9da-0609-4ce3-8289-28eb12124ce4",
 					"name": "Add citizen to queue",
 					"event": [
 						{
@@ -4856,7 +4856,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "72aa1e0b-a4d9-4197-99f8-4435b9777414",
+								"id": "f0aacc69-ff0e-4ed3-9ef7-f131bbf3a5bd",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -4883,8 +4883,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_PropTax_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_telephone_id\"));",
@@ -4975,7 +4975,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "2e8acc9d-c391-4634-aef3-2b5facdc1d93",
+					"_postman_id": "6e7db3e8-7d4c-4353-9a9d-997475a09712",
 					"name": "Citizen left",
 					"event": [
 						{
@@ -4993,7 +4993,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "71f4bbb0-ea58-43b0-8cdd-49ee23c51d2c",
+								"id": "70d0dff7-802f-4f7c-968d-1b7fdeb0f4fa",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -5017,8 +5017,8 @@
 									"if (allElements !== null) {",
 									"",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_PropTax_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_telephone_id\"));",
@@ -5107,11 +5107,11 @@
 			]
 		},
 		{
-			"_postman_id": "d684eeae-588d-41f6-ab75-c2d2deb772c9",
+			"_postman_id": "05fa8745-fb95-4774-bed6-ceb0735c366e",
 			"name": "Check update service information",
 			"item": [
 				{
-					"_postman_id": "748e19f5-b0ae-4add-b9e9-450316c743ee",
+					"_postman_id": "6b21d232-168e-4747-bfcb-170fb87090e1",
 					"name": "Check no citizens",
 					"event": [
 						{
@@ -5195,7 +5195,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "0de00997-156f-4745-a221-c433b699f5ca",
+					"_postman_id": "d416dc72-24ef-4649-9fe0-e1cb646c40d2",
 					"name": "Create citizen",
 					"event": [
 						{
@@ -5292,35 +5292,35 @@
 					"response": []
 				},
 				{
-					"_postman_id": "8c1db976-ed1b-40cc-8700-916685108979",
+					"_postman_id": "c4ff5d90-3053-41de-9615-355bfda0b3ed",
 					"name": "Edit specific citizen",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "fb1437e9-c5af-4a60-8218-34b6d7fa9140",
+								"id": "2be395b2-e14c-4ff8-8753-42ea1fe2010d",
 								"type": "text/javascript",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
 									"",
-									"//  Get data, create JSON body.",
-									"var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"var citizenComments = postman.getEnvironmentVariable(\"citizen_comment\");",
-									"var bodyData = {",
-									"    \"citizen_name\" : citizenName,",
-									"    \"citizen_comments\" : citizenComments",
-									"};",
+									"// //  Get data, create JSON body.",
+									"// var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
+									"// var citizenComments = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"// var bodyData = {",
+									"//     \"citizen_name\" : citizenName,",
+									"//     \"citizen_comments\" : citizenComments",
+									"// };",
 									"",
-									"//  Store the data in an environment variable.",
-									"postman.setEnvironmentVariable(\"putBody\", JSON.stringify(bodyData));"
+									"// //  Store the data in an environment variable.",
+									"// postman.setEnvironmentVariable(\"putBody\", JSON.stringify(bodyData));"
 								]
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
-								"id": "1d98b7a5-dcf9-4b07-95f1-3dcce4f5bb18",
+								"id": "0ef8b307-a37c-4908-9e31-a7fc781a7257",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -5351,8 +5351,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
 									"",
 									"    //  Perform tests.",
 									"    describe(\"Check for correct citizen updates\", function() {",
@@ -5391,7 +5391,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{{putBody}}"
+							"raw": "{\n\t\"citizen_name\" : {{citizen_name}},\n    \"citizen_comments\" : {{citizen_comment}}\n}"
 						},
 						"url": {
 							"raw": "{{url}}citizens/{{current_client}}/",
@@ -5408,7 +5408,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "3208982a-8599-4edb-8232-b7d9b1bc0c16",
+					"_postman_id": "061c64d0-bf97-4e99-88ab-54699a07aabf",
 					"name": "Add property tax via phone service request",
 					"event": [
 						{
@@ -5469,7 +5469,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "ed76d473-748a-4cb8-a882-382466739d49",
+					"_postman_id": "8b31fa55-ecb4-4f9b-9a24-8cea9cede1e3",
 					"name": "List specific citizen",
 					"event": [
 						{
@@ -5487,7 +5487,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "24bec902-0987-4b2b-a2c6-ac2b26899f7a",
+								"id": "3d906a10-51fe-4329-bac0-e69e6847e852",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -5514,8 +5514,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_PropTax_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_telephone_id\"));",
@@ -5597,7 +5597,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "c2398b74-2e56-4f32-9cf6-64f0738a6a65",
+					"_postman_id": "ba7bff7f-bd92-485d-88a9-f66e0e2a7099",
 					"name": "Begin serving citizen",
 					"event": [
 						{
@@ -5615,7 +5615,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "2c672650-7d92-4dab-98e0-cd8032c950d4",
+								"id": "ff3a25ca-0df2-40f2-b7a1-9e9b4bde2aab",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -5642,8 +5642,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_PropTax_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_telephone_id\"));",
@@ -5734,7 +5734,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "ccc5589c-ef31-4fe1-8ea0-f4d4a9af0fa1",
+					"_postman_id": "1477b426-7aa4-435b-9da8-348a091e7fd5",
 					"name": "Update quantity from 3 to 5",
 					"event": [
 						{
@@ -5816,7 +5816,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "d8f9af92-ee15-49cc-95a3-ce80997c1c2a",
+					"_postman_id": "7af12fb0-d8ad-4d19-9f42-a7eb8222cf6c",
 					"name": "Update service from PropTax to MSP",
 					"event": [
 						{
@@ -5898,7 +5898,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "5d178598-3d6c-4cd5-bd48-1c1e1cec5aa1",
+					"_postman_id": "b1bd821f-3095-4608-9016-fa0527eee73a",
 					"name": "Finish serving citizen",
 					"event": [
 						{
@@ -5916,7 +5916,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "bc41b2c7-a55f-4b16-bda5-78e0d3dfd395",
+								"id": "4ca8ae22-b658-4e45-b7c6-7d8ab0014400",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -5940,8 +5940,8 @@
 									"if (allElements !== null) {",
 									"",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_MSP_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity_update\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_telephone_id\"));",
@@ -6030,11 +6030,11 @@
 			]
 		},
 		{
-			"_postman_id": "c657f7be-f716-470d-a9b6-3120271664a1",
+			"_postman_id": "8d79087f-b5d4-4f02-a891-e0fdd5ab852a",
 			"name": "Check pick qtxn customer",
 			"item": [
 				{
-					"_postman_id": "b452d36d-b55e-4403-9e51-7718cb1dbd51",
+					"_postman_id": "fd4c5a56-4310-444e-8049-8fee81d16fda",
 					"name": "Check no citizens",
 					"event": [
 						{
@@ -6116,7 +6116,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "a2f8b78c-67a6-4553-aa56-838bc2a99972",
+					"_postman_id": "d7e82f8d-97a5-4c3a-b293-8d15e5d63057",
 					"name": "First citizen - Create",
 					"event": [
 						{
@@ -6213,35 +6213,35 @@
 					"response": []
 				},
 				{
-					"_postman_id": "e04ad8a0-e817-4165-ba10-a100ec4739a7",
+					"_postman_id": "c518a2d5-aefc-4d56-9905-9192de9fb82f",
 					"name": "First citizen - Edit",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "fb5c9709-886d-4de4-ba32-d608cbdd2a23",
+								"id": "f52aea38-cdcb-4d0b-8421-0ee5b7486913",
 								"type": "text/javascript",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
 									"",
-									"//  Get data, create JSON body.",
-									"var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"var citizenComments = postman.getEnvironmentVariable(\"citizen_comment\");",
-									"var bodyData = {",
-									"    \"citizen_name\" : citizenName,",
-									"    \"citizen_comments\" : citizenComments",
-									"}",
+									"// //  Get data, create JSON body.",
+									"// var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
+									"// var citizenComments = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"// var bodyData = {",
+									"//     \"citizen_name\" : citizenName,",
+									"//     \"citizen_comments\" : citizenComments",
+									"// }",
 									"",
-									"//  Store the data in an environment variable.",
-									"postman.setEnvironmentVariable(\"putBody\", JSON.stringify(bodyData));"
+									"// //  Store the data in an environment variable.",
+									"// postman.setEnvironmentVariable(\"putBody\", JSON.stringify(bodyData));"
 								]
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
-								"id": "ad6c0690-5334-45c2-a7a7-e0dbf87a0b55",
+								"id": "a0ded2ba-3a0d-45ff-ac3a-ee25ad2bd578",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -6269,8 +6269,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
 									"",
 									"    //  Perform tests.",
 									"    describe(\"Check for correct citizen updates\", function() {",
@@ -6309,7 +6309,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{{putBody}}"
+							"raw": "{\n\t\"citizen_name\" : {{citizen_name}},\n    \"citizen_comments\" : {{citizen_comment}}\n}"
 						},
 						"url": {
 							"raw": "{{url}}citizens/{{first_client}}/",
@@ -6326,7 +6326,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "6ac0dfe3-2f51-4681-8725-de467a320583",
+					"_postman_id": "5dcf3d48-e1a3-4312-8fc2-f3dc4454d6e8",
 					"name": "First citizen - Prop Tax via phone",
 					"event": [
 						{
@@ -6387,7 +6387,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "b37c8e0b-a721-4ca5-964a-28e03c607037",
+					"_postman_id": "89f10994-f9f0-4f6a-b208-63cbffac1639",
 					"name": "First citizen - List",
 					"event": [
 						{
@@ -6405,7 +6405,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "af5b6bca-0bd7-4779-8a20-03dcb1bb5a32",
+								"id": "87ab56aa-84f3-4d90-9064-b916104415b5",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -6432,8 +6432,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_PropTax_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_telephone_id\"));",
@@ -6511,7 +6511,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "4c3d4b08-4b95-4ad0-a3f5-025bca7ff1a4",
+					"_postman_id": "0349f21b-10f8-4247-be5a-b62f7ceeb447",
 					"name": "First citizen - Add to queue",
 					"event": [
 						{
@@ -6529,7 +6529,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "700821a0-3a6f-4572-bcbe-f4506cff1a7e",
+								"id": "c6bd4047-5ddb-4b96-9b1b-851455cbc71d",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -6556,8 +6556,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_PropTax_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_telephone_id\"));",
@@ -6648,7 +6648,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "ee2aa324-5341-4f16-b9ba-3cd0adfdb061",
+					"_postman_id": "712eb5e6-0c2b-4405-bd26-3c4287c5be46",
 					"name": "Second citizen - Create",
 					"event": [
 						{
@@ -6745,36 +6745,36 @@
 					"response": []
 				},
 				{
-					"_postman_id": "f78395f1-05c4-44c6-8cbf-f4235eabf33d",
+					"_postman_id": "b12edcc8-ddca-4324-ab3d-76aba2732279",
 					"name": "Second citizen - Edit QTxn",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "c8a5ad3b-d092-40de-ad68-01e6061aeb16",
+								"id": "f58d00cd-ab75-407b-ab4c-a541944510e3",
 								"type": "text/javascript",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
 									"",
-									"//  Get data, create JSON body.",
-									"var citizenName = postman.getEnvironmentVariable(\"citizen_name_quick\");",
-									"var citizenComments = postman.getEnvironmentVariable(\"citizen_comment_quick\");",
-									"var bodyData = {",
-									"    \"citizen_name\" : citizenName,",
-									"    \"citizen_comments\" : citizenComments,",
-									"    \"qt_xn_citizen_ind\" : 1",
-									"};",
+									"// //  Get data, create JSON body.",
+									"// var citizenName = postman.getEnvironmentVariable(\"citizen_name_quick\");",
+									"// var citizenComments = postman.getEnvironmentVariable(\"citizen_comment_quick\");",
+									"// var bodyData = {",
+									"//     \"citizen_name\" : citizenName,",
+									"//     \"citizen_comments\" : citizenComments,",
+									"//     \"qt_xn_citizen_ind\" : 1",
+									"// };",
 									"",
-									"//  Store the data in an environment variable.",
-									"postman.setEnvironmentVariable(\"putBody\", JSON.stringify(bodyData));"
+									"// //  Store the data in an environment variable.",
+									"// postman.setEnvironmentVariable(\"putBody\", JSON.stringify(bodyData));"
 								]
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
-								"id": "2993be04-1b21-439a-a7ac-452699cfd7b3",
+								"id": "12b50df4-9162-4d6d-8ec4-ddebc3cb6cda",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -6802,8 +6802,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name_quick\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment_quick\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name_quick\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment_quick\"));",
 									"",
 									"    //  Perform tests.",
 									"    describe(\"Check for correct citizen updates\", function() {",
@@ -6842,7 +6842,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{{putBody}}"
+							"raw": "{\n\t\"citizen_name\" : {{citizen_name_quick}},\n    \"citizen_comments\" : {{citizen_comment_quick}},\n    \"qt_xn_citizen_ind\" : 1\n}"
 						},
 						"url": {
 							"raw": "{{url}}citizens/{{second_client}}/",
@@ -6859,7 +6859,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "de120b1f-4484-4ae7-82a7-5f6fb477fbb8",
+					"_postman_id": "09877a37-f84c-4885-ba17-dc05bd60c35c",
 					"name": "Second citizen - MSP via email",
 					"event": [
 						{
@@ -6920,7 +6920,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "29b5788b-e4af-4321-880a-6e39ed4778dc",
+					"_postman_id": "56903e07-8048-4f91-a64a-044af8c141d2",
 					"name": "Second citizen - List",
 					"event": [
 						{
@@ -6938,7 +6938,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "88ea6ef3-8474-4b41-8078-ad4d8f09525c",
+								"id": "6abcbbab-941e-43b4-85e8-6c2f14a19c75",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -6965,8 +6965,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name_quick\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment_quick\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name_quick\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment_quick\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_MSP_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity_update\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_email_id\"));",
@@ -7044,7 +7044,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "edca95c3-46da-4818-a1d2-f1a5e6a9001c",
+					"_postman_id": "197c7bcb-ff41-4aaf-9dab-b567a2692d36",
 					"name": "Second citizen - Add to queue",
 					"event": [
 						{
@@ -7062,7 +7062,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "2f522e76-9828-4bb1-a165-669dc532453e",
+								"id": "b396fdd7-845d-4702-ad69-1b53a2ced21b",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -7089,8 +7089,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name_quick\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment_quick\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name_quick\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment_quick\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_MSP_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity_update\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_telephone_id\"));",
@@ -7181,7 +7181,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "c41a5ba4-dcdd-4ab7-8ace-4e05da345b38",
+					"_postman_id": "61cac902-684c-403b-bd31-75688f025db7",
 					"name": "Check 2 citizens in queue",
 					"event": [
 						{
@@ -7263,7 +7263,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "d68fae2d-9b38-424e-a06c-5bc3b2c0bc1e",
+					"_postman_id": "a3656914-593f-4f12-bb94-462aa2ad6743",
 					"name": "Invite next citizen - should be second one",
 					"event": [
 						{
@@ -7281,7 +7281,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "4be934e8-8807-468e-aa86-d0bf43af6f50",
+								"id": "95764f4d-0506-47b4-a464-0f275cd2e5b5",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -7308,8 +7308,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name_quick\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment_quick\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name_quick\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment_quick\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_MSP_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity_update\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_email_id\"));",
@@ -7403,7 +7403,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "83188954-c9fc-42d7-8881-957990ced029",
+					"_postman_id": "6e7d8181-ff6f-48a8-b94e-450f69361720",
 					"name": "Second citizen - begin serving",
 					"event": [
 						{
@@ -7421,7 +7421,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "73a61ce9-4a36-4758-98ed-48e14fe1ec11",
+								"id": "caecf715-4ce2-4422-8374-b330c0433f4b",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -7448,8 +7448,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name_quick\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment_quick\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name_quick\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment_quick\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_MSP_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity_update\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_email_id\"));",
@@ -7540,7 +7540,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "d319697d-33b6-4c57-a556-c91f7cd6595a",
+					"_postman_id": "2f746c1b-6c2d-4141-9e6a-907ef1771964",
 					"name": "Second citizen - finish serving",
 					"event": [
 						{
@@ -7558,7 +7558,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "b5ad9862-ba09-440e-8a89-6262e7750367",
+								"id": "40a3080e-6107-4b92-8cfe-0f4d429f9db8",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -7582,8 +7582,8 @@
 									"if (allElements !== null) {",
 									"",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name_quick\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment_quick\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name_quick\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment_quick\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_MSP_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity_update\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_email_id\"));",
@@ -7670,7 +7670,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "252f4429-4d67-4c62-bfbd-8d943f304ca5",
+					"_postman_id": "7e32ff99-0ec9-47a1-8ddd-57a87780eeed",
 					"name": "Invite next citizen - should be first one",
 					"event": [
 						{
@@ -7688,7 +7688,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "7e7eccec-f891-448f-86c5-f34447447b13",
+								"id": "17db8e75-ce53-4e6a-bbd8-ca9037ba1a29",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -7715,8 +7715,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_PropTax_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_telephone_id\"));",
@@ -7810,7 +7810,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "e221deb1-b0e4-48cc-85ca-28361c63f55a",
+					"_postman_id": "a84dc7d3-b07c-4174-bae8-3c15ab073634",
 					"name": "First citizen - citizen left",
 					"event": [
 						{
@@ -7828,7 +7828,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "429fb7bd-e03c-4dbd-8760-fdfe0363b420",
+								"id": "a7d76250-4371-48e1-8118-c4c9004f10d3",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -7852,8 +7852,8 @@
 									"if (allElements !== null) {",
 									"",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_PropTax_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_telephone_id\"));",
@@ -7942,11 +7942,11 @@
 			]
 		},
 		{
-			"_postman_id": "4a85cef2-c3f8-4faa-a0a1-98c0e8ae23be",
+			"_postman_id": "1306b85e-a327-4300-8d5e-28911bddccd8",
 			"name": "Check pick non-qtxn customer",
 			"item": [
 				{
-					"_postman_id": "8b8738c4-b807-481a-b6aa-78a33dbed73c",
+					"_postman_id": "819987fa-04bb-4f55-a8d5-5fa7647f86df",
 					"name": "Check no citizens",
 					"event": [
 						{
@@ -8028,7 +8028,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "c93eaf57-82c4-46f4-abbd-1db6fecb769d",
+					"_postman_id": "5249e64d-6a91-410b-9814-cddafeb64f9d",
 					"name": "First citizen - Create",
 					"event": [
 						{
@@ -8125,36 +8125,36 @@
 					"response": []
 				},
 				{
-					"_postman_id": "c873f0e8-2920-4bd0-a2f4-c6ff448f7b4a",
+					"_postman_id": "c259a0d4-090f-4665-8c9d-1986800c5776",
 					"name": "First citizen - Edit QTxn",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "c8a5ad3b-d092-40de-ad68-01e6061aeb16",
+								"id": "b1833da7-f814-433f-8a11-295e244d9e4f",
 								"type": "text/javascript",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
 									"",
-									"//  Get data, create JSON body.",
-									"var citizenName = postman.getEnvironmentVariable(\"citizen_name_quick\");",
-									"var citizenComments = postman.getEnvironmentVariable(\"citizen_comment_quick\");",
-									"var bodyData = {",
-									"    \"citizen_name\" : citizenName,",
-									"    \"citizen_comments\" : citizenComments,",
-									"    \"qt_xn_citizen_ind\" : 1",
-									"};",
+									"// //  Get data, create JSON body.",
+									"// var citizenName = postman.getEnvironmentVariable(\"citizen_name_quick\");",
+									"// var citizenComments = postman.getEnvironmentVariable(\"citizen_comment_quick\");",
+									"// var bodyData = {",
+									"//     \"citizen_name\" : citizenName,",
+									"//     \"citizen_comments\" : citizenComments,",
+									"//     \"qt_xn_citizen_ind\" : 1",
+									"// };",
 									"",
-									"//  Store the data in an environment variable.",
-									"postman.setEnvironmentVariable(\"putBody\", JSON.stringify(bodyData));"
+									"// //  Store the data in an environment variable.",
+									"// postman.setEnvironmentVariable(\"putBody\", JSON.stringify(bodyData));"
 								]
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
-								"id": "6a0aa390-5a1b-486e-9a37-de0ceb367d28",
+								"id": "1eac614b-0f6c-4b84-8423-de10ffec680f",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -8182,8 +8182,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name_quick\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment_quick\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name_quick\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment_quick\"));",
 									"",
 									"    //  Perform tests.",
 									"    describe(\"Check for correct citizen updates\", function() {",
@@ -8222,7 +8222,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{{putBody}}"
+							"raw": "{\n\t\"citizen_name\" : {{citizen_name_quick}},\n    \"citizen_comments\" : {{citizen_comment_quick}},\n    \"qt_xn_citizen_ind\" : 1\n}"
 						},
 						"url": {
 							"raw": "{{url}}citizens/{{first_client}}/",
@@ -8239,7 +8239,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "ca7b36d3-14f8-42f4-82db-dcae88cf753b",
+					"_postman_id": "968bb7c1-01dc-40ac-9a9b-b5de7e01288b",
 					"name": "First citizen - MSP via email",
 					"event": [
 						{
@@ -8300,7 +8300,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "9cff3541-f00a-4fc2-b521-dccce3abd99f",
+					"_postman_id": "5ffa9374-caae-4946-a589-f763cec984ae",
 					"name": "First citizen - List",
 					"event": [
 						{
@@ -8318,7 +8318,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "2b833276-a7db-4005-9c30-ba1f09410ab3",
+								"id": "f695dc9f-e14f-4e39-8cc0-06d6bff46d1d",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -8345,8 +8345,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name_quick\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment_quick\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name_quick\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment_quick\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_MSP_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity_update\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_email_id\"));",
@@ -8424,7 +8424,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "9d3dc159-7592-4ec3-ba7a-055671e5bad2",
+					"_postman_id": "aba79299-a310-4de0-afe7-4598b6b42099",
 					"name": "First citizen - Add to queue",
 					"event": [
 						{
@@ -8442,7 +8442,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "244f7ba7-ec08-4394-a455-86f0b1e1d333",
+								"id": "4ed70849-8f22-4cd0-ab73-582dd012ba60",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -8469,8 +8469,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name_quick\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment_quick\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name_quick\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment_quick\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_MSP_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity_update\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_telephone_id\"));",
@@ -8561,7 +8561,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "4581671c-5e16-4d33-9357-2e5557f05156",
+					"_postman_id": "865ee408-f19c-4884-8c75-881633c35205",
 					"name": "Second citizen - Create",
 					"event": [
 						{
@@ -8658,35 +8658,35 @@
 					"response": []
 				},
 				{
-					"_postman_id": "f547081a-8519-428b-a8b9-4dabfd787f8b",
+					"_postman_id": "92c5ca2a-222d-4518-8d62-9d76cdfbddeb",
 					"name": "Second citizen - Edit",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "fb5c9709-886d-4de4-ba32-d608cbdd2a23",
+								"id": "03647497-dfc2-437d-bace-b6ab2a08fa7b",
 								"type": "text/javascript",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
 									"",
-									"//  Get data, create JSON body.",
-									"var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"var citizenComments = postman.getEnvironmentVariable(\"citizen_comment\");",
-									"var bodyData = {",
-									"    \"citizen_name\" : citizenName,",
-									"    \"citizen_comments\" : citizenComments",
-									"}",
+									"// //  Get data, create JSON body.",
+									"// var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
+									"// var citizenComments = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"// var bodyData = {",
+									"//     \"citizen_name\" : citizenName,",
+									"//     \"citizen_comments\" : citizenComments",
+									"// }",
 									"",
-									"//  Store the data in an environment variable.",
-									"postman.setEnvironmentVariable(\"putBody\", JSON.stringify(bodyData));"
+									"// //  Store the data in an environment variable.",
+									"// postman.setEnvironmentVariable(\"putBody\", JSON.stringify(bodyData));"
 								]
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
-								"id": "cce8696f-b703-4070-b49f-cf409e0a7456",
+								"id": "9f22638b-3ebc-404e-a43b-fb8af32a2083",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -8714,8 +8714,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
 									"",
 									"    //  Perform tests.",
 									"    describe(\"Check for correct citizen updates\", function() {",
@@ -8754,7 +8754,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{{putBody}}"
+							"raw": "{\n\t\"citizen_name\" : {{citizen_name}},\n    \"citizen_comments\" : {{citizen_comment}}\n}"
 						},
 						"url": {
 							"raw": "{{url}}citizens/{{second_client}}/",
@@ -8771,7 +8771,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "6a6ecfbb-07b0-4d05-9268-5716c88d698d",
+					"_postman_id": "8444c078-aa81-4d6a-aaf8-c2b8b7ba9d14",
 					"name": "Second citizen - Prop Tax via phone",
 					"event": [
 						{
@@ -8832,7 +8832,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "482f31b8-2d01-4970-95e2-307c39595797",
+					"_postman_id": "31967ee2-1ee7-46c7-9df6-4c0e43f9d276",
 					"name": "Second citizen - List",
 					"event": [
 						{
@@ -8850,7 +8850,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "36d5276d-8310-458e-a0a7-4a319a6c1f80",
+								"id": "dcfc340a-b267-4a1b-8f39-cbedfe02ef76",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -8877,8 +8877,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_PropTax_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_telephone_id\"));",
@@ -8956,7 +8956,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "5027ab73-3217-47cb-b8a8-656a0eabed0e",
+					"_postman_id": "bfaffd03-1b2e-4a16-8a23-3971d315a3dd",
 					"name": "Second citizen - Add to queue",
 					"event": [
 						{
@@ -8974,7 +8974,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "4dfcd97b-fb97-424e-b984-8816f5ce0ba4",
+								"id": "b82e3735-add5-4522-a418-a42931ba84ae",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -9001,8 +9001,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_PropTax_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_telephone_id\"));",
@@ -9093,7 +9093,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "4a3007ab-51ad-4700-940f-13d6d06870d1",
+					"_postman_id": "1a27f88f-451e-421f-81c4-f10afd1f9199",
 					"name": "Check 2 citizens in queue",
 					"event": [
 						{
@@ -9175,7 +9175,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "dd07099e-ae9e-456d-95a7-3781a06ad9cd",
+					"_postman_id": "5ae55957-83d3-4d71-9618-3b5a1146bb2b",
 					"name": "Invite next citizen - should be second one",
 					"event": [
 						{
@@ -9193,7 +9193,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "06144ff7-794a-4c66-89a1-b19b7180b2ee",
+								"id": "acabd700-6289-4f0b-8539-9dad33b22861",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -9220,8 +9220,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_PropTax_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_telephone_id\"));",
@@ -9315,7 +9315,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "a0bed33f-b12f-4fbc-a673-c845a0bd038b",
+					"_postman_id": "757b985f-7789-4255-b4cd-559a2f6d9298",
 					"name": "Second citizen - begin serving",
 					"event": [
 						{
@@ -9333,7 +9333,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "a260cb9a-c4ae-4bf3-9167-2e01cfc3b9e4",
+								"id": "0ceb5800-311b-4b82-9278-80e3296843ba",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -9360,8 +9360,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_PropTax_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_telephone_id\"));",
@@ -9452,7 +9452,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "2c9590ec-8378-4c87-80bc-8bad57c6ac7b",
+					"_postman_id": "e028343d-654c-4d9d-af55-e7112ed45ce6",
 					"name": "Second citizen - finish serving",
 					"event": [
 						{
@@ -9470,7 +9470,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "3967d0d6-56de-462e-a592-1aa8cfb1ffb6",
+								"id": "e36ac8d0-2ced-497a-9146-7243d9ad733f",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -9494,8 +9494,8 @@
 									"if (allElements !== null) {",
 									"",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_PropTax_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_telephone_id\"));",
@@ -9582,7 +9582,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "b321266d-75cb-416d-b712-ad8be7b4ed34",
+					"_postman_id": "eb577c5d-d93e-40d8-b59f-6c2bc1bf639c",
 					"name": "Invite next citizen - should be first one",
 					"event": [
 						{
@@ -9600,7 +9600,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "b2db367c-d5d2-4289-a194-6c854bc90c0f",
+								"id": "cd0d90ff-6d3b-4bad-b3d4-3c4a2111aaec",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -9627,8 +9627,8 @@
 									"    eval(environment.get_active_citizens_test);",
 									"    ",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name_quick\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment_quick\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name_quick\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment_quick\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_MSP_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity_update\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_email_id\"));",
@@ -9722,7 +9722,7 @@
 					"response": []
 				},
 				{
-					"_postman_id": "df2fc2e9-936f-43ab-bbf7-ac965302e1f8",
+					"_postman_id": "52005c4d-e2b6-4c25-9c34-c139a6b260a2",
 					"name": "First citizen - citizen left",
 					"event": [
 						{
@@ -9740,7 +9740,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "ce764cd5-ad7f-43af-907c-c8c7e42ade41",
+								"id": "99352946-b5e3-4e5e-ac12-52d8e7fba297",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -9764,8 +9764,8 @@
 									"if (allElements !== null) {",
 									"",
 									"    //  Get environment variables.",
-									"    var citizenName = postman.getEnvironmentVariable(\"citizen_name_quick\");",
-									"    var citizenComment = postman.getEnvironmentVariable(\"citizen_comment_quick\");",
+									"    var citizenName = JSON.parse(postman.getEnvironmentVariable(\"citizen_name_quick\"));",
+									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment_quick\"));",
 									"    var citizenService = JSON.parse(postman.getEnvironmentVariable(\"service_MSP_id\"));",
 									"    var citizenQuantity = JSON.parse(postman.getEnvironmentVariable(\"citizen_quantity_update\"));",
 									"    var citizenChannel = JSON.parse(postman.getEnvironmentVariable(\"channel_email_id\"));",
