@@ -1,6 +1,6 @@
 {
-  "id": "4a785fb0-f2f2-4fff-bb5b-c6b7629f11a8",
-  "name": "queue-management-dev-NoPw",
+  "id": "3bdd95fe-76f8-4799-9fdb-ff156d9096c1",
+  "name": "queue-management-dev",
   "values": [
     {
       "value": "https://servicebc-cfms-dev.pathfinder.gov.bc.ca/api/v1/",
@@ -43,22 +43,22 @@
       "enabled": true
     },
     {
-      "value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJEeEJ2b2dvUG1Lc0dFZnlkdnRVandDUF9sV18wd1V2b1NzV3F6NVFtRlFFIn0.eyJqdGkiOiJkZWQ4YmQwMi1jMDhhLTRjZDQtYTdmYy1jYWQzODFjM2VmMmUiLCJleHAiOjE1MzM3NzU5OTEsIm5iZiI6MCwiaWF0IjoxNTMzNzc0MTkxLCJpc3MiOiJodHRwczovL2Rldi1zc28ucGF0aGZpbmRlci5nb3YuYmMuY2EvYXV0aC9yZWFsbXMvbmVzdCIsImF1ZCI6ImNmbXMtREVWIiwic3ViIjoiNjhhMjJlMGQtYmZjNi00MTk3LWFiODYtNDE2ZjY3ZTJiZTI4IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiY2Ztcy1ERVYiLCJhdXRoX3RpbWUiOjAsInNlc3Npb25fc3RhdGUiOiJjYzYzNzA5MS1jN2MyLTRmYmMtYjQyMS0yZjYyYTgxOWUwYWYiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbIioiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImNmbXNfb3BlcmF0b3IiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sIm5hbWUiOiJDRk1TIFBvc3RtYW4gT3BlcmF0b3IiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJjZm1zLXBvc3RtYW4tb3BlcmF0b3IiLCJnaXZlbl9uYW1lIjoiQ0ZNUyBQb3N0bWFuIiwiZmFtaWx5X25hbWUiOiJPcGVyYXRvciJ9.HfzUIXNEJS8Nohz_JU8f4ev5pjw23XRC4I900v-H_dLEOsmcCFIJXP_MSj4gOHfkH8tVKgmSPx4eohOEJXvntDmW6Dau57NpCwn3t9cppJUjUxszwtFI4z-zWEsATlwndbl3o9t1HcLyDDGpyFCRq42XLwbeH8PJ6esOcPVYyzHAc9O5PHjaenvP9WT4OfBHYu8elXVu-t2Se9CaJRW2CrBHsa7sJVBr4RHu4kUdtkH8Zm3niM1sVJShQcdbKTNQ2AyePM2zf2TcNeFXg06OhrrAuoQ_bP8rZSzi3R4QzIoFP5p5HAPjethuQP60So0onqG63ytIVLK89v46r-rfSA",
+      "value": 0,
       "key": "token",
       "enabled": true
     },
     {
-      "value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJEeEJ2b2dvUG1Lc0dFZnlkdnRVandDUF9sV18wd1V2b1NzV3F6NVFtRlFFIn0.eyJqdGkiOiIwOTg1MzhiNS04MDhjLTRiYjQtOWVjZC05MzNkMmNmZjE3YTgiLCJleHAiOjE1MzM3ODEzOTEsIm5iZiI6MCwiaWF0IjoxNTMzNzc0MTkxLCJpc3MiOiJodHRwczovL2Rldi1zc28ucGF0aGZpbmRlci5nb3YuYmMuY2EvYXV0aC9yZWFsbXMvbmVzdCIsImF1ZCI6ImNmbXMtREVWIiwic3ViIjoiNjhhMjJlMGQtYmZjNi00MTk3LWFiODYtNDE2ZjY3ZTJiZTI4IiwidHlwIjoiUmVmcmVzaCIsImF6cCI6ImNmbXMtREVWIiwiYXV0aF90aW1lIjowLCJzZXNzaW9uX3N0YXRlIjoiY2M2MzcwOTEtYzdjMi00ZmJjLWI0MjEtMmY2MmE4MTllMGFmIiwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImNmbXNfb3BlcmF0b3IiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX19.HUqHhut-wbLySNpRwF5FToMaZLX7i2PhLFRSvDfsPbgrw9UmtTRTLUBWhPDdW2teaD3mtRjRaMi6zu5YwBh68BdDFCbN49R8LO5UkFLOjjtQqHlwVNxqRunAAJMr5j7SVRLY22k4_vy5bImDG2UkNtJKGsOTN_pOSR-rmb89pV21amM_2wqQMbdLs2cs3F5gXqTh8Vnv5yE4f7OQpbieIMP6W5pBoTmD4IW4rvwzfIioZZHFpC6SgMRjJkwwXYE3HknvwlvYXW_7QxcEvlXoaZl3a07X7bBnDxvbiziqAXjptgmaZw_PRh7H4kSq_LX58Ss9h_si6AdHjs3skAs1vQ",
+      "value": 0,
       "key": "refresh_token",
       "enabled": true
     },
     {
-      "value": 1533775975693,
+      "value": 0,
       "key": "token_expires",
       "enabled": true
     },
     {
-      "value": 1533781375693,
+      "value": 0,
       "key": "refresh_token_expires",
       "enabled": true
     },
@@ -158,7 +158,7 @@
       "enabled": true
     },
     {
-      "value": "auth_url = pm.environment.get(\"auth_url\");\nrealm = pm.environment.get(\"realm\");\nclientid = pm.environment.get(\"clientid\");\nuserid = pm.environment.get(\"userid\");\npassword = pm.environment.get(\"password\");\nclient_secret = pm.environment.get(\"client_secret\");\n\nconst echoPostRequest = {\n  url: auth_url + '/auth/realms/' + realm + '/protocol/openid-connect/token',\n  method: 'POST',\n  header: 'Content-Type:application/x-www-form-urlencoded',\n  body: {\n    mode: 'raw',\n    raw: 'grant_type=password&client_id=' + clientid \n          + '&username=' + userid \n          + '&password=' + password\n          + '&client_secret=' + client_secret\n  }\n};\npm.sendRequest(echoPostRequest, function (err, res) {\n    var jsonData = res.json();\n    if (jsonData.hasOwnProperty('access_token')) {\n    \tpm.environment.set(\"token\", jsonData.access_token);\n\t    pm.environment.set(\"refresh_token\", jsonData.refresh_token);\n\t    console.log(err ? err : res.json());\n\t} else {\n\t    pm.environment.set(\"token\", 0);\n\t    pm.environment.set(\"refresh_token\", 0);\n\t    pm.environment.set(\"token_expires\", 0);\n\t    pm.environment.set(\"refresh_token_expires\", 0);\n\t}\n});",
+      "value": "auth_url = pm.environment.get(\"auth_url\");\nrealm = pm.environment.get(\"realm\");\nclientid = pm.environment.get(\"clientid\");\nuserid = pm.environment.get(\"userid\");\npassword = pm.globals.get(\"password\");\nclient_secret = pm.globals.get(\"client_secret\");\n\nconst echoPostRequest = {\n  url: auth_url + '/auth/realms/' + realm + '/protocol/openid-connect/token',\n  method: 'POST',\n  header: 'Content-Type:application/x-www-form-urlencoded',\n  body: {\n    mode: 'raw',\n    raw: 'grant_type=password&client_id=' + clientid \n          + '&username=' + userid \n          + '&password=' + password\n          + '&client_secret=' + client_secret\n  }\n};\npm.sendRequest(echoPostRequest, function (err, res) {\n    var jsonData = res.json();\n    if (jsonData.hasOwnProperty('access_token')) {\n    \tpm.environment.set(\"token\", jsonData.access_token);\n\t    pm.environment.set(\"refresh_token\", jsonData.refresh_token);\n\t    console.log(err ? err : res.json());\n\t} else {\n\t    pm.environment.set(\"token\", 0);\n\t    pm.environment.set(\"refresh_token\", 0);\n\t    pm.environment.set(\"token_expires\", 0);\n\t    pm.environment.set(\"refresh_token_expires\", 0);\n\t}\n});",
       "key": "auth_first",
       "enabled": true
     },
@@ -208,7 +208,7 @@
       "enabled": true
     },
     {
-      "value": "1884",
+      "value": "2073",
       "key": "current_client",
       "enabled": true
     },
@@ -229,6 +229,6 @@
     }
   ],
   "_postman_variable_scope": "environment",
-  "_postman_exported_at": "2018-08-09T00:25:04.709Z",
+  "_postman_exported_at": "2018-08-09T21:31:58.964Z",
   "_postman_exported_using": "Postman/6.2.3"
 }
