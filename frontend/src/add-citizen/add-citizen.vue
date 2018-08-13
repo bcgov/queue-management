@@ -9,7 +9,7 @@
              no-close-on-backdrop
              no-close-on-esc
              class="m-0 p-0"
-             @shown="focusref()"
+             @shown="setupForm()"
              >
 
        <div style="display: flex; flex-direction: row; justify-content: space-between" class="modal_header">
@@ -52,9 +52,11 @@ import AddCitizenForm from './add-citizen-form'
 
 export default {
     name: 'AddCitizen',
+
     components: {
         AddCitizenForm, Buttons
     },
+
     mounted() {
       this.$root.$on('showAddMessage', () => {
         this.showAlert()
@@ -70,7 +72,7 @@ export default {
 
     computed: {
       ...mapState(['addCitizenModal', 'showAddModal', 'addModalSetup']),
-      ...mapGetters(['form_data']),
+      ...mapGetters(['form_data', 'reception']),
       
       modalTitle() {
         if (this.addModalSetup === 'edit_mode') {
@@ -88,24 +90,27 @@ export default {
 
     methods: {
       ...mapActions(['cancelAddCitizensModal']),
-      ...mapMutations(['updateAddModalForm']),
+      ...mapMutations(['updateAddModalForm', 'setDefaultChannel']),
 
       countDownChanged (dismissCountDown) {
         this.dismissCountDown = dismissCountDown
       },
-      
-      focusref() {
-        this.$root.$emit('focusinput')
+      setupForm() {
+        this.setDefaultChannel()
+        if (!this.reception) {
+          this.$root.$emit( 'focusfilter' )
+        } else if (this.reception) {
+          this.$root.$emit( 'focuscomments' )
+        }
       },
-
       showAlert () {
         this.dismissCountDown = this.dismissSecs
       }
     }
   }
 </script>
+
 <style>
-  
   .disabled {
     background-color: #8e9399 !important;
     color: Gainsboro !important;

@@ -16,7 +16,7 @@ import Vue from 'vue'
 import 'es6-promise/auto'
 import { store } from './store/'
 import App from './App'
-import Smartboard from './smartboard'
+import Smartboard from './smartboard/'
 import BootstrapVue from 'bootstrap-vue'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
@@ -32,7 +32,7 @@ Vue.config.productionTip = false
 
 const routes = {
   '/': App,
-  '/smartboard': Smartboard
+  'smartboard': Smartboard
 }
 
 /* eslint-disable no-new */
@@ -40,13 +40,22 @@ const app = new Vue({
   el: '#app',
   store,
   components: { App, Smartboard },
-  data: {
-    currentRoute: window.location.pathname
-  },
   computed: {
+    currentRoute() {
+      let path = window.location.pathname
+      let pathspl = path.split('/')
+      if ( path === '/') {
+        return '/'
+      } else if (pathspl.length >= 2) {
+        return pathspl[1]
+      } else {
+        return '/'
+      }
+    },
     ViewComponent () {
-      return routes[this.currentRoute] || NotFound
+      return routes[this.currentRoute]
     }
   },
+
   render (h) { return h(this.ViewComponent) }
 })

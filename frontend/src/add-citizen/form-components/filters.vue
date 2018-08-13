@@ -7,7 +7,7 @@
     </b-form-row>
     <b-form-row no-gutters>
       <b-col>
-          <input ref="inputref"
+          <input ref="filterref"
                  class="form-control"
                  style="height: 38px; font-size: 15px"
                  v-model="search"
@@ -26,29 +26,48 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
-  
+  import { mapGetters, mapMutations, mapState } from 'vuex'
+
   export default {
     name: 'Filters',
+
     mounted() {
-      this.$root.$on('focusinput', () => {this.$refs.inputref.focus()})
+      this.$root.$on('focusfilter', () => {this.$refs.filterref.focus()})
     },
+
     computed: {
       ...mapGetters(['categories_options', 'form_data']),
+      ...mapState({
+                    suspendFilter: state => state.addModalForm.suspendFilter,
+                    selectedItem: state => state.addModalForm.selectedItem
+      }),
+
       search: {
-        get() { return this.form_data.search },
+        get() {
+          if (this.suspendFilter) {
+            return this.selectedItem
+          } else if (!this.suspendFilter) {
+            return this.form_data.search
+          }
+        },
         set(value) {
-          this.$store.commit('updateAddModalForm',{type: 'search', value})
+          if (this.suspendFilter) {
+            this.updateAddModalForm({type: 'suspendFilter', value: false})
+          }
+          this.updateAddModalForm({type: 'search', value})
         }
       },
       category: {
         get() { return this.form_data.category },
         set(value) {
-          this.$store.commit('updateAddModalForm',{type: 'category', value})
+          this.updateAddModalForm({type: 'category', value})
         }
       }
     },
+
     methods: {
+      ...mapMutations(['updateAddModalForm']),
+
       focus() {
         this.$refs.inputref.focus()
       }

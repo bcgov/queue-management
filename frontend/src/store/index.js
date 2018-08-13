@@ -48,7 +48,9 @@ export const store = new Vuex.Store({
         search: '',
         category: '',
         service:'',
-        quick: 0
+        quick: 0,
+        suspendFilter: false,
+        selectedItem: ''
     },
     showAddModal: false,
     showServiceModal: 'none',
@@ -63,6 +65,11 @@ export const store = new Vuex.Store({
   },
 
   getters: {
+    reception(state) {
+      if (state.user.receptionist_ind)
+        return state.user.receptionist_ind===1 ? true : false
+    },
+
     active_index(state, getters) {
       let { service_citizen } = state.serviceModalForm
 
@@ -163,7 +170,7 @@ export const store = new Vuex.Store({
     filtered_services: (state, getters) => {
       let services = state.services
 
-      if (getters.form_data.category != '') {
+      if (getters.form_data.category) {
         return services.filter(service=>service.parent.service_id === getters.form_data.category)
       } else {
         return services
@@ -208,7 +215,7 @@ export const store = new Vuex.Store({
                   citizenFound = true
                   console.log("Found citizen")
                   console.log(this.state.serviceModalForm.service_citizen)
-d
+
                   if (activePeriod.ps.ps_name === "Invited") {
                     context.commit('setServiceModalForm', citizen)
                     context.commit('toggleServiceModal', 'block')
@@ -694,7 +701,7 @@ d
       let citizen_id
       let quick
       
-      if (context.state.serviceModalForm.citizen_id != null) {
+      if (context.state.serviceModalForm.citizen_id) {
         let { citizen_comments } = context.state.serviceModalForm
         citizen_id = context.state.serviceModalForm.citizen_id
         let compareCitizen = context.getters.invited_citizen
@@ -888,23 +895,30 @@ d
       )
     },
 
+    setAddModalSelectedItem(state, payload) {
+      state.addModalForm.selectedItem = payload
+      state.addModalForm.suspendFilter = true
+    },
+
     resetAddModalForm(state) {
       let keys = Object.keys(state.addModalForm)
       
       keys.forEach( key => {
-        if (key != 'quick') {
-          Vue.set(
+        if ( key === 'quick') Vue.set(
+          state.addModalForm,
+          key,
+          0
+        )
+        if ( key === 'suspendFilter') Vue.set(
             state.addModalForm,
             key,
-            ''
-          )
-        } else if ( key === 'quick') {
-          Vue.set(
-            state.addModalForm,
-            key,
-            0
-          )
-        }
+            false
+        )
+        Vue.set(
+          state.addModalForm,
+          key,
+          ''
+        )
       })
     },
 
@@ -988,6 +1002,11 @@ d
         payload.type,
         payload.value
       )
+    },
+
+    setDefaultChannel(state) {
+      let channel = state.channels.filter(ch=>ch.channel_name==='In Person')
+      state.addModalForm.channel = channel[0].channel_id
     },
 
     setMainAlert(state, payload) {

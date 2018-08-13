@@ -58,10 +58,11 @@
 </template>
 
 <script>
-  import { mapState, mapGetters } from 'vuex'
+  import { mapState, mapGetters, mapMutations } from 'vuex'
   
   export default {
     name: 'Tables',
+
     data() {
       return {
         f:false,
@@ -89,22 +90,28 @@
         ]
       }
     },
+
     computed: {
       ...mapState(['addCitizenModal']),
       ...mapGetters(['form_data', 'filtered_services']),
+
       filter(value) {
         return this.form_data.search
       }
     },
+
     methods: {
+      ...mapMutations(['setAddModalSelectedItem']),
+
       rowClicked(item, index) {
         let id = item.service_id
+        this.setAddModalSelectedItem(item.service_name)
         this.selectedRow = id
         this.$store.commit('updateAddModalForm', {type:'service',value:id})
       }
     }
   }
-</script
+</script>
 
 <style>
 .add_citizen_categories_table {
