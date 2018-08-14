@@ -1,0 +1,9 @@
+0.0.0.0:2015
+root /var/www/html
+log stdout
+errors stdout
+
+rewrite {
+    to {path} {path}/ /
+}
+
