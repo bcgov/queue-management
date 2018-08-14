@@ -72,8 +72,8 @@ podTemplate(
                            showBuildLogs: 'true',
                            env: [
                                 [ name: 'CLIENT_ID', value: "${CLIENT_ID}" ],
-                                [ name: 'CLIENT_SECRET', value: "${CLIENT_SECRET}" ]
-                                [ name: 'KEYCLOAK_REALM', value: "${KEYCLOAK_REALM}" ]
+                                [ name: 'CLIENT_SECRET', value: "${CLIENT_SECRET}" ],
+                                [ name: 'KEYCLOAK_REALM', value: "${KEYCLOAK_REALM}" ],
                                 [ name: 'AUTH_SERVER_URL', value: "${AUTH_SERVER_URL}" ]
                            ]
         }
