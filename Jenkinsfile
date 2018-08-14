@@ -70,12 +70,6 @@ podTemplate(
             echo ">>> building final image: queue-management-frontend <<<"
             openshiftBuild bldCfg: 'queue-management-frontend',
                            showBuildLogs: 'true',
-                           env: [
-                                [ name: 'CLIENT_ID', value: "${CLIENT_ID}" ],
-                                [ name: 'CLIENT_SECRET', value: "${CLIENT_SECRET}" ],
-                                [ name: 'KEYCLOAK_REALM', value: "${KEYCLOAK_REALM}" ],
-                                [ name: 'AUTH_SERVER_URL', value: "${AUTH_SERVER_URL}" ]
-                           ]
         }
         stage('Deploy API'){
             echo ">>> get api image hash <<<"

@@ -1,9 +1,0 @@
-{
-  "realm": "${keycloak_realm}",
-  "auth-server-url": "${auth_server_url}",
-  "ssl-required": "external",
-  "resource": "${client_id}",
-  "credentials": {
-    "secret": "${client_secret}"
-  }
-}
