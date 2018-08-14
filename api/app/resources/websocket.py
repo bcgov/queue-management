@@ -28,26 +28,19 @@ def test_message(message):
 def on_join(message):
     cookie = request.cookies.get("oidc-jwt", None)
     if cookie is None:
-        print("cookie is none")
         emit('joinRoomFail', {"sucess": False})
         return
-
-    print(cookie)
 
     if not oidc.validate_token(cookie):
         print("Cookie failed validation")
         emit('joinRoomFail', {"sucess": False})
         return
 
-    print("Validated")
-
     claims = jwt.get_unverified_claims(cookie)
-    print(claims)
 
     username = claims["preferred_username"]
     csr = CSR.query.filter_by(username=username).first()
     if csr:
-        print("Joining room")
         join_room(csr.office_id)
         emit('joinRoomSuccess', {"sucess": True})
         emit('update_customer_list', {"sucess": True}, room=csr.office_id)
@@ -55,3 +48,22 @@ def on_join(message):
     else:
         print("Fail")
         emit('joinRoomFail', {"sucess": False})
+
+
+@socketio.on('joinSmartboardRoom')
+def on_join_smartboard(message):
+    try:
+        office_id = int(message['office_id'])
+        room = "sb-%s" % office_id
+
+        print("Joining room: %s" % room)
+
+        join_room(room)
+        emit('joinSmartboardRoomSuccess', {"success": True})
+    except KeyError as e:
+        print(e)
+        emit('joinSmartboardRoomFail', {"sucess": False, "message": "office_id must be passed to this method"})
+
+    except ValueError as e:
+        print(e)
+        emit('joinSmartboardRoomFail', {"sucess": False, "message": "office_id must be an integer"})

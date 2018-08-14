@@ -15,7 +15,7 @@ limitations under the License.'''
 
 from qsystem import db
 from .base import Base 
-from app.models import Period, PeriodState
+from app.models import Period, PeriodState, SRState
 from datetime import datetime
 
 

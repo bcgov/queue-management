@@ -90,6 +90,7 @@ import app.resources.services
 import app.resources.service_requests_list
 import app.resources.service_requests_detail
 import app.resources.slack
+import app.resources.smartboard
 import app.resources.websocket
 
 #Hostname for debug puposes
