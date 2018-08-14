@@ -28,7 +28,8 @@ class Services(Resource):
     @oidc.accept_token(require_token=True)
     def get(self):
         try:
-            csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+            username = g.oidc_token_info['username'].split("idir/")[-1]
+            csr = CSR.query.filter_by(username=username).first()
             result = self.csr_schema.dump(csr)
 
             return {'csr': result.data,
