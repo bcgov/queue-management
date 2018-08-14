@@ -69,7 +69,7 @@ podTemplate(
 
             echo ">>> building final image: queue-management-frontend <<<"
             openshiftBuild bldCfg: 'queue-management-frontend',
-                           showBuildLogs: 'true',
+                           showBuildLogs: 'true'
         }
         stage('Deploy API'){
             echo ">>> get api image hash <<<"
