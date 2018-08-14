@@ -31,4 +31,4 @@ class ServiceReqSchema(ma.ModelSchema):
     sr_state = fields.Nested(SRStateSchema, exclude=('sr_state_desc',))
     service = fields.Nested(ServiceSchema, exclude=('actual_service_ind', 'deleted', 'display_dashboard_ind', 'parent', 'prefix', 'service_code', 'service_desc',))
     channel = fields.Nested(ChannelSchema)
-
+    citizen = fields.Nested('CitizenSchema', exclude=('service_reqs',))
