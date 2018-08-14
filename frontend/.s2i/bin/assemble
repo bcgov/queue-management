@@ -5,7 +5,7 @@ echo "Before assembling"
 rc=$?
 
 if [ $rc -eq 0 ]; then
-    npm run build:${BUILD_ENV}
+    npm run build:production
     rc=$?
     if [ $rc -eq 0 ]; then
       npm test

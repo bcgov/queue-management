@@ -10,9 +10,7 @@
     "start": "node build/dev-server.js",
     "test": "jest",
     "build:local": "node build/build-local.js",
-    "build:dev": "node build/build-dev.js",
-    "build:test": "node build/build-test.js",
-    "build:prod": "node build/build-prod.js",
+    "build:": "node build/build-prod.js",
     "lint": "eslint --ext .js,.vue src"
   },
   "dependencies": {
