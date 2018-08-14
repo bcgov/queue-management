@@ -15,12 +15,12 @@ limitations under the License.*/
 
 <template>
   <div>
-    <div class="top-flex-div"> 
+    <div class="top-flex-div">
       <div class="flex-title-2">{{ date }} {{ time }}</div>
     </div>
-    
+
     <div style="display: flex; height: 75%; width: 100%; justify-content: center">
-      
+
       <div class="board-75-video">
         <div class="board-video-div">
           <Video vidh="504" vidw="896" />
@@ -49,15 +49,15 @@ const Axios = axios.create({
 
 export default {
   name: 'CallByName',
-  
+
   mounted() {
     this.$root.$on('addToBoard',( data) => { this.updateBoard(data) })
     setInterval( () => { this.now() }, 3000)
     this.initializeBoard()
   },
-  
+
   components: { Video },
-  
+
   data() {
     return {
       options:{weekday:'long',year:'numeric',month:'long',day:'numeric',},
@@ -67,7 +67,7 @@ export default {
       message: 'Welcome to ServiceBC'
     }
   },
-  
+
   computed: {
     office_id() {
       let path = window.location.pathname.split('/')
@@ -78,11 +78,11 @@ export default {
       }
     },
     url() {
-      return `/smartboard/?office_id=${this.office_id}`
+      return `/smartboard/?office_number=${this.office_id}`
     },
     waiting() {
       if (this.citizens && this.citizens.length > 0) {
-        return this.citizens.filter(c=>c.state === 'Waiting').length
+        return this.citizens.filter(c=>c.active_period.ps.ps_name === 'Waiting').length
       }
       return 0
     },
@@ -91,7 +91,7 @@ export default {
       return d.toLocaleDateString('en-CA', this.options)
     }
   },
-  
+
   methods: {
     initializeBoard() {
       Axios.get(this.url).then( resp => {

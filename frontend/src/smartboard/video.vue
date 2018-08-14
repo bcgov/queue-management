@@ -33,7 +33,7 @@ limitations under the License.*/
     data() {
       return {
         playerOptions: {
-          autoplay: 'muted',
+          autoplay: 'true',
           controls: false,
           muted: true,
           sources: [{

@@ -14,7 +14,7 @@ limitations under the License.*/
 
 <template>
 <div style="width: 100%; height: 100%;">
-  <div class="top-flex-div"> 
+  <div class="top-flex-div">
     <div class="flex-title">Welcome to ServiceBC</div>
   </div>
   <div style="display: flex; height: 75%; width: 100%;">
@@ -42,9 +42,9 @@ limitations under the License.*/
             </div>
           </template>
           <template slot="overflow" slot-scope="data">
-            {{ this.showOverflow === false ? 
+            {{ this.showOverflow === false ?
               data.item._tdClass = 'd-none': data.item._tdClass = ''}}
-              {{ this.showOverflow === false ? 
+              {{ this.showOverflow === false ?
                 data.item._thClass = 'd-none': data.item._thClass = ''}}
             <div v-if="highlighted.includes(data.value)" class="flashing-ticket">
               {{data.value}}
@@ -60,7 +60,7 @@ limitations under the License.*/
   </div>
   <div class="board-footer-div">
     <div style="width: 5%"></div>
-    <div style="display:flex;flex-direction:column;justify-content:flex-end"> 
+    <div style="display:flex;flex-direction:column;justify-content:flex-end">
       <div>{{date}}</div>
       <div style="text-align: start">{{time}}</div>
     </div>
@@ -82,15 +82,15 @@ const Axios = axios.create({
 
 export default {
   name: 'CallByNumber',
-  
+
   mounted() {
-    this.$root.$on('addToBoard',( data) => { this.updateBoard(data) })
+    this.$root.$on('addToBoard',() => { this.updateBoard() })
     setInterval( () => { this.now() }, 3000)
     this.initializeBoard()
   },
-  
+
   components: { Video },
-  
+
   data() {
     return {
       highlighted: [],
@@ -108,7 +108,7 @@ export default {
       overflowStyle: 'd-none'
     }
   },
-  
+
   computed: {
     items() {
       if (this.showOverflow === true) {
@@ -148,11 +148,11 @@ export default {
       }
     },
     url() {
-      return `/smartboard/?office_id=${this.office_id}`
+      return `/smartboard/?office_number=${this.office_id}`
     },
     invited() {
       if (this.citizens && this.citizens.length > 0) {
-        let citizens = this.citizens.filter(c=>c.state === 'Invited')
+        let citizens = this.citizens.filter(c=>c.active_period.ps.ps_name === 'Invited')
         if (citizens.length > 8) {
           this.overflow = citizens.slice(8, (citizens.length-1))
           this.showOverflow = true
@@ -167,7 +167,7 @@ export default {
     },
     waiting() {
       if (this.citizens && this.citizens.length > 0) {
-        return this.citizens.filter(c=>c.state === 'Waiting').length
+        return this.citizens.filter(c=>c.active_period.ps.ps_name === 'Waiting').length
       }
       return 0
     },
@@ -175,9 +175,9 @@ export default {
       let d = new Date()
       return d.toLocaleDateString('en-CA', this.options)
     },
-  
+
   },
-  
+
   methods: {
     initializeBoard() {
       Axios.get(this.url).then( resp => {
@@ -185,24 +185,7 @@ export default {
         this.$root.$emit('boardConnect', this.office_id)
       })
     },
-    updateBoard(ticketId) {
-      let ticketFlash = () => {
-        this.highlighted.push(ticketId)
-        setTimeout( () => { ticketUnFlash() }, 300)
-      }
-      let ticketUnFlash = () => {
-        let i = this.highlighted.indexOf(ticketId)
-        this.highlighted.splice(i, 1)
-      }
-      let clearFlasher = () => {
-        clearInterval(interval)
-        let i = this.highlighted.indexOf(ticketId)
-        if (i >= 0) {
-          this.highlighted.splice(i, 1)
-        }
-      }
-      let interval = setInterval( () => { ticketFlash() }, 600 )
-      setTimeout( () => { clearFlasher() }, 5000)
+    updateBoard() {
       Axios.get(this.url).then( resp => {
         this.citizens = resp.data.citizens
       })

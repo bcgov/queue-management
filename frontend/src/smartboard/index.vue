@@ -39,19 +39,19 @@ const Axios = axios.create({
 
 export default {
   name: 'Smartboard',
-  
+
   created() {
     this.initializeBoard()
   },
-  
+
   components: { CallByName, CallByNumber, BoardSocket, NonReception },
-  
+
   data() {
     return {
       officetype: ''
     }
   },
-  
+
   computed: {
     office_id() {
       let path = window.location.pathname.split('/')
@@ -62,10 +62,10 @@ export default {
       }
     },
     url() {
-      return `/smartboard/?office_id=${this.office_id}`
-    }  
+      return `/smartboard/?office_number=${this.office_id}`
+    }
   },
-    
+
   methods: {
     initializeBoard() {
       Axios.get(this.url).then( resp => {

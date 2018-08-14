@@ -15,7 +15,7 @@ limitations under the License.*/
 
 
 <template>
-  
+
 </template>
 
 <script>
@@ -29,7 +29,7 @@ limitations under the License.*/
         this.connect(data)
       })
     },
-    
+
     data() {
       return {
         reconnectInterval: null,
@@ -53,7 +53,7 @@ limitations under the License.*/
         console.log(socket.connected)
         socket.emit(
           'joinSmartboardRoom',
-          {office_id: this.office_id}, 
+          {office_id: this.office_id},
           () => {console.log('socket emit: "joinSmartboardRoom"')}
         )
       },
@@ -65,7 +65,7 @@ limitations under the License.*/
       addListeners() {
         socket.on(
           'reconnecting',
-          () => { this.onReconnecting() } 
+          () => { this.onReconnecting() }
         )
         socket.on(
           'joinSmartboardRoomSuccess',
@@ -76,8 +76,8 @@ limitations under the License.*/
           () => { this.onJoinRoom(false) }
         )
         socket.on(
-          'citizen_invited', 
-          (data) =>{ this.onUpdateBoard(data) } 
+          'citizen_invited',
+           () =>{ this.onUpdateBoard() }
         )
       },
 //LISTENER METHODS
@@ -103,8 +103,8 @@ limitations under the License.*/
           console.log('boardSocket received: "joinSmartboardRoomFail"')
         }
       },
-      onUpdateBoard(data) {
-        this.$root.$emit('addToBoard', data.citizen)
+      onUpdateBoard() {
+        this.$root.$emit('addToBoard')
         console.log('socket received: "onUpdateBoard"')
       }
     }
