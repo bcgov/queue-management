@@ -208,24 +208,23 @@ podTemplate(
 }
 
 stage('deploy test') {
+    node('jenkins-python3nodejs'){
         input "Deploy to test?"
-            node('jenkins-python3nodejs'){
-                openshiftTag destStream: 'queue-management-frontend',
-                             verbose: 'true',
-                             destTag: 'test',
-                             srcStream: 'queue-management-frontend',
-                             srcTag: "${IMAGE_HASH}"
-            }
-        }
-        
-        stage('deploy prod') {
-            input "Deploy to prod?"
-            node('jenkins-python3nodejs'){
-                openshiftTag destStream: 'queue-management-frontend',
-                             verbose: 'true',
-                             destTag: 'production',
-                             srcStream: 'queue-management-frontend',
-                             srcTag: "${IMAGE_HASH}"
-            }
-        }
+        openshiftTag destStream: 'queue-management-frontend',
+                     verbose: 'true',
+                     destTag: 'test',
+                     srcStream: 'queue-management-frontend',
+                     srcTag: "${IMAGE_HASH}"
+    }
+}
+
+stage('deploy prod') {
+    node('jenkins-python3nodejs'){
+        input "Deploy to prod?"
+        openshiftTag destStream: 'queue-management-frontend',
+                     verbose: 'true',
+                     destTag: 'production',
+                     srcStream: 'queue-management-frontend',
+                     srcTag: "${IMAGE_HASH}"
+    }
 }

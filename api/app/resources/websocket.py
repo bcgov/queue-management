@@ -38,16 +38,19 @@ def on_join(message):
 
     claims = jwt.get_unverified_claims(cookie)
 
-    username = claims["preferred_username"]
-    csr = CSR.query.filter_by(username=username).first()
-    if csr:
-        join_room(csr.office_id)
-        emit('joinRoomSuccess', {"sucess": True})
-        emit('update_customer_list', {"sucess": True}, room=csr.office_id)
-        print("Success")
+    if claims["preferred_username"]:
+        csr = CSR.query.filter_by(username=claims["preferred_username"].split("idir/")[-1]).first()
+        if csr:
+            join_room(csr.office_id)
+            emit('joinRoomSuccess', {"sucess": True})
+            emit('update_customer_list', {"success": True}, room=csr.office_id)
+            print("Success")
+        else:
+            print("Fail")
+            emit('joinRoomFail', {"success": False})
     else:
-        print("Fail")
-        emit('joinRoomFail', {"sucess": False})
+        print("No preferred_username on request")
+        emit('joinRoomFail', {"success": False})
 
 
 @socketio.on('joinSmartboardRoom')
