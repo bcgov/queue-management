@@ -38,14 +38,16 @@
                    class="add_citizen_categories_table"
                    > 
             <template slot="service_name" slot-scope="data">
-              
-              <div v-b-popover.hover.left="{content: data.item.service_desc}" variant="primary">
-               {{data.item.service_name}}
-              </div>
-              <div style="display: none">
-               {{ (data.item.service_id==form_data.service) ?
-                    (data.item._rowVariant='active') :
-                      (data.item._rowVariant='') }}
+              <div>
+                <span v-bind:title="data.item.service_desc">
+                  {{data.item.service_name}}
+                </span>
+                <div style="display: none">
+                  {{ 
+                    (data.item.service_id==form_data.service) ?
+                    (data.item._rowVariant='active') : (data.item._rowVariant='') 
+                  }}
+                </div>
               </div>
             </template>
           </b-table>

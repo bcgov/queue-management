@@ -12,7 +12,9 @@
                     v-model="comments"
                     :rows="4"
                     size="sm"
-                    placeholder="add comments here"></b-textarea>
+                    placeholder="add comments here">
+
+        </b-textarea>
       </b-col>
     </b-form-row>
   </b-container>

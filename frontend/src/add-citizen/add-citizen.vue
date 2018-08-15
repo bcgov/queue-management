@@ -31,9 +31,9 @@
       <b-container class="mt-3 pr-3">
 
         <b-row align-v="center" align-h="end">
-          <b-col cols="auto" class="p-0">Quick Txn?</b-col>
-          <b-col cols="1">
-            <b-form-checkbox v-model="quickTrans" value="1" unchecked-value="0"/>
+          <b-col cols="1" class="p-0 mr-1">Quick Txn?</b-col>
+          <b-col col cols="1" class="p-0">
+            <b-form-checkbox  v-model="quickTrans" value="1" unchecked-value="0"/>
           </b-col>
         <Buttons />
       </b-row>
@@ -71,7 +71,7 @@ export default {
     },
 
     computed: {
-      ...mapState(['addCitizenModal', 'showAddModal', 'addModalSetup']),
+      ...mapState(['addCitizenModal', 'showAddModal', 'addModalSetup', 'serviceModalForm']),
       ...mapGetters(['form_data', 'reception']),
       
       modalTitle() {
@@ -96,11 +96,16 @@ export default {
         this.dismissCountDown = dismissCountDown
       },
       setupForm() {
-        this.setDefaultChannel()
-        if (!this.reception) {
+        if (!this.serviceModalForm.citizen_id) {
+          this.setDefaultChannel()
+          if (!this.reception) {
+            this.$root.$emit( 'focusfilter' )
+          } else if (this.reception) {
+            this.$root.$emit( 'focuscomments' )
+          }
+        }
+        if (this.serviceModalForm.citizen_id) {
           this.$root.$emit( 'focusfilter' )
-        } else if (this.reception) {
-          this.$root.$emit( 'focuscomments' )
         }
       },
       showAlert () {

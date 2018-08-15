@@ -43,8 +43,18 @@ limitations under the License.*/
               <b-button class="m-1 btn-primary"
                         @click="clickAddCitizen""
                         :disabled="citizenInvited===true"
-                        id="add-citizen-button">Add Citizen</b-button>
-              <b-button class="m-1" v-if="f" :disabled="citizenInvited===true">Back Office</b-button>
+                        id="add-citizen-button"
+                        >
+                Add Citizen
+              </b-button>
+              <b-button class="m-1 btn-primary"
+                        @click="clickAddCitizen""
+                        :disabled="citizenInvited===true"
+                        id="add-citizen-button"
+                        >
+                Back Office
+              </b-button>
+
             </div>
           </div>
         </b-col>
@@ -54,18 +64,18 @@ limitations under the License.*/
     <b-container fluid v-if="isLoggedIn">
       <b-row>
         <b-col>
-          <ServeCitizen />
+          <ServeCitizen v-if="showServiceModal" />
           <AddCitizen />
         </b-col>
       </b-row>
 
-      <b-row no-gutters class="mt-2">
+      <b-row no-gutters class="mt-2" v-if="reception">
         <b-col class="m-2" id="citizen-wait-count">
           Citizens Waiting: {{ queueLength }}
         </b-col>
       </b-row>
 
-      <b-row no-gutters>
+      <b-row no-gutters v-if="reception">
         <b-col style="height: 250px; overflow-y: scroll; overflow: scroll; margin-bottom: 1em; border: 1px solid;" xl="12">
           <DashTable />
         </b-col>
@@ -123,9 +133,10 @@ import ServeCitizen from './serve-citizen'
       ...mapState([
         'isLoggedIn',
         'citizenInvited',
-        'dismissCountDown'
+        'dismissCountDown',
+        'showServiceModal'
       ]),
-      ...mapGetters(['citizens_queue', 'on_hold_queue']),
+      ...mapGetters(['citizens_queue', 'on_hold_queue', 'reception']),
 
       queueLength() {
         return this.citizens_queue.length

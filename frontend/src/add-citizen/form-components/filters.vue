@@ -8,18 +8,17 @@
     <b-form-row no-gutters>
       <b-col>
           <input ref="filterref"
+                 style="height: 37px; font-size: 15px;"
                  class="form-control"
-                 style="height: 38px; font-size: 15px"
                  v-model="search"
-                />
+                 ></input>
       </b-col>
       <b-col>
           <b-select id="add_citizen_catagories_select"
                     :options="categories_options" 
                     v-model="category"
                     size="sm"
-                    placeholder="Filter by category"
-                    />
+                    placeholder="Filter by category"></b-select>
       </b-col>
     </b-form-row>
   </b-container>
@@ -53,8 +52,9 @@
         set(value) {
           if (this.suspendFilter) {
             this.updateAddModalForm({type: 'suspendFilter', value: false})
+          } else if (!this.suspendFilter) {
+            this.updateAddModalForm( { type: 'search', value } )
           }
-          this.updateAddModalForm({type: 'search', value})
         }
       },
       category: {

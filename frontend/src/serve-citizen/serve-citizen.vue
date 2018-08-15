@@ -1,7 +1,7 @@
 
 
 <template>
-  <div id="serveModal" class="serve-modal" v-bind:style="{ display: showServiceModal }">
+  <div id="serveModal" class="serve-modal">
     <div class="serve-modal-content">
      <div style="display: flex; flex-direction: row; justify-content: space-between" class="modal_header">
        <div><h5>Serve Citizen</h5></div>
@@ -34,7 +34,7 @@
              <div>
              <b-button @click="clickServiceBeginService"
                        :disabled="serviceBegun===true"
-                       class="btn-primary serve-btn"
+                       v-bind:class="buttonStyle"
                        id="serve-citizen-begin-service-button">Begin Service</b-button>
              <b-button @click="clickReturnToQueue"
                        :disabled="serviceBegun===true"
@@ -117,9 +117,12 @@ export default {
   components: {
     ServeCitizenTable
   },
+  mounted() {
+    setInterval( () => { this.flashButton() }, 800)
+  },
   data() {
     return {
-      showModal: 'block',
+      buttonStyle: 'btn-primary serve-btn',
       selected: '',
       f: false,
       t: true,
@@ -184,8 +187,15 @@ export default {
       }
     },
 
-    resetChecked() {
-      this.checked = 'no'
+    flashButton() {
+
+      if (this.serviceBegun === false) {
+        this.buttonStyle == 'btn-primary serve-btn' ?
+          this.buttonStyle = 'btn-highlighted' : this.buttonStyle = 'btn-primary serve-btn'
+      }
+      if (this.serviceBegun === true) {
+        this.buttonStyle = 'btn-primary serve-btn'
+      }
     },
 
     closeWindow() {
@@ -226,6 +236,12 @@ export default {
   border: 1px solid grey;
   background-color: WhiteSmoke;
 }
+
+  .btn-highlighted {
+    background-color: orange !important;
+    color: white !important;
+    border: 1px solid orangered;
+  }
 
 #serve-citizen-modal-footer {
   border: 1px solid grey;
