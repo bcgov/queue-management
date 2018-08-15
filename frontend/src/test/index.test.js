@@ -1,32 +1,43 @@
-/**
- * @jest-environment jest-environment-webdriver
- */
+const puppeteer = require('puppeteer')
 
-const url = process.env['jest_url'];
+let page;
+let browser;
+const width = 1200;
+const height = 800;
 const maxTestCaseTime = 30000;
 
-/**
- * Begin test cases
- */
+beforeAll(async () => {
+  browser = await puppeteer.launch({
+    headless: false,
+    slowMo: 100,
+    args: [`--window-size=${width},${height}`]
+  });
+  page = await browser.newPage();
+  await page.setViewport({ width, height });
+});
 
-describe(process.env['jest_url'], () => {
+afterAll(() => {
+  browser.close();
+});
+
+describe("Serve Citizens", () => {
   test('Login', async () => {
-    await browser.get(url);
-    await browser.findElement(by.id('login-button')).click();
+    await page.goto(process.env.CFMS_DEV_URL)
+    await page.waitForSelector('#login-button')
 
-    //At Keycloak page
-    await browser.wait(until.titleIs('Log in to Service BC'), 10000);
-    await browser.findElement(by.id('username')).sendKeys(process.env['jest_username']);
-    await browser.findElement(by.id('password')).sendKeys(process.env['jest_password']);
-    await browser.findElement(by.id('kc-login')).click();
+    const navigationPromise = page.waitForNavigation();
+    await page.click('#login-button');
+    await navigationPromise;
 
-    //Back at main page
-    await browser.wait(until.titleIs('Queue Management'), 10000);
+    await page.waitForSelector('#username')
+    await page.type('#username', 'cfms-postman-operator')
+    await page.type('#password', process.env.POSTMAN_OPERATOR_PASSWORD)
 
-    //Wait for login to finish
-    await browser.wait(until.elementIsVisible(browser.findElement(by.className('navbar-user'))), 10000);
-    await browser.sleep(1000);
-  }, maxTestCaseTime);
+    await page.click('#kc-login');
+    await navigationPromise;
+
+    await page.waitForSelector('label.navbar-user')
+  }, maxTestCaseTime)
 
   test('Invite and serve citizen from queue', async () => {
     await addCitizenToQueue();
@@ -65,20 +76,26 @@ describe(process.env['jest_url'], () => {
     await beginServiceFromHoldTable();
     await finishService();
   }, maxTestCaseTime);
-
+/*
   test('Begin service from add citizen modal', async () => {
     await addCitizenFromDash();
     await populateAddCitizen();
     await beginServiceFromAddCitizenModal();
     await finishService();
   }, maxTestCaseTime);
-
+*/
   test('Cancel service from add citizen modal', async () => {
     await addCitizenFromDash();
     await populateAddCitizen();
     await cancelFromAddCitizenModal();
   }, maxTestCaseTime);
-});
+})
+
+function delay(time) {
+   return new Promise(function(resolve) {
+       setTimeout(resolve, time)
+   });
+}
 
 async function addCitizenToQueue() {
   await addCitizenFromDash();
@@ -87,38 +104,21 @@ async function addCitizenToQueue() {
 }
 
 async function populateAddCitizen() {
-  //Open the dropdown
-  const channelDropdown = await browser.findElement(by.id('add_citizen_channels_select'));
-  await channelDropdown.click();
-
-  //Find and click the first one
-  const options = await channelDropdown.findElements(by.tagName("option"));
-  options[0].click();
-
-  //Select the service
-  const serviceTable = await browser.findElement(by.className('add_citizen_categories_table'));
-  const service = await serviceTable.findElements(by.tagName('td'));
-  service[0].click();
-
-  await browser.sleep(1000);
+  await page.waitForSelector('#add_citizen_channels_select')
+  await page.select('#add_citizen_channels_select', "1")
+  await page.click('.add_citizen_categories_table > tbody > tr > td')
 }
 
 async function inviteFromQueue() {
-  const waitingCitizensTable = await browser.findElement(by.id('client-table'));
-  const waitingCitizensData = await waitingCitizensTable.findElements(by.tagName('td'));
-
-  //Open the modal
-  waitingCitizensData[0].click();
-  await browser.sleep(1000);
+  await page.click('#client-waiting-table > tbody > tr > td')
+  await delay(1000)
+  await page.waitForSelector('.serve-modal-content')
 }
 
 async function beginServiceFromHoldTable() {
-  const holdCitizensTable = await browser.findElement(by.id('client-hold-table'));
-  const holdCitizensRows = await holdCitizensTable.findElements(by.tagName('td'));
-
-  //Open the modal
-  holdCitizensRows[0].click();
-  await browser.sleep(1000);
+  await page.click('#client-hold-table > table > tbody > tr > td')
+  await delay(1000)
+  await page.waitForSelector('.serve-modal-content')
 }
 
 /**
@@ -126,13 +126,15 @@ async function beginServiceFromHoldTable() {
  */
 
 async function inviteCitizenFromDash() {
-  await browser.findElement(by.id('invite-citizen-button')).click();
-  await browser.sleep(1000);
+  await page.click('#invite-citizen-button');
+  await delay(1000)
+  await page.waitForSelector('.serve-modal-content')
 }
 
 async function addCitizenFromDash() {
-  await browser.findElement(by.id('add-citizen-button')).click();
-  await browser.sleep(1000);
+  await page.click('#add-citizen-button');
+  await delay(1000)
+  await page.waitForSelector('.add_citizen_template')
 }
 
 /**
@@ -140,21 +142,21 @@ async function addCitizenFromDash() {
  */
 
 async function addToQueue() {
-  await browser.wait(until.elementIsVisible(browser.findElement(by.id('add-citizen-add-to-queue'))), 10000);
-  await browser.findElement(by.id('add-citizen-add-to-queue')).click();
-  await browser.sleep(1000);
+  await page.click('#add-citizen-add-to-queue')
+  await delay(1000)
+  await page.waitForSelector('.add_citizen_template', { hidden: true })
 }
 
 async function beginServiceFromAddCitizenModal() {
-  await browser.wait(until.elementIsVisible(browser.findElement(by.id('add-citizen-begin-service'))), 10000);
-  await browser.findElement(by.id('add-citizen-begin-service')).click();
-  await browser.sleep(1000);
+  await page.click('#add-citizen-begin-service')
+  await delay(1000)
+  await page.waitForSelector('.add_citizen_template')
 }
 
 async function cancelFromAddCitizenModal() {
-  await browser.wait(until.elementIsVisible(browser.findElement(by.id('add-citizen-cancel'))), 10000);
-  await browser.findElement(by.id('add-citizen-cancel')).click();
-  await browser.sleep(1000);
+  await page.click('#add-citizen-cancel')
+  await delay(1000)
+  await page.waitForSelector('.add_citizen_template', { hidden: true })
 }
 
 /**
@@ -162,31 +164,26 @@ async function cancelFromAddCitizenModal() {
  */
 
 async function beginServiceFromServeCitizenModal() {
-  await browser.wait(until.elementIsVisible(browser.findElement(by.id('serve-citizen-begin-service-button'))), 10000);
-  await browser.findElement(by.id('serve-citizen-begin-service-button')).click();
-  await browser.sleep(1000);
+  await page.waitForSelector('#serve-citizen-begin-service-button', { disabled: false })
+  await page.click('#serve-citizen-begin-service-button')
 }
 
 async function returnToQueue() {
-  await browser.wait(until.elementIsVisible(browser.findElement(by.id('serve-citizen-return-to-queue-button'))), 10000);
-  await browser.findElement(by.id('serve-citizen-return-to-queue-button')).click();
-  await browser.sleep(1000);
+  await page.waitForSelector('#serve-citizen-return-to-queue-button', { disabled: false })
+  await page.click('#serve-citizen-return-to-queue-button')
 }
 
 async function citizenLeft() {
-  await browser.wait(until.elementIsVisible(browser.findElement(by.id('serve-citizen-citizen-left-button'))), 10000);
-  await browser.findElement(by.id('serve-citizen-citizen-left-button')).click();
-  await browser.sleep(1000);
+  await page.waitForSelector('#serve-citizen-citizen-left-button', { disabled: false })
+  await page.click('#serve-citizen-citizen-left-button')
 }
 
 async function placeOnHold() {
-  await browser.wait(until.elementIsEnabled(browser.findElement(by.id('serve-citizen-place-on-hold-button'))), 10000);
-  await browser.findElement(by.id('serve-citizen-place-on-hold-button')).click();
-  await browser.sleep(1000);
+  await page.waitForSelector('#serve-citizen-place-on-hold-button', { disabled: false })
+  await page.click('#serve-citizen-place-on-hold-button')
 }
 
 async function finishService() {
-  await browser.wait(until.elementIsEnabled(browser.findElement(by.id('serve-citizen-finish-button'))), 10000);
-  await browser.findElement(by.id('serve-citizen-finish-button')).click();
-  await browser.sleep(1000);
+  await page.waitForSelector('#serve-citizen-finish-button', { disabled: false })
+  await page.click('#serve-citizen-finish-button')
 }

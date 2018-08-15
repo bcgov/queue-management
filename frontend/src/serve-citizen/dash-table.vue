@@ -23,7 +23,7 @@ limitations under the License.*/
              hover
              @row-clicked="rowClicked"
              class="p-0 m-0 w-100"
-             >
+             id="client-waiting-table">
       <template slot='qt_xn_citizen_ind' slot-scope='data'>
         {{ (data.item.qt_xn_citizen_ind===0) ?
              ('No') :
@@ -87,7 +87,7 @@ limitations under the License.*/
         }
       },
       showCSR(id) {
-        let service = this.active_service_id(id) 
+        let service = this.active_service_id(id)
         if (!service) {
           return null
         }
@@ -111,4 +111,4 @@ limitations under the License.*/
       }
     }
   }
-</script>  
+</script>

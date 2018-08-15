@@ -17,7 +17,7 @@
         <template v-else-if="setup == 'add_mode' ">
           <b-form-group>
             <b-button @click="addServiceApply">Apply</b-button>
-            <b-button @click="clickEditCancel">Cancel</b-button>
+            <b-button @click="clickEditCancel" id="add-citizen-cancel">Cancel</b-button>
           </b-form-group>
         </template>
         <template v-else-if="setup === 'non_reception' ">
@@ -32,7 +32,7 @@
 
 <script>
   import { mapGetters, mapActions, mapState } from 'vuex'
-  
+
   export default {
     name: 'Buttons',
 
