@@ -29,7 +29,7 @@ class CitizenDetail(Resource):
     @oidc.accept_token(require_token=True)
     def get(self, id):
         try:
-            csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+            csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
             citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
             result = self.citizen_schema.dump(citizen)
             return {'citizen': result.data,
@@ -47,7 +47,7 @@ class CitizenDetail(Resource):
         if not json_data:
             return {'message': 'No input data received for updating citizen'}, 400
 
-        csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
         citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
 
         try:

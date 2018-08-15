@@ -36,7 +36,7 @@ class ServiceRequestsDetail(Resource):
         if not json_data:
             return {'message': 'No input data received for updating citizen'}, 400
 
-        csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
 
         service_request = ServiceReq.query.filter_by(sr_id=id) \
                 .join(ServiceReq.citizen, aliased=True) \
@@ -66,7 +66,7 @@ class ServiceRequestActivate(Resource):
     @api_call_with_retry
     def post(self, id):
 
-        csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
 
         service_request = ServiceReq.query.filter_by(sr_id=id) \
             .join(ServiceReq.citizen, aliased=True) \

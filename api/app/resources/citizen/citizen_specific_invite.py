@@ -28,7 +28,7 @@ class CitizenSpecificInvite(Resource):
     @oidc.accept_token(require_token=True)
     @api_call_with_retry
     def post(self, id):
-        csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
         citizen = Citizen.query.get(id)
         active_service_request = citizen.get_active_service_request()
 

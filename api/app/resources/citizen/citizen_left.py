@@ -31,7 +31,7 @@ class CitizenLeft(Resource):
     @api_call_with_retry
     def post(self, id):
 
-        csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
         citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
         sr_state = SRState.query.filter_by(sr_code="Complete").first()
 

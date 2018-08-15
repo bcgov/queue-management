@@ -35,7 +35,7 @@ class ServiceRequestsList(Resource):
         if not json_data:
             return {"message": "No input data received for creating service request"}, 400
 
-        csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
 
         try:
             service_request = self.service_request_schema.load(json_data['service_request']).data

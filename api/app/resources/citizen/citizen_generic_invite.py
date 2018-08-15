@@ -29,7 +29,7 @@ class CitizenGenericInvite(Resource):
     @api_call_with_retry
     def post(self):
 
-        csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
 
         active_citizen_state = CitizenState.query.filter_by(cs_state_name='Active').first()
         waiting_period_state = PeriodState.query.filter_by(ps_name='Waiting').first()

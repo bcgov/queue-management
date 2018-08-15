@@ -31,7 +31,7 @@ class CitizenList(Resource):
     @oidc.accept_token(require_token=True)
     def get(self):
         try:
-            csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+            csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
             active_state = CitizenState.query.filter_by(cs_state_name="Active").first()
             citizens = Citizen.query.filter_by(office_id=csr.office_id, cs_id=active_state.cs_id) \
                 .join(Citizen.service_reqs).all()
@@ -48,7 +48,7 @@ class CitizenList(Resource):
     def post(self):
         json_data = request.get_json()
 
-        csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
 
         try:
             citizen = self.citizen_schema.load(json_data).data

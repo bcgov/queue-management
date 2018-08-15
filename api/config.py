@@ -36,6 +36,7 @@ class LocalConfig(BaseConfig):
     USE_HTTPS = False
     SQLALCHEMY_ECHO = False
     SLACK_URL = os.getenv('SLACK_URL')
+    SECRET_KEY = "pancakes"
 
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
