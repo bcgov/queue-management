@@ -210,8 +210,8 @@ export const store = new Vuex.Store({
             resp.data.citizens.forEach((citizen) => {
               if (citizen.service_reqs.length > 0) {
                 let activeService = citizen.service_reqs.filter(sr=>sr.periods.some(p=>p.time_end === null))
-                if (activeService.periods.length > 0) {
-                  let activePeriod = activeService.periods[activeService.periods.length - 1]
+                if (activeService[0].periods.length > 0) {
+                  let activePeriod = activeService[0].periods[activeService[0].periods.length - 1]
                   if ((["Invited", "Being Served"].indexOf(activePeriod.ps.ps_name) > -1) 
                     && activePeriod.csr.username === this.state.user.username) {
                     citizenFound = true
