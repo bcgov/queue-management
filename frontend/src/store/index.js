@@ -31,7 +31,8 @@ export const store = new Vuex.Store({
     user: {
       username: null,
       office: {
-        office_name: null
+        office_name: null,
+        office_id: null
       },
       receptionist_ind: null
     },
@@ -166,7 +167,7 @@ export const store = new Vuex.Store({
       let blankOpt = [{value:'', text:'Categories'}]
       return blankOpt.concat(mappedOpts)
     },
-    
+
     filtered_services: (state, getters) => {
       let services = state.services
 
@@ -204,7 +205,7 @@ export const store = new Vuex.Store({
           if (!resp.data.citizens) {
             context.commit('updateQueue', [])
           }
-          
+
           if (resp.data.citizens && resp.data.citizens.length > 0) {
             context.commit('updateQueue', resp.data.citizens)
             resp.data.citizens.forEach((citizen) => {
@@ -212,7 +213,7 @@ export const store = new Vuex.Store({
                 let activeService = citizen.service_reqs.filter(sr=>sr.periods.some(p=>p.time_end === null))
                 if (activeService[0].periods.length > 0) {
                   let activePeriod = activeService[0].periods[activeService[0].periods.length - 1]
-                  if ((["Invited", "Being Served"].indexOf(activePeriod.ps.ps_name) > -1) 
+                  if ((["Invited", "Being Served"].indexOf(activePeriod.ps.ps_name) > -1)
                     && activePeriod.csr.username === this.state.user.username) {
                     citizenFound = true
                     console.log("Found citizen")
@@ -293,7 +294,8 @@ export const store = new Vuex.Store({
     },
 
     getServices(context) {
-      Axios(context).get('/services/')
+      let office_id = context.state.user.office.office_id
+      Axios(context).get(`/services/?office_id=${office_id}`)
         .then( resp => {
           context.commit('setServices', resp.data.services)
         })
@@ -388,8 +390,6 @@ export const store = new Vuex.Store({
     clickAddServiceApply(context) {
       context.dispatch('postServiceReq').then( () => {
         context.dispatch('putCitizen').then(resp => {
-          console.log('HERE')
-          console.log(resp.data.citizen)
           context.dispatch('setServiceModalForm', resp.data.citizen).then( () => {
             context.commit( 'toggleAddModal', false )
             context.commit( 'toggleServiceModal', true )
@@ -708,7 +708,7 @@ export const store = new Vuex.Store({
       let data = {}
       let citizen_id
       let quick
-      
+
       if (context.state.serviceModalForm.citizen_id) {
         let { citizen_comments } = context.state.serviceModalForm
         citizen_id = context.state.serviceModalForm.citizen_id
@@ -730,7 +730,7 @@ export const store = new Vuex.Store({
       } else {
         let { form_data } = context.getters
         citizen_id = form_data.citizen.citizen_id
-        data.qt_xn_citizen_ind = form_data.quick 
+        data.qt_xn_citizen_ind = form_data.quick
         if (!form_data.quick) {
           data.qt_xn_citizen_ind = 0
         }
@@ -747,7 +747,7 @@ export const store = new Vuex.Store({
           })
         })
       }
-      
+
       return new Promise((resolve, reject) => {
         let url = `/citizens/${citizen_id}/`
         Axios(context).put(url,data).then(resp=>{
@@ -778,12 +778,12 @@ export const store = new Vuex.Store({
       let compareService = context.getters.active_service
       let { sr_id } = compareService
       let index = context.getters.active_index
-      
+
       let data = {}
       if (activeQuantity != compareService.quantity) {
         data.quantity = activeQuantity
       }
-      
+
       let setup = context.state.addModalSetup
       let { form_data } = context.getters
       if ( setup === 'add_mode' || setup === 'edit_mode') {
@@ -798,7 +798,7 @@ export const store = new Vuex.Store({
         console.log('no service_reqs object data changed')
         return new Promise((resolve, reject) => { resolve(' ') })
       }
-      
+
       return new Promise((resolve, reject) => {
         let url = `/service_requests/${sr_id}/`
         Axios(context).put(url,data).then(resp=>{
@@ -816,7 +816,7 @@ export const store = new Vuex.Store({
       let url = "/slack/"
       Axios.post(url, slackObject)
     },
-    
+
     resetAddCitizenModal(context) {
       context.commit('toggleAddModal', false)
       context.dispatch('toggleModalBack')
@@ -838,7 +838,7 @@ export const store = new Vuex.Store({
       }
       context.commit('setAddModalData', data)
     },
-    
+
     setServedCitizenId(context, payload) {
       let data = {
         type: 'citizen_id',
@@ -900,7 +900,7 @@ export const store = new Vuex.Store({
 
     resetAddModalForm(state) {
       let keys = Object.keys(state.addModalForm)
-      
+
       keys.forEach( key => {
         if (key !== 'quick' && key !== 'suspendFilter') Vue.set(
           state.addModalForm,
@@ -1007,7 +1007,7 @@ export const store = new Vuex.Store({
     setModalAlert(state, payload) {
       state.alertMessage = payload
     },
-    
+
     setAllCitizens(state, payload) {
       state.allCitizens = payload
     },
