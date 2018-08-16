@@ -73,18 +73,18 @@ podTemplate(
         }
         stage('Deploy API'){
             echo ">>> get api image hash <<<"
-            IMAGE_HASH = sh (
+            API_IMAGE_HASH = sh (
                 script: 'oc get istag queue-management-api:latest -o template --template="{{.image.dockerImageReference}}"|awk -F ":" \'{print $3}\'',
                 returnStdout: true
             ).trim()
 
-            echo ">>> image_hash: $IMAGE_HASH"
+            echo ">>> image_hash: $API_IMAGE_HASH"
 
             openshiftTag destStream: 'queue-management-api', 
                          verbose: 'true', 
                          destTag: 'dev', 
                          srcStream: 'queue-management-api', 
-                         srcTag: "${IMAGE_HASH}"
+                         srcTag: "${API_IMAGE_HASH}"
 
             // Sleep to ensure that the deployment has started when we begin the verification stage
             sleep 5
@@ -99,18 +99,18 @@ podTemplate(
         }
         stage('Deploy Frontend'){
             echo ">>> get frontend image hash <<<"
-            IMAGE_HASH = sh (
+            FRONTEND_IMAGE_HASH = sh (
                 script: 'oc get istag queue-management-frontend:latest -o template --template="{{.image.dockerImageReference}}"|awk -F ":" \'{print $3}\'',
                 returnStdout: true
             ).trim()
 
-            echo ">>> image_hash: $IMAGE_HASH"
+            echo ">>> image_hash: $FRONTEND_IMAGE_HASH"
 
             openshiftTag destStream: 'queue-management-frontend', 
                          verbose: 'true', 
                          destTag: 'dev', 
                          srcStream: 'queue-management-frontend', 
-                         srcTag: "${IMAGE_HASH}"
+                         srcTag: "${FRONTEND_IMAGE_HASH}"
 
             // Sleep to ensure that the deployment has started when we begin the verification stage
             sleep 5
@@ -210,21 +210,33 @@ podTemplate(
 stage('deploy test') {
     node('jenkins-python3nodejs'){
         input "Deploy to test?"
+        openshiftTag destStream: 'queue-management-api',
+                     verbose: 'true',
+                     destTag: 'test',
+                     srcStream: 'queue-management-api',
+                     srcTag: "${API_IMAGE_HASH}"
+
         openshiftTag destStream: 'queue-management-frontend',
                      verbose: 'true',
                      destTag: 'test',
                      srcStream: 'queue-management-frontend',
-                     srcTag: "${IMAGE_HASH}"
+                     srcTag: "${FRONTEND_IMAGE_HASH}"
     }
 }
 
 stage('deploy prod') {
     node('jenkins-python3nodejs'){
         input "Deploy to prod?"
+        openshiftTag destStream: 'queue-management-api',
+                     verbose: 'true',
+                     destTag: 'production',
+                     srcStream: 'queue-management-api',
+                     srcTag: "${API_IMAGE_HASH}"
+
         openshiftTag destStream: 'queue-management-frontend',
                      verbose: 'true',
                      destTag: 'production',
                      srcStream: 'queue-management-frontend',
-                     srcTag: "${IMAGE_HASH}"
+                     srcTag: "${FRONTEND_IMAGE_HASH}"
     }
 }
