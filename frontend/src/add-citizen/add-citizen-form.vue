@@ -1,12 +1,12 @@
 <template>
   <div class="add_citizen_template">
-    <template v-if="addModalSetup === 'non-reception'">
+    <template v-if="addModalSetup === 'non_reception'">
       <b-container fluid class="add_citizen_template">
         <b-form>
-          <Comments />
           <Channel />
           <Filters />
           <Tables />
+          <Comments style="margin-top:5px"/>
         </b-form>
       </b-container>
     </template>

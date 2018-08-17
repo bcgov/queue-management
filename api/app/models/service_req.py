@@ -116,4 +116,5 @@ class ServiceReq(Base):
     def finish_service(self, csr):
         active_period = self.get_active_period()
         active_period.time_end = datetime.now()
+        self.citizen.citizen_comments = None
         # db.session.add(active_period)

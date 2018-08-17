@@ -32,7 +32,11 @@ export const store = new Vuex.Store({
       username: null,
       office: {
         office_name: null,
-        office_id: null
+        office_id: null,
+        qt_xn_csr_ind: true,
+        sb: {
+          sb_type: null
+        }
       },
       receptionist_ind: null
     },
@@ -68,8 +72,12 @@ export const store = new Vuex.Store({
 
   getters: {
     reception(state) {
-      if (state.user.receptionist_ind)
-        return state.user.receptionist_ind===1 ? true : false
+      if (state.user.office && state.user.office.sb)
+        if (state.user.office.sb.sb_type === "callbyname" || state.user.office.sb.sb_type === "callbyticket") {
+          return true
+        }
+
+        return false
     },
 
     active_index(state, getters) {
@@ -848,10 +856,9 @@ export const store = new Vuex.Store({
     },
 
     toggleModalBack(context) {
-      if (context.state.user.receptionist_ind === 0) {
-        context.commit('switchAddModalMode', 'non-reception')
-      }
-      if (context.state.user.receptionist_ind === 1) {
+      if (context.state.user.office.sb.sb_type === "nocallonsmartboard") {
+        context.commit('switchAddModalMode', 'non_reception')
+      } else {
         context.commit('switchAddModalMode', 'reception')
       }
     },
@@ -1018,7 +1025,9 @@ export const store = new Vuex.Store({
 
     toggleInvitedStatus: (state, payload) => state.citizenInvited = payload,
 
-    toggleBegunStatus: (state, payload) => state.serviceBegun = payload
+    toggleBegunStatus: (state, payload) => state.serviceBegun = payload,
+
+    setQuickTransactionState: (state, payload) => state.user.qt_xn_csr_ind = payload
   }
 })
 

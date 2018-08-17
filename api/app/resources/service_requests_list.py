@@ -108,7 +108,6 @@ class ServiceRequestsList(Resource):
         db.session.add(citizen)
         db.session.commit()
 
-        print (len(citizen.service_reqs))
         # We only need to send the socket emission for creating multiple service reqs
         if len(citizen.service_reqs) >= 2:
             print("Emiting")

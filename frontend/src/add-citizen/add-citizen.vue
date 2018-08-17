@@ -1,7 +1,7 @@
 
 
 <template>
-    <b-modal 
+    <b-modal
              :visible="showAddModal"
              size="lg"
              hide-header
@@ -9,34 +9,26 @@
              no-close-on-backdrop
              no-close-on-esc
              class="m-0 p-0"
-             @shown="setupForm()"
-             >
-
+             @shown="setupForm()">
        <div style="display: flex; flex-direction: row; justify-content: space-between" class="modal_header">
          <div><h5>{{modalTitle}}</h5></div>
-         <div>
-           <b-button-close size="lg"
-                           @click="cancelAddCitizensModal" />
-         </div>
-
        </div>
        <b-alert :show="dismissCountDown"
                 style="h-align: center"
                 variant="danger"
                 @dismissed="dismissCountDown=0"
-                @dismiss-count-down="countDownChanged">
-         {{this.$store.state.alertMessage}}
-       </b-alert>
+                @dismiss-count-down="countDownChanged">{{this.$store.state.alertMessage}}</b-alert>
       <AddCitizenForm />
       <b-container class="mt-3 pr-3">
-
         <b-row align-v="center" align-h="end">
-          <b-col cols="1" class="p-0 mr-1">Quick Txn?</b-col>
-          <b-col col cols="1" class="p-0">
-            <b-form-checkbox  v-model="quickTrans" value="1" unchecked-value="0"/>
-          </b-col>
-        <Buttons />
-      </b-row>
+          <div v-if="reception">
+            <b-col cols="1" class="p-0 mr-1">Quick Txn?</b-col>
+            <b-col col cols="1" class="p-0">
+              <b-form-checkbox  v-model="quickTrans" value="1" unchecked-value="0"/>
+            </b-col>
+          </div>
+          <Buttons />
+        </b-row>
       </b-container>
     </b-modal>
 </template>
@@ -73,7 +65,7 @@ export default {
     computed: {
       ...mapState(['addCitizenModal', 'showAddModal', 'addModalSetup', 'serviceModalForm']),
       ...mapGetters(['form_data', 'reception']),
-      
+
       modalTitle() {
         if (this.addModalSetup === 'edit_mode') {
           return 'Edit Service'

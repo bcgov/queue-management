@@ -12,10 +12,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask import g
+from flask import g, request
 from flask_restplus import Resource
 from qsystem import api, api_call_with_retry, db, oidc, socketio
-from app.models import Citizen, CSR, CitizenState, PeriodState, ServiceReq, SRState
+from app.models import Citizen, CSR, CitizenState, Period, PeriodState, ServiceReq, SRState
 from app.schemas import CitizenSchema
 
 
@@ -36,25 +36,37 @@ class CitizenGenericInvite(Resource):
 
         citizen = None
 
-        if csr.qt_xn_csr_ind:
-            citizen = Citizen.query.filter_by(qt_xn_citizen_ind=1, cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
+        # qt_xn_csr_ind = csr.qt_xn_csr_ind
+        qt_xn_csr_ind = request.get_json().get('qt_xn_csr_ind')
+
+        if qt_xn_csr_ind:
+            citizen = Citizen.query \
+                .filter_by(qt_xn_citizen_ind=1, cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
                 .join(Citizen.service_reqs) \
                 .join(ServiceReq.periods) \
                 .filter_by(ps_id=waiting_period_state.ps_id) \
+                .filter(Period.time_end.is_(None)) \
+                .order_by(Citizen.citizen_id) \
                 .first()
         else:
-            citizen = Citizen.query.filter_by(qt_xn_citizen_ind=0, cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
+            citizen = Citizen.query \
+                .filter_by(qt_xn_citizen_ind=0, cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
                 .join(Citizen.service_reqs) \
                 .join(ServiceReq.periods) \
                 .filter_by(ps_id=waiting_period_state.ps_id) \
+                .filter(Period.time_end.is_(None)) \
+                .order_by(Citizen.citizen_id) \
                 .first()
 
         # Either no quick txn citizens for the quick txn csr, or vice versa
         if citizen is None:
-            citizen = Citizen.query.filter_by(cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
+            citizen = Citizen.query \
+                .filter_by(cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
                 .join(Citizen.service_reqs) \
                 .join(ServiceReq.periods) \
                 .filter_by(ps_id=waiting_period_state.ps_id) \
+                .filter(Period.time_end.is_(None)) \
+                .order_by(Citizen.citizen_id) \
                 .first()
 
         if citizen is None:

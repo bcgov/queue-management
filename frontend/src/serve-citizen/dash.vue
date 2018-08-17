@@ -27,12 +27,13 @@ limitations under the License.*/
 
     <b-container fluid>
       <b-row>
-        <b-col style="padding-top: 10px">
+        <b-col style="padding-top: 10px" cols="8">
           <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: flex-start">
             <div>
               <b-button class="m-1 btn-primary"
                         @click="invite"
                         :disabled="citizenInvited===true"
+                        v-if="reception"
                         id="invite-citizen-button">Invite</b-button>
               <b-button class="m-1 btn-primary"
                         @click="clickServeNow"
@@ -43,18 +44,11 @@ limitations under the License.*/
               <b-button class="m-1 btn-primary"
                         @click="clickAddCitizen""
                         :disabled="citizenInvited===true"
-                        id="add-citizen-button"
-                        >
-                Add Citizen
-              </b-button>
+                        id="add-citizen-button">Add Citizen</b-button>
               <b-button class="m-1 btn-primary"
                         @click="clickAddCitizen""
                         :disabled="citizenInvited===true"
-                        id="add-citizen-button"
-                        >
-                Back Office
-              </b-button>
-
+                        id="add-citizen-button">Back Office</b-button>
             </div>
           </div>
         </b-col>

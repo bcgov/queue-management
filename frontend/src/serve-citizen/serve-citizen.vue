@@ -5,15 +5,12 @@
     <div class="serve-modal-content">
      <div style="display: flex; flex-direction: row; justify-content: space-between" class="modal_header">
        <div><h5>Serve Citizen</h5></div>
-       <div><b-button-close size="lg" @click="closeWindow" /></div>
      </div>
-
       <b-container class="pb-3" id="serve-citizen-modal-top" fluid>
        <b-row no-gutters class="p-2">
          <b-col col cols="4">
            <div><h6>Ticket #: <strong>{{citizen.ticket_number}}</strong></h6></div>
            <div><h6>Channel: <strong>{{channel.channel_name}}</strong></h6></div>
-
          </b-col>
          <b-col cols="auto" class="ml-3 mr-2">
            <h6>Comments</h6>
@@ -23,8 +20,7 @@
              <b-textarea id="serve_comment_textarea"
                          v-model="comments"
                          :rows="4"
-                         size="sm"
-                         />
+                         size="sm" />
            </div>
          </b-col>
        </b-row>
@@ -57,7 +53,7 @@
                   class="pt-3 pb-3">
        <b-row no-gutters>
          <b-col cols="7"/>
-       
+
          <b-col cols="auto" style="align: right">
            <b-button class="w-100 btn-primary serve-btn" @click="clickAddService" :disabled="serviceBegun===false">
              Add Next Service
@@ -72,23 +68,23 @@
                   id="serve-citizen-modal-footer"
                   class="pt-3">
        <b-row no-gutters align-h="center">
-         <b-col cols="2" />
-         <b-col cols="3">
+         <b-col cols="1" />
+         <b-col cols="4">
            <b-button @click="clickHold"
                      :disabled="serviceBegun===false"
                      class="w-100 btn-primary serve-btn"
                      id="serve-citizen-place-on-hold-button">Place on Hold</b-button>
          </b-col>
          <b-col cols="2" />
-         <b-col cols="3">
+         <b-col cols="4">
            <b-button @click="serviceFinish"
                      :disabled="serviceBegun===false"
-                     class="w-100 btn-primary serve-btn" 
+                     class="w-100 btn-primary serve-btn"
                      id="serve-citizen-finish-button">
                        Finish
                    </b-button>
-           <div v-if="serviceBegun===true" class="px-3 pt-1">
-             <b-form-checkbox v-model="checked" 
+           <div v-if="serviceBegun===true" class="px-3 pt-1" style="padding-right: 0 !important">
+             <b-form-checkbox v-model="checked"
                               value="yes"
                               unchecked-value="no"
                               >
@@ -96,7 +92,7 @@
              </b-form-checkbox>
            </div>
          </b-col>
-         <b-col cols="2" />
+         <b-col cols="1" />
        </b-row>
        <b-row no-gutters>
          <b-col cols="11"/>
@@ -135,7 +131,7 @@ export default {
       'serviceBegun',
       'serviceModalForm'
     ]),
-    
+
     ...mapGetters(['invited_citizen', 'active_service', 'invited_service_reqs']),
 
     citizen() {
@@ -156,7 +152,7 @@ export default {
         })
       }
     },
-    
+
     channel() {
       if (!this.active_service) {
         return {channel_name: '', channel_id: ''}
@@ -208,28 +204,28 @@ export default {
 
 <style scoped>
   .serve-modal {
-    position: fixed; 
-    z-index: 1; 
+    position: fixed;
+    z-index: 1;
     left: 0;
     top: 0;
-    width: 100%; 
-    height: 100%; 
-    overflow: auto; 
-    background-color: rgb(0,0,0); 
-    background-color: rgba(0,0,0,0.4); 
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
     transition: display 1s;
 }
 
 .serve-modal-content {
     background-color: #fefefe;
-    margin-right: auto; 
+    margin-right: auto;
     margin-left: auto;
     margin-top: 1%;
     border-radius: 5px;
     padding: 20px;
     border: 1px solid #888;
-    width: 80%; 
-    
+    width: 80%;
+
 }
 
 #serve-citizen-modal-top {

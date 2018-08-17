@@ -25,8 +25,9 @@ limitations under the License.*/
 
     <div v-show="this.$store.state.isLoggedIn"
          style="display: flex; flex-direction: row; justify-content: space-between">
-      <div style="padding-right: 20px">
+      <div style="padding-right: 20px" v-if="reception">
         <b-form-checkbox :checked="quick_trans_status"
+                         @change="updateTransactionStatus($event)""
                          class="navbar-label">Quick Txn</b-form-checkbox>
       </div>
       <div style="padding-right: 20px">
@@ -45,7 +46,7 @@ limitations under the License.*/
 
 <script>
 import _ from 'lodash'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 
   export default {
     name: 'Login',
@@ -54,9 +55,10 @@ import { mapGetters } from 'vuex'
       _.defer(this.initLocalStorage)
     },
     computed: {
-      ...mapGetters(['quick_trans_status'])
+      ...mapGetters(['quick_trans_status', 'reception'])
     },
     methods: {
+      ...mapMutations(['setQuickTransactionState']),
       initLocalStorage() {
         if(localStorage.token) {
           let tokenExp = localStorage.tokenExp
@@ -160,6 +162,10 @@ import { mapGetters } from 'vuex'
         }).error( () => {
           output('Failed to refresh token')
         })
+      },
+
+      updateTransactionStatus(e) {
+        this.setQuickTransactionState(e)
       }
     }
   }
