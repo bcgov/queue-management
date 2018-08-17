@@ -25,11 +25,12 @@ class Citizen(Base):
     citizen_name = db.Column(db.String(150), nullable=True)
     citizen_comments = db.Column(db.String(1000), nullable=True)
     qt_xn_citizen_ind = db.Column(db.Integer, default=0, nullable=False)
-    cs_id = db.Column(db.BigInteger, db.ForeignKey('citizenstate.cs_id'), nullable=False)
+    cs_id = db.Column(db.Integer, db.ForeignKey('citizenstate.cs_id'), nullable=False)
     start_time = db.Column(db.DateTime, nullable=False)
 
-    service_reqs = db.relationship('ServiceReq')
-    cs = db.relationship('CitizenState')
+    service_reqs = db.relationship('ServiceReq', lazy='joined', order_by='ServiceReq.sr_id')
+    cs = db.relationship('CitizenState', lazy='joined')
+    office = db.relationship('Office', lazy='joined')
 
     def __repr__(self):
         return '<Citizen Name:(name={self.citizen_name!r})>'.format(self=self)
@@ -45,9 +46,14 @@ class Citizen(Base):
         return None
 
     def get_service_start_time(self):
+        time_end = self.start_time
+
         # If a service request already exists, then the start time for the next
         # service should be the end time of the previous service request
-        if len(self.service_reqs) >= 2:
-            return self.service_reqs[-2].periods[-1].time_end
-        else:
-            return self.start_time
+        for s in self.service_reqs:
+            sorted_periods = sorted(s.periods, key=lambda p: p.time_start)
+
+            if len(sorted_periods) > 0 and sorted_periods[-1].time_end is not None and sorted_periods[-1].time_end > time_end:
+                time_end = sorted_periods[-1].time_end
+
+        return time_end

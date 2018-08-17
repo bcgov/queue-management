@@ -15,8 +15,8 @@ limitations under the License.'''
 from flask import request, g
 from flask_restplus import Resource
 from datetime import datetime
-from qsystem import api, db, oidc
-from app.models import Citizen, Channel, CSR, Period, PeriodState, ServiceReq, SRState
+from qsystem import api, api_call_with_retry, db, oidc, socketio
+from app.models import Citizen, CitizenState, Channel, CSR, Period, PeriodState, Service, ServiceReq, SRState
 from app.schemas import ChannelSchema, ServiceReqSchema
 from marshmallow import ValidationError
 
@@ -28,57 +28,90 @@ class ServiceRequestsList(Resource):
     service_request_schema = ServiceReqSchema()
 
     @oidc.accept_token(require_token=True)
+    @api_call_with_retry
     def post(self):
         json_data = request.get_json()
 
         if not json_data:
-            return {"message": "No input data received for creating citizen"}, 400
+            return {"message": "No input data received for creating service request"}, 400
 
-        csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
 
         try:
             service_request = self.service_request_schema.load(json_data['service_request']).data
-            channel_id = json_data['channel_id']
 
         except ValidationError as err:
             return {"message": err.messages}, 422
         except KeyError as err:
-            return {"message": err.messages}
+            print (err)
+            return {"message": str(err)}
 
-        channel = Channel.query.get(channel_id)
         active_sr_state = SRState.query.filter_by(sr_code='Active').first()
-        service_request.channel = channel
+        complete_sr_state = SRState.query.filter_by(sr_code='Complete').first()
+        citizen_state = CitizenState.query.filter_by(cs_state_name="Active").first()
+        citizen = Citizen.query.get(service_request.citizen_id)
+        service = Service.query.get(service_request.service_id)
+
+        if citizen is None:
+            return {"message": "No matching citizen found for citizen_id"}, 400
+
+        if service is None:
+            return {"message": "No matching service found for service_id"}, 400
+
+        # Find the currently active service_request and close it (if it exists)
+        for req in citizen.service_reqs:
+            if req.sr_state_id == active_sr_state.sr_state_id:
+                req.sr_state_id = complete_sr_state.sr_state_id
+                req.finish_service(csr)
+                db.session.add(req)
+
         service_request.sr_state = active_sr_state
 
+        # Only add ticket creation period and ticket number if it's their first service_request
+        if len(citizen.service_reqs) == 0:
+            period_state_ticket_creation = PeriodState.query.filter_by(ps_name="Ticket Creation").first()
+
+            ticket_create_period = Period(
+                csr_id=csr.csr_id,
+                reception_csr_ind=csr.receptionist_ind,
+                ps_id=period_state_ticket_creation.ps_id,
+                time_start=citizen.get_service_start_time(),
+                time_end=datetime.now(),
+                accurate_time_ind=1
+            )
+            service_request.periods.append(ticket_create_period)
+
+            service_count = ServiceReq.query \
+                    .join(ServiceReq.citizen, aliased=True) \
+                    .filter(Citizen.start_time >= citizen.start_time.strftime("%Y-%m-%d")) \
+                    .filter_by(office_id=csr.office_id) \
+                    .join(ServiceReq.service, aliased=True) \
+                    .filter_by(prefix=service.prefix) \
+                    .count()
+
+            citizen.ticket_number = service.prefix + str(service_count)
+        else:
+            period_state_being_served = PeriodState.query.filter_by(ps_name="Being Served").first()
+
+            ticket_create_period = Period(
+                csr_id=csr.csr_id,
+                reception_csr_ind=csr.receptionist_ind,
+                ps_id=period_state_being_served.ps_id,
+                time_start=datetime.now(),
+                accurate_time_ind=1
+            )
+            service_request.periods.append(ticket_create_period)
+
+        citizen.cs_id = citizen_state.cs_id
+
         db.session.add(service_request)
-        db.session.flush()
-
-        period_state_ticket_creation = PeriodState.query.filter_by(ps_name="Ticket Creation").first()
-
-        ticket_create_period = Period(
-            sr_id=service_request.sr_id,
-            csr_id=csr.csr_id,
-            reception_csr_ind=csr.receptionist_ind,
-            channel_id=channel.channel_id,
-            ps_id=period_state_ticket_creation.ps_id,
-            time_start=service_request.citizen.get_service_start_time(),
-            time_end=datetime.now(),
-            accurate_time_ind=1
-        )
-
-        service_count = ServiceReq.query \
-                .join(ServiceReq.citizen, aliased=True) \
-                .filter(Citizen.start_time >= datetime.now().strftime("%Y-%m-%d")) \
-                .filter_by(office_id=csr.office_id) \
-                .join(ServiceReq.service, aliased=True) \
-                .filter_by(prefix=service_request.service.prefix) \
-                .count()
-
-        service_request.citizen.ticket_number = service_request.service.prefix + str(service_count)
-
-        db.session.add(ticket_create_period)
+        db.session.add(citizen)
         db.session.commit()
 
+        # We only need to send the socket emission for creating multiple service reqs
+        if len(citizen.service_reqs) >= 2:
+            print("Emiting")
+            socketio.emit('update_customer_list', {}, room=csr.office_id)
         result = self.service_request_schema.dump(service_request)
 
         return {'service_request': result.data,

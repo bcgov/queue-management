@@ -1,4 +1,9 @@
-module.exports = {
+var merge = require('webpack-merge')
+var prodEnv = require('./prod.env')
+
+module.exports = merge(prodEnv, {
   NODE_ENV: '"production"',
-  API_URL: '"https://servicebc-cfms.pathfinder.gov.bc.ca/api/v1"'
-}
+  API_URL: '"/api/v1"',
+  SOCKET_URL: '""',
+  KEYCLOAK_JSON_URL: '"/static/keycloak/keycloak.json"'
+})

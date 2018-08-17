@@ -25,6 +25,7 @@ from .period_state import PeriodState
 from .permission import Permission
 from .role import Role
 from .service import Service
+from .sr_state import SRState
 from .service_req import ServiceReq
 from .smartboard import SmartBoard
-from .sr_state import SRState
+

@@ -12,22 +12,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
 
-
-
 <template>
-  <h6>
-    Socket Connection:
-    <b-badge :variant="buttonStyle">
-      {{ socketMessage }}
-    </b-badge>
-  </h6>
+  <div>
+    <p>HTTP 404 - Not Found!  Shitty </p>
+  </div>
 </template>
 
 <script>
-  export default {
-    name: 'SocketStatus',
-    props: [ 'buttonStyle', 'socketMessage' ]
-  }
+export default {
+  name: '404',
+}
 </script>
 
 

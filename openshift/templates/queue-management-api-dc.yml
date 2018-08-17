@@ -11,11 +11,15 @@ parameters:
 - name: API_APPLICATION_DOMAIN
   description: "The exposed hostname that will route to the Flask service"
   required: true
-  value: "servicebc-cfms-api-dev.pathfinder.gov.bc.ca"
+  value: "servicebc-cfms-dev.pathfinder.gov.bc.ca"
 - name: FLASK_CONFIGURATION
   description: "The configuration object that should be loaded for this deployment. Only development exists currently"
   required: true
   value: development
+- name: API_IMAGE_TAG
+  description: The tag to use when deploying
+  required: true
+  value: "dev"
 objects:
 - kind: Service
   apiVersion: v1
@@ -41,6 +45,7 @@ objects:
       kind: Service
       name: "${API_NAME}"
     tls:
+      insecureEdgeTerminationPolicy: Redirect
       termination: edge
 - kind: DeploymentConfig
   apiVersion: v1
@@ -54,6 +59,11 @@ objects:
   spec:
     strategy:
       type: Rolling
+      rollingParams:
+        updatePeriodSeconds: 1
+        intervalSeconds: 1
+        timeoutSeconds: 60
+        maxUnavailable: 1
     triggers:
     - type: ImageChange
       imageChangeParams:
@@ -63,7 +73,7 @@ objects:
         from:
           kind: ImageStreamTag
           namespace: servicebc-cfms-tools
-          name: "${API_NAME}:dev"
+          name: "${API_NAME}:${API_IMAGE_TAG}"
     - type: ConfigChange
     replicas: 3
     selector:
@@ -97,15 +107,26 @@ objects:
             timeoutSeconds: 3
           env:
           - name: DATABASE_ENGINE
-            value: "cockroachdb"
+            value: "mysql"
           - name: DATABASE_USERNAME
-            value: "queue_user"
-          - name: DATABASE_HOST
-            value: "cockroachdb-public"
-          - name: DATABASE_PORT
-            value: 26257
+            valueFrom:
+              secretKeyRef:
+                name: "percona-passwords"
+                key: mysql_user
+          - name: DATABASE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: "percona-passwords"
+                key: mysql_password
           - name: DATABASE_NAME
-            value: "queue_management"
+            valueFrom:
+              secretKeyRef:
+                name: "percona-passwords"
+                key: mysql_database
+          - name: DATABASE_HOST
+            value: "percona"
+          - name: DATABASE_PORT
+            value: "3306"
           - name: SQLALCHEMY_ECHO
             value: "False"
           - name: APP_CONFIG
@@ -117,15 +138,20 @@ objects:
           - name: ACTIVE_MQ_HOST
             value: rabbitmq
           - name: ACTIVE_MQ_PORT
-            value: 5672
-          - name: ACTIVE_MQ_USER
-            value: guest
-          - name: ACTIVE_MQ_PASSWORD
-            value: guest
+            value: "5672"
           resources:
             requests:
-              cpu: 100m
+              cpu: 200m
               memory: 256Mi
             limits:
               cpu: 200m
               memory: 512Mi
+          volumeMounts:
+            - mountPath: /opt/app-root/src/client_secrets
+              name: oidc-secrets-o6ya6
+              readOnly: true
+        volumes:
+          - configMap:
+              defaultMode: 420
+              name: oidc-secrets
+            name: oidc-secrets-o6ya6

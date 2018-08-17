@@ -12,36 +12,41 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
 
-
-
 <template>
-  <div>
-    <b-form-input v-model="name"
-                  id="client_name"
-                  type="text"
-                  placeholder="Client Name"
-                  />
-    <b-button @click="buttonClick()">
-      Add to Queue
-    </b-button>
-  </div>
+  <videoPlayer class="video-player-box"
+               ref="videoPlayer"
+               :options="playerOptions"
+               :playsinline="true">
+  </videoPlayer>
 </template>
 
 <script>
+  import 'video.js/dist/video-js.css'
+  import { videoPlayer } from 'vue-video-player'
+
   export default {
-    name: 'ClientInput',
+    name: 'BoardVideo',
+    components: {
+      videoPlayer
+    },
+    props: ['vidh', 'vidw'],
     data() {
       return {
-        name: ''
-      }
-    },
-    methods: {
-      buttonClick() {
-        this.$store.dispatch('postClient', {name: this.name})
-        this.name = ''
+        playerOptions: {
+          autoplay: 'true',
+          controls: false,
+          muted: true,
+          sources: [{
+            type: 'video/mp4',
+            src: 'https://sbc-qsystem-test.pathfinder.gov.bc.ca/sbc.mp4'
+          }],
+          height: this.vidh,
+          width: this.vidw
+        }
       }
     }
   }
 </script>
+
 
 

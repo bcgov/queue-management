@@ -31,34 +31,38 @@ class Bootstrap(Command):
 
         print("Starting to bootstrap data")
 
-        smartboard1 = models.SmartBoard(sb_type="Test")
+        smartboard1 = models.SmartBoard(sb_type="nocallbyticket")
+        smartboard2 = models.SmartBoard(sb_type="callbynumber")
+        smartboard3 = models.SmartBoard(sb_type="callbyname")
 
         db.session.add(smartboard1)
+        db.session.add(smartboard2)
+        db.session.add(smartboard3)
         db.session.flush()
 
         office1 = models.Office(
             office_name="Summerland", 
             office_number=1, 
-            sb_id=smartboard1.sb_id
+            sb_id=smartboard2.sb_id
         )
 
 
         office2 = models.Office(
             office_name="Victoria", 
             office_number=2, 
-            sb_id=smartboard1.sb_id
+            sb_id=smartboard2.sb_id
         )
 
         office3 = models.Office(
             office_name="Vernon", 
             office_number=3, 
-            sb_id=smartboard1.sb_id
+            sb_id=smartboard2.sb_id
         )
 
         office4 = models.Office(
             office_name="Test Office", 
             office_number=4, 
-            sb_id=smartboard1.sb_id
+            sb_id=smartboard2.sb_id
         )
 
         db.session.add(office1)
@@ -393,11 +397,33 @@ class Bootstrap(Command):
             csr_state_id=csr_state5.csr_state_id
         )
 
+        cfms_postman_operator = models.CSR(
+            username="cfms-postman-operator",
+            office_id=office4.office_id,
+            role_id=role2.role_id,
+            qt_xn_csr_ind=1,
+            receptionist_ind=1,
+            deleted=None,
+            csr_state_id=csr_state5.csr_state_id
+        )
+
+        cfms_postman_nonoperator = models.CSR(
+            username="cfms-postman-nonoperator",
+            office_id=office4.office_id,
+            role_id=role2.role_id,
+            qt_xn_csr_ind=0,
+            receptionist_ind=1,
+            deleted=None,
+            csr_state_id=csr_state5.csr_state_id
+        )
+
         db.session.add(adamkroon)
         db.session.add(cdmcinto)
         db.session.add(kgillani)
         db.session.add(scottrumsby)
         db.session.add(seanrumsby)
+        db.session.add(cfms_postman_operator)
+        db.session.add(cfms_postman_nonoperator)
 
         db.session.commit()
 

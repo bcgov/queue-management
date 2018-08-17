@@ -23,6 +23,106 @@ podTemplate(
             checkout scm
         }
         
+        stage('SonarQube Analysis') {
+          echo ">>> Performing static analysis <<<"
+          SONARQUBE_PWD = sh (
+            script: 'oc env dc/sonarqube --list | awk  -F  "=" \'/SONARQUBE_ADMINPW/{print $2}\'',
+            returnStdout: true
+          ).trim()
+
+          SONARQUBE_URL = sh (
+            script: 'oc get routes -o wide --no-headers | awk \'/sonarqube/{ print match($0,/edge/) ?  "https://"$2 : "http://"$2 }\'',
+            returnStdout: true
+          ).trim()
+
+          echo "PWD: ${SONARQUBE_PWD}"
+          echo "URL: ${SONARQUBE_URL}"
+
+          dir('sonar-runner') {
+            sh (
+              returnStdout: true, 
+              script: "./gradlew sonarqube -Dsonar.host.url=${SONARQUBE_URL} --stacktrace --info"
+            )
+          }
+        }
+        stage('Dependency check') {
+            dir('owasp') {
+                sh './dependency-check/bin/dependency-check.sh --project "Queue Management" --scan ../frontend/package.json --enableExperimental --enableRetired'
+                sh 'rm -rf ./dependency-check/data/'
+                publishHTML (target: [
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: false,
+                    keepAll: true,
+                    reportDir: './',
+                    reportFiles: 'dependency-check-report.html',
+                    reportName: "OWASP Dependency Check Report"
+                ])
+            }
+        }
+        stage('Build API') {
+            echo ">>> building queue-management-api <<<"
+            openshiftBuild bldCfg: 'queue-management-api', showBuildLogs: 'true'
+        }
+        stage('Build Frontend') {
+            echo ">>> building intermediate image: queue-management-npm-build <<<"
+            openshiftBuild bldCfg: 'queue-management-npm-build', showBuildLogs: 'true'
+
+            echo ">>> building final image: queue-management-frontend <<<"
+            openshiftBuild bldCfg: 'queue-management-frontend',
+                           showBuildLogs: 'true'
+        }
+        stage('Deploy API'){
+            echo ">>> get api image hash <<<"
+            API_IMAGE_HASH = sh (
+                script: 'oc get istag queue-management-api:latest -o template --template="{{.image.dockerImageReference}}"|awk -F ":" \'{print $3}\'',
+                returnStdout: true
+            ).trim()
+
+            echo ">>> image_hash: $API_IMAGE_HASH"
+
+            openshiftTag destStream: 'queue-management-api', 
+                         verbose: 'true', 
+                         destTag: 'dev', 
+                         srcStream: 'queue-management-api', 
+                         srcTag: "${API_IMAGE_HASH}"
+
+            // Sleep to ensure that the deployment has started when we begin the verification stage
+            sleep 5
+
+            openshiftVerifyDeployment depCfg: 'queue-management-api', 
+                                      namespace: 'servicebc-cfms-dev', 
+                                      replicaCount: 3, 
+                                      verbose: 'false', 
+                                      verifyReplicaCount: 'false'
+
+            echo ">>> deployment complete <<<"
+        }
+        stage('Deploy Frontend'){
+            echo ">>> get frontend image hash <<<"
+            FRONTEND_IMAGE_HASH = sh (
+                script: 'oc get istag queue-management-frontend:latest -o template --template="{{.image.dockerImageReference}}"|awk -F ":" \'{print $3}\'',
+                returnStdout: true
+            ).trim()
+
+            echo ">>> image_hash: $FRONTEND_IMAGE_HASH"
+
+            openshiftTag destStream: 'queue-management-frontend', 
+                         verbose: 'true', 
+                         destTag: 'dev', 
+                         srcStream: 'queue-management-frontend', 
+                         srcTag: "${FRONTEND_IMAGE_HASH}"
+
+            // Sleep to ensure that the deployment has started when we begin the verification stage
+            sleep 5
+
+            openshiftVerifyDeployment depCfg: 'queue-management-frontend', 
+                                      namespace: 'servicebc-cfms-dev', 
+                                      replicaCount: 3, 
+                                      verbose: 'false', 
+                                      verifyReplicaCount: 'false'
+
+            echo ">>> deployment complete <<<"
+        }
         stage('Newman Tests') {
             dir('api/postman') {
                 sh "ls -alh"
@@ -58,110 +158,9 @@ podTemplate(
                 )
             }
         }
-
-        stage('SonarQube Analysis') {
-          echo ">>> Performing static analysis <<<"
-          SONARQUBE_PWD = sh (
-            script: 'oc env dc/sonarqube --list | awk  -F  "=" \'/SONARQUBE_ADMINPW/{print $2}\'',
-            returnStdout: true
-          ).trim()
-
-          SONARQUBE_URL = sh (
-            script: 'oc get routes -o wide --no-headers | awk \'/sonarqube/{ print match($0,/edge/) ?  "https://"$2 : "http://"$2 }\'',
-            returnStdout: true
-          ).trim()
-
-          echo "PWD: ${SONARQUBE_PWD}"
-          echo "URL: ${SONARQUBE_URL}"
-
-          dir('sonar-runner') {
-            sh (
-              returnStdout: true, 
-              script: "./gradlew sonarqube -Dsonar.host.url=${SONARQUBE_URL} --stacktrace --info"
-            )
-          }
-        }
-        /*
-        stage('Dependency check') {
-            dir('owasp') {
-                sh './dependency-check/bin/dependency-check.sh --project "Queue Management" --scan ../frontend/package.json --enableExperimental --enableRetired'
-                sh 'rm -rf ./dependency-check/data/'
-                publishHTML (target: [
-                    allowMissing: false,
-                    alwaysLinkToLastBuild: false,
-                    keepAll: true,
-                    reportDir: './',
-                    reportFiles: 'dependency-check-report.html',
-                    reportName: "OWASP Dependency Check Report"
-                ])
-            }
-        }
-        stage('Build API') {
-            echo ">>> building queue-management-api <<<"
-            openshiftBuild bldCfg: 'queue-management-api', showBuildLogs: 'true'
-        }
-        stage('Build Frontend') {
-            echo ">>> building intermediate image: queue-management-npm-build <<<"
-            openshiftBuild bldCfg: 'queue-management-npm-build', showBuildLogs: 'true'
-
-            echo ">>> building final image: queue-management-frontend <<<"
-            openshiftBuild bldCfg: 'queue-management-frontend', showBuildLogs: 'true'
-        }
-        stage('Deploy API'){
-            echo ">>> get api image hash <<<"
-            IMAGE_HASH = sh (
-                script: 'oc get istag queue-management-api:latest -o template --template="{{.image.dockerImageReference}}"|awk -F ":" \'{print $3}\'',
-                returnStdout: true
-            ).trim()
-
-            echo ">>> image_hash: $IMAGE_HASH"
-
-            openshiftTag destStream: 'queue-management-api', 
-                         verbose: 'true', 
-                         destTag: 'dev', 
-                         srcStream: 'queue-management-api', 
-                         srcTag: "${IMAGE_HASH}"
-
-            // Sleep to ensure that the deployment has started when we begin the verification stage
-            sleep 5
-
-            openshiftVerifyDeployment depCfg: 'queue-management-api', 
-                                      namespace: 'servicebc-cfms-dev', 
-                                      replicaCount: 3, 
-                                      verbose: 'false', 
-                                      verifyReplicaCount: 'false'
-
-            echo ">>> deployment complete <<<"
-        }
-        stage('Deploy Frontend'){
-            echo ">>> get frontend image hash <<<"
-            IMAGE_HASH = sh (
-                script: 'oc get istag queue-management-frontend:latest -o template --template="{{.image.dockerImageReference}}"|awk -F ":" \'{print $3}\'',
-                returnStdout: true
-            ).trim()
-
-            echo ">>> image_hash: $IMAGE_HASH"
-
-            openshiftTag destStream: 'queue-management-frontend', 
-                         verbose: 'true', 
-                         destTag: 'dev', 
-                         srcStream: 'queue-management-frontend', 
-                         srcTag: "${IMAGE_HASH}"
-
-            // Sleep to ensure that the deployment has started when we begin the verification stage
-            sleep 5
-
-            openshiftVerifyDeployment depCfg: 'queue-management-frontend', 
-                                      namespace: 'servicebc-cfms-dev', 
-                                      replicaCount: 3, 
-                                      verbose: 'false', 
-                                      verifyReplicaCount: 'false'
-
-            echo ">>> deployment complete <<<"
-        }*/
     }
 }
-/*
+
 def owaspPodLabel = "owasp-zap-${UUID.randomUUID().toString()}"
 podTemplate(
     label: owaspPodLabel, 
@@ -207,4 +206,37 @@ podTemplate(
         }
     }
 }
-*/
+
+stage('deploy test') {
+    node('jenkins-python3nodejs'){
+        input "Deploy to test?"
+        openshiftTag destStream: 'queue-management-api',
+                     verbose: 'true',
+                     destTag: 'test',
+                     srcStream: 'queue-management-api',
+                     srcTag: "${API_IMAGE_HASH}"
+
+        openshiftTag destStream: 'queue-management-frontend',
+                     verbose: 'true',
+                     destTag: 'test',
+                     srcStream: 'queue-management-frontend',
+                     srcTag: "${FRONTEND_IMAGE_HASH}"
+    }
+}
+
+stage('deploy prod') {
+    node('jenkins-python3nodejs'){
+        input "Deploy to prod?"
+        openshiftTag destStream: 'queue-management-api',
+                     verbose: 'true',
+                     destTag: 'production',
+                     srcStream: 'queue-management-api',
+                     srcTag: "${API_IMAGE_HASH}"
+
+        openshiftTag destStream: 'queue-management-frontend',
+                     verbose: 'true',
+                     destTag: 'production',
+                     srcStream: 'queue-management-frontend',
+                     srcTag: "${FRONTEND_IMAGE_HASH}"
+    }
+}

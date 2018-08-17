@@ -35,8 +35,8 @@ module.exports = {
     // just be aware of this issue when enabling this option.
     cssSourceMap: false
   },
-  localhost: {
-    env: require('./localhost.env'),
+  prod: {
+    env: require('./prod.env'),
     port: 8080,
     autoOpenBrowser: true,
     assetsSubDirectory: 'static',

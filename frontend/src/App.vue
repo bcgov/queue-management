@@ -13,35 +13,20 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 
 <template>
-  <b-container>
-    <b-row align-v="end">
-      <b-col cols="9">
-        <h1>
-          <img src='./assets/bcid.jpg'/>
-          Queue Management
-        </h1>
-        <Socket/>
-      </b-col>
-      <b-col cols="3">
-        <Login></Login>
-      </b-col>
-    </b-row>
-      <Controls v-if="this.$store.state.isLoggedIn"/>
-      <SlackMessage v-if="this.$store.state.isLoggedIn"/>
-  </b-container>
+  <div id="App">
+    <Header />
+    <Dash />
+    <Socket v-show="1===2" />
+  </div>
 </template>
 
 <script>
-import Controls from './Controls'
-import Login from './Login'
+import Dash from './serve-citizen/dash'
+import Header from './layout/header'
 import Socket from './Socket'
-import SlackMessage from './SlackMessage'
 
 export default {
   name: 'App',
-  components: { Login, Socket, Controls, SlackMessage },
+  components: { Dash, Header, Socket }
 }
-
 </script>
-
-

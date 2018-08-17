@@ -22,15 +22,14 @@ class Period(Base):
     sr_id = db.Column(db.Integer, db.ForeignKey('servicereq.sr_id'), nullable=False)
     csr_id = db.Column(db.Integer, db.ForeignKey('csr.csr_id'), nullable=False)
     reception_csr_ind = db.Column(db.Integer, nullable=False)
-    channel_id = db.Column(db.Integer, db.ForeignKey('channel.channel_id'), nullable=False)
     ps_id = db.Column(db.Integer, db.ForeignKey('periodstate.ps_id'), nullable=False)
     time_start = db.Column(db.DateTime, nullable=False)
     time_end = db.Column(db.DateTime, nullable=True)
     accurate_time_ind = db.Column(db.Integer, nullable=False)
 
-    ps = db.relationship("PeriodState")
-    sr = db.relationship('ServiceReq')
-    channel = db.relationship("Channel")
+    csr = db.relationship("CSR", lazy='joined')
+    ps = db.relationship("PeriodState", lazy='joined')
+    sr = db.relationship("ServiceReq", lazy='joined')
 
     def __repr__(self):
         return '<Period id:(name={self.period_id!r})>'.format(self=self)

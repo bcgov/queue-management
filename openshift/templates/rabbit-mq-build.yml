@@ -84,4 +84,4 @@ parameters:
 - description: Git source URL for application
   name: SOURCE_REPOSITORY_URL
   required: true
-  value: https://github.com/sjrumsby/queue-management
+  value: https://github.com/bcgov/queue-management

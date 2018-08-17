@@ -14,6 +14,7 @@ limitations under the License.'''
 
 from marshmallow import fields
 from app.models import CSR
+from app.schemas import OfficeSchema
 from qsystem import ma
 
 
@@ -30,3 +31,4 @@ class CSRSchema(ma.ModelSchema):
     receptionist_ind = fields.Int()
     deleted = fields.DateTime()
     csr_state_id = fields.Int()
+    office = fields.Nested(OfficeSchema)

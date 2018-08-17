@@ -78,7 +78,7 @@ objects:
                 apiVersion: v1
                 fieldPath: status.podIP
           - name: RABBITMQ_ERLANG_COOKIE
-            value: sup3rS3cr1+
+            value: "${RABBITMQ_ERLANG_COOKIE}"
           - name: RABBITMQ_NODENAME
             value: rabbit@$(MY_POD_IP)
           - name: RABBITMQ_USE_LONGNAME
@@ -102,12 +102,11 @@ objects:
             protocol: TCP
           - containerPort: 5672
             protocol: TCP
-          resources: {}
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
           volumeMounts:
-          - name: mnesia
-            mountPath: /var/lib/rabbitmq/mnesia
+          - name: "${APPLICATION_NAME}"
+            mountPath: "/var/lib/rabbitmq/${APPLICATION_NAME}"
         dnsPolicy: ClusterFirst
         restartPolicy: Always
         schedulerName: default-scheduler
@@ -115,7 +114,7 @@ objects:
         terminationGracePeriodSeconds: 10
     volumeClaimTemplates:
     - metadata:
-        name: mnesia
+        name: "${APPLICATION_NAME}"
       spec:
         accessModes: [ "ReadWriteOnce" ]
         resources:
@@ -130,3 +129,8 @@ parameters:
   name: RABBITMQ_VERSION
   required: true
   value: 3.6.12
+- description: The password for rabbit MQ
+  name: RABBITMQ_ERLANG_COOKIE
+  required: true
+  generate: expression
+  from: "[a-zA-Z0-9]{16}"

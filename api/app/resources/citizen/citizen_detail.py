@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from flask import request, g
 from flask_restplus import Resource
-from qsystem import api, db, oidc
+from qsystem import api, api_call_with_retry, db, oidc, socketio
 from app.models import Citizen, CSR
 from marshmallow import ValidationError
 from app.schemas import CitizenSchema
@@ -29,8 +29,8 @@ class CitizenDetail(Resource):
     @oidc.accept_token(require_token=True)
     def get(self, id):
         try:
-            csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
-            citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first_or_404()
+            csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
+            citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
             result = self.citizen_schema.dump(citizen)
             return {'citizen': result.data,
                     'errors': result.errors}
@@ -40,14 +40,15 @@ class CitizenDetail(Resource):
             return {'message': 'API is down'}, 500
 
     @oidc.accept_token(require_token=True)
+    @api_call_with_retry
     def put(self, id):
         json_data = request.get_json()
 
         if not json_data:
             return {'message': 'No input data received for updating citizen'}, 400
 
-        csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
-        citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first_or_404()
+        csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
+        citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
 
         try:
             citizen = self.citizen_schema.load(json_data, instance=citizen, partial=True).data
@@ -58,6 +59,8 @@ class CitizenDetail(Resource):
         db.session.add(citizen)
         db.session.commit()
 
+        socketio.emit('update_customer_list', {}, room=csr.office_id)
         result = self.citizen_schema.dump(citizen)
+        
         return {'citizen': result.data,
                 'errors': result.errors}, 200

@@ -12,10 +12,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask import g
+from flask import g, request
 from flask_restplus import Resource
-from qsystem import api, db, oidc
-from app.models import CSR, CitizenState, Period, PeriodState, ServiceReq, SRState
+from qsystem import api, api_call_with_retry, db, oidc, socketio
+from app.models import Citizen, CSR, CitizenState, Period, PeriodState, ServiceReq, SRState
 from app.schemas import CitizenSchema
 
 
@@ -26,45 +26,48 @@ class CitizenGenericInvite(Resource):
     citizens_schema = CitizenSchema(many=True)
 
     @oidc.accept_token(require_token=True)
+    @api_call_with_retry
     def post(self):
 
-        csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
 
         active_citizen_state = CitizenState.query.filter_by(cs_state_name='Active').first()
         waiting_period_state = PeriodState.query.filter_by(ps_name='Waiting').first()
 
         citizen = None
 
-        if csr.qt_xn_csr_ind:
-            period = Period.query.filter(Period.time_end.is_(None)) \
+        # qt_xn_csr_ind = csr.qt_xn_csr_ind
+        qt_xn_csr_ind = request.get_json().get('qt_xn_csr_ind')
+
+        if qt_xn_csr_ind:
+            citizen = Citizen.query \
+                .filter_by(qt_xn_citizen_ind=1, cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
+                .join(Citizen.service_reqs) \
+                .join(ServiceReq.periods) \
                 .filter_by(ps_id=waiting_period_state.ps_id) \
-                .join(Period.sr, aliased=True) \
-                .join(ServiceReq.citizen, aliased=True) \
-                .filter_by(qt_xn_citizen_ind=1,  cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
+                .filter(Period.time_end.is_(None)) \
+                .order_by(Citizen.citizen_id) \
                 .first()
         else:
-            period = Period.query.filter(Period.time_end.is_(None)) \
+            citizen = Citizen.query \
+                .filter_by(qt_xn_citizen_ind=0, cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
+                .join(Citizen.service_reqs) \
+                .join(ServiceReq.periods) \
                 .filter_by(ps_id=waiting_period_state.ps_id) \
-                .join(Period.sr, aliased=True) \
-                .join(ServiceReq.citizen, aliased=True) \
-                .filter_by(qt_xn_citizen_ind=0,  cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
+                .filter(Period.time_end.is_(None)) \
+                .order_by(Citizen.citizen_id) \
                 .first()
-
-        if period is not None:
-            citizen = period.sr.citizen
 
         # Either no quick txn citizens for the quick txn csr, or vice versa
         if citizen is None:
-            print("3")
-            period = Period.query.filter(Period.time_end.is_(None)) \
-                .filter_by(ps_id=waiting_period_state.ps_id) \
-                .join(Period.sr, aliased=True) \
-                .join(ServiceReq.citizen, aliased=True) \
+            citizen = Citizen.query \
                 .filter_by(cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
+                .join(Citizen.service_reqs) \
+                .join(ServiceReq.periods) \
+                .filter_by(ps_id=waiting_period_state.ps_id) \
+                .filter(Period.time_end.is_(None)) \
+                .order_by(Citizen.citizen_id) \
                 .first()
-
-            if period is not None:
-                citizen = period.sr.citizen
 
         if citizen is None:
             return {"message": "There is no citizen to invite"}, 400
@@ -75,9 +78,12 @@ class CitizenGenericInvite(Resource):
         pending_service_state = SRState.query.filter_by(sr_code='Pending').first()
         active_service_request.sr_state_id = pending_service_state.sr_state_id
 
-        db.session.add(active_service_request)
+        db.session.add(citizen)
         db.session.commit()
 
+        socketio.emit('update_customer_list', {}, room=csr.office_id)
+        socketio.emit('citizen_invited', {}, room='sb-%s' % csr.office.office_number)
         result = self.citizen_schema.dump(citizen)
+        
         return {'citizen': result.data,
                 'errors': result.errors}, 200

@@ -1,16 +1,16 @@
 """empty message
 
-Revision ID: cb273ec081b1
+Revision ID: 755d0f8eded1
 Revises: 
-Create Date: 2018-06-24 18:12:49.762157
+Create Date: 2018-08-07 18:43:26.606504
 
 """
 from alembic import op
 import sqlalchemy as sa
-
+from sqlalchemy.dialects import mysql
 
 # revision identifiers, used by Alembic.
-revision = 'cb273ec081b1'
+revision = '755d0f8eded1'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -113,7 +113,7 @@ def upgrade():
     sa.Column('citizen_name', sa.String(length=150), nullable=True),
     sa.Column('citizen_comments', sa.String(length=1000), nullable=True),
     sa.Column('qt_xn_citizen_ind', sa.Integer(), nullable=False),
-    sa.Column('cs_id', sa.BigInteger(), nullable=False),
+    sa.Column('cs_id', sa.Integer(), nullable=False),
     sa.Column('start_time', sa.DateTime(), nullable=False),
     sa.ForeignKeyConstraint(['cs_id'], ['citizenstate.cs_id'], ),
     sa.ForeignKeyConstraint(['office_id'], ['office.office_id'], ),
@@ -144,8 +144,10 @@ def upgrade():
     sa.Column('sr_id', sa.Integer(), nullable=False),
     sa.Column('citizen_id', sa.Integer(), nullable=False),
     sa.Column('quantity', sa.Integer(), nullable=False),
+    sa.Column('channel_id', sa.Integer(), nullable=False),
     sa.Column('service_id', sa.Integer(), nullable=False),
     sa.Column('sr_state_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['channel_id'], ['channel.channel_id'], ),
     sa.ForeignKeyConstraint(['citizen_id'], ['citizen.citizen_id'], ),
     sa.ForeignKeyConstraint(['service_id'], ['service.service_id'], ),
     sa.ForeignKeyConstraint(['sr_state_id'], ['srstate.sr_state_id'], ),
@@ -156,12 +158,10 @@ def upgrade():
     sa.Column('sr_id', sa.Integer(), nullable=False),
     sa.Column('csr_id', sa.Integer(), nullable=False),
     sa.Column('reception_csr_ind', sa.Integer(), nullable=False),
-    sa.Column('channel_id', sa.Integer(), nullable=False),
     sa.Column('ps_id', sa.Integer(), nullable=False),
-    sa.Column('time_start', sa.DateTime(), nullable=False),
-    sa.Column('time_end', sa.DateTime(), nullable=True),
+    sa.Column('time_start', mysql.DATETIME(fsp=6), nullable=False),
+    sa.Column('time_end', mysql.DATETIME(fsp=6), nullable=True),
     sa.Column('accurate_time_ind', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['channel_id'], ['channel.channel_id'], ),
     sa.ForeignKeyConstraint(['csr_id'], ['csr.csr_id'], ),
     sa.ForeignKeyConstraint(['ps_id'], ['periodstate.ps_id'], ),
     sa.ForeignKeyConstraint(['sr_id'], ['servicereq.sr_id'], ),

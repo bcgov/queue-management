@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from flask import request, g
 from flask_restplus import Resource
-from qsystem import api, db, oidc
+from qsystem import api, api_call_with_retry, db, oidc, socketio
 from app.models import Citizen, CSR, CitizenState
 from app.schemas import CitizenSchema, ServiceReqSchema
 from app.models import SRState
@@ -28,10 +28,11 @@ class CitizenLeft(Resource):
     citizen_schema = CitizenSchema()
 
     @oidc.accept_token(require_token=True)
+    @api_call_with_retry
     def post(self, id):
 
-        csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
-        citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first_or_404()
+        csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
+        citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
         sr_state = SRState.query.filter_by(sr_code="Complete").first()
 
         for service_request in citizen.service_reqs:
@@ -42,14 +43,12 @@ class CitizenLeft(Resource):
                 if p.time_end is None:
                     p.time_end = datetime.now()
 
-                    db.session.add(p)
-                    
-            db.session.add(service_request)
-
         citizen.cs = CitizenState.query.filter_by(cs_state_name='Left before receiving services').first()
 
         db.session.add(citizen)
         db.session.commit()
+
+        socketio.emit('update_customer_list', {}, room=csr.office_id)
         result = self.citizen_schema.dump(citizen)
 
         return {'citizen': result.data,

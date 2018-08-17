@@ -14,37 +14,48 @@ limitations under the License.*/
 
 import Vue from 'vue'
 import 'es6-promise/auto'
-import App from './App'
 import { store } from './store/'
-
-
-
+import App from './App'
+import Smartboard from './smartboard/'
 import BootstrapVue from 'bootstrap-vue'
+
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+import './assets/css/bc-gov-style.css'
 Vue.use(BootstrapVue)
 
-import 'es6-promise/auto'
-import axios from 'axios'
-
+require('es6-shim')
 require('Keycloak')
 var keycloak = Keycloak(process.env.KEYCLOAK_JSON_URL)
-console.log(process.env.KEYCLOAK_JSON_URL)
-
-export const axiosInstance = axios.create({
-  baseURL: process.env.API_URL,
-  withCredentials: true
-})
-
 Vue.prototype.$keycloak = keycloak
-Vue.prototype.$axios = axiosInstance
-
 Vue.config.productionTip = false
 
+const routes = {
+  '/': App,
+  'smartboard': Smartboard
+}
+
 /* eslint-disable no-new */
-new Vue({
+const app = new Vue({
   el: '#app',
   store,
-  template: '<App />',
-  components: { App }
+  components: { App, Smartboard },
+  computed: {
+    currentRoute() {
+      let path = window.location.pathname
+      let pathspl = path.split('/')
+      if ( path === '/') {
+        return '/'
+      } else if (pathspl.length >= 2) {
+        return pathspl[1]
+      } else {
+        return '/'
+      }
+    },
+    ViewComponent () {
+      return routes[this.currentRoute]
+    }
+  },
+
+  render (h) { return h(this.ViewComponent) }
 })

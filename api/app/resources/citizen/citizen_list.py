@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from flask import request, g
 from flask_restplus import Resource
-from qsystem import api, db, oidc
+from qsystem import api, api_call_with_retry, db, oidc, socketio
 from app.models import Citizen, CSR, CitizenState
 from marshmallow import ValidationError
 from app.schemas import CitizenSchema
@@ -31,9 +31,10 @@ class CitizenList(Resource):
     @oidc.accept_token(require_token=True)
     def get(self):
         try:
-            csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+            csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
             active_state = CitizenState.query.filter_by(cs_state_name="Active").first()
-            citizens = Citizen.query.filter_by(office_id=csr.office_id, cs_id=active_state.cs_id).all()
+            citizens = Citizen.query.filter_by(office_id=csr.office_id, cs_id=active_state.cs_id) \
+                .join(Citizen.service_reqs).all()
             result = self.citizens_schema.dump(citizens)
             return {'citizens': result.data,
                     'errors': result.errors}, 200
@@ -43,10 +44,11 @@ class CitizenList(Resource):
             return {'message': 'API is down'}, 500
 
     @oidc.accept_token(require_token=True)
+    @api_call_with_retry
     def post(self):
         json_data = request.get_json()
 
-        csr = CSR.query.filter_by(username=g.oidc_token_info['username']).first()
+        csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
 
         try:
             citizen = self.citizen_schema.load(json_data).data
@@ -61,6 +63,8 @@ class CitizenList(Resource):
         citizen.cs_id = citizen_state.cs_id
         db.session.add(citizen)
         db.session.commit()
+
+        socketio.emit('update_customer_list', {}, room=csr.office_id)
         result = self.citizen_schema.dump(citizen)
 
         return {'citizen': result.data,
