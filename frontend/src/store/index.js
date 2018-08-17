@@ -305,7 +305,8 @@ export const store = new Vuex.Store({
       let office_id = context.state.user.office.office_id
       Axios(context).get(`/services/?office_id=${office_id}`)
         .then( resp => {
-          context.commit('setServices', resp.data.services)
+          let services = resp.data.services.filter(service => service.actual_service_ind === 1)
+          context.commit('setServices', services)
         })
         .catch(error => {
           console.log('error @ store.actions.getServices')
