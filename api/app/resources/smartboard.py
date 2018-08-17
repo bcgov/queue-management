@@ -28,13 +28,17 @@ class Smartboard(Resource):
 
     def get(self):
         try:
-            office_id = int(request.args.get('office_number'))
+            office_number = int(request.args.get('office_number'))
 
-            office = Office.query.get(office_id)
+            office = Office.query.filter_by(office_number=office_number).first()
+
+            if not office:
+                return {'message': 'office_number could not be found.'}, 400
+
             active_citizen_state = CitizenState.query.filter_by(cs_state_name="Active").first()
             pending_sr_state = SRState.query.filter_by(sr_code='Pending').first()
 
-            citizens = Citizen.query.filter_by(office_id=office_id) \
+            citizens = Citizen.query.filter_by(office_id=office.office_id) \
                 .filter_by(cs_id=active_citizen_state.cs_id) \
                 .join(ServiceReq, aliased=True) \
                 .filter_by(sr_state_id=pending_sr_state.sr_state_id)
