@@ -791,7 +791,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "cbbac3bd-feab-4f92-88e0-b7b37eeb87da",
+								"id": "42742c4c-505d-472d-857b-fdba74cc49ac",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD",
@@ -820,6 +820,7 @@
 									"var allChannels = jsonData.channels;",
 									"var channelCount = 0;",
 									"var phoneId = 0;",
+									"var emailId = 0;",
 									"var phoneText = \"Phone\";",
 									"var emailText = \"Email/Fax/Mail\"",
 									"allChannels.forEach(function(channel) {",
@@ -2736,7 +2737,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "717581c1-04ab-4b48-b3b5-75ca3ccda53e",
+								"id": "818713b9-18a0-4fef-9c16-f71b43dd2ad0",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -2789,8 +2790,9 @@
 									"        it('citizen_name must equal \"' + citizenName + '\"', function() {",
 									"            (currentCitizen.citizen_name).should.be.eql(citizenName);",
 									"        });",
-									"        it('citizen_comment must equal \"' + citizenComment + '\"', function() {",
-									"            (currentCitizen.citizen_comments).should.be.eql(citizenComment);",
+									"        it('citizen_comment must be null on service completion ', function() {",
+									"            var newshould = chai.should();",
+									"            newshould.equal(currentCitizen.citizen_comments, null);",
 									"        });",
 									"        it('service_reqs length must be 1 (single service request)', function() {",
 									"            (currentCitizen.service_reqs.length).should.be.eql(1);",
@@ -5828,7 +5830,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "4ca8ae22-b658-4e45-b7c6-7d8ab0014400",
+								"id": "7a831dcf-ff2c-4907-95c5-bf042cdd967a",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -5881,8 +5883,9 @@
 									"        it('citizen_name must equal \"' + citizenName + '\"', function() {",
 									"            (currentCitizen.citizen_name).should.be.eql(citizenName);",
 									"        });",
-									"        it('citizen_comment must equal \"' + citizenComment + '\"', function() {",
-									"            (currentCitizen.citizen_comments).should.be.eql(citizenComment);",
+									"        it('citizen_comment must be null on service completion ', function() {",
+									"            var newshould = chai.should();",
+									"            newshould.equal(currentCitizen.citizen_comments, null);",
 									"        });",
 									"        it('service_reqs length must be 1 (single service request)', function() {",
 									"            (currentCitizen.service_reqs.length).should.be.eql(1);",
@@ -7454,7 +7457,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "40a3080e-6107-4b92-8cfe-0f4d429f9db8",
+								"id": "d5890c30-3ce5-4807-9d17-bd58050dab44",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -7507,8 +7510,9 @@
 									"        it('citizen_name must equal \"' + citizenName + '\"', function() {",
 									"            (currentCitizen.citizen_name).should.be.eql(citizenName);",
 									"        });",
-									"        it('citizen_comment must equal \"' + citizenComment + '\"', function() {",
-									"            (currentCitizen.citizen_comments).should.be.eql(citizenComment);",
+									"        it('citizen_comment must be null on service completion ', function() {",
+									"            var newshould = chai.should();",
+									"            newshould.equal(currentCitizen.citizen_comments, null);",
 									"        });",
 									"        it('service_reqs length must be 1 (single service request)', function() {",
 									"            (currentCitizen.service_reqs.length).should.be.eql(1);",
@@ -7722,7 +7726,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "a7d76250-4371-48e1-8118-c4c9004f10d3",
+								"id": "e502775f-6829-45f8-a225-61c54e625c7f",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -7775,8 +7779,9 @@
 									"        it('citizen_name must equal \"' + citizenName + '\"', function() {",
 									"            (currentCitizen.citizen_name).should.be.eql(citizenName);",
 									"        });",
-									"        it('citizen_comment must equal \"' + citizenComment + '\"', function() {",
-									"            (currentCitizen.citizen_comments).should.be.eql(citizenComment);",
+									"        it('citizen_comment must be null on service completion ', function() {",
+									"            var newshould = chai.should();",
+									"            newshould.equal(currentCitizen.citizen_comments, null);",
 									"        });",
 									"        it('service_reqs length must be 1 (single service request)', function() {",
 									"            (currentCitizen.service_reqs.length).should.be.eql(1);",
@@ -9348,7 +9353,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "e36ac8d0-2ced-497a-9146-7243d9ad733f",
+								"id": "ec44532d-3f42-41f4-8faa-7803c188970f",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -9401,8 +9406,9 @@
 									"        it('citizen_name must equal \"' + citizenName + '\"', function() {",
 									"            (currentCitizen.citizen_name).should.be.eql(citizenName);",
 									"        });",
-									"        it('citizen_comment must equal \"' + citizenComment + '\"', function() {",
-									"            (currentCitizen.citizen_comments).should.be.eql(citizenComment);",
+									"        it('citizen_comment must be null on service completion ', function() {",
+									"            var newshould = chai.should();",
+									"            newshould.equal(currentCitizen.citizen_comments, null);",
 									"        });",
 									"        it('service_reqs length must be 1 (single service request)', function() {",
 									"            (currentCitizen.service_reqs.length).should.be.eql(1);",
@@ -9616,7 +9622,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "99352946-b5e3-4e5e-ac12-52d8e7fba297",
+								"id": "14a22c20-3902-4ca1-9e56-e97dde7b212b",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -9669,8 +9675,9 @@
 									"        it('citizen_name must equal \"' + citizenName + '\"', function() {",
 									"            (currentCitizen.citizen_name).should.be.eql(citizenName);",
 									"        });",
-									"        it('citizen_comment must equal \"' + citizenComment + '\"', function() {",
-									"            (currentCitizen.citizen_comments).should.be.eql(citizenComment);",
+									"        it('citizen_comment must be null on service completion ', function() {",
+									"            var newshould = chai.should();",
+									"            newshould.equal(currentCitizen.citizen_comments, null);",
 									"        });",
 									"        it('service_reqs length must be 1 (single service request)', function() {",
 									"            (currentCitizen.service_reqs.length).should.be.eql(1);",
