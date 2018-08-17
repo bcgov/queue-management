@@ -36,8 +36,10 @@ class CitizenGenericInvite(Resource):
 
         citizen = None
 
-        # qt_xn_csr_ind = csr.qt_xn_csr_ind
-        qt_xn_csr_ind = request.get_json().get('qt_xn_csr_ind')
+        try:
+            qt_xn_csr_ind = request.get_json().get('qt_xn_csr_ind')
+        except AttributeError:
+            qt_xn_csr_ind = csr.qt_xn_csr_ind
 
         if qt_xn_csr_ind:
             citizen = Citizen.query \
