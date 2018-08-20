@@ -19,12 +19,13 @@ from marshmallow import ValidationError
 
 from qsystem import api, api_call_with_retry, db, oidc, socketio
 from app.models import CSR, Period, PeriodState, ServiceReq, SRState
-from app.schemas import ServiceReqSchema
+from app.schemas import CitizenSchema, ServiceReqSchema
 
 
 @api.route("/service_requests/<int:id>/", methods=["PUT"])
 class ServiceRequestsDetail(Resource):
 
+    citizen_schema = CitizenSchema()
     service_requests_schema = ServiceReqSchema(many=True)
     service_request_schema = ServiceReqSchema()
 
@@ -51,6 +52,8 @@ class ServiceRequestsDetail(Resource):
         db.session.commit()
 
         result = self.service_request_schema.dump(service_request)
+        citizen_result = self.citizen_schema.dump(service_request.citizen)
+        socketio.emit('update_active_citizen', citizen_result.data, room=csr.office_id)
 
         return {'service_request': result.data,
                 'errors': result.errors}, 200
@@ -59,6 +62,7 @@ class ServiceRequestsDetail(Resource):
 @api.route("/service_requests/<int:id>/activate/", methods=["POST"])
 class ServiceRequestActivate(Resource):
 
+    citizen_schema = CitizenSchema()
     service_requests_schema = ServiceReqSchema(many=True)
     service_request_schema = ServiceReqSchema()
 
@@ -101,6 +105,8 @@ class ServiceRequestActivate(Resource):
         db.session.commit()
 
         socketio.emit('update_customer_list', {}, room=csr.office_id)
+        citizen_result = self.citizen_schema.dump(service_request.citizen)
+        socketio.emit('update_active_citizen', citizen_result.data, room=csr.office_id)
         result = self.service_request_schema.dump(service_request)
 
         return {'service_request': result.data,
