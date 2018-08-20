@@ -62,7 +62,7 @@ class ServiceRequestsList(Resource):
         for req in citizen.service_reqs:
             if req.sr_state_id == active_sr_state.sr_state_id:
                 req.sr_state_id = complete_sr_state.sr_state_id
-                req.finish_service(csr)
+                req.finish_service(csr, clear_comments=False)
                 db.session.add(req)
 
         service_request.sr_state = active_sr_state

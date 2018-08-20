@@ -113,8 +113,9 @@ class ServiceReq(Base):
 
         self.periods.append(new_period)
 
-    def finish_service(self, csr):
+    def finish_service(self, csr, clear_comments=True):
         active_period = self.get_active_period()
         active_period.time_end = datetime.now()
-        self.citizen.citizen_comments = None
+        if clear_comments:
+            self.citizen.citizen_comments = None
         # db.session.add(active_period)
