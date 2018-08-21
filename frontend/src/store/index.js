@@ -728,7 +728,12 @@ export const store = new Vuex.Store({
           Axios(context).post(url, data).then(resp=>{
             resolve(resp)
           }, error => {
-            reject(error)
+            console.log(error.response)
+            if (error.response.status === 400) {
+              context.commit('setMainAlert', error.response.data.message)
+            } else {
+              reject(error)
+            }
           })
         })
       }

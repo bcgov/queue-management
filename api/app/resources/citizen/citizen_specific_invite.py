@@ -39,9 +39,12 @@ class CitizenSpecificInvite(Resource):
             active_service_request = citizen.get_active_service_request()
 
             if active_service_request is None:
-                return {"message": "Citizen has no active service requests"}
+                return {"message": "Citizen has no active service requests"}, 400
 
-            active_service_request.invite(csr)
+            try:
+                active_service_request.invite(csr)
+            except TypeError:
+                return {"message": "Citizen  has already been invited"}, 400
 
             pending_service_state = SRState.query.filter_by(sr_code='Pending').first()
             active_service_request.sr_state_id = pending_service_state.sr_state_id
