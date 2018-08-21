@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+from filelock import FileLock
 from flask import g
 from flask_restplus import Resource
 from qsystem import api, api_call_with_retry, db, oidc, socketio
@@ -29,18 +30,26 @@ class CitizenBeginService(Resource):
     @api_call_with_retry
     def post(self, id):
         csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
-        citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
-        active_service_request = citizen.get_active_service_request()
+        lock = FileLock("begin_citizen.lock")
 
-        if active_service_request is None:
-            return {"message": "Citizen has no active service requests"}
+        with lock:
+            print("Lock acquired")
+            citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
+            active_service_request = citizen.get_active_service_request()
 
-        active_service_request.begin_service(csr)
-        pending_service_state = SRState.query.filter_by(sr_code='Active').first()
-        active_service_request.sr_state_id = pending_service_state.sr_state_id
+            if active_service_request is None:
+                return {"message": "Citizen has no active service requests"}
 
-        db.session.add(citizen)
-        db.session.commit()
+            try:
+                active_service_request.begin_service(csr)
+            except TypeError:
+                return {"message": "Citizen  has already been invited"}, 400
+
+            pending_service_state = SRState.query.filter_by(sr_code='Active').first()
+            active_service_request.sr_state_id = pending_service_state.sr_state_id
+
+            db.session.add(citizen)
+            db.session.commit()
 
         socketio.emit('update_customer_list', {}, room=csr.office_id)
         result = self.citizen_schema.dump(citizen)
