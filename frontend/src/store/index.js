@@ -18,56 +18,62 @@ import Vue from 'vue'
 import 'es6-promise/auto'
 import Vuex from 'vuex'
 import { Axios } from './helpers'
-
+var flashInt
 
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
 
   state: {
-    allCitizens: [],
-    isLoggedIn: false,
-    bearer: '',
-    user: {
-      username: null,
-      office: {
-        office_name: null,
-        office_id: null,
-        qt_xn_csr_ind: true,
-        sb: {
-          sb_type: null
-        }
-      },
-      receptionist_ind: null
+    addModalForm: {
+      citizen:'',
+      comments: '',
+      channel: '',
+      search: '',
+      category: '',
+      service:'',
+      quick: 0,
+      suspendFilter: false,
+      selectedItem: ''
     },
+    addModalSetup: null,
+    alertMessage: '',
+    allCitizens: [],
+    bearer: '',
+    categories: [],
+    channels: [],
+    citizens: [],
+    citizenInvited: false,
+    dismissCountDown: 0,
+    isLoggedIn: false,
+    nowServing: false,
+    officeType: null,
+    serveNowAltAction: false,
+    serveNowStyle: 'btn-primary',
+    serviceBegun: false,
     serviceModalForm: {
       citizen_id: null,
       service_citizen: null,
       citizen_comments: '',
       activeQuantity: 1
     },
-    addModalSetup: 'reception',
-    addModalForm: {
-        citizen:'',
-        comments: '',
-        channel: '',
-        search: '',
-        category: '',
-        service:'',
-        quick: 0,
-        suspendFilter: false,
-        selectedItem: ''
-    },
+    services: [],
     showAddModal: false,
     showServiceModal: false,
-    citizens: [],
-    services: [],
-    categories: [],
-    channels: [],
-    alertMessage: '',
-    dismissCountDown: 0,
-    citizenInvited: false,
-    serviceBegun: false
+    user: {
+      username: null,
+      office: {
+        office_id: null,
+        office_name: null,
+        sb: {
+          sb_type: null,
+        },
+      },
+      office_id: null,
+      qt_xn_csr_ind: true,
+      receptionist_ind: null,
+      checkComplete: false
+    },
   },
 
   getters: {
@@ -76,7 +82,6 @@ export const store = new Vuex.Store({
         if (state.user.office.sb.sb_type === "callbyname" || state.user.office.sb.sb_type === "callbyticket") {
           return true
         }
-
         return false
     },
 
@@ -94,8 +99,7 @@ export const store = new Vuex.Store({
       if (!service_citizen || !service_citizen.service_reqs || service_citizen.service_reqs.length === 0) {
         return null
       }
-
-      return service_citizen.service_reqs.find(sr => sr.periods.some(p => p.time_end == null))
+      return service_citizen.service_reqs.filter(sr => sr.periods.some(p => p.time_end == null))[0]
     },
 
     active_service_id: (state) => (citizen_id) => {
@@ -107,7 +111,6 @@ export const store = new Vuex.Store({
 
     invited_service_reqs: (state, getters) => {
       let { service_citizen } = state.serviceModalForm
-      console.log(service_citizen)
 
       if (!service_citizen || !service_citizen.service_reqs || service_citizen.service_reqs.length === 0) {
         return []
@@ -196,6 +199,23 @@ export const store = new Vuex.Store({
   },
 
   actions: {
+    flashServeNow(context, payload) {
+      let flash = () => {
+        if ( context.state.serveNowStyle === 'btn-primary' ) {
+          context.commit('flashServeNow', 'btn-highlighted')
+        } else if ( context.state.serveNowStyle === 'btn-highlighted' ) {
+          context.commit('flashServeNow', 'btn-primary')
+        }
+      }
+      if (payload === 'start') {
+        flashInt = setInterval( ()=>{ flash() }, 800)
+        return
+      }
+      if (payload === 'stop') {
+        clearInterval(flashInt)
+        context.commit('flashServeNow', 'btn-primary')
+      }
+    },
 
     logIn(context, payload) {
       context.commit('setBearer', payload)
@@ -204,66 +224,20 @@ export const store = new Vuex.Store({
     },
 
     getAllCitizens(context) {
-      console.log("getAllCitizens")
-      let url = "/citizens/"
-      Axios(context).get(url)
-        .then( resp => {
-          context.commit('setAllCitizens', resp.data.citizens)
-          let citizenFound = false;
-          if (!resp.data.citizens) {
-            context.commit('updateQueue', [])
-          }
+      let url = '/citizens/'
+      Axios(context).get(url).then( resp => {
+        if (!resp.data.citizens) {
+          context.commit('updateQueue', [])
+          return
+        }
+        context.commit('updateQueue', resp.data.citizens)
+        if (!context.state.checkComplete) {
+          context.dispatch('checkForUnfinishedService', resp.data.citizens).then(()=>{
+            context.commit('logCheckComplete', true)
+          })
 
-          if (resp.data.citizens && resp.data.citizens.length > 0) {
-            context.commit('updateQueue', resp.data.citizens)
-            resp.data.citizens.forEach((citizen) => {
-              if (citizen.service_reqs.length > 0) {
-                let activeService = citizen.service_reqs.filter(sr=>sr.periods.some(p=>p.time_end === null))
-                if (activeService[0].periods.length > 0) {
-                  let activePeriod = activeService[0].periods[activeService[0].periods.length - 1]
-                  if ((["Invited", "Being Served"].indexOf(activePeriod.ps.ps_name) > -1)
-                    && activePeriod.csr.username === this.state.user.username) {
-                    citizenFound = true
-                    console.log("Found citizen")
-                    console.log(this.state.serviceModalForm.service_citizen)
-
-                    if (activePeriod.ps.ps_name === "Invited") {
-                      context.commit('setServiceModalForm', citizen)
-                      context.commit('toggleServiceModal', true)
-                      context.commit('toggleBegunStatus', false)
-                      context.commit('toggleInvitedStatus', true)
-                      context.commit('resetAddModalForm')
-                    } else if (activePeriod.ps.ps_name === "Being Served") {
-                      context.commit('setServiceModalForm', citizen)
-                      context.commit('toggleServiceModal', true)
-                      context.commit('toggleBegunStatus', true)
-                      context.commit('toggleInvitedStatus', false)
-                      context.commit('resetAddModalForm')
-                    } else {
-                      context.commit('toggleServiceModal', false)
-                      context.commit('toggleBegunStatus', false)
-                      context.commit('toggleInvitedStatus', false)
-                      context.commit('resetAddModalForm')
-                    }
-                  }
-                }
-              }
-            })
-          }
-
-          if (!citizenFound) {
-            console.log("No citizen found")
-            context.commit('resetServiceModal')
-            context.commit('toggleServiceModal', false)
-            context.commit('toggleBegunStatus', false)
-            context.commit('toggleInvitedStatus', false)
-          }
-        })
-        .catch(error => {
-          console.log('error @ store.actions.getAllCitizens')
-          console.log(error.response)
-          console.log(error.message)
-        })
+        }
+      })
     },
 
     getCategories(context) {
@@ -279,15 +253,15 @@ export const store = new Vuex.Store({
     },
 
     getChannels(context) {
-      Axios(context).get('/channels/')
-        .then( resp => {
+      return new Promise((resolve, reject) => {
+        let url = `/channels/`
+        Axios(context).get(url).then(resp=>{
           context.commit('setChannels', resp.data.channels)
+          resolve(resp)
+        }, error => {
+          reject(error)
         })
-        .catch(error => {
-          console.log('error @ store.actions.getChannels')
-          console.log(error.response)
-          console.log(error.message)
-        })
+      })
     },
 
     getCitizen(context, citizen_id) {
@@ -316,10 +290,21 @@ export const store = new Vuex.Store({
     },
 
     getUser(context) {
-      Axios(context).get('/csrs/me/')
-        .then( resp => {
+      return new Promise((resolve, reject) => {
+        let url = '/csrs/me/'
+        Axios(context).get(url).then(resp=>{
           context.commit('setUser', resp.data.csr)
+          let officeType = resp.data.csr.office.sb.sb_type
+          context.commit('setOffice', officeType)
+          resolve(resp)
+        }, error => {
+          reject(error)
         })
+      })
+    },
+
+    getOffice(context) {
+
     },
 
     cancelAddCitizensModal(context) {
@@ -341,16 +326,60 @@ export const store = new Vuex.Store({
           context.commit('toggleAddModal', true)
           context.commit('resetServiceModal')
         })
-      if (context.state.categories.length == 0) {
+      if (context.state.categories.length === 0) {
         context.dispatch('getCategories')
       }
-      if (context.state.channels.length == 0) {
-        context.dispatch('getChannels')
+      if (context.state.channels.length === 0) {
+        context.dispatch('getChannels').then( () => {
+          context.commit('setDefaultChannel')
+        })
       }
-      if (context.state.services.length == 0) {
+      if (context.state.channels.length > 0) {
+        context.commit('setDefaultChannel')
+      }
+      if (context.state.services.length === 0) {
         context.dispatch('getServices')
       }
     },
+
+    clickAddService(context) {
+      if (context.state.channels.length === 0) {
+        context.dispatch('getCategories')
+        context.dispatch('getChannels')
+        context.dispatch('getServices')
+      }
+
+      context.dispatch('putServiceRequest').then(() => {
+        context.dispatch('putCitizen').then(() => {
+          context.commit('switchAddModalMode', 'add_mode')
+          context.commit('updateAddModalForm', {
+            type: 'citizen',
+            value: context.getters.invited_citizen
+          })
+          context.commit('updateAddModalForm', {
+            type: 'channel',
+            value: context.getters.active_service.channel_id
+          })
+          context.commit('updateAddModalForm', {
+            type: 'quick',
+            value: context.getters.invited_citizen.qt_xn_citizen_ind
+          })
+          context.commit('toggleAddModal', true)
+          context.commit('toggleServiceModal', false)
+        })
+      })
+  },
+
+    clickAddServiceApply(context) {
+      context.dispatch('postServiceReq').then(() => {
+        context.dispatch('putCitizen').then(() => {
+          context.commit('toggleAddModal', false)
+          context.commit('toggleServiceModal', true)
+          context.dispatch('toggleModalBack')
+          context.commit('resetAddModalForm')
+        })
+      })
+  },
 
     clickAddToQueue(context) {
       let { citizen_id } = context.getters.form_data.citizen
@@ -361,49 +390,7 @@ export const store = new Vuex.Store({
             context.dispatch('resetAddCitizenModal')
             context.commit('toggleBegunStatus', false)
             context.commit('toggleInvitedStatus', false)
-          })
-        })
-      })
-    },
 
-    clickAddService(context) {
-      if (context.state.channels.length === 0) {
-        context.dispatch('getCategories')
-        context.dispatch('getChannels')
-        context.dispatch('getServices')
-      }
-
-      context.dispatch('putServiceRequest').then( () => {
-        context.dispatch('putCitizen').then(resp => {
-          context.dispatch('setServiceModalForm', resp.data.citizen).then( () => {
-            context.commit( 'updateAddModalForm', {
-              type:  'citizen',
-              value: context.getters.invited_citizen
-            } )
-            context.commit( 'updateAddModalForm', {
-              type:  'channel',
-              value: context.getters.active_service.channel_id
-            } )
-            context.commit( 'updateAddModalForm', {
-              type:  'quick',
-              value: context.getters.invited_citizen.qt_xn_citizen_ind
-            } )
-            context.commit( 'switchAddModalMode', 'add_mode' )
-            context.commit( 'toggleAddModal', true )
-            context.commit( 'toggleServiceModal', false )
-          })
-        })
-      })
-    },
-
-    clickAddServiceApply(context) {
-      context.dispatch('postServiceReq').then( () => {
-        context.dispatch('putCitizen').then(resp => {
-          context.dispatch('setServiceModalForm', resp.data.citizen).then( () => {
-            context.commit( 'toggleAddModal', false )
-            context.commit( 'toggleServiceModal', true )
-            context.dispatch( 'toggleModalBack' )
-            context.commit( 'resetAddModalForm' )
           })
         })
       })
@@ -414,24 +401,18 @@ export const store = new Vuex.Store({
 
       context.dispatch('putCitizen').then( () => {
         context.dispatch('postServiceReq').then( () => {
-          context.dispatch('postBeginService', citizen_id).then( (resp) => {
-            context.dispatch('setServiceModalForm', resp.data.citizen).then( () => {
-              context.commit('toggleAddModal', false)
-              context.commit('toggleServiceModal', true)
-              context.commit('toggleBegunStatus', true)
-              context.commit('toggleInvitedStatus', false)
-              context.commit('resetAddModalForm')
-            })
+          context.dispatch('postBeginService', citizen_id).then( () => {
+            context.commit('toggleAddModal', false)
+            context.commit('toggleBegunStatus', true)
+            context.commit('toggleInvitedStatus', false)
+            context.commit('toggleServiceModal', true)
+            context.commit('resetAddModalForm')
           })
         })
       })
     },
 
-    setServiceModalForm(context, citizen) {
-      context.commit('setServiceModalForm', citizen)
-    },
-
-    clickBackOffce(context) {
+    clickBackOffice(context) {
       context.dispatch('toggleModalBack')
       Axios(context).post('/citizens/', {})
         .then(resp => {
@@ -460,15 +441,14 @@ export const store = new Vuex.Store({
       context.commit('toggleBegunStatus', false)
       context.commit('toggleInvitedStatus', false)
       context.commit('resetServiceModal')
+
     },
 
     clickDashTableRow(context, citizen_id) {
-      context.dispatch('postInvite', citizen_id).then( resp => {
-        context.commit('setServiceModalForm', resp.data.citizen)
-        context.commit('toggleServiceModal', true)
+      context.dispatch('postInvite', citizen_id).then( () => {
         context.commit('toggleBegunStatus', false)
         context.commit('toggleInvitedStatus', true)
-        context.dispatch('resetQuantity')
+        context.commit('toggleServiceModal', true)
       })
     },
 
@@ -478,27 +458,23 @@ export const store = new Vuex.Store({
         context.dispatch('getChannels')
         context.dispatch('getServices')
       }
-      context.dispatch('putServiceRequest').then( () => {
-        context.dispatch('putCitizen').then(resp => {
-          context.dispatch('setServiceModalForm', resp.data.citizen).then( () => {
-            context.dispatch( 'setAddModalData' )
-            context.commit( 'switchAddModalMode', 'edit_mode' )
-            context.commit( 'toggleAddModal', true )
-            context.commit( 'toggleServiceModal', false )
-          })
+      context.dispatch('putServiceRequest').then(() => {
+        context.dispatch('putCitizen').then(() => {
+          context.commit('switchAddModalMode', 'edit_mode')
+          context.dispatch('setAddModalData')
+          context.commit('toggleAddModal', true)
+          context.commit('toggleServiceModal', false)
         })
       })
     },
 
     clickEditApply(context) {
       context.dispatch('putServiceRequest').then( () => {
-        context.dispatch('putCitizen').then(resp => {
-          context.dispatch('setServiceModalForm', resp.data.citizen).then( () => {
-            context.commit( 'toggleAddModal', false )
-            context.dispatch( 'toggleModalBack' )
-            context.commit( 'resetAddModalForm' )
-            context.commit( 'toggleServiceModal', true )
-          })
+        context.dispatch('putCitizen').then(() => {
+          context.commit( 'toggleAddModal', false )
+          context.dispatch( 'toggleModalBack' )
+          context.commit( 'resetAddModalForm' )
+          context.commit( 'toggleServiceModal', true )
         })
       })
     },
@@ -512,36 +488,80 @@ export const store = new Vuex.Store({
 
     clickHold(context) {
       let { citizen_id } = context.state.serviceModalForm
-      context.dispatch('putCitizen').then( () => {
-        context.dispatch('putServiceRequest').then( () => {
-          context.dispatch('postHold', citizen_id).then( resp=> {
-            context.commit('toggleServiceModal', false)
+      context.dispatch('putCitizen').then(() => {
+        context.dispatch('putServiceRequest').then(() => {
+          context.dispatch('postHold', citizen_id).then(() => {
             context.commit('toggleBegunStatus', false)
             context.commit('toggleInvitedStatus', false)
+            context.commit('toggleServiceModal', false)
           })
         })
       })
     },
 
     clickInvite(context) {
-      context.dispatch('postInvite', 'next').then( resp => {
-        context.commit('setServiceModalForm', resp.data.citizen)
-        context.commit('toggleServiceModal', true)
+      context.dispatch('postInvite', 'next').then(() => {
         context.commit('toggleInvitedStatus', true)
-        context.dispatch('resetQuantity')
-      })
-      .catch(error=> {
-        context.commit('setMainAlert', 'There are currently not citizens to invite.')
+        context.commit('toggleServiceModal', true)
+      }).catch(() => {
+        context.commit('setMainAlert', 'There are no citizens waiting.')
       })
     },
 
+    checkForUnfinishedService(context, citizens) {
+
+      if (context.state.serviceBegun || context.state.citizenInvited) {
+        clearInterval(flashInt)
+        context.commit('flashServeNow', 'btn-primary')
+        return
+      }
+      if ( !( context.state.serviceBegun && context.state.citizenInvited ) ) {
+        let citizenFound = false
+        citizens.forEach(citizen => {
+          if ( citizen.service_reqs.length > 0 ) {
+            let activeService = citizen.service_reqs.filter(sr => sr.periods.some(p => p.time_end === null))
+            if ( activeService[0].periods.length > 0 ) {
+              let activePeriod = activeService[0].periods[activeService[0].periods.length - 1]
+              if ( ( ['Invited', 'Being Served'].indexOf(activePeriod.ps.ps_name) > -1 )
+                && activePeriod.csr.username === this.state.user.username ) {
+                citizenFound = true
+
+                if ( activePeriod.ps.ps_name === 'Invited' ) {
+                  context.commit('setServiceModalForm', citizen)
+                  context.commit('toggleInvitedStatus', true)
+                  context.commit('toggleBegunStatus', false)
+                  context.dispatch('flashServeNow', 'start')
+                  context.commit('resetAddModalForm')
+                } else if ( activePeriod.ps.ps_name === 'Being Served' ) {
+                  context.commit('setServiceModalForm', citizen)
+                  context.commit('toggleInvitedStatus', true)
+                  context.commit('setServeNowAction', true)
+                  context.dispatch('flashServeNow', 'start')
+                  context.commit('resetAddModalForm')
+                } else {
+                  context.commit('toggleServiceModal', false)
+                  context.commit('toggleBegunStatus', false)
+                  context.commit('toggleInvitedStatus', false)
+                  context.commit('resetAddModalForm')
+                }
+              }
+            }
+          }
+        })
+
+        if ( !citizenFound ) {
+          context.commit('resetServiceModal')
+          context.commit('toggleServiceModal', false)
+          context.commit('toggleBegunStatus', false)
+          context.commit('toggleInvitedStatus', false)
+        }
+      }
+    },
+
     clickMakeActive(context, sr_id) {
-      let { citizen_id } = context.getters.invited_citizen
-        context.dispatch('putServiceRequest').then( () => {
-          context.dispatch('postActivateServiceReq', sr_id).then( () => {
-            context.dispatch('putCitizen').then( resp => {
-              context.commit('setServiceModalForm', resp.data.citizen)
-          })
+      context.dispatch('putServiceRequest').then(() => {
+        context.dispatch('putCitizen').then(() => {
+          context.dispatch('postActivateServiceReq', sr_id)
         })
       })
     },
@@ -554,23 +574,35 @@ export const store = new Vuex.Store({
            context.commit('toggleInvitedStatus', false)
            context.commit('toggleServiceModal', false)
            context.commit('resetServiceModal')
+
          })
        })
      })
     },
 
     clickRowHoldQueue(context, citizen_id) {
-      context.dispatch('postBeginService', citizen_id).then( resp => {
-        context.commit('setServiceModalForm', resp.data.citizen)
-        context.commit('toggleServiceModal', true)
+      context.dispatch('postBeginService', citizen_id).then( () => {
         context.commit('toggleBegunStatus', true)
         context.commit('toggleInvitedStatus', false)
-        context.dispatch('resetQuantity')
+        context.commit('toggleServiceModal', true)
       })
     },
 
+    toggleBegunStatus(context, payload) {
+      context.commit('toggleBegunStatus', payload)
+    },
+
+    toggleInvitedStatus(context, payload) {
+      context.commit('toggleInvitedStatus', payload)
+    },
+
     clickServeNow(context) {
+      if (context.state.serveNowAltAction) {
+        context.commit('toggleBegunStatus', true)
+        context.commit('toggleInvitedStatus', false)
+      }
       context.commit('toggleServiceModal', true)
+      context.dispatch('flashServeNow', 'stop')
     },
 
     clickServiceBeginService(context) {
@@ -593,6 +625,7 @@ export const store = new Vuex.Store({
             context.commit('toggleServiceModal', false)
             context.commit('toggleBegunStatus', false)
             context.commit('toggleInvitedStatus', false)
+
           })
         })
       })
@@ -601,6 +634,14 @@ export const store = new Vuex.Store({
     clickServiceModalClose(context) {
       context.commit('toggleServiceModal', false)
       context.commit('toggleInvitedStatus', true)
+    },
+
+    messageSlack(context, payload) {
+      let slackObject = {
+        slack_message: payload.slack_message
+      }
+      let url = "/slack/"
+      Axios.post(url, slackObject)
     },
 
     postActivateServiceReq(context, sr_id) {
@@ -721,20 +762,18 @@ export const store = new Vuex.Store({
       if (context.state.serviceModalForm.citizen_id) {
         let { citizen_comments } = context.state.serviceModalForm
         citizen_id = context.state.serviceModalForm.citizen_id
-        let compareCitizen = context.getters.invited_citizen
+        let prevCitizen = context.getters.invited_citizen
 
-        if (context.state.showAddModal===true) {
+        if (context.state.showAddModal) {
           quick = context.getters.form_data.quick
-
-          if (compareCitizen.qt_xn_citizen_ind != quick) {
+          if (prevCitizen.qt_xn_citizen_ind !== quick) {
             data.qt_xn_citizen_ind = quick
           }
         }
-        if (citizen_comments && citizen_comments != compareCitizen.citizen_comments) {
-          data.citizen_comments = citizen_comments
-        }
-        if (!citizen_comments && compareCitizen.citizen_comments) {
-          data.citizen_comments = ''
+        if (!context.state.showAddModal) {
+          if ( citizen_comments !== prevCitizen.citizen_comments ) {
+            data.citizen_comments = citizen_comments
+          }
         }
       } else {
         let { form_data } = context.getters
@@ -745,25 +784,17 @@ export const store = new Vuex.Store({
         }
         data.citizen_comments = form_data.comments
       }
+
       if (Object.keys(data).length === 0) {
-        console.log('no citizen object data changed')
-        return new Promise((resolve, reject) => {
-          let url = `/citizens/${citizen_id}/`
-          Axios(context).get(url).then(resp=>{
-            resolve(resp)
-          }, error => {
-            reject(error)
-          })
-        })
+        return new Promise((resolve, reject) => { resolve(' ') })
       }
+
 
       return new Promise((resolve, reject) => {
         let url = `/citizens/${citizen_id}/`
-        Axios(context).put(url,data).then(resp=>{
-          resolve(resp)
-        }, error => {
-          reject(error)
-        })
+
+        Axios(context).put(url, data).then(resp => { resolve(resp) },
+          error => { reject(error) })
       })
     },
 
@@ -804,7 +835,6 @@ export const store = new Vuex.Store({
         }
       }
       if (Object.keys(data).length === 0) {
-        console.log('no service_reqs object data changed')
         return new Promise((resolve, reject) => { resolve(' ') })
       }
 
@@ -818,26 +848,31 @@ export const store = new Vuex.Store({
       })
     },
 
-    messageSlack(context, payload) {
-      let slackObject = {
-        slack_message: payload.slack_message
-      }
-      let url = "/slack/"
-      Axios.post(url, slackObject)
-    },
-
     resetAddCitizenModal(context) {
       context.commit('toggleAddModal', false)
       context.dispatch('toggleModalBack')
       context.commit('resetAddModalForm')
     },
 
-    resetQuantity(context) {
-      let { quantity } = context.getters.active_service
-      context.commit('editServiceModalForm', {
-        type: 'activeQuantity',
-        value: quantity
-      })
+    screenIncomingCitizen(context, citizen) {
+      console.log(citizen)
+      let { csr_id } = context.state.user
+      if (citizen.service_reqs.length > 0) {
+        if ( citizen.service_reqs[0].periods) {
+          let filteredService = citizen.service_reqs.filter(sr =>
+            sr.periods.some(p => p.time_end === null))
+          if (filteredService.length > 0) {
+            let activeService = filteredService[0]
+            if ( activeService.periods.length > 0 ) {
+              let l = activeService.periods.length - 1
+              let activePeriod = activeService.periods[l]
+              if ( activePeriod.csr_id === csr_id ) {
+                context.commit('setServiceModalForm', citizen)
+              }
+            }
+          }
+        }
+      }
     },
 
     setAddModalData(context) {
@@ -848,25 +883,13 @@ export const store = new Vuex.Store({
       context.commit('setAddModalData', data)
     },
 
-    setServedCitizenId(context, payload) {
-      let data = {
-        type: 'citizen_id',
-        value: payload
-      }
-      context.commit('editServiceModalForm', data)
-    },
-
     toggleModalBack(context) {
       if (context.state.user.office.sb.sb_type === "nocallonsmartboard") {
         context.commit('switchAddModalMode', 'non_reception')
       } else {
         context.commit('switchAddModalMode', 'reception')
       }
-    },
-
-    updateAddModalForm(context, payload) {
-      context.commit('updateAddModalForm', payload)
-    },
+    }
   },
 
   mutations: {
@@ -909,21 +932,21 @@ export const store = new Vuex.Store({
     resetAddModalForm(state) {
       let keys = Object.keys(state.addModalForm)
 
-      keys.forEach( key => {
-        if (key !== 'quick' && key !== 'suspendFilter') Vue.set(
+      keys.forEach(key => {
+        if ( key !== 'quick' && key !== 'suspendFilter' ) Vue.set(
           state.addModalForm,
           key,
           ''
         )
-        if ( key === 'quick') Vue.set(
+        if ( key === 'quick' ) Vue.set(
           state.addModalForm,
           key,
           0
         )
-        if ( key === 'suspendFilter') Vue.set(
-            state.addModalForm,
-            key,
-            false
+        if ( key === 'suspendFilter' ) Vue.set(
+          state.addModalForm,
+          key,
+          false
         )
       })
     },
@@ -943,20 +966,20 @@ export const store = new Vuex.Store({
         service: active_service.service_id
       }
       let keys = Object.keys(formData)
-      keys.forEach(key=>{
+      keys.forEach(key => {
         Vue.set(
           state.addModalForm,
           key,
-          formData[key]
+          formData[ key ]
         )
       })
     },
 
-    toggleServiceModal: (state,payload)=>state.showServiceModal=payload,
+    toggleServiceModal: (state, payload) => state.showServiceModal = payload,
 
     setServiceModalForm(state, citizen) {
       let citizen_comments = citizen.citizen_comments
-      let activeService = citizen.service_reqs.filter(sr=>sr.periods.some(p=>p.time_end === null))
+      let activeService = citizen.service_reqs.filter(sr => sr.periods.some(p => p.time_end === null))
       let activeQuantity = activeService[0].quantity
       let { citizen_id } = citizen
       let service_citizen = citizen
@@ -964,11 +987,11 @@ export const store = new Vuex.Store({
       let obj = { citizen_comments, activeQuantity, citizen_id, service_citizen }
       let keys = Object.keys(obj)
 
-      keys.forEach( key => {
+      keys.forEach(key => {
         Vue.set(
           state.serviceModalForm,
           key,
-          obj[key]
+          obj[ key ]
         )
       })
     },
@@ -977,8 +1000,8 @@ export const store = new Vuex.Store({
       let { serviceModalForm } = state
       let keys = Object.keys(serviceModalForm)
 
-      keys.forEach( key => {
-        if (key === 'activeQuantity') {
+      keys.forEach(key => {
+        if ( key === 'activeQuantity' ) {
           Vue.set(
             state.serviceModalForm,
             key,
@@ -1003,8 +1026,8 @@ export const store = new Vuex.Store({
     },
 
     setDefaultChannel(state) {
-      let channel = state.channels.filter(ch=>ch.channel_name==='In Person')
-      state.addModalForm.channel = channel[0].channel_id
+      let channel = state.channels.filter(ch => ch.channel_name === 'In Person')
+      state.addModalForm.channel = channel[ 0 ].channel_id
     },
 
     setMainAlert(state, payload) {
@@ -1016,11 +1039,7 @@ export const store = new Vuex.Store({
       state.alertMessage = payload
     },
 
-    setAllCitizens(state, payload) {
-      state.allCitizens = payload
-    },
-
-    dismissCountDown(state,payload) {
+    dismissCountDown(state, payload) {
       state.dismissCountDown = payload
     },
 
@@ -1028,7 +1047,15 @@ export const store = new Vuex.Store({
 
     toggleBegunStatus: (state, payload) => state.serviceBegun = payload,
 
-    setQuickTransactionState: (state, payload) => state.user.qt_xn_csr_ind = payload
+    setQuickTransactionState: (state, payload) => state.user.qt_xn_csr_ind = payload,
+
+    setOffice: (state, officeType) => state.officeType = officeType,
+
+    flashServeNow: (state, payload) => state.serveNowStyle = payload,
+
+    setServeNowAction: (state, payload) => state.serveNowAltAction = payload,
+
+    logCheckComplete: (state, payload) => state.checkComplete = payload
   }
 })
 

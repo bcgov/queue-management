@@ -8,6 +8,7 @@
         :fields="fields"
         :items="invited_service_reqs"
         head-variant="light"
+        class="m-0 p-0 align-middle"
         small
         id="serve-table"
         fixed
@@ -16,11 +17,19 @@
         >
           <template slot="status" slot-scope="row">
             <div v-if="row.item.periods.some(p=>p.time_end===null)===true">
-              <b-badge variant="success" size="sm">
-                <h6 class="pt-1 px-2" style="font-size: 15px">
+              <div style="display: inline-block;
+                          color: white;
+                          font-size: .75rem;
+                          padding-top: 3px;
+                          padding-bottom: 2px;
+                          padding-right: 10px;
+                          padding-left: 10px;
+                          border-radius: 16px;
+                          border: 1.5px solid #2dc01d;
+                          background-color: limegreen;"
+                          >
                   Active
-                </h6> 
-              </b-badge>
+              </div>
             </div>
             <div v-if="row.item.periods.some(p=>p.time_end===null)===false">
               Innactive
@@ -30,27 +39,35 @@
           <template slot="quantity" slot-scope="row">
             <div v-if="row.item.periods.some(p=>p.time_end===null)===true" >
               <div class="w-25" style="margin: auto">
-                <b-input :value="getQuantity()" @input="setQuantity" size="sm"></b-input>
+                <b-input :value="getQuantity()" @input="setQuantity" size="sm" style="height: 1.8em;"></b-input>
               </div>
             </div>
             <div v-if="row.item.periods.some(p=>p.time_end===null)===false">
               {{ invited_service_reqs[row.index].quantity }}
             </div>
           </template>
-          
+
           <template slot="service.service_name" slot-scope="row">
             {{ row.item.service.service_name }}
             <div style="display: none">
-              {{ 
-                row.item.periods.some(p=>p.time_end===null) ? 
-                   row.item._rowVariant='info' : row.item._rowVariant='' 
+              {{
+                row.item.periods.some(p=>p.time_end===null) ?
+                   row.item._rowVariant='info' : row.item._rowVariant=''
               }}
             </div>
           </template>
               
           <template slot="editBut"  slot-scope="row">
-            <div v-if="row.item.periods.some(p=>p.time_end===null)===true" >
-              <b-button size="sm" @click="clickEdit">
+            <div v-if="row.item.periods.some(p => p.time_end === null) === true" >
+              <b-button size="sm"
+                        @click="clickEdit"
+                        style="height: 1.8em;
+                               display: inline-block;
+                               padding-top: 3px;
+                               padding-bottom: 3px;
+                               padding-left: 8px;
+                               padding-right: 8px;"
+                        >
                 edit
               </b-button>
             </div>
@@ -75,11 +92,11 @@ export default {
   data() {
     return {
       fields: [
-        {key:'status', label: 'Status', thStyle:'text-align: center; font-size: 15px'},
-        {key:'service.parent.service_name', label:'Category', thStyle:'text-align: center; font-size: 15px'},
-        {key:'service.service_name', label:'Service', thStyle:'text-align: center; font-size: 15px'},
-        {key:'quantity', label:'Quantity', thStyle:'text-align: center; font-size: 15px'},
-        {key:'editBut', label:'Change Service', thStyle:'text-align: center; font-size: 15px'}
+        {key:'status', label: 'Status', thStyle:'text-align: center;'},
+        {key:'service.parent.service_name', tdClass: 'align-middle', label:'Category', thStyle:'text-align: center;'},
+        {key:'service.service_name', tdClass: 'align-middle', label:'Service', thStyle:'text-align: center;'},
+        {key:'quantity', label:'Quantity', thStyle:'text-align: center;'},
+        {key:'editBut', label:'Change Service', thStyle:'text-align: center;'}
       ]
     }
   },

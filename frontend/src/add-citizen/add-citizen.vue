@@ -88,16 +88,15 @@ export default {
         this.dismissCountDown = dismissCountDown
       },
       setupForm() {
-        if (!this.serviceModalForm.citizen_id) {
-          this.setDefaultChannel()
+        let setup = this.addModalSetup
+        if (setup === 'add_mode' || setup === 'edit_mode') {
+          this.$root.$emit( 'focusfilter' )
+        } else {
           if (!this.reception) {
             this.$root.$emit( 'focusfilter' )
           } else if (this.reception) {
             this.$root.$emit( 'focuscomments' )
           }
-        }
-        if (this.serviceModalForm.citizen_id) {
-          this.$root.$emit( 'focusfilter' )
         }
       },
       showAlert () {

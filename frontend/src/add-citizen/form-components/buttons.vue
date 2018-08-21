@@ -1,31 +1,27 @@
 <template>
-      <b-col cols="auto" class="p-0 m-0">
-        <template v-if="setup === 'reception' ">
-         
-            <b-button @click="addToQueue" class="btn-primary" id="add-citizen-add-to-queue">Add to queue</b-button>
-            <b-button @click="beginService" class="btn-primary" id="add-citizen-begin-service">Begin service</b-button>
-            <b-button @click="cancelAddCitizensModal" class="btn-secondary" id="add-citizen-cancel">Cancel</b-button>
-    
-        </template>
-        <template v-else-if="setup == 'edit_mode' ">
-        
-            <b-button @click="clickEditApply" class="btn-primary" id="add-citizen-apply">Apply</b-button>
-            <b-button @click="clickEditCancel" class="btn-secondary" id="add-citizen-cancel">Cancel</b-button>
-     
-        </template>
-        <template v-else-if="setup == 'add_mode' ">
-      
-            <b-button @click="addServiceApply">Apply</b-button>
-            <b-button @click="clickEditCancel">Cancel</b-button>
-    
-        </template>
-        <template v-else-if="setup === 'non_reception' ">
-         
-            <b-button @click="beginService" class="btn-primary" id="add-citizen-begin-service">Begin service</b-button>
-            <b-button @click="cancelAddCitizensModal" class="btn-secondary" id="add-citizen-cancel">Cancel</b-button>
-   
-        </template>
-      </b-col>
+  <b-col cols="auto" class="p-0 m-0">
+    <template v-if="setup === 'add_mode' || setup === 'edit_mode' ">
+      <div v-if="setup === 'edit_mode' ">
+        <b-button @click="clickEditApply" class="btn-primary" id="add-citizen-apply">Apply</b-button>
+        <b-button @click="clickEditCancel" class="btn-secondary" id="add-citizen-cancel">Cancel</b-button>
+      </div>
+      <div v-else-if="setup === 'add_mode' ">
+        <b-button @click="addServiceApply">Apply</b-button>
+        <b-button @click="clickEditCancel">Cancel</b-button>
+      </div>
+    </template>
+    <template v-else>
+      <div v-if="reception">
+        <b-button @click="addToQueue" class="btn-primary" id="add-citizen-add-to-queue">Add to queue</b-button>
+        <b-button @click="beginService" class="btn-primary" id="add-citizen-begin-service">Begin service</b-button>
+        <b-button @click="cancelAddCitizensModal" class="btn-secondary" id="add-citizen-cancel">Cancel</b-button>
+      </div>
+      <div v-if="!reception">
+        <b-button @click="beginService" class="btn-primary" id="add-citizen-begin-service">Begin service</b-button>
+        <b-button @click="cancelAddCitizensModal" class="btn-secondary" id="add-citizen-cancel">Cancel</b-button>
+      </div>
+    </template>
+  </b-col>
 </template>
 
 <script>
@@ -35,7 +31,7 @@
     name: 'Buttons',
 
     computed: {
-      ...mapGetters([ 'form_data' ]),
+      ...mapGetters([ 'form_data', 'reception' ]),
       ...mapState({ setup: state => state.addModalSetup })
     },
 
