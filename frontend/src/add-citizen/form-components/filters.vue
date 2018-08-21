@@ -8,7 +8,7 @@
     <b-form-row no-gutters>
       <b-col>
           <input ref="filterref"
-                 style="height: 37px; font-size: 15px;"
+                 style="height: 38px; font-size: .8rem;"
                  class="form-control"
                  v-model="search"
                  ></input>

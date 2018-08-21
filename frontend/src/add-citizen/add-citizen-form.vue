@@ -1,7 +1,24 @@
 <template>
   <div class="add_citizen_template">
-    <template v-if="addModalSetup === 'non_reception'">
+    <template v-if="addModalSetup === 'add_mode' || addModalSetup === 'edit_mode' ">
       <b-container fluid class="add_citizen_template">
+        <b-form>
+          <Channel />
+          <Filters />
+          <Tables />
+        </b-form>
+      </b-container>
+    </template>
+    <template v-else>
+      <b-container fluid class="add_citizen_template" v-if="reception">
+        <b-form>
+          <Comments />
+          <Channel />
+          <Filters />
+          <Tables />
+        </b-form>
+      </b-container>
+      <b-container fluid class="add_citizen_template" v-if="!reception">
         <b-form>
           <Channel />
           <Filters />
@@ -10,30 +27,11 @@
         </b-form>
       </b-container>
     </template>
-    <template v-else-if="addModalSetup === 'reception'">
-      <b-container fluid class="add_citizen_template">
-        <b-form>
-          <Comments />
-          <Channel />
-          <Filters />
-          <Tables />
-        </b-form>
-      </b-container>
-    </template>
-    <template v-else-if="addModalSetup === 'edit_mode' || addModalSetup === 'add_mode' ">
-      <b-container fluid class="add_citizen_template">
-        <b-form>
-          <Channel />
-          <Filters />
-          <Tables />
-        </b-form>
-      </b-container>
-    </template>
   </div>
 </template>
 
 <script>
-import {mapState} from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 import Comments from './form-components/comments'
 import Channel from './form-components/channel'
@@ -49,9 +47,10 @@ export default {
     Tables
   },
   computed: {
-    ...mapState(['addModalSetup'])
-    }
+    ...mapState(['addModalSetup']),
+    ...mapGetters(['reception'])
   }
+}
 
 </script>
 

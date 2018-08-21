@@ -28,6 +28,7 @@
                     >
           <b-table :items="filtered_services" 
                    :fields="fields"
+                   sort-by="parrent.service_name"
                    :filter="filter"
                    :small="t"
                    :bordered="f"
@@ -70,25 +71,9 @@
         f:false,
         t:true,
         fields: [
-          {
-            key: 'service_name',
-            label: 'Service',
-            sortable: false,
-            thClass: 'd-none'
-          },
-          {
-            key: 'parent.service_name',
-            label: 'Category',
-            sortable: false,
-            thClass: 'd-none'
-          },
-          {
-            key: 'service_desc',
-            label: 'Description',
-            sortable: false,
-            thClass: 'd-none',
-            tdClass: 'd-none'
-          }
+          { key: 'service_name', label: 'Service', sortable: false, thClass: 'd-none' },
+          { key: 'parent.service_name', label: 'Category', sortable: false, thClass: 'd-none' },
+          { key: 'service_desc', label: 'Description', sortable: false, thClass: 'd-none', tdClass: 'd-none' }
         ]
       }
     },

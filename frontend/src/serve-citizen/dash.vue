@@ -21,7 +21,8 @@ limitations under the License.*/
              style="h-align: center"
              variant="warning"
              @dismissed="dismissCountDown=0"
-             @dismiss-count-down="countDownChanged">
+             @dismiss-count-down="countDownChanged"
+             >
       {{this.$store.state.alertMessage}}
     </b-alert>
 
@@ -35,7 +36,7 @@ limitations under the License.*/
                         :disabled="citizenInvited===true"
                         v-if="reception"
                         id="invite-citizen-button">Invite</b-button>
-              <b-button class="m-1 btn-primary"
+              <b-button v-bind:class="serveNowStyle"
                         @click="clickServeNow"
                         :disabled="citizenInvited===false"
                         id="serve-citizen-button">Serve Now</b-button>
@@ -128,7 +129,8 @@ import ServeCitizen from './serve-citizen'
         'isLoggedIn',
         'citizenInvited',
         'dismissCountDown',
-        'showServiceModal'
+        'showServiceModal',
+        'serveNowStyle'
       ]),
       ...mapGetters(['citizens_queue', 'on_hold_queue', 'reception']),
 
@@ -166,5 +168,10 @@ import ServeCitizen from './serve-citizen'
 <style>
   .modal-main div {
     background-color: blue;
+  }
+  .btn-highlighted {
+    background-color: #FEDF01 !important;
+    color: black !important;
+    border: 1px solid white;
   }
 </style>

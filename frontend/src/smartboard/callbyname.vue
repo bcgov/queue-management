@@ -28,9 +28,9 @@ limitations under the License.*/
       </div>
     </div>
     <div class="board-footer-div">
-      <div v-if="officeType==='callbynumber'" style="width: 100%; text-align: center;"> Currently waiting:
+      <div v-if="officeType==='callbyticket'" style="width: 100%; text-align: center;"> Currently waiting:
         {{waiting}}</div>
-      <div style="width: 100%; text-align: center; font-size: 1.2em">{{ message }}</div>
+      <div style="width: 100%; text-align: center; font-size: 1.2rem;">{{ message }}</div>
   </div>
   </div>
 </template>
