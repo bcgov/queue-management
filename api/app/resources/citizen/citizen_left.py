@@ -44,6 +44,7 @@ class CitizenLeft(Resource):
                     p.time_end = datetime.now()
 
         citizen.cs = CitizenState.query.filter_by(cs_state_name='Left before receiving services').first()
+        citizen.citizen_comments = None
 
         db.session.add(citizen)
         db.session.commit()
