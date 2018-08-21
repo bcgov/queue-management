@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+from filelock import FileLock
 from flask import g, request
 from flask_restplus import Resource
 from qsystem import api, api_call_with_retry, db, oidc, socketio
@@ -34,54 +35,59 @@ class CitizenGenericInvite(Resource):
         active_citizen_state = CitizenState.query.filter_by(cs_state_name='Active').first()
         waiting_period_state = PeriodState.query.filter_by(ps_name='Waiting').first()
 
-        citizen = None
+        lock = FileLock("invite_citizen.lock")
 
-        try:
-            qt_xn_csr_ind = request.get_json().get('qt_xn_csr_ind')
-        except AttributeError:
-            qt_xn_csr_ind = csr.qt_xn_csr_ind
+        with lock:
+            print("Lock acquired")
 
-        if qt_xn_csr_ind:
-            citizen = Citizen.query \
-                .filter_by(qt_xn_citizen_ind=1, cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
-                .join(Citizen.service_reqs) \
-                .join(ServiceReq.periods) \
-                .filter_by(ps_id=waiting_period_state.ps_id) \
-                .filter(Period.time_end.is_(None)) \
-                .order_by(Citizen.citizen_id) \
-                .first()
-        else:
-            citizen = Citizen.query \
-                .filter_by(qt_xn_citizen_ind=0, cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
-                .join(Citizen.service_reqs) \
-                .join(ServiceReq.periods) \
-                .filter_by(ps_id=waiting_period_state.ps_id) \
-                .filter(Period.time_end.is_(None)) \
-                .order_by(Citizen.citizen_id) \
-                .first()
+            citizen = None
 
-        # Either no quick txn citizens for the quick txn csr, or vice versa
-        if citizen is None:
-            citizen = Citizen.query \
-                .filter_by(cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
-                .join(Citizen.service_reqs) \
-                .join(ServiceReq.periods) \
-                .filter_by(ps_id=waiting_period_state.ps_id) \
-                .filter(Period.time_end.is_(None)) \
-                .order_by(Citizen.citizen_id) \
-                .first()
+            try:
+                qt_xn_csr_ind = request.get_json().get('qt_xn_csr_ind')
+            except AttributeError:
+                qt_xn_csr_ind = csr.qt_xn_csr_ind
 
-        if citizen is None:
-            return {"message": "There is no citizen to invite"}, 400
+            if qt_xn_csr_ind:
+                citizen = Citizen.query \
+                    .filter_by(qt_xn_citizen_ind=1, cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
+                    .join(Citizen.service_reqs) \
+                    .join(ServiceReq.periods) \
+                    .filter_by(ps_id=waiting_period_state.ps_id) \
+                    .filter(Period.time_end.is_(None)) \
+                    .order_by(Citizen.citizen_id) \
+                    .first()
+            else:
+                citizen = Citizen.query \
+                    .filter_by(qt_xn_citizen_ind=0, cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
+                    .join(Citizen.service_reqs) \
+                    .join(ServiceReq.periods) \
+                    .filter_by(ps_id=waiting_period_state.ps_id) \
+                    .filter(Period.time_end.is_(None)) \
+                    .order_by(Citizen.citizen_id) \
+                    .first()
 
-        active_service_request = citizen.get_active_service_request()
-        active_service_request.invite(csr)
+            # Either no quick txn citizens for the quick txn csr, or vice versa
+            if citizen is None:
+                citizen = Citizen.query \
+                    .filter_by(cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
+                    .join(Citizen.service_reqs) \
+                    .join(ServiceReq.periods) \
+                    .filter_by(ps_id=waiting_period_state.ps_id) \
+                    .filter(Period.time_end.is_(None)) \
+                    .order_by(Citizen.citizen_id) \
+                    .first()
 
-        pending_service_state = SRState.query.filter_by(sr_code='Pending').first()
-        active_service_request.sr_state_id = pending_service_state.sr_state_id
+            if citizen is None:
+                return {"message": "There is no citizen to invite"}, 400
 
-        db.session.add(citizen)
-        db.session.commit()
+            active_service_request = citizen.get_active_service_request()
+            active_service_request.invite(csr)
+
+            pending_service_state = SRState.query.filter_by(sr_code='Pending').first()
+            active_service_request.sr_state_id = pending_service_state.sr_state_id
+
+            db.session.add(citizen)
+            db.session.commit()
 
         socketio.emit('update_customer_list', {}, room=csr.office_id)
         socketio.emit('citizen_invited', {}, room='sb-%s' % csr.office.office_number)

@@ -408,7 +408,7 @@ class Bootstrap(Command):
         )
 
         cfms_postman_nonoperator = models.CSR(
-            username="cfms-postman-nonoperator",
+            username="cfms-postman-non-operator",
             office_id=office4.office_id,
             role_id=role2.role_id,
             qt_xn_csr_ind=0,

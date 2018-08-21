@@ -859,17 +859,46 @@ export const store = new Vuex.Store({
       let { csr_id } = context.state.user
       if (citizen.service_reqs.length > 0) {
         if ( citizen.service_reqs[0].periods) {
-          let filteredService = citizen.service_reqs.filter(sr =>
-            sr.periods.some(p => p.time_end === null))
+          let filteredService = citizen.service_reqs.filter(sr => sr.periods.some(p => p.time_end === null))
           if (filteredService.length > 0) {
             let activeService = filteredService[0]
             if ( activeService.periods.length > 0 ) {
               let l = activeService.periods.length - 1
               let activePeriod = activeService.periods[l]
               if ( activePeriod.csr_id === csr_id ) {
-                context.commit('setServiceModalForm', citizen)
+                if (activePeriod.ps.ps_name === 'Invited') {
+                  context.commit('setServiceModalForm', citizen)
+                  context.commit('toggleServiceModal', true)
+                  context.commit('toggleInvitedStatus', true)
+                  context.commit('setServeNowAction', true)
+                  context.dispatch('flashServeNow', 'start')
+                  context.commit('resetAddModalForm')
+                } else if (activePeriod.ps.ps_name === 'Being Served') {
+                  context.commit('setServiceModalForm', citizen)
+                  context.commit('toggleServiceModal', true)
+                  context.commit('toggleBegunStatus', true)
+                  context.commit('toggleInvitedStatus', false)
+                  context.commit('setServeNowAction', false)
+                  context.dispatch('flashServeNow', 'stop')
+                  context.commit('resetAddModalForm')
+                } else {
+                  context.commit('resetServiceModal')
+                  context.commit('toggleServiceModal', false)
+                  context.commit('toggleInvitedStatus', false)
+                  context.commit('toggleBegunStatus', false)
+                  context.dispatch('flashServeNow', 'stop')
+                  context.commit('resetAddModalForm')
+                }
               }
             }
+            //Citizen is completed or left
+          } else {
+            context.commit('resetServiceModal')
+            context.commit('toggleServiceModal', false)
+            context.commit('toggleInvitedStatus', false)
+            context.commit('toggleBegunStatus', false)
+            context.dispatch('flashServeNow', 'stop')
+            context.commit('resetAddModalForm')
           }
         }
       }

@@ -150,8 +150,20 @@ objects:
             - mountPath: /opt/app-root/src/client_secrets
               name: oidc-secrets-o6ya6
               readOnly: true
+            - mountPath: /opt/app-root/src/lock
+              name: lockdir
+              readOnly: false
         volumes:
           - configMap:
               defaultMode: 420
               name: oidc-secrets
             name: oidc-secrets-o6ya6
+- kind: PersistentVolumeClaim
+  apiVersion: v1
+  metadata:
+    name: "lockdir"
+  spec:
+    accessModes: [ "ReadWriteMany" ]
+    resources:
+      requests:
+        storage: "128Mi"
