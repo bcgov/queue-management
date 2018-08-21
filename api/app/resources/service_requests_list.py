@@ -16,15 +16,15 @@ from flask import request, g
 from flask_restplus import Resource
 from datetime import datetime
 from qsystem import api, api_call_with_retry, db, oidc, socketio
-from app.models import Citizen, CitizenState, Channel, CSR, Period, PeriodState, Service, ServiceReq, SRState
-from app.schemas import ChannelSchema, ServiceReqSchema
+from app.models import Citizen, CitizenState, CSR, Period, PeriodState, Service, ServiceReq, SRState
+from app.schemas import CitizenSchema, ServiceReqSchema
 from marshmallow import ValidationError
 
 
 @api.route("/service_requests/", methods=["POST"])
 class ServiceRequestsList(Resource):
 
-    channel_schema = ChannelSchema()
+    citizen_schema = CitizenSchema()
     service_request_schema = ServiceReqSchema()
 
     @oidc.accept_token(require_token=True)
@@ -62,7 +62,7 @@ class ServiceRequestsList(Resource):
         for req in citizen.service_reqs:
             if req.sr_state_id == active_sr_state.sr_state_id:
                 req.sr_state_id = complete_sr_state.sr_state_id
-                req.finish_service(csr)
+                req.finish_service(csr, clear_comments=False)
                 db.session.add(req)
 
         service_request.sr_state = active_sr_state
@@ -108,10 +108,8 @@ class ServiceRequestsList(Resource):
         db.session.add(citizen)
         db.session.commit()
 
-        # We only need to send the socket emission for creating multiple service reqs
-        if len(citizen.service_reqs) >= 2:
-            print("Emiting")
-            socketio.emit('update_customer_list', {}, room=csr.office_id)
+        citizen_result = self.citizen_schema.dump(citizen)
+        socketio.emit('update_active_citizen', citizen_result.data, room=csr.office_id)
         result = self.service_request_schema.dump(service_request)
 
         return {'service_request': result.data,

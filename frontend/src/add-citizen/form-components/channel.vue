@@ -19,7 +19,7 @@
 
 <script>
   import { mapGetters } from 'vuex'
-  
+
   export default {
     name: 'Channel',
     data() {
@@ -30,11 +30,12 @@
       }
     },
     computed: {
-      ...mapGetters(['channel_options', 'form_data']),
+      ...mapGetters([ 'channel_options', 'form_data' ]),
       channel: {
         get() { return this.form_data.channel },
         set(value) {
-          this.$store.commit('updateAddModalForm',{type: 'channel', value})
+          console.log('setter did it')
+          this.$store.commit('updateAddModalForm', { type: 'channel', value })
         }
       }
     }

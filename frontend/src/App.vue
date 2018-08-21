@@ -30,3 +30,9 @@ export default {
   components: { Dash, Header, Socket }
 }
 </script>
+
+<style>
+  .custom-select-sm {
+    font-size: .8rem !important;
+  }
+</style>

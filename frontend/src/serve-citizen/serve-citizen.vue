@@ -88,7 +88,7 @@
                               value="yes"
                               unchecked-value="no"
                               >
-               <span style="font-size: 17px;">Inaccurate Time</span>
+               <span style="font-size: 1rem;">Inaccurate Time</span>
              </b-form-checkbox>
            </div>
          </b-col>
@@ -233,18 +233,12 @@ export default {
   background-color: WhiteSmoke;
 }
 
-  .btn-highlighted {
-    background-color: orange !important;
-    color: white !important;
-    border: 1px solid orangered;
-  }
-
 #serve-citizen-modal-footer {
   border: 1px solid grey;
   background-color: WhiteSmoke;
 }
 strong {
   color: blue;
-  font-size: 21px;
+  font-size: 1.35rem;
 }
 </style>

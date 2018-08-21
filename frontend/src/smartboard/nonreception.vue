@@ -26,7 +26,7 @@ limitations under the License.*/
         </div>
     </div>
     <div class="board-footer-div" style="align-items: flex-end">
-      <div style="width: 100%; text-align: center; font-size: 1.2em padding-top:30px">
+      <div style="width: 100%; text-align: center; font-size: 1.2rem; padding-top:30px;">
         {{ message }}
       </div>
     </div>
