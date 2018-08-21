@@ -83,7 +83,7 @@ class ServiceRequestActivate(Resource):
         for req in service_request.citizen.service_reqs:
             if req.sr_state_id == active_service_state.sr_state_id:
                 req.sr_state_id = complete_service_state.sr_state_id
-                req.finish_service(csr)
+                req.finish_service(csr, clear_comments=False)
                 db.session.add(req)
 
         # Then set the requested service to active
