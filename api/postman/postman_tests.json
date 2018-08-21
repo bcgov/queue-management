@@ -4920,7 +4920,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "70d0dff7-802f-4f7c-968d-1b7fdeb0f4fa",
+								"id": "4ee90115-54c2-4b44-b6f1-d739e8a385b1",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -4973,8 +4973,9 @@
 									"        it('citizen_name must equal \"' + citizenName + '\"', function() {",
 									"            (currentCitizen.citizen_name).should.be.eql(citizenName);",
 									"        });",
-									"        it('citizen_comment must equal \"' + citizenComment + '\"', function() {",
-									"            (currentCitizen.citizen_comments).should.be.eql(citizenComment);",
+									"        it('citizen_comment must be null on service completion ', function() {",
+									"            var newshould = chai.should();",
+									"            newshould.equal(currentCitizen.citizen_comments, null);",
 									"        });",
 									"        it('service_reqs length must be 1 (single service request)', function() {",
 									"            (currentCitizen.service_reqs.length).should.be.eql(1);",

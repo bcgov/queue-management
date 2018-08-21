@@ -3,7 +3,7 @@
   "name": "queue-management-dev",
   "values": [
     {
-      "value": "https://servicebc-cfms-dev.pathfinder.gov.bc.ca/api/v1/",
+      "value": "https://dev-theq.pathfinder.gov.bc.ca/api/v1/",
       "key": "url",
       "enabled": true
     },
@@ -43,22 +43,22 @@
       "enabled": true
     },
     {
-      "value": 0,
+      "value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJEeEJ2b2dvUG1Lc0dFZnlkdnRVandDUF9sV18wd1V2b1NzV3F6NVFtRlFFIn0.eyJqdGkiOiI0ZTc2MTA5Ni0wMzg5LTQwOTUtYTZmNC1jNWU5MmY2ODdjOGYiLCJleHAiOjE1MzQ4NzI4NDEsIm5iZiI6MCwiaWF0IjoxNTM0ODcxMDQxLCJpc3MiOiJodHRwczovL2Rldi1zc28ucGF0aGZpbmRlci5nb3YuYmMuY2EvYXV0aC9yZWFsbXMvbmVzdCIsImF1ZCI6ImNmbXMtREVWIiwic3ViIjoiNjhhMjJlMGQtYmZjNi00MTk3LWFiODYtNDE2ZjY3ZTJiZTI4IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiY2Ztcy1ERVYiLCJhdXRoX3RpbWUiOjAsInNlc3Npb25fc3RhdGUiOiI2ZmZlNjAwMC1mYmUzLTRkNmYtOWZkMS1jYWRkMzMzMDFiNjMiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbIioiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwibmFtZSI6IkNGTVMgUG9zdG1hbiBPcGVyYXRvciIsInByZWZlcnJlZF91c2VybmFtZSI6ImNmbXMtcG9zdG1hbi1vcGVyYXRvciIsImdpdmVuX25hbWUiOiJDRk1TIFBvc3RtYW4iLCJmYW1pbHlfbmFtZSI6Ik9wZXJhdG9yIn0.O2aYvlDnjxWANzJXq2EvNAQ0nBJhEPRPtWmJhGVAZriwW7yUNRf0dx4gQ5qM-dPPNHos0gjCNNZACb_si8RlbowPvGLjjzLxQp7j6_ZaNzG3M3i9e0z9swqdLZbO3g2GPsHZCJX7LOlp05pI_4p0Tk8cK12d4kuPTTvrX57mgmHi1Gq6-ZSmTS1cws-tAAqxYVfAlLpBeG4Q--bamP8-Ai15FLi_NaKtAtRLV16_r-7BrKn_wpyRxLjGP_qaqyBZiEDpZYxSSA5dN72akgmLBEPKQKWz_AdRj8V1rvHBquCYoq4W2W_-t9-wIjedtGTD1L3eHiZYFcMtWJ1v628PZQ",
       "key": "token",
       "enabled": true
     },
     {
-      "value": 0,
+      "value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJEeEJ2b2dvUG1Lc0dFZnlkdnRVandDUF9sV18wd1V2b1NzV3F6NVFtRlFFIn0.eyJqdGkiOiIzOTUwM2ZhZi1kNmQ3LTQwNWYtYjM4Yi05NjhlNmM0ZjkyYTEiLCJleHAiOjE1MzQ4NzgyNDEsIm5iZiI6MCwiaWF0IjoxNTM0ODcxMDQxLCJpc3MiOiJodHRwczovL2Rldi1zc28ucGF0aGZpbmRlci5nb3YuYmMuY2EvYXV0aC9yZWFsbXMvbmVzdCIsImF1ZCI6ImNmbXMtREVWIiwic3ViIjoiNjhhMjJlMGQtYmZjNi00MTk3LWFiODYtNDE2ZjY3ZTJiZTI4IiwidHlwIjoiUmVmcmVzaCIsImF6cCI6ImNmbXMtREVWIiwiYXV0aF90aW1lIjowLCJzZXNzaW9uX3N0YXRlIjoiNmZmZTYwMDAtZmJlMy00ZDZmLTlmZDEtY2FkZDMzMzAxYjYzIiwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fX0.JB1JqCieiG92vvpgUL9uOcVm7FmqsEQJb0bU3uBtx2xKi54I0DcKRPjxJXxmXPTGkJcauydkKaBuv93AjzwbWg7GHCdZGqyPCQDal_kS1WYcKEeIkWjB2rZGS7QR0ZcL_KsYRKu-lli5BOFFqnHd4voxMhDzdW59v8577xXyway77UoIhQz382M4nRKZJsFoheLlpNlah4mcnma6bhxkRbQGTf77YLPcjGxezVnKSxS_QewyCd6vz4I4bJr4J3FQkxGVyrbIKg30Zq-5fPYdinC0KARpcgjqRnFwh8DkvvaAkYW88UkK-0KpRY7VAXciEZLLh8agOXtmZDp-0Q4DdA",
       "key": "refresh_token",
       "enabled": true
     },
     {
-      "value": 0,
+      "value": 1534872823812,
       "key": "token_expires",
       "enabled": true
     },
     {
-      "value": 0,
+      "value": 1534878223812,
       "key": "refresh_token_expires",
       "enabled": true
     },
@@ -123,17 +123,17 @@
       "enabled": true
     },
     {
-      "value": "24",
+      "value": "148",
       "key": "service_MSP_id",
       "enabled": true
     },
     {
-      "value": "21",
+      "value": "145",
       "key": "service_PropTax_id",
       "enabled": true
     },
     {
-      "value": "6",
+      "value": "13",
       "key": "channel_telephone_id",
       "enabled": true
     },
@@ -143,7 +143,7 @@
       "enabled": true
     },
     {
-      "value": "1824",
+      "value": "3612",
       "key": "current_sr_id",
       "enabled": true
     },
@@ -153,7 +153,7 @@
       "enabled": true
     },
     {
-      "value": "9",
+      "value": "19",
       "key": "channel_email_id",
       "enabled": true
     },
@@ -173,7 +173,7 @@
       "enabled": true
     },
     {
-      "value": "1884",
+      "value": "3810",
       "key": "first_client",
       "enabled": true
     },
@@ -183,38 +183,38 @@
       "enabled": true
     },
     {
-      "value": "auth_url = pm.environment.get(\"auth_url\");\nrealm = pm.environment.get(\"realm\");\nclientid = pm.environment.get(\"clientid\");\nuserid = pm.environment.get(\"userid_nonqtxn\");\npassword = pm.environment.get(\"password_nonqtxn\");\nclient_secret = pm.environment.get(\"client_secret\");\n\nconst echoPostRequest = {\n  url: auth_url + '/auth/realms/' + realm + '/protocol/openid-connect/token',\n  method: 'POST',\n  header: 'Content-Type:application/x-www-form-urlencoded',\n  body: {\n    mode: 'raw',\n    raw: 'grant_type=password&client_id=' + clientid \n          + '&username=' + userid \n          + '&password=' + password\n          + '&client_secret=' + client_secret\n  }\n};\npm.sendRequest(echoPostRequest, function (err, res) {\n    var jsonData = res.json();\n    if (jsonData.hasOwnProperty('access_token')) {\n    \tpm.environment.set(\"token_nonqtxn\", jsonData.access_token);\n\t    pm.environment.set(\"refresh_token_nonqtxn\", jsonData.refresh_token);\n\t    console.log(err ? err : res.json());\n\t} else {\n\t    pm.environment.set(\"token_nonqtxn\", 0);\n\t    pm.environment.set(\"refresh_token_nonqtxn\", 0);\n\t    pm.environment.set(\"token_expires_nonqtxn\", 0);\n\t    pm.environment.set(\"refresh_token_expires_nonqtxn\", 0);\n\t}\n});",
+      "value": "auth_url = pm.environment.get(\"auth_url\");\nrealm = pm.environment.get(\"realm\");\nclientid = pm.environment.get(\"clientid\");\nuserid = pm.environment.get(\"userid_nonqtxn\");\npassword = pm.globals.get(\"password_nonqtxn\");\nclient_secret = pm.globals.get(\"client_secret\");\n\nconst echoPostRequest = {\n  url: auth_url + '/auth/realms/' + realm + '/protocol/openid-connect/token',\n  method: 'POST',\n  header: 'Content-Type:application/x-www-form-urlencoded',\n  body: {\n    mode: 'raw',\n    raw: 'grant_type=password&client_id=' + clientid \n          + '&username=' + userid \n          + '&password=' + password\n          + '&client_secret=' + client_secret\n  }\n};\npm.sendRequest(echoPostRequest, function (err, res) {\n    var jsonData = res.json();\n    if (jsonData.hasOwnProperty('access_token')) {\n    \tpm.environment.set(\"token_nonqtxn\", jsonData.access_token);\n\t    pm.environment.set(\"refresh_token_nonqtxn\", jsonData.refresh_token);\n\t    console.log(err ? err : res.json());\n\t} else {\n\t    pm.environment.set(\"token_nonqtxn\", 0);\n\t    pm.environment.set(\"refresh_token_nonqtxn\", 0);\n\t    pm.environment.set(\"token_expires_nonqtxn\", 0);\n\t    pm.environment.set(\"refresh_token_expires_nonqtxn\", 0);\n\t}\n});",
       "key": "auth_first_nonqtxn",
       "enabled": true
     },
     {
-      "value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJEeEJ2b2dvUG1Lc0dFZnlkdnRVandDUF9sV18wd1V2b1NzV3F6NVFtRlFFIn0.eyJqdGkiOiJlYTUwN2NlYi1iODA3LTQxYzgtOWZhNy03ZmVlMDQyY2U2N2UiLCJleHAiOjE1MzM3NzU5OTUsIm5iZiI6MCwiaWF0IjoxNTMzNzc0MTk1LCJpc3MiOiJodHRwczovL2Rldi1zc28ucGF0aGZpbmRlci5nb3YuYmMuY2EvYXV0aC9yZWFsbXMvbmVzdCIsImF1ZCI6ImNmbXMtREVWIiwic3ViIjoiNjMxOTU3OWUtNGE1Ny00MmE2LWI1ZGUtZWViNGQ1MjQ3YWYwIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiY2Ztcy1ERVYiLCJhdXRoX3RpbWUiOjAsInNlc3Npb25fc3RhdGUiOiJkZTAzYWFhOS1jMzY2LTRlY2YtYTRkNS00NGQ5NjU2ZDAzNzUiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbIioiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImNmbXNfbm9ub3BlcmF0b3IiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sIm5hbWUiOiJDRk1TIFBvc3RtYW4gTm9uIE9wZXJhdG9yIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiY2Ztcy1wb3N0bWFuLW5vbi1vcGVyYXRvciIsImdpdmVuX25hbWUiOiJDRk1TIFBvc3RtYW4iLCJmYW1pbHlfbmFtZSI6Ik5vbiBPcGVyYXRvciJ9.Zw3YzjBOLLEK4bmkVl_5io4t-489I85Wr5xOHCErh5J2WFeOngXFtOJHTagH03Pku4gg830NhDxDGeyJn3hWrBYDotUd2-eFYrxpraPRTbnEgJQSFCezpyqbZF1HyHTRHyrRLFWHURW93akPaA1T--kW73DTSpp2JDvBzzkkkJI4cMDHQNp75kNQSAojwOvfvii3dwSJEBxDl8Pd3VoCg9uH7SucPlEsgVdV4VcIfHU5EtiibBgcj5eckorp5LIa3FpnFxHXjTbKG1_QYGH3e59Z6UQRPUyO7RcA0hYy_MdfRMWSy6JOmmYdCN8MGnSqUT7B2YtNY0K780Xu62-EgQ",
+      "value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJEeEJ2b2dvUG1Lc0dFZnlkdnRVandDUF9sV18wd1V2b1NzV3F6NVFtRlFFIn0.eyJqdGkiOiIzYmU3MTEzZC04YjY5LTQxMmEtYjVlNC03MmIzODM4ZWY4YTUiLCJleHAiOjE1MzQ4NzI4NDUsIm5iZiI6MCwiaWF0IjoxNTM0ODcxMDQ1LCJpc3MiOiJodHRwczovL2Rldi1zc28ucGF0aGZpbmRlci5nb3YuYmMuY2EvYXV0aC9yZWFsbXMvbmVzdCIsImF1ZCI6ImNmbXMtREVWIiwic3ViIjoiNjMxOTU3OWUtNGE1Ny00MmE2LWI1ZGUtZWViNGQ1MjQ3YWYwIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiY2Ztcy1ERVYiLCJhdXRoX3RpbWUiOjAsInNlc3Npb25fc3RhdGUiOiJjMGQzY2YwZC1jNzJmLTRhYTEtODcwMS1kYTZhMjljMTgyZDciLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbIioiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwibmFtZSI6IkNGTVMgUG9zdG1hbiBOb24gT3BlcmF0b3IiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJjZm1zLXBvc3RtYW4tbm9uLW9wZXJhdG9yIiwiZ2l2ZW5fbmFtZSI6IkNGTVMgUG9zdG1hbiIsImZhbWlseV9uYW1lIjoiTm9uIE9wZXJhdG9yIn0.OxkKBn6ujSXjS84s3SvIoXN8AlWwYEREJZMIMfaLztE2H2VNcUe6fByq9ksaYoqsWwwsVjEu-u1e1R3BA3roI06VWJ6KYBkaR52jQLPtrROKqZethh4DrJ3duc506KJTMyQrnS3ZNVv8uEhzAYRQrrzqVk0ZSWlKoG8wVqzFyBSsF4pW91v0L9hZ_cdEhAkN7ckS4cMseeGGNjVlCPmgJWzYaVuGhnDRXtJfI0mNZszHRGCOofQJwvSe8owpE81tYZoFrCAsyfYZyIdh0Mgxee4fh5eoHKIPP3gBalMVeYu2c9XU16e8xPN8uKew-fh-R4phL8xJkJziXURoiJkK7w",
       "key": "token_nonqtxn",
       "enabled": true
     },
     {
-      "value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJEeEJ2b2dvUG1Lc0dFZnlkdnRVandDUF9sV18wd1V2b1NzV3F6NVFtRlFFIn0.eyJqdGkiOiIwMmJlNGY5OS1jNWMzLTQwYTQtYmIwMy01ZTg2ZjFlYjY3YTQiLCJleHAiOjE1MzM3ODEzOTUsIm5iZiI6MCwiaWF0IjoxNTMzNzc0MTk1LCJpc3MiOiJodHRwczovL2Rldi1zc28ucGF0aGZpbmRlci5nb3YuYmMuY2EvYXV0aC9yZWFsbXMvbmVzdCIsImF1ZCI6ImNmbXMtREVWIiwic3ViIjoiNjMxOTU3OWUtNGE1Ny00MmE2LWI1ZGUtZWViNGQ1MjQ3YWYwIiwidHlwIjoiUmVmcmVzaCIsImF6cCI6ImNmbXMtREVWIiwiYXV0aF90aW1lIjowLCJzZXNzaW9uX3N0YXRlIjoiZGUwM2FhYTktYzM2Ni00ZWNmLWE0ZDUtNDRkOTY1NmQwMzc1IiwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImNmbXNfbm9ub3BlcmF0b3IiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX19.BX5twFsAyYt0iYMIVaTTENyyl7wBN82Y_fLcJdmms68uNAVhasOOhepenN86Dk0gKiRcatM3UQG9aKRrDb3DwZcm4RYD7OgS8j9TNXiSxld9V7Ja4476EszQmGi2Y8TC_TnNTMCOJ5vN0x_JeVYd4SlC8QV3unJ4X1weirf1RfNSFiglxxOOb76QgM4ub2R63gtmb-n1o-qRdntCA5kdObdD7Nmx6yafz8YDwHmJt8laFn1AUW65-OSbD-8BRx6khZIINZYdIji2vZRPpKYxxRJmRl3vN5hXbh7PzSEBNdlvgQX-DnDH_x-h1kiz8cq5rxICcbpfYaQf_1cA3-2SQQ",
+      "value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJEeEJ2b2dvUG1Lc0dFZnlkdnRVandDUF9sV18wd1V2b1NzV3F6NVFtRlFFIn0.eyJqdGkiOiIzOTM4NWExZC1mZjM4LTRmMmQtODhjYy01NjA0OTZjODk5ZDMiLCJleHAiOjE1MzQ4NzgyNDUsIm5iZiI6MCwiaWF0IjoxNTM0ODcxMDQ1LCJpc3MiOiJodHRwczovL2Rldi1zc28ucGF0aGZpbmRlci5nb3YuYmMuY2EvYXV0aC9yZWFsbXMvbmVzdCIsImF1ZCI6ImNmbXMtREVWIiwic3ViIjoiNjMxOTU3OWUtNGE1Ny00MmE2LWI1ZGUtZWViNGQ1MjQ3YWYwIiwidHlwIjoiUmVmcmVzaCIsImF6cCI6ImNmbXMtREVWIiwiYXV0aF90aW1lIjowLCJzZXNzaW9uX3N0YXRlIjoiYzBkM2NmMGQtYzcyZi00YWExLTg3MDEtZGE2YTI5YzE4MmQ3IiwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fX0.H8jeuPwY4MD4FeF_b4l6w69zJYzmx64KhcvxSPR9tm-RbG6yf-dhjqeXRrl3H3etXmfodY4LwQNuVDFZ-mBTEmDFwYKsFlBPuh8jN8U2X2rdbEWNvp3Q2Oky9qidAs1cekvFEnSeCNMVpBNucGzSMXPIrdPoLFWfbHaUAkN7qVBtqXLyjjqZ4AOpOkwy0jntsCRdxXtLrFxOUNxEn8sv6Im6r1m4N36cKOk_zr1ANHXsYkioJjJpp7zaJXuh7z3oQx2QKEtfPB1tWTvcS04AW-UJ_0RLz3Wh7E0oqUvRsm3xGzRyUSglyql_O2I5MmT3gPryCPtrXqb-rTMte9UcHg",
       "key": "refresh_token_nonqtxn",
       "enabled": true
     },
     {
-      "value": 1533775976280,
+      "value": 1534872824609,
       "key": "token_expires_nonqtxn",
       "enabled": true
     },
     {
-      "value": 1533781376280,
+      "value": 1534878224609,
       "key": "refresh_token_expires_nonqtxn",
       "enabled": true
     },
     {
-      "value": "2073",
+      "value": "3810",
       "key": "current_client",
       "enabled": true
     },
     {
       "value": "https://servicebc-cfms-dev.pathfinder.gov.bc.ca/api/v1/",
-      "key": "url_dev",
+      "key": "url_dev_old",
       "enabled": true
     },
     {
@@ -223,12 +223,21 @@
       "enabled": true
     },
     {
-      "value": "1887",
+      "value": "3813",
       "key": "second_client",
+      "enabled": true
+    },
+    {
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "value": "https://dev-theq.pathfinder.gov.bc.ca/api/v1/",
+      "key": "url_dev_theq",
       "enabled": true
     }
   ],
   "_postman_variable_scope": "environment",
-  "_postman_exported_at": "2018-08-09T21:31:58.964Z",
-  "_postman_exported_using": "Postman/6.2.3"
+  "_postman_exported_at": "2018-08-21T17:05:04.213Z",
+  "_postman_exported_using": "Postman/6.2.4"
 }
