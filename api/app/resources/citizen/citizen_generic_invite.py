@@ -35,7 +35,7 @@ class CitizenGenericInvite(Resource):
         active_citizen_state = CitizenState.query.filter_by(cs_state_name='Active').first()
         waiting_period_state = PeriodState.query.filter_by(ps_name='Waiting').first()
 
-        lock = FileLock("invite_citizen.lock")
+        lock = FileLock("lock/invite_citizen.lock")
 
         with lock:
             print("Lock acquired")

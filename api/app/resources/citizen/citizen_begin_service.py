@@ -30,7 +30,7 @@ class CitizenBeginService(Resource):
     @api_call_with_retry
     def post(self, id):
         csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
-        lock = FileLock("begin_citizen.lock")
+        lock = FileLock("lock/begin_citizen.lock")
 
         with lock:
             print("Lock acquired")

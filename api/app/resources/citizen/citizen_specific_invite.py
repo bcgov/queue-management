@@ -29,7 +29,7 @@ class CitizenSpecificInvite(Resource):
     @oidc.accept_token(require_token=True)
     @api_call_with_retry
     def post(self, id):
-        lock = FileLock("invite_citizen.lock")
+        lock = FileLock("lock/invite_citizen.lock")
 
         with lock:
             print("Lock acquired")
