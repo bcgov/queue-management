@@ -82,6 +82,10 @@ class ServiceReq(Base):
 
     def begin_service(self, csr):
         active_period = self.get_active_period()
+        
+        if active_period.ps.ps_name in ["Being Served"]:
+            raise TypeError("You cannot begin serving a citizen that is already being served")
+
         active_period.time_end = datetime.now()
         # db.session.add(active_period)
 
