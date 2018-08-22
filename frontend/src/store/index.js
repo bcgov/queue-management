@@ -672,7 +672,11 @@ export const store = new Vuex.Store({
         Axios(context).post(url,{}).then(resp=>{
           resolve(resp)
         }, error => {
-          reject(error)
+          if (error.response.status === 400) {
+              context.commit('setMainAlert', error.response.data.message)
+          } else {
+            reject(error)
+          }
         })
       })
     },
@@ -728,7 +732,11 @@ export const store = new Vuex.Store({
           Axios(context).post(url, data).then(resp=>{
             resolve(resp)
           }, error => {
-            reject(error)
+            if (error.response.status === 400) {
+              context.commit('setMainAlert', error.response.data.message)
+            } else {
+              reject(error)
+            }
           })
         })
       }
@@ -859,16 +867,57 @@ export const store = new Vuex.Store({
       let { csr_id } = context.state.user
       if (citizen.service_reqs.length > 0) {
         if ( citizen.service_reqs[0].periods) {
-          let filteredService = citizen.service_reqs.filter(sr =>
-            sr.periods.some(p => p.time_end === null))
+          let filteredService = citizen.service_reqs.filter(sr => sr.periods.some(p => p.time_end === null))
           if (filteredService.length > 0) {
             let activeService = filteredService[0]
             if ( activeService.periods.length > 0 ) {
               let l = activeService.periods.length - 1
               let activePeriod = activeService.periods[l]
               if ( activePeriod.csr_id === csr_id ) {
-                context.commit('setServiceModalForm', citizen)
+                if (activePeriod.ps.ps_name === 'Invited') {
+                  context.commit('setServiceModalForm', citizen)
+                  context.commit('toggleServiceModal', true)
+                  context.commit('toggleInvitedStatus', true)
+                  context.commit('setServeNowAction', true)
+                  context.dispatch('flashServeNow', 'start')
+                  context.commit('resetAddModalForm')
+                } else if (activePeriod.ps.ps_name === 'Being Served') {
+                  context.commit('setServiceModalForm', citizen)
+                  context.commit('toggleServiceModal', true)
+                  context.commit('toggleBegunStatus', true)
+                  context.commit('toggleInvitedStatus', false)
+                  context.commit('setServeNowAction', false)
+                  context.dispatch('flashServeNow', 'stop')
+                  context.commit('resetAddModalForm')
+                } else {
+                  context.commit('resetServiceModal')
+                  context.commit('toggleServiceModal', false)
+                  context.commit('toggleInvitedStatus', false)
+                  context.commit('toggleBegunStatus', false)
+                  context.dispatch('flashServeNow', 'stop')
+                  context.commit('resetAddModalForm')
+                }
               }
+            }
+            //Citizen is completed or left
+          } else {
+
+            //Ensure that we only close serve citizen if it's the citizen _we're_ editing that was finished
+            let mostRecentActivePeriod = citizen.service_reqs[0].periods[0]
+            citizen.service_reqs.forEach((request) => {
+              request.periods.forEach((period) => {
+                if (period.end_time > mostRecentActivePeriod.end_time) {
+                  mostRecentActivePeriod = period
+                }
+              })
+            })
+
+            if (mostRecentActivePeriod.csr_id === csr_id) {
+              context.commit('resetServiceModal')
+              context.commit('toggleServiceModal', false)
+              context.commit('toggleInvitedStatus', false)
+              context.commit('toggleBegunStatus', false)
+              context.dispatch('flashServeNow', 'stop')
             }
           }
         }
