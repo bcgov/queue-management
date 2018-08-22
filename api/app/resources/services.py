@@ -34,12 +34,12 @@ class Services(Resource):
         elif a.parent is not None and b.parent is None:
             return 1
         elif (a.parent is None and b.parent is None) or (a.parent == b.parent):
-            if a.service_name < b.service_name:
+            if a.service_name.lower() < b.service_name.lower():
                 return -1
             else:
                 return 1
         else:
-            if a.parent.service_name < b.parent.service_name:
+            if a.parent.service_name.lower() < b.parent.service_name.lower():
                 return -1
             else:
                 return 1

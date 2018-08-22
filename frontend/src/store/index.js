@@ -901,11 +901,24 @@ export const store = new Vuex.Store({
             }
             //Citizen is completed or left
           } else {
-            context.commit('resetServiceModal')
-            context.commit('toggleServiceModal', false)
-            context.commit('toggleInvitedStatus', false)
-            context.commit('toggleBegunStatus', false)
-            context.dispatch('flashServeNow', 'stop')
+
+            //Ensure that we only close serve citizen if it's the citizen _we're_ editing that was finished
+            let mostRecentActivePeriod = citizen.service_reqs[0].periods[0]
+            citizen.service_reqs.forEach((request) => {
+              request.periods.forEach((period) => {
+                if (period.end_time > mostRecentActivePeriod.end_time) {
+                  mostRecentActivePeriod = period
+                }
+              })
+            })
+
+            if (mostRecentActivePeriod.csr_id === csr_id) {
+              context.commit('resetServiceModal')
+              context.commit('toggleServiceModal', false)
+              context.commit('toggleInvitedStatus', false)
+              context.commit('toggleBegunStatus', false)
+              context.dispatch('flashServeNow', 'stop')
+            }
           }
         }
       }
