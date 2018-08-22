@@ -32,7 +32,7 @@
               </div>
             </div>
             <div v-if="row.item.periods.some(p=>p.time_end===null)===false">
-              Innactive
+              Inactive
             </div>
           </template>
           

@@ -906,7 +906,6 @@ export const store = new Vuex.Store({
             context.commit('toggleInvitedStatus', false)
             context.commit('toggleBegunStatus', false)
             context.dispatch('flashServeNow', 'stop')
-            context.commit('resetAddModalForm')
           }
         }
       }
