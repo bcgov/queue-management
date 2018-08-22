@@ -14,24 +14,15 @@ limitations under the License.*/
 
 
 <template>
-  <div>
-    <div class="top-flex-div">
-      <div class="flex-title-2">{{ date }} {{ time }}</div>
-    </div>
-
-    <div style="display: flex; height: 75%; width: 100%; justify-content: center">
-
-      <div class="board-75-video">
-        <div class="board-video-div">
-          <Video vidh="504" vidw="896" />
-        </div>
+  <div style="display: flex; height: 75%; width: 100%; justify-content: center">
+    <div class="board-85-video">
+      <div class="board-video-div">
+        <Video />
+      </div>
+      <div class="bottom-flex-div">
+        <div class="flex-title"> Currently waiting: {{waiting}}</div>
       </div>
     </div>
-    <div class="board-footer-div">
-      <div v-if="officeType==='callbyticket'" style="width: 100%; text-align: center;"> Currently waiting:
-        {{waiting}}</div>
-      <div style="width: 100%; text-align: center; font-size: 1.2rem;">{{ message }}</div>
-  </div>
   </div>
 </template>
 
@@ -40,31 +31,30 @@ import axios from 'axios'
 import Video from './video'
 
 const Axios = axios.create({
-        baseURL: process.env.API_URL,
-        withCredentials: true,
-        headers: {
-          'Accept': 'application/json'
-        }
-      })
+  baseURL: process.env.API_URL,
+  withCredentials: true,
+  headers: {
+    'Accept': 'application/json'
+  }
+})
 
 export default {
   name: 'CallByName',
 
   mounted() {
     this.$root.$on('addToBoard',( data) => { this.updateBoard(data) })
-    setInterval( () => { this.now() }, 3000)
     this.initializeBoard()
+    this.handleResize()
+    window.addEventListener('resize', this.handleResize)
   },
 
   components: { Video },
 
   data() {
     return {
-      options:{weekday:'long',year:'numeric',month:'long',day:'numeric',},
-      timeOpts: {hour12: true, hour: 'numeric', minute: '2-digit'},
       citizens: '',
-      time: '',
-      message: 'Welcome to ServiceBC'
+      officeType: '',
+      maxVideoHeight: ''
     }
   },
 
@@ -82,19 +72,16 @@ export default {
     },
     waiting() {
       if (this.citizens && this.citizens.length > 0) {
-        return this.citizens.filter(c=>c.active_period.ps.ps_name === 'Waiting').length
+        return this.citizens.filter(c => c.active_period.ps.ps_name === 'Waiting').length
       }
       return 0
-    },
-    date() {
-      let d = new Date()
-      return d.toLocaleDateString('en-CA', this.options)
     }
   },
 
   methods: {
     initializeBoard() {
       Axios.get(this.url).then( resp => {
+      console.log(resp.data)
         this.officeType = resp.data.office_type
         this.citizens = resp.data.citizens
         this.$root.$emit('boardConnect', this.office_id)
@@ -105,9 +92,8 @@ export default {
         this.citizens = resp.data.citizens
       })
     },
-    now() {
-      let d = new Date()
-      this.time = d.toLocaleTimeString('en-CA', this.timeOpts)
+    handleResize(event) {
+      this.maxVideoHeight = document.documentElement.clientHeight * 0.8
     }
   }
 }

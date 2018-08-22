@@ -14,13 +14,10 @@ limitations under the License.*/
 
 <template>
 <div style="width: 100%; height: 100%;">
-  <div class="top-flex-div">
-    <div class="flex-title">Welcome to ServiceBC</div>
-  </div>
   <div style="display: flex; height: 75%; width: 100%;">
-    <div class="board-75-video">
+    <div class="board-85-video">
       <div class="board-video-div">
-        <Video vidh="504" vidw="896"></Video>
+        <Video />
       </div>
     </div>
     <div class="board-25-table">
@@ -30,8 +27,7 @@ limitations under the License.*/
                  :small="longlist"
                  thead-tr-class="testclass"
                  v-bind:thead-class="headclass"
-                 v-bind:tbody-class="bodyclass"
-                 >
+                 v-bind:tbody-class="bodyclass">
           <template slot="ticket_number" slot-scope="data">
             <div v-if="highlighted.includes(data.value)" class="flashing-ticket">
               {{data.value}}
@@ -58,13 +54,9 @@ limitations under the License.*/
       </div>
     </div>
   </div>
-  <div class="board-footer-div">
-    <div style="width: 5%"></div>
-    <div style="display:flex;flex-direction:column;justify-content:flex-end">
-      <div>{{date}}</div>
-      <div style="text-align: start">{{time}}</div>
+  <div class="bottom-flex-div">
+      <div class="flex-title"> Currently waiting: {{waiting}}</div>
     </div>
-  </div>
 </div>
 </template>
 
@@ -73,19 +65,18 @@ import axios from 'axios'
 import Video from './video'
 
 const Axios = axios.create({
-        baseURL: process.env.API_URL,
-        withCredentials: true,
-        headers: {
-          'Accept': 'application/json'
-        }
-      })
+  baseURL: process.env.API_URL,
+  withCredentials: true,
+  headers: {
+    'Accept': 'application/json'
+  }
+})
 
 export default {
-  name: 'CallByNumber',
+  name: 'CallByTicket',
 
   mounted() {
     this.$root.$on('addToBoard',() => { this.updateBoard() })
-    setInterval( () => { this.now() }, 3000)
     this.initializeBoard()
   },
 
@@ -98,10 +89,7 @@ export default {
         {key: 'ticket_number', label: 'Now Calling', tdClass:'text-center'},
         {key: 'overflow', label:'', tdClass: 'd-none', thClass: 'd-none'}
       ],
-      options:{weekday:'long',year:'numeric',month:'long',day:'numeric',},
-      timeOpts: {hour12: true, hour: 'numeric', minute: '2-digit'},
       citizens: '',
-      time: '',
       intervals: {},
       overflow: [],
       showOverflow: false,
@@ -189,10 +177,6 @@ export default {
       Axios.get(this.url).then( resp => {
         this.citizens = resp.data.citizens
       })
-    },
-    now() {
-      let d = new Date()
-      this.time = d.toLocaleTimeString('en-CA', this.timeOpts)
     }
   }
 }

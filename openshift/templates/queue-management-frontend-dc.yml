@@ -121,8 +121,21 @@ objects:
             limits:
               cpu: 200m
               memory: 512Mi
+          volumeMounts:
+            - mountPath: /var/www/html/static/videos
+              name: frontend-videos
+              readOnly: false
         restartPolicy: Always
         terminationGracePeriodSeconds: 30
         dnsPolicy: ClusterFirst
         securityContext: {}
         schedulerName: default-scheduler
+- kind: PersistentVolumeClaim
+  apiVersion: v1
+  metadata:
+    name: "frontend-videos"
+  spec:
+    accessModes: [ "ReadWriteMany" ]
+    resources:
+      requests:
+        storage: "1Gi"

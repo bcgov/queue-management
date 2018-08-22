@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+from functools import cmp_to_key
 from flask import request
 from flask_restplus import Resource
 from qsystem import api, oidc
@@ -27,13 +28,30 @@ class Services(Resource):
     service_schema = ServiceSchema(many=True)
     services_schema = ServiceSchema(many=True)
 
+    def sort_services(self, a, b):
+        if a.parent is None and b.parent is not None:
+            return -1
+        elif a.parent is not None and b.parent is None:
+            return 1
+        elif (a.parent is None and b.parent is None) or (a.parent == b.parent):
+            if a.service_name < b.service_name:
+                return -1
+            else:
+                return 1
+        else:
+            if a.parent.service_name < b.parent.service_name:
+                return -1
+            else:
+                return 1
+
+
     @oidc.accept_token(require_token=True)
     def get(self):
         if request.args.get('office_id'):
             try:
                 office_id = int(request.args['office_id'])
                 office = Office.query.get(office_id)
-                services = office.services
+                services = sorted(office.services, key=cmp_to_key(self.sort_services))
                 result = self.service_schema.dump(services)
                 return {'services': result.data,
                         'errors': result.errors}

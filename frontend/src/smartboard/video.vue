@@ -25,11 +25,10 @@ limitations under the License.*/
   import { videoPlayer } from 'vue-video-player'
 
   export default {
-    name: 'BoardVideo',
+    name: 'Video',
     components: {
       videoPlayer
     },
-    props: ['vidh', 'vidw'],
     data() {
       return {
         playerOptions: {
@@ -38,15 +37,11 @@ limitations under the License.*/
           muted: true,
           sources: [{
             type: 'video/mp4',
-            src: 'https://sbc-qsystem-test.pathfinder.gov.bc.ca/sbc.mp4'
+            src: '/static/videos/sbc.mp4'
           }],
-          height: this.vidh,
-          width: this.vidw
+          fluid: true
         }
       }
     }
   }
 </script>
-
-
-
