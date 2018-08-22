@@ -57,7 +57,11 @@ export default {
     return {
       officetype: '',
       options: {weekday:'long',year:'numeric',month:'long',day:'numeric'},
-      timeOpts: {hour12: true, hour: 'numeric', minute: '2-digit'},
+      timeOpts: {
+        hour12: true,
+        hour: 'numeric',
+        minute: '2-digit',
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone},
       time: ''
     }
   },
