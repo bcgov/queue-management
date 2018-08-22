@@ -45,6 +45,7 @@ export const store = new Vuex.Store({
     citizens: [],
     citizenInvited: false,
     dismissCountDown: 0,
+    feedbackMessage: '',
     isLoggedIn: false,
     nowServing: false,
     officeType: null,
@@ -59,6 +60,8 @@ export const store = new Vuex.Store({
     },
     services: [],
     showAddModal: false,
+    showFeedbackModal: false,
+    showResponseModal: false,
     showServiceModal: false,
     user: {
       username: null,
@@ -301,10 +304,6 @@ export const store = new Vuex.Store({
           reject(error)
         })
       })
-    },
-
-    getOffice(context) {
-
     },
 
     cancelAddCitizensModal(context) {
@@ -636,12 +635,14 @@ export const store = new Vuex.Store({
       context.commit('toggleInvitedStatus', true)
     },
 
-    messageSlack(context, payload) {
+    messageSlack(context) {
       let slackObject = {
-        slack_message: payload.slack_message
+        slack_message: context.state.feedbackMessage
       }
       let url = "/slack/"
-      Axios.post(url, slackObject)
+      Axios(context).post(url, slackObject).then(()=> {
+        context.commit('setFeedbackMessage', '')
+      })
     },
 
     postActivateServiceReq(context, sr_id) {
@@ -1104,7 +1105,20 @@ export const store = new Vuex.Store({
 
     setServeNowAction: (state, payload) => state.serveNowAltAction = payload,
 
-    logCheckComplete: (state, payload) => state.checkComplete = payload
+    logCheckComplete: (state, payload) => state.checkComplete = payload,
+
+    toggleFeedbackModal: (state, payload) => state.showFeedbackModal = payload,
+
+    setFeedbackMessage: (state, payload) => state.feedbackMessage = payload,
+
+    showHideResponseModal(state) {
+      state.showResponseModal = true
+      setTimeout( ()=> {state.showResponseModal = false}, 3000)
+    },
+
+    hideResponseModal(state) {
+      state.showResponseModal = false
+    }
   }
 })
 

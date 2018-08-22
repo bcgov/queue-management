@@ -71,7 +71,7 @@ limitations under the License.*/
       </b-row>
 
       <b-row no-gutters v-if="reception">
-        <b-col style="height: 250px; overflow-y: scroll; overflow: scroll; margin-bottom: 1em; border: 1px solid;" xl="12">
+        <b-col class="dash-table-col 250-height"xl="12">
           <DashTable />
         </b-col>
       </b-row>
@@ -83,7 +83,7 @@ limitations under the License.*/
       </b-row>
 
       <b-row no-gutters>
-        <b-col style="height: 250px; overflow-y: scroll; overflow: scroll; border: 1px solid;" xl="12">
+        <b-col v-bind:class="holdColClass" xl="12" >
           <DashHoldTable />
         </b-col>
       </b-row>
@@ -136,6 +136,14 @@ import ServeCitizen from './serve-citizen'
 
       queueLength() {
         return this.citizens_queue.length
+      },
+
+      holdColClass() {
+        if (this.reception) {
+          return 'dash-table-col height-250-col'
+        } else if (!this.reception) {
+          return 'dash-table-col height-500-col'
+        }
       }
     },
 
@@ -166,6 +174,16 @@ import ServeCitizen from './serve-citizen'
 </script>
 
 <style>
+  .dash-table-col {
+    overflow-y: scroll; overflow: scroll; border: 1px solid;
+  }
+
+  .height-500-col {
+    height: 500px !important;
+      }
+  .height-250-col {
+    height: 250px !important;
+          }
   .modal-main div {
     background-color: blue;
   }

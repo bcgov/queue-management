@@ -184,6 +184,6 @@ import { mapGetters, mapMutations } from 'vuex'
 }
 
 .navbar-brand {
-  font-size: 1rem;
+  font-size: .85rem;
 }
 </style>

@@ -17,6 +17,9 @@ limitations under the License.*/
     <Header />
     <Dash />
     <Socket v-show="1===2" />
+    <Feedback />
+    <Response />
+    <Footer />
   </div>
 </template>
 
@@ -24,10 +27,13 @@ limitations under the License.*/
 import Dash from './serve-citizen/dash'
 import Header from './layout/header'
 import Socket from './Socket'
+import Footer from './layout/footer'
+import Feedback from './feedback'
+import Response from './response'
 
 export default {
   name: 'App',
-  components: { Dash, Header, Socket }
+  components: { Dash, Header, Socket, Footer, Feedback, Response }
 }
 </script>
 
