@@ -906,7 +906,7 @@ export const store = new Vuex.Store({
             let mostRecentActivePeriod = citizen.service_reqs[0].periods[0]
             citizen.service_reqs.forEach((request) => {
               request.periods.forEach((period) => {
-                if (period.end_time > mostRecentActivePeriod.end_time) {
+                if (period.time_end > mostRecentActivePeriod.time_end) {
                   mostRecentActivePeriod = period
                 }
               })
