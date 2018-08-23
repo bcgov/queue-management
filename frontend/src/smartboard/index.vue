@@ -54,6 +54,11 @@ export default {
   components: { CallByName, CallByTicket, BoardSocket, NonReception },
 
   data() {
+    let tz = this.getParameterByName("tz")
+    if (!tz) {
+      tz = Intl.DateTimeFormat().resolvedOptions().timeZone
+    }
+
     return {
       officetype: '',
       options: {weekday:'long',year:'numeric',month:'long',day:'numeric'},
@@ -61,7 +66,8 @@ export default {
         hour12: true,
         hour: 'numeric',
         minute: '2-digit',
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone},
+        timeZone: tz
+      },
       time: ''
     }
   },
@@ -94,6 +100,15 @@ export default {
     now() {
       let d = new Date()
       this.time = d.toLocaleTimeString('en-CA', this.timeOpts)
+    },
+    getParameterByName(name, url) {
+      if (!url) url = window.location.href;
+
+      name = name.replace(/[\[\]]/g, '\\$&');
+      var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'), results = regex.exec(url);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\+/g, ' '));
     }
   }
 }
