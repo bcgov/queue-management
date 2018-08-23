@@ -22,19 +22,16 @@ limitations under the License.*/
              outlined
              hover
              @row-clicked="rowClicked"
-             class="p-0 m-0 w-100"
+             class="p-0 m-0"
              id="client-waiting-table">
       <template slot='qt_xn_citizen_ind' slot-scope='data'>
-        {{ (data.item.qt_xn_citizen_ind===0) ?
-             ('No') :
-               ('Yes')
-        }}
+        {{ (data.item.qt_xn_citizen_ind===0) ? ('No') : ('Yes') }}
       </template>
       <template slot='start_time' slot-scope='data'>
         {{ formatTime(data.item.start_time) }}
       </template>
       <template slot='csr' slot-scope='data'>
-      {{ showCSR(data.item.citizen_id) }}
+        {{ showCSR(data.item.citizen_id) }}
       </template>
       <template slot='category' slot-scope='data'>
         {{ showCategory(data.item.citizen_id) }}
@@ -68,7 +65,7 @@ limitations under the License.*/
     },
     computed: {
       ...mapState(['citizenInvited', 'serviceModalForm']),
-      ...mapGetters(['citizens_queue', 'active_service_id']),
+      ...mapGetters(['citizens_queue', 'active_service_id', 'reception']),
       citizens() {
         return this.citizens_queue
       }

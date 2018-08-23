@@ -63,30 +63,55 @@ limitations under the License.*/
           <AddCitizen />
         </b-col>
       </b-row>
-
-      <b-row no-gutters class="mt-2" v-if="reception">
-        <b-col class="m-2" id="citizen-wait-count">
+    <template v-if="reception">
+      <b-row no-gutters class="mt-1" >
+        <b-col class="font-900-rem" id="citizen-wait-count">
           Citizens Waiting: {{ queueLength }}
         </b-col>
       </b-row>
 
-      <b-row no-gutters v-if="reception">
-        <b-col class="dash-table-col 250-height"xl="12">
+
+      <b-row no-gutters>
+        <b-col class="dash-table-col m-0 p-0" v-bind:style="{height: queueHeight}" xl="12">
           <DashTable />
         </b-col>
       </b-row>
-
-      <b-row no-gutters>
-        <b-col>
+      <b-row no-gutters class="m-0 p-0">
+        <b-col class="m-0 p-0">
+          <b-button class="m-0 p-0" variant="link" @click="clickExpandContract">
+            <font-awesome-icon class="m-0 p-0"
+                               v-bind:icon="computeIcon"
+                               style="font-size: 2rem; padding: 0px;"
+                               >
+            </font-awesome-icon>
+          </b-button>
+        </b-col>
+      </b-row>
+      <b-row no-gutters class="m-0 p-0">
+        <b-col class="font-900-rem m-0 p-0">
           Citizens on Hold: {{on_hold_queue.length}}
         </b-col>
       </b-row>
 
-      <b-row no-gutters>
-        <b-col v-bind:class="holdColClass" xl="12" >
+      <b-row no-gutters class="m-0 p-0">
+        <b-col class="dash-table-col m-0 p-0" xl="12" v-bind:style="{height: holdHeight}">
           <DashHoldTable />
         </b-col>
       </b-row>
+    </template>
+      <template v-else-if="!reception">
+        <b-row no-gutters class="m-0 p-0">
+          <b-col class="font-900-rem m-0 p-0">
+            Citizens on Hold: {{on_hold_queue.length}}
+          </b-col>
+        </b-row>
+
+        <b-row no-gutters class="m-0 p-0">
+          <b-col class="dash-table-col m-0 p-0" xl="12" style="max-height: 600px; min-height: 200px;">
+            <DashHoldTable />
+          </b-col>
+        </b-row>
+        </template>
     </b-container>
   </div>
 </template>
@@ -120,7 +145,11 @@ import ServeCitizen from './serve-citizen'
         t: true,
         f: false,
         dismissSecs: 5,
-        citizencount: this.queueLength
+        citizencount: this.queueLength,
+        y: 300,
+        ymax: 300,
+        interval: null,
+        point: 'down'
       }
     },
 
@@ -134,16 +163,18 @@ import ServeCitizen from './serve-citizen'
       ]),
       ...mapGetters(['citizens_queue', 'on_hold_queue', 'reception']),
 
+      computeIcon() {
+        if (this.point === 'up') return 'caret-up'
+        if (this.point === 'down') return 'caret-down'
+      },
       queueLength() {
         return this.citizens_queue.length
       },
-
-      holdColClass() {
-        if (this.reception) {
-          return 'dash-table-col height-250-col'
-        } else if (!this.reception) {
-          return 'dash-table-col height-500-col'
-        }
+      holdHeight() {
+        return `${(600 - this.y)}px`
+      },
+      queueHeight() {
+        return `${this.y}px`
       }
     },
 
@@ -165,9 +196,44 @@ import ServeCitizen from './serve-citizen'
           this.clickInvite()
         }
       },
-
       countDownChanged(dismissCountDown) {
         this.$store.commit('dismissCountDown', dismissCountDown)
+      },
+      clickExpandContract() {
+        if (this.y === 300) {
+          this.ymax = 450
+          this.interval = setInterval( () => { this.makeBigger() }, 15)
+          return
+        }
+        if (this.y === 450) {
+          this.ymax = 300
+          this.interval = setInterval( () => { this.makeSmaller() }, 15)
+          return
+        }
+      },
+      makeBigger() {
+        let sizeUp = () => {
+          this.y += 5
+        }
+        if (this.y >= this.ymax) {
+          clearInterval(this.interval)
+          this.y = 450
+          this.point = 'up'
+          return
+        }
+        sizeUp()
+      },
+      makeSmaller() {
+        let sizeDown = () => {
+          this.y -= 5
+        }
+        if (this.y < this.ymax) {
+          clearInterval(this.interval)
+          this.y = 300
+          this.point = 'down'
+          return
+        }
+        sizeDown()
       }
     }
   }
@@ -177,13 +243,9 @@ import ServeCitizen from './serve-citizen'
   .dash-table-col {
     overflow-y: scroll; overflow: scroll; border: 1px solid;
   }
-
-  .height-500-col {
-    height: 500px !important;
-      }
-  .height-250-col {
-    height: 250px !important;
-          }
+  .font-900-rem {
+    font-size: .9rem;
+  }
   .modal-main div {
     background-color: blue;
   }
@@ -191,5 +253,8 @@ import ServeCitizen from './serve-citizen'
     background-color: #FEDF01 !important;
     color: black !important;
     border: 1px solid white;
+  }
+  #queue-col-top {
+    display: flex; width: 100%; justify-content: space-between;
   }
 </style>
