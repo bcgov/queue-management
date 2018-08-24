@@ -17,7 +17,7 @@ from qsystem import db
 from .base import Base 
 from app.models import Period, PeriodState, SRState
 from datetime import datetime
-
+from ..snowplow.snowplow import SnowPlow
 
 class ServiceReq(Base):
 
@@ -67,6 +67,8 @@ class ServiceReq(Base):
         active_period = self.get_active_period()
         active_period.time_end = datetime.now()
         #db.session.add(active_period)
+
+        # SnowPlow call will go here for add_to_queue Snowplow event
 
         period_state_waiting = PeriodState.query.filter_by(ps_name="Waiting").first()
 
@@ -126,3 +128,4 @@ class ServiceReq(Base):
         if clear_comments:
             self.citizen.citizen_comments = None
         # db.session.add(active_period)
+
