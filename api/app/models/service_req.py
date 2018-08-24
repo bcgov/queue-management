@@ -68,7 +68,7 @@ class ServiceReq(Base):
         active_period.time_end = datetime.now()
         #db.session.add(active_period)
 
-        SnowPlow.SayHello("Fred")
+        # SnowPlow call will go here for add_to_queue Snowplow event
 
         period_state_waiting = PeriodState.query.filter_by(ps_name="Waiting").first()
 

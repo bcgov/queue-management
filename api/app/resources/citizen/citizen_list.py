@@ -20,7 +20,7 @@ from marshmallow import ValidationError
 from app.schemas import CitizenSchema
 from sqlalchemy import exc
 from datetime import datetime
-
+from ...snowplow.snowplow import SnowPlow
 
 @api.route("/citizens/", methods=['GET', 'POST'])
 class CitizenList(Resource):
@@ -63,6 +63,8 @@ class CitizenList(Resource):
         citizen.cs_id = citizen_state.cs_id
         db.session.add(citizen)
         db.session.commit()
+
+        SnowPlow.add_citizen(citizen, csr)
 
         socketio.emit('update_customer_list', {}, room=csr.office_id)
         result = self.citizen_schema.dump(citizen)
