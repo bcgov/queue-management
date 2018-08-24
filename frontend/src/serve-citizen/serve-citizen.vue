@@ -26,7 +26,7 @@
        </b-row>
        <b-row>
          <b-col>
-           <div class="pt-3" style="display: flex; flex-direction: row; justify-content: space-between;">
+           <div class="pt-1" style="display: flex; flex-direction: row; justify-content: space-between;">
              <div>
              <b-button @click="clickServiceBeginService"
                        :disabled="serviceBegun===true"
@@ -50,7 +50,7 @@
 
      <b-container fluid
                   id="serve-light-inner-container"
-                  class="pt-3 pb-3">
+                  class="pt-2 pb-2">
        <b-row no-gutters>
          <b-col cols="7"/>
 
@@ -96,7 +96,15 @@
        </b-row>
        <b-row no-gutters>
          <b-col cols="11"/>
-         <b-col cols="1" class="mb-2 pt-3"><b-button size="sm" id="serve-citizen-footer-button" v-if="f">Feedback</b-button></b-col>
+         <b-col cols="1" class="m-0 pt-3">
+           <b-button size="sm"
+                     id="serve-citizen-footer-button"
+                     variant="link"
+                     @click="toggleFeedback"
+                     >
+             Feedback
+           </b-button>
+         </b-col>
        </b-row>
      </b-container>
    </div>
@@ -171,7 +179,7 @@ export default {
       'clickAddService',
       'putInaccurateIndicator'
     ]),
-    ...mapMutations(['editServiceModalForm']),
+    ...mapMutations(['editServiceModalForm', 'toggleFeedbackModal']),
 
     serviceFinish() {
       if (this.checked === 'yes') {
@@ -181,6 +189,10 @@ export default {
       } else {
         this.clickServiceFinish()
       }
+    },
+
+    toggleFeedback() {
+      this.toggleFeedbackModal(true)
     },
 
     flashButton() {
@@ -215,7 +227,6 @@ export default {
     background-color: rgba(0,0,0,0.4);
     transition: display 1s;
 }
-
 .serve-modal-content {
     background-color: #fefefe;
     margin-right: auto;
@@ -227,12 +238,13 @@ export default {
     width: 80%;
 
 }
-
 #serve-citizen-modal-top {
   border: 1px solid grey;
   background-color: WhiteSmoke;
 }
-
+#serve-citizen-footer-button {
+  color: black;
+}
 #serve-citizen-modal-footer {
   border: 1px solid grey;
   background-color: WhiteSmoke;
