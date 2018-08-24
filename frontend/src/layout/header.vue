@@ -15,10 +15,12 @@ limitations under the License.*/
 
 
 <template>
-<div id="header">
+<div id="header" style="position: fixed; top: 0px; left: 0px; width: 100%; height: 70px; min-height:60px">
   <b-navbar variant="faded"
             type="light"
-            style="box-shadow: 0px 5px 10px 0px rgba(169,169,169,1); padding: 5px 0px 0px 0px; background-color: #003366; border-bottom: 2px solid #fcba19;">
+            style="box-shadow: 0px 5px 10px 0px rgba(169,169,169,1); padding: 5px 0px 0px 0px;
+            background-color: #003366; border-bottom: 2px solid #fcba19;
+            height: 100%; width: 100%;">
     <b-navbar-brand style="padding-left: 30px; padding-top: 0px; margin-bottom:5px;">
       <a href="#">
         <img style="height:95%; width: 95%" src="https://www2.gov.bc.ca/assets/gov/home/bc_gov_logo_transparent.png" alt="Government of B.C." title="Government of B.C.">
