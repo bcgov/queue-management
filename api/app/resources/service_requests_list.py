@@ -18,7 +18,6 @@ from datetime import datetime
 from qsystem import api, api_call_with_retry, db, oidc, socketio
 from app.models import Citizen, CitizenState, CSR, Period, PeriodState, Service, ServiceReq, SRState
 from app.schemas import CitizenSchema, ServiceReqSchema
-from ..snowplow.snowplow import SnowPlow
 from marshmallow import ValidationError
 
 
@@ -108,8 +107,6 @@ class ServiceRequestsList(Resource):
         db.session.add(service_request)
         db.session.add(citizen)
         db.session.commit()
-
-        SnowPlow.choose_service(service_request, csr)
 
         citizen_result = self.citizen_schema.dump(citizen)
         socketio.emit('update_active_citizen', citizen_result.data, room=csr.office_id)
