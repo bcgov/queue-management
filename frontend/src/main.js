@@ -23,11 +23,12 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import './assets/css/bc-gov-style.css'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons'
+import { faSort } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import VDragged from 'v-dragged'
 
-library.add(faCaretDown)
-library.add(faCaretUp)
+Vue.use(VDragged)
+library.add(faSort)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(BootstrapVue)

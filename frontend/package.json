@@ -25,6 +25,7 @@
     "popper.js": "^1.12.9",
     "socket.io": "^2.1.1",
     "socket.io-client": "^2.1.1",
+    "v-dragged": "0.0.5",
     "video-js": "^0.7.0",
     "video.js": "^7.1.0",
     "vue": "^2.5.2",

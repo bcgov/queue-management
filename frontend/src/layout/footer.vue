@@ -56,6 +56,7 @@
     position: fixed;
     bottom: 0px;
     left: 0px;
+    height: 30px;
     padding-top: 7px;
     padding-bottom: 7px;
     width: 100%;

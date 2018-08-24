@@ -13,106 +13,67 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 
 
-
 <template>
-  <div>
-    <b-alert :show="dismissCountDown"
-             dismissible
-             style="h-align: center"
-             variant="warning"
-             @dismissed="dismissCountDown=0"
-             @dismiss-count-down="countDownChanged"
-             >
-      {{this.$store.state.alertMessage}}
-    </b-alert>
+  <div id="dashmaincontainer" class="dashmaincontainer" key="dashmaincontainer">
+    <div v-bind:style="{width:'100%', height:`${buttonH}px`}" v-if="isLoggedIn">
+      <AddCitizen /><ServeCitizen v-if="showServiceModal"/>
+      <div id="dash-flex-button-container">
 
-    <b-container fluid>
-      <b-row>
-        <b-col style="padding-top: 10px" cols="8">
-          <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: flex-start">
-            <div>
-              <b-button class="m-1 btn-primary"
-                        @click="invite"
-                        :disabled="citizenInvited===true"
-                        v-if="reception"
-                        id="invite-citizen-button">Invite</b-button>
-              <b-button v-bind:class="serveNowStyle"
-                        @click="clickServeNow"
-                        :disabled="citizenInvited===false"
-                        id="serve-citizen-button">Serve Now</b-button>
-            </div>
-            <div>
-              <b-button class="m-1 btn-primary"
-                        @click="clickAddCitizen""
-                        :disabled="citizenInvited===true"
-                        id="add-citizen-button">Add Citizen</b-button>
-              <b-button class="m-1 btn-primary"
-                        @click="clickAddCitizen""
-                        :disabled="citizenInvited===true"
-                        id="add-citizen-button">Back Office</b-button>
-            </div>
-          </div>
-        </b-col>
-        <b-col />
-      </b-row>
-    </b-container>
-    <b-container fluid v-if="isLoggedIn">
-      <b-row>
-        <b-col>
-          <ServeCitizen v-if="showServiceModal" />
-          <AddCitizen />
-        </b-col>
-      </b-row>
-    <template v-if="reception">
-      <b-row no-gutters class="mt-1" >
-        <b-col class="font-900-rem" id="citizen-wait-count">
-          Citizens Waiting: {{ queueLength }}
-        </b-col>
-      </b-row>
+        <div>
+          <b-button class="btn-primary"
+                    @click="invite"
+                    :disabled="citizenInvited===true"
+                    v-if="reception"
+                    id="invite-citizen-button">Invite</b-button>
+          <b-button v-bind:class="serveNowStyle"
+                    @click="clickServeNow"
+                    :disabled="citizenInvited===false"
+                    id="serve-citizen-button">Serve Now</b-button>
+        </div>
 
+        <div>
+          <b-button class="btn-primary"
+                    @click="clickAddCitizen"
+                    :disabled="citizenInvited===true"
+                    id="add-citizen-button">Add Citizen</b-button>
+          <b-button class="btn-primary"
+                    @click="clickAddCitizen"
+                    :disabled="citizenInvited===true"
+                    id="add-citizen-button">Back Office</b-button>
+        </div>
 
-      <b-row no-gutters>
-        <b-col class="dash-table-col m-0 p-0" v-bind:style="{height: queueHeight}" xl="12">
-          <DashTable />
-        </b-col>
-      </b-row>
-      <b-row no-gutters class="m-0 p-0">
-        <b-col class="m-0 p-0">
-          <b-button class="m-0 p-0" variant="link" @click="clickExpandContract">
-            <font-awesome-icon class="m-0 p-0"
-                               v-bind:icon="computeIcon"
-                               style="font-size: 2rem; padding: 0px;"
-                               >
-            </font-awesome-icon>
-          </b-button>
-        </b-col>
-      </b-row>
-      <b-row no-gutters class="m-0 p-0">
-        <b-col class="font-900-rem m-0 p-0">
-          Citizens on Hold: {{on_hold_queue.length}}
-        </b-col>
-      </b-row>
+        <div></div>
 
-      <b-row no-gutters class="m-0 p-0">
-        <b-col class="dash-table-col m-0 p-0" xl="12" v-bind:style="{height: holdHeight}">
-          <DashHoldTable />
-        </b-col>
-      </b-row>
-    </template>
-      <template v-else-if="!reception">
-        <b-row no-gutters class="m-0 p-0">
-          <b-col class="font-900-rem m-0 p-0">
-            Citizens on Hold: {{on_hold_queue.length}}
-          </b-col>
-        </b-row>
+      </div>
+    </div>
+    <template v-if="reception && isLoggedIn">
+    <div v-bind:style="{width:'100%', height: `${qLengthH}px`}" class="font-900-rem">
+      Citizens Waiting: {{ queueLength }}
+    </div>
 
-        <b-row no-gutters class="m-0 p-0">
-          <b-col class="dash-table-col m-0 p-0" xl="12" style="max-height: 600px; min-height: 200px;">
-            <DashHoldTable />
-          </b-col>
-        </b-row>
-        </template>
-    </b-container>
+  <div class="dash-table-holder" v-bind:style="{width:'100%', height:`${dashH}px`}">
+    <DashTable></DashTable>
+  </div>
+    <div v-bind:style="{width:'100%', height:`${qLengthH}px`}">
+      <div style="display: flex; width: 100%; justify-content: space-between;">
+        <div class="font-900-rem">Citizens on Hold: {{on_hold_queue.length}}</div>
+      <b-button variant="link" v-dragged="onDrag" class="m-0 p-0">
+        <font-awesome-icon icon="sort"
+                           class="m-0 p-0"
+                           style="font-size: 1.5rem;"></font-awesome-icon>
+      </b-button>
+      </div>
+    </div>
+    <div class="dash-table-holder" v-bind:style="{width:'100%',height:`${holdH}px`}">
+      <DashHoldTable></DashHoldTable>
+    </div>
+  </template>
+  <template v-else-if="!reception && isLoggedIn">
+    <div class="font-900-rem">Citizens on Hold: {{on_hold_queue.length}}</div>
+    <div class="dash-table-holder" v-bind:style="{width:'100%',minHeight:'200px',maxHeight:`${this.availH}px`}">
+      <DashHoldTable></DashHoldTable>
+    </div>
+  </template>
   </div>
 </template>
 
@@ -137,19 +98,23 @@ import ServeCitizen from './serve-citizen'
       this.$root.$on('showMessage', () => {
         this.showAlert()
       })
+      let totalH = dashmaincontainer.clientHeight
+      let availH = totalH-(2 * this.qLengthH)-this.buttonH-16
+      this.availH = availH
     },
 
     data() {
       return {
-        enbleServe: true,
+        availH: '',
+        buttonH: 45,
+        qLengthH: 28,
+        isDragged: false,
+        offset: 0,
         t: true,
         f: false,
+        last: 0,
         dismissSecs: 5,
         citizencount: this.queueLength,
-        y: 300,
-        ymax: 300,
-        interval: null,
-        point: 'down'
       }
     },
 
@@ -162,11 +127,6 @@ import ServeCitizen from './serve-citizen'
         'serveNowStyle'
       ]),
       ...mapGetters(['citizens_queue', 'on_hold_queue', 'reception']),
-
-      computeIcon() {
-        if (this.point === 'up') return 'caret-up'
-        if (this.point === 'down') return 'caret-down'
-      },
       queueLength() {
         return this.citizens_queue.length
       },
@@ -175,6 +135,14 @@ import ServeCitizen from './serve-citizen'
       },
       queueHeight() {
         return `${this.y}px`
+      },
+      dashH() {
+        if (!this.isDragged) return this.availH / 2;
+        if (this.isDragged) return this.availH + this.offset;
+      },
+      holdH() {
+        if (!this.isDragged) return this.availH / 2;
+        if (this.isDragged) return this.availH - this.dashH;
       }
     },
 
@@ -188,7 +156,17 @@ import ServeCitizen from './serve-citizen'
         'clickServeNow',
         'clickBackOffice'
       ]),
-
+      onDrag({ deltaY, first, last }) {
+        this.isDragged = true
+        if (first) {
+          this.offset = -this.availH / 2 + this.last
+          return
+        }
+        if(!first && !last) {
+          this.offset += deltaY
+          this.last = (this.availH / 2) + this.offset
+        }
+      },
       invite() {
         if (this.queueLength === 0) {
           this.setMainAlert('The are currently no citizens to invite.')
@@ -198,63 +176,26 @@ import ServeCitizen from './serve-citizen'
       },
       countDownChanged(dismissCountDown) {
         this.$store.commit('dismissCountDown', dismissCountDown)
-      },
-      clickExpandContract() {
-        if (this.y === 300) {
-          this.ymax = 450
-          this.interval = setInterval( () => { this.makeBigger() }, 15)
-          return
-        }
-        if (this.y === 450) {
-          this.ymax = 300
-          this.interval = setInterval( () => { this.makeSmaller() }, 15)
-          return
-        }
-      },
-      makeBigger() {
-        let sizeUp = () => {
-          this.y += 5
-        }
-        if (this.y >= this.ymax) {
-          clearInterval(this.interval)
-          this.y = 450
-          this.point = 'up'
-          return
-        }
-        sizeUp()
-      },
-      makeSmaller() {
-        let sizeDown = () => {
-          this.y -= 5
-        }
-        if (this.y < this.ymax) {
-          clearInterval(this.interval)
-          this.y = 300
-          this.point = 'down'
-          return
-        }
-        sizeDown()
       }
     }
   }
 </script>
 
-<style>
-  .dash-table-col {
-    overflow-y: scroll; overflow: scroll; border: 1px solid;
+<style scoped>
+  .dashmaincontainer {
+    height: 85%; width: 100%; display: block; position: absolute; top: 75px;
+    padding-left: 1%; padding-right: 1%; padding-top: 8px; padding-bottom: 8px;
+  }
+  #dash-flex-button-container {
+    display: flex; justify-content: space-between; height: 100% !important;
+  }
+  .dash-table-holder {
+    overflow-y: scroll; overflow: scroll; border: 1px solid dimgrey;
   }
   .font-900-rem {
     font-size: .9rem;
   }
   .modal-main div {
     background-color: blue;
-  }
-  .btn-highlighted {
-    background-color: #FEDF01 !important;
-    color: black !important;
-    border: 1px solid white;
-  }
-  #queue-col-top {
-    display: flex; width: 100%; justify-content: space-between;
   }
 </style>
