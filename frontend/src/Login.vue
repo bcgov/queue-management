@@ -27,7 +27,7 @@ limitations under the License.*/
          style="display: flex; flex-direction: row; justify-content: space-between">
       <div style="padding-right: 20px" v-if="reception">
         <b-form-checkbox :checked="quick_trans_status"
-                         @change="updateTransactionStatus($event)""
+                         @change="updateTransactionStatus($event)"
                          class="navbar-label">Quick Txn</b-form-checkbox>
       </div>
       <div style="padding-right: 20px">
@@ -46,7 +46,7 @@ limitations under the License.*/
 
 <script>
 import _ from 'lodash'
-import { mapGetters, mapMutations } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 
   export default {
     name: 'Login',
@@ -58,6 +58,7 @@ import { mapGetters, mapMutations } from 'vuex'
       ...mapGetters(['quick_trans_status', 'reception'])
     },
     methods: {
+      ...mapActions(['updateCSRQuickTransactionState']),
       ...mapMutations(['setQuickTransactionState']),
       initLocalStorage() {
         if(localStorage.token) {
@@ -166,6 +167,7 @@ import { mapGetters, mapMutations } from 'vuex'
 
       updateTransactionStatus(e) {
         this.setQuickTransactionState(e)
+        this.updateCSRQuickTransactionState()
       }
     }
   }

@@ -64,6 +64,7 @@ export const store = new Vuex.Store({
     showResponseModal: false,
     showServiceModal: false,
     user: {
+      csr_id: null,
       username: null,
       office: {
         office_id: null,
@@ -955,6 +956,15 @@ export const store = new Vuex.Store({
       } else {
         context.commit('switchAddModalMode', 'reception')
       }
+    },
+
+    updateCSRQuickTransactionState(context) {
+      let csr_id = context.state.user.csr_id
+      Axios(context).put(`/csrs/${csr_id}/`, {
+        qt_xn_csr_ind: context.state.user.qt_xn_csr_ind
+      })
+      .then( resp => {
+      })
     }
   },
 

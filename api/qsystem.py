@@ -1,11 +1,10 @@
-import datetime
 import logging
 import socket
 import time
 import traceback
 
 from config import configure_app
-from flask import Flask, g, session
+from flask import Flask
 from flask_caching import Cache
 from flask_cors import CORS
 from flask_marshmallow import Marshmallow
@@ -19,12 +18,10 @@ from app.exceptions import AuthError
 
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
-from sqlalchemy.orm import scoped_session, sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
 
 application = Flask(__name__, instance_relative_config=True)
 
-#Make sure we 404 when the trailing slash is not present on ALL routes
+# Make sure we 404 when the trailing slash is not present on ALL routes
 application.url_map.strict_slashes = True
 configure_app(application)
 
@@ -54,6 +51,7 @@ oidc = OpenIDConnect(application)
 logging.basicConfig(format=application.config['LOGGING_FORMAT'], level=logging.INFO)
 logger = logging.getLogger("myapp.sqltime")
 logger.setLevel(logging.DEBUG)
+
 
 def api_call_with_retry(f):
     @wraps(f)
@@ -85,6 +83,7 @@ import app.resources.citizen.citizen_place_on_hold
 import app.resources.citizen.citizen_service_requests
 import app.resources.citizen.citizen_specific_invite
 import app.resources.csrs
+import app.resources.csr_detail
 import app.resources.health
 import app.resources.services
 import app.resources.service_requests_list
@@ -93,8 +92,9 @@ import app.resources.slack
 import app.resources.smartboard
 import app.resources.websocket
 
-#Hostname for debug puposes
+# Hostname for debug puposes
 hostname = socket.gethostname()
+
 
 @api.errorhandler(SQLAlchemyError)
 def error_handler(e):
@@ -102,16 +102,19 @@ def error_handler(e):
     print(e)
     return {"message": str(e), "trace": traceback.format_exc()}, 500
 
+
 @application.errorhandler(SQLAlchemyError)
 def error_handler(e):
     '''Default error handler'''
     print(e)
     return "error"
 
+
 @application.errorhandler(AuthError)
 @api.errorhandler(AuthError)
 def handle_auth_error(ex):
     return {}, 401
+
 
 @event.listens_for(Engine, "before_cursor_execute")
 def before_cursor_execute(conn, cursor, statement,
@@ -126,6 +129,7 @@ def after_cursor_execute(conn, cursor, statement,
     if total > 0.2:
         logger.debug("Long running Query (%s s): %s" % (total, statement))
         logger.debug("Parameters: %s", parameters)
+
 
 @application.after_request
 def apply_header(response):
