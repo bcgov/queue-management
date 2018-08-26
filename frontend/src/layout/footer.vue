@@ -16,9 +16,6 @@
     </div>
     <div class="p-0 m-0">
       <div class="p-0" style="width: 80px; height: 20px; display:inline-block; margin-right: 25px;">
-        <b-btn v-if="!showServiceModal" variant="link" @click="toggleModal">
-          Feedback
-        </b-btn>
       </div>
       <div class="p-0" style="display:inline-block; color: white; margin-right:15px;">
         v1.0
@@ -36,14 +33,6 @@
 
     computed: {
       ...mapState(['showServiceModal'])
-    },
-
-    methods: {
-      ...mapMutations(['toggleFeedbackModal']),
-
-      toggleModal() {
-        this.toggleFeedbackModal(true)
-      }
     }
   }
 </script>
