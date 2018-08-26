@@ -636,9 +636,22 @@ export const store = new Vuex.Store({
     },
 
     messageSlack(context) {
-      let slackObject = {
-        slack_message: context.state.feedbackMessage
+      let messageParts = []
+      messageParts.push(`Username: ${context.state.user.username}`)
+      messageParts.push(`Office: ${context.state.user.office.office_name}`)
+
+      if (context.state.serviceModalForm.service_citizen) {
+        messageParts.push(`Ticket Number: ${context.state.serviceModalForm.service_citizen.ticket_number}`)
+      } else {
+        messageParts.push(`Ticket Number: not available`)
       }
+      messageParts.push("")
+      messageParts.push(`Message: ${context.state.feedbackMessage}`)
+
+      let slackObject = {
+        slack_message: messageParts.join("\n")
+      }
+
       let url = "/slack/"
       Axios(context).post(url, slackObject).then(()=> {
         context.commit('setFeedbackMessage', '')

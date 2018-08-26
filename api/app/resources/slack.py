@@ -34,8 +34,6 @@ class Slack(Resource):
         except KeyError as err:
             return {"message": "Must provide message to send to slack"}, 422
 
-        print(slack_message)
-
         slack_json_data = {
             "text": slack_message
         }
@@ -43,8 +41,13 @@ class Slack(Resource):
         print(slack_json_data)
         params = json.dumps(slack_json_data).encode('utf8')
 
+        url = application.config['SLACK_URL']
+
+        if url is None:
+            return {"message": "SLACK_URL is not set"}, 400
+
         req = urllib.request.Request(
-            url=application.config['SLACK_URL'],
+            url=url,
             data=params,
             headers={'content-type': 'application/json'}
         )

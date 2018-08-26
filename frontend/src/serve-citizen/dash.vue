@@ -42,38 +42,42 @@ limitations under the License.*/
                     id="add-citizen-button">Back Office</b-button>
         </div>
 
-        <div></div>
+        <div>
+          <b-button class="btn-primary"
+                    @click="clickFeedback"
+                    id="click-feedback-button">Feedback</b-button>
+        </div>
 
       </div>
     </div>
     <template v-if="reception && isLoggedIn">
-    <div v-bind:style="{width:'100%', height: `${qLengthH}px`}" class="font-900-rem">
-      Citizens Waiting: {{ queueLength }}
-    </div>
-
-  <div class="dash-table-holder" v-bind:style="{width:'100%', height:`${dashH}px`}">
-    <DashTable></DashTable>
-  </div>
-    <div v-bind:style="{width:'100%', height:`${qLengthH}px`}">
-      <div style="display: flex; width: 100%; justify-content: space-between;">
-        <div class="font-900-rem">Citizens on Hold: {{on_hold_queue.length}}</div>
-      <b-button variant="link" v-dragged="onDrag" class="m-0 p-0">
-        <font-awesome-icon icon="sort"
-                           class="m-0 p-0"
-                           style="font-size: 1.5rem;"></font-awesome-icon>
-      </b-button>
+      <div v-bind:style="{width:'100%', height: `${qLengthH}px`}" class="font-900-rem">
+        Citizens Waiting: {{ queueLength }}
       </div>
-    </div>
-    <div class="dash-table-holder" v-bind:style="{width:'100%',height:`${holdH}px`}">
-      <DashHoldTable></DashHoldTable>
-    </div>
-  </template>
-  <template v-else-if="!reception && isLoggedIn">
-    <div class="font-900-rem">Citizens on Hold: {{on_hold_queue.length}}</div>
-    <div class="dash-table-holder" v-bind:style="{width:'100%',minHeight:'200px',maxHeight:`${this.availH}px`}">
-      <DashHoldTable></DashHoldTable>
-    </div>
-  </template>
+
+      <div class="dash-table-holder" v-bind:style="{width:'100%', height:`${dashH}px`}">
+        <DashTable></DashTable>
+      </div>
+      <div v-bind:style="{width:'100%', height:`${qLengthH}px`}">
+        <div style="display: flex; width: 100%; justify-content: space-between;">
+          <div class="font-900-rem">Citizens on Hold: {{on_hold_queue.length}}</div>
+          <b-button variant="link" v-dragged="onDrag" class="m-0 p-0">
+            <font-awesome-icon icon="sort"
+                              class="m-0 p-0"
+                              style="font-size: 1.5rem;" />
+          </b-button>
+        </div>
+      </div>
+      <div class="dash-table-holder" v-bind:style="{width:'100%',height:`${holdH}px`}">
+        <DashHoldTable></DashHoldTable>
+      </div>
+    </template>
+    <template v-else-if="!reception && isLoggedIn">
+      <div class="font-900-rem">Citizens on Hold: {{on_hold_queue.length}}</div>
+      <div class="dash-table-holder" v-bind:style="{width:'100%',minHeight:'200px',maxHeight:`${this.availH}px`}">
+        <DashHoldTable></DashHoldTable>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -147,7 +151,7 @@ import ServeCitizen from './serve-citizen'
     },
 
     methods: {
-      ...mapMutations(['setMainAlert']),
+      ...mapMutations(['setMainAlert', 'toggleFeedbackModal']),
       ...mapActions([
         'clickInvite',
         'clickAddCitizen',
@@ -176,6 +180,10 @@ import ServeCitizen from './serve-citizen'
       },
       countDownChanged(dismissCountDown) {
         this.$store.commit('dismissCountDown', dismissCountDown)
+      },
+
+      clickFeedback() {
+        this.toggleFeedbackModal(true)
       }
     }
   }
