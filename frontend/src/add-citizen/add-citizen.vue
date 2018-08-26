@@ -1,8 +1,7 @@
 
 
 <template>
-    <b-modal
-             :visible="showAddModal"
+    <b-modal :visible="showAddModal"
              size="lg"
              hide-header
              hide-footer
