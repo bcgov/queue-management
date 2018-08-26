@@ -6,13 +6,12 @@
            :ok-disabled="t"
            :cancel-disabled="t"
            :visible="showFeedbackModal"
-           @hidden="toggleModal"
-           >
+           @hidden="toggleModal">
     <h5>Submit Feedback</h5>
     Please describe the issue you are experiencing, including the actions that cause it or what you were doing when
     it occurred, where in the app/what screen you were viewing, a description of the issue and how it differs from the
     expected behaviour.  Please don't include any private or personal information in your explanation.
-    <p class="feedback-warning" v-if="showWarning">Please take a moment to explain in a bit more detail</p>
+    <p class="feedback-warning" v-if="showWarning">You must provide a message</p>
     <b-textarea :rows="5"
                 v-model="writeFeedback"
                 class="mb-2 mt-1"
@@ -27,9 +26,7 @@
       <b-btn @click="toggleModal">
         Cancel
       </b-btn>
-
     </div>
-
   </b-modal>
 </template>
 
@@ -72,7 +69,7 @@
       },
 
       submitMessage() {
-        if (this.feedbackMessage.length < 25) {
+        if (this.feedbackMessage.length <= 0) {
           this.showWarning = true
         } else {
           this.messageSlack()

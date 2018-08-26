@@ -5,6 +5,7 @@
     <div class="serve-modal-content">
      <div style="display: flex; flex-direction: row; justify-content: space-between" class="modal_header">
        <div><h5>Serve Citizen</h5></div>
+       <div><b-button-close size="lg" @click="closeWindow" /></div>
      </div>
       <b-container class="pb-3" id="serve-citizen-modal-top" fluid>
        <b-row no-gutters class="p-2">
@@ -29,10 +30,12 @@
            <div class="pt-1" style="display: flex; flex-direction: row; justify-content: space-between;">
              <div>
              <b-button @click="clickServiceBeginService"
+                       v-if="reception"
                        :disabled="serviceBegun===true"
                        v-bind:class="buttonStyle"
                        id="serve-citizen-begin-service-button">Begin Service</b-button>
              <b-button @click="clickReturnToQueue"
+                       v-if="reception"
                        :disabled="serviceBegun===true"
                        class="btn-primary serve-btn"
                        id="serve-citizen-return-to-queue-button">Return to Queue</b-button>
@@ -140,7 +143,7 @@ export default {
       'serviceModalForm'
     ]),
 
-    ...mapGetters(['invited_citizen', 'active_service', 'invited_service_reqs']),
+    ...mapGetters(['invited_citizen', 'active_service', 'invited_service_reqs', 'reception']),
 
     citizen() {
       if (!this.invited_citizen) {
