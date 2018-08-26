@@ -64,6 +64,7 @@ export const store = new Vuex.Store({
     showResponseModal: false,
     showServiceModal: false,
     user: {
+      csr_id: null,
       username: null,
       office: {
         office_id: null,
@@ -174,7 +175,8 @@ export const store = new Vuex.Store({
     },
 
     categories_options: (state, getters) => {
-      let opts = state.categories
+      let opts = state.categories.filter(o => state.services.some(s => s.parent_id === o.service_id))
+
       let mappedOpts = opts.map(opt =>
           ({value: opt.service_id, text: opt.service_name})
         )
@@ -954,6 +956,15 @@ export const store = new Vuex.Store({
       } else {
         context.commit('switchAddModalMode', 'reception')
       }
+    },
+
+    updateCSRQuickTransactionState(context) {
+      let csr_id = context.state.user.csr_id
+      Axios(context).put(`/csrs/${csr_id}/`, {
+        qt_xn_csr_ind: context.state.user.qt_xn_csr_ind
+      })
+      .then( resp => {
+      })
     }
   },
 

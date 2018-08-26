@@ -47,6 +47,11 @@ class Smartboard(Resource):
 
             for c in citizens:
                 active_service_request = c.get_active_service_request()
+
+                # Filter Back Office out of services
+                if active_service_request.service.parent.service_name == "Back Office":
+                    continue
+
                 active_period = active_service_request.get_active_period()
                 period = self.period_schema.dump(active_period)
 
