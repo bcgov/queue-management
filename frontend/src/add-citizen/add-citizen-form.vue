@@ -2,29 +2,23 @@
   <div class="add_citizen_template">
     <template v-if="addModalSetup === 'add_mode' || addModalSetup === 'edit_mode' ">
       <b-container fluid class="add_citizen_template">
-        <b-form>
           <Channel />
           <Filters />
           <Tables />
-        </b-form>
       </b-container>
     </template>
     <template v-else>
       <b-container fluid class="add_citizen_template" v-if="reception">
-        <b-form>
           <Comments />
           <Channel />
           <Filters />
           <Tables />
-        </b-form>
       </b-container>
       <b-container fluid class="add_citizen_template" v-if="!reception">
-        <b-form>
           <Channel />
           <Filters />
           <Tables />
           <Comments style="margin-top:5px"/>
-        </b-form>
       </b-container>
     </template>
   </div>
