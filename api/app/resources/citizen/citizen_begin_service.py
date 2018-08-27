@@ -29,12 +29,13 @@ class CitizenBeginService(Resource):
     @oidc.accept_token(require_token=True)
     @api_call_with_retry
     def post(self, id):
-        csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
         lock = FileLock("lock/begin_citizen.lock")
 
         with lock:
-            print("Lock acquired")
+            csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
             citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
+            pending_service_state = SRState.query.filter_by(sr_code='Active').first()
+
             active_service_request = citizen.get_active_service_request()
 
             if active_service_request is None:
@@ -45,15 +46,14 @@ class CitizenBeginService(Resource):
             except TypeError:
                 return {"message": "Citizen  has already been invited"}, 400
 
-            pending_service_state = SRState.query.filter_by(sr_code='Active').first()
             active_service_request.sr_state_id = pending_service_state.sr_state_id
 
             db.session.add(citizen)
             db.session.commit()
 
-        socketio.emit('update_customer_list', {}, room=csr.office_id)
-        result = self.citizen_schema.dump(citizen)
-        socketio.emit('update_active_citizen', result.data, room=csr.office_id)
+            socketio.emit('update_customer_list', {}, room=csr.office_id)
+            result = self.citizen_schema.dump(citizen)
+            socketio.emit('update_active_citizen', result.data, room=csr.office_id)
 
         return {'citizen': result.data,
                 'errors': result.errors}, 200

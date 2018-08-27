@@ -34,6 +34,7 @@ class CitizenSpecificInvite(Resource):
         with lock:
             csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
             citizen = db.session.query(Citizen).with_lockmode('update').filter_by(citizen_id=id).first()
+            pending_service_state = SRState.query.filter_by(sr_code='Pending').first()
 
             active_service_request = citizen.get_active_service_request()
 
@@ -45,7 +46,6 @@ class CitizenSpecificInvite(Resource):
             except TypeError:
                 return {"message": "Citizen  has already been invited"}, 400
 
-            pending_service_state = SRState.query.filter_by(sr_code='Pending').first()
             active_service_request.sr_state_id = pending_service_state.sr_state_id
 
             db.session.add(citizen)
