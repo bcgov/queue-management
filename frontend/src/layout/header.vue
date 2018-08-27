@@ -15,7 +15,7 @@ limitations under the License.*/
 
 
 <template>
-<div id="header" style="position: fixed; top: 0px; left: 0px; width: 100%; height: 70px; min-height:60px">
+<div id="header" style="position: fixed; top: 0px; left: 0px; width: 100%; height: 70px;">
   <b-navbar variant="faded"
             type="light"
             style="box-shadow: 0px 5px 10px 0px rgba(169,169,169,1); padding: 5px 0px 0px 0px;

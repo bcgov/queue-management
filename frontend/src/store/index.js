@@ -44,7 +44,7 @@ export const store = new Vuex.Store({
     channels: [],
     citizens: [],
     citizenInvited: false,
-    dismissCountDown: 0,
+    dismissCount: 0,
     feedbackMessage: '',
     isLoggedIn: false,
     nowServing: false,
@@ -206,13 +206,16 @@ export const store = new Vuex.Store({
   actions: {
     flashServeNow(context, payload) {
       let flash = () => {
-        if ( context.state.serveNowStyle === 'btn-primary' ) {
-          context.commit('flashServeNow', 'btn-highlighted')
-        } else if ( context.state.serveNowStyle === 'btn-highlighted' ) {
-          context.commit('flashServeNow', 'btn-primary')
+        if (!context.state.showServiceModal) {
+          if ( context.state.serveNowStyle === 'btn-primary' ) {
+            context.commit('flashServeNow', 'btn-highlighted')
+          } else if ( context.state.serveNowStyle === 'btn-highlighted' ) {
+            context.commit('flashServeNow', 'btn-primary')
+          }
         }
       }
       if (payload === 'start') {
+        clearInterval(flashInt)
         flashInt = setInterval( ()=>{ flash() }, 800)
         return
       }
@@ -415,22 +418,39 @@ export const store = new Vuex.Store({
 
     clickBackOffice(context) {
       context.dispatch('toggleModalBack')
+      
       Axios(context).post('/citizens/', {})
         .then(resp => {
           let value = resp.data.citizen
           context.commit('updateAddModalForm', {type:'citizen',value})
-          let chanopts = context.getters.channel_options
-          let index = chanopts.findIndex(co=>co.text === 'back office')
-          context.commit('updateAddModalForm', {type:'channel', value:chanopts[index].value})
           context.commit('toggleAddModal', true)
+          context.commit('resetServiceModal')
         })
-      if (context.state.categories.length == 0) {
+      
+      let setupChannels = () => {
+        let index = -1
+        let { channel_options } = context.getters
+        channel_options.forEach((opt,i) => {
+          if (opt.text.toLowerCase() === 'back office') {
+            index = i
+          }
+        })
+        if (index >= 0) {
+          context.commit('updateAddModalForm', {type:'channel', value:channel_options[index].value})
+        } else {
+          context.commit('setDefaultChannel')
+        }
+      }
+
+      if (context.state.channels.length === 0) {
+        context.dispatch('getChannels').then( () => { setupChannels() })
+      } else {
+        setupChannels()
+      }
+      if (context.state.categories.length === 0) {
         context.dispatch('getCategories')
       }
-      if (context.state.channels.length == 0) {
-        context.dispatch('getChannels')
-      }
-      if (context.state.services.length == 0) {
+      if (context.state.services.length === 0) {
         context.dispatch('getServices')
       }
     },
@@ -507,6 +527,7 @@ export const store = new Vuex.Store({
       }).catch(() => {
         context.commit('setMainAlert', 'There are no citizens waiting.')
       })
+      context.dispatch('flashServeNow', 'stop')
     },
 
     checkForUnfinishedService(context, citizens) {
@@ -1108,7 +1129,7 @@ export const store = new Vuex.Store({
 
     setMainAlert(state, payload) {
       state.alertMessage = payload
-      state.dismissCountDown = 5
+      state.dismissCount = 5
     },
 
     setModalAlert(state, payload) {
@@ -1116,7 +1137,7 @@ export const store = new Vuex.Store({
     },
 
     dismissCountDown(state, payload) {
-      state.dismissCountDown = payload
+      state.dismissCount = payload
     },
 
     toggleInvitedStatus: (state, payload) => state.citizenInvited = payload,
