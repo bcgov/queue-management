@@ -29,17 +29,13 @@ class CitizenGenericInvite(Resource):
     @oidc.accept_token(require_token=True)
     @api_call_with_retry
     def post(self):
-
-        csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
-
-        active_citizen_state = CitizenState.query.filter_by(cs_state_name='Active').first()
-        waiting_period_state = PeriodState.query.filter_by(ps_name='Waiting').first()
-
         lock = FileLock("lock/invite_citizen.lock")
 
         with lock:
-            print("Lock acquired")
+            csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
 
+            active_citizen_state = CitizenState.query.filter_by(cs_state_name='Active').first()
+            waiting_period_state = PeriodState.query.filter_by(ps_name='Waiting').first()
             citizen = None
 
             try:
@@ -80,8 +76,13 @@ class CitizenGenericInvite(Resource):
             if citizen is None:
                 return {"message": "There is no citizen to invite"}, 400
 
+            db.session.refresh(citizen)
             active_service_request = citizen.get_active_service_request()
-            active_service_request.invite(csr)
+
+            try:
+                active_service_request.invite(csr)
+            except TypeError:
+                return {"message": "Error inviting citizen. Please try again."}, 400
 
             pending_service_state = SRState.query.filter_by(sr_code='Pending').first()
             active_service_request.sr_state_id = pending_service_state.sr_state_id
@@ -89,10 +90,10 @@ class CitizenGenericInvite(Resource):
             db.session.add(citizen)
             db.session.commit()
 
-        socketio.emit('update_customer_list', {}, room=csr.office_id)
-        socketio.emit('citizen_invited', {}, room='sb-%s' % csr.office.office_number)
-        result = self.citizen_schema.dump(citizen)
-        socketio.emit('update_active_citizen', result.data, room=csr.office_id)
+            socketio.emit('update_customer_list', {}, room=csr.office_id)
+            socketio.emit('citizen_invited', {}, room='sb-%s' % csr.office.office_number)
+            result = self.citizen_schema.dump(citizen)
+            socketio.emit('update_active_citizen', result.data, room=csr.office_id)
 
         return {'citizen': result.data,
                 'errors': result.errors}, 200

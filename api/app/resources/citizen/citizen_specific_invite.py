@@ -32,7 +32,6 @@ class CitizenSpecificInvite(Resource):
         lock = FileLock("lock/invite_citizen.lock")
 
         with lock:
-            print("Lock acquired")
             csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
             citizen = db.session.query(Citizen).with_lockmode('update').filter_by(citizen_id=id).first()
 
@@ -52,10 +51,10 @@ class CitizenSpecificInvite(Resource):
             db.session.add(citizen)
             db.session.commit()
 
-        socketio.emit('update_customer_list', {}, room=csr.office_id)
-        socketio.emit('citizen_invited', {}, room='sb-%s' % csr.office.office_number)
-        result = self.citizen_schema.dump(citizen)
-        socketio.emit('update_active_citizen', result.data, room=csr.office_id)
+            socketio.emit('update_customer_list', {}, room=csr.office_id)
+            socketio.emit('citizen_invited', {}, room='sb-%s' % csr.office.office_number)
+            result = self.citizen_schema.dump(citizen)
+            socketio.emit('update_active_citizen', result.data, room=csr.office_id)
 
         return {'citizen': result.data,
                 'errors': result.errors}, 200
