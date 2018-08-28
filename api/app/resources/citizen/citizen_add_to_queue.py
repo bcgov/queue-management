@@ -37,12 +37,11 @@ class CitizenAddToQueue(Resource):
             return {"message": "Citizen has no active service requests"}
 
         #  Figure out what Snowplow call to make.
-        # snowplow_call = "returntoqueue"
-        # if ((len(citizen.service_reqs) == 1) and (len(active_service_request.periods) == 1)):
-        #     snowplow_call = "addtoqueue"
+        snowplow_call = "returntoqueue"
+        if ((len(citizen.service_reqs) == 1) and (len(active_service_request.periods) == 1)):
+            snowplow_call = "addtoqueue"
 
-        # active_service_request.add_to_queue(csr, snowplow_call)
-        active_service_request.add_to_queue(csr, "addtoqueue")
+        active_service_request.add_to_queue(csr, snowplow_call)
 
         pending_service_state = SRState.query.filter_by(sr_code='Pending').first()
         active_service_request.sr_state_id = pending_service_state.sr_state_id

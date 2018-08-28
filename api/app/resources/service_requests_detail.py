@@ -20,6 +20,7 @@ from marshmallow import ValidationError
 from qsystem import api, api_call_with_retry, db, oidc, socketio
 from app.models import CSR, Period, PeriodState, ServiceReq, SRState
 from app.schemas import CitizenSchema, ServiceReqSchema
+from ..snowplow.snowplow import SnowPlow
 
 
 @api.route("/service_requests/<int:id>/", methods=["PUT"])
@@ -50,6 +51,8 @@ class ServiceRequestsDetail(Resource):
 
         db.session.add(service_request)
         db.session.commit()
+
+        SnowPlow.choose_service(service_request, csr, "chooseservice")
 
         result = self.service_request_schema.dump(service_request)
         citizen_result = self.citizen_schema.dump(service_request.citizen)

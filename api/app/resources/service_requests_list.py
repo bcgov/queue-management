@@ -108,10 +108,11 @@ class ServiceRequestsList(Resource):
         db.session.add(citizen)
         db.session.commit()
 
-        # choose_service(service_request, csr):
-        # SnowPlow.add_citizen(citizen, csr)
-        SnowPlow.choose_service(service_request, csr)
-
+        #  See whether first service, or next service.
+        snowplow_event = "additionalservice"
+        if ((len(citizen.service_reqs) == 1)):
+            snowplow_event = "chooseservice"
+        SnowPlow.choose_service(service_request, csr, snowplow_event)
 
         citizen_result = self.citizen_schema.dump(citizen)
         socketio.emit('update_active_citizen', citizen_result.data, room=csr.office_id)
