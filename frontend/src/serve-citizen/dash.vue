@@ -14,13 +14,7 @@ limitations under the License.*/
 
 
 <template>
-  <div id="dashmaincontainer" class="dashmaincontainer" key="dashmaincontainer">
-    <b-alert :show="dismissCountDown"
-             dismissible
-             style="h-align: center"
-             variant="warning"
-             @dismissed="dismissCountDown=0"
-             @dismiss-count-down="countDownChanged">{{this.$store.state.alertMessage}}</b-alert>
+  <div v-bind:style="{height: totalH}" class="dashmaincontainer" key="dashmaincontainer">
     <div v-bind:style="{width:'100%', height:`${buttonH}px`}" v-if="isLoggedIn">
       <AddCitizen />
       <ServeCitizen v-if="showServiceModal"/>
@@ -42,44 +36,46 @@ limitations under the License.*/
                     :disabled="citizenInvited===true"
                     id="add-citizen-button">Add Citizen</b-button>
           <b-button class="btn-primary"
-                    @click="clickAddCitizen"
+                    @click="clickBackOffice"
                     :disabled="citizenInvited===true"
                     id="add-citizen-button">Back Office</b-button>
         </div>
         <div>
           <b-button class="btn-primary"
+                    v-if="!showServiceModal"
                     @click="clickFeedback"
                     id="click-feedback-button">Feedback</b-button>
         </div>
       </div>
     </div>
     <template v-if="reception && isLoggedIn">
-      <div v-bind:style="{width:'100%', height: `${qLengthH}px`}" class="font-900-rem">
-        Citizens Waiting: {{ queueLength }}
+    <div v-bind:style="{width:'100%', height: `${qLengthH}px`}" class="font-900-rem">
+      Citizens Waiting: {{ queueLength }}
+    </div>
+
+  <div class="dash-table-holder" v-bind:style="{width:'100%', height:`${dashH}px`}">
+    <DashTable></DashTable>
+  </div>
+    <div v-bind:style="{width:'100%', height:`${qLengthH}px`}">
+      <div style="display: flex; width: 100%; justify-content: space-between;">
+        <div class="font-900-rem">Citizens on Hold: {{on_hold_queue.length}}</div>
+      <b-button variant="link" v-dragged="onDrag" class="m-0 p-0">
+        <font-awesome-icon icon="sort"
+                           class="m-0 p-0"
+                           style="font-size: 1.5rem;"></font-awesome-icon>
+      </b-button>
       </div>
-      <div class="dash-table-holder" v-bind:style="{width:'100%', height:`${dashH}px`}">
-        <DashTable />
-      </div>
-      <div v-bind:style="{width:'100%', height:`${qLengthH}px`}">
-        <div style="display: flex; width: 100%; justify-content: space-between;">
-          <div class="font-900-rem">Citizens on Hold: {{on_hold_queue.length}}</div>
-          <b-button variant="link" v-dragged="onDrag" class="m-0 p-0">
-            <font-awesome-icon icon="sort"
-                              class="m-0 p-0"
-                              style="font-size: 1.5rem;" />
-          </b-button>
-        </div>
-      </div>
-      <div class="dash-table-holder" v-bind:style="{width:'100%',height:`${holdH}px`}">
-        <DashHoldTable />
-      </div>
-    </template>
-    <template v-else-if="!reception && isLoggedIn">
-      <div class="font-900-rem">Citizens on Hold: {{on_hold_queue.length}}</div>
-      <div class="dash-table-holder" v-bind:style="{width:'100%',minHeight:'200px',maxHeight:`${this.availH}px`}">
-        <DashHoldTable></DashHoldTable>
-      </div>
-    </template>
+    </div>
+    <div class="dash-table-holder" v-bind:style="{width:'100%',height:`${holdH}px`}">
+      <DashHoldTable></DashHoldTable>
+    </div>
+  </template>
+  <template v-else-if="!reception && isLoggedIn">
+    <div class="font-900-rem">Citizens on Hold: {{on_hold_queue.length}}</div>
+    <div class="dash-table-holder" v-bind:style="{width:'100%',height:`${fullHoldH}px`}">
+      <DashHoldTable></DashHoldTable>
+    </div>
+  </template>
   </div>
 </template>
 
@@ -104,54 +100,65 @@ import ServeCitizen from './serve-citizen'
       this.$root.$on('showMessage', () => {
         this.showAlert()
       })
-      let totalH = dashmaincontainer.clientHeight
-      let availH = totalH-(2 * this.qLengthH)-this.buttonH-16
-      this.availH = availH
+      this.totalH = window.innerHeight - 70 - 36
+      this.$nextTick(function() {
+        window.addEventListener('resize', this.getNewHeight)
+      })
     },
 
     data() {
       return {
-        availH: '',
+        totalH:'',
         buttonH: 45,
         qLengthH: 28,
-        isDragged: false,
+        isDragged: '',
         offset: 0,
         t: true,
         f: false,
         last: 0,
         dismissSecs: 5,
-        citizencount: this.queueLength,
+        checkedLocalStorage: false
       }
     },
-
+    
     computed: {
+      ...mapGetters(['citizens_queue', 'on_hold_queue', 'reception']),
       ...mapState([
         'isLoggedIn',
         'citizenInvited',
         'dismissCountDown',
         'showServiceModal',
-        'serveNowStyle'
+        'serveNowStyle',
+        'user'
       ]),
-      ...mapGetters(['citizens_queue', 'on_hold_queue', 'reception']),
+      fullHoldH() {
+        return this.totalH - this.qLengthH - this.buttonH - 16
+      },
+      availH() {
+        return this.totalH - (2 * this.qLengthH) - this.buttonH - 16
+      },
       queueLength() {
         return this.citizens_queue.length
-      },
-      holdHeight() {
-        return `${(600 - this.y)}px`
-      },
-      queueHeight() {
-        return `${this.y}px`
       },
       dashH() {
         if (!this.isDragged) return this.availH / 2;
         if (this.isDragged) return this.availH + this.offset;
       },
       holdH() {
-        if (!this.isDragged) return this.availH / 2;
-        if (this.isDragged) return this.availH - this.dashH;
+        return this.availH - this.dashH;
+      },
+      csrId() {
+        return this.user.csr_id
       }
     },
-
+    watch: {
+      csrId: function(val, oldVal) {
+        console.log(val)
+        if (val) {
+          this.checkLocalStorage(val)
+        }
+      }
+    },
     methods: {
       ...mapMutations(['setMainAlert', 'toggleFeedbackModal']),
       ...mapActions([
@@ -162,6 +169,10 @@ import ServeCitizen from './serve-citizen'
         'clickServeNow',
         'clickBackOffice'
       ]),
+      getNewHeight() {
+        //window.innerHeight - height of header (70) - height of footer (36)
+        this.totalH = window.innerHeight - 70 - 36
+      },
       onDrag({ deltaY, first, last }) {
         this.isDragged = true
         if (first) {
@@ -172,6 +183,12 @@ import ServeCitizen from './serve-citizen'
           this.offset += deltaY
           this.last = (this.availH / 2) + this.offset
         }
+        if (last) {
+          let offsetRatio = this.offset / this.availH
+          let lastRatio = this.last / this.availH
+          localStorage.setItem(`${this.csrId}offset`, offsetRatio)
+          localStorage.setItem(`${this.csrId}last`, lastRatio)
+        }
       },
       invite() {
         if (this.queueLength === 0) {
@@ -180,12 +197,21 @@ import ServeCitizen from './serve-citizen'
           this.clickInvite()
         }
       },
-      countDownChanged(dismissCountDown) {
-        this.$store.commit('dismissCountDown', dismissCountDown)
-      },
-
       clickFeedback() {
         this.toggleFeedbackModal(true)
+      },
+      checkLocalStorage(csrId) {
+        this.checkedLocalStorage = true
+        let offsetRatio = localStorage.getItem(`${csrId}offset`)
+        console.log(offsetRatio)
+        if(offsetRatio) {
+          this.isDragged = true
+          let lastRatio = localStorage.getItem(`${csrId}last`)
+          this.offset = offsetRatio * this.availH
+          this.last = lastRatio * this.availH
+        } else {
+          this.isDragged = false
+        }
       }
     }
   }

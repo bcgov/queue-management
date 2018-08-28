@@ -14,14 +14,9 @@
         <a href="http://www2.gov.bc.ca/gov/content/home/copyright" target="_blank">Copyright</a>
       </div>
     </div>
-    <div class="p-0 m-0">
-      <div class="p-0" style="width: 80px; height: 20px; display:inline-block; margin-right: 25px;">
-      </div>
-      <div class="p-0" style="display:inline-block; color: white; margin-right:15px;">
-        v1.0
-      </div>
+    <div class="p-0" style="display:inline-block; color: white; margin-right:15px;">
+      v1.0
     </div>
-
   </div>
 </template>
 
@@ -30,28 +25,24 @@
 
   export default {
     name: 'Footer',
-
-    computed: {
-      ...mapState(['showServiceModal'])
-    }
   }
 </script>
 
 <style scoped>
   #main-footer {
     display: flex;
-    justify-content: space-between;
+    justify-content:space-between;
     align-items: center;
     position: fixed;
     bottom: 0px;
     left: 0px;
-    height: 30px;
+    height: 36px;
     padding-top: 7px;
     padding-bottom: 7px;
     width: 100%;
     background-color: #123263;
     border-top: 2px solid #fcba19;
-    font-size: .750rem;
+    font-size: .850rem;
     font-family: Myriad-Pro, Calibri, Arial, sans serif;
   }
   #footer-links {
@@ -75,5 +66,7 @@
     font-size: .800rem;
     font-family: Myriad-Pro, Calibri, Arial, sans serif;
     color: white;
+    border: none;
+    background-color: #4678b0;
   }
 </style>

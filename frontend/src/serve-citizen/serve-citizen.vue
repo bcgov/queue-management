@@ -97,16 +97,18 @@
          </b-col>
          <b-col cols="1" />
        </b-row>
-       <b-row no-gutters>
-         <b-col cols="11"/>
-         <b-col cols="1" class="m-0 pt-3">
-           <b-button size="sm"
-                     id="serve-citizen-footer-button"
-                     variant="link"
-                     @click="toggleFeedback"
-                     >
-             Feedback
-           </b-button>
+       <b-row no-gutters class="p-0 m-1">
+         <b-col cols="12" class="p-0 m-1">
+           <div style="display: flex; justify-content: flex-end;" class="p-0 m-1">
+             <b-button size="sm"
+                       class="p-1 btn-primary"
+                       style="color: white;"
+                       id="serve-citizen-footer-button"
+                       @click="toggleFeedback"
+                       >
+               Feedback
+             </b-button>
+         </div>
          </b-col>
        </b-row>
      </b-container>
@@ -142,16 +144,13 @@ export default {
       'serviceBegun',
       'serviceModalForm'
     ]),
-
     ...mapGetters(['invited_citizen', 'active_service', 'invited_service_reqs', 'reception']),
-
     citizen() {
       if (!this.invited_citizen) {
         return {ticket_number: ''}
       }
       return this.invited_citizen
     },
-
     comments: {
       get() {
         return this.serviceModalForm.citizen_comments
@@ -163,7 +162,6 @@ export default {
         })
       }
     },
-
     channel() {
       if (!this.active_service) {
         return {channel_name: '', channel_id: ''}
@@ -183,7 +181,6 @@ export default {
       'putInaccurateIndicator'
     ]),
     ...mapMutations(['editServiceModalForm', 'toggleFeedbackModal']),
-
     serviceFinish() {
       if (this.checked === 'yes') {
         this.putInaccurateIndicator().then(() => {
@@ -193,13 +190,10 @@ export default {
         this.clickServiceFinish()
       }
     },
-
     toggleFeedback() {
       this.toggleFeedbackModal(true)
     },
-
     flashButton() {
-
       if (this.serviceBegun === false) {
         this.buttonStyle == 'btn-primary serve-btn' ?
           this.buttonStyle = 'btn-highlighted' : this.buttonStyle = 'btn-primary serve-btn'
@@ -208,7 +202,6 @@ export default {
         this.buttonStyle = 'btn-primary serve-btn'
       }
     },
-
     closeWindow() {
       this.$store.dispatch('clickServiceModalClose')
     }
@@ -251,6 +244,11 @@ export default {
 #serve-citizen-modal-footer {
   border: 1px solid grey;
   background-color: WhiteSmoke;
+}
+.btn-highlighted {
+  color: black;
+  border: 1px solid darkgoldenrod;
+  background-color: gold;
 }
 strong {
   color: blue;
