@@ -75,8 +75,7 @@ export const store = new Vuex.Store({
       },
       office_id: null,
       qt_xn_csr_ind: true,
-      receptionist_ind: null,
-      checkComplete: false
+      receptionist_ind: null
     },
   },
 
@@ -239,12 +238,6 @@ export const store = new Vuex.Store({
           return
         }
         context.commit('updateQueue', resp.data.citizens)
-        if (!context.state.checkComplete) {
-          context.dispatch('checkForUnfinishedService', resp.data.citizens).then(()=>{
-            context.commit('logCheckComplete', true)
-          })
-
-        }
       })
     },
 
@@ -304,6 +297,10 @@ export const store = new Vuex.Store({
           context.commit('setUser', resp.data.csr)
           let officeType = resp.data.csr.office.sb.sb_type
           context.commit('setOffice', officeType)
+
+          if (resp.data.active_citizens && resp.data.active_citizens.length > 0) {
+            context.dispatch('checkForUnfinishedService', resp.data.active_citizens)
+          }
           resolve(resp)
         }, error => {
           reject(error)
@@ -1151,8 +1148,6 @@ export const store = new Vuex.Store({
     flashServeNow: (state, payload) => state.serveNowStyle = payload,
 
     setServeNowAction: (state, payload) => state.serveNowAltAction = payload,
-
-    logCheckComplete: (state, payload) => state.checkComplete = payload,
 
     toggleFeedbackModal: (state, payload) => state.showFeedbackModal = payload,
 
