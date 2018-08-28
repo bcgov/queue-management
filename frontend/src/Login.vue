@@ -101,11 +101,6 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
       },
 
       setupKeycloakCallbacks(authenticated) {
-        this.$keycloak.onReady = (authenticated) => {
-          if (authenticated) {
-            this.$store.dispatch('logIn', this.$keycloak.token)
-          }
-        }
 
         this.$keycloak.onAuthSuccess = () => {
           this.$store.dispatch('logIn', this.$keycloak.token)
