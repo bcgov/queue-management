@@ -6,8 +6,8 @@
         <b-button @click="clickEditCancel" class="btn-secondary" id="add-citizen-cancel">Cancel</b-button>
       </div>
       <div v-else-if="setup === 'add_mode' ">
-        <b-button @click="addServiceApply">Apply</b-button>
-        <b-button @click="clickEditCancel">Cancel</b-button>
+        <b-button class="btn-primary" @click="addServiceApply">Apply</b-button>
+        <b-button class="btn-secondary" @click="clickEditCancel">Cancel</b-button>
       </div>
     </template>
     <template v-else>
