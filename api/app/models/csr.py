@@ -27,6 +27,9 @@ class CSR(Base):
     deleted = db.Column(db.DateTime, nullable=True)
     csr_state_id = db.Column(db.Integer, db.ForeignKey('csrstate.csr_state_id'), nullable=False)
 
+    periods = db.relationship("Period", primaryjoin="and_(CSR.csr_id==Period.csr_id,Period.time_end.is_(None))",
+                              lazy='joined', order_by='desc(Period.time_start)')
+
     def __repr__(self):
         return '<CSR Username:(name={self.username!r})>'.format(self=self)
 

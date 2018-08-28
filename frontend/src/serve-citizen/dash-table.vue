@@ -100,7 +100,6 @@ limitations under the License.*/
       },
       showService(id) {
         let service = this.active_service_id(id)
-        console.log(service)
         if (!service) {
           return null
         }

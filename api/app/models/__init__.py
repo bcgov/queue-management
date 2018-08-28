@@ -16,12 +16,12 @@ from .base import Base
 from .channel import Channel
 from .citizen import Citizen 
 from .citizen_state import CitizenState
+from .period_state import PeriodState
 from .csr import CSR
 from .csr_state import CSRState 
 from .metadata import MetaData
 from .office import Office
 from .period import Period
-from .period_state import PeriodState
 from .permission import Permission
 from .role import Role
 from .service import Service
