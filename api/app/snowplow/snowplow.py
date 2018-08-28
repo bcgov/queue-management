@@ -21,18 +21,26 @@ from ..models.service import Service
 from ..models.smartboard import SmartBoard
 from snowplow_tracker import Subject, Tracker, Emitter
 from snowplow_tracker import SelfDescribingJson
+import os
 
 class SnowPlow():
+
+    sp_endpoint = os.getenv("THEQ_SNOWPLOW_ENDPOINT", "spm.gov.bc.ca")
+    sp_appid = os.getenv("THEQ_SNOWPLOW_APPID", "CFMS")
+    sp_namespace = os.getenv("THEQ_SNOWPLOW_NAMESPACE", "CFMS_dev")
 
     @staticmethod
     def add_citizen(new_citizen, csr):
 
-        print("==> SP: add_citizen");
+        # print("==> SP: addcitizen");
+        # print("    --> SP endpoint:  " + SnowPlow.sp_endpoint);
+        # print("    --> SP appid:     " + SnowPlow.sp_appid);
+        # print("    --> SP namespace: " + SnowPlow.sp_namespace);
 
         # Set up core Snowplow environment
         s = Subject()#.set_platform("app")
-        e = Emitter("spm.gov.bc.ca")
-        t = Tracker(e, encode_base64=False, app_id = 'CFMS', namespace="CFMS_dev")
+        e = Emitter(SnowPlow.sp_endpoint)
+        t = Tracker(e, encode_base64=False, app_id = SnowPlow.sp_appid, namespace=SnowPlow.sp_namespace)
 
         # Set up contexts for the call.
         citizen = SnowPlow.get_citizen(new_citizen.citizen_id, 1, True)
@@ -46,14 +54,14 @@ class SnowPlow():
         t.track_self_describing_event(addcitizen, [citizen, office, agent])
 
     @staticmethod
-    def choose_service(service_request, csr):
+    def choose_service(service_request, csr, snowplow_event):
 
-        print("==> SP: choose_service")
+        # print("==> SP: " + snowplow_event)
 
         # Set up core Snowplow environment
         s = Subject()#.set_platform("app")
-        e = Emitter("spm.gov.bc.ca")
-        t = Tracker(e, encode_base64=False, app_id = 'CFMS', namespace="CFMS_dev")
+        e = Emitter(SnowPlow.sp_endpoint)
+        t = Tracker(e, encode_base64=False, app_id = SnowPlow.sp_appid, namespace=SnowPlow.sp_namespace)
 
         # Set up the contexts for the call.
         citizen = SnowPlow.get_citizen(service_request.citizen_id, service_request.quantity, False)
@@ -69,12 +77,12 @@ class SnowPlow():
     @staticmethod
     def snowplow_event(service_request, csr, schema):
 
-        print("==> SP: Snowplow event: " + schema)
+        # print("==> SP: Snowplow event: " + schema)
 
         #  Set up core Snowplow environment
         s = Subject()#.set_platform("app")
-        e = Emitter("spm.gov.bc.ca")
-        t = Tracker(e, encode_base64=False, app_id = 'CFMS', namespace="CFMS_dev")
+        e = Emitter(SnowPlow.sp_endpoint)
+        t = Tracker(e, encode_base64=False, app_id = SnowPlow.sp_appid, namespace=SnowPlow.sp_namespace)
 
         #  Set up the contexts for the call.
         citizen = SnowPlow.get_citizen(service_request.citizen_id, service_request.quantity, False)
@@ -90,14 +98,6 @@ class SnowPlow():
         #  Make the call.
         t.track_self_describing_event(snowplow_event, [citizen, office, agent])
 
-
-        # # the addcitizen event has no parameters of its own so we pass an empty array "{}"
-        # addcitizen = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/addcitizen/jsonschema/1-0-0', {})
-        #
-        # # make the call
-        # t.track_self_describing_event(addcitizen, [citizen, office, agent])
-
-
     @staticmethod
     def get_citizen(id, quantity, add_flag):
 
@@ -108,11 +108,11 @@ class SnowPlow():
             citizen_obj = Citizen.query.get(id)
             citizen_qtxn = (citizen_obj.qt_xn_citizen_ind == 1)
 
-        #  Display citizen context info.
-        print("    --> Citizen")
-        print("        --> ID:                " + str(id))
-        print("        --> quantity:          " + str(quantity))
-        print("        --> quick txn:         " + str(citizen_qtxn))
+        # #  Display citizen context info.
+        # print("    --> Citizen")
+        # print("        --> ID:                " + str(id))
+        # print("        --> quantity:          " + str(quantity))
+        # print("        --> quick txn:         " + str(citizen_qtxn))
 
         # Set up the citizen context.
         citizen = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/citizen/jsonschema/3-0-0',
@@ -132,10 +132,10 @@ class SnowPlow():
         if (my_board.sb_type == "callbyname") or (my_board.sb_type == "callbyticket"):
             office_type = "reception"
 
-        #  Display office context info.
-        print("    --> Office")
-        print("        --> office number:     " + str(office_num))
-        print("        --> office type:       " + office_type)
+        # #  Display office context info.
+        # print("    --> Office")
+        # print("        --> office number:     " + str(office_num))
+        # print("        --> office type:       " + office_type)
 
         #  Set up the office context.
         office = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/office/jsonschema/1-0-0',
@@ -151,11 +151,11 @@ class SnowPlow():
         role_name = role_obj.role_code
         csr_qtxn = (csr.qt_xn_csr_ind == 1)
 
-        #  Display the CSR variables.
-        print("    --> CSR")
-        print("        --> CSR ID:            " + str(csr.csr_id))
-        print("        --> CSR role:          " + role_name)
-        print("        --> CSR qtxn:          " + str(csr_qtxn))
+        # #  Display the CSR variables.
+        # print("    --> CSR")
+        # print("        --> CSR ID:            " + str(csr.csr_id))
+        # print("        --> CSR role:          " + role_name)
+        # print("        --> CSR qtxn:          " + str(csr_qtxn))
 
         #  Set up the CSR context.
         agent = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/agent/jsonschema/2-0-0',
@@ -176,18 +176,35 @@ class SnowPlow():
         pgm_name = parent.service_name
         channel = Channel.query.get(service_request.channel_id)
         channel_name = channel.channel_name
+        snowplow_channel = ""
 
-        #  Display the service variables.
-        print("    --> Service")
-        print("        --> Channel            " + channel_name)
-        print("        --> Program code:      " + pgm_code)
-        print("        --> Program:           " + pgm_name)
-        print("        --> Service code:      " + svc_code)
-        print("        --> Service:           " + svc_name)
+        #  Translate channel name to old versions, to avoid major Snowplow changes
+        if (channel_name == "In Person"):
+            snowplow_channel = "in-person"
+        elif (channel_name == "Phone"):
+            snowplow_channel = "phone"
+        elif ("channel_name" == "Back Office"):
+            snowplow_channel = "back-office"
+        elif ("channel_name" == "Email/Fax/Mail"):
+            snowplow_channel = "email-fax-assist"
+        elif ("channel_name" == "CATs Assist"):
+            snowplow_channel = "cats-assist"
+        elif ("channel_name" == "Mobile Assist"):
+            snowplow_channel = "mobile-assist"
+        else:
+            snowplow_channel = "sms"
+
+        # #  Display the service variables.
+        # print("    --> Service")
+        # print("        --> Channel            " + snowplow_channel)
+        # print("        --> Program code:      " + pgm_code)
+        # print("        --> Program:           " + pgm_name)
+        # print("        --> Service code:      " + svc_code)
+        # print("        --> Service:           " + svc_name)
 
         # for chooseservices, we build a JSON array and pass it
         chooseservice = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/chooseservice/jsonschema/2-0-0',
-                                           {"channel": "in-person", "program_id": svc_id, "parent_id": pgm_id,
+                                           {"channel": snowplow_channel, "program_id": svc_id, "parent_id": pgm_id,
                                             "program_name": pgm_name,
                                             "transaction_name": svc_name})
 
