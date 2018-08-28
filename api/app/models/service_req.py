@@ -42,11 +42,17 @@ class ServiceReq(Base):
 
         return sorted_periods[-1]
 
-    def invite(self, csr):
-        print("==> In service_req.py: invite method")
+    def invite(self, csr, snowplow_event="use_period"):
         active_period = self.get_active_period()
         if active_period.ps.ps_name in ["Invited", "Being Served", "On Hold"]:
             raise TypeError("You cannot invite a citizen that has already been invited")
+
+        #  Calculate what Snowplow event to call.
+        if (snowplow_event == "use_period"):
+            if (active_period.ps.ps_name == "Waiting"):
+                snowplow_event = "invitefromlist"
+            else:
+                snowplow_event = "invitefromhold"
 
         active_period.time_end = datetime.now()
         # db.session.add(active_period)
@@ -64,8 +70,7 @@ class ServiceReq(Base):
 
         self.periods.append(new_period)
 
-        print("==> About to make snowplow invitecitizen call")
-        #  SnowPlow.snowplow_event(self, csr, "invitecitizen")
+        SnowPlow.snowplow_event(self, csr, snowplow_event)
 
     def add_to_queue(self, csr, snowplow_event):
 
@@ -87,7 +92,7 @@ class ServiceReq(Base):
 
         SnowPlow.snowplow_event(self, csr, snowplow_event)
 
-    def begin_service(self, csr):
+    def begin_service(self, csr, snowplow_event):
         active_period = self.get_active_period()
         
         if active_period.ps.ps_name in ["Being Served"]:
@@ -109,6 +114,8 @@ class ServiceReq(Base):
 
         self.periods.append(new_period)
 
+        SnowPlow.snowplow_event(self, csr, snowplow_event)
+
     def place_on_hold(self, csr):
         active_period = self.get_active_period()
         active_period.time_end = datetime.now()
@@ -126,6 +133,8 @@ class ServiceReq(Base):
         )
 
         self.periods.append(new_period)
+
+        SnowPlow.snowplow_event(self, csr, "hold")
 
     def finish_service(self, csr, clear_comments=True):
         active_period = self.get_active_period()
