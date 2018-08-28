@@ -16,7 +16,7 @@ gunicorn
 kombu>=3.0,<4
 marshmallow
 marshmallow-sqlalchemy
-mysqlclient==1.3.12
+mysqlclient
 python-jose
 snowplow-tracker
 pysnow
