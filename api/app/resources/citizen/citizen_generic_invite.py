@@ -30,8 +30,6 @@ class CitizenGenericInvite(Resource):
     @api_call_with_retry
     def post(self):
 
-        print("==> In citizen_generic_invite.py: about to make invite call")
-
         lock = FileLock("lock/invite_citizen.lock")
 
         with lock:
@@ -82,10 +80,8 @@ class CitizenGenericInvite(Resource):
             db.session.refresh(citizen)
             active_service_request = citizen.get_active_service_request()
 
-            print("==> In citizen_generic_invite.py: about to make invite call")
-
             try:
-                active_service_request.invite(csr)
+                active_service_request.invite(csr, "invitecitizen")
             except TypeError:
                 return {"message": "Error inviting citizen. Please try again."}, 400
 
