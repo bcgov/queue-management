@@ -15,7 +15,7 @@ import logging
 
 class OpenIDConnect(OriginalOIDC):
 
-    @cache.memoize(timeout=60)
+    @cache.memoize(timeout=300)
     def _get_token_info(self, token):
         start_time = time.time()
         # We hardcode to use client_secret_post, because that's what the Google

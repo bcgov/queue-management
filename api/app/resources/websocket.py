@@ -43,7 +43,7 @@ def on_join(message):
         if csr:
             join_room(csr.office_id)
             emit('joinRoomSuccess', {"sucess": True})
-            emit('update_customer_list', {"success": True}, room=csr.office_id)
+            emit('update_customer_list', {"success": True})
             print("Success")
         else:
             print("Fail")
@@ -62,7 +62,7 @@ def on_join_smartboard(message):
         print("Joining room: %s" % room)
 
         join_room(room)
-        emit('joinSmartboardRoomSuccess', {"success": True})
+        emit('joinSmartboardRoomSuccess')
     except KeyError as e:
         print(e)
         emit('joinSmartboardRoomFail', {"sucess": False, "message": "office_id must be passed to this method"})

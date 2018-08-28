@@ -15,6 +15,7 @@ limitations under the License.*/
 <template>
   <div id="App">
     <Header />
+    <Alert />
     <Dash />
     <Socket v-show="1===2" />
     <Feedback />
@@ -24,6 +25,7 @@ limitations under the License.*/
 </template>
 
 <script>
+import Alert from './alert'
 import Dash from './serve-citizen/dash'
 import Header from './layout/header'
 import Socket from './Socket'
@@ -33,12 +35,17 @@ import Response from './response'
 
 export default {
   name: 'App',
-  components: { Dash, Header, Socket, Footer, Feedback, Response }
+  components: { Alert, Dash, Header, Socket, Footer, Feedback, Response }
 }
 </script>
 
 <style>
   .custom-select-sm {
     font-size: .8rem !important;
+  }
+  .btn-highlighted {
+    color: black;
+    border: 1px solid darkgoldenrod;
+    background-color: gold;
   }
 </style>
