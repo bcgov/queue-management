@@ -3,9 +3,13 @@
 <template>
   <div id="serveModal" class="serve-modal">
     <div class="serve-modal-content">
-     <div style="display: flex; flex-direction: row; justify-content: space-between" class="modal_header">
-       <div><h5>Serve Citizen</h5></div>
-       <div><b-button-close size="lg" @click="closeWindow" /></div>
+      <div style="display: flex; flex-direction: row; justify-content: space-between" class="modal_header">
+        <div><h4>Serve Citizen</h4></div>
+        <div>
+          <b-button size="sm"
+                    class="btn-primary"
+                    @click="toggleFeedback">Feedback</b-button>
+        </div>
      </div>
       <b-container class="pb-3" id="serve-citizen-modal-top" fluid>
        <b-row no-gutters class="p-2">
@@ -96,20 +100,6 @@
            </div>
          </b-col>
          <b-col cols="1" />
-       </b-row>
-       <b-row no-gutters class="p-0 m-1">
-         <b-col cols="12" class="p-0 m-1">
-           <div style="display: flex; justify-content: flex-end;" class="p-0 m-1">
-             <b-button size="sm"
-                       class="p-1 btn-primary"
-                       style="color: white;"
-                       id="serve-citizen-footer-button"
-                       @click="toggleFeedback"
-                       >
-               Feedback
-             </b-button>
-         </div>
-         </b-col>
        </b-row>
      </b-container>
    </div>
@@ -242,6 +232,7 @@ export default {
   color: black;
 }
 #serve-citizen-modal-footer {
+  padding-bottom: 1rem;
   border: 1px solid grey;
   background-color: WhiteSmoke;
 }

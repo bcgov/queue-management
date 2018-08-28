@@ -10,7 +10,7 @@
              class="m-0 p-0"
              @shown="setupForm()">
        <div style="display: flex; flex-direction: row; justify-content: space-between" class="modal_header">
-         <div><h5>{{modalTitle}}</h5></div>
+         <div><h4>{{modalTitle}}</h4></div>
        </div>
        <b-alert :show="dismissCountDown"
                 style="h-align: center"
