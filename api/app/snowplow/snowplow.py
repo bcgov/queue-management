@@ -27,7 +27,7 @@ class SnowPlow():
     @staticmethod
     def add_citizen(new_citizen, csr):
 
-        # print("==> SP: add_citizen");
+        print("==> SP: add_citizen");
 
         # Set up core Snowplow environment
         s = Subject()#.set_platform("app")
@@ -48,7 +48,7 @@ class SnowPlow():
     @staticmethod
     def choose_service(service_request, csr):
 
-        # print("==> SP: choose_service")
+        print("==> SP: choose_service")
 
         # Set up core Snowplow environment
         s = Subject()#.set_platform("app")
@@ -65,6 +65,38 @@ class SnowPlow():
 
         #  Make the call.
         t.track_self_describing_event(chooseservice, [citizen, office, agent])
+
+    @staticmethod
+    def snowplow_event(service_request, csr, schema):
+
+        print("==> SP: Snowplow event: " + schema)
+
+        #  Set up core Snowplow environment
+        s = Subject()#.set_platform("app")
+        e = Emitter("spm.gov.bc.ca")
+        t = Tracker(e, encode_base64=False, app_id = 'CFMS', namespace="CFMS_dev")
+
+        #  Set up the contexts for the call.
+        citizen = SnowPlow.get_citizen(service_request.citizen_id, service_request.quantity, False)
+        office = SnowPlow.get_office(csr.office_id)
+        agent = SnowPlow.get_csr(csr)
+
+        #  Initialize schema version.
+        schema_version = "1-0-0"
+
+        #  The choose service event has parameters, needs to be built.
+        snowplow_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/' + schema + '/jsonschema/' + schema_version, {})
+
+        #  Make the call.
+        t.track_self_describing_event(snowplow_event, [citizen, office, agent])
+
+
+        # # the addcitizen event has no parameters of its own so we pass an empty array "{}"
+        # addcitizen = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/addcitizen/jsonschema/1-0-0', {})
+        #
+        # # make the call
+        # t.track_self_describing_event(addcitizen, [citizen, office, agent])
+
 
     @staticmethod
     def get_citizen(id, quantity, add_flag):

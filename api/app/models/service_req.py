@@ -17,7 +17,7 @@ from qsystem import db
 from .base import Base 
 from app.models import Period, PeriodState, SRState
 from datetime import datetime
-
+from ..snowplow.snowplow import SnowPlow
 
 class ServiceReq(Base):
 
@@ -43,6 +43,7 @@ class ServiceReq(Base):
         return sorted_periods[-1]
 
     def invite(self, csr):
+        print("==> In service_req.py: invite method")
         active_period = self.get_active_period()
         if active_period.ps.ps_name in ["Invited", "Being Served", "On Hold"]:
             raise TypeError("You cannot invite a citizen that has already been invited")
@@ -63,7 +64,11 @@ class ServiceReq(Base):
 
         self.periods.append(new_period)
 
-    def add_to_queue(self, csr):
+        print("==> About to make snowplow invitecitizen call")
+        #  SnowPlow.snowplow_event(self, csr, "invitecitizen")
+
+    def add_to_queue(self, csr, snowplow_event):
+
         active_period = self.get_active_period()
         active_period.time_end = datetime.now()
         #db.session.add(active_period)
@@ -79,6 +84,8 @@ class ServiceReq(Base):
             accurate_time_ind=1
         )
         self.periods.append(new_period)
+
+        SnowPlow.snowplow_event(self, csr, snowplow_event)
 
     def begin_service(self, csr):
         active_period = self.get_active_period()

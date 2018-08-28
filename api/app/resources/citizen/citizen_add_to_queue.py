@@ -18,6 +18,7 @@ from qsystem import api, api_call_with_retry, db, oidc, socketio
 from app.models import Citizen, CSR
 from app.models import SRState
 from app.schemas import CitizenSchema
+from ...snowplow.snowplow import SnowPlow
 
 
 @api.route("/citizens/<int:id>/add_to_queue/", methods=["POST"])
@@ -35,13 +36,21 @@ class CitizenAddToQueue(Resource):
         if active_service_request is None:
             return {"message": "Citizen has no active service requests"}
 
-        active_service_request.add_to_queue(csr)
+        #  Figure out what Snowplow call to make.
+        # snowplow_call = "returntoqueue"
+        # if ((len(citizen.service_reqs) == 1) and (len(active_service_request.periods) == 1)):
+        #     snowplow_call = "addtoqueue"
+
+        # active_service_request.add_to_queue(csr, snowplow_call)
+        active_service_request.add_to_queue(csr, "addtoqueue")
 
         pending_service_state = SRState.query.filter_by(sr_code='Pending').first()
         active_service_request.sr_state_id = pending_service_state.sr_state_id
 
         db.session.add(citizen)
         db.session.commit()
+
+        # SnowPlow.snowplow_event(active_service_request, csr, "addtoqueue")
 
         socketio.emit('update_customer_list', {}, room=csr.office_id)
         socketio.emit('citizen_invited', {}, room='sb-%s' % csr.office.office_number)

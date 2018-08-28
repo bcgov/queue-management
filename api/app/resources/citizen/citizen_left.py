@@ -19,7 +19,7 @@ from app.models import Citizen, CSR, CitizenState
 from app.schemas import CitizenSchema, ServiceReqSchema
 from app.models import SRState
 from datetime import datetime
-
+from ...snowplow.snowplow import SnowPlow
 
 @api.route("/citizens/<int:id>/citizen_left/", methods=['POST'])
 class CitizenLeft(Resource):
@@ -35,6 +35,9 @@ class CitizenLeft(Resource):
         citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
         sr_state = SRState.query.filter_by(sr_code="Complete").first()
 
+        #  Save this service for the Snowplow call later.
+        active_service_request = citizen.get_active_service_request()
+
         for service_request in citizen.service_reqs:
 
             service_request.sr_state_id = sr_state.sr_state_id
@@ -48,6 +51,8 @@ class CitizenLeft(Resource):
 
         db.session.add(citizen)
         db.session.commit()
+
+        SnowPlow.snowplow_event(active_service_request, csr, "customerleft")
 
         socketio.emit('update_customer_list', {}, room=csr.office_id)
         socketio.emit('citizen_invited', {}, room='sb-%s' % csr.office.office_number)

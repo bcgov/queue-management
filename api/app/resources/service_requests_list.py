@@ -19,7 +19,7 @@ from qsystem import api, api_call_with_retry, db, oidc, socketio
 from app.models import Citizen, CitizenState, CSR, Period, PeriodState, Service, ServiceReq, SRState
 from app.schemas import CitizenSchema, ServiceReqSchema
 from marshmallow import ValidationError
-
+from ..snowplow.snowplow import SnowPlow
 
 @api.route("/service_requests/", methods=["POST"])
 class ServiceRequestsList(Resource):
@@ -107,6 +107,11 @@ class ServiceRequestsList(Resource):
         db.session.add(service_request)
         db.session.add(citizen)
         db.session.commit()
+
+        # choose_service(service_request, csr):
+        # SnowPlow.add_citizen(citizen, csr)
+        SnowPlow.choose_service(service_request, csr)
+
 
         citizen_result = self.citizen_schema.dump(citizen)
         socketio.emit('update_active_citizen', citizen_result.data, room=csr.office_id)
