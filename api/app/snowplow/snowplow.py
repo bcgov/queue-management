@@ -75,17 +75,22 @@ class SnowPlow():
         t.track_self_describing_event(chooseservice, [citizen, office, agent])
 
     @staticmethod
-    def snowplow_event(service_request, csr, schema):
-
-        # print("==> SP: Snowplow event: " + schema)
+    def snowplow_event(service_request, csr, schema, citizen_id = 0):
 
         #  Set up core Snowplow environment
         s = Subject()#.set_platform("app")
         e = Emitter(SnowPlow.sp_endpoint)
         t = Tracker(e, encode_base64=False, app_id = SnowPlow.sp_appid, namespace=SnowPlow.sp_namespace)
 
+        #  If you have a service_request, get citizen ID from it.
+        if (service_request is not None):
+            citizen_id = service_request.citizen_id
+            quantity = service_request.quantity
+        else:
+            quantity = 1
+
         #  Set up the contexts for the call.
-        citizen = SnowPlow.get_citizen(service_request.citizen_id, service_request.quantity, False)
+        citizen = SnowPlow.get_citizen(citizen_id, quantity, False)
         office = SnowPlow.get_office(csr.office_id)
         agent = SnowPlow.get_csr(csr)
 
