@@ -61,7 +61,13 @@ export default {
 
     return {
       officetype: '',
-      options: {weekday:'long',year:'numeric',month:'long',day:'numeric'},
+      options: {
+        weekday:'long',
+        year:'numeric',
+        month:'long',
+        day:'numeric',
+        timeZone: tz
+      },
       timeOpts: {
         hour12: true,
         hour: 'numeric',
@@ -83,10 +89,6 @@ export default {
     },
     url() {
       return `/smartboard/?office_number=${this.office_number}`
-    },
-    date() {
-      let d = new Date()
-      return d.toLocaleDateString('en-CA', this.options)
     }
   },
 
@@ -99,6 +101,7 @@ export default {
     },
     now() {
       let d = new Date()
+      this.date = d.toLocaleDateString('en-CA', this.options)
       this.time = d.toLocaleTimeString('en-CA', this.timeOpts)
     },
     getParameterByName(name, url) {
