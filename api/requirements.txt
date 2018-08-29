@@ -12,6 +12,7 @@ flask-caching
 flask-cors
 flask_marshmallow
 flask-socketio
+gevent>=1.1.0
 gunicorn
 kombu>=3.0,<4
 marshmallow

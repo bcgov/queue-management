@@ -85,8 +85,8 @@ class CitizenGenericInvite(Resource):
             except TypeError:
                 return {"message": "Error inviting citizen. Please try again."}, 400
 
-            pending_service_state = SRState.query.filter_by(sr_code='Pending').first()
-            active_service_request.sr_state_id = pending_service_state.sr_state_id
+            active_service_state = SRState.query.filter_by(sr_code='Active').first()
+            active_service_request.sr_state_id = active_service_state.sr_state_id
 
             db.session.add(citizen)
             db.session.commit()
