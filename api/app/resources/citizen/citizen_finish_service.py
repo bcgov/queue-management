@@ -18,7 +18,7 @@ from qsystem import api, api_call_with_retry, db, oidc, socketio
 from app.models import Citizen, CSR, CitizenState
 from app.models import SRState
 from app.schemas import CitizenSchema
-
+from ...snowplow.snowplow import SnowPlow
 
 @api.route("/citizens/<int:id>/finish_service/", methods=["POST"])
 class CitizenFinishService(Resource):
@@ -44,6 +44,8 @@ class CitizenFinishService(Resource):
 
         db.session.add(citizen)
         db.session.commit()
+
+        SnowPlow.snowplow_event(active_service_request, csr, "finish")
 
         socketio.emit('citizen_invited', {}, room='sb-%s' % csr.office.office_number)
         result = self.citizen_schema.dump(citizen)

@@ -13,7 +13,7 @@ flask-cors
 flask_marshmallow
 flask-socketio
 gunicorn
-kombu
+kombu>=3.0,<4
 marshmallow
 marshmallow-sqlalchemy
 mysqlclient
