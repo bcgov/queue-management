@@ -92,8 +92,19 @@ class SnowPlow():
         #  Initialize schema version.
         schema_version = "1-0-0"
 
-        #  The choose service event has parameters, needs to be built.
-        snowplow_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/' + schema + '/jsonschema/' + schema_version, {})
+        #  If finish or hold events, parameters need to be built.
+        if (schema == "finish"):
+            snowplow_event = SnowPlow.get_finish(service_request.quantity)
+
+        elif (schema == "hold"):
+            snowplow_event = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/hold/jsonschema/1-0-0',
+                                                {"time": 0})
+
+        #  Most Snowplow events don't have parameters, so don't have to be built.
+        else:
+            snowplow_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/' + schema + '/jsonschema/' + schema_version, {})
+
+        # snowplow_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/' + schema + '/jsonschema/' + schema_version, {})
 
         #  Make the call.
         t.track_self_describing_event(snowplow_event, [citizen, office, agent])
@@ -179,17 +190,17 @@ class SnowPlow():
         snowplow_channel = ""
 
         #  Translate channel name to old versions, to avoid major Snowplow changes
-        if (channel_name == "In Person"):
+        if (channel_name == 'In Person'):
             snowplow_channel = "in-person"
-        elif (channel_name == "Phone"):
+        elif (channel_name == 'Phone'):
             snowplow_channel = "phone"
-        elif ("channel_name" == "Back Office"):
+        elif (channel_name == 'Back Office'):
             snowplow_channel = "back-office"
-        elif ("channel_name" == "Email/Fax/Mail"):
-            snowplow_channel = "email-fax-assist"
-        elif ("channel_name" == "CATs Assist"):
+        elif (channel_name == 'Email/Fax/Mail'):
+            snowplow_channel = "email-fax-mail"
+        elif (channel_name == 'CATs Assist'):
             snowplow_channel = "cats-assist"
-        elif ("channel_name" == "Mobile Assist"):
+        elif (channel_name == 'Mobile Assist'):
             snowplow_channel = "mobile-assist"
         else:
             snowplow_channel = "sms"
@@ -204,8 +215,14 @@ class SnowPlow():
 
         # for chooseservices, we build a JSON array and pass it
         chooseservice = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/chooseservice/jsonschema/2-0-0',
-                                           {"channel": snowplow_channel, "program_id": svc_id, "parent_id": pgm_id,
+                                           {"channel": snowplow_channel, "program_id": svc_code, "parent_id": pgm_code,
                                             "program_name": pgm_name,
                                             "transaction_name": svc_name})
 
         return chooseservice
+
+    @staticmethod
+    def get_finish(svc_quantity):
+        finishservice = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/finish/jsonschema/1-0-0',
+                                           {"inaccurate_time": False, "count": svc_quantity})
+        return finishservice
