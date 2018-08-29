@@ -18,6 +18,7 @@ from .period_state_schema import PeriodStateSchema
 from .sr_state_schema import SRStateSchema
 from .channel_schema import ChannelSchema
 from .smartboard_schema import SmartBoardSchema
+from .role_schema import RoleSchema
 from .office_schema import OfficeSchema
 from .csr_schema import CSRSchema
 from .metadata_schema import MetaDataSchema
@@ -26,4 +27,3 @@ from .period_schema import PeriodSchema
 from .service_req_schema import ServiceReqSchema
 from .citizen_schema import CitizenSchema
 from .permission_schema import PermissionSchema
-from .role_schema import RoleSchema

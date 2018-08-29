@@ -20,8 +20,32 @@ from app.models import Citizen, CSR, Period, ServiceReq, SRState
 from app.schemas import CitizenSchema, CSRSchema
 
 
+@api.route("/csrs/", methods=["GET"])
+class CsrList(Resource):
+
+    csr_schema = CSRSchema(many=True)
+
+    @oidc.accept_token(require_token=True)
+    def get(self):
+        try:
+            csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
+
+            if csr.role.role_code != "GA":
+                return {'message': 'You do not have permission to view this end-point'}, 403
+
+            csrs = CSR.query.filter_by(office_id=csr.office_id)
+            result = self.csr_schema.dump(csrs)
+
+            return {'csrs': result.data,
+                    'errors': result.errors}
+
+        except exc.SQLAlchemyError as e:
+            print(e)
+            return {'message': 'API is down'}, 500
+
+
 @api.route("/csrs/me/", methods=["GET"])
-class Services(Resource):
+class CsrSelf(Resource):
 
     csr_schema = CSRSchema()
     citizen_schema = CitizenSchema(many=True)
