@@ -15,7 +15,7 @@
       </div>
     </div>
     <div class="p-0" style="display:inline-block; color: white; margin-right:15px;">
-      v1.0
+      v1.01
     </div>
   </div>
 </template>

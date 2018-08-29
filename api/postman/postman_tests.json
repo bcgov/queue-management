@@ -2465,7 +2465,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "7884b553-77a8-46e6-a1de-d8bee02ca6ff",
+								"id": "8e9cd1ef-a5d9-4f81-b061-f818d4fc5603",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -2527,8 +2527,8 @@
 									"        it('service_reqs length must be 1 (single service request)', function() {",
 									"            (currentCitizen.service_reqs.length).should.be.eql(1);",
 									"        });",
-									"        it('service_reqs state must be \"Pending\"', function() {",
-									"            (currentCitizen.service_reqs[0].sr_state.sr_code).should.be.eql(\"Pending\");",
+									"        it('service_reqs state must be \"Active\"', function() {",
+									"            (currentCitizen.service_reqs[0].sr_state.sr_code).should.be.eql(\"Active\");",
 									"        });",
 									"        it('service_reqs service must be ' + citizenService, function() {",
 									"            (currentCitizen.service_reqs[0].service_id).should.be.eql(citizenService);",
@@ -7183,7 +7183,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "95764f4d-0506-47b4-a464-0f275cd2e5b5",
+								"id": "84ff5966-dfec-47d0-ae77-2c5819005fb9",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -7245,8 +7245,8 @@
 									"        it('service_reqs length must be 1 (single service request)', function() {",
 									"            (currentCitizen.service_reqs.length).should.be.eql(1);",
 									"        });",
-									"        it('service_reqs state must be \"Pending\"', function() {",
-									"            (currentCitizen.service_reqs[0].sr_state.sr_code).should.be.eql(\"Pending\");",
+									"        it('service_reqs state must be \"Active\"', function() {",
+									"            (currentCitizen.service_reqs[0].sr_state.sr_code).should.be.eql(\"Active\");",
 									"        });",
 									"        it('service_reqs service must be ' + citizenService, function() {",
 									"            (currentCitizen.service_reqs[0].service_id).should.be.eql(citizenService);",
@@ -7588,7 +7588,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "17db8e75-ce53-4e6a-bbd8-ca9037ba1a29",
+								"id": "62e7f31d-0bd6-4337-bd70-f6a197063a00",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -7650,8 +7650,8 @@
 									"        it('service_reqs length must be 1 (single service request)', function() {",
 									"            (currentCitizen.service_reqs.length).should.be.eql(1);",
 									"        });",
-									"        it('service_reqs state must be \"Pending\"', function() {",
-									"            (currentCitizen.service_reqs[0].sr_state.sr_code).should.be.eql(\"Pending\");",
+									"        it('service_reqs state must be \"Active\"', function() {",
+									"            (currentCitizen.service_reqs[0].sr_state.sr_code).should.be.eql(\"Active\");",
 									"        });",
 									"        it('service_reqs service must be ' + citizenService, function() {",
 									"            (currentCitizen.service_reqs[0].service_id).should.be.eql(citizenService);",
@@ -9079,7 +9079,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "acabd700-6289-4f0b-8539-9dad33b22861",
+								"id": "cfcc38e7-765f-48aa-8600-159bbeda4994",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -9141,8 +9141,8 @@
 									"        it('service_reqs length must be 1 (single service request)', function() {",
 									"            (currentCitizen.service_reqs.length).should.be.eql(1);",
 									"        });",
-									"        it('service_reqs state must be \"Pending\"', function() {",
-									"            (currentCitizen.service_reqs[0].sr_state.sr_code).should.be.eql(\"Pending\");",
+									"        it('service_reqs state must be \"Active\"', function() {",
+									"            (currentCitizen.service_reqs[0].sr_state.sr_code).should.be.eql(\"Active\");",
 									"        });",
 									"        it('service_reqs service must be ' + citizenService, function() {",
 									"            (currentCitizen.service_reqs[0].service_id).should.be.eql(citizenService);",
@@ -9484,7 +9484,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "cd0d90ff-6d3b-4bad-b3d4-3c4a2111aaec",
+								"id": "a4812ded-5043-426a-b837-91ac5f06ba62",
 								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
@@ -9546,8 +9546,8 @@
 									"        it('service_reqs length must be 1 (single service request)', function() {",
 									"            (currentCitizen.service_reqs.length).should.be.eql(1);",
 									"        });",
-									"        it('service_reqs state must be \"Pending\"', function() {",
-									"            (currentCitizen.service_reqs[0].sr_state.sr_code).should.be.eql(\"Pending\");",
+									"        it('service_reqs state must be \"Active\"', function() {",
+									"            (currentCitizen.service_reqs[0].sr_state.sr_code).should.be.eql(\"Active\");",
 									"        });",
 									"        it('service_reqs service must be ' + citizenService, function() {",
 									"            (currentCitizen.service_reqs[0].service_id).should.be.eql(citizenService);",
