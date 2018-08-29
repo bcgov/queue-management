@@ -42,40 +42,51 @@ limitations under the License.*/
         </div>
         <div>
           <b-button class="btn-primary"
+                    style="margin-right: 20px"
+                    @click="clickGAScreen"
+                    v-if="user.role && user.role.role_code=='GA'">Toggle GA Panel</b-button>
+          <b-button class="btn-primary"
                     v-if="!showServiceModal"
                     @click="clickFeedback"
                     id="click-feedback-button">Feedback</b-button>
         </div>
       </div>
     </div>
-    <template v-if="reception && isLoggedIn">
-    <div v-bind:style="{width:'100%', height: `${qLengthH}px`}" class="font-900-rem">
-      Citizens Waiting: {{ queueLength }}
-    </div>
-
-  <div class="dash-table-holder" v-bind:style="{width:'100%', height:`${dashH}px`}">
-    <DashTable></DashTable>
-  </div>
-    <div v-bind:style="{width:'100%', height:`${qLengthH}px`}">
-      <div style="display: flex; width: 100%; justify-content: space-between;">
-        <div class="font-900-rem">Citizens on Hold: {{on_hold_queue.length}}</div>
-      <b-button variant="link" v-dragged="onDrag" class="m-0 p-0">
-        <font-awesome-icon icon="sort"
-                           class="m-0 p-0"
-                           style="font-size: 1.5rem;"></font-awesome-icon>
-      </b-button>
+    <div style="display: flex; flex-direction: row; justify-content: space-between;">
+      <div style="width: 100%">
+        <template v-if="reception && isLoggedIn">
+          <div v-bind:style="{width:'100%', height: `${qLengthH}px`}" class="font-900-rem">
+            Citizens Waiting: {{ queueLength }}
+          </div>
+          <div class="dash-table-holder" v-bind:style="{width:'100%', height:`${dashH}px`}">
+            <DashTable></DashTable>
+          </div>
+          <div v-bind:style="{width:'100%', height:`${qLengthH}px`}">
+            <div style="display: flex; width: 100%; justify-content: space-between;">
+              <div class="font-900-rem">Citizens on Hold: {{on_hold_queue.length}}</div>
+              <b-button variant="link" v-dragged="onDrag" class="m-0 p-0">
+                <font-awesome-icon icon="sort"
+                                   class="m-0 p-0"
+                                   style="font-size: 1.5rem;"></font-awesome-icon>
+              </b-button>
+            </div>
+          </div>
+          <div class="dash-table-holder" v-bind:style="{width:'100%',height:`${holdH}px`}">
+            <DashHoldTable></DashHoldTable>
+          </div>
+        </template>
+        <template v-else-if="!reception && isLoggedIn">
+          <div class="font-900-rem">Citizens on Hold: {{on_hold_queue.length}}</div>
+          <div class="dash-table-holder" v-bind:style="{width:'100%',height:`${fullHoldH}px`}">
+            <DashHoldTable></DashHoldTable>
+          </div>
+        </template>
+      </div>
+      <div v-if="showGAScreenModal"
+           style="margin-left: 1em; padding-top: 1em; width: 75%">
+        <GAScreen />
       </div>
     </div>
-    <div class="dash-table-holder" v-bind:style="{width:'100%',height:`${holdH}px`}">
-      <DashHoldTable></DashHoldTable>
-    </div>
-  </template>
-  <template v-else-if="!reception && isLoggedIn">
-    <div class="font-900-rem">Citizens on Hold: {{on_hold_queue.length}}</div>
-    <div class="dash-table-holder" v-bind:style="{width:'100%',height:`${fullHoldH}px`}">
-      <DashHoldTable></DashHoldTable>
-    </div>
-  </template>
   </div>
 </template>
 
@@ -84,6 +95,7 @@ import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
 import AddCitizen from './../add-citizen/add-citizen'
 import DashTable from './dash-table'
 import DashHoldTable from './dash-hold-table'
+import GAScreen from './../ga-screen/ga-screen'
 import ServeCitizen from './serve-citizen'
 
   export default {
@@ -93,6 +105,7 @@ import ServeCitizen from './serve-citizen'
       AddCitizen,
       DashTable,
       DashHoldTable,
+      GAScreen,
       ServeCitizen
     },
 
@@ -120,13 +133,14 @@ import ServeCitizen from './serve-citizen'
         checkedLocalStorage: false
       }
     },
-    
+
     computed: {
       ...mapGetters(['citizens_queue', 'on_hold_queue', 'reception']),
       ...mapState([
         'isLoggedIn',
         'citizenInvited',
         'dismissCountDown',
+        'showGAScreenModal',
         'showServiceModal',
         'serveNowStyle',
         'user'
@@ -153,7 +167,6 @@ import ServeCitizen from './serve-citizen'
     },
     watch: {
       csrId: function(val, oldVal) {
-        console.log(val)
         if (val) {
           this.checkLocalStorage(val)
         }
@@ -166,6 +179,7 @@ import ServeCitizen from './serve-citizen'
         'clickAddCitizen',
         'clickServiceModalClose',
         'clickCitizenLeft',
+        'clickGAScreen',
         'clickServeNow',
         'clickBackOffice'
       ]),
@@ -203,7 +217,6 @@ import ServeCitizen from './serve-citizen'
       checkLocalStorage(csrId) {
         this.checkedLocalStorage = true
         let offsetRatio = localStorage.getItem(`${csrId}offset`)
-        console.log(offsetRatio)
         if(offsetRatio) {
           this.isDragged = true
           let lastRatio = localStorage.getItem(`${csrId}last`)

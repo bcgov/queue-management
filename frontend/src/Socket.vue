@@ -65,7 +65,6 @@ limitations under the License.*/
       },
 
       join() {
-        console.log(socket.connected)
         socket.emit('joinRoom',{count:0}, ()=>{console.log('socket emit: "joinRoom"')}
         )
       },

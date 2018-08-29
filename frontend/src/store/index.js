@@ -44,6 +44,7 @@ export const store = new Vuex.Store({
     channels: [],
     citizens: [],
     citizenInvited: false,
+    csrs: [],
     dismissCount: 0,
     feedbackMessage: '',
     isLoggedIn: false,
@@ -61,6 +62,7 @@ export const store = new Vuex.Store({
     services: [],
     showAddModal: false,
     showFeedbackModal: false,
+    showGAScreenModal: false,
     showResponseModal: false,
     showServiceModal: false,
     user: {
@@ -276,6 +278,45 @@ export const store = new Vuex.Store({
       })
     },
 
+    getCsrs(context) {
+      Axios(context).get('/csrs/')
+      .then( resp => {
+        let csrs = []
+        let currentDate = new Date()
+        resp.data.csrs.forEach(csr => {
+          if (csr.periods.length > 0 && csr.periods[0].ps.ps_name === "Being Served") {
+            let firstServedPeriod = csr.periods.filter(p => p.ps.ps_name === "Being Served")[0]
+            let citizenStartDate = new Date(firstServedPeriod.sr.citizen.start_time)
+            let firstServedPeriodDate = new Date(firstServedPeriod.time_start)
+
+            let waitSeconds = (firstServedPeriodDate - citizenStartDate) / 1000
+            let serveSeconds = (currentDate - firstServedPeriodDate) / 1000
+
+            let waitDate = new Date(null)
+            waitDate.setSeconds(waitSeconds)
+
+            let serveDate = new Date(null)
+            serveDate.setSeconds(serveSeconds)
+
+            csr['wait_time'] = `${waitDate.getUTCHours()}h ${waitDate.getMinutes()}min`
+            csr['serving_time'] = `${serveDate.getUTCHours()}h ${serveDate.getMinutes()}min`
+          } else {
+            csr['periods'] = []
+            csr['wait_time'] = null
+            csr['serving_time'] = null
+          }
+
+          csrs.push(csr)
+        })
+        context.commit('setCsrs', csrs)
+      })
+      .catch(error => {
+        console.log('error @ store.actions.getCsrs')
+        console.log(error.response)
+        console.log(error.message)
+      })
+    },
+
     getServices(context) {
       let office_id = context.state.user.office.office_id
       Axios(context).get(`/services/?office_id=${office_id}`)
@@ -415,7 +456,7 @@ export const store = new Vuex.Store({
 
     clickBackOffice(context) {
       context.dispatch('toggleModalBack')
-      
+
       Axios(context).post('/citizens/', {})
         .then(resp => {
           let value = resp.data.citizen
@@ -423,7 +464,7 @@ export const store = new Vuex.Store({
           context.commit('toggleAddModal', true)
           context.commit('resetServiceModal')
         })
-      
+
       let setupChannels = () => {
         let index = -1
         let { channel_options } = context.getters
@@ -502,6 +543,12 @@ export const store = new Vuex.Store({
       context.dispatch('toggleModalBack')
       context.commit('resetAddModalForm')
       context.commit('toggleServiceModal', true)
+    },
+
+    clickGAScreen(context) {
+      context.dispatch('getCsrs').then( () => {
+        context.commit('toggleGAScreenModal', !context.state.showGAScreenModal)
+      })
     },
 
     clickHold(context) {
@@ -653,6 +700,10 @@ export const store = new Vuex.Store({
     clickServiceModalClose(context) {
       context.commit('toggleServiceModal', false)
       context.commit('toggleInvitedStatus', true)
+    },
+
+    closeGAScreenModal(context) {
+      context.commit('toggleGAScreenModal', false)
     },
 
     messageSlack(context) {
@@ -1133,6 +1184,11 @@ export const store = new Vuex.Store({
       state.alertMessage = payload
     },
 
+    setCsrs(state, payload) {
+      state.csrs = []
+      state.csrs = payload
+    },
+
     dismissCountDown(state, payload) {
       state.dismissCount = payload
     },
@@ -1140,6 +1196,8 @@ export const store = new Vuex.Store({
     toggleInvitedStatus: (state, payload) => state.citizenInvited = payload,
 
     toggleBegunStatus: (state, payload) => state.serviceBegun = payload,
+
+    toggleGAScreenModal: (state,payload) => state.showGAScreenModal = payload,
 
     setQuickTransactionState: (state, payload) => state.user.qt_xn_csr_ind = payload,
 
