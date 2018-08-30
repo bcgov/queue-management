@@ -8,7 +8,7 @@
       "enabled": true
     },
     {
-      "value": "https://dev-sso.pathfinder.gov.bc.ca",
+      "value": "https://sso-test.pathfinder.gov.bc.ca",
       "key": "auth_url",
       "enabled": true
     },
@@ -23,7 +23,7 @@
       "enabled": true
     },
     {
-      "value": "nest",
+      "value": "sbc",
       "key": "realm",
       "enabled": true
     },
