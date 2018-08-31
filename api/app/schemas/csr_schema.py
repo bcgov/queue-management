@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+import toastedmarshmallow
 from marshmallow import fields
 from app.models import CSR
 from app.schemas import CSRStateSchema, OfficeSchema, RoleSchema
@@ -22,6 +23,7 @@ class CSRSchema(ma.ModelSchema):
 
     class Meta:
         model = CSR
+        jit = toastedmarshmallow.Jit
 
     csr_id = fields.Int()
     username = fields.Str()

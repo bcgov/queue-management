@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+import toastedmarshmallow
 from marshmallow import fields
 from app.models import Period
 from app.schemas import ChannelSchema, CSRSchema, PeriodStateSchema
@@ -22,6 +23,7 @@ class PeriodSchema(ma.ModelSchema):
 
     class Meta:
         model = Period
+        jit = toastedmarshmallow.Jit
 
     period_id = fields.Int()
     sr_id = fields.Int()

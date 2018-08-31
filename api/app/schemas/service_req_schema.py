@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+import toastedmarshmallow
 from marshmallow import fields, post_load
 from app.models import ServiceReq
 from app.schemas import ChannelSchema, PeriodSchema, PeriodStateSchema, SRStateSchema, ServiceSchema
@@ -22,6 +23,7 @@ class ServiceReqSchema(ma.ModelSchema):
 
     class Meta:
         model = ServiceReq
+        jit = toastedmarshmallow.Jit
 
     citizen_id = fields.Int()
     channel_id = fields.Int()

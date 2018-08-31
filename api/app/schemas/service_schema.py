@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+import toastedmarshmallow
 from marshmallow import fields
 from app.models import Service
 from qsystem import ma
@@ -21,6 +22,7 @@ class ServiceSchema(ma.ModelSchema):
 
     class Meta:
         model = Service
+        jit = toastedmarshmallow.Jit
         include_fk = True
 
     service_id = fields.Int(dump_only=True)
