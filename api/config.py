@@ -26,6 +26,8 @@ class BaseConfig(object):
     OIDC_USER_INFO_ENABLED = True
     OIDC_SCOPES = ['openid', 'email', 'profile']
 
+    MARSHMALLOW_SCHEMA_DEFAULT_JIT = "toastedmarshmallow.Jit"
+
 class LocalConfig(BaseConfig):
     DEBUG = True
     TESTING = False

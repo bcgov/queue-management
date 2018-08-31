@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+import toastedmarshmallow
 from marshmallow import fields
 from app.models import Channel
 from qsystem import ma
@@ -21,6 +22,7 @@ class ChannelSchema(ma.ModelSchema):
 
     class Meta:
         model = Channel
+        jit = toastedmarshmallow.Jit
 
     channel_id = fields.Int(dump_only=True)
     channel_name = fields.Str()

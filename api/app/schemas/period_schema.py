@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+import toastedmarshmallow
 from marshmallow import fields
 from app.models import Period
 from app.schemas import ChannelSchema, CSRSchema, PeriodStateSchema
@@ -22,6 +23,7 @@ class PeriodSchema(ma.ModelSchema):
 
     class Meta:
         model = Period
+        jit = toastedmarshmallow.Jit
 
     period_id = fields.Int()
     sr_id = fields.Int()
@@ -31,6 +33,7 @@ class PeriodSchema(ma.ModelSchema):
     time_start = fields.DateTime()
     time_end = fields.DateTime()
     accurate_time_ind = fields.Integer()
-    ps = fields.Nested(PeriodStateSchema, exclude=('ps_desc', 'ps_number',))
+    ps = fields.Nested(PeriodStateSchema(exclude=('ps_id', 'ps_desc', 'ps_number',)))
     sr = fields.Nested("ServiceReqSchema", exclude=('periods',))
-    csr = fields.Nested(CSRSchema, exclude=('office', 'periods',))
+    csr = fields.Nested(CSRSchema(exclude=('csr_id', 'csr_state', 'csr_state_id', 'deleted', 'office', 'office_id',
+                                           'periods', 'qt_xn_csr_ind', 'receptionist_ind', 'role', 'role_id')))

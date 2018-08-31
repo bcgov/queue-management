@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+import toastedmarshmallow
 from marshmallow import fields
 from app.models import CitizenState
 from qsystem import ma
@@ -21,6 +22,7 @@ class CitizenStateSchema(ma.ModelSchema):
 
     class Meta:
         model = CitizenState
+        jit = toastedmarshmallow.Jit
 
     cs_id = fields.Int()
     cs_state_name = fields.Str()

@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+import toastedmarshmallow
 from marshmallow import fields
 from app.models import Citizen
 from app.schemas import ServiceReqSchema, CitizenStateSchema, OfficeSchema
@@ -22,15 +23,16 @@ class CitizenSchema(ma.ModelSchema):
 
     class Meta:
         model = Citizen
+        jit = toastedmarshmallow.Jit
         exclude = ('office_citizens','office',)
 
     citizen_id = fields.Int(dump_only=True)
     office_id = fields.Int()
     ticket_number = fields.Str(dump_only=True)
-    citizen_name = fields.Str()
+    # citizen_name = fields.Str()
     citizen_comments = fields.Str()
     qt_xn_citizen_ind = fields.Int()
     start_time = fields.DateTime(dump_only=True)
-    service_reqs = fields.Nested(ServiceReqSchema, many=True, exclude=('citizen'))
-    cs = fields.Nested(CitizenStateSchema, exclude=('cs_state_desc', 'citizens', 'state_citizens'))
-    #office = fields.Nested(OfficeSchema, exclude=('citizens', 'csrs', 'services'))
+    service_reqs = fields.Nested(ServiceReqSchema(exclude=('citizen',)), many=True)
+    cs = fields.Nested(CitizenStateSchema(exclude=('cs_state_desc', 'cs_id', 'citizens', 'state_citizens')))
+    # office = fields.Nested(OfficeSchema, exclude=('citizens', 'csrs', 'services'))

@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+import toastedmarshmallow
 from marshmallow import fields
 from app.models import SmartBoard
 from qsystem import ma
@@ -21,6 +22,7 @@ class SmartBoardSchema(ma.ModelSchema):
 
     class Meta:
         model = SmartBoard
+        jit = toastedmarshmallow.Jit
 
     sb_id = fields.Int()
     sb_type = fields.Str()

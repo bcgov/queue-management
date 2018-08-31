@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+import toastedmarshmallow
 from marshmallow import fields
 from app.models import Office
 from app.schemas import SmartBoardSchema
@@ -22,6 +23,7 @@ class OfficeSchema(ma.ModelSchema):
 
     class Meta:
         model = Office
+        jit = toastedmarshmallow.Jit
         exclude = ('citizens', 'csrs', 'deleted', 'services',)
 
     office_id = fields.Int()
@@ -30,4 +32,4 @@ class OfficeSchema(ma.ModelSchema):
     sb_id = fields.Int()
     deleted = fields.DateTime()
 
-    sb = fields.Nested(SmartBoardSchema)
+    sb = fields.Nested(SmartBoardSchema())
