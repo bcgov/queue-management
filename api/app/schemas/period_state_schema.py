@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+import toastedmarshmallow
 from marshmallow import fields
 from app.models import PeriodState
 from qsystem import ma
@@ -21,6 +22,7 @@ class PeriodStateSchema(ma.ModelSchema):
 
     class Meta:
         model = PeriodState
+        jit = toastedmarshmallow.Jit
 
     ps_id = fields.Int()
     ps_name = fields.Str()

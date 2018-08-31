@@ -6,6 +6,7 @@ import traceback
 from config import configure_app
 from flask import Flask
 from flask_caching import Cache
+from flask_compress import Compress
 from flask_cors import CORS
 from flask_marshmallow import Marshmallow
 from flask_restplus import Api
@@ -35,18 +36,25 @@ ma = Marshmallow(application)
 
 socketio = SocketIO(engineio_logger=True)
 
-if application.config['ACTIVE_MQ_URL'] != None:
+if application.config['ACTIVE_MQ_URL'] is None:
     socketio.init_app(application, async_mode='eventlet', message_queue=application.config['ACTIVE_MQ_URL'], path='/api/v1/socket.io')
 else:  
     socketio.init_app(application, path='/api/v1/socket.io')
 
-if application.config['CORS_ALLOWED_ORIGINS'] != None:
+# Set socket logging to errors only to reduce log spam
+logging.getLogger('socketio').setLevel(logging.ERROR)
+logging.getLogger('engineio').setLevel(logging.ERROR)
+
+if application.config['CORS_ALLOWED_ORIGINS'] is None:
     CORS(application, supports_credentials=True, origins=application.config['CORS_ALLOWED_ORIGINS'])
 
 api = Api(application, prefix='/api/v1', doc='/api/v1/')
 
 from app.patches.flask_oidc_patched import OpenIDConnect
 oidc = OpenIDConnect(application)
+
+compress = Compress()
+compress.init_app(application)
 
 logging.basicConfig(format=application.config['LOGGING_FORMAT'], level=logging.INFO)
 logger = logging.getLogger("myapp.sqltime")

@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+import toastedmarshmallow
 from marshmallow import fields
 from app.models import SRState
 from qsystem import ma
@@ -21,6 +22,7 @@ class SRStateSchema(ma.ModelSchema):
 
     class Meta:
         model = SRState
+        jit = toastedmarshmallow.Jit
 
     sr_state_id = fields.Int()
     sr_code = fields.Str()
