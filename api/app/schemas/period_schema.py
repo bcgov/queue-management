@@ -31,6 +31,7 @@ class PeriodSchema(ma.ModelSchema):
     time_start = fields.DateTime()
     time_end = fields.DateTime()
     accurate_time_ind = fields.Integer()
-    ps = fields.Nested(PeriodStateSchema, exclude=('ps_desc', 'ps_number',))
+    ps = fields.Nested(PeriodStateSchema(exclude=('ps_id', 'ps_desc', 'ps_number',)))
     sr = fields.Nested("ServiceReqSchema", exclude=('periods',))
-    csr = fields.Nested(CSRSchema, exclude=('office', 'periods',))
+    csr = fields.Nested(CSRSchema(exclude=('csr_id', 'csr_state', 'csr_state_id', 'deleted', 'office', 'office_id',
+                                           'periods', 'qt_xn_csr_ind', 'receptionist_ind', 'role', 'role_id')))

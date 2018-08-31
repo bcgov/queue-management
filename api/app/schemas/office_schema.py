@@ -30,4 +30,4 @@ class OfficeSchema(ma.ModelSchema):
     sb_id = fields.Int()
     deleted = fields.DateTime()
 
-    sb = fields.Nested(SmartBoardSchema)
+    sb = fields.Nested(SmartBoardSchema())
