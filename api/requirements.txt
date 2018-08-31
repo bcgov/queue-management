@@ -6,6 +6,7 @@ Flask-OIDC
 Flask-RESTplus
 Flask-Script
 Flask-SQLAlchemy
+certifi
 eventlet
 filelock
 flask-caching
