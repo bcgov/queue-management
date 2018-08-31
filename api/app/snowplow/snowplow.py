@@ -37,10 +37,13 @@ class SnowPlow():
         # print("    --> SP appid:     " + SnowPlow.sp_appid);
         # print("    --> SP namespace: " + SnowPlow.sp_namespace);
 
+        print("==> SP: addcitizen")
+
         # Set up core Snowplow environment
         s = Subject()#.set_platform("app")
-        e = Emitter(SnowPlow.sp_endpoint)
-        t = Tracker(e, encode_base64=False, app_id = SnowPlow.sp_appid, namespace=SnowPlow.sp_namespace)
+        e = Emitter("spm.gov.bc.ca")
+        # e = Emitter(SnowPlow.sp_endpoint, on_failure=SnowPlow.failure)
+        t = Tracker(e, encode_base64=False, app_id = "CFMS", namespace="CFMS_dev")
 
         # Set up contexts for the call.
         citizen = SnowPlow.get_citizen(new_citizen.citizen_id, 1, True)
@@ -56,11 +59,11 @@ class SnowPlow():
     @staticmethod
     def choose_service(service_request, csr, snowplow_event):
 
-        # print("==> SP: " + snowplow_event)
+        print("==> SP: " + snowplow_event)
 
         # Set up core Snowplow environment
         s = Subject()#.set_platform("app")
-        e = Emitter(SnowPlow.sp_endpoint)
+        e = Emitter(SnowPlow.sp_endpoint, on_failure=SnowPlow.failure)
         t = Tracker(e, encode_base64=False, app_id = SnowPlow.sp_appid, namespace=SnowPlow.sp_namespace)
 
         # Set up the contexts for the call.
@@ -77,9 +80,11 @@ class SnowPlow():
     @staticmethod
     def snowplow_event(service_request, csr, schema, citizen_id = 0):
 
+        print("==> SP: " + schema)
+
         #  Set up core Snowplow environment
         s = Subject()#.set_platform("app")
-        e = Emitter(SnowPlow.sp_endpoint)
+        e = Emitter(SnowPlow.sp_endpoint, on_failure=SnowPlow.failure)
         t = Tracker(e, encode_base64=False, app_id = SnowPlow.sp_appid, namespace=SnowPlow.sp_namespace)
 
         #  If you have a service_request, get citizen ID from it.
@@ -113,6 +118,16 @@ class SnowPlow():
 
         #  Make the call.
         t.track_self_describing_event(snowplow_event, [citizen, office, agent])
+
+    @staticmethod
+    def success(count):
+        print("####> " + str(count) + " events sent successfully!")
+
+    @staticmethod
+    def failure(count, failed):
+        print("###################  " + str(count) + " events sent successfuly.  Events below failed:")
+        for event_dict in failed:
+            print(event_dict)
 
     @staticmethod
     def get_citizen(id, quantity, add_flag):
@@ -219,7 +234,7 @@ class SnowPlow():
         # print("        --> Service:           " + svc_name)
 
         # for chooseservices, we build a JSON array and pass it
-        chooseservice = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/chooseservice/jsonschema/2-0-0',
+        chooseservice = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/chooseservice/jsonschema/3-0-0',
                                            {"channel": snowplow_channel, "program_id": svc_code, "parent_id": pgm_code,
                                             "program_name": pgm_name,
                                             "transaction_name": svc_name})
