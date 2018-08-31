@@ -26,8 +26,8 @@ import os
 class SnowPlow():
 
     sp_endpoint = os.getenv("THEQ_SNOWPLOW_ENDPOINT", "spm.gov.bc.ca")
-    sp_appid = os.getenv("THEQ_SNOWPLOW_APPID", "CFMS")
-    sp_namespace = os.getenv("THEQ_SNOWPLOW_NAMESPACE", "CFMS_dev")
+    sp_appid = os.getenv("THEQ_SNOWPLOW_APPID", "TheQ")
+    sp_namespace = os.getenv("THEQ_SNOWPLOW_NAMESPACE", "TheQ_dev")
 
     @staticmethod
     def add_citizen(new_citizen, csr):
@@ -41,9 +41,8 @@ class SnowPlow():
 
         # Set up core Snowplow environment
         s = Subject()#.set_platform("app")
-        e = Emitter("spm.gov.bc.ca")
-        # e = Emitter(SnowPlow.sp_endpoint, on_failure=SnowPlow.failure)
-        t = Tracker(e, encode_base64=False, app_id = "CFMS", namespace="CFMS_dev")
+        e = Emitter(SnowPlow.sp_endpoint, on_success=SnowPlow.success, on_failure=SnowPlow.failure)
+        t = Tracker(e, encode_base64=False, app_id = SnowPlow.sp_appid, namespace=SnowPlow.sp_namespace)
 
         # Set up contexts for the call.
         citizen = SnowPlow.get_citizen(new_citizen.citizen_id, 1, True)
@@ -63,7 +62,7 @@ class SnowPlow():
 
         # Set up core Snowplow environment
         s = Subject()#.set_platform("app")
-        e = Emitter(SnowPlow.sp_endpoint, on_failure=SnowPlow.failure)
+        e = Emitter(SnowPlow.sp_endpoint, on_success=SnowPlow.success, on_failure=SnowPlow.failure)
         t = Tracker(e, encode_base64=False, app_id = SnowPlow.sp_appid, namespace=SnowPlow.sp_namespace)
 
         # Set up the contexts for the call.
@@ -84,7 +83,7 @@ class SnowPlow():
 
         #  Set up core Snowplow environment
         s = Subject()#.set_platform("app")
-        e = Emitter(SnowPlow.sp_endpoint, on_failure=SnowPlow.failure)
+        e = Emitter(SnowPlow.sp_endpoint, on_success=SnowPlow.success, on_failure=SnowPlow.failure)
         t = Tracker(e, encode_base64=False, app_id = SnowPlow.sp_appid, namespace=SnowPlow.sp_namespace)
 
         #  If you have a service_request, get citizen ID from it.
