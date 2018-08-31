@@ -6,6 +6,7 @@ import traceback
 from config import configure_app
 from flask import Flask
 from flask_caching import Cache
+from flask_compress import Compress
 from flask_cors import CORS
 from flask_marshmallow import Marshmallow
 from flask_restplus import Api
@@ -51,6 +52,9 @@ api = Api(application, prefix='/api/v1', doc='/api/v1/')
 
 from app.patches.flask_oidc_patched import OpenIDConnect
 oidc = OpenIDConnect(application)
+
+compress = Compress()
+compress.init_app(application)
 
 logging.basicConfig(format=application.config['LOGGING_FORMAT'], level=logging.INFO)
 logger = logging.getLogger("myapp.sqltime")

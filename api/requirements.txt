@@ -10,6 +10,7 @@ certifi
 eventlet
 filelock
 flask-caching
+flask-compress
 flask-cors
 flask_marshmallow
 flask-socketio
