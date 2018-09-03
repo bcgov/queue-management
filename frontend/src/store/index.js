@@ -65,6 +65,7 @@ export const store = new Vuex.Store({
     showGAScreenModal: false,
     showResponseModal: false,
     showServiceModal: false,
+    addNextService: false,
     user: {
       csr_id: null,
       username: null,
@@ -391,6 +392,8 @@ export const store = new Vuex.Store({
         context.dispatch('getServices')
       }
 
+      context.commit('addNextService', true)
+
       context.dispatch('putServiceRequest').then(() => {
         context.dispatch('putCitizen').then(() => {
           context.commit('switchAddModalMode', 'add_mode')
@@ -410,12 +413,13 @@ export const store = new Vuex.Store({
           context.commit('toggleServiceModal', false)
         })
       })
-  },
+    },
 
     clickAddServiceApply(context) {
       context.dispatch('postServiceReq').then(() => {
         context.dispatch('putCitizen').then((resp) => {
           context.commit('toggleAddModal', false)
+          context.commit('addNextService', false)
           context.commit('toggleServiceModal', true)
           context.dispatch('toggleModalBack')
           context.commit('resetAddModalForm')
@@ -957,9 +961,9 @@ export const store = new Vuex.Store({
     },
 
     screenIncomingCitizen(context, citizen) {
-      let { showAddModal } = context.state
+      let { addNextService } = context.state
 
-      if (showAddModal) {
+      if (addNextService) {
         return false;
       }
 
@@ -1220,6 +1224,8 @@ export const store = new Vuex.Store({
     setServeNowAction: (state, payload) => state.serveNowAltAction = payload,
 
     toggleFeedbackModal: (state, payload) => state.showFeedbackModal = payload,
+
+    toggleAddNextService: (state, payload) => state.addNextService = payload,
 
     setFeedbackMessage: (state, payload) => state.feedbackMessage = payload,
 
