@@ -3,7 +3,7 @@
 <template>
   <div id="serveModal" class="serve-modal">
     <div class="serve-modal-content">
-      <b-alert :show="!citizen"
+      <b-alert :show="citizen && citizen.ticket_number === ''"
                 style="h-align: center"
                 variant="danger">An error occurred loading citizen, please try refreshing the page.</b-alert>
       <div style="display: flex; flex-direction: row; justify-content: space-between" class="modal_header">
@@ -132,7 +132,7 @@ export default {
     }
   },
   updated() {
-    if (!this.citizen) {
+    if (!this.citizen && this.citizen.ticket_number === "") {
       console.log("Screen All Citizens")
       this.screenAllCitizens()
     }

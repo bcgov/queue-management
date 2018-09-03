@@ -414,7 +414,7 @@ export const store = new Vuex.Store({
 
     clickAddServiceApply(context) {
       context.dispatch('postServiceReq').then(() => {
-        context.dispatch('putCitizen').then(() => {
+        context.dispatch('putCitizen').then((resp) => {
           context.commit('toggleAddModal', false)
           context.commit('toggleServiceModal', true)
           context.dispatch('toggleModalBack')
@@ -900,7 +900,8 @@ export const store = new Vuex.Store({
       return new Promise((resolve, reject) => {
         let url = `/service_requests/${sr_id}/`
 
-        Axios(context).put(url, {accurate_time_ind: 0}).then(resp=>{
+        Axios(context).put(url, {accurate_time_ind: 0}).then(resp=> {
+          context.commit('setServiceModalForm', resp.data.citizen)
           resolve(resp)
         }, error => {
           reject(error)
@@ -961,7 +962,7 @@ export const store = new Vuex.Store({
       if (showAddModal) {
         return false;
       }
-      
+
       let { csr_id } = context.state.user
       if (citizen.service_reqs.length > 0) {
         if ( citizen.service_reqs[0].periods) {
