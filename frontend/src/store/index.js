@@ -189,7 +189,7 @@ export const store = new Vuex.Store({
       let services = state.services
 
       if (getters.form_data.category) {
-        return services.filter(service=>service.parent.service_id === getters.form_data.category)
+        return services.filter(service=>service.parent_id === getters.form_data.category)
       } else {
         return services
       }
