@@ -956,6 +956,12 @@ export const store = new Vuex.Store({
     },
 
     screenIncomingCitizen(context, citizen) {
+      let { showAddModal } = context.state
+
+      if (showAddModal) {
+        return false;
+      }
+      
       let { csr_id } = context.state.user
       if (citizen.service_reqs.length > 0) {
         if ( citizen.service_reqs[0].periods) {
