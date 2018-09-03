@@ -16,7 +16,7 @@ limitations under the License.*/
 <template>
   <div v-bind:style="{height: totalH}" class="dashmaincontainer" key="dashmaincontainer">
     <div v-bind:style="{width:'100%', height:`${buttonH}px`}" v-if="isLoggedIn">
-      <AddCitizen />
+      <AddCitizen v-if="showAddModal"/>
       <ServeCitizen v-if="showServiceModal"/>
       <div id="dash-flex-button-container">
         <div>
@@ -138,6 +138,7 @@ import ServeCitizen from './serve-citizen'
       ...mapGetters(['citizens_queue', 'on_hold_queue', 'reception']),
       ...mapState([
         'isLoggedIn',
+        'showAddModal',
         'citizenInvited',
         'dismissCountDown',
         'showGAScreenModal',

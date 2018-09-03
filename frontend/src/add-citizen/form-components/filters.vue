@@ -15,7 +15,7 @@
       </b-col>
       <b-col>
           <b-select id="add_citizen_catagories_select"
-                    :options="categories_options" 
+                    :options="categories_options"
                     v-model="category"
                     size="sm"
                     placeholder="Filter by category"></b-select>
@@ -31,7 +31,11 @@
     name: 'Filters',
 
     mounted() {
-      this.$root.$on('focusfilter', () => {this.$refs.filterref.focus()})
+      this.$root.$on('focusfilter', () => {
+        if (this.$refs && this.$refs.filterref) {
+          this.$refs.filterref.focus()
+        }
+      })
     },
 
     computed: {
@@ -69,7 +73,9 @@
       ...mapMutations(['updateAddModalForm']),
 
       focus() {
-        this.$refs.inputref.focus()
+        if (this.$refs && this.$refs.inputref) {
+          this.$refs.inputref.focus()
+        }
       }
     }
   }

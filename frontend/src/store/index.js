@@ -189,7 +189,7 @@ export const store = new Vuex.Store({
       let services = state.services
 
       if (getters.form_data.category) {
-        return services.filter(service=>service.parent.service_id === getters.form_data.category)
+        return services.filter(service=>service.parent_id === getters.form_data.category)
       } else {
         return services
       }
@@ -949,8 +949,13 @@ export const store = new Vuex.Store({
       context.commit('resetAddModalForm')
     },
 
+    screenAllCitizens(context) {
+      context.state.citizens.forEach(citizen => {
+        context.dispatch('screenIncomingCitizen', citizen)
+      })
+    },
+
     screenIncomingCitizen(context, citizen) {
-      console.log(citizen)
       let { csr_id } = context.state.user
       if (citizen.service_reqs.length > 0) {
         if ( citizen.service_reqs[0].periods) {

@@ -2,7 +2,7 @@
   "realm": "nest",
   "auth-server-url": "https://dev-sso.pathfinder.gov.bc.ca/auth",
   "ssl-required": "external",
-  "resource": "cfms-LOCAL",
+  "resource": "cfms-LOCAL_OLD",
   "credentials": {
     "secret": "d3a728fc-0671-4c08-82fe-602c695450cf"
   }
