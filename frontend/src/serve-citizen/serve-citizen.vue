@@ -131,6 +131,12 @@ export default {
       checked: null
     }
   },
+  updated() {
+    if (!this.citizen) {
+      console.log("Screen All Citizens")
+      this.screenAllCitizens()
+    }
+  },
   computed: {
     ...mapState([
       'showServiceModal',
@@ -171,7 +177,8 @@ export default {
       'clickReturnToQueue',
       'clickHold',
       'clickAddService',
-      'putInaccurateIndicator'
+      'putInaccurateIndicator',
+      'screenAllCitizens'
     ]),
     ...mapMutations(['editServiceModalForm', 'toggleFeedbackModal']),
     serviceFinish() {

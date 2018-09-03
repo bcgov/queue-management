@@ -949,6 +949,12 @@ export const store = new Vuex.Store({
       context.commit('resetAddModalForm')
     },
 
+    screenAllCitizens(context) {
+      context.state.citizens.forEach(citizen => {
+        context.dispatch('screenIncomingCitizen', citizen)
+      })
+    },
+
     screenIncomingCitizen(context, citizen) {
       let { csr_id } = context.state.user
       if (citizen.service_reqs.length > 0) {
