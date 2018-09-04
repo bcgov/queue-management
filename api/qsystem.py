@@ -36,7 +36,7 @@ ma = Marshmallow(application)
 
 socketio = SocketIO(engineio_logger=True)
 
-if application.config['ACTIVE_MQ_URL'] is None:
+if application.config['ACTIVE_MQ_URL'] is not None:
     socketio.init_app(application, async_mode='eventlet', message_queue=application.config['ACTIVE_MQ_URL'], path='/api/v1/socket.io')
 else:  
     socketio.init_app(application, path='/api/v1/socket.io')
