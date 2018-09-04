@@ -43,9 +43,4 @@ export default {
   .custom-select-sm {
     font-size: .8rem !important;
   }
-  .btn-highlighted {
-    color: black;
-    border: 1px solid darkgoldenrod;
-    background-color: gold;
-  }
 </style>

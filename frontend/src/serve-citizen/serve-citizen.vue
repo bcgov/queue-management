@@ -3,6 +3,9 @@
 <template>
   <div id="serveModal" class="serve-modal">
     <div class="serve-modal-content">
+      <b-alert :show="showCitizenWarning"
+                style="h-align: center"
+                variant="danger">An error occurred loading citizen, please try refreshing the page.</b-alert>
       <div style="display: flex; flex-direction: row; justify-content: space-between" class="modal_header">
         <div><h4>Serve Citizen</h4></div>
         <div>
@@ -125,8 +128,22 @@ export default {
       selected: '',
       f: false,
       t: true,
-      checked: null
+      checked: null,
+      showCitizenWarning: false
     }
+  },
+  updated() {
+    if (!this.citizen && this.citizen.ticket_number === "") {
+      console.log("Screen All Citizens")
+      this.screenAllCitizens()
+    }
+
+    setTimeout( () => {
+      console.log("timeout done")
+      if (!this.citizen && this.citizen.ticket_number === "") {
+        this.showCitizenWarning = true
+      }
+    }, 1000)
   },
   computed: {
     ...mapState([
@@ -168,7 +185,8 @@ export default {
       'clickReturnToQueue',
       'clickHold',
       'clickAddService',
-      'putInaccurateIndicator'
+      'putInaccurateIndicator',
+      'screenAllCitizens'
     ]),
     ...mapMutations(['editServiceModalForm', 'toggleFeedbackModal']),
     serviceFinish() {

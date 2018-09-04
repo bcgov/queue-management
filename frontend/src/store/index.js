@@ -65,6 +65,7 @@ export const store = new Vuex.Store({
     showGAScreenModal: false,
     showResponseModal: false,
     showServiceModal: false,
+    addNextService: false,
     user: {
       csr_id: null,
       username: null,
@@ -189,7 +190,7 @@ export const store = new Vuex.Store({
       let services = state.services
 
       if (getters.form_data.category) {
-        return services.filter(service=>service.parent.service_id === getters.form_data.category)
+        return services.filter(service=>service.parent_id === getters.form_data.category)
       } else {
         return services
       }
@@ -391,6 +392,8 @@ export const store = new Vuex.Store({
         context.dispatch('getServices')
       }
 
+      context.commit('addNextService', true)
+
       context.dispatch('putServiceRequest').then(() => {
         context.dispatch('putCitizen').then(() => {
           context.commit('switchAddModalMode', 'add_mode')
@@ -410,12 +413,13 @@ export const store = new Vuex.Store({
           context.commit('toggleServiceModal', false)
         })
       })
-  },
+    },
 
     clickAddServiceApply(context) {
       context.dispatch('postServiceReq').then(() => {
-        context.dispatch('putCitizen').then(() => {
+        context.dispatch('putCitizen').then((resp) => {
           context.commit('toggleAddModal', false)
+          context.commit('addNextService', false)
           context.commit('toggleServiceModal', true)
           context.dispatch('toggleModalBack')
           context.commit('resetAddModalForm')
@@ -900,7 +904,8 @@ export const store = new Vuex.Store({
       return new Promise((resolve, reject) => {
         let url = `/service_requests/${sr_id}/`
 
-        Axios(context).put(url, {accurate_time_ind: 0}).then(resp=>{
+        Axios(context).put(url, {accurate_time_ind: 0}).then(resp=> {
+          context.commit('setServiceModalForm', resp.data.citizen)
           resolve(resp)
         }, error => {
           reject(error)
@@ -949,8 +954,19 @@ export const store = new Vuex.Store({
       context.commit('resetAddModalForm')
     },
 
+    screenAllCitizens(context) {
+      context.state.citizens.forEach(citizen => {
+        context.dispatch('screenIncomingCitizen', citizen)
+      })
+    },
+
     screenIncomingCitizen(context, citizen) {
-      console.log(citizen)
+      let { addNextService } = context.state
+
+      if (addNextService) {
+        return false;
+      }
+
       let { csr_id } = context.state.user
       if (citizen.service_reqs.length > 0) {
         if ( citizen.service_reqs[0].periods) {
@@ -1208,6 +1224,8 @@ export const store = new Vuex.Store({
     setServeNowAction: (state, payload) => state.serveNowAltAction = payload,
 
     toggleFeedbackModal: (state, payload) => state.showFeedbackModal = payload,
+
+    toggleAddNextService: (state, payload) => state.addNextService = payload,
 
     setFeedbackMessage: (state, payload) => state.feedbackMessage = payload,
 

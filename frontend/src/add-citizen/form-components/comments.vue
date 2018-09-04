@@ -22,12 +22,16 @@
 
 <script>
   import { mapGetters } from 'vuex'
-  
+
   export default {
     name: 'Comments',
 
     mounted() {
-      this.$root.$on('focuscomments', () => {this.$refs.commentsref.focus()})
+      this.$root.$on('focuscomments', () => {
+        if (this.$refs && this.$refs.commentsref) {
+          this.$refs.commentsref.focus()
+        }
+      })
     },
 
     computed: {

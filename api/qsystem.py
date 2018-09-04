@@ -45,7 +45,7 @@ else:
 logging.getLogger('socketio').setLevel(logging.ERROR)
 logging.getLogger('engineio').setLevel(logging.ERROR)
 
-if application.config['CORS_ALLOWED_ORIGINS'] is None:
+if application.config['CORS_ALLOWED_ORIGINS'] is not None:
     CORS(application, supports_credentials=True, origins=application.config['CORS_ALLOWED_ORIGINS'])
 
 api = Api(application, prefix='/api/v1', doc='/api/v1/')
