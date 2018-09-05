@@ -27,6 +27,7 @@ class Citizen(Base):
     qt_xn_citizen_ind = db.Column(db.Integer, default=0, nullable=False)
     cs_id = db.Column(db.Integer, db.ForeignKey('citizenstate.cs_id'), nullable=False)
     start_time = db.Column(db.DateTime, nullable=False)
+    accurate_time_ind = db.Column(db.Integer, nullable=False, default=1)
 
     service_reqs = db.relationship('ServiceReq', lazy='joined', order_by='ServiceReq.sr_id')
     cs = db.relationship('CitizenState', lazy='joined')

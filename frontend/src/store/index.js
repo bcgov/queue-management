@@ -57,7 +57,8 @@ export const store = new Vuex.Store({
       citizen_id: null,
       service_citizen: null,
       citizen_comments: '',
-      activeQuantity: 1
+      activeQuantity: 1,
+      accurate_time_ind: 1
     },
     services: [],
     showAddModal: false,
@@ -859,7 +860,7 @@ export const store = new Vuex.Store({
       let quick
 
       if (context.state.serviceModalForm.citizen_id) {
-        let { citizen_comments } = context.state.serviceModalForm
+        let { accurate_time_ind, citizen_comments } = context.state.serviceModalForm
         citizen_id = context.state.serviceModalForm.citizen_id
         let prevCitizen = context.getters.invited_citizen
 
@@ -872,6 +873,10 @@ export const store = new Vuex.Store({
         if (!context.state.showAddModal) {
           if ( citizen_comments !== prevCitizen.citizen_comments ) {
             data.citizen_comments = citizen_comments
+          }
+
+          if ( accurate_time_ind != null && accurate_time_ind !== prevCitizen.accurate_time_ind ) {
+            data.accurate_time_ind = accurate_time_ind
           }
         }
       } else {
@@ -894,22 +899,6 @@ export const store = new Vuex.Store({
 
         Axios(context).put(url, data).then(resp => { resolve(resp) },
           error => { reject(error) })
-      })
-    },
-
-    putInaccurateIndicator(context) {
-      let { citizen_id } = context.getters.invited_citizen
-      let { sr_id } = context.getters.active_service
-
-      return new Promise((resolve, reject) => {
-        let url = `/service_requests/${sr_id}/`
-
-        Axios(context).put(url, {accurate_time_ind: 0}).then(resp=> {
-          context.commit('setServiceModalForm', resp.data.citizen)
-          resolve(resp)
-        }, error => {
-          reject(error)
-        })
       })
     },
 
