@@ -87,17 +87,16 @@
          </b-col>
          <b-col cols="2" />
          <b-col cols="4">
-           <b-button @click="serviceFinish"
+           <b-button @click="clickServiceFinish"
                      :disabled="serviceBegun===false"
                      class="w-100 btn-primary serve-btn"
                      id="serve-citizen-finish-button">
                        Finish
                    </b-button>
            <div v-if="serviceBegun===true" class="px-3 pt-1" style="padding-right: 0 !important">
-             <b-form-checkbox v-model="checked"
-                              value="yes"
-                              unchecked-value="no"
-                              >
+             <b-form-checkbox v-model="accurate_time_ind"
+                              value="0"
+                              unchecked-value="1">
                <span style="font-size: 1rem;">Inaccurate Time</span>
              </b-form-checkbox>
            </div>
@@ -169,6 +168,21 @@ export default {
         })
       }
     },
+    accurate_time_ind: {
+      get() {
+        console.log("Get")
+        console.log(this.editServiceModalForm.accurate_time_ind)
+        return this.serviceModalForm.accurate_time_ind
+      },
+      set(value) {
+        console.log("Set: " + value)
+        this.editServiceModalForm({
+          type: 'accurate_time_ind',
+          value
+        })
+        console.log(this.editServiceModalForm.accurate_time_ind)
+      }
+    },
     channel() {
       if (!this.active_service) {
         return {channel_name: '', channel_id: ''}
@@ -185,19 +199,9 @@ export default {
       'clickReturnToQueue',
       'clickHold',
       'clickAddService',
-      'putInaccurateIndicator',
       'screenAllCitizens'
     ]),
     ...mapMutations(['editServiceModalForm', 'toggleFeedbackModal']),
-    serviceFinish() {
-      if (this.checked === 'yes') {
-        this.putInaccurateIndicator().then(() => {
-          this.clickServiceFinish()
-        })
-      } else {
-        this.clickServiceFinish()
-      }
-    },
     toggleFeedback() {
       this.toggleFeedbackModal(true)
     },
