@@ -25,7 +25,6 @@ class Period(Base):
     ps_id = db.Column(db.Integer, db.ForeignKey('periodstate.ps_id'), nullable=False)
     time_start = db.Column(db.DateTime, nullable=False)
     time_end = db.Column(db.DateTime, nullable=True)
-    accurate_time_ind = db.Column(db.Integer, nullable=False)
 
     csr = db.relationship("CSR", lazy='joined')
     ps = db.relationship("PeriodState", lazy='joined')
