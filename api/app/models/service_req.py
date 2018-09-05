@@ -114,7 +114,10 @@ class ServiceReq(Base):
 
         self.periods.append(new_period)
 
-        SnowPlow.snowplow_event(self, csr, snowplow_event)
+        #  Calculate number of active periods, for Snowplow call.
+        period_count = len(self.periods)
+        # print("##> Period count: " + str(period_count))
+        SnowPlow.snowplow_event(self, csr, snowplow_event, period_count = period_count)
 
     def place_on_hold(self, csr):
         active_period = self.get_active_period()

@@ -26,8 +26,8 @@ import os
 class SnowPlow():
 
     sp_endpoint = os.getenv("THEQ_SNOWPLOW_ENDPOINT", "spm.gov.bc.ca")
-    sp_appid = os.getenv("THEQ_SNOWPLOW_APPID", "CFMS")
-    sp_namespace = os.getenv("THEQ_SNOWPLOW_NAMESPACE", "CFMS_dev")
+    sp_appid = os.getenv("THEQ_SNOWPLOW_APPID", "TheQ")
+    sp_namespace = os.getenv("THEQ_SNOWPLOW_NAMESPACE", "TheQ_dev")
 
     @staticmethod
     def add_citizen(new_citizen, csr):
@@ -37,13 +37,15 @@ class SnowPlow():
         # print("    --> SP appid:     " + SnowPlow.sp_appid);
         # print("    --> SP namespace: " + SnowPlow.sp_namespace);
 
+        # print("==> SP: addcitizen")
+
         # Set up core Snowplow environment
         s = Subject()#.set_platform("app")
-        e = Emitter(SnowPlow.sp_endpoint)
+        e = Emitter(SnowPlow.sp_endpoint, on_success=SnowPlow.success, on_failure=SnowPlow.failure)
         t = Tracker(e, encode_base64=False, app_id = SnowPlow.sp_appid, namespace=SnowPlow.sp_namespace)
 
         # Set up contexts for the call.
-        citizen = SnowPlow.get_citizen(new_citizen.citizen_id, 1, True)
+        citizen = SnowPlow.get_citizen(new_citizen.citizen_id, True)
         office = SnowPlow.get_office(new_citizen.office_id)
         agent = SnowPlow.get_csr(csr)
 
@@ -56,41 +58,59 @@ class SnowPlow():
     @staticmethod
     def choose_service(service_request, csr, snowplow_event):
 
-        # print("==> SP: " + snowplow_event)
-
         # Set up core Snowplow environment
         s = Subject()#.set_platform("app")
-        e = Emitter(SnowPlow.sp_endpoint)
+        e = Emitter(SnowPlow.sp_endpoint, on_success=SnowPlow.success, on_failure=SnowPlow.failure)
         t = Tracker(e, encode_base64=False, app_id = SnowPlow.sp_appid, namespace=SnowPlow.sp_namespace)
 
         # Set up the contexts for the call.
-        citizen = SnowPlow.get_citizen(service_request.citizen_id, service_request.quantity, False)
+        citizen = SnowPlow.get_citizen(service_request.citizen_id, False)
         office = SnowPlow.get_office(csr.office_id)
         agent = SnowPlow.get_csr(csr)
 
         #  The choose service event has parameters, needs to be built.
         chooseservice = SnowPlow.get_service(service_request)
 
+        #  If an additionalservice event, add "bogus" SP events before.
+        if (snowplow_event == "additionalservice"):
+            #  Start here.  Add finish, additional calls before chooseservice
+            # print("==> SP: finish")
+            prev_citizen = SnowPlow.get_citizen(service_request.citizen_id, False, True)
+            sp_event = SnowPlow.get_finish(service_request.quantity)
+            t.track_self_describing_event(sp_event, [prev_citizen, office, agent])
+            # print("==> SP: additionalservice")
+            sp_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/additionalservice/1-0-0', {})
+            t.track_self_describing_event(sp_event, [citizen, office, agent])
+
+        # print("==> SP: chooseservice")
+
         #  Make the call.
         t.track_self_describing_event(chooseservice, [citizen, office, agent])
 
+        #  If an additionalservice event, add "bogus" SP events after.
+        if (snowplow_event == "additionalservice"):
+            #  Add invitecitizen, beginservice after chooseservice
+            # print("==> SP: invitecitizen")
+            sp_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/invitecitizen/1-0-0', {})
+            t.track_self_describing_event(sp_event, [citizen, office, agent])
+            # print("==> SP: beginservice")
+            sp_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/beginservice/1-0-0', {})
+            t.track_self_describing_event(sp_event, [citizen, office, agent])
+
     @staticmethod
-    def snowplow_event(service_request, csr, schema, citizen_id = 0):
+    def snowplow_event(service_request, csr, schema, citizen_id = 0, period_count = 0):
 
         #  Set up core Snowplow environment
         s = Subject()#.set_platform("app")
-        e = Emitter(SnowPlow.sp_endpoint)
+        e = Emitter(SnowPlow.sp_endpoint, on_success=SnowPlow.success, on_failure=SnowPlow.failure)
         t = Tracker(e, encode_base64=False, app_id = SnowPlow.sp_appid, namespace=SnowPlow.sp_namespace)
 
         #  If you have a service_request, get citizen ID from it.
         if (service_request is not None):
             citizen_id = service_request.citizen_id
-            quantity = service_request.quantity
-        else:
-            quantity = 1
 
         #  Set up the contexts for the call.
-        citizen = SnowPlow.get_citizen(citizen_id, quantity, False)
+        citizen = SnowPlow.get_citizen(citizen_id, False)
         office = SnowPlow.get_office(csr.office_id)
         agent = SnowPlow.get_csr(csr)
 
@@ -105,34 +125,74 @@ class SnowPlow():
             snowplow_event = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/hold/jsonschema/1-0-0',
                                                 {"time": 0})
 
+        #  If begin service direct from choose service, extra Snowplow events needed.
+        elif ((schema == "beginservice") and (period_count == 2)):
+
+            #  Add "bogus" add to queue and invitecitizen events.
+            # print("==> SP: addtoqueue")
+            sp_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/addtoqueue/1-0-0', {})
+            t.track_self_describing_event(sp_event, [citizen, office, agent])
+            # print("==> SP: invitecitizen")
+            sp_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/invitecitizen/1-0-0', {})
+            t.track_self_describing_event(sp_event, [citizen, office, agent])
+
+            #  Create "real" beginservice event.
+            snowplow_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/' + schema + '/jsonschema/' + schema_version, {})
+
+        #  If additional service / next service, extra Snowplow events needed.
+        elif ((schema == "additionalservice") and (period_count == 2)):
+
+            #  Add "bogus" add to queue and invitecitizen events.
+            # print("==> SP: addtoqueue")
+
         #  Most Snowplow events don't have parameters, so don't have to be built.
         else:
             snowplow_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/' + schema + '/jsonschema/' + schema_version, {})
 
-        # snowplow_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/' + schema + '/jsonschema/' + schema_version, {})
+        # print("==> SP: " + schema)
 
         #  Make the call.
         t.track_self_describing_event(snowplow_event, [citizen, office, agent])
 
     @staticmethod
-    def get_citizen(id, quantity, add_flag):
+    def success(count):
+        # print("####> " + str(count) + " events sent successfully!")
+
+    @staticmethod
+    def failure(count, failed):
+        print("###################  " + str(count) + " events sent successfuly.  Events below failed:")
+        for event_dict in failed:
+            print(event_dict)
+
+    @staticmethod
+    def get_citizen(id, add_flag, close_previous = False):
 
         #  Set up citizen variables.
         if add_flag:
             citizen_qtxn = False
+            svc_count = 1
         else:
-            citizen_obj = Citizen.query.get(id)
-            citizen_qtxn = (citizen_obj.qt_xn_citizen_ind == 1)
+            if (id != 0):
+                citizen_obj = Citizen.query.get(id)
+                citizen_qtxn = (citizen_obj.qt_xn_citizen_ind == 1)
+                svc_count = len(citizen_obj.service_reqs)
+            else:
+                citizen_qtxn = False
+                svc_count = 0
+
+        #  If closing previous service, subtract 1 from svc_count
+        if (close_previous):
+            svc_count = svc_count - 1
 
         # #  Display citizen context info.
         # print("    --> Citizen")
         # print("        --> ID:                " + str(id))
-        # print("        --> quantity:          " + str(quantity))
+        # print("        --> service count:     " + str(svc_count))
         # print("        --> quick txn:         " + str(citizen_qtxn))
 
         # Set up the citizen context.
         citizen = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/citizen/jsonschema/3-0-0',
-                                      {"client_id": id, "service_count": quantity,
+                                      {"client_id": id, "service_count": svc_count,
                                        "quick_txn": citizen_qtxn})
 
         return citizen
@@ -219,7 +279,7 @@ class SnowPlow():
         # print("        --> Service:           " + svc_name)
 
         # for chooseservices, we build a JSON array and pass it
-        chooseservice = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/chooseservice/jsonschema/2-0-0',
+        chooseservice = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/chooseservice/jsonschema/3-0-0',
                                            {"channel": snowplow_channel, "program_id": svc_code, "parent_id": pgm_code,
                                             "program_name": pgm_name,
                                             "transaction_name": svc_name})

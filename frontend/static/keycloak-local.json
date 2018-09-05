@@ -1,9 +1,9 @@
 {
-  "realm": "nest",
-  "auth-server-url": "https://dev-sso.pathfinder.gov.bc.ca/auth",
-  "ssl-required": "external",
-  "resource": "cfms-LOCAL_OLD",
-  "credentials": {
-    "secret": "d3a728fc-0671-4c08-82fe-602c695450cf"
-  }
+ "realm": "sbc",
+ "auth-server-url": "https://sso-test.pathfinder.gov.bc.ca/auth",
+ "ssl-required": "external",
+ "resource": "cfms-DEV",
+ "credentials": {
+   "secret": "06076933-3453-49d9-83a5-52e27f8105a9"
+ }
 }
