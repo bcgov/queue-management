@@ -76,8 +76,7 @@ class ServiceRequestsList(Resource):
                 reception_csr_ind=csr.receptionist_ind,
                 ps_id=period_state_ticket_creation.ps_id,
                 time_start=citizen.get_service_start_time(),
-                time_end=datetime.now(),
-                accurate_time_ind=1
+                time_end=datetime.now()
             )
             service_request.periods.append(ticket_create_period)
 
@@ -97,8 +96,7 @@ class ServiceRequestsList(Resource):
                 csr_id=csr.csr_id,
                 reception_csr_ind=csr.receptionist_ind,
                 ps_id=period_state_being_served.ps_id,
-                time_start=datetime.now(),
-                accurate_time_ind=1
+                time_start=datetime.now()
             )
             service_request.periods.append(ticket_create_period)
 
