@@ -50,6 +50,7 @@
              <div>
              <b-button @click="clickCitizenLeft"
                        class="btn-danger serve-btn"
+                       v-if="reception"
                        id="serve-citizen-citizen-left-button">Citizen Left</b-button>
              </div>
            </div>
