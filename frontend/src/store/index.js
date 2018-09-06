@@ -393,7 +393,7 @@ export const store = new Vuex.Store({
         context.dispatch('getServices')
       }
 
-      context.commit('addNextService', true)
+      context.commit('toggleAddNextService', true)
 
       context.dispatch('putServiceRequest').then(() => {
         context.dispatch('putCitizen').then(() => {
@@ -420,7 +420,7 @@ export const store = new Vuex.Store({
       context.dispatch('postServiceReq').then(() => {
         context.dispatch('putCitizen').then((resp) => {
           context.commit('toggleAddModal', false)
-          context.commit('addNextService', false)
+          context.commit('toggleAddNextService', false)
           context.commit('toggleServiceModal', true)
           context.dispatch('toggleModalBack')
           context.commit('resetAddModalForm')
