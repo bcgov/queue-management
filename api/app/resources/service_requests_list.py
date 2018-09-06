@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from flask import request, g
 from flask_restplus import Resource
-from datetime import datetime
+from datetime import datetime, timedelta
 from qsystem import api, api_call_with_retry, db, oidc, socketio
 from app.models import Citizen, CitizenState, CSR, Period, PeriodState, Service, ServiceReq, SRState
 from app.schemas import CitizenSchema, ServiceReqSchema
@@ -80,9 +80,14 @@ class ServiceRequestsList(Resource):
             )
             service_request.periods.append(ticket_create_period)
 
+            # Move start_time back 6 hours to account for DST and UTC offsets
+            # It's only important that the number carries over _around_ midnight
+            offset_start_time = citizen.start_time - timedelta(hours=6)
+            print(offset_start_time.strftime("%Y-%m-%d"))
+
             service_count = ServiceReq.query \
                     .join(ServiceReq.citizen, aliased=True) \
-                    .filter(Citizen.start_time >= citizen.start_time.strftime("%Y-%m-%d")) \
+                    .filter(Citizen.start_time >= offset_start_time.strftime("%Y-%m-%d")) \
                     .filter_by(office_id=csr.office_id) \
                     .join(ServiceReq.service, aliased=True) \
                     .filter_by(prefix=service.prefix) \
