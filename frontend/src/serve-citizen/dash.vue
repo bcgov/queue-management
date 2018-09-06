@@ -14,7 +14,7 @@ limitations under the License.*/
 
 
 <template>
-  <div v-bind:style="{height: totalH}" class="dashmaincontainer" key="dashmaincontainer">
+  <div v-bind:style="{height: totalH}" class="dashmaincontainer" key="dashmaincontainer" v-if="user.username">
     <div v-bind:style="{width:'100%', height:`${buttonH}px`}" v-if="isLoggedIn">
       <AddCitizen v-if="showAddModal"/>
       <ServeCitizen v-if="showServiceModal"/>
@@ -32,7 +32,7 @@ limitations under the License.*/
         </div>
         <div>
           <b-button class="btn-primary"
-                    @click="clickAddCitizen"
+                    @click="addCitizen"
                     :disabled="citizenInvited===true"
                     id="add-citizen-button">Add Citizen</b-button>
           <b-button class="btn-primary"
@@ -87,6 +87,9 @@ limitations under the License.*/
         <GAScreen />
       </div>
     </div>
+  </div>
+  <div v-else-if="isLoggedIn">
+    <div class="loader" style="margin-top: 250px"></div>
   </div>
 </template>
 
@@ -184,6 +187,9 @@ import ServeCitizen from './serve-citizen'
         'clickServeNow',
         'clickBackOffice'
       ]),
+      addCitizen() {
+        this.clickAddCitizen()
+      },
       getNewHeight() {
         //window.innerHeight - height of header (70) - height of footer (36)
         this.totalH = window.innerHeight - 70 - 36
@@ -252,5 +258,30 @@ import ServeCitizen from './serve-citizen'
     color: black;
     border: 1px solid darkgoldenrod;
     background-color: gold;
+  }
+  .loader {
+    position: relative;
+    text-align: center;
+    margin: 15px auto 35px auto;
+    z-index: 9999;
+    display: block;
+    width: 80px;
+    height: 80px;
+    border: 10px solid rgba(0, 0, 0, .3);
+    border-radius: 50%;
+    border-top-color: #000;
+    animation: spin 1s ease-in-out infinite;
+    -webkit-animation: spin 1s ease-in-out infinite;
+  }
+  @keyframes spin {
+    to {
+      -webkit-transform: rotate(360deg);
+    }
+  }
+
+  @-webkit-keyframes spin {
+    to {
+      -webkit-transform: rotate(360deg);
+    }
   }
 </style>
