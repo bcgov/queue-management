@@ -69,8 +69,7 @@ class SnowPlow():
             prev_citizen = SnowPlow.get_citizen(service_request.citizen_id, False, True)
             sp_event = SnowPlow.get_finish(service_request.quantity)
             t.track_self_describing_event(sp_event, [prev_citizen, office, agent])
-            # print("==> SP: additionalservice")
-            sp_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/additionalservice/1-0-0', {})
+            sp_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/additionalservice/jsonschema/1-0-0', {})
             t.track_self_describing_event(sp_event, [citizen, office, agent])
 
         #  Make the call.
@@ -119,12 +118,6 @@ class SnowPlow():
 
             #  Create "real" beginservice event.
             snowplow_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/' + schema + '/jsonschema/' + schema_version, {})
-
-        #  If additional service / next service, extra Snowplow events needed.
-        elif (schema == "additionalservice") and (period_count == 2):
-
-            #  Add "bogus" add to queue and invitecitizen events.
-            print("==> SP: addtoqueue")
 
         #  Most Snowplow events don't have parameters, so don't have to be built.
         else:
