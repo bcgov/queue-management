@@ -57,7 +57,7 @@ export default {
   mounted() {
     this.timer = setInterval(() => {
       this.refresh_board()
-    }, 10000)
+    }, 5000)
   },
 
   beforeDestroy() {

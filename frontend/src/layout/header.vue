@@ -18,9 +18,7 @@ limitations under the License.*/
 <div id="header" style="position: fixed; top: 0px; left: 0px; width: 100%; height: 70px;">
   <b-navbar variant="faded"
             type="light"
-            style="box-shadow: 0px 5px 10px 0px rgba(169,169,169,1); padding: 5px 0px 0px 0px;
-            background-color: #003366; border-bottom: 2px solid #fcba19;
-            height: 100%; width: 100%;">
+            :style="this.navbarStyle">
     <b-navbar-brand style="padding-left: 30px; padding-top: 0px; margin-bottom:5px;">
       <a href="#">
         <img style="height:95%; width: 95%" src="https://www2.gov.bc.ca/assets/gov/home/bc_gov_logo_transparent.png" alt="Government of B.C." title="Government of B.C.">
@@ -38,7 +36,34 @@ import Login from './../Login'
 
 export default {
   name: 'Header',
-  components: { Login }
+  components: { Login },
+  data() {
+    return {
+      navbarStyle: {
+        boxShadow: '0px 5px 10px 0px rgba(169,169,169,1)',
+        padding: '5px 0px 0px 0px',
+        backgroundColor: '#003366',
+        borderBottom: '2px solid #fcba19',
+        height: '100%',
+        width: '100%'
+      }
+    }
+  },
+  created() {
+    switch(window.location.host) {
+      case "localhost:8080":
+        this.navbarStyle.backgroundColor = 'green'
+        break;
+      case "dev-theq.pathfinder.gov.bc.ca":
+        this.navbarStyle.backgroundColor = 'green'
+        break;
+      case "test-theq.pathfinder.gov.bc.ca":
+        this.navbarStyle.backgroundColor = 'orange'
+        break;
+      default:
+        this.navbarStyle.backgroundColor = '#003366'
+    }
+  }
 }
 </script>
 
