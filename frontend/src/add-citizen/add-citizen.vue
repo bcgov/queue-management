@@ -17,18 +17,23 @@
                 variant="danger"
                 @dismissed="dismissCountDown=0"
                 @dismiss-count-down="countDownChanged">{{this.$store.state.alertMessage}}</b-alert>
-      <AddCitizenForm />
-      <b-container class="mt-3 pr-3">
-        <b-row align-v="center" align-h="end">
-          <div v-if="reception">
-            <b-col cols="1" class="p-0 mr-1">Quick Txn?</b-col>
-            <b-col col cols="1" class="p-0">
-              <b-form-checkbox  v-model="quickTrans" value="1" unchecked-value="0"/>
-            </b-col>
-          </div>
-          <Buttons />
-        </b-row>
-      </b-container>
+      <div v-if="!this.addModalForm.citizen">
+        <div class="loader"></div>
+      </div>
+      <div v-else>
+        <AddCitizenForm />
+        <b-container class="mt-3 pr-3">
+          <b-row align-v="center" align-h="end">
+            <div v-if="reception">
+              <b-col cols="1" class="p-0 mr-1">Quick Txn?</b-col>
+              <b-col col cols="1" class="p-0">
+                <b-form-checkbox  v-model="quickTrans" value="1" unchecked-value="0"/>
+              </b-col>
+            </div>
+            <Buttons />
+          </b-row>
+        </b-container>
+      </div>
     </b-modal>
 </template>
 
@@ -62,7 +67,7 @@ export default {
     },
 
     computed: {
-      ...mapState(['addCitizenModal', 'showAddModal', 'addModalSetup', 'serviceModalForm']),
+      ...mapState(['addCitizenModal', 'addModalForm', 'showAddModal', 'addModalSetup', 'serviceModalForm']),
       ...mapGetters(['form_data', 'reception']),
 
       modalTitle() {
@@ -112,5 +117,30 @@ export default {
   }
   .disabled:hover {
     background-color: #8e9399 !important;
+  }
+  .loader {
+    position: relative;
+    text-align: center;
+    margin: 15px auto 35px auto;
+    z-index: 9999;
+    display: block;
+    width: 80px;
+    height: 80px;
+    border: 10px solid rgba(0, 0, 0, .3);
+    border-radius: 50%;
+    border-top-color: #000;
+    animation: spin 1s ease-in-out infinite;
+    -webkit-animation: spin 1s ease-in-out infinite;
+  }
+  @keyframes spin {
+    to {
+      -webkit-transform: rotate(360deg);
+    }
+  }
+
+  @-webkit-keyframes spin {
+    to {
+      -webkit-transform: rotate(360deg);
+    }
   }
 </style>

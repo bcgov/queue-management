@@ -363,13 +363,17 @@ export const store = new Vuex.Store({
 
     clickAddCitizen(context) {
       context.dispatch('toggleModalBack')
+      context.commit('toggleAddModal', true)
       Axios(context).post('/citizens/', {})
-        .then(resp => {
-          let value = resp.data.citizen
-          context.commit('updateAddModalForm', {type:'citizen',value})
-          context.commit('toggleAddModal', true)
-          context.commit('resetServiceModal')
-        })
+      .then(resp => {
+        let value = resp.data.citizen
+        context.commit('updateAddModalForm', {type:'citizen',value})
+        context.commit('resetServiceModal')
+      },
+      error => {
+        context.commit('toggleAddModal', false)
+        context.commit('setMainAlert', 'An error occurred adding a citizen.')
+      })
       if (context.state.categories.length === 0) {
         context.dispatch('getCategories')
       }

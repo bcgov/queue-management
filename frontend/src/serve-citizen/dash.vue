@@ -32,7 +32,7 @@ limitations under the License.*/
         </div>
         <div>
           <b-button class="btn-primary"
-                    @click="clickAddCitizen"
+                    @click="addCitizen"
                     :disabled="citizenInvited===true"
                     id="add-citizen-button">Add Citizen</b-button>
           <b-button class="btn-primary"
@@ -184,6 +184,9 @@ import ServeCitizen from './serve-citizen'
         'clickServeNow',
         'clickBackOffice'
       ]),
+      addCitizen() {
+        this.clickAddCitizen()
+      },
       getNewHeight() {
         //window.innerHeight - height of header (70) - height of footer (36)
         this.totalH = window.innerHeight - 70 - 36
