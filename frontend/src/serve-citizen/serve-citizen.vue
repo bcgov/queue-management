@@ -138,7 +138,6 @@ export default {
     }
 
     setTimeout( () => {
-      console.log("timeout done")
       if (!this.citizen && this.citizen.ticket_number === "") {
         this.showCitizenWarning = true
       }
@@ -170,17 +169,13 @@ export default {
     },
     accurate_time_ind: {
       get() {
-        console.log("Get")
-        console.log(this.editServiceModalForm.accurate_time_ind)
         return this.serviceModalForm.accurate_time_ind
       },
       set(value) {
-        console.log("Set: " + value)
         this.editServiceModalForm({
           type: 'accurate_time_ind',
           value
         })
-        console.log(this.editServiceModalForm.accurate_time_ind)
       }
     },
     channel() {
