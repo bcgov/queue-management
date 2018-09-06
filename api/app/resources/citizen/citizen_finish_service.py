@@ -35,6 +35,7 @@ class CitizenFinishService(Resource):
         if active_service_request is None:
             return {"message": "Citizen has no active service requests"}
 
+        quantity = active_service_request.quantity
         active_service_request.finish_service(csr)
         citizen_state = CitizenState.query.filter_by(cs_state_name="Received Services").first()
         citizen.cs_id = citizen_state.cs_id
@@ -45,7 +46,7 @@ class CitizenFinishService(Resource):
         db.session.add(citizen)
         db.session.commit()
 
-        SnowPlow.snowplow_event(active_service_request, csr, "finish")
+        SnowPlow.snowplow_event(citizen.citizen_id, csr, "finish", quantity = quantity)
 
         socketio.emit('citizen_invited', {}, room='sb-%s' % csr.office.office_number)
         result = self.citizen_schema.dump(citizen)

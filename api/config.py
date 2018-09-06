@@ -32,7 +32,23 @@ class LocalConfig(BaseConfig):
     DEBUG = True
     TESTING = False
     ENV = 'dev'
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///db.sqlite3'
+
+    DB_ENGINE = os.getenv('DATABASE_ENGINE', '')
+    DB_USER = os.getenv('DATABASE_USERNAME', '')
+    DB_PASSWORD = os.getenv('DATABASE_PASSWORD','')
+    DB_NAME = os.getenv('DATABASE_NAME','')
+    DB_HOST = os.getenv('DATABASE_HOST','')
+    DB_PORT = os.getenv('DATABASE_PORT','')
+
+    # SQLALCHEMY_DATABASE_URI = 'sqlite:///db.sqlite3'
+    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}'.format(
+        engine=DB_ENGINE,
+        user=DB_USER,
+        password=DB_PASSWORD,
+        host=DB_HOST,
+        port=DB_PORT,
+        name=DB_NAME
+    )
     ACTIVE_MQ_URL = ''      #'amqp://guest:guest@localhost:5672'
     # ACTIVE_MQ_URL = 'amqp://guest:guest@localhost:5672'      #'amqp://guest:guest@localhost:5672'
     # 	In config.py: ACTIVE_MQ_URL = 'amqp://guest:guest@localhost:5672'

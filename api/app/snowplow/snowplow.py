@@ -79,22 +79,18 @@ class SnowPlow():
         #  If an additionalservice event, add "bogus" SP events after.
         if snowplow_event == "additionalservice":
             #  Add invitecitizen, beginservice after chooseservice
-            sp_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/invitecitizen/1-0-0', {})
+            sp_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/invitecitizen/jsonschema/1-0-0', {})
             t.track_self_describing_event(sp_event, [citizen, office, agent])
-            sp_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/beginservice/1-0-0', {})
+            sp_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/beginservice/jsonschema/1-0-0', {})
             t.track_self_describing_event(sp_event, [citizen, office, agent])
 
     @staticmethod
-    def snowplow_event(service_request, csr, schema, citizen_id = 0, period_count = 0):
+    def snowplow_event(citizen_id, csr, schema, period_count = 0, quantity = 0):
 
         #  Set up core Snowplow environment
         s = Subject()#.set_platform("app")
         e = Emitter(SnowPlow.sp_endpoint, on_failure=SnowPlow.failure)
         t = Tracker(e, encode_base64=False, app_id = SnowPlow.sp_appid, namespace=SnowPlow.sp_namespace)
-
-        #  If you have a service_request, get citizen ID from it.
-        if service_request is not None:
-            citizen_id = service_request.citizen_id
 
         #  Set up the contexts for the call.
         citizen = SnowPlow.get_citizen(citizen_id, False)
@@ -106,7 +102,7 @@ class SnowPlow():
 
         #  If finish or hold events, parameters need to be built.
         if schema == "finish":
-            snowplow_event = SnowPlow.get_finish(service_request.quantity)
+            snowplow_event = SnowPlow.get_finish(quantity)
 
         elif schema == "hold":
             snowplow_event = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/hold/jsonschema/1-0-0',
@@ -116,9 +112,9 @@ class SnowPlow():
         elif (schema == "beginservice") and (period_count == 2):
 
             #  Add "bogus" add to queue and invitecitizen events.
-            sp_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/addtoqueue/1-0-0', {})
+            sp_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/addtoqueue/jsonschema/1-0-0', {})
             t.track_self_describing_event(sp_event, [citizen, office, agent])
-            sp_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/invitecitizen/1-0-0', {})
+            sp_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/invitecitizen/jsonschema/1-0-0', {})
             t.track_self_describing_event(sp_event, [citizen, office, agent])
 
             #  Create "real" beginservice event.
