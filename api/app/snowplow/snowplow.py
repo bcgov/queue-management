@@ -38,7 +38,8 @@ class SnowPlow():
         t = Tracker(e, encode_base64=False, app_id = SnowPlow.sp_appid, namespace=SnowPlow.sp_namespace)
 
         # Set up contexts for the call.
-        citizen = SnowPlow.get_citizen(new_citizen.citizen_id, True)
+        citizen_obj = Citizen.query.get(new_citizen.citizen_id)
+        citizen = SnowPlow.get_citizen(citizen_obj, True)
         office = SnowPlow.get_office(new_citizen.office_id)
         agent = SnowPlow.get_csr(csr)
 
@@ -57,7 +58,8 @@ class SnowPlow():
         t = Tracker(e, encode_base64=False, app_id = SnowPlow.sp_appid, namespace=SnowPlow.sp_namespace)
 
         # Set up the contexts for the call.
-        citizen = SnowPlow.get_citizen(service_request.citizen_id, False)
+        citizen_obj = Citizen.query.get(service_request.citizen_id)
+        citizen = SnowPlow.get_citizen(citizen_obj, False)
         office = SnowPlow.get_office(csr.office_id)
         agent = SnowPlow.get_csr(csr)
 
@@ -66,8 +68,8 @@ class SnowPlow():
 
         #  If an additionalservice event, add "bogus" SP events before.
         if snowplow_event == "additionalservice":
-            prev_citizen = SnowPlow.get_citizen(service_request.citizen_id, False, True)
-            sp_event = SnowPlow.get_finish(service_request.quantity)
+            prev_citizen = SnowPlow.get_citizen(citizen_obj, False, True)
+            sp_event = SnowPlow.get_finish(service_request.quantity, citizen_obj.accurate_time_ind)
             t.track_self_describing_event(sp_event, [prev_citizen, office, agent])
             sp_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/additionalservice/jsonschema/1-0-0', {})
             t.track_self_describing_event(sp_event, [citizen, office, agent])
@@ -92,7 +94,8 @@ class SnowPlow():
         t = Tracker(e, encode_base64=False, app_id = SnowPlow.sp_appid, namespace=SnowPlow.sp_namespace)
 
         #  Set up the contexts for the call.
-        citizen = SnowPlow.get_citizen(citizen_id, False)
+        citizen_obj = Citizen.query.get(citizen_id)
+        citizen = SnowPlow.get_citizen(citizen_obj, False)
         office = SnowPlow.get_office(csr.office_id)
         agent = SnowPlow.get_csr(csr)
 
@@ -101,7 +104,7 @@ class SnowPlow():
 
         #  If finish or hold events, parameters need to be built.
         if schema == "finish":
-            snowplow_event = SnowPlow.get_finish(quantity)
+            snowplow_event = SnowPlow.get_finish(quantity, citizen_obj.accurate_time_ind)
 
         elif schema == "hold":
             snowplow_event = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/hold/jsonschema/1-0-0',
@@ -133,20 +136,15 @@ class SnowPlow():
             print(event_dict)
 
     @staticmethod
-    def get_citizen(id, add_flag, close_previous = False):
+    def get_citizen(citizen_obj, add_flag, close_previous = False):
 
         #  Set up citizen variables.
         if add_flag:
             citizen_qtxn = False
             svc_count = 1
         else:
-            if id != 0:
-                citizen_obj = Citizen.query.get(id)
-                citizen_qtxn = (citizen_obj.qt_xn_citizen_ind == 1)
-                svc_count = len(citizen_obj.service_reqs)
-            else:
-                citizen_qtxn = False
-                svc_count = 0
+            citizen_qtxn = (citizen_obj.qt_xn_citizen_ind == 1)
+            svc_count = len(citizen_obj.service_reqs)
 
         #  If closing previous service, subtract 1 from svc_count
         if close_previous:
@@ -154,7 +152,7 @@ class SnowPlow():
 
         # Set up the citizen context.
         citizen = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/citizen/jsonschema/3-0-0',
-                                      {"client_id": id, "service_count": svc_count,
+                                      {"client_id": citizen_obj.citizen_id, "service_count": svc_count,
                                        "quick_txn": citizen_qtxn})
 
         return citizen
@@ -228,7 +226,8 @@ class SnowPlow():
         return chooseservice
 
     @staticmethod
-    def get_finish(svc_quantity):
+    def get_finish(svc_quantity, accurate_time):
+        inaccurate_flag = accurate_time != 1
         finishservice = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/finish/jsonschema/1-0-0',
-                                           {"inaccurate_time": False, "count": svc_quantity})
+                                           {"inaccurate_time": inaccurate_flag, "count": svc_quantity})
         return finishservice
