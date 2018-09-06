@@ -3,9 +3,9 @@
 <template>
   <div id="serveModal" class="serve-modal">
     <div class="serve-modal-content">
-      <b-alert :show="showCitizenWarning"
+      <b-alert :show="this.serveModalAlert != ''"
                 style="h-align: center"
-                variant="danger">An error occurred loading citizen, please try refreshing the page.</b-alert>
+                variant="warning">{{this.serveModalAlert}}</b-alert>
       <div style="display: flex; flex-direction: row; justify-content: space-between" class="modal_header">
         <div><h4>Serve Citizen</h4></div>
         <div>
@@ -139,7 +139,7 @@ export default {
 
     setTimeout( () => {
       if (!this.citizen && this.citizen.ticket_number === "") {
-        this.showCitizenWarning = true
+        this.setServeModalAlert("An error occurred loading citizen, please try refreshing the page.")
       }
     }, 1000)
   },
@@ -147,7 +147,8 @@ export default {
     ...mapState([
       'showServiceModal',
       'serviceBegun',
-      'serviceModalForm'
+      'serviceModalForm',
+      'serveModalAlert'
     ]),
     ...mapGetters(['invited_citizen', 'active_service', 'invited_service_reqs', 'reception']),
     citizen() {
@@ -194,7 +195,8 @@ export default {
       'clickReturnToQueue',
       'clickHold',
       'clickAddService',
-      'screenAllCitizens'
+      'screenAllCitizens',
+      'setServeModalAlert'
     ]),
     ...mapMutations(['editServiceModalForm', 'toggleFeedbackModal']),
     toggleFeedback() {
@@ -218,17 +220,17 @@ export default {
 </script>
 
 <style scoped>
-  .serve-modal {
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgb(0,0,0);
-    background-color: rgba(0,0,0,0.4);
-    transition: display 1s;
+.serve-modal {
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.4);
+  transition: display 1s;
 }
 .serve-modal-content {
     background-color: #fefefe;

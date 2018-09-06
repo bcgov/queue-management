@@ -53,6 +53,7 @@ export const store = new Vuex.Store({
     serveNowAltAction: false,
     serveNowStyle: 'btn-primary',
     serviceBegun: false,
+    serveModalAlert: '',
     serviceModalForm: {
       citizen_id: null,
       service_citizen: null,
@@ -399,7 +400,7 @@ export const store = new Vuex.Store({
 
       context.commit('toggleAddNextService', true)
 
-      context.dispatch('putServiceRequest').then(() => {
+      context.dispatch('putServiceRequest').then(response => {
         context.dispatch('putCitizen').then(() => {
           context.commit('switchAddModalMode', 'add_mode')
           context.commit('updateAddModalForm', {
@@ -417,6 +418,8 @@ export const store = new Vuex.Store({
           context.commit('toggleAddModal', true)
           context.commit('toggleServiceModal', false)
         })
+      }, error => {
+          console.log(error)
       })
     },
 
@@ -509,7 +512,6 @@ export const store = new Vuex.Store({
       context.commit('toggleBegunStatus', false)
       context.commit('toggleInvitedStatus', false)
       context.commit('resetServiceModal')
-
     },
 
     clickDashTableRow(context, citizen_id) {
@@ -917,6 +919,12 @@ export const store = new Vuex.Store({
         data.quantity = activeQuantity
       }
 
+      // Make sure quantity is position
+      if (!/^\+?\d+$/.test(activeQuantity)) {
+        context.commit("setServeModalAlert", "Quantity must be a number and greater than 0")
+        return Promise.reject('No Token Found In Local Storage')
+      }
+
       let setup = context.state.addModalSetup
       let { form_data } = context.getters
       if ( setup === 'add_mode' || setup === 'edit_mode') {
@@ -1153,6 +1161,11 @@ export const store = new Vuex.Store({
     resetServiceModal(state) {
       let { serviceModalForm } = state
       let keys = Object.keys(serviceModalForm)
+      Vue.set(
+        state,
+        "serveModalAlert",
+        ""
+      )
 
       keys.forEach(key => {
         if ( key === 'activeQuantity' ) {
@@ -1191,6 +1204,10 @@ export const store = new Vuex.Store({
 
     setModalAlert(state, payload) {
       state.alertMessage = payload
+    },
+
+    setServeModalAlert(state, payload) {
+      state.serveModalAlert = payload
     },
 
     setCsrs(state, payload) {
