@@ -922,7 +922,9 @@ export const store = new Vuex.Store({
       // Make sure quantity is position
       if (!/^\+?\d+$/.test(activeQuantity)) {
         context.commit("setServeModalAlert", "Quantity must be a number and greater than 0")
-        return Promise.reject('No Token Found In Local Storage')
+        return Promise.reject('Quantity must be a number and greater than 0')
+      } else {
+        context.commit("setServeModalAlert", "")
       }
 
       let setup = context.state.addModalSetup
