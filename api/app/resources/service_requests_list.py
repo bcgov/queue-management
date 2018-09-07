@@ -114,7 +114,7 @@ class ServiceRequestsList(Resource):
         snowplow_event = "additionalservice"
         if ((len(citizen.service_reqs) == 1)):
             snowplow_event = "chooseservice"
-        SnowPlow.choose_service(service_request, csr, snowplow_event)
+        # SnowPlow.choose_service(service_request, csr, snowplow_event)
 
         citizen_result = self.citizen_schema.dump(citizen)
         socketio.emit('update_active_citizen', citizen_result.data, room=csr.office_id)

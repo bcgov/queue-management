@@ -47,7 +47,7 @@ class SnowPlow():
         addcitizen = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/addcitizen/jsonschema/1-0-0', {})
 
         # make the call
-        t.track_self_describing_event(addcitizen, [citizen, office, agent])
+        # t.track_self_describing_event(addcitizen, [citizen, office, agent])
 
     @staticmethod
     def choose_service(service_request, csr, snowplow_event):
@@ -70,20 +70,20 @@ class SnowPlow():
         if snowplow_event == "additionalservice":
             prev_citizen = SnowPlow.get_citizen(citizen_obj, False, True)
             sp_event = SnowPlow.get_finish(service_request.quantity, citizen_obj.accurate_time_ind)
-            t.track_self_describing_event(sp_event, [prev_citizen, office, agent])
+            # t.track_self_describing_event(sp_event, [prev_citizen, office, agent])
             sp_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/additionalservice/jsonschema/1-0-0', {})
-            t.track_self_describing_event(sp_event, [citizen, office, agent])
+            # t.track_self_describing_event(sp_event, [citizen, office, agent])
 
         #  Make the call.
-        t.track_self_describing_event(chooseservice, [citizen, office, agent])
+        # t.track_self_describing_event(chooseservice, [citizen, office, agent])
 
         #  If an additionalservice event, add "bogus" SP events after.
         if snowplow_event == "additionalservice":
             #  Add invitecitizen, beginservice after chooseservice
             sp_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/invitecitizen/jsonschema/1-0-0', {})
-            t.track_self_describing_event(sp_event, [citizen, office, agent])
+            # t.track_self_describing_event(sp_event, [citizen, office, agent])
             sp_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/beginservice/jsonschema/1-0-0', {})
-            t.track_self_describing_event(sp_event, [citizen, office, agent])
+            # t.track_self_describing_event(sp_event, [citizen, office, agent])
 
     @staticmethod
     def snowplow_event(citizen_id, csr, schema, period_count = 0, quantity = 0):
@@ -115,9 +115,9 @@ class SnowPlow():
 
             #  Add "bogus" add to queue and invitecitizen events.
             sp_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/addtoqueue/jsonschema/1-0-0', {})
-            t.track_self_describing_event(sp_event, [citizen, office, agent])
+            # t.track_self_describing_event(sp_event, [citizen, office, agent])
             sp_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/invitecitizen/jsonschema/1-0-0', {})
-            t.track_self_describing_event(sp_event, [citizen, office, agent])
+            # t.track_self_describing_event(sp_event, [citizen, office, agent])
 
             #  Create "real" beginservice event.
             snowplow_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/' + schema + '/jsonschema/' + schema_version, {})
@@ -127,7 +127,7 @@ class SnowPlow():
             snowplow_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/' + schema + '/jsonschema/' + schema_version, {})
 
         #  Make the call.
-        t.track_self_describing_event(snowplow_event, [citizen, office, agent])
+        # t.track_self_describing_event(snowplow_event, [citizen, office, agent])
 
     @staticmethod
     def failure(count, failed):
