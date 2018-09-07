@@ -48,7 +48,8 @@ limitations under the License.*/
 
       connect() {
         socket = io(process.env.SOCKET_URL, {
-          path: '/api/v1/socket.io'
+          path: '/api/v1/socket.io',
+          transports: ['websocket']
         })
         socket.on('connect',()=>{this.onConnect()})
         socket.on('disconnect',()=>{this.onDisconnect()})
