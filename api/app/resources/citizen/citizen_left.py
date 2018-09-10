@@ -52,7 +52,7 @@ class CitizenLeft(Resource):
         db.session.add(citizen)
         db.session.commit()
 
-        # SnowPlow.snowplow_event(citizen.citizen_id, csr, "customerleft")
+        SnowPlow.snowplow_event(citizen.citizen_id, csr, "customerleft")
 
         socketio.emit('update_customer_list', {}, room=csr.office_id)
         socketio.emit('citizen_invited', {}, room='sb-%s' % csr.office.office_number)
