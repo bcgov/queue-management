@@ -28,12 +28,7 @@ class SnowPlow():
     sp_endpoint = os.getenv("THEQ_SNOWPLOW_ENDPOINT", "spm.gov.bc.ca")
     sp_appid = os.getenv("THEQ_SNOWPLOW_APPID", "TheQ")
     sp_namespace = os.getenv("THEQ_SNOWPLOW_NAMESPACE", "TheQ_dev")
-    call_snowplow_flag =  (os.getenv("THEQ_SNOWPLOW_CALLFLAG", "False")).upper() == "TRUE"
-
-    # Set up core Snowplow environment
-    s = Subject()  # .set_platform("app")
-    e = AsyncEmitter(sp_endpoint, protocol="https")
-    t = Tracker(e, encode_base64=False, app_id=sp_appid, namespace=sp_namespace)
+    call_snowplow_flag = (os.getenv("THEQ_SNOWPLOW_CALLFLAG", "False")).upper() == "TRUE"
 
     @staticmethod
     def add_citizen(new_citizen, csr):
@@ -51,7 +46,7 @@ class SnowPlow():
             addcitizen = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/addcitizen/jsonschema/1-0-0', {})
 
             # make the call
-            SnowPlow.t.track_self_describing_event(addcitizen, [citizen, office, agent])
+            t.track_self_describing_event(addcitizen, [citizen, office, agent])
 
     @staticmethod
     def choose_service(service_request, csr, snowplow_event):
@@ -72,20 +67,20 @@ class SnowPlow():
             if snowplow_event == "additionalservice":
                 prev_citizen = SnowPlow.get_citizen(citizen_obj, False, True)
                 sp_event = SnowPlow.get_finish(service_request.quantity, citizen_obj.accurate_time_ind)
-                SnowPlow.t.track_self_describing_event(sp_event, [prev_citizen, office, agent])
+                t.track_self_describing_event(sp_event, [prev_citizen, office, agent])
                 sp_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/additionalservice/jsonschema/1-0-0', {})
-                SnowPlow.t.track_self_describing_event(sp_event, [citizen, office, agent])
+                t.track_self_describing_event(sp_event, [citizen, office, agent])
 
             #  Make the call.
-            SnowPlow.t.track_self_describing_event(chooseservice, [citizen, office, agent])
+            t.track_self_describing_event(chooseservice, [citizen, office, agent])
 
             #  If an additionalservice event, add "bogus" SP events after.
             if snowplow_event == "additionalservice":
                 #  Add invitecitizen, beginservice after chooseservice
                 sp_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/invitecitizen/jsonschema/1-0-0', {})
-                SnowPlow.t.track_self_describing_event(sp_event, [citizen, office, agent])
+                t.track_self_describing_event(sp_event, [citizen, office, agent])
                 sp_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/beginservice/jsonschema/1-0-0', {})
-                SnowPlow.t.track_self_describing_event(sp_event, [citizen, office, agent])
+                t.track_self_describing_event(sp_event, [citizen, office, agent])
 
     @staticmethod
     def snowplow_event(citizen_id, csr, schema, period_count = 0, quantity = 0):
@@ -115,9 +110,9 @@ class SnowPlow():
 
                 #  Add "bogus" add to queue and invitecitizen events.
                 sp_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/addtoqueue/jsonschema/1-0-0', {})
-                SnowPlow.t.track_self_describing_event(sp_event, [citizen, office, agent])
+                t.track_self_describing_event(sp_event, [citizen, office, agent])
                 sp_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/invitecitizen/jsonschema/1-0-0', {})
-                SnowPlow.t.track_self_describing_event(sp_event, [citizen, office, agent])
+                t.track_self_describing_event(sp_event, [citizen, office, agent])
 
                 #  Create "real" beginservice event.
                 snowplow_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/' + schema + '/jsonschema/' + schema_version, {})
@@ -127,7 +122,7 @@ class SnowPlow():
                 snowplow_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/' + schema + '/jsonschema/' + schema_version, {})
 
             #  Make the call.
-            SnowPlow.t.track_self_describing_event(snowplow_event, [citizen, office, agent])
+            t.track_self_describing_event(snowplow_event, [citizen, office, agent])
 
     @staticmethod
     def failure(count, failed):
@@ -231,3 +226,9 @@ class SnowPlow():
         finishservice = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/finish/jsonschema/1-0-0',
                                            {"inaccurate_time": inaccurate_flag, "count": svc_quantity})
         return finishservice
+
+# Set up core Snowplow environment
+s = Subject()  # .set_platform("app")
+e = AsyncEmitter(SnowPlow.sp_endpoint, on_failure=SnowPlow.failure, protocol="https")
+# e = AsyncEmitter(SnowPlow.sp_endpoint, protocol="https")
+t = Tracker(e, encode_base64=False, app_id=SnowPlow.sp_appid, namespace=SnowPlow.sp_namespace)
