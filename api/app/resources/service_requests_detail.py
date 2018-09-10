@@ -52,7 +52,7 @@ class ServiceRequestsDetail(Resource):
         db.session.add(service_request)
         db.session.commit()
 
-        SnowPlow.choose_service(service_request, csr, "chooseservice")
+        # SnowPlow.choose_service(service_request, csr, "chooseservice")
 
         result = self.service_request_schema.dump(service_request)
         citizen_result = self.citizen_schema.dump(service_request.citizen)

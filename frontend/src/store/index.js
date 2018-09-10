@@ -922,7 +922,9 @@ export const store = new Vuex.Store({
       // Make sure quantity is position
       if (!/^\+?\d+$/.test(activeQuantity)) {
         context.commit("setServeModalAlert", "Quantity must be a number and greater than 0")
-        return Promise.reject('No Token Found In Local Storage')
+        return Promise.reject('Quantity must be a number and greater than 0')
+      } else {
+        context.commit("setServeModalAlert", "")
       }
 
       let setup = context.state.addModalSetup
@@ -964,10 +966,6 @@ export const store = new Vuex.Store({
     screenIncomingCitizen(context, citizen) {
       let { addNextService } = context.state
 
-      if (addNextService) {
-        return false;
-      }
-
       let { csr_id } = context.state.user
       if (citizen.service_reqs.length > 0) {
         if ( citizen.service_reqs[0].periods) {
@@ -980,19 +978,27 @@ export const store = new Vuex.Store({
               if ( activePeriod.csr_id === csr_id ) {
                 if (activePeriod.ps.ps_name === 'Invited') {
                   context.commit('setServiceModalForm', citizen)
-                  context.commit('toggleServiceModal', true)
+                  context.commit('toggleBegunStatus', false)
                   context.commit('toggleInvitedStatus', true)
                   context.commit('setServeNowAction', true)
                   context.dispatch('flashServeNow', 'start')
-                  context.commit('resetAddModalForm')
+
+                  if (!addNextService) {
+                    context.commit('toggleServiceModal', true)
+                    context.commit('resetAddModalForm')
+                  }
+
                 } else if (activePeriod.ps.ps_name === 'Being Served') {
                   context.commit('setServiceModalForm', citizen)
-                  context.commit('toggleServiceModal', true)
                   context.commit('toggleBegunStatus', true)
                   context.commit('toggleInvitedStatus', false)
                   context.commit('setServeNowAction', false)
                   context.dispatch('flashServeNow', 'stop')
-                  context.commit('resetAddModalForm')
+
+                  if (!addNextService) {
+                    context.commit('toggleServiceModal', true)
+                    context.commit('resetAddModalForm')
+                  }
                 } else {
                   context.commit('resetServiceModal')
                   context.commit('toggleServiceModal', false)

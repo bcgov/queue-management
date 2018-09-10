@@ -46,7 +46,7 @@ class CitizenFinishService(Resource):
         db.session.add(citizen)
         db.session.commit()
 
-        SnowPlow.snowplow_event(citizen.citizen_id, csr, "finish", quantity = quantity)
+        # SnowPlow.snowplow_event(citizen.citizen_id, csr, "finish", quantity = quantity)
 
         socketio.emit('citizen_invited', {}, room='sb-%s' % csr.office.office_number)
         result = self.citizen_schema.dump(citizen)

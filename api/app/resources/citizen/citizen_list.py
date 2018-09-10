@@ -64,7 +64,7 @@ class CitizenList(Resource):
         db.session.add(citizen)
         db.session.commit()
 
-        SnowPlow.add_citizen(citizen, csr)
+        # SnowPlow.add_citizen(citizen, csr)
 
         # socketio.emit('update_customer_list', {})
         result = self.citizen_schema.dump(citizen)
