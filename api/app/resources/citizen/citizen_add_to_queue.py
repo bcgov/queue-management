@@ -49,8 +49,6 @@ class CitizenAddToQueue(Resource):
         db.session.add(citizen)
         db.session.commit()
 
-        # SnowPlow.snowplow_event(active_service_request, csr, "addtoqueue")
-
         socketio.emit('update_customer_list', {}, room=csr.office_id)
         socketio.emit('citizen_invited', {}, room='sb-%s' % csr.office.office_number)
         result = self.citizen_schema.dump(citizen)
