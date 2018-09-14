@@ -373,11 +373,11 @@ export const store = new Vuex.Store({
         let value = resp.data.citizen
         context.commit('updateAddModalForm', {type:'citizen',value})
         context.commit('resetServiceModal')
-        context.commit('setPerformingAction', false)
       },
       error => {
         context.commit('toggleAddModal', false)
         context.commit('setMainAlert', 'An error occurred adding a citizen.')
+      }).finally(() => {
         context.commit('setPerformingAction', false)
       })
       if (context.state.categories.length === 0) {
@@ -424,6 +424,7 @@ export const store = new Vuex.Store({
           })
           context.commit('toggleAddModal', true)
           context.commit('toggleServiceModal', false)
+        }).finally(() => {
           context.commit('setPerformingAction', false)
         })
       }, error => {
@@ -442,8 +443,11 @@ export const store = new Vuex.Store({
           context.commit('toggleServiceModal', true)
           context.dispatch('toggleModalBack')
           context.commit('resetAddModalForm')
+        }).finally(() => {
           context.commit('setPerformingAction', false)
         })
+      }).catch(() => {
+        context.commit('setPerformingAction', false)
       })
   },
 
@@ -457,9 +461,14 @@ export const store = new Vuex.Store({
             context.dispatch('resetAddCitizenModal')
             context.commit('toggleBegunStatus', false)
             context.commit('toggleInvitedStatus', false)
+          }).finally(() => {
             context.commit('setPerformingAction', false)
           })
+        }).catch(() => {
+          context.commit('setPerformingAction', false)
         })
+      }).catch(() => {
+        context.commit('setPerformingAction', false)
       })
     },
 
@@ -475,9 +484,14 @@ export const store = new Vuex.Store({
             context.commit('toggleInvitedStatus', false)
             context.commit('toggleServiceModal', true)
             context.commit('resetAddModalForm')
+          }).finally(() => {
             context.commit('setPerformingAction', false)
           })
+        }).catch(() => {
+          context.commit('setPerformingAction', false)
         })
+      }).catch(() => {
+        context.commit('setPerformingAction', false)
       })
     },
 
@@ -486,13 +500,14 @@ export const store = new Vuex.Store({
       context.dispatch('toggleModalBack')
 
       Axios(context).post('/citizens/', {})
-        .then(resp => {
-          let value = resp.data.citizen
-          context.commit('updateAddModalForm', {type:'citizen',value})
-          context.commit('toggleAddModal', true)
-          context.commit('resetServiceModal')
-          context.commit('setPerformingAction', false)
-        })
+      .then(resp => {
+        let value = resp.data.citizen
+        context.commit('updateAddModalForm', {type:'citizen',value})
+        context.commit('toggleAddModal', true)
+        context.commit('resetServiceModal')
+      }).finally(() => {
+        context.commit('setPerformingAction', false)
+      })
 
       let setupChannels = () => {
         let index = -1
@@ -526,14 +541,13 @@ export const store = new Vuex.Store({
       let {citizen_id} = context.getters.invited_citizen
       context.commit('setPerformingAction', true)
 
-      context.dispatch('postCitizenLeft', citizen_id).then(() => {
+      context.dispatch('postCitizenLeft', citizen_id).finally(() => {
         context.commit('setPerformingAction', false)
       })
       context.commit('toggleServiceModal', false)
       context.commit('toggleBegunStatus', false)
       context.commit('toggleInvitedStatus', false)
       context.commit('resetServiceModal')
-
     },
 
     clickDashTableRow(context, citizen_id) {
@@ -543,6 +557,7 @@ export const store = new Vuex.Store({
         context.commit('toggleBegunStatus', false)
         context.commit('toggleInvitedStatus', true)
         context.commit('toggleServiceModal', true)
+      }).finally(() => {
         context.commit('setPerformingAction', false)
       })
     },
@@ -561,8 +576,11 @@ export const store = new Vuex.Store({
           context.dispatch('setAddModalData')
           context.commit('toggleAddModal', true)
           context.commit('toggleServiceModal', false)
+        }).finally(() => {
           context.commit('setPerformingAction', false)
         })
+      }).catch(() => {
+        context.commit('setPerformingAction', false)
       })
     },
 
@@ -575,8 +593,11 @@ export const store = new Vuex.Store({
           context.dispatch('toggleModalBack' )
           context.commit('resetAddModalForm' )
           context.commit('toggleServiceModal', true )
+        }).finally(() => {
           context.commit('setPerformingAction', false)
         })
+      }).catch(() => {
+        context.commit('setPerformingAction', false)
       })
     },
 
@@ -603,9 +624,14 @@ export const store = new Vuex.Store({
             context.commit('toggleBegunStatus', false)
             context.commit('toggleInvitedStatus', false)
             context.commit('toggleServiceModal', false)
+          }).finally(() => {
             context.commit('setPerformingAction', false)
           })
+        }).catch(() => {
+          context.commit('setPerformingAction', false)
         })
+      }).catch(() => {
+        context.commit('setPerformingAction', false)
       })
     },
 
@@ -615,9 +641,10 @@ export const store = new Vuex.Store({
       context.dispatch('postInvite', 'next').then(() => {
         context.commit('toggleInvitedStatus', true)
         context.commit('toggleServiceModal', true)
-        context.commit('setPerformingAction', false)
       }).catch(() => {
         context.commit('setMainAlert', 'There are no citizens waiting.')
+      }).finally(() => {
+        context.commit('setPerformingAction', false)
       })
       context.dispatch('flashServeNow', 'stop')
     },
@@ -677,10 +704,16 @@ export const store = new Vuex.Store({
 
       context.dispatch('putServiceRequest').then(() => {
         context.dispatch('putCitizen').then(() => {
-          context.dispatch('postActivateServiceReq', sr_id).then(() => {
+          context.dispatch('postActivateServiceReq', sr_id).finally(() => {
+            context.commit('setPerformingAction', false)
+          }).finally(() => {
             context.commit('setPerformingAction', false)
           })
+        }).catch(() => {
+          context.commit('setPerformingAction', false)
         })
+      }).catch(() => {
+        context.commit('setPerformingAction', false)
       })
     },
 
@@ -694,9 +727,14 @@ export const store = new Vuex.Store({
             context.commit('toggleInvitedStatus', false)
             context.commit('toggleServiceModal', false)
             context.commit('resetServiceModal')
+          }).finally(() => {
             context.commit('setPerformingAction', false)
           })
+        }).catch(() => {
+          context.commit('setPerformingAction', false)
         })
+      }).catch(() => {
+        context.commit('setPerformingAction', false)
       })
     },
 
@@ -707,7 +745,7 @@ export const store = new Vuex.Store({
         context.commit('toggleBegunStatus', true)
         context.commit('toggleInvitedStatus', false)
         context.commit('toggleServiceModal', true)
-        context.commit('setPerformingAction', false)
+      }).finally(() => {
         context.commit('setPerformingAction', false)
       })
     },
@@ -735,10 +773,16 @@ export const store = new Vuex.Store({
 
       context.dispatch('putCitizen').then( () => {
         context.dispatch('putServiceRequest').then( () => {
-          context.dispatch('postBeginService', citizen_id)
-          context.commit('toggleBegunStatus', true)
+          context.dispatch('postBeginService', citizen_id).then(() => {
+            context.commit('toggleBegunStatus', false)
+          }).finally(() => {
+            context.commit('setPerformingAction', false)
+          })
+        }).catch(() => {
           context.commit('setPerformingAction', false)
         })
+      }).catch(() => {
+        context.commit('setPerformingAction', false)
       })
     },
 
@@ -752,9 +796,14 @@ export const store = new Vuex.Store({
             context.commit('toggleServiceModal', false)
             context.commit('toggleBegunStatus', false)
             context.commit('toggleInvitedStatus', false)
+          }).finally(() => {
             context.commit('setPerformingAction', false)
           })
+        }).catch(() => {
+          context.commit('setPerformingAction', false)
         })
+      }).catch(() => {
+        context.commit('setPerformingAction', false)
       })
     },
 
@@ -830,9 +879,9 @@ export const store = new Vuex.Store({
         error => {
           if (error.response.status === 400) {
             context.commit('setMainAlert', error.response.data.message)
-          } else {
-            reject(error)
           }
+
+          reject(error)
         })
       })
     },
@@ -890,9 +939,9 @@ export const store = new Vuex.Store({
           }, error => {
             if (error.response.status === 400) {
               context.commit('setMainAlert', error.response.data.message)
-            } else {
-              reject(error)
             }
+
+            reject(error)
           })
         })
       }
