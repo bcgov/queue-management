@@ -72,7 +72,7 @@ limitations under the License.*/
     },
 
     computed: {
-      ...mapState(['citizens','citizenInvited']),
+      ...mapState(['citizens', 'citizenInvited', 'performingAction']),
       ...mapGetters([
         'on_hold_queue',
         'citizens_queue',
@@ -90,6 +90,9 @@ limitations under the License.*/
       },
 
       rowClicked(item, index) {
+        if (this.performingAction) {
+          return null
+        }
         if (this.citizenInvited===true) {
           this.$store.commit('setMainAlert', 'You are already serving a citizen.  Click Serve Now to resume.')
         } else if (this.citizenInvited===false) {

@@ -38,17 +38,18 @@
              <div>
              <b-button @click="clickServiceBeginService"
                        v-if="reception"
-                       :disabled="serviceBegun===true"
+                       :disabled="serviceBegun===true || performingAction"
                        v-bind:class="buttonStyle"
                        id="serve-citizen-begin-service-button">Begin Service</b-button>
              <b-button @click="clickReturnToQueue"
                        v-if="reception"
-                       :disabled="serviceBegun===true"
+                       :disabled="serviceBegun===true || performingAction"
                        class="btn-primary serve-btn"
                        id="serve-citizen-return-to-queue-button">Return to Queue</b-button>
              </div>
              <div>
              <b-button @click="clickCitizenLeft"
+                       :disabled="performingAction"
                        class="btn-danger serve-btn"
                        v-if="reception"
                        id="serve-citizen-citizen-left-button">Citizen Left</b-button>
@@ -58,15 +59,16 @@
        </b-row>
      </b-container>
      <ServeCitizenTable/>
-
      <b-container fluid
                   id="serve-light-inner-container"
                   class="pt-2 pb-2">
        <b-row no-gutters>
          <b-col cols="7"/>
-
          <b-col cols="auto" style="align: right">
-           <b-button class="w-100 btn-primary serve-btn" @click="clickAddService" :disabled="serviceBegun===false">
+           <b-button class="w-100
+                     btn-primary serve-btn"
+                     @click="clickAddService"
+                     :disabled="serviceBegun===false || performingAction">
              Add Next Service
            </b-button>
          </b-col>
@@ -82,14 +84,14 @@
          <b-col cols="1" />
          <b-col cols="4">
            <b-button @click="clickHold"
-                     :disabled="serviceBegun===false"
+                     :disabled="serviceBegun===false || performingAction"
                      class="w-100 btn-primary serve-btn"
                      id="serve-citizen-place-on-hold-button">Place on Hold</b-button>
          </b-col>
          <b-col cols="2" />
          <b-col cols="4">
            <b-button @click="clickServiceFinish"
-                     :disabled="serviceBegun===false"
+                     :disabled="serviceBegun===false || performingAction"
                      class="w-100 btn-primary serve-btn"
                      id="serve-citizen-finish-button">
                        Finish
@@ -146,6 +148,7 @@ export default {
   },
   computed: {
     ...mapState([
+      'performingAction',
       'showServiceModal',
       'serviceBegun',
       'serviceModalForm',
