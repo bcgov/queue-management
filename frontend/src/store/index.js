@@ -772,8 +772,16 @@ export const store = new Vuex.Store({
       messageParts.push(`Username: ${context.state.user.username}`)
       messageParts.push(`Office: ${context.state.user.office.office_name}`)
 
-      if (context.state.serviceModalForm.service_citizen) {
-        messageParts.push(`Ticket Number: ${context.state.serviceModalForm.service_citizen.ticket_number}`)
+      let activeCitizen = context.state.serviceModalForm.service_citizen
+
+      if (activeCitizen) {
+        let activeService = activeCitizen.service_reqs.filter(sr => sr.periods.some(p => p.time_end === null))[0]
+        let activePeriod = activeService.periods.filter(p => p.time_end === null)[0]
+
+        messageParts.push(`Ticket Number: ${activeCitizen.ticket_number}`)
+        messageParts.push(`Citizen ID: ${activeCitizen.citizen_id}`)
+        messageParts.push(`Active SR ID: ${activeService.sr_id}`)
+        messageParts.push(`Active Period ID: ${activePeriod.period_id}`)
       } else {
         messageParts.push(`Ticket Number: not available`)
       }
