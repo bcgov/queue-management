@@ -22,7 +22,7 @@ limitations under the License.*/
         <div>
           <b-button class="btn-primary"
                     @click="invite"
-                    :disabled="citizenInvited===true"
+                    :disabled="citizenInvited===true || performingAction"
                     v-if="reception"
                     id="invite-citizen-button">Invite</b-button>
           <b-button v-bind:class="serveNowStyle"
@@ -33,11 +33,11 @@ limitations under the License.*/
         <div>
           <b-button class="btn-primary"
                     @click="addCitizen"
-                    :disabled="citizenInvited===true"
+                    :disabled="citizenInvited===true || performingAction"
                     id="add-citizen-button">Add Citizen</b-button>
           <b-button class="btn-primary"
                     @click="clickBackOffice"
-                    :disabled="citizenInvited===true"
+                    :disabled="citizenInvited===true || performingAction"
                     id="add-citizen-button">Back Office</b-button>
         </div>
         <div>
@@ -144,6 +144,7 @@ import ServeCitizen from './serve-citizen'
         'showAddModal',
         'citizenInvited',
         'dismissCountDown',
+        'performingAction',
         'showGAScreenModal',
         'showServiceModal',
         'serveNowStyle',

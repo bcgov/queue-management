@@ -50,6 +50,7 @@ export const store = new Vuex.Store({
     isLoggedIn: false,
     nowServing: false,
     officeType: null,
+    performingAction: false,
     serveNowAltAction: false,
     serveNowStyle: 'btn-primary',
     serviceBegun: false,
@@ -363,17 +364,21 @@ export const store = new Vuex.Store({
     },
 
     clickAddCitizen(context) {
+      context.commit('setPerformingAction', true)
       context.dispatch('toggleModalBack')
       context.commit('toggleAddModal', true)
+
       Axios(context).post('/citizens/', {})
       .then(resp => {
         let value = resp.data.citizen
         context.commit('updateAddModalForm', {type:'citizen',value})
         context.commit('resetServiceModal')
+        context.commit('setPerformingAction', false)
       },
       error => {
         context.commit('toggleAddModal', false)
         context.commit('setMainAlert', 'An error occurred adding a citizen.')
+        context.commit('setPerformingAction', false)
       })
       if (context.state.categories.length === 0) {
         context.dispatch('getCategories')
@@ -392,6 +397,8 @@ export const store = new Vuex.Store({
     },
 
     clickAddService(context) {
+      context.commit('setPerformingAction', true)
+
       if (context.state.channels.length === 0) {
         context.dispatch('getCategories')
         context.dispatch('getChannels')
@@ -417,13 +424,17 @@ export const store = new Vuex.Store({
           })
           context.commit('toggleAddModal', true)
           context.commit('toggleServiceModal', false)
+          context.commit('setPerformingAction', false)
         })
       }, error => {
-          console.log(error)
+        console.log(error)
+        context.commit('setPerformingAction', false)
       })
     },
 
     clickAddServiceApply(context) {
+      context.commit('setPerformingAction', true)
+
       context.dispatch('postServiceReq').then(() => {
         context.dispatch('putCitizen').then((resp) => {
           context.commit('toggleAddModal', false)
@@ -431,12 +442,14 @@ export const store = new Vuex.Store({
           context.commit('toggleServiceModal', true)
           context.dispatch('toggleModalBack')
           context.commit('resetAddModalForm')
+          context.commit('setPerformingAction', false)
         })
       })
   },
 
     clickAddToQueue(context) {
       let { citizen_id } = context.getters.form_data.citizen
+      context.commit('setPerformingAction', true)
 
       context.dispatch('putCitizen').then( () => {
         context.dispatch('postServiceReq').then( () => {
@@ -444,7 +457,7 @@ export const store = new Vuex.Store({
             context.dispatch('resetAddCitizenModal')
             context.commit('toggleBegunStatus', false)
             context.commit('toggleInvitedStatus', false)
-
+            context.commit('setPerformingAction', false)
           })
         })
       })
@@ -452,6 +465,7 @@ export const store = new Vuex.Store({
 
     clickBeginService(context) {
       let {citizen_id} = context.getters.form_data.citizen
+      context.commit('setPerformingAction', true)
 
       context.dispatch('putCitizen').then( () => {
         context.dispatch('postServiceReq').then( () => {
@@ -461,12 +475,14 @@ export const store = new Vuex.Store({
             context.commit('toggleInvitedStatus', false)
             context.commit('toggleServiceModal', true)
             context.commit('resetAddModalForm')
+            context.commit('setPerformingAction', false)
           })
         })
       })
     },
 
     clickBackOffice(context) {
+      context.commit('setPerformingAction', true)
       context.dispatch('toggleModalBack')
 
       Axios(context).post('/citizens/', {})
@@ -475,6 +491,7 @@ export const store = new Vuex.Store({
           context.commit('updateAddModalForm', {type:'citizen',value})
           context.commit('toggleAddModal', true)
           context.commit('resetServiceModal')
+          context.commit('setPerformingAction', false)
         })
 
       let setupChannels = () => {
@@ -507,22 +524,32 @@ export const store = new Vuex.Store({
 
     clickCitizenLeft(context) {
       let {citizen_id} = context.getters.invited_citizen
-      context.dispatch('postCitizenLeft', citizen_id)
+      context.commit('setPerformingAction', true)
+
+      context.dispatch('postCitizenLeft', citizen_id).then(() => {
+        context.commit('setPerformingAction', false)
+      })
       context.commit('toggleServiceModal', false)
       context.commit('toggleBegunStatus', false)
       context.commit('toggleInvitedStatus', false)
       context.commit('resetServiceModal')
+
     },
 
     clickDashTableRow(context, citizen_id) {
+      context.commit('setPerformingAction', true)
+
       context.dispatch('postInvite', citizen_id).then( () => {
         context.commit('toggleBegunStatus', false)
         context.commit('toggleInvitedStatus', true)
         context.commit('toggleServiceModal', true)
+        context.commit('setPerformingAction', false)
       })
     },
 
     clickEdit(context) {
+      context.commit('setPerformingAction', true)
+
       if (context.state.channels.length === 0) {
         context.dispatch('getCategories')
         context.dispatch('getChannels')
@@ -534,17 +561,21 @@ export const store = new Vuex.Store({
           context.dispatch('setAddModalData')
           context.commit('toggleAddModal', true)
           context.commit('toggleServiceModal', false)
+          context.commit('setPerformingAction', false)
         })
       })
     },
 
     clickEditApply(context) {
+      context.commit('setPerformingAction', true)
+
       context.dispatch('putServiceRequest').then( () => {
         context.dispatch('putCitizen').then(() => {
-          context.commit( 'toggleAddModal', false )
-          context.dispatch( 'toggleModalBack' )
-          context.commit( 'resetAddModalForm' )
-          context.commit( 'toggleServiceModal', true )
+          context.commit('toggleAddModal', false )
+          context.dispatch('toggleModalBack' )
+          context.commit('resetAddModalForm' )
+          context.commit('toggleServiceModal', true )
+          context.commit('setPerformingAction', false)
         })
       })
     },
@@ -564,21 +595,27 @@ export const store = new Vuex.Store({
 
     clickHold(context) {
       let { citizen_id } = context.state.serviceModalForm
+      context.commit('setPerformingAction', true)
+
       context.dispatch('putCitizen').then(() => {
         context.dispatch('putServiceRequest').then(() => {
           context.dispatch('postHold', citizen_id).then(() => {
             context.commit('toggleBegunStatus', false)
             context.commit('toggleInvitedStatus', false)
             context.commit('toggleServiceModal', false)
+            context.commit('setPerformingAction', false)
           })
         })
       })
     },
 
     clickInvite(context) {
+      context.commit('setPerformingAction', true)
+
       context.dispatch('postInvite', 'next').then(() => {
         context.commit('toggleInvitedStatus', true)
         context.commit('toggleServiceModal', true)
+        context.commit('setPerformingAction', false)
       }).catch(() => {
         context.commit('setMainAlert', 'There are no citizens waiting.')
       })
@@ -636,32 +673,42 @@ export const store = new Vuex.Store({
     },
 
     clickMakeActive(context, sr_id) {
+      context.commit('setPerformingAction', true)
+
       context.dispatch('putServiceRequest').then(() => {
         context.dispatch('putCitizen').then(() => {
-          context.dispatch('postActivateServiceReq', sr_id)
+          context.dispatch('postActivateServiceReq', sr_id).then(() => {
+            context.commit('setPerformingAction', false)
+          })
         })
       })
     },
 
     clickReturnToQueue(context) {
-     let {citizen_id} = context.getters.invited_citizen
-     context.dispatch('putCitizen').then( () => {
-       context.dispatch('putServiceRequest').then( () => {
-         context.dispatch('postAddToQueue', citizen_id).then( () => {
-           context.commit('toggleInvitedStatus', false)
-           context.commit('toggleServiceModal', false)
-           context.commit('resetServiceModal')
+      let {citizen_id} = context.getters.invited_citizen
+      context.commit('setPerformingAction', true)
 
-         })
-       })
-     })
+      context.dispatch('putCitizen').then( () => {
+        context.dispatch('putServiceRequest').then( () => {
+          context.dispatch('postAddToQueue', citizen_id).then( () => {
+            context.commit('toggleInvitedStatus', false)
+            context.commit('toggleServiceModal', false)
+            context.commit('resetServiceModal')
+            context.commit('setPerformingAction', false)
+          })
+        })
+      })
     },
 
     clickRowHoldQueue(context, citizen_id) {
+      context.commit('setPerformingAction', true)
+
       context.dispatch('postBeginService', citizen_id).then( () => {
         context.commit('toggleBegunStatus', true)
         context.commit('toggleInvitedStatus', false)
         context.commit('toggleServiceModal', true)
+        context.commit('setPerformingAction', false)
+        context.commit('setPerformingAction', false)
       })
     },
 
@@ -684,17 +731,20 @@ export const store = new Vuex.Store({
 
     clickServiceBeginService(context) {
       let { citizen_id } = context.state.serviceModalForm
+      context.commit('setPerformingAction', true)
 
       context.dispatch('putCitizen').then( () => {
         context.dispatch('putServiceRequest').then( () => {
           context.dispatch('postBeginService', citizen_id)
           context.commit('toggleBegunStatus', true)
+          context.commit('setPerformingAction', false)
         })
       })
     },
 
     clickServiceFinish(context) {
       let { citizen_id } = context.state.serviceModalForm
+      context.commit('setPerformingAction', true)
 
       context.dispatch('putCitizen').then( (resp) => {
         context.dispatch('putServiceRequest').then( () => {
@@ -702,7 +752,7 @@ export const store = new Vuex.Store({
             context.commit('toggleServiceModal', false)
             context.commit('toggleBegunStatus', false)
             context.commit('toggleInvitedStatus', false)
-
+            context.commit('setPerformingAction', false)
           })
         })
       })
@@ -1244,6 +1294,8 @@ export const store = new Vuex.Store({
     toggleAddNextService: (state, payload) => state.addNextService = payload,
 
     setFeedbackMessage: (state, payload) => state.feedbackMessage = payload,
+
+    setPerformingAction: (state, payload) => state.performingAction = payload,
 
     showHideResponseModal(state) {
       state.showResponseModal = true

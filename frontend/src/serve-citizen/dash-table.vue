@@ -64,7 +64,7 @@ limitations under the License.*/
       }
     },
     computed: {
-      ...mapState(['citizenInvited', 'serviceModalForm']),
+      ...mapState(['citizenInvited', 'serviceModalForm', 'performingAction']),
       ...mapGetters(['citizens_queue', 'active_service_id', 'reception']),
       citizens() {
         return this.citizens_queue
@@ -77,6 +77,9 @@ limitations under the License.*/
         return date.toLocaleTimeString()
       },
       rowClicked(item, index) {
+        if (this.performingAction) {
+          return null
+        }
         if (this.citizenInvited===true) {
           this.$store.commit('setMainAlert', 'You are already serving a citizen.  Click Serve Now to resume.')
         } else if (this.citizenInvited===false) {
