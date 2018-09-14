@@ -774,7 +774,7 @@ export const store = new Vuex.Store({
       context.dispatch('putCitizen').then( () => {
         context.dispatch('putServiceRequest').then( () => {
           context.dispatch('postBeginService', citizen_id).then(() => {
-            context.commit('toggleBegunStatus', false)
+            context.commit('toggleBegunStatus', true)
           }).finally(() => {
             context.commit('setPerformingAction', false)
           })
