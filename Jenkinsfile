@@ -184,7 +184,7 @@ podTemplate(
             sleep 60
             def retVal = sh (
                 returnStatus: true, 
-                script: '/zap/zap-baseline.py -r baseline.html -t https://servicebc-cfms-dev.pathfinder.gov.bc.ca/'
+                script: '/zap/zap-baseline.py -r baseline.html -t https://dev-theq.pathfinder.gov.bc.ca/'
             )
             publishHTML([
                 allowMissing: false, 
