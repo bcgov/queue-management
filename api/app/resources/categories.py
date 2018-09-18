@@ -28,7 +28,7 @@ class Categories(Resource):
     @oidc.accept_token(require_token=True)
     def get(self):
         try:
-            services = Service.query.filter_by(actual_service_ind=0).all()
+            services = Service.query.filter_by(actual_service_ind=0).order_by(Service.service_name).all()
             result = self.categories_schema.dump(services)
             return {'categories': result.data,
                     'errors': result.errors}, 200
