@@ -38,7 +38,7 @@ class CitizenAddToQueue(Resource):
 
         #  Figure out what Snowplow call to make.
         snowplow_call = "returntoqueue"
-        if ((len(citizen.service_reqs) == 1) and (len(active_service_request.periods) == 1)):
+        if len(citizen.service_reqs) == 1 and len(active_service_request.periods) == 1:
             snowplow_call = "addtoqueue"
 
         active_service_request.add_to_queue(csr, snowplow_call)

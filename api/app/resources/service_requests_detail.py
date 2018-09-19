@@ -108,7 +108,6 @@ class ServiceRequestActivate(Resource):
 
         SnowPlow.choose_service(service_request, csr, "additionalservice")
 
-        # socketio.emit('update_customer_list', {})
         citizen_result = self.citizen_schema.dump(service_request.citizen)
         socketio.emit('update_active_citizen', citizen_result.data, room=csr.office_id)
         result = self.service_request_schema.dump(service_request)

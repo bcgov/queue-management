@@ -51,7 +51,6 @@ class CitizenLeft(Resource):
 
         SnowPlow.snowplow_event(citizen.citizen_id, csr, "customerleft")
 
-        socketio.emit('update_customer_list', {}, room=csr.office_id)
         socketio.emit('citizen_invited', {}, room='sb-%s' % csr.office.office_number)
         result = self.citizen_schema.dump(citizen)
         socketio.emit('update_active_citizen', result.data, room=csr.office_id)

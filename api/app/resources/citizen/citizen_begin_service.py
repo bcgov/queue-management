@@ -45,9 +45,9 @@ class CitizenBeginService(Resource):
                 #  Get Snowplow call.
                 active_period = active_service_request.get_active_period()
                 snowplow_event = "beginservice"
-                if (active_period.ps.ps_name == "On hold"):
+                if active_period.ps.ps_name == "On hold":
                     snowplow_event = "invitefromhold"
-                if (active_period.ps.ps_name == "Waiting"):
+                if active_period.ps.ps_name == "Waiting":
                     snowplow_event = "invitefromlist"
 
                 active_service_request.begin_service(csr, snowplow_event)
@@ -59,7 +59,9 @@ class CitizenBeginService(Resource):
             db.session.add(citizen)
             db.session.commit()
 
-            socketio.emit('update_customer_list', {}, room=csr.office_id)
+            if snowplow_event != "beginservice":
+                socketio.emit('update_customer_list', {}, room=csr.office_id)
+                
             result = self.citizen_schema.dump(citizen)
             socketio.emit('update_active_citizen', result.data, room=csr.office_id)
 
