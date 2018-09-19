@@ -112,7 +112,7 @@ class ServiceRequestsList(Resource):
 
         #  See whether first service, or next service.
         snowplow_event = "additionalservice"
-        if ((len(citizen.service_reqs) == 1)):
+        if len(citizen.service_reqs) == 1:
             snowplow_event = "chooseservice"
         SnowPlow.choose_service(service_request, csr, snowplow_event)
 

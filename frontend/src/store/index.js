@@ -87,11 +87,12 @@ export const store = new Vuex.Store({
 
   getters: {
     reception(state) {
-      if (state.user.office && state.user.office.sb)
+      if (state.user.office && state.user.office.sb) {
         if (state.user.office.sb.sb_type === "callbyname" || state.user.office.sb.sb_type === "callbyticket") {
           return true
         }
         return false
+      }
     },
 
     active_index(state, getters) {
@@ -1016,10 +1017,9 @@ export const store = new Vuex.Store({
     },
 
     putServiceRequest(context) {
-      let { citizen_id, activeQuantity } = context.state.serviceModalForm
+      let { activeQuantity } = context.state.serviceModalForm
       let compareService = context.getters.active_service
       let { sr_id } = compareService
-      let index = context.getters.active_index
 
       let data = {}
       if (activeQuantity != compareService.quantity) {

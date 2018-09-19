@@ -35,9 +35,6 @@ class CitizenLeft(Resource):
         citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
         sr_state = SRState.get_state_by_name("Complete")
 
-        #  Save this service for the Snowplow call later.
-        active_service_request = citizen.get_active_service_request()
-
         for service_request in citizen.service_reqs:
 
             service_request.sr_state_id = sr_state.sr_state_id
