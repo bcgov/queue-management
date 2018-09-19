@@ -15,12 +15,18 @@ limitations under the License.'''
 
 from app.models import SmartBoard
 from flask_admin.contrib.sqla import ModelView
+from flask_login import current_user
 from qsystem import db
 
 
 class SmartBoardConfig(ModelView):
-    create_modal = True
-    edit_modal = True
+    roles_allowed = ['SUPPORT']
+
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.role.role_code in self.roles_allowed
+
+    create_modal = False
+    edit_modal = False
     column_labels = {'sb_type': 'Smartboard Type'}
 
 

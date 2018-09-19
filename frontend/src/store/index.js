@@ -64,6 +64,7 @@ export const store = new Vuex.Store({
     },
     services: [],
     showAddModal: false,
+    showAdmin: false,
     showFeedbackModal: false,
     showGAScreenModal: false,
     showResponseModal: false,
@@ -471,6 +472,10 @@ export const store = new Vuex.Store({
       }).catch(() => {
         context.commit('setPerformingAction', false)
       })
+    },
+
+    clickAdmin(context) {
+      context.commit('toggleShowAdmin')
     },
 
     clickBeginService(context) {
@@ -1349,6 +1354,8 @@ export const store = new Vuex.Store({
     toggleFeedbackModal: (state, payload) => state.showFeedbackModal = payload,
 
     toggleAddNextService: (state, payload) => state.addNextService = payload,
+
+    toggleShowAdmin: (state) => state.showAdmin = !state.showAdmin,
 
     setFeedbackMessage: (state, payload) => state.feedbackMessage = payload,
 

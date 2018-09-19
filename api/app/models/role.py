@@ -27,7 +27,7 @@ class Role(Base):
     role_code = db.Column(db.String(100))
     role_desc = db.Column(db.String(1000))
 
-    roles = db.relationship('CSR', backref='role', lazy=False)
+    roles = db.relationship('CSR', lazy=False)
 
     def __repr__(self):
         return self.role_code

@@ -15,10 +15,16 @@ limitations under the License.'''
 
 from app.models import Channel
 from flask_admin.contrib.sqla import ModelView
+from flask_login import current_user
 from qsystem import db
 
 
 class ChannelConfig(ModelView):
+    roles_allowed = ['SUPPORT']
+
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.role.role_code in self.roles_allowed
+
     can_delete = False
     create_modal = True
     edit_modal = True

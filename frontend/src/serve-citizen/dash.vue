@@ -43,6 +43,11 @@ limitations under the License.*/
         <div>
           <b-button class="btn-primary"
                     style="margin-right: 20px"
+                    v-if="user.role && user.role.role_code=='GA'"
+                    @click="clickAdmin"
+                    id="click-feedback-button">Toggle Admin</b-button>
+          <b-button class="btn-primary"
+                    style="margin-right: 20px"
                     @click="clickGAScreen"
                     v-if="user.role && user.role.role_code=='GA'">Toggle GA Panel</b-button>
           <b-button class="btn-primary"
@@ -52,7 +57,7 @@ limitations under the License.*/
         </div>
       </div>
     </div>
-    <div style="display: flex; flex-direction: row; justify-content: space-between;">
+    <div style="display: flex; flex-direction: row; justify-content: space-between;" v-if="!showAdmin">
       <div style="width: 100%">
         <template v-if="reception && isLoggedIn">
           <div v-bind:style="{width:'100%', height: `${qLengthH}px`}" class="font-900-rem">
@@ -87,6 +92,12 @@ limitations under the License.*/
         <GAScreen />
       </div>
     </div>
+    <div v-if="showAdmin">
+      <iframe :src="iframeUrl"
+              width="100%"
+              frameborder="0"
+              height="500px" />
+    </div>
   </div>
   <div v-else-if="isLoggedIn">
     <div class="loader" style="margin-top: 250px"></div>
@@ -120,6 +131,7 @@ import ServeCitizen from './serve-citizen'
       this.$nextTick(function() {
         window.addEventListener('resize', this.getNewHeight)
       })
+      this.iframeUrl = process.env.SOCKET_URL + "/admin"
     },
 
     data() {
@@ -145,6 +157,7 @@ import ServeCitizen from './serve-citizen'
         'citizenInvited',
         'dismissCountDown',
         'performingAction',
+        'showAdmin',
         'showGAScreenModal',
         'showServiceModal',
         'serveNowStyle',
@@ -182,6 +195,7 @@ import ServeCitizen from './serve-citizen'
       ...mapActions([
         'clickInvite',
         'clickAddCitizen',
+        'clickAdmin',
         'clickServiceModalClose',
         'clickCitizenLeft',
         'clickGAScreen',

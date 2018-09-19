@@ -50,7 +50,7 @@ class LocalConfig(BaseConfig):
         name=DB_NAME
     )
 
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///db.sqlite3'
+    # SQLALCHEMY_DATABASE_URI = 'sqlite:///db.sqlite3'
 
     ACTIVE_MQ_URL = ''      #'amqp://guest:guest@localhost:5672'
     # ACTIVE_MQ_URL = 'amqp://guest:guest@localhost:5672'      #'amqp://guest:guest@localhost:5672'

@@ -15,12 +15,18 @@ limitations under the License.'''
 
 from app.models import Service
 from flask_admin.contrib.sqla import ModelView
+from flask_login import current_user
 from qsystem import db
 
 
 class ServiceConfig(ModelView):
-    create_modal = True
-    edit_modal = True
+    roles_allowed = ['ANALYTICS', 'SUPPORT']
+
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.role.role_code in self.roles_allowed
+
+    create_modal = False
+    edit_modal = False
     can_delete = False
     column_list = [
         'service_code',

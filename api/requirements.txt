@@ -1,6 +1,7 @@
 Flask
 Flask-Admin
 Flask-Cache
+Flask-Login
 Flask-Migrate
 Flask-Moment
 Flask-OIDC
