@@ -31,7 +31,7 @@ class Office(Base):
     deleted = db.Column(db.DateTime, nullable=True)
 
     services = db.relationship("Service", secondary='office_service')
-    csrs = db.relationship('CSR', backref='office')
+    csrs = db.relationship('CSR')
     citizens = db.relationship('Citizen', backref='office_citizens')
     sb = db.relationship('SmartBoard')
 

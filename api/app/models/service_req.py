@@ -15,9 +15,10 @@ limitations under the License.'''
 
 from qsystem import db
 from .base import Base 
-from app.models import Period, PeriodState, SRState
+from app.models import Period, PeriodState
 from datetime import datetime
 from ..snowplow.snowplow import SnowPlow
+
 
 class ServiceReq(Base):
 
@@ -57,7 +58,7 @@ class ServiceReq(Base):
         active_period.time_end = datetime.now()
         # db.session.add(active_period)
 
-        period_state_invite = PeriodState.query.filter_by(ps_name="Invited").first()
+        period_state_invite = PeriodState.get_state_by_name("Invited")
 
         new_period = Period(
             sr_id=self.sr_id,
@@ -77,7 +78,7 @@ class ServiceReq(Base):
         active_period.time_end = datetime.now()
         #db.session.add(active_period)
 
-        period_state_waiting = PeriodState.query.filter_by(ps_name="Waiting").first()
+        period_state_waiting = PeriodState.get_state_by_name("Waiting")
 
         new_period = Period(
             sr_id=self.sr_id,
@@ -99,7 +100,7 @@ class ServiceReq(Base):
         active_period.time_end = datetime.now()
         # db.session.add(active_period)
 
-        period_state_being_served = PeriodState.query.filter_by(ps_name="Being Served").first()
+        period_state_being_served = PeriodState.get_state_by_name("Being Served")
 
         new_period = Period(
             sr_id=self.sr_id,
@@ -120,7 +121,7 @@ class ServiceReq(Base):
         active_period.time_end = datetime.now()
         # db.session.add(active_period)
 
-        period_state_on_hold = PeriodState.query.filter_by(ps_name="On hold").first()
+        period_state_on_hold = PeriodState.get_state_by_name("On Hold")
 
         new_period = Period(
             sr_id=self.sr_id,

@@ -38,7 +38,7 @@ class ServiceRequestsDetail(Resource):
         if not json_data:
             return {'message': 'No input data received for updating citizen'}, 400
 
-        csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
+        csr = CSR.find_by_username(g.oidc_token_info['username'])
 
         service_request = ServiceReq.query.filter_by(sr_id=id) \
                 .join(ServiceReq.citizen, aliased=True) \
@@ -73,14 +73,14 @@ class ServiceRequestActivate(Resource):
     @api_call_with_retry
     def post(self, id):
 
-        csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
+        csr = CSR.find_by_username(g.oidc_token_info['username'])
 
         service_request = ServiceReq.query.filter_by(sr_id=id) \
             .join(ServiceReq.citizen, aliased=True) \
             .filter_by(office_id=csr.office_id).first_or_404()
 
-        active_service_state = SRState.query.filter_by(sr_code='Active').first()
-        complete_service_state = SRState.query.filter_by(sr_code='Complete').first()
+        active_service_state = SRState.get_state_by_name("Active")
+        complete_service_state = SRState.get_state_by_name("Complete")
 
         # Find the currently active service_request and close it
         for req in service_request.citizen.service_reqs:
@@ -92,7 +92,7 @@ class ServiceRequestActivate(Resource):
         # Then set the requested service to active
         service_request.sr_state_id = active_service_state.sr_state_id
 
-        period_state_being_served = PeriodState.query.filter_by(ps_name="Being Served").first()
+        period_state_being_served = PeriodState.get_state_by_name("Being Served")
 
         new_period = Period(
             sr_id=service_request.sr_id,

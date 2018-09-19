@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from qsystem import db
+from qsystem import db, cache
 from .base import Base
 
 
@@ -27,6 +27,7 @@ class CSR(Base):
     deleted = db.Column(db.DateTime, nullable=True)
     csr_state_id = db.Column(db.Integer, db.ForeignKey('csrstate.csr_state_id'), nullable=False)
 
+    office = db.relationship("Office", lazy='joined')
     periods = db.relationship("Period", primaryjoin="and_(CSR.csr_id==Period.csr_id,Period.time_end.is_(None))",
                               lazy='joined', order_by='desc(Period.time_start)')
 
@@ -35,3 +36,9 @@ class CSR(Base):
 
     def __init__(self, **kwargs):
         super(CSR, self).__init__(**kwargs)
+
+    @classmethod
+    @cache.memoize(timeout=300)
+    def find_by_username(cls, username):
+        csr = CSR.query.filter_by(username=username.split("idir/")[-1]).first()
+        return csr

@@ -32,9 +32,9 @@ class CitizenBeginService(Resource):
         lock = FileLock("lock/begin_citizen.lock")
 
         with lock:
-            csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
+            csr = CSR.find_by_username(g.oidc_token_info['username'])
             citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
-            pending_service_state = SRState.query.filter_by(sr_code='Active').first()
+            pending_service_state = SRState.get_state_by_name("Active")
 
             active_service_request = citizen.get_active_service_request()
 
