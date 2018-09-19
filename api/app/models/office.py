@@ -36,7 +36,7 @@ class Office(Base):
     sb = db.relationship('SmartBoard')
 
     def __repr__(self):
-        return '<Office Name:(name={self.office_name!r})>'.format(self=self)
+        return self.office_name
 
     def __init__(self, **kwargs):
         super(Office, self).__init__(**kwargs)

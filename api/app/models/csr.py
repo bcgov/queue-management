@@ -32,7 +32,7 @@ class CSR(Base):
                               lazy='joined', order_by='desc(Period.time_start)')
 
     def __repr__(self):
-        return '<CSR Username:(name={self.username!r})>'.format(self=self)
+        return self.username
 
     def __init__(self, **kwargs):
         super(CSR, self).__init__(**kwargs)

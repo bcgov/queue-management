@@ -13,17 +13,9 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 
-from qsystem import db
-from .base import Base
-
-
-class SmartBoard(Base):
-
-    sb_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    sb_type = db.Column(db.String(45), nullable=False)
-
-    def __repr__(self):
-        return self.sb_type
-
-    def __init__(self, **kwargs):
-        super(SmartBoard, self).__init__(**kwargs)
+from .channel import ChannelModelView
+from .csr import CSRModelView
+from .office import OfficeModelView
+from .role import RoleModelView
+from .service import ServiceModelView
+from .smartboard import SmartBoardModelView
