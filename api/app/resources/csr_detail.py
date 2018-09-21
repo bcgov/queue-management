@@ -34,7 +34,7 @@ class Services(Resource):
         if not json_data:
             return {'message': 'No input data received for updating CSR'}, 400
 
-        auth_csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
+        auth_csr = CSR.find_by_username(g.oidc_token_info['username'])
         edit_csr = CSR.query.filter_by(csr_id=id).first_or_404()
 
         if auth_csr.csr_id != edit_csr.csr_id:

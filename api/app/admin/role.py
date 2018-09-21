@@ -13,17 +13,24 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 
+from app.models import Role
+from flask_admin.contrib.sqla import ModelView
+from flask_login import current_user
 from qsystem import db
-from .base import Base
 
 
-class SmartBoard(Base):
+class RoleConfig(ModelView):
+    roles_allowed = ['SUPPORT']
 
-    sb_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    sb_type = db.Column(db.String(45), nullable=False)
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.role.role_code in self.roles_allowed
 
-    def __repr__(self):
-        return self.sb_type
+    create_modal = False
+    edit_modal = False
+    form_excluded_columns = ('roles',)
+    column_labels = {'role_desc': 'Role Description'}
+    form_create_rules = ('role_code', 'role_desc')
+    form_edit_rules = ('role_code', 'role_desc')
 
-    def __init__(self, **kwargs):
-        super(SmartBoard, self).__init__(**kwargs)
+
+RoleModelView = RoleConfig(Role, db.session)

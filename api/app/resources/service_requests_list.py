@@ -35,7 +35,7 @@ class ServiceRequestsList(Resource):
         if not json_data:
             return {"message": "No input data received for creating service request"}, 400
 
-        csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
+        csr = CSR.find_by_username(g.oidc_token_info['username'])
 
         try:
             service_request = self.service_request_schema.load(json_data['service_request']).data
@@ -46,8 +46,8 @@ class ServiceRequestsList(Resource):
             print (err)
             return {"message": str(err)}
 
-        active_sr_state = SRState.query.filter_by(sr_code='Active').first()
-        complete_sr_state = SRState.query.filter_by(sr_code='Complete').first()
+        active_sr_state = SRState.get_state_by_name("Active")
+        complete_sr_state = SRState.get_state_by_name("Complete")
         citizen_state = CitizenState.query.filter_by(cs_state_name="Active").first()
         citizen = Citizen.query.get(service_request.citizen_id)
         service = Service.query.get(service_request.service_id)
@@ -65,11 +65,11 @@ class ServiceRequestsList(Resource):
                 req.finish_service(csr, clear_comments=False)
                 db.session.add(req)
 
-        service_request.sr_state = active_sr_state
+        service_request.sr_state_id = active_sr_state.sr_state_id
 
         # Only add ticket creation period and ticket number if it's their first service_request
         if len(citizen.service_reqs) == 0:
-            period_state_ticket_creation = PeriodState.query.filter_by(ps_name="Ticket Creation").first()
+            period_state_ticket_creation = PeriodState.get_state_by_name("Ticket Creation")
 
             ticket_create_period = Period(
                 csr_id=csr.csr_id,
@@ -94,7 +94,7 @@ class ServiceRequestsList(Resource):
 
             citizen.ticket_number = service.prefix + str(service_count)
         else:
-            period_state_being_served = PeriodState.query.filter_by(ps_name="Being Served").first()
+            period_state_being_served = PeriodState.get_state_by_name("Being Served")
 
             ticket_create_period = Period(
                 csr_id=csr.csr_id,
@@ -112,7 +112,7 @@ class ServiceRequestsList(Resource):
 
         #  See whether first service, or next service.
         snowplow_event = "additionalservice"
-        if ((len(citizen.service_reqs) == 1)):
+        if len(citizen.service_reqs) == 1:
             snowplow_event = "chooseservice"
         SnowPlow.choose_service(service_request, csr, snowplow_event)
 

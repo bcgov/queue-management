@@ -5,9 +5,11 @@ import traceback
 
 from config import configure_app
 from flask import Flask
+from flask_admin import Admin
 from flask_caching import Cache
 from flask_compress import Compress
 from flask_cors import CORS
+from flask_login import LoginManager
 from flask_marshmallow import Marshmallow
 from flask_restplus import Api
 from flask_sqlalchemy import SQLAlchemy
@@ -53,6 +55,23 @@ api = Api(application, prefix='/api/v1', doc='/api/v1/')
 from app.patches.flask_oidc_patched import OpenIDConnect
 oidc = OpenIDConnect(application)
 
+from app import admin
+
+flask_admin = Admin(application, name='Admin Console', template_mode='bootstrap3')
+
+flask_admin.add_view(admin.ChannelModelView)
+flask_admin.add_view(admin.CSRModelView)
+flask_admin.add_view(admin.OfficeModelView)
+flask_admin.add_view(admin.RoleModelView)
+flask_admin.add_view(admin.ServiceModelView)
+flask_admin.add_view(admin.SmartBoardModelView)
+flask_admin.add_link(admin.LoginMenuLink(name='Login', category='', url="/api/v1/login/"))
+flask_admin.add_link(admin.LogoutMenuLink(name='Logout', category='', url="/api/v1/logout/"))
+
+login_manager = LoginManager()
+login_manager.init_app(application)
+from app import auth
+
 compress = Compress()
 compress.init_app(application)
 
@@ -93,6 +112,7 @@ import app.resources.citizen.citizen_specific_invite
 import app.resources.csrs
 import app.resources.csr_detail
 import app.resources.health
+import app.resources.login
 import app.resources.services
 import app.resources.service_requests_list
 import app.resources.service_requests_detail
@@ -100,7 +120,7 @@ import app.resources.slack
 import app.resources.smartboard
 import app.resources.websocket
 
-# Hostname for debug puposes
+# Hostname for debug purposes
 hostname = socket.gethostname()
 
 

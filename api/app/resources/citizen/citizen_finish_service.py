@@ -28,7 +28,7 @@ class CitizenFinishService(Resource):
     @oidc.accept_token(require_token=True)
     @api_call_with_retry
     def post(self, id):
-        csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
+        csr = CSR.find_by_username(g.oidc_token_info['username'])
         citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
         active_service_request = citizen.get_active_service_request()
 
@@ -40,7 +40,7 @@ class CitizenFinishService(Resource):
         citizen_state = CitizenState.query.filter_by(cs_state_name="Received Services").first()
         citizen.cs_id = citizen_state.cs_id
 
-        pending_service_state = SRState.query.filter_by(sr_code='Complete').first()
+        pending_service_state = SRState.get_state_by_name("Complete")
         active_service_request.sr_state_id = pending_service_state.sr_state_id
 
         db.session.add(citizen)

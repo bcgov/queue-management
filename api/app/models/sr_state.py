@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 from .base import Base
-from qsystem import db
+from qsystem import db, cache
 
 
 class SRState(Base):
@@ -27,3 +27,9 @@ class SRState(Base):
 
     def __init__(self, **kwargs):
         super(SRState, self).__init__(**kwargs)
+
+    @classmethod
+    @cache.memoize(timeout=300)
+    def get_state_by_name(cls, sr_code):
+        state = SRState.query.filter_by(sr_code=sr_code).first()
+        return state

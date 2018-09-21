@@ -22,7 +22,7 @@ class Channel(Base):
     channel_name = db.Column(db.String(100), nullable=False)
 
     def __repr__(self):
-        return '<Channel Name:(name={self.channel_name!r})>'.format(self=self)
+        return self.channel_name
 
     def __init__(self, **kwargs):
         super(Channel, self).__init__(**kwargs)

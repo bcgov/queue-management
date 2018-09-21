@@ -11,6 +11,7 @@ config = {
     "default": "config.LocalConfig"
 }
 
+
 class BaseConfig(object):
     PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
     SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -40,7 +41,6 @@ class LocalConfig(BaseConfig):
     DB_HOST = os.getenv('DATABASE_HOST','')
     DB_PORT = os.getenv('DATABASE_PORT','')
 
-    # SQLALCHEMY_DATABASE_URI = 'sqlite:///db.sqlite3'
     SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}'.format(
         engine=DB_ENGINE,
         user=DB_USER,
@@ -49,6 +49,9 @@ class LocalConfig(BaseConfig):
         port=DB_PORT,
         name=DB_NAME
     )
+
+    # SQLALCHEMY_DATABASE_URI = 'sqlite:///db.sqlite3'
+
     ACTIVE_MQ_URL = ''      #'amqp://guest:guest@localhost:5672'
     # ACTIVE_MQ_URL = 'amqp://guest:guest@localhost:5672'      #'amqp://guest:guest@localhost:5672'
     # 	In config.py: ACTIVE_MQ_URL = 'amqp://guest:guest@localhost:5672'
@@ -57,6 +60,7 @@ class LocalConfig(BaseConfig):
     SQLALCHEMY_ECHO = False
     SLACK_URL = os.getenv('SLACK_URL')
     SECRET_KEY = "pancakes"
+
 
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
@@ -68,7 +72,7 @@ class DevelopmentConfig(BaseConfig):
     REMEMBER_COOKIE_DURATION = 86400
     USE_HTTPS = True
 
-    CORS_ALLOWED_ORIGINS = [""]
+    CORS_ALLOWED_ORIGINS = ["https://" + SESSION_COOKIE_DOMAIN]
 
     ACTIVE_MQ_USER = os.getenv('ACTIVE_MQ_USER', '')
     ACTIVE_MQ_PASSWORD = os.getenv('ACTIVE_MQ_PASSWORD', '')
@@ -102,6 +106,7 @@ class DevelopmentConfig(BaseConfig):
         SQLALCHEMY_ECHO=True
     else:
         SQLALCHEMY_ECHO=False
+
 
 class TestConfig(BaseConfig):
     DEBUG = True
@@ -113,7 +118,7 @@ class TestConfig(BaseConfig):
     REMEMBER_COOKIE_DURATION = 86400
     USE_HTTPS = True
 
-    CORS_ALLOWED_ORIGINS = [""]
+    CORS_ALLOWED_ORIGINS = ["https://" + SESSION_COOKIE_DOMAIN]
 
     ACTIVE_MQ_USER = os.getenv('ACTIVE_MQ_USER', '')
     ACTIVE_MQ_PASSWORD = os.getenv('ACTIVE_MQ_PASSWORD', '')
@@ -147,6 +152,7 @@ class TestConfig(BaseConfig):
         SQLALCHEMY_ECHO=True
     else:
         SQLALCHEMY_ECHO=False
+
 
 class ProductionConfig(BaseConfig):
     DEBUG = True
@@ -158,7 +164,7 @@ class ProductionConfig(BaseConfig):
     REMEMBER_COOKIE_DURATION = 86400
     USE_HTTPS = True
 
-    CORS_ALLOWED_ORIGINS = [""]
+    CORS_ALLOWED_ORIGINS = ["https://" + SESSION_COOKIE_DOMAIN]
 
     ACTIVE_MQ_USER = os.getenv('ACTIVE_MQ_USER', '')
     ACTIVE_MQ_PASSWORD = os.getenv('ACTIVE_MQ_PASSWORD', '')
@@ -192,6 +198,7 @@ class ProductionConfig(BaseConfig):
         SQLALCHEMY_ECHO=True
     else:
         SQLALCHEMY_ECHO=False
+
 
 def configure_app(app):
     config_name = os.getenv('FLASK_CONFIGURATION', 'default')

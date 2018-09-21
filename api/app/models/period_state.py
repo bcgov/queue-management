@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from qsystem import db
+from qsystem import db, cache
 from .base import Base
 
 
@@ -28,3 +28,9 @@ class PeriodState(Base):
 
     def __init__(self, **kwargs):
         super(PeriodState, self).__init__(**kwargs)
+
+    @classmethod
+    @cache.memoize(timeout=300)
+    def get_state_by_name(cls, period_name):
+        state = PeriodState.query.filter_by(ps_name=period_name).first()
+        return state

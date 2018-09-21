@@ -36,7 +36,7 @@ class Service(Base):
     parent = db.relationship("Service", remote_side=[service_id])
 
     def __repr__(self):
-        return '<Service Name:(name={self.service_name!r})>'.format(self=self)
+        return self.service_name
 
     def __init__(self, **kwargs):
         super(Service, self).__init__(**kwargs)

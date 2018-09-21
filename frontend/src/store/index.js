@@ -64,6 +64,7 @@ export const store = new Vuex.Store({
     },
     services: [],
     showAddModal: false,
+    showAdmin: false,
     showFeedbackModal: false,
     showGAScreenModal: false,
     showResponseModal: false,
@@ -87,11 +88,12 @@ export const store = new Vuex.Store({
 
   getters: {
     reception(state) {
-      if (state.user.office && state.user.office.sb)
+      if (state.user.office && state.user.office.sb) {
         if (state.user.office.sb.sb_type === "callbyname" || state.user.office.sb.sb_type === "callbyticket") {
           return true
         }
         return false
+      }
     },
 
     active_index(state, getters) {
@@ -470,6 +472,10 @@ export const store = new Vuex.Store({
       }).catch(() => {
         context.commit('setPerformingAction', false)
       })
+    },
+
+    clickAdmin(context) {
+      context.commit('toggleShowAdmin')
     },
 
     clickBeginService(context) {
@@ -1016,10 +1022,9 @@ export const store = new Vuex.Store({
     },
 
     putServiceRequest(context) {
-      let { citizen_id, activeQuantity } = context.state.serviceModalForm
+      let { activeQuantity } = context.state.serviceModalForm
       let compareService = context.getters.active_service
       let { sr_id } = compareService
-      let index = context.getters.active_index
 
       let data = {}
       if (activeQuantity != compareService.quantity) {
@@ -1349,6 +1354,8 @@ export const store = new Vuex.Store({
     toggleFeedbackModal: (state, payload) => state.showFeedbackModal = payload,
 
     toggleAddNextService: (state, payload) => state.addNextService = payload,
+
+    toggleShowAdmin: (state) => state.showAdmin = !state.showAdmin,
 
     setFeedbackMessage: (state, payload) => state.feedbackMessage = payload,
 
