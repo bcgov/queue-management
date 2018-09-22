@@ -45,7 +45,7 @@ class ServiceReq(Base):
 
     def invite(self, csr, snowplow_event="use_period"):
         active_period = self.get_active_period()
-        if active_period.ps.ps_name in ["Invited", "Being Served", "On Hold"]:
+        if active_period.ps.ps_name in ["Invited", "Being Served", "On hold"]:
             raise TypeError("You cannot invite a citizen that has already been invited")
 
         #  Calculate what Snowplow event to call.
@@ -121,7 +121,7 @@ class ServiceReq(Base):
         active_period.time_end = datetime.now()
         # db.session.add(active_period)
 
-        period_state_on_hold = PeriodState.get_state_by_name("On Hold")
+        period_state_on_hold = PeriodState.get_state_by_name("On hold")
 
         new_period = Period(
             sr_id=self.sr_id,
