@@ -23,7 +23,7 @@ from app.schemas import CitizenSchema, CSRSchema
 @api.route("/csrs/", methods=["GET"])
 class CsrList(Resource):
 
-    csr_schema = CSRSchema(many=True)
+    csr_schema = CSRSchema(many=True, exclude=('office', 'periods',))
 
     @oidc.accept_token(require_token=True)
     def get(self):

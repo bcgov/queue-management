@@ -287,34 +287,7 @@ export const store = new Vuex.Store({
     getCsrs(context) {
       Axios(context).get('/csrs/')
       .then( resp => {
-        let csrs = []
-        let currentDate = new Date()
-        resp.data.csrs.forEach(csr => {
-          if (csr.periods.length > 0 && csr.periods[0].ps.ps_name === "Being Served") {
-            let firstServedPeriod = csr.periods.filter(p => p.ps.ps_name === "Being Served")[0]
-            let citizenStartDate = new Date(firstServedPeriod.sr.citizen.start_time)
-            let firstServedPeriodDate = new Date(firstServedPeriod.time_start)
-
-            let waitSeconds = (firstServedPeriodDate - citizenStartDate) / 1000
-            let serveSeconds = (currentDate - firstServedPeriodDate) / 1000
-
-            let waitDate = new Date(null)
-            waitDate.setSeconds(waitSeconds)
-
-            let serveDate = new Date(null)
-            serveDate.setSeconds(serveSeconds)
-
-            csr['wait_time'] = `${waitDate.getUTCHours()}h ${waitDate.getMinutes()}min`
-            csr['serving_time'] = `${serveDate.getUTCHours()}h ${serveDate.getMinutes()}min`
-          } else {
-            csr['periods'] = []
-            csr['wait_time'] = null
-            csr['serving_time'] = null
-          }
-
-          csrs.push(csr)
-        })
-        context.commit('setCsrs', csrs)
+        context.commit('setCsrs', resp.data.csrs)
       })
       .catch(error => {
         console.log('error @ store.actions.getCsrs')
