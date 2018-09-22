@@ -1314,7 +1314,7 @@ export const store = new Vuex.Store({
     updateCitizen(state, payload) {
       const index = state.citizens.map(c => c.citizen_id).indexOf(payload.citizen_id);
 
-      if (index && index >= 0) {
+      if (index >= 0) {
         Vue.set(state.citizens, index, payload)
       }
     },

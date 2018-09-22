@@ -210,7 +210,6 @@ export default {
       this.toggleFeedbackModal(true)
     },
     toggleMinimize() {
-      console.log(this.minimizeWindow)
       this.minimizeWindow = !this.minimizeWindow
     },
     flashButton() {
