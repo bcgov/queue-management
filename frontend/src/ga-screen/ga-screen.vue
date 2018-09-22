@@ -36,7 +36,7 @@ limitations under the License.*/
     </div>
     <b-table small
              head-variant="light"
-             :items="csrs"
+             :items="this.computed_csrs()"
              :fields="fields"
              outlined
              class="p-0 m-0 w-100">
@@ -55,13 +55,7 @@ export default {
   name: 'GAScreen',
 
   mounted() {
-    this.timer = setInterval(() => {
-      this.refresh_board()
-    }, 5000)
-  },
-
-  beforeDestroy() {
-    clearInterval(this.timer);
+    this.fetch_csrs()
   },
 
   data() {
@@ -73,7 +67,7 @@ export default {
           sortable: true
         },
         {
-          key: 'periods[0].sr.service.service_name',
+          key: 'citizen.service_reqs[0].service.service_name',
           label: 'Service',
           sortable: true
         },
@@ -88,7 +82,7 @@ export default {
           sortable: true,
         },
         {
-          key: 'periods[0].sr.citizen.citizen_comments',
+          key: 'citizen.citizen_comments',
           label: 'Comments',
           sortable: true,
           formatter: (value) => { return value }
@@ -98,7 +92,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['showGAScreenModal', 'csrs']),
+    ...mapState(['showGAScreenModal', 'csrs', 'citizens']),
     ...mapGetters(['citizens_queue', 'on_hold_queue', 'reception'])
   },
   methods: {
@@ -110,14 +104,75 @@ export default {
       return this.on_hold_queue.length
     },
     ga_total_csrs() {
-      let allCsrs = this.csrs;
-      return allCsrs.length
+      return this.csrs.length
     },
     ga_serving_csrs() {
-      let allCsrs = this.csrs.filter(c => c.periods.length > 0 && c.periods[0].ps.ps_name === "Being Served");
-      return allCsrs.length
+      let serving_csrs = []
+      this.citizens.forEach(c => {
+        c.service_reqs.forEach(sr => {
+          sr.periods.forEach(p => {
+            if (p.time_end === null) {
+              if (p.ps.ps_name === 'Invited' || p.ps.ps_name === 'Being Served') {
+                if (serving_csrs.indexOf(p.csr_id) === -1) {
+                  serving_csrs.push(p.csr_id)
+                }
+              }
+            }
+          })
+        })
+      })
+      return serving_csrs.length
     },
-    refresh_board() {
+    get_citizen_for_csr(csr) {
+      for(let i = 0; i < this.citizens.length; i++) {
+        for(let j = 0; j < this.citizens[i].service_reqs.length; j++) {
+          let activePeriod = this.citizens[i].service_reqs[j].periods.filter(p => p.time_end === null)[0]
+
+          if (activePeriod.ps.ps_name === 'Being Served' && activePeriod.csr_id === csr.csr_id) {
+            return this.citizens[i]
+          }
+        }
+      }
+
+      return null
+    },
+    computed_csrs() {
+      let computed_csrs = []
+      let currentDate = new Date()
+      this.csrs.forEach(csr => {
+        let activeCitizen = this.get_citizen_for_csr(csr)
+
+        if (activeCitizen === null) {
+          csr['wait_time'] = null
+          csr['serving_time'] = null
+          computed_csrs.push(csr)
+        } else {
+          let firstServedPeriod = activeCitizen.service_reqs[0].periods.filter(p => p.ps.ps_name === "Being Served")[0]
+          let citizenStartDate = new Date(activeCitizen.start_time)
+          let firstServedPeriodDate = new Date(firstServedPeriod.time_start)
+
+          let waitSeconds = (firstServedPeriodDate - citizenStartDate) / 1000
+          let serveSeconds = (currentDate - firstServedPeriodDate) / 1000
+
+          let waitDate = new Date(null)
+          waitDate.setSeconds(waitSeconds)
+
+          let serveDate = new Date(null)
+          serveDate.setSeconds(serveSeconds)
+
+          csr['wait_time'] = `${waitDate.getUTCHours()}h ${waitDate.getMinutes()}min`
+          csr['serving_time'] = `${serveDate.getUTCHours()}h ${serveDate.getMinutes()}min`
+          csr['citizen'] = activeCitizen
+          console.log(csr)
+          console.log(csr.citizen)
+          console.log(csr.citizen.service_reqs)
+          computed_csrs.push(csr)
+        }
+      })
+
+      return computed_csrs
+    },
+    fetch_csrs() {
       this.getCsrs()
     }
   }
