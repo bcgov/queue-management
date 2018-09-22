@@ -43,7 +43,7 @@ limitations under the License.*/
         <div>
           <b-button class="btn-primary"
                     style="margin-right: 20px"
-                    v-if="user.role && user.role.role_code=='GA'"
+                    v-if="user.role && (['ANALYTICS', 'GA', 'HELPDESK', 'SUPPORT'].indexOf(user.role.role_code) >= 0)"
                     @click="clickAdmin"
                     id="click-feedback-button">Toggle Admin</b-button>
           <b-button class="btn-primary"
