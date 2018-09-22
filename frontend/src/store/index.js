@@ -285,15 +285,18 @@ export const store = new Vuex.Store({
     },
 
     getCsrs(context) {
-      Axios(context).get('/csrs/')
-      .then( resp => {
-        context.commit('setCsrs', resp.data.csrs)
-      })
-      .catch(error => {
-        console.log('error @ store.actions.getCsrs')
-        console.log(error.response)
-        console.log(error.message)
-      })
+      //We only need to get the CSRs once
+      if (context.state.csrs === null || context.state.csrs.length === 0) {
+        Axios(context).get('/csrs/')
+        .then( resp => {
+          context.commit('setCsrs', resp.data.csrs)
+        })
+        .catch(error => {
+          console.log('error @ store.actions.getCsrs')
+          console.log(error.response)
+          console.log(error.message)
+        })
+      }
     },
 
     getServices(context) {
@@ -1117,6 +1120,8 @@ export const store = new Vuex.Store({
           }
         }
       }
+
+      context.commit('updateCitizen', citizen)
     },
 
     setAddModalData(context) {
@@ -1304,6 +1309,14 @@ export const store = new Vuex.Store({
     setCsrs(state, payload) {
       state.csrs = []
       state.csrs = payload
+    },
+
+    updateCitizen(state, payload) {
+      const index = state.citizens.map(c => c.citizen_id).indexOf(payload.citizen_id);
+
+      if (index && index >= 0) {
+        Vue.set(state.citizens, index, payload)
+      }
     },
 
     dismissCountDown(state, payload) {

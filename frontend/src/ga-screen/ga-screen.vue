@@ -54,10 +54,6 @@ from 'vuex'
 export default {
   name: 'GAScreen',
 
-  mounted() {
-    this.fetch_csrs()
-  },
-
   data() {
     return {
       fields: [
@@ -128,6 +124,10 @@ export default {
         for(let j = 0; j < this.citizens[i].service_reqs.length; j++) {
           let activePeriod = this.citizens[i].service_reqs[j].periods.filter(p => p.time_end === null)[0]
 
+          if (!activePeriod) {
+            return null
+          }
+
           if (activePeriod.ps.ps_name === 'Being Served' && activePeriod.csr_id === csr.csr_id) {
             return this.citizens[i]
           }
@@ -145,6 +145,7 @@ export default {
         if (activeCitizen === null) {
           csr['wait_time'] = null
           csr['serving_time'] = null
+          csr['citizen'] = null
           computed_csrs.push(csr)
         } else {
           let firstServedPeriod = activeCitizen.service_reqs[0].periods.filter(p => p.ps.ps_name === "Being Served")[0]
@@ -163,9 +164,6 @@ export default {
           csr['wait_time'] = `${waitDate.getUTCHours()}h ${waitDate.getMinutes()}min`
           csr['serving_time'] = `${serveDate.getUTCHours()}h ${serveDate.getMinutes()}min`
           csr['citizen'] = activeCitizen
-          console.log(csr)
-          console.log(csr.citizen)
-          console.log(csr.citizen.service_reqs)
           computed_csrs.push(csr)
         }
       })

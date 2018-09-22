@@ -131,7 +131,7 @@ import ServeCitizen from './serve-citizen'
       this.$nextTick(function() {
         window.addEventListener('resize', this.getNewHeight)
       })
-      this.iframeUrl = process.env.SOCKET_URL + "/admin"
+      this.iframeUrl = process.env.SOCKET_URL + "/admin/"
     },
 
     data() {
