@@ -47,7 +47,7 @@ class Login(Resource):
                 csr.is_anonymous = False
 
                 login_user(csr)
-                return redirect("/admin")
+                return redirect("/admin/")
             else:
                 return abort(401, self.auth_string)
         else:
@@ -60,4 +60,4 @@ class Logout(Resource):
 
     def get(self):
         logout_user()
-        return redirect("/admin")
+        return redirect("/admin/")
