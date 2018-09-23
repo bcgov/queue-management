@@ -69,6 +69,7 @@ class DevelopmentConfig(BaseConfig):
     SESSION_COOKIE_DOMAIN = 'dev-theq.pathfinder.gov.bc.ca'
     REMEMBER_COOKIE_DURATION = 86400
     USE_HTTPS = True
+    PREFERRED_URL_SCHEME = 'https'
 
     CORS_ALLOWED_ORIGINS = ["https://" + SESSION_COOKIE_DOMAIN]
 
@@ -115,6 +116,7 @@ class TestConfig(BaseConfig):
     SESSION_COOKIE_DOMAIN = 'test-theq.pathfinder.gov.bc.ca'
     REMEMBER_COOKIE_DURATION = 86400
     USE_HTTPS = True
+    PREFERRED_URL_SCHEME = 'https'
 
     CORS_ALLOWED_ORIGINS = ["https://" + SESSION_COOKIE_DOMAIN]
 
@@ -161,6 +163,7 @@ class ProductionConfig(BaseConfig):
     SESSION_COOKIE_DOMAIN = 'theq.pathfinder.gov.bc.ca'
     REMEMBER_COOKIE_DURATION = 86400
     USE_HTTPS = True
+    PREFERRED_URL_SCHEME = 'https'
 
     CORS_ALLOWED_ORIGINS = ["https://" + SESSION_COOKIE_DOMAIN]
 
