@@ -124,11 +124,7 @@ export default {
         for(let j = 0; j < this.citizens[i].service_reqs.length; j++) {
           let activePeriod = this.citizens[i].service_reqs[j].periods.filter(p => p.time_end === null)[0]
 
-          if (!activePeriod) {
-            return null
-          }
-
-          if (activePeriod.ps.ps_name === 'Being Served' && activePeriod.csr_id === csr.csr_id) {
+          if (activePeriod && activePeriod.ps.ps_name === 'Being Served' && activePeriod.csr_id === csr.csr_id) {
             return this.citizens[i]
           }
         }

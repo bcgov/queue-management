@@ -1124,7 +1124,19 @@ export const store = new Vuex.Store({
         }
       }
 
-      context.commit('updateCitizen', citizen)
+      const index = context.state.citizens.map(c => c.citizen_id).indexOf(citizen.citizen_id);
+
+      if (index >= 0) {
+        console.log("updating citizen")
+        context.commit('updateCitizen', {citizen, index})
+      } else {
+        if (citizen.service_reqs && citizen.service_reqs.length > 0) {
+          if (citizen.service_reqs[0].periods && citizen.service_reqs[0].periods.length > 0) {
+            console.log("Adding citizen")
+            context.commit('addCitizen', citizen)
+          }
+        }
+      }
     },
 
     setAddModalData(context) {
@@ -1315,11 +1327,11 @@ export const store = new Vuex.Store({
     },
 
     updateCitizen(state, payload) {
-      const index = state.citizens.map(c => c.citizen_id).indexOf(payload.citizen_id);
+      Vue.set(state.citizens, payload.index, payload.citizen)
+    },
 
-      if (index >= 0) {
-        Vue.set(state.citizens, index, payload)
-      }
+    addCitizen(state, citizen) {
+      state.citizens.push(citizen)
     },
 
     dismissCountDown(state, payload) {
