@@ -47,6 +47,7 @@ class CSRConfig(ModelView):
         'role.role_desc': 'Role',
         'deleted': 'Deleted'
     }
+    column_searchable_list = ('username',)
     column_sortable_list = ('username', 'office.office_name', 'role.role_desc', 'deleted')
     column_default_sort = 'username'
     form_args = {

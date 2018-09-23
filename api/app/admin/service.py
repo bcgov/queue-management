@@ -42,6 +42,7 @@ class ServiceConfig(ModelView):
         'service_desc': 'Description',
         'deleted': 'Deleted'
     }
+    column_searchable_list = ('service_code','service_name',)
     column_sortable_list = [
         'service_code',
         'service_name',
