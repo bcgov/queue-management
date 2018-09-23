@@ -29,7 +29,6 @@ class CSRConfig(ModelView):
     roles_allowed = ['GA', 'HELPDESK', 'SUPPORT']
 
     def is_accessible(self):
-        print (current_user.role.role_code)
         return current_user.is_authenticated and current_user.role.role_code in self.roles_allowed
 
     create_modal = False
