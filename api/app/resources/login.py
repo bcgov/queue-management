@@ -36,7 +36,7 @@ class Login(Resource):
         claims = jwt.get_unverified_claims(cookie)
 
         if claims["preferred_username"]:
-            csr = CSR.query.filter_by(username=claims["preferred_username"].split("idir/")[-1]).first()
+            csr = CSR.find_by_username(claims["preferred_username"])
             if csr:
                 if csr.deleted is None:
                     csr.is_active = True

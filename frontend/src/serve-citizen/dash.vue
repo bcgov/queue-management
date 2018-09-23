@@ -99,7 +99,7 @@ limitations under the License.*/
               height="500px" />
     </div>
   </div>
-  <div v-else-if="isLoggedIn">
+  <div v-else-if="isLoggedIn && !userLoadingFail">
     <div class="loader" style="margin-top: 250px"></div>
   </div>
 </template>
@@ -161,7 +161,8 @@ import ServeCitizen from './serve-citizen'
         'showGAScreenModal',
         'showServiceModal',
         'serveNowStyle',
-        'user'
+        'user',
+        'userLoadingFail'
       ]),
       fullHoldH() {
         return this.totalH - this.qLengthH - this.buttonH - 16

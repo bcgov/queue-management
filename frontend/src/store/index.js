@@ -84,6 +84,7 @@ export const store = new Vuex.Store({
       qt_xn_csr_ind: true,
       receptionist_ind: null
     },
+    userLoadingFail: false
   },
 
   getters: {
@@ -235,7 +236,9 @@ export const store = new Vuex.Store({
     logIn(context, payload) {
       context.commit('setBearer', payload)
       context.commit('logIn')
-      context.dispatch('getUser')
+      context.dispatch('getUser').catch(() => {
+        context.commit('setUserLoadingFail', true)
+      })
     },
 
     getAllCitizens(context) {
@@ -1346,6 +1349,8 @@ export const store = new Vuex.Store({
     setFeedbackMessage: (state, payload) => state.feedbackMessage = payload,
 
     setPerformingAction: (state, payload) => state.performingAction = payload,
+
+    setUserLoadingFail: (state, payload) => state.userLoadingFail = payload,
 
     showHideResponseModal(state) {
       state.showResponseModal = true

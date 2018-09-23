@@ -41,7 +41,7 @@ class CSR(Base):
     @classmethod
     @cache.memoize(timeout=300)
     def find_by_username(cls, username):
-        csr = CSR.query.filter_by(username=username.split("idir/")[-1]).first()
+        csr = CSR.query.filter(CSR.deleted.is_(None)).filter_by(username=username.split("idir/")[-1]).first()
         return csr
 
     def get_id(self):
