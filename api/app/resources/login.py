@@ -12,13 +12,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask import abort, config, redirect, request, url_for
+from flask import abort, redirect, request, url_for
 from flask_login import login_user, logout_user
 from flask_restplus import Resource
 from jose import jwt
 
 from app.models import CSR
-from qsystem import api, oidc
+from qsystem import api, application, oidc
 
 
 @api.route("/login/", methods=["GET"])
@@ -47,9 +47,12 @@ class Login(Resource):
                 csr.is_anonymous = False
 
                 login_user(csr)
-                return redirect(url_for("admin.index",
-                                        _scheme=config['PREFERRED_URL_SCHEME'],
-                                        _external=config['USE_HTTPS']))
+                if application.config['USE_HTTPS']:
+                    return redirect(url_for("admin.index",
+                                            _scheme=application.config['PREFERRED_URL_SCHEME'],
+                                            _external=application.config['USE_HTTPS']))
+                else:
+                    return redirect(url_for("admin.index"))
             else:
                 return abort(401, self.auth_string)
         else:
@@ -62,6 +65,9 @@ class Logout(Resource):
 
     def get(self):
         logout_user()
-        return redirect(url_for("admin.index",
-                        _scheme=config['PREFERRED_URL_SCHEME'],
-                        _external=config['USE_HTTPS']))
+        if application.config['USE_HTTPS']:
+            return redirect(url_for("admin.index",
+                            _scheme=application.config['PREFERRED_URL_SCHEME'],
+                            _external=application.config['USE_HTTPS']))
+        else:
+            return redirect(url_for("admin.index"))

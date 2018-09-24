@@ -65,6 +65,7 @@ flask_admin.add_view(admin.OfficeModelView)
 flask_admin.add_view(admin.RoleModelView)
 flask_admin.add_view(admin.ServiceModelView)
 flask_admin.add_view(admin.SmartBoardModelView)
+flask_admin.add_link(admin.LoginMenuLink(name='Login', category='', url="/api/v1/login/"))
 flask_admin.add_link(admin.LogoutMenuLink(name='Logout', category='', url="/api/v1/logout/"))
 
 login_manager = LoginManager()
