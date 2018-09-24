@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask import abort, redirect, request
+from flask import abort, config, redirect, request, url_for
 from flask_login import login_user, logout_user
 from flask_restplus import Resource
 from jose import jwt
@@ -47,7 +47,9 @@ class Login(Resource):
                 csr.is_anonymous = False
 
                 login_user(csr)
-                return redirect("/admin/")
+                return redirect(url_for("admin.index",
+                                        _scheme=config['PREFERRED_URL_SCHEME'],
+                                        _external=config['USE_HTTPS']))
             else:
                 return abort(401, self.auth_string)
         else:
@@ -60,4 +62,6 @@ class Logout(Resource):
 
     def get(self):
         logout_user()
-        return redirect("/admin/")
+        return redirect(url_for("admin.index",
+                        _scheme=config['PREFERRED_URL_SCHEME'],
+                        _external=config['USE_HTTPS']))
