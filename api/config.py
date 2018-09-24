@@ -34,6 +34,9 @@ class LocalConfig(BaseConfig):
     TESTING = False
     ENV = 'dev'
 
+    USE_HTTPS = False
+    PREFERRED_URL_SCHEME = 'http'
+
     DB_ENGINE = os.getenv('DATABASE_ENGINE', '')
     DB_USER = os.getenv('DATABASE_USERNAME', '')
     DB_PASSWORD = os.getenv('DATABASE_PASSWORD','')
@@ -68,6 +71,7 @@ class DevelopmentConfig(BaseConfig):
 
     SESSION_COOKIE_DOMAIN = 'dev-theq.pathfinder.gov.bc.ca'
     REMEMBER_COOKIE_DURATION = 86400
+    SERVER_NAME = 'dev-theq.pathfinder.gov.bc.ca'
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
 
@@ -115,6 +119,7 @@ class TestConfig(BaseConfig):
 
     SESSION_COOKIE_DOMAIN = 'test-theq.pathfinder.gov.bc.ca'
     REMEMBER_COOKIE_DURATION = 86400
+    SERVER_NAME = 'test-theq.pathfinder.gov.bc.ca'
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
 
@@ -162,6 +167,7 @@ class ProductionConfig(BaseConfig):
 
     SESSION_COOKIE_DOMAIN = 'theq.pathfinder.gov.bc.ca'
     REMEMBER_COOKIE_DURATION = 86400
+    SERVER_NAME = 'theq.pathfinder.gov.bc.ca'
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
 
