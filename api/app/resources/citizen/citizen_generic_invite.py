@@ -33,10 +33,10 @@ class CitizenGenericInvite(Resource):
         lock = FileLock("lock/invite_citizen.lock")
 
         with lock:
-            csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
+            csr = CSR.find_by_username(g.oidc_token_info['username'])
 
             active_citizen_state = CitizenState.query.filter_by(cs_state_name='Active').first()
-            waiting_period_state = PeriodState.query.filter_by(ps_name='Waiting').first()
+            waiting_period_state = PeriodState.get_state_by_name("Waiting")
             citizen = None
 
             try:
@@ -85,7 +85,7 @@ class CitizenGenericInvite(Resource):
             except TypeError:
                 return {"message": "Error inviting citizen. Please try again."}, 400
 
-            active_service_state = SRState.query.filter_by(sr_code='Active').first()
+            active_service_state = SRState.get_state_by_name("Active")
             active_service_request.sr_state_id = active_service_state.sr_state_id
 
             db.session.add(citizen)

@@ -29,7 +29,7 @@ class CitizenDetail(Resource):
     @oidc.accept_token(require_token=True)
     def get(self, id):
         try:
-            csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
+            csr = CSR.find_by_username(g.oidc_token_info['username'])
             citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
             result = self.citizen_schema.dump(citizen)
             return {'citizen': result.data,
@@ -47,7 +47,7 @@ class CitizenDetail(Resource):
         if not json_data:
             return {'message': 'No input data received for updating citizen'}, 400
 
-        csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
+        csr = CSR.find_by_username(g.oidc_token_info['username'])
         citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
 
         try:
@@ -59,7 +59,6 @@ class CitizenDetail(Resource):
         db.session.add(citizen)
         db.session.commit()
 
-        # socketio.emit('update_customer_list', {}, room=csr.office_id)
         result = self.citizen_schema.dump(citizen)
         socketio.emit('update_active_citizen', result.data, room=csr.office_id)
 

@@ -64,6 +64,7 @@ export const store = new Vuex.Store({
     },
     services: [],
     showAddModal: false,
+    showAdmin: false,
     showFeedbackModal: false,
     showGAScreenModal: false,
     showResponseModal: false,
@@ -83,15 +84,17 @@ export const store = new Vuex.Store({
       qt_xn_csr_ind: true,
       receptionist_ind: null
     },
+    userLoadingFail: false
   },
 
   getters: {
     reception(state) {
-      if (state.user.office && state.user.office.sb)
+      if (state.user.office && state.user.office.sb) {
         if (state.user.office.sb.sb_type === "callbyname" || state.user.office.sb.sb_type === "callbyticket") {
           return true
         }
         return false
+      }
     },
 
     active_index(state, getters) {
@@ -233,7 +236,9 @@ export const store = new Vuex.Store({
     logIn(context, payload) {
       context.commit('setBearer', payload)
       context.commit('logIn')
-      context.dispatch('getUser')
+      context.dispatch('getUser').catch(() => {
+        context.commit('setUserLoadingFail', true)
+      })
     },
 
     getAllCitizens(context) {
@@ -283,42 +288,18 @@ export const store = new Vuex.Store({
     },
 
     getCsrs(context) {
-      Axios(context).get('/csrs/')
-      .then( resp => {
-        let csrs = []
-        let currentDate = new Date()
-        resp.data.csrs.forEach(csr => {
-          if (csr.periods.length > 0 && csr.periods[0].ps.ps_name === "Being Served") {
-            let firstServedPeriod = csr.periods.filter(p => p.ps.ps_name === "Being Served")[0]
-            let citizenStartDate = new Date(firstServedPeriod.sr.citizen.start_time)
-            let firstServedPeriodDate = new Date(firstServedPeriod.time_start)
-
-            let waitSeconds = (firstServedPeriodDate - citizenStartDate) / 1000
-            let serveSeconds = (currentDate - firstServedPeriodDate) / 1000
-
-            let waitDate = new Date(null)
-            waitDate.setSeconds(waitSeconds)
-
-            let serveDate = new Date(null)
-            serveDate.setSeconds(serveSeconds)
-
-            csr['wait_time'] = `${waitDate.getUTCHours()}h ${waitDate.getMinutes()}min`
-            csr['serving_time'] = `${serveDate.getUTCHours()}h ${serveDate.getMinutes()}min`
-          } else {
-            csr['periods'] = []
-            csr['wait_time'] = null
-            csr['serving_time'] = null
-          }
-
-          csrs.push(csr)
+      //We only need to get the CSRs once
+      if (context.state.csrs === null || context.state.csrs.length === 0) {
+        Axios(context).get('/csrs/')
+        .then( resp => {
+          context.commit('setCsrs', resp.data.csrs)
         })
-        context.commit('setCsrs', csrs)
-      })
-      .catch(error => {
-        console.log('error @ store.actions.getCsrs')
-        console.log(error.response)
-        console.log(error.message)
-      })
+        .catch(error => {
+          console.log('error @ store.actions.getCsrs')
+          console.log(error.response)
+          console.log(error.message)
+        })
+      }
     },
 
     getServices(context) {
@@ -470,6 +451,10 @@ export const store = new Vuex.Store({
       }).catch(() => {
         context.commit('setPerformingAction', false)
       })
+    },
+
+    clickAdmin(context) {
+      context.commit('toggleShowAdmin')
     },
 
     clickBeginService(context) {
@@ -1016,10 +1001,9 @@ export const store = new Vuex.Store({
     },
 
     putServiceRequest(context) {
-      let { citizen_id, activeQuantity } = context.state.serviceModalForm
+      let { activeQuantity } = context.state.serviceModalForm
       let compareService = context.getters.active_service
       let { sr_id } = compareService
-      let index = context.getters.active_index
 
       let data = {}
       if (activeQuantity != compareService.quantity) {
@@ -1136,6 +1120,19 @@ export const store = new Vuex.Store({
               context.commit('toggleBegunStatus', false)
               context.dispatch('flashServeNow', 'stop')
             }
+          }
+        }
+      }
+
+      const index = context.state.citizens.map(c => c.citizen_id).indexOf(citizen.citizen_id);
+
+      if (index >= 0) {
+        context.commit('updateCitizen', {citizen, index})
+      } else {
+        if (citizen.service_reqs && citizen.service_reqs.length > 0) {
+          if (citizen.service_reqs[0].periods && citizen.service_reqs[0].periods.length > 0) {
+            console.log("Adding citizen")
+            context.commit('addCitizen', citizen)
           }
         }
       }
@@ -1328,6 +1325,14 @@ export const store = new Vuex.Store({
       state.csrs = payload
     },
 
+    updateCitizen(state, payload) {
+      Vue.set(state.citizens, payload.index, payload.citizen)
+    },
+
+    addCitizen(state, citizen) {
+      state.citizens.push(citizen)
+    },
+
     dismissCountDown(state, payload) {
       state.dismissCount = payload
     },
@@ -1350,9 +1355,13 @@ export const store = new Vuex.Store({
 
     toggleAddNextService: (state, payload) => state.addNextService = payload,
 
+    toggleShowAdmin: (state) => state.showAdmin = !state.showAdmin,
+
     setFeedbackMessage: (state, payload) => state.feedbackMessage = payload,
 
     setPerformingAction: (state, payload) => state.performingAction = payload,
+
+    setUserLoadingFail: (state, payload) => state.userLoadingFail = payload,
 
     showHideResponseModal(state) {
       state.showResponseModal = true

@@ -47,6 +47,19 @@ objects:
     tls:
       insecureEdgeTerminationPolicy: Redirect
       termination: edge
+- kind: Route
+  apiVersion: v1
+  metadata:
+    name: "${API_NAME}-admin"
+  spec:
+    host: "${API_APPLICATION_DOMAIN}"
+    path: /admin
+    to:
+      kind: Service
+      name: "${API_NAME}"
+    tls:
+      insecureEdgeTerminationPolicy: Redirect
+      termination: edge
 - kind: DeploymentConfig
   apiVersion: v1
   metadata:

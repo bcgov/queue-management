@@ -45,20 +45,6 @@ podTemplate(
             )
           }
         }
-        stage('Dependency check') {
-            dir('owasp') {
-                sh './dependency-check/bin/dependency-check.sh --project "Queue Management" --scan ../frontend/package.json --enableExperimental --enableRetired'
-                sh 'rm -rf ./dependency-check/data/'
-                publishHTML (target: [
-                    allowMissing: false,
-                    alwaysLinkToLastBuild: false,
-                    keepAll: true,
-                    reportDir: './',
-                    reportFiles: 'dependency-check-report.html',
-                    reportName: "OWASP Dependency Check Report"
-                ])
-            }
-        }
         stage('Build API') {
             echo ">>> building queue-management-api <<<"
             openshiftBuild bldCfg: 'queue-management-api', showBuildLogs: 'true'

@@ -31,12 +31,12 @@ class Office(Base):
     deleted = db.Column(db.DateTime, nullable=True)
 
     services = db.relationship("Service", secondary='office_service')
-    csrs = db.relationship('CSR', backref='office')
+    csrs = db.relationship('CSR')
     citizens = db.relationship('Citizen', backref='office_citizens')
     sb = db.relationship('SmartBoard')
 
     def __repr__(self):
-        return '<Office Name:(name={self.office_name!r})>'.format(self=self)
+        return self.office_name
 
     def __init__(self, **kwargs):
         super(Office, self).__init__(**kwargs)
