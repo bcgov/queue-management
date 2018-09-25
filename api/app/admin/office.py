@@ -14,12 +14,12 @@ limitations under the License.'''
 
 
 from app.models import Office
-from flask_admin.contrib.sqla import ModelView
+from .base import Base
 from flask_login import current_user
 from qsystem import db
 
 
-class OfficeConfig(ModelView):
+class OfficeConfig(Base):
     roles_allowed = ['SUPPORT']
 
     def is_accessible(self):
