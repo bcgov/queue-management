@@ -22,7 +22,7 @@ limitations under the License.*/
         <div>
           <b-button class="btn-primary"
                     @click="invite"
-                    :disabled="citizenInvited===true || performingAction"
+                    :disabled="citizenInvited===true || performingAction || showAdmin"
                     v-if="reception"
                     id="invite-citizen-button">Invite</b-button>
           <b-button v-bind:class="serveNowStyle"
@@ -33,11 +33,11 @@ limitations under the License.*/
         <div>
           <b-button class="btn-primary"
                     @click="addCitizen"
-                    :disabled="citizenInvited===true || performingAction"
+                    :disabled="citizenInvited===true || performingAction || showAdmin"
                     id="add-citizen-button">Add Citizen</b-button>
           <b-button class="btn-primary"
                     @click="clickBackOffice"
-                    :disabled="citizenInvited===true || performingAction"
+                    :disabled="citizenInvited===true || performingAction || showAdmin"
                     id="add-citizen-button">Back Office</b-button>
         </div>
         <div>
@@ -48,6 +48,7 @@ limitations under the License.*/
                     id="click-feedback-button">Toggle Admin</b-button>
           <b-button class="btn-primary"
                     style="margin-right: 20px"
+                    :disabled="showAdmin"
                     @click="clickGAScreen"
                     v-if="user.role && user.role.role_code=='GA'">Toggle GA Panel</b-button>
           <b-button class="btn-primary"
@@ -161,6 +162,7 @@ import ServeCitizen from './serve-citizen'
         'showGAScreenModal',
         'showServiceModal',
         'serveNowStyle',
+        'toggleShowAdmin',
         'user',
         'userLoadingFail'
       ]),
