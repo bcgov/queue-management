@@ -1127,7 +1127,6 @@ export const store = new Vuex.Store({
       const index = context.state.citizens.map(c => c.citizen_id).indexOf(citizen.citizen_id);
 
       if (index >= 0) {
-        console.log("updating citizen")
         context.commit('updateCitizen', {citizen, index})
       } else {
         if (citizen.service_reqs && citizen.service_reqs.length > 0) {

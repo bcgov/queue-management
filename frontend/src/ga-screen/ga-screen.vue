@@ -63,7 +63,7 @@ export default {
           sortable: true
         },
         {
-          key: 'citizen.service_reqs[0].service.service_name',
+          key: 'service_request.service.service_name',
           label: 'Service',
           sortable: true
         },
@@ -142,8 +142,10 @@ export default {
           csr['wait_time'] = null
           csr['serving_time'] = null
           csr['citizen'] = null
+          csr['service_request'] = null
           computed_csrs.push(csr)
         } else {
+          let activeServiceRequest = activeCitizen.service_reqs.filter(sr => sr.periods.some(p => p.time_end === null))[0]
           let firstServedPeriod = activeCitizen.service_reqs[0].periods.filter(p => p.ps.ps_name === "Being Served")[0]
           let citizenStartDate = new Date(activeCitizen.start_time)
           let firstServedPeriodDate = new Date(firstServedPeriod.time_start)
@@ -160,6 +162,7 @@ export default {
           csr['wait_time'] = `${waitDate.getUTCHours()}h ${waitDate.getMinutes()}min`
           csr['serving_time'] = `${serveDate.getUTCHours()}h ${serveDate.getMinutes()}min`
           csr['citizen'] = activeCitizen
+          csr['service_request'] = activeServiceRequest
           computed_csrs.push(csr)
         }
       })
