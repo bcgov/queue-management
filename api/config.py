@@ -57,7 +57,6 @@ class LocalConfig(BaseConfig):
     # ACTIVE_MQ_URL = 'amqp://guest:guest@localhost:5672'      #'amqp://guest:guest@localhost:5672'
     # 	In config.py: ACTIVE_MQ_URL = 'amqp://guest:guest@localhost:5672'
     CORS_ALLOWED_ORIGINS = ["http://localhost:8080"]
-    USE_HTTPS = False
     SQLALCHEMY_ECHO = False
     SLACK_URL = os.getenv('SLACK_URL')
     SECRET_KEY = "pancakes"
