@@ -32,6 +32,7 @@ class ServiceConfig(Base):
         'service_name',
         'service_desc',
         'parent',
+        'offices',
         'actual_service_ind',
         'display_dashboard_ind',
         'prefix',
