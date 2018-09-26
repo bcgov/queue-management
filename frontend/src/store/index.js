@@ -609,6 +609,7 @@ export const store = new Vuex.Store({
             context.commit('toggleBegunStatus', false)
             context.commit('toggleInvitedStatus', false)
             context.commit('toggleServiceModal', false)
+            context.commit('resetServiceModal')
           }).finally(() => {
             context.commit('setPerformingAction', false)
           })
@@ -781,6 +782,7 @@ export const store = new Vuex.Store({
             context.commit('toggleServiceModal', false)
             context.commit('toggleBegunStatus', false)
             context.commit('toggleInvitedStatus', false)
+            context.commit('resetServiceModal')
           }).finally(() => {
             context.commit('setPerformingAction', false)
           })
