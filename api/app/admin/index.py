@@ -12,21 +12,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from app.models import Channel
-from .base import Base
-from flask_login import current_user
-from qsystem import db
+from qsystem import application
+from flask_admin import AdminIndexView, expose
 
 
-class ChannelConfig(Base):
-    roles_allowed = ['SUPPORT']
+class HomeView(AdminIndexView):
 
-    def is_accessible(self):
-        return current_user.is_authenticated and current_user.role.role_code in self.roles_allowed
+    @expose('/')
+    def index(self):
+        return self.render('admin/base.html')
 
-    can_delete = False
-    create_modal = True
-    edit_modal = True
-
-
-ChannelModelView = ChannelConfig(Channel, db.session)
+    def get_url(self, endpoint, **kwargs):
+        new_kwargs = dict(kwargs, _external=True, _scheme=application.config['PREFERRED_URL_SCHEME'])
+        return super(AdminIndexView, self).get_url(endpoint, **new_kwargs)

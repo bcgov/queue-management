@@ -16,7 +16,8 @@ limitations under the License.*/
   <videoPlayer class="video-player-box"
                ref="videoPlayer"
                :options="playerOptions"
-               :playsinline="true">
+               :playsinline="true"
+               @statechanged="playerStateChanged($event)">
   </videoPlayer>
 </template>
 
@@ -41,6 +42,17 @@ limitations under the License.*/
             src: '/static/videos/sbc.mp4'
           }],
           fluid: true
+        },
+        playing: false
+      }
+    },
+    methods: {
+      playerStateChanged(playerCurrentState) {
+        if (playerCurrentState && playerCurrentState.playing) {
+          this.playing = true
+        } else if (playerCurrentState && playerCurrentState.error && this.playing) {
+          //This probably means that the video has been updated, try to refresh the page
+          setTimeout(() => { window.location.reload(true);}, 5000);
         }
       }
     }

@@ -15,6 +15,7 @@ limitations under the License.'''
 
 from .channel import ChannelModelView
 from .csr import CSRModelView
+from .index import HomeView
 from .login import LoginMenuLink
 from .logout import LogoutMenuLink
 from .office import OfficeModelView

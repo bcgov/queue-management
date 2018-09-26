@@ -33,6 +33,7 @@ class Service(Base):
     display_dashboard_ind = db.Column(db.Integer, nullable=False)
     actual_service_ind = db.Column(db.Integer, nullable=False)
 
+    offices = db.relationship("Office", secondary='office_service')
     parent = db.relationship("Service", remote_side=[service_id])
 
     def __repr__(self):

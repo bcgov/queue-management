@@ -15,7 +15,7 @@ limitations under the License.'''
 
 from app.models import CSR
 from flask import flash, redirect, request
-from flask_admin.contrib.sqla import ModelView
+from .base import Base
 from flask_admin.babel import gettext
 from flask_admin.base import expose
 from flask_admin.form import FormOpts
@@ -25,7 +25,7 @@ from flask_login import current_user
 from qsystem import db
 
 
-class CSRConfig(ModelView):
+class CSRConfig(Base):
     roles_allowed = ['GA', 'HELPDESK', 'SUPPORT']
 
     def is_accessible(self):

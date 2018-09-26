@@ -24,6 +24,7 @@ class CSRSchema(ma.ModelSchema):
     class Meta:
         model = CSR
         jit = toastedmarshmallow.Jit
+        exclude = ('periods',)
 
     csr_id = fields.Int()
     username = fields.Str()
@@ -35,5 +36,4 @@ class CSRSchema(ma.ModelSchema):
     csr_state_id = fields.Int()
     csr_state = fields.Nested(CSRStateSchema(exclude=('csrs',)))
     office = fields.Nested(OfficeSchema())
-    periods = fields.Nested('PeriodSchema', many=True, exclude=('csr',))
     role = fields.Nested(RoleSchema(exclude=('roles',)))
