@@ -30,7 +30,7 @@ class CSR(Base):
     role = db.relationship("Role", lazy='joined')
     office = db.relationship("Office", lazy='joined')
     periods = db.relationship("Period", primaryjoin="and_(CSR.csr_id==Period.csr_id,Period.time_end.is_(None))",
-                              lazy='joined', order_by='desc(Period.time_start)')
+                              order_by='desc(Period.time_start)')
 
     def __repr__(self):
         return self.username

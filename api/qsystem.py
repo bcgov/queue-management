@@ -57,7 +57,7 @@ oidc = OpenIDConnect(application)
 
 from app import admin
 
-flask_admin = Admin(application, name='Admin Console', template_mode='bootstrap3')
+flask_admin = Admin(application, name='Admin Console', template_mode='bootstrap3', index_view=admin.HomeView())
 
 flask_admin.add_view(admin.ChannelModelView)
 flask_admin.add_view(admin.CSRModelView)

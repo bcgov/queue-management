@@ -1,7 +1,7 @@
 <template>
   <div id="main-footer">
     <div id="footer-links">
-      <div id="footer-anchor-item-1st">
+      <div class="footer-anchor-item">
         <a href="http://www2.gov.bc.ca/gov/content/home/disclaimer" target="_blank">Disclaimer</a>
       </div>
       <div class="footer-anchor-item">
@@ -10,12 +10,21 @@
       <div class="footer-anchor-item">
         <a href="http://www2.gov.bc.ca/gov/content/home/accessibility" target="_blank">Accessibility</a>
       </div>
-      <div class="footer-anchor-item">
+      <div class="footer-anchor-item-last">
         <a href="http://www2.gov.bc.ca/gov/content/home/copyright" target="_blank">Copyright</a>
       </div>
     </div>
-    <div class="p-0" style="display:inline-block; color: white; margin-right:15px;">
-      v1.05
+
+
+    <div class="p-0" style="display:inline-block; color: white;">
+      <div v-if="!this.$store.state.isLoggedIn"
+           class="footer-anchor-item"
+           style="display:inline-block; color: white;">
+        <a href="#" @click="keycloakLogin()">Keycloak Login</a>
+      </div>
+      <div class="footer-anchor-item-last" style="display:inline-block; color: white; margin-right:15px;">
+        v1.0.5
+      </div>
     </div>
   </div>
 </template>
@@ -25,6 +34,11 @@
 
   export default {
     name: 'Footer',
+    methods: {
+      keycloakLogin() {
+        this.$keycloak.login()
+      }
+    }
   }
 </script>
 
@@ -49,12 +63,12 @@
     padding-left: 10px;
   }
   .footer-anchor-item {
-     border-left: 1px solid grey;
+     border-right: 1px solid grey;
      display: inline-block;
      padding-right: 7px;
      padding-left: 7px;
    }
-  #footer-anchor-item-1st {
+  .footer-anchor-item-last {
     display: inline-block;
     padding-right: 7px;
     padding-left: 7px;

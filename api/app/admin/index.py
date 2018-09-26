@@ -12,13 +12,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+from qsystem import application
+from flask_admin import AdminIndexView, expose
 
-from .channel import ChannelModelView
-from .csr import CSRModelView
-from .index import HomeView
-from .login import LoginMenuLink
-from .logout import LogoutMenuLink
-from .office import OfficeModelView
-from .role import RoleModelView
-from .service import ServiceModelView
-from .smartboard import SmartBoardModelView
+
+class HomeView(AdminIndexView):
+
+    @expose('/')
+    def index(self):
+        return self.render('admin/base.html')
+
+    def get_url(self, endpoint, **kwargs):
+        new_kwargs = dict(kwargs, _external=True, _scheme=application.config['PREFERRED_URL_SCHEME'])
+        return super(AdminIndexView, self).get_url(endpoint, **new_kwargs)
