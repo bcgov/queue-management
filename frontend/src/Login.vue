@@ -138,7 +138,7 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
       },
 
       login() {
-        this.$keycloak.login()
+        this.$keycloak.login({idpHint: 'idir'})
       },
 
       logout() {
