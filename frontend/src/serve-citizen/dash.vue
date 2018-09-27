@@ -97,7 +97,7 @@ limitations under the License.*/
       <iframe :src="iframeUrl"
               width="100%"
               frameborder="0"
-              height="500px" />
+              height="600px" />
     </div>
   </div>
   <div v-else-if="isLoggedIn && !userLoadingFail">
@@ -257,8 +257,15 @@ import ServeCitizen from './serve-citizen'
 
 <style scoped>
   .dashmaincontainer {
-    height: 85%; width: 100%; display: block; position: absolute; top: 75px;
-    padding-left: 1%; padding-right: 1%; padding-top: 8px; padding-bottom: 8px;
+    height: 85%;
+    width: 100%;
+    display: block;
+    position: absolute;
+    top: 75px;
+    padding-left: 1%;
+    padding-right: 1%;
+    padding-top: 8px;
+    padding-bottom: 8px;
   }
   #dash-flex-button-container {
     display: flex; justify-content: space-between; height: 100% !important;
