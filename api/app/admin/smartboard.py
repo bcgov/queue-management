@@ -24,8 +24,8 @@ class SmartBoardConfig(Base):
     def is_accessible(self):
         return current_user.is_authenticated and current_user.role.role_code in self.roles_allowed
 
-    create_modal = False
-    edit_modal = False
+    create_modal = True
+    edit_modal = True
     column_labels = {'sb_type': 'Smartboard Type'}
 
 
