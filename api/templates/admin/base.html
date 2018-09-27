@@ -83,6 +83,22 @@
     <script src="{{ admin_static.url(filename='bootstrap/bootstrap3/js/bootstrap.min.js', v='3.3.5') }}" type="text/javascript"></script>
     <script src="{{ admin_static.url(filename='vendor/moment.min.js', v='2.9.0') }}" type="text/javascript"></script>
     <script src="{{ admin_static.url(filename='vendor/select2/select2.min.js', v='3.5.2') }}" type="text/javascript"></script>
+    <script type="text/javascript">
+      function postSize(height){
+        var target = parent.postMessage ? parent : (parent.document.postMessage ? parent.document : undefined);
+
+        if(typeof target != "undefined" && document.body.scrollHeight) {
+          target.postMessage(height, "*");
+        }
+      }
+
+      $(document).ready(function() {
+        if(top != self) {
+          var contentHeight = $('body').height();
+          postSize(contentHeight);
+        }
+      })
+    </script>
     {% if admin_view.extra_js %}
       {% for js_url in admin_view.extra_js %}
         <script src="{{ js_url }}" type="text/javascript"></script>

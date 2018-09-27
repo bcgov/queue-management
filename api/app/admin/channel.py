@@ -25,8 +25,8 @@ class ChannelConfig(Base):
         return current_user.is_authenticated and current_user.role.role_code in self.roles_allowed
 
     can_delete = False
-    create_modal = True
-    edit_modal = True
+    create_modal = False
+    edit_modal = False
 
 
 ChannelModelView = ChannelConfig(Channel, db.session)
