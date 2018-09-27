@@ -62,7 +62,7 @@ class CSRConfig(Base):
     def get_return_url(self):
         return get_redirect_target() or self.get_url('.index_view')
 
-    def validate_request(self):
+    def validate_model(self):
         if not self.can_edit:
             return False
 
