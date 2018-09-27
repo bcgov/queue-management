@@ -95,9 +95,9 @@ limitations under the License.*/
     </div>
     <div v-if="showAdmin">
       <iframe :src="iframeUrl"
+              :height="iframeHeight"
               width="100%"
-              frameborder="0"
-              height="500px" />
+              frameborder="0" />
     </div>
   </div>
   <div v-else-if="isLoggedIn && !userLoadingFail">
@@ -132,6 +132,7 @@ import ServeCitizen from './serve-citizen'
       this.$nextTick(function() {
         window.addEventListener('resize', this.getNewHeight)
       })
+      window.addEventListener("message", this.receiveSize);
       this.iframeUrl = process.env.SOCKET_URL + "/admin/"
     },
 
@@ -146,7 +147,8 @@ import ServeCitizen from './serve-citizen'
         f: false,
         last: 0,
         dismissSecs: 5,
-        checkedLocalStorage: false
+        checkedLocalStorage: false,
+        iframeHeight: "500px"
       }
     },
 
@@ -229,6 +231,21 @@ import ServeCitizen from './serve-citizen'
           localStorage.setItem(`${this.csrId}last`, lastRatio)
         }
       },
+      receiveSize(e) {
+        var newHeight = e.data;
+
+        if (!Number.isInteger(newHeight)) {
+          return
+        }
+
+        if (newHeight < 450) {
+          newHeight = 500
+        } else {
+          newHeight = newHeight + 50
+        }
+
+        this.iframeHeight = newHeight + "px"
+      },
       invite() {
         if (this.queueLength === 0) {
           this.setMainAlert('The are currently no citizens to invite.')
@@ -257,8 +274,15 @@ import ServeCitizen from './serve-citizen'
 
 <style scoped>
   .dashmaincontainer {
-    height: 85%; width: 100%; display: block; position: absolute; top: 75px;
-    padding-left: 1%; padding-right: 1%; padding-top: 8px; padding-bottom: 8px;
+    height: 85%;
+    width: 100%;
+    display: block;
+    position: absolute;
+    top: 75px;
+    padding-left: 1%;
+    padding-right: 1%;
+    padding-top: 8px;
+    padding-bottom: 8px;
   }
   #dash-flex-button-container {
     display: flex; justify-content: space-between; height: 100% !important;

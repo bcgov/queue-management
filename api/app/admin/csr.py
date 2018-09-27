@@ -59,41 +59,51 @@ class CSRConfig(Base):
     form_create_rules = ('username', 'qt_xn_csr_ind', 'receptionist_ind', 'csr_state', 'role', 'office','deleted',)
     form_edit_rules = ('username', 'qt_xn_csr_ind', 'receptionist_ind', 'csr_state', 'role', 'office', 'deleted',)
 
-    @expose('/edit/', methods=('GET', 'POST'))
-    def edit_view(self):
-        """
-            Edit model view
-        """
-        return_url = get_redirect_target() or self.get_url('.index_view')
+    def get_return_url(self):
+        return get_redirect_target() or self.get_url('.index_view')
 
+    def validate_request(self):
         if not self.can_edit:
-            return redirect(return_url)
+            return False
 
         id = get_mdict_item_or_list(request.args, 'id')
         if id is None:
-            return redirect(return_url)
+            return False
 
         model = self.get_one(id)
 
         if model is None:
             flash(gettext('Record does not exist.'), 'error')
-            return redirect(return_url)
+            return False
+
+        return model
+
+
+    @expose('/edit/', methods=('GET', 'POST'))
+    def edit_view(self):
+        """
+            Edit model view
+        """
+        return_url = self.get_return_url()
+        model = self.validate_model()
+
+        if not model:
+            return(return_url)
 
         form = self.edit_form(obj=model)
         if not hasattr(form, '_validated_ruleset') or not form._validated_ruleset:
             self._validate_form_instance(ruleset=self._form_edit_rules, form=form)
 
-        if self.validate_form(form):
-            if self.update_model(form, model):
-                flash(gettext('''Record was successfully saved. 
-                Note: it may take up to 5 minutes for these changes to be effective'''), 'success')
-                if '_add_another' in request.form:
-                    return redirect(self.get_url('.create_view', url=return_url))
-                elif '_continue_editing' in request.form:
-                    return redirect(request.url)
-                else:
-                    # save button
-                    return redirect(self.get_save_return_url(model, is_created=False))
+        if self.validate_form(form) and self.update_model(form, model):
+            flash(gettext('''Record was successfully saved. 
+            Note: it may take up to 5 minutes for these changes to be effective'''), 'success')
+            if '_add_another' in request.form:
+                return redirect(self.get_url('.create_view', url=return_url))
+            elif '_continue_editing' in request.form:
+                return redirect(request.url)
+            else:
+                # save button
+                return redirect(self.get_save_return_url(model, is_created=False))
 
         if request.method == 'GET' or form.errors:
             self.on_form_prefill(form, id)
