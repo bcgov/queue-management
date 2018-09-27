@@ -19,8 +19,6 @@ api:
     DATABASE_PORT: 3306
     DATABASE_HOST: mysql_db
     THEQ_SNOWPLOW_CALLFLAG: "false"
-  volumes:
-    - "./api:/opt/queue-management-api"
   links:
     - mysql_db
 
@@ -28,9 +26,6 @@ frontend:
   build: ./frontend
   ports:
     - "8080:8080"
-  volumes:
-    - "./frontend:/opt/queue-management-frontend"
-  links:
-    - api
+
 
 
