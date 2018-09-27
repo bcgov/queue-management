@@ -213,7 +213,7 @@
       "enabled": true
     },
     {
-      "value": "https://servicebc-cfms-dev.pathfinder.gov.bc.ca/api/v1/",
+      "value": "https://dev-theq.pathfinder.gov.bc.ca/api/v1/",
       "key": "url_dev_old",
       "enabled": true
     },

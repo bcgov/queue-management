@@ -82,6 +82,6 @@
   ],
   "jest": {
     "verbose": true,
-    "testURL": "https://servicebc-cfms-dev.pathfinder.gov.bc.ca/"
+    "testURL": "https://dev-theq.pathfinder.gov.bc.ca/"
   }
 }
