@@ -11,6 +11,30 @@ The Queue Managment System will be used to manage the citizen flow and provide a
 
 ## Installation
 
+To build the frontend, client, and database images, run the following from the root of the queue-management project:
+
+```bash
+$ docker-compose build
+```
+
+Once the images are built, you can run all of them with the command:
+
+```bash
+$ docker-compose up
+```
+
+Note that the `up` argument will also build the images if they don't exist yet.
+
+Running `docker-compose up` will launch separate containers for the MySQL database, the API, and the Front-end.  The API container will wait for the MySQL database to come online, and then populate it with the 00-PopulateAllDemo.sql script.  
+
+Once the containers are running, you can access the client at http://localhost:8080 and the API at http://localhost:5000/api/v1.
+
+To stop the containers use:
+
+```base
+$ docker-compose down
+```
+
 ## Project Status
 
 ## Goals/Roadmap
