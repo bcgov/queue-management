@@ -35,6 +35,9 @@ To stop the containers use:
 $ docker-compose down
 ```
 
+To load data you will need to place the SQL load script 00-PopulateAllDemo.sql in the directory api/.
+You will also need to place the appropriate authentication files in both the api/ and frontend/ directories.
+
 ## Project Status
 
 ## Goals/Roadmap
