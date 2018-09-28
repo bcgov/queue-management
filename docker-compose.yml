@@ -21,11 +21,17 @@ api:
     THEQ_SNOWPLOW_CALLFLAG: "false"
   links:
     - mysql_db
+  volumes:
+    - "./api:/opt/queue-management-api"
+    - "/opt/queue-management-api/env"
 
 frontend:
   build: ./frontend
   ports:
     - "8080:8080"
+  volumes:
+    - "./frontend:/opt/queue-management-frontend"
+    - "/opt/queue-management-frontend/node_modules"
 
 
 
