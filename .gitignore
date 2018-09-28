@@ -114,3 +114,6 @@ owasp/dependency-check-report.html
 sonar-runner/.gradle
 .DS_Store
 /.idea
+
+# Data loading
+00-PopulateAllDemo.sql
