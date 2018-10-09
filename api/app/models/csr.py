@@ -19,7 +19,7 @@ from .base import Base
 class CSR(Base):
 
     csr_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    username = db.Column(db.String(150), nullable=False)
+    username = db.Column(db.String(150), nullable=False, unique=True)
     office_id = db.Column(db.Integer, db.ForeignKey('office.office_id'), nullable=False)
     role_id = db.Column(db.Integer, db.ForeignKey('role.role_id'), nullable=False)
     qt_xn_csr_ind = db.Column(db.Integer, nullable=False)
