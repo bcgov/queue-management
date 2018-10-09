@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from flask import g
 from flask_restplus import Resource
-from qsystem import api, oidc
+from qsystem import api, db, oidc
 from sqlalchemy import exc
 from app.models import Citizen, CSR, Period, ServiceReq, SRState
 from app.schemas import CitizenSchema, CSRSchema
@@ -23,12 +23,12 @@ from app.schemas import CitizenSchema, CSRSchema
 @api.route("/csrs/", methods=["GET"])
 class CsrList(Resource):
 
-    csr_schema = CSRSchema(many=True)
+    csr_schema = CSRSchema(many=True, exclude=('office', 'periods',))
 
     @oidc.accept_token(require_token=True)
     def get(self):
         try:
-            csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
+            csr = CSR.find_by_username(g.oidc_token_info['username'])
 
             if csr.role.role_code != "GA":
                 return {'message': 'You do not have permission to view this end-point'}, 403
@@ -53,8 +53,9 @@ class CsrSelf(Resource):
     @oidc.accept_token(require_token=True)
     def get(self):
         try:
-            csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
-            active_sr_state = SRState.query.filter_by(sr_code='Active').first()
+            csr = CSR.find_by_username(g.oidc_token_info['username'])
+            db.session.add(csr)
+            active_sr_state = SRState.get_state_by_name("Active")
 
             active_citizens = Citizen.query \
                 .join(Citizen.service_reqs) \

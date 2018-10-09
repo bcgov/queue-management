@@ -12,18 +12,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+from qsystem import application
+from flask_admin import AdminIndexView, expose
 
-from qsystem import db
-from .base import Base
 
+class HomeView(AdminIndexView):
 
-class SmartBoard(Base):
+    @expose('/')
+    def index(self):
+        return self.render('admin/base.html')
 
-    sb_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    sb_type = db.Column(db.String(45), nullable=False)
-
-    def __repr__(self):
-        return self.sb_type
-
-    def __init__(self, **kwargs):
-        super(SmartBoard, self).__init__(**kwargs)
+    def get_url(self, endpoint, **kwargs):
+        new_kwargs = dict(kwargs, _external=True, _scheme=application.config['PREFERRED_URL_SCHEME'])
+        return super(AdminIndexView, self).get_url(endpoint, **new_kwargs)

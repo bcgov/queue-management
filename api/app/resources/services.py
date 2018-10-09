@@ -28,7 +28,8 @@ class Services(Resource):
     service_schema = ServiceSchema(many=True)
     services_schema = ServiceSchema(many=True)
 
-    def sort_services(self, a, b):
+    @classmethod
+    def sort_services(cls, a, b):
         if a.parent is None and b.parent is not None:
             return -1
         elif a.parent is not None and b.parent is None:
@@ -44,7 +45,6 @@ class Services(Resource):
             else:
                 return 1
 
-
     @oidc.accept_token(require_token=True)
     def get(self):
         if request.args.get('office_id'):
@@ -52,7 +52,9 @@ class Services(Resource):
                 office_id = int(request.args['office_id'])
                 office = Office.query.get(office_id)
                 services = sorted(office.services, key=cmp_to_key(self.sort_services))
-                result = self.service_schema.dump(services)
+                filtered_services = [s for s in services if s.deleted is None]
+                result = self.service_schema.dump(filtered_services)
+                
                 return {'services': result.data,
                         'errors': result.errors}
 

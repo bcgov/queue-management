@@ -34,7 +34,9 @@ objects:
   data:
     extra.cnf: |
       [mysqld]
-      innodb-buffer-pool-size=512M
+      innodb_buffer_pool_size=1G
+      innodb_log_file_size=256M
+      innodb_flush_method=O_DIRECT
 - apiVersion: v1
   kind: Service
   metadata:
@@ -147,7 +149,7 @@ objects:
         volumes:
         - name: config-volume
           configMap:
-            name: mysql
+            name: percona
             optional: true
     volumeClaimTemplates:
     - metadata:

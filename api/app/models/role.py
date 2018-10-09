@@ -27,10 +27,10 @@ class Role(Base):
     role_code = db.Column(db.String(100))
     role_desc = db.Column(db.String(1000))
 
-    roles = db.relationship('CSR', backref='role', lazy=False)
+    roles = db.relationship('CSR', lazy=False)
 
     def __repr__(self):
-        return '<Role Code:(name={self.role_code!r})>'.format(self=self)
+        return self.role_code
 
     def __init__(self, **kwargs):
         super(Role, self).__init__(**kwargs)

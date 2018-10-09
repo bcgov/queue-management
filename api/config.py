@@ -11,6 +11,7 @@ config = {
     "default": "config.LocalConfig"
 }
 
+
 class BaseConfig(object):
     PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
     SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -33,6 +34,9 @@ class LocalConfig(BaseConfig):
     TESTING = False
     ENV = 'dev'
 
+    USE_HTTPS = False
+    PREFERRED_URL_SCHEME = 'http'
+
     DB_ENGINE = os.getenv('DATABASE_ENGINE', '')
     DB_USER = os.getenv('DATABASE_USERNAME', '')
     DB_PASSWORD = os.getenv('DATABASE_PASSWORD','')
@@ -40,7 +44,6 @@ class LocalConfig(BaseConfig):
     DB_HOST = os.getenv('DATABASE_HOST','')
     DB_PORT = os.getenv('DATABASE_PORT','')
 
-    # SQLALCHEMY_DATABASE_URI = 'sqlite:///db.sqlite3'
     SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}'.format(
         engine=DB_ENGINE,
         user=DB_USER,
@@ -49,14 +52,15 @@ class LocalConfig(BaseConfig):
         port=DB_PORT,
         name=DB_NAME
     )
+
     ACTIVE_MQ_URL = ''      #'amqp://guest:guest@localhost:5672'
     # ACTIVE_MQ_URL = 'amqp://guest:guest@localhost:5672'      #'amqp://guest:guest@localhost:5672'
     # 	In config.py: ACTIVE_MQ_URL = 'amqp://guest:guest@localhost:5672'
     CORS_ALLOWED_ORIGINS = ["http://localhost:8080"]
-    USE_HTTPS = False
     SQLALCHEMY_ECHO = False
     SLACK_URL = os.getenv('SLACK_URL')
     SECRET_KEY = "pancakes"
+
 
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
@@ -66,9 +70,11 @@ class DevelopmentConfig(BaseConfig):
 
     SESSION_COOKIE_DOMAIN = 'dev-theq.pathfinder.gov.bc.ca'
     REMEMBER_COOKIE_DURATION = 86400
+    SERVER_NAME = 'dev-theq.pathfinder.gov.bc.ca'
     USE_HTTPS = True
+    PREFERRED_URL_SCHEME = 'https'
 
-    CORS_ALLOWED_ORIGINS = [""]
+    CORS_ALLOWED_ORIGINS = ["https://" + SESSION_COOKIE_DOMAIN]
 
     ACTIVE_MQ_USER = os.getenv('ACTIVE_MQ_USER', '')
     ACTIVE_MQ_PASSWORD = os.getenv('ACTIVE_MQ_PASSWORD', '')
@@ -102,6 +108,7 @@ class DevelopmentConfig(BaseConfig):
         SQLALCHEMY_ECHO=True
     else:
         SQLALCHEMY_ECHO=False
+
 
 class TestConfig(BaseConfig):
     DEBUG = True
@@ -111,9 +118,11 @@ class TestConfig(BaseConfig):
 
     SESSION_COOKIE_DOMAIN = 'test-theq.pathfinder.gov.bc.ca'
     REMEMBER_COOKIE_DURATION = 86400
+    SERVER_NAME = 'test-theq.pathfinder.gov.bc.ca'
     USE_HTTPS = True
+    PREFERRED_URL_SCHEME = 'https'
 
-    CORS_ALLOWED_ORIGINS = [""]
+    CORS_ALLOWED_ORIGINS = ["https://" + SESSION_COOKIE_DOMAIN]
 
     ACTIVE_MQ_USER = os.getenv('ACTIVE_MQ_USER', '')
     ACTIVE_MQ_PASSWORD = os.getenv('ACTIVE_MQ_PASSWORD', '')
@@ -147,6 +156,7 @@ class TestConfig(BaseConfig):
         SQLALCHEMY_ECHO=True
     else:
         SQLALCHEMY_ECHO=False
+
 
 class ProductionConfig(BaseConfig):
     DEBUG = True
@@ -156,9 +166,11 @@ class ProductionConfig(BaseConfig):
 
     SESSION_COOKIE_DOMAIN = 'theq.pathfinder.gov.bc.ca'
     REMEMBER_COOKIE_DURATION = 86400
+    SERVER_NAME = 'theq.pathfinder.gov.bc.ca'
     USE_HTTPS = True
+    PREFERRED_URL_SCHEME = 'https'
 
-    CORS_ALLOWED_ORIGINS = [""]
+    CORS_ALLOWED_ORIGINS = ["https://" + SESSION_COOKIE_DOMAIN]
 
     ACTIVE_MQ_USER = os.getenv('ACTIVE_MQ_USER', '')
     ACTIVE_MQ_PASSWORD = os.getenv('ACTIVE_MQ_PASSWORD', '')
@@ -192,6 +204,7 @@ class ProductionConfig(BaseConfig):
         SQLALCHEMY_ECHO=True
     else:
         SQLALCHEMY_ECHO=False
+
 
 def configure_app(app):
     config_name = os.getenv('FLASK_CONFIGURATION', 'default')

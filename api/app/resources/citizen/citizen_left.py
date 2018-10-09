@@ -31,12 +31,9 @@ class CitizenLeft(Resource):
     @api_call_with_retry
     def post(self, id):
 
-        csr = CSR.query.filter_by(username=g.oidc_token_info['username'].split("idir/")[-1]).first()
+        csr = CSR.find_by_username(g.oidc_token_info['username'])
         citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
-        sr_state = SRState.query.filter_by(sr_code="Complete").first()
-
-        #  Save this service for the Snowplow call later.
-        active_service_request = citizen.get_active_service_request()
+        sr_state = SRState.get_state_by_name("Complete")
 
         for service_request in citizen.service_reqs:
 
@@ -54,7 +51,6 @@ class CitizenLeft(Resource):
 
         SnowPlow.snowplow_event(citizen.citizen_id, csr, "customerleft")
 
-        socketio.emit('update_customer_list', {}, room=csr.office_id)
         socketio.emit('citizen_invited', {}, room='sb-%s' % csr.office.office_number)
         result = self.citizen_schema.dump(citizen)
         socketio.emit('update_active_citizen', result.data, room=csr.office_id)

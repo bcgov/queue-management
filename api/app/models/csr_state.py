@@ -25,7 +25,7 @@ class CSRState(Base):
     csrs = db.relationship('CSR', backref='csr_state', lazy=False)
 
     def __repr__(self):
-        return '<CSR State Name:(name={self.csr_state_name!r})>'.format(self=self)
+        return self.csr_state_name
 
     def __init__(self, **kwargs):
         super(CSRState, self).__init__(**kwargs)

@@ -227,8 +227,8 @@ class SnowPlow():
                                            {"inaccurate_time": inaccurate_flag, "count": svc_quantity})
         return finishservice
 
+
 # Set up core Snowplow environment
 s = Subject()  # .set_platform("app")
 e = AsyncEmitter(SnowPlow.sp_endpoint, on_failure=SnowPlow.failure, protocol="https")
-# e = AsyncEmitter(SnowPlow.sp_endpoint, protocol="https")
 t = Tracker(e, encode_base64=False, app_id=SnowPlow.sp_appid, namespace=SnowPlow.sp_namespace)
