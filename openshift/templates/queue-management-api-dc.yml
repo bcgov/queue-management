@@ -11,13 +11,13 @@ parameters:
 - name: API_APPLICATION_DOMAIN
   description: "The exposed hostname that will route to the Flask service"
   required: true
-  value: "servicebc-cfms-dev.pathfinder.gov.bc.ca"
+  value: "dev-theq.pathfinder.gov.bc.ca"
 - name: FLASK_CONFIGURATION
-  description: "The configuration object that should be loaded for this deployment. Only development exists currently"
+  description: "The configuration object that should be loaded for this deployment."
   required: true
   value: development
 - name: API_IMAGE_TAG
-  description: The tag to use when deploying
+  description: "The tag to use when deploying"
   required: true
   value: "dev"
 objects:
@@ -76,7 +76,10 @@ objects:
         updatePeriodSeconds: 1
         intervalSeconds: 1
         timeoutSeconds: 60
+        maxSurge: 2
         maxUnavailable: 1
+      resources: {}
+      activeDeadlineSeconds: 3600
     triggers:
     - type: ImageChange
       imageChangeParams:
@@ -95,7 +98,7 @@ objects:
       metadata:
         name: "${API_NAME}"
         labels:
-          name: "${API_NAME}"
+          name: "queue-management-api"
       spec:
         containers:
         - name: "${API_NAME}"
@@ -154,10 +157,10 @@ objects:
             value: "5672"
           resources:
             requests:
-              cpu: 200m
+              cpu: 500m
               memory: 256Mi
             limits:
-              cpu: 200m
+              cpu: 1
               memory: 512Mi
           volumeMounts:
             - mountPath: /opt/app-root/src/client_secrets
@@ -166,11 +169,22 @@ objects:
             - mountPath: /opt/app-root/src/lock
               name: lockdir
               readOnly: false
+          imagePullPolicy: Always
         volumes:
           - configMap:
               defaultMode: 420
               name: oidc-secrets
             name: oidc-secrets-o6ya6
+        affinity:
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: name
+                  operator: In
+                  values:
+                  - queue-management-api
+              topologyKey: kubernetes.io/hostname
 - kind: PersistentVolumeClaim
   apiVersion: v1
   metadata:

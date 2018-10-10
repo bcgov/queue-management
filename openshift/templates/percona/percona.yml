@@ -66,6 +66,7 @@ objects:
       metadata:
         labels:
           app: percona
+          name: percona
       spec:
         containers:
         - name: mysql
@@ -95,6 +96,7 @@ objects:
             initialDelaySeconds: 300
             timeoutSeconds: 5
             periodSeconds: 10
+          imagePullPolicy: Always
           resources:
             requests:
               cpu: 500m
@@ -151,6 +153,16 @@ objects:
           configMap:
             name: percona
             optional: true
+        affinity:
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: name
+                  operator: In
+                  values:
+                  - percona
+              topologyKey: kubernetes.io/hostname
     volumeClaimTemplates:
     - metadata:
         name: datadir

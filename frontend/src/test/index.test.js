@@ -23,10 +23,10 @@ afterAll(() => {
 describe("Serve Citizens", () => {
   test('Login', async () => {
     await page.goto(process.env.CFMS_DEV_URL)
-    await page.waitForSelector('#login-button')
+    await page.waitForSelector('#keycloak-login')
 
     const navigationPromise = page.waitForNavigation();
-    await page.click('#login-button');
+    await page.click('#keycloak-login');
     await navigationPromise;
 
     await page.waitForSelector('#username')
@@ -126,6 +126,7 @@ async function beginServiceFromHoldTable() {
  */
 
 async function inviteCitizenFromDash() {
+  await page.waitForSelector('#invite-citizen-button')
   await page.click('#invite-citizen-button');
   await delay(1000)
   await page.waitForSelector('.serve-modal-content')

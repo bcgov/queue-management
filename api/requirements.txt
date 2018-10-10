@@ -21,6 +21,7 @@ gunicorn
 kombu>=3.0,<4
 marshmallow-sqlalchemy
 mysqlclient
+pytest
 python-jose
 snowplow-tracker
 toastedmarshmallow
