@@ -114,3 +114,4 @@ owasp/dependency-check-report.html
 sonar-runner/.gradle
 .DS_Store
 /.idea
+/frontend/static/keycloak-local.json
