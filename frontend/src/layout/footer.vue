@@ -20,7 +20,7 @@
       <div v-if="!this.$store.state.isLoggedIn"
            class="footer-anchor-item"
            style="display:inline-block; color: white;">
-        <a href="#" @click="keycloakLogin()">Keycloak Login</a>
+        <a href="#" @click="keycloakLogin()" id="keycloak-login">Keycloak Login</a>
       </div>
       <div class="footer-anchor-item-last" style="display:inline-block; color: white; margin-right:15px;">
         v1.0.6
