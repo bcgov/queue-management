@@ -11,7 +11,7 @@ parameters:
   value: queue-management-frontend
 - name: APPLICATION_DOMAIN
   description: "The exposed hostname that will route to the Vue application"
-  value: "servicebc-cfms-dev.pathfinder.gov.bc.ca"
+  value: "dev-theq.pathfinder.gov.bc.ca"
 - name: IMAGE_TAG
   description: The image tag to pull for the deployment.
   required: true
@@ -60,9 +60,10 @@ objects:
         updatePeriodSeconds: 1
         intervalSeconds: 1
         timeoutSeconds: 60
+        maxSurge: 2
         maxUnavailable: 1
       resources: {}
-      activeDeadlineSeconds: 21600
+      activeDeadlineSeconds: 3600
     triggers:
     - type: ConfigChange
     - type: ImageChange
@@ -130,6 +131,16 @@ objects:
         dnsPolicy: ClusterFirst
         securityContext: {}
         schedulerName: default-scheduler
+        affinity:
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: name
+                  operator: In
+                  values:
+                  - queue-management-frontend
+              topologyKey: kubernetes.io/hostname
 - kind: PersistentVolumeClaim
   apiVersion: v1
   metadata:

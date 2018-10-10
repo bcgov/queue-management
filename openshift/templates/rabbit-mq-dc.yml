@@ -65,6 +65,7 @@ objects:
       metadata:
         labels:
           application: "${APPLICATION_NAME}"
+          name: "queue-management-mq"
       spec:
         containers:
         - env:
@@ -112,6 +113,16 @@ objects:
         schedulerName: default-scheduler
         securityContext: {}
         terminationGracePeriodSeconds: 10
+        affinity:
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: name
+                  operator: In
+                  values:
+                  - queue-management-mq
+              topologyKey: kubernetes.io/hostname
     volumeClaimTemplates:
     - metadata:
         name: "${APPLICATION_NAME}"
