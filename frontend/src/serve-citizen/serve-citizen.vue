@@ -25,6 +25,7 @@
           <b-col col cols="4">
             <div><h6>Ticket #: <strong>{{citizen.ticket_number}}</strong></h6></div>
             <div><h6>Channel: <strong>{{channel.channel_name}}</strong></h6></div>
+            <div><h6>Stand Time: <strong>{{formatTime(citizen.start_time)}}</strong></h6></div>
           </b-col>
           <b-col cols="auto" class="ml-3 mr-2">
             <h6>Comments</h6>
@@ -207,6 +208,10 @@ export default {
       'setServeModalAlert'
     ]),
     ...mapMutations(['editServiceModalForm', 'toggleFeedbackModal']),
+    formatTime(data) {
+      let date = new Date(data)
+      return date.toLocaleTimeString()
+    },
     toggleFeedback() {
       this.toggleFeedbackModal(true)
     },
