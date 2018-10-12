@@ -1,22 +1,30 @@
 
 
 <template>
-    <b-modal :visible="showAddModal"
-             size="lg"
-             hide-header
-             hide-footer
-             no-close-on-backdrop
-             no-close-on-esc
-             class="m-0 p-0"
-             @shown="setupForm()">
-       <div style="display: flex; flex-direction: row; justify-content: space-between" class="modal_header">
-         <div><h4>{{modalTitle}}</h4></div>
-       </div>
-       <b-alert :show="dismissCountDown"
-                style="h-align: center"
-                variant="danger"
-                @dismissed="dismissCountDown=0"
-                @dismiss-count-down="countDownChanged">{{this.$store.state.alertMessage}}</b-alert>
+  <b-modal :visible="showAddModal"
+           size="lg"
+           hide-header
+           hide-footer
+           no-close-on-backdrop
+           no-close-on-esc
+           class="m-0 p-0"
+           @shown="setupForm()">
+    <div style="display: flex; flex-direction: row; justify-content: space-between" class="modal_header">
+      <div><h4>{{modalTitle}}</h4></div>
+      <div>
+        <b-button size="sm"
+                  class="btn-primary"
+                  style="margin-left: 20px"
+                  @click="toggleMinimize">{{ minimizeWindow ? "Maximize" : "Minimize" }}</b-button>
+      </div>
+    </div>
+    <b-alert :show="dismissCountDown"
+              style="h-align: center"
+              variant="danger"
+              @dismissed="dismissCountDown=0"
+              @dismiss-count-down="countDownChanged">{{this.$store.state.alertMessage}}</b-alert>
+    <b-container class="pb-3" id="serve-citizen-modal-top" fluid v-if="!minimizeWindow">
+
       <div v-if="!this.addModalForm.citizen">
         <div class="loader"></div>
       </div>
@@ -34,7 +42,8 @@
           </b-row>
         </b-container>
       </div>
-    </b-modal>
+    </b-container>
+  </b-modal>
 </template>
 
 <script>
@@ -62,7 +71,8 @@ export default {
     data() {
       return {
         dismissSecs: 5,
-        dismissCountDown: 0
+        dismissCountDown: 0,
+        minimizeWindow: false
       }
     },
 
@@ -105,7 +115,10 @@ export default {
       },
       showAlert () {
         this.dismissCountDown = this.dismissSecs
-      }
+      },
+      toggleMinimize() {
+        this.minimizeWindow = !this.minimizeWindow
+      },
     }
   }
 </script>
