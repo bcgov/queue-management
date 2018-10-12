@@ -32,11 +32,11 @@
         <AddCitizenForm />
         <b-container class="mt-3 pr-3">
           <b-row align-v="center" align-h="end">
-            <div v-if="reception">
-              <b-col cols="1" class="p-0 mr-1">Quick Txn?</b-col>
-              <b-col col cols="1" class="p-0">
-                <b-form-checkbox  v-model="quickTrans" value="1" unchecked-value="0"/>
-              </b-col>
+            <div v-if="reception" class="mr-1 btn-success" style="border-radius: 5px">
+              <b-form-checkbox v-model="quickTrans" value="1" unchecked-value="0"
+                               class="mt-1 ml-1 mr-1">
+                <span style="font: 400 16px Myriad-Pro;">Quick Txn</span>
+              </b-form-checkbox>
             </div>
             <Buttons />
           </b-row>
