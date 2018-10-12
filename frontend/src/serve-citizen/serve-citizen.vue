@@ -98,11 +98,12 @@
                         :disabled="serviceBegun===false || performingAction"
                         class="w-100 btn-primary serve-btn"
                         id="serve-citizen-finish-button">Finish</b-button>
-              <div v-if="serviceBegun===true" class="px-3 pt-1" style="padding-right: 0 !important">
+              <div v-if="serviceBegun===true" class="px-3 pt-1 btn-warning"
+                   style="padding-right: 0 !important; border-radius: 5px; text-align: center">
                 <b-form-checkbox v-model="accurate_time_ind"
                                  value="0"
                                  unchecked-value="1">
-                  <span style="font-size: 1rem;">Inaccurate Time</span>
+                  <span  style="font: 400 16px Myriad-Pro;">Inaccurate Time</span>
                 </b-form-checkbox>
               </div>
             </b-col>
