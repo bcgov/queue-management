@@ -70,8 +70,7 @@ Analytics
 
 ## Requirements
 
-Requires KeyCloak
-Configuration Maps
+Requires KeyCloak and additional Openshift / Kubernetes Config Maps
 
 - keycloak.json is required in Front End Container in the following location: /var/www/html/static/keycloak
 
@@ -103,7 +102,7 @@ Configuration Maps
    }
   }
 
-- Digital Signage video needs to be manually placed in /var/www/html/static/videos
+- Digital Signage video (with the name of sbc.mp4) needs to be manually placed in /var/www/html/static/videos
 
 The openshift templates are used for build configs and deployment configs
 
