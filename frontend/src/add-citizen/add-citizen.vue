@@ -34,7 +34,7 @@
           <b-row align-v="center" align-h="end">
             <div v-if="reception" class="mr-1 btn-success" style="border-radius: 5px">
               <b-form-checkbox v-model="quickTrans" value="1" unchecked-value="0"
-                               class="mt-1 ml-1 mr-1">
+                               class="mt-3 ml-1 mr-1 pb-1" style="position: relative; top: -5px;">
                 <span style="font: 400 16px Myriad-Pro;">Quick Txn</span>
               </b-form-checkbox>
             </div>
