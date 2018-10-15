@@ -25,6 +25,7 @@
           <b-col col cols="4">
             <div><h6>Ticket #: <strong>{{citizen.ticket_number}}</strong></h6></div>
             <div><h6>Channel: <strong>{{channel.channel_name}}</strong></h6></div>
+            <div><h6>Stand Time: <strong>{{formatTime(citizen.start_time)}}</strong></h6></div>
           </b-col>
           <b-col cols="auto" class="ml-3 mr-2">
             <h6>Comments</h6>
@@ -98,11 +99,12 @@
                         :disabled="serviceBegun===false || performingAction"
                         class="w-100 btn-primary serve-btn"
                         id="serve-citizen-finish-button">Finish</b-button>
-              <div v-if="serviceBegun===true" class="px-3 pt-1" style="padding-right: 0 !important">
+              <div v-if="serviceBegun===true" class="px-3 pt-1 btn-warning"
+                   style="padding-right: 0 !important; border-radius: 5px; text-align: center">
                 <b-form-checkbox v-model="accurate_time_ind"
                                  value="0"
                                  unchecked-value="1">
-                  <span style="font-size: 1rem;">Inaccurate Time</span>
+                  <span  style="font: 400 16px Myriad-Pro;">Inaccurate Time</span>
                 </b-form-checkbox>
               </div>
             </b-col>
@@ -206,6 +208,10 @@ export default {
       'setServeModalAlert'
     ]),
     ...mapMutations(['editServiceModalForm', 'toggleFeedbackModal']),
+    formatTime(data) {
+      let date = new Date(data)
+      return date.toLocaleTimeString()
+    },
     toggleFeedback() {
       this.toggleFeedbackModal(true)
     },
