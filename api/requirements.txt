@@ -1,3 +1,4 @@
+snowplow-tracker==0.8.1rc1.dev1
 Flask
 Flask-Admin
 Flask-Cache
@@ -16,13 +17,10 @@ flask-compress
 flask-cors
 flask_marshmallow
 flask-socketio
-gevent>=1.1.0,<1.2.0
 gunicorn
-kombu>=3.0,<4
 marshmallow-sqlalchemy
 mysqlclient
 pytest
 python-jose
-snowplow-tracker
 toastedmarshmallow
 pysnow
