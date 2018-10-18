@@ -19,11 +19,13 @@ from app.models import Citizen, CSR, CitizenState
 from app.models import SRState
 from app.schemas import CitizenSchema
 from ...snowplow.snowplow import SnowPlow
+import os
 
 @api.route("/citizens/<int:id>/finish_service/", methods=["POST"])
 class CitizenFinishService(Resource):
 
     citizen_schema = CitizenSchema()
+    clear_comments_flag = (os.getenv("THEQ_CLEAR_COMMENTS_FLAG", "True")).upper() == "TRUE"
 
     @oidc.accept_token(require_token=True)
     @api_call_with_retry
@@ -36,7 +38,7 @@ class CitizenFinishService(Resource):
             return {"message": "Citizen has no active service requests"}
 
         quantity = active_service_request.quantity
-        active_service_request.finish_service(csr)
+        active_service_request.finish_service(csr, self.clear_comments_flag)
         citizen_state = CitizenState.query.filter_by(cs_state_name="Received Services").first()
         citizen.cs_id = citizen_state.cs_id
 
