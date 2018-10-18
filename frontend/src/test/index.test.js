@@ -98,6 +98,7 @@ function delay(time) {
 }
 
 async function addCitizenToQueue() {
+  await page.waitForSelector('#add-citizen-button')
   await addCitizenFromDash();
   await populateAddCitizen();
   await addToQueue();
@@ -110,12 +111,14 @@ async function populateAddCitizen() {
 }
 
 async function inviteFromQueue() {
+  await page.waitForSelector('#client-waiting-table')
   await page.click('#client-waiting-table > tbody > tr > td')
   await delay(1000)
   await page.waitForSelector('.serve-modal-content')
 }
 
 async function beginServiceFromHoldTable() {
+  await page.waitForSelector('#client-hold-table')
   await page.click('#client-hold-table > table > tbody > tr > td')
   await delay(1000)
   await page.waitForSelector('.serve-modal-content')
@@ -155,6 +158,7 @@ async function beginServiceFromAddCitizenModal() {
 }
 
 async function cancelFromAddCitizenModal() {
+  await page.waitForSelector('#add-citizen-cancel')
   await page.click('#add-citizen-cancel')
   await delay(1000)
   await page.waitForSelector('.add_citizen_template', { hidden: true })
