@@ -20,12 +20,14 @@ from app.schemas import CitizenSchema, ServiceReqSchema
 from app.models import SRState
 from datetime import datetime
 from ...snowplow.snowplow import SnowPlow
+import os
 
 @api.route("/citizens/<int:id>/citizen_left/", methods=['POST'])
 class CitizenLeft(Resource):
 
     service_request_schema = ServiceReqSchema(many=True)
     citizen_schema = CitizenSchema()
+    clear_comments_flag = (os.getenv("THEQ_CLEAR_COMMENTS_FLAG", "True")).upper() == "TRUE"
 
     @oidc.accept_token(require_token=True)
     @api_call_with_retry
@@ -44,7 +46,8 @@ class CitizenLeft(Resource):
                     p.time_end = datetime.now()
 
         citizen.cs = CitizenState.query.filter_by(cs_state_name='Left before receiving services').first()
-        citizen.citizen_comments = None
+        if self.clear_comments_flag:
+            citizen.citizen_comments = None
 
         db.session.add(citizen)
         db.session.commit()
