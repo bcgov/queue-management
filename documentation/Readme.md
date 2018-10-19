@@ -30,21 +30,23 @@ If you want to just try out the application, here are some instructions to get i
 
 ## Setup MySQL instance & run it:
 
-1. sudo apt-get install mysql-server
-1. sudo service mysql start
-1. sudo mysql --defaults-file=/etc/mysql/debian.cnf
-1. CREATE USER 'demo'@'localhost' IDENTIFIED BY 'demo';
-1. GRANT ALL PRIVILEGES ON _ . _ TO 'demo'@'localhost';
-1. CREATE DATABASE IF NOT EXISTS queue_management;
-1. FLUSH PRIVILEGES;
+1. ```sudo apt-get install mysql-server```
+1. ```sudo service mysql start```
+1. ```sudo mysql --defaults-file=/etc/mysql/debian.cnf```
+1. ```CREATE USER 'demo'@'localhost' IDENTIFIED BY 'demo';```
+1. ```GRANT ALL PRIVILEGES ON *.* TO 'demo'@'localhost';```
+1. ```CREATE DATABASE IF NOT EXISTS queue_management;```
+1. ```FLUSH PRIVILEGES;```
 
 ## Setup docker & install Keycloak:
 
-1. git clone https://github.com/bcgov/queue-management.git
-1. export DOCKER_HOST=tcp://0.0.0.0:2375
-1. cd /queue-management/keycloak-local-testserver
-1. docker build -t keycloak .
-1. docker run -it --name keycloak -p 8085:8080 keycloak
+1. ```git clone https://github.com/bcgov/queue-management.git```
+1. ```export DOCKER_HOST=tcp://0.0.0.0:2375```
+1. ```cd /queue-management/keycloak-local-testserver```
+1. ```docker build -t keycloak .```
+1. ```docker run -it --name keycloak -p 8085:8080 keycloak```
+
+You should be able to login in with admin/admin  on http://localhost:8085/auth
 
 ## Setup Flask Python API Container:
 
@@ -52,50 +54,56 @@ Ensure you have python 3. I also had to install: gcc, python3-venv, libmysqlclie
 
 ### Setup API Server:
 
-1. python3 -m venv env
-1. source env/bin/activate
-1. cd /queue-management/api
-1. pip3 install -r requirements.txt
+1. ```python3 -m venv env```
+1. ```source env/bin/activate```
+1. ```cd /queue-management/api```
+1. ```pip3 install -r requirements.txt```
 
 ### Add two required keycloak config files
 
-1. cp /queue-management/documentation/demo-files/secrets.json /queue-management/api/client_secrets/secrets.json
-1. cp /queue-management/documentation/demo-files/keycloak-local.json /queue-management/frontend/static/keycloak-local.json
+1. ```cp /queue-management/documentation/demo-files/secrets.json /queue-management/api/client_secrets/secrets.json```
+1. ```cp /queue-management/documentation/demo-files/keycloak-local.json /queue-management/frontend/static/keycloak-local.json```
 
 ### Set Enviornment Variables required:
 
-export DATABASE_ENGINE=mysql
-export DATABASE_USERNAME=demo
-export DATABASE_PASSWORD=demo
-export DATABASE_NAME=queue_management
-export DATABASE_HOST=127.0.0.1
-export DATABASE_PORT=3306
-export THEQ_SNOWPLOW_CALLFLAG=false
+1. ```export DATABASE_ENGINE=mysql```
+1. ```export DATABASE_USERNAME=demo```
+1. ```export DATABASE_PASSWORD=demo```
+1. ```export DATABASE_NAME=queue_management```
+1. ```export DATABASE_HOST=127.0.0.1```
+1. ```export DATABASE_PORT=3306```
+1. ```export THEQ_SNOWPLOW_CALLFLAG=False```
 
 ### Update Database with required tables:
 
-1. python3 manage.py db upgrade
+1. ```python3 manage.py db upgrade```
 
 ### Update the Database with demo data:
 
-1. python3 manage.py bootstrap
+1. ```python3 manage.py bootstrap```
 
 ### Run API Server:
 
-1. python3 -m flask run
+1. ```python3 -m flask run```
 
 ## Setup for  FrontEnd Development
 
 Install npm:
 
-1. sudo apt-get install npm
-1. /usr/bin/npm install
+1. ```sudo apt-get install npm```
+1. ```/usr/bin/npm install```
 
 ## To Start FRONTEND:
 
-1. npm start localhost
+1. ```npm start localhost```
 
 **IMPORTANT: To login, use the Keycloak Login link at the bottom right hand corner. The main login is used with Single Signon integration to our Enterprise Active Directory Domain.**
+
+You should be able to login in using the following IDs:  
+user/user - Regular Customer Service Representative (CSR)  
+admin/admin - Manager of the office (Government Agent)  
+
+
 
 Additional API Enviornment Variables of note:
 
