@@ -68,9 +68,9 @@ class DevelopmentConfig(BaseConfig):
     TESTING = False
     ENV = 'dev'
 
-    SESSION_COOKIE_DOMAIN = os.getenv('SERVER_NAME', 'wesq.pathfinder.gov.bc.ca')
+    SESSION_COOKIE_DOMAIN = 'wesq.pathfinder.gov.bc.ca'
     REMEMBER_COOKIE_DURATION = 86400
-    SERVER_NAME = os.getenv('SERVER_NAME', 'wesq.pathfinder.gov.bc.ca')
+    SERVER_NAME = 'wesq.pathfinder.gov.bc.ca'
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
 
