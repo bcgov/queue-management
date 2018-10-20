@@ -59,7 +59,7 @@
         'showHideResponseModal',
         'toggleFeedbackModal'
       ]),
-      ...mapActions(['messageSlack']),
+      ...mapActions(['messageFeedback']),
 
       toggleModal() {
         this.toggleFeedbackModal(false)
@@ -71,7 +71,7 @@
         if (this.feedbackMessage.length <= 0) {
           this.showWarning = true
         } else {
-          this.messageSlack()
+          this.messageFeedback()
           this.showWarning = false
           this.toggleFeedbackModal(false)
           this.showHideResponseModal()

@@ -61,7 +61,7 @@ Basic Administration Panels to add, update and delete:
 
 Feedback
 
-- Sends to Slack
+- Sends to Slack and / or Service Now
 
 Analytics
 
