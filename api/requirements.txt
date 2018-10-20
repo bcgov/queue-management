@@ -1,4 +1,5 @@
 kombu==4.2.1
+celery==4.2.1
 snowplow-tracker==0.8.1rc1.dev1
 Flask
 Flask-Admin
