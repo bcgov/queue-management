@@ -59,6 +59,7 @@ class LocalConfig(BaseConfig):
     CORS_ALLOWED_ORIGINS = ["http://localhost:8080"]
     SQLALCHEMY_ECHO = False
     SLACK_URL = os.getenv('SLACK_URL')
+    SERVICENOW_INSTANCE = os.getenv('SERVICENOW_INSTANCE')
     SECRET_KEY = "pancakes"
 
 
