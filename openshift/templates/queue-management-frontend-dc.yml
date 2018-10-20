@@ -11,11 +11,15 @@ parameters:
   value: queue-management-frontend
 - name: APPLICATION_DOMAIN
   description: "The exposed hostname that will route to the Vue application"
-  value: "dev-theq.pathfinder.gov.bc.ca"
+  value: ""
 - name: IMAGE_TAG
   description: The image tag to pull for the deployment.
   required: true
   value: dev
+- name: TOOLS_WORKSPACE
+  description: The Location for your image streams (Tools Workspace)
+  required: true
+  value: servicebc-cfms-tools
 objects:
 - kind: Service
   apiVersion: v1
@@ -73,9 +77,9 @@ objects:
         - "${NAME}"
         from:
           kind: ImageStreamTag
-          namespace: servicebc-cfms-tools
+          namespace: ${TOOLS_WORKSPACE}
           name: "${NAME}:${IMAGE_TAG}"
-    replicas: 3
+    replicas: 2
     revisionHistoryLimit: 10
     test: false
     selector:
@@ -122,10 +126,10 @@ objects:
             limits:
               cpu: 200m
               memory: 512Mi
-          volumeMounts:
-            - mountPath: /var/www/html/static/videos
-              name: frontend-videos
-              readOnly: false
+        volumeMounts:
+          - mountPath: /var/www/html/static/videos
+            name: frontend-videos
+            readOnly: false
         restartPolicy: Always
         terminationGracePeriodSeconds: 30
         dnsPolicy: ClusterFirst

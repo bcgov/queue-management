@@ -75,8 +75,12 @@ podTemplate(
             // Sleep to ensure that the deployment has started when we begin the verification stage
             sleep 5
 
+            DEV_NAMESPACE = sh (
+                    script: 'oc describe configmap postman-passwords | awk  -F  "=" \'/^dev_namespace/{print $2}\'',
+                    returnStdout: true
+                ).trim()
             openshiftVerifyDeployment depCfg: 'queue-management-api', 
-                                      namespace: 'servicebc-cfms-dev', 
+                                      namespace: ${DEV_NAMESPACE}, 
                                       replicaCount: 3, 
                                       verbose: 'false', 
                                       verifyReplicaCount: 'false'
@@ -101,8 +105,12 @@ podTemplate(
             // Sleep to ensure that the deployment has started when we begin the verification stage
             sleep 5
 
+            DEV_NAMESPACE = sh (
+                    script: 'oc describe configmap postman-passwords | awk  -F  "=" \'/^dev_namespace/{print $2}\'',
+                    returnStdout: true
+                ).trim()
             openshiftVerifyDeployment depCfg: 'queue-management-frontend', 
-                                      namespace: 'servicebc-cfms-dev', 
+                                      namespace: ${DEV_NAMESPACE}, 
                                       replicaCount: 3, 
                                       verbose: 'false', 
                                       verifyReplicaCount: 'false'
@@ -168,9 +176,13 @@ podTemplate(
     node(owaspPodLabel) {
         stage('ZAP Security Scan') {
             sleep 60
+            DEV_URL = sh (
+                script: 'oc describe configmap postman-passwords | awk  -F  "=" \'/^dev_url/{print $2}\'',
+                returnStdout: true
+            ).trim()            
             def retVal = sh (
                 returnStatus: true, 
-                script: '/zap/zap-baseline.py -r baseline.html -t https://dev-theq.pathfinder.gov.bc.ca/'
+                script: '/zap/zap-baseline.py -r baseline.html -t ${DEV_URL}'
             )
             publishHTML([
                 allowMissing: false, 

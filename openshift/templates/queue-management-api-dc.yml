@@ -20,6 +20,10 @@ parameters:
   description: "The tag to use when deploying"
   required: true
   value: "dev"
+- name: TOOLS_WORKSPACE
+  description: "IMAGE STREAM WORKSPACE LOCATION"
+  required: true
+  value: "servicebc-cfms-tools"
 objects:
 - kind: Service
   apiVersion: v1
@@ -88,7 +92,7 @@ objects:
           - "${API_NAME}"
         from:
           kind: ImageStreamTag
-          namespace: servicebc-cfms-tools
+          namespace: $(TOOLS_WORKSPACE)
           name: "${API_NAME}:${API_IMAGE_TAG}"
     - type: ConfigChange
     replicas: 3
