@@ -187,9 +187,7 @@ podTemplate(
             ).trim()            
             def retVal = sh (
                 returnStatus: true, 
-                script: {
-                        '/zap/zap-baseline.py -r baseline.html -t ' && "${DEV_URL}"
-                }
+                script: '${DEV_URL}'
             )
             publishHTML([
                 allowMissing: false, 
