@@ -8,5 +8,4 @@ if [ $rc -eq 0 ]; then
     npm run build:production
     rc=$?
 fi
-
 exit $rc

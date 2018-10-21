@@ -1,9 +1,9 @@
-// This Jenkins build requires a configmap called postman-passwords with the following in it:
+// This Jenkins build requires a configmap called jenkin-config with the following in it:
 //
 // password_qtxn=<cfms-postman-operator userid password>
 // password_nonqtxn=<cfms-postman-non-operator userid password>
 // client_secret=<keycloak client secret>
-// dev_url=<development application url to run ZAP Test> 
+// zap_with_url=<zap command including dev url for analysis> 
 // dev_namespace=<dev namespace to run tests>
 //
 
@@ -85,7 +85,7 @@ podTemplate(
             sleep 5
 
             DEV_NAMESPACE = sh (
-                    script: 'oc describe configmap postman-passwords | awk  -F  "=" \'/^dev_namespace/{print $2}\'',
+                    script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^dev_namespace/{print $2}\'',
                     returnStdout: true
                 ).trim()
             openshiftVerifyDeployment depCfg: 'queue-management-api', 
@@ -137,17 +137,17 @@ podTemplate(
                 )
 
                 PASSWORD = sh (
-                    script: 'oc describe configmap postman-passwords | awk  -F  "=" \'/^password_qtxn/{print $2}\'',
+                    script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^password_qtxn/{print $2}\'',
                     returnStdout: true
                 ).trim()
 
                 PASSWORD_NONQTXN = sh (
-                    script: 'oc describe configmap postman-passwords | awk  -F  "=" \'/^password_nonqtxn/{print $2}\'',
+                    script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^password_nonqtxn/{print $2}\'',
                     returnStdout: true
                 ).trim()
 
                 CLIENT_SECRET = sh (
-                    script: 'oc describe configmap postman-passwords | awk  -F  "=" \'/^client_secret/{print $2}\'',
+                    script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^client_secret/{print $2}\'',
                     returnStdout: true
                 ).trim()
 
@@ -181,13 +181,13 @@ podTemplate(
     node(owaspPodLabel) {
         stage('ZAP Security Scan') {
             sleep 60
-            DEV_URL = sh (
-                script: 'oc describe configmap postman-passwords | awk  -F  "=" \'/^dev_url/{print $2}\'',
+            ZAP_WITH_URL = sh (
+                script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^zap_with_url/{print $2}\'',
                 returnStdout: true
             ).trim()            
             def retVal = sh (
                 returnStatus: true, 
-                script: "${DEV_URL}"
+                script: "${ZAP_WITH_URL}"
             )
             publishHTML([
                 allowMissing: false, 
