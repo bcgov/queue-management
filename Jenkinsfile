@@ -104,12 +104,7 @@ podTemplate(
 
             // Sleep to ensure that the deployment has started when we begin the verification stage
             sleep 5
-
-
-            DEV_NAMESPACE = sh (
-                    script: 'oc describe configmap postman.key | awk  -F  "=" \'/^dev_namespace/{print $2}\'',
-                    returnStdout: true
-                ).trim()
+            
             openshiftVerifyDeployment depCfg: 'queue-management-frontend', 
                                       namespace: ${DEV_NAMESPACE}, 
                                       replicaCount: 3, 
