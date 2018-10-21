@@ -104,9 +104,9 @@ podTemplate(
 
             // Sleep to ensure that the deployment has started when we begin the verification stage
             sleep 5
-            
+
             openshiftVerifyDeployment depCfg: 'queue-management-frontend', 
-                                      namespace: ${DEV_NAMESPACE}, 
+                                      namespace: "${DEV_NAMESPACE}", 
                                       replicaCount: 3, 
                                       verbose: 'false', 
                                       verifyReplicaCount: 'false'
