@@ -7,9 +7,6 @@ rc=$?
 if [ $rc -eq 0 ]; then
     npm run build:production
     rc=$?
-    if [ $rc -eq 0 ]; then
-      npm test
-    fi
 fi
 
 exit $rc

@@ -187,7 +187,7 @@ podTemplate(
             ).trim()            
             def retVal = sh (
                 returnStatus: true, 
-                script: '${DEV_URL}'
+                script: "${DEV_URL}"
             )
             publishHTML([
                 allowMissing: false, 
