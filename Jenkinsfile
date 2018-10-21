@@ -1,3 +1,12 @@
+// This Jenkins build requires a configmap called postman-passwords with the following in it:
+//
+// password_qtxn=<cfms-postman-operator userid password>
+// password_nonqtxn=<cfms-postman-non-operator userid password>
+// client_secret=<keycloak client secret>
+// dev_url=<development application url to run ZAP Test> 
+// dev_namespace=<dev namespace to run tests>
+//
+
 podTemplate(
     label: 'jenkins-python3nodejs', 
     name: 'jenkins-python3nodejs', 
@@ -178,7 +187,9 @@ podTemplate(
             ).trim()            
             def retVal = sh (
                 returnStatus: true, 
-                script: '/zap/zap-baseline.py -r baseline.html -t ${DEV_URL}'
+                script: {
+                        '/zap/zap-baseline.py -r baseline.html -t ' && "${DEV_URL}"
+                }
             )
             publishHTML([
                 allowMissing: false, 
