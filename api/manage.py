@@ -359,7 +359,7 @@ class Bootstrap(Command):
             csr_state_id=csr_state_logout.csr_state_id
         )
         demo_ga = models.CSR(
-            username="demoga",
+            username="admin",
             office_id=office_test.office_id,
             role_id=role_ga.role_id,
             qt_xn_csr_ind=0,
@@ -368,7 +368,7 @@ class Bootstrap(Command):
             csr_state_id=csr_state_logout.csr_state_id
         )
         demo_csr = models.CSR(
-            username="democsr",
+            username="user",
             office_id=office_test.office_id,
             role_id=role_csr.role_id,
             qt_xn_csr_ind=0,

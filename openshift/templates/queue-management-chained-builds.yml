@@ -112,7 +112,13 @@ objects:
       to:
         kind: ImageStreamTag
         name: queue-management-frontend-build:latest
-    resources: {}
+    resources:
+      limits:
+        cpu: '1'
+        memory: 4Gi
+      requests:
+        cpu: '1'
+        memory: 4Gi
     postCommit: {}
     nodeSelector: 
     successfulBuildsHistoryLimit: 5

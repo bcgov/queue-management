@@ -114,9 +114,9 @@ THEQ_SNOWPLOW_APPID - Application ID for snowplow
 THEQ_SNOWPLOW_NAMESPACE - Snowplow events namespace
 THEQ_SNOWPLOW_CALLFLAG - disable/enable snowplow (Value: True or False)
 
-## Installation
+## [Installation](documentation/Readme.md)
 
-Documentation under development.
+Additional information can be found in the [documention](documentation/Readme.md) folder.
 
 ## Goals/Roadmap
 
