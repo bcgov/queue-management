@@ -1,200 +1,264 @@
----
-kind: Template
 apiVersion: v1
+kind: Template
+labels:
+  template: queue-management-api
 metadata:
   name: queue-management-api
-parameters:
-- name: API_NAME
-  description: "Name of the flask application"
-  required: true
-  value: "queue-management-api"
-- name: API_APPLICATION_DOMAIN
-  description: "The exposed hostname that will route to the Flask service"
-  required: true
-  value: "dev-theq.pathfinder.gov.bc.ca"
-- name: FLASK_CONFIGURATION
-  description: "The configuration object that should be loaded for this deployment."
-  required: true
-  value: development
-- name: API_IMAGE_TAG
-  description: "The tag to use when deploying"
-  required: true
-  value: "dev"
-- name: TOOLS_WORKSPACE
-  description: "IMAGE STREAM WORKSPACE LOCATION"
-  required: true
-  value: "servicebc-cfms-tools"
 objects:
-- kind: Service
-  apiVersion: v1
-  metadata:
-    name: "${API_NAME}"
-    annotations:
-      description: "Exposes and load balances the api pods"
-  spec:
-    ports:
-    - name: web
-      port: 8080
-      targetPort: 8080
-    selector:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: lockdir
+    spec:
+      accessModes:
+        - ReadWriteMany
+      resources:
+        requests:
+          storage: 128Mi
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: oidc-secrets
+      labels:
+        app: "${API_NAME}"
+    data:
+      secrets.json: |
+        {
+          "web": {
+            "realm_public_key": "",
+            "issuer": "https://<keycloak server>/auth/realms/<realm>",
+            "auth_uri": "https://<keycloak server>/auth/realms/<realm>/protocol/openid-connect/auth",
+            "client_id": "",
+            "client_secret": "",
+            "redirect_urls": [
+              ""  
+            ],
+            "userinfo_uri": "https://<keycloak server>/auth/realms/<realm>/protocol/openid-connect/userinfo",
+            "token_uri": "https://<keycloak server>/auth/realms/<realm>/protocol/openid-connect/token",
+            "token_introspection_uri": "https://<keycloak server>/auth/realms/<realm>/protocol/openid-connect/token/introspect"  
+          }
+        }
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      annotations:
+        description: "Exposes and load balances the api pods"
       name: "${API_NAME}"
-- kind: Route
-  apiVersion: v1
-  metadata:
-    name: "${API_NAME}"
-  spec:
-    host: "${API_APPLICATION_DOMAIN}"
-    path: /api
-    to:
-      kind: Service
+      labels:
+        app: "${API_NAME}"
+    spec:
+      ports:
+        - name: web
+          port: 8080
+          targetPort: 8080
+      selector:
+        app: "${API_NAME}"
+  - apiVersion: v1
+    kind: Route
+    metadata:
       name: "${API_NAME}"
-    tls:
-      insecureEdgeTerminationPolicy: Redirect
-      termination: edge
-- kind: Route
-  apiVersion: v1
-  metadata:
-    name: "${API_NAME}-admin"
-  spec:
-    host: "${API_APPLICATION_DOMAIN}"
-    path: /admin
-    to:
-      kind: Service
-      name: "${API_NAME}"
-    tls:
-      insecureEdgeTerminationPolicy: Redirect
-      termination: edge
-- kind: DeploymentConfig
-  apiVersion: v1
-  metadata:
-    name: "${API_NAME}"
-    labels:
-      app: queue-management
-    annotations:
-      description: "Defines how to deploy the application server"
-      template.alpha.openshift.io/wait-for-ready: "true"
-  spec:
-    strategy:
-      type: Rolling
-      rollingParams:
-        updatePeriodSeconds: 1
-        intervalSeconds: 1
-        timeoutSeconds: 60
-        maxSurge: 2
-        maxUnavailable: 1
-      resources: {}
-      activeDeadlineSeconds: 3600
-    triggers:
-    - type: ImageChange
-      imageChangeParams:
-        automatic: true
-        containerNames: 
-          - "${API_NAME}"
-        from:
-          kind: ImageStreamTag
-          namespace: $(TOOLS_WORKSPACE)
-          name: "${API_NAME}:${API_IMAGE_TAG}"
-    - type: ConfigChange
-    replicas: 3
-    selector:
-      name: "${API_NAME}"
-    template:
-      metadata:
+    spec:
+      host: "${API_APPLICATION_DOMAIN}"
+      path: /api
+      to:
+        kind: Service
         name: "${API_NAME}"
-        labels:
-          name: "queue-management-api"
-      spec:
-        containers:
-        - name: "${API_NAME}"
-          image: ""
-          ports:
-          - containerPort: 8080
-          readinessProbe:
-            failureThreshold: 3
-            initialDelaySeconds: 3
-            periodSeconds: 10
-            successThreshold: 1
-            tcpSocket:
-              port: 8080
-            timeoutSeconds: 3
-          livenessProbe:
-            failureThreshold: 3
-            initialDelaySeconds: 3
-            periodSeconds: 10
-            successThreshold: 1
-            tcpSocket:
-              port: 8080
-            timeoutSeconds: 3
-          env:
-          - name: DATABASE_ENGINE
-            value: "mysql"
-          - name: DATABASE_USERNAME
-            valueFrom:
-              secretKeyRef:
-                name: "percona-passwords"
-                key: mysql_user
-          - name: DATABASE_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: "percona-passwords"
-                key: mysql_password
-          - name: DATABASE_NAME
-            valueFrom:
-              secretKeyRef:
-                name: "percona-passwords"
-                key: mysql_database
-          - name: DATABASE_HOST
-            value: "percona"
-          - name: DATABASE_PORT
-            value: "3306"
-          - name: SQLALCHEMY_ECHO
-            value: "False"
-          - name: APP_CONFIG
-            value: gunicorn_config.py
-          - name: FLASK_CONFIGURATION
-            value: "${FLASK_CONFIGURATION}"
-          - name: APP_MODULE
-            value: wsgi
-          - name: ACTIVE_MQ_HOST
-            value: rabbitmq
-          - name: ACTIVE_MQ_PORT
-            value: "5672"
-          resources:
-            requests:
-              cpu: 500m
-              memory: 256Mi
-            limits:
-              cpu: 1
-              memory: 512Mi
-          volumeMounts:
-            - mountPath: /opt/app-root/src/client_secrets
+      tls:
+        insecureEdgeTerminationPolicy: Redirect
+        termination: edge
+  - apiVersion: v1
+    kind: Route
+    metadata:
+      name: "${API_NAME}-admin"
+    spec:
+      host: "${API_APPLICATION_DOMAIN}"
+      path: /admin
+      to:
+        kind: Service
+        name: "${API_NAME}"
+      tls:
+        insecureEdgeTerminationPolicy: Redirect
+        termination: edge
+  - apiVersion: v1
+    kind: DeploymentConfig
+    metadata:
+      annotations:
+        description: "Defines how to deploy the application server"
+        template.alpha.openshift.io/wait-for-ready: "true"
+      name: "${API_NAME}"
+    spec:
+      replicas: 2
+      selector:
+        name: ${API_NAME}
+      strategy:
+        type: Rolling
+        rollingParams:
+          updatePeriodSeconds: 1
+          intervalSeconds: 1
+          timeoutSeconds: 60
+          maxSurge: 2
+          maxUnavailable: 1
+        resources: {}
+        activeDeadlineSeconds: 3600
+      template:
+        metadata:
+          labels:
+            app: "${API_NAME}"
+            name: "${API_NAME}"
+        spec:
+          containers:
+            - name: "${API_NAME}"
+              image: " "
+              env:
+                - name: DATABASE_ENGINE
+                  value: "mysql"
+                - name: DATABASE_USERNAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: "percona-passwords"
+                      key: mysql_user
+                - name: DATABASE_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: "percona-passwords"
+                      key: mysql_password
+                - name: DATABASE_NAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: "percona-passwords"
+                      key: mysql_database
+                - name: DATABASE_HOST
+                  value: "percona"
+                - name: DATABASE_PORT
+                  value: "3306"
+                - name: SQLALCHEMY_ECHO
+                  value: "False"
+                - name: APP_CONFIG
+                  value: gunicorn_config.py
+                - name: FLASK_CONFIGURATION
+                  value: "${FLASK_CONFIGURATION}"
+                - name: APP_MODULE
+                  value: wsgi
+                - name: ACTIVE_MQ_HOST
+                  value: rabbitmq
+                - name: ACTIVE_MQ_PORT
+                  value: "5672"
+              ports:
+                - containerPort: 8080
+              readinessProbe:
+                failureThreshold: 3
+                initialDelaySeconds: 3
+                periodSeconds: 10
+                successThreshold: 1
+                tcpSocket:
+                  port: 8080
+                timeoutSeconds: 3
+              livenessProbe:
+                failureThreshold: 3
+                initialDelaySeconds: 3
+                periodSeconds: 10
+                successThreshold: 1
+                tcpSocket:
+                  port: 8080
+                timeoutSeconds: 3
+              volumeMounts:
+                - mountPath: /opt/app-root/src/client_secrets
+                  name: oidc-secrets-o6ya6
+                  readOnly: true
+                - mountPath: /opt/app-root/src/lock
+                  name: lockdir
+              terminationMessagePath: "/dev/termination-log"
+              terminationMessagePolicy: File
+              imagePullPolicy: Always
+              resources:
+                requests:
+                  cpu: 200m
+                  memory: 256Mi
+                limits:
+                  cpu: 500m
+                  memory: 512Mi
+          restartPolicy: Always
+          terminationGracePeriodSeconds: 30
+          dnsPolicy: ClusterFirst
+          securityContext: {}
+          schedulerName: default-scheduler
+          volumes:
+            - configMap:
+                defaultMode: 420
+                name: oidc-secrets
               name: oidc-secrets-o6ya6
-              readOnly: true
-            - mountPath: /opt/app-root/src/lock
-              name: lockdir
-              readOnly: false
-          imagePullPolicy: Always
-        volumes:
-          - configMap:
-              defaultMode: 420
-              name: oidc-secrets
-            name: oidc-secrets-o6ya6
-        affinity:
-          podAntiAffinity:
-            requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                - key: name
-                  operator: In
-                  values:
-                  - queue-management-api
-              topologyKey: kubernetes.io/hostname
-- kind: PersistentVolumeClaim
-  apiVersion: v1
-  metadata:
-    name: "lockdir"
-  spec:
-    accessModes: [ "ReadWriteMany" ]
-    resources:
-      requests:
-        storage: "128Mi"
+            - name: lockdir
+              persistentVolumeClaim:
+                claimName: lockdir
+          affinity:
+            podAntiAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchExpressions:
+                      - key: name
+                        operator: In
+                        values:
+                          - "${API_NAME}"
+                  topologyKey: kubernetes.io/hostname
+      triggers:
+        - type: ConfigChange
+        - type: ImageChange
+          imageChangeParams:
+            automatic: true
+            containerNames:
+              - "${API_NAME}"
+            from:
+              kind: ImageStreamTag
+              namespace: "${TOOLS_WORKSPACE}"
+              name: "${API_NAME}:${API_IMAGE_TAG}"
+parameters:
+  - name: API_NAME
+    displayName: Name
+    description: "Name of the flask application"
+    required: true
+    value: "queue-management-api"
+  - name: API_APPLICATION_DOMAIN
+    description: "The exposed hostname that will route to the Flask service"
+    required: true
+    value: ""
+  - name: FLASK_CONFIGURATION
+    description: "The configuration object that should be loaded for this deployment."
+    required: true
+    value: development
+  - name: API_IMAGE_TAG
+    description: "The tag to use when deploying"
+    required: true
+    value: "dev"
+  - name: TOOLS_WORKSPACE
+    description: "IMAGE STREAM WORKSPACE LOCATION"
+    required: true
+    value: ""
+  - name: SECRET_KEY
+    description: "Key required for Flask"
+    required: true
+    generate: expression
+    from: "[a-zA-Z0-9]{16}"
+  - name: SLACK_URL
+    description: "Slack API URL"
+    required: false
+    value: ""
+  - name: THEQ_CLEAR_COMMENTS_FLAG
+    description: "Remove Comments in Database (True or False)"
+    required: false
+    value: "True"
+  - name: THEQ_SNOWPLOW_CALLFLAG
+    description: "Send events to Snowplow for Analytics (True or False)"
+    required: true
+    value: "False"
+  - name: THEQ_SNOWPLOW_ENDPOINT
+    description: "Send events to Snowplow for Analytics (True or False)"
+    required: false
+    value: ""
+  - name: THEQ_SNOWPLOW_APPID
+    description: "Send events to Snowplow for Analytics (True or False)"
+    required: false
+    value: ""
+  - name: THEQ_SNOWPLOW_NAMESPACE
+    description: "Send events to Snowplow for Analytics (True or False)"
+    required: false
+    value: ""

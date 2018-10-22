@@ -5,7 +5,10 @@
 // client_secret=<keycloak client secret>
 // zap_with_url=<zap command including dev url for analysis> 
 // dev_namespace=<dev namespace to run tests>
-//
+// url=<url of api>/api/v1/
+// authurl=<Keycloak domain>
+// clientid=<keycload Client ID>
+// realm=<keycloak realm>
 
 podTemplate(
     label: 'jenkins-python3nodejs', 
@@ -153,7 +156,7 @@ podTemplate(
 
                 sh (
                     returnStdout: true,
-                    script: "./node_modules/newman/bin/newman.js run postman_tests.json -e postman_env.json --global-var 'password=${PASSWORD}' --global-var 'password_nonqtxn=${PASSWORD_NONQTXN}' --global-var 'client_secret=${CLIENT_SECRET}'"
+                    script: "./node_modules/newman/bin/newman.js run postman_tests.json -e postman_env.json --global-var 'password=${PASSWORD}' --global-var 'password_nonqtxn=${PASSWORD_NONQTXN}' --global-var 'client_secret=${CLIENT_SECRET}'" --global-var 'url=${URL}' --global-var 'authurl=${AUTHURL}' --global-var 'clientid=${CLIENTID}' --global-var 'realm=${REALM}'
                 )
             }
         }

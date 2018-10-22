@@ -15,27 +15,31 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "1c9fd856-5ff7-4c5b-87c7-dc6d6167ac37",
-								"type": "text/javascript",
+								"id": "34b6afaf-8d76-4adf-a628-2c4ccd57c881",
 								"exec": [
 									"// If the \"postman_bdd_path\" environment variable is set, then we'll use it.",
 									"// Otherwise, we'll default to the published version",
 									"if (!environment.postman_bdd_path) {",
-									"    postman.setGlobalVariable('postman_bdd_path', 'http://bigstickcarpet.com/postman-bdd/dist/postman-bdd.min.js');",
+									"    //  Original URL from Registries.  Now appears to be blocked from gov't workstations, not from Openshift, however.",
+									"    //  postman.setGlobalVariable('postman_bdd_path', 'http://bigstickcarpet.com/postman-bdd/dist/postman-bdd.min.js');",
+									"",
+									"    //  New link, which appears to work.",
+									"    postman.setGlobalVariable('postman_bdd_path', 'https://raw.githubusercontent.com/JamesMessinger/postman-bdd/master/dist/postman-bdd.min.js');",
 									"}",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
 								"id": "47e65f0f-09a2-4eda-a006-edfc894218b1",
-								"type": "text/javascript",
 								"exec": [
 									"// \"install\" Postman BDD",
 									"postman.setGlobalVariable('postmanBDD', responseBody);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
