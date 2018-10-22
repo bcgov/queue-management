@@ -101,6 +101,7 @@ class Feedback(Resource):
         c = pysnow.Client(instance = instance, user='CfmsApi', password='CfmsApi')
         incident = c.resource(api_path='/table/incident')
         new_record = {
+            'contact_type': 'Self-service',
             'short_description': 'TheQ created incident',
             'description': 'Test incident created by TheQ'
         }
