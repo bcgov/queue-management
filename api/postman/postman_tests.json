@@ -19,7 +19,7 @@
 								"exec": [
 									"// If the \"postman_bdd_path\" environment variable is set, then we'll use it.",
 									"// Otherwise, we'll default to the published version",
-									"if (!environment.postman_bdd_path) {",
+									"if (!globals.postman_bdd_path) {",
 									"    //  Original URL from Registries.  Now appears to be blocked from gov't workstations, not from Openshift, however.",
 									"    //  postman.setGlobalVariable('postman_bdd_path', 'http://bigstickcarpet.com/postman-bdd/dist/postman-bdd.min.js');",
 									"",
@@ -72,11 +72,11 @@
 							"listen": "test",
 							"script": {
 								"id": "5409b66d-67a4-449b-8633-9aeca632b388",
-								"type": "text/javascript",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"auth_first\", jsonData.data);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -85,7 +85,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "auth_url = pm.globals.get(\"auth_url\");\nrealm = pm.globals.get(\"realm\");\nclientid = pm.globals.get(\"clientid\");\nuserid = pm.environment.get(\"userid\");\npassword = pm.globals.get(\"password\");\nclient_secret = pm.globals.get(\"client_secret\");\n\nconst echoPostRequest = {\n  url: auth_url + '/auth/realms/' + realm + '/protocol/openid-connect/token',\n  method: 'POST',\n  header: 'Content-Type:application/x-www-form-urlencoded',\n  body: {\n    mode: 'raw',\n    raw: 'grant_type=password&client_id=' + clientid \n          + '&username=' + userid \n          + '&password=' + password\n          + '&client_secret=' + client_secret\n  }\n};\npm.sendRequest(echoPostRequest, function (err, res) {\n    var jsonData = res.json();\n    if (jsonData.hasOwnProperty('access_token')) {\n    \tpm.environment.set(\"token\", jsonData.access_token);\n\t    pm.environment.set(\"refresh_token\", jsonData.refresh_token);\n\t    console.log(err ? err : res.json());\n\t} else {\n\t    pm.environment.set(\"token\", 0);\n\t    pm.environment.set(\"refresh_token\", 0);\n\t    pm.environment.set(\"token_expires\", 0);\n\t    pm.environment.set(\"refresh_token_expires\", 0);\n\t}\n});"
+							"raw": "auth_url = globals.auth_url;\nrealm = globals.realm;\nclientid = globals.clientid;\nuserid = environment.userid;\npassword = globals.password;\nclient_secret = globals.client_secret;\n\nconst echoPostRequest = {\n  url: auth_url + '/auth/realms/' + realm + '/protocol/openid-connect/token',\n  method: 'POST',\n  header: 'Content-Type:application/x-www-form-urlencoded',\n  body: {\n    mode: 'raw',\n    raw: 'grant_type=password&client_id=' + clientid \n          + '&username=' + userid \n          + '&password=' + password\n          + '&client_secret=' + client_secret\n  }\n};\npm.sendRequest(echoPostRequest, function (err, res) {\n    var jsonData = res.json();\n    if (jsonData.hasOwnProperty('access_token')) {\n    \tpm.environment.set(\"token\", jsonData.access_token);\n\t    pm.environment.set(\"refresh_token\", jsonData.refresh_token);\n\t    console.log(err ? err : res.json());\n\t} else {\n\t    pm.environment.set(\"token\", 0);\n\t    pm.environment.set(\"refresh_token\", 0);\n\t    pm.environment.set(\"token_expires\", 0);\n\t    pm.environment.set(\"refresh_token_expires\", 0);\n\t}\n});"
 						},
 						"url": {
 							"raw": "https://postman-echo.com/post",
@@ -109,11 +109,11 @@
 							"listen": "test",
 							"script": {
 								"id": "d4115f4c-a05c-4de1-8020-da1181a82656",
-								"type": "text/javascript",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"auth_first_nonqtxn\", jsonData.data);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -122,7 +122,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "auth_url = pm.globals.get(\"auth_url\");\nrealm = pm.globals.get(\"realm\");\nclientid = pm.globals.get(\"clientid\");\nuserid = pm.environment.get(\"userid_nonqtxn\");\npassword = pm.globals.get(\"password_nonqtxn\");\nclient_secret = pm.globals.get(\"client_secret\");\n\nconst echoPostRequest = {\n  url: auth_url + '/auth/realms/' + realm + '/protocol/openid-connect/token',\n  method: 'POST',\n  header: 'Content-Type:application/x-www-form-urlencoded',\n  body: {\n    mode: 'raw',\n    raw: 'grant_type=password&client_id=' + clientid \n          + '&username=' + userid \n          + '&password=' + password\n          + '&client_secret=' + client_secret\n  }\n};\npm.sendRequest(echoPostRequest, function (err, res) {\n    var jsonData = res.json();\n    if (jsonData.hasOwnProperty('access_token')) {\n    \tpm.environment.set(\"token_nonqtxn\", jsonData.access_token);\n\t    pm.environment.set(\"refresh_token_nonqtxn\", jsonData.refresh_token);\n\t    console.log(err ? err : res.json());\n\t} else {\n\t    pm.environment.set(\"token_nonqtxn\", 0);\n\t    pm.environment.set(\"refresh_token_nonqtxn\", 0);\n\t    pm.environment.set(\"token_expires_nonqtxn\", 0);\n\t    pm.environment.set(\"refresh_token_expires_nonqtxn\", 0);\n\t}\n});"
+							"raw": "auth_url = globals.auth_url;\nrealm = globals.realm;\nclientid = globals.clientid;\nuserid = environment.userid_nonqtxn;\npassword = globals.password_nonqtxn;\nclient_secret = globals.client_secret;\n\nconst echoPostRequest = {\n  url: auth_url + '/auth/realms/' + realm + '/protocol/openid-connect/token',\n  method: 'POST',\n  header: 'Content-Type:application/x-www-form-urlencoded',\n  body: {\n    mode: 'raw',\n    raw: 'grant_type=password&client_id=' + clientid \n          + '&username=' + userid \n          + '&password=' + password\n          + '&client_secret=' + client_secret\n  }\n};\npm.sendRequest(echoPostRequest, function (err, res) {\n    var jsonData = res.json();\n    if (jsonData.hasOwnProperty('access_token')) {\n    \tpm.environment.set(\"token_nonqtxn\", jsonData.access_token);\n\t    pm.environment.set(\"refresh_token_nonqtxn\", jsonData.refresh_token);\n\t    console.log(err ? err : res.json());\n\t} else {\n\t    pm.environment.set(\"token_nonqtxn\", 0);\n\t    pm.environment.set(\"refresh_token_nonqtxn\", 0);\n\t    pm.environment.set(\"token_expires_nonqtxn\", 0);\n\t    pm.environment.set(\"refresh_token_expires_nonqtxn\", 0);\n\t}\n});"
 						},
 						"url": {
 							"raw": "https://postman-echo.com/post",
@@ -146,11 +146,11 @@
 							"listen": "test",
 							"script": {
 								"id": "f386cf22-bb0f-47d9-9c22-cda162ed4375",
-								"type": "text/javascript",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"auth_script\", jsonData.data);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -159,7 +159,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "auth_url = pm.environment.get(\"auth_url\");\nrealm = pm.environment.get(\"realm\");\nclientid = pm.environment.get(\"clientid\");\nuserid = pm.environment.get(\"userid\");\npassword = pm.environment.get(\"password\");\nclient_secret = pm.environment.get(\"client_secret\");\n\n"
+							"raw": "auth_url = globals.auth_url;\nrealm = globals.realm;\nclientid = globals.clientid;\nuserid = environment.userid;\npassword = globals.password;\nclient_secret = globals.client_secret;\n"
 						},
 						"url": {
 							"raw": "https://postman-echo.com/post",
@@ -183,11 +183,11 @@
 							"listen": "test",
 							"script": {
 								"id": "e1d0ab5c-fe6b-4e6d-8778-417ae879cee1",
-								"type": "text/javascript",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"auth_token_script\", jsonData.data);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -196,7 +196,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "auth_url = pm.environment.get(\"auth_url\");\nrealm = pm.environment.get(\"realm\");\nclientid = pm.environment.get(\"clientid\");\nuserid = pm.environment.get(\"userid\");\npassword = pm.environment.get(\"password\");\nclient_secret = pm.environment.get(\"client_secret\");\n\nconst echoPostRequest = {\n  url: authurl + '/auth/realms/' + realm + '/protocol/openid-connect/token',\n  method: 'POST',\n  header: 'Content-Type:application/x-www-form-urlencoded',\n  body: {\n    mode: 'raw',\n    raw: 'grant_type=password&client_id=' + clientid \n         + '&username=' + userid \n         + '&password=' + password\n         + '&client_secret=' + client_secret\n  }\n};\n\npm.sendRequest(echoPostRequest, function (err, res) {\n    if (err) { console.log(err); }\n    else {\n      var jsonData = res.json();\n      pm.environment.set(\"token\", jsonData.access_token);\n      pm.environment.set(\"refresh_token\", jsonData.refresh_token);\n      pm.environment.set(\"token_expires\", Date.now()+(jsonData.expires_in * 1000));\n      pm.environment.set(\"refresh_token_expires\", Date.now()+(jsonData.refresh_expires_in * 1000));\n    }\n    //console.log(err ? err : res.json());\n});"
+							"raw": "auth_url = globals.auth_url;\nrealm = globals.realm;\nclientid = globals.clientid;\nuserid = environment.userid;\npassword = globals.password;\nclient_secret = globals.client_secret;\n\nconst echoPostRequest = {\n  url: authurl + '/auth/realms/' + realm + '/protocol/openid-connect/token',\n  method: 'POST',\n  header: 'Content-Type:application/x-www-form-urlencoded',\n  body: {\n    mode: 'raw',\n    raw: 'grant_type=password&client_id=' + clientid \n         + '&username=' + userid \n         + '&password=' + password\n         + '&client_secret=' + client_secret\n  }\n};\n\npm.sendRequest(echoPostRequest, function (err, res) {\n    if (err) { console.log(err); }\n    else {\n      var jsonData = res.json();\n      pm.environment.set(\"token\", jsonData.access_token);\n      pm.environment.set(\"refresh_token\", jsonData.refresh_token);\n      pm.environment.set(\"token_expires\", Date.now()+(jsonData.expires_in * 1000));\n      pm.environment.set(\"refresh_token_expires\", Date.now()+(jsonData.refresh_expires_in * 1000));\n    }\n    //console.log(err ? err : res.json());\n});"
 						},
 						"url": {
 							"raw": "https://postman-echo.com/post",
@@ -220,11 +220,11 @@
 							"listen": "test",
 							"script": {
 								"id": "365727f4-696d-4e44-a379-5eba3001641a",
-								"type": "text/javascript",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"auth_refresh_script\", jsonData.data);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -233,7 +233,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "auth_url = pm.environment.get(\"auth_url\");\nrealm = pm.environment.get(\"realm\");\nclientid = pm.environment.get(\"clientid\");\nrefresh_token = pm.environment.get(\"refresh_token\");\nclient_secret = pm.environment.get(\"client_secret\");\n\nconst echoPostRequest = {\n  url: authurl +'/auth/realms/' +realm + '/protocol/openid-connect/token',\n  method: 'POST',\n  header: 'Content-Type:application/x-www-form-urlencoded',\n  body: {\n    mode: 'raw',\n    raw: 'grant_type=refresh_token&client_id=' + clientid \n         + '&refresh_token=' + refresh_token \n         + '&client_secret=' + client_secret\n  }\n};\n\npm.sendRequest(echoPostRequest, function (err, res) {\n    var jsonData = res.json();\n    pm.environment.set(\"token\", jsonData.access_token);\n    pm.environment.set(\"refresh_token\", jsonData.refresh_token);\n    pm.environment.set(\"token_expires\", Date.now()+(jsonData.expires_in * 1000));\n    pm.environment.set(\"refresh_token_expires\", Date.now()+(jsonData.refresh_expires_in * 1000));\n\n    console.log(err ? err : res.json());\n});"
+							"raw": "auth_url = globals.auth_url;\nrealm = globals.realm;\nclientid = globals.clientid;\nrefresh_token = environment.refresh_token;\nclient_secret = globals.client_secret;\n\nconst echoPostRequest = {\n  url: authurl +'/auth/realms/' +realm + '/protocol/openid-connect/token',\n  method: 'POST',\n  header: 'Content-Type:application/x-www-form-urlencoded',\n  body: {\n    mode: 'raw',\n    raw: 'grant_type=refresh_token&client_id=' + clientid \n         + '&refresh_token=' + refresh_token \n         + '&client_secret=' + client_secret\n  }\n};\n\npm.sendRequest(echoPostRequest, function (err, res) {\n    var jsonData = res.json();\n    pm.environment.set(\"token\", jsonData.access_token);\n    pm.environment.set(\"refresh_token\", jsonData.refresh_token);\n    pm.environment.set(\"token_expires\", Date.now()+(jsonData.expires_in * 1000));\n    pm.environment.set(\"refresh_token_expires\", Date.now()+(jsonData.refresh_expires_in * 1000));\n\n    console.log(err ? err : res.json());\n});"
 						},
 						"url": {
 							"raw": "https://postman-echo.com/post",

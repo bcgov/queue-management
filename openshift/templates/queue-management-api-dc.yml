@@ -159,6 +159,8 @@ objects:
                   value: "${SECRET_KEY}"
                 - name: SERVER_NAME
                   value: "${API_APPLICATION_DOMAIN}"
+                - name: LOG_ERRORS
+                  value: "${LOG_ERROS}"
               ports:
                 - containerPort: 8080
               readinessProbe:
@@ -280,5 +282,9 @@ parameters:
     value: ""
   - name: THEQ_SNOWPLOW_NAMESPACE
     description: "Snowplow Namespace"
+    required: false
+    value: ""
+  - name: LOG_ERRORS
+    description: "Enable/Disable Logging of Socketio errors"
     required: false
     value: ""

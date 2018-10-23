@@ -33,7 +33,7 @@ objects:
         zap_with_url=<zap command including dev url for analysis> 
         dev_namespace=<dev namespace to run tests>
         url=<url of api>/api/v1/
-        authurl=<Keycloak domain>
+        auth_url=<Keycloak domain>
         clientid=<keycload Client ID>
         realm=<keycloak realm>
   - kind: ImageStream
