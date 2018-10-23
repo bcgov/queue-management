@@ -156,7 +156,9 @@ objects:
                 - name: THEQ_CLEAR_COMMENTS_FLAG
                   value: "${THEQ_CLEAR_COMMENTS_FLAG}"
                 - name: SECRET_KEY
-                  value: "@{SECRET_KEY}"
+                  value: "${SECRET_KEY}"
+                - name: SERVER_NAME
+                  value: "${API_APPLICATION_DOMAIN}"
               ports:
                 - containerPort: 8080
               readinessProbe:
