@@ -60,6 +60,8 @@ class LocalConfig(BaseConfig):
     SQLALCHEMY_ECHO = False
     SLACK_URL = os.getenv('SLACK_URL')
     SERVICENOW_INSTANCE = os.getenv('SERVICENOW_INSTANCE')
+    SERVICENOW_USER = os.getenv('SERVICENOW_USER')
+    SERVICENOW_PASSWORD = os.getenv('SERVICENOW_PASSWORD')
     SECRET_KEY = "pancakes"
 
 

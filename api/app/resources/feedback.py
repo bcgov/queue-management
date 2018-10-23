@@ -50,6 +50,7 @@ class Feedback(Resource):
 
         if self.flag_service_now:
             service_now_result = Feedback.send_to_service_now(feedback_message)
+            print(service_now_result)
 
         return {"message": "Success"}, 200
 
@@ -74,16 +75,19 @@ class Feedback(Resource):
         else:
             return {"status": "error", "http_code": resp.getcode()}, 400
 
-        return {"message": "Success"}, 200
-
     @staticmethod
     def send_to_service_now(params):
 
         instance = application.config['SERVICENOW_INSTANCE']
-        # url = 'https://bcrsdev.service-now.com/api/now/table/incident'
+        user = application.config['SERVICENOW_USER']
+        password = application.config['SERVICENOW_PASSWORD']
 
         if instance is None:
             return {"message": "SERVICENOW_INSTANCE is not set"}, 400
+        if user is None:
+            return {"message": "SERVICENOW_USER is not set"}, 400
+        if password is None:
+            return {"message": "SERVICENOW_PASSWORD is not set"}, 400
 
         # user = 'CfmsApi'
         # pwd = 'CfmsApi'
@@ -92,7 +96,7 @@ class Feedback(Resource):
         # response = requests.post(url, auth=(user, pwd), headers=headers, data='{"short_description":"TheQ created incident", "description": "Test incident created by TheQ}')
         # print("Status: ", response.status_code, "Headers: ", response.headers, "Error Response: ", response.json)
 
-        c = pysnow.Client(instance = instance, user='CfmsApi', password='CfmsApi')
+        c = pysnow.Client(instance = instance, user=user, password=password)
         incident = c.resource(api_path='/table/incident')
         new_record = {
             #'contact_type': 'Phone',  This isn't working for now. Not critical
@@ -107,7 +111,6 @@ class Feedback(Resource):
         }
 
         result = incident.create(payload=new_record)
-
         print("==> Service Now result <==")
         print(result)
         print("==========================")
