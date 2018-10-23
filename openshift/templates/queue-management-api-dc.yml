@@ -155,6 +155,8 @@ objects:
                   value: "${THEQ_SNOWPLOW_CALLFLAG}"
                 - name: THEQ_CLEAR_COMMENTS_FLAG
                   value: "${THEQ_CLEAR_COMMENTS_FLAG}"
+                - name: SECRET_KEY
+                  value: "@{SECRET_KEY}"
               ports:
                 - containerPort: 8080
               readinessProbe:
