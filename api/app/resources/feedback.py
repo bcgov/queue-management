@@ -52,7 +52,26 @@ class Feedback(Resource):
             service_now_result = Feedback.send_to_service_now(feedback_message)
             print(service_now_result)
 
-        return {"message": "Success"}, 200
+        if not self.flag_slack:
+            return service_now_result
+
+        if not self.flag_service_now:
+            return slack_result
+
+        if self.flag_slack and self.flag_service_now:
+            message = ""
+            if hasattr(slack_result, 'message'):
+                message = slack_result.message
+            if hasattr(service_now_result, 'message'):
+                if len(message) != 0:
+                    message = message + "; " + service_now_result.message
+                else:
+                    message = service_now_result.message
+
+            if message:
+                return {"message": message}, 400
+            else:
+                return {"status": "Success"}, 200
 
     @staticmethod
     def send_to_slack(params):
@@ -73,7 +92,7 @@ class Feedback(Resource):
         if resp.getcode() == 200:
             return {"status": "success"}, 200
         else:
-            return {"status": "error", "http_code": resp.getcode()}, 400
+            return {"message": "error", "http_code": resp.getcode()}, 400
 
     @staticmethod
     def send_to_service_now(params):
@@ -111,8 +130,8 @@ class Feedback(Resource):
         }
 
         result = incident.create(payload=new_record)
-        print("==> Service Now result <==")
-        print(result)
-        print("==========================")
 
-        return {"message": "Success"}, 200
+        if '201' in str(result):
+            return {"status": "Success"}, 201
+        else:
+            return {"message": "Service Now incident not created"}, 400
