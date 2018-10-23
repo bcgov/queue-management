@@ -60,7 +60,7 @@ class LocalConfig(BaseConfig):
     SQLALCHEMY_ECHO = False
     SLACK_URL = os.getenv('SLACK_URL')
     SECRET_KEY = "pancakes"
-
+    LOG_ERRORS = (os.getenv("LOG_ERRORS","FALSE")).upper() == "TRUE"
 
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
