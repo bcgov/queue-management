@@ -156,7 +156,7 @@ podTemplate(
 
                 sh (
                     returnStdout: true,
-                    script: "./node_modules/newman/bin/newman.js run postman_tests.json -e postman_env.json --global-var 'password=${PASSWORD}' --global-var 'password_nonqtxn=${PASSWORD_NONQTXN}' --global-var 'client_secret=${CLIENT_SECRET}'" --global-var 'url=${URL}' --global-var 'authurl=${AUTHURL}' --global-var 'clientid=${CLIENTID}' --global-var 'realm=${REALM}'
+                    script: "./node_modules/newman/bin/newman.js run postman_tests.json -e postman_env.json --global-var 'password=${PASSWORD}' --global-var 'password_nonqtxn=${PASSWORD_NONQTXN}' --global-var 'client_secret=${CLIENT_SECRET}' --global-var 'url=${URL}' --global-var 'authurl=${AUTHURL}' --global-var 'clientid=${CLIENTID}' --global-var 'realm=${REALM}'
                 )
             }
         }

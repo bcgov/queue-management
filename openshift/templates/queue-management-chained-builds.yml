@@ -21,6 +21,21 @@ parameters:
     displayName: Git Reference
     description: Set this to a branch name, tag or other ref of your repository if you are not using the default branch.
 objects:
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: jenkin-config
+    data:
+      jenkin-config: |
+        password_qtxn=<cfms-postman-operator userid password>
+        password_nonqtxn=<cfms-postman-non-operator userid password>
+        client_secret=<keycloak client secret>
+        zap_with_url=<zap command including dev url for analysis> 
+        dev_namespace=<dev namespace to run tests>
+        url=<url of api>/api/v1/
+        authurl=<Keycloak domain>
+        clientid=<keycload Client ID>
+        realm=<keycloak realm>
   - kind: ImageStream
     apiVersion: v1
     metadata:

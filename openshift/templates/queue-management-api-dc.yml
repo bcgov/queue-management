@@ -132,7 +132,7 @@ objects:
                 - name: DATABASE_PORT
                   value: "3306"
                 - name: SQLALCHEMY_ECHO
-                  value: "False"
+                  value: "${SQLALCHEMY_ECHO}"
                 - name: APP_CONFIG
                   value: gunicorn_config.py
                 - name: FLASK_CONFIGURATION
@@ -143,6 +143,18 @@ objects:
                   value: rabbitmq
                 - name: ACTIVE_MQ_PORT
                   value: "5672"
+                - name: SLACK_URL
+                  value: "${SLACK_URL}"
+                - name: THEQ_SNOWPLOW_ENDPOINT
+                  value: "${THEQ_SNOWPLOW_ENDPOINT}"
+                - name: THEQ_SNOWPLOW_APPID
+                  value: "${THEQ_SNOWPLOW_APPID}"
+                - name: THEQ_SNOWPLOW_NAMESPACE
+                  value: "${THEQ_SNOWPLOW_NAMESPACE}"
+                - name: THEQ_SNOWPLOW_CALLFLAG
+                  value: "${THEQ_SNOWPLOW_CALLFLAG}"
+                - name: THEQ_CLEAR_COMMENTS_FLAG
+                  value: "${THEQ_CLEAR_COMMENTS_FLAG}"
               ports:
                 - containerPort: 8080
               readinessProbe:
@@ -225,6 +237,10 @@ parameters:
     description: "The configuration object that should be loaded for this deployment."
     required: true
     value: development
+  - name: SQLALCHEMY_ECHO
+    description: ""
+    required: true
+    value: "False"
   - name: API_IMAGE_TAG
     description: "The tag to use when deploying"
     required: true
@@ -251,14 +267,14 @@ parameters:
     required: true
     value: "False"
   - name: THEQ_SNOWPLOW_ENDPOINT
-    description: "Send events to Snowplow for Analytics (True or False)"
+    description: "Snowplow URL Endopoint"
     required: false
     value: ""
   - name: THEQ_SNOWPLOW_APPID
-    description: "Send events to Snowplow for Analytics (True or False)"
+    description: "Snowplow Application ID"
     required: false
     value: ""
   - name: THEQ_SNOWPLOW_NAMESPACE
-    description: "Send events to Snowplow for Analytics (True or False)"
+    description: "Snowplow Namespace"
     required: false
     value: ""
