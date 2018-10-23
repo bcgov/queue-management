@@ -19,7 +19,7 @@ flask_marshmallow
 flask-socketio
 gunicorn
 marshmallow-sqlalchemy
-mysqlclient==1.3.12
+mysqlclient
 pytest
 python-jose
 toastedmarshmallow
