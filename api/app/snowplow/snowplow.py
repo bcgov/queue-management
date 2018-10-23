@@ -25,10 +25,12 @@ import os
 
 class SnowPlow():
 
-    sp_endpoint = os.getenv("THEQ_SNOWPLOW_ENDPOINT", "spm.gov.bc.ca")
-    sp_appid = os.getenv("THEQ_SNOWPLOW_APPID", "TheQ")
-    sp_namespace = os.getenv("THEQ_SNOWPLOW_NAMESPACE", "TheQ_dev")
+    sp_endpoint = os.getenv("THEQ_SNOWPLOW_ENDPOINT", "")
+    sp_appid = os.getenv("THEQ_SNOWPLOW_APPID", "")
+    sp_namespace = os.getenv("THEQ_SNOWPLOW_NAMESPACE", "")
     call_snowplow_flag = (os.getenv("THEQ_SNOWPLOW_CALLFLAG", "False")).upper() == "TRUE"
+    if (not sp_endpoint.strip()) or (not sp_endpoint.strip()) or (not sp_endpoint.strip()):
+        call_snowplow_flag = False
 
     @staticmethod
     def add_citizen(new_citizen, csr):
@@ -229,6 +231,7 @@ class SnowPlow():
 
 
 # Set up core Snowplow environment
-s = Subject()  # .set_platform("app")
-e = AsyncEmitter(SnowPlow.sp_endpoint, on_failure=SnowPlow.failure, protocol="https")
-t = Tracker(e, encode_base64=False, app_id=SnowPlow.sp_appid, namespace=SnowPlow.sp_namespace)
+if SnowPlow.call_snowplow_flag:
+    s = Subject()  # .set_platform("app")
+    e = AsyncEmitter(SnowPlow.sp_endpoint, on_failure=SnowPlow.failure, protocol="https")
+    t = Tracker(e, encode_base64=False, app_id=SnowPlow.sp_appid, namespace=SnowPlow.sp_namespace)
