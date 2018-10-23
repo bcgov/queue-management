@@ -40,19 +40,16 @@ class Feedback(Resource):
         except KeyError as err:
             return {"message": "Must provide message to send as feedback"}, 422
 
-        feedback_json_data = {
-            "text": feedback_message
-        }
-
-        print(feedback_json_data)
-        params = json.dumps(feedback_json_data).encode('utf8')
-
         if self.flag_slack:
+            feedback_json_data = {
+                "text": feedback_message
+            }
+            params = json.dumps(feedback_json_data).encode('utf8')
             slack_result = Feedback.send_to_slack(params)
             print(slack_result)
 
         if self.flag_service_now:
-            service_now_result = Feedback.send_to_service_now(params)
+            service_now_result = Feedback.send_to_service_now(feedback_message)
 
         return {"message": "Success"}, 200
 
@@ -85,9 +82,6 @@ class Feedback(Resource):
         instance = application.config['SERVICENOW_INSTANCE']
         # url = 'https://bcrsdev.service-now.com/api/now/table/incident'
 
-        print("==> Sending to service now")
-        print("    --> Instance is " + instance)
-
         if instance is None:
             return {"message": "SERVICENOW_INSTANCE is not set"}, 400
 
@@ -101,11 +95,21 @@ class Feedback(Resource):
         c = pysnow.Client(instance = instance, user='CfmsApi', password='CfmsApi')
         incident = c.resource(api_path='/table/incident')
         new_record = {
-            'contact_type': 'Self-service',
-            'short_description': 'TheQ created incident',
-            'description': 'Test incident created by TheQ'
+            #'contact_type': 'Phone',  This isn't working for now. Not critical
+            'category': 'Inquiry / Help',
+            'cmdb_ci': 'CFMS',
+            'impact': '2 - Some Customers',
+            'urgency': '2 - High',
+            'priority': 'High',
+            'short_description': 'TheQ Feedback',
+            'description': params,
+            'assignment_group': 'Service Delivery Tech Services (GARMS)'
         }
 
         result = incident.create(payload=new_record)
+
+        print("==> Service Now result <==")
+        print(result)
+        print("==========================")
 
         return {"message": "Success"}, 200
