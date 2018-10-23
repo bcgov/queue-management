@@ -154,9 +154,29 @@ podTemplate(
                     returnStdout: true
                 ).trim()
 
+                REALM = sh (
+                    script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^realm/{print $2}\'',
+                    returnStdout: true
+                ).trim()
+
+                URL = sh (
+                    script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^url/{print $2}\'',
+                    returnStdout: true
+                ).trim()
+
+                AUTH_URL = sh (
+                    script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/auth_url/{print $2}\'',
+                    returnStdout: true
+                ).trim()
+
+                CLIENTID = sh (
+                    script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^clientid/{print $2}\'',
+                    returnStdout: true
+                ).trim()
+
                 sh (
                     returnStdout: true,
-                    script: "./node_modules/newman/bin/newman.js run postman_tests.json -e postman_env.json --global-var 'password=${PASSWORD}' --global-var 'password_nonqtxn=${PASSWORD_NONQTXN}' --global-var 'client_secret=${CLIENT_SECRET}' --global-var 'url=${URL}' --global-var 'authurl=${AUTHURL}' --global-var 'clientid=${CLIENTID}' --global-var 'realm=${REALM}'"
+                    script: "./node_modules/newman/bin/newman.js run postman_tests.json -e postman_env.json --global-var 'password=${PASSWORD}' --global-var 'password_nonqtxn=${PASSWORD_NONQTXN}' --global-var 'client_secret=${CLIENT_SECRET}' --global-var 'url=${URL}' --global-var 'auth_url=${AUTH_URL}' --global-var 'clientid=${CLIENTID}' --global-var 'realm=${REALM}'"
                 )
             }
         }
