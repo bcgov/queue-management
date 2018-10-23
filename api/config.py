@@ -60,7 +60,7 @@ class LocalConfig(BaseConfig):
     SQLALCHEMY_ECHO = False
     SLACK_URL = os.getenv('SLACK_URL')
     SECRET_KEY = "pancakes"
-
+    LOG_ERRORS = (os.getenv("LOG_ERRORS","FALSE")).upper() == "TRUE"
 
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
@@ -103,6 +103,7 @@ class DevelopmentConfig(BaseConfig):
     )
 
     SLACK_URL = os.getenv('SLACK_URL')
+    LOG_ERRORS = (os.getenv("LOG_ERRORS","FALSE")).upper() == "TRUE"
 
     if os.getenv('SQLALCHEMY_ECHO', "False") == "True":
         SQLALCHEMY_ECHO=True
@@ -151,6 +152,7 @@ class TestConfig(BaseConfig):
     )
 
     SLACK_URL = os.getenv('SLACK_URL')
+    LOG_ERRORS = (os.getenv("LOG_ERRORS","FALSE")).upper() == "TRUE"
 
     if os.getenv('SQLALCHEMY_ECHO', "False") == "True":
         SQLALCHEMY_ECHO=True
@@ -199,6 +201,7 @@ class ProductionConfig(BaseConfig):
     )
 
     SLACK_URL = os.getenv('SLACK_URL')
+    LOG_ERRORS = (os.getenv("LOG_ERRORS","FALSE")).upper() == "TRUE"
 
     if os.getenv('SQLALCHEMY_ECHO', "False") == "True":
         SQLALCHEMY_ECHO=True

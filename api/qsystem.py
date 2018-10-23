@@ -36,7 +36,11 @@ cache.init_app(application)
 
 ma = Marshmallow(application)
 
-socketio = SocketIO(engineio_logger=True)
+log_error_flag = application.config['LOG_ERRORS']
+if log_error_flag:
+    socketio = SocketIO(logger=True, engineio_logger=True)
+else:
+    socketio = SocketIO(engineio_logger=True)
 
 if application.config['ACTIVE_MQ_URL'] is not None:
     socketio.init_app(application, async_mode='eventlet', message_queue=application.config['ACTIVE_MQ_URL'], path='/api/v1/socket.io')
@@ -44,8 +48,12 @@ else:
     socketio.init_app(application, path='/api/v1/socket.io')
 
 # Set socket logging to errors only to reduce log spam
-logging.getLogger('socketio').setLevel(logging.ERROR)
-logging.getLogger('engineio').setLevel(logging.ERROR)
+if log_error_flag:
+    logging.getLogger('socketio').setLevel(logging.DEBUG)
+    logging.getLogger('engineio').setLevel(logging.DEBUG)
+else:
+    logging.getLogger('socketio').setLevel(logging.ERROR)
+    logging.getLogger('engineio').setLevel(logging.ERROR)
 
 if application.config['CORS_ALLOWED_ORIGINS'] is not None:
     CORS(application, supports_credentials=True, origins=application.config['CORS_ALLOWED_ORIGINS'])
