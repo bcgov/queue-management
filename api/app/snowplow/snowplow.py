@@ -32,11 +32,6 @@ class SnowPlow():
     if (not sp_endpoint.strip()) or (not sp_endpoint.strip()) or (not sp_endpoint.strip()):
         call_snowplow_flag = False
 
-    print("==> Endpoint:  " + sp_endpoint)
-    print("==> AppID:     " + sp_appid)
-    print("==> Namespace: " + sp_namespace)
-    print("==> CallFlag:  " + str(call_snowplow_flag))
-
     @staticmethod
     def add_citizen(new_citizen, csr):
 
