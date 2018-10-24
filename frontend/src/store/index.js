@@ -803,7 +803,7 @@ export const store = new Vuex.Store({
       context.commit('toggleGAScreenModal', false)
     },
 
-    messageSlack(context) {
+    messageFeedback(context) {
       let messageParts = []
       messageParts.push(`Username: ${context.state.user.username}`)
       messageParts.push(`Office: ${context.state.user.office.office_name}`)
@@ -824,12 +824,12 @@ export const store = new Vuex.Store({
       messageParts.push("")
       messageParts.push(`Message: ${context.state.feedbackMessage}`)
 
-      let slackObject = {
-        slack_message: messageParts.join("\n")
+      let feedbackObject = {
+        feedback_message: messageParts.join("\n")
       }
 
-      let url = "/slack/"
-      Axios(context).post(url, slackObject).then(()=> {
+      let url = "/feedback/"
+      Axios(context).post(url, feedbackObject).then(()=> {
         context.commit('setFeedbackMessage', '')
       })
     },

@@ -119,12 +119,12 @@ import app.resources.citizen.citizen_service_requests
 import app.resources.citizen.citizen_specific_invite
 import app.resources.csrs
 import app.resources.csr_detail
+import app.resources.feedback
 import app.resources.health
 import app.resources.login
 import app.resources.services
 import app.resources.service_requests_list
 import app.resources.service_requests_detail
-import app.resources.slack
 import app.resources.smartboard
 import app.resources.websocket
 
