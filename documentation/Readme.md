@@ -103,6 +103,10 @@ Additional API Enviornment Variables of note:
 1. THEQ_SNOWPLOW_CALLFLAG (True/False) - Used to disable calls to SnowPlow
 1. SERVER_NAME - required for API POD if not localhost.
 1. LOG_ERRORS (True/Flase) - To log socket.io errors
+1. THEQ_FEEDBACK - String of endpoint names to send Feedback to (eg. 'Slack, Service Now' or 'Slack')
+1. SERVICENOW_INSTANCE - the instance of your Service Now environment
+1. SERVICENOW_USER - the login ID of a Service Now ID used to create Service Now incidents
+1. SERVICENOW_PASSWORD - the password of the SERVICENOW_USER account
 
 We are using Snowplow & Looker to display our Analytics.
 
