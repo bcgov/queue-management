@@ -1,24 +1,29 @@
-# Installation Instructions - **Work in Progress**
+# OpenShift Template information
 
-Prequisites: Keycloak
+Prerequesite: Keycloak instance running and setup for authentication.
 
-Openshift Environment split into at least two or more workspaces:
-1. Tools Workspace - Location to include Jenkins, SonarQube, Build Configs
-1. Dev, Test, Prod Workspaces - Deployment Configs for Percona, queue-management-api, queue-management-frontend and rabbitmq
+## Deployment Configuration Templates:
 
-Within the Tools Workspace, you will be required to add two config maps.
+- percona-dc.yml - Creates a high availability MySQL Statefull set.
+- rabbit-mq-dc.yml - Creates a RabbitMQ Statefull set. Used for to support high availability API interactivity. This syncs the requests between pods.
+- queue-management-api-dc.yml - Creates the queue management API Pods. Please note that this also creates a Config Map that needs to be updated with your Openshift & Keycloak variables.
+- queue-management-frontend-dc.yml - Creates the queue management Front End Pods. Please note that this also creates a Config Map that needs to be updated with your Openshift & Keycloak variables.
 
-```keycloak-dev``` with the following attibutes:
-1. client_id=```<keycloak client name>```
-1. client_secret=```<keycloak client secret>```
-1. keycloak_realm=```<realm>```
-1. auth_server_url=```<auth URL>```
+## Build Configuration Templates
 
-```postman-passwords``` with the following attibutes:
-1. password_qtxn=```<required keycloak user "cfms-postman-operator" password>```
-1. password_nonqtxn=```<required keycloak user "cfms-postman-non-operator" password```>
-1. client_secret=```<keycloak client secret>```
+It is assumed that you will already have a Jenkins & SonarQube instance.
 
+- rabbit-mq-build - Used in the imagestream for RabbitMQ
+- queue-managmement-chained-builds.yml - Used to create the imagestreams for both the API & Front End pods. Please note that this also creates a Config Map that needs to be updated with your Openshift & Keycloak variables. These are used with the Jenkinsfile as well. Review the comments in the Jenkinsfiles for more information.
 
+Required information in the ConfigMap includes:
 
-**To Do:** Provide sample from Installation instance of Keycloak
+1. `password_qtxn=<<cfms-postman-operator userid password>`
+1. `password_nonqtxn=<cfms-postman-non-operator userid password>`
+1. `client_secret=<keycloak client secret></keycloak>`
+1. `zap_with_url=/zap/zap-baseline.py -r baseline.html -t <queue management frontend URL>`
+1. `dev_namespace=<Openshift Development Workspace>`
+1. `url=<API URL>/api/v1/`
+1. `auth_url=<keycloak URL>`
+1. `clientid=<keycloak Client ID>`
+1. `realm=<Keycloak Realm>`

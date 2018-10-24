@@ -1,3 +1,15 @@
+// This Jenkins build requires a configmap called jenkin-config with the following in it:
+//
+// password_qtxn=<cfms-postman-operator userid password>
+// password_nonqtxn=<cfms-postman-non-operator userid password>
+// client_secret=<keycloak client secret>
+// zap_with_url=<zap command including dev url for analysis> 
+// dev_namespace=<dev namespace to run tests>
+// url=<url of api>/api/v1/
+// authurl=<Keycloak domain>
+// clientid=<keycload Client ID>
+// realm=<keycloak realm>
+
 podTemplate(
     label: 'jenkins-python3nodejs', 
     name: 'jenkins-python3nodejs', 
@@ -75,8 +87,12 @@ podTemplate(
             // Sleep to ensure that the deployment has started when we begin the verification stage
             sleep 5
 
+            DEV_NAMESPACE = sh (
+                    script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^dev_namespace/{print $2}\'',
+                    returnStdout: true
+                ).trim()
             openshiftVerifyDeployment depCfg: 'queue-management-api', 
-                                      namespace: 'servicebc-cfms-dev', 
+                                      namespace: "${DEV_NAMESPACE}", 
                                       replicaCount: 3, 
                                       verbose: 'false', 
                                       verifyReplicaCount: 'false'
@@ -102,7 +118,7 @@ podTemplate(
             sleep 5
 
             openshiftVerifyDeployment depCfg: 'queue-management-frontend', 
-                                      namespace: 'servicebc-cfms-dev', 
+                                      namespace: "${DEV_NAMESPACE}", 
                                       replicaCount: 3, 
                                       verbose: 'false', 
                                       verifyReplicaCount: 'false'
@@ -124,23 +140,43 @@ podTemplate(
                 )
 
                 PASSWORD = sh (
-                    script: 'oc describe configmap postman-passwords | awk  -F  "=" \'/^password_qtxn/{print $2}\'',
+                    script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^password_qtxn/{print $2}\'',
                     returnStdout: true
                 ).trim()
 
                 PASSWORD_NONQTXN = sh (
-                    script: 'oc describe configmap postman-passwords | awk  -F  "=" \'/^password_nonqtxn/{print $2}\'',
+                    script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^password_nonqtxn/{print $2}\'',
                     returnStdout: true
                 ).trim()
 
                 CLIENT_SECRET = sh (
-                    script: 'oc describe configmap postman-passwords | awk  -F  "=" \'/^client_secret/{print $2}\'',
+                    script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^client_secret/{print $2}\'',
+                    returnStdout: true
+                ).trim()
+
+                REALM = sh (
+                    script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^realm/{print $2}\'',
+                    returnStdout: true
+                ).trim()
+
+                API_URL = sh (
+                    script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^url/{print $2}\'',
+                    returnStdout: true
+                ).trim()
+
+                AUTH_URL = sh (
+                    script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/auth_url/{print $2}\'',
+                    returnStdout: true
+                ).trim()
+
+                CLIENTID = sh (
+                    script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^clientid/{print $2}\'',
                     returnStdout: true
                 ).trim()
 
                 sh (
                     returnStdout: true,
-                    script: "./node_modules/newman/bin/newman.js run postman_tests.json -e postman_env.json --global-var 'password=${PASSWORD}' --global-var 'password_nonqtxn=${PASSWORD_NONQTXN}' --global-var 'client_secret=${CLIENT_SECRET}'"
+                    script: "./node_modules/newman/bin/newman.js run postman_tests.json -e postman_env.json --global-var 'password=${PASSWORD}' --global-var 'password_nonqtxn=${PASSWORD_NONQTXN}' --global-var 'client_secret=${CLIENT_SECRET}' --global-var 'url=${API_URL}' --global-var 'auth_url=${AUTH_URL}' --global-var 'clientid=${CLIENTID}' --global-var 'realm=${REALM}'"
                 )
             }
         }
@@ -168,9 +204,13 @@ podTemplate(
     node(owaspPodLabel) {
         stage('ZAP Security Scan') {
             sleep 60
+            ZAP_WITH_URL = sh (
+                script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^zap_with_url/{print $2}\'',
+                returnStdout: true
+            ).trim()            
             def retVal = sh (
                 returnStatus: true, 
-                script: '/zap/zap-baseline.py -r baseline.html -t https://dev-theq.pathfinder.gov.bc.ca/'
+                script: "${ZAP_WITH_URL}"
             )
             publishHTML([
                 allowMissing: false, 
