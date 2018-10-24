@@ -34,7 +34,8 @@ class CsrList(Resource):
                 return {'message': 'You do not have permission to view this end-point'}, 403
 
             csrs = CSR.query.filter_by(office_id=csr.office_id)
-            result = self.csr_schema.dump(csrs)
+            filtered_csrs = [c for c in csrs if c.deleted is None]
+            result = self.csr_schema.dump(filtered_csrs)
 
             return {'csrs': result.data,
                     'errors': result.errors}
