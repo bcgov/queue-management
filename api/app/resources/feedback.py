@@ -25,7 +25,7 @@ import requests
 @api.route("/feedback/", methods=['POST'])
 class Feedback(Resource):
 
-    feedback_destinations = (os.getenv("THEQ_FEEDBACK", "Slack")).upper().replace(" ","").split(",")
+    feedback_destinations = (os.getenv("THEQ_FEEDBACK", "")).upper().replace(" ","").split(",")
     flag_slack = "SLACK" in feedback_destinations
     flag_service_now = "SERVICENOW" in feedback_destinations
 
@@ -52,10 +52,10 @@ class Feedback(Resource):
             service_now_result = Feedback.send_to_service_now(feedback_message)
             print(service_now_result)
 
-        if not self.flag_slack:
+        if (not self.flag_slack) and self.flag_service_now:
             return service_now_result
 
-        if not self.flag_service_now:
+        if (not self.flag_service_now) and self.flag_slack:
             return slack_result
 
         if self.flag_slack and self.flag_service_now:
