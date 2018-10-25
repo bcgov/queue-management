@@ -46,11 +46,9 @@ class Feedback(Resource):
             }
             params = json.dumps(feedback_json_data).encode('utf8')
             slack_result = Feedback.send_to_slack(params)
-            print(slack_result)
 
         if self.flag_service_now:
             service_now_result = Feedback.send_to_service_now(feedback_message)
-            print(service_now_result)
 
         if (not self.flag_slack) and self.flag_service_now:
             return service_now_result
