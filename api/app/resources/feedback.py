@@ -88,7 +88,7 @@ class Feedback(Resource):
         resp = urllib.request.urlopen(req)
 
         if resp.getcode() == 200:
-            return {"status": "success"}, 200
+            return {"status": "Success"}, 200
         else:
             return {"message": "error", "http_code": resp.getcode()}, 400
 
