@@ -160,7 +160,16 @@ objects:
                 - name: SERVER_NAME
                   value: "${API_APPLICATION_DOMAIN}"
                 - name: LOG_ERRORS
-                  value: "${LOG_ERROS}"
+                  value: "${LOG_ERRORS}"
+                - name: THEQ_FEEDBACK
+                  value: "${THEQ_FEEDBACK}"
+                - name: SERVICENOW_INSTANCE
+                  value: "${SERVICENOW_INSTANCE}"
+                - name: SERVICENOW_USER
+                  value: "${SERVICENOW_USER}"
+                - name: SERVICENOW_PASSWORD
+                  value: "${SERVICENOW_PASSWORD}"
+
               ports:
                 - containerPort: 8080
               readinessProbe:
@@ -288,3 +297,15 @@ parameters:
     description: "Enable/Disable Logging of Socketio errors"
     required: false
     value: ""
+  - name: THEQ_FEEDBACK
+    description: "Where feedback should go (eg. 'Slack, Service Now')"
+    required: false
+  - name: SERVICENOW_INSTANCE
+    description: "The name of your organizations Service Now instance"
+    required: false
+  - name: SERVICENOW_USER
+    description: "The login ID of a Service Now account to create incidents"
+    required: false
+  - name: SERVICENOW_PASSWORD
+    description: "The password of the SERVICENOW_USER account"
+    required: false
