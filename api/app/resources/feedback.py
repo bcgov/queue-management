@@ -25,7 +25,7 @@ import requests
 @api.route("/feedback/", methods=['POST'])
 class Feedback(Resource):
 
-    feedback_destinations = (os.getenv("THEQ_FEEDBACK", "")).upper().replace(" ","").split(",")
+    feedback_destinations = application.config['THEQ_FEEDBACK']
     flag_slack = "SLACK" in feedback_destinations
     flag_service_now = "SERVICENOW" in feedback_destinations
 
@@ -46,11 +46,9 @@ class Feedback(Resource):
             }
             params = json.dumps(feedback_json_data).encode('utf8')
             slack_result = Feedback.send_to_slack(params)
-            print(slack_result)
 
         if self.flag_service_now:
             service_now_result = Feedback.send_to_service_now(feedback_message)
-            print(service_now_result)
 
         if (not self.flag_slack) and self.flag_service_now:
             return service_now_result
@@ -90,7 +88,7 @@ class Feedback(Resource):
         resp = urllib.request.urlopen(req)
 
         if resp.getcode() == 200:
-            return {"status": "success"}, 200
+            return {"status": "Success"}, 200
         else:
             return {"message": "error", "http_code": resp.getcode()}, 400
 
