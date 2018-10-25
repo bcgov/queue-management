@@ -20,6 +20,7 @@ class BaseConfig(object):
     LOGGING_LOCATION = "logs/qsystem.log"
     LOGGING_LEVEL = DEBUG
     LOGGING_FORMAT = '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
+    LOG_ERRORS = (os.getenv("LOG_ERRORS","FALSE")).upper() == "TRUE"
 
     SECRET_KEY = os.getenv('SECRET_KEY')
     OIDC_OPENID_REALM = os.getenv('OIDC_OPENID_REALM','nest')
@@ -29,54 +30,9 @@ class BaseConfig(object):
 
     MARSHMALLOW_SCHEMA_DEFAULT_JIT = "toastedmarshmallow.Jit"
 
-class LocalConfig(BaseConfig):
-    DEBUG = True
-    TESTING = False
-    ENV = 'dev'
-
-    USE_HTTPS = False
-    PREFERRED_URL_SCHEME = 'http'
-
-    DB_ENGINE = os.getenv('DATABASE_ENGINE', '')
-    DB_USER = os.getenv('DATABASE_USERNAME', '')
-    DB_PASSWORD = os.getenv('DATABASE_PASSWORD','')
-    DB_NAME = os.getenv('DATABASE_NAME','')
-    DB_HOST = os.getenv('DATABASE_HOST','')
-    DB_PORT = os.getenv('DATABASE_PORT','')
-
-    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}'.format(
-        engine=DB_ENGINE,
-        user=DB_USER,
-        password=DB_PASSWORD,
-        host=DB_HOST,
-        port=DB_PORT,
-        name=DB_NAME
-    )
-
-    ACTIVE_MQ_URL = ''      #'amqp://guest:guest@localhost:5672'
-    # ACTIVE_MQ_URL = 'amqp://guest:guest@localhost:5672'      #'amqp://guest:guest@localhost:5672'
-    # 	In config.py: ACTIVE_MQ_URL = 'amqp://guest:guest@localhost:5672'
-    CORS_ALLOWED_ORIGINS = ["http://localhost:8080"]
-    SQLALCHEMY_ECHO = False
-    SLACK_URL = os.getenv('SLACK_URL')
-    SERVICENOW_INSTANCE = os.getenv('SERVICENOW_INSTANCE')
-    SERVICENOW_USER = os.getenv('SERVICENOW_USER')
-    SERVICENOW_PASSWORD = os.getenv('SERVICENOW_PASSWORD')
-    SECRET_KEY = "pancakes"
-    LOG_ERRORS = (os.getenv("LOG_ERRORS","FALSE")).upper() == "TRUE"
-
-class DevelopmentConfig(BaseConfig):
-    DEBUG = True
-    REDIS_DEBUG = True
-    TESTING = False
-    ENV = 'dev'
-
-    SESSION_COOKIE_DOMAIN = os.getenv('SERVER_NAME', '')
     REMEMBER_COOKIE_DURATION = 86400
     SERVER_NAME = os.getenv('SERVER_NAME', '')
-    USE_HTTPS = True
-    PREFERRED_URL_SCHEME = 'https'
-
+    SESSION_COOKIE_DOMAIN = os.getenv('SERVER_NAME', '')
     CORS_ALLOWED_ORIGINS = ["https://" + SESSION_COOKIE_DOMAIN]
 
     ACTIVE_MQ_USER = os.getenv('ACTIVE_MQ_USER', '')
@@ -102,14 +58,41 @@ class DevelopmentConfig(BaseConfig):
         password=DB_PASSWORD,
         host=DB_HOST,
         port=DB_PORT,
-        name=DB_NAME,
+        name=DB_NAME
     )
 
-    SLACK_URL = os.getenv('SLACK_URL')
-    LOG_ERRORS = (os.getenv("LOG_ERRORS","FALSE")).upper() == "TRUE"
-    SERVICENOW_INSTANCE = os.getenv('SERVICENOW_INSTANCE')
-    SERVICENOW_USER = os.getenv('SERVICENOW_USER')
-    SERVICENOW_PASSWORD = os.getenv('SERVICENOW_PASSWORD')
+    THEQ_FEEDBACK = (os.getenv("THEQ_FEEDBACK", "")).upper().replace(" ","").split(",")
+    SLACK_URL = os.getenv('SLACK_URL', '')
+    SERVICENOW_INSTANCE = os.getenv('SERVICENOW_INSTANCE', '')
+    SERVICENOW_USER = os.getenv('SERVICENOW_USER', '')
+    SERVICENOW_PASSWORD = os.getenv('SERVICENOW_PASSWORD', '')
+
+class LocalConfig(BaseConfig):
+    DEBUG = True
+    TESTING = False
+    ENV = 'dev'
+
+    USE_HTTPS = False
+    PREFERRED_URL_SCHEME = 'http'
+
+    ACTIVE_MQ_URL = ''
+    #  For running rabbitmq locally, use the line below.
+    # ACTIVE_MQ_URL = 'amqp://guest:guest@localhost:5672'
+
+    SERVER_NAME = None
+    SESSION_COOKIE_DOMAIN = None
+    CORS_ALLOWED_ORIGINS = ["http://localhost:8080"]
+    SQLALCHEMY_ECHO = False
+    SECRET_KEY = "pancakes"
+
+class DevelopmentConfig(BaseConfig):
+    DEBUG = True
+    REDIS_DEBUG = True
+    TESTING = False
+    ENV = 'dev'
+
+    USE_HTTPS = True
+    PREFERRED_URL_SCHEME = 'https'
 
     if os.getenv('SQLALCHEMY_ECHO', "False") == "True":
         SQLALCHEMY_ECHO=True
@@ -123,45 +106,8 @@ class TestConfig(BaseConfig):
     TESTING = False
     ENV = 'test'
 
-    SESSION_COOKIE_DOMAIN = 'test-theq.pathfinder.gov.bc.ca'
-    REMEMBER_COOKIE_DURATION = 86400
-    SERVER_NAME = 'test-theq.pathfinder.gov.bc.ca'
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
-
-    CORS_ALLOWED_ORIGINS = ["https://" + SESSION_COOKIE_DOMAIN]
-
-    ACTIVE_MQ_USER = os.getenv('ACTIVE_MQ_USER', '')
-    ACTIVE_MQ_PASSWORD = os.getenv('ACTIVE_MQ_PASSWORD', '')
-    ACTIVE_MQ_HOST = os.getenv('ACTIVE_MQ_HOST', '')
-    ACTIVE_MQ_PORT = os.getenv('ACTIVE_MQ_PORT', '')
-    ACTIVE_MQ_URL = 'amqp://{amq_user}:{amq_password}@{amq_host}:{amq_port}'.format(
-        amq_user=ACTIVE_MQ_USER,
-        amq_password=ACTIVE_MQ_PASSWORD,
-        amq_host=ACTIVE_MQ_HOST,
-        amq_port=ACTIVE_MQ_PORT
-    )
-
-    DB_ENGINE = os.getenv('DATABASE_ENGINE', '')
-    DB_USER = os.getenv('DATABASE_USERNAME', '')
-    DB_PASSWORD = os.getenv('DATABASE_PASSWORD','')
-    DB_NAME = os.getenv('DATABASE_NAME','')
-    DB_HOST = os.getenv('DATABASE_HOST','')
-    DB_PORT = os.getenv('DATABASE_PORT','')
-    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}'.format(
-        engine=DB_ENGINE,
-        user=DB_USER,
-        password=DB_PASSWORD,
-        host=DB_HOST,
-        port=DB_PORT,
-        name=DB_NAME,
-    )
-
-    SLACK_URL = os.getenv('SLACK_URL')
-    LOG_ERRORS = (os.getenv("LOG_ERRORS","FALSE")).upper() == "TRUE"
-    SERVICENOW_INSTANCE = os.getenv('SERVICENOW_INSTANCE')
-    SERVICENOW_USER = os.getenv('SERVICENOW_USER')
-    SERVICENOW_PASSWORD = os.getenv('SERVICENOW_PASSWORD')
 
     if os.getenv('SQLALCHEMY_ECHO', "False") == "True":
         SQLALCHEMY_ECHO=True
@@ -175,45 +121,8 @@ class ProductionConfig(BaseConfig):
     TESTING = False
     ENV = 'production'
 
-    SESSION_COOKIE_DOMAIN = 'theq.pathfinder.gov.bc.ca'
-    REMEMBER_COOKIE_DURATION = 86400
-    SERVER_NAME = 'theq.pathfinder.gov.bc.ca'
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
-
-    CORS_ALLOWED_ORIGINS = ["https://" + SESSION_COOKIE_DOMAIN]
-
-    ACTIVE_MQ_USER = os.getenv('ACTIVE_MQ_USER', '')
-    ACTIVE_MQ_PASSWORD = os.getenv('ACTIVE_MQ_PASSWORD', '')
-    ACTIVE_MQ_HOST = os.getenv('ACTIVE_MQ_HOST', '')
-    ACTIVE_MQ_PORT = os.getenv('ACTIVE_MQ_PORT', '')
-    ACTIVE_MQ_URL = 'amqp://{amq_user}:{amq_password}@{amq_host}:{amq_port}'.format(
-        amq_user=ACTIVE_MQ_USER,
-        amq_password=ACTIVE_MQ_PASSWORD,
-        amq_host=ACTIVE_MQ_HOST,
-        amq_port=ACTIVE_MQ_PORT
-    )
-
-    DB_ENGINE = os.getenv('DATABASE_ENGINE', '')
-    DB_USER = os.getenv('DATABASE_USERNAME', '')
-    DB_PASSWORD = os.getenv('DATABASE_PASSWORD','')
-    DB_NAME = os.getenv('DATABASE_NAME','')
-    DB_HOST = os.getenv('DATABASE_HOST','')
-    DB_PORT = os.getenv('DATABASE_PORT','')
-    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}'.format(
-        engine=DB_ENGINE,
-        user=DB_USER,
-        password=DB_PASSWORD,
-        host=DB_HOST,
-        port=DB_PORT,
-        name=DB_NAME,
-    )
-
-    SLACK_URL = os.getenv('SLACK_URL')
-    LOG_ERRORS = (os.getenv("LOG_ERRORS","FALSE")).upper() == "TRUE"
-    SERVICENOW_INSTANCE = os.getenv('SERVICENOW_INSTANCE')
-    SERVICENOW_USER = os.getenv('SERVICENOW_USER')
-    SERVICENOW_PASSWORD = os.getenv('SERVICENOW_PASSWORD')
 
     if os.getenv('SQLALCHEMY_ECHO', "False") == "True":
         SQLALCHEMY_ECHO=True
