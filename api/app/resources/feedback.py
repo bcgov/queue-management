@@ -25,7 +25,7 @@ import requests
 @api.route("/feedback/", methods=['POST'])
 class Feedback(Resource):
 
-    feedback_destinations = (os.getenv("THEQ_FEEDBACK", "")).upper().replace(" ","").split(",")
+    feedback_destinations = application.config['THEQ_FEEDBACK']
     flag_slack = "SLACK" in feedback_destinations
     flag_service_now = "SERVICENOW" in feedback_destinations
 
