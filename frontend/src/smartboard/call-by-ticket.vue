@@ -140,18 +140,24 @@ export default {
     },
     invited() {
       if (this.citizens && this.citizens.length > 0) {
-        let citizens = this.citizens.filter(c=>c.active_period.ps.ps_name === 'Invited')
-        if (citizens.length > 8) {
-          this.overflow = citizens.slice(8, (citizens.length-1))
-          this.showOverflow = true
-          return citizens.slice(0,8)
-        } else {
-          this.overflow = []
-          this.showOverflow = false
-          return citizens
+        let citizens = this.citizens.filter(c=>c.active_period.ps.ps_name === 'Waiting')
+//        let citizens = this.citizens.filter(c=>c.active_period.ps.ps_name === 'Invited')
+        console.log("==> citizens length:")
+        console.log(citizens.length)
+        if (citizens.length > 0) {
+                return [{ticket_number:'21'}]
         }
       }
-      return [{ticket_number:''}]
+      //     this.overflow = citizens.slice(8, (citizens.length-1))
+      //     this.showOverflow = true
+      //     return citizens.slice(0,8)
+      //   } else {
+      //     this.overflow = []
+      //     this.showOverflow = false
+      //     return citizens
+      //   }
+      // }
+      return [{ticket_number:'25'}]
     },
     waiting() {
       if (this.citizens && this.citizens.length > 0) {
