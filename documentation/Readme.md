@@ -50,8 +50,9 @@ Ensure you have python 3. I also had to install: gcc, python3-venv, libmysqlclie
 
 ### Add two required keycloak config files
 
-1. `cp queue-management/documentation/demo-files/secrets.json /queue-management/api/client_secrets/secrets.json`
-1. `cp queue-management/documentation/demo-files/keycloak-local.json /queue-management/frontend/static/keycloak-local.json`
+1. `cd queue-management`
+1. `cp documentation/demo-files/secrets.json api/client_secrets/secrets.json`
+1. `cp documentation/demo-files/keycloak-local.json frontend/static/keycloak-local.json`
 
 ### Set Enviornment Variables required:
 
