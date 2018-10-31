@@ -61,6 +61,7 @@ class CitizenList(Resource):
 
         citizen_state = CitizenState.query.filter_by(cs_state_name="Active").first()
         citizen.cs_id = citizen_state.cs_id
+        citizen.service_count = 1
         db.session.add(citizen)
         db.session.commit()
 
