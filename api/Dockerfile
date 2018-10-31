@@ -14,6 +14,8 @@ python3-pip \
 libmysqlclient-dev \
 mysql-client \
 python-dev \
+iputils-ping \
+curl \
 python3-dev \
 python3-venv \
 wget \
