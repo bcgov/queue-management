@@ -40,8 +40,7 @@ class Smartboard(Resource):
 
             citizens = Citizen.query.filter_by(office_id=office.office_id) \
                 .filter_by(cs_id=active_citizen_state.cs_id) \
-                .join(ServiceReq, aliased=True) \
-                .filter_by(sr_state_id=pending_sr_state.sr_state_id)
+                .join(ServiceReq, aliased=True)
 
             citizens_waiting = []
 
