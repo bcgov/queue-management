@@ -7,7 +7,7 @@ services:
       - DOCKER_HOST=tcp://0.0.0.0:2375
     build: ./keycloak-local-testserver
     ports:
-      - 8080:8080
+      - 8085:8080
   mysql_db:
     image: mysql:5.7.22
     restart: always
@@ -38,14 +38,13 @@ services:
   frontend:
     build: ./frontend
     ports:
-      - "80:8080"
+      - "8080:8080"
     volumes:
       - "./frontend:/opt/queue-management-frontend"
-      - "node_modules:/opt/queue-management-frontend/node_modules"
+#      - "node_modules:/opt/queue-management-frontend/node_modules"
+    command: bash -c "npm i && npm start localhost"
 
 
 volumes:
   node_modules:
     driver: local
-
-
