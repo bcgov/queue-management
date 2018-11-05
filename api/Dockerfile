@@ -5,7 +5,7 @@ EXPOSE 5000 8088
 
 # You may increment this to bust (yours and remote) image caches.
 # When Docker doesn't detect changes that require a rebuild.
-RUN echo "Version 2.0"
+RUN echo "Version 2.1"
 
 # Install packages
 RUN apt-get update -q
