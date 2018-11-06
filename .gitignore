@@ -116,3 +116,5 @@ sonar-runner/.gradle
 .DS_Store
 /.idea
 /frontend/static/keycloak-local.json
+/frontend/static/keycloak-local.localhost.json
+/frontend/static/keycloak-local.pathfinder.json
