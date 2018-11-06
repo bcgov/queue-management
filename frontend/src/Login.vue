@@ -25,7 +25,7 @@ limitations under the License.*/
     <div v-show="this.$store.state.isLoggedIn"
          style="display: flex; flex-direction: row; justify-content: space-between">
       <div id="select-wrapper" style="padding-right: 20px" v-if="reception">
-         <select v-model="counter_selection">
+         <select id="counter-selection" v-model="counter_selection">
            <option value='counter'>Counter</option>
            <option value='quick'>Quick Trans</option>
            <option value='receptionist'>Receptionist</option>
