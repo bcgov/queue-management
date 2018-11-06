@@ -77,6 +77,12 @@
                       btn-primary serve-btn"
                       @click="clickAddService"
                       :disabled="serviceBegun===false || performingAction">Add Next Service</b-button>
+            <div class="mr-1 btn-success" style="border-radius: 5px">
+              <b-form-checkbox v-model="quick" value="1" unchecked-value="0"
+                               class="mt-3 ml-1 mr-1 pb-1" style="position: relative; top: -5px;">
+                <span style="font: 400 16px Myriad-Pro;">Quick Txn</span>
+              </b-form-checkbox>
+            </div>
           </b-col>
           <b-col cols="2" />
         </b-row>
@@ -193,6 +199,13 @@ export default {
         return {channel_name: '', channel_id: ''}
       }
       return this.active_service.channel
+    },
+    quick: {
+      get() { return this.serviceModalForm.quick },
+      set(value) {
+        console.log(value)
+        this.editServiceModalForm({type:'quick',value})
+      }
     }
   },
 
