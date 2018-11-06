@@ -8,7 +8,7 @@
                 variant="warning">{{this.serveModalAlert}}</b-alert>
       <div style="display: flex; flex-direction: row; justify-content: space-between" class="modal_header">
         <div>
-          <h4>Serve Citizen</h4>
+          <h4>Serve Citizen <span class="quick-span" v-if="quick">(qck tx)</span></h4>
         </div>
         <div>
           <b-button size="sm"
