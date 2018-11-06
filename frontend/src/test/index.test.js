@@ -6,6 +6,11 @@ const width = 1200;
 const height = 800;
 const maxTestCaseTime = 30000;
 
+/*
+RUN TEST WITH:
+`KEYCLOAK_USERNAME=<username> KEYCLOAK_PASSWORD=<password> npm test` from the frontend directory
+*/
+
 beforeAll(async () => {
   browser = await puppeteer.launch({
     headless: false,
@@ -21,10 +26,31 @@ afterAll(() => {
 });
 
 describe("Serve Citizens", () => {
+  //   test(
+  //     "Login",
+  //     async () => {
+  //       await page.goto(process.env.CFMS_DEV_URL);
+  //       await page.waitForSelector("#keycloak-login");
+
+  //       const navigationPromise = page.waitForNavigation();
+  //       await page.click("#keycloak-login");
+  //       await navigationPromise;
+
+  //       await page.waitForSelector("#username");
+  //       await page.type("#username", "cfms-postman-operator");
+  //       await page.type("#password", process.env.POSTMAN_OPERATOR_PASSWORD);
+
+  //       await page.click("#kc-login");
+  //       await navigationPromise;
+
+  //       await page.waitForSelector("label.navbar-user");
+  //     },
+  //     maxTestCaseTime
+  //   );
   test(
     "Login",
     async () => {
-      await page.goto(process.env.CFMS_DEV_URL);
+      await page.goto("http://localhost:8080/");
       await page.waitForSelector("#keycloak-login");
 
       const navigationPromise = page.waitForNavigation();
@@ -32,8 +58,8 @@ describe("Serve Citizens", () => {
       await navigationPromise;
 
       await page.waitForSelector("#username");
-      await page.type("#username", "cfms-postman-operator");
-      await page.type("#password", process.env.POSTMAN_OPERATOR_PASSWORD);
+      await page.type("#username", process.env.KEYCLOAK_USERNAME);
+      await page.type("#password", process.env.KEYCLOAK_PASSWORD);
 
       await page.click("#kc-login");
       await navigationPromise;
@@ -44,21 +70,29 @@ describe("Serve Citizens", () => {
   );
 
   test(
-    "Invite and serve citizen from queue",
-    async () => {
-      await addCitizenToQueue();
-      await inviteFromQueue();
-      await beginServiceFromServeCitizenModal();
-      await finishService();
-    },
-    maxTestCaseTime
+      "Invite and serve citizen from queue",
+      async () => {
+          await addCitizenToQueue();
+          await inviteFromQueue();
+          await beginServiceFromServeCitizenModal();
+          await finishService();
+      },
+      maxTestCaseTime
   );
 
   test(
-    "Invite and serve citizen using button",
+    "Invite as quick transaction counter",
     async () => {
-      await addCitizenToQueue();
+      await addCitizenToQueue(); //Add regular first
+      await addQuickCitizenToQueue(); //Add quick second
+      await page.select("#counter-selection", "quick"); //Select quick transaction counter
+
       await inviteCitizenFromDash();
+      await page.waitForSelector(".quick-span"); //Invite should bring up the quick first
+      await beginServiceFromServeCitizenModal();
+      await finishService();
+
+      await inviteCitizenFromDash(); //Second invite bring up remaining regular
       await beginServiceFromServeCitizenModal();
       await finishService();
     },
@@ -66,39 +100,50 @@ describe("Serve Citizens", () => {
   );
 
   test(
-    "Return citizen to queue then complete service",
-    async () => {
-      await addCitizenToQueue();
-      await inviteFromQueue();
-      await returnToQueue();
-      await inviteCitizenFromDash();
-      await beginServiceFromServeCitizenModal();
-      await finishService();
-    },
-    maxTestCaseTime
+      "Invite and serve citizen using button",
+      async () => {
+          await addCitizenToQueue();
+          await inviteCitizenFromDash();
+          await beginServiceFromServeCitizenModal();
+          await finishService();
+      },
+      maxTestCaseTime
   );
 
   test(
-    "Citizen left",
-    async () => {
-      await addCitizenToQueue();
-      await inviteFromQueue();
-      await citizenLeft();
-    },
-    maxTestCaseTime
+      "Return citizen to queue then complete service",
+      async () => {
+          await addCitizenToQueue();
+          await inviteFromQueue();
+          await returnToQueue();
+          await inviteCitizenFromDash();
+          await beginServiceFromServeCitizenModal();
+          await finishService();
+      },
+      maxTestCaseTime
   );
 
   test(
-    "Serve citizen through the queue",
-    async () => {
-      await addCitizenToQueue();
-      await inviteCitizenFromDash();
-      await beginServiceFromServeCitizenModal();
-      await placeOnHold();
-      await beginServiceFromHoldTable();
-      await finishService();
-    },
-    maxTestCaseTime
+      "Citizen left",
+      async () => {
+          await addCitizenToQueue();
+          await inviteFromQueue();
+          await citizenLeft();
+      },
+      maxTestCaseTime
+  );
+
+  test(
+      "Serve citizen through the queue",
+      async () => {
+          await addCitizenToQueue();
+          await inviteCitizenFromDash();
+          await beginServiceFromServeCitizenModal();
+          await placeOnHold();
+          await beginServiceFromHoldTable();
+          await finishService();
+      },
+      maxTestCaseTime
   );
   /*
   test('Begin service from add citizen modal', async () => {
@@ -109,13 +154,13 @@ describe("Serve Citizens", () => {
   }, maxTestCaseTime);
 */
   test(
-    "Cancel service from add citizen modal",
-    async () => {
-      await addCitizenFromDash();
-      await populateAddCitizen();
-      await cancelFromAddCitizenModal();
-    },
-    maxTestCaseTime
+      "Cancel service from add citizen modal",
+      async () => {
+          await addCitizenFromDash();
+          await populateAddCitizen();
+          await cancelFromAddCitizenModal();
+      },
+      maxTestCaseTime
   );
 });
 
@@ -130,6 +175,13 @@ async function addCitizenToQueue() {
   await addCitizenFromDash();
   await populateAddCitizen();
   await addToQueue();
+}
+
+async function addQuickCitizenToQueue() {
+  await page.waitForSelector("#add-citizen-button");
+  await addCitizenFromDash();
+  await populateAddCitizen();
+  await addToQuickQueue();
 }
 
 async function populateAddCitizen() {
@@ -174,6 +226,13 @@ async function addCitizenFromDash() {
  */
 
 async function addToQueue() {
+  await page.click("#add-citizen-add-to-queue");
+  await delay(1000);
+  await page.waitForSelector(".add_citizen_template", { hidden: true });
+}
+
+async function addToQuickQueue() {
+  await page.click(".quick");
   await page.click("#add-citizen-add-to-queue");
   await delay(1000);
   await page.waitForSelector(".add_citizen_template", { hidden: true });
