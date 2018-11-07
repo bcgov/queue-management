@@ -8,7 +8,7 @@
                 variant="warning">{{this.serveModalAlert}}</b-alert>
       <div style="display: flex; flex-direction: row; justify-content: space-between" class="modal_header">
         <div>
-          <h4>Serve Citizen <span class="quick-span" v-if="quick">(qck tx)</span></h4>
+          <h4>Serve Citizen</h4>
         </div>
         <div>
           <b-button size="sm"
@@ -81,6 +81,7 @@
               <b-form-checkbox v-model="quick" value="1" unchecked-value="0"
                                class="mt-3 ml-1 mr-1 pb-1" style="position: relative; top: -5px;">
                 <span style="font: 400 16px Myriad-Pro;">Quick Txn</span>
+                <span class="quick-span" v-if="quick"></span> <!-- For puppeteer testing to see if quick is selected -->
               </b-form-checkbox>
             </div>
           </b-col>
