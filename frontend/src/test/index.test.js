@@ -99,6 +99,21 @@ describe("Serve Citizens", () => {
     maxTestCaseTime
   );
 
+    test(
+        "Edit to quick transaction in serve citizen counter",
+        async () => {
+            await addCitizenToQueue();
+            await inviteCitizenFromDash();
+            await editQuickTransFromServeCitizenModal() //Edit to quick transaction
+            await returnToQueue();
+            await inviteCitizenFromDash();
+            await page.waitForSelector(".quick-span"); //Should be quick transaction now
+            await beginServiceFromServeCitizenModal();
+            await finishService();
+        },
+        maxTestCaseTime
+    );
+
   test(
       "Invite and serve citizen using button",
       async () => {
@@ -260,6 +275,11 @@ async function beginServiceFromServeCitizenModal() {
     disabled: false
   });
   await page.click("#serve-citizen-begin-service-button");
+}
+
+async function editQuickTransFromServeCitizenModal(){
+  await page.waitForSelector(".quick-checkbox");
+  await page.click(".quick-checkbox");
 }
 
 async function returnToQueue() {
