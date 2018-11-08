@@ -18,7 +18,7 @@ from qsystem import api, api_call_with_retry, db, oidc, socketio
 from app.models import Citizen, CSR, CitizenState
 from app.models import SRState
 from app.schemas import CitizenSchema
-from ...snowplow.snowplow import SnowPlow
+from ...utilities.snowplow import SnowPlow
 import os
 
 @api.route("/citizens/<int:id>/finish_service/", methods=["POST"])

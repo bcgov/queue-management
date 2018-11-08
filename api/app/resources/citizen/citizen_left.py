@@ -19,7 +19,7 @@ from app.models import Citizen, CSR, CitizenState
 from app.schemas import CitizenSchema, ServiceReqSchema
 from app.models import SRState
 from datetime import datetime
-from ...snowplow.snowplow import SnowPlow
+from ...utilities.snowplow import SnowPlow
 import os
 
 @api.route("/citizens/<int:id>/citizen_left/", methods=['POST'])
