@@ -49,6 +49,9 @@ class CitizenLeft(Resource):
         if self.clear_comments_flag:
             citizen.citizen_comments = None
 
+        if citizen.start_time.date() != datetime.now().date():
+            citizen.accurate_time_ind = 0
+
         db.session.add(citizen)
         db.session.commit()
 
