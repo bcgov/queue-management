@@ -21,6 +21,7 @@ import urllib.parse
 import os
 import pysnow
 import requests
+import json
 
 @api.route("/feedback/", methods=['POST'])
 class Feedback(Resource):
@@ -40,6 +41,9 @@ class Feedback(Resource):
         except KeyError as err:
             return {"message": "Must provide message to send as feedback"}, 422
 
+        slack_result = None
+        service_now_result = None
+
         if self.flag_slack:
             feedback_json_data = {
                 "text": feedback_message
@@ -50,26 +54,9 @@ class Feedback(Resource):
         if self.flag_service_now:
             service_now_result = Feedback.send_to_service_now(feedback_message)
 
-        if (not self.flag_slack) and self.flag_service_now:
-            return service_now_result
-
-        if (not self.flag_service_now) and self.flag_slack:
-            return slack_result
-
-        if self.flag_slack and self.flag_service_now:
-            message = ""
-            if hasattr(slack_result, 'message'):
-                message = slack_result.message
-            if hasattr(service_now_result, 'message'):
-                if len(message) != 0:
-                    message = message + "; " + service_now_result.message
-                else:
-                    message = service_now_result.message
-
-            if message:
-                return {"message": message}, 400
-            else:
-                return {"status": "Success"}, 200
+        #  Calculate return message as combination of slack and service now results.
+        result = Feedback.combine_results(slack_result, service_now_result)
+        return result
 
     @staticmethod
     def send_to_slack(params):
@@ -133,3 +120,46 @@ class Feedback(Resource):
             return {"status": "Success"}, 201
         else:
             return {"message": "Service Now incident not created"}, 400
+
+    @staticmethod
+    def combine_results(slack_result, service_now_result):
+
+        if slack_result is None:
+            if service_now_result is None:
+                print("    --> slack none, service now none")
+                result = {"message": "TheQ is not configured for feedback.  Contact your service desk."}, 400
+            else:
+                print("    --> slack none, service now result")
+                result = service_now_result
+
+        else:
+            if service_now_result is None:
+                print("    --> slack result, service now none")
+                result = slack_result
+            else:
+                print("    --> slack result, service now result")
+                result = Feedback.extract_messages(slack_result, service_now_result)
+
+        return result
+
+    @staticmethod
+    def extract_messages(slack, service_now):
+
+        message = ""
+        slack_result, code = slack
+        service_now_result, code = service_now
+
+        if 'message' in slack_result:
+            message = slack_result['message']
+        if 'message' in service_now_result:
+            if len(message) != 0:
+                message = message + "; " + service_now_result['message']
+            else:
+                message = service_now_result['message']
+
+        if message:
+            result = {"message": message}, 400
+        else:
+            result = {"status": "Success"}, 200
+
+        return result

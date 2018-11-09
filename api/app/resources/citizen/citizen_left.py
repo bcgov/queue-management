@@ -19,7 +19,7 @@ from app.models import Citizen, CSR, CitizenState
 from app.schemas import CitizenSchema, ServiceReqSchema
 from app.models import SRState
 from datetime import datetime
-from ...snowplow.snowplow import SnowPlow
+from ...utilities.snowplow import SnowPlow
 import os
 
 @api.route("/citizens/<int:id>/citizen_left/", methods=['POST'])
@@ -48,6 +48,9 @@ class CitizenLeft(Resource):
         citizen.cs = CitizenState.query.filter_by(cs_state_name='Left before receiving services').first()
         if self.clear_comments_flag:
             citizen.citizen_comments = None
+
+        if citizen.start_time.date() != datetime.now().date():
+            citizen.accurate_time_ind = 0
 
         db.session.add(citizen)
         db.session.commit()

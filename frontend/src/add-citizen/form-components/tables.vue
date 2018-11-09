@@ -1,13 +1,13 @@
 <template>
-  <b-container fluid 
+  <b-container fluid
                class="mt-1 add_citizen_form"
                style="border: 1px solid dimgrey;
-                      margin: 0 px;
-                      padding-left: 0px
+                      margin: 0px;
+                      padding-left: 0px;
                       padding-right: 0px;
                       padding-bottom: 7px;"
                       >
-    <b-form-row no-gutters class="m-0" 
+    <b-form-row no-gutters class="m-0"
                 style="background-color: #f0f2f8;
                        border-top: 2px solid white;
                        border-bottom: 2px solid #e6e9ed;
@@ -21,12 +21,12 @@
     <b-form-row no-gutters>
       <b-col>
         <div id="innertable"
-             style="height: 200px; 
+             style="height: 200px;
                     overflow-y: scroll;
                     margin: 0px;
                     background-color: #fcfcfc"
                     >
-          <b-table :items="filtered_services" 
+          <b-table :items="filtered_services"
                    :fields="fields"
                    sort-by="parrent.service_name"
                    :filter="filter"
@@ -37,16 +37,16 @@
                    id="table2"
                    @row-clicked="rowClicked"
                    class="add_citizen_categories_table"
-                   > 
+                   >
             <template slot="service_name" slot-scope="data">
               <div>
                 <span v-bind:title="data.item.service_desc">
                   {{data.item.service_name}}
                 </span>
                 <div style="display: none">
-                  {{ 
+                  {{
                     (data.item.service_id==form_data.service) ?
-                    (data.item._rowVariant='active') : (data.item._rowVariant='') 
+                    (data.item._rowVariant='active') : (data.item._rowVariant='')
                   }}
                 </div>
               </div>
@@ -56,13 +56,11 @@
       </b-col>
     </b-form-row>
   </b-container>
-  </b-col>
-</b-form-row>
 </template>
 
 <script>
   import { mapState, mapGetters, mapMutations } from 'vuex'
-  
+
   export default {
     name: 'Tables',
 

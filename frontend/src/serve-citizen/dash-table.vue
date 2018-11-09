@@ -18,7 +18,7 @@ limitations under the License.*/
     <b-table small
              head-variant="light"
              :items="citizens"
-             :fields="fields"
+             :fields=getFields
              outlined
              hover
              @row-clicked="rowClicked"
@@ -52,7 +52,6 @@ limitations under the License.*/
         t:true,
         f:false,
         fields: [
-          {key: 'qt_xn_citizen_ind', label: 'Q. Txn', sortable: false, thStyle: 'width: 6%'},
           {key: 'citizen_id', thClass:'d-none', tdClass:'d-none' },
           {key: 'start_time', label: 'Time', sortable: true, thStyle: 'width: 10%'},
           {key: 'ticket_number', label: 'Ticket', sortable: false, thStyle: 'width: 6%'},
@@ -68,6 +67,16 @@ limitations under the License.*/
       ...mapGetters(['citizens_queue', 'active_service_id', 'reception']),
       citizens() {
         return this.citizens_queue
+      },
+      getFields: function() {
+        if (this.reception) {
+          let temp = this.fields
+          temp.unshift({key: 'qt_xn_citizen_ind', label: 'Q. Txn', sortable: false, thStyle: 'width: 6%'})
+          return temp
+        }
+        else {
+          return this.fields
+        }
       }
     },
     methods: {
