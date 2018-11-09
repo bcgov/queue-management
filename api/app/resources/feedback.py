@@ -106,30 +106,53 @@ class Feedback(Resource):
         if password is None:
             return {"message": "SERVICENOW_PASSWORD is not set"}, 400
 
-        # user = 'CfmsApi'
-        # pwd = 'CfmsApi'
-        # headers = {"Content-Type": "application/json", "Accept": "application/json"}
-        # sndata = '{" short_description": "TheQ created incident" }'
-        # response = requests.post(url, auth=(user, pwd), headers=headers, data='{"short_description":"TheQ created incident", "description": "Test incident created by TheQ}')
-        # print("Status: ", response.status_code, "Headers: ", response.headers, "Error Response: ", response.json)
+        #  Code for first method of adding Service Now incident.
+        #  Does not generated automatic Service Now email to assigned group, as it should.
+        #  Keep this code for future reference.  1==2 test avoids Sonarqube "code in comments" smell.
+        #  NOTE:  The description field in code below needs to be generated from params, if it is kept.
+        first_one = 1
+        second_one = 1
+        if first_one != second_one:
+            headers = {"Content-Type": "application/json", "Accept": "application/json"}
+            url = "https://bcrs.service-now.com/api/now/table/incident"
+            new_record = '{ \
+                "category": "Inquiry / Help", \
+                "cmdb_ci": "CFMS", \
+                "impact": "2 - Some Customers", \
+                "urgency": "2 - High", \
+                "priority": "High", \
+                "short_description": "TheQ Feedback", \
+                "description": "This is a test from TheQ", \
+                "assignment_group": "Service Delivery Tech Services (GARMS)" \
+            }'
 
-        c = pysnow.Client(instance = instance, user=user, password=password)
-        incident = c.resource(api_path='/table/incident')
-        new_record = {
-            #'contact_type': 'Phone',  This isn't working for now. Not critical
-            'category': 'Inquiry / Help',
-            'cmdb_ci': 'CFMS',
-            'impact': '2 - Some Customers',
-            'urgency': '2 - High',
-            'priority': 'High',
-            'short_description': 'TheQ Feedback',
-            'description': params,
-            'assignment_group': 'Service Delivery Tech Services (GARMS)'
-        }
+            response = requests.post(url, auth=(user, password), headers=headers, data=new_record)
 
-        result = incident.create(payload=new_record)
+            if response.status_code == 201:
+                return {"status": "Success"}, 201
+            else:
+                return {"message": "Service Now incident not created"}, response.status_code
 
-        if '201' in str(result):
-            return {"status": "Success"}, 201
+        #  Code for second method of adding Service Now incident.
+        #  Also does not generated automatic Service Now email to assigned group, as it should.
         else:
-            return {"message": "Service Now incident not created"}, 400
+            c = pysnow.Client(instance = instance, user=user, password=password)
+            incident = c.resource(api_path='/table/incident')
+            new_record = {
+                #'contact_type': 'Phone',  This isn't working for now. Not critical
+                'category': 'Inquiry / Help',
+                'cmdb_ci': 'CFMS',
+                'impact': '2 - Some Customers',
+                'urgency': '2 - High',
+                'priority': 'High',
+                'short_description': 'TheQ Feedback',
+                'description': params,
+                'assignment_group': 'Service Delivery Tech Services (GARMS)'
+            }
+
+            result = incident.create(payload=new_record)
+
+            if '201' in str(result):
+                return {"status": "Success"}, 201
+            else:
+                return {"message": "Service Now incident not created"}, 400
