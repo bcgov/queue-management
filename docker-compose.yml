@@ -2,20 +2,6 @@ version: '2'
 
 services:
 
-  keycloak:
-    environment:
-      - DOCKER_HOST=tcp://0.0.0.0:2375
-    build: ./keycloak-local-testserver
-    ports:
-      - 8085:8080
-  mysql_db:
-    image: mysql:5.7.22
-    restart: always
-    ports:
-      - "3306:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-
   api:
     build: ./api
     ports:
