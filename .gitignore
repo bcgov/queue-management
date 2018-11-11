@@ -118,3 +118,11 @@ sonar-runner/.gradle
 /frontend/static/keycloak-local.json
 /frontend/static/keycloak-local.localhost.json
 /frontend/static/keycloak-local.pathfinder.json
+
+# Docker
+api/Dockerfile
+frontend/Dockerfile
+docker-compose.yml
+api/init.sh
+api/wait-for-it.sh
+
