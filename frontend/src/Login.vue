@@ -57,6 +57,7 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
     },
     computed: {
       ...mapGetters(['quick_trans_status', 'reception', 'receptionist_status']),
+      // set and get state of counter type (select dropdown in nav)
       counter_selection: {
         get() {
           if (this.quick_trans_status === true) {
