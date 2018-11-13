@@ -50,7 +50,7 @@
                           id="serve-citizen-begin-service-button">Begin Service</b-button>
                 <b-button @click="clickReturnToQueue"
                           v-if="reception"
-                          :disabled="serviceBegun===true || performingAction"
+                          :disabled="performingAction"
                           class="btn-primary serve-btn"
                           id="serve-citizen-return-to-queue-button">Return to Queue</b-button>
               </div>
