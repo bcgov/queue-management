@@ -36,7 +36,6 @@ class Smartboard(Resource):
                 return {'message': 'office_number could not be found.'}, 400
 
             active_citizen_state = CitizenState.query.filter_by(cs_state_name="Active").first()
-            pending_sr_state = SRState.get_state_by_name("Pending")
 
             citizens = Citizen.query.filter_by(office_id=office.office_id) \
                 .filter_by(cs_id=active_citizen_state.cs_id) \

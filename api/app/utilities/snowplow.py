@@ -29,7 +29,7 @@ class SnowPlow():
     sp_appid = os.getenv("THEQ_SNOWPLOW_APPID", "")
     sp_namespace = os.getenv("THEQ_SNOWPLOW_NAMESPACE", "")
     call_snowplow_flag = (os.getenv("THEQ_SNOWPLOW_CALLFLAG", "False")).upper() == "TRUE"
-    if (not sp_endpoint.strip()) or (not sp_endpoint.strip()) or (not sp_endpoint.strip()):
+    if (not sp_endpoint.strip()) or (not sp_appid.strip()) or (not sp_namespace.strip()):
         call_snowplow_flag = False
 
     @staticmethod
