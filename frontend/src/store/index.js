@@ -60,7 +60,8 @@ export const store = new Vuex.Store({
       service_citizen: null,
       citizen_comments: '',
       activeQuantity: 1,
-      accurate_time_ind: 1
+      accurate_time_ind: 1,
+      quick: 0
     },
     services: [],
     showAddModal: false,
@@ -207,6 +208,18 @@ export const store = new Vuex.Store({
         return true
       } else if (state.user.qt_xn_csr_ind == 0) {
         return false
+      } else {
+        console.error('quick trans status: ', state.user.qt_xn_csr_ind)
+      }
+    },
+
+    receptionist_status(state) {
+      if (state.user.receptionist_ind == 1) {
+        return true
+      } else if (state.user.receptionist_ind == 0) {
+        return false
+      } else {
+        console.error('receptionist status: ', state.user.qt_xn_csr_ind)
       }
     }
   },
@@ -960,7 +973,7 @@ export const store = new Vuex.Store({
       let quick
 
       if (context.state.serviceModalForm.citizen_id) {
-        let { accurate_time_ind, citizen_comments } = context.state.serviceModalForm
+        let { accurate_time_ind, citizen_comments, quick } = context.state.serviceModalForm
         citizen_id = context.state.serviceModalForm.citizen_id
         let prevCitizen = context.getters.invited_citizen
 
@@ -974,7 +987,9 @@ export const store = new Vuex.Store({
           if ( citizen_comments !== prevCitizen.citizen_comments ) {
             data.citizen_comments = citizen_comments
           }
-
+          if ( quick !== prevCitizen.quick ) {
+            data.qt_xn_citizen_ind = quick
+          }
           if ( accurate_time_ind != null && accurate_time_ind !== prevCitizen.accurate_time_ind ) {
             data.accurate_time_ind = accurate_time_ind
           }
@@ -1156,10 +1171,12 @@ export const store = new Vuex.Store({
       }
     },
 
-    updateCSRQuickTransactionState(context) {
+    //Updates the counter's type from the state after selecting from the dropdown (regular counter, quick transaction, or receptionist)
+    updateCSRState(context) {
       let csr_id = context.state.user.csr_id
       Axios(context).put(`/csrs/${csr_id}/`, {
-        qt_xn_csr_ind: context.state.user.qt_xn_csr_ind
+        qt_xn_csr_ind: context.state.user.qt_xn_csr_ind,
+        receptionist_ind: context.state.user.receptionist_ind
       })
       .then( resp => {
       })
@@ -1257,8 +1274,9 @@ export const store = new Vuex.Store({
       let activeQuantity = activeService[0].quantity
       let { citizen_id } = citizen
       let service_citizen = citizen
+      let quick = citizen.qt_xn_citizen_ind
 
-      let obj = { citizen_comments, activeQuantity, citizen_id, service_citizen }
+      let obj = { citizen_comments, activeQuantity, citizen_id, service_citizen, quick }
       let keys = Object.keys(obj)
 
       keys.forEach(key => {
@@ -1347,6 +1365,8 @@ export const store = new Vuex.Store({
 
     setQuickTransactionState: (state, payload) => state.user.qt_xn_csr_ind = payload,
 
+    setReceptionistState: (state, payload) => state.user.receptionist_ind = payload,
+
     setOffice: (state, officeType) => state.officeType = officeType,
 
     flashServeNow: (state, payload) => state.serveNowStyle = payload,
@@ -1375,4 +1395,3 @@ export const store = new Vuex.Store({
     }
   }
 })
-

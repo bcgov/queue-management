@@ -13,7 +13,6 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 
 
-
 <template>
   <b-col id="login-form">
     <div v-show="!this.$store.state.isLoggedIn">
@@ -25,10 +24,12 @@ limitations under the License.*/
 
     <div v-show="this.$store.state.isLoggedIn"
          style="display: flex; flex-direction: row; justify-content: space-between">
-      <div style="padding-right: 20px" v-if="reception">
-        <b-form-checkbox :checked="quick_trans_status"
-                         @change="updateTransactionStatus($event)"
-                         class="navbar-label">Quick Txn</b-form-checkbox>
+      <div id="select-wrapper" style="padding-right: 20px" v-if="reception">
+         <select id="counter-selection" class="custom-select" v-model="counter_selection">
+           <option value='counter'>Counter</option>
+           <option value='quick'>Quick Trans</option>
+           <option value='receptionist'>Receptionist</option>
+        </select>
       </div>
       <div style="padding-right: 20px">
         <label class="navbar-label navbar-user">User: {{ this.$store.state.user.username }}</label>
@@ -55,11 +56,28 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
       _.defer(this.initLocalStorage)
     },
     computed: {
-      ...mapGetters(['quick_trans_status', 'reception'])
+      ...mapGetters(['quick_trans_status', 'reception', 'receptionist_status']),
+      // set and get state of counter type (select dropdown in nav)
+      counter_selection: {
+        get() {
+          if (this.quick_trans_status === true) {
+            return 'quick';
+          } else if (this.receptionist_status === true) {
+            return 'receptionist';
+          } else {
+            return 'counter';
+          }
+        },
+        set(value) {
+          this.setQuickTransactionState(value === 'quick')
+          this.setReceptionistState(value === 'receptionist')
+          this.updateCSRState()
+        }
+      }
     },
     methods: {
-      ...mapActions(['updateCSRQuickTransactionState']),
-      ...mapMutations(['setQuickTransactionState']),
+      ...mapActions(['updateCSRState']),
+      ...mapMutations(['setQuickTransactionState', 'setReceptionistState']),
       initLocalStorage() {
         if(localStorage.token) {
           let tokenExp = localStorage.tokenExp
@@ -162,7 +180,7 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
 
       updateTransactionStatus(e) {
         this.setQuickTransactionState(e)
-        this.updateCSRQuickTransactionState()
+        this.updateCSRState()
       }
     }
   }
