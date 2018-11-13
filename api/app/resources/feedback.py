@@ -149,18 +149,14 @@ class Feedback(Resource):
 
         if slack_result is None:
             if service_now_result is None:
-                print("    --> slack none, service now none")
                 result = {"message": "TheQ is not configured for feedback.  Contact your service desk."}, 400
             else:
-                print("    --> slack none, service now result")
                 result = service_now_result
 
         else:
             if service_now_result is None:
-                print("    --> slack result, service now none")
                 result = slack_result
             else:
-                print("    --> slack result, service now result")
                 result = Feedback.extract_messages(slack_result, service_now_result)
 
         return result
