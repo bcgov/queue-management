@@ -138,8 +138,7 @@ export default {
       for(let i = 0; i < this.citizens.length; i++) {
         for(let j = 0; j < this.citizens[i].service_reqs.length; j++) {
           let activePeriod = this.citizens[i].service_reqs[j].periods.filter(p => p.time_end === null)[0]
-
-          if (activePeriod && activePeriod.ps.ps_name === 'Being Served' && activePeriod.csr_id === csr.csr_id) {
+          if (activePeriod && (activePeriod.ps.ps_name === 'Invited' || activePeriod.ps.ps_name === 'Being Served') && activePeriod.csr_id === csr.csr_id) {
             return this.citizens[i]
           }
         }
@@ -161,21 +160,28 @@ export default {
           computed_csrs.push(csr)
         } else {
           let activeServiceRequest = activeCitizen.service_reqs.filter(sr => sr.periods.some(p => p.time_end === null))[0]
-          let firstServedPeriod = activeCitizen.service_reqs[0].periods.filter(p => p.ps.ps_name === "Being Served")[0]
-          let citizenStartDate = new Date(activeCitizen.start_time)
-          let firstServedPeriodDate = new Date(firstServedPeriod.time_start)
 
-          let waitSeconds = (firstServedPeriodDate - citizenStartDate) / 1000
-          let serveSeconds = (currentDate - firstServedPeriodDate) / 1000
+          // Add Wait time and Serve time when service begins
+          if(activeCitizen.service_reqs[0].periods.filter(p => p.ps.ps_name === "Being Served")[0]){
+            let firstServedPeriod = activeCitizen.service_reqs[0].periods.filter(p => p.ps.ps_name === "Being Served")[0]
+            let citizenStartDate = new Date(activeCitizen.start_time)
+            let firstServedPeriodDate = new Date(firstServedPeriod.time_start)
 
-          let waitDate = new Date(null)
-          waitDate.setSeconds(waitSeconds)
+            let waitSeconds = (firstServedPeriodDate - citizenStartDate) / 1000
+            let serveSeconds = (currentDate - firstServedPeriodDate) / 1000
 
-          let serveDate = new Date(null)
-          serveDate.setSeconds(serveSeconds)
+            let waitDate = new Date(null)
+            waitDate.setSeconds(waitSeconds)
 
-          csr['wait_time'] = `${waitDate.getUTCHours()}h ${waitDate.getMinutes()}min`
-          csr['serving_time'] = `${serveDate.getUTCHours()}h ${serveDate.getMinutes()}min`
+            let serveDate = new Date(null)
+            serveDate.setSeconds(serveSeconds)
+            csr['wait_time'] = `${waitDate.getUTCHours()}h ${waitDate.getMinutes()}min`
+            csr['serving_time'] = `${serveDate.getUTCHours()}h ${serveDate.getMinutes()}min`
+          } else {
+            csr['wait_time'] = null
+            csr['serving_time'] = null
+          }
+
           csr['citizen'] = activeCitizen
           csr['service_request'] = activeServiceRequest
           csr['end_service'] = {label:'End Service', id: activeCitizen.citizen_id}
