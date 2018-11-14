@@ -40,6 +40,13 @@ limitations under the License.*/
              :fields="fields"
              outlined
              class="p-0 m-0 w-100">
+
+        <template slot="end_service" slot-scope="data" v-if="data.value">
+            <button @click.stop="clickEnd(data.value.id)" class="GA-end-button">
+                {{data.value.label}}
+            </button>
+        </template>
+
     </b-table>
   </div>
 </template>
@@ -82,6 +89,10 @@ export default {
           label: 'Comments',
           sortable: true,
           formatter: (value) => { return value }
+        },
+        {
+            key: 'end_service',
+            label: 'End Service'
         }
       ],
       timer: null
@@ -92,7 +103,11 @@ export default {
     ...mapGetters(['citizens_queue', 'on_hold_queue', 'reception'])
   },
   methods: {
-    ...mapActions(['closeGAScreenModal', 'getCsrs']),
+    ...mapActions(['closeGAScreenModal', 'getCsrs', 'finishServiceFromGA']),
+    clickEnd(citizen_id){
+        this.finishServiceFromGA(citizen_id)
+        this.getCsrs()
+    },
     ga_citizens_waiting() {
       return this.citizens_queue.length
     },
@@ -163,6 +178,7 @@ export default {
           csr['serving_time'] = `${serveDate.getUTCHours()}h ${serveDate.getMinutes()}min`
           csr['citizen'] = activeCitizen
           csr['service_request'] = activeServiceRequest
+          csr['end_service'] = {label:'End Service', id: activeCitizen.citizen_id}
           computed_csrs.push(csr)
         }
       })
@@ -176,3 +192,11 @@ export default {
 }
 
 </script>
+
+<style>
+.GA-end-button{
+    background: #e0e0e0;
+    cursor: pointer;
+}
+</style>
+

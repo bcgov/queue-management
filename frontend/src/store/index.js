@@ -813,6 +813,10 @@ export const store = new Vuex.Store({
       })
     },
 
+    finishServiceFromGA(context, citizen_id) {
+      context.dispatch('postFinishService', citizen_id)
+    },
+
     clickServiceModalClose(context) {
       context.commit('toggleServiceModal', false)
       context.commit('toggleInvitedStatus', true)
