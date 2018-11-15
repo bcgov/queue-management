@@ -34,6 +34,15 @@ parameters:
   - name: VOLUME_SIZE
     description: "Size of the RabbitMQ data volume"
     value: 1Gi
+  - name: RABBITMQ_LOG_BASE
+    description: "This base directory contains the RabbitMQ server's log files, unless RABBITMQ_LOGS or RABBITMQ_SASL_LOGS are set explicitly."
+    value: "-"
+  - name: MQ_USER
+    description: "vhost default user name"
+    value: guest
+  - name: MQ_PASSWORD
+    description: "vhost default password"
+    value:
 
 objects:
   # This service account is needed for rabbit_peer_discovery_k8s plugin to be able to discover
@@ -72,7 +81,6 @@ objects:
     data:
       rabbitmq.conf: |
         loopback_users.guest = false
-
         ## Clustering
         cluster_formation.peer_discovery_backend = rabbit_peer_discovery_k8s
         cluster_formation.k8s.host = kubernetes.default.svc.cluster.local
@@ -83,8 +91,10 @@ objects:
         cluster_partition_handling = autoheal
         ## queue master locator
         queue_master_locator=min-masters
+        management.load_definitions = /etc/rabbitmq/policy.json
       enabled_plugins: |
         [rabbitmq_management,rabbitmq_peer_discovery_k8s].
+      policy.json: "{\r\n  \"vhosts\":[\r\n    {\r\n      \"name\": \"/\"\r\n    }\r\n  ],\r\n  \"users\": [\r\n      {\r\n        \"name\": \"${MQ_USER}\",\r\n        \"${MQ_PASSWORD}  \": \"${MQ_USER}\",\r\n        \"hashing_algorithm\": \"rabbit_password_hashing_sha256\",\r\n        \"tags\": \"administrator\"\r\n      }\r\n  ],\r\n  \"permissions\": [\r\n    {\r\n      \"user\": \"${MQ_USER}\",\r\n      \"vhost\": \"\\/\",\r\n      \"configure\": \".*\",\r\n      \"write\": \".*\",\r\n      \"read\": \".*\"\r\n    }\r\n  ],\r\n  \"policies\":[\r\n    {\r\n      \"vhost\": \"/\",\r\n      \"name\": \"ha-all\",\r\n      \"pattern\": \"\", \r\n      \"definition\": {\r\n        \"ha-mode\": \"all\",\r\n        \"ha-sync-mode\": \"automatic\",\r\n        \"ha-sync-batch-size\": 5\r\n      }\r\n    }\r\n  ]\r\n}"
 
   # Load balancer
   - kind: Service
@@ -132,7 +142,7 @@ objects:
         app: ${CLUSTER_NAME}
     spec:
       serviceName: ${CLUSTER_NAME}
-      replicas: 2
+      replicas: 3
       selector:
         matchLabels:
           app: ${CLUSTER_NAME}
@@ -165,6 +175,13 @@ objects:
                 - name: amqp
                   protocol: TCP
                   containerPort: 5672
+              resources:
+                limits:
+                  cpu: "1"
+                  memory: 1Gi
+                requests:
+                  cpu: 100m
+                  memory: 256Mi
               livenessProbe:
                 exec:
                   command: ["rabbitmqctl", "status"]
@@ -211,6 +228,12 @@ objects:
                   value: "rabbit@$(POD_NAME).${CLUSTER_NAME}.$(POD_NAMESPACE).svc.cluster.local"
                 - name: RABBITMQ_CONFIG_FILE
                   value: /var/lib/rabbitmq/rabbitmq.conf
+                - name: RABBITMQ_LOG_BASE
+                  value: ${RABBITMQ_LOG_BASE}
+                - name: MQ_USER
+                  value: ${MQ_USER}
+                - name: MQ_PASSWORD
+                  value: ${MQ_PASSWORD}
           volumes:
             - name: config-volume
               configMap:
@@ -220,6 +243,8 @@ objects:
                     path: rabbitmq.conf
                   - key: enabled_plugins
                     path: enabled_plugins
+                  - key: policy.json
+                    path: policy.json
       volumeClaimTemplates:
         - metadata:
             name: rabbitmq-storage

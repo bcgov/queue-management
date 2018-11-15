@@ -10,6 +10,7 @@
 // clientid=<keycload Client ID>
 // realm=<keycloak realm>
 
+def label = "mypod-${UUID.randomUUID().toString()}"
 podTemplate(
     label: 'jenkins-python3nodejs', 
     name: 'jenkins-python3nodejs', 
