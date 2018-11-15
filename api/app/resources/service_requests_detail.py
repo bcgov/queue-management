@@ -21,7 +21,7 @@ from qsystem import api, api_call_with_retry, db, oidc, socketio
 from app.models import CSR, Period, PeriodState, ServiceReq, SRState
 from app.schemas import CitizenSchema, ServiceReqSchema
 from ..models.citizen import Citizen
-from ..snowplow.snowplow import SnowPlow
+from ..utilities.snowplow import SnowPlow
 
 
 @api.route("/service_requests/<int:id>/", methods=["PUT"])

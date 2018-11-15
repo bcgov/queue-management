@@ -208,6 +208,18 @@ export const store = new Vuex.Store({
         return true
       } else if (state.user.qt_xn_csr_ind == 0) {
         return false
+      } else {
+        console.error('quick trans status: ', state.user.qt_xn_csr_ind)
+      }
+    },
+
+    receptionist_status(state) {
+      if (state.user.receptionist_ind == 1) {
+        return true
+      } else if (state.user.receptionist_ind == 0) {
+        return false
+      } else {
+        console.error('receptionist status: ', state.user.qt_xn_csr_ind)
       }
     },
 
@@ -1167,6 +1179,7 @@ export const store = new Vuex.Store({
       }
     },
 
+    //Updates the counter's type from the state after selecting from the dropdown (regular counter, quick transaction, or receptionist)
     updateCSRState(context) {
       let csr_id = context.state.user.csr_id
       Axios(context).put(`/csrs/${csr_id}/`, {

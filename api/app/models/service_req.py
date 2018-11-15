@@ -17,7 +17,7 @@ from qsystem import db
 from .base import Base 
 from app.models import Period, PeriodState
 from datetime import datetime
-from ..snowplow.snowplow import SnowPlow
+from ..utilities.snowplow import SnowPlow
 
 
 class ServiceReq(Base):

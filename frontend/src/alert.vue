@@ -13,12 +13,13 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 
 <template>
-  <div style="top: 0px; left: 0px;"
+  <div style="top: 0px; left: 0px;">
   <b-alert :show="dismissCount"
            dismissible
            style="h-align: center; font-size:1rem; border-radius: 0px;"
            variant="warning"
-           @dismissed="onDismissed">{{ alertMessage  }}</b-alert></div>
+           @dismissed="onDismissed">{{ alertMessage  }}</b-alert>
+  </div>
 </template>
 
 <script>
@@ -26,14 +27,14 @@ import { mapMutations, mapState } from 'vuex'
 
 export default {
   name: 'Alert',
-  
+
   computed: {
     ...mapState([ 'alertMessage', 'dismissCount' ])
   },
-  
+
   methods: {
     ...mapMutations(['dismissCountDown']),
-    
+
     onDismissed() {
       this.dismissCountDown(0)
     }
