@@ -12,7 +12,7 @@
 
 def label = "mypod-${UUID.randomUUID().toString()}"
 podTemplate(
-    label: 'jenkins-python3nodejs', 
+    label: label, 
     name: 'jenkins-python3nodejs', 
     serviceAccount: 'jenkins', 
     cloud: 'openshift', 
@@ -30,7 +30,7 @@ podTemplate(
         )
     ]
 ){
-    node('jenkins-python3nodejs') {
+    node(label) {
         stage('Checkout Source') {
             echo "checking out source"
             checkout scm
@@ -235,7 +235,7 @@ podTemplate(
 }
 
 stage('deploy test') {
-    node('jenkins-python3nodejs'){
+    node(label){
         input "Deploy to test?"
         openshiftTag destStream: 'queue-management-api',
                      verbose: 'true',
@@ -252,7 +252,7 @@ stage('deploy test') {
 }
 
 stage('deploy prod') {
-    node('jenkins-python3nodejs'){
+    node(label){
         input "Deploy to prod?"
         openshiftTag destStream: 'queue-management-api',
                      verbose: 'true',
