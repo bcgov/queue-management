@@ -265,3 +265,5 @@ node(label){
                      srcTag: "${FRONTEND_IMAGE_HASH}"
     }
 }
+}
+}
