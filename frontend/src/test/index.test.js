@@ -7,41 +7,41 @@ const height = 800;
 const maxTestCaseTime = 30000;
 
 beforeAll(async () => {
-  browser = await puppeteer.launch({
-    headless: false,
-    slowMo: 100,
-    args: [`--window-size=${width},${height}`]
-  });
-  page = await browser.newPage();
-  await page.setViewport({ width, height });
+    browser = await puppeteer.launch({
+        headless: false,
+        slowMo: 100,
+        args: [`--window-size=${width},${height}`]
+    });
+    page = await browser.newPage();
+    await page.setViewport({ width, height });
 });
 
 afterAll(() => {
-  browser.close();
+    browser.close();
 });
 
 describe("Serve Citizens", () => {
-  test(
-    "Login",
-    async () => {
-      await page.goto(process.env.CFMS_DEV_URL);
-      await page.waitForSelector("#keycloak-login");
+      test(
+        "Login",
+        async () => {
+          await page.goto(process.env.CFMS_DEV_URL);
+          await page.waitForSelector("#keycloak-login");
 
-      const navigationPromise = page.waitForNavigation();
-      await page.click("#keycloak-login");
-      await navigationPromise;
+          const navigationPromise = page.waitForNavigation();
+          await page.click("#keycloak-login");
+          await navigationPromise;
 
-      await page.waitForSelector("#username");
-      await page.type("#username", "cfms-postman-operator");
-      await page.type("#password", process.env.POSTMAN_OPERATOR_PASSWORD);
+          await page.waitForSelector("#username");
+          await page.type("#username", "cfms-postman-operator");
+          await page.type("#password", process.env.POSTMAN_OPERATOR_PASSWORD);
 
-      await page.click("#kc-login");
-      await navigationPromise;
+          await page.click("#kc-login");
+          await navigationPromise;
 
-      await page.waitForSelector("label.navbar-user");
-    },
-    maxTestCaseTime
-  );
+          await page.waitForSelector("label.navbar-user");
+        },
+        maxTestCaseTime
+      );
 
   test(
     "Invite and serve citizen from queue",
@@ -151,6 +151,36 @@ describe("Serve Citizens", () => {
     },
     maxTestCaseTime
   );
+
+  test(
+    "Invite low, normal, high priority citizens",
+    async () => {
+      let priorityValue;
+      // Add low, then normal, and then high priority citizen
+      await addCitizenLowPriorityToQueue();
+      await addCitizenToQueue();
+      await addCitizenHighPriorityToQueue();
+
+      await inviteCitizenFromDash();
+      priorityValue = await page.$eval("#priority-selection", el => el.value);
+      if(priorityValue != '1') throw('Not high priority') // First should be high
+      await beginServiceFromServeCitizenModal();
+      await finishService();
+
+      await inviteCitizenFromDash();
+      priorityValue = await page.$eval("#priority-selection", el => el.value);
+      if (priorityValue != '2') throw ('Not normal priority') // Second should be normal
+      await beginServiceFromServeCitizenModal();
+      await finishService();
+
+      await inviteCitizenFromDash();
+      priorityValue = await page.$eval("#priority-selection", el => el.value);
+      if(priorityValue != '3') throw('Not low priority') // Third should be low
+      await beginServiceFromServeCitizenModal();
+      await finishService();
+    },
+    maxTestCaseTime
+  );
 });
 
 function delay(time) {
@@ -171,6 +201,20 @@ async function addQuickCitizenToQueue() {
   await addCitizenFromDash();
   await populateAddCitizen();
   await addToQuickQueue();
+}
+
+async function addCitizenHighPriorityToQueue() {
+  await page.waitForSelector("#add-citizen-button");
+  await addCitizenFromDash();
+  await populateAddCitizen();
+  await addToHighPriorityQueue();
+}
+
+async function addCitizenLowPriorityToQueue() {
+  await page.waitForSelector("#add-citizen-button");
+  await addCitizenFromDash();
+  await populateAddCitizen();
+  await addToLowPriorityQueue();
 }
 
 async function populateAddCitizen() {
@@ -223,6 +267,20 @@ async function addToQueue() {
 
 async function addToQuickQueue() {
   await page.click(".quick");
+  await page.click("#add-citizen-add-to-queue");
+  await delay(1000);
+  await page.waitForSelector(".add_citizen_template", { hidden: true });
+}
+
+async function addToHighPriorityQueue() {
+  await page.select("#priority-selection", "1"); //Select high priority
+  await page.click("#add-citizen-add-to-queue");
+  await delay(1000);
+  await page.waitForSelector(".add_citizen_template", { hidden: true });
+}
+
+async function addToLowPriorityQueue() {
+  await page.select("#priority-selection", "3"); //Select low priority
   await page.click("#add-citizen-add-to-queue");
   await delay(1000);
   await page.waitForSelector(".add_citizen_template", { hidden: true });
