@@ -39,11 +39,14 @@ class CSR(Base):
         super(CSR, self).__init__(**kwargs)
 
     @classmethod
-    @cache.memoize(timeout=300)
     def find_by_username(cls, username):
+        key = 'csr_detail_%s' % username
+        if cache.get(key):
+            return cache.get(key)
+
         csr = CSR.query.filter(CSR.deleted.is_(None)).filter_by(username=username.split("idir/")[-1]).first()
+        cache.set(key, csr)
         return csr
 
     def get_id(self):
         return str(self.csr_id)
-

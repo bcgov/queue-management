@@ -100,20 +100,54 @@ describe("Serve Citizens", () => {
     },
     maxTestCaseTime
   );
-  /*
+
   test('Begin service from add citizen modal', async () => {
     await addCitizenFromDash();
     await populateAddCitizen();
     await beginServiceFromAddCitizenModal();
     await finishService();
   }, maxTestCaseTime);
-*/
+
   test(
     "Cancel service from add citizen modal",
     async () => {
       await addCitizenFromDash();
       await populateAddCitizen();
       await cancelFromAddCitizenModal();
+    },
+    maxTestCaseTime
+  );
+
+  test(
+    "Invite as quick transaction counter",
+    async () => {
+      await addCitizenToQueue(); //Add regular first
+      await addQuickCitizenToQueue(); //Add quick second
+      await page.select("#counter-selection", "quick"); //Select quick transaction counter
+
+      await inviteCitizenFromDash();
+      await page.waitForSelector(".quick-span"); //Invite should bring up the quick first
+      await beginServiceFromServeCitizenModal();
+      await finishService();
+
+      await inviteCitizenFromDash(); //Second invite bring up remaining regular
+      await beginServiceFromServeCitizenModal();
+      await finishService();
+    },
+    maxTestCaseTime
+  );
+
+  test(
+    "Edit to quick transaction in serve citizen counter",
+    async () => {
+      await addCitizenToQueue();
+      await inviteCitizenFromDash();
+      await editQuickTransFromServeCitizenModal() //Edit to quick transaction
+      await returnToQueue();
+      await inviteCitizenFromDash();
+      await page.waitForSelector(".quick-span"); //Should be quick transaction now
+      await beginServiceFromServeCitizenModal();
+      await finishService();
     },
     maxTestCaseTime
   );
@@ -130,6 +164,13 @@ async function addCitizenToQueue() {
   await addCitizenFromDash();
   await populateAddCitizen();
   await addToQueue();
+}
+
+async function addQuickCitizenToQueue() {
+  await page.waitForSelector("#add-citizen-button");
+  await addCitizenFromDash();
+  await populateAddCitizen();
+  await addToQuickQueue();
 }
 
 async function populateAddCitizen() {
@@ -164,6 +205,7 @@ async function inviteCitizenFromDash() {
 }
 
 async function addCitizenFromDash() {
+  await page.waitForSelector("#add-citizen-button");
   await page.click("#add-citizen-button");
   await delay(1000);
   await page.waitForSelector(".add_citizen_template");
@@ -179,10 +221,17 @@ async function addToQueue() {
   await page.waitForSelector(".add_citizen_template", { hidden: true });
 }
 
+async function addToQuickQueue() {
+  await page.click(".quick");
+  await page.click("#add-citizen-add-to-queue");
+  await delay(1000);
+  await page.waitForSelector(".add_citizen_template", { hidden: true });
+}
+
 async function beginServiceFromAddCitizenModal() {
   await page.click("#add-citizen-begin-service");
   await delay(1000);
-  await page.waitForSelector(".add_citizen_template");
+  await page.waitForSelector(".serve-modal-content");
 }
 
 async function cancelFromAddCitizenModal() {
@@ -201,6 +250,11 @@ async function beginServiceFromServeCitizenModal() {
     disabled: false
   });
   await page.click("#serve-citizen-begin-service-button");
+}
+
+async function editQuickTransFromServeCitizenModal() {
+  await page.waitForSelector(".quick-checkbox");
+  await page.click(".quick-checkbox");
 }
 
 async function returnToQueue() {
