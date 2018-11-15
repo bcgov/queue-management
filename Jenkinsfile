@@ -232,8 +232,8 @@ podTemplate(
             }
         }
     }
-} {
-node(label){
+} 
+node {
     stage('deploy test') {
         input "Deploy to test?"
         openshiftTag destStream: 'queue-management-api',
@@ -248,8 +248,8 @@ node(label){
                      srcStream: 'queue-management-frontend',
                      srcTag: "${FRONTEND_IMAGE_HASH}"
     }
-} {
-node(label){
+} 
+node {
     stage('deploy prod') {
         input "Deploy to prod?"
         openshiftTag destStream: 'queue-management-api',
@@ -264,6 +264,4 @@ node(label){
                      srcStream: 'queue-management-frontend',
                      srcTag: "${FRONTEND_IMAGE_HASH}"
     }
-}
-}
 }
