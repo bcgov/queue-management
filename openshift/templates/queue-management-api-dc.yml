@@ -140,7 +140,7 @@ objects:
                 - name: APP_MODULE
                   value: wsgi
                 - name: ACTIVE_MQ_HOST
-                  value: rabbitmq
+                  value: rabbitmq-cluster
                 - name: ACTIVE_MQ_PORT
                   value: "5672"
                 - name: SLACK_URL
