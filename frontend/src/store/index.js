@@ -75,6 +75,7 @@ export const store = new Vuex.Store({
     addNextService: false,
     user: {
       csr_id: null,
+      csr_state_id: null,
       username: null,
       office: {
         office_id: null,
@@ -1189,7 +1190,7 @@ export const store = new Vuex.Store({
     },
 
     //Updates the counter's type from the state after selecting from the dropdown (regular counter, quick transaction, or receptionist)
-    updateCSRState(context) {
+    updateCSRCounterTypeState(context) {
       let csr_id = context.state.user.csr_id
       Axios(context).put(`/csrs/${csr_id}/`, {
         qt_xn_csr_ind: context.state.user.qt_xn_csr_ind,
@@ -1197,7 +1198,14 @@ export const store = new Vuex.Store({
       })
       .then( resp => {
       })
-    }
+    },
+
+    updateCSRState(context) {
+      let csr_id = context.state.user.csr_id
+      Axios(context).put(`/csrs/${csr_id}/`, {
+        csr_state_id: context.state.user.csr_state_id,
+      })
+    },
   },
 
   mutations: {
@@ -1390,6 +1398,8 @@ export const store = new Vuex.Store({
     setQuickTransactionState: (state, payload) => state.user.qt_xn_csr_ind = payload,
 
     setReceptionistState: (state, payload) => state.user.receptionist_ind = payload,
+
+    setCSRState: (state, payload) => state.user.csr_state_id = payload,
 
     setOffice: (state, officeType) => state.officeType = officeType,
 

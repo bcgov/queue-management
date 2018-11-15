@@ -24,6 +24,10 @@ limitations under the License.*/
 
     <div v-show="this.$store.state.isLoggedIn"
          style="display: flex; flex-direction: row; justify-content: space-between">
+      <b-button @click="break_toggle"
+                style="margin-right: 20px;"
+                v-bind:class="{ 'btn-danger': user.csr_state_id == 3, 'btn-success': user.csr_state_id == 1 }"
+                >{{user.csr_state_id == 1 ? 'Active' : 'On Break' }}</b-button>
       <div id="select-wrapper" style="padding-right: 20px" v-if="reception">
          <select id="counter-selection" class="custom-select" v-model="counter_selection">
            <option value='counter'>Counter</option>
@@ -47,7 +51,7 @@ limitations under the License.*/
 
 <script>
 import _ from 'lodash'
-import { mapActions, mapGetters, mapMutations } from 'vuex'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 
   export default {
     name: 'Login',
@@ -56,6 +60,7 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
       _.defer(this.initLocalStorage)
     },
     computed: {
+      ...mapState(['user']),
       ...mapGetters(['quick_trans_status', 'reception', 'receptionist_status']),
       // set and get state of counter type (select dropdown in nav)
       counter_selection: {
@@ -71,13 +76,13 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
         set(value) {
           this.setQuickTransactionState(value === 'quick')
           this.setReceptionistState(value === 'receptionist')
-          this.updateCSRState()
+          this.updateCSRCounterTypeState()
         }
       }
     },
     methods: {
-      ...mapActions(['updateCSRState']),
-      ...mapMutations(['setQuickTransactionState', 'setReceptionistState']),
+      ...mapActions(['updateCSRCounterTypeState', 'updateCSRState']),
+      ...mapMutations(['setQuickTransactionState', 'setReceptionistState', 'setCSRState']),
       initLocalStorage() {
         if(localStorage.token) {
           let tokenExp = localStorage.tokenExp
@@ -166,6 +171,13 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
         localStorage.removeItem("refreshToken")
       },
 
+      break_toggle(){
+        let id;
+        this.user.csr_state_id == 1 ? id = 3 : id = 1; //3 is id for Break
+        this.setCSRState(id)
+        this.updateCSRState()
+      },
+
       refreshToken(minValidity) {
         this.$keycloak.updateToken(minValidity).success(refreshed => {
           if (refreshed) {
@@ -177,11 +189,6 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
           output('Failed to refresh token')
         })
       },
-
-      updateTransactionStatus(e) {
-        this.setQuickTransactionState(e)
-        this.updateCSRState()
-      }
     }
   }
 </script>

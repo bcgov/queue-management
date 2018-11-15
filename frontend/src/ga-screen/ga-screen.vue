@@ -106,7 +106,6 @@ export default {
     ...mapActions(['closeGAScreenModal', 'getCsrs', 'finishServiceFromGA']),
     clickEnd(citizen_id){
         this.finishServiceFromGA(citizen_id)
-        this.getCsrs()
     },
     ga_citizens_waiting() {
       return this.citizens_queue.length
@@ -153,7 +152,7 @@ export default {
         let activeCitizen = this.get_citizen_for_csr(csr)
 
         if (activeCitizen === null) {
-          csr['wait_time'] = null
+          csr.csr_state_id == 3 ? csr['wait_time'] = 'ON BREAK' : csr['wait_time'] = null;
           csr['serving_time'] = null
           csr['citizen'] = null
           csr['service_request'] = null
