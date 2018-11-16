@@ -32,12 +32,11 @@
         <AddCitizenForm />
         <b-container class="mt-3 pr-3">
           <b-row align-v="center" align-h="end">
-            <span style="font: 400 16px Myriad-Pro;">Priority:</span>
             <div id="select-wrapper" style="padding-right: 10px; padding-left: 5px;">
-               <select id="priority-selection" class="custom-select" v-model="priority_selection">
-                 <option value=1>High</option>
-                 <option value=2>-</option>
-                 <option value=3>Low</option>
+              <select id="priority-selection" class="custom-select" v-model="priority_selection">
+                <option value=1>High Priority</option>
+                <option value=2>Default Priority</option>
+                <option value=3>Low Priority</option>
               </select>
             </div>
             <div v-if="reception" class="mr-1 btn-success" style="border-radius: 5px">

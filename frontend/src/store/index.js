@@ -576,14 +576,11 @@ export const store = new Vuex.Store({
         context.dispatch('getServices')
       }
       context.dispatch('putServiceRequest').then(() => {
-        context.dispatch('putCitizen').then(() => {
-          context.commit('switchAddModalMode', 'edit_mode')
-          context.dispatch('setAddModalData')
-          context.commit('toggleAddModal', true)
-          context.commit('toggleServiceModal', false)
-        }).finally(() => {
-          context.commit('setPerformingAction', false)
-        })
+        context.commit('switchAddModalMode', 'edit_mode')
+        context.dispatch('setAddModalData')
+        context.commit('toggleAddModal', true)
+        context.commit('toggleServiceModal', false)
+        context.commit('setPerformingAction', false)
       }).catch(() => {
         context.commit('setPerformingAction', false)
       })
@@ -827,7 +824,7 @@ export const store = new Vuex.Store({
       context.commit('toggleGAScreenModal', false)
     },
 
-    messageFeedback(context) {
+      messageFeedback(context) {
       let messageParts = []
       messageParts.push(`Username: ${context.state.user.username}`)
       messageParts.push(`Office: ${context.state.user.office.office_name}`)
@@ -987,7 +984,9 @@ export const store = new Vuex.Store({
       let priority
 
       if (context.state.serviceModalForm.citizen_id) {
-        let { accurate_time_ind, citizen_comments, quick, priority } = context.state.serviceModalForm
+        let { accurate_time_ind, citizen_comments } = context.state.serviceModalForm
+        quick = context.state.serviceModalForm.quick
+        priority = context.state.serviceModalForm.priority
         citizen_id = context.state.serviceModalForm.citizen_id
         let prevCitizen = context.getters.invited_citizen
 
@@ -1001,7 +1000,7 @@ export const store = new Vuex.Store({
           if ( citizen_comments !== prevCitizen.citizen_comments ) {
             data.citizen_comments = citizen_comments
           }
-          if ( quick !== prevCitizen.quick ) {
+          if ( quick !== prevCitizen.qt_xn_citizen_ind ) {
             data.qt_xn_citizen_ind = quick
           }
           if ( priority !== prevCitizen.priority ) {

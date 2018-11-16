@@ -20,7 +20,7 @@ from marshmallow import ValidationError
 from app.schemas import CitizenSchema
 from sqlalchemy import exc
 from datetime import datetime
-from ...snowplow.snowplow import SnowPlow
+from ...utilities.snowplow import SnowPlow
 
 @api.route("/citizens/", methods=['GET', 'POST'])
 class CitizenList(Resource):

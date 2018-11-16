@@ -12,8 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-
-from app.models import CSR
+from app.models import Citizen, CSR, CitizenState, Period, PeriodState, ServiceReq, SRState
 from flask import flash, redirect, request
 from .base import Base
 from flask_admin.babel import gettext
@@ -22,6 +21,7 @@ from flask_admin.form import FormOpts
 from flask_admin.helpers import get_redirect_target
 from flask_admin.model.helpers import get_mdict_item_or_list
 from flask_login import current_user
+from sqlalchemy import or_
 from qsystem import db
 
 
@@ -63,11 +63,29 @@ class CSRConfig(Base):
         return get_redirect_target() or self.get_url('.index_view')
 
     def validate_model(self):
-        if not self.can_edit:
-            return False
 
         id = get_mdict_item_or_list(request.args, 'id')
         if id is None:
+            return False
+
+        #  Get Invited and Being Served states, to see if CSR has any open tickets.
+        period_state_invited = PeriodState.get_state_by_name("Invited")
+        period_state_being_served = PeriodState.get_state_by_name("Being Served")
+
+        #  See if CSR has any open tickets.
+        citizen = Citizen.query \
+            .join(Citizen.service_reqs) \
+            .join(ServiceReq.periods) \
+            .filter(Period.time_end.is_(None)) \
+            .filter(Period.csr_id==id) \
+            .filter(or_(Period.ps_id==period_state_invited.ps_id, Period.ps_id==period_state_being_served.ps_id)) \
+            .all()
+
+        if len(citizen) != 0:
+            flash(gettext('CSR has an open ticket and cannot be edited.'), 'error')
+            return False
+
+        if not self.can_edit:
             return False
 
         model = self.get_one(id)
@@ -88,7 +106,7 @@ class CSRConfig(Base):
         model = self.validate_model()
 
         if not model:
-            return(return_url)
+            return redirect(return_url)
 
         form = self.edit_form(obj=model)
         if not hasattr(form, '_validated_ruleset') or not form._validated_ruleset:
