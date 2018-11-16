@@ -41,7 +41,6 @@ limitations under the License.*/
       </template>
       <template slot='priority' slot-scope='data'>
         {{ showPriority(data.item.priority) }}
-        </div>
       </template>
     </b-table>
 </template>
@@ -123,7 +122,7 @@ limitations under the License.*/
         return service.service.service_name
       },
       showPriority(priority) {
-        return priority == 1 ? 'High' : priority == 2 ? '-' : priority == 3 ? 'Low' : null
+        return priority == 1 ? 'High' : priority == 2 ? 'Default' : priority == 3 ? 'Low' : null
       }
     }
   }
