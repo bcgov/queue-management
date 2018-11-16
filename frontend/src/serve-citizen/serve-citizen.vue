@@ -53,6 +53,11 @@
                           :disabled="performingAction"
                           class="btn-primary serve-btn"
                           id="serve-citizen-return-to-queue-button">Return to Queue</b-button>
+                <select id="priority-selection" class="custom-select" v-model="priority_selection">
+                  <option value=1>High Priority</option>
+                  <option value=2>Default Priority</option>
+                  <option value=3>Low Priority</option>
+                </select>
               </div>
               <div>
                 <b-button @click="clickCitizenLeft"
@@ -83,14 +88,6 @@
                 <span style="font: 400 16px Myriad-Pro;">Quick Txn</span>
                 <span class="quick-span" v-if="quick"></span> <!-- For puppeteer testing to see if quick is selected -->
               </b-form-checkbox>
-            </div>
-            <div id="select-wrapper" style="padding-right: 20px; margin-top:10px;">
-              <span style="font: 400 16px Myriad-Pro;">Priority:</span>
-               <select id="priority-selection" class="custom-select" v-model="priority_selection">
-                 <option value=1>High</option>
-                 <option value=2>-</option>
-                 <option value=3>Low</option>
-              </select>
             </div>
           </b-col>
           <b-col cols="2" />
@@ -306,5 +303,9 @@ export default {
 strong {
   color: blue;
   font-size: 1.35rem;
+}
+#priority-selection {
+    display: inline-block;
+    width: 135px;
 }
 </style>
