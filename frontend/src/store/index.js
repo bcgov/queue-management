@@ -792,7 +792,7 @@ export const store = new Vuex.Store({
 
       context.dispatch('putCitizen').then( (resp) => {
         context.dispatch('putServiceRequest').then( () => {
-          context.dispatch('postFinishService', citizen_id).then( () => {
+          context.dispatch('postFinishService', {citizen_id}).then( () => {
             context.commit('toggleServiceModal', false)
             context.commit('toggleBegunStatus', false)
             context.commit('toggleInvitedStatus', false)
@@ -809,7 +809,7 @@ export const store = new Vuex.Store({
     },
 
     finishServiceFromGA(context, citizen_id) {
-      context.dispatch('postFinishService', citizen_id)
+      context.dispatch('postFinishService', {citizen_id, inaccurate:'true'})
     },
 
     clickServiceModalClose(context) {
@@ -902,9 +902,10 @@ export const store = new Vuex.Store({
       })
     },
 
-    postFinishService(context, citizen_id) {
+    postFinishService(context, payload) {
+      console.log(payload);
       return new Promise((resolve, reject) => {
-        let url = `/citizens/${citizen_id}/finish_service/`
+          let url = `/citizens/${payload.citizen_id}/finish_service/?inaccurate=${payload.inaccurate}`
         Axios(context).post(url).then(resp=>{
           resolve(resp)
         }, error => {

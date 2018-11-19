@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask import g
+from flask import g, request
 from flask_restplus import Resource
 from qsystem import api, api_call_with_retry, db, oidc, socketio
 from app.models import Citizen, CSR, CitizenState
@@ -34,6 +34,7 @@ class CitizenFinishService(Resource):
         csr = CSR.find_by_username(g.oidc_token_info['username'])
         citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
         active_service_request = citizen.get_active_service_request()
+        inaccurate = request.args.get('inaccurate')
 
         if active_service_request is None:
             return {"message": "Citizen has no active service requests"}
@@ -46,7 +47,7 @@ class CitizenFinishService(Resource):
         pending_service_state = SRState.get_state_by_name("Complete")
         active_service_request.sr_state_id = pending_service_state.sr_state_id
 
-        if citizen.start_time.date() != datetime.now().date():
+        if citizen.start_time.date() != datetime.now().date() or inaccurate == 'true':
             citizen.accurate_time_ind = 0
 
         db.session.add(citizen)
