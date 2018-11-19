@@ -50,9 +50,14 @@
                           id="serve-citizen-begin-service-button">Begin Service</b-button>
                 <b-button @click="clickReturnToQueue"
                           v-if="reception"
-                          :disabled="serviceBegun===true || performingAction"
+                          :disabled="performingAction"
                           class="btn-primary serve-btn"
                           id="serve-citizen-return-to-queue-button">Return to Queue</b-button>
+                <select id="priority-selection" class="custom-select" v-model="priority_selection">
+                  <option value=1>High Priority</option>
+                  <option value=2>Default Priority</option>
+                  <option value=3>Low Priority</option>
+                </select>
               </div>
               <div>
                 <b-button @click="clickCitizenLeft"
@@ -204,8 +209,13 @@ export default {
     quick: {
       get() { return this.serviceModalForm.quick },
       set(value) {
-        console.log(value)
         this.editServiceModalForm({type:'quick',value})
+      }
+    },
+    priority_selection: {
+      get() { return this.serviceModalForm.priority },
+      set(value) {
+        this.editServiceModalForm({type:'priority',value})
       }
     }
   },
@@ -293,5 +303,9 @@ export default {
 strong {
   color: blue;
   font-size: 1.35rem;
+}
+#priority-selection {
+    display: inline-block;
+    width: 135px;
 }
 </style>
