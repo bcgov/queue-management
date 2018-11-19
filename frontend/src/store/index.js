@@ -304,9 +304,7 @@ export const store = new Vuex.Store({
     },
 
     getCsrs(context) {
-      //We only need to get the CSRs once
-      if (context.state.csrs === null || context.state.csrs.length === 0) {
-        Axios(context).get('/csrs/')
+      Axios(context).get('/csrs/')
         .then( resp => {
           context.commit('setCsrs', resp.data.csrs)
         })
@@ -315,7 +313,6 @@ export const store = new Vuex.Store({
           console.log(error.response)
           console.log(error.message)
         })
-      }
     },
 
     getServices(context) {

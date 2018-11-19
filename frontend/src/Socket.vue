@@ -63,11 +63,17 @@ limitations under the License.*/
         socket.on('joinRoomFail',()=>{this.onJoinRoom(false)})
         socket.on('update_customer_list',()=>{this.onUpdateCustomerList()})
         socket.on('update_active_citizen', (citizen) => { this.onUpdateActiveCitizen(citizen) } )
+        socket.on('csr_update', ()=>{this.onCSRUpdate()})
       },
 
       join() {
         socket.emit('joinRoom',{count:0}, ()=>{console.log('socket emit: "joinRoom"')}
         )
+      },
+
+      onCSRUpdate(){
+          console.log('socket received: "updateCSRList"')
+          this.$store.dispatch('getCsrs')
       },
 
       onConnect() {

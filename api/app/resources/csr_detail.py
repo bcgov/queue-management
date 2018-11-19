@@ -16,7 +16,7 @@ from flask import g, request
 from flask_restplus import Resource
 from marshmallow import ValidationError
 
-from qsystem import api, api_call_with_retry, db, oidc, cache
+from qsystem import api, api_call_with_retry, db, oidc, cache, socketio
 from app.models import CSR
 from app.schemas import CSRSchema
 
@@ -49,6 +49,7 @@ class Services(Resource):
         db.session.commit()
 
         result = self.csr_schema.dump(edit_csr)
+        socketio.emit('csr_update', {}, room=auth_csr.office_id)
 
         # Purge cache of old CSR record so the new one can be fetched by the next request for it.
         cache.delete('csr_detail_%s' % g.oidc_token_info['username'])
