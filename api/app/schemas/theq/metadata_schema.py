@@ -14,7 +14,7 @@ limitations under the License.'''
 
 import toastedmarshmallow
 from marshmallow import fields
-from api.app.models.theq import MetaData
+from app.models.theq import MetaData
 from qsystem import ma
 
 

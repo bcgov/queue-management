@@ -14,8 +14,8 @@ limitations under the License.'''
 
 import toastedmarshmallow
 from marshmallow import fields
-from api.app.models.theq import Period
-from api.app.schemas.theq import PeriodStateSchema, ChannelSchema
+from app.models.theq import Period
+from app.schemas.theq import PeriodStateSchema, ChannelSchema, CSRSchema
 from qsystem import ma
 
 

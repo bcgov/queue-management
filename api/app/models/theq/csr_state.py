@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 from qsystem import db
-from api.app.models.theq import Base
+from app.models.theq import Base
 
 
 class CSRState(Base):

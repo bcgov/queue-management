@@ -16,6 +16,7 @@ from flask_restplus import fields
 from qsystem import api, db
 from app.models.theq import Base
 
+
 class Permission(Base):
 
     model = api.model('Permission', {

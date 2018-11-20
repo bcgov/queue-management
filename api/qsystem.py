@@ -78,7 +78,6 @@ flask_admin.add_link(admin.LogoutMenuLink(name='Logout', category='', url="/api/
 
 login_manager = LoginManager()
 login_manager.init_app(application)
-from app import auth
 
 compress = Compress()
 compress.init_app(application)
@@ -105,29 +104,41 @@ def api_call_with_retry(f):
 
     return decorated_function
 
-import app.resources.categories
-import app.resources.channels
-import app.resources.citizen.citizen_add_to_queue
-import app.resources.citizen.citizen_begin_service
-import app.resources.citizen.citizen_detail
-import app.resources.citizen.citizen_finish_service
-import app.resources.citizen.citizen_generic_invite
-import app.resources.citizen.citizen_left
-import app.resources.citizen.citizen_list
-import app.resources.citizen.citizen_place_on_hold
-import app.resources.citizen.citizen_service_requests
-import app.resources.citizen.citizen_specific_invite
-import app.resources.csrs
-import app.resources.csr_detail
-import app.resources.csr_states
-import app.resources.feedback
-import app.resources.health
-import app.resources.login
-import app.resources.services
-import app.resources.service_requests_list
-import app.resources.service_requests_detail
-import app.resources.smartboard
-import app.resources.websocket
+import app.resources.theq.categories
+import app.resources.theq.channels
+import app.resources.theq.citizen.citizen_add_to_queue
+import app.resources.theq.citizen.citizen_begin_service
+import app.resources.theq.citizen.citizen_detail
+import app.resources.theq.citizen.citizen_finish_service
+import app.resources.theq.citizen.citizen_generic_invite
+import app.resources.theq.citizen.citizen_left
+import app.resources.theq.citizen.citizen_list
+import app.resources.theq.citizen.citizen_place_on_hold
+import app.resources.theq.citizen.citizen_service_requests
+import app.resources.theq.citizen.citizen_specific_invite
+import app.resources.theq.csrs
+import app.resources.theq.csr_detail
+import app.resources.theq.feedback
+import app.resources.theq.health
+import app.resources.theq.login
+import app.resources.theq.services
+import app.resources.theq.service_requests_list
+import app.resources.theq.service_requests_detail
+import app.resources.theq.smartboard
+import app.resources.theq.websocket
+
+import app.resources.bookings.booking.booking_delete
+import app.resources.bookings.booking.booking_detail
+import app.resources.bookings.booking.booking_list
+import app.resources.bookings.booking.booking_post
+import app.resources.bookings.booking.booking_put
+import app.resources.bookings.exam.exam_delete
+import app.resources.bookings.exam.exam_detail
+import app.resources.bookings.exam.exam_list
+import app.resources.bookings.exam.exam_post
+import app.resources.bookings.exam.exam_put
+import app.resources.bookings.invigilator.invigilator_list
+import app.resources.bookings.room.room_list
 
 # Hostname for debug purposes
 hostname = socket.gethostname()

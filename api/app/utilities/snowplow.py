@@ -12,13 +12,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from ..models.channel import Channel
-from ..models.citizen import Citizen
-from ..models.csr import CSR
-from ..models.office import Office
-from ..models.role import Role
-from ..models.service import Service
-from ..models.smartboard import SmartBoard
+from app.models.theq.channel import Channel
+from app.models.theq.citizen import Citizen
+from app.models.theq.csr import CSR
+from app.models.theq.office import Office
+from app.models.theq.role import Role
+from app.models.theq.service import Service
+from app.models.theq.smartboard import SmartBoard
 from snowplow_tracker import Subject, Tracker, AsyncEmitter
 from snowplow_tracker import SelfDescribingJson
 import os

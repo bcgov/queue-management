@@ -14,7 +14,8 @@ limitations under the License.'''
 
 import toastedmarshmallow
 from marshmallow import fields
-from api.app.models.theq import CSR
+from app.models.theq import CSR
+from app.schemas.theq import CSRStateSchema, OfficeSchema, RoleSchema
 from qsystem import ma
 
 

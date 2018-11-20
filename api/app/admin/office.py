@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 
-from app.models import Office
+from app.models.theq import Office
 from .base import Base
 from flask_login import current_user
 from qsystem import db
@@ -29,7 +29,7 @@ class OfficeConfig(Base):
     edit_modal = False
     can_delete = False
     column_list = ['office_name', 'sb', 'services', 'deleted']
-    form_excluded_columns = ('citizens', 'csrs',)
+    form_excluded_columns = ('citizens', 'csrs', 'exams', 'rooms', 'invigilators')
     form_create_rules = ('office_name', 'office_number', 'sb', 'services', 'deleted')
     form_edit_rules = ('office_name', 'office_number', 'sb', 'services', 'deleted')
     column_labels = {'sb': 'Smartboard'}

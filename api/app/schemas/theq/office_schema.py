@@ -14,8 +14,8 @@ limitations under the License.'''
 
 import toastedmarshmallow
 from marshmallow import fields
-from app.models import Office
-from app.schemas import SmartBoardSchema
+from app.models.theq import Office
+from app.schemas.theq import SmartBoardSchema
 from qsystem import ma
 
 
@@ -24,7 +24,7 @@ class OfficeSchema(ma.ModelSchema):
     class Meta:
         model = Office
         jit = toastedmarshmallow.Jit
-        exclude = ('citizens', 'csrs', 'deleted', 'services',)
+        exclude = ('citizens', 'csrs', 'deleted', 'exams', 'rooms', 'services',)
 
     office_id = fields.Int()
     office_name = fields.Str()

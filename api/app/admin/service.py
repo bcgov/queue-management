@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from app.models import Service
+from app.models.theq import Service
 from .base import Base
 from flask_login import current_user
 from qsystem import db

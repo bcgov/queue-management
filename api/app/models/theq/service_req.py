@@ -13,9 +13,9 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 from qsystem import db
-from api.app.models.theq import Base, Period, PeriodState
+from app.models.theq import Base, Period, PeriodState
 from datetime import datetime
-from ..utilities.snowplow import SnowPlow
+from app.utilities.snowplow import SnowPlow
 
 
 class ServiceReq(Base):

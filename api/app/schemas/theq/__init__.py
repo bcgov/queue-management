@@ -12,17 +12,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from api.app.schemas.theq.citizen_state_schema import CitizenStateSchema
-from api.app.schemas.theq.csr_state_schema import CSRStateSchema
-from api.app.schemas.theq.period_state_schema import PeriodStateSchema
-from api.app.schemas.theq.sr_state_schema import SRStateSchema
-from api.app.schemas.theq.channel_schema import ChannelSchema
-from api.app.schemas.theq.office_schema import OfficeSchema
-from api.app.schemas.theq.csr_schema import CSRSchema
-from api.app.schemas.theq.metadata_schema import MetaDataSchema
-from api.app.schemas.theq.service_schema import ServiceSchema
-from api.app.schemas.theq.period_schema import PeriodSchema
-from api.app.schemas.theq.service_req_schema import ServiceReqSchema
-from api.app.schemas.theq.citizen_schema import CitizenSchema
-from api.app.schemas.theq.permission_schema import PermissionSchema
-from api.app.schemas.theq.role_schema import RoleSchema
+from .citizen_state_schema import CitizenStateSchema
+from .csr_state_schema import CSRStateSchema
+from .period_state_schema import PeriodStateSchema
+from .sr_state_schema import SRStateSchema
+from .channel_schema import ChannelSchema
+from .smartboard_schema import SmartBoardSchema
+from .role_schema import RoleSchema
+from .office_schema import OfficeSchema
+from .csr_schema import CSRSchema
+from .metadata_schema import MetaDataSchema
+from .service_schema import ServiceSchema
+from .period_schema import PeriodSchema
+from .service_req_schema import ServiceReqSchema
+from .citizen_schema import CitizenSchema
+from .permission_schema import PermissionSchema

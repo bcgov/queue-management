@@ -14,8 +14,8 @@ limitations under the License.'''
 
 import toastedmarshmallow
 from marshmallow import fields
-from api.app.models.theq import Citizen
-from api.app.schemas.theq import ServiceReqSchema, CitizenStateSchema, OfficeSchema
+from app.models.theq import Citizen
+from app.schemas.theq import ServiceReqSchema, CitizenStateSchema, OfficeSchema
 from qsystem import ma
 
 

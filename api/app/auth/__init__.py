@@ -1,5 +1,5 @@
 from qsystem import login_manager
-from app.models import CSR
+from app.models.theq import CSR
 
 
 @login_manager.user_loader
