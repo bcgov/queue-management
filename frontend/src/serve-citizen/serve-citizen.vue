@@ -294,7 +294,6 @@ export default {
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
-    /*position: absolute;*/
 }
 #serve-citizen-modal-top {
   border: 1px solid grey;
