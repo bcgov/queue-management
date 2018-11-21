@@ -2,7 +2,7 @@
 
 <template>
   <div id="serveModal" class="serve-modal">
-    <div class="serve-modal-content">
+    <div class="serve-modal-content" v-dragged="onDrag">
       <b-alert :show="this.serveModalAlert != ''"
                 style="h-align: center"
                 variant="warning">{{this.serveModalAlert}}</b-alert>
@@ -253,6 +253,19 @@ export default {
     },
     closeWindow() {
       this.$store.dispatch('clickServiceModalClose')
+    },
+    onDrag({ el, deltaX, deltaY, offsetX, offsetY, clientX, clientY, first, last }) {
+      if (first) {
+        this.dragged = true
+        return
+      }
+      if (last) {
+        this.dragged = false
+        return
+      }
+      this.left = (this.left || 0) + deltaX
+      this.top = (this.top || 0) + deltaY
+      el.style.transform = "translate("+this.left+"px,"+this.top+"px)"
     }
   }
 }
@@ -281,7 +294,6 @@ export default {
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
-
 }
 #serve-citizen-modal-top {
   border: 1px solid grey;
