@@ -307,5 +307,6 @@ strong {
 #priority-selection {
     display: inline-block;
     width: 135px;
+    padding-right: 0;
 }
 </style>
