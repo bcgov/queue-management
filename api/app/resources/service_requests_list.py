@@ -19,7 +19,7 @@ from qsystem import api, api_call_with_retry, db, oidc, socketio
 from app.models import Citizen, CitizenState, CSR, Period, PeriodState, Service, ServiceReq, SRState
 from app.schemas import CitizenSchema, ServiceReqSchema
 from marshmallow import ValidationError
-from ..snowplow.snowplow import SnowPlow
+from ..utilities.snowplow import SnowPlow
 
 @api.route("/service_requests/", methods=["POST"])
 class ServiceRequestsList(Resource):
@@ -106,14 +106,18 @@ class ServiceRequestsList(Resource):
 
         citizen.cs_id = citizen_state.cs_id
 
+        #  See whether first service, or next service.
+        if len(citizen.service_reqs) == 0:
+            snowplow_event = "chooseservice"
+            citizen.service_count = 1
+        else:
+            snowplow_event = "additionalservice"
+            citizen.service_count = citizen.service_count + 1
+
         db.session.add(service_request)
         db.session.add(citizen)
         db.session.commit()
 
-        #  See whether first service, or next service.
-        snowplow_event = "additionalservice"
-        if len(citizen.service_reqs) == 1:
-            snowplow_event = "chooseservice"
         SnowPlow.choose_service(service_request, csr, snowplow_event)
 
         citizen_result = self.citizen_schema.dump(citizen)

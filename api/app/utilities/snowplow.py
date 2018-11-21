@@ -29,7 +29,7 @@ class SnowPlow():
     sp_appid = os.getenv("THEQ_SNOWPLOW_APPID", "")
     sp_namespace = os.getenv("THEQ_SNOWPLOW_NAMESPACE", "")
     call_snowplow_flag = (os.getenv("THEQ_SNOWPLOW_CALLFLAG", "False")).upper() == "TRUE"
-    if (not sp_endpoint.strip()) or (not sp_endpoint.strip()) or (not sp_endpoint.strip()):
+    if (not sp_endpoint.strip()) or (not sp_appid.strip()) or (not sp_namespace.strip()):
         call_snowplow_flag = False
 
     @staticmethod
@@ -138,14 +138,14 @@ class SnowPlow():
         #  Set up citizen variables.
         if add_flag:
             citizen_qtxn = False
-            svc_count = 1
+            svc_count = citizen_obj.service_count
         else:
             citizen_qtxn = (citizen_obj.qt_xn_citizen_ind == 1)
-            svc_count = len(citizen_obj.service_reqs)
+            svc_count = citizen_obj.service_count
 
         #  If closing previous service, subtract 1 from svc_count
         if close_previous:
-            svc_count = svc_count - 1
+            svc_count = citizen_obj.service_count - 1
 
         # Set up the citizen context.
         citizen = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/citizen/jsonschema/3-0-0',

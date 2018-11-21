@@ -141,14 +141,20 @@ export default {
     invited() {
       if (this.citizens && this.citizens.length > 0) {
         let citizens = this.citizens.filter(c=>c.active_period.ps.ps_name === 'Invited')
+        let invited = null
         if (citizens.length > 8) {
           this.overflow = citizens.slice(8, (citizens.length-1))
           this.showOverflow = true
-          return citizens.slice(0,8)
+          invited = citizens.slice(0,8)
         } else {
           this.overflow = []
           this.showOverflow = false
-          return citizens
+          invited = citizens
+        }
+        if (invited.length != 0) {
+          let tickets = []
+          invited.forEach(item => tickets.push({ticket_number: item.ticket_number}))
+          return tickets
         }
       }
       return [{ticket_number:''}]

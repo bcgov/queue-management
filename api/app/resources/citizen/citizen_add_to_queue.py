@@ -18,7 +18,7 @@ from qsystem import api, api_call_with_retry, db, oidc, socketio
 from app.models import Citizen, CSR
 from app.models import SRState
 from app.schemas import CitizenSchema
-from ...snowplow.snowplow import SnowPlow
+from ...utilities.snowplow import SnowPlow
 
 
 @api.route("/citizens/<int:id>/add_to_queue/", methods=["POST"])

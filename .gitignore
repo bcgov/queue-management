@@ -55,6 +55,7 @@ coverage.xml
 *.log
 local_settings.py
 db.sqlite3
+api/00-PopulateAllDemo.sql
 
 # Flask stuff:
 instance/
@@ -115,3 +116,13 @@ sonar-runner/.gradle
 .DS_Store
 /.idea
 /frontend/static/keycloak-local.json
+/frontend/static/keycloak-local.localhost.json
+/frontend/static/keycloak-local.pathfinder.json
+
+# Docker
+api/Dockerfile
+frontend/Dockerfile
+docker-compose.yml
+api/init.sh
+api/wait-for-it.sh
+

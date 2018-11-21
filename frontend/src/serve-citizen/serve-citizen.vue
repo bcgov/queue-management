@@ -50,9 +50,14 @@
                           id="serve-citizen-begin-service-button">Begin Service</b-button>
                 <b-button @click="clickReturnToQueue"
                           v-if="reception"
-                          :disabled="serviceBegun===true || performingAction"
+                          :disabled="performingAction"
                           class="btn-primary serve-btn"
                           id="serve-citizen-return-to-queue-button">Return to Queue</b-button>
+                <select id="priority-selection" class="custom-select" v-model="priority_selection">
+                  <option value=1>High Priority</option>
+                  <option value=2>Default Priority</option>
+                  <option value=3>Low Priority</option>
+                </select>
               </div>
               <div>
                 <b-button @click="clickCitizenLeft"
@@ -77,6 +82,13 @@
                       btn-primary serve-btn"
                       @click="clickAddService"
                       :disabled="serviceBegun===false || performingAction">Add Next Service</b-button>
+            <div class="mr-1 btn-success" style="border-radius: 5px" v-if="reception">
+              <b-form-checkbox v-model="quick" value="1" unchecked-value="0"
+                               class="mt-3 ml-1 mr-1 pb-1 quick-checkbox" style="position: relative; top: -5px;">
+                <span style="font: 400 16px Myriad-Pro;">Quick Txn</span>
+                <span class="quick-span" v-if="quick"></span> <!-- For puppeteer testing to see if quick is selected -->
+              </b-form-checkbox>
+            </div>
           </b-col>
           <b-col cols="2" />
         </b-row>
@@ -193,6 +205,18 @@ export default {
         return {channel_name: '', channel_id: ''}
       }
       return this.active_service.channel
+    },
+    quick: {
+      get() { return this.serviceModalForm.quick },
+      set(value) {
+        this.editServiceModalForm({type:'quick',value})
+      }
+    },
+    priority_selection: {
+      get() { return this.serviceModalForm.priority },
+      set(value) {
+        this.editServiceModalForm({type:'priority',value})
+      }
     }
   },
 
@@ -279,5 +303,9 @@ export default {
 strong {
   color: blue;
   font-size: 1.35rem;
+}
+#priority-selection {
+    display: inline-block;
+    width: 135px;
 }
 </style>

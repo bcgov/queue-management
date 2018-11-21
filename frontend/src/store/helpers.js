@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 export function Axios(context) {
-  return( 
+  return(
     axios.create({
       baseURL: process.env.API_URL,
       withCredentials: true,
@@ -19,6 +19,7 @@ export const invitedCitizen = {
     citizen_id: null,
     qt_xn_citizen_ind: null,
     start_time: null,
+    priority: null,
     service_reqs: [
       {
         start_time: null,
@@ -44,5 +45,6 @@ export const formData = {
   search: '',
   category: '',
   service:'',
-  quick: false
+  quick: false,
+  priority: 2
 }

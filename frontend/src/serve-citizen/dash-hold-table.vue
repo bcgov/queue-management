@@ -15,9 +15,10 @@ limitations under the License.*/
 
 
 <template>
+
   <div id='client-hold-table'>
     <b-table :items="on_hold_queue"
-             :fields="fields"
+             :fields=getFields
              head-variant="light"
              small
              outlined
@@ -42,9 +43,9 @@ limitations under the License.*/
              <template slot='service' slot-scope='data'>
                {{ showService(data.item.citizen_id) }}
              </template>
-      <template slot='start_time' slot-scope='data'>
-        {{ formatTime(data.item.start_time) }}
-      </template>
+             <template slot='priority' slot-scope='data'>
+               {{ showPriority(data.item.priority) }}
+             </template>
     </b-table>
   </div>
 </template>
@@ -59,14 +60,14 @@ limitations under the License.*/
         t:true,
         f:false,
         fields: [
-          {key: 'qt_xn_citizen_ind', label: 'Q. Txn', sortable: false, thStyle: 'width: 6%'},
           {key: 'citizen_id', thClass:'d-none', tdClass:'d-none' },
           {key: 'start_time', label: 'Time', sortable: true, thStyle: 'width: 10%'},
           {key: 'ticket_number', label: 'Ticket', sortable: false, thStyle: 'width: 6%'},
           {key: 'csr', label: 'Served By', sortable: false, thStyle: 'width: 10%'},
           {key: 'category', label: 'Category', sortable: false, thStyle: 'width: 17%'},
           {key: 'service', label: 'Service', sortable: false, thStyle: 'width: 17%'},
-          {key: 'citizen_comments', label: 'Comments', sortable: false, thStyle: 'width: 27%'}
+          {key: 'citizen_comments', label: 'Comments', sortable: false, thStyle: 'width: 17%'},
+          {key: 'priority', label: 'Priority', sortable: false, thStyle: 'width: 10%'}
         ]
       }
     },
@@ -78,8 +79,19 @@ limitations under the License.*/
         'citizens_queue',
         'active_service',
         'active_index',
-        'active_service_id'
-      ])
+        'active_service_id',
+        'reception'
+      ]),
+      getFields: function() {
+        if (this.reception) {
+          let temp = this.fields
+          temp.unshift({key: 'qt_xn_citizen_ind', label: 'Q. Txn', sortable: false, thStyle: 'width: 6%'})
+          return temp
+        }
+        else {
+          return this.fields
+        }
+      }
     },
     methods: {
       ...mapActions(['clickRowHoldQueue']),
@@ -120,6 +132,9 @@ limitations under the License.*/
           return null
         }
         return service.service.service_name
+      },
+      showPriority(priority) {
+        return priority == 1 ? 'High' : priority == 2 ? 'Default' : priority == 3 ? 'Low' : null
       }
     }
   }

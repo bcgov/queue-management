@@ -18,7 +18,8 @@ from qsystem import api, api_call_with_retry, db, oidc, socketio
 from app.models import Citizen, CSR, CitizenState
 from app.models import SRState
 from app.schemas import CitizenSchema
-from ...snowplow.snowplow import SnowPlow
+from ...utilities.snowplow import SnowPlow
+from datetime import datetime
 import os
 
 @api.route("/citizens/<int:id>/finish_service/", methods=["POST"])
@@ -44,6 +45,9 @@ class CitizenFinishService(Resource):
 
         pending_service_state = SRState.get_state_by_name("Complete")
         active_service_request.sr_state_id = pending_service_state.sr_state_id
+
+        if citizen.start_time.date() != datetime.now().date():
+            citizen.accurate_time_ind = 0
 
         db.session.add(citizen)
         db.session.commit()
