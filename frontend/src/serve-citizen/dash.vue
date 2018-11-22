@@ -14,7 +14,7 @@ limitations under the License.*/
 
 
 <template>
-  <div v-bind:style="{height: totalH}" class="dashmaincontainer" key="dashmaincontainer" v-if="user.username">
+  <div v-bind:style="{height: totalH, position: 'static'}" class="dashmaincontainer" key="dashmaincontainer" v-if="user.username">
     <div v-bind:style="{width:'100%', height:`${buttonH}px`}" v-if="isLoggedIn">
       <AddCitizen v-if="showAddModal"/>
       <ServeCitizen v-if="showServiceModal"/>
