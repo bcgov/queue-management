@@ -126,3 +126,5 @@ docker-compose.yml
 api/init.sh
 api/wait-for-it.sh
 
+/frontend/static/keycloak-local.pathfinder-test.json
+/frontend/static/keycloak-local.pathfinder-dev.json
