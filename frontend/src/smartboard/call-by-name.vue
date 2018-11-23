@@ -40,7 +40,7 @@ const Axios = axios.create({
 
 export default {
   name: 'CallByName',
-
+  props: ['id'],
   mounted() {
     this.$root.$on('addToBoard',( data) => { this.updateBoard(data) })
     this.initializeBoard()
@@ -60,12 +60,10 @@ export default {
 
   computed: {
     office_id() {
-      let path = window.location.pathname.split('/')
-      if (path.length >= 3) {
-        return path[2]
-      } else {
-        return 'notfound'
+      if (this.id) {
+        return this.id
       }
+      return 'notfound'
     },
     url() {
       return `/smartboard/?office_number=${this.office_id}`

@@ -25,6 +25,7 @@ Vue.use(Vuex)
 export const store = new Vuex.Store({
 
   state: {
+    navigationVisible: false,
     addModalForm: {
       citizen:'',
       comments: '',

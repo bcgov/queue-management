@@ -20,7 +20,7 @@ limitations under the License.*/
     <CallByTicket v-if="officetype==='callbyticket'"></CallByTicket>
     <CallByName v-else-if="officetype==='callbyname' || officetype==='reception'"></CallByName>
     <NonReception v-else-if="officetype==='nocallonsmartboard'"></NonReception>
-    <div v-else>Please stand by</div>
+    <div v-else>Please stand by...</div>
     <BoardSocket></BoardSocket>
   </div>
 </template>
