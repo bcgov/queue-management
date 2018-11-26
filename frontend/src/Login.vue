@@ -26,7 +26,7 @@ limitations under the License.*/
          style="display: flex; flex-direction: row; justify-content: space-between">
       <b-button @click="break_toggle"
                 style="margin-right: 20px;"
-                v-bind:class="{ 'btn-danger': user.csr_state.csr_state_name == 'Break', 'btn-success': user.csr_state.csr_state_name == 'Logout' }"
+                v-bind:class="{ 'btn-danger': user.csr_state.csr_state_name == 'Break', 'btn-success': user.csr_state.csr_state_name == 'Login' }"
                 >{{user.csr_state.csr_state_name == 'Break' ? 'On Break' : 'Active' }}</b-button>
       <div id="select-wrapper" style="padding-right: 20px" v-if="reception">
          <select id="counter-selection" class="custom-select" v-model="counter_selection">
@@ -174,8 +174,18 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 
       break_toggle(){
         let name;
-        this.user.csr_state.csr_state_name == "Break" ? name = "Logout" : name = "Break"; //Logout is awkways default state (other states not being used)
+        this.user.csr_state.csr_state_name == "Break" ? name = "Login" : name = "Break";
         this.setCSRState(name)
+        this.updateCSRState()
+      },
+
+      setBreakClickEvent(){
+        // Click anywhere on screen to end "Break"
+        document.body.addEventListener('click', this.stopBreak);
+      },
+
+      stopBreak(){
+        this.setCSRState('Login')
         this.updateCSRState()
       },
 
@@ -190,7 +200,14 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
           output('Failed to refresh token')
         })
       },
-    }
+    },
+    updated(){
+        if(this.user.csr_state.csr_state_name == 'Break'){
+            this.setBreakClickEvent();
+        } else {
+          document.body.removeEventListener('click', this.stopBreak)
+        }
+    },
   }
 </script>
 
