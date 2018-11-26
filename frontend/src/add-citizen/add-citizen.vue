@@ -138,13 +138,13 @@ export default {
 </script>
 
 <style>
-  .disabled {
+  /* .disabled {
     background-color: #8e9399 !important;
     color: Gainsboro !important;
   }
   .disabled:hover {
     background-color: #8e9399 !important;
-  }
+  } */
   .loader {
     position: relative;
     text-align: center;

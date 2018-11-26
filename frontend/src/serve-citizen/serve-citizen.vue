@@ -6,21 +6,21 @@
       <b-alert :show="this.serveModalAlert != ''"
                 style="h-align: center"
                 variant="warning">{{this.serveModalAlert}}</b-alert>
-      <div style="display: flex; flex-direction: row; justify-content: space-between" class="modal_header">
+      <div class="modal_header">
         <div>
-          <h4>Serve Citizen</h4>
+          <h4 style="font-weight:900; color:#6e6e6e">Serve Citizen</h4>
         </div>
         <div>
-          <b-button size="sm"
-                    class="btn-primary"
-                    @click="toggleFeedback">Feedback</b-button>
-          <b-button size="sm"
-                    class="btn-primary"
+          <button
+                    class="btn btn-link"
+                    @click="toggleFeedback">Feedback</button>
+          <button
+                    class="btn btn-link"
                     style="margin-left: 20px"
-                    @click="toggleMinimize">{{ minimizeWindow ? "Maximize" : "Minimize" }}</b-button>
+                    @click="toggleMinimize">{{ minimizeWindow ? "Maximize" : "Minimize" }}</button>
         </div>
       </div>
-      <b-container class="pb-3" id="serve-citizen-modal-top" fluid v-if="!minimizeWindow">
+      <b-container id="serve-citizen-modal-top" fluid v-if="!minimizeWindow">
         <b-row no-gutters class="p-2">
           <b-col col cols="4">
             <div><h6>Ticket #: <strong>{{citizen.ticket_number}}</strong></h6></div>
@@ -28,7 +28,7 @@
             <div><h6>Created At: <strong>{{formatTime(citizen.start_time)}}</strong></h6></div>
           </b-col>
           <b-col cols="auto" class="ml-3 mr-2">
-            <h6>Comments</h6>
+            <h6>Comments:</h6>
           </b-col>
           <b-col col cols="*" style="text-align: left" class="pr-2">
             <div>
@@ -39,89 +39,75 @@
             </div>
           </b-col>
         </b-row>
-        <b-row>
-          <b-col>
-            <div class="pt-1" style="display: flex; flex-direction: row; justify-content: space-between;">
-              <div>
-                <b-button @click="clickServiceBeginService"
-                          v-if="reception"
-                          :disabled="serviceBegun===true || performingAction"
-                          v-bind:class="buttonStyle"
-                          id="serve-citizen-begin-service-button">Begin Service</b-button>
-                <b-button @click="clickReturnToQueue"
-                          v-if="reception"
-                          :disabled="performingAction"
-                          class="btn-primary serve-btn"
-                          id="serve-citizen-return-to-queue-button">Return to Queue</b-button>
-                <select id="priority-selection" class="custom-select" v-model="priority_selection">
-                  <option value=1>High Priority</option>
-                  <option value=2>Default Priority</option>
-                  <option value=3>Low Priority</option>
-                </select>
-              </div>
-              <div>
-                <b-button @click="clickCitizenLeft"
-                          :disabled="performingAction"
-                          class="btn-danger serve-btn"
-                          v-if="reception"
-                          id="serve-citizen-citizen-left-button">Citizen Left</b-button>
-              </div>
-            </div>
-          </b-col>
-        </b-row>
       </b-container>
+      <b-container id="serve-top-buttons-container" v-if="!minimizeWindow">
+        <div>
+            <b-button @click="clickServiceBeginService"
+                    v-if="reception"
+                    :disabled="serviceBegun===true || performingAction"
+                    v-bind:class="buttonStyle"
+                    style="margin-right:8px; opacity:1"
+                    id="serve-citizen-begin-service-button">Begin Service</b-button>
+            <b-button @click="clickReturnToQueue"
+                    v-if="reception"
+                    :disabled="performingAction"
+                    class="btn serve-btn"
+                    id="serve-citizen-return-to-queue-button">Return to Queue</b-button>
+        </div>
+        <div>
+            <b-button @click="clickCitizenLeft"
+                    :disabled="performingAction"
+                    class="btn-danger serve-btn"
+                    v-if="reception"
+                    id="serve-citizen-citizen-left-button">Citizen Left</b-button>
+        </div>
+    </b-container>
       <ServeCitizenTable v-if="!minimizeWindow"/>
       <b-container fluid
                    id="serve-light-inner-container"
-                   class="pt-2 pb-2"
+                   class="pt-3 pb-2"
                     v-if="!minimizeWindow">
         <b-row no-gutters>
           <b-col cols="7" />
           <b-col cols="auto" style="align: right">
-            <b-button class="w-100
-                      btn-primary serve-btn"
-                      @click="clickAddService"
-                      :disabled="serviceBegun===false || performingAction">Add Next Service</b-button>
-            <div class="mr-1 btn-success" style="border-radius: 5px" v-if="reception">
-              <b-form-checkbox v-model="quick" value="1" unchecked-value="0"
-                               class="mt-3 ml-1 mr-1 pb-1 quick-checkbox" style="position: relative; top: -5px;">
+            <b-form-checkbox v-model="quick" value="1" unchecked-value="0" v-if="reception"
+                            class="quick-checkbox" style="color:white;margin-right: 8px;">
                 <span style="font: 400 16px Myriad-Pro;">Quick Txn</span>
                 <span class="quick-span" v-if="quick"></span> <!-- For puppeteer testing to see if quick is selected -->
-              </b-form-checkbox>
-            </div>
+            </b-form-checkbox>
+            <select id="priority-selection" class="custom-select" v-model="priority_selection" style="margin-right:8px;">
+                <option value=1>High Priority</option>
+                <option value=2>Default Priority</option>
+                <option value=3>Low Priority</option>
+            </select>
+            <b-button class="btn-primary serve-btn"
+                      @click="clickAddService"
+                      :disabled="serviceBegun===false || performingAction"
+                      >Add Next Service</b-button>
           </b-col>
           <b-col cols="2" />
         </b-row>
       </b-container>
       <div v-if="!minimizeWindow">
         <b-container fluid
-                     id="serve-citizen-modal-footer"
-                     class="pt-3">
-          <b-row no-gutters align-h="center">
-            <b-col cols="1" />
-            <b-col cols="4">
+                     id="serve-citizen-modal-footer">
+                <div style="display:flex; flex-direction:column; margin-left:10px;">
+                    <b-form-checkbox v-model="accurate_time_ind"
+                                                    v-if="serviceBegun===true"
+                                                    value="0"
+                                                    style="color:white; margin:0 0 8px;"
+                                                    unchecked-value="1">
+                                    <span  style="font: 400 16px Myriad-Pro;">Inaccurate Time</span>
+                                    </b-form-checkbox>
+                    <b-button @click="clickServiceFinish"
+                            :disabled="serviceBegun===false || performingAction"
+                            class="btn-success serve-btn"
+                            id="serve-citizen-finish-button">Finish</b-button>
+                </div>
               <b-button @click="clickHold"
                         :disabled="serviceBegun===false || performingAction"
-                        class="w-100 btn-primary serve-btn"
+                        class="btn-warning serve-btn"
                         id="serve-citizen-place-on-hold-button">Place on Hold</b-button>
-            </b-col>
-            <b-col cols="2" />
-            <b-col cols="4">
-              <b-button @click="clickServiceFinish"
-                        :disabled="serviceBegun===false || performingAction"
-                        class="w-100 btn-primary serve-btn"
-                        id="serve-citizen-finish-button">Finish</b-button>
-              <div v-if="serviceBegun===true" class="px-3 pt-1 btn-warning"
-                   style="padding-right: 0 !important; border-radius: 5px; text-align: center">
-                <b-form-checkbox v-model="accurate_time_ind"
-                                 value="0"
-                                 unchecked-value="1">
-                  <span  style="font: 400 16px Myriad-Pro;">Inaccurate Time</span>
-                </b-form-checkbox>
-              </div>
-            </b-col>
-            <b-col cols="1" />
-          </b-row>
         </b-container>
       </div>
     </div>
@@ -277,23 +263,44 @@ export default {
     margin-right: auto;
     margin-left: auto;
     margin-top: 1%;
-    border-radius: 5px;
-    padding: 20px;
-    border: 1px solid #888;
     width: 80%;
-
+    position: relative;
+}
+.modal_header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 20px 20px 4px;
 }
 #serve-citizen-modal-top {
-  border: 1px solid grey;
-  background-color: WhiteSmoke;
+ background-color: #F0F0F0;
+ color: #6e6e6e;
+ padding-bottom: 20px;
 }
-#serve-citizen-footer-button {
-  color: black;
+#serve-top-buttons-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    position: absolute;
+    top: 178px;
+    z-index: 99;
+    width: 100%;
+}
+#serve-light-inner-container{
+    background: #504E4F;
+    display: flex;
+    flex-direction: row-reverse;
 }
 #serve-citizen-modal-footer {
-  padding-bottom: 1rem;
-  border: 1px solid grey;
-  background-color: WhiteSmoke;
+    background: #504E4F;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: flex-end;
+    padding-top: 30px;
+    padding-bottom: 25px;
+}
+#serve-citizen-modal-footer .btn {
+    width: 140px;
 }
 .btn-highlighted {
   color: black;
@@ -301,12 +308,25 @@ export default {
   background-color: gold;
 }
 strong {
-  color: blue;
   font-size: 1.35rem;
 }
 #priority-selection {
     display: inline-block;
     width: 135px;
     padding-right: 0;
+}
+.custom-select {
+    line-height: 25px;
+}
+#serve-citizen-return-to-queue-button {
+    background: white;
+    color: black;
+    border: 1px solid #cecece;
+}
+#serve-citizen-return-to-queue-button:hover {
+    background: #e8e8e8;
+}
+.btn-link {
+    text-decoration: underline;
 }
 </style>
