@@ -23,11 +23,16 @@ limitations under the License.*/
     </div>
 
     <div v-show="this.$store.state.isLoggedIn"
-         style="display: flex; flex-direction: row; justify-content: space-between">
-      <b-button @click="break_toggle"
-                style="margin-right: 20px;"
-                v-bind:class="{ 'btn-danger': user.csr_state.csr_state_name == 'Break', 'btn-success': user.csr_state.csr_state_name == 'Login' }"
-                >{{user.csr_state.csr_state_name == 'Break' ? 'On Break' : 'Active' }}</b-button>
+         style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
+
+      <div style="margin-right: 22px;margin-top: 9px;">
+        <label id="break-switch">
+          <input type="checkbox" v-model="break_toggle">
+          <span class="circle1"></span>
+          <span class="circle2"></span>
+        </label>
+        <p class="switch-p">{{user.csr_state.csr_state_name == 'Break' ? 'On Break' : 'Active' }}</p>
+      </div>
       <div id="select-wrapper" style="padding-right: 20px" v-if="reception">
          <select id="counter-selection" class="custom-select" v-model="counter_selection">
            <option value='counter'>Counter</option>
@@ -79,7 +84,22 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
           this.setReceptionistState(value === 'receptionist')
           this.updateCSRCounterTypeState()
         }
-      }
+      },
+      break_toggle: {
+        get() {
+            if(this.user.csr_state.csr_state_name == 'Break'){
+                return false
+            } else {
+                return true
+            }
+        },
+        set(value) {
+            let name;
+            value ? name = "Login" : name = "Break";
+            this.setCSRState(name)
+            this.updateCSRState()
+        }
+      },
     },
     methods: {
       ...mapActions(['updateCSRCounterTypeState', 'updateCSRState']),
@@ -172,16 +192,10 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
         localStorage.removeItem("refreshToken")
       },
 
-      break_toggle(){
-        let name;
-        this.user.csr_state.csr_state_name == "Break" ? name = "Login" : name = "Break";
-        this.setCSRState(name)
-        this.updateCSRState()
-      },
-
       setBreakClickEvent(){
         // Click anywhere on screen to end "Break"
         document.body.addEventListener('click', this.stopBreak);
+        document.getElementById('break-switch').style.pointerEvents = 'none'; //Prevent double click event
       },
 
       stopBreak(){
@@ -206,6 +220,7 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
             this.setBreakClickEvent();
         } else {
           document.body.removeEventListener('click', this.stopBreak)
+          document.getElementById('break-switch').style.pointerEvents = 'all';
         }
     },
   }
@@ -225,5 +240,61 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 
 .navbar-brand {
   font-size: .85rem;
+}
+
+#break-switch {
+    position: relative;
+    display: inline-block;
+    width: 66px;
+    height: 33px;
+    border-radius: 16px;
+    margin: 0;
+    background: white;
+    cursor: pointer;
+}
+
+#break-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.circle1 {
+    width: 25px;
+    height: 25px;
+    background-color: #6c757d;
+    -webkit-transition: .2s;
+    transition: .2s;
+    position: absolute;
+    border-radius: 50%;
+    top: 4px;
+    left: 4px;
+}
+
+.circle2 {
+    width: 25px;
+    height: 25px;
+    background-color: red;
+    -webkit-transition: .2s;
+    transition: .2s;
+    position: absolute;
+    border-radius: 50%;
+    top: 4px;
+    right: 4px;
+}
+
+input:checked + .circle1 {
+  background-color: lightgreen;
+}
+
+input:checked + .circle1 + .circle2 {
+    background-color: #6c757d;
+}
+
+.switch-p {
+    margin: 0;
+    text-align: center;
+    color: white;
+    font-size: 14px;
 }
 </style>
