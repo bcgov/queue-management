@@ -8,7 +8,7 @@
            no-close-on-backdrop
            no-close-on-esc
            class="m-0 p-0"
-           @shown="setupForm()">
+           @shown="setupForm()" v-dragged="onDrag">
     <div style="display: flex; flex-direction: row; justify-content: space-between" class="modal_header">
       <div><h4>{{modalTitle}}</h4></div>
       <div>
@@ -133,6 +133,22 @@ export default {
       toggleMinimize() {
         this.minimizeWindow = !this.minimizeWindow
       },
+      onDrag({ el, deltaX, deltaY, offsetX, offsetY, clientX, clientY, first, last }) {
+        if (first) {
+          this.dragged = true
+          return
+        }
+        if (last) {
+          this.dragged = false
+          return
+        }
+        this.left = (this.left || 0) + deltaX
+        this.top = (this.top || 0) + deltaY
+        let transform = "translate("+this.left+"px,"+this.top+"px)"
+        console.log(transform)
+        console.log(el)
+        el.querySelector('.modal-content').style.transform = transform
+      }
     }
   }
 </script>
