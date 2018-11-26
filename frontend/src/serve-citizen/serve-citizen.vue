@@ -298,6 +298,7 @@ export default {
     top: 178px;
     z-index: 99;
     width: 100%;
+    max-width: 100%;
 }
 #serve-light-inner-container{
     background: #504E4F;
