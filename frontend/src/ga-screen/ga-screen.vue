@@ -152,7 +152,7 @@ export default {
         let activeCitizen = this.get_citizen_for_csr(csr)
 
         if (activeCitizen === null) {
-          csr.csr_state_id == 3 ? csr['wait_time'] = 'ON BREAK' : csr['wait_time'] = null;
+          csr.csr_state.csr_state_name == 'Break' ? csr['wait_time'] = 'ON BREAK' : csr['wait_time'] = null;
           csr['serving_time'] = null
           csr['citizen'] = null
           csr['service_request'] = null

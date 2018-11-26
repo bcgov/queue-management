@@ -76,6 +76,11 @@ export const store = new Vuex.Store({
     user: {
       csr_id: null,
       csr_state_id: null,
+      csr_state: {
+        csr_state_desc: null,
+        csr_state_id: null,
+        csr_state_name: null
+      },
       username: null,
       office: {
         office_id: null,
@@ -1202,7 +1207,7 @@ export const store = new Vuex.Store({
     updateCSRState(context) {
       let csr_id = context.state.user.csr_id
       Axios(context).put(`/csrs/${csr_id}/`, {
-        csr_state_id: context.state.user.csr_state_id,
+        csr_state: context.state.user.csr_state,
       })
     },
   },
@@ -1398,7 +1403,7 @@ export const store = new Vuex.Store({
 
     setReceptionistState: (state, payload) => state.user.receptionist_ind = payload,
 
-    setCSRState: (state, payload) => state.user.csr_state_id = payload,
+    setCSRState: (state, payload) => state.user.csr_state.csr_state_name = payload,
 
     setOffice: (state, officeType) => state.officeType = officeType,
 

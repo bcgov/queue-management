@@ -26,8 +26,8 @@ limitations under the License.*/
          style="display: flex; flex-direction: row; justify-content: space-between">
       <b-button @click="break_toggle"
                 style="margin-right: 20px;"
-                v-bind:class="{ 'btn-danger': user.csr_state_id == 3, 'btn-success': user.csr_state_id == 1 }"
-                >{{user.csr_state_id == 1 ? 'Active' : 'On Break' }}</b-button>
+                v-bind:class="{ 'btn-danger': user.csr_state.csr_state_name == 'Break', 'btn-success': user.csr_state.csr_state_name == 'Logout' }"
+                >{{user.csr_state.csr_state_name == 'Break' ? 'On Break' : 'Active' }}</b-button>
       <div id="select-wrapper" style="padding-right: 20px" v-if="reception">
          <select id="counter-selection" class="custom-select" v-model="counter_selection">
            <option value='counter'>Counter</option>
@@ -65,6 +65,7 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
       // set and get state of counter type (select dropdown in nav)
       counter_selection: {
         get() {
+        console.log(this.user)
           if (this.quick_trans_status === true) {
             return 'quick';
           } else if (this.receptionist_status === true) {
@@ -172,9 +173,9 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
       },
 
       break_toggle(){
-        let id;
-        this.user.csr_state_id == 1 ? id = 3 : id = 1; //3 is id for Break
-        this.setCSRState(id)
+        let name;
+        this.user.csr_state.csr_state_name == "Break" ? name = "Logout" : name = "Break"; //Logout is awkways default state (other states not being used)
+        this.setCSRState(name)
         this.updateCSRState()
       },
 
