@@ -809,7 +809,9 @@ export const store = new Vuex.Store({
     },
 
     finishServiceFromGA(context, citizen_id) {
-      context.dispatch('postFinishService', {citizen_id, inaccurate:'true'})
+      context.dispatch('postFinishService', {citizen_id, inaccurate:'true'}).then(()=>{
+          context.dispatch('getCsrs')
+      })
     },
 
     clickServiceModalClose(context) {
