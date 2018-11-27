@@ -156,6 +156,7 @@ export default {
           csr['serving_time'] = null
           csr['citizen'] = null
           csr['service_request'] = null
+          csr['end_service'] = null
           computed_csrs.push(csr)
         } else {
           let activeServiceRequest = activeCitizen.service_reqs.filter(sr => sr.periods.some(p => p.time_end === null))[0]
