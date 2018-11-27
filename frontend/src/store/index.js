@@ -22,6 +22,8 @@ var flashInt
 
 Vue.use(Vuex)
 
+var csr_states = []
+
 export const store = new Vuex.Store({
 
   state: {
@@ -309,15 +311,28 @@ export const store = new Vuex.Store({
     },
 
     getCsrs(context) {
-      Axios(context).get('/csrs/')
-        .then( resp => {
-          context.commit('setCsrs', resp.data.csrs)
-        })
-        .catch(error => {
-          console.log('error @ store.actions.getCsrs')
-          console.log(error.response)
-          console.log(error.message)
-        })
+        if (csr_states.length === 0){
+            Axios(context).get('/csr_states/')
+                .then(resp => {
+                    console.log(resp.data.csrs)
+                    csr_states = resp.data.csrs
+                })
+                .catch(error => {
+                    console.log('error @ store.actions.getCsrs')
+                    console.log(error.response)
+                    console.log(error.message)
+                })
+        }
+        Axios(context).get('/csrs/')
+            .then(resp => {
+                console.log(resp.data.csrs)
+                context.commit('setCsrs', resp.data.csrs)
+            })
+            .catch(error => {
+                console.log('error @ store.actions.getCsrs')
+                console.log(error.response)
+                console.log(error.message)
+            })
     },
 
     getServices(context) {
