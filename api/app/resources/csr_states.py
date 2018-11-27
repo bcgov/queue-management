@@ -23,7 +23,7 @@ from app.schemas import CSRStateSchema
 @api.route("/csr_states/", methods=["GET"])
 class CsrStateList(Resource):
 
-    csr_state_schema = CSRStateSchema(many=True)
+    csr_state_schema = CSRStateSchema(many=True, exclude=('csrs'))
 
     @oidc.accept_token(require_token=True)
     def get(self):

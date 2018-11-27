@@ -22,8 +22,6 @@ var flashInt
 
 Vue.use(Vuex)
 
-var csr_states = []
-
 export const store = new Vuex.Store({
 
   state: {
@@ -95,6 +93,7 @@ export const store = new Vuex.Store({
       qt_xn_csr_ind: true,
       receptionist_ind: null
     },
+    csr_states: [],
     userLoadingFail: false
   },
 
@@ -311,21 +310,22 @@ export const store = new Vuex.Store({
     },
 
     getCsrs(context) {
-        if (csr_states.length === 0){
-            Axios(context).get('/csr_states/')
-                .then(resp => {
-                    console.log(resp.data.csrs)
-                    csr_states = resp.data.csrs
-                })
-                .catch(error => {
-                    console.log('error @ store.actions.getCsrs')
-                    console.log(error.response)
-                    console.log(error.message)
-                })
+        if (context.state.csr_states.length === 0) {
+          Axios(context).get("/csr_states/")
+            .then(resp => {
+              var states = resp.data.csr_states;
+              states.forEach(x => {
+                context.state.csr_states[x.csr_state_name] = x.csr_state_id;
+              });
+            })
+            .catch(error => {
+              console.log("error @ store.actions.getCsrs");
+              console.log(error.response);
+              console.log(error.message);
+            });
         }
         Axios(context).get('/csrs/')
             .then(resp => {
-                console.log(resp.data.csrs)
                 context.commit('setCsrs', resp.data.csrs)
             })
             .catch(error => {
@@ -1220,7 +1220,7 @@ export const store = new Vuex.Store({
     updateCSRState(context) {
       let csr_id = context.state.user.csr_id
       Axios(context).put(`/csrs/${csr_id}/`, {
-        csr_state: context.state.user.csr_state,
+        csr_state_id: context.state.user.csr_state_id,
       })
     },
   },
@@ -1416,7 +1416,7 @@ export const store = new Vuex.Store({
 
     setReceptionistState: (state, payload) => state.user.receptionist_ind = payload,
 
-    setCSRState: (state, payload) => state.user.csr_state.csr_state_name = payload,
+    setCSRState: (state, payload) => state.user.csr_state_id = payload,
 
     setOffice: (state, officeType) => state.officeType = officeType,
 

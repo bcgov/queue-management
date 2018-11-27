@@ -119,7 +119,7 @@ import app.resources.citizen.citizen_service_requests
 import app.resources.citizen.citizen_specific_invite
 import app.resources.csrs
 import app.resources.csr_detail
-# import app.resources.csr_states
+import app.resources.csr_states
 import app.resources.feedback
 import app.resources.health
 import app.resources.login

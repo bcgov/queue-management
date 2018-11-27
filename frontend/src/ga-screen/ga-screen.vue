@@ -99,7 +99,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['showGAScreenModal', 'csrs', 'citizens']),
+    ...mapState(['showGAScreenModal', 'csrs', 'citizens', 'csr_states']),
     ...mapGetters(['citizens_queue', 'on_hold_queue', 'reception'])
   },
   methods: {
@@ -148,11 +148,13 @@ export default {
     computed_csrs() {
       let computed_csrs = []
       let currentDate = new Date()
+      const breakStateID = this.csr_states['Break'];
       this.csrs.forEach(csr => {
         let activeCitizen = this.get_citizen_for_csr(csr)
 
         if (activeCitizen === null) {
-          csr.csr_state.csr_state_name == 'Break' ? csr['wait_time'] = 'ON BREAK' : csr['wait_time'] = null;
+
+          csr.csr_state_id === breakStateID ? csr['wait_time'] = 'ON BREAK' : csr['wait_time'] = null;
           csr['serving_time'] = null
           csr['citizen'] = null
           csr['service_request'] = null

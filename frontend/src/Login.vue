@@ -31,7 +31,7 @@ limitations under the License.*/
           <span class="circle1"></span>
           <span class="circle2"></span>
         </label>
-        <p class="switch-p">{{user.csr_state.csr_state_name == 'Break' ? 'On Break' : 'Active' }}</p>
+        <p class="switch-p">{{user.csr_state_id === csr_states['Break'] ? 'On Break' : 'Active' }}</p>
       </div>
       <div id="select-wrapper" style="padding-right: 20px" v-if="reception">
          <select id="counter-selection" class="custom-select" v-model="counter_selection">
@@ -65,12 +65,11 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
       _.defer(this.initLocalStorage)
     },
     computed: {
-      ...mapState(['user']),
+      ...mapState(['user', 'csr_states']),
       ...mapGetters(['quick_trans_status', 'reception', 'receptionist_status']),
       // set and get state of counter type (select dropdown in nav)
       counter_selection: {
         get() {
-        console.log(this.user)
           if (this.quick_trans_status === true) {
             return 'quick';
           } else if (this.receptionist_status === true) {
@@ -87,16 +86,19 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
       },
       break_toggle: {
         get() {
-            if(this.user.csr_state.csr_state_name == 'Break'){
+            if(this.user.csr_state_id === this.csr_states['Break']){
                 return false
             } else {
                 return true
             }
         },
         set(value) {
-            let name;
-            value ? name = "Login" : name = "Break";
-            this.setCSRState(name)
+            var breakID = this.csr_states['Break']
+            var loginID = this.csr_states['Login']
+
+            let id = value ? name = loginID : name = breakID;
+            console.log(id)
+            this.setCSRState(id)
             this.updateCSRState()
         }
       },
@@ -199,7 +201,8 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
       },
 
       stopBreak(){
-        this.setCSRState('Login')
+        const loginStateID = this.csr_states['Login'];
+        this.setCSRState(loginStateID)
         this.updateCSRState()
       },
 
@@ -216,7 +219,7 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
       },
     },
     updated(){
-        if(this.user.csr_state.csr_state_name == 'Break'){
+        if(this.user.csr_state_id === this.csr_states['Break']){
             this.setBreakClickEvent();
         } else {
           document.body.removeEventListener('click', this.stopBreak)
