@@ -277,6 +277,7 @@ export default {
     margin-left: auto;
     margin-top: 1%;
     width: 80%;
+    max-width: 900px;
     position: relative;
 }
 .modal_header{
