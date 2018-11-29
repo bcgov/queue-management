@@ -29,6 +29,7 @@ class Citizen(Base):
     start_time = db.Column(db.DateTime, nullable=False)
     accurate_time_ind = db.Column(db.Integer, nullable=False, default=1)
     service_count = db.Column(db.Integer, nullable=False, default=1)
+    priority = db.Column(db.Integer, nullable=False, default=2)
 
     service_reqs = db.relationship('ServiceReq', lazy='joined', order_by='ServiceReq.sr_id')
     cs = db.relationship('CitizenState', lazy='joined')

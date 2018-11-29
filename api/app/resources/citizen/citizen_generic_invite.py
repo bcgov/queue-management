@@ -51,7 +51,7 @@ class CitizenGenericInvite(Resource):
                     .join(ServiceReq.periods) \
                     .filter_by(ps_id=waiting_period_state.ps_id) \
                     .filter(Period.time_end.is_(None)) \
-                    .order_by(Citizen.citizen_id) \
+                    .order_by(Citizen.priority, Citizen.citizen_id) \
                     .first()
             else:
                 citizen = Citizen.query \
@@ -60,7 +60,7 @@ class CitizenGenericInvite(Resource):
                     .join(ServiceReq.periods) \
                     .filter_by(ps_id=waiting_period_state.ps_id) \
                     .filter(Period.time_end.is_(None)) \
-                    .order_by(Citizen.citizen_id) \
+                    .order_by(Citizen.priority, Citizen.citizen_id) \
                     .first()
 
             # Either no quick txn citizens for the quick txn csr, or vice versa
@@ -71,7 +71,7 @@ class CitizenGenericInvite(Resource):
                     .join(ServiceReq.periods) \
                     .filter_by(ps_id=waiting_period_state.ps_id) \
                     .filter(Period.time_end.is_(None)) \
-                    .order_by(Citizen.citizen_id) \
+                    .order_by(Citizen.priority, Citizen.citizen_id) \
                     .first()
 
             if citizen is None:

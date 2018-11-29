@@ -39,6 +39,9 @@ limitations under the License.*/
       <template slot='service' slot-scope='data'>
         {{ showService(data.item.citizen_id) }}
       </template>
+      <template slot='priority' slot-scope='data'>
+        {{ showPriority(data.item.priority) }}
+      </template>
     </b-table>
 </template>
 
@@ -58,7 +61,8 @@ limitations under the License.*/
           {key: 'csr', label: 'Served By', sortable: false, thStyle: 'width: 10%'},
           {key: 'category', label: 'Category', sortable: false, thStyle: 'width: 17%'},
           {key: 'service', label: 'Service', sortable: false, thStyle: 'width: 17%'},
-          {key: 'citizen_comments', label: 'Comments', sortable: false, thStyle: 'width: 27%'}
+          {key: 'citizen_comments', label: 'Comments', sortable: false, thStyle: 'width: 17%'},
+          {key: 'priority', label: 'Priority', sortable: false, thStyle: 'width: 10%'}
         ]
       }
     },
@@ -116,6 +120,9 @@ limitations under the License.*/
           return null
         }
         return service.service.service_name
+      },
+      showPriority(priority) {
+        return priority == 1 ? 'High' : priority == 2 ? 'Default' : priority == 3 ? 'Low' : null
       }
     }
   }

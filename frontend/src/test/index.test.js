@@ -7,41 +7,41 @@ const height = 800;
 const maxTestCaseTime = 30000;
 
 beforeAll(async () => {
-  browser = await puppeteer.launch({
-    headless: false,
-    slowMo: 100,
-    args: [`--window-size=${width},${height}`]
-  });
-  page = await browser.newPage();
-  await page.setViewport({ width, height });
+    browser = await puppeteer.launch({
+        headless: false,
+        slowMo: 100,
+        args: [`--window-size=${width},${height}`]
+    });
+    page = await browser.newPage();
+    await page.setViewport({ width, height });
 });
 
 afterAll(() => {
-  browser.close();
+    browser.close();
 });
 
 describe("Serve Citizens", () => {
-  test(
-    "Login",
-    async () => {
-      await page.goto(process.env.CFMS_DEV_URL);
-      await page.waitForSelector("#keycloak-login");
+      test(
+        "Login",
+        async () => {
+          await page.goto(process.env.CFMS_DEV_URL);
+          await page.waitForSelector("#keycloak-login");
 
-      const navigationPromise = page.waitForNavigation();
-      await page.click("#keycloak-login");
-      await navigationPromise;
+          const navigationPromise = page.waitForNavigation();
+          await page.click("#keycloak-login");
+          await navigationPromise;
 
-      await page.waitForSelector("#username");
-      await page.type("#username", "cfms-postman-operator");
-      await page.type("#password", process.env.POSTMAN_OPERATOR_PASSWORD);
+          await page.waitForSelector("#username");
+          await page.type("#username", "cfms-postman-operator");
+          await page.type("#password", process.env.POSTMAN_OPERATOR_PASSWORD);
 
-      await page.click("#kc-login");
-      await navigationPromise;
+          await page.click("#kc-login");
+          await navigationPromise;
 
-      await page.waitForSelector("label.navbar-user");
-    },
-    maxTestCaseTime
-  );
+          await page.waitForSelector("label.navbar-user");
+        },
+        maxTestCaseTime
+      );
 
   test(
     "Invite and serve citizen from queue",
@@ -100,20 +100,84 @@ describe("Serve Citizens", () => {
     },
     maxTestCaseTime
   );
-  /*
+
   test('Begin service from add citizen modal', async () => {
     await addCitizenFromDash();
     await populateAddCitizen();
     await beginServiceFromAddCitizenModal();
     await finishService();
   }, maxTestCaseTime);
-*/
+
   test(
     "Cancel service from add citizen modal",
     async () => {
       await addCitizenFromDash();
       await populateAddCitizen();
       await cancelFromAddCitizenModal();
+    },
+    maxTestCaseTime
+  );
+
+  test(
+    "Invite as quick transaction counter",
+    async () => {
+      await addCitizenToQueue(); //Add regular first
+      await addQuickCitizenToQueue(); //Add quick second
+      await page.select("#counter-selection", "quick"); //Select quick transaction counter
+
+      await inviteCitizenFromDash();
+      await page.waitForSelector(".quick-span"); //Invite should bring up the quick first
+      await beginServiceFromServeCitizenModal();
+      await finishService();
+
+      await inviteCitizenFromDash(); //Second invite bring up remaining regular
+      await beginServiceFromServeCitizenModal();
+      await finishService();
+    },
+    maxTestCaseTime
+  );
+
+  test(
+    "Edit to quick transaction in serve citizen counter",
+    async () => {
+      await addCitizenToQueue();
+      await inviteCitizenFromDash();
+      await editQuickTransFromServeCitizenModal() //Edit to quick transaction
+      await returnToQueue();
+      await inviteCitizenFromDash();
+      await page.waitForSelector(".quick-span"); //Should be quick transaction now
+      await beginServiceFromServeCitizenModal();
+      await finishService();
+    },
+    maxTestCaseTime
+  );
+
+  test(
+    "Invite low, normal, high priority citizens",
+    async () => {
+      let priorityValue;
+      // Add low, then normal, and then high priority citizen
+      await addCitizenLowPriorityToQueue();
+      await addCitizenToQueue();
+      await addCitizenHighPriorityToQueue();
+
+      await inviteCitizenFromDash();
+      priorityValue = await page.$eval("#priority-selection", el => el.value);
+      if(priorityValue != '1') throw('Not high priority') // First should be high
+      await beginServiceFromServeCitizenModal();
+      await finishService();
+
+      await inviteCitizenFromDash();
+      priorityValue = await page.$eval("#priority-selection", el => el.value);
+      if (priorityValue != '2') throw ('Not normal priority') // Second should be normal
+      await beginServiceFromServeCitizenModal();
+      await finishService();
+
+      await inviteCitizenFromDash();
+      priorityValue = await page.$eval("#priority-selection", el => el.value);
+      if(priorityValue != '3') throw('Not low priority') // Third should be low
+      await beginServiceFromServeCitizenModal();
+      await finishService();
     },
     maxTestCaseTime
   );
@@ -130,6 +194,27 @@ async function addCitizenToQueue() {
   await addCitizenFromDash();
   await populateAddCitizen();
   await addToQueue();
+}
+
+async function addQuickCitizenToQueue() {
+  await page.waitForSelector("#add-citizen-button");
+  await addCitizenFromDash();
+  await populateAddCitizen();
+  await addToQuickQueue();
+}
+
+async function addCitizenHighPriorityToQueue() {
+  await page.waitForSelector("#add-citizen-button");
+  await addCitizenFromDash();
+  await populateAddCitizen();
+  await addToHighPriorityQueue();
+}
+
+async function addCitizenLowPriorityToQueue() {
+  await page.waitForSelector("#add-citizen-button");
+  await addCitizenFromDash();
+  await populateAddCitizen();
+  await addToLowPriorityQueue();
 }
 
 async function populateAddCitizen() {
@@ -164,6 +249,7 @@ async function inviteCitizenFromDash() {
 }
 
 async function addCitizenFromDash() {
+  await page.waitForSelector("#add-citizen-button");
   await page.click("#add-citizen-button");
   await delay(1000);
   await page.waitForSelector(".add_citizen_template");
@@ -179,10 +265,31 @@ async function addToQueue() {
   await page.waitForSelector(".add_citizen_template", { hidden: true });
 }
 
+async function addToQuickQueue() {
+  await page.click(".quick");
+  await page.click("#add-citizen-add-to-queue");
+  await delay(1000);
+  await page.waitForSelector(".add_citizen_template", { hidden: true });
+}
+
+async function addToHighPriorityQueue() {
+  await page.select("#priority-selection", "1"); //Select high priority
+  await page.click("#add-citizen-add-to-queue");
+  await delay(1000);
+  await page.waitForSelector(".add_citizen_template", { hidden: true });
+}
+
+async function addToLowPriorityQueue() {
+  await page.select("#priority-selection", "3"); //Select low priority
+  await page.click("#add-citizen-add-to-queue");
+  await delay(1000);
+  await page.waitForSelector(".add_citizen_template", { hidden: true });
+}
+
 async function beginServiceFromAddCitizenModal() {
   await page.click("#add-citizen-begin-service");
   await delay(1000);
-  await page.waitForSelector(".add_citizen_template");
+  await page.waitForSelector(".serve-modal-content");
 }
 
 async function cancelFromAddCitizenModal() {
@@ -201,6 +308,11 @@ async function beginServiceFromServeCitizenModal() {
     disabled: false
   });
   await page.click("#serve-citizen-begin-service-button");
+}
+
+async function editQuickTransFromServeCitizenModal() {
+  await page.waitForSelector(".quick-checkbox");
+  await page.click(".quick-checkbox");
 }
 
 async function returnToQueue() {
