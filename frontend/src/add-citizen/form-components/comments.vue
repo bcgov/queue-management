@@ -1,5 +1,5 @@
 <template>
-  <b-container fluid class="add_citizen_form">
+  <div class="add_citizen_form">
     <b-form-row no-gutters>
       <b-col cols="auto">
         <label class="add_citizen_form_label">
@@ -16,7 +16,7 @@
         </b-textarea>
       </b-col>
     </b-form-row>
-  </b-container>
+  </div>
 </template>
 
 <script>

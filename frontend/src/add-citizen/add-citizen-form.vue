@@ -10,23 +10,18 @@
       </b-container>
     </template>
     <template v-else>
-        <div class="add_citizen_template" v-if="reception">
-
-      <b-container fluid style="background:#F0F0F0;">
-          <Comments />
-          <Channel />
-          <Filters />
-      </b-container>
-      <b-container fluid style="background:black;">
-          <Tables />
-      </b-container>
+      <div class="add_citizen_template">
+        <div class="add_citizen_padding" style="background: rgb(240, 240, 240);padding-top: 12px;padding-bottom: 40px;">
+            <Comments />
+            <Channel />
         </div>
-      <!-- <b-container fluid class="add_citizen_template" v-if="!reception">
-          <Channel />
-          <Filters />
-          <Tables />
-          <Comments style="margin-top:5px"/>
-      </b-container> -->
+        <b-container class="add_citizen_padding" style="position: absolute;top: 238px;">
+            <Filters />
+        </b-container>
+        <b-container fluid class="add_citizen_padding" style="background:#504e4f; padding-top: 35px;">
+            <Tables />
+        </b-container>
+      </div>
     </template>
   </div>
 </template>
@@ -65,5 +60,9 @@ export default {
     width: 75px;
     text-align: right;
     line-height: 38px;
+  }
+  .add_citizen_padding {
+      padding-left: 30px;
+      padding-right: 30px;
   }
 </style>

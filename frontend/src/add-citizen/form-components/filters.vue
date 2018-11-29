@@ -1,5 +1,5 @@
 <template>
-  <b-container class="add_citizen_form mt-2">
+  <div>
     <b-form-row no-gutters>
       <b-col cols="7">
           <input ref="filterref"
@@ -18,7 +18,7 @@
                     placeholder="Filter by category"></b-select>
       </b-col>
     </b-form-row>
-  </b-container>
+  </div>
 </template>
 
 <script>

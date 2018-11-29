@@ -41,7 +41,7 @@
       </div>
       <div v-else>
         <AddCitizenForm/>
-        <b-container class="add-buttons">
+        <b-container class="add-buttons add_citizen_padding">
           <div class="button-row" style="padding-bottom:35px;">
             <div id="select-wrapper">
               <select id="priority-selection" class="custom-select" v-model="priority_selection">
@@ -56,7 +56,7 @@
               unchecked-value="0"
               v-if="reception"
               class="quick"
-              style="color:white;margin-right: 8px;"
+              style="color:white;margin: 8px;"
             >
               <span style="font: 400 16px Myriad-Pro;">Quick Txn</span>
             </b-form-checkbox>
@@ -202,7 +202,7 @@ export default {
 
 .add-buttons {
   background: #504e4f;
-  padding: 20px 15px;
+  padding: 10px 15px 20px;
 }
 
 .button-row {
