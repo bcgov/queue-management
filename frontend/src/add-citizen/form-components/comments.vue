@@ -1,11 +1,10 @@
 <template>
   <b-container fluid class="add_citizen_form">
     <b-form-row no-gutters>
-      <b-col>
-        <label>Comments</label>
+      <b-col cols="auto">
+        <label class="add_citizen_form_label">
+            Comments:</label>
       </b-col>
-    </b-form-row>
-    <b-form-row no-gutters>
       <b-col>
         <b-textarea id="add_citizen_comment_textarea"
                     ref="commentsref"

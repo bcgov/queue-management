@@ -59,4 +59,11 @@ export default {
   .add_citizen_form_table {
     border-bottom: 1px solid darkgrey;
   }
+  .add_citizen_form_label {
+    font-size: 15px;
+    font-weight: 400;
+    width: 75px;
+    text-align: right;
+    line-height: 38px;
+  }
 </style>
