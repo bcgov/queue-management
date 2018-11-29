@@ -4,22 +4,29 @@
       <b-container fluid class="add_citizen_template">
           <Channel />
           <Filters />
+      </b-container>
+      <b-container>
           <Tables />
       </b-container>
     </template>
     <template v-else>
-      <b-container fluid class="add_citizen_template" v-if="reception">
+        <div class="add_citizen_template" v-if="reception">
+
+      <b-container fluid style="background:#F0F0F0;">
           <Comments />
           <Channel />
           <Filters />
+      </b-container>
+      <b-container fluid style="background:black;">
           <Tables />
       </b-container>
-      <b-container fluid class="add_citizen_template" v-if="!reception">
+        </div>
+      <!-- <b-container fluid class="add_citizen_template" v-if="!reception">
           <Channel />
           <Filters />
           <Tables />
           <Comments style="margin-top:5px"/>
-      </b-container>
+      </b-container> -->
     </template>
   </div>
 </template>
@@ -49,10 +56,6 @@ export default {
 </script>
 
 <style>
-  .add_citizen_template div {
-    padding-left: 0px;
-    padding-right: 0px;
-  }
   .add_citizen_form_table {
     border-bottom: 1px solid darkgrey;
   }

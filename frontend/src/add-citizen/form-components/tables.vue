@@ -1,19 +1,13 @@
 <template>
   <b-container fluid
-               class="mt-1 add_citizen_form"
+               class="add_citizen_form"
                style="border: 1px solid dimgrey;
                       margin: 0px;
                       padding-left: 0px;
                       padding-right: 0px;
                       padding-bottom: 7px;"
                       >
-    <b-form-row no-gutters class="m-0"
-                style="background-color: #f0f2f8;
-                       border-top: 2px solid white;
-                       border-bottom: 2px solid #e6e9ed;
-                       height: 35px;
-                       padding-top: 7px;
-                       padding-left: 0px;"
+    <b-form-row no-gutters class="m-0 add_citizen_table_header"
                        >
       <b-col class="m-0 p-0">&nbsp&nbspService</b-col>
       <b-col class="m-0 p-0">Category</b-col>
@@ -101,5 +95,15 @@
 <style>
 .add_citizen_categories_table {
   padding: 0px;
+}
+.add_citizen_table_header {
+    background-color: rgb(179, 183, 186);
+    color: white;
+    height: 35px;
+    padding-top: 6px;
+    padding-left: 0px;
+    text-align: center;
+    font-size: 17px;
+    text-shadow: 0px 0px 2px #a5a5a5;
 }
 </style>
