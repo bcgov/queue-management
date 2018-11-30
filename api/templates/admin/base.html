@@ -36,46 +36,12 @@
   <body>
     {% block page_body %}
     <div class="container{%if config.get('FLASK_ADMIN_FLUID_LAYOUT', False) %}-fluid{% endif %}">
-      <nav class="navbar navbar-default" role="navigation">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#admin-navbar-collapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          {% block brand %}
-          <a class="navbar-brand" href="{{ admin_view.get_url('admin.index') }}">{{ admin_view.admin.name }}</a>
-          {% endblock %}
-        </div>
-        <!-- navbar content -->
-        <div class="collapse navbar-collapse" id="admin-navbar-collapse">
-          {% block main_menu %}
-          <ul class="nav navbar-nav">
-            {{ layout.menu() }}
-          </ul>
-          {% endblock %}
-
-          {% block menu_links %}
-          <ul class="nav navbar-nav navbar-right">
-            {{ layout.menu_links() }}
-          </ul>
-          {% endblock %}
-          {% block access_control %}
-          {% endblock %}
-        </div>
-      </nav>
-
       {% block messages %}
       {{ layout.messages() }}
       {% endblock %}
-
       {# store the jinja2 context for form_rules rendering logic #}
       {% set render_ctx = h.resolve_ctx() %}
-
       {% block body %}{% endblock %}
-    </div>
     {% endblock %}
 
     {% block tail_js %}
@@ -86,12 +52,10 @@
     <script type="text/javascript">
       function postSize(height){
         var target = parent.postMessage ? parent : (parent.document.postMessage ? parent.document : undefined);
-
         if(typeof target != "undefined" && document.body.scrollHeight) {
           target.postMessage(height, "*");
         }
       }
-
       $(document).ready(function() {
         if(top != self) {
           var contentHeight = $('body').height();
@@ -105,8 +69,14 @@
       {% endfor %}
     {% endif %}
     {% endblock %}
-
     {% block tail %}
     {% endblock %}
+
+    {% if not current_user.is_authenticated %}
+      <div style="list-style-type: none !important;">
+        {{ layout.menu_links() }}
+        {{ current_user.username }}
+      </div>
+    {% endif %}
   </body>
 </html>

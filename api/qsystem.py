@@ -78,6 +78,7 @@ flask_admin.add_link(admin.LogoutMenuLink(name='Logout', category='', url="/api/
 
 login_manager = LoginManager()
 login_manager.init_app(application)
+import app.auth
 
 compress = Compress()
 compress.init_app(application)
