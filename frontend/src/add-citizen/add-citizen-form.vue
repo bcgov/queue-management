@@ -2,12 +2,12 @@
   <div class="add_citizen_template">
     <template v-if="addModalSetup === 'add_mode' || addModalSetup === 'edit_mode' ">
       <div class="add_citizen_template">
-        <div class="add_citizen_padding" style="background: rgb(240, 240, 240);padding-top: 12px;padding-bottom: 40px;">
+        <div class="add_citizen_padding" style="background: rgb(240, 240, 240);padding-top: 12px;">
             <Channel />
+            <div style="transform: translateY(19px);">
+                <Filters />
+            </div>
         </div>
-        <b-container class="add_citizen_padding" style="position: absolute;top: 142px;">
-            <Filters />
-        </b-container>
         <b-container fluid class="add_citizen_padding" style="background:#504e4f; padding-top: 35px;">
             <Tables />
         </b-container>
@@ -15,13 +15,13 @@
     </template>
     <template v-else>
       <div class="add_citizen_template">
-        <div class="add_citizen_padding" style="background: rgb(240, 240, 240);padding-top: 12px;padding-bottom: 40px;">
+        <div class="add_citizen_padding" style="background: rgb(240, 240, 240);padding-top: 12px;">
             <Comments />
             <Channel />
+            <div style="transform: translateY(18px);">
+                <Filters />
+            </div>
         </div>
-        <b-container class="add_citizen_padding" style="position: absolute;top: 238px;">
-            <Filters />
-        </b-container>
         <b-container fluid class="add_citizen_padding" style="background:#504e4f; padding-top: 35px;">
             <Tables />
         </b-container>
