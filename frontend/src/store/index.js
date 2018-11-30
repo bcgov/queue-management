@@ -309,21 +309,22 @@ export const store = new Vuex.Store({
       })
     },
 
-    getCsrs(context) {
-        if (context.state.csr_states.length === 0) {
-          Axios(context).get("/csr_states/")
+    getCsrStateIDs(context) {
+        Axios(context).get("/csr_states/")
             .then(resp => {
-              var states = resp.data.csr_states;
-              states.forEach(x => {
-                context.state.csr_states[x.csr_state_name] = x.csr_state_id;
-              });
+                var states = resp.data.csr_states;
+                states.forEach(x => {
+                    context.state.csr_states[x.csr_state_name] = x.csr_state_id;
+                });
             })
             .catch(error => {
-              console.log("error @ store.actions.getCsrs");
-              console.log(error.response);
-              console.log(error.message);
+                console.log("error @ store.actions.getCsrStateIDs");
+                console.log(error.response);
+                console.log(error.message);
             });
-        }
+    },
+
+    getCsrs(context) {
         Axios(context).get('/csrs/')
             .then(resp => {
                 context.commit('setCsrs', resp.data.csrs)
