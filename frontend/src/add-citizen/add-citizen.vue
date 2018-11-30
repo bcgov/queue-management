@@ -189,7 +189,7 @@ export default {
 
 <style>
 .modal-body {
-  padding: 0;
+  padding: 0 !important;
 }
 .modal_header {
   display: flex;
