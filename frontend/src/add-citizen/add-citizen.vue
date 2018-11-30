@@ -20,12 +20,10 @@
         <h4>{{modalTitle}}</h4>
       </div>
       <div>
-        <b-button
-          size="sm"
-          class="btn-primary"
+        <button
+          class="btn btn-link"
           style="margin-left: 20px"
-          @click="toggleMinimize"
-        >{{ minimizeWindow ? "Maximize" : "Minimize" }}</b-button>
+          @click="toggleMinimize">{{ minimizeWindow ? "Maximize" : "Minimize" }}</button>
       </div>
     </div>
     <b-alert

@@ -341,7 +341,4 @@ strong {
 #serve-citizen-return-to-queue-button:hover {
     background: #e8e8e8;
 }
-.btn-link {
-    text-decoration: underline;
-}
 </style>

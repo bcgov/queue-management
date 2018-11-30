@@ -43,4 +43,7 @@ export default {
   .custom-select-sm {
     font-size: .8rem !important;
   }
+  .btn-link {
+    text-decoration: underline;
+  }
 </style>
