@@ -93,17 +93,13 @@ class Feedback(Resource):
         if password is None:
             return {"message": "SERVICENOW_PASSWORD is not set"}, 400
 
-        # user = 'CfmsApi'
-        # pwd = 'CfmsApi'
-        # headers = {"Content-Type": "application/json", "Accept": "application/json"}
-        # sndata = '{" short_description": "TheQ created incident" }'
-        # response = requests.post(url, auth=(user, pwd), headers=headers, data='{"short_description":"TheQ created incident", "description": "Test incident created by TheQ}')
-        # print("Status: ", response.status_code, "Headers: ", response.headers, "Error Response: ", response.json)
-
+        #  Generate Service Now incident.
+        #  NOTE:  Automatic email gets sent to the assignment group below
+        #         ONLY IF the email of the SERVICENOW_USER IS NOT the same
+        #         as the email of this assignment group.
         c = pysnow.Client(instance = instance, user=user, password=password)
         incident = c.resource(api_path='/table/incident')
         new_record = {
-            #'contact_type': 'Phone',  This isn't working for now. Not critical
             'category': 'Inquiry / Help',
             'cmdb_ci': 'CFMS',
             'impact': '2 - Some Customers',
@@ -126,18 +122,14 @@ class Feedback(Resource):
 
         if slack_result is None:
             if service_now_result is None:
-                print("    --> slack none, service now none")
                 result = {"message": "TheQ is not configured for feedback.  Contact your service desk."}, 400
             else:
-                print("    --> slack none, service now result")
                 result = service_now_result
 
         else:
             if service_now_result is None:
-                print("    --> slack result, service now none")
                 result = slack_result
             else:
-                print("    --> slack result, service now result")
                 result = Feedback.extract_messages(slack_result, service_now_result)
 
         return result
