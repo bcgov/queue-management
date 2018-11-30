@@ -37,28 +37,12 @@
                 :disabled="citizenInvited===true || performingAction || showAdmin"
                 id="add-citizen-button">Back Office</b-button>
     </div>
-    <div>
-      <b-button class="btn-primary mr-1"
-                style="margin-right: 20px"
-                v-if="user.role && (['ANALYTICS', 'GA', 'HELPDESK', 'SUPPORT'].indexOf(user.role.role_code) >= 0)"
-                @click="clickAdmin"
-                id="click-feedback-button">Toggle Admin</b-button>
-      <b-button class="btn-primary mr-1"
-                style="margin-right: 20px"
-                :disabled="showAdmin"
-                @click="clickGAScreen"
-                v-if="user.role && user.role.role_code=='GA'">Toggle GA Panel</b-button>
-      <b-button class="btn-primary"
-                v-if="!showServiceModal"
-                @click="clickFeedback"
-                id="click-feedback-button">Feedback</b-button>
-    </div>
+    <div />
   </div>
 </template>
 
 <script>
   import { mapState, mapMutations, mapGetters, mapActions } from 'vuex'
-
   export default {
     name: "DashButtons",
     computed: {

@@ -16,7 +16,7 @@
 
 <template>
   <div class="nav-container">
-    <div class="dash-button-flex-button-container pb-0 mb-0">
+    <div class="dash-button-flex-button-container pb-0 mb-3">
 
       <!-- SLOT FOR EACH VIEW'S BUTTON CONTROLS-->
       <router-view name="buttons"/>
@@ -31,39 +31,66 @@
           </template>
           <div :style="{width:200+'px'}">
             <b-dropdown-item to="/queue">The Q</b-dropdown-item>
-            <!--
-            <b-dropdown-item to="/exams">Manage Exams</b-dropdown-item>
-            <b-dropdown-item to="/cal">Room Booking</b-dropdown-item>
-            <b-dropdown-item>Reporting</b-dropdown-item>
-            <b-dropdown-item>GA Panel</b-dropdown-item>
-            <b-dropdown-item>Admin Console</b-dropdown-item>
-            <b-dropdown-item>My Settings</b-dropdown-item>
+
+            <template  v-if="user.role && user.role.role_code=='GA'">
+              <b-dropdown-item @click="clickGAScreen">
+                <b-check :checked="showGAScreenModal"><span style="font-weight: 400;">Show GA Panel</span></b-check>
+              </b-dropdown-item>
+              <b-dropdown-divider />
+            </template>
+
+            <b-dropdown-item v-if="showAdmin" to="/admin">Administration</b-dropdown-item>
+            <b-dropdown-divider v-if="showAdmin" />
+
             <b-dropdown-item>
-              <b-button block class="btn-primary">
-                Feedback
-              </b-button>
-            </b-dropdown-item>-->
+              <b-button class="btn-primary w-100 m-0"
+                        v-if="!showServiceModal"
+                        @click="clickFeedback"
+                        id="click-feedback-button">Feedback</b-button></b-dropdown-item>
+
+
+            </b-dropdown-item>
           </div>
         </b-dropdown>
       </div>
     </div>
 
     <!--SLOT FOR EACH VIEW'S MAIN CONTENT-->
-    <router-view />
+    <div style="width: 98%; margin-right: 15px;">
+      <router-view />
+    </div>
 
   </div>
 </template>
 
 <script>
-  import { mapState } from 'vuex'
-
+  import { mapState, mapActions, mapMutations } from 'vuex'
   export default {
     name: 'Nav',
     computed: {
       ...mapState([
         'navigationVisible',
+        'showServiceModal',
+        'showGAScreenModal',
+        'user'
       ]),
+      showAdmin() {
+        let roles = ['GA', 'ANALYTICS', 'HELPDESK', 'SUPPORT']
+        if (this.user) {
+          if (roles.includes(this.user.role.role_code)) {
+            return true
+          }
+        }
+        return false
+      }
     },
+    methods: {
+      ...mapActions(['clickGAScreen']),
+      ...mapMutations(['toggleFeedbackModal']),
+      clickFeedback() {
+        this.toggleFeedbackModal(true)
+      },
+    }
   }
 </script>
 

@@ -52,12 +52,6 @@ limitations under the License.*/
         <GAScreen />
       </div>
     </div>
-    <div v-if="showAdmin">
-      <iframe :src="iframeUrl"
-              :height="iframeHeight"
-              width="100%"
-              frameborder="0" />
-    </div>
   </div>
   <div v-else-if="isLoggedIn && !userLoadingFail">
     <div class="loader" style="margin-top: 250px"></div>
@@ -141,7 +135,7 @@ import ServeCitizen from './serve-citizen'
         if (this.isDragged) return this.availH + this.offset
       },
       holdH() {
-        return (this.availH - this.dashH - 15)
+        return (this.availH - this.dashH - 40)
       },
       csrId() {
         return this.user.csr_id

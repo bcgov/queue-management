@@ -18,8 +18,10 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import App from './App'
 import Dash from './serve-citizen/dash.vue'
-import DashButtons from '@/serve-citizen/dash-buttons'
+import ButtonsDash from '@/serve-citizen/dash-buttons'
 import Smartboard from './smartboard/'
+import ButtonsAdmin from './buttons-admin'
+import Admin from './admin'
 
 Vue.use(Router)
 
@@ -30,15 +32,22 @@ export default new Router({
       path: '/',
       component: App,
       redirect: '/queue',
-        children: [
-          {
-            path: 'queue',
-            components: {
-              default: Dash,
-              buttons: DashButtons,
-            },
+      children: [
+        {
+          path: 'queue',
+          components: {
+            default: Dash,
+            buttons: ButtonsDash,
           },
-        ]
+        },
+        {
+          path: 'admin',
+          components: {
+            default: Admin,
+            buttons: ButtonsAdmin
+          }
+        },
+      ]
     },
     {
       path:'/smartboard/:id',
