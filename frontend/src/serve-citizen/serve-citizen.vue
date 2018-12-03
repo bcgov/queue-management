@@ -2,11 +2,11 @@
 
 <template>
   <div id="serveModal" class="serve-modal">
-    <div class="serve-modal-content" v-dragged="onDrag">
+    <div class="serve-modal-content">
       <b-alert :show="this.serveModalAlert != ''"
                 style="h-align: center"
                 variant="warning">{{this.serveModalAlert}}</b-alert>
-      <div class="modal_header">
+      <div class="modal_header" v-dragged="onDrag">
         <div>
           <h4 style="font-weight:900; color:#6e6e6e">Serve Citizen</h4>
         </div>
@@ -251,7 +251,9 @@ export default {
       }
       this.left = (this.left || 0) + deltaX
       this.top = (this.top || 0) + deltaY
-      el.style.transform = "translate("+this.left+"px,"+this.top+"px)"
+
+      var serve_modal = document.getElementsByClassName('serve-modal-content')[0]
+      serve_modal.style.transform = "translate("+this.left+"px,"+this.top+"px)"
     }
   }
 }

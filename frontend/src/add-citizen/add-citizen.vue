@@ -10,11 +10,11 @@
     no-close-on-esc
     class="m-0 p-0"
     @shown="setupForm()"
-    v-dragged="onDrag"
   >
     <div
       style="display: flex; flex-direction: row; justify-content: space-between"
       class="modal_header"
+      v-dragged="onDrag"
     >
       <div>
         <h4>{{modalTitle}}</h4>
@@ -157,17 +157,7 @@ export default {
     toggleMinimize() {
       this.minimizeWindow = !this.minimizeWindow;
     },
-    onDrag({
-      el,
-      deltaX,
-      deltaY,
-      offsetX,
-      offsetY,
-      clientX,
-      clientY,
-      first,
-      last
-    }) {
+    onDrag({ el, deltaX, deltaY, offsetX, offsetY, clientX, clientY, first, last }) {
       if (first) {
         this.dragged = true;
         return;
@@ -178,10 +168,9 @@ export default {
       }
       this.left = (this.left || 0) + deltaX;
       this.top = (this.top || 0) + deltaY;
-      let transform = "translate(" + this.left + "px," + this.top + "px)";
-      console.log(transform);
-      console.log(el);
-      el.querySelector(".modal-content").style.transform = transform;
+
+      var add_modal = document.getElementsByClassName('modal-content')[0]
+      add_modal.style.transform = "translate("+this.left+"px,"+this.top+"px)"
     }
   }
 };
