@@ -185,6 +185,7 @@ export default {
   flex-direction: row;
   justify-content: space-between;
   padding: 20px 20px 4px;
+  cursor: grab;
 }
 
 .add-buttons {

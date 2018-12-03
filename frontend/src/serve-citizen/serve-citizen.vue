@@ -282,12 +282,6 @@ export default {
     max-width: 900px;
     position: relative;
 }
-.modal_header{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    padding: 20px 20px 4px;
-}
 #serve-citizen-modal-top {
  background-color: #F0F0F0;
  color: #6e6e6e;
