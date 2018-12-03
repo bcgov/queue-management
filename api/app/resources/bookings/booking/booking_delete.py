@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from flask import g
 from flask_restplus import Resource
-from app.models.bookings import Booking
+from app.models.bookings import Booking, Room
 from app.schemas.bookings import BookingSchema
 from app.models.theq import CSR
 from qsystem import api, db, oidc
@@ -30,11 +30,8 @@ class BookingDelete(Resource):
 
         csr = CSR.find_by_username(g.oidc_token_info['username'])
 
-        booking = Booking.query.filter_by(booking_id=id).first_or_404()
+        booking = Booking.query.filter_by(booking_id=id).join(Room).filter_by(office_id=csr.office_id).first_or_404()
 
-        if booking.exam.office_id == csr.office_id:
-            db.session.delete(booking)
-            db.session.commit()
-            return {}, 204
-        else:
-            return {"The Booking Office ID and CSR Office ID do not match!"}, 403
+        db.sessiion.delete(booking)
+        db.session.commit()
+        return {}, 204

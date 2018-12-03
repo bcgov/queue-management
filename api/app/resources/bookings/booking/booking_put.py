@@ -16,7 +16,7 @@ import logging
 from flask import request, g
 from flask_restplus import Resource
 from qsystem import api, db, oidc
-from app.models.bookings import Booking
+from app.models.bookings import Booking, Room
 from app.models.theq import CSR
 from app.schemas.bookings import BookingSchema
 
@@ -27,7 +27,7 @@ class BookingPut(Resource):
     booking_schema = BookingSchema()
 
     @oidc.accept_token(require_token=True)
-    def put(self, booking_id):
+    def put(self, id):
 
         csr = CSR.find_by_username(g.oidc_token_info['username'])
 
@@ -36,7 +36,7 @@ class BookingPut(Resource):
         if not json_data:
             return {"message": "No input data received for updating a booking"}
 
-        booking = Booking.query.filter_by(booking_id=booking_id).first_or_404()
+        booking = Booking.query.filter_by(booking_id=id).first_or_404()
 
         booking, warning = self.booking_schema.load(json_data, instance=booking, partial=True)
 
@@ -44,7 +44,9 @@ class BookingPut(Resource):
             logging.warning("WARNING: %s", warning)
             return {"message": warning}, 422
 
-        if booking.exam.office_id == csr.office_id:
+        room = Room.query.filter_by(room_id=booking.room_id).first()
+
+        if room.office_id == csr.office_id:
 
             db.session.add(booking)
             db.session.commit()

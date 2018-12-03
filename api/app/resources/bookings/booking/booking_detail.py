@@ -16,7 +16,7 @@ import logging
 from sqlalchemy import exc
 from flask import g
 from flask_restplus import Resource
-from app.models.bookings import Booking
+from app.models.bookings import Booking, Exam, Room
 from app.models.theq import CSR
 from app.schemas.bookings import BookingSchema
 from qsystem import api, oidc
@@ -33,14 +33,11 @@ class BookingDetail(Resource):
         csr = CSR.find_by_username(g.oidc_token_info['username'])
 
         try:
-            booking = Booking.query.filter_by(booking_id=id).first_or_404()
+            booking = Booking.query.filter_by(booking_id=id).join(Room).filter_by(office_id=csr.office_id).first_or_404()
 
-            if booking.exam.office_id == csr.office_id:
-                result = self.booking_schema.dump(booking)
-                return {"booking": result.data,
-                        "errors": result.errors}, 200
-            else:
-                return {"CSR Office ID doesn't match Booking Office ID!"}, 403
+            result = self.booking_schema.dump(booking)
+            return {"booking": result.data,
+                    "errors": result.errors}, 200
 
         except exc.SQLAlchemyError as error:
             logging.error(error, exc_info=True)

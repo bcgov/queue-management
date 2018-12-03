@@ -15,7 +15,7 @@ limitations under the License.'''
 import logging
 from flask_restplus import Resource
 from flask import request, g
-from app.models.bookings import Exam
+from app.models.bookings import Room
 from app.schemas.bookings import BookingSchema
 from app.models.theq import CSR
 from qsystem import api, api_call_with_retry, db, oidc
@@ -43,9 +43,9 @@ class BookingPost(Resource):
             logging.warning("WARNING: %s", warning)
             return {"message": warning}, 422
 
-        exam = Exam.query.filter_by(exam_id=booking.exam_id).first()
+        room = Room.query.filter_by(room_id=booking.room_id).first()
 
-        if exam.office_id == csr.office_id:
+        if room.office_id == csr.office_id:
 
             db.session.add(booking)
             db.session.commit()

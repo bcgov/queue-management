@@ -16,7 +16,7 @@ import logging
 from flask import g
 from flask_restplus import Resource
 from sqlalchemy import exc
-from app.models.bookings import Booking, Exam
+from app.models.bookings import Booking, Room
 from app.models.theq import CSR
 from app.schemas.bookings import BookingSchema
 from qsystem import api, oidc
@@ -33,7 +33,7 @@ class BookingList(Resource):
         csr = CSR.find_by_username(g.oidc_token_info['username'])
 
         try:
-            bookings = Booking.query.join(Exam).filter_by(office_id=csr.office_id).all()
+            bookings = Booking.query.join(Room).filter_by(office_id=csr.office_id).all()
             result = self.booking_schema.dump(bookings)
             return {'bookings': result.data,
                     'errors': result.errors}, 200

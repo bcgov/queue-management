@@ -19,7 +19,7 @@ from qsystem import db
 class Exam(Base):
 
     exam_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    booking_id = db.Column(db.Integer, db.ForeignKey("booking.booking_id"), nullable=True)
+    booking_id = db.Column(db.Integer, db.ForeignKey("booking.booking_id", ondelete="set null"), nullable=True)
     exam_type_id = db.Column(db.Integer, db.ForeignKey("examtype.exam_type_id"), nullable=False)
     invigilator_id = db.Column(db.Integer, db.ForeignKey("invigilator.invigilator_id"), nullable=False)
     office_id = db.Column(db.Integer, db.ForeignKey("office.office_id"), nullable=False)
