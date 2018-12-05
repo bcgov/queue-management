@@ -43,6 +43,7 @@ def on_join(message):
         if csr:
             join_room(csr.office_id)
             emit('joinRoomSuccess', {"sucess": True})
+            emit('get_Csr_State_IDs', {"success": True})
             emit('update_customer_list', {"success": True})
         else:
             print("Fail")

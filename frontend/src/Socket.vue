@@ -61,13 +61,20 @@ limitations under the License.*/
         socket.on('reconnecting',()=>{this.onReconnecting()})
         socket.on('joinRoomSuccess',()=>{this.onJoinRoom(true)})
         socket.on('joinRoomFail',()=>{this.onJoinRoom(false)})
+        socket.on('get_Csr_State_IDs',()=>{this.getCsrStateIDs()})
         socket.on('update_customer_list',()=>{this.onUpdateCustomerList()})
         socket.on('update_active_citizen', (citizen) => { this.onUpdateActiveCitizen(citizen) } )
+        socket.on('csr_update', ()=>{this.onCSRUpdate()})
       },
 
       join() {
         socket.emit('joinRoom',{count:0}, ()=>{console.log('socket emit: "joinRoom"')}
         )
+      },
+
+      onCSRUpdate(){
+          console.log('socket received: "updateCSRList"')
+          this.$store.dispatch('getCsrs')
       },
 
       onConnect() {
@@ -105,6 +112,11 @@ limitations under the License.*/
       onUpdateCustomerList() {
           console.log('socket received: "updateCustomerList"')
           this.$store.dispatch('getAllCitizens')
+      },
+
+      getCsrStateIDs() {
+          console.log('socket received: "getCsrStateIDs"')
+          this.$store.dispatch('getCsrStateIDs')
       },
 
       close() {

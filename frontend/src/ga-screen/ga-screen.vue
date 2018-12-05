@@ -40,6 +40,13 @@ limitations under the License.*/
              :fields="fields"
              outlined
              class="p-0 m-0 w-100">
+
+        <template slot="end_service" slot-scope="data" v-if="data.value">
+            <button @click.stop="clickEnd(data.value.id)" class="ga-close btn btn-secondary btn-sm">
+                {{data.value.label}}
+            </button>
+        </template>
+
     </b-table>
   </div>
 </template>
@@ -82,17 +89,24 @@ export default {
           label: 'Comments',
           sortable: true,
           formatter: (value) => { return value }
+        },
+        {
+            key: 'end_service',
+            label: 'End Service'
         }
       ],
       timer: null
     }
   },
   computed: {
-    ...mapState(['showGAScreenModal', 'csrs', 'citizens']),
+    ...mapState(['showGAScreenModal', 'csrs', 'citizens', 'csr_states']),
     ...mapGetters(['citizens_queue', 'on_hold_queue', 'reception'])
   },
   methods: {
-    ...mapActions(['closeGAScreenModal', 'getCsrs']),
+    ...mapActions(['closeGAScreenModal', 'getCsrs', 'finishServiceFromGA']),
+    clickEnd(citizen_id){
+        this.finishServiceFromGA(citizen_id)
+    },
     ga_citizens_waiting() {
       return this.citizens_queue.length
     },
@@ -123,8 +137,7 @@ export default {
       for(let i = 0; i < this.citizens.length; i++) {
         for(let j = 0; j < this.citizens[i].service_reqs.length; j++) {
           let activePeriod = this.citizens[i].service_reqs[j].periods.filter(p => p.time_end === null)[0]
-
-          if (activePeriod && activePeriod.ps.ps_name === 'Being Served' && activePeriod.csr_id === csr.csr_id) {
+          if (activePeriod && (activePeriod.ps.ps_name === 'Invited' || activePeriod.ps.ps_name === 'Being Served') && activePeriod.csr_id === csr.csr_id) {
             return this.citizens[i]
           }
         }
@@ -135,34 +148,45 @@ export default {
     computed_csrs() {
       let computed_csrs = []
       let currentDate = new Date()
+      const breakStateID = this.csr_states['Break'];
       this.csrs.forEach(csr => {
         let activeCitizen = this.get_citizen_for_csr(csr)
 
         if (activeCitizen === null) {
-          csr['wait_time'] = null
+
+          csr.csr_state_id === breakStateID ? csr['wait_time'] = 'ON BREAK' : csr['wait_time'] = null;
           csr['serving_time'] = null
           csr['citizen'] = null
           csr['service_request'] = null
+          csr['end_service'] = null
           computed_csrs.push(csr)
         } else {
           let activeServiceRequest = activeCitizen.service_reqs.filter(sr => sr.periods.some(p => p.time_end === null))[0]
-          let firstServedPeriod = activeCitizen.service_reqs[0].periods.filter(p => p.ps.ps_name === "Being Served")[0]
-          let citizenStartDate = new Date(activeCitizen.start_time)
-          let firstServedPeriodDate = new Date(firstServedPeriod.time_start)
 
-          let waitSeconds = (firstServedPeriodDate - citizenStartDate) / 1000
-          let serveSeconds = (currentDate - firstServedPeriodDate) / 1000
+          // Add Wait time and Serve time when service begins
+          if(activeCitizen.service_reqs[0].periods.filter(p => p.ps.ps_name === "Being Served")[0]){
+            let firstServedPeriod = activeCitizen.service_reqs[0].periods.filter(p => p.ps.ps_name === "Being Served")[0]
+            let citizenStartDate = new Date(activeCitizen.start_time)
+            let firstServedPeriodDate = new Date(firstServedPeriod.time_start)
 
-          let waitDate = new Date(null)
-          waitDate.setSeconds(waitSeconds)
+            let waitSeconds = (firstServedPeriodDate - citizenStartDate) / 1000
+            let serveSeconds = (currentDate - firstServedPeriodDate) / 1000
 
-          let serveDate = new Date(null)
-          serveDate.setSeconds(serveSeconds)
+            let waitDate = new Date(null)
+            waitDate.setSeconds(waitSeconds)
 
-          csr['wait_time'] = `${waitDate.getUTCHours()}h ${waitDate.getMinutes()}min`
-          csr['serving_time'] = `${serveDate.getUTCHours()}h ${serveDate.getMinutes()}min`
+            let serveDate = new Date(null)
+            serveDate.setSeconds(serveSeconds)
+            csr['wait_time'] = `${waitDate.getUTCHours()}h ${waitDate.getMinutes()}min`
+            csr['serving_time'] = `${serveDate.getUTCHours()}h ${serveDate.getMinutes()}min`
+          } else {
+            csr['wait_time'] = null
+            csr['serving_time'] = null
+          }
+
           csr['citizen'] = activeCitizen
           csr['service_request'] = activeServiceRequest
+          csr['end_service'] = {label:'End Service', id: activeCitizen.citizen_id}
           computed_csrs.push(csr)
         }
       })
@@ -176,3 +200,13 @@ export default {
 }
 
 </script>
+
+<style>
+td {
+    vertical-align: middle;
+}
+.ga-close {
+    font-size: 13px;
+}
+</style>
+

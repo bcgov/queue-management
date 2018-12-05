@@ -1,7 +1,7 @@
 
 
 <template>
-  <b-container class="mt-4">
+  <div id="serve-citizen-table-container">
     <b-row>
       <b-col>
         <b-table :fields="fields"
@@ -15,16 +15,7 @@
                  style="text-align: center">
           <template slot="status" slot-scope="row">
             <div v-if="row.item.periods.some(p=>p.time_end===null)===true">
-              <div style="display: inline-block;
-                          color: white;
-                          font-size: .75rem;
-                          padding-top: 3px;
-                          padding-bottom: 2px;
-                          padding-right: 10px;
-                          padding-left: 10px;
-                          border-radius: 16px;
-                          border: 1.5px solid #2dc01d;
-                          background-color: limegreen;">Active</div>
+              <div style="font-weight: 900;">Active</div>
             </div>
             <div v-if="row.item.periods.some(p=>p.time_end===null)===false">
               Inactive
@@ -56,12 +47,7 @@
             <div v-if="row.item.periods.some(p => p.time_end === null) === true" >
               <b-button size="sm"
                         @click="clickEdit"
-                        style="height: 1.8em;
-                               display: inline-block;
-                               padding-top: 3px;
-                               padding-bottom: 3px;
-                               padding-left: 8px;
-                               padding-right: 8px;">edit</b-button>
+                        variant="link">edit</b-button>
             </div>
             <div v-if="row.item.periods.some(p=>p.time_end===null)===false">
               <b-button size="sm" variant="link" @click="clickMakeActive(row.item.sr_id)">make active</b-button>
@@ -70,7 +56,7 @@
         </b-table>
       </b-col>
     </b-row>
-  </b-container>
+  </div>
 </template>
 
 <script>
@@ -129,3 +115,32 @@ export default {
   }
 }
 </script>
+<style>
+#serve-citizen-table-container {
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    background: #504E4F;
+    padding-top: 40px;
+}
+
+#serve-table {
+    background-color: white;
+}
+#serve-table .table-info,
+#serve-table .table-info>td,
+#serve-table .table-info>th {
+    background-color: #ecf9ff;
+}
+#serve-table > thead > tr > th {
+    background-color: #B5B7BC;
+    color: white;
+    padding: 7px;
+    font-size: 16px;
+}
+td {
+    vertical-align: middle!important;
+}
+</style>

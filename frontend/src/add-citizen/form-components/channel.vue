@@ -1,20 +1,21 @@
 <template>
-  <b-container fluid class="add_citizen_form mt-2">
+  <div class="add_citizen_form mt-2">
     <b-form-row no-gutters>
       <b-col cols="auto">
-        <label>Channel</label>
+        <label class="add_citizen_form_label">Channel:</label>
       </b-col>
       <b-col>
         <b-select id="add_citizen_channels_select"
-                  :options="channel_options" 
+                  :options="channel_options"
                   v-model="channel"
+                  style="height: 38px; font-size: .8rem;"
                   size="sm"
                   label="Channels"
                   placeholder="Select delivery channel"
                   />
       </b-col>
     </b-form-row>
-  </b-container>
+  </div>
 </template>
 
 <script>

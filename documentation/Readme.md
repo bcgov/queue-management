@@ -30,7 +30,7 @@ If you want to just try out the application, here are some instructions to get i
 
 1. `git clone https://github.com/bcgov/queue-management.git`
 1. `export DOCKER_HOST=tcp://0.0.0.0:2375`
-1. `cd /queue-management/keycloak-local-testserver`
+1. `cd queue-management/keycloak-local-testserver`
 1. `chmod +x *.sh`
 1. `docker build -t keycloak .`
 1. `docker run -it --name keycloak -p 8085:8080 keycloak`
@@ -45,13 +45,14 @@ Ensure you have python 3. I also had to install: gcc, python3-venv, libmysqlclie
 
 1. `python3 -m venv env`
 1. `source env/bin/activate`
-1. `cd /queue-management/api`
+1. `cd queue-management/api`
 1. `pip3 install -r requirements.txt`
 
 ### Add two required keycloak config files
 
-1. `cp /queue-management/documentation/demo-files/secrets.json /queue-management/api/client_secrets/secrets.json`
-1. `cp /queue-management/documentation/demo-files/keycloak-local.json /queue-management/frontend/static/keycloak-local.json`
+1. `cd queue-management`
+1. `cp documentation/demo-files/secrets.json api/client_secrets/secrets.json`
+1. `cp documentation/demo-files/keycloak-local.json frontend/static/keycloak-local.json`
 
 ### Set Enviornment Variables required:
 

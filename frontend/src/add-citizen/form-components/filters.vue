@@ -1,27 +1,24 @@
 <template>
-  <b-container class="add_citizen_form mt-2">
+  <div>
     <b-form-row no-gutters>
-      <b-col>
-        <label>Type service here</label>
-      </b-col>
-    </b-form-row>
-    <b-form-row no-gutters>
-      <b-col>
+      <b-col cols="7">
           <input ref="filterref"
                  style="height: 38px; font-size: .8rem;"
                  class="form-control"
                  v-model="search"
+                 placeholder="Type service here"
                  ></input>
       </b-col>
       <b-col>
           <b-select id="add_citizen_catagories_select"
+                    style="height: 38px; font-size: .8rem;"
                     :options="categories_options"
                     v-model="category"
                     size="sm"
                     placeholder="Filter by category"></b-select>
       </b-col>
     </b-form-row>
-  </b-container>
+  </div>
 </template>
 
 <script>
@@ -85,5 +82,8 @@
   b-col {
     padding: 0px;
     margin: 0px;
+  }
+  * {
+      border-radius: 0;
   }
 </style>

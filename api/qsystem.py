@@ -44,7 +44,7 @@ else:
 
 if application.config['ACTIVE_MQ_URL'] is not None:
     socketio.init_app(application, async_mode='eventlet', message_queue=application.config['ACTIVE_MQ_URL'], path='/api/v1/socket.io')
-else:  
+else:
     socketio.init_app(application, path='/api/v1/socket.io')
 
 # Set socket logging to errors only to reduce log spam
@@ -119,6 +119,7 @@ import app.resources.citizen.citizen_service_requests
 import app.resources.citizen.citizen_specific_invite
 import app.resources.csrs
 import app.resources.csr_detail
+import app.resources.csr_states
 import app.resources.feedback
 import app.resources.health
 import app.resources.login

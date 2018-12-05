@@ -23,7 +23,16 @@ limitations under the License.*/
     </div>
 
     <div v-show="this.$store.state.isLoggedIn"
-         style="display: flex; flex-direction: row; justify-content: space-between">
+         style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
+
+      <div style="margin-right: 22px;margin-top: 9px;">
+        <label id="break-switch">
+          <input type="checkbox" v-model="break_toggle">
+          <span class="circle1"></span>
+          <span class="circle2"></span>
+        </label>
+        <p class="switch-p">{{user.csr_state_id === csr_states['Break'] ? 'On Break' : 'Active' }}</p>
+      </div>
       <div id="select-wrapper" style="padding-right: 20px" v-if="reception">
          <select id="counter-selection" class="custom-select" v-model="counter_selection">
            <option value='counter'>Counter</option>
@@ -47,7 +56,7 @@ limitations under the License.*/
 
 <script>
 import _ from 'lodash'
-import { mapActions, mapGetters, mapMutations } from 'vuex'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 
   export default {
     name: 'Login',
@@ -56,6 +65,7 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
       _.defer(this.initLocalStorage)
     },
     computed: {
+      ...mapState(['user', 'csr_states']),
       ...mapGetters(['quick_trans_status', 'reception', 'receptionist_status']),
       // set and get state of counter type (select dropdown in nav)
       counter_selection: {
@@ -71,13 +81,31 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
         set(value) {
           this.setQuickTransactionState(value === 'quick')
           this.setReceptionistState(value === 'receptionist')
-          this.updateCSRState()
+          this.updateCSRCounterTypeState()
         }
-      }
+      },
+      break_toggle: {
+        get() {
+            if(this.user.csr_state_id === this.csr_states['Break']){
+                return false
+            } else {
+                return true
+            }
+        },
+        set(value) {
+            var breakID = this.csr_states['Break']
+            var loginID = this.csr_states['Login']
+
+            let id = value ? name = loginID : name = breakID;
+            console.log(id)
+            this.setCSRState(id)
+            this.updateCSRState()
+        }
+      },
     },
     methods: {
-      ...mapActions(['updateCSRState']),
-      ...mapMutations(['setQuickTransactionState', 'setReceptionistState']),
+      ...mapActions(['updateCSRCounterTypeState', 'updateCSRState']),
+      ...mapMutations(['setQuickTransactionState', 'setReceptionistState', 'setCSRState']),
       initLocalStorage() {
         if(localStorage.token) {
           let tokenExp = localStorage.tokenExp
@@ -166,6 +194,18 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
         localStorage.removeItem("refreshToken")
       },
 
+      setBreakClickEvent(){
+        // Click anywhere on screen to end "Break"
+        document.body.addEventListener('click', this.stopBreak);
+        document.getElementById('break-switch').style.pointerEvents = 'none'; //Prevent double click event
+      },
+
+      stopBreak(){
+        const loginStateID = this.csr_states['Login'];
+        this.setCSRState(loginStateID)
+        this.updateCSRState()
+      },
+
       refreshToken(minValidity) {
         this.$keycloak.updateToken(minValidity).success(refreshed => {
           if (refreshed) {
@@ -177,12 +217,15 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
           output('Failed to refresh token')
         })
       },
-
-      updateTransactionStatus(e) {
-        this.setQuickTransactionState(e)
-        this.updateCSRState()
-      }
-    }
+    },
+    updated(){
+        if(this.user.csr_state_id === this.csr_states['Break']){
+            this.setBreakClickEvent();
+        } else {
+          document.body.removeEventListener('click', this.stopBreak)
+          document.getElementById('break-switch').style.pointerEvents = 'all';
+        }
+    },
   }
 </script>
 
@@ -200,5 +243,61 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
 
 .navbar-brand {
   font-size: .85rem;
+}
+
+#break-switch {
+    position: relative;
+    display: inline-block;
+    width: 66px;
+    height: 33px;
+    border-radius: 16px;
+    margin: 0;
+    background: white;
+    cursor: pointer;
+}
+
+#break-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.circle1 {
+    width: 25px;
+    height: 25px;
+    background-color: #6c757d;
+    -webkit-transition: .2s;
+    transition: .2s;
+    position: absolute;
+    border-radius: 50%;
+    top: 4px;
+    left: 4px;
+}
+
+.circle2 {
+    width: 25px;
+    height: 25px;
+    background-color: red;
+    -webkit-transition: .2s;
+    transition: .2s;
+    position: absolute;
+    border-radius: 50%;
+    top: 4px;
+    right: 4px;
+}
+
+input:checked + .circle1 {
+  background-color: lightgreen;
+}
+
+input:checked + .circle1 + .circle2 {
+    background-color: #6c757d;
+}
+
+.switch-p {
+    margin: 0;
+    text-align: center;
+    color: white;
+    font-size: 14px;
 }
 </style>

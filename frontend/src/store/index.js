@@ -75,6 +75,12 @@ export const store = new Vuex.Store({
     addNextService: false,
     user: {
       csr_id: null,
+      csr_state_id: null,
+      csr_state: {
+        csr_state_desc: null,
+        csr_state_id: null,
+        csr_state_name: null
+      },
       username: null,
       office: {
         office_id: null,
@@ -87,6 +93,7 @@ export const store = new Vuex.Store({
       qt_xn_csr_ind: true,
       receptionist_ind: null
     },
+    csr_states: [],
     userLoadingFail: false
   },
 
@@ -302,19 +309,31 @@ export const store = new Vuex.Store({
       })
     },
 
+    getCsrStateIDs(context) {
+        Axios(context).get("/csr_states/")
+            .then(resp => {
+                var states = resp.data.csr_states;
+                states.forEach(x => {
+                    context.state.csr_states[x.csr_state_name] = x.csr_state_id;
+                });
+            })
+            .catch(error => {
+                console.log("error @ store.actions.getCsrStateIDs");
+                console.log(error.response);
+                console.log(error.message);
+            });
+    },
+
     getCsrs(context) {
-      //We only need to get the CSRs once
-      if (context.state.csrs === null || context.state.csrs.length === 0) {
         Axios(context).get('/csrs/')
-        .then( resp => {
-          context.commit('setCsrs', resp.data.csrs)
-        })
-        .catch(error => {
-          console.log('error @ store.actions.getCsrs')
-          console.log(error.response)
-          console.log(error.message)
-        })
-      }
+            .then(resp => {
+                context.commit('setCsrs', resp.data.csrs)
+            })
+            .catch(error => {
+                console.log('error @ store.actions.getCsrs')
+                console.log(error.response)
+                console.log(error.message)
+            })
     },
 
     getServices(context) {
@@ -794,7 +813,7 @@ export const store = new Vuex.Store({
 
       context.dispatch('putCitizen').then( (resp) => {
         context.dispatch('putServiceRequest').then( () => {
-          context.dispatch('postFinishService', citizen_id).then( () => {
+          context.dispatch('postFinishService', {citizen_id}).then( () => {
             context.commit('toggleServiceModal', false)
             context.commit('toggleBegunStatus', false)
             context.commit('toggleInvitedStatus', false)
@@ -808,6 +827,10 @@ export const store = new Vuex.Store({
       }).catch(() => {
         context.commit('setPerformingAction', false)
       })
+    },
+
+    finishServiceFromGA(context, citizen_id) {
+      context.dispatch('postFinishService', {citizen_id, inaccurate:'true'})
     },
 
     clickServiceModalClose(context) {
@@ -900,9 +923,10 @@ export const store = new Vuex.Store({
       })
     },
 
-    postFinishService(context, citizen_id) {
+    postFinishService(context, payload) {
+      console.log(payload);
       return new Promise((resolve, reject) => {
-        let url = `/citizens/${citizen_id}/finish_service/`
+          let url = `/citizens/${payload.citizen_id}/finish_service/?inaccurate=${payload.inaccurate}`
         Axios(context).post(url).then(resp=>{
           resolve(resp)
         }, error => {
@@ -1184,7 +1208,7 @@ export const store = new Vuex.Store({
     },
 
     //Updates the counter's type from the state after selecting from the dropdown (regular counter, quick transaction, or receptionist)
-      updateCSRState(context) {
+    updateCSRCounterTypeState(context) {
       let csr_id = context.state.user.csr_id
       Axios(context).put(`/csrs/${csr_id}/`, {
         qt_xn_csr_ind: context.state.user.qt_xn_csr_ind,
@@ -1192,7 +1216,14 @@ export const store = new Vuex.Store({
       })
       .then( resp => {
       })
-    }
+    },
+
+    updateCSRState(context) {
+      let csr_id = context.state.user.csr_id
+      Axios(context).put(`/csrs/${csr_id}/`, {
+        csr_state_id: context.state.user.csr_state_id,
+      })
+    },
   },
 
   mutations: {
@@ -1385,6 +1416,8 @@ export const store = new Vuex.Store({
     setQuickTransactionState: (state, payload) => state.user.qt_xn_csr_ind = payload,
 
     setReceptionistState: (state, payload) => state.user.receptionist_ind = payload,
+
+    setCSRState: (state, payload) => state.user.csr_state_id = payload,
 
     setOffice: (state, officeType) => state.officeType = officeType,
 
