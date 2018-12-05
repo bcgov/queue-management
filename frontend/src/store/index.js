@@ -25,6 +25,24 @@ Vue.use(Vuex)
 export const store = new Vuex.Store({
 
   state: {
+    addIndividualITAExamModalVisibe: false,
+    examInventory: [
+      {
+        event_id: 1,
+        booking_id: null,
+        exam_type_id: 2,
+        invigilator_id: null,
+        office_id: 1,
+        exam_name: 'Some Exam Name',
+        examinee_name: 'Student One',
+        expiry_date: 'Jan 22, 2019',
+        notes: '250-477-3960',
+        exam_received: 'Oct 24, 2018',
+        session_number: null,
+        number_of_students: 1,
+        exam_method: 'online',
+      },
+    ],
     iframeLogedIn: false,
     viewPortSizes: {
       h: null,
@@ -1476,6 +1494,8 @@ export const store = new Vuex.Store({
 
     setiframeLogedIn: (state, value) => state.iframeLogedIn = value,
 
-    setNavigation: (state, value) => state.adminNavigation = value
+    setNavigation: (state, value) => state.adminNavigation = value,
+
+    toggleAddIndividualITAExam: (state, payload) => state.addIndividualITAExamModalVisibe = payload,
   }
 })
