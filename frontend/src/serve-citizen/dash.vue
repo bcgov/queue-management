@@ -122,7 +122,7 @@ import ServeCitizen from './serve-citizen'
         'userLoadingFail'
       ]),
       fullHoldH() {
-        return this.totalH - this.qLengthH - this.buttonH - 16
+        return this.totalH - this.qLengthH - this.buttonH - 50
       },
       availH() {
         return this.totalH - (2 * this.qLengthH) - this.buttonH - 16
