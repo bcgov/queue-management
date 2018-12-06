@@ -56,7 +56,7 @@
         }
       },
       url() {
-        return process.env.SOCKET_URL + '/admin/' + this.navigation
+        return process.env.SOCKET_URL + '/admin/' + this.navigation + '/'
       }
     },
     methods: {
