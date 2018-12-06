@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from app.models import Citizen, CSR, CitizenState, Period, PeriodState, ServiceReq, SRState
+from app.models.theq import Citizen, CSR, CitizenState, Period, PeriodState, ServiceReq, SRState
 from flask import flash, redirect, request
 from .base import Base
 from flask_admin.babel import gettext

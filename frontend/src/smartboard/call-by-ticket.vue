@@ -74,14 +74,12 @@ const Axios = axios.create({
 
 export default {
   name: 'CallByTicket',
-
   mounted() {
     this.$root.$on('addToBoard',() => { this.updateBoard() })
     this.initializeBoard()
   },
-
+  props: ['id'],
   components: { Video },
-
   data() {
     return {
       highlighted: [],
@@ -96,7 +94,6 @@ export default {
       overflowStyle: 'd-none'
     }
   },
-
   computed: {
     items() {
       if (this.showOverflow === true) {
@@ -128,12 +125,10 @@ export default {
       return 'lg-boardtable-body pr-3'
     },
     office_id() {
-      let path = window.location.pathname.split('/')
-      if (path.length >= 3) {
-        return path[2]
-      } else {
-        return 'notfound'
+      if (this.id) {
+        return this.id
       }
+      return 'notfound'
     },
     url() {
       return `/smartboard/?office_number=${this.office_id}`
@@ -171,7 +166,6 @@ export default {
     },
 
   },
-
   methods: {
     initializeBoard() {
       Axios.get(this.url).then( resp => {
