@@ -16,7 +16,7 @@
 
 <template>
   <b-form>
-    <template v-if="user.role.role_code==='SUPPORT' ">
+    <template v-if="user.role && user.role.role_code==='SUPPORT' ">
       <b-form-select :options="options" @input="handleInput" :value="option" />
     </template>
     <template v-else>
@@ -46,11 +46,11 @@
     computed: {
       ...mapState(['user']),
       name() {
-        if (this.user.role.role_code === 'GA' || this.user.role.role_code === 'HELPDESK') {
+        if (this.user && this.user.role && (this.user.role.role_code === 'GA' || this.user.role.role_code === 'HELPDESK')) {
           this.$changeAdminView('csr')
           return 'CSRs'
         }
-        if (this.user.role.role_code === 'ANALYTICS') {
+        if (this.user && this.user.role && this.user.role.role_code === 'ANALYTICS') {
           this.$changeAdminView('service')
           return 'Services Provided'
         }

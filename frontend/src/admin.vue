@@ -38,10 +38,8 @@
     name: "Admin",
     created() {
       this.loginIframe()
-    },
-    mounted() {
       Vue.prototype.$changeAdminView = this.changeAdminView
-  },
+    },
     data() {
       return {
         navigation: 'csr',

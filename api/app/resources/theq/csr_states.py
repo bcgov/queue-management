@@ -16,8 +16,8 @@ from flask import g
 from flask_restplus import Resource
 from qsystem import api, db, oidc
 from sqlalchemy import exc
-from app.models import CSRState
-from app.schemas import CSRStateSchema
+from app.models.theq import CSRState
+from app.schemas.theq import CSRStateSchema
 
 
 @api.route("/csr_states/", methods=["GET"])
