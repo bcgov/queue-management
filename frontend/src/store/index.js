@@ -31,6 +31,7 @@ export const store = new Vuex.Store({
       w: null
     },
     navigationVisible: true,
+    adminNavigation: 'csr',
     addModalForm: {
       citizen:'',
       comments: '',
@@ -244,6 +245,12 @@ export const store = new Vuex.Store({
       Axios(context).get('/login/').then( () => {
         context.commit('setiframeLogedIn', true)
       })
+    },
+
+    changeAdminView(context, view) {
+      if (view !== null) {
+        context.commit("setNavigation", view)
+      }
     },
 
     flashServeNow(context, payload) {
@@ -1468,5 +1475,7 @@ export const store = new Vuex.Store({
     },
 
     setiframeLogedIn: (state, value) => state.iframeLogedIn = value,
+
+    setNavigation: (state, value) => state.adminNavigation = value
   }
 })

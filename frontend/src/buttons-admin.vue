@@ -17,7 +17,10 @@
 <template>
   <b-form>
     <template v-if="user.role && user.role.role_code==='SUPPORT' ">
-      <b-form-select :options="options" @input="handleInput" :value="option" />
+      <div style="display: inline-flex;">
+        <span style="font-size: 1.4rem; font-weight: 600; margin-right: 1em"> Editing: </span>
+        <b-form-select :options="options" @input="handleInput" :value="option" />
+      </div>
     </template>
     <template v-else>
       <span style="font-size: 1.4rem; font-weight: 600"> Editing: {{this.name}}</span>
@@ -26,7 +29,7 @@
 </template>
 
 <script>
-  import {  mapState } from 'vuex'
+  import {  mapActions, mapState } from 'vuex'
 
   export default {
     name: "ButtonsAdmin",
@@ -47,19 +50,20 @@
       ...mapState(['user']),
       name() {
         if (this.user && this.user.role && (this.user.role.role_code === 'GA' || this.user.role.role_code === 'HELPDESK')) {
-          this.$changeAdminView('csr')
+          this.changeAdminView('csr')
           return 'CSRs'
         }
         if (this.user && this.user.role && this.user.role.role_code === 'ANALYTICS') {
-          this.$changeAdminView('service')
+          this.changeAdminView('service')
           return 'Services Provided'
         }
       }
     },
     methods: {
+      ...mapActions(['changeAdminView']),
       handleInput(e) {
         this.view = e
-        this.$changeAdminView(e)
+        this.changeAdminView(e)
       }
     }
   }

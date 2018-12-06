@@ -77,7 +77,7 @@
       showAdmin() {
         let roles = ['GA', 'ANALYTICS', 'HELPDESK', 'SUPPORT']
         if (this.user && this.user.role && this.user.role.role_code) {
-          if (roles.includes(this.user.role.role_code)) {
+          if (roles.indexOf(this.user.role.role_code) > -1) {
             return true
           }
         }

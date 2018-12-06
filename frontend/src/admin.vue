@@ -21,8 +21,7 @@
               ref="iframe1"
               width="100%"
               :style="frameStyle"
-              frameborder="0"
-              @click="hideNav" />
+              frameborder="0" />
     </template>
     <template v-else>
       <div class="loader" style="margin-top: 250px" />
@@ -38,15 +37,9 @@
     name: "Admin",
     created() {
       this.loginIframe()
-      Vue.prototype.$changeAdminView = this.changeAdminView
-    },
-    data() {
-      return {
-        navigation: 'csr',
-      }
     },
     computed: {
-      ...mapState(['viewPortSizes', 'iframeLogedIn']),
+      ...mapState(['viewPortSizes', 'iframeLogedIn', 'adminNavigation']),
       frameHeight() {
         return this.viewPortSizes.h - 80
       },
@@ -56,22 +49,11 @@
         }
       },
       url() {
-        return process.env.SOCKET_URL + '/admin/' + this.navigation + '/'
+        return process.env.SOCKET_URL + '/admin/' + this.adminNavigation + '/'
       }
     },
     methods: {
       ...mapActions(['loginIframe']),
-      changeAdminView(view) {
-        if (view === null) {
-          return
-        } else {
-          this.navigation = view
-        }
-
-      },
-      hideNav() {
-
-      },
     }
   }
 </script>
