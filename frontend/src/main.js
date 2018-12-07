@@ -15,8 +15,6 @@ limitations under the License.*/
 import Vue from 'vue'
 import 'es6-promise/auto'
 import { store } from './store/'
-import App from './App'
-import Smartboard from './smartboard/'
 import BootstrapVue from 'bootstrap-vue'
 import Router from './router.js'
 
@@ -26,7 +24,8 @@ import './assets/css/bc-gov-style.css'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
   faSort,
-  faBars
+  faBars,
+  faCheck
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import VDragged from 'v-dragged'
@@ -34,7 +33,8 @@ import VDragged from 'v-dragged'
 Vue.use(VDragged)
 library.add(
   faSort,
-  faBars
+  faBars,
+  faCheck
 )
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
