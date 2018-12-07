@@ -176,7 +176,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .modal-body {
   padding: 0 !important;
 }
