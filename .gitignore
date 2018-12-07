@@ -128,3 +128,4 @@ api/wait-for-it.sh
 
 /frontend/static/keycloak-local.pathfinder-test.json
 /frontend/static/keycloak-local.pathfinder-dev.json
+/frontend/static/keycloak.json
