@@ -12,11 +12,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+from datetime import datetime
 from flask import g
 from flask_restplus import Resource
 from qsystem import api, db, oidc
 from sqlalchemy import exc
+from app.models.bookings import Exam
 from app.models.theq import Citizen, CSR, Period, ServiceReq, SRState
+from app.schemas.bookings import ExamSchema
 from app.schemas.theq import CitizenSchema, CSRSchema
 
 
@@ -50,6 +53,7 @@ class CsrSelf(Resource):
 
     csr_schema = CSRSchema()
     citizen_schema = CitizenSchema(many=True)
+    exam_schema = ExamSchema(many=True)
 
     @oidc.accept_token(require_token=True)
     def get(self):
@@ -57,6 +61,7 @@ class CsrSelf(Resource):
             csr = CSR.find_by_username(g.oidc_token_info['username'])
             db.session.add(csr)
             active_sr_state = SRState.get_state_by_name("Active")
+            today = datetime.now()
 
             active_citizens = Citizen.query \
                 .join(Citizen.service_reqs) \
@@ -65,10 +70,17 @@ class CsrSelf(Resource):
                 .filter_by(csr_id=csr.csr_id) \
                 .filter(Period.time_end.is_(None))
 
+            exams = Exam.query \
+                .filter_by(office_id=csr.office_id) \
+                .filter(Exam.booking_id.is_(None),
+                        Exam.expiry_date > today).all()
+
             result = self.csr_schema.dump(csr)
             active_citizens = self.citizen_schema.dump(active_citizens)
+            active_exams = self.exam_schema.dump(exams)
 
             return {'csr': result.data,
+                    'active_exams': active_exams,
                     'active_citizens': active_citizens.data,
                     'errors': result.errors}
 
