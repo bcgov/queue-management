@@ -17,11 +17,13 @@ limitations under the License.*/
     <div class="top-flex-div">
       <div class="flex-title">{{ date }} {{ time }}</div>
     </div>
-    <CallByTicket v-if="officetype==='callbyticket'"></CallByTicket>
-    <CallByName v-else-if="officetype==='callbyname' || officetype==='reception'"></CallByName>
+    <CallByTicket v-if="officetype==='callbyticket'"
+                  :smartboardData="{office_number}"></CallByTicket>
+    <CallByName v-else-if="officetype==='callbyname' || officetype==='reception'"
+                :smartboardData="{office_number}"></CallByName>
     <NonReception v-else-if="officetype==='nocallonsmartboard'"></NonReception>
     <div v-else>Please stand by...</div>
-    <BoardSocket></BoardSocket>
+    <BoardSocket :smartboardData="{office_number}"></BoardSocket>
   </div>
 </template>
 
@@ -51,6 +53,8 @@ export default {
     setInterval( () => { this.now() }, 3000)
   },
 
+  props: ['office_number'],
+
   components: { CallByName, CallByTicket, BoardSocket, NonReception },
 
   data() {
@@ -79,14 +83,6 @@ export default {
   },
 
   computed: {
-    office_number() {
-      let path = window.location.pathname.split('/')
-      if (path.length >= 3) {
-        return path[2]
-      } else {
-        return 'notfound'
-      }
-    },
     url() {
       return `/smartboard/?office_number=${this.office_number}`
     }
@@ -105,7 +101,7 @@ export default {
       this.time = d.toLocaleTimeString('en-CA', this.timeOpts)
     },
     getParameterByName(name, url) {
-      if (!url) url = window.location.href;
+      url = window.location.href;
 
       name = name.replace(/[\[\]]/g, '\\$&');
       var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'), results = regex.exec(url);

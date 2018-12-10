@@ -78,7 +78,7 @@ export default {
     this.$root.$on('addToBoard',() => { this.updateBoard() })
     this.initializeBoard()
   },
-  props: ['id'],
+  props: ['smartboardData'],
   components: { Video },
   data() {
     return {
@@ -124,14 +124,8 @@ export default {
       }
       return 'lg-boardtable-body pr-3'
     },
-    office_id() {
-      if (this.id) {
-        return this.id
-      }
-      return 'notfound'
-    },
     url() {
-      return `/smartboard/?office_number=${this.office_id}`
+      return `/smartboard/?office_number=${this.smartboardData.office_number}`
     },
     invited() {
       if (this.citizens && this.citizens.length > 0) {
