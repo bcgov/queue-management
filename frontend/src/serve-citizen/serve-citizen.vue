@@ -273,6 +273,13 @@ export default {
   background-color: rgba(0,0,0,0.4);
   transition: display 1s;
 }
+.modal_header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 20px 20px 4px;
+  cursor: grab;
+}
 .serve-modal-content {
     background-color: #fefefe;
     margin-right: auto;
