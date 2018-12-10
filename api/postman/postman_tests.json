@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "4b52746f-404b-42fb-b245-2e2ef396b2bb",
+		"_postman_id": "cafee735-1e3e-4ed0-87ef-eac6a39b2f6a",
 		"name": "Queue-Management API Tests",
 		"description": "Test the back end APIs",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -257,11 +257,11 @@
 							"listen": "test",
 							"script": {
 								"id": "a0d8e240-3b40-4654-a32b-bf2e676fdeb9",
-								"type": "text/javascript",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"basic_response_test\", jsonData.data);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -270,7 +270,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "//  Test the authenticate response.\ndescribe('Basic response tests', function() {\n    it('Response time should be below 1000ms', function() {\n        pm.response.responseTime.should.be.below(1000);\n    });\n    it('Response statusCode should be 200 OK', function() {\n        response.should.have.status(200);\n    });\n    it('Response header should have Content-Type of application/json', function() {\n        response.should.have.header('content-type', 'application/json');\n    });\n    it('Response body be in JSON format', function() {\n        response.should.be.json; \n    });\n});\n"
+							"raw": "//  Test the authenticate response.\ndescribe('Basic response tests', function() {\n    it('Response time should be below 1500ms', function() {\n        pm.response.responseTime.should.be.below(1500);\n    });\n    it('Response statusCode should be 200 OK', function() {\n        response.should.have.status(200);\n    });\n    it('Response header should have Content-Type of application/json', function() {\n        response.should.have.header('content-type', 'application/json');\n    });\n    it('Response body be in JSON format', function() {\n        response.should.be.json; \n    });\n});\n"
 						},
 						"url": {
 							"raw": "https://postman-echo.com/post",
@@ -479,22 +479,26 @@
 			"name": "Check app health",
 			"item": [
 				{
-					"name": "Check the healthz endpoint",
+					"name": "Check healthz driver",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"id": "74adc5ce-caa5-452a-bd96-8ac90a4c11d7",
-								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD",
 									"eval(globals.postmanBDD);",
 									"",
-									"//  Perform the standard tests.",
-									"eval(environment.basic_response_test);",
+									"//  Set health response time variable.",
+									"max_response_time = 1500;",
+									"health_tries = 15;",
+									"counter = 1;",
+									"postman.setEnvironmentVariable(\"max_response_time\", JSON.stringify(max_response_time));",
+									"postman.setEnvironmentVariable(\"health_tries\", JSON.stringify(health_tries));",
+									"postman.setEnvironmentVariable(\"health_counter\", JSON.stringify(counter));",
 									"",
-									"//  Test the authenticate response.",
-									"describe('Testing application health', function() {",
+									"//  Test the health response.",
+									"describe('Testing application health Driver: Try ' + counter.toString(), function() {",
 									"    it(\"Response should have 'message' property\", function() {",
 									"        var jsonData = response.body;",
 									"        jsonData.should.have.property('message');",
@@ -504,19 +508,29 @@
 									"        jsonData.message.should.equal('api is healthy');",
 									"    });",
 									"});",
-									""
-								]
+									"",
+									"//  If response time is OK, proceed to the next test.",
+									"if (pm.response.responseTime < max_response_time) {",
+									"    postman.setNextRequest(\"Check the readyz endpoint\");",
+									"}",
+									"    ",
+									"//  Response time is too long.  Try again, give pod a chance to spin up.",
+									"else {",
+									"    postman.setNextRequest(\"Check the healthz endpoint\");",
+									"}"
+								],
+								"type": "text/javascript"
 							}
 						},
 						{
 							"listen": "prerequest",
 							"script": {
 								"id": "9e00b481-ef9a-440b-8e83-025fc49026c4",
-								"type": "text/javascript",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -528,7 +542,104 @@
 								"value": "Bearer {{token}}"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}healthz/",
+							"host": [
+								"{{url}}healthz"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check the healthz endpoint",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "74adc5ce-caa5-452a-bd96-8ac90a4c11d7",
+								"exec": [
+									"//  Install postmanBDD",
+									"eval(globals.postmanBDD);",
+									"",
+									"//  Get and update variables.",
+									"max_response_time = JSON.parse(postman.getEnvironmentVariable(\"max_response_time\"));",
+									"health_tries = JSON.parse(postman.getEnvironmentVariable(\"health_tries\"));",
+									"counter = JSON.parse(postman.getEnvironmentVariable(\"health_counter\")) + 1;",
+									"postman.setEnvironmentVariable(\"health_counter\", JSON.stringify(counter));",
+									"",
+									"//  Test the health response.",
+									"describe('Testing application health Endpoint: Try ' + counter.toString(), function() {",
+									"    it(\"Response should have 'message' property\", function() {",
+									"        var jsonData = response.body;",
+									"        jsonData.should.have.property('message');",
+									"    });",
+									"    it(\"Response message should be 'api is healthy'\", function() {",
+									"        var jsonData = response.body;",
+									"        jsonData.message.should.equal('api is healthy');",
+									"    });",
+									"});",
+									"",
+									"//  If response time is OK, proceed to the next test.",
+									"if (pm.response.responseTime < max_response_time) {",
+									"    postman.setNextRequest(\"Check the readyz endpoint\");",
+									"}",
+									"    ",
+									"//  Response time is too long.",
+									"else {",
+									"    ",
+									"    //  You haven't reached your maximum tries yet.  Try again.",
+									"    if (counter < health_tries) {",
+									"        postman.setNextRequest(\"Check the healthz endpoint\");",
+									"    }",
+									"    ",
+									"    //   You have reached the maximum.  An error, go to next test.",
+									"    else {",
+									"        describe('Health response should be below ' + max_response_time.toString() + ' in ' + health_tries.toString() + ' tries.', function() {",
+									"            it('Response time should be OK', function() {",
+									"                (health_tries).should.be.below(health_tries);",
+									"               response.should.equal(23); ",
+									"            });",
+									"        });",
+									"        postman.setNextRequest(\"Check the readyz endpoint\");",
+									"    }",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "9e00b481-ef9a-440b-8e83-025fc49026c4",
+								"exec": [
+									"//  Ensure the client is logged in.",
+									"eval(environment.auth_script);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}healthz/",
 							"host": [
@@ -548,7 +659,6 @@
 							"listen": "test",
 							"script": {
 								"id": "661c33c4-4a3d-4396-a549-9969edafbfa6",
-								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD",
 									"eval(globals.postmanBDD);",
@@ -568,18 +678,19 @@
 									"    });",
 									"});",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						},
 						{
 							"listen": "prerequest",
 							"script": {
 								"id": "9e00b481-ef9a-440b-8e83-025fc49026c4",
-								"type": "text/javascript",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -591,7 +702,10 @@
 								"value": "Bearer {{token}}"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}readyz/",
 							"host": [
@@ -864,7 +978,10 @@
 								"value": "Bearer {{token}}"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}channels/",
 							"host": [
@@ -981,7 +1098,10 @@
 								"value": "Bearer {{token}}"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}categories/",
 							"host": [
@@ -1137,7 +1257,10 @@
 								"value": "Bearer {{token}}"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}services/",
 							"host": [
@@ -1210,7 +1333,10 @@
 								"disabled": true
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -1279,7 +1405,10 @@
 								"value": "Bearer andDUF9sV18wd1V2b1NzV3F6NVFtRlFFIn0.eyJqdGkiOiIzMWU0M2E4"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -1454,7 +1583,10 @@
 								"value": "application/json"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -1823,7 +1955,10 @@
 								"value": "Bearer {{token}}"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}healthz/",
 							"host": [
@@ -1910,7 +2045,10 @@
 								"value": "application/json"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -2299,7 +2437,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{}"
+							"raw": ""
 						},
 						"url": {
 							"raw": "{{url}}citizens/{{current_client}}/",
@@ -2927,7 +3065,10 @@
 								"value": "application/json"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -3316,7 +3457,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{}"
+							"raw": ""
 						},
 						"url": {
 							"raw": "{{url}}citizens/{{current_client}}/",
@@ -4068,7 +4209,10 @@
 								"value": "application/json"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -4365,7 +4509,10 @@
 								"value": "application/json"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -4754,7 +4901,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{}"
+							"raw": ""
 						},
 						"url": {
 							"raw": "{{url}}citizens/{{current_client}}/",
@@ -5110,7 +5257,10 @@
 								"value": "application/json"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -5503,7 +5653,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{}"
+							"raw": ""
 						},
 						"url": {
 							"raw": "{{url}}citizens/{{current_client}}/",
@@ -6019,7 +6169,10 @@
 								"value": "application/json"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -6408,7 +6561,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{}"
+							"raw": ""
 						},
 						"url": {
 							"raw": "{{url}}citizens/{{first_client}}/",
@@ -6936,7 +7089,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{}"
+							"raw": ""
 						},
 						"url": {
 							"raw": "{{url}}citizens/{{second_client}}/",
@@ -7155,7 +7308,10 @@
 								"value": "application/json"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -7915,7 +8071,10 @@
 								"value": "application/json"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -8305,7 +8464,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{}"
+							"raw": ""
 						},
 						"url": {
 							"raw": "{{url}}citizens/{{first_client}}/",
@@ -8832,7 +8991,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{}"
+							"raw": ""
 						},
 						"url": {
 							"raw": "{{url}}citizens/{{second_client}}/",
@@ -9051,7 +9210,10 @@
 								"value": "application/json"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
