@@ -50,7 +50,7 @@ export default new Router({
       ]
     },
     {
-      path:'/smartboard/:id',
+      path:'/smartboard/:office_number',
       component: Smartboard,
       props: true,
     },
