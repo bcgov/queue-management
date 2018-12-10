@@ -7,7 +7,7 @@
            :cancel-disabled="t"
            :visible="showFeedbackModal"
            @hidden="toggleModal">
-    <div>
+    <div style="padding: 1rem;">
         <h4>Submit Feedback</h4>
         Please use this form to submit any questions you have, or to report any issues that you are experiencing.  Please try to include details such as the part of the app you were viewing and what you were doing at the time.
         <p style="margin-top: 9px">Please also use this form to submit feedback including any comments, suggestions, or feature requests.</p>
