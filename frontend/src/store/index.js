@@ -25,6 +25,13 @@ Vue.use(Vuex)
 export const store = new Vuex.Store({
 
   state: {
+    iframeLogedIn: false,
+    viewPortSizes: {
+      h: null,
+      w: null
+    },
+    navigationVisible: true,
+    adminNavigation: 'csr',
     addModalForm: {
       citizen:'',
       comments: '',
@@ -234,6 +241,18 @@ export const store = new Vuex.Store({
   },
 
   actions: {
+    loginIframe(context) {
+      Axios(context).get('/login/').then( () => {
+        context.commit('setiframeLogedIn', true)
+      })
+    },
+
+    changeAdminView(context, view) {
+      if (view !== null) {
+        context.commit("setNavigation", view)
+      }
+    },
+
     flashServeNow(context, payload) {
       let flash = () => {
         if (!context.state.showServiceModal) {
@@ -1444,6 +1463,19 @@ export const store = new Vuex.Store({
 
     hideResponseModal(state) {
       state.showResponseModal = false
-    }
+    },
+
+    updateViewportSizes(state, attr) {
+      let key = Object.keys(attr)[0]
+      Vue.set(
+        state.viewPortSizes,
+        key,
+        attr[key]
+      )
+    },
+
+    setiframeLogedIn: (state, value) => state.iframeLogedIn = value,
+
+    setNavigation: (state, value) => state.adminNavigation = value
   }
 })

@@ -40,7 +40,7 @@ const Axios = axios.create({
 
 export default {
   name: 'CallByName',
-
+  props: ['smartboardData'],
   mounted() {
     this.$root.$on('addToBoard',( data) => { this.updateBoard(data) })
     this.initializeBoard()
@@ -59,16 +59,8 @@ export default {
   },
 
   computed: {
-    office_id() {
-      let path = window.location.pathname.split('/')
-      if (path.length >= 3) {
-        return path[2]
-      } else {
-        return 'notfound'
-      }
-    },
     url() {
-      return `/smartboard/?office_number=${this.office_id}`
+      return `/smartboard/?office_number=${this.smartboardData.office_number}`
     },
     waiting() {
       if (this.citizens && this.citizens.length > 0) {
@@ -81,7 +73,6 @@ export default {
   methods: {
     initializeBoard() {
       Axios.get(this.url).then( resp => {
-      console.log(resp.data)
         this.officeType = resp.data.office_type
         this.citizens = resp.data.citizens
         this.$root.$emit('boardConnect', this.office_id)

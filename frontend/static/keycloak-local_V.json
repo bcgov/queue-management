@@ -1,0 +1,9 @@
+{
+  "realm": "sbc",
+  "auth-server-url": "https://sso-dev.pathfinder.gov.bc.ca/auth",
+  "ssl-required": "external",
+  "resource": "cfms-procurement",
+  "credentials": {
+    "secret": "d2adf87c-1a1b-4b4c-831c-e352b4fc9654"
+  }
+}

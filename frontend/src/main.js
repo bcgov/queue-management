@@ -15,20 +15,27 @@ limitations under the License.*/
 import Vue from 'vue'
 import 'es6-promise/auto'
 import { store } from './store/'
-import App from './App'
-import Smartboard from './smartboard/'
 import BootstrapVue from 'bootstrap-vue'
+import Router from './router.js'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import './assets/css/bc-gov-style.css'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faSort } from '@fortawesome/free-solid-svg-icons'
+import {
+  faSort,
+  faBars,
+  faCheck
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import VDragged from 'v-dragged'
 
 Vue.use(VDragged)
-library.add(faSort)
+library.add(
+  faSort,
+  faBars,
+  faCheck
+)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(BootstrapVue)
@@ -39,32 +46,11 @@ var keycloak = Keycloak(process.env.KEYCLOAK_JSON_URL)
 Vue.prototype.$keycloak = keycloak
 Vue.config.productionTip = false
 
-const routes = {
-  '/': App,
-  'smartboard': Smartboard
-}
 
 /* eslint-disable no-new */
 const app = new Vue({
   el: '#app',
   store,
-  components: { App, Smartboard },
-  computed: {
-    currentRoute() {
-      let path = window.location.pathname
-      let pathspl = path.split('/')
-      if ( path === '/') {
-        return '/'
-      } else if (pathspl.length >= 2) {
-        return pathspl[1]
-      } else {
-        return '/'
-      }
-    },
-    ViewComponent () {
-      return routes[this.currentRoute]
-    }
-  },
-
-  render (h) { return h(this.ViewComponent) }
+  router: Router,
+  template: '<router-view></router-view>',
 })

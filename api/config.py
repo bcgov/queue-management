@@ -85,6 +85,21 @@ class LocalConfig(BaseConfig):
     SQLALCHEMY_ECHO = False
     SECRET_KEY = "pancakes"
 
+    DB_ENGINE = os.getenv('DATABASE_ENGINE', 'mysql')
+    DB_USER = os.getenv('DATABASE_USERNAME', 'root')
+    DB_PASSWORD = os.getenv('DATABASE_PASSWORD', 'root')
+    DB_NAME = os.getenv('DATABASE_NAME', 'qsystem')
+    DB_HOST = os.getenv('DATABASE_HOST', '127.0.0.1')
+    DB_PORT = os.getenv('DATABASE_PORT', '3306')
+    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}'.format(
+        engine=DB_ENGINE,
+        user=DB_USER,
+        password=DB_PASSWORD,
+        host=DB_HOST,
+        port=DB_PORT,
+        name=DB_NAME
+    )
+
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
     REDIS_DEBUG = True
