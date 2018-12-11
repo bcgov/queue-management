@@ -548,6 +548,7 @@ class Bootstrap(Command):
             expiry_date = "2018-11-29 11:19:53.5",
             notes = "This student is extremely s-m-r-t",
             exam_received = 1,
+            exam_received_date= "2018-12-25 (9:00:00.000",
             session_number = 1,
             number_of_students = 1,
             exam_method = "Written"
@@ -564,7 +565,8 @@ class Bootstrap(Command):
             examinee_name = "Joey Fatone",
             expiry_date = "2018-11-29 11:19:53.5",
             notes = "Speak slowly with this student, hearing impaired",
-            exam_received = 0,
+            exam_received = 1,
+            exam_received_date="2018-12-24 (9:00:00.000",
             session_number = 2,
             number_of_students = 12,
             exam_method = "Written"
@@ -582,6 +584,7 @@ class Bootstrap(Command):
             expiry_date="2018-11-29 11:19:53.5",
             notes="Student is extremely verbally obscene",
             exam_received=1,
+            exam_received_date="2018-12-23 (9:00:00.000",
             session_number=3,
             number_of_students=10,
             exam_method="Kitchen"
