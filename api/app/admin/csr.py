@@ -117,9 +117,7 @@ class CSRConfig(Base):
         if self.validate_form(form) and self.update_model(form, model):
 
             #  Clear cache for the user just editted
-            csr = CSR.find_by_userid(csr_id)
-            cache_key = 'csr_detail_%s' % csr.username
-            cache.delete(cache_key)
+            CSR.update_user_cache(csr_id)
 
             flash(gettext('''Record was successfully saved.'''), 'success')
             if '_add_another' in request.form:

@@ -51,7 +51,7 @@ class Services(Resource):
         socketio.emit('csr_update', {}, room=auth_csr.office_id)
 
         # Purge cache of old CSR record so the new one can be fetched by the next request for it.
-        cache.delete('csr_detail_%s' % g.oidc_token_info['username'])
+        CSR.delete_user_cache(g.oidc_token_info['username'])
 
         return {'service_request': result.data,
                 'errors': result.errors}, 200
