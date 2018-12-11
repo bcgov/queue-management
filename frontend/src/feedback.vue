@@ -7,7 +7,7 @@
            :cancel-disabled="t"
            :visible="showFeedbackModal"
            @hidden="toggleModal">
-    <div>
+    <div style="padding: 1rem;">
         <h4>Submit Feedback</h4>
         Please use this form to submit any questions you have, or to report any issues that you are experiencing.  Please try to include details such as the part of the app you were viewing and what you were doing at the time.
         <p style="margin-top: 9px">Please also use this form to submit feedback including any comments, suggestions, or feature requests.</p>
@@ -33,10 +33,8 @@
 
 <script>
   import { mapState, mapMutations, mapActions } from 'vuex'
-
   export default {
     name: 'Feedback',
-
     data() {
       return {
         t: true,
@@ -44,16 +42,13 @@
         showWarning: false
       }
     },
-
     computed: {
       ...mapState(['showFeedbackModal', 'feedbackMessage']),
-
       writeFeedback: {
         get() { return this.feedbackMessage },
         set(value) { this.setFeedbackMessage(value) }
       }
     },
-
     methods: {
       ...mapMutations([
         'toggleFeedbackModal',
@@ -62,13 +57,11 @@
         'toggleFeedbackModal'
       ]),
       ...mapActions(['messageFeedback']),
-
       toggleModal() {
         this.toggleFeedbackModal(false)
         this.showWarning = false
         this.setFeedbackMessage('')
       },
-
       submitMessage() {
         if (this.feedbackMessage.length <= 0) {
           this.showWarning = true
