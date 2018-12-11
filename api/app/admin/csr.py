@@ -121,8 +121,7 @@ class CSRConfig(Base):
             cache_key = 'csr_detail_%s' % csr.username
             cache.delete(cache_key)
 
-            flash(gettext('''Record was successfully saved. 
-            Note: it may take up to 5 minutes for these changes to be effective'''), 'success')
+            flash(gettext('''Record was successfully saved.'''), 'success')
             if '_add_another' in request.form:
                 return redirect(self.get_url('.create_view', url=return_url))
             elif '_continue_editing' in request.form:
