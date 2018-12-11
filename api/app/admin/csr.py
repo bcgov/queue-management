@@ -22,7 +22,7 @@ from flask_admin.helpers import get_redirect_target
 from flask_admin.model.helpers import get_mdict_item_or_list
 from flask_login import current_user
 from sqlalchemy import or_
-from qsystem import db
+from qsystem import db, cache
 
 
 class CSRConfig(Base):
@@ -96,7 +96,6 @@ class CSRConfig(Base):
 
         return model
 
-
     @expose('/edit/', methods=('GET', 'POST'))
     def edit_view(self):
         """
@@ -108,11 +107,20 @@ class CSRConfig(Base):
         if not model:
             return redirect(return_url)
 
+        #  We know model is good.  Save id of CSR you're editing for later use.
+        csr_id = get_mdict_item_or_list(request.args, 'id')
+
         form = self.edit_form(obj=model)
         if not hasattr(form, '_validated_ruleset') or not form._validated_ruleset:
             self._validate_form_instance(ruleset=self._form_edit_rules, form=form)
 
         if self.validate_form(form) and self.update_model(form, model):
+
+            #  Clear cache for the user just editted
+            csr = CSR.find_by_userid(csr_id)
+            cache_key = 'csr_detail_%s' % csr.username
+            cache.delete(cache_key)
+
             flash(gettext('''Record was successfully saved. 
             Note: it may take up to 5 minutes for these changes to be effective'''), 'success')
             if '_add_another' in request.form:

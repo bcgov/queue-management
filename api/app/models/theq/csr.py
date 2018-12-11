@@ -48,5 +48,15 @@ class CSR(Base):
         cache.set(key, csr)
         return csr
 
+    @classmethod
+    def find_by_userid(cls, userid):
+        csr = CSR.query.filter(CSR.deleted.is_(None)).filter_by(csr_id=userid).first()
+        key = 'csr_detail_%s' % csr.username
+        if cache.get(key):
+            return cache.get(key)
+
+        cache.set(key, csr)
+        return csr
+
     def get_id(self):
         return str(self.csr_id)
