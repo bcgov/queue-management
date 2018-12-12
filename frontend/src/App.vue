@@ -15,7 +15,6 @@ limitations under the License.*/
 <template>
   <div id="App">
     <Header />
-
     <div id="fixed-viewport-app" :style="{width:`${x}px`, height:`${y}px`}">
       <Alert />
       <Nav v-if="isLoggedIn" />
