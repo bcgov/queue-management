@@ -5,8 +5,8 @@
                          class="mr-1"
                          style="font-size: 1.0rem"/>
       <b-form-select :options="filters"
-                     @input.native="changeFilter"
-                     :value="filter"/>
+                     :value="filter"
+                     @input.native="changeFilter"/>
       <font-awesome-icon icon="binoculars"
                          class="ml-3 mr-1"
                          style="font-size: 1.0rem"/>

@@ -13,6 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 
 import Vue from 'vue'
+import "@babel/polyfill"
 import 'es6-promise/auto'
 import { store } from './store/'
 import App from './App'
@@ -24,12 +25,30 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import './assets/css/bc-gov-style.css'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faBars, faBinoculars, faFilter, faSort } from '@fortawesome/free-solid-svg-icons'
+import {
+  faBars,
+  faBinoculars,
+  faCaretLeft,
+  faCaretRight,
+  faCheck,
+  faExclamation,
+  faFilter,
+  faSort,
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import VDragged from 'v-dragged'
 
 Vue.use(VDragged)
-library.add(faBars, faBinoculars, faFilter, faSort)
+library.add(
+  faBars,
+  faBinoculars,
+  faCaretLeft,
+  faCaretRight,
+  faCheck,
+  faExclamation,
+  faFilter,
+  faSort,
+)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(BootstrapVue)
 
@@ -38,7 +57,6 @@ require('Keycloak')
 var keycloak = Keycloak(process.env.KEYCLOAK_JSON_URL)
 Vue.prototype.$keycloak = keycloak
 Vue.config.productionTip = false
-
 
 /* eslint-disable no-new */
 const app = new Vue({

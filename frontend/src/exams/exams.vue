@@ -8,11 +8,12 @@
 </template>
 
 <script>
+  import { mapActions } from 'vuex'
   import ExamInventoryTable from './exam-inventory-table'
 
   export default {
     name: "Exams",
-    components: { ExamInventoryTable }
+    components: { ExamInventoryTable },
   }
 </script>
 
