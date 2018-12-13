@@ -16,6 +16,7 @@ from marshmallow import fields
 import toastedmarshmallow
 from app.models.bookings import Exam
 from app.schemas.bookings import BookingSchema, ExamTypeSchema, InvigilatorSchema
+from app.schemas.theq import OfficeSchema
 from qsystem import ma
 
 
@@ -44,3 +45,4 @@ class ExamSchema(ma.ModelSchema):
     booking = fields.Nested(BookingSchema())
     exam_type = fields.Nested(ExamTypeSchema())
     invigilator = fields.Nested(InvigilatorSchema())
+    office = fields.Nested(OfficeSchema(exclude=("csrs",)))

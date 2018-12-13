@@ -1,39 +1,31 @@
 <template>
   <div style="margin-left: 20px">
-    <b-form inline class="pb-2 pl-3">
-      <font-awesome-icon icon="filter"
-                         class="mr-1"
-                         style="font-size: 1.0rem"/>
-      <b-form-select :options="filters"
-                     :value="filter"
-                     @input.native="changeFilter"/>
-      <font-awesome-icon icon="binoculars"
-                         class="ml-3 mr-1"
-                         style="font-size: 1.0rem"/>
-      <b-form-input placeholder="type to search"/>
-    </b-form>
-    <b-table :items="examInventory"
-             :fields="fields"
+    <b-col md="6" class="my-1">
+      <b-form-group horizontal label="Filter" class="mb-0">
+        <b-input-group>
+          <b-form-input v-model="filter" placeholder="Type to Search" />
+          <b-input-group-append>
+            <b-btn :disabled="!filter" @click="filter = ''">Clear</b-btn>
+          </b-input-group-append>
+        </b-input-group>
+      </b-form-group>
+    </b-col>
+    <b-table :items="exams"
+             :fields=getFields
              class="m-0 p-0"
              head-variant="light"
+             empty-text="There are no exams that match this filter criteria"
              small
              outlined
-             hover>
-      <template slot="roomloc" slot-scope="row">
-        <div v-if="row.item.location">
-          {{ row.item.location }}
-        </div>
-        <div v-if="row.item.room">
-          {{ row.item.room }}
-        </div>
-      </template>
+             hover
+             show-empty
+             :filter="filter">
     </b-table>
-
   </div>
 </template>
 
 <script>
-  import { mapGetters, mapState } from 'vuex'
+  import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 
   export default {
     name: "ExamInventoryTable",
@@ -41,48 +33,39 @@
     data() {
       return {
         filter: null,
-        filters: [
-          {text: 'Select a Filter', value: null},
-        ],
-        fieldsModal: [
-          {key: 'event_id', label: 'Event ID', sortable: false, thStyle: {width: '9%'} },
-          {key: 'exam_name', label: 'Exam Name', sortable: true, thStyle: {width: '17%'} },
-          {key: 'exam_method', label: 'Method', sortable: false, thStyle: {width: '8%'} },
-          {key: 'expiry_date', label: 'Expirey Date', sortable: true, thStyle: {width: '9%'} },
-          {key: 'exam_received', label: 'Received', sortable: true, thStyle: {width: '10%'} },
-          {key: 'examinee_name', label: 'Student Name', sortable: true, thStyle: {width: '18%'}},
-          {key: 'notes', label: 'Notes', sortable: true, thStyle: {width: '18%'}},
-          {key: 'number_of_students', label: 'Students', sortable: false, thStyle: {width: '11%'}}
-        ],
-        fieldsInventory: [
-          {key: 'event_id', label: 'Event ID', sortable: false, thStyle: {width: '9%'} },
-          {key: 'exam_name', label: 'Exam Name', sortable: true, thStyle: {width: '17%'} },
-          {key: 'exam_method', label: 'Method', sortable: false, thStyle: {width: '8%'} },
-          {key: 'expiry_date', label: 'Expirey Date', sortable: true, thStyle: {width: '9%'} },
-          {key: 'exam_received', label: 'Received', sortable: true, thStyle: {width: '10%'} },
-          {key: 'examinee_name', label: 'Student Name', sortable: true, thStyle: {width: '18%'}},
-          {key: 'notes', label: 'Notes', sortable: true, thStyle: {width: '18%'}},
-          {key: 'number_of_students', label: 'Students', sortable: false, thStyle: {width: '11%'}}
+        fields: [
+          {key: 'office.office_name', label: 'Office', sortable: true},
+          {key: 'event_id', label: 'Event ID', sortable: true },
+          {key: 'exam_name', label: 'Exam Name', sortable: true },
+          {key: 'exam_method', label: 'Method', sortable: true },
+          {key: 'expiry_date', label: 'Expiry Date', sortable: true },
+          {key: 'exam_received', label: 'Received', sortable: true },
+          {key: 'examinee_name', label: 'Student Name', sortable: true },
+          {key: 'notes', label: 'Notes', sortable: true },
+          {key: 'invigilator.invigilator_name', label: 'Invigilator', sortable: true },
+          {key: 'booking.room.room_name', label: 'Location', sortable: true },
         ],
       }
+    },
+    methods: {
+      ...mapActions(['getExams']),
+    },
+    mounted() {
+      this.getExams()
     },
     computed: {
+      ...mapState(['exams']),
       ...mapGetters(['role_code']),
-      ...mapState(['examInventory']),
-      fields() {
-        if (this.mode === 'inventory') {
-          if (this.role_code === 'GA' || this.role_code === 'CSR' || this.role_code === 'SUPPORT') {
-            return this.fieldsInventory
-          }
-        } else if (this.mode === 'modal') {
-          return this.fieldsModal
+      getFields() {
+        if ("LIASON" === this.role_code) {
+          return this.fields
+        } else {
+          let returnFields = this.fields
+          let index = this.fields.findIndex(x => x.key === "office.office_name")
+          returnFields.splice(index, 1)
+          return returnFields
         }
       }
-    },
-
+    }
   }
 </script>
-
-<style scoped>
-
-</style>
