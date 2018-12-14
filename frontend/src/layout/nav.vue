@@ -31,7 +31,7 @@
           </template>
           <div :style="{width:200+'px'}">
             <b-dropdown-item to="/queue">The Q</b-dropdown-item>
-            <b-dropdown-item to="/exams">Manage Exams</b-dropdown-item>
+            <b-dropdown-item v-if="showExams" to="/exams">Manage Exams</b-dropdown-item>
             <template  v-if="user.role && user.role.role_code=='GA'">
               <b-dropdown-item @click="clickGAScreen" :class="gaPanelStyle">
                 <font-awesome-icon v-if="showGAScreenModal"
@@ -92,6 +92,12 @@
           if (roles.indexOf(this.user.role.role_code) > -1) {
             return true
           }
+        }
+        return false
+      },
+      showExams() {
+        if (this.user.office.exams_enabled_ind === 1){
+          return true
         }
         return false
       }
