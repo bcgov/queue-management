@@ -16,8 +16,6 @@ import Vue from 'vue'
 import "@babel/polyfill"
 import 'es6-promise/auto'
 import { store } from './store/'
-import App from './App'
-import Smartboard from './smartboard/'
 import BootstrapVue from 'bootstrap-vue'
 import Router from './router.js'
 

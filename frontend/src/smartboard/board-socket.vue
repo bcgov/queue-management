@@ -24,6 +24,7 @@ limitations under the License.*/
 
   export default {
     name: 'BoardSocket',
+    props: ['smartboardData'],
     created() {
       this.$root.$on('boardConnect', (data) => {
         this.connect(data)
@@ -32,15 +33,12 @@ limitations under the License.*/
 
     data() {
       return {
-        reconnectInterval: null,
-        data: '',
-        office_id: ''
+        reconnectInterval: null
       }
     },
 
     methods: {
       connect(data) {
-        this.office_id = data
         socket = io(process.env.SOCKET_URL, {
           path: '/api/v1/socket.io'
         })
@@ -50,10 +48,9 @@ limitations under the License.*/
         this.addListeners()
       },
       join() {
-        console.log(socket.connected)
         socket.emit(
           'joinSmartboardRoom',
-          {office_id: this.office_id},
+          {office_id: this.smartboardData.office_number},
           () => {console.log('socket emit: "joinSmartboardRoom"')}
         )
       },

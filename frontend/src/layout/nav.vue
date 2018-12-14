@@ -33,8 +33,12 @@
             <b-dropdown-item to="/queue">The Q</b-dropdown-item>
             <b-dropdown-item to="/exams">Manage Exams</b-dropdown-item>
             <template  v-if="user.role && user.role.role_code=='GA'">
-              <b-dropdown-item @click="clickGAScreen">
-                <b-check :checked="showGAScreenModal"><span style="font-weight: 400;">Show GA Panel</span></b-check>
+              <b-dropdown-item @click="clickGAScreen" :class="gaPanelStyle">
+                <font-awesome-icon v-if="showGAScreenModal"
+                                   icon="check"
+                                   class="m-0 p-0"
+                                   style="padding-left: .25em !important; padding-top: 2px !important" />
+                <span style="font-weight: 400;">Show GA Panel</span>
               </b-dropdown-item>
               <b-dropdown-divider />
             </template>
@@ -74,6 +78,14 @@
         'showGAScreenModal',
         'user'
       ]),
+      gaPanelStyle() {
+        let classStyle = 'gaScreenUnchecked'
+        if (this.showGAScreenModal) {
+          classStyle = 'gaScreenChecked'
+         }
+
+         return classStyle
+      },
       showAdmin() {
         let roles = ['GA', 'ANALYTICS', 'HELPDESK', 'SUPPORT']
         if (this.user && this.user.role && this.user.role.role_code) {
@@ -110,5 +122,11 @@
   }
   .nav-container {
     display: inline;
+  }
+  .gaScreenChecked {
+    padding-left: 0em
+  }
+  .gaScreenUnchecked {
+    padding-left: 1.5em
   }
 </style>
