@@ -40,7 +40,6 @@ class ExamSchema(ma.ModelSchema):
     notes = fields.Str()
     number_of_students = fields.Int()
     office_id = fields.Int()
-    room_id = fields.Int()
     session_number = fields.Int()
 
     booking = fields.Nested(BookingSchema())
