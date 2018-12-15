@@ -118,9 +118,12 @@ owasp/dependency-check-report.html
 sonar-runner/.gradle
 .DS_Store
 /.idea
+/frontend/static/keycloak.json
 /frontend/static/keycloak-local.json
 /frontend/static/keycloak-local.localhost.json
 /frontend/static/keycloak-local.pathfinder.json
+/frontend/static/keycloak-local.pathfinder-test.json
+/frontend/static/keycloak-local.pathfinder-dev.json
 
 # Docker
 api/Dockerfile
@@ -128,8 +131,3 @@ frontend/Dockerfile
 docker-compose.yml
 api/init.sh
 api/wait-for-it.sh
-
-/frontend/static/keycloak-local.pathfinder-test.json
-/frontend/static/keycloak-local.pathfinder-dev.json
-/frontend/static/keycloak.json
-.vscode/settings.json
