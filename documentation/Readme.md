@@ -52,7 +52,7 @@ Ensure you have python 3. I also had to install: gcc, python3-venv, libmysqlclie
 
 1. `cd queue-management`
 1. `cp documentation/demo-files/secrets.json api/client_secrets/secrets.json`
-1. `cp documentation/demo-files/keycloak-local.json frontend/static/keycloak-local.json`
+1. `cp documentation/demo-files/keycloak.json frontend/static/keycloak.json`
 
 ### Set Enviornment Variables required:
 

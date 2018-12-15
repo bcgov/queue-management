@@ -104,6 +104,9 @@ venv.bak/
 # mypy
 .mypy_cache/
 
+# Visual Studio
+.vscode/
+
 # Project specific include/excludes
 !frontend/build
 api/client_secrets/secrets.json
@@ -129,3 +132,4 @@ api/wait-for-it.sh
 /frontend/static/keycloak-local.pathfinder-test.json
 /frontend/static/keycloak-local.pathfinder-dev.json
 /frontend/static/keycloak.json
+.vscode/settings.json
