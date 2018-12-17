@@ -5,7 +5,7 @@
                       margin: 0px;
                       padding-left: 0px;
                       padding-right: 0px;
-                      padding-bottom: 7px;"
+                      padding-bottom: 5px;"
                       >
     <b-form-row no-gutters class="m-0 add_citizen_table_header"
                        >
