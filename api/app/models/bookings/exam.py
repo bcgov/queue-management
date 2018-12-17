@@ -38,6 +38,7 @@ class Exam(Base):
     booking = db.relationship("Booking")
     exam_type = db.relationship("ExamType")
     invigilator = db.relationship("Invigilator")
+    office = db.relationship("Office")
 
     def __repr__(self):
         return '<Exam Name: (name={self.exam_name!r})>'.format(self=self)

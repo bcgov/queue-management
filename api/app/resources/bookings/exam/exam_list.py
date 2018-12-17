@@ -31,12 +31,16 @@ class ExamList(Resource):
     def get(self):
         try:
             csr = CSR.find_by_username(g.oidc_token_info['username'])
-
             exams = Exam.query.filter(Exam.deleted_date.is_(None)).filter_by(office_id=csr.office_id)
 
-            if request.args:
+            search_kwargs = {}
 
-                exams = exams.filter_by(**request.args)
+            if request.args:
+                for key in request.args:
+                    if hasattr(Exam, key):
+                        search_kwargs[key] = request.args.get(key)
+
+                exams = exams.filter_by(**search_kwargs)
 
             result = self.exam_schema.dump(exams)
 
