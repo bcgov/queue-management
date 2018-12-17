@@ -1,5 +1,5 @@
 <template>
-  <div class="add_citizen_form">
+  <div class="add_citizen_form mt-0">
     <b-form-row no-gutters>
       <b-col cols="auto">
         <label class="add_citizen_form_label">
@@ -9,7 +9,7 @@
         <b-textarea id="add_citizen_comment_textarea"
                     ref="commentsref"
                     v-model="comments"
-                    :rows="4"
+                    :rows="2"
                     size="sm"
                     placeholder="add comments here">
 
