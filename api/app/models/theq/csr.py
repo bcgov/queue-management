@@ -32,6 +32,8 @@ class CSR(Base):
     periods = db.relationship("Period", primaryjoin="and_(CSR.csr_id==Period.csr_id,Period.time_end.is_(None))",
                               order_by='desc(Period.time_start)')
 
+    format_string = 'csr_detail_%s'
+
     def __repr__(self):
         return self.username
 
@@ -40,13 +42,34 @@ class CSR(Base):
 
     @classmethod
     def find_by_username(cls, username):
-        key = 'csr_detail_%s' % username
+        key = CSR.format_string % username
         if cache.get(key):
             return cache.get(key)
 
         csr = CSR.query.filter(CSR.deleted.is_(None)).filter_by(username=username.split("idir/")[-1]).first()
         cache.set(key, csr)
         return csr
+
+    @classmethod
+    def find_by_userid(cls, userid):
+        csr = CSR.query.filter(CSR.deleted.is_(None)).filter_by(csr_id=userid).first()
+        key = CSR.format_string % csr.username
+        if cache.get(key):
+            return cache.get(key)
+
+        cache.set(key, csr)
+        return csr
+
+    @classmethod
+    def delete_user_cache(cls, username):
+        key = CSR.format_string % username
+        cache.delete(key)
+
+    @classmethod
+    def update_user_cache(cls, userid):
+        csr = CSR.query.filter_by(csr_id=userid).first()
+        key = CSR.format_string % csr.username
+        cache.set(key, csr)
 
     def get_id(self):
         return str(self.csr_id)
