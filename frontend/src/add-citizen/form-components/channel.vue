@@ -1,5 +1,5 @@
 <template>
-  <div class="add_citizen_form mt-2">
+  <div class="add_citizen_form mt-1">
     <b-form-row no-gutters>
       <b-col cols="auto">
         <label class="add_citizen_form_label">Channel:</label>
@@ -42,3 +42,9 @@
     }
   }
 </script>
+
+<style>
+  .add_citizen_form {
+    padding-bottom: 2px;
+  }
+</style>

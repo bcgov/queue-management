@@ -2,7 +2,7 @@
   <div class="add_citizen_template">
     <template v-if="addModalSetup === 'add_mode' || addModalSetup === 'edit_mode' ">
       <div class="add_citizen_template">
-        <div class="add_citizen_padding" style="background: rgb(240, 240, 240);padding-top: 12px;">
+        <div class="add_citizen_padding" style="background: rgb(240, 240, 240); padding-top: 12px; padding-bottom: 1px">
             <Channel />
             <div style="transform: translateY(19px);">
                 <Filters />
@@ -22,7 +22,7 @@
                 <Filters />
             </div>
         </div>
-        <b-container fluid class="add_citizen_padding" style="background:#504e4f; padding-top: 35px;">
+        <b-container fluid class="add_citizen_padding" style="background:#504e4f; padding-top: 25px;">
             <Tables />
         </b-container>
       </div>
