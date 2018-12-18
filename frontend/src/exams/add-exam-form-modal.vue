@@ -4,46 +4,56 @@
            hide-ok
            hide-header
            hide-cancel
+           @shown="initialize"
            @hidden="resetModal"
            size="md">
     <template slot="modal-footer">
-      <div v-if="step < 4"
-           style="width: 100%;
-                  display: flex;
-                  justify-content: space-between">
-        <div>
-          <b-button @click="clickCancel">Cancel</b-button>
+      <template v-if="unSubmitted">
+        <div v-if="step < 4"
+             style="width: 100%;
+                    display: flex;
+                    justify-content: space-between">
+          <div>
+            <b-button @click="clickCancel">Cancel</b-button>
+          </div>
+          <div style="display: inline">
+            <b-button v-if="step > 1"
+                      class="btn-secondary mr-2"
+                      @click="clickBack">Back</b-button>
+            <b-button v-if="button.nextDisabled"
+                      :class="button.nextClass"
+                      @click="setWarning">Next</b-button>
+            <b-button v-else
+                      :class="button.nextClass"
+                      @click="clickNext">Next</b-button>
+          </div>
         </div>
-        <div style="display: inline">
-          <b-button v-if="step > 1"
-                    class="btn-secondary mr-2"
-                    @click="clickBack">Back</b-button>
-          <b-button v-if="button.nextDisabled"
-                    :class="button.nextClass"
-                    @click="setWarning">Next</b-button>
-          <b-button v-else
-                    :class="button.nextClass"
-                    @click="clickNext">Next</b-button>
+        <div v-else-if="step == 4"
+             style="display: flex;
+                    justify-content: space-between;
+                    width: 100%">
+          <div style="display: inline">
+            <b-button class="btn-secondary"
+                      @click="clickCancel">Cancel</b-button>
+          <b-button class="btn-warning"
+                    @click="resetModal">Start Again</b-button>
+          </div>
+          <div style="display: flex">
+            <b-button v-if="errors.length > 0"
+                      @click="submitMsg='You have an error on a previous step.  Click on the red tab.'"
+                      class="btn-primary disabled">Submit</b-button>
+            <b-button v-else
+                      class="btn-primary"
+                      @click="submit">Submit</b-button>
+          </div>
         </div>
-      </div>
-      <div v-else-if="step == 4"
-           style="display: flex;
-                  justify-content: space-between;
-                  width: 100%">
-        <div style="display: inline">
+      </template>
+      <template v-if="!unSubmitted">
+        <div style="display: flex; justify-content: flex-start">
           <b-button class="btn-secondary"
-                    @click="clickCancel">Cancel</b-button>
-        <b-button class="btn-warning"
-                  @click="resetModal">Start Again</b-button>
+                    @click="clickCancel">Close</b-button>
         </div>
-        <div style="display: flex">
-          <b-button v-if="errors.length > 0"
-                    @click="submitMsg='You have an error on a previous step.  Click on the red tab.'"
-                    class="btn-primary disabled">Submit</b-button>
-          <b-button v-else
-                    class="btn-primary">Submit</b-button>
-        </div>
-      </div>
+      </template>
     </template>
 
     <b-nav tabs class="mb-3">
@@ -59,8 +69,37 @@
         </span>
       </b-nav-item>
     </b-nav>
-    <AddExamFormController v-if="step <= 3"  />
-    <AddExamFormConfirm v-if="step==4" :submitMsg="submitMsg" />
+    <template v-if="unSubmitted">
+      <AddExamFormController v-if="step <= 3"  />
+      <AddExamFormConfirm v-if="step==4" :submitMsg="submitMsg" />
+    </template>
+    <template v-if="!unSubmitted">
+      <div v-if="success==='' " class="loader" style="margin-top: auto"></div>
+      <div v-if="success">
+        <b-container>
+          <b-row align-v="center"
+                 align-h="center"
+                 align-content="center">
+            <b-col>
+              <p><h5>Success.  Exam Details Added.</h5></p>
+              <p><b-button @click="resetModal" class="btn-primary">Log Another Exam</b-button></p>
+            </b-col>
+          </b-row>
+        </b-container>
+      </div>
+      <div v-if="!success">
+        <b-container>
+          <b-row align-v="center"
+                 align-h="center"
+                 align-content="center">
+            <b-col>
+              <p class="message-text">Something Went Wrong</p>
+              <p><b-button>Try Again</b-button></p>
+            </b-col>
+          </b-row>
+        </b-container>
+      </div>
+    </template>
   </b-modal>
 </template>
 
@@ -73,9 +112,10 @@
     name: 'AddExamFormModal',
     components: { AddExamFormController, AddExamFormConfirm },
     data() {
-      return {
-        submitMsg: ''
-      }
+      return ({
+        submitMsg: '',
+        unSubmitted: true,
+      })
     },
     computed: {
       ...mapGetters({
@@ -85,9 +125,15 @@
         exam: state => state.capturedExam,
         examTypes: state => state.examTypes,
         modalVisible: state => state.addIndividualITAExamModalVisibe,
-        steps: state => state.addIndividualITAsteps,
+        steps: state => state.addIndITASteps,
         tab: state => state.captureITAExamTabSetup,
       }),
+      success() {
+        if (this.tab) {
+          return this.tab.success
+        }
+        return false
+      },
       errors() {
         if (this.tab.errors) {
           return this.tab.errors
@@ -124,7 +170,7 @@
       },
     },
     methods: {
-      ...mapActions(['postExam']),
+      ...mapActions(['clickAddExamSubmit']),
       ...mapMutations([
         'resetCaptureForm',
         'resetCaptureTab',
@@ -161,7 +207,6 @@
       clickCancel() {
         this.toggleAddIndividualITAExam(false)
       },
-
       clickNext() {
         let step = this.step + 1
         this.updateCaptureTab({step})
@@ -170,28 +215,38 @@
           this.updateCaptureTab({highestStep: step})
         }
       },
-
       clickTab(e) {
         this.updateCaptureTab({step: e})
       },
-
+      initialize() {
+        this.unSubmitted = true
+        this.submitMsg = ''
+      },
+      submit() {
+        this.unSubmitted = false
+        this.submitMsg = ''
+        this.clickAddExamSubmit('ind_ita')
+      },
       resetModal() {
         this.resetCaptureForm()
         this.resetCaptureTab()
+        this.unSubmitted = true
+        this.submitMsg = ''
       },
-
       setWarning() {
         if (!this.errors.includes(this.step)) {
           let errors = this.errors.concat([this.step])
           this.updateCaptureTab({errors})
         }
       },
-
     }
   }
 </script>
 
 <style>
+  .message-text {
+    font-size: .9rem; font-weight: 500
+  }
   .tab-title-font {
     font-size: .8rem
   }
@@ -201,6 +256,31 @@
     border-top: none;
     border-right: none;
     border-left: none;
+  }
+  .loader {
+    position: relative;
+    text-align: center;
+    margin: 15px auto 35px auto;
+    z-index: 9999;
+    display: block;
+    width: 80px;
+    height: 80px;
+    border: 10px solid rgba(0, 0, 0, .3);
+    border-radius: 50%;
+    border-top-color: #000;
+    animation: spin 1s ease-in-out infinite;
+    -webkit-animation: spin 1s ease-in-out infinite;
+  }
+  @keyframes spin {
+    to {
+      -webkit-transform: rotate(360deg);
+    }
+  }
+
+  @-webkit-keyframes spin {
+    to {
+      -webkit-transform: rotate(360deg);
+    }
   }
 
 </style>

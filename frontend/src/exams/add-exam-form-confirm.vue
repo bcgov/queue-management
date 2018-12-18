@@ -54,7 +54,7 @@
         <span class="confirm-header">Received Date</span>
       </b-col>
       <b-col align-self="end">
-        <span class="confirm-item">{{ exam.exam_received }}</span>
+        <span class="confirm-item">{{ exam.exam_received_date }}</span>
       </b-col>
     </b-row>
     <b-row no-gutters align-h="between" align-v="end">

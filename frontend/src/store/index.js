@@ -25,7 +25,7 @@ Vue.use(Vuex)
 export const store = new Vuex.Store({
 
   state: {
-    addIndividualITAsteps: [
+    addIndITASteps: [
       {
         step: 1,
         title:'Exam Type',
@@ -83,7 +83,7 @@ export const store = new Vuex.Store({
         questions: [
           {
             kind: 'exam_received',
-            key: 'exam_received',
+            key: 'exam_received_date',
             text1:'Was the Exam Package Receieved Today?',
             text2: 'Date of Receipt of Exam Package',
             minLength: 0,
@@ -126,25 +126,27 @@ export const store = new Vuex.Store({
       stepsValidated: [],
       errors: [],
       showRadio: true,
+      success: '',
+      notes: false,
     },
     examTypes: [
       {
         exam_type_name: 'ODSC 1 SINGLE-3HR+1HR-READER OWN',
-        exam_type_id: 2,
+        exam_type_id: 1,
         header: false,
         class:'add-exam-list-item',
         exam_type_colour: '#f7e1b5'
       },
       {
         exam_type_name: 'CWERC 1 SINGLE-3HR+1HR-READER SBC',
-        exam_type_id: 3,
+        exam_type_id: 2,
         header: false,
         class:'add-exam-list-item',
         exam_type_colour: '#b6e1b6'
       },
       {
         exam_type_name: 'CWERC 2 SINGLE-3HR NONE',
-        exam_type_id: 4,
+        exam_type_id: 3,
         header: false,
         class:'add-exam-list-item',
         exam_type_colour: '#b6e1b6'
@@ -156,7 +158,8 @@ export const store = new Vuex.Store({
       examinee_name: null,
       expiry_date: null,
       notes: null,
-      exam_received: null,
+      exam_received: false,
+      exam_received_date: null,
       number_of_students: null,
       exam_method: 'paper',
       exam_type_id: null,
@@ -700,6 +703,12 @@ export const store = new Vuex.Store({
       })
     },
 
+    clickAddExamSubmit(context, type) {
+      context.dispatch('postExam', type).finally( () => {
+        context.dispatch('getExams')
+      })
+    },
+
     clickAdmin(context) {
       context.commit('toggleShowAdmin')
     },
@@ -1181,6 +1190,44 @@ export const store = new Vuex.Store({
           })
         })
       }
+    },
+
+    postExam(context, payload) {
+      let capturedExam = context.state.capturedExam
+      let examObj = {}
+      let steps
+      let additionalKeys = {}
+      switch (payload) {
+        case 'ind_ita':
+          steps = context.state.addIndITASteps
+          additionalKeys = {
+            exam_received: 1,
+            office_id: context.state.user.office_id
+          }
+          break
+        case 'group_ita':
+          steps = null
+          break
+        default:
+          steps = null
+          end
+      }
+      let keys = steps.map(step=>step.questions.map(q=>q.key)).flat()
+      keys.forEach(key => {
+        examObj[key] = capturedExam[key]
+      })
+      let data = {...examObj, ...additionalKeys}
+
+      return new Promise((resolve, reject) => {
+        Axios(context).post('/exams/', data).then(resp=>{
+          context.commit('updateCaptureTab', {success: true})
+          resolve(resp)
+        })
+          .catch( error => {
+            context.commit('updateCaptureTab', {success: false})
+            reject(error)
+        })
+      })
     },
 
     postServiceReq(context) {
@@ -1676,6 +1723,12 @@ export const store = new Vuex.Store({
     toggleAddIndividualITAExam: (state, payload) => state.addIndividualITAExamModalVisibe = payload,
 
     captureExamDetail(state, payload) {
+      if (payload.key === 'exam_type_id') {
+        payload.value = Number(payload.value)
+      }
+      if (payload.key === 'event_id') {
+        payload.value = payload.value.toString()
+      }
       Vue.set(
         state.capturedExam,
         payload.key,
@@ -1704,7 +1757,9 @@ export const store = new Vuex.Store({
         highestStep: 1,
         stepsValidated: [],
         errors: [],
-        showRadio: true
+        showRadio: true,
+        success: '',
+        notes: false
       }
       let keys = Object.keys(initialState)
       keys.forEach(key => {

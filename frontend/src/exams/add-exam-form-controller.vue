@@ -76,7 +76,8 @@
           number = '0' + number
         }
       let date = `${d.getFullYear()}-${month}-${number}`
-      this.captureExamDetail({key:'exam_received', value: date})
+      this.captureExamDetail({key:'exam_received_date', value: date})
+      this.captureExamDetail({key:'notes', value: ''})
     },
     data() {
       return {
@@ -91,7 +92,7 @@
       ...mapGetters(['exam_object']),
       ...mapState({
         exam: state => state.capturedExam,
-        steps: state => state.addIndividualITAsteps,
+        steps: state => state.addIndITASteps,
         tab: state => state.captureITAExamTabSetup,
       }),
       error() {
@@ -218,6 +219,7 @@
         'updateCaptureTab'
       ]),
       handleInput(e) {
+        console.log(e)
         let payload = {
           key: e.target.name,
           value: e.target.value,
@@ -235,13 +237,9 @@
               number = '0' + number
             }
             let date = `${d.getFullYear()}-${month}-${number}`
-            payload.key = 'exam_received'
+            payload.key = 'exam_received_date'
             payload.value = date
           }
-        }
-        if (e.target.nodeName === 'SELECT') {
-          payload.key = 'exam_method'
-          payload.value = this.selectOptions[e.target.options.selectedIndex].value
         }
         if (this.step === 1) {
           payload.key = 'exam_type_id'
