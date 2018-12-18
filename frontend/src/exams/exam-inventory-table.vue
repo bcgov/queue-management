@@ -20,6 +20,12 @@
              hover
              show-empty
              :filter="filter">
+      <template slot="exam_received" slot-scope="row">
+        {{ row.item.exam_received === 0 ? 'No' : 'Yes' }}
+      </template>
+      <template slot="expiry_date" slot-scope="row">
+        {{ row.item.expiry_date.split('T')[0] }}
+      </template>
     </b-table>
   </div>
 </template>
@@ -35,13 +41,13 @@
         filter: null,
         fields: [
           {key: 'office.office_name', label: 'Office', sortable: true},
-          {key: 'event_id', label: 'Event ID', sortable: true },
+          {key: 'event_id', label: 'Event ID', sortable: false },
           {key: 'exam_name', label: 'Exam Name', sortable: true },
-          {key: 'exam_method', label: 'Method', sortable: true },
+          {key: 'exam_method', label: 'Method', sortable: false },
           {key: 'expiry_date', label: 'Expiry Date', sortable: true },
-          {key: 'exam_received', label: 'Received', sortable: true },
+          {key: 'exam_received', label: 'Received?', sortable: true },
           {key: 'examinee_name', label: 'Student Name', sortable: true },
-          {key: 'notes', label: 'Notes', sortable: true },
+          {key: 'notes', label: 'Notes', sortable: false },
           {key: 'invigilator.invigilator_name', label: 'Invigilator', sortable: true },
           {key: 'booking.room.room_name', label: 'Location', sortable: true },
         ],
@@ -54,10 +60,10 @@
       this.getExams()
     },
     computed: {
-      ...mapState(['exams']),
       ...mapGetters(['role_code']),
+      ...mapState(['exams', 'user']),
       getFields() {
-        if ("LIASON" === this.role_code) {
+        if (this.role_code === "LIAISON") {
           return this.fields
         } else {
           let returnFields = this.fields

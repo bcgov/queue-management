@@ -45,14 +45,13 @@ export const SelectQuestion = Vue.component('select-question', {
     <b-row no-gutters>
       <b-col cols="11">
         <b-form-group>
-          <label>{{ q.text }}
+          <label>{{q.text}}
             <span v-if="error" style="color: red">{{ validationObj[q.key].message }}</span>
           </label><br>
           <b-form-select :options="q.options"
                          :value="exam[q.key]"
-                         :name="q.key"
-                         :id="q.key"
-                         @input.native="handleInput" />
+                         @change.native="handleInput"
+                         :name="q.key" />
         </b-form-group>
       </b-col>
       <checkmark :validated="validationObj[q.key].valid"  />
@@ -74,23 +73,23 @@ export const ExamReceivedQuestion = Vue.component('exam-received-question', {
   template: `
     <b-row no-gutters>
       <b-col cols="6">
-          <b-form-group v-if="showRadio">
-            <label>{{ q.text1 }}
-              <span v-if="error" style="color: red">{{ validationObj[q.key].message }}</span>
-            </label><br>
-            <b-form-radio-group v-model="showRadio"
-                                :options="options" />
-          </b-form-group>
-          <b-form-group v-else>
-            <label>{{ q.text2 }}
-              <span v-if="error" style="color: red">{{ validationObj[q.key].message }}
-            </span></label>
-            <b-input type="date"
-                     :value="exam[q.key]"
-                     :key="q.key"
-                     :name="q.key"
-                     @input.native="handleInput" />
-          </b-form-group>
+        <b-form-group v-if="showRadio">
+          <label>{{ q.text1 }}
+            <span v-if="error" style="color: red">{{ validationObj[q.key].message }}</span>
+          </label><br>
+          <b-form-radio-group v-model="showRadio"
+                              :options="options" />
+        </b-form-group>
+        <b-form-group v-else>
+          <label>{{ q.text2 }}
+            <span v-if="error" style="color: red">{{ validationObj[q.key].message }}</span>
+          </label>
+          <b-input type="date"
+                   :value="exam[q.key]"
+                   :key="q.key"
+                   :name="q.key"
+                   @input.native="handleInput" />
+        </b-form-group>
       </b-col>
       <b-col cols="5" />
       <checkmark :validated="validationObj[q.key].valid" />
@@ -103,9 +102,7 @@ export const ExamReceivedQuestion = Vue.component('exam-received-question', {
         return this.captureITAExamTabSetup.showRadio
       },
       set(e) {
-        if (e === false) {
-          this.captureExamDetail({ key: 'exam_received', value: null })
-        }
+        this.captureExamDetail({ key: 'exam_received_date', value: null })
         this.toggleIndividualCaptureTabRadio(e)
       }
     }
@@ -118,33 +115,38 @@ export const ExamReceivedQuestion = Vue.component('exam-received-question', {
 export const NotesQuestion = Vue.component('notes-question', {
   props: ['error', 'q', 'validationObj', 'handleInput', 'exam'],
   components: { checkmark },
-  data() {
-    return {
-      notes: false,
-    }
-  },
   template: `
     <b-row no-gutters >
       <b-col cols="12">
-        <b-form-group>
-          <template v-if="!notes">
-            <label>Click to Display the Notes Field (Optional)</label><br>
-            <b-button @click="notes=true"
-                  class="btn--secondary"
-                  size="sm">Display Notes Field?</b-button>
-      </template>
-      <template v-if="notes">
+        <b-form-group v-if="!notes">
+          <label>Click to Display the Notes Field (Optional)</label><br>
+          <b-button @click="handleClick"
+                    class="btn-secondary"
+                    size="sm">Display Notes Field?</b-button>
+        </b-form-group>
+        <b-form-group v-if="notes">
           <label>Notes (Optional)</label><br>
           <b-textarea :value="exam[q.key]"
                       @input.native="handleInput"
                       :rows="3"
                       :name="q.key"
                       :id="q.key" />
-      </template>
         </b-form-group>
       </b-col>
     </b-row>
-  `
+  `,
+  computed: {
+    ...mapState(['captureITAExamTabSetup']),
+    notes() {
+      return this.captureITAExamTabSetup.notes
+    }
+  },
+  methods: {
+    ...mapMutations(['updateCaptureTab']),
+    handleClick() {
+      this.updateCaptureTab({ notes: true })
+    }
+  }
 })
 
 export const DateQuestion = Vue.component('date-question', {
