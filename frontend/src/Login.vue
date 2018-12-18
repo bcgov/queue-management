@@ -86,7 +86,9 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
       },
       break_toggle: {
         get() {
-            if(this.user.csr_state_id === this.csr_states['Break']){
+            var csr_status = this.user.csr_state.csr_state_name
+
+            if(csr_status === 'Break'){
                 return false
             } else {
                 return true
@@ -95,17 +97,26 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
         set(value) {
             var breakID = this.csr_states['Break']
             var loginID = this.csr_states['Login']
+            var id;
+            var name;
 
-            let id = value ? name = loginID : name = breakID;
-            console.log(id)
+            if(value){
+                id = loginID
+                name = 'Login'
+            } else {
+                id = breakID
+                name='Break'
+            }
+
             this.setCSRState(id)
+            this.setUserCSRStateName(name)
             this.updateCSRState()
         }
       },
     },
     methods: {
       ...mapActions(['updateCSRCounterTypeState', 'updateCSRState']),
-      ...mapMutations(['setQuickTransactionState', 'setReceptionistState', 'setCSRState']),
+      ...mapMutations(['setQuickTransactionState', 'setReceptionistState', 'setCSRState', 'setUserCSRStateName']),
       initLocalStorage() {
         if(localStorage.token) {
           let tokenExp = localStorage.tokenExp
@@ -203,6 +214,7 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
       stopBreak(){
         const loginStateID = this.csr_states['Login'];
         this.setCSRState(loginStateID)
+        this.setUserCSRStateName('Login')
         this.updateCSRState()
       },
 
