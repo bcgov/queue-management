@@ -28,11 +28,11 @@
     name: 'Filters',
 
     mounted() {
-    //   this.$root.$on('focusfilter', () => {
-    //     if (this.$refs && this.$refs.filterref) {
-    //       this.$refs.filterref.focus()
-    //     }
-    //   })
+      this.$root.$on('focusfilter', () => {
+        if (this.$refs && this.$refs.filterref) {
+          this.$refs.filterref.focus()
+        }
+      })
     },
 
     computed: {
