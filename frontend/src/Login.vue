@@ -231,7 +231,9 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
       },
     },
     updated(){
-        if(this.user.csr_state_id === this.csr_states['Break']){
+        var csr_status = this.user.csr_state.csr_state_name
+
+        if(csr_status === 'Break'){
             this.setBreakClickEvent();
         } else {
           document.body.removeEventListener('click', this.stopBreak)
