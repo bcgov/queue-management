@@ -68,7 +68,7 @@
 </template>
 
 <script>
-  import { mapState, mapActions, mapMutations } from 'vuex'
+  import { mapState, mapActions, mapMutations, mapGetters } from 'vuex'
   export default {
     name: 'Nav',
     computed: {
@@ -95,12 +95,9 @@
         }
         return false
       },
-      showExams() {
-        if (this.user.office.exams_enabled_ind === 1){
-          return true
-        }
-        return false
-      }
+      ...mapGetters([
+        'showExams',
+      ])
     },
     methods: {
       ...mapActions(['clickGAScreen']),

@@ -10,36 +10,23 @@
     </div>
   </div>
   <div v-else>
-    <div class="loader" style="margin-top: 250px"></div>
+    <div class="loader"></div>
   </div>
 
 </template>
 
 <script>
-  import { mapActions, mapState, mapMutations } from 'vuex'
+  import { mapState, mapGetters } from 'vuex'
   import ExamInventoryTable from './exam-inventory-table'
   export default {
     name: "Exams",
     computed: {
       ...mapState([
         'user',
-        'navigationVisible',
-        'showServiceModal',
-        'showGAScreenModal'
       ]),
-      showExams() {
-        if (this.user.office.exams_enabled_ind === 1) {
-          return true
-        }
-        return false
-      }
-    },
-    methods: {
-      ...mapActions(['clickGAScreen']),
-      ...mapMutations(['toggleFeedbackModal']),
-      clickFeedback() {
-        this.toggleFeedbackModal(true)
-      },
+      ...mapGetters([
+        'showExams',
+      ])
     },
     components: { ExamInventoryTable },
   }

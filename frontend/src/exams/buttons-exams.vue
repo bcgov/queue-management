@@ -1,12 +1,12 @@
 <template>
   <div>
     <b-button v-if="showExams" class="btn-primary" @click="clickAddIndividual">Add Individual ITA Exam</b-button>
-    <AddExamFormModal />
+    <AddExamFormModal v-if="showExams" />
   </div>
 </template>
 
 <script>
-  import { mapMutations, mapState } from 'vuex'
+  import { mapMutations, mapState, mapGetters } from 'vuex'
   import AddExamFormModal from './add-exam-form-modal'
 
   export default {
@@ -15,12 +15,9 @@
       ...mapState([
         'user'
       ]),
-      showExams() {
-        if (this.user.office.exams_enabled_ind === 1) {
-          return true
-        }
-        return false
-      }
+      ...mapGetters([
+        'showExams',
+      ]),
     },
     components: {AddExamFormModal },
     methods: {
