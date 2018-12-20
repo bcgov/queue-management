@@ -1,16 +1,24 @@
 <template>
   <div>
-    <b-button class="btn-primary" @click="clickAddIndividual">Add Individual ITA Exam</b-button>
-    <AddExamFormModal />
+    <b-button v-if="showExams" class="btn-primary" @click="clickAddIndividual">Add Individual ITA Exam</b-button>
+    <AddExamFormModal v-if="showExams" />
   </div>
 </template>
 
 <script>
-  import { mapMutations } from 'vuex'
+  import { mapMutations, mapState, mapGetters } from 'vuex'
   import AddExamFormModal from './add-exam-form-modal'
 
   export default {
     name: "ButtonsExams",
+    computed: {
+      ...mapState([
+        'user'
+      ]),
+      ...mapGetters([
+        'showExams',
+      ]),
+    },
     components: {AddExamFormModal },
     methods: {
       ...mapMutations(['toggleAddIndividualITAExam']),

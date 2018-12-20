@@ -259,6 +259,13 @@ export const store = new Vuex.Store({
       }
     },
 
+    showExams(state) {
+      if (state.user && state.user.office.exams_enabled_ind === 1) {
+        return true
+      }
+      return false
+    },
+
     addIndividualITAButton(state) {
       let setup = state.captureITAExamTabSetup
       if (setup.stepsValidated.indexOf(setup.step) === -1) {
