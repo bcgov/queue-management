@@ -1,4 +1,4 @@
-snowplow-tracker==0.8.1rc1.dev1
+snowplow-tracker==0.8.2rc1.dev1
 Flask
 Flask-Admin
 Flask-Cache
