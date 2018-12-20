@@ -198,6 +198,8 @@ export const store = new Vuex.Store({
     citizenInvited: false,
     csrs: [],
     dismissCount: 0,
+    examAlertMessage: '',
+    examDismissCount: 0,
     feedbackMessage: '',
     isLoggedIn: false,
     nowServing: false,
@@ -460,6 +462,25 @@ export const store = new Vuex.Store({
   },
 
   actions: {
+
+    examsOnLogin(context) {
+      if (context.state.user && context.state.groupExam && context.state.individualExam) {
+        // Set alert message to display that both group and individual exams need attention
+        context.commit('setExamAlert', 'There are Individual Exams and Group Exams that require attention')
+        console.log('Set BOTH Exam Alert Message')
+      }
+      else if (context.state.user && context.state.groupExam) {
+        // Set alert message to display that only group exams need attention
+        context.commit('setExamAlert', 'There are Group Exams that require attention')
+        console.log('Set GROUP Exam Alert Message Only')
+      }
+      else if (context.state.user && context.state.individualExam) {
+        // Set alert message to display that only individual exams need attention
+        context.commit('setExamAlert', 'There are Individual Exams that require attention')
+        console.log('Set INDIVIDUAL Exam Alert Message Only')
+      }
+    },
+
     loginIframe(context) {
       Axios(context).get('/login/').then( () => {
         context.commit('setiframeLogedIn', true)
@@ -635,6 +656,30 @@ export const store = new Vuex.Store({
           context.commit('setUser', resp.data.csr)
           let officeType = resp.data.csr.office.sb.sb_type
           context.commit('setOffice', officeType)
+
+          if (resp.data.group_exams > 0) {
+            var groupExamBoolean = true
+            context.commit('setGroupExam', groupExamBoolean)
+          } else {
+            var groupExamBoolean = false
+            context.commit('setGroupExam', groupExamBoolean)
+          }
+
+          if (resp.data.individual_exams > 0) {
+            var individualExamBoolean = true
+            context.commit('setGroupExam', individualExamBoolean)
+          } else {
+            var individualExamBoolean = false
+            context.commit('setGroupExam', individualExamBoolean)
+          }
+
+          if (groupExamBoolean && individualExamBoolean) {
+            context.commit('setExamAlert', 'There are Individual Exams and Group Exams that require attention')
+          }else if (groupExamBoolean) {
+            context.commit('setExamAlert', 'There are Group Exams that require attention')
+          }else if (individualExamBoolean) {
+            context.commit('setExamAlert', 'There are Individual Exams that require attention')
+          }
 
           if (resp.data.active_citizens && resp.data.active_citizens.length > 0) {
             context.dispatch('checkForUnfinishedService', resp.data.active_citizens)
@@ -1712,6 +1757,11 @@ export const store = new Vuex.Store({
       state.dismissCount = 5
     },
 
+    setExamAlert(state, payload) {
+      state.examAlertMessage = payload
+      state.examDismissCount = 999
+    },
+
     setModalAlert(state, payload) {
       state.alertMessage = payload
     },
@@ -1740,6 +1790,10 @@ export const store = new Vuex.Store({
 
     dismissCountDown(state, payload) {
       state.dismissCount = payload
+    },
+
+    examDismissCountDown(state, payload) {
+      state.examDismissCount = payload
     },
 
     toggleInvitedStatus: (state, payload) => state.citizenInvited = payload,
@@ -1773,6 +1827,10 @@ export const store = new Vuex.Store({
     setPerformingAction: (state, payload) => state.performingAction = payload,
 
     setUserLoadingFail: (state, payload) => state.userLoadingFail = payload,
+
+    setGroupExam: (state, payload) => state.groupExam = payload,
+
+    setIndividualExam: (state, payload) => state.individualExam = payload,
 
     showHideResponseModal(state) {
       state.showResponseModal = true

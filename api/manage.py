@@ -484,7 +484,8 @@ class Bootstrap(Command):
             exam_color = "red",
             number_of_hours = 3,
             method_type = "Written",
-            ita_ind = 1
+            ita_ind = 1,
+            group_exam_ind = 0
         )
 
         exam_type_two = bookings.ExamType(
@@ -492,7 +493,8 @@ class Bootstrap(Command):
             exam_color = "green",
             number_of_hours = 2,
             method_type = "Written",
-            ita_ind = 0
+            ita_ind = 0,
+            group_exam_ind = 0
         )
 
         exam_type_three = bookings.ExamType(
@@ -500,12 +502,33 @@ class Bootstrap(Command):
             exam_color = "white",
             number_of_hours = 1,
             method_type = "Written",
-            ita_ind = 0
+            ita_ind = 0,
+            group_exam_ind = 0
+        )
+
+        exam_type_four = bookings.ExamType(
+            exam_type_name = "Group Exam Test Type",
+            exam_color="green",
+            number_of_hours=4,
+            method_type="Written",
+            ita_ind = 0,
+            group_exam_ind = 1
+        )
+
+        exam_type_five = bookings.ExamType(
+            exam_type_name = "Group Rap Battle",
+            exam_color = "Grey",
+            number_of_hours = 5,
+            method_type = "Written",
+            ita_ind = 1,
+            group_exam_ind = 1
         )
 
         db.session.add(exam_type_one)
         db.session.add(exam_type_two)
         db.session.add(exam_type_three)
+        db.session.add(exam_type_four)
+        db.session.add(exam_type_five)
         db.session.commit()
 
         print("--> Bookings: Booking")
@@ -550,10 +573,11 @@ class Bootstrap(Command):
             expiry_date = "2018-11-29 11:19:53.5",
             notes = "This student is extremely s-m-r-t",
             exam_received = 1,
-            exam_received_date= "2018-12-25 (9:00:00.000",
+            exam_received_date= "2018-12-25 9:00:00.000",
             session_number = 1,
             number_of_students = 1,
-            exam_method = "Written"
+            exam_method = "Written",
+            exam_returned_ind=0
         )
 
         exam_two = bookings.Exam(
@@ -567,10 +591,11 @@ class Bootstrap(Command):
             expiry_date = "2018-11-29 11:19:53.5",
             notes = "Speak slowly with this student, hearing impaired",
             exam_received = 1,
-            exam_received_date="2018-12-24 (9:00:00.000",
+            exam_received_date="2018-12-24 9:00:00.000",
             session_number = 2,
             number_of_students = 12,
-            exam_method = "Written"
+            exam_method = "Written",
+            exam_returned_ind = 0
         )
 
         exam_three = bookings.Exam(
@@ -584,15 +609,52 @@ class Bootstrap(Command):
             expiry_date="2018-11-29 11:19:53.5",
             notes="Student is extremely verbally obscene",
             exam_received=1,
-            exam_received_date="2018-12-23 (9:00:00.000",
+            exam_received_date="2018-12-23 9:00:00.000",
             session_number=3,
             number_of_students=10,
-            exam_method="Kitchen"
+            exam_method="Kitchen",
+            exam_returned_ind = 0
+        )
+
+        exam_four = bookings.Exam(
+            exam_type_id=exam_type_four.exam_type_id,
+            office_id=office_test.office_id,
+            event_id="e-000005",
+            exam_name="Lyrical Flow Exam",
+            examinee_name="Celine Dion",
+            expiry_date="2019-01-31 15:00:00.000",
+            notes="Not sure if she uses a ghost writer or not",
+            exam_received=1,
+            exam_received_date="2018-12-25 9:00:00.000",
+            session_number=4,
+            number_of_students=25,
+            exam_method="Vocal",
+            exam_returned_ind = 0
+        )
+
+        exam_five = bookings.Exam(
+            exam_type_id=exam_type_five.exam_type_id,
+            booking_id=booking_three.booking_id,
+            invigilator_id=invigilator_one.invigilator_id,
+            office_id=office_test.office_id,
+            event_id="e-000005",
+            exam_name="Lyrical Flow Exam",
+            examinee_name="Luciano Pavarotti",
+            expiry_date="2019-01-31 15:00:00.000",
+            notes="Use ear plugs, quite loud",
+            exam_received=1,
+            exam_received_date="2018-12-25 9:00:00.000",
+            session_number=4,
+            number_of_students=25,
+            exam_method="Vocal",
+            exam_returned_ind = 0
         )
 
         db.session.add(exam_one)
         db.session.add(exam_two)
         db.session.add(exam_three)
+        db.session.add(exam_four)
+        db.session.add(exam_five)
         db.session.commit()
 
 class FetchData(Command):

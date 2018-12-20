@@ -24,6 +24,7 @@ class ExamType(Base):
     number_of_hours = db.Column(db.Integer, nullable=False)
     method_type = db.Column(db.String(10), nullable=False)
     ita_ind = db.Column(db.Integer, nullable=False)
+    group_exam_ind = db.Column(db.Integer,  nullable=False)
 
     exam = db.relationship("Exam", lazy=False)
 
