@@ -129,6 +129,7 @@ export const store = new Vuex.Store({
       success: '',
       notes: false,
     },
+    bookings: [],
     examTypes: [
       {
         exam_type_name: 'ODSC 1 SINGLE-3HR+1HR-READER OWN',
@@ -202,6 +203,7 @@ export const store = new Vuex.Store({
     nowServing: false,
     officeType: null,
     performingAction: false,
+    rooms: [],
     serveNowAltAction: false,
     serveNowStyle: 'btn-primary',
     serviceBegun: false,
@@ -248,6 +250,35 @@ export const store = new Vuex.Store({
   },
 
   getters: {
+    room_resources(state) {
+      if (state.rooms.length > 0) {
+        return state.rooms.map(room =>
+          ({
+            id: room.room_id,
+            title: room.room_name,
+            eventColor: room.color
+          })
+        )
+      }
+      return []
+    },
+    
+    calendar_events(state) {
+      if (state.bookings.length > 0) {
+        return state.bookings.map(booking =>
+          ({
+            id: booking.booking_id,
+            title: booking.booking_name,
+            start: booking.start_time,
+            end: booking.end_time,
+            resourceId: booking.room_id,
+            color: booking.room.color
+          })
+        )
+      }
+      return []
+    },
+    
     exam_object(state) {
       if (state.capturedExam && state.capturedExam.exam_type_id) {
         return state.examTypes.find(type => type.exam_type_id == state.capturedExam.exam_type_id)
@@ -470,6 +501,19 @@ export const store = new Vuex.Store({
       })
     },
 
+    getBookings(context) {
+      return new Promise((resolve, reject) => {
+        Axios(context).get('/bookings/')
+          .then(resp => {
+            context.commit('setBookings', resp.data.bookings)
+            resolve(resp)
+          })
+          .catch( errpr => {
+            reject(error)
+          })
+      })
+    },
+
     getAllCitizens(context) {
       let url = '/citizens/'
       Axios(context).get(url).then( resp => {
@@ -544,15 +588,30 @@ export const store = new Vuex.Store({
     },
 
     getExams(context) {
-      Axios(context).get('/exams/')
-        .then(resp => {
-          context.commit('setExams', resp.data.exams)
-        })
-        .catch(error => {
-          console.log('error @ store.actions.getCsrs')
-          console.log(error.response)
-          console.log(error.message)
-        })
+      return new Promise((resolve, reject) => {
+        Axios(context).get('/exams/')
+          .then(resp => {
+            context.commit('setExams', resp.data.exams)
+            resolve(resp)
+          })
+          .catch(error => {
+            console.log(error)
+            reject(error)
+          })
+      })
+    },
+    
+    getRooms(context) {
+      return new Promise((resolve, reject) => {
+        Axios(context).get('/rooms/')
+          .then(resp => {
+            context.commit('setRooms', resp.data.rooms)
+            resolve(resp)
+          })
+          .catch( error => {
+            reject(error)
+          })
+      })
     },
 
     getServices(context) {
@@ -1065,6 +1124,14 @@ export const store = new Vuex.Store({
 
     closeGAScreenModal(context) {
       context.commit('toggleGAScreenModal', false)
+    },
+    
+    initializeAgenda(context) {
+      context.dispatch('getExams').then( () => {
+        context.dispatch('getRooms').then( () => {
+          context.dispatch('getBookings')
+        })
+      })
     },
 
     messageFeedback(context) {
@@ -1795,6 +1862,10 @@ export const store = new Vuex.Store({
         'showRadio',
         payload
       )
-    }
+    },
+  
+    setBookings: (state, payload) => state.bookings = payload,
+    
+    setRooms: (state, payload) => state.rooms = payload,
   }
 })
