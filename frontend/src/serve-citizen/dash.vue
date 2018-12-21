@@ -245,11 +245,6 @@ import ServeCitizen from './serve-citizen'
   .modal-main div {
     background-color: blue;
   }
-  .btn-highlighted {
-    color: black;
-    border: 1px solid darkgoldenrod;
-    background-color: gold;
-  }
   .loader {
     position: relative;
     text-align: center;

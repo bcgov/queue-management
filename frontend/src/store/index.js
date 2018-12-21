@@ -1754,6 +1754,8 @@ export const store = new Vuex.Store({
 
     setCSRState: (state, payload) => state.user.csr_state_id = payload,
 
+    setUserCSRStateName: (state, payload) => state.user.csr_state.csr_state_name = payload,
+
     setOffice: (state, officeType) => state.officeType = officeType,
 
     flashServeNow: (state, payload) => state.serveNowStyle = payload,

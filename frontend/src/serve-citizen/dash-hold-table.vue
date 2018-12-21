@@ -66,8 +66,7 @@ limitations under the License.*/
           {key: 'csr', label: 'Served By', sortable: false, thStyle: 'width: 10%'},
           {key: 'category', label: 'Category', sortable: false, thStyle: 'width: 17%'},
           {key: 'service', label: 'Service', sortable: false, thStyle: 'width: 17%'},
-          {key: 'citizen_comments', label: 'Comments', sortable: false, thStyle: 'width: 17%'},
-          {key: 'priority', label: 'Priority', sortable: false, thStyle: 'width: 10%'}
+          {key: 'citizen_comments', label: 'Comments', sortable: false, thStyle: 'width: 17%'}
         ]
       }
     },
@@ -86,10 +85,13 @@ limitations under the License.*/
         if (this.reception) {
           let temp = this.fields
           temp.unshift({key: 'qt_xn_citizen_ind', label: 'Q. Txn', sortable: false, thStyle: 'width: 6%'})
+          temp.unshift({key: 'priority', label: 'Priority', sortable: false, thStyle: 'width: 10%'})
           return temp
         }
         else {
-          return this.fields
+          let temp = this.fields
+          temp.unshift({key: 'priority', label: 'Priority', sortable: false, thStyle: 'width: 10%'})
+          return temp
         }
       }
     },

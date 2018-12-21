@@ -102,4 +102,9 @@
     width: 100%;
     height: 100% !important;
   }
+  .btn-highlighted {
+    color: black;
+    border: 1px solid darkgoldenrod;
+    background-color: gold;
+  }
 </style>
