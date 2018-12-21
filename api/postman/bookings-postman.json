@@ -1,0 +1,1978 @@
+{
+	"info": {
+		"_postman_id": "3b22868c-9047-415a-8ed2-2af61e470390",
+		"name": " Bookings End-point Testing",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Setup",
+			"item": [
+				{
+					"name": "Authentication Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "454ea7d6-4c7e-4571-8bc1-be7eed57d03a",
+								"exec": [
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"//Test to make sure that the access token field is not null",
+									"pm.test(\"Access Token is not null\", function(){",
+									"    var access_token = jsonData.access_token;",
+									"    if (pm.expect(access_token).not.eql(null)){",
+									"        pm.globals.set(\"token\", access_token);",
+									"    }",
+									"});",
+									"//Test to make sure that the refresh token response field is not null",
+									"pm.test(\"Refresh Token is not null\", function(){",
+									"    var refresh_token = jsonData.refresh_token;",
+									"    if (pm.expect(refresh_token).not.eql(null)){",
+									"        pm.globals.set(\"refresh_token\", refresh_token);",
+									"    }",
+									"});",
+									"//Test to make sure that expires in response field is not nullf",
+									"pm.test(\"Expires In is not null\", function(){",
+									"    var expires_in = jsonData.expires_in;",
+									"    if (pm.expect(expires_in).not.eql(null)){",
+									"        pm.globals.set(\"expires_in\", expires_in);",
+									"    }",
+									"});",
+									"//Test to make sure that refresh expires in response fiels is not null",
+									"pm.test(\"Refresh Expires In is not null\", function(){",
+									"    var refresh_expires_in = jsonData.refresh_expires_in;",
+									"    if (pm.expect(refresh_expires_in).not.eql(null)){",
+									"        pm.globals.set(\"refresh_expires_in\", refresh_expires_in);",
+									"    }",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "grant_type=password&client_id=cfms-DEV&username=cfms-postman-operator&password=cfmspmopw333&client_secret=06076933-3453-49d9-83a5-52e27f8105a9"
+						},
+						"url": {
+							"raw": "https://sso-test.pathfinder.gov.bc.ca/auth/realms/sbc/protocol/openid-connect/token",
+							"protocol": "https",
+							"host": [
+								"sso-test",
+								"pathfinder",
+								"gov",
+								"bc",
+								"ca"
+							],
+							"path": [
+								"auth",
+								"realms",
+								"sbc",
+								"protocol",
+								"openid-connect",
+								"token"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Exams",
+			"item": [
+				{
+					"name": "Localhost - Exam Post End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "851b530c-92d7-482c-9e80-2a1f542b280c",
+								"exec": [
+									"// Define the JSON Schema expected in response",
+									"var examSchema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"exam\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {",
+									"                \"booking\": {},",
+									"                \"exam_received\": {\"type\": \"integer\"},",
+									"                \"exam_received_date\": {},",
+									"                \"exam_type\": {",
+									"                    \"type\": \"object\",",
+									"                    \"properties\": {},",
+									"                    \"required\": [\"exam_color\", \"exam_type_id\", \"exam_type_name\", \"ita_ind\", \"method_type\", \"number_of_hours\"]",
+									"                },",
+									"                \"examinee_name\": {\"type\": \"string\"},",
+									"                \"exam_name\": {\"type\": \"string\"},",
+									"                \"expiry_date\": {\"type\": \"string\"},",
+									"                \"notes\": {\"type\": \"string\"},",
+									"                \"exam_method\": {\"type\": \"string\"},",
+									"                \"invigilator\": {",
+									"                    \"type\": \"object\",",
+									"                    \"properties\": {",
+									"                        \"contact_email\": {\"type\": \"string\"},",
+									"                        \"contact_phone\": {\"type\": \"string\"},",
+									"                        \"contract_expiry_date\": {\"type\": \"string\"},",
+									"                        \"contract_number\": {\"type\": \"string\"},",
+									"                        \"invigilator_id\": {\"type\": \"integer\"},",
+									"                        \"invigilator_name\": {\"type\": \"string\"},",
+									"                        \"invigilator_notes\": {\"type\": \"string\"},",
+									"                        \"office\": {",
+									"                            \"type\": \"object\",",
+									"                            \"properties\": {",
+									"                                \"office_id\": {\"type\": \"integer\"},",
+									"                                \"office_name\": {\"type\": \"string\"},",
+									"                                \"office_number\": {\"type\": \"integer\"},",
+									"                                \"sb\": {",
+									"                                    \"type\": \"object\",",
+									"                                    \"properties\": {",
+									"                                        \"sb_id\": {\"type\": \"integer\"},",
+									"                                        \"sb_type\": {\"type\": \"string\"}",
+									"                                    },",
+									"                                    \"required\": [\"sb_id\", \"sb_type\"]",
+									"                                }",
+									"                            },",
+									"                            \"required\": [\"office_id\", \"office_name\", \"office_number\", \"sb\", \"sb_id\"]",
+									"                        }",
+									"                    },",
+									"                    \"required\": [\"contact_email\", \"contact_phone\", \"contract_expiry_date\", \"contract_number\", \"invigilator_id\", \"invigilator_name\", \"invigilator_notes\", \"office\"]",
+									"                },",
+									"                \"office_id\": {\"type\": \"integer\"},",
+									"                \"session_number\": {\"type\": \"integer\"},",
+									"                \"booking_id\": {},",
+									"                \"invigilator_id\": {\"type\": \"integer\"},",
+									"                \"deleted_date\": {},",
+									"                \"exam_id\": {\"type\": \"integer\"},",
+									"                \"number_of_students\": {\"type\": \"integer\"},",
+									"                \"exam_type_id\": {\"type\": \"integer\"},",
+									"                \"event_id\": {\"type\": \"string\"}",
+									"            },",
+									"            \"required\": [\"booking\", \"exam_received\", \"exam_received_date\", \"exam_type\", \"examinee_name\", \"exam_name\", \"expiry_date\", \"notes\", \"exam_method\", \"invigilator\",\"office_id\", \"session_number\", \"booking_id\", \"invigilator_id\", \"deleted_date\", \"exam_id\", \"number_of_students\", \"exam_type_id\", \"event_id\"]",
+									"        },",
+									"        \"errors\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {}",
+									"        },",
+									"    \"required\": [\"exam\", \"errors\"]",
+									"    }   ",
+									"};",
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 201\", function(){",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Response time less than 500ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"pm.test(\"Validate Response Exam Schema\", function(){",
+									"    pm.expect(tv4.validate(jsonData, examSchema)).to.be.true;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"event_id\": \"e-000018\",\n  \"exam_name\": \"Super big friday demo\",\n  \"examinee_name\": \"Patrick Stewart\",\n  \"expiry_date\": \"2018-11-30 00:39:38.920\",\n  \"notes\": \"Mild shock\",\n  \"exam_received\": 0,\n  \"session_number\": 1,\n  \"number_of_students\": 12,\n  \"exam_method\": \"spoken word\",\n  \"exam_type_id\": 1,\n  \"invigilator_id\": 1,\n  \"office_id\": 1\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/exams/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"exams",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Localhost - Exam Detail End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5206f620-8220-4ba4-860a-13c1bb452e6d",
+								"exec": [
+									"// Define the JSON Schema expected in response",
+									"var examSchema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"exam\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {",
+									"                \"exam_method\": {\"type\": \"string\"},",
+									"                \"exam_type_id\": {\"type\": \"number\"},",
+									"                \"office_id\": {\"type\": \"number\"},",
+									"                \"exam_id\": {\"type\": \"number\"},",
+									"                \"invigilator\": {",
+									"                    \"type\": \"object\",",
+									"                    \"properties\": {",
+									"                        \"contact_email\": {\"type\": \"string\"},",
+									"                        \"contact_phone\": {\"type\": \"string\"},",
+									"                        \"contract_expiry_date\": {\"type\": \"string\"},",
+									"                        \"contract_number\": {\"type\": \"string\"},",
+									"                        \"invigilator_id\": {\"type\": \"number\"},",
+									"                        \"invigilator_name\": {\"type\": \"string\"},",
+									"                        \"invigilator_notes\": {\"type\": \"string\"},",
+									"                        \"office\": {",
+									"                            \"type\": \"object\",",
+									"                            \"properties\": {",
+									"                                \"office_id\": {\"type\": \"number\"},",
+									"                                \"office_name\": {\"type\": \"string\"},",
+									"                                \"office_number\": {\"type\": \"number\"},",
+									"                                \"sb\": {",
+									"                                    \"type\": \"object\",",
+									"                                    \"properties\": {",
+									"                                        \"sb_id\": {\"type\": \"number\"},",
+									"                                        \"sb_type\": {\"type\": \"string\"}",
+									"                                    },",
+									"                                    \"required\": [\"sb_id\", \"sb_type\"]",
+									"                                }",
+									"                            },",
+									"                            \"required\": [\"office_id\", \"office_name\", \"office_number\", \"sb\", \"sb_id\"]",
+									"                        }",
+									"                    },",
+									"                    \"required\": [\"contact_email\", \"contact_phone\", \"contract_expiry_date\", \"contract_number\", \"invigilator_id\", \"invigilator_name\", \"invigilator_notes\", \"office\"]",
+									"                },",
+									"                \"examinee_name\": {},",
+									"                \"notes\": {},",
+									"                \"number_of_students\": {},",
+									"                \"booking_id\": {},",
+									"                \"expiry_date\": {\"type\": \"string\"},",
+									"                \"exam_type\": {",
+									"                    \"type\": \"object\",",
+									"                    \"properties\": {",
+									"                        \"exam_color\": {\"type\": \"string\"},",
+									"                        \"exam_type_id\": {\"type\": \"number\"},",
+									"                        \"exam_type_name\": {\"type\": \"string\"},",
+									"                        \"ita_ind\": {\"type\": \"number\"},",
+									"                        \"method_type\": {\"type\": \"string\"},",
+									"                        \"number_of_hours\": {\"type\": \"number\"}",
+									"                    },",
+									"                    \"required\": [\"exam_color\", \"exam_type_id\", \"exam_type_name\", \"ita_ind\", \"method_type\", \"number_of_hours\"]",
+									"                },",
+									"                \"exam_received\": {\"type\": \"number\"},",
+									"                \"exam_received_date\": {},",
+									"                \"invigilator_id\": {},",
+									"                \"booking\": {},",
+									"                \"session_number\": {},",
+									"                \"deleted_date\": {},",
+									"                \"event_id\": {\"type\": \"string\"},",
+									"                \"exam_name\": {\"type\": \"string\"}",
+									"            },",
+									"            \"required\": [\"exam_method\", \"exam_type_id\", \"office_id\", \"exam_id\", \"examinee_name\", \"notes\", \"number_of_students\", \"booking_id\", \"expiry_date\", \"exam_type\", \"exam_received\", \"exam_received_date\", \"invigilator_id\", \"booking\", \"session_number\", \"deleted_date\", \"event_id\", \"exam_name\" ]",
+									"        }",
+									"    },",
+									"    \"required\": []",
+									"};            ",
+									"",
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 200\", function(){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time less than 1000ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"pm.test(\"Validate Response Exam Schema\", function(){",
+									"    pm.expect(tv4.validate(jsonData, examSchema)).to.be.true;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/exams/4/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"exams",
+								"4",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Localhost - Exam List End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2a7432b9-ffb0-4e23-a224-c3a48171d6c4",
+								"exec": [
+									"// Define the JSON Schema expected in response",
+									"var examSchema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"exam\": {",
+									"            \"type\": \"array\",",
+									"            \"properties\": {",
+									"                \"booking\": {",
+									"                    \"type\": \"object\",",
+									"                    \"properties\": {",
+									"                        \"booking_id\": {\"type\": \"integer\"},",
+									"                        \"booking_name\": {\"type\": \"string\"},",
+									"                        \"end_time\": {\"type\": \"string\"},",
+									"                        \"fees\": {\"type\": \"string\"},",
+									"                        \"room\": {",
+									"                            \"type\": \"object\",",
+									"                            \"properties\": {",
+									"                                \"capacity\": {\"type\": \"integer\"},",
+									"                                \"color\": {\"type\": \"string\"},",
+									"                                \"room_id\": {\"type\": \"integer\"},",
+									"                                \"room_name\": {\"type\": \"string\"}",
+									"                            },",
+									"                            \"required\": [\"capacity\", \"color\", \"room_id\", \"room_name\"]",
+									"                        },",
+									"                        \"room_id\": {\"type\": \"integer\"},",
+									"                        \"start_time\": {\"type\": \"string\"}",
+									"                    },",
+									"                    \"required\": [\"booking_id\", \"booking_name\", \"end_time\", \"fees\", \"room\", \"room_id\", \"start_time\"]",
+									"                },",
+									"                \"booking_id\": {},",
+									"                \"deleted_date\": {},",
+									"                \"event_id\": {\"type\": \"string\"},",
+									"                \"exam_id\": {\"type\": \"integer\"},",
+									"                \"exam_method\": {\"type\": \"string\"},",
+									"                \"exam_name\": {\"type\": \"string\"},",
+									"                \"exam_received\": {\"type:\": \"integer\"},",
+									"                \"exam_received_date\": {},",
+									"                \"exam_type\": {",
+									"                    \"type\": \"object\",",
+									"                    \"properties\": {",
+									"                        \"exam_color\": {\"type\": \"string\"},",
+									"                        \"exam_type_id\": {\"type\": \"integer\"},",
+									"                        \"exam_type_name\": {\"type\": \"string\"},",
+									"                        \"ita_ind\": {\"type\": \"integer\"},",
+									"                        \"method_type\": {\"type\": \"string\"},",
+									"                        \"number_of_hours\": {\"type\": \"integer\"}",
+									"                    },",
+									"                    \"required\": [\"exam_color\", \"exam_type_id\", \"exam_type_name\", \"ita_ind\", \"method_type\", \"number_of_hours\"]",
+									"                },",
+									"                \"exam_type_id\": {\"type\": \"integer\"},",
+									"                \"examinee_name\": {},",
+									"                \"expiry_date\": {\"type\": \"string\"},",
+									"                \"invigilator\": {",
+									"                    \"type\": \"object\",",
+									"                    \"properties\": {",
+									"                        \"contact_email\": {\"type\": \"string\"},",
+									"                        \"contact_phone\": {\"type\": \"string\"},",
+									"                        \"contract_expiry_date\": {\"type\": \"string\"},",
+									"                        \"contract_number\": {\"type\": \"string\"},",
+									"                        \"invigilator_id\": {\"type\": \"integer\"},",
+									"                        \"invigilator_name\": {\"type\": \"string\"},",
+									"                        \"invigilator_notes\": {\"type\": \"string\"},",
+									"                        \"office\": {",
+									"                            \"type\": \"object\",",
+									"                            \"properties\": {",
+									"                                \"office_id\": {\"type\": \"integer\"},",
+									"                                \"office_name\": {\"type\": \"string\"},",
+									"                                \"office_number\": {\"type\": \"integer\"},",
+									"                                \"sb\": {",
+									"                                    \"type\": \"object\",",
+									"                                    \"properties\": {},",
+									"                                    \"required\": [\"sb_id\", \"sb_type\"]",
+									"                                },",
+									"                                \"sb_id\": {\"type\": \"integer\"}",
+									"                            },",
+									"                            \"required\": [\"office_id\", \"office_name\", \"office_number\", \"sb\", \"sb_id\"]",
+									"                        }",
+									"                    },",
+									"                    \"required\": [\"contact_email\", \"contact_phone\", \"contract_expiry_date\", \"contract_number\", \"invigilator_id\", \"invigilator_name\", \"invigilator_notes\", \"office\"]",
+									"                },",
+									"                \"invigilator_id\": {},",
+									"                \"notes\": {},",
+									"                \"number_of_student\": {},",
+									"                \"office_id\": {\"type\": \"integer\"},",
+									"                \"session_number\": {}",
+									"            },",
+									"            \"required\": [\"booking_id\", \"deleted_date\", \"event_id\", \"exam_id\", \"exam_type\", \"exam_method\", \"exam_name\",\"exam_type_id\", \"examinee_name\", \"expiry_date\", \"invigilator_id\", \"notes\", \"number_of_students\", \"office_id\", \"room_id\", \"session_number\", \"exam_received\", \"exam_received_date\"]",
+									"        },",
+									"        \"errors\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {}",
+									"        }",
+									"    }",
+									"}",
+									"",
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 200\", function(){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time less than 1000ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"pm.test(\"Validate Response Exam Schema\", function(){",
+									"    pm.expect(tv4.validate(jsonData, examSchema)).to.be.true;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/exams/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"exams",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Localhost - Exam Put End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1cf958af-12dd-44f4-a624-d070cc6d90cb",
+								"exec": [
+									"// Define the JSON Schema expected in response",
+									"var examSchema = {",
+									"    \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"exam\": {",
+									"                \"type\": \"object\",",
+									"                \"properties\": {",
+									"                    \"booking\": {",
+									"                        \"type\": \"object\",",
+									"                        \"properties\": {",
+									"                            \"booking_id\": {\"type\": \"number\"},",
+									"                            \"booking_name\": {\"type\": \"string\"},",
+									"                            \"end_time\": {\"type\": \"string\"},",
+									"                            \"fees\": {\"type\": \"string\"},",
+									"                            \"room\": {",
+									"                                \"type\": \"object\",",
+									"                                \"properties\": {",
+									"                                    \"capacity\": {\"type\": \"number\"},",
+									"                                    \"color\": {\"type\": \"string\"},",
+									"                                    \"room_id\": {\"type\": \"number\"},",
+									"                                    \"room_name\": {\"type\": \"string\"}",
+									"                                },",
+									"                                \"required\":[\"capacity\", \"color\", \"room_id\", \"room_name\"]",
+									"                            },",
+									"                            \"room_id\": {\"type\": \"number\"},",
+									"                            \"start_time\": {\"type\": \"string\"}",
+									"                        },",
+									"                        \"required\": [\"booking_id\", \"booking_name\", \"end_time\", \"fees\", \"room\", \"room_id\", \"start_time\"]",
+									"                    },",
+									"                    \"booking_id\": {\"type\": \"number\"},",
+									"                    \"deleted_date\": {\"type\": \"string\"},",
+									"                    \"event_id\": {\"type\": \"string\"},",
+									"                    \"exam_id\": {\"type\": \"number\"},",
+									"                    \"exam_method\": {\"type\": \"string\"},",
+									"                    \"exam_name\": {\"type\": \"string\"},",
+									"                    \"exam_received\": {\"type\": \"number\"},",
+									"                    \"exam_received_date\": {\"type\": \"string\"},",
+									"                    \"exam_type\": {",
+									"                        \"type\": \"object\",",
+									"                        \"properties\": {",
+									"                            \"exam_color\": {\"type\": \"string\"},",
+									"                            \"exam_type_id\": {\"type\": \"number\"},",
+									"                            \"exam_type_name\": {\"type\": \"string\"},",
+									"                            \"ita_ind\": {\"type\": \"number\"},",
+									"                            \"method_type\": {\"type\": \"string\"},",
+									"                            \"number_of_hours\": {\"type\": \"number\"}",
+									"                        },",
+									"                        \"required\": [\"exam_color\", \"exam_type_id\", \"exam_type_name\", \"ita_ind\", \"method_type\", \"number_of_hours\"]",
+									"                    },",
+									"                    \"exam_type_id\": {\"type\": \"number\"},",
+									"                    \"examinee_name\": {\"type\": \"string\"},",
+									"                    \"expiry_date\": {\"type\": \"string\"},",
+									"                    \"invigilator\": {",
+									"                        \"type\": \"object\",",
+									"                        \"properties\": {",
+									"                            \"contact_email\": {\"type\": \"string\"},",
+									"                            \"contact_phone\": {\"type\": \"string\"},",
+									"                            \"contract_expiry_date\": {\"type\": \"string\"},",
+									"                            \"contract_number\": {\"type\": \"string\"},",
+									"                            \"invigilator_id\": {\"type\": \"number\"},",
+									"                            \"invigilator_name\": {\"type\": \"string\"},",
+									"                            \"invigilator_notes\": {\"type\": \"string\"},",
+									"                            \"office\":{",
+									"                                \"type\": \"object\",",
+									"                                \"properties\": {",
+									"                                    \"office_id\": {\"type\": \"number\"},",
+									"                                    \"office_name\": {\"type\": \"string\"},",
+									"                                    \"office_number\": {\"type\": \"number\"},",
+									"                                    \"sb\": {",
+									"                                        \"type\": \"object\",",
+									"                                        \"properties\": {",
+									"                                            \"sb_id\": {\"type\": \"number\"},",
+									"                                            \"sb_type\": {\"type\": \"string\"}",
+									"                                        },",
+									"                                        \"required\": [\"sb_id\", \"sb_type\"]",
+									"                                    },",
+									"                                    \"sb_id\": {\"type\": \"number\"}",
+									"                                },",
+									"                                \"required\": [\"office_id\", \"office_name\", \"office_number\", \"sb\", \"sb_id\"]",
+									"                            }",
+									"                        },",
+									"                        \"required\": [\"contact_email\", \"contact_phone\", \"contract_expiry_date\", \"contract_number\", \"invigilator_id\", \"invigilator_name\", \"invigilator_notes\", \"office\"]",
+									"                    },",
+									"                    \"invigilator_id\": {\"type\": \"number\"},",
+									"                    \"notes\": {\"type\": \"string\"},",
+									"                    \"number_of_students\": {\"type\": \"number\"},",
+									"                    \"office_id\": {\"type\": \"number\"},",
+									"                    \"session_number\": {\"type\": \"number\"}",
+									"                },",
+									"                \"required\": [\"booking_id\", \"deleted_date\", \"event_id\", \"exam_id\", \"exam_method\", \"exam_name\", \"exam_received\", \"exam_type\", \"exam_type_id\", \"examinee_name\", \"expiry_date\", \"invigilator\", \"invigilator_id\", \"notes\", \"number_of_students\", \"office_id\", \"session_number\"]",
+									"            },",
+									"            \"errors\": {",
+									"                \"type\": \"object\",",
+									"                \"properties\": {},",
+									"                \"required\": []",
+									"            }",
+									"        },",
+									"        \"required\": []",
+									"",
+									"};",
+									"",
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 201\", function(){",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Response time less than 200ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"pm.test(\"Validate Response Exam Schema\", function(){",
+									"    pm.expect(tv4.validate(jsonData, examSchema)).to.be.true;",
+									"});",
+									"",
+									"//Test to see that booking ID is not null",
+									"pm.test(\"Validate that Booking ID is not null\", function(){",
+									"    pm.expect(jsonData.booking_id).not.eql(null);",
+									"});",
+									"",
+									"//Test to see if booking id field has changed",
+									"pm.test(\"Validate Booking ID change\", function(){",
+									"   pm.expect(jsonData.booking_id == 2) ;",
+									"});",
+									"",
+									"//Test to see if examinee name field has changed",
+									"pm.test(\"Validate Examinee Name change\", function(){",
+									"    pm.expect(jsonData.examinee_name === \"Captain Pickard\")",
+									"});",
+									"",
+									"//Test to see if Event ID field remains unchanged",
+									"pm.test(\"Validate Event Id remains unchanged\", function(){",
+									"    pm.expect(jsonData.event_id === \"e-00005\");",
+									"});",
+									"",
+									"//Test to see if Exam Name field remains unchanged",
+									"pm.test(\"Validate Exam Name remains unchanged\", function(){",
+									"    pm.expect(jsonData.exam_name === \"Drivers Exam\");",
+									"});",
+									"",
+									"//Test to see if Expiry Date field remains unchanged",
+									"pm.test(\"Validate Expiry Date remains unchanged\", function(){",
+									"    pm.expect(jsonData.expiry_date === \"2018-11-29 23:10:28.841\");",
+									"});",
+									"",
+									"//Test to see if Note field remains unchanged",
+									"pm.test(\"Validate Notes remain unchanged\", function(){",
+									"    pm.expect(jsonData.notes === \"Not sure if this examinee can speak\");",
+									"});",
+									"",
+									"//Test to see if Exam Received field remains unchanged",
+									"pm.test(\"Validate Exam Received field remains unchanged\", function(){",
+									"    pm.expect(jsonData.exam_received === 0);",
+									"});",
+									"",
+									"//Test to see if Session Number field remains unchanged",
+									"pm.test(\"Validate Session Number field remains unchanged\", function(){",
+									"    pm.expect(jsonData.session_number === 1);",
+									"});",
+									"",
+									"//Test to see if Number of Students field remains unchanged",
+									"pm.test(\"Validate Number of Students field remains unchanged\", function(){",
+									"    pm.expect(jsonData.number_of_students === 25);",
+									"});",
+									"",
+									"//Test to see if Exam Method field remains unchanged",
+									"pm.test(\"Validate Exam Method field remains unchanged\", function(){",
+									"    pm.expect(jsonData.exam.exam_method === \"in-person\");",
+									"});",
+									"",
+									"//Test to see if Exam Type ID field remains unchanged",
+									"pm.test(\"Validate Exam Type ID field remains unchanged\", function(){",
+									"    pm.expect(jsonData.exam_type_id === 1);",
+									"});",
+									"",
+									"//Test to see if Exam Type ID field remains unchanged",
+									"pm.test(\"Validate Exam Type ID field remains unchanged\", function(){",
+									"    pm.expect(jsonData.exam.exam_type_id === 1);",
+									"});",
+									"",
+									"//Test to see if Invigilator ID field remains unchanged",
+									"pm.test(\"Validate Invigilator ID field remains unchanged\", function(){",
+									"    pm.expect(jsonData.invigilator_id === 1);",
+									"});",
+									"",
+									"//Test to see if Office ID field remains unchanged",
+									"pm.test(\"Validate Office ID field remains unchanged\", function(){",
+									"    pm.expect(jsonData.office_id == 1);",
+									"});",
+									"",
+									"//Test to see if Room ID field remains unchanged",
+									"pm.test(\"Validate Roon ID field remains unchanged\", function(){",
+									"    pm.expect(jsonData.room_id == 1);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"event_id\": \"e-00005\",\n  \"exam_name\": \"Drivers Exam\",\n  \"examinee_name\": \"Captain Pickard\",\n  \"expiry_date\": \"2018-11-29 23:10:28.841\",\n  \"notes\": \"Not sure if this examinee can speak.\",\n  \"exam_received\": 1,\n  \"exam_received_date\": \"2018-12-25 9:00:00.000\",\n  \"session_number\": 1,\n  \"number_of_students\": 25,\n  \"exam_method\": \"in-person\",\n  \"exam_type_id\": 1,\n  \"invigilator_id\": 1,\n  \"office_id\": 1,\n  \"room_id\": 1,\n  \"booking_id\": 2\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/exams/4/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"exams",
+								"4",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Localhost - Exam Detail End-point Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "3efcb554-1e5a-4e0a-91b8-aa32eb14a5e6",
+								"exec": [
+									"// Define the JSON Schema expected in response",
+									"var examSchema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"exam\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {",
+									"                \"exam_method\": {\"type\": \"string\"},",
+									"                \"exam_type_id\": {\"type\": \"number\"},",
+									"                \"office_id\": {\"type\": \"number\"},",
+									"                \"exam_id\": {\"type\": \"number\"},",
+									"                \"invigilator\": {",
+									"                    \"type\": \"object\",",
+									"                    \"properties\": {",
+									"                        \"contact_email\": {\"type\": \"string\"},",
+									"                        \"contact_phone\": {\"type\": \"string\"},",
+									"                        \"contract_expiry_date\": {\"type\": \"string\"},",
+									"                        \"contract_number\": {\"type\": \"string\"},",
+									"                        \"invigilator_id\": {\"type\": \"number\"},",
+									"                        \"invigilator_name\": {\"type\": \"string\"},",
+									"                        \"invigilator_notes\": {\"type\": \"string\"},",
+									"                        \"office\": {",
+									"                            \"type\": \"object\",",
+									"                            \"properties\": {",
+									"                                \"office_id\": {\"type\": \"number\"},",
+									"                                \"office_name\": {\"type\": \"string\"},",
+									"                                \"office_number\": {\"type\": \"number\"},",
+									"                                \"sb\": {",
+									"                                    \"type\": \"object\",",
+									"                                    \"properties\": {",
+									"                                        \"sb_id\": {\"type\": \"number\"},",
+									"                                        \"sb_type\": {\"type\": \"string\"}",
+									"                                    },",
+									"                                    \"required\": [\"sb_id\", \"sb_type\"]",
+									"                                }",
+									"                            },",
+									"                            \"required\": [\"office_id\", \"office_name\", \"office_number\", \"sb\", \"sb_id\"]",
+									"                        }",
+									"                    },",
+									"                    \"required\": [\"contact_email\", \"contact_phone\", \"contract_expiry_date\", \"contract_number\", \"invigilator_id\", \"invigilator_name\", \"invigilator_notes\", \"office\"]",
+									"                },",
+									"                \"examinee_name\": {},",
+									"                \"notes\": {},",
+									"                \"number_of_students\": {},",
+									"                \"booking_id\": {},",
+									"                \"expiry_date\": {\"type\": \"string\"},",
+									"                \"exam_type\": {",
+									"                    \"type\": \"object\",",
+									"                    \"properties\": {",
+									"                        \"exam_color\": {\"type\": \"string\"},",
+									"                        \"exam_type_id\": {\"type\": \"number\"},",
+									"                        \"exam_type_name\": {\"type\": \"string\"},",
+									"                        \"ita_ind\": {\"type\": \"number\"},",
+									"                        \"method_type\": {\"type\": \"string\"},",
+									"                        \"number_of_hours\": {\"type\": \"number\"}",
+									"                    },",
+									"                    \"required\": [\"exam_color\", \"exam_type_id\", \"exam_type_name\", \"ita_ind\", \"method_type\", \"number_of_hours\"]",
+									"                },",
+									"                \"exam_received\": {\"type\": \"number\"},",
+									"                \"exam_received_date\": {},",
+									"                \"invigilator_id\": {},",
+									"                \"booking\": {},",
+									"                \"session_number\": {},",
+									"                \"deleted_date\": {},",
+									"                \"event_id\": {\"type\": \"string\"},",
+									"                \"exam_name\": {\"type\": \"string\"}",
+									"            },",
+									"            \"required\": [\"exam_method\", \"exam_type_id\", \"office_id\", \"exam_id\", \"examinee_name\", \"notes\", \"number_of_students\", \"booking_id\", \"expiry_date\", \"exam_type\", \"exam_received\", \"exam_received_date\", \"invigilator_id\", \"booking\", \"session_number\", \"deleted_date\", \"event_id\", \"exam_name\" ]",
+									"        }",
+									"    },",
+									"    \"required\": []",
+									"}; ",
+									"",
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 200\", function(){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time less than 1000ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"pm.test(\"Validate Response Exam Schema\", function(){",
+									"    pm.expect(tv4.validate(jsonData, examSchema)).to.be.true;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/exams/4/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"exams",
+								"4",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Localhost - Exam Delete End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "88b43898-330f-4cf1-81c3-8cce3c53f54c",
+								"exec": [
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 204\", function(){",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"Response time less than 200ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/exams/4/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"exams",
+								"4",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Bookings",
+			"item": [
+				{
+					"name": "Localhost - Booking Post End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a4099862-1c9a-48f7-adbf-0240e6eb185a",
+								"exec": [
+									"// Define the JSON Schema expected in response",
+									"var bookingSchema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"booking\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {",
+									"                \"booking_id\": {\"type\": \"number\"},",
+									"                \"booking_name\": {\"type\": \"string\"},",
+									"                \"end_time\": {\"type\": \"string\"},",
+									"                \"fees\": {\"type\": \"string\"},",
+									"                \"room\": {",
+									"                    \"type\": \"object\",",
+									"                    \"properties\": {",
+									"                        \"capacity\": {\"type\": \"number\"},",
+									"                        \"color\": {\"type\": \"string\"},",
+									"                        \"room_id\": {\"type\": \"number\"},",
+									"                        \"room_name\": {\"type\": \"string\"}",
+									"                    },",
+									"                    \"required\": [\"capacity\", \"color\", \"room_id\", \"room_name\"]",
+									"                },",
+									"                \"room_id\": {\"type\": \"number\"},",
+									"                \"start_time\": {\"type\": \"string\"}",
+									"            },",
+									"            \"required\": [\"booking_id\", \"booking_name\", \"end_time\", \"fees\", \"room\", \"room_id\", \"start_time\"]",
+									"        },",
+									"        \"errors\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {}",
+									"        }",
+									"    },",
+									"    \"required\": [\"booking\", \"errors\"]",
+									"}",
+									"",
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 201\", function(){",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Response time less than 1000ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"pm.test(\"Validate Response Exam Schema\", function(){",
+									"    pm.expect(tv4.validate(jsonData, bookingSchema)).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"start_time\": \"2018-11-30 13:00:00.000\",\n  \"end_time\": \"2018-11-30 15:00:00.00\",\n  \"room_id\": 1,\n  \"fees\": \"false\",\n  \"booking_name\": \"Super big friday demo\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/bookings/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"bookings",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Localhost - Booking Detail End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "232f5232-de75-4f55-b999-2e39e39a12a8",
+								"exec": [
+									"// Define the JSON Schema expected in response",
+									"var bookingSchema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"booking\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {",
+									"                \"booking_id\": {\"type\": \"number\"},",
+									"                \"booking_name\": {\"type\": \"string\"},",
+									"                \"end_time\": {\"type\": \"string\"},",
+									"                \"fees\": {\"type\": \"string\"},",
+									"                \"room\": {",
+									"                    \"type\": \"object\",",
+									"                    \"properties\": {",
+									"                        \"capacity\": {\"type\": \"number\"},",
+									"                        \"color\": {\"type\": \"string\"},",
+									"                        \"room_id\": {\"type\": \"number\"},",
+									"                        \"room_name\": {\"type\": \"string\"}",
+									"                    },",
+									"                    \"required\": [\"capacity\", \"color\", \"room_id\", \"room_name\"]",
+									"                },",
+									"                \"room_id\": {\"type\": \"number\"},",
+									"                \"start_time\": {\"type\": \"string\"}",
+									"            },",
+									"            \"required\": [\"booking_id\", \"booking_name\", \"end_time\", \"fees\", \"room\", \"room_id\", \"start_time\"]",
+									"        },",
+									"        \"errors\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {}",
+									"        }",
+									"    },",
+									"    \"required\": [\"booking\", \"errors\"]",
+									"}",
+									"",
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 200\", function(){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time less than 1000ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"pm.test(\"Validate Response Exam Schema\", function(){",
+									"    pm.expect(tv4.validate(jsonData, bookingSchema)).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/bookings/4/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"bookings",
+								"4",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Localhost - Booking List End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "59fc7e18-6df0-48d9-822c-6518fbece309",
+								"exec": [
+									"// Define the JSON Schema expected in response",
+									"var bookingSchema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"bookings\": {",
+									"            \"type\": \"array\",",
+									"            \"properties\": {",
+									"                \"booking_id\": {\"type\": \"number\"},",
+									"                \"booking_name\": {\"type\": \"string\"},",
+									"                \"end_time\": {\"type\": \"string\"},",
+									"                \"fees\": {\"type\": \"string\"},",
+									"                \"room\": {",
+									"                    \"type\": \"object\",",
+									"                    \"properties\": {",
+									"                        \"capacity\": {\"type\": \"number\"},",
+									"                        \"color\": {\"type\": \"string\"},",
+									"                        \"room_id\": {\"type\": \"number\"},",
+									"                        \"room_name\": {\"type\": \"string\"}",
+									"                    },",
+									"                    \"required\": [\"capacity\", \"color\", \"room_id\", \"room_name\"]",
+									"                },",
+									"                \"room_id\": {\"type\": \"number\"},",
+									"                \"start_time\": {\"type\": \"string\"}",
+									"            },",
+									"            \"required\": [\"booking_id\", \"booking_name\", \"end_time\", \"fees\", \"room\", \"room_id\", \"start_time\"]",
+									"        },",
+									"        \"errors\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {}",
+									"        }",
+									"    },",
+									"    \"required\": [\"bookings\", \"errors\"]",
+									"}",
+									"",
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 200\", function(){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time less than 1000ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"pm.test(\"Validate Response Exam Schema\", function(){",
+									"    pm.expect(tv4.validate(jsonData, bookingSchema)).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/bookings/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"bookings",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Localhost- Booking Put End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b127046f-b399-4e66-b76f-b6e79268b8ce",
+								"exec": [
+									"// Define the JSON Schema expected in response",
+									"var bookingSchema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"booking\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {",
+									"                \"booking_id\": {\"type\": \"number\"},",
+									"                \"booking_name\": {\"type\": \"string\"},",
+									"                \"end_time\": {\"type\": \"string\"},",
+									"                \"fees\": {\"type\": \"string\"},",
+									"                \"room\": {",
+									"                    \"type\": \"object\",",
+									"                    \"properties\": {",
+									"                        \"capacity\": {\"type\": \"number\"},",
+									"                        \"color\": {\"type\": \"string\"},",
+									"                        \"room_id\": {\"type\": \"number\"},",
+									"                        \"room_name\": {\"type\": \"string\"}",
+									"                    },",
+									"                    \"required\": [\"capacity\", \"color\", \"room_id\", \"room_name\"]",
+									"                },",
+									"                \"room_id\": {\"type\": \"number\"},",
+									"                \"start_time\": {\"type\": \"string\"}",
+									"            },",
+									"            \"required\": [\"booking_id\", \"booking_name\", \"end_time\", \"fees\", \"room\", \"room_id\", \"start_time\"]",
+									"        },",
+									"        \"errors\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {}",
+									"        }",
+									"    },",
+									"    \"required\": [\"booking\", \"errors\"]",
+									"}",
+									"",
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 200\", function(){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time less than 1000ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"pm.test(\"Validate Response Exam Schema\", function(){",
+									"    pm.expect(tv4.validate(jsonData, bookingSchema)).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"start_time\": \"2018-11-30 13:00:00.000\",\n  \"end_time\": \"2018-11-30 15:00:00.00\",\n  \"room_id\": 1,\n  \"fees\": \"true\",\n  \"booking_name\": \"Time to pay your fees.\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/bookings/4/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"bookings",
+								"4",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Localhost - Booking Detail End-point Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b5e53be0-ddda-4c99-b563-5a3b449e0f79",
+								"exec": [
+									"// Define the JSON Schema expected in response",
+									"var bookingSchema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"booking\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {",
+									"                \"booking_id\": {\"type\": \"number\"},",
+									"                \"booking_name\": {\"type\": \"string\"},",
+									"                \"end_time\": {\"type\": \"string\"},",
+									"                \"fees\": {\"type\": \"string\"},",
+									"                \"room\": {",
+									"                    \"type\": \"object\",",
+									"                    \"properties\": {",
+									"                        \"capacity\": {\"type\": \"number\"},",
+									"                        \"color\": {\"type\": \"string\"},",
+									"                        \"room_id\": {\"type\": \"number\"},",
+									"                        \"room_name\": {\"type\": \"string\"}",
+									"                    },",
+									"                    \"required\": [\"capacity\", \"color\", \"room_id\", \"room_name\"]",
+									"                },",
+									"                \"room_id\": {\"type\": \"number\"},",
+									"                \"start_time\": {\"type\": \"string\"}",
+									"            },",
+									"            \"required\": [\"booking_id\", \"booking_name\", \"end_time\", \"fees\", \"room\", \"room_id\", \"start_time\"]",
+									"        },",
+									"        \"errors\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {}",
+									"        }",
+									"    },",
+									"    \"required\": [\"booking\", \"errors\"]",
+									"}",
+									"",
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 200\", function(){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time less than 1000ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"pm.test(\"Validate Response Exam Schema\", function(){",
+									"    pm.expect(tv4.validate(jsonData, bookingSchema)).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/bookings/4/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"bookings",
+								"4",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Localhost- Booking Delete End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1e7c1d71-ea74-4a78-9ef2-ee9a7a47d915",
+								"exec": [
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 204\", function(){",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"Response time less than 1000ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/bookings/4/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"bookings",
+								"4",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Invigilators",
+			"item": [
+				{
+					"name": "Localhost - Invigilator List End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0e68858e-985c-4fb0-bca6-04d33f65c28d",
+								"exec": [
+									"// Define the JSON Schema expected in response",
+									"var invigilatorSchema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"invigilators\": {",
+									"            \"type\": \"array\",",
+									"            \"properties\": {",
+									"                \"contact_email\": {\"type\": \"string\"},",
+									"                \"contact_phone\": {\"type\": \"string\"},",
+									"                \"contract_expiry_date\": {\"type\": \"string\"},",
+									"                \"contract_number\": {\"type\": \"string\"},",
+									"                \"invigilator_id\": {\"type\": \"number\"},",
+									"                \"invigilator_name\": {\"type\": \"string\"},",
+									"                \"invigilator_notes\": {\"type\": \"string\"},",
+									"                \"office\":{",
+									"                    \"type\": \"object\",",
+									"                    \"properties\": {",
+									"                        \"office_id\": {\"type\": \"number\"},",
+									"                        \"office_name\": {\"type\": \"string\"},",
+									"                        \"office_number\": {\"type\": \"number\"},",
+									"                        \"sb\": {",
+									"                            \"type\": \"object\",",
+									"                            \"properties\": {",
+									"                                \"sb_id\": {\"type\": \"number\"},",
+									"                                \"sb_type\": {\"type\": \"string\"}",
+									"                            },",
+									"                            \"required\": [\"sb_id\", \"sb_type\"]",
+									"                        }",
+									"                    },",
+									"                    \"required\": [\"office_id\", \"office_name\", \"office_number\", \"sb\", \"sb_id\"]",
+									"                }",
+									"            },",
+									"            \"required\": [\"contact_email\", \"contact_phone\", \"contract_expiry_date\", \"contract_number\", \"invigilator_id\", \"invigilator_name\", \"invigilator_notes\", \"office\"]",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 200\", function(){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time less than 1000ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"pm.test(\"Validate Response Exam Schema\", function(){",
+									"    pm.expect(tv4.validate(jsonData, invigilatorSchema)).to.be.true;",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/invigilators/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"invigilators",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Rooms",
+			"item": [
+				{
+					"name": "Localhost - Room List End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "859ae114-22c4-4f3e-9f1f-9f0e06fbc29d",
+								"exec": [
+									"// Define the JSON Schema expected in response",
+									"var roomSchema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"rooms\": {",
+									"            \"type\": \"array\",",
+									"            \"properties\": {",
+									"                \"capacity\": {\"type\": \"number\"},",
+									"                \"color\": {\"type\": \"string\"},",
+									"                \"office\": {",
+									"                    \"type\": \"object\",",
+									"                    \"properties\": {",
+									"                        \"office_id\": {\"type\": \"number\"},",
+									"                        \"office_name\": {\"type\": \"string\"},",
+									"                        \"office_number\": {\"type\": \"number\"},",
+									"                        \"sb\": {",
+									"                            \"type\": \"object\",",
+									"                            \"properties\": {",
+									"                                \"sb_id\": {\"type\": \"number\"},",
+									"                                \"sb_type\": {\"type\": \"string\"}",
+									"                            },",
+									"                            \"required\": [\"sb_id\", \"sb_type\"]",
+									"                        },",
+									"                    \"sb_id\": {\"type\": \"number\"}                        ",
+									"                    },",
+									"                    \"required\": [\"office_id\", \"office_name\", \"office_number\", \"sb\", \"sb_id\"]",
+									"                }",
+									"            },",
+									"            \"required\": [\"capacity\", \"color\", \"office\", \"room_id\", \"room_name\"]",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 200\", function(){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time less than 1000ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"pm.test(\"Validate Response Exam Schema\", function(){",
+									"    pm.expect(tv4.validate(jsonData, roomSchema)).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/rooms/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"rooms",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CSRS",
+			"item": [
+				{
+					"name": "Localhost - CSRS Me Get End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1ed052a0-06cc-45c7-ae49-b19b96e02d51",
+								"exec": [
+									"// Define the JSON Schema expected in response",
+									"var CSRSSchema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"csr\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {",
+									"                \"csr_id\": {\"type\": \"number\"},",
+									"                \"csr_state\": {",
+									"                    \"type\": \"object\",",
+									"                    \"properties\": {",
+									"                        \"csr_state_desc\": {\"type\": \"string\"},",
+									"                        \"csr_state_id\": {\"type\": \"number\"},",
+									"                        \"csr_state_name\": {\"type\": \"string\"}",
+									"                    },",
+									"                    \"required\": [\"csr_state_desc\", \"csr_state_id\", \"csr_state_name\"]",
+									"                },",
+									"                \"csr_state_id\": {\"type\": \"number\"},",
+									"                \"deleted\": {},",
+									"                \"office\": {",
+									"                    \"type\": \"object\",",
+									"                    \"properties\": {",
+									"                        \"office_id\": {\"type\": \"number\"},",
+									"                        \"office_name\": {\"type\": \"string\"},",
+									"                        \"office_number\": {\"type\": \"number\"},",
+									"                        \"sb\": {",
+									"                            \"type\": \"object\",",
+									"                            \"properties\": {",
+									"                                \"sb_id\": {\"type\": \"number\"},",
+									"                                \"sb_type\": {\"type\": \"string\"}",
+									"                            },",
+									"                            \"required\": [\"sb_id\", \"sb_type\"]",
+									"                        },",
+									"                        \"sb_id\": {\"type\": \"number\"}",
+									"                    },",
+									"                    \"required\": [\"office_id\", \"office_name\", \"office_number\", \"sb\", \"sb_id\"]",
+									"                },",
+									"                \"office_id\": {\"type\": \"number\"},",
+									"                \"qt_xn_csr_ind\": {\"type\": \"number\"},",
+									"                \"receptionist_ind\": {\"type\": \"number\"},",
+									"                \"role\": {",
+									"                    \"type\": \"object\",",
+									"                    \"properties\": {",
+									"                        \"role_code\": {\"type\": \"string\"},",
+									"                        \"role_desc\": {\"type\": \"string\"},",
+									"                        \"role_id\": {\"type\": \"number\"}",
+									"                    },",
+									"                    \"required\": [\"role_code\", \"role_desc\", \"role_id\"]",
+									"                },",
+									"                \"role_id\": {\"type\": \"number\"},",
+									"                \"username\": {\"type\": \"string\"}",
+									"            },",
+									"            \"required\": [\"csr_id\", \"csr_state\", \"csr_state_id\", \"deleted\", \"office\", \"office_id\", \"qt_xn_csr_ind\", \"receptionist_ind\", \"role\", \"role_id\", \"username\"]",
+									"        },",
+									"        \"active_exams\": {",
+									"            \"type\": \"array\",",
+									"            \"properties\": {",
+									"                \"expiry_date\": {\"type\": \"string\"},",
+									"                \"exam_name\": {\"type\": \"string\"},",
+									"                \"office_id\": {\"type\": \"number\"},",
+									"                \"invigilator_id\": {\"type\": \"number\"},",
+									"                \"number_of_students\": {\"type\": \"number\"},",
+									"                \"exam_method\": {\"type\": \"string\"},",
+									"                \"examinee_name\": {\"type\": \"string\"},",
+									"                \"session_number\": {\"type\": \"string\"},",
+									"                \"deleted_date\": {\"type\": \"string\"},",
+									"                \"booking_id\": {},",
+									"                \"booking\": {},",
+									"                \"exam_id\": {\"type\": \"number\"},",
+									"                \"invigilator\": {",
+									"                    \"type\": \"object\",",
+									"                    \"properties\": {",
+									"                        \"contact_email\": {\"type\": \"string\"},",
+									"                        \"contact_phone\": {\"type\": \"string\"},",
+									"                        \"contract_expiry_date\": {\"type\": \"string\"},",
+									"                        \"contract_number\": {\"type\": \"string\"},",
+									"                        \"invigilator_id\": {\"type\": \"number\"},",
+									"                        \"invigilator_name\": {\"type\": \"string\"},",
+									"                        \"invigilator_notes\": {\"type\": \"string\"},",
+									"                        \"office\": {",
+									"                            \"type\": \"object\",",
+									"                            \"properties\": {",
+									"                                \"office_id\": {\"type\": \"number\"},",
+									"                                \"office_name\": {\"type\": \"string\"},",
+									"                                \"office_number\": {\"type\": \"string\"},",
+									"                                \"sb\": {",
+									"                                    \"type\": \"object\",",
+									"                                    \"properties\": {",
+									"                                        \"sb_id\": {\"type\": \"number\"},",
+									"                                        \"sb_type\": {\"type\": \"string\"}",
+									"                                    },",
+									"                                    \"required\": [\"sb_id\", \"sb_type\"]",
+									"                                }",
+									"                            },",
+									"                            \"required\": [\"office_id\", \"office_name\", \"office_number\", \"sb\", \"sb_id\"]",
+									"                        }",
+									"                    },",
+									"                    \"required\": [\"contact_email\", \"contact_phone\", \"contract_expiry_date\", \"contract_number\", \"invigilator_id\", \"invigilator_name\", \"invigilator_notes\", \"office\"]",
+									"                },",
+									"                \"exam_type_id\": {\"type\": \"number\"},",
+									"                \"exam_type\": {",
+									"                    \"type\": \"object\",",
+									"                    \"properties\": {",
+									"                        \"exam_color\": {\"type\": \"string\"},",
+									"                        \"exam_type_id\": {\"type\": \"number\"},",
+									"                        \"ita_ind\": {\"type\": \"number\"},",
+									"                        \"method_type\": {\"type\": \"string\"},",
+									"                        \"number_of_hours\": {\"type\": \"number\"}",
+									"                    },",
+									"                    \"required\": [\"exam_color\", \"exam_type_id\", \"exam_type_name\", \"ita_ind\", \"method_type\", \"number_of_hours\"]",
+									"                },",
+									"                \"exam_received\": {\"type\": \"number\"},",
+									"                \"notes\": {\"type\": \"string\"}",
+									"            },",
+									"            \"required\": [\"expiry_date\", \"exam_name\", \"office_id\", \"invigilator_id\", \"number_of_students\", \"exam_method\", \"examinee_name\", \"session_number\", \"deleted_date\", \"booking_id\", \"booking\", \"exam_id\", \"invigilator\", \"exam_type_id\", \"exam_type\", \"exam_received\", \"notes\"]",
+									"        },",
+									"        \"errors\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {},",
+									"            \"required\": []",
+									"        }",
+									"    },",
+									"    \"required\": [\"csr\", \"active_citizens\", \"active_exams\", \"errors\"]",
+									"};",
+									"",
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 200\", function(){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time less than 1000ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"pm.test(\"Validate Response Exam Schema\", function(){",
+									"    pm.expect(tv4.validate(jsonData, CSRSSchema)).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/csrs/me/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"csrs",
+								"me",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "1bfedebf-df09-4b2b-8c49-78fc3b07e34b",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "787fad5e-5387-4a35-a8f5-0fdb115be54a",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "f4881a21-b9ac-4aa6-927e-bd02075a7bef",
+			"key": "auth_variable",
+			"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI1NXhiZzcyaml6NWQ3cEtkbzdwNFhLdTB2VFA2UXMtemthZzFaY1ZKWTZVIn0.eyJqdGkiOiJmZWVlYzU4YS0zOTY0LTQwZDgtOTk3Ni02OTg1ZjNiNmQ2NzYiLCJleHAiOjE1NDQwMzY2NzQsIm5iZiI6MCwiaWF0IjoxNTQ0MDM0ODc0LCJpc3MiOiJodHRwczovL3Nzby10ZXN0LnBhdGhmaW5kZXIuZ292LmJjLmNhL2F1dGgvcmVhbG1zL3NiYyIsImF1ZCI6ImNmbXMtREVWIiwic3ViIjoiY2ZmNTQ3MDItZTkzMC00YjZlLTlhYzgtMmZkMTRjY2FmNzUxIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiY2Ztcy1ERVYiLCJub25jZSI6ImM1Zjg1NzBmLTgwNDktNDUxNC04Mjg4LTJjN2RmMzdkZTc5NSIsImF1dGhfdGltZSI6MTU0NDAzMjgxNywic2Vzc2lvbl9zdGF0ZSI6IjM4YjhiYzY4LTdmZDktNDE0NC04YWQ1LTI4ZGRlNmMwYWE1MCIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJuYW1lIjoiQ0ZNUyBQb3N0bWFuIE9wZXJhdG9yIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiY2Ztcy1wb3N0bWFuLW9wZXJhdG9yIiwiZ2l2ZW5fbmFtZSI6IkNGTVMgUG9zdG1hbiIsImZhbWlseV9uYW1lIjoiT3BlcmF0b3IifQ.CaDq7kLDMu1oqUVm6fhiAw4ubu_D4jVdkXrqLjfCxu9b-9GzyNSIK1Gy0NCesN3caG684-Ofv3LlragMOwdoRhx-xkO6j5rqPhh2EdEDYTGkrnmQrVBjgHECLYN3RSAUWk4oKsp7gRMLDorU6QWLZNRWe9qlzulbss08Mut4nZz1RV0CirvJQ9oshBdpstQIPBM7ZEptcF2AOnc8swcFMJ3mqdrs0ImytArwZEzYwRzSIAR0-kYW-AXq-TK1dk2R7fqkMXmy3ZdHoQlFRfNtfYILVPzBAq3zPftrD-lmCcfUWz-0UcwhmNELQ-Pej-t_Z_eFSPPGkAVIuv_kkHbqQw",
+			"type": "string"
+		}
+	]
+}

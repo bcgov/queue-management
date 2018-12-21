@@ -25,6 +25,150 @@ Vue.use(Vuex)
 export const store = new Vuex.Store({
 
   state: {
+    addIndITASteps: [
+      {
+        step: 1,
+        title:'Exam Type',
+        questions: [
+          {
+            key: 'exam_type_id',
+            text: 'Exam Type ID / Colour',
+            kind:'dropdown',
+            minLength: 0,
+            digit: false,
+          }
+        ]
+      },
+      {
+        step: 2,
+        title:'Exam Info',
+        questions: [
+          {
+            key: 'event_id',
+            text:'Event ID' ,
+            kind: 'input',
+            minLength: 6,
+            digit: true,
+          },
+          {
+            key: 'exam_name',
+            text: 'Exam Name',
+            kind: 'input',
+            minLength: 6,
+            digit: false
+          },
+          {
+            key: 'examinee_name',
+            text: `Exam Writer's Name`,
+            minLength: 6,
+            kind:'input',
+            digit: false
+          },
+          {
+            key: 'exam_method',
+            text: 'Exam Method',
+            minLength: 0,
+            digit: false,
+            kind:'select',
+            options: [
+              {text: 'paper', value: 'paper', id: 'exam_method'},
+              {text: 'online', value: 'online', id: 'exam_method'}
+            ]
+          },
+        ]
+      },
+      {
+        step: 3,
+        title:'Exam Dates',
+        questions: [
+          {
+            kind: 'exam_received',
+            key: 'exam_received_date',
+            text1:'Was the Exam Package Receieved Today?',
+            text2: 'Date of Receipt of Exam Package',
+            minLength: 0,
+            digit: false,
+          },
+          {
+            kind: 'date',
+            key: 'expiry_date',
+            text: 'Exam Expiry Date',
+            minLength: 0,
+            digit: false,
+          },
+          {
+            kind: 'notes',
+            key: 'notes',
+            text: 'Additional Notes (optional)',
+            minLength: 0,
+            digit: false,
+          }
+        ]
+      },
+      {
+        step: 4,
+        title:'Summary',
+        questions: [
+          {
+            kind: null,
+            key: null,
+            text1:null,
+            text2: null,
+            minLength: 0,
+            digit: false,
+          },
+        ]
+      },
+    ],
+    captureITAExamTabSetup: {
+      step: 1,
+      highestStep: 1,
+      stepsValidated: [],
+      errors: [],
+      showRadio: true,
+      success: '',
+      notes: false,
+    },
+    bookings: [],
+    examTypes: [
+      {
+        exam_type_name: 'ODSC 1 SINGLE-3HR+1HR-READER OWN',
+        exam_type_id: 1,
+        header: false,
+        class:'add-exam-list-item',
+        exam_type_colour: '#f7e1b5'
+      },
+      {
+        exam_type_name: 'CWERC 1 SINGLE-3HR+1HR-READER SBC',
+        exam_type_id: 2,
+        header: false,
+        class:'add-exam-list-item',
+        exam_type_colour: '#b6e1b6'
+      },
+      {
+        exam_type_name: 'CWERC 2 SINGLE-3HR NONE',
+        exam_type_id: 3,
+        header: false,
+        class:'add-exam-list-item',
+        exam_type_colour: '#b6e1b6'
+      },
+    ],
+    capturedExam: {
+      event_id: null,
+      exam_name: null,
+      examinee_name: null,
+      expiry_date: null,
+      notes: null,
+      exam_received: false,
+      exam_received_date: null,
+      number_of_students: null,
+      exam_method: 'paper',
+      exam_type_id: null,
+      room_id: null,
+      office_id: null,
+    },
+    addIndividualITAExamModalVisibe: false,
+    exams: [],
     iframeLogedIn: false,
     viewPortSizes: {
       h: null,
@@ -59,6 +203,7 @@ export const store = new Vuex.Store({
     nowServing: false,
     officeType: null,
     performingAction: false,
+    rooms: [],
     serveNowAltAction: false,
     serveNowStyle: 'btn-primary',
     serviceBegun: false,
@@ -105,6 +250,80 @@ export const store = new Vuex.Store({
   },
 
   getters: {
+    room_resources(state) {
+      if (state.rooms.length > 0) {
+        return state.rooms.map(room =>
+          ({
+            id: room.room_id,
+            title: room.room_name,
+            eventColor: room.color
+          })
+        )
+      }
+      return []
+    },
+    
+    calendar_events(state) {
+      if (state.bookings.length > 0) {
+        return state.bookings.map(booking =>
+          ({
+            id: booking.booking_id,
+            title: booking.booking_name,
+            start: booking.start_time,
+            end: booking.end_time,
+            resourceId: booking.room_id,
+            color: booking.room.color
+          })
+        )
+      }
+      return []
+    },
+    
+    exam_object(state) {
+      if (state.capturedExam && state.capturedExam.exam_type_id) {
+        return state.examTypes.find(type => type.exam_type_id == state.capturedExam.exam_type_id)
+      }
+      return {
+        exam_type_colour: '',
+        exam_type_name: '',
+        exam_type_id: ''
+      }
+    },
+
+    showExams(state) {
+      if (state.user && state.user.office.exams_enabled_ind === 1) {
+        return true
+      }
+      return false
+    },
+
+    addIndividualITAButton(state) {
+      let setup = state.captureITAExamTabSetup
+      if (setup.stepsValidated.indexOf(setup.step) === -1) {
+        return {
+          nextClass: 'btn-secondary disabled',
+          nextDisabled: true
+        }
+      } else if (setup.step < setup.highestStep) {
+        return {
+          nextClass: 'btn-primary',
+          nextDisabled: false
+        }
+      } else {
+        return {
+          nextClass: 'btn-primary',
+          nextDisabled: false
+        }
+      }
+    },
+
+    role_code(state) {
+      if (state.user && state.user.role && state.user.role.role_code) {
+        return state.user.role.role_code
+      }
+      return ''
+    },
+
     reception(state) {
       if (state.user.office && state.user.office.sb) {
         if (state.user.office.sb.sb_type === "callbyname" || state.user.office.sb.sb_type === "callbyticket") {
@@ -203,8 +422,8 @@ export const store = new Vuex.Store({
       let opts = state.categories.filter(o => state.services.some(s => s.parent_id === o.service_id))
 
       let mappedOpts = opts.map(opt =>
-          ({value: opt.service_id, text: opt.service_name})
-        )
+        ({value: opt.service_id, text: opt.service_name})
+      )
       let blankOpt = [{value:'', text:'Categories'}]
       return blankOpt.concat(mappedOpts)
     },
@@ -282,6 +501,19 @@ export const store = new Vuex.Store({
       })
     },
 
+    getBookings(context) {
+      return new Promise((resolve, reject) => {
+        Axios(context).get('/bookings/')
+          .then(resp => {
+            context.commit('setBookings', resp.data.bookings)
+            resolve(resp)
+          })
+          .catch( errpr => {
+            reject(error)
+          })
+      })
+    },
+
     getAllCitizens(context) {
       let url = '/citizens/'
       Axios(context).get(url).then( resp => {
@@ -329,30 +561,57 @@ export const store = new Vuex.Store({
     },
 
     getCsrStateIDs(context) {
-        Axios(context).get("/csr_states/")
-            .then(resp => {
-                var states = resp.data.csr_states;
-                states.forEach(x => {
-                    context.state.csr_states[x.csr_state_name] = x.csr_state_id;
-                });
-            })
-            .catch(error => {
-                console.log("error @ store.actions.getCsrStateIDs");
-                console.log(error.response);
-                console.log(error.message);
-            });
+      Axios(context).get("/csr_states/")
+        .then(resp => {
+          var states = resp.data.csr_states;
+          states.forEach(x => {
+            context.state.csr_states[x.csr_state_name] = x.csr_state_id;
+          });
+        })
+        .catch(error => {
+          console.log("error @ store.actions.getCsrStateIDs");
+          console.log(error.response);
+          console.log(error.message);
+        });
     },
 
     getCsrs(context) {
-        Axios(context).get('/csrs/')
-            .then(resp => {
-                context.commit('setCsrs', resp.data.csrs)
-            })
-            .catch(error => {
-                console.log('error @ store.actions.getCsrs')
-                console.log(error.response)
-                console.log(error.message)
-            })
+      Axios(context).get('/csrs/')
+        .then(resp => {
+          context.commit('setCsrs', resp.data.csrs)
+        })
+        .catch(error => {
+          console.log('error @ store.actions.getCsrs')
+          console.log(error.response)
+          console.log(error.message)
+        })
+    },
+
+    getExams(context) {
+      return new Promise((resolve, reject) => {
+        Axios(context).get('/exams/')
+          .then(resp => {
+            context.commit('setExams', resp.data.exams)
+            resolve(resp)
+          })
+          .catch(error => {
+            console.log(error)
+            reject(error)
+          })
+      })
+    },
+    
+    getRooms(context) {
+      return new Promise((resolve, reject) => {
+        Axios(context).get('/rooms/')
+          .then(resp => {
+            context.commit('setRooms', resp.data.rooms)
+            resolve(resp)
+          })
+          .catch( error => {
+            reject(error)
+          })
+      })
     },
 
     getServices(context) {
@@ -403,15 +662,15 @@ export const store = new Vuex.Store({
       context.commit('toggleAddModal', true)
 
       Axios(context).post('/citizens/', {})
-      .then(resp => {
-        let value = resp.data.citizen
-        context.commit('updateAddModalForm', {type:'citizen',value})
-        context.commit('resetServiceModal')
-      },
-      error => {
-        context.commit('toggleAddModal', false)
-        context.commit('setMainAlert', 'An error occurred adding a citizen.')
-      }).finally(() => {
+        .then(resp => {
+            let value = resp.data.citizen
+            context.commit('updateAddModalForm', {type:'citizen',value})
+            context.commit('resetServiceModal')
+          },
+          error => {
+            context.commit('toggleAddModal', false)
+            context.commit('setMainAlert', 'An error occurred adding a citizen.')
+          }).finally(() => {
         context.commit('setPerformingAction', false)
       })
       if (context.state.categories.length === 0) {
@@ -487,7 +746,7 @@ export const store = new Vuex.Store({
       }).catch(() => {
         context.commit('setPerformingAction', false)
       })
-  },
+    },
 
     clickAddToQueue(context) {
       let { citizen_id } = context.getters.form_data.citizen
@@ -507,6 +766,12 @@ export const store = new Vuex.Store({
         })
       }).catch(() => {
         context.commit('setPerformingAction', false)
+      })
+    },
+
+    clickAddExamSubmit(context, type) {
+      context.dispatch('postExam', type).finally( () => {
+        context.dispatch('getExams')
       })
     },
 
@@ -542,12 +807,12 @@ export const store = new Vuex.Store({
       context.dispatch('toggleModalBack')
 
       Axios(context).post('/citizens/', {})
-      .then(resp => {
-        let value = resp.data.citizen
-        context.commit('updateAddModalForm', {type:'citizen',value})
-        context.commit('toggleAddModal', true)
-        context.commit('resetServiceModal')
-      }).finally(() => {
+        .then(resp => {
+          let value = resp.data.citizen
+          context.commit('updateAddModalForm', {type:'citizen',value})
+          context.commit('toggleAddModal', true)
+          context.commit('resetServiceModal')
+        }).finally(() => {
         context.commit('setPerformingAction', false)
       })
 
@@ -860,8 +1125,16 @@ export const store = new Vuex.Store({
     closeGAScreenModal(context) {
       context.commit('toggleGAScreenModal', false)
     },
+    
+    initializeAgenda(context) {
+      context.dispatch('getExams').then( () => {
+        context.dispatch('getRooms').then( () => {
+          context.dispatch('getBookings')
+        })
+      })
+    },
 
-      messageFeedback(context) {
+    messageFeedback(context) {
       let messageParts = []
       messageParts.push(`Username: ${context.state.user.username}`)
       messageParts.push(`Office: ${context.state.user.office.office_name}`)
@@ -896,11 +1169,11 @@ export const store = new Vuex.Store({
       return new Promise((resolve, reject) => {
         let url = `/service_requests/${sr_id}/activate/`
         Axios(context).post(url).then(resp=>{
-            resolve(resp)
-          }, error => {
-            reject(error)
-          })
+          resolve(resp)
+        }, error => {
+          reject(error)
         })
+      })
     },
 
     postAddToQueue(context, citizen_id) {
@@ -918,16 +1191,16 @@ export const store = new Vuex.Store({
       return new Promise((resolve, reject) => {
         let url = `/citizens/${citizen_id}/begin_service/`
         Axios(context).post(url,{})
-        .then(resp => {
-          resolve(resp)
-        },
-        error => {
-          if (error.response.status === 400) {
-            context.commit('setMainAlert', error.response.data.message)
-          }
+          .then(resp => {
+              resolve(resp)
+            },
+            error => {
+              if (error.response.status === 400) {
+                context.commit('setMainAlert', error.response.data.message)
+              }
 
-          reject(error)
-        })
+              reject(error)
+            })
       })
     },
 
@@ -945,7 +1218,7 @@ export const store = new Vuex.Store({
     postFinishService(context, payload) {
       console.log(payload);
       return new Promise((resolve, reject) => {
-          let url = `/citizens/${payload.citizen_id}/finish_service/?inaccurate=${payload.inaccurate}`
+        let url = `/citizens/${payload.citizen_id}/finish_service/?inaccurate=${payload.inaccurate}`
         Axios(context).post(url).then(resp=>{
           resolve(resp)
         }, error => {
@@ -991,6 +1264,44 @@ export const store = new Vuex.Store({
           })
         })
       }
+    },
+
+    postExam(context, payload) {
+      let capturedExam = context.state.capturedExam
+      let examObj = {}
+      let steps
+      let additionalKeys = {}
+      switch (payload) {
+        case 'ind_ita':
+          steps = context.state.addIndITASteps
+          additionalKeys = {
+            exam_received: 1,
+            office_id: context.state.user.office_id
+          }
+          break
+        case 'group_ita':
+          steps = null
+          break
+        default:
+          steps = null
+          end
+      }
+      let keys = steps.map(step=>step.questions.map(q=>q.key)).flat()
+      keys.forEach(key => {
+        examObj[key] = capturedExam[key]
+      })
+      let data = {...examObj, ...additionalKeys}
+
+      return new Promise((resolve, reject) => {
+        Axios(context).post('/exams/', data).then(resp=>{
+          context.commit('updateCaptureTab', {success: true})
+          resolve(resp)
+        })
+          .catch( error => {
+            context.commit('updateCaptureTab', {success: false})
+            reject(error)
+        })
+      })
     },
 
     postServiceReq(context) {
@@ -1233,8 +1544,8 @@ export const store = new Vuex.Store({
         qt_xn_csr_ind: context.state.user.qt_xn_csr_ind,
         receptionist_ind: context.state.user.receptionist_ind
       })
-      .then( resp => {
-      })
+        .then( resp => {
+        })
     },
 
     updateCSRState(context) {
@@ -1414,6 +1725,11 @@ export const store = new Vuex.Store({
       state.csrs = payload
     },
 
+    setExams(state, payload) {
+      state.exams = []
+      state.exams = payload
+    },
+
     updateCitizen(state, payload) {
       Vue.set(state.citizens, payload.index, payload.citizen)
     },
@@ -1478,6 +1794,80 @@ export const store = new Vuex.Store({
 
     setiframeLogedIn: (state, value) => state.iframeLogedIn = value,
 
-    setNavigation: (state, value) => state.adminNavigation = value
+    setNavigation: (state, value) => state.adminNavigation = value,
+
+    toggleAddIndividualITAExam: (state, payload) => state.addIndividualITAExamModalVisibe = payload,
+
+    captureExamDetail(state, payload) {
+      if (payload.key === 'exam_type_id') {
+        payload.value = Number(payload.value)
+      }
+      if (payload.key === 'event_id') {
+        payload.value = payload.value.toString()
+      }
+      Vue.set(
+        state.capturedExam,
+        payload.key,
+        payload.value
+      )
+    },
+
+    resetCaptureForm(state) {
+      let keys = Object.keys(state.capturedExam)
+      keys.forEach(key => {
+        let value = null
+        if (key === 'exam_method') {
+          value = 'paper'
+        }
+        Vue.set(
+          state.capturedExam,
+          key,
+          value
+        )
+      })
+    },
+
+    resetCaptureTab(state) {
+      let initialState = {
+        step: 1,
+        highestStep: 1,
+        stepsValidated: [],
+        errors: [],
+        showRadio: true,
+        success: '',
+        notes: false
+      }
+      let keys = Object.keys(initialState)
+      keys.forEach(key => {
+        Vue.set(
+          state.captureITAExamTabSetup,
+          key,
+          initialState[key]
+        )
+      })
+    },
+
+    updateCaptureTab(state, payload) {
+      let keys = Object.keys(payload)
+      keys.forEach(key=>{
+        Vue.set(
+          state.captureITAExamTabSetup,
+          key,
+          payload[key]
+        )
+      })
+    },
+
+    toggleIndividualCaptureTabRadio(state, payload) {
+      Vue.set(
+        state.captureITAExamTabSetup,
+        'showRadio',
+        payload
+      )
+    },
+  
+    setBookings: (state, payload) => state.bookings = payload,
+    
+    setRooms: (state, payload) => state.rooms = payload,
   }
 })
