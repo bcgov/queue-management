@@ -1,5 +1,3 @@
-
-
 <template>
   <b-modal
     :visible="showAddModal"
@@ -40,7 +38,7 @@
       <div v-else>
         <AddCitizenForm/>
         <b-container class="add-buttons add_citizen_padding">
-          <div class="button-row" style="padding-bottom:35px;">
+          <div class="button-row" style="padding-bottom:6px;">
             <div id="select-wrapper">
               <select id="priority-selection" class="custom-select" v-model="priority_selection">
                 <option value="1">High Priority</option>
@@ -184,13 +182,13 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  padding: 20px 20px 4px;
+  padding: 10px 20px 1px;
   cursor: grab;
 }
 
 .add-buttons {
   background: #504e4f;
-  padding: 10px 15px 20px;
+  padding: 5px 15px 20px;
 }
 
 .button-row {
