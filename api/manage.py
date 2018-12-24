@@ -480,8 +480,8 @@ class Bootstrap(Command):
 
         print("--> Bookings: Exam Types")
         exam_type_one = bookings.ExamType(
-            exam_type_name = "ITA Exam Type",
-            exam_color = "red",
+            exam_type_name = "COFQ - 3HR Group Exam",
+            exam_color = "#FF69B4",
             number_of_hours = 3,
             method_type = "Written",
             ita_ind = 1,
@@ -489,39 +489,123 @@ class Bootstrap(Command):
         )
 
         exam_type_two = bookings.ExamType(
-            exam_type_name = "Pesticide Exam",
-            exam_color = "green",
-            number_of_hours = 2,
+            exam_type_name = "COFQ - 3HR Single Exam",
+            exam_color = "#FF69B4",
+            number_of_hours = 3,
             method_type = "Written",
-            ita_ind = 0,
-            group_exam_ind = 0
+            ita_ind = 1
         )
 
         exam_type_three = bookings.ExamType(
-            exam_type_name = "Milk Exam",
-            exam_color = "white",
-            number_of_hours = 1,
+            exam_type_name = "COFQ - 3HR Single Exam - Own Reader",
+            exam_color = "#FF69B4",
+            number_of_hours = 3,
             method_type = "Written",
-            ita_ind = 0,
-            group_exam_ind = 0
+            ita_ind = 1
         )
 
         exam_type_four = bookings.ExamType(
-            exam_type_name = "Group Exam Test Type",
-            exam_color="green",
-            number_of_hours=4,
+            exam_type_name="COFQ - 3HR Single Exam - SBC Reader",
+            exam_color="#FF69B4",
+            number_of_hours=3,
             method_type="Written",
-            ita_ind = 0,
-            group_exam_ind = 1
+            ita_ind= 1
         )
 
         exam_type_five = bookings.ExamType(
-            exam_type_name = "Group Rap Battle",
-            exam_color = "Grey",
-            number_of_hours = 5,
-            method_type = "Written",
-            ita_ind = 1,
-            group_exam_ind = 1
+            exam_type_name="COFQ - 3HR Single Exam - Time Extension",
+            exam_color="#FF69B4",
+            number_of_hours=3,
+            method_type="Written",
+            ita_ind=1
+        )
+
+        exam_type_six = bookings.ExamType(
+            exam_type_name="IPSE - 3HR Group Exam",
+            exam_color="#FFD701",
+            number_of_hours=4,
+            method_type="Written",
+            ita_ind=1
+        )
+
+        exam_type_seven = bookings.ExamType(
+            exam_type_name="IPSE - 3HR Single Exam",
+            exam_color="#FFD701",
+            number_of_hours=4,
+            method_type="Written",
+            ita_ind=1
+        )
+
+        exam_type_eight = bookings.ExamType(
+            exam_type_name="IPSE - 3HR Single Exam - Own Reader",
+            exam_color="#FFD701",
+            number_of_hours=4,
+            method_type="Written",
+            ita_ind=1
+        )
+
+        exam_type_nine = bookings.ExamType(
+            exam_type_name="IPSE - 3HR Single Exam - SBC Reader",
+            exam_color="#FFD701",
+            number_of_hours=4,
+            method_type="Written",
+            ita_ind=1
+        )
+
+        exam_type_ten = bookings.ExamType(
+            exam_type_name="IPSE - 3HR Single Exam - Time Extension",
+            exam_color="#FFD701",
+            number_of_hours=4,
+            method_type="Written",
+            ita_ind=1
+        )
+
+        exam_type_eleven = bookings.ExamType(
+            exam_type_name="SLE - 3HR Group Exam",
+            exam_color="#8FBC8F",
+            number_of_hours=3,
+            method_type="Written",
+            ita_ind=1
+        )
+
+        exam_type_twelve = bookings.ExamType(
+            exam_type_name="SLE - 3HR Single Exam",
+            exam_color="#8FBC8F",
+            number_of_hours=3,
+            method_type="Written",
+            ita_ind=1
+        )
+
+        exam_type_thirteen = bookings.ExamType(
+            exam_type_name="SLE - 3HR Single Exam - Own Reader",
+            exam_color="#8FBC8F",
+            number_of_hours=3,
+            method_type="Written",
+            ita_ind=1
+        )
+
+        exam_type_fourteen = bookings.ExamType(
+            exam_type_name="SLE - 3HR Single Exam - SBC Reader",
+            exam_color="#8FBC8F",
+            number_of_hours=3,
+            method_type="Written",
+            ita_ind=1
+        )
+
+        exam_type_fifteen = bookings.ExamType(
+            exam_type_name="SLE - 3HR Single Exam - Time Extension",
+            exam_color="#8FBC8F",
+            number_of_hours=3,
+            method_type="Written",
+            ita_ind=1
+        )
+
+        exam_type_sixteen = bookings.ExamType(
+            exam_type_name="Challenger Exam Session",
+            exam_color="#FFFFFF",
+            number_of_hours=4,
+            method_type="Written",
+            ita_ind=1
         )
 
         db.session.add(exam_type_one)
@@ -529,6 +613,17 @@ class Bootstrap(Command):
         db.session.add(exam_type_three)
         db.session.add(exam_type_four)
         db.session.add(exam_type_five)
+        db.session.add(exam_type_six)
+        db.session.add(exam_type_seven)
+        db.session.add(exam_type_eight)
+        db.session.add(exam_type_nine)
+        db.session.add(exam_type_ten)
+        db.session.add(exam_type_eleven)
+        db.session.add(exam_type_twelve)
+        db.session.add(exam_type_thirteen)
+        db.session.add(exam_type_fourteen)
+        db.session.add(exam_type_fifteen)
+        db.session.add(exam_type_sixteen)
         db.session.commit()
 
         print("--> Bookings: Booking")

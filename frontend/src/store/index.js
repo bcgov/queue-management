@@ -138,32 +138,7 @@ export const store = new Vuex.Store({
       notes: false,
     },
     bookings: [],
-    examTypes: [
-      {
-        exam_type_name: 'IPSE - 4HR SINGLE EXAM - OWN READER',
-        length: 5,
-        exam_type_id: 1,
-        header: false,
-        class:'add-exam-list-item',
-        exam_type_colour: '#f7e1b5'
-      },
-      {
-        exam_type_name: 'COFQ - 3HR GROUP EXAM - TIME EXTENSION',
-        length: 4,
-        exam_type_id: 2,
-        header: false,
-        class:'add-exam-list-item',
-        exam_type_colour: '#b6e1b6'
-      },
-      {
-        exam_type_name: 'SLE - 4HR GROUP EXAM',
-        length: 4,
-        exam_type_id: 3,
-        header: false,
-        class:'add-exam-list-item',
-        exam_type_colour: '#b6e1b6'
-      },
-    ],
+    examTypes: [],
     capturedExam: {
       event_id: null,
       exam_name: null,
@@ -638,6 +613,22 @@ export const store = new Vuex.Store({
             reject(error)
           })
       })
+    },
+
+    getExamTypes(context) {
+      return new Promise( (resolve, reject) => {
+        Axios(context).get('/exam_types/')
+          .then(resp => {
+            context.commit('setExamTypes', resp.data.exam_types)
+            console.log('called exam types getter')
+            resolve(resp)
+          })
+          .catch(error => {
+            console.log(error)
+            reject(error)
+          })
+      })
+
     },
     
     getRooms(context) {
@@ -1833,6 +1824,11 @@ export const store = new Vuex.Store({
     setExams(state, payload) {
       state.exams = []
       state.exams = payload
+    },
+
+    setExamTypes(state, payload) {
+      state.examTypes = []
+      state.examTypes = payload
     },
 
     updateCitizen(state, payload) {
