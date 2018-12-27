@@ -219,7 +219,6 @@
         'updateCaptureTab'
       ]),
       handleInput(e) {
-        console.log(e)
         let payload = {
           key: e.target.name,
           value: e.target.value,

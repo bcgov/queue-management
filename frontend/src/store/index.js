@@ -25,6 +25,14 @@ Vue.use(Vuex)
 export const store = new Vuex.Store({
 
   state: {
+    calendarTitle: null,
+    showCalendarControls: true,
+    scheduling: false,
+    selectedExam: {},
+    showExamInventoryModal: false,
+    selectedDate: {},
+    clickedDate: '',
+    showBookingModal: false,
     addIndITASteps: [
       {
         step: 1,
@@ -132,21 +140,24 @@ export const store = new Vuex.Store({
     bookings: [],
     examTypes: [
       {
-        exam_type_name: 'ODSC 1 SINGLE-3HR+1HR-READER OWN',
+        exam_type_name: 'IPSE - 4HR SINGLE EXAM - OWN READER',
+        length: 5,
         exam_type_id: 1,
         header: false,
         class:'add-exam-list-item',
         exam_type_colour: '#f7e1b5'
       },
       {
-        exam_type_name: 'CWERC 1 SINGLE-3HR+1HR-READER SBC',
+        exam_type_name: 'COFQ - 3HR GROUP EXAM - TIME EXTENSION',
+        length: 4,
         exam_type_id: 2,
         header: false,
         class:'add-exam-list-item',
         exam_type_colour: '#b6e1b6'
       },
       {
-        exam_type_name: 'CWERC 2 SINGLE-3HR NONE',
+        exam_type_name: 'SLE - 4HR GROUP EXAM',
+        length: 4,
         exam_type_id: 3,
         header: false,
         class:'add-exam-list-item',
@@ -277,6 +288,13 @@ export const store = new Vuex.Store({
         )
       }
       return []
+    },
+    
+    exam_inventory(state) {
+      if (state.showExamInventoryModal) {
+        return state.exams.filter(exam => exam.booking_id === null)
+      }
+      return state.exams
     },
     
     exam_object(state) {
@@ -506,7 +524,7 @@ export const store = new Vuex.Store({
         Axios(context).get('/bookings/')
           .then(resp => {
             context.commit('setBookings', resp.data.bookings)
-            resolve(resp)
+            resolve(resp.data.bookings)
           })
           .catch( errpr => {
             reject(error)
@@ -606,7 +624,7 @@ export const store = new Vuex.Store({
         Axios(context).get('/rooms/')
           .then(resp => {
             context.commit('setRooms', resp.data.rooms)
-            resolve(resp)
+            resolve(resp.data.rooms)
           })
           .catch( error => {
             reject(error)
@@ -1127,9 +1145,11 @@ export const store = new Vuex.Store({
     },
     
     initializeAgenda(context) {
-      context.dispatch('getExams').then( () => {
-        context.dispatch('getRooms').then( () => {
-          context.dispatch('getBookings')
+      return new Promise((resolve, reject) => {
+        context.dispatch('getExams').then( () => {
+          context.dispatch('getRooms').then( rooms => {
+            resolve(rooms)
+          })
         })
       })
     },
@@ -1264,6 +1284,41 @@ export const store = new Vuex.Store({
           })
         })
       }
+    },
+    
+    scheduleExam(context, payload) {
+      context.dispatch('postBooking', payload).then(booking_id => {
+        context.dispatch('putExam', booking_id).then( () => {
+          context.dispatch('getBookings')
+          context.commit('toggleCalendarControls', true)
+          context.commit('toggleScheduling', false)
+          context.commit('toggleBookingModal', false)
+          context.commit('navigationVisible', true)
+        })
+      })
+    },
+    
+    putExam(context, payload) {
+      return new Promise((resolve, reject) => {
+        let url = `/exams/${context.state.selectedExam.exam_id}/`
+        Axios(context).put(url, {booking_id: payload}).then( resp =>{
+          resolve(resp)
+        })
+          .catch(error => {
+            reject(error)
+          })
+      })
+    },
+    
+    postBooking(context, payload) {
+      return new Promise((resolve, reject) => {
+        Axios(context).post('/bookings/', payload).then( resp => {
+          resolve(resp.data.booking.booking_id)
+        })
+          .catch(error => {
+            reject(error)
+          })
+      })
     },
 
     postExam(context, payload) {
@@ -1866,8 +1921,30 @@ export const store = new Vuex.Store({
       )
     },
   
-    setBookings: (state, payload) => state.bookings = payload,
+    setBookings(state, payload) {
+      state.bookings = payload
+    },
     
-    setRooms: (state, payload) => state.rooms = payload,
+    setRooms(state, payload) {
+      state.rooms = payload
+    },
+  
+    toggleBookingModal: (state, payload) => state.showBookingModal = payload,
+    
+    setClickedDate: (state, payload) => state.clickedDate = payload,
+    
+    setSelectedDate: (state, payload) => state.selectedDate = payload,
+    
+    toggleExamInventoryModal: (state, payload) => state.showExamInventoryModal = payload,
+  
+    setSelectedExam: (state, payload) => state.selectedExam = payload,
+  
+    toggleScheduling: (state, payload) => state.scheduling = payload,
+    
+    toggleCalendarControls: (state, payload) => state.showCalendarControls = payload,
+  
+    navigationVisible: (state, payload) => state.navigationVisible = payload,
+    
+    setCalendarTitle: (state, payload) => state.calendarTitle = payload,
   }
 })

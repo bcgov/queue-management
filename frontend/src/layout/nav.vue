@@ -19,6 +19,10 @@
     <div class="dash-button-flex-button-container pb-0 mb-3">
       <!-- SLOT FOR EACH VIEW'S BUTTON CONTROLS-->
       <router-view name="buttons"/>
+      <div v-if="calendarTitle"
+           style="flex-grow: 8"
+           class="q-inline-title">{{ calendarTitle.title }}</div>
+    <div />
       <div v-if="navigationVisible">
         <b-dropdown variant="outline-primary"
                     class="pl-0 ml-0 mr-3"
@@ -30,6 +34,7 @@
           <div :style="{width:200+'px'}">
             <b-dropdown-item to="/queue">The Q</b-dropdown-item>
             <b-dropdown-item to="/agenda" v-if="isGAorCSR && showExams">Branch Agenda</b-dropdown-item>
+            <b-dropdown-item to="/booking" v-if="showExams">Room Booking</b-dropdown-item>
             <b-dropdown-item v-if="showExams" to="/exams">Manage Exams</b-dropdown-item>
             <template  v-if="user.role && user.role.role_code=='GA'">
               <b-dropdown-item @click="clickGAScreen" :class="gaPanelStyle">
@@ -66,7 +71,7 @@
     name: 'Nav',
     computed: {
       ...mapGetters(['showExams']),
-      ...mapState(['navigationVisible', 'showServiceModal', 'showGAScreenModal', 'user']),
+      ...mapState(['navigationVisible', 'showServiceModal', 'showGAScreenModal', 'user', 'calendarTitle']),
       isGAorCSR() {
         if (this.user && this.user.role) {
           if (this.user.role.role_code === 'CSR' || this.user.role.role_code === 'GA') {
@@ -107,7 +112,7 @@
     border: none !important;
   }
   .dash-button-flex-button-container {
-    display: inline-flex;
+    display: flex;
     justify-content: space-between;
     width: 97%;
     padding: 10px;
@@ -117,7 +122,7 @@
     flex-grow: 1;
   }
   .nav-container {
-    display: inline;
+    height: 100%;
   }
   .gaScreenChecked {
     padding-left: 0em
