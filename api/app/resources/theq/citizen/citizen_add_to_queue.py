@@ -35,10 +35,20 @@ class CitizenAddToQueue(Resource):
         if active_service_request is None:
             return {"message": "Citizen has no active service requests"}
 
-        #  Figure out what Snowplow call to make.
-        snowplow_call = "returntoqueue"
-        if len(citizen.service_reqs) == 1 and len(active_service_request.periods) == 1:
-            snowplow_call = "addtoqueue"
+        #  Figure out what Snowplow call to make.  Default is addtoqueue
+        snowplow_call = "addtoqueue"
+        if len(citizen.service_reqs) != 1 or len(active_service_request.periods) != 1:
+            active_period = active_service_request.get_active_period()
+            if active_period.ps.ps_name == "Invited":
+                snowplow_call = "queuefromprep"
+            elif active_period.ps.ps_name == "Being Served":
+                snowplow_call = "returntoqueue"
+            else:
+                #  TODO:  Put in a Feedback Slack/Service now call here.
+                return {"message": "Invalid citizen/period state. "}
+
+        print("==> Citizen returning to a wait queue")
+        print("    --> Snowplow call is: " + snowplow_call)
 
         active_service_request.add_to_queue(csr, snowplow_call)
 
