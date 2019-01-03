@@ -23,6 +23,7 @@ class RoomSchema(ma.ModelSchema):
 
     class Meta:
         model = Room
+        exclude = ("booking",)
         jit = toastedmarshmallow.Jit
 
     capacity = fields.Int()

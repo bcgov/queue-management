@@ -250,30 +250,30 @@ components:
   schemas:
     Booking:
       type: object
-      rquired:
-      - booking_id
-      - room_id
-      - start_time
-      - end_time
-      - booking_name
       properties:
         booking_id:
           type: integer
+          nullable: false
           example: 1
         room_id:
           type: integer
+          nullable: false
           example: 1
         start_time:
           type: string
+          nullable: false
           format: date-time
         end_time:
           type: string
+          nullable: false
           format: date-time
         fees:
           type: string
+          nullable: true
           example: false
         booking_name:
           type: string
+          nullable: true
           example: Monthly Office Check In
         room:
           readOnly: true
@@ -284,49 +284,69 @@ components:
       properties:
         exam_id:
           type: integer
+          nullable: false
           example: 1
         booking_id:
           type: integer
+          nullable: true
           example: 1
         exam_type_id:
           type: integer
+          nullable: false
           example: 1
         invigilator_id:
           type: integer
+          nullable: true
           example: 1
         office_id:
           type: integer
+          nullable: false
           example: 1
         event_id:
           type: string
+          nullable: false
           example: 123456789
         exam_name:
           type: string
+          nullable: false
         examinee_name:
+          nullable: true
           type: string
         expiry_date:
           type: string
           format: date-time
+          nullable: false
         notes:
           type: string
+          nullable: true
           example: Helpful and specific notes about student/office
         exam_received:
           type: boolean
+          nullable: false
           example: false
+        exam_received_date:
+          type: string
+          format: date-time
+          nullable: true
         session_number:
           type: integer
+          nullable: true
           example: 1
         number_of_students:
           type: integer
+          nullable: true
           example: 12
         exam_method:
           type: string
-          enum:
-          - online
-          - paper
+          nullable: false
         deleted_date:
           type: string
           format: date-time
+          nullable: true
+        booking:
+          allOf:
+          - $ref: "#/components/schemas/Booking"
+          readOnly: true
         exam_type:
           allOf:
           - $ref: "#/components/schemas/ExamType"
@@ -344,52 +364,65 @@ components:
       properties:
         exam_type_id:
           type: integer
+          nullable: false
           example: 1
         exam_type_name:
           type: string
+          nullable: false
           example: ITA Exam Type
         exam_color:
           type: string
+          nullable: false
           example: red
         number_of_hours:
           type: int
+          nullable: false
           example: 3
         method_type:
           type: string
-          enum:
-          - group
-          - individual
+          nullable: false
         ita_ind:
-          type: boolean
-          example: false
+          type: integer
+          nullable: false
+          example: 0
     Invigilator:
       type: object
       properties:
         invigilator_id:
           type: integer
+          nullable: false
           example: 1
         office_id:
           type: integer
+          nullable: false
           example: 1
         invigilator_name:
           type: string
+          nullable: false
           example: Homer Simpson
         invigilator_notes:
           type: string
+          nullable: true
         contact_phone:
           type: string
+          nullable: true
           format: phone
         contact_email:
           type: string
+          nullable: true
           format: email
         contract_number:
           type: string
+          nullable: false
           example: c-00001
         contract_expiry_date:
           type: string
+          nullable: false
           format: date
         office:
           $ref: "#/components/schemas/Office"
+        exams:
+          $ref: "#/components/schemas/Exam"
     Office:
       type: object
       properties:
@@ -413,18 +446,25 @@ components:
       properties:
         room_id:
           type: integer
+          nullable: false
           example: 1
         office_id:
           type: integer
+          nullable: false
           example: 1
         room_name:
           type: string
+          nullable: false
           example: "Boardroom 1"
         capacity:
           type: integer
+          nullable: false
           example: 12
         color:
           type: string
+          nullable: false
           example: red
         office:
           $ref: "#/components/schemas/Office"
+        booking:
+          $ref: "#/components/schemas/Booking"

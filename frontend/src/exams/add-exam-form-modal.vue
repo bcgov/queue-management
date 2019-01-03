@@ -1,0 +1,286 @@
+<template>
+  <b-modal v-model="modal"
+           :no-close-on-backdrop="true"
+           hide-ok
+           hide-header
+           hide-cancel
+           @shown="initialize"
+           @hidden="resetModal"
+           size="md">
+    <template slot="modal-footer">
+      <template v-if="unSubmitted">
+        <div v-if="step < 4"
+             style="width: 100%;
+                    display: flex;
+                    justify-content: space-between">
+          <div>
+            <b-button @click="clickCancel">Cancel</b-button>
+          </div>
+          <div style="display: inline">
+            <b-button v-if="step > 1"
+                      class="btn-secondary mr-2"
+                      @click="clickBack">Back</b-button>
+            <b-button v-if="button.nextDisabled"
+                      :class="button.nextClass"
+                      @click="setWarning">Next</b-button>
+            <b-button v-else
+                      :class="button.nextClass"
+                      @click="clickNext">Next</b-button>
+          </div>
+        </div>
+        <div v-else-if="step == 4"
+             style="display: flex;
+                    justify-content: space-between;
+                    width: 100%">
+          <div style="display: inline">
+            <b-button class="btn-secondary"
+                      @click="clickCancel">Cancel</b-button>
+          <b-button class="btn-warning"
+                    @click="resetModal">Start Again</b-button>
+          </div>
+          <div style="display: flex">
+            <b-button v-if="errors.length > 0"
+                      @click="submitMsg='You have an error on a previous step.  Click on the red tab.'"
+                      class="btn-primary disabled">Submit</b-button>
+            <b-button v-else
+                      class="btn-primary"
+                      @click="submit">Submit</b-button>
+          </div>
+        </div>
+      </template>
+      <template v-if="!unSubmitted">
+        <div style="display: flex; justify-content: flex-start">
+          <b-button class="btn-secondary"
+                    @click="clickCancel">Close</b-button>
+        </div>
+      </template>
+    </template>
+
+    <b-nav tabs class="mb-3">
+      <b-nav-item v-for="i in tabs"
+                  :key="'tab '+i.title"
+                  :active="tabs[step-1].title==i.title"
+                  @click="clickTab(i.step)">
+        <span :style="tabWarning(i)">{{ i.title }}
+        <font-awesome-icon v-if="tabValidate(i.step)"
+                           icon="check"
+                           class="m-0 p-0"
+                           style="font-size: .8rem; color: green"/>
+        </span>
+      </b-nav-item>
+    </b-nav>
+    <template v-if="unSubmitted">
+      <AddExamFormController v-if="step <= 3"  />
+      <AddExamFormConfirm v-if="step==4" :submitMsg="submitMsg" />
+    </template>
+    <template v-if="!unSubmitted">
+      <div v-if="success==='' " class="loader" style="margin-top: auto"></div>
+      <div v-if="success">
+        <b-container>
+          <b-row align-v="center"
+                 align-h="center"
+                 align-content="center">
+            <b-col>
+              <p><h5>Success.  Exam Details Added.</h5></p>
+              <p><b-button @click="resetModal" class="btn-primary">Log Another Exam</b-button></p>
+            </b-col>
+          </b-row>
+        </b-container>
+      </div>
+      <div v-if="!success">
+        <b-container>
+          <b-row align-v="center"
+                 align-h="center"
+                 align-content="center">
+            <b-col>
+              <p class="message-text">Something Went Wrong</p>
+              <p><b-button>Try Again</b-button></p>
+            </b-col>
+          </b-row>
+        </b-container>
+      </div>
+    </template>
+  </b-modal>
+</template>
+
+<script>
+  import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+  import AddExamFormController from './add-exam-form-controller'
+  import AddExamFormConfirm from './add-exam-form-confirm'
+
+  export default {
+    name: 'AddExamFormModal',
+    components: { AddExamFormController, AddExamFormConfirm },
+    data() {
+      return ({
+        submitMsg: '',
+        unSubmitted: true,
+      })
+    },
+    computed: {
+      ...mapGetters({
+        button: 'addIndividualITAButton',
+      }),
+      ...mapState({
+        exam: state => state.capturedExam,
+        examTypes: state => state.examTypes,
+        modalVisible: state => state.addIndividualITAExamModalVisibe,
+        steps: state => state.addIndITASteps,
+        tab: state => state.captureITAExamTabSetup,
+      }),
+      success() {
+        if (this.tab) {
+          return this.tab.success
+        }
+        return false
+      },
+      errors() {
+        if (this.tab.errors) {
+          return this.tab.errors
+        } else {
+          this.submitMsg = ''
+          return []
+        }
+      },
+      modal: {
+        get() {
+          return this.modalVisible
+        },
+        set(e) {
+          this.toggleAddIndividualITAExam(e)
+        }
+      },
+      step() {
+        if (this.tab && this.tab.step) {
+          return this.tab.step
+        }
+        return 1
+      },
+      tabs() {
+        return this.steps.slice(0, this.tab.highestStep)
+      },
+      validated() {
+        if (this.tab && this.tab.stepsValidated) {
+          if (Array.isArray(this.tab.stepsValidated)) {
+            return this.tab.stepsValidated
+          }
+          return [this.tab.stepsValidated]
+        }
+        return []
+      },
+    },
+    methods: {
+      ...mapActions(['clickAddExamSubmit']),
+      ...mapMutations([
+        'resetCaptureForm',
+        'resetCaptureTab',
+        'toggleAddIndividualITAExam',
+        'updateCaptureTab',
+      ]),
+      tabWarning(i) {
+        if (!Array.isArray(this.errors)) return ''
+        if (this.errors.length > 0) {
+          let list = []
+            this.errors.forEach(error=>{
+              if (this.steps.some(step=>step.step==error)) {
+                list.push(this.steps.find(step=>step.step==error)).questions
+              }
+
+            })
+          if (list.includes(i)) {
+            return {color: 'red'}
+          }
+          return ''
+        }
+        return ''
+      },
+      tabValidate(i) {
+        if (this.validated.indexOf(i) === -1) {
+          return false
+        }
+        return true
+      },
+      clickBack() {
+        let step = this.step - 1
+        this.updateCaptureTab({step})
+      },
+      clickCancel() {
+        this.toggleAddIndividualITAExam(false)
+      },
+      clickNext() {
+        let step = this.step + 1
+        this.updateCaptureTab({step})
+
+        if (step > this.tab.highestStep) {
+          this.updateCaptureTab({highestStep: step})
+        }
+      },
+      clickTab(e) {
+        this.updateCaptureTab({step: e})
+      },
+      initialize() {
+        this.unSubmitted = true
+        this.submitMsg = ''
+      },
+      submit() {
+        this.unSubmitted = false
+        this.submitMsg = ''
+        this.clickAddExamSubmit('ind_ita')
+      },
+      resetModal() {
+        this.resetCaptureForm()
+        this.resetCaptureTab()
+        this.unSubmitted = true
+        this.submitMsg = ''
+      },
+      setWarning() {
+        if (!this.errors.includes(this.step)) {
+          let errors = this.errors.concat([this.step])
+          this.updateCaptureTab({errors})
+        }
+      },
+    }
+  }
+</script>
+
+<style>
+  .message-text {
+    font-size: .9rem; font-weight: 500
+  }
+  .tab-title-font {
+    font-size: .8rem
+  }
+  .buttontabs {
+    border-radius: 0 !important;
+    border-bottom: 1px solid black;
+    border-top: none;
+    border-right: none;
+    border-left: none;
+  }
+  .loader {
+    position: relative;
+    text-align: center;
+    margin: 15px auto 35px auto;
+    z-index: 9999;
+    display: block;
+    width: 80px;
+    height: 80px;
+    border: 10px solid rgba(0, 0, 0, .3);
+    border-radius: 50%;
+    border-top-color: #000;
+    animation: spin 1s ease-in-out infinite;
+    -webkit-animation: spin 1s ease-in-out infinite;
+  }
+  @keyframes spin {
+    to {
+      -webkit-transform: rotate(360deg);
+    }
+  }
+
+  @-webkit-keyframes spin {
+    to {
+      -webkit-transform: rotate(360deg);
+    }
+  }
+
+</style>

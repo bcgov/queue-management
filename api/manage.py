@@ -328,17 +328,20 @@ class Bootstrap(Command):
         office_test = theq.Office(
             office_name="Test Office",
             office_number=999,
-            sb_id=smartboard_call_ticket.sb_id
+            sb_id=smartboard_call_ticket.sb_id,
+            exams_enabled_ind=1
         )
         office_100 = theq.Office(
             office_name="100 Mile House",
             office_number=1,
-            sb_id=smartboard_no_call.sb_id
+            sb_id=smartboard_no_call.sb_id,
+            exams_enabled_ind=0
         )
         office_victoria = theq.Office(
             office_name="Victoria",
             office_number=61,
-            sb_id=smartboard_call_name.sb_id
+            sb_id=smartboard_call_name.sb_id,
+            exams_enabled_ind=0
         )
         db.session.add(office_test)
         db.session.add(office_100)
@@ -541,13 +544,13 @@ class Bootstrap(Command):
             booking_id = booking_one.booking_id,
             invigilator_id = invigilator_one.invigilator_id,
             office_id = office_test.office_id,
-            room_id = room_one.room_id,
             event_id = "1234abcd",
             exam_name = "Carpentry Red Seal",
             examinee_name = "Chandler Bing",
             expiry_date = "2018-11-29 11:19:53.5",
             notes = "This student is extremely s-m-r-t",
             exam_received = 1,
+            exam_received_date= "2018-12-25 (9:00:00.000",
             session_number = 1,
             number_of_students = 1,
             exam_method = "Written"
@@ -558,13 +561,13 @@ class Bootstrap(Command):
             booking_id = booking_two.booking_id,
             invigilator_id = invigilator_two.invigilator_id,
             office_id = office_test.office_id,
-            room_id = room_two.room_id,
             event_id = "e-000001",
             exam_name = "Plumbing Red Seal",
             examinee_name = "Joey Fatone",
             expiry_date = "2018-11-29 11:19:53.5",
             notes = "Speak slowly with this student, hearing impaired",
-            exam_received = 0,
+            exam_received = 1,
+            exam_received_date="2018-12-24 (9:00:00.000",
             session_number = 2,
             number_of_students = 12,
             exam_method = "Written"
@@ -575,13 +578,13 @@ class Bootstrap(Command):
             booking_id=booking_three.booking_id,
             invigilator_id=invigilator_three.invigilator_id,
             office_id=office_test.office_id,
-            room_id=room_two.room_id,
             event_id="e-000002",
             exam_name="Culinary Red Seal",
             examinee_name="Anthony Bourdain",
             expiry_date="2018-11-29 11:19:53.5",
             notes="Student is extremely verbally obscene",
             exam_received=1,
+            exam_received_date="2018-12-23 (9:00:00.000",
             session_number=3,
             number_of_students=10,
             exam_method="Kitchen"

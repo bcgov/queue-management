@@ -30,6 +30,7 @@ class Office(Base):
     office_number = db.Column(db.Integer)
     sb_id = db.Column(db.Integer, db.ForeignKey('smartboard.sb_id'))
     deleted = db.Column(db.DateTime, nullable=True)
+    exams_enabled_ind = db.Column(db.Integer, nullable=False)
 
     services = db.relationship("Service", secondary='office_service')
     csrs = db.relationship('CSR')

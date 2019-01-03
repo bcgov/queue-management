@@ -31,5 +31,6 @@ class OfficeSchema(ma.ModelSchema):
     office_number = fields.Int()
     sb_id = fields.Int()
     deleted = fields.DateTime()
+    exams_enabled_ind = fields.Int()
 
     sb = fields.Nested(SmartBoardSchema())

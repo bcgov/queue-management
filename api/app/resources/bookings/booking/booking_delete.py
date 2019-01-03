@@ -32,6 +32,6 @@ class BookingDelete(Resource):
 
         booking = Booking.query.filter_by(booking_id=id).join(Room).filter_by(office_id=csr.office_id).first_or_404()
 
-        db.sessiion.delete(booking)
+        db.session.delete(booking)
         db.session.commit()
         return {}, 204
