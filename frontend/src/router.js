@@ -26,6 +26,8 @@ import Exams from './exams/exams'
 import ButtonsExams from './exams/buttons-exams'
 import Agenda from './agenda/agenda'
 import ButtonsAgenda from './agenda/buttons-agenda'
+import Calendar from './booking/calendar'
+import ButtonsCalendar from './booking/buttons-calendar'
 
 Vue.use(Router)
 
@@ -63,6 +65,13 @@ export default new Router({
           components: {
             default: Agenda,
             buttons: ButtonsAgenda,
+          }
+        },
+        {
+          path: 'booking',
+          components: {
+            default: Calendar,
+            buttons: ButtonsCalendar,
           }
         }
       ]

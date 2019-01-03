@@ -18,10 +18,10 @@ import 'es6-promise/auto'
 import { store } from './store/'
 import BootstrapVue from 'bootstrap-vue'
 import Router from './router.js'
-import FullCalendar from 'vue-full-calendar'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+import './assets/css/q.css'
 import './assets/css/bc-gov-style.css'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
@@ -29,6 +29,7 @@ import {
   faAngleRight,
   faBars,
   faBinoculars,
+  faCalendar,
   faCaretLeft,
   faCaretRight,
   faCheck,
@@ -39,13 +40,13 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import VDragged from 'v-dragged'
 
-Vue.use(FullCalendar)
 Vue.use(VDragged)
 library.add(
   faAngleLeft,
   faAngleRight,
   faBars,
   faBinoculars,
+  faCalendar,
   faCaretLeft,
   faCaretRight,
   faCheck,

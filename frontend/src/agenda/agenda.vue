@@ -1,13 +1,12 @@
 <template>
   <div>
-    <div class="inline-title">{{ title }}</div>
     <keep-alive>
-      <full-calendar ref="qcalendar"
-                     key="qcalendar"
-                     class="calendar-margins"
+      <full-calendar ref="agendacal"
+                     key="agendacal"
+                     class="q-calendar-margins"
                      @view-render="viewRender"
                      @event-render="eventRender"
-                     :events="calendar_events"
+                     :events="events"
                      :config="configuration"></full-calendar>
     </keep-alive>
   </div>
@@ -16,29 +15,34 @@
 
 <script>
   import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
+  import { FullCalendar } from 'vue-full-calendar'
   import 'fullcalendar/dist/fullcalendar.css'
   import 'fullcalendar-scheduler'
 
   export default {
     name: 'Agenda',
-    created() {
-      this.initializeAgenda()
-    },
+    components: { FullCalendar },
     mounted() {
+      this.initialize()
       this.$root.$on('next', () => { this.next() })
       this.$root.$on('prev', () => { this.prev() })
       this.$root.$on('today', () => { this.today() })
       this.$root.$on('listWeek', () => { this.listWeek() })
       this.$root.$on('listDay', () => { this.listDay() })
     },
+    destroyed() {
+      this.setCalendarTitle(null)
+    },
     data() {
       return {
-        config: {
+        configuration: {
+          timezone: 'local',
           schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
           showNonCurrentDates: false,
           fixedWeekCount: false,
           navLinks: true,
           defaultView: 'listWeek',
+          resources: [],
           views: {
             listDay: {
               allDaySlot: false,
@@ -47,12 +51,8 @@
               allDaySlot: false,
             },
           },
-          contentHeight() {
-            return window.innerHeight - 240
-          },
+          height: 'auto',
           weekends: false,
-          maxTime: '18:00:00',
-          minTime: '8:00:00',
           header: {
             left: null,
             center: null,
@@ -60,24 +60,38 @@
           },
           groupByDateAndResource: true
         },
-        title: '',
       }
     },
     computed: {
-      ...mapGetters(['room_resources', 'calendar_events']),
-      ...mapState(['exams']),
-      configuration() {
-        let configuration = this.config
-        configuration['resources'] = this.room_resources
-        return configuration
+      ...mapGetters(['calendar_events', 'room_resources']),
+      ...mapState(['exams', 'viewPortSizes', 'calendarTitle']),
+      events() {
+        if (this.calendar_events.length > 0) {
+          return this.calendar_events
+        }
+        return []
       },
     },
     methods: {
-      ...mapActions(['initializeAgenda']),
+      ...mapActions(['initializeAgenda', 'getBookings']),
       ...mapMutations([
+        'setCalendarTitle',
         'toggleBookRoomModal',
         'setCalendarView'
       ]),
+      initialize() {
+        this.initializeAgenda().then( rooms => {
+          rooms.forEach( room => {
+            let roomObj = {
+              id: room.room_id,
+              title: room.room_name,
+              eventColor: room.color
+            }
+            this.$refs.agendacal.fireMethod('addResource', roomObj)
+          })
+          this.getBookings()
+        })
+      },
       eventRender(event, element, view) {
         if (view.name === 'listWeek' || view.name === 'listDay') {
           let resTitle = this.room_resources.find(res => res.id == event.resourceId).title
@@ -93,37 +107,26 @@
         }
       },
       viewRender(view, el) {
-        this.title = view.title
+        this.setCalendarTitle({ title: view.title, view: view.name })
+        if (view.name === 'basicDay') {
+          this.$refs.agendacal.fireMethod('changeView', 'listDay')
+        }
       },
       next() {
-        this.$refs.qcalendar.fireMethod('next')
+        this.$refs.agendacal.fireMethod('next')
       },
       prev() {
-        this.$refs.qcalendar.fireMethod('prev')
+        this.$refs.agendacal.fireMethod('prev')
       },
       today() {
-        this.$refs.qcalendar.fireMethod('today')
+        this.$refs.agendacal.fireMethod('today')
       },
       listDay() {
-        this.$refs.qcalendar.fireMethod('changeView', 'listDay')
+        this.$refs.agendacal.fireMethod('changeView', 'listDay')
       },
       listWeek() {
-        this.$refs.qcalendar.fireMethod('changeView', 'listWeek')
+        this.$refs.agendacal.fireMethod('changeView', 'listWeek')
       },
     }
   }
 </script>
-
-<style scoped>
-  .inline-title {
-    display: inline;
-    margin: 0px 0px -30px 20px;
-    font-size: 2rem;
-    font-weight: 600;
-  }
-  .calendar-margins {
-    margin-top: -35px;
-    margin-left: 20px;
-    padding: 0px;
-  }
-</style>
