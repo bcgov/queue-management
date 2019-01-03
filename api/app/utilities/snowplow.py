@@ -37,6 +37,7 @@ class SnowPlow():
 
         #  Make sure you want to track calls.
         if SnowPlow.call_snowplow_flag:
+            print("==> Snowplow: add_citizen")
 
             # Set up contexts for the call.
             citizen_obj = Citizen.query.get(new_citizen.citizen_id)
@@ -55,6 +56,7 @@ class SnowPlow():
 
         #  Make sure you want to track calls.
         if SnowPlow.call_snowplow_flag:
+            print("==> Snowplow: choose_service")
 
             # Set up the contexts for the call.
             citizen_obj = Citizen.query.get(service_request.citizen_id)
@@ -89,6 +91,7 @@ class SnowPlow():
 
         #  Make sure you want to track calls.
         if SnowPlow.call_snowplow_flag:
+            print("==> Snowplow: snowplow_event: " + schema)
 
             #  Set up the contexts for the call.
             citizen_obj = Citizen.query.get(citizen_id)

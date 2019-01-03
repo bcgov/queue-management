@@ -41,17 +41,31 @@ class ServiceReq(Base):
 
         return sorted_periods[-1]
 
-    def invite(self, csr, snowplow_event="use_period"):
+    def invite(self, csr, invite_type, sr_count = 1):
         active_period = self.get_active_period()
         if active_period.ps.ps_name in ["Invited", "Being Served", "On hold"]:
             raise TypeError("You cannot invite a citizen that has already been invited")
 
-        #  Calculate what Snowplow event to call.
-        if (snowplow_event == "use_period"):
-            if (active_period.ps.ps_name == "Waiting"):
-                snowplow_event = "invitefromlist"
+        #  If a generic invite type, event is either invitecitizen or returninvite.
+        if invite_type == "generic":
+            #  If only one SR, one period, an invitecitizen call, from First Time in Line state.
+            if sr_count == 1 and len(self.periods) == 2:
+                snowplow_event = "invitecitizen"
+            #  Otherwise from the Back in Line state.
             else:
-                snowplow_event = "invitefromhold"
+                snowplow_event = "returninvite"
+
+        #  A specific invite type.  Event is invitefromlist, returnfromlist or invitefromhold
+        else:
+            #  If only one SR, one period, an invitefromlist call, from First Time in Line state.
+            if sr_count == 1 and len(self.periods) == 2:
+                snowplow_event = "invitefromlist"
+            #  Either from back in line or hold state.
+            else:
+                if active_period.ps.ps_name == "Waiting":
+                    snowplow_event = "returnfromlist"
+                else:
+                    snowplow_event = "invitefromhold"
 
         active_period.time_end = datetime.now()
         # db.session.add(active_period)
