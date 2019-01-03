@@ -27,7 +27,7 @@ class Invigilator(Base):
     contract_number = db.Column(db.String(50), nullable=False)
     contract_expiry_date = db.Column(db.String(50), nullable=False)
 
-    exams = db.relationship("Exam")
+    bookings = db.relationship("Booking")
     office = db.relationship("Office", lazy="joined")
 
     def __repr__(self):

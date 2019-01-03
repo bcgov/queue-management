@@ -21,12 +21,14 @@ class Booking(Base):
 
     booking_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     room_id = db.Column(db.Integer, db.ForeignKey("room.room_id"), nullable=False)
+    invigilator_id = db.Column(db.Integer, db.ForeignKey("invigilator.invigilator_id"), nullable=True)
     start_time = db.Column(UtcDateTime, nullable=False)
     end_time = db.Column(UtcDateTime, nullable=False)
     fees = db.Column(db.String(5), nullable=True)
     booking_name = db.Column(db.String(150), nullable=True)
 
     room = db.relationship("Room")
+    invigilator = db.relationship("Invigilator")
 
     def __repr__(self):
         return '<Booking Name: (name={self.booking_name!r})>'.format(self=self)

@@ -6,6 +6,7 @@ from app.models import theq
 from app.models import bookings
 import logging
 from datetime import datetime
+import pytz
 
 migrate = Migrate(application, db)
 manager = Manager(application)
@@ -629,24 +630,24 @@ class Bootstrap(Command):
         print("--> Bookings: Booking")
         booking_one = bookings.Booking(
             room_id = room_one.room_id,
-            start_time = "2018-11-29 9:00:00.0",
-            end_time = "2018-11-29 12:00:00.0",
+            start_time = datetime(year=2018, month=11, day=1, hour=9, tzinfo=pytz.timezone('US/Pacific')),
+            end_time = datetime(year=2018, month=11, day=1, hour=12, tzinfo=pytz.timezone('US/Pacific')),
             fees = "false",
             booking_name = "Carpentry Exam"
         )
 
         booking_two = bookings.Booking(
             room_id = room_two.room_id,
-            start_time = "2018-11-29 13:00:00.0",
-            end_time = "2018-11-29 16:00:00.0",
+            start_time = datetime(year=2018, month=11, day=1, hour=9, tzinfo=pytz.timezone('US/Pacific')),
+            end_time = datetime(year=2018, month=11, day=1, hour=12, tzinfo=pytz.timezone('US/Pacific')),
             fees = "true",
             booking_name = "Plubming Exam"
         )
 
         booking_three = bookings.Booking(
             room_id = room_one.room_id,
-            start_time = "2018-11-29 9:00:00.0",
-            end_time = "2018-11-29 12:00:00.0",
+            start_time = datetime(year=2018, month=11, day=1, hour=9, tzinfo=pytz.timezone('US/Pacific')),
+            end_time = datetime(year=2018, month=11, day=1, hour=12, tzinfo=pytz.timezone('US/Pacific')),
             fees = "true",
             booking_name = "Kitchen Exam"
         )
@@ -660,7 +661,6 @@ class Bootstrap(Command):
         exam_one = bookings.Exam(
             exam_type_id = exam_type_one.exam_type_id,
             booking_id = booking_one.booking_id,
-            invigilator_id = invigilator_one.invigilator_id,
             office_id = office_test.office_id,
             event_id = "1234abcd",
             exam_name = "Carpentry Red Seal",
@@ -678,7 +678,6 @@ class Bootstrap(Command):
         exam_two = bookings.Exam(
             exam_type_id = exam_type_two.exam_type_id,
             booking_id = booking_two.booking_id,
-            invigilator_id = invigilator_two.invigilator_id,
             office_id = office_test.office_id,
             event_id = "e-000001",
             exam_name = "Plumbing Red Seal",
@@ -696,7 +695,6 @@ class Bootstrap(Command):
         exam_three = bookings.Exam(
             exam_type_id=exam_type_three.exam_type_id,
             booking_id=booking_three.booking_id,
-            invigilator_id=invigilator_three.invigilator_id,
             office_id=office_test.office_id,
             event_id="e-000002",
             exam_name="Culinary Red Seal",
@@ -730,7 +728,6 @@ class Bootstrap(Command):
         exam_five = bookings.Exam(
             exam_type_id=exam_type_five.exam_type_id,
             booking_id=booking_three.booking_id,
-            invigilator_id=invigilator_one.invigilator_id,
             office_id=office_test.office_id,
             event_id="e-000005",
             exam_name="Lyrical Flow Exam",

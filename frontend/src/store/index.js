@@ -156,6 +156,7 @@ export const store = new Vuex.Store({
     addIndividualITAExamModalVisibe: false,
     exams: [],
     iframeLogedIn: false,
+    invigilators: [],
     viewPortSizes: {
       h: null,
       w: null
@@ -616,7 +617,7 @@ export const store = new Vuex.Store({
     },
 
     getExamTypes(context) {
-      return new Promise( (resolve, reject) => {
+      return new Promise((resolve, reject) => {
         Axios(context).get('/exam_types/')
           .then(resp => {
             context.commit('setExamTypes', resp.data.exam_types)
@@ -628,7 +629,20 @@ export const store = new Vuex.Store({
             reject(error)
           })
       })
+    },
 
+    getInvigilators(context) {
+      return new Promise ((resolve, reject) => {
+        Axios(context).get('/invigilators/')
+          .then(resp => {
+            context.commit('setInvigilators', resp.data.invigilators)
+            resolve(resp)
+          })
+          .catch(error => {
+            console.log(error)
+            reject(error)
+          })
+      })
     },
     
     getRooms(context) {
@@ -1829,6 +1843,11 @@ export const store = new Vuex.Store({
     setExamTypes(state, payload) {
       state.examTypes = []
       state.examTypes = payload
+    },
+
+    setInvigilators(state, payload){
+      state.invigilators = []
+      state.invigilators = payload
     },
 
     updateCitizen(state, payload) {

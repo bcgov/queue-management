@@ -17,7 +17,7 @@ from flask import g
 from flask_restplus import Resource
 from qsystem import api, db, oidc
 from sqlalchemy import exc
-from app.models.bookings import Exam, ExamType
+from app.models.bookings import Exam, ExamType, Booking
 from app.models.theq import Citizen, CSR, Period, ServiceReq, SRState
 from app.schemas.bookings import ExamSchema, ExamTypeSchema
 from app.schemas.theq import CitizenSchema, CSRSchema
@@ -81,11 +81,12 @@ class CsrSelf(Resource):
 
             group_exams = Exam.query \
                 .filter_by(office_id=csr.office_id) \
-                .filter(Exam.invigilator_id.is_(None),
-                        Exam.expiry_date > today,
+                .filter(Exam.expiry_date > today,
                         Exam.deleted_date.is_(None)) \
                 .join(ExamType, Exam.exam_type_id == ExamType.exam_type_id) \
-                .filter(ExamType.group_exam_ind == 1).count()
+                .filter(ExamType.group_exam_ind == 1) \
+                .join(Booking, Exam.booking_id == Booking.booking_id) \
+                .filter(Booking.invigilator_id.is_(None)).count()
 
             result = self.csr_schema.dump(csr)
             active_citizens = self.citizen_schema.dump(active_citizens)
