@@ -110,17 +110,9 @@ class SnowPlow():
                 snowplow_event = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/hold/jsonschema/1-0-0',
                                                 {"time": 0})
 
-            #  If begin service direct from choose service, extra Snowplow events needed.
-            elif (schema == "beginservice") and (period_count == 2):
-
-                #  Add "bogus" add to queue and invitecitizen events.
-                sp_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/addtoqueue/jsonschema/1-0-0', {})
-                t.track_self_describing_event(sp_event, [citizen, office, agent])
-                sp_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/invitecitizen/jsonschema/1-0-0', {})
-                t.track_self_describing_event(sp_event, [citizen, office, agent])
-
-                #  Create "real" beginservice event.
-                snowplow_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/' + schema + '/jsonschema/' + schema_version, {})
+            elif schema == "customerleft":
+                snowplow_event = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/customerleft/jsonschema/2-0-0',
+                                                    {"leave_status": "being-served"})
 
             #  Most Snowplow events don't have parameters, so don't have to be built.
             else:
