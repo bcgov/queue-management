@@ -22,6 +22,10 @@ import ButtonsDash from '@/serve-citizen/dash-buttons'
 import Smartboard from './smartboard/'
 import ButtonsAdmin from './buttons-admin'
 import Admin from './admin'
+import Exams from './exams/exams'
+import ButtonsExams from './exams/buttons-exams'
+import Agenda from './agenda/agenda'
+import ButtonsAgenda from './agenda/buttons-agenda'
 
 Vue.use(Router)
 
@@ -47,6 +51,20 @@ export default new Router({
             buttons: ButtonsAdmin
           }
         },
+        {
+          path: 'exams',
+          components: {
+            default: Exams,
+            buttons: ButtonsExams
+          }
+        },
+        {
+          path: 'agenda',
+          components: {
+            default: Agenda,
+            buttons: ButtonsAgenda,
+          }
+        }
       ]
     },
     {

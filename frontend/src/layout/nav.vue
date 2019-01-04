@@ -17,10 +17,8 @@
 <template>
   <div class="nav-container">
     <div class="dash-button-flex-button-container pb-0 mb-3">
-
       <!-- SLOT FOR EACH VIEW'S BUTTON CONTROLS-->
       <router-view name="buttons"/>
-
       <div v-if="navigationVisible">
         <b-dropdown variant="outline-primary"
                     class="pl-0 ml-0 mr-3"
@@ -31,7 +29,8 @@
           </template>
           <div :style="{width:200+'px'}">
             <b-dropdown-item to="/queue">The Q</b-dropdown-item>
-
+            <b-dropdown-item to="/agenda" v-if="isGAorCSR && showExams">Branch Agenda</b-dropdown-item>
+            <b-dropdown-item v-if="showExams" to="/exams">Manage Exams</b-dropdown-item>
             <template  v-if="user.role && user.role.role_code=='GA'">
               <b-dropdown-item @click="clickGAScreen" :class="gaPanelStyle">
                 <font-awesome-icon v-if="showGAScreenModal"
@@ -42,48 +41,45 @@
               </b-dropdown-item>
               <b-dropdown-divider />
             </template>
-
             <b-dropdown-item v-if="showAdmin" to="/admin">Administration</b-dropdown-item>
             <b-dropdown-divider v-if="showAdmin" />
-
             <b-dropdown-item>
               <b-button class="btn-primary w-100 m-0"
                         v-if="!showServiceModal"
                         @click="clickFeedback"
                         id="click-feedback-button">Feedback</b-button></b-dropdown-item>
-
-
             </b-dropdown-item>
           </div>
         </b-dropdown>
       </div>
     </div>
-
     <!--SLOT FOR EACH VIEW'S MAIN CONTENT-->
     <div style="width: 98%; margin-right: 15px;">
       <router-view />
     </div>
-
   </div>
 </template>
 
 <script>
-  import { mapState, mapActions, mapMutations } from 'vuex'
+  import { mapState, mapActions, mapMutations, mapGetters } from 'vuex'
   export default {
     name: 'Nav',
     computed: {
-      ...mapState([
-        'navigationVisible',
-        'showServiceModal',
-        'showGAScreenModal',
-        'user'
-      ]),
+      ...mapGetters(['showExams']),
+      ...mapState(['navigationVisible', 'showServiceModal', 'showGAScreenModal', 'user']),
+      isGAorCSR() {
+        if (this.user && this.user.role) {
+          if (this.user.role.role_code === 'CSR' || this.user.role.role_code === 'GA') {
+            return true
+          }
+        }
+        return false
+      },
       gaPanelStyle() {
         let classStyle = 'gaScreenUnchecked'
         if (this.showGAScreenModal) {
           classStyle = 'gaScreenChecked'
          }
-
          return classStyle
       },
       showAdmin() {
@@ -94,7 +90,7 @@
           }
         }
         return false
-      }
+      },
     },
     methods: {
       ...mapActions(['clickGAScreen']),

@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import logging
-from flask import g
+from flask import g, request
 from flask_restplus import Resource
 from sqlalchemy import exc
 from app.models.bookings import Exam
@@ -31,8 +31,17 @@ class ExamList(Resource):
     def get(self):
         try:
             csr = CSR.find_by_username(g.oidc_token_info['username'])
-
             exams = Exam.query.filter(Exam.deleted_date.is_(None)).filter_by(office_id=csr.office_id)
+
+            search_kwargs = {}
+
+            if request.args:
+                for key in request.args:
+                    if hasattr(Exam, key):
+                        search_kwargs[key] = request.args.get(key)
+
+                exams = exams.filter_by(**search_kwargs)
+
             result = self.exam_schema.dump(exams)
 
             return {'exams': result.data,
