@@ -26,6 +26,7 @@ class ServiceReq(Base):
     channel_id = db.Column(db.Integer, db.ForeignKey('channel.channel_id'), nullable=False)
     service_id = db.Column(db.Integer, db.ForeignKey('service.service_id'), nullable=False)
     sr_state_id = db.Column(db.Integer, db.ForeignKey('srstate.sr_state_id'), nullable=False)
+    sr_number = db.Column(db.Integer, default=1, nullable=False)
 
     channel = db.relationship('Channel')
     periods = db.relationship('Period', backref=db.backref("request_periods", lazy=False), lazy='joined', order_by='Period.period_id')

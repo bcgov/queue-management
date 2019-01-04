@@ -105,9 +105,6 @@ class ServiceRequestActivate(Resource):
         db.session.add(new_period)
         db.session.add(service_request)
 
-        citizen_obj = Citizen.query.get(service_request.citizen_id)
-        citizen_obj.service_count = citizen_obj.service_count + 1
-
         db.session.commit()
 
         SnowPlow.choose_service(service_request, csr, "additionalservice")

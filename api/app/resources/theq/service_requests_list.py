@@ -109,10 +109,10 @@ class ServiceRequestsList(Resource):
         #  See whether first service, or next service.
         if len(citizen.service_reqs) == 0:
             snowplow_event = "chooseservice"
-            citizen.service_count = 1
         else:
             snowplow_event = "additionalservice"
-            citizen.service_count = citizen.service_count + 1
+
+        service_request.sr_number = len(citizen.service_reqs) + 1
 
         db.session.add(service_request)
         db.session.add(citizen)
