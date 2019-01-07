@@ -20,6 +20,9 @@
         <b-dropdown-item @click="showExamModal">
           ITA Exam
         </b-dropdown-item>
+        <b-dropdown-item @click="scheduleOtherEvent">
+          Non-exam/Other Event
+        </b-dropdown-item>
       </b-dropdown>
     </form>
   </div>
@@ -36,9 +39,23 @@
       ...mapState(['showCalendarControls',])
     },
     methods: {
-      ...mapMutations(['toggleExamInventoryModal', 'toggleScheduling', 'navigationVisible']),
+      ...mapMutations([
+        'toggleExamInventoryModal',
+        'toggleScheduling',
+        'toggleCalendarControls',
+        'toggleSchedulingIndicator',
+        'toggleSchedulingOther',
+        'navigationVisible'
+      ]),
       showExamModal() {
         this.toggleExamInventoryModal(true)
+      },
+      scheduleOtherEvent() {
+        this.navigationVisible(false)
+        this.toggleCalendarControls(false)
+        this.toggleSchedulingOther(true)
+        this.toggleSchedulingIndicator(true)
+        this.$root.$emit('options', {name: 'selectable', value: true})
       },
       next() {
         this.$root.$emit('next')

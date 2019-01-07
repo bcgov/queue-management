@@ -2,7 +2,8 @@
   <b-modal v-model="modalVisible"
            modal-class="q-modal"
            body-class="q-modal"
-           :no-close-on-backdrop="true"
+           no-close-on-backdrop
+           no-close-on-esc
            hide-ok
            lazy
            @cancel="cancel"
@@ -92,10 +93,15 @@
     },
     methods: {
       ...mapActions(['scheduleExam', 'getInvigilators']),
-      ...mapMutations(['toggleBookingModal', 'toggleScheduling', 'toggleCalendarControls', 'navigationVisible']),
+      ...mapMutations([
+        'toggleBookingModal',
+        'toggleSchedulingIndicator',
+        'setClickedDate',
+      ]),
       cancel() {
-        this.toggleScheduling(true)
         this.toggleBookingModal(false)
+        this.toggleSchedulingIndicator(true)
+        this.setClickedDate(null)
       },
       postEvent(e) {
         e.preventDefault()
@@ -110,6 +116,8 @@
           invigilator_id: this.selectedInvigilator
         }
         this.scheduleExam(booking)
+        this.$root.$emit('unselect')
+        this.$root.$emit('options', {name: 'selectable', value: false})
       }
     },
     mounted(){

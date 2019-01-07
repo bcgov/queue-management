@@ -25,12 +25,14 @@ Vue.use(Vuex)
 export const store = new Vuex.Store({
 
   state: {
+    showSchedulingIndicator: false,
+    showOtherBookingModal: false,
+    schedulingOther: false,
     calendarTitle: null,
     showCalendarControls: true,
     scheduling: false,
     selectedExam: {},
     showExamInventoryModal: false,
-    selectedDate: {},
     clickedDate: '',
     showBookingModal: false,
     addIndITASteps: [
@@ -248,8 +250,9 @@ export const store = new Vuex.Store({
             eventColor: room.color
           })
         )
+      } else {
+        return []
       }
-      return []
     },
     
     calendar_events(state) {
@@ -1339,11 +1342,7 @@ export const store = new Vuex.Store({
     scheduleExam(context, payload) {
       context.dispatch('postBooking', payload).then(booking_id => {
         context.dispatch('putExam', booking_id).then( () => {
-          context.dispatch('getBookings')
-          context.commit('toggleCalendarControls', true)
-          context.commit('toggleScheduling', false)
-          context.commit('toggleBookingModal', false)
-          context.commit('navigationVisible', true)
+          context.dispatch('finishBooking')
         })
       })
     },
@@ -1369,6 +1368,19 @@ export const store = new Vuex.Store({
             reject(error)
           })
       })
+    },
+    
+    finishBooking(context) {
+      context.dispatch('getBookings')
+      context.commit('navigationVisible', true)
+      context.commit('toggleCalendarControls', true)
+      context.commit('toggleScheduling', false)
+      context.commit('toggleSchedulingOther', false)
+      context.commit('toggleSchedulingIndicator', false)
+      context.commit('toggleBookingModal', false)
+      context.commit('toggleOtherBookingModal', false)
+      context.commit('setClickedDate', null)
+      context.commit('setSelectedExam', null)
     },
 
     postExam(context, payload) {
@@ -2006,8 +2018,6 @@ export const store = new Vuex.Store({
     
     setClickedDate: (state, payload) => state.clickedDate = payload,
     
-    setSelectedDate: (state, payload) => state.selectedDate = payload,
-    
     toggleExamInventoryModal: (state, payload) => state.showExamInventoryModal = payload,
   
     setSelectedExam: (state, payload) => state.selectedExam = payload,
@@ -2019,5 +2029,11 @@ export const store = new Vuex.Store({
     navigationVisible: (state, payload) => state.navigationVisible = payload,
     
     setCalendarTitle: (state, payload) => state.calendarTitle = payload,
+  
+    toggleSchedulingOther: (state, payload) => state.schedulingOther = payload,
+    
+    toggleOtherBookingModal: (state, payload) => state.showOtherBookingModal = payload,
+  
+    toggleSchedulingIndicator: (state, payload) => state.showSchedulingIndicator= payload,
   }
 })

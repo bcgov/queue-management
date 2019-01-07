@@ -24,7 +24,10 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import './assets/css/q.css'
 import './assets/css/bc-gov-style.css'
 import { library } from '@fortawesome/fontawesome-svg-core'
+import { InputNumber } from 'element-ui'
 import {
+  faPlus,
+  faMinus,
   faAngleLeft,
   faAngleRight,
   faBars,
@@ -42,6 +45,8 @@ import VDragged from 'v-dragged'
 
 Vue.use(VDragged)
 library.add(
+  faPlus,
+  faMinus,
   faAngleLeft,
   faAngleRight,
   faBars,
@@ -56,6 +61,7 @@ library.add(
 )
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(BootstrapVue)
+Vue.use(InputNumber)
 
 require('es6-shim')
 require('Keycloak')

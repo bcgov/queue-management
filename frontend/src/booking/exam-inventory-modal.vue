@@ -22,8 +22,14 @@
     name: "ExamInventoryModal",
     components: { ExamInventoryTable },
     methods: {
-      ...mapMutations(['toggleExamInventoryModal', 'navigationVisible', 'toggleScheduling']),
+      ...mapMutations([
+        'toggleExamInventoryModal',
+        'navigationVisible',
+        'toggleScheduling',
+        'toggleSchedulingIndicator'
+      ]),
       cancel() {
+        this.toggleSchedulingIndicator(false)
         this.toggleExamInventoryModal(false)
         this.navigationVisible(true)
         this.toggleScheduling(false)
