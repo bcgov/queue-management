@@ -18,10 +18,10 @@
   export default {
     name: "DropdownCalendar",
     computed: {
-      ...mapState(['calendarTitle']),
+      ...mapState(['calendarSetup']),
       view() {
-        if (this.calendarTitle) {
-          switch (this.calendarTitle.view) {
+        if (this.calendarSetup) {
+          switch (this.calendarSetup.viewName) {
             case 'agendaDay':
               return 'Single Day'
             case 'agendaWeek':

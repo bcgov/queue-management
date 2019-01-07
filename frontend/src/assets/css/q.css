@@ -7,8 +7,10 @@
 
 .q-calendar-margins {
   margin-top: -35px;
-  margin-left: 20px;
+  margin-left: 15px;
+  margin-right: 15px;
   padding: 0px;
+  overflow: no-display;
 }
 
 .q-custom-modal {

@@ -53,6 +53,7 @@
     NotesQuestion,
     SelectQuestion
   } from './add-exam-form-components.js'
+  import moment from 'moment'
 
   export default {
     name: "AddExamFormController",
@@ -66,19 +67,12 @@
       SelectQuestion
     },
     mounted() {
-      let d = new Date()
-      let month = String(d.getMonth())
-        if (month.length === 1) {
-          month = '0' + month
-        }
-      let number = String(d.getDate())
-        if (number.length === 1) {
-          number = '0' + number
-        }
-      let date = `${d.getFullYear()}-${month}-${number}`
-      this.captureExamDetail({key:'exam_received_date', value: date})
-      this.captureExamDetail({key:'notes', value: ''})
       this.getExamTypes()
+    //assigning an empty value to notes so it gets picked up by submitter function later if not filled in by user
+      this.captureExamDetail({key:'notes', value: ''})
+      let d = new Date()
+      let today = moment(d).format('YYYY-MM-DD')
+      this.captureExamDetail({key:'exam_received_date', value: today})
     },
     data() {
       return {
@@ -225,23 +219,6 @@
         let payload = {
           key: e.target.name,
           value: e.target.value,
-        }
-        if (this.step === 3) {
-          let number, month
-          let d = new Date()
-          if (this.today) {
-            month = String(d.getMonth())
-            if (month.length === 1) {
-              month = '0' + month
-            }
-            number = String(d.getDate())
-            if (number.length === 1) {
-              number = '0' + number
-            }
-            let date = `${d.getFullYear()}-${month}-${number}`
-            payload.key = 'exam_received_date'
-            payload.value = date
-          }
         }
         if (this.step === 1) {
           payload.key = 'exam_type_id'

@@ -61,7 +61,7 @@ limitations under the License.*/
       ...mapMutations(['updateViewportSizes']),
       getSize() {
         this.x = window.innerWidth
-        this.y = window.innerHeight - 78 - 40
+        this.y = window.innerHeight - 110
         this.updateStore()
       },
       updateStore() {
