@@ -980,6 +980,93 @@
 			]
 		},
 		{
+			"name": "Exam Types",
+			"item": [
+				{
+					"name": "Localhost - Exam Type List End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2df2a851-6a71-48e6-b44f-ccf096fe9d83",
+								"exec": [
+									"// Define the JSON Schema expected in response",
+									"var examTypeSchema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"exam_color\": \"string\",",
+									"            \"exam_type_id\": \"number\",",
+									"            \"exam_type_name\": \"string\",",
+									"            \"ita_ind\": \"number\",",
+									"            \"method_type\": \"string\",",
+									"            \"number_of_hours\": \"number\"",
+									"        },",
+									"        \"required\": []",
+									"    },",
+									"    \"required\": []",
+									"};            ",
+									"",
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 200\", function(){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time less than 1000ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"pm.test(\"Validate Response Exam Type Schema\", function(){",
+									"    pm.expect(tv4.validate(jsonData, examTypeSchema)).to.be.true;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/exam_types/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"exam_types",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Bookings",
 			"item": [
 				{
@@ -1969,7 +2056,7 @@
 	],
 	"variable": [
 		{
-			"id": "f4881a21-b9ac-4aa6-927e-bd02075a7bef",
+			"id": "c5722412-a107-4935-9d0d-1d645ffbf521",
 			"key": "auth_variable",
 			"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI1NXhiZzcyaml6NWQ3cEtkbzdwNFhLdTB2VFA2UXMtemthZzFaY1ZKWTZVIn0.eyJqdGkiOiJmZWVlYzU4YS0zOTY0LTQwZDgtOTk3Ni02OTg1ZjNiNmQ2NzYiLCJleHAiOjE1NDQwMzY2NzQsIm5iZiI6MCwiaWF0IjoxNTQ0MDM0ODc0LCJpc3MiOiJodHRwczovL3Nzby10ZXN0LnBhdGhmaW5kZXIuZ292LmJjLmNhL2F1dGgvcmVhbG1zL3NiYyIsImF1ZCI6ImNmbXMtREVWIiwic3ViIjoiY2ZmNTQ3MDItZTkzMC00YjZlLTlhYzgtMmZkMTRjY2FmNzUxIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiY2Ztcy1ERVYiLCJub25jZSI6ImM1Zjg1NzBmLTgwNDktNDUxNC04Mjg4LTJjN2RmMzdkZTc5NSIsImF1dGhfdGltZSI6MTU0NDAzMjgxNywic2Vzc2lvbl9zdGF0ZSI6IjM4YjhiYzY4LTdmZDktNDE0NC04YWQ1LTI4ZGRlNmMwYWE1MCIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJuYW1lIjoiQ0ZNUyBQb3N0bWFuIE9wZXJhdG9yIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiY2Ztcy1wb3N0bWFuLW9wZXJhdG9yIiwiZ2l2ZW5fbmFtZSI6IkNGTVMgUG9zdG1hbiIsImZhbWlseV9uYW1lIjoiT3BlcmF0b3IifQ.CaDq7kLDMu1oqUVm6fhiAw4ubu_D4jVdkXrqLjfCxu9b-9GzyNSIK1Gy0NCesN3caG684-Ofv3LlragMOwdoRhx-xkO6j5rqPhh2EdEDYTGkrnmQrVBjgHECLYN3RSAUWk4oKsp7gRMLDorU6QWLZNRWe9qlzulbss08Mut4nZz1RV0CirvJQ9oshBdpstQIPBM7ZEptcF2AOnc8swcFMJ3mqdrs0ImytArwZEzYwRzSIAR0-kYW-AXq-TK1dk2R7fqkMXmy3ZdHoQlFRfNtfYILVPzBAq3zPftrD-lmCcfUWz-0UcwhmNELQ-Pej-t_Z_eFSPPGkAVIuv_kkHbqQw",
 			"type": "string"

@@ -78,6 +78,7 @@
       let date = `${d.getFullYear()}-${month}-${number}`
       this.captureExamDetail({key:'exam_received_date', value: date})
       this.captureExamDetail({key:'notes', value: ''})
+      this.getExamTypes()
     },
     data() {
       return {
@@ -94,6 +95,7 @@
         exam: state => state.capturedExam,
         steps: state => state.addIndITASteps,
         tab: state => state.captureITAExamTabSetup,
+        examTypes: state => state.examTypes
       }),
       error() {
         if (this.errors.includes(this.step)) {
@@ -218,6 +220,7 @@
         'captureExamDetail',
         'updateCaptureTab'
       ]),
+      ...mapActions(['getExamTypes']),
       handleInput(e) {
         let payload = {
           key: e.target.name,
