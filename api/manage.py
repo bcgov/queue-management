@@ -494,7 +494,8 @@ class Bootstrap(Command):
             exam_color = "#FF69B4",
             number_of_hours = 3,
             method_type = "Written",
-            ita_ind = 1
+            ita_ind = 1,
+            group_exam_ind=0
         )
 
         exam_type_three = bookings.ExamType(
@@ -502,7 +503,8 @@ class Bootstrap(Command):
             exam_color = "#FF69B4",
             number_of_hours = 3,
             method_type = "Written",
-            ita_ind = 1
+            ita_ind = 1,
+            group_exam_ind=0
         )
 
         exam_type_four = bookings.ExamType(
@@ -510,7 +512,8 @@ class Bootstrap(Command):
             exam_color="#FF69B4",
             number_of_hours=3,
             method_type="Written",
-            ita_ind= 1
+            ita_ind= 1,
+            group_exam_ind=0
         )
 
         exam_type_five = bookings.ExamType(
@@ -518,7 +521,8 @@ class Bootstrap(Command):
             exam_color="#FF69B4",
             number_of_hours=3,
             method_type="Written",
-            ita_ind=1
+            ita_ind=1,
+            group_exam_ind=0
         )
 
         exam_type_six = bookings.ExamType(
@@ -526,7 +530,8 @@ class Bootstrap(Command):
             exam_color="#FFD701",
             number_of_hours=4,
             method_type="Written",
-            ita_ind=1
+            ita_ind=1,
+            group_exam_ind=0
         )
 
         exam_type_seven = bookings.ExamType(
@@ -534,7 +539,8 @@ class Bootstrap(Command):
             exam_color="#FFD701",
             number_of_hours=4,
             method_type="Written",
-            ita_ind=1
+            ita_ind=1,
+            group_exam_ind=0
         )
 
         exam_type_eight = bookings.ExamType(
@@ -542,7 +548,8 @@ class Bootstrap(Command):
             exam_color="#FFD701",
             number_of_hours=4,
             method_type="Written",
-            ita_ind=1
+            ita_ind=1,
+            group_exam_ind=0
         )
 
         exam_type_nine = bookings.ExamType(
@@ -550,7 +557,8 @@ class Bootstrap(Command):
             exam_color="#FFD701",
             number_of_hours=4,
             method_type="Written",
-            ita_ind=1
+            ita_ind=1,
+            group_exam_ind=0
         )
 
         exam_type_ten = bookings.ExamType(
@@ -558,7 +566,8 @@ class Bootstrap(Command):
             exam_color="#FFD701",
             number_of_hours=4,
             method_type="Written",
-            ita_ind=1
+            ita_ind=1,
+            group_exam_ind=0
         )
 
         exam_type_eleven = bookings.ExamType(
@@ -566,7 +575,8 @@ class Bootstrap(Command):
             exam_color="#8FBC8F",
             number_of_hours=3,
             method_type="Written",
-            ita_ind=1
+            ita_ind=1,
+            group_exam_ind=0
         )
 
         exam_type_twelve = bookings.ExamType(
@@ -574,7 +584,8 @@ class Bootstrap(Command):
             exam_color="#8FBC8F",
             number_of_hours=3,
             method_type="Written",
-            ita_ind=1
+            ita_ind=1,
+            group_exam_ind=0
         )
 
         exam_type_thirteen = bookings.ExamType(
@@ -582,7 +593,8 @@ class Bootstrap(Command):
             exam_color="#8FBC8F",
             number_of_hours=3,
             method_type="Written",
-            ita_ind=1
+            ita_ind=1,
+            group_exam_ind=0
         )
 
         exam_type_fourteen = bookings.ExamType(
@@ -590,7 +602,8 @@ class Bootstrap(Command):
             exam_color="#8FBC8F",
             number_of_hours=3,
             method_type="Written",
-            ita_ind=1
+            ita_ind=1,
+            group_exam_ind=0
         )
 
         exam_type_fifteen = bookings.ExamType(
@@ -598,7 +611,8 @@ class Bootstrap(Command):
             exam_color="#8FBC8F",
             number_of_hours=3,
             method_type="Written",
-            ita_ind=1
+            ita_ind=1,
+            group_exam_ind=0
         )
 
         exam_type_sixteen = bookings.ExamType(
@@ -606,7 +620,8 @@ class Bootstrap(Command):
             exam_color="#FFFFFF",
             number_of_hours=4,
             method_type="Written",
-            ita_ind=1
+            ita_ind=1,
+            group_exam_ind=0
         )
 
         db.session.add(exam_type_one)
