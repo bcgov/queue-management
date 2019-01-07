@@ -57,19 +57,22 @@
     methods: {
       ...mapActions(['getExams']),
       ...mapMutations([
+        'navigationVisible',
         'setSelectedExam',
+        'toggleCalendarControls',
         'toggleExamInventoryModal',
         'toggleScheduling',
-        'navigationVisible',
-        'toggleCalendarControls'
+        'toggleSchedulingIndicator',
       ]),
       clickRow(e) {
         if (this.showExamInventoryModal) {
+          this.$root.$emit('options', {name: 'selectable', value: true})
+          this.navigationVisible(false)
           this.setSelectedExam(e)
+          this.toggleCalendarControls(false)
           this.toggleExamInventoryModal(false)
           this.toggleScheduling(true)
-          this.toggleCalendarControls(false)
-          this.navigationVisible(false)
+          this.toggleSchedulingIndicator(true)
         }
       },
     },

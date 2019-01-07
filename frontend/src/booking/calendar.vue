@@ -1,44 +1,45 @@
 <template>
-    <div @mouseup="resetDrag"
-         @click="resetDrag"
-         style="position: relative; height: 100%; width: 100%">
+    <div style="position: relative; height: 100%; width: 100%">
       <keep-alive>
         <full-calendar ref="bookingcal"
                        key="bookingcal"
                        id="bookingcal"
                        class="q-calendar-margins"
                        @view-render="viewRender"
-                       @mouseup="resetDrag"
                        @event-created="selectEvent"
-                       @click="resetDrag"
                        :events="events"
                        :config="setup"></full-calendar>
       </keep-alive>
-      <div class="exam-card"
-           v-if="scheduling"
-           :style="examCardStyle"
+      <div class="scheduling-indicator"
+           v-if="showSchedulingIndicator"
+           :style="indicatorStyle"
            @mousedown="startDrag"
            @mousemove="moveCard"
-           @mouseup="resetDrag"
-           ref="examCardDiv">
+           @mouseup="resetDrag">
         <div style="display: flex; justify-content: space-between; border-radius: 24">
           <div class="mr-2">
             <span style="font-weight:600; font-size:1rem">Now</span><br>
             <span style="font-weight:600; font-size:1rem">Scheduling</span>
           </div>
-          <div class="mr-3">
+          <div class="mr-3" v-if="scheduling">
             <span><b>Exam: </b> {{ selectedExam.exam_name }}</span><br>
             <span><b>Writer: </b>{{ selectedExam.examinee_name }}</span><br>
             <span><b>Duration: </b>{{ `${selectedExam.exam_type.number_of_hours }HRS` }}</span><br>
           </div>
+          <div v-else>
+            <span><b>Non-Exam Event</b></span><br>
+            <span class="smaller-font">Click and Drag to select</span><br>
+            <span class="smaller-font">a time on the calendar</span><br>
+          </div>
           <div style="margin-top: auto; margin-bottom: auto">
             <b-button @click="cancel"
-                      class="btn-danger">Cancel</b-button>
+                      class="btn-danger ml-3">Cancel</b-button>
           </div>
         </div>
       </div>
     <BookingModal />
     <ExamInventoryModal v-if="showExamInventoryModal" />
+    <OtherBookingModal />
   </div>
 </template>
 
@@ -47,22 +48,26 @@
   import { FullCalendar } from 'vue-full-calendar'
   import BookingModal from './booking-modal'
   import DropdownCalendar from './dropdown-calendar'
+  import OtherBookingModal from './other-booking-modal'
   import ExamInventoryModal from './exam-inventory-modal'
-  import Moment from 'moment'
+  import moment from 'moment'
+  import _ from 'lodash'
   import 'fullcalendar/dist/fullcalendar.css'
   import 'fullcalendar-scheduler'
 
   export default {
     name: 'Calendar',
-    components: { BookingModal, DropdownCalendar, ExamInventoryModal, FullCalendar, },
+    components: { BookingModal, DropdownCalendar, ExamInventoryModal, FullCalendar, OtherBookingModal },
     mounted() {
       this.initialize()
       this.$root.$on('next', () => { this.next() })
       this.$root.$on('prev', () => { this.prev() })
       this.$root.$on('today', () => { this.today() })
       this.$root.$on('month', () => { this.month() })
+      this.$root.$on('unselect', () => { this.unselect() })
       this.$root.$on('agendaWeek', () => { this.agendaWeek() })
       this.$root.$on('agendaDay', () => { this.agendaDay() })
+      this.$root.$on('options', (option) => { this.options(option) })
       this.$root.$on('initialize', () => { this.initialize() })
     },
     data() {
@@ -72,14 +77,22 @@
         top: 80,
         left: 10,
         setup: {
+          unselectCancel: '.modal, .modal-content',
+          selectable: false,
           editable: false,
           schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
           showNonCurrentDates: false,
           fixedWeekCount: false,
           navLinks: true,
+          height: 'auto',
           timezone: 'local',
           defaultView: 'agendaWeek',
+          resourceAreaWidth: 100,
           views: {
+            timelineDay: {
+              slotWidth: 40,
+              allDaySlot: false,
+            },
             agendaDay: {
               allDaySlot: false,
             },
@@ -87,7 +100,6 @@
               allDaySlot: false,
             },
           },
-          contentHeight: 'auto',
           resources: [],
           weekends: false,
           maxTime: '18:00:00',
@@ -97,7 +109,8 @@
             center: null,
             right: null
           },
-          groupByResource: true,
+          groupByDateAndResource: false,
+          groupByResource: false,
         },
       }
     },
@@ -106,9 +119,11 @@
       ...mapState([
         'exams',
         'scheduling',
+        'schedulingOther',
         'selectedExam',
         'showBookingModal',
         'showExamInventoryModal',
+        'showSchedulingIndicator',
         'viewPortSizes',
       ]),
       events() {
@@ -117,18 +132,15 @@
         }
         return []
       },
-      examCardStyle() {
+      indicatorStyle() {
         return {top: this.top+'px', left: this.left+'px'}
-      },
-      height() {
-        return this.viewPortSizes.h
       },
     },
     destroyed() {
       this.setCalendarTitle(null)
     },
     methods: {
-      ...mapActions(['initializeAgenda', 'getBookings']),
+      ...mapActions(['getBookings', 'finishBooking', 'initializeAgenda',]),
       ...mapMutations([
         'navigationVisible',
         'setCalendarTitle',
@@ -137,21 +149,21 @@
         'setSelectedExam',
         'toggleBookingModal',
         'toggleCalendarControls',
+        'toggleOtherBookingModal',
         'toggleScheduling',
+        'toggleSchedulingIndicator',
+        'toggleSchedulingOther'
       ]),
       agendaDay() {
         this.$refs.bookingcal.fireMethod('changeView', 'agendaDay')
-        this.$refs.bookingcal.fireMethod('option', 'groupByResource', true)
       },
       agendaWeek() {
         this.$refs.bookingcal.fireMethod('changeView', 'agendaWeek')
-        this.$refs.bookingcal.fireMethod('option', 'groupByResource', true)
       },
       cancel() {
-        this.toggleScheduling(false)
-        this.navigationVisible(true)
-        this.toggleCalendarControls(true)
-        this.setSelectedExam(null)
+        this.finishBooking()
+        this.unselect()
+        this.options({name: 'selectable', value: false})
       },
       initialize() {
         this.initializeAgenda().then( rooms => {
@@ -163,6 +175,7 @@
             }
             this.$refs.bookingcal.fireMethod('addResource', roomObj)
           })
+          this.setupResourceView(rooms)
           this.getBookings()
         })
       },
@@ -171,6 +184,7 @@
         this.$refs.bookingcal.fireMethod('option', 'groupByResource', false)
       },
       moveCard(e) {
+        e.preventDefault()
         if (this.clicked) {
           if (this.initialEvent === true) {
             this.offsetX = e.clientX
@@ -188,21 +202,39 @@
       next() {
         this.$refs.bookingcal.fireMethod('next')
       },
+      options(option) {
+        this.$refs.bookingcal.fireMethod('option', option.name, option.value)
+      },
       prev() {
         this.$refs.bookingcal.fireMethod('prev')
       },
-      resetDrag() {
+      resetDrag(e) {
+        e.preventDefault()
         this.initialEvent = true
         this.clicked = false
       },
       selectEvent(event) {
         if (this.scheduling) {
           this.setClickedDate(event)
-          this.toggleScheduling(false)
+          this.toggleSchedulingIndicator(false)
           this.toggleBookingModal(true)
         }
+        if (this.schedulingOther) {
+          this.setClickedDate(event)
+          this.toggleSchedulingIndicator(false)
+          this.toggleOtherBookingModal(true)
+        }
       },
-      startDrag() {
+      setupResourceView(rooms) {
+        if (rooms.length <= 3) {
+          this.options({name:'groupByDateAndResource', value: true})
+        }
+        if (rooms.length > 3 && rooms.length <= 5) {
+          this.options({name:'groupByResource', value: true})
+        }
+      },
+      startDrag(e) {
+        e.preventDefault()
         this.initialEvent = true
         this.clicked = true
       },
@@ -210,30 +242,34 @@
         this.$refs.bookingcal.fireMethod('today')
       },
       viewRender(view, el) {
-        this.$refs.bookingcal.fireMethod('option', 'height', this.height)
+        if (this.room_resources && this.room_resources.length > 0) {
+          this.setupResourceView(this.room_resources)
+        }
         this.setCalendarTitle({ title: view.title, view: view.name })
         if (view.name === 'basicDay') {
           this.$refs.bookingcal.fireMethod('changeView', 'agendaDay')
         }
         if (view.name === 'agendaWeek') {
+          //days = refs to the text dates displayed in the column headers (ie. the day of the week and month)
           let days = el.find('th > a')
-          let n = days.length
-          for (let i = 1; i <= n; i++) {
-            if (i <= 5) {
-              let head = new Moment(view.intervalStart).add(i, 'days')
-              days[i - 1].innerHTML = head.format(`D[/]ddd`)
-            }
-            if (i > 5 && i <=10) {
-              let head = new Moment(view.intervalStart).add((i-5), 'days')
-              days[i - 1].innerHTML = head.format(`D[/]ddd`)
-            }
-            if (i > 10) {
-              let head = new Moment(view.intervalStart).add((i-10), 'days')
-              days[i - 1].innerHTML = head.format(`D[/]ddd`)
-            }
+          let length = days.length
+          //weeksArray is empty array with as many slots as the number of times Mon-Fri dates are rendered in header
+          //eg. 5x per room_resource when groupByDateAndResource===true
+          let weeksArray = Array(length / 5)
+          //fill the empty slots with [1,2,3,4,5] and flaten
+          //now is a template for calculating the day based on days from interval start, left to right, across headers
+          _.fill(weeksArray, [1,2,3,4,5])
+          let flaten = (arr) => [].concat(...arr)
+          let addDaysArray = flaten(weeksArray)
+          for (let i = 0; i < length; i++) {
+            let header = new moment(view.intervalStart).add(addDaysArray[i], 'days')
+            days[i].innerHTML = header.format(`D[/]ddd`)
           }
         }
       },
+      unselect() {
+        this.$refs.$bookingcal.fireMethod('unselect')
+      }
     }
   }
 
@@ -241,7 +277,10 @@
 </script>
 
 <style scoped>
-  .exam-card {
+  .smaller-font {
+    font-size: .75rem;
+  }
+  .scheduling-indicator {
     position: absolute;
     border: 1px solid grey;
     border-radius: 7px;
