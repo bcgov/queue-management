@@ -83,7 +83,7 @@ class ServiceReq(Base):
 
         self.periods.append(new_period)
 
-        SnowPlow.snowplow_event(self.citizen_id, csr, snowplow_event)
+        SnowPlow.snowplow_event(self.citizen_id, csr, snowplow_event, current_sr_number=self.sr_number)
 
     def add_to_queue(self, csr, snowplow_event):
 
@@ -102,7 +102,7 @@ class ServiceReq(Base):
         )
         self.periods.append(new_period)
 
-        SnowPlow.snowplow_event(self.citizen_id, csr, snowplow_event)
+        SnowPlow.snowplow_event(self.citizen_id, csr, snowplow_event, current_sr_number=self.sr_number)
 
     def begin_service(self, csr, snowplow_event):
         active_period = self.get_active_period()
@@ -127,7 +127,8 @@ class ServiceReq(Base):
 
         #  Calculate number of active periods, for Snowplow call.
         period_count = len(self.periods)
-        SnowPlow.snowplow_event(self.citizen_id, csr, snowplow_event, period_count = period_count)
+        SnowPlow.snowplow_event(self.citizen_id, csr, snowplow_event, period_count = period_count,
+                                current_sr_number = self.sr_number)
 
     def place_on_hold(self, csr):
         active_period = self.get_active_period()
@@ -146,7 +147,7 @@ class ServiceReq(Base):
 
         self.periods.append(new_period)
 
-        SnowPlow.snowplow_event(self.citizen_id, csr, "hold")
+        SnowPlow.snowplow_event(self.citizen_id, csr, "hold", current_sr_number = self.sr_number)
 
     def finish_service(self, csr, clear_comments=True):
         active_period = self.get_active_period()

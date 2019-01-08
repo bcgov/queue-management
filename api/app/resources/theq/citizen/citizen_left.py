@@ -37,6 +37,25 @@ class CitizenLeft(Resource):
         citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
         sr_state = SRState.get_state_by_name("Complete")
 
+        #  Create parameters for and make snowplow call.  Default is no service request, CSR pressed cancel.
+        quantity = 0
+        sr_number = 0
+        active_sr = 0
+        status = "service-creation"
+        if len(citizen.service_reqs) != 0:
+            active_service_request = citizen.get_active_service_request()
+            quantity = active_service_request.quantity
+            sr_number = active_service_request.sr_number
+            active_sr = active_service_request.sr_id
+            active_period = active_service_request.get_active_period()
+            if active_period.ps.ps_name == "Invited":
+                status = "at-prep"
+            else:
+                status = "being-served"
+
+        SnowPlow.snowplow_event(citizen.citizen_id, csr, ("left/" + status),
+                                quantity = quantity, current_sr_number= sr_number)
+
         for service_request in citizen.service_reqs:
 
             service_request.sr_state_id = sr_state.sr_state_id
@@ -44,6 +63,12 @@ class CitizenLeft(Resource):
             for p in service_request.periods:
                 if p.time_end is None:
                     p.time_end = datetime.now()
+
+            #  Make snowplow calls to finish any stopped services
+            if service_request.sr_id != active_sr:
+                SnowPlow.snowplow_event(citizen.citizen_id, csr, "finishstopped",
+                                        quantity = service_request.quantity,
+                                        current_sr_number= service_request.sr_number)
 
         citizen.cs = CitizenState.query.filter_by(cs_state_name='Left before receiving services').first()
         if self.clear_comments_flag:
@@ -54,8 +79,6 @@ class CitizenLeft(Resource):
 
         db.session.add(citizen)
         db.session.commit()
-
-        SnowPlow.snowplow_event(citizen.citizen_id, csr, "customerleft")
 
         socketio.emit('citizen_invited', {}, room='sb-%s' % csr.office.office_number)
         result = self.citizen_schema.dump(citizen)

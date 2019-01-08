@@ -59,10 +59,12 @@ class ServiceRequestsList(Resource):
             return {"message": "No matching service found for service_id"}, 400
 
         # Find the currently active service_request and close it (if it exists)
+        current_sr_number = 0
         for req in citizen.service_reqs:
             if req.sr_state_id == active_sr_state.sr_state_id:
                 req.sr_state_id = complete_sr_state.sr_state_id
                 req.finish_service(csr, clear_comments=False)
+                current_sr_number = req.sr_number
                 db.session.add(req)
 
         service_request.sr_state_id = active_sr_state.sr_state_id
@@ -118,7 +120,7 @@ class ServiceRequestsList(Resource):
         db.session.add(citizen)
         db.session.commit()
 
-        SnowPlow.choose_service(service_request, csr, snowplow_event)
+        SnowPlow.choose_service(service_request, csr, snowplow_event, current_sr_number)
 
         citizen_result = self.citizen_schema.dump(citizen)
         socketio.emit('update_active_citizen', citizen_result.data, room=csr.office_id)

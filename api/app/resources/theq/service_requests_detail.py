@@ -83,10 +83,12 @@ class ServiceRequestActivate(Resource):
         complete_service_state = SRState.get_state_by_name("Complete")
 
         # Find the currently active service_request and close it
+        current_sr_number = 0
         for req in service_request.citizen.service_reqs:
             if req.sr_state_id == active_service_state.sr_state_id:
                 req.sr_state_id = complete_service_state.sr_state_id
                 req.finish_service(csr, clear_comments=False)
+                current_sr_number = req.sr_number
                 db.session.add(req)
 
         # Then set the requested service to active
@@ -107,7 +109,7 @@ class ServiceRequestActivate(Resource):
 
         db.session.commit()
 
-        SnowPlow.choose_service(service_request, csr, "additionalservice")
+        SnowPlow.choose_service(service_request, csr, "makeactive", current_sr_number)
 
         citizen_result = self.citizen_schema.dump(service_request.citizen)
         socketio.emit('update_active_citizen', citizen_result.data, room=csr.office_id)
