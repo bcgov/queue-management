@@ -47,9 +47,6 @@ class CitizenAddToQueue(Resource):
                 #  TODO:  Put in a Feedback Slack/Service now call here.
                 return {"message": "Invalid citizen/period state. "}
 
-        print("==> Citizen returning to a wait queue")
-        print("    --> Snowplow call is: " + snowplow_call)
-
         active_service_request.add_to_queue(csr, snowplow_call)
 
         pending_service_state = SRState.get_state_by_name("Pending")
