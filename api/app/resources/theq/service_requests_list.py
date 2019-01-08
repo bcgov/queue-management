@@ -108,7 +108,7 @@ class ServiceRequestsList(Resource):
 
         citizen.cs_id = citizen_state.cs_id
 
-        #  See whether first service, or next service.
+        #  If first service, just choose it.  If additional service, more work needed.
         if len(citizen.service_reqs) == 0:
             snowplow_event = "chooseservice"
         else:
@@ -120,7 +120,15 @@ class ServiceRequestsList(Resource):
         db.session.add(citizen)
         db.session.commit()
 
-        SnowPlow.choose_service(service_request, csr, snowplow_event, current_sr_number)
+        #  If first service, just need a choose service call.
+        if snowplow_event == "chooseservice":
+            SnowPlow.choose_service(service_request, csr, "chooseservice")
+
+        #  If not first service, need stop service, choose service, and additional service calls.
+        else:
+            SnowPlow.snowplow_event(citizen.citizen_id, csr, "stopservice", current_sr_number=current_sr_number)
+            SnowPlow.choose_service(service_request, csr, "chooseservice")
+            SnowPlow.snowplow_event(citizen.citizen_id, csr, "additionalservice", current_sr_number=service_request.sr_number)
 
         citizen_result = self.citizen_schema.dump(citizen)
         socketio.emit('update_active_citizen', citizen_result.data, room=csr.office_id)

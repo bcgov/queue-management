@@ -109,7 +109,9 @@ class ServiceRequestActivate(Resource):
 
         db.session.commit()
 
-        SnowPlow.choose_service(service_request, csr, "makeactive", current_sr_number)
+        #  To make service active, stop current service, restart previous service.
+        SnowPlow.snowplow_event(service_request.citizen.citizen_id, csr, "stopservice", current_sr_number=current_sr_number)
+        SnowPlow.snowplow_event(service_request.citizen.citizen_id, csr, "restartservice", current_sr_number=service_request.sr_number)
 
         citizen_result = self.citizen_schema.dump(service_request.citizen)
         socketio.emit('update_active_citizen', citizen_result.data, room=csr.office_id)
