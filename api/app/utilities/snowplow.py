@@ -67,20 +67,7 @@ class SnowPlow():
             #  The choose service event has parameters, needs to be built.
             chooseservice = SnowPlow.get_service(service_request)
 
-            #  If an additionalservice event, let Snowplow know to stop current service.
-            if (snowplow_event == "additionalservice") or (snowplow_event == "makeactive"):
-                prev_citizen = SnowPlow.get_citizen(citizen_obj, False, True, current_sr_number)
-                sp_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/stopservice/jsonschema/1-0-0', {})
-                SnowPlow.make_tracking_call(sp_event, prev_citizen, office, agent)
-
-            #  Make the call to choose the next service
-            if (snowplow_event != "makeactive"):
-                SnowPlow.make_tracking_call(chooseservice, citizen, office, agent)
-
-            #  If an additionalservice event, start the next service
-            if (snowplow_event == "additionalservice") or (snowplow_event == "makeactive"):
-                sp_event = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/additionalservice/jsonschema/1-0-0', {})
-                SnowPlow.make_tracking_call(sp_event, citizen, office, agent)
+            SnowPlow.make_tracking_call(chooseservice, citizen, office, agent)
 
     @staticmethod
     def snowplow_event(citizen_id, csr, schema, period_count = 0, quantity = 0, current_sr_number = 0):
@@ -88,13 +75,8 @@ class SnowPlow():
         #  Make sure you want to track calls.
         if SnowPlow.call_snowplow_flag:
 
-            # print("==> snowplow_event: " + schema + "; svc_number: " + str(svc_number))
-
             #  Set up the contexts for the call.
             citizen_obj = Citizen.query.get(citizen_id)
-            # if svc_number == 0:
-            #     print("    --> svc_number is 0")
-            #     svc_number = citizen_obj.get_active_service_request().sr_number
             citizen = SnowPlow.get_citizen(citizen_obj, False, svc_number = current_sr_number)
             office = SnowPlow.get_office(csr.office_id)
             agent = SnowPlow.get_csr(csr)
@@ -230,11 +212,6 @@ class SnowPlow():
 
     @staticmethod
     def make_tracking_call(schema, citizen, office, agent):
-        print("==> Making tracking call")
-        print("    --> schema:  " + SelfDescribingJson.to_string(schema))
-        print("    --> citizen: " + SelfDescribingJson.to_string(citizen))
-        print("    --> office:  " + SelfDescribingJson.to_string(office))
-        print("    --> agent:   " + SelfDescribingJson.to_string(agent))
         t.track_self_describing_event(schema, [citizen, office, agent])
 
 # Set up core Snowplow environment
