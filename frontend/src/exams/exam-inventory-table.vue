@@ -17,6 +17,7 @@
              empty-text="There are no exams that match this filter criteria"
              small
              outlined
+             @row-clicked="clickRow"
              hover
              show-empty
              :filter="filter">
@@ -55,13 +56,38 @@
     },
     methods: {
       ...mapActions(['getExams']),
+      ...mapMutations([
+        'navigationVisible',
+        'setSelectedExam',
+        'toggleCalendarControls',
+        'toggleExamInventoryModal',
+        'toggleScheduling',
+        'toggleSchedulingIndicator',
+      ]),
+      clickRow(e) {
+        if (this.showExamInventoryModal) {
+          this.$root.$emit('options', {name: 'selectable', value: true})
+          this.navigationVisible(false)
+          this.setSelectedExam(e)
+          this.toggleCalendarControls(false)
+          this.toggleExamInventoryModal(false)
+          this.toggleScheduling(true)
+          this.toggleSchedulingIndicator(true)
+        }
+      },
     },
     mounted() {
       this.getExams()
     },
     computed: {
-      ...mapGetters(['role_code']),
-      ...mapState(['exams', 'user']),
+      ...mapGetters(['role_code', 'exam_inventory']),
+      ...mapState(['user', 'showExamInventoryModal']),
+      exams() {
+        if (this.exam_inventory && Array.isArray(this.exam_inventory)) {
+          return this.exam_inventory
+        }
+        return []
+      },
       getFields() {
         if (this.role_code === "LIAISON") {
           return this.fields

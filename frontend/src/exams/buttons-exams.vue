@@ -12,9 +12,7 @@
   export default {
     name: "ButtonsExams",
     computed: {
-      ...mapState([
-        'user'
-      ]),
+      ...mapState(['user', 'scheduling', 'selectedExam']),
       ...mapGetters([
         'showExams',
       ]),

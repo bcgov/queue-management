@@ -186,9 +186,9 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
               <b-dropdown>
                 <template v-for="type in examTypes">
                   <b-dd-header v-if="type.header"
-                               :style="{backgroundColor: type.exam_type_colour}"
+                               :style="{backgroundColor: type.exam_color}"
                                :class="type.class">{{ type.exam_type_name }}</b-dd-header>
-                  <b-dd-item v-else :style="{backgroundColor: type.exam_type_colour}"
+                  <b-dd-item v-else :style="{backgroundColor: type.exam_color}"
                              @click="handleInput"
                              :name="type.exam_type_id"
                              :id="type.exam_type_id"
@@ -199,7 +199,7 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
             <b-input :value="exam_object.exam_type_name"
                      class="w-75"
                      disabled
-                     :style="{backgroundColor: exam_object.exam_type_colour}"/>
+                     :style="{backgroundColor: exam_object.exam_color}"/>
           </b-input-group>
         </b-form-group>
       </b-col>

@@ -15,8 +15,9 @@ limitations under the License.*/
 <template>
   <div id="App">
     <Header />
-    <div id="fixed-viewport-app" :style="{width:`${x}px`, height:`${y}px`}">
+    <div id="fixed-viewport-app" :style="{width:`${x}px`, height:`${y}px`,}">
       <Alert />
+      <ExamAlert />
       <Nav v-if="isLoggedIn" />
       <Socket v-show="1===2" />
       <Feedback />
@@ -27,8 +28,9 @@ limitations under the License.*/
 </template>
 
 <script>
-  import { mapState, mapMutations } from 'vuex'
+  import { mapState, mapMutations, mapActions } from 'vuex'
   import Alert from './alert'
+  import ExamAlert from './exam-alert'
   import Header from './layout/header'
   import Socket from './Socket'
   import Footer from './layout/footer'
@@ -37,7 +39,7 @@ limitations under the License.*/
   import Nav from './layout/nav'
   export default {
     name: 'App',
-    components: { Nav, Alert, Header, Socket, Footer, Feedback, Response },
+    components: { Nav, Alert, ExamAlert, Header, Socket, Footer, Feedback, Response },
     created() {
       this.getSize()
     },
