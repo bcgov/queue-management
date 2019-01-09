@@ -39,7 +39,7 @@ class CitizenLeft(Resource):
 
         #  Create parameters for and make snowplow call.  Default is no service request, CSR pressed cancel.
         quantity = 0
-        sr_number = 0
+        sr_number = 1
         active_sr = 0
         status = "service-creation"
         if len(citizen.service_reqs) != 0:
