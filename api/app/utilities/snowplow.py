@@ -203,11 +203,15 @@ class SnowPlow():
     def get_finish(svc_quantity, accurate_time, schema):
         inaccurate_flag = (accurate_time != 1) and (schema == "finish")
         if schema == "finish":
+
             version = "2-0-0"
+            finishservice = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/finish/jsonschema/2-0-0',
+                                               {"inaccurate_time": inaccurate_flag, "quantity": svc_quantity})
         else:
             version = "1-0-0"
-        finishservice = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/' + schema + '/jsonschema/' + version,
-                                           {"inaccurate_time": inaccurate_flag, "quantity": svc_quantity})
+            finishservice = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/finishstopped/jsonschema/1-0-0',
+                                               {"quantity": svc_quantity})
+
         return finishservice
 
     @staticmethod
