@@ -212,6 +212,10 @@ class SnowPlow():
 
     @staticmethod
     def make_tracking_call(schema, citizen, office, agent):
+        print("==> Snowplow call: " + SelfDescribingJson.to_string(schema))
+        print("    --> Citizen: " + SelfDescribingJson.to_string(citizen))
+        print("    --> Office:  " + SelfDescribingJson.to_string(office))
+        print("    --> Agent:   " + SelfDescribingJson.to_string(agent))
         t.track_self_describing_event(schema, [citizen, office, agent])
 
 # Set up core Snowplow environment
