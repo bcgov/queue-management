@@ -52,15 +52,15 @@ class SnowPlow():
             SnowPlow.make_tracking_call(addcitizen, citizen, office, agent)
 
     @staticmethod
-    def choose_service(service_request, csr, snowplow_event, current_sr_number = 0):
+    def choose_service(service_request, csr, snowplow_event):
 
         #  Make sure you want to track calls.
         if SnowPlow.call_snowplow_flag:
 
             # Set up the contexts for the call.
             citizen_obj = Citizen.query.get(service_request.citizen_id)
-            new_sr_number = service_request.sr_number
-            citizen = SnowPlow.get_citizen(citizen_obj, False, svc_number = new_sr_number)
+            current_sr_number = service_request.sr_number
+            citizen = SnowPlow.get_citizen(citizen_obj, False, svc_number = current_sr_number)
             office = SnowPlow.get_office(csr.office_id)
             agent = SnowPlow.get_csr(csr)
 
