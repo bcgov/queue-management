@@ -432,7 +432,7 @@ class Bootstrap(Command):
             color = "red"
         )
         room_two = bookings.Room(
-            office_id = office_victoria.office_id,
+            office_id = office_test.office_id,
             room_name = "Turquoise W-135",
             capacity = 25,
             color = "red"
@@ -642,40 +642,9 @@ class Bootstrap(Command):
         db.session.add(exam_type_sixteen)
         db.session.commit()
 
-        print("--> Bookings: Booking")
-        booking_one = bookings.Booking(
-            room_id = room_one.room_id,
-            start_time = datetime(year=2018, month=11, day=1, hour=9, tzinfo=pytz.timezone('US/Pacific')),
-            end_time = datetime(year=2018, month=11, day=1, hour=12, tzinfo=pytz.timezone('US/Pacific')),
-            fees = "false",
-            booking_name = "Carpentry Exam"
-        )
-
-        booking_two = bookings.Booking(
-            room_id = room_two.room_id,
-            start_time = datetime(year=2018, month=11, day=1, hour=9, tzinfo=pytz.timezone('US/Pacific')),
-            end_time = datetime(year=2018, month=11, day=1, hour=12, tzinfo=pytz.timezone('US/Pacific')),
-            fees = "true",
-            booking_name = "Plubming Exam"
-        )
-
-        booking_three = bookings.Booking(
-            room_id = room_one.room_id,
-            start_time = datetime(year=2018, month=11, day=1, hour=9, tzinfo=pytz.timezone('US/Pacific')),
-            end_time = datetime(year=2018, month=11, day=1, hour=12, tzinfo=pytz.timezone('US/Pacific')),
-            fees = "true",
-            booking_name = "Kitchen Exam"
-        )
-
-        db.session.add(booking_one)
-        db.session.add(booking_two)
-        db.session.add(booking_three)
-        db.session.commit()
-
         print("--> Bookings: Exam")
         exam_one = bookings.Exam(
             exam_type_id = exam_type_one.exam_type_id,
-            booking_id = booking_one.booking_id,
             office_id = office_test.office_id,
             event_id = "1234abcd",
             exam_name = "Carpentry Red Seal",
@@ -686,13 +655,12 @@ class Bootstrap(Command):
             exam_received_date= "2018-12-25 9:00:00.000",
             session_number = 1,
             number_of_students = 1,
-            exam_method = "Written",
+            exam_method = "paper",
             exam_returned_ind=0
         )
 
         exam_two = bookings.Exam(
             exam_type_id = exam_type_two.exam_type_id,
-            booking_id = booking_two.booking_id,
             office_id = office_test.office_id,
             event_id = "e-000001",
             exam_name = "Plumbing Red Seal",
@@ -703,13 +671,12 @@ class Bootstrap(Command):
             exam_received_date="2018-12-24 9:00:00.000",
             session_number = 2,
             number_of_students = 12,
-            exam_method = "Written",
+            exam_method = "online",
             exam_returned_ind = 0
         )
 
         exam_three = bookings.Exam(
             exam_type_id=exam_type_three.exam_type_id,
-            booking_id=booking_three.booking_id,
             office_id=office_test.office_id,
             event_id="e-000002",
             exam_name="Culinary Red Seal",
@@ -720,7 +687,7 @@ class Bootstrap(Command):
             exam_received_date="2018-12-23 9:00:00.000",
             session_number=3,
             number_of_students=10,
-            exam_method="Kitchen",
+            exam_method="paper",
             exam_returned_ind = 0
         )
 
@@ -736,13 +703,12 @@ class Bootstrap(Command):
             exam_received_date="2018-12-25 9:00:00.000",
             session_number=4,
             number_of_students=25,
-            exam_method="Vocal",
+            exam_method="online",
             exam_returned_ind = 0
         )
 
         exam_five = bookings.Exam(
             exam_type_id=exam_type_five.exam_type_id,
-            booking_id=booking_three.booking_id,
             office_id=office_test.office_id,
             event_id="e-000005",
             exam_name="Lyrical Flow Exam",
@@ -753,7 +719,7 @@ class Bootstrap(Command):
             exam_received_date="2018-12-25 9:00:00.000",
             session_number=4,
             number_of_students=25,
-            exam_method="Vocal",
+            exam_method="paper",
             exam_returned_ind = 0
         )
 

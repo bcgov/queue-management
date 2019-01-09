@@ -1,3 +1,67 @@
+.edit-exam-modal {
+  position: fixed;
+  z-index: 3;
+  left: 25%;
+  top: 20%;
+  width: 50%;
+  height: 60%;
+  overflow: auto;
+  transition: display 1s;
+  border: 10px solid white;
+  border-radius: 25px;
+}
+
+.edit-exam-modal-background {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.4);
+}
+
+.edit-exam-modal-content {
+  background-color: #fefefe;
+  margin-right: auto;
+  margin-left: auto;
+  width: 100%;
+  height: 100%;
+  padding: 1%;
+  position: relative;
+}
+
+.edit-exam-modal-content-message {
+  background-color: #fefefe;
+  position: fixed;
+  z-index: 3;
+  left: 35%;
+  top: 35%;
+  width: 30%;
+  height: 22%;
+  overflow: auto;
+  transition: display 1s;
+  border: 10px solid white;
+  border-radius: 25px;
+  padding-left: 10px;
+}
+
+.exam-modal-content-message {
+  background-color: #fefefe;
+  position: fixed;
+  z-index: 3;
+  left: 35%;
+  top: 35%;
+  width: 22%;
+  height: 22%;
+  overflow: auto;
+  transition: display 1s;
+  border: 10px solid white;
+  border-radius: 25px;
+  padding-left: 10px;
+}
+
 .q-inline-title {
   display: inline;
   margin: 0px 0px -30px 20px;
@@ -34,4 +98,17 @@
   width: 90%;
   padding: 1%;
   position: relative;
+}
+
+.return-exam-modal {
+  position: fixed;
+  z-index: 3;
+  left: 25%;
+  top: 25%;
+  width: 50%;
+  height: 33%;
+  overflow: auto;
+  transition: display 1s;
+  border: 10px solid white;
+  border-radius: 25px;
 }
