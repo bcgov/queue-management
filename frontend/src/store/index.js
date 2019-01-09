@@ -28,7 +28,7 @@ export const store = new Vuex.Store({
     showSchedulingIndicator: false,
     showOtherBookingModal: false,
     schedulingOther: false,
-    calendarTitle: null,
+    calendarSetup: null,
     showCalendarControls: true,
     scheduling: false,
     selectedExam: {},
@@ -257,16 +257,25 @@ export const store = new Vuex.Store({
     
     calendar_events(state) {
       if (state.bookings.length > 0) {
-        return state.bookings.map(booking =>
-          ({
+        let bookings = []
+        state.bookings.forEach(booking => {
+          let obj = {
             id: booking.booking_id,
             title: booking.booking_name,
             start: booking.start_time,
             end: booking.end_time,
             resourceId: booking.room_id,
-            color: booking.room.color
-          })
-        )
+            invigilator: booking.invigilator,
+            room: booking.room,
+          }
+          if (state.exams) {
+            if (state.exams.find(ex => ex.booking_id == booking.booking_id)) {
+              obj['exam'] = state.exams.find(ex => ex.booking_id == booking.booking_id)
+            }
+          }
+          bookings.push(obj)
+        })
+        return bookings
       }
       return []
     },
@@ -322,7 +331,7 @@ export const store = new Vuex.Store({
       }
       return ''
     },
-
+    
     reception(state) {
       if (state.user.office && state.user.office.sb) {
         if (state.user.office.sb.sb_type === "callbyname" || state.user.office.sb.sb_type === "callbyticket") {
@@ -625,7 +634,7 @@ export const store = new Vuex.Store({
           .then(resp => {
             context.commit('setExamTypes', resp.data.exam_types)
             console.log('called exam types getter')
-            resolve(resp)
+            resolve(resp.data.exam_types)
           })
           .catch(error => {
             console.log(error)
@@ -1393,6 +1402,7 @@ export const store = new Vuex.Store({
           steps = context.state.addIndITASteps
           additionalKeys = {
             exam_received: 1,
+            exam_returned_ind: 0,
             office_id: context.state.user.office_id
           }
           break
@@ -2028,7 +2038,7 @@ export const store = new Vuex.Store({
   
     navigationVisible: (state, payload) => state.navigationVisible = payload,
     
-    setCalendarTitle: (state, payload) => state.calendarTitle = payload,
+    setCalendarSetup: (state, payload) => state.calendarSetup = payload,
   
     toggleSchedulingOther: (state, payload) => state.schedulingOther = payload,
     

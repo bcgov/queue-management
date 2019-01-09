@@ -58,6 +58,7 @@
     border-top: 2px solid #fcba19;
     font-size: .850rem;
     font-family: Myriad-Pro, Calibri, Arial, sans serif;
+    z-index:1000;
   }
   #footer-links {
     padding-left: 10px;
