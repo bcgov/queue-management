@@ -30,10 +30,10 @@
   export default {
     name: 'ButtonsAgenda',
     computed: {
-      ...mapState(['calendarTitle']),
+      ...mapState(['calendarSetup']),
       view() {
-        if (this.calendarTitle) {
-          switch (this.calendarTitle.view) {
+        if (this.calendarSetup) {
+          switch (this.calendarSetup.viewName) {
             case 'listDay':
               return 'Daily List'
             case 'listWeek':

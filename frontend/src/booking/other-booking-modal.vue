@@ -5,7 +5,6 @@
            :no-close-on-backdrop="true"
            lazy
            @show="show"
-           @hidden="hide"
            @cancel="cancel"
            @ok="postEvent"
            hide-header
@@ -203,10 +202,10 @@
         this.state = null
       },
       incrementDuration() {
-        this.added -= .5
+        this.added += .5
       },
       decrementDuration() {
-        this.added += .5
+        this.added -= .5
       },
       postEvent(e) {
         e.preventDefault()

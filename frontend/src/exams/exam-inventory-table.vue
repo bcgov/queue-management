@@ -1,5 +1,5 @@
 <template>
-  <div style="margin-left: 20px">
+  <div class="px-3">
     <b-col md="6" class="my-1">
       <b-form-group horizontal label="Filter" class="mb-0">
         <b-input-group>
@@ -10,7 +10,7 @@
         </b-input-group>
       </b-form-group>
     </b-col>
-    <b-table :items="exams"
+    <b-table :items="selectedExams"
              :fields=getFields
              class="m-0 p-0"
              head-variant="light"
@@ -23,6 +23,9 @@
              :filter="filter">
       <template slot="exam_received" slot-scope="row">
         {{ row.item.exam_received === 0 ? 'No' : 'Yes' }}
+      </template>
+      <template slot="invigilator" slot-scope="row">
+        {{ getInvigilator(row) }}
       </template>
       <template slot="expiry_date" slot-scope="row">
         {{ row.item.expiry_date.split('T')[0] }}
@@ -40,6 +43,7 @@
     data() {
       return {
         filter: null,
+        events: null,
         fields: [
           {key: 'office.office_name', label: 'Office', sortable: true},
           {key: 'event_id', label: 'Event ID', sortable: false },
@@ -49,13 +53,13 @@
           {key: 'exam_received', label: 'Received?', sortable: true },
           {key: 'examinee_name', label: 'Student Name', sortable: true },
           {key: 'notes', label: 'Notes', sortable: false },
-          {key: 'invigilator.invigilator_name', label: 'Invigilator', sortable: true },
+          {key: 'invigilator', label: 'Invigilator', sortable: true },
           {key: 'booking.room.room_name', label: 'Location', sortable: true },
         ],
       }
     },
     methods: {
-      ...mapActions(['getExams']),
+      ...mapActions(['getExams', 'getBookings']),
       ...mapMutations([
         'navigationVisible',
         'setSelectedExam',
@@ -64,6 +68,16 @@
         'toggleScheduling',
         'toggleSchedulingIndicator',
       ]),
+      getInvigilator(row) {
+        if (this.events) {
+          let bookingObj = this.events.find(event=>event.booking_id==row.item.booking_id)
+          if (bookingObj && bookingObj.invigilator) {
+            return bookingObj.invigilator.invigilator_name
+          }
+          return ''
+        }
+        return ''
+      },
       clickRow(e) {
         if (this.showExamInventoryModal) {
           this.$root.$emit('options', {name: 'selectable', value: true})
@@ -77,16 +91,19 @@
       },
     },
     mounted() {
+      this.getBookings().then(bookings => {
+        this.events = bookings
+      })
       this.getExams()
     },
     computed: {
-      ...mapGetters(['role_code', 'exam_inventory']),
-      ...mapState(['user', 'showExamInventoryModal']),
-      exams() {
-        if (this.exam_inventory && Array.isArray(this.exam_inventory)) {
+      ...mapGetters(['role_code', 'exam_inventory', 'calendar_events']),
+      ...mapState(['user', 'exams', 'showExamInventoryModal', 'bookings']),
+      selectedExams() {
+        if (this.showExamInventoryModal) {
           return this.exam_inventory
         }
-        return []
+        return this.exams
       },
       getFields() {
         if (this.role_code === "LIAISON") {
