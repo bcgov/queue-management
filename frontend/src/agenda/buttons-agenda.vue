@@ -12,12 +12,12 @@
                            style="font-size: 1rem;"/>
       </b-button>
       <b-button class="btn-primary mx-2" @click="today">Today</b-button>
-      <b-dropdown variant="primary" class="mr-3" text="Calendar View">
+      <b-dropdown variant="primary" class="mr-3" :text="view">
         <b-dropdown-item @click="listDay">
-          List Day
+          Daily List
         </b-dropdown-item>
         <b-dropdown-item @click="listWeek">
-          List Week
+          Weekly List
         </b-dropdown-item>
       </b-dropdown>
     </form>
@@ -30,7 +30,20 @@
   export default {
     name: 'ButtonsAgenda',
     computed: {
-      ...mapState(['calendarView'])
+      ...mapState(['calendarSetup']),
+      view() {
+        if (this.calendarSetup) {
+          switch (this.calendarSetup.viewName) {
+            case 'listDay':
+              return 'Daily List'
+            case 'listWeek':
+              return 'Weekly List'
+            default:
+              return 'Weekly List'
+          }
+        }
+        return 'Weekly List'
+      }
     },
     methods: {
       ...mapMutations([

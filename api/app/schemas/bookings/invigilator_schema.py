@@ -23,7 +23,7 @@ class InvigilatorSchema(ma.ModelSchema):
 
     class Meta:
         model = Invigilator
-        exclude = ("exams",)
+        exclude = ("invigilators",)
         jit = toastedmarshmallow.Jit
 
     contact_phone = fields.Str()

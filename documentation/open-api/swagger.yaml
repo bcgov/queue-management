@@ -279,6 +279,10 @@ components:
           readOnly: true
           allOf:
           - $ref: "#/components/schemas/Room"
+        invigilator:
+          allOf:
+            - $ref: "#/components/schemas/Invigilator"
+          readOnly: true
     Exam:
       type: object
       properties:
@@ -343,6 +347,12 @@ components:
           type: string
           format: date-time
           nullable: true
+        exams_returned_ind:
+          type: integer
+          nullable: false
+        exam_returned_tracking_number:
+          type: string
+          nullable: true
         booking:
           allOf:
           - $ref: "#/components/schemas/Booking"
@@ -350,10 +360,6 @@ components:
         exam_type:
           allOf:
           - $ref: "#/components/schemas/ExamType"
-          readOnly: true
-        invigilator:
-          allOf:
-          - $ref: "#/components/schemas/Invigilator"
           readOnly: true
         office:
           allOf:
@@ -385,6 +391,9 @@ components:
           type: integer
           nullable: false
           example: 0
+        group_exam_ind:
+          type: number
+          nullable: false
     Invigilator:
       type: object
       properties:

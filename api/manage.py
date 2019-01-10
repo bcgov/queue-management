@@ -6,6 +6,7 @@ from app.models import theq
 from app.models import bookings
 import logging
 from datetime import datetime
+import pytz
 
 migrate = Migrate(application, db)
 manager = Manager(application)
@@ -480,55 +481,188 @@ class Bootstrap(Command):
 
         print("--> Bookings: Exam Types")
         exam_type_one = bookings.ExamType(
-            exam_type_name = "ITA Exam Type",
-            exam_color = "red",
+            exam_type_name = "COFQ - 3HR Group Exam",
+            exam_color = "#FF69B4",
             number_of_hours = 3,
             method_type = "Written",
-            ita_ind = 1
+            ita_ind = 1,
+            group_exam_ind = 0
         )
 
         exam_type_two = bookings.ExamType(
-            exam_type_name = "Pesticide Exam",
-            exam_color = "green",
-            number_of_hours = 2,
+            exam_type_name = "COFQ - 3HR Single Exam",
+            exam_color = "#FF69B4",
+            number_of_hours = 3,
             method_type = "Written",
-            ita_ind = 0
+            ita_ind = 1,
+            group_exam_ind=0
         )
 
         exam_type_three = bookings.ExamType(
-            exam_type_name = "Milk Exam",
-            exam_color = "white",
-            number_of_hours = 1,
+            exam_type_name = "COFQ - 3HR Single Exam - Own Reader",
+            exam_color = "#FF69B4",
+            number_of_hours = 3,
             method_type = "Written",
-            ita_ind = 0
+            ita_ind = 1,
+            group_exam_ind=0
+        )
+
+        exam_type_four = bookings.ExamType(
+            exam_type_name="COFQ - 3HR Single Exam - SBC Reader",
+            exam_color="#FF69B4",
+            number_of_hours=3,
+            method_type="Written",
+            ita_ind= 1,
+            group_exam_ind=0
+        )
+
+        exam_type_five = bookings.ExamType(
+            exam_type_name="COFQ - 3HR Single Exam - Time Extension",
+            exam_color="#FF69B4",
+            number_of_hours=3,
+            method_type="Written",
+            ita_ind=1,
+            group_exam_ind=0
+        )
+
+        exam_type_six = bookings.ExamType(
+            exam_type_name="IPSE - 3HR Group Exam",
+            exam_color="#FFD701",
+            number_of_hours=4,
+            method_type="Written",
+            ita_ind=1,
+            group_exam_ind=0
+        )
+
+        exam_type_seven = bookings.ExamType(
+            exam_type_name="IPSE - 3HR Single Exam",
+            exam_color="#FFD701",
+            number_of_hours=4,
+            method_type="Written",
+            ita_ind=1,
+            group_exam_ind=0
+        )
+
+        exam_type_eight = bookings.ExamType(
+            exam_type_name="IPSE - 3HR Single Exam - Own Reader",
+            exam_color="#FFD701",
+            number_of_hours=4,
+            method_type="Written",
+            ita_ind=1,
+            group_exam_ind=0
+        )
+
+        exam_type_nine = bookings.ExamType(
+            exam_type_name="IPSE - 3HR Single Exam - SBC Reader",
+            exam_color="#FFD701",
+            number_of_hours=4,
+            method_type="Written",
+            ita_ind=1,
+            group_exam_ind=0
+        )
+
+        exam_type_ten = bookings.ExamType(
+            exam_type_name="IPSE - 3HR Single Exam - Time Extension",
+            exam_color="#FFD701",
+            number_of_hours=4,
+            method_type="Written",
+            ita_ind=1,
+            group_exam_ind=0
+        )
+
+        exam_type_eleven = bookings.ExamType(
+            exam_type_name="SLE - 3HR Group Exam",
+            exam_color="#8FBC8F",
+            number_of_hours=3,
+            method_type="Written",
+            ita_ind=1,
+            group_exam_ind=0
+        )
+
+        exam_type_twelve = bookings.ExamType(
+            exam_type_name="SLE - 3HR Single Exam",
+            exam_color="#8FBC8F",
+            number_of_hours=3,
+            method_type="Written",
+            ita_ind=1,
+            group_exam_ind=0
+        )
+
+        exam_type_thirteen = bookings.ExamType(
+            exam_type_name="SLE - 3HR Single Exam - Own Reader",
+            exam_color="#8FBC8F",
+            number_of_hours=3,
+            method_type="Written",
+            ita_ind=1,
+            group_exam_ind=0
+        )
+
+        exam_type_fourteen = bookings.ExamType(
+            exam_type_name="SLE - 3HR Single Exam - SBC Reader",
+            exam_color="#8FBC8F",
+            number_of_hours=3,
+            method_type="Written",
+            ita_ind=1,
+            group_exam_ind=0
+        )
+
+        exam_type_fifteen = bookings.ExamType(
+            exam_type_name="SLE - 3HR Single Exam - Time Extension",
+            exam_color="#8FBC8F",
+            number_of_hours=3,
+            method_type="Written",
+            ita_ind=1,
+            group_exam_ind=0
+        )
+
+        exam_type_sixteen = bookings.ExamType(
+            exam_type_name="Challenger Exam Session",
+            exam_color="#FFFFFF",
+            number_of_hours=4,
+            method_type="Written",
+            ita_ind=1,
+            group_exam_ind=0
         )
 
         db.session.add(exam_type_one)
         db.session.add(exam_type_two)
         db.session.add(exam_type_three)
+        db.session.add(exam_type_four)
+        db.session.add(exam_type_five)
+        db.session.add(exam_type_six)
+        db.session.add(exam_type_seven)
+        db.session.add(exam_type_eight)
+        db.session.add(exam_type_nine)
+        db.session.add(exam_type_ten)
+        db.session.add(exam_type_eleven)
+        db.session.add(exam_type_twelve)
+        db.session.add(exam_type_thirteen)
+        db.session.add(exam_type_fourteen)
+        db.session.add(exam_type_fifteen)
+        db.session.add(exam_type_sixteen)
         db.session.commit()
 
         print("--> Bookings: Booking")
         booking_one = bookings.Booking(
             room_id = room_one.room_id,
-            start_time = "2018-11-29 9:00:00.0",
-            end_time = "2018-11-29 12:00:00.0",
+            start_time = datetime(year=2018, month=11, day=1, hour=9, tzinfo=pytz.timezone('US/Pacific')),
+            end_time = datetime(year=2018, month=11, day=1, hour=12, tzinfo=pytz.timezone('US/Pacific')),
             fees = "false",
             booking_name = "Carpentry Exam"
         )
 
         booking_two = bookings.Booking(
             room_id = room_two.room_id,
-            start_time = "2018-11-29 13:00:00.0",
-            end_time = "2018-11-29 16:00:00.0",
+            start_time = datetime(year=2018, month=11, day=1, hour=9, tzinfo=pytz.timezone('US/Pacific')),
+            end_time = datetime(year=2018, month=11, day=1, hour=12, tzinfo=pytz.timezone('US/Pacific')),
             fees = "true",
             booking_name = "Plubming Exam"
         )
 
         booking_three = bookings.Booking(
             room_id = room_one.room_id,
-            start_time = "2018-11-29 9:00:00.0",
-            end_time = "2018-11-29 12:00:00.0",
+            start_time = datetime(year=2018, month=11, day=1, hour=9, tzinfo=pytz.timezone('US/Pacific')),
+            end_time = datetime(year=2018, month=11, day=1, hour=12, tzinfo=pytz.timezone('US/Pacific')),
             fees = "true",
             booking_name = "Kitchen Exam"
         )
@@ -542,7 +676,6 @@ class Bootstrap(Command):
         exam_one = bookings.Exam(
             exam_type_id = exam_type_one.exam_type_id,
             booking_id = booking_one.booking_id,
-            invigilator_id = invigilator_one.invigilator_id,
             office_id = office_test.office_id,
             event_id = "1234abcd",
             exam_name = "Carpentry Red Seal",
@@ -550,16 +683,16 @@ class Bootstrap(Command):
             expiry_date = "2018-11-29 11:19:53.5",
             notes = "This student is extremely s-m-r-t",
             exam_received = 1,
-            exam_received_date= "2018-12-25 (9:00:00.000",
+            exam_received_date= "2018-12-25 9:00:00.000",
             session_number = 1,
             number_of_students = 1,
-            exam_method = "Written"
+            exam_method = "Written",
+            exam_returned_ind=0
         )
 
         exam_two = bookings.Exam(
             exam_type_id = exam_type_two.exam_type_id,
             booking_id = booking_two.booking_id,
-            invigilator_id = invigilator_two.invigilator_id,
             office_id = office_test.office_id,
             event_id = "e-000001",
             exam_name = "Plumbing Red Seal",
@@ -567,16 +700,16 @@ class Bootstrap(Command):
             expiry_date = "2018-11-29 11:19:53.5",
             notes = "Speak slowly with this student, hearing impaired",
             exam_received = 1,
-            exam_received_date="2018-12-24 (9:00:00.000",
+            exam_received_date="2018-12-24 9:00:00.000",
             session_number = 2,
             number_of_students = 12,
-            exam_method = "Written"
+            exam_method = "Written",
+            exam_returned_ind = 0
         )
 
         exam_three = bookings.Exam(
             exam_type_id=exam_type_three.exam_type_id,
             booking_id=booking_three.booking_id,
-            invigilator_id=invigilator_three.invigilator_id,
             office_id=office_test.office_id,
             event_id="e-000002",
             exam_name="Culinary Red Seal",
@@ -584,15 +717,51 @@ class Bootstrap(Command):
             expiry_date="2018-11-29 11:19:53.5",
             notes="Student is extremely verbally obscene",
             exam_received=1,
-            exam_received_date="2018-12-23 (9:00:00.000",
+            exam_received_date="2018-12-23 9:00:00.000",
             session_number=3,
             number_of_students=10,
-            exam_method="Kitchen"
+            exam_method="Kitchen",
+            exam_returned_ind = 0
+        )
+
+        exam_four = bookings.Exam(
+            exam_type_id=exam_type_four.exam_type_id,
+            office_id=office_test.office_id,
+            event_id="e-000005",
+            exam_name="Lyrical Flow Exam",
+            examinee_name="Celine Dion",
+            expiry_date="2019-01-31 15:00:00.000",
+            notes="Not sure if she uses a ghost writer or not",
+            exam_received=1,
+            exam_received_date="2018-12-25 9:00:00.000",
+            session_number=4,
+            number_of_students=25,
+            exam_method="Vocal",
+            exam_returned_ind = 0
+        )
+
+        exam_five = bookings.Exam(
+            exam_type_id=exam_type_five.exam_type_id,
+            booking_id=booking_three.booking_id,
+            office_id=office_test.office_id,
+            event_id="e-000005",
+            exam_name="Lyrical Flow Exam",
+            examinee_name="Luciano Pavarotti",
+            expiry_date="2019-01-31 15:00:00.000",
+            notes="Use ear plugs, quite loud",
+            exam_received=1,
+            exam_received_date="2018-12-25 9:00:00.000",
+            session_number=4,
+            number_of_students=25,
+            exam_method="Vocal",
+            exam_returned_ind = 0
         )
 
         db.session.add(exam_one)
         db.session.add(exam_two)
         db.session.add(exam_three)
+        db.session.add(exam_four)
+        db.session.add(exam_five)
         db.session.commit()
 
 class FetchData(Command):

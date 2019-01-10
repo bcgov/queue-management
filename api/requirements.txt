@@ -20,7 +20,8 @@ flask-socketio
 gunicorn
 marshmallow-sqlalchemy
 mysqlclient
+pysnow
 pytest
 python-jose
+SQLAlchemy-Utc
 toastedmarshmallow
-pysnow
