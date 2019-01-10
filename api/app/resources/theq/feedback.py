@@ -99,13 +99,17 @@ class Feedback(Resource):
         #         as the email of this assignment group.
         c = pysnow.Client(instance = instance, user=user, password=password)
         incident = c.resource(api_path='/table/incident')
+        user = Feedback.extract_string(params, "Username: ", "\n", 0)
+        ticket = Feedback.extract_string(params, "Ticket Number: ","\n", 0)
+        msg = Feedback.extract_string(params, "Message: ", "", 50)
+        short_desc = "TheQ Feedback (User: " + user + "; Ticket: " + ticket + "; Msg: " + msg + ")"
         new_record = {
             'category': 'Inquiry / Help',
             'cmdb_ci': 'CFMS',
             'impact': '2 - Some Customers',
             'urgency': '2 - High',
             'priority': 'High',
-            'short_description': 'TheQ Feedback',
+            'short_description': short_desc,
             'description': params,
             'assignment_group': 'Service Delivery Tech Services (GARMS)'
         }
@@ -116,6 +120,26 @@ class Feedback(Resource):
             return {"status": "Success"}, 201
         else:
             return {"message": "Service Now incident not created"}, 400
+
+    @staticmethod
+    def extract_string(big_string, key, endstr, max_if_not_found):
+        extracted = "Unknown"
+        start = big_string.find(key)
+        if start >= 0:
+            #  End string specified.
+            if len(endstr) != 0:
+                end = big_string.find(endstr, start+len(key))
+            else:
+                end = -1
+
+            if end >= 0:
+                extracted = big_string[start+len(key):end]
+            else:
+                if max_if_not_found > 0:
+                    extracted = big_string[start+len(key):]
+                    extracted = extracted[0:min(max_if_not_found, len(extracted))]
+
+        return extracted
 
     @staticmethod
     def combine_results(slack_result, service_now_result):
