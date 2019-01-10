@@ -17,9 +17,9 @@ from flask import g
 from flask_restplus import Resource
 from qsystem import api, db, oidc
 from sqlalchemy import exc
-from app.models.bookings import Exam
+from app.models.bookings import Exam, ExamType, Booking
 from app.models.theq import Citizen, CSR, Period, ServiceReq, SRState
-from app.schemas.bookings import ExamSchema
+from app.schemas.bookings import ExamSchema, ExamTypeSchema
 from app.schemas.theq import CitizenSchema, CSRSchema
 
 
@@ -54,6 +54,7 @@ class CsrSelf(Resource):
     csr_schema = CSRSchema()
     citizen_schema = CitizenSchema(many=True)
     exam_schema = ExamSchema(many=True)
+    exam_type_schema = ExamTypeSchema()
 
     @oidc.accept_token(require_token=True)
     def get(self):
@@ -70,17 +71,29 @@ class CsrSelf(Resource):
                 .filter_by(csr_id=csr.csr_id) \
                 .filter(Period.time_end.is_(None))
 
-            exams = Exam.query \
+            individual_exams = Exam.query \
                 .filter_by(office_id=csr.office_id) \
-                .filter(Exam.booking_id.is_(None),
-                        Exam.expiry_date > today).all()
+                .filter(Exam.exam_returned_ind == 0,
+                        Exam.expiry_date <= today,
+                        Exam.deleted_date.is_(None)) \
+                .join(ExamType, Exam.exam_type_id == ExamType.exam_type_id) \
+                .filter(ExamType.group_exam_ind == 0).count()
+
+            group_exams = Exam.query \
+                .filter_by(office_id=csr.office_id) \
+                .filter(Exam.expiry_date > today,
+                        Exam.deleted_date.is_(None)) \
+                .join(ExamType, Exam.exam_type_id == ExamType.exam_type_id) \
+                .filter(ExamType.group_exam_ind == 1) \
+                .join(Booking, Exam.booking_id == Booking.booking_id) \
+                .filter(Booking.invigilator_id.is_(None)).count()
 
             result = self.csr_schema.dump(csr)
             active_citizens = self.citizen_schema.dump(active_citizens)
-            active_exams = self.exam_schema.dump(exams)
 
             return {'csr': result.data,
-                    'active_exams': active_exams,
+                    'individual_exams': individual_exams,
+                    'group_exams': group_exams,
                     'active_citizens': active_citizens.data,
                     'errors': result.errors}
 

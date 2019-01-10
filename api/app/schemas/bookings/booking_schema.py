@@ -15,7 +15,7 @@ limitations under the License.'''
 from marshmallow import fields
 import toastedmarshmallow
 from app.models.bookings import Booking
-from app.schemas.bookings import RoomSchema
+from app.schemas.bookings import RoomSchema, InvigilatorSchema
 from qsystem import ma
 
 
@@ -31,5 +31,7 @@ class BookingSchema(ma.ModelSchema):
     fees = fields.Str()
     room_id = fields.Int()
     start_time = fields.DateTime()
+    invigilator_id = fields.Int()
 
+    invigilator = fields.Nested(InvigilatorSchema())
     room = fields.Nested(RoomSchema(exclude=("booking", "office",)))
