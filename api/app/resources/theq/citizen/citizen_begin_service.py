@@ -46,8 +46,8 @@ class CitizenBeginService(Resource):
                 snowplow_event = "beginservice"
                 if active_period.ps.ps_name == "On hold":
                     snowplow_event = "invitefromhold"
-                if active_period.ps.ps_name == "Waiting":
-                    snowplow_event = "invitefromlist"
+                if active_period.ps.ps_name == "Ticket Creation":
+                    snowplow_event = "servecitizen"
 
                 active_service_request.begin_service(csr, snowplow_event)
             except TypeError:
