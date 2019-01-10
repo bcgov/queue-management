@@ -19,11 +19,12 @@ from qsystem import db
 class ExamType(Base):
 
     exam_type_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    exam_type_name = db.Column(db.String(25), nullable=False)
+    exam_type_name = db.Column(db.String(50), nullable=False)
     exam_color = db.Column(db.String(10), nullable=False)
     number_of_hours = db.Column(db.Integer, nullable=False)
     method_type = db.Column(db.String(10), nullable=False)
     ita_ind = db.Column(db.Integer, nullable=False)
+    group_exam_ind = db.Column(db.Integer,  nullable=False)
 
     exam = db.relationship("Exam", lazy=False)
 

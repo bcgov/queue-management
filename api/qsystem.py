@@ -141,6 +141,7 @@ import app.resources.bookings.exam.exam_post
 import app.resources.bookings.exam.exam_put
 import app.resources.bookings.invigilator.invigilator_list
 import app.resources.bookings.room.room_list
+import app.resources.bookings.exam_type.exam_type_list
 
 # Hostname for debug purposes
 hostname = socket.gethostname()

@@ -15,7 +15,7 @@ limitations under the License.'''
 from marshmallow import fields
 import toastedmarshmallow
 from app.models.bookings import Exam
-from app.schemas.bookings import BookingSchema, ExamTypeSchema, InvigilatorSchema
+from app.schemas.bookings import BookingSchema, ExamTypeSchema
 from app.schemas.theq import OfficeSchema
 from qsystem import ma
 
@@ -37,13 +37,13 @@ class ExamSchema(ma.ModelSchema):
     exam_type_id = fields.Int()
     examinee_name = fields.Str()
     expiry_date = fields.DateTime()
-    invigilator_id = fields.Int()
     notes = fields.Str()
     number_of_students = fields.Int()
     office_id = fields.Int()
     session_number = fields.Int()
+    exam_returned_ind = fields.Int()
+    exam_returned_tracking_number = fields.String()
 
     booking = fields.Nested(BookingSchema())
     exam_type = fields.Nested(ExamTypeSchema())
-    invigilator = fields.Nested(InvigilatorSchema())
     office = fields.Nested(OfficeSchema(exclude=("csrs",)))

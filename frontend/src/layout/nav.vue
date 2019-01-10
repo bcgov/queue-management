@@ -15,10 +15,14 @@
   -->
 
 <template>
-  <div class="nav-container">
+  <div style="position: relative">
     <div class="dash-button-flex-button-container pb-0 mb-3">
       <!-- SLOT FOR EACH VIEW'S BUTTON CONTROLS-->
       <router-view name="buttons"/>
+      <div v-if="calendarSetup"
+           style="flex-grow: 8"
+           class="q-inline-title">{{ calendarSetup.title }}</div>
+    <div />
       <div v-if="navigationVisible">
         <b-dropdown variant="outline-primary"
                     class="pl-0 ml-0 mr-3"
@@ -29,8 +33,9 @@
           </template>
           <div :style="{width:200+'px'}">
             <b-dropdown-item to="/queue">The Q</b-dropdown-item>
-            <b-dropdown-item to="/agenda" v-if="isGAorCSR && showExams">Branch Agenda</b-dropdown-item>
-            <b-dropdown-item v-if="showExams" to="/exams">Manage Exams</b-dropdown-item>
+            <b-dropdown-item to="/booking" v-if="showExams">Room Booking</b-dropdown-item>
+            <b-dropdown-item v-if="showExams" to="/exams">Exam Admin</b-dropdown-item>
+            <b-dropdown-item to="/agenda" v-if="isGAorCSR && showExams">Office Agenda</b-dropdown-item>
             <template  v-if="user.role && user.role.role_code=='GA'">
               <b-dropdown-item @click="clickGAScreen" :class="gaPanelStyle">
                 <font-awesome-icon v-if="showGAScreenModal"
@@ -54,7 +59,7 @@
       </div>
     </div>
     <!--SLOT FOR EACH VIEW'S MAIN CONTENT-->
-    <div style="width: 98%; margin-right: 15px;">
+    <div style="position: relative">
       <router-view />
     </div>
   </div>
@@ -62,11 +67,21 @@
 
 <script>
   import { mapState, mapActions, mapMutations, mapGetters } from 'vuex'
+  import SchedulingIndicator from '../booking/scheduling-indicator'
+
   export default {
     name: 'Nav',
+    components: { SchedulingIndicator },
     computed: {
       ...mapGetters(['showExams']),
-      ...mapState(['navigationVisible', 'showServiceModal', 'showGAScreenModal', 'user']),
+      ...mapState([
+        'navigationVisible',
+        'showServiceModal',
+        'showGAScreenModal',
+        'user',
+        'calendarSetup',
+        'viewPortSizes'
+      ]),
       isGAorCSR() {
         if (this.user && this.user.role) {
           if (this.user.role.role_code === 'CSR' || this.user.role.role_code === 'GA') {
@@ -107,7 +122,7 @@
     border: none !important;
   }
   .dash-button-flex-button-container {
-    display: inline-flex;
+    display: flex;
     justify-content: space-between;
     width: 97%;
     padding: 10px;
@@ -115,9 +130,6 @@
   }
   .add-flex-grow {
     flex-grow: 1;
-  }
-  .nav-container {
-    display: inline;
   }
   .gaScreenChecked {
     padding-left: 0em

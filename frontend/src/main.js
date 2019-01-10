@@ -18,17 +18,21 @@ import 'es6-promise/auto'
 import { store } from './store/'
 import BootstrapVue from 'bootstrap-vue'
 import Router from './router.js'
-import FullCalendar from 'vue-full-calendar'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+import './assets/css/q.css'
 import './assets/css/bc-gov-style.css'
 import { library } from '@fortawesome/fontawesome-svg-core'
+import { InputNumber } from 'element-ui'
 import {
+  faPlus,
+  faMinus,
   faAngleLeft,
   faAngleRight,
   faBars,
   faBinoculars,
+  faCalendar,
   faCaretLeft,
   faCaretRight,
   faCheck,
@@ -39,13 +43,15 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import VDragged from 'v-dragged'
 
-Vue.use(FullCalendar)
 Vue.use(VDragged)
 library.add(
+  faPlus,
+  faMinus,
   faAngleLeft,
   faAngleRight,
   faBars,
   faBinoculars,
+  faCalendar,
   faCaretLeft,
   faCaretRight,
   faCheck,
@@ -55,6 +61,7 @@ library.add(
 )
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(BootstrapVue)
+Vue.use(InputNumber)
 
 require('es6-shim')
 require('Keycloak')
