@@ -73,6 +73,13 @@ export default new Router({
             default: Calendar,
             buttons: ButtonsCalendar,
           }
+        },
+        {
+          path: 'booking/:view/:id',
+          components: {
+            default: Calendar,
+            buttons: ButtonsCalendar,
+          }
         }
       ]
     },

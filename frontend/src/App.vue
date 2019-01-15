@@ -15,7 +15,7 @@ limitations under the License.*/
 <template>
   <div id="App">
     <Header />
-    <div id="fixed-viewport-app" :style="{width:`${x}px`, height:`${y}px`,}">
+    <div :style="style">
       <Alert />
       <ExamAlert />
       <Nav v-if="isLoggedIn" />
@@ -23,12 +23,12 @@ limitations under the License.*/
       <Feedback />
       <Response />
     </div>
-    <Footer />
+      <Footer />
   </div>
 </template>
 
 <script>
-  import { mapState, mapMutations, mapActions } from 'vuex'
+  import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
   import Alert from './alert'
   import ExamAlert from './exam-alert'
   import Header from './layout/header'
@@ -40,37 +40,19 @@ limitations under the License.*/
   export default {
     name: 'App',
     components: { Nav, Alert, ExamAlert, Header, Socket, Footer, Feedback, Response },
-    created() {
-      this.getSize()
-    },
-    mounted() {
-      this.$nextTick(function() {
-        window.addEventListener('resize', this.getSize)
-      })
-    },
     computed: {
-      ...mapState(['isLoggedIn']),
-    },
-    data() {
-      return {
-        x: 0,
-        y: 0,
+      ...mapState(['isLoggedIn', 'showSchedulingIndicator']),
+      style() {
+        let output = {marginTop: 72+'px', width: '100%', overflowY: 'auto'}
+        if (this.showSchedulingIndicator) {
+          output['marginBottom'] = 100+'px'
+        }
+        if (!this.showSchedulingIndicator) {
+          output['marginBottom'] = 40+'px'
+        }
+        return output
       }
     },
-    methods: {
-      ...mapMutations(['updateViewportSizes']),
-      getSize() {
-        this.x = window.innerWidth
-        this.y = window.innerHeight - 110
-        this.updateStore()
-      },
-      updateStore() {
-        let x =  parseInt(this.x)
-        let y = parseInt(this.y)
-        this.updateViewportSizes({w: x})
-        this.updateViewportSizes({h: y})
-      }
-    }
   }
 </script>
 
@@ -100,8 +82,12 @@ limitations under the License.*/
     display: block;
     overflow-y: auto;
     overflow-x: auto;
+    background-color: blue;
     margin: 0px;
     padding: 0px;
+    position: absolute;
+    left: 0px;
+    top: 72px;
   }
   .view-screen-title {
     font-family: "Helvetica Neue",Arial,sans-serif;

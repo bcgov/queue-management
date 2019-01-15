@@ -17,27 +17,14 @@ limitations under the License.*/
 import Vue from 'vue'
 import 'es6-promise/auto'
 import Vuex from 'vuex'
-import { Axios } from './helpers'
+import { Axios, searchNestedObject } from './helpers'
 var flashInt
 
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
-
+  
   state: {
-    showSchedulingIndicator: false,
-    showOtherBookingModal: false,
-    schedulingOther: false,
-    calendarSetup: null,
-    showCalendarControls: true,
-    scheduling: false,
-    selectedExam: {},
-    selectedBooking: {},
-    showExamInventoryModal: false,
-    showEditExamModalVisible: false,
-    showReturnExamModalVisible: false,
-    clickedDate: '',
-    showBookingModal: false,
     addIndITASteps: [
       {
         step: 1,
@@ -133,23 +120,27 @@ export const store = new Vuex.Store({
         ]
       },
     ],
-    captureITAExamTabSetup: {
-      step: 1,
-      highestStep: 1,
-      stepsValidated: [],
-      errors: [],
-      showRadio: true,
-      success: '',
-      notes: false,
+    addIndividualITAExamModalVisibe: false,
+    addModalForm: {
+      citizen:'',
+      comments: '',
+      channel: '',
+      search: '',
+      category: '',
+      service:'',
+      quick: 0,
+      suspendFilter: false,
+      selectedItem: '',
+      priority: 2
     },
+    addModalSetup: null,
+    addNextService: false,
+    adminNavigation: 'csr',
+    alertMessage: '',
+    allCitizens: [],
+    bearer: '',
     bookings: [],
-    examTypes: [],
-    editExams: [],
-    returnExams: [],
-    examMethods: [
-      {text: 'paper', value: 'paper', id: 'exam_method'},
-      {text: 'online', value: 'online', id: 'exam_method'}
-    ],
+    calendarSetup: null,
     capturedExam: {
       event_id: null,
       exam_name: null,
@@ -164,52 +155,55 @@ export const store = new Vuex.Store({
       room_id: null,
       office_id: null,
     },
-    addIndividualITAExamModalVisibe: false,
-    exams: [],
-    iframeLogedIn: false,
-    invigilators: [],
-    viewPortSizes: {
-      h: null,
-      w: null
+    captureITAExamTabSetup: {
+      step: 1,
+      highestStep: 1,
+      stepsValidated: [],
+      errors: [],
+      showRadio: true,
+      success: '',
+      notes: false,
     },
-    navigationVisible: true,
-    adminNavigation: 'csr',
-    addModalForm: {
-      citizen:'',
-      comments: '',
-      channel: '',
-      search: '',
-      category: '',
-      service:'',
-      quick: 0,
-      suspendFilter: false,
-      selectedItem: '',
-      priority: 2
-    },
-    addModalSetup: null,
-    alertMessage: '',
-    allCitizens: [],
-    bearer: '',
     categories: [],
     channels: [],
-    citizens: [],
     citizenInvited: false,
+    citizens: [],
+    clickedDate: '',
+    csr_states: [],
     csrs: [],
     dismissCount: 0,
-    editExamSuccess: false,
+    editedBooking: null,
+    editedBookingOriginal: null,
     editExamFailure: false,
+    editExams: [],
+    editExamSuccess: false,
     examAlertMessage: '',
     examDismissCount: 0,
+    examMethods: [
+      {text: 'paper', value: 'paper', id: 'exam_method'},
+      {text: 'online', value: 'online', id: 'exam_method'}
+    ],
+    exams: [],
+    examTypes: [],
     feedbackMessage: '',
+    iframeLogedIn: false,
+    invigilators: [],
     isLoggedIn: false,
+    navigationVisible: true,
     nowServing: false,
     officeType: null,
     performingAction: false,
+    rescheduling: false,
+    returnExams: [],
     rooms: [],
+    scheduling: false,
+    schedulingOther: false,
+    selectedBooking: {},
+    selectedExam: {},
+    serveModalAlert: '',
     serveNowAltAction: false,
     serveNowStyle: 'btn-primary',
     serviceBegun: false,
-    serveModalAlert: '',
     serviceModalForm: {
       citizen_id: null,
       service_citizen: null,
@@ -222,11 +216,18 @@ export const store = new Vuex.Store({
     services: [],
     showAddModal: false,
     showAdmin: false,
+    showBookingModal: false,
+    showCalendarControls: true,
+    showEditBookingModal: false,
+    showEditExamModalVisible: false,
+    showExamInventoryModal: false,
     showFeedbackModal: false,
     showGAScreenModal: false,
+    showOtherBookingModal: false,
     showResponseModal: false,
+    showReturnExamModalVisible: false,
+    showSchedulingIndicator: false,
     showServiceModal: false,
-    addNextService: false,
     user: {
       csr_id: null,
       csr_state_id: null,
@@ -247,11 +248,33 @@ export const store = new Vuex.Store({
       qt_xn_csr_ind: true,
       receptionist_ind: null
     },
-    csr_states: [],
-    userLoadingFail: false
+    userLoadingFail: false,
+    viewPortSizes: {
+      h: null,
+      w: null
+    },
   },
 
   getters: {
+    view_port: (state) => {
+      return {
+        h: state.viewPortSizes.h - state.indicatorHeight,
+        w: state.viewPortSizes.w
+      }
+    },
+    
+    get_room_by_id: (state) => (id) => {
+      return state.rooms.find(room => room.id == id)
+    },
+    
+    get_exam_by_id: (state) => (id) => {
+      return state.exams.find(exam => exam.id == id)
+    },
+    
+    get_booking_by_id: (state) => (id) => {
+      return state.bookings.find(booking => booking.id = id)
+    },
+    
     room_resources(state) {
       if (state.rooms.length > 0) {
         return state.rooms.map(room =>
@@ -264,6 +287,10 @@ export const store = new Vuex.Store({
       } else {
         return []
       }
+    },
+  
+    filtered_calendar_events: (state, getters) => (search) => {
+      return getters.calendar_events.filter(booking => searchNestedObject(booking, search))
     },
     
     calendar_events(state) {
@@ -508,6 +535,28 @@ export const store = new Vuex.Store({
       if (view !== null) {
         context.commit("setNavigation", view)
       }
+    },
+  
+    deleteBooking(context, id) {
+      return new Promise((resolve, reject) => {
+        Axios(context).delete(`/bookings/${id}/`).then(resp => {
+          resolve(resp.data)
+        })
+          .catch(error => {
+            reject(error)
+          })
+      })
+    },
+    
+    putBooking(context, payload) {
+      return new Promise((resolve, reject) => {
+        Axios(context).put(`/bookings/${payload.id}/`, payload.changes).then(resp => {
+          resolve(resp.data)
+        })
+          .catch(error => {
+            reject(error)
+          })
+      })
     },
 
     flashServeNow(context, payload) {
@@ -1202,6 +1251,14 @@ export const store = new Vuex.Store({
         context.commit('setPerformingAction', false)
       })
     },
+    
+    resetRescheduling(context) {
+      context.commit('navigationVisible', true)
+      context.commit('toggleCalendarControls', true)
+      context.commit('toggleSchedulingIndicator', false)
+      context.commit('toggleScheduling', false)
+      context.commit('toggleSchedulingOther', false)
+    },
 
     finishServiceFromGA(context, citizen_id) {
       context.dispatch('postFinishService', {citizen_id, inaccurate:'true'})
@@ -1308,7 +1365,6 @@ export const store = new Vuex.Store({
     },
 
     postFinishService(context, payload) {
-      console.log(payload);
       return new Promise((resolve, reject) => {
         let url = `/citizens/${payload.citizen_id}/finish_service/?inaccurate=${payload.inaccurate}`
         Axios(context).post(url).then(resp=>{
@@ -1427,6 +1483,9 @@ export const store = new Vuex.Store({
       context.commit('toggleOtherBookingModal', false)
       context.commit('setClickedDate', null)
       context.commit('setSelectedExam', null)
+      context.commit('setEditedBooking', null)
+      context.commit('toggleEditBookingModal', false)
+      context.commit('resetRescheduling', false)
     },
 
     postExam(context, payload) {
@@ -2098,5 +2157,21 @@ export const store = new Vuex.Store({
     setEditExamSuccess: (state, payload) => state.editExamSuccess = payload,
 
     setEditExamFailure: (state, payload) => state.editExamFailure = payload,
+  
+    toggleEditBookingModal: (state, payload) => state.showEditBookingModal = payload,
+  
+    setEditedBooking(state, payload) {
+      if (payload) {
+        let eventCopy = Object.assign({}, payload)
+        state.editedBooking = eventCopy
+      }
+      if (!payload) {
+        state.editedBooking = null
+      }
+    },
+  
+    toggleRescheduling: (state, payload) => state.rescheduling = payload,
+  
+    setEditedBookingOriginal: (state, payload) => state.editedBookingOriginal = payload,
   }
 })
