@@ -30,15 +30,29 @@
       <template slot="expiry_date" slot-scope="row">
         {{ row.item.expiry_date.split('T')[0] }}
       </template>
+      <template slot="actions" slot-scope="row">
+        <b-dropdown variant="outline-primary"
+                    class="pl-0 ml-0 mr-3"
+                    id="nav-dropdown"
+                    right text="">
+          <b-dropdown-item size="sm" @click.stop="editInfo(row.item, row.index)">Edit Row</b-dropdown-item>
+          <b-dropdown-item size="sm" @click.stop="returnExamInfo(row.item, row.index)">Return Exam</b-dropdown-item>
+        </b-dropdown>
+      </template>
     </b-table>
+    <EditExamModal v-if="showEditExamModalVisible"></EditExamModal>
+    <ReturnExamModal v-if="showReturnExamModalVisible"></ReturnExamModal>
   </div>
 </template>
 
 <script>
   import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+  import EditExamModal from './edit-exam-form-modal'
+  import ReturnExamModal from './return-exam-form-modal'
 
   export default {
     name: "ExamInventoryTable",
+    components: { EditExamModal, ReturnExamModal },
     props: ['mode'],
     data() {
       return {
@@ -55,7 +69,8 @@
           {key: 'notes', label: 'Notes', sortable: false },
           {key: 'invigilator', label: 'Invigilator', sortable: true },
           {key: 'booking.room.room_name', label: 'Location', sortable: true },
-        ],
+          {key: 'actions', label: 'Actions', sortable: false}
+        ]
       }
     },
     methods: {
@@ -67,6 +82,10 @@
         'toggleExamInventoryModal',
         'toggleScheduling',
         'toggleSchedulingIndicator',
+        'toggleEditExamModalVisible',
+        'setEditExamInfo',
+        'toggleReturnExamModalVisible',
+        'setReturnExamInfo'
       ]),
       getInvigilator(row) {
         if (this.events) {
@@ -89,6 +108,14 @@
           this.toggleSchedulingIndicator(true)
         }
       },
+      editInfo(item, index) {
+        this.toggleEditExamModalVisible(true)
+        this.setEditExamInfo(item)
+      },
+      returnExamInfo(item, index) {
+        this.toggleReturnExamModalVisible(true)
+        this.setReturnExamInfo(item)
+      }
     },
     mounted() {
       this.getBookings().then(bookings => {
@@ -98,7 +125,7 @@
     },
     computed: {
       ...mapGetters(['role_code', 'exam_inventory', 'calendar_events']),
-      ...mapState(['user', 'exams', 'showExamInventoryModal', 'bookings']),
+      ...mapState(['user', 'exams', 'showExamInventoryModal', 'bookings', 'showEditExamModalVisible', 'showReturnExamModalVisible' ]),
       selectedExams() {
         if (this.showExamInventoryModal) {
           return this.exam_inventory

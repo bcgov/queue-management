@@ -32,7 +32,10 @@ export const store = new Vuex.Store({
     showCalendarControls: true,
     scheduling: false,
     selectedExam: {},
+    selectedBooking: {},
     showExamInventoryModal: false,
+    showEditExamModalVisible: false,
+    showReturnExamModalVisible: false,
     clickedDate: '',
     showBookingModal: false,
     addIndITASteps: [
@@ -141,6 +144,12 @@ export const store = new Vuex.Store({
     },
     bookings: [],
     examTypes: [],
+    editExams: [],
+    returnExams: [],
+    examMethods: [
+      {text: 'paper', value: 'paper', id: 'exam_method'},
+      {text: 'online', value: 'online', id: 'exam_method'}
+    ],
     capturedExam: {
       event_id: null,
       exam_name: null,
@@ -187,6 +196,8 @@ export const store = new Vuex.Store({
     citizenInvited: false,
     csrs: [],
     dismissCount: 0,
+    editExamSuccess: false,
+    editExamFailure: false,
     examAlertMessage: '',
     examDismissCount: 0,
     feedbackMessage: '',
@@ -633,7 +644,6 @@ export const store = new Vuex.Store({
         Axios(context).get('/exam_types/')
           .then(resp => {
             context.commit('setExamTypes', resp.data.exam_types)
-            console.log('called exam types getter')
             resolve(resp.data.exam_types)
           })
           .catch(error => {
@@ -656,7 +666,7 @@ export const store = new Vuex.Store({
           })
       })
     },
-    
+
     getRooms(context) {
       return new Promise((resolve, reject) => {
         Axios(context).get('/rooms/')
@@ -1367,6 +1377,33 @@ export const store = new Vuex.Store({
           })
       })
     },
+
+    putExamInfo(context, payload) {
+      return new Promise((resolve, reject) => {
+        let url = `/exams/${context.state.selectedExam.exam_id}/`
+        Axios(context).put(url, payload).then( resp =>{
+          resolve(resp)
+          context.commit('setEditExamSuccess', true)
+        })
+          .catch(error => {
+            context.commit('setEditExamFailure', true)
+            reject(error)
+          })
+      })
+    },
+
+    putBookingInfo(context, payload) {
+      return new Promise((resolve, reject) => {
+        let url = `/bookings/${context.state.selectedBooking.booking_id}/`
+        Axios(context).put(url, payload).then( resp =>{
+          resolve(resp)
+        })
+          .catch(error => {
+            reject(error)
+          })
+      })
+    },
+
     
     postBooking(context, payload) {
       return new Promise((resolve, reject) => {
@@ -2029,8 +2066,20 @@ export const store = new Vuex.Store({
     setClickedDate: (state, payload) => state.clickedDate = payload,
     
     toggleExamInventoryModal: (state, payload) => state.showExamInventoryModal = payload,
-  
+
+    toggleEditExamModalVisible: (state, payload) => state.showEditExamModalVisible = payload,
+
+    toggleReturnExamModalVisible: (state, payload) => state.showReturnExamModalVisible = payload,
+
+    setEditExamInfo: (state, payload) => state.editExams = payload,
+
+    setReturnExamInfo: (state, payload) => state.returnExams = payload,
+
+    setExamMethods: (state, payload) => state.examMethods = payload,
+
     setSelectedExam: (state, payload) => state.selectedExam = payload,
+
+    setSelectedBooking: (state, payload) => state.selectedBooking = payload,
   
     toggleScheduling: (state, payload) => state.scheduling = payload,
     
@@ -2045,5 +2094,9 @@ export const store = new Vuex.Store({
     toggleOtherBookingModal: (state, payload) => state.showOtherBookingModal = payload,
   
     toggleSchedulingIndicator: (state, payload) => state.showSchedulingIndicator= payload,
+
+    setEditExamSuccess: (state, payload) => state.editExamSuccess = payload,
+
+    setEditExamFailure: (state, payload) => state.editExamFailure = payload,
   }
 })
