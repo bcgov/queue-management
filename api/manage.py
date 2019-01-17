@@ -526,7 +526,7 @@ class Bootstrap(Command):
         )
 
         exam_type_six = bookings.ExamType(
-            exam_type_name="IPSE - 3HR Group Exam",
+            exam_type_name="IPSE - 4HR Group Exam",
             exam_color="#FFD701",
             number_of_hours=4,
             method_type="Written",
@@ -535,7 +535,7 @@ class Bootstrap(Command):
         )
 
         exam_type_seven = bookings.ExamType(
-            exam_type_name="IPSE - 3HR Single Exam",
+            exam_type_name="IPSE - 4HR Single Exam",
             exam_color="#FFD701",
             number_of_hours=4,
             method_type="Written",
@@ -544,7 +544,7 @@ class Bootstrap(Command):
         )
 
         exam_type_eight = bookings.ExamType(
-            exam_type_name="IPSE - 3HR Single Exam - Own Reader",
+            exam_type_name="IPSE - 4HR Single Exam - Own Reader",
             exam_color="#FFD701",
             number_of_hours=4,
             method_type="Written",
@@ -553,7 +553,7 @@ class Bootstrap(Command):
         )
 
         exam_type_nine = bookings.ExamType(
-            exam_type_name="IPSE - 3HR Single Exam - SBC Reader",
+            exam_type_name="IPSE - 4HR Single Exam - SBC Reader",
             exam_color="#FFD701",
             number_of_hours=4,
             method_type="Written",
@@ -562,7 +562,7 @@ class Bootstrap(Command):
         )
 
         exam_type_ten = bookings.ExamType(
-            exam_type_name="IPSE - 3HR Single Exam - Time Extension",
+            exam_type_name="IPSE - 4HR Single Exam - Time Extension",
             exam_color="#FFD701",
             number_of_hours=4,
             method_type="Written",
