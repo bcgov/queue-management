@@ -37,6 +37,7 @@
                     right text="">
           <b-dropdown-item size="sm" @click.stop="editInfo(row.item, row.index)">Edit Row</b-dropdown-item>
           <b-dropdown-item size="sm" @click.stop="returnExamInfo(row.item, row.index)">Return Exam</b-dropdown-item>
+          <b-dropdown-item v-if=row.item.booking size="sm" @click="updateBookingRoute(row.item, row.index)">Update Booking</b-dropdown-item>
         </b-dropdown>
       </template>
     </b-table>
@@ -49,6 +50,7 @@
   import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
   import EditExamModal from './edit-exam-form-modal'
   import ReturnExamModal from './return-exam-form-modal'
+  import moment from 'moment'
 
   export default {
     name: "ExamInventoryTable",
@@ -70,7 +72,8 @@
           {key: 'invigilator', label: 'Invigilator', sortable: true },
           {key: 'booking.room.room_name', label: 'Location', sortable: true },
           {key: 'actions', label: 'Actions', sortable: false}
-        ]
+        ],
+        bookingRouteString: '',
       }
     },
     methods: {
@@ -115,6 +118,12 @@
       returnExamInfo(item, index) {
         this.toggleReturnExamModalVisible(true)
         this.setReturnExamInfo(item)
+      },
+      updateBookingRoute(item) {
+        let bookingRoute = '/booking/'
+        let rowDate = moment(item.booking.start_time).format('YYYY-MM-DD')
+        let dateConcat = bookingRoute.concat(rowDate)
+        this.$router.push(dateConcat)
       }
     },
     mounted() {
@@ -125,7 +134,7 @@
     },
     computed: {
       ...mapGetters(['role_code', 'exam_inventory', 'calendar_events']),
-      ...mapState(['user', 'exams', 'showExamInventoryModal', 'bookings', 'showEditExamModalVisible', 'showReturnExamModalVisible' ]),
+      ...mapState(['user', 'exams', 'showExamInventoryModal', 'bookings', 'showEditExamModalVisible', 'showReturnExamModalVisible', 'calendarSetup' ]),
       selectedExams() {
         if (this.showExamInventoryModal) {
           return this.exam_inventory

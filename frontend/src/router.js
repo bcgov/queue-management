@@ -80,7 +80,14 @@ export default new Router({
             default: Calendar,
             buttons: ButtonsCalendar,
           }
-        }
+        },
+        {
+          path: 'booking/:date',
+          components: {
+            default: Calendar,
+            buttons: ButtonsCalendar,
+          }
+        },
       ]
     },
     {
