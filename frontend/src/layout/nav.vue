@@ -26,6 +26,7 @@
       <div v-if="navigationVisible">
         <b-dropdown variant="outline-primary"
                     class="pl-0 ml-0 mr-3"
+                    boundary="viewport"
                     id="nav-dropdown">
           <template slot="button-content">
             <font-awesome-icon icon="bars"
@@ -80,7 +81,6 @@
         'showGAScreenModal',
         'user',
         'calendarSetup',
-        'viewPortSizes'
       ]),
       isGAorCSR() {
         if (this.user && this.user.role) {

@@ -15,7 +15,7 @@ limitations under the License.*/
 
 
 <template>
-<div id="header" style="top: 0px; left: 0px; width: 100%; height: 70px;">
+<div id="header" style="position: fixed; top: 0px; left: 0px; width: 100%; height: 70px; z-index: 1039">
   <b-navbar variant="faded"
             type="light"
             :style="this.navbarStyle">

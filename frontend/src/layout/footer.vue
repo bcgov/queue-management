@@ -1,29 +1,32 @@
 <template>
-  <div id="main-footer">
-    <div id="footer-links">
-      <div class="footer-anchor-item">
-        <a href="http://www2.gov.bc.ca/gov/content/home/disclaimer" target="_blank">Disclaimer</a>
+  <div style="outer-header-style">
+    <SchedulingIndicator />
+    <div id="main-footer">
+      <div id="footer-links">
+        <div class="footer-anchor-item">
+          <a href="http://www2.gov.bc.ca/gov/content/home/disclaimer" target="_blank">Disclaimer</a>
+        </div>
+        <div class="footer-anchor-item">
+          <a href="http://www2.gov.bc.ca/gov/content/home/privacy" target="_blank">Privacy</a>
+        </div>
+        <div class="footer-anchor-item">
+          <a href="http://www2.gov.bc.ca/gov/content/home/accessibility" target="_blank">Accessibility</a>
+        </div>
+        <div class="footer-anchor-item-last">
+          <a href="http://www2.gov.bc.ca/gov/content/home/copyright" target="_blank">Copyright</a>
+        </div>
       </div>
-      <div class="footer-anchor-item">
-        <a href="http://www2.gov.bc.ca/gov/content/home/privacy" target="_blank">Privacy</a>
-      </div>
-      <div class="footer-anchor-item">
-        <a href="http://www2.gov.bc.ca/gov/content/home/accessibility" target="_blank">Accessibility</a>
-      </div>
-      <div class="footer-anchor-item-last">
-        <a href="http://www2.gov.bc.ca/gov/content/home/copyright" target="_blank">Copyright</a>
-      </div>
-    </div>
 
 
-    <div class="p-0" style="display:inline-block; color: white;">
-      <div v-if="!this.$store.state.isLoggedIn"
-           class="footer-anchor-item"
-           style="display:inline-block; color: white;">
-        <a href="#" @click="keycloakLogin()" id="keycloak-login">Keycloak Login</a>
-      </div>
-      <div class="footer-anchor-item-last" style="display:inline-block; color: white; margin-right:15px;">
-        v1.0.14
+      <div class="p-0" style="display:inline-block; color: white;">
+        <div v-if="!this.$store.state.isLoggedIn"
+             class="footer-anchor-item"
+             style="display:inline-block; color: white;">
+          <a href="#" @click="keycloakLogin()" id="keycloak-login">Keycloak Login</a>
+        </div>
+        <div class="footer-anchor-item-last" style="display:inline-block; color: white; margin-right:15px;">
+          v1.0.14
+        </div>
       </div>
     </div>
   </div>
@@ -31,9 +34,11 @@
 
 <script>
   import { mapMutations, mapState } from 'vuex'
+  import SchedulingIndicator from '../booking/scheduling-indicator'
 
   export default {
     name: 'Footer',
+    components: { SchedulingIndicator },
     methods: {
       keycloakLogin() {
         this.$keycloak.login()
@@ -43,6 +48,14 @@
 </script>
 
 <style scoped>
+  .outer-header-style {
+    position: fixed;
+    width: 100%;
+    left: 0px;
+    bottom: 0px;
+    display: block;
+    z-index: 3000;
+  }
   #main-footer {
     display: flex;
     justify-content:space-between;
