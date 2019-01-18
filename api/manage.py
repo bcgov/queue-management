@@ -369,6 +369,51 @@ class Bootstrap(Command):
             deleted=None,
             csr_state_id=csr_state_logout.csr_state_id
         )
+        akroon3r = theq.CSR(
+            username="akroon3r",
+            office_id=office_test.office_id,
+            role_id=role_csr.role_id,
+            qt_xn_csr_ind=0,
+            receptionist_ind=1,
+            deleted=None,
+            csr_state_id=csr_state_logout.csr_state_id
+        )
+        sjrumsby = theq.CSR(
+            username="sjrumsby",
+            office_id=office_test.office_id,
+            role_id=role_csr.role_id,
+            qt_xn_csr_ind=0,
+            receptionist_ind=1,
+            deleted=None,
+            csr_state_id=csr_state_logout.csr_state_id
+        )
+        scottrumsby = theq.CSR(
+            username="scottrumsby",
+            office_id=office_test.office_id,
+            role_id=role_csr.role_id,
+            qt_xn_csr_ind=0,
+            receptionist_ind=1,
+            deleted=None,
+            csr_state_id=csr_state_logout.csr_state_id
+        )
+        ChrisDMac = theq.CSR(
+            username="ChrisDMac",
+            office_id=office_test.office_id,
+            role_id=role_csr.role_id,
+            qt_xn_csr_ind=0,
+            receptionist_ind=1,
+            deleted=None,
+            csr_state_id=csr_state_logout.csr_state_id
+        )
+        gil0109 = theq.CSR(
+            username="gil0109",
+            office_id=office_test.office_id,
+            role_id=role_csr.role_id,
+            qt_xn_csr_ind=0,
+            receptionist_ind=1,
+            deleted=None,
+            csr_state_id=csr_state_logout.csr_state_id
+        )
         demo_ga = theq.CSR(
             username="admin",
             office_id=office_test.office_id,
@@ -391,6 +436,11 @@ class Bootstrap(Command):
         db.session.add(cfms_postman_non_operator)
         db.session.add(demo_ga)
         db.session.add(demo_csr)
+        db.session.add(akroon3r)
+        db.session.add(sjrumsby)
+        db.session.add(scottrumsby)
+        db.session.add(ChrisDMac)
+        db.session.add(gil0109)
         db.session.commit()
 
         #-- The Office / Services values ------------------------------------

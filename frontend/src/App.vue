@@ -15,7 +15,7 @@ limitations under the License.*/
 <template>
   <div id="App">
     <Header />
-    <div :style="style">
+    <div v-if="user.username && isLoggedIn" :style="style">
       <Alert />
       <ExamAlert />
       <Nav v-if="isLoggedIn" />
@@ -23,7 +23,10 @@ limitations under the License.*/
       <Feedback />
       <Response />
     </div>
-      <Footer />
+    <div v-else-if="!user.username && isLoggedIn">
+      <LoginWarning />
+    </div>
+    <Footer />
   </div>
 </template>
 
@@ -37,11 +40,14 @@ limitations under the License.*/
   import Feedback from './feedback'
   import Response from './response'
   import Nav from './layout/nav'
+  import Login from "./Login";
+  import LoginWarning from './login-warning'
+
   export default {
     name: 'App',
-    components: { Nav, Alert, ExamAlert, Header, Socket, Footer, Feedback, Response },
+    components: { Login, LoginWarning, Nav, Alert, ExamAlert, Header, Socket, Footer, Feedback, Response },
     computed: {
-      ...mapState(['isLoggedIn', 'showSchedulingIndicator']),
+      ...mapState(['isLoggedIn', 'showSchedulingIndicator', 'user' ]),
       style() {
         let output = {marginTop: 72+'px', width: '100%', overflowY: 'auto'}
         if (this.showSchedulingIndicator) {
