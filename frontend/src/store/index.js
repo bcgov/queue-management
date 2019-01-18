@@ -507,24 +507,6 @@ export const store = new Vuex.Store({
 
   actions: {
 
-    examsOnLogin(context) {
-      if (context.state.user && context.state.groupExam && context.state.individualExam) {
-        // Set alert message to display that both group and individual exams need attention
-        context.commit('setExamAlert', 'There are Individual Exams and Group Exams that require attention')
-        console.log('Set BOTH Exam Alert Message')
-      }
-      else if (context.state.user && context.state.groupExam) {
-        // Set alert message to display that only group exams need attention
-        context.commit('setExamAlert', 'There are Group Exams that require attention')
-        console.log('Set GROUP Exam Alert Message Only')
-      }
-      else if (context.state.user && context.state.individualExam) {
-        // Set alert message to display that only individual exams need attention
-        context.commit('setExamAlert', 'There are Individual Exams that require attention')
-        console.log('Set INDIVIDUAL Exam Alert Message Only')
-      }
-    },
-
     loginIframe(context) {
       Axios(context).get('/login/').then( () => {
         context.commit('setiframeLogedIn', true)
