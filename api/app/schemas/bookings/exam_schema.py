@@ -43,6 +43,7 @@ class ExamSchema(ma.ModelSchema):
     session_number = fields.Int()
     exam_returned_ind = fields.Int()
     exam_returned_tracking_number = fields.String()
+    offsite_location = fields.String()
 
     booking = fields.Nested(BookingSchema())
     exam_type = fields.Nested(ExamTypeSchema())
