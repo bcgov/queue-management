@@ -380,6 +380,13 @@
         if (view.name === 'agendaDay' || view.name === 'agendaWeek') {
           this.options({ name: 'height', value: 'auto' })
         }
+        if(this.$route.params.date){
+          this.$refs.bookingcal.fireMethod('changeView', 'agendaDay')
+          this.goToDate(this.$route.params.date)
+          this.$router.push('/booking')
+        }else{
+          this.$router.push('/booking')
+        }
       },
       events() {
         if (this.searchTerm) {
@@ -395,7 +402,10 @@
 
 
 </script>
+<<<<<<< HEAD
 
 <style>
 
   </style>
+=======
+>>>>>>> f41ce7a... Link Single Exam to Booking Feature
