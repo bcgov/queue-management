@@ -32,17 +32,21 @@
 <script>
   import Vue from 'vue'
 
-  import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
+  import { mapState, mapActions, mapMutations } from 'vuex'
   export default {
     name: "Admin",
     created() {
       this.loginIframe()
     },
     computed: {
-      ...mapGetters(['view_port']),
       ...mapState(['iframeLogedIn', 'adminNavigation']),
+      viewPort() {
+        let h = window.innerHeight - 100
+        let w = window.innerWidth
+        return { h, w }
+      },
       frameHeight() {
-        return this.view_port.h - 80
+        return this.viewPort.h - 80
       },
       frameStyle() {
         return {

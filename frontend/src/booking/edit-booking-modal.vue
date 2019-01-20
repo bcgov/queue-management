@@ -329,7 +329,6 @@
         'getInvigilators',
         'postBooking',
         'putBooking',
-        'resetRescheduling',
       ]),
       ...mapMutations([
         'navigationVisible',
@@ -393,6 +392,9 @@
         this.$root.$emit('updateEvent', this.actualEvent, params)
       },
       increment() {
+        if (this.end.format('H') == 18) {
+          return
+        }
         this.added += .5
         let params = {
           end: this.end
@@ -412,9 +414,6 @@
         this.toggleRescheduling(true)
         this.message = ''
         this.$root.$emit('options', {name: 'selectable', value: true})
-        let bg = adjustColor(this.actualEvent.room.color, 96)
-        this.$root.$emit('updateEvent', this.actualEvent, {backgroundColor: bg, borderColor: bg,})
-        this.navigationVisible(false)
         this.toggleCalendarControls(false)
         this.toggleSchedulingIndicator(true)
         if (this.examAssociated) {
