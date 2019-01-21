@@ -1,7 +1,8 @@
 <template v-if="showExamEditModalVisible">
   <div id ="examBackground" class="edit-exam-modal-background">
-    <div id="examModal" v-bind:class="{'return-exam-modal': !editExamSuccess,
-                                       'exam-modal-content-message': editExamSuccess || editExamFailure }">
+    <div id="examModal" v-bind:class="{'return-exam-modal': !editExamSuccess && !editExamFailure,
+                                       'exam-modal-content-message': editExamSuccess,
+                                       'exam-modal-content-message-failure': editExamFailure }">
       <div v-bind:class="{ 'edit-exam-modal-content': !editExamSuccess, 'exam-modal-content-message': editExamSuccess }">
         <div class="modal_header" v-if="!editExamSuccess && !editExamFailure">
           <div>
@@ -13,7 +14,7 @@
               </b-row>
               <b-row class="my-1">
                 <b-col sm="4"><label>Exam Returned: </label></b-col>
-                <b-col sm="6">
+                <b-col sm="7">
                   <select class="form-control" name="examReturned" v-model=selectedReturned>
                     <option v-for="returned in examReturnedOptions" :value="returned.value">{{ returned.value }}</option>
                   </select>
@@ -21,7 +22,7 @@
               </b-row>
               <b-row>
                 <b-col sm="4"><label>Tracking Number: </label></b-col>
-                <b-col sm="6"><b-form-input id="trackingNumber" type="text" v-model=fields.exam_returned_tracking_number></b-form-input></b-col>
+                <b-col sm="7"><b-form-input id="trackingNumber" type="text" v-model=fields.exam_returned_tracking_number></b-form-input></b-col>
               </b-row>
             </b-container>
           </div>
