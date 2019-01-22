@@ -18,6 +18,8 @@ limitations under the License.*/
     <div v-if="user.username && isLoggedIn" :style="style">
       <Alert />
       <ExamAlert />
+      <SuccessExamAlert />
+      <FailureExamAlert />
       <Nav v-if="isLoggedIn" />
       <Socket v-show="1===2" />
       <Feedback />
@@ -42,10 +44,23 @@ limitations under the License.*/
   import Nav from './layout/nav'
   import Login from "./Login";
   import LoginWarning from './login-warning'
+  import SuccessExamAlert from './exams/success-exam-alert'
+  import FailureExamAlert from './exams/failure-exam-alert'
 
   export default {
     name: 'App',
-    components: { Login, LoginWarning, Nav, Alert, ExamAlert, Header, Socket, Footer, Feedback, Response },
+    components: { Login,
+                  LoginWarning,
+                  Nav,
+                  Alert,
+                  ExamAlert,
+                  Header,
+                  Socket,
+                  Footer,
+                  Feedback,
+                  Response,
+                  SuccessExamAlert,
+                  FailureExamAlert },
     computed: {
       ...mapState(['isLoggedIn', 'showSchedulingIndicator', 'user' ]),
       style() {

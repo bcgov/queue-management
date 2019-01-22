@@ -178,7 +178,10 @@ export const store = new Vuex.Store({
     editExams: [],
     editExamSuccess: false,
     examAlertMessage: '',
+    examEditSuccessMessage: '',
+    examEditFailureMessage: '',
     examDismissCount: 0,
+    examSuccessDismiss : 0,
     examMethods: [
       {text: 'paper', value: 'paper', id: 'exam_method'},
       {text: 'online', value: 'online', id: 'exam_method'}
@@ -1422,9 +1425,11 @@ export const store = new Vuex.Store({
         Axios(context).put(url, payload).then( resp =>{
           resolve(resp)
           context.commit('setEditExamSuccess', true)
+          context.commit('setExamEditSuccessMessage', 'Success! Exam changes were committed.')
         })
           .catch(error => {
             context.commit('setEditExamFailure', true)
+            context.commit('setExamEditFailureMessage', 'There was a problem submitting changes to your exam.')
             reject(error)
           })
       })
@@ -1922,6 +1927,14 @@ export const store = new Vuex.Store({
       state.examDismissCount = 999
     },
 
+    setExamEditSuccessMessage(state, payload) {
+      state.examEditSuccessMessage = payload
+    },
+
+    setExamEditFailureMessage(state, payload) {
+      state.examEditFailureMessage = payload
+    },
+
     setModalAlert(state, payload) {
       state.alertMessage = payload
     },
@@ -1964,6 +1977,10 @@ export const store = new Vuex.Store({
 
     examDismissCountDown(state, payload) {
       state.examDismissCount = payload
+    },
+
+    examSuccessCountDown(state, payload) {
+      state.examSuccessDismiss = payload
     },
 
     toggleInvitedStatus: (state, payload) => state.citizenInvited = payload,

@@ -1,87 +1,56 @@
-<template v-if="showExamEditModalVisible">
-  <div id ="examBackground" class="edit-exam-modal-background">
-    <div id="examModal" v-bind:class="{ 'edit-exam-modal': !editExamSuccess || !editExamFailure,
-                                        'edit-exam-modal-content-message': editExamSuccess,
-                                        'edit- exam-modal-content-message': editExamFailure }">
-      <div class="edit-exam-modal-content">
-        <div class="modal_header" v-if="!editExamSuccess && !editExamFailure">
-          <div>
-            <b-container style="font-size:1.1rem; border:1px solid lightgrey; border-radius: 10px" class="mb-2 pb-3" fluid>
-              <b-row>
-                <b-col>
-                  <h3>Edit Exam Information Form</h3>
-                </b-col>
-              </b-row>
-              <b-row class="my-1">
-                <b-col sm="4"><label>Event ID:</label></b-col>
-                <b-col sm="6"><b-form-input id="eventIDInput" type="text" v-model=fields.event_id></b-form-input></b-col>
-              </b-row>
-              <b-row class="my-1">
-                <b-col sm="4"><label>Exam Name:</label></b-col>
-                <b-col sm="6"><b-form-input id="examNameInput" type="text" v-model=fields.exam_name></b-form-input></b-col>
-              </b-row>
-              <b-row class="my-1">
-                <b-col sm="4"><label>Exam Methods:</label></b-col>
-                <b-col sm="6">
+<template>
+  <b-modal v-model="modal"
+           :no-close-on-backdrop="true"
+           hide-ok
+           hide-header
+           hide-cancel
+           @hidden="ok"
+           @ok="submit"
+           size="md">
+      <b-container style="font-size:1.1rem; border:1px solid lightgrey; border-radius: 10px" class="mb-2 pb-3" fluid>
+          <b-row>
+              <b-col>
+                <h3>Edit Exam Information Form</h3>
+              </b-col>
+          </b-row>
+          <b-row class="my-1">
+              <b-col sm="4"><label>Event ID:</label></b-col>
+              <b-col sm="6"><b-form-input id="eventIDInput" type="text" v-model=fields.event_id></b-form-input></b-col>
+          </b-row>
+          <b-row class="my-1">
+              <b-col sm="4"><label>Exam Name:</label></b-col>
+              <b-col sm="6"><b-form-input id="examNameInput" type="text" v-model=fields.exam_name></b-form-input></b-col>
+          </b-row>
+          <b-row class="my-1">
+              <b-col sm="4"><label>Exam Methods:</label></b-col>
+              <b-col sm="6">
                   <select class="form-control" name="examMethod" v-model=selectedMethod>
-                    <option v-for="examMethod in examMethodOptions" :value="examMethod.value">{{ examMethod.value }}</option>
+                      <option v-for="examMethod in examMethodOptions" :value="examMethod.value">{{ examMethod.value }}</option>
                   </select>
-                </b-col>
-              </b-row>
-              <b-row class="my-1">
-                <b-col sm="4"><label>Expiry Date:</label></b-col>
-                <b-col sm="6"><b-form-input id="expiryDate" type="date" v-model=expiryDate></b-form-input></b-col>
-              </b-row>
-              <b-row class="my-1">
-                <b-col sm="4"><label>Exam Received:</label></b-col>
-                <b-col sm="6">
+              </b-col>
+          </b-row>
+          <b-row class="my-1">
+              <b-col sm="4"><label>Expiry Date:</label></b-col>
+              <b-col sm="6"><b-form-input id="expiryDate" type="date" v-model=expiryDate></b-form-input></b-col>
+          </b-row>
+          <b-row class="my-1">
+              <b-col sm="4"><label>Exam Received:</label></b-col>
+              <b-col sm="6">
                   <select class="form-control" name="examReceived" v-model=selectedReceived>
-                    <option v-for="received in examReceivedOptions" :value="received.value">{{ received.value }}</option>
+                      <option v-for="received in examReceivedOptions" :value="received.value">{{ received.value }}</option>
                   </select>
-                </b-col>
-              </b-row>
-              <b-row class="my-1">
-                <b-col sm="4"><label>Student Name:</label></b-col>
-                <b-col sm="6"><b-form-input id="studentName" type="text" v-model=fields.examinee_name></b-form-input></b-col>
-              </b-row>
-              <b-row class="my-1">
-                <b-col sm="4"><label>Notes:</label></b-col>
-                <b-col sm="6"><b-form-input id="examNotes" type="text" v-model="fields.notes"></b-form-input></b-col>
-              </b-row>
-            </b-container>
-          </div>
-        </div>
-        <div>
-          <div class="" v-if="editExamSuccess">
-            <b-row>
-              <b-col>
-                <h1 style="color:green">Success!</h1>
-                <p style="color:green"><b>Changes have been submitted!</b></p>
-                <b-button @click="ok" class="btn btn-success btn-secondary">Ok</b-button>
               </b-col>
-            </b-row>
-          </div>
-        </div>
-        <div>
-          <div v-if="editExamFailure">
-            <b-row>
-              <b-col>
-                <h2 style="color:red">Error!</h2>
-                <p style="color:red"><b>Your changes were not submitted.</b></p>
-                <b-button @click="ok" class="btn btn-warning btn-secondary">Ok</b-button>
-              </b-col>
-            </b-row>
-          </div>
-        </div>
-        <div class="button-flex-end">
-          <div v-if="!editExamSuccess && !editExamFailure">
-            <b-button @click="cancel" class="mt-3 ml-3 mr-3">Cancel</b-button>
-            <b-button @click="submit" class="btn-primary mt-3 ml-3 mr-3">Submit</b-button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+          </b-row>
+          <b-row class="my-1">
+              <b-col sm="4"><label>Student Name:</label></b-col>
+              <b-col sm="6"><b-form-input id="studentName" type="text" v-model=fields.examinee_name></b-form-input></b-col>
+              </b-row>
+          <b-row class="my-1">
+              <b-col sm="4"><label>Notes:</label></b-col>
+              <b-col sm="6"><b-form-input id="examNotes" type="text" v-model="fields.notes"></b-form-input></b-col>
+          </b-row>
+      </b-container>
+  </b-modal>
 </template>
 
 <script>
@@ -108,32 +77,29 @@
                 expiryDate:'',
                 selectedReceived: '',
                 examReceivedOptions: [
-                  { id: 0, value: 'No' },
-                  { id: 1, value: 'Yes' }
+                    { id: 0, value: 'No' },
+                    { id: 1, value: 'Yes' }
                 ],
                 noBooking: true
             }
-        },
-        computed: {
-            ...mapState({
-                showExamEditModalVisible: state => state.showEditExamModalVisible,
-                fields: state => state.editExams,
-                selectedExam: state => state.selectedExam,
-                selectedBooking: state => state.selectedBooking,
-                editExamSuccess: state => state.editExamSuccess,
-                editExamFailure: state => state.editExamFailure
-            }),
         },
         methods: {
             ...mapActions([
                 'putExamInfo',
                 'putBookingInfo',
                 'getExams',
-                'getBookings' ]),
+                'getBookings'
+            ]),
             ...mapMutations([
                 'toggleEditExamModalVisible',
                 'setEditExamSuccess',
-                'setEditExamFailure' ]),
+                'setEditExamFailure'
+            ]),
+            ok() {
+                this.toggleEditExamModalVisible(false);
+                this.setEditExamSuccess(false);
+                this.setEditExamFailure(false);
+            },
             cancel() {
                 this.toggleEditExamModalVisible(false);
                 this.selectedMethod = '';
@@ -141,13 +107,14 @@
                 this.selectedReceived = '';
             },
             submit() {
+                this.setEditExamSuccess(false)
+                this.setEditExamFailure(false)
                 this.selectedExam.exam_id = this.fields.exam_id;
                 if (this.selectedReceived === 'No') {
                     this.selectedReceived = 0;
                 }else {
                     this.selectedReceived = 1;
                 }
-                console.log("method: ", this.selectedMethod);
                 let submit_exam = {
                     exam_id: this.selectedExam.exam_id,
                     event_id: this.fields.event_id,
@@ -163,13 +130,29 @@
                     this.setEditExamFailure(false)
                 }
                 this.getExams()
+                console.log(this.editExamSuccess)
+
             },
-            ok() {
-                this.toggleEditExamModalVisible(false);
-                this.setEditExamSuccess(false);
-                this.setEditExamFailure(false);
+        },
+        computed: {
+            ...mapState({
+                showEditExamModalVisible: state => state.showEditExamModalVisible,
+                fields: state => state.editExams,
+                selectedExam: state => state.selectedExam,
+                selectedBooking: state => state.selectedBooking,
+                editExamSuccess: state => state.editExamSuccess,
+                editExamFailure: state => state.editExamFailure
+            }),
+            modal: {
+              get() {
+                  return this.showEditExamModalVisible
+              },
+              set(e) {
+                  this.toggleEditExamModalVisible(e)
+              }
             }
         },
+
     }
 </script>
 

@@ -51,10 +51,12 @@
   import EditExamModal from './edit-exam-form-modal'
   import ReturnExamModal from './return-exam-form-modal'
   import moment from 'moment'
+  import SuccessExamAlert from './success-exam-alert'
+  import FailureExamAlert from './failure-exam-alert'
 
   export default {
     name: "ExamInventoryTable",
-    components: { EditExamModal, ReturnExamModal },
+    components: { EditExamModal, ReturnExamModal, SuccessExamAlert, FailureExamAlert },
     props: ['mode'],
     data() {
       return {
@@ -111,7 +113,7 @@
           this.toggleSchedulingIndicator(true)
         }
       },
-      editInfo(item, index) {
+      editInfo(item) {
         this.toggleEditExamModalVisible(true)
         this.setEditExamInfo(item)
       },
@@ -133,8 +135,16 @@
       this.getExams()
     },
     computed: {
-      ...mapGetters(['role_code', 'exam_inventory', 'calendar_events']),
-      ...mapState(['user', 'exams', 'showExamInventoryModal', 'bookings', 'showEditExamModalVisible', 'showReturnExamModalVisible', 'calendarSetup' ]),
+      ...mapGetters([ 'role_code',
+                      'exam_inventory',
+                      'calendar_events']),
+      ...mapState([ 'user',
+                    'exams',
+                    'showExamInventoryModal',
+                    'bookings',
+                    'showEditExamModalVisible',
+                    'showReturnExamModalVisible',
+                    'calendarSetup' ]),
       selectedExams() {
         if (this.showExamInventoryModal) {
           return this.exam_inventory
@@ -151,6 +161,7 @@
           return returnFields
         }
       }
+
     }
   }
 </script>
