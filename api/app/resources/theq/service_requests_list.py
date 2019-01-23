@@ -59,10 +59,12 @@ class ServiceRequestsList(Resource):
             return {"message": "No matching service found for service_id"}, 400
 
         # Find the currently active service_request and close it (if it exists)
+        current_sr_number = 0
         for req in citizen.service_reqs:
             if req.sr_state_id == active_sr_state.sr_state_id:
                 req.sr_state_id = complete_sr_state.sr_state_id
                 req.finish_service(csr, clear_comments=False)
+                current_sr_number = req.sr_number
                 db.session.add(req)
 
         service_request.sr_state_id = active_sr_state.sr_state_id
@@ -106,19 +108,27 @@ class ServiceRequestsList(Resource):
 
         citizen.cs_id = citizen_state.cs_id
 
-        #  See whether first service, or next service.
+        #  If first service, just choose it.  If additional service, more work needed.
         if len(citizen.service_reqs) == 0:
             snowplow_event = "chooseservice"
-            citizen.service_count = 1
         else:
             snowplow_event = "additionalservice"
-            citizen.service_count = citizen.service_count + 1
+
+        service_request.sr_number = len(citizen.service_reqs) + 1
 
         db.session.add(service_request)
         db.session.add(citizen)
         db.session.commit()
 
-        SnowPlow.choose_service(service_request, csr, snowplow_event)
+        #  If first service, just need a choose service call.
+        if snowplow_event == "chooseservice":
+            SnowPlow.choose_service(service_request, csr, "chooseservice")
+
+        #  If not first service, need stop service, choose service, and additional service calls.
+        else:
+            SnowPlow.snowplow_event(citizen.citizen_id, csr, "stopservice", current_sr_number=current_sr_number)
+            SnowPlow.choose_service(service_request, csr, "chooseservice")
+            SnowPlow.snowplow_event(citizen.citizen_id, csr, "additionalservice", current_sr_number=service_request.sr_number)
 
         citizen_result = self.citizen_schema.dump(citizen)
         socketio.emit('update_active_citizen', citizen_result.data, room=csr.office_id)

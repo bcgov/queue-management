@@ -30,15 +30,33 @@
       <template slot="expiry_date" slot-scope="row">
         {{ row.item.expiry_date.split('T')[0] }}
       </template>
+      <template slot="actions" slot-scope="row">
+        <b-dropdown variant="outline-primary"
+                    class="pl-0 ml-0 mr-3"
+                    id="nav-dropdown"
+                    right text="">
+          <b-dropdown-item size="sm" @click.stop="editInfo(row.item, row.index)">Edit Row</b-dropdown-item>
+          <b-dropdown-item size="sm" @click.stop="returnExamInfo(row.item, row.index)">Return Exam</b-dropdown-item>
+          <b-dropdown-item v-if=row.item.booking size="sm" @click="updateBookingRoute(row.item, row.index)">Update Booking</b-dropdown-item>
+        </b-dropdown>
+      </template>
     </b-table>
+    <EditExamModal v-if="showEditExamModalVisible"></EditExamModal>
+    <ReturnExamModal v-if="showReturnExamModalVisible"></ReturnExamModal>
   </div>
 </template>
 
 <script>
   import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+  import EditExamModal from './edit-exam-form-modal'
+  import ReturnExamModal from './return-exam-form-modal'
+  import moment from 'moment'
+  import SuccessExamAlert from './success-exam-alert'
+  import FailureExamAlert from './failure-exam-alert'
 
   export default {
     name: "ExamInventoryTable",
+    components: { EditExamModal, ReturnExamModal, SuccessExamAlert, FailureExamAlert },
     props: ['mode'],
     data() {
       return {
@@ -55,7 +73,9 @@
           {key: 'notes', label: 'Notes', sortable: false },
           {key: 'invigilator', label: 'Invigilator', sortable: true },
           {key: 'booking.room.room_name', label: 'Location', sortable: true },
+          {key: 'actions', label: 'Actions', sortable: false}
         ],
+        bookingRouteString: '',
       }
     },
     methods: {
@@ -67,6 +87,10 @@
         'toggleExamInventoryModal',
         'toggleScheduling',
         'toggleSchedulingIndicator',
+        'toggleEditExamModalVisible',
+        'setEditExamInfo',
+        'toggleReturnExamModalVisible',
+        'setReturnExamInfo'
       ]),
       getInvigilator(row) {
         if (this.events) {
@@ -89,6 +113,20 @@
           this.toggleSchedulingIndicator(true)
         }
       },
+      editInfo(item) {
+        this.toggleEditExamModalVisible(true)
+        this.setEditExamInfo(item)
+      },
+      returnExamInfo(item, index) {
+        this.toggleReturnExamModalVisible(true)
+        this.setReturnExamInfo(item)
+      },
+      updateBookingRoute(item) {
+        let bookingRoute = '/booking/'
+        let rowDate = moment(item.booking.start_time).format('YYYY-MM-DD')
+        let dateConcat = bookingRoute.concat(rowDate)
+        this.$router.push(dateConcat)
+      }
     },
     mounted() {
       this.getBookings().then(bookings => {
@@ -97,8 +135,16 @@
       this.getExams()
     },
     computed: {
-      ...mapGetters(['role_code', 'exam_inventory', 'calendar_events']),
-      ...mapState(['user', 'exams', 'showExamInventoryModal', 'bookings']),
+      ...mapGetters([ 'role_code',
+                      'exam_inventory',
+                      'calendar_events']),
+      ...mapState([ 'user',
+                    'exams',
+                    'showExamInventoryModal',
+                    'bookings',
+                    'showEditExamModalVisible',
+                    'showReturnExamModalVisible',
+                    'calendarSetup' ]),
       selectedExams() {
         if (this.showExamInventoryModal) {
           return this.exam_inventory
@@ -115,6 +161,14 @@
           return returnFields
         }
       }
+
     }
   }
 </script>
+
+invigilatorNull() {
+  if (fields.booking.invigilator.invigilator_name) {
+    return fields.booking.invigilator.invigilator_name
+  }
+  return null
+}

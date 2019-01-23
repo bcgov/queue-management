@@ -1,7 +1,10 @@
-<template>
+<template v-if="showExams">
   <div>
-    <b-button v-if="showExams" class="btn-primary" @click="clickAddIndividual">Add Individual ITA Exam</b-button>
-    <AddExamFormModal v-if="showExams" />
+    <b-form inline>
+      <b-button class="mr-1" @click="clickAddIndividual">Add Individual Exam</b-button>
+      <b-button class="mx-2" v-if="liaison" @click="clickAddGroup">Add Group Exam</b-button>
+    </b-form>
+    <AddExamFormModal />
   </div>
 </template>
 
@@ -11,22 +14,24 @@
 
   export default {
     name: "ButtonsExams",
-    computed: {
-      ...mapState(['user', 'scheduling', 'selectedExam']),
-      ...mapGetters([
-        'showExams',
-      ]),
-    },
     components: {AddExamFormModal },
-    methods: {
-      ...mapMutations(['toggleAddIndividualITAExam']),
-      clickAddIndividual() {
-        this.toggleAddIndividualITAExam(true)
+    computed: {
+      ...mapState(['user',]),
+      ...mapGetters(['showExams',]),
+      liaison() {
+        if (this.user && this.user.role) {
+          return (this.user.role.role_code === 'LIAISON')
+        }
       }
+    },
+    methods: {
+      ...mapMutations(['toggleAddITAExamModal']),
+      clickAddIndividual() {
+        this.toggleAddITAExamModal({visible: true, setup: 'individual'})
+      },
+      clickAddGroup() {
+        this.toggleAddITAExamModal({visible: true, setup: 'group'})
+      },
     }
   }
 </script>
-
-<style scoped>
-
-</style>

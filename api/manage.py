@@ -91,11 +91,16 @@ class Bootstrap(Command):
             role_code="ANALYTICS",
             role_desc="Analtyics Team to update Services per Office"
         )
+        role6 = theq.Role(
+            role_code="LIAISON",
+            role_desc="Centralized Government Agent Officer responsible for liaising without outside providers (e.g., ITA)"
+        )
         db.session.add(role_csr)
         db.session.add(role_ga)
         db.session.add(role3)
         db.session.add(role4)
         db.session.add(role5)
+        db.session.add(role6)
         db.session.commit()
 
         #-- Period State ----------------------------------------------------
@@ -369,6 +374,51 @@ class Bootstrap(Command):
             deleted=None,
             csr_state_id=csr_state_logout.csr_state_id
         )
+        akroon3r = theq.CSR(
+            username="akroon3r",
+            office_id=office_test.office_id,
+            role_id=role_csr.role_id,
+            qt_xn_csr_ind=0,
+            receptionist_ind=1,
+            deleted=None,
+            csr_state_id=csr_state_logout.csr_state_id
+        )
+        sjrumsby = theq.CSR(
+            username="sjrumsby",
+            office_id=office_test.office_id,
+            role_id=role_csr.role_id,
+            qt_xn_csr_ind=0,
+            receptionist_ind=1,
+            deleted=None,
+            csr_state_id=csr_state_logout.csr_state_id
+        )
+        scottrumsby = theq.CSR(
+            username="scottrumsby",
+            office_id=office_test.office_id,
+            role_id=role_csr.role_id,
+            qt_xn_csr_ind=0,
+            receptionist_ind=1,
+            deleted=None,
+            csr_state_id=csr_state_logout.csr_state_id
+        )
+        ChrisDMac = theq.CSR(
+            username="ChrisDMac",
+            office_id=office_test.office_id,
+            role_id=role_csr.role_id,
+            qt_xn_csr_ind=0,
+            receptionist_ind=1,
+            deleted=None,
+            csr_state_id=csr_state_logout.csr_state_id
+        )
+        gil0109 = theq.CSR(
+            username="gil0109",
+            office_id=office_test.office_id,
+            role_id=role_csr.role_id,
+            qt_xn_csr_ind=0,
+            receptionist_ind=1,
+            deleted=None,
+            csr_state_id=csr_state_logout.csr_state_id
+        )
         demo_ga = theq.CSR(
             username="admin",
             office_id=office_test.office_id,
@@ -391,6 +441,11 @@ class Bootstrap(Command):
         db.session.add(cfms_postman_non_operator)
         db.session.add(demo_ga)
         db.session.add(demo_csr)
+        db.session.add(akroon3r)
+        db.session.add(sjrumsby)
+        db.session.add(scottrumsby)
+        db.session.add(ChrisDMac)
+        db.session.add(gil0109)
         db.session.commit()
 
         #-- The Office / Services values ------------------------------------
@@ -432,7 +487,7 @@ class Bootstrap(Command):
             color = "red"
         )
         room_two = bookings.Room(
-            office_id = office_victoria.office_id,
+            office_id = office_test.office_id,
             room_name = "Turquoise W-135",
             capacity = 25,
             color = "red"
@@ -526,7 +581,7 @@ class Bootstrap(Command):
         )
 
         exam_type_six = bookings.ExamType(
-            exam_type_name="IPSE - 3HR Group Exam",
+            exam_type_name="IPSE - 4HR Group Exam",
             exam_color="#FFD701",
             number_of_hours=4,
             method_type="Written",
@@ -535,7 +590,7 @@ class Bootstrap(Command):
         )
 
         exam_type_seven = bookings.ExamType(
-            exam_type_name="IPSE - 3HR Single Exam",
+            exam_type_name="IPSE - 4HR Single Exam",
             exam_color="#FFD701",
             number_of_hours=4,
             method_type="Written",
@@ -544,7 +599,7 @@ class Bootstrap(Command):
         )
 
         exam_type_eight = bookings.ExamType(
-            exam_type_name="IPSE - 3HR Single Exam - Own Reader",
+            exam_type_name="IPSE - 4HR Single Exam - Own Reader",
             exam_color="#FFD701",
             number_of_hours=4,
             method_type="Written",
@@ -553,7 +608,7 @@ class Bootstrap(Command):
         )
 
         exam_type_nine = bookings.ExamType(
-            exam_type_name="IPSE - 3HR Single Exam - SBC Reader",
+            exam_type_name="IPSE - 4HR Single Exam - SBC Reader",
             exam_color="#FFD701",
             number_of_hours=4,
             method_type="Written",
@@ -562,7 +617,7 @@ class Bootstrap(Command):
         )
 
         exam_type_ten = bookings.ExamType(
-            exam_type_name="IPSE - 3HR Single Exam - Time Extension",
+            exam_type_name="IPSE - 4HR Single Exam - Time Extension",
             exam_color="#FFD701",
             number_of_hours=4,
             method_type="Written",
@@ -642,40 +697,9 @@ class Bootstrap(Command):
         db.session.add(exam_type_sixteen)
         db.session.commit()
 
-        print("--> Bookings: Booking")
-        booking_one = bookings.Booking(
-            room_id = room_one.room_id,
-            start_time = datetime(year=2018, month=11, day=1, hour=9, tzinfo=pytz.timezone('US/Pacific')),
-            end_time = datetime(year=2018, month=11, day=1, hour=12, tzinfo=pytz.timezone('US/Pacific')),
-            fees = "false",
-            booking_name = "Carpentry Exam"
-        )
-
-        booking_two = bookings.Booking(
-            room_id = room_two.room_id,
-            start_time = datetime(year=2018, month=11, day=1, hour=9, tzinfo=pytz.timezone('US/Pacific')),
-            end_time = datetime(year=2018, month=11, day=1, hour=12, tzinfo=pytz.timezone('US/Pacific')),
-            fees = "true",
-            booking_name = "Plubming Exam"
-        )
-
-        booking_three = bookings.Booking(
-            room_id = room_one.room_id,
-            start_time = datetime(year=2018, month=11, day=1, hour=9, tzinfo=pytz.timezone('US/Pacific')),
-            end_time = datetime(year=2018, month=11, day=1, hour=12, tzinfo=pytz.timezone('US/Pacific')),
-            fees = "true",
-            booking_name = "Kitchen Exam"
-        )
-
-        db.session.add(booking_one)
-        db.session.add(booking_two)
-        db.session.add(booking_three)
-        db.session.commit()
-
         print("--> Bookings: Exam")
         exam_one = bookings.Exam(
             exam_type_id = exam_type_one.exam_type_id,
-            booking_id = booking_one.booking_id,
             office_id = office_test.office_id,
             event_id = "1234abcd",
             exam_name = "Carpentry Red Seal",
@@ -686,13 +710,12 @@ class Bootstrap(Command):
             exam_received_date= "2018-12-25 9:00:00.000",
             session_number = 1,
             number_of_students = 1,
-            exam_method = "Written",
+            exam_method = "paper",
             exam_returned_ind=0
         )
 
         exam_two = bookings.Exam(
             exam_type_id = exam_type_two.exam_type_id,
-            booking_id = booking_two.booking_id,
             office_id = office_test.office_id,
             event_id = "e-000001",
             exam_name = "Plumbing Red Seal",
@@ -703,13 +726,12 @@ class Bootstrap(Command):
             exam_received_date="2018-12-24 9:00:00.000",
             session_number = 2,
             number_of_students = 12,
-            exam_method = "Written",
+            exam_method = "online",
             exam_returned_ind = 0
         )
 
         exam_three = bookings.Exam(
             exam_type_id=exam_type_three.exam_type_id,
-            booking_id=booking_three.booking_id,
             office_id=office_test.office_id,
             event_id="e-000002",
             exam_name="Culinary Red Seal",
@@ -720,7 +742,7 @@ class Bootstrap(Command):
             exam_received_date="2018-12-23 9:00:00.000",
             session_number=3,
             number_of_students=10,
-            exam_method="Kitchen",
+            exam_method="paper",
             exam_returned_ind = 0
         )
 
@@ -736,13 +758,12 @@ class Bootstrap(Command):
             exam_received_date="2018-12-25 9:00:00.000",
             session_number=4,
             number_of_students=25,
-            exam_method="Vocal",
+            exam_method="online",
             exam_returned_ind = 0
         )
 
         exam_five = bookings.Exam(
             exam_type_id=exam_type_five.exam_type_id,
-            booking_id=booking_three.booking_id,
             office_id=office_test.office_id,
             event_id="e-000005",
             exam_name="Lyrical Flow Exam",
@@ -753,7 +774,7 @@ class Bootstrap(Command):
             exam_received_date="2018-12-25 9:00:00.000",
             session_number=4,
             number_of_students=25,
-            exam_method="Vocal",
+            exam_method="paper",
             exam_returned_ind = 0
         )
 

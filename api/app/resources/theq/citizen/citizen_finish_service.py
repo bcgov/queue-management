@@ -39,7 +39,11 @@ class CitizenFinishService(Resource):
         if active_service_request is None:
             return {"message": "Citizen has no active service requests"}
 
-        quantity = active_service_request.quantity
+        SnowPlow.snowplow_event(citizen.citizen_id, csr, "finish",
+                                quantity = active_service_request.quantity,
+                                current_sr_number= active_service_request.sr_number)
+
+        active_sr_id = active_service_request.sr_id
         active_service_request.finish_service(csr, self.clear_comments_flag)
         citizen_state = CitizenState.query.filter_by(cs_state_name="Received Services").first()
         citizen.cs_id = citizen_state.cs_id
@@ -53,7 +57,13 @@ class CitizenFinishService(Resource):
         db.session.add(citizen)
         db.session.commit()
 
-        SnowPlow.snowplow_event(citizen.citizen_id, csr, "finish", quantity = quantity)
+        #  Loop to stop all services in the service stopped state (which are all except the active service)
+        if len(citizen.service_reqs) != 1:
+            for sr in citizen.service_reqs:
+                if sr.sr_id != active_sr_id:
+                    SnowPlow.snowplow_event(citizen.citizen_id, csr, "finishstopped",
+                                            quantity = sr.quantity,
+                                            current_sr_number= sr.sr_number)
 
         socketio.emit('citizen_invited', {}, room='sb-%s' % csr.office.office_number)
         result = self.citizen_schema.dump(citizen)

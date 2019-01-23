@@ -1,5 +1,5 @@
 <template>
-  <b-modal v-model="modal"
+  <b-modal v-model="modalVisible"
            :no-close-on-backdrop="true"
            hide-ok
            hide-header
@@ -124,9 +124,13 @@
       ...mapState({
         exam: state => state.capturedExam,
         examTypes: state => state.examTypes,
-        modalVisible: state => state.addIndividualITAExamModalVisibe,
-        steps: state => state.addIndITASteps,
+        addITAExamModal: state => state.addITAExamModal,
+        groupITASteps: state => state.groupITASteps,
+        indITASteps: state => state.indITASteps,
         tab: state => state.captureITAExamTabSetup,
+        user: state => state.user,
+        groupITASteps: state => state.addGroupITASteps,
+        indITASteps: state => state.addIndITASteps,
       }),
       success() {
         if (this.tab) {
@@ -142,12 +146,12 @@
           return []
         }
       },
-      modal: {
+      modalVisible: {
         get() {
-          return this.modalVisible
+          return this.addITAExamModal.visible
         },
         set(e) {
-          this.toggleAddIndividualITAExam(e)
+          this.toggleAddITAExamVisibility(e)
         }
       },
       step() {
@@ -156,8 +160,19 @@
         }
         return 1
       },
+      steps() {
+        let { setup } = this.addITAExamModal
+        if (setup === 'group') {
+          return this.groupITASteps
+        }
+        if (setup === 'individual') {
+          return this.indITASteps
+        }
+      },
       tabs() {
-        return this.steps.slice(0, this.tab.highestStep)
+        if (this.steps && Array.isArray(this.steps)) {
+          return this.steps.slice(0, this.tab.highestStep)
+        }
       },
       validated() {
         if (this.tab && this.tab.stepsValidated) {
@@ -174,8 +189,9 @@
       ...mapMutations([
         'resetCaptureForm',
         'resetCaptureTab',
-        'toggleAddIndividualITAExam',
+        'toggleAddITAExamModal',
         'updateCaptureTab',
+        'toggleAddITAExamVisibility'
       ]),
       tabWarning(i) {
         if (!Array.isArray(this.errors)) return ''
@@ -205,7 +221,7 @@
         this.updateCaptureTab({step})
       },
       clickCancel() {
-        this.toggleAddIndividualITAExam(false)
+        this.toggleAddITAExamModal({visible: false, setup: null})
       },
       clickNext() {
         let step = this.step + 1
@@ -225,7 +241,11 @@
       submit() {
         this.unSubmitted = false
         this.submitMsg = ''
-        this.clickAddExamSubmit('ind_ita')
+        if (this.user.role.role_code === 'LIAISON') {
+          this.clickAddExamSubmit('group_ita')
+        } else {
+          this.clickAddExamSubmit('ind_ita')
+        }
       },
       resetModal() {
         this.resetCaptureForm()

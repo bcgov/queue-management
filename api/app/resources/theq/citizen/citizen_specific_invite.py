@@ -42,7 +42,7 @@ class CitizenSpecificInvite(Resource):
                 return {"message": "Citizen has no active service requests"}, 400
 
             try:
-                active_service_request.invite(csr)
+                active_service_request.invite(csr, invite_type="specific", sr_count = len(citizen.service_reqs))
             except TypeError:
                 return {"message": "Citizen  has already been invited"}, 400
 
