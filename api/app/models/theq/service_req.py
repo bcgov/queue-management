@@ -26,6 +26,7 @@ class ServiceReq(Base):
     channel_id = db.Column(db.Integer, db.ForeignKey('channel.channel_id'), nullable=False)
     service_id = db.Column(db.Integer, db.ForeignKey('service.service_id'), nullable=False)
     sr_state_id = db.Column(db.Integer, db.ForeignKey('srstate.sr_state_id'), nullable=False)
+    sr_number = db.Column(db.Integer, default=1, nullable=False)
 
     channel = db.relationship('Channel')
     periods = db.relationship('Period', backref=db.backref("request_periods", lazy=False), lazy='joined', order_by='Period.period_id')
@@ -41,17 +42,31 @@ class ServiceReq(Base):
 
         return sorted_periods[-1]
 
-    def invite(self, csr, snowplow_event="use_period"):
+    def invite(self, csr, invite_type, sr_count = 1):
         active_period = self.get_active_period()
         if active_period.ps.ps_name in ["Invited", "Being Served", "On hold"]:
             raise TypeError("You cannot invite a citizen that has already been invited")
 
-        #  Calculate what Snowplow event to call.
-        if (snowplow_event == "use_period"):
-            if (active_period.ps.ps_name == "Waiting"):
-                snowplow_event = "invitefromlist"
+        #  If a generic invite type, event is either invitecitizen or returninvite.
+        if invite_type == "generic":
+            #  If only one SR, one period, an invitecitizen call, from First Time in Line state.
+            if sr_count == 1 and len(self.periods) == 2:
+                snowplow_event = "invitecitizen"
+            #  Otherwise from the Back in Line state.
             else:
-                snowplow_event = "invitefromhold"
+                snowplow_event = "returninvite"
+
+        #  A specific invite type.  Event is invitefromlist, returnfromlist or invitefromhold
+        else:
+            #  If only one SR, one period, an invitefromlist call, from First Time in Line state.
+            if sr_count == 1 and len(self.periods) == 2:
+                snowplow_event = "invitefromlist"
+            #  Either from back in line or hold state.
+            else:
+                if active_period.ps.ps_name == "Waiting":
+                    snowplow_event = "returnfromlist"
+                else:
+                    snowplow_event = "invitefromhold"
 
         active_period.time_end = datetime.now()
         # db.session.add(active_period)
@@ -68,7 +83,7 @@ class ServiceReq(Base):
 
         self.periods.append(new_period)
 
-        SnowPlow.snowplow_event(self.citizen_id, csr, snowplow_event)
+        SnowPlow.snowplow_event(self.citizen_id, csr, snowplow_event, current_sr_number=self.sr_number)
 
     def add_to_queue(self, csr, snowplow_event):
 
@@ -87,7 +102,7 @@ class ServiceReq(Base):
         )
         self.periods.append(new_period)
 
-        SnowPlow.snowplow_event(self.citizen_id, csr, snowplow_event)
+        SnowPlow.snowplow_event(self.citizen_id, csr, snowplow_event, current_sr_number=self.sr_number)
 
     def begin_service(self, csr, snowplow_event):
         active_period = self.get_active_period()
@@ -112,7 +127,8 @@ class ServiceReq(Base):
 
         #  Calculate number of active periods, for Snowplow call.
         period_count = len(self.periods)
-        SnowPlow.snowplow_event(self.citizen_id, csr, snowplow_event, period_count = period_count)
+        SnowPlow.snowplow_event(self.citizen_id, csr, snowplow_event, period_count = period_count,
+                                current_sr_number = self.sr_number)
 
     def place_on_hold(self, csr):
         active_period = self.get_active_period()
@@ -131,7 +147,7 @@ class ServiceReq(Base):
 
         self.periods.append(new_period)
 
-        SnowPlow.snowplow_event(self.citizen_id, csr, "hold")
+        SnowPlow.snowplow_event(self.citizen_id, csr, "hold", current_sr_number = self.sr_number)
 
     def finish_service(self, csr, clear_comments=True):
         active_period = self.get_active_period()

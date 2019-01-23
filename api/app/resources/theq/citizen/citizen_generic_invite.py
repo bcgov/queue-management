@@ -80,7 +80,7 @@ class CitizenGenericInvite(Resource):
             active_service_request = citizen.get_active_service_request()
 
             try:
-                active_service_request.invite(csr, "invitecitizen")
+                active_service_request.invite(csr, invite_type="generic", sr_count = len(citizen.service_reqs))
             except TypeError:
                 return {"message": "Error inviting citizen. Please try again."}, 400
 
