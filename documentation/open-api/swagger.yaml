@@ -353,6 +353,9 @@ components:
         exam_returned_tracking_number:
           type: string
           nullable: true
+        offsite_location:
+          type: string
+          nullable: true
         booking:
           allOf:
           - $ref: "#/components/schemas/Booking"
