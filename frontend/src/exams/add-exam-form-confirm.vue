@@ -39,7 +39,7 @@
         <span class="confirm-item">{{ exam.exam_name }}</span>
       </b-col>
     </b-row>
-    <b-row no-gutters align-h="between" align-v="end">
+    <b-row no-gutters align-h="between" align-v="end" v-if="!user.role.role_code == 'LIAISON'">
       <b-col cols="1" />
       <b-col cols="3">
         <span class="confirm-header">Writer's Name</span>
@@ -48,7 +48,16 @@
         <span class="confirm-item">{{ exam.examinee_name }}</span>
       </b-col>
     </b-row>
-    <b-row no-gutters align-h="between" align-v="end">
+    <b-row no-gutters align-h="between" align-v="end" v-else>
+      <b-col cols="1" />
+      <b-col cols="3">
+        <span class="confirm-header">Students</span>
+      </b-col>
+      <b-col align-self="end">
+        <span class="confirm-item">{{ exam.number_of_students }}</span>
+      </b-col>
+    </b-row>
+    <b-row no-gutters align-h="between" align-v="end" v-if="!user.role.role_code == 'LIAISON'">
       <b-col cols="1" />
       <b-col cols="3">
         <span class="confirm-header">Received Date</span>
@@ -60,10 +69,31 @@
     <b-row no-gutters align-h="between" align-v="end">
       <b-col cols="1" />
       <b-col cols="3">
-        <span class="confirm-header">Expiry Date</span>
+        <span class="confirm-header">{{ user.role.role_code == 'LIAISON' ? 'Exam Date' : 'Expiry Date' }}
+        </span>
       </b-col>
       <b-col align-self="end">
         <span class="confirm-item">{{ exam.expiry_date }}</span>
+      </b-col>
+    </b-row>
+    <b-row no-gutters align-h="between" align-v="end" v-if="user.role.role_code == 'LIAISON'">
+      <b-col cols="1" />
+      <b-col cols="3">
+        <span class="confirm-header">Exam Time
+        </span>
+      </b-col>
+      <b-col align-self="end">
+        <span class="confirm-item">{{ exam.exam_time }}</span>
+      </b-col>
+    </b-row>
+    <b-row no-gutters align-h="between" align-v="end" v-if="user.role.role_code == 'LIAISON'">
+      <b-col cols="1" />
+      <b-col cols="3">
+        <span class="confirm-header">Location
+        </span>
+      </b-col>
+      <b-col align-self="end">
+        <span class="confirm-item">{{ exam.offsite_location }}</span>
       </b-col>
     </b-row>
   </b-form>
@@ -80,6 +110,7 @@
         exam: state => state.capturedExam,
         examTypes: state => state.examTypes,
         tab: state => state.captureITAExamTabSetup,
+        user: state => state.user,
       }),
       errors() {
         if (this.tab.errors) {

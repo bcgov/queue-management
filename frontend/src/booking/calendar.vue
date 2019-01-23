@@ -51,7 +51,7 @@
       </div>
     <BookingModal />
     <ExamInventoryModal v-if="showExamInventoryModal" />
-    <OtherBookingModal />
+    <OtherBookingModal :editSelection="editSelection" :getEvent="getEvent" />
     <EditBookingModal />
   </div>
 </template>
@@ -68,6 +68,7 @@
   import SchedulingIndicator from './scheduling-indicator'
   import 'fullcalendar-scheduler'
   import 'fullcalendar/dist/fullcalendar.css'
+  import { adjustColor } from '../store/helpers'
 
   export default {
     name: 'Calendar',
@@ -93,15 +94,25 @@
       this.$root.$on('today', () => { this.today() })
       this.$root.$on('unselect', () => { this.unselect() })
       this.$root.$on('updateEvent', (event, params) => { this.updateEvent(event, params) })
+      this.$root.$on('removeSavedSelection', () => {this.removeSavedSelection() })
     },
     data() {
       return {
+        savedSelection: null,
         tempEvent: null,
         listView: false,
         searchTerm: '',
         setup: {
           defaultView: 'agendaWeek',
           editable: false,
+          selectConstraint: {
+            start: '07:00:00',
+            end: '18:00:00',
+          },
+          eventConstraint: {
+            start: '07:00:00',
+            end: '18:00:00',
+          },
           fixedWeekCount: false,
           header: {
             left: null,
@@ -142,7 +153,7 @@
       }
     },
     computed: {
-      ...mapGetters(['calendar_events', 'room_resources', 'view_port']),
+      ...mapGetters(['calendar_events', 'room_resources',]),
       ...mapState([
         'calendarSetup',
         'editedBooking',
@@ -182,19 +193,20 @@
       this.setCalendarSetup(null)
     },
     methods: {
-      ...mapActions(['getBookings', 'finishBooking', 'initializeAgenda', 'getExamTypes', 'resetRescheduling']),
+      ...mapActions(['getBookings', 'finishBooking', 'initializeAgenda', 'getExamTypes',]),
       ...mapMutations([
         'setCalendarSetup',
         'setClickedDate',
         'setEditedBooking',
         'setEditedBookingOriginal',
         'setSelectedExam',
+        'setSelectionIndicator',
         'toggleBookingModal',
         'toggleEditBookingModal',
         'toggleOtherBookingModal',
         'toggleScheduling',
         'toggleSchedulingIndicator',
-        'toggleSchedulingOther'
+        'toggleSchedulingOther',
       ]),
       agendaDay() {
         this.$refs.bookingcal.fireMethod('changeView', 'agendaDay')
@@ -203,6 +215,9 @@
         this.$refs.bookingcal.fireMethod('changeView', 'agendaWeek')
       },
       cancel() {
+        this.removeSavedSelection()
+        this.setSelectionIndicator(false)
+        this.unselect()
         if (this.editedBooking) {
           this.toggleEditBookingModal(true)
           this.toggleSchedulingIndicator(false)
@@ -212,126 +227,13 @@
         this.finishBooking()
         this.options({name: 'selectable', value: false})
       },
-      filter(event) {
-        if (event) {
-          if (!this.listView) {
-            this.$refs.bookingcal.fireMethod('changeView', 'listYear')
-            this.listView = true
-          }
-        }
-        if (!event) {
-          if (this.listView) {
-            let view = this.calendarSetup.viewName
-            this.$refs.bookingcal.fireMethod('changeView', view)
-            this.listView = false
-          }
-        }
+      getEvent() {
+        return this.$refs.bookingcal.fireMethod('clientEvents', '_cal$election')[0]
       },
-      removeEvent() {
-        let event = this.editedBooking
-        event.backgroundColor = 'white '
+      editSelection(event, adj) {
+        let newEnd = new moment(event.end).add(adj, 'h')
+        event.end = newEnd
         this.$refs.bookingcal.fireMethod('updateEvent', event)
-      },
-      eventSelected(event, jsEvent, view) {
-        if (view.name === 'listYear') {
-          this.goToDate(event.start)
-          this.agendaDay()
-          this.searchTerm = ''
-        }
-        this.setEditedBooking(event)
-        if (Object.keys(event).includes('exam')) {
-          this.setSelectedExam(event.exam)
-        }
-        this.setEditedBookingOriginal(event)
-        this.toggleEditBookingModal(true)
-      },
-      updateEvent(event, params) {
-        Object.keys(params).forEach(key => {
-          event[key] = params[key]
-        })
-        this.$refs.bookingcal.fireMethod('updateEvent', event)
-      },
-      initialize() {
-        this.getExamTypes()
-        this.initializeAgenda().then( rooms => {
-          rooms.forEach( room => {
-            let roomObj = {
-              id: room.room_id,
-              title: room.room_name,
-              eventColor: room.color
-            }
-            this.$refs.bookingcal.fireMethod('addResource', roomObj)
-          })
-          this.getBookings()
-        })
-      },
-      month() {
-        this.$refs.bookingcal.fireMethod('changeView', 'month')
-      },
-      goToDate(date) {
-        this.$refs.bookingcal.fireMethod('gotoDate', date)
-      },
-      next() {
-        this.$refs.bookingcal.fireMethod('next')
-      },
-      options(option) {
-        this.$refs.bookingcal.fireMethod('option', option.name, option.value)
-      },
-      prev() {
-        this.$refs.bookingcal.fireMethod('prev')
-      },
-      selectEvent(event) {
-        //overrides the default behavior (sets event=all day event on the day) to a view change instead
-        if (this.calendarSetup.viewName === 'month') {
-          this.goToDate(event.start.local())
-          this.agendaDay()
-          return
-        }
-        if (this.rescheduling) {
-          let booking = this.editedBookingOriginal
-          if (Object.keys(booking).includes('exam')) {
-            this.unselect()
-            let { number_of_hours } = this.selectedExam.exam_type
-            let endTime = new moment(event.start).add(number_of_hours, 'h')
-            event.end = endTime
-            this.setClickedDate(event)
-            let tempEvent = {
-              start: new moment(event.start),
-              end: new moment(event.end),
-              title: '(NEW TIME) ' + booking.title,
-              borderColor: booking.room.color,
-              backgroundColor: 'white',
-              resourceId: event.resource.id,
-            }
-            if (this.tempEvent) {
-              this.$refs.bookingcal.fireMethod('removeEvents', [ this.tempEvent.id ])
-              let id = this.tempEvent.id.split('-')
-              tempEvent.id = id[0] + toString(( parseInt(id[1]) + 1 ))
-            } else {
-              tempEvent.id = 'temp-1'
-            }
-            this.tempEvent = tempEvent
-            console.log(tempEvent)
-            this.$refs.bookingcal.fireMethod('renderEvent', tempEvent, true)
-            this.toggleEditBookingModal(true)
-            return
-          }
-          this.toggleSchedulingIndicator(false)
-          this.toggleEditBookingModal(true)
-          this.setClickedDate(event)
-          return
-        }
-        this.setClickedDate(event)
-        this.toggleSchedulingIndicator(false)
-        if (this.scheduling) {
-          this.toggleBookingModal(true)
-        }
-        if (this.schedulingOther) {
-          this.toggleOtherBookingModal(true)
-        }
-      },
-      today() {
-        this.$refs.bookingcal.fireMethod('today')
       },
       eventRender(event, el, view) {
         if (event.exam) {
@@ -365,7 +267,176 @@
         }
       },
       events() {
+        if (this.searchTerm) {
+          return this.$store.getters.filtered_calendar_events(this.searchTerm)
+        }
         return this.calendar_events
+      },
+      eventSelected(event, jsEvent, view) {
+        if (this.scheduling || this.schedulingOther) {
+          return
+        }
+        if (view.name === 'listYear') {
+          this.goToDate(event.start)
+          this.agendaDay()
+          this.searchTerm = ''
+        }
+        let newColor = adjustColor(event.room.color, 128)
+        event.backgroundColor = newColor
+        this.$refs.bookingcal.fireMethod('updateEvent', event)
+        this.setEditedBooking(event)
+        if (Object.keys(event).includes('exam')) {
+          this.setSelectedExam(event.exam)
+        }
+        this.setEditedBookingOriginal(event)
+        this.toggleEditBookingModal(true)
+      },
+      filter(event) {
+        if (event) {
+          if (!this.listView) {
+            this.$refs.bookingcal.fireMethod('changeView', 'listYear')
+            this.listView = true
+          }
+        }
+        if (!event) {
+          if (this.listView) {
+            let view = this.calendarSetup.viewName
+            this.$refs.bookingcal.fireMethod('changeView', view)
+            this.listView = false
+          }
+        }
+      },
+      goToDate(date) {
+        this.$refs.bookingcal.fireMethod('gotoDate', date)
+      },
+      initialize() {
+        this.setSelectionIndicator(false)
+        this.getExamTypes()
+        this.initializeAgenda().then( rooms => {
+          rooms.forEach( room => {
+            let roomObj = {
+              id: room.room_id,
+              title: room.room_name,
+              eventColor: room.color
+            }
+            this.$refs.bookingcal.fireMethod('addResource', roomObj)
+          })
+          this.getBookings()
+        })
+      },
+      month() {
+        this.$refs.bookingcal.fireMethod('changeView', 'month')
+      },
+      next() {
+        this.$refs.bookingcal.fireMethod('next')
+      },
+      options(option) {
+        this.$refs.bookingcal.fireMethod('option', option.name, option.value)
+      },
+      prev() {
+        this.$refs.bookingcal.fireMethod('prev')
+      },
+      removeSavedSelection() {
+        if (this.savedSelection) {
+          this.$refs.bookingcal.fireMethod('removeEvents', [this.savedSelection.id])
+        }
+      },
+      renderEvent(event) {
+        this.$refs.bookingcal.fireMethod('renderEvent', event)
+        this.savedSelection = event
+        this.setSelectionIndicator(true)
+      },
+      selectEvent(event) {
+        //called whenever a a block of free time is clicked or a range of free time is selected on the calendar
+        if (this.calendarSetup.viewName === 'month') {
+          //overrides the default behavior (sets event=all day event on the day) to a view change instead
+          this.goToDate(event.start.local())
+          this.agendaDay()
+          return
+        }
+        if (this.rescheduling) {
+          this.unselect()
+          this.removeSavedSelection()
+          let booking = this.editedBookingOriginal
+          if (Object.keys(booking).includes('exam')) {
+            let { number_of_hours } = this.selectedExam.exam_type
+            let endTime = new moment(event.start).add(number_of_hours, 'h')
+            event.end = endTime
+            this.setClickedDate(event)
+            let tempEvent = {
+              start: new moment(event.start),
+              end: new moment(event.end),
+              title: '(NEW TIME) ' + booking.title,
+              borderColor: event.resource.eventColor,
+              backgroundColor: 'white',
+              resourceId: event.resource.id,
+              id: '_cal$election'
+            }
+            this.renderEvent(tempEvent)
+            this.toggleEditBookingModal(true)
+            return
+          }
+          let i = new moment(booking.start)
+          let f = new moment(booking.end)
+          let duration = new moment(f).diff(new moment(i), 'h', true)
+          let ii = new moment(event.start)
+          let ff = new moment(event.end)
+          let clickedDuration = ff.diff(ii, 'h', true)
+          let tempEvent = {
+            start: new moment(event.start),
+            title: '(NEW TIME) ' + booking.title,
+            borderColor: event.resource.eventColor,
+            backgroundColor: 'white',
+            resourceId: event.resource.id,
+            id: '_cal$election'
+          }
+          if (clickedDuration == 0.5) {
+            tempEvent.end = new moment(event.start).add(duration, 'h')
+          } else {
+            tempEvent.end = new moment(event.end)
+          }
+          event.end = tempEvent.end
+          this.renderEvent(tempEvent)
+          this.toggleSchedulingIndicator(false)
+          this.toggleEditBookingModal(true)
+          this.setClickedDate(event)
+          return
+        }
+        let selection = {
+          start: new moment(event.start),
+          resourceId: event.resource.id,
+          id: '_cal$election'
+        }
+        this.toggleSchedulingIndicator(false)
+        if (this.scheduling) {
+          selection.end = new moment(event.start).add(this.selectedExam.exam_type.number_of_hours, 'h')
+          selection.title = this.selectedExam.exam_name
+          this.unselect()
+          this.removeSavedSelection()
+          this.toggleBookingModal(true)
+        }
+        else if (this.schedulingOther) {
+          this.unselect()
+          this.toggleOtherBookingModal(true)
+          selection.title = 'New Event'
+          selection.end = new moment(event.end)
+        }
+        this.renderEvent(selection)
+        event.start = new moment(selection.start)
+        event.end = new moment(selection.end)
+        this.setClickedDate(event)
+      },
+      today() {
+        this.$refs.bookingcal.fireMethod('today')
+      },
+      unselect() {
+        this.$refs.bookingcal.fireMethod('unselect')
+      },
+      updateEvent(event, params) {
+        Object.keys(params).forEach(key => {
+          event[key] = params[key]
+        })
+        this.$refs.bookingcal.fireMethod('updateEvent', event)
       },
       viewRender(view, el) {
         if (view.name !== 'listYear') {
@@ -385,24 +456,8 @@
           this.goToDate(this.$route.params.date)
         }
       },
-      events() {
-        if (this.searchTerm) {
-          return this.$store.getters.filtered_calendar_events(this.searchTerm)
-        }
-        return this.calendar_events
-      },
-      unselect() {
-        this.$refs.bookingcal.fireMethod('unselect')
-      }
     }
   }
 
 
 </script>
-<<<<<<< HEAD
-
-<style>
-
-  </style>
-=======
->>>>>>> f41ce7a... Link Single Exam to Booking Feature

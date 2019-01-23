@@ -60,7 +60,7 @@
       </div>
     </div>
     <!--SLOT FOR EACH VIEW'S MAIN CONTENT-->
-    <div style="position: relative">
+    <div style="position: relative; min-height: 400px;">
       <router-view />
     </div>
   </div>
@@ -84,7 +84,8 @@
       ]),
       isGAorCSR() {
         if (this.user && this.user.role) {
-          if (this.user.role.role_code === 'CSR' || this.user.role.role_code === 'GA') {
+          let { role_code } = this.user.role
+          if (role_code === 'CSR' || role_code === 'GA' || role_code === 'LIAISON' ) {
             return true
           }
         }
