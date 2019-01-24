@@ -19,6 +19,7 @@ import 'es6-promise/auto'
 import Vuex from 'vuex'
 import { Axios, searchNestedObject } from './helpers'
 import moment from 'moment'
+
 var flashInt
 
 Vue.use(Vuex)
@@ -303,8 +304,10 @@ export const store = new Vuex.Store({
       {text: 'online', value: 'online', id: 'exam_method'}
     ],
     exams: [],
+    examsExport: [],
     examTypes: [],
     feedbackMessage: '',
+    showGenFinReportModal: false,
     iframeLogedIn: false,
     invigilators: [],
     isLoggedIn: false,
@@ -773,6 +776,20 @@ export const store = new Vuex.Store({
         Axios(context).get('/exams/')
           .then(resp => {
             context.commit('setExams', resp.data.exams)
+            resolve(resp)
+          })
+          .catch(error => {
+            console.log(error)
+            reject(error)
+          })
+      })
+    },
+
+    getExamsExport(context, url) {
+      return new Promise((resolve, reject) => {
+        Axios(context).get(url)
+          .then(resp => {
+            context.commit('setExamsExport', resp.data.exams)
             resolve(resp)
           })
           .catch(error => {
@@ -2082,6 +2099,11 @@ export const store = new Vuex.Store({
       state.exams = payload
     },
 
+    setExamsExport(state, payload){
+      state.examsExport = []
+      state.examsExport = payload
+    },
+
     setExamTypes(state, payload) {
       state.examTypes = []
       state.examTypes = payload
@@ -2173,6 +2195,10 @@ export const store = new Vuex.Store({
       } else {
         state.addITAExamModal = payload
       }
+    },
+
+    toggleGenFinReport(state, payload) {
+      state.showGenFinReportModal = payload
     },
 
     captureExamDetail(state, payload) {
