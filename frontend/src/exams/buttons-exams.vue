@@ -1,8 +1,8 @@
 <template v-if="showExams">
   <div>
     <b-form inline>
-      <b-button class="mr-1" @click="clickAddIndividual">Add Individual Exam</b-button>
-      <b-button class="mx-2" v-if="liaison" @click="clickAddGroup">Add Group Exam</b-button>
+      <b-button class="mr-1 btn-primary" @click="clickAddIndividual">Add Individual Exam</b-button>
+      <b-button class="mx-2 btn-primary" v-if="liaison" @click="clickAddGroup">Add Group Exam</b-button>
     </b-form>
     <AddExamFormModal />
   </div>
