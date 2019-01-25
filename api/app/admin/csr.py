@@ -22,7 +22,7 @@ from flask_admin.helpers import get_redirect_target
 from flask_admin.model.helpers import get_mdict_item_or_list
 from flask_login import current_user
 from sqlalchemy import or_
-from qsystem import db, cache
+from qsystem import db, cache, socketio
 
 
 class CSRConfig(Base):
@@ -116,8 +116,10 @@ class CSRConfig(Base):
 
         if self.validate_form(form) and self.update_model(form, model):
 
-            #  Clear cache for the user just editted
-            CSR.update_user_cache(csr_id)
+            #  Clear cache for the user just edited
+            # CSR.update_user_cache(csr_id)
+            print("==> Emitting clear_csr_cache from admin\csr.py")
+            socketio.emit('clear_csr_cache', { "id": csr_id})
 
             flash(gettext('''Record was successfully saved.'''), 'success')
             if '_add_another' in request.form:

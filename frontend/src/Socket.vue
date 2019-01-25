@@ -64,7 +64,8 @@ limitations under the License.*/
         socket.on('get_Csr_State_IDs',()=>{this.getCsrStateIDs()})
         socket.on('update_customer_list',()=>{this.onUpdateCustomerList()})
         socket.on('update_active_citizen', (citizen) => { this.onUpdateActiveCitizen(citizen) } )
-        socket.on('csr_update', ()=>{this.onCSRUpdate()})
+        socket.on('csr_update', (data)=>{this.onCSRUpdate(data)})
+        socket.on('clear_csr_cache', (data)=>{this.onClearCsrCache(data)})
       },
 
       join() {
@@ -72,8 +73,10 @@ limitations under the License.*/
         )
       },
 
-      onCSRUpdate(){
-          console.log('socket received: "updateCSRList"')
+      onCSRUpdate(data){
+          console.log('==> socket received: "updateCSRList"')
+          console.log("    --> csr_id:           " + data.csr_id.toString())
+          console.log("    --> receptionist_ind: " + data.receptionist_ind.toString())
           this.$store.dispatch('getCsrs')
       },
 
@@ -112,6 +115,13 @@ limitations under the License.*/
       onUpdateCustomerList() {
           console.log('socket received: "updateCustomerList"')
           this.$store.dispatch('getAllCitizens')
+      },
+
+      onClearCsrCache(data) {
+        console.log('==> received clear_csr_cache in socket.vue')
+        console.log('    --> emitting clear_csr_user_id from socket.vue')
+        console.log(data.id)
+        socket.emit('clear_csr_user_id', data.id)
       },
 
       getCsrStateIDs() {

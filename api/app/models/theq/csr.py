@@ -67,6 +67,7 @@ class CSR(Base):
 
     @classmethod
     def update_user_cache(cls, userid):
+        print("==> Updating the user cache")
         csr = CSR.query.filter_by(csr_id=userid).first()
         key = CSR.format_string % csr.username
         cache.set(key, csr)

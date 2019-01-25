@@ -17,6 +17,7 @@ from flask_socketio import emit, join_room
 from jose import jwt
 from app.models.theq import CSR
 from qsystem import oidc, socketio
+import json
 
 
 @socketio.on('myEvent')
@@ -52,7 +53,6 @@ def on_join(message):
         print("No preferred_username on request")
         emit('joinRoomFail', {"success": False})
 
-
 @socketio.on('joinSmartboardRoom')
 def on_join_smartboard(message):
     try:
@@ -70,3 +70,25 @@ def on_join_smartboard(message):
     except ValueError as e:
         print(e)
         emit('joinSmartboardRoomFail', {"sucess": False, "message": "office_id must be an integer"})
+
+# @socketio.on('clear_csr_user_id')
+# def clear_csr_user_id(*args):
+#     print("==> receiving clear_csr_user_id in websocket.py")
+#     for arg in args:
+#         print(arg)
+#     # print(csr_id)
+
+@socketio.on('clear_csr_user_id')
+def clear_csr_user_id(csr_id):
+    print("==> receiving clear_csr_user_id in websocket.py")
+    print(csr_id)
+    # print(arg1["data"])
+    CSR.update_user_cache(csr_id)
+
+    # arg_json = json.loads(arg1)
+    # for x in arg_json:
+    #     print("%s: %d" % x, arg_json[x])
+    # print(csr_id)
+
+
+# – emit(‘joinRoom’, {count:0}, ()=> { console.log(‘socket emit: “joinRoom”’)})
