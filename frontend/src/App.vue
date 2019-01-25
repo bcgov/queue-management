@@ -15,13 +15,13 @@ limitations under the License.*/
 <template>
   <div id="App">
     <Header />
+    <Socket v-show="1===2" />
     <div v-if="user.username && isLoggedIn" :style="style">
       <Alert />
       <ExamAlert />
       <SuccessExamAlert />
       <FailureExamAlert />
       <Nav v-if="isLoggedIn" />
-      <Socket v-show="1===2" />
       <Feedback />
       <Response />
     </div>

@@ -94,7 +94,7 @@
                  align-content="center">
             <b-col>
               <p class="message-text">Something Went Wrong</p>
-              <p><b-button>Try Again</b-button></p>
+              <p><b-button @click="()=>{updateCaptureTab({step:4})}">Try Again</b-button></p>
             </b-col>
           </b-row>
         </b-container>
@@ -241,9 +241,10 @@
       submit() {
         this.unSubmitted = false
         this.submitMsg = ''
-        if (this.user.role.role_code === 'LIAISON') {
+        if (this.addITAExamModal.setup === 'group') {
           this.clickAddExamSubmit('group_ita')
-        } else {
+        }
+        if (this.addITAExamModal.setup === 'individual') {
           this.clickAddExamSubmit('ind_ita')
         }
       },
