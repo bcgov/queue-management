@@ -1601,6 +1601,7 @@ export const store = new Vuex.Store({
           additionalKeys = {
             exam_received: 1,
             exam_returned_ind: 0,
+            number_of_students: 1,
             office_id: context.state.user.office_id
           }
           break
@@ -1609,7 +1610,7 @@ export const store = new Vuex.Store({
           additionalKeys = {
             exam_received: 0,
             exam_returned_ind: 0,
-            exam_name: 'group exam'
+            examimee_name: 'group exam'
           }
           break
         default:
@@ -1620,6 +1621,9 @@ export const store = new Vuex.Store({
       keys.forEach(key => {
         examObj[key] = capturedExam[key]
       })
+      if (!keys.includes('notes')) {
+        examObj['notes'] = ' '
+      }
       if (payload === 'group_ita') {
         let datestring = examObj.expiry_date + ' ' + examObj.exam_time
         examObj.expiry_date = new moment(datestring).local().utc().format('YYYY-MM-DD[T]HH:mm:ssZ')

@@ -122,7 +122,7 @@ export const SelectOffice = Vue.component('select-question', {
                         @input="filter"
                         class="mb-1"
                         placeholder="Start typing to search"/>
-            <div style="background-color: whitesmoke; border: 1px solid lightgrey">
+            <div style="border: 1px solid lightgrey">
             <b-table :items="items"
                      :fields="fields"
                      :filter="search"
@@ -131,12 +131,10 @@ export const SelectOffice = Vue.component('select-question', {
                      :per-page="3"
                      class="pb-0"
                      :id="q.key"
-                     thead-tr-class="thead-tr-class"
-                     :bordered="false"
-                     :outlined="false"
-                     :striped="false"
+                     head-variant="light"
+                     hover
                      :fixed="true"
-                     id="table2"
+                     id="office_select_table"
                      @row-clicked="rowClicked">
               <template slot="office_name" slot-scope="data">
                 <div>
@@ -288,6 +286,8 @@ export const TimeQuestion = Vue.component('date-question', {
         enableTime: true,
         noCalendar: true,
         static: true,
+        dateFormat: 'h:i K',
+        time_24hr: false,
         minTime: '8:00',
         maxTime: '17:00',
         minuteIncrement: 15,
