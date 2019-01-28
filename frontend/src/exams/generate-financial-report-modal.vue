@@ -44,11 +44,14 @@
             'toggleGenFinReport'
           ]),
           submit() {
+
             console.log("Pressed Submit")
             let form_start_date = this.startDate
             let form_end_date = this.endDate
             let url= '/exams/export/?start_date=' + form_start_date + '&end_date=' + form_end_date
             this.getExamsExport(url)
+                .then(resp => { const FileDownload = require('js-file-download')
+                                                    FileDownload(resp.data, 'export.csv')})
           },
         },
         computed: {

@@ -304,7 +304,6 @@ export const store = new Vuex.Store({
       {text: 'online', value: 'online', id: 'exam_method'}
     ],
     exams: [],
-    examsExport: [],
     examTypes: [],
     feedbackMessage: '',
     showGenFinReportModal: false,
@@ -789,7 +788,6 @@ export const store = new Vuex.Store({
       return new Promise((resolve, reject) => {
         Axios(context).get(url)
           .then(resp => {
-            context.commit('setExamsExport', resp.data.exams)
             resolve(resp)
           })
           .catch(error => {
@@ -2097,11 +2095,6 @@ export const store = new Vuex.Store({
     setExams(state, payload) {
       state.exams = []
       state.exams = payload
-    },
-
-    setExamsExport(state, payload){
-      state.examsExport = []
-      state.examsExport = payload
     },
 
     setExamTypes(state, payload) {
