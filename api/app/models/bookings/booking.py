@@ -20,8 +20,9 @@ from sqlalchemy_utc import UtcDateTime
 class Booking(Base):
 
     booking_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    room_id = db.Column(db.Integer, db.ForeignKey("room.room_id"), nullable=False)
+    room_id = db.Column(db.Integer, db.ForeignKey("room.room_id"), nullable=True)
     invigilator_id = db.Column(db.Integer, db.ForeignKey("invigilator.invigilator_id"), nullable=True)
+    office_id = db.Column(db.Integer, db.ForeignKey("office.office_id"), nullable=False)
     start_time = db.Column(UtcDateTime, nullable=False)
     end_time = db.Column(UtcDateTime, nullable=False)
     fees = db.Column(db.String(5), nullable=True)
@@ -29,6 +30,7 @@ class Booking(Base):
 
     room = db.relationship("Room")
     invigilator = db.relationship("Invigilator")
+    office = db.relationship("Office")
 
     def __repr__(self):
         return '<Booking Name: (name={self.booking_name!r})>'.format(self=self)
