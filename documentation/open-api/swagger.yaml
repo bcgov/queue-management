@@ -257,7 +257,11 @@ components:
           example: 1
         room_id:
           type: integer
-          nullable: false
+          nullable: true
+          example: 1
+        office_id:
+          type: integer
+          nullable: true
           example: 1
         start_time:
           type: string
