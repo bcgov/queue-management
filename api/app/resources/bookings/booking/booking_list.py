@@ -13,10 +13,10 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import logging
-from flask import g
+from flask import g, request
 from flask_restplus import Resource
 from sqlalchemy import exc
-from app.models.bookings import Booking, Room
+from app.models.bookings import Booking
 from app.models.theq import CSR
 from app.schemas.bookings import BookingSchema
 from qsystem import api, oidc
@@ -31,9 +31,13 @@ class BookingList(Resource):
     def get(self):
 
         csr = CSR.find_by_username(g.oidc_token_info['username'])
+        office_filter = csr.office_id
+
+        if request.args.get('office_id') and csr.role_code == "LIAISON":
+            office_filter = request.args.get('office_id')
 
         try:
-            bookings = Booking.query.join(Room).filter_by(office_id=csr.office_id).all()
+            bookings = Booking.query.filter_by(office_id=office_filter).all()
             result = self.booking_schema.dump(bookings)
             return {'bookings': result.data,
                     'errors': result.errors}, 200
