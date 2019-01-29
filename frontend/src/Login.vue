@@ -82,6 +82,7 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
           this.setQuickTransactionState(value === 'quick')
           this.setReceptionistState(value === 'receptionist')
           this.updateCSRCounterTypeState()
+        //  zzz to do
         }
       },
       break_toggle: {

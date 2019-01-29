@@ -48,7 +48,11 @@ class Services(Resource):
         db.session.commit()
 
         result = self.csr_schema.dump(edit_csr)
-        socketio.emit('csr_update', {}, room=auth_csr.office_id)
+        print("==> emitting csr_update from Python")
+        socketio.emit('csr_update', \
+                      { "csr_id": edit_csr.csr_id, \
+                        "receptionist_ind" : edit_csr.receptionist_ind }, \
+                      room=auth_csr.office_id)
 
         # Purge cache of old CSR record so the new one can be fetched by the next request for it.
         CSR.delete_user_cache(g.oidc_token_info['username'])

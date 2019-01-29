@@ -40,7 +40,7 @@ log_error_flag = application.config['LOG_ERRORS']
 if log_error_flag:
     socketio = SocketIO(logger=True, engineio_logger=True)
 else:
-    socketio = SocketIO(engineio_logger=True)
+    socketio = SocketIO(logger=False, engineio_logger=False)
 
 if application.config['ACTIVE_MQ_URL'] is not None:
     socketio.init_app(application, async_mode='eventlet', message_queue=application.config['ACTIVE_MQ_URL'], path='/api/v1/socket.io')
