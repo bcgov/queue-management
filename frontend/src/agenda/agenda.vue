@@ -43,13 +43,14 @@
           defaultView: 'listWeek',
           resources: [],
           listDayFormat: 'dddd, MMM Do',
-          listDayAltFormat: '[Invigilator]',
           views: {
             listDay: {
               allDaySlot: false,
+              listDayAltFormat: '[Invigilator]',
             },
             listWeek: {
               allDaySlot: false,
+              listDayAltFormat: null,
             },
           },
           height: 'auto',
@@ -65,7 +66,7 @@
     },
     computed: {
       ...mapGetters(['calendar_events', 'room_resources']),
-      ...mapState(['exams', 'viewPortSizes', 'calendarSetup']),
+      ...mapState(['exams', 'calendarSetup']),
       events() {
         if (this.calendar_events.length > 0) {
           return this.calendar_events
@@ -92,25 +93,6 @@
           this.getBookings()
         })
       },
-     /* eventRender(event, element, view) {
-        if (view.name === 'listWeek' || view.name === 'listDay') {
-          let resTitle = event.room.room_name
-          element.find('.fc-list-item-marker').replaceWith(`
-            <td>
-              <b-badge class="mr-2" style="background-color: ${event.room.color}">
-                <span style="color: ${event.room.color}">O</span>
-              </b-badge> ${resTitle} - ${event.title}</td>`)
-          element.find('.fc-list-item-title').replaceWith(
-            `<td style="text-align: right">Invigilator: kk</td>`
-          )
-        }
-        element.find('tr.fc-list-heading').replaceWith(null)
-      },*/
-      /*viewRender(view, el) {
-        this.setCalendarSetup({ title: view.title, view: view.name })
-        if (view.name === 'basicDay') {
-          this.$refs.agendacal.fireMethod('changeView', 'listDay')
-        }*/
       viewRender(view, el) {
         this.setCalendarSetup({ title: view.title, view: view.name })
       },

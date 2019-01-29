@@ -8,6 +8,7 @@
            lazy
            @cancel="cancel"
            @ok="postEvent"
+           @show="show"
            hide-header
            size="md">
     <div v-if="showModal">
@@ -102,6 +103,9 @@
         this.toggleBookingModal(false)
         this.toggleSchedulingIndicator(true)
         this.setClickedDate(null)
+      },
+      show() {
+        this.selectedInvigilator = null
       },
       postEvent(e) {
         e.preventDefault()

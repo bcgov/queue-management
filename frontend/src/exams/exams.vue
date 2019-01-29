@@ -1,5 +1,5 @@
 <template>
-  <div v-if="user.username">
+  <div v-if="user.username" style="min-height: 350px">
     <div v-if="showExams">
       <span class="title margin-left mt-3">Exam Inventory</span><br>
       <span class="subheader margin-left">Click an exam in the table to review its details and fulfill the exam process</span>

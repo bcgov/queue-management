@@ -226,8 +226,9 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
           } else {
             console.log('Token not refreshed, valid for ' + Math.round(this.$keycloak.tokenParsed.exp + this.$keycloak.timeSkew - new Date().getTime() / 1000) + ' seconds')
           }
-        }).error( () => {
-          output('Failed to refresh token')
+        }).error( (error) => {
+          console.log('Failed to refresh token')
+          console.log(error)
         })
       },
     },

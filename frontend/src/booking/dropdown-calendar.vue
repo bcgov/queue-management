@@ -28,6 +28,8 @@
               return 'Weekly Planner'
             case 'month':
               return 'Monthly Planner'
+            case 'listYear':
+              return 'Search Results'
             default:
               return 'Weekly Planner'
           }

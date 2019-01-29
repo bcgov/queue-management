@@ -20,6 +20,12 @@
                       :validationObj="validationObj"
                       :handleInput="handleInput"
                       :exam="exam" />
+      <SelectOffice v-if="q.kind==='office'"
+                      :error="error"
+                      :q="q"
+                      :validationObj="validationObj"
+                      :handleInput="handleInput"
+                      :exam="exam" />
       <ExamReceivedQuestion v-if="q.kind==='exam_received'"
                             :error="error"
                             :q="q"
@@ -27,6 +33,12 @@
                             :handleInput="handleInput"
                             :exam="exam" />
       <DateQuestion v-if="q.kind==='date'"
+                    :error="error"
+                    :q="q"
+                    :validationObj="validationObj"
+                    :handleInput="handleInput"
+                    :exam="exam" />
+      <TimeQuestion v-if="q.kind==='time'"
                     :error="error"
                     :q="q"
                     :validationObj="validationObj"
@@ -47,11 +59,13 @@
   import {
     checkmark,
     DateQuestion,
+    TimeQuestion,
     DropdownQuestion,
     ExamReceivedQuestion,
     InputQuestion,
     NotesQuestion,
-    SelectQuestion
+    SelectQuestion,
+    SelectOffice
   } from './add-exam-form-components.js'
   import moment from 'moment'
 
@@ -63,11 +77,14 @@
       DropdownQuestion,
       ExamReceivedQuestion,
       InputQuestion,
+      TimeQuestion,
       NotesQuestion,
-      SelectQuestion
+      SelectQuestion,
+      SelectOffice
     },
     mounted() {
       this.getExamTypes()
+      this.getOffices()
     //assigning an empty value to notes so it gets picked up by submitter function later if not filled in by user
       this.captureExamDetail({key:'notes', value: ''})
       let d = new Date()
@@ -87,9 +104,12 @@
       ...mapGetters(['exam_object']),
       ...mapState({
         exam: state => state.capturedExam,
-        steps: state => state.addIndITASteps,
+        addITAExamModal: state => state.addITAExamModal,
+        addGroupITASteps: state => state.addGroupITASteps,
+        addIndITASteps: state => state.addIndITASteps,
         tab: state => state.captureITAExamTabSetup,
-        examTypes: state => state.examTypes
+        examTypes: state => state.examTypes,
+        user: state => state.user,
       }),
       error() {
         if (this.errors.includes(this.step)) {
@@ -122,6 +142,13 @@
           return this.tab.step
         }
         return 1
+      },
+      steps() {
+        if (this.addITAExamModal.setup === "group") {
+          return this.addGroupITASteps
+        } else {
+          return this.addIndITASteps
+        }
       },
       stepErrors() {
         let keys = Object.keys(this.validationObj)
@@ -214,7 +241,7 @@
         'captureExamDetail',
         'updateCaptureTab'
       ]),
-      ...mapActions(['getExamTypes']),
+      ...mapActions(['getExamTypes', 'getOffices']),
       handleInput(e) {
         let payload = {
           key: e.target.name,
