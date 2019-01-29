@@ -60,6 +60,10 @@ class CsrSelf(Resource):
     def get(self):
         try:
             csr = CSR.find_by_username(g.oidc_token_info['username'])
+
+            if not csr:
+                return {'Message': 'User Not Found'}, 404
+
             db.session.add(csr)
             active_sr_state = SRState.get_state_by_name("Active")
             today = datetime.now()

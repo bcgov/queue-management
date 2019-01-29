@@ -123,6 +123,7 @@ import app.resources.theq.csr_detail
 import app.resources.theq.feedback
 import app.resources.theq.health
 import app.resources.theq.login
+import app.resources.theq.offices
 import app.resources.theq.services
 import app.resources.theq.service_requests_list
 import app.resources.theq.service_requests_detail

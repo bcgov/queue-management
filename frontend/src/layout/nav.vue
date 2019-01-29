@@ -26,6 +26,7 @@
       <div v-if="navigationVisible">
         <b-dropdown variant="outline-primary"
                     class="pl-0 ml-0 mr-3"
+                    boundary="viewport"
                     id="nav-dropdown">
           <template slot="button-content">
             <font-awesome-icon icon="bars"
@@ -59,7 +60,7 @@
       </div>
     </div>
     <!--SLOT FOR EACH VIEW'S MAIN CONTENT-->
-    <div style="position: relative">
+    <div style="position: relative; min-height: 400px;">
       <router-view />
     </div>
   </div>
@@ -80,11 +81,11 @@
         'showGAScreenModal',
         'user',
         'calendarSetup',
-        'viewPortSizes'
       ]),
       isGAorCSR() {
         if (this.user && this.user.role) {
-          if (this.user.role.role_code === 'CSR' || this.user.role.role_code === 'GA') {
+          let { role_code } = this.user.role
+          if (role_code === 'CSR' || role_code === 'GA' || role_code === 'LIAISON' ) {
             return true
           }
         }

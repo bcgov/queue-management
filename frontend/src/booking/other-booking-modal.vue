@@ -9,87 +9,94 @@
            @ok="postEvent"
            hide-header
            size="md">
-    <div v-if="showModal">
-      <b-form>
-        <b-form-group>
-          <label>Event Title<span style="color: red">{{ message }}</span></label><br>
-          <b-input :state="state" type="text" v-model="title" />
-        </b-form-group>
-        <b-row>
-          <b-col cols="5">
+    <div v-if="showModal" style="margin: 10px">
+      <div v-if="minimized || !confirm" style="display: flex; justify-content: space-between">
+        <div><h5>Edit Booking</h5></div>
+        <div><button class="btn btn-link"
+                  @click="minimized = !minimized">{{ minimized ? "Maximize" : "Minimize" }}</button></div>
+      </div>
+        <template v-if="!minimized">
+          <b-form>
             <b-form-group>
-              <label>Collect Fees</label><br>
-              <b-select v-model="fees" :options="feesOptions" />
+              <label>Event Title<span style="color: red">{{ message }}</span></label><br>
+              <b-input :state="state" type="text" v-model="title" />
             </b-form-group>
-          </b-col>
-          <b-col cols="7">
-            <b-form-group>
-              <label>Room</label>
-              <b-input readonly :value="resource.title" />
-            </b-form-group>
-          </b-col>
-        </b-row>
-        <b-form-row v-if="fees">
-          <b-col cols="4">
-            <b-form-group>
-              <label>Fee Option</label>
-              <b-select :options="roomRates" v-model="rate" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="8">
-            <b-form-group>
-              <label>Invoice To</label>
-              <b-select :options="invoiceOptions" v-model="invoice"/>
-            </b-form-group>
-          </b-col>
-        </b-form-row>
-        <b-form-row v-if="invoice==='custom'">
-          <b-col cols="12">
-            <b-form-group>
-              <label>Enter Name of Entity to Invoice</label><br>
-              <b-input />
-            </b-form-group>
-          </b-col>
-        </b-form-row>
-        <b-form-row>
-          <b-col cols="4">
-            <b-form-group>
-              <label>Start Time</label><br>
-              <b-input type="text"
-                       readonly
-                       :value="startTime.format('hh:mm a')" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="4">
-            <b-form-group>
-              <label>End Time</label><br>
-              <b-input type="text"
-                       readonly
-                       :value="endTime.format('hh:mm a')" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="4">
-            <b-form-group>
-              <label>Duration</label><br>
-              <b-button-group>
-                <b-button @click="decrementDuration" >
-                  <font-awesome-icon icon="minus"
-                                     class="m-0 p-0"
-                                     style="font-size: .8rem; color: white"/>
-                </b-button>
-                <b-input :value="displayDuration"
-                         readonly
-                         style="border-radius: 0px" />
-                <b-button @click="incrementDuration" >
-                  <font-awesome-icon icon="plus"
-                                     class="m-0 p-0"
-                                     style="font-size: .8rem; color: white"/>
-                </b-button>
-              </b-button-group>
-            </b-form-group>
-          </b-col>
-        </b-form-row>
-      </b-form>
+            <b-row>
+              <b-col cols="5">
+                <b-form-group>
+                  <label>Collect Fees</label><br>
+                  <b-select v-model="fees" :options="feesOptions" />
+                </b-form-group>
+              </b-col>
+              <b-col cols="7">
+                <b-form-group>
+                  <label>Room</label>
+                  <b-input readonly :value="resource.title" />
+                </b-form-group>
+              </b-col>
+            </b-row>
+            <b-form-row v-if="fees">
+              <b-col cols="4">
+                <b-form-group>
+                  <label>Fee Option</label>
+                  <b-select :options="roomRates" v-model="rate" />
+                </b-form-group>
+              </b-col>
+              <b-col cols="8">
+                <b-form-group>
+                  <label>Invoice To</label>
+                  <b-select :options="invoiceOptions" v-model="invoice"/>
+                </b-form-group>
+              </b-col>
+            </b-form-row>
+            <b-form-row v-if="invoice==='custom'">
+              <b-col cols="12">
+                <b-form-group>
+                  <label>Enter Name of Entity to Invoice</label><br>
+                  <b-input />
+                </b-form-group>
+              </b-col>
+            </b-form-row>
+            <b-form-row>
+              <b-col cols="4">
+                <b-form-group>
+                  <label>Start Time</label><br>
+                  <b-input type="text"
+                           readonly
+                           :value="startTime.format('hh:mm a')" />
+                </b-form-group>
+              </b-col>
+              <b-col cols="4">
+                <b-form-group>
+                  <label>End Time</label><br>
+                  <b-input type="text"
+                           readonly
+                           :value="endTime.format('hh:mm a')" />
+                </b-form-group>
+              </b-col>
+              <b-col cols="4">
+                <b-form-group>
+                  <label>Duration</label><br>
+                  <b-button-group>
+                    <b-button @click="decrementDuration" >
+                      <font-awesome-icon icon="minus"
+                                         class="m-0 p-0"
+                                         style="font-size: .8rem; color: white"/>
+                    </b-button>
+                    <b-input :value="displayDuration"
+                             readonly
+                             style="border-radius: 0px" />
+                    <b-button @click="incrementDuration" >
+                      <font-awesome-icon icon="plus"
+                                         class="m-0 p-0"
+                                         style="font-size: .8rem; color: white"/>
+                    </b-button>
+                  </b-button-group>
+                </b-form-group>
+              </b-col>
+            </b-form-row>
+          </b-form>
+        </template>
     </div>
   </b-modal>
 </template>
@@ -104,8 +111,11 @@
   export default {
     name: "OtherBookingModal",
     components: { FullCalendar },
+    props: ['editSelection', 'getEvent'],
     data() {
       return {
+        confirm: false,
+        minimized: false,
         title: '',
         state: null,
         message: '',
@@ -133,6 +143,7 @@
           exam: state => state.selectedExam,
           event: state => state.clickedDate,
           showModal: state => state.showOtherBookingModal,
+          selectionIndicator: state => state.selectionIndicator,
         }
       ),
       ...mapGetters(['room_resources']),
@@ -192,6 +203,7 @@
         this.toggleSchedulingIndicator(true)
         this.toggleOtherBookingModal(false)
         this.$root.$emit('unselect')
+        this.$root.$emit('removeSavedSelection')
         this.message = ''
       },
       show() {
@@ -202,10 +214,24 @@
         this.state = null
       },
       incrementDuration() {
+        if (this.endTime.format('H') == 18 || this.duration == .5) {
+          return
+        }
         this.added += .5
+        if (this.selectionIndicator) {
+          let event = this.getEvent()
+          this.editSelection(event, 0.5)
+        }
       },
       decrementDuration() {
+        if (this.duration == .5) {
+          return
+        }
         this.added -= .5
+        if (this.selectionIndicator) {
+          let event = this.getEvent()
+          this.editSelection(event, -0.5)
+        }
       },
       postEvent(e) {
         e.preventDefault()
@@ -232,4 +258,16 @@
       }
     }
   }
-</script>
+</script>]
+
+event = {
+title: 'a title',
+end: moment('2019-01-21T19:54:33.03-08:00').format('YYY-MM').utc()
+start: moment('2019-01-20T19:54:33.03-08:00').format('YYY-MM').utc()
+id: '24324'
+resource: 'the conservatory'
+weapon: 'with the candlestick'
+person: 'Mrs. White'
+}
+
+delete event.end
