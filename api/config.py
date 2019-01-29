@@ -63,9 +63,11 @@ class BaseConfig(object):
 
     THEQ_FEEDBACK = (os.getenv("THEQ_FEEDBACK", "")).upper().replace(" ","").split(",")
     SLACK_URL = os.getenv('SLACK_URL', '')
+    ROCKET_CHAT_URL = os.getenv('ROCKET_CHAT_URL')
     SERVICENOW_INSTANCE = os.getenv('SERVICENOW_INSTANCE', '')
     SERVICENOW_USER = os.getenv('SERVICENOW_USER', '')
     SERVICENOW_PASSWORD = os.getenv('SERVICENOW_PASSWORD', '')
+
 
 class LocalConfig(BaseConfig):
     DEBUG = True

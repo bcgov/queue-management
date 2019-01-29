@@ -17,7 +17,6 @@
         </div>
       </div>
 
-
       <div class="p-0" style="display:inline-block; color: white;">
         <div v-if="!this.$store.state.isLoggedIn"
              class="footer-anchor-item"
@@ -25,7 +24,7 @@
           <a href="#" @click="keycloakLogin()" id="keycloak-login">Keycloak Login</a>
         </div>
         <div class="footer-anchor-item-last" style="display:inline-block; color: white; margin-right:15px;">
-          v1.0.14
+          v1.0.15
         </div>
       </div>
     </div>
@@ -35,7 +34,6 @@
 <script>
   import { mapMutations, mapState } from 'vuex'
   import SchedulingIndicator from '../booking/scheduling-indicator'
-
   export default {
     name: 'Footer',
     components: { SchedulingIndicator },
