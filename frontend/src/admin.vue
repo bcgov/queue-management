@@ -39,9 +39,14 @@
       this.loginIframe()
     },
     computed: {
-      ...mapState(['viewPortSizes', 'iframeLogedIn', 'adminNavigation']),
+      ...mapState(['iframeLogedIn', 'adminNavigation']),
+      viewPort() {
+        let h = window.innerHeight - 100
+        let w = window.innerWidth
+        return { h, w }
+      },
       frameHeight() {
-        return this.viewPortSizes.h - 80
+        return this.viewPort.h - 80
       },
       frameStyle() {
         return {
