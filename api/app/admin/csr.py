@@ -117,8 +117,6 @@ class CSRConfig(Base):
         if self.validate_form(form) and self.update_model(form, model):
 
             #  Clear cache for the user just edited
-            # CSR.update_user_cache(csr_id)
-            print("==> Emitting clear_csr_cache from admin\csr.py")
             socketio.emit('clear_csr_cache', { "id": csr_id})
 
             flash(gettext('''Record was successfully saved.'''), 'success')

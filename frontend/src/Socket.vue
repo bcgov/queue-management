@@ -118,9 +118,7 @@ limitations under the License.*/
       },
 
       onClearCsrCache(data) {
-        console.log('==> received clear_csr_cache in socket.vue')
-        console.log('    --> emitting clear_csr_user_id from socket.vue')
-        console.log(data.id)
+        console.log('socket received: "clear_csr_cache"')
         socket.emit('clear_csr_user_id', data.id)
       },
 
