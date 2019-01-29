@@ -29,6 +29,7 @@ class Feedback(Resource):
     feedback_destinations = application.config['THEQ_FEEDBACK']
     flag_slack = "SLACK" in feedback_destinations
     flag_service_now = "SERVICENOW" in feedback_destinations
+    flag_rocket_chat = "ROCKETCHAT" in feedback_destinations
 
     @oidc.accept_token(require_token=True)
     def post(self):
@@ -43,37 +44,40 @@ class Feedback(Resource):
 
         slack_result = None
         service_now_result = None
+        rocket_chat_result = None
 
         if self.flag_slack:
-            feedback_json_data = {
-                "text": feedback_message
-            }
-            params = json.dumps(feedback_json_data).encode('utf8')
-            slack_result = Feedback.send_to_slack(params)
+            slack_result = Feedback.send_to_slack(feedback_message)
 
         if self.flag_service_now:
             service_now_result = Feedback.send_to_service_now(feedback_message)
 
+        if self.flag_rocket_chat:
+            rocket_chat_result = Feedback.send_to_rocket_chat(feedback_message)
+
         #  Calculate return message as combination of slack and service now results.
-        result = Feedback.combine_results(slack_result, service_now_result)
+        result = Feedback.combine_results("Slack: ", slack_result, "Service Now: ", service_now_result)
+        result = Feedback.combine_results("", result, "Rocket Chat: ", rocket_chat_result)
         return result
 
     @staticmethod
-    def send_to_slack(params):
+    def send_to_slack(feedback_message):
 
         url = application.config['SLACK_URL']
 
         if url is None:
             return {"message": "SLACK_URL is not set"}, 400
 
+        feedback_json_data = {
+            "text": feedback_message
+        }
+        params = json.dumps(feedback_json_data).encode('utf8')
         req = urllib.request.Request(
             url=url,
             data=params,
             headers={'content-type': 'application/json'}
         )
-
         resp = urllib.request.urlopen(req)
-
         if resp.getcode() == 200:
             return {"status": "Success"}, 200
         else:
@@ -122,6 +126,29 @@ class Feedback(Resource):
             return {"message": "Service Now incident not created"}, 400
 
     @staticmethod
+    def send_to_rocket_chat(feedback_message):
+
+        url = application.config['ROCKET_CHAT_URL']
+
+        if url is None:
+            return {"message": "ROCKET_CHAT_URL is not set"}, 400
+
+        feedback_json_data = {
+            "text": feedback_message
+        }
+        params = json.dumps(feedback_json_data).encode('utf8')
+        try:
+            result = requests.post(url, params)
+        except Exception as err:
+            return {"message": "Error posting to Rocket Chat. " + str(err)}, 400
+
+        #  See if success or not.
+        if result.status_code == 200:
+            return {"status": "Success"}, 200
+        else:
+            return {"message": result.content.decode()}, result.status_code
+
+    @staticmethod
     def extract_string(big_string, key, endstr, max_if_not_found):
         extracted = "Unknown"
         start = big_string.find(key)
@@ -142,36 +169,36 @@ class Feedback(Resource):
         return extracted
 
     @staticmethod
-    def combine_results(slack_result, service_now_result):
+    def combine_results(name_one, result_one, name_two, result_two):
 
-        if slack_result is None:
-            if service_now_result is None:
+        if result_one is None:
+            if result_two is None:
                 result = {"message": "TheQ is not configured for feedback.  Contact your service desk."}, 400
             else:
-                result = service_now_result
+                result = result_two
 
         else:
-            if service_now_result is None:
-                result = slack_result
+            if result_two is None:
+                result = result_one
             else:
-                result = Feedback.extract_messages(slack_result, service_now_result)
+                result = Feedback.extract_messages(name_one, result_one, name_two, result_two)
 
         return result
 
     @staticmethod
-    def extract_messages(slack, service_now):
+    def extract_messages(name_one, result_one, name_two, result_two):
 
         message = ""
-        slack_result, code = slack
-        service_now_result, code = service_now
+        first_result, code = result_one
+        second_result, code = result_two
 
-        if 'message' in slack_result:
-            message = slack_result['message']
-        if 'message' in service_now_result:
+        if 'message' in first_result:
+            message = name_one + first_result['message']
+        if 'message' in second_result:
             if len(message) != 0:
-                message = message + "; " + service_now_result['message']
+                message = message + "; " + name_two + second_result['message']
             else:
-                message = service_now_result['message']
+                message = name_two + second_result['message']
 
         if message:
             result = {"message": message}, 400

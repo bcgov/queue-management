@@ -17,7 +17,6 @@
         </div>
       </div>
 
-
       <div class="p-0" style="display:inline-block; color: white;">
         <div v-if="!this.$store.state.isLoggedIn"
              class="footer-anchor-item"
@@ -35,7 +34,6 @@
 <script>
   import { mapMutations, mapState } from 'vuex'
   import SchedulingIndicator from '../booking/scheduling-indicator'
-
   export default {
     name: 'Footer',
     components: { SchedulingIndicator },
