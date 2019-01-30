@@ -3,7 +3,7 @@
     <div class="q-custom-modal-content">
       <div class="modal_header">
         <div>
-          <div style="q-inline-title">Select an Exam to Schedule</div>
+          <h5>Select an Exam to Schedule</h5>
         </div>
       </div>
       <ExamInventoryTable />

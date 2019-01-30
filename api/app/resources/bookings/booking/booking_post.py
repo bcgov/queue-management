@@ -43,10 +43,7 @@ class BookingPost(Resource):
             logging.warning("WARNING: %s", warning)
             return {"message": warning}, 422
 
-        room = Room.query.filter_by(room_id=booking.room_id).first()
-
-        if room.office_id == csr.office_id:
-
+        if booking.office_id == csr.office_id or csr.role_code == "LIAISON":
             db.session.add(booking)
             db.session.commit()
 

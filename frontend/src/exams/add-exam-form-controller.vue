@@ -3,6 +3,7 @@
     <div v-for="q in questions" :key="q.key">
       <DropdownQuestion v-if="q.kind==='dropdown'"
                         :question="q"
+                        :exam="exam"
                         :exam_object="exam_object"
                         :examTypes="examTypes"
                         :message="validationObj[q.key].message"

@@ -199,6 +199,7 @@
         'toggleCalendarControls',
       ]),
       cancel() {
+        this.$root.$emit('toggleOffsite', false)
         this.toggleSchedulingOther(true)
         this.toggleSchedulingIndicator(true)
         this.toggleOtherBookingModal(false)
@@ -235,6 +236,7 @@
       },
       postEvent(e) {
         e.preventDefault()
+        this.$root.$emit('toggleOffsite', true)
         if (this.title.length > 0) {
           this.message = ''
           this.state = null

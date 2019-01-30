@@ -74,8 +74,9 @@
       <AddExamFormConfirm v-if="step==4" :submitMsg="submitMsg" />
     </template>
     <template v-if="!unSubmitted">
-      <div v-if="success==='' " class="loader" style="margin-top: auto"></div>
-      <div v-if="success">
+      <div v-if="status==='unknown' "
+           class="loader" style="margin-top: auto"></div>
+      <div v-if="status==='success'">
         <b-container>
           <b-row align-v="center"
                  align-h="center"
@@ -87,14 +88,14 @@
           </b-row>
         </b-container>
       </div>
-      <div v-if="!success">
+      <div v-if="status==='failed'">
         <b-container>
           <b-row align-v="center"
                  align-h="center"
                  align-content="center">
             <b-col>
               <p class="message-text">Something Went Wrong</p>
-              <p><b-button @click="()=>{updateCaptureTab({step:4})}">Try Again</b-button></p>
+              <p><b-button @click="tryAgain">Try Again</b-button></p>
             </b-col>
           </b-row>
         </b-container>
@@ -115,11 +116,12 @@
       return ({
         submitMsg: '',
         unSubmitted: true,
+        status: 'unknown',
       })
     },
     computed: {
       ...mapGetters({
-        button: 'addIndividualITAButton',
+        button: 'add_exam_modal_navigation_buttons',
       }),
       ...mapState({
         exam: state => state.capturedExam,
@@ -132,12 +134,6 @@
         groupITASteps: state => state.addGroupITASteps,
         indITASteps: state => state.addIndITASteps,
       }),
-      success() {
-        if (this.tab) {
-          return this.tab.success
-        }
-        return false
-      },
       errors() {
         if (this.tab.errors) {
           return this.tab.errors
@@ -185,7 +181,7 @@
       },
     },
     methods: {
-      ...mapActions(['clickAddExamSubmit']),
+      ...mapActions(['clickAddExamSubmit', 'getExams']),
       ...mapMutations([
         'resetCaptureForm',
         'resetCaptureTab',
@@ -221,7 +217,7 @@
         this.updateCaptureTab({step})
       },
       clickCancel() {
-        this.toggleAddITAExamModal({visible: false, setup: null})
+        this.toggleAddITAExamModal({visible: false, setup: null, step1MenuOpen: false})
       },
       clickNext() {
         let step = this.step + 1
@@ -238,14 +234,30 @@
         this.unSubmitted = true
         this.submitMsg = ''
       },
+      tryAgain() {
+        this.unSubmitted = true
+        this.status = 'unknown'
+      },
       submit() {
         this.unSubmitted = false
         this.submitMsg = ''
         if (this.addITAExamModal.setup === 'group') {
-          this.clickAddExamSubmit('group_ita')
+          this.clickAddExamSubmit('group').then( resp => {
+            this.status = resp
+            this.getExams()
+          }).catch( error => {
+            this.status = error
+            this.getExams()
+          })
         }
         if (this.addITAExamModal.setup === 'individual') {
-          this.clickAddExamSubmit('ind_ita')
+          this.clickAddExamSubmit('individual').then( resp => {
+            this.status = resp
+            this.getExams()
+          }).catch( error => {
+            this.status = error
+            this.getExams()
+          })
         }
       },
       resetModal() {
@@ -253,6 +265,7 @@
         this.resetCaptureTab()
         this.unSubmitted = true
         this.submitMsg = ''
+
       },
       setWarning() {
         if (!this.errors.includes(this.step)) {

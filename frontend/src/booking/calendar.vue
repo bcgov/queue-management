@@ -1,45 +1,21 @@
 <template>
-    <div style="position: relative" ref="calcontainer">`
-      <div style="display: flex; justify-content: flex-start">
-        <div style="padding: 0; margin: -25px 0px -5px 15px">
-          <b-form inline>
-            <label class="mr-2">Filter Exams
-              <font-awesome-icon icon="filter"
-                                 class="m-0 p-0"
-                                 style="font-size: 1rem;"/>
-            </label>
-            <b-form-input v-model="searchTerm" @input="filter"></b-form-input>
-          </b-form>
-        </div>
-        <div class="w-50 mt-2 ml-3 pl-3"
-             style="display: flex; justify-content: space-between;"
-             v-if="calView === 'listYear'">
-          <template v-for="col in roomLegendArray">
-            <div>
-              <b-badge :style="{backgroundColor: `${col.color}`}">
-                <span :style="{color: `${col.color}`}">legend</span>
-              </b-badge>
-              <span>{{ col.title }}</span>
-            </div>
-          </template>
-        </div>
+  <div style="position: relative" ref="calcontainer">
+    <div style="display: flex; justify-content: flex-start">
+      <div style="padding: 0; margin-top:auto; margin-left: 20px;">
+        <b-form inline>
+          <label class="mr-2">Filter Exams
+            <font-awesome-icon icon="filter"
+                               class="m-0 p-0"
+                               style="font-size: 1rem;"/>
+          </label>
+          <b-form-input v-model="searchTerm"
+                        size="sm"
+                        @input="filter"></b-form-input>
+        </b-form>
       </div>
-      <keep-alive>
-        <full-calendar ref="bookingcal"
-                       key="bookingcal"
-                       id="bookingcal"
-                       class="q-calendar-margins"
-                       @event-selected="eventSelected"
-                       @view-render="viewRender"
-                       @event-created="selectEvent"
-                       @event-render="eventRender"
-                       :events="events()"
-                       :config="setup">
-
-        </full-calendar>
-      </keep-alive>
-      <div class="w-50 mt-2 ml-3 pl-3" style="display: flex; justify-content: space-between;"
-           v-if="calView === 'month'">
+      <div class="w-50 mt-2 ml-3 pl-3"
+           style="display: flex; justify-content: space-between;"
+           v-if="calView === 'listYear'">
         <template v-for="col in roomLegendArray">
           <div>
             <b-badge :style="{backgroundColor: `${col.color}`}">
@@ -49,16 +25,41 @@
           </div>
         </template>
       </div>
-    <BookingModal />
-    <ExamInventoryModal v-if="showExamInventoryModal" />
-    <OtherBookingModal :editSelection="editSelection" :getEvent="getEvent" />
-    <EditBookingModal />
-  </div>
+    </div>
+    <keep-alive>
+      <full-calendar ref="bookingcal"
+                     key="bookingcal"
+                     id="bookingcal"
+                     class="q-calendar-margins"
+                     @event-selected="eventSelected"
+                     @view-render="viewRender"
+                     @event-created="selectEvent"
+                     @event-render="eventRender"
+                     :events="events()"
+                     :config="setup">
+      </full-calendar>
+    </keep-alive>
+    <div class="w-50 mt-2 ml-3 pl-3" style="display: flex; justify-content: space-between;"
+         v-if="calView === 'month'">
+      <template v-for="col in roomLegendArray">
+        <div>
+          <b-badge :style="{backgroundColor: `${col.color}`}">
+            <span :style="{color: `${col.color}`}">legend</span>
+          </b-badge>
+          <span>{{ col.title }}</span>
+        </div>
+      </template>
+    </div>
+  <BookingModal />
+  <ExamInventoryModal v-if="showExamInventoryModal" />
+  <OtherBookingModal :editSelection="editSelection" :getEvent="getEvent" />
+  <EditBookingModal />
+</div>
 </template>
 
 <script>
   import { FullCalendar } from 'vue-full-calendar'
-  import { mapActions, mapGetters, mapMutations, mapState, } from 'vuex'
+  import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
   import BookingModal from './booking-modal'
   import DropdownCalendar from './dropdown-calendar'
   import EditBookingModal from './edit-booking-modal'
@@ -69,10 +70,12 @@
   import 'fullcalendar-scheduler'
   import 'fullcalendar/dist/fullcalendar.css'
   import { adjustColor } from '../store/helpers'
+  import OfficeDropDownFilter from '../exams/office-dropdown-filter'
 
   export default {
     name: 'Calendar',
     components: {
+      OfficeDropDownFilter,
       BookingModal,
       DropdownCalendar,
       EditBookingModal,
@@ -91,24 +94,25 @@
       this.$root.$on('next', () => { this.next() })
       this.$root.$on('options', (option) => { this.options(option) })
       this.$root.$on('prev', () => { this.prev() })
+      this.$root.$on('removeSavedSelection', () => {this.removeSavedSelection() })
       this.$root.$on('today', () => { this.today() })
+      this.$root.$on('toggleOffsite', (bool) => { this.toggleOffsite(bool) })
       this.$root.$on('unselect', () => { this.unselect() })
       this.$root.$on('updateEvent', (event, params) => { this.updateEvent(event, params) })
-      this.$root.$on('removeSavedSelection', () => {this.removeSavedSelection() })
     },
     data() {
       return {
+        groupFilter: 'both',
+        office: null,
         savedSelection: null,
         tempEvent: null,
         listView: false,
+        calendarsSelected: null,
+        selectedCals: '',
         searchTerm: '',
         setup: {
           defaultView: 'agendaWeek',
           editable: false,
-          selectConstraint: {
-            start: '07:00:00',
-            end: '18:00:00',
-          },
           eventConstraint: {
             start: '07:00:00',
             end: '18:00:00',
@@ -126,10 +130,13 @@
           resources: [],
           schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
           selectable: false,
+          selectConstraint: {
+            start: '07:00:00',
+            end: '18:00:00',
+          },
           showNonCurrentDates: false,
           timezone: 'local',
           unselectCancel: '.modal, .modal-content',
-          weekends: false,
           views: {
             agendaDay: {
               allDaySlot: false,
@@ -149,18 +156,20 @@
               groupByResource: false,
             },
           },
+          weekends: false,
         },
       }
     },
     computed: {
-      ...mapGetters(['calendar_events', 'room_resources',]),
+      ...mapGetters(['filtered_calendar_events']),
       ...mapState([
+        'calendarEvents',
         'calendarSetup',
         'editedBooking',
         'editedBookingOriginal',
-        'exam_types',
         'exams',
         'rescheduling',
+        'roomResources',
         'scheduling',
         'schedulingOther',
         'selectedExam',
@@ -180,9 +189,16 @@
         }
         return ''
       },
+      roomOptions() {
+        if (this.roomResources && this.roomResources.length > 0) {
+          return this.roomResources.map( room =>
+            ({ text:room.title, value: room.id })
+          )
+        }
+      },
       roomLegendArray() {
-        if (this.room_resources && this.room_resources.length > 0) {
-          return this.room_resources.map(room =>
+        if (this.roomResources && this.roomResources.length > 0) {
+          return this.roomResources.map(room =>
             ({color: room.eventColor, title: room.title})
           )
         }
@@ -268,14 +284,15 @@
       },
       events() {
         if (this.searchTerm) {
-          return this.$store.getters.filtered_calendar_events(this.searchTerm)
+          return this.filtered_calendar_events(this.searchTerm)
         }
-        return this.calendar_events
+        return this.calendarEvents
       },
       eventSelected(event, jsEvent, view) {
-        if (this.scheduling || this.schedulingOther) {
+        if (this.scheduling || this.schedulingOther || event.resourceId === '_offsite') {
           return
         }
+        console.log(event)
         if (view.name === 'listYear') {
           this.goToDate(event.start)
           this.agendaDay()
@@ -312,14 +329,9 @@
       initialize() {
         this.setSelectionIndicator(false)
         this.getExamTypes()
-        this.initializeAgenda().then( rooms => {
-          rooms.forEach( room => {
-            let roomObj = {
-              id: room.room_id,
-              title: room.room_name,
-              eventColor: room.color
-            }
-            this.$refs.bookingcal.fireMethod('addResource', roomObj)
+        this.initializeAgenda().then( resources => {
+          resources.forEach( res => {
+            this.$refs.bookingcal.fireMethod('addResource', res)
           })
           this.getBookings()
         })
@@ -429,6 +441,18 @@
       today() {
         this.$refs.bookingcal.fireMethod('today')
       },
+      toggleOffsite(bool) {
+        if (bool === true) {
+          this.$refs.bookingcal.fireMethod('addResource', {
+            id: '_offsite',
+            title: 'Offsite',
+            eventColor: '#82ff68',
+          })
+        }
+        if (!bool) {
+          this.$refs.bookingcal.fireMethod('removeResource', '_offsite')
+        }
+      },
       unselect() {
         this.$refs.bookingcal.fireMethod('unselect')
       },
@@ -459,5 +483,25 @@
     }
   }
 
-
 </script>
+
+<style scoped>
+  .btn {
+    border: none !important;
+  }
+  .label-text {
+    font-size: .9rem;
+  }
+  .btn {
+    border: none !important;
+    box-shadow: none !important;
+    transition: none !important;
+  }
+  .btn:active, .btn.active {
+    background-color: whitesmoke  !important;
+    color: darkgrey !important;
+  }
+  .exam-table-holder {
+    border: 1px solid dimgrey;
+  }
+</style>

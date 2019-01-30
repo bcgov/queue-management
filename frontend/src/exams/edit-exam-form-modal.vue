@@ -54,9 +54,10 @@
 </template>
 
 <script>
-    import { mapMutations, mapState, mapActions } from 'vuex'
-    import moment from 'moment'
-    export default {
+  import { mapActions, mapMutations, mapState } from 'vuex'
+  import moment from 'moment'
+
+  export default {
         name: "EditExamModal",
         mounted() {
             this.selectedMethod = this.fields.exam_method;
@@ -136,7 +137,7 @@
         },
         computed: {
             ...mapState({
-                showEditExamModalVisible: state => state.showEditExamModalVisible,
+              showEditExamModal: state => state.showEditExamModal,
                 fields: state => state.editExams,
                 selectedExam: state => state.selectedExam,
                 selectedBooking: state => state.selectedBooking,
@@ -145,7 +146,7 @@
             }),
             modal: {
               get() {
-                  return this.showEditExamModalVisible
+                return this.showEditExamModal
               },
               set(e) {
                   this.toggleEditExamModalVisible(e)
