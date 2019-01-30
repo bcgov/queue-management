@@ -10,7 +10,7 @@
                 <b-dd-item @click="handleClick"
                            v-if="officeList.length > 0"
                            :name="office.office_name"
-                           :id="office.office_id">{{ office.office_name + ', #' + office.office_id }}</b-dd-item>
+                           :id="office.office_id">{{ office.office_name }}</b-dd-item>
                 <b-dd-item v-if="officeList.length === 0">No matching offices</b-dd-item>
 
               </template>
@@ -22,7 +22,7 @@
 </template>
 
 <script>
-  import { mapActions, mapState } from 'vuex'
+  import { mapActions, mapState, mapMutations } from 'vuex'
 
   export default {
     name: "OfficeDropDownFilter",
@@ -38,7 +38,7 @@
       }
     },
     computed: {
-      ...mapState([ 'offices' ]),
+      ...mapState([ 'offices', 'selectedOffice' ]),
       officeList() {
         if (this.searching === true) {
           if (this.offices && this.offices.length > 0) {
@@ -60,6 +60,7 @@
         this.search = e
         if (this.search.length > 1 && this.searching === true) {
           this.menuClass = 'dropdown-menu show py-0 my-0 w-100'
+          this.setSelectedOffice(this.search)
         }
         if (this.search.length <= 1) {
           this.searching = false
@@ -71,6 +72,7 @@
         this.searching = false
         this.menuClass = 'dropdown-menu'
       },
+      ...mapMutations(['setSelectedOffice'])
     },
   }
 </script>
