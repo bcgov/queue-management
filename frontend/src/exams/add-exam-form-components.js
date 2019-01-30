@@ -340,19 +340,69 @@ export const TimeQuestion = Vue.component('date-question', {
 })
 
 export const DropdownQuestion = Vue.component('dropdown-question',{
-  props: ['question', 'exam_object', 'examTypes', 'handleInput', 'selected', 'message', 'error'],
+  props: ['question', 'exam', 'exam_object', 'examTypes', 'handleInput', 'selected', 'message', 'error'],
   components: { checkmark },
+  data() {
+    return {
+      clicked: false,
+    }
+  },
+  computed: {
+    ...mapState(['addITAExamModal', 'capturedExam']),
+    dropItems() {
+      if (this.addITAExamModal.setup === 'group') {
+        return this.examTypes.filter(type => type.exam_type_name.includes('Group'))
+      }
+      if (this.addITAExamModal.setup === 'individual') {
+        return this.examTypes.filter(type => type.exam_type_name.includes('Single'))
+      }
+    },
+    inputText() {
+      if (this.exam_object && this.exam_object.exam_type_name) {
+        return this.exam_object.exam_type_name
+      }
+      return ''
+    },
+    inputStyle() {
+      if (this.exam_object && this.exam_object.exam_type_name) {
+        return {backgroundColor: `${this.exam_object.exam_color}`}
+      }
+      return ''
+    },
+    dropclass() {
+      if (!this.addITAExamModal.step1MenuOpen) {
+        return 'dropdown-menu'
+      }
+      if (this.addITAExamModal.step1MenuOpen) {
+        return 'dropdown-menu dropdown-menu-right show py-0 my-0 w-100'
+      }
+    }
+  },
+  methods: {
+    ...mapMutations(['toggleAddITAExamModal']),
+    clickInput() {
+      if (!this.addITAExamModal.step1MenuOpen) {
+        this.toggleAddITAExamModal({step1MenuOpen: true})
+        return
+      }
+      this.toggleAddITAExamModal({step1MenuOpen: false})
+    },
+  },
   template: `
     <b-row no-gutters>
-      <b-col>
-        <b-form-group>
-          <label>{{ question.text }}
-            <span v-if="error" style="color: red">{{ message }}</span>
-          </label><br>
-          <b-input-group>
-            <b-input-group-addon>
-              <b-dropdown>
-                <template v-for="type in examTypes">
+      <b-col class="dropdown">
+      <h5>{{ addITAExamModal.setup === 'group' ? 'Add a Group Exam' : 'Add an Individual Exam' }}</h5>
+      <label>Exam Type</label><br>
+        <div @click="clickInput">
+          <b-input read-only
+                   :value="inputText"
+                   placeholder="click here to see options"
+                   :style="inputStyle" />
+        </div>
+        <div :class="dropclass"
+             style="border: 1px solid grey"
+             @click="clickInput">
+                <template v-for="type in dropItems">
                   <b-dd-header v-if="type.header"
                                :style="{backgroundColor: type.exam_color}"
                                :class="type.class">{{ type.exam_type_name }}</b-dd-header>
@@ -362,14 +412,10 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
                              :id="type.exam_type_id"
                              :class="type.class">{{ type.exam_type_name }}</b-dd-item>
                 </template>
-              </b-dropdown>
-            </b-input-group-addon>
-            <b-input :value="exam_object.exam_type_name"
-                     class="w-75"
-                     disabled
-                     :style="{backgroundColor: exam_object.exam_color}"/>
-          </b-input-group>
+              </div>
         </b-form-group>
+      
+      
       </b-col>
     </b-row>
   `

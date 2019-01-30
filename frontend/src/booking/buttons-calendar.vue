@@ -48,9 +48,11 @@
         'navigationVisible'
       ]),
       showExamModal() {
+        this.$root.$emit('toggleOffsite', false)
         this.toggleExamInventoryModal(true)
       },
       scheduleOtherEvent() {
+        this.$root.$emit('toggleOffsite', false)
         this.navigationVisible(false)
         this.toggleCalendarControls(false)
         this.toggleSchedulingOther(true)

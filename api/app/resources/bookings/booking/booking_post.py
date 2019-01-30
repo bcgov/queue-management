@@ -44,7 +44,6 @@ class BookingPost(Resource):
             return {"message": warning}, 422
 
         if booking.office_id == csr.office_id or csr.role_code == "LIAISON":
-
             db.session.add(booking)
             db.session.commit()
 

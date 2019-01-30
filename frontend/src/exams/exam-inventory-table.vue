@@ -5,7 +5,7 @@
         <b-input-group-prepend><label class="mx-1 pt-1 my-auto label-text">Search</label></b-input-group-prepend>
         <b-input size="sm" class="mb-1 mt-3" v-model="filter"></b-input>
       </b-input-group>
-      <b-input-group class="ml-3">
+      <b-input-group class="ml-3" v-if="!showExamInventoryModal">
         <b-input-group-prepend>
           <label class="mx-1 pt-1 my-auto label-text">Filters</label>
         </b-input-group-prepend>
@@ -13,56 +13,50 @@
           <b-btn value="all"
                  size="sm"
                  :pressed="expiryFilter==='all'"
-                 @mousedown="storeLocally"
                  @click="expiryFilter='all'"><span class="mx-2">All</span></b-btn>
           <b-btn value="expired"
                  size="sm"
                  :pressed="expiryFilter==='expired'"
-                 @mousedown="storeLocally"
                  @click="expiryFilter='expired'">Expired</b-btn>
           <b-btn value="current"
                  size="sm"
-                 @mousedown="storeLocally"
                  :pressed="expiryFilter==='current'"
                  @click="expiryFilter='current'">Current</b-btn>
         </b-btn-group>
         <b-btn-group horizontal class="ml-2 pt-2">
           <b-btn value="both"
                  size="sm"
-                 @mousedown="storeLocally"
                  :pressed="bookedFilter==='both'"
                  @click="bookedFilter='both'"><span class="mx-2">Both</span></b-btn>
           <b-btn value="unbooked"
                  size="sm"
-                 @mousedown="storeLocally"
                  :pressed="bookedFilter==='unbooked'"
                  @click="bookedFilter='unbooked'">Un-Booked</b-btn>
           <b-btn value="booked"
                  size="sm"
-                 @mousedown="storeLocally"
                  :pressed="bookedFilter==='booked'"
                  @click="bookedFilter='booked'">Booked</b-btn>
         </b-btn-group>
         <b-btn-group horizontal class="ml-2 pt-2">
           <b-btn value="both"
                  size="sm"
-                 @mousedown="storeLocally"
+
                  :pressed="groupFilter==='both'"
                  @click="groupFilter='both'"><span class="mx-2">Both</span></b-btn>
           <b-btn value="unbooked"
                  size="sm"
-                 @mousedown="storeLocally"
+
                  :pressed="groupFilter==='individual'"
                  @click="groupFilter='individual'">Individual</b-btn>
           <b-btn value="booked"
                  size="sm"
-                 @mousedown="storeLocally"
+
                  :pressed="groupFilter==='group'"
                  @click="groupFilter='group'">Group</b-btn>
         </b-btn-group>
       </b-input-group>
     </b-form>
-    <div :style="tableStyle" class="exam-table-holder my-0 mx-3">
+    <div :style="tableStyle" class="my-0 mx-3">
       <b-table :items="filteredExams"
                :fields=getFields
                head-variant="light"
@@ -80,7 +74,6 @@
       <template slot="exam_received" slot-scope="row">
         {{ row.item.exam_received === 0 ? 'No' : 'Yes' }}
       </template>
-        <template slot="booking_"
       <template slot="invigilator" slot-scope="row">
         {{ getInvigilator(row) }}
       </template>
@@ -90,11 +83,9 @@
       <template slot="location" slot-scope="row">
         <template v-if="!row.item.offsite_location">
           <span v-if="row.item.booking">
-            <b-btn variant="link" class="open-cal-link" @click="openEditBooking">
-                {{ row.item.booking.room.room_name }}
-            </b-btn>
+            {{ row.item.booking.room.room_name }}
           </span>
-          <span v-else><b-btn variant="link" class="schedule-link" to="/booking">Schedule</b-btn></span>
+          <span v-else>–</span>
         </template>
         <span v-if="row.item.offsite_location">
           <b-btn variant="link" class="view-details-link" @click.stop="row.toggleDetails">
@@ -123,7 +114,7 @@
       </template>
     </b-table>
     </div>
-    <EditExamModal v-if="showEditExamModalVisible"></EditExamModal>
+    <EditExamModal v-if="showEditExamModal"></EditExamModal>
     <ReturnExamModal v-if="showReturnExamModalVisible"></ReturnExamModal>
   </div>
 </template>
@@ -158,36 +149,57 @@
         groupFilter: 'both',
         filter: null,
         events: null,
-        fields: [
-          {key: 'office.office_name', label: 'Office', sortable: true, thStyle: 'width: 8%'},
-          {key: 'event_id', label: 'Event ID', sortable: true, thStyle: 'width: 6%' },
-          {key: 'exam_name', label: 'Exam Name', sortable: true, thStyle: 'width: 11%' },
-          {key: 'exam_method', label: 'Method', sortable: true, thStyle: 'width: 5%' },
-          {key: 'expiry_date', label: 'Expiry Date', sortable: true, thStyle: 'width: 8%' },
-          {key: 'exam_received', label: 'Received?', sortable: true, thStyle: 'width: 5%' },
-          {key: 'examinee_name', label: 'Student Name', sortable: true, thStyle: 'width: 12%' },
-          {key: 'notes', label: 'Notes', sortable: true, thStyle: 'width: 21%' },
-          {key: 'invigilator', label: 'Invigilator', sortable: true, thStyle: 'width: 10%' },
-          {key: 'location', label: 'Location', sortable: true, thStyle: 'width: 9%' },
-          {key: 'actions', label: 'Actions', sortable: true, thStyle: 'width: 5%' }
-        ],
         bookingRouteString: '',
       }
     },
     computed: {
-      ...mapGetters(['calendar_events', 'exam_inventory', 'role_code',]),
+      ...mapGetters([ 'calendar_events', 'exam_inventory', 'role_code' ]),
       ...mapState([
         'bookings',
         'calendarSetup',
         'exams',
-        'showEditExamModalVisible',
+        'showEditExamModal',
         'showExamInventoryModal',
         'showReturnExamModalVisible',
         'user',
       ]),
+      fields() {
+        if (!this.showExamInventoryModal) {
+          return [
+            { key: 'office.office_name', label: 'Office', sortable: true, thStyle: 'width: 8%' },
+            { key: 'event_id', label: 'Event ID', sortable: true, thStyle: 'width: 6%' },
+            { key: 'exam_name', label: 'Exam Name', sortable: true, thStyle: 'width: 11%' },
+            { key: 'exam_method', label: 'Method', sortable: true, thStyle: 'width: 5%' },
+            { key: 'expiry_date', label: 'Expiry Date', sortable: true, thStyle: 'width: 8%' },
+            { key: 'exam_received', label: 'Received?', sortable: true, thStyle: 'width: 5%' },
+            { key: 'examinee_name', label: 'Student Name', sortable: true, thStyle: 'width: 12%' },
+            { key: 'notes', label: 'Notes', sortable: true, thStyle: 'width: 21%' },
+            { key: 'invigilator', label: 'Invigilator', sortable: true, thStyle: 'width: 10%' },
+            { key: 'location', label: 'Location', sortable: true, thStyle: 'width: 9%' },
+            { key: 'actions', label: 'Actions', sortable: true, thStyle: 'width: 5%' },
+          ]
+        }
+        if (this.showExamInventoryModal) {
+          return [
+            { key: 'event_id', label: 'Event ID', sortable: true, thStyle: 'width: 6%' },
+            { key: 'exam_name', label: 'Exam Name', sortable: true, thStyle: 'width: 11%' },
+            { key: 'exam_method', label: 'Method', sortable: true, thStyle: 'width: 5%' },
+            { key: 'expiry_date', label: 'Expiry Date', sortable: true, thStyle: 'width: 8%' },
+            { key: 'exam_received', label: 'Received?', sortable: true, thStyle: 'width: 5%' },
+            { key: 'examinee_name', label: 'Student Name', sortable: true, thStyle: 'width: 12%' },
+            { key: 'notes', label: 'Notes', sortable: true, thStyle: 'width: 21%' },
+          ]
+        }
+      },
       filteredExams() {
         let exams = this.exam_inventory || []
         let filtered = []
+        if (this.showExamInventoryModal) {
+          filtered = exams.filter(ex => moment(ex.expiry_date).isSameOrAfter(moment(), 'day'))
+          let moreFiltered = filtered.filter(ex => !ex.booking)
+          let evenMoreFiltered = moreFiltered.filter(ex => !ex.offsite_location)
+          return evenMoreFiltered
+        }
         switch (this.expiryFilter) {
           case 'all':
             filtered = exams
@@ -234,12 +246,6 @@
         }
         return evenMoreFiltered
       },
-      selectedExams() {
-        if (this.showExamInventoryModal) {
-          return this.exam_inventory
-        }
-        return this.exams
-      },
       getFields() {
         if (this.role_code === "LIAISON") {
           return this.fields
@@ -266,17 +272,16 @@
         'toggleReturnExamModalVisible',
         'setReturnExamInfo'
       ]),
-      storeLocally(e) {
-        console.log(e)
-      },
       handleExpiryFilter(e) {
         this.expiryFilter = e.target.value
       },
-      openEditBooking() {
-
-      },
       getWidth() {
-        this.tableStyle = {width: `${window.innerWidth - 40}px`}
+        if (!this.showExamInventoryModal) {
+          this.tableStyle = { width: `${ window.innerWidth - 40 }px` }
+        }
+        if (this.showExamInventoryModal) {
+          this.tableStyle = { width: 98 + '%' }
+        }
       },
       handleBookedFilter(e) {
         this.bookedFilter = e.target.value
@@ -298,6 +303,7 @@
       },
       clickRow(e) {
         if (this.showExamInventoryModal) {
+          this.$root.$emit('toggleOffsite', false)
           this.$root.$emit('options', {name: 'selectable', value: true})
           this.navigationVisible(false)
           this.setSelectedExam(e)
@@ -328,10 +334,10 @@
 <style scoped>
   .open-cal-link {
     text-decoration: #007bff underline !important;
-    text-underline-position: under;
-    font-size: .85rem;
+    text-underline-position: under !important;
+    font-size: .85rem !important;
     color: #007bff !important;
-    font-weight: 300;
+    font-weight: 300 !important;
   }
   .view-details-link {
     text-decoration: #007bff underline !important;
@@ -368,8 +374,9 @@
     transition: none !important;
   }
   .btn:active, .btn.active {
-    background-color: darkgrey !important;
-  } color: blue !important;
+    background-color: lightgrey !important;
+    color: dimgrey !important;
+  }
   .exam-table-holder {
     border: 1px solid dimgrey;
   }
