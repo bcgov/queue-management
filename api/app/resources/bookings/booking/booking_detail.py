@@ -14,9 +14,9 @@ limitations under the License.'''
 
 import logging
 from sqlalchemy import exc
-from flask import g
+from flask import abort, g, request
 from flask_restplus import Resource
-from app.models.bookings import Booking, Exam, Room
+from app.models.bookings import Booking
 from app.models.theq import CSR
 from app.schemas.bookings import BookingSchema
 from qsystem import api, oidc
@@ -33,7 +33,11 @@ class BookingDetail(Resource):
         csr = CSR.find_by_username(g.oidc_token_info['username'])
 
         try:
-            booking = Booking.query.filter_by(booking_id=id).join(Room).filter_by(office_id=csr.office_id).first_or_404()
+            booking = Booking.query.filter_by(booking_id=id).first_or_404()
+
+            # Also 404 the request if they shouldn't be able to see this booking
+            if booking.office_id != csr.office_id and csr.role_code != "LIAISON":
+                abort(404)
 
             result = self.booking_schema.dump(booking)
             return {"booking": result.data,

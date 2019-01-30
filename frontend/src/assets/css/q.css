@@ -35,3 +35,7 @@
   padding: 1%;
   position: relative;
 }
+
+.q-modal-body {
+  padding: 0px !important;
+}
