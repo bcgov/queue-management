@@ -124,11 +124,16 @@ class CSRConfig(Base):
                 db.session.add(updated_csr)
                 db.session.commit()
 
-            socketio.emit('clear_csr_cache', { "id": csr_id})
+            # auth_csr = CSR.find_by_username(g.oidc_token_info['username'])
+            print("==> Editor: " + current_user.username + "; Changing: " + updated_csr.username)
+            print("    --> EId: " + str(current_user.csr_id) + "; RId: " + str(csr_id) + "; UId: " + str(updated_csr.csr_id))
+
+            # socketio.emit('clear_csr_cache', { "id": csr_id})
             socketio.emit('csr_update', \
                           {"csr_id": csr_id, \
                            "receptionist_ind": updated_csr.receptionist_ind}, \
-                          room=updated_csr.office_id)
+                           room=current_user.office_id)
+            socketio.emit('clear_csr_cache', { "id": csr_id})
 
             flash(gettext('''Record was successfully saved.'''), 'success')
             if '_add_another' in request.form:
