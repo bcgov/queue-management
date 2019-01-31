@@ -16,11 +16,34 @@
       </b-row>
       <b-row class="my-1">
         <b-col sm="4"><label>Start Date:</label></b-col>
-        <b-col sm="6"><b-form-input id="startDate" type="date" v-model=startDate></b-form-input></b-col>
+        <b-col sm="6">
+          <b-form-input id="startDate"
+                        type="date"
+                        v-model=startDate />
+        </b-col>
       </b-row>
       <b-row class="my-1">
         <b-col sm="4"><label>End Date:</label></b-col>
-        <b-col sm="6"><b-form-input id="endDate" type="date" v-model=endDate></b-form-input></b-col>
+        <b-col sm="6"><b-form-input id="endDate"
+                                    type="date"
+                                    v-model=endDate />
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col sm="4"><label>Exam Types:</label></b-col>
+        <b-col sm="6>">
+          <b-form-group>
+            <b-form-radio-group :options="options"
+                                stacked
+                                v-model="selectedExamType" />
+          </b-form-group>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col sm="4"><label>Office:</label></b-col>
+        <b-col sm="6">
+          <OfficeDropDownFilter />
+        </b-col>
       </b-row>
     </b-container>
   </b-modal>
@@ -28,35 +51,64 @@
 
 <script>
     import { mapState, mapMutations, mapActions } from 'vuex'
+    import OfficeDropDownFilter from './office-dropdown-filter'
+    import moment from 'moment'
+    const FileDownload = require('js-file-download')
     export default {
         name: "FinancialReportModal",
+        components: {
+          OfficeDropDownFilter,
+        },
+        mounted() {
+          this.getOffices()
+        },
         data() {
           return {
             startDate: '',
             endDate: '',
+            options: [
+              {text: 'ITA - Individual', value: 'ita_individual'},
+              {text: 'ITA - Group', value: 'ita_group'},
+              {text: 'Pesticide', value: 'pesticide'},
+              {text: 'Bulk Milk Tank Grader', value: 'milk_tank'}
+            ],
+            selectedExamType: '',
           }
         },
         methods: {
           ...mapActions([
-            'getExamsExport'
+            'getExamsExport',
+            'getExamTypes',
+            'getOffices'
           ]),
           ...mapMutations([
-            'toggleGenFinReport'
+            'toggleGenFinReport',
+            'setSelectedOffice'
           ]),
           submit() {
-
-            console.log("Pressed Submit")
             let form_start_date = this.startDate
             let form_end_date = this.endDate
-            let url= '/exams/export/?start_date=' + form_start_date + '&end_date=' + form_end_date
+            let exam_type = this.selectedExamType
+            let office_name = this.selectedOffice
+            let url = '/exams/export/?start_date=' + form_start_date + '&end_date=' + form_end_date + '&exam_type='
+                      + exam_type + '&office_name=' + office_name
+            let today = moment().format('YYYY-MM-DD_HHMMSS')
+            let filename = 'export-csv-' + today + '.csv'
             this.getExamsExport(url)
-                .then(resp => { const FileDownload = require('js-file-download')
-                                                    FileDownload(resp.data, 'export.csv')})
+              .then(resp => {
+                FileDownload(resp.data, filename)
+              })
+            this.startDate = ''
+            this.endDate = ''
+            this.selectedExamType = ''
+            this.setSelectedOffice('')
           },
         },
         computed: {
           ...mapState({
             showGenFinReportModal: state => state.showGenFinReportModal,
+            offices: state => state.offices,
+            selectedOffice: state => state.selectedOffice,
           }),
           modal: {
             get() {
@@ -66,10 +118,9 @@
               this.toggleGenFinReport(e)
             }
           },
-        },
+        }
     }
 </script>
 
 <style scoped>
-
 </style>

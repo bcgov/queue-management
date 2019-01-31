@@ -312,6 +312,7 @@ export const store = new Vuex.Store({
     schedulingOther: false,
     selectedBooking: {},
     selectedExam: {},
+    selectedOffice: {},
     selectionIndicator: false,
     serveModalAlert: '',
     serveNowAltAction: false,
@@ -2138,6 +2139,10 @@ export const store = new Vuex.Store({
     setMainAlert(state, payload) {
       state.alertMessage = payload
       state.dismissCount = 5
+    },
+
+    setSelectedOffice(state, payload) {
+      state.selectedOffice = payload
     },
 
     setExamAlert(state, payload) {
