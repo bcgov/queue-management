@@ -125,6 +125,10 @@ class CSRConfig(Base):
                 db.session.commit()
 
             socketio.emit('clear_csr_cache', { "id": csr_id})
+            socketio.emit('csr_update', \
+                          {"csr_id": csr_id, \
+                           "receptionist_ind": updated_csr.receptionist_ind}, \
+                          room=updated_csr.office_id)
 
             flash(gettext('''Record was successfully saved.'''), 'success')
             if '_add_another' in request.form:
