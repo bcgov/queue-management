@@ -116,7 +116,14 @@ class CSRConfig(Base):
 
         if self.validate_form(form) and self.update_model(form, model):
 
-            #  Clear cache for the user just edited
+            #  Trim the user name, if necessary.
+            updated_csr = CSR.query.filter_by(csr_id=csr_id).first()
+            if updated_csr.username != updated_csr.username.strip():
+                print("==> trimming user name")
+                updated_csr.username = updated_csr.username.strip()
+                db.session.add(updated_csr)
+                db.session.commit()
+
             socketio.emit('clear_csr_cache', { "id": csr_id})
 
             flash(gettext('''Record was successfully saved.'''), 'success')
