@@ -109,6 +109,9 @@ class CSRConfig(Base):
 
         #  We know model is good.  Save id of CSR you're editing for later use.
         csr_id = get_mdict_item_or_list(request.args, 'id')
+        #  Delete next two lines later.
+        csr_old = CSR.query.filter_by(csr_id=csr_id).first()
+        csr_office_old = csr_old.office.office_name
 
         form = self.edit_form(obj=model)
         if not hasattr(form, '_validated_ruleset') or not form._validated_ruleset:
@@ -125,8 +128,8 @@ class CSRConfig(Base):
                 db.session.commit()
 
             # auth_csr = CSR.find_by_username(g.oidc_token_info['username'])
-            print("==> Editor: " + current_user.username + "; Changing: " + updated_csr.username)
-            print("    --> EId: " + str(current_user.csr_id) + "; RId: " + str(csr_id) + "; UId: " + str(updated_csr.csr_id))
+            print("==> Edit: " + current_user.username + "; Ch: " + updated_csr.username + \
+                "; Old: " + csr_office_old + "; New: " + updated_csr.office.office_name)
 
             socketio.emit('clear_csr_cache', { "id": csr_id})
             socketio.emit('csr_update', \

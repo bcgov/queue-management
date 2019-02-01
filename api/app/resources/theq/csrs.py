@@ -64,7 +64,7 @@ class CsrSelf(Resource):
             if not csr:
                 return {'Message': 'User Not Found'}, 404
 
-            print("==> CsrSelf(Resource), after find_by_username: Office: " + csr.office.office_name)
+            print("==> CsrSelf: get(self): Csr: " + csr.username + "; Office: " + csr.office.office_name)
             db.session.add(csr)
             active_sr_state = SRState.get_state_by_name("Active")
             today = datetime.now()
