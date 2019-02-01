@@ -107,9 +107,16 @@
             <font-awesome-icon icon="caret-down"
                                style="padding: -2px; margin: -2px; font-size: 1rem; color: dimgray"/>
           </template>
-          <b-dropdown-item size="sm" @click.stop="editInfo(row.item, row.index)">Edit Row</b-dropdown-item>
-          <b-dropdown-item size="sm" @click.stop="returnExamInfo(row.item, row.index)">Return Exam</b-dropdown-item>
-          <b-dropdown-item v-if=row.item.booking size="sm" @click="updateBookingRoute(row.item, row.index)">Update Booking</b-dropdown-item>
+          <b-dropdown-item size="sm"
+                           @click.stop="editInfo(row.item, row.index)">Edit Row</b-dropdown-item>
+          <b-dropdown-item size="sm"
+                           @click.stop="returnExamInfo(row.item, row.index)">Return Exam</b-dropdown-item>
+          <b-dropdown-item v-if=row.item.booking
+                           size="sm"
+                           @click="updateBookingRoute(row.item, row.index)">Edit Booking</b-dropdown-item>
+          <b-dropdown-item v-else-if=!row.item.booking
+                           size="sm"
+                           @click="addBookingRoute(row.item, row.index)">Add Booking</b-dropdown-item>
         </b-dropdown>
       </template>
     </b-table>
@@ -270,7 +277,7 @@
         'toggleEditExamModalVisible',
         'setEditExamInfo',
         'toggleReturnExamModalVisible',
-        'setReturnExamInfo'
+        'setReturnExamInfo',
       ]),
       handleExpiryFilter(e) {
         this.expiryFilter = e.target.value
@@ -326,6 +333,16 @@
         let rowDate = moment(item.booking.start_time).format('YYYY-MM-DD')
         let dateConcat = bookingRoute.concat(rowDate)
         this.$router.push(dateConcat)
+      },
+      addBookingRoute(item) {
+        let bookingRoute = '/booking/?schedule=true'
+        this.$router.push(bookingRoute)
+        this.navigationVisible(false)
+        this.setSelectedExam(item)
+        this.toggleCalendarControls(false)
+        this.toggleExamInventoryModal(false)
+        this.toggleScheduling(true)
+        this.toggleSchedulingIndicator(true)
       }
     },
   }
