@@ -128,12 +128,12 @@ class CSRConfig(Base):
             print("==> Editor: " + current_user.username + "; Changing: " + updated_csr.username)
             print("    --> EId: " + str(current_user.csr_id) + "; RId: " + str(csr_id) + "; UId: " + str(updated_csr.csr_id))
 
-            # socketio.emit('clear_csr_cache', { "id": csr_id})
+            socketio.emit('clear_csr_cache', { "id": csr_id})
             socketio.emit('csr_update', \
                           {"csr_id": csr_id, \
                            "receptionist_ind": updated_csr.receptionist_ind}, \
                            room=current_user.office_id)
-            socketio.emit('clear_csr_cache', { "id": csr_id})
+            # socketio.emit('clear_csr_cache', { "id": csr_id})
 
             flash(gettext('''Record was successfully saved.'''), 'success')
             if '_add_another' in request.form:
