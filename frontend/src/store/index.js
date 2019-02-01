@@ -1669,7 +1669,9 @@ export const store = new Vuex.Store({
     
     postITAGroupExam(context) {
       let responses = Object.assign( {}, context.state.capturedExam)
-      let datetime = moment(responses.expiry_date).local().format('YYYY-MM-DD') + ' ' + responses.exam_time
+      let date = moment(responses.expiry_date).local().format('YYYY-MM-DD').toString()
+      let time = moment(responses.exam_time).local().format('H:mm').toString()
+      let datetime = date+'T'+time
       let start = moment(datetime).local()
       let length = context.state.examTypes.find(ex => ex.exam_type_id == responses.exam_type_id).number_of_hours
       let end = start.clone().add(length, 'hours')
@@ -1721,6 +1723,7 @@ export const store = new Vuex.Store({
         number_of_students: 1,
         office_id: context.state.user.office_id
       }
+      responses.expiry_date = moment(responses.expiry_date).format('YYYY-MM-DD')
       if (responses.notes === null) {
         responses.notes = ''
       }

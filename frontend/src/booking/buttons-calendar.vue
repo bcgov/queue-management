@@ -48,7 +48,6 @@
         'navigationVisible'
       ]),
       showExamModal() {
-        this.$root.$emit('toggleOffsite', false)
         this.toggleExamInventoryModal(true)
       },
       scheduleOtherEvent() {

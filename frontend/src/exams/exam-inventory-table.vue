@@ -78,7 +78,7 @@
         {{ getInvigilator(row) }}
       </template>
       <template slot="expiry_date" slot-scope="row">
-        {{ row.item.expiry_date.split('T')[0] }}
+        {{ row.item.examinee_name === 'group exam' ? '–' : row.item.expiry_date.split('T')[0] }}
       </template>
       <template slot="location" slot-scope="row">
         <template v-if="!row.item.offsite_location">

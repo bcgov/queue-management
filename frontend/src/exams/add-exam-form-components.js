@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import { mapMutations, mapState } from 'vuex'
-import 'flatpickr/dist/flatpickr.css'
-import flatPickr from 'vue-flatpickr-component'
+import DatePicker from 'vue2-datepicker'
 
 export const checkmark = Vue.component('checkmark', {
   props: ['validated'],
@@ -161,9 +160,10 @@ export const SelectOffice = Vue.component('select-question', {
 
 export const ExamReceivedQuestion = Vue.component('exam-received-question', {
   props: ['error', 'q', 'validationObj', 'handleInput', 'exam',],
-  components: { checkmark },
+  components: { checkmark, DatePicker },
   data() {
     return {
+      date: null,
       options: [
         {text: 'Yes', value: true},
         {text: 'No', value: false}
@@ -184,11 +184,7 @@ export const ExamReceivedQuestion = Vue.component('exam-received-question', {
           <label>{{ q.text2 }}
             <span v-if="error" style="color: red">{{ validationObj[q.key].message }}</span>
           </label>
-          <b-input type="date"
-                   :value="exam[q.key]"
-                   :key="q.key"
-                   :name="q.key"
-                   @input.native="handleInput" />
+          <DatePicker :value="exam[q.key]" lang="en" @input="selectRecdDate"></DatePicker>
         </b-form-group>
       </b-col>
       <b-col cols="5" />
@@ -208,8 +204,17 @@ export const ExamReceivedQuestion = Vue.component('exam-received-question', {
     }
   },
   methods: {
-    ...mapMutations(['captureExamDetail', 'toggleIndividualCaptureTabRadio'])
-  }
+    ...mapMutations(['captureExamDetail', 'toggleIndividualCaptureTabRadio']),
+      selectRecdDate(e) {
+        console.log(e)
+        this.handleInput({
+          target: {
+            name: 'exam_received_date',
+            value: e
+          }
+        })
+      }
+      },
 })
 
 export const NotesQuestion = Vue.component('notes-question', {
@@ -251,56 +256,53 @@ export const NotesQuestion = Vue.component('notes-question', {
 
 export const DateQuestion = Vue.component('date-question', {
   props: ['error', 'exam', 'handleInput', 'q', 'radioChange','today', 'validationObj'],
-  components: { checkmark },
+  components: { checkmark, DatePicker },
+  data() {
+    return {
+      date: null
+    }
+  },
   computed: {
     ...mapState(['user', 'addITAExamModal']),
   },
+  methods: {
+    selectDate(e) {
+      this.handleInput({
+        target: {
+          name: 'expiry_date',
+          value: e
+        }
+      })
+    }
+  },
   template: `
-    <b-row no-gutters >
-      <b-col cols="6">
+    <b-row no-gutters>
+      <b-col cols="11">
         <b-form-group>
           <label>
             {{ addITAExamModal.setup == 'group' ? 'Exam Date' : 'Expiry Date' }}
             <span v-if="error" style="color: red">{{ validationObj[q.key].message }}</span>
           </label>
-          <b-form-input :value="exam[q.key]"
-                        :name="q.key"
-                        type="date"
-                        @input.native="handleInput" />
+          <DatePicker :value="exam[q.key]" lang="en" @input="selectDate"></DatePicker>
         </b-form-group>
       </b-col>
-      <b-col cols="5" />
       <checkmark :validated="validationObj[q.key].valid" />
     </b-row>
   `
 })
 
-export const TimeQuestion = Vue.component('date-question', {
+export const TimeQuestion = Vue.component('time-question', {
   props: ['error', 'exam', 'handleInput', 'q', 'radioChange','today', 'validationObj'],
-  components: { checkmark, flatPickr },
+  components: { checkmark, DatePicker },
   data() {
     return {
-      date: '',
-      config: {
-        wrap: true,
-        enableTime: true,
-        noCalendar: true,
-        static: true,
-        dateFormat: 'h:i K',
-        time_24hr: false,
-        minTime: '8:00',
-        maxTime: '17:00',
-        minuteIncrement: 15,
-      }
+      date: ''
     }
   },
   computed: {
     ...mapState(['user']),
   },
   methods: {
-    onMonthNavClick(e) {
-      e.preventDefault()
-    },
     selectTime(e) {
       this.handleInput({
         target: {
@@ -311,31 +313,24 @@ export const TimeQuestion = Vue.component('date-question', {
     }
   },
   template: `
-<div>
-    <b-row no-gutters >
-      <b-col cols="12">
-        <b-input-group>
-          <label>Exam Time</label><br>
-        </b-input-group>
-      </b-col>
-    </b-row>
     <b-row no-gutters>
       <b-col cols="11">
-        <div class="form-group">
-          <flat-pickr @input="selectTime"
-                      :value="date"
-                      :config="config"
-                      @onMonthNavClick="onMonthNavClick"
-                      class="form-control">
-          </flat-pickr>
-        </div>
+        <b-form-group>
+          <label>
+            Exam Time
+            <span v-if="error" style="color: red">{{ validationObj[q.key].message }}</span>
+          </label>
+          <DatePicker :value="exam[q.key]"
+                      :time-picker-options="{ start: '8:00', step: '00:30', end: '17:00' }"
+                      lang="en"
+                      @input="selectTime"
+                      format="h:mm a"
+                      confirm
+                      type="time"></DatePicker>
+        </b-form-group>
       </b-col>
       <checkmark :validated="validationObj[q.key].valid" />
-      
     </b-row>
-    </div>
-    
-    
   `
 })
 
