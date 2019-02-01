@@ -67,10 +67,14 @@ class CSR(Base):
 
     @classmethod
     def update_user_cache(cls, userid):
-        csr = CSR.query.filter_by(csr_id=userid).first()
-        key = CSR.format_string % csr.username
-        print("==> Updating the user cache, key: '" + key + "'")
-        cache.set(key, csr)
+        csr_cache_before = CSR.find_by_userid(userid)
+        csr_db = CSR.query.filter_by(csr_id=userid).first()
+        key = CSR.format_string % csr_db.username
+        cache.set(key, csr_db)
+        csr_cache_after = CSR.find_by_userid(userid)
+        print("==> Key: " + key + "; CB: " + csr_cache_before.office.office_name + \
+              "; CA: " + csr_cache_after.office.office_name + "; DB: " + \
+              csr_db.office.office_name)
 
     def get_id(self):
         return str(self.csr_id)
