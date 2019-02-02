@@ -109,6 +109,9 @@ class CSRConfig(Base):
 
         #  We know model is good.  Save id of CSR you're editing for later use.
         csr_id = get_mdict_item_or_list(request.args, 'id')
+        #  Delete next two lines later.
+        csr_old = CSR.query.filter_by(csr_id=csr_id).first()
+        csr_office_old = csr_old.office.office_name
 
         form = self.edit_form(obj=model)
         if not hasattr(form, '_validated_ruleset') or not form._validated_ruleset:
@@ -119,21 +122,15 @@ class CSRConfig(Base):
             #  Trim the user name, if necessary.
             updated_csr = CSR.query.filter_by(csr_id=csr_id).first()
             if updated_csr.username != updated_csr.username.strip():
-                print("==> trimming user name")
                 updated_csr.username = updated_csr.username.strip()
                 db.session.add(updated_csr)
                 db.session.commit()
 
-            # auth_csr = CSR.find_by_username(g.oidc_token_info['username'])
-            print("==> Editor: " + current_user.username + "; Changing: " + updated_csr.username)
-            print("    --> EId: " + str(current_user.csr_id) + "; RId: " + str(csr_id) + "; UId: " + str(updated_csr.csr_id))
-
-            # socketio.emit('clear_csr_cache', { "id": csr_id})
+            socketio.emit('clear_csr_cache', { "id": csr_id})
             socketio.emit('csr_update', \
                           {"csr_id": csr_id, \
                            "receptionist_ind": updated_csr.receptionist_ind}, \
                            room=current_user.office_id)
-            socketio.emit('clear_csr_cache', { "id": csr_id})
 
             flash(gettext('''Record was successfully saved.'''), 'success')
             if '_add_another' in request.form:

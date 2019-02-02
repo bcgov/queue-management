@@ -48,7 +48,6 @@ class Services(Resource):
         db.session.commit()
 
         result = self.csr_schema.dump(edit_csr)
-        print("==> emitting csr_update from Python")
         socketio.emit('csr_update', \
                       { "csr_id": edit_csr.csr_id, \
                         "receptionist_ind" : edit_csr.receptionist_ind }, \

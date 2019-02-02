@@ -42,18 +42,19 @@ class CSR(Base):
 
     @classmethod
     def find_by_username(cls, username):
-        key = CSR.format_string % username
+        idir_id = username.split("idir/")[-1]
+        key = (CSR.format_string % idir_id).lower()
         if cache.get(key):
             return cache.get(key)
 
-        csr = CSR.query.filter(CSR.deleted.is_(None)).filter_by(username=username.split("idir/")[-1]).first()
+        csr = CSR.query.filter(CSR.deleted.is_(None)).filter_by(username=idir_id).first()
         cache.set(key, csr)
         return csr
 
     @classmethod
     def find_by_userid(cls, userid):
         csr = CSR.query.filter(CSR.deleted.is_(None)).filter_by(csr_id=userid).first()
-        key = CSR.format_string % csr.username
+        key = (CSR.format_string % csr.username).lower()
         if cache.get(key):
             return cache.get(key)
 
@@ -62,15 +63,15 @@ class CSR(Base):
 
     @classmethod
     def delete_user_cache(cls, username):
-        key = CSR.format_string % username
+        idir_id = username.split("idir/")[-1]
+        key = (CSR.format_string % idir_id).lower()
         cache.delete(key)
 
     @classmethod
     def update_user_cache(cls, userid):
-        csr = CSR.query.filter_by(csr_id=userid).first()
-        key = CSR.format_string % csr.username
-        print("==> Updating the user cache, key: '" + key + "'")
-        cache.set(key, csr)
+        csr_db = CSR.query.filter_by(csr_id=userid).first()
+        key = (CSR.format_string % csr_db.username).lower()
+        cache.set(key, csr_db)
 
     def get_id(self):
         return str(self.csr_id)

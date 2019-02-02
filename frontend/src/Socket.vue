@@ -74,9 +74,7 @@ limitations under the License.*/
       },
 
       onCSRUpdate(data){
-          console.log('==> socket received: "updateCSRList"')
-          console.log("    --> csr_id:           " + data.csr_id.toString())
-          console.log("    --> receptionist_ind: " + data.receptionist_ind.toString())
+          console.log('socket received: "csr_update"')
           this.$store.dispatch('getCsrs')
       },
 
