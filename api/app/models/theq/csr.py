@@ -43,7 +43,7 @@ class CSR(Base):
     @classmethod
     def find_by_username(cls, username):
         idir_id = username.split("idir/")[-1]
-        key = CSR.format_string % idir_id
+        key = (CSR.format_string % idir_id).lower()
         if cache.get(key):
             csr = cache.get(key)
             print("==> find_by_username: C: Yes, username: " + username + "; key: " + key + "; U: " + \
@@ -59,7 +59,7 @@ class CSR(Base):
     @classmethod
     def find_by_userid(cls, userid):
         csr = CSR.query.filter(CSR.deleted.is_(None)).filter_by(csr_id=userid).first()
-        key = CSR.format_string % csr.username
+        key = (CSR.format_string % csr.username).lower()
         if cache.get(key):
             csr = cache.get(key)
             print("==> find_by_userid: C: Yes, userid: " + userid + "; key: " + key + "; U: " + \
@@ -74,14 +74,14 @@ class CSR(Base):
     @classmethod
     def delete_user_cache(cls, username):
         idir_id = username.split("idir/")[-1]
-        key = CSR.format_string % idir_id
+        key = (CSR.format_string % idir_id).lower()
         cache.delete(key)
 
     @classmethod
     def update_user_cache(cls, userid):
         csr_cache_before = CSR.find_by_userid(userid)
         csr_db = CSR.query.filter_by(csr_id=userid).first()
-        key = CSR.format_string % csr_db.username
+        key = (CSR.format_string % csr_db.username).lower()
         cache.set(key, csr_db)
         csr_cache_after = CSR.find_by_userid(userid)
         print("==> update_user_cache: Key: " + key + "; CB: " + csr_cache_before.office.office_name + \
