@@ -122,21 +122,15 @@ class CSRConfig(Base):
             #  Trim the user name, if necessary.
             updated_csr = CSR.query.filter_by(csr_id=csr_id).first()
             if updated_csr.username != updated_csr.username.strip():
-                print("==> trimming user name")
                 updated_csr.username = updated_csr.username.strip()
                 db.session.add(updated_csr)
                 db.session.commit()
-
-            # auth_csr = CSR.find_by_username(g.oidc_token_info['username'])
-            print("==> Edit: " + current_user.username + "; Ch: " + updated_csr.username + \
-                "; Old: " + csr_office_old + "; New: " + updated_csr.office.office_name)
 
             socketio.emit('clear_csr_cache', { "id": csr_id})
             socketio.emit('csr_update', \
                           {"csr_id": csr_id, \
                            "receptionist_ind": updated_csr.receptionist_ind}, \
                            room=current_user.office_id)
-            # socketio.emit('clear_csr_cache', { "id": csr_id})
 
             flash(gettext('''Record was successfully saved.'''), 'success')
             if '_add_another' in request.form:
