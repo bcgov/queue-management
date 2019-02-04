@@ -36,7 +36,7 @@
                      @event-created="selectEvent"
                      @event-render="eventRender"
                      :events="events()"
-                     :config="setup">
+                     :config="config">
       </full-calendar>
     </keep-alive>
     <div class="w-50 mt-2 ml-3 pl-3" style="display: flex; justify-content: space-between;"
@@ -99,6 +99,7 @@
       this.$root.$on('toggleOffsite', (bool) => { this.toggleOffsite(bool) })
       this.$root.$on('unselect', () => { this.unselect() })
       this.$root.$on('updateEvent', (event, params) => { this.updateEvent(event, params) })
+
     },
     data() {
       return {
@@ -177,6 +178,11 @@
         'showExamInventoryModal',
         'showSchedulingIndicator',
       ]),
+      config() {
+        let setup = this.setup
+        setup.selectable = true
+        return setup
+      },
       adjustment() {
         if (this.showSchedulingIndicator) {
           return 240
@@ -479,6 +485,11 @@
           this.$refs.bookingcal.fireMethod('changeView', 'agendaDay')
           this.goToDate(this.$route.params.date)
         }
+        if(this.$route.params.schedule == true) {
+          this.$refs.bookingcal.fireMethod('changeView', 'agendaWeek')
+          this.toggleOffsite(false)
+          this.options({name: 'selectable', value: true})
+      }
       },
     }
   }
