@@ -217,6 +217,7 @@
         this.updateCaptureTab({step})
       },
       clickCancel() {
+        this.resetModal()
         this.toggleAddITAExamModal({visible: false, setup: null, step1MenuOpen: false})
       },
       clickNext() {
@@ -265,6 +266,7 @@
         this.resetCaptureTab()
         this.unSubmitted = true
         this.submitMsg = ''
+        this.status = 'unknown'
 
       },
       setWarning() {

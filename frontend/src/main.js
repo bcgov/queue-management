@@ -25,6 +25,9 @@ import './assets/css/q.css'
 import './assets/css/bc-gov-style.css'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
+  faRegistered
+} from '@fortawesome/free-regular-svg-icons'
+import {
   faAngleLeft,
   faAngleRight,
   faBars,
@@ -49,6 +52,7 @@ library.add(
   faAngleRight,
   faBars,
   faBinoculars,
+  faRegistered,
   faCalendar,
   faCaretLeft,
   faCaretRight,
