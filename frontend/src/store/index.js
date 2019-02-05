@@ -250,6 +250,7 @@ export const store = new Vuex.Store({
       priority: 2
     },
     addModalSetup: null,
+    nonITAExam: false,
     addNextService: false,
     adminNavigation: 'csr',
     alertMessage: '',
@@ -2357,6 +2358,8 @@ export const store = new Vuex.Store({
     setClickedDate: (state, payload) => state.clickedDate = payload,
     
     toggleExamInventoryModal: (state, payload) => state.showExamInventoryModal = payload,
+
+    toggleNonITAExamModal: (state, payload) => state.nonITAExam = payload,
 
     toggleEditExamModalVisible: (state, payload) => state.showEditExamModalVisible = payload,
 

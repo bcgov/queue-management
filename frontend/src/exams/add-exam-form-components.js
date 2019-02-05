@@ -343,13 +343,19 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
     }
   },
   computed: {
-    ...mapState(['addITAExamModal', 'capturedExam']),
+    ...mapState(['addITAExamModal', 'capturedExam', 'nonITAExam' ]),
     dropItems() {
+      if (this.addITAExamModal.setup === 'individual' && !this.nonITAExam) {
+        return this.examTypes.filter(type => type.exam_type_name.includes('Single'))
+      }
+      if(this.addITAExamModal.setup === 'individual' && this.nonITAExam) {
+        //this.examTypes.forEach(type => {
+          //console.log(type)
+        //})
+        return this.examTypes.filter(type  => type.ita_ind === 0)
+      }
       if (this.addITAExamModal.setup === 'group') {
         return this.examTypes.filter(type => type.exam_type_name.includes('Group'))
-      }
-      if (this.addITAExamModal.setup === 'individual') {
-        return this.examTypes.filter(type => type.exam_type_name.includes('Single'))
       }
     },
     inputText() {
@@ -374,7 +380,7 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
     }
   },
   methods: {
-    ...mapMutations(['toggleAddITAExamModal']),
+    ...mapMutations(['toggleAddITAExamModal', 'toggleNonITAExamModal']),
     clickInput() {
       if (!this.addITAExamModal.step1MenuOpen) {
         this.toggleAddITAExamModal({step1MenuOpen: true})
@@ -386,7 +392,9 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
   template: `
     <b-row no-gutters>
       <b-col class="dropdown">
-      <h5>{{ addITAExamModal.setup === 'group' ? 'Add a Group Exam' : 'Add an Individual Exam' }}</h5>
+      <h5 v-if="addITAExamModal.setup === 'group' ">Add Group Exam</h5>
+      <h5 v-else-if="addITAExamModal.setup === 'individual' && !this.nonITAExam ">Add Individual ITA Exam</h5>
+      <h5 v-else-if="addITAExamModal.setup === 'individual' && this.nonITAExam ">Add Non-ITA Exam</h5>
       <label>Exam Type</label><br>
         <div @click="clickInput">
           <b-input read-only
