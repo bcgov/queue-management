@@ -24,7 +24,6 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import './assets/css/q.css'
 import './assets/css/bc-gov-style.css'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { InputNumber } from 'element-ui'
 import {
   faAngleLeft,
   faAngleRight,
@@ -63,13 +62,13 @@ library.add(
 )
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(BootstrapVue)
-Vue.use(InputNumber)
 
 require('es6-shim')
 require('Keycloak')
 var keycloak = Keycloak(process.env.KEYCLOAK_JSON_URL)
 Vue.prototype.$keycloak = keycloak
 Vue.config.productionTip = false
+
 
 /* eslint-disable no-new */
 const app = new Vue({

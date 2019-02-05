@@ -83,7 +83,7 @@
         </span>
       </b-col>
       <b-col align-self="end">
-        <span class="confirm-item">{{ exam.exam_time }}</span>
+        <span class="confirm-item">{{ displayTime }}</span>
       </b-col>
     </b-row>
     <b-row no-gutters align-h="between" align-v="end" v-if="user.role.role_code == 'LIAISON'">
@@ -101,6 +101,7 @@
 
 <script>
   import { mapState } from 'vuex'
+  import moment from 'moment'
 
   export default {
     name: "AddExamFormConfirm",
@@ -119,6 +120,12 @@
           this.submitMsg = ''
           return []
         }
+      },
+      displayTime() {
+        if (this.exam && this.exam.exam_time) {
+          return new moment(this.exam.exam_time).format('h:mm a')
+        }
+        return ''
       },
       examObject() {
         if (this.exam && this.exam.exam_type_id) {

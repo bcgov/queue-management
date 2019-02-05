@@ -83,12 +83,7 @@
       initialize() {
         this.initializeAgenda().then( rooms => {
           rooms.forEach( room => {
-            let roomObj = {
-              id: room.room_id,
-              title: room.room_name,
-              eventColor: room.color
-            }
-            this.$refs.agendacal.fireMethod('addResource', roomObj)
+            this.$refs.agendacal.fireMethod('addResource', room)
           })
           this.getBookings()
         })
@@ -107,6 +102,7 @@
           `<div style="display: flex; justify-content: space-between; width: 100%;">
              <div>${room} - <span style="font-weight: 600; font-size: .9rem">${title}</span></div>
              <div>${invig}</div>
+             <div>jjj</div>
            </div>
           `
         )

@@ -188,7 +188,6 @@
 
 <script>
   import { mapActions, mapMutations, mapState } from 'vuex'
-  import { adjustColor } from '../store/helpers'
   import moment from 'moment'
 
   export default {
@@ -412,6 +411,7 @@
       },
       reschedule() {
         this.toggleRescheduling(true)
+        this.$root.$emit('toggleOffsite', false)
         this.message = ''
         this.$root.$emit('options', {name: 'selectable', value: true})
         this.toggleCalendarControls(false)
@@ -471,6 +471,7 @@
       },
       submit(e) {
         e.preventDefault()
+        this.$root.$emit('toggleOffsite', true)
         if (this.title.length === 0) {
           this.labelColor = 'red'
           this.state = 'danger'
