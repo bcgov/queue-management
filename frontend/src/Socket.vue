@@ -75,7 +75,10 @@ limitations under the License.*/
 
       onCSRUpdate(data){
           console.log('socket received: "csr_update"')
-          this.$store.dispatch('getCsrs')
+          if (this.$store.state.user.role.role_code === "GA") {
+            console.log('--> person is a GA -> calling getCsrs routine')
+            this.$store.dispatch('getCsrs')
+          }
       },
 
       onConnect() {
