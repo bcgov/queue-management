@@ -74,7 +74,7 @@ Ensure you have python 3. I also had to install: gcc, python3-venv, libmysqlclie
 
 ### Run API Server:
 
-1. `gunicorn wsgi --bind=0.0.0.0:5000 --access-logfile=- --config gunicorn_config.py
+1. `gunicorn wsgi --bind=0.0.0.0:5000 --access-logfile=- --config gunicorn_config.py`
 
 ## Setup for  FrontEnd Development
 
