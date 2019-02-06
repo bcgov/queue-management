@@ -250,6 +250,7 @@ export const store = new Vuex.Store({
       priority: 2
     },
     addModalSetup: null,
+    nonITAExam: false,
     addNextService: false,
     adminNavigation: 'csr',
     alertMessage: '',
@@ -1669,10 +1670,10 @@ export const store = new Vuex.Store({
     
     postITAGroupExam(context) {
       let responses = Object.assign( {}, context.state.capturedExam)
-      let date = moment(responses.expiry_date).local().format('YYYY-MM-DD').toString()
-      let time = moment(responses.exam_time).local().format('H:mm').toString()
+      let date = new moment(responses.expiry_date).local().format('YYYY-MM-DD')
+      let time = new moment(responses.exam_time).local().format('HH:mm:ss')
       let datetime = date+'T'+time
-      let start = moment(datetime).local()
+      let start = new moment(datetime).local()
       let length = context.state.examTypes.find(ex => ex.exam_type_id == responses.exam_type_id).number_of_hours
       let end = start.clone().add(length, 'hours')
       let booking = {
@@ -2290,20 +2291,7 @@ export const store = new Vuex.Store({
       )
     },
 
-    resetCaptureForm(state) {
-      let keys = Object.keys(state.capturedExam)
-      keys.forEach(key => {
-        let value = null
-        if (key === 'exam_method') {
-          value = 'paper'
-        }
-        Vue.set(
-          state.capturedExam,
-          key,
-          value
-        )
-      })
-    },
+    resetCaptureForm: (state) => state.capturedExam = {},
 
     resetCaptureTab(state) {
       let initialState = {
@@ -2357,6 +2345,8 @@ export const store = new Vuex.Store({
     setClickedDate: (state, payload) => state.clickedDate = payload,
     
     toggleExamInventoryModal: (state, payload) => state.showExamInventoryModal = payload,
+
+    toggleNonITAExamModal: (state, payload) => state.nonITAExam = payload,
 
     toggleEditExamModalVisible: (state, payload) => state.showEditExamModalVisible = payload,
 
