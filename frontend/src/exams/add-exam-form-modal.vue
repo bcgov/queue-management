@@ -108,6 +108,7 @@
   import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
   import AddExamFormController from './add-exam-form-controller'
   import AddExamFormConfirm from './add-exam-form-confirm'
+  import moment from 'moment'
 
   export default {
     name: 'AddExamFormModal',
@@ -183,6 +184,7 @@
     methods: {
       ...mapActions(['clickAddExamSubmit', 'getExams']),
       ...mapMutations([
+        'captureExamDetail',
         'resetCaptureForm',
         'resetCaptureTab',
         'toggleAddITAExamModal',
@@ -197,7 +199,6 @@
               if (this.steps.some(step=>step.step==error)) {
                 list.push(this.steps.find(step=>step.step==error)).questions
               }
-
             })
           if (list.includes(i)) {
             return {color: 'red'}
@@ -232,6 +233,10 @@
         this.updateCaptureTab({step: e})
       },
       initialize() {
+        this.captureExamDetail({key:'notes', value: 'hhh'})
+        let d = new Date()
+        let today = moment(d).format('YYYY-MM-DD')
+        this.captureExamDetail({key:'exam_received_date', value: today})
         this.unSubmitted = true
         this.submitMsg = ''
       },

@@ -2348,7 +2348,7 @@ export const store = new Vuex.Store({
 
     toggleNonITAExamModal: (state, payload) => state.nonITAExam = payload,
 
-    toggleEditExamModalVisible: (state, payload) => state.showEditExamModalVisible = payload,
+    toggleEditExamModalVisible: (state, payload) => state.showEditExamModal = payload,
 
     toggleReturnExamModalVisible: (state, payload) => state.showReturnExamModalVisible = payload,
 
