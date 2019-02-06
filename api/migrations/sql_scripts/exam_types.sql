@@ -1,4 +1,4 @@
-user qsystem;
+use qsystem;
 
 insert examtypes (exam_type_name, exam_color, number_of_hours, method_type, ita_ind, group_exam_ind) values ('COFQ - 3HR Group Exam', '#FF69B4', 3, 'Written', 1 , 0)
 
