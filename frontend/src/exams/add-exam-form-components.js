@@ -279,7 +279,7 @@ export const DateQuestion = Vue.component('date-question', {
     <b-row no-gutters>
       <b-col cols="11">
         <b-form-group>
-          <label>
+          <label class="mr-3">
             {{ addITAExamModal.setup == 'group' ? 'Exam Date' : 'Expiry Date' }}
             <span v-if="error" style="color: red">{{ validationObj[q.key].message }}</span>
           </label>
@@ -316,7 +316,7 @@ export const TimeQuestion = Vue.component('time-question', {
     <b-row no-gutters>
       <b-col cols="11">
         <b-form-group>
-          <label>
+          <label class="mr-3">
             Exam Time
             <span v-if="error" style="color: red">{{ validationObj[q.key].message }}</span>
           </label>

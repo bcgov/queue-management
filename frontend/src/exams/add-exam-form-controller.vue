@@ -86,11 +86,6 @@
     mounted() {
       this.getExamTypes()
       this.getOffices()
-    //assigning an empty value to notes so it gets picked up by submitter function later if not filled in by user
-      this.captureExamDetail({key:'notes', value: ''})
-      let d = new Date()
-      let today = moment(d).format('YYYY-MM-DD')
-      this.captureExamDetail({key:'exam_received_date', value: today})
     },
     data() {
       return {
