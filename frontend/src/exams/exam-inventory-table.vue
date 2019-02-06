@@ -108,7 +108,7 @@
                                style="padding: -2px; margin: -2px; font-size: 1rem; color: dimgray"/>
           </template>
           <b-dropdown-item size="sm"
-                           @click.stop="editInfo(row.item, row.index)">Edit Row</b-dropdown-item>
+                           @click.stop="editInfo(row.item, row.index)">Edit Exam</b-dropdown-item>
           <b-dropdown-item size="sm"
                            @click.stop="returnExamInfo(row.item, row.index)">Return Exam</b-dropdown-item>
           <b-dropdown-item v-if=row.item.booking
