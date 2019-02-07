@@ -281,6 +281,7 @@ export const store = new Vuex.Store({
     editedBookingOriginal: null,
     editExamFailure: false,
     editExams: [],
+    editedGroupBooking: null,
     editExamSuccess: false,
     examAlertMessage: '',
     examEditSuccessMessage: '',
@@ -334,6 +335,7 @@ export const store = new Vuex.Store({
     showBookingModal: false,
     showCalendarControls: true,
     showEditBookingModal: false,
+    showEditGroupBookingModal: false,
     showEditExamModal: false,
     showExamInventoryModal: false,
     showFeedbackModal: false,
@@ -635,6 +637,16 @@ export const store = new Vuex.Store({
       })
     },
     
+    putRequest(context, payload) {
+      return new Promise((resolve, reject) => {
+        Axios(context).put(payload.url, payload.data).then( () => {
+          resolve()
+        }).catch( () => {
+          reject()
+        })
+      })
+    },
+    
     putBooking(context, payload) {
       return new Promise((resolve, reject) => {
         Axios(context).put(`/bookings/${payload.id}/`, payload.changes).then(resp => {
@@ -699,10 +711,7 @@ export const store = new Vuex.Store({
             booking.end = b.end_time
             booking.title = b.booking_name
             booking.id = b.booking_id
-            let exam = context.state.exams.find(ex => parseInt(ex.booking_id) == parseInt(b.booking_id)) || null
-            if (exam !== null && exam.length >= 1) {
-              booking.exam = exam
-            }
+            booking.exam = context.state.exams.find(ex => ex.booking_id == b.booking_id) || false
           calendarEvents.push(booking)
           })
           context.commit('setEvents', calendarEvents)
@@ -2416,5 +2425,12 @@ export const store = new Vuex.Store({
     toggleSelectInvigilatorModal: (state, payload) => state.showSelectInvigilatorModal = payload,
     
     setEvents: (state, payload) => state.calendarEvents = payload,
+    
+    setInventoryEditedBooking(state, booking) {
+      let bookingCopy = Object.assign({}, booking)
+      state.editedBooking = bookingCopy
+    },
+  
+    toggleEditGroupBookingModal: (state, payload) => state.showEditGroupBookingModal = payload,
   }
 })

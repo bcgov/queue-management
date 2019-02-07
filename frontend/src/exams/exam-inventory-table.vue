@@ -40,17 +40,14 @@
         <b-btn-group horizontal class="ml-2 pt-2">
           <b-btn value="both"
                  size="sm"
-
                  :pressed="groupFilter==='both'"
                  @click="groupFilter='both'"><span class="mx-2">Both</span></b-btn>
           <b-btn value="unbooked"
                  size="sm"
-
                  :pressed="groupFilter==='individual'"
                  @click="groupFilter='individual'">Individual</b-btn>
           <b-btn value="booked"
                  size="sm"
-
                  :pressed="groupFilter==='group'"
                  @click="groupFilter='group'">Group</b-btn>
         </b-btn-group>
@@ -111,10 +108,17 @@
                            @click.stop="editInfo(row.item, row.index)">Edit Exam</b-dropdown-item>
           <b-dropdown-item size="sm"
                            @click.stop="returnExamInfo(row.item, row.index)">Return Exam</b-dropdown-item>
-          <b-dropdown-item v-if=row.item.booking
+          <b-dropdown-item v-if="row.item.booking"
                            size="sm"
-                           @click="updateBookingRoute(row.item, row.index)">Edit Booking</b-dropdown-item>
-          <b-dropdown-item v-else-if=!row.item.booking
+                           @click="updateBookingRoute(row.item)">
+            <template v-if="row.item.offsite_location">
+              {{ row.item.booking.invigilator_id ? 'Reschedule' : 'Schedule' }}
+            </template>
+            <template v-if="!row.item.offsite_location">
+              {{ row.item.booking ? 'Reschedule' : 'Schedule' }}
+            </template>
+          </b-dropdown-item>
+          <b-dropdown-item v-else-if="!row.item.booking"
                            size="sm"
                            @click="addBookingRoute(row.item, row.index)">Add Booking</b-dropdown-item>
         </b-dropdown>
@@ -123,6 +127,7 @@
     </div>
     <EditExamModal v-if="showEditExamModal"></EditExamModal>
     <ReturnExamModal v-if="showReturnExamModalVisible"></ReturnExamModal>
+    <EditGroupExamBookingModal :exam="item" :resetExam="resetEditedExam" />
   </div>
 </template>
 
@@ -133,23 +138,23 @@
   import moment from 'moment'
   import SuccessExamAlert from './success-exam-alert'
   import FailureExamAlert from './failure-exam-alert'
+  import EditGroupExamBookingModal from './edit-group-exam-modal'
 
   export default {
     name: "ExamInventoryTable",
-    components: { EditExamModal, ReturnExamModal, SuccessExamAlert, FailureExamAlert },
+    components: { EditGroupExamBookingModal, EditExamModal, ReturnExamModal, SuccessExamAlert, FailureExamAlert },
     props: ['mode'],
     mounted() {
-      this.getBookings().then(bookings => {
-        this.events = bookings
-      })
+      this.getInvigilators()
+      this.getBookings().then( () => { this.getExams() })
       this.getWidth()
-      this.getExams()
       this.$nextTick(function() {
         window.addEventListener('resize', () => { this.getWidth() })
       })
     },
     data() {
       return {
+        item: null,
         tableStyle: null,
         expiryFilter: 'all',
         bookedFilter: 'both',
@@ -266,7 +271,7 @@
 
     },
     methods: {
-      ...mapActions(['getExams', 'getBookings']),
+      ...mapActions(['getExams', 'getBookings', 'getInvigilators']),
       ...mapMutations([
         'navigationVisible',
         'setSelectedExam',
@@ -275,6 +280,7 @@
         'toggleScheduling',
         'toggleSchedulingIndicator',
         'toggleEditExamModalVisible',
+        'toggleEditGroupBookingModal',
         'setEditExamInfo',
         'toggleReturnExamModalVisible',
         'setReturnExamInfo',
@@ -329,10 +335,16 @@
         this.setReturnExamInfo(item)
       },
       updateBookingRoute(item) {
-        let bookingRoute = '/booking/'
-        let rowDate = moment(item.booking.start_time).format('YYYY-MM-DD')
-        let dateConcat = bookingRoute.concat(rowDate)
-        this.$router.push(dateConcat)
+        if (item.offsite_location) {
+          this.item = item
+          this.toggleEditGroupBookingModal(true)
+          return
+        }
+        let route = '/booking/' + moment(item.booking.start_time).format('YYYY-MM-DD').toString()
+        this.$router.push(route)
+      },
+      resetEditedExam() {
+        this.item = {}
       },
       addBookingRoute(item) {
         let bookingRoute = '/booking/?schedule=true'
@@ -343,7 +355,7 @@
         this.toggleExamInventoryModal(false)
         this.toggleScheduling(true)
         this.toggleSchedulingIndicator(true)
-      }
+      },
     },
   }
 </script>

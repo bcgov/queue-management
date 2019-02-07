@@ -23,21 +23,21 @@
         <b-form>
           <b-form-row v-if="examAssociated">
             <b-col class="mb-2">
-              <div class="display-div-box">
-                <div class="outer-grid-q">
-                  <div class="grid-top-head">Exam Details</div>
+              <div class="q-info-display-grid-container">
+                <div class="q-id-grid-outer">
+                  <div class="q-id-grid-top-head">Exam Details</div>
                   <div>Writer:</div>
-                  <div class="grid-1st-col">{{ this.event.exam.examinee_name }}</div>
-                  <div class="grid-2nd-head">Exam:</div>
-                  <div class="grid-2nd-col">{{ this.event.exam.exam_name }}</div>
+                  <div class="q-id-grid-1st-col">{{ this.event.exam.examinee_name }}</div>
+                  <div class="q-id-grid-2nd-head">Exam:</div>
+                  <div class="q-id-grid-2nd-col">{{ this.event.exam.exam_name }}</div>
                   <div>Method:</div>
-                  <div class="grid-1st-col">{{ this.event.exam.exam_method }}</div>
-                  <div class="grid-2nd-head">Event ID:</div>
-                  <div class="grid-2nd-col">{{ this.event.exam.event_id }}</div>
+                  <div class="q-id-grid-1st-col">{{ this.event.exam.exam_method }}</div>
+                  <div class="q-id-grid-2nd-head">Event ID:</div>
+                  <div class="q-id-grid-2nd-col">{{ this.event.exam.event_id }}</div>
                   <div>Duration:</div>
-                  <div class="grid-1st-col">{{ this.event.exam.exam_type.number_of_hours }} hrs</div>
-                  <div class="grid-2nd-head">Expiry:</div>
-                  <div class="grid-2nd-col">{{ expiryDate }}</div>
+                  <div class="q-id-grid-1st-col">{{ this.event.exam.exam_type.number_of_hours }} hrs</div>
+                  <div class="q-id-grid-2nd-head">Expiry:</div>
+                  <div class="q-id-grid-2nd-col">{{ expiryDate }}</div>
                 </div>
               </div>
             </b-col>
@@ -518,34 +518,3 @@
     }
   }
 </script>
-
-<style scoped>
-  .display-div-box {
-    border-radius: 7px;
-    border: 1px solid lightgrey;
-    height: 100%;
-    width: 100%;
-    padding: 7px;
-  }
-  .outer-grid-q {
-    display: grid;
-    grid-template-columns: 2fr 3fr 2fr 3fr;
-  }
-  .grid-1st-col {
-    margin-left: auto;
-    margin-right: 20px;
-  }
-  .grid-2nd-col {
-    margin-left: auto;
-  }
-  .grid-2nd-head {
-    margin-left: 10px;
-  }
-  .grid-top-head {
-    grid-column-start: 1;
-    grid-column-end: 5;
-    margin-right: auto;
-    font-weight: 600;
-    padding-bottom: 5px;
-  }
-</style>
