@@ -31,7 +31,10 @@ class ExamDelete(Resource):
 
         csr = CSR.find_by_username(g.oidc_token_info['username'])
 
-        exam = Exam.query.filter_by(exam_id=id, office_id=csr.office_id).first_or_404()
+        exam = Exam.query.filter_by(exam_id=id).first_or_404()
+
+        if not (exam.office_id == csr.office_id or csr.role.role_code == "LIAISON"):
+            return {"The Exam Office ID and CSR Office ID do not match!"}, 403
 
         exam.deleted_date = datetime.now()
 
