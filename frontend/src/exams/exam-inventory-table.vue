@@ -144,7 +144,7 @@
     props: ['mode'],
     mounted() {
       this.getInvigilators()
-      this.getBookings().then( () => { this.getExams() })
+      this.getExams().then( () => { this.getBookings() })
       this.getWidth()
       this.$nextTick(function() {
         window.addEventListener('resize', () => { this.getWidth() })
