@@ -130,6 +130,11 @@ import app.resources.theq.service_requests_detail
 import app.resources.theq.smartboard
 import app.resources.theq.websocket
 
+import app.resources.bookings.appointment.appointment_detail
+import app.resources.bookings.appointment.appointment_list
+import app.resources.bookings.appointment.appointment_post
+import app.resources.bookings.appointment.appointment_put
+import app.resources.bookings.appointment.appointment_delete
 import app.resources.bookings.booking.booking_delete
 import app.resources.bookings.booking.booking_detail
 import app.resources.bookings.booking.booking_list
