@@ -116,7 +116,7 @@
           <b-dropdown-item v-if="!row.item.booking"
                            size="sm"
                            @click="addBookingRoute(row.item)">Schedule Exam</b-dropdown-item>
-          <b-dropdown-item v-if="row.item.offsite_location && !row.item.booking.invigilator_id"
+          <b-dropdown-item v-if="row.item.offsite_location && !(row.item.booking && row.item.booking.invigilator_id)"
                            size="sm"
                            @click="editGroupExam(row.item)">Add Invigilator</b-dropdown-item>
         </b-dropdown>
