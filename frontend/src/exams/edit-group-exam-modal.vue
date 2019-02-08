@@ -20,7 +20,7 @@
                     <div>{{ this.exam.exam_name }}</div>
                   </div>
                 </div>
-                <div class="pl-2"><b>Event ID:</b></div>
+                <div class="pl-2">Event ID: </div>
                 <div class="q-id-grid-2nd-col">{{ this.exam.event_id }}</div>
                 <div class="id-grid-1st-col w-100 pr-2">
                   <div style="display: flex; justify-content: space-between; width: 100%">
@@ -28,14 +28,14 @@
                     <div>{{ this.exam.exam_type.exam_type_name }}</div>
                   </div>
                 </div>
-                <div class="pl-2"><b>Writers:</b></div>
+                <div class="pl-2">Writers: </div>
                 <div style="margin-left: auto;">{{ this.exam.number_of_students }}</div>
               </div>
             </div>
           </b-col>
         </b-form-row>
-        <b-form-row v-if="role_code==='LIAISON' || role_code === 'GA'">
-          <b-col cols="6">
+        <b-form-row>
+          <b-col cols="6" v-if="role_code === 'LIAISON' || role_code === 'GA'">
             <b-form-group>
               <label>Exam Date</label><br>
               <DatePicker v-model="date"
@@ -45,7 +45,19 @@
                           lang="en"></DatePicker>
             </b-form-group>
           </b-col>
-          <b-col cols="6">
+          <b-col cols="6" v-if="role_code !== 'GA' && role_code !== 'LIAISON'">
+            <b-form-group>
+              <label>Exam Time</label><br>
+              <b-input disabled :value="formatTime(this.exam.booking.start_time)" />
+            </b-form-group>
+          </b-col>
+          <b-col cols="6" v-if="role_code !== 'GA' && role_code !== 'LIAISON'">
+            <b-form-group>
+              <label>Exam Date</label><br>
+              <b-input disabled :value="formatDate(this.exam.booking.start_time)" />
+            </b-form-group>
+          </b-col>
+          <b-col cols="6" v-if="role_code === 'LIAISON' || role_code === 'GA'">
             <b-form-group>
               <label>Exam Time</label><br>
               <DatePicker v-model="time"
@@ -66,11 +78,12 @@
             </b-form-group>
           </b-col>
         </b-form-row>
-        <b-form-row v-if="role_code==='LIAISON' || role_code === 'GA'">
+        <b-form-row>
           <b-col>
             <b-form-group>
               <label>Location</label><br>
               <b-textarea v-model="offsite_location"
+                          :disabled="role_code !== 'GA' && role_code !== 'LIAISON'"
                           class="mb-0"
                           :rows="2"
                           name="offsite_location"
@@ -79,7 +92,7 @@
           </b-col>
         </b-form-row>
         <b-form-row align-content="end" align-h="end">
-          <b-col cols="10" v-if="role_code==='LIAISON' || role_code === 'GA'">
+          <b-col cols="10" v-if="role_code === 'LIAISON' || role_code === 'GA'">
             <b-form-group>
               <label>Invigilator</label><br>
               <b-select v-model="invigilator_id"
@@ -88,7 +101,7 @@
                         :options="invigilatorOptions" />
             </b-form-group>
           </b-col>
-          <b-col v-if="role_code!=='LIAISON' && role_code!=='GA'">
+          <b-col v-if="role_code !== 'LIAISON' && role_code !== 'GA'">
             <b-form-group>
               <label>Invigilator</label><br>
               <b-select v-model="invigilator_id"
@@ -169,6 +182,12 @@
         this.toggleEditGroupBookingModal(false)
         this.reset()
         this.resetExam()
+      },
+      formatDate(d) {
+        return new moment(d).format('ddd, MMM DD, YYYY')
+      },
+      formatTime(d) {
+        return new moment(d).format('h:mm a')
       },
       checkDate(e) {
         this.showMessage = false

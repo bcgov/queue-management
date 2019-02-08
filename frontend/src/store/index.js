@@ -387,48 +387,15 @@ export const store = new Vuex.Store({
       return state.calendarEvents.filter(event => searchNestedObject(event, search))
     },
     
-    calendar_events(state) {
-      if (state.bookings.length > 0) {
-        let bookings = []
-        state.bookings.forEach(booking => {
-          let obj
-          if (booking.room_id) {
-            obj = {
-              id: booking.booking_id,
-              title: booking.booking_name,
-              start: new moment(booking.start_time).utc(),
-              end: new moment(booking.end_time).utc(),
-              resourceId: booking.room_id,
-              invigilator: booking.invigilator,
-              room: booking.room,
-            }
-          }
-          if (!booking.room_id) {
-            obj = {
-              id: booking.booking_id,
-              title: booking.booking_name,
-              start: new moment(booking.start_time).utc(),
-              end: new moment(booking.end_time).utc(),
-              resourceId: '_offsite',
-            }
-          }
-          if (state.exams) {
-            if (state.exams.find(ex => ex.booking_id == booking.booking_id)) {
-              obj['exam'] = state.exams.find(ex => ex.booking_id == booking.booking_id)
-            }
-          }
-          bookings.push(obj)
-        })
-        return bookings
-      }
-      return []
-    },
-    
     exam_inventory(state) {
       if (state.showExamInventoryModal) {
         return state.exams.filter(exam => exam.booking_id === null)
       }
       return state.exams
+    },
+    
+    exam_object_id: (state, getters) => (examId) => {
+      return state.examTypes.find(type => type.exam_type_id == examId)
     },
     
     exam_object(state) {
@@ -693,7 +660,6 @@ export const store = new Vuex.Store({
         .then(resp => {
           context.commit('setBookings', resp.data.bookings)
           let calendarEvents = []
-          
           resp.data.bookings.forEach(b => {
             let booking = {}
             if (b.room_id) {
@@ -2357,7 +2323,7 @@ export const store = new Vuex.Store({
 
     toggleNonITAExamModal: (state, payload) => state.nonITAExam = payload,
 
-    toggleEditExamModalVisible: (state, payload) => state.showEditExamModal = payload,
+    toggleEditExamModal: (state, payload) => state.showEditExamModal = payload,
 
     toggleReturnExamModalVisible: (state, payload) => state.showReturnExamModalVisible = payload,
 

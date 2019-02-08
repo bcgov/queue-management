@@ -233,35 +233,27 @@
           invigilators: state => state.invigilators
         }
       ),
-      expiryDate() {
-        if (this.examAssociated && this.event.exam) {
-          return new moment(this.event.exam.expiry_date).format('MMM Do, YYYY')
-        }
-      },
-      receivedDate() {
-        if (this.examAssociated && this.event.exam) {
-          return new moment(this.event.exam.received_date).format('MMM Do, YYYY')
-        }
-      },
       displayDates() {
-        return {
-          end: this.end.format('h:mm a'),
-          start: this.start.format('h:mm a'),
-          date: this.start.format('MMM Do, YYYY')
+        if (this.start && this.end) {
+          return {
+            end: this.end.format('h:mm a'),
+            start: this.start.format('h:mm a'),
+            date: this.start.format('MMM Do, YYYY')
+          }
         }
-      },
-      invigilatorDropdown() {
-        return this.invigilators.map( i =>
-          ({value: i.invigilator_id,
-            text: i.invigilator_name})
-        )
+        return {end: '', start: '', date: ''}
       },
       displayDuration() {
-        let output = this.duration.toFixed(1)
-        return `${output} hrs`
+        if (this.duration) {
+          let output = this.duration.toFixed(1)
+          return `${output} hrs`
+        }
       },
       duration() {
-        return this.end.diff(this.start, 'hours', true)
+        if (this.start && this.end) {
+          return this.end.diff(this.start, 'hours', true)
+        }
+        return ''
       },
       end() {
         if (this.examAssociated && this.newEvent) {
@@ -278,10 +270,21 @@
         }
       },
       examAssociated() {
-        if (this.event && Object.keys(this.event).includes('exam')) {
+        if (this.event && this.event.exam) {
           return true
         }
         return false
+      },
+      expiryDate() {
+        if (this.examAssociated && this.event.exam) {
+          return new moment(this.event.exam.expiry_date).format('MMM Do, YYYY')
+        }
+      },
+      invigilatorDropdown() {
+        return this.invigilators.map( i =>
+          ({value: i.invigilator_id,
+            text: i.invigilator_name})
+        )
       },
       modalVisible: {
         get() {
@@ -289,6 +292,11 @@
         },
         set(e) {
           this.toggleEditBookingModal(e)
+        }
+      },
+      receivedDate() {
+        if (this.examAssociated && this.event.exam) {
+          return new moment(this.event.exam.received_date).format('MMM Do, YYYY')
         }
       },
       resource() {
@@ -299,9 +307,11 @@
           }
         }
         if (this.event) {
-          return {
-            name: this.event.room.room_name,
-            id: this.event.room.room_id
+          if (this.event.room && this.event.room.room_name) {
+            return {
+              name: this.event.room.room_name,
+              id: this.event.room.room_id
+            }
           }
         }
         return ''
@@ -343,9 +353,11 @@
         'toggleSchedulingOther',
       ]),
       cancel() {
-        this.finishBooking()
+        if (this.$route.params.date) {
+          this.$router.push('/booking/')
+        }
         this.$root.$emit('initialize')
-        this.$root.$emit('options', {name: 'selectable', value: false})
+        this.finishBooking()
         this.resetModal()
       },
       checkValue(e) {

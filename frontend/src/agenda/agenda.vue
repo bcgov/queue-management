@@ -169,8 +169,8 @@
       }
     },
     computed: {
-      ...mapGetters(['calendar_events', 'room_resources']),
-      ...mapState(['calendarSetup']),
+      ...mapGetters(['room_resources']),
+      ...mapState(['calendarEvents','calendarSetup']),
       displayDates() {
         let output = []
         this.exams.sort(function(a,b) {
@@ -198,13 +198,13 @@
         'toggleBookRoomModal',
       ]),
       events() {
-        if (this.calendar_events.length > 0) {
+        if (this.calendarEvents.length > 0) {
           if (this.groupFilter === 'individual') {
-            return this.calendar_events.filter(event => !event.resourceId === '_offsite')
+            return this.calendarEvents.filter(event => !event.resourceId === '_offsite')
           } else if (this.groupFilter === 'group') {
-            return this.calendar_events.filter(event => event.resourceId === '_offsite')
+            return this.calendarEvents.filter(event => event.resourceId === '_offsite')
           } else {
-            return this.calendar_events
+            return this.calendarEvents
           }
         }
         return []
