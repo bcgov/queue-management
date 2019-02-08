@@ -23,21 +23,21 @@
         <b-form>
           <b-form-row v-if="examAssociated">
             <b-col class="mb-2">
-              <div class="display-div-box">
-                <div class="outer-grid-q">
-                  <div class="grid-top-head">Exam Details</div>
+              <div class="q-info-display-grid-container">
+                <div class="q-id-grid-outer">
+                  <div class="q-id-grid-top-head">Exam Details</div>
                   <div>Writer:</div>
-                  <div class="grid-1st-col">{{ this.event.exam.examinee_name }}</div>
-                  <div class="grid-2nd-head">Exam:</div>
-                  <div class="grid-2nd-col">{{ this.event.exam.exam_name }}</div>
+                  <div class="q-id-grid-1st-col">{{ this.event.exam.examinee_name }}</div>
+                  <div class="q-id-grid-2nd-head">Exam:</div>
+                  <div class="q-id-grid-2nd-col">{{ this.event.exam.exam_name }}</div>
                   <div>Method:</div>
-                  <div class="grid-1st-col">{{ this.event.exam.exam_method }}</div>
-                  <div class="grid-2nd-head">Event ID:</div>
-                  <div class="grid-2nd-col">{{ this.event.exam.event_id }}</div>
+                  <div class="q-id-grid-1st-col">{{ this.event.exam.exam_method }}</div>
+                  <div class="q-id-grid-2nd-head">Event ID:</div>
+                  <div class="q-id-grid-2nd-col">{{ this.event.exam.event_id }}</div>
                   <div>Duration:</div>
-                  <div class="grid-1st-col">{{ this.event.exam.exam_type.number_of_hours }} hrs</div>
-                  <div class="grid-2nd-head">Expiry:</div>
-                  <div class="grid-2nd-col">{{ expiryDate }}</div>
+                  <div class="q-id-grid-1st-col">{{ this.event.exam.exam_type.number_of_hours }} hrs</div>
+                  <div class="q-id-grid-2nd-head">Expiry:</div>
+                  <div class="q-id-grid-2nd-col">{{ expiryDate }}</div>
                 </div>
               </div>
             </b-col>
@@ -233,35 +233,27 @@
           invigilators: state => state.invigilators
         }
       ),
-      expiryDate() {
-        if (this.examAssociated && this.event.exam) {
-          return new moment(this.event.exam.expiry_date).format('MMM Do, YYYY')
-        }
-      },
-      receivedDate() {
-        if (this.examAssociated && this.event.exam) {
-          return new moment(this.event.exam.received_date).format('MMM Do, YYYY')
-        }
-      },
       displayDates() {
-        return {
-          end: this.end.format('h:mm a'),
-          start: this.start.format('h:mm a'),
-          date: this.start.format('MMM Do, YYYY')
+        if (this.start && this.end) {
+          return {
+            end: this.end.format('h:mm a'),
+            start: this.start.format('h:mm a'),
+            date: this.start.format('MMM Do, YYYY')
+          }
         }
-      },
-      invigilatorDropdown() {
-        return this.invigilators.map( i =>
-          ({value: i.invigilator_id,
-            text: i.invigilator_name})
-        )
+        return {end: '', start: '', date: ''}
       },
       displayDuration() {
-        let output = this.duration.toFixed(1)
-        return `${output} hrs`
+        if (this.duration) {
+          let output = this.duration.toFixed(1)
+          return `${output} hrs`
+        }
       },
       duration() {
-        return this.end.diff(this.start, 'hours', true)
+        if (this.start && this.end) {
+          return this.end.diff(this.start, 'hours', true)
+        }
+        return ''
       },
       end() {
         if (this.examAssociated && this.newEvent) {
@@ -278,10 +270,21 @@
         }
       },
       examAssociated() {
-        if (this.event && Object.keys(this.event).includes('exam')) {
+        if (this.event && this.event.exam) {
           return true
         }
         return false
+      },
+      expiryDate() {
+        if (this.examAssociated && this.event.exam) {
+          return new moment(this.event.exam.expiry_date).format('MMM Do, YYYY')
+        }
+      },
+      invigilatorDropdown() {
+        return this.invigilators.map( i =>
+          ({value: i.invigilator_id,
+            text: i.invigilator_name})
+        )
       },
       modalVisible: {
         get() {
@@ -289,6 +292,11 @@
         },
         set(e) {
           this.toggleEditBookingModal(e)
+        }
+      },
+      receivedDate() {
+        if (this.examAssociated && this.event.exam) {
+          return new moment(this.event.exam.received_date).format('MMM Do, YYYY')
         }
       },
       resource() {
@@ -299,9 +307,11 @@
           }
         }
         if (this.event) {
-          return {
-            name: this.event.room.room_name,
-            id: this.event.room.room_id
+          if (this.event.room && this.event.room.room_name) {
+            return {
+              name: this.event.room.room_name,
+              id: this.event.room.room_id
+            }
           }
         }
         return ''
@@ -343,9 +353,11 @@
         'toggleSchedulingOther',
       ]),
       cancel() {
-        this.finishBooking()
+        if (this.$route.params.date) {
+          this.$router.push('/booking/')
+        }
         this.$root.$emit('initialize')
-        this.$root.$emit('options', {name: 'selectable', value: false})
+        this.finishBooking()
         this.resetModal()
       },
       checkValue(e) {
@@ -518,34 +530,3 @@
     }
   }
 </script>
-
-<style scoped>
-  .display-div-box {
-    border-radius: 7px;
-    border: 1px solid lightgrey;
-    height: 100%;
-    width: 100%;
-    padding: 7px;
-  }
-  .outer-grid-q {
-    display: grid;
-    grid-template-columns: 2fr 3fr 2fr 3fr;
-  }
-  .grid-1st-col {
-    margin-left: auto;
-    margin-right: 20px;
-  }
-  .grid-2nd-col {
-    margin-left: auto;
-  }
-  .grid-2nd-head {
-    margin-left: 10px;
-  }
-  .grid-top-head {
-    grid-column-start: 1;
-    grid-column-end: 5;
-    margin-right: auto;
-    font-weight: 600;
-    padding-bottom: 5px;
-  }
-</style>

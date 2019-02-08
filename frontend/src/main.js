@@ -28,6 +28,7 @@ import {
   faRegistered
 } from '@fortawesome/free-regular-svg-icons'
 import {
+  faClock,
   faAngleLeft,
   faAngleRight,
   faBars,
@@ -37,7 +38,9 @@ import {
   faCaretLeft,
   faCaretRight,
   faCheck,
+  faCheckSquare,
   faExclamation,
+  faExclamationTriangle,
   faFilter,
   faMinus,
   faPlus,
@@ -48,6 +51,7 @@ import VDragged from 'v-dragged'
 
 Vue.use(VDragged)
 library.add(
+  faClock,
   faAngleLeft,
   faAngleRight,
   faBars,
@@ -58,7 +62,9 @@ library.add(
   faCaretRight,
   faCaretDown,
   faCheck,
+  faCheckSquare,
   faExclamation,
+  faExclamationTriangle,
   faFilter,
   faMinus,
   faPlus,
