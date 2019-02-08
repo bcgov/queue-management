@@ -33,7 +33,11 @@ class ExamDetail(Resource):
         csr = CSR.find_by_username(g.oidc_token_info['username'])
 
         try:
-            exam = Exam.query.filter_by(exam_id=id, office_id=csr.office_id).first()
+            exam = Exam.query.filter_by(exam_id=id).first()
+
+            if not (exam.office_id == csr.office_id or csr.role.role_code == "LIAISON"):
+                return {"The Exam Office ID and CSR Office ID do not match!"}, 403
+
             result = self.exam_schema.dump(exam)
             return {'exam': result.data,
                     'errors': result.errors}, 200

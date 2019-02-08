@@ -73,19 +73,21 @@
                 this.setEditExamSuccess(false)
                 this.setEditExamFailure(false)
                 this.selectedExam.exam_id = this.fields.exam_id;
-                if(this.selectedReturned === 'No'){
+                if(this.selectedReturned === 'No') {
                     this.selectedReturned = 0;
-                }else{
-                    this.selectedReturned =1;
+                } else {
+                    this.selectedReturned = 1;
                 }
                 let return_exam = {
                     exam_id: this.selectedExam.exam_id,
                     exam_returned_ind: this.selectedReturned,
-                    exam_returned_tracking_number: this.fields.exam_returned_tracking_number
-                };
+                }
+
+                if (this.fields.exam_returned_tracking_number) {
+                  return_exam.exam_returned_tracking_number = this.fields.exam_returned_tracking_number
+                }
                 this.putExamInfo(return_exam);
                 this.getExams();
-                console.log(this.editExamSuccess)
             },
         },
         computed: {

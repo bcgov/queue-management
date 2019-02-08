@@ -46,7 +46,7 @@ class BookingPost(Resource):
         if booking.office_id is None:
             booking.office_id = csr.office_id
 
-        if booking.office_id == csr.office_id or csr.role_code == "LIAISON":
+        if booking.office_id == csr.office_id or csr.role.role_code == "LIAISON":
             db.session.add(booking)
             db.session.commit()
 

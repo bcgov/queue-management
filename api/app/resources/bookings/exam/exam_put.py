@@ -36,7 +36,10 @@ class ExamPut(Resource):
         if not json_data:
             return {"message": "No input data received for updating an exam"}
 
-        exam = Exam.query.filter_by(exam_id=id, office_id=csr.office_id).first_or_404()
+        exam = Exam.query.filter_by(exam_id=id).first_or_404()
+
+        if not (exam.office_id == csr.office_id or csr.role.role_code == "LIAISON"):
+            return {"The Exam Office ID and CSR Office ID do not match!"}, 403
 
         exam, warning = self.exam_schema.load(json_data, instance=exam, partial=True)
 
