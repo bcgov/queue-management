@@ -33,7 +33,7 @@ class BookingDelete(Resource):
         booking = Booking.query.filter_by(booking_id=id).first_or_404()
 
         # Also 404 the request if they shouldn't be able to see this booking
-        if booking.office_id != csr.office_id and csr.role_code != "LIAISON":
+        if booking.office_id != csr.office_id and csr.role.role_code != "LIAISON":
             abort(404)
 
         db.session.delete(booking)
