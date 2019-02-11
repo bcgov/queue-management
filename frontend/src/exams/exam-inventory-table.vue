@@ -364,7 +364,7 @@
         return new moment(d).format('h:mm a')
       },
       addBookingRoute(item) {
-        let bookingRoute = '/booking/?schedule=true'
+        let bookingRoute = '/booking/?schedule=1'
         this.$router.push(bookingRoute)
         this.navigationVisible(false)
         this.setSelectedExam(item)
