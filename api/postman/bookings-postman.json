@@ -2292,7 +2292,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/exams/export/?start_date=2019-01-05&end_date=2019-01-25",
+							"raw": "http://localhost:5000/api/v1/exams/export/?start_date=2019-01-05&end_date=2019-01-31",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -2312,8 +2312,444 @@
 								},
 								{
 									"key": "end_date",
-									"value": "2019-01-25"
+									"value": "2019-01-31"
 								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Appointments",
+			"item": [
+				{
+					"name": "Localhost - Appointment Post End-point Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "851b530c-92d7-482c-9e80-2a1f542b280c",
+								"exec": [
+									"// Define the JSON Schema expected in response",
+									"var appointmentSchema = {",
+									"    \"type\": \"object\", ",
+									"    \"properties\": {",
+									"        \"appointment\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {",
+									"                \"appointment_id\": {\"type\": \"number\"},",
+									"                \"category\": {\"type\": \"string\"},",
+									"                \"checked_in_time\": {\"type\": \"string\"},",
+									"                \"comments\": {\"type\": \"string\"},",
+									"                \"end_time\": {\"type\": \"string\"},",
+									"                \"office\": {\"type\": \"number\"},",
+									"                \"office_id\": {\"type\": \"number\"},",
+									"                \"start_time\": {\"type\": \"string\"}",
+									"            },",
+									"            \"required\": [\"appointment_id\", \"category\", \"checked_in_time\", \"comments\", \"end_time\", \"office\", \"office_id\", \"start_time\"],",
+									"            \"errors\": {}",
+									"        }",
+									"    },",
+									"    \"required\": [\"appointment\"],",
+									"    \"errors\": {}",
+									"}",
+									" ",
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 201\", function(){",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Response time less than 500ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"pm.test(\"Validate Response Appointment Schema\", function(){",
+									"    pm.expect(tv4.validate(jsonData, appointmentSchema)).to.be.true;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n \"office_id\": 1,\n \"start_time\": \"2019-02-12T09:00:00Z\",\n \"end_time\": \"2019-02-12T09:30:00Z\",\n \"category\": \"Exam\",\n \"checked_in_time\": \"2019-02-12T09:03:00Z\",\n \"comments\": \"super late\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/appointments/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"appointments",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Localhost - Appointment Detail End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5206f620-8220-4ba4-860a-13c1bb452e6d",
+								"exec": [
+									"// Define the JSON Schema expected in response",
+									"var appointmentSchema = {",
+									"    \"type\": \"object\", ",
+									"    \"properties\": {",
+									"        \"appointment\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {",
+									"                \"appointment_id\": {\"type\": \"number\"},",
+									"                \"category\": {\"type\": \"string\"},",
+									"                \"checked_in_time\": {\"type\": \"string\"},",
+									"                \"comments\": {\"type\": \"string\"},",
+									"                \"end_time\": {\"type\": \"string\"},",
+									"                \"office\": {\"type\": \"number\"},",
+									"                \"office_id\": {\"type\": \"number\"},",
+									"                \"start_time\": {\"type\": \"string\"}",
+									"            },",
+									"            \"required\": [\"appointment_id\", \"category\", \"checked_in_time\", \"comments\", \"end_time\", \"office\", \"office_id\", \"start_time\"],",
+									"            \"errors\": {}",
+									"        }",
+									"    },",
+									"    \"required\": [\"appointment\"],",
+									"    \"errors\": {}",
+									"};",
+									"",
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 200\", function(){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time less than 1000ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"pm.test(\"Validate Response Appointment Schema\", function(){",
+									"    pm.expect(tv4.validate(jsonData, appointmentSchema)).to.be.true;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/appointments/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"appointments",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Localhost - Appointment List End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2a7432b9-ffb0-4e23-a224-c3a48171d6c4",
+								"exec": [
+									"// Define the JSON Schema expected in response",
+									"var appointmentSchema = {",
+									"    \"type\": \"object\", ",
+									"    \"properties\": {",
+									"        \"type\": \"array\",",
+									"        \"properties\": {",
+									"            \"appointment_id\": {\"type\": \"number\"},",
+									"            \"category\": {\"type\": \"string\"},",
+									"            \"checked_in_time\": {\"type\": \"string\"},",
+									"            \"comments\": {\"type\": \"string\"},",
+									"            \"end_time\": {\"type\": \"string\"},",
+									"            \"office\": {\"type\": \"number\"},",
+									"            \"office_id\": {\"type\": \"number\"},",
+									"            \"start_time\": {\"type\": \"string\"}",
+									"        },",
+									"        \"required\": [\"appointment_id\", \"category\", \"checked_in_time\", \"comments\", \"end_time\", \"office\", \"office_id\", \"start_time\"]",
+									"    },",
+									"    \"required\": [\"appointments\"],",
+									"    \"errors\": {}",
+									"};",
+									"",
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 200\", function(){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time less than 1000ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"pm.test(\"Validate Response Appointment Schema\", function(){",
+									"    pm.expect(tv4.validate(jsonData, appointmentSchema)).to.be.true;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/appointments/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"appointments",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Localhost - Appointment Put End-point Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1cf958af-12dd-44f4-a624-d070cc6d90cb",
+								"exec": [
+									"// Define the JSON Schema expected in response",
+									"var appointmentSchema = {",
+									"    \"type\": \"object\", ",
+									"    \"properties\": {",
+									"        \"appointment\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {",
+									"                \"appointment_id\": {\"type\": \"number\"},",
+									"                \"category\": {\"type\": \"string\"},",
+									"                \"checked_in_time\": {\"type\": \"string\"},",
+									"                \"comments\": {\"type\": \"string\"},",
+									"                \"end_time\": {\"type\": \"string\"},",
+									"                \"office\": {\"type\": \"number\"},",
+									"                \"office_id\": {\"type\": \"number\"},",
+									"                \"start_time\": {\"type\": \"string\"}",
+									"            },",
+									"            \"required\": [\"appointment_id\", \"category\", \"checked_in_time\", \"comments\", \"end_time\", \"office\", \"office_id\", \"start_time\"],",
+									"            \"errors\": {}",
+									"        }",
+									"    },",
+									"    \"required\": [\"appointment\"],",
+									"    \"errors\": {}",
+									"};",
+									"",
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 200\", function(){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time less than 200ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"pm.test(\"Validate Response Exam Schema\", function(){",
+									"    pm.expect(tv4.validate(jsonData, appointmentSchema)).to.be.true;",
+									"});",
+									"",
+									"//Test to see that appointment ID is not null",
+									"pm.test(\"Validate that Booking ID is not null\", function(){",
+									"    pm.expect(jsonData.appointment_id).not.eql(null);",
+									"});",
+									"",
+									"//Test to see if appointment id field has changed",
+									"pm.test(\"Validate Appointment ID change\", function(){",
+									"   pm.expect(jsonData.appointment_id == 3) ;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n \"office_id\": 1,\n \"start_time\": \"2019-02-12T09:00:00Z\",\n \"end_time\": \"2019-02-12T09:30:00Z\",\n \"category\": \"Exam\",\n \"checked_in_time\": \"2019-02-12T08:57:00Z\",\n \"comments\": \"super EARLY\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/appointments/1/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"appointments",
+								"1",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Localhost - Appointment Delete End-point Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "88b43898-330f-4cf1-81c3-8cce3c53f54c",
+								"exec": [
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 204\", function(){",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"Response time less than 200ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/appointments/3/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"appointments",
+								"3",
+								""
 							]
 						}
 					},
@@ -2346,7 +2782,7 @@
 	],
 	"variable": [
 		{
-			"id": "db6cdbf1-56a7-49c5-ad7c-ebf66c5f8b81",
+			"id": "089ae271-6af4-47bc-8d6f-7944aa759c40",
 			"key": "auth_variable",
 			"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI1NXhiZzcyaml6NWQ3cEtkbzdwNFhLdTB2VFA2UXMtemthZzFaY1ZKWTZVIn0.eyJqdGkiOiJmZWVlYzU4YS0zOTY0LTQwZDgtOTk3Ni02OTg1ZjNiNmQ2NzYiLCJleHAiOjE1NDQwMzY2NzQsIm5iZiI6MCwiaWF0IjoxNTQ0MDM0ODc0LCJpc3MiOiJodHRwczovL3Nzby10ZXN0LnBhdGhmaW5kZXIuZ292LmJjLmNhL2F1dGgvcmVhbG1zL3NiYyIsImF1ZCI6ImNmbXMtREVWIiwic3ViIjoiY2ZmNTQ3MDItZTkzMC00YjZlLTlhYzgtMmZkMTRjY2FmNzUxIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiY2Ztcy1ERVYiLCJub25jZSI6ImM1Zjg1NzBmLTgwNDktNDUxNC04Mjg4LTJjN2RmMzdkZTc5NSIsImF1dGhfdGltZSI6MTU0NDAzMjgxNywic2Vzc2lvbl9zdGF0ZSI6IjM4YjhiYzY4LTdmZDktNDE0NC04YWQ1LTI4ZGRlNmMwYWE1MCIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJuYW1lIjoiQ0ZNUyBQb3N0bWFuIE9wZXJhdG9yIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiY2Ztcy1wb3N0bWFuLW9wZXJhdG9yIiwiZ2l2ZW5fbmFtZSI6IkNGTVMgUG9zdG1hbiIsImZhbWlseV9uYW1lIjoiT3BlcmF0b3IifQ.CaDq7kLDMu1oqUVm6fhiAw4ubu_D4jVdkXrqLjfCxu9b-9GzyNSIK1Gy0NCesN3caG684-Ofv3LlragMOwdoRhx-xkO6j5rqPhh2EdEDYTGkrnmQrVBjgHECLYN3RSAUWk4oKsp7gRMLDorU6QWLZNRWe9qlzulbss08Mut4nZz1RV0CirvJQ9oshBdpstQIPBM7ZEptcF2AOnc8swcFMJ3mqdrs0ImytArwZEzYwRzSIAR0-kYW-AXq-TK1dk2R7fqkMXmy3ZdHoQlFRfNtfYILVPzBAq3zPftrD-lmCcfUWz-0UcwhmNELQ-Pej-t_Z_eFSPPGkAVIuv_kkHbqQw",
 			"type": "string"
