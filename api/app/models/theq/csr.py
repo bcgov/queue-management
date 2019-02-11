@@ -26,6 +26,7 @@ class CSR(Base):
     receptionist_ind = db.Column(db.Integer, nullable=False)
     deleted = db.Column(db.DateTime, nullable=True)
     csr_state_id = db.Column(db.Integer, db.ForeignKey('csrstate.csr_state_id'), nullable=False)
+    ita_designate = db.Column(db.Integer, default=0, nullable=False)
 
     role = db.relationship("Role", lazy='joined')
     office = db.relationship("Office", lazy='joined')

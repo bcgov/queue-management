@@ -37,3 +37,4 @@ class CSRSchema(ma.ModelSchema):
     csr_state = fields.Nested(CSRStateSchema(exclude=('csrs',)))
     office = fields.Nested(OfficeSchema())
     role = fields.Nested(RoleSchema(exclude=('roles',)))
+    ita_designate = fields.Int()
