@@ -17,5 +17,6 @@ from app.schemas.bookings.exam_type_schema import ExamTypeSchema
 from app.schemas.bookings.room_schema import RoomSchema
 from app.schemas.bookings.booking_schema import BookingSchema
 from app.schemas.bookings.exam_schema import ExamSchema
+from app.schemas.bookings.appointment_schema import AppointmentSchema
 
 
