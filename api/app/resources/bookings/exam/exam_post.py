@@ -39,7 +39,7 @@ class ExamPost(Resource):
             logging.warning("WARNING: %s", warning)
             return {"message": warning}, 422
 
-        if exam.office_id == csr.office_id or csr.role_code == "LIAISON":
+        if exam.office_id == csr.office_id or csr.role.role_code == "LIAISON":
 
             db.session.add(exam)
             db.session.commit()

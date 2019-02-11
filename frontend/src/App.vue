@@ -36,31 +36,33 @@ limitations under the License.*/
   import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
   import Alert from './alert'
   import ExamAlert from './exam-alert'
-  import Header from './layout/header'
-  import Socket from './Socket'
-  import Footer from './layout/footer'
+  import FailureExamAlert from './exams/failure-exam-alert'
   import Feedback from './feedback'
-  import Response from './response'
-  import Nav from './layout/nav'
+  import Footer from './layout/footer'
+  import Header from './layout/header'
   import Login from "./Login";
   import LoginWarning from './login-warning'
+  import Nav from './layout/nav'
+  import Response from './response'
+  import Socket from './Socket'
   import SuccessExamAlert from './exams/success-exam-alert'
-  import FailureExamAlert from './exams/failure-exam-alert'
 
   export default {
     name: 'App',
-    components: { Login,
-                  LoginWarning,
-                  Nav,
-                  Alert,
-                  ExamAlert,
-                  Header,
-                  Socket,
-                  Footer,
-                  Feedback,
-                  Response,
-                  SuccessExamAlert,
-                  FailureExamAlert },
+    components: {
+      Alert,
+      ExamAlert,
+      FailureExamAlert,
+      Feedback,
+      Footer,
+      Header,
+      Login,
+      LoginWarning,
+      Nav,
+      Response,
+      Socket,
+      SuccessExamAlert,
+    },
     computed: {
       ...mapState(['isLoggedIn', 'showSchedulingIndicator', 'user' ]),
       style() {

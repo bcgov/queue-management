@@ -6,6 +6,7 @@
     hide-footer
     no-close-on-backdrop
     no-close-on-esc
+    body-class="q-modal-body"
     class="m-0 p-0"
     @shown="setupForm()"
   >
@@ -175,9 +176,6 @@ export default {
 </script>
 
 <style>
-.modal-body {
-  padding: 0 !important;
-}
 .modal_header {
   display: flex;
   flex-direction: row;
