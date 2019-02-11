@@ -1586,8 +1586,10 @@ export const store = new Vuex.Store({
     },
 
     putExamInfo(context, payload) {
+      let id = payload.exam_id.valueOf()
+      delete payload.exam_id
       return new Promise((resolve, reject) => {
-        let url = `/exams/${context.state.selectedExam.exam_id}/`
+        let url = `/exams/${id}/`
         Axios(context).put(url, payload).then( resp =>{
           resolve(resp)
           context.commit('setEditExamSuccess', true)
@@ -1661,12 +1663,11 @@ export const store = new Vuex.Store({
       }
       
       let defaultValues = {
-        exam_received: 0,
         exam_returned_ind: 0,
         examinee_name: 'group exam',
-        expiry_date: new moment('2499-01-01T12:00:00-08:00').toString()
       }
       delete responses.exam_time
+      delete responses.expiry_date
       if (responses.notes === null) {
         data.notes = ''
       }
@@ -1695,7 +1696,6 @@ export const store = new Vuex.Store({
     postITAIndividualExam(context) {
       let responses = Object.assign( {}, context.state.capturedExam)
       let defaultValues = {
-        exam_received: 1,
         exam_returned_ind: 0,
         number_of_students: 1,
         office_id: context.state.user.office_id

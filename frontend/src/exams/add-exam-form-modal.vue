@@ -234,9 +234,11 @@
       },
       initialize() {
         this.captureExamDetail({key:'notes', value: ''})
-        let d = new Date()
-        let today = moment(d).format('YYYY-MM-DD')
-        this.captureExamDetail({key:'exam_received_date', value: today})
+        if (this.addITAExamModal.setup !== 'group') {
+          let d = new Date()
+          let today = moment(d).format('YYYY-MM-DD')
+          this.captureExamDetail({ key: 'exam_received_date', value: today })
+        }
         this.unSubmitted = true
         this.submitMsg = ''
       },
