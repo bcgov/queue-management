@@ -32,5 +32,3 @@ class AppointmentSchema(ma.ModelSchema):
     category = fields.String()
     checked_in_time = fields.DateTime()
     comments = fields.String()
-
-    office = fields.Nested(OfficeSchema())
