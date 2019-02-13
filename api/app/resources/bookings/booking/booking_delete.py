@@ -12,9 +12,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask import g
+from flask import abort, g, request
 from flask_restplus import Resource
-from app.models.bookings import Booking, Room
+from app.models.bookings import Booking
 from app.schemas.bookings import BookingSchema
 from app.models.theq import CSR
 from qsystem import api, db, oidc
@@ -30,7 +30,11 @@ class BookingDelete(Resource):
 
         csr = CSR.find_by_username(g.oidc_token_info['username'])
 
-        booking = Booking.query.filter_by(booking_id=id).join(Room).filter_by(office_id=csr.office_id).first_or_404()
+        booking = Booking.query.filter_by(booking_id=id).first_or_404()
+
+        # Also 404 the request if they shouldn't be able to see this booking
+        if booking.office_id != csr.office_id and csr.role.role_code != "LIAISON":
+            abort(404)
 
         db.session.delete(booking)
         db.session.commit()

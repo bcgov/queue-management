@@ -16,6 +16,7 @@ from marshmallow import fields
 import toastedmarshmallow
 from app.models.bookings import Booking
 from app.schemas.bookings import RoomSchema, InvigilatorSchema
+from app.schemas.theq import OfficeSchema
 from qsystem import ma
 
 
@@ -32,6 +33,8 @@ class BookingSchema(ma.ModelSchema):
     room_id = fields.Int()
     start_time = fields.DateTime()
     invigilator_id = fields.Int()
+    office_id = fields.Int()
 
     invigilator = fields.Nested(InvigilatorSchema())
     room = fields.Nested(RoomSchema(exclude=("booking", "office",)))
+    office = fields.Nested(OfficeSchema())

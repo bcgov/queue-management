@@ -85,7 +85,8 @@
                     </b-button>
                     <b-input :value="displayDuration"
                              readonly
-                             style="border-radius: 0px" />
+                             style="border-radius: 0px"
+                             class="w-50"/>
                     <b-button @click="incrementDuration" >
                       <font-awesome-icon icon="plus"
                                          class="m-0 p-0"
@@ -199,6 +200,7 @@
         'toggleCalendarControls',
       ]),
       cancel() {
+        this.$root.$emit('toggleOffsite', false)
         this.toggleSchedulingOther(true)
         this.toggleSchedulingIndicator(true)
         this.toggleOtherBookingModal(false)
@@ -214,7 +216,7 @@
         this.state = null
       },
       incrementDuration() {
-        if (this.endTime.format('H') == 18 || this.duration == .5) {
+        if (this.endTime.format('H') == 18) {
           return
         }
         this.added += .5
@@ -235,6 +237,7 @@
       },
       postEvent(e) {
         e.preventDefault()
+        this.$root.$emit('toggleOffsite', true)
         if (this.title.length > 0) {
           this.message = ''
           this.state = null

@@ -3,6 +3,7 @@
     <div v-for="q in questions" :key="q.key">
       <DropdownQuestion v-if="q.kind==='dropdown'"
                         :question="q"
+                        :exam="exam"
                         :exam_object="exam_object"
                         :examTypes="examTypes"
                         :message="validationObj[q.key].message"
@@ -85,11 +86,6 @@
     mounted() {
       this.getExamTypes()
       this.getOffices()
-    //assigning an empty value to notes so it gets picked up by submitter function later if not filled in by user
-      this.captureExamDetail({key:'notes', value: ''})
-      let d = new Date()
-      let today = moment(d).format('YYYY-MM-DD')
-      this.captureExamDetail({key:'exam_received_date', value: today})
     },
     data() {
       return {

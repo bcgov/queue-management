@@ -43,6 +43,7 @@
     methods: {
       cancel() {
         this.$root.$emit('cancel')
+        this.$root.$emit('toggleOffsite', true)
       }
     }
   }
