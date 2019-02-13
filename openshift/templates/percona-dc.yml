@@ -69,7 +69,7 @@ objects:
         spec:
           containers:
             - name: mysql
-              image: perconalab/pxc-openshift
+              image: perconalab/pxc-openshift:master
               imagePullPolicy: Always
               ports:
                 - containerPort: 3306
