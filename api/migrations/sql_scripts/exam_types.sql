@@ -32,3 +32,9 @@ insert examtypes (exam_type_name, exam_color, number_of_hours, method_type, ita_
 
 insert examtypes (exam_type_name, exam_color, number_of_hours, method_type, ita_ind, group_exam_ind) values ('Challenger Exam Session', '#FFFFFF', 3, 'Written', 1, 0)
 
+insert into examtype (exam_type_name, exam_color, number_of_hours, method_type, ita_ind, group_exam_ind) values ('Veterinary Exam', '#FFFFFF', 2, 'Written', 0, 0);
+
+insert into examtype (exam_type_name, exam_color, number_of_hours, method_type, ita_ind, group_exam_ind) values ('Milk Grader', '#FFFFFF', 2, 'Written', 0, 0);
+
+insert into examtype (exam_type_name, exam_color, number_of_hours, method_type, ita_ind, group_exam_ind) values ('Pesticide', '#FFFFFF', 2, 'Written', 0, 0);
+
