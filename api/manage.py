@@ -679,6 +679,33 @@ class Bootstrap(Command):
             group_exam_ind=0
         )
 
+        exam_type_seventeen = bookings.ExamType(
+            exam_type_name="Veterinary Exam",
+            exam_color="#FFFFFF",
+            number_of_hours=2,
+            method_type="written",
+            ita_ind=0,
+            group_exam_ind=0
+        )
+
+        exam_type_eighteen = bookings.ExamType(
+            exam_type_name="Milk Grader",
+            exam_color="#FFFFFF",
+            number_of_hours=2,
+            method_type="written",
+            ita_ind=0,
+            group_exam_ind=0
+        )
+
+        exam_type_nineteen = bookings.ExamType(
+            exam_type_name="Pesticide",
+            exam_color="#FFFFFF",
+            number_of_hours=2,
+            method_type="written",
+            ita_ind=0,
+            group_exam_ind=0
+        )
+
         db.session.add(exam_type_one)
         db.session.add(exam_type_two)
         db.session.add(exam_type_three)
@@ -695,6 +722,9 @@ class Bootstrap(Command):
         db.session.add(exam_type_fourteen)
         db.session.add(exam_type_fifteen)
         db.session.add(exam_type_sixteen)
+        db.session.add(exam_type_seventeen)
+        db.session.add(exam_type_eighteen)
+        db.session.add(exam_type_nineteen)
         db.session.commit()
 
         print("--> Bookings: Exam")
