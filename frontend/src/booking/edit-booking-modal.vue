@@ -492,6 +492,11 @@
         }
         let changes = {}
         if (!this.start.isSame(this.event.start)) {
+          if (this.examAssociated) {
+            if (this.start.isAfter(this.event.exam.expiry_date)) {
+              this.message = 'Selected date/time is '
+            }
+          }
           if (moment().isAfter(this.start)) {
             this.message = 'Selected date/time is is in the past. Press Reschedule and pick a new time.'
             return

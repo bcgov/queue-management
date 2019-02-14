@@ -304,7 +304,6 @@
         if (this.scheduling || this.schedulingOther || event.resourceId === '_offsite') {
           return
         }
-        console.log(event)
         if (view.name === 'listYear') {
           this.goToDate(event.start)
           this.agendaDay()

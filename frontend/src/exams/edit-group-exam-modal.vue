@@ -17,19 +17,19 @@
                 <div class="id-grid-1st-col w-100 pr-2">
                   <div style="display: flex; justify-content: space-between; width: 100%">
                     <div>Exam:</div>
-                    <div>{{ this.exam.exam_name }}</div>
+                    <div>{{ examRow.exam_name }}</div>
                   </div>
                 </div>
                 <div class="pl-2">Event ID: </div>
-                <div class="q-id-grid-2nd-col">{{ this.exam.event_id }}</div>
+                <div class="q-id-grid-2nd-col">{{ examRow.event_id }}</div>
                 <div class="id-grid-1st-col w-100 pr-2">
                   <div style="display: flex; justify-content: space-between; width: 100%">
                     <div>Type:</div>
-                    <div>{{ this.exam.exam_type.exam_type_name }}</div>
+                    <div>{{ examRow.exam_type.exam_type_name }}</div>
                   </div>
                 </div>
                 <div class="pl-2">Writers: </div>
-                <div style="margin-left: auto;">{{ this.exam.number_of_students }}</div>
+                <div style="margin-left: auto;">{{ examRow.number_of_students }}</div>
               </div>
             </div>
           </b-col>
@@ -48,13 +48,13 @@
           <b-col cols="6" v-if="role_code !== 'GA' && role_code !== 'LIAISON'">
             <b-form-group>
               <label>Exam Time</label><br>
-              <b-input disabled :value="formatTime(this.exam.booking.start_time)" />
+              <b-input disabled :value="formatTime(examRow.booking.start_time)" />
             </b-form-group>
           </b-col>
           <b-col cols="6" v-if="role_code !== 'GA' && role_code !== 'LIAISON'">
             <b-form-group>
               <label>Exam Date</label><br>
-              <b-input disabled :value="formatDate(this.exam.booking.start_time)" />
+              <b-input disabled :value="formatDate(examRow.booking.start_time)" />
             </b-form-group>
           </b-col>
           <b-col cols="6" v-if="role_code === 'LIAISON' || role_code === 'GA'">
@@ -140,7 +140,7 @@
   export default {
     name: "EditGroupExamBookingModal",
     components: { DatePicker },
-    props: ['exam', 'resetExam'],
+    props: ['examRow', 'resetExam'],
     data () {
       return {
         invigilator_id: '',
@@ -301,7 +301,7 @@
         })
       },
       setValues() {
-        let tempItem = Object.assign({}, this.exam)
+        let tempItem = Object.assign({}, this.examRow)
         this.time = tempItem.booking.start_time
         this.date = tempItem.booking.start_time
         this.offsite_location = tempItem.offsite_location
