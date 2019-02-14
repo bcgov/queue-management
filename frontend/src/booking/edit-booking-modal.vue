@@ -26,27 +26,27 @@
               <div class="q-info-display-grid-container">
                 <div class="q-id-grid-outer">
                   <div class="q-id-grid-head">Exam Details</div>
-                  <div class="q-id-grid-1-col">
+                  <div class="q-id-grid-col">
                     <div>Writer:</div>
                     <div>{{ this.event.exam.examinee_name }}</div>
                   </div>
-                  <div class="q-id-grid-2-col">
+                  <div class="q-id-grid-col">
                     <div>Exam:</div>
                     <div>{{ this.event.exam.exam_name }}</div>
                   </div>
-                  <div class="q-id-grid-1-col">
+                  <div class="q-id-grid-col">
                     <div>Method:</div>
                     <div>{{ this.event.exam.exam_method }}</div>
                   </div>
-                  <div class="q-id-grid-2-col">
+                  <div class="q-id-grid-col">
                     <div>Event ID:</div>
                     <div>{{ this.event.exam.event_id }}</div>
                   </div>
-                  <div class="q-id-grid-1-col">
+                  <div class="q-id-grid-col">
                     <div>Duration:</div>
                     <div>{{ this.event.exam.exam_type.number_of_hours }} hrs</div>
                   </div>
-                  <div class="q-id-grid-2-col">
+                  <div class="q-id-grid-col">
                     <div>Expiry:</div>
                     <div>{{ expiryDate }}</div>
                   </div>
@@ -130,7 +130,7 @@
             <b-col cols="5" v-if="examAssociated">
               <b-form-group>
                 <label>Invigilator</label><br>
-                <b-select :options="invigilatorDropdown"
+                <b-select :options="invigilator_dropdown"
                           id="invigilator"
                           :value="invigilator"
                           @change="setInvigilator"/>
@@ -199,7 +199,7 @@
 </template>
 
 <script>
-  import { mapActions, mapMutations, mapState } from 'vuex'
+  import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
   import moment from 'moment'
 
   export default {
@@ -233,10 +233,8 @@
         title: '',
       }
     },
-    mounted() {
-      this.getInvigilators()
-    },
     computed: {
+      ...mapGetters(['invigilator_dropdown']),
       ...mapState(
         {
           event: state => state.editedBooking,
@@ -294,23 +292,12 @@
           return new moment(this.event.exam.expiry_date).format('MMM Do, YYYY')
         }
       },
-      invigilatorDropdown() {
-        return this.invigilators.map( i =>
-          ({value: i.invigilator_id,
-            text: i.invigilator_name})
-        )
-      },
       modalVisible: {
         get() {
           return this.showModal
         },
         set(e) {
           this.toggleEditBookingModal(e)
-        }
-      },
-      receivedDate() {
-        if (this.examAssociated && this.event.exam) {
-          return new moment(this.event.exam.received_date).format('MMM Do, YYYY')
         }
       },
       resource() {
@@ -461,14 +448,21 @@
       },
       setInvigilator(e) {
         this.message = ''
-        if (this.event.invigilator.invigilator_id !== e) {
-          if (!this.editedFields.includes('invigilator')) {
-            this.editedFields.push('invigilator')
+        if (this.event.exam && this.event.exam.booking) {
+          if (this.event.exam.booking.invigilator_id !== e) {
+            if (!this.editedFields.includes('invigilator')) {
+              this.editedFields.push('invigilator')
+            }
+          }
+          if (this.event.exam.booking.invigilator_id == e) {
+            if (this.editedFields.includes('invigilator')) {
+              this.editedFields.splice(this.editedFields.indexOf('invigilator'), 1)
+            }
           }
         }
-        if (this.event.invigilator.invigilator_id == e) {
-          if (this.editedFields.includes('invigilator')) {
-            this.editedFields.splice(this.editedFields.indexOf('invigilator'), 1)
+        if (this.invigilator === 'sbc' && !e) {
+          if (!this.editedFields.includes('invigilator')) {
+            this.editedFields.push('invigilator')
           }
         }
         this.invigilator = e
@@ -478,9 +472,14 @@
           this.newStart = new moment(this.newEvent.start)
           this.newEnd = new moment(this.newEvent.end)
         }
-        if (this.event.invigilator) {
+        if (this.event.exam && this.event.exam.booking) {
           if (!this.editedFields.includes('invigilator')) {
-            this.invigilator = this.event.invigilator.invigilator_id
+            this.invigilator = this.event.exam.booking.invigilator_id || null
+          }
+          if (this.event.exam.booking.sbc_staff_invigilated) {
+            if (!this.editedFields.includes('invigilator')) {
+              this.invigilator = 'sbc'
+            }
           }
         }
         if (!this.editedFields.includes('title')) {
@@ -502,7 +501,8 @@
         if (!this.start.isSame(this.event.start)) {
           if (this.examAssociated) {
             if (this.start.isAfter(this.event.exam.expiry_date)) {
-              this.message = 'Selected date/time is '
+              this.message = `Selected date/time is after the exam's expiry date.  Press reschedule to pick a new time.`
+              return
             }
           }
           if (moment().isAfter(this.start)) {
@@ -524,7 +524,14 @@
           changes['fees'] = this.fee
         }
         if (this.editedFields.includes('invigilator')) {
-          changes['invigilator_id'] = this.invigilator
+          changes.invigilator_id = this.invigilator
+          if (changes.invigilator_id !== 'sbc') {
+            changes.sbc_staff_invigilated = 0
+          }
+          if (changes.invigilator_id === 'sbc') {
+            changes.invigilator_id = null
+            changes.sbc_staff_invigilated = 1
+          }
         }
         if (Object.keys(changes).length === 0) {
           this.message = 'No Changes Made'
@@ -533,10 +540,12 @@
             id: this.event.id,
             changes
           }
-          this.putBooking(payload).then(() => {
-            this.finishBooking()
-            this.resetModal()
-            this.$root.$emit('initialize')
+          this.putBooking(payload).then( () => {
+            setTimeout( () => {
+              this.$root.$emit('initialize')
+              this.finishBooking()
+              this.resetModal()
+            }, 250)
           })
         }
       },

@@ -1,4 +1,4 @@
-<template>
+<slot>
   <b-modal v-model="showModal"
            :no-close-on-backdrop="true"
            hide-header
@@ -14,7 +14,7 @@
                @filtered="getFilteredOffices" />
       <span style="font-size: 1.4rem; font-weight: 600;">Edit Exam</span>
       <b-form v-if="showAllFields">
-        <b-form-row v-if="role_code === 'LIAISON'">
+        <b-form-row v-if="role_code === 'LIAISON' && examType === 'group'">
           <b-col>
             <b-form-group>
               <label class="my-0">Office (Start typing below to search or enter Office Number )</label>
@@ -125,7 +125,13 @@
                           id="exam_received_date"
                           input-class="form-control"
                           class="w-100 my-0 less-10-mb"
-                          lang="en"/>
+                          lang="en">
+                <template slot="calendar-icon">
+                  <font-awesome-icon icon="clock"
+                                     class="m-0 p-0"
+                                     style="font-size: .9rem;"/>
+                </template>
+              </DatePicker>
             </b-form-group>
           </b-col>
           <b-col v-if="examType === 'group'" col>
@@ -142,7 +148,13 @@
                           id="exam_expiry"
                           input-class="form-control"
                           class="w-100 less-10-mb"
-                          lang="en"/>
+                          lang="en">
+                <template slot="calendar-icon">
+                  <font-awesome-icon icon="clock"
+                                     class="m-0 p-0"
+                                     style="font-size: .9rem;"/>
+                </template>
+              </DatePicker>
             </b-form-group>
           </b-col>
         </b-form-row>

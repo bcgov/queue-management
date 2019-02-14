@@ -369,6 +369,16 @@ export const store = new Vuex.Store({
   },
 
   getters: {
+    invigilator_dropdown(state) {
+      let invigilators = state.invigilators
+      invigilators.push({invigilator_id: 'sbc', invigilator_name: 'SBC Staff'})
+      invigilators.push({invigilator_id: null, invigilator_name: 'unassigned'})
+      return invigilators.map( i =>
+        ({value: i.invigilator_id,
+          text: i.invigilator_name})
+      )
+    },
+    
     show_scheduling_indicator: (state) => {
       if (state.scheduling || state.rescheduling) {
         if (!state.showOtherBookingModal && !state.showBookingModal && !state.showEditBookingModal) {
@@ -766,20 +776,7 @@ export const store = new Vuex.Store({
       return new Promise((resolve, reject) => {
         Axios(context).get('/exams/')
           .then(resp => {
-            if (resp.data.exams.length > 0) {
-              context.commit('setExams', resp.data.exams)
-              let groupExams = resp.data.exams.filter(exm => exm.exam_type.exam_type_name.includes('Group'))
-              let groupBookings = groupExams.map(ex =>
-                ({
-                  title: ex.exam_name,
-                  start: new moment(ex.expiry_date).utc().local().toString(),
-                  end: new moment(ex.expiry_date).add(ex.exam_type.number_of_hours, 'h').toString(),
-                  resourceId: '_offsite',
-                  exam: ex,
-                })
-              )
-              context.commit('setGroupBookings', groupBookings)
-            }
+            context.commit('setExams', resp.data.exams)
             resolve(resp)
           })
           .catch(error => {
@@ -1560,11 +1557,14 @@ export const store = new Vuex.Store({
     },
     
     scheduleExam(context, payload) {
-      context.dispatch('postBooking', payload).then(booking_id => {
-        context.dispatch('putExam', booking_id).then( () => {
-          context.dispatch('finishBooking')
+      return new Promise((resolve, reject) => {
+        context.dispatch('postBooking', payload).then(booking_id => {
+          context.dispatch('putExam', booking_id).then( () => {
+            resolve()
+          })
         })
       })
+      
     },
     
     putExam(context, payload) {
@@ -1629,6 +1629,9 @@ export const store = new Vuex.Store({
       context.commit('setSelectedExam', null)
       context.commit('setEditedBooking', null)
       context.commit('toggleEditBookingModal', false)
+      context.commit('toggleEditBookingModal', false)
+      context.commit('toggleEditGroupBookingModal', false)
+      context.commit('toggleSelectInvigilatorModal', false)
     },
     
     postITAGroupExam(context) {

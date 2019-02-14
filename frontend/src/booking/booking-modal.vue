@@ -4,54 +4,98 @@
            body-class="q-modal"
            no-close-on-backdrop
            no-close-on-esc
-           hide-ok
            lazy
+           :ok-disabled="buttonStatus"
+           :ok-title="buttonText"
            @cancel="cancel"
-           @ok="postEvent"
-           @show="show"
+           @ok="clickOk"
+           @shown="setupModal"
            hide-header
            size="md">
-    <div v-if="showModal">
-      <b-container style="font-size:1.1rem; border:1px solid lightgrey; border-radius: 10px" class="mb-2 pb-3">
-        <b-row>
-          <b-col><b>Step 1: Pick an Invigilator</b></b-col>
-        </b-row>
-        <b-row no-gutters>
-          <b-col cols="4">Invigilator: </b-col>
-          <b-col> <b-form-select v-model="selectedInvigilator" :options="invigilatorDropdown"></b-form-select></b-col>
-        </b-row>
-      </b-container>
-      <template v-if="selectedInvigilator">
-        <b-container style="font-size:1.1rem; border:1px solid lightgrey; border-radius: 10px">
-          <b-row>
-            <b-col class="mb-1"><b>Step 2: Booking Details Confirmation</b></b-col>
-          </b-row>
-          <b-row no-gutters>
-            <b-col cols="4" >Exam Name: </b-col><b-col> {{ exam.exam_name }}</b-col>
-          </b-row>
-          <b-row no-gutters>
-            <b-col cols="4">Date: </b-col><b-col> {{ date.start.local().format('ddd, MMM Do, YYYY')}}</b-col>
-          </b-row>
-          <b-row no-gutters>
-            <b-col cols="4">Time Slot: </b-col><b-col> {{ date.start.local().format('h:mm a') }} - {{ endTime.local().format('h:mm a')}}</b-col>
-          </b-row>
-          <b-row no-gutters>
-            <b-col cols="4">Duration: </b-col><b-col> {{ exam.exam_type.number_of_hours+' hrs' }}</b-col>
-          </b-row>
-          <b-row no-gutters>
-            <b-col cols="4">Room: </b-col><b-col> {{ date.resource.title }}</b-col>
-          </b-row>
-          <b-row>
-            <b-col cols="4">Event ID: </b-col><b-col> {{ exam.event_id }}</b-col>
-          </b-row>
-         <b-row no-gutters>
-            <b-col cols="4">Type: </b-col><b-col> {{ exam.exam_type.exam_type_name }}</b-col>
-          </b-row>
-          <b-row no-gutters>
-            <b-col cols="4">Format: </b-col><b-col> {{ exam.exam_method }}</b-col>
-          </b-row>
-        </b-container>
-      </template>
+    <div v-if="showModal && formStep == 1">
+      <span style="font-weight: 600; font-size: 1.3rem;">Confirm Booking</span>
+      <DataSummaryTable :displayData="displayData" class="w-100 p-0 m-0" />
+      <b-form class="mt-3">
+        <b-form-row>
+          <b-col cols="12">
+            <b-form-group>
+              <label>Invigilator Selection Options</label>
+              <b-select :options="invigilatorOptions" v-model="selectedOption" @input="handleSelect"/>
+            </b-form-group>
+          </b-col>
+        </b-form-row>
+        <b-form-row>
+          <b-col>
+            <b-form-group>
+              <label>Notes</label><br>
+              <b-textarea :rows="2" v-model="notes" />
+            </b-form-group>
+          </b-col>
+        </b-form-row>
+      </b-form>
+    </div>
+    <div v-if="showModal && formStep == 2">
+      <span style="font-weight: 600; font-size: 1.3rem;">Assign Invigilator</span>
+      <b-form>
+        <b-form-row>
+          <b-col>
+            <div class="table-holder">
+              <div class="info-display-grid-container mt-1">
+                <div class="q-id-grid-outer">
+                  <div class="q-id-grid-head mb-1">
+                    <strong class="mr-2">Selected:</strong> {{ invigilatorDetails.invigilator_name }}</div>
+                  <div class="id-grid-col">
+                    <div class="mr-1"><strong>Phone: </strong></div>
+                    <div>{{ invigilatorDetails.contact_phone }}</div>
+                  </div>
+                  <div class="q-id-grid-col">
+                    <div class="mr-1">Email: </div>
+                    <div>{{ invigilatorDetails.contact_email }}</div>
+                  </div>
+                  <div class="q-id-grid-full-col">
+                    <div class="mr-1">Notes: </div>
+                    <div>{{ invigilatorDetails.invigilator_notes }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </b-col>
+        </b-form-row>
+        <b-form-row class="mt-2 mb-0">
+          <b-col>Click an Invigilator to Select</b-col>
+        </b-form-row>
+        <b-form-row>
+          <b-col>
+            <b-table :items="invigilators"
+                     :fields="fields"
+                     outlined
+                     inverse
+                     striped
+                     :selectable="true"
+                     select-mode="multi"
+                     selectedVariant="success"
+                     @row-clicked="rowClicked"
+                     sort-by="invigilator_name"
+                     class="mr-3 mt-1 mb-0 pr-3 pl-3"
+                     small>
+              <template slot="invigilator_name" slot-scope="row">
+                <div class="table-pointer">{{ row.item.invigilator_name }}</div>
+                <div style="display: none">
+                  {{ row.item.invigilator_id == selectedInvigilator ?
+                  row.item._rowVariant='info' : row.item._rowVariant=''
+                  }}
+                </div>
+              </template>
+            </b-table>
+          </b-col>
+        </b-form-row>
+        <b-form-row>
+          <b-col><b-button class="btn-secondary mt-3"
+                           @click="formStep=1"><font-awesome-icon icon="caret-left"
+                             class="mr-1 p-0"
+                             style="font-size: 1rem;"/>Back</b-button></b-col>
+        </b-form-row>
+      </b-form>
     </div>
   </b-modal>
 </template>
@@ -59,9 +103,34 @@
 <script>
   import { mapActions, mapMutations, mapState } from 'vuex'
   import moment from 'moment'
+  import DataSummaryTable from './../exams/data-summary-table'
 
   export default {
     name: "BookingModal",
+    components: { DataSummaryTable },
+    mounted(){
+      this.getInvigilators()
+    },
+    data() {
+      return {
+        notes: '',
+        invigilator: null,
+        formStep: 2,
+        fields: {
+          invigilator_name: {
+            label: 'Name',
+            thClass: 'd-none',
+          },
+        },
+        selectedOption: null,
+        selectedInvigilator: null,
+        invigilatorOptions: [
+          {text: 'ServiceBC Staff', value: 'sbc'},
+          {text: 'Assign Later', value: 'unassigned'},
+          {text: 'Contract Invigilator', value: 'invigilator'},
+        ]
+      }
+    },
     computed: {
       ...mapState({
         exam: state => state.selectedExam,
@@ -69,13 +138,62 @@
         showModal: state => state.showBookingModal,
         invigilators: state => state.invigilators
       }),
-      invigilatorDropdown() {
-        let invigilatorOptions = []
-        this.invigilators.forEach((i) => {
-          invigilatorOptions.push({value: i.invigilator_id,
-                                    text: i.invigilator_name})
-        })
-        return invigilatorOptions
+      buttonStatus() {
+        if (!this.selectedOption) {
+          return true
+        }
+        if (this.selectedOption === 'invigilator' && !this.selectedInvigilator && this.formStep == 2) {
+          return true
+        }
+        return false
+      },
+      buttonText() {
+        if (this.selectedOption === 'invigilator' && this.formStep == 1) {
+          return 'Continue'
+        }
+        return 'Submit'
+      },
+      displayData() {
+        return {
+          title: 'Booking Details',
+          items: [
+            {key: 'Exam:', value: this.exam.exam_name},
+            {key: 'Exam Date:', value: this.date.start.local().format('dddd MMM D, YYYY')},
+            {key: '', value: this.exam.exam_type.exam_type_name},
+            {key: 'Exam Time:', value: this.date.start.local().format('h:mm a')},
+            {key: 'Exam Expiry:', value: this.formatExpiry(this.exam.expiry_date)},
+            {key: 'Writer:', value: this.exam.examinee_name},
+            {key: 'Format of Exam:', value: this.exam.exam_method},
+            {key: 'Length of Exam:', value: this.exam.exam_type.number_of_hours+' hrs'},
+            {key: 'ServiceBC to Provide Reader:', value: this.invigilatorRequired ? 'Yes' : 'No'},
+            {key: 'Room:', value: this.date.resource.title},
+          ]
+        }
+      },
+      invigilatorDetails() {
+        if (this.invigilator) {
+          return this.invigilator
+        }
+        return {
+          invigilator_name: '',
+          contact_phone: '',
+          contact_email: '',
+          invigilator_notes: '',
+        }
+      },
+      invigilatorRequired() {
+        if (this.exam && this.exam.exam_type) {
+          if (this.exam.exam_type.exam_type_name.includes('SBC Reader')) {
+            return true
+          }
+        }
+        return false
+      },
+      handleSelect(e) {
+        if (!this.selectedOption || e !== this.selectedOption) {
+          this.selectedInvigilator = null
+          this.invigilator = null
+        }
       },
       modalVisible: {
         get() {
@@ -93,21 +211,50 @@
       },
     },
     methods: {
-      ...mapActions(['scheduleExam', 'getInvigilators']),
-      ...mapMutations([
-        'toggleBookingModal',
-        'setClickedDate',
-      ]),
+      ...mapActions(['finishBooking', 'getExams', 'getBookings', 'getInvigilators', 'putRequest', 'scheduleExam', ]),
+      ...mapMutations(['setClickedDate', 'toggleBookingModal', ]),
+      formatExpiry(d) {
+        return new moment(d).local().format('MMM D, YYYY')
+      },
       cancel() {
         this.toggleBookingModal(false)
         this.setClickedDate(null)
         this.$root.$emit('removeSavedSelection')
       },
-      show() {
-        this.selectedInvigilator = null
-      },
-      postEvent(e) {
+      clickOk(e) {
         e.preventDefault()
+        if (this.selectedOption === 'invigilator') {
+          this.formStep = 2
+          return
+        }
+        if (this.selectedOption) {
+          this.postEvent()
+        }
+      },
+      resetModal() {
+        this.formStep = 1
+        this.selectedInvigilator = null
+        this.invigilator = null
+        this.notes = ''
+      },
+      setupModal() {
+        this.resetModal()
+        if (this.exam.exam_type.exam_type_name.includes('SBC Reader')) {
+          this.selectedOption = 'unassigned'
+          return
+        }
+        this.selectedOption = 'sbc'
+        this.notes = this.exam.notes.valueOf()
+      },
+      rowClicked(item) {
+        this.selectedInvigilator = item.invigilator_id
+        this.invigilator = item
+      },
+      postEvent() {
+        let exam_id = null
+        if (this.exam.notes !== this.notes) {
+          exam_id = this.exam.exam_id.valueOf()
+        }
         let start = new moment(this.date.start).utc()
         let end = new moment(this.endTime).utc()
         let booking = {
@@ -116,20 +263,81 @@
           end_time: end.format('DD-MMM-YYYY[T]HH:mm:ssZ'),
           fees: 'false',
           booking_name: this.exam.exam_name,
-          invigilator_id: this.selectedInvigilator
+          sbc_staff_invigilated: 0,
         }
-        this.scheduleExam(booking).then(()=>{
-          this.toggleBookingModal(false)
+        if (this.selectedOption === 'sbc') {
+          booking.sbc_staff_invigilated = 1
+        }
+        if (this.selectedOption === 'invigilator') {
+          booking.invigilator_id = this.selectedInvigilator
+        }
+        this.scheduleExam(booking).then( () =>{
+          if (exam_id) {
+            let payload = {
+              url: `/exams/${exam_id}/`,
+              data: {
+                notes: this.notes
+              }
+            }
+            this.putRequest(payload).then( () => {
+              this.getExams().then( () => {
+                this.getBookings().then( () => {
+                  this.finishBooking()
+                })
+              })
+            })
+          } else {
+            this.getExams().then( () => {
+              this.getBookings().then( () => {
+                this.finishBooking()
+              })
+            })
+          }
         })
       }
     },
-    mounted(){
-      this.getInvigilators()
-    },
-    data() {
-      return {
-        selectedInvigilator: null
-      }
-    }
   }
 </script>
+
+<style scoped>
+  .id-grid-outer {
+    display: grid;
+    grid-template-columns: 2fr 1fr 4fr 3fr;
+  }
+  .sum-td-l-col {
+    margin-top: auto;
+    margin-left: auto;
+    grid-column: 1 / span 2;
+    font-size: 1rem;
+    font-weight: bold;
+  }
+  .sum-td-r-col {
+    margin-top: auto;
+    margin-left: 20%;
+    margin-right: auto;
+    grid-column: 3 / span 2;
+    font-size: 0.925rem;
+    font-weight: normal;
+  }
+  .table-holder {
+    border: 1px solid lightgray;
+    border-radius: 7px;
+    font-size: .9rem;
+    font-weight: normal !important;
+  }
+  .info-display-grid-container {
+    height: 100%;
+    width: 100%;
+    padding: 4px;
+  }
+  .id-grid-col {
+    margin-left: 4px;
+    margin-right: 14px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .table-pointer {
+    cursor: pointer;
+  }
+
+</style>

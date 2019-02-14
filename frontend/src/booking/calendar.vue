@@ -83,6 +83,8 @@
       OtherBookingModal,
     },
     mounted() {
+      this.getExamTypes()
+      this.getInvigilators()
       this.initialize()
       this.$root.$on('agendaDay', () => { this.agendaDay() })
       this.$root.$on('agendaWeek', () => { this.agendaWeek() })
@@ -220,7 +222,7 @@
       }
     },
     methods: {
-      ...mapActions(['finishBooking', 'getBookings', 'getExamTypes', 'initializeAgenda',]),
+      ...mapActions(['getBookings', 'finishBooking', 'initializeAgenda', 'getExamTypes', 'getInvigilators']),
       ...mapMutations([
         'setCalendarSetup',
         'setClickedDate',
@@ -258,7 +260,7 @@
         this.$refs.bookingcal.fireMethod('updateEvent', event)
       },
       eventRender(event, el, view) {
-        if (event.exam) {
+        if (event.exam && view.name === 'listYear') {
           el.find('td.fc-list-item-title.fc-widget-content').html(
           `<div style="display: flex; justify-content: center; width: 100%;">
              <div class="ft-wt-600 mr-1"><b>Exam:</b></div>
@@ -333,7 +335,6 @@
       },
       initialize() {
         this.setSelectionIndicator(false)
-        this.getExamTypes()
         this.initializeAgenda().then( resources => {
           if (this.scheduling || this.rescheduling) {
             let i = resources.findIndex( r => r.title === '_offsite')
