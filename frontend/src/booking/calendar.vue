@@ -71,6 +71,8 @@
   import { adjustColor } from '../store/helpers'
   import OfficeDropDownFilter from '../exams/office-dropdown-filter'
 
+  var urlParams = new URLSearchParams(window.location.search)
+
   export default {
     name: 'Calendar',
     components: {

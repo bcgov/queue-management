@@ -350,6 +350,7 @@
         this.buttons.current = 'btn-secondary'
         this.buttons.expired = 'btn-secondary'
       },
+
       resetEditedExam() {
         this.examRow = {}
       },
