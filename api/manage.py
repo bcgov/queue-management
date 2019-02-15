@@ -679,6 +679,33 @@ class Bootstrap(Command):
             group_exam_ind=0
         )
 
+        exam_type_seventeen = bookings.ExamType(
+            exam_type_name="Veterinary Exam",
+            exam_color="#FFFFFF",
+            number_of_hours=2,
+            method_type="written",
+            ita_ind=0,
+            group_exam_ind=0
+        )
+
+        exam_type_eighteen = bookings.ExamType(
+            exam_type_name="Milk Grader",
+            exam_color="#FFFFFF",
+            number_of_hours=2,
+            method_type="written",
+            ita_ind=0,
+            group_exam_ind=0
+        )
+
+        exam_type_nineteen = bookings.ExamType(
+            exam_type_name="Pesticide",
+            exam_color="#FFFFFF",
+            number_of_hours=2,
+            method_type="written",
+            ita_ind=0,
+            group_exam_ind=0
+        )
+
         db.session.add(exam_type_one)
         db.session.add(exam_type_two)
         db.session.add(exam_type_three)
@@ -695,6 +722,9 @@ class Bootstrap(Command):
         db.session.add(exam_type_fourteen)
         db.session.add(exam_type_fifteen)
         db.session.add(exam_type_sixteen)
+        db.session.add(exam_type_seventeen)
+        db.session.add(exam_type_eighteen)
+        db.session.add(exam_type_nineteen)
         db.session.commit()
 
         print("--> Bookings: Exam")
@@ -706,7 +736,6 @@ class Bootstrap(Command):
             examinee_name = "Chandler Bing",
             expiry_date = "2018-11-29 11:19:53.5",
             notes = "This student is extremely s-m-r-t",
-            exam_received = 1,
             exam_received_date= "2018-12-25 9:00:00.000",
             session_number = 1,
             number_of_students = 1,
@@ -722,7 +751,6 @@ class Bootstrap(Command):
             examinee_name = "Joey Fatone",
             expiry_date = "2018-11-29 11:19:53.5",
             notes = "Speak slowly with this student, hearing impaired",
-            exam_received = 1,
             exam_received_date="2018-12-24 9:00:00.000",
             session_number = 2,
             number_of_students = 12,
@@ -738,7 +766,6 @@ class Bootstrap(Command):
             examinee_name="Anthony Bourdain",
             expiry_date="2018-11-29 11:19:53.5",
             notes="Student is extremely verbally obscene",
-            exam_received=1,
             exam_received_date="2018-12-23 9:00:00.000",
             session_number=3,
             number_of_students=10,
@@ -754,7 +781,6 @@ class Bootstrap(Command):
             examinee_name="Celine Dion",
             expiry_date="2019-01-31 15:00:00.000",
             notes="Not sure if she uses a ghost writer or not",
-            exam_received=1,
             exam_received_date="2018-12-25 9:00:00.000",
             session_number=4,
             number_of_students=25,
@@ -770,7 +796,6 @@ class Bootstrap(Command):
             examinee_name="Luciano Pavarotti",
             expiry_date="2019-01-31 15:00:00.000",
             notes="Use ear plugs, quite loud",
-            exam_received=1,
             exam_received_date="2018-12-25 9:00:00.000",
             session_number=4,
             number_of_students=25,

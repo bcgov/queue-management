@@ -16,7 +16,7 @@ import logging
 from flask import g, request, make_response
 from flask_restplus import Resource
 from sqlalchemy import exc
-from app.models.bookings import Exam, Booking, Invigilator, Room
+from app.models.bookings import Exam, Booking, Invigilator, Room, ExamType
 from app.models.theq import CSR, Office
 from app.schemas.bookings import ExamSchema
 from qsystem import api, oidc
@@ -40,6 +40,7 @@ class ExamList(Resource):
 
             start_param = request.args.get("start_date")
             end_param = request.args.get("end_date")
+            exam_type = request.args.get("exam_type")
 
             if not(start_param and end_param):
 
@@ -59,20 +60,30 @@ class ExamList(Resource):
 
             end_date = self.timezone.localize(end_date)
 
-            exams = Exam.query.filter_by(office_id=csr.office_id)\
-                              .join(Booking, Exam.booking_id == Booking.booking_id)\
-                              .filter(Booking.start_time >= start_date)\
-                              .filter(Booking.start_time < end_date)\
-                              .join(Invigilator, Booking.invigilator_id == Invigilator.invigilator_id)\
-                              .join(Room, Booking.room_id == Room.room_id)\
-                              .join(Office, Booking.office_id == Office.office_id)
+            exams = Exam.query.filter_by(office_id=csr.office_id) \
+                              .join(Booking, Exam.booking_id == Booking.booking_id) \
+                              .filter(Booking.start_time >= start_date) \
+                              .filter(Booking.start_time < end_date) \
+                              .join(Invigilator, Booking.invigilator_id == Invigilator.invigilator_id) \
+                              .join(Room, Booking.room_id == Room.room_id) \
+                              .join(Office, Booking.office_id == Office.office_id) \
+                              .join(ExamType, Exam.exam_type_id == ExamType.exam_type_id)
+
+            if exam_type == '1':
+                exams = exams.filter(ExamType.ita_ind == 1)
+            elif exam_type == '2':
+                exams = exams.filter(ExamType.exam_type_name == 'Veterinary Exam')
+            elif exam_type == '3':
+                exams = exams.filter(ExamType.exam_type_name == 'Milk Grader')
+            elif exam_type == '4':
+                exams = exams.filter(ExamType.exam_type_name == 'Pesticide')
 
             dest = io.StringIO()
             out = csv.writer(dest)
-            out.writerow(['Office Name', 'Exam ID', 'Exam Name', 'Examinee Name', 'Event ID', 'Room Name', 'Invigilator Name', 'Booking ID', 'Booking Name', 'Exam Received', 'Exam Returned' ])
+            out.writerow(['Office Name', 'Exam Type', 'Exam ID', 'Exam Name', 'Examinee Name', 'Event ID', 'Room Name', 'Invigilator Name', 'Booking ID', 'Booking Name', 'Exam Received', 'Exam Returned' ])
 
             for exam in exams:
-                out.writerow([exam.office.office_name, exam.exam_id, exam.exam_name, exam.examinee_name,
+                out.writerow([exam.office.office_name, exam.exam_type.exam_type_name, exam.exam_id, exam.exam_name, exam.examinee_name,
                               exam.event_id, exam.booking.room.room_name, exam.booking.invigilator.invigilator_name,
                               exam.booking.booking_id, exam.booking.booking_name, exam.exam_returned_ind,
                               exam.exam_returned_ind ])

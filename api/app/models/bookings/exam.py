@@ -27,7 +27,6 @@ class Exam(Base):
     examinee_name = db.Column(db.String(50), nullable=True)
     expiry_date = db.Column(db.DateTime, nullable=True)
     notes = db.Column(db.String(400), nullable=True)
-    exam_received = db.Column(db.Integer, nullable=False)
     exam_received_date = db.Column(db.DateTime, nullable=True)
     session_number = db.Column(db.Integer, nullable=True)
     number_of_students = db.Column(db.Integer, nullable=True)

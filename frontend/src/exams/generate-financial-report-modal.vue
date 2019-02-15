@@ -17,16 +17,19 @@
       <b-row class="my-1">
         <b-col sm="4"><label>Start Date:</label></b-col>
         <b-col sm="6">
-          <b-form-input id="startDate"
-                        type="date"
-                        v-model=startDate />
+          <DatePicker v-model="startDate"
+                      input-class="form-control"
+                      class="w-100 less-10-mb"
+                      lang="en"/>
         </b-col>
       </b-row>
       <b-row class="my-1">
         <b-col sm="4"><label>End Date:</label></b-col>
-        <b-col sm="6"><b-form-input id="endDate"
-                                    type="date"
-                                    v-model=endDate />
+        <b-col sm="6">
+          <DatePicker v-model="endDate"
+                      input-class="form-control"
+                      class="w-100 less-10-mb"
+                      lang="en"/>
         </b-col>
       </b-row>
       <b-row>
@@ -45,19 +48,21 @@
 
 <script>
     import { mapState, mapMutations, mapActions } from 'vuex'
-    import OfficeDropDownFilter from './office-dropdown-filter'
+    import DatePicker from 'vue2-datepicker'
     import moment from 'moment'
     const FileDownload = require('js-file-download')
     export default {
         name: "FinancialReportModal",
+        components: { DatePicker },
         data() {
           return {
             startDate: '',
             endDate: '',
             options: [
               {text: 'ITA - Individual and Group ', value: 'ita'},
-              {text: 'Pesticide', value: 'pesticide'},
-              {text: 'Bulk Milk Tank Grader', value: 'milk_tank'}
+              {text: 'Veterinary Exam', value: 'veterinary'},
+              {text: 'Milk Grader', value: 'milk_tank'},
+              {text: 'Pesticide', value: 'pesticide'}
             ],
             selectedExamType: '',
           }
@@ -71,9 +76,18 @@
             'toggleGenFinReport',
           ]),
           submit() {
-            let form_start_date = this.startDate
-            let form_end_date = this.endDate
-            let exam_type = this.selectedExamType
+            let form_start_date = moment.utc(this.startDate).format('YYYY-MM-DD')
+            let form_end_date = moment.utc(this.endDate).format('YYYY-MM-DD')
+            let exam_type
+            if (this.selectedExamType === 'ita'){
+              exam_type = 1
+            }else if (this.selectedExamType === 'veterinary') {
+              exam_type = 2
+            }else if (this.selectedExamType === 'milk_tank') {
+              exam_type = 3
+            }else if (this.selectedExamType === 'pesticide') {
+              exam_type = 4
+            }
             let url = '/exams/export/?start_date=' + form_start_date + '&end_date=' + form_end_date + '&exam_type='
                       + exam_type
             let today = moment().format('YYYY-MM-DD_HHMMSS')

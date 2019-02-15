@@ -72,6 +72,8 @@
   import { adjustColor } from '../store/helpers'
   import OfficeDropDownFilter from '../exams/office-dropdown-filter'
 
+  var urlParams = new URLSearchParams(window.location.search)
+
   export default {
     name: 'Calendar',
     components: {
@@ -179,9 +181,13 @@
         'showSchedulingIndicator',
       ]),
       config() {
-        let setup = this.setup
-        setup.selectable = true
-        return setup
+        let calSetup = this.setup
+        if(urlParams.has('schedule')){
+          calSetup.selectable = true
+        }else{
+          calSetup.selectable = false
+        }
+        return calSetup
       },
       adjustment() {
         if (this.showSchedulingIndicator) {
@@ -298,7 +304,6 @@
         if (this.scheduling || this.schedulingOther || event.resourceId === '_offsite') {
           return
         }
-        console.log(event)
         if (view.name === 'listYear') {
           this.goToDate(event.start)
           this.agendaDay()
@@ -485,11 +490,6 @@
           this.$refs.bookingcal.fireMethod('changeView', 'agendaDay')
           this.goToDate(this.$route.params.date)
         }
-        if(this.$route.params.schedule == true) {
-          this.$refs.bookingcal.fireMethod('changeView', 'agendaWeek')
-          this.toggleOffsite(false)
-          this.options({name: 'selectable', value: true})
-      }
       },
     }
   }

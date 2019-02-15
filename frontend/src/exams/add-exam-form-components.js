@@ -206,7 +206,6 @@ export const ExamReceivedQuestion = Vue.component('exam-received-question', {
   methods: {
     ...mapMutations(['captureExamDetail', 'toggleIndividualCaptureTabRadio']),
       selectRecdDate(e) {
-        console.log(e)
         this.handleInput({
           target: {
             name: 'exam_received_date',
@@ -279,7 +278,7 @@ export const DateQuestion = Vue.component('date-question', {
     <b-row no-gutters>
       <b-col cols="11">
         <b-form-group>
-          <label class="mr-3">
+          <label>
             {{ addITAExamModal.setup == 'group' ? 'Exam Date' : 'Expiry Date' }}
             <span v-if="error" style="color: red">{{ validationObj[q.key].message }}</span>
           </label>
@@ -316,7 +315,7 @@ export const TimeQuestion = Vue.component('time-question', {
     <b-row no-gutters>
       <b-col cols="11">
         <b-form-group>
-          <label class="mr-3">
+          <label>
             Exam Time
             <span v-if="error" style="color: red">{{ validationObj[q.key].message }}</span>
           </label>
@@ -349,9 +348,6 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
         return this.examTypes.filter(type => type.exam_type_name.includes('Single'))
       }
       if(this.addITAExamModal.setup === 'individual' && this.nonITAExam) {
-        //this.examTypes.forEach(type => {
-          //console.log(type)
-        //})
         return this.examTypes.filter(type  => type.ita_ind === 0)
       }
       if (this.addITAExamModal.setup === 'group') {

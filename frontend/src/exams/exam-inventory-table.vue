@@ -60,7 +60,7 @@
         {{ row.item.offsite_location ? 'Group Exam' : row.item.examinee_name }}
       </template>
       <template slot="exam_received" slot-scope="row">
-        {{ row.item.exam_received === 0 ? 'No' : 'Yes' }}
+        {{ row.item.exam_received_date ? 'Yes' : 'No' }}
       </template>
       <template slot="expiry_date" slot-scope="row">
         {{ row.item.examinee_name === 'group exam' ? '–' : row.item.expiry_date.split('T')[0] }}
@@ -102,9 +102,9 @@
                                style="padding: -2px; margin: -2px; font-size: 1rem; color: dimgray"/>
           </template>
           <b-dropdown-item size="sm"
-                           @click.stop="editExam(row.item)">Edit Exam</b-dropdown-item>
+                           @click="editExam(row.item)">Edit Exam</b-dropdown-item>
           <b-dropdown-item size="sm"
-                           @click.stop="returnExamInfo(row.item)">Return Exam</b-dropdown-item>
+                           @click="returnExamInfo(row.item)">Return Exam</b-dropdown-item>
           <template v-if="row.item.booking && row.item.booking.invigilator_id">
             <b-dropdown-item v-if="row.item.offsite_location"
                              size="sm"
@@ -123,9 +123,9 @@
       </template>
     </b-table>
     </div>
-    <EditExamModal :exam="item" :resetExam="resetEditedExam" />
+    <EditExamModal :examRow="examRow" :resetExam="resetEditedExam" />
     <ReturnExamModal v-if="showReturnExamModalVisible" />
-    <EditGroupExamBookingModal :exam="item" :resetExam="resetEditedExam" />
+    <EditGroupExamBookingModal :examRow="examRow" :resetExam="resetEditedExam" />
   </div>
 </template>
 
@@ -137,6 +137,7 @@
   import SuccessExamAlert from './success-exam-alert'
   import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
   import moment from 'moment'
+  import Vue from 'vue'
 
   export default {
     name: "ExamInventoryTable",
@@ -152,7 +153,7 @@
     },
     data() {
       return {
-        item: null,
+        examRow: {},
         tableStyle: null,
         expiryFilter: 'current',
         scheduledFilter: 'unscheduled',
@@ -231,8 +232,41 @@
         'toggleReturnExamModalVisible',
         'setReturnExamInfo',
       ]),
-      handleExpiryFilter(e) {
-        this.expiryFilter = e.target.value
+      addBookingRoute(item) {
+        let bookingRoute = '/booking/scheduling'
+        this.$router.push(bookingRoute)
+        this.navigationVisible(false)
+        this.setSelectedExam(item)
+        this.toggleCalendarControls(false)
+        this.toggleExamInventoryModal(false)
+        this.toggleScheduling(true)
+        this.toggleSchedulingIndicator(true)
+      },
+      clickRow(e) {
+        if (this.showExamInventoryModal) {
+          this.$root.$emit('toggleOffsite', false)
+          this.$root.$emit('options', {name: 'selectable', value: true})
+          this.navigationVisible(false)
+          this.setSelectedExam(e)
+          this.toggleCalendarControls(false)
+          this.toggleExamInventoryModal(false)
+          this.toggleScheduling(true)
+          this.toggleSchedulingIndicator(true)
+        }
+      },
+      editExam(item) {
+        Object.keys(item).forEach( i => {
+          Vue.set(
+            this.examRow,
+            i,
+            item[i]
+          )
+        })
+        this.toggleEditExamModal(true)
+      },
+      editGroupExam(item) {
+        this.examRow = item
+        this.toggleEditGroupBookingModal(true)
       },
       filteredExams() {
         let exams = this.exam_inventory || []
@@ -252,7 +286,9 @@
               filtered = exams.filter(ex => moment(ex.expiry_date).isBefore(moment(), 'day'))
               break
             case 'current':
-              filtered = exams.filter(ex => moment(ex.expiry_date).isSameOrAfter(moment(), 'day'))
+              let step1 = exams.filter(ex => moment(ex.expiry_date).isSameOrAfter(moment(), 'day'))
+              let step2 = exams.filter(ex => !ex.expiry_date)
+              filtered = step1.concat(step2)
               break
             default:
               filtered = exams
@@ -292,9 +328,21 @@
         }
         return []
       },
-      handleFilter(e) {
-        this[e.type] = e.value
-        localStorage.setItem(e.type, e.value)
+      formatDate(d) {
+        return new moment(d).format('MMM DD, YYYY')
+      },
+      formatTime(d) {
+        return new moment(d).format('h:mm a')
+      },
+      getInvigilator(row) {
+        if (this.events) {
+          let bookingObj = this.events.find(event=>event.booking_id==row.item.booking_id)
+          if (bookingObj && bookingObj.invigilator) {
+            return bookingObj.invigilator.invigilator_name
+          }
+          return ''
+        }
+        return ''
       },
       getWidth() {
         if (!this.showExamInventoryModal) {
@@ -307,45 +355,24 @@
       handleBookedFilter(e) {
         this.bookedFilter = e.target.value
       },
+      handleExpiryFilter(e) {
+        this.expiryFilter = e.target.value
+      },
+      handleFilter(e) {
+        this[e.type] = e.value
+        localStorage.setItem(e.type, e.value)
+      },
       resetButtons() {
         this.buttons.all = 'btn-secondary'
         this.buttons.current = 'btn-secondary'
         this.buttons.expired = 'btn-secondary'
       },
-      getInvigilator(row) {
-        if (this.events) {
-          let bookingObj = this.events.find(event=>event.booking_id==row.item.booking_id)
-          if (bookingObj && bookingObj.invigilator) {
-            return bookingObj.invigilator.invigilator_name
-          }
-          return ''
-        }
-        return ''
-      },
-      clickRow(e) {
-        if (this.showExamInventoryModal) {
-          this.$root.$emit('toggleOffsite', false)
-          this.$root.$emit('options', {name: 'selectable', value: true})
-          this.navigationVisible(false)
-          this.setSelectedExam(e)
-          this.toggleCalendarControls(false)
-          this.toggleExamInventoryModal(false)
-          this.toggleScheduling(true)
-          this.toggleSchedulingIndicator(true)
-        }
-      },
-      editExam(item) {
-        this.item = item
-        this.setEditExamInfo(item)
-        this.toggleEditExamModal(true)
+      resetEditedExam() {
+        this.examRow = {}
       },
       returnExamInfo(item) {
         this.toggleReturnExamModalVisible(true)
         this.setReturnExamInfo(item)
-      },
-      editGroupExam(item) {
-        this.item = item
-        this.toggleEditGroupBookingModal(true)
       },
       updateBookingRoute(item) {
         let calendarEvent = this.calendarEvents.find(event => event.id == item.booking_id)
@@ -353,25 +380,6 @@
         this.setEditedBooking(calendarEvent)
         this.toggleEditBookingModal(true)
         this.$router.push('/booking/' + moment(item.booking.start_time).format('YYYY-MM-DD'))
-      },
-      resetEditedExam() {
-        this.item = {}
-      },
-      formatDate(d) {
-        return new moment(d).format('MMM DD, YYYY')
-      },
-      formatTime(d) {
-        return new moment(d).format('h:mm a')
-      },
-      addBookingRoute(item) {
-        let bookingRoute = '/booking/?schedule=true'
-        this.$router.push(bookingRoute)
-        this.navigationVisible(false)
-        this.setSelectedExam(item)
-        this.toggleCalendarControls(false)
-        this.toggleExamInventoryModal(false)
-        this.toggleScheduling(true)
-        this.toggleSchedulingIndicator(true)
       },
     },
   }
