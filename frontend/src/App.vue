@@ -33,7 +33,7 @@ limitations under the License.*/
 </template>
 
 <script>
-  import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+  import { mapState, mapGetters } from 'vuex'
   import Alert from './alert'
   import ExamAlert from './exam-alert'
   import FailureExamAlert from './exams/failure-exam-alert'
@@ -64,13 +64,14 @@ limitations under the License.*/
       SuccessExamAlert,
     },
     computed: {
-      ...mapState(['isLoggedIn', 'showSchedulingIndicator', 'user' ]),
+      ...mapGetters(['show_scheduling_indicator']),
+      ...mapState(['isLoggedIn', 'user' ]),
       style() {
-        let output = {marginTop: 72+'px', width: '100%', overflowY: 'auto'}
-        if (this.showSchedulingIndicator) {
+        let output = {marginTop: 72+'px', width: '100%',}
+        if (this.show_scheduling_indicator) {
           output['marginBottom'] = 100+'px'
         }
-        if (!this.showSchedulingIndicator) {
+        if (!this.show_scheduling_indicator) {
           output['marginBottom'] = 40+'px'
         }
         return output

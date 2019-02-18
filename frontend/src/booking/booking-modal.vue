@@ -96,21 +96,18 @@
       ...mapActions(['scheduleExam', 'getInvigilators']),
       ...mapMutations([
         'toggleBookingModal',
-        'toggleSchedulingIndicator',
         'setClickedDate',
       ]),
       cancel() {
-        this.$root.$emit('toggleOffsite', true)
         this.toggleBookingModal(false)
-        this.toggleSchedulingIndicator(true)
         this.setClickedDate(null)
+        this.$root.$emit('removeSavedSelection')
       },
       show() {
         this.selectedInvigilator = null
       },
       postEvent(e) {
         e.preventDefault()
-        this.$root.$emit('toggleOffsite', true)
         let start = new moment(this.date.start).utc()
         let end = new moment(this.endTime).utc()
         let booking = {
@@ -121,9 +118,9 @@
           booking_name: this.exam.exam_name,
           invigilator_id: this.selectedInvigilator
         }
-        this.scheduleExam(booking)
-        this.$root.$emit('unselect')
-        this.$root.$emit('options', {name: 'selectable', value: false})
+        this.scheduleExam(booking).then(()=>{
+          this.toggleBookingModal(false)
+        })
       }
     },
     mounted(){

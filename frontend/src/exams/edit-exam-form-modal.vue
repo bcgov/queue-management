@@ -366,7 +366,7 @@
       }
     },
     methods: {
-      ...mapActions(['getBookings', 'getExams', 'getOffices', 'putBookingInfo', 'putExamInfo',]),
+      ...mapActions(['getBookings', 'getExams', 'getOffices', 'putExamInfo',]),
       ...mapMutations(['setEditExamFailure', 'setEditExamSuccess', 'setSelectedExam', 'toggleEditExamModal',]),
       allowSubmit() {
         if (this.examRow) {

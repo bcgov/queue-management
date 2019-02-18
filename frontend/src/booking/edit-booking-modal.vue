@@ -11,7 +11,7 @@
            :hide-footer="confirm"
            hide-header
            :size="confirm && !minimized ? 'sm' : 'md'">
-    <div v-if="showModal" style="margin: 10px">
+    <div v-if="event && showModal" style="margin: 10px">
       <div v-if="minimized || !confirm" style="display: flex; justify-content: space-between">
         <div><h5>Edit Booking</h5></div>
         <div>
@@ -25,19 +25,31 @@
             <b-col class="mb-2">
               <div class="q-info-display-grid-container">
                 <div class="q-id-grid-outer">
-                  <div class="q-id-grid-top-head">Exam Details</div>
-                  <div>Writer:</div>
-                  <div class="q-id-grid-1st-col">{{ this.event.exam.examinee_name }}</div>
-                  <div class="q-id-grid-2nd-head">Exam:</div>
-                  <div class="q-id-grid-2nd-col">{{ this.event.exam.exam_name }}</div>
-                  <div>Method:</div>
-                  <div class="q-id-grid-1st-col">{{ this.event.exam.exam_method }}</div>
-                  <div class="q-id-grid-2nd-head">Event ID:</div>
-                  <div class="q-id-grid-2nd-col">{{ this.event.exam.event_id }}</div>
-                  <div>Duration:</div>
-                  <div class="q-id-grid-1st-col">{{ this.event.exam.exam_type.number_of_hours }} hrs</div>
-                  <div class="q-id-grid-2nd-head">Expiry:</div>
-                  <div class="q-id-grid-2nd-col">{{ expiryDate }}</div>
+                  <div class="q-id-grid-head">Exam Details</div>
+                  <div class="q-id-grid-1-col">
+                    <div>Writer:</div>
+                    <div>{{ this.event.exam.examinee_name }}</div>
+                  </div>
+                  <div class="q-id-grid-2-col">
+                    <div>Exam:</div>
+                    <div>{{ this.event.exam.exam_name }}</div>
+                  </div>
+                  <div class="q-id-grid-1-col">
+                    <div>Method:</div>
+                    <div>{{ this.event.exam.exam_method }}</div>
+                  </div>
+                  <div class="q-id-grid-2-col">
+                    <div>Event ID:</div>
+                    <div>{{ this.event.exam.event_id }}</div>
+                  </div>
+                  <div class="q-id-grid-1-col">
+                    <div>Duration:</div>
+                    <div>{{ this.event.exam.exam_type.number_of_hours }} hrs</div>
+                  </div>
+                  <div class="q-id-grid-2-col">
+                    <div>Expiry:</div>
+                    <div>{{ expiryDate }}</div>
+                  </div>
                 </div>
               </div>
             </b-col>
@@ -192,6 +204,7 @@
 
   export default {
     name: "EditBooking",
+    props: ['tempEvent'],
     data() {
       return {
         minimized: false,
@@ -230,7 +243,8 @@
           actualEvent: state => state.editedBookingOriginal,
           newEvent: state => state.clickedDate,
           showModal: state => state.showEditBookingModal,
-          invigilators: state => state.invigilators
+          invigilators: state => state.invigilators,
+          selectedExam: state => state.selectedExam,
         }
       ),
       displayDates() {
@@ -238,7 +252,7 @@
           return {
             end: this.end.format('h:mm a'),
             start: this.start.format('h:mm a'),
-            date: this.start.format('MMM Do, YYYY')
+            date: this.start.format('ddd MMM D, YYYY')
           }
         }
         return {end: '', start: '', date: ''}
@@ -340,25 +354,23 @@
         'putBooking',
       ]),
       ...mapMutations([
-        'navigationVisible',
         'setClickedDate',
         'setEditedBooking',
         'setSelectedExam',
-        'toggleCalendarControls',
         'toggleEditBookingModal',
-        'toggleFeedbackModalFromEditModal',
         'toggleScheduling',
         'toggleRescheduling',
-        'toggleSchedulingIndicator',
-        'toggleSchedulingOther',
       ]),
       cancel() {
-        if (this.$route.params.date) {
-          this.$router.push('/booking/')
+        let returnRoute = false
+        if (this.selectedExam && this.selectedExam.referringAction === 'rescheduling') {
+          returnRoute = true
         }
-        this.$root.$emit('initialize')
         this.finishBooking()
         this.resetModal()
+        if (returnRoute) {
+          this.$router.push('/exams')
+        }
       },
       checkValue(e) {
         if (this.labelColor === 'red') {
@@ -400,6 +412,9 @@
         let params = {
           end: this.end
         }
+        if (this.tempEvent) {
+          return
+        }
         this.$root.$emit('updateEvent', this.actualEvent, params)
       },
       increment() {
@@ -409,6 +424,9 @@
         this.added += .5
         let params = {
           end: this.end
+        }
+        if (this.tempEvent) {
+          return
         }
         this.$root.$emit('updateEvent', this.actualEvent, params)
       },
@@ -422,18 +440,10 @@
         }
       },
       reschedule() {
-        this.toggleRescheduling(true)
-        this.$root.$emit('toggleOffsite', false)
-        this.message = ''
-        this.$root.$emit('options', {name: 'selectable', value: true})
-        this.toggleCalendarControls(false)
-        this.toggleSchedulingIndicator(true)
-        if (this.examAssociated) {
-          this.toggleScheduling(true)
-          this.setSelectedExam(this.event.exam)
-        } else {
-          this.toggleSchedulingOther(true)
+        if (this.selectedExam && this.selectedExam.gotoDate) {
+          this.setSelectedExam('clearGoto')
         }
+        this.toggleRescheduling(true)
         this.toggleEditBookingModal(false)
       },
       resetModal() {
@@ -464,7 +474,6 @@
         this.invigilator = e
       },
       show() {
-        this.toggleRescheduling(false)
         if (this.newEvent && this.newEvent.start) {
           this.newStart = new moment(this.newEvent.start)
           this.newEnd = new moment(this.newEvent.end)
@@ -483,7 +492,6 @@
       },
       submit(e) {
         e.preventDefault()
-        this.$root.$emit('toggleOffsite', true)
         if (this.title.length === 0) {
           this.labelColor = 'red'
           this.state = 'danger'
@@ -526,9 +534,9 @@
             changes
           }
           this.putBooking(payload).then(() => {
-            this.$root.$emit('options', { name: 'selectable', value: false })
             this.finishBooking()
             this.resetModal()
+            this.$root.$emit('initialize')
           })
         }
       },
