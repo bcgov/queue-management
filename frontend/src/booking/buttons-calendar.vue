@@ -14,7 +14,7 @@
       <b-button class="btn-primary mx-2" @click="today">Today</b-button>
       <DropdownCalendar class="mr-3" />
       <b-dropdown variant="primary"
-                  v-if="showCalendarControls"
+                  v-if="!scheduling && !rescheduling"
                   class="mr-3 ml-3"
                   text="Schedule an Event...">
         <b-dropdown-item @click="showExamModal">
@@ -36,27 +36,16 @@
     name: 'ButtonsCalendar',
     components: { DropdownCalendar },
     computed: {
-      ...mapState(['showCalendarControls',])
+      ...mapState(['scheduling', 'rescheduling'])
     },
     methods: {
-      ...mapMutations([
-        'toggleExamInventoryModal',
-        'toggleScheduling',
-        'toggleCalendarControls',
-        'toggleSchedulingIndicator',
-        'toggleSchedulingOther',
-        'navigationVisible'
-      ]),
+      ...mapMutations(['setSelectedExam', 'toggleExamInventoryModal', 'toggleScheduling',]),
       showExamModal() {
         this.toggleExamInventoryModal(true)
       },
       scheduleOtherEvent() {
-        this.$root.$emit('toggleOffsite', false)
-        this.navigationVisible(false)
-        this.toggleCalendarControls(false)
-        this.toggleSchedulingOther(true)
-        this.toggleSchedulingIndicator(true)
-        this.$root.$emit('options', {name: 'selectable', value: true})
+        this.setSelectedExam(null)
+        this.toggleScheduling(true)
       },
       next() {
         this.$root.$emit('next')
