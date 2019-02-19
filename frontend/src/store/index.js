@@ -370,13 +370,13 @@ export const store = new Vuex.Store({
 
   getters: {
     invigilator_dropdown(state) {
-      let invigilators = state.invigilators
-      invigilators.push({invigilator_id: 'sbc', invigilator_name: 'SBC Staff'})
-      invigilators.push({invigilator_id: null, invigilator_name: 'unassigned'})
-      return invigilators.map( i =>
+      let invigilators = state.invigilators.map( i =>
         ({value: i.invigilator_id,
           text: i.invigilator_name})
       )
+      invigilators.push({value: 'sbc', text: 'SBC Staff'})
+      invigilators.push({value: null, text: 'unassigned'})
+      return invigilators
     },
     
     show_scheduling_indicator: (state) => {
@@ -2149,8 +2149,7 @@ export const store = new Vuex.Store({
       state.examTypes = payload
     },
 
-    setInvigilators(state, payload){
-      state.invigilators = []
+    setInvigilators(state, payload) {
       state.invigilators = payload
     },
 

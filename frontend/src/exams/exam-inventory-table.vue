@@ -106,7 +106,7 @@
                            @click="editExam(row.item)">Edit Exam</b-dropdown-item>
           <b-dropdown-item size="sm"
                            @click="returnExamInfo(row.item)">Return Exam</b-dropdown-item>
-          <template v-if="row.item.booking && row.item.booking.invigilator_id">
+          <template v-if="row.item.booking&&(row.item.booking.invigilator_id||row.item.booking.sbc_staff_invigilated)">
             <b-dropdown-item v-if="row.item.offsite_location"
                              size="sm"
                              @click="editGroupExam(row.item)">Reschedule</b-dropdown-item>
@@ -290,10 +290,10 @@
               moreFiltered = filtered
               break
             case 'unscheduled':
-              moreFiltered = filtered.filter(ex => !ex.booking || !ex.booking.invigilator_id)
+              moreFiltered=filtered.filter(x=>!x.booking||(!x.booking.invigilator_id&&!x.booking.sbc_staff_invigilated))
               break
             case 'scheduled':
-              moreFiltered = filtered.filter(ex => ex.booking && ex.booking.invigilator_id)
+              moreFiltered = filtered.filter(x=>x.booking&&(x.booking.invigilator_id||x.booking.sbc_staff_invigilated))
               break
             default:
               moreFiltered = filtered
