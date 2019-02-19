@@ -12,24 +12,23 @@
           <b-col class="mb-2">
             <div class="q-info-display-grid-container">
               <div class="q-id-grid-outer">
-                <div class="id-grid-1st-col w-100 pr-2">
+                <div class="q-id-grid-head">Exam Details</div>
+                <div class="q-id-grid-col">
+                  <div>Exam: </div>
+                  <div>{{ examRow.exam_name }}</div>
                 </div>
-                <div class="id-grid-1st-col w-100 pr-2">
-                  <div style="display: flex; justify-content: space-between; width: 100%">
-                    <div>Exam:</div>
-                    <div>{{ examRow.exam_name }}</div>
-                  </div>
+                <div class="q-id-grid-col">
+                  <div>Event ID: </div>
+                  <div>{{ examRow.event_id }}</div>
                 </div>
-                <div class="pl-2">Event ID: </div>
-                <div class="q-id-grid-2nd-col">{{ examRow.event_id }}</div>
-                <div class="id-grid-1st-col w-100 pr-2">
-                  <div style="display: flex; justify-content: space-between; width: 100%">
-                    <div>Type:</div>
-                    <div>{{ examRow.exam_type.exam_type_name }}</div>
-                  </div>
+                <div class="q-id-grid-col">
+                  <div>Type: </div>
+                  <div>{{ examRow.exam_type.exam_type_name }}</div>
                 </div>
-                <div class="pl-2">Writers: </div>
-                <div style="margin-left: auto;">{{ examRow.number_of_students }}</div>
+                <div class="q-id-grid-col">
+                  <div>Writers: </div>
+                  <div>{{ examRow.number_of_students }}</div>
+                </div>
               </div>
             </div>
           </b-col>
@@ -160,9 +159,11 @@
       }),
       invigilatorOptions() {
         if (this.invigilators && this.invigilators.length > 0) {
-          return this.invigilators.map( inv =>
+          let options = this.invigilators.map( inv =>
             ({text: inv.invigilator_name, value: inv.invigilator_id})
           )
+          options.push({text: 'unassigned', value: ''})
+          return options
         }
         return []
       },
@@ -239,9 +240,24 @@
               let i = this.editedFields.indexOf(e.target.name)
               this.editedFields.splice(i, 1)
             }
-            this[e.target.name] = e.target.value
+            this[name] = value
             return
           }
+        }
+        if (name === 'invigiator_id' && value == '') {
+          if (this.itemCopy.booking.invigiator_id) {
+            if (!this.editedFields.includes(name)) {
+              this.editedFields.push(name)
+            }
+          }
+          if (!this.itemCopy.booking.invigiator_id) {
+            if (this.editedFields.includes(e.target.name)) {
+              let i = this.editedFields.indexOf(e.target.name)
+              this.editedFields.splice(i, 1)
+            }
+          }
+          this.invigiator_id = ''
+          return
         }
         value = parseInt(value)
         if (value !== this.itemCopy.booking[name]) {
@@ -278,8 +294,9 @@
           let end = start.clone().add(parseInt(this.itemCopy.exam_type.number_of_hours), 'h')
           bookingChanges['start_time'] = start.utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
           bookingChanges['end_time'] = end.utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
-          if (this.invigilator_id) {
-            bookingChanges['invigilator_id'] = this.invigilator_id
+          bookingChanges['invigilator_id'] = this.invigilator_id
+          if (bookingChanges.invigilator_id == '') {
+            bookingChanges.invigilator_id = null
           }
           putRequests.push({url:`/bookings/${this.itemCopy.booking.booking_id}/`, data: bookingChanges})
         }

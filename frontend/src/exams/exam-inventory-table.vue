@@ -11,35 +11,35 @@
         </b-input-group-prepend>
         <b-btn-group horizontal class="pt-2">
           <b-btn size="sm"
-                 :pressed="expiryFilter==='all'"
+                 :pressed="inventoryFilters.expiryFilter==='all'"
                  @click="handleFilter({type:'expiryFilter', value:'all'})"><span class="mx-2">All</span></b-btn>
           <b-btn size="sm"
-                 :pressed="expiryFilter==='expired'"
+                 :pressed="inventoryFilters.expiryFilter==='expired'"
                  @click="handleFilter({type:'expiryFilter', value:'expired'})">Expired</b-btn>
           <b-btn size="sm"
-                 :pressed="expiryFilter==='current'"
+                 :pressed="inventoryFilters.expiryFilter==='current'"
                  @click="handleFilter({type:'expiryFilter', value:'current'})">Current</b-btn>
         </b-btn-group>
         <b-btn-group horizontal class="ml-2 pt-2">
           <b-btn size="sm"
-                 :pressed="scheduledFilter==='both'"
+                 :pressed="inventoryFilters.scheduledFilter==='both'"
                  @click="handleFilter({type:'scheduledFilter', value:'both'})"><span class="mx-2">Both</span></b-btn>
           <b-btn size="sm"
-                 :pressed="scheduledFilter==='unscheduled'"
+                 :pressed="inventoryFilters.scheduledFilter==='unscheduled'"
                  @click="handleFilter({type:'scheduledFilter', value:'unscheduled'})">Un-Scheduled</b-btn>
           <b-btn size="sm"
-                 :pressed="scheduledFilter==='scheduled'"
+                 :pressed="inventoryFilters.scheduledFilter==='scheduled'"
                  @click="handleFilter({type:'scheduledFilter', value:'scheduled'})">Scheduled</b-btn>
         </b-btn-group>
         <b-btn-group horizontal class="ml-2 pt-2">
           <b-btn size="sm"
-                 :pressed="groupFilter==='both'"
+                 :pressed="inventoryFilters.groupFilter==='both'"
                  @click="handleFilter({type:'groupFilter', value:'both'})"><span class="mx-2">Both</span></b-btn>
           <b-btn size="sm"
-                 :pressed="groupFilter==='individual'"
+                 :pressed="inventoryFilters.groupFilter==='individual'"
                  @click="handleFilter({type:'groupFilter', value:'individual'})">Individual</b-btn>
           <b-btn size="sm"
-                 :pressed="groupFilter==='group'"
+                 :pressed="inventoryFilters.groupFilter==='group'"
                  @click="handleFilter({type:'groupFilter', value:'group'})">Group</b-btn>
         </b-btn-group>
       </b-input-group>`
@@ -51,6 +51,7 @@
                style="border: 1px solid dimgrey"
                empty-text="There are no exams that match this filter criteria"
                small
+               tbody-tr-class="q-custom-tr"
                outlined
                @row-clicked="clickRow"
                hover
@@ -63,7 +64,7 @@
         {{ row.item.exam_received_date ? 'Yes' : 'No' }}
       </template>
       <template slot="expiry_date" slot-scope="row">
-        {{ row.item.examinee_name === 'group exam' ? '–' : row.item.expiry_date.split('T')[0] }}
+        {{ row.item.examinee_name === 'group exam' ? '–' : formatDate(row.item.expiry_date) }}
       </template>
       <template slot="scheduled" slot-scope="row">
         <b-button v-if="row.item.booking_id && row.item.booking.invigilator_id"
@@ -105,7 +106,7 @@
                            @click="editExam(row.item)">Edit Exam</b-dropdown-item>
           <b-dropdown-item size="sm"
                            @click="returnExamInfo(row.item)">Return Exam</b-dropdown-item>
-          <template v-if="row.item.booking && row.item.booking.invigilator_id">
+          <template v-if="row.item.booking&&(row.item.booking.invigilator_id||row.item.booking.sbc_staff_invigilated)">
             <b-dropdown-item v-if="row.item.offsite_location"
                              size="sm"
                              @click="editGroupExam(row.item)">Reschedule</b-dropdown-item>
@@ -155,9 +156,6 @@
       return {
         examRow: {},
         tableStyle: null,
-        expiryFilter: 'current',
-        scheduledFilter: 'unscheduled',
-        groupFilter: 'both',
         filter: null,
         events: null,
         bookingRouteString: '',
@@ -170,6 +168,7 @@
         'calendarSetup',
         'calendarEvents',
         'exams',
+        'inventoryFilters',
         'showEditExamModal',
         'showExamInventoryModal',
         'showReturnExamModalVisible',
@@ -217,41 +216,32 @@
     methods: {
       ...mapActions(['getExams', 'getBookings', 'getInvigilators']),
       ...mapMutations([
-        'navigationVisible',
-        'setSelectedExam',
-        'toggleCalendarControls',
-        'toggleExamInventoryModal',
-        'toggleScheduling',
-        'toggleSchedulingIndicator',
-        'toggleEditBookingModal',
-        'toggleEditExamModal',
-        'toggleEditGroupBookingModal',
         'setEditedBooking',
         'setEditedBookingOriginal',
         'setEditExamInfo',
-        'toggleReturnExamModalVisible',
+        'setInventoryFilters',
         'setReturnExamInfo',
+        'setSelectedExam',
+        'toggleEditBookingModal',
+        'toggleEditExamModal',
+        'toggleEditGroupBookingModal',
+        'toggleExamInventoryModal',
+        'toggleReturnExamModalVisible',
+        'toggleScheduling',
       ]),
       addBookingRoute(item) {
-        let bookingRoute = '/booking/scheduling'
-        this.$router.push(bookingRoute)
-        this.navigationVisible(false)
-        this.setSelectedExam(item)
-        this.toggleCalendarControls(false)
-        this.toggleExamInventoryModal(false)
         this.toggleScheduling(true)
-        this.toggleSchedulingIndicator(true)
+        item.referringAction = 'scheduling'
+        this.setSelectedExam(item)
+        this.$router.push('/booking')
+        this.toggleExamInventoryModal(false)
       },
-      clickRow(e) {
+      clickRow(item) {
         if (this.showExamInventoryModal) {
-          this.$root.$emit('toggleOffsite', false)
-          this.$root.$emit('options', {name: 'selectable', value: true})
-          this.navigationVisible(false)
-          this.setSelectedExam(e)
-          this.toggleCalendarControls(false)
-          this.toggleExamInventoryModal(false)
           this.toggleScheduling(true)
-          this.toggleSchedulingIndicator(true)
+          this.setSelectedExam(item)
+          this.$router.push('/booking')
+          this.toggleExamInventoryModal(false)
         }
       },
       editExam(item) {
@@ -278,7 +268,7 @@
             let evenMoreFiltered = moreFiltered.filter(ex => !ex.offsite_location)
             return evenMoreFiltered
           }
-          switch (this.expiryFilter) {
+          switch (this.inventoryFilters.expiryFilter) {
             case 'all':
               filtered = exams
               break
@@ -295,22 +285,22 @@
               break
           }
           let moreFiltered = []
-          switch (this.scheduledFilter) {
+          switch (this.inventoryFilters.scheduledFilter) {
             case 'both':
               moreFiltered = filtered
               break
             case 'unscheduled':
-              moreFiltered = filtered.filter(ex => !ex.booking || !ex.booking.invigilator_id)
+              moreFiltered=filtered.filter(x=>!x.booking||(!x.booking.invigilator_id&&!x.booking.sbc_staff_invigilated))
               break
             case 'scheduled':
-              moreFiltered = filtered.filter(ex => ex.booking && ex.booking.invigilator_id)
+              moreFiltered = filtered.filter(x=>x.booking&&(x.booking.invigilator_id||x.booking.sbc_staff_invigilated))
               break
             default:
               moreFiltered = filtered
               break
           }
           let evenMoreFiltered = []
-          switch (this.groupFilter) {
+          switch (this.inventoryFilters.groupFilter) {
             case 'both':
               evenMoreFiltered = moreFiltered
               break
@@ -352,15 +342,8 @@
           this.tableStyle = { width: 98 + '%' }
         }
       },
-      handleBookedFilter(e) {
-        this.bookedFilter = e.target.value
-      },
-      handleExpiryFilter(e) {
-        this.expiryFilter = e.target.value
-      },
       handleFilter(e) {
-        this[e.type] = e.value
-        localStorage.setItem(e.type, e.value)
+        this.setInventoryFilters(e)
       },
       resetButtons() {
         this.buttons.all = 'btn-secondary'
@@ -375,11 +358,16 @@
         this.setReturnExamInfo(item)
       },
       updateBookingRoute(item) {
-        let calendarEvent = this.calendarEvents.find(event => event.id == item.booking_id)
-        this.setEditedBookingOriginal(calendarEvent)
-        this.setEditedBooking(calendarEvent)
+        item.gotoDate = new moment(item.booking.start_time)
+        item.referringAction = 'rescheduling'
+        this.setSelectedExam(item)
+        let booking = this.calendarEvents.find(event => event.id == item.booking_id)
+        booking.start = new moment(booking.start)
+        booking.end = new moment(booking.end)
+        this.setEditedBooking(booking)
+        this.setEditedBookingOriginal(booking)
         this.toggleEditBookingModal(true)
-        this.$router.push('/booking/' + moment(item.booking.start_time).format('YYYY-MM-DD'))
+        this.$router.push('/booking')
       },
     },
   }

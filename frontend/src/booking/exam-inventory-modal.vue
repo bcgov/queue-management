@@ -24,14 +24,10 @@
     methods: {
       ...mapMutations([
         'toggleExamInventoryModal',
-        'navigationVisible',
         'toggleScheduling',
-        'toggleSchedulingIndicator'
       ]),
       cancel() {
-        this.toggleSchedulingIndicator(false)
         this.toggleExamInventoryModal(false)
-        this.navigationVisible(true)
         this.toggleScheduling(false)
       }
     }

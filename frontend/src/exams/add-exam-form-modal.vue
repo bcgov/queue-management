@@ -241,6 +241,7 @@
         }
         this.unSubmitted = true
         this.submitMsg = ''
+        this.status = 'unknown'
       },
       tryAgain() {
         this.unSubmitted = true
@@ -271,10 +272,7 @@
       resetModal() {
         this.resetCaptureForm()
         this.resetCaptureTab()
-        this.unSubmitted = true
-        this.submitMsg = ''
-        this.status = 'unknown'
-
+        this.initialize()
       },
       setWarning() {
         if (!this.errors.includes(this.step)) {
