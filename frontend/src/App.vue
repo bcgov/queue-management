@@ -67,7 +67,7 @@ limitations under the License.*/
       ...mapGetters(['show_scheduling_indicator']),
       ...mapState(['isLoggedIn', 'user' ]),
       style() {
-        let output = {marginTop: 72+'px', width: '100%',}
+        let output = {marginTop: 72+'px', width: '100%', overflowX: 'hidden'}
         if (this.show_scheduling_indicator) {
           output['marginBottom'] = 100+'px'
         }
