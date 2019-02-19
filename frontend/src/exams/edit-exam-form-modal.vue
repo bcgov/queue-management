@@ -1,4 +1,4 @@
-<slot>
+<template>
   <b-modal v-model="showModal"
            :no-close-on-backdrop="true"
            hide-header
