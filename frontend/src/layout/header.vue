@@ -45,7 +45,8 @@ export default {
         backgroundColor: '#003366',
         borderBottom: '2px solid #fcba19',
         height: '100%',
-        width: '100%'
+        width: '100%',
+        justifyContent: 'space-between'
       }
     }
   },
