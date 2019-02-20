@@ -24,11 +24,13 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import './assets/css/q.css'
 import './assets/css/bc-gov-style.css'
 import { library } from '@fortawesome/fontawesome-svg-core'
+
 import {
-  faRegistered
+  faRegistered,
+  faCalendarCheck,
+  faCalendarTimes,
 } from '@fortawesome/free-regular-svg-icons'
 import {
-  faClock,
   faAngleLeft,
   faAngleRight,
   faBars,
@@ -39,6 +41,7 @@ import {
   faCaretRight,
   faCheck,
   faCheckSquare,
+  faClock,
   faExclamation,
   faExclamationTriangle,
   faFilter,
@@ -58,6 +61,8 @@ library.add(
   faBinoculars,
   faRegistered,
   faCalendar,
+  faCalendarCheck,
+  faCalendarTimes,
   faCaretLeft,
   faCaretRight,
   faCaretDown,

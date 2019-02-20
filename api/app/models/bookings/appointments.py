@@ -17,24 +17,21 @@ from qsystem import db
 from sqlalchemy_utc import UtcDateTime
 
 
-class Booking(Base):
+class Appointment(Base):
 
-    booking_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    room_id = db.Column(db.Integer, db.ForeignKey("room.room_id"), nullable=True)
-    invigilator_id = db.Column(db.Integer, db.ForeignKey("invigilator.invigilator_id"), nullable=True)
+    appointment_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     office_id = db.Column(db.Integer, db.ForeignKey("office.office_id"), nullable=False)
     start_time = db.Column(UtcDateTime, nullable=False)
     end_time = db.Column(UtcDateTime, nullable=False)
-    fees = db.Column(db.String(5), nullable=True)
-    booking_name = db.Column(db.String(150), nullable=True)
-    sbc_staff_invigilated = db.Column(db.Integer, default=0)
+    category = db.Column(db.String(255), nullable=False)
+    checked_in_time = db.Column(UtcDateTime, nullable=True)
+    comments = db.Column(db.String(255), nullable=True)
 
-    room = db.relationship("Room")
-    invigilator = db.relationship("Invigilator")
     office = db.relationship("Office")
 
     def __repr__(self):
-        return '<Booking Name: (name={self.booking_name!r})>'.format(self=self)
+        return '<Appointment ID: (name={self.appointment_id!r})>'.format(self=self)
 
     def __init__(self, **kwargs):
-        super(Booking, self).__init__(**kwargs)
+        super(Appointment, self).__init__(**kwargs)
+

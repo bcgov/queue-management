@@ -12,9 +12,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+
 from app.models.bookings.base import Base
 from app.models.bookings.booking import Booking
 from app.models.bookings.exam import Exam
 from app.models.bookings.exam_type import ExamType
 from app.models.bookings.invigilator import Invigilator
 from app.models.bookings.room import Room
+from app.models.bookings.appointments import Appointment

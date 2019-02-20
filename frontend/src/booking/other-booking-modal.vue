@@ -11,17 +11,18 @@
            size="md">
     <div v-if="showModal" style="margin: 10px">
       <div v-if="minimized || !confirm" style="display: flex; justify-content: space-between">
-        <div><h5>Edit Booking</h5></div>
+        <div><h5>Other Booking</h5></div>
         <div><button class="btn btn-link"
                   @click="minimized = !minimized">{{ minimized ? "Maximize" : "Minimize" }}</button></div>
       </div>
+      <div class="mb-1" style="font-size:1rem;">{{ startTime.format('ddd MMMM Do, YYYY') }}</div>
         <template v-if="!minimized">
           <b-form>
             <b-form-group>
               <label>Event Title<span style="color: red">{{ message }}</span></label><br>
               <b-input :state="state" type="text" v-model="title" />
             </b-form-group>
-            <b-row>
+            <b-form-row>
               <b-col cols="5">
                 <b-form-group>
                   <label>Collect Fees</label><br>
@@ -34,7 +35,7 @@
                   <b-input readonly :value="resource.title" />
                 </b-form-group>
               </b-col>
-            </b-row>
+            </b-form-row>
             <b-form-row v-if="fees">
               <b-col cols="4">
                 <b-form-group>
@@ -58,7 +59,7 @@
               </b-col>
             </b-form-row>
             <b-form-row>
-              <b-col cols="4">
+              <b-col>
                 <b-form-group>
                   <label>Start Time</label><br>
                   <b-input type="text"
@@ -66,7 +67,7 @@
                            :value="startTime.format('hh:mm a')" />
                 </b-form-group>
               </b-col>
-              <b-col cols="4">
+              <b-col>
                 <b-form-group>
                   <label>End Time</label><br>
                   <b-input type="text"
@@ -74,7 +75,7 @@
                            :value="endTime.format('hh:mm a')" />
                 </b-form-group>
               </b-col>
-              <b-col cols="4">
+              <b-col cols="5">
                 <b-form-group>
                   <label>Duration</label><br>
                   <b-button-group>
@@ -86,7 +87,7 @@
                     <b-input :value="displayDuration"
                              readonly
                              style="border-radius: 0px"
-                             class="w-50"/>
+                             class="w-100"/>
                     <b-button @click="incrementDuration" >
                       <font-awesome-icon icon="plus"
                                          class="m-0 p-0"
@@ -194,22 +195,12 @@
       ...mapActions(['postBooking', 'finishBooking']),
       ...mapMutations([
         'toggleOtherBookingModal',
-        'toggleSchedulingIndicator',
-        'toggleSchedulingOther',
-        'navigationVisible',
-        'toggleCalendarControls',
       ]),
       cancel() {
-        this.$root.$emit('toggleOffsite', false)
-        this.toggleSchedulingOther(true)
-        this.toggleSchedulingIndicator(true)
-        this.toggleOtherBookingModal(false)
-        this.$root.$emit('unselect')
         this.$root.$emit('removeSavedSelection')
         this.message = ''
       },
       show() {
-        this.toggleSchedulingIndicator(false)
         this.message = ''
         this.added = 0
         this.title = ''
@@ -237,7 +228,6 @@
       },
       postEvent(e) {
         e.preventDefault()
-        this.$root.$emit('toggleOffsite', true)
         if (this.title.length > 0) {
           this.message = ''
           this.state = null
@@ -252,7 +242,6 @@
           }
           this.postBooking(booking).then( () => {
             this.finishBooking()
-            this.$root.$emit('options', {name: 'selectable', value: false})
           })
         } else {
           this.message = ' (Required)'

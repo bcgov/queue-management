@@ -23,7 +23,7 @@
            style="flex-grow: 8"
            class="q-inline-title">{{ calendarSetup.title }}</div>
     <div />
-      <div v-if="navigationVisible">
+      <div v-if="!scheduling && !rescheduling">
         <b-dropdown variant="outline-primary"
                     class="pl-0 ml-0 mr-3"
                     right
@@ -68,19 +68,18 @@
 
 <script>
   import { mapState, mapActions, mapMutations, mapGetters } from 'vuex'
-  import SchedulingIndicator from '../booking/scheduling-indicator'
 
   export default {
     name: 'Nav',
-    components: { SchedulingIndicator },
     computed: {
       ...mapGetters(['showExams']),
       ...mapState([
-        'navigationVisible',
-        'showServiceModal',
-        'showGAScreenModal',
-        'user',
         'calendarSetup',
+        'rescheduling',
+        'scheduling',
+        'showGAScreenModal',
+        'showServiceModal',
+        'user',
       ]),
       isGAorCSR() {
         if (this.user && this.user.role) {

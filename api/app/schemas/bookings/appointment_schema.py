@@ -12,11 +12,23 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from app.schemas.bookings.invigilator_schema import InvigilatorSchema
-from app.schemas.bookings.exam_type_schema import ExamTypeSchema
-from app.schemas.bookings.room_schema import RoomSchema
-from app.schemas.bookings.booking_schema import BookingSchema
-from app.schemas.bookings.exam_schema import ExamSchema
-from app.schemas.bookings.appointment_schema import AppointmentSchema
+from marshmallow import fields
+import toastedmarshmallow
+from app.models.bookings import Appointment
+from app.schemas.theq import OfficeSchema
+from qsystem import ma
 
 
+class AppointmentSchema(ma.ModelSchema):
+
+    class Meta:
+        model = Appointment
+        jit = toastedmarshmallow.Jit
+
+    appointment_id = fields.Int(dump_only=True)
+    office_id = fields.Int()
+    start_time = fields.DateTime()
+    end_time = fields.DateTime()
+    category = fields.String()
+    checked_in_time = fields.DateTime()
+    comments = fields.String()

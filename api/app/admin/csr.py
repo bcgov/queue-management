@@ -40,24 +40,27 @@ class CSRConfig(Base):
 
     can_delete = False
 
-    column_list = ['username', 'office.office_name', 'role.role_desc', 'deleted']
+    column_list = ['username', 'office.office_name', 'ita_designate', 'role.role_desc', 'deleted']
     column_labels = {
         'username': 'Username',
         'office.office_name': 'Office',
+        'ita_designate': 'ITA Designate',
         'role.role_desc': 'Role',
         'deleted': 'Deleted'
     }
     column_searchable_list = ('username',)
-    column_sortable_list = ('username', 'office.office_name', 'role.role_desc', 'deleted')
+    column_sortable_list = ('username', 'office.office_name', 'ita_designate', 'role.role_desc', 'deleted')
     column_default_sort = 'username'
     form_args = {
         'qt_xn_csr_ind': {'default': '0'},
         'receptionist_ind': {'default': '0'},
-        'csr_state': {'default': 'Logout'}
+
+        'csr_state': {'default': 'Logout'},
+        'ita_designate': {'default': '0'}
     }
     form_excluded_columns = ('periods',)
-    form_create_rules = ('username', 'qt_xn_csr_ind', 'receptionist_ind', 'csr_state', 'role', 'office','deleted',)
-    form_edit_rules = ('username', 'qt_xn_csr_ind', 'receptionist_ind', 'csr_state', 'role', 'office', 'deleted',)
+    form_create_rules = ('username', 'qt_xn_csr_ind', 'receptionist_ind', 'ita_designate', 'csr_state', 'role', 'office','deleted',)
+    form_edit_rules = ('username', 'qt_xn_csr_ind', 'receptionist_ind', 'ita_designate', 'csr_state', 'role', 'office', 'deleted',)
 
     def get_return_url(self):
         return get_redirect_target() or self.get_url('.index_view')

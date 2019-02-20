@@ -21,6 +21,10 @@
 
   export default {
     name: "Exams",
+    components: { ExamInventoryTable },
+    mounted() {
+      this.$store.dispatch('getOffices')
+    },
     computed: {
       ...mapState([
         'user',
@@ -29,7 +33,6 @@
         'showExams',
       ])
     },
-    components: { ExamInventoryTable },
   }
 </script>
 

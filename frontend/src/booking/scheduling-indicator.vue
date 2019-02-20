@@ -1,19 +1,19 @@
 <template>
   <div class="scheduling-indicator"
-       v-if="showSchedulingIndicator">
+       v-if="show_scheduling_indicator">
     <div style="display: flex; justify-content: flex-start; border-radius: 24">
       <div class="m-2 flex-min" style="font-weight:600; font-size:1.2rem">Now Scheduling | </div>
       <div style="font-size: 1.1rem;" class="flex-min ml-1 mr-2 mt-2">
-        {{ scheduling ? 'Exam Event | ' : 'Non-Exam Event' }}
+        {{ examAssociated ? 'Exam Event | ' : 'Non-Exam Event' }}
       </div>
-      <div class="mr-1 mt-2 flex-min" v-if="scheduling" style="font-size: 1.1rem">
+      <div class="mr-1 mt-2 flex-min" v-if="examAssociated" style="font-size: 1.1rem">
         <span>{{ `Duration: ${selectedExam.exam_type.number_of_hours} HRS | ` }}</span><br>
       </div>
-      <div class="m-2 flex-min" v-if="scheduling">
+      <div class="m-2 flex-min" v-if="examAssociated">
         <span><b>Exam: </b> {{ selectedExam.exam_name }}</span><br>
         <span><b>Expiry Date: </b>{{ expiryDateFormat }}</span><br>
       </div>
-      <div v-if="schedulingOther" class="flex-min mx-3 mt-1">
+      <div v-if="!examAssociated" class="flex-min mx-3 mt-1">
         <span class="smaller-font">Click and Drag to select</span><br>
         <span class="smaller-font">a time on the calendar</span><br>
       </div>
@@ -27,23 +27,56 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex'
+  import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
   import moment from 'moment'
 
   export default {
     name: "SchedulingIndicator",
     computed: {
-      ...mapState(['showSchedulingIndicator', 'scheduling', 'schedulingOther', 'selectedExam',]),
+      ...mapGetters(['show_scheduling_indicator']),
+      ...mapState([
+        'editedBooking',
+        'rescheduling',
+        'scheduling',
+        'selectedExam',
+        'showEditBookingModal',
+        'showBookingModal',
+        'showOtherBookingModal'
+      ]),
+      examAssociated() {
+        if (this.selectedExam && Object.keys(this.selectedExam).length > 0) {
+          return true
+        }
+        return false
+      },
+      bookingModalsHidden() {
+        if (!this.showOtherBookingModal && !this.showBookingModal && !this.showEditBookingModal) {
+          return true
+        }
+        return false
+      },
       expiryDateFormat() {
-        if (this.selectedExam && this.selectedExam.expiry_date) {
+        if (this.examAssociated && this.selectedExam.expiry_date) {
           return moment(this.selectedExam.expiry_date).format('MMM-DD-YYYY')
         }
       }
     },
     methods: {
+      ...mapActions(['finishBooking']),
+      ...mapMutations(['toggleEditBookingModal']),
       cancel() {
-        this.$root.$emit('cancel')
-        this.$root.$emit('toggleOffsite', true)
+        if (this.rescheduling) {
+          this.toggleEditBookingModal(true)
+          return
+        }
+        let pushToExams = false
+        if (this.selectedExam && this.selectedExam.referringAction === 'scheduling') {
+          pushToExams = true
+        }
+        this.finishBooking()
+        if (pushToExams) {
+          this.$router.push('/exams')
+        }
       }
     }
   }

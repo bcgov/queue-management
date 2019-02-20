@@ -33,8 +33,8 @@
               </template>
 
               <template slot="materials" slot-scope="row">
-                <span v-if="!row.item.exam.exam_received" style="color: red;">No</span>
-                <span v-if="row.item.exam.exam_received">Yes</span>
+                <span v-if="!row.item.exam.exam_received_date" style="color: red;">No</span>
+                <span v-if="row.item.exam.exam_received_date">Yes</span>
               </template>
 
               <template slot="invigilator" slot-scope="row">
