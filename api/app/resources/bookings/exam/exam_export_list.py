@@ -64,7 +64,7 @@ class ExamList(Resource):
                               .join(Booking, Exam.booking_id == Booking.booking_id) \
                               .filter(Booking.start_time >= start_date) \
                               .filter(Booking.start_time < end_date) \
-                              .join(Invigilator, Booking.invigilator_id == Invigilator.invigilator_id) \
+                              .join(Invigilator, Booking.invigilator_id == Invigilator.invigilator_id, isouter=True) \
                               .join(Room, Booking.room_id == Room.room_id) \
                               .join(Office, Booking.office_id == Office.office_id) \
                               .join(ExamType, Exam.exam_type_id == ExamType.exam_type_id)
@@ -83,10 +83,70 @@ class ExamList(Resource):
             out.writerow(['Office Name', 'Exam Type', 'Exam ID', 'Exam Name', 'Examinee Name', 'Event ID', 'Room Name', 'Invigilator Name', 'Booking ID', 'Booking Name', 'Exam Received', 'Exam Returned' ])
 
             for exam in exams:
-                out.writerow([exam.office.office_name, exam.exam_type.exam_type_name, exam.exam_id, exam.exam_name, exam.examinee_name,
-                              exam.event_id, exam.booking.room.room_name, exam.booking.invigilator.invigilator_name,
-                              exam.booking.booking_id, exam.booking.booking_name, exam.exam_returned_ind,
-                              exam.exam_returned_ind ])
+
+                try:
+                    if exam.booking.invigilator is None:
+                        if exam.exam_received_date is None:
+                            if exam.exam_returned_ind == 0:
+                                out.writerow([exam.office.office_name, exam.exam_type.exam_type_name, exam.exam_id, exam.exam_name,
+                                              exam.examinee_name,
+                                              exam.event_id, exam.booking.room.room_name, '',
+                                              exam.booking.booking_id, exam.booking.booking_name, 'N',
+                                              'N'])
+                            else:
+                                out.writerow([exam.office.office_name, exam.exam_type.exam_type_name, exam.exam_id,
+                                              exam.exam_name,
+                                              exam.examinee_name,
+                                              exam.event_id, exam.booking.room.room_name, '',
+                                              exam.booking.booking_id, exam.booking.booking_name, 'N',
+                                              'Y'])
+                        else:
+                            if exam.exam_returned_ind == 0:
+                                out.writerow([exam.office.office_name, exam.exam_type.exam_type_name, exam.exam_id, exam.exam_name,
+                                              exam.examinee_name,
+                                              exam.event_id, exam.booking.room.room_name, '',
+                                              exam.booking.booking_id, exam.booking.booking_name, 'Y',
+                                              'N'])
+                            else:
+                                out.writerow([exam.office.office_name, exam.exam_type.exam_type_name, exam.exam_id,
+                                              exam.exam_name,
+                                              exam.examinee_name,
+                                              exam.event_id, exam.booking.room.room_name, '',
+                                              exam.booking.booking_id, exam.booking.booking_name, 'Y',
+                                              'Y'])
+                    else:
+                        if exam.exam_received_date is None:
+                            if exam.exam_returned_ind == 0:
+                                out.writerow([exam.office.office_name, exam.exam_type.exam_type_name, exam.exam_id, exam.exam_name,
+                                              exam.examinee_name,
+                                              exam.event_id, exam.booking.room.room_name, exam.booking.invigilator.invigilator_name,
+                                              exam.booking.booking_id, exam.booking.booking_name, 'N',
+                                              'N'])
+                            else:
+                                out.writerow([exam.office.office_name, exam.exam_type.exam_type_name, exam.exam_id,
+                                              exam.exam_name,
+                                              exam.examinee_name,
+                                              exam.event_id, exam.booking.room.room_name, exam.booking.invigilator.invigilator_name,
+                                              exam.booking.booking_id, exam.booking.booking_name, 'N',
+                                              'Y'])
+                        else:
+                            if exam.exam_returned_ind == 0:
+                                out.writerow([exam.office.office_name, exam.exam_type.exam_type_name, exam.exam_id, exam.exam_name,
+                                              exam.examinee_name,
+                                              exam.event_id, exam.booking.room.room_name, exam.booking.invigilator.invigilator_name,
+                                              exam.booking.booking_id, exam.booking.booking_name, 'Y',
+                                              'N'])
+                            else:
+                                out.writerow([exam.office.office_name, exam.exam_type.exam_type_name, exam.exam_id,
+                                              exam.exam_name,
+                                              exam.examinee_name,
+                                              exam.event_id, exam.booking.room.room_name, exam.booking.invigilator.invigilator_name,
+                                              exam.booking.booking_id, exam.booking.booking_name, 'Y',
+                                              'Y'])
+
+                except AttributeError as error:
+                    logging.error(error, exc_info=True)
+                    return {"message": "Invigilator Name Not Found"}, 404
 
             output = make_response(dest.getvalue())
             output.headers["Content-Disposition"] = "attachment; filename=export.csv"
