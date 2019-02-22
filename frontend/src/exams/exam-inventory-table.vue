@@ -67,7 +67,7 @@
         {{ row.item.examinee_name === 'group exam' ? '–' : formatDate(row.item.expiry_date) }}
       </template>
       <template slot="scheduled" slot-scope="row">
-        <b-button v-if="row.item.booking_id && row.item.booking.invigilator_id"
+        <b-button v-if="row.item.booking && (row.item.booking.invigilator_id || row.item.booking.sbc_staff_invigilated)"
                   class="btn-link"
                   @click.stop="row.toggleDetails">
           {{ row.detailsShowing ? 'Hide' : 'Show'}}
@@ -81,14 +81,16 @@
         <div class="details-slot-div">
           <div style="flex-grow: 1" class="ml-3"><b>Date:</b> {{ formatDate(row.item.booking.start_time) }}</div>
           <div style="flex-grow: 1"><b>Time:</b> {{ formatTime(row.item.booking.start_time) }}</div>
-          <div style="flex-grow: 1">
+          <div style="flex-grow: 2">
             <b>Invigilator: </b>
-               {{ row.item.booking.invigilator_id ? row.item.booking.invigilator.invigilator_name : '–' }}
+            <span v-if="row.item.booking.invigilator_id">{{ row.item.booking.invigilator.invigilator_name }}</span>
+            <span v-if="row.item.booking.sbc_staff_invigilated">ServiceBC Staff</span>
           </div>
           <div v-if="row.item.offsite_location"
-               style="flex-grow: 4">Location: {{ row.item.offsite_location }}</div>
+               style="flex-grow: 8">Location: {{ row.item.offsite_location }}</div>
           <div v-else
-               style="flex-grow: 6">Room: {{ row.item.booking.room_id ? row.item.booking.room.room_name : '–' }}</div>
+               style="flex-grow: 8">Room: {{ row.item.booking.room_id ? row.item.booking.room.room_name : '–' }}</div>
+          <div style="flex-grow: 8" />
         </div>
       </template>
       <template slot="actions" slot-scope="row">
@@ -319,7 +321,7 @@
         return []
       },
       formatDate(d) {
-        return new moment(d).format('MMM DD, YYYY')
+        return new moment(d).format('ddd MMM DD, YYYY')
       },
       formatTime(d) {
         return new moment(d).format('h:mm a')
