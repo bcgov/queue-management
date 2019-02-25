@@ -31,6 +31,21 @@ limitations under the License.*/
       videoPlayer
     },
     data() {
+      function getParameterByName(name, url) {
+        url = window.location.href;
+
+        name = name.replace(/[\[\]]/g, '\\$&');
+        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'), results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+      }
+
+      var videoPath = '/static/videos/sbc.mp4';
+      if (getParameterByName("localvideo") == "1") {
+        videoPath = "http://localhost/videos/video.mp4";
+      }
+
       return {
         playerOptions: {
           autoplay: 'true',
@@ -39,7 +54,7 @@ limitations under the License.*/
           muted: true,
           sources: [{
             type: 'video/mp4',
-            src: '/static/videos/sbc.mp4'
+            src: videoPath
           }],
           fluid: true
         },
