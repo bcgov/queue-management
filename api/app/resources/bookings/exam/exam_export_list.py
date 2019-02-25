@@ -69,14 +69,16 @@ class ExamList(Resource):
                               .join(Office, Booking.office_id == Office.office_id) \
                               .join(ExamType, Exam.exam_type_id == ExamType.exam_type_id)
 
-            if exam_type == '1':
+            if exam_type == 'ita':
                 exams = exams.filter(ExamType.ita_ind == 1)
-            elif exam_type == '2':
+            elif exam_type == 'veterinary':
                 exams = exams.filter(ExamType.exam_type_name == 'Veterinary Exam')
-            elif exam_type == '3':
+            elif exam_type == 'milk_tank':
                 exams = exams.filter(ExamType.exam_type_name == 'Milk Grader')
-            elif exam_type == '4':
+            elif exam_type == 'pesticide':
                 exams = exams.filter(ExamType.exam_type_name == 'Pesticide')
+            elif exam_type == 'all_non_ita':
+                exams = exams.filter(ExamType.ita_ind == 0)
 
             dest = io.StringIO()
             out = csv.writer(dest)

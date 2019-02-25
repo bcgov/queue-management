@@ -59,7 +59,9 @@
             startDate: '',
             endDate: '',
             options: [
+              {text: 'All Exams', value: 'all'},
               {text: 'ITA - Individual and Group ', value: 'ita'},
+              {text: 'All Non-ITA Exams', value: 'all_non_ita'},
               {text: 'Veterinary Exam', value: 'veterinary'},
               {text: 'Milk Grader', value: 'milk_tank'},
               {text: 'Pesticide', value: 'pesticide'}
@@ -78,18 +80,8 @@
           submit() {
             let form_start_date = moment.utc(this.startDate).format('YYYY-MM-DD')
             let form_end_date = moment.utc(this.endDate).format('YYYY-MM-DD')
-            let exam_type
-            if (this.selectedExamType === 'ita'){
-              exam_type = 1
-            }else if (this.selectedExamType === 'veterinary') {
-              exam_type = 2
-            }else if (this.selectedExamType === 'milk_tank') {
-              exam_type = 3
-            }else if (this.selectedExamType === 'pesticide') {
-              exam_type = 4
-            }
             let url = '/exams/export/?start_date=' + form_start_date + '&end_date=' + form_end_date + '&exam_type='
-                      + exam_type
+                      + this.selectedExamType
             let today = moment().format('YYYY-MM-DD_HHMMSS')
             let filename = 'export-csv-' + today + '.csv'
             this.getExamsExport(url)
