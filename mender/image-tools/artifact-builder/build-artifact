@@ -7,6 +7,8 @@ set -e
 DOCKER_IMAGE_NAME=bcgov/smartboard-artifact-builder
 OUTPUT_DIR="$DIR/output"
 
+$DIR/docker-build
+
 show_usage() {
   echo "Usage:"
   echo "$0 <rootfs input file> <output Artifact name> <config.env file>"
