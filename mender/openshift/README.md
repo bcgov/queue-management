@@ -91,7 +91,7 @@ The other two components in this sub-application are `mender-redis` and `mender-
 
 If `mender-conductor` is removed, much of the application will still function, however errors will show up in the GUI and it will not be possible to decommission devices.
 
-**Note**: `mender-conductor` is really covered in the Mender Integration](https://github.com/mendersoftware/integration) git repo.
+**Note**: `mender-conductor` is not covered well in the [Mender Integration](https://github.com/mendersoftware/integration) git repo.
 
 ### Minio
 This sub-application consists of one component--`minio`. This component comes unmodified from the [BCDevOps](https://github.com/BCDevOps/minio-openshift) git repo. Because of this, it shows up as a separate application from `mender`.
