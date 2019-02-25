@@ -1,0 +1,36 @@
+#! /bin/bash
+cd $files
+
+set -ex
+
+dphys-swapfile swapoff
+dphys-swapfile uninstall 
+systemctl disable dphys-swapfile
+
+if [ -f /var/swap ] ; then
+	rm /var/swap
+fi
+
+if [ ! -e /var.base ] ; then
+	mkdir -p /var.overlay
+	mv /var /var.base
+	mkdir /var
+fi
+
+if [ ! -e /home.base ] ; then
+	mkdir -p /home.overlay
+	mv /home /home.base
+	mkdir /home
+fi
+
+mkdir -p /tmp
+
+mkdir -p /usr/local/bin
+cp mount_overlay /usr/local/bin
+
+if [ -e /etc/mender/artifact_info ] ; then
+	cp fstab.mender /etc/fstab
+else
+	mkdir -p /data
+	cp fstab.base /etc/fstab
+fi

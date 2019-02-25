@@ -1,0 +1,39 @@
+#! /bin/bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+set -e
+
+DOCKER_IMAGE_NAME=bcgov/smartboard-shrink-image
+
+show_usage() {
+  echo "Usage:"
+  echo "$0 raspbian-image-to-shrink.img"
+}
+
+if [ "$#" -ne 1 ]; then
+  echo "ERROR: 1 parameter required."
+  show_usage
+  exit 1
+fi
+
+INPUT_IMAGE=$1
+
+OUTPUT_DIR=$DIR/output
+mkdir -p $OUTPUT_DIR
+
+if [ ! -f "$INPUT_IMAGE" ]; then
+  echo "ERROR: File passed as input is not accessible."
+  show_usage
+  exit 1
+fi
+
+VOLUME=$(dirname $(realpath $1))
+IMAGE_NAME=$(basename $1)
+
+docker run \
+       -ti \
+       --privileged=true \
+       --mount type=bind,source=$VOLUME,target=/image \
+       --mount type=bind,source=$OUTPUT_DIR,target=/output \
+       $DOCKER_IMAGE_NAME $IMAGE_NAME

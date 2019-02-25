@@ -1,0 +1,9 @@
+[Unit]
+Description=Network Watchdog
+After=network-online.target
+
+[Service]
+ExecStart=/root/network-watchdog.sh
+
+[Install]
+WantedBy=multi-user.target

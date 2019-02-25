@@ -1,0 +1,11 @@
+#! /bin/bash
+
+cd $files
+
+set -ex
+
+cp raspi-blacklist.conf /etc/modprobe.d/
+
+systemctl disable hciuart
+systemctl disable bluetooth
+

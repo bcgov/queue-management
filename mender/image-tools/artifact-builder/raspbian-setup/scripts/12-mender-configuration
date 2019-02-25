@@ -1,0 +1,18 @@
+#! /bin/bash
+cd $files
+
+set -ex
+
+mkdir -p /usr/share/mender/identity
+cp mender-device-identity /usr/share/mender/identity
+chmod +x /usr/share/mender/identity/mender-device-identity
+
+mkdir -p /usr/share/mender/inventory
+cp mender-inventory-smartboard /usr/share/mender/inventory
+chmod +x /usr/share/mender/inventory/mender-inventory-smartboard
+
+# Only patch mender conf for Artifact updates
+if [ -e /etc/mender/mender.conf ] ; then
+	export SERVER_URL=`cat /etc/mender/mender.conf | jq -r '.["ServerURL"]'`
+	envsubst '${SERVER_URL}' < /setup-scripts/files/mender.conf > /etc/mender/mender.conf
+fi

@@ -1,0 +1,73 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <title>Queue Management</title>
+
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <style>
+        html {
+            background: url(splash.png) no-repeat center center fixed; 
+            -webkit-background-size: contain;
+            background-size: contain;
+        }
+    </style>
+
+    <script src="axios.min.js"></script>
+    <script>
+        window.onload = function() {
+            var fallbackVideoTimer;
+
+            var fetchNetworkStatus = function () {
+                axios
+                .get('http://localhost/health')
+                .then(function(response) {
+                    var data = response.data;
+
+                    if (data.videoCached)
+                    {
+                        if (data.connected)
+                        {
+                            // Generally hiding the loader might be better, but
+                            // the chaos of getting luakit to work with certs requires
+                            // several boots and longer boot times, so leaving the loader
+                            // creates better feedback.
+                            // document.getElementById('loading').remove();
+                            location.href = response.data.url;
+                        }
+                        else
+                        {
+                            setTimeout(fetchNetworkStatus, 1000);
+                        }
+
+                        document.getElementById('loading').className = "";
+
+                        if (fallbackVideoTimer == undefined)
+                        {
+                            fallbackVideoTimer = setTimeout(function() {
+                                location.href = "/video.html";
+                            }, data.fallbackVideoTimeout * 1000);
+                        }
+                    }
+                    else
+                    {
+                        document.getElementById('loading').className = "content";
+                        clearTimeout(fallbackVideoTimer);
+                    }
+
+                })
+                .catch(function(error) {
+                    setTimeout(fetchNetworkStatus, 1000);
+                });
+            }
+            fetchNetworkStatus();
+        }
+    </script>
+
+</head>
+<body>
+    <div id="loading"><div></div><div></div><div></div><div></div><div></div></div>
+</body>
+</html>

@@ -1,0 +1,9 @@
+[Unit]
+Description=Video Updater
+After=network-online.target
+
+[Service]
+ExecStart=/root/video-updater.sh
+
+[Install]
+WantedBy=multi-user.target

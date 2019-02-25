@@ -1,0 +1,14 @@
+server {
+    server_name localhost;
+    listen 80;
+    root /var/flaskapp/web-service/static;
+
+    location / {
+        try_files $uri @web-service-flask;
+    }
+
+    location @web-service-flask {
+        include proxy_params;
+        proxy_pass http://unix:/var/flaskapp/web-service/web-service.sock;
+    }
+}

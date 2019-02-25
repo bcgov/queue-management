@@ -1,0 +1,65 @@
+#! /bin/bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+set -e
+
+DOCKER_IMAGE_NAME=bcgov/smartboard-prepare-raspbian
+
+show_usage() {
+  echo "Usage:"
+  echo "$0 raspbian-image-to-prepare.img config.env"
+}
+
+if [ "$#" -ne 2 ]; then
+  echo "ERROR: 2 parameters required."
+  show_usage
+  exit 1
+fi
+
+INPUT_IMAGE=$1
+CONFIG_ENV=$2
+
+if [ ! -f "$INPUT_IMAGE" ]; then
+  echo "ERROR: File passed as input is not accessible."
+  show_usage
+  exit 1
+fi
+
+SETUP_SCRIPTS=$DIR/../../artifact-builder/raspbian-setup
+
+VOLUME=$(dirname $(realpath $1))
+IMAGE_NAME=$(basename $1)
+
+if [ ! -e $SETUP_SCRIPTS ] ; then
+  SETUP_SCRIPTS=$DIR
+  echo "WARNING: Could not find raspbian-setup, image will just be trimmed not loaded with software"
+else
+  source $CONFIG_ENV
+
+  if [ ! -e $CONFIG_ENV ] ; then          echo "ERROR: Couldn't find required file: $CONFIG_ENV" ; exit 1 ; fi
+  if [ ! -e $wpa_supplicant_conf ] ; then echo "ERROR: Couldn't find required file: $wpa_supplicant_conf" ; exit 1 ; fi
+  if [ ! -e $authorized_keys ] ; then     echo "ERROR: Couldn't find required file: $authorized_keys" ; exit 1 ; fi
+  if [ ! -e $sites_txt ] ; then           echo "ERROR: Couldn't find required file: $sites_txt" ; exit 1 ; fi
+
+  cp $CONFIG_ENV $SETUP_SCRIPTS/config.env
+  cp $wpa_supplicant_conf $SETUP_SCRIPTS/files/network/wpa_supplicant-wlan0.conf
+  cp $authorized_keys $SETUP_SCRIPTS/files/authorized_keys
+  cp $sites_txt $SETUP_SCRIPTS/files/sites.txt
+fi
+
+docker run \
+       -ti \
+       --privileged=true \
+       --mount type=bind,source=$DIR/scripts,target=/scripts \
+       --mount type=bind,source=$VOLUME,target=/image \
+       --mount type=bind,source=$SETUP_SCRIPTS,target=/setup-scripts \
+       $DOCKER_IMAGE_NAME $IMAGE_NAME
+
+
+if [ -e $SETUP_SCRIPTS ] ; then
+  rm $SETUP_SCRIPTS/config.env
+  rm $SETUP_SCRIPTS/files/network/wpa_supplicant-wlan0.conf
+  rm $SETUP_SCRIPTS/files/authorized_keys
+  rm $SETUP_SCRIPTS/files/sites.txt
+fi

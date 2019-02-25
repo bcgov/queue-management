@@ -1,0 +1,15 @@
+#! /bin/bash
+
+mount / -o remount,rw
+
+# Move the sites.txt to data so it can be modified if needed
+# just by mounting that drive
+cp /root/sites.txt /uboot/sites.txt
+cp /root/smartboard-base-url /uboot/smartboard-base-url.txt
+
+# We need to start ssh once before we go RO, otherwise it has problems
+
+rm /etc/ssh/ssh_host_*
+ssh-keygen -A
+
+mount / -o remount,ro

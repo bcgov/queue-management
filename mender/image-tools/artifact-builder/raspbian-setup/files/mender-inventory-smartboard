@@ -1,0 +1,10 @@
+#!/bin/sh
+
+set -e
+
+echo "smartboard_id=`cat /var/smartboard/id`"
+echo "smartboard_timezone=`cat /var/smartboard/timezone`"
+echo "smartboard_location=`cat /var/smartboard/location`"
+echo "smartboard_last_seen=`date`"
+echo "smartboard_url=`cat /var/smartboard/base-url`"
+exit 0

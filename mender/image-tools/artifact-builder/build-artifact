@@ -1,0 +1,80 @@
+#! /bin/bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+set -e
+
+DOCKER_IMAGE_NAME=bcgov/smartboard-artifact-builder
+OUTPUT_DIR="$DIR/output"
+
+show_usage() {
+  echo "Usage:"
+  echo "$0 <rootfs input file> <output Artifact name> <config.env file>"
+}
+
+if [ "$#" -ne 3 ]; then
+  echo "ERROR: 3 parameters required."
+  show_usage
+  exit 1
+fi
+
+ROOTFS_INPUT_FILE=$1
+ARTIFACT_NAME=$2
+DEVICE_TYPE="raspberrypi3"
+SETUP_SCRIPTS=$DIR/raspbian-setup
+CONFIG_ENV=$3
+
+if [ ! -f "$ROOTFS_INPUT_FILE" ]; then
+  echo "ERROR: File passed as first argument is not accessible."
+  echo "Got ROOTFS_INPUT_FILE=\"$ROOTFS_INPUT_FILE\""
+  show_usage
+  exit 1
+fi
+
+mkdir -p $OUTPUT_DIR
+
+ROOTFS_INPUT_FILE_NAME="$(basename -- $ROOTFS_INPUT_FILE)"
+ROOTFS_INPUT_FILE_EXTENSION="${ROOTFS_INPUT_FILE_NAME##*.}"
+
+ROOTFS_OUTPUT_FILE_NAME="$ARTIFACT_NAME.$ROOTFS_INPUT_FILE_EXTENSION"
+
+source $CONFIG_ENV
+
+if [ ! -e $CONFIG_ENV ] ; then          echo "ERROR: Couldn't find required file: $CONFIG_ENV" ; exit 1 ; fi
+if [ ! -e $wpa_supplicant_conf ] ; then echo "ERROR: Couldn't find required file: $wpa_supplicant_conf" ; exit 1 ; fi
+if [ ! -e $authorized_keys ] ; then     echo "ERROR: Couldn't find required file: $authorized_keys" ; exit 1 ; fi
+if [ ! -e $sites_txt ] ; then           echo "ERROR: Couldn't find required file: $sites_txt" ; exit 1 ; fi
+
+cp $CONFIG_ENV $SETUP_SCRIPTS/config.env
+cp $wpa_supplicant_conf $SETUP_SCRIPTS/files/network/wpa_supplicant-wlan0.conf
+cp $authorized_keys $SETUP_SCRIPTS/files/authorized_keys
+cp $sites_txt $SETUP_SCRIPTS/files/sites.txt
+
+echo "Copying rootfs input file..."
+rsync -h --progress $ROOTFS_INPUT_FILE $OUTPUT_DIR/$ROOTFS_OUTPUT_FILE_NAME
+
+# Copy configuration files into their correct folder for use during setup
+
+docker run \
+       -ti \
+       --privileged=true \
+       --mount type=bind,source=$OUTPUT_DIR,target=/root_images \
+       --mount type=bind,source=$SETUP_SCRIPTS,target=/setup-scripts \
+       $DOCKER_IMAGE_NAME $ROOTFS_OUTPUT_FILE_NAME $ARTIFACT_NAME $DEVICE_TYPE
+
+rm $SETUP_SCRIPTS/config.env
+rm $SETUP_SCRIPTS/files/network/wpa_supplicant-wlan0.conf
+rm $SETUP_SCRIPTS/files/authorized_keys
+rm $SETUP_SCRIPTS/files/sites.txt
+
+# Output Artifact gets root owner and group, change to current logged in
+CURRENT_USER=$(id -u -n)
+CURRENT_GROUP=$(id -g -n)
+
+echo "Changing ownership of Mender Artifact (may ask you to authenticate)"
+sudo chown $CURRENT_USER:$CURRENT_GROUP $OUTPUT_DIR/$ARTIFACT_NAME.mender
+
+echo "Image generation complete!"
+/bin/echo "The new root file system is at:\n\t$OUTPUT_DIR/$ROOTFS_OUTPUT_FILE_NAME"
+/bin/echo "The new Mender Artifact you can upload to your Mender server to deploy to your devices is at:\
+         \n\t$OUTPUT_DIR/$ARTIFACT_NAME.mender"

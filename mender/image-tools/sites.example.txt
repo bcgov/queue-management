@@ -1,0 +1,6 @@
+Mac_Address	Time_Zone	Smartboard_ID	Location	WIFI_MAC	Static_IP
+b8:27:eb:61:a6:7d	America/Vancouver	1	Tokyo	b827eba1ba1a	142.28.64.168
+b8:27:eb:ed:ad:86	America/Edmonton	61	New_York	b827eba1ba1a	142.28.64.168
+b8:27:eb:36:c3:31	America/Dawson_Creek	999	Paris	b827eba1ba1a	142.28.64.168
+b8:27:eb:64:f0:70	America/Edmonton	61	Narnia	b827eba1ba1a	142.28.64.168
+b8:27:eb:cb:c2:10	America/Vancouver	999	Berlin	b827eba1ba1a	142.28.64.168
