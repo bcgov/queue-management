@@ -20,7 +20,7 @@ This step modifies the stock Raspberry PI Raspbian image by removing extra packa
 
 This Base Image must be "menderized" (the next stage) in order to be used as a Mender client. However it can still be flashed on an SD card and used in a Raspberry PI.
 
-## Menderized Image
+### Menderized Image
 ##### Rerun Frequency:
 * Base Image is modified
 * Mender server URL changes
@@ -29,7 +29,7 @@ This Base Image must be "menderized" (the next stage) in order to be used as a M
 ##### Purpose:
 This stage converts an existing Raspberry PI Raspbian image into a **Menderized** image which can be used to perform OTA updates. This process is done using the [mender-convert](https://github.com/mendersoftware/mender-convert.git) utility. The Menderized image is configured with the correct `UBoot` settings, partition configuration, and a `data` partition for persisting data between updates.
 
-## Patched Image
+### Patched Image
 ##### Rerun Frequency:
 * Menderized Image is modified
 
@@ -41,7 +41,7 @@ The `Mender-Convert` tool makes a number of assumptions about device configurati
 
 **Important**: The image produced at this stage--`.sdimg`--is what will be flashed to every Raspberry PI and will allow them to register with the Mender server and receive updates. 
 
-## Deployment Artifact
+### Deployment Artifact
 ##### Rerun Frequency:
 * New functionality is added to deployment [scripts](./artifact-builder/raspbian-setup/scripts/)
 * Updates to persistent data (WiFi config, SSH Keys, etc)
