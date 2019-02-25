@@ -12,9 +12,6 @@ INPUT_NAME=$(basename $1)
 
 CONFIG_ENV=$2
 
-$DIR/prepare-raspbian/docker-build
-$DIR/shrink-image/docker-build
-
 $DIR/prepare-raspbian/prepare-raspbian $INPUT_IMAGE $CONFIG_ENV
 $DIR/shrink-image/shrink-image $INPUT_IMAGE
 

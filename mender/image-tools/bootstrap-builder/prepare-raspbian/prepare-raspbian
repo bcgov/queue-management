@@ -6,6 +6,8 @@ set -e
 
 DOCKER_IMAGE_NAME=bcgov/smartboard-prepare-raspbian
 
+$DIR/docker-build
+
 show_usage() {
   echo "Usage:"
   echo "$0 raspbian-image-to-prepare.img config.env"
