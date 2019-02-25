@@ -48,7 +48,7 @@
         <span class="confirm-item">{{ exam.exam_name }}</span>
       </b-col>
     </b-row>
-    <b-row no-gutters align-h="between" align-v="end" v-if="setup === 'individual'">
+    <b-row no-gutters align-h="between" align-v="end" v-if="setup === 'individual' || setup === 'other' ">
       <b-col cols="1" />
       <b-col cols="3">
         <span class="confirm-header">Writer's Name</span>
@@ -66,7 +66,7 @@
         <span class="confirm-item">{{ exam.number_of_students }}</span>
       </b-col>
     </b-row>
-    <b-row no-gutters align-h="between" align-v="end" v-if="setup === 'individual'">
+    <b-row no-gutters align-h="between" align-v="end" v-if="setup === 'individual' || setup === 'other' ">
       <b-col cols="1" />
       <b-col cols="3">
         <span class="confirm-header">Received Date</span>
@@ -129,22 +129,22 @@
         examTypes: state => state.examTypes,
         tab: state => state.captureITAExamTabSetup,
         user: state => state.user,
-        addITAExamModal: state => state.addITAExamModal,
+        addExamModal: state => state.addExamModal,
         offices: state => state.offices,
       }),
       ...mapGetters(['exam_object']),
       officeName() {
-        if (this.addITAExamModal.setup === 'group' && this.exam.office_id) {
+        if (this.addExamModal.setup === 'group' && this.exam.office_id) {
           let office = this.offices.find(o => o.office_id == this.exam.office_id)
           return `#${office.office_id} - ${office.office_name}`
         }
         return ''
       },
       setup() {
-        if (this.addITAExamModal.setup === 'individual') {
+        if (this.addExamModal.setup === 'individual') {
           return 'individual'
         }
-        if (this.addITAExamModal.setup === 'group') {
+        if (this.addExamModal.setup === 'group') {
           return 'group'
         }
       },

@@ -1,6 +1,8 @@
 import Vue from 'vue'
-import { mapMutations, mapState } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 import DatePicker from 'vue2-datepicker'
+import moment from 'moment'
+import OfficeDrop from './office-drop'
 
 export const checkmark = Vue.component('checkmark', {
   props: ['validated'],
@@ -41,6 +43,9 @@ export const InputQuestion = Vue.component('input-question', {
 export const SelectQuestion = Vue.component('select-question', {
   props: ['error', 'q', 'validationObj', 'handleInput', 'exam'],
   components: { checkmark },
+  computed: {
+    ...mapState(['addExamModal']),
+  },
   template: `
     <b-row no-gutters>
       <b-col cols="11">
@@ -51,148 +56,92 @@ export const SelectQuestion = Vue.component('select-question', {
           <b-form-select :options="q.options"
                          :value="exam[q.key]"
                          @change.native="handleInput"
+                         :class="addExamModal.setup === 'group' ? 'w-50' : '' "
                          :name="q.key" />
         </b-form-group>
       </b-col>
       <checkmark :validated="validationObj[q.key].valid"  />
     </b-row>
-  `
+  `,
 })
 
-export const SelectOffice = Vue.component('select-question', {
+export const SelectOffice = Vue.component('select-office', {
   props: ['error', 'q', 'validationObj', 'handleInput', 'exam',],
-  components: { checkmark },
+  components: { checkmark, OfficeDrop },
   data() {
-    return {
-      search: '',
-      selected: '',
-      officeId: '',
-      fields: [
-        {key: 'office_name', thStyle: 'width: 70%'},
-        {key: 'office_id', thStyle: 'width: 30%'}
-      ]
-    }
+    return {}
   },
   computed: {
-    ...mapState(['offices', 'capturedExam']),
-    displaySelection() {
-      if (this.offices && this.capturedExam && this.capturedExam.office_id) {
-        let name = this.offices.find(office => office.office_id == this.capturedExam['office_id']).office_name
-        let id = this.capturedExam.office_id
-        return `${id} - ${name}`
-      }
-      return ''
+    ...mapGetters(['role_code']),
+    ...mapState(['offices', 'user', 'addExamModal']),
+    office_number() {
+      return this.addExamModal.office_number
     },
-    items() {
-      if (!this.search) {
-        if (this.selected) {
-          return this.selected
-        }
-        return this.offices
+    Error() {
+      if (this.error && this.validationObj['office_id'].message) {
+        return true
       }
-      if (this.selected) {
-        return this.selected
+      return false
+    },
+    message() {
+      if (this.error && this.validationObj['office_id'].message) {
+        return this.validationObj['office_id'].message
       }
-      return this.offices
+      return `(Start typing to search or enter Office #)`
     }
   },
   methods: {
-    filter(e) {
-      this.search = e
-      
-    },
-    rowClicked(item, index) {
-      this.officeId = item.office_id
-      this.handleInput({
-        target: {
-          name: 'office_id',
-          value: item.office_id
+    ...mapMutations(['toggleAddExamModal']),
+    setOffice(office_number) {
+      office_number = parseInt(office_number)
+      this.toggleAddExamModal({office_number})
+      if (this.offices && this.offices.length > 0) {
+        let office = this.offices.find(office => office.office_number == office_number) || null
+        if (office) {
+          let { office_id } = office
+          this.handleInput({
+            target: {
+              name: 'office_id',
+              value: office_id
+            }
+          })
+          return
         }
-      })
-    },
+        this.handleInput({
+          target: {
+            name: 'office_id',
+            value: null
+          }
+        })
+      }
+    }
   },
   template: `
       <b-row no-gutters class="mb-2">
-        <b-col cols="11" class="mb-0">
-          <label>Search for Office</label><br>
-          <b-form-input :value="search"
-                        id="input1ref"
-                        style="border-radius: 0px; border: 1px solid lightgrey"
-                        @input="filter"
-                        class="mb-1"
-                        placeholder="Start typing to search"/>
-            <div style="border: 1px solid lightgrey">
-            <b-table :items="items"
-                     :fields="fields"
-                     :filter="search"
-                     :show-empty="true"
-                     :small="true"
-                     :per-page="3"
-                     class="pb-0"
-                     :id="q.key"
-                     head-variant="light"
-                     hover
-                     :fixed="true"
-                     id="office_select_table"
-                     @row-clicked="rowClicked">
-              <template slot="office_name" slot-scope="data">
-                <div>
-                  <span>
-                    {{ data.item.office_name }}
-                  </span>
-                    <div style="display: none">
-                    {{
-                      (officeId == data.item.office_id) ?
-                      (data.item._rowVariant='active') : (data.item._rowVariant='')
-                    }}
-                  </div>
-                </div>
-              </template>
-            </b-table>
-          </div>
-        </b-col>
+        <OfficeDrop columnW="9" :office_number="office_number" :setOffice="setOffice" :msg="message" :error="Error" />
         <checkmark :validated="validationObj[q.key].valid"  />
       </b-row>
- 
-  
   `
 })
 
 export const ExamReceivedQuestion = Vue.component('exam-received-question', {
   props: ['error', 'q', 'validationObj', 'handleInput', 'exam',],
-  components: { checkmark, DatePicker },
+  components: { checkmark, DatePicker, moment },
   data() {
     return {
       date: null,
       options: [
         {text: 'Yes', value: true},
         {text: 'No', value: false}
+      ],
+      otherOptions: [
+        {text: 'No', value: true},
+        {text: 'Yes', value: false}
       ]
     }
   },
-  template: `
-    <b-row no-gutters>
-      <b-col cols="6">
-        <b-form-group v-if="showRadio">
-          <label>{{ q.text1 }}
-            <span v-if="error" style="color: red">{{ validationObj[q.key].message }}</span>
-          </label><br>
-          <b-form-radio-group v-model="showRadio"
-                              :options="options" />
-        </b-form-group>
-        <b-form-group v-else>
-          <label>{{ q.text2 }}
-            <span v-if="error" style="color: red">{{ validationObj[q.key].message }}</span>
-          </label>
-          <DatePicker :value="exam[q.key]" lang="en" @input="selectRecdDate"></DatePicker>
-        </b-form-group>
-      </b-col>
-      <b-col cols="5" />
-      <checkmark :validated="validationObj[q.key].valid" />
-    </b-row>
-  `,
   computed: {
-    ...mapState(['captureITAExamTabSetup']),
+    ...mapState(['addExamModal', 'captureITAExamTabSetup',]),
     showRadio: {
       get() {
         return this.captureITAExamTabSetup.showRadio
@@ -205,20 +154,65 @@ export const ExamReceivedQuestion = Vue.component('exam-received-question', {
   },
   methods: {
     ...mapMutations(['captureExamDetail', 'toggleIndividualCaptureTabRadio']),
-      selectRecdDate(e) {
+    preSetDate() {
+      if (this.addExamModal.setup === 'other') {
         this.handleInput({
           target: {
             name: 'exam_received_date',
-            value: e
+            value: moment()
           }
         })
       }
-      },
+    },
+    selectRecdDate(e) {
+      console.log(e)
+      this.handleInput({
+        target: {
+          name: 'exam_received_date',
+          value: e
+        }
+      })
+    }
+  },
+  template: `
+    <b-row no-gutters>
+      <b-col cols="6">
+        <b-form-group v-if="showRadio">
+          <label>{{ q.text1 }}
+            <span v-if="error" style="color: red">{{ validationObj[q.key].message }}</span>
+          </label><br>
+          <b-form-radio-group v-model="showRadio"
+                              @input="preSetDate"
+                              :options="addExamModal.setup === 'other' ? otherOptions : options" />
+        </b-form-group>
+        <b-form-group v-else>
+          <label>{{ q.text2 }}
+            <span v-if="error" style="color: red">{{ validationObj[q.key].message }}</span>
+          </label>
+          <DatePicker :value="exam[q.key]" lang="en" @input="selectRecdDate"></DatePicker>
+        </b-form-group>
+      </b-col>
+      <b-col cols="5" />
+      <checkmark :validated="validationObj[q.key].valid" />
+    </b-row>
+  `
 })
 
 export const NotesQuestion = Vue.component('notes-question', {
   props: ['error', 'q', 'validationObj', 'handleInput', 'exam'],
   components: { checkmark },
+  computed: {
+    ...mapState(['captureITAExamTabSetup']),
+    notes() {
+      return this.captureITAExamTabSetup.notes
+    }
+  },
+  methods: {
+    ...mapMutations(['updateCaptureTab']),
+    handleClick() {
+      this.updateCaptureTab({ notes: true })
+    }
+  },
   template: `
     <b-row no-gutters >
       <b-col cols="12">
@@ -238,19 +232,7 @@ export const NotesQuestion = Vue.component('notes-question', {
         </b-form-group>
       </b-col>
     </b-row>
-  `,
-  computed: {
-    ...mapState(['captureITAExamTabSetup']),
-    notes() {
-      return this.captureITAExamTabSetup.notes
-    }
-  },
-  methods: {
-    ...mapMutations(['updateCaptureTab']),
-    handleClick() {
-      this.updateCaptureTab({ notes: true })
-    }
-  }
+  `
 })
 
 export const DateQuestion = Vue.component('date-question', {
@@ -262,7 +244,7 @@ export const DateQuestion = Vue.component('date-question', {
     }
   },
   computed: {
-    ...mapState(['user', 'addITAExamModal']),
+    ...mapState(['user', 'addExamModal']),
   },
   methods: {
     selectDate(e) {
@@ -279,10 +261,10 @@ export const DateQuestion = Vue.component('date-question', {
       <b-col cols="11">
         <b-form-group>
           <label>
-            {{ addITAExamModal.setup == 'group' ? 'Exam Date' : 'Expiry Date' }}
+            {{ addExamModal.setup == 'group' ? 'Exam Date' : 'Expiry Date' }}
             <span v-if="error" style="color: red">{{ validationObj[q.key].message }}</span>
-          </label>
-          <DatePicker :value="exam[q.key]" lang="en" @input="selectDate"></DatePicker>
+          </label><br>
+          <DatePicker :value="exam[q.key]" lang="en" @input="selectDate" class="w-50"></DatePicker>
         </b-form-group>
       </b-col>
       <checkmark :validated="validationObj[q.key].valid" />
@@ -318,13 +300,14 @@ export const TimeQuestion = Vue.component('time-question', {
           <label>
             Exam Time
             <span v-if="error" style="color: red">{{ validationObj[q.key].message }}</span>
-          </label>
+          </label><br>
           <DatePicker :value="exam[q.key]"
                       :time-picker-options="{ start: '8:00', step: '00:30', end: '17:00' }"
                       lang="en"
                       @input="selectTime"
                       format="h:mm a"
                       confirm
+                      class="w-50"
                       type="time"></DatePicker>
         </b-form-group>
       </b-col>
@@ -342,15 +325,15 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
     }
   },
   computed: {
-    ...mapState(['addITAExamModal', 'capturedExam', 'nonITAExam' ]),
+    ...mapState(['addExamModal', 'capturedExam', 'nonITAExam' ]),
     dropItems() {
-      if (this.addITAExamModal.setup === 'individual' && !this.nonITAExam) {
+      if (this.addExamModal.setup === 'individual') {
         return this.examTypes.filter(type => type.exam_type_name.includes('Single'))
       }
-      if(this.addITAExamModal.setup === 'individual' && this.nonITAExam) {
+      if(this.addExamModal.setup === 'other') {
         return this.examTypes.filter(type  => type.ita_ind === 0)
       }
-      if (this.addITAExamModal.setup === 'group') {
+      if (this.addExamModal.setup === 'group') {
         return this.examTypes.filter(type => type.exam_type_name.includes('Group'))
       }
     },
@@ -367,30 +350,30 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
       return ''
     },
     dropclass() {
-      if (!this.addITAExamModal.step1MenuOpen) {
+      if (!this.addExamModal.step1MenuOpen) {
         return 'dropdown-menu'
       }
-      if (this.addITAExamModal.step1MenuOpen) {
+      if (this.addExamModal.step1MenuOpen) {
         return 'dropdown-menu dropdown-menu-right show py-0 my-0 w-100'
       }
     }
   },
   methods: {
-    ...mapMutations(['toggleAddITAExamModal', 'toggleNonITAExamModal']),
+    ...mapMutations(['toggleAddExamModal', 'toggleAddExamModal']),
     clickInput() {
-      if (!this.addITAExamModal.step1MenuOpen) {
-        this.toggleAddITAExamModal({step1MenuOpen: true})
+      if (!this.addExamModal.step1MenuOpen) {
+        this.toggleAddExamModal({step1MenuOpen: true})
         return
       }
-      this.toggleAddITAExamModal({step1MenuOpen: false})
+      this.toggleAddExamModal({step1MenuOpen: false})
     },
   },
   template: `
     <b-row no-gutters>
       <b-col class="dropdown">
-      <h5 v-if="addITAExamModal.setup === 'group' ">Add Group Exam</h5>
-      <h5 v-else-if="addITAExamModal.setup === 'individual' && !this.nonITAExam ">Add Individual ITA Exam</h5>
-      <h5 v-else-if="addITAExamModal.setup === 'individual' && this.nonITAExam ">Add Non-ITA Exam</h5>
+      <h5 v-if="addExamModal.setup === 'group' ">Add Group Exam</h5>
+      <h5 v-if="addExamModal.setup === 'individual' ">Add Individual ITA Exam</h5>
+      <h5 v-else-if="addExamModal.setup === 'other' ">Add Non-ITA Exam</h5>
       <label>Exam Type</label><br>
         <div @click="clickInput">
           <b-input read-only
@@ -401,20 +384,17 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
         <div :class="dropclass"
              style="border: 1px solid grey"
              @click="clickInput">
-                <template v-for="type in dropItems">
-                  <b-dd-header v-if="type.header"
-                               :style="{backgroundColor: type.exam_color}"
-                               :class="type.class">{{ type.exam_type_name }}</b-dd-header>
-                  <b-dd-item v-else :style="{backgroundColor: type.exam_color}"
-                             @click="handleInput"
-                             :name="type.exam_type_id"
-                             :id="type.exam_type_id"
-                             :class="type.class">{{ type.exam_type_name }}</b-dd-item>
-                </template>
-              </div>
-        </b-form-group>
-      
-      
+          <template v-for="type in dropItems">
+            <b-dd-header v-if="type.header"
+                         :style="{backgroundColor: type.exam_color}"
+                         :class="type.class">{{ type.exam_type_name }}</b-dd-header>
+            <b-dd-item v-else :style="{backgroundColor: type.exam_color}"
+                       @click="handleInput"
+                       :name="type.exam_type_id"
+                       :id="type.exam_type_id"
+                       :class="type.class">{{ type.exam_type_name }}</b-dd-item>
+          </template>
+        </div>
       </b-col>
     </b-row>
   `

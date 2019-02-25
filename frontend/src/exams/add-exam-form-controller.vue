@@ -22,11 +22,12 @@
                       :handleInput="handleInput"
                       :exam="exam" />
       <SelectOffice v-if="q.kind==='office'"
-                      :error="error"
-                      :q="q"
-                      :validationObj="validationObj"
-                      :handleInput="handleInput"
-                      :exam="exam" />
+                    v-show="role_code === 'LIAISON'"
+                    :error="error"
+                    :q="q"
+                    :validationObj="validationObj"
+                    :handleInput="handleInput"
+                    :exam="exam" />
       <ExamReceivedQuestion v-if="q.kind==='exam_received'"
                             :error="error"
                             :q="q"
@@ -97,12 +98,13 @@
       }
     },
     computed: {
-      ...mapGetters(['exam_object']),
+      ...mapGetters(['exam_object', 'role_code']),
       ...mapState({
         exam: state => state.capturedExam,
-        addITAExamModal: state => state.addITAExamModal,
-        addGroupITASteps: state => state.addGroupITASteps,
-        addIndITASteps: state => state.addIndITASteps,
+        addExamModal: state => state.addExamModal,
+        addGroupSteps: state => state.addGroupSteps,
+        addIndividualSteps: state => state.addIndividualSteps,
+        addOtherSteps: state => state.addOtherSteps,
         tab: state => state.captureITAExamTabSetup,
         examTypes: state => state.examTypes,
         user: state => state.user,
@@ -110,9 +112,8 @@
       error() {
         if (this.errors.includes(this.step)) {
           return true
-        } else {
-          return false
         }
+        return false
       },
       errors() {
         if (this.tab && this.tab.errors) {
@@ -131,7 +132,10 @@
         }
       },
       questions() {
-        return this.steps.find(q => q.step == this.step).questions
+        if (this.steps && this.steps.length > 0) {
+          return this.steps.find(q => q.step == this.step).questions
+        }
+        return []
       },
       step() {
         if (this.tab && this.tab.step) {
@@ -140,10 +144,12 @@
         return 1
       },
       steps() {
-        if (this.addITAExamModal.setup === "group") {
-          return this.addGroupITASteps
-        } else {
-          return this.addIndITASteps
+        if (this.addExamModal.setup === 'group') {
+          return this.addGroupSteps
+        } if (this.addExamModal.setup === 'other') {
+          return this.addOtherSteps
+        } if (this.addExamModal.setup === 'individual') {
+          return this.addIndividualSteps
         }
       },
       stepErrors() {
@@ -166,10 +172,17 @@
             messages[key] = ''
             return
           }
+          if (key === 'office_id' && answer == null) {
+            valid[key] = false
+            messages[key] = 'Invalid Office'
+            return
+          }
           if (answer) {
+            answer = answer.toString()
             if (question.minLength > 0) {
               if (answer.length >= question.minLength) {
                 if (question.digit) {
+                  answer = parseInt(answer)
                   if (!isNaN(answer)) {
                     valid[key] = true
                     messages[key] = ''
@@ -193,8 +206,9 @@
                 return
               }
             }
-            if (question.minLength === 0) {
+            if (question.minLength == 0) {
               if (question.digit) {
+                answer = parseInt(answer)
                 if (!isNaN(answer)) {
                   valid[key] = true
                   messages[key] = ''
@@ -212,7 +226,16 @@
                 return
               }
             }
-          } else {
+            valid[key] = false
+            messages[key] = 'Required Field'
+            return
+          }
+          if (!answer) {
+            if (question.minLength == 0 && !question.digit) {
+              valid[key] = true
+              messages[key] = ''
+              return
+            }
             valid[key] = false
             messages[key] = 'Required Field'
             return

@@ -10,19 +10,19 @@
     <div style="flex-grow: 1">
       <b-button variant="primary" @click="clickGenFinReport">Generate Financial Report</b-button>
     </div>
-    <AddExamFormModal />
+    <AddExamModal />
     <FinancialReportModal />
   </div>
 </template>
 
 <script>
   import { mapMutations, mapState, mapGetters } from 'vuex'
-  import AddExamFormModal from './add-exam-form-modal'
+  import AddExamModal from './add-exam-modal'
   import FinancialReportModal from './generate-financial-report-modal'
 
   export default {
     name: "ButtonsExams",
-    components: {AddExamFormModal, FinancialReportModal },
+    components: { AddExamModal, FinancialReportModal },
     computed: {
       ...mapState([ 'user',
                     'showGenFinReportModal',
@@ -35,21 +35,18 @@
       }
     },
     methods: {
-      ...mapMutations(['toggleAddITAExamModal', 'toggleGenFinReport', 'toggleNonITAExamModal']),
+      ...mapMutations(['toggleAddExamModal', 'toggleGenFinReport',]),
       clickAddIndividual() {
-        this.toggleNonITAExamModal(false)
-        this.toggleAddITAExamModal({visible: true, setup: 'individual'})
+        this.toggleAddExamModal({visible: true, setup: 'individual'})
       },
       clickAddGroup() {
-        this.toggleNonITAExamModal(false)
-        this.toggleAddITAExamModal({visible: true, setup: 'group'})
+        this.toggleAddExamModal({visible: true, setup: 'group'})
       },
       clickGenFinReport() {
         this.toggleGenFinReport(true)
       },
       clickAddNonITA() {
-        this.toggleNonITAExamModal(true)
-        this.toggleAddITAExamModal({visible: true, setup: 'individual'})
+        this.toggleAddExamModal({visible: true, setup: 'other'})
       }
     }
   }

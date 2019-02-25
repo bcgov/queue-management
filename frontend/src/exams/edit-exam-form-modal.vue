@@ -8,6 +8,7 @@
            size="md">
     <div v-if="exam">
       <b-table v-show="false"
+               v-if="role_code==='LIAISON'"
                :items="offices"
                :fields="{key: 'office_name'}"
                :filter="search"

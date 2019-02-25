@@ -111,7 +111,7 @@
   import moment from 'moment'
 
   export default {
-    name: 'AddExamFormModal',
+    name: 'AddExamModal',
     components: { AddExamFormController, AddExamFormConfirm },
     data() {
       return ({
@@ -127,13 +127,12 @@
       ...mapState({
         exam: state => state.capturedExam,
         examTypes: state => state.examTypes,
-        addITAExamModal: state => state.addITAExamModal,
-        groupITASteps: state => state.groupITASteps,
-        indITASteps: state => state.indITASteps,
+        addExamModal: state => state.addExamModal,
         tab: state => state.captureITAExamTabSetup,
         user: state => state.user,
-        groupITASteps: state => state.addGroupITASteps,
-        indITASteps: state => state.addIndITASteps,
+        addGroupSteps: state => state.addGroupSteps,
+        addIndividualSteps: state => state.addIndividualSteps,
+        addOtherSteps: state => state.addOtherSteps,
       }),
       errors() {
         if (this.tab.errors) {
@@ -145,10 +144,10 @@
       },
       modalVisible: {
         get() {
-          return this.addITAExamModal.visible
+          return this.addExamModal.visible
         },
         set(e) {
-          this.toggleAddITAExamVisibility(e)
+          this.toggleAddExamModal(e)
         }
       },
       step() {
@@ -158,12 +157,15 @@
         return 1
       },
       steps() {
-        let { setup } = this.addITAExamModal
+        let { setup } = this.addExamModal
         if (setup === 'group') {
-          return this.groupITASteps
+          return this.addGroupSteps
+        }
+        if (setup === 'other') {
+          return this.addOtherSteps
         }
         if (setup === 'individual') {
-          return this.indITASteps
+          return this.addIndividualSteps
         }
       },
       tabs() {
@@ -187,9 +189,8 @@
         'captureExamDetail',
         'resetCaptureForm',
         'resetCaptureTab',
-        'toggleAddITAExamModal',
+        'toggleAddExamModal',
         'updateCaptureTab',
-        'toggleAddITAExamVisibility'
       ]),
       tabWarning(i) {
         if (!Array.isArray(this.errors)) return ''
@@ -219,7 +220,7 @@
       },
       clickCancel() {
         this.resetModal()
-        this.toggleAddITAExamModal({visible: false, setup: null, step1MenuOpen: false})
+        this.toggleAddExamModal({visible: false, setup: null, step1MenuOpen: false})
       },
       clickNext() {
         let step = this.step + 1
@@ -234,10 +235,17 @@
       },
       initialize() {
         this.captureExamDetail({key:'notes', value: ''})
-        if (this.addITAExamModal.setup !== 'group') {
+        if (this.addExamModal.setup !== 'group') {
           let d = new Date()
           let today = moment(d).format('YYYY-MM-DD')
           this.captureExamDetail({ key: 'exam_received_date', value: today })
+        }
+        if (this.addExamModal.setup === 'group') {
+          let { office_id, office_number } = this.user.office
+          office_id = parseInt(office_id)
+          office_number = parseInt(office_number)
+          this.captureExamDetail({key: 'office_id', value: office_id })
+          this.toggleAddExamModal({ office_number })
         }
         this.unSubmitted = true
         this.submitMsg = ''
@@ -250,7 +258,7 @@
       submit() {
         this.unSubmitted = false
         this.submitMsg = ''
-        if (this.addITAExamModal.setup === 'group') {
+        if (this.addExamModal.setup === 'group') {
           this.clickAddExamSubmit('group').then( resp => {
             this.status = resp
             this.getExams()
@@ -259,7 +267,7 @@
             this.getExams()
           })
         }
-        if (this.addITAExamModal.setup === 'individual') {
+        if (this.addExamModal.setup === 'individual') {
           this.clickAddExamSubmit('individual').then( resp => {
             this.status = resp
             this.getExams()
