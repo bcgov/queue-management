@@ -60,8 +60,6 @@ objects:
               env:
                 - name: CONFIG_PROP
                   value: "config.properties"
-                - name: CONDUCTOR_JAVA_OPTS
-                  value: "-Xms128m -Xmx128m"
               # readinessProbe:
               #   failureThreshold: 3
               #   initialDelaySeconds: 3
