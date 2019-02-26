@@ -184,25 +184,23 @@
           <b-col class="mb-2">
             <div class="q-info-display-grid-container">
               <div class="q-id-grid-outer">
-                <div class="id-grid-1st-col w-100 pr-2">
-                  <strong>Exam Details:</strong>
+                <div class="q-id-grid-head">Exam Details:</div>
+                <div class="q-id-grid-col">
+                  <div>Exam:</div>
+                  <div>{{ this.exam.exam_name }}</div>
                 </div>
-                <div class="id-grid-1st-col w-100 pr-2">
-                  <div style="display: flex; justify-content: space-between; width: 100%">
-                    <div>Exam:</div>
-                    <div>{{ this.exam.exam_name }}</div>
-                  </div>
+                <div class="q-id-grid-col">
+                  <div>Event ID:</div>
+                  <div>{{ this.exam.event_id }}</div>
                 </div>
-                <div class="pl-2">Event ID: </div>
-                <div class="q-id-grid-2nd-col">{{ this.exam.event_id }}</div>
-                <div class="id-grid-1st-col w-100 pr-2">
-                  <div style="display: flex; justify-content: space-between; width: 100%">
-                    <div>Type:</div>
-                    <div :style="{color: exam.exam_type.exam_color}">{{ exam.exam_type.exam_type_name }}</div>
-                  </div>
+                <div class="q-id-grid-col">
+                  <div>Type:</div>
+                  <div :style="{color: exam.exam_type.exam_color}">{{ exam.exam_type.exam_type_name }}</div>
                 </div>
-                <div class="pl-2">Method: </div>
-                <div class="q-id-grid-2nd-col">{{ this.exam.exam_method }}</div>
+                <div class="q-id-grid-col">
+                  <div>Method:</div>
+                  <div>{{ this.exam.exam_method }}</div>
+                </div>
               </div>
             </div>
           </b-col>
