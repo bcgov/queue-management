@@ -431,6 +431,7 @@ export const store = new Vuex.Store({
     showAddModal: false,
     showAdmin: false,
     showBookingModal: false,
+    showDeleteExamModal: false,
     showEditBookingModal: false,
     showEditGroupBookingModal: false,
     showEditExamModal: false,
@@ -700,7 +701,18 @@ export const store = new Vuex.Store({
           })
       })
     },
-    
+
+    deleteExam(context, id) {
+      return new Promise((resolve, reject) => {
+        Axios(context).delete(`/exams/${id}/`).then(resp => {
+          resolve(resp.data)
+        })
+          .catch(error => {
+            reject(error)
+          })
+      })
+    },
+
     putRequest(context, payload) {
       return new Promise((resolve, reject) => {
         Axios(context).put(payload.url, payload.data).then( () => {
@@ -2403,6 +2415,8 @@ export const store = new Vuex.Store({
     toggleEditExamModal: (state, payload) => state.showEditExamModal = payload,
 
     toggleReturnExamModalVisible: (state, payload) => state.showReturnExamModalVisible = payload,
+
+    toggleDeleteExamModalVisible: (state, payload) => state.showDeleteExamModal = payload,
 
     setEditExamInfo: (state, payload) => state.editExams = payload,
 
