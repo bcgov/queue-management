@@ -73,7 +73,6 @@ sudo mkdir -p /lib/binfmt.d
 sudo cp qemu-static-conf/*.conf /lib/binfmt.d/
 sudo systemctl restart systemd-binfmt.service
 ```
-https://github.com/computermouth/qemu-static-conf
 
 ### Step 1: Building Base Image (Bootstrapping)
 First, download the latest [Raspbian Lite Image](https://downloads.raspberrypi.org/raspbian_lite_latest) and copy it into the `./mender/image-tools` directory.
