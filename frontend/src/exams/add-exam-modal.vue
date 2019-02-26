@@ -82,7 +82,7 @@
                  align-h="center"
                  align-content="center">
             <b-col>
-              <p><h5>Success.  Exam Details Added.</h5></p>
+              <h5>Success.  Exam Details Added.</h5>
               <p><b-button @click="resetModal" class="btn-primary">Log Another Exam</b-button></p>
             </b-col>
           </b-row>

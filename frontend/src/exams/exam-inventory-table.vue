@@ -124,6 +124,8 @@
           <b-dropdown-item v-if="row.item.offsite_location && !(row.item.booking && row.item.booking.invigilator_id)"
                            size="sm"
                            @click="editGroupExam(row.item)">Add Invigilator</b-dropdown-item>
+          <b-dropdown-item size="sm"
+                           @click="deleteExam(row.item)">Delete Exam</b-dropdown-item>
         </b-dropdown>
       </template>
     </b-table>
@@ -137,10 +139,12 @@
     <EditExamModal :examRow="examRow" :resetExam="resetEditedExam" />
     <ReturnExamModal v-if="showReturnExamModalVisible" />
     <EditGroupExamBookingModal :examRow="examRow" :resetExam="resetEditedExam" />
+    <DeleteExamModal v-if="showDeleteExamModal" />
   </div>
 </template>
 
 <script>
+  import DeleteExamModal from './delete-exam-modal'
   import EditExamModal from './edit-exam-form-modal'
   import EditGroupExamBookingModal from './edit-group-exam-modal'
   import FailureExamAlert from './failure-exam-alert'
@@ -152,7 +156,8 @@
 
   export default {
     name: "ExamInventoryTable",
-    components: { EditGroupExamBookingModal, EditExamModal, ReturnExamModal, SuccessExamAlert, FailureExamAlert },
+    components: { EditGroupExamBookingModal, EditExamModal, ReturnExamModal, SuccessExamAlert, FailureExamAlert,
+                  DeleteExamModal },
     props: ['mode'],
     mounted() {
       this.getInvigilators()
@@ -180,6 +185,7 @@
         'calendarEvents',
         'exams',
         'inventoryFilters',
+        'showDeleteExamModal',
         'showEditExamModal',
         'showExamInventoryModal',
         'showReturnExamModalVisible',
@@ -240,6 +246,7 @@
         'setInventoryFilters',
         'setReturnExamInfo',
         'setSelectedExam',
+        'toggleDeleteExamModalVisible',
         'toggleEditBookingModal',
         'toggleEditExamModal',
         'toggleEditGroupBookingModal',
@@ -261,6 +268,11 @@
           this.$router.push('/booking')
           this.toggleExamInventoryModal(false)
         }
+      },
+      deleteExam(item) {
+        this.examRow = item
+        this.toggleDeleteExamModalVisible(true)
+        this.setReturnExamInfo(item)
       },
       editExam(item) {
         Object.keys(item).forEach( i => {

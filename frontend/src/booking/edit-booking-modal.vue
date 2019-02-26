@@ -164,13 +164,13 @@
               <b-form-group>
                 <label>Delete Booking?</label><br>
                 <b-btn class="w-100 btn-danger"
-                       @click="confirm = true">Delete</b-btn>
+                       @click="confirm = true">Delete Booking</b-btn>
               </b-form-group>
             </b-col>
             <b-col>
               <b-form-group>
                 <label>Change Date, Time or Room?</label><br>
-                <b-btn class="w-100 mb-0" @click="reschedule">Reschedule</b-btn>
+                <b-btn class="w-100 mb-0" @click="reschedule">Reschedule Booking</b-btn>
               </b-form-group>
             </b-col>
           </b-form-row>
