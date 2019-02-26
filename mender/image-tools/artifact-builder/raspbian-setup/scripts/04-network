@@ -23,8 +23,6 @@ cp network/02-wireless.network /etc/systemd/network/
 cp network/wpa_supplicant-country.conf /etc/wpa_supplicant/wpa_supplicant.conf
 cp network/wpa_supplicant-wlan0.conf /etc/wpa_supplicant/
 
-cp resolvconf.conf /etc/
-
 systemctl enable wpa_supplicant@wlan0
 
 envsubst '${network_reboot_timeout}' < network-watchdog.sh > /root/network-watchdog.sh
@@ -34,12 +32,8 @@ cp network-watchdog.service  /etc/systemd/system/
 
 systemctl enable network-watchdog
 
-# resolv.conf needs to be writable, so we link the one in /var
-if [[ ! -e /var/resolv.conf && -e /etc/resolv.conf ]] ; then
-	mv /etc/resolv.conf /var/resolv.conf
-fi
-touch /var/resolv.conf
-ln -nsf /var/resolv.conf /etc/resolv.conf
+systemctl enable systemd-resolved
+ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
 
 cp first-boot.sh /root/
 chmod +x /root/first-boot.sh

@@ -10,7 +10,7 @@ mkdir -p /data/videos
 ln -nsf /data/videos /var/flaskapp/web-service/static/videos
 
 while true ; do
-	wget -q -O /tmp/manifest.json "`cat /var/smartboard/manifest-url`"
+	wget --no-check-certificate -q -O /tmp/manifest.json "`cat /var/smartboard/manifest-url`"
 	if [ $? -gt 0 ] ; then
 		echo "Network down, video caching skipped"
 
@@ -24,7 +24,7 @@ while true ; do
 		if [[ ! -e /data/videos/video.mp4 || ! -e /data/videos/updated ||
 			"$UPDATED" != `cat /data/videos/updated` || "$URL" != `cat /data/videos/url` ]]
 		then
-			wget -O "/data/videos/video.mp4.tmp" "$BASE_URL$URL"
+			wget --no-check-certificate  -O "/data/videos/video.mp4.tmp" "$BASE_URL$URL"
 			# Once a new video is downloaded the browser needs to be restarted
 			killall chromium-browser
 
