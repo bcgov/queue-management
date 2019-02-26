@@ -80,8 +80,8 @@ oc process -f ./templates/mender-component-deployment-template.yaml \
     -p IMAGESTREAM_TAG=${IMAGESTREAM_TAG} \
     -p TOOLS_WORKSPACE=${TOOLS_WORKSPACE} \
     -p MINIO_ROUTE_HOSTNAME=${MINIO_ROUTE_HOSTNAME} \
-    -p USERADM_KEY=${USERADM_KEY} \
-    -p DEVICEAUTH_KEY=${DEVICEAUTH_KEY} \
+    -p USERADM_KEY="${USERADM_KEY}" \
+    -p DEVICEAUTH_KEY="${DEVICEAUTH_KEY}" \
     -p MENDER_DEFAULT_USERNAME=${MENDER_DEFAULT_USERNAME} | oc create -n $PROJECTNAME -f -
 ```
 
