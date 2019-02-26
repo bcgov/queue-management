@@ -9,7 +9,7 @@ TIMEOUT=5
 RETRIES=$((${network_reboot_timeout} / $TIMEOUT))
 
 while true ; do
-	wget --no-check-certificate -q -O /dev/null "`cat /var/smartboard/url`"
+	wget -q -O /dev/null "`cat /var/smartboard/url`"
 	if [ $? -gt 0 ] ; then
 		NETWORK_DOWN=$((NETWORK_DOWN + 1))
 		echo "Network down, attempt number: ${NETWORK_DOWN}"
