@@ -15,6 +15,7 @@ limitations under the License.*/
 
 
 <template>
+  <div id="client-waiting-table">
     <b-table small
              head-variant="light"
              :items="citizens"
@@ -22,8 +23,8 @@ limitations under the License.*/
              outlined
              hover
              @row-clicked="rowClicked"
-             class="p-0 m-0"
-             id="client-waiting-table">
+             class="p-0 m-0">
+             <!--id="client-waiting-table"-->
       <template slot='qt_xn_citizen_ind' slot-scope='data'>
         {{ (data.item.qt_xn_citizen_ind===0) ? ('No') : ('Yes') }}
       </template>
@@ -43,6 +44,7 @@ limitations under the License.*/
         {{ showPriority(data.item.priority) }}
       </template>
     </b-table>
+  </div>
 </template>
 
 <script>
