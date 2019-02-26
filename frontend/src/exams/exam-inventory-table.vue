@@ -56,6 +56,8 @@
                @row-clicked="clickRow"
                hover
                show-empty
+               :current-page="page"
+               :per-page="10"
                :filter="filter">
       <template slot="examinee_name" slot-scope="row">
         {{ row.item.offsite_location ? 'Group Exam' : row.item.examinee_name }}
@@ -125,6 +127,12 @@
         </b-dropdown>
       </template>
     </b-table>
+      <b-pagination
+        :total-rows="totalRows"
+        :per-page="10"
+        v-model="page"
+        class="my-0"
+      />
     </div>
     <EditExamModal :examRow="examRow" :resetExam="resetEditedExam" />
     <ReturnExamModal v-if="showReturnExamModalVisible" />
@@ -156,11 +164,12 @@
     },
     data() {
       return {
-        examRow: {},
-        tableStyle: null,
-        filter: null,
-        events: null,
         bookingRouteString: '',
+        events: null,
+        examRow: {},
+        filter: null,
+        page: 1,
+        tableStyle: null,
       }
     },
     computed: {
@@ -176,6 +185,13 @@
         'showReturnExamModalVisible',
         'user',
       ]),
+      totalRows() {
+        let exams = this.filteredExams() || null
+        if (exams && exams.length > 0) {
+          return exams.length
+        }
+        return 10
+      },
       fields() {
         if (!this.showExamInventoryModal) {
           return [
