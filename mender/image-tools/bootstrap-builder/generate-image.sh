@@ -13,6 +13,5 @@ INPUT_NAME=$(basename $1)
 CONFIG_ENV=$2
 
 $DIR/prepare-raspbian/prepare-raspbian $INPUT_IMAGE $CONFIG_ENV
-$DIR/shrink-image/shrink-image $INPUT_IMAGE
+$DIR/shrink-image/shrink-image output/$INPUT_NAME
 
-mv $DIR/shrink-image/output/$INPUT_NAME $INPUT_IMAGE

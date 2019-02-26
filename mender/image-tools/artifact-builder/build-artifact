@@ -77,6 +77,6 @@ echo "Changing ownership of Mender Artifact (may ask you to authenticate)"
 sudo chown $CURRENT_USER:$CURRENT_GROUP $OUTPUT_DIR/$ARTIFACT_NAME.mender
 
 echo "Image generation complete!"
-/bin/echo "The new root file system is at:\n\t$OUTPUT_DIR/$ROOTFS_OUTPUT_FILE_NAME"
-/bin/echo "The new Mender Artifact you can upload to your Mender server to deploy to your devices is at:\
-         \n\t$OUTPUT_DIR/$ARTIFACT_NAME.mender"
+printf "The new root file system is at:\n\t$OUTPUT_DIR/$ROOTFS_OUTPUT_FILE_NAME\n"
+printf "The new Mender Artifact you can upload to your Mender server to deploy to your devices is at:\
+         \n\t$OUTPUT_DIR/$ARTIFACT_NAME.mender\n"

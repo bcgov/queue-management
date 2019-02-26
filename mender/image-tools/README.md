@@ -83,21 +83,37 @@ Then, run:
 ```
 RASPI_IMG=<raspberry pi image filename>
 ENV_FILE=<config.env>
-bootstrap-builder/generate-image.sh ${RASPI_IMG}
+bootstrap-builder/generate-image.sh ${RASPI_IMG} ${ENV_FILE}
 ```
 
-**Note**: This process modifies the input file (Raspbian image) in place.
+**Note:** The builder will output your image in `output` in the directory where you ran the command.
 
 #### Example Output
 ```
 ...
-The filesystem on /dev/loop0 is now 239393 (4k) blocks long.
+Prepared Raspbian with base image:
+    /Users/adam/Dropbox/Code/bcgov/queue-management/mender/image-tools/output/2018-11-13-raspbian-stretch-lite.img
+Copying /image/2018-11-13-raspbian-stretch-lite.img to /output/2018-11-13-raspbian-stretch-lite.img.tmp...
+Skipping autoexpanding process...
+rootfs: 32063/110880 files (0.1% non-contiguous), 220428/443392 blocks
+resize2fs 1.44.1 (24-Mar-2018)
+resize2fs 1.44.1 (24-Mar-2018)
+Resizing the filesystem on /dev/loop0 to 261385 (4k) blocks.
+Begin pass 2 (max = 85373)
+Relocating blocks             XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+Begin pass 3 (max = 14)
+Scanning inode table          XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+Begin pass 4 (max = 2798)
+Updating inode references     XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+The filesystem on /dev/loop0 is now 261385 (4k) blocks long.
 
 sh: 1: udevadm: not found
 sh: 1: udevadm: not found
 sh: 1: udevadm: not found
 sh: 1: udevadm: not found
-Shrunk /output/2018-11-13-raspbian-stretch-lite.img from 1.8G to 984M
+Shrunk /output/2018-11-13-raspbian-stretch-lite.img.tmp from 1.8G to 1.1G
+Shrunk Image:
+    /Users/adam/Dropbox/Code/bcgov/queue-management/mender/image-tools/output/2018-11-13-raspbian-stretch-lite.img
 ```
 
 #### Building Standalone Image (Optional)

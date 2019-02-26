@@ -28,9 +28,12 @@ if [ ! -f "$INPUT_IMAGE" ]; then
   exit 1
 fi
 
+mkdir -p output
+cp $INPUT_IMAGE output/
+
 SETUP_SCRIPTS=$DIR/../../artifact-builder/raspbian-setup
 
-VOLUME=$(dirname $(realpath $1))
+VOLUME=$(realpath output)
 IMAGE_NAME=$(basename $1)
 
 if [ ! -e $SETUP_SCRIPTS ] ; then
@@ -65,3 +68,5 @@ if [ -e $SETUP_SCRIPTS ] ; then
   rm $SETUP_SCRIPTS/files/authorized_keys
   rm $SETUP_SCRIPTS/files/sites.txt
 fi
+
+printf "Prepared Raspbian with base image:\n\t$(realpath output/$IMAGE_NAME)\n"
