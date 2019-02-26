@@ -14,5 +14,5 @@ chmod +x /usr/share/mender/inventory/mender-inventory-smartboard
 # Only patch mender conf for Artifact updates
 if [ -e /etc/mender/mender.conf ] ; then
 	export SERVER_URL=`cat /etc/mender/mender.conf | jq -r '.["ServerURL"]'`
-	envsubst '${SERVER_URL}' < /setup-scripts/files/mender.conf > /etc/mender/mender.conf
+	envsubst '${SERVER_URL}' < mender.conf > /etc/mender/mender.conf
 fi
