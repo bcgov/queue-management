@@ -86,16 +86,49 @@ ENV_FILE=<config.env>
 bootstrap-builder/generate-image.sh ${RASPI_IMG} ${ENV_FILE}
 ```
 
-**Note:** The builder will output your image in `output` in the directory where you ran the command.
+**Note:** The builder will output your image in `output` named `smartboard-bootstrap-image.img` in the directory where you ran the command.
 
 #### Example Output
 ```
 ...
+Sending build context to Docker daemon  18.43kB
+Step 1/5 : FROM ubuntu:18.04
+ ---> 20bb25d32758
+Step 2/5 : ARG MENDER_ARTIFACT_VERSION=2.3.0
+ ---> Using cache
+ ---> 4a912122a514
+Step 3/5 : RUN apt-get update && apt-get install -y     simg2img img2simg     qemu-user-static
+ ---> Using cache
+ ---> 7bfbeabb89ad
+Step 4/5 : COPY docker-entrypoint.sh /usr/local/bin/
+ ---> Using cache
+ ---> 9d23b0b17a84
+Step 5/5 : ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+ ---> Using cache
+ ---> 9bf9135969af
+Successfully built 9bf9135969af
+Successfully tagged bcgov/smartboard-prepare-raspbian:latest
 Prepared Raspbian with base image:
-    /Users/adam/Dropbox/Code/bcgov/queue-management/mender/image-tools/output/2018-11-13-raspbian-stretch-lite.img
-Copying /image/2018-11-13-raspbian-stretch-lite.img to /output/2018-11-13-raspbian-stretch-lite.img.tmp...
+    /Users/adam/Dropbox/Code/bcgov/queue-management/mender/image-tools/output/smartboard-bootstrap-image.img
+Sending build context to Docker daemon  23.55kB
+Step 1/5 : FROM ubuntu:18.04
+ ---> 20bb25d32758
+Step 2/5 : RUN apt-get update && apt-get install -y     parted util-linux
+ ---> Using cache
+ ---> 5df8281ff68f
+Step 3/5 : COPY docker-entrypoint.sh /usr/local/bin/
+ ---> b0b14e2c222c
+Step 4/5 : COPY pishrink.sh /usr/local/bin/
+ ---> a9b1f364a438
+Step 5/5 : ENTRYPOINT ["docker-entrypoint.sh"]
+ ---> Running in ee5b5fa817fb
+Removing intermediate container ee5b5fa817fb
+ ---> cf09cd5e6815
+Successfully built cf09cd5e6815
+Successfully tagged bcgov/smartboard-shrink-image:latest
+Copying /image/smartboard-bootstrap-image.img to /output/smartboard-bootstrap-image.img.tmp...
 Skipping autoexpanding process...
-rootfs: 32063/110880 files (0.1% non-contiguous), 220428/443392 blocks
+rootfs: 39646/110880 files (0.1% non-contiguous), 258346/443392 blocks
 resize2fs 1.44.1 (24-Mar-2018)
 resize2fs 1.44.1 (24-Mar-2018)
 Resizing the filesystem on /dev/loop0 to 261385 (4k) blocks.
@@ -113,7 +146,7 @@ sh: 1: udevadm: not found
 sh: 1: udevadm: not found
 Shrunk /output/2018-11-13-raspbian-stretch-lite.img.tmp from 1.8G to 1.1G
 Shrunk Image:
-    /Users/adam/Dropbox/Code/bcgov/queue-management/mender/image-tools/output/2018-11-13-raspbian-stretch-lite.img
+    /Users/adam/Dropbox/Code/bcgov/queue-management/mender/image-tools/output/smartboard-bootstrap-image.img
 ```
 
 #### Building Standalone Image (Optional)

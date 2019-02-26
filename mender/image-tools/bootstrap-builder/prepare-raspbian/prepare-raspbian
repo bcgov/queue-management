@@ -29,12 +29,12 @@ if [ ! -f "$INPUT_IMAGE" ]; then
 fi
 
 mkdir -p output
-cp $INPUT_IMAGE output/
+cp $INPUT_IMAGE output/smartboard-bootstrap-image.img
 
 SETUP_SCRIPTS=$DIR/../../artifact-builder/raspbian-setup
 
 VOLUME=$(realpath output)
-IMAGE_NAME=$(basename $1)
+IMAGE_NAME='smartboard-bootstrap-image.img'
 
 if [ ! -e $SETUP_SCRIPTS ] ; then
   SETUP_SCRIPTS=$DIR
@@ -60,7 +60,6 @@ docker run \
        --mount type=bind,source=$VOLUME,target=/image \
        --mount type=bind,source=$SETUP_SCRIPTS,target=/setup-scripts \
        $DOCKER_IMAGE_NAME $IMAGE_NAME
-
 
 if [ -e $SETUP_SCRIPTS ] ; then
   rm $SETUP_SCRIPTS/config.env

@@ -13,5 +13,5 @@ INPUT_NAME=$(basename $1)
 CONFIG_ENV=$2
 
 $DIR/prepare-raspbian/prepare-raspbian $INPUT_IMAGE $CONFIG_ENV
-$DIR/shrink-image/shrink-image output/$INPUT_NAME
+$DIR/shrink-image/shrink-image output/smartboard-bootstrap-image.img
 
