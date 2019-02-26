@@ -327,14 +327,28 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
   computed: {
     ...mapState(['addExamModal', 'capturedExam', 'nonITAExam' ]),
     dropItems() {
+      let sorter = (a, b) => {
+        var typeA = a.exam_type_name
+        var typeB = b.exam_type_name
+        if (typeA < typeB) {
+          return -1
+        }
+        if (typeA > typeB) {
+          return 1
+        }
+        return 0
+      }
       if (this.addExamModal.setup === 'individual') {
-        return this.examTypes.filter(type => type.exam_type_name.includes('Single'))
+        let exams = this.examTypes.filter(type => type.exam_type_name.includes('Single'))
+        return exams.sort((a,b) => sorter(a,b))
       }
       if(this.addExamModal.setup === 'other') {
-        return this.examTypes.filter(type  => type.ita_ind === 0)
+        let exams = this.examTypes.filter(type  => type.ita_ind === 0)
+        return exams.sort((a,b) => sorter(a,b))
       }
       if (this.addExamModal.setup === 'group') {
-        return this.examTypes.filter(type => type.exam_type_name.includes('Group'))
+        let exams = this.examTypes.filter(type => type.exam_type_name.includes('Group'))
+        return exams.sort((a,b) => sorter(a,b))
       }
     },
     inputText() {
