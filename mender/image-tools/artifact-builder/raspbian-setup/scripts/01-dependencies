@@ -22,6 +22,9 @@ apt-get update
 # rpi-update
 # apt-get dist-upgrade -y
 
+# remove deps
+apt-get remove -y $(cat deps_remove.txt | tr '\n' ' ')
+
 # add deps
 apt-get install -y --no-install-recommends $(cat deps_add.txt | tr '\n' ' ')
 
