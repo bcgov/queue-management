@@ -33,6 +33,7 @@ cp network-watchdog.service  /etc/systemd/system/
 systemctl enable network-watchdog
 
 systemctl enable systemd-resolved
+rm -f /etc/resolv.conf
 ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
 
 cp first-boot.sh /root/

@@ -32,15 +32,12 @@ else
   QEMU_STATIC_COPIED=true
 fi
 
-cp -R /scripts /root_system/root/
-chroot /root_system /bin/bash -c "cd /root/scripts ; ./01-*.sh "
-rm -rf /root_system/root/scripts
+rm -f /root_system/etc/resolv.conf
+cp /etc/resolv.conf /root_system/etc/resolv.conf
 
-if [ -e /setup-scripts/setup.sh ] ; then
-  cp -R /setup-scripts /root_system/root/
-  chroot /root_system /bin/bash -c "/root/setup-scripts/setup.sh"
-  rm -rf /root_system/root/setup-scripts
-fi
+cp -R /setup-scripts /root_system/root/
+chroot /root_system /bin/bash -c "/root/setup-scripts/setup.sh"
+rm -rf /root_system/root/setup-scripts
 
 if [ "$QEMU_STATIC_COPIED" = true ]; then
   rm /root_system/usr/bin/qemu-arm-static

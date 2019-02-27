@@ -14,13 +14,16 @@ if [ -e /home.base ] ; then
 fi
 
 apt-get update
- 
+
 # WARNING: If you want new builds to update the kernel and all new packages
 # enable the following lines. This very much may break your build. Upgrading 
 # inside the docker embedded environment has unexpected consequences, test
 # the resultant image before deploying.
 # rpi-update
 # apt-get dist-upgrade -y
+
+# We need to back up init_resize as it's used by Menderization
+cp /usr/lib/raspi-config/init_resize.sh /root/
 
 # remove deps
 apt-get remove -y $(cat deps_remove.txt | tr '\n' ' ')

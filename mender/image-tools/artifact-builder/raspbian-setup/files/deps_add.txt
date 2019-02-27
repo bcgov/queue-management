@@ -1,6 +1,5 @@
 python3
 avahi-daemon
-ntp
 ufw
 ifplugd
 wpasupplicant

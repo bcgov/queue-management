@@ -37,8 +37,8 @@ VOLUME=$(realpath output)
 IMAGE_NAME='smartboard-bootstrap-image.img'
 
 if [ ! -e $SETUP_SCRIPTS ] ; then
-  SETUP_SCRIPTS=$DIR
-  echo "WARNING: Could not find raspbian-setup, image will just be trimmed not loaded with software"
+  echo "ERROR: Could not find raspbian-setup, image will just be trimmed not loaded with software"
+  exit 1
 else
   source $CONFIG_ENV
 
@@ -56,7 +56,6 @@ fi
 docker run \
        -ti \
        --privileged=true \
-       --mount type=bind,source=$DIR/scripts,target=/scripts \
        --mount type=bind,source=$VOLUME,target=/image \
        --mount type=bind,source=$SETUP_SCRIPTS,target=/setup-scripts \
        $DOCKER_IMAGE_NAME $IMAGE_NAME

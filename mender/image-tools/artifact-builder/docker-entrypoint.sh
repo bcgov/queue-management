@@ -24,6 +24,9 @@ fi
 echo "Entering emulated shell in device image. All commands are run as the root user of the device image."
 echo "Make changes (e.g. apt update, apt upgrade, wget ...) and press Ctrl-D when done."
 
+rm -f /root_system/etc/resolv.conf
+cp /etc/resolv.conf /root_system/etc/resolv.conf
+
 # Using bash for command completion support and other conveniences
 chroot /root_system /bin/bash -c "/root/setup-scripts/setup.sh"
 
