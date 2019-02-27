@@ -154,7 +154,8 @@ It is possible to run the bootstrapping stage without shrinking the image. The i
 
 ```
 RASPI_IMG=<raspberry pi image filename>
-bootstrap-builder/prepare-raspbian/prepare-raspbian ${RASPI_IMG} config.env 
+ENV_FILE=<config.env>
+bootstrap-builder/prepare-raspbian/prepare-raspbian ${RASPI_IMG} ${ENV_FILE}
 ```
 
 ### Step 2: Menderizing the Image
