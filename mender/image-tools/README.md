@@ -183,11 +183,11 @@ Next, to generate the **Menderized** image you will need to provide some informa
 **Note**: copy the Raspberry PI Bootstrap image (from previous step) into `./mender-convert/input`.
 
 ```
-BOOTSTRAP_IMG=<bootstrapped image filename>
+BOOTSTRAP_IMG=<bootstrapped image file>
 ARTIFACT_NAME=<artifact name>
 SERVER_URL=<https://your.mender.application.com>
 ./docker-mender-convert from-raw-disk-image \
-    --raw-disk-image "input/${BOOTSTRAP_IMG}" \
+    --raw-disk-image "${BOOTSTRAP_IMG}" \
     --artifact-name "${ARTIFACT_NAME}" \
     --device-type "raspberrypi3" \
     --mender-client "/mender" \
