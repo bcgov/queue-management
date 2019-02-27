@@ -80,7 +80,7 @@ objects:
                 timeoutSeconds: 3
               volumeMounts:
                 - name: mender-mongodb-pv-claim
-                  mountPath: /data/db
+                  mountPath: /var/lib/mongodb/data
               terminationMessagePath: "/dev/termination-log"
               terminationMessagePolicy: File
               imagePullPolicy: Always
