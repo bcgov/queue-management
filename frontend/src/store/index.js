@@ -1746,7 +1746,6 @@ export const store = new Vuex.Store({
         booking_name: responses.exam_name,
         office_id: responses.office_id,
       }
-      
       let defaultValues = {
         exam_returned_ind: 0,
         examinee_name: 'group exam',
@@ -1759,21 +1758,18 @@ export const store = new Vuex.Store({
       let postData = {...responses, ...defaultValues}
       
       return new Promise((resolve, reject) => {
-        Axios(context).post('/exams/', postData)
-        .then(examResp => {
-            let { exam_id } = examResp.data.exam
-            context.dispatch('postBooking', booking)
-            .then( bookingResp => {
-                let putObject = {
-                  examId: exam_id,
-                  bookingId: bookingResp,
-                  officeId: responses.office_id
-                }
-                context.dispatch('putExam', putObject)
-                .then( () => {
-                    resolve()
-                }).catch( () => { reject() })
+        Axios(context).post('/exams/', postData).then( examResp => {
+          let { exam_id } = examResp.data.exam
+          context.dispatch('postBooking', booking).then( bookingResp => {
+            let putObject = {
+              examId: exam_id,
+              bookingId: bookingResp,
+              officeId: responses.office_id
+            }
+            context.dispatch('putExam', putObject).then( () => {
+              resolve()
             }).catch( () => { reject() })
+          }).catch( () => { reject() })
         }).catch( () => { reject() })
       })
     },
@@ -1789,12 +1785,15 @@ export const store = new Vuex.Store({
       if (responses.notes === null) {
         responses.notes = ''
       }
+      if (context.state.addExamModal.setup === 'other') {
+        if (context.state.captureITAExamTabSetup.showRadio === true) {
+          delete responses.exam_received_date
+        }
+      }
       let postData = {...responses, ...defaultValues}
   
       return new Promise((resolve, reject) => {
-        Axios(context).post('/exams/', postData)
-          .then(() => { resolve() })
-          .catch(() => { reject() })
+        Axios(context).post('/exams/', postData).then( () => { resolve() }).catch( () => { reject() })
       })
     },
 
@@ -2352,13 +2351,7 @@ export const store = new Vuex.Store({
     },
 
     resetCaptureForm(state) {
-      Object.keys(state.capturedExam).forEach(key => {
-        Vue.set(
-          state.capturedExam,
-          key,
-          null
-        )
-      })
+      state.capturedExam = {}
     },
 
     resetCaptureTab(state) {

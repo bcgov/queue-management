@@ -4,7 +4,6 @@
   font-size: 2rem;
   font-weight: 600;
 }
-
 .q-calendar-margins {
   margin-top: -15px;
   margin-left: 15px;
@@ -12,7 +11,6 @@
   padding: 0px;
   overflow: no-display;
 }
-
 .q-custom-modal {
   background-color: rgb(0, 0, 0);
   background-color: rgba(0, 0, 0, 0.4);
@@ -25,7 +23,6 @@
   width: 100%;
   z-index: 2000;
 }
-
 .q-custom-modal-content {
   background-color: #fefefe;
   margin-right: auto;
@@ -35,11 +32,9 @@
   padding: 1%;
   position: relative;
 }
-
 .q-modal-body {
   padding: 0px !important;
 }
-
 .q-info-display-grid-container {
    border-radius: 7px;
    border: 1px solid lightgrey;
@@ -47,19 +42,16 @@
    width: 100%;
    padding: 4px;
  }
-
 .q-id-grid-outer {
   display: grid;
   grid-template-columns: 1fr 1fr;
 }
-
 .q-id-grid-col {
   margin-left: 4px;
   margin-right: 4px;
   display: flex;
   justify-content: space-between;
 }
-
 .q-id-grid-full-col {
   margin-left: 4px;
   margin-right: auto;
@@ -67,21 +59,17 @@
   justify-content: space-between;
   grid-column: 1 / span 2;
 }
-
 .q-id-grid-title {
   font-weight: normal;
 }
-
 .q-id-grid-item {
   font-weight: lighter;
 }
-
 .q-id-grid-head {
   margin-right: auto;
   margin-left: 5px;
   grid-column: 1 / span 2;
 }
-
 .q-sum-td-outer-flex {
   margin: 0px;
   padding: 2px 10px 1px 10px !important;
@@ -90,7 +78,6 @@
   justify-content: space-between;
   border: 1px solid #e3e3e3;
 }
-
 .q-sum-td-inner-flex {
   display: flex;
   width: 100%;
@@ -98,4 +85,14 @@
   justify-content: space-between;
   align-items: center;
   font-size: 0.8rem;
+}
+.q-w100-flex-sb {
+   width: 100%;
+   display: flex;
+   justify-content: space-between;
+ }
+.q-w100-flex-fs {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
 }
