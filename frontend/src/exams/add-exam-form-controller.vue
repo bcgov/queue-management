@@ -10,6 +10,7 @@
                         :error="error"
                         :handleInput="handleInput" />
       <InputQuestion v-if="q.kind==='input'"
+                     v-show="addExamModal.setup !== 'other' || q.key !== 'event_id'"
                      :error="error"
                      :q="q"
                      :validationObj="validationObj"
@@ -164,7 +165,7 @@
       validationObj() {
         let valid = {}
         let messages = {}
-        let validateAnswer = question => {
+        let validateAnswer = (question) => {
           let key = question.key
           let answer = this.exam[key]
           if (key === 'notes') {

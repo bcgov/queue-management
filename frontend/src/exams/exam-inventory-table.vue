@@ -191,6 +191,10 @@
         'showReturnExamModalVisible',
         'user',
       ]),
+      calculatePagination() {
+        let h = window.innerHeight
+        return h
+      },
       totalRows() {
         let exams = this.filteredExams() || null
         if (exams && exams.length > 0) {

@@ -1,10 +1,14 @@
 <template v-if="showExams">
-  <div style="display: flex; justify-content: flex-start; width: 100%">
+  <div class="q-w100-flex-fs">
     <div style="flex-grow: 12">
       <b-form inline>
-        <b-button variant="primary" class="mr-1" @click="clickAddIndividual">Add Individual Exam</b-button>
-        <b-button variant="primary" class="mr-1" @click="clickAddNonITA">Add Non-ITA Exam</b-button>
-        <b-button variant="primary" v-if="liaison" @click="clickAddGroup">Add Group Exam</b-button>
+        <b-button class="mr-1 btn-primary"
+                  @click="clickAddIndividual">Add Individual Exam</b-button>
+        <b-button class="mr-1 btn-primary"
+                  @click="clickAddNonITA">Add Non-ITA Exam</b-button>
+        <b-button v-if="role_code==='LIAISON'"
+                  class="btn-primary"
+                  @click="clickAddGroup">Add Group Exam</b-button>
       </b-form>
     </div>
     <div style="flex-grow: 1">
@@ -24,29 +28,25 @@
     name: "ButtonsExams",
     components: { AddExamModal, FinancialReportModal },
     computed: {
-      ...mapState([ 'user',
-                    'showGenFinReportModal',
-                    'addNonITA' ]),
-      ...mapGetters([ 'showExams', ]),
-      liaison() {
-        if (this.user && this.user.role) {
-          return (this.user.role.role_code === 'LIAISON')
-        }
-      }
+      ...mapState(['addNonITA', 'showGenFinReportModal', 'user',]),
+      ...mapGetters([ 'showExams', 'role_code',]),
     },
     methods: {
       ...mapMutations(['toggleAddExamModal', 'toggleGenFinReport',]),
       clickAddIndividual() {
-        this.toggleAddExamModal({visible: true, setup: 'individual'})
+        this.toggleAddExamModal({setup: 'individual'})
+        this.toggleAddExamModal(true)
       },
       clickAddGroup() {
-        this.toggleAddExamModal({visible: true, setup: 'group'})
+        this.toggleAddExamModal({setup: 'group'})
+        this.toggleAddExamModal(true)
       },
       clickGenFinReport() {
         this.toggleGenFinReport(true)
       },
       clickAddNonITA() {
-        this.toggleAddExamModal({visible: true, setup: 'other'})
+        this.toggleAddExamModal({setup: 'other'})
+        this.toggleAddExamModal(true)
       }
     }
   }

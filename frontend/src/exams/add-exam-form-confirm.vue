@@ -16,9 +16,12 @@
         <span class="confirm-header">Exam Type</span>
       </b-col>
       <b-col>
-        <span :style="{color: exam_object.exam_color}">
+        <template v-if="addExamModal.setup === 'group' || addExamModal.setup === 'individual'">
+          span :style="{color: exam_object.exam_color}">{{ exam_object.exam_type_name }}</span>
+        </template>
+        <template v-else>
           {{ exam_object.exam_type_name }}
-        </span>
+        </template>
       </b-col>
     </b-row>
     <b-row no-gutters align-h="between" align-v="end" v-if="setup === 'group'">
@@ -30,7 +33,7 @@
         <span class="confirm-item">{{ officeName }}</span>
       </b-col>
     </b-row>
-    <b-row no-gutters align-h="start" align-v="end">
+    <b-row no-gutters align-h="start" align-v="end" v-if="exam.event_id">
       <b-col cols="1" />
       <b-col cols="3">
         <span class="confirm-header">Event ID</span>
@@ -71,8 +74,12 @@
       <b-col cols="3">
         <span class="confirm-header">Received Date</span>
       </b-col>
-      <b-col align-self="end">
+      <b-col align-self="end" v-if="setup === 'individual'">
         <span class="confirm-item">{{ exam.exam_received_date }}</span>
+      </b-col>
+      <b-col align-self="end" v-else>
+        <span v-if="!tab.showRadio" class="confirm-item">{{ exam.exam_received_date }}</span>
+        <span v-if="tab.showRadio" class="confirm-item">Not Yet Received</span>
       </b-col>
     </b-row>
     <b-row no-gutters align-h="between" align-v="end">
@@ -141,12 +148,10 @@
         return ''
       },
       setup() {
-        if (this.addExamModal.setup === 'individual') {
-          return 'individual'
+        if (this.addExamModal && this.addExamModal.setup) {
+          return this.addExamModal.setup
         }
-        if (this.addExamModal.setup === 'group') {
-          return 'group'
-        }
+        return ''
       },
       errors() {
         if (this.tab.errors) {

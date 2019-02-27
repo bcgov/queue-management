@@ -82,8 +82,8 @@
                  align-h="center"
                  align-content="center">
             <b-col>
-              <h5>Success.  Exam Details Added.</h5>
-              <p><b-button @click="resetModal" class="btn-primary">Log Another Exam</b-button></p>
+              <p><h5>Success.  Exam Details Added.</h5></p>
+              <p><b-button @click="logAnother" class="btn-primary">Log Another Exam</b-button></p>
             </b-col>
           </b-row>
         </b-container>
@@ -214,6 +214,10 @@
         }
         return true
       },
+      logAnother() {
+        this.resetModal()
+        this.initialize()
+      },
       clickBack() {
         let step = this.step - 1
         this.updateCaptureTab({step})
@@ -234,18 +238,28 @@
         this.updateCaptureTab({step: e})
       },
       initialize() {
+        let { setup } = this.addExamModal
         this.captureExamDetail({key:'notes', value: ''})
-        if (this.addExamModal.setup !== 'group') {
+        this.captureExamDetail({key: 'exam_method', value: 'paper'})
+        if (setup !== 'group') {
           let d = new Date()
           let today = moment(d).format('YYYY-MM-DD')
           this.captureExamDetail({ key: 'exam_received_date', value: today })
         }
-        if (this.addExamModal.setup === 'group') {
+        if (setup === 'group') {
           let { office_id, office_number } = this.user.office
           office_id = parseInt(office_id)
           office_number = parseInt(office_number)
           this.captureExamDetail({key: 'office_id', value: office_id })
           this.toggleAddExamModal({ office_number })
+        }
+        if (setup === 'individual') {
+          let value = moment().add(90, 'd')
+          this.captureExamDetail({ key: 'expiry_date', value })
+        }
+        if (setup === 'other') {
+          let value = moment().add(60, 'd')
+          this.captureExamDetail({ key: 'expiry_date', value })
         }
         this.unSubmitted = true
         this.submitMsg = ''
@@ -256,9 +270,10 @@
         this.status = 'unknown'
       },
       submit() {
+        let { setup } = this.addExamModal
         this.unSubmitted = false
         this.submitMsg = ''
-        if (this.addExamModal.setup === 'group') {
+        if (setup === 'group') {
           this.clickAddExamSubmit('group').then( resp => {
             this.status = resp
             this.getExams()
@@ -267,7 +282,7 @@
             this.getExams()
           })
         }
-        if (this.addExamModal.setup === 'individual') {
+        if (setup === 'individual' || setup === 'other') {
           this.clickAddExamSubmit('individual').then( resp => {
             this.status = resp
             this.getExams()
@@ -280,7 +295,6 @@
       resetModal() {
         this.resetCaptureForm()
         this.resetCaptureTab()
-        this.initialize()
       },
       setWarning() {
         if (!this.errors.includes(this.step)) {
