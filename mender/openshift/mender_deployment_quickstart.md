@@ -56,8 +56,9 @@ oc process \
     -p VOLUME_CAPACITY=${MINIO_VOLUME_CAPACITY} | oc create -n $PROJECTNAME -f -
 ```
 
-## Step 5 - Deploy Mender
-### mender-mongodb
+## Step 5 - Deploy Mongodb
+**NOTE**: The Mongodb should be started before any other part of the Mender application begins. If ImageSteam tags have not been set, then make sure ImageStreams are tagged in sequence (outlined in [Step 7](#Step-7-Tag-ImageStreams-in-Sequence-to-Bring-Them-Up)). Othewise, after running the command below, wait for the Mongodb deployment to start before proceeding to the next step.
+
 ```
 oc process -f ./templates/mender-mongodb-deployment-template.yaml \
     -p IMAGESTREAM_TAG=${IMAGESTREAM_TAG} \
@@ -65,6 +66,7 @@ oc process -f ./templates/mender-mongodb-deployment-template.yaml \
     -p MONGO_VOLUME_CAPACITY=${MONGO_VOLUME_CAPACITY} | oc create -n $PROJECTNAME -f -
 ```
 
+## Step 6 - Deploy Mender
 ### mender-conductor
 ```
 oc process -f ./templates/mender-conductor-deployment-template.yaml \
@@ -93,7 +95,7 @@ oc process -f ./templates/mender-frontend-deployment-template.yaml \
     -p IMAGESTREAM_TAG=${IMAGESTREAM_TAG} | oc create -n $PROJECTNAME -f -
 ```
 
-## Step 6 - Tag ImageStreams in Sequence to Bring Them Up
+## Step 7 - Tag ImageStreams in Sequence to Bring Them Up
 These steps likely can be done all at once but have only been tested in sequence. It is likely best to wait after each step to make sure all systems are ready before tagging the next set of ImageStreams.
 
 ### mender-conductor
