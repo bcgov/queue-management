@@ -32,7 +32,7 @@
         </div>
       </b-form-group>
     </b-col>
-    <b-col cols="2">
+    <b-col :cols="columnW == 8 ? 4 : 2">
       <b-form-group>
         <label class="my-0">Office #</label>
         <b-form-input id="office_number"

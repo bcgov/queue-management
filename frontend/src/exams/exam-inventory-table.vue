@@ -1,5 +1,6 @@
 <template>
   <div>
+  <div class="q-w100-flex-fs">
     <b-form inline class="ml-3">
       <b-input-group>
         <b-input-group-prepend><label class="mx-1 pt-1 my-auto label-text">Search</label></b-input-group-prepend>
@@ -9,7 +10,11 @@
         <b-input-group-prepend>
           <label class="mx-1 pt-1 my-auto label-text">Filters</label>
         </b-input-group-prepend>
-        <b-btn-group horizontal class="pt-2">
+        <b-btn-group v-if="role_code === 'LIAISON'" class="pt-2">
+          <b-btn @click="officeFilterModal=true"
+                 class="btn-sm btn-warning">Office # {{ officeNumber }} - {{ officeName }}</b-btn>
+        </b-btn-group>
+        <b-btn-group horizontal class="ml-2 pt-2">
           <b-btn size="sm"
                  :pressed="inventoryFilters.expiryFilter==='all'"
                  @click="handleFilter({type:'expiryFilter', value:'all'})"><span class="mx-2">All</span></b-btn>
@@ -42,8 +47,9 @@
                  :pressed="inventoryFilters.groupFilter==='group'"
                  @click="handleFilter({type:'groupFilter', value:'group'})">Group</b-btn>
         </b-btn-group>
-      </b-input-group>`
+      </b-input-group>
     </b-form>
+  </div>
     <div :style="tableStyle" class="my-0 mx-3">
       <b-table :items="filteredExams()"
                :fields="getFields"
@@ -95,7 +101,7 @@
           <div style="flex-grow: 8" />
         </div>
       </template>
-      <template slot="actions" slot-scope="row">
+      <template slot="actions" slot-scope="row" v-if="inventoryFilters.office_number == user.office.office_number">
         <b-dropdown variant="link"
                     no-caret
                     size="sm"
@@ -128,48 +134,103 @@
                            @click="deleteExam(row.item)">Delete Exam</b-dropdown-item>
         </b-dropdown>
       </template>
-    </b-table>
-      <b-pagination
-        :total-rows="totalRows"
-        :per-page="10"
-        v-model="page"
-        class="my-0"
-      />
+      <template slot="actions" slot-scope="row" v-if="inventoryFilters.office_number != user.office.office_number">
+          <b-dropdown variant="link"
+                      no-caret
+                      size="sm"
+                      class="pl-0 ml-0 mr-3"
+                      id="nav-dropdown"
+                      right>
+            <template slot="button-content">
+              <font-awesome-icon icon="caret-down"
+                                 style="padding: -2px; margin: -2px; font-size: 1rem; color: dimgray"/>
+            </template>
+            <b-dropdown-item size="sm"
+                             @click="editExam(row.item)">Edit Exam</b-dropdown-item>
+            <b-dropdown-item size="sm"
+                             @click="deleteExam(row.item)">Delete Exam</b-dropdown-item>
+          </b-dropdown>
+        </template>
+      </b-table>
+      <div v-if="filteredExams().length > 10 && !showReturnExamModalVisible"
+           class="pagination-class">
+        <b-pagination
+          :total-rows="totalRows"
+          :per-page="10"
+          v-model="page" />
+      </div>
+      <div v-if="filteredExams().length > 10 && showReturnExamModalVisible">
+        <b-pagination
+          :total-rows="totalRows"
+          :per-page="10"
+          v-model="page" />
+      </div>
     </div>
     <EditExamModal :examRow="examRow" :resetExam="resetEditedExam" />
     <ReturnExamModal v-if="showReturnExamModalVisible" />
     <EditGroupExamBookingModal :examRow="examRow" :resetExam="resetEditedExam" />
     <DeleteExamModal v-if="showDeleteExamModal" />
+    <b-modal v-model="officeFilterModal"
+             size="sm"
+             centered
+             hide-backdrop
+             @hide="checkValid()"
+             hide-header
+             hide-footer>
+      <h5>View Another Office</h5>
+      <p>To search, start typing or enter an office #</p>
+      <b-form>
+        <b-form-row>
+          <OfficeDrop columnW="8" :office_number="officeNumber" :setOffice="setOffice"/>
+        </b-form-row>
+      </b-form>
+      <div style="display:flex; justify-content: space-between">
+        <b-button class="mr-2 btn-secondary"
+                  @click="handleFilter({type: 'office_number', value: 'default'})">This Office</b-button>
+        <b-button class="ml-2 btn-primary"
+                  @click="officeFilterModal=false">Ok</b-button>
+      </div>
+    </b-modal>
+
   </div>
 </template>
 
 <script>
+  import moment from 'moment'
+  import Vue from 'vue'
+  import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
   import DeleteExamModal from './delete-exam-modal'
   import EditExamModal from './edit-exam-form-modal'
   import EditGroupExamBookingModal from './edit-group-exam-modal'
   import FailureExamAlert from './failure-exam-alert'
+  import OfficeDrop from './office-drop'
   import ReturnExamModal from './return-exam-form-modal'
   import SuccessExamAlert from './success-exam-alert'
-  import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-  import moment from 'moment'
-  import Vue from 'vue'
 
   export default {
     name: "ExamInventoryTable",
-    components: { EditGroupExamBookingModal, EditExamModal, ReturnExamModal, SuccessExamAlert, FailureExamAlert,
-                  DeleteExamModal },
-    props: ['mode'],
+    components: {
+      DeleteExamModal,
+      EditExamModal,
+      EditGroupExamBookingModal,
+      FailureExamAlert,
+      OfficeDrop,
+      ReturnExamModal,
+      SuccessExamAlert,
+    },
     mounted() {
+      this.getOffices()
       this.getInvigilators()
       this.getExams().then( () => { this.getBookings() })
       this.getWidth()
       this.$nextTick(function() {
         window.addEventListener('resize', () => { this.getWidth() })
       })
+      this.handleFilter({type: 'office_number', value: 'default'})
     },
     data() {
       return {
-        bookingRouteString: '',
+        officeFilterModal: false,
         events: null,
         examRow: {},
         filter: null,
@@ -178,7 +239,7 @@
       }
     },
     computed: {
-      ...mapGetters([ 'calendar_events', 'exam_inventory', 'role_code' ]),
+      ...mapGetters(['calendar_events', 'exam_inventory', 'role_code', ]),
       ...mapState([
         'bookings',
         'calendarSetup',
@@ -189,11 +250,33 @@
         'showEditExamModal',
         'showExamInventoryModal',
         'showReturnExamModalVisible',
+        'offices',
         'user',
       ]),
-      calculatePagination() {
-        let h = window.innerHeight
-        return h
+      officeNumber() {
+        if (this.inventoryFilters && this.inventoryFilters.office_number) {
+          let { office_number } = this.inventoryFilters
+          if (office_number !== 'default') {
+            return office_number
+          }
+        }
+        if (this.user && this.user.office_id) {
+          return this.user.office.office_number
+        }
+        return ''
+      },
+      officeName() {
+        if (this.offices && this.offices.length > 0) {
+          let office = this.offices.find(office=>office.office_number==this.officeNumber)
+          if (office) {
+            return office.office_name
+          }
+          return 'Invalid Office'
+        }
+        if (this.user && this.user.office_id) {
+          return this.user.office.office_name
+        }
+        return ''
       },
       totalRows() {
         let exams = this.filteredExams() || null
@@ -238,11 +321,10 @@
           returnFields.splice(index, 1)
           return returnFields
         }
-      }
-
+      },
     },
     methods: {
-      ...mapActions(['getExams', 'getBookings', 'getInvigilators']),
+      ...mapActions(['getBookings', 'getExams', 'getInvigilators', 'getOffices',]),
       ...mapMutations([
         'setEditedBooking',
         'setEditedBookingOriginal',
@@ -258,12 +340,20 @@
         'toggleReturnExamModalVisible',
         'toggleScheduling',
       ]),
+      checkValid() {
+        if  (this.officeName === 'Invalid Office') {
+          this.handleFilter({type: 'office_number', value: 'default'})
+        }
+      },
       addBookingRoute(item) {
         this.toggleScheduling(true)
         item.referringAction = 'scheduling'
         this.setSelectedExam(item)
         this.$router.push('/booking')
         this.toggleExamInventoryModal(false)
+      },
+      setOffice(office_number) {
+        this.handleFilter({type:'office_number', value: office_number})
       },
       clickRow(item) {
         if (this.showExamInventoryModal) {
@@ -279,13 +369,7 @@
         this.setReturnExamInfo(item)
       },
       editExam(item) {
-        Object.keys(item).forEach( i => {
-          Vue.set(
-            this.examRow,
-            i,
-            item[i]
-          )
-        })
+        this.examRow = item
         this.toggleEditExamModal(true)
       },
       editGroupExam(item) {
@@ -293,15 +377,19 @@
         this.toggleEditGroupBookingModal(true)
       },
       filteredExams() {
-        let exams = this.exam_inventory || []
+        let examInventory = this.exam_inventory
         let filtered = []
-        if (exams.length > 0) {
+        if (examInventory.length > 0) {
           if (this.showExamInventoryModal) {
-            filtered = exams.filter(ex => moment(ex.expiry_date).isSameOrAfter(moment(), 'day'))
+            filtered = examInventory.filter(ex => moment(ex.expiry_date).isSameOrAfter(moment(), 'day'))
             let moreFiltered = filtered.filter(ex => !ex.booking)
             let evenMoreFiltered = moreFiltered.filter(ex => !ex.offsite_location)
-            return evenMoreFiltered
+            let { office_id } = this.user
+            return evenMoreFiltered.filter(ex => ex.office_id == office_id)
           }
+          let office_number = this.inventoryFilters.office_number === 'default' ?
+                          this.user.office.office_number : this.inventoryFilters.office_number
+          let exams = examInventory.filter(ex => ex.office.office_number == office_number)
           switch (this.inventoryFilters.expiryFilter) {
             case 'all':
               filtered = exams
@@ -462,5 +550,10 @@
     width: 100%;
     padding-top: 6px;
     padding-bottom: 6px;
+  }
+  .pagination-class {
+    position: fixed;
+    bottom: 35px;
+    left: 30px;
   }
 </style>
