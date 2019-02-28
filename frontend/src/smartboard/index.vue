@@ -156,6 +156,7 @@ export default {
   .board-85-video { display: inline-block; width: 74%; padding-left: 1%; padding-right: 1%; margin: 8px auto 0 auto; }
   .board-25-table { display: inline-block; width: 24%; max-height: 60vh; padding-left: 1%; padding-right: 1%; vertical-align: top; }
   .flex-title { font-size: 4.0rem; color: midnightblue; margin-top: -4px; }
+  .video-js { background-color: white; }
 
   #network-status {
     position: absolute;
