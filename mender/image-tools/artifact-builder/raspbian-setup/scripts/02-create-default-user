@@ -1,0 +1,21 @@
+#! /bin/bash
+cd $files
+
+set -ex
+
+echo "${username} ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/011_${username}-nopasswd 
+
+# Remove existing user so an installation can be rerun
+if id -u $username > /dev/null 2>&1; then
+	deluser --force $username
+	rm -rf /home/$username
+fi
+
+# Create new user that is a sudo user
+useradd --create-home \
+	--groups sudo,adm,dialout,cdrom,audio,plugdev,games,users,input,netdev,gpio,i2c,spi \
+	--shell /bin/bash \
+	$username 
+echo "$username:$password" | chpasswd
+
+cp bashrc $home_dir/.bashrc

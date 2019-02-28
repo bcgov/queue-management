@@ -1,0 +1,14 @@
+#! /bin/bash
+cd $files
+
+set -ex
+
+mkdir -p /opt
+
+systemctl disable getty@tty1
+
+# The splash screen image is in the web-service static files
+cp splashscreen.service  /etc/systemd/system/
+
+systemctl enable splashscreen
+ 

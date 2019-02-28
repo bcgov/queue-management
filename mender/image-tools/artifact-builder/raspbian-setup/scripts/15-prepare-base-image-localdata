@@ -1,0 +1,27 @@
+#! /bin/bash
+#
+# This file puts our sites and base url file somewhere the base image
+# can find. This works a bit differently under the menderized image
+# in that the data lives on the /uboot drive. We fake this by
+# creating that folder on the base drive, which will just get mounted
+# over in the final image. This leaves us with a functional image
+
+cd $files
+
+set -ex
+
+mkdir -p /uboot
+
+cp /root/sites.txt /uboot/sites.txt
+cp /root/smartboard-base-url /uboot/smartboard-base-url.txt
+
+# Unmount if we are patching up an image
+umount /var || /bin/true
+umount /home || /bin/true
+
+# Create stub pointer so Menderization and booting map to the right places
+ln -snf /data/mender /var.base/lib/mender
+
+# These lines make it so mender-convert doesn't complain
+mkdir -p /var/lib
+ln -snf /data/mender /var/lib/mender

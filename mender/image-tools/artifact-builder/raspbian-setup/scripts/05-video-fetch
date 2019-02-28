@@ -1,0 +1,11 @@
+#! /bin/bash
+cd $files
+
+set -ex
+
+envsubst '${video_cache_timeout}' < video-updater.sh > /root/video-updater.sh
+chmod +x /root/video-updater.sh
+
+cp video-updater.service /etc/systemd/system/
+
+systemctl enable video-updater

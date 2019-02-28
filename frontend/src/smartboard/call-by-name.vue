@@ -19,7 +19,7 @@ limitations under the License.*/
       <div class="board-video-div">
         <Video />
       </div>
-      <div class="bottom-flex-div">
+      <div v-if="!networkStatus.networkDown" class="bottom-flex-div">
         <div class="flex-title"> Currently waiting: {{waiting}}</div>
       </div>
     </div>
@@ -40,7 +40,7 @@ const Axios = axios.create({
 
 export default {
   name: 'CallByName',
-  props: ['smartboardData'],
+  props: ['smartboardData', 'networkStatus'],
   mounted() {
     this.$root.$on('addToBoard',( data) => { this.updateBoard(data) })
     this.initializeBoard()
