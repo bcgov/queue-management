@@ -89,6 +89,8 @@ class Feedback(Resource):
         instance = application.config['SERVICENOW_INSTANCE']
         user = application.config['SERVICENOW_USER']
         password = application.config['SERVICENOW_PASSWORD']
+        table = application.config['SERVICENOW_TABLE']
+        tenant = application.config['SERVICENOW_TENANT']
 
         if instance is None:
             return {"message": "SERVICENOW_INSTANCE is not set"}, 400
@@ -96,27 +98,48 @@ class Feedback(Resource):
             return {"message": "SERVICENOW_USER is not set"}, 400
         if password is None:
             return {"message": "SERVICENOW_PASSWORD is not set"}, 400
+        if table is None:
+            return {"message": "SERVICENOW_TABLE is not set"}, 400
+        if tenant is None:
+            return {"message": "SERVICENOW_TENANT is not set"}, 400
 
         #  Generate Service Now incident.
         #  NOTE:  Automatic email gets sent to the assignment group below
         #         ONLY IF the email of the SERVICENOW_USER IS NOT the same
         #         as the email of this assignment group.
+
         c = pysnow.Client(instance = instance, user=user, password=password)
-        incident = c.resource(api_path='/table/incident')
-        user = Feedback.extract_string(params, "Username: ", "\n", 0)
+        incident = c.resource(api_path=table)
+        csr = Feedback.extract_string(params, "Username: ", "\n", 0)
         ticket = Feedback.extract_string(params, "Ticket Number: ","\n", 0)
         msg = Feedback.extract_string(params, "Message: ", "", 50)
-        short_desc = "TheQ Feedback (User: " + user + "; Ticket: " + ticket + "; Msg: " + msg + ")"
-        new_record = {
-            'category': 'Inquiry / Help',
-            'cmdb_ci': 'CFMS',
-            'impact': '2 - Some Customers',
-            'urgency': '2 - High',
-            'priority': 'High',
-            'short_description': short_desc,
-            'description': params,
-            'assignment_group': 'Service Delivery Tech Services (GARMS)'
-        }
+        short_desc = "TheQ Feedback (CSR: " + csr + "; Ticket: " + ticket + "; Msg: " + msg + ")"
+
+        #  Create new record depending on tenant value.
+        if len(tenant) != 0:
+          new_record = {
+              'caller_id': user,
+              'category': 'Inquiry / Help',
+              'cmdb_ci': 'CFMS',
+              'u_tenant': tenant,
+              'impact': '2 - Some Customers',
+              'urgency': '2 - High',
+              'priority': 'High',
+              'short_description': short_desc,
+              'description': params,
+              'assignment_group': 'Service Delivery Tech Services (GARMS)'
+          }
+        else:
+            new_record = {
+                'category': 'Inquiry / Help',
+                'cmdb_ci': 'CFMS',
+                'impact': '2 - Some Customers',
+                'urgency': '2 - High',
+                'priority': 'High',
+                'short_description': short_desc,
+                'description': params,
+                'assignment_group': 'Service Delivery Tech Services (GARMS)'
+            }
 
         result = incident.create(payload=new_record)
 

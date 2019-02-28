@@ -22,6 +22,7 @@ marshmallow-sqlalchemy
 mysqlclient
 pysnow
 pytest
+python-dotenv
 python-jose
 SQLAlchemy-Utc
 toastedmarshmallow
