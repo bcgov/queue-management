@@ -503,6 +503,7 @@ export const store = new Vuex.Store({
       expiryFilter: 'current',
       scheduledFilter: 'unscheduled',
       groupFilter: 'both',
+      office_number: 'default',
     },
     nowServing: false,
     offices: [],

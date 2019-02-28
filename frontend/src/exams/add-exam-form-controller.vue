@@ -262,11 +262,16 @@
         return output
       },
     },
+    watch: {
+      step(newV, oldV) {
+        if (oldV == 2 && newV == 3 && this.addExamModal.setup === 'other') {
+          console.log('hererererere uuuuuu')
+          setTimeout(()=>{this.validate()}, 200)
+        }
+      }
+    },
     methods: {
-      ...mapMutations([
-        'captureExamDetail',
-        'updateCaptureTab'
-      ]),
+      ...mapMutations(['captureExamDetail', 'updateCaptureTab',]),
       ...mapActions(['getExamTypes', 'getOffices']),
       handleInput(e) {
         let payload = {

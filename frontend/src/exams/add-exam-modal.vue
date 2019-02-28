@@ -113,6 +113,9 @@
   export default {
     name: 'AddExamModal',
     components: { AddExamFormController, AddExamFormConfirm },
+    mounted() {
+      this.captureExamDetail({key: 'exam_received_date', value: null})
+    },
     data() {
       return ({
         submitMsg: '',
@@ -177,15 +180,6 @@
           return this.steps.slice(0, this.tab.highestStep)
         }
       },
-      validated() {
-        if (this.tab && this.tab.stepsValidated) {
-          if (Array.isArray(this.tab.stepsValidated)) {
-            return this.tab.stepsValidated
-          }
-          return [this.tab.stepsValidated]
-        }
-        return []
-      },
     },
     methods: {
       ...mapActions(['clickAddExamSubmit', 'getExams']),
@@ -213,7 +207,7 @@
         return ''
       },
       tabValidate(i) {
-        if (this.validated.indexOf(i) === -1) {
+        if (this.validated().indexOf(i) === -1) {
           return false
         }
         return true
@@ -245,7 +239,7 @@
         let { setup } = this.addExamModal
         this.captureExamDetail({key:'notes', value: ''})
         this.captureExamDetail({key: 'exam_method', value: 'paper'})
-        if (setup !== 'group') {
+        if (setup == 'individual') {
           let d = new Date()
           let today = moment(d).format('YYYY-MM-DD')
           this.captureExamDetail({ key: 'exam_received_date', value: today })
@@ -309,6 +303,15 @@
           let errors = this.errors.concat([this.step])
           this.updateCaptureTab({errors})
         }
+      },
+      validated() {
+        if (this.tab && this.tab.stepsValidated) {
+          if (Array.isArray(this.tab.stepsValidated)) {
+            return this.tab.stepsValidated
+          }
+          return [this.tab.stepsValidated]
+        }
+        return []
       },
     }
   }
