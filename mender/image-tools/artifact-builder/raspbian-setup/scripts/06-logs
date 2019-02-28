@@ -1,0 +1,7 @@
+#! /bin/bash
+cd $files
+
+set -ex
+
+cp rc.local /etc/
+cp rsyslog.conf /etc/

@@ -1,0 +1,30 @@
+#!/bin/bash
+DIR="$1"
+[ -z "${DIR}" ] && exit 1 
+
+BASE="${DIR}.base"
+OVERLAY="${DIR}.overlay"
+
+if [ ! -d "${BASE}" ]
+then
+    echo "${BASE} does not exist" >&2
+    exit 1
+fi
+if [ ! -d "${OVERLAY}" ]
+then
+    echo "${OVERLAY} does not exist" >&2
+    exit 1
+fi
+#
+# ro must be the first mount option for root .....
+#
+ROOT_MOUNT=$( awk '$2=="/" { print substr($4,1,2) }' /proc/mounts )
+if [ "$ROOT_MOUNT" != "ro" ]; then
+    /bin/mount --bind ${BASE} ${DIR}
+else
+    /bin/mount -t tmpfs ramdisk ${OVERLAY}
+    /bin/mkdir ${OVERLAY}/upper
+    /bin/mkdir ${OVERLAY}/work
+    OPTS="-o lowerdir=${BASE},upperdir=${OVERLAY}/upper,workdir=${OVERLAY}/work"
+    /bin/mount -t overlay ${OPTS} overlay ${DIR}
+fi

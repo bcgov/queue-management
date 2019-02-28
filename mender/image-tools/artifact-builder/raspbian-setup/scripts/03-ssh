@@ -1,0 +1,21 @@
+#! /bin/bash
+cd $files
+
+set -ex
+
+envsubst '${sshd_port} ${username}' < sshd_config > /etc/ssh/sshd_config
+
+ssh_dir=$home_dir/.ssh/
+
+mkdir -p $ssh_dir
+chmod 700 $ssh_dir
+cp authorized_keys $ssh_dir
+chmod 644 $ssh_dir/authorized_keys
+chown $username:$username $ssh_dir $ssh_dir/authorized_keys
+
+systemctl enable ssh
+
+echo $sshd_port > /var/sshd_port
+
+ssh-keygen -A
+systemctl disable regenerate_ssh_host_keys

@@ -1,0 +1,38 @@
+#! /bin/bash
+cd $files
+
+set -ex
+
+# If we're patching images then var and home have moves so bind
+# mount them to the right location
+if [ -e /var.base ] ; then
+	mount --bind /var.base /var
+fi
+
+if [ -e /home.base ] ; then
+	mount --bind /home.base /home
+fi
+
+apt-get update
+
+# WARNING: If you want new builds to update the kernel and all new packages
+# enable the following lines. This very much may break your build. Upgrading 
+# inside the docker embedded environment has unexpected consequences, test
+# the resultant image before deploying.
+# rpi-update
+# apt-get dist-upgrade -y
+
+# We need to back up init_resize as it's used by Menderization
+cp /usr/lib/raspi-config/init_resize.sh /root/
+
+# remove deps
+apt-get remove -y $(cat deps_remove.txt | tr '\n' ' ')
+
+# add deps
+apt-get install -y --no-install-recommends $(cat deps_add.txt | tr '\n' ' ')
+
+# Copy our smartboard data generator
+envsubst '${fallback_video_timeout}' < load-smartboard-data.sh > /root/load-smartboard-data.sh
+chmod +x /root/load-smartboard-data.sh
+
+echo "$smartboard_base_url" > /root/smartboard-base-url

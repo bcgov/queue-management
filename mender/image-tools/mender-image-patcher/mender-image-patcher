@@ -1,0 +1,46 @@
+#! /bin/bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+set -e
+
+DOCKER_IMAGE_NAME=bcgov/smartboard-mender-image-patcher
+
+$DIR/docker-build
+
+show_usage() {
+  echo "Usage:"
+  echo "$0 menderized-image.sdimg"
+}
+
+if [ "$#" -ne 1 ]; then
+  echo "ERROR: 1 parameters required."
+  show_usage
+  exit 1
+fi
+
+INPUT_IMAGE=$1
+
+if [ ! -f "$INPUT_IMAGE" ]; then
+  echo "ERROR: File passed as input is not accessible."
+  show_usage
+  exit 1
+fi
+
+SETUP_SCRIPTS=$DIR/../artifact-builder/raspbian-setup
+
+VOLUME=$(dirname $(realpath $1))
+IMAGE_NAME=$(basename $1)
+
+if [ ! -e $SETUP_SCRIPTS ] ; then
+  SETUP_SCRIPTS=$DIR
+  echo "ERROR: Could not find raspbian-setup"
+  exit 1
+fi
+
+docker run \
+       -ti \
+       --privileged=true \
+       --mount type=bind,source=$VOLUME,target=/image \
+       --mount type=bind,source=$SETUP_SCRIPTS,target=/setup-scripts \
+       $DOCKER_IMAGE_NAME $IMAGE_NAME

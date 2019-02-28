@@ -1,0 +1,10 @@
+[Unit]
+Description=Splash screen
+DefaultDependencies=no
+After=local-fs.target
+
+[Service]
+ExecStart=/usr/bin/fim -w -T 1 -d /dev/fb0 --quiet -a /var/flaskapp/web-service/static/splash.png
+
+[Install]
+WantedBy=sysinit.target

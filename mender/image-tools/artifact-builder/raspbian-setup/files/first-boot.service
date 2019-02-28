@@ -1,0 +1,10 @@
+[Unit]
+Description=First Boot
+DefaultDependencies=no
+After=local-fs.target
+
+[Service]
+ExecStart=/root/first-boot.sh
+
+[Install]
+WantedBy=sysinit.target
