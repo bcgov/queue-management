@@ -1,5 +1,9 @@
 import logging
 import os
+import dotenv
+
+# Load all the environment variables from a .env file located in some directory above.
+dotenv.load_dotenv(dotenv.find_dotenv())
 
 config = {
     "production": "config.ProductionConfig",
@@ -67,7 +71,8 @@ class BaseConfig(object):
     SERVICENOW_INSTANCE = os.getenv('SERVICENOW_INSTANCE', '')
     SERVICENOW_USER = os.getenv('SERVICENOW_USER', '')
     SERVICENOW_PASSWORD = os.getenv('SERVICENOW_PASSWORD', '')
-
+    SERVICENOW_TABLE = os.getenv('SERVICENOW_TABLE', '')
+    SERVICENOW_TENANT = os.getenv('SERVICENOW_TENANT', '')
 
 class LocalConfig(BaseConfig):
     DEBUG = True
