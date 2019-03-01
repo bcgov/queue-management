@@ -17,7 +17,7 @@
       </b-col>
       <b-col>
         <template v-if="addExamModal.setup === 'group' || addExamModal.setup === 'individual'">
-          span :style="{color: exam_object.exam_color}">{{ exam_object.exam_type_name }}</span>
+          <span :style="{color: exam_object.exam_color}">{{ exam_object.exam_type_name }}</span>
         </template>
         <template v-else>
           {{ exam_object.exam_type_name }}
