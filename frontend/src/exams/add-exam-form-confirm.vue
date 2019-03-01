@@ -24,7 +24,7 @@
         </template>
       </b-col>
     </b-row>
-    <b-row no-gutters align-h="between" align-v="end" v-if="setup === 'group'">
+    <b-row no-gutters align-h="between" align-v="end" v-if="setup === 'group' || pesticide_designate===1">
       <b-col cols="1" />
       <b-col cols="3">
         <span class="confirm-header">Office</span>
@@ -120,6 +120,15 @@
         <span class="confirm-item">{{ exam.exam_method }}</span>
       </b-col>
     </b-row>
+    <b-row no-gutters align-h="between" align-v="end" v-if="setup === 'pesticide' ">
+      <b-col cols="1" />
+      <b-col cols="3">
+        <span class="confirm-header">Notes</span>
+      </b-col>
+      <b-col align-self="end">
+        <span class="confirm-item">{{ exam.notes }}</span>
+      </b-col>
+    </b-row>
   </b-form>
 </template>
 
@@ -139,9 +148,9 @@
         addExamModal: state => state.addExamModal,
         offices: state => state.offices,
       }),
-      ...mapGetters(['exam_object']),
+      ...mapGetters(['exam_object', 'pesticide_designate', ]),
       officeName() {
-        if (this.addExamModal.setup === 'group' && this.exam.office_id) {
+        if (this.addExamModal.setup === 'group' || this.addExamModal.setup === 'pesticide' && this.exam.office_id ) {
           let office = this.offices.find(o => o.office_id == this.exam.office_id)
           return `#${office.office_id} - ${office.office_name}`
         }

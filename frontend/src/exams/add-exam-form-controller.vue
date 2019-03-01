@@ -23,7 +23,7 @@
                       :handleInput="handleInput"
                       :exam="exam" />
       <SelectOffice v-if="q.kind==='office'"
-                    v-show="role_code === 'LIAISON'"
+                    v-show="role_code === 'LIAISON' || pesticide_designate === 1"
                     :error="error"
                     :q="q"
                     :validationObj="validationObj"
@@ -99,13 +99,14 @@
       }
     },
     computed: {
-      ...mapGetters(['exam_object', 'role_code']),
+      ...mapGetters(['exam_object', 'role_code', 'pesticide_designate', ]),
       ...mapState({
         exam: state => state.capturedExam,
         addExamModal: state => state.addExamModal,
         addGroupSteps: state => state.addGroupSteps,
         addIndividualSteps: state => state.addIndividualSteps,
         addOtherSteps: state => state.addOtherSteps,
+        addPesticideSteps: state => state.addPesticideSteps,
         tab: state => state.captureITAExamTabSetup,
         examTypes: state => state.examTypes,
         user: state => state.user,
@@ -147,10 +148,15 @@
       steps() {
         if (this.addExamModal.setup === 'group') {
           return this.addGroupSteps
-        } if (this.addExamModal.setup === 'other') {
+        }
+        if (this.addExamModal.setup === 'other') {
           return this.addOtherSteps
-        } if (this.addExamModal.setup === 'individual') {
+        }
+        if (this.addExamModal.setup === 'individual') {
           return this.addIndividualSteps
+        }
+        if (this.addExamModal.setup === 'pesticide') {
+          return this.addPesticideSteps
         }
       },
       stepErrors() {

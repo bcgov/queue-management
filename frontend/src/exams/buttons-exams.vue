@@ -9,6 +9,9 @@
         <b-button v-if="role_code==='LIAISON'"
                   class="btn-primary"
                   @click="clickAddGroup">Add Group Exam</b-button>
+        <b-button v-if="pesticide_designate===1"
+                  class="btn-primary"
+                  @click="clickAddPesticide">Add Pesticide Exam</b-button>
       </b-form>
     </div>
     <div style="flex-grow: 1">
@@ -29,7 +32,7 @@
     components: { AddExamModal, FinancialReportModal },
     computed: {
       ...mapState(['addNonITA', 'showGenFinReportModal', 'user',]),
-      ...mapGetters([ 'showExams', 'role_code',]),
+      ...mapGetters([ 'showExams', 'role_code', 'pesticide_designate',]),
     },
     methods: {
       ...mapMutations(['toggleAddExamModal', 'toggleGenFinReport',]),
@@ -46,6 +49,10 @@
       },
       clickAddNonITA() {
         this.toggleAddExamModal({setup: 'other'})
+        this.toggleAddExamModal(true)
+      },
+      clickAddPesticide() {
+        this.toggleAddExamModal({setup: 'pesticide'})
         this.toggleAddExamModal(true)
       }
     }

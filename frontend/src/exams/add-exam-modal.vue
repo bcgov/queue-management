@@ -133,6 +133,7 @@
         addGroupSteps: state => state.addGroupSteps,
         addIndividualSteps: state => state.addIndividualSteps,
         addOtherSteps: state => state.addOtherSteps,
+        addPesticideSteps: state => state.addPesticideSteps,
       }),
       errors() {
         if (this.tab.errors) {
@@ -166,6 +167,9 @@
         }
         if (setup === 'individual') {
           return this.addIndividualSteps
+        }
+        if (setup === 'pesticide') {
+          return this.addPesticideSteps
         }
       },
       tabs() {
@@ -261,6 +265,10 @@
           let value = moment().add(60, 'd')
           this.captureExamDetail({ key: 'expiry_date', value })
         }
+        if (setup === 'pesticide') {
+          let value = moment().add(60, 'd')
+          this.captureExamDetail({ key: 'expiry_date', value })
+        }
         this.unSubmitted = true
         this.submitMsg = ''
         this.status = 'unknown'
@@ -282,7 +290,7 @@
             this.getExams()
           })
         }
-        if (setup === 'individual' || setup === 'other') {
+        if (setup === 'individual' || setup === 'other' || setup === 'pesticide') {
           this.clickAddExamSubmit('individual').then( resp => {
             this.status = resp
             this.getExams()
