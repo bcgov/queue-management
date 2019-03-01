@@ -2,20 +2,24 @@
   <div class="q-w100-flex-fs">
     <div style="flex-grow: 12">
       <b-form inline>
-        <b-button class="mr-1 btn-primary"
+        <b-button v-if="financial_designate === 0 "
+                  class="mr-1 btn-primary"
                   @click="clickAddIndividual">Add Individual Exam</b-button>
-        <b-button class="mr-1 btn-primary"
+        <b-button v-if="financial_designate === 0 "
+                  class="mr-1 btn-primary"
                   @click="clickAddNonITA">Add Non-ITA Exam</b-button>
-        <b-button v-if="role_code==='LIAISON'"
+        <b-button v-if="role_code==='LIAISON' && financial_designate === 0 "
                   class="btn-primary"
                   @click="clickAddGroup">Add Group Exam</b-button>
-        <b-button v-if="pesticide_designate===1"
+        <b-button v-if="pesticide_designate === 1 && financial_designate === 0"
                   class="btn-primary"
                   @click="clickAddPesticide">Add Pesticide Exam</b-button>
       </b-form>
     </div>
     <div style="flex-grow: 1">
-      <b-button variant="primary" @click="clickGenFinReport">Generate Financial Report</b-button>
+      <b-button v-if="financial_designate === 1"
+                class="btn-primary"
+                @click="clickGenFinReport">Generate Financial Report</b-button>
     </div>
     <AddExamModal />
     <FinancialReportModal />
@@ -32,7 +36,10 @@
     components: { AddExamModal, FinancialReportModal },
     computed: {
       ...mapState(['addNonITA', 'showGenFinReportModal', 'user',]),
-      ...mapGetters([ 'showExams', 'role_code', 'pesticide_designate',]),
+      ...mapGetters([ 'showExams', 'role_code', 'pesticide_designate', 'financial_designate', ]),
+    },
+    created() {
+      console.log(this.financial_designate)
     },
     methods: {
       ...mapMutations(['toggleAddExamModal', 'toggleGenFinReport',]),

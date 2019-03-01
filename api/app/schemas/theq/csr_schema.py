@@ -39,3 +39,4 @@ class CSRSchema(ma.ModelSchema):
     role = fields.Nested(RoleSchema(exclude=('roles',)))
     ita_designate = fields.Int()
     pesticide_designate = fields.Int()
+    finance_designate = fields.Int()
