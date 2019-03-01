@@ -72,7 +72,7 @@ export const SelectOffice = Vue.component('select-office', {
     return {}
   },
   computed: {
-    ...mapGetters(['role_code']),
+    ...mapGetters(['role_code', 'pesticide_designate', ]),
     ...mapState(['offices', 'user', 'addExamModal']),
     office_number() {
       return this.addExamModal.office_number
@@ -343,12 +343,16 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
         return exams.sort((a,b) => sorter(a,b))
       }
       if(this.addExamModal.setup === 'other') {
-        let exams = this.examTypes.filter(type  => type.ita_ind === 0)
+        let exams = this.examTypes.filter(type  => type.ita_ind === 0 && !type.exam_type_name.includes('Pesticide') )
         return exams.sort((a,b) => sorter(a,b))
       }
       if (this.addExamModal.setup === 'group') {
         let exams = this.examTypes.filter(type => type.exam_type_name.includes('Group'))
         return exams.sort((a,b) => sorter(a,b))
+      }
+      if (this.addExamModal.setup === 'pesticide') {
+        let exams = this.examTypes.filter(type => type.exam_type_name.includes('Pesticide'))
+        return exams
       }
     },
     inputText() {
@@ -388,6 +392,7 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
       <h5 v-if="addExamModal.setup === 'group' ">Add Group Exam</h5>
       <h5 v-if="addExamModal.setup === 'individual' ">Add Individual ITA Exam</h5>
       <h5 v-else-if="addExamModal.setup === 'other' ">Add Non-ITA Exam</h5>
+      <h5 v-else-if="addExamModal.setup === 'pesticide' ">Add Pesticide Exam</h5>
       <label>Exam Type</label><br>
         <div @click="clickInput">
           <b-input read-only

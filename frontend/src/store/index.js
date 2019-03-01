@@ -216,6 +216,109 @@ export const store = new Vuex.Store({
           ]
       },
     ],
+    addPesticideSteps: [
+      {
+        step: 1,
+        title:'Exam Type',
+        questions: [
+          {
+            key: 'exam_type_id',
+            text: 'Exam Type ID / Colour',
+            kind:'dropdown',
+            minLength: 0,
+            digit: false,
+          }
+        ]
+      },
+      {
+        step: 2,
+        title:'Exam Info',
+        questions: [
+          {
+            key: 'office_id',
+            text: 'Office',
+            kind: 'office',
+            minLength: 1,
+            digit: true,
+          },
+          {
+            key: 'event_id',
+            text:'Event ID (not required)' ,
+            kind: 'input',
+            minLength: 0,
+            digit: false,
+          },
+          {
+            key: 'exam_name',
+            text: 'Exam Name',
+            kind: 'input',
+            minLength: 6,
+            digit: false
+          },
+          {
+            key: 'examinee_name',
+            text: `Exam Writer's Name`,
+            minLength: 6,
+            kind:'input',
+            digit: false
+          },
+          {
+            key: 'exam_method',
+            text: 'Exam Method',
+            minLength: 1,
+            digit: false,
+            kind:'select',
+            options: [
+              {text: 'paper', value: 'paper', id: 'exam_method'},
+              {text: 'online', value: 'online', id: 'exam_method'}
+            ]
+          },
+        ]
+      },
+      {
+        step: 3,
+        title: 'Exam Dates',
+        questions: [
+          {
+            kind: 'exam_received',
+            key: 'exam_received_date',
+            text1:'Have you received the exam package yet?',
+            text2: 'Date of Receipt of Exam Package',
+            minLength: 0,
+            digit: false,
+          },
+          {
+            kind: 'date',
+            key: 'expiry_date',
+            text: 'Exam Expiry Date',
+            minLength: 1,
+            digit: false,
+          },
+          {
+            kind: 'notes',
+            key: 'notes',
+            text: 'Additional Notes (optional)',
+            minLength: 0,
+            digit: false,
+          },
+        ]
+      },
+      {
+        step: 4,
+        title:'Summary',
+        questions:
+          [
+            {
+              kind: null,
+              key: null,
+              text1:null,
+              text2: null,
+              minLength: 0,
+              digit: false,
+            },
+          ]
+      },
+    ],
     addGroupSteps: [
       {
         step: 1,
@@ -538,6 +641,13 @@ export const store = new Vuex.Store({
     role_code(state) {
       if (state.user && state.user.role && state.user.role.role_code) {
         return state.user.role.role_code
+      }
+      return ''
+    },
+
+    pesticide_designate(state) {
+      if (state.user && state.user.role && state.user.role.role_code) {
+        return state.user.pesticide_designate
       }
       return ''
     },
