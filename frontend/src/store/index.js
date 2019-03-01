@@ -652,6 +652,13 @@ export const store = new Vuex.Store({
       }
       return ''
     },
+
+    financial_designate(state) {
+      if (state.user && state.user.role && state.user.role.role_code) {
+        return state.user.finance_designate
+      }
+      return ''
+    },
     
     reception(state) {
       if (state.user.office && state.user.office.sb) {
