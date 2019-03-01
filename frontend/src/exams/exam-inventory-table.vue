@@ -101,7 +101,7 @@
           <div style="flex-grow: 8" />
         </div>
       </template>
-      <template slot="actions" slot-scope="row" v-if="inventoryFilters.office_number == user.office.office_number">
+      <template slot="actions" slot-scope="row">
         <b-dropdown variant="link"
                     no-caret
                     size="sm"
@@ -112,43 +112,34 @@
             <font-awesome-icon icon="caret-down"
                                style="padding: -2px; margin: -2px; font-size: 1rem; color: dimgray"/>
           </template>
-          <b-dropdown-item size="sm"
-                           @click="editExam(row.item)">Edit Exam</b-dropdown-item>
-          <b-dropdown-item size="sm"
-                           @click="returnExamInfo(row.item)">Return Exam</b-dropdown-item>
-          <template v-if="row.item.booking&&(row.item.booking.invigilator_id||row.item.booking.sbc_staff_invigilated)">
-            <b-dropdown-item v-if="row.item.offsite_location"
-                             size="sm"
-                             @click="editGroupExam(row.item)">Reschedule</b-dropdown-item>
-            <b-dropdown-item v-if="!row.item.offsite_location"
-                             size="sm"
-                             @click="updateBookingRoute(row.item)">Reschedule</b-dropdown-item>
-          </template>
-          <b-dropdown-item v-if="!row.item.booking"
-                           size="sm"
-                           @click="addBookingRoute(row.item)">Schedule Exam</b-dropdown-item>
-          <b-dropdown-item v-if="row.item.offsite_location && !(row.item.booking && row.item.booking.invigilator_id)"
-                           size="sm"
-                           @click="editGroupExam(row.item)">Add Invigilator</b-dropdown-item>
-          <b-dropdown-item size="sm"
-                           @click="deleteExam(row.item)">Delete Exam</b-dropdown-item>
-        </b-dropdown>
-      </template>
-      <template slot="actions" slot-scope="row" v-if="inventoryFilters.office_number != user.office.office_number">
-          <b-dropdown variant="link"
-                      no-caret
-                      size="sm"
-                      class="pl-0 ml-0 mr-3"
-                      id="nav-dropdown"
-                      right>
-            <template slot="button-content">
-              <font-awesome-icon icon="caret-down"
-                                 style="padding: -2px; margin: -2px; font-size: 1rem; color: dimgray"/>
+          <template v-if="officeFilter == userOffice || officeFilter == 'default'">
+            <b-dropdown-item size="sm"
+                             @click="editExam(row.item)">Edit Exam</b-dropdown-item>
+            <b-dropdown-item size="sm"
+                             @click="returnExamInfo(row.item)">Return Exam</b-dropdown-item>
+            <template v-if="row.item.booking&&(row.item.booking.invigilator_id||row.item.booking.sbc_staff_invigilated)">
+              <b-dropdown-item v-if="row.item.offsite_location"
+                               size="sm"
+                               @click="editGroupExam(row.item)">Reschedule</b-dropdown-item>
+              <b-dropdown-item v-if="!row.item.offsite_location"
+                               size="sm"
+                               @click="updateBookingRoute(row.item)">Reschedule</b-dropdown-item>
             </template>
+            <b-dropdown-item v-if="!row.item.booking"
+                             size="sm"
+                             @click="addBookingRoute(row.item)">Schedule Exam</b-dropdown-item>
+            <b-dropdown-item v-if="row.item.offsite_location && !(row.item.booking && row.item.booking.invigilator_id)"
+                             size="sm"
+                             @click="editGroupExam(row.item)">Add Invigilator</b-dropdown-item>
+            <b-dropdown-item size="sm"
+                             @click="deleteExam(row.item)">Delete Exam</b-dropdown-item>
+          </template>
+          <template v-if="officeFilter != userOffice && officeFilter != 'default'">
             <b-dropdown-item size="sm"
                              @click="editExam(row.item)">Edit Exam</b-dropdown-item>
             <b-dropdown-item size="sm"
                              @click="deleteExam(row.item)">Delete Exam</b-dropdown-item>
+          </template>
           </b-dropdown>
         </template>
       </b-table>
@@ -253,6 +244,18 @@
         'offices',
         'user',
       ]),
+      officeFilter() {
+        if (this.inventoryFilters && this.inventoryFilters.office_number) {
+          return this.inventoryFilters.office_number
+        }
+        return ''
+      },
+      userOffice() {
+        if (this.user && this.user.office_id) {
+          return this.user.office.office_number
+        }
+        return ''
+      },
       officeNumber() {
         if (this.inventoryFilters && this.inventoryFilters.office_number) {
           let { office_number } = this.inventoryFilters
@@ -290,6 +293,7 @@
           return [
             { key: 'office.office_name', label: 'Office', sortable: true, thStyle: 'width: 8%' },
             { key: 'event_id', label: 'Event ID', sortable: true, thStyle: 'width: 6%' },
+            { key: 'exam_type.exam_type_name', label: 'Exam Type'},
             { key: 'exam_name', label: 'Exam Name', sortable: true, thStyle: 'width: 11%' },
             { key: 'exam_method', label: 'Method', sortable: true, thStyle: 'width: 5%' },
             { key: 'expiry_date', label: 'Expiry Date', sortable: true, thStyle: 'width: 8%' },
@@ -303,6 +307,7 @@
         if (this.showExamInventoryModal) {
           return [
             { key: 'event_id', label: 'Event ID', sortable: true, thStyle: 'width: 6%' },
+            { key: 'exam_type.exam_type_name', label: 'Exam Type'},
             { key: 'exam_name', label: 'Exam Name', sortable: true, thStyle: 'width: 15%' },
             { key: 'exam_method', label: 'Method', sortable: true, thStyle: 'width: 5%' },
             { key: 'expiry_date', label: 'Expiry Date', sortable: true, thStyle: 'width: 8%' },
