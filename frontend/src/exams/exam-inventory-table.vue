@@ -47,6 +47,17 @@
                  :pressed="inventoryFilters.groupFilter==='group'"
                  @click="handleFilter({type:'groupFilter', value:'group'})">Group</b-btn>
         </b-btn-group>
+        <b-btn-group horizontal class="ml-2 pt-2">
+          <b-btn size="sm"
+                 :pressed="inventoryFilters.returnedFilter==='both'"
+                 @click="handleFilter({type:'returnedFilter', value:'both'})"><span class="mx-2">Both</span></b-btn>
+          <b-btn size="sm"
+                 :pressed="inventoryFilters.returnedFilter==='returned'"
+                 @click="handleFilter({type:'returnedFilter', value:'returned'})">Returned</b-btn>
+          <b-btn size="sm"
+                 :pressed="inventoryFilters.returnedFilter==='notReturned'"
+                 @click="handleFilter({type:'returnedFilter', value:'notReturned'})">Not Returned</b-btn>
+        </b-btn-group>
       </b-input-group>
     </b-form>
   </div>
@@ -441,7 +452,22 @@
               evenMoreFiltered = moreFiltered
               break
           }
-          return evenMoreFiltered
+          let manyMoreFiltered = []
+          switch (this.inventoryFilters.returnedFilter) {
+            case 'both':
+              manyMoreFiltered = evenMoreFiltered
+              break
+            case 'returned':
+              manyMoreFiltered = evenMoreFiltered.filter(ex => ex.exam_returned_ind === 1)
+              break
+            case 'notReturned':
+              manyMoreFiltered = evenMoreFiltered.filter(ex => ex.exam_returned_ind === 0)
+              break
+            default:
+              manyMoreFiltered = evenMoreFiltered
+              break
+          }
+          return manyMoreFiltered
         }
         return []
       },
