@@ -124,32 +124,28 @@
                                style="padding: -2px; margin: -2px; font-size: 1rem; color: dimgray"/>
           </template>
           <template v-if="officeFilter == userOffice || officeFilter == 'default'">
-            <b-dropdown-item size="sm"
-                             @click="editExam(row.item)">Edit Exam</b-dropdown-item>
-            <b-dropdown-item size="sm"
-                             @click="returnExamInfo(row.item)">Return Exam</b-dropdown-item>
-            <template v-if="row.item.booking&&(row.item.booking.invigilator_id||row.item.booking.sbc_staff_invigilated)">
-              <b-dropdown-item v-if="row.item.offsite_location"
-                               size="sm"
-                               @click="editGroupExam(row.item)">Reschedule</b-dropdown-item>
-              <b-dropdown-item v-if="!row.item.offsite_location"
-                               size="sm"
-                               @click="updateBookingRoute(row.item)">Reschedule</b-dropdown-item>
-            </template>
             <b-dropdown-item v-if="!row.item.booking"
                              size="sm"
                              @click="addBookingRoute(row.item)">Schedule Exam</b-dropdown-item>
+            <template v-if="row.item.booking&&(row.item.booking.invigilator_id||row.item.booking.sbc_staff_invigilated)">
+              <b-dropdown-item v-if="row.item.offsite_location"
+                               size="sm"
+                               @click="editGroupExam(row.item)">Update Booking</b-dropdown-item>
+              <b-dropdown-item v-if="!row.item.offsite_location"
+                               size="sm"
+                               @click="updateBookingRoute(row.item)">Update Booking</b-dropdown-item>
+            </template>
             <b-dropdown-item v-if="row.item.offsite_location && !(row.item.booking && row.item.booking.invigilator_id)"
                              size="sm"
                              @click="editGroupExam(row.item)">Add Invigilator</b-dropdown-item>
             <b-dropdown-item size="sm"
-                             @click="deleteExam(row.item)">Delete Exam</b-dropdown-item>
+                             @click="returnExamInfo(row.item)">Return Exam</b-dropdown-item>
+            <b-dropdown-item size="sm"
+                             @click="editExam(row.item)">Edit Exam Details</b-dropdown-item>
           </template>
           <template v-if="officeFilter != userOffice && officeFilter != 'default'">
             <b-dropdown-item size="sm"
-                             @click="editExam(row.item)">Edit Exam</b-dropdown-item>
-            <b-dropdown-item size="sm"
-                             @click="deleteExam(row.item)">Delete Exam</b-dropdown-item>
+                             @click="editExam(row.item)">Edit Exam Details</b-dropdown-item>
           </template>
           </b-dropdown>
         </template>
@@ -201,7 +197,6 @@
   import moment from 'moment'
   import Vue from 'vue'
   import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-  import DeleteExamModal from './delete-exam-modal'
   import EditExamModal from './edit-exam-form-modal'
   import EditGroupExamBookingModal from './edit-group-exam-modal'
   import FailureExamAlert from './failure-exam-alert'
@@ -212,7 +207,6 @@
   export default {
     name: "ExamInventoryTable",
     components: {
-      DeleteExamModal,
       EditExamModal,
       EditGroupExamBookingModal,
       FailureExamAlert,
@@ -378,11 +372,6 @@
           this.$router.push('/booking')
           this.toggleExamInventoryModal(false)
         }
-      },
-      deleteExam(item) {
-        this.examRow = item
-        this.toggleDeleteExamModalVisible(true)
-        this.setReturnExamInfo(item)
       },
       editExam(item) {
         this.examRow = item
