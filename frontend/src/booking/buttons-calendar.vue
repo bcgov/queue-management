@@ -18,10 +18,10 @@
                   class="mr-3 ml-3"
                   text="Schedule an Event...">
         <b-dropdown-item @click="showExamModal">
-          ITA Exam
+          Exam Event
         </b-dropdown-item>
         <b-dropdown-item @click="scheduleOtherEvent">
-          Non-exam/Other Event
+          Non-Exam Event
         </b-dropdown-item>
       </b-dropdown>
     </form>

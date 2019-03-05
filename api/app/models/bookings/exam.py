@@ -22,7 +22,7 @@ class Exam(Base):
     booking_id = db.Column(db.Integer, db.ForeignKey("booking.booking_id", ondelete="set null"), nullable=True)
     exam_type_id = db.Column(db.Integer, db.ForeignKey("examtype.exam_type_id"), nullable=False)
     office_id = db.Column(db.Integer, db.ForeignKey("office.office_id"), nullable=False)
-    event_id = db.Column(db.String(25), nullable=False)
+    event_id = db.Column(db.String(25), nullable=True)
     exam_name = db.Column(db.String(50), nullable=False)
     examinee_name = db.Column(db.String(50), nullable=True)
     expiry_date = db.Column(db.DateTime, nullable=True)

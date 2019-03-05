@@ -24,7 +24,7 @@ Vue.use(Vuex)
 
 export const store = new Vuex.Store({
   state: {
-    addIndITASteps: [
+    addIndividualSteps: [
       {
         step: 1,
         title:'Exam Type',
@@ -46,7 +46,7 @@ export const store = new Vuex.Store({
             key: 'event_id',
             text:'Event ID' ,
             kind: 'input',
-            minLength: 6,
+            minLength: 5,
             digit: true,
           },
           {
@@ -66,7 +66,7 @@ export const store = new Vuex.Store({
           {
             key: 'exam_method',
             text: 'Exam Method',
-            minLength: 0,
+            minLength: 1,
             digit: false,
             kind:'select',
             options: [
@@ -85,14 +85,14 @@ export const store = new Vuex.Store({
             key: 'exam_received_date',
             text1:'Was the Exam Package Receieved Today?',
             text2: 'Date of Receipt of Exam Package',
-            minLength: 0,
+            minLength: 1,
             digit: false,
           },
           {
             kind: 'date',
             key: 'expiry_date',
             text: 'Exam Expiry Date',
-            minLength: 0,
+            minLength: 1,
             digit: false,
           },
           {
@@ -120,7 +120,206 @@ export const store = new Vuex.Store({
           ]
       },
     ],
-    addGroupITASteps: [
+    addOtherSteps: [
+      {
+        step: 1,
+        title:'Exam Type',
+        questions: [
+          {
+            key: 'exam_type_id',
+            text: 'Exam Type ID / Colour',
+            kind:'dropdown',
+            minLength: 0,
+            digit: false,
+          }
+        ]
+      },
+      {
+        step: 2,
+        title:'Exam Info',
+        questions: [
+          {
+            key: 'event_id',
+            text:'Event ID (not required)' ,
+            kind: 'input',
+            minLength: 0,
+            digit: false,
+          },
+          {
+            key: 'exam_name',
+            text: 'Exam Name',
+            kind: 'input',
+            minLength: 6,
+            digit: false
+          },
+          {
+            key: 'examinee_name',
+            text: `Exam Writer's Name`,
+            minLength: 6,
+            kind:'input',
+            digit: false
+          },
+          {
+            key: 'exam_method',
+            text: 'Exam Method',
+            minLength: 1,
+            digit: false,
+            kind:'select',
+            options: [
+              {text: 'paper', value: 'paper', id: 'exam_method'},
+              {text: 'online', value: 'online', id: 'exam_method'}
+            ]
+          },
+        ]
+      },
+      {
+        step: 3,
+        title: 'Exam Dates',
+        questions: [
+          {
+            kind: 'exam_received',
+            key: 'exam_received_date',
+            text1:'Have you received the exam package yet?',
+            text2: 'Date of Receipt of Exam Package',
+            minLength: 0,
+            digit: false,
+          },
+          {
+            kind: 'date',
+            key: 'expiry_date',
+            text: 'Exam Expiry Date',
+            minLength: 1,
+            digit: false,
+          },
+          {
+            kind: 'notes',
+            key: 'notes',
+            text: 'Additional Notes (optional)',
+            minLength: 0,
+            digit: false,
+          },
+        ]
+      },
+      {
+        step: 4,
+        title:'Summary',
+        questions:
+          [
+            {
+              kind: null,
+              key: null,
+              text1:null,
+              text2: null,
+              minLength: 0,
+              digit: false,
+            },
+          ]
+      },
+    ],
+    addPesticideSteps: [
+      {
+        step: 1,
+        title:'Exam Type',
+        questions: [
+          {
+            key: 'exam_type_id',
+            text: 'Exam Type ID / Colour',
+            kind:'dropdown',
+            minLength: 0,
+            digit: false,
+          }
+        ]
+      },
+      {
+        step: 2,
+        title:'Exam Info',
+        questions: [
+          {
+            key: 'office_id',
+            text: 'Office',
+            kind: 'office',
+            minLength: 1,
+            digit: true,
+          },
+          {
+            key: 'event_id',
+            text:'Event ID (not required)' ,
+            kind: 'input',
+            minLength: 0,
+            digit: false,
+          },
+          {
+            key: 'exam_name',
+            text: 'Exam Name',
+            kind: 'input',
+            minLength: 6,
+            digit: false
+          },
+          {
+            key: 'examinee_name',
+            text: `Exam Writer's Name`,
+            minLength: 6,
+            kind:'input',
+            digit: false
+          },
+          {
+            key: 'exam_method',
+            text: 'Exam Method',
+            minLength: 1,
+            digit: false,
+            kind:'select',
+            options: [
+              {text: 'paper', value: 'paper', id: 'exam_method'},
+              {text: 'online', value: 'online', id: 'exam_method'}
+            ]
+          },
+        ]
+      },
+      {
+        step: 3,
+        title: 'Exam Dates',
+        questions: [
+          {
+            kind: 'exam_received',
+            key: 'exam_received_date',
+            text1:'Have you received the exam package yet?',
+            text2: 'Date of Receipt of Exam Package',
+            minLength: 0,
+            digit: false,
+          },
+          {
+            kind: 'date',
+            key: 'expiry_date',
+            text: 'Exam Expiry Date',
+            minLength: 1,
+            digit: false,
+          },
+          {
+            kind: 'notes',
+            key: 'notes',
+            text: 'Additional Notes (optional)',
+            minLength: 0,
+            digit: false,
+          },
+        ]
+      },
+      {
+        step: 4,
+        title:'Summary',
+        questions:
+          [
+            {
+              kind: null,
+              key: null,
+              text1:null,
+              text2: null,
+              minLength: 0,
+              digit: false,
+            },
+          ]
+      },
+    ],
+    addGroupSteps: [
       {
         step: 1,
         title:'Exam Type',
@@ -143,29 +342,29 @@ export const store = new Vuex.Store({
             key: 'office_id',
             text: 'Office',
             kind: 'office',
-            minLength: 0,
-            digit: false,
+            minLength: 1,
+            digit: true,
           },
           {
             key: 'event_id',
             text: 'Event ID',
             kind: 'input',
-            minLength: 0,
-            digit: false
+            minLength: 5,
+            digit: true
           },
           {
             key: 'exam_name',
             text: 'Exam Name',
             kind: 'input',
-            minLength: 0,
+            minLength: 6,
             digit: false,
           },
           {
             key: 'number_of_students',
             text: 'Number of Students',
-            minLength: 0,
+            minLength: 1,
             kind: 'input',
-            digit: false
+            digit: true
           },
         ]
       },
@@ -177,34 +376,34 @@ export const store = new Vuex.Store({
             kind: 'date',
             key: 'expiry_date',
             text: 'Date and Time',
-            minLength: 0,
+            minLength: 1,
             digit: false,
           },
           {
             kind: 'time',
             key: 'exam_time',
             text: 'Exam Time',
-            minLength: 0,
-            digit: false,
-          },
-          {
-            kind: 'input',
-            key: 'offsite_location',
-            text: 'Location',
-            type: 'input',
-            minLength: 0,
+            minLength: 1,
             digit: false,
           },
           {
             key: 'exam_method',
             text: 'Exam Method',
-            minLength: 0,
+            minLength: 1,
             digit: false,
             kind: 'select',
             options: [
               { text: 'paper', value: 'paper', id: 'exam_method' },
               { text: 'online', value: 'online', id: 'exam_method' }
             ]
+          },
+          {
+            kind: 'input',
+            key: 'offsite_location',
+            text: 'Location',
+            type: 'input',
+            minLength: 6,
+            digit: false,
           },
           {
             kind: 'notes',
@@ -231,10 +430,11 @@ export const store = new Vuex.Store({
         ]
       },
     ],
-    addITAExamModal: {
+    addExamModal: {
       visible: false,
       setup: 'individual',
       step1MenuOpen: false,
+      office_number: null,
     },
     addModalForm: {
       citizen:'',
@@ -303,6 +503,8 @@ export const store = new Vuex.Store({
       expiryFilter: 'current',
       scheduledFilter: 'unscheduled',
       groupFilter: 'both',
+      returnedFilter: 'notReturned',
+      office_number: 'default',
     },
     nowServing: false,
     offices: [],
@@ -310,7 +512,7 @@ export const store = new Vuex.Store({
     officeType: null,
     performingAction: false,
     rescheduling: false,
-    returnExams: [],
+    returnExam: null,
     rooms: [],
     roomResources: [],
     scheduling: false,
@@ -334,6 +536,7 @@ export const store = new Vuex.Store({
     showAddModal: false,
     showAdmin: false,
     showBookingModal: false,
+    showDeleteExamModal: false,
     showEditBookingModal: false,
     showEditGroupBookingModal: false,
     showEditExamModal: false,
@@ -388,18 +591,6 @@ export const store = new Vuex.Store({
       }
       return false
     },
-    
-    get_room_by_id: (state) => (id) => {
-      return state.rooms.find(room => room.id == id)
-    },
-    
-    get_exam_by_id: (state) => (id) => {
-      return state.exams.find(exam => exam.id == id)
-    },
-    
-    get_booking_by_id: (state) => (id) => {
-      return state.bookings.find(booking => booking.id = id)
-    },
   
     filtered_calendar_events: (state, getters) => (search) => {
       return state.calendarEvents.filter(event => searchNestedObject(event, search))
@@ -452,6 +643,20 @@ export const store = new Vuex.Store({
     role_code(state) {
       if (state.user && state.user.role && state.user.role.role_code) {
         return state.user.role.role_code
+      }
+      return ''
+    },
+
+    pesticide_designate(state) {
+      if (state.user && state.user.role && state.user.role.role_code) {
+        return state.user.pesticide_designate
+      }
+      return ''
+    },
+
+    financial_designate(state) {
+      if (state.user && state.user.role && state.user.role.role_code) {
+        return state.user.finance_designate
       }
       return ''
     },
@@ -615,7 +820,18 @@ export const store = new Vuex.Store({
           })
       })
     },
-    
+
+    deleteExam(context, id) {
+      return new Promise((resolve, reject) => {
+        Axios(context).delete(`/exams/${id}/`).then(resp => {
+          resolve(resp.data)
+        })
+          .catch(error => {
+            reject(error)
+          })
+      })
+    },
+
     putRequest(context, payload) {
       return new Promise((resolve, reject) => {
         Axios(context).put(payload.url, payload.data).then( () => {
@@ -1649,7 +1865,6 @@ export const store = new Vuex.Store({
         booking_name: responses.exam_name,
         office_id: responses.office_id,
       }
-      
       let defaultValues = {
         exam_returned_ind: 0,
         examinee_name: 'group exam',
@@ -1662,21 +1877,18 @@ export const store = new Vuex.Store({
       let postData = {...responses, ...defaultValues}
       
       return new Promise((resolve, reject) => {
-        Axios(context).post('/exams/', postData)
-        .then(examResp => {
-            let { exam_id } = examResp.data.exam
-            context.dispatch('postBooking', booking)
-            .then( bookingResp => {
-                let putObject = {
-                  examId: exam_id,
-                  bookingId: bookingResp,
-                  officeId: responses.office_id
-                }
-                context.dispatch('putExam', putObject)
-                .then( () => {
-                    resolve()
-                }).catch( () => { reject() })
+        Axios(context).post('/exams/', postData).then( examResp => {
+          let { exam_id } = examResp.data.exam
+          context.dispatch('postBooking', booking).then( bookingResp => {
+            let putObject = {
+              examId: exam_id,
+              bookingId: bookingResp,
+              officeId: responses.office_id
+            }
+            context.dispatch('putExam', putObject).then( () => {
+              resolve()
             }).catch( () => { reject() })
+          }).catch( () => { reject() })
         }).catch( () => { reject() })
       })
     },
@@ -1692,12 +1904,15 @@ export const store = new Vuex.Store({
       if (responses.notes === null) {
         responses.notes = ''
       }
+      if (context.state.addExamModal.setup === 'other') {
+        if (context.state.captureITAExamTabSetup.showRadio === true) {
+          delete responses.exam_received_date
+        }
+      }
       let postData = {...responses, ...defaultValues}
   
       return new Promise((resolve, reject) => {
-        Axios(context).post('/exams/', postData)
-          .then(() => { resolve() })
-          .catch(() => { reject() })
+        Axios(context).post('/exams/', postData).then( () => { resolve() }).catch( () => { reject() })
       })
     },
 
@@ -2222,18 +2437,18 @@ export const store = new Vuex.Store({
 
     setNavigation: (state, value) => state.adminNavigation = value,
   
-    toggleAddITAExamModal(state, payload) {
-      if (typeof payload === 'object') {
-        Object.keys(payload).forEach(key => {
-          Vue.set(
-            state.addITAExamModal,
-            key,
-            payload[key]
-          )
-        })
-      } else {
-        state.addITAExamModal.visible = payload
+    toggleAddExamModal(state, payload) {
+      if (typeof payload === 'boolean') {
+        state.addExamModal.visible = payload
+        return
       }
+      Object.keys(payload).forEach(key => {
+        Vue.set(
+          state.addExamModal,
+          key,
+          payload[key]
+        )
+      })
     },
 
     toggleGenFinReport(state, payload) {
@@ -2254,10 +2469,12 @@ export const store = new Vuex.Store({
       )
     },
 
-    resetCaptureForm: (state) => state.capturedExam = {},
+    resetCaptureForm(state) {
+      state.capturedExam = {}
+    },
 
     resetCaptureTab(state) {
-      let initialState = {
+      Object.entries({
         step: 1,
         highestStep: 1,
         stepsValidated: [],
@@ -2265,13 +2482,11 @@ export const store = new Vuex.Store({
         showRadio: true,
         success: '',
         notes: false
-      }
-      let keys = Object.keys(initialState)
-      keys.forEach(key => {
+      }).forEach( entry => {
         Vue.set(
           state.captureITAExamTabSetup,
-          key,
-          initialState[key]
+          entry[0],
+          entry[1]
         )
       })
     },
@@ -2309,15 +2524,15 @@ export const store = new Vuex.Store({
     
     toggleExamInventoryModal: (state, payload) => state.showExamInventoryModal = payload,
 
-    toggleNonITAExamModal: (state, payload) => state.nonITAExam = payload,
-
     toggleEditExamModal: (state, payload) => state.showEditExamModal = payload,
 
     toggleReturnExamModalVisible: (state, payload) => state.showReturnExamModalVisible = payload,
 
+    toggleDeleteExamModalVisible: (state, payload) => state.showDeleteExamModal = payload,
+
     setEditExamInfo: (state, payload) => state.editExams = payload,
 
-    setReturnExamInfo: (state, payload) => state.returnExams = payload,
+    setReturnExamInfo: (state, payload) => state.returnExam = payload,
 
     setExamMethods: (state, payload) => state.examMethods = payload,
 
@@ -2368,13 +2583,6 @@ export const store = new Vuex.Store({
   
     setSelectionIndicator: (state, payload) => state.selectionIndicator = payload,
     
-    toggleAddITAExamVisibility(state, payload) {
-      Vue.set(
-        state.addITAExamModal,
-        'visible',
-        payload
-      )
-    },
     setGroupBookings: (state, payload) => state.groupBookings = payload,
   
     setResources: (state, payload) => state.roomResources = payload,

@@ -83,7 +83,7 @@
                  align-content="center">
             <b-col>
               <p><h5>Success.  Exam Details Added.</h5></p>
-              <p><b-button @click="resetModal" class="btn-primary">Log Another Exam</b-button></p>
+              <p><b-button @click="logAnother" class="btn-primary">Log Another Exam</b-button></p>
             </b-col>
           </b-row>
         </b-container>
@@ -111,8 +111,11 @@
   import moment from 'moment'
 
   export default {
-    name: 'AddExamFormModal',
+    name: 'AddExamModal',
     components: { AddExamFormController, AddExamFormConfirm },
+    mounted() {
+      this.captureExamDetail({key: 'exam_received_date', value: null})
+    },
     data() {
       return ({
         submitMsg: '',
@@ -127,13 +130,13 @@
       ...mapState({
         exam: state => state.capturedExam,
         examTypes: state => state.examTypes,
-        addITAExamModal: state => state.addITAExamModal,
-        groupITASteps: state => state.groupITASteps,
-        indITASteps: state => state.indITASteps,
+        addExamModal: state => state.addExamModal,
         tab: state => state.captureITAExamTabSetup,
         user: state => state.user,
-        groupITASteps: state => state.addGroupITASteps,
-        indITASteps: state => state.addIndITASteps,
+        addGroupSteps: state => state.addGroupSteps,
+        addIndividualSteps: state => state.addIndividualSteps,
+        addOtherSteps: state => state.addOtherSteps,
+        addPesticideSteps: state => state.addPesticideSteps,
       }),
       errors() {
         if (this.tab.errors) {
@@ -145,10 +148,10 @@
       },
       modalVisible: {
         get() {
-          return this.addITAExamModal.visible
+          return this.addExamModal.visible
         },
         set(e) {
-          this.toggleAddITAExamVisibility(e)
+          this.toggleAddExamModal(e)
         }
       },
       step() {
@@ -158,27 +161,24 @@
         return 1
       },
       steps() {
-        let { setup } = this.addITAExamModal
+        let { setup } = this.addExamModal
         if (setup === 'group') {
-          return this.groupITASteps
+          return this.addGroupSteps
+        }
+        if (setup === 'other') {
+          return this.addOtherSteps
         }
         if (setup === 'individual') {
-          return this.indITASteps
+          return this.addIndividualSteps
+        }
+        if (setup === 'pesticide') {
+          return this.addPesticideSteps
         }
       },
       tabs() {
         if (this.steps && Array.isArray(this.steps)) {
           return this.steps.slice(0, this.tab.highestStep)
         }
-      },
-      validated() {
-        if (this.tab && this.tab.stepsValidated) {
-          if (Array.isArray(this.tab.stepsValidated)) {
-            return this.tab.stepsValidated
-          }
-          return [this.tab.stepsValidated]
-        }
-        return []
       },
     },
     methods: {
@@ -187,9 +187,8 @@
         'captureExamDetail',
         'resetCaptureForm',
         'resetCaptureTab',
-        'toggleAddITAExamModal',
+        'toggleAddExamModal',
         'updateCaptureTab',
-        'toggleAddITAExamVisibility'
       ]),
       tabWarning(i) {
         if (!Array.isArray(this.errors)) return ''
@@ -208,10 +207,14 @@
         return ''
       },
       tabValidate(i) {
-        if (this.validated.indexOf(i) === -1) {
+        if (this.validated().indexOf(i) === -1) {
           return false
         }
         return true
+      },
+      logAnother() {
+        this.resetModal()
+        this.initialize()
       },
       clickBack() {
         let step = this.step - 1
@@ -219,7 +222,7 @@
       },
       clickCancel() {
         this.resetModal()
-        this.toggleAddITAExamModal({visible: false, setup: null, step1MenuOpen: false})
+        this.toggleAddExamModal({visible: false, setup: null, step1MenuOpen: false})
       },
       clickNext() {
         let step = this.step + 1
@@ -233,11 +236,32 @@
         this.updateCaptureTab({step: e})
       },
       initialize() {
+        let { setup } = this.addExamModal
         this.captureExamDetail({key:'notes', value: ''})
-        if (this.addITAExamModal.setup !== 'group') {
+        this.captureExamDetail({key: 'exam_method', value: 'paper'})
+        if (setup == 'individual') {
           let d = new Date()
           let today = moment(d).format('YYYY-MM-DD')
           this.captureExamDetail({ key: 'exam_received_date', value: today })
+        }
+        if (setup === 'group') {
+          let { office_id, office_number } = this.user.office
+          office_id = parseInt(office_id)
+          office_number = parseInt(office_number)
+          this.captureExamDetail({key: 'office_id', value: office_id })
+          this.toggleAddExamModal({ office_number })
+        }
+        if (setup === 'individual') {
+          let value = moment().add(90, 'd')
+          this.captureExamDetail({ key: 'expiry_date', value })
+        }
+        if (setup === 'other') {
+          let value = moment().add(60, 'd')
+          this.captureExamDetail({ key: 'expiry_date', value })
+        }
+        if (setup === 'pesticide') {
+          let value = moment().add(60, 'd')
+          this.captureExamDetail({ key: 'expiry_date', value })
         }
         this.unSubmitted = true
         this.submitMsg = ''
@@ -248,9 +272,10 @@
         this.status = 'unknown'
       },
       submit() {
+        let { setup } = this.addExamModal
         this.unSubmitted = false
         this.submitMsg = ''
-        if (this.addITAExamModal.setup === 'group') {
+        if (setup === 'group') {
           this.clickAddExamSubmit('group').then( resp => {
             this.status = resp
             this.getExams()
@@ -259,7 +284,7 @@
             this.getExams()
           })
         }
-        if (this.addITAExamModal.setup === 'individual') {
+        if (setup === 'individual' || setup === 'other' || setup === 'pesticide') {
           this.clickAddExamSubmit('individual').then( resp => {
             this.status = resp
             this.getExams()
@@ -272,13 +297,21 @@
       resetModal() {
         this.resetCaptureForm()
         this.resetCaptureTab()
-        this.initialize()
       },
       setWarning() {
         if (!this.errors.includes(this.step)) {
           let errors = this.errors.concat([this.step])
           this.updateCaptureTab({errors})
         }
+      },
+      validated() {
+        if (this.tab && this.tab.stepsValidated) {
+          if (Array.isArray(this.tab.stepsValidated)) {
+            return this.tab.stepsValidated
+          }
+          return [this.tab.stepsValidated]
+        }
+        return []
       },
     }
   }
