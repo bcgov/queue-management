@@ -9,10 +9,11 @@
                   class="mr-1 btn-primary"
                   @click="clickAddNonITA">Add Non-ITA Exam</b-button>
         <b-button v-if="role_code==='LIAISON' && financial_designate === 0 "
-                  class="btn-primary"
+                  class="mr-1 btn-primary"
                   @click="clickAddGroup">Add Group Exam</b-button>
-        <b-button v-if="pesticide_designate === 1 && financial_designate === 0"
-                  class="btn-primary"
+        <!-- TODO re-implement v-if="pesticide_designate === 1 && financial_designate === 0" when pesticide modal is re-activated -->
+        <b-button v-if="1 == 0"
+                  class="mr-1 btn-primary"
                   @click="clickAddPesticide">Add Pesticide Exam</b-button>
       </b-form>
     </div>
