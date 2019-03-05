@@ -18,6 +18,7 @@ import 'es6-promise/auto'
 import { store } from './store/'
 import BootstrapVue from 'bootstrap-vue'
 import Router from './router.js'
+import Fragment from 'vue-fragment'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
@@ -53,6 +54,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import VDragged from 'v-dragged'
 
 Vue.use(VDragged)
+Vue.use(Fragment.Plugin)
 library.add(
   faClock,
   faAngleLeft,

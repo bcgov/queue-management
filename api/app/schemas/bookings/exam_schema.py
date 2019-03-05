@@ -33,7 +33,7 @@ class ExamSchema(ma.ModelSchema):
     exam_method = fields.Str()
     exam_name = fields.Str()
     exam_received = fields.Int()
-    exam_received_date = fields.DateTime()
+    exam_received_date = fields.DateTime(allow_none=True)
     exam_type_id = fields.Int()
     examinee_name = fields.Str()
     expiry_date = fields.DateTime()
