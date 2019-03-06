@@ -25,7 +25,7 @@ class Categories(Resource):
 
     categories_schema = ServiceSchema(many=True)
 
-    @jwt.requires_auth 
+    @jwt.requires_auth
     def get(self):
         try:
             services = Service.query.filter_by(actual_service_ind=0).order_by(Service.service_name).all()
