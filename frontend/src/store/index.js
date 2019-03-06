@@ -53,13 +53,13 @@ export const store = new Vuex.Store({
             key: 'exam_name',
             text: 'Exam Name',
             kind: 'input',
-            minLength: 6,
+            minLength: 2,
             digit: false
           },
           {
             key: 'examinee_name',
             text: `Exam Writer's Name`,
-            minLength: 6,
+            minLength: 2,
             kind:'input',
             digit: false
           },
@@ -149,13 +149,13 @@ export const store = new Vuex.Store({
             key: 'exam_name',
             text: 'Exam Name',
             kind: 'input',
-            minLength: 6,
+            minLength: 2,
             digit: false
           },
           {
             key: 'examinee_name',
             text: `Exam Writer's Name`,
-            minLength: 6,
+            minLength: 2,
             kind:'input',
             digit: false
           },
@@ -356,7 +356,7 @@ export const store = new Vuex.Store({
             key: 'exam_name',
             text: 'Exam Name',
             kind: 'input',
-            minLength: 6,
+            minLength: 2,
             digit: false,
           },
           {
@@ -402,7 +402,7 @@ export const store = new Vuex.Store({
             key: 'offsite_location',
             text: 'Location',
             type: 'input',
-            minLength: 6,
+            minLength: 2,
             digit: false,
           },
           {
