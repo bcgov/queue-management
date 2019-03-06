@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from flask import g
 from flask_restplus import Resource
-from qsystem import api, db, oidc
+from qsystem import api, db, jwt
 from sqlalchemy import exc
 from app.models.theq import CSRState
 from app.schemas.theq import CSRStateSchema
@@ -25,7 +25,7 @@ class CsrStateList(Resource):
 
     csr_state_schema = CSRStateSchema(many=True, exclude=('csrs'))
 
-    @oidc.accept_token(require_token=True)
+    @jwt.requires_auth
     def get(self):
         try:
 

@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from flask import g, request
 from flask_restplus import Resource
-from qsystem import api, api_call_with_retry, db, oidc, socketio
+from qsystem import api, api_call_with_retry, db, jwt, socketio
 from app.models.theq import Citizen, CSR, CitizenState
 from app.models.theq import SRState
 from app.schemas.theq import CitizenSchema
@@ -28,10 +28,10 @@ class CitizenFinishService(Resource):
     citizen_schema = CitizenSchema()
     clear_comments_flag = (os.getenv("THEQ_CLEAR_COMMENTS_FLAG", "True")).upper() == "TRUE"
 
-    @oidc.accept_token(require_token=True)
+    @jwt.requires_auth
     @api_call_with_retry
     def post(self, id):
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
+        csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
         citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
         active_service_request = citizen.get_active_service_request()
         inaccurate = request.args.get('inaccurate')

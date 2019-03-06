@@ -15,7 +15,7 @@ limitations under the License.'''
 from filelock import FileLock
 from flask import g, request
 from flask_restplus import Resource
-from qsystem import api, api_call_with_retry, db, oidc, socketio
+from qsystem import api, api_call_with_retry, db, jwt, socketio
 from app.models.theq import Citizen, CSR, CitizenState, Period, PeriodState, ServiceReq, SRState
 from app.schemas.theq import CitizenSchema
 
@@ -25,14 +25,14 @@ class CitizenGenericInvite(Resource):
     citizen_schema = CitizenSchema()
     citizens_schema = CitizenSchema(many=True)
 
-    @oidc.accept_token(require_token=True)
+    @jwt.requires_auth
     @api_call_with_retry
     def post(self):
 
         lock = FileLock("lock/invite_citizen.lock")
 
         with lock:
-            csr = CSR.find_by_username(g.oidc_token_info['username'])
+            csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
 
             active_citizen_state = CitizenState.query.filter_by(cs_state_name='Active').first()
             waiting_period_state = PeriodState.get_state_by_name("Waiting")
