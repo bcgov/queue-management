@@ -264,7 +264,7 @@
     },
     watch: {
       step(newV, oldV) {
-        if (oldV == 2 && newV == 3 && this.addExamModal.setup === 'other') {
+        if (oldV == 2 && newV == 3) {
           setTimeout(()=>{this.validate()}, 200)
         }
       }

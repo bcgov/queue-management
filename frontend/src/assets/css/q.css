@@ -41,16 +41,19 @@
    height: 100%;
    width: 100%;
    padding: 4px;
+   overflow: hidden;
  }
 .q-id-grid-outer {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  overflow: hidden;
 }
 .q-id-grid-col {
   margin-left: 4px;
   margin-right: 4px;
   display: flex;
   justify-content: space-between;
+
 }
 .q-id-grid-full-col {
   margin-left: 4px;
@@ -58,17 +61,21 @@
   display: flex;
   justify-content: space-between;
   grid-column: 1 / span 2;
+  overflow: hidden;
 }
 .q-id-grid-title {
   font-weight: normal;
+  overflow: hidden;
 }
 .q-id-grid-item {
   font-weight: lighter;
+  overflow: hidden;
 }
 .q-id-grid-head {
   margin-right: auto;
   margin-left: 5px;
   grid-column: 1 / span 2;
+  overflow: hidden;
 }
 .q-sum-td-outer-flex {
   margin: 0px;
@@ -95,4 +102,10 @@
   width: 100%;
   display: flex;
   justify-content: flex-start;
+}
+.q-modal-header {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 0px;
+  margin-bottom: 15px;
 }

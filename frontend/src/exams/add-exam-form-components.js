@@ -150,12 +150,18 @@ export const ExamReceivedQuestion = Vue.component('exam-received-question', {
         this.captureExamDetail({ key: 'exam_received_date', value: null })
         this.toggleIndividualCaptureTabRadio(e)
       }
+    },
+    modalSetup() {
+      if (this.addExamModal && this.addExamModal.setup) {
+        return this.addExamModal.setup
+      }
+      return ''
     }
   },
   methods: {
     ...mapMutations(['captureExamDetail', 'toggleIndividualCaptureTabRadio']),
     preSetDate() {
-      if (this.addExamModal.setup === 'other') {
+      if (this.modalSetup === 'other' || this.modalSetup === 'pesticide') {
         this.handleInput({
           target: {
             name: 'exam_received_date',
@@ -182,8 +188,8 @@ export const ExamReceivedQuestion = Vue.component('exam-received-question', {
             <span v-if="error" style="color: red">{{ validationObj[q.key].message }}</span>
           </label><br>
           <b-form-radio-group v-model="showRadio"
-                              @input="preSetDate"
-                              :options="addExamModal.setup === 'other' ? otherOptions : options" />
+                              @input="preSetDate()"
+                              :options="['other', 'pesticide'].includes(modalSetup) ? otherOptions : options"/>
         </b-form-group>
         <b-form-group v-else>
           <label>{{ q.text2 }}

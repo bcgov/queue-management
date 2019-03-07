@@ -69,7 +69,7 @@
               <b-form-group>
                 <label>Collect Fees</label><br>
                 <b-select v-model="fees"
-                          @input.native="checkValue"
+                          @change="checkValue"
                           :options="feesOptions" />
               </b-form-group>
             </b-col>
@@ -213,13 +213,9 @@
         invigilator: null,
         editedFields: [],
         fees: false,
-        feesOptions: [
-          {text: 'No', value: false},
-        ],
+        feesOptions: [ {text: 'No', value: false}, ],
         invoice: null,
-        invoiceOptions: [
-          {text: 'Custom', value: 'custom'}
-        ],
+        invoiceOptions: [ {text: 'Custom', value: 'custom'} ],
         labelColor: 'black',
         message: '',
         newEnd: null,
