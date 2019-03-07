@@ -144,7 +144,7 @@ export default {
 <style>
   .main-container { position: fixed; top: 0; left: 0; height:100%; width: 100%; margin: 0px; text-align: center; }
   .top-flex-div { height:11%; text-align: center; width: 100% }
-  .bottom-flex-div { position: absolute; bottom: 10px; left: 0; text-align: center; height:11%; width: 100%;}
+  .bottom-flex-div { position: relative; top: 2px; bottom: 10px; left: 0; text-align: center; height:12%; width: 100%;}
   .flex-title { font-size: 7.2rem; color: darkblue; text-shadow: -1px 0 steelblue, 0 1px steelblue, 1px 0 steelblue, 0 -1px steelblue }
   .lg-boardtable-head { font-size: 2.3rem; text-align: center; height: 30px }
   .sm-boardtable-body { font-size: 1.8rem; text-align: center }
