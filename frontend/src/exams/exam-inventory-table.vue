@@ -203,10 +203,12 @@
   import OfficeDrop from './office-drop'
   import ReturnExamModal from './return-exam-form-modal'
   import SuccessExamAlert from './success-exam-alert'
+  import DeleteExamModal from './delete-exam-modal'
 
   export default {
     name: "ExamInventoryTable",
     components: {
+      DeleteExamModal,
       EditExamModal,
       EditGroupExamBookingModal,
       FailureExamAlert,
