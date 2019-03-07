@@ -14,49 +14,61 @@
           <b-btn @click="officeFilterModal=true"
                  class="btn-sm btn-warning">Office # {{ officeNumber }} - {{ officeName }}</b-btn>
         </b-btn-group>
-        <b-btn-group horizontal class="ml-2 pt-2">
-          <b-btn size="sm"
-                 :pressed="inventoryFilters.expiryFilter==='all'"
-                 @click="handleFilter({type:'expiryFilter', value:'all'})"><span class="mx-2">All</span></b-btn>
-          <b-btn size="sm"
-                 :pressed="inventoryFilters.expiryFilter==='expired'"
-                 @click="handleFilter({type:'expiryFilter', value:'expired'})">Expired</b-btn>
-          <b-btn size="sm"
-                 :pressed="inventoryFilters.expiryFilter==='current'"
-                 @click="handleFilter({type:'expiryFilter', value:'current'})">Current</b-btn>
-        </b-btn-group>
+        <b-button-group horizontal class="ml-2 pt-2" label="Expired Exam Filters">
+          <b-button size="sm"
+                    :pressed="inventoryFilters.expiryFilter==='all'"
+                    @click="handleFilter({type:'expiryFilter', value:'all'})"
+                    variant="primary"><span class="mx-2">All</span></b-button>
+          <b-button size="sm"
+                    :pressed="inventoryFilters.expiryFilter==='expired'"
+                    @click="handleFilter({type:'expiryFilter', value:'expired'})"
+                    variant="primary">Expired</b-button>
+          <b-button size="sm"
+                    :pressed="inventoryFilters.expiryFilter==='current'"
+                    @click="handleFilter({type:'expiryFilter', value:'current'})"
+                    variant="primary">Current</b-button>
+        </b-button-group>
         <b-btn-group horizontal class="ml-2 pt-2">
           <b-btn size="sm"
                  :pressed="inventoryFilters.scheduledFilter==='both'"
-                 @click="handleFilter({type:'scheduledFilter', value:'both'})"><span class="mx-2">Both</span></b-btn>
+                 @click="handleFilter({type:'scheduledFilter', value:'both'})"
+                 variant="primary"><span class="mx-2">Both</span></b-btn>
           <b-btn size="sm"
                  :pressed="inventoryFilters.scheduledFilter==='unscheduled'"
-                 @click="handleFilter({type:'scheduledFilter', value:'unscheduled'})">Un-Scheduled</b-btn>
+                 @click="handleFilter({type:'scheduledFilter', value:'unscheduled'})"
+                 variant="primary">Un-Scheduled</b-btn>
           <b-btn size="sm"
                  :pressed="inventoryFilters.scheduledFilter==='scheduled'"
-                 @click="handleFilter({type:'scheduledFilter', value:'scheduled'})">Scheduled</b-btn>
+                 @click="handleFilter({type:'scheduledFilter', value:'scheduled'})"
+                 variant="primary">Scheduled</b-btn>
         </b-btn-group>
         <b-btn-group horizontal class="ml-2 pt-2">
           <b-btn size="sm"
                  :pressed="inventoryFilters.groupFilter==='both'"
-                 @click="handleFilter({type:'groupFilter', value:'both'})"><span class="mx-2">Both</span></b-btn>
+                 @click="handleFilter({type:'groupFilter', value:'both'})"
+                 variant="primary"><span class="mx-2">Both</span></b-btn>
           <b-btn size="sm"
                  :pressed="inventoryFilters.groupFilter==='individual'"
-                 @click="handleFilter({type:'groupFilter', value:'individual'})">Individual</b-btn>
+                 @click="handleFilter({type:'groupFilter', value:'individual'})"
+                 variant="primary">Individual</b-btn>
           <b-btn size="sm"
                  :pressed="inventoryFilters.groupFilter==='group'"
-                 @click="handleFilter({type:'groupFilter', value:'group'})">Group</b-btn>
+                 @click="handleFilter({type:'groupFilter', value:'group'})"
+                 variant="primary">Group</b-btn>
         </b-btn-group>
         <b-btn-group horizontal class="ml-2 pt-2">
           <b-btn size="sm"
                  :pressed="inventoryFilters.returnedFilter==='both'"
-                 @click="handleFilter({type:'returnedFilter', value:'both'})"><span class="mx-2">Both</span></b-btn>
+                 @click="handleFilter({type:'returnedFilter', value:'both'})"
+                 variant="primary"><span class="mx-2">Both</span></b-btn>
           <b-btn size="sm"
                  :pressed="inventoryFilters.returnedFilter==='returned'"
-                 @click="handleFilter({type:'returnedFilter', value:'returned'})">Returned</b-btn>
+                 @click="handleFilter({type:'returnedFilter', value:'returned'})"
+                 variant="primary">Returned</b-btn>
           <b-btn size="sm"
                  :pressed="inventoryFilters.returnedFilter==='notReturned'"
-                 @click="handleFilter({type:'returnedFilter', value:'notReturned'})">Not Returned</b-btn>
+                 @click="handleFilter({type:'returnedFilter', value:'notReturned'})"
+                 variant="primary">Not Returned</b-btn>
         </b-btn-group>
       </b-input-group>
     </b-form>
@@ -549,20 +561,8 @@
   .schedule-link:hover {
     font-weight: 600;
   }
-  .btn {
-    border: none !important;
-  }
   .label-text {
     font-size: .9rem;
-  }
-  .btn {
-    border: none !important;
-    box-shadow: none !important;
-    transition: none !important;
-  }
-  .btn:active, .btn.active {
-    background-color: lightgrey !important;
-    color: dimgrey !important;
   }
   .exam-table-holder {
     border: 1px solid dimgrey;
@@ -579,4 +579,8 @@
     bottom: 35px;
     left: 30px;
   }
+  .btn:active, .btn.active {
+   background-color: #184368 !important;
+   color: white !important;
+ }
 </style>
