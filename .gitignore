@@ -139,3 +139,4 @@ api/wait-for-it.sh
 # Secrets generated for Mender
 keys-generated
 .key
+/frontend/static/videos/*.mp4
