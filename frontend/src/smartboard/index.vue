@@ -114,19 +114,8 @@ export default {
     },
     now() {
       let d = new Date()
-
-      var weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-      // We can't use `toLocale` on LuaKit so need to format manually
-      var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-
-      this.date = weekDays[d.getDay()] + ", " + months[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear()
-
-      var hours = (d.getHours() % 12) == 0 ? 12 : d.getHours() % 12
-      var mins = d.getMinutes() < 10 ? "0" + d.getMinutes() : d.getMinutes()
-      this.time = hours + ":" + mins + " " + ((d.getHours() / 12) >= 1 ? "PM" : "AM")
-
-      // this.date = d.toLocaleDateString('en-CA', this.options)
-      // this.time = d.toLocaleTimeString('en-CA', this.timeOpts)
+      this.date = d.toLocaleDateString('en-CA', this.options)
+      this.time = d.toLocaleTimeString('en-CA', this.timeOpts)
     },
     getParameterByName(name, url) {
       url = window.location.href;
