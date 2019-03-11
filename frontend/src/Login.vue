@@ -133,7 +133,7 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
             .success( () => {
 
               //Set a timer to auto-refresh the token
-              setInterval(() => { this.refreshToken(300); }, 60*1000)
+              setInterval(() => { this.refreshToken(1700); }, 60*1000)
               this.setTokenToLocalStorage()
               this.$store.commit('setBearer', localStorage.token)
             })
@@ -154,7 +154,7 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
             flow: 'standard'
           }
         ).success( () => {
-          setInterval(() => { this.refreshToken(300); }, 60*1000)
+          setInterval(() => { this.refreshToken(1700); }, 60*1000)
         })
       },
 
