@@ -96,7 +96,6 @@ admin/admin - Manager of the office (Government Agent)
 Additional API Enviornment Variables of note:
 
 1. SECRET_KEY - Flask required key
-1. SLACK_URL - used to send feedback to Slack (Will be integrating ServiceNOW soon)
 1. THEQ_CLEAR_COMMENTS_FLAG - used to not remove comments for debugging purposes
 1. THEQ_SNOWPLOW_ENDPOINT - Snowplow URL
 1. THEQ_SNOWPLOW_APPID - Snowplow Application ID
@@ -105,9 +104,12 @@ Additional API Enviornment Variables of note:
 1. SERVER_NAME - required for API POD if not localhost.
 1. LOG_ERRORS (True/Flase) - To log socket.io errors
 1. THEQ_FEEDBACK - String of endpoint names to send Feedback to (eg. 'Slack, Service Now' or 'Slack')
-1. SERVICENOW_INSTANCE - the instance of your Service Now environment
+1. SLACK_URL - used to send feedback to Slack
+1. ROCKET_CHAT_URL - used to send feedback to Rocket Chat
+1. SERVICENOW_INSTANCE - used to send feedback to Service Now, the instance of your Service Now environment
 1. SERVICENOW_USER - the login ID of a Service Now ID used to create Service Now incidents
 1. SERVICENOW_PASSWORD - the password of the SERVICENOW_USER account
+1. SERVICENOW_TABLE - the name of the Service Now incident table to be updated 
 
 We are using Snowplow & Looker to display our Analytics.
 
