@@ -457,7 +457,7 @@
           this.$refs.bookingcal.fireMethod('addResource', {
             id: '_offsite',
             title: 'Offsite',
-            eventColor: '#82ff68',
+            eventColor: '#F58B4C',
           })
         }
         if (!bool) {

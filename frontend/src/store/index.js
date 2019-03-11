@@ -1075,7 +1075,7 @@ export const store = new Vuex.Store({
             resources.push({
               id: '_offsite',
               title: 'Offsite',
-              eventColor: '#82ff68'
+              eventColor: '#F58B4C'
             })
             context.commit('setRooms', resp.data.rooms)
             context.commit('setResources', resources)
