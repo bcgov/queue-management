@@ -19,7 +19,7 @@ from sqlalchemy import exc
 from app.models.bookings import Exam
 from app.models.theq import CSR
 from app.schemas.bookings import ExamSchema
-from qsystem import api, oidc
+from qsystem import api, jwt
 
 
 @api.route("/exams/", methods=["GET"])
@@ -27,10 +27,10 @@ class ExamList(Resource):
 
     exam_schema = ExamSchema(many=True)
 
-    @oidc.accept_token(require_token=True)
+    @jwt.requires_auth
     def get(self):
         try:
-            csr = CSR.find_by_username(g.oidc_token_info['username'])
+            csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
 
             if csr.role.role_code == "LIAISON":
                 exams = Exam.query.filter(Exam.deleted_date.is_(None)).all()
