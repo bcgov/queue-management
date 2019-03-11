@@ -71,6 +71,7 @@ def setup_jwt_manager(app, jwt):
     try:
         jwt.init_app(app)
     except:
+        # print("==> Error initializing flask-jwt-oidc. Keycloak is likely down.")
         raise EnvironmentError('Error initializing flask-jwt-oidc. Keycloak is likely down.')
 
     return
