@@ -62,9 +62,6 @@
               {text: 'All Exams', value: 'all'},
               {text: 'ITA - Individual and Group ', value: 'ita'},
               {text: 'All Non-ITA Exams', value: 'all_non_ita'},
-              {text: 'Veterinary Exam', value: 'veterinary'},
-              {text: 'Milk Grader', value: 'milk_tank'},
-              {text: 'Pesticide', value: 'pesticide'}
             ],
             selectedExamType: '',
           }

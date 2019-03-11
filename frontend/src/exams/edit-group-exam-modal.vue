@@ -6,7 +6,7 @@
            hide-footer
            size="md">
     <div v-if="showModal">
-      <span style="font-size: 1.5rem; font-weight:600">Edit Group Exam Booking</span>
+      <span class="q-modal-header">Edit Group Exam Booking</span>
       <b-form>
         <b-form-row>
           <b-col class="mb-2">
@@ -91,22 +91,13 @@
           </b-col>
         </b-form-row>
         <b-form-row align-content="end" align-h="end">
-          <b-col cols="10" v-if="role_code === 'LIAISON' || role_code === 'GA'">
+          <b-col :cols="role_code === 'LIAISON' || role_code === 'GA' ? 10 : '' ">
             <b-form-group>
               <label>Invigilator</label><br>
               <b-select v-model="invigilator_id"
                         name="invigilator_id"
-                        @input.native="checkInput"
-                        :options="invigilatorOptions" />
-            </b-form-group>
-          </b-col>
-          <b-col v-if="role_code !== 'LIAISON' && role_code !== 'GA'">
-            <b-form-group>
-              <label>Invigilator</label><br>
-              <b-select v-model="invigilator_id"
-                        name="invigilator_id"
-                        @input.native="checkInput"
-                        :options="invigilatorOptions" />
+                        @change.native="checkInput"
+                        :options="invigilator_dropdown" />
             </b-form-group>
           </b-col>
           <b-col cols="2" align-self="start" v-if="role_code==='LIAISON' || role_code === 'GA'">
@@ -152,21 +143,11 @@
       }
     },
     computed: {
-      ...mapGetters(['role_code']),
+      ...mapGetters(['role_code', 'invigilator_dropdown']),
       ...mapState({
         showModal: state => state.showEditGroupBookingModal,
         invigilators: state => state.invigilators,
       }),
-      invigilatorOptions() {
-        if (this.invigilators && this.invigilators.length > 0) {
-          let options = this.invigilators.map( inv =>
-            ({text: inv.invigilator_name, value: inv.invigilator_id})
-          )
-          options.push({text: 'unassigned', value: ''})
-          return options
-        }
-        return []
-      },
       modalVisible: {
         get() {
           return this.showModal

@@ -240,7 +240,10 @@
            class="mb-3"
            style="color: red;">{{ this.message }}</div>
       <div style="display: flex; justify-content: flex-end; width: 100%">
-        <b-btn class="btn-secondary mr-2" @click="toggleEditExamModal(false)">Cancel</b-btn>
+        <b-btn class="btn-danger mr-2"
+               @click="deleteExam()">Delete Exam</b-btn>
+        <b-btn class="btn-secondary mr-2"
+               @click="toggleEditExamModal(false)">Cancel</b-btn>
         <b-btn v-if="!allowSubmit()"
                class="btn-primary disabled"
                @click="setMessage">Submit</b-btn>
@@ -257,10 +260,12 @@
   import DatePicker from 'vue2-datepicker'
   import moment from 'moment'
   import Vue from 'vue'
+  import DeleteExamModal from './delete-exam-modal'
 
   export default {
     name: "EditExamModal",
-    components: { DatePicker },
+    components: { DatePicker,
+                  DeleteExamModal},
     props: ['examRow', 'resetExam'],
     data () {
       return {
@@ -286,7 +291,12 @@
     },
     computed: {
       ...mapGetters(['exam_object_id', 'role_code']),
-      ...mapState(['editExamFailure', 'editExamSuccess', 'examTypes', 'offices', 'showEditExamModal',]),
+      ...mapState(['editExamFailure',
+                   'editExamSuccess',
+                   'examTypes',
+                   'offices',
+                   'showEditExamModal',
+                   'showDeleteExamModal', ]),
       exam() {
         if (Object.keys(this.examRow).length > 0) {
           return this.examRow
@@ -378,7 +388,13 @@
     },
     methods: {
       ...mapActions(['getBookings', 'getExams', 'getOffices', 'putExamInfo',]),
-      ...mapMutations(['setEditExamFailure', 'setEditExamSuccess', 'setSelectedExam', 'toggleEditExamModal',]),
+      ...mapMutations(['setEditExamFailure',
+                       'setEditExamSuccess',
+                       'setSelectedExam',
+                       'setReturnExamInfo',
+                       'setReturnDeleteExamInfo',
+                       'toggleEditExamModal',
+                       'toggleDeleteExamModalVisible']),
       allowSubmit() {
         if (this.examRow) {
           let fieldsEdited = false
@@ -393,6 +409,29 @@
           return fieldsEdited
         }
         return false
+      },
+      deleteExam() {
+        let deleteExamInfo = {}
+
+        if (this.fields.booking_id) {
+          deleteExamInfo = {
+            booking_id: this.fields.booking_id,
+            exam_id: this.fields.exam_id,
+            exam_name: this.fields.exam_name,
+            examinee_name: this.fields.examinee_name,
+            event_id: this.fields.event_id,
+          }
+        }else {
+          deleteExamInfo = {
+            booking_id: null,
+            exam_id: this.fields.exam_id,
+            exam_name: this.fields.exam_name,
+            examinee_name: this.fields.examinee_name,
+            event_id: this.fields.event_id,
+          }
+        }
+        this.toggleDeleteExamModalVisible(true)
+        this.setReturnExamInfo(deleteExamInfo)
       },
       getFilteredOffices(offices) {
         if (offices.length === 0) {

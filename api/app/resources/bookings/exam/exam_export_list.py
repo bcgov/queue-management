@@ -74,18 +74,13 @@ class ExamList(Resource):
 
             if exam_type == 'ita':
                 exams = exams.filter(ExamType.ita_ind == 1)
-            elif exam_type == 'veterinary':
-                exams = exams.filter(ExamType.exam_type_name == 'Veterinary Exam')
-            elif exam_type == 'milk_tank':
-                exams = exams.filter(ExamType.exam_type_name == 'Milk Grader')
-            elif exam_type == 'pesticide':
-                exams = exams.filter(ExamType.exam_type_name == 'Pesticide')
             elif exam_type == 'all_non_ita':
                 exams = exams.filter(ExamType.ita_ind == 0)
 
             dest = io.StringIO()
             out = csv.writer(dest)
-            out.writerow(['Office Name', 'Exam Type', 'Exam ID', 'Exam Name', 'Examinee Name', 'Event ID', 'Room Name', 'Invigilator Name', 'Booking ID', 'Booking Name', 'Exam Received', 'Exam Returned' ])
+            out.writerow(['Office Name', 'Exam Type', 'Exam ID', 'Exam Name', 'Examinee Name', 'Event ID', 'Room Name',
+                          'Invigilator Name', 'Booking ID', 'Booking Name', 'Exam Received', 'Exam Returned'])
 
             keys = [
                 "office_name",
