@@ -15,7 +15,7 @@ limitations under the License.'''
 import logging
 from flask import request, g
 from flask_restplus import Resource
-from qsystem import api, db, oidc
+from qsystem import api, db, jwt
 from app.models.bookings import Booking, Room
 from app.models.theq import CSR
 from app.schemas.bookings import BookingSchema
@@ -26,10 +26,10 @@ class BookingPut(Resource):
 
     booking_schema = BookingSchema()
 
-    @oidc.accept_token(require_token=True)
+    @jwt.requires_auth
     def put(self, id):
 
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
+        csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
 
         json_data = request.get_json()
 
