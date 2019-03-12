@@ -1,78 +1,84 @@
 <template>
   <div>
-  <div class="q-w100-flex-fs">
-    <b-form inline class="ml-3">
-      <b-input-group>
-        <b-input-group-prepend><label class="mx-1 pt-1 my-auto label-text">Search</label></b-input-group-prepend>
-        <b-input size="sm" class="mb-1 mt-3" v-model="filter"></b-input>
-      </b-input-group>
-      <b-input-group class="ml-3" v-if="!showExamInventoryModal">
-        <b-input-group-prepend>
-          <label class="mx-1 pt-1 my-auto label-text">Filters</label>
-        </b-input-group-prepend>
-        <b-btn-group v-if="role_code === 'LIAISON'" class="pt-2">
-          <b-btn @click="officeFilterModal=true"
-                 class="btn-sm btn-warning">Office # {{ officeNumber }} - {{ officeName }}</b-btn>
-        </b-btn-group>
-        <b-button-group horizontal class="ml-2 pt-2" label="Expired Exam Filters">
-          <b-button size="sm"
-                    :pressed="inventoryFilters.expiryFilter==='all'"
-                    @click="handleFilter({type:'expiryFilter', value:'all'})"
-                    variant="primary"><span class="mx-2">All</span></b-button>
-          <b-button size="sm"
-                    :pressed="inventoryFilters.expiryFilter==='expired'"
-                    @click="handleFilter({type:'expiryFilter', value:'expired'})"
-                    variant="primary">Expired</b-button>
-          <b-button size="sm"
-                    :pressed="inventoryFilters.expiryFilter==='current'"
-                    @click="handleFilter({type:'expiryFilter', value:'current'})"
-                    variant="primary">Current</b-button>
-        </b-button-group>
-        <b-btn-group horizontal class="ml-2 pt-2">
-          <b-btn size="sm"
-                 :pressed="inventoryFilters.scheduledFilter==='both'"
-                 @click="handleFilter({type:'scheduledFilter', value:'both'})"
-                 variant="primary"><span class="mx-2">Both</span></b-btn>
-          <b-btn size="sm"
-                 :pressed="inventoryFilters.scheduledFilter==='unscheduled'"
-                 @click="handleFilter({type:'scheduledFilter', value:'unscheduled'})"
-                 variant="primary">Un-Scheduled</b-btn>
-          <b-btn size="sm"
-                 :pressed="inventoryFilters.scheduledFilter==='scheduled'"
-                 @click="handleFilter({type:'scheduledFilter', value:'scheduled'})"
-                 variant="primary">Scheduled</b-btn>
-        </b-btn-group>
-        <b-btn-group horizontal class="ml-2 pt-2">
-          <b-btn size="sm"
-                 :pressed="inventoryFilters.groupFilter==='both'"
-                 @click="handleFilter({type:'groupFilter', value:'both'})"
-                 variant="primary"><span class="mx-2">Both</span></b-btn>
-          <b-btn size="sm"
-                 :pressed="inventoryFilters.groupFilter==='individual'"
-                 @click="handleFilter({type:'groupFilter', value:'individual'})"
-                 variant="primary">Individual</b-btn>
-          <b-btn size="sm"
-                 :pressed="inventoryFilters.groupFilter==='group'"
-                 @click="handleFilter({type:'groupFilter', value:'group'})"
-                 variant="primary">Group</b-btn>
-        </b-btn-group>
-        <b-btn-group horizontal class="ml-2 pt-2">
-          <b-btn size="sm"
-                 :pressed="inventoryFilters.returnedFilter==='both'"
-                 @click="handleFilter({type:'returnedFilter', value:'both'})"
-                 variant="primary"><span class="mx-2">Both</span></b-btn>
-          <b-btn size="sm"
-                 :pressed="inventoryFilters.returnedFilter==='returned'"
-                 @click="handleFilter({type:'returnedFilter', value:'returned'})"
-                 variant="primary">Returned</b-btn>
-          <b-btn size="sm"
-                 :pressed="inventoryFilters.returnedFilter==='notReturned'"
-                 @click="handleFilter({type:'returnedFilter', value:'notReturned'})"
-                 variant="primary">Not Returned</b-btn>
-        </b-btn-group>
-      </b-input-group>
-    </b-form>
-  </div>
+    <div class="q-w100-flex-fs">
+      <b-form inline class="ml-3">
+        <b-input-group>
+          <b-input-group-prepend><label class="mx-1 pt-1 my-auto label-text">Search</label></b-input-group-prepend>
+          <b-input size="sm" class="mb-1 mt-3" v-model="filter"></b-input>
+        </b-input-group>
+        <b-input-group class="ml-3" v-if="!showExamInventoryModal">
+          <b-input-group-prepend>
+            <label class="mx-1 pt-1 my-auto label-text">Filters</label>
+          </b-input-group-prepend>
+          <b-btn-group v-if="role_code === 'LIAISON'" class="pt-2">
+            <b-btn @click="officeFilterModal=true"
+                   class="btn-sm btn-warning">Office # {{ officeNumber }} - {{ officeName }}</b-btn>
+          </b-btn-group>
+          <b-button-group horizontal
+                          class="ml-2 pt-2"
+                          label="Expired Exam Filters">
+            <b-button size="sm"
+                      :pressed="inventoryFilters.expiryFilter==='all'"
+                      @click="handleFilter({type:'expiryFilter', value:'all'})"
+                      variant="primary">
+              <span class="mx-2">All</span>
+            </b-button>
+            <b-button size="sm"
+                      :pressed="inventoryFilters.expiryFilter==='expired'"
+                      @click="handleFilter({type:'expiryFilter', value:'expired'})"
+                      variant="primary">Expired</b-button>
+            <b-button size="sm"
+                      :pressed="inventoryFilters.expiryFilter==='current'"
+                      @click="handleFilter({type:'expiryFilter', value:'current'})"
+                      variant="primary">Current</b-button>
+          </b-button-group>
+          <b-btn-group horizontal class="ml-2 pt-2">
+            <b-btn size="sm"
+                   :pressed="inventoryFilters.scheduledFilter==='both'"
+                   @click="handleFilter({type:'scheduledFilter', value:'both'})"
+                   variant="primary">
+              <span class="mx-2">Both</span>
+            </b-btn>
+            <b-btn size="sm"
+                   :pressed="inventoryFilters.scheduledFilter==='unscheduled'"
+                   @click="handleFilter({type:'scheduledFilter', value:'unscheduled'})"
+                   variant="primary">Un-Scheduled</b-btn>
+            <b-btn size="sm"
+                   :pressed="inventoryFilters.scheduledFilter==='scheduled'"
+                   @click="handleFilter({type:'scheduledFilter', value:'scheduled'})"
+                   variant="primary">Scheduled</b-btn>
+          </b-btn-group>
+          <b-btn-group horizontal class="ml-2 pt-2">
+            <b-btn size="sm"
+                   :pressed="inventoryFilters.groupFilter==='both'"
+                   @click="handleFilter({type:'groupFilter', value:'both'})"
+                   variant="primary"><span class="mx-2">Both</span></b-btn>
+            <b-btn size="sm"
+                   :pressed="inventoryFilters.groupFilter==='individual'"
+                   @click="handleFilter({type:'groupFilter', value:'individual'})"
+                   variant="primary">Individual</b-btn>
+            <b-btn size="sm"
+                   :pressed="inventoryFilters.groupFilter==='group'"
+                   @click="handleFilter({type:'groupFilter', value:'group'})"
+                   variant="primary">Group</b-btn>
+          </b-btn-group>
+          <b-btn-group horizontal class="ml-2 pt-2">
+            <b-btn size="sm"
+                   :pressed="inventoryFilters.returnedFilter==='both'"
+                   @click="handleFilter({type:'returnedFilter', value:'both'})"
+                   variant="primary"><span class="mx-2">Both</span></b-btn>
+            <b-btn size="sm"
+                   :pressed="inventoryFilters.returnedFilter==='returned'"
+                   @click="handleFilter({type:'returnedFilter', value:'returned'})"
+                   variant="primary">Returned</b-btn>
+            <b-btn size="sm"
+                   :pressed="inventoryFilters.returnedFilter==='notReturned'"
+                   @click="handleFilter({type:'returnedFilter', value:'notReturned'})"
+                   variant="primary">Not Returned</b-btn>
+          </b-btn-group>
+        </b-input-group>
+      </b-form>
+    </div>
     <div :style="tableStyle" class="my-0 mx-3">
       <b-table :items="filteredExams()"
                :fields="getFields"
@@ -88,77 +94,167 @@
                :current-page="page"
                :per-page="10"
                :filter="filter">
-      <template slot="examinee_name" slot-scope="row">
-        {{ row.item.offsite_location ? 'Group Exam' : row.item.examinee_name }}
-      </template>
-      <template slot="exam_received" slot-scope="row">
-        {{ row.item.exam_received_date ? 'Yes' : 'No' }}
-      </template>
-      <template slot="expiry_date" slot-scope="row">
-        {{ row.item.examinee_name === 'group exam' ? '–' : formatDate(row.item.expiry_date) }}
-      </template>
-      <template slot="scheduled" slot-scope="row">
-        <b-button v-if="row.item.booking && (row.item.booking.invigilator_id || row.item.booking.sbc_staff_invigilated)"
-                  class="btn-link"
-                  @click.stop="row.toggleDetails">
-          {{ row.detailsShowing ? 'Hide' : 'Show'}}
-        </b-button>
-        <font-awesome-icon v-else
-                           icon="exclamation-triangle"
-                           class="m-0 p-0"
-                           style="font-size:1rem;color:#ffc32b"/>
-      </template>
-      <template slot="row-details" slot-scope="row">
-        <div class="details-slot-div">
-          <div style="flex-grow: 1" class="ml-3"><b>Date:</b> {{ formatDate(row.item.booking.start_time) }}</div>
-          <div style="flex-grow: 1"><b>Time:</b> {{ formatTime(row.item.booking.start_time) }}</div>
-          <div style="flex-grow: 2">
-            <b>Invigilator: </b>
-            <span v-if="row.item.booking.invigilator_id">{{ row.item.booking.invigilator.invigilator_name }}</span>
-            <span v-if="row.item.booking.sbc_staff_invigilated">ServiceBC Staff</span>
+        <template slot="exam_received" slot-scope="row">
+          {{ row.item.exam_received_date ? 'Yes' : 'No' }}
+        </template>
+
+        <template slot="exam_type_name" slot-scope="row">
+          <div v-if="row.item.exam_type.exam_type_name.includes('Group')"
+               :style="{color: row.item.exam_type.exam_color}">
+            {{ row.item.exam_type.exam_type_name }}
           </div>
-          <div v-if="row.item.offsite_location"
-               style="flex-grow: 8">Location: {{ row.item.offsite_location }}</div>
-          <div v-else
-               style="flex-grow: 8">Room: {{ row.item.booking.room_id ? row.item.booking.room.room_name : '–' }}</div>
-          <div style="flex-grow: 8" />
-        </div>
-      </template>
-      <template slot="actions" slot-scope="row">
-        <b-dropdown variant="link"
-                    no-caret
-                    size="sm"
-                    class="pl-0 ml-0 mr-3"
-                    id="nav-dropdown"
-                    right>
-          <template slot="button-content">
-            <font-awesome-icon icon="caret-down"
-                               style="padding: -2px; margin: -2px; font-size: 1rem; color: dimgray"/>
-          </template>
-          <template v-if="officeFilter == userOffice || officeFilter == 'default'">
-            <b-dropdown-item v-if="!row.item.booking"
-                             size="sm"
-                             @click="addBookingRoute(row.item)">Schedule Exam</b-dropdown-item>
-            <template v-if="row.item.booking&&(row.item.booking.invigilator_id||row.item.booking.sbc_staff_invigilated)">
-              <b-dropdown-item v-if="row.item.offsite_location"
-                               size="sm"
-                               @click="editGroupExam(row.item)">Update Booking</b-dropdown-item>
-              <b-dropdown-item v-if="!row.item.offsite_location"
-                               size="sm"
-                               @click="updateBookingRoute(row.item)">Update Booking</b-dropdown-item>
+          <div v-else-if="row.item.exam_type.exam_type_name.includes('Single')"
+               :style="{color: row.item.exam_type.exam_color}">
+               {{ row.item.exam_type.exam_type_name }}
+          </div>
+          <div v-else>{{ row.item.exam_type.exam_type_name }}</div>
+        </template>
+
+        <template slot="expiry_date" slot-scope="row">
+          <span v-if="row.item.exam_type.exam_type_name === 'Challenger Exam Session'">–</span>
+          <span v-else-if="row.item.examinee_name === 'group exam'">–</span>
+          <span v-else>{{ formatDate(row.item.expiry_date) }}</span>
+        </template>
+
+        <template slot="scheduled" slot-scope="row">
+          <template v-if="row.item.exam_type.exam_type_name === 'Challenger Exam Session'">
+            <b-button v-if="checkChallenger(row.item)"
+                      class="btn-link"
+                      style="border: none;"
+                      @click.stop="handleDetails({row, origin: 'button'})">
+              {{ row.detailsShowing ? 'Hide' : 'Show' }}
+            </b-button>
+            <template v-else>
+              <font-awesome-icon v-if="!row.detailsShowing"
+                                 icon="exclamation-triangle"
+                                 @click.stop="handleDetails({row, origin: 'error'})"
+                                 class="m-0 p-0 error-cursor-hover"
+                                 style="font-size:1rem;color:#ffc32b"/>
+              <b-button v-if="row.detailsShowing"
+                        class="btn-link"
+                        style="border: none;"
+                        @click.stop="handleDetails({row, origin: 'button'})">Hide</b-button>
             </template>
-            <b-dropdown-item v-if="row.item.offsite_location && !(row.item.booking && row.item.booking.invigilator_id)"
-                             size="sm"
-                             @click="editGroupExam(row.item)">Add Invigilator</b-dropdown-item>
-            <b-dropdown-item size="sm"
-                             @click="returnExamInfo(row.item)">Return Exam</b-dropdown-item>
-            <b-dropdown-item size="sm"
-                             @click="editExam(row.item)">Edit Exam Details</b-dropdown-item>
           </template>
-          <template v-if="officeFilter != userOffice && officeFilter != 'default'">
-            <b-dropdown-item size="sm"
-                             @click="editExam(row.item)">Edit Exam Details</b-dropdown-item>
+          <template v-if="row.item.exam_type.exam_type_name !== 'Challenger Exam Session'">
+            <b-button v-if="row.item.booking && (row.item.booking.invigilator_id || row.item.booking.sbc_staff_invigilated)"
+                      class="btn-link"
+                      style="border: none;"
+                      @click.stop="handleDetails({row, origin:'button'})">{{ row.detailsShowing ? 'Hide' : 'Show'}}
+            </b-button>
+            <template v-else>
+              <font-awesome-icon v-if="!row.detailsShowing"
+                                 icon="exclamation-triangle"
+                                 @click.stop="handleDetails({row, origin: 'error'})"
+                                 class="m-0 p-0 error-cursor-hover"
+                                 style="font-size:1rem;color:#ffc32b"/>
+              <b-button v-if="row.detailsShowing"
+                        class="btn-link"
+                        style="border: none;"
+                        @click.stop="handleDetails({row, origin: 'button'})">Hide</b-button>
+            </template>
           </template>
+        </template>
+
+        <template slot="row-details" slot-scope="row">
+          <template v-if="detailsSetup === 'button'">
+            <div class="details-slot-div">
+              <div style="flex-grow: 1" class="ml-3"><b>Date:</b> {{ formatDate(row.item.booking.start_time) }}</div>
+              <div style="flex-grow: 1"><b>Time:</b> {{ formatTime(row.item.booking.start_time) }}</div>
+              <div style="flex-grow: 2">
+                <b>Invigilator: </b>
+                <span v-if="row.item.booking.invigilator_id">{{ row.item.booking.invigilator.invigilator_name }}</span>
+                <span v-if="row.item.booking.sbc_staff_invigilated">ServiceBC Staff</span>
+              </div>
+              <div v-if="row.item.offsite_location"
+                   style="flex-grow: 8">Location: {{ row.item.offsite_location }}</div>
+              <div v-else
+                   style="flex-grow: 8">Room: {{ row.item.booking.room_id ? row.item.booking.room.room_name : '–' }}</div>
+              <div style="flex-grow: 8" />
+            </div>
+          </template>
+          <template v-if="detailsSetup === 'error'">
+            <div class="details-slot-div">
+              <div class="ml-3" style="font-size: 1rem;">Still Requires:</div>
+              <template v-if="row.item.exam_type.exam_type_name.includes('Single')">
+                <div v-if="!row.item.booking"
+                     class="ml-3 mt-1">Scheduling</div>
+                <div
+                  v-if="row.item.booking && (!row.item.booking.invigilator_id || !row.item.booking.sbc_staff_invigilated)"
+                  class="ml-3 mt-1">Assignment of Invigilator</div>
+              </template>
+              <template v-else-if="row.item.exam_type.exam_type_name.includes('Group')">
+                <div v-if="!row.item.booking.invigilator_id"
+                     class="ml-3 mt-1">Assignment of Invigilator</div>
+              </template>
+              <template v-else-if="row.item.exam_type.exam_type_name === 'Challenger Exam Session'">
+                <div v-if="!row.item.booking.invigilator_id"
+                     class="ml-3 mt-1">Assignment of Invigilator</div>
+                <div v-if="!row.item.number_of_students"
+                     class="ml-3 mt-1">Number of Students</div>
+                <div v-if="!row.item.event_id"
+                     class="ml-3 mt-1">Event ID</div>
+              </template>
+              <template v-else>
+                <div v-if="!row.item.booking"
+                     class="ml-3 mt-1">Scheduling</div>
+                <div
+                  v-if="row.item.booking && !row.item.booking.invigilator_id || !row.item.booking.sbc_staff_invigilated"
+                  class="ml-3 mt-1">Assignment of Invigilator</div>
+              </template>
+            </div>
+          </template>
+        </template>
+
+        <template slot="actions" slot-scope="row">
+          <b-dropdown variant="link"
+                      no-caret
+                      size="sm"
+                      class="pl-0 ml-0 mr-3"
+                      id="nav-dropdown"
+                      right>
+            <template slot="button-content">
+              <font-awesome-icon icon="caret-down"
+                                 style="padding: -2px; margin: -2px; font-size: 1rem; color: dimgray"/>
+            </template>
+            <template v-if="officeFilter == userOffice || officeFilter == 'default'">
+              <template v-if="row.item.exam_type.exam_type_name === 'Challenger Exam Session'">
+                <b-dropdown-item size="sm"
+                                 v-if="row.item.offsite_location"
+                                 @click="editGroupExam(row.item)">
+                  {{ row.item.booking.invigilator_id ? 'Update Booking' : 'Add Invigilator' }}
+                </b-dropdown-item>
+                <b-dropdown-item size="sm"
+                                 v-if="!row.item.offsite_location"
+                                 @click="updateBookingRoute(row.item)">
+                  {{ row.item.booking.invigilator_id ? 'Update Booking' : 'Add Invigilator' }}
+                </b-dropdown-item>
+              </template>
+              <template v-if="row.item.exam_type.exam_type_name !== 'Challenger Exam Session'">
+                <template v-if="row.item.offsite_location">
+                  <b-dropdown-item size="sm"
+                                   v-if="row.item.offsite_location"
+                                   @click="editGroupExam(row.item)">
+                    {{ row.item.booking.invigilator_id ? 'Update Booking jj' : 'Add Invigilator jj' }}</b-dropdown-item>
+                </template>
+                <template v-if="!row.item.offsite_location">
+                  <b-dropdown-item v-if="!row.item.booking"
+                                   size="sm"
+                                   @click="addBookingRoute(row.item)">Schedule Exam</b-dropdown-item>
+                  <b-dropdown-item v-else
+                                   size="sm"
+                                   @click="updateBookingRoute(row.item)">Update Booking</b-dropdown-item>
+                </template>
+              </template>
+              <b-dropdown-item size="sm"
+                               @click="editExam(row.item)">Edit Exam Details</b-dropdown-item>
+              <b-dropdown-item size="sm"
+                               @click="returnExamInfo(row.item)">Return Exam</b-dropdown-item>
+            </template>
+            <template v-if="officeFilter != userOffice && officeFilter != 'default'">
+              <b-dropdown-item size="sm"
+                               @click="editExam(row.item)">Edit Exam Details</b-dropdown-item>
+            </template>
           </b-dropdown>
         </template>
       </b-table>
@@ -170,38 +266,37 @@
           v-model="page" />
       </div>
       <div v-if="filteredExams().length > 10 && showReturnExamModalVisible">
-        <b-pagination
-          :total-rows="totalRows"
-          :per-page="10"
-          v-model="page" />
-      </div>
+          <b-pagination
+            :total-rows="totalRows"
+            :per-page="10"
+            v-model="page" />
+        </div>
     </div>
     <EditExamModal :examRow="examRow" :resetExam="resetEditedExam" />
     <ReturnExamModal v-if="showReturnExamModalVisible" />
     <EditGroupExamBookingModal :examRow="examRow" :resetExam="resetEditedExam" />
     <DeleteExamModal v-if="showDeleteExamModal" />
     <b-modal v-model="officeFilterModal"
-             size="sm"
-             centered
-             hide-backdrop
-             @hide="checkValid()"
-             hide-header
-             hide-footer>
-      <h5>View Another Office</h5>
-      <p>To search, start typing or enter an office #</p>
-      <b-form>
-        <b-form-row>
-          <OfficeDrop columnW="8" :office_number="officeNumber" :setOffice="setOffice"/>
-        </b-form-row>
-      </b-form>
-      <div style="display:flex; justify-content: space-between">
-        <b-button class="mr-2 btn-secondary"
-                  @click="handleFilter({type: 'office_number', value: 'default'})">This Office</b-button>
-        <b-button class="ml-2 btn-primary"
-                  @click="officeFilterModal=false">Ok</b-button>
-      </div>
-    </b-modal>
-
+               size="sm"
+               centered
+               hide-backdrop
+               @hide="checkValid()"
+               hide-header
+               hide-footer>
+        <h5>View Another Office</h5>
+        <p>To search, start typing or enter an office #</p>
+        <b-form>
+          <b-form-row>
+            <OfficeDrop columnW="8" :office_number="officeNumber" :setOffice="setOffice"/>
+          </b-form-row>
+        </b-form>
+        <div style="display:flex; justify-content: space-between">
+          <b-button class="mr-2 btn-secondary"
+                    @click="handleFilter({type: 'office_number', value: 'default'})">This Office</b-button>
+          <b-button class="ml-2 btn-primary"
+                    @click="officeFilterModal=false">Ok</b-button>
+        </div>
+      </b-modal>
   </div>
 </template>
 
@@ -246,6 +341,7 @@
         filter: null,
         page: 1,
         tableStyle: null,
+        detailsSetup: null,
       }
     },
     computed: {
@@ -289,7 +385,7 @@
       },
       officeName() {
         if (this.offices && this.offices.length > 0) {
-          let office = this.offices.find(office=>office.office_number==this.officeNumber)
+          let office = this.offices.find( office => office.office_number==this.officeNumber)
           if (office) {
             return office.office_name
           }
@@ -312,7 +408,7 @@
           return [
             { key: 'office.office_name', label: 'Office', sortable: true, thStyle: 'width: 8%' },
             { key: 'event_id', label: 'Event ID', sortable: true, thStyle: 'width: 6%' },
-            { key: 'exam_type.exam_type_name', label: 'Exam Type'},
+            { key: 'exam_type_name', label: 'Exam Type', sortable: true },
             { key: 'exam_name', label: 'Exam Name', sortable: true, thStyle: 'width: 11%' },
             { key: 'exam_method', label: 'Method', sortable: true, thStyle: 'width: 5%' },
             { key: 'expiry_date', label: 'Expiry Date', sortable: true, thStyle: 'width: 8%' },
@@ -326,7 +422,7 @@
         if (this.showExamInventoryModal) {
           return [
             { key: 'event_id', label: 'Event ID', sortable: true, thStyle: 'width: 6%' },
-            { key: 'exam_type.exam_type_name', label: 'Exam Type'},
+            { key: 'exam_type.exam_type_name', label: 'Exam Type', sortable: true},
             { key: 'exam_name', label: 'Exam Name', sortable: true, thStyle: 'width: 15%' },
             { key: 'exam_method', label: 'Method', sortable: true, thStyle: 'width: 5%' },
             { key: 'expiry_date', label: 'Expiry Date', sortable: true, thStyle: 'width: 8%' },
@@ -371,7 +467,7 @@
       },
       addBookingRoute(item) {
         this.toggleScheduling(true)
-        item.referringAction = 'scheduling'
+        item.referrer = 'scheduling'
         this.setSelectedExam(item)
         this.$router.push('/booking')
         this.toggleExamInventoryModal(false)
@@ -394,6 +490,10 @@
       editGroupExam(item) {
         this.examRow = item
         this.toggleEditGroupBookingModal(true)
+      },
+      handleDetails(item) {
+        this.detailsSetup = item.origin
+        item.row.toggleDetails()
       },
       filteredExams() {
         let examInventory = this.exam_inventory
@@ -446,10 +546,11 @@
               evenMoreFiltered = moreFiltered
               break
             case 'individual':
-              evenMoreFiltered = moreFiltered.filter(ex => !ex.offsite_location)
+              evenMoreFiltered = moreFiltered.filter(ex => !this.groupFilter(ex))
+
               break
             case 'group':
-              evenMoreFiltered = moreFiltered.filter(ex => ex.offsite_location)
+              evenMoreFiltered = moreFiltered.filter(ex => this.groupFilter(ex))
               break
             default:
               evenMoreFiltered = moreFiltered
@@ -490,6 +591,12 @@
         }
         return ''
       },
+      checkChallenger(item) {
+        if (item.event_id && item.booking.invigilator_id && item.number_of_students) {
+          return true
+        }
+        return false
+      },
       getWidth() {
         if (!this.showExamInventoryModal) {
           this.tableStyle = { width: `${ window.innerWidth - 40 }px` }
@@ -506,7 +613,15 @@
         this.buttons.current = 'btn-secondary'
         this.buttons.expired = 'btn-secondary'
       },
-
+      groupFilter(ex) {
+        if (ex.exam_type.exam_type_name === 'Challenger Exam Session') {
+          return true
+        }
+        if (ex.exam_type.exam_type_name !== 'Challenger Exam Session' && ex.offsite_location) {
+          return true
+        }
+        return false
+      },
       resetEditedExam() {
         this.examRow = {}
       },
@@ -516,7 +631,7 @@
       },
       updateBookingRoute(item) {
         item.gotoDate = new moment(item.booking.start_time)
-        item.referringAction = 'rescheduling'
+        item.referrer = 'rescheduling'
         this.setSelectedExam(item)
         let booking = this.calendarEvents.find(event => event.id == item.booking_id)
         booking.start = new moment(booking.start)
@@ -570,6 +685,7 @@
   .details-slot-div {
     display: flex;
     justify-content: flex-start;
+    justify-items: flex-start;
     width: 100%;
     padding-top: 6px;
     padding-bottom: 6px;
@@ -578,6 +694,9 @@
     position: fixed;
     bottom: 35px;
     left: 30px;
+  }
+  .error-cursor-hover {
+    cursor: pointer !important;
   }
   .btn:active, .btn.active {
    background-color: #184368 !important;

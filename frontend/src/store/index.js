@@ -13,423 +13,21 @@
  limitations under the License.*/
 
 import Vue from 'vue'
-import 'es6-promise/auto'
 import Vuex from 'vuex'
-import { Axios, searchNestedObject } from './helpers'
 import moment from 'moment'
+import 'es6-promise/auto'
+import { addExamModule } from './add-exam-module'
+import { Axios, searchNestedObject } from './helpers'
 
 var flashInt
 
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
+  modules: {
+    addExamModule
+  },
   state: {
-    addIndividualSteps: [
-      {
-        step: 1,
-        title:'Exam Type',
-        questions: [
-          {
-            key: 'exam_type_id',
-            text: 'Exam Type ID / Colour',
-            kind:'dropdown',
-            minLength: 0,
-            digit: false,
-          }
-        ]
-      },
-      {
-        step: 2,
-        title:'Exam Info',
-        questions: [
-          {
-            key: 'event_id',
-            text:'Event ID' ,
-            kind: 'input',
-            minLength: 5,
-            digit: true,
-          },
-          {
-            key: 'exam_name',
-            text: 'Exam Name',
-            kind: 'input',
-            minLength: 2,
-            digit: false
-          },
-          {
-            key: 'examinee_name',
-            text: `Exam Writer's Name`,
-            minLength: 2,
-            kind:'input',
-            digit: false
-          },
-          {
-            key: 'exam_method',
-            text: 'Exam Method',
-            minLength: 1,
-            digit: false,
-            kind:'select',
-            options: [
-              {text: 'paper', value: 'paper', id: 'exam_method'},
-              {text: 'online', value: 'online', id: 'exam_method'}
-            ]
-          },
-        ]
-      },
-      {
-        step: 3,
-        title: 'Exam Dates',
-        questions: [
-          {
-            kind: 'exam_received',
-            key: 'exam_received_date',
-            text1:'Was the Exam Package Receieved Today?',
-            text2: 'Date of Receipt of Exam Package',
-            minLength: 1,
-            digit: false,
-          },
-          {
-            kind: 'date',
-            key: 'expiry_date',
-            text: 'Exam Expiry Date',
-            minLength: 1,
-            digit: false,
-          },
-          {
-            kind: 'notes',
-            key: 'notes',
-            text: 'Additional Notes (optional)',
-            minLength: 0,
-            digit: false,
-          },
-        ]
-      },
-      {
-        step: 4,
-        title:'Summary',
-        questions:
-          [
-            {
-              kind: null,
-              key: null,
-              text1:null,
-              text2: null,
-              minLength: 0,
-              digit: false,
-            },
-          ]
-      },
-    ],
-    addOtherSteps: [
-      {
-        step: 1,
-        title:'Exam Type',
-        questions: [
-          {
-            key: 'exam_type_id',
-            text: 'Exam Type ID / Colour',
-            kind:'dropdown',
-            minLength: 0,
-            digit: false,
-          }
-        ]
-      },
-      {
-        step: 2,
-        title:'Exam Info',
-        questions: [
-          {
-            key: 'event_id',
-            text:'Event ID (not required)' ,
-            kind: 'input',
-            minLength: 0,
-            digit: false,
-          },
-          {
-            key: 'exam_name',
-            text: 'Exam Name',
-            kind: 'input',
-            minLength: 2,
-            digit: false
-          },
-          {
-            key: 'examinee_name',
-            text: `Exam Writer's Name`,
-            minLength: 2,
-            kind:'input',
-            digit: false
-          },
-          {
-            key: 'exam_method',
-            text: 'Exam Method',
-            minLength: 1,
-            digit: false,
-            kind:'select',
-            options: [
-              {text: 'paper', value: 'paper', id: 'exam_method'},
-              {text: 'online', value: 'online', id: 'exam_method'}
-            ]
-          },
-        ]
-      },
-      {
-        step: 3,
-        title: 'Exam Dates',
-        questions: [
-          {
-            kind: 'exam_received',
-            key: 'exam_received_date',
-            text1:'Have you received the exam package yet?',
-            text2: 'Date of Receipt of Exam Package',
-            minLength: 0,
-            digit: false,
-          },
-          {
-            kind: 'date',
-            key: 'expiry_date',
-            text: 'Exam Expiry Date',
-            minLength: 1,
-            digit: false,
-          },
-          {
-            kind: 'notes',
-            key: 'notes',
-            text: 'Additional Notes (optional)',
-            minLength: 0,
-            digit: false,
-          },
-        ]
-      },
-      {
-        step: 4,
-        title:'Summary',
-        questions:
-          [
-            {
-              kind: null,
-              key: null,
-              text1:null,
-              text2: null,
-              minLength: 0,
-              digit: false,
-            },
-          ]
-      },
-    ],
-    addPesticideSteps: [
-      {
-        step: 1,
-        title:'Exam Type',
-        questions: [
-          {
-            key: 'exam_type_id',
-            text: 'Exam Type ID / Colour',
-            kind:'dropdown',
-            minLength: 0,
-            digit: false,
-          }
-        ]
-      },
-      {
-        step: 2,
-        title:'Exam Info',
-        questions: [
-          {
-            key: 'office_id',
-            text: 'Office',
-            kind: 'office',
-            minLength: 1,
-            digit: true,
-          },
-          {
-            key: 'event_id',
-            text:'Event ID (not required)' ,
-            kind: 'input',
-            minLength: 0,
-            digit: false,
-          },
-          {
-            key: 'exam_name',
-            text: 'Exam Name',
-            kind: 'input',
-            minLength: 6,
-            digit: false
-          },
-          {
-            key: 'examinee_name',
-            text: `Exam Writer's Name`,
-            minLength: 6,
-            kind:'input',
-            digit: false
-          },
-          {
-            key: 'exam_method',
-            text: 'Exam Method',
-            minLength: 1,
-            digit: false,
-            kind:'select',
-            options: [
-              {text: 'paper', value: 'paper', id: 'exam_method'},
-              {text: 'online', value: 'online', id: 'exam_method'}
-            ]
-          },
-        ]
-      },
-      {
-        step: 3,
-        title: 'Exam Dates',
-        questions: [
-          {
-            kind: 'exam_received',
-            key: 'exam_received_date',
-            text1:'Have you received the exam package yet?',
-            text2: 'Date of Receipt of Exam Package',
-            minLength: 0,
-            digit: false,
-          },
-          {
-            kind: 'date',
-            key: 'expiry_date',
-            text: 'Exam Expiry Date',
-            minLength: 1,
-            digit: false,
-          },
-          {
-            kind: 'notes',
-            key: 'notes',
-            text: 'Additional Notes (optional)',
-            minLength: 0,
-            digit: false,
-          },
-        ]
-      },
-      {
-        step: 4,
-        title:'Summary',
-        questions:
-          [
-            {
-              kind: null,
-              key: null,
-              text1:null,
-              text2: null,
-              minLength: 0,
-              digit: false,
-            },
-          ]
-      },
-    ],
-    addGroupSteps: [
-      {
-        step: 1,
-        title:'Exam Type',
-        questions:
-        [
-          {
-            key: 'exam_type_id',
-            text: 'Exam Type ID / Colour',
-            kind:'dropdown',
-            minLength: 0,
-            digit: false,
-          }
-        ]
-      },
-      {
-        step: 2,
-        title: 'Basic Info',
-        questions: [
-          {
-            key: 'office_id',
-            text: 'Office',
-            kind: 'office',
-            minLength: 1,
-            digit: true,
-          },
-          {
-            key: 'event_id',
-            text: 'Event ID',
-            kind: 'input',
-            minLength: 5,
-            digit: true
-          },
-          {
-            key: 'exam_name',
-            text: 'Exam Name',
-            kind: 'input',
-            minLength: 2,
-            digit: false,
-          },
-          {
-            key: 'number_of_students',
-            text: 'Number of Students',
-            minLength: 1,
-            kind: 'input',
-            digit: true
-          },
-        ]
-      },
-      {
-        step: 3,
-        title: 'Date, Time & Format',
-        questions: [
-          {
-            kind: 'date',
-            key: 'expiry_date',
-            text: 'Date and Time',
-            minLength: 1,
-            digit: false,
-          },
-          {
-            kind: 'time',
-            key: 'exam_time',
-            text: 'Exam Time',
-            minLength: 1,
-            digit: false,
-          },
-          {
-            key: 'exam_method',
-            text: 'Exam Method',
-            minLength: 1,
-            digit: false,
-            kind: 'select',
-            options: [
-              { text: 'paper', value: 'paper', id: 'exam_method' },
-              { text: 'online', value: 'online', id: 'exam_method' }
-            ]
-          },
-          {
-            kind: 'input',
-            key: 'offsite_location',
-            text: 'Location',
-            type: 'input',
-            minLength: 2,
-            digit: false,
-          },
-          {
-            kind: 'notes',
-            key: 'notes',
-            text: 'Additional Notes (optional)',
-            minLength: 0,
-            digit: false,
-          },
-        ]
-      },
-      {
-        step: 4,
-        title:'Summary',
-        questions:
-        [
-          {
-            kind: null,
-            key: null,
-            text1:null,
-            text2: null,
-            minLength: 0,
-            digit: false,
-          },
-        ]
-      },
-    ],
     addExamModal: {
       visible: false,
       setup: 'individual',
@@ -572,6 +170,24 @@ export const store = new Vuex.Store({
   },
 
   getters: {
+    add_modal_steps(state) {
+      if (state.addExamModal && state.addExamModal.setup)  {
+        switch(state.addExamModal.setup) {
+          case 'challenger':
+            return state.addExamModule.addChallengerSteps
+          case 'group':
+            return state.addExamModule.addGroupSteps
+          case 'individual':
+            return state.addExamModule.addIndividualSteps
+          case 'pesticide':
+            return state.addExamModule.addPesticideSteps
+          case 'other':
+            return state.addExamModule.addOtherSteps
+          default:
+            return []
+        }
+      }
+    },
     invigilator_dropdown(state) {
       let invigilators = [
         {value: null, text: 'unassigned'},
@@ -588,7 +204,6 @@ export const store = new Vuex.Store({
         if (!state.showOtherBookingModal && !state.showBookingModal && !state.showEditBookingModal) {
           return true
         }
-        return false
       }
       return false
     },
@@ -1268,6 +883,11 @@ export const store = new Vuex.Store({
 
     clickAddExamSubmit(context, type) {
       return new Promise((resolve, reject) => {
+        if (type === 'challenger') {
+          context.dispatch('postITAChallengerExam').then(() => {
+            resolve('success')
+          }).catch(() => { reject('failed') })
+        }
         if (type === 'group') {
           context.dispatch('postITAGroupExam').then(() => {
             resolve('success')
@@ -1846,9 +1466,58 @@ export const store = new Vuex.Store({
       context.commit('setSelectedExam', null)
       context.commit('setEditedBooking', null)
       context.commit('toggleEditBookingModal', false)
-      context.commit('toggleEditBookingModal', false)
       context.commit('toggleEditGroupBookingModal', false)
       context.commit('toggleSelectInvigilatorModal', false)
+    },
+  
+    postITAChallengerExam(context) {
+      let responses = Object.assign( {}, context.state.capturedExam)
+      let date = new moment(responses.expiry_date).local().format('YYYY-MM-DD')
+      let time = new moment(responses.exam_time).local().format('HH:mm:ss')
+      let datetime = date+'T'+time
+      let start = new moment(datetime).local()
+      let end = start.clone().add(4, 'hours')
+      let booking = {
+        start_time: start.clone().utc().format('YYYY-MM-DD[T]HH:mm:ssZ'),
+        end_time: end.clone().utc().format('YYYY-MM-DD[T]HH:mm:ssZ'),
+        fees: 'false',
+        booking_name: 'Challenger Exam',
+        office_id: context.state.user.office_id,
+      }
+      if (responses.on_or_off === 'on') {
+        booking.room_id = responses.offsite_location.id.valueOf()
+        delete responses.offsite_location
+      }
+      let exam_type= context.state.examTypes.find(ex => ex.exam_type_name === 'Challenger Exam Session')
+      let defaultValues = {
+        exam_returned_ind: 0,
+        examinee_name: 'Challenger Exam',
+        exam_type_id: exam_type.exam_type_id,
+        office_id: context.state.user.office_id
+      }
+      delete responses.exam_time
+      delete responses.expiry_date
+      if (responses.notes === null) {
+        data.notes = ''
+      }
+      let postData = {...responses, ...defaultValues}
+     
+      return new Promise((resolve, reject) => {
+        Axios(context).post('/exams/', postData).then( examResp => {
+          let { exam_id } = examResp.data.exam
+          context.dispatch('postBooking', booking).then( bookingResp => {
+            let putObject = {
+              examId: exam_id,
+              bookingId: bookingResp,
+              officeId: responses.office_id
+            }
+            context.dispatch('putExam', putObject).then( () => {
+              resolve()
+            }).catch( () => { reject() })
+          }).catch( () => { reject() })
+        }).catch( () => { reject() })
+      })
+      
     },
     
     postITAGroupExam(context) {
@@ -2602,5 +2271,16 @@ export const store = new Vuex.Store({
     setInventoryFilters(state, payload) {
       state.inventoryFilters[payload.type] = payload.value
     },
+    
+    restoreSavedModal(state, payload) {
+      Object.keys(payload.item).forEach(key => {
+        Vue.set(
+          state[payload.name],
+          key,
+          payload.item[key]
+        )
+      })
+      
+    }
   }
 })

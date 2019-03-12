@@ -11,6 +11,11 @@
           <b-form-input v-model="searchTerm"
                         size="sm"
                         @input="filter"></b-form-input>
+          <b-button class="btn-secondary btn-sm ml-3"
+                    v-if="!scheduling && !reshceduling"
+                    @click="toggleOffsite(!offsiteVisible)">
+            {{ offsiteVisible ? 'Hide Offsite' : 'Show Offsite' }}
+          </b-button>
         </b-form>
       </div>
       <div class="w-50 mt-2 ml-3 pl-3"
@@ -104,6 +109,7 @@
       return {
         tempEvent: false,
         groupFilter: 'both',
+        offsiteVisible: true,
         office: null,
         savedSelection: null,
         tempEvent: null,
@@ -453,6 +459,7 @@
         this.$refs.bookingcal.fireMethod('today')
       },
       toggleOffsite(bool) {
+        this.offsiteVisible = bool
         if (bool) {
           this.$refs.bookingcal.fireMethod('addResource', {
             id: '_offsite',

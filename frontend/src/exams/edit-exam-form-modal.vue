@@ -70,7 +70,7 @@
             </b-form-group>
           </b-col>
         </b-form-row>
-        <b-form-row>
+        <b-form-row v-if="examType !== 'challenger' ">
             <b-col>
               <b-form-group>
                 <label class="my-0">Exam Type</label><br>
@@ -98,6 +98,17 @@
               </b-form-group>
             </b-col>
           </b-form-row>
+        <b-form-row v-if="examType === 'challenger'">
+          <b-col>
+            <b-form-group>
+              <label class="mb-0 mt-1">Exam Type</label>
+              <b-form-input id="exam_name" type="text"
+                            class="less-10-mb"
+                            disabled
+                            value="Challenger Exam Session" />
+            </b-form-group>
+          </b-col>
+        </b-form-row>
         <b-form-row>
           <b-col>
             <b-form-group>
@@ -135,7 +146,7 @@
               </DatePicker>
             </b-form-group>
           </b-col>
-          <b-col v-if="examType === 'group'" col>
+          <b-col v-if="examType === 'group' || examType === 'challenger'" col>
             <b-form-group>
               <label class="my-0"># of Writers</label><br>
               <b-input v-model="fields.number_of_students"
@@ -195,7 +206,9 @@
                 </div>
                 <div class="q-id-grid-col">
                   <div>Type:</div>
-                  <div :style="{color: exam.exam_type.exam_color}">{{ exam.exam_type.exam_type_name }}</div>
+                  <div v-if="isITAGropOrSingleExam(exam)"
+                       :style="{color: exam.exam_type.exam_color}">{{ exam.exam_type.exam_type_name }}</div>
+                  <div v-else>{{ exam.exam_type.exam_type_name }}</div>
                 </div>
                 <div class="q-id-grid-col">
                   <div>Method:</div>
@@ -324,6 +337,9 @@
       },
       examType() {
         if (this.exam && this.exam.exam_type && this.exam.exam_type.ita_ind) {
+          if (this.exam.exam_type.exam_type_name === 'Challenger Exam Session') {
+            return 'challenger'
+          }
           if (this.exam.offsite_location) {
             return 'group'
           }
@@ -366,6 +382,12 @@
       },
       showAllFields() {
         if (this.exam) {
+          if (this.exam.exam_type.exam_type_name === 'Challenger Exam Session') {
+            if (this.role_code === 'GA') {
+              return true
+            }
+            return false
+          }
           if (!this.exam.offsite_location) {
             return true
           }
@@ -407,6 +429,12 @@
             }
           }
           return fieldsEdited
+        }
+        return false
+      },
+      isITAGropOrSingleExam(ex) {
+        if (ex.exam_type.exam_type_name.includes('Group') || ex.exam_type.exam_type_name.includes('Single') ) {
+          return true
         }
         return false
       },

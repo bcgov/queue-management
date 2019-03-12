@@ -285,8 +285,12 @@
       },
       expiryDate() {
         if (this.examAssociated && this.event.exam) {
-          return new moment(this.event.exam.expiry_date).format('MMM Do, YYYY')
+          let d = new moment(this.event.exam.expiry_date)
+          if (d.isValid()) {
+            return d.format('MMM Do, YYYY')
+          }
         }
+        return 'not applicable'
       },
       modalVisible: {
         get() {
@@ -346,7 +350,7 @@
       ]),
       cancel() {
         let returnRoute = false
-        if (this.selectedExam && this.selectedExam.referringAction === 'rescheduling') {
+        if (this.selectedExam && this.selectedExam.referrer === 'rescheduling') {
           returnRoute = true
         }
         this.finishBooking()
