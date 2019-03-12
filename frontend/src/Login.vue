@@ -133,7 +133,9 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
             .success( () => {
 
               //Set a timer to auto-refresh the token
-              setInterval(() => { this.refreshToken(1700); }, 60*1000)
+              setInterval(() => {
+                this.refreshToken(process.env.REFRESH_TOKEN_SECONDS_LEFT);
+                }, 60*1000)
               this.setTokenToLocalStorage()
               this.$store.commit('setBearer', localStorage.token)
             })
@@ -154,7 +156,9 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
             flow: 'standard'
           }
         ).success( () => {
-          setInterval(() => { this.refreshToken(1700); }, 60*1000)
+          setInterval(() => {
+            this.refreshToken(process.env.REFRESH_TOKEN_SECONDS_LEFT);
+            }, 60*1000)
         })
       },
 
@@ -220,9 +224,13 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
       },
 
       refreshToken(minValidity) {
+        console.log('==> Refreshing token: REFRESH_TOKEN_SECONDS_LEFT is ' + process.env.REFRESH_TOKEN_SECONDS_LEFT)
+        console.log('Token valid for ' + Math.round(this.$keycloak.tokenParsed.exp + this.$keycloak.timeSkew - new Date().getTime() / 1000) + ' seconds')
         this.$keycloak.updateToken(minValidity).success(refreshed => {
           if (refreshed) {
+            console.log("Token was refreshed, printed immediately below")
             console.log(this.$keycloak.tokenParsed)
+            console.log('Token valid for ' + Math.round(this.$keycloak.tokenParsed.exp + this.$keycloak.timeSkew - new Date().getTime() / 1000) + ' seconds')
           } else {
             console.log('Token not refreshed, valid for ' + Math.round(this.$keycloak.tokenParsed.exp + this.$keycloak.timeSkew - new Date().getTime() / 1000) + ' seconds')
           }
