@@ -53,7 +53,7 @@ Ensure you have python 3. I also had to install: gcc, python3-venv, libmysqlclie
 1. `cd queue-management`
 1. `cp documentation/demo-files/keycloak.json frontend/static/keycloak.json`
 
-### Set Enviornment Variables required:
+### Set Environment Variables required:
 
 1. `cd queue-management`
 1. `cp documentation/demo-files/.env .`
