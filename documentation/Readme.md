@@ -48,21 +48,15 @@ Ensure you have python 3. I also had to install: gcc, python3-venv, libmysqlclie
 1. `cd queue-management/api`
 1. `pip3 install -r requirements.txt`
 
-### Add two required keycloak config files
+### Add one required keycloak config file
 
 1. `cd queue-management`
-1. `cp documentation/demo-files/secrets.json api/client_secrets/secrets.json`
 1. `cp documentation/demo-files/keycloak.json frontend/static/keycloak.json`
 
 ### Set Enviornment Variables required:
 
-1. `export DATABASE_ENGINE=mysql`
-1. `export DATABASE_USERNAME=demo`
-1. `export DATABASE_PASSWORD=demo`
-1. `export DATABASE_NAME=queue_management`
-1. `export DATABASE_HOST=127.0.0.1`
-1. `export DATABASE_PORT=3306`
-1. `export THEQ_SNOWPLOW_CALLFLAG=False`
+1. `cd queue-management`
+1. `cp documentation/demo-files/.env ./.env`
 
 ### Update Database with required tables:
 
@@ -93,7 +87,7 @@ You should be able to login in using the following IDs:
 user/user - Regular Customer Service Representative (CSR)  
 admin/admin - Manager of the office (Government Agent)
 
-Additional API Enviornment Variables of note:
+Additional API Enviornment Variables of note, which you can add to the .env file
 
 1. SECRET_KEY - Flask required key
 1. THEQ_CLEAR_COMMENTS_FLAG - used to not remove comments for debugging purposes
