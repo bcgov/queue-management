@@ -56,7 +56,7 @@ Ensure you have python 3. I also had to install: gcc, python3-venv, libmysqlclie
 ### Set Enviornment Variables required:
 
 1. `cd queue-management`
-1. `cp documentation/demo-files/.env ./.env`
+1. `cp documentation/demo-files/.env .`
 
 ### Update Database with required tables:
 
