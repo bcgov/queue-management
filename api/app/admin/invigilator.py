@@ -19,17 +19,16 @@ from qsystem import db
 
 
 class InvigilatorConfig(Base):
-    roles_allowed = ['SUPPORT', 'LIAISON']
-
-    @property
-    def can_create(self):
-        return current_user.role.role_code != 'GA'
+    roles_allowed = ['SUPPORT', 'GA']
 
     def is_accessible(self):
         return current_user.is_authenticated and current_user.role.role_code in self.roles_allowed
 
     def get_query(self):
-        return self.session.query(self.model).filter_by(office_id=current_user.office_id)
+        if current_user.role.role_code == 'SUPPORT':
+            return self.session.query(self.model)
+        elif current_user.role.role_code == 'GA':
+            return self.session.query(self.model).filter_by(office_id=current_user.office_id)
 
     create_modal = False
     edit_modal = False
