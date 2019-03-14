@@ -20,6 +20,7 @@ flask-socketio
 gunicorn
 marshmallow-sqlalchemy
 mysqlclient
+psycopg2-binary
 pysnow
 pytest
 python-dotenv
