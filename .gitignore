@@ -140,3 +140,5 @@ api/wait-for-it.sh
 keys-generated
 .key
 /frontend/static/videos/*.mp4
+/frontend/static/keycloak.js.Debug
+/frontend/static/keycloak.js.Original
