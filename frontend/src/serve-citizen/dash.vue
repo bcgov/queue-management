@@ -100,7 +100,7 @@ import ServeCitizen from './serve-citizen'
         f: false,
         last: 0,
         dismissSecs: 5,
-        checkedLocalStorage: false,
+        checkedSessionStorage: false,
         iframeHeight: "500px"
       }
     },
@@ -144,7 +144,7 @@ import ServeCitizen from './serve-citizen'
     watch: {
       csrId: function(val, oldVal) {
         if (val) {
-          this.checkLocalStorage(val)
+          this.checkSessionStorage(val)
         }
       }
     },
@@ -180,8 +180,8 @@ import ServeCitizen from './serve-citizen'
         if (last) {
           let offsetRatio = this.offset / this.availH
           let lastRatio = this.last / this.availH
-          localStorage.setItem(`${this.csrId}offset`, offsetRatio)
-          localStorage.setItem(`${this.csrId}last`, lastRatio)
+          sessionStorage.setItem(`${this.csrId}offset`, offsetRatio)
+          sessionStorage.setItem(`${this.csrId}last`, lastRatio)
         }
       },
       receiveSize(e) {
@@ -209,12 +209,12 @@ import ServeCitizen from './serve-citizen'
       clickFeedback() {
         this.toggleFeedbackModal(true)
       },
-      checkLocalStorage(csrId) {
-        this.checkedLocalStorage = true
-        let offsetRatio = localStorage.getItem(`${csrId}offset`)
+      checkSessionStorage(csrId) {
+        this.checkedSessionStorage = true
+        let offsetRatio = sessionStorage.getItem(`${csrId}offset`)
         if(offsetRatio) {
           this.isDragged = true
-          let lastRatio = localStorage.getItem(`${csrId}last`)
+          let lastRatio = sessionStorage.getItem(`${csrId}last`)
           this.offset = offsetRatio * this.availH
           this.last = lastRatio * this.availH
         } else {
