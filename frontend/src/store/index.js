@@ -108,6 +108,7 @@ export const store = new Vuex.Store({
     offices: [],
     officeFilter: null,
     officeType: null,
+    offsiteVisible: false,
     performingAction: false,
     rescheduling: false,
     returnExam: null,
@@ -1254,10 +1255,8 @@ export const store = new Vuex.Store({
     
     initializeAgenda(context) {
       return new Promise((resolve, reject) => {
-        context.dispatch('getExams').then( () => {
-          context.dispatch('getRooms').then( rooms => {
-            resolve(rooms)
-          })
+        context.dispatch('getBookings').then( () => {
+          context.dispatch('getExams').then( () => resolve() )
         })
       })
     },
@@ -2280,7 +2279,8 @@ export const store = new Vuex.Store({
           payload.item[key]
         )
       })
-      
-    }
+    },
+    
+    toggleOffsiteVisible: (state, payload) => state.offsiteVisible = payload,
   }
 })

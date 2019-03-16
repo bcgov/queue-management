@@ -105,7 +105,7 @@
           </div>
           <div v-else-if="row.item.exam_type.exam_type_name.includes('Single')"
                :style="{color: row.item.exam_type.exam_color}">
-               {{ row.item.exam_type.exam_type_name }}
+            {{ row.item.exam_type.exam_type_name }}
           </div>
           <div v-else>{{ row.item.exam_type.exam_type_name }}</div>
         </template>
@@ -235,7 +235,7 @@
                   <b-dropdown-item size="sm"
                                    v-if="row.item.offsite_location"
                                    @click="editGroupExam(row.item)">
-                    {{ row.item.booking.invigilator_id ? 'Update Booking jj' : 'Add Invigilator jj' }}</b-dropdown-item>
+                    {{ row.item.booking.invigilator_id ? 'Update Booking' : 'Add Invigilator' }}</b-dropdown-item>
                 </template>
                 <template v-if="!row.item.offsite_location">
                   <b-dropdown-item v-if="!row.item.booking"
@@ -266,37 +266,37 @@
           v-model="page" />
       </div>
       <div v-if="filteredExams().length > 10 && showReturnExamModalVisible">
-          <b-pagination
-            :total-rows="totalRows"
-            :per-page="10"
-            v-model="page" />
-        </div>
+        <b-pagination
+          :total-rows="totalRows"
+          :per-page="10"
+          v-model="page" />
+      </div>
     </div>
     <EditExamModal :examRow="examRow" :resetExam="resetEditedExam" />
     <ReturnExamModal v-if="showReturnExamModalVisible" />
     <EditGroupExamBookingModal :examRow="examRow" :resetExam="resetEditedExam" />
     <DeleteExamModal v-if="showDeleteExamModal" />
     <b-modal v-model="officeFilterModal"
-               size="sm"
-               centered
-               hide-backdrop
-               @hide="checkValid()"
-               hide-header
-               hide-footer>
-        <h5>View Another Office</h5>
-        <p>To search, start typing or enter an office #</p>
-        <b-form>
-          <b-form-row>
-            <OfficeDrop columnW="8" :office_number="officeNumber" :setOffice="setOffice"/>
-          </b-form-row>
-        </b-form>
-        <div style="display:flex; justify-content: space-between">
-          <b-button class="mr-2 btn-secondary"
-                    @click="handleFilter({type: 'office_number', value: 'default'})">This Office</b-button>
-          <b-button class="ml-2 btn-primary"
-                    @click="officeFilterModal=false">Ok</b-button>
-        </div>
-      </b-modal>
+             size="sm"
+             centered
+             hide-backdrop
+             @hide="checkValid()"
+             hide-header
+             hide-footer>
+      <h5>View Another Office</h5>
+      <p>To search, start typing or enter an office #</p>
+      <b-form>
+        <b-form-row>
+          <OfficeDrop columnW="8" :office_number="officeNumber" :setOffice="setOffice"/>
+        </b-form-row>
+      </b-form>
+      <div style="display:flex; justify-content: space-between">
+        <b-button class="mr-2 btn-secondary"
+                  @click="handleFilter({type: 'office_number', value: 'default'})">This Office</b-button>
+        <b-button class="ml-2 btn-primary"
+                  @click="officeFilterModal=false">Ok</b-button>
+      </div>
+    </b-modal>
   </div>
 </template>
 
