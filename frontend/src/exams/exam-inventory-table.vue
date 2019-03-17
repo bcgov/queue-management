@@ -12,7 +12,8 @@
           </b-input-group-prepend>
           <b-btn-group v-if="role_code === 'LIAISON'" class="pt-2">
             <b-btn @click="officeFilterModal=true"
-                   class="btn-sm btn-warning">Office # {{ officeNumber }} - {{ officeName }}</b-btn>
+                   :variant="officeFilter === userOffice || officeFilter === 'default' ? 'primary' : 'warning'"
+                   class="btn-sm">Office # {{ officeNumber }} - {{ officeName }}</b-btn>
           </b-btn-group>
           <b-button-group horizontal
                           class="ml-2 pt-2"
@@ -42,11 +43,11 @@
             <b-btn size="sm"
                    :pressed="inventoryFilters.scheduledFilter==='unscheduled'"
                    @click="handleFilter({type:'scheduledFilter', value:'unscheduled'})"
-                   variant="primary">Un-Scheduled</b-btn>
+                   variant="primary">Not Ready</b-btn>
             <b-btn size="sm"
                    :pressed="inventoryFilters.scheduledFilter==='scheduled'"
                    @click="handleFilter({type:'scheduledFilter', value:'scheduled'})"
-                   variant="primary">Scheduled</b-btn>
+                   variant="primary">Ready</b-btn>
           </b-btn-group>
           <b-btn-group horizontal class="ml-2 pt-2">
             <b-btn size="sm"
@@ -81,7 +82,7 @@
     </div>
     <div :style="tableStyle" class="my-0 mx-3">
       <b-table :items="filteredExams()"
-               :fields="getFields"
+               :fields="fields"
                head-variant="light"
                style="border: 1px solid dimgrey"
                empty-text="There are no exams that match this filter criteria"
@@ -117,42 +118,27 @@
         </template>
 
         <template slot="scheduled" slot-scope="row">
-          <template v-if="row.item.exam_type.exam_type_name === 'Challenger Exam Session'">
-            <b-button v-if="checkChallenger(row.item)"
-                      class="btn-link"
-                      style="border: none;"
-                      @click.stop="handleDetails({row, origin: 'button'})">
-              {{ row.detailsShowing ? 'Hide' : 'Show' }}
-            </b-button>
-            <template v-else>
-              <font-awesome-icon v-if="!row.detailsShowing"
-                                 icon="exclamation-triangle"
-                                 @click.stop="handleDetails({row, origin: 'error'})"
-                                 class="m-0 p-0 error-cursor-hover"
-                                 style="font-size:1rem;color:#ffc32b"/>
-              <b-button v-if="row.detailsShowing"
-                        class="btn-link"
-                        style="border: none;"
-                        @click.stop="handleDetails({row, origin: 'button'})">Hide</b-button>
-            </template>
+          <template v-if="!scheduledFilter(row.item)">
+            <font-awesome-icon v-if="!row.detailsShowing"
+                               icon="exclamation-triangle"
+                               @click.stop="handleDetails({row, origin: 'error'})"
+                               class="m-0 p-0 error-cursor-hover"
+                               style="font-size:1rem;color:#ffc32b"/>
+            <b-button v-if="row.detailsShowing"
+                      variant="link"
+                      style="padding: 0px;"
+                      @click.stop="handleDetails({row, origin: 'button'})">Hide</b-button>
           </template>
-          <template v-if="row.item.exam_type.exam_type_name !== 'Challenger Exam Session'">
-            <b-button v-if="row.item.booking && (row.item.booking.invigilator_id || row.item.booking.sbc_staff_invigilated)"
-                      class="btn-link"
-                      style="border: none;"
-                      @click.stop="handleDetails({row, origin:'button'})">{{ row.detailsShowing ? 'Hide' : 'Show'}}
-            </b-button>
-            <template v-else>
-              <font-awesome-icon v-if="!row.detailsShowing"
-                                 icon="exclamation-triangle"
-                                 @click.stop="handleDetails({row, origin: 'error'})"
-                                 class="m-0 p-0 error-cursor-hover"
-                                 style="font-size:1rem;color:#ffc32b"/>
-              <b-button v-if="row.detailsShowing"
-                        class="btn-link"
-                        style="border: none;"
-                        @click.stop="handleDetails({row, origin: 'button'})">Hide</b-button>
-            </template>
+          <template v-if="scheduledFilter(row.item)">
+            <b-button v-if="row.detailsShowing"
+                      variant="link"
+                      style="padding: 0px;"
+                      @click.stop="handleDetails({row, origin: 'button'})">Hide</b-button>
+            <font-awesome-icon v-if="!row.detailsShowing"
+                               icon="clipboard-check"
+                               @click.stop="handleDetails({row, origin: 'button'})"
+                               class="m-0 p-0 error-cursor-hover"
+                               style="font-size:1.25rem;color:green"/>
           </template>
         </template>
 
@@ -176,12 +162,11 @@
           <template v-if="detailsSetup === 'error'">
             <div class="details-slot-div">
               <div class="ml-3" style="font-size: 1rem;">Still Requires:</div>
+              <div v-if="!row.item.exam_received_date"
+                   class="ml-3 mt-1">Materials Received</div>
               <template v-if="row.item.exam_type.exam_type_name.includes('Single')">
                 <div v-if="!row.item.booking"
                      class="ml-3 mt-1">Scheduling</div>
-                <div
-                  v-if="row.item.booking && (!row.item.booking.invigilator_id || !row.item.booking.sbc_staff_invigilated)"
-                  class="ml-3 mt-1">Assignment of Invigilator</div>
               </template>
               <template v-else-if="row.item.exam_type.exam_type_name.includes('Group')">
                 <div v-if="!row.item.booking.invigilator_id"
@@ -199,7 +184,7 @@
                 <div v-if="!row.item.booking"
                      class="ml-3 mt-1">Scheduling</div>
                 <div
-                  v-if="row.item.booking && !row.item.booking.invigilator_id || !row.item.booking.sbc_staff_invigilated"
+                  v-if="row.item.booking && !checkInvigilator(row.item)"
                   class="ml-3 mt-1">Assignment of Invigilator</div>
               </template>
             </div>
@@ -217,34 +202,46 @@
               <font-awesome-icon icon="caret-down"
                                  style="padding: -2px; margin: -2px; font-size: 1rem; color: dimgray"/>
             </template>
+
             <template v-if="officeFilter == userOffice || officeFilter == 'default'">
-              <template v-if="row.item.exam_type.exam_type_name === 'Challenger Exam Session'">
-                <b-dropdown-item size="sm"
-                                 v-if="row.item.offsite_location"
-                                 @click="editGroupExam(row.item)">
-                  {{ row.item.booking.invigilator_id ? 'Update Booking' : 'Add Invigilator' }}
-                </b-dropdown-item>
-                <b-dropdown-item size="sm"
-                                 v-if="!row.item.offsite_location"
-                                 @click="updateBookingRoute(row.item)">
-                  {{ row.item.booking.invigilator_id ? 'Update Booking' : 'Add Invigilator' }}
-                </b-dropdown-item>
-              </template>
-              <template v-if="row.item.exam_type.exam_type_name !== 'Challenger Exam Session'">
+              <template v-if="row.item.exam_type.exam_type_name.includes('Challenger')">
                 <template v-if="row.item.offsite_location">
                   <b-dropdown-item size="sm"
                                    v-if="row.item.offsite_location"
                                    @click="editGroupExam(row.item)">
-                    {{ row.item.booking.invigilator_id ? 'Update Booking' : 'Add Invigilator' }}</b-dropdown-item>
+                      {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}
+                  </b-dropdown-item>
                 </template>
                 <template v-if="!row.item.offsite_location">
-                  <b-dropdown-item v-if="!row.item.booking"
-                                   size="sm"
+                  <b-dropdown-item size="sm"
+                                     v-if="row.item.booking && Object.keys(row.item.booking).length > 0"
+                                   @click="updateBookingRoute(row.item)">
+                      {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}</b-dropdown-item>
+                  <b-dropdown-item size="sm"
+                                   v-if="!row.item.booking || Object.keys(row.item.booking).length === 0"
                                    @click="addBookingRoute(row.item)">Schedule Exam</b-dropdown-item>
-                  <b-dropdown-item v-else
-                                   size="sm"
-                                   @click="updateBookingRoute(row.item)">Update Booking</b-dropdown-item>
                 </template>
+              </template>
+
+              <template v-else-if="row.item.exam_type.exam_type_name.includes('Group')">
+                <b-dropdown-item size="sm"
+                                   v-if="row.item.offsite_location"
+                                   @click="editGroupExam(row.item)">
+                  {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}
+                </b-dropdown-item>
+              </template>
+
+              <template v-else>
+                <b-dropdown-item size="sm"
+                                 v-if="row.item.booking && Object.keys(row.item.booking).length > 0"
+                                 @click="updateBookingRoute(row.item)">
+                  {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}</b-dropdown-item>
+                <b-dropdown-item size="sm"
+                                 v-if="!row.item.booking || Object.keys(row.item.booking).length === 0"
+                                   @click="addBookingRoute(row.item)">Schedule Exam</b-dropdown-item>
+                <b-dropdown-item v-else
+                                 size="sm"
+                                 @click="updateBookingRoute(row.item)">Update Booking</b-dropdown-item>
               </template>
               <b-dropdown-item size="sm"
                                @click="editExam(row.item)">Edit Exam Details</b-dropdown-item>
@@ -258,8 +255,7 @@
           </b-dropdown>
         </template>
       </b-table>
-      <div v-if="filteredExams().length > 10 && !showReturnExamModalVisible"
-           class="pagination-class">
+      <div v-if="filteredExams().length > 10 && !showReturnExamModalVisible">
         <b-pagination
           :total-rows="totalRows"
           :per-page="10"
@@ -311,10 +307,12 @@
   import ReturnExamModal from './return-exam-form-modal'
   import SuccessExamAlert from './success-exam-alert'
   import DeleteExamModal from './delete-exam-modal'
+  import AddCitizen from '../add-citizen/add-citizen'
 
   export default {
     name: "ExamInventoryTable",
     components: {
+      AddCitizen,
       DeleteExamModal,
       EditExamModal,
       EditGroupExamBookingModal,
@@ -406,7 +404,6 @@
       fields() {
         if (!this.showExamInventoryModal) {
           return [
-            { key: 'office.office_name', label: 'Office', sortable: true, thStyle: 'width: 8%' },
             { key: 'event_id', label: 'Event ID', sortable: true, thStyle: 'width: 6%' },
             { key: 'exam_type_name', label: 'Exam Type', sortable: true },
             { key: 'exam_name', label: 'Exam Name', sortable: true, thStyle: 'width: 11%' },
@@ -430,16 +427,6 @@
             { key: 'examinee_name', label: 'Student Name', sortable: true, thStyle: 'width: 20%' },
             { key: 'notes', label: 'Notes', sortable: true, },
           ]
-        }
-      },
-      getFields() {
-        if (this.role_code === "LIAISON") {
-          return this.fields
-        } else {
-          let returnFields = this.fields
-          let index = this.fields.findIndex(x => x.key === "office.office_name")
-          returnFields.splice(index, 1)
-          return returnFields
         }
       },
     },
@@ -531,10 +518,10 @@
               moreFiltered = filtered
               break
             case 'unscheduled':
-              moreFiltered=filtered.filter(x=>!x.booking||(!x.booking.invigilator_id&&!x.booking.sbc_staff_invigilated))
+              moreFiltered = filtered.filter( x => !this.scheduledFilter(x))
               break
             case 'scheduled':
-              moreFiltered = filtered.filter(x=>x.booking&&(x.booking.invigilator_id||x.booking.sbc_staff_invigilated))
+              moreFiltered = filtered.filter( x => this.scheduledFilter(x))
               break
             default:
               moreFiltered = filtered
@@ -591,6 +578,12 @@
         }
         return ''
       },
+      checkInvigilator(item) {
+        if (item.booking && (item.booking.invigilator_id || item.booking.sbc_staff_invigilated)) {
+          return true
+        }
+        return false
+      },
       checkChallenger(item) {
         if (item.event_id && item.booking.invigilator_id && item.number_of_students) {
           return true
@@ -612,6 +605,28 @@
         this.buttons.all = 'btn-secondary'
         this.buttons.current = 'btn-secondary'
         this.buttons.expired = 'btn-secondary'
+      },
+      scheduledFilter(ex) {
+        if (ex.exam_type.exam_type_name.includes('Challenger')) {
+          if (ex.booking || ex.offsite_location) {
+            if (ex.booking.invigilator_id) {
+              if (ex.event_id && ex.number_of_students) {
+                if (ex.exam_received_date) {
+                  return true
+                }
+              }
+            }
+          }
+          return false
+        }
+        if (ex.booking || ex.offsite_location) {
+          if (ex.booking.invigilator_id || ex.booking.sbc_staff_invigilated) {
+            if (ex.exam_received_date) {
+              return true
+            }
+          }
+        }
+        return false
       },
       groupFilter(ex) {
         if (ex.exam_type.exam_type_name === 'Challenger Exam Session') {

@@ -99,7 +99,7 @@ export const store = new Vuex.Store({
     isLoggedIn: false,
     inventoryFilters: {
       expiryFilter: 'current',
-      scheduledFilter: 'unscheduled',
+      scheduledFilter: 'both',
       groupFilter: 'both',
       returnedFilter: 'notReturned',
       office_number: 'default',
@@ -1255,8 +1255,8 @@ export const store = new Vuex.Store({
     
     initializeAgenda(context) {
       return new Promise((resolve, reject) => {
-        context.dispatch('getBookings').then( () => {
-          context.dispatch('getExams').then( () => resolve() )
+        context.dispatch('getExams').then( () => {
+          context.dispatch('getBookings').then( () => resolve() )
         })
       })
     },
@@ -1486,6 +1486,10 @@ export const store = new Vuex.Store({
       if (responses.on_or_off === 'on') {
         booking.room_id = responses.offsite_location.id.valueOf()
         delete responses.offsite_location
+      }
+      if (responses.invigilator) {
+        booking.invigilator_id = responses.invigilator.invigilator_id.valueOf()
+        delete responses.invigilator
       }
       let exam_type= context.state.examTypes.find(ex => ex.exam_type_name === 'Challenger Exam Session')
       let defaultValues = {

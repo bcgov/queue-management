@@ -204,7 +204,7 @@
         }
       },
       challengerExam() {
-        if (this.capturedExam && this.capturedExam.on_or_off && this.capturedExam.on_or_off === 'on') {
+        if (this.capturedExam && this.capturedExam.on_or_off) {
           return true
         }
         return false
@@ -259,16 +259,21 @@
       },
       clickOk(e) {
         e.preventDefault()
+        if (this.selectedOption === 'invigilator' && this.formStep === 1) {
+          this.formStep++
+          return
+        }
         if (this.challengerExam) {
-          this.saveBooking(this.date)
+          let date = Object.assign({}, this.date)
+          if (this.invigilator && this.invigilator.invigilator_id) {
+            date.invigilator = this.invigilator
+          }
+
+          this.saveBooking(date)
           this.actionRestoreAll().then( () => {
             this.cancel()
             this.$router.push('/exams')
           })
-          return
-        }
-        if (this.selectedOption === 'invigilator') {
-          this.formStep = 2
           return
         }
         if (this.selectedOption) {
