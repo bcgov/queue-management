@@ -57,12 +57,16 @@
       },
       expiryDateFormat() {
         if (this.examAssociated && this.selectedExam.expiry_date) {
-          return moment(this.selectedExam.expiry_date).format('MMM-DD-YYYY')
+          let d = moment(this.selectedExam.expiry_date)
+          if (d.isValid()) {
+            return d.format('MMM-DD-YYYY')
+          }
         }
+        return 'not applicable'
       }
     },
     methods: {
-      ...mapActions(['finishBooking']),
+      ...mapActions(['finishBooking', 'actionRestoreAll']),
       ...mapMutations(['toggleEditBookingModal']),
       cancel() {
         if (this.rescheduling) {
@@ -70,12 +74,14 @@
           return
         }
         let pushToExams = false
-        if (this.selectedExam && this.selectedExam.referringAction === 'scheduling') {
+        if (this.selectedExam && this.selectedExam.referrer === 'scheduling') {
           pushToExams = true
         }
         this.finishBooking()
         if (pushToExams) {
-          this.$router.push('/exams')
+          this.actionRestoreAll().then( () => {
+            this.$router.push('/exams')
+          })
         }
       }
     }

@@ -22,3 +22,6 @@ from .office import OfficeModelView
 from .role import RoleModelView
 from .service import ServiceModelView
 from .smartboard import SmartBoardModelView
+from .invigilator import InvigilatorModelView
+from .room import RoomModelView
+
