@@ -11,6 +11,11 @@
           <b-form-input v-model="searchTerm"
                         size="sm"
                         @input="filter"></b-form-input>
+          <b-button class="btn-secondary btn-sm ml-3"
+                    v-if="!show_scheduling_indicator"
+                    @click="toggleOffsite(!offsiteVisible)">
+            {{ offsiteVisible ? 'Hide Offsite' : 'Show Offsite' }}
+          </b-button>
         </b-form>
       </div>
       <div class="w-50 mt-2 ml-3 pl-3"
@@ -103,13 +108,8 @@
     data() {
       return {
         tempEvent: false,
-        groupFilter: 'both',
-        office: null,
         savedSelection: null,
-        tempEvent: null,
         listView: false,
-        calendarsSelected: null,
-        selectedCals: '',
         searchTerm: '',
         config: {
           columnHeaderFormat: 'ddd/D',
@@ -122,7 +122,7 @@
           defaultView: 'agendaWeek',
           editable: false,
           eventConstraint: {
-            start: '07:00:00',
+            start: '08:00:00',
             end: '18:00:00',
           },
           fixedWeekCount: false,
@@ -133,12 +133,21 @@
           },
           height: 'auto',
           maxTime: '18:00:00',
-          minTime: '07:00:00',
+          minTime: '08:00:00',
           navLinks: true,
-          resources: [],
+          resources: (setResources) => {
+            this.getRooms().then( resources => {
+              setResources(resources)
+              this.$nextTick(function() {
+                if (!this.offsiteVisible) {
+                  this.toggleOffsite(false)
+                }
+              })
+            })
+          },
           schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
           selectConstraint: {
-            start: '07:00:00',
+            start: '08:00:00',
             end: '18:00:00',
           },
           showNonCurrentDates: false,
@@ -148,12 +157,10 @@
             agendaDay: {
               allDaySlot: false,
               groupByResource: true,
-              nowIndicator: true,
             },
             agendaWeek: {
               allDaySlot: false,
               groupByDateAndResource: true,
-              nowIndicator: true,
             },
             list: {
               listDayAltFormat: false,
@@ -168,13 +175,14 @@
       }
     },
     computed: {
-      ...mapGetters(['filtered_calendar_events']),
+      ...mapGetters(['filtered_calendar_events', 'show_scheduling_indicator']),
       ...mapState([
         'calendarEvents',
         'calendarSetup',
         'editedBooking',
         'editedBookingOriginal',
         'exams',
+        'offsiteVisible',
         'rescheduling',
         'roomResources',
         'scheduling',
@@ -209,7 +217,9 @@
           this.toggleOffsite(false)
         }
         if (oldVal && !newVal) {
-          this.toggleOffsite(true)
+          if (this.offsiteVisible) {
+            this.toggleOffsite(true)
+          }
         }
       },
       rescheduling(newVal, oldVal) {
@@ -217,12 +227,14 @@
           this.toggleOffsite(false)
         }
         if (oldVal && !newVal) {
-          this.toggleOffsite(true)
+          if (this.offsiteVisible) {
+            this.toggleOffsite(true)
+          }
         }
       }
     },
     methods: {
-      ...mapActions(['getBookings', 'finishBooking', 'initializeAgenda', 'getExamTypes', 'getInvigilators']),
+      ...mapActions(['getBookings','getRooms', 'finishBooking', 'initializeAgenda', 'getExamTypes', 'getInvigilators']),
       ...mapMutations([
         'setCalendarSetup',
         'setClickedDate',
@@ -232,6 +244,7 @@
         'setSelectionIndicator',
         'toggleBookingModal',
         'toggleEditBookingModal',
+        'toggleOffsiteVisible',
         'toggleOtherBookingModal',
         'toggleScheduling',
       ]),
@@ -334,17 +347,8 @@
         this.$refs.bookingcal.fireMethod('gotoDate', date)
       },
       initialize() {
+        this.initializeAgenda()
         this.setSelectionIndicator(false)
-        this.initializeAgenda().then( resources => {
-          if (this.scheduling || this.rescheduling) {
-            let i = resources.findIndex( r => r.title === '_offsite')
-            resources.splice(i, 1)
-          }
-          resources.forEach( res => {
-            this.$refs.bookingcal.fireMethod('addResource', res)
-          })
-        })
-        this.getBookings()
         this.tempEvent = false
       },
       month() {
@@ -453,11 +457,12 @@
         this.$refs.bookingcal.fireMethod('today')
       },
       toggleOffsite(bool) {
+        this.toggleOffsiteVisible(bool)
         if (bool) {
           this.$refs.bookingcal.fireMethod('addResource', {
             id: '_offsite',
             title: 'Offsite',
-            eventColor: '#82ff68',
+            eventColor: '#F58B4C',
           })
         }
         if (!bool) {
