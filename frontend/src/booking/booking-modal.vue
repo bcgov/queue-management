@@ -18,9 +18,13 @@
       <b-form class="mt-3">
         <b-form-row>
           <b-col cols="12">
-            <b-form-group>
+            <b-form-group v-if="individualExamInd">
               <label>Invigilator Selection Options</label>
-              <b-select :options="invigilatorOptions" v-model="selectedOption" @input="handleSelect"/>
+              <b-select :options="invigilatorIndividualOptions" v-model="selectedOption" @input="handleSelect"/>
+            </b-form-group>
+            <b-form-group v-else>
+              <label>Invigilator Selection Options</label>
+              <b-select :options="invigilatorIndividualOptions" v-model="selectedOption" @input="handleSelect"/>
             </b-form-group>
           </b-col>
         </b-form-row>
@@ -124,7 +128,11 @@
         },
         selectedOption: null,
         selectedInvigilator: null,
-        invigilatorOptions: [
+        invigilatorIndividualOptions: [
+          {text: 'ServiceBC Staff', value: 'sbc'},
+          {text: 'Contract Invigilator', value: 'invigilator'},
+        ],
+        invigilatorGroupOptions: [
           {text: 'ServiceBC Staff', value: 'sbc'},
           {text: 'Assign Later', value: 'unassigned'},
           {text: 'Contract Invigilator', value: 'invigilator'},
@@ -155,9 +163,6 @@
         }
         return 'Submit'
       },
-      huh() {
-        return this.notes == this.exam.notes
-      },
       displayData() {
         let items = [
           { key: 'Exam:', value: this.exam.exam_name },
@@ -178,6 +183,13 @@
         return {
           title: 'Booking Details',
           items
+        }
+      },
+      individualExamInd() {
+        if(this.exam.exam_type.group_exam_ind === 0){
+          return true
+        }else{
+          return false
         }
       },
       invigilatorDetails() {
