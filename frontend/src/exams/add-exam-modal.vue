@@ -136,11 +136,6 @@
         tab: 'captureITAExamTabSetup',
         user: 'user',
         module: 'addExamModule',
-        addGroupSteps: state => state.addExamModule.addGroupSteps,
-        addChallengerSteps: state => state.addExamModule.addChallengerSteps,
-        addIndividualSteps: state => state.addExamModule.addIndividualSteps,
-        addOtherSteps: state => state.addExamModule.addOtherSteps,
-        addPesticideSteps: state => state.addExamModule.addPesticideSteps,
         capturtedAddModal: state => state.addExamModule.addExamModal,
       }),
       lastStep() {

@@ -22,6 +22,9 @@
                 @click="handleClick('group')">Add Group Exam</b-button>
       <b-button class="mr-1 btn-primary"
                 @click="handleClick('other')">Add Other Exam</b-button>
+      <b-button v-if="pesticide_designate===1"
+                class="btn-primary"
+                @click="handleClick('pesticide')">Add Pesticide Exam</b-button>
     </b-form>
     <AddExamModal />
   </div>
