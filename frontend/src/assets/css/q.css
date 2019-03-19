@@ -103,6 +103,11 @@
   display: flex;
   justify-content: flex-start;
 }
+.q-w100-flex-fe {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
 .q-modal-header {
   font-size: 1.5rem;
   font-weight: 600;

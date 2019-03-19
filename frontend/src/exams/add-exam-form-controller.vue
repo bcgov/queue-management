@@ -16,6 +16,19 @@
                      :validationObj="validationObj"
                      :handleInput="handleInput"
                      :exam="exam" />
+      <LocationInput v-if="q.kind==='locationInput'"
+                     v-show="addExamModal.setup !== 'other' || q.key !== 'event_id'"
+                     :error="error"
+                     :q="q"
+                     :validationObj="validationObj"
+                     :handleInput="handleInput"
+                     :exam="exam" />
+      <OffsiteSelect v-if="q.kind==='offsiteSelect'"
+                     :error="error"
+                     :q="q"
+                     :validationObj="validationObj"
+                     :handleInput="handleInput"
+                     :exam="exam" />
       <SelectQuestion v-if="q.kind==='select'"
                       :error="error"
                       :q="q"
@@ -37,11 +50,13 @@
                             :exam="exam" />
       <DateQuestion v-if="q.kind==='date'"
                     :error="error"
+                    v-show="addExamModal.setup !== 'challenger' || exam.on_or_off === 'off'"
                     :q="q"
                     :validationObj="validationObj"
                     :handleInput="handleInput"
                     :exam="exam" />
       <TimeQuestion v-if="q.kind==='time'"
+                    v-show="addExamModal.setup !== 'challenger' || exam.on_or_off === 'off'"
                     :error="error"
                     :q="q"
                     :validationObj="validationObj"
@@ -65,6 +80,8 @@
     TimeQuestion,
     DropdownQuestion,
     ExamReceivedQuestion,
+    LocationInput,
+    OffsiteSelect,
     InputQuestion,
     NotesQuestion,
     SelectQuestion,
@@ -80,6 +97,8 @@
       DropdownQuestion,
       ExamReceivedQuestion,
       InputQuestion,
+      LocationInput,
+      OffsiteSelect,
       TimeQuestion,
       NotesQuestion,
       SelectQuestion,
@@ -88,6 +107,9 @@
     mounted() {
       this.getExamTypes()
       this.getOffices()
+      this.$root.$on('validateform', () => {
+        this.validate()
+      })
     },
     data() {
       return {
@@ -99,14 +121,20 @@
       }
     },
     computed: {
-      ...mapGetters(['exam_object', 'role_code', 'pesticide_designate', ]),
+      ...mapGetters({
+        steps: 'add_modal_steps',
+        exam_object: 'exam_object',
+        role_code: 'role_code',
+        pesticide_designate: 'pesticide_designate',
+      }),
       ...mapState({
         exam: state => state.capturedExam,
         addExamModal: state => state.addExamModal,
-        addGroupSteps: state => state.addGroupSteps,
-        addIndividualSteps: state => state.addIndividualSteps,
-        addOtherSteps: state => state.addOtherSteps,
-        addPesticideSteps: state => state.addPesticideSteps,
+        addGroupSteps: state => state.addExamModule.addGroupSteps,
+        addChallengerSteps: state => state.addExamModule.addChallengerSteps,
+        addIndividualSteps: state => state.addExamModule.addIndividualSteps,
+        addOtherSteps: state => state.addExamModule.addOtherSteps,
+        addPesticideSteps: state => state.addExamModule.addPesticideSteps,
         tab: state => state.captureITAExamTabSetup,
         examTypes: state => state.examTypes,
         user: state => state.user,
@@ -144,20 +172,6 @@
           return this.tab.step
         }
         return 1
-      },
-      steps() {
-        if (this.addExamModal.setup === 'group') {
-          return this.addGroupSteps
-        }
-        if (this.addExamModal.setup === 'other') {
-          return this.addOtherSteps
-        }
-        if (this.addExamModal.setup === 'individual') {
-          return this.addIndividualSteps
-        }
-        if (this.addExamModal.setup === 'pesticide') {
-          return this.addPesticideSteps
-        }
       },
       stepErrors() {
         let keys = Object.keys(this.validationObj)
@@ -264,10 +278,10 @@
     },
     watch: {
       step(newV, oldV) {
-        if (oldV == 2 && newV == 3) {
-          setTimeout(()=>{this.validate()}, 200)
-        }
-      }
+        this.$nextTick( function() {
+          this.validate()
+        })
+      },
     },
     methods: {
       ...mapMutations(['captureExamDetail', 'updateCaptureTab',]),
@@ -277,12 +291,10 @@
           key: e.target.name,
           value: e.target.value,
         }
-        if (this.step === 1) {
-          payload.key = 'exam_type_id'
-          payload.value = e.target.id
-        }
         this.captureExamDetail(payload)
-        this.validate()
+        this.$nextTick( function() {
+          this.validate()
+        })
       },
       removeError() {
         if (this.error) {
