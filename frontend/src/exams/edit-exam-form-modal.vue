@@ -361,7 +361,11 @@
             return this.examTypes.filter(type => type.exam_type_name.includes('Group'))
           }
           if (!this.exam.offsite_location) {
-            return this.examTypes.filter(type => type.exam_type_name.includes('Single'))
+            if (this.exam.exam_type.ita_ind == 1) {
+              return this.examTypes.filter(type => type.exam_type_name.includes('Single'))
+            }else {
+              return this.examTypes.filter(type => type.ita_ind == 0)
+            }
           }
         }
         return []
