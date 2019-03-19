@@ -1220,11 +1220,16 @@ export const store = new Vuex.Store({
 
     clickServiceFinish(context) {
       let { citizen_id } = context.state.serviceModalForm
+      let { accurate_time_ind } = context.state.serviceModalForm
+      let inaccurate_flag = 'true'
+      if ((accurate_time_ind === null) || (accurate_time_ind === 1)) {
+        inaccurate_flag = 'false'
+      }
       context.commit('setPerformingAction', true)
 
       context.dispatch('putCitizen').then( (resp) => {
         context.dispatch('putServiceRequest').then( () => {
-          context.dispatch('postFinishService', {citizen_id}).then( () => {
+          context.dispatch('postFinishService', {citizen_id, inaccurate:inaccurate_flag}).then( () => {
             context.commit('toggleServiceModal', false)
             context.commit('toggleBegunStatus', false)
             context.commit('toggleInvitedStatus', false)

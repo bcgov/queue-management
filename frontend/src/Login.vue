@@ -62,7 +62,7 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
     name: 'Login',
     created() {
       this.setupKeycloakCallbacks()
-      _.defer(this.initLocalStorage)
+      _.defer(this.initSessionStorage)
     },
     computed: {
       ...mapState(['user', 'csr_states']),
@@ -118,24 +118,26 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
     methods: {
       ...mapActions(['updateCSRCounterTypeState', 'updateCSRState']),
       ...mapMutations(['setQuickTransactionState', 'setReceptionistState', 'setCSRState', 'setUserCSRStateName']),
-      initLocalStorage() {
-        if(localStorage.token) {
-          let tokenExp = localStorage.tokenExp
+      initSessionStorage() {
+        if(sessionStorage.getItem('token')) {
+          let tokenExp = sessionStorage.getItem('tokenExp')
           let timeUntilExp = Math.round(tokenExp - new Date().getTime() / 1000)
           if (timeUntilExp > 30) {
             this.$keycloak.init({
                 responseMode: 'fragment',
                 flow: 'standard',
-                refreshToken: localStorage.refreshToken,
-                token: localStorage.token,
-                tokenExp: localStorage.tokenExp
+                refreshToken: sessionStorage.getItem('refreshToken'),
+                token: sessionStorage.getItem('token'),
+                tokenExp: sessionStorage.getItem('tokenExp')
             })
             .success( () => {
 
               //Set a timer to auto-refresh the token
-              setInterval(() => { this.refreshToken(300); }, 60*1000)
-              this.setTokenToLocalStorage()
-              this.$store.commit('setBearer', localStorage.token)
+              setInterval(() => {
+                this.refreshToken(process.env.REFRESH_TOKEN_SECONDS_LEFT);
+                }, 60*1000)
+              this.setTokenToSessionStorage()
+              this.$store.commit('setBearer', sessionStorage.getItem('token'))
             })
             .error( () => {
               this.init()
@@ -143,7 +145,7 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
           } else {
             this.init()
           }
-        } else if (!localStorage.token) {
+        } else if (!sessionStorage.getItem('token')) {
           this.init()
         }
       },
@@ -154,7 +156,9 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
             flow: 'standard'
           }
         ).success( () => {
-          setInterval(() => { this.refreshToken(300); }, 60*1000)
+          setInterval(() => {
+            this.refreshToken(process.env.REFRESH_TOKEN_SECONDS_LEFT);
+            }, 60*1000)
         })
       },
 
@@ -162,7 +166,7 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 
         this.$keycloak.onAuthSuccess = () => {
           this.$store.dispatch('logIn', this.$keycloak.token)
-          this.setTokenToLocalStorage()
+          this.setTokenToSessionStorage()
           this.$root.$emit('socketConnect')
         }
 
@@ -173,37 +177,48 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
         }
 
         this.$keycloak.onAuthRefreshSuccess = () => {
-          this.setTokenToLocalStorage()
+          this.setTokenToSessionStorage()
           this.$store.commit('setBearer', this.$keycloak.token)
         }
       },
 
-      setTokenToLocalStorage() {
+      setTokenToSessionStorage() {
         let tokenParsed = this.$keycloak.tokenParsed
         let token = this.$keycloak.token
         let refreshToken = this.$keycloak.refreshToken
         let tokenExpiry = tokenParsed.exp
 
-        if (localStorage.token) {
-          localStorage.removeItem("token")
-          localStorage.removeItem("tokenExp")
-          localStorage.removeItem("refreshToken")
+        if (sessionStorage.getItem('token')) {
+          sessionStorage.removeItem("token")
+          sessionStorage.removeItem("tokenExp")
+          sessionStorage.removeItem("refreshToken")
         }
-        localStorage.setItem("token", token)
+        sessionStorage.setItem("token", token)
         document.cookie = "oidc-jwt=" + this.$keycloak.token
-        localStorage.setItem("tokenExp", tokenExpiry)
-        localStorage.setItem("refreshToken", refreshToken)
+        sessionStorage.setItem("tokenExp", tokenExpiry)
+        sessionStorage.setItem("refreshToken", refreshToken)
       },
 
       login() {
         this.$keycloak.login({idpHint: 'idir'})
       },
 
+      logoutTokenExpired() {
+        console.log("==> In logoutTokenExpired")
+        this.clearStorage()
+        // this.init()
+        location.href = "/queue"
+      },
+
       logout() {
         this.$keycloak.logout()
-        localStorage.removeItem("token")
-        localStorage.removeItem("tokenExp")
-        localStorage.removeItem("refreshToken")
+        this.clearStorage()
+      },
+
+      clearStorage() {
+        sessionStorage.removeItem("token")
+        sessionStorage.removeItem("tokenExp")
+        sessionStorage.removeItem("refreshToken")
       },
 
       setBreakClickEvent(){
@@ -220,15 +235,25 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
       },
 
       refreshToken(minValidity) {
+        let secondsLeft = Math.round(this.$keycloak.tokenParsed.exp + this.$keycloak.timeSkew - new Date().getTime() / 1000)
+        console.log('==> Updating token.  Currently valid for ' + secondsLeft + ' seconds')
         this.$keycloak.updateToken(minValidity).success(refreshed => {
           if (refreshed) {
+            console.log("Token refreshed and is below")
             console.log(this.$keycloak.tokenParsed)
           } else {
-            console.log('Token not refreshed, valid for ' + Math.round(this.$keycloak.tokenParsed.exp + this.$keycloak.timeSkew - new Date().getTime() / 1000) + ' seconds')
+            console.log('Token not refreshed')
           }
+          let secondsLeft = Math.round(this.$keycloak.tokenParsed.exp + this.$keycloak.timeSkew - new Date().getTime() / 1000)
+          console.log('    --> After refresh.  Token now valid for ' + secondsLeft + ' seconds')
         }).error( (error) => {
           console.log('Failed to refresh token')
           console.log(error)
+          let secondsLeft = Math.round(this.$keycloak.tokenParsed.exp + this.$keycloak.timeSkew - new Date().getTime() / 1000)
+          console.log('    --> After refresh.  Token now valid for ' + secondsLeft + ' seconds')
+          if (secondsLeft < 90) {
+            this.logoutTokenExpired()
+          }
         })
       },
     },
