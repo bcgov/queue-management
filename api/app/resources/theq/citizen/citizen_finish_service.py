@@ -39,6 +39,10 @@ class CitizenFinishService(Resource):
         if active_service_request is None:
             return {"message": "Citizen has no active service requests"}
 
+        #  If citizen here overnight, or inaccurate time flag set, update accurate time flag.
+        if citizen.start_time.date() != datetime.now().date() or inaccurate == 'true':
+            citizen.accurate_time_ind = 0
+
         SnowPlow.snowplow_event(citizen.citizen_id, csr, "finish",
                                 quantity = active_service_request.quantity,
                                 current_sr_number= active_service_request.sr_number)
@@ -50,9 +54,6 @@ class CitizenFinishService(Resource):
 
         pending_service_state = SRState.get_state_by_name("Complete")
         active_service_request.sr_state_id = pending_service_state.sr_state_id
-
-        if citizen.start_time.date() != datetime.now().date() or inaccurate == 'true':
-            citizen.accurate_time_ind = 0
 
         db.session.add(citizen)
         db.session.commit()
