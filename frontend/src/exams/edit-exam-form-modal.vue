@@ -70,7 +70,7 @@
             </b-form-group>
           </b-col>
         </b-form-row>
-        <b-form-row>
+        <b-form-row v-if="examType !== 'challenger' ">
             <b-col>
               <b-form-group>
                 <label class="my-0">Exam Type</label><br>
@@ -98,6 +98,17 @@
               </b-form-group>
             </b-col>
           </b-form-row>
+        <b-form-row v-if="examType === 'challenger'">
+          <b-col>
+            <b-form-group>
+              <label class="mb-0 mt-1">Exam Type</label>
+              <b-form-input id="exam_name" type="text"
+                            class="less-10-mb"
+                            disabled
+                            value="Challenger Exam Session" />
+            </b-form-group>
+          </b-col>
+        </b-form-row>
         <b-form-row>
           <b-col>
             <b-form-group>
@@ -135,7 +146,7 @@
               </DatePicker>
             </b-form-group>
           </b-col>
-          <b-col v-if="examType === 'group'" col>
+          <b-col v-if="examType === 'group' || examType === 'challenger'" col>
             <b-form-group>
               <label class="my-0"># of Writers</label><br>
               <b-input v-model="fields.number_of_students"
@@ -195,7 +206,9 @@
                 </div>
                 <div class="q-id-grid-col">
                   <div>Type:</div>
-                  <div :style="{color: exam.exam_type.exam_color}">{{ exam.exam_type.exam_type_name }}</div>
+                  <div v-if="isITAGropOrSingleExam(exam)"
+                       :style="{color: exam.exam_type.exam_color}">{{ exam.exam_type.exam_type_name }}</div>
+                  <div v-else>{{ exam.exam_type.exam_type_name }}</div>
                 </div>
                 <div class="q-id-grid-col">
                   <div>Method:</div>
@@ -240,7 +253,10 @@
            class="mb-3"
            style="color: red;">{{ this.message }}</div>
       <div style="display: flex; justify-content: flex-end; width: 100%">
-        <b-btn class="btn-secondary mr-2" @click="toggleEditExamModal(false)">Cancel</b-btn>
+        <b-btn class="btn-danger mr-2"
+               @click="deleteExam()">Delete Exam</b-btn>
+        <b-btn class="btn-secondary mr-2"
+               @click="toggleEditExamModal(false)">Cancel</b-btn>
         <b-btn v-if="!allowSubmit()"
                class="btn-primary disabled"
                @click="setMessage">Submit</b-btn>
@@ -257,10 +273,12 @@
   import DatePicker from 'vue2-datepicker'
   import moment from 'moment'
   import Vue from 'vue'
+  import DeleteExamModal from './delete-exam-modal'
 
   export default {
     name: "EditExamModal",
-    components: { DatePicker },
+    components: { DatePicker,
+                  DeleteExamModal},
     props: ['examRow', 'resetExam'],
     data () {
       return {
@@ -286,7 +304,12 @@
     },
     computed: {
       ...mapGetters(['exam_object_id', 'role_code']),
-      ...mapState(['editExamFailure', 'editExamSuccess', 'examTypes', 'offices', 'showEditExamModal',]),
+      ...mapState(['editExamFailure',
+                   'editExamSuccess',
+                   'examTypes',
+                   'offices',
+                   'showEditExamModal',
+                   'showDeleteExamModal', ]),
       exam() {
         if (Object.keys(this.examRow).length > 0) {
           return this.examRow
@@ -314,6 +337,9 @@
       },
       examType() {
         if (this.exam && this.exam.exam_type && this.exam.exam_type.ita_ind) {
+          if (this.exam.exam_type.exam_type_name === 'Challenger Exam Session') {
+            return 'challenger'
+          }
           if (this.exam.offsite_location) {
             return 'group'
           }
@@ -356,6 +382,12 @@
       },
       showAllFields() {
         if (this.exam) {
+          if (this.exam.exam_type.exam_type_name === 'Challenger Exam Session') {
+            if (this.role_code === 'GA') {
+              return true
+            }
+            return false
+          }
           if (!this.exam.offsite_location) {
             return true
           }
@@ -378,7 +410,13 @@
     },
     methods: {
       ...mapActions(['getBookings', 'getExams', 'getOffices', 'putExamInfo',]),
-      ...mapMutations(['setEditExamFailure', 'setEditExamSuccess', 'setSelectedExam', 'toggleEditExamModal',]),
+      ...mapMutations(['setEditExamFailure',
+                       'setEditExamSuccess',
+                       'setSelectedExam',
+                       'setReturnExamInfo',
+                       'setReturnDeleteExamInfo',
+                       'toggleEditExamModal',
+                       'toggleDeleteExamModalVisible']),
       allowSubmit() {
         if (this.examRow) {
           let fieldsEdited = false
@@ -393,6 +431,35 @@
           return fieldsEdited
         }
         return false
+      },
+      isITAGropOrSingleExam(ex) {
+        if (ex.exam_type.exam_type_name.includes('Group') || ex.exam_type.exam_type_name.includes('Single') ) {
+          return true
+        }
+        return false
+      },
+      deleteExam() {
+        let deleteExamInfo = {}
+
+        if (this.fields.booking_id) {
+          deleteExamInfo = {
+            booking_id: this.fields.booking_id,
+            exam_id: this.fields.exam_id,
+            exam_name: this.fields.exam_name,
+            examinee_name: this.fields.examinee_name,
+            event_id: this.fields.event_id,
+          }
+        }else {
+          deleteExamInfo = {
+            booking_id: null,
+            exam_id: this.fields.exam_id,
+            exam_name: this.fields.exam_name,
+            examinee_name: this.fields.examinee_name,
+            event_id: this.fields.event_id,
+          }
+        }
+        this.toggleDeleteExamModalVisible(true)
+        this.setReturnExamInfo(deleteExamInfo)
       },
       getFilteredOffices(offices) {
         if (offices.length === 0) {

@@ -9,7 +9,7 @@
            size="md">
     <template slot="modal-footer">
       <template v-if="unSubmitted">
-        <div v-if="step < 4"
+        <div v-if="step < lastStep"
              style="width: 100%;
                     display: flex;
                     justify-content: space-between">
@@ -28,7 +28,7 @@
                       @click="clickNext">Next</b-button>
           </div>
         </div>
-        <div v-else-if="step == 4"
+        <div v-else-if="step == lastStep"
              style="display: flex;
                     justify-content: space-between;
                     width: 100%">
@@ -36,7 +36,7 @@
             <b-button class="btn-secondary"
                       @click="clickCancel">Cancel</b-button>
           <b-button class="btn-warning"
-                    @click="resetModal">Start Again</b-button>
+                    @click="logAnother">Start Again</b-button>
           </div>
           <div style="display: flex">
             <b-button v-if="errors.length > 0"
@@ -70,8 +70,8 @@
       </b-nav-item>
     </b-nav>
     <template v-if="unSubmitted">
-      <AddExamFormController v-if="step <= 3"  />
-      <AddExamFormConfirm v-if="step==4" :submitMsg="submitMsg" />
+      <AddExamFormController v-if="step <= (lastStep - 1)"  />
+      <AddExamFormConfirm v-if="step==lastStep" :submitMsg="submitMsg" />
     </template>
     <template v-if="!unSubmitted">
       <div v-if="status==='unknown' "
@@ -125,19 +125,29 @@
     },
     computed: {
       ...mapGetters({
+        steps: 'add_modal_steps',
         button: 'add_exam_modal_navigation_buttons',
       }),
       ...mapState({
-        exam: state => state.capturedExam,
-        examTypes: state => state.examTypes,
-        addExamModal: state => state.addExamModal,
-        tab: state => state.captureITAExamTabSetup,
-        user: state => state.user,
-        addGroupSteps: state => state.addGroupSteps,
-        addIndividualSteps: state => state.addIndividualSteps,
-        addOtherSteps: state => state.addOtherSteps,
-        addPesticideSteps: state => state.addPesticideSteps,
+        exam: 'capturedExam',
+        examTypes: 'examTypes',
+        addExamModal: 'addExamModal',
+        tab: 'captureITAExamTabSetup',
+        user: 'user',
+        module: 'addExamModule',
+        addGroupSteps: state => state.addExamModule.addGroupSteps,
+        addChallengerSteps: state => state.addExamModule.addChallengerSteps,
+        addIndividualSteps: state => state.addExamModule.addIndividualSteps,
+        addOtherSteps: state => state.addExamModule.addOtherSteps,
+        addPesticideSteps: state => state.addExamModule.addPesticideSteps,
+        capturtedAddModal: state => state.addExamModule.addExamModal,
       }),
+      lastStep() {
+        if (this.addExamModal.setup === 'challenger') {
+          return 3
+        }
+        return 4
+      },
       errors() {
         if (this.tab.errors) {
           return this.tab.errors
@@ -160,21 +170,6 @@
         }
         return 1
       },
-      steps() {
-        let { setup } = this.addExamModal
-        if (setup === 'group') {
-          return this.addGroupSteps
-        }
-        if (setup === 'other') {
-          return this.addOtherSteps
-        }
-        if (setup === 'individual') {
-          return this.addIndividualSteps
-        }
-        if (setup === 'pesticide') {
-          return this.addPesticideSteps
-        }
-      },
       tabs() {
         if (this.steps && Array.isArray(this.steps)) {
           return this.steps.slice(0, this.tab.highestStep)
@@ -182,14 +177,8 @@
       },
     },
     methods: {
-      ...mapActions(['clickAddExamSubmit', 'getExams']),
-      ...mapMutations([
-        'captureExamDetail',
-        'resetCaptureForm',
-        'resetCaptureTab',
-        'toggleAddExamModal',
-        'updateCaptureTab',
-      ]),
+      ...mapActions(['clickAddExamSubmit', 'getExams', 'wipeAll']),
+      ...mapMutations(['captureExamDetail', 'resetCaptureForm', 'resetCaptureTab', 'toggleAddExamModal', 'updateCaptureTab', ]),
       tabWarning(i) {
         if (!Array.isArray(this.errors)) return ''
         if (this.errors.length > 0) {
@@ -213,6 +202,7 @@
         return true
       },
       logAnother() {
+        this.wipeAll()
         this.resetModal()
         this.initialize()
       },
@@ -222,12 +212,12 @@
       },
       clickCancel() {
         this.resetModal()
+        this.wipeAll()
         this.toggleAddExamModal({visible: false, setup: null, step1MenuOpen: false})
       },
       clickNext() {
         let step = this.step + 1
         this.updateCaptureTab({step})
-
         if (step > this.tab.highestStep) {
           this.updateCaptureTab({highestStep: step})
         }
@@ -236,13 +226,31 @@
         this.updateCaptureTab({step: e})
       },
       initialize() {
-        let { setup } = this.addExamModal
         this.captureExamDetail({key:'notes', value: ''})
         this.captureExamDetail({key: 'exam_method', value: 'paper'})
+        this.unSubmitted = true
+        this.submitMsg = ''
+        this.status = 'unknown'
+        let { setup } = this.addExamModal
+        if (setup === 'challenger') {
+          if (this.module.booking && this.module.booking.start) {
+            this.captureExamDetail({ key: 'offsite_location', value: this.module.booking.resource})
+            this.captureExamDetail({ key: 'exam_time', value: this.module.booking.start})
+            this.captureExamDetail({ key: 'expiry_date', value: this.module.booking.start})
+            setTimeout( () => { this.$root.$emit('validateform') }, 300)
+          }
+          if (this.module.addExamModal &&
+              Object.keys(this.module.addExamModal).length > 0) {
+            return
+          }
+          this.captureExamDetail({ key: 'on_or_off', value: 'off'})
+        }
         if (setup == 'individual') {
           let d = new Date()
           let today = moment(d).format('YYYY-MM-DD')
           this.captureExamDetail({ key: 'exam_received_date', value: today })
+          let value = moment().add(90, 'd')
+          this.captureExamDetail({ key: 'expiry_date', value })
         }
         if (setup === 'group') {
           let { office_id, office_number } = this.user.office
@@ -250,10 +258,6 @@
           office_number = parseInt(office_number)
           this.captureExamDetail({key: 'office_id', value: office_id })
           this.toggleAddExamModal({ office_number })
-        }
-        if (setup === 'individual') {
-          let value = moment().add(90, 'd')
-          this.captureExamDetail({ key: 'expiry_date', value })
         }
         if (setup === 'other') {
           let value = moment().add(60, 'd')
@@ -263,9 +267,7 @@
           let value = moment().add(60, 'd')
           this.captureExamDetail({ key: 'expiry_date', value })
         }
-        this.unSubmitted = true
-        this.submitMsg = ''
-        this.status = 'unknown'
+
       },
       tryAgain() {
         this.unSubmitted = true
@@ -276,7 +278,16 @@
         this.unSubmitted = false
         this.submitMsg = ''
         if (setup === 'group') {
-          this.clickAddExamSubmit('group').then( resp => {
+          this.clickAddExamSubmit(setup).then( resp => {
+            this.status = resp
+            this.getExams()
+          }).catch( error => {
+            this.status = error
+            this.getExams()
+          })
+        }
+        if (setup === 'challenger') {
+          this.clickAddExamSubmit(setup).then( resp => {
             this.status = resp
             this.getExams()
           }).catch( error => {
@@ -295,6 +306,14 @@
         }
       },
       resetModal() {
+        if (this.addExamModal.setup !== 'challenger') {
+          this.resetCaptureForm()
+          this.resetCaptureTab()
+          return
+        }
+        if (this.capturtedAddModal && Object.keys(this.capturtedAddModal).length > 0) {
+          return
+        }
         this.resetCaptureForm()
         this.resetCaptureTab()
       },

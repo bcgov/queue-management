@@ -22,6 +22,12 @@
         <b-form-select :options="options" @input="handleInput" :value="option" />
       </div>
     </template>
+    <tempate v-else-if="user.role && user.role.role_code==='GA' ">
+      <div style="display: inline-flex;">
+        <span style="font-size: 1.4rem; font-weight: 600; margin-right: 1em"> Editing: </span>
+        <b-form-select :options="optionsGA" @input="handleInput" :value="option" />
+      </div>
+    </tempate>
     <template v-else>
       <span style="font-size: 1.4rem; font-weight: 600"> Editing: {{this.name}}</span>
     </template>
@@ -43,6 +49,13 @@
           {value: 'role', text: 'User roles'},
           {value: 'service', text: 'Provided Services'},
           {value: 'smartboard', text: 'Smartboard Content'},
+          {value: 'invigilator', text: 'Invigilators'},
+          {value: 'room', text: 'Rooms'}
+        ],
+        optionsGA: [
+          {value: 'csr', text: 'CSRs'},
+          {value: 'invigilator', text: 'Invigilators'},
+          {value: 'room', text: 'Rooms'}
         ]
       }
     },

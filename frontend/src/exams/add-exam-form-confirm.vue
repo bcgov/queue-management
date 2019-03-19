@@ -1,5 +1,5 @@
 <template>
-  <b-form>
+  <b-form v-if="addExamModal.setup !== 'challenger'">
     <b-row no-gutters>
       <b-col cols="12">
         <span style="font-size:1rem">Please Review the Details You have Entered</span>
@@ -127,6 +127,77 @@
       </b-col>
       <b-col align-self="end">
         <span class="confirm-item">{{ exam.notes }}</span>
+      </b-col>
+    </b-row>
+  </b-form>
+  <b-form v-else>
+    <b-row no-gutters>
+      <b-col cols="12">
+        <span style="font-size:1rem">Please Review the Details You have Entered</span>
+      </b-col>
+    </b-row>
+    <b-row v-if="errors.length > 0">
+      <b-col cols="12">
+        <span style="font-size:1rem; color: red">{{ submitMsg }}</span>
+      </b-col>
+    </b-row>
+    <b-row no-gutters class="mt-2" align-v="end">
+      <b-col cols="1" />
+      <b-col cols="3">
+        <span class="confirm-header">Exam Type</span>
+      </b-col>
+      <b-col>
+        Challenger Exam Session
+      </b-col>
+    </b-row>
+    <b-row no-gutters align-h="start" align-v="end" v-if="exam.event_id">
+      <b-col cols="1" />
+      <b-col cols="3">
+        <span class="confirm-header">Event ID</span>
+      </b-col>
+      <b-col>
+        <span class="confirm-item">{{ exam.event_id }}</span>
+      </b-col>
+    </b-row>
+    <b-row no-gutters align-h="between" align-v="end" v-if="exam.number_of_students">
+      <b-col cols="1" />
+      <b-col cols="3">
+        <span class="confirm-header">Students</span>
+      </b-col>
+      <b-col align-self="end">
+        <span class="confirm-item">{{ exam.number_of_students }}</span>
+      </b-col>
+    </b-row>
+    <b-row no-gutters align-h="start" align-v="end">
+    <b-col cols="1" />
+      <b-col cols="3">
+        <span class="confirm-header">Exam Date</span>
+      </b-col>
+      <b-col align-self="end">
+        <span class="confirm-item">{{ formatDate(exam.expiry_date) }}</span>
+      </b-col>
+    </b-row>
+    <b-row no-gutters align-h="between" align-v="end"">
+      <b-col cols="1" />
+      <b-col cols="3">
+        <span class="confirm-header">Exam Time
+        </span>
+      </b-col>
+      <b-col align-self="end">
+        <span class="confirm-item">{{ displayTime }}</span>
+      </b-col>
+    </b-row>
+    <b-row no-gutters align-h="between" align-v="end">
+      <b-col cols="1" />
+      <b-col cols="3">
+        <span class="confirm-header">Location
+        </span>
+      </b-col>
+      <b-col align-self="end">
+        <span v-if="exam.on_or_off === 'off'"
+              class="confirm-item">{{ exam.offsite_location }}</span>
+        <span v-if="exam.on_or_off === 'on'"
+              class="confirm-item">ServiceBC Office<br>{{ exam.offsite_location.title }}</span>
       </b-col>
     </b-row>
   </b-form>

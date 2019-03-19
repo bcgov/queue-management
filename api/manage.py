@@ -484,13 +484,13 @@ class Bootstrap(Command):
             office_id = office_test.office_id,
             room_name = "Boardroom 1",
             capacity = 25,
-            color = "red"
+            color = "#EFD469"
         )
         room_two = bookings.Room(
             office_id = office_test.office_id,
             room_name = "Turquoise W-135",
             capacity = 25,
-            color = "red"
+            color = "#EFD469"
         )
 
 
