@@ -242,6 +242,13 @@ export const store = new Vuex.Store({
       return false
     },
 
+    showAppointments(state) {
+      if (state.user && state.user.office.appointments_enabled_ind === 1){
+        return true
+      }
+      return false
+    },
+
     add_exam_modal_navigation_buttons(state) {
       //controls disabled/enabled state of and current classes applied to the 'next' button in AddExamFormModal
       let setup = state.captureITAExamTabSetup

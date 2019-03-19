@@ -35,7 +35,7 @@
           <div :style="{width:200+'px'}">
             <b-dropdown-item to="/queue">The Q</b-dropdown-item>
             <b-dropdown-item to="/booking" v-if="showExams">Room Booking</b-dropdown-item>
-            <b-dropdown-item to="/appointments" v-if="showExams">Appointments</b-dropdown-item>
+            <b-dropdown-item to="/appointments" v-if="showAppointments">Appointments</b-dropdown-item>
             <b-dropdown-item to="/exams" v-if="showExams">Exam Admin</b-dropdown-item>
             <b-dropdown-item to="/agenda" v-if="isGAorCSR && showExams">Office Agenda</b-dropdown-item>
             <template  v-if="user.role && user.role.role_code=='GA'">
@@ -73,7 +73,10 @@
   export default {
     name: 'Nav',
     computed: {
-      ...mapGetters(['showExams']),
+      ...mapGetters([
+        'showExams',
+        'showAppointments'
+      ]),
       ...mapState([
         'calendarSetup',
         'rescheduling',
