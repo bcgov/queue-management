@@ -1,6 +1,7 @@
 <template>
   <b-modal v-model="modalVisible"
            :no-close-on-backdrop="true"
+           id="add-exam-modal"
            hide-ok
            hide-header
            hide-cancel
@@ -177,7 +178,7 @@
       },
     },
     methods: {
-      ...mapActions(['clickAddExamSubmit', 'getExams', 'wipeAll']),
+      ...mapActions(['clickAddExamSubmit', 'getExams', 'actionWipeAllSavedModals']),
       ...mapMutations(['captureExamDetail', 'resetCaptureForm', 'resetCaptureTab', 'toggleAddExamModal', 'updateCaptureTab', ]),
       tabWarning(i) {
         if (!Array.isArray(this.errors)) return ''
@@ -202,7 +203,7 @@
         return true
       },
       logAnother() {
-        this.wipeAll()
+        this.actionWipeAllSavedModals()
         this.resetModal()
         this.initialize()
       },
@@ -212,7 +213,7 @@
       },
       clickCancel() {
         this.resetModal()
-        this.wipeAll()
+        this.actionWipeAllSavedModals()
         this.toggleAddExamModal({visible: false, setup: null, step1MenuOpen: false})
       },
       clickNext() {
@@ -226,25 +227,36 @@
         this.updateCaptureTab({step: e})
       },
       initialize() {
-        this.captureExamDetail({key:'notes', value: ''})
-        this.captureExamDetail({key: 'exam_method', value: 'paper'})
-        this.unSubmitted = true
-        this.submitMsg = ''
-        this.status = 'unknown'
+        document.addEventListener('keydown', this.filterKeyPress)
         let { setup } = this.addExamModal
+        let reset = () => {
+          this.unSubmitted = true
+          this.submitMsg = ''
+          this.status = 'unknown'
+          this.captureExamDetail({key: 'exam_method', value: 'paper'})
+          this.captureExamDetail({key:'notes', value: ''})
+        }
         if (setup === 'challenger') {
           if (this.module.booking && this.module.booking.start) {
+            this.captureExamDetail({ key: 'on_or_off', value: 'on'})
             this.captureExamDetail({ key: 'offsite_location', value: this.module.booking.resource})
             this.captureExamDetail({ key: 'exam_time', value: this.module.booking.start})
             this.captureExamDetail({ key: 'expiry_date', value: this.module.booking.start})
-            setTimeout( () => { this.$root.$emit('validateform') }, 300)
-          }
-          if (this.module.addExamModal &&
-              Object.keys(this.module.addExamModal).length > 0) {
+            if (this.module.booking.invigilator) {
+              this.captureExamDetail({ key: 'invigilator', value: this.module.booking.invigilator })
+            }
+            this.$nextTick(function() { this.$root.$emit('validateform') })
+            this.actionWipeAllSavedModals()
+            reset()
             return
           }
+          this.resetCaptureForm()
+          this.resetCaptureTab()
           this.captureExamDetail({ key: 'on_or_off', value: 'off'})
-        }
+          reset()
+          return
+          }
+        reset()
         if (setup == 'individual') {
           let d = new Date()
           let today = moment(d).format('YYYY-MM-DD')
@@ -267,11 +279,15 @@
           let value = moment().add(60, 'd')
           this.captureExamDetail({ key: 'expiry_date', value })
         }
-
       },
       tryAgain() {
         this.unSubmitted = true
         this.status = 'unknown'
+      },
+      filterKeyPress(e) {
+        if (e.keyCode === 13) {
+          e.preventDefault()
+        }
       },
       submit() {
         let { setup } = this.addExamModal
@@ -306,16 +322,18 @@
         }
       },
       resetModal() {
+        document.removeEventListener('keydown', this.filterKeyPress)
         if (this.addExamModal.setup !== 'challenger') {
           this.resetCaptureForm()
           this.resetCaptureTab()
           return
         }
-        if (this.capturtedAddModal && Object.keys(this.capturtedAddModal).length > 0) {
+        if (this.addExamModal.setup === 'challenger' && this.capturedExam && this.capturedExam.on_or_off !== 'on') {
+          this.resetCaptureForm()
+          this.resetCaptureTab()
+          this.actionWipeAllSavedModals()
           return
         }
-        this.resetCaptureForm()
-        this.resetCaptureTab()
       },
       setWarning() {
         if (!this.errors.includes(this.step)) {

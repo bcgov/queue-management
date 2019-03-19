@@ -9,6 +9,9 @@
                    :events="events()"
                    :config="config"></full-calendar>
     <b-container fluid>
+      <b-alert show v-if="exams.length === 0" variant="primary">
+        There are no exam events to display.  <b>Note:</b> The Agenda only shows events scheduled on or after today's date.
+      </b-alert>
     <template v-for="date in displayDates">
       <b-container fluid style="background-color: white">
         <b-form-row class="mt-1">
@@ -29,7 +32,12 @@
               </template>
 
               <template slot="length" slot-scope="row">
-                {{ row.item.exam.exam_type.number_of_hours }} hrs
+                <span v-if="row.item.exam && row.item.exam.exam_type">
+                {{ row.item.exam.exam_type.number_of_hours }} hrs</span>
+              </template>
+
+              <template slot="row-details" slot-scope="row">
+                <span class="ml-3 pl-3">Location: {{ row.item.exam.offsite_location }} </span>
               </template>
 
               <template slot="materials" slot-scope="row">
@@ -38,23 +46,44 @@
               </template>
 
               <template slot="invigilator" slot-scope="row">
-                <span v-if="!row.item.exam.booking.invigilator_id" style="color: red;">Not Scheduled </span>
-                <span v-if="row.item.exam.booking.invigilator_id">
-                  {{ row.item.exam.booking.invigilator.invigilator_name }}
-                </span>
+                <template v-if="row.item.exam && row.item.exam.booking">
+                  <span v-if="!row.item.exam.booking.invigilator_id && !row.item.exam.booking.sbc_staff_invigilated"
+                        style="color: red;">Not Assigned</span>
+                  <span v-if="row.item.exam.booking.invigilator_id">
+                    {{ row.item.exam.booking.invigilator.invigilator_name }}
+                  </span>
+                  <span v-if="row.item.exam.booking.sbc_staff_invigilated"
+                        class="text-warning">
+                    SBC Staff
+                  </span>
+                </template>
               </template>
 
               <template slot="room" slot-scope="row">
                 <template v-if="row.item.resourceId === '_offsite'">
-                  <b-badge  variant="info">Offsite</b-badge>
+                  <b-badge  variant="info"
+                            style="cursor: pointer;"
+                            v-if="!row.detailsShowing"
+                            @click="row.toggleDetails()">Offsite</b-badge>
+                  <b-btn class="btn-link btn-sm m-0 p-0"
+                         style="border: none;"
+                         @click="row.toggleDetails()"
+                         v-if="row.detailsShowing">Hide</b-btn>
                 </template>
                 <template v-else>
-                  {{ row.item.exam.booking.room ? row.item.exam.booking.room.room_name : 'Not booked' }}
+                  <span v-if="row.item.exam && row.item.exam.booking">
+                  {{ row.item.exam.booking.room ? row.item.exam.booking.room.room_name : 'Not booked' }}</span>
                 </template>
               </template>
 
               <template slot="writer" slot-scope="row">
-                {{ row.item.exam.examinee_name }}
+                <span v-if="!row.item.exam.exam_type.exam_type_name.includes('Group') &&
+                            !row.item.exam.exam_type.exam_type_name.includes('Challenger')">
+                  {{ row.item.exam.examinee_name }}
+                </span>
+                <span v-else>
+                  –
+                </span>
               </template>
             </b-table>
           </b-col>
@@ -63,7 +92,7 @@
     </template>
     </b-container>
     <b-container fluid class="mt-3">
-      <b-container fluid style="background-color: white">
+      <b-container fluid style="background-color: white" v-if="others.length > 0">
         <b-form-row class="mt-1">
           <b-col class="date-header-col-other"><span class="date-header">Non Exam Bookings</span></b-col>
         </b-form-row>
@@ -102,7 +131,7 @@
     name: 'Agenda',
     components: { FullCalendar },
     mounted() {
-      this.initialize()
+      this.initializeAgenda()
       this.$root.$on('next', () => { this.next() })
       this.$root.$on('prev', () => { this.prev() })
       this.$root.$on('today', () => { this.today() })
@@ -120,23 +149,23 @@
         others: [],
         rendered: false,
         fields: [
-          {key: 'start', label: 'Time', thStyle: 'width: 6%'},
-          {key: 'length', label:'Duration', thStyle: 'width: 6%'},
-          {key: 'room',  thStyle: 'width: 8%'},
-          {key: 'exam.exam_type.exam_type_name', label: 'Exam Type'},
-          {key: 'invigilator', thStyle: 'width: 10%'},
-          {key: 'materials', label: 'Materials?', thStyle: 'width: 6%'},
-          {key: 'title' },
-          {key: 'writer', label: "Writer's Name"},
-          {key: 'notes'},
+          {key: 'start', label: 'Time', thStyle: 'width: 6%;font-size:.9rem;'},
+          {key: 'length', label:'Duration', thStyle: 'width: 6%;font-size:.9rem;'},
+          {key: 'room',  thStyle: 'width: 8%;font-size:.9rem;'},
+          {key: 'exam.exam_type.exam_type_name', label: 'Exam Type', thStyle:'font-size:.9rem;'},
+          {key: 'invigilator', thStyle: 'width: 10%;font-size:.9rem;'},
+          {key: 'materials', label: 'Materials?', thStyle: 'width: 6%;font-size:.9rem;'},
+          {key: 'title', thStyle: 'font-size:.9rem;'},
+          {key: 'writer', label: "Writer's Name", thStyle: 'font-size:.9rem;'},
+          {key: 'notes', thStyle: 'font-size:.9rem;'},
         ],
         fieldsOther: [
-          {key: 'date', thStyle: 'width: 11%'},
-          {key: 'start', label: 'Start', thStyle: 'width: 6%'},
-          {key: 'end', label: 'End', thStyle: 'width: 6%'},
-          {key: 'room.room_name', label: 'Room'},
-          {key: 'title' },
-          {key: 'notes'},
+          {key: 'date', thStyle: 'width: 11%;font-size:.9rem;'},
+          {key: 'start', label: 'Start', thStyle: 'width: 6%;font-size:.9rem;'},
+          {key: 'end', label: 'End', thStyle: 'width: 6%;font-size:.9rem;'},
+          {key: 'room.room_name', label: 'Room', thStyle: 'font-size:.9rem;' },
+          {key: 'title', thStyle: 'font-size:.9rem;' },
+          {key: 'notes', thStyle: 'font-size:.9rem;'},
         ],
         config: {
           timezone: 'local',
@@ -145,7 +174,11 @@
           fixedWeekCount: true,
           navLinks: true,
           defaultView: 'listWeek',
-          resources: [],
+          resources: (setResources) => {
+            this.getRooms().then( resources => {
+              setResources(resources)
+            })
+          },
           listDayFormat: 'dddd, MMM Do',
           views: {
             listDay: {
@@ -192,7 +225,7 @@
       }
     },
     methods: {
-      ...mapActions(['initializeAgenda', 'getBookings']),
+      ...mapActions(['initializeAgenda', 'getBookings', 'getRooms']),
       ...mapMutations([
         'setCalendarSetup',
         'toggleBookRoomModal',
@@ -212,63 +245,60 @@
       setDate(d) {
         return new moment(d).format('dddd, MMMM Do, YYYY')
       },
-      initialize() {
-        this.initializeAgenda().then( rooms => {
-          rooms.forEach( room => {
-            this.$refs.agendacal.fireMethod('addResource', room)
-          })
-          this.getBookings()
-        })
-      },
       viewRender(view, el) {
         this.setCalendarSetup({ title: view.title, view: view.name })
       },
       eventRender(event, el, view) {
-        if (Object.keys(event).includes('exam')) {
+        if (event.exam) {
           let list = this.exams.length > 0 ? this.exams.map(exam => exam.id) : []
           if (!list.includes(event.id)) {
-            this.exams.push(event)
+            let now = moment()
+            if (event.start.isSameOrAfter(now, 'day')) {
+              this.exams.push(event)
+            }
+
           }
         }
-        if (!Object.keys(event).includes('exam')) {
+        if (!event.exam) {
           let list = this.others.length > 0 ? this.others.map(other => other.id) : []
           if (!list.includes(event.id)) {
-            this.others.push(event)
+            let now = moment()
+            if (event.start.isSameOrAfter(now, 'day')) {
+              this.others.push(event)
+            }
           }
         }
       },
       next() {
         this.exams = []
         this.others = []
-        this.$refs.agendacal.fireMethod('next')
+        this.$nextTick(function() {
+          this.$refs.agendacal.fireMethod('next')
+        })
+
       },
       prev() {
         this.exams = []
         this.others = []
-        this.$refs.agendacal.fireMethod('prev')
-
+        this.$nextTick(function() {
+          this.$refs.agendacal.fireMethod('prev')
+        })
       },
       today() {
         this.exams = []
         this.others = []
-        this.$refs.agendacal.fireMethod('today')
-      },
-      listDay() {
-        this.exams = []
-        this.others = []
-        this.$refs.agendacal.fireMethod('changeView', 'listDay')
-
-      },
-      listWeek() {
-        this.exams = []
-        this.others = []
-        this.$refs.agendacal.fireMethod('changeView', 'listWeek')
+        this.$nextTick(function() {
+          this.$refs.agendacal.fireMethod('today')
+        })
       },
     }
   }
 </script>
 
 <style scoped>
+  .header-table-special {
+    color: red !important;
+  }
   .exam-title {
     font-weight: 500 !important;
     font-size: 1rem !important;
