@@ -534,6 +534,9 @@ export const addExamModule = {
     },
     actionAddModalSetup({commit, rootState}) {
       commit('saveAddModalSetup', Object.assign({}, rootState.addExamModal))
+    },
+    actionWipeAllSavedModals({commit}) {
+      commit('wipeAll')
     }
   },
   mutations: {

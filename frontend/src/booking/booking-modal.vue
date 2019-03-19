@@ -18,9 +18,13 @@
       <b-form class="mt-3">
         <b-form-row>
           <b-col cols="12">
-            <b-form-group>
+            <b-form-group v-if="individualExamInd">
               <label>Invigilator Selection Options</label>
-              <b-select :options="invigilatorOptions" v-model="selectedOption" @input="handleSelect"/>
+              <b-select :options="invigilatorIndividualOptions" v-model="selectedOption" @input="handleSelect"/>
+            </b-form-group>
+            <b-form-group v-else>
+              <label>Invigilator Selection Options</label>
+              <b-select :options="invigilatorIndividualOptions" v-model="selectedOption" @input="handleSelect"/>
             </b-form-group>
           </b-col>
         </b-form-row>
@@ -124,7 +128,11 @@
         },
         selectedOption: null,
         selectedInvigilator: null,
-        invigilatorOptions: [
+        invigilatorIndividualOptions: [
+          {text: 'ServiceBC Staff', value: 'sbc'},
+          {text: 'Contract Invigilator', value: 'invigilator'},
+        ],
+        invigilatorGroupOptions: [
           {text: 'ServiceBC Staff', value: 'sbc'},
           {text: 'Assign Later', value: 'unassigned'},
           {text: 'Contract Invigilator', value: 'invigilator'},
@@ -155,9 +163,6 @@
         }
         return 'Submit'
       },
-      huh() {
-        return this.notes == this.exam.notes
-      },
       displayData() {
         let items = [
           { key: 'Exam:', value: this.exam.exam_name },
@@ -180,6 +185,13 @@
           items
         }
       },
+      individualExamInd() {
+        if(this.exam.exam_type.group_exam_ind === 0){
+          return true
+        }else{
+          return false
+        }
+      },
       invigilatorDetails() {
         if (this.invigilator) {
           return this.invigilator
@@ -192,7 +204,7 @@
         }
       },
       challengerExam() {
-        if (this.capturedExam && this.capturedExam.on_or_off && this.capturedExam.on_or_off === 'on') {
+        if (this.capturedExam && this.capturedExam.on_or_off) {
           return true
         }
         return false
@@ -247,16 +259,21 @@
       },
       clickOk(e) {
         e.preventDefault()
+        if (this.selectedOption === 'invigilator' && this.formStep === 1) {
+          this.formStep++
+          return
+        }
         if (this.challengerExam) {
-          this.saveBooking(this.date)
+          let date = Object.assign({}, this.date)
+          if (this.invigilator && this.invigilator.invigilator_id) {
+            date.invigilator = this.invigilator
+          }
+
+          this.saveBooking(date)
           this.actionRestoreAll().then( () => {
             this.cancel()
             this.$router.push('/exams')
           })
-          return
-        }
-        if (this.selectedOption === 'invigilator') {
-          this.formStep = 2
           return
         }
         if (this.selectedOption) {

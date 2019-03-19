@@ -327,10 +327,10 @@ export const LocationInput = Vue.component('input-question', {
       }
     },
     bookingDetails() {
-      if (this.booking && this.booking.start) {
-        let date = this.booking.start.format('ddd MMM Do, YYYY')
-        let time = this.booking.start.format('h:mm a')
-        let room = this.booking.resource.title
+      if (this.exam.exam_time) {
+        let date = moment(this.exam.exam_time).format('ddd MMM Do, YYYY')
+        let time = moment(this.exam.exam_time).format('h:mm a')
+        let room = this.exam.offsite_location.title
         return `${date} @ ${time} in ${room}`
       }
       return 'Not Yet Scheduled'
@@ -401,6 +401,16 @@ export const LocationInput = Vue.component('input-question', {
             </b-form-group>
           </b-col>
            <checkmark :validated="validationObj[q.key].valid"  />
+        </b-row>
+        <b-row no-gutters v-if="exam.invigilator && exam.invigilator.invigilator_name">
+          <b-col cols="11">
+            <b-form-group>
+              <label>Invigilator
+              </label>
+              <b-form-input :value="exam.invigilator.invigilator_name"
+                            disabled />
+            </b-form-group>
+          </b-col>
         </b-row>
       </template>
       </fragment>
@@ -485,15 +495,7 @@ export const OffsiteSelect = Vue.component('offsite-select', {
   methods: {
     ...mapActions(['actionSaveAll']),
     ...mapMutations(['captureExamDetail']),
-    resetGroupQuestions() {
-      ['expiry_date', 'offsite_location', 'exam_time'].forEach(item => {
-        this.captureExamDetail({key: item, value: null})
-      })
-    },
     preHandleInput(e) {
-      if (this.exam.on_or_off && e.target.value !== this.exam.on_or_off) {
-        this.resetGroupQuestions()
-      }
       this.handleInput(e)
     }
   },

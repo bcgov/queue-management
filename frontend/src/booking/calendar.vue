@@ -88,6 +88,7 @@
       OtherBookingModal,
     },
     mounted() {
+      document.addEventListener('keydown', this.filterKeyPress)
       this.getExamTypes()
       this.getInvigilators()
       this.initialize()
@@ -343,6 +344,11 @@
           }
         }
       },
+      filterKeyPress(e) {
+        if (e.keyCode === 13) {
+          e.preventDefault()
+        }
+      },
       goToDate(date) {
         this.$refs.bookingcal.fireMethod('gotoDate', date)
       },
@@ -506,6 +512,7 @@
     destroyed() {
       this.setCalendarSetup(null)
       this.toggleScheduling(false)
+      document.removeEventListener('keydown', this.filterKeyPress)
     },
   }
 
