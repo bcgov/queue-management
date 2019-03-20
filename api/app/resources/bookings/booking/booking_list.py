@@ -33,7 +33,7 @@ class BookingList(Resource):
         csr = CSR.find_by_username(g.oidc_token_info['username'])
         office_filter = csr.office_id
 
-        if request.args.get('office_id') and csr.role.role_code == "LIAISON":
+        if request.args.get('office_id') and csr.liaison_designate == 1:
             office_filter = request.args.get('office_id')
 
         try:
