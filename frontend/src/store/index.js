@@ -661,7 +661,7 @@ export const store = new Vuex.Store({
     },
     
     getOffices(context, payload=null) {
-      if (context.state.user.role.role_code === 'LIAISON' || payload === 'force') {
+      if (context.state.user.role.role_code === 'LIAISON' || payload === 'force' || context.state.user.pesticide_designate===1) {
         return new Promise((resolve, reject) => {
           Axios(context).get('/offices/').then(resp => {
             context.commit('setOffices', resp.data.offices)
