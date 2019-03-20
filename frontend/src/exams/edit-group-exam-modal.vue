@@ -34,7 +34,7 @@
           </b-col>
         </b-form-row>
         <b-form-row>
-          <b-col cols="6" v-if="role_code === 'LIAISON' || role_code === 'GA'">
+          <b-col cols="6" v-if="liaison_designate === 1 || role_code === 'GA'">
             <b-form-group>
               <label>Exam Date</label><br>
               <DatePicker v-model="date"
@@ -44,19 +44,19 @@
                           lang="en"></DatePicker>
             </b-form-group>
           </b-col>
-          <b-col cols="6" v-if="role_code !== 'GA' && role_code !== 'LIAISON'">
+          <b-col cols="6" v-if="role_code !== 'GA' && liaison_designate !== 1">
             <b-form-group>
               <label>Exam Time</label><br>
               <b-input disabled :value="formatTime(examRow.booking.start_time)" />
             </b-form-group>
           </b-col>
-          <b-col cols="6" v-if="role_code !== 'GA' && role_code !== 'LIAISON'">
+          <b-col cols="6" v-if="role_code !== 'GA' && liaison_designate !== 1">
             <b-form-group>
               <label>Exam Date</label><br>
               <b-input disabled :value="formatDate(examRow.booking.start_time)" />
             </b-form-group>
           </b-col>
-          <b-col cols="6" v-if="role_code === 'LIAISON' || role_code === 'GA'">
+          <b-col cols="6" v-if="liaison_designate === 1 || role_code === 'GA'">
             <b-form-group>
               <label>Exam Time</label><br>
               <DatePicker v-model="time"
@@ -82,7 +82,7 @@
             <b-form-group>
               <label>Location</label><br>
               <b-textarea v-model="offsite_location"
-                          :disabled="role_code !== 'GA' && role_code !== 'LIAISON'"
+                          :disabled="role_code !== 'GA' && liaison_designate !== 1"
                           class="mb-0"
                           :rows="2"
                           name="offsite_location"
@@ -91,7 +91,7 @@
           </b-col>
         </b-form-row>
         <b-form-row align-content="end" align-h="end">
-          <b-col :cols="role_code === 'LIAISON' || role_code === 'GA' ? 10 : '' ">
+          <b-col :cols="liaison_designate === 1 || role_code === 'GA' ? 10 : '' ">
             <b-form-group>
               <label>Invigilator</label><br>
               <b-select v-model="invigilator_id"
@@ -100,7 +100,7 @@
                         :options="invigilator_dropdown" />
             </b-form-group>
           </b-col>
-          <b-col cols="2" align-self="start" v-if="role_code==='LIAISON' || role_code === 'GA'">
+          <b-col cols="2" align-self="start" v-if="liaison_designate === 1 || role_code === 'GA'">
             <label>Clear Form?</label><br>
             <b-btn class="w-100 btn-warning" @click="setValues">Reset</b-btn>
           </b-col>
@@ -143,7 +143,7 @@
       }
     },
     computed: {
-      ...mapGetters(['role_code', 'invigilator_dropdown']),
+      ...mapGetters(['role_code', 'invigilator_dropdown', 'liaison_designate']),
       ...mapState({
         showModal: state => state.showEditGroupBookingModal,
         invigilators: state => state.invigilators,

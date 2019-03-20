@@ -286,6 +286,13 @@ export const store = new Vuex.Store({
       }
       return ''
     },
+
+    liaison_designate(state) {
+      if (state.user && state.user.role && state.user.role.role_code){
+        return state.user.liaison_designate
+      }
+      return ''
+    },
     
     reception(state) {
       if (state.user.office && state.user.office.sb) {
@@ -674,7 +681,7 @@ export const store = new Vuex.Store({
     },
     
     getOffices(context, payload=null) {
-      if (context.state.user.role.role_code === 'LIAISON' || payload === 'force' || context.state.user.pesticide_designate===1) {
+      if (context.state.user.liaison_designate === 1 || payload === 'force' || context.state.user.pesticide_designate === 1) {
         return new Promise((resolve, reject) => {
           Axios(context).get('/offices/').then(resp => {
             context.commit('setOffices', resp.data.offices)

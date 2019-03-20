@@ -92,16 +92,12 @@ class Bootstrap(Command):
             role_code="ANALYTICS",
             role_desc="Analtyics Team to update Services per Office"
         )
-        role6 = theq.Role(
-            role_code="LIAISON",
-            role_desc="Centralized Government Agent Officer responsible for liaising without outside providers (e.g., ITA)"
-        )
+
         db.session.add(role_csr)
         db.session.add(role_ga)
         db.session.add(role3)
         db.session.add(role4)
         db.session.add(role5)
-        db.session.add(role6)
         db.session.commit()
 
         #-- Period State ----------------------------------------------------

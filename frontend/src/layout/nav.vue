@@ -117,7 +117,8 @@
       isGAorCSR() {
         if (this.user && this.user.role) {
           let { role_code } = this.user.role
-          if (role_code === 'CSR' || role_code === 'GA' || role_code === 'LIAISON' ) {
+          let { liaison_designate } = this.user.liaison_designate
+          if (role_code === 'CSR' || role_code === 'GA' ||  liaison_designate === 1 ) {
             return true
           }
         }
