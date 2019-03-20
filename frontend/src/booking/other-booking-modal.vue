@@ -19,8 +19,12 @@
         <template v-if="!minimized">
           <b-form>
             <b-form-group>
-              <label>Event Title<span style="color: red">{{ message }}</span></label><br>
+              <label>Scheduling Party<span style="color: red">{{ message }}</span></label><br>
               <b-input :state="state" type="text" v-model="title" />
+            </b-form-group>
+            <b-form-group>
+              <label>Contact Information(Email or Phone Number)</label><br>
+              <b-input :state="state" type="text" v-model="contact_information"/>
             </b-form-group>
             <b-form-row>
               <b-col cols="5">
@@ -117,6 +121,7 @@
     data() {
       return {
         confirm: false,
+        contact_information: '',
         minimized: false,
         title: '',
         state: null,
@@ -239,6 +244,7 @@
             end_time: end.format('DD-MMM-YYYY[T]HH:mm:ssZ'),
             fees: 'false',
             booking_name: this.title,
+            booking_contact_information: this.contact_information,
           }
           this.postBooking(booking).then( () => {
             this.finishBooking()
