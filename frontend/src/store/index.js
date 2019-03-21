@@ -394,6 +394,7 @@ export const store = new Vuex.Store({
     channel_options: state => {
       return state.channels.map(ch=>({value: ch.channel_id, text: ch.channel_name}))
     },
+
     categories_options: (state, getters) => {
       let opts = state.categories.filter(o => state.services.some(s => s.parent_id === o.service_id))
 
@@ -1751,13 +1752,13 @@ export const store = new Vuex.Store({
     },
   
     screenAllCitizens(context, route) {
-      for (let citizen of context.state.citizens) {
+      context.state.citizens.forEach( citizen =>{
         let payload = {
           citizen,
           route
         }
         context.dispatch('screenIncomingCitizen', payload)
-      }
+      })
     },
   
     screenIncomingCitizen(context, payload) {
