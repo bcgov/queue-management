@@ -42,9 +42,6 @@
       ...mapState(['addNonITA', 'showGenFinReportModal', 'user' ]),
       ...mapGetters([ 'showExams', 'role_code', 'pesticide_designate', 'financial_designate', 'liaison_designate']),
     },
-    created() {
-      console.log(this.financial_designate)
-    },
     methods: {
       ...mapActions(['actionRestoreAll']),
       ...mapMutations(['toggleAddExamModal', 'toggleGenFinReport',]),

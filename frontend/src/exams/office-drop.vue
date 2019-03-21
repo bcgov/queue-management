@@ -2,7 +2,7 @@
   <fragment>
     <b-col :cols="columnW">
       <b-table v-show="false"
-               v-if="liaison_designate === 1 pesticide_designate===1"
+               v-if="liaison_designate === 1 || pesticide_designate===1"
                :items="offices"
                :fields="{key: 'office_name'}"
                :filter="search"

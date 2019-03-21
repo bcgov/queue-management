@@ -274,22 +274,29 @@ export const store = new Vuex.Store({
     },
 
     pesticide_designate(state) {
-      if (state.user && state.user.role && state.user.role.role_code) {
+      if (state.user && state.user.role.role_code) {
         return state.user.pesticide_designate
       }
       return ''
     },
 
     financial_designate(state) {
-      if (state.user && state.user.role && state.user.role.role_code) {
+      if (state.user && state.user.role.role_code) {
         return state.user.finance_designate
       }
       return ''
     },
 
     liaison_designate(state) {
-      if (state.user && state.user.role && state.user.role.role_code){
+      if (state.user && state.user.role.role_code){
         return state.user.liaison_designate
+      }
+      return ''
+    },
+
+    ita_designate(state) {
+      if (state.user && state.user.role.role_code){
+        return state.user.ita_designate
       }
       return ''
     },

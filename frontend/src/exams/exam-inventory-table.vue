@@ -239,9 +239,9 @@
                 <b-dropdown-item size="sm"
                                  v-if="!row.item.booking || Object.keys(row.item.booking).length === 0"
                                    @click="addBookingRoute(row.item)">Schedule Exam</b-dropdown-item>
-                <b-dropdown-item v-else
+                <!--<b-dropdown-item v-else
                                  size="sm"
-                                 @click="updateBookingRoute(row.item)">Update Booking</b-dropdown-item>
+                                 @click="updateBookingRoute(row.item)">Update Booking</b-dropdown-item>-->
               </template>
               <b-dropdown-item size="sm"
                                @click="editExam(row.item)">Edit Exam Details</b-dropdown-item>

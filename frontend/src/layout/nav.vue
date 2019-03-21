@@ -118,7 +118,7 @@
         if (this.user && this.user.role) {
           let { role_code } = this.user.role
           let { liaison_designate } = this.user.liaison_designate
-          if (role_code === 'CSR' || role_code === 'GA' ||  liaison_designate === 1 ) {
+          if (role_code === 'CSR' || role_code === 'GA' ) {
             return true
           }
         }
