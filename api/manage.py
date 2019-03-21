@@ -233,7 +233,6 @@ class Bootstrap(Command):
             display_dashboard_ind = 0,
             actual_service_ind = 0
         )
-
         category_back_office = theq.Service(
             service_code = "Back Office",
             service_name = "Back Office",
@@ -242,9 +241,18 @@ class Bootstrap(Command):
             display_dashboard_ind = 0,
             actual_service_ind = 0
         )
+        category_exams = theq.Service(
+            service_code = "Exams",
+            service_name = "Exams",
+            service_desc = "Exams",
+            prefix = "E",
+            display_dashboard_ind = 0,
+            actual_service_ind = 0
+        )
         db.session.add(category_msp)
         db.session.add(category_ptax)
         db.session.add(category_back_office)
+        db.session.add(category_exams)
         db.session.commit()
 
         #-- Service values --------------------------------------------------
@@ -320,6 +328,15 @@ class Bootstrap(Command):
             display_dashboard_ind = 1,
             actual_service_ind = 1
         )
+        service_exams = theq.Service(
+            service_code = "Exams - 001",
+            service_name = "Exam Management",
+            service_desc = "ITA or PEST -Checking for expired Exams, contacting ITA or PEST program, mailing back ITA or shredding expired PEST Exams, etc.",
+            parent_id = category_exams.service_id,
+            prefix = "E",
+            display_dashboard_ind = 1,
+            actual_service_ind = 1
+        )
         db.session.add(service_bo1)
         db.session.add(service_bo2)
         db.session.add(service_msp1)
@@ -328,6 +345,7 @@ class Bootstrap(Command):
         db.session.add(service_ptax1)
         db.session.add(service_ptax2)
         db.session.add(service_ptax4)
+        db.session.add(service_exams)
         db.session.commit()
 
         #-- Office values ---------------------------------------------------
@@ -454,6 +472,7 @@ class Bootstrap(Command):
         office_test.services.append(category_back_office)
         office_test.services.append(category_msp)
         office_test.services.append(category_ptax)
+        office_test.services.append(category_exams)
         office_test.services.append(service_bo1)
         office_test.services.append(service_bo2)
         office_test.services.append(service_msp1)
@@ -462,6 +481,7 @@ class Bootstrap(Command):
         office_test.services.append(service_ptax1)
         office_test.services.append(service_ptax2)
         office_test.services.append(service_ptax4)
+        office_test.services.append(service_exams)
 
         office_victoria.services.append(category_back_office)
         office_victoria.services.append(category_msp)

@@ -18,8 +18,18 @@
   <div style="position: relative">
     <div class="dash-button-flex-button-container pb-0 mb-3">
       <!-- SLOT FOR EACH VIEW'S BUTTON CONTROLS-->
-      <router-view name="buttons"/>
-      <div v-if="calendarSetup"
+      <div v-if="this.$route.path === '/booking' || this.$route.path === '/exams' ">
+        <b-button :variant="showIcon ? 'warning' : 'primary'"
+                  class="mr-3"
+                  @click="clickIcon">
+          <font-awesome-icon icon="stopwatch"
+                             style="font-size: 1.0rem;color: white;"
+                             class="p0" />
+        </b-button>
+      </div>
+      <router-view name="buttons"></router-view>
+
+      <div v-if="calendarSetup && this.$route.path === '/booking'"
            style="flex-grow: 8"
            class="q-inline-title">{{ calendarSetup.title }}</div>
     <div />
@@ -64,27 +74,46 @@
     <div style="position: relative; min-height: 400px;">
       <router-view />
     </div>
+    <AddCitizen />
+    <ServeCitizen v-if="showServiceModal"/>
   </div>
 </template>
 
 <script>
   import { mapState, mapActions, mapMutations, mapGetters } from 'vuex'
+  import ServeCitizen from '../serve-citizen/serve-citizen'
+  import AddCitizen from '../add-citizen/add-citizen'
 
   export default {
     name: 'Nav',
+    components: { AddCitizen, ServeCitizen },
     computed: {
       ...mapGetters([
         'showExams',
         'showAppointments'
       ]),
       ...mapState([
+        'showServiceModal',
         'calendarSetup',
         'rescheduling',
         'scheduling',
+        'serviceModalForm',
+        'serviceBegun',
         'showGAScreenModal',
         'showServiceModal',
+        'showAddModal',
         'user',
       ]),
+      showIcon() {
+        if (this.$route.path !== '/queue' &&
+            !this.showServiceModal &&
+            !this.showAddModal &&
+            this.serviceModalForm &&
+            this.serviceModalForm.citizen_id) {
+          return true
+        }
+        return false
+      },
       isGAorCSR() {
         if (this.user && this.user.role) {
           let { role_code } = this.user.role
@@ -112,11 +141,18 @@
       },
     },
     methods: {
-      ...mapActions(['clickGAScreen']),
-      ...mapMutations(['toggleFeedbackModal']),
+      ...mapActions(['clickGAScreen', 'clickAddCitizen']),
+      ...mapMutations(['toggleFeedbackModal', 'toggleServiceModal']),
       clickFeedback() {
         this.toggleFeedbackModal(true)
       },
+      clickIcon() {
+        if (this.showIcon) {
+          this.toggleServiceModal(true)
+          return
+        }
+        this.clickAddCitizen()
+      }
     }
   }
 </script>
@@ -140,5 +176,11 @@
   }
   .gaScreenUnchecked {
     padding-left: 1.5em
+  }
+  .tracking-icon {
+    font-size: 2.75rem;
+    border-radius: 5px;
+    box-shadow: -4px 4px 4px 0px grey;
+    cursor: pointer;
   }
 </style>

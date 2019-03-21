@@ -10,7 +10,7 @@
     <b-form-row no-gutters class="m-0 add_citizen_table_header"
                        >
       <b-col class="m-0 p-0">&nbsp&nbspService</b-col>
-      <b-col class="m-0 p-0">Category</b-col>
+      <b-col class="m-0 p-0" v-if="!simplifiedModal">Category</b-col>
     </b-form-row>
     <b-form-row no-gutters>
       <b-col>
@@ -24,6 +24,7 @@
                    :fields="fields"
                    sort-by="parrent.service_name"
                    :filter="filter"
+                   :tbody-tr-class="addcitizen-tr"
                    :small="t"
                    :bordered="f"
                    :striped="f"
@@ -57,26 +58,49 @@
 
   export default {
     name: 'Tables',
-
     data() {
       return {
         f:false,
         t:true,
-        fields: [
-          { key: 'service_name', label: 'Service', sortable: false, thClass: 'd-none' },
-          { key: 'parent.service_name', label: 'Category', sortable: false, thClass: 'd-none' },
-          { key: 'service_desc', label: 'Description', sortable: false, thClass: 'd-none', tdClass: 'd-none' }
-        ]
       }
     },
-
     computed: {
-      ...mapState(['addCitizenModal']),
-      ...mapGetters(['form_data', 'filtered_services']),
+      ...mapState({
+        addModalSetup: 'addModalSetup',
+        addCitizenModal: 'addCitizenModal',
 
+      }),
+      ...mapGetters({form_data: 'form_data', filtered_services: 'filtered_services',}),
+      simplified() {
+        if (this.$route.path !== '/queue') {
+          return true
+        }
+        return false
+      },
+      simplifiedModal() {
+        if (this.simplified && this.addModalSetup !== 'edit_mode') {
+          return true
+        }
+        return false
+      },
+      fields() {
+        if (!this.simplifiedModal) {
+          return [
+            { key: 'service_name', label: 'Service', sortable: false, thClass: 'd-none', tdClass: 'addcit-td',},
+            { key: 'parent.service_name', label: 'Category', sortable: false, thClass: 'd-none', tdClass: 'addcit-td',},
+            { key: 'service_desc', label: 'Description', sortable: false, thClass: 'd-none', tdClass: 'd-none',}
+          ]
+        }
+        return [
+          { key: 'service_name', label: 'Service', sortable: false, thClass: 'd-none', tdClass: 'addcit-td',},
+        ]
+      },
       filter(value) {
-        return this.form_data.search
-      }
+        if (!this.simplified) {
+          return this.form_data.search
+        }
+        return 'Exams'
+      },
     },
 
     methods: {
@@ -105,5 +129,8 @@
     text-align: center;
     font-size: 17px;
     text-shadow: 0px 0px 2px #a5a5a5;
+}
+.addcit-td {
+  cursor: pointer;
 }
 </style>
