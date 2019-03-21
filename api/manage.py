@@ -37,6 +37,7 @@ class Bootstrap(Command):
         theq.Service.query.delete()
         theq.Channel.query.delete()
         bookings.Booking.query.delete()
+        theq.Timezone.query.delete()
 
         db.session.commit()
 
@@ -809,6 +810,26 @@ class Bootstrap(Command):
         db.session.add(exam_four)
         db.session.add(exam_five)
         db.session.commit()
+
+        print("--> Bookings: Timezones")
+
+        timezone_one = theq.Timezone(
+            timezone_name='America/Vancouver'
+        )
+
+        timezone_two = theq.Timezone(
+            timezone_name='America/Dawson_Creek'
+        )
+
+        timezone_three = theq.Timezone(
+            timezone_name='America/Edmonton'
+        )
+
+        db.session.add(timezone_one)
+        db.session.add(timezone_two)
+        db.session.add(timezone_three)
+        db.session.commit()
+
 
 class FetchData(Command):
 
