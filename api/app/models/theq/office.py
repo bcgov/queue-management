@@ -23,7 +23,10 @@ class Office(Base):
                               db.Column('office_id', db.Integer,
                                         db.ForeignKey('office.office_id', ondelete="CASCADE"), primary_key=True),
                               db.Column('service_id', db.Integer,
-                                        db.ForeignKey('service.service_id', ondelete="CASCADE"), primary_key=True))
+                                        db.ForeignKey('service.service_id', ondelete="CASCADE"), primary_key=True),
+                              db.Column('quick_list_order',
+                                        db.Integer, nullable=True)
+                              )
 
     office_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     office_name = db.Column(db.String(100))
@@ -36,6 +39,7 @@ class Office(Base):
     csrs = db.relationship('CSR')
     citizens = db.relationship('Citizen', backref='office_citizens')
     sb = db.relationship('SmartBoard')
+    counters = db.relationship('Counter', backref='office_counters')
 
     exams = db.relationship("Exam")
     rooms = db.relationship('Room')
