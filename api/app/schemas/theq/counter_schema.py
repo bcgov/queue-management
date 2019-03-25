@@ -12,16 +12,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+import toastedmarshmallow
+from marshmallow import fields
+from app.models.theq import Counter
+from qsystem import ma
 
-from .channel import ChannelModelView
-from .csr import CSRModelView
-from .index import HomeView
-from .login import LoginMenuLink
-from .logout import LogoutMenuLink
-from .office import OfficeModelView
-from .role import RoleModelView
-from .service import ServiceModelView
-from .smartboard import SmartBoardModelView
-from .invigilator import InvigilatorModelView
-from .room import RoomModelView
-from .counter import CounterModelView
+
+class RoleSchema(ma.ModelSchema):
+
+    class Meta:
+        model = Counter
+        jit = toastedmarshmallow.Jit
+
+    counter_id = fields.Int()
+    counter_name = fields.Str()

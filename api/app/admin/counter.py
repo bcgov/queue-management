@@ -12,29 +12,24 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-
-from app.models.theq import Office
+from app.models.theq import Counter
 from .base import Base
 from flask_login import current_user
 from qsystem import db
 
 
-class OfficeConfig(Base):
-    roles_allowed = ['SUPPORT', 'GA'] # TODO: remove GA
+class CounterConfig(Base):
+    roles_allowed = ['GA', 'SUPPORT'] # TODO: remove GA
 
     def is_accessible(self):
         return current_user.is_authenticated and current_user.role.role_code in self.roles_allowed
 
     create_modal = False
     edit_modal = False
-    can_delete = False
-    column_list = ['office_name', 'sb', 'services', 'deleted', 'exams_enabled_ind']
-    form_excluded_columns = ('citizens', 'csrs', 'exams', 'rooms', 'invigilators')
-    form_create_rules = ('office_name', 'office_number', 'sb', 'services', 'deleted', 'exams_enabled_ind')
-    form_edit_rules = ('office_name', 'office_number', 'sb', 'services', 'deleted', 'exams_enabled_ind')
-    column_labels = {'sb': 'Smartboard'}
-    column_sortable_list = ['office_name', 'sb', 'deleted', 'exams_enabled_ind']
-    column_default_sort = 'office_name'
+    # form_excluded_columns = ('roles',)
+    # column_labels = {'role_desc': 'Role Description'}
+    # form_create_rules = ('role_code', 'role_desc')
+    # form_edit_rules = ('role_code', 'role_desc')
 
 
-OfficeModelView = OfficeConfig(Office, db.session)
+CounterModelView = CounterConfig(Counter, db.session)

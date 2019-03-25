@@ -22,12 +22,12 @@
         <b-form-select :options="options" @input="handleInput" :value="option" />
       </div>
     </template>
-    <tempate v-else-if="user.role && user.role.role_code==='GA' ">
+    <template v-else-if="user.role && user.role.role_code==='GA' ">
       <div style="display: inline-flex;">
         <span style="font-size: 1.4rem; font-weight: 600; margin-right: 1em"> Editing: </span>
         <b-form-select :options="optionsGA" @input="handleInput" :value="option" />
       </div>
-    </tempate>
+    </template>
     <template v-else>
       <span style="font-size: 1.4rem; font-weight: 600"> Editing: {{this.name}}</span>
     </template>
@@ -54,6 +54,8 @@
         ],
         optionsGA: [
           {value: 'csr', text: 'CSRs'},
+          {value: 'counter', text: 'Counters'}, // TODO remove
+          {value: 'office', text: 'Offices'}, // TODO remove
           {value: 'invigilator', text: 'Invigilators'},
           {value: 'room', text: 'Rooms'}
         ]
