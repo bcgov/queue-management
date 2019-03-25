@@ -17,7 +17,7 @@
       <b-button v-if="role_code!=='GA'"
                 class="mr-1 btn-primary"
                 @click="handleClick('individual')">Add ITA Exam</b-button>
-      <b-button v-if="liaison_designate === 1"
+      <b-button v-if="is_liaison_designate"
                 class="mr-1 btn-primary"
                 @click="handleClick('group')">Add Group Exam</b-button>
       <b-button class="mr-1 btn-primary"
@@ -40,7 +40,7 @@
     components: { AddExamModal, FinancialReportModal },
     computed: {
       ...mapState(['addNonITA', 'showGenFinReportModal', 'user' ]),
-      ...mapGetters([ 'showExams', 'role_code', 'pesticide_designate', 'financial_designate', 'liaison_designate']),
+      ...mapGetters([ 'showExams', 'role_code', 'pesticide_designate', 'financial_designate', 'is_liaison_designate']),
     },
     methods: {
       ...mapActions(['actionRestoreAll']),

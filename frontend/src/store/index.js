@@ -287,11 +287,15 @@ export const store = new Vuex.Store({
       return ''
     },
 
-    liaison_designate(state) {
-      if (state.user && state.user.role.role_code){
-        return state.user.liaison_designate
+    is_liaison_designate(state) {
+      if (state.user){
+        if(state.user.liaison_designate){
+          return true
+        }else{
+          return false
+        }
       }
-      return ''
+      return false
     },
 
     is_ita_designate(state) {
