@@ -36,7 +36,7 @@
                       :handleInput="handleInput"
                       :exam="exam" />
       <SelectOffice v-if="q.kind==='office'"
-                    v-show="is_liaison_designate === 1 || pesticide_designate === 1"
+                    v-show="is_liaison_designate || is_pesticide_designate"
                     :error="error"
                     :q="q"
                     :validationObj="validationObj"
@@ -125,7 +125,7 @@
         steps: 'add_modal_steps',
         exam_object: 'exam_object',
         role_code: 'role_code',
-        pesticide_designate: 'pesticide_designate',
+        is_pesticide_designate: 'is_pesticide_designate',
         is_liaison_designate: 'is_liaison_designate',
       }),
       ...mapState({

@@ -22,7 +22,7 @@
                 @click="handleClick('group')">Add Group Exam</b-button>
       <b-button class="mr-1 btn-primary"
                 @click="handleClick('other')">Add Other Exam</b-button>
-      <b-button v-if="pesticide_designate===1"
+      <b-button v-if="is_pesticide_designate"
                 class="btn-primary"
                 @click="handleClick('pesticide')">Add Pesticide Exam</b-button>
     </b-form>
@@ -40,7 +40,7 @@
     components: { AddExamModal, FinancialReportModal },
     computed: {
       ...mapState(['addNonITA', 'showGenFinReportModal', 'user' ]),
-      ...mapGetters([ 'showExams', 'role_code', 'pesticide_designate', 'is_financial_designate', 'is_liaison_designate']),
+      ...mapGetters([ 'showExams', 'role_code', 'is_pesticide_designate', 'is_financial_designate', 'is_liaison_designate']),
     },
     methods: {
       ...mapActions(['actionRestoreAll']),

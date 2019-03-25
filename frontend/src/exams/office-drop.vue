@@ -2,7 +2,7 @@
   <fragment>
     <b-col :cols="columnW">
       <b-table v-show="false"
-               v-if="is_liaison_designate || pesticide_designate===1"
+               v-if="is_liaison_designate || is_pesticide_designate"
                :items="offices"
                :fields="{key: 'office_name'}"
                :filter="search"
@@ -63,7 +63,7 @@
       }
     },
     computed: {
-      ...mapGetters([ 'role_code', 'pesticide_designate', 'is_liaison_designate' ]),
+      ...mapGetters([ 'role_code', 'is_pesticide_designate', 'is_liaison_designate' ]),
       ...mapState([ 'offices', 'capturedExam' ]),
       office_id() {
         if (this.capturedExam && this.capturedExam.office_id) {

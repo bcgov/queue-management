@@ -527,7 +527,7 @@ export const SelectOffice = Vue.component('select-office', {
     return {}
   },
   computed: {
-    ...mapGetters(['role_code', 'pesticide_designate', ]),
+    ...mapGetters(['role_code']),
     ...mapState(['offices', 'user', 'addExamModal']),
     office_number() {
       return this.addExamModal.office_number

@@ -273,11 +273,15 @@ export const store = new Vuex.Store({
       return ''
     },
 
-    pesticide_designate(state) {
-      if (state.user && state.user.role.role_code) {
-        return state.user.pesticide_designate
+    is_pesticide_designate(state) {
+      if (state.user) {
+        if(state.user.pesticide_designate){
+          return true
+        }else{
+          return false
+        }
       }
-      return ''
+      return false
     },
 
     is_financial_designate(state) {
