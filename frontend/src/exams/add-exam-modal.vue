@@ -157,7 +157,7 @@
           return this.addExamModal.visible
         },
         set(e) {
-          this.toggleAddExamModal(e)
+          this.setAddExamModalSetting(e)
         }
       },
       step() {
@@ -174,7 +174,7 @@
     },
     methods: {
       ...mapActions(['clickAddExamSubmit', 'getExams', 'actionWipeAllSavedModals']),
-      ...mapMutations(['captureExamDetail', 'resetCaptureForm', 'resetCaptureTab', 'toggleAddExamModal', 'updateCaptureTab', ]),
+      ...mapMutations(['captureExamDetail', 'resetCaptureForm', 'resetCaptureTab', 'setAddExamModalSetting', 'updateCaptureTab', ]),
       tabWarning(i) {
         if (!Array.isArray(this.errors)) return ''
         if (this.errors.length > 0) {
@@ -209,7 +209,7 @@
       clickCancel() {
         this.resetModal()
         this.actionWipeAllSavedModals()
-        this.toggleAddExamModal({visible: false, setup: null, step1MenuOpen: false})
+        this.setAddExamModalSetting({visible: false, setup: null, step1MenuOpen: false})
       },
       clickNext() {
         let step = this.step + 1
@@ -264,7 +264,7 @@
           office_id = parseInt(office_id)
           office_number = parseInt(office_number)
           this.captureExamDetail({key: 'office_id', value: office_id })
-          this.toggleAddExamModal({ office_number })
+          this.setAddExamModalSetting({ office_number })
         }
         if (setup === 'other') {
           let value = moment().add(60, 'd')

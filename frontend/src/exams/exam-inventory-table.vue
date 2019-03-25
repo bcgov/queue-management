@@ -239,9 +239,9 @@
                 <b-dropdown-item size="sm"
                                  v-if="!row.item.booking || Object.keys(row.item.booking).length === 0"
                                    @click="addBookingRoute(row.item)">Schedule Exam</b-dropdown-item>
-                <!--<b-dropdown-item v-else
+                <b-dropdown-item v-else
                                  size="sm"
-                                 @click="updateBookingRoute(row.item)">Update Booking</b-dropdown-item>-->
+                                 @click="updateBookingRoute(row.item)">Update Booking</b-dropdown-item>
               </template>
               <b-dropdown-item size="sm"
                                @click="editExam(row.item)">Edit Exam Details</b-dropdown-item>
@@ -250,22 +250,18 @@
             </template>
             <template v-if="officeFilter != userOffice && officeFilter != 'default'">
               <b-dropdown-item size="sm"
+                               v-if="row.item.offsite_location"
+                               @click="editGroupExam(row.item)">Edit Booking</b-dropdown-item>
+              <b-dropdown-item size="sm"
                                @click="editExam(row.item)">Edit Exam Details</b-dropdown-item>
             </template>
           </b-dropdown>
         </template>
       </b-table>
       <div v-if="filteredExams().length > 10 && !showReturnExamModalVisible">
-        <b-pagination
-          :total-rows="totalRows"
-          :per-page="10"
-          v-model="page" />
-      </div>
-      <div v-if="filteredExams().length > 10 && showReturnExamModalVisible">
-        <b-pagination
-          :total-rows="totalRows"
-          :per-page="10"
-          v-model="page" />
+        <b-pagination :total-rows="totalRows"
+                      :per-page="10"
+                      v-model="page" />
       </div>
     </div>
     <EditExamModal :examRow="examRow" :resetExam="resetEditedExam" />
@@ -307,6 +303,7 @@
   import SuccessExamAlert from './success-exam-alert'
   import DeleteExamModal from './delete-exam-modal'
   import AddCitizen from '../add-citizen/add-citizen'
+  import zone from 'moment-timezone'
 
   export default {
     name: "ExamInventoryTable",
@@ -493,7 +490,7 @@
             return evenMoreFiltered.filter(ex => ex.office_id == office_id)
           }
           let office_number = this.inventoryFilters.office_number === 'default' ?
-                          this.user.office.office_number : this.inventoryFilters.office_number
+                                this.user.office.office_number : this.inventoryFilters.office_number
           let exams = examInventory.filter(ex => ex.office.office_number == office_number)
           switch (this.inventoryFilters.expiryFilter) {
             case 'all':
@@ -618,7 +615,7 @@
           }
           return false
         }
-        if (ex.booking || ex.offsite_location) {
+        if (ex.booking) {
           if (ex.booking.invigilator_id || ex.booking.sbc_staff_invigilated) {
             if (ex.exam_received_date) {
               return true

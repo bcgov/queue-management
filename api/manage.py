@@ -836,9 +836,14 @@ class Bootstrap(Command):
             timezone_name='America/Edmonton'
         )
 
+        timezone_four = theq.Timezone(
+            timezone_name='America/Creston'
+        )
+
         db.session.add(timezone_one)
         db.session.add(timezone_two)
         db.session.add(timezone_three)
+        db.session.add(timezone_four)
         db.session.commit()
 
         start_time = datetime(2019, 3, 28, 9, 0, 0)

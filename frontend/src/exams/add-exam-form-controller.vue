@@ -1,5 +1,5 @@
 <template>
-  <b-form id="capture-ind-ita-form">
+  <b-form id="capture-ind-ita-form" autocomplete="off">
     <div v-for="q in questions" :key="q.key">
       <DropdownQuestion v-if="q.kind==='dropdown'"
                         :question="q"

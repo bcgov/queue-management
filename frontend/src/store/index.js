@@ -15,6 +15,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import moment from 'moment'
+import tZone from 'moment-timezone'
 import 'es6-promise/auto'
 import { addExamModule } from './add-exam-module'
 import { Axios, searchNestedObject } from './helpers'
@@ -1555,15 +1556,22 @@ export const store = new Vuex.Store({
           }).catch( () => { reject() })
         }).catch( () => { reject() })
       })
-      
     },
     
     postITAGroupExam(context) {
       let responses = Object.assign( {}, context.state.capturedExam)
-      let date = new moment(responses.expiry_date).local().format('YYYY-MM-DD')
-      let time = new moment(responses.exam_time).local().format('HH:mm:ss')
+      let timezone_name = context.state.user.office.timezone
+      let booking_office = context.state.offices.find(office => office.office_id == responses.office_id)
+      let booking_timezone_name = booking_office.timezone.timezone_name
+      let date = new moment(responses.expiry_date).format('YYYY-MM-DD')
+      let time = new moment(responses.exam_time).format('HH:mm:ss')
       let datetime = date+'T'+time
-      let start = new moment(datetime).local()
+      let start
+      if (booking_timezone_name != timezone_name) {
+        start = new tZone.tz(datetime, booking_timezone_name)
+      } else {
+        start = new moment(datetime).local()
+      }
       let length = context.state.examTypes.find(ex => ex.exam_type_id == responses.exam_type_id).number_of_hours
       let end = start.clone().add(length, 'hours')
       let booking = {
@@ -1583,7 +1591,6 @@ export const store = new Vuex.Store({
         data.notes = ''
       }
       let postData = {...responses, ...defaultValues}
-      
       return new Promise((resolve, reject) => {
         Axios(context).post('/exams/', postData).then( examResp => {
           let { exam_id } = examResp.data.exam
@@ -2166,7 +2173,7 @@ export const store = new Vuex.Store({
   
     setNavigation: (state, value) => state.adminNavigation = value,
   
-    toggleAddExamModal(state, payload) {
+    setAddExamModalSetting(state, payload) {
       if (typeof payload === 'boolean') {
         state.addExamModal.visible = payload
         return

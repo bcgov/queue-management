@@ -1,5 +1,5 @@
 <template>
-  <fragment>
+  <fragment v-if="office_number">
     <b-col :cols="columnW">
       <b-table v-show="false"
                v-if="is_liaison_designate || is_pesticide_designate"
@@ -7,40 +7,47 @@
                :fields="{key: 'office_name'}"
                :filter="search"
                @filtered="getFilteredOffices" />
-      <b-form-group>
-        <label class="my-0">Office
-          <span v-if="!error"> {{ msg }} </span>
-          <span v-if="error" style="color: red"> {{ msg }} </span>
-        </label>
-        <div>
-          <b-form-input id="office_name"
-                        type="text"
-                        class="less-10-mb"
-                        :value="officeSearch"
-                        @focus.native="officeSearchOnFocus"
-                        @blur.native="officeSearchOnBlur"
-                        @input.native="handleOfficeInput" />
-        </div>
-        <div :class="officeDropClass"
-             style="border: 1px solid grey">
-          <template v-for="office in officeChoices">
-            <b-dropdown-item-button v-on:click.prevent="handleOfficeDropClick"
-                                    :name="office.office_name"
-                                    :value="office.office_number"
-                                    :id="office.office_number">{{ office.office_name }}</b-dropdown-item-button>
-          </template>
-        </div>
-      </b-form-group>
+      <b-form autocomplete="off">
+        <b-form-group>
+          <label class="my-0">Office
+            <span v-if="!error"> {{ msg }} </span>
+            <span v-if="error" style="color: red"> {{ msg }} </span>
+          </label>
+          <div>
+            <b-form-input id="office_name"
+                          type="text"
+                          autocomplete="off"
+                          class="less-10-mb"
+                          :value="officeSearch"
+                          @focus.native="officeSearchOnFocus"
+                          @blur.native="officeSearchOnBlur"
+                          @input.native="handleOfficeInput" />
+          </div>
+          <div :class="officeDropClass"
+               style="border: 1px solid grey">
+            <template v-for="office in officeChoices">
+              <b-dropdown-item-button v-on:click.prevent="handleOfficeDropClick"
+                                      :name="office.office_name"
+                                      :value="office.office_number"
+                                      :id="office.office_number">{{ office.office_name }}</b-dropdown-item-button>
+            </template>
+          </div>
+        </b-form-group>
+      </b-form>
     </b-col>
     <b-col :cols="columnW == 8 ? 4 : 2">
-      <b-form-group>
-        <label class="my-0">Office #</label>
-        <b-form-input id="office_number"
-                      type="number"
-                      class="less-10-mb"
-                      :value="office_number"
-                      @input.native="handleOfficeNumberInput" />
-      </b-form-group>
+      <b-form>
+        <b-form-group>
+          <label class="my-0">Office #</label>
+          <b-form-input id="office_number"
+                        type="number"
+                        class="less-10-mb"
+                        :value="numberSearch"
+                        @focus.native="handleOfficeNumberFocus"
+                        @blur.native="handleOfficeNumberBlur"
+                        @input.native="handleOfficeNumberInput" />
+        </b-form-group>
+      </b-form>
     </b-col>
   </fragment>
 </template>
@@ -60,6 +67,9 @@
         showSearch: false,
         searching: false,
         search: '',
+        searchingNumber: false,
+        searchNumber: '',
+        timer: null,
       }
     },
     computed: {
@@ -78,9 +88,14 @@
           return 'dropdown-menu show py-0 my-0 w-100'
         }
       },
+      numberSearch() {
+        if (!this.searchingNumber) {
+          return this.office_number
+        }
+        this.searchNumber
+      },
       officeSearch() {
-        let office_number = this.office_number
-        if (!this.searching && office_number && this.offices.find(office=>office.office_number == office_number)) {
+        if (!this.searching && this.office_number && this.offices.length > 0) {
           return this.offices.find(office => office.office_number == this.office_number).office_name
         }
         return this.search
@@ -91,7 +106,7 @@
       ...mapMutations([]),
       getFilteredOffices(offices) {
         if (offices.length === 0) {
-          this.officeChoices = [{office_number: null, office_name: 'No offices found with those letters'}]
+          this.officeChoices = [{office_number: null, office_name: 'No Offices found'}]
           return
         }
         this.officeChoices = offices.length >= 4 ? offices.slice(0,4) : offices
@@ -99,8 +114,16 @@
       handleOfficeDropClick(e) {
         this.showSearch = false
         this.search = e.target.name
+        console.log(e.target.value)
         this.setOffice(e.target.value)
         this.searching = false
+      },
+      handleOfficeNumberFocus() {
+        this.searchingNumber = true
+        this.searchNumber = ''
+      },
+      handleOfficeNumberBlur() {
+        this.searchingNumber = false
       },
       handleOfficeInput(e) {
         this.searching = true
@@ -113,13 +136,19 @@
         }
       },
       handleOfficeNumberInput(e) {
-        let { value } = e.target
-        this.setOffice(value)
-        if (this.offices.find(office=>office.office_number == value)) {
-          let office = this.offices.find(office=>office.office_number == value)
-          this.search = office.office_name
-        } else {
-          this.search = 'Invalid office number entered.'
+        this.searchingNumber = true
+        this.searchNumber = e.target.value
+        if (this.offices.find(office=>office.office_number == e.target.value)) {
+          this.setOffice(e.target.value)
+          this.searchingNumber = false
+        }
+        let officeSet = (num) => {
+          this.setOffice(num)
+          if (this.offices.find(office=>office.office_number == num)) {
+            let office = this.offices.find(office=>office.office_number == num)
+          } else {
+            this.search = 'Invalid office number entered.'
+          }
         }
       },
       officeSearchOnBlur() {
