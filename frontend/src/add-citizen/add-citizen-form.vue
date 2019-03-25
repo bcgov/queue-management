@@ -16,7 +16,7 @@
     <template v-else>
       <div class="add_citizen_template">
         <div class="add_citizen_padding" style="background: rgb(240, 240, 240);padding-top: 12px;">
-            <Comments />
+            <Comments v-if="!simplifiedModal" />
             <Channel />
             <div style="transform: translateY(18px);">
                 <Filters />
@@ -47,9 +47,20 @@ export default {
     Tables
   },
   computed: {
-    ...mapState(['addModalSetup']),
-    ...mapGetters(['reception'])
-  }
+    ...mapState({addModalSetup: 'addModalSetup', }),
+    ...mapGetters({reception: "reception",}),
+    simplified() {
+      if (this.$route.path !== '/queue') {
+        return true
+      }
+      return false
+    },
+    simplifiedModal() {
+      if (this.simplified && this.addModalSetup !== 'edit_mode') {
+        return true
+      }
+      return false
+    },  }
 }
 
 </script>

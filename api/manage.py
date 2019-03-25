@@ -37,6 +37,7 @@ class Bootstrap(Command):
         theq.Service.query.delete()
         theq.Channel.query.delete()
         bookings.Booking.query.delete()
+        theq.Timezone.query.delete()
 
         db.session.commit()
 
@@ -91,16 +92,12 @@ class Bootstrap(Command):
             role_code="ANALYTICS",
             role_desc="Analtyics Team to update Services per Office"
         )
-        role6 = theq.Role(
-            role_code="LIAISON",
-            role_desc="Centralized Government Agent Officer responsible for liaising without outside providers (e.g., ITA)"
-        )
+
         db.session.add(role_csr)
         db.session.add(role_ga)
         db.session.add(role3)
         db.session.add(role4)
         db.session.add(role5)
-        db.session.add(role6)
         db.session.commit()
 
         #-- Period State ----------------------------------------------------
@@ -232,7 +229,6 @@ class Bootstrap(Command):
             display_dashboard_ind = 0,
             actual_service_ind = 0
         )
-
         category_back_office = theq.Service(
             service_code = "Back Office",
             service_name = "Back Office",
@@ -241,9 +237,18 @@ class Bootstrap(Command):
             display_dashboard_ind = 0,
             actual_service_ind = 0
         )
+        category_exams = theq.Service(
+            service_code = "Exams",
+            service_name = "Exams",
+            service_desc = "Exams",
+            prefix = "E",
+            display_dashboard_ind = 0,
+            actual_service_ind = 0
+        )
         db.session.add(category_msp)
         db.session.add(category_ptax)
         db.session.add(category_back_office)
+        db.session.add(category_exams)
         db.session.commit()
 
         #-- Service values --------------------------------------------------
@@ -319,6 +324,15 @@ class Bootstrap(Command):
             display_dashboard_ind = 1,
             actual_service_ind = 1
         )
+        service_exams = theq.Service(
+            service_code = "Exams - 001",
+            service_name = "Exam Management",
+            service_desc = "ITA or PEST -Checking for expired Exams, contacting ITA or PEST program, mailing back ITA or shredding expired PEST Exams, etc.",
+            parent_id = category_exams.service_id,
+            prefix = "E",
+            display_dashboard_ind = 1,
+            actual_service_ind = 1
+        )
         db.session.add(service_bo1)
         db.session.add(service_bo2)
         db.session.add(service_msp1)
@@ -327,6 +341,7 @@ class Bootstrap(Command):
         db.session.add(service_ptax1)
         db.session.add(service_ptax2)
         db.session.add(service_ptax4)
+        db.session.add(service_exams)
         db.session.commit()
 
         #-- Office values ---------------------------------------------------
@@ -453,6 +468,7 @@ class Bootstrap(Command):
         office_test.services.append(category_back_office)
         office_test.services.append(category_msp)
         office_test.services.append(category_ptax)
+        office_test.services.append(category_exams)
         office_test.services.append(service_bo1)
         office_test.services.append(service_bo2)
         office_test.services.append(service_msp1)
@@ -461,6 +477,7 @@ class Bootstrap(Command):
         office_test.services.append(service_ptax1)
         office_test.services.append(service_ptax2)
         office_test.services.append(service_ptax4)
+        office_test.services.append(service_exams)
 
         office_victoria.services.append(category_back_office)
         office_victoria.services.append(category_msp)
@@ -809,6 +826,26 @@ class Bootstrap(Command):
         db.session.add(exam_four)
         db.session.add(exam_five)
         db.session.commit()
+
+        print("--> Bookings: Timezones")
+
+        timezone_one = theq.Timezone(
+            timezone_name='America/Vancouver'
+        )
+
+        timezone_two = theq.Timezone(
+            timezone_name='America/Dawson_Creek'
+        )
+
+        timezone_three = theq.Timezone(
+            timezone_name='America/Edmonton'
+        )
+
+        db.session.add(timezone_one)
+        db.session.add(timezone_two)
+        db.session.add(timezone_three)
+        db.session.commit()
+
 
 class FetchData(Command):
 

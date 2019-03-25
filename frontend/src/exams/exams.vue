@@ -10,13 +10,13 @@
     </div>
   </div>
   <div v-else>
-    <div class="loader"></div>
+    <div class="q-loader"></div>
   </div>
 
 </template>
 
 <script>
-  import { mapGetters, mapState } from 'vuex'
+  import { mapMutations, mapGetters, mapState } from 'vuex'
   import ExamInventoryTable from './exam-inventory-table'
 
   export default {
@@ -26,13 +26,17 @@
       this.$store.dispatch('getOffices')
     },
     computed: {
-      ...mapState([
-        'user',
-      ]),
-      ...mapGetters([
-        'showExams',
-      ])
+      ...mapState({
+        serviceBegun: 'serviceBegun',
+        showServiceModal: 'showServiceModal',
+        serviceModalPath: 'serviceModalPath',
+        user: 'user',
+      }),
+      ...mapGetters(['showExams', ]),
     },
+    methods: {
+      ...mapMutations(['toggleServiceModal', ]),
+    }
   }
 </script>
 
@@ -49,32 +53,5 @@
   }
   div.center {
     text-align: center;
-  }
-
-  .loader {
-    position: relative;
-    text-align: center;
-    margin: 15px auto 35px auto;
-    z-index: 9999;
-    display: block;
-    width: 80px;
-    height: 80px;
-    border: 10px solid rgba(0, 0, 0, .3);
-    border-radius: 50%;
-    border-top-color: #000;
-    animation: spin 1s ease-in-out infinite;
-    -webkit-animation: spin 1s ease-in-out infinite;
-  }
-
-  @keyframes spin {
-    to {
-      -webkit-transform: rotate(360deg);
-    }
-  }
-
-  @-webkit-keyframes spin {
-    to {
-      -webkit-transform: rotate(360deg);
-    }
   }
 </style>

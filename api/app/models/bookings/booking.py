@@ -28,6 +28,7 @@ class Booking(Base):
     fees = db.Column(db.String(5), nullable=True)
     booking_name = db.Column(db.String(150), nullable=True)
     sbc_staff_invigilated = db.Column(db.Integer, default=0)
+    booking_contact_information = db.Column(db.String(256), nullable=True)
 
     room = db.relationship("Room")
     invigilator = db.relationship("Invigilator")

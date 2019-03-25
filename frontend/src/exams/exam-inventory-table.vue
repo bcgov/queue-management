@@ -10,7 +10,7 @@
           <b-input-group-prepend>
             <label class="mx-1 pt-1 my-auto label-text">Filters</label>
           </b-input-group-prepend>
-          <b-btn-group v-if="role_code === 'LIAISON'" class="pt-2">
+          <b-btn-group v-if="is_liaison_designate" class="pt-2">
             <b-btn @click="officeFilterModal=true"
                    :variant="officeFilter === userOffice || officeFilter === 'default' ? 'primary' : 'warning'"
                    class="btn-sm">Office # {{ officeNumber }} - {{ officeName }}</b-btn>
@@ -239,9 +239,9 @@
                 <b-dropdown-item size="sm"
                                  v-if="!row.item.booking || Object.keys(row.item.booking).length === 0"
                                    @click="addBookingRoute(row.item)">Schedule Exam</b-dropdown-item>
-                <b-dropdown-item v-else
+                <!--<b-dropdown-item v-else
                                  size="sm"
-                                 @click="updateBookingRoute(row.item)">Update Booking</b-dropdown-item>
+                                 @click="updateBookingRoute(row.item)">Update Booking</b-dropdown-item>-->
               </template>
               <b-dropdown-item size="sm"
                                @click="editExam(row.item)">Edit Exam Details</b-dropdown-item>
@@ -343,7 +343,7 @@
       }
     },
     computed: {
-      ...mapGetters(['calendar_events', 'exam_inventory', 'role_code', ]),
+      ...mapGetters(['calendar_events', 'exam_inventory', 'role_code', 'is_liaison_designate' ]),
       ...mapState([
         'bookings',
         'calendarSetup',

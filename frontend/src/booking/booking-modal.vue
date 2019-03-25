@@ -16,6 +16,12 @@
       <span style="font-weight: 600; font-size: 1.3rem;">Confirm Booking</span>
       <DataSummaryTable :displayData="displayData" class="w-100 p-0 m-0" />
       <b-form class="mt-3">
+        <b-form-group>
+                <label>Contact Information (Email or Phone Number)</label><br>
+                <b-input id="contact_information"
+                         type="text"
+                         v-model="booking_contact_information"/>
+        </b-form-group>
         <b-form-row>
           <b-col cols="12">
             <b-form-group v-if="individualExamInd">
@@ -118,6 +124,7 @@
     data() {
       return {
         notes: '',
+        booking_contact_information: '',
         invigilator: null,
         formStep: 2,
         fields: {
@@ -335,6 +342,7 @@
           fees: 'false',
           booking_name: this.exam.exam_name,
           sbc_staff_invigilated: 0,
+          booking_contact_information: this.booking_contact_information
         }
         if (this.selectedOption === 'sbc') {
           booking.sbc_staff_invigilated = 1

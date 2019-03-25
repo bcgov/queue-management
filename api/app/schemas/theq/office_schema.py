@@ -15,7 +15,7 @@ limitations under the License.'''
 import toastedmarshmallow
 from marshmallow import fields
 from app.models.theq import Office
-from app.schemas.theq import SmartBoardSchema
+from app.schemas.theq import SmartBoardSchema, TimezoneSchema
 from qsystem import ma
 
 
@@ -32,5 +32,7 @@ class OfficeSchema(ma.ModelSchema):
     sb_id = fields.Int()
     deleted = fields.DateTime()
     exams_enabled_ind = fields.Int()
+    appointments_enabled_ind = fields.Int()
 
     sb = fields.Nested(SmartBoardSchema())
+    timezone = fields.Nested(TimezoneSchema())

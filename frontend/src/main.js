@@ -32,6 +32,8 @@ import {
   faCalendarTimes,
 } from '@fortawesome/free-regular-svg-icons'
 import {
+  faWindowMaximize,
+  faWindowRestore,
   faAngleLeft,
   faAngleRight,
   faBars,
@@ -50,6 +52,7 @@ import {
   faMinus,
   faPlus,
   faSort,
+  faStopwatch,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import VDragged from 'v-dragged'
@@ -78,6 +81,9 @@ library.add(
   faMinus,
   faPlus,
   faSort,
+  faStopwatch,
+  faWindowMaximize,
+  faWindowRestore,
 )
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(BootstrapVue)

@@ -32,7 +32,7 @@ class ExamList(Resource):
         try:
             csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
 
-            if csr.role.role_code == "LIAISON":
+            if csr.liaison_designate == 1:
                 exams = Exam.query.filter(Exam.deleted_date.is_(None)).all()
             else:
                 exams = Exam.query.filter(Exam.deleted_date.is_(None)).filter_by(office_id=csr.office_id)

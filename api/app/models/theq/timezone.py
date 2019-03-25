@@ -12,17 +12,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+from qsystem import db
+from app.models.theq import Base
 
-from .channel import ChannelModelView
-from .csr import CSRModelView
-from .index import HomeView
-from .login import LoginMenuLink
-from .logout import LogoutMenuLink
-from .office import OfficeModelView
-from .role import RoleModelView
-from .service import ServiceModelView
-from .smartboard import SmartBoardModelView
-from .invigilator import InvigilatorModelView
-from .room import RoomModelView
-from .examtype import ExamTypeModelView
 
+class Timezone(Base):
+
+    timezone_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    timezone_name = db.Column(db.String(256), nullable=False)
+
+    def __repr__(self):
+        return self.timezone_name
+
+    def __init__(self, **kwargs):
+        super(Timezone, self).__init__(**kwargs)

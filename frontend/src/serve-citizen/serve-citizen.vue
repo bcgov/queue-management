@@ -8,7 +8,8 @@
                 variant="warning">{{this.serveModalAlert}}</b-alert>
       <div class="modal_header" v-dragged="onDrag">
         <div>
-          <h4 style="font-weight:900; color:#6e6e6e">Serve Citizen</h4>
+          <h4 style="font-weight:900; color:#6e6e6e">
+            {{ simplifiedModal ? 'Exams Time Tracking' : 'Servce Citizen' }}</h4>
         </div>
         <div>
           <button
@@ -20,28 +21,29 @@
                     @click="toggleMinimize">{{ minimizeWindow ? "Maximize" : "Minimize" }}</button>
         </div>
       </div>
-      <b-container id="serve-citizen-modal-top" fluid v-if="!minimizeWindow">
-        <b-row no-gutters class="p-2">
-          <b-col col cols="4">
-            <div><h6>Ticket #: <strong>{{citizen.ticket_number}}</strong></h6></div>
-            <div><h6>Channel: <strong>{{channel.channel_name}}</strong></h6></div>
-            <div><h6>Created At: <strong>{{formatTime(citizen.start_time)}}</strong></h6></div>
-          </b-col>
-          <b-col cols="auto" class="ml-3 mr-2">
-            <h6>Comments:</h6>
-          </b-col>
-          <b-col col cols="*" style="text-align: left" class="pr-2">
-            <div>
-              <b-textarea id="serve_comment_textarea"
-                          v-model="comments"
-                          :rows="4"
-                          size="sm" />
-            </div>
-          </b-col>
-        </b-row>
-      </b-container>
-      <b-container id="serve-top-buttons-container" v-if="!minimizeWindow">
-        <div>
+      <template v-if="!simplifiedModal">
+        <b-container id="serve-citizen-modal-top" fluid v-if="!minimizeWindow">
+          <b-row no-gutters class="p-2">
+            <b-col col cols="4">
+              <div><h6>Ticket #: <strong>{{citizen.ticket_number}}</strong></h6></div>
+              <div><h6>Channel: <strong>{{channel.channel_name}}</strong></h6></div>
+              <div><h6>Created At: <strong>{{formatTime(citizen.start_time)}}</strong></h6></div>
+            </b-col>
+            <b-col cols="auto" class="ml-3 mr-2">
+              <h6>Comments:</h6>
+            </b-col>
+            <b-col col cols="*" style="text-align: left" class="pr-2">
+              <div>
+                <b-textarea id="serve_comment_textarea"
+                            v-model="comments"
+                            :rows="4"
+                            size="sm" />
+              </div>
+            </b-col>
+          </b-row>
+        </b-container>
+        <b-container id="serve-top-buttons-container" v-if="!minimizeWindow">
+          <div>
             <b-button @click="clickServiceBeginService"
                     v-if="reception"
                     :disabled="serviceBegun===true || performingAction"
@@ -53,63 +55,96 @@
                     :disabled="performingAction"
                     class="btn serve-btn"
                     id="serve-citizen-return-to-queue-button">Return to Queue</b-button>
-        </div>
-        <div>
+          </div>
+          <div>
             <b-button @click="clickCitizenLeft"
                     :disabled="performingAction"
                     class="btn-danger serve-btn"
                     v-if="reception"
                     id="serve-citizen-citizen-left-button">Citizen Left</b-button>
-        </div>
-    </b-container>
-      <ServeCitizenTable v-if="!minimizeWindow"/>
-      <b-container fluid
-                   id="serve-light-inner-container"
-                   class="pt-3 pb-2"
-                    v-if="!minimizeWindow">
-        <b-row no-gutters>
-          <b-col cols="7" />
-          <b-col cols="auto" style="align: right">
-            <b-form-checkbox v-model="quick" value="1" unchecked-value="0" v-if="reception"
-                            class="quick-checkbox" style="color:white;margin-right: 8px;">
-                <span style="font: 400 16px Myriad-Pro;">Quick Txn</span>
-                <span class="quick-span" v-if="quick"></span> <!-- For puppeteer testing to see if quick is selected -->
-            </b-form-checkbox>
-            <select id="priority-selection" class="custom-select" v-model="priority_selection" style="margin-right:8px;">
-                <option value=1>High Priority</option>
-                <option value=2>Default Priority</option>
-                <option value=3>Low Priority</option>
-            </select>
-            <b-button class="btn-primary serve-btn"
-                      @click="clickAddService"
-                      :disabled="serviceBegun===false || performingAction"
-                      >Add Next Service</b-button>
-          </b-col>
-          <b-col cols="2" />
-        </b-row>
-      </b-container>
-      <div v-if="!minimizeWindow">
-        <b-container fluid
-                     id="serve-citizen-modal-footer">
-                <div style="display:flex; flex-direction:column; margin-left:10px;">
-                    <b-form-checkbox v-model="accurate_time_ind"
-                                                    v-if="serviceBegun===true"
-                                                    value="0"
-                                                    style="color:white; margin:0 0 8px;"
-                                                    unchecked-value="1">
-                                    <span  style="font: 400 16px Myriad-Pro;">Inaccurate Time</span>
-                                    </b-form-checkbox>
-                    <b-button @click="clickServiceFinish"
-                            :disabled="serviceBegun===false || performingAction"
-                            class="btn-success serve-btn"
-                            id="serve-citizen-finish-button">Finish</b-button>
-                </div>
-              <b-button @click="clickHold"
-                        :disabled="serviceBegun===false || performingAction"
-                        class="btn-warning serve-btn"
-                        id="serve-citizen-place-on-hold-button">Place on Hold</b-button>
+          </div>
         </b-container>
-      </div>
+      </template>
+      <ServeCitizenTable v-if="!minimizeWindow"/>
+      <template v-if="!simplifiedModal && !minimizeWindow">
+        <b-container fluid
+                     id="serve-light-inner-container"
+                     class="pt-3 pb-2">
+          <b-row no-gutters>
+            <b-col cols="7" />
+            <b-col cols="auto"
+                   style="align: right">
+              <b-form-checkbox v-model="quick"
+                               value="1"
+                               unchecked-value="0"
+                               v-if="reception"
+                               class="quick-checkbox"
+                               style="color:white; margin-right: 8px;">
+                  <span style="font: 400 16px Myriad-Pro;">Quick Txn</span>
+                  <span class="quick-span" v-if="quick"></span> <!-- For puppeteer testing to see if quick is selected -->
+              </b-form-checkbox>
+              <select id="priority-selection"
+                      class="custom-select"
+                      v-model="priority_selection"
+                      style="margin-right:8px;">
+                  <option value=1>High Priority</option>
+                  <option value=2>Default Priority</option>
+                  <option value=3>Low Priority</option>
+              </select>
+              <b-button class="btn-primary serve-btn"
+                        @click="clickAddService"
+                        :disabled="serviceBegun===false || performingAction">Add Next Service</b-button>
+            </b-col>
+            <b-col cols="2" />
+          </b-row>
+        </b-container>
+        <div v-if="!minimizeWindow">
+          <b-container fluid
+                       id="serve-citizen-modal-footer">
+                  <div style="display:flex; flex-direction:column; margin-left:10px;">
+                      <b-form-checkbox v-model="accurate_time_ind"
+                                                      v-if="serviceBegun===true"
+                                                      value="0"
+                                                      style="color:white; margin:0 0 8px;"
+                                                      unchecked-value="1">
+                                      <span  style="font: 400 16px Myriad-Pro;">Inaccurate Time</span>
+                                      </b-form-checkbox>
+                      <b-button @click="clickServiceFinish"
+                              :disabled="serviceBegun===false || performingAction"
+                              class="btn-success serve-btn"
+                              id="serve-citizen-finish-button">Finish</b-button>
+                  </div>
+                <b-button @click="clickHold"
+                          :disabled="serviceBegun===false || performingAction"
+                          class="btn-warning serve-btn"
+                          id="serve-citizen-place-on-hold-button">Place on Hold</b-button>
+          </b-container>
+        </div>
+      </template>
+      <template v-if="simplifiedModal && !minimizeWindow">
+        <b-container class="serve-citizen-modal-footer" fluid>
+          <b-row no-gutters class="w-100" align-h="end">
+            <b-col cols="auto">
+              <b-button class="btn-primary serve-btn"
+                        @click="clickAddService">Add Next Service</b-button>
+            </b-col>
+          </b-row>
+          <b-row no-gutters
+                 class="mt-3"
+                 align-h="end">
+            <b-col cols="auto">
+              <b-button @click="clickSimplifiedFinish"
+                        style="width: 100px;"
+                         class="btn-warning serve-btn"
+                         id="serve-citizen-finish-button">Finish</b-button>
+              <b-button @click="clickContinue"
+                        style="width: 100px;"
+                        class="btn-success serve-btn ml-2"
+                        id="serve-citizen-finish-button">Continue</b-button>
+            </b-col>
+          </b-row>
+        </b-container>
+      </template>
     </div>
   </div>
 </template>
@@ -140,9 +175,8 @@ export default {
   updated() {
     if (!this.citizen && this.citizen.ticket_number === "") {
       console.log("Screen All Citizens")
-      this.screenAllCitizens()
+      this.screenAllCitizens(this.$route)
     }
-
     setTimeout( () => {
       if (!this.citizen && this.citizen.ticket_number === "") {
         this.setServeModalAlert("An error occurred loading citizen, please try refreshing the page.")
@@ -157,7 +191,18 @@ export default {
       'serviceModalForm',
       'serveModalAlert'
     ]),
-    ...mapGetters(['invited_citizen', 'active_service', 'invited_service_reqs', 'reception']),
+    ...mapGetters({
+      invited_citizen: 'invited_citizen',
+      active_service: 'active_service',
+      invited_service_reqs: 'invited_service_reqs',
+      reception: 'reception',
+    }),
+    simplifiedModal() {
+      if (this.$route.path !== '/queue') {
+        return true
+      }
+      return false
+    },
     citizen() {
       if (!this.invited_citizen) {
         return {ticket_number: ''}
@@ -217,10 +262,18 @@ export default {
       'screenAllCitizens',
       'setServeModalAlert'
     ]),
-    ...mapMutations(['editServiceModalForm', 'toggleFeedbackModal']),
+    ...mapMutations(['editServiceModalForm', 'toggleFeedbackModal', 'toggleServiceModal', 'toggleExamsTrackingIP']),
     formatTime(data) {
       let date = new Date(data)
       return date.toLocaleTimeString()
+    },
+    clickSimplifiedFinish() {
+      this.toggleExamsTrackingIP(false)
+      this.clickServiceFinish()
+    },
+    clickContinue() {
+      this.toggleExamsTrackingIP(true)
+      this.toggleServiceModal(false)
     },
     toggleFeedback() {
       this.toggleFeedbackModal(true)
@@ -308,6 +361,11 @@ export default {
     background: #504E4F;
     display: flex;
     flex-direction: row-reverse;
+}
+.serve-citizen-modal-footer {
+  background: #504E4F;
+  padding-top: 30px;
+  padding-bottom: 25px;
 }
 #serve-citizen-modal-footer {
     background: #504E4F;
