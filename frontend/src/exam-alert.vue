@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 
 <template>
-  <div v-if="ita_designate === 1">
+  <div v-if="is_ita_designate === 1">
     <b-alert
              variant="primary"
              dismissible
@@ -32,7 +32,7 @@ export default {
   name: 'ExamAlert',
 
   computed: {
-    ...mapGetters([ 'ita_designate' ]),
+    ...mapGetters([ 'is_ita_designate' ]),
     ...mapState([ 'examAlertMessage', 'examDismissCount' ])
   },
   methods: {

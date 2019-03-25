@@ -294,11 +294,15 @@ export const store = new Vuex.Store({
       return ''
     },
 
-    ita_designate(state) {
-      if (state.user && state.user.role.role_code){
-        return state.user.ita_designate
+    is_ita_designate(state) {
+      if (state.user){
+        if(state.user.ita_designate){
+          return true
+        }else {
+          return false
+        }
       }
-      return ''
+      return false
     },
     
     reception(state) {

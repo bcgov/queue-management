@@ -253,7 +253,7 @@
            class="mb-3"
            style="color: red;">{{ this.message }}</div>
       <div style="display: flex; justify-content: flex-end; width: 100%">
-        <b-btn v-if="ita_designate === 1"
+        <b-btn v-if="is_ita_designate"
                class="btn-danger mr-2"
                @click="deleteExam()">Delete Exam</b-btn>
         <b-btn class="btn-secondary mr-2"
@@ -304,7 +304,7 @@
       }
     },
     computed: {
-      ...mapGetters(['exam_object_id', 'role_code', 'liaison_designate', 'ita_designate' ]),
+      ...mapGetters(['exam_object_id', 'role_code', 'liaison_designate', 'is_ita_designate' ]),
       ...mapState(['editExamFailure',
                    'editExamSuccess',
                    'examTypes',
