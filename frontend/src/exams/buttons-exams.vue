@@ -1,5 +1,5 @@
 <template v-if="showExams">
-  <div class="q-w100-flex-fe pr-3" v-if="financial_designate === 1">
+  <div class="q-w100-flex-fe pr-3" v-if="is_financial_designate">
     <b-button class="btn-primary mr-3"
               @click="clickGenFinReport">Generate Financial Report</b-button>
     <FinancialReportModal />
@@ -40,7 +40,7 @@
     components: { AddExamModal, FinancialReportModal },
     computed: {
       ...mapState(['addNonITA', 'showGenFinReportModal', 'user' ]),
-      ...mapGetters([ 'showExams', 'role_code', 'pesticide_designate', 'financial_designate', 'is_liaison_designate']),
+      ...mapGetters([ 'showExams', 'role_code', 'pesticide_designate', 'is_financial_designate', 'is_liaison_designate']),
     },
     methods: {
       ...mapActions(['actionRestoreAll']),

@@ -280,11 +280,15 @@ export const store = new Vuex.Store({
       return ''
     },
 
-    financial_designate(state) {
-      if (state.user && state.user.role.role_code) {
-        return state.user.finance_designate
+    is_financial_designate(state) {
+      if (state.user) {
+        if(state.user.finance_designate){
+          return true
+        }else{
+          return false
+        }
       }
-      return ''
+      return false
     },
 
     is_liaison_designate(state) {
