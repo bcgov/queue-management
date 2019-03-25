@@ -30,9 +30,6 @@ class OfficeList(Resource):
         try:
             csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
 
-            # if csr.role.role_code != "LIAISON":
-            #     return {'message': 'You do not have permission to view this end-point'}, 403
-
             offices = Office.query.filter(Office.deleted.is_(None))
             result = self.office_schema.dump(offices)
 

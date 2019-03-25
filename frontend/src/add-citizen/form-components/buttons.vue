@@ -11,7 +11,7 @@
                   class="btn-success"
                   id="add-citizen-apply">Apply</b-button>
       </div>
-      <div v-else-if="setup === 'add_mode' " class="buttons-div">
+      <div v-if="setup === 'add_mode' " class="buttons-div">
         <b-button @click="clickEditCancel"
                   :disabled="performingAction"
                   class="btn-danger" >Cancel</b-button>
@@ -21,23 +21,23 @@
       </div>
     </template>
     <template v-else>
-      <div v-if="reception" class="buttons-div">
+      <div v-if="!simplified && reception" class="buttons-div">
         <b-button @click="cancelAddCitizensModal"
                   :disabled="performingAction"
                   class="btn-danger"
                   id="add-citizen-cancel">Cancel</b-button>
         <div style="display:inline-block">
-            <b-button @click="addToQueue"
+          <b-button @click="addToQueue"
                     :disabled="performingAction"
                     class="btn-white"
                     id="add-citizen-add-to-queue">Add to queue</b-button>
-            <b-button @click="beginService"
+          <b-button @click="beginService"
                     :disabled="performingAction"
                     class="btn-success"
                     id="add-citizen-begin-service">Begin service</b-button>
         </div>
       </div>
-      <div v-if="!reception" class="buttons-div">
+      <div v-if="!simplified && !reception" class="buttons-div">
         <b-button @click="cancelAddCitizensModal"
                   :disabled="performingAction"
                   class="btn-danger"
@@ -47,25 +47,43 @@
                   class="btn-success"
                   id="add-citizen-begin-service">Begin service</b-button>
       </div>
+      <div v-if="simplified" class="buttons-div">
+        <b-button @click="cancelAddCitizensModal"
+                  :disabled="performingAction"
+                  class="btn-danger"
+                  id="add-citizen-cancel">Cancel</b-button>
+        <b-button @click="beginServiceSimplified"
+                  :disabled="performingAction"
+                  class="btn-success"
+                  id="add-citizen-begin-service">Begin service</b-button>
+      </div>
     </template>
   </b-col>
 </template>
 
 <script>
-  import { mapGetters, mapActions, mapState } from 'vuex'
+  import { mapGetters, mapActions, mapMutations, mapState } from 'vuex'
 
   export default {
     name: 'Buttons',
-
     computed: {
-      ...mapGetters([ 'form_data', 'reception' ]),
+      ...mapGetters({
+        form_data: 'form_data',
+        reception: 'reception',
+      }),
       ...mapState({
-        setup: state => state.addModalSetup,
-        performingAction: state => state.performingAction
-      })
+        setup: 'addModalSetup',
+        performingAction: 'performingAction',
+      }),
+      simplified() {
+        if (this.$route.path !== '/queue') {
+          return true
+        }
+        return false
+      },
     },
-
     methods: {
+      ...mapMutations(['toggleExamsTrackingIP']),
       ...mapActions([
         'clickBeginService',
         'clickAddToQueue',
@@ -75,7 +93,6 @@
         'clickEditCancel',
         'clickAddServiceApply'
       ]),
-
       addToQueue() {
         if (this.form_data.service === '') {
           this.$store.commit('setModalAlert', 'You must select a service')
@@ -89,7 +106,6 @@
         }
         this.clickAddToQueue()
       },
-
       beginService() {
         if (this.form_data.service === '') {
           this.$store.commit('setModalAlert', 'You must select a service')
@@ -101,7 +117,21 @@
           this.$root.$emit('showAddMessage')
           return null
         }
-        this.clickBeginService()
+        this.clickBeginService({simple: false})
+      },
+      beginServiceSimplified() {
+        if (this.form_data.service === '') {
+          this.$store.commit('setModalAlert', 'You must select a service')
+          this.$root.$emit('showAddMessage')
+          return null
+        }
+        if (this.form_data.channel === '') {
+          this.$store.commit('setModalAlert', 'You must select a channel')
+          this.$root.$emit('showAddMessage')
+          return null
+        }
+        this.toggleExamsTrackingIP(true)
+        this.clickBeginService({simple: true})
       },
       addServiceApply() {
         if (this.form_data.service === '') {

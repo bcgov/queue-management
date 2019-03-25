@@ -8,14 +8,14 @@
            size="md">
     <div v-if="exam">
       <b-table v-show="false"
-               v-if="role_code==='LIAISON'"
+               v-if="is_liaison_designate"
                :items="offices"
                :fields="{key: 'office_name'}"
                :filter="search"
                @filtered="getFilteredOffices" />
       <span style="font-size: 1.4rem; font-weight: 600;">Edit Exam</span>
       <b-form v-if="showAllFields">
-        <b-form-row v-if="role_code === 'LIAISON' && examType === 'group'">
+        <b-form-row v-if="is_liaison_designate && examType === 'group'">
           <b-col>
             <b-form-group>
               <label class="my-0">Office (Start typing below to search or enter Office Number )</label>
@@ -253,7 +253,8 @@
            class="mb-3"
            style="color: red;">{{ this.message }}</div>
       <div style="display: flex; justify-content: flex-end; width: 100%">
-        <b-btn class="btn-danger mr-2"
+        <b-btn v-if="is_ita_designate"
+               class="btn-danger mr-2"
                @click="deleteExam()">Delete Exam</b-btn>
         <b-btn class="btn-secondary mr-2"
                @click="toggleEditExamModal(false)">Cancel</b-btn>
@@ -303,7 +304,7 @@
       }
     },
     computed: {
-      ...mapGetters(['exam_object_id', 'role_code']),
+      ...mapGetters(['exam_object_id', 'role_code', 'is_liaison_designate', 'is_ita_designate' ]),
       ...mapState(['editExamFailure',
                    'editExamSuccess',
                    'examTypes',
@@ -396,7 +397,7 @@
             return true
           }
           if (this.exam.offsite_location) {
-            if (this.role_code === 'GA' || this.role_code === 'LIAISON') {
+            if (this.role_code === 'GA' || this.is_liaison_designate) {
               return true
             }
           }
@@ -540,7 +541,7 @@
         if (this.fields.exam_received_date) {
           this.exam_received = true
         }
-        if (this.role_code === 'LIAISON') {
+        if (this.is_liaison_designate) {
           let office = this.offices.find(office => office.office_id == this.exam.office_id)
           this.search = office.office_name
           this.office_number = office.office_number

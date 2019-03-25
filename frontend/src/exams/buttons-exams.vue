@@ -1,5 +1,5 @@
 <template v-if="showExams">
-  <div class="q-w100-flex-fe pr-3" v-if="financial_designate === 1">
+  <div class="q-w100-flex-fe pr-3" v-if="is_financial_designate">
     <b-button class="btn-primary mr-3"
               @click="clickGenFinReport">Generate Financial Report</b-button>
     <FinancialReportModal />
@@ -17,11 +17,14 @@
       <b-button v-if="role_code!=='GA'"
                 class="mr-1 btn-primary"
                 @click="handleClick('individual')">Add ITA Exam</b-button>
-      <b-button v-if="role_code==='LIAISON'"
+      <b-button v-if="is_liaison_designate"
                 class="mr-1 btn-primary"
                 @click="handleClick('group')">Add Group Exam</b-button>
       <b-button class="mr-1 btn-primary"
                 @click="handleClick('other')">Add Other Exam</b-button>
+      <b-button v-if="is_pesticide_designate"
+                class="btn-primary"
+                @click="handleClick('pesticide')">Add Pesticide Exam</b-button>
     </b-form>
     <AddExamModal />
   </div>
@@ -36,11 +39,8 @@
     name: "ButtonsExams",
     components: { AddExamModal, FinancialReportModal },
     computed: {
-      ...mapState(['addNonITA', 'showGenFinReportModal', 'user', ]),
-      ...mapGetters([ 'showExams', 'role_code', 'pesticide_designate', 'financial_designate', ]),
-    },
-    created() {
-      console.log(this.financial_designate)
+      ...mapState(['addNonITA', 'showGenFinReportModal', 'user' ]),
+      ...mapGetters([ 'showExams', 'role_code', 'is_pesticide_designate', 'is_financial_designate', 'is_liaison_designate']),
     },
     methods: {
       ...mapActions(['actionRestoreAll']),

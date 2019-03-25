@@ -24,7 +24,7 @@
         </template>
       </b-col>
     </b-row>
-    <b-row no-gutters align-h="between" align-v="end" v-if="setup === 'group' || pesticide_designate===1">
+    <b-row no-gutters align-h="between" align-v="end" v-if="setup === 'group' || is_pesticide_designate">
       <b-col cols="1" />
       <b-col cols="3">
         <span class="confirm-header">Office</span>
@@ -219,7 +219,7 @@
         addExamModal: state => state.addExamModal,
         offices: state => state.offices,
       }),
-      ...mapGetters(['exam_object', 'pesticide_designate', ]),
+      ...mapGetters(['exam_object', 'is_pesticide_designate', ]),
       officeName() {
         if (this.addExamModal.setup === 'group' || this.addExamModal.setup === 'pesticide' && this.exam.office_id ) {
           let office = this.offices.find(o => o.office_id == this.exam.office_id)

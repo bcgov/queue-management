@@ -68,7 +68,7 @@
     methods: {
       ...mapMutations([
         'setMainAlert',
-        'toggleFeedbackModal'
+        'toggleFeedbackModal',
       ]),
       ...mapActions([
         'clickInvite',

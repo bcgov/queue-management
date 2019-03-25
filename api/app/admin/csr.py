@@ -41,19 +41,20 @@ class CSRConfig(Base):
     can_delete = False
 
     column_list = ['username', 'office.office_name', 'ita_designate', 'pesticide_designate', 'finance_designate',
-                   'role.role_desc', 'deleted']
+                   'liaison_designate', 'role.role_desc', 'deleted']
     column_labels = {
         'username': 'Username',
         'office.office_name': 'Office',
         'ita_designate': 'ITA Designate',
         'pesticide_designate': 'Pesticide Exam Designate',
         'finance_designate': 'Financial Reporting Designate',
+        'liaison_designate': 'Liaison Designate',
         'role.role_desc': 'Role',
         'deleted': 'Deleted'
     }
     column_searchable_list = ('username',)
-    column_sortable_list = ('username', 'office.office_name', 'ita_designate', 'pesticide_designate', 'finance_designate',
-                            'role.role_desc', 'deleted')
+    column_sortable_list = ('username', 'office.office_name', 'ita_designate', 'pesticide_designate',
+                            'finance_designate', 'liaison_designate', 'role.role_desc', 'deleted')
     column_default_sort = 'username'
     form_args = {
         'qt_xn_csr_ind': {'default': '0'},
@@ -62,12 +63,13 @@ class CSRConfig(Base):
         'ita_designate': {'default': '0'},
         'pesticide_designate': {'default': '0'},
         'finance_designate': {'default': '0'},
+        'liaison_designate': {'default': '0'},
     }
     form_excluded_columns = ('periods',)
     form_create_rules = ('username', 'qt_xn_csr_ind', 'receptionist_ind', 'ita_designate', 'pesticide_designate',
-                         'finance_designate', 'csr_state', 'role', 'office','deleted',)
+                         'finance_designate', 'liaison_designate', 'csr_state', 'role', 'office','deleted',)
     form_edit_rules = ('username', 'qt_xn_csr_ind', 'receptionist_ind', 'ita_designate', 'pesticide_designate',
-                       'finance_designate', 'csr_state', 'role', 'office', 'deleted',)
+                       'finance_designate', 'liaison_designate', 'csr_state', 'role', 'office', 'deleted',)
 
     def get_return_url(self):
         return get_redirect_target() or self.get_url('.index_view')

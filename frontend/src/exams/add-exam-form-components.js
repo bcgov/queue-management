@@ -87,7 +87,8 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
         let exams = this.examTypes.filter( type =>
           !type.exam_type_name.includes('Group') &&
           !type.exam_type_name.includes('Single') &&
-          !type.exam_type_name.includes('Challenger Exam Session')
+          !type.exam_type_name.includes('Challenger Exam Session') &&
+          !type.exam_type_name.includes('Pesticide')
         )
         return exams.sort((a,b) => sorter(a,b))
       }
@@ -145,6 +146,7 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
       <h5 v-if="addExamModal.setup === 'group' ">Add Group Exam</h5>
       <h5 v-if="addExamModal.setup === 'individual' ">Add Individual ITA Exam</h5>
       <h5 v-if="addExamModal.setup === 'other' ">Add Non-ITA Exam</h5>
+      <h5 v-if="addExamModal.setup === 'pesticide' ">Add Pesticide Exam</h5>
       <label>Exam Type</label><br>
         <div @click="clickInput">
           <b-input read-only
@@ -525,7 +527,7 @@ export const SelectOffice = Vue.component('select-office', {
     return {}
   },
   computed: {
-    ...mapGetters(['role_code', 'pesticide_designate', ]),
+    ...mapGetters(['role_code']),
     ...mapState(['offices', 'user', 'addExamModal']),
     office_number() {
       return this.addExamModal.office_number
