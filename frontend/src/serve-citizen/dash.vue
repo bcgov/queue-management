@@ -98,6 +98,7 @@ import GAScreen from './../ga-screen/ga-screen'
         this.clickAddCitizen()
         next()
       }
+      next()
     },
     computed: {
       ...mapGetters(['citizens_queue', 'on_hold_queue', 'reception']),
