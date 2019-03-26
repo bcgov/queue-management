@@ -13,12 +13,12 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 
 <template>
-  <div v-if="is_ita_designate === 1">
+  <div v-if="is_ita_designate">
     <b-alert
              variant="primary"
              dismissible
              :show="examDismissCount"
-             style="h-align: center; font-size:1rem; border-radius: 0px;"
+             style="h-align: center; font-size:1rem; border-radius: 0px; z-index: 1041"
              @dismissed="onDismissedExam">
              {{ examAlertMessage }}
     </b-alert>

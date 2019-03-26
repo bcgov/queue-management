@@ -85,8 +85,7 @@ class CsrSelf(Resource):
 
             group_exams = Exam.query \
                 .filter_by(office_id=csr.office_id) \
-                .filter(Exam.expiry_date > today,
-                        Exam.deleted_date.is_(None)) \
+                .filter(Exam.deleted_date.is_(None)) \
                 .join(ExamType, Exam.exam_type_id == ExamType.exam_type_id) \
                 .filter(ExamType.group_exam_ind == 1) \
                 .join(Booking, Exam.booking_id == Booking.booking_id) \

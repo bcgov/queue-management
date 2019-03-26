@@ -767,21 +767,21 @@ export const store = new Vuex.Store({
           context.commit('setUser', resp.data.csr)
           let officeType = resp.data.csr.office.sb.sb_type
           context.commit('setOffice', officeType)
+          let individualExamBoolean = false
+          let groupExamBoolean = false
 
           if (resp.data.group_exams > 0) {
-            var groupExamBoolean = true
+            groupExamBoolean = true
             context.commit('setGroupExam', groupExamBoolean)
           } else {
-            var groupExamBoolean = false
             context.commit('setGroupExam', groupExamBoolean)
           }
 
           if (resp.data.individual_exams > 0) {
-            var individualExamBoolean = true
-            context.commit('setGroupExam', individualExamBoolean)
+            individualExamBoolean = true
+            context.commit('setIndividualExam', individualExamBoolean)
           } else {
-            var individualExamBoolean = false
-            context.commit('setGroupExam', individualExamBoolean)
+            context.commit('setIndividualExam', individualExamBoolean)
           }
 
           if (groupExamBoolean && individualExamBoolean) {
