@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 
 <template>
-  <div v-if="is_ita_designate">
+  <div v-if="is_ita_designate" id="EXAMALERT">
     <b-alert
              variant="primary"
              dismissible
@@ -30,7 +30,6 @@ import { mapGetters, mapMutations, mapState } from 'vuex'
 
 export default {
   name: 'ExamAlert',
-
   computed: {
     ...mapGetters([ 'is_ita_designate' ]),
     ...mapState([ 'examAlertMessage', 'examDismissCount' ])
