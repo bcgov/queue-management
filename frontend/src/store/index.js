@@ -1647,7 +1647,10 @@ export const store = new Vuex.Store({
 
       if (context.state.serviceModalForm.citizen_id) {
         let { accurate_time_ind, citizen_comments } = context.state.serviceModalForm
+        // DELETE
         quick = context.state.serviceModalForm.quick
+        //
+        counter = context.state.serviceModalForm.counter
         priority = context.state.serviceModalForm.priority
         citizen_id = context.state.serviceModalForm.citizen_id
         let prevCitizen = context.getters.invited_citizen
@@ -1675,10 +1678,13 @@ export const store = new Vuex.Store({
       } else {
         let { form_data } = context.getters
         citizen_id = form_data.citizen.citizen_id
+        // DELETE
         data.qt_xn_citizen_ind = form_data.quick
         if (!form_data.quick) {
           data.qt_xn_citizen_ind = 0
         }
+        //
+        data.counter_id = form_data.counter
         data.priority = form_data.priority
         data.citizen_comments = form_data.comments
       }
