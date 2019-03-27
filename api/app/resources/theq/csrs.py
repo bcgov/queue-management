@@ -77,7 +77,7 @@ class CsrSelf(Resource):
 
             individual_exams = Exam.query \
                 .filter_by(office_id=csr.office_id) \
-                .filter(Exam.exam_returned_ind == 0,
+                .filter(Exam.exam_returned_date.is_(None),
                         Exam.expiry_date <= today,
                         Exam.deleted_date.is_(None)) \
                 .join(ExamType, Exam.exam_type_id == ExamType.exam_type_id) \

@@ -757,7 +757,6 @@ class Bootstrap(Command):
             session_number = 1,
             number_of_students = 1,
             exam_method = "paper",
-            exam_returned_ind=0
         )
 
         exam_two = bookings.Exam(
@@ -772,7 +771,6 @@ class Bootstrap(Command):
             session_number = 2,
             number_of_students = 12,
             exam_method = "online",
-            exam_returned_ind = 0
         )
 
         exam_three = bookings.Exam(
@@ -787,7 +785,6 @@ class Bootstrap(Command):
             session_number=3,
             number_of_students=10,
             exam_method="paper",
-            exam_returned_ind = 0
         )
 
         exam_four = bookings.Exam(
@@ -802,7 +799,6 @@ class Bootstrap(Command):
             session_number=4,
             number_of_students=25,
             exam_method="online",
-            exam_returned_ind = 0
         )
 
         exam_five = bookings.Exam(
@@ -817,7 +813,6 @@ class Bootstrap(Command):
             session_number=4,
             number_of_students=25,
             exam_method="paper",
-            exam_returned_ind = 0
         )
 
         db.session.add(exam_one)
