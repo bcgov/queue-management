@@ -361,9 +361,8 @@ export const store = new Vuex.Store({
         let test = c.service_reqs.filter(sr=>sr.periods.some(p=>p.time_end == null && p.ps.ps_name === 'On hold'))
         if (test.length > 0) {
           return true
-        } else {
-          return false
         }
+        return false
       }
       let filtered = citizens.filter(c=>c.service_reqs.length > 0)
       let list = filtered.filter(isCitizenOnHold)
@@ -380,9 +379,8 @@ export const store = new Vuex.Store({
         let test = c.service_reqs.filter(sr=>sr.periods.some(p=>p.time_end == null && p.ps.ps_name === 'Waiting'))
         if (test.length > 0) {
           return true
-        } else {
-          return false
         }
+        return false
       }
       let filtered = citizens.filter(c=>c.service_reqs.length > 0)
       let list = filtered.filter(isCitizenQueued)
