@@ -122,6 +122,7 @@ def api_call_with_retry(f):
     return decorated_function
 
 import app.resources.theq.categories
+import app.resources.theq.counters
 import app.resources.theq.channels
 import app.resources.theq.citizen.citizen_add_to_queue
 import app.resources.theq.citizen.citizen_begin_service

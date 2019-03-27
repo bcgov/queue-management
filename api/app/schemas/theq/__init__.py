@@ -27,3 +27,4 @@ from .period_schema import PeriodSchema
 from .service_req_schema import ServiceReqSchema
 from .citizen_schema import CitizenSchema
 from .permission_schema import PermissionSchema
+from .counter_schema import CounterSchema

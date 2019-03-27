@@ -18,7 +18,7 @@ from app.models.theq import Counter
 from qsystem import ma
 
 
-class RoleSchema(ma.ModelSchema):
+class CounterSchema(ma.ModelSchema):
 
     class Meta:
         model = Counter
