@@ -1,11 +1,11 @@
 /*Copyright 2015 Province of British Columbia
- 
+
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
  You may obtain a copy of the License at
- 
+
  http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing, software
  distributed under the License is distributed on an "AS IS" BASIS,
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -71,6 +71,7 @@ export const store = new Vuex.Store({
     citizenInvited: false,
     citizens: [],
     clickedDate: '',
+    counter_types: [],
     csr_states: [],
     csrs: [],
     dismissCount: 0,
@@ -148,6 +149,7 @@ export const store = new Vuex.Store({
     showReturnExamModalVisible: false,
     showServiceModal: false,
     user: {
+      counter_id: null,
       csr_id: null,
       csr_state_id: null,
       csr_state: {
@@ -199,7 +201,7 @@ export const store = new Vuex.Store({
       })
       return invigilators
     },
-    
+
     show_scheduling_indicator: (state) => {
       if (state.scheduling || state.rescheduling) {
         if (!state.showOtherBookingModal && !state.showBookingModal && !state.showEditBookingModal) {
@@ -208,22 +210,22 @@ export const store = new Vuex.Store({
       }
       return false
     },
-  
+
     filtered_calendar_events: (state, getters) => (search) => {
       return state.calendarEvents.filter(event => searchNestedObject(event, search))
     },
-    
+
     exam_inventory(state) {
       if (state.showExamInventoryModal) {
         return state.exams.filter(exam => exam.booking_id === null)
       }
       return state.exams
     },
-    
+
     exam_object_id: (state, getters) => (examId) => {
       return state.examTypes.find(type => type.exam_type_id == examId)
     },
-    
+
     exam_object(state) {
       if (state.capturedExam && state.capturedExam.exam_type_id) {
         return state.examTypes.find(type => type.exam_type_id == state.capturedExam.exam_type_id)
@@ -277,7 +279,7 @@ export const store = new Vuex.Store({
       }
       return ''
     },
-    
+
     reception(state) {
       if (state.user.office && state.user.office.sb) {
         if (state.user.office.sb.sb_type === "callbyname" || state.user.office.sb.sb_type === "callbyticket") {
@@ -426,7 +428,7 @@ export const store = new Vuex.Store({
         context.commit("setNavigation", view)
       }
     },
-  
+
     deleteBooking(context, id) {
       return new Promise((resolve, reject) => {
         Axios(context).delete(`/bookings/${id}/`).then(resp => {
@@ -458,7 +460,7 @@ export const store = new Vuex.Store({
         })
       })
     },
-    
+
     putBooking(context, payload) {
       return new Promise((resolve, reject) => {
         Axios(context).put(`/bookings/${payload.id}/`, payload.changes).then(resp => {
@@ -567,6 +569,18 @@ export const store = new Vuex.Store({
       })
     },
 
+    getCounterTypes(context) {
+      return new Promise((resolve, reject) => {
+        let url = `/counters/`;
+        Axios(context).get(url).then(resp=>{
+          context.commit('setCounterTypes', resp.data.counters)
+          resolve(resp)
+        }, error => {
+          reject(error)
+        })
+      })
+    },
+
     getCitizen(context, citizen_id) {
       return new Promise((resolve, reject) => {
         let url = `/citizens/${citizen_id}/`
@@ -659,7 +673,7 @@ export const store = new Vuex.Store({
           })
       })
     },
-    
+
     getOffices(context, payload=null) {
       if (context.state.user.role.role_code === 'LIAISON' || payload === 'force') {
         return new Promise((resolve, reject) => {
@@ -1257,7 +1271,7 @@ export const store = new Vuex.Store({
     closeGAScreenModal(context) {
       context.commit('toggleGAScreenModal', false)
     },
-    
+
     initializeAgenda(context) {
       return new Promise((resolve, reject) => {
         context.dispatch('getExams').then( () => {
@@ -1396,7 +1410,7 @@ export const store = new Vuex.Store({
         })
       }
     },
-    
+
     scheduleExam(context, payload) {
       return new Promise((resolve, reject) => {
         context.dispatch('postBooking', payload).then(booking_id => {
@@ -1405,9 +1419,9 @@ export const store = new Vuex.Store({
           })
         })
       })
-      
+
     },
-    
+
     putExam(context, payload) {
       let bookingId, examId
       if (typeof payload === 'object' && payload !== null) {
@@ -1445,7 +1459,7 @@ export const store = new Vuex.Store({
           })
       })
     },
-    
+
     postBooking(context, payload) {
       if (!Object.keys(payload).includes('office_id')) {
         payload['office_id'] = context.state.user.office_id
@@ -1459,7 +1473,7 @@ export const store = new Vuex.Store({
           })
       })
     },
-    
+
     finishBooking(context) {
       context.dispatch('getBookings')
       context.commit('setSelectionIndicator', false)
@@ -1473,7 +1487,7 @@ export const store = new Vuex.Store({
       context.commit('toggleEditGroupBookingModal', false)
       context.commit('toggleSelectInvigilatorModal', false)
     },
-  
+
     postITAChallengerExam(context) {
       let responses = Object.assign( {}, context.state.capturedExam)
       let date = new moment(responses.expiry_date).local().format('YYYY-MM-DD')
@@ -1509,7 +1523,7 @@ export const store = new Vuex.Store({
         data.notes = ''
       }
       let postData = {...responses, ...defaultValues}
-     
+
       return new Promise((resolve, reject) => {
         Axios(context).post('/exams/', postData).then( examResp => {
           let { exam_id } = examResp.data.exam
@@ -1525,9 +1539,9 @@ export const store = new Vuex.Store({
           }).catch( () => { reject() })
         }).catch( () => { reject() })
       })
-      
+
     },
-    
+
     postITAGroupExam(context) {
       let responses = Object.assign( {}, context.state.capturedExam)
       let date = new moment(responses.expiry_date).local().format('YYYY-MM-DD')
@@ -1553,7 +1567,7 @@ export const store = new Vuex.Store({
         data.notes = ''
       }
       let postData = {...responses, ...defaultValues}
-      
+
       return new Promise((resolve, reject) => {
         Axios(context).post('/exams/', postData).then( examResp => {
           let { exam_id } = examResp.data.exam
@@ -1570,7 +1584,7 @@ export const store = new Vuex.Store({
         }).catch( () => { reject() })
       })
     },
-  
+
     postITAIndividualExam(context) {
       let responses = Object.assign( {}, context.state.capturedExam)
       let defaultValues = {
@@ -1588,7 +1602,7 @@ export const store = new Vuex.Store({
         }
       }
       let postData = {...responses, ...defaultValues}
-  
+
       return new Promise((resolve, reject) => {
         Axios(context).post('/exams/', postData).then( () => { resolve() }).catch( () => { reject() })
       })
@@ -1827,6 +1841,13 @@ export const store = new Vuex.Store({
       }
     },
 
+    updateCSRCounterTypeState2(context) {
+      let csr_id = context.state.user.csr_id
+      Axios(context).put(`/csrs/${csr_id}/`, {
+        counter_id: context.state.user.counter_id,
+      })
+    },
+
     //Updates the counter's type from the state after selecting from the dropdown (regular counter, quick transaction, or receptionist)
     updateCSRCounterTypeState(context) {
       let csr_id = context.state.user.csr_id
@@ -1834,8 +1855,6 @@ export const store = new Vuex.Store({
         qt_xn_csr_ind: context.state.user.qt_xn_csr_ind,
         receptionist_ind: context.state.user.receptionist_ind
       })
-        .then( resp => {
-        })
     },
 
     updateCSRState(context) {
@@ -1862,6 +1881,10 @@ export const store = new Vuex.Store({
     setChannels(state, payload) {
       state.channels = []
       state.channels = payload
+    },
+    setCounterTypes(state, payload) {
+      state.counter_types = []
+      state.counter_types = payload
     },
     setCategories(state, payload) {
       state.categories = []
@@ -2076,6 +2099,8 @@ export const store = new Vuex.Store({
 
     setReceptionistState: (state, payload) => state.user.receptionist_ind = payload,
 
+    setCounterStatusState: (state, payload) => state.user.counter_id = payload,
+
     setCSRState: (state, payload) => state.user.csr_state_id = payload,
 
     setUserCSRStateName: (state, payload) => state.user.csr_state.csr_state_name = payload,
@@ -2114,7 +2139,7 @@ export const store = new Vuex.Store({
     setiframeLogedIn: (state, value) => state.iframeLogedIn = value,
 
     setNavigation: (state, value) => state.adminNavigation = value,
-  
+
     toggleAddExamModal(state, payload) {
       if (typeof payload === 'boolean') {
         state.addExamModal.visible = payload
@@ -2187,19 +2212,19 @@ export const store = new Vuex.Store({
         payload
       )
     },
-  
+
     setBookings(state, payload) {
       state.bookings = payload
     },
-    
+
     setRooms(state, payload) {
       state.rooms = payload
     },
-  
+
     toggleBookingModal: (state, payload) => state.showBookingModal = payload,
-    
+
     setClickedDate: (state, payload) => state.clickedDate = payload,
-    
+
     toggleExamInventoryModal: (state, payload) => state.showExamInventoryModal = payload,
 
     toggleEditExamModal: (state, payload) => state.showEditExamModal = payload,
@@ -2221,7 +2246,7 @@ export const store = new Vuex.Store({
       }
       state.selectedExam = payload
     },
-  
+
     toggleScheduling: (state, payload) => {
       if (!payload) {
         state.scheduling = payload
@@ -2230,17 +2255,17 @@ export const store = new Vuex.Store({
       }
       state.scheduling = payload
     },
-    
+
     setCalendarSetup: (state, payload) => state.calendarSetup = payload,
-    
+
     toggleOtherBookingModal: (state, payload) => state.showOtherBookingModal = payload,
 
     setEditExamSuccess: (state, payload) => state.editExamSuccess = payload,
 
     setEditExamFailure: (state, payload) => state.editExamFailure = payload,
-  
+
     toggleEditBookingModal: (state, payload) => state.showEditBookingModal = payload,
-  
+
     setEditedBooking(state, payload) {
       if (typeof payload === 'object' && payload !== null) {
         state.editedBooking = Object.assign({}, payload)
@@ -2250,36 +2275,36 @@ export const store = new Vuex.Store({
         state.editedBookingOriginal = null
       }
     },
-  
+
     toggleRescheduling: (state, payload) => state.rescheduling = payload,
-  
+
     setEditedBookingOriginal: (state, payload) => state.editedBookingOriginal = payload,
-    
+
     setOffices: (state, payload) => state.offices = payload,
-    
+
     setOfficeFilter: (state, payload) => state.officeFilter = payload,
-  
+
     setSelectionIndicator: (state, payload) => state.selectionIndicator = payload,
-    
+
     setGroupBookings: (state, payload) => state.groupBookings = payload,
-  
+
     setResources: (state, payload) => state.roomResources = payload,
-    
+
     toggleSelectInvigilatorModal: (state, payload) => state.showSelectInvigilatorModal = payload,
-    
+
     setEvents: (state, payload) => state.calendarEvents = payload,
-    
+
     setInventoryEditedBooking(state, booking) {
       let bookingCopy = Object.assign({}, booking)
       state.editedBooking = bookingCopy
     },
-  
+
     toggleEditGroupBookingModal: (state, payload) => state.showEditGroupBookingModal = payload,
-  
+
     setInventoryFilters(state, payload) {
       state.inventoryFilters[payload.type] = payload.value
     },
-    
+
     restoreSavedModal(state, payload) {
       Object.keys(payload.item).forEach(key => {
         Vue.set(
@@ -2289,7 +2314,7 @@ export const store = new Vuex.Store({
         )
       })
     },
-    
+
     toggleOffsiteVisible: (state, payload) => state.offsiteVisible = payload,
   }
 })

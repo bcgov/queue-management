@@ -34,10 +34,17 @@ limitations under the License.*/
         <p class="switch-p">{{user.csr_state_id === csr_states['Break'] ? 'On Break' : 'Active' }}</p>
       </div>
       <div id="select-wrapper" style="padding-right: 20px" v-if="reception">
-         <select id="counter-selection" class="custom-select" v-model="counter_selection">
-           <option value='counter'>Counter</option>
-           <option value='quick'>Quick Trans</option>
-           <option value='receptionist'>Receptionist</option>
+        <!-- <select id="counter-selection" class="custom-select" v-model="counter_selection">
+          <option value='counter'>Counter</option>
+          <option value='quick'>Quick Trans</option>
+          <option value='receptionist'>Receptionist</option>
+        </select> -->
+        <select id="counter-selection" class="custom-select" v-model="counter_selection2">
+            <option v-for="counter in counter_types"
+                  :value="counter.counter_id"
+                  :key="counter.counter_id">
+            {{counter.counter_name}}
+          </option>
         </select>
       </div>
       <div style="padding-right: 20px">
@@ -65,7 +72,7 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
       _.defer(this.initSessionStorage)
     },
     computed: {
-      ...mapState(['user', 'csr_states']),
+      ...mapState(['user', 'csr_states', 'counter_types']),
       ...mapGetters(['quick_trans_status', 'reception', 'receptionist_status']),
       // set and get state of counter type (select dropdown in nav)
       counter_selection: {
@@ -78,11 +85,14 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
             return 'counter';
           }
         },
+      },
+      counter_selection2: {
+        get() {
+          return this.user.counter_id
+        },
         set(value) {
-          this.setQuickTransactionState(value === 'quick')
-          this.setReceptionistState(value === 'receptionist')
-          this.updateCSRCounterTypeState()
-        //  zzz to do
+          this.setCounterStatusState(value)
+          this.updateCSRCounterTypeState2()
         }
       },
       break_toggle: {
@@ -116,8 +126,8 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
       },
     },
     methods: {
-      ...mapActions(['updateCSRCounterTypeState', 'updateCSRState']),
-      ...mapMutations(['setQuickTransactionState', 'setReceptionistState', 'setCSRState', 'setUserCSRStateName']),
+      ...mapActions(['updateCSRCounterTypeState', 'updateCSRCounterTypeState2', 'updateCSRState']),
+      ...mapMutations(['setQuickTransactionState', 'setReceptionistState', 'setCSRState', 'setUserCSRStateName', 'setCounterStatusState']),
       initSessionStorage() {
         if(sessionStorage.getItem('token')) {
           let tokenExp = sessionStorage.getItem('tokenExp')

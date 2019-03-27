@@ -61,6 +61,7 @@ limitations under the License.*/
         socket.on('reconnecting',()=>{this.onReconnecting()})
         socket.on('joinRoomSuccess',()=>{this.onJoinRoom(true)})
         socket.on('joinRoomFail',()=>{this.onJoinRoom(false)})
+        socket.on('get_counter_types',()=>{this.getCounterTypes()})
         socket.on('get_Csr_State_IDs',()=>{this.getCsrStateIDs()})
         socket.on('update_customer_list',()=>{this.onUpdateCustomerList()})
         socket.on('update_active_citizen', (citizen) => { this.onUpdateActiveCitizen(citizen) } )
@@ -121,6 +122,11 @@ limitations under the License.*/
       onClearCsrCache(data) {
         console.log('socket received: "clear_csr_cache"')
         socket.emit('clear_csr_user_id', data.id)
+      },
+
+      getCounterTypes() {
+          console.log('socket received: "getCounterTypes"')
+          this.$store.dispatch('getCounterTypes')
       },
 
       getCsrStateIDs() {
