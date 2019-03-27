@@ -57,6 +57,13 @@
             >
               <span style="font: 400 16px Myriad-Pro;">Quick Txn</span>
             </b-form-checkbox>
+            <select id="counter-selection" class="custom-select" v-model="counter_selection">
+              <option v-for="counter in counter_types"
+                    :value="counter.counter_id"
+                    :key="counter.counter_id">
+                {{counter.counter_name}}
+              </option>
+            </select>
           </div>
           <div class="button-row">
             <Buttons/>
@@ -100,7 +107,8 @@ export default {
       "addModalForm",
       "showAddModal",
       "addModalSetup",
-      "serviceModalForm"
+      "serviceModalForm",
+      "counter_types"
     ]),
     ...mapGetters(["form_data", "reception"]),
 
@@ -118,6 +126,15 @@ export default {
       },
       set(value) {
         this.updateAddModalForm({ type: "quick", value });
+      }
+    },
+
+    counter_selection: {
+      get() {
+        return this.form_data.counter;
+      },
+      set(value) {
+        this.updateAddModalForm({ type: "counter", value });
       }
     },
 

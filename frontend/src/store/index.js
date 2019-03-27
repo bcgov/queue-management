@@ -44,7 +44,8 @@ export const store = new Vuex.Store({
       quick: 0,
       suspendFilter: false,
       selectedItem: '',
-      priority: 2
+      priority: 2,
+      counter: 1,
     },
     addModalSetup: null,
     nonITAExam: false,
@@ -130,7 +131,8 @@ export const store = new Vuex.Store({
       activeQuantity: 1,
       accurate_time_ind: 1,
       quick: 0,
-      priority: 2
+      priority: 2,
+      counter: 1,
     },
     services: [],
     showAddModal: false,
@@ -838,8 +840,15 @@ export const store = new Vuex.Store({
             type: 'channel',
             value: context.getters.active_service.channel_id
           })
+          // DELETE
           context.commit('updateAddModalForm', {
             type: 'quick',
+            value: context.getters.invited_citizen.qt_xn_citizen_ind
+          })
+          //
+          //TODO
+          context.commit('updateAddModalForm', {
+            type: 'counter',
             value: context.getters.invited_citizen.qt_xn_citizen_ind
           })
           context.commit('updateAddModalForm', {
@@ -1910,26 +1919,44 @@ export const store = new Vuex.Store({
       let keys = Object.keys(state.addModalForm)
 
       keys.forEach(key => {
-        if ( key !== 'quick' && key !== 'suspendFilter' ) Vue.set(
-          state.addModalForm,
-          key,
-          ''
-        )
-        if ( key === 'quick' ) Vue.set(
-          state.addModalForm,
-          key,
-          0
-        )
-        if ( key === 'priority' ) Vue.set(
-          state.addModalForm,
-          key,
-          2
-        )
-        if ( key === 'suspendFilter' ) Vue.set(
-          state.addModalForm,
-          key,
-          false
-        )
+        switch (key) {
+          case 'suspendFilter':
+            Vue.set(
+              state.addModalForm,
+              key,
+              false
+            )
+            break
+          case 'priority':
+            Vue.set(
+              state.addModalForm,
+              key,
+              2
+            )
+            break
+          case 'counter':
+            Vue.set(
+              state.addModalForm,
+              key,
+              1
+            )
+            break
+          // DELETE
+          case 'quick':
+            Vue.set(
+              state.addModalForm,
+              key,
+              2
+            )
+            break
+          //
+          default:
+            Vue.set(
+              state.addModalForm,
+              key,
+              ''
+            )
+        }
       })
     },
 
