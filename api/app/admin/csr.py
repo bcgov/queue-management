@@ -119,11 +119,7 @@ class CSRConfig(Base):
         if not model:
             return redirect(return_url)
 
-        #  We know model is good.  Save id of CSR you're editing for later use.
         csr_id = get_mdict_item_or_list(request.args, 'id')
-        #  Delete next two lines later.
-        csr_old = CSR.query.filter_by(csr_id=csr_id).first()
-        csr_office_old = csr_old.office.office_name
 
         form = self.edit_form(obj=model)
         if not hasattr(form, '_validated_ruleset') or not form._validated_ruleset:
