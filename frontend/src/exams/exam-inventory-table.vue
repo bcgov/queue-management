@@ -298,7 +298,6 @@
 
 <script>
   import moment from 'moment'
-  import Vue from 'vue'
   import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
   import EditExamModal from './edit-exam-form-modal'
   import EditGroupExamBookingModal from './edit-group-exam-modal'
