@@ -17,9 +17,10 @@ limitations under the License.*/
     <b-alert
       variant="danger"
       dismissible
-      :show="editExamFailure"
+      v-model="countdown"
+      @dismissed="setEditExamFailure(0)"
        style="h-align: center; font-size:1rem; border-radius: 0px;">
-      {{ examEditFailureMessage }}
+      Something Went Wrong!  Please submit feedback and tell us about this issue.
     </b-alert>
   </div>
 </template>
@@ -31,11 +32,16 @@ export default {
   name: 'FailureExamAlert',
 
   computed: {
-    ...mapState([ 'examEditFailureMessage', 'editExamFailure' ])
+    ...mapState(['editExamFailureCount']),
+    countdown: {
+      get() { return this.editExamFailureCount },
+      set(e) {
+        this.setEditExamFailure(e)
+      }
+    }
   },
-
   methods: {
-    ...mapMutations([])
+    ...mapMutations(['setEditExamFailure'])
   }
 }
 </script>

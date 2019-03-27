@@ -114,9 +114,6 @@
   export default {
     name: 'AddExamModal',
     components: { AddExamFormController, AddExamFormConfirm },
-    mounted() {
-      this.captureExamDetail({key: 'exam_received_date', value: null})
-    },
     data() {
       return ({
         submitMsg: '',
@@ -130,13 +127,13 @@
         button: 'add_exam_modal_navigation_buttons',
       }),
       ...mapState({
-        exam: 'capturedExam',
+        exam: state => state.capturedExam,
         examTypes: 'examTypes',
-        addExamModal: 'addExamModal',
-        tab: 'captureITAExamTabSetup',
+        addExamModal: state => state.addExamModal,
+        tab: state => state.captureITAExamTabSetup,
         user: 'user',
         module: 'addExamModule',
-        capturtedAddModal: state => state.addExamModule.addExamModal,
+        capturtedAddModal: state => state.addExamModal,
       }),
       lastStep() {
         if (this.addExamModal.setup === 'challenger') {
@@ -229,7 +226,6 @@
           this.submitMsg = ''
           this.status = 'unknown'
           this.captureExamDetail({key: 'exam_method', value: 'paper'})
-          this.captureExamDetail({key:'notes', value: ''})
         }
         if (setup === 'challenger') {
           if (this.module.booking && this.module.booking.start) {

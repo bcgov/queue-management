@@ -1,8 +1,7 @@
 <template>
-  <fragment v-if="office_number">
+  <fragment>
     <b-col :cols="columnW">
       <b-table v-show="false"
-               v-if="is_liaison_designate || is_pesticide_designate"
                :items="offices"
                :fields="{key: 'office_name'}"
                :filter="search"

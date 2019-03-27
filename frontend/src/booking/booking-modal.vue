@@ -16,12 +16,16 @@
       <span style="font-weight: 600; font-size: 1.3rem;">Confirm Booking</span>
       <DataSummaryTable :displayData="displayData" class="w-100 p-0 m-0" />
       <b-form class="mt-3">
-        <b-form-group>
-                <label>Contact Information (Email or Phone Number)</label><br>
-                <b-input id="contact_information"
-                         type="text"
-                         v-model="booking_contact_information"/>
-        </b-form-group>
+        <b-form-row v-if="!challengerExam">
+          <b-col>
+            <b-form-group>
+              <label>Contact Information (Email or Phone Number)</label><br>
+              <b-input id="contact_information"
+                       type="text"
+                       v-model="booking_contact_information"/>
+            </b-form-group>
+          </b-col>
+        </b-form-row>
         <b-form-row>
           <b-col cols="12">
             <b-form-group v-if="individualExamInd">
@@ -30,7 +34,7 @@
             </b-form-group>
             <b-form-group v-else>
               <label>Invigilator Selection Options</label>
-              <b-select :options="invigilatorIndividualOptions" v-model="selectedOption" @input="handleSelect"/>
+              <b-select :options="invigilatorGroupOptions" v-model="selectedOption" @input="handleSelect"/>
             </b-form-group>
           </b-col>
         </b-form-row>

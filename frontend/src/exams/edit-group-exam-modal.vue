@@ -15,23 +15,23 @@
                 <div class="q-id-grid-head">Exam Details</div>
                 <div class="q-id-grid-col">
                   <div>Exam: </div>
-                  <div>{{ examRow.exam_name }}</div>
+                  <div>{{ actionedExam.exam_name }}</div>
                 </div>
                 <div class="q-id-grid-col">
                   <div>Event ID: </div>
-                  <div>{{ examRow.event_id }}</div>
+                  <div>{{ actionedExam.event_id }}</div>
                 </div>
                 <div class="q-id-grid-col">
                   <div>Type: </div>
-                  <div>{{ examRow.exam_type.exam_type_name }}</div>
+                  <div>{{ actionedExam.exam_type.exam_type_name }}</div>
                 </div>
                 <div class="q-id-grid-col">
                   <div>Writers: </div>
-                  <div>{{ examRow.number_of_students }}</div>
+                  <div>{{ actionedExam.number_of_students }}</div>
                 </div>
-                <div class="q-id-grid-col" v-if="role_code==='LIAISON'">
+                <div class="q-id-grid-col" v-if="is_liaison_designate">
                   <div>Office: </div>
-                  <div>{{ examRow.booking.office.office_name }}</div>
+                  <div>{{ actionedExam.booking.office.office_name }}</div>
                 </div>
               </div>
             </div>
@@ -51,19 +51,19 @@
           <b-col cols="6" v-if="role_code !== 'GA' && !is_liaison_designate">
             <b-form-group>
               <label>Exam Time</label><br>
-              <b-input disabled :value="formatTime(examRow.booking.start_time)" />
+              <b-input disabled :value="formatTime(actionedExam.booking.start_time)" />
             </b-form-group>
           </b-col>
           <b-col cols="6" v-if="role_code !== 'GA' && !is_liaison_designate">
             <b-form-group>
               <label>Exam Date</label><br>
-              <b-input disabled :value="formatDate(examRow.booking.start_time)" />
+              <b-input disabled :value="formatDate(actionedExam.booking.start_time)" />
             </b-form-group>
           </b-col>
           <b-col cols="6" v-if="is_liaison_designate || role_code === 'GA'">
             <b-form-group>
               <label>Exam Time</label><br>
-              <DatePicker :value="time"
+              <DatePicker v-model="time"
                           class="w-100"
                           :time-picker-options="{ start: '8:00', step: '00:30', end: '17:00' }"
                           lang="en"
@@ -135,7 +135,7 @@
   export default {
     name: "EditGroupExamBookingModal",
     components: { DatePicker },
-    props: ['examRow', 'resetExam'],
+    props: ['actionedExam', 'resetExam'],
     data () {
       return {
         invigilator_id: '',
@@ -155,8 +155,8 @@
         user: 'user',
       }),
       editedTimezone() {
-        if (this.examRow && this.examRow.booking) {
-          return this.examRow.booking.office.timezone.timezone_name
+        if (this.actionedExam && this.actionedExam.booking) {
+          return this.actionedExam.booking.office.timezone.timezone_name
         }
         return ''
       },
@@ -203,9 +203,7 @@
         this.time = e
         this.showMessage = false
         let time = zone.tz(this.itemCopy.booking.start_time, this.editedTimezone).format('HH:mm').toString()
-        console.log(time)
         let newTime = new moment(e).format('HH:mm').toString()
-        console.log(newTime)
         if (newTime === time) {
           if (this.editedFields.includes('time')) {
             let i = this.editedFields.indexOf('time')
@@ -272,14 +270,12 @@
           return
         }
       },
-
       submit() {
         let edits = this.editedFields
         let putRequests = []
         let local_timezone_name = this.user.office.timezone.timezone_name
-        let edit_timezone_name = this.examRow.booking.office.timezone.timezone_name
+        let edit_timezone_name = this.actionedExam.booking.office.timezone.timezone_name
         let bookingChanges = {}
-
         if (edits.includes('time') || edits.includes('date') || edits.includes('invigilator_id')) {
           let baseDate = this.date
           let baseTime = moment(this.time).format('HH:mm:ss').toString()
@@ -322,8 +318,8 @@
         })
       },
       setValues() {
-        let tempItem = Object.assign({}, this.examRow)
-        let { timezone_name } = this.examRow.booking.office.timezone
+        let tempItem = Object.assign({}, this.actionedExam)
+        let { timezone_name } = this.actionedExam.booking.office.timezone
         let time = zone.tz(tempItem.booking.start_time, timezone_name).format('HH:mm:ss')
         let date = moment(tempItem.booking.start_time).format('YYYY-MM-DD')
         this.time = date + 'T' + time

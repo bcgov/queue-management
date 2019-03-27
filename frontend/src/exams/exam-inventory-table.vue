@@ -1,10 +1,35 @@
 <template>
-  <div>
+  <fragment>
+    <EditExamModal :actionedExam="actionedExam" :resetExam="resetActionedExam" />
+    <ReturnExamModal :actionedExam="actionedExam" :resetExam="resetActionedExam" />
+    <EditGroupExamBookingModal :actionedExam="actionedExam" :resetExam="resetActionedExam" />
+    <DeleteExamModal v-if="showDeleteExamModal" :actionedExam="actionedExam" :resetExam="resetActionedExam" />
+    <b-modal v-model="officeFilterModal"
+             size="sm"
+             centered
+             hide-backdrop
+             @hide="resetInvalidOfficeOnHide()"
+             hide-header
+             hide-footer>
+      <h5>View Another Office</h5>
+      <p>To search, start typing or enter an office #</p>
+      <b-form>
+        <b-form-row>
+          <OfficeDrop columnW="8" :office_number="officeNumber" :setOffice="setOfficeFilter"/>
+        </b-form-row>
+      </b-form>
+      <div style="display:flex; justify-content: space-between">
+        <b-button class="mr-2 btn-secondary"
+                  @click="setFilter({type: 'office_number', value: 'default'})">This Office</b-button>
+        <b-button class="ml-2 btn-primary"
+                  @click="officeFilterModal=false">Ok</b-button>
+      </div>
+    </b-modal>
     <div class="q-w100-flex-fs">
       <b-form inline class="ml-3">
         <b-input-group>
           <b-input-group-prepend><label class="mx-1 pt-1 my-auto label-text">Search</label></b-input-group-prepend>
-          <b-input size="sm" class="mb-1 mt-3" v-model="filter"></b-input>
+          <b-input size="sm" class="mb-1 mt-3" v-model="searchTerm"></b-input>
         </b-input-group>
         <b-input-group class="ml-3" v-if="!showExamInventoryModal">
           <b-input-group-prepend>
@@ -20,61 +45,61 @@
                           label="Expired Exam Filters">
             <b-button size="sm"
                       :pressed="inventoryFilters.expiryFilter==='all'"
-                      @click="handleFilter({type:'expiryFilter', value:'all'})"
+                      @click="setInventoryFilters({type:'expiryFilter', value:'all'})"
                       variant="primary">
               <span class="mx-2">All</span>
             </b-button>
             <b-button size="sm"
                       :pressed="inventoryFilters.expiryFilter==='expired'"
-                      @click="handleFilter({type:'expiryFilter', value:'expired'})"
+                      @click="setInventoryFilters({type:'expiryFilter', value:'expired'})"
                       variant="primary">Expired</b-button>
             <b-button size="sm"
                       :pressed="inventoryFilters.expiryFilter==='current'"
-                      @click="handleFilter({type:'expiryFilter', value:'current'})"
+                      @click="setInventoryFilters({type:'expiryFilter', value:'current'})"
                       variant="primary">Current</b-button>
           </b-button-group>
           <b-btn-group horizontal class="ml-2 pt-2">
             <b-btn size="sm"
                    :pressed="inventoryFilters.scheduledFilter==='both'"
-                   @click="handleFilter({type:'scheduledFilter', value:'both'})"
+                   @click="setInventoryFilters({type:'scheduledFilter', value:'both'})"
                    variant="primary">
               <span class="mx-2">Both</span>
             </b-btn>
             <b-btn size="sm"
                    :pressed="inventoryFilters.scheduledFilter==='unscheduled'"
-                   @click="handleFilter({type:'scheduledFilter', value:'unscheduled'})"
+                   @click="setInventoryFilters({type:'scheduledFilter', value:'unscheduled'})"
                    variant="primary">Not Ready</b-btn>
             <b-btn size="sm"
                    :pressed="inventoryFilters.scheduledFilter==='scheduled'"
-                   @click="handleFilter({type:'scheduledFilter', value:'scheduled'})"
+                   @click="setInventoryFilters({type:'scheduledFilter', value:'scheduled'})"
                    variant="primary">Ready</b-btn>
           </b-btn-group>
           <b-btn-group horizontal class="ml-2 pt-2">
             <b-btn size="sm"
                    :pressed="inventoryFilters.groupFilter==='both'"
-                   @click="handleFilter({type:'groupFilter', value:'both'})"
+                   @click="setInventoryFilters({type:'groupFilter', value:'both'})"
                    variant="primary"><span class="mx-2">Both</span></b-btn>
             <b-btn size="sm"
                    :pressed="inventoryFilters.groupFilter==='individual'"
-                   @click="handleFilter({type:'groupFilter', value:'individual'})"
+                   @click="setInventoryFilters({type:'groupFilter', value:'individual'})"
                    variant="primary">Individual</b-btn>
             <b-btn size="sm"
                    :pressed="inventoryFilters.groupFilter==='group'"
-                   @click="handleFilter({type:'groupFilter', value:'group'})"
+                   @click="setInventoryFilters({type:'groupFilter', value:'group'})"
                    variant="primary">Group</b-btn>
           </b-btn-group>
           <b-btn-group horizontal class="ml-2 pt-2">
             <b-btn size="sm"
                    :pressed="inventoryFilters.returnedFilter==='both'"
-                   @click="handleFilter({type:'returnedFilter', value:'both'})"
+                   @click="setFilter({type:'returnedFilter', value:'both'})"
                    variant="primary"><span class="mx-2">Both</span></b-btn>
             <b-btn size="sm"
                    :pressed="inventoryFilters.returnedFilter==='returned'"
-                   @click="handleFilter({type:'returnedFilter', value:'returned'})"
+                   @click="setFilter({type:'returnedFilter', value:'returned'})"
                    variant="primary">Returned</b-btn>
             <b-btn size="sm"
-                   :pressed="inventoryFilters.returnedFilter==='notReturned'"
-                   @click="handleFilter({type:'returnedFilter', value:'notReturned'})"
+                   :pressed="inventoryFilters.returnedFilter==='unreturned'"
+                   @click="setFilter({type:'returnedFilter', value:'unreturned'})"
                    variant="primary">Not Returned</b-btn>
           </b-btn-group>
         </b-input-group>
@@ -89,26 +114,18 @@
                small
                tbody-tr-class="q-custom-tr"
                outlined
-               @row-clicked="clickRow"
+               @row-clicked="clickModalRow"
                hover
                show-empty
                :current-page="page"
                :per-page="10"
-               :filter="filter">
+               :filter="searchTerm">
         <template slot="exam_received" slot-scope="row">
           {{ row.item.exam_received_date ? 'Yes' : 'No' }}
         </template>
 
         <template slot="exam_type_name" slot-scope="row">
-          <div v-if="row.item.exam_type.exam_type_name.includes('Group')"
-               :style="{color: row.item.exam_type.exam_color}">
-            {{ row.item.exam_type.exam_type_name }}
-          </div>
-          <div v-else-if="row.item.exam_type.exam_type_name.includes('Single')"
-               :style="{color: row.item.exam_type.exam_color}">
-            {{ row.item.exam_type.exam_type_name }}
-          </div>
-          <div v-else>{{ row.item.exam_type.exam_type_name }}</div>
+          {{ row.item.exam_type.exam_type_name }}
         </template>
 
         <template slot="expiry_date" slot-scope="row">
@@ -118,35 +135,35 @@
         </template>
 
         <template slot="scheduled" slot-scope="row">
-          <template v-if="!scheduledFilter(row.item)">
+          <template v-if="!filterByScheduled(row.item)">
             <font-awesome-icon v-if="!row.detailsShowing"
                                icon="exclamation-triangle"
-                               @click.stop="handleDetails({row, origin: 'error'})"
+                               @click.stop="toggleDetailsRow({row, origin: 'error'})"
                                class="m-0 p-0 error-cursor-hover"
                                style="font-size:1rem;color:#ffc32b"/>
             <b-button v-if="row.detailsShowing"
                       variant="link"
                       style="padding: 0px;"
-                      @click.stop="handleDetails({row, origin: 'button'})">Hide</b-button>
+                      @click.stop="toggleDetailsRow({row, origin: 'button'})">Hide</b-button>
           </template>
-          <template v-if="scheduledFilter(row.item)">
+          <template v-if="filterByScheduled(row.item)">
             <b-button v-if="row.detailsShowing"
                       variant="link"
                       style="padding: 0px;"
-                      @click.stop="handleDetails({row, origin: 'button'})">Hide</b-button>
+                      @click.stop="toggleDetailsRow({row, origin: 'button'})">Hide</b-button>
             <font-awesome-icon v-if="!row.detailsShowing"
                                icon="clipboard-check"
-                               @click.stop="handleDetails({row, origin: 'button'})"
+                               @click.stop="toggleDetailsRow({row, origin: 'button'})"
                                class="m-0 p-0 error-cursor-hover"
                                style="font-size:1.25rem;color:green"/>
           </template>
         </template>
 
         <template slot="row-details" slot-scope="row">
-          <template v-if="detailsSetup === 'button'">
+          <template v-if="detailsRowSetup === 'button'">
             <div class="details-slot-div">
               <div style="flex-grow: 1" class="ml-3"><b>Date:</b> {{ formatDate(row.item.booking.start_time) }}</div>
-              <div style="flex-grow: 1"><b>Time:</b> {{ formatTime(row.item.booking.start_time) }}</div>
+              <div style="flex-grow: 1"><b>Time:</b> {{ formatTime(row.item.booking) }}</div>
               <div style="flex-grow: 2">
                 <b>Invigilator: </b>
                 <span v-if="row.item.booking.invigilator_id">{{ row.item.booking.invigilator.invigilator_name }}</span>
@@ -159,7 +176,7 @@
               <div style="flex-grow: 8" />
             </div>
           </template>
-          <template v-if="detailsSetup === 'error'">
+          <template v-if="detailsRowSetup === 'error'">
             <div class="details-slot-div">
               <div class="ml-3" style="font-size: 1rem;">Still Requires:</div>
               <div v-if="!row.item.exam_received_date"
@@ -202,94 +219,70 @@
               <font-awesome-icon icon="caret-down"
                                  style="padding: -2px; margin: -2px; font-size: 1rem; color: dimgray"/>
             </template>
+            <template v-if="!row.item.exam_returned_date">
+              <template v-if="officeFilter == userOffice || officeFilter == 'default'">
+                <template v-if="row.item.exam_type.exam_type_name.includes('Challenger')">
+                  <template v-if="row.item.offsite_location">
+                    <b-dropdown-item size="sm"
+                                     v-if="row.item.offsite_location"
+                                     @click="editGroupBooking(row.item)">
+                        {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}
+                    </b-dropdown-item>
+                  </template>
+                  <template v-if="!row.item.offsite_location">
+                    <b-dropdown-item size="sm"
+                                       v-if="row.item.booking && Object.keys(row.item.booking).length > 0"
+                                     @click="updateCalendarBooking(row.item)">
+                        {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}</b-dropdown-item>
+                    <b-dropdown-item size="sm"
+                                     v-if="!row.item.booking || Object.keys(row.item.booking).length === 0"
+                                     @click="addCalendarBooking(row.item)">Schedule Exam</b-dropdown-item>
+                  </template>
+                </template>
 
-            <template v-if="officeFilter == userOffice || officeFilter == 'default'">
-              <template v-if="row.item.exam_type.exam_type_name.includes('Challenger')">
-                <template v-if="row.item.offsite_location">
+                <template v-else-if="row.item.exam_type.exam_type_name.includes('Group')">
                   <b-dropdown-item size="sm"
                                    v-if="row.item.offsite_location"
-                                   @click="editGroupExam(row.item)">
-                      {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}
+                                   @click="editGroupBooking(row.item)">
+                    {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}
                   </b-dropdown-item>
                 </template>
-                <template v-if="!row.item.offsite_location">
+
+                <template v-else>
                   <b-dropdown-item size="sm"
-                                     v-if="row.item.booking && Object.keys(row.item.booking).length > 0"
-                                   @click="updateBookingRoute(row.item)">
-                      {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}</b-dropdown-item>
+                                   v-if="row.item.booking && Object.keys(row.item.booking).length > 0"
+                                   @click="updateCalendarBooking(row.item)">
+                    {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}</b-dropdown-item>
                   <b-dropdown-item size="sm"
                                    v-if="!row.item.booking || Object.keys(row.item.booking).length === 0"
-                                   @click="addBookingRoute(row.item)">Schedule Exam</b-dropdown-item>
+                                     @click="addCalendarBooking(row.item)">Schedule Exam</b-dropdown-item>
                 </template>
-              </template>
-
-              <template v-else-if="row.item.exam_type.exam_type_name.includes('Group')">
                 <b-dropdown-item size="sm"
-                                   v-if="row.item.offsite_location"
-                                   @click="editGroupExam(row.item)">
-                  {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}
-                </b-dropdown-item>
-              </template>
-
-              <template v-else>
+                                 @click="editExamDetails(row.item)">Edit Exam Details</b-dropdown-item>
                 <b-dropdown-item size="sm"
-                                 v-if="row.item.booking && Object.keys(row.item.booking).length > 0"
-                                 @click="updateBookingRoute(row.item)">
-                  {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}</b-dropdown-item>
-                <b-dropdown-item size="sm"
-                                 v-if="!row.item.booking || Object.keys(row.item.booking).length === 0"
-                                   @click="addBookingRoute(row.item)">Schedule Exam</b-dropdown-item>
-                <b-dropdown-item v-else
-                                 size="sm"
-                                 @click="updateBookingRoute(row.item)">Update Booking</b-dropdown-item>
+                                 @click="returnExam(row.item)">Return Exam</b-dropdown-item>
               </template>
-              <b-dropdown-item size="sm"
-                               @click="editExam(row.item)">Edit Exam Details</b-dropdown-item>
-              <b-dropdown-item size="sm"
-                               @click="returnExamInfo(row.item)">Return Exam</b-dropdown-item>
+              <template v-if="officeFilter != userOffice && officeFilter != 'default'">
+                <b-dropdown-item size="sm"
+                                 v-if="row.item.offsite_location"
+                                 @click="editGroupBooking(row.item)">Edit Booking</b-dropdown-item>
+                <b-dropdown-item size="sm"
+                                 @click="editExamDetails(row.item)">Edit Exam Details</b-dropdown-item>
+              </template>
             </template>
-            <template v-if="officeFilter != userOffice && officeFilter != 'default'">
+            <template v-if="examReturnedFilter(row.item)">
               <b-dropdown-item size="sm"
-                               v-if="row.item.offsite_location"
-                               @click="editGroupExam(row.item)">Edit Booking</b-dropdown-item>
-              <b-dropdown-item size="sm"
-                               @click="editExam(row.item)">Edit Exam Details</b-dropdown-item>
+                               @click="returnExam(row.item)">Edit Return Details</b-dropdown-item>
             </template>
           </b-dropdown>
         </template>
       </b-table>
-      <div v-if="filteredExams().length > 10 && !showReturnExamModalVisible">
-        <b-pagination :total-rows="totalRows"
-                      :per-page="10"
-                      v-model="page" />
-      </div>
     </div>
-    <EditExamModal :examRow="examRow" :resetExam="resetEditedExam" />
-    <ReturnExamModal v-if="showReturnExamModalVisible" />
-    <EditGroupExamBookingModal :examRow="examRow" :resetExam="resetEditedExam" />
-    <DeleteExamModal v-if="showDeleteExamModal" />
-    <b-modal v-model="officeFilterModal"
-             size="sm"
-             centered
-             hide-backdrop
-             @hide="checkValid()"
-             hide-header
-             hide-footer>
-      <h5>View Another Office</h5>
-      <p>To search, start typing or enter an office #</p>
-      <b-form>
-        <b-form-row>
-          <OfficeDrop columnW="8" :office_number="officeNumber" :setOffice="setOffice"/>
-        </b-form-row>
-      </b-form>
-      <div style="display:flex; justify-content: space-between">
-        <b-button class="mr-2 btn-secondary"
-                  @click="handleFilter({type: 'office_number', value: 'default'})">This Office</b-button>
-        <b-button class="ml-2 btn-primary"
-                  @click="officeFilterModal=false">Ok</b-button>
-      </div>
-    </b-modal>
-  </div>
+    <b-pagination :total-rows="totalRows"
+                  :per-page="10"
+                  v-if="filteredExams().length > 10"
+                  v-model="page" />
+  </fragment>
 </template>
 
 <script>
@@ -318,24 +311,23 @@
       SuccessExamAlert,
     },
     mounted() {
+      this.getExams().then( () => { this.getBookings() })
       this.getOffices()
       this.getInvigilators()
-      this.getExams().then( () => { this.getBookings() })
       this.getWidth()
       this.$nextTick(function() {
         window.addEventListener('resize', () => { this.getWidth() })
       })
-      this.handleFilter({type: 'office_number', value: 'default'})
+      this.setFilter({type: 'office_number', value: 'default'})
     },
     data() {
       return {
+        actionedExam: {},
+        detailsRowSetup: null,
+        searchTerm: null,
         officeFilterModal: false,
-        events: null,
-        examRow: {},
-        filter: null,
         page: 1,
         tableStyle: null,
-        detailsSetup: null,
       }
     },
     computed: {
@@ -353,50 +345,6 @@
         'offices',
         'user',
       ]),
-      officeFilter() {
-        if (this.inventoryFilters && this.inventoryFilters.office_number) {
-          return this.inventoryFilters.office_number
-        }
-        return ''
-      },
-      userOffice() {
-        if (this.user && this.user.office_id) {
-          return this.user.office.office_number
-        }
-        return ''
-      },
-      officeNumber() {
-        if (this.inventoryFilters && this.inventoryFilters.office_number) {
-          let { office_number } = this.inventoryFilters
-          if (office_number !== 'default') {
-            return office_number
-          }
-        }
-        if (this.user && this.user.office_id) {
-          return this.user.office.office_number
-        }
-        return ''
-      },
-      officeName() {
-        if (this.offices && this.offices.length > 0) {
-          let office = this.offices.find( office => office.office_number==this.officeNumber)
-          if (office) {
-            return office.office_name
-          }
-          return 'Invalid Office'
-        }
-        if (this.user && this.user.office_id) {
-          return this.user.office.office_name
-        }
-        return ''
-      },
-      totalRows() {
-        let exams = this.filteredExams() || null
-        if (exams && exams.length > 0) {
-          return exams.length
-        }
-        return 10
-      },
       fields() {
         if (!this.showExamInventoryModal) {
           return [
@@ -425,6 +373,50 @@
           ]
         }
       },
+      officeFilter() {
+        if (this.inventoryFilters && this.inventoryFilters.office_number) {
+          return this.inventoryFilters.office_number
+        }
+        return ''
+      },
+      officeName() {
+        if (this.offices && this.offices.length > 0) {
+          let office = this.offices.find( office => office.office_number==this.officeNumber)
+          if (office) {
+            return office.office_name
+          }
+          return 'Invalid Office'
+        }
+        if (this.user && this.user.office_id) {
+          return this.user.office.office_name
+        }
+        return ''
+      },
+      officeNumber() {
+        if (this.inventoryFilters && this.inventoryFilters.office_number) {
+          let { office_number } = this.inventoryFilters
+          if (office_number !== 'default') {
+            return office_number
+          }
+        }
+        if (this.user && this.user.office_id) {
+          return this.user.office.office_number
+        }
+        return ''
+      },
+      totalRows() {
+        let exams = this.filteredExams() || null
+        if (exams && exams.length > 0) {
+          return exams.length
+        }
+        return 10
+      },
+      userOffice() {
+        if (this.user && this.user.office_id) {
+          return this.user.office.office_number
+        }
+        return ''
+      },
     },
     methods: {
       ...mapActions(['getBookings', 'getExams', 'getInvigilators', 'getOffices',]),
@@ -433,32 +425,41 @@
         'setEditedBookingOriginal',
         'setEditExamInfo',
         'setInventoryFilters',
-        'setReturnExamInfo',
         'setSelectedExam',
-        'toggleDeleteExamModalVisible',
+        'toggleDeleteExamModal',
         'toggleEditBookingModal',
         'toggleEditExamModal',
         'toggleEditGroupBookingModal',
         'toggleExamInventoryModal',
-        'toggleReturnExamModalVisible',
+        'toggleReturnExamModal',
         'toggleScheduling',
       ]),
-      checkValid() {
-        if  (this.officeName === 'Invalid Office') {
-          this.handleFilter({type: 'office_number', value: 'default'})
-        }
-      },
-      addBookingRoute(item) {
+      addCalendarBooking(item) {
         this.toggleScheduling(true)
         item.referrer = 'scheduling'
         this.setSelectedExam(item)
         this.$router.push('/booking')
         this.toggleExamInventoryModal(false)
       },
-      setOffice(office_number) {
-        this.handleFilter({type:'office_number', value: office_number})
+      checkChallenger(item) {
+        if (item.event_id && item.booking.invigilator_id && item.number_of_students) {
+          return true
+        }
+        return false
       },
-      clickRow(item) {
+      checkInvigilator(item) {
+        if (item.booking && (item.booking.invigilator_id || item.booking.sbc_staff_invigilated)) {
+          return true
+        }
+        return false
+      },
+      examReturnedFilter(item) {
+        if (item.exam_returned_date && (this.officeFilter === this.userOffice || this.officeFilter === 'default')) {
+          return true
+        }
+        return false
+      },
+      clickModalRow(item) {
         if (this.showExamInventoryModal) {
           this.toggleScheduling(true)
           this.setSelectedExam(item)
@@ -466,20 +467,42 @@
           this.toggleExamInventoryModal(false)
         }
       },
-      editExam(item) {
-        this.examRow = item
+      editExamDetails(item) {
+        this.actionedExam = item
         this.toggleEditExamModal(true)
       },
-      editGroupExam(item) {
-        this.examRow = item
+      editGroupBooking(item) {
+        this.actionedExam = item
         this.toggleEditGroupBookingModal(true)
       },
-      handleDetails(item) {
-        this.detailsSetup = item.origin
-        item.row.toggleDetails()
+      filterByGroup(ex) {
+        if (ex.exam_type.exam_type_name.includes('Challenger') || ex.exam_type.exam_type_name.includes('Group')) {
+          return true
+        }
+        if (ex.number_of_students && parseInt(ex.number_of_students) > 1) {
+          return true
+        }
+        return false
+      },
+      filterByScheduled(ex) {
+        if (ex.exam_received_date) {
+          if (ex.booking && ( ex.booking.invigilator_id || ex.booking.sbc_staff_invigilated )) {
+            if (!ex.exam_type.exam_type_name.includes('Challenger')) {
+              return true
+            }
+            if (ex.exam_type.exam_type_name.includes('Challenger')) {
+              if (ex.number_of_students && ex.event_id) {
+                return true
+              }
+            }
+          }
+        }
+        return false
       },
       filteredExams() {
         let examInventory = this.exam_inventory
+        let office_number = this.inventoryFilters.office_number === 'default' ?
+          this.user.office.office_number : this.inventoryFilters.office_number
         let filtered = []
         if (examInventory.length > 0) {
           if (this.showExamInventoryModal) {
@@ -489,8 +512,6 @@
             let { office_id } = this.user
             return evenMoreFiltered.filter(ex => ex.office_id == office_id)
           }
-          let office_number = this.inventoryFilters.office_number === 'default' ?
-                                this.user.office.office_number : this.inventoryFilters.office_number
           let exams = examInventory.filter(ex => ex.office.office_number == office_number)
           switch (this.inventoryFilters.expiryFilter) {
             case 'all':
@@ -514,10 +535,10 @@
               moreFiltered = filtered
               break
             case 'unscheduled':
-              moreFiltered = filtered.filter( x => !this.scheduledFilter(x))
+              moreFiltered = filtered.filter( x => !this.filterByScheduled(x))
               break
             case 'scheduled':
-              moreFiltered = filtered.filter( x => this.scheduledFilter(x))
+              moreFiltered = filtered.filter( x => this.filterByScheduled(x))
               break
             default:
               moreFiltered = filtered
@@ -529,32 +550,32 @@
               evenMoreFiltered = moreFiltered
               break
             case 'individual':
-              evenMoreFiltered = moreFiltered.filter(ex => !this.groupFilter(ex))
+              evenMoreFiltered = moreFiltered.filter(ex => !this.filterByGroup(ex))
 
               break
             case 'group':
-              evenMoreFiltered = moreFiltered.filter(ex => this.groupFilter(ex))
+              evenMoreFiltered = moreFiltered.filter(ex => this.filterByGroup(ex))
               break
             default:
               evenMoreFiltered = moreFiltered
               break
           }
-          let manyMoreFiltered = []
+          let finalFiltered = []
           switch (this.inventoryFilters.returnedFilter) {
             case 'both':
-              manyMoreFiltered = evenMoreFiltered
+              finalFiltered = evenMoreFiltered
               break
             case 'returned':
-              manyMoreFiltered = evenMoreFiltered.filter(ex => ex.exam_returned_ind === 1)
+              finalFiltered = evenMoreFiltered.filter(ex => ex.exam_returned_date)
               break
-            case 'notReturned':
-              manyMoreFiltered = evenMoreFiltered.filter(ex => ex.exam_returned_ind === 0)
+            case 'unreturned':
+              finalFiltered = evenMoreFiltered.filter(ex => !ex.exam_returned_date)
               break
             default:
-              manyMoreFiltered = evenMoreFiltered
+              finalFiltered = evenMoreFiltered
               break
           }
-          return manyMoreFiltered
+          return finalFiltered
         }
         return []
       },
@@ -562,29 +583,9 @@
         return new moment(d).format('ddd MMM DD, YYYY')
       },
       formatTime(d) {
-        return new moment(d).format('h:mm a')
-      },
-      getInvigilator(row) {
-        if (this.events) {
-          let bookingObj = this.events.find(event=>event.booking_id==row.item.booking_id)
-          if (bookingObj && bookingObj.invigilator) {
-            return bookingObj.invigilator.invigilator_name
-          }
-          return ''
-        }
-        return ''
-      },
-      checkInvigilator(item) {
-        if (item.booking && (item.booking.invigilator_id || item.booking.sbc_staff_invigilated)) {
-          return true
-        }
-        return false
-      },
-      checkChallenger(item) {
-        if (item.event_id && item.booking.invigilator_id && item.number_of_students) {
-          return true
-        }
-        return false
+        let tz = d.office.timezone.timezone_name
+        let time =  new zone.tz(d.start_time, tz).format('2017-MM-DD[T]HH:mm:ss').toString()
+        return new moment(time).format('h:mm a')
       },
       getWidth() {
         if (!this.showExamInventoryModal) {
@@ -594,53 +595,29 @@
           this.tableStyle = { width: 98 + '%' }
         }
       },
-      handleFilter(e) {
+      resetActionedExam() {
+        this.actionedExam = {}
+      },
+      resetInvalidOfficeOnHide() {
+        if  (this.officeName === 'Invalid Office') {
+          this.setFilter({type: 'office_number', value: 'default'})
+        }
+      },
+      returnExam(item) {
+        this.actionedExam = item
+        this.toggleReturnExamModal(true)
+      },
+      setFilter(e) {
         this.setInventoryFilters(e)
       },
-      resetButtons() {
-        this.buttons.all = 'btn-secondary'
-        this.buttons.current = 'btn-secondary'
-        this.buttons.expired = 'btn-secondary'
+      setOfficeFilter(office_number) {
+        this.setFilter({type:'office_number', value: office_number})
       },
-      scheduledFilter(ex) {
-        if (ex.exam_type.exam_type_name.includes('Challenger')) {
-          if (ex.booking || ex.offsite_location) {
-            if (ex.booking.invigilator_id) {
-              if (ex.event_id && ex.number_of_students) {
-                if (ex.exam_received_date) {
-                  return true
-                }
-              }
-            }
-          }
-          return false
-        }
-        if (ex.booking) {
-          if (ex.booking.invigilator_id || ex.booking.sbc_staff_invigilated) {
-            if (ex.exam_received_date) {
-              return true
-            }
-          }
-        }
-        return false
+      toggleDetailsRow(item) {
+        this.detailsRowSetup = item.origin
+        item.row.toggleDetails()
       },
-      groupFilter(ex) {
-        if (ex.exam_type.exam_type_name === 'Challenger Exam Session') {
-          return true
-        }
-        if (ex.exam_type.exam_type_name !== 'Challenger Exam Session' && ex.offsite_location) {
-          return true
-        }
-        return false
-      },
-      resetEditedExam() {
-        this.examRow = {}
-      },
-      returnExamInfo(item) {
-        this.toggleReturnExamModalVisible(true)
-        this.setReturnExamInfo(item)
-      },
-      updateBookingRoute(item) {
+      updateCalendarBooking(item) {
         item.gotoDate = new moment(item.booking.start_time)
         item.referrer = 'rescheduling'
         this.setSelectedExam(item)
