@@ -276,45 +276,29 @@ export const store = new Vuex.Store({
     },
 
     is_pesticide_designate(state) {
-      if (state.user) {
-        if(state.user.pesticide_designate){
-          return true
-        }else{
-          return false
-        }
+      if (state.user.pesticide_designate) {
+        return true
       }
       return false
     },
 
     is_financial_designate(state) {
-      if (state.user) {
-        if(state.user.finance_designate){
-          return true
-        }else{
-          return false
-        }
+      if(state.user.finance_designate){
+        return true
       }
       return false
     },
 
     is_liaison_designate(state) {
-      if (state.user){
-        if(state.user.liaison_designate){
-          return true
-        }else{
-          return false
-        }
+      if(state.user.liaison_designate){
+        return true
       }
       return false
     },
 
     is_ita_designate(state) {
-      if (state.user){
-        if(state.user.ita_designate){
-          return true
-        }else {
-          return false
-        }
+      if(state.user.ita_designate){
+        return true
       }
       return false
     },
