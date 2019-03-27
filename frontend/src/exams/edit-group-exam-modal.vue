@@ -308,7 +308,6 @@
         this.itemCopy = tempItem
       },
       reset() {
-        let tempItem = null
         this.time = null
         this.date = null
         this.offsite_location = null
