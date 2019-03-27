@@ -416,7 +416,7 @@ class Bootstrap(Command):
             deleted=None,
             csr_state_id=csr_state_logout.csr_state_id
         )
-        ChrisDMac = theq.CSR(
+        chrisdmac = theq.CSR(
             username="ChrisDMac",
             office_id=office_test.office_id,
             role_id=role_csr.role_id,
@@ -459,7 +459,7 @@ class Bootstrap(Command):
         db.session.add(akroon3r)
         db.session.add(sjrumsby)
         db.session.add(scottrumsby)
-        db.session.add(ChrisDMac)
+        db.session.add(chrisdmac)
         db.session.add(gil0109)
         db.session.commit()
 
