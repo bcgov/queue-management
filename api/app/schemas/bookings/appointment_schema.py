@@ -27,8 +27,10 @@ class AppointmentSchema(ma.ModelSchema):
 
     appointment_id = fields.Int(dump_only=True)
     office_id = fields.Int()
+    service_id = fields.Int()
     start_time = fields.DateTime()
     end_time = fields.DateTime()
-    category = fields.String()
     checked_in_time = fields.DateTime()
     comments = fields.String()
+    citizen_name = fields.String()
+    contact_information = fields.String()

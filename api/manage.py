@@ -841,6 +841,30 @@ class Bootstrap(Command):
         db.session.add(timezone_three)
         db.session.commit()
 
+        start_time = datetime(2019, 3, 28, 9, 0, 0)
+        end_time = datetime(2019, 3, 28, 9, 15, 0)
+        checked_in_time = datetime(2019, 3, 28, 9, 3, 0)
+
+        start_time_aware = pytz.utc.localize(start_time)
+        end_time_aware = pytz.utc.localize(end_time)
+        checked_in_time_aware = pytz.utc.localize(checked_in_time)
+
+        print("--> Bookings: Appointments")
+
+        appointment_one = bookings.Appointment(
+            office_id=office_test.office_id,
+            service_id=service_exams.service_id,
+            start_time=start_time_aware,
+            end_time=end_time_aware,
+            checked_in_time=checked_in_time_aware,
+            comments="Consultation",
+            citizen_name="Adam Kroon",
+            contact_information="adam@olivewood.io"
+        )
+
+        db.session.add(appointment_one)
+        db.session.commit()
+
 
 class FetchData(Command):
 

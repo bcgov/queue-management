@@ -22,7 +22,7 @@ from app.schemas.bookings import AppointmentSchema
 from qsystem import api, jwt
 
 
-@api.route("/appointments/<int:id>", methods=["GET"])
+@api.route("/appointments/<int:id>/", methods=["GET"])
 class AppointmentDetail(Resource):
 
     appointment_schema = AppointmentSchema()
