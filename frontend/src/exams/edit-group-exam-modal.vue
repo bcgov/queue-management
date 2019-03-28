@@ -7,7 +7,7 @@
            size="md">
     <div v-if="showModal">
       <span class="q-modal-header">Edit Group Exam Booking</span>
-      <b-form>
+      <b-form autocomplete="off">
         <b-form-row>
           <b-col class="mb-2">
             <div class="q-info-display-grid-container">

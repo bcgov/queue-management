@@ -12,7 +12,7 @@
            @cancel="resetModal()"
            @ok.prevent="submit">
     <FailureExamAlert />
-    <b-form>
+    <b-form autocomplete="off">
       <b-form-row>
         <b-col class="q-modal-header">
           {{ modalUse === 'return' ? 'Return Exam' : 'Edit Return Details' }}</b-col>

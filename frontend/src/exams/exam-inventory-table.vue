@@ -13,7 +13,7 @@
              hide-footer>
       <h5>View Another Office</h5>
       <p>To search, start typing or enter an office #</p>
-      <b-form>
+      <b-form autocomplete="off">
         <b-form-row>
           <OfficeDrop columnW="8" :office_number="officeNumber" :setOffice="setOfficeFilter"/>
         </b-form-row>
@@ -109,10 +109,9 @@
       <b-table :items="filteredExams()"
                :fields="fields"
                head-variant="light"
-               style="border: 1px solid dimgrey"
+               :style="availableH"
                empty-text="There are no exams that match this filter criteria"
                small
-               tbody-tr-class="q-custom-tr"
                outlined
                @row-clicked="clickModalRow"
                hover
@@ -315,9 +314,9 @@
       this.getExams().then( () => { this.getBookings() })
       this.getOffices()
       this.getInvigilators()
-      this.getWidth()
+      this.getSize()
       this.$nextTick(function() {
-        window.addEventListener('resize', () => { this.getWidth() })
+        window.addEventListener('resize', () => { this.getSize() })
       })
       this.setFilter({type: 'office_number', value: 'default'})
     },
@@ -329,6 +328,9 @@
         officeFilterModal: false,
         page: 1,
         tableStyle: null,
+        buttonH: 45,
+        qLengthH: 28,
+        totalH: 0,
       }
     },
     computed: {
@@ -346,6 +348,10 @@
         'offices',
         'user',
       ]),
+      availableH() {
+        let h = this.totalH - this.qLengthH - this.buttonH - 220
+        return { height:`${h}px`, border: '1px solid dimgrey' }
+      },
       fields() {
         if (!this.showExamInventoryModal) {
           return [
@@ -588,9 +594,10 @@
         let time =  new zone.tz(d.start_time, tz).format('2017-MM-DD[T]HH:mm:ss').toString()
         return new moment(time).format('h:mm a')
       },
-      getWidth() {
+      getSize() {
+        this.totalH = window.innerHeight - 70 - 36
         if (!this.showExamInventoryModal) {
-          this.tableStyle = { width: `${ window.innerWidth - 40 }px` }
+          this.tableStyle = { height: `${this.availableH}px`, width: `${ window.innerWidth - 40 }px` }
         }
         if (this.showExamInventoryModal) {
           this.tableStyle = { width: 98 + '%' }
@@ -670,6 +677,9 @@
   }
   .exam-table-holder {
     border: 1px solid dimgrey;
+  }
+  .tr-container-div {
+    min-height: 50% !important;
   }
   .details-slot-div {
     display: flex;

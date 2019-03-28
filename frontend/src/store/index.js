@@ -18,6 +18,7 @@ import moment from 'moment'
 import tZone from 'moment-timezone'
 import 'es6-promise/auto'
 import { addExamModule } from './add-exam-module'
+import appointmentsModule from './appointments-module'
 import { Axios, searchNestedObject } from './helpers'
 
 var flashInt
@@ -26,7 +27,7 @@ Vue.use(Vuex)
 
 export const store = new Vuex.Store({
   modules: {
-    addExamModule
+    addExamModule, appointmentsModule,
   },
   state: {
     addExamModal: {
@@ -51,6 +52,10 @@ export const store = new Vuex.Store({
     nonITAExam: false,
     addNextService: false,
     adminNavigation: 'csr',
+    appointmentsStateInfo: {
+      channel_id: null,
+      service_id: null,
+    },
     alertMessage: '',
     allCitizens: [],
     bearer: '',
@@ -106,7 +111,7 @@ export const store = new Vuex.Store({
     offices: [],
     officeFilter: null,
     officeType: null,
-    offsiteVisible: false,
+    offsiteVisible: true,
     performingAction: false,
     rescheduling: false,
     returnExam: null,
@@ -728,16 +733,16 @@ export const store = new Vuex.Store({
 
     getServices(context) {
       let office_id = context.state.user.office_id
-      Axios(context).get(`/services/?office_id=${office_id}`)
-        .then( resp => {
-          let services = resp.data.services.filter(service => service.actual_service_ind === 1)
-          context.commit('setServices', services)
-        })
-        .catch(error => {
-          console.log('error @ store.actions.getServices')
-          console.log(error.response)
-          console.log(error.message)
-        })
+        Axios(context).get(`/services/?office_id=${office_id}`)
+          .then( resp => {
+            let services = resp.data.services.filter(service => service.actual_service_ind === 1)
+            context.commit('setServices', services)
+          })
+          .catch(error => {
+            console.log('error @ store.actions.getServices')
+            console.log(error.response)
+            console.log(error.message)
+          })
     },
 
     getUser(context) {
@@ -931,7 +936,7 @@ export const store = new Vuex.Store({
     },
   
     clickBeginService(context, payload) {
-      let {citizen_id} = context.getters.form_data.citizen
+      let { citizen_id } = context.getters.form_data.citizen
       context.commit('setPerformingAction', true)
     
       context.dispatch('putCitizen').then( () => {
@@ -1694,7 +1699,8 @@ export const store = new Vuex.Store({
         return new Promise((resolve, reject) => { resolve(' ') })
       }
 
-
+      console.log(citizen_id)
+      console.log(data)
       return new Promise((resolve, reject) => {
         let url = `/citizens/${citizen_id}/`
 
@@ -1702,17 +1708,17 @@ export const store = new Vuex.Store({
           error => { reject(error) })
       })
     },
-
+  
     putServiceRequest(context) {
       let { activeQuantity } = context.state.serviceModalForm
       let compareService = context.getters.active_service
       let { sr_id } = compareService
-
+    
       let data = {}
       if (activeQuantity != compareService.quantity) {
         data.quantity = activeQuantity
       }
-
+    
       // Make sure quantity is position
       if (!/^\+?\d+$/.test(activeQuantity)) {
         context.commit("setServeModalAlert", "Quantity must be a number and greater than 0")
@@ -1720,7 +1726,7 @@ export const store = new Vuex.Store({
       } else {
         context.commit("setServeModalAlert", "")
       }
-
+    
       let setup = context.state.addModalSetup
       let { form_data } = context.getters
       if ( setup === 'add_mode' || setup === 'edit_mode') {
@@ -1734,7 +1740,7 @@ export const store = new Vuex.Store({
       if (Object.keys(data).length === 0) {
         return new Promise((resolve, reject) => { resolve(' ') })
       }
-
+    
       return new Promise((resolve, reject) => {
         let url = `/service_requests/${sr_id}/`
         Axios(context).put(url,data).then(resp=>{
@@ -2339,5 +2345,7 @@ export const store = new Vuex.Store({
     toggleOffsiteVisible: (state, payload) => state.offsiteVisible = payload,
     
     toggleExamsTrackingIP: (state, payload) => state.examsTrackingIP = payload,
+  
+    setAppointmentsStateInfo: (state, payload) => state.appointmentsStateInfo = payload,
   }
 })

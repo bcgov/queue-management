@@ -17,7 +17,7 @@
       </div>
       <div class="mb-1" style="font-size:1rem;">{{ startTime.format('ddd MMMM Do, YYYY') }}</div>
         <template v-if="!minimized">
-          <b-form>
+          <b-form autocomplete="off">
             <b-form-group>
               <label>Scheduling Party<span style="color: red">{{ message }}</span></label><br>
               <b-input :state="state" type="text" v-model="title" />
