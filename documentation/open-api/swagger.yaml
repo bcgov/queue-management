@@ -17,6 +17,10 @@ tags:
   description: Everything about invigilators
 - name: Rooms
   description: Everything about rooms
+- name: Appointments
+  description: Everything about appointments
+- name: ExamTypes
+  description: Everything about exam types
 paths:
   /exams:
     get:
@@ -117,6 +121,36 @@ paths:
       responses:
         '204':
           description: No Content
+  /exams/export:
+    get:
+      tags:
+        - Exams
+      summary: Get a list of all exams in CSV form
+      operationId: getExamsExport
+      responses:
+        '200':
+          description: An array of Exams
+          content:
+            application/json:
+              schema:
+                type: csv
+                items:
+                  $ref: "#/components/schemas/Exam"
+  /exams_types:
+    get:
+      tags:
+        - ExamTypes
+      summary: Get a list of all exam types
+      operationId: getExamTypes
+      responses:
+        '200':
+          description: An array of Exam Types
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ExamType"
   /bookings:
     get:
       tags:
@@ -246,6 +280,105 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Room"
+  /appointments/:
+    get:
+      tags:
+        - Appointments
+      summary: Get a list of all appointments
+      operationId: getAppointments
+      responses:
+        '200':
+          description: An array of Appointments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Appointment"
+    post:
+      tags:
+        - Appointments
+      summary: Create a new appointment
+      operationId: createAppointment
+      requestBody:
+        description: Appointment to add to the database
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Appointment'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              schema:
+                type: string
+                example: "/appointment/1/"
+              description: The URL of the created resource
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Appointment"
+  /appointment/${id}:
+    get:
+      tags:
+        - Appointments
+      summary: Get an appointment by ID
+      operationId: getAppointmentById
+      parameters:
+        - name: id
+          in: path
+          description: ID of appointment to fetch
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: The appointment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Appointment"
+    put:
+      tags:
+        - Appointments
+      summary: Update an appointment by ID
+      operationId: updateAppointmentById
+      parameters:
+        - name: id
+          in: path
+          description: ID of appointment to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: The appointment having been updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Appointment"
+    delete:
+      tags:
+        - Appointments
+      summary: Get an appointment by ID
+      operationId: deleteAppointmentById
+      parameters:
+        - name: id
+          in: path
+          description: ID of appointment to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: No Content
 components:
   schemas:
     Booking:
@@ -256,6 +389,10 @@ components:
           nullable: false
           example: 1
         room_id:
+          type: integer
+          nullable: true
+          example: 1
+        invigilator_id:
           type: integer
           nullable: true
           example: 1
@@ -279,6 +416,14 @@ components:
           type: string
           nullable: true
           example: Monthly Office Check In
+        sbc_staff_invigilated:
+          type: integer
+          nullable: false
+          example: 0
+        booking_contact_information:
+          type: string
+          nullable: true
+          example: "555-555-5555"
         room:
           readOnly: true
           allOf:
@@ -287,6 +432,9 @@ components:
           allOf:
             - $ref: "#/components/schemas/Invigilator"
           readOnly: true
+        office:
+          allOf:
+          - $ref: "#/components/schemas/Office"
     Exam:
       type: object
       properties:
@@ -301,10 +449,6 @@ components:
         exam_type_id:
           type: integer
           nullable: false
-          example: 1
-        invigilator_id:
-          type: integer
-          nullable: true
           example: 1
         office_id:
           type: integer
@@ -332,10 +476,6 @@ components:
           type: boolean
           nullable: false
           example: false
-        exam_received_date:
-          type: string
-          format: date-time
-          nullable: true
         session_number:
           type: integer
           nullable: true
@@ -347,16 +487,25 @@ components:
         exam_method:
           type: string
           nullable: false
+          example: "Written"
         deleted_date:
           type: string
           format: date-time
           nullable: true
-        exams_returned_ind:
-          type: integer
-          nullable: false
+        exam_received_date:
+          type: string
+          format: date-time
+          nullable: true
+        exams_returned_date:
+          type: datetime
+          nullable: true
         exam_returned_tracking_number:
           type: string
           nullable: true
+        exam_written_ind:
+          type: integer
+          nullable: false
+          example: 0
         offsite_location:
           type: string
           nullable: true
@@ -401,6 +550,9 @@ components:
         group_exam_ind:
           type: number
           nullable: false
+        exam:
+          allOf:
+          - $ref: "#/components/schemas/Exam"
     Invigilator:
       type: object
       properties:
@@ -445,18 +597,38 @@ components:
         office_id:
           type: integer
           example: 1
+          nullable: false
         office_name:
           type: string
           example: Vernon
+          nullable: false
         office_number:
           type: integer
           example: 1
+          nullable: false
         sb_id:
           type: integer
           example: 1
+          nullable: false
         deleted:
           type: string
-          format: date-time
+          format: datetime
+          nullable: true
+        exams_enabled_ind:
+          type: integer
+          nullable: false
+          example: 0
+        appointments_enabled_ind:
+          type: integer
+          nullable: false
+          example: 0
+        timezone_id:
+          type: integer
+          nullable: false
+          example: 1
+        timezone:
+          allOf:
+            - $ref: "#/components/schemas/Timezone"
     Room:
       type: object
       properties:
@@ -484,3 +656,45 @@ components:
           $ref: "#/components/schemas/Office"
         booking:
           $ref: "#/components/schemas/Booking"
+    Appointment:
+      type: object
+      properties:
+        appointment_id:
+          type: integer
+          nullable: false
+          example: 1
+        office_id:
+          type: integer
+          nullable: false
+          example: 1
+        start_time:
+          type: datetime
+          nullable: false
+          example: "2019-03-28 09:00:00"
+        end time:
+          type: datetime
+          nullable: false
+          example: "2019-03-28 09:15:00"
+        category:
+          type: string
+          nullable: false
+          example: "Exam"
+        checked_in_time:
+          type: datetime
+          nullable: false
+          example: "2019-03-28 09:03:00"
+        comments:
+          type: string
+          nullable: false
+          example: "Wants to set up written exam booking."
+    Timezone:
+      type: object
+      properties:
+        timezone_id:
+          type: integer
+          nullable: false
+          example: 1
+        timezone_name:
+          type: string
+          nullable: false
+          example: "America/Vancouver"
