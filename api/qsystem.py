@@ -60,6 +60,11 @@ if application.config['CORS_ALLOWED_ORIGINS'] is not None:
 
 api = Api(application, prefix='/api/v1', doc='/api/v1/')
 
+#  For some strange, and as yet unknown reason, the following initialization
+#  must be done, or the front end queue isn't updated properly in IE browsers.
+from app.patches.flask_oidc_patched import OpenIDConnect
+oidc = OpenIDConnect(application)
+
 def setup_jwt_manager(app, jwt):
     def get_roles(a_dict):
         return a_dict['realm_access']['roles']
