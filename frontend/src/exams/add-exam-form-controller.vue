@@ -252,16 +252,14 @@
             messages[key] = 'Required Field'
             return
           }
-          if (!answer) {
-            if (question.minLength == 0 && !question.digit) {
-              valid[key] = true
-              messages[key] = ''
-              return
-            }
-            valid[key] = false
-            messages[key] = 'Required Field'
+          if (question.minLength == 0 && !question.digit) {
+            valid[key] = true
+            messages[key] = ''
             return
           }
+          valid[key] = false
+          messages[key] = 'Required Field'
+          return
         }
         this.questions.forEach(question => {
           validateAnswer(question)
