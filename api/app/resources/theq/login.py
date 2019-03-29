@@ -29,9 +29,6 @@ class Login(Resource):
         if cookie is None:
             return abort(401, self.auth_string)
 
-        # if not oidc.validate_token(cookie):
-        #     return abort(401, self.auth_string)
-
         claims = jwt.get_unverified_claims(cookie)
 
         if claims["preferred_username"]:

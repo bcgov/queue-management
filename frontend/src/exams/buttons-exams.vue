@@ -44,10 +44,10 @@
     },
     methods: {
       ...mapActions(['actionRestoreAll']),
-      ...mapMutations(['toggleAddExamModal', 'toggleGenFinReport',]),
+      ...mapMutations(['setAddExamModalSetting', 'toggleGenFinReport',]),
       handleClick(type) {
-        this.toggleAddExamModal({setup: type})
-        this.toggleAddExamModal(true)
+        this.setAddExamModalSetting({setup: type})
+        this.setAddExamModalSetting(true)
       },
       clickGenFinReport() {
         this.toggleGenFinReport(true)

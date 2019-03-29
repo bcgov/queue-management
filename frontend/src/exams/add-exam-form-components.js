@@ -123,13 +123,13 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
     }
   },
   methods: {
-    ...mapMutations(['toggleAddExamModal', 'toggleAddExamModal']),
+    ...mapMutations(['setAddExamModalSetting', ]),
     clickInput() {
       if (!this.addExamModal.step1MenuOpen) {
-        this.toggleAddExamModal({step1MenuOpen: true})
+        this.setAddExamModalSetting({step1MenuOpen: true})
         return
       }
-      this.toggleAddExamModal({step1MenuOpen: false})
+      this.setAddExamModalSetting({step1MenuOpen: false})
     },
     preHandleInput(id) {
       this.handleInput({
@@ -340,7 +340,7 @@ export const LocationInput = Vue.component('input-question', {
   },
   methods: {
     ...mapActions(['actionSaveAll']),
-    ...mapMutations(['toggleScheduling', 'toggleAddExamModal', 'setSelectedExam']),
+    ...mapMutations(['toggleScheduling', 'setAddExamModalSetting', 'setSelectedExam']),
     launchSchedule() {
       let exam = {
         exam_name: 'Challenger Exam',
@@ -359,7 +359,7 @@ export const LocationInput = Vue.component('input-question', {
         exam.referrer = 'scheduling'
         this.setSelectedExam(exam)
         this.$router.push('/booking')
-        this.toggleAddExamModal(false)
+        this.setAddExamModalSetting(false)
       })
     }
     
@@ -546,10 +546,10 @@ export const SelectOffice = Vue.component('select-office', {
     }
   },
   methods: {
-    ...mapMutations(['toggleAddExamModal']),
+    ...mapMutations(['setAddExamModalSetting']),
     setOffice(office_number) {
       office_number = parseInt(office_number)
-      this.toggleAddExamModal({office_number})
+      this.setAddExamModalSetting({office_number})
       if (this.offices && this.offices.length > 0) {
         let office = this.offices.find(office => office.office_number == office_number) || null
         if (office) {

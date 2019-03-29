@@ -32,7 +32,6 @@
 </template>
 
 <script>
-  import { mapMutations, mapState } from 'vuex'
   import SchedulingIndicator from '../booking/scheduling-indicator'
   export default {
     name: 'Footer',
