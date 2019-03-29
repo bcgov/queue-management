@@ -129,25 +129,17 @@ class CSRConfig(Base):
 
             #  Trim the user name, if necessary.
             updated_csr = CSR.query.filter_by(csr_id=csr_id).first()
-            if updated_csr.username != updated_csr.username.strip():
-                updated_csr.username = updated_csr.username.strip()
-                db.session.add(updated_csr)
-                db.session.commit()
+
+            trim_username(updated_csr)
 
             socketio.emit('clear_csr_cache', { "id": csr_id})
-            socketio.emit('csr_update', \
-                          {"csr_id": csr_id, \
-                           "receptionist_ind": updated_csr.receptionist_ind}, \
-                           room=current_user.office_id)
+            socketio.emit('csr_update',
+                          {"csr_id": csr_id, "receptionist_ind": updated_csr.receptionist_ind},
+                          room=current_user.office_id)
 
             flash(gettext('''Record was successfully saved.'''), 'success')
-            if '_add_another' in request.form:
-                return redirect(self.get_url('.create_view', url=return_url))
-            elif '_continue_editing' in request.form:
-                return redirect(request.url)
-            else:
-                # save button
-                return redirect(self.get_save_return_url(model, is_created=False))
+
+            request_redirect(self, return_url, model, request)
 
         if request.method == 'GET' or form.errors:
             self.on_form_prefill(form, id)
@@ -168,3 +160,22 @@ class CSRConfig(Base):
 
 
 CSRModelView = CSRConfig(CSR, db.session)
+
+
+def trim_username(updated_csr):
+
+    if updated_csr.username != updated_csr.username.strip():
+        updated_csr.username = updated_csr.username.strip()
+        db.session.add(updated_csr)
+        db.session.commit()
+    return
+
+
+def request_redirect(self, return_url, model, request_parameter):
+
+    if '_add_another' in request_parameter.form:
+        return redirect(self.get_url('.create_view', url=return_url))
+    elif '_continue_editing' in request.form:
+        return redirect(request_parameter.url)
+    else:
+        return redirect(self.get_save_return_url(model, is_created=False))
