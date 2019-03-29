@@ -114,12 +114,13 @@ class LocalConfig(BaseConfig):
     CORS_ALLOWED_ORIGINS = ["http://localhost:8080"]
     SQLALCHEMY_ECHO = False
     SECRET_KEY = "pancakes"
+    LOCALHOST_DB_IP = "127.0.0.1"
 
     DB_ENGINE = os.getenv('DATABASE_ENGINE', 'mysql')
     DB_USER = os.getenv('DATABASE_USERNAME', 'root')
     DB_PASSWORD = os.getenv('DATABASE_PASSWORD', 'root')
     DB_NAME = os.getenv('DATABASE_NAME', 'qsystem')
-    DB_HOST = os.getenv('DATABASE_HOST', '127.0.0.1')
+    DB_HOST = os.getenv('DATABASE_HOST', LOCALHOST_DB_IP)
     DB_PORT = os.getenv('DATABASE_PORT', '3306')
     SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}'.format(
         engine=DB_ENGINE,
