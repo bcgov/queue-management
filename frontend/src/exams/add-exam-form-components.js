@@ -48,7 +48,10 @@ export const DateQuestion = Vue.component('date-question', {
             {{ addExamModal.setup == 'group' || addExamModal.setup == 'challenger' ? 'Exam Date' : 'Expiry Date' }}
             <span v-if="error" style="color: red">{{ validationObj[q.key].message }}</span>
           </label><br>
-          <DatePicker :value="exam[q.key]" lang="en" @input="selectDate" class="w-50"></DatePicker>
+          <DatePicker :value="exam[q.key]"
+                      lang="en"
+                      @input="selectDate"
+                      class="w-50"></DatePicker>
         </b-form-group>
       </b-col>
       <checkmark :validated="validationObj[q.key].valid" />
@@ -150,6 +153,7 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
       <label>Exam Type</label><br>
         <div @click="clickInput">
           <b-input read-only
+                   autocomplete="off"
                    :value="inputText"
                    placeholder="click here to see options"
                    :style="inputStyle" />
@@ -164,6 +168,7 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
             <b-dd-item v-else :style="{backgroundColor: type.exam_color}"
                        @click="preHandleInput(type.exam_type_id)"
                        :name="type.exam_type_id"
+                       autocomplete="off"
                        :id="type.exam_type_id"
                        :class="type.class">{{ type.exam_type_name }}</b-dd-item>
           </template>
@@ -238,6 +243,7 @@ export const ExamReceivedQuestion = Vue.component('exam-received-question', {
           </label><br>
           <b-form-radio-group v-model="showRadio"
                               @input="preSetDate()"
+                              autocomplete="off"
                               :options="['other', 'pesticide'].includes(modalSetup) ? otherOptions : options"/>
         </b-form-group>
         <b-form-group v-else>
@@ -279,6 +285,7 @@ export const InputQuestion = Vue.component('input-question', {
             <b-form-input :value="exam[q.key]"
                           :name="q.key"
                           :key="q.key"
+                          autocomplete="off"
                           @input.native="preHandleInput" />
           </b-form-group>
         </b-col>
@@ -295,6 +302,7 @@ export const InputQuestion = Vue.component('input-question', {
             <b-form-input :value="exam[q.key]"
                           :name="q.key"
                           :key="q.key"
+                          autocomplete="off"
                           @input.native="preHandleInput" />
           </b-form-group>
         </b-col>
@@ -375,6 +383,7 @@ export const LocationInput = Vue.component('input-question', {
               </label>
               <b-form-input :value="exam[q.key]"
                             :name="q.key"
+                            autocomplete="off"
                             :key="q.key"
                             @input.native="handleInput" />
             </b-form-group>
@@ -410,6 +419,7 @@ export const LocationInput = Vue.component('input-question', {
               <label>Invigilator
               </label>
               <b-form-input :value="exam.invigilator.invigilator_name"
+                            autocomplete="off"
                             disabled />
             </b-form-group>
           </b-col>
@@ -436,6 +446,7 @@ export const SelectQuestion = Vue.component('select-question', {
           </label><br>
           <b-form-select :options="q.options"
                          :value="exam[q.key]"
+                         autocomplete="off"
                          @change.native="handleInput"
                          :class="addExamModal.setup === 'group' ? 'w-50' : '' "
                          :name="q.key" />
@@ -475,6 +486,7 @@ export const NotesQuestion = Vue.component('notes-question', {
           <b-textarea :value="exam[q.key]"
                       @input.native="handleInput"
                       :rows="3"
+                      autocomplete="off"
                       :name="q.key"
                       :id="q.key" />
         </b-form-group>
@@ -510,6 +522,7 @@ export const OffsiteSelect = Vue.component('offsite-select', {
           </label><br>
           <b-form-select :options="q.options"
                          :value="exam[q.key]"
+                         autocomplete="off"
                          @change.native="preHandleInput"
                          :class="addExamModal.setup === 'group' ? 'w-50 mr-1' : 'mr-1' "
                          :name="q.key" />
@@ -614,6 +627,7 @@ export const TimeQuestion = Vue.component('time-question', {
                       @input="selectTime"
                       format="h:mm a"
                       confirm
+                      autocomplete="off"
                       placeholder="Select Time"
                       class="w-50"
                       type="time">

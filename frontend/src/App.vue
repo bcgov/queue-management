@@ -20,7 +20,6 @@ limitations under the License.*/
       <Alert />
       <ExamAlert />
       <SuccessExamAlert />
-      <FailureExamAlert />
       <Nav v-if="isLoggedIn" />
       <Feedback />
       <Response />

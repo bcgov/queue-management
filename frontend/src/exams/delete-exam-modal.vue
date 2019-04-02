@@ -72,8 +72,8 @@
                 }
             },
             exam() {
-              if(Object.keys(this.examRow).length > 0){
-                return this.examRow
+              if(Object.keys(this.actionedExam).length > 0){
+                return this.actionedExam
               }
               return false
             }

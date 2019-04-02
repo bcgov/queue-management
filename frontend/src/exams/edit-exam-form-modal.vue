@@ -6,6 +6,7 @@
            @hidden="reset"
            @shown="populateForm"
            size="md">
+    <FailureExamAlert class="m-0 p-0" />
     <div v-if="exam">
       <span style="font-size: 1.4rem; font-weight: 600;">Edit Exam</span>
       <b-form v-if="showAllFields">
@@ -239,11 +240,12 @@
   import Vue from 'vue'
   import DeleteExamModal from './delete-exam-modal'
   import OfficeDrop from './office-drop'
+  import FailureExamAlert from './failure-exam-alert'
 
   export default {
     name: "EditExamModal",
-    components: { OfficeDrop, DatePicker, DeleteExamModal },
-    props: ['examRow', 'resetExam'],
+    components: { DatePicker, DeleteExamModal, FailureExamAlert, OfficeDrop },
+    props: ['actionedExam', 'resetExam'],
     data () {
       return {
         clickedMenu: false,
@@ -272,8 +274,8 @@
                    'showEditExamModal',
                    'showDeleteExamModal', ]),
       exam() {
-        if (Object.keys(this.examRow).length > 0) {
-          return this.examRow
+        if (Object.keys(this.actionedExam).length > 0) {
+          return this.actionedExam
         }
         return false
       },
@@ -373,11 +375,11 @@
         'toggleDeleteExamModalVisible'
       ]),
       allowSubmit() {
-        if (this.examRow) {
+        if (this.actionedExam) {
           let fieldsEdited = false
           let fields = Object.keys(this.fields)
           for (let key of fields) {
-            if (this.fields[key] != this.examRow[key]) {
+            if (this.fields[key] != this.actionedExam[key]) {
               fieldsEdited = true
               this.showMessage = false
               break
@@ -427,8 +429,8 @@
         this.clickedMenu = false
       },
       populateForm() {
-        let exam = Object.assign({}, this.examRow)
-        Object.keys(exam).forEach( key => {
+        let exam = this.actionedExam
+        Object.keys(this.actionedExam).forEach( key => {
           if (typeof exam[key] === 'string' || typeof exam[key] === 'number') {
             Vue.set(
               this.fields,
@@ -479,17 +481,17 @@
           exam_id: this.fields.exam_id
         }
         Object.keys(this.fields).forEach( key => {
-          if (this.fields[key] != this.examRow[key]) {
+          if (this.fields[key] != this.actionedExam[key]) {
             putRequest[key] = this.fields[key]
           }
         })
-        if (!this.exam_received && this.examRow.exam_received_date) {
+        if (!this.exam_received && this.actionedExam.exam_received_date) {
           putRequest['exam_received_date'] = null
         }
         this.putExamInfo(putRequest).then( () => {
-          this.getExams()
-          this.setEditExamSuccess(true)
           this.toggleEditExamModal(false)
+        }).catch( () => {
+          this.setEditExamFailure(10)
         })
       },
       updateExamReceived(e) {

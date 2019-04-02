@@ -6,7 +6,7 @@
   </div>
   <div class="q-w100-flex-fs" v-else>
     <b-form inline>
-      <b-dd v-if="role_code === 'GA'"
+      <b-dd v-if="role_code === 'GA' || is_ita_designate"
             split
             class="mr-2"
             variant="primary"
@@ -24,7 +24,7 @@
                 @click="handleClick('other')">Add Other Exam</b-button>
       <b-button v-if="is_pesticide_designate"
                 class="btn-primary"
-                @click="handleClick('pesticide')">Add Pesticide Exam</b-button>
+                @click="handleClick('pesticide')">Add 1 Pesticide Exam</b-button>
     </b-form>
     <AddExamModal />
   </div>
@@ -40,7 +40,14 @@
     components: { AddExamModal, FinancialReportModal },
     computed: {
       ...mapState(['addNonITA', 'showGenFinReportModal', 'user' ]),
-      ...mapGetters([ 'showExams', 'role_code', 'is_pesticide_designate', 'is_financial_designate', 'is_liaison_designate']),
+      ...mapGetters([
+        'is_financial_designate',
+        'is_ita_designate',
+        'is_liaison_designate',
+        'is_pesticide_designate',
+        'role_code',
+        'showExams',
+      ]),
     },
     methods: {
       ...mapActions(['actionRestoreAll']),

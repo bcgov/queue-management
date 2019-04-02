@@ -83,20 +83,6 @@ export default new Router({
             buttons: ButtonsCalendar,
           }
         },
-        {
-          path: 'booking/:view/:id',
-          components: {
-            default: Calendar,
-            buttons: ButtonsCalendar,
-          }
-        },
-        {
-          path: 'booking/:date',
-          components: {
-            default: Calendar,
-            buttons: ButtonsCalendar,
-          }
-        },
       ]
     },
     {
