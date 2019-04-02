@@ -109,6 +109,7 @@ export const store = new Vuex.Store({
     offsiteVisible: false,
     performingAction: false,
     rescheduling: false,
+    returnExam: null,
     rooms: [],
     roomResources: [],
     scheduling: false,
@@ -1909,7 +1910,9 @@ export const store = new Vuex.Store({
       state.categories = []
       state.categories = payload
     },
-  
+
+    setReturnExamInfo: (state, payload) => state.returnExam = payload,
+
     toggleAddModal: (state, payload) => state.showAddModal = payload,
   
     updateAddModalForm(state, payload) {
