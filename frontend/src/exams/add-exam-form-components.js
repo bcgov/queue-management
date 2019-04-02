@@ -152,10 +152,17 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
       <h5 v-if="addExamModal.setup === 'pesticide' ">Add Pesticide Exam</h5>
       <label>Exam Type</label><br>
         <div @click="clickInput">
-          <b-input read-only
+          <b-input v-if="addExamModal.setup !== 'pesticide'"
+                   read-only
                    autocomplete="off"
                    :value="inputText"
                    placeholder="click here to see options"
+                   :style="inputStyle" />
+          <b-input v-if="addExamModal.setup === 'pesticide'"
+                   read-only
+                   autocomplete="off"
+                   :value="inputText"
+                   placeholder="Pesticide"
                    :style="inputStyle" />
         </div>
         <div :class="dropclass"
@@ -164,7 +171,8 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
           <template v-for="type in dropItems">
             <b-dd-header v-if="type.header"
                          :style="{backgroundColor: type.exam_color}"
-                         :class="type.class">{{ type.exam_type_name }}</b-dd-header>
+                         :class="type.class">{{ type.exam_type_name }}
+                         :value="type.exam_</b-dd-header>
             <b-dd-item v-else :style="{backgroundColor: type.exam_color}"
                        @click="preHandleInput(type.exam_type_id)"
                        :name="type.exam_type_id"
