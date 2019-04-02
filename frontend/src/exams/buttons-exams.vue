@@ -40,14 +40,21 @@
     components: { AddExamModal, FinancialReportModal },
     computed: {
       ...mapState(['addNonITA', 'showGenFinReportModal', 'user' ]),
-      ...mapGetters([ 'showExams', 'role_code', 'is_pesticide_designate', 'is_financial_designate', 'is_liaison_designate']),
+      ...mapGetters([
+        'is_financial_designate',
+        'is_ita_designate',
+        'is_liaison_designate',
+        'is_pesticide_designate',
+        'role_code',
+        'showExams',
+      ]),
     },
     methods: {
       ...mapActions(['actionRestoreAll']),
-      ...mapMutations(['toggleAddExamModal', 'toggleGenFinReport',]),
+      ...mapMutations(['setAddExamModalSetting', 'toggleGenFinReport',]),
       handleClick(type) {
-        this.toggleAddExamModal({setup: type})
-        this.toggleAddExamModal(true)
+        this.setAddExamModalSetting({setup: type})
+        this.setAddExamModalSetting(true)
       },
       clickGenFinReport() {
         this.toggleGenFinReport(true)

@@ -6,49 +6,12 @@
            @hidden="reset"
            @shown="populateForm"
            size="md">
+    <FailureExamAlert class="m-0 p-0" />
     <div v-if="exam">
-      <b-table v-show="false"
-               v-if="is_liaison_designate"
-               :items="offices"
-               :fields="{key: 'office_name'}"
-               :filter="search"
-               @filtered="getFilteredOffices" />
       <span style="font-size: 1.4rem; font-weight: 600;">Edit Exam</span>
       <b-form v-if="showAllFields">
         <b-form-row v-if="is_liaison_designate && examType === 'group'">
-          <b-col>
-            <b-form-group>
-              <label class="my-0">Office (Start typing below to search or enter Office Number )</label>
-              <div>
-                <b-form-input id="office_name"
-                              type="text"
-                              class="less-10-mb"
-                              :value="officeSearch"
-                              @focus.native="officeSearchOnFocus"
-                              @blur.native="officeSearchOnBlur"
-                              @input.native="handleOfficeInput" />
-              </div>
-              <div :class="officeDropClass"
-                   style="border: 1px solid grey">
-                <template v-for="office in officeChoices">
-                  <b-dropdown-item-button v-on:click.prevent="handleOfficeDropClick"
-                                          :name="office.office_name"
-                                          :value="office.office_number"
-                                          :id="office.office_id">{{ office.office_name }}</b-dropdown-item-button>
-                </template>
-              </div>
-            </b-form-group>
-          </b-col>
-          <b-col cols="2">
-            <b-form-group>
-              <label class="my-0">Office #</label>
-              <b-form-input id="office_id"
-                            type="number"
-                            class="less-10-mb"
-                            :value="office_number"
-                            @input.native="handleOfficeNumberInput" />
-            </b-form-group>
-          </b-col>
+          <OfficeDrop :columnW="10" :office_number="office_number" :setOffice="setOffice" />
         </b-form-row>
         <b-form-row>
           <b-col cols="6">
@@ -113,7 +76,8 @@
           <b-col>
             <b-form-group>
               <label class="mb-0 mt-1">Exam Name</label>
-              <b-form-input id="exam_name" type="text"
+              <b-form-input id="exam_name"
+                            type="text"
                             class="less-10-mb"
                             v-model="fields.exam_name" />
             </b-form-group>
@@ -198,11 +162,11 @@
                 <div class="q-id-grid-head">Exam Details:</div>
                 <div class="q-id-grid-col">
                   <div>Exam:</div>
-                  <div>{{ this.exam.exam_name }}</div>
+                  <div>{{ exam.exam_name }}</div>
                 </div>
                 <div class="q-id-grid-col">
                   <div>Event ID:</div>
-                  <div>{{ this.exam.event_id }}</div>
+                  <div>{{ exam.event_id }}</div>
                 </div>
                 <div class="q-id-grid-col">
                   <div>Type:</div>
@@ -212,7 +176,7 @@
                 </div>
                 <div class="q-id-grid-col">
                   <div>Method:</div>
-                  <div>{{ this.exam.exam_method }}</div>
+                  <div>{{ exam.exam_method }}</div>
                 </div>
               </div>
             </div>
@@ -275,12 +239,13 @@
   import moment from 'moment'
   import Vue from 'vue'
   import DeleteExamModal from './delete-exam-modal'
+  import OfficeDrop from './office-drop'
+  import FailureExamAlert from './failure-exam-alert'
 
   export default {
     name: "EditExamModal",
-    components: { DatePicker,
-                  DeleteExamModal},
-    props: ['examRow', 'resetExam'],
+    components: { DatePicker, DeleteExamModal, FailureExamAlert, OfficeDrop },
+    props: ['actionedExam', 'resetExam'],
     data () {
       return {
         clickedMenu: false,
@@ -298,9 +263,6 @@
         office_number: null,
         officeChoices: [],
         showMessage: false,
-        showSearch: false,
-        searching: false,
-        search: '',
       }
     },
     computed: {
@@ -312,8 +274,8 @@
                    'showEditExamModal',
                    'showDeleteExamModal', ]),
       exam() {
-        if (Object.keys(this.examRow).length > 0) {
-          return this.examRow
+        if (Object.keys(this.actionedExam).length > 0) {
+          return this.actionedExam
         }
         return false
       },
@@ -337,14 +299,16 @@
         return ''
       },
       examType() {
-        if (this.exam && this.exam.exam_type && this.exam.exam_type.ita_ind) {
-          if (this.exam.exam_type.exam_type_name === 'Challenger Exam Session') {
+        if (this.examRow && this.examRow.exam_type) {
+          if (this.exam.exam_type.exam_type_name.includes('Challenger')) {
             return 'challenger'
           }
-          if (this.exam.offsite_location) {
+          if (this.exam.exam_type.exam_type_name.includes('Group')) {
             return 'group'
           }
-          return 'individual'
+          if (this.exam.exam_type.exam_type_name.includes('Single')) {
+            return 'individual'
+          }
         }
         return 'other'
       },
@@ -370,20 +334,6 @@
           }
         }
         return []
-      },
-      officeDropClass() {
-        if (!this.showSearch) {
-          return 'dropdown-menu'
-        }
-        if (this.showSearch) {
-          return 'dropdown-menu show py-0 my-0 w-100'
-        }
-      },
-      officeSearch() {
-        if (!this.searching && this.office_number) {
-          return this.offices.find(office=>office.office_number == this.office_number).office_name
-        }
-        return this.search
       },
       showAllFields() {
         if (this.exam) {
@@ -415,19 +365,21 @@
     },
     methods: {
       ...mapActions(['getBookings', 'getExams', 'getOffices', 'putExamInfo',]),
-      ...mapMutations(['setEditExamFailure',
-                       'setEditExamSuccess',
-                       'setSelectedExam',
-                       'setReturnExamInfo',
-                       'setReturnDeleteExamInfo',
-                       'toggleEditExamModal',
-                       'toggleDeleteExamModalVisible']),
+      ...mapMutations([
+        'setEditExamFailure',
+        'setEditExamSuccess',
+        'setSelectedExam',
+        'setReturnExamInfo',
+        'setReturnDeleteExamInfo',
+        'toggleEditExamModal',
+        'toggleDeleteExamModalVisible'
+      ]),
       allowSubmit() {
-        if (this.examRow) {
+        if (this.actionedExam) {
           let fieldsEdited = false
           let fields = Object.keys(this.fields)
           for (let key of fields) {
-            if (this.fields[key] != this.examRow[key]) {
+            if (this.fields[key] != this.actionedExam[key]) {
               fieldsEdited = true
               this.showMessage = false
               break
@@ -445,7 +397,6 @@
       },
       deleteExam() {
         let deleteExamInfo = {}
-
         if (this.fields.booking_id) {
           deleteExamInfo = {
             booking_id: this.fields.booking_id,
@@ -466,13 +417,6 @@
         this.toggleDeleteExamModalVisible(true)
         this.setReturnExamInfo(deleteExamInfo)
       },
-      getFilteredOffices(offices) {
-        if (offices.length === 0) {
-          this.officeChoices = [{office_id: null, office_name: 'No offices found with those letters'}]
-          return
-        }
-        this.officeChoices = offices.length >= 4 ? offices.slice(0,4) : offices
-      },
       handleExamDropClick(e) {
         this.fields.exam_type_id = e.target.id
       },
@@ -483,50 +427,9 @@
         }
         this.clickedMenu = false
       },
-      handleOfficeDropClick(e) {
-        this.showSearch = false
-        this.fields.office_id = e.target.id
-        this.search = e.target.name
-        this.office_number = e.target.value
-        this.searching = false
-      },
-      handleOfficeInput(e) {
-
-        this.searching = true
-        this.search = e.target.value
-        if (this.search.length > 1 && this.searching === true) {
-          this.showSearch = true
-        }
-        if (this.search.length <= 1) {
-          this.showSearch = false
-        }
-      },
-      handleOfficeNumberInput(e) {
-        let { value } = e.target
-        if (value.length <= 2) {
-          this.office_number = value
-        } else {
-          this.office_number = value.slice(value.length-2, value.length)
-        }
-        if (this.offices.find(office=>office.office_number == this.office_number)) {
-          let office = this.offices.find(office=>office.office_number == this.office_number)
-          this.search = office.office_name
-          this.fields.office_id = office.office_id
-        } else {
-          this.search = 'Invalid office number entered.'
-          this.fields.office_id = null
-        }
-      },
-      officeSearchOnBlur() {
-        this.searching = false
-      },
-      officeSearchOnFocus() {
-        this.searching = true
-        this.search = ''
-      },
       populateForm() {
-        let exam = this.examRow
-        Object.keys(this.examRow).forEach( key => {
+        let exam = this.actionedExam
+        Object.keys(this.actionedExam).forEach( key => {
           if (typeof exam[key] === 'string' || typeof exam[key] === 'number') {
             Vue.set(
               this.fields,
@@ -534,18 +437,15 @@
               exam[key]
             )
           }
-          if ( key === 'exam_received_date' ) {
-            this.fields[key] = this.exam[key]
-          }
         })
-        if (this.fields.exam_received_date) {
+        this.office_number = exam.office.office_number
+        if (exam.exam_received_date) {
           this.exam_received = true
         }
-        if (this.is_liaison_designate) {
-          let office = this.offices.find(office => office.office_id == this.exam.office_id)
-          this.search = office.office_name
-          this.office_number = office.office_number
-        }
+      },
+      setOffice(officeNumber) {
+        this.office_number = officeNumber
+        this.fields.office_id = this.offices.find(office => office.office_number == officeNumber).office_id
       },
       reset() {
         Object.keys(this.fields).forEach(key => {
@@ -580,17 +480,17 @@
           exam_id: this.fields.exam_id
         }
         Object.keys(this.fields).forEach( key => {
-          if (this.fields[key] != this.examRow[key]) {
+          if (this.fields[key] != this.actionedExam[key]) {
             putRequest[key] = this.fields[key]
           }
         })
-        if (!this.exam_received && this.examRow.exam_received_date) {
+        if (!this.exam_received && this.actionedExam.exam_received_date) {
           putRequest['exam_received_date'] = null
         }
         this.putExamInfo(putRequest).then( () => {
-          this.getExams()
-          this.setEditExamSuccess(true)
           this.toggleEditExamModal(false)
+        }).catch( () => {
+          this.setEditExamFailure(10)
         })
       },
       updateExamReceived(e) {

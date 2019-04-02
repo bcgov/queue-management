@@ -430,13 +430,13 @@ export const addExamModule = {
             key: 'exam_name',
             text: 'Exam Name',
             kind: 'input',
-            minLength: 6,
+            minLength: 2,
             digit: false
           },
           {
             key: 'examinee_name',
             text: `Exam Writer's Name`,
-            minLength: 6,
+            minLength: 2,
             kind:'input',
             digit: false
           },
@@ -561,6 +561,9 @@ export const addExamModule = {
     },
     saveCapturedExam(state, payload) {
       Object.keys(payload).forEach(key => {
+        if (payload[key] === null) {
+          payload[key] = ''
+        }
         Vue.set(
           state.capturedExam,
           key,

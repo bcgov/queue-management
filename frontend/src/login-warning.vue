@@ -13,19 +13,30 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 
 <template>
-  <div>
-    <b-alert
-      variant="warning"
-      dismissible
-      style="h-align: center; font-size:1rem; border-radius: 0px;">
-      Username does not exist. Please Contact an Administrator
+  <div id="LOGIN" v-if="!user.username && isLoggedIn">
+    <b-alert variant="warning"
+             dismissible
+             :show=loginDismissCount
+             style="h-align: center; top: 70px; font-size:1rem; border-radius: 0px; z-index: 1041"
+             @dismissed="onDismissedLogin">
+             {{ loginAlertMessage }}
     </b-alert>
   </div>
 </template>
 
 <script>
-
+import { mapState, mapMutations } from 'vuex'
 export default {
   name: 'LoginWarning',
+  computed: {
+    ...mapState([ 'loginAlertMessage', 'loginDismissCount', 'user', 'isLoggedIn' ])
+  },
+  methods: {
+    ...mapMutations(['loginDismissCountDown']),
+
+    onDismissedLogin() {
+      this.loginDismissCountDown(999)
+    }
+  }
 }
 </script>

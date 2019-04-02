@@ -26,11 +26,6 @@ def on_join(message):
         emit('joinRoomFail', {"sucess": False})
         return
 
-    # if not oidc.validate_token(cookie):
-    #     print("Cookie failed validation")
-    #     emit('joinRoomFail', {"sucess": False})
-    #     return
-
     claims = jwt.get_unverified_claims(cookie)
 
     if claims["preferred_username"]:
