@@ -397,7 +397,6 @@
       },
       deleteExam() {
         let deleteExamInfo = {}
-
         if (this.fields.booking_id) {
           deleteExamInfo = {
             booking_id: this.fields.booking_id,
