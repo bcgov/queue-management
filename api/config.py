@@ -96,6 +96,7 @@ class BaseConfig(object):
     SERVICENOW_PASSWORD = os.getenv('SERVICENOW_PASSWORD', '')
     SERVICENOW_TABLE = os.getenv('SERVICENOW_TABLE', '')
     SERVICENOW_TENANT = os.getenv('SERVICENOW_TENANT', '')
+    SERVICENOW_ASSIGN_GROUP = os.getenv('SERVICENOW_ASSIGN_GROUP', '')
 
 class LocalConfig(BaseConfig):
     DEBUG = True
