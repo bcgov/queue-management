@@ -6,7 +6,7 @@
   </div>
   <div class="q-w100-flex-fs" v-else>
     <b-form inline>
-      <b-dd v-if="role_code === 'GA' || is_ita_designate"
+      <b-dd v-if="role_code === 'GA'"
             split
             class="mr-2"
             variant="primary"
@@ -24,7 +24,7 @@
                 @click="handleClick('other')">Add Other Exam</b-button>
       <b-button v-if="is_pesticide_designate"
                 class="btn-primary"
-                @click="handleClick('pesticide')">Add 1 Pesticide Exam</b-button>
+                @click="handleClick('pesticide')">Add Pesticide Exam</b-button>
     </b-form>
     <AddExamModal />
   </div>
