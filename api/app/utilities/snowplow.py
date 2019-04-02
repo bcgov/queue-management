@@ -23,7 +23,6 @@ import os
 import http.client
 import time
 import json
-from pprint import pprint
 
 class SnowPlow():
 
@@ -307,10 +306,6 @@ class SnowPlow():
 
         # Create a JSON object from the event dictionary
         json_event = json.dumps(example_event)
-
-        print("===========> Snowplow call <==================")
-        pprint(example_event)
-        print("==============================================")
 
         # POST the event to the Analytics service
         SnowPlow.post_event(json_event)
