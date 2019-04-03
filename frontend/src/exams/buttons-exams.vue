@@ -12,7 +12,7 @@
             variant="primary"
             text="Add ITA Exam"
             @click="handleClick('individual')">
-        <b-dd-item @click="handleClick('challenger')">Add Challenger Exam</b-dd-item>
+        <b-dd-item @click="handleClick('challenger')">Add Monthly Session Exam</b-dd-item>
       </b-dd>
       <b-button v-if="role_code!=='GA'"
                 class="mr-1 btn-primary"

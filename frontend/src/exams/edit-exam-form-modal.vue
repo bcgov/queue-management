@@ -68,7 +68,7 @@
               <b-form-input id="exam_name" type="text"
                             class="less-10-mb"
                             disabled
-                            value="Challenger Exam Session" />
+                            value="Monthly Session Exam" />
             </b-form-group>
           </b-col>
         </b-form-row>
@@ -137,7 +137,7 @@
         <b-form-row v-if="examType === 'individual' || examType === 'other'">
           <b-col>
             <b-form-group>
-              <label class="my-0">Writer's Name</label>
+              <label class="my-0">Candidate's Name</label>
               <b-form-input id="examinee_name"
                             class="less-10-mb"
                             type="text"
@@ -337,7 +337,7 @@
       },
       showAllFields() {
         if (this.exam) {
-          if (this.exam.exam_type.exam_type_name === 'Challenger Exam Session') {
+          if (this.exam.exam_type.exam_type_name === 'Monthly Session Exam') {
             if (this.role_code === 'GA') {
               return true
             }

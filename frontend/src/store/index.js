@@ -1505,7 +1505,7 @@ export const store = new Vuex.Store({
         start_time: start.clone().utc().format('YYYY-MM-DD[T]HH:mm:ssZ'),
         end_time: end.clone().utc().format('YYYY-MM-DD[T]HH:mm:ssZ'),
         fees: 'false',
-        booking_name: 'Challenger Exam',
+        booking_name: 'Monthly Session',
         office_id: context.state.user.office_id,
       }
       if (responses.on_or_off === 'on') {
@@ -1516,10 +1516,10 @@ export const store = new Vuex.Store({
         booking.invigilator_id = responses.invigilator.invigilator_id.valueOf()
         delete responses.invigilator
       }
-      let exam_type= context.state.examTypes.find(ex => ex.exam_type_name === 'Challenger Exam Session')
+      let exam_type= context.state.examTypes.find(ex => ex.exam_type_name === 'Monthly Session Exam')
       let defaultValues = {
         exam_returned_ind: 0,
-        examinee_name: 'Challenger Exam',
+        examinee_name: 'Monthly Session',
         exam_type_id: exam_type.exam_type_id,
         office_id: context.state.user.office_id
       }

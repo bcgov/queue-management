@@ -129,7 +129,7 @@
         </template>
 
         <template slot="expiry_date" slot-scope="row">
-          <span v-if="row.item.exam_type.exam_type_name === 'Challenger Exam Session'">–</span>
+          <span v-if="row.item.exam_type.exam_type_name === 'Monthly Session Exam'">–</span>
           <span v-else-if="row.item.examinee_name === 'group exam'">–</span>
           <span v-else>{{ formatDate(row.item.expiry_date) }}</span>
         </template>
@@ -189,7 +189,7 @@
                 <div v-if="!row.item.booking.invigilator_id"
                      class="ml-3 mt-1">Assignment of Invigilator</div>
               </template>
-              <template v-else-if="row.item.exam_type.exam_type_name === 'Challenger Exam Session'">
+              <template v-else-if="row.item.exam_type.exam_type_name === 'Monthly Session Exam'">
                 <div v-if="!row.item.booking.invigilator_id"
                      class="ml-3 mt-1">Assignment of Invigilator</div>
                 <div v-if="!row.item.number_of_students"
