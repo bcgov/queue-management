@@ -70,11 +70,13 @@
         <b-row no-gutters>
           <b-col cols="7" />
           <b-col cols="auto" style="align: right">
-            <b-form-checkbox v-model="quick" value="1" unchecked-value="0" v-if="reception"
-                            class="quick-checkbox" style="color:white;margin-right: 8px;">
-                <span style="font: 400 16px Myriad-Pro;">Quick Txn</span>
-                <span class="quick-span" v-if="quick"></span> <!-- For puppeteer testing to see if quick is selected -->
-            </b-form-checkbox>
+            <select id="counter-selection" class="custom-select" v-model="counter_selection">
+              <option v-for="counter in counter_types"
+                    :value="counter.counter_id"
+                    :key="counter.counter_id">
+                {{counter.counter_name}}
+              </option>
+            </select>
             <select id="priority-selection" class="custom-select" v-model="priority_selection" style="margin-right:8px;">
                 <option value=1>High Priority</option>
                 <option value=2>Default Priority</option>
@@ -155,7 +157,8 @@ export default {
       'showServiceModal',
       'serviceBegun',
       'serviceModalForm',
-      'serveModalAlert'
+      'serveModalAlert',
+      'counter_types'
     ]),
     ...mapGetters(['invited_citizen', 'active_service', 'invited_service_reqs', 'reception']),
     citizen() {
@@ -192,18 +195,18 @@ export default {
       }
       return this.active_service.channel
     },
-    quick: {
-      get() { return this.serviceModalForm.quick },
-      set(value) {
-        this.editServiceModalForm({type:'quick',value})
-      }
-    },
     priority_selection: {
       get() { return this.serviceModalForm.priority },
       set(value) {
         this.editServiceModalForm({type:'priority',value})
       }
-    }
+    },
+    counter_selection: {
+      get() { return this.serviceModalForm.counter },
+      set(value) {
+        this.editServiceModalForm({ type: "counter", value })
+      }
+    },
   },
 
   methods: {

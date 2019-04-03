@@ -840,16 +840,9 @@ export const store = new Vuex.Store({
             type: 'channel',
             value: context.getters.active_service.channel_id
           })
-          // DELETE
-          context.commit('updateAddModalForm', {
-            type: 'quick',
-            value: context.getters.invited_citizen.qt_xn_citizen_ind
-          })
-          //
-          //TODO
           context.commit('updateAddModalForm', {
             type: 'counter',
-            value: context.getters.invited_citizen.qt_xn_citizen_ind
+            value: context.getters.invited_citizen.counter_id
           })
           context.commit('updateAddModalForm', {
             type: 'priority',
@@ -1642,31 +1635,30 @@ export const store = new Vuex.Store({
     putCitizen(context) {
       let data = {}
       let citizen_id
-      let quick
       let priority
+      let counter
 
       if (context.state.serviceModalForm.citizen_id) {
         let { accurate_time_ind, citizen_comments } = context.state.serviceModalForm
-        // DELETE
-        quick = context.state.serviceModalForm.quick
-        //
         counter = context.state.serviceModalForm.counter
         priority = context.state.serviceModalForm.priority
         citizen_id = context.state.serviceModalForm.citizen_id
         let prevCitizen = context.getters.invited_citizen
 
         if (context.state.showAddModal) {
-          quick = context.getters.form_data.quick
-          if (prevCitizen.qt_xn_citizen_ind !== quick) {
-            data.qt_xn_citizen_ind = quick
-          }
+          // @TODO Not sure when this is used
+
+          // quick = context.getters.form_data.quick
+          // if (prevCitizen.qt_xn_citizen_ind !== quick) {
+          //   data.qt_xn_citizen_ind = quick
+          // }
         }
         if (!context.state.showAddModal) {
           if ( citizen_comments !== prevCitizen.citizen_comments ) {
             data.citizen_comments = citizen_comments
           }
-          if ( quick !== prevCitizen.qt_xn_citizen_ind ) {
-            data.qt_xn_citizen_ind = quick
+          if ( counter !== prevCitizen.counter_id ) {
+            data.counter_id = counter
           }
           if ( priority !== prevCitizen.priority ) {
             data.priority = priority
@@ -1678,12 +1670,6 @@ export const store = new Vuex.Store({
       } else {
         let { form_data } = context.getters
         citizen_id = form_data.citizen.citizen_id
-        // DELETE
-        data.qt_xn_citizen_ind = form_data.quick
-        if (!form_data.quick) {
-          data.qt_xn_citizen_ind = 0
-        }
-        //
         data.counter_id = form_data.counter
         data.priority = form_data.priority
         data.citizen_comments = form_data.comments
@@ -1999,10 +1985,10 @@ export const store = new Vuex.Store({
       let activeQuantity = activeService[0].quantity
       let { citizen_id } = citizen
       let service_citizen = citizen
-      let quick = citizen.qt_xn_citizen_ind
       let priority = citizen.priority
+      let counter = citizen.counter_id
 
-      let obj = { citizen_comments, activeQuantity, citizen_id, service_citizen, quick, priority }
+      let obj = { citizen_comments, activeQuantity, citizen_id, service_citizen, priority, counter }
       let keys = Object.keys(obj)
 
       keys.forEach(key => {
