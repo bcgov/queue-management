@@ -39,30 +39,20 @@ class CitizenGenericInvite(Resource):
             citizen = None
 
             try:
-                qt_xn_csr_ind = request.get_json().get('qt_xn_csr_ind')
+                counter_id = int(request.get_json().get('counter_id'))
             except AttributeError:
-                qt_xn_csr_ind = csr.qt_xn_csr_ind
+                counter_id = int(csr.counter_id)
 
-            if qt_xn_csr_ind:
-                citizen = Citizen.query \
-                    .filter_by(qt_xn_citizen_ind=1, cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
-                    .join(Citizen.service_reqs) \
-                    .join(ServiceReq.periods) \
-                    .filter_by(ps_id=waiting_period_state.ps_id) \
-                    .filter(Period.time_end.is_(None)) \
-                    .order_by(Citizen.priority, Citizen.citizen_id) \
-                    .first()
-            else:
-                citizen = Citizen.query \
-                    .filter_by(qt_xn_citizen_ind=0, cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
-                    .join(Citizen.service_reqs) \
-                    .join(ServiceReq.periods) \
-                    .filter_by(ps_id=waiting_period_state.ps_id) \
-                    .filter(Period.time_end.is_(None)) \
-                    .order_by(Citizen.priority, Citizen.citizen_id) \
-                    .first()
+            citizen = Citizen.query \
+                .filter_by(counter_id=counter_id, cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
+                .join(Citizen.service_reqs) \
+                .join(ServiceReq.periods) \
+                .filter_by(ps_id=waiting_period_state.ps_id) \
+                .filter(Period.time_end.is_(None)) \
+                .order_by(Citizen.priority, Citizen.citizen_id) \
+                .first()
 
-            # Either no quick txn citizens for the quick txn csr, or vice versa
+            # If no matching citizen with the same counter type, get next one
             if citizen is None:
                 citizen = Citizen.query \
                     .filter_by(cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \

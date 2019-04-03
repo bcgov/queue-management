@@ -1386,8 +1386,9 @@ export const store = new Vuex.Store({
     },
 
     postInvite(context, payload) {
-      let { qt_xn_csr_ind } = context.state.user
-      let data = { qt_xn_csr_ind }
+      let { counter_id } = context.state.user
+
+      let data = { counter_id }
       if (payload==='next') {
         return new Promise((resolve, reject) => {
           let url = `/citizens/invite/`
