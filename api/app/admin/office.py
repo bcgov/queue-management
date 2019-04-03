@@ -28,12 +28,12 @@ class OfficeConfig(Base):
     create_modal = False
     edit_modal = False
     can_delete = False
-    column_list = ['office_name', 'sb', 'services', 'deleted', 'exams_enabled_ind']
+    column_list = ['office_name', 'sb', 'services', 'deleted', 'exams_enabled_ind', 'quick_list', 'counters']
     form_excluded_columns = ('citizens', 'csrs', 'exams', 'rooms', 'invigilators')
-    form_create_rules = ('office_name', 'office_number', 'sb', 'services', 'deleted', 'exams_enabled_ind')
-    form_edit_rules = ('office_name', 'office_number', 'sb', 'services', 'deleted', 'exams_enabled_ind')
+    form_create_rules = ('office_name', 'office_number', 'sb', 'services', 'deleted', 'exams_enabled_ind', 'quick_list', 'counters')
+    form_edit_rules = ('office_name', 'office_number', 'sb', 'services', 'deleted', 'exams_enabled_ind', 'quick_list', 'counters')
     column_labels = {'sb': 'Smartboard'}
-    column_sortable_list = ['office_name', 'sb', 'deleted', 'exams_enabled_ind']
+    column_sortable_list = ['office_name', 'sb', 'deleted', 'exams_enabled_ind', 'quick_list', 'counters']
     column_default_sort = 'office_name'
 
 

@@ -21,7 +21,7 @@ class Counter(Base):
 
 
     def __repr__(self):
-        return str(self.counter_id)
+        return self.counter_name
 
     def __init__(self, **kwargs):
         super(Counter, self).__init__(**kwargs)

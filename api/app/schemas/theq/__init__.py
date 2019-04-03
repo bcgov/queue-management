@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+from .counter_schema import CounterSchema
 from .citizen_state_schema import CitizenStateSchema
 from .csr_state_schema import CSRStateSchema
 from .period_state_schema import PeriodStateSchema
@@ -27,4 +28,3 @@ from .period_schema import PeriodSchema
 from .service_req_schema import ServiceReqSchema
 from .citizen_schema import CitizenSchema
 from .permission_schema import PermissionSchema
-from .counter_schema import CounterSchema
