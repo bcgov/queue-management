@@ -110,6 +110,13 @@ limitations under the License.*/
           this.clickRowHoldQueue(item.citizen_id)
         }
       },
+      showCounter(value) {
+        for(let i = 0; i < this.counter_types.length; i++){
+          if(this.counter_types[i].counter_id == value){
+            return this.counter_types[i].counter_name
+          }
+        }
+      },
       showCSR(id) {
         let service = this.active_service_id(id)
         if (!service) {
