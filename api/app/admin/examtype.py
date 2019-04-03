@@ -40,6 +40,10 @@ class ExamTypeConfig(Base):
 
     column_searchable_list = {'exam_type_name'}
 
+    form_excluded_columns = [
+        'exam'
+    ]
+
     form_create_rules = (
         'exam_type_name',
         'exam_color',

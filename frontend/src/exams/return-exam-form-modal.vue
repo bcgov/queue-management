@@ -1,116 +1,225 @@
-<template >
+<template>
   <b-modal v-model="modal"
            :no-close-on-backdrop="true"
-           hide-ok
+           :ok-only="okButton.title === 'Cancel'"
+           :ok-title="okButton.title"
+           :ok-variant="okButton.title === 'Cancel' ? 'secondary' : 'primary'"
+           :ok-disabled="okButton.disabled"
            hide-header
-           hide-cancel
-           @hidden="ok"
-           @ok="submit"
-           size="md">
-      <b-container style="font-size:1.1rem; border:1px solid lightgrey; border-radius: 10px"
-                   class="mb-2 pb-3"
-                   fluid>
-          <b-row>
-              <b-col>
-                  <h3>Return Exam Form</h3>
-              </b-col>
-          </b-row>
-          <b-row class="my-1">
-              <b-col sm="4"><label>Exam Returned: </label></b-col>
-              <b-col sm="7">
-                  <select class="form-control"
-                          name="examReturned"
-                          v-model=selectedReturned>
-                      <option v-for="returned in examReturnedOptions"
-                              :value="returned.value">{{ returned.value }}
-                      </option>
-                  </select>
-              </b-col>
-          </b-row>
-          <b-row>
-              <b-col sm="4"><label>Tracking Number: </label></b-col>
-              <b-col sm="7">
-                <b-form-input id="trackingNumber"
-                              type="text"
-                              v-model=fields.exam_returned_tracking_number>
-              </b-form-input></b-col>
-          </b-row>
-      </b-container>
+           :size="returned ? 'md' : 'sm' "
+           @shown="show"
+           @hidden="resetModal()"
+           @cancel="resetModal()"
+           @ok.prevent="submit">
+    <FailureExamAlert />
+    <b-form>
+      <b-form-row>
+        <b-col class="q-modal-header">
+          {{ modalUse === 'return' ? 'Return Exam' : 'Edit Return Details' }}</b-col>
+      </b-form-row>
+      <b-form-row>
+        <b-col :cols="returned ? 3 : 12">
+          <b-form-group class="mb-0">
+            <label class="mb-0">Exam Returned</label><br>
+            <b-select id="exam-returned-select"
+                      v-model="returned"
+                      @input="handleReturnedStatus"
+                      :options="returnOptions" />
+          </b-form-group>
+        </b-col>
+        <template v-if="returned">
+          <b-col cols="3" >
+            <b-form-group class="mb-0">
+              <label class="mb-0">Written?</label><br>
+              <b-form-select id="exam-written-select"
+                             v-model="exam_written_ind"
+                             @input="handleReturnedStatus"
+                             :options="writtenOptions" />
+            </b-form-group>
+          </b-col>
+          <b-col>
+          <b-form-group class="mb-0">
+            <label class="mb-0">Date of Return</label><br>
+            <DatePicker v-model="exam_returned_date"
+                        class="w-100"
+                        input-class="form-control"
+                        lang="en" />
+          </b-form-group>
+          </b-col>
+        </template>
+      </b-form-row>
+      <template v-if="returned">
+        <b-form-row>
+          <b-col>
+            <b-form-group class="mb-0 mt-2">
+              <label class="mb-0">Action Taken</label><br>
+              <b-form-input v-model="exam_returned_tracking_number"
+                            placeholder="Include tracking info"
+                            ref="returnactiontaken"/>
+            </b-form-group>
+          </b-col>
+        </b-form-row>
+        <b-form-row>
+          <b-col>
+            <b-form-group class="mb-0 mt-2">
+              <label class="mb-0">Notes</label><br>
+              <b-textarea v-model="notes"
+                          :rows="2"/>
+            </b-form-group>
+          </b-col>
+        </b-form-row>
+      </template>
+    </b-form>
   </b-modal>
 </template>
 
 <script>
-    import { mapMutations, mapState, mapActions } from 'vuex'
-    export default {
-        name: "ReturnExamModal",
-        mounted() {
-            if(this.fields.exam_returned_ind === 0) {
-                  this.selectedReturned = 'No';
-            }else if (this.fields.exam_returned_ind === 1) {
-                  this.selectedReturned = 'Yes';
-            }
-        },
-        data () {
-            return {
-                selectedReturned: '',
-                examReturnedOptions: [
-                    { id: 0, value: 'No' },
-                    { id: 1, value: 'Yes' }
-                ],
-            }
-        },
-        methods: {
-            ...mapActions([
-              'getExams',
-              'putExamInfo'
-            ]),
-            ...mapMutations([
-                'toggleReturnExamModalVisible',
-                'setEditExamSuccess',
-                'setEditExamFailure'
-            ]),
-            ok() {
-                this.toggleReturnExamModalVisible(false);
-                this.setEditExamSuccess(false);
-                this.setEditExamFailure(false);
-            },
-            cancel() {
-                this.toggleReturnExamModalVisible(false);
-                this.selectedReturned = '';
-            },
-            submit() {
-                this.setEditExamSuccess(false)
-                this.setEditExamFailure(false)
-                if(this.selectedReturned === 'No') {
-                    this.selectedReturned = 0;
-                } else {
-                    this.selectedReturned = 1;
-                }
-                let return_exam = {
-                    exam_id: this.fields.exam_id,
-                    exam_returned_ind: this.selectedReturned,
-                    exam_returned_tracking_number: this.fields.exam_returned_tracking_number
-                }
-                this.putExamInfo(return_exam)
-                  .then(() => { this.getExams() })
-            },
-        },
-        computed: {
-            ...mapState({
-                showReturnExamModalVisible: state => state.showReturnExamModalVisible,
-                fields: state => state.returnExam,
-                editExamSuccess: state => state.editExamSuccess,
-                editExamFailure: state => state.editExamFailure,
-            }),
-            modal: {
-              get() {
-                  return this.showReturnExamModalVisible
-              },
-              set(e) {
-                  this.toggleReturnExamModalVisible(e)
-              }
-            }
-        },
+  import { mapActions, mapMutations, mapState } from 'vuex'
+  import DatePicker from 'vue2-datepicker'
+  import moment from 'moment'
+  import FailureExamAlert from './failure-exam-alert'
 
-    }
+  export default {
+    name: "ReturnExamModal",
+    props: ['actionedExam', 'resetExam'],
+    components: { FailureExamAlert, DatePicker },
+    data() {
+      return {
+        exam: null,
+        returned: false,
+        exam_written_ind: true,
+        exam_returned_date: null,
+        notes: null,
+        exam_returned_tracking_number: null,
+        returnOptions: [
+          { value: false, text: 'Not Returned' },
+          { value: true, text: 'Returned' },
+        ],
+        writtenOptions: [
+          { value: 1, text: 'Yes' },
+          { value: 0, text: 'No' },
+        ],
+        modalUse: 'return'
+      }
+    },
+    computed: {
+      ...mapState({
+        showModal: 'showReturnExamModal',
+        editExamSuccess: 'editExamSuccess',
+        editExamFailure: 'editExamFailure',
+      }),
+      changesMadeInEditMode() {
+        if (this.exam && this.exam.exam_id) {
+          let fields = [ 'exam_returned_tracking_number', 'exam_written_ind', 'notes', 'exam_returned_date' ]
+          let result = false
+          fields.forEach(field => {
+            if (this[field] != this.exam[field]) {
+              result = true
+            }
+          })
+          return result
+        }
+        return false
+      },
+      okButton() {
+        if (!this.returned && this.modalUse === 'edit') {
+          return {title: 'Submit', disabled: false}
+        }
+        if (this.returned && this.modalUse === 'edit') {
+          if (this.changesMadeInEditMode) {
+            return {title: 'Submit', disabled: false}
+          }
+          return {title: 'Submit', disabled: true}
+        }
+        if (this.returned && this.modalUse === 'return') {
+          if (this.exam_returned_date && this.exam_returned_tracking_number) {
+            return {title: 'Submit', disabled: false}
+          }
+          return {title: 'Submit', disabled: true}
+        }
+        return {title: 'Cancel', disabled: false}
+      },
+      modal: {
+        get() {
+          return this.showModal
+        },
+        set(e) {
+          this.toggleReturnExamModal(e)
+        },
+      },
+    },
+    methods: {
+      ...mapActions(['putExamInfo', 'getExams', ]),
+      ...mapMutations(['toggleReturnExamModal', 'setEditExamSuccess', 'setEditExamFailure',  ]),
+      handleReturnedStatus(value) {
+        if (value) {
+          if (!this.exam_returned_date) {
+            this.exam_returned_date = moment()
+          }
+          if (this.modalUse === 'return') {
+            this.$nextTick( () => {
+              this.$refs.returnactiontaken.focus()
+            })
+          }
+        }
+      },
+      show() {
+        this.exam = this.actionedExam
+        let tempValues = Object.assign({}, this.actionedExam)
+        this.notes = tempValues.notes
+        this.exam_returned_tracking_number = tempValues.exam_returned_tracking_number
+        if (tempValues.exam_returned_date) {
+          console.log('twas true')
+          this.modalUse = 'edit'
+          this.returned = true
+          this.exam_returned_date = tempValues.exam_returned_date
+          this.exam_written_ind = tempValues.exam_written_ind
+          return
+        }
+        this.modalUse = 'return'
+        this.exam_written_ind = 1
+
+      },
+      resetModal() {
+        this.toggleReturnExamModal(false)
+        this.exam = null
+        this.returned = false
+        this.exam_returned_date = null
+        this.exam_returned_tracking_number = null
+        this.notes  = null
+        this.resetExam()
+      },
+      submit() {
+        if (this.okButton.title === 'Cancel') {
+          this.resetModal()
+          return
+        }
+        let putData = {
+          exam_id: this.exam.exam_id,
+          exam_returned_date: moment(this.exam_returned_date).format('YYYY-MM-DD'),
+          exam_returned_tracking_number: this.exam_returned_tracking_number,
+          notes: this.notes,
+          exam_written_ind: this.exam_written_ind
+        }
+        if (!this.returned && this.modalUse === 'edit') {
+          putData = {
+            exam_id: this.exam.exam_id,
+            exam_returned_date: null,
+            exam_returned_tracking_number: null,
+            notes: ''
+          }
+        }
+        if (this.notes) {
+          putData.notes = this.notes
+        }
+        this.putExamInfo(putData).then( () => {
+          this.getExams().then( () => {
+            this.resetModal()
+          })
+        }).catch( () => {
+          this.setExamEditFailureMessage(10)
+        })
+      }
+    },
+  }
 </script>

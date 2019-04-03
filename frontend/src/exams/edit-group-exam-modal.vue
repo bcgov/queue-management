@@ -15,19 +15,23 @@
                 <div class="q-id-grid-head">Exam Details</div>
                 <div class="q-id-grid-col">
                   <div>Exam: </div>
-                  <div>{{ examRow.exam_name }}</div>
+                  <div>{{ actionedExam.exam_name }}</div>
                 </div>
                 <div class="q-id-grid-col">
                   <div>Event ID: </div>
-                  <div>{{ examRow.event_id }}</div>
+                  <div>{{ actionedExam.event_id }}</div>
                 </div>
                 <div class="q-id-grid-col">
                   <div>Type: </div>
-                  <div>{{ examRow.exam_type.exam_type_name }}</div>
+                  <div>{{ actionedExam.exam_type.exam_type_name }}</div>
                 </div>
                 <div class="q-id-grid-col">
                   <div>Writers: </div>
-                  <div>{{ examRow.number_of_students }}</div>
+                  <div>{{ actionedExam.number_of_students }}</div>
+                </div>
+                <div class="q-id-grid-col" v-if="is_liaison_designate">
+                  <div>Office: </div>
+                  <div>{{ actionedExam.booking.office.office_name }}</div>
                 </div>
               </div>
             </div>
@@ -47,13 +51,13 @@
           <b-col cols="6" v-if="role_code !== 'GA' && !is_liaison_designate">
             <b-form-group>
               <label>Exam Time</label><br>
-              <b-input disabled :value="formatTime(examRow.booking.start_time)" />
+              <b-input disabled :value="formatTime(actionedExam.booking.start_time)" />
             </b-form-group>
           </b-col>
           <b-col cols="6" v-if="role_code !== 'GA' && !is_liaison_designate">
             <b-form-group>
               <label>Exam Date</label><br>
-              <b-input disabled :value="formatDate(examRow.booking.start_time)" />
+              <b-input disabled :value="formatDate(actionedExam.booking.start_time)" />
             </b-form-group>
           </b-col>
           <b-col cols="6" v-if="is_liaison_designate || role_code === 'GA'">
@@ -125,12 +129,13 @@
 <script>
   import { mapActions, mapMutations, mapState, mapGetters } from 'vuex'
   import moment from 'moment'
+  import zone from 'moment-timezone'
   import DatePicker from 'vue2-datepicker'
 
   export default {
     name: "EditGroupExamBookingModal",
     components: { DatePicker },
-    props: ['examRow', 'resetExam'],
+    props: ['actionedExam', 'resetExam'],
     data () {
       return {
         invigilator_id: '',
@@ -146,8 +151,15 @@
       ...mapGetters(['role_code', 'invigilator_dropdown', 'is_liaison_designate']),
       ...mapState({
         showModal: state => state.showEditGroupBookingModal,
-        invigilators: state => state.invigilators,
+        invigilators: 'invigilators',
+        user: 'user',
       }),
+      editedTimezone() {
+        if (this.actionedExam && this.actionedExam.booking) {
+          return this.actionedExam.booking.office.timezone.timezone_name
+        }
+        return ''
+      },
       modalVisible: {
         get() {
           return this.showModal
@@ -155,7 +167,7 @@
         set(e) {
           this.toggleEditGroupBookingModal(e)
         }
-      }
+      },
     },
     methods: {
       ...mapActions(['getBookings', 'getExams', 'putRequest']),
@@ -188,8 +200,9 @@
         }
       },
       checkTime(e) {
+        this.time = e
         this.showMessage = false
-        let time = new moment(this.itemCopy.booking.start_time).format('HH:mm').toString()
+        let time = zone.tz(this.itemCopy.booking.start_time, this.editedTimezone).format('HH:mm').toString()
         let newTime = new moment(e).format('HH:mm').toString()
         if (newTime === time) {
           if (this.editedFields.includes('time')) {
@@ -260,18 +273,24 @@
       submit() {
         let edits = this.editedFields
         let putRequests = []
-
+        let local_timezone_name = this.user.office.timezone.timezone_name
+        let edit_timezone_name = this.actionedExam.booking.office.timezone.timezone_name
         let bookingChanges = {}
         if (edits.includes('time') || edits.includes('date') || edits.includes('invigilator_id')) {
-          let baseDate = new moment(this.itemCopy.booking.start_time).format('YYYY-MM-DD').toString()
-          let baseTime = new moment(this.itemCopy.booking.start_time).format('HH:mm:ssZ').toString()
-          if (edits.includes('time')) {
-            baseTime = new moment(this.time).format('HH:mm:ssZ').toString()
-          }
+          let baseDate = this.date
+          let baseTime = moment(this.time).format('HH:mm:ss').toString()
           if (edits.includes('date')) {
             baseDate = new moment(this.date).format('YYYY-MM-DD').toString()
           }
-          let start =  moment(baseDate + 'T' + baseTime)
+          let start
+          if (local_timezone_name !== edit_timezone_name) {
+            console.log('different time zones')
+            start =  zone.tz(`${baseDate}T${baseTime}`, edit_timezone_name)
+          }
+          if (local_timezone_name === edit_timezone_name) {
+            console.log('same time zones')
+            start = moment(`${baseDate}T${baseTime}`)
+          }
           let end = start.clone().add(parseInt(this.itemCopy.exam_type.number_of_hours), 'h')
           bookingChanges['start_time'] = start.utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
           bookingChanges['end_time'] = end.utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
@@ -299,16 +318,18 @@
         })
       },
       setValues() {
-        let tempItem = Object.assign({}, this.examRow)
-        this.time = tempItem.booking.start_time
-        this.date = tempItem.booking.start_time
+        let tempItem = Object.assign({}, this.actionedExam)
+        let { timezone_name } = this.actionedExam.booking.office.timezone
+        let time = zone.tz(tempItem.booking.start_time, timezone_name).format('HH:mm:ss')
+        let date = moment(tempItem.booking.start_time).format('YYYY-MM-DD')
+        this.time = date + 'T' + time
+        this.date = date
         this.offsite_location = tempItem.offsite_location
         this.invigilator_id = tempItem.booking.invigilator_id
         this.editedFields = []
         this.itemCopy = tempItem
       },
       reset() {
-        let tempItem = null
         this.time = null
         this.date = null
         this.offsite_location = null

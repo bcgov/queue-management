@@ -114,9 +114,6 @@
   export default {
     name: 'AddExamModal',
     components: { AddExamFormController, AddExamFormConfirm },
-    mounted() {
-      this.captureExamDetail({key: 'exam_received_date', value: null})
-    },
     data() {
       return ({
         submitMsg: '',
@@ -130,13 +127,13 @@
         button: 'add_exam_modal_navigation_buttons',
       }),
       ...mapState({
-        exam: 'capturedExam',
+        exam: state => state.capturedExam,
         examTypes: 'examTypes',
-        addExamModal: 'addExamModal',
-        tab: 'captureITAExamTabSetup',
+        addExamModal: state => state.addExamModal,
+        tab: state => state.captureITAExamTabSetup,
         user: 'user',
         module: 'addExamModule',
-        capturtedAddModal: state => state.addExamModule.addExamModal,
+        capturtedAddModal: state => state.addExamModal,
       }),
       lastStep() {
         if (this.addExamModal.setup === 'challenger') {
@@ -157,7 +154,7 @@
           return this.addExamModal.visible
         },
         set(e) {
-          this.toggleAddExamModal(e)
+          this.setAddExamModalSetting(e)
         }
       },
       step() {
@@ -174,7 +171,7 @@
     },
     methods: {
       ...mapActions(['clickAddExamSubmit', 'getExams', 'actionWipeAllSavedModals']),
-      ...mapMutations(['captureExamDetail', 'resetCaptureForm', 'resetCaptureTab', 'toggleAddExamModal', 'updateCaptureTab', ]),
+      ...mapMutations(['captureExamDetail', 'resetCaptureForm', 'resetCaptureTab', 'setAddExamModalSetting', 'updateCaptureTab', ]),
       tabWarning(i) {
         if (!Array.isArray(this.errors)) return ''
         if (this.errors.length > 0) {
@@ -209,7 +206,7 @@
       clickCancel() {
         this.resetModal()
         this.actionWipeAllSavedModals()
-        this.toggleAddExamModal({visible: false, setup: null, step1MenuOpen: false})
+        this.setAddExamModalSetting({visible: false, setup: null, step1MenuOpen: false})
       },
       clickNext() {
         let step = this.step + 1
@@ -229,7 +226,6 @@
           this.submitMsg = ''
           this.status = 'unknown'
           this.captureExamDetail({key: 'exam_method', value: 'paper'})
-          this.captureExamDetail({key:'notes', value: ''})
         }
         if (setup === 'challenger') {
           if (this.module.booking && this.module.booking.start) {
@@ -264,7 +260,7 @@
           office_id = parseInt(office_id)
           office_number = parseInt(office_number)
           this.captureExamDetail({key: 'office_id', value: office_id })
-          this.toggleAddExamModal({ office_number })
+          this.setAddExamModalSetting({ office_number })
         }
         if (setup === 'other') {
           let value = moment().add(60, 'd')

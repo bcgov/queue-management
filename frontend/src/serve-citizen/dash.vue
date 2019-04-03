@@ -89,8 +89,8 @@ import GAScreen from './../ga-screen/ga-screen'
         offset: 0,
         last: 0,
         dismissSecs: 5,
+        iframeHeight: "500px",
         checkedSessionStorage: false,
-        iframeHeight: "500px"
       }
     },
     beforeRouteLeave(to, from, next) {

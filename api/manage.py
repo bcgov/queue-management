@@ -416,7 +416,7 @@ class Bootstrap(Command):
             deleted=None,
             csr_state_id=csr_state_logout.csr_state_id
         )
-        ChrisDMac = theq.CSR(
+        chrisdmac = theq.CSR(
             username="ChrisDMac",
             office_id=office_test.office_id,
             role_id=role_csr.role_id,
@@ -459,7 +459,7 @@ class Bootstrap(Command):
         db.session.add(akroon3r)
         db.session.add(sjrumsby)
         db.session.add(scottrumsby)
-        db.session.add(ChrisDMac)
+        db.session.add(chrisdmac)
         db.session.add(gil0109)
         db.session.commit()
 
@@ -757,7 +757,6 @@ class Bootstrap(Command):
             session_number = 1,
             number_of_students = 1,
             exam_method = "paper",
-            exam_returned_ind=0
         )
 
         exam_two = bookings.Exam(
@@ -772,7 +771,6 @@ class Bootstrap(Command):
             session_number = 2,
             number_of_students = 12,
             exam_method = "online",
-            exam_returned_ind = 0
         )
 
         exam_three = bookings.Exam(
@@ -787,7 +785,6 @@ class Bootstrap(Command):
             session_number=3,
             number_of_students=10,
             exam_method="paper",
-            exam_returned_ind = 0
         )
 
         exam_four = bookings.Exam(
@@ -802,7 +799,6 @@ class Bootstrap(Command):
             session_number=4,
             number_of_students=25,
             exam_method="online",
-            exam_returned_ind = 0
         )
 
         exam_five = bookings.Exam(
@@ -817,7 +813,6 @@ class Bootstrap(Command):
             session_number=4,
             number_of_students=25,
             exam_method="paper",
-            exam_returned_ind = 0
         )
 
         db.session.add(exam_one)
@@ -841,9 +836,38 @@ class Bootstrap(Command):
             timezone_name='America/Edmonton'
         )
 
+        timezone_four = theq.Timezone(
+            timezone_name='America/Creston'
+        )
+
         db.session.add(timezone_one)
         db.session.add(timezone_two)
         db.session.add(timezone_three)
+        db.session.add(timezone_four)
+        db.session.commit()
+
+        start_time = datetime(2019, 3, 28, 9, 0, 0)
+        end_time = datetime(2019, 3, 28, 9, 15, 0)
+        checked_in_time = datetime(2019, 3, 28, 9, 3, 0)
+
+        start_time_aware = pytz.utc.localize(start_time)
+        end_time_aware = pytz.utc.localize(end_time)
+        checked_in_time_aware = pytz.utc.localize(checked_in_time)
+
+        print("--> Bookings: Appointments")
+
+        appointment_one = bookings.Appointment(
+            office_id=office_test.office_id,
+            service_id=service_exams.service_id,
+            start_time=start_time_aware,
+            end_time=end_time_aware,
+            checked_in_time=checked_in_time_aware,
+            comments="Consultation",
+            citizen_name="Adam Kroon",
+            contact_information="adam@olivewood.io"
+        )
+
+        db.session.add(appointment_one)
         db.session.commit()
 
 

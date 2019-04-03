@@ -15,6 +15,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import moment from 'moment'
+import tZone from 'moment-timezone'
 import 'es6-promise/auto'
 import { addExamModule } from './add-exam-module'
 import { Axios, searchNestedObject } from './helpers'
@@ -30,7 +31,7 @@ export const store = new Vuex.Store({
   state: {
     addExamModal: {
       visible: false,
-      setup: 'individual',
+      setup: null,
       step1MenuOpen: false,
       office_number: null,
     },
@@ -76,24 +77,20 @@ export const store = new Vuex.Store({
     dismissCount: 0,
     editedBooking: null,
     editedBookingOriginal: null,
-    editExamFailure: false,
-    editExams: [],
+    editExamFailureCount: 0,
     editedGroupBooking: null,
-    editExamSuccess: false,
+    editExamSuccessCount: 0,
     examAlertMessage: '',
+    loginAlertMessage: '',
     examEditSuccessMessage: '',
     examEditFailureMessage: '',
     examDismissCount: 0,
+    loginDismissCount: 0,
     examsTrackingIP: false,
     examSuccessDismiss : 0,
-    examMethods: [
-      {text: 'paper', value: 'paper', id: 'exam_method'},
-      {text: 'online', value: 'online', id: 'exam_method'}
-    ],
     exams: [],
     examTypes: [],
     feedbackMessage: '',
-    groupBookings: [],
     showGenFinReportModal: false,
     iframeLogedIn: false,
     invigilators: [],
@@ -102,7 +99,7 @@ export const store = new Vuex.Store({
       expiryFilter: 'current',
       scheduledFilter: 'both',
       groupFilter: 'both',
-      returnedFilter: 'notReturned',
+      returnedFilter: 'unreturned',
       office_number: 'default',
     },
     nowServing: false,
@@ -146,7 +143,7 @@ export const store = new Vuex.Store({
     showSelectInvigilatorModal: false,
     showOtherBookingModal: false,
     showResponseModal: false,
-    showReturnExamModalVisible: false,
+    showReturnExamModal: false,
     showServiceModal: false,
     user: {
       csr_id: null,
@@ -274,45 +271,29 @@ export const store = new Vuex.Store({
     },
 
     is_pesticide_designate(state) {
-      if (state.user) {
-        if(state.user.pesticide_designate){
-          return true
-        }else{
-          return false
-        }
+      if (state.user.pesticide_designate) {
+        return true
       }
       return false
     },
 
     is_financial_designate(state) {
-      if (state.user) {
-        if(state.user.finance_designate){
-          return true
-        }else{
-          return false
-        }
+      if(state.user.finance_designate){
+        return true
       }
       return false
     },
 
     is_liaison_designate(state) {
-      if (state.user){
-        if(state.user.liaison_designate){
-          return true
-        }else{
-          return false
-        }
+      if(state.user.liaison_designate){
+        return true
       }
       return false
     },
 
     is_ita_designate(state) {
-      if (state.user){
-        if(state.user.ita_designate){
-          return true
-        }else {
-          return false
-        }
+      if(state.user.ita_designate){
+        return true
       }
       return false
     },
@@ -375,9 +356,8 @@ export const store = new Vuex.Store({
         let test = c.service_reqs.filter(sr=>sr.periods.some(p=>p.time_end == null && p.ps.ps_name === 'On hold'))
         if (test.length > 0) {
           return true
-        } else {
-          return false
         }
+        return false
       }
       let filtered = citizens.filter(c=>c.service_reqs.length > 0)
       let list = filtered.filter(isCitizenOnHold)
@@ -394,9 +374,8 @@ export const store = new Vuex.Store({
         let test = c.service_reqs.filter(sr=>sr.periods.some(p=>p.time_end == null && p.ps.ps_name === 'Waiting'))
         if (test.length > 0) {
           return true
-        } else {
-          return false
         }
+        return false
       }
       let filtered = citizens.filter(c=>c.service_reqs.length > 0)
       let list = filtered.filter(isCitizenQueued)
@@ -410,6 +389,7 @@ export const store = new Vuex.Store({
     channel_options: state => {
       return state.channels.map(ch=>({value: ch.channel_id, text: ch.channel_name}))
     },
+
     categories_options: (state, getters) => {
       let opts = state.categories.filter(o => state.services.some(s => s.parent_id === o.service_id))
 
@@ -767,21 +747,21 @@ export const store = new Vuex.Store({
           context.commit('setUser', resp.data.csr)
           let officeType = resp.data.csr.office.sb.sb_type
           context.commit('setOffice', officeType)
+          let individualExamBoolean = false
+          let groupExamBoolean = false
 
           if (resp.data.group_exams > 0) {
-            var groupExamBoolean = true
+            groupExamBoolean = true
             context.commit('setGroupExam', groupExamBoolean)
           } else {
-            var groupExamBoolean = false
             context.commit('setGroupExam', groupExamBoolean)
           }
 
           if (resp.data.individual_exams > 0) {
-            var individualExamBoolean = true
-            context.commit('setGroupExam', individualExamBoolean)
+            individualExamBoolean = true
+            context.commit('setIndividualExam', individualExamBoolean)
           } else {
-            var individualExamBoolean = false
-            context.commit('setGroupExam', individualExamBoolean)
+            context.commit('setIndividualExam', individualExamBoolean)
           }
 
           if (groupExamBoolean && individualExamBoolean) {
@@ -797,6 +777,7 @@ export const store = new Vuex.Store({
           }
           resolve(resp)
         }, error => {
+          context.commit('setLoginAlert', "Your are not setup in TheQ, please contact RMSHelp to be setup.")
           reject(error)
         })
       })
@@ -1477,16 +1458,12 @@ export const store = new Vuex.Store({
       delete payload.exam_id
       return new Promise((resolve, reject) => {
         let url = `/exams/${id}/`
-        Axios(context).put(url, payload).then( resp =>{
-          resolve(resp)
-          context.commit('setEditExamSuccess', true)
-          context.commit('setExamEditSuccessMessage', 'Success! Exam changes were committed.')
-        })
-          .catch(error => {
-            context.commit('setEditExamFailure', true)
-            context.commit('setExamEditFailureMessage', 'There was a problem submitting changes to your exam.')
-            reject(error)
+        Axios(context).put(url, payload).then( () =>{
+          context.dispatch('getExams').then( () => {
+            context.commit('setEditExamSuccess', 6)
+            resolve()
           })
+        })
       })
     },
     
@@ -1515,7 +1492,6 @@ export const store = new Vuex.Store({
       context.commit('setEditedBooking', null)
       context.commit('toggleEditBookingModal', false)
       context.commit('toggleEditGroupBookingModal', false)
-      context.commit('toggleSelectInvigilatorModal', false)
     },
   
     postITAChallengerExam(context) {
@@ -1569,15 +1545,22 @@ export const store = new Vuex.Store({
           }).catch( () => { reject() })
         }).catch( () => { reject() })
       })
-      
     },
     
     postITAGroupExam(context) {
       let responses = Object.assign( {}, context.state.capturedExam)
-      let date = new moment(responses.expiry_date).local().format('YYYY-MM-DD')
-      let time = new moment(responses.exam_time).local().format('HH:mm:ss')
+      let timezone_name = context.state.user.office.timezone
+      let booking_office = context.state.offices.find(office => office.office_id == responses.office_id)
+      let booking_timezone_name = booking_office.timezone.timezone_name
+      let date = new moment(responses.expiry_date).format('YYYY-MM-DD')
+      let time = new moment(responses.exam_time).format('HH:mm:ss')
       let datetime = date+'T'+time
-      let start = new moment(datetime).local()
+      let start
+      if (booking_timezone_name != timezone_name) {
+        start = new tZone.tz(datetime, booking_timezone_name)
+      } else {
+        start = new moment(datetime).local()
+      }
       let length = context.state.examTypes.find(ex => ex.exam_type_id == responses.exam_type_id).number_of_hours
       let end = start.clone().add(length, 'hours')
       let booking = {
@@ -1621,6 +1604,9 @@ export const store = new Vuex.Store({
         exam_returned_ind: 0,
         number_of_students: 1,
         office_id: context.state.user.office_id
+      }
+      if (context.state.addExamModal.setup === 'pesticide') {
+        defaultValues.office_id = responses['office_id']
       }
       responses.expiry_date = moment(responses.expiry_date).format('YYYY-MM-DD')
       if (responses.notes === null) {
@@ -1766,13 +1752,13 @@ export const store = new Vuex.Store({
     },
   
     screenAllCitizens(context, route) {
-      for (let citizen of context.state.citizens) {
+      context.state.citizens.forEach( citizen =>{
         let payload = {
           citizen,
           route
         }
         context.dispatch('screenIncomingCitizen', payload)
-      }
+      })
     },
   
     screenIncomingCitizen(context, payload) {
@@ -1924,7 +1910,9 @@ export const store = new Vuex.Store({
       state.categories = []
       state.categories = payload
     },
-  
+
+    setReturnExamInfo: (state, payload) => state.returnExam = payload,
+
     toggleAddModal: (state, payload) => state.showAddModal = payload,
   
     updateAddModalForm(state, payload) {
@@ -2066,13 +2054,18 @@ export const store = new Vuex.Store({
       state.examAlertMessage = payload
       state.examDismissCount = 999
     },
-  
-    setExamEditSuccessMessage(state, payload) {
-      state.examEditSuccessMessage = payload
+
+    setLoginAlert(state, payload) {
+      state.loginAlertMessage = payload
+      state.loginDismissCount = 999
     },
   
-    setExamEditFailureMessage(state, payload) {
-      state.examEditFailureMessage = payload
+    setExamEditSuccessCount(state, payload) {
+      state.examEditSuccessCount = payload
+    },
+  
+    setExamEditFailureCount(state, payload) {
+      state.examEditFailCount = payload
     },
   
     setModalAlert(state, payload) {
@@ -2116,6 +2109,10 @@ export const store = new Vuex.Store({
   
     examDismissCountDown(state, payload) {
       state.examDismissCount = payload
+    },
+
+    loginDismissCountDown(state, payload){
+      state.loginDismissCount = payload
     },
   
     examSuccessCountDown(state, payload) {
@@ -2171,7 +2168,7 @@ export const store = new Vuex.Store({
   
     setNavigation: (state, value) => state.adminNavigation = value,
   
-    toggleAddExamModal(state, payload) {
+    setAddExamModalSetting(state, payload) {
       if (typeof payload === 'boolean') {
         state.addExamModal.visible = payload
         return
@@ -2195,6 +2192,9 @@ export const store = new Vuex.Store({
       }
       if (payload.key === 'event_id') {
         payload.value = payload.value.toString()
+      }
+      if (payload.value === null) {
+        payload.value = ''
       }
       Vue.set(
         state.capturedExam,
@@ -2260,16 +2260,10 @@ export const store = new Vuex.Store({
   
     toggleEditExamModal: (state, payload) => state.showEditExamModal = payload,
   
-    toggleReturnExamModalVisible: (state, payload) => state.showReturnExamModalVisible = payload,
+    toggleReturnExamModal: (state, payload) => state.showReturnExamModal = payload,
   
     toggleDeleteExamModalVisible: (state, payload) => state.showDeleteExamModal = payload,
-  
-    setEditExamInfo: (state, payload) => state.editExams = payload,
-  
-    setReturnExamInfo: (state, payload) => state.returnExam = payload,
-  
-    setExamMethods: (state, payload) => state.examMethods = payload,
-  
+    
     setSelectedExam(state, payload) {
       if (payload === 'clearGoto') {
         delete state.selectedExam.gotoDate
@@ -2291,9 +2285,9 @@ export const store = new Vuex.Store({
   
     toggleOtherBookingModal: (state, payload) => state.showOtherBookingModal = payload,
   
-    setEditExamSuccess: (state, payload) => state.editExamSuccess = payload,
+    setEditExamSuccess: (state, payload) => state.editExamSuccessCount = payload,
   
-    setEditExamFailure: (state, payload) => state.editExamFailure = payload,
+    setEditExamFailure: (state, payload) => state.editExamFailureCount = payload,
   
     toggleEditBookingModal: (state, payload) => state.showEditBookingModal = payload,
   
@@ -2316,12 +2310,8 @@ export const store = new Vuex.Store({
     setOfficeFilter: (state, payload) => state.officeFilter = payload,
   
     setSelectionIndicator: (state, payload) => state.selectionIndicator = payload,
-  
-    setGroupBookings: (state, payload) => state.groupBookings = payload,
-  
+    
     setResources: (state, payload) => state.roomResources = payload,
-  
-    toggleSelectInvigilatorModal: (state, payload) => state.showSelectInvigilatorModal = payload,
   
     setEvents: (state, payload) => state.calendarEvents = payload,
   

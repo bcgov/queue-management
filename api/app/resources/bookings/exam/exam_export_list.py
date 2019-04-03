@@ -80,7 +80,8 @@ class ExamList(Resource):
             dest = io.StringIO()
             out = csv.writer(dest)
             out.writerow(['Office Name', 'Exam Type', 'Exam ID', 'Exam Name', 'Examinee Name', 'Event ID', 'Room Name',
-                          'Invigilator Name', 'Booking ID', 'Booking Name', 'Exam Received', 'Exam Returned'])
+                          'Invigilator Name', 'Booking ID', 'Booking Name', 'Exam Received', 'Exam Written',
+                          'Exam Returned'])
 
             keys = [
                 "office_name",
@@ -94,7 +95,8 @@ class ExamList(Resource):
                 "booking_id",
                 "booking_name",
                 "exam_received_date",
-                "exam_returned_ind"
+                "exam_written_ind",
+                "exam_returned_date"
             ]
 
             for exam in exams:
@@ -132,8 +134,13 @@ class ExamList(Resource):
                                 row.append("N")
                             else:
                                 row.append("Y")
-                        elif key == "exam_returned_ind":
-                            if exam.exam_returned_ind == 0:
+                        elif key == "exam_written_ind":
+                            if exam.exam_written_ind == 1:
+                                row.append("Y")
+                            else:
+                                row.append("N")
+                        elif key == "exam_returned_date":
+                            if exam.exam_returned_date is None:
                                 row.append("N")
                             else:
                                 row.append("Y")

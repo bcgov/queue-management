@@ -18,31 +18,26 @@
              style="height: 200px;
                     overflow-y: scroll;
                     margin: 0px;
-                    background-color: #fcfcfc"
-                    >
+                    background-color: #fcfcfc">
           <b-table :items="filtered_services"
                    :fields="fields"
                    sort-by="parrent.service_name"
                    :filter="filter"
-                   :tbody-tr-class="addcitizen-tr"
                    :small="t"
                    :bordered="f"
                    :striped="f"
                    :fixed="t"
                    id="table2"
                    @row-clicked="rowClicked"
-                   class="add_citizen_categories_table"
-                   >
+                   class="add_citizen_categories_table">
             <template slot="service_name" slot-scope="data">
               <div>
                 <span v-bind:title="data.item.service_desc">
                   {{data.item.service_name}}
                 </span>
                 <div style="display: none">
-                  {{
-                    (data.item.service_id==form_data.service) ?
-                    (data.item._rowVariant='active') : (data.item._rowVariant='')
-                  }}
+                  {{ data.item.service_id==form_data.service ?
+                      data.item._rowVariant='active' : data.item._rowVariant='' }}
                 </div>
               </div>
             </template>

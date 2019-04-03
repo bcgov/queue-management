@@ -103,7 +103,8 @@ Additional API Enviornment Variables of note, which you can add to the .env file
 1. SERVICENOW_INSTANCE - used to send feedback to Service Now, the instance of your Service Now environment
 1. SERVICENOW_USER - the login ID of a Service Now ID used to create Service Now incidents
 1. SERVICENOW_PASSWORD - the password of the SERVICENOW_USER account
-1. SERVICENOW_TABLE - the name of the Service Now incident table to be updated 
+1. SERVICENOW_TABLE - the name of the Service Now incident table to be updated
+1. SERVICENOW_ASSIGN_GROUP - the name of the Service Now group to be assigned to the incident
 
 We are using Snowplow & Looker to display our Analytics.
 
