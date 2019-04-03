@@ -47,16 +47,6 @@
                 <option value="3">Low Priority</option>
               </select>
             </div>
-            <b-form-checkbox
-              v-model="quickTrans"
-              value="1"
-              unchecked-value="0"
-              v-if="reception"
-              class="quick"
-              style="color:white;margin: 8px;"
-            >
-              <span style="font: 400 16px Myriad-Pro;">Quick Txn</span>
-            </b-form-checkbox>
             <select id="counter-selection" class="custom-select" v-model="counter_selection">
               <option v-for="counter in counter_types"
                     :value="counter.counter_id"
@@ -117,15 +107,6 @@ export default {
         return "Edit Service";
       } else {
         return "Add Citizen";
-      }
-    },
-
-    quickTrans: {
-      get() {
-        return this.form_data.quick;
-      },
-      set(value) {
-        this.updateAddModalForm({ type: "quick", value });
       }
     },
 
