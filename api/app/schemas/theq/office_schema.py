@@ -15,7 +15,7 @@ limitations under the License.'''
 import toastedmarshmallow
 from marshmallow import fields
 from app.models.theq import Office
-from app.schemas.theq import SmartBoardSchema, CounterSchema
+from app.schemas.theq import SmartBoardSchema, CounterSchema, ServiceSchema
 from qsystem import ma
 
 
@@ -34,4 +34,5 @@ class OfficeSchema(ma.ModelSchema):
     exams_enabled_ind = fields.Int()
 
     sb = fields.Nested(SmartBoardSchema())
-    counters = fields.Nested(CounterSchema())
+    counters = fields.Nested(CounterSchema(), many=True)
+    quick_list = fields.Nested(ServiceSchema(), many=True)
