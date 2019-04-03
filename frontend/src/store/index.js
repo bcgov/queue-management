@@ -945,6 +945,46 @@ export const store = new Vuex.Store({
       })
     },
 
+    clickQuickServe(context) {
+      context.commit('setPerformingAction', true)
+
+      if (context.state.channels.length === 0) {
+        context.dispatch('getChannels').then( () => {
+          context.commit('setDefaultChannel')
+        })
+      }
+      if (context.state.channels.length > 0) {
+        context.commit('setDefaultChannel')
+      }
+      
+      Axios(context).post('/citizens/', {})
+        .then(resp => {
+          let value = resp.data.citizen
+          context.commit('updateAddModalForm', {type:'citizen',value})
+          context.commit('resetServiceModal')
+          context.dispatch('putCitizen').then( () => {
+            context.dispatch('postServiceReq').then( () => {
+              context.dispatch('postBeginService', value.citizen_id).then( () => {
+                context.commit('toggleAddModal', false)
+                context.commit('toggleBegunStatus', true)
+                context.commit('toggleInvitedStatus', false)
+                context.commit('toggleServiceModal', true)
+                context.commit('resetAddModalForm')
+              }).finally(() => {
+                context.commit('setPerformingAction', false)
+              })
+            }).catch(() => {
+              context.commit('setPerformingAction', false)
+            })
+          }).catch(() => {
+            context.commit('setPerformingAction', false)
+          })
+        },
+        error => {
+          context.commit('setMainAlert', 'An error occurred adding a citizen.')
+        })
+    },
+
     clickBackOffice(context) {
       context.commit('setPerformingAction', true)
       context.dispatch('toggleModalBack')

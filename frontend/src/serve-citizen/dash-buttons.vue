@@ -28,10 +28,17 @@
                 id="serve-citizen-button">Serve Now</b-button>
     </div>
     <div>
-      <b-button class="btn-primary mr-1"
-                @click="addCitizen"
-                :disabled="citizenInvited===true || performingAction || showAdmin"
-                id="add-citizen-button">Add Citizen</b-button>
+      <b-button-group>
+        <b-button class="btn-primary"
+                  @click="addCitizen"
+                  :disabled="citizenInvited===true || performingAction || showAdmin"
+                  id="add-citizen-button">Add Citizen</b-button>
+        <b-dropdown variant="primary" :disabled="citizenInvited===true || performingAction || showAdmin" right>
+          <b-dropdown-item @click="quickServeCitizen" data-id="85">Emails (All)</b-dropdown-item>
+          <b-dropdown-item @click="quickServeCitizen" data-id="81">Cash Out/Transfers</b-dropdown-item>
+        </b-dropdown>
+      </b-button-group>
+
       <b-button class="btn-primary"
                 @click="clickBackOffice"
                 :disabled="citizenInvited===true || performingAction || showAdmin"
@@ -68,7 +75,8 @@
     methods: {
       ...mapMutations([
         'setMainAlert',
-        'toggleFeedbackModal'
+        'toggleFeedbackModal',
+        'setAddModalSelectedItem'
       ]),
       ...mapActions([
         'clickInvite',
@@ -76,10 +84,18 @@
         'clickAdmin',
         'clickGAScreen',
         'clickServeNow',
-        'clickBackOffice'
+        'clickBackOffice',
+        'clickQuickServe'
       ]),
       addCitizen() {
         this.clickAddCitizen()
+      },
+      quickServeCitizen(e) {
+        let service_id = e.target.dataset.id
+        let service_name = e.target.innerText
+        this.setAddModalSelectedItem(service_name)
+        this.$store.commit('updateAddModalForm', {type:'service',value:service_id})
+        this.clickQuickServe()
       },
       invite() {
         if (this.queueLength === 0) {
