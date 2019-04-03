@@ -147,7 +147,7 @@
         <span class="confirm-header">Exam Type</span>
       </b-col>
       <b-col>
-        Challenger Exam Session
+        Monthly Session Exam
       </b-col>
     </b-row>
     <b-row no-gutters align-h="start" align-v="end" v-if="exam.event_id">

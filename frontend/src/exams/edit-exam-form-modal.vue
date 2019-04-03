@@ -68,7 +68,7 @@
               <b-form-input id="exam_name" type="text"
                             class="less-10-mb"
                             disabled
-                            value="Challenger Exam Session" />
+                            value="Monthly Session Exam" />
             </b-form-group>
           </b-col>
         </b-form-row>
@@ -337,7 +337,7 @@
       },
       showAllFields() {
         if (this.exam) {
-          if (this.exam.exam_type.exam_type_name === 'Challenger Exam Session') {
+          if (this.exam.exam_type.exam_type_name === 'Monthly Session Exam') {
             if (this.role_code === 'GA') {
               return true
             }

@@ -90,7 +90,7 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
         let exams = this.examTypes.filter( type =>
           !type.exam_type_name.includes('Group') &&
           !type.exam_type_name.includes('Single') &&
-          !type.exam_type_name.includes('Challenger Exam Session') &&
+          !type.exam_type_name.includes('Monthly Session Exam') &&
           !type.exam_type_name.includes('Pesticide')
         )
         return exams.sort((a,b) => sorter(a,b))
@@ -274,7 +274,7 @@ export const InputQuestion = Vue.component('input-question', {
   template: `
     <fragment v-if="q.key === 'exam_name' && setup === 'challenger'">
       <b-row no-gutters>
-        <b-col cols="11"><h5>Adding a Challenger Exam</h5></b-col>
+        <b-col cols="11"><h5>Adding a Monthly Session Exam</h5></b-col>
       </b-row>
       <b-row no-gutters>
         <b-col cols="11">
@@ -351,12 +351,12 @@ export const LocationInput = Vue.component('input-question', {
     ...mapMutations(['toggleScheduling', 'setAddExamModalSetting', 'setSelectedExam']),
     launchSchedule() {
       let exam = {
-        exam_name: 'Challenger Exam',
-        examinee_name: 'Challenger Exam',
+        exam_name: 'Monthly Session',
+        examinee_name: 'Monthly Session',
         exam_method: 'tbd',
         offiice_id: this.user.office_id,
         exam_type: {
-          exam_type_name: 'Challenger Exam Session',
+          exam_type_name: 'Monthly Session Exam',
           exam_type_id: 16,
           number_of_hours: 4,
         },

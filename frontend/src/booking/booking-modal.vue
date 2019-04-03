@@ -187,7 +187,7 @@
           { key: 'ServiceBC to Provide Reader:', value: this.invigilatorRequired ? 'Yes' : 'No' },
           { key: 'Room:', value: this.date.resource.title },
         ]
-        if (this.exam.exam_type.exam_type_name === 'Challenger Exam Session') {
+        if (this.exam.exam_type.exam_type_name === 'Monthly Session Exam') {
           let i = items.findIndex(x => x.key === 'Exam Expiry:')
           items[i] = {key: 'Exam Expiry:', value: 'n/a'}
         }
