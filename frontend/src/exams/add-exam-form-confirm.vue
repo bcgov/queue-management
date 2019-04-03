@@ -54,7 +54,7 @@
     <b-row no-gutters align-h="between" align-v="end" v-if="setup === 'individual' || setup === 'other' ">
       <b-col cols="1" />
       <b-col cols="3">
-        <span class="confirm-header">Writer's Name</span>
+        <span class="confirm-header">Candidate's Name</span>
       </b-col>
       <b-col align-self="end">
         <span class="confirm-item">{{ exam.examinee_name }}</span>

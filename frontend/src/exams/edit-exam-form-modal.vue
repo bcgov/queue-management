@@ -137,7 +137,7 @@
         <b-form-row v-if="examType === 'individual' || examType === 'other'">
           <b-col>
             <b-form-group>
-              <label class="my-0">Writer's Name</label>
+              <label class="my-0">Candidate's Name</label>
               <b-form-input id="examinee_name"
                             class="less-10-mb"
                             type="text"

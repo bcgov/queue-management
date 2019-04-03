@@ -236,7 +236,7 @@ export const addExamModule = {
           },
           {
             key: 'examinee_name',
-            text: `Exam Writer's Name`,
+            text: `Candidate's Name`,
             minLength: 2,
             kind:'input',
             digit: false
@@ -332,7 +332,7 @@ export const addExamModule = {
           },
           {
             key: 'examinee_name',
-            text: `Exam Writer's Name`,
+            text: `Candidate's Name`,
             minLength: 2,
             kind:'input',
             digit: false
@@ -435,7 +435,7 @@ export const addExamModule = {
           },
           {
             key: 'examinee_name',
-            text: `Exam Writer's Name`,
+            text: `Candidate's Name`,
             minLength: 2,
             kind:'input',
             digit: false
