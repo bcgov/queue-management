@@ -121,7 +121,7 @@ export const addExamModule = {
             key: 'event_id',
             text: 'Event ID',
             kind: 'input',
-            minLength: 5,
+            minLength: 4,
             digit: true
           },
           {
@@ -224,7 +224,7 @@ export const addExamModule = {
             key: 'event_id',
             text:'Event ID' ,
             kind: 'input',
-            minLength: 5,
+            minLength: 4,
             digit: true,
           },
           {
