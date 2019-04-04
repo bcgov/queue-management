@@ -21,7 +21,7 @@ def upgrade():
     op.add_column('citizen', sa.Column('counter_id', sa.Integer(), nullable=True))
     op.create_foreign_key(None, 'citizen', 'counter', ['counter_id'], ['counter_id'])
     op.create_foreign_key(None, 'csr', 'counter', ['counter_id'], ['counter_id'])
-
+    
 
 def downgrade():
     op.drop_constraint(None, 'csr', type_='foreignkey')

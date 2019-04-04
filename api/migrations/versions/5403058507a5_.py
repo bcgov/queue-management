@@ -21,6 +21,8 @@ def upgrade():
     sa.Column('counter_name', sa.String(length=50), nullable=False),
     sa.PrimaryKeyConstraint('counter_id')
     )
+    # TODO: create default counters, assign to all offices.
+    
     op.create_table('office_counter',
     sa.Column('office_id', sa.Integer(), nullable=False),
     sa.Column('counter_id', sa.Integer(), nullable=False),
