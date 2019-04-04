@@ -14,8 +14,8 @@
         <span><b>Expiry Date: </b>{{ expiryDateFormat }}</span><br>
       </div>
       <div v-if="!examAssociated" class="flex-min mx-3 mt-1">
-        <span class="smaller-font">Click and Drag to select</span><br>
-        <span class="smaller-font">a time on the calendar</span><br>
+        <span class="smaller-font">Select date and time</span><br>
+        <span class="smaller-font">on the calendar</span><br>
       </div>
       <div class="flex-fill " />
       <div class="flex-min">
