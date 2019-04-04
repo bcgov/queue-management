@@ -19,7 +19,7 @@ from sqlalchemy import exc
 from app.models.bookings import Booking
 from app.models.theq import CSR
 from app.schemas.bookings import BookingSchema
-from qsystem import api, oidc
+from qsystem import api, jwt
 
 
 @api.route("/bookings/", methods=["GET"])
@@ -27,13 +27,13 @@ class BookingList(Resource):
 
     booking_schema = BookingSchema(many=True)
 
-    @oidc.accept_token(require_token=True)
+    @jwt.requires_auth
     def get(self):
 
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
+        csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
         office_filter = csr.office_id
 
-        if request.args.get('office_id') and csr.role.role_code == "LIAISON":
+        if request.args.get('office_id') and csr.liaison_designate == 1:
             office_filter = request.args.get('office_id')
 
         try:

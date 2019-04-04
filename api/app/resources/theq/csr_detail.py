@@ -15,7 +15,7 @@ limitations under the License.'''
 from flask import g, request
 from flask_restplus import Resource
 from marshmallow import ValidationError
-from qsystem import api, api_call_with_retry, db, oidc, cache, socketio
+from qsystem import api, api_call_with_retry, db, jwt, cache, socketio
 from app.models.theq import CSR
 from app.schemas.theq import CSRSchema
 
@@ -25,7 +25,7 @@ class Services(Resource):
 
     csr_schema = CSRSchema()
 
-    @oidc.accept_token(require_token=True)
+    @jwt.requires_auth
     @api_call_with_retry
     def put(self, id):
         json_data = request.get_json()
@@ -33,7 +33,7 @@ class Services(Resource):
         if not json_data:
             return {'message': 'No input data received for updating CSR'}, 400
 
-        auth_csr = CSR.find_by_username(g.oidc_token_info['username'])
+        auth_csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
         edit_csr = CSR.query.filter_by(csr_id=id).first_or_404()
 
         if auth_csr.csr_id != edit_csr.csr_id:
@@ -54,7 +54,7 @@ class Services(Resource):
                       room=auth_csr.office_id)
 
         # Purge cache of old CSR record so the new one can be fetched by the next request for it.
-        CSR.delete_user_cache(g.oidc_token_info['username'])
+        CSR.delete_user_cache(g.jwt_oidc_token_info['preferred_username'])
 
         return {'service_request': result.data,
                 'errors': result.errors}, 200

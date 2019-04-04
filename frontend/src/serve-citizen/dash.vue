@@ -15,8 +15,6 @@ limitations under the License.*/
 
 <template>
   <div v-bind:style="{height: totalH}" class="dashmaincontainer" key="dashmaincontainer" v-if="user.username">
-    <AddCitizen v-if="showAddModal"/>
-    <ServeCitizen v-if="showServiceModal"/>
     <div style="display: flex; flex-direction: row; justify-content: space-between;" v-if="!showAdmin">
       <div style="width: 100%">
         <template v-if="reception && isLoggedIn">
@@ -60,23 +58,17 @@ limitations under the License.*/
 
 <script>
 import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
-import AddCitizen from './../add-citizen/add-citizen'
 import DashTable from './dash-table'
 import DashHoldTable from './dash-hold-table'
 import GAScreen from './../ga-screen/ga-screen'
-import ServeCitizen from './serve-citizen'
 
   export default {
     name: 'Dash',
-
     components: {
-      AddCitizen,
       DashTable,
       DashHoldTable,
       GAScreen,
-      ServeCitizen
     },
-
     mounted() {
       this.$root.$on('showMessage', () => {
         this.showAlert()
@@ -85,10 +77,9 @@ import ServeCitizen from './serve-citizen'
       this.$nextTick(function() {
         window.addEventListener('resize', this.getNewHeight)
       })
-      window.addEventListener("message", this.receiveSize);
-      this.iframeUrl = process.env.SOCKET_URL + "/admin/"
+      window.addEventListener("message", this.receiveSize)
+      setTimeout(()=>{ this.checkServiceReqs() }, 400 )
     },
-
     data() {
       return {
         totalH:'',
@@ -96,15 +87,19 @@ import ServeCitizen from './serve-citizen'
         qLengthH: 28,
         isDragged: '',
         offset: 0,
-        t: true,
-        f: false,
         last: 0,
         dismissSecs: 5,
-        checkedLocalStorage: false,
-        iframeHeight: "500px"
+        iframeHeight: "500px",
+        checkedSessionStorage: false,
       }
     },
-
+    beforeRouteLeave(to, from, next) {
+      if (to.path === '/exams' || to.path === '/booking') {
+        this.clickAddCitizen()
+        next()
+      }
+      next()
+    },
     computed: {
       ...mapGetters(['citizens_queue', 'on_hold_queue', 'reception']),
       ...mapState([
@@ -112,11 +107,14 @@ import ServeCitizen from './serve-citizen'
         'showAddModal',
         'citizenInvited',
         'dismissCountDown',
+        'examsTrackingIP',
         'performingAction',
         'showAdmin',
         'showGAScreenModal',
         'showServiceModal',
         'serveNowStyle',
+        'serviceBegun',
+        'serviceModalForm',
         'toggleShowAdmin',
         'user',
         'userLoadingFail'
@@ -144,24 +142,31 @@ import ServeCitizen from './serve-citizen'
     watch: {
       csrId: function(val, oldVal) {
         if (val) {
-          this.checkLocalStorage(val)
+          this.checkSessionStorage(val)
         }
       }
     },
     methods: {
-      ...mapMutations(['setMainAlert', 'toggleFeedbackModal']),
+      ...mapMutations(['setMainAlert', 'toggleServiceModal', 'toggleFeedbackModal', 'toggleBegunStatus', ]),
       ...mapActions([
-        'clickInvite',
         'clickAddCitizen',
+        'clickInvite',
         'clickAdmin',
         'clickServiceModalClose',
         'clickCitizenLeft',
         'clickGAScreen',
         'clickServeNow',
-        'clickBackOffice'
+        'clickBackOffice',
+        'screenAllCitizens',
       ]),
-      addCitizen() {
-        this.clickAddCitizen()
+      checkServiceReqs() {
+        if (this.examsTrackingIP) {
+          if (this.serviceModalForm && this.serviceModalForm.citizen_id) {
+            this.toggleServiceModal(true)
+            this.$store.commit('toggleBegunStatus', true)
+            this.$store.commit('setPerformingAction', false)
+          }
+        }
       },
       getNewHeight() {
         //window.innerHeight - height of header (70) - height of footer (36)
@@ -180,8 +185,8 @@ import ServeCitizen from './serve-citizen'
         if (last) {
           let offsetRatio = this.offset / this.availH
           let lastRatio = this.last / this.availH
-          localStorage.setItem(`${this.csrId}offset`, offsetRatio)
-          localStorage.setItem(`${this.csrId}last`, lastRatio)
+          sessionStorage.setItem(`${this.csrId}offset`, offsetRatio)
+          sessionStorage.setItem(`${this.csrId}last`, lastRatio)
         }
       },
       receiveSize(e) {
@@ -209,12 +214,12 @@ import ServeCitizen from './serve-citizen'
       clickFeedback() {
         this.toggleFeedbackModal(true)
       },
-      checkLocalStorage(csrId) {
-        this.checkedLocalStorage = true
-        let offsetRatio = localStorage.getItem(`${csrId}offset`)
+      checkSessionStorage(csrId) {
+        this.checkedSessionStorage = true
+        let offsetRatio = sessionStorage.getItem(`${csrId}offset`)
         if(offsetRatio) {
           this.isDragged = true
-          let lastRatio = localStorage.getItem(`${csrId}last`)
+          let lastRatio = sessionStorage.getItem(`${csrId}last`)
           this.offset = offsetRatio * this.availH
           this.last = lastRatio * this.availH
         } else {

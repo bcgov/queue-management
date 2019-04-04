@@ -14,8 +14,8 @@
         <span><b>Expiry Date: </b>{{ expiryDateFormat }}</span><br>
       </div>
       <div v-if="!examAssociated" class="flex-min mx-3 mt-1">
-        <span class="smaller-font">Click and Drag to select</span><br>
-        <span class="smaller-font">a time on the calendar</span><br>
+        <span class="smaller-font">Select date and time</span><br>
+        <span class="smaller-font">on the calendar</span><br>
       </div>
       <div class="flex-fill " />
       <div class="flex-min">
@@ -57,12 +57,16 @@
       },
       expiryDateFormat() {
         if (this.examAssociated && this.selectedExam.expiry_date) {
-          return moment(this.selectedExam.expiry_date).format('MMM-DD-YYYY')
+          let d = moment(this.selectedExam.expiry_date)
+          if (d.isValid()) {
+            return d.format('MMM-DD-YYYY')
+          }
         }
+        return 'not applicable'
       }
     },
     methods: {
-      ...mapActions(['finishBooking']),
+      ...mapActions(['finishBooking', 'actionRestoreAll']),
       ...mapMutations(['toggleEditBookingModal']),
       cancel() {
         if (this.rescheduling) {
@@ -70,12 +74,14 @@
           return
         }
         let pushToExams = false
-        if (this.selectedExam && this.selectedExam.referringAction === 'scheduling') {
+        if (this.selectedExam && this.selectedExam.referrer === 'scheduling') {
           pushToExams = true
         }
         this.finishBooking()
         if (pushToExams) {
-          this.$router.push('/exams')
+          this.actionRestoreAll().then( () => {
+            this.$router.push('/exams')
+          })
         }
       }
     }

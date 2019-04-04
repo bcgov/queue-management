@@ -18,7 +18,7 @@ from flask import request, g
 from app.models.bookings import Room
 from app.schemas.bookings import BookingSchema
 from app.models.theq import CSR
-from qsystem import api, api_call_with_retry, db, oidc
+from qsystem import api, api_call_with_retry, db, jwt
 
 
 @api.route("/bookings/", methods=["POST"])
@@ -26,11 +26,11 @@ class BookingPost(Resource):
 
     booking_schema = BookingSchema()
 
-    @oidc.accept_token(require_token=True)
+    @jwt.requires_auth
     @api_call_with_retry
     def post(self):
 
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
+        csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
 
         json_data = request.get_json()
 
@@ -46,7 +46,7 @@ class BookingPost(Resource):
         if booking.office_id is None:
             booking.office_id = csr.office_id
 
-        if booking.office_id == csr.office_id or csr.role.role_code == "LIAISON":
+        if booking.office_id == csr.office_id or csr.liaison_designate == 1:
             db.session.add(booking)
             db.session.commit()
 

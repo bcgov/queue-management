@@ -17,7 +17,7 @@ from flask_restplus import Resource
 from app.models.bookings import Booking
 from app.schemas.bookings import BookingSchema
 from app.models.theq import CSR
-from qsystem import api, db, oidc
+from qsystem import api, db, jwt
 
 
 @api.route("/bookings/<int:id>/", methods=["DELETE"])
@@ -25,15 +25,15 @@ class BookingDelete(Resource):
 
     booking_schema = BookingSchema()
 
-    @oidc.accept_token(require_token=True)
+    @jwt.requires_auth
     def delete(self, id):
 
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
+        csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
 
         booking = Booking.query.filter_by(booking_id=id).first_or_404()
 
         # Also 404 the request if they shouldn't be able to see this booking
-        if booking.office_id != csr.office_id and csr.role.role_code != "LIAISON":
+        if booking.office_id != csr.office_id and csr.liaison_designate != 1:
             abort(404)
 
         db.session.delete(booking)

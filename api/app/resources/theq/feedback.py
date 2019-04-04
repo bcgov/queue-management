@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from flask import request
 from flask_restplus import Resource
-from qsystem import application, api, oidc
+from qsystem import application, api, jwt
 import json
 import urllib.request
 import urllib.parse
@@ -31,7 +31,7 @@ class Feedback(Resource):
     flag_service_now = "SERVICENOW" in feedback_destinations
     flag_rocket_chat = "ROCKETCHAT" in feedback_destinations
 
-    @oidc.accept_token(require_token=True)
+    @jwt.requires_auth
     def post(self):
         json_data = request.get_json()
         if not json_data:
@@ -91,6 +91,7 @@ class Feedback(Resource):
         password = application.config['SERVICENOW_PASSWORD']
         table = application.config['SERVICENOW_TABLE']
         tenant = application.config['SERVICENOW_TENANT']
+        assign_group = application.config['SERVICENOW_ASSIGN_GROUP']
 
         if instance is None:
             return {"message": "SERVICENOW_INSTANCE is not set"}, 400
@@ -102,6 +103,8 @@ class Feedback(Resource):
             return {"message": "SERVICENOW_TABLE is not set"}, 400
         if tenant is None:
             return {"message": "SERVICENOW_TENANT is not set"}, 400
+        if assign_group is None:
+            return {"message": "SERVICENOW_ASSIGN_GROUP is not set"}, 400
 
         #  Generate Service Now incident.
         #  NOTE:  Automatic email gets sent to the assignment group below
@@ -127,7 +130,7 @@ class Feedback(Resource):
               'priority': 'High',
               'short_description': short_desc,
               'description': params,
-              'assignment_group': 'Service Delivery Tech Services (GARMS)'
+              'assignment_group': assign_group
           }
         else:
             new_record = {
@@ -138,7 +141,7 @@ class Feedback(Resource):
                 'priority': 'High',
                 'short_description': short_desc,
                 'description': params,
-                'assignment_group': 'Service Delivery Tech Services (GARMS)'
+                'assignment_group': assign_group
             }
 
         result = incident.create(payload=new_record)

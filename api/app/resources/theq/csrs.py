@@ -15,7 +15,7 @@ limitations under the License.'''
 from datetime import datetime
 from flask import g
 from flask_restplus import Resource
-from qsystem import api, db, oidc
+from qsystem import api, db, jwt
 from sqlalchemy import exc
 from app.models.bookings import Exam, ExamType, Booking
 from app.models.theq import Citizen, CSR, Period, ServiceReq, SRState
@@ -28,10 +28,10 @@ class CsrList(Resource):
 
     csr_schema = CSRSchema(many=True, exclude=('office', 'periods',))
 
-    @oidc.accept_token(require_token=True)
+    @jwt.requires_auth
     def get(self):
         try:
-            csr = CSR.find_by_username(g.oidc_token_info['username'])
+            csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
 
             if csr.role.role_code != "GA":
                 return {'message': 'You do not have permission to view this end-point'}, 403
@@ -56,10 +56,10 @@ class CsrSelf(Resource):
     exam_schema = ExamSchema(many=True)
     exam_type_schema = ExamTypeSchema()
 
-    @oidc.accept_token(require_token=True)
+    @jwt.requires_auth
     def get(self):
         try:
-            csr = CSR.find_by_username(g.oidc_token_info['username'])
+            csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
 
             if not csr:
                 return {'Message': 'User Not Found'}, 404
@@ -77,7 +77,7 @@ class CsrSelf(Resource):
 
             individual_exams = Exam.query \
                 .filter_by(office_id=csr.office_id) \
-                .filter(Exam.exam_returned_ind == 0,
+                .filter(Exam.exam_returned_date.is_(None),
                         Exam.expiry_date <= today,
                         Exam.deleted_date.is_(None)) \
                 .join(ExamType, Exam.exam_type_id == ExamType.exam_type_id) \
@@ -85,8 +85,7 @@ class CsrSelf(Resource):
 
             group_exams = Exam.query \
                 .filter_by(office_id=csr.office_id) \
-                .filter(Exam.expiry_date > today,
-                        Exam.deleted_date.is_(None)) \
+                .filter(Exam.deleted_date.is_(None)) \
                 .join(ExamType, Exam.exam_type_id == ExamType.exam_type_id) \
                 .filter(ExamType.group_exam_ind == 1) \
                 .join(Booking, Exam.booking_id == Booking.booking_id) \

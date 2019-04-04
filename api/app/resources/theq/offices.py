@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from flask import g
 from flask_restplus import Resource
-from qsystem import api, db, oidc
+from qsystem import api, db, jwt
 from sqlalchemy import exc
 from app.models.theq import CSR, Office
 from app.schemas.theq import OfficeSchema
@@ -25,13 +25,9 @@ class OfficeList(Resource):
 
     office_schema = OfficeSchema(many=True)
 
-    @oidc.accept_token(require_token=True)
+    @jwt.requires_auth
     def get(self):
         try:
-            csr = CSR.find_by_username(g.oidc_token_info['username'])
-
-            # if csr.role.role_code != "LIAISON":
-            #     return {'message': 'You do not have permission to view this end-point'}, 403
 
             offices = Office.query.filter(Office.deleted.is_(None))
             result = self.office_schema.dump(offices)

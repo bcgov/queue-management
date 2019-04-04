@@ -57,7 +57,7 @@
           <b-form-row v-if="!examAssociated">
             <b-col>
               <b-form-group>
-                <label :style="{color: labelColor}">Event Title</label><br>
+                <label :style="{color: labelColor}">Scheduling Party</label><br>
                 <b-input :state="state"
                          id="title"
                          type="text"
@@ -69,8 +69,19 @@
               <b-form-group>
                 <label>Collect Fees</label><br>
                 <b-select v-model="fees"
-                          @input.native="checkValue"
+                          @change="checkValue"
                           :options="feesOptions" />
+              </b-form-group>
+            </b-col>
+          </b-form-row>
+          <b-form-row>
+            <b-col>
+              <b-form-group>
+                <label>Contact Information (Email or Phone Number)</label><br>
+                <b-input id="contact_information"
+                         type="text"
+                         @change="checkValue"
+                         v-model="booking_contact_information"/>
               </b-form-group>
             </b-col>
           </b-form-row>
@@ -213,13 +224,9 @@
         invigilator: null,
         editedFields: [],
         fees: false,
-        feesOptions: [
-          {text: 'No', value: false},
-        ],
+        feesOptions: [ {text: 'No', value: false}, ],
         invoice: null,
-        invoiceOptions: [
-          {text: 'Custom', value: 'custom'}
-        ],
+        invoiceOptions: [ {text: 'Custom', value: 'custom'} ],
         labelColor: 'black',
         message: '',
         newEnd: null,
@@ -231,6 +238,7 @@
         ],
         state: null,
         title: '',
+        booking_contact_information: '',
       }
     },
     computed: {
@@ -289,8 +297,12 @@
       },
       expiryDate() {
         if (this.examAssociated && this.event.exam) {
-          return new moment(this.event.exam.expiry_date).format('MMM Do, YYYY')
+          let d = new moment(this.event.exam.expiry_date)
+          if (d.isValid()) {
+            return d.format('MMM Do, YYYY')
+          }
         }
+        return 'not applicable'
       },
       modalVisible: {
         get() {
@@ -350,7 +362,7 @@
       ]),
       cancel() {
         let returnRoute = false
-        if (this.selectedExam && this.selectedExam.referringAction === 'rescheduling') {
+        if (this.selectedExam && this.selectedExam.referrer === 'rescheduling') {
           returnRoute = true
         }
         this.finishBooking()
@@ -488,6 +500,9 @@
         if (!this.editedFields.includes('fee')) {
           this.fee = this.event.fee
         }
+        if (!this.editedFields.includes('booking_contact_information')){
+          this.booking_contact_information = this.event.booking_contact_information
+        }
       },
       submit(e) {
         e.preventDefault()
@@ -533,6 +548,7 @@
             changes.sbc_staff_invigilated = 1
           }
         }
+        changes['booking_contact_information'] = this.booking_contact_information
         if (Object.keys(changes).length === 0) {
           this.message = 'No Changes Made'
         } else {

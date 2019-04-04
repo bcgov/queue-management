@@ -17,7 +17,7 @@ from flask import request, g
 from flask_restplus import Resource
 from app.models.theq import CSR
 from app.schemas.bookings import ExamSchema
-from qsystem import api, api_call_with_retry, db, oidc
+from qsystem import api, api_call_with_retry, db, jwt
 
 
 @api.route("/exams/", methods=["POST"])
@@ -25,11 +25,11 @@ class ExamPost(Resource):
 
     exam_schema = ExamSchema()
 
-    @oidc.accept_token(require_token=True)
+    @jwt.requires_auth
     @api_call_with_retry
     def post(self):
 
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
+        csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
 
         json_data = request.get_json()
 
@@ -39,7 +39,7 @@ class ExamPost(Resource):
             logging.warning("WARNING: %s", warning)
             return {"message": warning}, 422
 
-        if exam.office_id == csr.office_id or csr.role.role_code == "LIAISON":
+        if exam.office_id == csr.office_id or csr.liaison_designate == 1:
 
             db.session.add(exam)
             db.session.commit()

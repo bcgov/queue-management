@@ -5,13 +5,13 @@
              hide-footer
              hide-cancel
              size="md">
-        <b-container style="font-size:1.1rem;">
-          <label>Are you sure you want to delete this Exam?</label>
+        <b-container>
+          <h5>Are you sure you want to delete this Exam?</h5>
           <div style="font-size:0.9rem; display:flex; justify-content:center;">
             <b-col>
-              <ul><b>Exam Name:</b> {{ fields.exam_name }}</ul>
-              <ul><b>Examinee Name:</b> {{ fields.examinee_name }}</ul>
-              <ul><b>Event ID:</b> {{ fields.event_id }}</ul>
+              <ul><b>Exam Name: {{ this.returnExam.exam_name }}</b></ul>
+              <ul><b>Examinee Name:</b> {{ this.returnExam.examinee_name }}</ul>
+              <ul><b>Event ID:</b>{{ this.returnExam.event_id }}</ul>
             </b-col>
           </div>
           <b-row>
@@ -38,17 +38,21 @@
         name: "DeleteExamModal",
         methods: {
           ...mapActions([
+            'deleteBooking',
             'deleteExam',
-            'getExams'
+            'getExams',
           ]),
           ...mapMutations([
             'toggleDeleteExamModalVisible'
           ]),
           clickYes() {
-            let id = this.fields.exam_id
-            this.deleteExam(id)
-              .then(() => { this.getExams() })
+            let exam_id = this.returnExam.exam_id
+            this.deleteExam(exam_id)
+                .then(() => { this.getExams() })
             this.toggleDeleteExamModalVisible(false)
+            if (this.returnExam.booking_id){
+              this.deleteBooking(this.returnExam.booking_id)
+            }
           },
           clickNo() {
             this.toggleDeleteExamModalVisible(false)
@@ -57,7 +61,7 @@
         computed: {
             ...mapState({
               showDeleteExamModal: state => state.showDeleteExamModal,
-              fields: state => state.returnExam,
+              returnExam: state => state.returnExam,
             }),
             deleteModalVisible: {
                 get() {
@@ -66,6 +70,12 @@
                 set(e) {
                     this.toggleDeleteExamModalVisible(e)
                 }
+            },
+            exam() {
+              if(Object.keys(this.actionedExam).length > 0){
+                return this.actionedExam
+              }
+              return false
             }
         }
     }

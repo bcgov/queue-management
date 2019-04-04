@@ -19,6 +19,7 @@ from app.models.theq.citizen_state import CitizenState
 from app.models.theq.csr import CSR
 from app.models.theq.csr_state import CSRState
 from app.models.theq.metadata import MetaData
+from app.models.theq.timezone import Timezone
 from app.models.theq.office import Office
 from app.models.theq.period import Period
 from app.models.theq.period_state import PeriodState

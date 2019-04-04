@@ -28,6 +28,8 @@ import Agenda from './agenda/agenda'
 import ButtonsAgenda from './agenda/buttons-agenda'
 import Calendar from './booking/calendar'
 import ButtonsCalendar from './booking/buttons-calendar'
+import Appointments from './appointments/appointments'
+import ButtonsAppointments from './appointments/buttons-appointments'
 
 Vue.use(Router)
 
@@ -68,21 +70,14 @@ export default new Router({
           }
         },
         {
+          path: 'appointments',
+          components: {
+            default: Appointments,
+            buttons: ButtonsAppointments,
+          }
+        },
+        {
           path: 'booking',
-          components: {
-            default: Calendar,
-            buttons: ButtonsCalendar,
-          }
-        },
-        {
-          path: 'booking/:view/:id',
-          components: {
-            default: Calendar,
-            buttons: ButtonsCalendar,
-          }
-        },
-        {
-          path: 'booking/:date',
           components: {
             default: Calendar,
             buttons: ButtonsCalendar,

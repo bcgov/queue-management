@@ -19,18 +19,19 @@ from flask_restplus import Resource
 from app.models.bookings import Appointment
 from app.models.theq import CSR
 from app.schemas.bookings import AppointmentSchema
-from qsystem import api, oidc
+from qsystem import api, jwt
 
 
-@api.route("/appointments/<int:id>", methods=["GET"])
+@api.route("/appointments/<int:id>/", methods=["GET"])
 class AppointmentDetail(Resource):
 
     appointment_schema = AppointmentSchema()
 
-    @oidc.accept_token(require_token=True)
+    @jwt.requires_auth
     def get(self, id):
 
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
+        print("==> In Python GET /appointments/<id> endpoint")
+        csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
 
         try:
             appointment = Appointment.query.filter_by(appointment_id=id)\

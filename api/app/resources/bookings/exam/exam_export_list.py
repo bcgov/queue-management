@@ -19,7 +19,7 @@ from sqlalchemy import exc
 from app.models.bookings import Exam, Booking, Invigilator, Room, ExamType
 from app.models.theq import CSR, Office
 from app.schemas.bookings import ExamSchema
-from qsystem import api, oidc
+from qsystem import api, jwt
 from datetime import datetime, timedelta
 import pytz
 import csv
@@ -33,10 +33,13 @@ class ExamList(Resource):
 
     timezone = pytz.timezone("US/Pacific")
 
-    @oidc.accept_token(require_token=True)
+    @jwt.requires_auth
     def get(self):
+
+        print("==> In Python GET /exams/export/ endpoint")
+
         try:
-            csr = CSR.find_by_username(g.oidc_token_info['username'])
+            csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
 
             start_param = request.args.get("start_date")
             end_param = request.args.get("end_date")
@@ -71,18 +74,14 @@ class ExamList(Resource):
 
             if exam_type == 'ita':
                 exams = exams.filter(ExamType.ita_ind == 1)
-            elif exam_type == 'veterinary':
-                exams = exams.filter(ExamType.exam_type_name == 'Veterinary Exam')
-            elif exam_type == 'milk_tank':
-                exams = exams.filter(ExamType.exam_type_name == 'Milk Grader')
-            elif exam_type == 'pesticide':
-                exams = exams.filter(ExamType.exam_type_name == 'Pesticide')
             elif exam_type == 'all_non_ita':
                 exams = exams.filter(ExamType.ita_ind == 0)
 
             dest = io.StringIO()
             out = csv.writer(dest)
-            out.writerow(['Office Name', 'Exam Type', 'Exam ID', 'Exam Name', 'Examinee Name', 'Event ID', 'Room Name', 'Invigilator Name', 'Booking ID', 'Booking Name', 'Exam Received', 'Exam Returned' ])
+            out.writerow(['Office Name', 'Exam Type', 'Exam ID', 'Exam Name', 'Examinee Name', 'Event ID', 'Room Name',
+                          'Invigilator Name', 'Booking ID', 'Booking Name', 'Exam Received', 'Exam Written',
+                          'Exam Returned'])
 
             keys = [
                 "office_name",
@@ -96,7 +95,8 @@ class ExamList(Resource):
                 "booking_id",
                 "booking_name",
                 "exam_received_date",
-                "exam_returned_ind"
+                "exam_written_ind",
+                "exam_returned_date"
             ]
 
             for exam in exams:
@@ -134,8 +134,13 @@ class ExamList(Resource):
                                 row.append("N")
                             else:
                                 row.append("Y")
-                        elif key == "exam_returned_ind":
-                            if exam.exam_returned_ind == 0:
+                        elif key == "exam_written_ind":
+                            if exam.exam_written_ind == 1:
+                                row.append("Y")
+                            else:
+                                row.append("N")
+                        elif key == "exam_returned_date":
+                            if exam.exam_returned_date is None:
                                 row.append("N")
                             else:
                                 row.append("Y")

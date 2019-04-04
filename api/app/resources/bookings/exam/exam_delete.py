@@ -18,7 +18,7 @@ from flask_restplus import Resource
 from app.models.bookings import Exam
 from app.models.theq import CSR
 from app.schemas.bookings import ExamSchema
-from qsystem import api, db, oidc
+from qsystem import api, db, jwt
 
 
 @api.route("/exams/<int:id>/", methods=["DELETE"])
@@ -26,14 +26,14 @@ class ExamDelete(Resource):
 
     exam_schema = ExamSchema()
 
-    @oidc.accept_token(require_token=True)
+    @jwt.requires_auth
     def delete(self, id):
 
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
+        csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
 
         exam = Exam.query.filter_by(exam_id=id).first_or_404()
 
-        if not (exam.office_id == csr.office_id or csr.role.role_code == "LIAISON"):
+        if not (exam.office_id == csr.office_id or csr.liaison_designate == 1):
             return {"The Exam Office ID and CSR Office ID do not match!"}, 403
 
         exam.deleted_date = datetime.now()

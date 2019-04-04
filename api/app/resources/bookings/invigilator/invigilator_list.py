@@ -19,7 +19,7 @@ from sqlalchemy import exc
 from app.models.bookings import Invigilator
 from app.models.theq import CSR
 from app.schemas.bookings import InvigilatorSchema
-from qsystem import api, oidc
+from qsystem import api, jwt
 
 
 @api.route("/invigilators/", methods=["GET"])
@@ -27,10 +27,10 @@ class InvigilatorList(Resource):
 
     invigilator_schema = InvigilatorSchema(many=True)
 
-    @oidc.accept_token(require_token=True)
+    @jwt.requires_auth
     def get(self):
 
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
+        csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
 
         try:
             invigilators = Invigilator.query.filter_by(office_id=csr.office_id)

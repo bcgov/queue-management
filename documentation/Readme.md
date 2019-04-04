@@ -48,21 +48,15 @@ Ensure you have python 3. I also had to install: gcc, python3-venv, libmysqlclie
 1. `cd queue-management/api`
 1. `pip3 install -r requirements.txt`
 
-### Add two required keycloak config files
+### Add one required keycloak config file
 
 1. `cd queue-management`
-1. `cp documentation/demo-files/secrets.json api/client_secrets/secrets.json`
 1. `cp documentation/demo-files/keycloak.json frontend/static/keycloak.json`
 
-### Set Enviornment Variables required:
+### Set Environment Variables required:
 
-1. `export DATABASE_ENGINE=mysql`
-1. `export DATABASE_USERNAME=demo`
-1. `export DATABASE_PASSWORD=demo`
-1. `export DATABASE_NAME=queue_management`
-1. `export DATABASE_HOST=127.0.0.1`
-1. `export DATABASE_PORT=3306`
-1. `export THEQ_SNOWPLOW_CALLFLAG=False`
+1. `cd queue-management`
+1. `cp documentation/demo-files/.env .`
 
 ### Update Database with required tables:
 
@@ -93,10 +87,9 @@ You should be able to login in using the following IDs:
 user/user - Regular Customer Service Representative (CSR)  
 admin/admin - Manager of the office (Government Agent)
 
-Additional API Enviornment Variables of note:
+Additional API Enviornment Variables of note, which you can add to the .env file
 
 1. SECRET_KEY - Flask required key
-1. SLACK_URL - used to send feedback to Slack (Will be integrating ServiceNOW soon)
 1. THEQ_CLEAR_COMMENTS_FLAG - used to not remove comments for debugging purposes
 1. THEQ_SNOWPLOW_ENDPOINT - Snowplow URL
 1. THEQ_SNOWPLOW_APPID - Snowplow Application ID
@@ -105,9 +98,13 @@ Additional API Enviornment Variables of note:
 1. SERVER_NAME - required for API POD if not localhost.
 1. LOG_ERRORS (True/Flase) - To log socket.io errors
 1. THEQ_FEEDBACK - String of endpoint names to send Feedback to (eg. 'Slack, Service Now' or 'Slack')
-1. SERVICENOW_INSTANCE - the instance of your Service Now environment
+1. SLACK_URL - used to send feedback to Slack
+1. ROCKET_CHAT_URL - used to send feedback to Rocket Chat
+1. SERVICENOW_INSTANCE - used to send feedback to Service Now, the instance of your Service Now environment
 1. SERVICENOW_USER - the login ID of a Service Now ID used to create Service Now incidents
 1. SERVICENOW_PASSWORD - the password of the SERVICENOW_USER account
+1. SERVICENOW_TABLE - the name of the Service Now incident table to be updated
+1. SERVICENOW_ASSIGN_GROUP - the name of the Service Now group to be assigned to the incident
 
 We are using Snowplow & Looker to display our Analytics.
 

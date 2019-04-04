@@ -60,8 +60,27 @@ if application.config['CORS_ALLOWED_ORIGINS'] is not None:
 
 api = Api(application, prefix='/api/v1', doc='/api/v1/')
 
+#  For some strange, and as yet unknown reason, the following initialization
+#  must be done, or the front end queue isn't updated properly in IE browsers.
 from app.patches.flask_oidc_patched import OpenIDConnect
 oidc = OpenIDConnect(application)
+
+def setup_jwt_manager(app, jwt):
+    def get_roles(a_dict):
+        return a_dict['realm_access']['roles']
+    app.config['JWT_ROLE_CALLBACK'] = get_roles
+
+    try:
+        jwt.init_app(app)
+    except:
+        # print("==> Error initializing flask-jwt-oidc. Keycloak is likely down.")
+        raise EnvironmentError('Error initializing flask-jwt-oidc. Keycloak is likely down.')
+
+    return
+
+from flask_jwt_oidc import JwtManager
+jwt = JwtManager()
+setup_jwt_manager(application, jwt)
 
 from app import admin
 
@@ -69,10 +88,13 @@ flask_admin = Admin(application, name='Admin Console', template_mode='bootstrap3
 
 flask_admin.add_view(admin.ChannelModelView)
 flask_admin.add_view(admin.CSRModelView)
+flask_admin.add_view(admin.InvigilatorModelView)
 flask_admin.add_view(admin.OfficeModelView)
 flask_admin.add_view(admin.RoleModelView)
 flask_admin.add_view(admin.ServiceModelView)
 flask_admin.add_view(admin.SmartBoardModelView)
+flask_admin.add_view(admin.RoomModelView)
+flask_admin.add_view(admin.ExamTypeModelView)
 flask_admin.add_link(admin.LoginMenuLink(name='Login', category='', url="/api/v1/login/"))
 flask_admin.add_link(admin.LogoutMenuLink(name='Logout', category='', url="/api/v1/logout/"))
 
@@ -86,7 +108,6 @@ compress.init_app(application)
 logging.basicConfig(format=application.config['LOGGING_FORMAT'], level=logging.INFO)
 logger = logging.getLogger("myapp.sqltime")
 logger.setLevel(logging.DEBUG)
-
 
 def api_call_with_retry(f):
     @wraps(f)

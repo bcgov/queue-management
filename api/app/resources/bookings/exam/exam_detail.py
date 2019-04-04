@@ -19,7 +19,7 @@ from sqlalchemy import exc
 from app.models.bookings import Exam
 from app.models.theq import CSR
 from app.schemas.bookings import ExamSchema
-from qsystem import api, oidc
+from qsystem import api, jwt
 
 
 @api.route("/exams/<int:id>/", methods=["GET"])
@@ -27,15 +27,17 @@ class ExamDetail(Resource):
 
     exam_schema = ExamSchema()
 
-    @oidc.accept_token(require_token=True)
+    @jwt.requires_auth
     def get(self, id):
 
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
+        print("==> In Python GET /exams/<id>/ endpoint")
+
+        csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
 
         try:
             exam = Exam.query.filter_by(exam_id=id).first()
 
-            if not (exam.office_id == csr.office_id or csr.role.role_code == "LIAISON"):
+            if not (exam.office_id == csr.office_id or csr.liaison_designate == 1):
                 return {"The Exam Office ID and CSR Office ID do not match!"}, 403
 
             result = self.exam_schema.dump(exam)

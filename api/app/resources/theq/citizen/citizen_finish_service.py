@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from flask import g, request
 from flask_restplus import Resource
-from qsystem import api, api_call_with_retry, db, oidc, socketio
+from qsystem import api, api_call_with_retry, db, jwt, socketio
 from app.models.theq import Citizen, CSR, CitizenState
 from app.models.theq import SRState
 from app.schemas.theq import CitizenSchema
@@ -28,16 +28,20 @@ class CitizenFinishService(Resource):
     citizen_schema = CitizenSchema()
     clear_comments_flag = (os.getenv("THEQ_CLEAR_COMMENTS_FLAG", "True")).upper() == "TRUE"
 
-    @oidc.accept_token(require_token=True)
+    @jwt.requires_auth
     @api_call_with_retry
     def post(self, id):
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
+        csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
         citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
         active_service_request = citizen.get_active_service_request()
         inaccurate = request.args.get('inaccurate')
 
         if active_service_request is None:
             return {"message": "Citizen has no active service requests"}
+
+        #  If citizen here overnight, or inaccurate time flag set, update accurate time flag.
+        if citizen.start_time.date() != datetime.now().date() or inaccurate == 'true':
+            citizen.accurate_time_ind = 0
 
         SnowPlow.snowplow_event(citizen.citizen_id, csr, "finish",
                                 quantity = active_service_request.quantity,
@@ -50,9 +54,6 @@ class CitizenFinishService(Resource):
 
         pending_service_state = SRState.get_state_by_name("Complete")
         active_service_request.sr_state_id = pending_service_state.sr_state_id
-
-        if citizen.start_time.date() != datetime.now().date() or inaccurate == 'true':
-            citizen.accurate_time_ind = 0
 
         db.session.add(citizen)
         db.session.commit()

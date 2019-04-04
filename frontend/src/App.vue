@@ -20,14 +20,11 @@ limitations under the License.*/
       <Alert />
       <ExamAlert />
       <SuccessExamAlert />
-      <FailureExamAlert />
       <Nav v-if="isLoggedIn" />
       <Feedback />
       <Response />
     </div>
-    <div v-else-if="!user.username && isLoggedIn">
-      <LoginWarning />
-    </div>
+    <LoginWarning/>
     <Footer />
   </div>
 </template>

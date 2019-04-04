@@ -14,7 +14,7 @@ limitations under the License.'''
 
 
 from flask_restplus import Resource
-from qsystem import api, oidc
+from qsystem import api, jwt
 from app.models.theq import Channel
 from app.schemas.theq import ChannelSchema
 from sqlalchemy import exc
@@ -25,7 +25,7 @@ class ChannelList(Resource):
 
     channels_schema = ChannelSchema(many=True)
 
-    @oidc.accept_token(require_token=True)
+    @jwt.requires_auth
     def get(self):
         try:
             channels = Channel.query.all()
