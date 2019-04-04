@@ -634,7 +634,6 @@ export const TimeQuestion = Vue.component('time-question', {
                       lang="en"
                       @input="selectTime"
                       format="h:mm a"
-                      confirm
                       autocomplete="off"
                       placeholder="Select Time"
                       class="w-50"
