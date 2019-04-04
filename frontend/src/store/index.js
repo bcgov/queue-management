@@ -303,6 +303,20 @@ export const store = new Vuex.Store({
       return false
     },
 
+    is_liaison_designate(state) {
+      if(state.user.liaison_designate){
+        return true
+      }
+      return false
+    },
+
+    is_ita_designate(state) {
+      if(state.user.ita_designate){
+        return true
+      }
+      return false
+    },
+
     reception(state) {
       if (state.user.office && state.user.office.sb) {
         if (state.user.office.sb.sb_type === "callbyname" || state.user.office.sb.sb_type === "callbyticket") {
@@ -766,9 +780,7 @@ export const store = new Vuex.Store({
           context.commit('setOffice', officeType)
           let individualExamBoolean = false
           let groupExamBoolean = false
-
-          console.log('USER ', context.state.user)
-
+          
           if (resp.data.group_exams > 0) {
             groupExamBoolean = true
             context.commit('setGroupExam', groupExamBoolean)
@@ -1605,7 +1617,6 @@ export const store = new Vuex.Store({
           }).catch( () => { reject() })
         }).catch( () => { reject() })
       })
-
     },
 
     postITAGroupExam(context) {
@@ -2009,15 +2020,6 @@ export const store = new Vuex.Store({
               1
             )
             break
-          // DELETE
-          case 'quick':
-            Vue.set(
-              state.addModalForm,
-              key,
-              2
-            )
-            break
-          //
           default:
             Vue.set(
               state.addModalForm,
