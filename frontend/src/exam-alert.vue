@@ -13,28 +13,27 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 
 <template>
-  <div>
+  <div v-if="is_ita_designate" id="EXAMALERT">
     <b-alert
-      variant="primary"
-      dismissible
-      :show="examDismissCount"
-       style="h-align: center; font-size:1rem; border-radius: 0px;"
-      @dismissed="onDismissedExam">
-      {{ examAlertMessage }}
+             variant="primary"
+             dismissible
+             :show="examDismissCount"
+             style="h-align: center; font-size:1rem; border-radius: 0px; z-index: 1041"
+             @dismissed="onDismissedExam">
+             {{ examAlertMessage }}
     </b-alert>
   </div>
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 
 export default {
   name: 'ExamAlert',
-
   computed: {
+    ...mapGetters([ 'is_ita_designate' ]),
     ...mapState([ 'examAlertMessage', 'examDismissCount' ])
   },
-
   methods: {
     ...mapMutations(['examDismissCountDown']),
 

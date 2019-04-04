@@ -30,9 +30,7 @@
 </template>
 
 <script>
-  import Vue from 'vue'
-
-  import { mapState, mapActions, mapMutations } from 'vuex'
+  import { mapState, mapActions } from 'vuex'
   export default {
     name: "Admin",
     created() {

@@ -110,7 +110,7 @@ limitations under the License.*/
 
       onUpdateActiveCitizen(citizen) {
         console.log('socket received: "update_active_citizen" ')
-        this.screenIncomingCitizen(citizen)
+        this.screenIncomingCitizen({ citizen, route: this.$route })
       },
 
       onUpdateCustomerList() {

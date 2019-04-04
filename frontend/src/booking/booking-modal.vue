@@ -16,6 +16,16 @@
       <span style="font-weight: 600; font-size: 1.3rem;">Confirm Booking</span>
       <DataSummaryTable :displayData="displayData" class="w-100 p-0 m-0" />
       <b-form class="mt-3">
+        <b-form-row v-if="!challengerExam">
+          <b-col>
+            <b-form-group>
+              <label>Contact Information (Email or Phone Number)</label><br>
+              <b-input id="contact_information"
+                       type="text"
+                       v-model="booking_contact_information"/>
+            </b-form-group>
+          </b-col>
+        </b-form-row>
         <b-form-row>
           <b-col cols="12">
             <b-form-group v-if="individualExamInd">
@@ -24,7 +34,7 @@
             </b-form-group>
             <b-form-group v-else>
               <label>Invigilator Selection Options</label>
-              <b-select :options="invigilatorIndividualOptions" v-model="selectedOption" @input="handleSelect"/>
+              <b-select :options="invigilatorGroupOptions" v-model="selectedOption" @input="handleSelect"/>
             </b-form-group>
           </b-col>
         </b-form-row>
@@ -118,6 +128,7 @@
     data() {
       return {
         notes: '',
+        booking_contact_information: '',
         invigilator: null,
         formStep: 2,
         fields: {
@@ -176,7 +187,7 @@
           { key: 'ServiceBC to Provide Reader:', value: this.invigilatorRequired ? 'Yes' : 'No' },
           { key: 'Room:', value: this.date.resource.title },
         ]
-        if (this.exam.exam_type.exam_type_name === 'Challenger Exam Session') {
+        if (this.exam.exam_type.exam_type_name === 'Monthly Session Exam') {
           let i = items.findIndex(x => x.key === 'Exam Expiry:')
           items[i] = {key: 'Exam Expiry:', value: 'n/a'}
         }
@@ -335,6 +346,7 @@
           fees: 'false',
           booking_name: this.exam.exam_name,
           sbc_staff_invigilated: 0,
+          booking_contact_information: this.booking_contact_information
         }
         if (this.selectedOption === 'sbc') {
           booking.sbc_staff_invigilated = 1

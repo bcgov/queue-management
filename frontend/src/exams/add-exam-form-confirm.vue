@@ -24,7 +24,7 @@
         </template>
       </b-col>
     </b-row>
-    <b-row no-gutters align-h="between" align-v="end" v-if="setup === 'group' || pesticide_designate===1">
+    <b-row no-gutters align-h="between" align-v="end" v-if="setup === 'group' || is_pesticide_designate">
       <b-col cols="1" />
       <b-col cols="3">
         <span class="confirm-header">Office</span>
@@ -54,7 +54,7 @@
     <b-row no-gutters align-h="between" align-v="end" v-if="setup === 'individual' || setup === 'other' ">
       <b-col cols="1" />
       <b-col cols="3">
-        <span class="confirm-header">Writer's Name</span>
+        <span class="confirm-header">Candidate's Name</span>
       </b-col>
       <b-col align-self="end">
         <span class="confirm-item">{{ exam.examinee_name }}</span>
@@ -147,7 +147,7 @@
         <span class="confirm-header">Exam Type</span>
       </b-col>
       <b-col>
-        Challenger Exam Session
+        Monthly Session Exam
       </b-col>
     </b-row>
     <b-row no-gutters align-h="start" align-v="end" v-if="exam.event_id">
@@ -219,7 +219,7 @@
         addExamModal: state => state.addExamModal,
         offices: state => state.offices,
       }),
-      ...mapGetters(['exam_object', 'pesticide_designate', ]),
+      ...mapGetters(['exam_object', 'is_pesticide_designate', ]),
       officeName() {
         if (this.addExamModal.setup === 'group' || this.addExamModal.setup === 'pesticide' && this.exam.office_id ) {
           let office = this.offices.find(o => o.office_id == this.exam.office_id)

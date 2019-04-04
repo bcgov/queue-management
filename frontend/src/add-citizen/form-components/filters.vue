@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-form-row no-gutters>
-      <b-col cols="7">
+      <b-col :cols="simplified ? 12 : 7">
           <input ref="filterref"
                  style="height: 38px; font-size: .8rem;"
                  class="form-control"
@@ -9,7 +9,7 @@
                  placeholder="Type service here"
                  ></input>
       </b-col>
-      <b-col>
+      <b-col v-if="!simplified">
           <b-select id="add_citizen_catagories_select"
                     style="height: 38px; font-size: .8rem;"
                     :options="categories_options"
@@ -36,12 +36,27 @@
     },
 
     computed: {
-      ...mapGetters(['categories_options', 'form_data']),
-      ...mapState({
-                    suspendFilter: state => state.addModalForm.suspendFilter,
-                    selectedItem: state => state.addModalForm.selectedItem
+      ...mapGetters({
+        categories_options: 'categories_options',
+        form_data: 'form_data',
       }),
-
+      ...mapState({
+        addModalSetup: 'addModalSetup',
+        suspendFilter: state => state.addModalForm.suspendFilter,
+        selectedItem: state => state.addModalForm.selectedItem,
+      }),
+      simplified() {
+        if (this.$route.path !== '/queue') {
+          return true
+        }
+        return false
+      },
+      simplifiedModal() {
+        if (this.simplified && this.addModalSetup !== 'edit_mode') {
+          return true
+        }
+        return false
+      },
       search: {
         get() {
           if (this.suspendFilter) {

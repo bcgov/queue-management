@@ -17,20 +17,9 @@ import "@babel/polyfill"
 import 'es6-promise/auto'
 import { store } from './store/'
 import BootstrapVue from 'bootstrap-vue'
-import Router from './router.js'
+import Router from './router'
 import Fragment from 'vue-fragment'
-
-import 'bootstrap/dist/css/bootstrap.min.css'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
-import './assets/css/q.css'
-import './assets/css/bc-gov-style.css'
 import { library } from '@fortawesome/fontawesome-svg-core'
-
-import {
-  faRegistered,
-  faCalendarCheck,
-  faCalendarTimes,
-} from '@fortawesome/free-regular-svg-icons'
 import {
   faAngleLeft,
   faAngleRight,
@@ -50,9 +39,19 @@ import {
   faMinus,
   faPlus,
   faSort,
+  faStopwatch,
+  faWindowMaximize,
+  faWindowRestore,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import VDragged from 'v-dragged'
+
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+import './assets/css/q.css'
+import './assets/css/bc-gov-style.css'
+require('es6-shim')
+require('Keycloak')
 
 Vue.use(VDragged)
 Vue.use(Fragment.Plugin)
@@ -62,10 +61,7 @@ library.add(
   faAngleRight,
   faBars,
   faBinoculars,
-  faRegistered,
   faCalendar,
-  faCalendarCheck,
-  faCalendarTimes,
   faCaretLeft,
   faCaretRight,
   faCaretDown,
@@ -78,16 +74,16 @@ library.add(
   faMinus,
   faPlus,
   faSort,
+  faStopwatch,
+  faWindowMaximize,
+  faWindowRestore,
 )
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(BootstrapVue)
 
-require('es6-shim')
-require('Keycloak')
 var keycloak = Keycloak(process.env.KEYCLOAK_JSON_URL)
 Vue.prototype.$keycloak = keycloak
 Vue.config.productionTip = false
-
 
 /* eslint-disable no-new */
 const app = new Vue({

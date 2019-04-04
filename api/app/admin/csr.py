@@ -41,19 +41,20 @@ class CSRConfig(Base):
     can_delete = False
 
     column_list = ['username', 'office.office_name', 'ita_designate', 'pesticide_designate', 'finance_designate',
-                   'role.role_desc', 'deleted']
+                   'liaison_designate', 'role.role_desc', 'deleted']
     column_labels = {
         'username': 'Username',
         'office.office_name': 'Office',
         'ita_designate': 'ITA Designate',
         'pesticide_designate': 'Pesticide Exam Designate',
         'finance_designate': 'Financial Reporting Designate',
+        'liaison_designate': 'Liaison Designate',
         'role.role_desc': 'Role',
         'deleted': 'Deleted'
     }
     column_searchable_list = ('username',)
-    column_sortable_list = ('username', 'office.office_name', 'ita_designate', 'pesticide_designate', 'finance_designate',
-                            'role.role_desc', 'deleted')
+    column_sortable_list = ('username', 'office.office_name', 'ita_designate', 'pesticide_designate',
+                            'finance_designate', 'liaison_designate', 'role.role_desc', 'deleted')
     column_default_sort = 'username'
     form_args = {
         'qt_xn_csr_ind': {'default': '0'},
@@ -62,12 +63,13 @@ class CSRConfig(Base):
         'ita_designate': {'default': '0'},
         'pesticide_designate': {'default': '0'},
         'finance_designate': {'default': '0'},
+        'liaison_designate': {'default': '0'},
     }
     form_excluded_columns = ('periods',)
     form_create_rules = ('username', 'qt_xn_csr_ind', 'receptionist_ind', 'ita_designate', 'pesticide_designate',
-                         'finance_designate', 'csr_state', 'role', 'office','deleted',)
+                         'finance_designate', 'liaison_designate', 'csr_state', 'role', 'office','deleted',)
     form_edit_rules = ('username', 'qt_xn_csr_ind', 'receptionist_ind', 'ita_designate', 'pesticide_designate',
-                       'finance_designate', 'csr_state', 'role', 'office', 'deleted',)
+                       'finance_designate', 'liaison_designate', 'csr_state', 'role', 'office', 'deleted',)
 
     def get_return_url(self):
         return get_redirect_target() or self.get_url('.index_view')
@@ -117,11 +119,7 @@ class CSRConfig(Base):
         if not model:
             return redirect(return_url)
 
-        #  We know model is good.  Save id of CSR you're editing for later use.
         csr_id = get_mdict_item_or_list(request.args, 'id')
-        #  Delete next two lines later.
-        csr_old = CSR.query.filter_by(csr_id=csr_id).first()
-        csr_office_old = csr_old.office.office_name
 
         form = self.edit_form(obj=model)
         if not hasattr(form, '_validated_ruleset') or not form._validated_ruleset:
@@ -131,25 +129,17 @@ class CSRConfig(Base):
 
             #  Trim the user name, if necessary.
             updated_csr = CSR.query.filter_by(csr_id=csr_id).first()
-            if updated_csr.username != updated_csr.username.strip():
-                updated_csr.username = updated_csr.username.strip()
-                db.session.add(updated_csr)
-                db.session.commit()
+
+            trim_username(updated_csr)
 
             socketio.emit('clear_csr_cache', { "id": csr_id})
-            socketio.emit('csr_update', \
-                          {"csr_id": csr_id, \
-                           "receptionist_ind": updated_csr.receptionist_ind}, \
-                           room=current_user.office_id)
+            socketio.emit('csr_update',
+                          {"csr_id": csr_id, "receptionist_ind": updated_csr.receptionist_ind},
+                          room=current_user.office_id)
 
             flash(gettext('''Record was successfully saved.'''), 'success')
-            if '_add_another' in request.form:
-                return redirect(self.get_url('.create_view', url=return_url))
-            elif '_continue_editing' in request.form:
-                return redirect(request.url)
-            else:
-                # save button
-                return redirect(self.get_save_return_url(model, is_created=False))
+
+            request_redirect(self, return_url, model, request)
 
         if request.method == 'GET' or form.errors:
             self.on_form_prefill(form, id)
@@ -170,3 +160,22 @@ class CSRConfig(Base):
 
 
 CSRModelView = CSRConfig(CSR, db.session)
+
+
+def trim_username(updated_csr):
+
+    if updated_csr.username != updated_csr.username.strip():
+        updated_csr.username = updated_csr.username.strip()
+        db.session.add(updated_csr)
+        db.session.commit()
+    return
+
+
+def request_redirect(self, return_url, model, request_parameter):
+
+    if '_add_another' in request_parameter.form:
+        return redirect(self.get_url('.create_view', url=return_url))
+    elif '_continue_editing' in request.form:
+        return redirect(request_parameter.url)
+    else:
+        return redirect(self.get_save_return_url(model, is_created=False))

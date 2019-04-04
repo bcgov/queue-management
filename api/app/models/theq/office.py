@@ -46,6 +46,8 @@ class Office(Base):
     sb_id = db.Column(db.Integer, db.ForeignKey('smartboard.sb_id'))
     deleted = db.Column(db.DateTime, nullable=True)
     exams_enabled_ind = db.Column(db.Integer, nullable=False)
+    appointments_enabled_ind = db.Column(db.Integer, nullable=False, default=0)
+    timezone_id = db.Column(db.Integer, db.ForeignKey('timezone.timezone_id'), nullable=True)
 
     counters = db.relationship("Counter", secondary='office_counter')
     services = db.relationship("Service", secondary='office_service')
@@ -53,6 +55,7 @@ class Office(Base):
     csrs = db.relationship('CSR')
     citizens = db.relationship('Citizen', backref='office_citizens')
     sb = db.relationship('SmartBoard')
+    timezone = db.relationship('Timezone')
 
     exams = db.relationship("Exam")
     rooms = db.relationship('Room')

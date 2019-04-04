@@ -1,5 +1,5 @@
 <template>
-  <b-form id="capture-ind-ita-form">
+  <b-form id="capture-ind-ita-form" autocomplete="off">
     <div v-for="q in questions" :key="q.key">
       <DropdownQuestion v-if="q.kind==='dropdown'"
                         :question="q"
@@ -36,7 +36,7 @@
                       :handleInput="handleInput"
                       :exam="exam" />
       <SelectOffice v-if="q.kind==='office'"
-                    v-show="role_code === 'LIAISON' || pesticide_designate === 1"
+                    v-show="is_liaison_designate || is_pesticide_designate"
                     :error="error"
                     :q="q"
                     :validationObj="validationObj"
@@ -125,7 +125,8 @@
         steps: 'add_modal_steps',
         exam_object: 'exam_object',
         role_code: 'role_code',
-        pesticide_designate: 'pesticide_designate',
+        is_pesticide_designate: 'is_pesticide_designate',
+        is_liaison_designate: 'is_liaison_designate',
       }),
       ...mapState({
         exam: state => state.capturedExam,
@@ -251,16 +252,14 @@
             messages[key] = 'Required Field'
             return
           }
-          if (!answer) {
-            if (question.minLength == 0 && !question.digit) {
-              valid[key] = true
-              messages[key] = ''
-              return
-            }
-            valid[key] = false
-            messages[key] = 'Required Field'
+          if (question.minLength == 0 && !question.digit) {
+            valid[key] = true
+            messages[key] = ''
             return
           }
+          valid[key] = false
+          messages[key] = 'Required Field'
+          return
         }
         this.questions.forEach(question => {
           validateAnswer(question)

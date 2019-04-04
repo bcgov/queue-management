@@ -156,7 +156,7 @@
           {key: 'invigilator', thStyle: 'width: 10%;font-size:.9rem;'},
           {key: 'materials', label: 'Materials?', thStyle: 'width: 6%;font-size:.9rem;'},
           {key: 'title', thStyle: 'font-size:.9rem;'},
-          {key: 'writer', label: "Writer's Name", thStyle: 'font-size:.9rem;'},
+          {key: 'writer', label: "Candidate's Name", thStyle: 'font-size:.9rem;'},
           {key: 'notes', thStyle: 'font-size:.9rem;'},
         ],
         fieldsOther: [

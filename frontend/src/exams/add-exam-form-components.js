@@ -48,7 +48,10 @@ export const DateQuestion = Vue.component('date-question', {
             {{ addExamModal.setup == 'group' || addExamModal.setup == 'challenger' ? 'Exam Date' : 'Expiry Date' }}
             <span v-if="error" style="color: red">{{ validationObj[q.key].message }}</span>
           </label><br>
-          <DatePicker :value="exam[q.key]" lang="en" @input="selectDate" class="w-50"></DatePicker>
+          <DatePicker :value="exam[q.key]"
+                      lang="en"
+                      @input="selectDate"
+                      class="w-50"></DatePicker>
         </b-form-group>
       </b-col>
       <checkmark :validated="validationObj[q.key].valid" />
@@ -87,7 +90,8 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
         let exams = this.examTypes.filter( type =>
           !type.exam_type_name.includes('Group') &&
           !type.exam_type_name.includes('Single') &&
-          !type.exam_type_name.includes('Challenger Exam Session')
+          !type.exam_type_name.includes('Monthly Session Exam') &&
+          !type.exam_type_name.includes('Pesticide')
         )
         return exams.sort((a,b) => sorter(a,b))
       }
@@ -122,13 +126,13 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
     }
   },
   methods: {
-    ...mapMutations(['toggleAddExamModal', 'toggleAddExamModal']),
+    ...mapMutations(['setAddExamModalSetting', ]),
     clickInput() {
       if (!this.addExamModal.step1MenuOpen) {
-        this.toggleAddExamModal({step1MenuOpen: true})
+        this.setAddExamModalSetting({step1MenuOpen: true})
         return
       }
-      this.toggleAddExamModal({step1MenuOpen: false})
+      this.setAddExamModalSetting({step1MenuOpen: false})
     },
     preHandleInput(id) {
       this.handleInput({
@@ -145,9 +149,11 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
       <h5 v-if="addExamModal.setup === 'group' ">Add Group Exam</h5>
       <h5 v-if="addExamModal.setup === 'individual' ">Add Individual ITA Exam</h5>
       <h5 v-if="addExamModal.setup === 'other' ">Add Non-ITA Exam</h5>
+      <h5 v-if="addExamModal.setup === 'pesticide' ">Add Pesticide Exam</h5>
       <label>Exam Type</label><br>
         <div @click="clickInput">
           <b-input read-only
+                   autocomplete="off"
                    :value="inputText"
                    placeholder="click here to see options"
                    :style="inputStyle" />
@@ -162,6 +168,7 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
             <b-dd-item v-else :style="{backgroundColor: type.exam_color}"
                        @click="preHandleInput(type.exam_type_id)"
                        :name="type.exam_type_id"
+                       autocomplete="off"
                        :id="type.exam_type_id"
                        :class="type.class">{{ type.exam_type_name }}</b-dd-item>
           </template>
@@ -236,6 +243,7 @@ export const ExamReceivedQuestion = Vue.component('exam-received-question', {
           </label><br>
           <b-form-radio-group v-model="showRadio"
                               @input="preSetDate()"
+                              autocomplete="off"
                               :options="['other', 'pesticide'].includes(modalSetup) ? otherOptions : options"/>
         </b-form-group>
         <b-form-group v-else>
@@ -266,7 +274,7 @@ export const InputQuestion = Vue.component('input-question', {
   template: `
     <fragment v-if="q.key === 'exam_name' && setup === 'challenger'">
       <b-row no-gutters>
-        <b-col cols="11"><h5>Adding a Challenger Exam</h5></b-col>
+        <b-col cols="11"><h5>Adding a Monthly Session Exam</h5></b-col>
       </b-row>
       <b-row no-gutters>
         <b-col cols="11">
@@ -277,6 +285,7 @@ export const InputQuestion = Vue.component('input-question', {
             <b-form-input :value="exam[q.key]"
                           :name="q.key"
                           :key="q.key"
+                          autocomplete="off"
                           @input.native="preHandleInput" />
           </b-form-group>
         </b-col>
@@ -293,6 +302,7 @@ export const InputQuestion = Vue.component('input-question', {
             <b-form-input :value="exam[q.key]"
                           :name="q.key"
                           :key="q.key"
+                          autocomplete="off"
                           @input.native="preHandleInput" />
           </b-form-group>
         </b-col>
@@ -338,15 +348,15 @@ export const LocationInput = Vue.component('input-question', {
   },
   methods: {
     ...mapActions(['actionSaveAll']),
-    ...mapMutations(['toggleScheduling', 'toggleAddExamModal', 'setSelectedExam']),
+    ...mapMutations(['toggleScheduling', 'setAddExamModalSetting', 'setSelectedExam']),
     launchSchedule() {
       let exam = {
-        exam_name: 'Challenger Exam',
-        examinee_name: 'Challenger Exam',
+        exam_name: 'Monthly Session',
+        examinee_name: 'Monthly Session',
         exam_method: 'tbd',
         offiice_id: this.user.office_id,
         exam_type: {
-          exam_type_name: 'Challenger Exam Session',
+          exam_type_name: 'Monthly Session Exam',
           exam_type_id: 16,
           number_of_hours: 4,
         },
@@ -357,7 +367,7 @@ export const LocationInput = Vue.component('input-question', {
         exam.referrer = 'scheduling'
         this.setSelectedExam(exam)
         this.$router.push('/booking')
-        this.toggleAddExamModal(false)
+        this.setAddExamModalSetting(false)
       })
     }
     
@@ -373,6 +383,7 @@ export const LocationInput = Vue.component('input-question', {
               </label>
               <b-form-input :value="exam[q.key]"
                             :name="q.key"
+                            autocomplete="off"
                             :key="q.key"
                             @input.native="handleInput" />
             </b-form-group>
@@ -408,6 +419,7 @@ export const LocationInput = Vue.component('input-question', {
               <label>Invigilator
               </label>
               <b-form-input :value="exam.invigilator.invigilator_name"
+                            autocomplete="off"
                             disabled />
             </b-form-group>
           </b-col>
@@ -434,6 +446,7 @@ export const SelectQuestion = Vue.component('select-question', {
           </label><br>
           <b-form-select :options="q.options"
                          :value="exam[q.key]"
+                         autocomplete="off"
                          @change.native="handleInput"
                          :class="addExamModal.setup === 'group' ? 'w-50' : '' "
                          :name="q.key" />
@@ -473,6 +486,7 @@ export const NotesQuestion = Vue.component('notes-question', {
           <b-textarea :value="exam[q.key]"
                       @input.native="handleInput"
                       :rows="3"
+                      autocomplete="off"
                       :name="q.key"
                       :id="q.key" />
         </b-form-group>
@@ -508,6 +522,7 @@ export const OffsiteSelect = Vue.component('offsite-select', {
           </label><br>
           <b-form-select :options="q.options"
                          :value="exam[q.key]"
+                         autocomplete="off"
                          @change.native="preHandleInput"
                          :class="addExamModal.setup === 'group' ? 'w-50 mr-1' : 'mr-1' "
                          :name="q.key" />
@@ -525,7 +540,7 @@ export const SelectOffice = Vue.component('select-office', {
     return {}
   },
   computed: {
-    ...mapGetters(['role_code', 'pesticide_designate', ]),
+    ...mapGetters(['role_code']),
     ...mapState(['offices', 'user', 'addExamModal']),
     office_number() {
       return this.addExamModal.office_number
@@ -544,10 +559,10 @@ export const SelectOffice = Vue.component('select-office', {
     }
   },
   methods: {
-    ...mapMutations(['toggleAddExamModal']),
+    ...mapMutations(['setAddExamModalSetting']),
     setOffice(office_number) {
       office_number = parseInt(office_number)
-      this.toggleAddExamModal({office_number})
+      this.setAddExamModalSetting({office_number})
       if (this.offices && this.offices.length > 0) {
         let office = this.offices.find(office => office.office_number == office_number) || null
         if (office) {
@@ -612,6 +627,7 @@ export const TimeQuestion = Vue.component('time-question', {
                       @input="selectTime"
                       format="h:mm a"
                       confirm
+                      autocomplete="off"
                       placeholder="Select Time"
                       class="w-50"
                       type="time">

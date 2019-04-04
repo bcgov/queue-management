@@ -21,6 +21,7 @@ from .channel_schema import ChannelSchema
 from .smartboard_schema import SmartBoardSchema
 from .role_schema import RoleSchema
 from .service_schema import ServiceSchema
+from .timezone_schema import TimezoneSchema
 from .office_schema import OfficeSchema
 from .csr_schema import CSRSchema
 from .metadata_schema import MetaDataSchema
@@ -28,3 +29,4 @@ from .period_schema import PeriodSchema
 from .service_req_schema import ServiceReqSchema
 from .citizen_schema import CitizenSchema
 from .permission_schema import PermissionSchema
+

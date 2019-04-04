@@ -17,9 +17,10 @@ limitations under the License.*/
     <b-alert
       variant="success"
       dismissible
-      :show="editExamSuccess"
+      v-model="countdown"
+      @dismissed="setExamEditSuccess(0)"
        style="h-align: center; font-size:1rem; border-radius: 0px;">
-      {{ examEditSuccessMessage }}
+      Success!
     </b-alert>
   </div>
 </template>
@@ -31,15 +32,16 @@ export default {
   name: 'SuccessExamAlert',
 
   computed: {
-    ...mapState([ 'examEditSuccessMessage', 'examSuccessDismiss', 'editExamSuccess' ])
-  },
-
-  methods: {
-    ...mapMutations(['examSuccessCountDown', 'setEditExamSuccess']),
-
-    onDismissedExam() {
-      this.examSuccessCountDown(5)
+    ...mapState(['editExamSuccessCount']),
+    countdown: {
+      get() { return this.editExamSuccessCount },
+      set(e) {
+        this.setEditExamSuccess(e)
+      }
     }
+  },
+  methods: {
+    ...mapMutations(['setEditExamSuccess']),
   }
 }
 </script>

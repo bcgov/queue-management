@@ -1,5 +1,5 @@
 <template v-if="showExams">
-  <div class="q-w100-flex-fe pr-3" v-if="financial_designate === 1">
+  <div class="q-w100-flex-fe pr-3" v-if="is_financial_designate">
     <b-button class="btn-primary mr-3"
               @click="clickGenFinReport">Generate Financial Report</b-button>
     <FinancialReportModal />
@@ -12,16 +12,19 @@
             variant="primary"
             text="Add ITA Exam"
             @click="handleClick('individual')">
-        <b-dd-item @click="handleClick('challenger')">Add Challenger Exam</b-dd-item>
+        <b-dd-item @click="handleClick('challenger')">Add Monthly Session Exam</b-dd-item>
       </b-dd>
       <b-button v-if="role_code!=='GA'"
                 class="mr-1 btn-primary"
                 @click="handleClick('individual')">Add ITA Exam</b-button>
-      <b-button v-if="role_code==='LIAISON'"
+      <b-button v-if="is_liaison_designate"
                 class="mr-1 btn-primary"
                 @click="handleClick('group')">Add Group Exam</b-button>
       <b-button class="mr-1 btn-primary"
                 @click="handleClick('other')">Add Other Exam</b-button>
+      <b-button v-if="is_pesticide_designate"
+                class="btn-primary"
+                @click="handleClick('pesticide')">Add Pesticide Exam</b-button>
     </b-form>
     <AddExamModal />
   </div>
@@ -36,18 +39,22 @@
     name: "ButtonsExams",
     components: { AddExamModal, FinancialReportModal },
     computed: {
-      ...mapState(['addNonITA', 'showGenFinReportModal', 'user', ]),
-      ...mapGetters([ 'showExams', 'role_code', 'pesticide_designate', 'financial_designate', ]),
-    },
-    created() {
-      console.log(this.financial_designate)
+      ...mapState(['addNonITA', 'showGenFinReportModal', 'user' ]),
+      ...mapGetters([
+        'is_financial_designate',
+        'is_ita_designate',
+        'is_liaison_designate',
+        'is_pesticide_designate',
+        'role_code',
+        'showExams',
+      ]),
     },
     methods: {
       ...mapActions(['actionRestoreAll']),
-      ...mapMutations(['toggleAddExamModal', 'toggleGenFinReport',]),
+      ...mapMutations(['setAddExamModalSetting', 'toggleGenFinReport',]),
       handleClick(type) {
-        this.toggleAddExamModal({setup: type})
-        this.toggleAddExamModal(true)
+        this.setAddExamModalSetting({setup: type})
+        this.setAddExamModalSetting(true)
       },
       clickGenFinReport() {
         this.toggleGenFinReport(true)

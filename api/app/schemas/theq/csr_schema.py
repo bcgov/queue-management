@@ -41,3 +41,4 @@ class CSRSchema(ma.ModelSchema):
     ita_designate = fields.Int()
     pesticide_designate = fields.Int()
     finance_designate = fields.Int()
+    liaison_designate = fields.Int()
