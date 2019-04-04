@@ -78,7 +78,8 @@
             <b-col>
               <b-form-group>
                 <label>Contact Information (Email or Phone Number)</label><br>
-                <b-input id="contact_information"
+                <b-input autocomplete="off"
+                         id="contact_information"
                          type="text"
                          @change="checkValue"
                          v-model="booking_contact_information"/>
