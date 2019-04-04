@@ -123,7 +123,11 @@ limitations under the License.*/
         if (!service) {
           return null
         }
-        return service.service.parent.service_name
+        if(service.service.parent){
+          return service.service.parent.service_name
+        } else { // @TODO DELETE THIS
+          return "category"
+        }
       },
       showService(id) {
         let service = this.active_service_id(id)

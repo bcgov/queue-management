@@ -34,8 +34,12 @@
                   :disabled="citizenInvited===true || performingAction || showAdmin"
                   id="add-citizen-button">Add Citizen</b-button>
         <b-dropdown variant="primary" :disabled="citizenInvited===true || performingAction || showAdmin" right>
-          <b-dropdown-item @click="quickServeCitizen" data-id="85">Emails (All)</b-dropdown-item>
-          <b-dropdown-item @click="quickServeCitizen" data-id="81">Cash Out/Transfers</b-dropdown-item>
+            <b-dropdown-item v-for="item in user.office.quick_list"
+                    :data-id="item.service_id"
+                    :key="item.service_id"
+                    @click="quickServeCitizen">
+              {{item.service_name}}
+            </b-dropdown-item>
         </b-dropdown>
       </b-button-group>
 
