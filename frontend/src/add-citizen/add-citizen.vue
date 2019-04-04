@@ -48,7 +48,7 @@
               </select>
             </div>
             <select id="counter-selection" class="custom-select" v-model="counter_selection">
-              <option v-for="counter in counter_types"
+              <option v-for="counter in user.office.counters"
                     :value="counter.counter_id"
                     :key="counter.counter_id">
                 {{counter.counter_name}}
@@ -98,7 +98,7 @@ export default {
       "showAddModal",
       "addModalSetup",
       "serviceModalForm",
-      "counter_types"
+      "user"
     ]),
     ...mapGetters(["form_data", "reception"]),
 

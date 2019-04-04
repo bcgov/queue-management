@@ -69,7 +69,7 @@ limitations under the License.*/
     },
 
     computed: {
-      ...mapState(['citizens', 'citizenInvited', 'performingAction', 'counter_types']),
+      ...mapState(['citizens', 'citizenInvited', 'performingAction', 'user']),
       ...mapGetters([
         'on_hold_queue',
         'citizens_queue',
@@ -111,9 +111,9 @@ limitations under the License.*/
         }
       },
       showCounter(value) {
-        for(let i = 0; i < this.counter_types.length; i++){
-          if(this.counter_types[i].counter_id == value){
-            return this.counter_types[i].counter_name
+        for(let i = 0; i < this.user.office.counters.length; i++){
+          if(this.user.office.counters[i].counter_id == value){
+            return this.user.office.counters[i].counter_name
           }
         }
       },

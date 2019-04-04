@@ -72,7 +72,6 @@ export const store = new Vuex.Store({
     citizenInvited: false,
     citizens: [],
     clickedDate: '',
-    counter_types: [],
     csr_states: [],
     csrs: [],
     dismissCount: 0,
@@ -166,6 +165,8 @@ export const store = new Vuex.Store({
         sb: {
           sb_type: null,
         },
+        counters: [],
+        quick_list: []
       },
       office_id: null,
       qt_xn_csr_ind: true,
@@ -740,6 +741,8 @@ export const store = new Vuex.Store({
           context.commit('setUser', resp.data.csr)
           let officeType = resp.data.csr.office.sb.sb_type
           context.commit('setOffice', officeType)
+
+          console.log('USER ', context.state.user)
 
           if (resp.data.group_exams > 0) {
             var groupExamBoolean = true
@@ -1883,19 +1886,10 @@ export const store = new Vuex.Store({
       }
     },
 
-    updateCSRCounterTypeState2(context) {
-      let csr_id = context.state.user.csr_id
-      Axios(context).put(`/csrs/${csr_id}/`, {
-        counter_id: context.state.user.counter_id,
-      })
-    },
-
-    //Updates the counter's type from the state after selecting from the dropdown (regular counter, quick transaction, or receptionist)
     updateCSRCounterTypeState(context) {
       let csr_id = context.state.user.csr_id
       Axios(context).put(`/csrs/${csr_id}/`, {
-        qt_xn_csr_ind: context.state.user.qt_xn_csr_ind,
-        receptionist_ind: context.state.user.receptionist_ind
+        counter_id: context.state.user.counter_id,
       })
     },
 
@@ -1923,10 +1917,6 @@ export const store = new Vuex.Store({
     setChannels(state, payload) {
       state.channels = []
       state.channels = payload
-    },
-    setCounterTypes(state, payload) {
-      state.counter_types = []
-      state.counter_types = payload
     },
     setCategories(state, payload) {
       state.categories = []

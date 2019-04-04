@@ -68,7 +68,7 @@ limitations under the License.*/
       }
     },
     computed: {
-      ...mapState(['citizenInvited', 'serviceModalForm', 'performingAction', 'counter_types']),
+      ...mapState(['citizenInvited', 'serviceModalForm', 'performingAction', 'user']),
       ...mapGetters(['citizens_queue', 'active_service_id', 'reception']),
       citizens() {
         return this.citizens_queue
@@ -112,9 +112,9 @@ limitations under the License.*/
         return service.periods[n].csr.username
       },
       showCounter(value) {
-        for(let i = 0; i < this.counter_types.length; i++){
-          if(this.counter_types[i].counter_id == value){
-            return this.counter_types[i].counter_name
+        for(let i = 0; i < this.user.office.counters.length; i++){
+          if(this.user.office.counters[i].counter_id == value){
+            return this.user.office.counters[i].counter_name
           }
         }
       },

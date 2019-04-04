@@ -71,7 +71,7 @@
           <b-col cols="7" />
           <b-col cols="auto" style="align: right">
             <select id="counter-selection" class="custom-select" v-model="counter_selection">
-              <option v-for="counter in counter_types"
+              <option v-for="counter in user.office.counters"
                     :value="counter.counter_id"
                     :key="counter.counter_id">
                 {{counter.counter_name}}
@@ -158,7 +158,7 @@ export default {
       'serviceBegun',
       'serviceModalForm',
       'serveModalAlert',
-      'counter_types'
+      'user'
     ]),
     ...mapGetters(['invited_citizen', 'active_service', 'invited_service_reqs', 'reception']),
     citizen() {
@@ -330,11 +330,6 @@ export default {
 }
 strong {
   font-size: 1.35rem;
-}
-#priority-selection {
-    display: inline-block;
-    width: 135px;
-    padding-right: 0;
 }
 .custom-select {
     line-height: 25px;
