@@ -35,6 +35,7 @@ limitations under the License.*/
       </div>
       <div id="select-wrapper" style="padding-right: 20px" v-if="reception">
         <select id="counter-selection" class="custom-select" v-model="counter_selection">
+            <option value='receptionist'>Receptionist</option>
             <option v-for="counter in user.office.counters"
                   :value="counter.counter_id"
                   :key="counter.counter_id">
@@ -72,10 +73,19 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
       
       counter_selection: {
         get() {
-          return this.user.counter_id
+          if (this.receptionist_status === true) {
+            return 'receptionist'
+          } else {
+            return this.user.counter_id
+          }
         },
         set(value) {
-          this.setCounterStatusState(value)
+          if(value === 'receptionist'){
+            this.setReceptionistState(true)
+          } else {
+            this.setCounterStatusState(value)
+            this.setReceptionistState(false)
+          }
           this.updateCSRCounterTypeState()
         }
       },
