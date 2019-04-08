@@ -117,6 +117,7 @@
                @row-clicked="clickModalRow"
                hover
                show-empty
+               responsive
                :current-page="page"
                :per-page="10"
                :filter="searchTerm">
