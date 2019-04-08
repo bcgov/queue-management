@@ -97,9 +97,15 @@
       quickServeCitizen(e) {
         let service_id = e.target.dataset.id
         let service_name = e.target.innerText
-        this.setAddModalSelectedItem(service_name)
-        this.$store.commit('updateAddModalForm', {type:'service',value:service_id})
-        this.clickQuickServe()
+
+        if(this.user.receptionist_ind){
+          this.clickAddCitizen()
+          this.$store.commit('updateAddModalForm', {type:'service',value:service_id})
+        } else {
+          this.setAddModalSelectedItem(service_name)
+          this.$store.commit('updateAddModalForm', {type:'service',value:service_id})
+          this.clickQuickServe()
+        }
       },
       invite() {
         if (this.queueLength === 0) {
