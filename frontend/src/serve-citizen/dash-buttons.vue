@@ -43,10 +43,20 @@
         </b-dropdown>
       </b-button-group>
 
-      <b-button class="btn-primary"
-                @click="clickBackOffice"
-                :disabled="citizenInvited===true || performingAction || showAdmin"
-                id="add-citizen-button">Back Office</b-button>
+      <b-button-group>
+        <b-button class="btn-primary"
+                  @click="clickBackOffice"
+                  :disabled="citizenInvited===true || performingAction || showAdmin"
+                  id="add-citizen-button">Back Office</b-button>
+        <b-dropdown variant="primary" :disabled="citizenInvited===true || performingAction || showAdmin" right>
+            <b-dropdown-item v-for="item in user.office.back_office_list"
+                    :data-id="item.service_id"
+                    :key="item.service_id"
+                    @click="quickBackOffice">
+              {{item.service_name}}
+            </b-dropdown-item>
+        </b-dropdown>
+      </b-button-group>
     </div>
     <div />
   </div>
@@ -89,7 +99,8 @@
         'clickGAScreen',
         'clickServeNow',
         'clickBackOffice',
-        'clickQuickServe'
+        'clickQuickServe',
+        'clickQuickBackOffice'
       ]),
       addCitizen() {
         this.clickAddCitizen()
@@ -105,6 +116,19 @@
           this.setAddModalSelectedItem(service_name)
           this.$store.commit('updateAddModalForm', {type:'service',value:service_id})
           this.clickQuickServe()
+        }
+      },
+      quickBackOffice(e) {
+        let service_id = e.target.dataset.id
+        let service_name = e.target.innerText
+
+        if(this.user.receptionist_ind){
+          this.clickBackOffice()
+          this.$store.commit('updateAddModalForm', {type:'service',value:service_id})
+        } else {
+          this.setAddModalSelectedItem(service_name)
+          this.$store.commit('updateAddModalForm', {type:'service',value:service_id})
+          this.clickQuickBackOffice()
         }
       },
       invite() {
