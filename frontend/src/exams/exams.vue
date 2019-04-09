@@ -23,6 +23,7 @@
     name: "Exams",
     components: { ExamInventoryTable },
     mounted() {
+      document.addEventListener('keydown', this.filterKeyPress)
       this.$store.dispatch('getOffices')
     },
     computed: {
@@ -36,6 +37,11 @@
     },
     methods: {
       ...mapMutations(['toggleServiceModal', ]),
+      filterKeyPress(e) {
+        if (e.keyCode === 13) {
+          e.preventDefault()
+        }
+      },
     }
   }
 </script>
