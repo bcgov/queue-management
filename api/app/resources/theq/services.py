@@ -22,6 +22,18 @@ from sqlalchemy import exc
 from app.schemas.theq import ServiceSchema
 
 
+@api.route("/services/refresh/", methods=["GET"])
+class Refresh(Resource):
+    """
+    Refresh the quick lists.
+    """
+    @jwt.requires_auth
+    def get(self):
+        if request.args.get('office_id'):
+            return {}
+        else:
+            return {'message': 'no office specified'}, 400
+
 @api.route("/services/", methods=["GET"])
 class Services(Resource):
 
