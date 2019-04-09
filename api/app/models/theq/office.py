@@ -33,6 +33,13 @@ class Office(Base):
         db.Column('service_id', db.Integer,
                 db.ForeignKey('service.service_id', ondelete="CASCADE"), primary_key=True))
 
+    office_back_office_list = db.Table(
+        'office_back_office_list',
+        db.Column('office_id', db.Integer,
+                db.ForeignKey('office.office_id', ondelete="CASCADE"), primary_key=True),
+        db.Column('service_id', db.Integer,
+                db.ForeignKey('service.service_id', ondelete="CASCADE"), primary_key=True))
+
     office_counter= db.Table(
         'office_counter',
         db.Column('office_id', db.Integer,
@@ -52,6 +59,7 @@ class Office(Base):
     counters = db.relationship("Counter", secondary='office_counter')
     services = db.relationship("Service", secondary='office_service')
     quick_list = db.relationship("Service", secondary='office_quick_list')
+    back_office_list = db.relationship("Service", secondary='office_back_office_list')
     csrs = db.relationship('CSR')
     citizens = db.relationship('Citizen', backref='office_citizens')
     sb = db.relationship('SmartBoard')

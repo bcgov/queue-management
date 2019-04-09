@@ -65,7 +65,7 @@ class CSRConfig(Base):
         'finance_designate': {'default': '0'},
         'liaison_designate': {'default': '0'},
     }
-    form_excluded_columns = ('periods',)
+    form_excluded_columns = ('periods', 'counter')
     form_create_rules = ('username', 'qt_xn_csr_ind', 'receptionist_ind', 'ita_designate', 'pesticide_designate',
                          'finance_designate', 'liaison_designate', 'csr_state', 'role', 'office','deleted',)
     form_edit_rules = ('username', 'qt_xn_csr_ind', 'receptionist_ind', 'ita_designate', 'pesticide_designate',

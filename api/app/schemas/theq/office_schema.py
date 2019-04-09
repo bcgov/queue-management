@@ -37,4 +37,5 @@ class OfficeSchema(ma.ModelSchema):
     sb = fields.Nested(SmartBoardSchema())
     counters = fields.Nested(CounterSchema(), many=True)
     quick_list = fields.Nested(ServiceSchema(), many=True)
+    office_back_office_list = fields.Nested(ServiceSchema(), many=True)
     timezone = fields.Nested(TimezoneSchema())
