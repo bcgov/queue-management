@@ -45,10 +45,10 @@ class CSRConfig(Base):
     column_labels = {
         'username': 'Username',
         'office.office_name': 'Office',
-        'ita_designate': 'ITA Designate',
-        'pesticide_designate': 'Pesticide Exam Designate',
+        'ita_designate': 'Office Exam Manager',
+        'pesticide_designate': 'Pesticide Client Liaison/Program Specialist',
         'finance_designate': 'Financial Reporting Designate',
-        'liaison_designate': 'Liaison Designate',
+        'liaison_designate': 'ITA Liaison/Program Specialist',
         'role.role_desc': 'Role',
         'deleted': 'Deleted'
     }
