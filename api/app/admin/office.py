@@ -20,7 +20,7 @@ from qsystem import db
 
 
 class OfficeConfig(Base):
-    roles_allowed = ['SUPPORT', 'GA'] # TODO: remove GA
+    roles_allowed = ['SUPPORT']
 
     def is_accessible(self):
         return current_user.is_authenticated and current_user.role.role_code in self.roles_allowed
@@ -30,8 +30,8 @@ class OfficeConfig(Base):
     can_delete = False
     column_list = ['office_name', 'sb', 'services', 'deleted', 'exams_enabled_ind', 'quick_list', 'counters', 'timezone.timezone_name', 'back_office_list']
     form_excluded_columns = ('citizens', 'csrs', 'exams', 'rooms', 'invigilators', 'appointments_enabled_ind')
-    form_create_rules = ('office_name', 'office_number', 'sb', 'services', 'deleted', 'exams_enabled_ind', 'quick_list', 'counters', 'timezone', 'back_office_list')
-    form_edit_rules = ('office_name', 'office_number', 'sb', 'services', 'deleted', 'exams_enabled_ind', 'quick_list', 'counters', 'timezone', 'back_office_list')
+    form_create_rules = ('office_name', 'office_number', 'sb', 'services', 'deleted', 'exams_enabled_ind', 'quick_list', 'back_office_list', 'counters', 'timezone')
+    form_edit_rules = ('office_name', 'office_number', 'sb', 'services', 'deleted', 'exams_enabled_ind', 'quick_list', 'back_office_list', 'counters', 'timezone')
     column_labels = {'sb': 'Smartboard', 'timezone.timezone_name': 'Timezone Name'}
     column_sortable_list = ['office_name', 'sb', 'deleted', 'exams_enabled_ind', 'quick_list', 'counters', 'exams_enabled_ind', 'back_office_list']
     column_default_sort = 'office_name'

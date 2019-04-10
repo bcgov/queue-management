@@ -370,9 +370,11 @@ class Bootstrap(Command):
         db.session.commit()
 
         qt_counter = theq.Counter(
+            counter_id=1,
             counter_name="Quick Trans",
         )
         counter = theq.Counter(
+            counter_id=2,
             counter_name="Counter",
         )
         #-- CSR values ------------------------------------------------------

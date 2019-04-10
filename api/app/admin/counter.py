@@ -19,17 +19,12 @@ from qsystem import db
 
 
 class CounterConfig(Base):
-    roles_allowed = ['GA', 'SUPPORT'] # TODO: remove GA
-
+    roles_allowed = ['SUPPORT']
     def is_accessible(self):
         return current_user.is_authenticated and current_user.role.role_code in self.roles_allowed
 
     create_modal = False
     edit_modal = False
-    # form_excluded_columns = ('roles',)
-    # column_labels = {'role_desc': 'Role Description'}
-    # form_create_rules = ('role_code', 'role_desc')
-    # form_edit_rules = ('role_code', 'role_desc')
 
 
 CounterModelView = CounterConfig(Counter, db.session)
