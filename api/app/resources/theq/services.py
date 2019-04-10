@@ -57,7 +57,8 @@ class Refresh(Resource):
                 ).join(
                     Service
                 ).filter(
-                    Citizen.office_id == office_id
+                    Citizen.office_id == office_id,
+                    Service.display_dashboard_ind == 1,
                 )
                 if is_back_office:
                     results = results.filter(Service.parent_id == back_office.service_id)
