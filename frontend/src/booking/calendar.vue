@@ -115,6 +115,10 @@
         config: {
           columnHeaderFormat: 'ddd/D',
           selectAllow: (info) => {
+            let today = moment()
+            if(info.start.isBefore(today)){
+              return false
+            }
             if (this.scheduling || this.rescheduling) {
               return true
             }
@@ -190,6 +194,7 @@
         'selectedExam',
         'showBookingModal',
         'showExamInventoryModal',
+        'showStartDateModal',
       ]),
       adjustment() {
         if (this.scheduling || this.rescheduling) {
@@ -248,6 +253,7 @@
         'toggleOffsiteVisible',
         'toggleOtherBookingModal',
         'toggleScheduling',
+        'toggleStartDateModalVisible',
       ]),
       agendaDay() {
         this.$refs.bookingcal.fireMethod('changeView', 'agendaDay')
