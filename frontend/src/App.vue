@@ -121,5 +121,6 @@ limitations under the License.*/
     display: inline-block;
     width: 135px;
     padding-right: 0;
+    margin-left: 4px;
   }
 </style>

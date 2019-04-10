@@ -46,7 +46,7 @@ class Refresh(Resource):
                 return {'message': 'You do not have permission to view this end-point'}, 403
             
             back_office = Service.query.filter(Service.service_name=='Back Office')[0]
-            def top_reqs(back_office=True):
+            def top_reqs(is_back_office=True):
                 '''
                 Get top requests for the office, and set the lists based on those.
                 '''
@@ -57,7 +57,7 @@ class Refresh(Resource):
                 ).filter(
                     Citizen.office_id == office_id
                 )
-                if back_office:
+                if is_back_office:
                     results = results.filter(Service.parent_id == back_office.service_id)
                 else:
                     results = results.filter(Service.parent_id != back_office.service_id)
@@ -78,8 +78,8 @@ class Refresh(Resource):
                 service_ids = [c[0] for c in counts]
                 return [r.service for r in services.values() if r.service_id in service_ids]
 
-            quick_list = top_reqs(back_office=True)
-            back_office_list = top_reqs(back_office=False)
+            quick_list = top_reqs(is_back_office=False)
+            back_office_list = top_reqs(is_back_office=True)
 
             office = Office.query.get(office_id)
             office.quick_list =  quick_list

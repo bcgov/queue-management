@@ -164,7 +164,8 @@ export const store = new Vuex.Store({
           sb_type: null,
         },
         counters: [],
-        quick_list: []
+        quick_list: [],
+        back_office_list: []
       },
       office_id: null,
       qt_xn_csr_ind: true,
@@ -1124,6 +1125,18 @@ export const store = new Vuex.Store({
       if (context.state.services.length === 0) {
         context.dispatch('getServices')
       }
+    },
+
+    clickRefresh(context) {
+      context.commit('setPerformingAction', true)
+      const office_id = context.state.user.office_id
+      Axios(context).get(`/services/refresh/?office_id=${office_id}`)
+        .then(resp => {
+          context.commit('setQuickList', resp.data.quick_list)
+          context.commit('setBackOfficeList', resp.data.back_office_list)
+        }).finally(() => {
+        context.commit('setPerformingAction', false)
+      })
     },
 
     clickCitizenLeft(context) {
@@ -2268,6 +2281,10 @@ export const store = new Vuex.Store({
     setCSRState: (state, payload) => state.user.csr_state_id = payload,
   
     setUserCSRStateName: (state, payload) => state.user.csr_state.csr_state_name = payload,
+
+    setQuickList: (state, payload) => state.user.office.quick_list = payload,
+    
+    setBackOfficeList: (state, payload) => state.user.office.back_office_list = payload,
   
     setOffice: (state, officeType) => state.officeType = officeType,
   
