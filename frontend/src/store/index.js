@@ -1068,6 +1068,64 @@ export const store = new Vuex.Store({
       }
     },
 
+    clickQuickBackOffice(context) {
+      context.commit('setPerformingAction', true)
+      context.dispatch('toggleModalBack')
+
+      Axios(context).post('/citizens/', {})
+        .then(resp => {
+          let value = resp.data.citizen
+          context.commit('updateAddModalForm', {type:'citizen',value})
+          context.commit('resetServiceModal')
+          context.dispatch('putCitizen').then( () => {
+            context.dispatch('postServiceReq').then( () => {
+              context.dispatch('postBeginService', value.citizen_id).then( () => {
+                context.commit('toggleAddModal', false)
+                context.commit('toggleBegunStatus', true)
+                context.commit('toggleInvitedStatus', false)
+                context.commit('toggleServiceModal', true)
+                context.commit('resetAddModalForm')
+              }).finally(() => {
+                context.commit('setPerformingAction', false)
+              })
+            }).catch(() => {
+              context.commit('setPerformingAction', false)
+            })
+          }).catch(() => {
+            context.commit('setPerformingAction', false)
+          })
+        }).finally(() => {
+        context.commit('setPerformingAction', false)
+      })
+
+      let setupChannels = () => {
+        let index = -1
+        let { channel_options } = context.getters
+        channel_options.forEach((opt,i) => {
+          if (opt.text.toLowerCase() === 'back office') {
+            index = i
+          }
+        })
+        if (index >= 0) {
+          context.commit('updateAddModalForm', {type:'channel', value:channel_options[index].value})
+        } else {
+          context.commit('setDefaultChannel')
+        }
+      }
+
+      if (context.state.channels.length === 0) {
+        context.dispatch('getChannels').then( () => { setupChannels() })
+      } else {
+        setupChannels()
+      }
+      if (context.state.categories.length === 0) {
+        context.dispatch('getCategories')
+      }
+      if (context.state.services.length === 0) {
+        context.dispatch('getServices')
+      }
+    },
+
     clickCitizenLeft(context) {
       let {citizen_id} = context.getters.invited_citizen
       context.commit('setPerformingAction', true)
