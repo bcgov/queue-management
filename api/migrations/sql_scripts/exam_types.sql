@@ -1,6 +1,6 @@
 use qsystem;
 
-insert into examtypes (exam_type_name, exam_color, number_of_hours, method_type, ita_ind, group_exam_ind) values ('COFQ - 3HR Group Exam', '#FF69B4', 3, 'Written', 1 , 0)
+insert into examtypes (exam_type_name, exam_color, number_of_hours, method_type, ita_ind, group_exam_ind) values ('COFQ - 3HR Group Exam', '#FF69B4', 3, 'Written', 1 , 1)
 
 insert into examtypes (exam_type_name, exam_color, number_of_hours, method_type, ita_ind, group_exam_ind) values ('COFQ - 3HR Single Exam', '#FF69B4', 3, 'Written', 1, 0)
 
@@ -10,7 +10,7 @@ insert into examtypes (exam_type_name, exam_color, number_of_hours, method_type,
 
 insert into examtypes (exam_type_name, exam_color, number_of_hours, method_type, ita_ind, group_exam_ind) values ('COFQ - 3HR Single Exam - Time Extension', '#FF69B4', 3, 'Written', 1, 0)
 
-insert into examtypes (exam_type_name, exam_color, number_of_hours, method_type, ita_ind, group_exam_ind) values ('IPSE - 4HR Group Exam', '#FFD701', 3, 'Written', 1, 0)
+insert into examtypes (exam_type_name, exam_color, number_of_hours, method_type, ita_ind, group_exam_ind) values ('IPSE - 4HR Group Exam', '#FFD701', 3, 'Written', 1, 1)
 
 insert into examtypes (exam_type_name, exam_color, number_of_hours, method_type, ita_ind, group_exam_ind) values ('IPSE - 4HR Single Exam', '#FFD701', 3, 'Written', 1, 0)
 
@@ -20,7 +20,7 @@ insert into examtypes (exam_type_name, exam_color, number_of_hours, method_type,
 
 insert into examtypes (exam_type_name, exam_color, number_of_hours, method_type, ita_ind, group_exam_ind) values ('IPSE - 4HR Single Exam - Time Extension', '#FFD701', 3, 'Written', 1, 0)
 
-insert into examtypes (exam_type_name, exam_color, number_of_hours, method_type, ita_ind, group_exam_ind) values ('SLE - 3HR Group Exam', '#8FBC8F', 3, 'Written', 1, 0)
+insert into examtypes (exam_type_name, exam_color, number_of_hours, method_type, ita_ind, group_exam_ind) values ('SLE - 3HR Group Exam', '#8FBC8F', 3, 'Written', 1, 1)
 
 insert into examtypes (exam_type_name, exam_color, number_of_hours, method_type, ita_ind, group_exam_ind) values ('SLE - 3HR Single Exam', '#8FBC8F', 3, 'Written', 1, 0)
 

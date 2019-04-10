@@ -558,7 +558,7 @@ class Bootstrap(Command):
             number_of_hours = 3,
             method_type = "Written",
             ita_ind = 1,
-            group_exam_ind = 0
+            group_exam_ind = 1
         )
 
         exam_type_two = bookings.ExamType(
@@ -603,7 +603,7 @@ class Bootstrap(Command):
             number_of_hours=4,
             method_type="Written",
             ita_ind=1,
-            group_exam_ind=0
+            group_exam_ind=1
         )
 
         exam_type_seven = bookings.ExamType(
@@ -648,7 +648,7 @@ class Bootstrap(Command):
             number_of_hours=3,
             method_type="Written",
             ita_ind=1,
-            group_exam_ind=0
+            group_exam_ind=1
         )
 
         exam_type_twelve = bookings.ExamType(
