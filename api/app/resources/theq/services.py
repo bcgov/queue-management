@@ -16,21 +16,63 @@ from functools import cmp_to_key
 from flask import request
 from flask_restplus import Resource
 from qsystem import api, jwt
+from qsystem import db
 from app.models.theq import Service
 from app.models.theq import Office
+from app.models.theq import ServiceReq, Citizen
 from sqlalchemy import exc
-from app.schemas.theq import ServiceSchema
+from app.schemas.theq import ServiceSchema, OfficeSchema
 
 
 @api.route("/services/refresh/", methods=["GET"])
 class Refresh(Resource):
     """
-    Refresh the quick lists.
+    Refresh the quick lists to the 5 most frequently used items.
+    Returns the resulting office object with updated lists indicated.
     """
     @jwt.requires_auth
     def get(self):
         if request.args.get('office_id'):
-            return {}
+            office_id = int(request.args.get('office_id'))
+
+            back_office = Service.query.filter(Service.service_name=='Back Office')[0]
+            def top_reqs(back_office=True):
+                '''
+                Get top requests for the office, and set the lists based on those.
+                '''
+                results = ServiceReq.query.join(
+                    Citizen
+                ).join(
+                    Service
+                ).filter(
+                    Citizen.office_id == office_id
+                )
+                if back_office:
+                    results = results.filter(Service.parent_id == back_office.service_id)
+                results = results.order_by(
+                    ServiceReq.sr_id.desc()
+                ).limit(100)
+                counts = {}
+                services = {}
+                for result in results:
+                    service_ct = counts.get(result.service_id, 0)
+                    counts[result.service_id] = service_ct + 1
+                    services[result.service_id] = result
+
+                counts = list(counts.items())[-5:]
+                counts.sort(key=lambda x: x[1]) # sort by quantity.
+                service_ids = [c[0] for c in counts]
+                return [r.service for r in services.values() if r.service_id in service_ids]
+
+            quick_list = top_reqs(back_office=False)
+            back_office_list = top_reqs(back_office=False)
+
+            office = Office.query.get(office_id)
+            office.quick_list =  quick_list
+            office.back_office_list = back_office_list
+            db.session.commit()
+
+            return OfficeSchema().dump(office)
         else:
             return {'message': 'no office specified'}, 400
 

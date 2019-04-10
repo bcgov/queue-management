@@ -74,6 +74,7 @@ export default {
   },
   mounted() {
     this.$root.$on("showAddMessage", () => {
+      console.warn('showAlert') // TODO, the following method doesn't exist.
       this.showAlert()
     })
   },
