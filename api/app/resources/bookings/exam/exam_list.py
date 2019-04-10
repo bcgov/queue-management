@@ -38,7 +38,7 @@ class ExamList(Resource):
             if csr.liaison_designate == 1:
                 exams = Exam.query.filter(Exam.deleted_date.is_(None))\
                                   .filter(or_(Exam.exam_returned_date.is_(None),
-                                              Exam.exam_returned_date > ninety_day_filter)).all
+                                              Exam.exam_returned_date > ninety_day_filter))
 
             else:
                 exams = Exam.query.filter(Exam.deleted_date.is_(None))\
