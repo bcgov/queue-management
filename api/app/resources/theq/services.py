@@ -19,7 +19,7 @@ from qsystem import api, jwt
 from qsystem import db
 from app.models.theq import Service
 from app.models.theq import Office
-from app.models.theq import ServiceReq, Citizen
+from app.models.theq import ServiceReq, Citizen, CSR
 from sqlalchemy import exc
 from app.schemas.theq import ServiceSchema, OfficeSchema
 
@@ -35,6 +35,16 @@ class Refresh(Resource):
         if request.args.get('office_id'):
             office_id = int(request.args.get('office_id'))
 
+            csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
+            
+            if csr.role.role_code == "GA":
+            
+                if csr.office_id != office_id:
+                    return {'message': 'This is not your office, cannot refresh.'}, 403
+            
+            elif csr.role.role_code != "SUPPORT":
+                return {'message': 'You do not have permission to view this end-point'}, 403
+            
             back_office = Service.query.filter(Service.service_name=='Back Office')[0]
             def top_reqs(back_office=True):
                 '''
@@ -49,9 +59,13 @@ class Refresh(Resource):
                 )
                 if back_office:
                     results = results.filter(Service.parent_id == back_office.service_id)
+                else:
+                    results = results.filter(Service.parent_id != back_office.service_id)
                 results = results.order_by(
                     ServiceReq.sr_id.desc()
                 ).limit(100)
+
+                # Some fancy dicts to collect the top 5 services in a list.
                 counts = {}
                 services = {}
                 for result in results:
@@ -64,7 +78,7 @@ class Refresh(Resource):
                 service_ids = [c[0] for c in counts]
                 return [r.service for r in services.values() if r.service_id in service_ids]
 
-            quick_list = top_reqs(back_office=False)
+            quick_list = top_reqs(back_office=True)
             back_office_list = top_reqs(back_office=False)
 
             office = Office.query.get(office_id)
