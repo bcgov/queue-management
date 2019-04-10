@@ -57,10 +57,6 @@
             </b-dropdown-item>
         </b-dropdown>
       </b-button-group>
-      <b-button class="btn-primary"
-          @click="clickRefresh"
-          :disabled="citizenInvited===true || performingAction || showAdmin"
-          id="add-citizen-button">Refresh</b-button>
     </div>
     <div />
   </div>
@@ -105,7 +101,6 @@
         'clickBackOffice',
         'clickQuickServe',
         'clickQuickBackOffice',
-        'clickRefresh'
       ]),
       addCitizen() {
         this.clickAddCitizen()
