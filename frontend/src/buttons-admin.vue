@@ -51,12 +51,11 @@
           {value: 'smartboard', text: 'Smartboard Content'},
           {value: 'invigilator', text: 'Invigilators'},
           {value: 'room', text: 'Rooms'},
-          {value: 'examtype', text: 'Exam Types'}
+          {value: 'examtype', text: 'Exam Types'},
+          {value: 'counter', text: 'Counters'}
         ],
         optionsGA: [
           {value: 'csr', text: 'CSRs'},
-          {value: 'counter', text: 'Counters'}, // TODO remove
-          {value: 'office', text: 'Offices'}, // TODO remove
           {value: 'invigilator', text: 'Invigilators'},
           {value: 'room', text: 'Rooms'}
         ]
