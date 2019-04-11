@@ -45,7 +45,7 @@
               </select>
             </div>
             <select id="counter-selection" class="custom-select" v-model="counter_selection">
-              <option v-for="counter in user.office.counters"
+              <option v-for="counter in sortedCounters"
                     :value="counter.counter_id"
                     :key="counter.counter_id">
                 {{counter.counter_name}}
@@ -125,6 +125,13 @@ export default {
       set(value) {
         this.updateAddModalForm({ type: "priority", value })
       }
+    },
+    sortedCounters(){
+      var sorted = this.user.office.counters.sort((a,b) => {
+        return a.counter_name > b.counter_name
+      })
+      console.log(sorted)
+      return sorted
     }
   },
   methods: {

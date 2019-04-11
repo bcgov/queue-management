@@ -24,6 +24,8 @@ var flashInt
 
 Vue.use(Vuex)
 
+const DEFAULT_COUNTER_NAME = "Counter";
+
 export const store = new Vuex.Store({
   modules: {
     addExamModule
@@ -42,11 +44,10 @@ export const store = new Vuex.Store({
       search: '',
       category: '',
       service:'',
-      quick: 0,
       suspendFilter: false,
       selectedItem: '',
       priority: 2,
-      counter: 1,
+      counter: null,
     },
     addModalSetup: null,
     nonITAExam: false,
@@ -127,7 +128,6 @@ export const store = new Vuex.Store({
       citizen_comments: '',
       activeQuantity: 1,
       accurate_time_ind: 1,
-      quick: 0,
       priority: 2,
       counter: 1,
     },
@@ -168,7 +168,6 @@ export const store = new Vuex.Store({
         back_office_list: []
       },
       office_id: null,
-      qt_xn_csr_ind: true,
       receptionist_ind: null
     },
     userLoadingFail: false,
@@ -403,6 +402,7 @@ export const store = new Vuex.Store({
     },
 
     form_data: state => {
+      console.log(state.addModalForm)
       return state.addModalForm
     },
 
@@ -430,23 +430,13 @@ export const store = new Vuex.Store({
       }
     },
 
-    quick_trans_status(state) {
-      if (state.user.qt_xn_csr_ind == 1) {
-        return true
-      } else if (state.user.qt_xn_csr_ind == 0) {
-        return false
-      } else {
-        console.error('quick trans status: ', state.user.qt_xn_csr_ind)
-      }
-    },
-
     receptionist_status(state) {
       if (state.user.receptionist_ind == 1) {
         return true
       } else if (state.user.receptionist_ind == 0) {
         return false
       } else {
-        console.error('receptionist status: ', state.user.qt_xn_csr_ind)
+        console.error('receptionist status: ', state.user.receptionist_ind)
       }
     }
   },
@@ -603,18 +593,6 @@ export const store = new Vuex.Store({
         let url = `/channels/`
         Axios(context).get(url).then(resp=>{
           context.commit('setChannels', resp.data.channels)
-          resolve(resp)
-        }, error => {
-          reject(error)
-        })
-      })
-    },
-
-    getCounterTypes(context) {
-      return new Promise((resolve, reject) => {
-        let url = `/counters/`;
-        Axios(context).get(url).then(resp=>{
-          context.commit('setCounterTypes', resp.data.counters)
           resolve(resp)
         }, error => {
           reject(error)
@@ -779,6 +757,8 @@ export const store = new Vuex.Store({
           context.commit('setUser', resp.data.csr)
           let officeType = resp.data.csr.office.sb.sb_type
           context.commit('setOffice', officeType)
+          context.commit('setDefaultCounter', resp.data.csr.office.counters.filter(
+            c => c.counter_name === DEFAULT_COUNTER_NAME)[0])
           let individualExamBoolean = false
           let groupExamBoolean = false
           
@@ -1802,14 +1782,6 @@ export const store = new Vuex.Store({
         citizen_id = context.state.serviceModalForm.citizen_id
         let prevCitizen = context.getters.invited_citizen
 
-        if (context.state.showAddModal) {
-          // @TODO Not sure when this is used
-
-          // quick = context.getters.form_data.quick
-          // if (prevCitizen.qt_xn_citizen_ind !== quick) {
-          //   data.qt_xn_citizen_ind = quick
-          // }
-        }
         if (!context.state.showAddModal) {
           if ( citizen_comments !== prevCitizen.citizen_comments ) {
             data.citizen_comments = citizen_comments
@@ -2110,7 +2082,6 @@ export const store = new Vuex.Store({
     
       let formData = {
         comments: citizen.citizen_comments,
-        quick: citizen.qt_xn_citizen_ind,
         priority: citizen.priority,
         citizen: citizen,
         channel: active_service.channel_id,
@@ -2272,8 +2243,6 @@ export const store = new Vuex.Store({
   
     toggleGAScreenModal: (state, payload) => state.showGAScreenModal = payload,
   
-    setQuickTransactionState: (state, payload) => state.user.qt_xn_csr_ind = payload,
-  
     setReceptionistState: (state, payload) => state.user.receptionist_ind = payload,
 
     setCounterStatusState: (state, payload) => state.user.counter_id = payload,
@@ -2287,7 +2256,12 @@ export const store = new Vuex.Store({
     setBackOfficeList: (state, payload) => state.user.office.back_office_list = payload,
   
     setOffice: (state, officeType) => state.officeType = officeType,
-  
+
+    setDefaultCounter: (state, defaultCounter) => {
+      state.addModalForm.counter = defaultCounter.counter_id
+      state.serviceModalForm.counter = defaultCounter.counter_id
+    },
+
     flashServeNow: (state, payload) => state.serveNowStyle = payload,
   
     setServeNowAction: (state, payload) => state.serveNowAltAction = payload,
