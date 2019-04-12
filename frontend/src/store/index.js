@@ -25,6 +25,7 @@ var flashInt
 Vue.use(Vuex)
 
 const DEFAULT_COUNTER_NAME = "Counter";
+var _default_counter_id = null;
 
 export const store = new Vuex.Store({
   modules: {
@@ -2060,7 +2061,7 @@ export const store = new Vuex.Store({
             Vue.set(
               state.addModalForm,
               key,
-              1
+              _default_counter_id
             )
             break
           default:
@@ -2260,6 +2261,7 @@ export const store = new Vuex.Store({
     setDefaultCounter: (state, defaultCounter) => {
       state.addModalForm.counter = defaultCounter.counter_id
       state.serviceModalForm.counter = defaultCounter.counter_id
+      _default_counter_id = defaultCounter.counter_id
     },
 
     flashServeNow: (state, payload) => state.serveNowStyle = payload,
