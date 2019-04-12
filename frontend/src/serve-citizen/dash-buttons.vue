@@ -112,6 +112,7 @@
         if(this.user.receptionist_ind){
           this.clickAddCitizen()
           this.$store.commit('updateAddModalForm', {type:'service',value:service_id})
+          this.$store.commit('updateAddModalForm', {type:'search',value:service_name})
         } else {
           this.setAddModalSelectedItem(service_name)
           this.$store.commit('updateAddModalForm', {type:'service',value:service_id})
@@ -125,6 +126,7 @@
         if(this.user.receptionist_ind){
           this.clickBackOffice()
           this.$store.commit('updateAddModalForm', {type:'service',value:service_id})
+          this.$store.commit('updateAddModalForm', {type:'search',value:service_name})
         } else {
           this.setAddModalSelectedItem(service_name)
           this.$store.commit('updateAddModalForm', {type:'service',value:service_id})
