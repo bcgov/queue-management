@@ -249,13 +249,27 @@
                 </template>
 
                 <template v-else>
-                  <b-dropdown-item size="sm"
-                                   v-if="row.item.booking && Object.keys(row.item.booking).length > 0"
-                                   @click="updateCalendarBooking(row.item)">
-                    {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}</b-dropdown-item>
-                  <b-dropdown-item size="sm"
-                                   v-if="!row.item.booking || Object.keys(row.item.booking).length === 0"
+                  <template v-if="row.item.offsite_location === '_offsite'">
+                    <b-dropdown-item size="sm"
+                                     v-if="!row.item.booking || Object.keys(row.item.booking).length === 0"
+                                     @click="editGroupBooking(row.item)">Schedule Exam</b-dropdown-item>
+                  </template>
+                  <template v-if="row.item.offsite_location && row.item.offsite_location !== '_offsite'">
+                    <b-dropdown-item size="sm"
+                                     v-if="row.item.offsite_location"
+                                     @click="editGroupBooking(row.item)">
+                      {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}
+                    </b-dropdown-item>
+                  </template>
+                  <template template v-if="!row.item.offsite_location">
+                    <b-dropdown-item size="sm"
+                                     v-if="row.item.booking && Object.keys(row.item.booking).length > 0"
+                                     @click="updateCalendarBooking(row.item)">
+                      {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}</b-dropdown-item>
+                    <b-dropdown-item size="sm"
+                                     v-if="!row.item.booking || Object.keys(row.item.booking).length === 0"
                                      @click="addCalendarBooking(row.item)">Schedule Exam</b-dropdown-item>
+                  </template>
                 </template>
                 <b-dropdown-item size="sm"
                                  @click="editExamDetails(row.item)">Edit Exam Details</b-dropdown-item>

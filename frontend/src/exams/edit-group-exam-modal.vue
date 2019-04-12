@@ -31,7 +31,7 @@
                 </div>
                 <div class="q-id-grid-col" v-if="is_liaison_designate">
                   <div>Office: </div>
-                  <div>{{ actionedExam.booking.office.office_name }}</div>
+                  <div>{{ actionedExam.office.office_name }}</div>
                 </div>
               </div>
             </div>
@@ -170,7 +170,7 @@
       },
     },
     methods: {
-      ...mapActions(['getBookings', 'getExams', 'putRequest']),
+      ...mapActions(['getBookings', 'getExams', 'postBooking', 'putRequest']),
       ...mapMutations(['toggleEditGroupBookingModal']),
       cancel() {
         this.toggleEditGroupBookingModal(false)
@@ -271,6 +271,41 @@
         }
       },
       submit() {
+        if (!this.actionedExam.booking || !this.actionedExam.booking.start_time) {
+          let { exam_id } = this.actionedExam
+          let date = new moment(this.date).format('YYYY-MM-DD').toString()
+          let time = new moment(this.time).format('HH:mm:ssZ').toString()
+          let start = new moment(`${date}T${time}`)
+          let end = start.clone().add(parseInt(this.actionedExam.exam_type.number_of_hours), 'h')
+          let bookingPost = {
+            exam_id,
+            invigilator_id: null,
+            sbc_staff_invigilated: false,
+            start_time: start.clone().utc().format('YYYY-MM-DD[T]HH:mm:ssZ'),
+            end_time: end.clone().utc().format('YYYY-MM-DD[T]HH:mm:ssZ'),
+            booking_name: this.actionedExam.exam_name,
+          }
+          if (this.invigilator_id) {
+            if (this.invigilator_id === 'sbc staff') {
+              bookingPost.sbc_staff_invigilated = true
+            }
+            bookingPost.invigilator_id = this.invigilator_id
+          }
+          let examPut = {
+            offsite_location: this.offsite_location
+          }
+          this.postBooking(bookingPost).then( booking_id => {
+            examPut.booking_id = booking_id
+            this.putRequest({url: `/exams/${exam_id}/`, data: examPut}).then( () => {
+              this.getBookings().then( () => {
+                this.getExams().then( () => {
+                  this.cancel()
+                })
+              })
+            })
+          })
+          return
+        }
         let edits = this.editedFields
         let putRequests = []
         let local_timezone_name = this.user.office.timezone.timezone_name
@@ -294,10 +329,17 @@
           let end = start.clone().add(parseInt(this.itemCopy.exam_type.number_of_hours), 'h')
           bookingChanges['start_time'] = start.utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
           bookingChanges['end_time'] = end.utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
-          bookingChanges['invigilator_id'] = this.invigilator_id
-          if (bookingChanges.invigilator_id == '') {
-            bookingChanges.invigilator_id = null
+          bookingChanges['invigilator_id'] = null
+          bookingChanges['sbc_staff_invigilated'] = false
+          if (this.invigilator_id) {
+            if (this.invigilator_id === 'sbc') {
+              bookingChanges.sbc_staff_invigilated = true
+            } else {
+              bookingChanges.invigilator_id = this.invigilator_id
+              bookingChanges.sbc_staff_invigilated = false
+            }
           }
+          console.log(bookingChanges)
           putRequests.push({url:`/bookings/${this.itemCopy.booking.booking_id}/`, data: bookingChanges})
         }
         let examChanges = {}
@@ -319,13 +361,19 @@
       },
       setValues() {
         let tempItem = Object.assign({}, this.actionedExam)
-        let { timezone_name } = this.actionedExam.booking.office.timezone
-        let time = zone.tz(tempItem.booking.start_time, timezone_name).format('HH:mm:ss')
-        let date = moment(tempItem.booking.start_time).format('YYYY-MM-DD')
-        this.time = date + 'T' + time
-        this.date = date
+        if (tempItem.booking && tempItem.booking.start_time) {
+          let { timezone_name } = this.actionedExam.booking.office.timezone
+          let time = zone.tz(tempItem.booking.start_time, timezone_name).format('HH:mm:ss')
+          let date = moment(tempItem.booking.start_time).format('YYYY-MM-DD')
+          this.time = date + 'T' + time
+          this.date = date
+          if (tempItem.booking.sbc_staff_invigilated) {
+            this.invigilator_id = 'sbc'
+          } else {
+            this.invigilator_id = tempItem.booking.invigilator_id
+          }
+        }
         this.offsite_location = tempItem.offsite_location
-        this.invigilator_id = tempItem.booking.invigilator_id
         this.editedFields = []
         this.itemCopy = tempItem
       },

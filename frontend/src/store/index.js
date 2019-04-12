@@ -1605,6 +1605,13 @@ export const store = new Vuex.Store({
   
     postITAIndividualExam(context) {
       let responses = Object.assign( {}, context.state.capturedExam)
+      if (responses.on_or_off) {
+        if (responses.on_or_off === 'off') {
+          responses.offsite_location = '_offsite'
+        }
+        delete responses.on_or_off
+      }
+      
       let defaultValues = {
         exam_returned_ind: 0,
         number_of_students: 1,

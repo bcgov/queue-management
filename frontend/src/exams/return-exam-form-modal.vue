@@ -20,7 +20,7 @@
       <b-form-row>
         <b-col :cols="returned ? 3 : 12">
           <b-form-group class="mb-0">
-            <label class="mb-0">Exam Returned</label><br>
+            <label class="mb-0">Exam Status</label><br>
             <b-select id="exam-returned-select"
                       v-model="returned"
                       @input="handleReturnedStatus"
@@ -54,7 +54,7 @@
             <b-form-group class="mb-0 mt-2">
               <label class="mb-0">Action Taken</label><br>
               <b-form-input v-model="exam_returned_tracking_number"
-                            placeholder="Include tracking info"
+                            placeholder="Include tracking info or exam disposition"
                             ref="returnactiontaken"/>
             </b-form-group>
           </b-col>
