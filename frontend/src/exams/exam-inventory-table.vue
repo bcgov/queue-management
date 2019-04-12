@@ -119,7 +119,8 @@
                responsive
                :current-page="page"
                :per-page="10"
-               :filter="searchTerm">
+               :filter="searchTerm"
+               id="exam_inventory_table">
         <template slot="exam_received" slot-scope="row">
           {{ row.item.exam_received_date ? 'Yes' : 'No' }}
         </template>

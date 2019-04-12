@@ -23,10 +23,12 @@
                       @click="clickBack">Back</b-button>
             <b-button v-if="button.nextDisabled"
                       :class="button.nextClass"
-                      @click="setWarning">Next</b-button>
+                      @click="setWarning"
+                      id="add_exam_next">Next</b-button>
             <b-button v-else
                       :class="button.nextClass"
-                      @click="clickNext">Next</b-button>
+                      @click="clickNext"
+                      id="add_exam_next">Next</b-button>
           </div>
         </div>
         <div v-else-if="step == lastStep"
@@ -42,17 +44,20 @@
           <div style="display: flex">
             <b-button v-if="errors.length > 0"
                       @click="submitMsg='You have an error on a previous step.  Click on the red tab.'"
-                      class="btn-primary disabled">Submit</b-button>
+                      class="btn-primary disabled"
+                      id="add_exam_submit">Submit</b-button>
             <b-button v-else
                       class="btn-primary"
-                      @click="submit">Submit</b-button>
+                      @click="submit"
+                      id="add_exam_submit">Submit</b-button>
           </div>
         </div>
       </template>
       <template v-if="!unSubmitted">
         <div style="display: flex; justify-content: flex-start">
           <b-button class="btn-secondary"
-                    @click="clickCancel">Close</b-button>
+                    @click="clickCancel"
+                    id="add_exam_submit_close">Close</b-button>
         </div>
       </template>
     </template>
@@ -285,11 +290,13 @@
         let { setup } = this.addExamModal
         this.unSubmitted = false
         this.submitMsg = ''
+        console.log("SETUP", setup)
         if (setup === 'group') {
           this.clickAddExamSubmit(setup).then( resp => {
             this.status = resp
             this.getExams()
           }).catch( error => {
+            console.log(error)
             this.status = error
             this.getExams()
           })

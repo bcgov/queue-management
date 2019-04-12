@@ -2,11 +2,13 @@
   <div>
     <b-form-row no-gutters>
       <b-col :cols="simplified ? 12 : 7">
-        <input ref="filterref"
-               style="height: 38px; font-size: .8rem;"
-               class="form-control"
-               v-model="search"
-               placeholder="Type service here" />
+          <input ref="filterref"
+                 style="height: 38px; font-size: .8rem;"
+                 class="form-control"
+                 v-model="search"
+                 placeholder="Type service here"
+                 id="simplified_service_input"
+                 ></input>
       </b-col>
       <b-col v-if="!simplified || addModalSetup === 'add_mode'">
         <b-select id="add_citizen_catagories_select"
