@@ -2,23 +2,29 @@
   <div class="q-w100-flex-fs">
     <b-form inline>
       <b-dd v-if="role_code === 'GA' || is_ita_designate"
+            id="add-ita"
             split
             class="mr-1"
             variant="primary"
             text="Add ITA Exam"
             @click="handleClick('individual')">
-        <b-dd-item @click="handleClick('challenger')">Add Monthly Session Exam</b-dd-item>
+        <b-dd-item id="add_session"
+                   @click="handleClick('challenger')">Add Monthly Session Exam</b-dd-item>
       </b-dd>
       <b-button v-if="role_code!=='GA'"
+                id="add_ita"
                 class="mr-1 btn-primary"
                 @click="handleClick('individual')">Add ITA Exam</b-button>
       <b-button v-if="is_liaison_designate"
+                id="add_group"
                 class="mr-1 btn-primary"
                 @click="handleClick('group')">Add Group Exam</b-button>
-      <b-button class="mr-1 btn-primary"
+      <b-button id="add_other"
+                class="mr-1 btn-primary"
                 @click="handleClick('other')">Add Other Exam</b-button>
       <b-button v-if="is_pesticide_designate"
                 class="mr-1 btn-primary"
+                id="add_pesticide"
                 @click="handleClick('pesticide')">Add Pesticide Exam</b-button>
       <b-button v-if="is_financial_designate || role_code === 'GA' || is_ita_designate"
                 class="btn-primary mr-3"

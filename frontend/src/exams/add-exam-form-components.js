@@ -35,7 +35,7 @@ export const DateQuestion = Vue.component('date-question', {
       this.handleInput({
         target: {
           name: 'expiry_date',
-          value: e
+          value: e,
         }
       })
     }
@@ -51,7 +51,8 @@ export const DateQuestion = Vue.component('date-question', {
           <DatePicker :value="exam[q.key]"
                       lang="en"
                       @input="selectDate"
-                      class="w-50"></DatePicker>
+                      class="w-50"
+                      ></DatePicker>
         </b-form-group>
       </b-col>
       <checkmark :validated="validationObj[q.key].valid" />
@@ -157,7 +158,7 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
       <h5 v-if="addExamModal.setup === 'other' ">Add Non-ITA Exam</h5>
       <h5 v-if="addExamModal.setup === 'pesticide' ">Add Pesticide Exam</h5>
       <label>Exam Type</label><br>
-        <div @click="clickInput">
+        <div @click="clickInput" id="exam_type_dropdown">
           <b-input read-only
                    autocomplete="off"
                    :value="inputText"
@@ -291,6 +292,7 @@ export const InputQuestion = Vue.component('input-question', {
             <b-form-input :value="exam[q.key]"
                           :name="q.key"
                           :key="q.key"
+                          :id="q.key"
                           autocomplete="off"
                           @input.native="preHandleInput" />
           </b-form-group>
@@ -308,6 +310,7 @@ export const InputQuestion = Vue.component('input-question', {
             <b-form-input :value="exam[q.key]"
                           :name="q.key"
                           :key="q.key"
+                          :id="q.key"
                           autocomplete="off"
                           @input.native="preHandleInput" />
           </b-form-group>
@@ -391,6 +394,7 @@ export const LocationInput = Vue.component('input-question', {
                             :name="q.key"
                             autocomplete="off"
                             :key="q.key"
+                            :id="q.key"
                             @input.native="handleInput" />
             </b-form-group>
           </b-col>
@@ -485,7 +489,8 @@ export const NotesQuestion = Vue.component('notes-question', {
           <label>Click to Display the Notes Field (Optional)</label><br>
           <b-button @click="handleClick"
                     class="btn-secondary"
-                    size="sm">Display Notes Field?</b-button>
+                    size="sm"
+                    id="notes">Display Notes Field?</b-button>
         </b-form-group>
         <b-form-group v-if="notes">
           <label>Notes (Optional)</label><br>

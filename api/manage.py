@@ -344,25 +344,52 @@ class Bootstrap(Command):
         db.session.add(service_exams)
         db.session.commit()
 
+        print("--> Bookings: Timezones")
+
+        timezone_one = theq.Timezone(
+            timezone_name='America/Vancouver'
+        )
+
+        timezone_two = theq.Timezone(
+            timezone_name='America/Dawson_Creek'
+        )
+
+        timezone_three = theq.Timezone(
+            timezone_name='America/Edmonton'
+        )
+
+        timezone_four = theq.Timezone(
+            timezone_name='America/Creston'
+        )
+
+        db.session.add(timezone_one)
+        db.session.add(timezone_two)
+        db.session.add(timezone_three)
+        db.session.add(timezone_four)
+        db.session.commit()
+
         #-- Office values ---------------------------------------------------
         print("--> Offices")
         office_test = theq.Office(
             office_name="Test Office",
             office_number=999,
             sb_id=smartboard_call_ticket.sb_id,
-            exams_enabled_ind=1
+            exams_enabled_ind=1,
+            timezone_id=timezone_one.timezone_id
         )
         office_100 = theq.Office(
             office_name="100 Mile House",
             office_number=1,
             sb_id=smartboard_no_call.sb_id,
-            exams_enabled_ind=0
+            exams_enabled_ind=0,
+            timezone_id=timezone_one.timezone_id
         )
         office_victoria = theq.Office(
             office_name="Victoria",
             office_number=61,
             sb_id=smartboard_call_name.sb_id,
-            exams_enabled_ind=0
+            exams_enabled_ind=0,
+            timezone_id=timezone_one.timezone_id
         )
         db.session.add(office_test)
         db.session.add(office_100)
@@ -378,7 +405,12 @@ class Bootstrap(Command):
             qt_xn_csr_ind=1,
             receptionist_ind=1,
             deleted=None,
-            csr_state_id=csr_state_logout.csr_state_id
+            csr_state_id=csr_state_logout.csr_state_id,
+            qt_xn_csr_ind=0,
+            ita_designate=0,
+            pesticide_designate=0,
+            finance_designate=0,
+            liaison_designate=0
         )
         cfms_postman_non_operator = theq.CSR(
             username="cfms-postman-non-operator",
@@ -387,7 +419,12 @@ class Bootstrap(Command):
             qt_xn_csr_ind=0,
             receptionist_ind=1,
             deleted=None,
-            csr_state_id=csr_state_logout.csr_state_id
+            csr_state_id=csr_state_logout.csr_state_id,
+            qt_xn_csr_ind=0,
+            ita_designate=0,
+            pesticide_designate=0,
+            finance_designate=0,
+            liaison_designate=0
         )
         akroon3r = theq.CSR(
             username="akroon3r",
@@ -396,7 +433,12 @@ class Bootstrap(Command):
             qt_xn_csr_ind=0,
             receptionist_ind=1,
             deleted=None,
-            csr_state_id=csr_state_logout.csr_state_id
+            csr_state_id=csr_state_logout.csr_state_id,
+            qt_xn_csr_ind=0,
+            ita_designate=0,
+            pesticide_designate=0,
+            finance_designate=0,
+            liaison_designate=0
         )
         sjrumsby = theq.CSR(
             username="sjrumsby",
@@ -405,7 +447,12 @@ class Bootstrap(Command):
             qt_xn_csr_ind=0,
             receptionist_ind=1,
             deleted=None,
-            csr_state_id=csr_state_logout.csr_state_id
+            csr_state_id=csr_state_logout.csr_state_id,
+            qt_xn_csr_ind=0,
+            ita_designate=0,
+            pesticide_designate=0,
+            finance_designate=0,
+            liaison_designate=0
         )
         scottrumsby = theq.CSR(
             username="scottrumsby",
@@ -414,7 +461,12 @@ class Bootstrap(Command):
             qt_xn_csr_ind=0,
             receptionist_ind=1,
             deleted=None,
-            csr_state_id=csr_state_logout.csr_state_id
+            csr_state_id=csr_state_logout.csr_state_id,
+            qt_xn_csr_ind=0,
+            ita_designate=0,
+            pesticide_designate=0,
+            finance_designate=0,
+            liaison_designate=0
         )
         chrisdmac = theq.CSR(
             username="ChrisDMac",
@@ -423,7 +475,12 @@ class Bootstrap(Command):
             qt_xn_csr_ind=0,
             receptionist_ind=1,
             deleted=None,
-            csr_state_id=csr_state_logout.csr_state_id
+            csr_state_id=csr_state_logout.csr_state_id,
+            qt_xn_csr_ind=0,
+            ita_designate=0,
+            pesticide_designate=0,
+            finance_designate=0,
+            liaison_designate=0
         )
         gil0109 = theq.CSR(
             username="gil0109",
@@ -432,7 +489,12 @@ class Bootstrap(Command):
             qt_xn_csr_ind=0,
             receptionist_ind=1,
             deleted=None,
-            csr_state_id=csr_state_logout.csr_state_id
+            csr_state_id=csr_state_logout.csr_state_id,
+            qt_xn_csr_ind=0,
+            ita_designate=0,
+            pesticide_designate=0,
+            finance_designate=0,
+            liaison_designate=0
         )
         demo_ga = theq.CSR(
             username="admin",
@@ -441,7 +503,12 @@ class Bootstrap(Command):
             qt_xn_csr_ind=0,
             receptionist_ind=1,
             deleted=None,
-            csr_state_id=csr_state_logout.csr_state_id
+            csr_state_id=csr_state_logout.csr_state_id,
+            qt_xn_csr_ind=0,
+            ita_designate=0,
+            pesticide_designate=0,
+            finance_designate=0,
+            liaison_designate=0
         )
         demo_csr = theq.CSR(
             username="user",
@@ -450,7 +517,12 @@ class Bootstrap(Command):
             qt_xn_csr_ind=0,
             receptionist_ind=1,
             deleted=None,
-            csr_state_id=csr_state_logout.csr_state_id
+            csr_state_id=csr_state_logout.csr_state_id,
+            qt_xn_csr_ind=0,
+            ita_designate=0,
+            pesticide_designate=0,
+            finance_designate=0,
+            liaison_designate=0
         )
         db.session.add(cfms_postman_operator)
         db.session.add(cfms_postman_non_operator)
@@ -850,30 +922,6 @@ class Bootstrap(Command):
         db.session.add(exam_three)
         db.session.add(exam_four)
         db.session.add(exam_five)
-        db.session.commit()
-
-        print("--> Bookings: Timezones")
-
-        timezone_one = theq.Timezone(
-            timezone_name='America/Vancouver'
-        )
-
-        timezone_two = theq.Timezone(
-            timezone_name='America/Dawson_Creek'
-        )
-
-        timezone_three = theq.Timezone(
-            timezone_name='America/Edmonton'
-        )
-
-        timezone_four = theq.Timezone(
-            timezone_name='America/Creston'
-        )
-
-        db.session.add(timezone_one)
-        db.session.add(timezone_two)
-        db.session.add(timezone_three)
-        db.session.add(timezone_four)
         db.session.commit()
 
         start_time = datetime(2019, 3, 28, 9, 0, 0)
