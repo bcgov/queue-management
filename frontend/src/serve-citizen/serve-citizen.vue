@@ -74,7 +74,7 @@
         <b-row no-gutters>
           <b-col cols="7" />
           <b-col cols="auto" style="align: right">
-            <select id="counter-selection" v-if="reception && !simplified" class="custom-select" v-model="counter_selection">
+            <select id="counter-selection" v-show="reception && !simplified" class="custom-select" v-model="counter_selection">
               <option v-for="counter in user.office.counters"
                     :value="counter.counter_id"
                     :key="counter.counter_id">
