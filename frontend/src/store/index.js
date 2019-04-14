@@ -1989,6 +1989,7 @@ export const store = new Vuex.Store({
       let csr_id = context.state.user.csr_id
       Axios(context).put(`/csrs/${csr_id}/`, {
         counter_id: context.state.user.counter_id,
+        receptionist_ind: context.state.user.receptionist_ind
       })
     },
 

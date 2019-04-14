@@ -73,6 +73,7 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
       
       counter_selection: {
         get() {
+          console.log(this.receptionist_status)
           if (this.receptionist_status === true) {
             return 'receptionist'
           } else {
