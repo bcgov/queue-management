@@ -263,6 +263,7 @@
           this.setAddExamModalSetting({ office_number })
         }
         if (setup === 'other') {
+          this.captureExamDetail({ key: 'on_or_off', value: 'on' })
           let value = moment().add(60, 'd')
           this.captureExamDetail({ key: 'expiry_date', value })
         }

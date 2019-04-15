@@ -20,7 +20,7 @@
         </div>
       </div>
       <template v-if="!confirm">
-        <b-form>
+        <b-form autocomplete="off">
           <b-form-row v-if="examAssociated">
             <b-col class="mb-2">
               <div class="q-info-display-grid-container">

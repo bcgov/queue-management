@@ -50,7 +50,7 @@
     </div>
     <div v-if="showModal && formStep == 2">
       <span style="font-weight: 600; font-size: 1.3rem;">Assign Invigilator</span>
-      <b-form>
+      <b-form autocomplete="off">
         <b-form-row>
           <b-col>
             <div class="table-holder">

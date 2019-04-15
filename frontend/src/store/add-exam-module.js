@@ -370,6 +370,17 @@ export const addExamModule = {
             digit: false,
           },
           {
+            key: 'on_or_off',
+            text: 'Exam Location',
+            minLength: 1,
+            digit: false,
+            kind: 'offsiteSelect',
+            options: [
+              { text: 'Offsite: Exam will be held at an external location', value: 'off', },
+              { text: 'Onsite: Exam will be held at SBC Office', value: 'on', }
+            ]
+          },
+          {
             kind: 'notes',
             key: 'notes',
             text: 'Additional Notes (optional)',
