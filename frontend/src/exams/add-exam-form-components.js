@@ -581,6 +581,7 @@ export const SelectOffice = Vue.component('select-office', {
               value: office_id
             }
           })
+          this.$nextTick(function() { this.$root.$emit('validateform') })
           return
         }
         this.handleInput({

@@ -15,7 +15,7 @@
   -->
 
 <template>
-  <b-form>
+  <b-form autocomplete="off">
     <template v-if="user.role && user.role.role_code==='SUPPORT' ">
       <div style="display: inline-flex;">
         <span style="font-size: 1.4rem; font-weight: 600; margin-right: 1em"> Editing: </span>

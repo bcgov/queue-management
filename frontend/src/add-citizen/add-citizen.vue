@@ -1,6 +1,6 @@
 <template>
   <b-modal :visible="showAddModal"
-           :size="simplified ? 'md' : 'lg' "
+           :size="simplified ? 'md' : 'lg'"
            hide-header
            hide-footer
            no-close-on-backdrop
@@ -8,8 +8,7 @@
            body-class="q-modal-body"
            class="m-0 p-0"
            @shown="setupForm()">
-    <div style="display: flex; flex-direction: row; justify-content: space-between"
-         class="modal_header"
+    <div class="modal_header div-top-cont"
          v-dragged="onDrag">
       <div>
         <h4>{{modalTitle}}</h4>
@@ -26,7 +25,7 @@
              @dismissed="dismissCountDown=0"
              @dismiss-count-down="countDownChanged">{{this.$store.state.alertMessage}}</b-alert>
     <div v-if="!minimizeWindow">
-      <div v-if="!this.addModalForm.citizen">
+      <div v-if="!this.addModalForm.citizen && !this.addModalForm.setup === 'add_mode'">
         <div class="q-loader" />
       </div>
       <div v-else>
@@ -63,18 +62,18 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from "vuex"
-import Buttons from "./form-components/buttons"
-import AddCitizenForm from "./add-citizen-form"
+import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import Buttons from './form-components/buttons'
+import AddCitizenForm from './add-citizen-form'
 
 export default {
-  name: "AddCitizen",
+  name: 'AddCitizen',
   components: {
     AddCitizenForm,
     Buttons
   },
   mounted() {
-    this.$root.$on("showAddMessage", () => {
+    this.$root.$on('showAddMessage', () => {
       this.showAlert()
     })
   },
@@ -93,7 +92,7 @@ export default {
       addModalSetup: 'addModalSetup',
       serviceModalForm: 'serviceModalForm',
     }),
-    ...mapGetters({form_data: "form_data", reception: "reception",}),
+    ...mapGetters(['form_data', 'reception',]),
     simplified() {
       if (this.$route.path !== '/queue') {
         return true
@@ -101,20 +100,23 @@ export default {
       return false
     },
     modalTitle() {
-      if (this.addModalSetup === "edit_mode") {
-        return "Edit Service"
+      if (this.addModalSetup === 'edit_mode') {
+        return 'Edit Service'
+      }
+      if (this.$route.path === '/appointments') {
+        return 'Add a Service'
       }
       if (this.simplified) {
         return 'Begin Tracking'
       }
-      return "Add Citizen"
+      return 'Add Citizen'
     },
     quickTrans: {
       get() {
         return this.form_data.quick
       },
       set(value) {
-        this.updateAddModalForm({ type: "quick", value })
+        this.updateAddModalForm({ type: 'quick', value })
       }
     },
     priority_selection: {
@@ -122,37 +124,18 @@ export default {
         return this.form_data.priority
       },
       set(value) {
-        this.updateAddModalForm({ type: "priority", value })
+        this.updateAddModalForm({ type: 'priority', value })
       }
     }
   },
   methods: {
-    ...mapActions(["cancelAddCitizensModal"]),
-    ...mapMutations(["updateAddModalForm", "setDefaultChannel"]),
-    countDownChanged(dismissCountDown) {
-      this.dismissCountDown = dismissCountDown
-    },
-    setupForm() {
-      let setup = this.addModalSetup;
-      if (this.simplified) {
-        this.$root.$emit("focusfilter")
-        return
-      }
-      if (setup === "add_mode" || setup === "edit_mode") {
-        this.$root.$emit("focusfilter")
-      } else {
-        if (!this.reception) {
-          this.$root.$emit("focusfilter")
-        } else if (this.reception) {
-          this.$root.$emit("focuscomments")
-        }
-      }
-    },
+    ...mapActions(['cancelAddCitizensModal']),
+    ...mapMutations(['setDefaultChannel', 'toggleAddModal',  'updateAddModalForm',]),
     Alert() {
       this.dismissCountDown = this.dismissSecs
     },
-    toggleMinimize() {
-      this.minimizeWindow = !this.minimizeWindow
+    countDownChanged(dismissCountDown) {
+      this.dismissCountDown = dismissCountDown
     },
     onDrag({ el, deltaX, deltaY, offsetX, offsetY, clientX, clientY, first, last }) {
       if (first) {
@@ -167,7 +150,26 @@ export default {
       this.top = (this.top || 0) + deltaY
       var add_modal = document.getElementsByClassName('modal-content')[0]
       add_modal.style.transform = "translate("+this.left+"px,"+this.top+"px)"
-    }
+    },
+    setupForm() {
+      let setup = this.addModalSetup;
+      if (this.simplified) {
+        this.$root.$emit('focusfilter')
+        return
+      }
+      if (setup === 'add_mode' || setup === 'edit_mode') {
+        this.$root.$emit('focusfilter')
+      } else {
+        if (!this.reception) {
+          this.$root.$emit('focusfilter')
+        } else if (this.reception) {
+          this.$root.$emit('focuscomments')
+        }
+      }
+    },
+    toggleMinimize() {
+      this.minimizeWindow = !this.minimizeWindow
+    },
   }
 }
 </script>
@@ -184,6 +186,12 @@ export default {
 .add-buttons {
   background: #504e4f;
   padding: 5px 15px 20px;
+}
+
+.div-top-cont {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .button-row {
