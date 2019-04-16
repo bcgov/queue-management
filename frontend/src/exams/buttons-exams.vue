@@ -1,14 +1,9 @@
 <template v-if="showExams">
-  <div class="q-w100-flex-fe pr-3" v-if="is_financial_designate">
-    <b-button class="btn-primary mr-3"
-              @click="clickGenFinReport">Generate Financial Report</b-button>
-    <FinancialReportModal />
-  </div>
-  <div class="q-w100-flex-fs" v-else>
+  <div class="q-w100-flex-fs">
     <b-form inline>
       <b-dd v-if="role_code === 'GA'"
             split
-            class="mr-2"
+            class="mr-1"
             variant="primary"
             text="Add ITA Exam"
             @click="handleClick('individual')">
@@ -23,8 +18,12 @@
       <b-button class="mr-1 btn-primary"
                 @click="handleClick('other')">Add Other Exam</b-button>
       <b-button v-if="is_pesticide_designate"
-                class="btn-primary"
+                class="mr-1 btn-primary"
                 @click="handleClick('pesticide')">Add Pesticide Exam</b-button>
+      <b-button v-if="is_financial_designate || role_code === 'GA' || is_ita_designate"
+                class="btn-primary mr-3"
+                @click="clickGenFinReport">Generate Financial Report</b-button>
+    <FinancialReportModal />
     </b-form>
     <AddExamModal />
   </div>
