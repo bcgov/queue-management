@@ -1,7 +1,7 @@
 <template v-if="showExams">
   <div class="q-w100-flex-fs">
     <b-form inline>
-      <b-dd v-if="role_code === 'GA'"
+      <b-dd v-if="role_code === 'GA' || is_ita_designate"
             split
             class="mr-1"
             variant="primary"
