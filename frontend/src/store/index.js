@@ -2258,19 +2258,11 @@ export const store = new Vuex.Store({
     toggleGAScreenModal: (state, payload) => state.showGAScreenModal = payload,
   
     setReceptionistState: (state, payload) => {
-        if (state.user.office.sb.sb_type === "callbyname" || state.user.office.sb.sb_type === "callbyticket") {
-          state.user.receptionist_ind = payload
-        } else {
-          state.user.receptionist_ind = 0
-        }
+      state.user.receptionist_ind = payload
     },
 
     setCounterStatusState: (state, payload) => {
-      if (state.user.office.sb.sb_type === "callbyname" || state.user.office.sb.sb_type === "callbyticket") {
-        state.user.counter_id = payload
-      } else {
-        state.user.receptionist_ind = _default_counter_id
-      }
+      state.user.counter_id = payload
     },
 
     setCSRState: (state, payload) => state.user.csr_state_id = payload,

@@ -109,7 +109,7 @@
         let service_id = e.target.dataset.id
         let service_name = e.target.innerText
 
-        if(this.user.receptionist_ind){
+        if(this.user.receptionist_ind && this.user.office.sb.sb_type !== "nocallonsmartboard"){
           this.clickAddCitizen()
           this.$store.commit('updateAddModalForm', {type:'service',value:service_id})
           this.$store.commit('updateAddModalForm', {type:'search',value:service_name})
@@ -123,7 +123,7 @@
         let service_id = e.target.dataset.id
         let service_name = e.target.innerText
 
-        if(this.user.receptionist_ind){
+        if(this.user.receptionist_ind && this.user.office.sb.sb_type !== "nocallonsmartboard"){
           this.clickBackOffice()
           this.$store.commit('updateAddModalForm', {type:'service',value:service_id})
           this.$store.commit('updateAddModalForm', {type:'search',value:service_name})
