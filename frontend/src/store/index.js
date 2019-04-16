@@ -1006,6 +1006,18 @@ export const store = new Vuex.Store({
         error => {
           context.commit('setMainAlert', 'An error occurred adding a citizen.')
         })
+
+      if (context.state.channels.length === 0) {
+        context.dispatch('getChannels').then( () => {
+          context.commit('setDefaultChannel')
+        })
+      }
+      if (context.state.channels.length > 0) {
+        context.commit('setDefaultChannel')
+      }
+      if (context.state.services.length === 0) {
+        context.dispatch('getServices')
+      }
     },
 
     clickBackOffice(context) {
@@ -2245,9 +2257,21 @@ export const store = new Vuex.Store({
   
     toggleGAScreenModal: (state, payload) => state.showGAScreenModal = payload,
   
-    setReceptionistState: (state, payload) => state.user.receptionist_ind = payload,
+    setReceptionistState: (state, payload) => {
+        if (state.user.office.sb.sb_type === "callbyname" || state.user.office.sb.sb_type === "callbyticket") {
+          state.user.receptionist_ind = payload
+        } else {
+          state.user.receptionist_ind = 0
+        }
+    },
 
-    setCounterStatusState: (state, payload) => state.user.counter_id = payload,
+    setCounterStatusState: (state, payload) => {
+      if (state.user.office.sb.sb_type === "callbyname" || state.user.office.sb.sb_type === "callbyticket") {
+        state.user.counter_id = payload
+      } else {
+        state.user.receptionist_ind = _default_counter_id
+      }
+    },
 
     setCSRState: (state, payload) => state.user.csr_state_id = payload,
   
