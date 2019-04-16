@@ -82,25 +82,31 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
         return 0
       }
       if (this.addExamModal.setup === 'individual') {
-        let exams = this.examTypes.filter(type => type.exam_type_name.includes('Single'))
+        let exams = this.examTypes.filter(type =>
+          type.ita_ind === 1 &&
+          type.group_exam_ind === 0 &&
+          !type.exam_type_name.includes('Monthly'));
         return exams.sort((a,b) => sorter(a,b))
       }
-      // TODO reimplement filter for Pesticides when they are re-activated
       if(this.addExamModal.setup === 'other') {
         let exams = this.examTypes.filter( type =>
-          !type.exam_type_name.includes('Group') &&
-          !type.exam_type_name.includes('Single') &&
-          !type.exam_type_name.includes('Monthly Session Exam') &&
-          !type.exam_type_name.includes('Pesticide')
-        )
+          type.ita_ind === 0 &&
+          type.group_exam_ind === 0 &&
+          type.pesticide_exam_ind === 0 &&
+          !type.exam_type_name.includes('Monthly')
+        );
         return exams.sort((a,b) => sorter(a,b))
       }
       if (this.addExamModal.setup === 'group') {
-        let exams = this.examTypes.filter(type => type.exam_type_name.includes('Group'))
+        let exams = this.examTypes.filter(type =>
+          type.group_exam_ind === 1
+        );
         return exams.sort((a,b) => sorter(a,b))
       }
       if (this.addExamModal.setup === 'pesticide') {
-        let exams = this.examTypes.filter(type => type.exam_type_name.includes('Pesticide'))
+        let exams = this.examTypes.filter(type =>
+          type.pesticide_exam_ind === 1 &&
+          type.group_exam_ind === 0);
         return exams
       }
     },

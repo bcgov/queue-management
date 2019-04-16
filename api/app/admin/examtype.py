@@ -36,7 +36,8 @@ class ExamTypeConfig(Base):
         'number_of_hours',
         'method_type',
         'ita_ind',
-        'group_exam_ind'
+        'group_exam_ind',
+        'pesticide_exam_ind'
     ]
 
     column_labels = {
@@ -46,6 +47,7 @@ class ExamTypeConfig(Base):
         'method_type': 'Method Type',
         'ita_ind': 'ITA Exam Flag',
         'group_exam_ind': 'Group Exam Flag',
+        'pesticide_exam_ind': 'Pesticide Exam Flag',
     }
 
     column_searchable_list = {'exam_type_name'}
@@ -60,7 +62,8 @@ class ExamTypeConfig(Base):
         'number_of_hours',
         'method_type',
         'ita_ind',
-        'group_exam_ind'
+        'group_exam_ind',
+        'pesticide_exam_ind'
     )
 
     form_edit_rules = {
@@ -70,6 +73,7 @@ class ExamTypeConfig(Base):
         'method_type': 'Method Type',
         'ita_ind': 'ITA Exam Flag',
         'group_exam_ind': 'Group Exam Flag',
+        'pesticide_exam_ind': 'Pesticide Exam Flag',
     }
 
     column_sortable_list = [
@@ -78,7 +82,8 @@ class ExamTypeConfig(Base):
         'number_of_hours',
         'method_type',
         'ita_ind',
-        'group_exam_ind'
+        'group_exam_ind',
+        'pesticide_exam_ind'
     ]
 
     column_default_sort = 'exam_type_name'

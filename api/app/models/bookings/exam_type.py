@@ -25,6 +25,7 @@ class ExamType(Base):
     method_type = db.Column(db.String(10), nullable=False)
     ita_ind = db.Column(db.Integer, nullable=False)
     group_exam_ind = db.Column(db.Integer,  nullable=False)
+    pesticide_exam_ind = db.Column(db.Integer, nullable=False)
 
     exam = db.relationship("Exam", lazy=False)
 

@@ -31,3 +31,5 @@ class ExamTypeSchema(ma.ModelSchema):
     number_of_hours = fields.Int()
     method_type = fields.Str()
     ita_ind = fields.Int()
+    group_exam_ind = fields.Int()
+    pesticide_exam_ind = fields.Int()
