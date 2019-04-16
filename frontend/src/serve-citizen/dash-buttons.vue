@@ -33,7 +33,9 @@
                   @click="addCitizen"
                   :disabled="citizenInvited===true || performingAction || showAdmin"
                   id="add-citizen-button">Add Citizen</b-button>
-        <b-dropdown v-if="user.office.quick_list.length > 0" variant="primary" :disabled="citizenInvited===true || performingAction || showAdmin" right>
+        <b-dropdown v-if="user.office.quick_list.length > 0"
+          :variant="citizenInvited===true || performingAction || showAdmin ? '' : 'primary'"
+          :disabled="citizenInvited===true || performingAction || showAdmin" right>
             <b-dropdown-item v-for="item in user.office.quick_list"
                     :data-id="item.service_id"
                     :key="item.service_id"
@@ -48,7 +50,9 @@
                   @click="clickBackOffice"
                   :disabled="citizenInvited===true || performingAction || showAdmin"
                   id="add-citizen-button">Back Office</b-button>
-        <b-dropdown v-if="user.office.back_office_list.length > 0" variant="primary" :disabled="citizenInvited===true || performingAction || showAdmin" right>
+        <b-dropdown v-if="user.office.back_office_list.length > 0"
+          :variant="citizenInvited===true || performingAction || showAdmin ? '' : 'primary'"
+          :disabled="citizenInvited===true || performingAction || showAdmin" right>
             <b-dropdown-item v-for="item in user.office.back_office_list"
                     :data-id="item.service_id"
                     :key="item.service_id"
