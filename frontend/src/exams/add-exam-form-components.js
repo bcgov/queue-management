@@ -107,7 +107,7 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
         let exams = this.examTypes.filter(type =>
           type.pesticide_exam_ind === 1 &&
           type.group_exam_ind === 0);
-        return exams
+        return exams.sort((a,b) => sorter(a,b))
       }
     },
     inputText() {
