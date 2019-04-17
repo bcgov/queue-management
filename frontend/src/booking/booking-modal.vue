@@ -183,7 +183,7 @@
           { key: 'Exam Expiry:', value: this.formatExpiry(this.exam.expiry_date) },
           { key: 'Writer:', value: this.exam.examinee_name },
           { key: 'Format of Exam:', value: this.exam.exam_method },
-          { key: 'Length of Exam:', value: this.exam.exam_type.number_of_hours + ' hrs' },
+          { key: 'Length of Exam:', value: this.exam.exam_type.number_of_hours + ' hrs ' + this.exam.exam_type.number_of_minutes + 'min'},
           { key: 'ServiceBC to Provide Reader:', value: this.invigilatorRequired ? 'Yes' : 'No' },
           { key: 'Room:', value: this.date.resource.title },
         ]
@@ -245,7 +245,8 @@
       endTime() {
         if (this.date && this.exam) {
           let l = parseInt(this.exam.exam_type.number_of_hours)
-          return new moment(this.date.start).add(l, 'hours')
+          let m = parseInt(this.exam.exam_type.number_of_minutes)
+          return new moment(this.date.start).add(l, 'hours').add(m, 'minutes')
         }
       },
     },

@@ -399,8 +399,9 @@
           this.removeSavedSelection()
           let booking = this.editedBookingOriginal
           if (this.selectedExam && Object.keys(this.selectedExam) > 0) {
-            let { number_of_hours } = this.selectedExam.exam_type
+            let { number_of_hours, number_of_minutes } = this.selectedExam.exam_type
             let endTime = new moment(event.start).add(number_of_hours, 'h')
+                                                 .add(number_of_minutes, 'm')
             event.end = endTime
             this.setClickedDate(event)
             let tempEvent = {
@@ -451,6 +452,7 @@
           if (this.selectedExam && Object.keys(this.selectedExam).length > 0) {
             this.unselect()
             selection.end = new moment(event.start).add(this.selectedExam.exam_type.number_of_hours, 'h')
+                                                   .add(this.selectedExam.exam_type.number_of_minutes, 'm')
             selection.title = this.selectedExam.exam_name
             this.removeSavedSelection()
             this.toggleBookingModal(true)

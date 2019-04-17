@@ -22,6 +22,7 @@ class ExamType(Base):
     exam_type_name = db.Column(db.String(50), nullable=False)
     exam_color = db.Column(db.String(10), nullable=False)
     number_of_hours = db.Column(db.Integer, nullable=False)
+    number_of_minutes = db.Column(db.Integer, nullable=True, default=0)
     method_type = db.Column(db.String(10), nullable=False)
     ita_ind = db.Column(db.Integer, nullable=False)
     group_exam_ind = db.Column(db.Integer,  nullable=False)
