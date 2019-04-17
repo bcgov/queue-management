@@ -280,6 +280,7 @@
         this.$refs.bookingcal.fireMethod('updateEvent', event)
       },
       eventRender(event, el, view) {
+        el.css('width', '85%')
         if (event.exam && view.name === 'listYear') {
           el.find('td.fc-list-item-title.fc-widget-content').html(
           `<div style="display: flex; justify-content: center; width: 100%;">
