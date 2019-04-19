@@ -34,10 +34,13 @@ limitations under the License.*/
         <p class="switch-p">{{user.csr_state_id === csr_states['Break'] ? 'On Break' : 'Active' }}</p>
       </div>
       <div id="select-wrapper" style="padding-right: 20px" v-if="reception">
-         <select id="counter-selection" class="custom-select" v-model="counter_selection">
-           <option value='counter'>Counter</option>
-           <option value='quick'>Quick Trans</option>
-           <option value='receptionist'>Receptionist</option>
+        <select id="counter-selection" class="custom-select" v-model="counter_selection">
+            <option value='receptionist'>Receptionist</option>
+            <option v-for="counter in user.office.counters"
+                  :value="counter.counter_id"
+                  :key="counter.counter_id">
+            {{counter.counter_name}}
+          </option>
         </select>
       </div>
       <div style="padding-right: 20px">
@@ -67,22 +70,24 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
     computed: {
       ...mapState(['user', 'csr_states']),
       ...mapGetters(['quick_trans_status', 'reception', 'receptionist_status']),
-      // set and get state of counter type (select dropdown in nav)
+      
       counter_selection: {
         get() {
-          if (this.quick_trans_status === true) {
-            return 'quick';
-          } else if (this.receptionist_status === true) {
-            return 'receptionist';
+          console.log(this.receptionist_status)
+          if (this.receptionist_status === true) {
+            return 'receptionist'
           } else {
-            return 'counter';
+            return this.user.counter_id
           }
         },
         set(value) {
-          this.setQuickTransactionState(value === 'quick')
-          this.setReceptionistState(value === 'receptionist')
+          if(value === 'receptionist'){
+            this.setReceptionistState(true)
+          } else {
+            this.setCounterStatusState(value)
+            this.setReceptionistState(false)
+          }
           this.updateCSRCounterTypeState()
-        //  zzz to do
         }
       },
       break_toggle: {
@@ -116,8 +121,8 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
       },
     },
     methods: {
-      ...mapActions(['updateCSRCounterTypeState', 'updateCSRState']),
-      ...mapMutations(['setQuickTransactionState', 'setReceptionistState', 'setCSRState', 'setUserCSRStateName']),
+      ...mapActions(['updateCSRCounterTypeState', 'updateCSRCounterTypeState', 'updateCSRState']),
+      ...mapMutations(['setQuickTransactionState', 'setReceptionistState', 'setCSRState', 'setUserCSRStateName', 'setCounterStatusState']),
       initSessionStorage() {
         if(sessionStorage.getItem('token')) {
           let tokenExp = sessionStorage.getItem('tokenExp')

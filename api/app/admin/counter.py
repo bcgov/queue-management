@@ -12,18 +12,19 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+from app.models.theq import Counter
+from .base import Base
+from flask_login import current_user
+from qsystem import db
 
-from .channel import ChannelModelView
-from .csr import CSRModelView
-from .index import HomeView
-from .login import LoginMenuLink
-from .logout import LogoutMenuLink
-from .office import OfficeModelView
-from .role import RoleModelView
-from .service import ServiceModelView
-from .smartboard import SmartBoardModelView
-from .invigilator import InvigilatorModelView
-from .room import RoomModelView
-from .counter import CounterModelView
-from .examtype import ExamTypeModelView
 
+class CounterConfig(Base):
+    roles_allowed = ['SUPPORT']
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.role.role_code in self.roles_allowed
+
+    create_modal = False
+    edit_modal = False
+
+
+CounterModelView = CounterConfig(Counter, db.session)

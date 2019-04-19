@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "54625a5b-9896-4e31-926f-a78237c46a97",
+		"_postman_id": "413b9c8c-fb9e-4106-9e25-80296812bb0c",
 		"name": "Queue-Management API Tests",
 		"description": "Test the back end APIs",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -6069,7 +6069,6 @@
 							"listen": "prerequest",
 							"script": {
 								"id": "f52aea38-cdcb-4d0b-8421-0ee5b7486913",
-								"type": "text/javascript",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -6084,14 +6083,14 @@
 									"",
 									"// //  Store the data in an environment variable.",
 									"// postman.setEnvironmentVariable(\"putBody\", JSON.stringify(bodyData));"
-								]
+								],
+								"type": "text/javascript"
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
 								"id": "a0ded2ba-3a0d-45ff-ac3a-ee25ad2bd578",
-								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
 									"eval(globals.postmanBDD);",
@@ -6140,7 +6139,8 @@
 									"        });",
 									"    });",
 									"}"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -6158,7 +6158,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"citizen_name\" : {{citizen_name}},\n    \"citizen_comments\" : {{citizen_comment}}\n}"
+							"raw": "{\n\t\"citizen_name\" : {{citizen_name}},\n    \"citizen_comments\" : {{citizen_comment}},\n    \"counter_id\": 2\n}"
 						},
 						"url": {
 							"raw": "{{url}}citizens/{{first_client}}/",
@@ -6596,7 +6596,6 @@
 							"listen": "prerequest",
 							"script": {
 								"id": "f58d00cd-ab75-407b-ab4c-a541944510e3",
-								"type": "text/javascript",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -6612,14 +6611,14 @@
 									"",
 									"// //  Store the data in an environment variable.",
 									"// postman.setEnvironmentVariable(\"putBody\", JSON.stringify(bodyData));"
-								]
+								],
+								"type": "text/javascript"
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
 								"id": "12b50df4-9162-4d6d-8ec4-ddebc3cb6cda",
-								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
 									"eval(globals.postmanBDD);",
@@ -6668,7 +6667,8 @@
 									"        });",
 									"    });",
 									"}"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -6686,7 +6686,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"citizen_name\" : {{citizen_name_quick}},\n    \"citizen_comments\" : {{citizen_comment_quick}},\n    \"qt_xn_citizen_ind\" : 1\n}"
+							"raw": "{\n\t\"citizen_name\" : {{citizen_name_quick}},\n    \"citizen_comments\" : {{citizen_comment_quick}},\n    \"qt_xn_citizen_ind\" : 1,\n    \"counter_id\": 1\n}"
 						},
 						"url": {
 							"raw": "{{url}}citizens/{{second_client}}/",
@@ -7112,19 +7112,18 @@
 							"listen": "prerequest",
 							"script": {
 								"id": "becda71c-71d6-4d2f-bad5-1a7a17da6128",
-								"type": "text/javascript",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
 								"id": "84ff5966-dfec-47d0-ae77-2c5819005fb9",
-								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
 									"eval(globals.postmanBDD);",
@@ -7209,7 +7208,8 @@
 									"//  Store the ID of the citizen just invited.",
 									"postman.setEnvironmentVariable(\"current_client\", JSON.stringify(currentCitizenId));",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -7228,7 +7228,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": ""
+							"raw": "{\n  \"counter_id\":1\n}"
 						},
 						"url": {
 							"raw": "{{url}}citizens/invite/",
@@ -7971,7 +7971,6 @@
 							"listen": "prerequest",
 							"script": {
 								"id": "b1833da7-f814-433f-8a11-295e244d9e4f",
-								"type": "text/javascript",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -7987,14 +7986,14 @@
 									"",
 									"// //  Store the data in an environment variable.",
 									"// postman.setEnvironmentVariable(\"putBody\", JSON.stringify(bodyData));"
-								]
+								],
+								"type": "text/javascript"
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
 								"id": "1eac614b-0f6c-4b84-8423-de10ffec680f",
-								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
 									"eval(globals.postmanBDD);",
@@ -8043,7 +8042,8 @@
 									"        });",
 									"    });",
 									"}"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -8061,7 +8061,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"citizen_name\" : {{citizen_name_quick}},\n    \"citizen_comments\" : {{citizen_comment_quick}},\n    \"qt_xn_citizen_ind\" : 1\n}"
+							"raw": "{\n\t\"citizen_name\" : {{citizen_name_quick}},\n    \"citizen_comments\" : {{citizen_comment_quick}},\n    \"qt_xn_citizen_ind\" : 1,\n    \"counter_id\": 1\n}"
 						},
 						"url": {
 							"raw": "{{url}}citizens/{{first_client}}/",
@@ -8499,7 +8499,6 @@
 							"listen": "prerequest",
 							"script": {
 								"id": "03647497-dfc2-437d-bace-b6ab2a08fa7b",
-								"type": "text/javascript",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -8514,14 +8513,14 @@
 									"",
 									"// //  Store the data in an environment variable.",
 									"// postman.setEnvironmentVariable(\"putBody\", JSON.stringify(bodyData));"
-								]
+								],
+								"type": "text/javascript"
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
 								"id": "9f22638b-3ebc-404e-a43b-fb8af32a2083",
-								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
 									"eval(globals.postmanBDD);",
@@ -8570,7 +8569,8 @@
 									"        });",
 									"    });",
 									"}"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -8588,7 +8588,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"citizen_name\" : {{citizen_name}},\n    \"citizen_comments\" : {{citizen_comment}}\n}"
+							"raw": "{\n\t\"citizen_name\" : {{citizen_name}},\n    \"citizen_comments\" : {{citizen_comment}},\n    \"counter_id\": 2\n}"
 						},
 						"url": {
 							"raw": "{{url}}citizens/{{second_client}}/",

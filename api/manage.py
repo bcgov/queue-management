@@ -369,13 +369,21 @@ class Bootstrap(Command):
         db.session.add(office_victoria)
         db.session.commit()
 
+        qt_counter = theq.Counter(
+            counter_id=1,
+            counter_name="Quick Trans",
+        )
+        counter = theq.Counter(
+            counter_id=2,
+            counter_name="Counter",
+        )
         #-- CSR values ------------------------------------------------------
         print("--> CSRs")
         cfms_postman_operator = theq.CSR(
             username="cfms-postman-operator",
             office_id=office_test.office_id,
             role_id=role_csr.role_id,
-            qt_xn_csr_ind=1,
+            counter_id=qt_counter.id,
             receptionist_ind=1,
             deleted=None,
             csr_state_id=csr_state_logout.csr_state_id
@@ -384,7 +392,7 @@ class Bootstrap(Command):
             username="cfms-postman-non-operator",
             office_id=office_test.office_id,
             role_id=role_csr.role_id,
-            qt_xn_csr_ind=0,
+            counter_id=counter.id,
             receptionist_ind=1,
             deleted=None,
             csr_state_id=csr_state_logout.csr_state_id
@@ -393,7 +401,7 @@ class Bootstrap(Command):
             username="akroon3r",
             office_id=office_test.office_id,
             role_id=role_csr.role_id,
-            qt_xn_csr_ind=0,
+            counter_id=counter.id,
             receptionist_ind=1,
             deleted=None,
             csr_state_id=csr_state_logout.csr_state_id
@@ -402,7 +410,7 @@ class Bootstrap(Command):
             username="sjrumsby",
             office_id=office_test.office_id,
             role_id=role_csr.role_id,
-            qt_xn_csr_ind=0,
+            counter_id=counter.id,
             receptionist_ind=1,
             deleted=None,
             csr_state_id=csr_state_logout.csr_state_id
@@ -411,7 +419,7 @@ class Bootstrap(Command):
             username="scottrumsby",
             office_id=office_test.office_id,
             role_id=role_csr.role_id,
-            qt_xn_csr_ind=0,
+            counter_id=counter.id,
             receptionist_ind=1,
             deleted=None,
             csr_state_id=csr_state_logout.csr_state_id
@@ -420,7 +428,7 @@ class Bootstrap(Command):
             username="ChrisDMac",
             office_id=office_test.office_id,
             role_id=role_csr.role_id,
-            qt_xn_csr_ind=0,
+            counter_id=counter.id,
             receptionist_ind=1,
             deleted=None,
             csr_state_id=csr_state_logout.csr_state_id
@@ -429,7 +437,7 @@ class Bootstrap(Command):
             username="gil0109",
             office_id=office_test.office_id,
             role_id=role_csr.role_id,
-            qt_xn_csr_ind=0,
+            counter_id=counter.id,
             receptionist_ind=1,
             deleted=None,
             csr_state_id=csr_state_logout.csr_state_id
@@ -438,7 +446,7 @@ class Bootstrap(Command):
             username="admin",
             office_id=office_test.office_id,
             role_id=role_ga.role_id,
-            qt_xn_csr_ind=0,
+            counter_id=counter.id,
             receptionist_ind=1,
             deleted=None,
             csr_state_id=csr_state_logout.csr_state_id
@@ -447,7 +455,7 @@ class Bootstrap(Command):
             username="user",
             office_id=office_test.office_id,
             role_id=role_csr.role_id,
-            qt_xn_csr_ind=0,
+            counter_id=counter.id,
             receptionist_ind=1,
             deleted=None,
             csr_state_id=csr_state_logout.csr_state_id
