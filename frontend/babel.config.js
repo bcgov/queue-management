@@ -1,35 +1,36 @@
 module.exports = function(api) {
-  api.cache.using( () => process.env.NODE_ENV !== 'test')
-  const isTest = api.env('test')
-  if (isTest) {
+  if (api.env('test')) {
     return {
       presets: [
         [
           '@babel/preset-env',
           {
-            useBuiltIns: "usage",
-            corejs: "3",
             targets: {
-              ie: "11"
-            }
-          },
+              browsers: [
+                'last 10 Chrome versions'
+              ]
+            },
+            useBuiltIns: 'usage',
+            corejs: 3,
+          }
         ]
-      ],
+      ]
     }
   }
   return {
     presets: [
-      '@vue/app',
       [
-          '@babel/preset-env',
-          {
-            useBuiltIns: "usage",
-            corejs: "3",
-            targets: {
-              ie: "11"
-          }
-        },
-      ]
-    ]
+        '@babel/preset-env',
+        {
+          modules: false,
+          targets: {
+            browsers: ['> 1%','last 2 versions', 'not ie <= 10'],
+          },
+          useBuiltIns: 'usage',
+          corejs: 3,
+        }
+      ],
+    ],
+    
   }
 }
