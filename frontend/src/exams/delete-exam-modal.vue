@@ -43,13 +43,15 @@
             'getExams',
           ]),
           ...mapMutations([
-            'toggleDeleteExamModalVisible'
+            'toggleDeleteExamModalVisible',
+            'toggleEditExamModal',
           ]),
           clickYes() {
             let exam_id = this.returnExam.exam_id
             this.deleteExam(exam_id)
                 .then(() => { this.getExams() })
             this.toggleDeleteExamModalVisible(false)
+            this.toggleEditExamModal(false)
             if (this.returnExam.booking_id){
               this.deleteBooking(this.returnExam.booking_id)
             }

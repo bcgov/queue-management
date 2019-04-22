@@ -22,21 +22,35 @@ class ExamTypeConfig(Base):
     roles_allowed = ['SUPPORT']
 
     def is_accessible(self):
-        return  current_user.is_authenticated and current_user.role.role_code in self.roles_allowed
+        return current_user.is_authenticated and current_user.role.role_code in self.roles_allowed
 
     def get_query(self):
         return self.session.query(self.model)
 
     create_modal = False
     edit_modal = False
+
     column_list = [
         'exam_type_name',
         'exam_color',
         'number_of_hours',
+        'number_of_minutes',
         'method_type',
         'ita_ind',
-        'group_exam_ind'
+        'group_exam_ind',
+        'pesticide_exam_ind'
     ]
+
+    column_labels = {
+        'exam_type_name': 'Exam Type Name',
+        'exam_color': 'Exam Color',
+        'number_of_hours': 'Number of Hours',
+        'number_of_minutes': 'Number of Minutes',
+        'method_type': 'Method Type',
+        'ita_ind': 'ITA Exam Flag',
+        'group_exam_ind': 'Group Exam Flag',
+        'pesticide_exam_ind': 'Pesticide Exam Flag',
+    }
 
     column_searchable_list = {'exam_type_name'}
 
@@ -48,19 +62,23 @@ class ExamTypeConfig(Base):
         'exam_type_name',
         'exam_color',
         'number_of_hours',
+        'number_of_minutes',
         'method_type',
         'ita_ind',
-        'group_exam_ind'
+        'group_exam_ind',
+        'pesticide_exam_ind'
     )
 
-    form_edit_rules = (
-        'exam_type_name',
-        'exam_color',
-        'number_of_hours',
-        'method_type',
-        'ita_ind',
-        'group_exam_ind'
-    )
+    form_edit_rules = {
+        'exam_type_name': 'Exam Type Name',
+        'exam_color': 'Exam Color',
+        'number_of_hours': 'Number of Hours',
+        'number_of_minutes': 'Number of Minutes',
+        'method_type': 'Method Type',
+        'ita_ind': 'ITA Exam Flag',
+        'group_exam_ind': 'Group Exam Flag',
+        'pesticide_exam_ind': 'Pesticide Exam Flag',
+    }
 
     column_sortable_list = [
         'exam_type_name',
@@ -68,7 +86,8 @@ class ExamTypeConfig(Base):
         'number_of_hours',
         'method_type',
         'ita_ind',
-        'group_exam_ind'
+        'group_exam_ind',
+        'pesticide_exam_ind'
     ]
 
     column_default_sort = 'exam_type_name'
