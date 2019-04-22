@@ -269,10 +269,7 @@
         }
         if (setup === 'pesticide') {
           let value = moment().add(60, 'd')
-          let id = this.examTypes.find(ex => ex.exam_type_name.includes("Pesticide")).exam_type_id
           this.captureExamDetail({ key: 'expiry_date', value })
-          this.captureExamDetail({ key: 'exam_type_id', id})
-          this.$root.$emit('validateform')
         }
       },
       tryAgain() {

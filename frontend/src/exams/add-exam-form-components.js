@@ -82,26 +82,32 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
         return 0
       }
       if (this.addExamModal.setup === 'individual') {
-        let exams = this.examTypes.filter(type => type.exam_type_name.includes('Single'))
+        let exams = this.examTypes.filter(type =>
+          type.ita_ind === 1 &&
+          type.group_exam_ind === 0 &&
+          !type.exam_type_name.includes('Monthly'));
         return exams.sort((a,b) => sorter(a,b))
       }
-      // TODO reimplement filter for Pesticides when they are re-activated
       if(this.addExamModal.setup === 'other') {
         let exams = this.examTypes.filter( type =>
-          !type.exam_type_name.includes('Group') &&
-          !type.exam_type_name.includes('Single') &&
-          !type.exam_type_name.includes('Monthly Session Exam') &&
-          !type.exam_type_name.includes('Pesticide')
-        )
+          type.ita_ind === 0 &&
+          type.group_exam_ind === 0 &&
+          type.pesticide_exam_ind === 0 &&
+          !type.exam_type_name.includes('Monthly')
+        );
         return exams.sort((a,b) => sorter(a,b))
       }
       if (this.addExamModal.setup === 'group') {
-        let exams = this.examTypes.filter(type => type.exam_type_name.includes('Group'))
+        let exams = this.examTypes.filter(type =>
+          type.group_exam_ind === 1
+        );
         return exams.sort((a,b) => sorter(a,b))
       }
       if (this.addExamModal.setup === 'pesticide') {
-        let exams = this.examTypes.filter(type => type.exam_type_name.includes('Pesticide'))
-        return exams
+        let exams = this.examTypes.filter(type =>
+          type.pesticide_exam_ind === 1 &&
+          type.group_exam_ind === 0);
+        return exams.sort((a,b) => sorter(a,b))
       }
     },
     inputText() {
@@ -152,17 +158,10 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
       <h5 v-if="addExamModal.setup === 'pesticide' ">Add Pesticide Exam</h5>
       <label>Exam Type</label><br>
         <div @click="clickInput">
-          <b-input v-if="addExamModal.setup !== 'pesticide'"
-                   read-only
+          <b-input read-only
                    autocomplete="off"
                    :value="inputText"
                    placeholder="click here to see options"
-                   :style="inputStyle" />
-          <b-input v-if="addExamModal.setup === 'pesticide'"
-                   read-only
-                   autocomplete="off"
-                   :value="inputText"
-                   placeholder="Pesticide"
                    :style="inputStyle" />
         </div>
         <div :class="dropclass"
@@ -171,8 +170,7 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
           <template v-for="type in dropItems">
             <b-dd-header v-if="type.header"
                          :style="{backgroundColor: type.exam_color}"
-                         :class="type.class">{{ type.exam_type_name }}
-                         :value="type.exam_</b-dd-header>
+                         :class="type.class">{{ type.exam_type_name }}</b-dd-header>
             <b-dd-item v-else :style="{backgroundColor: type.exam_color}"
                        @click="preHandleInput(type.exam_type_id)"
                        :name="type.exam_type_id"

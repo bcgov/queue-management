@@ -44,7 +44,7 @@
                   </div>
                   <div class="q-id-grid-col">
                     <div>Duration:</div>
-                    <div>{{ this.event.exam.exam_type.number_of_hours }} hrs</div>
+                    <div>{{ this.event.exam.exam_type.number_of_hours }} hrs {{ this.event.exam.exam_type.number_of_minutes }} min</div>
                   </div>
                   <div class="q-id-grid-col">
                     <div>Expiry:</div>
