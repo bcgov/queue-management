@@ -71,7 +71,7 @@ import GAScreen from './../ga-screen/ga-screen'
     },
     mounted() {
       this.$root.$on('showMessage', () => {
-        this.showAlert()
+        this.Alert()
       })
       this.totalH = window.innerHeight - 70 - 36
       this.$nextTick(function() {

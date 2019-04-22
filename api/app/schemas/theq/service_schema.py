@@ -15,7 +15,6 @@ limitations under the License.'''
 import toastedmarshmallow
 from marshmallow import fields
 from app.models.theq import Service
-from app.schemas.theq import OfficeSchema
 from qsystem import ma
 
 
