@@ -1632,7 +1632,7 @@ export const store = new Vuex.Store({
         start_time: start.clone().utc().format('YYYY-MM-DD[T]HH:mm:ssZ'),
         end_time: end.clone().utc().format('YYYY-MM-DD[T]HH:mm:ssZ'),
         fees: 'false',
-        booking_name: 'Monthly Session',
+        booking_name: responses.exam_name,
         office_id: context.state.user.office_id,
       }
       if (responses.on_or_off === 'on') {

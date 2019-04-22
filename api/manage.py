@@ -721,7 +721,7 @@ class Bootstrap(Command):
         )
 
         exam_type_sixteen = bookings.ExamType(
-            exam_type_name="Challenger Exam Session",
+            exam_type_name="Monthly Session Exam",
             exam_color="#FFFFFF",
             number_of_hours=4,
             method_type="Written",
