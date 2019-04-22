@@ -14,8 +14,7 @@
     "lint": "eslint --ext .js,.vue src"
   },
   "dependencies": {
-    "@babel/polyfill": "^7.0.0",
-    "@babel/runtime-corejs2": "^7.4.3",
+    "@babel/runtime-corejs3": "^7.4.3",
     "@fortawesome/fontawesome-free": "^5.7.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.8",
     "@fortawesome/free-regular-svg-icons": "^5.7.1",
