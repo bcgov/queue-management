@@ -23,7 +23,7 @@ class CSR(Base):
     office_id = db.Column(db.Integer, db.ForeignKey('office.office_id'), nullable=False)
     counter_id = db.Column(db.Integer, db.ForeignKey('counter.counter_id'), nullable=True)
     role_id = db.Column(db.Integer, db.ForeignKey('role.role_id'), nullable=False)
-    qt_xn_csr_ind = db.Column(db.Integer, nullable=False) # deprecated
+    qt_xn_csr_ind = db.Column(db.Integer, nullable=False, default=0) # deprecated
     receptionist_ind = db.Column(db.Integer, nullable=False)
     deleted = db.Column(db.DateTime, nullable=True)
     csr_state_id = db.Column(db.Integer, db.ForeignKey('csrstate.csr_state_id'), nullable=False)
