@@ -15,6 +15,7 @@ class Bootstrap(Command):
 
     def run(self):
         print("Clearing out all models")
+        theq.Counter.query.delete()
         theq.Period.query.delete()
         theq.PeriodState.query.delete()
         theq.ServiceReq.query.delete()
@@ -372,21 +373,21 @@ class Bootstrap(Command):
         db.session.commit()
 
 
-        qt_counter = theq.Counter.query.filter_by(counter_name="Quick Trans").first()
-        counter = theq.Counter.query.filter_by(counter_name="Counter").first()
 
         print('createing counters...')
-        if not qt_counter:
-            quick_trans_counter = theq.Counter(
-                counter_name='Quick Trans'
-            )
-            counter = theq.Counter(
-                counter_name='Counter'
-            )
+        qt_counter = theq.Counter(
+            counter_name='Quick Trans',
+            counter_id=1,
+        )
+        counter = theq.Counter(
+            counter_name='Counter',
+            counter_id=2
+        )
 
-            db.session.add(qt_counter)
-            db.session.add(counter)
-            db.session.commit()
+        db.session.add(qt_counter)
+        db.session.add(counter)
+        db.session.commit()
+
         #-- CSR values ------------------------------------------------------
         print("--> CSRs")
         cfms_postman_operator = theq.CSR(
