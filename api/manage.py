@@ -15,7 +15,6 @@ class Bootstrap(Command):
 
     def run(self):
         print("Clearing out all models")
-        theq.Counter.query.delete()
         theq.Period.query.delete()
         theq.PeriodState.query.delete()
         theq.ServiceReq.query.delete()
@@ -33,6 +32,7 @@ class Bootstrap(Command):
         bookings.Invigilator.query.delete()
         theq.Office.query.delete()
         theq.SmartBoard.query.delete()
+        theq.Counter.query.delete()
         # theq.RolePermission.query.delete()  #  No data in this table yet. (table also not defined in models.theq)
         theq.Role.query.delete()
         # theq.Permission.query.delete()      #  No data in this table yet. (table also not defined in models.theq)
