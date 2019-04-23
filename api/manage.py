@@ -373,7 +373,6 @@ class Bootstrap(Command):
         db.session.commit()
 
 
-
         print('createing counters...')
         qt_counter = theq.Counter(
             counter_name='Quick Trans',
