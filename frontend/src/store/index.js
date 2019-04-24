@@ -749,12 +749,11 @@ export const store = new Vuex.Store({
           context.commit('setUser', resp.data.csr)
           let officeType = resp.data.csr.office.sb.sb_type
           context.commit('setOffice', officeType)
-          // TODO Implement this when it's not broken
-          //context.commit('setDefaultCounter', resp.data.csr.office.counters.filter(
-          //  c => c.counter_name === DEFAULT_COUNTER_NAME)[0])
+          context.commit('setDefaultCounter', resp.data.csr.office.counters.filter(
+           c => c.counter_name === DEFAULT_COUNTER_NAME)[0])
           let individualExamBoolean = false
           let groupExamBoolean = false
-
+          
           if (resp.data.group_exams > 0) {
             groupExamBoolean = true
             context.commit('setGroupExam', groupExamBoolean)
@@ -916,26 +915,17 @@ export const store = new Vuex.Store({
         if (type === 'challenger') {
           context.dispatch('postITAChallengerExam').then(() => {
             resolve('success')
-          }).catch((error) => {
-            console.log(error)
-            reject('failed')
-          })
+          }).catch(() => { reject('failed') })
         }
         if (type === 'group') {
           context.dispatch('postITAGroupExam').then(() => {
             resolve('success')
-          }).catch((error) => {
-            console.log(error)
-            reject('failed')
-          })
+          }).catch(() => { reject('failed') })
         }
         if (type === 'individual') {
           context.dispatch('postITAIndividualExam').then(() => {
             resolve('success')
-          }).catch((error) => {
-            console.log(error)
-            reject('failed')
-          })
+          }).catch(() => { reject('failed') })
         }
       })
     },
@@ -1685,7 +1675,6 @@ export const store = new Vuex.Store({
     },
 
     postITAGroupExam(context) {
-      console.log("First line")
       let responses = Object.assign( {}, context.state.capturedExam)
       let timezone_name = context.state.user.office.timezone
       let booking_office = context.state.offices.find(office => office.office_id == responses.office_id)
@@ -1694,7 +1683,6 @@ export const store = new Vuex.Store({
       let time = new moment(responses.exam_time).format('HH:mm:ss')
       let datetime = date+'T'+time
       let start
-      console.log("Datetime", datetime)
       if (booking_timezone_name != timezone_name) {
         start = new tZone.tz(datetime, booking_timezone_name)
       } else {
