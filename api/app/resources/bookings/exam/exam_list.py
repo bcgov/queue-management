@@ -15,11 +15,12 @@ limitations under the License.'''
 import logging
 from flask import g, request
 from flask_restplus import Resource
-from sqlalchemy import exc
+from sqlalchemy import exc, or_
 from app.models.bookings import Exam
 from app.models.theq import CSR
 from app.schemas.bookings import ExamSchema
 from qsystem import api, jwt
+from datetime import datetime, timedelta
 
 
 @api.route("/exams/", methods=["GET"])
@@ -32,10 +33,18 @@ class ExamList(Resource):
         try:
             csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
 
+            ninety_day_filter = datetime.now() - timedelta(days=90)
+
             if csr.liaison_designate == 1:
-                exams = Exam.query.filter(Exam.deleted_date.is_(None)).all()
+                exams = Exam.query.filter(Exam.deleted_date.is_(None))\
+                                  .filter(or_(Exam.exam_returned_date.is_(None),
+                                              Exam.exam_returned_date > ninety_day_filter))
+
             else:
-                exams = Exam.query.filter(Exam.deleted_date.is_(None)).filter_by(office_id=csr.office_id)
+                exams = Exam.query.filter(Exam.deleted_date.is_(None))\
+                                  .filter_by(office_id=csr.office_id)\
+                                  .filter(or_(Exam.exam_returned_date.is_(None),
+                                              Exam.exam_returned_date > ninety_day_filter))
 
             search_kwargs = {}
 

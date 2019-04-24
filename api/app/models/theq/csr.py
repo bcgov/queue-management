@@ -21,8 +21,9 @@ class CSR(Base):
     csr_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     username = db.Column(db.String(150), nullable=False, unique=True)
     office_id = db.Column(db.Integer, db.ForeignKey('office.office_id'), nullable=False)
+    counter_id = db.Column(db.Integer, db.ForeignKey('counter.counter_id'), nullable=True)
     role_id = db.Column(db.Integer, db.ForeignKey('role.role_id'), nullable=False)
-    qt_xn_csr_ind = db.Column(db.Integer, nullable=False)
+    qt_xn_csr_ind = db.Column(db.Integer, nullable=False, default=0) # deprecated
     receptionist_ind = db.Column(db.Integer, nullable=False)
     deleted = db.Column(db.DateTime, nullable=True)
     csr_state_id = db.Column(db.Integer, db.ForeignKey('csrstate.csr_state_id'), nullable=False)
@@ -33,6 +34,7 @@ class CSR(Base):
 
     role = db.relationship("Role", lazy='joined')
     office = db.relationship("Office", lazy='joined')
+    counter = db.relationship("Counter", lazy='joined')
     periods = db.relationship("Period", primaryjoin="and_(CSR.csr_id==Period.csr_id,Period.time_end.is_(None))",
                               order_by='desc(Period.time_start)')
 

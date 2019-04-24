@@ -20,10 +20,12 @@ class Citizen(Base):
 
     citizen_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     office_id = db.Column(db.Integer, db.ForeignKey('office.office_id'), nullable=False)
+    counter_id = db.Column(db.Integer, db.ForeignKey('counter.counter_id'), nullable=True)
     ticket_number = db.Column(db.String(50), nullable=True)
     citizen_name = db.Column(db.String(150), nullable=True)
     citizen_comments = db.Column(db.String(1000), nullable=True)
     qt_xn_citizen_ind = db.Column(db.Integer, default=0, nullable=False)
+
     cs_id = db.Column(db.Integer, db.ForeignKey('citizenstate.cs_id'), nullable=False)
     start_time = db.Column(db.DateTime, nullable=False)
     accurate_time_ind = db.Column(db.Integer, nullable=False, default=1)
@@ -32,6 +34,7 @@ class Citizen(Base):
     service_reqs = db.relationship('ServiceReq', lazy='joined', order_by='ServiceReq.sr_id')
     cs = db.relationship('CitizenState', lazy='joined')
     office = db.relationship('Office', lazy='joined')
+    counter = db.relationship('Counter', lazy='joined')
 
     def __repr__(self):
         return '<Citizen Name:(name={self.citizen_name!r})>'.format(self=self)

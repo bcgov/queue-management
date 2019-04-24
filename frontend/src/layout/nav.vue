@@ -59,6 +59,7 @@
               <b-dropdown-divider />
             </template>
             <b-dropdown-item v-if="showAdmin" to="/admin">Administration</b-dropdown-item>
+            <b-dropdown-item v-if="showAdmin" @click="clickRefresh">Refresh</b-dropdown-item>
             <b-dropdown-divider v-if="showAdmin" />
             <b-dropdown-item>
               <b-button class="btn-primary w-100 m-0"
@@ -141,7 +142,7 @@
       },
     },
     methods: {
-      ...mapActions(['clickGAScreen', 'clickAddCitizen']),
+      ...mapActions(['clickGAScreen', 'clickAddCitizen', 'clickRefresh']),
       ...mapMutations(['toggleFeedbackModal', 'toggleServiceModal']),
       clickFeedback() {
         this.toggleFeedbackModal(true)
