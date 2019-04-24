@@ -44,7 +44,8 @@
                      :config="config">
       </full-calendar>
     </keep-alive>
-    <div class="w-50 mt-2 ml-3 pl-3" style="display: flex; justify-content: space-between;"
+    <div class="w-50 mt-2 ml-3 pl-3"
+         style="display: flex; justify-content: space-between;"
          v-if="calView === 'month'">
       <template v-for="col in roomLegendArray">
         <div>
@@ -456,6 +457,7 @@
             selection.title = this.selectedExam.exam_name
             this.removeSavedSelection()
             this.toggleBookingModal(true)
+            this.$root.$emit('showbookingmodal')
           } else {
             this.unselect()
             this.toggleOtherBookingModal(true)
