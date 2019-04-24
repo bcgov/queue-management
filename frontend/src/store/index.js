@@ -309,20 +309,6 @@ export const store = new Vuex.Store({
       return false
     },
 
-    is_liaison_designate(state) {
-      if(state.user.liaison_designate){
-        return true
-      }
-      return false
-    },
-
-    is_ita_designate(state) {
-      if(state.user.ita_designate){
-        return true
-      }
-      return false
-    },
-
     reception(state) {
       if (state.user.office && state.user.office.sb) {
         if (state.user.office.sb.sb_type === "callbyname" || state.user.office.sb.sb_type === "callbyticket") {
