@@ -199,7 +199,7 @@ class SnowPlow():
             role_obj = Role.query.get(csr.role_id)
             role_name = role_obj.role_code
 
-        csr_qtxn = (csr.qt_xn_csr_ind == 1)
+        csr_qtxn = (csr.counter.counter_name == 'Quick Trans')
 
         agent_dict = {
             'data':
