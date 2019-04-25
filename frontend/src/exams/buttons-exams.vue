@@ -11,7 +11,7 @@
         <b-dd-item id="add_session"
                    @click="handleClick('challenger')">Add Monthly Session Exam</b-dd-item>
       </b-dd>
-      <b-button v-if="role_code!=='GA'"
+      <b-button v-if="!(role_code === 'GA' || is_ita_designate)"
                 id="add_ita"
                 class="mr-1 btn-primary"
                 @click="handleClick('individual')">Add ITA Exam</b-button>
