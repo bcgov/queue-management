@@ -346,34 +346,9 @@ class Bootstrap(Command):
         db.session.add(service_ptax4)
         db.session.add(service_exams)
         db.session.commit()
-
-        #-- Office values ---------------------------------------------------
-        print("--> Offices")
-        office_test = theq.Office(
-            office_name="Test Office",
-            office_number=999,
-            sb_id=smartboard_call_ticket.sb_id,
-            exams_enabled_ind=1
-        )
-        office_100 = theq.Office(
-            office_name="100 Mile House",
-            office_number=1,
-            sb_id=smartboard_no_call.sb_id,
-            exams_enabled_ind=0
-        )
-        office_victoria = theq.Office(
-            office_name="Victoria",
-            office_number=61,
-            sb_id=smartboard_call_name.sb_id,
-            exams_enabled_ind=0
-        )
-        db.session.add(office_test)
-        db.session.add(office_100)
-        db.session.add(office_victoria)
-        db.session.commit()
-
-
-        print('createing counters...')
+        
+        #-- Counter values ---------------------------------------------------
+        print('--> Counters')
         qt_counter = theq.Counter(
             counter_name='Quick Trans',
             counter_id=1,
@@ -385,6 +360,34 @@ class Bootstrap(Command):
 
         db.session.add(qt_counter)
         db.session.add(counter)
+        db.session.commit()
+
+        #-- Office values ---------------------------------------------------
+        print("--> Offices")
+        office_test = theq.Office(
+            office_name="Test Office",
+            office_number=999,
+            sb_id=smartboard_call_ticket.sb_id,
+            exams_enabled_ind=1,
+        )
+        office_test.counters.append(counter)
+        office_100 = theq.Office(
+            office_name="100 Mile House",
+            office_number=1,
+            sb_id=smartboard_no_call.sb_id,
+            exams_enabled_ind=0,
+        )
+        office_100.counters.append(counter)
+        office_victoria = theq.Office(
+            office_name="Victoria",
+            office_number=61,
+            sb_id=smartboard_call_name.sb_id,
+            exams_enabled_ind=0,
+        )
+        office_victoria.counters.append(counter)
+        db.session.add(office_test)
+        db.session.add(office_100)
+        db.session.add(office_victoria)
         db.session.commit()
 
         #-- CSR values ------------------------------------------------------
@@ -480,6 +483,25 @@ class Bootstrap(Command):
         db.session.add(chrisdmac)
         db.session.add(gil0109)
         db.session.commit()
+
+        # print("--> Counters attached to offices")
+
+        # for office in theq.Office.query.all():
+        #     if counter not in office.counters:
+        #         office.counters.append(counter)
+        #     if qt_counter not in office.counters:
+        #         office.counters.append(qt_counter)
+        #     db.session.add(office)
+        # db.session.commit()
+
+        # print("--> Counters attached to csrs")
+        # for csr in theq.CSR.query.all():
+        #     if csr.qt_xn_csr_ind:
+        #         csr.counter = qt_counter
+        #     else:
+        #         csr.counter = counter
+        #     db.session.add(csr)
+        # db.session.commit()
 
         #-- The Office / Services values ------------------------------------
         print("--> Office Services")
