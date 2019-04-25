@@ -128,7 +128,7 @@
                                  class="ml-1 p-0"
                                  style="font-size: 1rem;"/></b-button></div>
           <div v-if="selectedOption !== 'invigilator' || formStep === 2">
-            <b-button @click="submit"
+            <b-button @click.once="submit"
                       :disabled="buttonStatus"
                       class="mt-3 ml-1 btn-primary">Submit</b-button></div>
         </div>

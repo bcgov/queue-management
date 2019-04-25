@@ -48,7 +48,7 @@
                       id="add_exam_submit">Submit</b-button>
             <b-button v-else
                       class="btn-primary"
-                      @click="submit"
+                      @click.once="submit"
                       id="add_exam_submit">Submit</b-button>
           </div>
         </div>
@@ -351,6 +351,7 @@
     }
   }
 </script>
+
 
 <style>
   .message-text {
