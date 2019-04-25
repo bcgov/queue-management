@@ -54,14 +54,16 @@
                     :q="q"
                     :validationObj="validationObj"
                     :handleInput="handleInput"
-                    :exam="exam" />
+                    :exam="exam"
+                    :id="q.key"/>
       <TimeQuestion v-if="q.kind==='time'"
                     v-show="addExamModal.setup !== 'challenger' || exam.on_or_off === 'off'"
                     :error="error"
                     :q="q"
                     :validationObj="validationObj"
                     :handleInput="handleInput"
-                    :exam="exam" />
+                    :exam="exam"
+                    :id="q.key"/>
       <NotesQuestion v-if="q.kind==='notes'"
                      :error="error"
                      :q="q"

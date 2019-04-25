@@ -223,9 +223,11 @@
         <b-btn class="btn-secondary mr-2"
                @click="toggleEditExamModal(false)">Cancel</b-btn>
         <b-btn v-if="!allowSubmit()"
+               id="edit_submit_not_allow"
                class="btn-primary disabled"
                @click="setMessage">Submit</b-btn>
         <b-btn v-else-if="allowSubmit()"
+               id="edit_submit_allow"
                class="btn-primary"
                @click="submit">Submit</b-btn>
       </div>

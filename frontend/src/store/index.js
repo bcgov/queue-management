@@ -309,20 +309,6 @@ export const store = new Vuex.Store({
       return false
     },
 
-    is_liaison_designate(state) {
-      if(state.user.liaison_designate){
-        return true
-      }
-      return false
-    },
-
-    is_ita_designate(state) {
-      if(state.user.ita_designate){
-        return true
-      }
-      return false
-    },
-
     reception(state) {
       if (state.user.office && state.user.office.sb) {
         if (state.user.office.sb.sb_type === "callbyname" || state.user.office.sb.sb_type === "callbyticket") {
@@ -764,7 +750,7 @@ export const store = new Vuex.Store({
           let officeType = resp.data.csr.office.sb.sb_type
           context.commit('setOffice', officeType)
           context.commit('setDefaultCounter', resp.data.csr.office.counters.filter(
-            c => c.counter_name === DEFAULT_COUNTER_NAME)[0])
+           c => c.counter_name === DEFAULT_COUNTER_NAME)[0])
           let individualExamBoolean = false
           let groupExamBoolean = false
           
@@ -1646,7 +1632,7 @@ export const store = new Vuex.Store({
         start_time: start.clone().utc().format('YYYY-MM-DD[T]HH:mm:ssZ'),
         end_time: end.clone().utc().format('YYYY-MM-DD[T]HH:mm:ssZ'),
         fees: 'false',
-        booking_name: 'Monthly Session',
+        booking_name: responses.exam_name,
         office_id: context.state.user.office_id,
       }
       if (responses.on_or_off === 'on') {

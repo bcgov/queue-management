@@ -25,10 +25,12 @@ def upgrade():
     print('createing counters...')
     if not quick_trans_counter:
         quick_trans_counter = Counter(
-            counter_name='Quick Trans'
+            counter_name='Quick Trans',
+            counter_id=1
         )
         regular_counter = Counter(
-            counter_name='Counter'
+            counter_name='Counter',
+            counter_id=2
         )
 
         db.session.add(quick_trans_counter)

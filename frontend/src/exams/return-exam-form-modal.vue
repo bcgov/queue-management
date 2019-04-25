@@ -7,6 +7,7 @@
            :ok-disabled="okButton.disabled"
            hide-header
            :size="returned ? 'md' : 'sm' "
+           id="return_exam_modal"
            @shown="show"
            @hidden="resetModal()"
            @cancel="resetModal()"
@@ -54,6 +55,7 @@
             <b-form-group class="mb-0 mt-2">
               <label class="mb-0">Action Taken</label><br>
               <b-form-input v-model="exam_returned_tracking_number"
+                            id="action_taken"
                             placeholder="Include tracking info or exam disposition"
                             ref="returnactiontaken"/>
             </b-form-group>
@@ -63,7 +65,8 @@
           <b-col>
             <b-form-group class="mb-0 mt-2">
               <label class="mb-0">Notes</label><br>
-              <b-textarea v-model="notes"
+              <b-input v-model="notes"
+                          id="notes"
                           :rows="2"/>
             </b-form-group>
           </b-col>
