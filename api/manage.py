@@ -484,25 +484,6 @@ class Bootstrap(Command):
         db.session.add(gil0109)
         db.session.commit()
 
-        # print("--> Counters attached to offices")
-
-        # for office in theq.Office.query.all():
-        #     if counter not in office.counters:
-        #         office.counters.append(counter)
-        #     if qt_counter not in office.counters:
-        #         office.counters.append(qt_counter)
-        #     db.session.add(office)
-        # db.session.commit()
-
-        # print("--> Counters attached to csrs")
-        # for csr in theq.CSR.query.all():
-        #     if csr.qt_xn_csr_ind:
-        #         csr.counter = qt_counter
-        #     else:
-        #         csr.counter = counter
-        #     db.session.add(csr)
-        # db.session.commit()
-
         #-- The Office / Services values ------------------------------------
         print("--> Office Services")
         office_test.services.append(category_back_office)
