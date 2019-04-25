@@ -544,7 +544,7 @@ export const store = new Vuex.Store({
             booking.id = b.booking_id
             booking.exam = context.state.exams.find(ex => ex.booking_id == b.booking_id) || false
             booking.booking_contact_information = b.booking_contact_information
-
+            booking.fees = b.fees
             calendarEvents.push(booking)
           })
           context.commit('setEvents', calendarEvents)
