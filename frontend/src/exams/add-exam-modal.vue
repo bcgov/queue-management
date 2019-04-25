@@ -290,7 +290,6 @@
         let { setup } = this.addExamModal
         this.unSubmitted = false
         this.submitMsg = ''
-        console.log("SETUP", setup)
         if (setup === 'group') {
           this.clickAddExamSubmit(setup).then( resp => {
             this.status = resp

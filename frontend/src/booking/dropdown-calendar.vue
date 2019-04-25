@@ -1,13 +1,16 @@
 <template>
-  <b-dropdown variant="primary" class="mr-3" :text="view">
-    <b-dropdown-item @click="month">
-      Monthly Planner
+  <b-dropdown variant="primary"
+              class="mr-3"
+              :text="view"
+              id="view_select">
+    <b-dropdown-item @click="month"
+                     id="monthly_planner">Monthly Planner
     </b-dropdown-item>
-    <b-dropdown-item @click="agendaWeek">
-      Weekly Planner
+    <b-dropdown-item @click="agendaWeek"
+                     id="weekly_planner">Weekly Planner
     </b-dropdown-item>
-    <b-dropdown-item @click="agendaDay">
-      Single Day
+    <b-dropdown-item @click="agendaDay"
+                     id="single_day_planner">Single Day
     </b-dropdown-item>
   </b-dropdown>
 </template>
