@@ -31,18 +31,16 @@
                 @click="clickGenFinReport">Generate Financial Report</b-button>
     <FinancialReportModal />
     </b-form>
-    <AddExamModal />
   </div>
 </template>
 
 <script>
   import { mapActions, mapMutations, mapState, mapGetters } from 'vuex'
-  import AddExamModal from './add-exam-modal'
   import FinancialReportModal from './generate-financial-report-modal'
 
   export default {
     name: "ButtonsExams",
-    components: { AddExamModal, FinancialReportModal },
+    components: { FinancialReportModal },
     computed: {
       ...mapState(['addNonITA', 'showGenFinReportModal', 'user' ]),
       ...mapGetters([
@@ -55,7 +53,6 @@
       ]),
     },
     methods: {
-      ...mapActions(['actionRestoreAll']),
       ...mapMutations(['setAddExamModalSetting', 'toggleGenFinReport',]),
       handleClick(type) {
         this.setAddExamModalSetting({setup: type})

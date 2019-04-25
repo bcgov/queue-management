@@ -66,7 +66,7 @@
       }
     },
     methods: {
-      ...mapActions(['finishBooking', 'actionRestoreAll']),
+      ...mapActions(['finishBooking', ]),
       ...mapMutations(['toggleEditBookingModal']),
       cancel() {
         if (this.rescheduling) {
@@ -79,9 +79,7 @@
         }
         this.finishBooking()
         if (pushToExams) {
-          this.actionRestoreAll().then( () => {
-            this.$router.push('/exams')
-          })
+          this.$router.push('/exams')
         }
       }
     }

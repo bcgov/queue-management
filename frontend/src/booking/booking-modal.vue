@@ -128,7 +128,7 @@
                                  class="ml-1 p-0"
                                  style="font-size: 1rem;"/></b-button></div>
           <div v-if="selectedOption !== 'invigilator' || formStep === 2">
-            <b-button @click.once="submit"
+            <b-button @click="clickOk"
                       :disabled="buttonStatus"
                       class="mt-3 ml-1 btn-primary">Submit</b-button></div>
         </div>
@@ -243,7 +243,7 @@
         }
       },
       challengerExam() {
-        if (this.capturedExam && this.capturedExam.on_or_off) {
+        if (this.exam && this.exam.referrer && this.exam.referrer === 'scheduling') {
           return true
         }
         return false
@@ -266,7 +266,6 @@
     },
     methods: {
       ...mapActions([
-        'actionRestoreAll',
         'finishBooking',
         'getExams',
         'getBookings',
@@ -274,7 +273,13 @@
         'putRequest',
         'scheduleExam',
       ]),
-      ...mapMutations(['captureExamDetail', 'saveBooking', 'setClickedDate', 'toggleBookingModal', ]),
+      ...mapMutations([
+        'captureExamDetail',
+        'setAddExamModalSetting',
+        'saveChallengerBooking',
+        'setClickedDate',
+        'toggleBookingModal',
+      ]),
       formatExpiry(d) {
         return new moment(d).format('MMM D, YYYY')
       },
@@ -290,16 +295,18 @@
           return
         }
         if (this.challengerExam) {
-          let date = Object.assign({}, this.date)
+          this.setAddExamModalSetting({ fromCalendar: true })
+          let date = Object.assign( {}, this.date )
           if (this.invigilator && this.invigilator.invigilator_id) {
             date.invigilator = this.invigilator
           }
-
-          this.saveBooking(date)
-          this.actionRestoreAll().then( () => {
-            this.cancel()
-            this.$router.push('/exams')
-          })
+          if (this.selectedOption === 'sbc') {
+            date.invigilator = 'sbc'
+          }
+          this.saveChallengerBooking(date)
+          this.cancel()
+          this.setAddExamModalSetting(true)
+          this.$router.push('/exams')
           return
         }
         if (this.selectedOption) {
@@ -328,8 +335,12 @@
       },
       setupModal() {
         this.resetModal()
-        setTimeout(() => { this.$refs.contact_information.focus() }, 150)
-
+        if (this.exam.notes) { this.notes = this.exam.notes.valueOf() }
+        this.$nextTick( function() {
+          if (this.$refs.contact_information) {
+            this.$refs.contact_information.focus()
+          }
+        })
         if (this.exam.exam_type.exam_type_name.includes('SBC Reader')) {
           this.selectedOption = 'unassigned'
           return
@@ -343,7 +354,6 @@
           this.notes = null
           return
         }
-        this.notes = this.exam.notes.valueOf()
       },
       clickNext() {
         this.formStep = 2

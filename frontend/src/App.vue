@@ -21,6 +21,7 @@ limitations under the License.*/
       <ExamAlert />
       <SuccessExamAlert />
       <Nav v-if="isLoggedIn" />
+      <AddExamModal />
       <Feedback />
       <Response />
     </div>
@@ -43,10 +44,12 @@ limitations under the License.*/
   import Response from './response'
   import Socket from './Socket'
   import SuccessExamAlert from './exams/success-exam-alert'
+  import AddExamModal from './exams/add-exam-modal'
 
   export default {
     name: 'App',
     components: {
+      AddExamModal,
       Alert,
       ExamAlert,
       FailureExamAlert,
