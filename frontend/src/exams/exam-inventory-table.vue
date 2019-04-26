@@ -187,11 +187,11 @@
                      class="ml-3 mt-1">Scheduling</div>
               </template>
               <template v-else-if="row.item.exam_type.exam_type_name.includes('Group')">
-                <div v-if="!row.item.booking.invigilator_id"
+                <div v-if="!checkInvigilator(row.item)"
                      class="ml-3 mt-1">Assignment of Invigilator</div>
               </template>
               <template v-else-if="row.item.exam_type.exam_type_name === 'Monthly Session Exam'">
-                <div v-if="!row.item.booking.invigilator_id"
+                <div v-if="!checkInvigilator(row.item)"
                      class="ml-3 mt-1">Assignment of Invigilator</div>
                 <div v-if="!row.item.number_of_students"
                      class="ml-3 mt-1">Number of Students</div>
@@ -470,6 +470,7 @@
         return false
       },
       checkInvigilator(item) {
+        console.log(item)
         if (item.booking && (item.booking.invigilator_id || item.booking.sbc_staff_invigilated)) {
           return true
         }

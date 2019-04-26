@@ -508,97 +508,31 @@ export const addExamModule = {
           ]
       },
     ],
-    capturedExam: {},
-    captureITAExamTabSetup: {},
-    addExamModal: {},
-    booking: {},
-    
+    challengerBooking: {},
   },
   actions: {
-    actionSaveAll(context) {
-      return new Promise((resolve, reject) => {
-        context.dispatch('actionCapturedExam').then( () => {
-          context.dispatch('actionCaptureITAExamTabSetup').then( () => {
-            context.dispatch('actionAddModalSetup').then( () => {
-              resolve()
-            })
-          })
-        })
-      })
+    clearChallengerBooking({commit}) {
+      commit('clearChallengerBooking')
+      commit('clearAddExamModalFromCalendarStatus')
     },
-    actionRestoreAll(context) {
-      let savedProps = ['capturedExam', 'captureITAExamTabSetup', 'addExamModal']
-      savedProps.forEach(key => {
-        let name = key
-        let item = Object.assign({}, context.state[key])
-        context.commit('restoreSavedModal', {name, item})
-      })
-    },
-    actionWipeAll({commit}) {
-      commit('wipeAll')
-    },
-    actionCapturedExam({commit, rootState}) {
-      commit('saveCapturedExam', Object.assign({}, rootState.capturedExam))
-    },
-    actionCaptureITAExamTabSetup({commit, rootState}) {
-      commit('saveCaptureITAExamTabSetup', Object.assign({}, rootState.captureITAExamTabSetup))
-    },
-    actionAddModalSetup({commit, rootState}) {
-      commit('saveAddModalSetup', Object.assign({}, rootState.addExamModal))
-    },
-    actionWipeAllSavedModals({commit}) {
-      commit('wipeAll')
-    }
   },
   mutations: {
-    wipeAll(state, payload) {
-      let keys = [ 'capturedExam', 'captureITAExamTabSetup', 'addExamModal', 'booking' ]
-      keys.forEach(key => {
-        Vue.set(
-          state,
-          key,
-          null
-        )
-      })
-    },
-    saveBooking(state, payload) {
-      Object.keys(payload).forEach(key => {
-        Vue.set(
-          state.booking,
-          key,
-          payload[key]
-        )
-      })
-    },
-    saveCapturedExam(state, payload) {
-      Object.keys(payload).forEach(key => {
-        if (payload[key] === null) {
-          payload[key] = ''
+    saveChallengerBooking(state, payload) {
+      Object.keys(payload).forEach( key => {
+        if (payload[key]) {
+          Vue.set(
+            state.challengerBooking,
+            key,
+            payload[key]
+          )
         }
-        Vue.set(
-          state.capturedExam,
-          key,
-          payload[key]
-        )
       })
     },
-    saveCaptureITAExamTabSetup(state, payload) {
-      Object.keys(payload).forEach(key => {
-        Vue.set(
-          state.captureITAExamTabSetup,
-          key,
-          payload[key]
-        )
-      })
-    },
-    saveAddModalSetup(state, payload) {
-      Object.keys(payload).forEach(key => {
-        Vue.set(
-          state.addExamModal,
-          key,
-          payload[key]
-        )
-      })
+    clearChallengerBooking(state) {
+      Vue.delete(
+        state,
+        'challengerBooking'
+      )
     }
   }
 }

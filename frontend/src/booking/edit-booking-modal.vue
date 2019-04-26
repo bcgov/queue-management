@@ -203,7 +203,7 @@
         added: 0,
         invigilator: null,
         editedFields: [],
-        fees: false,
+        fees: '',
         feesOptions: [
           {text: 'No', value: "false"},
           {text: 'Yes', value: "true"},
@@ -480,8 +480,8 @@
         if (!this.editedFields.includes('title')) {
           this.title = this.event.title
         }
-        if (!this.editedFields.includes('fee')) {
-          this.fee = this.event.fee
+        if (!this.editedFields.includes('fees')) {
+          this.fees = this.event.fees
         }
         if (!this.editedFields.includes('booking_contact_information')){
           this.booking_contact_information = this.event.booking_contact_information

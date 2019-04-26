@@ -232,7 +232,6 @@ export const ExamReceivedQuestion = Vue.component('exam-received-question', {
       }
     },
     selectRecdDate(e) {
-      console.log(e)
       this.handleInput({
         target: {
           name: 'exam_received_date',
@@ -326,6 +325,7 @@ export const LocationInput = Vue.component('input-question', {
   components: { checkmark },
   computed: {
     ...mapState({
+      examTypes: 'examTypes',
       setup: state => state.addExamModal.setup,
       capturedExam: state => state.capturedExam,
       booking: state => state.addExamModule.booking,
@@ -345,6 +345,25 @@ export const LocationInput = Vue.component('input-question', {
         return true
       }
     },
+    invigilator() {
+      if (this.exam.invigilator) {
+        if (this.exam.invigilator === 'sbc') {
+          return {
+            show: true,
+            text: 'SBC Staff'
+          }
+        }
+        if (this.exam.invigilator.invigilator_id) {
+          return {
+            show: true,
+            text: this.exam.invigilator.invigilator_name
+          }
+        }
+      }
+      return {
+        show: false,
+      }
+    },
     bookingDetails() {
       if (this.exam.exam_time) {
         let date = moment(this.exam.exam_time).format('ddd MMM Do, YYYY')
@@ -356,30 +375,27 @@ export const LocationInput = Vue.component('input-question', {
     }
   },
   methods: {
-    ...mapActions(['actionSaveAll']),
     ...mapMutations(['toggleScheduling', 'setAddExamModalSetting', 'setSelectedExam']),
     launchSchedule() {
+      let { exam_type_id } = this.examTypes.find(t => t.exam_type_name === 'Monthly Session Exam')
       let exam = {
-        exam_name: 'Monthly Session',
+        exam_name: this.exam.exam_name,
         examinee_name: 'Monthly Session',
         exam_method: 'tbd',
-        offiice_id: this.user.office_id,
+        office_id: this.user.office_id,
         exam_type: {
           exam_type_name: 'Monthly Session Exam',
-          exam_type_id: 16,
+          exam_type_id,
           number_of_hours: 4,
         },
         number_of_students: 1,
       }
-      this.actionSaveAll().then( () => {
-        this.toggleScheduling(true)
-        exam.referrer = 'scheduling'
-        this.setSelectedExam(exam)
-        this.$router.push('/booking')
-        this.setAddExamModalSetting(false)
-      })
+      this.toggleScheduling(true)
+      exam.referrer = 'scheduling'
+      this.setSelectedExam(exam)
+      this.$router.push('/booking')
+      this.setAddExamModalSetting(false)
     }
-    
   },
   template: `
     <fragment>
@@ -398,7 +414,6 @@ export const LocationInput = Vue.component('input-question', {
                             @input.native="handleInput" />
             </b-form-group>
           </b-col>
-          <checkmark :validated="validationObj[q.key].valid"  />
         </b-row>
       </template>
       <template v-if="capturedExam.on_or_off === 'on'">
@@ -412,7 +427,7 @@ export const LocationInput = Vue.component('input-question', {
           </b-col>
         </b-row>
         <b-row no-gutters >
-          <b-col cols="11">
+          <b-col cols="12">
             <b-form-group>
               <label>Scheduled For
                 <span v-if="error" style="color: red">{{ validationObj[q.key].message }}</span>
@@ -421,14 +436,14 @@ export const LocationInput = Vue.component('input-question', {
                             disabled />
             </b-form-group>
           </b-col>
-           <checkmark :validated="validationObj[q.key].valid"  />
+          
         </b-row>
-        <b-row no-gutters v-if="exam.invigilator && exam.invigilator.invigilator_name">
-          <b-col cols="11">
+        <b-row no-gutters v-if="invigilator.show">
+          <b-col cols="12">
             <b-form-group>
               <label>Invigilator
               </label>
-              <b-form-input :value="exam.invigilator.invigilator_name"
+              <b-form-input :value="invigilator.text"
                             autocomplete="off"
                             disabled />
             </b-form-group>
@@ -518,7 +533,6 @@ export const OffsiteSelect = Vue.component('offsite-select', {
     }),
   },
   methods: {
-    ...mapActions(['actionSaveAll']),
     ...mapMutations(['captureExamDetail']),
     preHandleInput(e) {
       this.handleInput(e)

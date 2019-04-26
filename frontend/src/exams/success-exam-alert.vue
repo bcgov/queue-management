@@ -18,7 +18,7 @@ limitations under the License.*/
       variant="success"
       dismissible
       v-model="countdown"
-      @dismissed="setExamEditSuccess(0)"
+      @dismissed="setEditExamSuccess"
        style="h-align: center; font-size:1rem; border-radius: 0px;">
       Success!
     </b-alert>

@@ -30,35 +30,14 @@
               <b-col cols="5">
                 <b-form-group>
                   <label>Collect Fees</label><br>
-                  <b-select v-model="fees" :options="feesOptions" />
+                  <b-select v-model="fees"
+                            :options="feesOptions" />
                 </b-form-group>
               </b-col>
               <b-col cols="7">
                 <b-form-group>
                   <label>Room</label>
                   <b-input readonly :value="resource.title" />
-                </b-form-group>
-              </b-col>
-            </b-form-row>
-            <b-form-row v-if="fees">
-              <b-col cols="4">
-                <b-form-group>
-                  <label>Fee Option</label>
-                  <b-select :options="roomRates" v-model="rate" />
-                </b-form-group>
-              </b-col>
-              <b-col cols="8">
-                <b-form-group>
-                  <label>Invoice To</label>
-                  <b-select :options="invoiceOptions" v-model="invoice"/>
-                </b-form-group>
-              </b-col>
-            </b-form-row>
-            <b-form-row v-if="invoice==='custom'">
-              <b-col cols="12">
-                <b-form-group>
-                  <label>Enter Name of Entity to Invoice</label><br>
-                  <b-input />
                 </b-form-group>
               </b-col>
             </b-form-row>
@@ -126,18 +105,12 @@
         title: '',
         state: null,
         message: '',
-        fees: false,
+        fees: '',
         feesOptions: [
-          {text: 'No', value: false},
+          {text: 'No', value: "false"},
+          {text: 'Yes', value: "true"}
         ],
         added: 0,
-        roomRates: [
-          {value: 125, text: '$125 for 1/2 Day'},
-          {value: 250, text: '$250 for Whole Day'}
-        ],
-        invoiceOptions: [
-          {text: 'Custom', value: 'custom'}
-        ],
         invoice: null,
         rate: null,
         start:'',
@@ -242,7 +215,7 @@
             room_id: this.resource.id,
             start_time: start.format('DD-MMM-YYYY[T]HH:mm:ssZ'),
             end_time: end.format('DD-MMM-YYYY[T]HH:mm:ssZ'),
-            fees: 'false',
+            fees: this.fees,
             booking_name: this.title,
             booking_contact_information: this.contact_information,
           }
