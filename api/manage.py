@@ -346,6 +346,21 @@ class Bootstrap(Command):
         db.session.add(service_ptax4)
         db.session.add(service_exams)
         db.session.commit()
+        
+        #-- Counter values ---------------------------------------------------
+        print('--> Counters')
+        qt_counter = theq.Counter(
+            counter_name='Quick Trans',
+            counter_id=1,
+        )
+        counter = theq.Counter(
+            counter_name='Counter',
+            counter_id=2
+        )
+
+        db.session.add(qt_counter)
+        db.session.add(counter)
+        db.session.commit()
 
         print("--> Bookings: Timezones")
 
@@ -380,6 +395,7 @@ class Bootstrap(Command):
             exams_enabled_ind=1,
             timezone_id=timezone_one.timezone_id
         )
+        office_test.counters.append(counter)
         office_100 = theq.Office(
             office_name="100 Mile House",
             office_number=1,
@@ -387,6 +403,7 @@ class Bootstrap(Command):
             exams_enabled_ind=0,
             timezone_id=timezone_one.timezone_id
         )
+        office_100.counters.append(counter)
         office_victoria = theq.Office(
             office_name="Victoria",
             office_number=61,
@@ -394,24 +411,10 @@ class Bootstrap(Command):
             exams_enabled_ind=0,
             timezone_id=timezone_one.timezone_id
         )
+        office_victoria.counters.append(counter)
         db.session.add(office_test)
         db.session.add(office_100)
         db.session.add(office_victoria)
-        db.session.commit()
-
-
-        print('createing counters...')
-        qt_counter = theq.Counter(
-            counter_name='Quick Trans',
-            counter_id=1,
-        )
-        counter = theq.Counter(
-            counter_name='Counter',
-            counter_id=2
-        )
-
-        db.session.add(qt_counter)
-        db.session.add(counter)
         db.session.commit()
 
         #-- CSR values ------------------------------------------------------
