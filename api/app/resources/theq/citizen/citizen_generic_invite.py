@@ -37,9 +37,10 @@ class CitizenGenericInvite(Resource):
             active_citizen_state = CitizenState.query.filter_by(cs_state_name='Active').first()
             waiting_period_state = PeriodState.get_state_by_name("Waiting")
             citizen = None
+            json_data = request.get_json()
 
-            if 'counter_id' in request.get_json():
-                counter_id = int(request.get_json().get('counter_id'))
+            if json_data and 'counter_id' in json_data:
+                counter_id = int(json_data.get('counter_id'))
             else:
                 counter_id = int(csr.counter_id)
 
