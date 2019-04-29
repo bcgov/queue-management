@@ -345,7 +345,7 @@
           this.selectedOption = 'unassigned'
           return
         }
-        if (this.exam.exam_type.exam_type_name.includes('Challenger')) {
+        if (this.exam.exam_type.exam_type_name === 'Monthly Session Exam') {
           this.selectedOption = 'unassigned'
           return
         }

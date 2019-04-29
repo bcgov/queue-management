@@ -222,7 +222,7 @@
             </template>
             <template v-if="!row.item.exam_returned_date">
               <template v-if="officeFilter == userOffice || officeFilter == 'default'">
-                <template v-if="row.item.exam_type.exam_type_name.includes('Challenger')">
+                <template v-if="row.item.exam_type.exam_type_name === 'Monthly Session Exam' ">
                   <template v-if="row.item.offsite_location">
                     <b-dropdown-item size="sm"
                                      v-if="row.item.offsite_location"
@@ -499,7 +499,7 @@
         this.toggleEditGroupBookingModal(true)
       },
       filterByGroup(ex) {
-        if (ex.exam_type.exam_type_name.includes('Challenger') || ex.exam_type.exam_type_name.includes('Group')) {
+        if (ex.exam_type.exam_type_name === 'Monthly Session Exam' || ex.exam_type.exam_type_name.includes('Group')) {
           return true
         }
         if (ex.number_of_students && parseInt(ex.number_of_students) > 1) {
@@ -510,10 +510,10 @@
       filterByScheduled(ex) {
         if (ex.exam_received_date) {
           if (ex.booking && ( ex.booking.invigilator_id || ex.booking.sbc_staff_invigilated )) {
-            if (!ex.exam_type.exam_type_name.includes('Challenger')) {
+            if (ex.exam_type.exam_type_name !== 'Monthly Session Exam') {
               return true
             }
-            if (ex.exam_type.exam_type_name.includes('Challenger')) {
+            if (ex.exam_type.exam_type_name === 'Monthly Session Exam') {
               if (ex.number_of_students && ex.event_id) {
                 return true
               }
