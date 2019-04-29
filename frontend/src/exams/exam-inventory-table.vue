@@ -364,7 +364,7 @@
         'user',
       ]),
       availableH() {
-        let h = this.totalH - this.qLengthH - this.buttonH - 220
+        let h = this.totalH - this.qLengthH - this.buttonH - 160
         return { height:`${h}px`, border: '1px solid dimgrey' }
       },
       fields() {
@@ -458,7 +458,7 @@
       ]),
       addCalendarBooking(item) {
         this.toggleScheduling(true)
-        item.referrer = 'scheduling'
+        item.referrer = 'inventory'
         this.setSelectedExam(item)
         this.$router.push('/booking')
         this.toggleExamInventoryModal(false)

@@ -310,7 +310,7 @@
           return
         }
         if (this.selectedOption) {
-          this.postEvent()
+          this.submit()
         }
       },
       minimize(e) {
@@ -370,22 +370,21 @@
         this.savedRef = e.target.id
       },
       submit() {
-        let exam_id = null
-        //notes are the only field editable on this form that would need a PUT to '/exams/'
-        //if they have not changed, we only need to POST the booking to '/booking/']
-        if (this.notes) {
-          if (this.exam.notes) {
-            if (this.notes != this.exam.notes) {
-              exam_id = this.exam.exam_id.valueOf()
-            }
+        let { exam_id } = this.exam
+        let notes = null
+        let putNotes = false
+
+        if (this.notes && !this.exam.notes) {
+          notes = this.notes
+          putNotes = true
           }
-          if (!this.exam.notes) {
-            exam_id = this.exam.exam_id.valueOf()
-          }
+        if (!this.notes && this.exam.notes) {
+          putNotes = true
         }
-        if (!this.notes) {
-          if (this.exam.notes) {
-            exam_id = this.exam.exam_id.valueOf()
+        if (this.notes && this.exam.notes) {
+          if (this.notes !== this.exam.notes) {
+            notes = this.notes
+            putNotes = true
           }
         }
         let start = new moment(this.date.start).utc()
@@ -405,28 +404,25 @@
         if (this.selectedOption === 'invigilator') {
           booking.invigilator_id = this.invigilatorId
         }
-        this.scheduleExam(booking).then( () =>{
-          if (exam_id) {
-            let payload = {
-              url: `/exams/${exam_id}/`,
-              data: {
-                notes: this.notes
-              }
-            }
-            this.putRequest(payload).then( () => {
-              this.getExams().then( () => {
-                this.getBookings().then( () => {
-                  this.finishBooking()
-                })
-              })
-            })
-          } else {
+        this.scheduleExam(booking).then( () => {
+          let payload = {
+            url:  `/exams/${exam_id}/`
+          }
+          putNotes ? payload.data = { notes } : null
+          let redirect = false
+          if  (this.exam.referrer === 'inventory') {
+            redirect = true
+          }
+          this.putRequest(payload).then( () => {
             this.getExams().then( () => {
               this.getBookings().then( () => {
                 this.finishBooking()
+              if (redirect) {
+                this.$router.push('/exams')
+              }
               })
             })
-          }
+          })
         })
       }
     },
