@@ -38,9 +38,9 @@ class CitizenGenericInvite(Resource):
             waiting_period_state = PeriodState.get_state_by_name("Waiting")
             citizen = None
 
-            try:
+            if 'counter_id' in request.get_json():
                 counter_id = int(request.get_json().get('counter_id'))
-            except AttributeError:
+            else:
                 counter_id = int(csr.counter_id)
 
             citizen = Citizen.query \
