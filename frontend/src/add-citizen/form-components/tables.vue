@@ -91,7 +91,10 @@
         ]
       },
       filter(value) {
-          return this.form_data.search
+        if (this.$route.path === '/exams' || this.$route.path === '/booking') {
+          return `exams ${this.form_data.search}`
+        }
+        return this.form_data.search
       },
     },
 
