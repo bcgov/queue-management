@@ -18,7 +18,6 @@ flask-jwt-oidc>=0.1.5
 flask_marshmallow
 flask-socketio
 gunicorn
-kombu
 marshmallow-sqlalchemy
 mysqlclient
 pysnow
