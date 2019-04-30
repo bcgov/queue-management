@@ -15,7 +15,7 @@
   -->
 
 <template>
-  <div style="position: relative">
+  <div style="">
     <div class="dash-button-flex-button-container pb-0 mb-3">
       <!-- SLOT FOR EACH VIEW'S BUTTON CONTROLS-->
       <div v-if="this.$route.path === '/booking' || this.$route.path === '/exams' ">

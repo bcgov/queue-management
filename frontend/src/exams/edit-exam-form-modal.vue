@@ -302,7 +302,7 @@
       },
       examType() {
         if (this.examRow && this.examRow.exam_type) {
-          if (this.exam.exam_type.exam_type_name.includes('Challenger')) {
+          if (this.exam.exam_type.exam_type_name === 'Monthly Session Exam') {
             return 'challenger'
           }
           if (this.exam.exam_type.exam_type_name.includes('Group')) {

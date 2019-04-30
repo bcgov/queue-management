@@ -106,6 +106,9 @@
       this.$root.$on('toggleOffsite', (bool) => { this.toggleOffsite(bool) })
       this.$root.$on('unselect', () => { this.unselect() })
       this.$root.$on('updateEvent', (event, params) => { this.updateEvent(event, params) })
+      if (this.scheduling || this.rescheduling) {
+        this.toggleOffsite(false)
+      }
     },
     data() {
       return {
