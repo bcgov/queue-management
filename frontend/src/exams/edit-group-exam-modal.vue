@@ -6,7 +6,7 @@
            hide-footer
            size="md">
     <div v-if="showModal">
-      <span class="q-modal-header">Edit Group Exam Booking</span>
+      <span class="q-modal-header">Edit {{ titleText }} Exam Booking</span>
       <b-form autocomplete="off">
         <b-form-row>
           <b-col class="mb-2">
@@ -38,37 +38,31 @@
           </b-col>
         </b-form-row>
         <b-form-row>
-          <b-col cols="6" v-if="is_liaison_designate || role_code === 'GA'">
+          <b-col cols="6">
             <b-form-group>
               <label>Exam Date</label><br>
               <DatePicker v-model="date"
+                          style="color: black"
+                          :disabled="fieldDisabled"
                           name="date"
-                          class="w-100"
+                          input-class="custom-disabled-fields form-control"
+                          class="w-100 date-time-fields"
                           @input="checkDate"
-                          lang="en"></DatePicker>
+                          lang="en">
+              </DatePicker>
             </b-form-group>
           </b-col>
-          <b-col cols="6" v-if="role_code !== 'GA' && !is_liaison_designate">
-            <b-form-group>
-              <label>Exam Time</label><br>
-              <b-input disabled :value="formatTime(actionedExam.booking.start_time)" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="6" v-if="role_code !== 'GA' && !is_liaison_designate">
-            <b-form-group>
-              <label>Exam Date</label><br>
-              <b-input disabled :value="formatDate(actionedExam.booking.start_time)" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="6" v-if="is_liaison_designate || role_code === 'GA'">
+
+          <b-col cols="6">
             <b-form-group>
               <label>Exam Time</label><br>
               <DatePicker v-model="time"
                           class="w-100"
+                          :disabled="fieldDisabled"
                           :time-picker-options="{ start: '8:00', step: '00:30', end: '17:00' }"
                           lang="en"
                           format="h:mm a"
-                          confirm
+                          input-class="custom-disabled-fields form-control"
                           name="time"
                           @input="checkTime"
                           type="time">
@@ -86,8 +80,9 @@
             <b-form-group>
               <label>Location</label><br>
               <b-textarea v-model="offsite_location"
-                          :disabled="role_code !== 'GA' && !is_liaison_designate"
-                          class="mb-0"
+                          :disabled="fieldDisabled"
+                          style="color: #525252"
+                          class="mb-0 custom-disabled-fields"
                           :rows="2"
                           name="offsite_location"
                           @input.native="checkInput" />
@@ -154,11 +149,44 @@
         invigilators: 'invigilators',
         user: 'user',
       }),
+      titleText() {
+        switch (this.examType) {
+          case 'group':
+            return 'Group'
+          case 'challenger':
+            return 'Monthly Session'
+          default:
+            return 'Other'
+        }
+      },
       editedTimezone() {
         if (this.actionedExam && this.actionedExam.booking) {
           return this.actionedExam.booking.office.timezone.timezone_name
         }
         return ''
+      },
+      examType() {
+        if (this.actionedExam && this.actionedExam.exam_type) {
+          let { exam_type } = this.actionedExam
+
+          if (exam_type.exam_type_name === 'Monthly Session Exam') {
+            return 'challenger'
+          }
+          if (exam_type.group_exam_ind) {
+            return 'group'
+          }
+          if (exam_type.ita_ind) {
+            return 'individual'
+          }
+          return 'other'
+        }
+        return ''
+      },
+      fieldDisabled() {
+        if ((this.role_code !== 'GA' && !this.is_liaison_designate) && this.examType != 'other') {
+          return true
+        }
+        return false
       },
       modalVisible: {
         get() {
@@ -395,5 +423,8 @@
   .id-grid-1st-col {
     grid-column: 1 / span 2;
     margin-right: 20px;
+  }
+  .custom-disabled-fields {
+    color: #525252 !important;
   }
 </style>

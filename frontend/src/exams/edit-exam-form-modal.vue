@@ -163,8 +163,11 @@
                 <div class="q-id-grid-col">
                   <div>Type:</div>
                   <div v-if="isITAGropOrSingleExam(exam)"
-                       :style="{color: exam.exam_type.exam_color}">{{ exam.exam_type.exam_type_name }}</div>
-                  <div v-else>{{ exam.exam_type.exam_type_name }}</div>
+                       :style="{ backgroundColor: exam.exam_type.exam_color,
+                                 height: 10+'px',
+                                 margin: '4px 0px 0px 0px',
+                                 width: 10+'px', }"></div>
+                  <div>{{ exam.exam_type.exam_type_name }}</div>
                 </div>
                 <div class="q-id-grid-col">
                   <div>Method:</div>
@@ -295,15 +298,19 @@
       },
       examType() {
         if (this.exam && this.exam.exam_type) {
-          if (this.exam.exam_type.exam_type_name === 'Monthly Session Exam') {
+          let { exam_type } = this.exam
+
+          if (exam_type.exam_type_name === 'Monthly Session Exam') {
             return 'challenger'
-          } else if (this.exam.exam_type.group_exam_ind) {
+          }
+          if (exam_type.group_exam_ind) {
             return 'group'
-          } else {
+          }
+          if (exam_type.ita_ind) {
             return 'individual'
           }
+          return 'other'
         }
-        return 'other'
       },
       examTypeDropClass() {
         if (!this.clickedMenu) {
