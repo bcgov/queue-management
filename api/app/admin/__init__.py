@@ -24,6 +24,5 @@ from .service import ServiceModelView
 from .smartboard import SmartBoardModelView
 from .invigilator import InvigilatorModelView
 from .room import RoomModelView
-from .counter import CounterModelView
 from .examtype import ExamTypeModelView
 
