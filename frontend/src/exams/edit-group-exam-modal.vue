@@ -99,7 +99,6 @@
             <b-form-group>
               <label>Invigilator</label><br>
               <b-select v-model="invigilator_id"
-                        placeholder="unassigned"
                         name="invigilator_id"
                         @change.native="checkInput"
                         :options="invigilator_dropdown" />
@@ -227,7 +226,6 @@
             if (!this.editedFields.includes(e.target.name)) {
               this.editedFields.push(e.target.name)
             }
-            this[e.target.name] = e.target.value
             return
           }
           if (value === this.itemCopy[name]) {
@@ -235,7 +233,6 @@
               let i = this.editedFields.indexOf(e.target.name)
               this.editedFields.splice(i, 1)
             }
-            this[name] = value
             return
           }
         }
@@ -374,7 +371,7 @@
             this.invigilator_id = tempItem.booking.invigilator_id
           }
         }
-        this.offsite_location = tempItem.offsite_location
+        tempItem.offsite_location === '_offsite' ? this.offsite_location = '' : tempItem.offsite_location
         this.editedFields = []
         this.itemCopy = tempItem
       },

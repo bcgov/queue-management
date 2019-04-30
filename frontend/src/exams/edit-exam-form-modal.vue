@@ -8,7 +8,7 @@
            size="md">
     <FailureExamAlert class="m-0 p-0" />
     <div v-if="exam">
-      <span style="font-size: 1.4rem; font-weight: 600;">Edit Exam</span>
+      <span style="font-size: 1.4rem; font-weight: 600;">Edit Exam Details</span>
       <b-form v-if="showAllFields">
         <b-form-row v-if="is_liaison_designate && examType === 'group'">
           <OfficeDrop :columnW="10" :office_number="office_number" :setOffice="setOffice" />
@@ -33,9 +33,9 @@
             </b-form-group>
           </b-col>
         </b-form-row>
-        <b-form-row v-if="exam.exam_type.ita_ind && examType !== 'challenger' ">
+        <b-form-row>
             <b-col>
-              <b-form-group>
+              <b-form-group v-if="exam.exam_type.ita_ind===1 && examType !== 'challenger' ">
                 <label class="my-0">Exam Type</label><br>
                 <div @click="handleExamInputClick">
                   <b-input read-only
@@ -59,11 +59,7 @@
                   </template>
                 </div>
               </b-form-group>
-            </b-col>
-          </b-form-row>
-        <b-form-row v-if="!exam.exam_type.ita_ind || examType === 'challenger' ">
-          <b-col>
-            <b-form-group>
+            <b-form-group v-else>
               <label class="mb-0 mt-1">Exam Type</label>
               <b-form-input id="exam_name" type="text"
                             class="less-10-mb form-control"
