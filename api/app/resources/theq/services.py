@@ -58,17 +58,12 @@ class Refresh(Resource):
                     Service
                 ).filter(
                     Citizen.office_id == office_id,
+                    Service.display_dashboard_ind == 1,
                 )
                 if is_back_office:
-                    results = results.filter(
-                        Service.parent_id == back_office.service_id,
-                        Service.display_dashboard_ind == 0,
-                    )
+                    results = results.filter(Service.parent_id == back_office.service_id)
                 else:
-                    results = results.filter(
-                        Service.parent_id != back_office.service_id,
-                        Service.display_dashboard_ind == 1,
-                    )
+                    results = results.filter(Service.parent_id != back_office.service_id)
                 results = results.order_by(
                     ServiceReq.sr_id.desc()
                 ).limit(100)
