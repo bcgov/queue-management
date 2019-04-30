@@ -33,7 +33,7 @@
             </b-form-group>
           </b-col>
         </b-form-row>
-        <b-form-row v-if="examType !== 'challenger' ">
+        <b-form-row v-if="exam.exam_type.ita_ind && examType !== 'challenger' ">
             <b-col>
               <b-form-group>
                 <label class="my-0">Exam Type</label><br>
@@ -61,14 +61,14 @@
               </b-form-group>
             </b-col>
           </b-form-row>
-        <b-form-row v-if="examType === 'challenger'">
+        <b-form-row v-if="!exam.exam_type.ita_ind || examType === 'challenger' ">
           <b-col>
             <b-form-group>
               <label class="mb-0 mt-1">Exam Type</label>
               <b-form-input id="exam_name" type="text"
-                            class="less-10-mb"
+                            class="less-10-mb form-control"
                             disabled
-                            value="Monthly Session Exam" />
+                            :value="exam.exam_type.exam_type_name" />
             </b-form-group>
           </b-col>
         </b-form-row>
@@ -97,16 +97,12 @@
           <b-col v-if="exam_received">
             <b-form-group>
               <label class="my-0">Received Date</label><br>
-              <DatePicker v-model="fields.exam_received_date"
+              <DatePicker :value="fields.exam_received_date"
+                          @input="handleDate"
                           id="exam_received_date"
                           input-class="form-control"
                           class="w-100 my-0 less-10-mb"
                           lang="en">
-                <template slot="calendar-icon">
-                  <font-awesome-icon icon="clock"
-                                     class="m-0 p-0"
-                                     style="font-size: .9rem;"/>
-                </template>
               </DatePicker>
             </b-form-group>
           </b-col>
@@ -200,6 +196,7 @@
                           id="exam_received_date"
                           input-class="form-control"
                           class="w-100 my-0 less-10-mb"
+                          type="date"
                           lang="en"/>
             </b-form-group>
           </b-col>
@@ -301,14 +298,12 @@
         return ''
       },
       examType() {
-        if (this.examRow && this.examRow.exam_type) {
+        if (this.exam && this.exam.exam_type) {
           if (this.exam.exam_type.exam_type_name === 'Monthly Session Exam') {
             return 'challenger'
-          }
-          if (this.exam.exam_type.exam_type_name.includes('Group')) {
+          } else if (this.exam.exam_type.group_exam_ind) {
             return 'group'
-          }
-          if (this.exam.exam_type.exam_type_name.includes('Single')) {
+          } else {
             return 'individual'
           }
         }
@@ -325,7 +320,7 @@
       examTypeDropItems() {
         if (this.exam) {
           if (this.exam.offsite_location) {
-            return this.examTypes.filter(type => type.exam_type_name.includes('Group'))
+            return this.examTypes.filter(type => type.group_exam_ind)
           }
           if (!this.exam.offsite_location) {
             if (this.exam.exam_type.ita_ind == 1) {
@@ -376,6 +371,13 @@
         'toggleEditExamModal',
         'toggleDeleteExamModalVisible'
       ]),
+      handleDate(date) {
+        Vue.set(
+          this.fields,
+          'exam_received_date',
+          date
+        )
+      },
       allowSubmit() {
         if (this.actionedExam) {
           let fieldsEdited = false
@@ -392,7 +394,7 @@
         return false
       },
       isITAGropOrSingleExam(ex) {
-        if (ex.exam_type.exam_type_name.includes('Group') || ex.exam_type.exam_type_name.includes('Single') ) {
+        if (ex.exam_type.group_exam_ind || ex.exam_type.exam_type_name.includes('Single') ) {
           return true
         }
         return false
@@ -498,7 +500,7 @@
       updateExamReceived(e) {
         let { exam_received_date } = this.fields
         if (e && !exam_received_date) {
-          this.fields['exam_received_date'] = new moment().utc().format('YYYY-MM-DD[T]hh:mm:ssZ')
+          this.fields['exam_received_date'] = new moment().format('YYYY-MM-DD[T]hh:mm:ssZ')
           return
         }
         if (!e && exam_received_date) {

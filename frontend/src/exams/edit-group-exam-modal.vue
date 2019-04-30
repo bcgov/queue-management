@@ -99,6 +99,7 @@
             <b-form-group>
               <label>Invigilator</label><br>
               <b-select v-model="invigilator_id"
+                        placeholder="unassigned"
                         name="invigilator_id"
                         @change.native="checkInput"
                         :options="invigilator_dropdown" />
@@ -364,7 +365,7 @@
         if (tempItem.booking && tempItem.booking.start_time) {
           let { timezone_name } = this.actionedExam.booking.office.timezone
           let time = zone.tz(tempItem.booking.start_time, timezone_name).format('HH:mm:ss')
-          let date = moment(tempItem.booking.start_time).format('YYYY-MM-DD')
+          let date = moment(tempItem.booking.start_time, timezone_name).format('YYYY-MM-DD')
           this.time = date + 'T' + time
           this.date = date
           if (tempItem.booking.sbc_staff_invigilated) {

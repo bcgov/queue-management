@@ -131,37 +131,37 @@
 
         <template slot="expiry_date" slot-scope="row">
           <span v-if="row.item.exam_type.exam_type_name === 'Monthly Session Exam'">–</span>
-          <span v-else-if="row.item.examinee_name === 'group exam'">–</span>
+          <span v-else-if="row.item.exam_type.group_exam_ind">–</span>
           <span v-else>{{ formatDate(row.item.expiry_date) }}</span>
         </template>
 
         <template slot="scheduled" slot-scope="row">
-          <template v-if="!filterByScheduled(row.item)">
+          <template v-if="stillRequires(row.item).length > 0">
             <font-awesome-icon v-if="!row.detailsShowing"
                                icon="exclamation-triangle"
-                               @click.stop="toggleDetailsRow({row, origin: 'error'})"
-                               class="m-0 p-0 error-cursor-hover"
+                               @click.stop="row.toggleDetails()"
+                               class="m-0 p-0 icon-cursor-hover"
                                style="font-size:1rem;color:#ffc32b"/>
             <b-button v-if="row.detailsShowing"
                       variant="link"
                       style="padding: 0px;"
-                      @click.stop="toggleDetailsRow({row, origin: 'button'})">Hide</b-button>
+                      @click.stop="row.toggleDetails()">Hide</b-button>
           </template>
-          <template v-if="filterByScheduled(row.item)">
+          <template v-if="stillRequires(row.item).length === 0">
             <b-button v-if="row.detailsShowing"
                       variant="link"
                       style="padding: 0px;"
-                      @click.stop="toggleDetailsRow({row, origin: 'button'})">Hide</b-button>
+                      @click.stop="row.toggleDetails()">Hide</b-button>
             <font-awesome-icon v-if="!row.detailsShowing"
                                icon="clipboard-check"
-                               @click.stop="toggleDetailsRow({row, origin: 'button'})"
-                               class="m-0 p-0 error-cursor-hover"
+                               @click.stop="row.toggleDetails()"
+                               class="m-0 p-0 icon-cursor-hover"
                                style="font-size:1.25rem;color:green"/>
           </template>
         </template>
 
         <template slot="row-details" slot-scope="row">
-          <template v-if="detailsRowSetup === 'button'">
+          <template v-if="stillRequires(row.item).length === 0">
             <div class="details-slot-div">
               <div style="flex-grow: 1" class="ml-3"><b>Date:</b> {{ formatDate(row.item.booking.start_time) }}</div>
               <div style="flex-grow: 1"><b>Time:</b> {{ formatTime(row.item.booking) }}</div>
@@ -177,33 +177,11 @@
               <div style="flex-grow: 8" />
             </div>
           </template>
-          <template v-if="detailsRowSetup === 'error'">
+          <template v-if="stillRequires(row.item).length > 0">
             <div class="details-slot-div">
               <div class="ml-3" style="font-size: 1rem;">Still Requires:</div>
-              <div v-if="!row.item.exam_received_date"
-                   class="ml-3 mt-1">Materials Received</div>
-              <template v-if="row.item.exam_type.exam_type_name.includes('Single')">
-                <div v-if="!row.item.booking"
-                     class="ml-3 mt-1">Scheduling</div>
-              </template>
-              <template v-else-if="row.item.exam_type.exam_type_name.includes('Group')">
-                <div v-if="!checkInvigilator(row.item)"
-                     class="ml-3 mt-1">Assignment of Invigilator</div>
-              </template>
-              <template v-else-if="row.item.exam_type.exam_type_name === 'Monthly Session Exam'">
-                <div v-if="!checkInvigilator(row.item)"
-                     class="ml-3 mt-1">Assignment of Invigilator</div>
-                <div v-if="!row.item.number_of_students"
-                     class="ml-3 mt-1">Number of Students</div>
-                <div v-if="!row.item.event_id"
-                     class="ml-3 mt-1">Event ID</div>
-              </template>
-              <template v-else>
-                <div v-if="!row.item.booking"
-                     class="ml-3 mt-1">Scheduling</div>
-                <div
-                  v-if="row.item.booking && !checkInvigilator(row.item)"
-                  class="ml-3 mt-1">Assignment of Invigilator</div>
+              <template v-for="req in stillRequires(row.item)">
+                <div key="i+'it'" class="ml-3 mt-1">{{ req }}</div>
               </template>
             </div>
           </template>
@@ -241,7 +219,7 @@
                   </template>
                 </template>
 
-                <template v-else-if="row.item.exam_type.exam_type_name.includes('Group')">
+                <template v-else-if="row.item.exam_type.group_exam_ind">
                   <b-dropdown-item size="sm"
                                    v-if="row.item.offsite_location"
                                    @click="editGroupBooking(row.item)">
@@ -476,12 +454,6 @@
         }
         return false
       },
-      examReturnedFilter(item) {
-        if (item.exam_returned_date && (this.officeFilter === this.userOffice || this.officeFilter === 'default')) {
-          return true
-        }
-        return false
-      },
       clickModalRow(item) {
         if (this.showExamInventoryModal) {
           this.toggleScheduling(true)
@@ -498,8 +470,14 @@
         this.actionedExam = item
         this.toggleEditGroupBookingModal(true)
       },
+      examReturnedFilter(item) {
+        if (item.exam_returned_date && (this.officeFilter === this.userOffice || this.officeFilter === 'default')) {
+          return true
+        }
+        return false
+      },
       filterByGroup(ex) {
-        if (ex.exam_type.exam_type_name === 'Monthly Session Exam' || ex.exam_type.exam_type_name.includes('Group')) {
+        if (ex.exam_type.exam_type_name === 'Monthly Session Exam' || ex.exam_type.group_exam_ind) {
           return true
         }
         if (ex.number_of_students && parseInt(ex.number_of_students) > 1) {
@@ -637,9 +615,26 @@
       setOfficeFilter(office_number) {
         this.setFilter({type:'office_number', value: office_number})
       },
-      toggleDetailsRow(item) {
-        this.detailsRowSetup = item.origin
-        item.row.toggleDetails()
+      stillRequires(item) {
+        let output = []
+        if (!item.booking) {
+          output.push('Scheduling and Assignment of Invigilator')
+        }
+        if (!item.exam_received_date) {
+          output.push('Receipt of Materials')
+        }
+        if (item.exam_type.exam_type_name === 'Monthly Session Exam') {
+          if (!item.number_of_students) {
+            output.push('Number of Students')
+          }
+          if (!item.session_number) {
+            output.push('Session Number')
+          }
+        }
+        if (item.booking && !item.booking.invigilator_id && !item.booking.sbc_staff_invigilated) {
+          output.push('Assignment of Invigilator')
+        }
+        return output
       },
       updateCalendarBooking(item) {
         item.gotoDate = new moment(item.booking.start_time)
@@ -710,7 +705,7 @@
     bottom: 35px;
     left: 30px;
   }
-  .error-cursor-hover {
+  .icon-cursor-hover {
     cursor: pointer !important;
   }
   .btn:active, .btn.active {
