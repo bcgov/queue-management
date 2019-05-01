@@ -177,6 +177,7 @@
               <div style="flex-grow: 8" />
             </div>
           </template>
+
           <template v-if="stillRequires(row.item).length > 0">
             <div class="details-slot-div">
               <div class="ml-3" style="font-size: 1rem;">Still Requires:</div>
@@ -200,6 +201,7 @@
             </template>
             <template v-if="!row.item.exam_returned_date">
               <template v-if="officeFilter == userOffice || officeFilter == 'default'">
+
                 <template v-if="row.item.exam_type.exam_type_name === 'Monthly Session Exam' ">
                   <template v-if="row.item.offsite_location">
                     <b-dropdown-item size="sm"
@@ -208,6 +210,7 @@
                         {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}
                     </b-dropdown-item>
                   </template>
+
                   <template v-if="!row.item.offsite_location">
                     <b-dropdown-item size="sm"
                                        v-if="row.item.booking && Object.keys(row.item.booking).length > 0"
@@ -228,7 +231,7 @@
                 </template>
 
                 <template v-else>
-                  <template v-if="row.item.offsite_location === '_offsite'">
+                  <template v-if="row.item.offsite_location && row.item.offsite_location === '_offsite'">
                     <b-dropdown-item size="sm"
                                      v-if="!row.item.booking || Object.keys(row.item.booking).length === 0"
                                      @click="editGroupBooking(row.item)">Schedule Exam</b-dropdown-item>
@@ -250,11 +253,13 @@
                                      @click="addCalendarBooking(row.item)">Schedule Exam</b-dropdown-item>
                   </template>
                 </template>
-                <b-dropdown-item size="sm"
-                                 @click="editExamDetails(row.item)">Edit Exam Details</b-dropdown-item>
-                <b-dropdown-item size="sm"
-                                 @click="returnExam(row.item)">Return Exam</b-dropdown-item>
+
+                  <b-dropdown-item size="sm"
+                                   @click="editExamDetails(row.item)">Edit Exam Details</b-dropdown-item>
+                  <b-dropdown-item size="sm"
+                                   @click="returnExam(row.item)">Return Exam</b-dropdown-item>
               </template>
+
               <template v-if="officeFilter != userOffice && officeFilter != 'default'">
                 <b-dropdown-item size="sm"
                                  v-if="row.item.offsite_location"
@@ -263,6 +268,7 @@
                                  @click="editExamDetails(row.item)">Edit Exam Details</b-dropdown-item>
               </template>
             </template>
+
             <template v-if="examReturnedFilter(row.item)">
               <b-dropdown-item size="sm"
                                @click="returnExam(row.item)">Edit Return Details</b-dropdown-item>

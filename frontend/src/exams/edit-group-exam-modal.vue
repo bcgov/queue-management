@@ -110,10 +110,10 @@
             style="color: red;">Nothing has changed.  All fields contain their initial values.</div>
       <div style="display: flex; justify-content: flex-end; width: 100%">
         <b-btn class="btn-secondary mr-2" @click="cancel">Cancel</b-btn>
-        <b-btn v-if="editedFields.length === 0"
+        <b-btn v-if="!allowSubmit"
                class="btn-primary disabled"
                @click="showMessage=true">Submit</b-btn>
-        <b-btn v-else-if="editedFields.length > 0"
+        <b-btn v-else-if="allowSubmit"
                class="btn-primary"
                @click="submit">Submit</b-btn>
       </div>
@@ -149,6 +149,21 @@
         invigilators: 'invigilators',
         user: 'user',
       }),
+      allowSubmit() {
+        if (!this.editedFields || this.editedFields.length === 0) {
+          return false
+        }
+        if (this.actionedExam.offsite_location === '_offsite') {
+          if (this.editedFields.length >= 3 && this.editedFields.includes('offsite_location')) {
+            return true
+          }
+          return false
+        }
+        if (this.editedFields.length > 0) {
+          return true
+        }
+        return false
+      },
       titleText() {
         switch (this.examType) {
           case 'group':
@@ -213,6 +228,12 @@
       },
       checkDate(e) {
         this.showMessage = false
+        if (!this.itemCopy.booking) {
+          if (!this.editedFields.includes('date')) {
+            this.editedFields.push('date')
+          }
+          return
+        }
         let date = new moment(this.itemCopy.booking.start_time).format('ddmmyyyy').toString()
         let newDate = new moment(e).format('ddmmyyyy').toString()
         if (newDate === date) {
@@ -230,6 +251,12 @@
       checkTime(e) {
         this.time = e
         this.showMessage = false
+        if (!this.itemCopy.booking) {
+          if (!this.editedFields.includes('time')) {
+            this.editedFields.push('time')
+          }
+          return
+        }
         let time = zone.tz(this.itemCopy.booking.start_time, this.editedTimezone).format('HH:mm').toString()
         let newTime = new moment(e).format('HH:mm').toString()
         if (newTime === time) {
@@ -264,20 +291,36 @@
             return
           }
         }
-        if (name === 'invigiator_id' && value == '') {
-          if (this.itemCopy.booking.invigiator_id) {
+        if (name === 'invigilator_id') {
+          if (!this.itemCopy.booking) {
             if (!this.editedFields.includes(name)) {
               this.editedFields.push(name)
             }
+            return
           }
-          if (!this.itemCopy.booking.invigiator_id) {
-            if (this.editedFields.includes(e.target.name)) {
-              let i = this.editedFields.indexOf(e.target.name)
-              this.editedFields.splice(i, 1)
+          if (value == '') {
+            if (this.itemCopy.booking.sbc_staff_invigilated) {
+              console.log('staff invigilated')
+              if (!this.editedFields.includes(name)) {
+                this.editedFields.push(name)
+              }
+              return
             }
+            if (this.itemCopy.booking.invigilator_id) {
+              if (!this.editedFields.includes(name)) {
+                this.editedFields.push(name)
+              }
+              return
+            }
+            if (!this.itemCopy.booking.invigiator_id) {
+              if (this.editedFields.includes(e.target.name)) {
+                let i = this.editedFields.indexOf(e.target.name)
+                this.editedFields.splice(i, 1)
+              }
+            }
+            this.invigiator_id = ''
+            return
           }
-          this.invigiator_id = ''
-          return
         }
         value = parseInt(value)
         if (value !== this.itemCopy.booking[name]) {
@@ -312,11 +355,13 @@
             booking_name: this.actionedExam.exam_name,
           }
           if (this.invigilator_id) {
-            if (this.invigilator_id === 'sbc staff') {
-              bookingPost.sbc_staff_invigilated = true
-            }
             bookingPost.invigilator_id = this.invigilator_id
+            if (this.invigilator_id === 'sbc') {
+              bookingPost.sbc_staff_invigilated = true
+              bookingPost.invigilator_id = null
+            }
           }
+
           let examPut = {
             offsite_location: this.offsite_location
           }
@@ -399,7 +444,7 @@
             this.invigilator_id = tempItem.booking.invigilator_id
           }
         }
-        tempItem.offsite_location === '_offsite' ? this.offsite_location = '' : tempItem.offsite_location
+        this.offsite_location = tempItem.offsite_location === '_offsite' ? null : tempItem.offsite_location
         this.editedFields = []
         this.itemCopy = tempItem
       },
