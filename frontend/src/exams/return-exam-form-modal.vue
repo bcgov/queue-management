@@ -172,16 +172,14 @@
         this.notes = tempValues.notes
         this.exam_returned_tracking_number = tempValues.exam_returned_tracking_number
         if (tempValues.exam_returned_date) {
-          console.log('twas true')
           this.modalUse = 'edit'
           this.returned = true
-          this.exam_returned_date = tempValues.exam_returned_date
+          this.exam_returned_date = moment(tempValues.exam_returned_date).format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ')
           this.exam_written_ind = tempValues.exam_written_ind
           return
         }
         this.modalUse = 'return'
         this.exam_written_ind = 1
-
       },
       resetModal() {
         this.toggleReturnExamModal(false)
