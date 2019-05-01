@@ -300,7 +300,6 @@
           }
           if (value == '') {
             if (this.itemCopy.booking.sbc_staff_invigilated) {
-              console.log('staff invigilated')
               if (!this.editedFields.includes(name)) {
                 this.editedFields.push(name)
               }
@@ -383,18 +382,13 @@
         let edit_timezone_name = this.actionedExam.booking.office.timezone.timezone_name
         let bookingChanges = {}
         if (edits.includes('time') || edits.includes('date') || edits.includes('invigilator_id')) {
-          let baseDate = this.date
-          let baseTime = moment(this.time).format('HH:mm:ss').toString()
-          if (edits.includes('date')) {
-            baseDate = new moment(this.date).format('YYYY-MM-DD').toString()
-          }
+          let baseDate = moment(this.date).clone().format('YYYY-MM-DD')
+          let baseTime = moment(this.time).clone().format('HH:mm:ss')
           let start
           if (local_timezone_name !== edit_timezone_name) {
-            console.log('different time zones')
             start =  zone.tz(`${baseDate}T${baseTime}`, edit_timezone_name)
           }
           if (local_timezone_name === edit_timezone_name) {
-            console.log('same time zones')
             start = moment(`${baseDate}T${baseTime}`)
           }
           let end = start.clone().add(parseInt(this.itemCopy.exam_type.number_of_hours), 'h')
@@ -410,7 +404,6 @@
               bookingChanges.sbc_staff_invigilated = false
             }
           }
-          console.log(bookingChanges)
           putRequests.push({url:`/bookings/${this.itemCopy.booking.booking_id}/`, data: bookingChanges})
         }
         let examChanges = {}
@@ -433,11 +426,11 @@
       setValues() {
         let tempItem = Object.assign({}, this.actionedExam)
         if (tempItem.booking && tempItem.booking.start_time) {
+          let { start_time } = tempItem.booking
           let { timezone_name } = this.actionedExam.booking.office.timezone
-          let time = zone.tz(tempItem.booking.start_time, timezone_name).format('HH:mm:ss')
-          let date = moment(tempItem.booking.start_time, timezone_name).format('YYYY-MM-DD')
-          this.time = date + 'T' + time
-          this.date = date
+          let time = zone.tz(start_time, timezone_name).clone().format('MMM-dd-YYYY HH:mm:ss').toString()
+          this.time = moment(time).format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ')
+          this.date = zone.tz(start_time, timezone_name).clone().format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ')
           if (tempItem.booking.sbc_staff_invigilated) {
             this.invigilator_id = 'sbc'
           } else {

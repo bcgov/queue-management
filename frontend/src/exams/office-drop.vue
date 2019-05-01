@@ -113,7 +113,6 @@
       handleOfficeDropClick(e) {
         this.showSearch = false
         this.search = e.target.name
-        console.log(e.target.value)
         this.setOffice(e.target.value)
         this.searching = false
       },

@@ -50,9 +50,7 @@ describe("Serve Citizens", () => {
       await clickNavMenu();
       await clickNavExamInventory();
       await closeTimeTracking();
-      console.log("Meow.")
       await clickNavDropDown();
-      console.log("Meow meow.")
       await fillInExamName();
       await fillInEventID();
       await fillInNumberOfStudents();
