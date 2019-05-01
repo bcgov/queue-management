@@ -77,8 +77,8 @@
               </template>
 
               <template slot="writer" slot-scope="row">
-                <span v-if="!row.item.exam.exam_type.exam_type_name.includes('Group') &&
-                            !row.item.exam.exam_type.exam_type_name.includes('Challenger')">
+                <span v-if="!row.item.exam.exam_type.group_exam_ind &&
+                            !row.item.exam.exam_type.exam_type_name.includes('Monthly Session Exam')">
                   {{ row.item.exam.examinee_name }}
                 </span>
                 <span v-else>
