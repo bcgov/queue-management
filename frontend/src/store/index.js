@@ -487,9 +487,9 @@ export const store = new Vuex.Store({
         Axios(context).put(`/bookings/${payload.id}/`, payload.changes).then(resp => {
           resolve(resp.data)
         })
-          .catch(error => {
-            reject(error)
-          })
+        .catch(error => {
+          reject(error)
+        })
       })
     },
 

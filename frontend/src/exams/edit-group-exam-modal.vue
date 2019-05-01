@@ -6,7 +6,7 @@
            hide-footer
            size="md">
     <div v-if="showModal">
-      <span class="q-modal-header">Edit Group Exam Booking</span>
+      <span class="q-modal-header">Edit {{ titleText }} Exam Booking</span>
       <b-form autocomplete="off">
         <b-form-row>
           <b-col class="mb-2">
@@ -38,37 +38,31 @@
           </b-col>
         </b-form-row>
         <b-form-row>
-          <b-col cols="6" v-if="is_liaison_designate || role_code === 'GA'">
+          <b-col cols="6">
             <b-form-group>
               <label>Exam Date</label><br>
               <DatePicker v-model="date"
+                          style="color: black"
+                          :disabled="fieldDisabled"
                           name="date"
-                          class="w-100"
+                          input-class="custom-disabled-fields form-control"
+                          class="w-100 date-time-fields"
                           @input="checkDate"
-                          lang="en"></DatePicker>
+                          lang="en">
+              </DatePicker>
             </b-form-group>
           </b-col>
-          <b-col cols="6" v-if="role_code !== 'GA' && !is_liaison_designate">
-            <b-form-group>
-              <label>Exam Time</label><br>
-              <b-input disabled :value="formatTime(actionedExam.booking.start_time)" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="6" v-if="role_code !== 'GA' && !is_liaison_designate">
-            <b-form-group>
-              <label>Exam Date</label><br>
-              <b-input disabled :value="formatDate(actionedExam.booking.start_time)" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="6" v-if="is_liaison_designate || role_code === 'GA'">
+
+          <b-col cols="6">
             <b-form-group>
               <label>Exam Time</label><br>
               <DatePicker v-model="time"
                           class="w-100"
+                          :disabled="fieldDisabled"
                           :time-picker-options="{ start: '8:00', step: '00:30', end: '17:00' }"
                           lang="en"
                           format="h:mm a"
-                          confirm
+                          input-class="custom-disabled-fields form-control"
                           name="time"
                           @input="checkTime"
                           type="time">
@@ -86,8 +80,9 @@
             <b-form-group>
               <label>Location</label><br>
               <b-textarea v-model="offsite_location"
-                          :disabled="role_code !== 'GA' && !is_liaison_designate"
-                          class="mb-0"
+                          :disabled="fieldDisabled"
+                          style="color: #525252"
+                          class="mb-0 custom-disabled-fields"
                           :rows="2"
                           name="offsite_location"
                           @input.native="checkInput" />
@@ -115,10 +110,10 @@
             style="color: red;">Nothing has changed.  All fields contain their initial values.</div>
       <div style="display: flex; justify-content: flex-end; width: 100%">
         <b-btn class="btn-secondary mr-2" @click="cancel">Cancel</b-btn>
-        <b-btn v-if="editedFields.length === 0"
+        <b-btn v-if="!allowSubmit"
                class="btn-primary disabled"
                @click="showMessage=true">Submit</b-btn>
-        <b-btn v-else-if="editedFields.length > 0"
+        <b-btn v-else-if="allowSubmit"
                class="btn-primary"
                @click="submit">Submit</b-btn>
       </div>
@@ -154,11 +149,59 @@
         invigilators: 'invigilators',
         user: 'user',
       }),
+      allowSubmit() {
+        if (!this.editedFields || this.editedFields.length === 0) {
+          return false
+        }
+        if (this.actionedExam.offsite_location === '_offsite') {
+          if (this.editedFields.length >= 3 && this.editedFields.includes('offsite_location')) {
+            return true
+          }
+          return false
+        }
+        if (this.editedFields.length > 0) {
+          return true
+        }
+        return false
+      },
+      titleText() {
+        switch (this.examType) {
+          case 'group':
+            return 'Group'
+          case 'challenger':
+            return 'Monthly Session'
+          default:
+            return 'Other'
+        }
+      },
       editedTimezone() {
         if (this.actionedExam && this.actionedExam.booking) {
           return this.actionedExam.booking.office.timezone.timezone_name
         }
         return ''
+      },
+      examType() {
+        if (this.actionedExam && this.actionedExam.exam_type) {
+          let { exam_type } = this.actionedExam
+
+          if (exam_type.exam_type_name === 'Monthly Session Exam') {
+            return 'challenger'
+          }
+          if (exam_type.group_exam_ind) {
+            return 'group'
+          }
+          if (exam_type.ita_ind) {
+            return 'individual'
+          }
+          return 'other'
+        }
+        return ''
+      },
+      fieldDisabled() {
+        if ((this.role_code !== 'GA' && !this.is_liaison_designate) && this.examType != 'other') {
+          return true
+        }
+        return false
       },
       modalVisible: {
         get() {
@@ -185,6 +228,12 @@
       },
       checkDate(e) {
         this.showMessage = false
+        if (!this.itemCopy.booking) {
+          if (!this.editedFields.includes('date')) {
+            this.editedFields.push('date')
+          }
+          return
+        }
         let date = new moment(this.itemCopy.booking.start_time).format('ddmmyyyy').toString()
         let newDate = new moment(e).format('ddmmyyyy').toString()
         if (newDate === date) {
@@ -202,6 +251,12 @@
       checkTime(e) {
         this.time = e
         this.showMessage = false
+        if (!this.itemCopy.booking) {
+          if (!this.editedFields.includes('time')) {
+            this.editedFields.push('time')
+          }
+          return
+        }
         let time = zone.tz(this.itemCopy.booking.start_time, this.editedTimezone).format('HH:mm').toString()
         let newTime = new moment(e).format('HH:mm').toString()
         if (newTime === time) {
@@ -226,7 +281,6 @@
             if (!this.editedFields.includes(e.target.name)) {
               this.editedFields.push(e.target.name)
             }
-            this[e.target.name] = e.target.value
             return
           }
           if (value === this.itemCopy[name]) {
@@ -234,24 +288,39 @@
               let i = this.editedFields.indexOf(e.target.name)
               this.editedFields.splice(i, 1)
             }
-            this[name] = value
             return
           }
         }
-        if (name === 'invigiator_id' && value == '') {
-          if (this.itemCopy.booking.invigiator_id) {
+        if (name === 'invigilator_id') {
+          if (!this.itemCopy.booking) {
             if (!this.editedFields.includes(name)) {
               this.editedFields.push(name)
             }
+            return
           }
-          if (!this.itemCopy.booking.invigiator_id) {
-            if (this.editedFields.includes(e.target.name)) {
-              let i = this.editedFields.indexOf(e.target.name)
-              this.editedFields.splice(i, 1)
+          if (value == '') {
+            if (this.itemCopy.booking.sbc_staff_invigilated) {
+              console.log('staff invigilated')
+              if (!this.editedFields.includes(name)) {
+                this.editedFields.push(name)
+              }
+              return
             }
+            if (this.itemCopy.booking.invigilator_id) {
+              if (!this.editedFields.includes(name)) {
+                this.editedFields.push(name)
+              }
+              return
+            }
+            if (!this.itemCopy.booking.invigiator_id) {
+              if (this.editedFields.includes(e.target.name)) {
+                let i = this.editedFields.indexOf(e.target.name)
+                this.editedFields.splice(i, 1)
+              }
+            }
+            this.invigiator_id = ''
+            return
           }
-          this.invigiator_id = ''
-          return
         }
         value = parseInt(value)
         if (value !== this.itemCopy.booking[name]) {
@@ -286,11 +355,13 @@
             booking_name: this.actionedExam.exam_name,
           }
           if (this.invigilator_id) {
-            if (this.invigilator_id === 'sbc staff') {
-              bookingPost.sbc_staff_invigilated = true
-            }
             bookingPost.invigilator_id = this.invigilator_id
+            if (this.invigilator_id === 'sbc') {
+              bookingPost.sbc_staff_invigilated = true
+              bookingPost.invigilator_id = null
+            }
           }
+
           let examPut = {
             offsite_location: this.offsite_location
           }
@@ -364,7 +435,7 @@
         if (tempItem.booking && tempItem.booking.start_time) {
           let { timezone_name } = this.actionedExam.booking.office.timezone
           let time = zone.tz(tempItem.booking.start_time, timezone_name).format('HH:mm:ss')
-          let date = moment(tempItem.booking.start_time).format('YYYY-MM-DD')
+          let date = moment(tempItem.booking.start_time, timezone_name).format('YYYY-MM-DD')
           this.time = date + 'T' + time
           this.date = date
           if (tempItem.booking.sbc_staff_invigilated) {
@@ -373,7 +444,7 @@
             this.invigilator_id = tempItem.booking.invigilator_id
           }
         }
-        this.offsite_location = tempItem.offsite_location
+        this.offsite_location = tempItem.offsite_location === '_offsite' ? null : tempItem.offsite_location
         this.editedFields = []
         this.itemCopy = tempItem
       },
@@ -397,5 +468,8 @@
   .id-grid-1st-col {
     grid-column: 1 / span 2;
     margin-right: 20px;
+  }
+  .custom-disabled-fields {
+    color: #525252 !important;
   }
 </style>

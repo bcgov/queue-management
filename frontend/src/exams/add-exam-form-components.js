@@ -221,6 +221,16 @@ export const ExamReceivedQuestion = Vue.component('exam-received-question', {
   },
   methods: {
     ...mapMutations(['captureExamDetail', 'toggleIndividualCaptureTabRadio']),
+    unsetDate(e) {
+      if (!e && this.modalSetup === 'individual') {
+        this.handleInput({
+          target: {
+            name: 'exam_received_date',
+            value: null
+          }
+        })
+      }
+    },
     preSetDate() {
       if (this.modalSetup === 'other' || this.modalSetup === 'pesticide') {
         this.handleInput({
@@ -249,6 +259,7 @@ export const ExamReceivedQuestion = Vue.component('exam-received-question', {
           </label><br>
           <b-form-radio-group v-model="showRadio"
                               @input="preSetDate()"
+                              @change="unsetDate"
                               autocomplete="off"
                               :options="['other', 'pesticide'].includes(modalSetup) ? otherOptions : options"/>
         </b-form-group>
