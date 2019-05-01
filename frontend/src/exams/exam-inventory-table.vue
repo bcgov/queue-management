@@ -454,7 +454,6 @@
         return false
       },
       checkInvigilator(item) {
-        console.log(item)
         if (item.booking && (item.booking.invigilator_id || item.booking.sbc_staff_invigilated)) {
           return true
         }
