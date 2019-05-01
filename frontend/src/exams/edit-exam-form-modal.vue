@@ -251,7 +251,11 @@
           { value: false, text: 'No' },
           { value: true, text: 'Yes' },
         ],
-        fields: {},
+        fields: {
+          exam_received_date: null,
+          notes: null,
+          event_id: null,
+        },
         message: '',
         methodOptions: [
           { text: 'paper', value: 'paper'},
