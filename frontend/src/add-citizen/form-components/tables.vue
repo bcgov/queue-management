@@ -104,6 +104,7 @@
       rowClicked(item, index) {
         let id = item.service_id
         this.setAddModalSelectedItem(item.service_name)
+        this.selectedRow = id
         this.$store.commit('updateAddModalForm', {type:'service',value:id})
       }
     }

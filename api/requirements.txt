@@ -1,3 +1,4 @@
+snowplow-tracker==0.8.2rc1.dev1
 Flask
 Flask-Admin
 Flask-Cache
@@ -18,7 +19,6 @@ flask-jwt-oidc>=0.1.5
 flask_marshmallow
 flask-socketio
 gunicorn
-kombu
 marshmallow-sqlalchemy
 mysqlclient
 pysnow

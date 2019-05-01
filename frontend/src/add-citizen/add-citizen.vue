@@ -44,13 +44,14 @@
                 <option value="3">Low Priority</option>
               </select>
             </div>
-            <select v-show="reception && !simplified" id="counter-selection" class="custom-select" v-model="counter_selection">
-              <option v-for="counter in sortedCounters"
-                    :value="counter.counter_id"
-                    :key="counter.counter_id">
-                {{counter.counter_name}}
-              </option>
-            </select>
+            <b-form-checkbox v-model="quickTrans"
+                             value="1"
+                             unchecked-value="0"
+                             v-if="reception && !simplified"
+                             class="quick"
+                             style="color:white;margin: 8px;">
+              <span style="font: 400 16px Myriad-Pro;">Quick Txn</span>
+            </b-form-checkbox>
           </div>
           <div class="button-row">
             <Buttons />
@@ -74,7 +75,7 @@ export default {
   },
   mounted() {
     this.$root.$on("showAddMessage", () => {
-      this.Alert()
+      this.showAlert()
     })
   },
   data() {
@@ -91,7 +92,6 @@ export default {
       showAddModal: 'showAddModal',
       addModalSetup: 'addModalSetup',
       serviceModalForm: 'serviceModalForm',
-      user: 'user'
     }),
     ...mapGetters({form_data: "form_data", reception: "reception",}),
     simplified() {
@@ -109,13 +109,12 @@ export default {
       }
       return "Add Citizen"
     },
-
-    counter_selection: {
+    quickTrans: {
       get() {
-        return this.form_data.counter;
+        return this.form_data.quick
       },
       set(value) {
-        this.updateAddModalForm({ type: "counter", value });
+        this.updateAddModalForm({ type: "quick", value })
       }
     },
     priority_selection: {
@@ -125,13 +124,6 @@ export default {
       set(value) {
         this.updateAddModalForm({ type: "priority", value })
       }
-    },
-    sortedCounters(){
-      var sorted = this.user.office.counters.sort((a,b) => {
-        return a.counter_name > b.counter_name
-      })
-      console.log(sorted)
-      return sorted
     }
   },
   methods: {
