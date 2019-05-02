@@ -2,7 +2,7 @@
 from flask_script import Command, Manager, Option # class for handling a set of commands
 from flask_migrate import Migrate, MigrateCommand, upgrade
 from qsystem import db, application
-from app.models import theq
+from app.models import theq, bookings
 from app.models import bookings
 import logging
 from datetime import datetime
@@ -23,6 +23,8 @@ class Bootstrap(Command):
         theq.CitizenState.query.delete()
         theq.CSR.query.delete()
         theq.CSRState.query.delete()
+        bookings.Booking.query.delete()
+        bookings.Appointment.query.delete()
         # theq.OfficeService.query.delete()   #  This needs to be updated.
         bookings.Exam.query.delete()
         bookings.ExamType.query.delete()
@@ -30,16 +32,17 @@ class Bootstrap(Command):
         bookings.Invigilator.query.delete()
         theq.Office.query.delete()
         theq.SmartBoard.query.delete()
-        # theq.RolePermission.query.delete()  #  No data in this table yet.
+        theq.Counter.query.delete()
+        # theq.RolePermission.query.delete()  #  No data in this table yet. (table also not defined in models.theq)
         theq.Role.query.delete()
-        # theq.Permission.query.delete()      #  No data in this table yet.
+        # theq.Permission.query.delete()      #  No data in this table yet. (table also not defined in models.theq)
         theq.Service.query.filter_by(actual_service_ind=1).delete()
         theq.Service.query.delete()
         theq.Channel.query.delete()
         bookings.Booking.query.delete()
         theq.Timezone.query.delete()
 
-        db.session.commit()
+        # db.session.commit()
 
         print("Starting to bootstrap data")
         #-- Channels --------------------------------------------------------
@@ -343,6 +346,21 @@ class Bootstrap(Command):
         db.session.add(service_ptax4)
         db.session.add(service_exams)
         db.session.commit()
+        
+        #-- Counter values ---------------------------------------------------
+        print('--> Counters')
+        qt_counter = theq.Counter(
+            counter_name='Quick Trans',
+            counter_id=1,
+        )
+        counter = theq.Counter(
+            counter_name='Counter',
+            counter_id=2
+        )
+
+        db.session.add(qt_counter)
+        db.session.add(counter)
+        db.session.commit()
 
         #-- Office values ---------------------------------------------------
         print("--> Offices")
@@ -350,20 +368,23 @@ class Bootstrap(Command):
             office_name="Test Office",
             office_number=999,
             sb_id=smartboard_call_ticket.sb_id,
-            exams_enabled_ind=1
+            exams_enabled_ind=1,
         )
+        office_test.counters.append(counter)
         office_100 = theq.Office(
             office_name="100 Mile House",
             office_number=1,
             sb_id=smartboard_no_call.sb_id,
-            exams_enabled_ind=0
+            exams_enabled_ind=0,
         )
+        office_100.counters.append(counter)
         office_victoria = theq.Office(
             office_name="Victoria",
             office_number=61,
             sb_id=smartboard_call_name.sb_id,
-            exams_enabled_ind=0
+            exams_enabled_ind=0,
         )
+        office_victoria.counters.append(counter)
         db.session.add(office_test)
         db.session.add(office_100)
         db.session.add(office_victoria)
@@ -375,7 +396,7 @@ class Bootstrap(Command):
             username="cfms-postman-operator",
             office_id=office_test.office_id,
             role_id=role_csr.role_id,
-            qt_xn_csr_ind=1,
+            counter_id=qt_counter.counter_id,
             receptionist_ind=1,
             deleted=None,
             csr_state_id=csr_state_logout.csr_state_id
@@ -384,7 +405,7 @@ class Bootstrap(Command):
             username="cfms-postman-non-operator",
             office_id=office_test.office_id,
             role_id=role_csr.role_id,
-            qt_xn_csr_ind=0,
+            counter_id=counter.counter_id,
             receptionist_ind=1,
             deleted=None,
             csr_state_id=csr_state_logout.csr_state_id
@@ -393,7 +414,7 @@ class Bootstrap(Command):
             username="akroon3r",
             office_id=office_test.office_id,
             role_id=role_csr.role_id,
-            qt_xn_csr_ind=0,
+            counter_id=counter.counter_id,
             receptionist_ind=1,
             deleted=None,
             csr_state_id=csr_state_logout.csr_state_id
@@ -402,7 +423,7 @@ class Bootstrap(Command):
             username="sjrumsby",
             office_id=office_test.office_id,
             role_id=role_csr.role_id,
-            qt_xn_csr_ind=0,
+            counter_id=counter.counter_id,
             receptionist_ind=1,
             deleted=None,
             csr_state_id=csr_state_logout.csr_state_id
@@ -411,7 +432,7 @@ class Bootstrap(Command):
             username="scottrumsby",
             office_id=office_test.office_id,
             role_id=role_csr.role_id,
-            qt_xn_csr_ind=0,
+            counter_id=counter.counter_id,
             receptionist_ind=1,
             deleted=None,
             csr_state_id=csr_state_logout.csr_state_id
@@ -420,7 +441,7 @@ class Bootstrap(Command):
             username="ChrisDMac",
             office_id=office_test.office_id,
             role_id=role_csr.role_id,
-            qt_xn_csr_ind=0,
+            counter_id=counter.counter_id,
             receptionist_ind=1,
             deleted=None,
             csr_state_id=csr_state_logout.csr_state_id
@@ -429,7 +450,7 @@ class Bootstrap(Command):
             username="gil0109",
             office_id=office_test.office_id,
             role_id=role_csr.role_id,
-            qt_xn_csr_ind=0,
+            counter_id=counter.counter_id,
             receptionist_ind=1,
             deleted=None,
             csr_state_id=csr_state_logout.csr_state_id
@@ -438,7 +459,7 @@ class Bootstrap(Command):
             username="admin",
             office_id=office_test.office_id,
             role_id=role_ga.role_id,
-            qt_xn_csr_ind=0,
+            counter_id=counter.counter_id,
             receptionist_ind=1,
             deleted=None,
             csr_state_id=csr_state_logout.csr_state_id
@@ -447,7 +468,7 @@ class Bootstrap(Command):
             username="user",
             office_id=office_test.office_id,
             role_id=role_csr.role_id,
-            qt_xn_csr_ind=0,
+            counter_id=counter.counter_id,
             receptionist_ind=1,
             deleted=None,
             csr_state_id=csr_state_logout.csr_state_id

@@ -68,36 +68,32 @@
       <ServeCitizenTable v-if="!minimizeWindow"/>
       <template v-if="!simplifiedModal && !minimizeWindow">
         <b-container fluid
-                     id="serve-light-inner-container"
-                     class="pt-3 pb-2">
-          <b-row no-gutters>
-            <b-col cols="7" />
-            <b-col cols="auto"
-                   style="align: right">
-              <b-form-checkbox v-model="quick"
-                               value="1"
-                               unchecked-value="0"
-                               v-if="reception"
-                               class="quick-checkbox"
-                               style="color:white; margin-right: 8px;">
-                  <span style="font: 400 16px Myriad-Pro;">Quick Txn</span>
-                  <span class="quick-span" v-if="quick"></span> <!-- For puppeteer testing to see if quick is selected -->
-              </b-form-checkbox>
-              <select id="priority-selection"
-                      class="custom-select"
-                      v-model="priority_selection"
-                      style="margin-right:8px;">
-                  <option value=1>High Priority</option>
-                  <option value=2>Default Priority</option>
-                  <option value=3>Low Priority</option>
-              </select>
-              <b-button class="btn-primary serve-btn"
-                        @click="clickAddService"
-                        :disabled="serviceBegun===false || performingAction">Add Next Service</b-button>
-            </b-col>
-            <b-col cols="2" />
-          </b-row>
-        </b-container>
+                   id="serve-light-inner-container"
+                   class="pt-3 pb-2"
+                    v-if="!minimizeWindow">
+        <b-row no-gutters>
+          <b-col cols="7" />
+          <b-col cols="auto" style="align: right">
+            <select id="counter-selection" v-show="reception && !simplifiedModal" class="custom-select" v-model="counter_selection">
+              <option v-for="counter in user.office.counters"
+                    :value="counter.counter_id"
+                    :key="counter.counter_id">
+                {{counter.counter_name}}
+              </option>
+            </select>
+            <select id="priority-selection" class="custom-select" v-model="priority_selection" style="margin-right:8px;">
+                <option value=1>High Priority</option>
+                <option value=2>Default Priority</option>
+                <option value=3>Low Priority</option>
+            </select>
+            <b-button class="btn-primary serve-btn"
+                      @click="clickAddService"
+                      :disabled="serviceBegun===false || performingAction"
+                      >Add Next Service</b-button>
+          </b-col>
+          <b-col cols="2" />
+        </b-row>
+      </b-container>
         <div v-if="!minimizeWindow">
           <b-container fluid
                        id="serve-citizen-modal-footer">
@@ -189,7 +185,8 @@ export default {
       'showServiceModal',
       'serviceBegun',
       'serviceModalForm',
-      'serveModalAlert'
+      'serveModalAlert',
+      'user'
     ]),
     ...mapGetters({
       invited_citizen: 'invited_citizen',
@@ -237,18 +234,18 @@ export default {
       }
       return this.active_service.channel
     },
-    quick: {
-      get() { return this.serviceModalForm.quick },
-      set(value) {
-        this.editServiceModalForm({type:'quick',value})
-      }
-    },
     priority_selection: {
       get() { return this.serviceModalForm.priority },
       set(value) {
         this.editServiceModalForm({type:'priority',value})
       }
-    }
+    },
+    counter_selection: {
+      get() { return this.serviceModalForm.counter },
+      set(value) {
+        this.editServiceModalForm({ type: "counter", value })
+      }
+    },
   },
 
   methods: {
@@ -385,11 +382,6 @@ export default {
 }
 strong {
   font-size: 1.35rem;
-}
-#priority-selection {
-    display: inline-block;
-    width: 135px;
-    padding-right: 0;
 }
 .custom-select {
     line-height: 25px;
