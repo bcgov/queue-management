@@ -28,39 +28,14 @@
                 id="serve-citizen-button">Serve Now</b-button>
     </div>
     <div>
-      <b-button-group>
-        <b-button class="btn-primary"
-                  @click="addCitizen"
-                  :disabled="citizenInvited===true || performingAction || showAdmin"
-                  id="add-citizen-button">Add Citizen</b-button>
-        <b-dropdown v-if="user.office.quick_list.length > 0"
-          :variant="citizenInvited===true || performingAction || showAdmin ? '' : 'primary'"
-          :disabled="citizenInvited===true || performingAction || showAdmin" right>
-            <b-dropdown-item v-for="item in user.office.quick_list"
-                    :data-id="item.service_id"
-                    :key="item.service_id"
-                    @click="quickServeCitizen">
-              {{item.service_name}}
-            </b-dropdown-item>
-        </b-dropdown>
-      </b-button-group>
-
-      <b-button-group>
-        <b-button class="btn-primary"
-                  @click="clickBackOffice"
-                  :disabled="citizenInvited===true || performingAction || showAdmin"
-                  id="add-citizen-button">Back Office</b-button>
-        <b-dropdown v-if="user.office.back_office_list.length > 0"
-          :variant="citizenInvited===true || performingAction || showAdmin ? '' : 'primary'"
-          :disabled="citizenInvited===true || performingAction || showAdmin" right>
-            <b-dropdown-item v-for="item in user.office.back_office_list"
-                    :data-id="item.service_id"
-                    :key="item.service_id"
-                    @click="quickBackOffice">
-              {{item.service_name}}
-            </b-dropdown-item>
-        </b-dropdown>
-      </b-button-group>
+      <b-button class="btn-primary mr-1"
+                @click="addCitizen"
+                :disabled="citizenInvited===true || performingAction || showAdmin"
+                id="add-citizen-button">Add Citizen</b-button>
+      <b-button class="btn-primary"
+                @click="clickBackOffice"
+                :disabled="citizenInvited===true || performingAction || showAdmin"
+                id="add-citizen-button">Back Office</b-button>
     </div>
     <div />
   </div>
@@ -94,7 +69,6 @@
       ...mapMutations([
         'setMainAlert',
         'toggleFeedbackModal',
-        'setAddModalSelectedItem'
       ]),
       ...mapActions([
         'clickInvite',
@@ -102,40 +76,10 @@
         'clickAdmin',
         'clickGAScreen',
         'clickServeNow',
-        'clickBackOffice',
-        'clickQuickServe',
-        'clickQuickBackOffice',
+        'clickBackOffice'
       ]),
       addCitizen() {
         this.clickAddCitizen()
-      },
-      quickServeCitizen(e) {
-        let service_id = e.target.dataset.id
-        let service_name = e.target.innerText
-
-        if(this.user.receptionist_ind && this.user.office.sb.sb_type !== "nocallonsmartboard"){
-          this.clickAddCitizen()
-          this.$store.commit('updateAddModalForm', {type:'service',value:service_id})
-          this.$store.commit('updateAddModalForm', {type:'search',value:service_name})
-        } else {
-          this.setAddModalSelectedItem(service_name)
-          this.$store.commit('updateAddModalForm', {type:'service',value:service_id})
-          this.clickQuickServe()
-        }
-      },
-      quickBackOffice(e) {
-        let service_id = e.target.dataset.id
-        let service_name = e.target.innerText
-
-        if(this.user.receptionist_ind && this.user.office.sb.sb_type !== "nocallonsmartboard"){
-          this.clickBackOffice()
-          this.$store.commit('updateAddModalForm', {type:'service',value:service_id})
-          this.$store.commit('updateAddModalForm', {type:'search',value:service_name})
-        } else {
-          this.setAddModalSelectedItem(service_name)
-          this.$store.commit('updateAddModalForm', {type:'service',value:service_id})
-          this.clickQuickBackOffice()
-        }
       },
       invite() {
         if (this.queueLength === 0) {

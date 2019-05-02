@@ -28,16 +28,14 @@ class OfficeConfig(Base):
     create_modal = False
     edit_modal = False
     can_delete = False
+
     column_list = ['office_name',
                    'sb',
                    'services',
                    'deleted',
                    'exams_enabled_ind',
                    'appointments_enabled_ind',
-                   'quick_list',
-                   'counters',
                    'timezone.timezone_name',
-                   'back_office_list'
                    ]
 
     form_excluded_columns = ('citizens',
@@ -54,9 +52,6 @@ class OfficeConfig(Base):
                          'deleted',
                          'exams_enabled_ind',
                          'appointments_enabled_ind',
-                         'quick_list',
-                         'back_office_list',
-                         'counters',
                          'timezone'
                          )
 
@@ -67,9 +62,6 @@ class OfficeConfig(Base):
                        'deleted',
                        'exams_enabled_ind',
                        'appointments_enabled_ind',
-                       'quick_list',
-                       'back_office_list',
-                       'counters',
                        'timezone'
                        )
 
@@ -83,11 +75,8 @@ class OfficeConfig(Base):
                             'sb',
                             'deleted',
                             'exams_enabled_ind',
-                            'quick_list',
-                            'counters',
                             'exams_enabled_ind',
-                            'appointments_enabled_ind',
-                            'back_office_list'
+                            'appointments_enabled_ind'
                             ]
 
     column_default_sort = 'office_name'

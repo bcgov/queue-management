@@ -25,8 +25,8 @@ limitations under the License.*/
              @row-clicked="rowClicked"
              class="p-0 m-0">
              <!--id="client-waiting-table"-->
-      <template slot='counter_id' slot-scope='data'>
-        {{ showCounter(data.item.counter_id) }}
+      <template slot='qt_xn_citizen_ind' slot-scope='data'>
+        {{ (data.item.qt_xn_citizen_ind===0) ? ('No') : ('Yes') }}
       </template>
       <template slot='start_time' slot-scope='data'>
         {{ formatTime(data.item.start_time) }}
@@ -63,12 +63,13 @@ limitations under the License.*/
           {key: 'csr', label: 'Served By', sortable: false, thStyle: 'width: 10%'},
           {key: 'category', label: 'Category', sortable: false, thStyle: 'width: 17%'},
           {key: 'service', label: 'Service', sortable: false, thStyle: 'width: 17%'},
-          {key: 'citizen_comments', label: 'Comments', sortable: false, thStyle: 'width: 17%'}
+          {key: 'citizen_comments', label: 'Comments', sortable: false, thStyle: 'width: 17%'},
+          {key: 'priority', label: 'Priority', sortable: false, thStyle: 'width: 10%'}
         ]
       }
     },
     computed: {
-      ...mapState(['citizenInvited', 'serviceModalForm', 'performingAction', 'user']),
+      ...mapState(['citizenInvited', 'serviceModalForm', 'performingAction']),
       ...mapGetters(['citizens_queue', 'active_service_id', 'reception']),
       citizens() {
         return this.citizens_queue
@@ -76,8 +77,8 @@ limitations under the License.*/
       getFields: function() {
         if (this.reception) {
           let temp = this.fields
-          temp.unshift({key: 'counter_id', label: 'Counter', sortable: false, thStyle: 'width: 8%'})
-          temp.unshift({key: 'priority', label: 'Priority', sortable: false, thStyle: 'width: 8%'})
+          temp.unshift({key: 'qt_xn_citizen_ind', label: 'Q. Txn', sortable: false, thStyle: 'width: 6%'})
+          temp.unshift({key: 'priority', label: 'Priority', sortable: false, thStyle: 'width: 10%'})
           return temp
         }
         else {
@@ -111,23 +112,12 @@ limitations under the License.*/
         let n = service.periods.findIndex(p => p.time_end === null)
         return service.periods[n].csr.username
       },
-      showCounter(value) {
-        for(let i = 0; i < this.user.office.counters.length; i++){
-          if(this.user.office.counters[i].counter_id == value){
-            return this.user.office.counters[i].counter_name
-          }
-        }
-      },
       showCategory(id) {
         let service = this.active_service_id(id)
         if (!service) {
           return null
         }
-        if(service.service.parent){
-          return service.service.parent.service_name
-        } else { // @TODO DELETE THIS
-          return "category"
-        }
+        return service.service.parent.service_name
       },
       showService(id) {
         let service = this.active_service_id(id)
