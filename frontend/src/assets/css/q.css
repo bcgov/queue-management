@@ -32,6 +32,16 @@
   padding: 1%;
   position: relative;
 }
+.q-custom-booking-modal {
+  background-color: #fefefe;
+  margin-right: auto;
+  margin-left: auto;
+  margin-top: 3%;
+  width: 525px;
+  padding: 1%;
+  position: relative;
+  border-radius: 5px;
+}
 .q-modal-body {
   padding: 0px !important;
 }

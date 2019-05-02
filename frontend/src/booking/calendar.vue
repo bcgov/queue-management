@@ -116,6 +116,9 @@
         config: {
           columnHeaderFormat: 'ddd/D',
           selectAllow: (info) => {
+            if (info.resourceId === '_offsite') {
+              return false
+            }
             let today = moment()
             if(info.start.isBefore(today)){
               return false

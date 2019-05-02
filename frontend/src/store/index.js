@@ -547,7 +547,7 @@ export const store = new Vuex.Store({
             booking.id = b.booking_id
             booking.exam = context.state.exams.find(ex => ex.booking_id == b.booking_id) || false
             booking.booking_contact_information = b.booking_contact_information
-
+            booking.fees = b.fees
             calendarEvents.push(booking)
           })
           context.commit('setEvents', calendarEvents)
@@ -1520,7 +1520,12 @@ export const store = new Vuex.Store({
         delete responses.offsite_location
       }
       if (responses.invigilator) {
-        booking.invigilator_id = responses.invigilator.invigilator_id.valueOf()
+        if (responses.invigilator === 'sbc') {
+          booking.invigilator_id = null
+          booking.sbc_staff_invigilated = true
+        } else {
+          booking.invigilator_id = responses.invigilator.invigilator_id.valueOf()
+        }
         delete responses.invigilator
       }
       let exam_type= context.state.examTypes.find(ex => ex.exam_type_name === 'Monthly Session Exam')
@@ -1528,7 +1533,8 @@ export const store = new Vuex.Store({
         exam_returned_ind: 0,
         examinee_name: 'Monthly Session',
         exam_type_id: exam_type.exam_type_id,
-        office_id: context.state.user.office_id
+        office_id: context.state.user.office_id,
+        exam_method: 'paper',
       }
       delete responses.exam_time
       delete responses.expiry_date
@@ -1902,6 +1908,10 @@ export const store = new Vuex.Store({
         csr_state_id: context.state.user.csr_state_id,
       })
     },
+  
+    restoreSavedModalAction({commit}, payload) {
+      commit('restoreSavedModal', payload)
+    },
   },
 
   mutations: {
@@ -1925,9 +1935,9 @@ export const store = new Vuex.Store({
       state.categories = []
       state.categories = payload
     },
-
+  
     setReturnExamInfo: (state, payload) => state.returnExam = payload,
-
+  
     toggleAddModal: (state, payload) => state.showAddModal = payload,
   
     updateAddModalForm(state, payload) {
@@ -2004,7 +2014,7 @@ export const store = new Vuex.Store({
       let service_citizen = citizen
       let quick = citizen.qt_xn_citizen_ind
       let priority = citizen.priority
-    
+
       let obj = { citizen_comments, activeQuantity, citizen_id, service_citizen, quick, priority }
       let keys = Object.keys(obj)
     
@@ -2069,7 +2079,7 @@ export const store = new Vuex.Store({
       state.examAlertMessage = payload
       state.examDismissCount = 999
     },
-
+  
     setLoginAlert(state, payload) {
       state.loginAlertMessage = payload
       state.loginDismissCount = 999
@@ -2125,8 +2135,8 @@ export const store = new Vuex.Store({
     examDismissCountDown(state, payload) {
       state.examDismissCount = payload
     },
-
-    loginDismissCountDown(state, payload){
+  
+    loginDismissCountDown(state, payload) {
       state.loginDismissCount = payload
     },
   
@@ -2139,7 +2149,7 @@ export const store = new Vuex.Store({
     toggleBegunStatus: (state, payload) => state.serviceBegun = payload,
   
     toggleGAScreenModal: (state, payload) => state.showGAScreenModal = payload,
-  
+
     setQuickTransactionState: (state, payload) => state.user.qt_xn_csr_ind = payload,
   
     setReceptionistState: (state, payload) => state.user.receptionist_ind = payload,
@@ -2149,7 +2159,7 @@ export const store = new Vuex.Store({
     setUserCSRStateName: (state, payload) => state.user.csr_state.csr_state_name = payload,
   
     setOffice: (state, officeType) => state.officeType = officeType,
-  
+
     flashServeNow: (state, payload) => state.serveNowStyle = payload,
   
     setServeNowAction: (state, payload) => state.serveNowAltAction = payload,
@@ -2195,6 +2205,15 @@ export const store = new Vuex.Store({
           payload[key]
         )
       })
+    },
+  
+    resetAddExamModal: (state) => {
+      state.addExamModal = {
+        visible: false,
+        setup: null,
+        step1MenuOpen: false,
+        office_number: null,
+      }
     },
   
     toggleGenFinReport(state, payload) {
@@ -2278,7 +2297,7 @@ export const store = new Vuex.Store({
     toggleReturnExamModal: (state, payload) => state.showReturnExamModal = payload,
   
     toggleDeleteExamModalVisible: (state, payload) => state.showDeleteExamModal = payload,
-    
+  
     setSelectedExam(state, payload) {
       if (payload === 'clearGoto') {
         delete state.selectedExam.gotoDate
@@ -2325,7 +2344,7 @@ export const store = new Vuex.Store({
     setOfficeFilter: (state, payload) => state.officeFilter = payload,
   
     setSelectionIndicator: (state, payload) => state.selectionIndicator = payload,
-    
+  
     setResources: (state, payload) => state.roomResources = payload,
   
     setEvents: (state, payload) => state.calendarEvents = payload,
@@ -2352,9 +2371,11 @@ export const store = new Vuex.Store({
     },
   
     toggleOffsiteVisible: (state, payload) => state.offsiteVisible = payload,
-    
+  
     toggleExamsTrackingIP: (state, payload) => state.examsTrackingIP = payload,
   
     setAppointmentsStateInfo: (state, payload) => state.appointmentsStateInfo = payload,
+  
+    clearAddExamModalFromCalendarStatus: state => Vue.delete(state.addExamModal, 'fromCalendar'),
   }
 })

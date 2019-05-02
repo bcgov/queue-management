@@ -3,11 +3,15 @@
   that flex-div must also be div in order for it to be subject to the flex settings (see layout/nav.vue)-->
   <div>
     <form inline>
-      <b-button class="btn-primary" @click="prev">
+      <b-button class="btn-primary"
+                @click="prev"
+                id="previous">
         <font-awesome-icon icon="angle-left"
                            class="m-0 p-0"
                            style="font-size: 1rem;"/></b-button>
-      <b-button class="btn-primary" @click="next">
+      <b-button class="btn-primary"
+                @click="next"
+                id="next">
         <font-awesome-icon icon="angle-right"
                            class="m-0 p-0"
                            style="font-size: 1rem;"/></b-button>

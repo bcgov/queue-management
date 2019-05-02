@@ -11,7 +11,7 @@
         <b-dd-item id="add_session"
                    @click="handleClick('challenger')">Add Monthly Session Exam</b-dd-item>
       </b-dd>
-      <b-button v-if="role_code!=='GA'"
+      <b-button v-if="!(role_code === 'GA' || is_ita_designate)"
                 id="add_ita"
                 class="mr-1 btn-primary"
                 @click="handleClick('individual')">Add ITA Exam</b-button>
@@ -31,18 +31,16 @@
                 @click="clickGenFinReport">Generate Financial Report</b-button>
     <FinancialReportModal />
     </b-form>
-    <AddExamModal />
   </div>
 </template>
 
 <script>
   import { mapActions, mapMutations, mapState, mapGetters } from 'vuex'
-  import AddExamModal from './add-exam-modal'
   import FinancialReportModal from './generate-financial-report-modal'
 
   export default {
     name: "ButtonsExams",
-    components: { AddExamModal, FinancialReportModal },
+    components: { FinancialReportModal },
     computed: {
       ...mapState(['addNonITA', 'showGenFinReportModal', 'user' ]),
       ...mapGetters([
@@ -55,7 +53,6 @@
       ]),
     },
     methods: {
-      ...mapActions(['actionRestoreAll']),
       ...mapMutations(['setAddExamModalSetting', 'toggleGenFinReport',]),
       handleClick(type) {
         this.setAddExamModalSetting({setup: type})
