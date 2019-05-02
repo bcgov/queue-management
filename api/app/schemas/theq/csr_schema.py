@@ -30,12 +30,10 @@ class CSRSchema(ma.ModelSchema):
     username = fields.Str()
     office_id = fields.Int()
     role_id = fields.Int()
-    # deprecated
-    #qt_xn_csr_ind = fields.Int()
+    qt_xn_csr_ind = fields.Int()
     receptionist_ind = fields.Int()
     deleted = fields.DateTime()
     csr_state_id = fields.Int()
-    counter_id = fields.Int()
     csr_state = fields.Nested(CSRStateSchema(exclude=('csrs',)))
     office = fields.Nested(OfficeSchema())
     role = fields.Nested(RoleSchema(exclude=('roles',)))

@@ -31,7 +31,6 @@ class CitizenSchema(ma.ModelSchema):
     ticket_number = fields.Str(dump_only=True)
     citizen_comments = fields.Str()
     qt_xn_citizen_ind = fields.Int()
-    counter_id = fields.Int()
     start_time = fields.DateTime(dump_only=True)
     accurate_time_ind = fields.Int()
     service_reqs = fields.Nested(ServiceReqSchema(exclude=('citizen',)), many=True)

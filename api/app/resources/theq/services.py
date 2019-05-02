@@ -14,89 +14,13 @@ limitations under the License.'''
 
 from functools import cmp_to_key
 from flask import request
-from flask import g
 from flask_restplus import Resource
-
 from qsystem import api, jwt
-from qsystem import db
 from app.models.theq import Service
 from app.models.theq import Office
-from app.models.theq import ServiceReq, Citizen, CSR
 from sqlalchemy import exc
-from app.schemas.theq import ServiceSchema, OfficeSchema
+from app.schemas.theq import ServiceSchema
 
-
-@api.route("/services/refresh/", methods=["GET"])
-class Refresh(Resource):
-    """
-    Refresh the quick lists to the 5 most frequently used items.
-    Returns the resulting office object with updated lists indicated.
-    """
-    @jwt.requires_auth
-    def get(self):
-        if request.args.get('office_id'):
-            office_id = int(request.args.get('office_id'))
-
-            csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
-            
-            if csr.role.role_code == "GA":
-            
-                if csr.office_id != office_id:
-                    return {'message': 'This is not your office, cannot refresh.'}, 403
-            
-            elif csr.role.role_code != "SUPPORT":
-                return {'message': 'You do not have permission to view this end-point'}, 403
-            
-            back_office = Service.query.filter(Service.service_name=='Back Office')[0]
-            def top_reqs(is_back_office=True):
-                '''
-                Get top requests for the office, and set the lists based on those.
-                '''
-                results = ServiceReq.query.join(
-                    Citizen
-                ).join(
-                    Service
-                ).filter(
-                    Citizen.office_id == office_id,
-                )
-                if is_back_office:
-                    results = results.filter(
-                        Service.parent_id == back_office.service_id,
-                        Service.display_dashboard_ind == 0,
-                    )
-                else:
-                    results = results.filter(
-                        Service.parent_id != back_office.service_id,
-                        Service.display_dashboard_ind == 1,
-                    )
-                results = results.order_by(
-                    ServiceReq.sr_id.desc()
-                ).limit(100)
-
-                # Some fancy dicts to collect the top 5 services in a list.
-                counts = {}
-                services = {}
-                for result in results:
-                    service_ct = counts.get(result.service_id, 0)
-                    counts[result.service_id] = service_ct + 1
-                    services[result.service_id] = result
-
-                counts = list(counts.items())[-5:]
-                counts.sort(key=lambda x: x[1]) # sort by quantity.
-                service_ids = [c[0] for c in counts]
-                return [r.service for r in services.values() if r.service_id in service_ids]
-
-            quick_list = top_reqs(is_back_office=False)
-            back_office_list = top_reqs(is_back_office=True)
-
-            office = Office.query.get(office_id)
-            office.quick_list =  quick_list
-            office.back_office_list = back_office_list
-            db.session.commit()
-
-            return OfficeSchema().dump(office)
-        else:
-            return {'message': 'no office specified'}, 400
 
 @api.route("/services/", methods=["GET"])
 class Services(Resource):
