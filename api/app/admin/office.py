@@ -28,12 +28,57 @@ class OfficeConfig(Base):
     create_modal = False
     edit_modal = False
     can_delete = False
-    column_list = ['office_name', 'sb', 'services', 'deleted', 'exams_enabled_ind', 'quick_list', 'counters', 'timezone.timezone_name', 'back_office_list']
-    form_excluded_columns = ('citizens', 'csrs', 'exams', 'rooms', 'invigilators', 'appointments_enabled_ind')
-    form_create_rules = ('office_name', 'office_number', 'sb', 'services', 'deleted', 'exams_enabled_ind', 'quick_list', 'back_office_list', 'counters', 'timezone')
-    form_edit_rules = ('office_name', 'office_number', 'sb', 'services', 'deleted', 'exams_enabled_ind', 'quick_list', 'back_office_list', 'counters', 'timezone')
-    column_labels = {'sb': 'Smartboard', 'timezone.timezone_name': 'Timezone Name'}
-    column_sortable_list = ['office_name', 'sb', 'deleted', 'exams_enabled_ind', 'quick_list', 'counters', 'exams_enabled_ind', 'back_office_list']
+
+    column_list = ['office_name',
+                   'sb',
+                   'services',
+                   'deleted',
+                   'exams_enabled_ind',
+                   'appointments_enabled_ind',
+                   'timezone.timezone_name',
+                   ]
+
+    form_excluded_columns = ('citizens',
+                             'csrs',
+                             'exams',
+                             'rooms',
+                             'invigilators'
+                             )
+
+    form_create_rules = ('office_name',
+                         'office_number',
+                         'sb',
+                         'services',
+                         'deleted',
+                         'exams_enabled_ind',
+                         'appointments_enabled_ind',
+                         'timezone'
+                         )
+
+    form_edit_rules = ('office_name',
+                       'office_number',
+                       'sb',
+                       'services',
+                       'deleted',
+                       'exams_enabled_ind',
+                       'appointments_enabled_ind',
+                       'timezone'
+                       )
+
+    column_labels = {'sb': 'Smartboard',
+                     'timezone.timezone_name': 'Timezone Name',
+                     'exams_enabled_ind': 'Exams Enabled',
+                     'appointments_enabled_ind': 'Appointments Enabled',
+                     }
+
+    column_sortable_list = ['office_name',
+                            'sb',
+                            'deleted',
+                            'exams_enabled_ind',
+                            'exams_enabled_ind',
+                            'appointments_enabled_ind'
+                            ]
+
     column_default_sort = 'office_name'
 
 

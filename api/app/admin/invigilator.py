@@ -20,6 +20,7 @@ from qsystem import db
 
 class InvigilatorConfig(Base):
     roles_allowed = ['SUPPORT', 'GA']
+    delete_allowed = ['SUPPORT']
 
     def is_accessible(self):
         return current_user.is_authenticated and current_user.role.role_code in self.roles_allowed
@@ -30,8 +31,16 @@ class InvigilatorConfig(Base):
         elif current_user.role.role_code == 'GA':
             return self.session.query(self.model).filter_by(office_id=current_user.office_id)
 
+    # Check to see whether or not the user can delete records based on their role
+    def _handle_view(self, name, **kwargs):
+        if current_user.role.role_code in self.delete_allowed:
+            self.can_delete = True
+        else:
+            self.can_delete = False
+
     create_modal = False
     edit_modal = False
+
     column_list = [
         'office.office_name',
         'invigilator_name',

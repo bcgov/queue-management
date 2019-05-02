@@ -51,8 +51,7 @@
           {value: 'smartboard', text: 'Smartboard Content'},
           {value: 'invigilator', text: 'Invigilators'},
           {value: 'room', text: 'Rooms'},
-          {value: 'examtype', text: 'Exam Types'},
-          {value: 'counter', text: 'Counters'}
+          {value: 'examtype', text: 'Exam Types'}
         ],
         optionsGA: [
           {value: 'csr', text: 'CSRs'},

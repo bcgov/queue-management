@@ -29,4 +29,3 @@ from app.models.theq.service import Service
 from app.models.theq.service_req import ServiceReq
 from app.models.theq.smartboard import SmartBoard
 from app.models.theq.sr_state import SRState
-from app.models.theq.counter import Counter
