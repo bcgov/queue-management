@@ -183,6 +183,11 @@
 									"pm.test(\"Validate Response Exam Schema\", function(){",
 									"    pm.expect(tv4.validate(jsonData, examSchema)).to.be.true;",
 									"});",
+									"",
+									"var exam_id = jsonData.exam.exam_id;",
+									"",
+									"//Dynamic variable used for end-point testing later on",
+									"postman.setEnvironmentVariable(\"exam_id\", JSON.stringify(exam_id));",
 									""
 								],
 								"type": "text/javascript"
@@ -342,7 +347,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/exams/4/",
+							"raw": "http://localhost:5000/api/v1/exams/{{exam_id}}/",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -352,7 +357,7 @@
 								"api",
 								"v1",
 								"exams",
-								"4",
+								"{{exam_id}}",
 								""
 							]
 						}
@@ -687,7 +692,7 @@
 							"raw": "{\n  \"event_id\": \"e-00005\",\n  \"exam_name\": \"Drivers Exam\",\n  \"examinee_name\": \"Captain Pickard\",\n  \"expiry_date\": \"2018-11-29 23:10:28.841\",\n  \"notes\": \"Not sure if this examinee can speak.\",\n  \"exam_received_date\": \"2018-12-25 9:00:00.000\",\n  \"session_number\": 1,\n  \"number_of_students\": 25,\n  \"exam_method\": \"in-person\",\n  \"exam_type_id\": 1,\n  \"invigilator_id\": 1,\n  \"office_id\": 1,\n  \"room_id\": 1\n}"
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/exams/4/",
+							"raw": "http://localhost:5000/api/v1/exams/{{exam_id}}/",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -697,7 +702,7 @@
 								"api",
 								"v1",
 								"exams",
-								"4",
+								"{{exam_id}}",
 								""
 							]
 						}
@@ -705,7 +710,7 @@
 					"response": []
 				},
 				{
-					"name": "Localhost - Exam Detail End-point Copy",
+					"name": "Localhost - Exam Detail End-point",
 					"event": [
 						{
 							"listen": "test",
@@ -816,7 +821,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/exams/4/",
+							"raw": "http://localhost:5000/api/v1/exams/{{exam_id}}/",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -826,7 +831,7 @@
 								"api",
 								"v1",
 								"exams",
-								"4",
+								"{{exam_id}}",
 								""
 							]
 						}
@@ -873,7 +878,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/exams/4/",
+							"raw": "http://localhost:5000/api/v1/exams/{{exam_id}}/",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -883,7 +888,7 @@
 								"api",
 								"v1",
 								"exams",
-								"4",
+								"{{exam_id}}",
 								""
 							]
 						}
@@ -1136,7 +1141,12 @@
 									"//Test to see if response schema is valid",
 									"pm.test(\"Validate Response Exam Schema\", function(){",
 									"    pm.expect(tv4.validate(jsonData, bookingSchema)).to.be.true;",
-									"});"
+									"});",
+									"",
+									"var booking_id = jsonData.booking.booking_id;",
+									"",
+									"//Dynamic variable used for end-point testing later on",
+									"postman.setEnvironmentVariable(\"booking_id\", JSON.stringify(booking_id));"
 								],
 								"type": "text/javascript"
 							}
@@ -1289,7 +1299,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/bookings/1/",
+							"raw": "http://localhost:5000/api/v1/bookings/{{booking_id}}/",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1299,7 +1309,7 @@
 								"api",
 								"v1",
 								"bookings",
-								"1",
+								"{{booking_id}}",
 								""
 							]
 						}
@@ -1540,7 +1550,7 @@
 							"raw": "{\n  \"start_time\": \"2018-11-30T13:00:00.000Z\",\n  \"end_time\": \"2018-11-30T15:00:00.00Z\",\n  \"room_id\": 1,\n  \"fees\": \"true\",\n  \"booking_name\": \"Time to pay your fees.\",\n  \"office_id\": 1\n}"
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/bookings/1/",
+							"raw": "http://localhost:5000/api/v1/bookings/{{booking_id}}/",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1550,7 +1560,7 @@
 								"api",
 								"v1",
 								"bookings",
-								"1",
+								"{{booking_id}}",
 								""
 							]
 						}
@@ -1663,7 +1673,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/bookings/1/",
+							"raw": "http://localhost:5000/api/v1/bookings/{{booking_id}}/",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1673,7 +1683,7 @@
 								"api",
 								"v1",
 								"bookings",
-								"1",
+								"{{booking_id}}",
 								""
 							]
 						}
@@ -1719,7 +1729,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/bookings/1/",
+							"raw": "http://localhost:5000/api/v1/bookings/{{booking_id}}/",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1729,7 +1739,7 @@
 								"api",
 								"v1",
 								"bookings",
-								"1",
+								"{{booking_id}}",
 								""
 							]
 						}
@@ -2221,7 +2231,12 @@
 									"//Test to see if response schema is valid",
 									"pm.test(\"Validate Response Appointments Schema\", function(){",
 									"    pm.expect(tv4.validate(jsonData, appointmentSchema)).to.be.true;",
-									"});"
+									"});",
+									"",
+									"var appointment_id = jsonData.appointment.appointment_id;",
+									"",
+									"//Dynamic variable used for end-point testing later on",
+									"postman.setEnvironmentVariable(\"appointment_id\", JSON.stringify(appointment_id));"
 								],
 								"type": "text/javascript"
 							}
@@ -2343,7 +2358,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/appointments/1/",
+							"raw": "http://localhost:5000/api/v1/appointments/{{appointment_id}}/",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -2353,7 +2368,7 @@
 								"api",
 								"v1",
 								"appointments",
-								"1",
+								"{{appointment_id}}",
 								""
 							]
 						}
@@ -2543,7 +2558,7 @@
 							"raw": "{\n \"office_id\": 1,\n \"start_time\": \"2019-02-12T09:00:00Z\",\n \"end_time\": \"2019-02-12T09:30:00Z\",\n \"category\": \"Exam\",\n \"checked_in_time\": \"2019-02-12T08:57:00Z\",\n \"comments\": \"super EARLY\"\n}"
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/appointments/1/",
+							"raw": "http://localhost:5000/api/v1/appointments/{{appointment_id}}/",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -2553,7 +2568,7 @@
 								"api",
 								"v1",
 								"appointments",
-								"1",
+								"{{appointment_id}}",
 								""
 							]
 						}
@@ -2600,7 +2615,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/appointments/1/",
+							"raw": "http://localhost:5000/api/v1/appointments/{{appointment_id}}/",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -2610,7 +2625,7 @@
 								"api",
 								"v1",
 								"appointments",
-								"1",
+								"{{appointment_id}}",
 								""
 							]
 						}
@@ -2644,7 +2659,7 @@
 	],
 	"variable": [
 		{
-			"id": "0d76d885-43f1-4d43-82a6-c9ce7abed45a",
+			"id": "278ecdd2-62d5-4df1-8d7f-b4cc71138575",
 			"key": "auth_variable",
 			"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI1NXhiZzcyaml6NWQ3cEtkbzdwNFhLdTB2VFA2UXMtemthZzFaY1ZKWTZVIn0.eyJqdGkiOiJmZWVlYzU4YS0zOTY0LTQwZDgtOTk3Ni02OTg1ZjNiNmQ2NzYiLCJleHAiOjE1NDQwMzY2NzQsIm5iZiI6MCwiaWF0IjoxNTQ0MDM0ODc0LCJpc3MiOiJodHRwczovL3Nzby10ZXN0LnBhdGhmaW5kZXIuZ292LmJjLmNhL2F1dGgvcmVhbG1zL3NiYyIsImF1ZCI6ImNmbXMtREVWIiwic3ViIjoiY2ZmNTQ3MDItZTkzMC00YjZlLTlhYzgtMmZkMTRjY2FmNzUxIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiY2Ztcy1ERVYiLCJub25jZSI6ImM1Zjg1NzBmLTgwNDktNDUxNC04Mjg4LTJjN2RmMzdkZTc5NSIsImF1dGhfdGltZSI6MTU0NDAzMjgxNywic2Vzc2lvbl9zdGF0ZSI6IjM4YjhiYzY4LTdmZDktNDE0NC04YWQ1LTI4ZGRlNmMwYWE1MCIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJuYW1lIjoiQ0ZNUyBQb3N0bWFuIE9wZXJhdG9yIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiY2Ztcy1wb3N0bWFuLW9wZXJhdG9yIiwiZ2l2ZW5fbmFtZSI6IkNGTVMgUG9zdG1hbiIsImZhbWlseV9uYW1lIjoiT3BlcmF0b3IifQ.CaDq7kLDMu1oqUVm6fhiAw4ubu_D4jVdkXrqLjfCxu9b-9GzyNSIK1Gy0NCesN3caG684-Ofv3LlragMOwdoRhx-xkO6j5rqPhh2EdEDYTGkrnmQrVBjgHECLYN3RSAUWk4oKsp7gRMLDorU6QWLZNRWe9qlzulbss08Mut4nZz1RV0CirvJQ9oshBdpstQIPBM7ZEptcF2AOnc8swcFMJ3mqdrs0ImytArwZEzYwRzSIAR0-kYW-AXq-TK1dk2R7fqkMXmy3ZdHoQlFRfNtfYILVPzBAq3zPftrD-lmCcfUWz-0UcwhmNELQ-Pej-t_Z_eFSPPGkAVIuv_kkHbqQw",
 			"type": "string"

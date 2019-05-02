@@ -20,7 +20,7 @@
         </div>
       </div>
       <template v-if="!confirm">
-        <b-form>
+        <b-form autocomplete="off">
           <b-form-row v-if="examAssociated">
             <b-col class="mb-2">
               <div class="q-info-display-grid-container">
@@ -44,7 +44,7 @@
                   </div>
                   <div class="q-id-grid-col">
                     <div>Duration:</div>
-                    <div>{{ this.event.exam.exam_type.number_of_hours }} hrs</div>
+                    <div>{{ this.event.exam.exam_type.number_of_hours }} hrs {{ this.event.exam.exam_type.number_of_minutes }} min</div>
                   </div>
                   <div class="q-id-grid-col">
                     <div>Expiry:</div>
@@ -203,7 +203,7 @@
         added: 0,
         invigilator: null,
         editedFields: [],
-        fees: false,
+        fees: '',
         feesOptions: [
           {text: 'No', value: "false"},
           {text: 'Yes', value: "true"},
@@ -480,8 +480,8 @@
         if (!this.editedFields.includes('title')) {
           this.title = this.event.title
         }
-        if (!this.editedFields.includes('fee')) {
-          this.fee = this.event.fee
+        if (!this.editedFields.includes('fees')) {
+          this.fees = this.event.fees
         }
         if (!this.editedFields.includes('booking_contact_information')){
           this.booking_contact_information = this.event.booking_contact_information

@@ -7,15 +7,16 @@
                  class="form-control"
                  v-model="search"
                  placeholder="Type service here"
+                 id="simplified_service_input"
                  ></input>
       </b-col>
-      <b-col v-if="!simplified">
-          <b-select id="add_citizen_catagories_select"
-                    style="height: 38px; font-size: .8rem;"
-                    :options="categories_options"
-                    v-model="category"
-                    size="sm"
-                    placeholder="Filter by category"></b-select>
+      <b-col v-if="!simplified || addModalSetup === 'add_mode'">
+        <b-select id="add_citizen_catagories_select"
+                  style="height: 38px; font-size: .8rem;"
+                  :options="categories_options"
+                  v-model="category"
+                  size="sm"
+                  placeholder="Filter by category" />
       </b-col>
     </b-form-row>
   </div>
@@ -26,7 +27,6 @@
 
   export default {
     name: 'Filters',
-
     mounted() {
       this.$root.$on('focusfilter', () => {
         if (this.$refs && this.$refs.filterref) {
@@ -34,12 +34,8 @@
         }
       })
     },
-
     computed: {
-      ...mapGetters({
-        categories_options: 'categories_options',
-        form_data: 'form_data',
-      }),
+      ...mapGetters(['categories_options', 'form_data']),
       ...mapState({
         addModalSetup: 'addModalSetup',
         suspendFilter: state => state.addModalForm.suspendFilter,
@@ -47,12 +43,6 @@
       }),
       simplified() {
         if (this.$route.path !== '/queue') {
-          return true
-        }
-        return false
-      },
-      simplifiedModal() {
-        if (this.simplified && this.addModalSetup !== 'edit_mode') {
           return true
         }
         return false
@@ -75,15 +65,11 @@
       },
       category: {
         get() { return this.form_data.category },
-        set(value) {
-          this.updateAddModalForm({type: 'category', value})
-        }
+        set(value) { this.updateAddModalForm({type: 'category', value}) }
       }
     },
-
     methods: {
       ...mapMutations(['updateAddModalForm']),
-
       focus() {
         if (this.$refs && this.$refs.inputref) {
           this.$refs.inputref.focus()
