@@ -24,7 +24,7 @@ def upgrade():
     
 
 def downgrade():
-    op.drop_constraint(None, 'csr', type_='foreignkey')
-    op.drop_constraint(None, 'citizen', type_='foreignkey')
+    op.drop_constraint('csr_ibfk_4', 'csr', type_='foreignkey')
+    op.drop_constraint('citizen_ibfk_3', 'citizen', type_='foreignkey')
     op.drop_column('csr', 'counter_id')
     op.drop_column('citizen', 'counter_id')
