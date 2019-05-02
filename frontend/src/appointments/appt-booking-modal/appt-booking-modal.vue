@@ -15,7 +15,7 @@
         <b-button class="btn-primary ml-2"
                   @click="submit"
                   v-if="!submitDisabled">Submit</b-button>
-        <b-button @click="resetModal">Cancel</b-button>
+        <b-button @click="cancel()">Cancel</b-button>
       </div>
     </template>
       <span style="font-size:1.75rem;">Book Service Appointment</span><br>
@@ -56,15 +56,22 @@
         </b-form-row>
 
         <b-form-row>
-          <b-col :cols="clickedAppt ? 6 : 12">
+          <b-col>
+            <b-form-group class="mb-0 mt-2">
+              <label class="mb-0">Length</label><br>
+              <b-select v-model="length"
+                        :options="timeOptions" />
+            </b-form-group>
+          </b-col>
+          <b-col>
             <b-form-group class="mb-0 mt-2">
               <label class="mb-0">Change Date/Time</label><br>
               <b-button @click="reschedule"
                         class="btn-secondary w-100">Reschedule</b-button>
             </b-form-group>
           </b-col>
-          <b-col>
-            <b-form-group class="mb-0 mt-2">
+          <b-col v-if="clickedAppt">
+            <b-form-group class="mb-0 mt-2" >
               <label class="mb-0">Remove Appointment?</label><br>
               <b-button @click="deleteAppt"
                         v-if="clickedAppt"
@@ -84,9 +91,9 @@
                       <b-button variant="primary"
                                 class="px-0"
                                 style="width: 52px"
-                                @click="addService">{{ editMode ? 'Edit' : 'Set' }}</b-button>
+                                @click="addService">{{ selectedService ? 'Edit' : 'Set' }}</b-button>
                       <b-button variant="secondary"
-                                v-if="!editMode"
+                                v-if="selectedService"
                                 class="px-0"
                                 style="width: 52px;border-radius: 0px;"
                                 @click="clearService">Clear</b-button>
@@ -106,7 +113,7 @@
           <b-col>
             <b-form-group class="mb-0 mt-2">
               <label class="mb-0">Notes</label><br>
-              <b-textarea v-model="citizen_comments"
+              <b-textarea v-model="comments"
                           rows="2" />
             </b-form-group>
           </b-col>
@@ -131,30 +138,68 @@
     props: ['clickedTime', 'clickedAppt'],
     data() {
       return {
-        showMessage: false,
-        validate: false,
+        baseEnd: null,
         booking: false,
-        start: null,
-        end: null,
-        citizen_comments: null,
         citizen_name: null,
+        oldLength: null,
+        comments: null,
         contact_information: null,
         fieldsEdited: false,
+        length: 0,
+        rescheduling: false,
+        selectingService: false,
+        showMessage: false,
+        start: null,
+        validate: false,
       }
     },
     mounted() {
-      this.getServices()
+      if (this.$store.state.services.length === 0) {
+        this.getServices()
+      }
     },
     computed: {
-      ...mapGetters(['services',]),
-      ...mapState(['editing', 'showApptBookingModal', 'rescheduling', 'selectedService' ]),
-      appointment() {
-        if (this.selectedService) {
-          return this.clickedAppt.concat(this.selectedService)
+      ...mapGetters(['services', 'appointment_events']),
+      ...mapState(['showApptBookingModal', 'selectedService' ]),
+      appointments() {
+        if (this.clickedAppt) {
+          let appointments = Object.assign([], this.appointment_events)
+          let i = this.appointment_events.indexOf(this.clickedAppt)
+          appointments.splice(i,1)
+          return appointments
         }
-        let clickedAppt = this.clickedAppt
-        clickedAppt.selectedService
-        return this.clickedAppt
+      },
+      end() {
+        if (this.clickedTime) {
+          return moment(this.clickedTime.start).clone().add(this.length, 'minutes')
+        }
+        if (this.clickedAppt) {
+          return moment(this.clickedAppt.start).clone().add(this.length, 'minutes')
+        }
+      },
+      timeOptions() {
+        let options = []
+        if (this.clickedTime) {
+          let event = this.clickedTime
+          let time = moment(event.end).clone().diff(event.start, 'minutes')
+          for (let l = 15; l <= time; l += 15) {
+            options.push(l)
+          }
+          return options
+        }
+        if (this.clickedAppt) {
+          let event = this.clickedAppt
+          let start = moment(event.start).clone()
+          let end = moment(event.end).clone()
+          for (let l of [15, 30, 45, 60]) {
+            let testEnd = start.clone().add(l, 'minutes')
+            if (this.appointments.find(appt => moment(appt.start).isBetween(start, testEnd))) {
+              break
+            }
+            options.push(l)
+          }
+          return options
+        }
       },
       service_name() {
         let { services } = this.$store.state
@@ -171,18 +216,6 @@
         }
         return ''
       },
-      displayEnd() {
-        if (this.end) {
-          return new moment(this.end).clone().format('h:mm a')
-        }
-        return ''
-      },
-      editMode() {
-        if (this.clickedAppt && this.clickedAppt.start) {
-          return true
-        }
-        return false
-      },
       displayStart() {
         if (this.start) {
           return new moment(this.start).clone().format('h:mm a')
@@ -194,13 +227,7 @@
         set(e) { this.toggleApptBookingModal(e) }
       },
       submitDisabled() {
-        if (!this.clickedAppt) {
-          if (this.citizen_name && this.selectedService) {
-            return false
-          }
-          return true
-        }
-        if (this.clickedAppt) {
+        if (this.citizen_name && this.selectedService) {
           return false
         }
         return true
@@ -208,7 +235,7 @@
       validated() {
         let output = {}
         if (!this.citizen_name) {
-          output.citizenName = false
+          output.citizen_name = false
         }
         if (!this.selectedService) {
           output.selectedService = false
@@ -237,11 +264,21 @@
       ]),
       ...mapMutations(['setEditedStatus', 'setSelectedService', 'setRescheduling', 'toggleApptBookingModal', ]),
       addService() {
-        if (this.editMode) {
-          this.setEditedStatus(true)
-        }
+        this.selectingService = true
         this.clearMessage()
+        this.toggleApptBookingModal(false)
         this.toggleAddModal(true)
+        if (this.selectedService) {
+          this.$store.commit('updateAddModalForm', {type:'service', value:this.selectedService})
+          return
+        }
+        this.clearService()
+      },
+      clearEvents() {
+        this.$root.$emit('clear-clicked-time')
+        if (!this.rescheduling && !this.selectingService) {
+          this.$root.$emit('clear-clicked-appt')
+        }
       },
       clearMessage() {
         this.validate = false
@@ -252,55 +289,62 @@
         this.clearAddModal()
         this.resetAddModalForm()
       },
+      deleteAppt() {
+        this.deleteAppointment(this.clickedAppt.appointment_id).then( () => {
+          this.cancel()
+        })
+      },
       reschedule() {
-        this.setRescheduling(true)
-        this.setEditedStatus(true)
+        if (this.clickedTime) {
+          this.$root.$emit('removeTempEvent')
+        }
+        this.rescheduling = true
         this.clearMessage()
-        this.$root.$emit('removeTempEvent')
+        this.oldLength = this.length
         this.toggleApptBookingModal(false)
       },
-      resetModal() {
-        this.booking = false
+      cancel() {
         this.$root.$emit('removeTempEvent')
-        this.$root.$emit('clearappt')
-        this.$root.$emit('cleardate')
+        this.$root.$emit('clear-clicked-time')
+        this.$root.$emit('clear-clicked-appt')
         this.toggleApptBookingModal(false)
-        this.resetAddModalForm()
       },
       show() {
-        if (this.rescheduling) {
-          this.setReschedulign(false)
-          this.start = this.clickedAppt.start.clone()
-          this.end = this.clickedAppt.end.clone()
-          this.citizen_name = this.clickedAppt.title.valueOf()
+        this.clearMessage()
+        if (this.selectingService) {
+          this.selectingService = false
+          return
         }
-        if (!this.clickedAppt) {
+        if (this.rescheduling) {
+          this.rescheduling = false
           this.start = this.clickedTime.start.clone()
-          this.end = this.clickedTime.end.clone()
-          if (!this.booking) {
-            this.clearAddModal()
-            this.clearMessage()
-            this.citizen_comments = null
-            this.citizen_name = null
-            this.contact_information = null
-            this.booking = true
+          this.length = this.clickedTime.end.clone().diff(this.start, 'minutes')
+          if (this.oldLength) {
+            if (this.oldLength < this.length) {
+              this.length = this.oldLength
+            }
+            this.oldLength = null
           }
           return
         }
-        this.start = this.clickedAppt.start.clone()
-        this.end = this.clickedAppt.end.clone()
-        this.citizen_name = this.clickedAppt.title.valueOf()
-        this.contact_information = this.clickedAppt.contact_information.valueOf()
-        let { service_id } = this.clickedAppt
-        if (!this.editing) {
-          this.setSelectedService(service_id)
+        if (this.clickedTime) {
+          this.citizen_name = null
+          this.comments = null
+          this.contact_information = null
+          this.length = 15
+          this.start = this.clickedTime.start.clone()
+          this.clearAddModal()
         }
-        this.setEditedStatus(false)
-      },
-      deleteAppt() {
-        this.deleteAppointment(this.clickedAppt.appointment_id).then( () => {
-          this.resetModal()
-        })
+        if (this.clickedAppt) {
+          this.citizen_name = this.clickedAppt.title
+          this.comments = this.clickedAppt.comments
+          this.contact_information = this.clickedAppt.contact_information
+          this.start = this.clickedAppt.start.clone()
+          this.length = this.clickedAppt.end.clone().diff(this.start, 'minutes')
+          let { service_id } = this.clickedAppt
+          this.setSelectedService(service_id)
+          this.$store.commit('updateAddModalForm', {type: 'service', value: service_id})
+        }
       },
       submit() {
         this.clearMessage()
@@ -314,8 +358,13 @@
           citizen_name: this.citizen_name,
           contact_information: this.contact_information,
         }
-        if (this.citizen_comments) {
-          e.comments = this.citizen_comments
+        if (this.comments) {
+          e.comments = this.comments
+        }
+        let finish = () => {
+          this.cancel()
+          this.$root.$emit('clear-clicked-appt')
+          this.$root.$emit('clear-clicked-time')
         }
         if (this.clickedAppt) {
           let payload = {
@@ -324,18 +373,14 @@
           }
           this.putAppointment(payload).then( () => {
             this.getAppointments().then( () => {
-              this.resetModal()
-              this.$root.$emit('clearappt')
-              this.$root.$emit('cleardate')
+              finish()
             })
           })
           return
         }
         this.postAppointment(e).then( () => {
           this.getAppointments().then( () => {
-            this.resetModal()
-            this.$root.$emit('clearappt')
-            this.$root.$emit('cleardate')
+            finish()
           })
         })
       }

@@ -1,5 +1,6 @@
 <template>
   <b-modal v-model="modalVisible"
+           @shown="clearTime"
            modal-class="q-modal"
            body-class="q-modal"
            no-close-on-backdrop
@@ -55,6 +56,9 @@
         this.postCheckIn(this.clickedAppt).then( () => {
           this.hide()
         })
+      },
+      clearTime() {
+        this.$root.$emit('cleardate')
       },
       hide() {
         this.getAppointments().then( () => {

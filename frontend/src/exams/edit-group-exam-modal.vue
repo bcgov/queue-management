@@ -2,7 +2,7 @@
   <b-modal v-model="modalVisible"
            :no-close-on-backdrop="true"
            hide-header
-           @shown="setValues"
+           @shown="show"
            hide-footer
            size="md">
     <div v-if="showModal">
@@ -423,14 +423,14 @@
           })
         })
       },
-      setValues() {
+      show() {
         let tempItem = Object.assign({}, this.actionedExam)
         if (tempItem.booking && tempItem.booking.start_time) {
           let { start_time } = tempItem.booking
           let { timezone_name } = this.actionedExam.booking.office.timezone
-          let time = zone.tz(start_time, timezone_name).clone().format('MMM-dd-YYYY HH:mm:ss').toString()
-          this.time = moment(time).format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ')
-          this.date = zone.tz(start_time, timezone_name).clone().format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ')
+          let time = zone.tz(start_time, timezone_name).clone().format('YYYY-MM-DD[T]HH:mm:ss').toString()
+          this.time = moment(time).format('YYYY-MM-DD[T]HH:mm:ssZ').toString()
+          this.date = zone.tz(start_time, timezone_name).clone().format('YYYY-MM-DD[T]HH:mm:ssZ').toString()
           if (tempItem.booking.sbc_staff_invigilated) {
             this.invigilator_id = 'sbc'
           } else {
