@@ -149,8 +149,6 @@ export default {
     },
     
     postServiceReq({rootState}, payload) {
-      console.log(payload.service_id)
-      console.log(payload.channel_id)
       let state = rootState
       let service_request = {
         service_id: payload.service_id,

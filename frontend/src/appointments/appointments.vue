@@ -1,6 +1,6 @@
 <template>
   <fragment>
-    <ApptBookingModal :clickedTime="clickedTime" :clickedAppt="clickedAppt"/>
+    <ApptBookingModal :clickedTime="clickedTime"  :clickedAppt="clickedAppt"/>
     <CheckInModal :clickedAppt="clickedAppt" />
     <keep-alive>
       <full-calendar ref="appointments"
@@ -44,8 +44,8 @@
       this.getAppointments()
       this.getServices()
       this.getChannels()
-      this.$root.$on('clearappt', () =>  { this.clearAppt() })
-      this.$root.$on('cleardate', () =>  { this.clearDate() })
+      this.$root.$on('clear-clicked-appt', () =>  { this.clearClickedAppt() })
+      this.$root.$on('clear-clicked-time', () =>  { this.clearClickedTime() })
       this.$root.$on('agendaDay', () => { this.agendaDay() })
       this.$root.$on('agendaWeek', () => { this.agendaWeek() })
       this.$root.$on('month', () => { this.month() })
@@ -60,6 +60,7 @@
         clickedAppt: null,
         clickedTime: null,
         config: {
+          selectOverlap: false,
           columnHeaderFormat: 'ddd/D',
           selectAllow: () => {
             return true
@@ -132,7 +133,7 @@
       events() {
         return null
       },
-      eventSelected(event, jsEvent, view) {
+      eventSelected(event) {
         this.clickedAppt = event
         this.highlightEvent(event)
         this.toggleCheckInModal(true)
@@ -158,7 +159,14 @@
       selectEvent(event) {
         this.unselect()
         let start = event.start.clone()
-        let end = event.start.clone().add(15, 'minutes')
+        let end
+        for (let l of [15, 30, 45, 60]) {
+          let testEnd = moment(start).clone().add(l, 'minutes')
+          if (this.appointment_events.find(event => moment(event.start).isBetween(start, testEnd))) {
+            break
+          }
+          end = testEnd
+        }
         let e = {
           start,
           end,
@@ -168,11 +176,11 @@
         this.setTempEvent(e)
         this.toggleApptBookingModal(true)
       },
-      clearAppt() {
+      clearClickedAppt() {
         this.clickedAppt = null
       },
-      clearDate() {
-        this.clickedDate = null
+      clearClickedTime() {
+        this.clickedTime = null
       },
       today() {
         this.$refs.appointments.fireMethod('today')
@@ -187,8 +195,8 @@
       },
       setTempEvent(event) {
         this.removeTempEvent()
-        let start = event.start.clone()
-        let end = event.end.clone()
+        let start = moment(event.start).clone()
+        let end = moment(event.end).clone()
         let e = {
           start,
           end,
