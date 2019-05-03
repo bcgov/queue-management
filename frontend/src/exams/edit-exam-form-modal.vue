@@ -8,7 +8,7 @@
            size="md">
     <FailureExamAlert class="m-0 p-0" />
     <div v-if="exam">
-      <span style="font-size: 1.4rem; font-weight: 600;">Edit Exam</span>
+      <span style="font-size: 1.4rem; font-weight: 600;">Edit Exam Details</span>
       <b-form v-if="showAllFields">
         <b-form-row v-if="is_liaison_designate && examType === 'group'">
           <OfficeDrop :columnW="10" :office_number="office_number" :setOffice="setOffice" />
@@ -33,9 +33,9 @@
             </b-form-group>
           </b-col>
         </b-form-row>
-        <b-form-row v-if="examType !== 'challenger' ">
+        <b-form-row>
             <b-col>
-              <b-form-group>
+              <b-form-group v-if="exam.exam_type.ita_ind===1 && examType !== 'challenger' ">
                 <label class="my-0">Exam Type</label><br>
                 <div @click="handleExamInputClick">
                   <b-input read-only
@@ -59,16 +59,12 @@
                   </template>
                 </div>
               </b-form-group>
-            </b-col>
-          </b-form-row>
-        <b-form-row v-if="examType === 'challenger'">
-          <b-col>
-            <b-form-group>
+            <b-form-group v-else>
               <label class="mb-0 mt-1">Exam Type</label>
               <b-form-input id="exam_name" type="text"
-                            class="less-10-mb"
+                            class="less-10-mb form-control"
                             disabled
-                            value="Monthly Session Exam" />
+                            :value="exam.exam_type.exam_type_name" />
             </b-form-group>
           </b-col>
         </b-form-row>
@@ -97,16 +93,12 @@
           <b-col v-if="exam_received">
             <b-form-group>
               <label class="my-0">Received Date</label><br>
-              <DatePicker v-model="fields.exam_received_date"
+              <DatePicker :value="fields.exam_received_date"
+                          @input="handleDate"
                           id="exam_received_date"
                           input-class="form-control"
                           class="w-100 my-0 less-10-mb"
                           lang="en">
-                <template slot="calendar-icon">
-                  <font-awesome-icon icon="clock"
-                                     class="m-0 p-0"
-                                     style="font-size: .9rem;"/>
-                </template>
               </DatePicker>
             </b-form-group>
           </b-col>
@@ -171,8 +163,11 @@
                 <div class="q-id-grid-col">
                   <div>Type:</div>
                   <div v-if="isITAGropOrSingleExam(exam)"
-                       :style="{color: exam.exam_type.exam_color}">{{ exam.exam_type.exam_type_name }}</div>
-                  <div v-else>{{ exam.exam_type.exam_type_name }}</div>
+                       :style="{ backgroundColor: exam.exam_type.exam_color,
+                                 height: 10+'px',
+                                 margin: '4px 0px 0px 0px',
+                                 width: 10+'px', }"></div>
+                  <div>{{ exam.exam_type.exam_type_name }}</div>
                 </div>
                 <div class="q-id-grid-col">
                   <div>Method:</div>
@@ -200,6 +195,7 @@
                           id="exam_received_date"
                           input-class="form-control"
                           class="w-100 my-0 less-10-mb"
+                          type="date"
                           lang="en"/>
             </b-form-group>
           </b-col>
@@ -223,9 +219,11 @@
         <b-btn class="btn-secondary mr-2"
                @click="toggleEditExamModal(false)">Cancel</b-btn>
         <b-btn v-if="!allowSubmit()"
+               id="edit_submit_not_allow"
                class="btn-primary disabled"
                @click="setMessage">Submit</b-btn>
         <b-btn v-else-if="allowSubmit()"
+               id="edit_submit_allow"
                class="btn-primary"
                @click="submit">Submit</b-btn>
       </div>
@@ -253,7 +251,11 @@
           { value: false, text: 'No' },
           { value: true, text: 'Yes' },
         ],
-        fields: {},
+        fields: {
+          exam_received_date: null,
+          notes: null,
+          event_id: null,
+        },
         message: '',
         methodOptions: [
           { text: 'paper', value: 'paper'},
@@ -299,18 +301,20 @@
         return ''
       },
       examType() {
-        if (this.examRow && this.examRow.exam_type) {
-          if (this.exam.exam_type.exam_type_name.includes('Challenger')) {
+        if (this.exam && this.exam.exam_type) {
+          let { exam_type } = this.exam
+
+          if (exam_type.exam_type_name === 'Monthly Session Exam') {
             return 'challenger'
           }
-          if (this.exam.exam_type.exam_type_name.includes('Group')) {
+          if (exam_type.group_exam_ind) {
             return 'group'
           }
-          if (this.exam.exam_type.exam_type_name.includes('Single')) {
+          if (exam_type.ita_ind) {
             return 'individual'
           }
+          return 'other'
         }
-        return 'other'
       },
       examTypeDropClass() {
         if (!this.clickedMenu) {
@@ -323,7 +327,7 @@
       examTypeDropItems() {
         if (this.exam) {
           if (this.exam.offsite_location) {
-            return this.examTypes.filter(type => type.exam_type_name.includes('Group'))
+            return this.examTypes.filter(type => type.group_exam_ind)
           }
           if (!this.exam.offsite_location) {
             if (this.exam.exam_type.ita_ind == 1) {
@@ -374,6 +378,13 @@
         'toggleEditExamModal',
         'toggleDeleteExamModalVisible'
       ]),
+      handleDate(date) {
+        Vue.set(
+          this.fields,
+          'exam_received_date',
+          date
+        )
+      },
       allowSubmit() {
         if (this.actionedExam) {
           let fieldsEdited = false
@@ -390,7 +401,7 @@
         return false
       },
       isITAGropOrSingleExam(ex) {
-        if (ex.exam_type.exam_type_name.includes('Group') || ex.exam_type.exam_type_name.includes('Single') ) {
+        if (ex.exam_type.group_exam_ind || ex.exam_type.exam_type_name.includes('Single') ) {
           return true
         }
         return false
@@ -496,7 +507,7 @@
       updateExamReceived(e) {
         let { exam_received_date } = this.fields
         if (e && !exam_received_date) {
-          this.fields['exam_received_date'] = new moment().utc().format('YYYY-MM-DD[T]hh:mm:ssZ')
+          this.fields['exam_received_date'] = new moment().format('YYYY-MM-DD[T]hh:mm:ssZ')
           return
         }
         if (!e && exam_received_date) {

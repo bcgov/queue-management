@@ -44,7 +44,8 @@
                      :config="config">
       </full-calendar>
     </keep-alive>
-    <div class="w-50 mt-2 ml-3 pl-3" style="display: flex; justify-content: space-between;"
+    <div class="w-50 mt-2 ml-3 pl-3"
+         style="display: flex; justify-content: space-between;"
          v-if="calView === 'month'">
       <template v-for="col in roomLegendArray">
         <div>
@@ -105,6 +106,9 @@
       this.$root.$on('toggleOffsite', (bool) => { this.toggleOffsite(bool) })
       this.$root.$on('unselect', () => { this.unselect() })
       this.$root.$on('updateEvent', (event, params) => { this.updateEvent(event, params) })
+      if (this.scheduling || this.rescheduling) {
+        this.toggleOffsite(false)
+      }
     },
     data() {
       return {
@@ -115,6 +119,9 @@
         config: {
           columnHeaderFormat: 'ddd/D',
           selectAllow: (info) => {
+            if (info.resourceId === '_offsite') {
+              return false
+            }
             let today = moment()
             if(info.start.isBefore(today)){
               return false
@@ -280,6 +287,7 @@
         this.$refs.bookingcal.fireMethod('updateEvent', event)
       },
       eventRender(event, el, view) {
+        el.css('max-width', '85%')
         if (event.exam && view.name === 'listYear') {
           el.find('td.fc-list-item-title.fc-widget-content').html(
           `<div style="display: flex; justify-content: center; width: 100%;">
@@ -398,8 +406,9 @@
           this.removeSavedSelection()
           let booking = this.editedBookingOriginal
           if (this.selectedExam && Object.keys(this.selectedExam) > 0) {
-            let { number_of_hours } = this.selectedExam.exam_type
+            let { number_of_hours, number_of_minutes } = this.selectedExam.exam_type
             let endTime = new moment(event.start).add(number_of_hours, 'h')
+                                                 .add(number_of_minutes, 'm')
             event.end = endTime
             this.setClickedDate(event)
             let tempEvent = {
@@ -450,9 +459,11 @@
           if (this.selectedExam && Object.keys(this.selectedExam).length > 0) {
             this.unselect()
             selection.end = new moment(event.start).add(this.selectedExam.exam_type.number_of_hours, 'h')
+                                                   .add(this.selectedExam.exam_type.number_of_minutes, 'm')
             selection.title = this.selectedExam.exam_name
             this.removeSavedSelection()
             this.toggleBookingModal(true)
+            this.$root.$emit('showbookingmodal')
           } else {
             this.unselect()
             this.toggleOtherBookingModal(true)
