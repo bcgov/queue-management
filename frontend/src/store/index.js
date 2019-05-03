@@ -752,8 +752,6 @@ export const store = new Vuex.Store({
           context.commit('setUser', resp.data.csr)
           let officeType = resp.data.csr.office.sb.sb_type
           context.commit('setOffice', officeType)
-          context.commit('setDefaultCounter', resp.data.csr.office.counters.filter(
-           c => c.counter_name === DEFAULT_COUNTER_NAME)[0])
           let individualExamBoolean = false
           let groupExamBoolean = false
           
