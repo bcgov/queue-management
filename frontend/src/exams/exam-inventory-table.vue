@@ -13,7 +13,7 @@
              hide-footer>
       <h5>View Another Office</h5>
       <p>To search, start typing or enter an office #</p>
-      <b-form>
+      <b-form autocomplete="off">
         <b-form-row>
           <OfficeDrop columnW="8" :office_number="officeNumber" :setOffice="setOfficeFilter"/>
         </b-form-row>
@@ -108,11 +108,12 @@
     <div :style="tableStyle" class="my-0 mx-3">
       <b-table :items="filteredExams()"
                :fields="fields"
+               sort-by="exam_id"
+               :sort-desc="true"
                head-variant="light"
-               style="border: 1px solid dimgrey"
+               :style="availableH"
                empty-text="There are no exams that match this filter criteria"
                small
-               tbody-tr-class="q-custom-tr"
                outlined
                @row-clicked="clickModalRow"
                hover
@@ -120,7 +121,8 @@
                responsive
                :current-page="page"
                :per-page="10"
-               :filter="searchTerm">
+               :filter="searchTerm"
+               id="exam_inventory_table">
         <template slot="exam_received" slot-scope="row">
           {{ row.item.exam_received_date ? 'Yes' : 'No' }}
         </template>
@@ -131,37 +133,37 @@
 
         <template slot="expiry_date" slot-scope="row">
           <span v-if="row.item.exam_type.exam_type_name === 'Monthly Session Exam'">–</span>
-          <span v-else-if="row.item.examinee_name === 'group exam'">–</span>
+          <span v-else-if="row.item.exam_type.group_exam_ind">–</span>
           <span v-else>{{ formatDate(row.item.expiry_date) }}</span>
         </template>
 
         <template slot="scheduled" slot-scope="row">
-          <template v-if="!filterByScheduled(row.item)">
+          <template v-if="stillRequires(row.item).length > 0">
             <font-awesome-icon v-if="!row.detailsShowing"
                                icon="exclamation-triangle"
-                               @click.stop="toggleDetailsRow({row, origin: 'error'})"
-                               class="m-0 p-0 error-cursor-hover"
+                               @click.stop="row.toggleDetails()"
+                               class="m-0 p-0 icon-cursor-hover"
                                style="font-size:1rem;color:#ffc32b"/>
             <b-button v-if="row.detailsShowing"
                       variant="link"
                       style="padding: 0px;"
-                      @click.stop="toggleDetailsRow({row, origin: 'button'})">Hide</b-button>
+                      @click.stop="row.toggleDetails()">Hide</b-button>
           </template>
-          <template v-if="filterByScheduled(row.item)">
+          <template v-if="stillRequires(row.item).length === 0">
             <b-button v-if="row.detailsShowing"
                       variant="link"
                       style="padding: 0px;"
-                      @click.stop="toggleDetailsRow({row, origin: 'button'})">Hide</b-button>
+                      @click.stop="row.toggleDetails()">Hide</b-button>
             <font-awesome-icon v-if="!row.detailsShowing"
                                icon="clipboard-check"
-                               @click.stop="toggleDetailsRow({row, origin: 'button'})"
-                               class="m-0 p-0 error-cursor-hover"
+                               @click.stop="row.toggleDetails()"
+                               class="m-0 p-0 icon-cursor-hover"
                                style="font-size:1.25rem;color:green"/>
           </template>
         </template>
 
         <template slot="row-details" slot-scope="row">
-          <template v-if="detailsRowSetup === 'button'">
+          <template v-if="stillRequires(row.item).length === 0">
             <div class="details-slot-div">
               <div style="flex-grow: 1" class="ml-3"><b>Date:</b> {{ formatDate(row.item.booking.start_time) }}</div>
               <div style="flex-grow: 1"><b>Time:</b> {{ formatTime(row.item.booking) }}</div>
@@ -177,34 +179,19 @@
               <div style="flex-grow: 8" />
             </div>
           </template>
-          <template v-if="detailsRowSetup === 'error'">
+
+          <template v-if="stillRequires(row.item).length > 0">
             <div class="details-slot-div">
-              <div class="ml-3" style="font-size: 1rem;">Still Requires:</div>
-              <div v-if="!row.item.exam_received_date"
-                   class="ml-3 mt-1">Materials Received</div>
-              <template v-if="row.item.exam_type.exam_type_name.includes('Single')">
-                <div v-if="!row.item.booking"
-                     class="ml-3 mt-1">Scheduling</div>
+              <div class="ml-3" style="font-size: 1rem; flex-grow: 1;">Still Requires:</div>
+              <template v-for="req in stillRequires(row.item)">
+                <div key="i+'it'" class="ml-3 mt-1" style="flex-grow: 1;">{{ req }}</div>
               </template>
-              <template v-else-if="row.item.exam_type.exam_type_name.includes('Group')">
-                <div v-if="!row.item.booking.invigilator_id"
-                     class="ml-3 mt-1">Assignment of Invigilator</div>
+              <div style="flex-grow: 6" />
+              <div style="flex-grow: 1; font-size: 1rem;">Details</div>
+              <template v-for="(val, key) in readyDetailsMap(row.item)">
+                <div class="ml-3 mt-1" style="flex-grow: 1;"><b>{{ key }}: </b> {{ val }} </div>
               </template>
-              <template v-else-if="row.item.exam_type.exam_type_name === 'Monthly Session Exam'">
-                <div v-if="!row.item.booking.invigilator_id"
-                     class="ml-3 mt-1">Assignment of Invigilator</div>
-                <div v-if="!row.item.number_of_students"
-                     class="ml-3 mt-1">Number of Students</div>
-                <div v-if="!row.item.event_id"
-                     class="ml-3 mt-1">Event ID</div>
-              </template>
-              <template v-else>
-                <div v-if="!row.item.booking"
-                     class="ml-3 mt-1">Scheduling</div>
-                <div
-                  v-if="row.item.booking && !checkInvigilator(row.item)"
-                  class="ml-3 mt-1">Assignment of Invigilator</div>
-              </template>
+              <div style="flex-grow: 12" />
             </div>
           </template>
         </template>
@@ -222,7 +209,8 @@
             </template>
             <template v-if="!row.item.exam_returned_date">
               <template v-if="officeFilter == userOffice || officeFilter == 'default'">
-                <template v-if="row.item.exam_type.exam_type_name.includes('Challenger')">
+
+                <template v-if="row.item.exam_type.exam_type_name === 'Monthly Session Exam' ">
                   <template v-if="row.item.offsite_location">
                     <b-dropdown-item size="sm"
                                      v-if="row.item.offsite_location"
@@ -230,6 +218,7 @@
                         {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}
                     </b-dropdown-item>
                   </template>
+
                   <template v-if="!row.item.offsite_location">
                     <b-dropdown-item size="sm"
                                        v-if="row.item.booking && Object.keys(row.item.booking).length > 0"
@@ -241,7 +230,7 @@
                   </template>
                 </template>
 
-                <template v-else-if="row.item.exam_type.exam_type_name.includes('Group')">
+                <template v-else-if="row.item.exam_type.group_exam_ind">
                   <b-dropdown-item size="sm"
                                    v-if="row.item.offsite_location"
                                    @click="editGroupBooking(row.item)">
@@ -250,19 +239,35 @@
                 </template>
 
                 <template v-else>
-                  <b-dropdown-item size="sm"
-                                   v-if="row.item.booking && Object.keys(row.item.booking).length > 0"
-                                   @click="updateCalendarBooking(row.item)">
-                    {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}</b-dropdown-item>
-                  <b-dropdown-item size="sm"
-                                   v-if="!row.item.booking || Object.keys(row.item.booking).length === 0"
+                  <template v-if="row.item.offsite_location && row.item.offsite_location === '_offsite'">
+                    <b-dropdown-item size="sm"
+                                     v-if="!row.item.booking || Object.keys(row.item.booking).length === 0"
+                                     @click="editGroupBooking(row.item)">Schedule Exam</b-dropdown-item>
+                  </template>
+                  <template v-if="row.item.offsite_location && row.item.offsite_location !== '_offsite'">
+                    <b-dropdown-item size="sm"
+                                     v-if="row.item.offsite_location"
+                                     @click="editGroupBooking(row.item)">
+                      {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}
+                    </b-dropdown-item>
+                  </template>
+                  <template template v-if="!row.item.offsite_location">
+                    <b-dropdown-item size="sm"
+                                     v-if="row.item.booking && Object.keys(row.item.booking).length > 0"
+                                     @click="updateCalendarBooking(row.item)">
+                      {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}</b-dropdown-item>
+                    <b-dropdown-item size="sm"
+                                     v-if="!row.item.booking || Object.keys(row.item.booking).length === 0"
                                      @click="addCalendarBooking(row.item)">Schedule Exam</b-dropdown-item>
+                  </template>
                 </template>
-                <b-dropdown-item size="sm"
-                                 @click="editExamDetails(row.item)">Edit Exam Details</b-dropdown-item>
-                <b-dropdown-item size="sm"
-                                 @click="returnExam(row.item)">Return Exam</b-dropdown-item>
+
+                  <b-dropdown-item size="sm"
+                                   @click="editExamDetails(row.item)">Edit Exam Details</b-dropdown-item>
+                  <b-dropdown-item size="sm"
+                                   @click="returnExam(row.item)">Return Exam</b-dropdown-item>
               </template>
+
               <template v-if="officeFilter != userOffice && officeFilter != 'default'">
                 <b-dropdown-item size="sm"
                                  v-if="row.item.offsite_location"
@@ -271,6 +276,7 @@
                                  @click="editExamDetails(row.item)">Edit Exam Details</b-dropdown-item>
               </template>
             </template>
+
             <template v-if="examReturnedFilter(row.item)">
               <b-dropdown-item size="sm"
                                @click="returnExam(row.item)">Edit Return Details</b-dropdown-item>
@@ -315,9 +321,9 @@
       this.getExams().then( () => { this.getBookings() })
       this.getOffices()
       this.getInvigilators()
-      this.getWidth()
+      this.getSize()
       this.$nextTick(function() {
-        window.addEventListener('resize', () => { this.getWidth() })
+        window.addEventListener('resize', () => { this.getSize() })
       })
       this.setFilter({type: 'office_number', value: 'default'})
     },
@@ -329,6 +335,9 @@
         officeFilterModal: false,
         page: 1,
         tableStyle: null,
+        buttonH: 45,
+        qLengthH: 28,
+        totalH: 0,
       }
     },
     computed: {
@@ -346,31 +355,37 @@
         'offices',
         'user',
       ]),
+      availableH() {
+        let h = this.totalH - this.qLengthH - this.buttonH - 160
+        return { height:`${h}px`, border: '1px solid dimgrey' }
+      },
       fields() {
         if (!this.showExamInventoryModal) {
           return [
-            { key: 'event_id', label: 'Event ID', sortable: true, thStyle: 'width: 6%' },
+            { key: 'exam_id', sortable: true, style: 'display: none', thClass: 'd-none', tdClass: 'd-none'},
+            { key: 'event_id', label: 'Event ID', sortable: false, thStyle: 'width: 6%' },
             { key: 'exam_type_name', label: 'Exam Type', sortable: true },
             { key: 'exam_name', label: 'Exam Name', sortable: true, thStyle: 'width: 11%' },
-            { key: 'exam_method', label: 'Method', sortable: true, thStyle: 'width: 5%' },
+            { key: 'exam_method', label: 'Method', sortable: false, thStyle: 'width: 5%' },
             { key: 'expiry_date', label: 'Expiry Date', sortable: true, thStyle: 'width: 8%' },
             { key: 'exam_received', label: 'Received?', sortable: true, thStyle: 'width: 5%' },
             { key: 'examinee_name', label: 'Student Name', sortable: true, thStyle: 'width: 12%' },
-            { key: 'notes', label: 'Notes', sortable: true, thStyle: 'width: 21%' },
-            { key: 'scheduled', label: 'Scheduled?', thStyle: 'width: 5%', tdClass: 'text-center'},
-            { key: 'actions', label: 'Actions', sortable: true, thStyle: 'width: 5%' },
+            { key: 'notes', label: 'Notes', sortable: false, thStyle: 'width: 21%' },
+            { key: 'scheduled', label: 'Scheduled?', sortable: false, thStyle: 'width: 5%', tdClass: 'text-center'},
+            { key: 'actions', label: 'Actions', sortable: false, thStyle: 'width: 5%' },
           ]
         }
         if (this.showExamInventoryModal) {
           return [
-            { key: 'event_id', label: 'Event ID', sortable: true, thStyle: 'width: 6%' },
+            { key: 'exam_id', sortable: true, thStyle: 'display: none'},
+            { key: 'event_id', label: 'Event ID', sortable: false, thStyle: 'width: 6%' },
             { key: 'exam_type.exam_type_name', label: 'Exam Type', sortable: true},
             { key: 'exam_name', label: 'Exam Name', sortable: true, thStyle: 'width: 15%' },
             { key: 'exam_method', label: 'Method', sortable: true, thStyle: 'width: 5%' },
             { key: 'expiry_date', label: 'Expiry Date', sortable: true, thStyle: 'width: 8%' },
             { key: 'exam_received', label: 'Received?', sortable: true, thStyle: 'width: 5%' },
             { key: 'examinee_name', label: 'Student Name', sortable: true, thStyle: 'width: 20%' },
-            { key: 'notes', label: 'Notes', sortable: true, },
+            { key: 'notes', label: 'Notes', sortable: false, },
           ]
         }
       },
@@ -437,7 +452,7 @@
       ]),
       addCalendarBooking(item) {
         this.toggleScheduling(true)
-        item.referrer = 'scheduling'
+        item.referrer = 'inventory'
         this.setSelectedExam(item)
         this.$router.push('/booking')
         this.toggleExamInventoryModal(false)
@@ -450,12 +465,6 @@
       },
       checkInvigilator(item) {
         if (item.booking && (item.booking.invigilator_id || item.booking.sbc_staff_invigilated)) {
-          return true
-        }
-        return false
-      },
-      examReturnedFilter(item) {
-        if (item.exam_returned_date && (this.officeFilter === this.userOffice || this.officeFilter === 'default')) {
           return true
         }
         return false
@@ -476,8 +485,14 @@
         this.actionedExam = item
         this.toggleEditGroupBookingModal(true)
       },
+      examReturnedFilter(item) {
+        if (item.exam_returned_date && (this.officeFilter === this.userOffice || this.officeFilter === 'default')) {
+          return true
+        }
+        return false
+      },
       filterByGroup(ex) {
-        if (ex.exam_type.exam_type_name.includes('Challenger') || ex.exam_type.exam_type_name.includes('Group')) {
+        if (ex.exam_type.exam_type_name === 'Monthly Session Exam' || ex.exam_type.group_exam_ind) {
           return true
         }
         if (ex.number_of_students && parseInt(ex.number_of_students) > 1) {
@@ -488,10 +503,10 @@
       filterByScheduled(ex) {
         if (ex.exam_received_date) {
           if (ex.booking && ( ex.booking.invigilator_id || ex.booking.sbc_staff_invigilated )) {
-            if (!ex.exam_type.exam_type_name.includes('Challenger')) {
+            if (ex.exam_type.exam_type_name !== 'Monthly Session Exam') {
               return true
             }
-            if (ex.exam_type.exam_type_name.includes('Challenger')) {
+            if (ex.exam_type.exam_type_name === 'Monthly Session Exam') {
               if (ex.number_of_students && ex.event_id) {
                 return true
               }
@@ -588,9 +603,10 @@
         let time =  new zone.tz(d.start_time, tz).format('2017-MM-DD[T]HH:mm:ss').toString()
         return new moment(time).format('h:mm a')
       },
-      getWidth() {
+      getSize() {
+        this.totalH = window.innerHeight - 70 - 36
         if (!this.showExamInventoryModal) {
-          this.tableStyle = { width: `${ window.innerWidth - 40 }px` }
+          this.tableStyle = { height: `${this.availableH}px`, width: `${ window.innerWidth - 40 }px` }
         }
         if (this.showExamInventoryModal) {
           this.tableStyle = { width: 98 + '%' }
@@ -614,9 +630,48 @@
       setOfficeFilter(office_number) {
         this.setFilter({type:'office_number', value: office_number})
       },
-      toggleDetailsRow(item) {
-        this.detailsRowSetup = item.origin
-        item.row.toggleDetails()
+      stillRequires(item) {
+        let output = []
+        if (!item.booking) {
+          output.push('Scheduling and Assignment of Invigilator')
+        }
+        if (!item.exam_received_date) {
+          output.push('Receipt of Materials')
+        }
+        if (item.exam_type.exam_type_name === 'Monthly Session Exam') {
+          if (!item.number_of_students) {
+            output.push('Number of Students')
+          }
+          if (!item.session_number) {
+            output.push('Session Number')
+          }
+        }
+        if (item.booking && !item.booking.invigilator_id && !item.booking.sbc_staff_invigilated) {
+          output.push('Assignment of Invigilator')
+        }
+        return output
+      },
+      readyDetailsMap(item) {
+        let output = {}
+        if (item.offsite_location && item.offsite_location !== '_offsite') {
+          output.Location = item.offsite_location
+        }
+        if (item.booking) {
+          if (item.booking.sbc_staff_invigilated) {
+            output.Invigilator = 'SBC Staff'
+          }
+          if (item.booking.invigilator_id) {
+            output.Invigilator = item.booking.invigilator.invigilator_name
+          }
+          if (item.booking.room_id) {
+            output.Room = item.booking.room.room_name
+          }
+          if (item.booking.start_time) {
+            output.Date = this.formatDate(item.booking.start_time)
+            output.Time = this.formatTime(item.booking)
+          }
+        }
+        return output
       },
       updateCalendarBooking(item) {
         item.gotoDate = new moment(item.booking.start_time)
@@ -671,6 +726,9 @@
   .exam-table-holder {
     border: 1px solid dimgrey;
   }
+  .tr-container-div {
+    min-height: 50% !important;
+  }
   .details-slot-div {
     display: flex;
     justify-content: flex-start;
@@ -684,7 +742,7 @@
     bottom: 35px;
     left: 30px;
   }
-  .error-cursor-hover {
+  .icon-cursor-hover {
     cursor: pointer !important;
   }
   .btn:active, .btn.active {

@@ -15,7 +15,7 @@
   -->
 
 <template>
-  <div style="position: relative">
+  <div style="">
     <div class="dash-button-flex-button-container pb-0 mb-3">
       <!-- SLOT FOR EACH VIEW'S BUTTON CONTROLS-->
       <div v-if="this.$route.path === '/booking' || this.$route.path === '/exams' ">
@@ -24,7 +24,8 @@
                   @click="clickIcon">
           <font-awesome-icon icon="stopwatch"
                              style="font-size: 1.0rem;color: white;"
-                             class="p0" />
+                             class="p0"
+                             id="booking_time_tracking"/>
         </b-button>
       </div>
       <router-view name="buttons"></router-view>
@@ -42,12 +43,13 @@
             <font-awesome-icon icon="bars"
                                style="font-size: 1.18rem;"/>
           </template>
-          <div :style="{width:200+'px'}">
-            <b-dropdown-item to="/queue">The Q</b-dropdown-item>
-            <b-dropdown-item to="/booking" v-if="showExams">Room Booking</b-dropdown-item>
-            <b-dropdown-item to="/appointments" v-if="showAppointments">Appointments</b-dropdown-item>
-            <b-dropdown-item to="/exams" v-if="showExams">Exam Inventory</b-dropdown-item>
-            <b-dropdown-item to="/agenda" v-if="isGAorCSR && showExams">Office Agenda</b-dropdown-item>
+          <div :style="{width:200+'px'}"
+               id="nav-dropdown-buttons">
+            <b-dropdown-item to="/queue" id="the_q">The Q</b-dropdown-item>
+            <b-dropdown-item to="/booking" v-if="showExams" id="room_bookings">Room Booking</b-dropdown-item>
+            <b-dropdown-item to="/appointments" v-if="showAppointments" id="appointments">Appointments</b-dropdown-item>
+            <b-dropdown-item to="/exams" v-if="showExams" id="exam_inventory">Exam Inventory</b-dropdown-item>
+            <b-dropdown-item to="/agenda" v-if="isGAorCSR && showExams" id="office_agenda">Office Agenda</b-dropdown-item>
             <template  v-if="user.role && user.role.role_code=='GA'">
               <b-dropdown-item @click="clickGAScreen" :class="gaPanelStyle">
                 <font-awesome-icon v-if="showGAScreenModal"

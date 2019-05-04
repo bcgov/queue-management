@@ -1,63 +1,74 @@
 <template>
   <b-col cols="auto" class="p-0 m-0" style="width:100%;">
-    <template v-if="setup === 'add_mode' || setup === 'edit_mode' ">
-      <div v-if="setup === 'edit_mode' " class="buttons-div">
-        <b-button @click="clickEditCancel"
-                  :disabled="performingAction"
-                  class="btn-danger"
-                  id="add-citizen-cancel">Cancel</b-button>
-        <b-button @click="clickEditApply"
-                  :disabled="performingAction"
-                  class="btn-success"
-                  id="add-citizen-apply">Apply</b-button>
-      </div>
-      <div v-if="setup === 'add_mode' " class="buttons-div">
-        <b-button @click="clickEditCancel"
-                  :disabled="performingAction"
-                  class="btn-danger" >Cancel</b-button>
-        <b-button @click="addServiceApply"
-                  :disabled="performingAction"
-                  class="btn-success" >Apply</b-button>
+    <template v-if="$route.path === '/appointments' ">
+      <div class="button-row">
+        <b-button class="btn-success ml-3"
+                  @click="addService">Add</b-button>
+        <b-button class="btn-danger"
+                  @click="closeAddServiceModal">Cancel</b-button>
       </div>
     </template>
-    <template v-else>
-      <div v-if="!simplified && reception" class="buttons-div">
-        <b-button @click="cancelAddCitizensModal"
-                  :disabled="performingAction"
-                  class="btn-danger"
-                  id="add-citizen-cancel">Cancel</b-button>
-        <div style="display:inline-block">
-          <b-button @click="addToQueue"
+    <template v-if="$route.path !== '/appointments'">
+      <template v-if="setup === 'add_mode' || setup === 'edit_mode' ">
+        <div v-if="setup === 'edit_mode' " class="buttons-div">
+          <b-button @click="clickEditCancel"
                     :disabled="performingAction"
-                    class="btn-white"
-                    id="add-citizen-add-to-queue">Add to queue</b-button>
+                    class="btn-danger"
+                    id="add-citizen-cancel">Cancel</b-button>
+          <b-button @click="clickEditApply"
+                    :disabled="performingAction"
+                    class="btn-success"
+                    id="add-citizen-apply">Apply</b-button>
+        </div>
+        <div v-if="setup === 'add_mode' " class="buttons-div">
+          <b-button @click="clickEditCancel"
+                    :disabled="performingAction"
+                    class="btn-danger" >Cancel</b-button>
+          <b-button @click="addServiceApply"
+                    :disabled="performingAction"
+                    class="btn-success" >Apply</b-button>
+        </div>
+      </template>
+      <template v-else>
+        <div v-if="!simplified && reception" class="buttons-div">
+          <b-button @click="cancelAddCitizensModal"
+                    :disabled="performingAction"
+                    class="btn-danger"
+                    id="add-citizen-cancel">Cancel</b-button>
+          <div style="display:inline-block">
+            <b-button @click="addToQueue"
+                      :disabled="performingAction"
+                      class="btn-white"
+                      id="add-citizen-add-to-queue">Add to queue</b-button>
+            <b-button @click="beginService"
+                      :disabled="performingAction"
+                      class="btn-success"
+                      id="add-citizen-begin-service">Begin service</b-button>
+          </div>
+        </div>
+        <div v-if="!simplified && !reception" class="buttons-div">
+          <b-button @click="cancelAddCitizensModal"
+                    :disabled="performingAction"
+                    class="btn-danger"
+                    id="add-citizen-cancel">Cancel</b-button>
           <b-button @click="beginService"
                     :disabled="performingAction"
                     class="btn-success"
                     id="add-citizen-begin-service">Begin service</b-button>
         </div>
-      </div>
-      <div v-if="!simplified && !reception" class="buttons-div">
-        <b-button @click="cancelAddCitizensModal"
-                  :disabled="performingAction"
-                  class="btn-danger"
-                  id="add-citizen-cancel">Cancel</b-button>
-        <b-button @click="beginService"
-                  :disabled="performingAction"
-                  class="btn-success"
-                  id="add-citizen-begin-service">Begin service</b-button>
-      </div>
-      <div v-if="simplified" class="buttons-div">
-        <b-button @click="cancelAddCitizensModal"
-                  :disabled="performingAction"
-                  class="btn-danger"
-                  id="add-citizen-cancel">Cancel</b-button>
-        <b-button @click="beginServiceSimplified"
-                  :disabled="performingAction"
-                  class="btn-success"
-                  id="add-citizen-begin-service">Begin service</b-button>
-      </div>
+        <div v-if="simplified" class="buttons-div">
+          <b-button @click="cancelAddCitizensModal"
+                    :disabled="performingAction"
+                    class="btn-danger"
+                    id="add-citizen-cancel">Cancel</b-button>
+          <b-button @click="beginServiceSimplified"
+                    :disabled="performingAction"
+                    class="btn-success"
+                    id="add-citizen-begin-service">Begin service</b-button>
+        </div>
+      </template>
     </template>
+
   </b-col>
 </template>
 
@@ -74,6 +85,7 @@
       ...mapState({
         setup: 'addModalSetup',
         performingAction: 'performingAction',
+        addModalForm: 'addModalForm',
       }),
       simplified() {
         if (this.$route.path !== '/queue') {
@@ -83,16 +95,34 @@
       },
     },
     methods: {
-      ...mapMutations(['toggleExamsTrackingIP']),
+      ...mapMutations(['toggleAddModal', 'toggleExamsTrackingIP']),
       ...mapActions([
-        'clickBeginService',
-        'clickAddToQueue',
-        'cancelAddCitizensModal',
         'applyEdits',
+        'cancelAddCitizensModal',
+        'clickAddServiceApply',
+        'clickAddToQueue',
+        'clickBeginService',
         'clickEditApply',
         'clickEditCancel',
-        'clickAddServiceApply'
+        'resetAddCitizenModal',
       ]),
+      addService() {
+        this.$store.commit('appointmentsModule/setSelectedService', this.addModalForm.service)
+        this.closeAddServiceModal()
+      },
+      addServiceApply() {
+        if (this.form_data.service === '') {
+            this.$store.commit('setModalAlert', 'You must select a service')
+            this.$root.$emit('showAddMessage')
+            return null
+        }
+        if (this.form_data.channel === '') {
+            this.$store.commit('setModalAlert', 'You must select a channel')
+            this.$root.$emit('showAddMessage')
+            return null
+        }
+        this.clickAddServiceApply()
+      },
       addToQueue() {
         if (this.form_data.service === '') {
           this.$store.commit('setModalAlert', 'You must select a service')
@@ -133,19 +163,10 @@
         this.toggleExamsTrackingIP(true)
         this.clickBeginService({simple: true})
       },
-      addServiceApply() {
-        if (this.form_data.service === '') {
-            this.$store.commit('setModalAlert', 'You must select a service')
-            this.$root.$emit('showAddMessage')
-            return null
-        }
-        if (this.form_data.channel === '') {
-            this.$store.commit('setModalAlert', 'You must select a channel')
-            this.$root.$emit('showAddMessage')
-            return null
-        }
-        this.clickAddServiceApply()
-      }
+      closeAddServiceModal() {
+        this.resetAddCitizenModal()
+        this.$store.commit('appointmentsModule/toggleApptBookingModal', true)
+      },
     }
   }
 </script>

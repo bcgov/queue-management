@@ -1,5 +1,5 @@
 <template>
-  <div class="add_citizen_form mt-1">
+  <div class="add_citizen_form mt-1" v-if="$route.path !== '/appointments'">
     <b-form-row no-gutters>
       <b-col cols="auto">
         <label class="add_citizen_form_label">Channel:</label>

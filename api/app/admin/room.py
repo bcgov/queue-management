@@ -32,6 +32,8 @@ class RoomConfig(Base):
 
     create_modal = False
     edit_modal = False
+    can_delete = False
+
     column_list = [
         'office.office_name',
         'room_name',

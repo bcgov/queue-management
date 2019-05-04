@@ -18,6 +18,7 @@ import moment from 'moment'
 import tZone from 'moment-timezone'
 import 'es6-promise/auto'
 import { addExamModule } from './add-exam-module'
+import appointmentsModule from './appointments-module'
 import { Axios, searchNestedObject } from './helpers'
 
 var flashInt
@@ -29,7 +30,7 @@ var _default_counter_id = null;
 
 export const store = new Vuex.Store({
   modules: {
-    addExamModule
+    addExamModule, appointmentsModule,
   },
   state: {
     addExamModal: {
@@ -54,6 +55,10 @@ export const store = new Vuex.Store({
     nonITAExam: false,
     addNextService: false,
     adminNavigation: 'csr',
+    appointmentsStateInfo: {
+      channel_id: null,
+      service_id: null,
+    },
     alertMessage: '',
     allCitizens: [],
     bearer: '',
@@ -109,7 +114,7 @@ export const store = new Vuex.Store({
     offices: [],
     officeFilter: null,
     officeType: null,
-    offsiteVisible: false,
+    offsiteVisible: true,
     performingAction: false,
     rescheduling: false,
     returnExam: null,
@@ -479,9 +484,9 @@ export const store = new Vuex.Store({
         Axios(context).put(`/bookings/${payload.id}/`, payload.changes).then(resp => {
           resolve(resp.data)
         })
-          .catch(error => {
-            reject(error)
-          })
+        .catch(error => {
+          reject(error)
+        })
       })
     },
 
@@ -539,7 +544,7 @@ export const store = new Vuex.Store({
             booking.id = b.booking_id
             booking.exam = context.state.exams.find(ex => ex.booking_id == b.booking_id) || false
             booking.booking_contact_information = b.booking_contact_information
-
+            booking.fees = b.fees
             calendarEvents.push(booking)
           })
           context.commit('setEvents', calendarEvents)
@@ -725,16 +730,16 @@ export const store = new Vuex.Store({
 
     getServices(context) {
       let office_id = context.state.user.office_id
-      Axios(context).get(`/services/?office_id=${office_id}`)
-        .then( resp => {
-          let services = resp.data.services.filter(service => service.actual_service_ind === 1)
-          context.commit('setServices', services)
-        })
-        .catch(error => {
-          console.log('error @ store.actions.getServices')
-          console.log(error.response)
-          console.log(error.message)
-        })
+        Axios(context).get(`/services/?office_id=${office_id}`)
+          .then( resp => {
+            let services = resp.data.services.filter(service => service.actual_service_ind === 1)
+            context.commit('setServices', services)
+          })
+          .catch(error => {
+            console.log('error @ store.actions.getServices')
+            console.log(error.response)
+            console.log(error.message)
+          })
     },
 
     getUser(context) {
@@ -930,7 +935,7 @@ export const store = new Vuex.Store({
     },
   
     clickBeginService(context, payload) {
-      let {citizen_id} = context.getters.form_data.citizen
+      let { citizen_id } = context.getters.form_data.citizen
       context.commit('setPerformingAction', true)
     
       context.dispatch('putCitizen').then( () => {
@@ -1627,7 +1632,7 @@ export const store = new Vuex.Store({
         start_time: start.clone().utc().format('YYYY-MM-DD[T]HH:mm:ssZ'),
         end_time: end.clone().utc().format('YYYY-MM-DD[T]HH:mm:ssZ'),
         fees: 'false',
-        booking_name: 'Monthly Session',
+        booking_name: responses.exam_name,
         office_id: context.state.user.office_id,
       }
       if (responses.on_or_off === 'on') {
@@ -1635,7 +1640,12 @@ export const store = new Vuex.Store({
         delete responses.offsite_location
       }
       if (responses.invigilator) {
-        booking.invigilator_id = responses.invigilator.invigilator_id.valueOf()
+        if (responses.invigilator === 'sbc') {
+          booking.invigilator_id = null
+          booking.sbc_staff_invigilated = true
+        } else {
+          booking.invigilator_id = responses.invigilator.invigilator_id.valueOf()
+        }
         delete responses.invigilator
       }
       let exam_type= context.state.examTypes.find(ex => ex.exam_type_name === 'Monthly Session Exam')
@@ -1643,7 +1653,8 @@ export const store = new Vuex.Store({
         exam_returned_ind: 0,
         examinee_name: 'Monthly Session',
         exam_type_id: exam_type.exam_type_id,
-        office_id: context.state.user.office_id
+        office_id: context.state.user.office_id,
+        exam_method: 'paper',
       }
       delete responses.exam_time
       delete responses.expiry_date
@@ -1722,6 +1733,13 @@ export const store = new Vuex.Store({
 
     postITAIndividualExam(context) {
       let responses = Object.assign( {}, context.state.capturedExam)
+      if (responses.on_or_off) {
+        if (responses.on_or_off === 'off') {
+          responses.offsite_location = '_offsite'
+        }
+        delete responses.on_or_off
+      }
+      
       let defaultValues = {
         exam_returned_ind: 0,
         number_of_students: 1,
@@ -1807,7 +1825,8 @@ export const store = new Vuex.Store({
         return new Promise((resolve, reject) => { resolve(' ') })
       }
 
-
+      console.log(citizen_id)
+      console.log(data)
       return new Promise((resolve, reject) => {
         let url = `/citizens/${citizen_id}/`
 
@@ -1815,17 +1834,17 @@ export const store = new Vuex.Store({
           error => { reject(error) })
       })
     },
-
+  
     putServiceRequest(context) {
       let { activeQuantity } = context.state.serviceModalForm
       let compareService = context.getters.active_service
       let { sr_id } = compareService
-
+    
       let data = {}
       if (activeQuantity != compareService.quantity) {
         data.quantity = activeQuantity
       }
-
+    
       // Make sure quantity is position
       if (!/^\+?\d+$/.test(activeQuantity)) {
         context.commit("setServeModalAlert", "Quantity must be a number and greater than 0")
@@ -1833,7 +1852,7 @@ export const store = new Vuex.Store({
       } else {
         context.commit("setServeModalAlert", "")
       }
-
+    
       let setup = context.state.addModalSetup
       let { form_data } = context.getters
       if ( setup === 'add_mode' || setup === 'edit_mode') {
@@ -1847,7 +1866,7 @@ export const store = new Vuex.Store({
       if (Object.keys(data).length === 0) {
         return new Promise((resolve, reject) => { resolve(' ') })
       }
-
+    
       return new Promise((resolve, reject) => {
         let url = `/service_requests/${sr_id}/`
         Axios(context).put(url,data).then(resp=>{
@@ -1997,6 +2016,10 @@ export const store = new Vuex.Store({
         csr_state_id: context.state.user.csr_state_id,
       })
     },
+  
+    restoreSavedModalAction({commit}, payload) {
+      commit('restoreSavedModal', payload)
+    },
   },
 
   mutations: {
@@ -2020,9 +2043,9 @@ export const store = new Vuex.Store({
       state.categories = []
       state.categories = payload
     },
-
+  
     setReturnExamInfo: (state, payload) => state.returnExam = payload,
-
+  
     toggleAddModal: (state, payload) => state.showAddModal = payload,
   
     updateAddModalForm(state, payload) {
@@ -2172,7 +2195,7 @@ export const store = new Vuex.Store({
       state.examAlertMessage = payload
       state.examDismissCount = 999
     },
-
+  
     setLoginAlert(state, payload) {
       state.loginAlertMessage = payload
       state.loginDismissCount = 999
@@ -2228,8 +2251,8 @@ export const store = new Vuex.Store({
     examDismissCountDown(state, payload) {
       state.examDismissCount = payload
     },
-
-    loginDismissCountDown(state, payload){
+  
+    loginDismissCountDown(state, payload) {
       state.loginDismissCount = payload
     },
   
@@ -2314,6 +2337,15 @@ export const store = new Vuex.Store({
       })
     },
   
+    resetAddExamModal: (state) => {
+      state.addExamModal = {
+        visible: false,
+        setup: null,
+        step1MenuOpen: false,
+        office_number: null,
+      }
+    },
+  
     toggleGenFinReport(state, payload) {
       state.showGenFinReportModal = payload
     },
@@ -2395,7 +2427,7 @@ export const store = new Vuex.Store({
     toggleReturnExamModal: (state, payload) => state.showReturnExamModal = payload,
   
     toggleDeleteExamModalVisible: (state, payload) => state.showDeleteExamModal = payload,
-    
+  
     setSelectedExam(state, payload) {
       if (payload === 'clearGoto') {
         delete state.selectedExam.gotoDate
@@ -2442,7 +2474,7 @@ export const store = new Vuex.Store({
     setOfficeFilter: (state, payload) => state.officeFilter = payload,
 
     setSelectionIndicator: (state, payload) => state.selectionIndicator = payload,
-    
+  
     setResources: (state, payload) => state.roomResources = payload,
   
     setEvents: (state, payload) => state.calendarEvents = payload,
@@ -2469,7 +2501,11 @@ export const store = new Vuex.Store({
     },
   
     toggleOffsiteVisible: (state, payload) => state.offsiteVisible = payload,
-    
+  
     toggleExamsTrackingIP: (state, payload) => state.examsTrackingIP = payload,
+  
+    setAppointmentsStateInfo: (state, payload) => state.appointmentsStateInfo = payload,
+  
+    clearAddExamModalFromCalendarStatus: state => Vue.delete(state.addExamModal, 'fromCalendar'),
   }
 })
