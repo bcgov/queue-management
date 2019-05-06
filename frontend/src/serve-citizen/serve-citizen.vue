@@ -71,29 +71,32 @@
                      id="serve-light-inner-container"
                      class="pt-3 pb-2">
           <b-row no-gutters>
-            <b-col cols="7" />
-            <b-col cols="auto"
+            <b-col cols="12"
                    style="align: right">
-              <b-form-checkbox v-model="quick"
-                               value="1"
-                               unchecked-value="0"
-                               v-if="reception"
-                               class="quick-checkbox"
-                               style="color:white; margin-right: 8px;">
-                  <span style="font: 400 16px Myriad-Pro;">Quick Txn</span>
-                  <span class="quick-span" v-if="quick"></span> <!-- For puppeteer testing to see if quick is selected -->
-              </b-form-checkbox>
-              <select id="priority-selection"
-                      class="custom-select"
-                      v-model="priority_selection"
-                      style="margin-right:8px;">
+              <div class="q-w100-flex-fe">
+                  <b-form-checkbox v-model="quick"
+                                   value="1"
+                                   unchecked-value="0"
+                                   v-if="reception"
+                                   class="quick-checkbox mt-1"
+                                   style="color:white; margin-right: 8px;">
+                    <span style="font: 400 16px Myriad-Pro;">Quick Txn</span>
+                    <span class="quick-span" v-if="quick"></span> <!-- For puppeteer testing to see if quick is selected -->
+                  </b-form-checkbox>
+
+                <select id="priority-selection"
+                        class="custom-select px-1"
+                        v-model="priority_selection"
+                        style="margin-right:8px;">
                   <option value=1>High Priority</option>
                   <option value=2>Default Priority</option>
                   <option value=3>Low Priority</option>
-              </select>
-              <b-button class="btn-primary serve-btn"
-                        @click="clickAddService"
-                        :disabled="serviceBegun===false || performingAction">Add Next Service</b-button>
+                </select>
+                <b-button class="btn-primary serve-btn"
+                          @click="clickAddService"
+                          :disabled="serviceBegun===false || performingAction">Add Next Service</b-button>
+              </div>
+
             </b-col>
             <b-col cols="2" />
           </b-row>
