@@ -19,7 +19,7 @@ from sqlalchemy import exc
 from app.models.bookings import Exam, Booking, Invigilator, Room, ExamType
 from app.models.theq import CSR, Office
 from app.schemas.bookings import ExamSchema
-from qsystem import api, jwt
+from qsystem import api, oidc
 from datetime import datetime, timedelta
 import pytz
 import csv
@@ -33,13 +33,11 @@ class ExamList(Resource):
 
     timezone = pytz.timezone("US/Pacific")
 
-    @jwt.requires_auth
+    @oidc.accept_token(require_token=True)
     def get(self):
 
-        print("==> In Python GET /exams/export/ endpoint")
-
         try:
-            csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
+            csr = CSR.find_by_username(g.oidc_token_info['username'])
 
             start_param = request.args.get("start_date")
             end_param = request.args.get("end_date")

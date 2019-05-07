@@ -17,7 +17,7 @@ from flask import request, g
 from flask_restplus import Resource
 from app.models.theq import CSR
 from app.schemas.bookings import ExamSchema
-from qsystem import api, api_call_with_retry, db, jwt
+from qsystem import api, api_call_with_retry, db, oidc
 
 
 @api.route("/exams/", methods=["POST"])
@@ -25,11 +25,11 @@ class ExamPost(Resource):
 
     exam_schema = ExamSchema()
 
-    @jwt.requires_auth
+    @oidc.accept_token(require_token=True)
     @api_call_with_retry
     def post(self):
 
-        csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
+        csr = CSR.find_by_username(g.oidc_token_info['username'])
 
         json_data = request.get_json()
 

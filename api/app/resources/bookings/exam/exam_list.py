@@ -19,7 +19,7 @@ from sqlalchemy import exc, or_, desc
 from app.models.bookings import Exam
 from app.models.theq import CSR
 from app.schemas.bookings import ExamSchema
-from qsystem import api, jwt
+from qsystem import api, oidc
 from datetime import datetime, timedelta
 
 
@@ -28,10 +28,10 @@ class ExamList(Resource):
 
     exam_schema = ExamSchema(many=True)
 
-    @jwt.requires_auth
+    @oidc.accept_token(require_token=True)
     def get(self):
         try:
-            csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
+            csr = CSR.find_by_username(g.oidc_token_info['username'])
 
             ninety_day_filter = datetime.now() - timedelta(days=90)
 

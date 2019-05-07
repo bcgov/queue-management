@@ -15,7 +15,7 @@ limitations under the License.'''
 import logging
 from flask import request, g
 from flask_restplus import Resource
-from qsystem import api, db, jwt
+from qsystem import api, db, oidc
 from app.models.bookings import Appointment
 from app.models.theq import CSR
 from app.schemas.bookings import AppointmentSchema
@@ -26,12 +26,12 @@ class AppointmentPut(Resource):
 
     appointment_schema = AppointmentSchema()
 
-    @jwt.requires_auth
+    @oidc.accept_token(require_token=True)
     def put(self, id):
 
         print("==> In Python PUT /appointments/<id>/ endpoint")
 
-        csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
+        csr = CSR.find_by_username(g.oidc_token_info['username'])
 
         json_data = request.get_json()
 

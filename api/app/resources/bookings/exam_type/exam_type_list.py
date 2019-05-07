@@ -17,7 +17,7 @@ from flask_restplus import Resource
 from sqlalchemy import exc
 from app.models.bookings import ExamType
 from app.schemas.bookings import ExamTypeSchema
-from qsystem import api, jwt
+from qsystem import api, oidc
 
 
 @api.route("/exam_types/", methods=["GET"])
@@ -25,7 +25,7 @@ class ExamTypeList(Resource):
 
     exam_type_schema = ExamTypeSchema(many=True)
 
-    @jwt.requires_auth
+    @oidc.accept_token(require_token=True)
     def get(self):
 
         try:
