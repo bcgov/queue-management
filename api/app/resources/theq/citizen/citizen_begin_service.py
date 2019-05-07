@@ -15,7 +15,7 @@ limitations under the License.'''
 from filelock import FileLock
 from flask import g
 from flask_restplus import Resource
-from qsystem import api, api_call_with_retry, db, jwt, socketio
+from qsystem import api, api_call_with_retry, db, oidc, socketio
 from app.models.theq import Citizen, CSR
 from app.models.theq import SRState
 from app.schemas.theq import CitizenSchema
@@ -25,13 +25,13 @@ class CitizenBeginService(Resource):
 
     citizen_schema = CitizenSchema()
 
-    @jwt.requires_auth
+    @oidc.accept_token(require_token=True)
     @api_call_with_retry
     def post(self, id):
         lock = FileLock("lock/begin_citizen.lock")
 
         with lock:
-            csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
+            csr = CSR.find_by_username(g.oidc_token_info['username'])
             citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
             pending_service_state = SRState.get_state_by_name("Active")
 

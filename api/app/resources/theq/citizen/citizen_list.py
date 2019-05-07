@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from flask import request, g
 from flask_restplus import Resource
-from qsystem import api, api_call_with_retry, db, jwt, socketio
+from qsystem import api, api_call_with_retry, db, oidc, socketio
 from app.models.theq import Citizen, CSR, CitizenState
 from marshmallow import ValidationError
 from app.schemas.theq import CitizenSchema
@@ -28,10 +28,10 @@ class CitizenList(Resource):
     citizen_schema = CitizenSchema()
     citizens_schema = CitizenSchema(many=True)
 
-    @jwt.requires_auth
+    @oidc.accept_token(require_token=True)
     def get(self):
         try:
-            csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
+            csr = CSR.find_by_username(g.oidc_token_info['username'])
             active_state = CitizenState.query.filter_by(cs_state_name="Active").first()
             citizens = Citizen.query.filter_by(office_id=csr.office_id, cs_id=active_state.cs_id) \
                 .order_by(Citizen.priority) \
@@ -44,12 +44,12 @@ class CitizenList(Resource):
             print(e)
             return {'message': 'API is down'}, 500
 
-    @jwt.requires_auth
+    @oidc.accept_token(require_token=True)
     @api_call_with_retry
     def post(self):
         json_data = request.get_json()
 
-        csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
+        csr = CSR.find_by_username(g.oidc_token_info['username'])
 
         try:
             citizen = self.citizen_schema.load(json_data).data

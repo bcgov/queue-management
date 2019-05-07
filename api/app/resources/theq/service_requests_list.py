@@ -15,7 +15,7 @@ limitations under the License.'''
 from flask import request, g
 from flask_restplus import Resource
 from datetime import datetime, timedelta
-from qsystem import api, api_call_with_retry, db, jwt, socketio
+from qsystem import api, api_call_with_retry, db, oidc, socketio
 from app.models.theq import Citizen, CitizenState, CSR, Period, PeriodState, Service, ServiceReq, SRState
 from app.schemas.theq import CitizenSchema, ServiceReqSchema
 from marshmallow import ValidationError
@@ -27,7 +27,7 @@ class ServiceRequestsList(Resource):
     citizen_schema = CitizenSchema()
     service_request_schema = ServiceReqSchema()
 
-    @jwt.requires_auth
+    @oidc.accept_token(require_token=True)
     @api_call_with_retry
     def post(self):
         json_data = request.get_json()
@@ -35,7 +35,7 @@ class ServiceRequestsList(Resource):
         if not json_data:
             return {"message": "No input data received for creating service request"}, 400
 
-        csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
+        csr = CSR.find_by_username(g.oidc_token_info['username'])
 
         try:
             service_request = self.service_request_schema.load(json_data['service_request']).data

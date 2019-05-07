@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from flask import g
 from flask_restplus import Resource
-from qsystem import api, jwt
+from qsystem import api, oidc
 from app.models.theq import Citizen, CSR
 from app.schemas.theq import ServiceReqSchema
 from sqlalchemy import exc
@@ -25,10 +25,10 @@ class CitizenServiceRequests(Resource):
 
     service_requests_schema = ServiceReqSchema(many=True)
 
-    @jwt.requires_auth
+    @oidc.accept_token(require_token=True)
     def get(self, id):
         try:
-            csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
+            csr = CSR.find_by_username(g.oidc_token_info['username'])
 
             citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
             result = self.service_requests_schema.dump(citizen.service_reqs)
