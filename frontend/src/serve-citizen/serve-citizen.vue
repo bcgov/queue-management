@@ -9,7 +9,7 @@
       <div class="modal_header" v-dragged="onDrag">
         <div>
           <h4 style="font-weight:900; color:#6e6e6e">
-            {{ simplifiedModal ? 'Exams Time Tracking' : 'Servce Citizen' }}</h4>
+            {{ simplifiedModal ? 'Exams Time Tracking' : 'Serve Citizen' }}</h4>
         </div>
         <div>
           <button
@@ -71,8 +71,7 @@
                      id="serve-light-inner-container"
                      class="pt-3 pb-2">
           <b-row no-gutters>
-            <b-col cols="12"
-                   style="align: right">
+            <b-col cols="7" />
               <div class="q-w100-flex-fe">
                   <b-form-checkbox v-model="quick"
                                    value="1"
@@ -96,8 +95,6 @@
                           @click="clickAddService"
                           :disabled="serviceBegun===false || performingAction">Add Next Service</b-button>
               </div>
-
-            </b-col>
             <b-col cols="2" />
           </b-row>
         </b-container>
