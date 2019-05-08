@@ -2,7 +2,6 @@
 
 <template>
   <div id="serveModal" class="serve-modal">
-     v-if="showServeCitizenSpinner" />
     <div class="serve-modal-content">
       <template v-if="showServeCitizenSpinner">
         <div class="q-loader" />
