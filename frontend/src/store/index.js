@@ -632,7 +632,37 @@ export const store = new Vuex.Store({
 
     getExams(context) {
       return new Promise((resolve, reject) => {
-        Axios(context).get('/exams/')
+        let url = "/exams/"
+
+        if (context.state.inventoryFilters["office_number"] === "default") {
+          url += `?office_number=${context.state.user.office.office_number}`
+        } else {
+          url += `?office_number=${context.state.inventoryFilters["office_number"]}`
+        }
+
+        Axios(context).get(url)
+          .then(resp => {
+            context.commit('setExams', resp.data.exams)
+            resolve(resp)
+          })
+          .catch(error => {
+            console.log(error)
+            reject(error)
+          })
+      })
+    },
+
+    getExamsForOffice(context, office_number) {
+      return new Promise((resolve, reject) => {
+        let url = "/exams/"
+
+        if (office_number === "default") {
+          url += `?office_number=${context.state.user.office.office_number}`
+        } else {
+          url += `?office_number=${office_number}`
+        }
+
+        Axios(context).get(url)
           .then(resp => {
             context.commit('setExams', resp.data.exams)
             resolve(resp)

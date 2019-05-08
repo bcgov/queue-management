@@ -9,7 +9,7 @@
       <div class="modal_header" v-dragged="onDrag">
         <div>
           <h4 style="font-weight:900; color:#6e6e6e">
-            {{ simplifiedModal ? 'Exams Time Tracking' : 'Servce Citizen' }}</h4>
+            {{ simplifiedModal ? 'Exams Time Tracking' : 'Serve Citizen' }}</h4>
         </div>
         <div>
           <button
@@ -81,7 +81,7 @@
                 {{counter.counter_name}}
               </option>
             </select>
-            <select id="priority-selection" class="custom-select" v-model="priority_selection" style="margin-right:8px;">
+            <select id="priority-selection" class="custom-select px-1" v-model="priority_selection" style="margin-right:8px;">
                 <option value=1>High Priority</option>
                 <option value=2>Default Priority</option>
                 <option value=3>Low Priority</option>
@@ -94,6 +94,7 @@
           <b-col cols="2" />
         </b-row>
       </b-container>
+
         <div v-if="!minimizeWindow">
           <b-container fluid
                        id="serve-citizen-modal-footer">
