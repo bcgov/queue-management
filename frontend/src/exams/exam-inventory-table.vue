@@ -601,7 +601,7 @@
         return []
       },
       formatDate(d) {
-        return new moment(d).format('ddd MMM DD, YYYY')
+        return new moment(d).utc().format('ddd MMM DD, YYYY')
       },
       formatTime(d) {
         let tz = d.office.timezone.timezone_name
