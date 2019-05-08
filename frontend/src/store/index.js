@@ -146,6 +146,7 @@ export const store = new Vuex.Store({
     showFeedbackModal: false,
     showGAScreenModal: false,
     showSelectInvigilatorModal: false,
+    showServeCitizenSpinner: false,
     showOtherBookingModal: false,
     showResponseModal: false,
     showReturnExamModal: false,
@@ -1046,6 +1047,7 @@ export const store = new Vuex.Store({
     },
 
     clickDashTableRow(context, citizen_id) {
+      context.commit('toggleServeCitizenSpinner', true)
       context.commit('setPerformingAction', true)
 
       context.dispatch('postInvite', citizen_id).then( () => {
@@ -1450,7 +1452,6 @@ export const store = new Vuex.Store({
             if (error.response.status === 400) {
               context.commit('setMainAlert', error.response.data.message)
             }
-
             reject(error)
           })
         })
@@ -1901,6 +1902,7 @@ export const store = new Vuex.Store({
           }
         }
       }
+      context.commit('toggleServeCitizenSpinner', false)
     },
     
     setAddModalData(context) {
@@ -2405,5 +2407,7 @@ export const store = new Vuex.Store({
     setAppointmentsStateInfo: (state, payload) => state.appointmentsStateInfo = payload,
   
     clearAddExamModalFromCalendarStatus: state => Vue.delete(state.addExamModal, 'fromCalendar'),
+  
+    toggleServeCitizenSpinner: (state, payload) => state.showServeCitizenSpinner = payload,
   }
 })
