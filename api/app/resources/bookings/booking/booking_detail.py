@@ -19,7 +19,7 @@ from flask_restplus import Resource
 from app.models.bookings import Booking
 from app.models.theq import CSR
 from app.schemas.bookings import BookingSchema
-from qsystem import api, jwt
+from qsystem import api, oidc
 
 
 @api.route("/bookings/<int:id>/", methods=["GET"])
@@ -27,12 +27,12 @@ class BookingDetail(Resource):
 
     booking_schema = BookingSchema()
 
-    @jwt.requires_auth
+    @oidc.accept_token(require_token=True)
     def get(self, id):
 
         print("==> In Python GET /bookings/<id>/")
 
-        csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
+        csr = CSR.find_by_username(g.oidc_token_info['username'])
 
         try:
             booking = Booking.query.filter_by(booking_id=id).first_or_404()

@@ -17,7 +17,7 @@ from flask_restplus import Resource
 from app.models.bookings import Appointment
 from app.schemas.bookings import AppointmentSchema
 from app.models.theq import CSR
-from qsystem import api, db, jwt
+from qsystem import api, db, oidc
 
 
 @api.route("/appointments/<int:id>/", methods=["DELETE"])
@@ -25,12 +25,12 @@ class AppointmentDelete(Resource):
 
     appointment_schema = AppointmentSchema()
 
-    @jwt.requires_auth
+    @oidc.accept_token(require_token=True)
     def delete(self, id):
 
         print("==> In the Python DELETE /appointments/<id>/ endpoint")
 
-        csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
+        csr = CSR.find_by_username(g.oidc_token_info['username'])
 
         appointment = Appointment.query.filter_by(appointment_id=id)\
                                        .filter_by(office_id=csr.office_id)\

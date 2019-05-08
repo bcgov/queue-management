@@ -15,7 +15,7 @@ limitations under the License.'''
 from functools import cmp_to_key
 from flask import request
 from flask_restplus import Resource
-from qsystem import api, jwt
+from qsystem import api, oidc
 from app.models.theq import Service
 from app.models.theq import Office
 from sqlalchemy import exc
@@ -45,7 +45,7 @@ class Services(Resource):
             else:
                 return 1
 
-    @jwt.requires_auth
+    @oidc.accept_token(require_token=True)
     def get(self):
         if request.args.get('office_id'):
             try:

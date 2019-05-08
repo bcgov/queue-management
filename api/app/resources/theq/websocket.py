@@ -16,13 +16,18 @@ from flask import request
 from flask_socketio import emit, join_room
 from jose import jwt
 from app.models.theq import CSR
-from qsystem import socketio
+from qsystem import oidc, socketio
 import json
 
 @socketio.on('joinRoom')
 def on_join(message):
     cookie = request.cookies.get("oidc-jwt", None)
     if cookie is None:
+        emit('joinRoomFail', {"sucess": False})
+        return
+
+    if not oidc.validate_token(cookie):
+        print("Cookie failed validation")
         emit('joinRoomFail', {"sucess": False})
         return
 

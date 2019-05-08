@@ -15,7 +15,7 @@ limitations under the License.'''
 from flask import request, jsonify, g
 from flask_restplus import Resource
 import sqlalchemy.orm
-from qsystem import application, api, db, jwt, socketio
+from qsystem import application, api, db, oidc, socketio
 from app.auth import required_scope
 from app.models.theq import Citizen, CSR
 from cockroachdb.sqlalchemy import run_transaction
@@ -29,7 +29,7 @@ import urllib.parse
 @api.route("/slack/", methods=['POST'])
 class Slack(Resource):
 
-    @jwt.requires_auth
+    @oidc.accept_token(require_token=True)
     def post(self):
         json_data = request.get_json()
         if not json_data:

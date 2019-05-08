@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from flask import request
 from flask_restplus import Resource
-from qsystem import application, api, jwt
+from qsystem import application, api, oidc
 import json
 import urllib.request
 import urllib.parse
@@ -31,7 +31,7 @@ class Feedback(Resource):
     flag_service_now = "SERVICENOW" in feedback_destinations
     flag_rocket_chat = "ROCKETCHAT" in feedback_destinations
 
-    @jwt.requires_auth
+    @oidc.accept_token(require_token=True)
     def post(self):
         json_data = request.get_json()
         if not json_data:
