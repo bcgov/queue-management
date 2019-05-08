@@ -160,6 +160,11 @@
                                class="m-0 p-0 icon-cursor-hover"
                                style="font-size:1.25rem;color:green"/>
           </template>
+          <font-awesome-icon v-if="showLifeRing(row.item)"
+                             icon="life-ring"
+                             class="ml-1 p-0 icon-cursor-hover"
+                             style="font-size:1.15rem;color:red"/>
+
         </template>
 
         <template slot="row-details" slot-scope="row">
@@ -633,6 +638,30 @@
       },
       setOfficeFilter(office_number) {
         this.setFilter({type:'office_number', value: office_number})
+      },
+      showLifeRing(item) {
+        if (item.exam_type.exam_type_name === 'Monthly Session Exam') {
+          if (!item.event_id && !item.number_of_students && !item.exam_received_date) {
+            if (!item.booking) {
+              return true
+            }
+            if (!item.booking.invigilator_id && !item.booking.sbc_staff_invigilated) {
+              return true
+            }
+            return false
+          }
+          return false
+        }
+        if (!item.exam_received_date) {
+          if (!item.booking) {
+            return true
+          }
+          if (!item.booking.invigilator_id && !item.booking.sbc_staff_invigilated) {
+            return true
+          }
+          return false
+        }
+        return false
       },
       stillRequires(item) {
         let output = []
