@@ -435,7 +435,7 @@
       },
     },
     methods: {
-      ...mapActions(['getBookings', 'getExams', 'getInvigilators', 'getOffices',]),
+      ...mapActions(['getBookings', 'getExams', 'getExamsForOffice', 'getInvigilators', 'getOffices',]),
       ...mapMutations([
         'setEditedBooking',
         'setEditedBookingOriginal',
@@ -626,6 +626,10 @@
       },
       setFilter(e) {
         this.setInventoryFilters(e)
+
+        if (e.type === "office_number") {
+          this.getExamsForOffice(e.value)
+        }
       },
       setOfficeFilter(office_number) {
         this.setFilter({type:'office_number', value: office_number})

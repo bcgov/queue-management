@@ -1,6 +1,6 @@
 <template>
   <b-modal :visible="showAddModal"
-           :key="Math.random()"
+           v-if="showAddModal"
            :size="simplified ? 'md' : 'lg'"
            hide-header
            hide-footer
