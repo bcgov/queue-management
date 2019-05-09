@@ -108,12 +108,13 @@
     <div :style="tableStyle" class="my-0 mx-3">
       <b-table :items="filteredExams()"
                :fields="fields"
-               sort-by="exam_id"
+               sort-by="scheduled"
                :sort-desc="true"
                head-variant="light"
                :style="availableH"
                empty-text="There are no exams that match this filter criteria"
                small
+               :sort-compare="sortCompare"
                outlined
                @row-clicked="clickModalRow"
                hover
@@ -123,6 +124,7 @@
                :per-page="10"
                :filter="searchTerm"
                id="exam_inventory_table">
+
         <template slot="exam_received" slot-scope="row">
           {{ row.item.exam_received_date ? 'Yes' : 'No' }}
         </template>
@@ -138,33 +140,15 @@
         </template>
 
         <template slot="scheduled" slot-scope="row">
-          <template v-if="stillRequires(row.item).length > 0">
-            <font-awesome-icon v-if="!row.detailsShowing"
-                               icon="exclamation-triangle"
-                               @click.stop="row.toggleDetails()"
-                               class="m-0 p-0 icon-cursor-hover"
-                               style="font-size:1rem;color:#ffc32b"/>
-            <b-button v-if="row.detailsShowing"
-                      variant="link"
-                      style="padding: 0px;"
-                      @click.stop="row.toggleDetails()">Hide</b-button>
-          </template>
-          <template v-if="stillRequires(row.item).length === 0">
-            <b-button v-if="row.detailsShowing"
-                      variant="link"
-                      style="padding: 0px;"
-                      @click.stop="row.toggleDetails()">Hide</b-button>
-            <font-awesome-icon v-if="!row.detailsShowing"
-                               icon="clipboard-check"
-                               @click.stop="row.toggleDetails()"
-                               class="m-0 p-0 icon-cursor-hover"
-                               style="font-size:1.25rem;color:green"/>
-          </template>
-          <font-awesome-icon v-if="showLifeRing(row.item)"
-                             icon="life-ring"
-                             class="ml-1 p-0 icon-cursor-hover"
-                             style="font-size:1.15rem;color:red"/>
-
+          <font-awesome-icon v-if="!row.detailsShowing"
+                             :icon="statusIcon(row.item).icon"
+                             @click.stop="row.toggleDetails()"
+                             class="m-0 p-0 icon-cursor-hover"
+                             :style="statusIcon(row.item).style"/>
+          <b-button v-if="row.detailsShowing"
+                    variant="link"
+                    style="padding: 0px;"
+                    @click.stop="row.toggleDetails()">Hide</b-button>
         </template>
 
         <template slot="row-details" slot-scope="row">
@@ -188,8 +172,8 @@
           <template v-if="stillRequires(row.item).length > 0">
             <div class="details-slot-div">
               <div class="ml-3" style="font-size: 1rem; flex-grow: 1;">Still Requires:</div>
-              <template v-for="req in stillRequires(row.item)">
-                <div key="i+'it'" class="ml-3 mt-1" style="flex-grow: 1;">{{ req }}</div>
+              <template v-for="(req, i) in stillRequires(row.item)">
+                <div :key="i+'it'" class="ml-3 mt-1" style="flex-grow: 1;">{{ req }}</div>
               </template>
               <div style="flex-grow: 6" />
               <div style="flex-grow: 1; font-size: 1rem;">Details</div>
@@ -361,13 +345,12 @@
         'user',
       ]),
       availableH() {
-        let h = this.totalH - this.qLengthH - this.buttonH - 160
+        let h = this.totalH - 240
         return { height:`${h}px`, border: '1px solid dimgrey' }
       },
       fields() {
         if (!this.showExamInventoryModal) {
           return [
-            { key: 'exam_id', sortable: true, style: 'display: none', thClass: 'd-none', tdClass: 'd-none'},
             { key: 'event_id', label: 'Event ID', sortable: false, thStyle: 'width: 6%' },
             { key: 'exam_type_name', label: 'Exam Type', sortable: true },
             { key: 'exam_name', label: 'Exam Name', sortable: true, thStyle: 'width: 11%' },
@@ -376,13 +359,12 @@
             { key: 'exam_received', label: 'Received?', sortable: true, thStyle: 'width: 5%' },
             { key: 'examinee_name', label: 'Student Name', sortable: true, thStyle: 'width: 12%' },
             { key: 'notes', label: 'Notes', sortable: false, thStyle: 'width: 21%' },
-            { key: 'scheduled', label: 'Scheduled?', sortable: false, thStyle: 'width: 5%', tdClass: 'text-center'},
+            { key: 'scheduled', label: 'Scheduled?', sortable: true, thStyle: 'width: 5%', tdClass: 'text-center'},
             { key: 'actions', label: 'Actions', sortable: false, thStyle: 'width: 5%' },
           ]
         }
         if (this.showExamInventoryModal) {
           return [
-            { key: 'exam_id', sortable: true, thStyle: 'display: none'},
             { key: 'event_id', label: 'Event ID', sortable: false, thStyle: 'width: 6%' },
             { key: 'exam_type.exam_type_name', label: 'Exam Type', sortable: true},
             { key: 'exam_name', label: 'Exam Name', sortable: true, thStyle: 'width: 15%' },
@@ -617,6 +599,28 @@
           this.tableStyle = { width: 98 + '%' }
         }
       },
+      readyDetailsMap(item) {
+        let output = {}
+        if (item.offsite_location && item.offsite_location !== '_offsite') {
+          output.Location = item.offsite_location
+        }
+        if (item.booking) {
+          if (item.booking.sbc_staff_invigilated) {
+            output.Invigilator = 'SBC Staff'
+          }
+          if (item.booking.invigilator_id) {
+            output.Invigilator = item.booking.invigilator.invigilator_name
+          }
+          if (item.booking.room_id) {
+            output.Room = item.booking.room.room_name
+          }
+          if (item.booking.start_time) {
+            output.Date = this.formatDate(item.booking.start_time)
+            output.Time = this.formatTime(item.booking)
+          }
+        }
+        return output
+      },
       resetActionedExam() {
         this.actionedExam = {}
       },
@@ -639,29 +643,83 @@
       setOfficeFilter(office_number) {
         this.setFilter({type:'office_number', value: office_number})
       },
-      showLifeRing(item) {
-        if (item.exam_type.exam_type_name === 'Monthly Session Exam') {
-          if (!item.event_id && !item.number_of_students && !item.exam_received_date) {
-            if (!item.booking) {
-              return true
-            }
-            if (!item.booking.invigilator_id && !item.booking.sbc_staff_invigilated) {
-              return true
-            }
-            return false
+      sortCompare(a, b, key) {
+        if (key === 'scheduled') {
+          let val1, val2
+          if (this.statusIcon(a).rank !== this.statusIcon(b).rank) {
+            val1 = parseInt(this.statusIcon(a).rank)
+            val2 = parseInt(this.statusIcon(b).rank)
           }
-          return false
+          if (this.statusIcon(a).rank === this.statusIcon(b).rank) {
+            val1 = parseInt(a.exam_id)
+            val2 = parseInt(b.exam_id)
+          }
+          return val1 < val2 ? -1 : val1 > val2 ? 1 : 0
         }
-        if (!item.exam_received_date) {
+        if (typeof a[key] === 'number' && typeof b[key] === 'number') {
+          return a[key] < b[key] ? -1 : a[key] > b[key] ? 1 : 0
+        } else {
+          return toString(a[key]).localeCompare(toString(b[key]), undefined, {
+            numeric: true
+          })
+        }
+        function toString(value) {
+          if (!value) {
+            return ''
+          } else if (value instanceof Object) {
+            return keys(value)
+            .sort()
+            .map(key => toString(value[key]))
+            .join(' ')
+          }
+          return String(value)
+        }
+      },
+      statusIcon(item) {
+        let lifeRing = {
+          icon: 'life-ring',
+          rank: 3,
+          style: {fontSize: '1rem', color: 'red'}
+        }
+        let exclamationTriangle = {
+          icon: 'exclamation-triangle',
+          rank: 2,
+          style: {fontSize: '.9rem', color: '#FFC32B'}
+        }
+        let clipboardCheck = {
+          icon: 'clipboard-check',
+          rank: 1,
+          style: {fontSize: '1rem', color: 'green'}
+        }
+        if (item.exam_type.exam_type_name === 'Monthly Session Exam') {
           if (!item.booking) {
-            return true
+            return lifeRing
           }
           if (!item.booking.invigilator_id && !item.booking.sbc_staff_invigilated) {
-            return true
+            return lifeRing
           }
-          return false
+          if (!item.event_id || !item.number_of_students || !item.exam_received_date) {
+            return exclamationTriangle
+          }
+          return clipboardCheck
         }
-        return false
+        if (item.exam_type.group_exam_ind) {
+          if (!item.booking) {
+            return lifeRing
+          }
+          if (!item.booking.invigilator_id && !item.booking.sbc_staff_invigilated) {
+            return lifeRing
+          }
+          if (!item.exam_received_date) {
+            return exclamationTriangle
+          }
+          return clipboardCheck
+        }
+        if (item.booking && (item.booking.invigilator_id || item.booking.sbc_staff_invigilated) &&
+            item.exam_received_date) {
+          return clipboardCheck
+        }
+        return exclamationTriangle
       },
       stillRequires(item) {
         let output = []
@@ -681,28 +739,6 @@
         }
         if (item.booking && !item.booking.invigilator_id && !item.booking.sbc_staff_invigilated) {
           output.push('Assignment of Invigilator')
-        }
-        return output
-      },
-      readyDetailsMap(item) {
-        let output = {}
-        if (item.offsite_location && item.offsite_location !== '_offsite') {
-          output.Location = item.offsite_location
-        }
-        if (item.booking) {
-          if (item.booking.sbc_staff_invigilated) {
-            output.Invigilator = 'SBC Staff'
-          }
-          if (item.booking.invigilator_id) {
-            output.Invigilator = item.booking.invigilator.invigilator_name
-          }
-          if (item.booking.room_id) {
-            output.Room = item.booking.room.room_name
-          }
-          if (item.booking.start_time) {
-            output.Date = this.formatDate(item.booking.start_time)
-            output.Time = this.formatTime(item.booking)
-          }
         }
         return output
       },
