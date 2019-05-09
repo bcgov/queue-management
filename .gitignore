@@ -135,6 +135,7 @@ api/init.sh
 api/wait-for-it.sh
 /.env-Names
 /.env-Localhost
+/*.sh
 
 # Secrets generated for Mender
 keys-generated
