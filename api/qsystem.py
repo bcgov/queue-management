@@ -89,7 +89,7 @@ import app.auth
 compress = Compress()
 compress.init_app(application)
 
-logging.basicConfig(format=application.config['LOGGING_FORMAT'], level=logging.INFO)
+logging.basicConfig(format=application.config['LOGGING_FORMAT'], level=logging.WARNING)
 logger = logging.getLogger("myapp.sqltime")
 logger.setLevel(logging.DEBUG)
 
