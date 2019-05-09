@@ -17,7 +17,7 @@ from flask_login import login_user, logout_user
 from flask_restplus import Resource
 from jose import jwt
 from app.models.theq import CSR
-from qsystem import api, application
+from qsystem import api, application, oidc
 
 
 @api.route("/login/", methods=["GET"])
@@ -27,6 +27,9 @@ class Login(Resource):
     def get(self):
         cookie = request.cookies.get("oidc-jwt", None)
         if cookie is None:
+            return abort(401, self.auth_string)
+
+        if not oidc.validate_token(cookie):
             return abort(401, self.auth_string)
 
         claims = jwt.get_unverified_claims(cookie)

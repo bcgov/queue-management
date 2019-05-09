@@ -15,7 +15,7 @@ limitations under the License.'''
 from datetime import datetime
 from flask import g
 from flask_restplus import Resource
-from qsystem import api, db, jwt
+from qsystem import api, db, oidc
 from sqlalchemy import exc
 from app.models.bookings import Exam, ExamType, Booking
 from app.models.theq import Citizen, CSR, Period, ServiceReq, SRState
@@ -28,10 +28,10 @@ class CsrList(Resource):
 
     csr_schema = CSRSchema(many=True, exclude=('office', 'periods',))
 
-    @jwt.requires_auth
+    @oidc.accept_token(require_token=True)
     def get(self):
         try:
-            csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
+            csr = CSR.find_by_username(g.oidc_token_info['username'])
 
             if csr.role.role_code != "GA":
                 return {'message': 'You do not have permission to view this end-point'}, 403
@@ -56,10 +56,10 @@ class CsrSelf(Resource):
     exam_schema = ExamSchema(many=True)
     exam_type_schema = ExamTypeSchema()
 
-    @jwt.requires_auth
+    @oidc.accept_token(require_token=True)
     def get(self):
         try:
-            csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
+            csr = CSR.find_by_username(g.oidc_token_info['username'])
 
             if not csr:
                 return {'Message': 'User Not Found'}, 404

@@ -19,7 +19,7 @@ from sqlalchemy import exc
 from app.models.bookings import Appointment
 from app.models.theq import CSR
 from app.schemas.bookings import AppointmentSchema
-from qsystem import api, jwt
+from qsystem import api, oidc
 
 
 @api.route("/appointments/", methods=["GET"])
@@ -27,12 +27,12 @@ class AppointmentList(Resource):
 
     appointment_schema = AppointmentSchema(many=True)
 
-    @jwt.requires_auth
+    @oidc.accept_token(require_token=True)
     def get(self):
 
         print("==> In Python GET /appointments/<id>/ ")
 
-        csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
+        csr = CSR.find_by_username(g.oidc_token_info['username'])
 
         try:
             appointments = Appointment.query.filter_by(office_id=csr.office_id).all()

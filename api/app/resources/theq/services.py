@@ -121,7 +121,7 @@ class Services(Resource):
             else:
                 return 1
 
-    @jwt.requires_auth
+    @oidc.accept_token(require_token=True)
     def get(self):
         if request.args.get('office_id'):
             try:
