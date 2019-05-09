@@ -102,6 +102,7 @@ Additional features that can be turned on by environment variables (see the .env
 1. Integration with Snowplow Analytics
 1. Integration with Slack
 1. Integration with Rocket Chat
+1. Integration with Service Now
 
 We are using Snowplow & Looker to display our Analytics.
 
