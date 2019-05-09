@@ -32,7 +32,6 @@ class Refresh(Resource):
     Refresh the quick lists to the 5 most frequently used items.
     Returns the resulting office object with updated lists indicated.
     """
-    @jwt.requires_auth
     def get(self):
         if request.args.get('office_id'):
             office_id = int(request.args.get('office_id'))
