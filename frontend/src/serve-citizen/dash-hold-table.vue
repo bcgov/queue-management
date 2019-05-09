@@ -25,11 +25,8 @@ limitations under the License.*/
              hover
              @row-clicked="rowClicked"
              class="p-0 m-0">
-             <template slot='qt_xn_citizen_ind' slot-scope='data'>
-               {{ (data.item.qt_xn_citizen_ind===0) ?
-                    ('No') :
-                      ('Yes')
-               }}
+             <template slot='counter_id' slot-scope='data'>
+               {{ showCounter(data.item.counter_id) }}
              </template>
              <template slot='start_time' slot-scope='data'>
                {{ formatTime(data.item.start_time) }}
@@ -72,7 +69,7 @@ limitations under the License.*/
     },
 
     computed: {
-      ...mapState(['citizens', 'citizenInvited', 'performingAction']),
+      ...mapState(['citizens', 'citizenInvited', 'performingAction', 'user']),
       ...mapGetters([
         'on_hold_queue',
         'citizens_queue',
@@ -84,8 +81,8 @@ limitations under the License.*/
       getFields: function() {
         if (this.reception) {
           let temp = this.fields
-          temp.unshift({key: 'qt_xn_citizen_ind', label: 'Q. Txn', sortable: false, thStyle: 'width: 6%'})
-          temp.unshift({key: 'priority', label: 'Priority', sortable: false, thStyle: 'width: 10%'})
+          temp.unshift({key: 'counter_id', label: 'Counter', sortable: false, thStyle: 'width: 8%'})
+          temp.unshift({key: 'priority', label: 'Priority', sortable: false, thStyle: 'width: 8%'})
           return temp
         }
         else {
@@ -111,6 +108,13 @@ limitations under the License.*/
           this.$store.commit('setMainAlert', 'You are already serving a citizen.  Click Serve Now to resume.')
         } else if (this.citizenInvited===false) {
           this.clickRowHoldQueue(item.citizen_id)
+        }
+      },
+      showCounter(value) {
+        for(let i = 0; i < this.user.office.counters.length; i++){
+          if(this.user.office.counters[i].counter_id == value){
+            return this.user.office.counters[i].counter_name
+          }
         }
       },
       showCSR(id) {
