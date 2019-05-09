@@ -95,6 +95,13 @@ Additional API Environment Variables of note, which you can add to the .env file
 
 1. SECRET_KEY - Flask required key
 1. SERVER_NAME - required for API POD if not localhost.
+1. POSTMAN_OPERATOR_PASSWORD - required for Postman and Jest testing.
+
+Additional features that can be turned on by environment variables (see the .env file for details)
+
+1. Integration with Snowplow Analytics
+1. Integration with Slack
+1. Integration with Rocket Chat
 
 We are using Snowplow & Looker to display our Analytics.
 
