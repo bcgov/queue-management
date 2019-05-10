@@ -637,11 +637,12 @@ export const store = new Vuex.Store({
     getExams(context) {
       return new Promise((resolve, reject) => {
         let url = "/exams/"
+        let filter = context.state.inventoryFilters["office_number"]
 
-        if (context.state.inventoryFilters["office_number"] === "default") {
+        if (filter === "default") {
           url += `?office_number=${context.state.user.office.office_number}`
         } else {
-          url += `?office_number=${context.state.inventoryFilters["office_number"]}`
+          url += `?office_number=${filter}`
         }
 
         Axios(context).get(url)

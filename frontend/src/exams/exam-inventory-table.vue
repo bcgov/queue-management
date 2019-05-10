@@ -733,8 +733,8 @@
           if (!item.number_of_students) {
             output.push('Number of Students')
           }
-          if (!item.session_number) {
-            output.push('Session Number')
+          if (!item.event_id) {
+            output.push('Event ID')
           }
         }
         if (item.booking && !item.booking.invigilator_id && !item.booking.sbc_staff_invigilated) {
