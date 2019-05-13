@@ -49,7 +49,6 @@ export const store = new Vuex.Store({
       priority: 2
     },
     addModalSetup: null,
-    nonITAExam: false,
     addNextService: false,
     adminNavigation: 'csr',
     appointmentsStateInfo: {
@@ -82,24 +81,19 @@ export const store = new Vuex.Store({
     dismissCount: 0,
     editedBooking: null,
     editedBookingOriginal: null,
-    editExamFailureCount: 0,
     editedGroupBooking: null,
+    editExamFailureCount: 0,
     editExamSuccessCount: 0,
     examAlertMessage: '',
-    loginAlertMessage: '',
-    examEditSuccessMessage: '',
-    examEditFailureMessage: '',
     examDismissCount: 0,
-    loginDismissCount: 0,
+    examEditFailureMessage: '',
+    examEditSuccessMessage: '',
+    exams: [],
     examsTrackingIP: false,
     examSuccessDismiss : 0,
-    exams: [],
     examTypes: [],
     feedbackMessage: '',
-    showGenFinReportModal: false,
     iframeLogedIn: false,
-    invigilators: [],
-    isLoggedIn: false,
     inventoryFilters: {
       expiryFilter: 'current',
       scheduledFilter: 'both',
@@ -107,16 +101,21 @@ export const store = new Vuex.Store({
       returnedFilter: 'unreturned',
       office_number: 'default',
     },
+    invigilators: [],
+    isLoggedIn: false,
+    loginAlertMessage: '',
+    loginDismissCount: 0,
+    nonITAExam: false,
     nowServing: false,
-    offices: [],
     officeFilter: null,
+    offices: [],
     officeType: null,
     offsiteVisible: true,
     performingAction: false,
     rescheduling: false,
     returnExam: null,
-    rooms: [],
     roomResources: [],
+    rooms: [],
     scheduling: false,
     selectedExam: {},
     selectedOffice: {},
@@ -140,16 +139,17 @@ export const store = new Vuex.Store({
     showBookingModal: false,
     showDeleteExamModal: false,
     showEditBookingModal: false,
-    showEditGroupBookingModal: false,
     showEditExamModal: false,
+    showEditGroupBookingModal: false,
     showExamInventoryModal: false,
     showFeedbackModal: false,
     showGAScreenModal: false,
-    showSelectInvigilatorModal: false,
-    showServeCitizenSpinner: false,
+    showGenFinReportModal: false,
     showOtherBookingModal: false,
     showResponseModal: false,
     showReturnExamModal: false,
+    showSelectInvigilatorModal: false,
+    showServeCitizenSpinner: false,
     showServiceModal: false,
     user: {
       csr_id: null,
@@ -1649,16 +1649,16 @@ export const store = new Vuex.Store({
         }
         delete responses.on_or_off
       }
-      
+      responses.office_id = responses.office_id ? responses.office_id : context.state.user.office_id
       let defaultValues = {
         exam_returned_ind: 0,
-        number_of_students: 1,
-        office_id: context.state.user.office_id
+        number_of_students: 1
       }
-      if (context.state.addExamModal.setup === 'pesticide') {
-        defaultValues.office_id = responses['office_id']
+      let exp = new moment(responses.expiry_date).format('YYYY-MM-DD').toString()
+      responses.expiry_date = new moment(exp).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
+      if (responses.exam_received_date) {
+        responses.exam_received_date = new moment(responses.exam_received_date).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
       }
-      responses.expiry_date = moment(responses.expiry_date).format('YYYY-MM-DD')
       if (responses.notes === null) {
         responses.notes = ''
       }
