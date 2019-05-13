@@ -49,9 +49,12 @@ class CitizenList(Resource):
     @oidc.accept_token(require_token=True)
     @api_call_with_retry
     def post(self):
+
         json_data = request.get_json()
 
         csr = CSR.find_by_username(g.oidc_token_info['username'])
+        if not csr:
+            raise Exception('no user found with username: `{}`'.format(g.oidc_token_info['username']))
 
         try:
             citizen = self.citizen_schema.load(json_data).data
