@@ -36,10 +36,18 @@ class ExamList(Resource):
             ninety_day_filter = datetime.now() - timedelta(days=90)
 
             if csr.liaison_designate == 1:
-                exams = Exam.query.filter(Exam.deleted_date.is_(None))\
-                                  .filter(or_(Exam.exam_returned_date.is_(None),
-                                              Exam.exam_returned_date > ninety_day_filter))\
-                                  .order_by(desc(Exam.exam_id))
+                if request.args and request.args.get("office_number"):
+                    exams = Exam.query.filter(Exam.deleted_date.is_(None)) \
+                        .filter(or_(Exam.exam_returned_date.is_(None),
+                                    Exam.exam_returned_date > ninety_day_filter)) \
+                        .join(Exam.office, aliased=True) \
+                        .filter_by(office_number=request.args.get("office_number")) \
+                        .order_by(desc(Exam.exam_id))
+                else:
+                    exams = Exam.query.filter(Exam.deleted_date.is_(None)) \
+                                      .filter(or_(Exam.exam_returned_date.is_(None),
+                                                  Exam.exam_returned_date > ninety_day_filter)) \
+                                      .order_by(desc(Exam.exam_id))
 
             else:
                 exams = Exam.query.filter(Exam.deleted_date.is_(None))\

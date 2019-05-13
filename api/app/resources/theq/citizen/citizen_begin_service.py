@@ -28,10 +28,10 @@ class CitizenBeginService(Resource):
     @oidc.accept_token(require_token=True)
     @api_call_with_retry
     def post(self, id):
-        lock = FileLock("lock/begin_citizen.lock")
+        csr = CSR.find_by_username(g.oidc_token_info['username'])
+        lock = FileLock("lock/begin_citizen_{}.lock".format(csr.office_id))
 
         with lock:
-            csr = CSR.find_by_username(g.oidc_token_info['username'])
             citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
             pending_service_state = SRState.get_state_by_name("Active")
 

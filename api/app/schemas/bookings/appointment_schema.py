@@ -31,6 +31,6 @@ class AppointmentSchema(ma.ModelSchema):
     start_time = fields.DateTime()
     end_time = fields.DateTime()
     checked_in_time = fields.DateTime()
-    comments = fields.String()
+    comments = fields.String(allow_none=True)
     citizen_name = fields.String()
-    contact_information = fields.String()
+    contact_information = fields.String(allow_none=True)
