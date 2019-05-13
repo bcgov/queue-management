@@ -19,11 +19,15 @@ from flask_restplus import Resource
 
 from qsystem import db
 from qsystem import api, oidc
+import logging
+
+from qsystem import db
 from app.models.theq import Service
 from app.models.theq import Office
 from app.models.theq import ServiceReq, Citizen, CSR
 from sqlalchemy import exc
 from app.schemas.theq import ServiceSchema, OfficeSchema
+from sqlalchemy.orm import noload, joinedload
 
 
 @api.route("/services/refresh/", methods=["GET"])
@@ -32,7 +36,6 @@ class Refresh(Resource):
     Refresh the quick lists to the 5 most frequently used items.
     Returns the resulting office object with updated lists indicated.
     """
-
     @oidc.accept_token(require_token=True)
     def get(self):
         if request.args.get('office_id'):
@@ -52,7 +55,9 @@ class Refresh(Resource):
                 '''
                 Get top requests for the office, and set the lists based on those.
                 '''
-                results = ServiceReq.query.join(
+                results = ServiceReq.query.options(
+                    noload('*'), joinedload('service')
+                ).join(
                     Citizen
                 ).join(
                     Service
@@ -61,28 +66,35 @@ class Refresh(Resource):
                 )
                 if is_back_office:
                     results = results.filter(
-                        Service.parent_id == back_office.service_id,
                         Service.display_dashboard_ind == 0,
                     )
                 else:
                     results = results.filter(
-                        Service.parent_id != back_office.service_id,
                         Service.display_dashboard_ind == 1,
                     )
                 results = results.order_by(
                     ServiceReq.sr_id.desc()
                 ).limit(100)
+                
+                logging.info("start *****************************")
+                logging.info(results.statement)
+                logging.info("end *****************************")
 
                 # Some fancy dicts to collect the top 5 services in a list.
                 counts = {}
                 services = {}
+                byname = {}
                 for result in results:
                     service_ct = counts.get(result.service_id, 0)
                     counts[result.service_id] = service_ct + 1
                     services[result.service_id] = result
-
+                    byname[result.service.service_name] = counts[result.service_id]
+                
                 counts = list(counts.items())[-5:]
                 counts.sort(key=lambda x: x[1]) # sort by quantity.
+
+                logging.info("Results of refresh call for office {} : {}".format(office_id, byname))
+
                 service_ids = [c[0] for c in counts]
                 return [r.service for r in services.values() if r.service_id in service_ids]
 
