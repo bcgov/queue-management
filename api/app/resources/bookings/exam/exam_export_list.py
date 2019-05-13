@@ -160,10 +160,10 @@ class ExamList(Resource):
 
 
 def write_room(row, exam):
-    if exam.exam_type.group_exam_ind == 1:
-        row.append("")
-    else:
+    if exam.booking and exam.booking.room:
         row.append(exam.booking.room.room_name)
+    else:
+        row.append("")
 
 
 def write_invigilator(row, exam):
