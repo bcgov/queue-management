@@ -968,6 +968,7 @@ export const store = new Vuex.Store({
     },
   
     clickBeginService(context, payload) {
+      context.commit('toggleServeCitizenSpinner', true)
       let { citizen_id } = context.getters.form_data.citizen
       context.commit('setPerformingAction', true)
     
@@ -1132,6 +1133,7 @@ export const store = new Vuex.Store({
     },
 
     clickInvite(context) {
+      context.commit('toggleServeCitizenSpinner', true)
       context.commit('setPerformingAction', true)
 
       context.dispatch('postInvite', 'next').then(() => {
@@ -1235,6 +1237,7 @@ export const store = new Vuex.Store({
     },
 
     clickRowHoldQueue(context, citizen_id) {
+      context.commit('toggleServeCitizenSpinner', true)
       context.commit('setPerformingAction', true)
 
       context.dispatch('postBeginService', citizen_id).then( () => {
@@ -1245,7 +1248,7 @@ export const store = new Vuex.Store({
         context.commit('setPerformingAction', false)
       })
     },
-
+    
     toggleBegunStatus({commit}) {
       commit('toggleBegunStatus', payload)
     },
@@ -2409,6 +2412,8 @@ export const store = new Vuex.Store({
   
     clearAddExamModalFromCalendarStatus: state => Vue.delete(state.addExamModal, 'fromCalendar'),
   
-    toggleServeCitizenSpinner: (state, payload) => state.showServeCitizenSpinner = payload,
+    toggleServeCitizenSpinner(state, payload) {
+      state.showServeCitizenSpinner = payload
+    },
   }
 })
