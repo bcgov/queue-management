@@ -29,10 +29,10 @@ class CitizenSpecificInvite(Resource):
     @oidc.accept_token(require_token=True)
     @api_call_with_retry
     def post(self, id):
-        lock = FileLock("lock/invite_citizen.lock")
+        csr = CSR.find_by_username(g.oidc_token_info['username'])
+        lock = FileLock("lock/invite_citizen_{}.lock".format(csr.office_id))
 
         with lock:
-            csr = CSR.find_by_username(g.oidc_token_info['username'])
             citizen = db.session.query(Citizen).with_lockmode('update').filter_by(citizen_id=id).first()
             active_service_state = SRState.get_state_by_name("Active")
 
