@@ -76,9 +76,9 @@ class Refresh(Resource):
                     ServiceReq.sr_id.desc()
                 ).limit(100)
                 
-                logging.info("start *****************************")
-                logging.info(results.statement)
-                logging.info("end *****************************")
+                print("start *****************************")
+                print(results.statement)
+                print("end *****************************")
 
                 # Some fancy dicts to collect the top 5 services in a list.
                 counts = {}
@@ -90,12 +90,16 @@ class Refresh(Resource):
                     services[result.service_id] = result
                     byname[result.service.service_name] = counts[result.service_id]
                 
-                counts = list(counts.items())[-5:]
+                counts = list(counts.items())
                 counts.sort(key=lambda x: x[1]) # sort by quantity.
+                counts = counts[-5:]
 
-                logging.info("Results of refresh call for office {} : {}".format(office_id, byname))
+                print("Results of refresh call for office {} : {}".format(office_id, byname))
 
                 service_ids = [c[0] for c in counts]
+
+                print("List chosen: {}".format([r.service.service_name for r in services.values() if r.service_id in service_ids]))
+
                 return [r.service for r in services.values() if r.service_id in service_ids]
 
             quick_list = top_reqs(is_back_office=False)
