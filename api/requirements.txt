@@ -26,3 +26,4 @@ python-dotenv
 python-jose
 SQLAlchemy-Utc
 toastedmarshmallow
+flask_oidc

@@ -37,32 +37,23 @@ class CitizenGenericInvite(Resource):
             active_citizen_state = CitizenState.query.filter_by(cs_state_name='Active').first()
             waiting_period_state = PeriodState.get_state_by_name("Waiting")
             citizen = None
+            json_data = request.get_json()
 
-            try:
-                qt_xn_csr_ind = request.get_json().get('qt_xn_csr_ind')
-            except AttributeError:
-                qt_xn_csr_ind = csr.qt_xn_csr_ind
-
-            if qt_xn_csr_ind:
-                citizen = Citizen.query \
-                    .filter_by(qt_xn_citizen_ind=1, cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
-                    .join(Citizen.service_reqs) \
-                    .join(ServiceReq.periods) \
-                    .filter_by(ps_id=waiting_period_state.ps_id) \
-                    .filter(Period.time_end.is_(None)) \
-                    .order_by(Citizen.priority, Citizen.citizen_id) \
-                    .first()
+            if json_data and 'counter_id' in json_data:
+                counter_id = int(json_data.get('counter_id'))
             else:
-                citizen = Citizen.query \
-                    .filter_by(qt_xn_citizen_ind=0, cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
-                    .join(Citizen.service_reqs) \
-                    .join(ServiceReq.periods) \
-                    .filter_by(ps_id=waiting_period_state.ps_id) \
-                    .filter(Period.time_end.is_(None)) \
-                    .order_by(Citizen.priority, Citizen.citizen_id) \
-                    .first()
+                counter_id = int(csr.counter_id)
 
-            # Either no quick txn citizens for the quick txn csr, or vice versa
+            citizen = Citizen.query \
+                .filter_by(counter_id=counter_id, cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
+                .join(Citizen.service_reqs) \
+                .join(ServiceReq.periods) \
+                .filter_by(ps_id=waiting_period_state.ps_id) \
+                .filter(Period.time_end.is_(None)) \
+                .order_by(Citizen.priority, Citizen.citizen_id) \
+                .first()
+
+            # If no matching citizen with the same counter type, get next one
             if citizen is None:
                 citizen = Citizen.query \
                     .filter_by(cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \

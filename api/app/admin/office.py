@@ -40,6 +40,7 @@ class OfficeConfig(Base):
                    'deleted',
                    'exams_enabled_ind',
                    'appointments_enabled_ind',
+                   'counters',
                    'timezone.timezone_name',
                    ]
 
@@ -57,7 +58,10 @@ class OfficeConfig(Base):
                          'deleted',
                          'exams_enabled_ind',
                          'appointments_enabled_ind',
-                         'timezone'
+                         'counters',
+                         'quick_list',
+                         'back_office_list',
+                         'timezone',
                          )
 
     form_edit_rules = ('office_name',
@@ -67,6 +71,9 @@ class OfficeConfig(Base):
                        'deleted',
                        'exams_enabled_ind',
                        'appointments_enabled_ind',
+                       'counters',
+                       'quick_list',
+                       'back_office_list',
                        'timezone'
                        )
 
@@ -82,6 +89,9 @@ class OfficeConfig(Base):
                             'exams_enabled_ind',
                             'exams_enabled_ind',
                             'appointments_enabled_ind',
+                             'counters',
+                            'quick_list',
+                            'back_office_list',
                             ]
 
     column_default_sort = 'office_name'

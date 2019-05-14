@@ -70,6 +70,7 @@ from app import admin
 flask_admin = Admin(application, name='Admin Console', template_mode='bootstrap3', index_view=admin.HomeView())
 
 flask_admin.add_view(admin.ChannelModelView)
+flask_admin.add_view(admin.CounterModelView)
 flask_admin.add_view(admin.CSRModelView)
 flask_admin.add_view(admin.InvigilatorModelView)
 flask_admin.add_view(admin.OfficeModelView)
@@ -88,7 +89,7 @@ import app.auth
 compress = Compress()
 compress.init_app(application)
 
-logging.basicConfig(format=application.config['LOGGING_FORMAT'], level=logging.INFO)
+logging.basicConfig(format=application.config['LOGGING_FORMAT'], level=logging.WARNING)
 logger = logging.getLogger("myapp.sqltime")
 logger.setLevel(logging.DEBUG)
 

@@ -44,14 +44,13 @@
                 <option value="3">Low Priority</option>
               </select>
             </div>
-            <b-form-checkbox v-model="quickTrans"
-                             value="1"
-                             unchecked-value="0"
-                             v-if="reception && !simplified"
-                             class="quick"
-                             style="color:white;margin: 8px;">
-              <span style="font: 400 16px Myriad-Pro;">Quick Txn</span>
-            </b-form-checkbox>
+            <select v-show="reception && !simplified" id="counter-selection" class="custom-select" v-model="counter_selection">
+              <option v-for="counter in sortedCounters"
+                    :value="counter.counter_id"
+                    :key="counter.counter_id">
+                {{counter.counter_name}}
+              </option>
+            </select>
           </div>
           <div class="button-row">
             <Buttons />
@@ -75,7 +74,7 @@ export default {
   },
   mounted() {
     this.$root.$on('showAddMessage', () => {
-      this.showAlert()
+      this.Alert()
     })
   },
   data() {
@@ -92,6 +91,7 @@ export default {
       showAddModal: 'showAddModal',
       addModalSetup: 'addModalSetup',
       serviceModalForm: 'serviceModalForm',
+      user: 'user'
     }),
     ...mapGetters(['form_data', 'reception',]),
     simplified() {
@@ -112,12 +112,13 @@ export default {
       }
       return 'Add Citizen'
     },
-    quickTrans: {
+
+    counter_selection: {
       get() {
-        return this.form_data.quick
+        return this.form_data.counter;
       },
       set(value) {
-        this.updateAddModalForm({ type: 'quick', value })
+        this.updateAddModalForm({ type: "counter", value });
       }
     },
     priority_selection: {
@@ -127,6 +128,13 @@ export default {
       set(value) {
         this.updateAddModalForm({ type: 'priority', value })
       }
+    },
+    sortedCounters(){
+      var sorted = this.user.office.counters.sort((a,b) => {
+        return a.counter_name > b.counter_name
+      })
+      console.log(sorted)
+      return sorted
     }
   },
   methods: {

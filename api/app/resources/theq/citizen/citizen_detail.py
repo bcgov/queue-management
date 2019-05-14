@@ -15,7 +15,7 @@ limitations under the License.'''
 from flask import request, g
 from flask_restplus import Resource
 from qsystem import api, api_call_with_retry, db, oidc, socketio
-from app.models.theq import Citizen, CSR
+from app.models.theq import Citizen, CSR, Counter
 from marshmallow import ValidationError
 from app.schemas.theq import CitizenSchema
 from sqlalchemy import exc
@@ -43,6 +43,10 @@ class CitizenDetail(Resource):
     @api_call_with_retry
     def put(self, id):
         json_data = request.get_json()
+
+        counter = Counter.query.filter(Counter.counter_name=="Counter")[0]
+        if 'counter_id' not in json_data:
+            json_data['counter_id'] = counter.counter_id
 
         if not json_data:
             return {'message': 'No input data received for updating citizen'}, 400
