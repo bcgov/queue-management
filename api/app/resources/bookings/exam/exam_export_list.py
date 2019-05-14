@@ -37,7 +37,10 @@ class ExamList(Resource):
     def get(self):
 
         try:
+
             csr = CSR.find_by_username(g.oidc_token_info['username'])
+
+            is_designate = csr.finance_designate
 
             start_param = request.args.get("start_date")
             end_param = request.args.get("end_date")
@@ -59,14 +62,16 @@ class ExamList(Resource):
 
             end_date = self.timezone.localize(end_date)
 
-            exams = Exam.query.filter_by(office_id=csr.office_id) \
-                              .join(Booking, Exam.booking_id == Booking.booking_id) \
+            exams = Exam.query.join(Booking, Exam.booking_id == Booking.booking_id) \
                               .filter(Booking.start_time >= start_date) \
                               .filter(Booking.start_time < end_date) \
                               .join(Invigilator, Booking.invigilator_id == Invigilator.invigilator_id, isouter=True) \
                               .join(Room, Booking.room_id == Room.room_id, isouter=True) \
                               .join(Office, Booking.office_id == Office.office_id) \
                               .join(ExamType, Exam.exam_type_id == ExamType.exam_type_id)
+
+            if not is_designate:
+                exams = exams.filter(Booking.office_id == csr.office_id)
 
             if exam_type == 'ita':
                 exams = exams.filter(ExamType.ita_ind == 1)
@@ -160,10 +165,10 @@ class ExamList(Resource):
 
 
 def write_room(row, exam):
-    if exam.exam_type.group_exam_ind == 1:
-        row.append("")
-    else:
+    if exam.booking and exam.booking.room:
         row.append(exam.booking.room.room_name)
+    else:
+        row.append("")
 
 
 def write_invigilator(row, exam):

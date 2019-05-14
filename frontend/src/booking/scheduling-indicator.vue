@@ -74,7 +74,7 @@
           return
         }
         let pushToExams = false
-        if (this.selectedExam && this.selectedExam.referrer === 'scheduling') {
+        if (this.selectedExam && this.selectedExam.referrer === 'inventory') {
           pushToExams = true
         }
         this.finishBooking()

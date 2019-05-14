@@ -89,7 +89,8 @@ class CsrSelf(Resource):
                 .join(ExamType, Exam.exam_type_id == ExamType.exam_type_id) \
                 .filter(ExamType.group_exam_ind == 1) \
                 .join(Booking, Exam.booking_id == Booking.booking_id) \
-                .filter(Booking.invigilator_id.is_(None)).count()
+                .filter(Booking.invigilator_id.is_(None))\
+                .filter(Booking.sbc_staff_invigilated == 0).count()
 
             result = self.csr_schema.dump(csr)
             active_citizens = self.citizen_schema.dump(active_citizens)
