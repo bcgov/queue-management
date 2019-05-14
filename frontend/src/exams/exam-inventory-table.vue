@@ -20,7 +20,7 @@
       </b-form>
       <div style="display:flex; justify-content: space-between">
         <b-button class="mr-2 btn-secondary"
-                  @click="setFilter({type: 'office_number', value: 'default'})">This Office</b-button>
+                  @click="setHomeOffice">This Office</b-button>
         <b-button class="ml-2 btn-primary"
                   @click="officeFilterModal=false">Ok</b-button>
       </div>
@@ -642,6 +642,10 @@
       },
       setOfficeFilter(office_number) {
         this.setFilter({type:'office_number', value: office_number})
+      },
+      setHomeOffice() {
+        this.setFilter({type: 'office_number', value: 'default'})
+        this.officeFilterModal = false
       },
       sortCompare(a, b, key) {
         if (key === 'scheduled') {

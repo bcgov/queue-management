@@ -16,13 +16,11 @@
               {{ simplifiedModal ? 'Exams Time Tracking' : 'Serve Citizen' }}</h4>
           </div>
           <div>
-            <button
-                      class="btn btn-link"
-                      @click="toggleFeedback">Feedback</button>
-            <button
-                      class="btn btn-link"
-                      style="margin-left: 20px"
-                      @click="toggleMinimize">{{ minimizeWindow ? "Maximize" : "Minimize" }}</button>
+            <button class="btn btn-link"
+                    @click="toggleFeedback">Feedback</button>
+            <button class="btn btn-link"
+                    style="margin-left: 20px"
+                    @click="toggleMinimize">{{ minimizeWindow ? "Maximize" : "Minimize" }}</button>
           </div>
         </div>
         <template v-if="!simplifiedModal">

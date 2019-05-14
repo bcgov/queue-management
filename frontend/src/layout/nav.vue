@@ -34,7 +34,7 @@
            style="flex-grow: 8"
            class="q-inline-title">{{ calendarSetup.title }}</div>
     <div />
-      <div v-if="!scheduling && !rescheduling">
+      <div v-if="!scheduling && !rescheduling && !citizenInvited">
         <b-dropdown variant="outline-primary"
                     class="pl-0 ml-0 mr-3"
                     right
@@ -95,6 +95,7 @@
         'showAppointments'
       ]),
       ...mapState([
+        'citizenInvited',
         'showServiceModal',
         'calendarSetup',
         'rescheduling',
