@@ -38,7 +38,7 @@ export default {
             service_id: parseInt(apt.service_id),
             title: apt.citizen_name,
             contact_information: apt.contact_information,
-            citizen_comments: apt.citizen_comments,
+            comments: apt.comments,
             color: '#B5E0B8',
           })
         )
