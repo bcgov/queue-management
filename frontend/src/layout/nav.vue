@@ -30,7 +30,7 @@
       </div>
       <router-view name="buttons"></router-view>
 
-      <div v-if="calendarSetup && this.$route.path === '/booking'"
+      <div v-if="calendarSetup && (this.$route.path === '/booking' || this.$route.path === '/agenda')"
            style="flex-grow: 8"
            class="q-inline-title">{{ calendarSetup.title }}</div>
     <div />
