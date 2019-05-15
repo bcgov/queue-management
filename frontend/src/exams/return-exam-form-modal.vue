@@ -153,7 +153,7 @@
     },
     methods: {
       ...mapActions(['putExamInfo', 'getExams', ]),
-      ...mapMutations(['toggleReturnExamModal', 'setEditExamSuccess', 'setEditExamFailure',  ]),
+      ...mapMutations(['toggleReturnExamModal', 'setEditExamFailure',  ]),
       handleReturnedStatus(value) {
         if (value) {
           if (!this.exam_returned_date) {
