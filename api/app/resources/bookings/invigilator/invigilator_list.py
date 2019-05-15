@@ -33,7 +33,9 @@ class InvigilatorList(Resource):
         csr = CSR.find_by_username(g.oidc_token_info['username'])
 
         try:
-            invigilators = Invigilator.query.filter_by(office_id=csr.office_id)
+            invigilators = Invigilator.query.filter_by(office_id=csr.office_id)\
+                                            .filter(Invigilator.deleted.is_(None))
+
             result = self.invigilator_schema.dump(invigilators)
             return {'invigilators': result.data,
                     'errors': result.errors}, 200
