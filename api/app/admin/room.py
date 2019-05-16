@@ -74,5 +74,9 @@ class RoomConfig(Base):
         'office.office_name'
     ]
 
+    column_searchable_list = {
+        'office.office_name'
+    }
+
 
 RoomModelView = RoomConfig(Room, db.session)
