@@ -70,7 +70,7 @@ class RoomConfig(Base):
         'room_name',
         'capacity',
         'color',
-        'deleted'
+        'deleted',
         'office.office_name'
     ]
 
