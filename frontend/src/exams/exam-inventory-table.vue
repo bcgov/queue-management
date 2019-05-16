@@ -490,6 +490,9 @@
       filterByScheduled(ex) {
         if (ex.exam_received_date) {
           if (ex.booking && ( ex.booking.invigilator_id || ex.booking.sbc_staff_invigilated )) {
+            if (ex.booking.invigilator && ex.booking.invigilator.deleted) {
+              return false
+            }
             if (ex.exam_type.exam_type_name !== 'Monthly Session Exam') {
               return true
             }
@@ -608,7 +611,7 @@
           if (item.booking.sbc_staff_invigilated) {
             output.Invigilator = 'SBC Staff'
           }
-          if (item.booking.invigilator_id) {
+          if (item.booking.invigilator_id && !item.booking.invigilator.deleted) {
             output.Invigilator = item.booking.invigilator.invigilator_name
           }
           if (item.booking.room_id) {
@@ -695,6 +698,9 @@
           rank: 1,
           style: {fontSize: '1rem', color: 'green'}
         }
+        if (item.booking && item.booking.invigilator && item.booking.invigilator.deleted) {
+          return lifeRing
+        }
         if (item.exam_type.exam_type_name === 'Monthly Session Exam') {
           if (!item.booking) {
             return lifeRing
@@ -741,8 +747,13 @@
             output.push('Event ID')
           }
         }
-        if (item.booking && !item.booking.invigilator_id && !item.booking.sbc_staff_invigilated) {
-          output.push('Assignment of Invigilator')
+        if (item.booking) {
+          if (item.booking.invigilator && item.booking.invigilator.deleted) {
+            output.push('Re-assignment of Invigilator')
+          }
+          if (!item.booking.invigilator_id && !item.booking.sbc_staff_invigilated) {
+            output.push('Assignment of Invigilator')
+          }
         }
         return output
       },

@@ -53,11 +53,19 @@
         <b-form-row>
           <b-col>
             <b-form-group class="mb-0 mt-2">
-              <label class="mb-0">Action Taken</label><br>
+              <label v-if="!errorText"
+                     class="mb-0">Action Taken</label>
+              <label v-if="errorText"
+                     style="color: red"
+                     class="mb-0">Maximum field length reached.  Use Notes field if needed.</label>
+              <br>
               <b-form-input v-model="exam_returned_tracking_number"
                             id="action_taken"
-                            placeholder="Include tracking info or exam disposition"
-                            ref="returnactiontaken"/>
+                            placeholder="Include tracking info or disposition"
+                            ref="returnactiontaken"
+                            v-on:keydown="handleActionInput"
+                            @blur="removeError()"
+                            />
             </b-form-group>
           </b-col>
         </b-form-row>
@@ -92,8 +100,9 @@
         returned: false,
         exam_written_ind: true,
         exam_returned_date: null,
+        errorText: false,
         notes: null,
-        exam_returned_tracking_number: null,
+        exam_returned_tracking_number: '',
         returnOptions: [
           { value: false, text: 'Not Returned' },
           { value: true, text: 'Returned' },
@@ -154,6 +163,19 @@
     methods: {
       ...mapActions(['putExamInfo', 'getExams', ]),
       ...mapMutations(['toggleReturnExamModal', 'setEditExamFailure',  ]),
+      handleActionInput(e) {
+        if (e.keyCode == 8 || e.keyCode == 46) {
+          this.removeError()
+          return true
+        }
+        console.log(this.exam_returned_tracking_number.length)
+        if (this.exam_returned_tracking_number && this.exam_returned_tracking_number.length >= 250) {
+          this.errorText = true
+          e.preventDefault()
+          e.stopPropagation()
+          return false
+        }
+      },
       handleReturnedStatus(value) {
         if (value) {
           if (!this.exam_returned_date) {
@@ -184,11 +206,15 @@
       resetModal() {
         this.toggleReturnExamModal(false)
         this.exam = null
+        this.errorText = false
         this.returned = false
         this.exam_returned_date = null
-        this.exam_returned_tracking_number = null
+        this.exam_returned_tracking_number = ''
         this.notes  = null
         this.resetExam()
+      },
+      removeError() {
+        this.errorText = false
       },
       submit() {
         if (this.okButton.title === 'Cancel') {

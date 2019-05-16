@@ -101,7 +101,7 @@
           </b-col>
           <b-col cols="2" align-self="start" v-if="is_liaison_designate || role_code === 'GA'">
             <label>Clear Form?</label><br>
-            <b-btn class="w-100 btn-warning" @click="setValues">Reset</b-btn>
+            <b-btn class="w-100 btn-warning" @click="show">Reset</b-btn>
           </b-col>
         </b-form-row>
       </b-form>
