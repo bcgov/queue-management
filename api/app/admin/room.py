@@ -38,7 +38,8 @@ class RoomConfig(Base):
         'office.office_name',
         'room_name',
         'capacity',
-        'color'
+        'color',
+        'deleted'
     ]
 
     form_excluded_columns = [
@@ -46,26 +47,31 @@ class RoomConfig(Base):
         'booking'
     ]
 
-    column_labels = {'office.office_name': 'Office Name'}
+    column_labels = {'office.office_name': 'Office Name',
+                     'deleted': 'Deleted'}
 
     form_create_rules = (
         'office',
         'room_name',
         'capacity',
-        'color'
+        'color',
+        'deleted'
     )
 
     form_edit_rules = (
         'office',
         'room_name',
         'capacity',
-        'color'
+        'color',
+        'deleted'
     )
 
     column_sortable_list = [
         'room_name',
         'capacity',
-        'color'
+        'color',
+        'deleted'
+        'office.office_name'
     ]
 
 

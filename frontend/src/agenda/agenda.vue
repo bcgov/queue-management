@@ -1,89 +1,63 @@
 <template>
   <div>
-    <full-calendar ref="agendacal"
-                   v-show="false"
-                   key="agendacal"
-                   class="q-calendar-margins"
-                   @event-render="eventRender"
-                   @view-render="viewRender"
-                   :events="events()"
-                   :config="config"></full-calendar>
     <b-container fluid>
-      <b-alert show v-if="exams.length === 0" variant="primary">
-        There are no exam events to display.  <b>Note:</b> The Agenda only shows events scheduled on or after today's date.
-      </b-alert>
-    <template v-for="date in displayDates">
+      <div v-if="examEvents.length === 0"
+           class="ml-3 my-3 no-exam-notice">
+        There are no exams scheduled for the week currently in view. <br>Use the Arrow Buttons above to view a
+        different week or click <b class="mx-1">"This Week"</b> to instantly view the current week.
+      </div>
+    <template v-for="(date, i) in examDates">
       <b-container fluid style="background-color: white">
         <b-form-row class="mt-1">
           <b-col class="date-header-col">
-            <span class="date-header">{{ exams.length > 0 ? setDate(date) : 'No Exams Scheduled' }}</span>
+            <span class="date-header">
+              {{ examEvents.length > 0 ? date : 'No Exams Scheduled' }}
+            </span>
           </b-col>
         </b-form-row>
         <b-form-row class="p-0" style="background-color: white; border-bottom: 1px solid lightgrey;">
           <b-col class="p-0 inner-col-table-style">
-            <b-table :items="exams.filter(ev=>ev.start.format('YYYY-MM-DD') == date)"
+            <b-table :items="getExamItems(date)"
+                     :fields="fields"
                      class="pb-0 mb-0"
                      small
                      fixed
-                     hover
-                     :fields="fields">
+                     hover>
               <template slot="start" slot-scope="row">
-                {{ row.item.start.format('h:mm a') }}
+                {{ formatDetail(row.item.exam.booking.start_time) }}
               </template>
 
               <template slot="length" slot-scope="row">
-                <span v-if="row.item.exam && row.item.exam.exam_type">
-                {{ row.item.exam.exam_type.number_of_hours }} hrs</span>
+                {{ duration(row.item) }}
               </template>
 
               <template slot="row-details" slot-scope="row">
-                <span class="ml-3 pl-3">Location: {{ row.item.exam.offsite_location }} </span>
+                <span class="ml-2 mr-3" style="font-size: .9rem;">Location Details: </span>
+                  {{ row.item.exam.offsite_location ? row.item.exam.offsite_location : null }}
               </template>
 
               <template slot="materials" slot-scope="row">
-                <span v-if="!row.item.exam.exam_received_date" style="color: red;">No</span>
-                <span v-if="row.item.exam.exam_received_date">Yes</span>
+                <span v-if="row.item.exam.exam_received_date" class="good-2-go">YES</span>
+                <span v-if="!row.item.exam.exam_received_date" class="no-way-jose">NO</span>
               </template>
 
               <template slot="invigilator" slot-scope="row">
-                <template v-if="row.item.exam && row.item.exam.booking">
-                  <span v-if="!row.item.exam.booking.invigilator_id && !row.item.exam.booking.sbc_staff_invigilated"
-                        style="color: red;">Not Assigned</span>
-                  <span v-if="row.item.exam.booking.invigilator_id">
-                    {{ row.item.exam.booking.invigilator.invigilator_name }}
-                  </span>
-                  <span v-if="row.item.exam.booking.sbc_staff_invigilated"
-                        class="text-warning">
-                    SBC Staff
-                  </span>
-                </template>
+                <span v-if="!showInvigilator(row.item)" class="no-way-jose">NOT ASSIGNED</span>
+                <span v-if="showInvigilator(row.item)"
+                      :style="row.item.exam.booking.invigilator_id ? null : {color: '#ff9f17'}">
+                  {{ showInvigilator(row.item) }}
+                </span>
               </template>
 
               <template slot="room" slot-scope="row">
-                <template v-if="row.item.resourceId === '_offsite'">
-                  <b-badge  variant="info"
-                            style="cursor: pointer;"
-                            v-if="!row.detailsShowing"
-                            @click="row.toggleDetails()">Offsite</b-badge>
-                  <b-btn class="btn-link btn-sm m-0 p-0"
-                         style="border: none;"
-                         @click="row.toggleDetails()"
-                         v-if="row.detailsShowing">Hide</b-btn>
-                </template>
-                <template v-else>
-                  <span v-if="row.item.exam && row.item.exam.booking">
-                  {{ row.item.exam.booking.room ? row.item.exam.booking.room.room_name : 'Not booked' }}</span>
-                </template>
+                <span v-if="showLocation(row.item)">{{ showLocation(row.item) }}</span>
+                <span v-if="!showLocation(row.item)"
+                      @click="row.toggleDetails()"
+                      class="toggle-link">{{ row.detailsShowing ? 'Hide' : 'Show' }}</span>
               </template>
 
               <template slot="writer" slot-scope="row">
-                <span v-if="!row.item.exam.exam_type.group_exam_ind &&
-                            !row.item.exam.exam_type.exam_type_name.includes('Monthly Session Exam')">
-                  {{ row.item.exam.examinee_name }}
-                </span>
-                <span v-else>
-                  –
-                </span>
+                {{ showWriter(row.item) }}
               </template>
             </b-table>
           </b-col>
@@ -92,13 +66,13 @@
     </template>
     </b-container>
     <b-container fluid class="mt-3">
-      <b-container fluid style="background-color: white" v-if="others.length > 0">
+      <b-container fluid style="background-color: white" v-if="nonExamEvents.length > 0">
         <b-form-row class="mt-1">
           <b-col class="date-header-col-other"><span class="date-header">Non Exam Bookings</span></b-col>
         </b-form-row>
         <b-form-row class="p-0" style="background-color: white">
           <b-col class="p-0 inner-col-table-style">
-            <b-table :items="others"
+            <b-table :items="nonExamEvents"
                      small
                      fixed
                      hover
@@ -108,6 +82,9 @@
               </template>
               <template slot="start" slot-scope="row">
                 {{ row.item.start.format('h:mm a') }}
+              </template>
+              <template slot="booking_contact_information" slot-scope="row">
+                {{ row.item.booking_contact_information ? row.item.booking_contact_information : '–' }}
               </template>
               <template slot="end" slot-scope="row">
                 {{ row.item.end.format('h:mm a') }}
@@ -122,173 +99,179 @@
 
 <script>
   import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
-  import { FullCalendar } from 'vue-full-calendar'
-  import 'fullcalendar/dist/fullcalendar.css'
-  import 'fullcalendar-scheduler'
   import moment from 'moment'
+  import Vue from 'vue'
 
   export default {
     name: 'Agenda',
-    components: { FullCalendar },
     mounted() {
       this.initializeAgenda()
       this.$root.$on('next', () => { this.next() })
       this.$root.$on('prev', () => { this.prev() })
       this.$root.$on('today', () => { this.today() })
-      this.$root.$on('listWeek', () => { this.listWeek() })
-      this.$root.$on('listDay', () => { this.listDay() })
+      this.weekStart = moment().day(1)
+      this.updateButtonsDate()
     },
     destroyed() {
       this.setCalendarSetup(null)
-      this.exams = []
-      this.others = []
     },
     data() {
       return {
-        exams: [],
-        others: [],
-        rendered: false,
         fields: [
           {key: 'start', label: 'Time', thStyle: 'width: 6%;font-size:.9rem;'},
           {key: 'length', label:'Duration', thStyle: 'width: 6%;font-size:.9rem;'},
-          {key: 'room',  thStyle: 'width: 8%;font-size:.9rem;'},
+          {key: 'room', label: 'Location', thStyle: 'width: 8%;font-size:.9rem;'},
           {key: 'exam.exam_type.exam_type_name', label: 'Exam Type', thStyle:'font-size:.9rem;'},
           {key: 'invigilator', thStyle: 'width: 10%;font-size:.9rem;'},
           {key: 'materials', label: 'Materials?', thStyle: 'width: 6%;font-size:.9rem;'},
-          {key: 'title', thStyle: 'font-size:.9rem;'},
+          {key: 'exam.exam_name', label: 'Exam Name', thStyle: 'font-size:.9rem;'},
           {key: 'writer', label: "Candidate's Name", thStyle: 'font-size:.9rem;'},
-          {key: 'notes', thStyle: 'font-size:.9rem;'},
+          {key: 'exam.notes', label: 'Notes', thStyle: 'font-size:.9rem;'},
         ],
         fieldsOther: [
           {key: 'date', thStyle: 'width: 11%;font-size:.9rem;'},
           {key: 'start', label: 'Start', thStyle: 'width: 6%;font-size:.9rem;'},
           {key: 'end', label: 'End', thStyle: 'width: 6%;font-size:.9rem;'},
           {key: 'room.room_name', label: 'Room', thStyle: 'font-size:.9rem;' },
-          {key: 'title', thStyle: 'font-size:.9rem;' },
-          {key: 'notes', thStyle: 'font-size:.9rem;'},
+          {key: 'title', label: 'Event Title/Booking Party', thStyle: 'font-size:.9rem;' },
+          {key: 'booking_contact_information', thStyle: 'font-size:.9rem;'},
         ],
-        config: {
-          timezone: 'local',
-          schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-          showNonCurrentDates: false,
-          fixedWeekCount: true,
-          navLinks: true,
-          defaultView: 'listWeek',
-          resources: (setResources) => {
-            this.getRooms().then( resources => {
-              setResources(resources)
-            })
-          },
-          listDayFormat: 'dddd, MMM Do',
-          views: {
-            listDay: {
-              allDaySlot: false,
-              listDayAltFormat: '[Invigilator]',
-            },
-            listWeek: {
-              allDaySlot: false,
-              listDayAltFormat: null,
-            },
-          },
-          height: 'auto',
-          weekends: false,
-          header: {
-            left: null,
-            center: null,
-            right: null
-          },
-          groupByDateAndResource: true
-        },
+        weekStart: null,
       }
     },
     computed: {
-      ...mapGetters(['room_resources']),
-      ...mapState(['calendarEvents','calendarSetup']),
-      displayDates() {
-        let output = []
-        this.exams.sort(function(a,b) {
-          if (a.start.isSame(b.start)) {
-            return 0
+      ...mapState(['calendarEvents', 'calendarSetup', ]),
+      examDates() {
+        if (this.examEvents && this.examEvents.length > 0) {
+          let dates = this.examEvents.map(ex => ex.start)
+          let output = []
+          for (let date of dates) {
+            let d = moment(date).format('dddd, MMM Do, YYYY').toString()
+            if (!output.includes(d)) {
+              output.push(d)
+            }
           }
-          if (a.start.isBefore(b.start)) {
-            return -1
-          }
-          return 1
-        })
-        this.exams.forEach(exam => {
-          let d = exam.start.format('YYYY-MM-DD')
-          if (!output.includes(d)) {
-            output.push(d)
-          }
-        })
-        return output
-      }
-    },
-    methods: {
-      ...mapActions(['initializeAgenda', 'getBookings', 'getRooms']),
-      ...mapMutations([
-        'setCalendarSetup',
-        'toggleBookRoomModal',
-      ]),
+          return output
+        }
+      },
       events() {
-        if (this.calendarEvents.length > 0) {
-          if (this.groupFilter === 'individual') {
-            return this.calendarEvents.filter(event => !event.resourceId === '_offsite')
-          } else if (this.groupFilter === 'group') {
-            return this.calendarEvents.filter(event => event.resourceId === '_offsite')
-          } else {
-            return this.calendarEvents
-          }
+        if (this.calendarEvents.length > 0 && this.weekStart) {
+          let events = this.calendarEvents
+          let weekEnd = this.weekStart.clone().add(4, 'day')
+          return events.filter(e =>
+            moment(e.start).isSameOrAfter(this.weekStart, 'day') &&
+            moment(e.start).isSameOrBefore(weekEnd, 'day')
+          ).sort(function(a,b) {
+            let A = moment(a.start).clone()
+            let B = moment(b.start).clone()
+            if ( A.isSame(B)) {
+              return 0
+            }
+            if (A.isBefore(B)) {
+              return -1
+            }
+            return 1
+          })
         }
         return []
       },
-      setDate(d) {
-        return new moment(d).format('dddd, MMMM Do, YYYY')
-      },
-      viewRender(view, el) {
-        this.setCalendarSetup({ title: view.title, view: view.name })
-      },
-      eventRender(event, el, view) {
-        if (event.exam) {
-          let list = this.exams.length > 0 ? this.exams.map(exam => exam.id) : []
-          if (!list.includes(event.id)) {
-            let now = moment()
-            if (event.start.isSameOrAfter(now, 'day')) {
-              this.exams.push(event)
-            }
-
-          }
+      examEvents() {
+        if (this.events && this.events.length > 0) {
+          return this.events.filter(e => !!e.exam )
         }
-        if (!event.exam) {
-          let list = this.others.length > 0 ? this.others.map(other => other.id) : []
-          if (!list.includes(event.id)) {
-            let now = moment()
-            if (event.start.isSameOrAfter(now, 'day')) {
-              this.others.push(event)
-            }
-          }
+        return []
+      },
+      teseter() {
+        return this.examEvents
+      },
+      nonExamEvents() {
+        if (this.events && this.events.length > 0) {
+          let nonExams = Object.assign([], this.events.filter(e => !e.exam ))
+          nonExams.forEach(ev => {
+            ev.start = moment(ev.start)
+            ev.end = moment(ev.end)
+          })
+          return nonExams
         }
+        return []
+      },
+    },
+    methods: {
+      ...mapActions(['initializeAgenda']),
+      ...mapMutations(['setCalendarSetup']),
+      duration({exam}) {
+        let start = moment(exam.booking.start_time).clone()
+        let end = moment(exam.booking.end_time).clone()
+        return `${end.diff(start, 'hours')} hrs`
+      },
+      formatDetail(d) {
+        return moment(d).clone().format('h:mm a')
+      },
+      formatHeader(d) {
+        return moment(d).clone().format('dddd, MMM Do, YYYY')
       },
       next() {
-        this.exams = []
-        this.others = []
-        this.$nextTick(function() {
-          this.$refs.agendacal.fireMethod('next')
-        })
-
+        Vue.set(
+          this,
+          'weekStart',
+          this.weekStart.clone().add(7, 'day')
+        )
+        this.updateButtonsDate()
       },
       prev() {
-        this.exams = []
-        this.others = []
-        this.$nextTick(function() {
-          this.$refs.agendacal.fireMethod('prev')
-        })
+        Vue.set(
+          this,
+          'weekStart',
+          this.weekStart.clone().subtract(7, 'day')
+        )
+        this.updateButtonsDate()
+
+      },
+      getExamItems(dateString) {
+        return this.examEvents.filter(exam => moment(exam.start).clone().format('dddd, MMM Do, YYYY') === dateString)
+      },
+      showInvigilator({exam}) {
+        if (exam.booking.sbc_staff_invigilated) {
+          return 'SBC Staff'
+        }
+        if (exam.booking.invigilator_id) {
+          return exam.booking.invigilator.invigilator_name
+        }
+        return false
+      },
+      showLocation({exam}) {
+        if (exam.offsite_location) {
+          return false
+        }
+        if (exam.booking && exam.booking.room_id) {
+          return exam.booking.room.room_name
+        }
+      },
+      showWriter({exam}) {
+        if (exam.exam_type.exam_type_name === 'Monthly Session Exam') {
+          return 'Monthly Session'
+        }
+        if (exam.exam_type.group_exam_ind) {
+          return 'Group Exam'
+        }
+        if (exam.examinee_name) {
+          return exam.examinee_name
+        }
+        return 'Other Exam'
       },
       today() {
-        this.exams = []
-        this.others = []
+        Vue.set(
+          this,
+          'weekStart',
+          moment().day(1)
+        )
+        this.updateButtonsDate()
+      },
+      updateButtonsDate() {
         this.$nextTick(function() {
-          this.$refs.agendacal.fireMethod('today')
+          let d = this.weekStart
+          let text = `Week of ${d.clone().format('MMM Do, YYYY')}`
+          this.setCalendarSetup({title: text})
         })
       },
     }
@@ -296,6 +279,12 @@
 </script>
 
 <style scoped>
+  .good-2-go {
+    color: green;
+  }
+  .no-way-jose {
+    color: red;
+  }
   .header-table-special {
     color: red !important;
   }
@@ -321,5 +310,18 @@
     background-color: slategray;
     color: white;
     padding: 3px 3px 2px 6px;
+  }
+  .toggle-link {
+    color: blue;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+  .no-exam-notice {
+    width: 75%;
+    background-color: #cce5ff;
+    border-radius: 4px;
+    padding: 8px 8px 8px 8px;
+    color: #0b2934;
+    font-size: 1rem;
   }
 </style>

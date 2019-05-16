@@ -26,6 +26,7 @@ class Invigilator(Base):
     contact_email = db.Column(db.String(50), nullable=True)
     contract_number = db.Column(db.String(50), nullable=False)
     contract_expiry_date = db.Column(db.String(50), nullable=False)
+    deleted = db.Column(db.DateTime, nullable=True)
 
     bookings = db.relationship("Booking")
     office = db.relationship("Office", lazy="joined")

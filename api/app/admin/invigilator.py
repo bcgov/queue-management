@@ -20,7 +20,6 @@ from qsystem import db
 
 class InvigilatorConfig(Base):
     roles_allowed = ['SUPPORT', 'GA']
-    delete_allowed = ['SUPPORT']
 
     def is_accessible(self):
         return current_user.is_authenticated and current_user.role.role_code in self.roles_allowed
@@ -31,15 +30,9 @@ class InvigilatorConfig(Base):
         elif current_user.role.role_code == 'GA':
             return self.session.query(self.model).filter_by(office_id=current_user.office_id)
 
-    # Check to see whether or not the user can delete records based on their role
-    def _handle_view(self, name, **kwargs):
-        if current_user.role.role_code in self.delete_allowed:
-            self.can_delete = True
-        else:
-            self.can_delete = False
-
     create_modal = False
     edit_modal = False
+    can_delete = False
 
     column_list = [
         'office.office_name',
@@ -48,16 +41,19 @@ class InvigilatorConfig(Base):
         'contact_email',
         'contract_number',
         'contract_expiry_date',
-        'invigilator_notes'
+        'invigilator_notes',
+        'deleted'
     ]
 
     form_excluded_columns = [
         'bookings'
     ]
 
-    column_labels = {'office.office_name': 'Office Name'}
+    column_labels = {'office.office_name': 'Office Name',
+                     'deleted': 'Deleted'}
 
-    column_searchable_list = {'invigilator_name'}
+    column_searchable_list = {'invigilator_name',
+                              'deleted'}
 
     form_create_rules = (
         'office',
@@ -66,7 +62,8 @@ class InvigilatorConfig(Base):
         'contact_email',
         'contract_number',
         'contract_expiry_date',
-        'invigilator_notes'
+        'invigilator_notes',
+        'deleted'
     )
 
     form_edit_rules = (
@@ -76,14 +73,16 @@ class InvigilatorConfig(Base):
         'contact_email',
         'contract_number',
         'contract_expiry_date',
-        'invigilator_notes'
+        'invigilator_notes',
+        'deleted'
     )
 
     column_sortable_list = [
         'invigilator_name',
         'contact_email',
         'contract_number',
-        'contract_expiry_date'
+        'contract_expiry_date',
+        'deleted'
     ]
 
     column_default_sort = 'invigilator_name'

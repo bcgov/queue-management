@@ -33,7 +33,8 @@ class RoomList(Resource):
         csr = CSR.find_by_username(g.oidc_token_info['username'])
 
         try:
-            rooms = Room.query.filter_by(office_id=csr.office_id)
+            rooms = Room.query.filter_by(office_id=csr.office_id)\
+                              .filter(Room.deleted.is_(None))
             result = self.rooms_schema.dump(rooms)
             return {'rooms': result.data,
                     'errors': result.errors}, 200

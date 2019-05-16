@@ -72,7 +72,7 @@
           },
           eventColor: 'pink',
           eventConstraint: {
-            start: '09:00:00',
+            start: '08:30:00',
             end: '17:00:00',
           },
           fixedWeekCount: false,

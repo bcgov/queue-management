@@ -41,7 +41,7 @@
           <b-col cols="6">
             <b-form-group>
               <label>Exam Date</label><br>
-              <DatePicker v-model="date"
+              <DatePicker :value="date"
                           style="color: black"
                           :disabled="fieldDisabled"
                           name="date"
@@ -227,6 +227,12 @@
         return new moment(d).format('h:mm a')
       },
       checkDate(e) {
+        let date = new moment(this.itemCopy.booking.start_time)
+        let event = new moment(e)
+        if (event.isBefore(moment(), 'day')) {
+          return
+        }
+        this.date = event
         this.showMessage = false
         if (!this.itemCopy.booking) {
           if (!this.editedFields.includes('date')) {
@@ -234,9 +240,9 @@
           }
           return
         }
-        let date = new moment(this.itemCopy.booking.start_time).format('ddmmyyyy').toString()
-        let newDate = new moment(e).format('ddmmyyyy').toString()
-        if (newDate === date) {
+        let oldDate = date.format('DDMMYYYY').toString()
+        let newDate = new moment(e).format('DDMMYYYY').toString()
+        if (newDate === oldDate) {
           if (this.editedFields.includes('date')) {
             let i = this.editedFields.indexOf('date')
             this.editedFields.splice(i,1)
