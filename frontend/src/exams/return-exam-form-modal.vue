@@ -168,7 +168,6 @@
           this.removeError()
           return true
         }
-        console.log(this.exam_returned_tracking_number.length)
         if (this.exam_returned_tracking_number && this.exam_returned_tracking_number.length >= 250) {
           this.errorText = true
           e.preventDefault()
