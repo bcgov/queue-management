@@ -57,6 +57,7 @@
     },
     data() {
       return {
+        blockEventSelect: false,
         clickedAppt: null,
         clickedTime: null,
         config: {
@@ -134,6 +135,9 @@
         return null
       },
       eventSelected(event) {
+        if (event.id === '_tempEvent') {
+          return
+        }
         this.clickedAppt = event
         this.highlightEvent(event)
         this.toggleCheckInModal(true)
@@ -157,6 +161,7 @@
         this.$refs.appointments.fireMethod('renderEvent', event)
       },
       selectEvent(event) {
+        this.blockEventSelect = true
         this.unselect()
         let start = event.start.clone()
         let end
@@ -175,6 +180,7 @@
         this.clickedTime = e
         this.setTempEvent(e)
         this.toggleApptBookingModal(true)
+        this.blockEventSelect = false
       },
       clearClickedAppt() {
         this.clickedAppt = null

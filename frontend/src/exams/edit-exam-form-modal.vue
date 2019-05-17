@@ -81,10 +81,16 @@
         <b-form-row>
           <b-col>
             <b-form-group>
-              <label class="mb-0 mt-1">Exam Name</label>
+              <label v-if="!lengthError"
+                     class="mb-0 mt-1">Exam Name</label>
+              <label v-if="lengthError"
+                     style="color: red"
+                     class="mb-0 mt-1">Maximum field length reached.</label>
               <b-form-input id="exam_name"
                             type="text"
                             class="less-10-mb"
+                            @blur="removeError"
+                            v-on:keydown="checkInputLength"
                             v-model="fields.exam_name" />
             </b-form-group>
           </b-col>
@@ -283,7 +289,9 @@
           exam_received_date: null,
           notes: null,
           event_id: null,
+          exam_name: null,
         },
+        lengthError: false,
         message: '',
         methodOptions: [
           { text: 'paper', value: 'paper'},
@@ -467,6 +475,18 @@
       isITAGropOrSingleExam(ex) {
         return ex.exam_type.ita_ind ? true : false
       },
+      checkInputLength(e) {
+        if (e.keyCode == 8 || e.keyCode == 46) {
+          this.removeError()
+          return true
+        }
+        if (this.fields.exam_name && this.fields.exam_name.length >= 50) {
+          this.lengthError = true
+          e.preventDefault()
+          e.stopPropagation()
+          return false
+        }
+      },
       deleteExam() {
         let deleteExamInfo = {}
         if (this.fields.booking_id) {
@@ -523,6 +543,9 @@
         this.office_number = officeNumber
         this.fields.office_id = this.offices.find(office => office.office_number == officeNumber).office_id
       },
+      removeError() {
+        this.lengthError = false
+      },
       reset() {
         Object.keys(this.fields).forEach(key => {
           Vue.set(
@@ -531,6 +554,7 @@
             null
           )
         })
+        this.lengthError = false
         this.clickedMenu = false
         this.message = null
         this.office_number = null
