@@ -832,5 +832,5 @@
   .btn:active, .btn.active {
    background-color: #184368 !important;
    color: white !important;
- }
+  }
 </style>
