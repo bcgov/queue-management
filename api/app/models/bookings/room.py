@@ -23,6 +23,7 @@ class Room(Base):
     room_name = db.Column(db.String(50), nullable=False)
     capacity = db.Column(db.Integer, nullable=False)
     color = db.Column(db.String(25), nullable=False)
+    deleted = db.Column(db.DateTime, nullable=True)
 
     booking = db.relationship("Booking")
     office = db.relationship("Office", lazy='joined')

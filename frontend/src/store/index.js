@@ -1622,7 +1622,7 @@ export const store = new Vuex.Store({
         let url = `/exams/${id}/`
         Axios(context).put(url, payload).then( () =>{
           context.dispatch('getExams').then( () => {
-            context.commit('setEditExamSuccess', 6)
+            context.commit('setEditExamSuccess', 3)
             resolve()
           })
         })
