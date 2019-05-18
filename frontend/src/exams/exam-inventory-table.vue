@@ -154,18 +154,10 @@
         <template slot="row-details" slot-scope="row">
           <template v-if="stillRequires(row.item).length === 0">
             <div class="details-slot-div">
-              <div style="flex-grow: 1" class="ml-3"><b>Date:</b> {{ formatDate(row.item.booking.start_time) }}</div>
-              <div style="flex-grow: 1"><b>Time:</b> {{ formatTime(row.item.booking) }}</div>
-              <div style="flex-grow: 2">
-                <b>Invigilator: </b>
-                <span v-if="row.item.booking.invigilator_id">{{ row.item.booking.invigilator.invigilator_name }}</span>
-                <span v-if="row.item.booking.sbc_staff_invigilated">ServiceBC Staff</span>
-              </div>
-              <div v-if="row.item.offsite_location"
-                   style="flex-grow: 8">Location: {{ row.item.offsite_location }}</div>
-              <div v-else
-                   style="flex-grow: 8">Room: {{ row.item.booking.room_id ? row.item.booking.room.room_name : '–' }}</div>
-              <div style="flex-grow: 8" />
+              <template v-for="(val, key) in readyDetailsMap(row.item)">
+                <div class="ml-3 mt-1" style="flex-grow: 1;"><b>{{ key }}: </b> {{ val }} </div>
+              </template>
+              <div style="flex-grow: 6"></div>
             </div>
           </template>
 
@@ -359,7 +351,7 @@
             { key: 'exam_received', label: 'Received?', sortable: true, thStyle: 'width: 5%' },
             { key: 'examinee_name', label: 'Student Name', sortable: true, thStyle: 'width: 12%' },
             { key: 'notes', label: 'Notes', sortable: false, thStyle: 'width: 21%' },
-            { key: 'scheduled', label: 'Scheduled?', sortable: true, thStyle: 'width: 5%', tdClass: 'text-center'},
+            { key: 'scheduled', label: 'Status', sortable: true, thStyle: 'width: 5%', tdClass: 'text-center'},
             { key: 'actions', label: 'Actions', sortable: false, thStyle: 'width: 5%' },
           ]
         }
@@ -604,6 +596,13 @@
       },
       readyDetailsMap(item) {
         let output = {}
+        if (item.exam_returned_date) {
+          return {
+            Returned: moment(item.exam_returned_date).format('YYYY-MMM-DD'),
+            Disposition: item.exam_returned_tracking_number,
+            Written: item.exam_written_ind ? 'Yes' : 'No',
+          }
+        }
         if (item.offsite_location && item.offsite_location !== '_offsite') {
           output.Location = item.offsite_location
         }
@@ -685,18 +684,26 @@
       statusIcon(item) {
         let lifeRing = {
           icon: 'life-ring',
-          rank: 3,
+          rank: 4,
           style: {fontSize: '1rem', color: 'red'}
         }
         let exclamationTriangle = {
           icon: 'exclamation-triangle',
-          rank: 2,
+          rank: 3,
           style: {fontSize: '.9rem', color: '#FFC32B'}
         }
         let clipboardCheck = {
           icon: 'clipboard-check',
-          rank: 1,
+          rank: 2,
           style: {fontSize: '1rem', color: 'green'}
+        }
+        let envelopeOpenText = {
+          icon: 'shipping-fast',
+          rank: 1,
+          style: {fontSize: '1rem', color: '#4e9de0'}
+        }
+        if (item.exam_returned_date) {
+          return envelopeOpenText
         }
         if (item.booking && item.booking.invigilator && item.booking.invigilator.deleted) {
           return lifeRing
@@ -733,6 +740,9 @@
       },
       stillRequires(item) {
         let output = []
+        if (item.exam_returned_date) {
+          return output
+        }
         if (!item.booking) {
           output.push('Scheduling and Assignment of Invigilator')
         }
