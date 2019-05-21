@@ -58,6 +58,7 @@ Thus, it is this stage where the majority of updates will be produced.
 - **Ubuntu 18.04**
 - 10 gigabytes of storage
 - qemu
+- docker.io
 
 **NOTE**: When running these steps in a VM, restart the machine to prevent potential issues.
 
@@ -75,7 +76,12 @@ sudo systemctl restart systemd-binfmt.service
 ```
 
 ### Step 1: Building Base Image (Bootstrapping)
-First, download the latest [Raspbian Lite Image](https://downloads.raspberrypi.org/raspbian_lite_latest) and copy it into the `./mender/image-tools` directory.
+
+```
+git clone https://www.github.com/bcgov/queue-management
+cd queue-management/mender/image-tools
+```
+Download and unzip the latest [Raspbian Lite Image](https://downloads.raspberrypi.org/raspbian_lite_latest) and copy it into the `./mender/image-tools` directory.
 
 **Note**: This step installs `chromium`. This will result in a large blue screen showing up and will require user input to continue. This is a good sign, do not be alarmed.
 

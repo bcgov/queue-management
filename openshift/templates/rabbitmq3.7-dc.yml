@@ -16,7 +16,7 @@ parameters:
     value: rabbitmq-cluster
   - name: ISTAG
     description: "Image to deploy"
-    value: rabbitmq:3.7-management
+    value: rabbitmq:3.7.14-management
   - name: RABBITMQ_USER
     description: "Username for the RabbitMQ instance"
     value: rabbitmq
@@ -94,7 +94,7 @@ objects:
         management.load_definitions = /etc/rabbitmq/policy.json
       enabled_plugins: |
         [rabbitmq_management,rabbitmq_peer_discovery_k8s].
-      policy.json: "{\r\n  \"vhosts\":[\r\n    {\r\n      \"name\": \"/\"\r\n    }\r\n  ],\r\n  \"users\": [\r\n      {\r\n        \"name\": \"${MQ_USER}\",\r\n        \"${MQ_PASSWORD}  \": \"${MQ_USER}\",\r\n        \"hashing_algorithm\": \"rabbit_password_hashing_sha256\",\r\n        \"tags\": \"administrator\"\r\n      }\r\n  ],\r\n  \"permissions\": [\r\n    {\r\n      \"user\": \"${MQ_USER}\",\r\n      \"vhost\": \"\\/\",\r\n      \"configure\": \".*\",\r\n      \"write\": \".*\",\r\n      \"read\": \".*\"\r\n    }\r\n  ],\r\n  \"policies\":[\r\n    {\r\n      \"vhost\": \"/\",\r\n      \"name\": \"ha-all\",\r\n      \"pattern\": \"\", \r\n      \"definition\": {\r\n        \"ha-mode\": \"all\",\r\n        \"ha-sync-mode\": \"automatic\",\r\n        \"ha-sync-batch-size\": 5\r\n      }\r\n    }\r\n  ]\r\n}"
+      policy.json: "{\r\n  \"vhosts\":[\r\n    {\r\n      \"name\": \"/\"\r\n    }\r\n  ],\r\n  \"users\": [\r\n      {\r\n        \"name\": \"guest\",\r\n        \"password\": \"guest\",\r\n        \"hashing_algorithm\": \"rabbit_password_hashing_sha256\",\r\n        \"tags\": \"administrator\"\r\n      }\r\n  ],\r\n  \"permissions\": [\r\n    {\r\n      \"user\": \"guest\",\r\n      \"vhost\": \"\\/\",\r\n      \"configure\": \".*\",\r\n      \"write\": \".*\",\r\n      \"read\": \".*\"\r\n    }\r\n  ],\r\n  \"policies\":[\r\n    {\r\n      \"vhost\": \"/\",\r\n      \"name\": \"ha-all\",\r\n      \"pattern\": \"\", \r\n      \"definition\": {\r\n        \"ha-mode\": \"all\",\r\n        \"ha-sync-mode\": \"automatic\",\r\n        \"ha-sync-batch-size\": 5\r\n      }\r\n    }\r\n  ]\r\n}"
 
   # Load balancer
   - kind: Service

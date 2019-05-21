@@ -51,6 +51,18 @@ Office Status Panel
 
 - Provides a manager the ability to see counter interaction details
 
+Service Appointments (Optional)
+
+- Calendar for booking appointments
+- Ability to Checkin clients and place them at the top of the queue
+
+Room Booking and Exam Invigilation (Optional)
+- Manage Industry Trade Authority Group and Individual Exams
+- Manage Other (Basic Exams)
+- Manage General Room Booking
+- Report on Exams
+
+
 Basic Administration Panels to add, update and delete:
 
 - Offices
@@ -58,10 +70,14 @@ Basic Administration Panels to add, update and delete:
 - Service Listing
 - Channels
 - Roles
+- Invigilators
+- Exam Types
+- Rooms
+- Counter Types
 
 Feedback
 
-- Sends to Slack and / or Service Now
+- Sends to Slack and / or Service Now and / or Rocket Chat
 
 Analytics
 
