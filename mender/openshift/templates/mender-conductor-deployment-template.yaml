@@ -236,8 +236,14 @@ objects:
         subapp: mender-conductor
     spec:
       ports:
-      - port: 8080
+      - name: in
+        port: 9300
         protocol: TCP
+        targetPort: 9300
+      - name: tcp
+        port: 9200
+        protocol: TCP
+        targetPort: 9200
       selector:
         service: mender-elasticsearch
   - apiVersion: v1
@@ -274,6 +280,15 @@ objects:
         spec:
           containers:
             - name: mender-elasticsearch
+              env:
+                - name: ES_JAVA_OPTS
+                    value: '-Xms512m -Xmx512m'
+                - name: transport.host
+                    value: 0.0.0.0
+                - name: discovery.type
+                  value: single-node
+                - name: xpack.security.enabled
+                  value: 'false'
               image: " "
               # readinessProbe:
               #   failureThreshold: 3
