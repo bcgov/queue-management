@@ -154,6 +154,7 @@ export const store = new Vuex.Store({
     showSelectInvigilatorModal: false,
     showServeCitizenSpinner: false,
     showServiceModal: false,
+    showTimeTrackingIcon: false,
     user: {
       counter_id: null,
       csr_id: null,
@@ -2547,5 +2548,7 @@ export const store = new Vuex.Store({
     toggleServeCitizenSpinner(state, payload) {
       state.showServeCitizenSpinner = payload
     },
+    
+    toggleTimeTrackingIcon: (state, payload) => state.showTimeTrackingIcon = payload,
   }
 })
