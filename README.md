@@ -134,14 +134,6 @@ THEQ_SNOWPLOW_CALLFLAG - disable/enable snowplow (Value: True or False)
 
 Additional information can be found in the [documention](documentation/Readme.md) folder.
 
-## Goals/Roadmap
-
-Currently onboarding to all of our sites.  
-Next major updates include:
-
-- Room Booking component
-- Service Appointments
-
 ## Getting Help or Reporting an Issue
 
 To report bugs/issues/feature requests, please file an [issue](../../issues).
