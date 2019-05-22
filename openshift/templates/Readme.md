@@ -27,3 +27,6 @@ Required information in the ConfigMap includes:
 1. `auth_url=<keycloak URL>`
 1. `clientid=<keycloak Client ID>`
 1. `realm=<Keycloak Realm>`
+
+Once the statefulset is up and running, set the guest passwod by going each of the pods and running the following command in the terminal:
+`rabbitmqctl change_password guest <password>`
