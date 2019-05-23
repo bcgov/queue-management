@@ -1,11 +1,11 @@
 /*Copyright 2015 Province of British Columbia
- 
+
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
  You may obtain a copy of the License at
- 
+
  http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing, software
  distributed under the License is distributed on an "AS IS" BASIS,
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,15 +18,19 @@ import moment from 'moment'
 import tZone from 'moment-timezone'
 import 'es6-promise/auto'
 import { addExamModule } from './add-exam-module'
+import appointmentsModule from './appointments-module'
 import { Axios, searchNestedObject } from './helpers'
 
 var flashInt
 
 Vue.use(Vuex)
 
+const DEFAULT_COUNTER_NAME = "Counter";
+var _default_counter_id = null;
+
 export const store = new Vuex.Store({
   modules: {
-    addExamModule
+    addExamModule, appointmentsModule,
   },
   state: {
     addExamModal: {
@@ -42,15 +46,18 @@ export const store = new Vuex.Store({
       search: '',
       category: '',
       service:'',
-      quick: 0,
       suspendFilter: false,
       selectedItem: '',
-      priority: 2
+      priority: 2,
+      counter: null,
     },
     addModalSetup: null,
-    nonITAExam: false,
     addNextService: false,
     adminNavigation: 'csr',
+    appointmentsStateInfo: {
+      channel_id: null,
+      service_id: null,
+    },
     alertMessage: '',
     allCitizens: [],
     bearer: '',
@@ -77,24 +84,19 @@ export const store = new Vuex.Store({
     dismissCount: 0,
     editedBooking: null,
     editedBookingOriginal: null,
-    editExamFailureCount: 0,
     editedGroupBooking: null,
+    editExamFailureCount: 0,
     editExamSuccessCount: 0,
     examAlertMessage: '',
-    loginAlertMessage: '',
-    examEditSuccessMessage: '',
-    examEditFailureMessage: '',
     examDismissCount: 0,
-    loginDismissCount: 0,
+    examEditFailureMessage: '',
+    examEditSuccessMessage: '',
+    exams: [],
     examsTrackingIP: false,
     examSuccessDismiss : 0,
-    exams: [],
     examTypes: [],
     feedbackMessage: '',
-    showGenFinReportModal: false,
     iframeLogedIn: false,
-    invigilators: [],
-    isLoggedIn: false,
     inventoryFilters: {
       expiryFilter: 'current',
       scheduledFilter: 'both',
@@ -102,16 +104,21 @@ export const store = new Vuex.Store({
       returnedFilter: 'unreturned',
       office_number: 'default',
     },
+    invigilators: [],
+    isLoggedIn: false,
+    loginAlertMessage: '',
+    loginDismissCount: 0,
+    nonITAExam: false,
     nowServing: false,
-    offices: [],
     officeFilter: null,
+    offices: [],
     officeType: null,
-    offsiteVisible: false,
+    offsiteVisible: true,
     performingAction: false,
     rescheduling: false,
     returnExam: null,
-    rooms: [],
     roomResources: [],
+    rooms: [],
     scheduling: false,
     selectedExam: {},
     selectedOffice: {},
@@ -126,8 +133,8 @@ export const store = new Vuex.Store({
       citizen_comments: '',
       activeQuantity: 1,
       accurate_time_ind: 1,
-      quick: 0,
-      priority: 2
+      priority: 2,
+      counter: 1,
     },
     services: [],
     showAddModal: false,
@@ -135,17 +142,20 @@ export const store = new Vuex.Store({
     showBookingModal: false,
     showDeleteExamModal: false,
     showEditBookingModal: false,
-    showEditGroupBookingModal: false,
     showEditExamModal: false,
+    showEditGroupBookingModal: false,
     showExamInventoryModal: false,
     showFeedbackModal: false,
     showGAScreenModal: false,
-    showSelectInvigilatorModal: false,
+    showGenFinReportModal: false,
     showOtherBookingModal: false,
     showResponseModal: false,
     showReturnExamModal: false,
+    showSelectInvigilatorModal: false,
+    showServeCitizenSpinner: false,
     showServiceModal: false,
     user: {
+      counter_id: null,
       csr_id: null,
       csr_state_id: null,
       csr_state: {
@@ -160,9 +170,11 @@ export const store = new Vuex.Store({
         sb: {
           sb_type: null,
         },
+        counters: [],
+        quick_list: [],
+        back_office_list: []
       },
       office_id: null,
-      qt_xn_csr_ind: true,
       receptionist_ind: null
     },
     userLoadingFail: false,
@@ -198,7 +210,7 @@ export const store = new Vuex.Store({
       })
       return invigilators
     },
-    
+
     show_scheduling_indicator: (state) => {
       if (state.scheduling || state.rescheduling) {
         if (!state.showOtherBookingModal && !state.showBookingModal && !state.showEditBookingModal) {
@@ -207,22 +219,22 @@ export const store = new Vuex.Store({
       }
       return false
     },
-  
+
     filtered_calendar_events: (state, getters) => (search) => {
       return state.calendarEvents.filter(event => searchNestedObject(event, search))
     },
-    
+
     exam_inventory(state) {
       if (state.showExamInventoryModal) {
         return state.exams.filter(exam => exam.booking_id === null)
       }
       return state.exams
     },
-    
+
     exam_object_id: (state, getters) => (examId) => {
       return state.examTypes.find(type => type.exam_type_id == examId)
     },
-    
+
     exam_object(state) {
       if (state.capturedExam && state.capturedExam.exam_type_id) {
         return state.examTypes.find(type => type.exam_type_id == state.capturedExam.exam_type_id)
@@ -297,7 +309,7 @@ export const store = new Vuex.Store({
       }
       return false
     },
-    
+
     reception(state) {
       if (state.user.office && state.user.office.sb) {
         if (state.user.office.sb.sb_type === "callbyname" || state.user.office.sb.sb_type === "callbyticket") {
@@ -383,6 +395,7 @@ export const store = new Vuex.Store({
     },
 
     form_data: state => {
+      console.log(state.addModalForm)
       return state.addModalForm
     },
 
@@ -410,23 +423,13 @@ export const store = new Vuex.Store({
       }
     },
 
-    quick_trans_status(state) {
-      if (state.user.qt_xn_csr_ind == 1) {
-        return true
-      } else if (state.user.qt_xn_csr_ind == 0) {
-        return false
-      } else {
-        console.error('quick trans status: ', state.user.qt_xn_csr_ind)
-      }
-    },
-
     receptionist_status(state) {
       if (state.user.receptionist_ind == 1) {
         return true
       } else if (state.user.receptionist_ind == 0) {
         return false
       } else {
-        console.error('receptionist status: ', state.user.qt_xn_csr_ind)
+        console.error('receptionist status: ', state.user.receptionist_ind)
       }
     }
   },
@@ -444,7 +447,7 @@ export const store = new Vuex.Store({
         context.commit("setNavigation", view)
       }
     },
-  
+
     deleteBooking(context, id) {
       return new Promise((resolve, reject) => {
         Axios(context).delete(`/bookings/${id}/`).then(resp => {
@@ -476,15 +479,15 @@ export const store = new Vuex.Store({
         })
       })
     },
-    
+
     putBooking(context, payload) {
       return new Promise((resolve, reject) => {
         Axios(context).put(`/bookings/${payload.id}/`, payload.changes).then(resp => {
           resolve(resp.data)
         })
-          .catch(error => {
-            reject(error)
-          })
+        .catch(error => {
+          reject(error)
+        })
       })
     },
 
@@ -542,7 +545,7 @@ export const store = new Vuex.Store({
             booking.id = b.booking_id
             booking.exam = context.state.exams.find(ex => ex.booking_id == b.booking_id) || false
             booking.booking_contact_information = b.booking_contact_information
-
+            booking.fees = b.fees
             calendarEvents.push(booking)
           })
           context.commit('setEvents', calendarEvents)
@@ -630,7 +633,38 @@ export const store = new Vuex.Store({
 
     getExams(context) {
       return new Promise((resolve, reject) => {
-        Axios(context).get('/exams/')
+        let url = "/exams/"
+        let filter = context.state.inventoryFilters["office_number"]
+
+        if (filter === "default") {
+          url += `?office_number=${context.state.user.office.office_number}`
+        } else {
+          url += `?office_number=${filter}`
+        }
+
+        Axios(context).get(url)
+          .then(resp => {
+            context.commit('setExams', resp.data.exams)
+            resolve(resp)
+          })
+          .catch(error => {
+            console.log(error)
+            reject(error)
+          })
+      })
+    },
+
+    getExamsForOffice(context, office_number) {
+      return new Promise((resolve, reject) => {
+        let url = "/exams/"
+
+        if (office_number === "default") {
+          url += `?office_number=${context.state.user.office.office_number}`
+        } else {
+          url += `?office_number=${office_number}`
+        }
+
+        Axios(context).get(url)
           .then(resp => {
             context.commit('setExams', resp.data.exams)
             resolve(resp)
@@ -682,7 +716,7 @@ export const store = new Vuex.Store({
           })
       })
     },
-    
+
     getOffices(context, payload=null) {
       if (context.state.user.liaison_designate === 1 || payload === 'force' || context.state.user.pesticide_designate === 1) {
         return new Promise((resolve, reject) => {
@@ -728,16 +762,16 @@ export const store = new Vuex.Store({
 
     getServices(context) {
       let office_id = context.state.user.office_id
-      Axios(context).get(`/services/?office_id=${office_id}`)
-        .then( resp => {
-          let services = resp.data.services.filter(service => service.actual_service_ind === 1)
-          context.commit('setServices', services)
-        })
-        .catch(error => {
-          console.log('error @ store.actions.getServices')
-          console.log(error.response)
-          console.log(error.message)
-        })
+        Axios(context).get(`/services/?office_id=${office_id}`)
+          .then( resp => {
+            let services = resp.data.services.filter(service => service.actual_service_ind === 1)
+            context.commit('setServices', services)
+          })
+          .catch(error => {
+            console.log('error @ store.actions.getServices')
+            console.log(error.response)
+            console.log(error.message)
+          })
     },
 
     getUser(context) {
@@ -747,9 +781,11 @@ export const store = new Vuex.Store({
           context.commit('setUser', resp.data.csr)
           let officeType = resp.data.csr.office.sb.sb_type
           context.commit('setOffice', officeType)
+          context.commit('setDefaultCounter', resp.data.csr.office.counters.filter(
+            c => c.counter_name === DEFAULT_COUNTER_NAME)[0])
           let individualExamBoolean = false
           let groupExamBoolean = false
-
+          
           if (resp.data.group_exams > 0) {
             groupExamBoolean = true
             context.commit('setGroupExam', groupExamBoolean)
@@ -849,8 +885,8 @@ export const store = new Vuex.Store({
             value: context.getters.active_service.channel_id
           })
           context.commit('updateAddModalForm', {
-            type: 'quick',
-            value: context.getters.invited_citizen.qt_xn_citizen_ind
+            type: 'counter',
+            value: context.getters.invited_citizen.counter_id
           })
           context.commit('updateAddModalForm', {
             type: 'priority',
@@ -931,7 +967,8 @@ export const store = new Vuex.Store({
     },
   
     clickBeginService(context, payload) {
-      let {citizen_id} = context.getters.form_data.citizen
+      context.commit('toggleServeCitizenSpinner', true)
+      let { citizen_id } = context.getters.form_data.citizen
       context.commit('setPerformingAction', true)
     
       context.dispatch('putCitizen').then( () => {
@@ -953,6 +990,58 @@ export const store = new Vuex.Store({
       }).catch(() => {
         context.commit('setPerformingAction', false)
       })
+    },
+
+    clickQuickServe(context) {
+      context.commit('setPerformingAction', true)
+
+      if (context.state.channels.length === 0) {
+        context.dispatch('getChannels').then( () => {
+          context.commit('setDefaultChannel')
+        })
+      }
+      if (context.state.channels.length > 0) {
+        context.commit('setDefaultChannel')
+      }
+      
+      Axios(context).post('/citizens/', {})
+        .then(resp => {
+          let value = resp.data.citizen
+          context.commit('updateAddModalForm', {type:'citizen',value})
+          context.commit('resetServiceModal')
+          context.dispatch('putCitizen').then( () => {
+            context.dispatch('postServiceReq').then( () => {
+              context.dispatch('postBeginService', value.citizen_id).then( () => {
+                context.commit('toggleAddModal', false)
+                context.commit('toggleBegunStatus', true)
+                context.commit('toggleInvitedStatus', false)
+                context.commit('toggleServiceModal', true)
+                context.commit('resetAddModalForm')
+              }).finally(() => {
+                context.commit('setPerformingAction', false)
+              })
+            }).catch(() => {
+              context.commit('setPerformingAction', false)
+            })
+          }).catch(() => {
+            context.commit('setPerformingAction', false)
+          })
+        },
+        error => {
+          context.commit('setMainAlert', 'An error occurred adding a citizen.')
+        })
+
+      if (context.state.channels.length === 0) {
+        context.dispatch('getChannels').then( () => {
+          context.commit('setDefaultChannel')
+        })
+      }
+      if (context.state.channels.length > 0) {
+        context.commit('setDefaultChannel')
+      }
+      if (context.state.services.length === 0) {
+        context.dispatch('getServices')
+      }
     },
 
     clickBackOffice(context) {
@@ -997,6 +1086,76 @@ export const store = new Vuex.Store({
       }
     },
 
+    clickQuickBackOffice(context) {
+      context.commit('setPerformingAction', true)
+      context.dispatch('toggleModalBack')
+
+      Axios(context).post('/citizens/', {})
+        .then(resp => {
+          let value = resp.data.citizen
+          context.commit('updateAddModalForm', {type:'citizen',value})
+          context.commit('resetServiceModal')
+          context.dispatch('putCitizen').then( () => {
+            context.dispatch('postServiceReq').then( () => {
+              context.dispatch('postBeginService', value.citizen_id).then( () => {
+                context.commit('toggleAddModal', false)
+                context.commit('toggleBegunStatus', true)
+                context.commit('toggleInvitedStatus', false)
+                context.commit('toggleServiceModal', true)
+                context.commit('resetAddModalForm')
+              }).finally(() => {
+                context.commit('setPerformingAction', false)
+              })
+            }).catch(() => {
+              context.commit('setPerformingAction', false)
+            })
+          }).catch(() => {
+            context.commit('setPerformingAction', false)
+          })
+        }).finally(() => {
+        context.commit('setPerformingAction', false)
+      })
+
+      let setupChannels = () => {
+        let index = -1
+        let { channel_options } = context.getters
+        channel_options.forEach((opt,i) => {
+          if (opt.text.toLowerCase() === 'back office') {
+            index = i
+          }
+        })
+        if (index >= 0) {
+          context.commit('updateAddModalForm', {type:'channel', value:channel_options[index].value})
+        } else {
+          context.commit('setDefaultChannel')
+        }
+      }
+
+      if (context.state.channels.length === 0) {
+        context.dispatch('getChannels').then( () => { setupChannels() })
+      } else {
+        setupChannels()
+      }
+      if (context.state.categories.length === 0) {
+        context.dispatch('getCategories')
+      }
+      if (context.state.services.length === 0) {
+        context.dispatch('getServices')
+      }
+    },
+
+    clickRefresh(context) {
+      context.commit('setPerformingAction', true)
+      const office_id = context.state.user.office_id
+      Axios(context).get(`/services/refresh/?office_id=${office_id}`)
+        .then(resp => {
+          context.commit('setQuickList', resp.data.quick_list)
+          context.commit('setBackOfficeList', resp.data.back_office_list)
+        }).finally(() => {
+        context.commit('setPerformingAction', false)
+      })
+    },
+
     clickCitizenLeft(context) {
       let {citizen_id} = context.getters.invited_citizen
       context.commit('setPerformingAction', true)
@@ -1011,6 +1170,7 @@ export const store = new Vuex.Store({
     },
 
     clickDashTableRow(context, citizen_id) {
+      context.commit('toggleServeCitizenSpinner', true)
       context.commit('setPerformingAction', true)
 
       context.dispatch('postInvite', citizen_id).then( () => {
@@ -1094,6 +1254,7 @@ export const store = new Vuex.Store({
     },
 
     clickInvite(context) {
+      context.commit('toggleServeCitizenSpinner', true)
       context.commit('setPerformingAction', true)
 
       context.dispatch('postInvite', 'next').then(() => {
@@ -1197,6 +1358,7 @@ export const store = new Vuex.Store({
     },
 
     clickRowHoldQueue(context, citizen_id) {
+      context.commit('toggleServeCitizenSpinner', true)
       context.commit('setPerformingAction', true)
 
       context.dispatch('postBeginService', citizen_id).then( () => {
@@ -1207,7 +1369,7 @@ export const store = new Vuex.Store({
         context.commit('setPerformingAction', false)
       })
     },
-
+    
     toggleBegunStatus({commit}) {
       commit('toggleBegunStatus', payload)
     },
@@ -1283,7 +1445,7 @@ export const store = new Vuex.Store({
     closeGAScreenModal(context) {
       context.commit('toggleGAScreenModal', false)
     },
-    
+
     initializeAgenda(context) {
       return new Promise((resolve, reject) => {
         context.dispatch('getExams').then( () => {
@@ -1395,8 +1557,9 @@ export const store = new Vuex.Store({
     },
 
     postInvite(context, payload) {
-      let { qt_xn_csr_ind } = context.state.user
-      let data = { qt_xn_csr_ind }
+      let { counter_id } = context.state.user
+
+      let data = { counter_id }
       if (payload==='next') {
         return new Promise((resolve, reject) => {
           let url = `/citizens/invite/`
@@ -1415,13 +1578,12 @@ export const store = new Vuex.Store({
             if (error.response.status === 400) {
               context.commit('setMainAlert', error.response.data.message)
             }
-
             reject(error)
           })
         })
       }
     },
-    
+
     scheduleExam(context, payload) {
       return new Promise((resolve, reject) => {
         context.dispatch('postBooking', payload).then(booking_id => {
@@ -1430,9 +1592,9 @@ export const store = new Vuex.Store({
           })
         })
       })
-      
+
     },
-    
+
     putExam(context, payload) {
       let bookingId, examId
       if (typeof payload === 'object' && payload !== null) {
@@ -1460,13 +1622,13 @@ export const store = new Vuex.Store({
         let url = `/exams/${id}/`
         Axios(context).put(url, payload).then( () =>{
           context.dispatch('getExams').then( () => {
-            context.commit('setEditExamSuccess', 6)
+            context.commit('setEditExamSuccess', 3)
             resolve()
           })
         })
       })
     },
-    
+
     postBooking(context, payload) {
       if (!Object.keys(payload).includes('office_id')) {
         payload['office_id'] = context.state.user.office_id
@@ -1480,7 +1642,7 @@ export const store = new Vuex.Store({
           })
       })
     },
-    
+
     finishBooking(context) {
       context.dispatch('getBookings')
       context.commit('setSelectionIndicator', false)
@@ -1493,7 +1655,7 @@ export const store = new Vuex.Store({
       context.commit('toggleEditBookingModal', false)
       context.commit('toggleEditGroupBookingModal', false)
     },
-  
+
     postITAChallengerExam(context) {
       let responses = Object.assign( {}, context.state.capturedExam)
       let date = new moment(responses.expiry_date).local().format('YYYY-MM-DD')
@@ -1505,7 +1667,7 @@ export const store = new Vuex.Store({
         start_time: start.clone().utc().format('YYYY-MM-DD[T]HH:mm:ssZ'),
         end_time: end.clone().utc().format('YYYY-MM-DD[T]HH:mm:ssZ'),
         fees: 'false',
-        booking_name: 'Monthly Session',
+        booking_name: responses.exam_name,
         office_id: context.state.user.office_id,
       }
       if (responses.on_or_off === 'on') {
@@ -1513,7 +1675,12 @@ export const store = new Vuex.Store({
         delete responses.offsite_location
       }
       if (responses.invigilator) {
-        booking.invigilator_id = responses.invigilator.invigilator_id.valueOf()
+        if (responses.invigilator === 'sbc') {
+          booking.invigilator_id = null
+          booking.sbc_staff_invigilated = true
+        } else {
+          booking.invigilator_id = responses.invigilator.invigilator_id.valueOf()
+        }
         delete responses.invigilator
       }
       let exam_type= context.state.examTypes.find(ex => ex.exam_type_name === 'Monthly Session Exam')
@@ -1521,7 +1688,8 @@ export const store = new Vuex.Store({
         exam_returned_ind: 0,
         examinee_name: 'Monthly Session',
         exam_type_id: exam_type.exam_type_id,
-        office_id: context.state.user.office_id
+        office_id: context.state.user.office_id,
+        exam_method: 'paper',
       }
       delete responses.exam_time
       delete responses.expiry_date
@@ -1529,7 +1697,7 @@ export const store = new Vuex.Store({
         data.notes = ''
       }
       let postData = {...responses, ...defaultValues}
-     
+
       return new Promise((resolve, reject) => {
         Axios(context).post('/exams/', postData).then( examResp => {
           let { exam_id } = examResp.data.exam
@@ -1546,7 +1714,7 @@ export const store = new Vuex.Store({
         }).catch( () => { reject() })
       })
     },
-    
+
     postITAGroupExam(context) {
       let responses = Object.assign( {}, context.state.capturedExam)
       let timezone_name = context.state.user.office.timezone
@@ -1580,7 +1748,7 @@ export const store = new Vuex.Store({
         data.notes = ''
       }
       let postData = {...responses, ...defaultValues}
-      
+
       return new Promise((resolve, reject) => {
         Axios(context).post('/exams/', postData).then( examResp => {
           let { exam_id } = examResp.data.exam
@@ -1597,18 +1765,25 @@ export const store = new Vuex.Store({
         }).catch( () => { reject() })
       })
     },
-  
+
     postITAIndividualExam(context) {
       let responses = Object.assign( {}, context.state.capturedExam)
+      if (responses.on_or_off) {
+        if (responses.on_or_off === 'off') {
+          responses.offsite_location = '_offsite'
+        }
+        delete responses.on_or_off
+      }
+      responses.office_id = responses.office_id ? responses.office_id : context.state.user.office_id
       let defaultValues = {
         exam_returned_ind: 0,
-        number_of_students: 1,
-        office_id: context.state.user.office_id
+        number_of_students: 1
       }
-      if (context.state.addExamModal.setup === 'pesticide') {
-        defaultValues.office_id = responses['office_id']
+      let exp = new moment(responses.expiry_date).format('YYYY-MM-DD').toString()
+      responses.expiry_date = new moment(exp).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
+      if (responses.exam_received_date) {
+        responses.exam_received_date = new moment(responses.exam_received_date).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
       }
-      responses.expiry_date = moment(responses.expiry_date).format('YYYY-MM-DD')
       if (responses.notes === null) {
         responses.notes = ''
       }
@@ -1618,7 +1793,7 @@ export const store = new Vuex.Store({
         }
       }
       let postData = {...responses, ...defaultValues}
-  
+
       return new Promise((resolve, reject) => {
         Axios(context).post('/exams/', postData).then( () => { resolve() }).catch( () => { reject() })
       })
@@ -1649,28 +1824,22 @@ export const store = new Vuex.Store({
     putCitizen(context) {
       let data = {}
       let citizen_id
-      let quick
       let priority
+      let counter
 
       if (context.state.serviceModalForm.citizen_id) {
         let { accurate_time_ind, citizen_comments } = context.state.serviceModalForm
-        quick = context.state.serviceModalForm.quick
+        counter = context.state.serviceModalForm.counter
         priority = context.state.serviceModalForm.priority
         citizen_id = context.state.serviceModalForm.citizen_id
         let prevCitizen = context.getters.invited_citizen
 
-        if (context.state.showAddModal) {
-          quick = context.getters.form_data.quick
-          if (prevCitizen.qt_xn_citizen_ind !== quick) {
-            data.qt_xn_citizen_ind = quick
-          }
-        }
         if (!context.state.showAddModal) {
           if ( citizen_comments !== prevCitizen.citizen_comments ) {
             data.citizen_comments = citizen_comments
           }
-          if ( quick !== prevCitizen.qt_xn_citizen_ind ) {
-            data.qt_xn_citizen_ind = quick
+          if ( counter !== prevCitizen.counter_id ) {
+            data.counter_id = counter
           }
           if ( priority !== prevCitizen.priority ) {
             data.priority = priority
@@ -1682,10 +1851,7 @@ export const store = new Vuex.Store({
       } else {
         let { form_data } = context.getters
         citizen_id = form_data.citizen.citizen_id
-        data.qt_xn_citizen_ind = form_data.quick
-        if (!form_data.quick) {
-          data.qt_xn_citizen_ind = 0
-        }
+        data.counter_id = form_data.counter
         data.priority = form_data.priority
         data.citizen_comments = form_data.comments
       }
@@ -1694,7 +1860,8 @@ export const store = new Vuex.Store({
         return new Promise((resolve, reject) => { resolve(' ') })
       }
 
-
+      console.log(citizen_id)
+      console.log(data)
       return new Promise((resolve, reject) => {
         let url = `/citizens/${citizen_id}/`
 
@@ -1702,17 +1869,17 @@ export const store = new Vuex.Store({
           error => { reject(error) })
       })
     },
-
+  
     putServiceRequest(context) {
       let { activeQuantity } = context.state.serviceModalForm
       let compareService = context.getters.active_service
       let { sr_id } = compareService
-
+    
       let data = {}
       if (activeQuantity != compareService.quantity) {
         data.quantity = activeQuantity
       }
-
+    
       // Make sure quantity is position
       if (!/^\+?\d+$/.test(activeQuantity)) {
         context.commit("setServeModalAlert", "Quantity must be a number and greater than 0")
@@ -1720,7 +1887,7 @@ export const store = new Vuex.Store({
       } else {
         context.commit("setServeModalAlert", "")
       }
-
+    
       let setup = context.state.addModalSetup
       let { form_data } = context.getters
       if ( setup === 'add_mode' || setup === 'edit_mode') {
@@ -1734,7 +1901,7 @@ export const store = new Vuex.Store({
       if (Object.keys(data).length === 0) {
         return new Promise((resolve, reject) => { resolve(' ') })
       }
-
+    
       return new Promise((resolve, reject) => {
         let url = `/service_requests/${sr_id}/`
         Axios(context).put(url,data).then(resp=>{
@@ -1852,6 +2019,7 @@ export const store = new Vuex.Store({
           }
         }
       }
+      context.commit('toggleServeCitizenSpinner', false)
     },
     
     setAddModalData(context) {
@@ -1870,15 +2038,12 @@ export const store = new Vuex.Store({
       }
     },
 
-    //Updates the counter's type from the state after selecting from the dropdown (regular counter, quick transaction, or receptionist)
     updateCSRCounterTypeState(context) {
       let csr_id = context.state.user.csr_id
       Axios(context).put(`/csrs/${csr_id}/`, {
-        qt_xn_csr_ind: context.state.user.qt_xn_csr_ind,
+        counter_id: context.state.user.counter_id,
         receptionist_ind: context.state.user.receptionist_ind
       })
-        .then( resp => {
-        })
     },
 
     updateCSRState(context) {
@@ -1886,6 +2051,10 @@ export const store = new Vuex.Store({
       Axios(context).put(`/csrs/${csr_id}/`, {
         csr_state_id: context.state.user.csr_state_id,
       })
+    },
+  
+    restoreSavedModalAction({commit}, payload) {
+      commit('restoreSavedModal', payload)
     },
   },
 
@@ -1910,9 +2079,9 @@ export const store = new Vuex.Store({
       state.categories = []
       state.categories = payload
     },
-
+  
     setReturnExamInfo: (state, payload) => state.returnExam = payload,
-
+  
     toggleAddModal: (state, payload) => state.showAddModal = payload,
   
     updateAddModalForm(state, payload) {
@@ -1931,26 +2100,35 @@ export const store = new Vuex.Store({
     resetAddModalForm(state) {
       let keys = Object.keys(state.addModalForm)
       keys.forEach(key => {
-        if (key !== 'quick' && key !== 'suspendFilter') Vue.set(
-          state.addModalForm,
-          key,
-          ''
-        )
-        if (key === 'quick') Vue.set(
-          state.addModalForm,
-          key,
-          0
-        )
-        if (key === 'priority') Vue.set(
-          state.addModalForm,
-          key,
-          2
-        )
-        if (key === 'suspendFilter') Vue.set(
-          state.addModalForm,
-          key,
-          false
-        )
+        switch (key) {
+          case 'suspendFilter':
+            Vue.set(
+              state.addModalForm,
+              key,
+              false
+            )
+            break
+          case 'priority':
+            Vue.set(
+              state.addModalForm,
+              key,
+              2
+            )
+            break
+          case 'counter':
+            Vue.set(
+              state.addModalForm,
+              key,
+              _default_counter_id
+            )
+            break
+          default:
+            Vue.set(
+              state.addModalForm,
+              key,
+              ''
+            )
+        }
       })
     },
   
@@ -1963,7 +2141,6 @@ export const store = new Vuex.Store({
     
       let formData = {
         comments: citizen.citizen_comments,
-        quick: citizen.qt_xn_citizen_ind,
         priority: citizen.priority,
         citizen: citizen,
         channel: active_service.channel_id,
@@ -1987,10 +2164,10 @@ export const store = new Vuex.Store({
       let activeQuantity = activeService[0].quantity
       let { citizen_id } = citizen
       let service_citizen = citizen
-      let quick = citizen.qt_xn_citizen_ind
       let priority = citizen.priority
-    
-      let obj = { citizen_comments, activeQuantity, citizen_id, service_citizen, quick, priority }
+      let counter = citizen.counter_id
+
+      let obj = { citizen_comments, activeQuantity, citizen_id, service_citizen, priority, counter }
       let keys = Object.keys(obj)
     
       keys.forEach(key => {
@@ -2054,7 +2231,7 @@ export const store = new Vuex.Store({
       state.examAlertMessage = payload
       state.examDismissCount = 999
     },
-
+  
     setLoginAlert(state, payload) {
       state.loginAlertMessage = payload
       state.loginDismissCount = 999
@@ -2110,8 +2287,8 @@ export const store = new Vuex.Store({
     examDismissCountDown(state, payload) {
       state.examDismissCount = payload
     },
-
-    loginDismissCountDown(state, payload){
+  
+    loginDismissCountDown(state, payload) {
       state.loginDismissCount = payload
     },
   
@@ -2125,16 +2302,30 @@ export const store = new Vuex.Store({
   
     toggleGAScreenModal: (state, payload) => state.showGAScreenModal = payload,
   
-    setQuickTransactionState: (state, payload) => state.user.qt_xn_csr_ind = payload,
-  
-    setReceptionistState: (state, payload) => state.user.receptionist_ind = payload,
-  
+    setReceptionistState: (state, payload) => {
+      state.user.receptionist_ind = payload
+    },
+
+    setCounterStatusState: (state, payload) => {
+      state.user.counter_id = payload
+    },
+
     setCSRState: (state, payload) => state.user.csr_state_id = payload,
   
     setUserCSRStateName: (state, payload) => state.user.csr_state.csr_state_name = payload,
+
+    setQuickList: (state, payload) => state.user.office.quick_list = payload,
+    
+    setBackOfficeList: (state, payload) => state.user.office.back_office_list = payload,
   
     setOffice: (state, officeType) => state.officeType = officeType,
-  
+
+    setDefaultCounter: (state, defaultCounter) => {
+      state.addModalForm.counter = defaultCounter.counter_id
+      state.serviceModalForm.counter = defaultCounter.counter_id
+      _default_counter_id = defaultCounter.counter_id
+    },
+
     flashServeNow: (state, payload) => state.serveNowStyle = payload,
   
     setServeNowAction: (state, payload) => state.serveNowAltAction = payload,
@@ -2180,6 +2371,15 @@ export const store = new Vuex.Store({
           payload[key]
         )
       })
+    },
+  
+    resetAddExamModal: (state) => {
+      state.addExamModal = {
+        visible: false,
+        setup: null,
+        step1MenuOpen: false,
+        office_number: null,
+      }
     },
   
     toggleGenFinReport(state, payload) {
@@ -2243,7 +2443,7 @@ export const store = new Vuex.Store({
         payload
       )
     },
-  
+
     setBookings(state, payload) {
       state.bookings = payload
     },
@@ -2251,7 +2451,7 @@ export const store = new Vuex.Store({
     setRooms(state, payload) {
       state.rooms = payload
     },
-  
+
     toggleBookingModal: (state, payload) => state.showBookingModal = payload,
   
     setClickedDate: (state, payload) => state.clickedDate = payload,
@@ -2263,7 +2463,7 @@ export const store = new Vuex.Store({
     toggleReturnExamModal: (state, payload) => state.showReturnExamModal = payload,
   
     toggleDeleteExamModalVisible: (state, payload) => state.showDeleteExamModal = payload,
-    
+  
     setSelectedExam(state, payload) {
       if (payload === 'clearGoto') {
         delete state.selectedExam.gotoDate
@@ -2271,7 +2471,7 @@ export const store = new Vuex.Store({
       }
       state.selectedExam = payload
     },
-  
+
     toggleScheduling: (state, payload) => {
       if (!payload) {
         state.scheduling = payload
@@ -2290,7 +2490,7 @@ export const store = new Vuex.Store({
     setEditExamFailure: (state, payload) => state.editExamFailureCount = payload,
   
     toggleEditBookingModal: (state, payload) => state.showEditBookingModal = payload,
-  
+
     setEditedBooking(state, payload) {
       if (typeof payload === 'object' && payload !== null) {
         state.editedBooking = Object.assign({}, payload)
@@ -2300,17 +2500,17 @@ export const store = new Vuex.Store({
         state.editedBookingOriginal = null
       }
     },
-  
+
     toggleRescheduling: (state, payload) => state.rescheduling = payload,
-  
+
     setEditedBookingOriginal: (state, payload) => state.editedBookingOriginal = payload,
   
     setOffices: (state, payload) => state.offices = payload,
   
     setOfficeFilter: (state, payload) => state.officeFilter = payload,
-  
+
     setSelectionIndicator: (state, payload) => state.selectionIndicator = payload,
-    
+  
     setResources: (state, payload) => state.roomResources = payload,
   
     setEvents: (state, payload) => state.calendarEvents = payload,
@@ -2319,9 +2519,9 @@ export const store = new Vuex.Store({
       let bookingCopy = Object.assign({}, booking)
       state.editedBooking = bookingCopy
     },
-  
+
     toggleEditGroupBookingModal: (state, payload) => state.showEditGroupBookingModal = payload,
-  
+
     setInventoryFilters(state, payload) {
       state.inventoryFilters[payload.type] = payload.value
     },
@@ -2337,7 +2537,15 @@ export const store = new Vuex.Store({
     },
   
     toggleOffsiteVisible: (state, payload) => state.offsiteVisible = payload,
-    
+  
     toggleExamsTrackingIP: (state, payload) => state.examsTrackingIP = payload,
+  
+    setAppointmentsStateInfo: (state, payload) => state.appointmentsStateInfo = payload,
+  
+    clearAddExamModalFromCalendarStatus: state => Vue.delete(state.addExamModal, 'fromCalendar'),
+  
+    toggleServeCitizenSpinner(state, payload) {
+      state.showServeCitizenSpinner = payload
+    },
   }
 })

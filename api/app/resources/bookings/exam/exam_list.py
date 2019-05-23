@@ -15,11 +15,12 @@ limitations under the License.'''
 import logging
 from flask import g, request
 from flask_restplus import Resource
-from sqlalchemy import exc
+from sqlalchemy import exc, or_, desc
 from app.models.bookings import Exam
 from app.models.theq import CSR
 from app.schemas.bookings import ExamSchema
-from qsystem import api, jwt
+from qsystem import api, oidc
+from datetime import datetime, timedelta
 
 
 @api.route("/exams/", methods=["GET"])
@@ -27,15 +28,33 @@ class ExamList(Resource):
 
     exam_schema = ExamSchema(many=True)
 
-    @jwt.requires_auth
+    @oidc.accept_token(require_token=True)
     def get(self):
         try:
-            csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
+            csr = CSR.find_by_username(g.oidc_token_info['username'])
+
+            ninety_day_filter = datetime.now() - timedelta(days=90)
 
             if csr.liaison_designate == 1:
-                exams = Exam.query.filter(Exam.deleted_date.is_(None)).all()
+                if request.args and request.args.get("office_number"):
+                    exams = Exam.query.filter(Exam.deleted_date.is_(None)) \
+                        .filter(or_(Exam.exam_returned_date.is_(None),
+                                    Exam.exam_returned_date > ninety_day_filter)) \
+                        .join(Exam.office, aliased=True) \
+                        .filter_by(office_number=request.args.get("office_number")) \
+                        .order_by(desc(Exam.exam_id))
+                else:
+                    exams = Exam.query.filter(Exam.deleted_date.is_(None)) \
+                                      .filter(or_(Exam.exam_returned_date.is_(None),
+                                                  Exam.exam_returned_date > ninety_day_filter)) \
+                                      .order_by(desc(Exam.exam_id))
+
             else:
-                exams = Exam.query.filter(Exam.deleted_date.is_(None)).filter_by(office_id=csr.office_id)
+                exams = Exam.query.filter(Exam.deleted_date.is_(None))\
+                                  .filter_by(office_id=csr.office_id)\
+                                  .filter(or_(Exam.exam_returned_date.is_(None),
+                                              Exam.exam_returned_date > ninety_day_filter))\
+                                  .order_by(desc(Exam.exam_id))
 
             search_kwargs = {}
 

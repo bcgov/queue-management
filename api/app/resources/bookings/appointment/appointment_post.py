@@ -17,7 +17,7 @@ from flask_restplus import Resource
 from flask import request, g
 from app.schemas.bookings import AppointmentSchema
 from app.models.theq import CSR
-from qsystem import api, api_call_with_retry, db, jwt
+from qsystem import api, api_call_with_retry, db, oidc
 
 
 @api.route("/appointments/", methods=["POST"])
@@ -25,13 +25,13 @@ class AppointmentPost(Resource):
 
     appointment_schema = AppointmentSchema()
 
-    @jwt.requires_auth
+    @oidc.accept_token(require_token=True)
     @api_call_with_retry
     def post(self):
 
         print("==> In Python POST /appointments/ endpoint")
 
-        csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
+        csr = CSR.find_by_username(g.oidc_token_info['username'])
         json_data = request.get_json()
 
         if not json_data:

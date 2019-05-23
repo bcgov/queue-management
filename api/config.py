@@ -73,30 +73,6 @@ class BaseConfig(object):
     print("    --> DB_HOST:     " + DB_HOST)
     print("    --> DB_PORT:     " + DB_PORT)
 
-    # JWT_OIDC Settings
-    JWT_OIDC_WELL_KNOWN_CONFIG = os.getenv('JWT_OIDC_WELL_KNOWN_CONFIG', '')
-    JWT_OIDC_ALGORITHMS = os.getenv('JWT_OIDC_ALGORITHMS', '')
-    JWT_OIDC_JWKS_URI = os.getenv('JWT_OIDC_JWKS_URI', '')
-    JWT_OIDC_ISSUER = os.getenv('JWT_OIDC_ISSUER', '')
-    JWT_OIDC_AUDIENCE = os.getenv('JWT_OIDC_AUDIENCE', '')
-    JWT_OIDC_CLIENT_SECRET = os.getenv('JWT_OIDC_CLIENT_SECRET', '')
-    JWT_OIDC_CACHING_ENABLED = os.getenv('JWT_OIDC_CACHING_ENABLED', '')
-    try:
-        JWT_OIDC_JWKS_CACHE_TIMEOUT = int(os.getenv('JWT_OIDC_JWKS_CACHE_TIMEOUT'))
-    except:
-        JWT_OIDC_JWKS_CACHE_TIMEOUT = 300
-
-    # #  Print out values.
-    # print("==> JWT config values")
-    # print("    --> JWT_OIDC_WELL_KNOWN_CONFIG:  " + JWT_OIDC_WELL_KNOWN_CONFIG)
-    # print("    --> JWT_OIDC_ALGORITHMS:         " + JWT_OIDC_ALGORITHMS)
-    # print("    --> JWT_OIDC_JWKS_URI:           " + JWT_OIDC_JWKS_URI)
-    # print("    --> JWT_OIDC_ISSUER:             " + JWT_OIDC_ISSUER)
-    # print("    --> JWT_OIDC_AUDIENCE:           " + JWT_OIDC_AUDIENCE)
-    # print("    --> JWT_OIDC_CLIENT_SECRET:      " + JWT_OIDC_CLIENT_SECRET)
-    # print("    --> JWT_OIDC_CACHING_ENABLED:    " + JWT_OIDC_CACHING_ENABLED)
-    # print("    --> JWT_OIDC_JWKS_CACHE_TIMEOUT: " + str(JWT_OIDC_JWKS_CACHE_TIMEOUT))
-
     THEQ_FEEDBACK = (os.getenv('THEQ_FEEDBACK','')).upper().replace(" ","").split(",")
     SLACK_URL = os.getenv('SLACK_URL', '')
     ROCKET_CHAT_URL = os.getenv('ROCKET_CHAT_URL')
@@ -140,7 +116,6 @@ class DevelopmentConfig(BaseConfig):
     else:
         SQLALCHEMY_ECHO=False
 
-
 class TestConfig(BaseConfig):
     DEBUG = True
     REDIS_DEBUG = True
@@ -155,7 +130,6 @@ class TestConfig(BaseConfig):
     else:
         SQLALCHEMY_ECHO=False
 
-
 class ProductionConfig(BaseConfig):
     DEBUG = True
     REDIS_DEBUG = True
@@ -169,7 +143,6 @@ class ProductionConfig(BaseConfig):
         SQLALCHEMY_ECHO=True
     else:
         SQLALCHEMY_ECHO=False
-
 
 def configure_app(app):
     config_name = os.getenv('FLASK_CONFIGURATION', 'default')

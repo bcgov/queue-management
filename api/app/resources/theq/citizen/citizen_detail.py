@@ -14,8 +14,8 @@ limitations under the License.'''
 
 from flask import request, g
 from flask_restplus import Resource
-from qsystem import api, api_call_with_retry, db, jwt, socketio
-from app.models.theq import Citizen, CSR
+from qsystem import api, api_call_with_retry, db, oidc, socketio
+from app.models.theq import Citizen, CSR, Counter
 from marshmallow import ValidationError
 from app.schemas.theq import CitizenSchema
 from sqlalchemy import exc
@@ -26,10 +26,10 @@ class CitizenDetail(Resource):
 
     citizen_schema = CitizenSchema()
 
-    @jwt.requires_auth
+    @oidc.accept_token(require_token=True)
     def get(self, id):
         try:
-            csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
+            csr = CSR.find_by_username(g.oidc_token_info['username'])
             citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
             result = self.citizen_schema.dump(citizen)
             return {'citizen': result.data,
@@ -39,15 +39,19 @@ class CitizenDetail(Resource):
             print(e)
             return {'message': 'API is down'}, 500
 
-    @jwt.requires_auth
+    @oidc.accept_token(require_token=True)
     @api_call_with_retry
     def put(self, id):
         json_data = request.get_json()
 
+        counter = Counter.query.filter(Counter.counter_name=="Counter")[0]
+        if 'counter_id' not in json_data:
+            json_data['counter_id'] = counter.counter_id
+
         if not json_data:
             return {'message': 'No input data received for updating citizen'}, 400
 
-        csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
+        csr = CSR.find_by_username(g.oidc_token_info['username'])
         citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
 
         try:

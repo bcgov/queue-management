@@ -7,12 +7,13 @@
            :ok-disabled="okButton.disabled"
            hide-header
            :size="returned ? 'md' : 'sm' "
+           id="return_exam_modal"
            @shown="show"
            @hidden="resetModal()"
            @cancel="resetModal()"
            @ok.prevent="submit">
     <FailureExamAlert />
-    <b-form>
+    <b-form autocomplete="off">
       <b-form-row>
         <b-col class="q-modal-header">
           {{ modalUse === 'return' ? 'Return Exam' : 'Edit Return Details' }}</b-col>
@@ -20,7 +21,7 @@
       <b-form-row>
         <b-col :cols="returned ? 3 : 12">
           <b-form-group class="mb-0">
-            <label class="mb-0">Exam Returned</label><br>
+            <label class="mb-0">Exam Status</label><br>
             <b-select id="exam-returned-select"
                       v-model="returned"
                       @input="handleReturnedStatus"
@@ -52,10 +53,19 @@
         <b-form-row>
           <b-col>
             <b-form-group class="mb-0 mt-2">
-              <label class="mb-0">Action Taken</label><br>
+              <label v-if="!errorText"
+                     class="mb-0">Action Taken</label>
+              <label v-if="errorText"
+                     style="color: red"
+                     class="mb-0">Maximum field length reached.  Use Notes field if needed.</label>
+              <br>
               <b-form-input v-model="exam_returned_tracking_number"
-                            placeholder="Include tracking info"
-                            ref="returnactiontaken"/>
+                            id="action_taken"
+                            placeholder="Include tracking info or disposition"
+                            ref="returnactiontaken"
+                            v-on:keydown="handleActionInput"
+                            @blur="removeError()"
+                            />
             </b-form-group>
           </b-col>
         </b-form-row>
@@ -63,7 +73,8 @@
           <b-col>
             <b-form-group class="mb-0 mt-2">
               <label class="mb-0">Notes</label><br>
-              <b-textarea v-model="notes"
+              <b-input v-model="notes"
+                          id="notes"
                           :rows="2"/>
             </b-form-group>
           </b-col>
@@ -89,8 +100,9 @@
         returned: false,
         exam_written_ind: true,
         exam_returned_date: null,
+        errorText: false,
         notes: null,
-        exam_returned_tracking_number: null,
+        exam_returned_tracking_number: '',
         returnOptions: [
           { value: false, text: 'Not Returned' },
           { value: true, text: 'Returned' },
@@ -150,7 +162,19 @@
     },
     methods: {
       ...mapActions(['putExamInfo', 'getExams', ]),
-      ...mapMutations(['toggleReturnExamModal', 'setEditExamSuccess', 'setEditExamFailure',  ]),
+      ...mapMutations(['toggleReturnExamModal', 'setEditExamFailure',  ]),
+      handleActionInput(e) {
+        if (e.keyCode == 8 || e.keyCode == 46) {
+          this.removeError()
+          return true
+        }
+        if (this.exam_returned_tracking_number && this.exam_returned_tracking_number.length >= 250) {
+          this.errorText = true
+          e.preventDefault()
+          e.stopPropagation()
+          return false
+        }
+      },
       handleReturnedStatus(value) {
         if (value) {
           if (!this.exam_returned_date) {
@@ -169,25 +193,27 @@
         this.notes = tempValues.notes
         this.exam_returned_tracking_number = tempValues.exam_returned_tracking_number
         if (tempValues.exam_returned_date) {
-          console.log('twas true')
           this.modalUse = 'edit'
           this.returned = true
-          this.exam_returned_date = tempValues.exam_returned_date
+          this.exam_returned_date = moment(tempValues.exam_returned_date).format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ')
           this.exam_written_ind = tempValues.exam_written_ind
           return
         }
         this.modalUse = 'return'
         this.exam_written_ind = 1
-
       },
       resetModal() {
         this.toggleReturnExamModal(false)
         this.exam = null
+        this.errorText = false
         this.returned = false
         this.exam_returned_date = null
-        this.exam_returned_tracking_number = null
+        this.exam_returned_tracking_number = ''
         this.notes  = null
         this.resetExam()
+      },
+      removeError() {
+        this.errorText = false
       },
       submit() {
         if (this.okButton.title === 'Cancel') {

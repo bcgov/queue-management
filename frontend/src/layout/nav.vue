@@ -15,7 +15,7 @@
   -->
 
 <template>
-  <div style="position: relative">
+  <div style="">
     <div class="dash-button-flex-button-container pb-0 mb-3">
       <!-- SLOT FOR EACH VIEW'S BUTTON CONTROLS-->
       <div v-if="this.$route.path === '/booking' || this.$route.path === '/exams' ">
@@ -24,16 +24,17 @@
                   @click="clickIcon">
           <font-awesome-icon icon="stopwatch"
                              style="font-size: 1.0rem;color: white;"
-                             class="p0" />
+                             class="p0"
+                             id="booking_time_tracking"/>
         </b-button>
       </div>
       <router-view name="buttons"></router-view>
 
-      <div v-if="calendarSetup && this.$route.path === '/booking'"
+      <div v-if="calendarSetup && (this.$route.path === '/booking' || this.$route.path === '/agenda')"
            style="flex-grow: 8"
            class="q-inline-title">{{ calendarSetup.title }}</div>
     <div />
-      <div v-if="!scheduling && !rescheduling">
+      <div v-if="!scheduling && !rescheduling && !citizenInvited">
         <b-dropdown variant="outline-primary"
                     class="pl-0 ml-0 mr-3"
                     right
@@ -42,12 +43,13 @@
             <font-awesome-icon icon="bars"
                                style="font-size: 1.18rem;"/>
           </template>
-          <div :style="{width:200+'px'}">
-            <b-dropdown-item to="/queue">The Q</b-dropdown-item>
-            <b-dropdown-item to="/booking" v-if="showExams">Room Booking</b-dropdown-item>
-            <b-dropdown-item to="/appointments" v-if="showAppointments">Appointments</b-dropdown-item>
-            <b-dropdown-item to="/exams" v-if="showExams">Exam Inventory</b-dropdown-item>
-            <b-dropdown-item to="/agenda" v-if="isGAorCSR && showExams">Office Agenda</b-dropdown-item>
+          <div :style="{width:200+'px'}"
+               id="nav-dropdown-buttons">
+            <b-dropdown-item to="/queue" id="the_q">The Q</b-dropdown-item>
+            <b-dropdown-item to="/booking" v-if="showExams" id="room_bookings">Room Booking</b-dropdown-item>
+            <b-dropdown-item to="/appointments" v-if="showAppointments" id="appointments">Appointments</b-dropdown-item>
+            <b-dropdown-item to="/exams" v-if="showExams" id="exam_inventory">Exam Inventory</b-dropdown-item>
+            <b-dropdown-item to="/agenda" v-if="isGAorCSR && showExams" id="office_agenda">Office Agenda</b-dropdown-item>
             <template  v-if="user.role && user.role.role_code=='GA'">
               <b-dropdown-item @click="clickGAScreen" :class="gaPanelStyle">
                 <font-awesome-icon v-if="showGAScreenModal"
@@ -59,6 +61,7 @@
               <b-dropdown-divider />
             </template>
             <b-dropdown-item v-if="showAdmin" to="/admin">Administration</b-dropdown-item>
+            <b-dropdown-item v-if="showAdmin" @click="clickRefresh">Refresh</b-dropdown-item>
             <b-dropdown-divider v-if="showAdmin" />
             <b-dropdown-item>
               <b-button class="btn-primary w-100 m-0"
@@ -93,6 +96,7 @@
         'showAppointments'
       ]),
       ...mapState([
+        'citizenInvited',
         'showServiceModal',
         'calendarSetup',
         'rescheduling',
@@ -141,7 +145,7 @@
       },
     },
     methods: {
-      ...mapActions(['clickGAScreen', 'clickAddCitizen']),
+      ...mapActions(['clickGAScreen', 'clickAddCitizen', 'clickRefresh']),
       ...mapMutations(['toggleFeedbackModal', 'toggleServiceModal']),
       clickFeedback() {
         this.toggleFeedbackModal(true)

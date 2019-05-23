@@ -15,7 +15,7 @@ limitations under the License.'''
 from filelock import FileLock
 from flask import g, request
 from flask_restplus import Resource
-from qsystem import api, api_call_with_retry, db, jwt, socketio
+from qsystem import api, api_call_with_retry, db, oidc, socketio
 from app.models.theq import Citizen, CSR, CitizenState, Period, PeriodState, ServiceReq, SRState
 from app.schemas.theq import CitizenSchema
 
@@ -25,44 +25,35 @@ class CitizenGenericInvite(Resource):
     citizen_schema = CitizenSchema()
     citizens_schema = CitizenSchema(many=True)
 
-    @jwt.requires_auth
+    @oidc.accept_token(require_token=True)
     @api_call_with_retry
     def post(self):
 
-        lock = FileLock("lock/invite_citizen.lock")
+        csr = CSR.find_by_username(g.oidc_token_info['username'])
+        lock = FileLock("lock/invite_citizen_{}.lock".format(csr.office_id))
 
         with lock:
-            csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
 
             active_citizen_state = CitizenState.query.filter_by(cs_state_name='Active').first()
             waiting_period_state = PeriodState.get_state_by_name("Waiting")
             citizen = None
+            json_data = request.get_json()
 
-            try:
-                qt_xn_csr_ind = request.get_json().get('qt_xn_csr_ind')
-            except AttributeError:
-                qt_xn_csr_ind = csr.qt_xn_csr_ind
-
-            if qt_xn_csr_ind:
-                citizen = Citizen.query \
-                    .filter_by(qt_xn_citizen_ind=1, cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
-                    .join(Citizen.service_reqs) \
-                    .join(ServiceReq.periods) \
-                    .filter_by(ps_id=waiting_period_state.ps_id) \
-                    .filter(Period.time_end.is_(None)) \
-                    .order_by(Citizen.priority, Citizen.citizen_id) \
-                    .first()
+            if json_data and 'counter_id' in json_data:
+                counter_id = int(json_data.get('counter_id'))
             else:
-                citizen = Citizen.query \
-                    .filter_by(qt_xn_citizen_ind=0, cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
-                    .join(Citizen.service_reqs) \
-                    .join(ServiceReq.periods) \
-                    .filter_by(ps_id=waiting_period_state.ps_id) \
-                    .filter(Period.time_end.is_(None)) \
-                    .order_by(Citizen.priority, Citizen.citizen_id) \
-                    .first()
+                counter_id = int(csr.counter_id)
 
-            # Either no quick txn citizens for the quick txn csr, or vice versa
+            citizen = Citizen.query \
+                .filter_by(counter_id=counter_id, cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
+                .join(Citizen.service_reqs) \
+                .join(ServiceReq.periods) \
+                .filter_by(ps_id=waiting_period_state.ps_id) \
+                .filter(Period.time_end.is_(None)) \
+                .order_by(Citizen.priority, Citizen.citizen_id) \
+                .first()
+
+            # If no matching citizen with the same counter type, get next one
             if citizen is None:
                 citizen = Citizen.query \
                     .filter_by(cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \

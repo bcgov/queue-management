@@ -19,7 +19,7 @@ from sqlalchemy import exc
 from app.models.bookings import Exam
 from app.models.theq import CSR
 from app.schemas.bookings import ExamSchema
-from qsystem import api, jwt
+from qsystem import api, oidc
 
 
 @api.route("/exams/<int:id>/", methods=["GET"])
@@ -27,12 +27,12 @@ class ExamDetail(Resource):
 
     exam_schema = ExamSchema()
 
-    @jwt.requires_auth
+    @oidc.accept_token(require_token=True)
     def get(self, id):
 
         print("==> In Python GET /exams/<id>/ endpoint")
 
-        csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
+        csr = CSR.find_by_username(g.oidc_token_info['username'])
 
         try:
             exam = Exam.query.filter_by(exam_id=id).first()

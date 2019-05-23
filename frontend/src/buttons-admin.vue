@@ -15,7 +15,7 @@
   -->
 
 <template>
-  <b-form>
+  <b-form autocomplete="off">
     <template v-if="user.role && user.role.role_code==='SUPPORT' ">
       <div style="display: inline-flex;">
         <span style="font-size: 1.4rem; font-weight: 600; margin-right: 1em"> Editing: </span>
@@ -51,7 +51,8 @@
           {value: 'smartboard', text: 'Smartboard Content'},
           {value: 'invigilator', text: 'Invigilators'},
           {value: 'room', text: 'Rooms'},
-          {value: 'examtype', text: 'Exam Types'}
+          {value: 'examtype', text: 'Exam Types'},
+          {value: 'counter', text: 'Counters'}
         ],
         optionsGA: [
           {value: 'csr', text: 'CSRs'},

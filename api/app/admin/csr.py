@@ -45,10 +45,10 @@ class CSRConfig(Base):
     column_labels = {
         'username': 'Username',
         'office.office_name': 'Office',
-        'ita_designate': 'ITA Designate',
-        'pesticide_designate': 'Pesticide Exam Designate',
+        'ita_designate': 'Office Exam Manager',
+        'pesticide_designate': 'Pesticide Client Liaison/Program Specialist',
         'finance_designate': 'Financial Reporting Designate',
-        'liaison_designate': 'Liaison Designate',
+        'liaison_designate': 'ITA Liaison/Program Specialist',
         'role.role_desc': 'Role',
         'deleted': 'Deleted'
     }
@@ -65,11 +65,11 @@ class CSRConfig(Base):
         'finance_designate': {'default': '0'},
         'liaison_designate': {'default': '0'},
     }
-    form_excluded_columns = ('periods',)
+    form_excluded_columns = ('periods')
     form_create_rules = ('username', 'qt_xn_csr_ind', 'receptionist_ind', 'ita_designate', 'pesticide_designate',
-                         'finance_designate', 'liaison_designate', 'csr_state', 'role', 'office','deleted',)
+                         'finance_designate', 'liaison_designate', 'csr_state', 'role', 'office','deleted', 'counter')
     form_edit_rules = ('username', 'qt_xn_csr_ind', 'receptionist_ind', 'ita_designate', 'pesticide_designate',
-                       'finance_designate', 'liaison_designate', 'csr_state', 'role', 'office', 'deleted',)
+                       'finance_designate', 'liaison_designate', 'csr_state', 'role', 'office', 'deleted','counter')
 
     def get_return_url(self):
         return get_redirect_target() or self.get_url('.index_view')

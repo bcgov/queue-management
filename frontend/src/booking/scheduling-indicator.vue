@@ -66,7 +66,7 @@
       }
     },
     methods: {
-      ...mapActions(['finishBooking', 'actionRestoreAll']),
+      ...mapActions(['finishBooking', ]),
       ...mapMutations(['toggleEditBookingModal']),
       cancel() {
         if (this.rescheduling) {
@@ -74,14 +74,12 @@
           return
         }
         let pushToExams = false
-        if (this.selectedExam && this.selectedExam.referrer === 'scheduling') {
+        if (this.selectedExam && this.selectedExam.referrer === 'inventory') {
           pushToExams = true
         }
         this.finishBooking()
         if (pushToExams) {
-          this.actionRestoreAll().then( () => {
-            this.$router.push('/exams')
-          })
+          this.$router.push('/exams')
         }
       }
     }

@@ -48,10 +48,14 @@ Ensure you have python 3. I also had to install: gcc, python3-venv, libmysqlclie
 1. `cd queue-management/api`
 1. `pip3 install -r requirements.txt`
 
-### Add one required keycloak config file
+### Copy two required files to the correct place in your directory structure
 
 1. `cd queue-management`
 1. `cp documentation/demo-files/keycloak.json frontend/static/keycloak.json`
+1. `cd api`
+1. `mkdir client_secrets`
+1. `cd ..`
+1. `cp documentation/demo-files/secrets.json api/client_secrets/secrets.json`
 
 ### Set Environment Variables required:
 
@@ -87,24 +91,18 @@ You should be able to login in using the following IDs:
 user/user - Regular Customer Service Representative (CSR)  
 admin/admin - Manager of the office (Government Agent)
 
-Additional API Enviornment Variables of note, which you can add to the .env file
+Additional API Environment Variables of note, which you can add to the .env file
 
 1. SECRET_KEY - Flask required key
-1. THEQ_CLEAR_COMMENTS_FLAG - used to not remove comments for debugging purposes
-1. THEQ_SNOWPLOW_ENDPOINT - Snowplow URL
-1. THEQ_SNOWPLOW_APPID - Snowplow Application ID
-1. THEQ_SNOWPLOW_NAMESPACE - Snowplow NameSpace
-1. THEQ_SNOWPLOW_CALLFLAG (True/False) - Used to disable calls to SnowPlow
 1. SERVER_NAME - required for API POD if not localhost.
-1. LOG_ERRORS (True/Flase) - To log socket.io errors
-1. THEQ_FEEDBACK - String of endpoint names to send Feedback to (eg. 'Slack, Service Now' or 'Slack')
-1. SLACK_URL - used to send feedback to Slack
-1. ROCKET_CHAT_URL - used to send feedback to Rocket Chat
-1. SERVICENOW_INSTANCE - used to send feedback to Service Now, the instance of your Service Now environment
-1. SERVICENOW_USER - the login ID of a Service Now ID used to create Service Now incidents
-1. SERVICENOW_PASSWORD - the password of the SERVICENOW_USER account
-1. SERVICENOW_TABLE - the name of the Service Now incident table to be updated
-1. SERVICENOW_ASSIGN_GROUP - the name of the Service Now group to be assigned to the incident
+1. POSTMAN_OPERATOR_PASSWORD - required for Postman and Jest testing.
+
+Additional features that can be turned on by environment variables (see the .env file for details)
+
+1. Integration with Snowplow Analytics
+1. Integration with Slack
+1. Integration with Rocket Chat
+1. Integration with Service Now
 
 We are using Snowplow & Looker to display our Analytics.
 

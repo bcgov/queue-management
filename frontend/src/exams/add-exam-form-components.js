@@ -35,7 +35,7 @@ export const DateQuestion = Vue.component('date-question', {
       this.handleInput({
         target: {
           name: 'expiry_date',
-          value: e
+          value: e,
         }
       })
     }
@@ -51,7 +51,8 @@ export const DateQuestion = Vue.component('date-question', {
           <DatePicker :value="exam[q.key]"
                       lang="en"
                       @input="selectDate"
-                      class="w-50"></DatePicker>
+                      class="w-50"
+                      ></DatePicker>
         </b-form-group>
       </b-col>
       <checkmark :validated="validationObj[q.key].valid" />
@@ -82,26 +83,32 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
         return 0
       }
       if (this.addExamModal.setup === 'individual') {
-        let exams = this.examTypes.filter(type => type.exam_type_name.includes('Single'))
+        let exams = this.examTypes.filter(type =>
+          type.ita_ind === 1 &&
+          type.group_exam_ind === 0 &&
+          !type.exam_type_name.includes('Monthly'));
         return exams.sort((a,b) => sorter(a,b))
       }
-      // TODO reimplement filter for Pesticides when they are re-activated
       if(this.addExamModal.setup === 'other') {
         let exams = this.examTypes.filter( type =>
-          !type.exam_type_name.includes('Group') &&
-          !type.exam_type_name.includes('Single') &&
-          !type.exam_type_name.includes('Monthly Session Exam') &&
-          !type.exam_type_name.includes('Pesticide')
-        )
+          type.ita_ind === 0 &&
+          type.group_exam_ind === 0 &&
+          type.pesticide_exam_ind === 0 &&
+          !type.exam_type_name.includes('Monthly')
+        );
         return exams.sort((a,b) => sorter(a,b))
       }
       if (this.addExamModal.setup === 'group') {
-        let exams = this.examTypes.filter(type => type.exam_type_name.includes('Group'))
+        let exams = this.examTypes.filter(type =>
+          type.group_exam_ind === 1
+        );
         return exams.sort((a,b) => sorter(a,b))
       }
       if (this.addExamModal.setup === 'pesticide') {
-        let exams = this.examTypes.filter(type => type.exam_type_name.includes('Pesticide'))
-        return exams
+        let exams = this.examTypes.filter(type =>
+          type.pesticide_exam_ind === 1 &&
+          type.group_exam_ind === 0);
+        return exams.sort((a,b) => sorter(a,b))
       }
     },
     inputText() {
@@ -151,7 +158,7 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
       <h5 v-if="addExamModal.setup === 'other' ">Add Non-ITA Exam</h5>
       <h5 v-if="addExamModal.setup === 'pesticide' ">Add Pesticide Exam</h5>
       <label>Exam Type</label><br>
-        <div @click="clickInput">
+        <div @click="clickInput" id="exam_type_dropdown">
           <b-input read-only
                    autocomplete="off"
                    :value="inputText"
@@ -214,6 +221,16 @@ export const ExamReceivedQuestion = Vue.component('exam-received-question', {
   },
   methods: {
     ...mapMutations(['captureExamDetail', 'toggleIndividualCaptureTabRadio']),
+    unsetDate(e) {
+      if (!e && this.modalSetup === 'individual') {
+        this.handleInput({
+          target: {
+            name: 'exam_received_date',
+            value: null
+          }
+        })
+      }
+    },
     preSetDate() {
       if (this.modalSetup === 'other' || this.modalSetup === 'pesticide') {
         this.handleInput({
@@ -225,7 +242,6 @@ export const ExamReceivedQuestion = Vue.component('exam-received-question', {
       }
     },
     selectRecdDate(e) {
-      console.log(e)
       this.handleInput({
         target: {
           name: 'exam_received_date',
@@ -243,6 +259,7 @@ export const ExamReceivedQuestion = Vue.component('exam-received-question', {
           </label><br>
           <b-form-radio-group v-model="showRadio"
                               @input="preSetDate()"
+                              @change="unsetDate"
                               autocomplete="off"
                               :options="['other', 'pesticide'].includes(modalSetup) ? otherOptions : options"/>
         </b-form-group>
@@ -285,6 +302,7 @@ export const InputQuestion = Vue.component('input-question', {
             <b-form-input :value="exam[q.key]"
                           :name="q.key"
                           :key="q.key"
+                          :id="q.key"
                           autocomplete="off"
                           @input.native="preHandleInput" />
           </b-form-group>
@@ -302,6 +320,7 @@ export const InputQuestion = Vue.component('input-question', {
             <b-form-input :value="exam[q.key]"
                           :name="q.key"
                           :key="q.key"
+                          :id="q.key"
                           autocomplete="off"
                           @input.native="preHandleInput" />
           </b-form-group>
@@ -317,6 +336,7 @@ export const LocationInput = Vue.component('input-question', {
   components: { checkmark },
   computed: {
     ...mapState({
+      examTypes: 'examTypes',
       setup: state => state.addExamModal.setup,
       capturedExam: state => state.capturedExam,
       booking: state => state.addExamModule.booking,
@@ -336,6 +356,25 @@ export const LocationInput = Vue.component('input-question', {
         return true
       }
     },
+    invigilator() {
+      if (this.exam.invigilator) {
+        if (this.exam.invigilator === 'sbc') {
+          return {
+            show: true,
+            text: 'SBC Staff'
+          }
+        }
+        if (this.exam.invigilator.invigilator_id) {
+          return {
+            show: true,
+            text: this.exam.invigilator.invigilator_name
+          }
+        }
+      }
+      return {
+        show: false,
+      }
+    },
     bookingDetails() {
       if (this.exam.exam_time) {
         let date = moment(this.exam.exam_time).format('ddd MMM Do, YYYY')
@@ -347,30 +386,27 @@ export const LocationInput = Vue.component('input-question', {
     }
   },
   methods: {
-    ...mapActions(['actionSaveAll']),
     ...mapMutations(['toggleScheduling', 'setAddExamModalSetting', 'setSelectedExam']),
     launchSchedule() {
+      let { exam_type_id } = this.examTypes.find(t => t.exam_type_name === 'Monthly Session Exam')
       let exam = {
-        exam_name: 'Monthly Session',
+        exam_name: this.exam.exam_name,
         examinee_name: 'Monthly Session',
         exam_method: 'tbd',
-        offiice_id: this.user.office_id,
+        office_id: this.user.office_id,
         exam_type: {
           exam_type_name: 'Monthly Session Exam',
-          exam_type_id: 16,
+          exam_type_id,
           number_of_hours: 4,
         },
         number_of_students: 1,
       }
-      this.actionSaveAll().then( () => {
-        this.toggleScheduling(true)
-        exam.referrer = 'scheduling'
-        this.setSelectedExam(exam)
-        this.$router.push('/booking')
-        this.setAddExamModalSetting(false)
-      })
+      this.toggleScheduling(true)
+      exam.referrer = 'scheduling'
+      this.setSelectedExam(exam)
+      this.$router.push('/booking')
+      this.setAddExamModalSetting(false)
     }
-    
   },
   template: `
     <fragment>
@@ -385,10 +421,10 @@ export const LocationInput = Vue.component('input-question', {
                             :name="q.key"
                             autocomplete="off"
                             :key="q.key"
+                            :id="q.key"
                             @input.native="handleInput" />
             </b-form-group>
           </b-col>
-          <checkmark :validated="validationObj[q.key].valid"  />
         </b-row>
       </template>
       <template v-if="capturedExam.on_or_off === 'on'">
@@ -402,7 +438,7 @@ export const LocationInput = Vue.component('input-question', {
           </b-col>
         </b-row>
         <b-row no-gutters >
-          <b-col cols="11">
+          <b-col cols="12">
             <b-form-group>
               <label>Scheduled For
                 <span v-if="error" style="color: red">{{ validationObj[q.key].message }}</span>
@@ -411,14 +447,14 @@ export const LocationInput = Vue.component('input-question', {
                             disabled />
             </b-form-group>
           </b-col>
-           <checkmark :validated="validationObj[q.key].valid"  />
+          
         </b-row>
-        <b-row no-gutters v-if="exam.invigilator && exam.invigilator.invigilator_name">
-          <b-col cols="11">
+        <b-row no-gutters v-if="invigilator.show">
+          <b-col cols="12">
             <b-form-group>
               <label>Invigilator
               </label>
-              <b-form-input :value="exam.invigilator.invigilator_name"
+              <b-form-input :value="invigilator.text"
                             autocomplete="off"
                             disabled />
             </b-form-group>
@@ -479,7 +515,8 @@ export const NotesQuestion = Vue.component('notes-question', {
           <label>Click to Display the Notes Field (Optional)</label><br>
           <b-button @click="handleClick"
                     class="btn-secondary"
-                    size="sm">Display Notes Field?</b-button>
+                    size="sm"
+                    id="notes">Display Notes Field?</b-button>
         </b-form-group>
         <b-form-group v-if="notes">
           <label>Notes (Optional)</label><br>
@@ -507,7 +544,6 @@ export const OffsiteSelect = Vue.component('offsite-select', {
     }),
   },
   methods: {
-    ...mapActions(['actionSaveAll']),
     ...mapMutations(['captureExamDetail']),
     preHandleInput(e) {
       this.handleInput(e)
@@ -573,6 +609,7 @@ export const SelectOffice = Vue.component('select-office', {
               value: office_id
             }
           })
+          this.$nextTick(function() { this.$root.$emit('validateform') })
           return
         }
         this.handleInput({
@@ -626,7 +663,6 @@ export const TimeQuestion = Vue.component('time-question', {
                       lang="en"
                       @input="selectTime"
                       format="h:mm a"
-                      confirm
                       autocomplete="off"
                       placeholder="Select Time"
                       class="w-50"

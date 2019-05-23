@@ -13,7 +13,6 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 
 import Vue from 'vue'
-import "@babel/polyfill"
 import 'es6-promise/auto'
 import { store } from './store/'
 import BootstrapVue from 'bootstrap-vue'
@@ -24,7 +23,6 @@ import {
   faAngleLeft,
   faAngleRight,
   faBars,
-  faBinoculars,
   faCalendar,
   faCaretDown,
   faCaretLeft,
@@ -36,6 +34,7 @@ import {
   faExclamation,
   faExclamationTriangle,
   faFilter,
+  faLifeRing,
   faMinus,
   faPlus,
   faSort,
@@ -60,7 +59,6 @@ library.add(
   faAngleLeft,
   faAngleRight,
   faBars,
-  faBinoculars,
   faCalendar,
   faCaretLeft,
   faCaretRight,
@@ -71,6 +69,7 @@ library.add(
   faExclamation,
   faExclamationTriangle,
   faFilter,
+  faLifeRing,
   faMinus,
   faPlus,
   faSort,

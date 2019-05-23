@@ -20,7 +20,7 @@
         </div>
       </div>
       <template v-if="!confirm">
-        <b-form>
+        <b-form autocomplete="off">
           <b-form-row v-if="examAssociated">
             <b-col class="mb-2">
               <div class="q-info-display-grid-container">
@@ -44,7 +44,7 @@
                   </div>
                   <div class="q-id-grid-col">
                     <div>Duration:</div>
-                    <div>{{ this.event.exam.exam_type.number_of_hours }} hrs</div>
+                    <div>{{ this.event.exam.exam_type.number_of_hours }} hrs {{ this.event.exam.exam_type.number_of_minutes }} min</div>
                   </div>
                   <div class="q-id-grid-col">
                     <div>Expiry:</div>
@@ -68,8 +68,9 @@
             <b-col cols="3">
               <b-form-group>
                 <label>Collect Fees</label><br>
-                <b-select v-model="fees"
-                          @change="checkValue"
+                <b-select id="fees"
+                          v-model="fees"
+                          @change.native="checkValue"
                           :options="feesOptions" />
               </b-form-group>
             </b-col>
@@ -78,32 +79,11 @@
             <b-col>
               <b-form-group>
                 <label>Contact Information (Email or Phone Number)</label><br>
-                <b-input id="contact_information"
+                <b-input autocomplete="off"
+                         id="contact_information"
                          type="text"
-                         @change="checkValue"
+                         @change.native="checkValue"
                          v-model="booking_contact_information"/>
-              </b-form-group>
-            </b-col>
-          </b-form-row>
-          <b-form-row v-if="fees">
-            <b-col cols="4">
-              <b-form-group>
-                <label>Fee Option</label>
-                <b-select :options="roomRates" v-model="rate" />
-              </b-form-group>
-            </b-col>
-            <b-col cols="8">
-              <b-form-group>
-                <label>Invoice To</label>
-                <b-select :options="invoiceOptions" v-model="invoice"/>
-              </b-form-group>
-            </b-col>
-          </b-form-row>
-          <b-form-row v-if="invoice==='custom'">
-            <b-col cols="12">
-              <b-form-group>
-                <label>Enter Name of Entity to Invoice</label><br>
-                <b-input />
               </b-form-group>
             </b-col>
           </b-form-row>
@@ -223,8 +203,11 @@
         added: 0,
         invigilator: null,
         editedFields: [],
-        fees: false,
-        feesOptions: [ {text: 'No', value: false}, ],
+        fees: '',
+        feesOptions: [
+          {text: 'No', value: "false"},
+          {text: 'Yes', value: "true"},
+        ],
         invoice: null,
         invoiceOptions: [ {text: 'Custom', value: 'custom'} ],
         labelColor: 'black',
@@ -497,8 +480,8 @@
         if (!this.editedFields.includes('title')) {
           this.title = this.event.title
         }
-        if (!this.editedFields.includes('fee')) {
-          this.fee = this.event.fee
+        if (!this.editedFields.includes('fees')) {
+          this.fees = this.event.fees
         }
         if (!this.editedFields.includes('booking_contact_information')){
           this.booking_contact_information = this.event.booking_contact_information
@@ -535,8 +518,8 @@
         if (this.editedFields.includes('title')) {
           changes['booking_name'] = this.title
         }
-        if (this.editedFields.includes('fee')) {
-          changes['fees'] = this.fee
+        if (this.editedFields.includes('fees')) {
+          changes['fees'] = this.fees
         }
         if (this.editedFields.includes('invigilator')) {
           changes.invigilator_id = this.invigilator
@@ -548,7 +531,9 @@
             changes.sbc_staff_invigilated = 1
           }
         }
-        changes['booking_contact_information'] = this.booking_contact_information
+        if (this.editedFields.includes('contact_information')){
+          changes['booking_contact_information'] = this.booking_contact_information
+        }
         if (Object.keys(changes).length === 0) {
           this.message = 'No Changes Made'
         } else {

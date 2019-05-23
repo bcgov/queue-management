@@ -3,147 +3,147 @@
 <template>
   <div id="serveModal" class="serve-modal">
     <div class="serve-modal-content">
-      <b-alert :show="this.serveModalAlert != ''"
-                style="h-align: center"
-                variant="warning">{{this.serveModalAlert}}</b-alert>
-      <div class="modal_header" v-dragged="onDrag">
-        <div>
-          <h4 style="font-weight:900; color:#6e6e6e">
-            {{ simplifiedModal ? 'Exams Time Tracking' : 'Servce Citizen' }}</h4>
-        </div>
-        <div>
-          <button
-                    class="btn btn-link"
+      <template v-if="showServeCitizenSpinner">
+        <div class="q-loader" />
+      </template>
+      <template v-else>
+        <b-alert :show="this.serveModalAlert != ''"
+                  style="h-align: center"
+                  variant="warning">{{this.serveModalAlert}}</b-alert>
+        <div class="modal_header" v-dragged="onDrag">
+          <div>
+            <h4 style="font-weight:900; color:#6e6e6e">
+              {{ simplifiedModal ? 'Exams Time Tracking' : 'Serve Citizen' }}</h4>
+          </div>
+          <div>
+            <button class="btn btn-link"
                     @click="toggleFeedback">Feedback</button>
-          <button
-                    class="btn btn-link"
+            <button class="btn btn-link"
                     style="margin-left: 20px"
                     @click="toggleMinimize">{{ minimizeWindow ? "Maximize" : "Minimize" }}</button>
+          </div>
         </div>
-      </div>
-      <template v-if="!simplifiedModal">
-        <b-container id="serve-citizen-modal-top" fluid v-if="!minimizeWindow">
-          <b-row no-gutters class="p-2">
-            <b-col col cols="4">
-              <div><h6>Ticket #: <strong>{{citizen.ticket_number}}</strong></h6></div>
-              <div><h6>Channel: <strong>{{channel.channel_name}}</strong></h6></div>
-              <div><h6>Created At: <strong>{{formatTime(citizen.start_time)}}</strong></h6></div>
-            </b-col>
-            <b-col cols="auto" class="ml-3 mr-2">
-              <h6>Comments:</h6>
-            </b-col>
-            <b-col col cols="*" style="text-align: left" class="pr-2">
-              <div>
-                <b-textarea id="serve_comment_textarea"
-                            v-model="comments"
-                            :rows="4"
-                            size="sm" />
-              </div>
-            </b-col>
-          </b-row>
-        </b-container>
-        <b-container id="serve-top-buttons-container" v-if="!minimizeWindow">
-          <div>
-            <b-button @click="clickServiceBeginService"
-                    v-if="reception"
-                    :disabled="serviceBegun===true || performingAction"
-                    v-bind:class="buttonStyle"
-                    style="margin-right:8px; opacity:1"
-                    id="serve-citizen-begin-service-button">Begin Service</b-button>
-            <b-button @click="clickReturnToQueue"
-                    v-if="reception"
-                    :disabled="performingAction"
-                    class="btn serve-btn"
-                    id="serve-citizen-return-to-queue-button">Return to Queue</b-button>
-          </div>
-          <div>
-            <b-button @click="clickCitizenLeft"
-                    :disabled="performingAction"
-                    class="btn-danger serve-btn"
-                    v-if="reception"
-                    id="serve-citizen-citizen-left-button">Citizen Left</b-button>
-          </div>
-        </b-container>
-      </template>
-      <ServeCitizenTable v-if="!minimizeWindow"/>
-      <template v-if="!simplifiedModal && !minimizeWindow">
-        <b-container fluid
-                     id="serve-light-inner-container"
-                     class="pt-3 pb-2">
-          <b-row no-gutters>
-            <b-col cols="7" />
-            <b-col cols="auto"
-                   style="align: right">
-              <b-form-checkbox v-model="quick"
-                               value="1"
-                               unchecked-value="0"
-                               v-if="reception"
-                               class="quick-checkbox"
-                               style="color:white; margin-right: 8px;">
-                  <span style="font: 400 16px Myriad-Pro;">Quick Txn</span>
-                  <span class="quick-span" v-if="quick"></span> <!-- For puppeteer testing to see if quick is selected -->
-              </b-form-checkbox>
-              <select id="priority-selection"
-                      class="custom-select"
-                      v-model="priority_selection"
-                      style="margin-right:8px;">
-                  <option value=1>High Priority</option>
-                  <option value=2>Default Priority</option>
-                  <option value=3>Low Priority</option>
-              </select>
-              <b-button class="btn-primary serve-btn"
-                        @click="clickAddService"
-                        :disabled="serviceBegun===false || performingAction">Add Next Service</b-button>
-            </b-col>
-            <b-col cols="2" />
-          </b-row>
-        </b-container>
-        <div v-if="!minimizeWindow">
-          <b-container fluid
-                       id="serve-citizen-modal-footer">
-                  <div style="display:flex; flex-direction:column; margin-left:10px;">
-                      <b-form-checkbox v-model="accurate_time_ind"
-                                                      v-if="serviceBegun===true"
-                                                      value="0"
-                                                      style="color:white; margin:0 0 8px;"
-                                                      unchecked-value="1">
-                                      <span  style="font: 400 16px Myriad-Pro;">Inaccurate Time</span>
-                                      </b-form-checkbox>
-                      <b-button @click="clickServiceFinish"
-                              :disabled="serviceBegun===false || performingAction"
-                              class="btn-success serve-btn"
-                              id="serve-citizen-finish-button">Finish</b-button>
-                  </div>
-                <b-button @click="clickHold"
-                          :disabled="serviceBegun===false || performingAction"
-                          class="btn-warning serve-btn"
-                          id="serve-citizen-place-on-hold-button">Place on Hold</b-button>
+        <template v-if="!simplifiedModal">
+          <b-container id="serve-citizen-modal-top" fluid v-if="!minimizeWindow">
+            <b-row no-gutters class="p-2">
+              <b-col col cols="4">
+                <div><h6>Ticket #: <strong>{{citizen.ticket_number}}</strong></h6></div>
+                <div><h6>Channel: <strong>{{channel.channel_name}}</strong></h6></div>
+                <div><h6>Created At: <strong>{{formatTime(citizen.start_time)}}</strong></h6></div>
+              </b-col>
+              <b-col cols="auto" class="ml-3 mr-2">
+                <h6>Comments:</h6>
+              </b-col>
+              <b-col col cols="*" style="text-align: left" class="pr-2">
+                <div>
+                  <b-textarea id="serve_comment_textarea"
+                              v-model="comments"
+                              :rows="4"
+                              size="sm" />
+                </div>
+              </b-col>
+            </b-row>
           </b-container>
-        </div>
-      </template>
-      <template v-if="simplifiedModal && !minimizeWindow">
-        <b-container class="serve-citizen-modal-footer" fluid>
-          <b-row no-gutters class="w-100" align-h="end">
-            <b-col cols="auto">
-              <b-button class="btn-primary serve-btn"
-                        @click="clickAddService">Add Next Service</b-button>
-            </b-col>
-          </b-row>
-          <b-row no-gutters
-                 class="mt-3"
-                 align-h="end">
-            <b-col cols="auto">
-              <b-button @click="clickSimplifiedFinish"
-                        style="width: 100px;"
-                         class="btn-warning serve-btn"
-                         id="serve-citizen-finish-button">Finish</b-button>
-              <b-button @click="clickContinue"
-                        style="width: 100px;"
-                        class="btn-success serve-btn ml-2"
-                        id="serve-citizen-finish-button">Continue</b-button>
-            </b-col>
-          </b-row>
-        </b-container>
+          <b-container id="serve-top-buttons-container" v-if="!minimizeWindow">
+            <div>
+              <b-button @click="clickServiceBeginService"
+                      v-if="reception"
+                      :disabled="serviceBegun===true || performingAction"
+                      v-bind:class="buttonStyle"
+                      style="margin-right:8px; opacity:1"
+                      id="serve-citizen-begin-service-button">Begin Service</b-button>
+              <b-button @click="clickReturnToQueue"
+                      v-if="reception"
+                      :disabled="performingAction"
+                      class="btn serve-btn"
+                      id="serve-citizen-return-to-queue-button">Return to Queue</b-button>
+            </div>
+            <div>
+              <b-button @click="clickCitizenLeft"
+                      :disabled="performingAction"
+                      class="btn-danger serve-btn"
+                      v-if="reception"
+                      id="serve-citizen-citizen-left-button">Citizen Left</b-button>
+            </div>
+          </b-container>
+        </template>
+        <ServeCitizenTable v-if="!minimizeWindow"/>
+        <template v-if="!simplifiedModal && !minimizeWindow">
+          <b-container fluid
+                   id="serve-light-inner-container"
+                   class="pt-3 pb-2"
+                    v-if="!minimizeWindow">
+        <b-row no-gutters>
+          <b-col cols="7" />
+          <b-col cols="auto" style="align: right">
+            <select id="counter-selection" v-show="reception && !simplifiedModal" class="custom-select" v-model="counter_selection">
+              <option v-for="counter in user.office.counters"
+                    :value="counter.counter_id"
+                    :key="counter.counter_id">
+                {{counter.counter_name}}
+              </option>
+            </select>
+            <select id="priority-selection" class="custom-select px-1" v-model="priority_selection" style="margin-right:8px;">
+                <option value=1>High Priority</option>
+                <option value=2>Default Priority</option>
+                <option value=3>Low Priority</option>
+            </select>
+            <b-button class="btn-primary serve-btn"
+                      @click="clickAddService"
+                      :disabled="serviceBegun===false || performingAction"
+                      >Add Next Service</b-button>
+          </b-col>
+          <b-col cols="2" />
+        </b-row>
+      </b-container>
+
+          <div v-if="!minimizeWindow">
+            <b-container fluid
+                         id="serve-citizen-modal-footer">
+                    <div style="display:flex; flex-direction:column; margin-left:10px;">
+                        <b-form-checkbox v-model="accurate_time_ind"
+                                                        v-if="serviceBegun===true"
+                                                        value="0"
+                                                        style="color:white; margin:0 0 8px;"
+                                                        unchecked-value="1">
+                                        <span  style="font: 400 16px Myriad-Pro;">Inaccurate Time</span>
+                                        </b-form-checkbox>
+                        <b-button @click="clickServiceFinish"
+                                :disabled="serviceBegun===false || performingAction"
+                                class="btn-success serve-btn"
+                                id="serve-citizen-finish-button">Finish</b-button>
+                    </div>
+                  <b-button @click="clickHold"
+                            :disabled="serviceBegun===false || performingAction"
+                            class="btn-warning serve-btn"
+                            id="serve-citizen-place-on-hold-button">Place on Hold</b-button>
+            </b-container>
+          </div>
+        </template>
+        <template v-if="simplifiedModal && !minimizeWindow">
+          <b-container class="serve-citizen-modal-footer" fluid>
+            <b-row no-gutters class="w-100" align-h="end">
+              <b-col cols="auto">
+                <b-button class="btn-primary serve-btn"
+                          @click="clickAddService">Add Next Service</b-button>
+              </b-col>
+            </b-row>
+            <b-row no-gutters
+                   class="mt-3"
+                   align-h="end">
+              <b-col cols="auto">
+                <b-button @click="clickSimplifiedFinish"
+                          style="width: 100px;"
+                           class="btn-warning serve-btn"
+                           id="serve-citizen-finish-button">Finish</b-button>
+                <b-button @click="clickContinue"
+                          style="width: 100px;"
+                          class="btn-success serve-btn ml-2"
+                          id="serve-citizen-finish-button">Continue</b-button>
+              </b-col>
+            </b-row>
+          </b-container>
+        </template>
       </template>
     </div>
   </div>
@@ -174,8 +174,11 @@ export default {
   },
   updated() {
     if (!this.citizen && this.citizen.ticket_number === "") {
+      this.$store.commit('toggleServeCitizenSpinner', true)
       console.log("Screen All Citizens")
-      this.screenAllCitizens(this.$route)
+      this.screenAllCitizens(this.$route).then(() => {
+        this.$store.commit('toggleServeCitizenSpinner', false)
+      })
     }
     setTimeout( () => {
       if (!this.citizen && this.citizen.ticket_number === "") {
@@ -187,9 +190,11 @@ export default {
     ...mapState([
       'performingAction',
       'showServiceModal',
+      'showServeCitizenSpinner',
       'serviceBegun',
       'serviceModalForm',
-      'serveModalAlert'
+      'serveModalAlert',
+      'user'
     ]),
     ...mapGetters({
       invited_citizen: 'invited_citizen',
@@ -237,18 +242,18 @@ export default {
       }
       return this.active_service.channel
     },
-    quick: {
-      get() { return this.serviceModalForm.quick },
-      set(value) {
-        this.editServiceModalForm({type:'quick',value})
-      }
-    },
     priority_selection: {
       get() { return this.serviceModalForm.priority },
       set(value) {
         this.editServiceModalForm({type:'priority',value})
       }
-    }
+    },
+    counter_selection: {
+      get() { return this.serviceModalForm.counter },
+      set(value) {
+        this.editServiceModalForm({ type: "counter", value })
+      }
+    },
   },
 
   methods: {
@@ -385,11 +390,6 @@ export default {
 }
 strong {
   font-size: 1.35rem;
-}
-#priority-selection {
-    display: inline-block;
-    width: 135px;
-    padding-right: 0;
 }
 .custom-select {
     line-height: 25px;

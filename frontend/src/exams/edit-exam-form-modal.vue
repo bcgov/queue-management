@@ -8,11 +8,13 @@
            size="md">
     <FailureExamAlert class="m-0 p-0" />
     <div v-if="exam">
-      <span style="font-size: 1.4rem; font-weight: 600;">Edit Exam</span>
+      <span style="font-size: 1.4rem; font-weight: 600;">Edit Exam Details</span>
+
       <b-form v-if="showAllFields">
-        <b-form-row v-if="is_liaison_designate && examType === 'group'">
+        <b-form-row v-if="is_liaison_designate && (examType === 'group' || examType === 'pest')">
           <OfficeDrop :columnW="10" :office_number="office_number" :setOffice="setOffice" />
         </b-form-row>
+
         <b-form-row>
           <b-col cols="6">
             <b-form-group>
@@ -23,6 +25,7 @@
                             v-model="fields.event_id" />
             </b-form-group>
           </b-col>
+
           <b-col cols="6">
             <b-form-group>
               <label class="my-0">Exam Method</label><br>
@@ -33,57 +36,67 @@
             </b-form-group>
           </b-col>
         </b-form-row>
-        <b-form-row v-if="examType !== 'challenger' ">
-            <b-col>
-              <b-form-group>
-                <label class="my-0">Exam Type</label><br>
-                <div @click="handleExamInputClick">
-                  <b-input read-only
-                           class="less-15-mb"
-                           :value="examInputText"
-                           placeholder="click here to see options"
-                           :style="examInputStyle" />
-                </div>
-                <div :class="examTypeDropClass"
-                     style="border: 1px solid grey"
-                     @click="handleExamInputClick">
-                  <template v-for="type in examTypeDropItems">
-                    <b-dd-header v-if="type.header"
-                                 :style="{backgroundColor: type.exam_color}"
-                                 :class="type.class">{{ type.exam_type_name }}</b-dd-header>
-                    <b-dd-item v-else :style="{backgroundColor: type.exam_color}"
-                               @click="handleExamDropClick"
-                               :value="type.exam_type_id"
-                               :id="type.exam_type_id"
-                               :class="type.class">{{ type.exam_type_name }}</b-dd-item>
-                  </template>
-                </div>
-              </b-form-group>
-            </b-col>
-          </b-form-row>
-        <b-form-row v-if="examType === 'challenger'">
+
+        <b-form-row>
           <b-col>
-            <b-form-group>
+            <b-form-group v-if="!['pest', 'challenger'].includes(examType)">
+              <label class="my-0">Exam Type</label><br>
+              <div @click="handleExamInputClick">
+                <b-input :style="examInputStyle"
+                         :value="examInputText"
+                         class="less-15-mb"
+                         placeholder="click here to see options"
+                         read-only />
+              </div>
+              <div :class="examTypeDropClass"
+                   style="border: 1px solid grey;"
+                   @click="handleExamInputClick">
+                <template v-for="(type, i) in examTypeDropItems">
+                  <b-dd-header v-if="type.header"
+                               :key="i+'exam-type-dd-h'"
+                               :style="type.exam_color !== '#FFFFF' ? {backgroundColor: type.exam_color} : null">
+                    {{type.exam_type_name }}
+                  </b-dd-header>
+                  <b-dd-item v-else
+                             :id="type.exam_type_id"
+                             :key="i+'exam-type-dd'"
+                             :style="type.exam_color !== '#FFFFF' ? {backgroundColor: type.exam_color} : null"
+                             :value="type.exam_type_id"
+                             @click="handleExamDropClick">{{ type.exam_type_name }}</b-dd-item>
+                </template>
+              </div>
+            </b-form-group>
+
+            <b-form-group v-else>
               <label class="mb-0 mt-1">Exam Type</label>
-              <b-form-input id="exam_name" type="text"
-                            class="less-10-mb"
+              <b-form-input :value="exam.exam_type.exam_type_name"
+                            class="less-10-mb form-control"
                             disabled
-                            value="Monthly Session Exam" />
+                            id="exam_name"
+                            type="text" />
             </b-form-group>
           </b-col>
         </b-form-row>
+
         <b-form-row>
           <b-col>
             <b-form-group>
-              <label class="mb-0 mt-1">Exam Name</label>
+              <label v-if="!lengthError"
+                     class="mb-0 mt-1">Exam Name</label>
+              <label v-if="lengthError"
+                     style="color: red"
+                     class="mb-0 mt-1">Maximum field length reached.</label>
               <b-form-input id="exam_name"
                             type="text"
                             class="less-10-mb"
+                            @blur="removeError"
+                            v-on:keydown="checkInputLength"
                             v-model="fields.exam_name" />
             </b-form-group>
           </b-col>
         </b-form-row>
-        <b-form-row>
+
+        <b-form-row v-if="!otherOfficeExam">
           <b-col :col="!this.fields.exam_received_date" :cols="this.exam_received ? 3 : '' ">
             <b-form-group>
               <label class="my-0">Exam Received?</label>
@@ -94,22 +107,22 @@
                         :options="examReceivedOptions" />
             </b-form-group>
           </b-col>
+
           <b-col v-if="exam_received">
             <b-form-group>
               <label class="my-0">Received Date</label><br>
-              <DatePicker v-model="fields.exam_received_date"
+              <DatePicker :value="fields.exam_received_date"
+                          @input="handleDate"
+                          format="YYYY-MM-DD"
+                          value-type="format"
+                          lang="en"
                           id="exam_received_date"
                           input-class="form-control"
-                          class="w-100 my-0 less-10-mb"
-                          lang="en">
-                <template slot="calendar-icon">
-                  <font-awesome-icon icon="clock"
-                                     class="m-0 p-0"
-                                     style="font-size: .9rem;"/>
-                </template>
+                          class="w-100 my-0 less-10-mb">
               </DatePicker>
             </b-form-group>
           </b-col>
+
           <b-col v-if="examType === 'group' || examType === 'challenger'" col>
             <b-form-group>
               <label class="my-0"># of Writers</label><br>
@@ -117,14 +130,17 @@
                        id="number_of_students" />
             </b-form-group>
           </b-col>
+
           <b-col class="w-100" v-if="examType === 'individual'">
             <b-form-group>
               <label class="my-0">Expiry Date</label><br>
               <DatePicker v-model="fields.expiry_date"
+                          lang="en"
                           id="exam_expiry"
+                          format="YYYY-MM-DD"
+                          value-type="format"
                           input-class="form-control"
-                          class="w-100 less-10-mb"
-                          lang="en">
+                          class="w-100 less-10-mb">
                 <template slot="calendar-icon">
                   <font-awesome-icon icon="clock"
                                      class="m-0 p-0"
@@ -134,6 +150,7 @@
             </b-form-group>
           </b-col>
         </b-form-row>
+
         <b-form-row v-if="examType === 'individual' || examType === 'other'">
           <b-col>
             <b-form-group>
@@ -145,6 +162,7 @@
             </b-form-group>
           </b-col>
         </b-form-row>
+
         <b-form-row>
           <b-col>
             <b-form-group>
@@ -154,6 +172,7 @@
           </b-col>
         </b-form-row>
       </b-form>
+
       <b-form v-if="!showAllFields">
         <b-form-row>
           <b-col class="mb-2">
@@ -171,8 +190,11 @@
                 <div class="q-id-grid-col">
                   <div>Type:</div>
                   <div v-if="isITAGropOrSingleExam(exam)"
-                       :style="{color: exam.exam_type.exam_color}">{{ exam.exam_type.exam_type_name }}</div>
-                  <div v-else>{{ exam.exam_type.exam_type_name }}</div>
+                       :style="{ backgroundColor: exam.exam_type.exam_color,
+                                 height: 10+'px',
+                                 margin: '4px 0px 0px 0px',
+                                 width: 10+'px', }"></div>
+                  <div>{{ exam.exam_type.exam_type_name }}</div>
                 </div>
                 <div class="q-id-grid-col">
                   <div>Method:</div>
@@ -182,6 +204,7 @@
             </div>
           </b-col>
         </b-form-row>
+
         <b-form-row>
           <b-col>
             <b-form-group>
@@ -193,17 +216,22 @@
                         v-model="exam_received" />
             </b-form-group>
           </b-col>
+
           <b-col v-if="exam_received" cols="6">
             <b-form-group>
               <label class="my-0">Date Received</label><br>
               <DatePicker v-model="fields.exam_received_date"
                           id="exam_received_date"
+                          format="YYYY-MM-DD"
+                          value-type="format"
                           input-class="form-control"
                           class="w-100 my-0 less-10-mb"
+                          type="date"
                           lang="en"/>
             </b-form-group>
           </b-col>
         </b-form-row>
+
         <b-form-row>
           <b-col>
             <b-form-group>
@@ -213,19 +241,23 @@
           </b-col>
         </b-form-row>
       </b-form>
+
       <div v-if="showMessage"
            class="mb-3"
            style="color: red;">{{ this.message }}</div>
+
       <div style="display: flex; justify-content: flex-end; width: 100%">
-        <b-btn v-if="is_ita_designate"
+        <b-btn v-if="is_ita_designate || role_code === 'GA' || is_liaison_designate"
                class="btn-danger mr-2"
                @click="deleteExam()">Delete Exam</b-btn>
         <b-btn class="btn-secondary mr-2"
                @click="toggleEditExamModal(false)">Cancel</b-btn>
-        <b-btn v-if="!allowSubmit()"
+        <b-btn v-if="!allowSubmit"
+               id="edit_submit_not_allow"
                class="btn-primary disabled"
                @click="setMessage">Submit</b-btn>
-        <b-btn v-else-if="allowSubmit()"
+        <b-btn v-else-if="allowSubmit"
+               id="edit_submit_allow"
                class="btn-primary"
                @click="submit">Submit</b-btn>
       </div>
@@ -253,7 +285,13 @@
           { value: false, text: 'No' },
           { value: true, text: 'Yes' },
         ],
-        fields: {},
+        fields: {
+          exam_received_date: null,
+          notes: null,
+          event_id: null,
+          exam_name: null,
+        },
+        lengthError: false,
         message: '',
         methodOptions: [
           { text: 'paper', value: 'paper'},
@@ -272,7 +310,62 @@
                    'examTypes',
                    'offices',
                    'showEditExamModal',
-                   'showDeleteExamModal', ]),
+                   'showDeleteExamModal',
+                   'user', ]),
+      fieldsEdited() {
+        let fieldsEdited = []
+        let data = Object.assign({}, this.fields)
+        if (data.exam_received_date) {
+          data.exam_received_date = moment(data.exam_received_date).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
+        }
+        if (data.expiry_date) {
+          data.expiry_date = moment(data.expiry_date).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
+        }
+        for (let key in data) {
+          if (data[key] != this.actionedExam[key]) {
+            fieldsEdited.push(key)
+          }
+        }
+        if (fieldsEdited.length === 1 && fieldsEdited.includes('notes')) {
+          if (!data.notes && !this.actionedExam.notes) {
+            return false
+          }
+        }
+        return fieldsEdited
+      },
+      allowSubmit() {
+        if (this.actionedExam) {
+          let fieldsEdited = []
+          let data = Object.assign({}, this.fields)
+          if (data.exam_received_date) {
+            data.exam_received_date = moment(data.exam_received_date).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
+          }
+          if (data.expiry_date) {
+            data.expiry_date = moment(data.expiry_date).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
+          }
+          for (let key in data) {
+            if (data[key] != this.actionedExam[key]) {
+              fieldsEdited.push(key)
+            }
+          }
+          if (fieldsEdited.length === 1 && fieldsEdited.includes('notes')) {
+            if (!data.notes && !this.actionedExam.notes) {
+              return false
+            }
+          }
+          return (fieldsEdited.length > 0)
+        }
+        return false
+      },
+      otherOfficeExam() {
+        if (!this.is_liaison_designate) {
+          return false
+        }
+        if (this.actionedExam && this.actionedExam.office_id != this.user.office_id) {
+          return true
+        }
+        return false
+      },
       exam() {
         if (Object.keys(this.actionedExam).length > 0) {
           return this.actionedExam
@@ -280,7 +373,7 @@
         return false
       },
       examInputStyle() {
-        if (this.examObject) {
+        if (this.examObject && this.examObject.exam_color !== '#FFFFFF') {
           let { exam_color } = this.examObject
           return { border: `1px solid ${exam_color}`, boxShadow: `inset 0px 0px 0px 3px ${exam_color}`, }
         }
@@ -299,18 +392,23 @@
         return ''
       },
       examType() {
-        if (this.examRow && this.examRow.exam_type) {
-          if (this.exam.exam_type.exam_type_name.includes('Challenger')) {
+        if (this.exam && this.exam.exam_type) {
+          let { exam_type } = this.exam
+
+          if (exam_type.exam_type_name === 'Monthly Session Exam') {
             return 'challenger'
           }
-          if (this.exam.exam_type.exam_type_name.includes('Group')) {
+          if (exam_type.pesticide_exam_ind) {
+            return 'pest'
+          }
+          if (exam_type.group_exam_ind) {
             return 'group'
           }
-          if (this.exam.exam_type.exam_type_name.includes('Single')) {
+          if (exam_type.ita_ind) {
             return 'individual'
           }
+          return 'other'
         }
-        return 'other'
       },
       examTypeDropClass() {
         if (!this.clickedMenu) {
@@ -321,36 +419,29 @@
         }
       },
       examTypeDropItems() {
-        if (this.exam) {
-          if (this.exam.offsite_location) {
-            return this.examTypes.filter(type => type.exam_type_name.includes('Group'))
+        if (this.examType && this.examTypes) {
+          let type = this.examType
+          if (type === 'challenger' || type === 'pest') {
+            return null
           }
-          if (!this.exam.offsite_location) {
-            if (this.exam.exam_type.ita_ind == 1) {
-              return this.examTypes.filter(type => type.exam_type_name.includes('Single'))
-            }else {
-              return this.examTypes.filter(type => type.ita_ind == 0)
-            }
+          let types = this.examTypes.filter(t => t.exam_type_name !== 'Monthly Session Exam' && !t.pesticide_exam_ind)
+
+          if (type === 'group') {
+            return types.filter(t => t.group_exam_ind)
           }
+          if (type === 'individual') {
+            return types.filter(t => t.ita_ind && !t.group_exam_ind)
+          }
+          return types.filter(t => !t.ita_ind && !t.group_exam_ind)
         }
         return []
       },
       showAllFields() {
-        if (this.exam) {
-          if (this.exam.exam_type.exam_type_name === 'Monthly Session Exam') {
-            if (this.role_code === 'GA') {
-              return true
-            }
-            return false
-          }
-          if (!this.exam.offsite_location) {
-            return true
-          }
-          if (this.exam.offsite_location) {
-            if (this.role_code === 'GA' || this.is_liaison_designate) {
-              return true
-            }
-          }
+        if (this.role_code === 'GA' || this.is_liaison_designate || this.is_ita_designate) {
+          return true
+        }
+        if (this.examType && ['individual', 'other'].includes(this.examType)) {
+          return true
         }
         return false
       },
@@ -361,7 +452,7 @@
         set(e) {
           this.toggleEditExamModal(e)
         }
-      }
+      },
     },
     methods: {
       ...mapActions(['getBookings', 'getExams', 'getOffices', 'putExamInfo',]),
@@ -374,26 +465,27 @@
         'toggleEditExamModal',
         'toggleDeleteExamModalVisible'
       ]),
-      allowSubmit() {
-        if (this.actionedExam) {
-          let fieldsEdited = false
-          let fields = Object.keys(this.fields)
-          for (let key of fields) {
-            if (this.fields[key] != this.actionedExam[key]) {
-              fieldsEdited = true
-              this.showMessage = false
-              break
-            }
-          }
-          return fieldsEdited
-        }
-        return false
+      handleDate(date) {
+        Vue.set(
+          this.fields,
+          'exam_received_date',
+          date
+        )
       },
       isITAGropOrSingleExam(ex) {
-        if (ex.exam_type.exam_type_name.includes('Group') || ex.exam_type.exam_type_name.includes('Single') ) {
+        return ex.exam_type.ita_ind ? true : false
+      },
+      checkInputLength(e) {
+        if (e.keyCode == 8 || e.keyCode == 46) {
+          this.removeError()
           return true
         }
-        return false
+        if (this.fields.exam_name && this.fields.exam_name.length >= 50) {
+          this.lengthError = true
+          e.preventDefault()
+          e.stopPropagation()
+          return false
+        }
       },
       deleteExam() {
         let deleteExamInfo = {}
@@ -405,7 +497,7 @@
             examinee_name: this.fields.examinee_name,
             event_id: this.fields.event_id,
           }
-        }else {
+        } else {
           deleteExamInfo = {
             booking_id: null,
             exam_id: this.fields.exam_id,
@@ -429,7 +521,7 @@
       },
       populateForm() {
         let exam = this.actionedExam
-        Object.keys(this.actionedExam).forEach( key => {
+        Object.keys(exam).forEach( key => {
           if (typeof exam[key] === 'string' || typeof exam[key] === 'number') {
             Vue.set(
               this.fields,
@@ -438,14 +530,21 @@
             )
           }
         })
-        this.office_number = exam.office.office_number
-        if (exam.exam_received_date) {
+        if (exam.expiry_date) {
+          this.fields.expiry_date = new moment(exam.expiry_date).format('YYYY-MM-DD')
+        }
+        if (exam.exam_received_date && moment().isValid(exam.exam_received_date)) {
+          this.fields.exam_received_date = new moment(exam.exam_received_date).format('YYYY-MM-DD')
           this.exam_received = true
         }
+        this.office_number = exam.office.office_number
       },
       setOffice(officeNumber) {
         this.office_number = officeNumber
         this.fields.office_id = this.offices.find(office => office.office_number == officeNumber).office_id
+      },
+      removeError() {
+        this.lengthError = false
       },
       reset() {
         Object.keys(this.fields).forEach(key => {
@@ -455,6 +554,7 @@
             null
           )
         })
+        this.lengthError = false
         this.clickedMenu = false
         this.message = null
         this.office_number = null
@@ -466,7 +566,7 @@
         this.resetExam()
       },
       setMessage() {
-        if (!this.allowSubmit()) {
+        if (!this.allowSubmit) {
           if (!this.fields.office_id) {
             this.message = 'Please specify a valid office.'
           } else {
@@ -476,15 +576,22 @@
         }
       },
       submit() {
+        let data = Object.assign({}, this.fields)
         let putRequest = {
           exam_id: this.fields.exam_id
         }
-        Object.keys(this.fields).forEach( key => {
-          if (this.fields[key] != this.actionedExam[key]) {
-            putRequest[key] = this.fields[key]
+        if (data.exam_received_date) {
+          data.exam_received_date = moment(data.exam_received_date).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
+        }
+        if (data.expiry_date) {
+          data.expiry_date = moment(data.expiry_date).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
+        }
+        Object.keys(data).forEach( key => {
+          if (data[key] != this.actionedExam[key]) {
+            putRequest[key] = data[key]
           }
         })
-        if (!this.exam_received && this.actionedExam.exam_received_date) {
+        if (!this.exam_received) {
           putRequest['exam_received_date'] = null
         }
         this.putExamInfo(putRequest).then( () => {
@@ -496,11 +603,11 @@
       updateExamReceived(e) {
         let { exam_received_date } = this.fields
         if (e && !exam_received_date) {
-          this.fields['exam_received_date'] = new moment().utc().format('YYYY-MM-DD[T]hh:mm:ssZ')
+          this.fields.exam_received_date = new moment().format('YYYY-MM-DD')
           return
         }
-        if (!e && exam_received_date) {
-          this.fields['exam_received_date'] = null
+        if (!e) {
+          this.fields.exam_received_date = null
         }
       }
     },

@@ -54,14 +54,16 @@
                     :q="q"
                     :validationObj="validationObj"
                     :handleInput="handleInput"
-                    :exam="exam" />
+                    :exam="exam"
+                    :id="q.key"/>
       <TimeQuestion v-if="q.kind==='time'"
                     v-show="addExamModal.setup !== 'challenger' || exam.on_or_off === 'off'"
                     :error="error"
                     :q="q"
                     :validationObj="validationObj"
                     :handleInput="handleInput"
-                    :exam="exam" />
+                    :exam="exam"
+                    :id="q.key"/>
       <NotesQuestion v-if="q.kind==='notes'"
                      :error="error"
                      :q="q"
@@ -192,6 +194,11 @@
           if (key === 'notes') {
             valid[key] = true
             messages[key] = ''
+            return
+          }
+          if (key === 'exam_name' && answer && answer.length > 50) {
+            valid['exam_name'] = false
+            messages['exam_name'] = 'Maximum Field Length Exceeded'
             return
           }
           if (key === 'office_id' && answer == null) {

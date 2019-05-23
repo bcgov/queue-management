@@ -91,10 +91,10 @@
         ]
       },
       filter(value) {
-        if (!this.simplified) {
-          return this.form_data.search
+        if (this.$route.path === '/exams' || this.$route.path === '/booking') {
+          return `exams ${this.form_data.search}`
         }
-        return 'Exams'
+        return this.form_data.search
       },
     },
 
@@ -104,7 +104,6 @@
       rowClicked(item, index) {
         let id = item.service_id
         this.setAddModalSelectedItem(item.service_name)
-        this.selectedRow = id
         this.$store.commit('updateAddModalForm', {type:'service',value:id})
       }
     }

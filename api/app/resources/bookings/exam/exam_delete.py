@@ -18,7 +18,7 @@ from flask_restplus import Resource
 from app.models.bookings import Exam
 from app.models.theq import CSR
 from app.schemas.bookings import ExamSchema
-from qsystem import api, db, jwt
+from qsystem import api, db, oidc
 
 
 @api.route("/exams/<int:id>/", methods=["DELETE"])
@@ -26,10 +26,10 @@ class ExamDelete(Resource):
 
     exam_schema = ExamSchema()
 
-    @jwt.requires_auth
+    @oidc.accept_token(require_token=True)
     def delete(self, id):
 
-        csr = CSR.find_by_username(g.jwt_oidc_token_info['preferred_username'])
+        csr = CSR.find_by_username(g.oidc_token_info['username'])
 
         exam = Exam.query.filter_by(exam_id=id).first_or_404()
 

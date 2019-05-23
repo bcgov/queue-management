@@ -30,5 +30,6 @@ class RoomSchema(ma.ModelSchema):
     color = fields.Str()
     room_id = fields.Int(dump_only=True)
     room_name = fields.Str()
+    deleted = fields.Str()
 
     office = fields.Nested(OfficeSchema())
