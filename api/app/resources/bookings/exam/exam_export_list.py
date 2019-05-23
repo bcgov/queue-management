@@ -70,15 +70,18 @@ class ExamList(Resource):
                               .join(Office, Booking.office_id == Office.office_id) \
                               .join(ExamType, Exam.exam_type_id == ExamType.exam_type_id)
 
-            non_exams = Booking.query.join(Exam, Booking.booking_id == Exam.booking_id, isouter=True) \
-                                     .filter(Booking.start_time >= start_date) \
-                                     .filter(Booking.start_time < end_date) \
-                                     .filter(Exam.booking_id.is_(None)) \
-                                     .join(Room, Booking.room_id == Room.room_id, isouter=True) \
-                                     .join(Office,  Booking.office_id == Office.office_id) \
+            if exam_type == 'all_bookings':
+                non_exams = Booking.query.join(Exam, Booking.booking_id == Exam.booking_id, isouter=True) \
+                                         .filter(Booking.start_time >= start_date) \
+                                         .filter(Booking.start_time < end_date) \
+                                         .filter(Exam.booking_id.is_(None)) \
+                                         .join(Room, Booking.room_id == Room.room_id, isouter=True) \
+                                         .join(Office,  Booking.office_id == Office.office_id) \
 
             if not is_designate:
                 exams = exams.filter(Booking.office_id == csr.office_id)
+                if exam_type == 'all_bookings':
+                    non_exams = non_exams.filter(Booking.office_id == csr.office_id)
 
             if exam_type == 'ita':
                 exams = exams.filter(ExamType.ita_ind == 1)
@@ -169,51 +172,52 @@ class ExamList(Resource):
                     return {"message": "Issue writing row to CSV ",
                             "key": key}, 500
 
-            for non_exam in non_exams:
-                row = []
-                try:
-                    for key in keys:
-                        if key == "room_name":
-                            write_booking_room(row, non_exam)
-                        elif key == "invigilator_name":
-                            row.append("")
-                        elif key == "sbc_staff_invigilated":
-                            row.append("")
-                        elif key == "exam_received_date":
-                            row.append("")
-                        elif key == "exam_written_ind":
-                            row.append("")
-                        elif key == "exam_returned_date":
-                            row.append("")
-                        elif key == "office_name":
-                            row.append(getattr(non_exam.office, key))
-                        elif key == "exam_type_name":
-                            row.append("Non Exam Booking")
-                        elif key in booking_keys:
-                            row.append(getattr(non_exam, key))
-                        elif key in non_exam_keys:
-                            which_non_exam_key(non_exam, row, key)
-                        elif key == "exam_id":
-                            row.append("")
-                        elif key == "exam_name":
-                            row.append("")
-                        elif key == "examinee_name":
-                            row.append("")
-                        elif key == "event_id":
-                            row.append("")
-                        elif key == "fees":
-                            which_non_exam_key(non_exam, row, key)
-                        elif key == "number_of_students":
-                            row.append("")
-                        elif key == "exam_received_ind":
-                            row.append("")
+            if exam_type == 'all_bookings':
+                for non_exam in non_exams:
+                    row = []
+                    try:
+                        for key in keys:
+                            if key == "room_name":
+                                write_booking_room(row, non_exam)
+                            elif key == "invigilator_name":
+                                row.append("")
+                            elif key == "sbc_staff_invigilated":
+                                row.append("")
+                            elif key == "exam_received_date":
+                                row.append("")
+                            elif key == "exam_written_ind":
+                                row.append("")
+                            elif key == "exam_returned_date":
+                                row.append("")
+                            elif key == "office_name":
+                                row.append(getattr(non_exam.office, key))
+                            elif key == "exam_type_name":
+                                row.append("Non Exam Booking")
+                            elif key in booking_keys:
+                                row.append(getattr(non_exam, key))
+                            elif key in non_exam_keys:
+                                which_non_exam_key(non_exam, row, key)
+                            elif key == "exam_id":
+                                row.append("")
+                            elif key == "exam_name":
+                                row.append("")
+                            elif key == "examinee_name":
+                                row.append("")
+                            elif key == "event_id":
+                                row.append("")
+                            elif key == "fees":
+                                which_non_exam_key(non_exam, row, key)
+                            elif key == "number_of_students":
+                                row.append("")
+                            elif key == "exam_received_ind":
+                                row.append("")
 
-                    out.writerow(row)
+                        out.writerow(row)
 
-                except AttributeError as error:
-                    logging.error(error, exc_info=True)
-                    return {"message": "Issue writing row to CSV ",
-                            "key": key}, 500
+                    except AttributeError as error:
+                        logging.error(error, exc_info=True)
+                        return {"message": "Issue writing row to CSV ",
+                                "key": key}, 500
 
             output = make_response(dest.getvalue())
             output.headers["Content-Disposition"] = "attachment; filename=export.csv"
@@ -227,8 +231,10 @@ class ExamList(Resource):
 
 
 def write_booking_room(row, booking):
-    row.append(booking.room.room_name)
-
+    if booking.room is None:
+        row.append("")
+    else:
+        row.append(booking.room.room_name)
 
 def write_room(row, exam):
     if exam.booking and exam.booking.room:
@@ -299,7 +305,3 @@ def which_non_exam_key(booking, row, key):
             row.append("N")
         elif booking.fees == 'true':
             row.append("Y")
-
-
-
-
