@@ -113,6 +113,7 @@ export const store = new Vuex.Store({
     officeFilter: null,
     offices: [],
     officeType: null,
+    offsiteOnly: false,
     offsiteVisible: true,
     performingAction: false,
     rescheduling: false,
@@ -154,6 +155,7 @@ export const store = new Vuex.Store({
     showSelectInvigilatorModal: false,
     showServeCitizenSpinner: false,
     showServiceModal: false,
+    showTimeTrackingIcon: false,
     user: {
       counter_id: null,
       csr_id: null,
@@ -1622,7 +1624,7 @@ export const store = new Vuex.Store({
         let url = `/exams/${id}/`
         Axios(context).put(url, payload).then( () =>{
           context.dispatch('getExams').then( () => {
-            context.commit('setEditExamSuccess', 6)
+            context.commit('setEditExamSuccess', 3)
             resolve()
           })
         })
@@ -2547,5 +2549,9 @@ export const store = new Vuex.Store({
     toggleServeCitizenSpinner(state, payload) {
       state.showServeCitizenSpinner = payload
     },
+    
+    setOffsiteOnly: (state, payload) => state.offsiteOnly = payload,
+    
+    toggleTimeTrackingIcon: (state, payload) => state.showTimeTrackingIcon = payload,
   }
 })

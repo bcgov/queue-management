@@ -1,17 +1,24 @@
 <template>
   <b-modal v-model="modal"
            :no-close-on-backdrop="true"
-           :ok-only="okButton.title === 'Cancel'"
-           :ok-title="okButton.title"
-           :ok-variant="okButton.title === 'Cancel' ? 'secondary' : 'primary'"
-           :ok-disabled="okButton.disabled"
            hide-header
            :size="returned ? 'md' : 'sm' "
            id="return_exam_modal"
            @shown="show"
-           @hidden="resetModal()"
-           @cancel="resetModal()"
-           @ok.prevent="submit">
+           @hidden="resetModal()">
+    <template slot="modal-footer">
+      <div style="display: flex; justify-content: flex-end; width: 100%">
+        <b-btn v-if="okButton.title !== 'Cancel'"
+               class="btn-secondary mr-2"
+               @click="resetModal()">Cancel</b-btn>
+        <b-btn v-if="okButton.disabled"
+               class="btn-primary disabled"
+               @click="showFieldErrors=false">Submit</b-btn>
+        <b-btn v-if="!okButton.disabled"
+               :class="okButton.title === 'Cancel' ? 'btn-secondary' : 'btn-primary'"
+               @click.prevent="submit">{{okButton.title}}</b-btn>
+      </div>
+    </template>
     <FailureExamAlert />
     <b-form autocomplete="off">
       <b-form-row>
@@ -53,11 +60,24 @@
         <b-form-row>
           <b-col>
             <b-form-group class="mb-0 mt-2">
-              <label class="mb-0">Action Taken</label><br>
+              <label v-if="!errorText"
+                     class="mb-0">Action Taken
+                <span v-if="typeof showFieldErrors === 'boolean' && !showFieldErrors"
+                      style="color: red">Required Field</span>
+              </label>
+              <label v-if="errorText"
+                     style="color: red"
+                     class="mb-0">Maximum field length reached.  Use Notes field if needed.</label>
+              <br>
               <b-form-input v-model="exam_returned_tracking_number"
                             id="action_taken"
-                            placeholder="Include tracking info or exam disposition"
-                            ref="returnactiontaken"/>
+                            :state="showFieldErrors"
+                            placeholder="Include tracking info or disposition"
+                            ref="returnactiontaken"
+                            @input="showFieldErrors = null"
+                            v-on:keydown="handleActionInput"
+                            @blur="removeError()"
+                            />
             </b-form-group>
           </b-col>
         </b-form-row>
@@ -92,8 +112,10 @@
         returned: false,
         exam_written_ind: true,
         exam_returned_date: null,
+        errorText: false,
         notes: null,
-        exam_returned_tracking_number: null,
+        showFieldErrors: null,
+        exam_returned_tracking_number: '',
         returnOptions: [
           { value: false, text: 'Not Returned' },
           { value: true, text: 'Returned' },
@@ -153,7 +175,19 @@
     },
     methods: {
       ...mapActions(['putExamInfo', 'getExams', ]),
-      ...mapMutations(['toggleReturnExamModal', 'setEditExamSuccess', 'setEditExamFailure',  ]),
+      ...mapMutations(['toggleReturnExamModal', 'setEditExamFailure',  ]),
+      handleActionInput(e) {
+        if (e.keyCode == 8 || e.keyCode == 46) {
+          this.removeError()
+          return true
+        }
+        if (this.exam_returned_tracking_number && this.exam_returned_tracking_number.length >= 250) {
+          this.errorText = true
+          e.preventDefault()
+          e.stopPropagation()
+          return false
+        }
+      },
       handleReturnedStatus(value) {
         if (value) {
           if (!this.exam_returned_date) {
@@ -183,12 +217,17 @@
       },
       resetModal() {
         this.toggleReturnExamModal(false)
+        this.showFieldErrors = null
         this.exam = null
+        this.errorText = false
         this.returned = false
         this.exam_returned_date = null
-        this.exam_returned_tracking_number = null
+        this.exam_returned_tracking_number = ''
         this.notes  = null
         this.resetExam()
+      },
+      removeError() {
+        this.errorText = false
       },
       submit() {
         if (this.okButton.title === 'Cancel') {

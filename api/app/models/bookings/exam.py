@@ -33,10 +33,9 @@ class Exam(Base):
     exam_method = db.Column(db.String(15), nullable=False)
     deleted_date = db.Column(db.String(50), nullable=True)
     exam_returned_date = db.Column(db.DateTime, nullable=True)
-    exam_returned_tracking_number = db.Column(db.String(50), nullable=True)
+    exam_returned_tracking_number = db.Column(db.String(255), nullable=True)
     exam_written_ind = db.Column(db.Integer, nullable=False, default=0)
     offsite_location = db.Column(db.String(50), nullable=True)
-
 
     booking = db.relationship("Booking")
     exam_type = db.relationship("ExamType")

@@ -57,6 +57,7 @@
     },
     data() {
       return {
+        blockEventSelect: false,
         clickedAppt: null,
         clickedTime: null,
         config: {
@@ -72,7 +73,7 @@
           },
           eventColor: 'pink',
           eventConstraint: {
-            start: '09:00:00',
+            start: '08:30:00',
             end: '17:00:00',
           },
           fixedWeekCount: false,
@@ -83,12 +84,12 @@
           },
           height: 'auto',
           maxTime: '17:00:00',
-          minTime: '09:00:00',
+          minTime: '08:30:00',
           navLinks: false,
           schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
           selectConstraint: {
-            start: '08:00:00',
-            end: '18:00:00',
+            start: '08:30:00',
+            end: '17:00:00',
           },
           showNonCurrentDates: false,
           slotDuration: '00:15:00',
@@ -134,6 +135,9 @@
         return null
       },
       eventSelected(event) {
+        if (event.id === '_tempEvent') {
+          return
+        }
         this.clickedAppt = event
         this.highlightEvent(event)
         this.toggleCheckInModal(true)
@@ -157,6 +161,7 @@
         this.$refs.appointments.fireMethod('renderEvent', event)
       },
       selectEvent(event) {
+        this.blockEventSelect = true
         this.unselect()
         let start = event.start.clone()
         let end
@@ -175,6 +180,7 @@
         this.clickedTime = e
         this.setTempEvent(e)
         this.toggleApptBookingModal(true)
+        this.blockEventSelect = false
       },
       clearClickedAppt() {
         this.clickedAppt = null

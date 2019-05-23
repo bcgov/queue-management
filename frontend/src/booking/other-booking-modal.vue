@@ -126,7 +126,6 @@
           selectionIndicator: state => state.selectionIndicator,
         }
       ),
-      ...mapGetters(['room_resources']),
       modalVisible: {
         get() {
           return this.showModal

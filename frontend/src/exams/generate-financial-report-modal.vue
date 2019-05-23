@@ -16,7 +16,7 @@
       </b-row>
       <b-row class="my-1">
         <b-col sm="4"><label>Start Date:</label></b-col>
-        <b-col sm="6">
+        <b-col sm="5.5">
           <DatePicker v-model="startDate"
                       input-class="form-control"
                       class="w-100 less-10-mb"
@@ -25,7 +25,7 @@
       </b-row>
       <b-row class="my-1">
         <b-col sm="4"><label>End Date:</label></b-col>
-        <b-col sm="6">
+        <b-col sm="5.5">
           <DatePicker v-model="endDate"
                       input-class="form-control"
                       class="w-100 less-10-mb"
@@ -59,7 +59,7 @@
             startDate: '',
             endDate: '',
             options: [
-              {text: 'All Exams', value: 'all'},
+              {text: 'All Booking Events', value: 'all'},
               {text: 'ITA - Individual and Group ', value: 'ita'},
               {text: 'All Non-ITA Exams', value: 'all_non_ita'},
             ],

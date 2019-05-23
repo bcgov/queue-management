@@ -196,6 +196,11 @@
             messages[key] = ''
             return
           }
+          if (key === 'exam_name' && answer && answer.length > 50) {
+            valid['exam_name'] = false
+            messages['exam_name'] = 'Maximum Field Length Exceeded'
+            return
+          }
           if (key === 'office_id' && answer == null) {
             valid[key] = false
             messages[key] = 'Invalid Office'

@@ -69,7 +69,7 @@ limitations under the License.*/
     },
 
     computed: {
-      ...mapState(['citizens', 'citizenInvited', 'performingAction', 'user']),
+      ...mapState(['citizens', 'citizenInvited', 'performingAction', 'showTimeTrackingIcon', 'user']),
       ...mapGetters([
         'on_hold_queue',
         'citizens_queue',
@@ -101,6 +101,10 @@ limitations under the License.*/
       },
 
       rowClicked(item, index) {
+        if (this.showTimeTrackingIcon) {
+          this.$store.commit('setMainAlert', 'You are already serving a citizen.  Click the Stopwatch to resume')
+          return null
+        }
         if (this.performingAction) {
           return null
         }
