@@ -117,10 +117,13 @@ objects:
       strategy:
         type: Source
         sourceStrategy:
+          env:
+            - name: NODE_ENV
+              value: development
           from:
             kind: ImageStreamTag
             namespace: openshift
-            name: nodejs:6
+            name: nodejs:10
       output:
         to:
           kind: ImageStreamTag
