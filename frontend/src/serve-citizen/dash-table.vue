@@ -25,23 +25,32 @@ limitations under the License.*/
              @row-clicked="rowClicked"
              class="p-0 m-0">
              <!--id="client-waiting-table"-->
-      <template slot='counter_id' slot-scope='data'>
-        {{ showCounter(data.item.counter_id) }}
+      <template slot='counter_id' slot-scope='row'>
+        {{ showCounter(row.item.counter_id) }}
       </template>
-      <template slot='start_time' slot-scope='data'>
-        {{ formatTime(data.item.start_time) }}
+      <template slot='start_time' slot-scope='row'>
+        {{ formatTime(row.item.start_time) }}
       </template>
-      <template slot='csr' slot-scope='data'>
-        {{ showCSR(data.item.citizen_id) }}
+      <template slot='csr' slot-scope='row'>
+        {{ showCSR(row.item.citizen_id) }}
       </template>
-      <template slot='category' slot-scope='data'>
-        {{ showCategory(data.item.citizen_id) }}
+      <template slot='category' slot-scope='row'>
+        {{ showCategory(row.item.citizen_id) }}
       </template>
-      <template slot='service' slot-scope='data'>
-        {{ showService(data.item.citizen_id) }}
+      <template slot='service' slot-scope='row'>
+        {{ showService(row.item.citizen_id) }}
       </template>
-      <template slot='priority' slot-scope='data'>
-        {{ showPriority(data.item.priority) }}
+      <template slot='priority' slot-scope='row'>
+        {{ showPriority(row.item.priority) }}
+      </template>
+      <template slot="citizen_comments" slot-scope="row">
+        <template v-if="row.item.citizen_name">
+          <span style="color: teal">{{ parseComments(row.item).appt }}</span><br>
+          <span class="mr-2">{{ parseComments(row.item).text }}</span>
+        </template>
+        <template v-else>
+          {{ parseComments(row.item) }}
+        </template>
       </template>
     </b-table>
   </div>
@@ -63,13 +72,18 @@ limitations under the License.*/
           {key: 'csr', label: 'Served By', sortable: false, thStyle: 'width: 10%'},
           {key: 'category', label: 'Category', sortable: false, thStyle: 'width: 17%'},
           {key: 'service', label: 'Service', sortable: false, thStyle: 'width: 17%'},
-          {key: 'citizen_comments', label: 'Comments', sortable: false, thStyle: 'width: 17%'}
+          {key: 'citizen_comments', label: 'Comments', sortable: false, thStyle: 'width: 17%'},
         ]
       }
     },
     computed: {
       ...mapState(['citizenInvited', 'serviceModalForm', 'performingAction', 'showTimeTrackingIcon', 'user']),
-      ...mapGetters(['citizens_queue', 'active_service_id', 'reception']),
+      ...mapGetters({
+        citizens_queue: 'citizens_queue',
+        active_service_id: 'active_service_id',
+        reception: 'reception',
+        apointments: 'appointmentsModule/appointment_even'
+      }),
       citizens() {
         return this.citizens_queue
       },
@@ -79,8 +93,7 @@ limitations under the License.*/
           temp.unshift({key: 'counter_id', label: 'Counter', sortable: false, thStyle: 'width: 8%'})
           temp.unshift({key: 'priority', label: 'Priority', sortable: false, thStyle: 'width: 8%'})
           return temp
-        }
-        else {
+        } else {
           let temp = this.fields
           temp.unshift({key: 'priority', label: 'Priority', sortable: false, thStyle: 'width: 10%'})
           return temp
@@ -88,11 +101,30 @@ limitations under the License.*/
       }
     },
     methods: {
-      ...mapActions(['postInvite','clickDashTableRow']),
+      ...mapActions(['clickDashTableRow', 'postInvite']),
       formatTime(data) {
         let date = new Date(data)
         return date.toLocaleTimeString()
       },
+      setAppointmentDisplayData(id) {
+
+      },
+      parseComments(item) {
+        if (!item.citizen_comments) {
+          return ''
+        }
+        let comments = item.citizen_comments
+        if (!comments.includes('|||')) {
+          return comments
+        } else {
+          let bits = comments.split('|||')
+          return {
+            appt: `${bits[0]} Appt: ${item.citizen_name}`,
+            text: bits[1]
+          }
+        }
+      },
+
       rowClicked(item, index) {
         if (this.showTimeTrackingIcon) {
           this.$store.commit('setMainAlert', 'You are already serving a citizen.  Click the Stopwatch to resume')
@@ -101,9 +133,9 @@ limitations under the License.*/
         if (this.performingAction) {
           return null
         }
-        if (this.citizenInvited===true) {
+        if (this.citizenInvited) {
           this.$store.commit('setMainAlert', 'You are already serving a citizen.  Click Serve Now to resume.')
-        } else if (this.citizenInvited===false) {
+        } else if (!this.citizenInvited) {
           this.clickDashTableRow(item.citizen_id)
         }
       },
@@ -133,6 +165,10 @@ limitations under the License.*/
           return "category"
         }
       },
+      log(data) {
+        console.log(data)
+        return 'wee'
+      },
       showService(id) {
         let service = this.active_service_id(id)
         if (!service) {
@@ -143,6 +179,7 @@ limitations under the License.*/
       showPriority(priority) {
         return priority == 1 ? 'High' : priority == 2 ? 'Default' : priority == 3 ? 'Low' : null
       }
+
     }
   }
 </script>

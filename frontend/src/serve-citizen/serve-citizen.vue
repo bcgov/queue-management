@@ -27,6 +27,8 @@
           <b-container id="serve-citizen-modal-top" fluid v-if="!minimizeWindow">
             <b-row no-gutters class="p-2">
               <b-col col cols="4">
+                <div v-if="appointment">
+                  <strong>{{citizen.citizen_name}}</strong></div>
                 <div><h6>Ticket #: <strong>{{citizen.ticket_number}}</strong></h6></div>
                 <div><h6>Channel: <strong>{{channel.channel_name}}</strong></h6></div>
                 <div><h6>Created At: <strong>{{formatTime(citizen.start_time)}}</strong></h6></div>
@@ -44,7 +46,9 @@
               </b-col>
             </b-row>
           </b-container>
-          <b-container id="serve-top-buttons-container" v-if="!minimizeWindow">
+          <b-container id="serve-top-buttons-container"
+                       :class="appointment ? 'serve-top-buttons-container-2' : 'serve-top-buttons-container' "
+                       v-if="!minimizeWindow">
             <div>
               <b-button @click="clickServiceBeginService"
                       v-if="reception"
@@ -208,6 +212,14 @@ export default {
       invited_service_reqs: 'invited_service_reqs',
       reception: 'reception',
     }),
+    appointment() {
+      if (this.serviceModalForm &&
+          this.serviceModalForm.citizen_comments &&
+          this.serviceModalForm.citizen_comments.includes('|||')) {
+        return true
+      }
+      return false
+    },
     simplifiedModal() {
       if (this.$route.path !== '/queue') {
         return true
@@ -230,13 +242,26 @@ export default {
     },
     comments: {
       get() {
+        if (this.appointment) {
+          let newVal = this.serviceModalForm.citizen_comments.split('|||')[1].valueOf()
+          return newVal
+        }
         return this.serviceModalForm.citizen_comments
       },
       set(value) {
-        this.editServiceModalForm({
-          type: 'citizen_comments',
-          value
-        })
+        if (this.appointment) {
+          let time = this.serviceModalForm.citizen_comments.split('|||')[0]
+          let prependedValue = `${time}|||${value}`
+          this.editServiceModalForm({
+            type: 'citizen_comments',
+            value: prependedValue
+          })
+        } else {
+          this.editServiceModalForm({
+            type: 'citizen_comments',
+            value
+          })
+        }
       }
     },
     accurate_time_ind: {
@@ -315,6 +340,7 @@ export default {
         this.minimizeWindow = !this.minimizeWindow
         return
       }
+      this.toggleExamsTrackingIP(true)
       this.toggleServiceModal(false)
       this.toggleTimeTrackingIcon(true)
     },
@@ -384,7 +410,7 @@ export default {
  color: #6e6e6e;
  padding-bottom: 20px;
 }
-#serve-top-buttons-container {
+.serve-top-buttons-container {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -393,6 +419,16 @@ export default {
     z-index: 99;
     width: 100%;
     max-width: 100%;
+}
+.serve-top-buttons-container-2 {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  position: absolute;
+  top: 210px;
+  z-index: 99;
+  width: 100%;
+  max-width: 100%;
 }
 #serve-light-inner-container{
     background: #504E4F;
