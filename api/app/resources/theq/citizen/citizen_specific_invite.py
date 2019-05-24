@@ -33,7 +33,7 @@ class CitizenSpecificInvite(Resource):
         lock = FileLock("lock/invite_citizen_{}.lock".format(csr.office_id))
 
         with lock:
-            citizen = db.session.query(Citizen).with_lockmode('update').filter_by(citizen_id=id).first()
+            citizen = db.session.query(Citizen).filter_by(citizen_id=id).first()
             active_service_state = SRState.get_state_by_name("Active")
 
             active_service_request = citizen.get_active_service_request()
