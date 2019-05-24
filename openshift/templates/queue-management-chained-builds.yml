@@ -153,13 +153,15 @@ objects:
       runPolicy: Serial
       source:
         type: Dockerfile
-        dockerfile: "FROM bcgov-s2i-caddy\nCOPY dist /var/www/html/"
+        dockerfile: "FROM bcgov-s2i-caddy\nCOPY dist /var/www/html/\nCOPY caddy/Caddyfile /etc/Caddyfile"
         images:
           - from:
               kind: ImageStreamTag
               name: queue-management-frontend-build:latest
             paths:
               - sourcePath: "/opt/app-root/src/dist"
+                destinationDir: "./"
+              - sourcePath: "/opt/app-root/src/caddy"
                 destinationDir: "./"
       strategy:
         type: Docker

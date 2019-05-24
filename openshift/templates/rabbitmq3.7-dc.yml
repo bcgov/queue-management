@@ -180,8 +180,8 @@ objects:
                   cpu: "1"
                   memory: 1Gi
                 requests:
-                  cpu: 100m
-                  memory: 256Mi
+                  cpu: "1"
+                  memory: 400Mi
               livenessProbe:
                 exec:
                   command: ["rabbitmqctl", "status"]
