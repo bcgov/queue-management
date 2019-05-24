@@ -138,6 +138,10 @@
   animation: spin 1s ease-in-out infinite;
   -webkit-animation: spin 1s ease-in-out infinite;
 }
+q-link-cursor {
+  cursor: pointer;
+}
+
 @keyframes spin {
   to {
     -webkit-transform: rotate(360deg);
