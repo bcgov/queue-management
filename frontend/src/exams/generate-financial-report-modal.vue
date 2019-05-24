@@ -3,10 +3,10 @@
            :no-close-on-backdrop="true"
            ok-title="Submit"
            ok-variant="primary"
-           hide-ok
            @ok="submit"
+           @cancel="cancel"
+           hide-ok
            hide-header
-           hide-cancel
            size="md">
     <b-container style="font-size:1.1rem; border-radius: 10px" class="mb-2 pb-3" fluid>
       <b-row>
@@ -16,7 +16,7 @@
       </b-row>
       <b-row class="my-1">
         <b-col sm="4"><label>Start Date:</label></b-col>
-        <b-col sm="6">
+        <b-col sm="5.5">
           <DatePicker v-model="startDate"
                       input-class="form-control"
                       class="w-100 less-10-mb"
@@ -25,7 +25,7 @@
       </b-row>
       <b-row class="my-1">
         <b-col sm="4"><label>End Date:</label></b-col>
-        <b-col sm="6">
+        <b-col sm="5.5">
           <DatePicker v-model="endDate"
                       input-class="form-control"
                       class="w-100 less-10-mb"
@@ -34,11 +34,28 @@
       </b-row>
       <b-row>
         <b-col sm="4"><label>Exam Types:</label></b-col>
-        <b-col sm="6>">
-          <b-form-group>
-            <b-form-radio-group :options="options"
-                                stacked
-                                v-model="selectedExamType" />
+        <b-col sm="5.5>">
+          <b-form-group v-if="selectedExamFilter !== ''">
+            <b-dropdown id="exam_filter_types_wo_filter"
+                        :text=this.selectedExamFilter
+                        class="w-100 mb-3"
+                        variant="primary"
+                        v-model="selectedExamType">
+              <b-dropdown-item v-for="option in options"
+                               @click="selectedExamType = option.value
+                                       selectedExamFilter = option.text"> {{ option.text }}</b-dropdown-item>
+            </b-dropdown>
+          </b-form-group>
+          <b-form-group v-else>
+            <b-dropdown id="exam_filter_types_w_filter"
+                        text="Click for Filter Options"
+                        class="w-100 mb-3"
+                        variant="primary"
+                        v-model="selectedExamType">
+              <b-dropdown-item v-for="option in options"
+                               @click="selectedExamType = option.value
+                                       selectedExamFilter = option.text"> {{ option.text }}</b-dropdown-item>
+            </b-dropdown>
           </b-form-group>
         </b-col>
       </b-row>
@@ -59,11 +76,13 @@
             startDate: '',
             endDate: '',
             options: [
-              {text: 'All Exams', value: 'all'},
-              {text: 'ITA - Individual and Group ', value: 'ita'},
+              {text: 'All Exams', value: 'all_exams'},
+              {text: 'All Booking Events', value: 'all_bookings'},
+              {text: 'ITA Individual and Group Exams', value: 'ita'},
               {text: 'All Non-ITA Exams', value: 'all_non_ita'},
             ],
             selectedExamType: '',
+            selectedExamFilter: '',
           }
         },
         methods: {
@@ -74,6 +93,10 @@
           ...mapMutations([
             'toggleGenFinReport',
           ]),
+          cancel() {
+            this.selectedExamType = ''
+            this.selectedExamFilter = ''
+          },
           submit() {
             let form_start_date = moment.utc(this.startDate).format('YYYY-MM-DD')
             let form_end_date = moment.utc(this.endDate).format('YYYY-MM-DD')
@@ -88,6 +111,7 @@
             this.startDate = ''
             this.endDate = ''
             this.selectedExamType = ''
+            this.selectedExamFilter = ''
           },
         },
         computed: {
@@ -99,6 +123,7 @@
               return this.showGenFinReportModal
             },
             set(e) {
+              this.selectedExamFilter = ''
               this.toggleGenFinReport(e)
             }
           },

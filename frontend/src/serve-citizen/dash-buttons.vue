@@ -19,7 +19,7 @@
     <div>
       <b-button class="btn-primary mr-1"
                 @click="invite"
-                :disabled="citizenInvited===true || performingAction || showAdmin"
+                :disabled="citizenInvited || showTimeTrackingIcon || performingAction || showAdmin"
                 v-if="reception"
                 id="invite-citizen-button">Invite</b-button>
       <b-button v-bind:class="serveNowStyle"
@@ -31,11 +31,11 @@
       <b-button-group>
         <b-button class="btn-primary"
                   @click="addCitizen"
-                  :disabled="citizenInvited===true || performingAction || showAdmin"
+                  :disabled="citizenInvited || showTimeTrackingIcon || performingAction || showAdmin"
                   id="add-citizen-button">Add Citizen</b-button>
         <b-dropdown v-if="user.office.quick_list.length > 0"
           :variant="citizenInvited===true || performingAction || showAdmin ? '' : 'primary'"
-          :disabled="citizenInvited===true || performingAction || showAdmin" right>
+          :disabled="citizenInvited || showTimeTrackingIcon || performingAction || showAdmin" right>
             <b-dropdown-item v-for="item in user.office.quick_list"
                     :data-id="item.service_id"
                     :key="item.service_id"
@@ -48,11 +48,11 @@
       <b-button-group>
         <b-button class="btn-primary"
                   @click="clickBackOffice"
-                  :disabled="citizenInvited===true || performingAction || showAdmin"
+                  :disabled="citizenInvited || showTimeTrackingIcon || performingAction || showAdmin"
                   id="add-citizen-button">Back Office</b-button>
         <b-dropdown v-if="user.office.back_office_list.length > 0"
           :variant="citizenInvited===true || performingAction || showAdmin ? '' : 'primary'"
-          :disabled="citizenInvited===true || performingAction || showAdmin" right>
+          :disabled="citizenInvited || showTimeTrackingIcon || performingAction || showAdmin" right>
             <b-dropdown-item v-for="item in user.office.back_office_list"
                     :data-id="item.service_id"
                     :key="item.service_id"
@@ -83,6 +83,7 @@
         'showAdmin',
         'showGAScreenModal',
         'showServiceModal',
+        'showTimeTrackingIcon',
         'serveNowStyle',
         'user',
       ]),

@@ -56,6 +56,11 @@
         </b-table>
       </b-col>
     </b-row>
+    <div v-if="showTicketNotice"
+         style="background-color: #bee5eb;"
+         class="p-2 m-0 tr-container-div">
+      You don't have a ticket started at this time.  Click Begin to start one.
+    </div>
   </div>
 </template>
 
@@ -83,7 +88,13 @@ export default {
       'invited_service_reqs',
       'active_service',
       'active_index'
-    ])
+    ]),
+    showTicketNotice() {
+      if (this.$route.path !== '/queue' && !this.serviceModalForm.citizen_id) {
+        return true
+      }
+      return false
+    },
   },
 
   methods: {
