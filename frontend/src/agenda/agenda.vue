@@ -98,7 +98,7 @@
 </template>
 
 <script>
-  import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
+  import { mapState, mapMutations, mapActions } from 'vuex'
   import moment from 'moment'
   import Vue from 'vue'
 
