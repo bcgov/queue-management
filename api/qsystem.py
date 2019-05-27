@@ -93,20 +93,36 @@ logging.basicConfig(format=application.config['LOGGING_FORMAT'], level=logging.W
 logger = logging.getLogger("myapp.sqltime")
 logger.setLevel(logging.DEBUG)
 
-def api_call_with_retry(f):
+def api_call_with_retry(f, max_time=6000, max_tries=7, delay_start=200, delay_mult=1.5):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        attempts = 3
 
-        while attempts > 0:
-            attempts -= 1
+        #  Initialize variables
+        current_try = 1
+        current_delay = 0
+        elapsed_time = 0
+
+        while (current_try <= max_tries) and (elapsed_time <= max_time):
+
             try:
                 return f(*args, **kwargs)
             except SQLAlchemyError as err:
-                if attempts > 0:
+                if current_try < max_tries:
                     db.session.rollback()
                 else:
                     raise
+
+            #  Update variables.
+            if current_try == 1:
+                current_delay = delay_start
+            else:
+                current_delay = current_delay * delay_mult
+
+            current_try += 1
+            elapsed_time = elapsed_time + current_delay
+
+            #  Sleep a bit.
+            time.sleep(current_delay / 1000.0)
 
     return decorated_function
 
