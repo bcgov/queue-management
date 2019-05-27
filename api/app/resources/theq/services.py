@@ -16,11 +16,7 @@ from functools import cmp_to_key
 from flask import request
 from flask import g
 from flask_restplus import Resource
-
-from qsystem import db
 from qsystem import api, oidc
-import logging
-
 from qsystem import db
 from app.models.theq import Service
 from app.models.theq import Office
@@ -50,11 +46,10 @@ class Refresh(Resource):
             elif csr.role.role_code != "SUPPORT":
                 return {'message': 'You do not have permission to view this end-point'}, 403
             
-            back_office = Service.query.filter(Service.service_name=='Back Office')[0]
             def top_reqs(is_back_office=True):
-                '''
-                Get top requests for the office, and set the lists based on those.
-                '''
+
+                # Get top requests for the office, and set the lists based on those.
+                
                 results = ServiceReq.query.options(
                     noload('*'), joinedload('service')
                 ).join(
@@ -113,6 +108,7 @@ class Refresh(Resource):
             return OfficeSchema().dump(office)
         else:
             return {'message': 'no office specified'}, 400
+
 
 @api.route("/services/", methods=["GET"])
 class Services(Resource):
