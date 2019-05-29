@@ -106,6 +106,9 @@ def api_call_with_retry(f, max_time=6000, max_tries=7, delay_start=200, delay_mu
 
         while (current_try <= max_tries) and (elapsed_time <= max_time):
 
+            print("==> api_call_with_retry: Try #: " + str(current_try) + "; delay: " + str(current_delay) \
+                  + "; elapsed: " + str(elapsed_time))
+
             try:
                 return f(*args, **kwargs)
             except SQLAlchemyError as err:
