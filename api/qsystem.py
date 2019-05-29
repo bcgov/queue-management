@@ -31,6 +31,8 @@ configure_app(application)
 db = SQLAlchemy(application)
 db.init_app(application)
 
+print("pool size = {}".format(db.engine.pool.size()))
+
 cache = Cache(config={'CACHE_TYPE': 'simple'})
 cache.init_app(application)
 
