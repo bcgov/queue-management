@@ -35,6 +35,7 @@ class CitizenLeft(Resource):
 
         csr = CSR.find_by_username(g.oidc_token_info['username'])
         citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
+        print("==> POST /citizens/" + str(citizen.citizen_id) + '/citizen_left/, Ticket: ' + citizen.ticket_number)
         sr_state = SRState.get_state_by_name("Complete")
 
         #  Create parameters for and make snowplow call.  Default is no service request, CSR pressed cancel.

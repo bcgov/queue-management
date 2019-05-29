@@ -34,6 +34,7 @@ class CitizenSpecificInvite(Resource):
 
         with lock:
             citizen = db.session.query(Citizen).filter_by(citizen_id=id).first()
+            print("==> POST /citizens/" + str(citizen.citizen_id) + '/invite/, Ticket: ' + citizen.ticket_number)
             active_service_state = SRState.get_state_by_name("Active")
 
             active_service_request = citizen.get_active_service_request()

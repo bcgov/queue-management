@@ -67,6 +67,8 @@ class CitizenGenericInvite(Resource):
             if citizen is None:
                 return {"message": "There is no citizen to invite"}, 400
 
+            print("==> POST /citizens/invite/" + str(citizen.citizen_id) + '/, Ticket: ' + citizen.ticket_number)
+
             db.session.refresh(citizen)
             active_service_request = citizen.get_active_service_request()
 
