@@ -2,6 +2,7 @@ import logging
 import socket
 import time
 import traceback
+import datetime
 
 from config import configure_app
 from flask import Flask
@@ -102,18 +103,28 @@ def api_call_with_retry(f, max_time=6000, max_tries=7, delay_start=200, delay_mu
         #  Initialize variables
         current_try = 1
         current_delay = 0
-        elapsed_time = 0
+        total_delay = 0
+        time_start = datetime.datetime.now()
+        time_current = time_start
+        time_save = time_current
 
-        while (current_try <= max_tries) and (elapsed_time <= max_time):
+        while (current_try <= max_tries) and (total_delay <= max_time):
 
             print("==> api_call_with_retry: Try #: " + str(current_try) + "; delay: " + str(current_delay) \
-                  + "; elapsed: " + str(elapsed_time))
+                  + "; total delay: " + str(total_delay))
+            print("    --> elapsed: " + str(time_current - time_save) + "; total elapsed: " + \
+                  str(time_current - time_start))
 
             try:
                 return f(*args, **kwargs)
             except SQLAlchemyError as err:
                 if current_try < max_tries:
+                    time_db_before = datetime.datetime.now()
                     db.session.rollback()
+                    time_db_after = datetime.datetime.now()
+                    print("        --> SQLAlchemyError: " + str(err))
+                    print("        --> rollback time: " + str(time_db_after - time_db_before))
+                    time_current = time_db_after
                 else:
                     raise
 
@@ -123,11 +134,16 @@ def api_call_with_retry(f, max_time=6000, max_tries=7, delay_start=200, delay_mu
             else:
                 current_delay = current_delay * delay_mult
 
+            #  Update variables.
             current_try += 1
-            elapsed_time = elapsed_time + current_delay
+            total_delay = total_delay + current_delay
 
             #  Sleep a bit.
             time.sleep(current_delay / 1000.0)
+
+            #  Update more variables.
+            time_save = time_current
+            time_current = datetime.datetime.now()
 
     return decorated_function
 
