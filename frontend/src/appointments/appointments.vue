@@ -22,11 +22,9 @@
   import moment from 'moment'
   import { createNamespacedHelpers } from 'vuex'
   import { FullCalendar } from 'vue-full-calendar'
-  import { adjustColor } from '../store/helpers'
   import 'fullcalendar-scheduler'
   import 'fullcalendar/dist/fullcalendar.css'
   import ApptBookingModal from './appt-booking-modal/appt-booking-modal'
-  import { store } from '../store/'
   import CheckInModal from './checkin-modal'
   import AddCitizen from '../add-citizen/add-citizen'
 

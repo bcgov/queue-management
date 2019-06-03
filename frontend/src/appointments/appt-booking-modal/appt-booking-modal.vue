@@ -128,7 +128,6 @@
 </template>
 
 <script>
-  import Vue from 'vue'
   import moment from 'moment'
   import { createNamespacedHelpers } from 'vuex'
   const { mapActions, mapGetters, mapMutations, mapState } = createNamespacedHelpers('appointmentsModule')
@@ -190,7 +189,6 @@
         if (this.clickedAppt) {
           let event = this.clickedAppt
           let start = moment(event.start).clone()
-          let end = moment(event.end).clone()
           for (let l of [15, 30, 45, 60]) {
             let testEnd = start.clone().add(l, 'minutes')
             if (this.appointments.find(appt => moment(appt.start).isBetween(start, testEnd))) {
