@@ -36,7 +36,7 @@
            style="flex-grow: 8"
            class="q-inline-title">{{ calendarSetup.title }}</div>
     <div />
-      <div v-if="!scheduling && !rescheduling && !citizenInvited">
+      <div v-if="showHamburger">
         <b-dropdown variant="outline-primary"
                     class="pl-0 ml-0 mr-3"
                     right
@@ -114,6 +114,15 @@
         'showAddModal',
         'user',
       ]),
+      showHamburger() {
+        if (this.scheduling || this.rescheduling) {
+          return false
+        }
+        if (this.$route.path === '/queue' && this.citizenInvited) {
+          return false
+        }
+        return true
+      },
       showIcon() {
         if (this.$route.path !== '/queue') {
           if ( this.serviceModalForm &&

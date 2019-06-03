@@ -106,9 +106,9 @@
     name: 'Agenda',
     mounted() {
       this.initializeAgenda()
-      this.$root.$on('next', () => { this.next() })
-      this.$root.$on('prev', () => { this.prev() })
-      this.$root.$on('today', () => { this.today() })
+      this.$root.$on('agenda-next', () => { this.next() })
+      this.$root.$on('agenda-prev', () => { this.prev() })
+      this.$root.$on('agenda-today', () => { this.today() })
       this.weekStart = moment().day(1)
       this.updateButtonsDate()
     },
