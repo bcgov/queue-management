@@ -92,7 +92,7 @@ import app.auth
 compress = Compress()
 compress.init_app(application)
 
-logging.basicConfig(format=application.config['LOGGING_FORMAT'], level=logging.WARNING)
+logging.basicConfig(format=application.config['LOGGING_FORMAT'], level=logging.DEBUG)
 logger = logging.getLogger("myapp.sqltime")
 logger.setLevel(logging.DEBUG)
 
@@ -110,8 +110,8 @@ def api_call_with_retry(f, max_time=6000, max_tries=7, delay_start=200, delay_mu
 
         while (current_try <= max_tries) and (total_delay <= max_time):
 
-            print("==> api_call_with_retry: Try #: " + str(current_try) + "; delay: " + str(current_delay) \
-                  + "; total delay: " + str(total_delay))
+            print("==> api_call_with_retry: Try #: " + str(current_try) + "; time: " + str(time_current))
+            print("    --> delay:   " + str(current_delay) + "; total delay: " + str(total_delay))
             print("    --> elapsed: " + str(time_current - time_save) + "; total elapsed: " + \
                   str(time_current - time_start))
 
@@ -122,8 +122,9 @@ def api_call_with_retry(f, max_time=6000, max_tries=7, delay_start=200, delay_mu
                     time_db_before = datetime.datetime.now()
                     db.session.rollback()
                     time_db_after = datetime.datetime.now()
-                    print("        --> SQLAlchemyError: " + str(err))
-                    print("        --> rollback time: " + str(time_db_after - time_db_before))
+                    print("        --> SQLAlchemyError: " + str(datetime.datetime.now()))
+                    print("        --> Message:         " + str(err))
+                    print("        --> rollback time:   " + str(time_db_after - time_db_before))
                     time_current = time_db_after
                 else:
                     raise
