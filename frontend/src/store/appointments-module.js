@@ -1,4 +1,3 @@
-import Vue from 'vue'
 import { Axios } from './helpers'
 import moment from 'moment'
 
