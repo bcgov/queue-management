@@ -96,7 +96,7 @@ logging.basicConfig(format=application.config['LOGGING_FORMAT'], level=logging.D
 logger = logging.getLogger("myapp.sqltime")
 logger.setLevel(logging.DEBUG)
 
-def api_call_with_retry(f, max_time=6000, max_tries=7, delay_first=2000, delay_start=200, delay_mult=1.5):
+def api_call_with_retry(f, max_time=6000, max_tries=7, delay_first=100, delay_start=200, delay_mult=1.5):
     @wraps(f)
     def decorated_function(*args, **kwargs):
 

@@ -55,6 +55,7 @@ class BaseConfig(object):
     DB_NAME = os.getenv('DATABASE_NAME','')
     DB_HOST = os.getenv('DATABASE_HOST','')
     DB_PORT = os.getenv('DATABASE_PORT','')
+    # SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}?connect_timeout=2'.format(
     SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}'.format(
         engine=DB_ENGINE,
         user=DB_USER,
@@ -63,6 +64,8 @@ class BaseConfig(object):
         port=DB_PORT,
         name=DB_NAME
     )
+    # Default pool size
+    # SQLALCHEMY_POOL_SIZE = 3
 
     #  Print out DB values.
     print("==> Database Values")
@@ -72,6 +75,7 @@ class BaseConfig(object):
     print("    --> DB_NAME:     " + DB_NAME)
     print("    --> DB_HOST:     " + DB_HOST)
     print("    --> DB_PORT:     " + DB_PORT)
+    print("    --> SQLALCHEMY_DATABASE_URI: " + SQLALCHEMY_DATABASE_URI)
 
     THEQ_FEEDBACK = (os.getenv('THEQ_FEEDBACK','')).upper().replace(" ","").split(",")
     SLACK_URL = os.getenv('SLACK_URL', '')
@@ -99,6 +103,7 @@ class LocalConfig(BaseConfig):
     SESSION_COOKIE_DOMAIN = None
     CORS_ALLOWED_ORIGINS = ["http://localhost:8080"]
     SQLALCHEMY_ECHO = False
+    # SQLALCHEMY_POOL_SIZE = 12
     SECRET_KEY = "pancakes"
     LOCALHOST_DB_IP = "127.0.0.1"
 
