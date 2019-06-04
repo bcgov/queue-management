@@ -55,8 +55,8 @@ class BaseConfig(object):
     DB_NAME = os.getenv('DATABASE_NAME','')
     DB_HOST = os.getenv('DATABASE_HOST','')
     DB_PORT = os.getenv('DATABASE_PORT','')
-    # SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}?connect_timeout=2'.format(
-    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}'.format(
+    # SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}'.format(
+    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}?connect_timeout=2'.format(
         engine=DB_ENGINE,
         user=DB_USER,
         password=DB_PASSWORD,
@@ -66,6 +66,12 @@ class BaseConfig(object):
     )
     # Default pool size
     # SQLALCHEMY_POOL_SIZE = 3
+
+    # Some more SQLALCHEMY options
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_size' : 13,
+        'pool_pre_ping': True
+    }
 
     #  Print out DB values.
     print("==> Database Values")

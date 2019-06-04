@@ -23,6 +23,8 @@ from app.exceptions import AuthError
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 
+# from pprint import pprint
+
 application = Flask(__name__, instance_relative_config=True)
 
 # Make sure we 404 when the trailing slash is not present on ALL routes
@@ -32,7 +34,11 @@ configure_app(application)
 db = SQLAlchemy(application)
 db.init_app(application)
 
-print("pool size = {}".format(db.engine.pool.size()))
+print("==> DB engine settings:")
+print("    --> pool_size = {}".format(db.engine.pool.size()))
+print("    --> pool_pre_ping = " + str(db.engine.pool._pre_ping))
+# for attr in dir(db.engine):
+#     print("db.engine.%s = %r" % (attr, getattr(db.engine, attr)))
 
 cache = Cache(config={'CACHE_TYPE': 'simple'})
 cache.init_app(application)
