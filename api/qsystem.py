@@ -31,14 +31,23 @@ application = Flask(__name__, instance_relative_config=True)
 application.url_map.strict_slashes = True
 configure_app(application)
 
-db = SQLAlchemy(application)
+db = SQLAlchemy(application, engine_options={
+    'pool_size' : 15,
+    #'timeout' : 10,
+    'pool_pre_ping' : True
+})
+# db = SQLAlchemy(application)
 db.init_app(application)
+
+logging.basicConfig()
+logging.getLogger('sqlalchemy.engine').setLevel(logging.DEBUG)
+logging.getLogger('sqlalchemy.pool').setLevel(logging.DEBUG)
 
 print("==> DB engine settings:")
 print("    --> pool_size = {}".format(db.engine.pool.size()))
 print("    --> pool_pre_ping = " + str(db.engine.pool._pre_ping))
-# for attr in dir(db.engine):
-#     print("db.engine.%s = %r" % (attr, getattr(db.engine, attr)))
+for attr in dir(db.engine.connect):
+    print("db.engine.connect.%s = %r" % (attr, getattr(db.engine.connect, attr)))
 
 cache = Cache(config={'CACHE_TYPE': 'simple'})
 cache.init_app(application)
@@ -102,7 +111,7 @@ logging.basicConfig(format=application.config['LOGGING_FORMAT'], level=logging.D
 logger = logging.getLogger("myapp.sqltime")
 logger.setLevel(logging.DEBUG)
 
-def api_call_with_retry(f, max_time=6000, max_tries=7, delay_first=100, delay_start=200, delay_mult=1.5):
+def api_call_with_retry(f, max_time=15000, max_tries=12, delay_first=100, delay_start=200, delay_mult=1.5):
     @wraps(f)
     def decorated_function(*args, **kwargs):
 

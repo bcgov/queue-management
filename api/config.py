@@ -68,10 +68,10 @@ class BaseConfig(object):
     # SQLALCHEMY_POOL_SIZE = 3
 
     # Some more SQLALCHEMY options
-    SQLALCHEMY_ENGINE_OPTIONS = {
-        'pool_size' : 13,
-        'pool_pre_ping': True
-    }
+    # SQLALCHEMY_ENGINE_OPTIONS = {
+    #     'pool_size' : 13,
+    #     'pool_pre_ping': True
+    # }
 
     #  Print out DB values.
     print("==> Database Values")
