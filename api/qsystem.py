@@ -39,9 +39,10 @@ db = SQLAlchemy(application, engine_options={
 # db = SQLAlchemy(application)
 db.init_app(application)
 
-logging.basicConfig()
+logging.basicConfig(level=logging.DEBUG)
 logging.getLogger('sqlalchemy.engine').setLevel(logging.DEBUG)
 logging.getLogger('sqlalchemy.pool').setLevel(logging.DEBUG)
+logging.getLogger('psycopg2').setLevel(logging.DEBUG)
 
 print("==> DB engine settings:")
 print("    --> pool_size = {}".format(db.engine.pool.size()))
