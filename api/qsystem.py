@@ -34,7 +34,9 @@ configure_app(application)
 db = SQLAlchemy(application, engine_options={
     'pool_size' : 15,
     #'timeout' : 10,
-    'pool_pre_ping' : True
+    'pool_pre_ping' : True,
+    'echo' : True,
+    'echo_pool' : True
 })
 # db = SQLAlchemy(application)
 db.init_app(application)
