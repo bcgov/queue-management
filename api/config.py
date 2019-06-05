@@ -55,14 +55,16 @@ class BaseConfig(object):
     DB_NAME = os.getenv('DATABASE_NAME','')
     DB_HOST = os.getenv('DATABASE_HOST','')
     DB_PORT = os.getenv('DATABASE_PORT','')
+    DB_TIMEOUT_STRING = os.getenv('DATABASE_TIMEOUT_STRING', '')
     # SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}'.format(
-    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}?connect_timeout=2'.format(
+    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}{timeoutstring}'.format(
         engine=DB_ENGINE,
         user=DB_USER,
         password=DB_PASSWORD,
         host=DB_HOST,
         port=DB_PORT,
-        name=DB_NAME
+        name=DB_NAME,
+        timeoutstring=DB_TIMEOUT_STRING
     )
     # Default pool size
     # SQLALCHEMY_POOL_SIZE = 3
@@ -75,12 +77,13 @@ class BaseConfig(object):
 
     #  Print out DB values.
     print("==> Database Values")
-    print("    --> DB_ENGINE:   " + DB_ENGINE)
-    print("    --> DB_USER:     " + DB_USER)
-    print("    --> DB_PASSWORD: " + DB_PASSWORD)
-    print("    --> DB_NAME:     " + DB_NAME)
-    print("    --> DB_HOST:     " + DB_HOST)
-    print("    --> DB_PORT:     " + DB_PORT)
+    print("    --> DB_ENGINE:      " + DB_ENGINE)
+    print("    --> DB_USER:        " + DB_USER)
+    print("    --> DB_PASSWORD:    " + DB_PASSWORD)
+    print("    --> DB_NAME:        " + DB_NAME)
+    print("    --> DB_HOST:        " + DB_HOST)
+    print("    --> DB_PORT:        " + DB_PORT)
+    print("    --> DB_TOUT_STRING: " + DB_TIMEOUT_STRING)
     print("    --> SQLALCHEMY_DATABASE_URI: " + SQLALCHEMY_DATABASE_URI)
 
     THEQ_FEEDBACK = (os.getenv('THEQ_FEEDBACK','')).upper().replace(" ","").split(",")
