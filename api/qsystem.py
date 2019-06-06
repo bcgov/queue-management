@@ -43,10 +43,12 @@ db = SQLAlchemy(application, engine_options={
 # db = SQLAlchemy(application)
 db.init_app(application)
 
-logging.getLogger('sqlalchemy.engine').info(">>> This is some info")
-logging.getLogger('sqlalchemy.pool').error(">>> This is an error")
+logging.getLogger('sqlalchemy.engine').info(">>> This is a test info message")
+logging.getLogger('sqlalchemy.pool').error(">>> This is a test error message")
 
-loggers = [logging.getLogger(name) for name in logging]
+# print("==> Loggers")
+# for name in logging.root.manager.loggerDict:
+#     print("    --> Logger name: " + name)
 
 # print("==> DB engine settings:")
 # print("    --> pool_size = {}".format(db.engine.pool.size()))

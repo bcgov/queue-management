@@ -19,7 +19,7 @@ class BaseConfig(object):
 
     def debug_string_to_debug_level(debug_string):
         input_string = debug_string.lower()
-        result = logging.NOTSET
+        result = -20
         if input_string == 'critical':
             result = logging.CRITICAL
         elif input_string == 'error':
@@ -30,6 +30,10 @@ class BaseConfig(object):
             result = logging.INFO
         elif input_string == 'debug':
             result = logging.DEBUG
+        elif input_string == 'notset':
+            result = logging.NOTSET
+        elif input_string == '':
+            result = -10
 
         return result
 
@@ -102,23 +106,33 @@ class BaseConfig(object):
     print("    --> DB_TOUT_STRING: " + DB_TIMEOUT_STRING)
     print("    --> SQLALCHEMY_DATABASE_URI: " + SQLALCHEMY_DATABASE_URI)
 
-    print("==> Debug levels:")
-    LOG_BASIC = debug_string_to_debug_level(os.getenv("LOG_BASIC"))
-    print("    --> LOG_BASIC:               " + os.getenv("LOG_BASIC") + "; Value: " + str(LOG_BASIC))
-    LOG_SQLALCHEMY_ENGINE = debug_string_to_debug_level(os.getenv("LOG_SQLALCHEMY_ENGINE"))
-    print("    --> LOG_SQLALCHEMY_ENGINE:   " + os.getenv("LOG_SQLALCHEMY_ENGINE") + "; Value: " + str(LOG_SQLALCHEMY_ENGINE))
-    LOG_SQLALCHEMY_POOL = debug_string_to_debug_level(os.getenv("LOG_SQLALCHEMY_POOL"))
-    print("    --> LOG_SQLALCHEMY_POOL:     " + os.getenv("LOG_SQLALCHEMY_POOL") + "; Value: " + str(LOG_SQLALCHEMY_POOL))
-    LOG_SQLALCHEMY_DIALECTS = debug_string_to_debug_level(os.getenv("LOG_SQLALCHEMY_DIALECTS"))
-    print("    --> LOG_SQLALCHEMY_DIALECTS: " + os.getenv("LOG_SQLALCHEMY_DIALECTS") + "; Value: " + str(LOG_SQLALCHEMY_DIALECTS))
-    LOG_SQLALCHEMY_ORM = debug_string_to_debug_level(os.getenv("LOG_SQLALCHEMY_ORM"))
-    print("    --> LOG_SQLALCHEMY_ORM:      " + os.getenv("LOG_SQLALCHEMY_ORM") +  "; Value: " + str(LOG_SQLALCHEMY_ORM))
-    LOG_PSYCOPG2 = debug_string_to_debug_level(os.getenv("LOG_PSYCOPG2"))
-    print("    --> LOG_PSYCOPG2:            " + os.getenv("LOG_PSYCOPG2") + "; Value: " + str(LOG_PSYCOPG2))
-    LOG_SOCKETIO = debug_string_to_debug_level(os.getenv("LOG_SOCKETIO"))
-    print("    --> LOG_SOCKETIO2:           " + os.getenv("LOG_SOCKETIO") + "; Value: " + str(LOG_SOCKETIO))
-    LOG_ENGINEIO = debug_string_to_debug_level(os.getenv("LOG_ENGINEIO"))
-    print("    --> LOG_ENGINEIO:            " + os.getenv("LOG_ENGINEIO") + "; Value: " + str(LOG_ENGINEIO))
+    # print("==> Debug levels:")
+    LOG_BASIC = debug_string_to_debug_level(os.getenv("LOG_BASIC", "Debug"))
+    # print("    --> LOG_BASIC:               " + os.getenv("LOG_BASIC", "Debug") + "; Value: " + str(LOG_BASIC))
+    LOG_ASYNCIO = debug_string_to_debug_level(os.getenv("LOG_ASYNCIO", ""))
+    # print("    --> LOG_ASYNCIO:             " + os.getenv("LOG_ASYNCIO", "<None>") + "; Value: " + str(LOG_ASYNCIO))
+    LOG_CONCURRENT = debug_string_to_debug_level(os.getenv("LOG_CONCURRENT", ""))
+    # print("    --> LOG_CONCURRENT:          " + os.getenv("LOG_CONCURRENT", "<None>") + "; Value: " + str(LOG_CONCURRENT))
+    LOG_ENGINEIO = debug_string_to_debug_level(os.getenv("LOG_ENGINEIO", ""))
+    # print("    --> LOG_ENGINEIO:            " + os.getenv("LOG_ENGINEIO", "<None>") + "; Value: " + str(LOG_ENGINEIO))
+    LOG_FLASK_CACHING = debug_string_to_debug_level(os.getenv("LOG_FLASK_CACHING", ""))
+    # print("    --> LOG_FLASK_CACHING:       " + os.getenv("LOG_FLASK_CACHING", "<None>") + "; Value: " + str(LOG_FLASK_CACHING))
+    LOG_FLASK_CORS = debug_string_to_debug_level(os.getenv("LOG_FLASK_CORS", ""))
+    # print("    --> LOG_FLASK_CORS:          " + os.getenv("LOG_FLASK_CORS", "<None>") + "; Value: " + str(LOG_FLASK_CORS))
+    LOG_FLASK_RESTPLUS = debug_string_to_debug_level(os.getenv("LOG_FLASK_RESTPLUS", ""))
+    # print("    --> LOG_FLASK_RESTPLUS:      " + os.getenv("LOG_FLASK_RESTPLUS", "<None>") + "; Value: " + str(LOG_FLASK_RESTPLUS))
+    LOG_GUNICORN = debug_string_to_debug_level(os.getenv("LOG_GUNICORN", ""))
+    # print("    --> LOG_GUNICORN:            " + os.getenv("LOG_GUNICORN", "<None>") + "; Value: " + str(LOG_GUNICORN))
+    LOG_PSYCOPG2 = debug_string_to_debug_level(os.getenv("LOG_PSYCOPG2", ""))
+    # print("    --> LOG_PSYCOPG2:            " + os.getenv("LOG_PSYCOPG2", "<None>") + "; Value: " + str(LOG_PSYCOPG2))
+    LOG_REQUESTS = debug_string_to_debug_level(os.getenv("LOG_REQUESTS", ""))
+    # print("    --> LOG_REQUESTS:            " + os.getenv("LOG_REQUESTS", "<None>") + "; Value: " + str(LOG_REQUESTS))
+    LOG_SOCKETIO = debug_string_to_debug_level(os.getenv("LOG_SOCKETIO", ""))
+    # print("    --> LOG_SOCKETIO2:           " + os.getenv("LOG_SOCKETIO", "<None>") + "; Value: " + str(LOG_SOCKETIO))
+    LOG_SQLALCHEMY = debug_string_to_debug_level(os.getenv("LOG_SQLALCHEMY", ""))
+    # print("    --> LOG_SQLALCHEMY:          " + os.getenv("LOG_SQLALCHEMY", "<None>") + "; Value: " + str(LOG_SQLALCHEMY))
+    LOG_URLLIB3 = debug_string_to_debug_level(os.getenv("LOG_URLLIB3", ""))
+    # print("    --> LOG_URLLIB3:             " + os.getenv("LOG_URLLIB3", "<None>") + "; Value: " + str(LOG_URLLIB3))
 
     THEQ_FEEDBACK = (os.getenv('THEQ_FEEDBACK','')).upper().replace(" ","").split(",")
     SLACK_URL = os.getenv('SLACK_URL', '')
@@ -198,12 +212,36 @@ def configure_app(app):
     app.config.from_pyfile('config.cfg', silent=True)
 
     # Configure logging
-    logging.basicConfig(format=app.config['LOGGING_FORMAT'], level=app.config['LOG_BASIC'], datefmt='%Y-%m-%d %H:%M:%S')
-    logging.getLogger('sqlalchemy.engine').setLevel(app.config['LOG_SQLALCHEMY_ENGINE'])
-    logging.getLogger('sqlalchemy.pool').setLevel(app.config['LOG_SQLALCHEMY_POOL'])
-    logging.getLogger('sqlalchemy.dialects').setLevel(app.config['LOG_SQLALCHEMY_DIALECTS'])
-    logging.getLogger('sqlalchemy.orm').setLevel(app.config['LOG_SQLALCHEMY_ORM'])
-    logging.getLogger('psycopg2').setLevel(app.config['LOG_PSYCOPG2'])
+    print("==> Logging levels")
+
+    level = app.config['LOG_BASIC']
+    if level >= 0:
+        logging.basicConfig(format=app.config['LOGGING_FORMAT'], level=level, datefmt='%Y-%m-%d %H:%M:%S')
+        print("    --> basicConfig:    " + str(level))
+
+    set_log_level(app, 'LOG_ASYNCIO', 'asyncio')
+    set_log_level(app, 'LOG_CONCURRENT', 'concurrent')
+    set_log_level(app, 'LOG_ENGINEIO', 'engineio')
+    set_log_level(app, 'LOG_FLASK_CACHING', 'flask_caching')
+    set_log_level(app, 'LOG_FLASK_CORS', 'flask_caching')
+    set_log_level(app, 'LOG_FLASK_RESTPLUS', 'flask_restplus')
+    set_log_level(app, 'LOG_GUNICORN', 'gunicorn')
+    set_log_level(app, 'LOG_PSYCOPG2', 'psycopg2')
+    set_log_level(app, 'LOG_REQUESTS', 'requests')
+    set_log_level(app, 'LOG_SOCKETIO', 'socketio')
+    set_log_level(app, 'LOG_SQLALCHEMY', 'sqlalchemy')
+    set_log_level(app, 'LOG_URLLIB3', 'urllib3')
+
+def set_log_level(app, config_name, log_name):
+
+    level = app.config[config_name]
+    if level >= 0:
+        logging.getLogger(log_name).setLevel(level)
+        print("    --> " + config_name + ": " + str(level))
+    elif level == -10:
+        print("    --> " + config_name + " env var not present.  Logger " + log_name + " logging level not set")
+    elif level == -20:
+        print("    --> " + config_name + " env var value invalid.  Logger " + log_name + " logging level not set")
 
     # formatter = logging.Formatter(app.config['LOGGING_FORMAT'])
     # handler = logging.FileHandler(app.config['LOGGING_LOCATION'])
