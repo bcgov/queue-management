@@ -205,7 +205,7 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
       },
 
       login() {
-        this.$keycloak.login({idpHint: 'idir'})
+        this.$keycloak.login({idpHint: 'idir', scope: 'offline_access'})
       },
 
       logoutTokenExpired() {
@@ -246,6 +246,8 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
           if (refreshed) {
             console.log("Token refreshed and is below")
             console.log(this.$keycloak.tokenParsed)
+            console.log("Refresh token is below")
+            console.log(this.$keycloak.refreshTokenParsed)
           } else {
             console.log('Token not refreshed')
           }
