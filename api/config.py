@@ -166,7 +166,7 @@ def configure_app(app):
     app.config.from_pyfile('config.cfg', silent=True)
 
     # Configure logging
-    # logging.basicConfig(format=app.config['LOGGING_FORMAT'], level=logging.DEBUG, datefmt='%Y-%m-%d %H:%M:%S')
+    logging.basicConfig(format=app.config['LOGGING_FORMAT'], level=logging.DEBUG, datefmt='%Y-%m-%d %H:%M:%S')
     logging.getLogger('sqlalchemy.engine').setLevel(logging.DEBUG)
     logging.getLogger('sqlalchemy.pool').setLevel(logging.DEBUG)
     logging.getLogger('sqlalchemy.dialects').setLevel(logging.DEBUG)
