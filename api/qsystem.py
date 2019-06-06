@@ -37,40 +37,11 @@ db = SQLAlchemy(application, engine_options={
     'pool_size' : 15,
     #'timeout' : 10,
     'pool_pre_ping' : True,
-    'echo' : True,
-    'echo_pool' : True
+    'echo' : 'debug',
+    'echo_pool' : 'debug'
 })
 # db = SQLAlchemy(application)
 db.init_app(application)
-
-# def setup_custom_logger(name):
-#     formatter = logging.Formatter(fmt='%(asctime)s %(levelname)-8s %(message)s',
-#                                   datefmt='%Y-%m-%d %H:%M:%S')
-#     handler = logging.FileHandler('log.txt', mode='w')
-#     handler.setFormatter(formatter)
-#     screen_handler = logging.StreamHandler(stream=sys.stdout)
-#     screen_handler.setFormatter(formatter)
-#     logger = logging.getLogger(name)
-#     logger.setLevel(logging.DEBUG)
-#     logger.addHandler(handler)
-#     logger.addHandler(screen_handler)
-#     return logger
-
-# formatter = logging.Formatter(fmt='%(asctime)s %(levelname)-8s %(message)s',
-#                               datefmt='%Y-%m-%d %H:%M:%S')
-# screen_handler = logging.StreamHandler(stream=sys.stdout)
-# screen_handler.setFormatter(formatter)
-
-logging.basicConfig(format='%(asctime)s %(levelname)-8s %(name)s %(message)s',
-                    level=logging.DEBUG,
-                    datefmt='%Y-%m-%d %H:%M:%S')
-# logging.basicConfig(level=logging.DEBUG)
-logging.getLogger('sqlalchemy.engine').setLevel(logging.DEBUG)
-# logging.getLogger('sqlalchemy.engine').addHandler(screen_handler)
-logging.getLogger('sqlalchemy.pool').setLevel(logging.DEBUG)
-# logging.getLogger('sqlalchemy.pool').addHandler(screen_handler)
-logging.getLogger('psycopg2').setLevel(logging.DEBUG)
-# logging.getLogger('psycopg2').addHandler(screen_handler)
 
 logging.getLogger('sqlalchemy.engine').info(">>> This is some info")
 logging.getLogger('sqlalchemy.pool').error(">>> This is an error")
@@ -139,7 +110,6 @@ import app.auth
 compress = Compress()
 compress.init_app(application)
 
-logging.basicConfig(format=application.config['LOGGING_FORMAT'], level=logging.DEBUG)
 logger = logging.getLogger("myapp.sqltime")
 logger.setLevel(logging.DEBUG)
 

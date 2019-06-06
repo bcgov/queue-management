@@ -22,7 +22,9 @@ class BaseConfig(object):
     DEBUG = True
     LOGGING_LOCATION = "logs/qsystem.log"
     LOGGING_LEVEL = DEBUG
-    LOGGING_FORMAT = '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
+    # LOGGING_FORMAT = '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
+    LOGGING_FORMAT = '[%(asctime)s.%(msecs)03d] %(levelname)-8s >>> %(name)s %(message)s'
+
     LOG_ERRORS = (os.getenv("LOG_ERRORS","FALSE")).upper() == "TRUE"
 
     SECRET_KEY = os.getenv('SECRET_KEY')
@@ -164,8 +166,18 @@ def configure_app(app):
     app.config.from_pyfile('config.cfg', silent=True)
 
     # Configure logging
-    handler = logging.FileHandler(app.config['LOGGING_LOCATION'])
-    handler.setLevel(app.config['LOGGING_LEVEL'])
-    formatter = logging.Formatter(app.config['LOGGING_FORMAT'])
-    handler.setFormatter(formatter)
-    app.logger.addHandler(handler)
+    # logging.basicConfig(format=app.config['LOGGING_FORMAT'], level=logging.DEBUG, datefmt='%Y-%m-%d %H:%M:%S')
+    logging.getLogger('sqlalchemy.engine').setLevel(logging.DEBUG)
+    logging.getLogger('sqlalchemy.pool').setLevel(logging.DEBUG)
+    logging.getLogger('sqlalchemy.dialects').setLevel(logging.DEBUG)
+    logging.getLogger('sqlalchemy.orm').setLevel(logging.DEBUG)
+    logging.getLogger('psycopg2').setLevel(logging.DEBUG)
+
+    # formatter = logging.Formatter(app.config['LOGGING_FORMAT'])
+    # handler = logging.FileHandler(app.config['LOGGING_LOCATION'])
+    # handler.setLevel(app.config['LOGGING_LEVEL'])
+    # handler.setFormatter(formatter)
+    # app.logger.addHandler(handler)
+
+
+
