@@ -16,16 +16,30 @@ config = {
 }
 
 class BaseConfig(object):
+
+    def debug_string_to_debug_level(debug_string):
+        input_string = debug_string.lower()
+        result = logging.NOTSET
+        if input_string == 'critical':
+            result = logging.CRITICAL
+        elif input_string == 'error':
+            result = logging.ERROR
+        elif input_string == 'warning':
+            result = logging.WARNING
+        elif input_string == 'info':
+            result = logging.INFO
+        elif input_string == 'debug':
+            result = logging.DEBUG
+
+        return result
+
     PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     TESTING = True,
     DEBUG = True
     LOGGING_LOCATION = "logs/qsystem.log"
     LOGGING_LEVEL = DEBUG
-    # LOGGING_FORMAT = '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
     LOGGING_FORMAT = '[%(asctime)s.%(msecs)03d] %(levelname)-8s >>> %(name)s %(message)s'
-
-    LOG_ERRORS = (os.getenv("LOG_ERRORS","FALSE")).upper() == "TRUE"
 
     SECRET_KEY = os.getenv('SECRET_KEY')
     OIDC_OPENID_REALM = os.getenv('OIDC_OPENID_REALM','nest')
@@ -87,6 +101,24 @@ class BaseConfig(object):
     print("    --> DB_PORT:        " + DB_PORT)
     print("    --> DB_TOUT_STRING: " + DB_TIMEOUT_STRING)
     print("    --> SQLALCHEMY_DATABASE_URI: " + SQLALCHEMY_DATABASE_URI)
+
+    print("==> Debug levels:")
+    LOG_BASIC = debug_string_to_debug_level(os.getenv("LOG_BASIC"))
+    print("    --> LOG_BASIC:               " + os.getenv("LOG_BASIC") + "; Value: " + str(LOG_BASIC))
+    LOG_SQLALCHEMY_ENGINE = debug_string_to_debug_level(os.getenv("LOG_SQLALCHEMY_ENGINE"))
+    print("    --> LOG_SQLALCHEMY_ENGINE:   " + os.getenv("LOG_SQLALCHEMY_ENGINE") + "; Value: " + str(LOG_SQLALCHEMY_ENGINE))
+    LOG_SQLALCHEMY_POOL = debug_string_to_debug_level(os.getenv("LOG_SQLALCHEMY_POOL"))
+    print("    --> LOG_SQLALCHEMY_POOL:     " + os.getenv("LOG_SQLALCHEMY_POOL") + "; Value: " + str(LOG_SQLALCHEMY_POOL))
+    LOG_SQLALCHEMY_DIALECTS = debug_string_to_debug_level(os.getenv("LOG_SQLALCHEMY_DIALECTS"))
+    print("    --> LOG_SQLALCHEMY_DIALECTS: " + os.getenv("LOG_SQLALCHEMY_DIALECTS") + "; Value: " + str(LOG_SQLALCHEMY_DIALECTS))
+    LOG_SQLALCHEMY_ORM = debug_string_to_debug_level(os.getenv("LOG_SQLALCHEMY_ORM"))
+    print("    --> LOG_SQLALCHEMY_ORM:      " + os.getenv("LOG_SQLALCHEMY_ORM") +  "; Value: " + str(LOG_SQLALCHEMY_ORM))
+    LOG_PSYCOPG2 = debug_string_to_debug_level(os.getenv("LOG_PSYCOPG2"))
+    print("    --> LOG_PSYCOPG2:            " + os.getenv("LOG_PSYCOPG2") + "; Value: " + str(LOG_PSYCOPG2))
+    LOG_SOCKETIO = debug_string_to_debug_level(os.getenv("LOG_SOCKETIO"))
+    print("    --> LOG_SOCKETIO2:           " + os.getenv("LOG_SOCKETIO") + "; Value: " + str(LOG_SOCKETIO))
+    LOG_ENGINEIO = debug_string_to_debug_level(os.getenv("LOG_ENGINEIO"))
+    print("    --> LOG_ENGINEIO:            " + os.getenv("LOG_ENGINEIO") + "; Value: " + str(LOG_ENGINEIO))
 
     THEQ_FEEDBACK = (os.getenv('THEQ_FEEDBACK','')).upper().replace(" ","").split(",")
     SLACK_URL = os.getenv('SLACK_URL', '')
@@ -166,18 +198,15 @@ def configure_app(app):
     app.config.from_pyfile('config.cfg', silent=True)
 
     # Configure logging
-    logging.basicConfig(format=app.config['LOGGING_FORMAT'], level=logging.DEBUG, datefmt='%Y-%m-%d %H:%M:%S')
-    logging.getLogger('sqlalchemy.engine').setLevel(logging.DEBUG)
-    logging.getLogger('sqlalchemy.pool').setLevel(logging.DEBUG)
-    logging.getLogger('sqlalchemy.dialects').setLevel(logging.DEBUG)
-    logging.getLogger('sqlalchemy.orm').setLevel(logging.DEBUG)
-    logging.getLogger('psycopg2').setLevel(logging.DEBUG)
+    logging.basicConfig(format=app.config['LOGGING_FORMAT'], level=app.config['LOG_BASIC'], datefmt='%Y-%m-%d %H:%M:%S')
+    logging.getLogger('sqlalchemy.engine').setLevel(app.config['LOG_SQLALCHEMY_ENGINE'])
+    logging.getLogger('sqlalchemy.pool').setLevel(app.config['LOG_SQLALCHEMY_POOL'])
+    logging.getLogger('sqlalchemy.dialects').setLevel(app.config['LOG_SQLALCHEMY_DIALECTS'])
+    logging.getLogger('sqlalchemy.orm').setLevel(app.config['LOG_SQLALCHEMY_ORM'])
+    logging.getLogger('psycopg2').setLevel(app.config['LOG_PSYCOPG2'])
 
     # formatter = logging.Formatter(app.config['LOGGING_FORMAT'])
     # handler = logging.FileHandler(app.config['LOGGING_LOCATION'])
     # handler.setLevel(app.config['LOGGING_LEVEL'])
     # handler.setFormatter(formatter)
     # app.logger.addHandler(handler)
-
-
-

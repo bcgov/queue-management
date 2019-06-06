@@ -46,35 +46,29 @@ db.init_app(application)
 logging.getLogger('sqlalchemy.engine').info(">>> This is some info")
 logging.getLogger('sqlalchemy.pool').error(">>> This is an error")
 
-print("==> DB engine settings:")
-print("    --> pool_size = {}".format(db.engine.pool.size()))
-print("    --> pool_pre_ping = " + str(db.engine.pool._pre_ping))
-for attr in dir(db.engine.connect):
-    print("db.engine.connect.%s = %r" % (attr, getattr(db.engine.connect, attr)))
+loggers = [logging.getLogger(name) for name in logging]
+
+# print("==> DB engine settings:")
+# print("    --> pool_size = {}".format(db.engine.pool.size()))
+# print("    --> pool_pre_ping = " + str(db.engine.pool._pre_ping))
+# for attr in dir(db.engine.connect):
+#     print("db.engine.connect.%s = %r" % (attr, getattr(db.engine.connect, attr)))
 
 cache = Cache(config={'CACHE_TYPE': 'simple'})
 cache.init_app(application)
 
 ma = Marshmallow(application)
 
-log_error_flag = application.config['LOG_ERRORS']
-if log_error_flag:
-    socketio = SocketIO(logger=True, engineio_logger=True)
-else:
-    socketio = SocketIO(logger=False, engineio_logger=False)
+socketio = SocketIO(logger=True, engineio_logger=True)
 
 if application.config['ACTIVE_MQ_URL'] is not None:
     socketio.init_app(application, async_mode='eventlet', message_queue=application.config['ACTIVE_MQ_URL'], path='/api/v1/socket.io')
 else:
     socketio.init_app(application, path='/api/v1/socket.io')
 
-# Set socket logging to errors only to reduce log spam
-if log_error_flag:
-    logging.getLogger('socketio').setLevel(logging.DEBUG)
-    logging.getLogger('engineio').setLevel(logging.DEBUG)
-else:
-    logging.getLogger('socketio').setLevel(logging.ERROR)
-    logging.getLogger('engineio').setLevel(logging.ERROR)
+# Set socket logging
+logging.getLogger('socketio').setLevel(application.config['LOG_SOCKETIO'])
+logging.getLogger('engineio').setLevel(application.config['LOG_ENGINEIO'])
 
 if application.config['CORS_ALLOWED_ORIGINS'] is not None:
     CORS(application, supports_credentials=True, origins=application.config['CORS_ALLOWED_ORIGINS'])
