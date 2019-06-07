@@ -2,7 +2,6 @@ import logging
 import socket
 import time
 import traceback
-import datetime
 
 from config import configure_app
 from flask import Flask
@@ -23,11 +22,7 @@ from app.exceptions import AuthError
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 
-import sys
-
-from sqlalchemy.pool import NullPool
-
-# from pprint import pprint
+import datetime
 
 application = Flask(__name__, instance_relative_config=True)
 
@@ -35,52 +30,32 @@ application = Flask(__name__, instance_relative_config=True)
 application.url_map.strict_slashes = True
 configure_app(application)
 
-db = SQLAlchemy(application, engine_options={
-    # 'pool_size' : 15,
-    # 'timeout' : 10,
-    # 'pool_pre_ping' : True,
-    'echo' : 'debug',
-    # 'echo_pool' : 'debug',
-    'poolclass' : NullPool
-})
-
-# db = SQLAlchemy(application)
+db = SQLAlchemy(application)
 db.init_app(application)
-
-logging.getLogger('sqlalchemy.engine').info(">>> This is a test info message")
-logging.getLogger('sqlalchemy.pool').error(">>> This is a test error message")
-
-# print("==> Loggers")
-# for name in logging.root.manager.loggerDict:
-#     print("    --> Logger name: " + name)
-
-# print("==> DB engine settings:")
-# print("    --> pool_size = {}".format(db.engine.pool.size()))
-# print("    --> pool_pre_ping = " + str(db.engine.pool._pre_ping))
-
-print("==> More DB engine settings:")
-for attr in dir(db.engine):
-    print("db.engine.%s = %r" % (attr, getattr(db.engine, attr)))
-
-print("==> Many more DB engine settings:")
-for attr in dir(db.engine.pool.__class__):
-    print("db.engine.pool.__class__.%s = %r" % (attr, getattr(db.engine.pool.__class__, attr)))
 
 cache = Cache(config={'CACHE_TYPE': 'simple'})
 cache.init_app(application)
 
 ma = Marshmallow(application)
 
-socketio = SocketIO(logger=True, engineio_logger=True)
+log_error_flag = application.config['LOG_ERRORS']
+if log_error_flag:
+    socketio = SocketIO(logger=True, engineio_logger=True)
+else:
+    socketio = SocketIO(logger=False, engineio_logger=False)
 
 if application.config['ACTIVE_MQ_URL'] is not None:
     socketio.init_app(application, async_mode='eventlet', message_queue=application.config['ACTIVE_MQ_URL'], path='/api/v1/socket.io')
 else:
     socketio.init_app(application, path='/api/v1/socket.io')
 
-# Set socket logging
-logging.getLogger('socketio').setLevel(application.config['LOG_SOCKETIO'])
-logging.getLogger('engineio').setLevel(application.config['LOG_ENGINEIO'])
+# Set socket logging to errors only to reduce log spam
+if log_error_flag:
+    logging.getLogger('socketio').setLevel(logging.DEBUG)
+    logging.getLogger('engineio').setLevel(logging.DEBUG)
+else:
+    logging.getLogger('socketio').setLevel(logging.ERROR)
+    logging.getLogger('engineio').setLevel(logging.ERROR)
 
 if application.config['CORS_ALLOWED_ORIGINS'] is not None:
     CORS(application, supports_credentials=True, origins=application.config['CORS_ALLOWED_ORIGINS'])
@@ -116,6 +91,7 @@ import app.auth
 compress = Compress()
 compress.init_app(application)
 
+logging.basicConfig(format=application.config['LOGGING_FORMAT'], level=logging.WARNING)
 logger = logging.getLogger("myapp.sqltime")
 logger.setLevel(logging.DEBUG)
 
