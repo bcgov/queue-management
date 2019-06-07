@@ -25,6 +25,8 @@ from sqlalchemy.engine import Engine
 
 import sys
 
+from sqlalchemy.pool import NullPool
+
 # from pprint import pprint
 
 application = Flask(__name__, instance_relative_config=True)
@@ -34,12 +36,14 @@ application.url_map.strict_slashes = True
 configure_app(application)
 
 db = SQLAlchemy(application, engine_options={
-    'pool_size' : 15,
-    #'timeout' : 10,
-    'pool_pre_ping' : True,
+    # 'pool_size' : 15,
+    # 'timeout' : 10,
+    # 'pool_pre_ping' : True,
     'echo' : 'debug',
-    'echo_pool' : 'debug'
+    # 'echo_pool' : 'debug',
+    'poolclass' : NullPool
 })
+
 # db = SQLAlchemy(application)
 db.init_app(application)
 
@@ -53,8 +57,14 @@ logging.getLogger('sqlalchemy.pool').error(">>> This is a test error message")
 # print("==> DB engine settings:")
 # print("    --> pool_size = {}".format(db.engine.pool.size()))
 # print("    --> pool_pre_ping = " + str(db.engine.pool._pre_ping))
-# for attr in dir(db.engine.connect):
-#     print("db.engine.connect.%s = %r" % (attr, getattr(db.engine.connect, attr)))
+
+print("==> More DB engine settings:")
+for attr in dir(db.engine):
+    print("db.engine.%s = %r" % (attr, getattr(db.engine, attr)))
+
+print("==> Many more DB engine settings:")
+for attr in dir(db.engine.pool.__class__):
+    print("db.engine.pool.__class__.%s = %r" % (attr, getattr(db.engine.pool.__class__, attr)))
 
 cache = Cache(config={'CACHE_TYPE': 'simple'})
 cache.init_app(application)

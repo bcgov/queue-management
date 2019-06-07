@@ -77,7 +77,8 @@ class BaseConfig(object):
     DB_PORT = os.getenv('DATABASE_PORT','')
     DB_TIMEOUT_STRING = os.getenv('DATABASE_TIMEOUT_STRING', '')
     # SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}'.format(
-    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}{timeoutstring}'.format(
+    # SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}{timeoutstring}'.format(
+    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}'.format(
         engine=DB_ENGINE,
         user=DB_USER,
         password=DB_PASSWORD,
@@ -94,6 +95,9 @@ class BaseConfig(object):
     #     'pool_size' : 13,
     #     'pool_pre_ping': True
     # }
+
+    # Some more SQLALCHEMY options
+    # SQLALCHEMY_ENGINE_OPTIONS = { 'poolclass' : NullPool,  }
 
     #  Print out DB values.
     print("==> Database Values")
@@ -131,6 +135,8 @@ class BaseConfig(object):
     # print("    --> LOG_SOCKETIO2:           " + os.getenv("LOG_SOCKETIO", "<None>") + "; Value: " + str(LOG_SOCKETIO))
     LOG_SQLALCHEMY = debug_string_to_debug_level(os.getenv("LOG_SQLALCHEMY", ""))
     # print("    --> LOG_SQLALCHEMY:          " + os.getenv("LOG_SQLALCHEMY", "<None>") + "; Value: " + str(LOG_SQLALCHEMY))
+    LOG_SQLALCHEMY_ORM = debug_string_to_debug_level(os.getenv("LOG_SQLALCHEMY_ORM", ""))
+    # print("    --> LOG_SQLALCHEMY_ORM:      " + os.getenv("LOG_SQLALCHEMY_ORM", "<None>") + "; Value: " + str(LOG_SQLALCHEMY_ORM))
     LOG_URLLIB3 = debug_string_to_debug_level(os.getenv("LOG_URLLIB3", ""))
     # print("    --> LOG_URLLIB3:             " + os.getenv("LOG_URLLIB3", "<None>") + "; Value: " + str(LOG_URLLIB3))
 
@@ -230,6 +236,7 @@ def configure_app(app):
     set_log_level(app, 'LOG_REQUESTS', 'requests')
     set_log_level(app, 'LOG_SOCKETIO', 'socketio')
     set_log_level(app, 'LOG_SQLALCHEMY', 'sqlalchemy')
+    set_log_level(app, 'LOG_SQLALCHEMY_ORM', 'sqlalchemy.orm')
     set_log_level(app, 'LOG_URLLIB3', 'urllib3')
 
 def set_log_level(app, config_name, log_name):
