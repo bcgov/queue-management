@@ -64,6 +64,9 @@ class BaseConfig(object):
         name=DB_NAME
     )
 
+    #  Try to set some options to avoid long delays.
+    SQLALCHEMY_ENGINE_OPTIONS = {'pool_timeout': 300, 'max_overflow': 20}
+
     THEQ_FEEDBACK = (os.getenv('THEQ_FEEDBACK','')).upper().replace(" ","").split(",")
     SLACK_URL = os.getenv('SLACK_URL', '')
     ROCKET_CHAT_URL = os.getenv('ROCKET_CHAT_URL')

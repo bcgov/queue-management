@@ -96,6 +96,8 @@ logger = logging.getLogger("myapp.sqltime")
 logger.setLevel(logging.DEBUG)
 
 def api_call_with_retry(f, max_time=15000, max_tries=12, delay_first=100, delay_start=200, delay_mult=1.5):
+    from app.models.theq import CSR
+
     @wraps(f)
     def decorated_function(*args, **kwargs):
 
@@ -114,6 +116,13 @@ def api_call_with_retry(f, max_time=15000, max_tries=12, delay_first=100, delay_
             print("    --> elapsed: " + str(time_current - time_save) + "; total elapsed: " + \
                   str(time_current - time_start))
 
+            # try:
+            #     for name in db.session.query('1'):
+            #         print("    --> name: " + str(name))
+            #     break
+            # except BaseException as ex:
+            #     print("==>  An error printing session names")
+            #     print(ex)
             try:
                 return f(*args, **kwargs)
             except SQLAlchemyError as err:
