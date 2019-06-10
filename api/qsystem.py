@@ -3,7 +3,7 @@ import socket
 import time
 import traceback
 
-from config import configure_app
+from config import configure_app, configure_engineio_socketio
 from flask import Flask
 from flask_admin import Admin
 from flask_caching import Cache
@@ -38,8 +38,9 @@ cache.init_app(application)
 
 ma = Marshmallow(application)
 
-log_error_flag = application.config['LOG_ERRORS']
-if log_error_flag:
+#  NOTE!!  Log levels for socketio and engineio set in configure_app
+log_enable_flag = application.config['LOG_ENABLE']
+if log_enable_flag:
     socketio = SocketIO(logger=True, engineio_logger=True)
 else:
     socketio = SocketIO(logger=False, engineio_logger=False)
@@ -49,13 +50,7 @@ if application.config['ACTIVE_MQ_URL'] is not None:
 else:
     socketio.init_app(application, path='/api/v1/socket.io')
 
-# Set socket logging to errors only to reduce log spam
-if log_error_flag:
-    logging.getLogger('socketio').setLevel(logging.DEBUG)
-    logging.getLogger('engineio').setLevel(logging.DEBUG)
-else:
-    logging.getLogger('socketio').setLevel(logging.ERROR)
-    logging.getLogger('engineio').setLevel(logging.ERROR)
+configure_engineio_socketio(application)
 
 if application.config['CORS_ALLOWED_ORIGINS'] is not None:
     CORS(application, supports_credentials=True, origins=application.config['CORS_ALLOWED_ORIGINS'])
