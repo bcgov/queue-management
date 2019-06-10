@@ -16,7 +16,7 @@ If you want to just try out the application, here are some instructions to get i
 
 - Note we do not use RabbitMQ for local testing but this is used to manage multiple pods and syncing messages between them.
 
-## Setup MySQL instance & run it:
+## Setup MySQL instance & run it (if MySQL desired):
 
 1. `sudo apt-get install mysql-server`
 1. `sudo service mysql start`
@@ -25,6 +25,8 @@ If you want to just try out the application, here are some instructions to get i
 1. `GRANT ALL PRIVILEGES ON *.* TO 'demo'@'localhost';`
 1. `CREATE DATABASE IF NOT EXISTS queue_management;`
 1. `FLUSH PRIVILEGES;`
+
+## Setup Postgres instance & run it (if Postgres desired):
 
 ## Setup docker & install Keycloak:
 
@@ -103,6 +105,7 @@ Additional features that can be turned on by environment variables (see the .env
 1. Integration with Slack
 1. Integration with Rocket Chat
 1. Integration with Service Now
+1. Support for MySQL and Postgres databases
 
 We are using Snowplow & Looker to display our Analytics.
 
