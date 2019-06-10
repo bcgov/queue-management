@@ -23,7 +23,8 @@ class BaseConfig(object):
     LOGGING_LOCATION = "logs/qsystem.log"
     LOGGING_LEVEL = DEBUG
     LOGGING_FORMAT = '[%(asctime)s.%(msecs)03d] %(levelname)-8s (%(name)s) <%(module)s.py>.%(funcName)s: %(message)s'
-    LOG_ERRORS = (os.getenv("LOG_ERRORS","FALSE")).upper() == "TRUE"
+    LOG_ENABLE = (os.getenv("LOG_ENABLE","FALSE")).upper() == "TRUE"
+    PRINT_ENABLE = (os.getenv("PRINT_ENABLE","FALSE")).upper() == "TRUE"
 
     SECRET_KEY = os.getenv('SECRET_KEY')
     OIDC_OPENID_REALM = os.getenv('OIDC_OPENID_REALM','nest')
@@ -65,7 +66,7 @@ class BaseConfig(object):
     )
 
     #  Try to set some options to avoid long delays.
-    SQLALCHEMY_ENGINE_OPTIONS = {'pool_timeout': 300, 'max_overflow': 20}
+    # SQLALCHEMY_ENGINE_OPTIONS = {'pool_timeout': 300, 'max_overflow': 20}
 
     THEQ_FEEDBACK = (os.getenv('THEQ_FEEDBACK','')).upper().replace(" ","").split(",")
     SLACK_URL = os.getenv('SLACK_URL', '')
@@ -161,47 +162,65 @@ def configure_app(app):
     app.config.from_object(config[config_name])
     app.config.from_pyfile('config.cfg', silent=True)
 
-    # Configure logging for the app.
-    print("==> Setting up logging")
-    location = app.config['LOGGING_LOCATION']
-    formatter = logging.Formatter(app.config['LOGGING_FORMAT'])
-    handler = logging.FileHandler(location)
-    handler.setFormatter(formatter)
-    stringLevel = os.getenv('LOG_BASIC', "")
-    msgLevel = max(logging.DEBUG, debug_string_to_debug_level(stringLevel))
-    print("    --> Setting logging for default app.logger; stringLevel: " + stringLevel + "; msgLevel: " + str(msgLevel))
-    app.logger.setLevel(msgLevel)
-    app.logger.addHandler(handler)
+    #  See if any logging is wanted.
+    if app.config['LOG_ENABLE']:
 
-    #  Configure logging for all other loggers.
-    setupLogger(location, 'asyncio', 'LOG_ASYNCIO', formatter)
-    setupLogger(location, 'concurrent', 'LOG_CONCURRENT', formatter)
-    setupLogger(location, 'engineio', 'LOG_ENGINEIO', formatter)
-    setupLogger(location, 'flask_caching', 'LOG_FLASK_CACHING', formatter)
-    setupLogger(location, 'flask_cors', 'LOG_FLASK_CORS', formatter)
-    setupLogger(location, 'flask_restplus', 'LOG_FLASK_RESTPLUS', formatter)
-    setupLogger(location, 'gunicorn', 'LOG_GUNICORN', formatter)
-    setupLogger(location, 'psycopg2', 'LOG_PSYCOPG2', formatter)
-    setupLogger(location, 'requests', 'LOG_REQUESTS', formatter)
-    setupLogger(location, 'socketio', 'LOG_SOCKETIO', formatter)
-    setupLogger(location, 'sqlalchemy', 'LOG_SQLALCHEMY', formatter)
-    setupLogger(location, 'sqlalchemy.orm', 'LOG_SQLALCHEMY_ORM', formatter)
-    setupLogger(location, 'urllib3', 'LOG_URLLIB3', formatter)
+        #  Get list of available loggers.
+        print("==> List of available loggers")
+        for name in logging.root.manager.loggerDict:
+            print("    --> Logger name: " + name)
 
-    # #  Test logging.
-    # test = logging.getLogger('asyncio')
-    # test.debug(">>> This is a debugging message")
-    # test.info(">>> This is an info message")
-    # test.warning(">>> This is a warning message")
-    # test.error(">>> This is an error message")
-    # test.critical(">>> This is a critical message")
-    #
-    # test2 = logging.getLogger('requests')
-    # test2.debug(">>> This is a debugging message")
-    # test2.info(">>> This is an info message")
-    # test2.warning(">>> This is a warning message")
-    # test2.error(">>> This is an error message")
-    # test2.critical(">>> This is a critical message")
+        # Configure logging for the app.
+        print("==> Setting up logging")
+        location = app.config['LOGGING_LOCATION']
+        formatter = logging.Formatter(app.config['LOGGING_FORMAT'])
+        handler = logging.FileHandler(location)
+        handler.setFormatter(formatter)
+        stringLevel = os.getenv('LOG_BASIC', "")
+        msgLevel = max(logging.DEBUG, debug_string_to_debug_level(stringLevel))
+        print("    --> Setting logging for default app.logger; stringLevel: " + stringLevel + "; msgLevel: " + str(msgLevel))
+        app.logger.setLevel(msgLevel)
+        app.logger.addHandler(handler)
+
+        #  Configure logging for all other loggers.
+        setupLogger(location, 'asyncio', 'LOG_ASYNCIO', formatter)
+        setupLogger(location, 'concurrent', 'LOG_CONCURRENT', formatter)
+        setupLogger(location, 'flask_caching', 'LOG_FLASK_CACHING', formatter)
+        setupLogger(location, 'flask_cors', 'LOG_FLASK_CORS', formatter)
+        setupLogger(location, 'flask_restplus', 'LOG_FLASK_RESTPLUS', formatter)
+        setupLogger(location, 'gunicorn', 'LOG_GUNICORN', formatter)
+        setupLogger(location, 'psycopg2', 'LOG_PSYCOPG2', formatter)
+        setupLogger(location, 'requests', 'LOG_REQUESTS', formatter)
+        setupLogger(location, 'sqlalchemy', 'LOG_SQLALCHEMY', formatter)
+        setupLogger(location, 'sqlalchemy.orm', 'LOG_SQLALCHEMY_ORM', formatter)
+        setupLogger(location, 'urllib3', 'LOG_URLLIB3', formatter)
+
+        # #  Test logging.
+        # test = logging.getLogger('asyncio')
+        # test.debug(">>> This is a debugging message")
+        # test.info(">>> This is an info message")
+        # test.warning(">>> This is a warning message")
+        # test.error(">>> This is an error message")
+        # test.critical(">>> This is a critical message")
+        #
+        # test2 = logging.getLogger('requests')
+        # test2.debug(">>> This is a debugging message")
+        # test2.info(">>> This is an info message")
+        # test2.warning(">>> This is a warning message")
+        # test2.error(">>> This is an error message")
+        # test2.critical(">>> This is a critical message")
+
+def configure_engineio_socketio(app):
+
+    #  See if any logging is wanted.
+    if app.config['LOG_ENABLE']:
+        print("==> Setting up engionio and socketio")
+        location = app.config['LOGGING_LOCATION']
+        formatter = logging.Formatter(app.config['LOGGING_FORMAT'])
+
+        #  Set up logging for last two loggers.
+        setupLogger(location, 'engineio', 'LOG_ENGINEIO', formatter)
+        setupLogger(location, 'socketio', 'LOG_SOCKETIO', formatter)
 
 def setupLogger(location, log_name, config_name, formatter):
 
