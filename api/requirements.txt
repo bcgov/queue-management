@@ -19,7 +19,6 @@ flask_marshmallow
 flask-socketio
 gunicorn
 marshmallow-sqlalchemy
-mysqlclient
 psycopg2-binary
 pysnow
 pytest
