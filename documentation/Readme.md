@@ -16,17 +16,17 @@ If you want to just try out the application, here are some instructions to get i
 
 - Note we do not use RabbitMQ for local testing but this is used to manage multiple pods and syncing messages between them.
 
-## Setup MySQL instance & run it (if MySQL desired):
+## Setup Postgresql instance & run it:
 
-1. `sudo apt-get install mysql-server`
-1. `sudo service mysql start`
-1. `sudo mysql --defaults-file=/etc/mysql/debian.cnf`
-1. `CREATE USER 'demo'@'localhost' IDENTIFIED BY 'demo';`
-1. `GRANT ALL PRIVILEGES ON *.* TO 'demo'@'localhost';`
-1. `CREATE DATABASE IF NOT EXISTS queue_management;`
-1. `FLUSH PRIVILEGES;`
-
-## Setup Postgres instance & run it (if Postgres desired):
+1. `sudo apt-get install postgresql`
+1. `sudo passwd postgres`
+1. `Enter password: postgres`
+1. `sudo service postgresql start`
+1. `sudo -u postgres createuser demo`
+1. `sudo -u postgres createdb queue_management`
+1. `sudo -u postgres psql`
+1. `alter user demo with encrypted password 'demo';`
+1. `grant all privileges on database queue_management to demo ;`
 
 ## Setup docker & install Keycloak:
 
@@ -76,7 +76,7 @@ Ensure you have python 3. I also had to install: gcc, python3-venv, libmysqlclie
 
 1. `gunicorn wsgi --bind=0.0.0.0:5000 --access-logfile=- --config gunicorn_config.py`
 
-## Setup for  FrontEnd Development
+## Setup for FrontEnd Development
 
 Install npm:
 
@@ -105,7 +105,6 @@ Additional features that can be turned on by environment variables (see the .env
 1. Integration with Slack
 1. Integration with Rocket Chat
 1. Integration with Service Now
-1. Support for MySQL and Postgres databases
 
 We are using Snowplow & Looker to display our Analytics.
 
