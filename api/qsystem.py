@@ -39,6 +39,7 @@ print("    --> pool size:    " + str(db.engine.pool.size()))
 print("    --> max overflow: " + str(db.engine.pool._max_overflow))
 print("    --> echo:         " + str(db.engine.echo))
 print("    --> pre ping:     " + str(db.engine.pool._pre_ping))
+print("    --> Database URI: " + application.config['SQLALCHEMY_DATABASE_URI_DISPLAY'])
 
 #  Debugging the engine in general.
 print("==> All DB Engine options")

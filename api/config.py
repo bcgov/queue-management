@@ -56,13 +56,24 @@ class BaseConfig(object):
     DB_NAME = os.getenv('DATABASE_NAME','')
     DB_HOST = os.getenv('DATABASE_HOST','')
     DB_PORT = os.getenv('DATABASE_PORT','')
-    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}'.format(
+    DB_TIMEOUT_STRING = os.getenv('DATABASE_TIMEOUT_STRING', '')
+    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}{timeout}'.format(
         engine=DB_ENGINE,
         user=DB_USER,
         password=DB_PASSWORD,
         host=DB_HOST,
         port=DB_PORT,
-        name=DB_NAME
+        name=DB_NAME,
+        timeout=DB_TIMEOUT_STRING
+    )
+
+    SQLALCHEMY_DATABASE_URI_DISPLAY = '{engine}://{user}:<password>@{host}:{port}/{name}{timeout}'.format(
+        engine=DB_ENGINE,
+        user=DB_USER,
+        host=DB_HOST,
+        port=DB_PORT,
+        name=DB_NAME,
+        timeout=DB_TIMEOUT_STRING
     )
 
     #  Get SQLAlchemy environment variables.
@@ -73,9 +84,14 @@ class BaseConfig(object):
     SQLALCHEMY_ENGINE_OPTIONS = {
         'pool_size' : pool_size,
         'max_overflow' : max_overflow,
-        'echo' : False,
         'pool_pre_ping' : False
     }
+
+    #  Set echo appropriately.
+    if (os.getenv('SQLALCHEMY_ECHO', "False")).upper() == "TRUE":
+        SQLALCHEMY_ECHO=True
+    else:
+        SQLALCHEMY_ECHO=False
 
     THEQ_FEEDBACK = (os.getenv('THEQ_FEEDBACK','')).upper().replace(" ","").split(",")
     SLACK_URL = os.getenv('SLACK_URL', '')
@@ -102,24 +118,8 @@ class LocalConfig(BaseConfig):
     SERVER_NAME = None
     SESSION_COOKIE_DOMAIN = None
     CORS_ALLOWED_ORIGINS = ["http://localhost:8080"]
-    SQLALCHEMY_ECHO = False
     SECRET_KEY = "pancakes"
     LOCALHOST_DB_IP = "127.0.0.1"
-
-    DB_ENGINE = os.getenv('DATABASE_ENGINE', 'mysql')
-    DB_USER = os.getenv('DATABASE_USERNAME', 'root')
-    DB_PASSWORD = os.getenv('DATABASE_PASSWORD', 'root')
-    DB_NAME = os.getenv('DATABASE_NAME', 'qsystem')
-    DB_HOST = os.getenv('DATABASE_HOST', LOCALHOST_DB_IP)
-    DB_PORT = os.getenv('DATABASE_PORT', '3306')
-    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}'.format(
-        engine=DB_ENGINE,
-        user=DB_USER,
-        password=DB_PASSWORD,
-        host=DB_HOST,
-        port=DB_PORT,
-        name=DB_NAME
-    )
 
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
@@ -130,12 +130,6 @@ class DevelopmentConfig(BaseConfig):
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
 
-    if os.getenv('SQLALCHEMY_ECHO', "False") == "True":
-        SQLALCHEMY_ECHO=True
-    else:
-        SQLALCHEMY_ECHO=False
-
-
 class TestConfig(BaseConfig):
     DEBUG = True
     REDIS_DEBUG = True
@@ -145,12 +139,6 @@ class TestConfig(BaseConfig):
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
 
-    if os.getenv('SQLALCHEMY_ECHO', "False") == "True":
-        SQLALCHEMY_ECHO=True
-    else:
-        SQLALCHEMY_ECHO=False
-
-
 class ProductionConfig(BaseConfig):
     DEBUG = True
     REDIS_DEBUG = True
@@ -159,12 +147,6 @@ class ProductionConfig(BaseConfig):
 
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
-
-    if os.getenv('SQLALCHEMY_ECHO', "False") == "True":
-        SQLALCHEMY_ECHO=True
-    else:
-        SQLALCHEMY_ECHO=False
-
 
 def configure_app(app):
     config_name = os.getenv('FLASK_CONFIGURATION', 'default')
