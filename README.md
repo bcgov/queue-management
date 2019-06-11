@@ -10,7 +10,7 @@ Designed for use in an application platform buld for containers specifically Ope
 
 - VueJS & BootStrap for Front End
 - Flask & Python for API Backend
-- Percona Database Cluster
+- Patroni Database Cluster
 - RabbitMQ
 - Caddy HTTP/2 Web Server
 
@@ -57,11 +57,11 @@ Service Appointments (Optional)
 - Ability to Checkin clients and place them at the top of the queue
 
 Room Booking and Exam Invigilation (Optional)
+
 - Manage Industry Trade Authority Group and Individual Exams
 - Manage Other (Basic Exams)
 - Manage General Room Booking
 - Report on Exams
-
 
 Basic Administration Panels to add, update and delete:
 
@@ -82,7 +82,7 @@ Feedback
 Analytics
 
 - Key timing events are sent to snowplow for analysis and reporting
-- Data is also stored in the Percona MySQL database as an alternative method to extract analytics
+- Data is also stored in the Patroni Postgres database as an alternative method to extract analytics
 
 ## Requirements
 

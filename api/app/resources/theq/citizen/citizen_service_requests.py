@@ -31,6 +31,7 @@ class CitizenServiceRequests(Resource):
             csr = CSR.find_by_username(g.oidc_token_info['username'])
 
             citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
+            print("==> GET /citizens/" + str(citizen.citizen_id) + '/service_requests/, Ticket: ' + citizen.ticket_number)
             result = self.service_requests_schema.dump(citizen.service_reqs)
             return {'service_requests': result.data,
                     'errors': result.errors}

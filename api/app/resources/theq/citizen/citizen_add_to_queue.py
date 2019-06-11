@@ -32,6 +32,8 @@ class CitizenAddToQueue(Resource):
         citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
         active_service_request = citizen.get_active_service_request()
 
+        print("==> POST /citizens/" + str(citizen.citizen_id) + '/add_to_queue, Ticket: ' + citizen.ticket_number)
+
         if active_service_request is None:
             return {"message": "Citizen has no active service requests"}
 

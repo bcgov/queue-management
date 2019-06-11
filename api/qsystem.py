@@ -3,7 +3,7 @@ import socket
 import time
 import traceback
 
-from config import configure_app
+from config import configure_app, configure_engineio_socketio
 from flask import Flask
 from flask_admin import Admin
 from flask_caching import Cache
@@ -22,6 +22,8 @@ from app.exceptions import AuthError
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 
+import datetime
+
 application = Flask(__name__, instance_relative_config=True)
 
 # Make sure we 404 when the trailing slash is not present on ALL routes
@@ -31,13 +33,28 @@ configure_app(application)
 db = SQLAlchemy(application)
 db.init_app(application)
 
+#  See whether options took.
+print("==> DB Engine options")
+print("    --> pool size:    " + str(db.engine.pool.size()))
+print("    --> max overflow: " + str(db.engine.pool._max_overflow))
+print("    --> echo:         " + str(db.engine.echo))
+print("    --> pre ping:     " + str(db.engine.pool._pre_ping))
+print("    --> Database URI: " + application.config['SQLALCHEMY_DATABASE_URI_DISPLAY'])
+
+#  Debugging the engine in general.
+print("==> All DB Engine options")
+for attr in dir(db.engine):
+    print("    --> db.engine." + attr + " = " + str(getattr(db.engine, attr)))
+    # print("db.engine.%s = %s") % (attr, getattr(db.engine, attr))
+
 cache = Cache(config={'CACHE_TYPE': 'simple'})
 cache.init_app(application)
 
 ma = Marshmallow(application)
 
-log_error_flag = application.config['LOG_ERRORS']
-if log_error_flag:
+#  NOTE!!  Log levels for socketio and engineio set in configure_app
+log_enable_flag = application.config['LOG_ENABLE']
+if log_enable_flag:
     socketio = SocketIO(logger=True, engineio_logger=True)
 else:
     socketio = SocketIO(logger=False, engineio_logger=False)
@@ -47,13 +64,7 @@ if application.config['ACTIVE_MQ_URL'] is not None:
 else:
     socketio.init_app(application, path='/api/v1/socket.io')
 
-# Set socket logging to errors only to reduce log spam
-if log_error_flag:
-    logging.getLogger('socketio').setLevel(logging.DEBUG)
-    logging.getLogger('engineio').setLevel(logging.DEBUG)
-else:
-    logging.getLogger('socketio').setLevel(logging.ERROR)
-    logging.getLogger('engineio').setLevel(logging.ERROR)
+configure_engineio_socketio(application)
 
 if application.config['CORS_ALLOWED_ORIGINS'] is not None:
     CORS(application, supports_credentials=True, origins=application.config['CORS_ALLOWED_ORIGINS'])
@@ -93,20 +104,58 @@ logging.basicConfig(format=application.config['LOGGING_FORMAT'], level=logging.W
 logger = logging.getLogger("myapp.sqltime")
 logger.setLevel(logging.DEBUG)
 
-def api_call_with_retry(f):
+def api_call_with_retry(f, max_time=15000, max_tries=12, delay_first=100, delay_start=200, delay_mult=1.5):
+
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        attempts = 3
 
-        while attempts > 0:
-            attempts -= 1
+        #  Initialize variables
+        current_try = 1
+        current_delay = 0
+        total_delay = 0
+        time_start = datetime.datetime.now()
+        time_current = time_start
+        time_save = time_current
+
+        while (current_try <= max_tries) and (total_delay <= max_time):
+
+            print("==> api_call_with_retry: Try #: " + str(current_try) + "; time: " + str(time_current))
+            print("    --> delay:   " + str(current_delay) + "; total delay: " + str(total_delay))
+            print("    --> elapsed: " + str(time_current - time_save) + "; total elapsed: " + \
+                  str(time_current - time_start))
+
             try:
                 return f(*args, **kwargs)
             except SQLAlchemyError as err:
-                if attempts > 0:
+                if current_try < max_tries:
+                    time_db_before = datetime.datetime.now()
                     db.session.rollback()
+                    time_db_after = datetime.datetime.now()
+                    print("        --> SQLAlchemyError: " + str(datetime.datetime.now()))
+                    print("        --> Message:         " + str(err))
+                    print("        --> rollback time:   " + str(time_db_after - time_db_before))
+                    time_current = time_db_after
                 else:
                     raise
+
+            #  Update variables.
+            if current_try == 1:
+                current_delay = delay_first
+            elif current_try == 2:
+                current_delay = delay_start
+            else:
+                current_delay = current_delay * delay_mult
+
+            #  Update variables.
+            current_try += 1
+            total_delay = total_delay + current_delay
+
+            #  Sleep a bit.
+            time.sleep(current_delay / 1000.0)
+
+            #  Update more variables.
+            time_save = time_current
+            time_current = datetime.datetime.now()
 
     return decorated_function
 

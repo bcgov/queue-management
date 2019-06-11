@@ -111,26 +111,26 @@ objects:
               image: " "
               env:
                 - name: DATABASE_ENGINE
-                  value: "mysql"
+                  value: "postgresql"
                 - name: DATABASE_USERNAME
                   valueFrom:
                     secretKeyRef:
-                      name: "percona-passwords"
-                      key: mysql_user
+                      name: "patronitheq"
+                      key: app-db-username
                 - name: DATABASE_PASSWORD
                   valueFrom:
                     secretKeyRef:
-                      name: "percona-passwords"
-                      key: mysql_password
+                      name: "patronitheq"
+                      key: app-db-password
                 - name: DATABASE_NAME
                   valueFrom:
                     secretKeyRef:
-                      name: "percona-passwords"
-                      key: mysql_database
+                      name: "patronitheq"
+                      key: app-db-name
                 - name: DATABASE_HOST
-                  value: "percona"
+                  value: "patroni-mastertheq"
                 - name: DATABASE_PORT
-                  value: "3306"
+                  value: "5432"
                 - name: SQLALCHEMY_ECHO
                   value: "${SQLALCHEMY_ECHO}"
                 - name: APP_CONFIG

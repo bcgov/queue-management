@@ -35,6 +35,8 @@ class CitizenBeginService(Resource):
             citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
             pending_service_state = SRState.get_state_by_name("Active")
 
+            print("==> POST /citizens/" + str(citizen.citizen_id) + '/begin_service, Ticket: ' + citizen.ticket_number)
+
             active_service_request = citizen.get_active_service_request()
 
             if active_service_request is None:
