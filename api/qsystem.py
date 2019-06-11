@@ -33,6 +33,19 @@ configure_app(application)
 db = SQLAlchemy(application)
 db.init_app(application)
 
+#  See whether options took.
+print("==> DB Engine options")
+print("    --> pool size:    " + str(db.engine.pool.size()))
+print("    --> max overflow: " + str(db.engine.pool._max_overflow))
+print("    --> echo:         " + str(db.engine.echo))
+print("    --> pre ping:     " + str(db.engine.pool._pre_ping))
+
+#  Debugging the engine in general.
+print("==> All DB Engine options")
+for attr in dir(db.engine):
+    print("    --> db.engine." + attr + " = " + str(getattr(db.engine, attr)))
+    # print("db.engine.%s = %s") % (attr, getattr(db.engine, attr))
+
 cache = Cache(config={'CACHE_TYPE': 'simple'})
 cache.init_app(application)
 
@@ -110,13 +123,6 @@ def api_call_with_retry(f, max_time=15000, max_tries=12, delay_first=100, delay_
             print("    --> elapsed: " + str(time_current - time_save) + "; total elapsed: " + \
                   str(time_current - time_start))
 
-            # try:
-            #     for name in db.session.query('1'):
-            #         print("    --> name: " + str(name))
-            #     break
-            # except BaseException as ex:
-            #     print("==>  An error printing session names")
-            #     print(ex)
             try:
                 return f(*args, **kwargs)
             except SQLAlchemyError as err:

@@ -65,8 +65,17 @@ class BaseConfig(object):
         name=DB_NAME
     )
 
+    #  Get SQLAlchemy environment variables.
+    pool_size = int(os.getenv('SQLALCHEMY_POOL_SIZE', '9'))
+    max_overflow = int(os.getenv('SQLALCHEMY_MAX_OVERFLOW', '18'))
+
     #  Try to set some options to avoid long delays.
-    # SQLALCHEMY_ENGINE_OPTIONS = {'pool_timeout': 300, 'max_overflow': 20}
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_size' : pool_size,
+        'max_overflow' : max_overflow,
+        'echo' : False,
+        'pool_pre_ping' : False
+    }
 
     THEQ_FEEDBACK = (os.getenv('THEQ_FEEDBACK','')).upper().replace(" ","").split(",")
     SLACK_URL = os.getenv('SLACK_URL', '')
