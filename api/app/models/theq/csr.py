@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from qsystem import cache, db
 from app.models.theq import Base
-
+from sqlalchemy import func
 
 class CSR(Base):
 
@@ -53,7 +53,8 @@ class CSR(Base):
         if cache.get(key):
             return cache.get(key)
 
-        csr = CSR.query.filter(CSR.deleted.is_(None)).filter_by(username=idir_id).first()
+        csr = CSR.query.filter(CSR.deleted.is_(None)).filter(func.lower(CSR.username)==func.lower(idir_id)).first()
+
         cache.set(key, csr)
         return csr
 
