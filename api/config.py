@@ -157,9 +157,10 @@ def configure_app(app):
     if app.config['LOG_ENABLE']:
 
         #  Get list of available loggers.
-        print("==> List of available loggers")
-        for name in logging.root.manager.loggerDict:
-            print("    --> Logger name: " + name)
+        if (1==2):
+            print("==> List of available loggers")
+            for name in logging.root.manager.loggerDict:
+                print("    --> Logger name: " + name)
 
         # Configure logging for the app.
         print("==> Setting up logging")
