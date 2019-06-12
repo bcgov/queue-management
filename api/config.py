@@ -152,39 +152,43 @@ def configure_app(app):
     config_name = os.getenv('FLASK_CONFIGURATION', 'default')
     app.config.from_object(config[config_name])
     app.config.from_pyfile('config.cfg', silent=True)
+    print_flag = app.config['PRINT_ENABLE']
 
     #  See if any logging is wanted.
     if app.config['LOG_ENABLE']:
 
         #  Get list of available loggers.
-        print("==> List of available loggers")
-        for name in logging.root.manager.loggerDict:
-            print("    --> Logger name: " + name)
+        if False:
+            print("==> List of available loggers")
+            for name in logging.root.manager.loggerDict:
+                print("    --> Logger name: " + name)
 
         # Configure logging for the app.
-        print("==> Setting up logging")
+        if print_flag:
+            print("==> Setting up logging")
         location = app.config['LOGGING_LOCATION']
         formatter = logging.Formatter(app.config['LOGGING_FORMAT'])
         handler = logging.FileHandler(location)
         handler.setFormatter(formatter)
         stringLevel = os.getenv('LOG_BASIC', "")
         msgLevel = max(logging.DEBUG, debug_string_to_debug_level(stringLevel))
-        print("    --> Setting logging for default app.logger; stringLevel: " + stringLevel + "; msgLevel: " + str(msgLevel))
+        if print_flag:
+            print("    --> Setting logging for default app.logger; stringLevel: " + stringLevel + "; msgLevel: " + str(msgLevel))
         app.logger.setLevel(msgLevel)
         app.logger.addHandler(handler)
 
         #  Configure logging for all other loggers.
-        setupLogger(location, 'asyncio', 'LOG_ASYNCIO', formatter)
-        setupLogger(location, 'concurrent', 'LOG_CONCURRENT', formatter)
-        setupLogger(location, 'flask_caching', 'LOG_FLASK_CACHING', formatter)
-        setupLogger(location, 'flask_cors', 'LOG_FLASK_CORS', formatter)
-        setupLogger(location, 'flask_restplus', 'LOG_FLASK_RESTPLUS', formatter)
-        setupLogger(location, 'gunicorn', 'LOG_GUNICORN', formatter)
-        setupLogger(location, 'psycopg2', 'LOG_PSYCOPG2', formatter)
-        setupLogger(location, 'requests', 'LOG_REQUESTS', formatter)
-        setupLogger(location, 'sqlalchemy', 'LOG_SQLALCHEMY', formatter)
-        setupLogger(location, 'sqlalchemy.orm', 'LOG_SQLALCHEMY_ORM', formatter)
-        setupLogger(location, 'urllib3', 'LOG_URLLIB3', formatter)
+        setupLogger(print_flag, location, 'asyncio', 'LOG_ASYNCIO', formatter)
+        setupLogger(print_flag, location, 'concurrent', 'LOG_CONCURRENT', formatter)
+        setupLogger(print_flag, location, 'flask_caching', 'LOG_FLASK_CACHING', formatter)
+        setupLogger(print_flag, location, 'flask_cors', 'LOG_FLASK_CORS', formatter)
+        setupLogger(print_flag, location, 'flask_restplus', 'LOG_FLASK_RESTPLUS', formatter)
+        setupLogger(print_flag, location, 'gunicorn', 'LOG_GUNICORN', formatter)
+        setupLogger(print_flag, location, 'psycopg2', 'LOG_PSYCOPG2', formatter)
+        setupLogger(print_flag, location, 'requests', 'LOG_REQUESTS', formatter)
+        setupLogger(print_flag, location, 'sqlalchemy', 'LOG_SQLALCHEMY', formatter)
+        setupLogger(print_flag, location, 'sqlalchemy.orm', 'LOG_SQLALCHEMY_ORM', formatter)
+        setupLogger(print_flag, location, 'urllib3', 'LOG_URLLIB3', formatter)
 
         # #  Test logging.
         # test = logging.getLogger('asyncio')
@@ -204,28 +208,33 @@ def configure_app(app):
 def configure_engineio_socketio(app):
 
     #  See if any logging is wanted.
+    print_flag = app.config['PRINT_ENABLE']
     if app.config['LOG_ENABLE']:
-        print("==> Setting up engionio and socketio")
+        if print_flag:
+            print("==> Setting up engionio and socketio")
         location = app.config['LOGGING_LOCATION']
         formatter = logging.Formatter(app.config['LOGGING_FORMAT'])
 
         #  Set up logging for last two loggers.
-        setupLogger(location, 'engineio', 'LOG_ENGINEIO', formatter)
-        setupLogger(location, 'socketio', 'LOG_SOCKETIO', formatter)
+        setupLogger(print_flag, location, 'engineio', 'LOG_ENGINEIO', formatter)
+        setupLogger(print_flag, location, 'socketio', 'LOG_SOCKETIO', formatter)
 
-def setupLogger(location, log_name, config_name, formatter):
+def setupLogger(print_flag, location, log_name, config_name, formatter):
 
     #  Translate the logging level.
     stringLevel = os.getenv(config_name, "")
     msgLevel = debug_string_to_debug_level(stringLevel)
-    print("    --> Setting logging for " + log_name + "; stringLevel: " + stringLevel + "; msgLevel: " + str(msgLevel))
+    if print_flag:
+        print("    --> Setting logging for " + log_name + "; stringLevel: " + stringLevel + "; msgLevel: " + str(msgLevel))
 
     #  Take action depending on the level.
     if msgLevel == -10:
-        print("    --> " + config_name + " env var not present.  Logger " + log_name + " logging not set up")
+        if print_flag:
+            print("    --> " + config_name + " env var not present.  Logger " + log_name + " logging not set up")
     elif msgLevel == -20:
-        print("    --> " + config_name + " env var value '" + stringLevel + \
-              "' invalid.  Logger " + log_name + " logging not set up")
+        if print_flag:
+            print("    --> " + config_name + " env var value '" + stringLevel + \
+                  "' invalid.  Logger " + log_name + " logging not set up")
     else:
 
         #  All OK.  Set up logging options

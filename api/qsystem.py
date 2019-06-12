@@ -34,18 +34,20 @@ db = SQLAlchemy(application)
 db.init_app(application)
 
 #  See whether options took.
-print("==> DB Engine options")
-print("    --> pool size:    " + str(db.engine.pool.size()))
-print("    --> max overflow: " + str(db.engine.pool._max_overflow))
-print("    --> echo:         " + str(db.engine.echo))
-print("    --> pre ping:     " + str(db.engine.pool._pre_ping))
-print("    --> Database URI: " + application.config['SQLALCHEMY_DATABASE_URI_DISPLAY'])
+if application.config['PRINT_ENABLE']:
+     print("==> DB Engine options")
+     print("    --> pool size:    " + str(db.engine.pool.size()))
+     print("    --> max overflow: " + str(db.engine.pool._max_overflow))
+     print("    --> echo:         " + str(db.engine.echo))
+     print("    --> pre ping:     " + str(db.engine.pool._pre_ping))
+     print("    --> Database URI: " + application.config['SQLALCHEMY_DATABASE_URI_DISPLAY'])
 
 #  Debugging the engine in general.
-print("==> All DB Engine options")
-for attr in dir(db.engine):
-    print("    --> db.engine." + attr + " = " + str(getattr(db.engine, attr)))
-    # print("db.engine.%s = %s") % (attr, getattr(db.engine, attr))
+if False:
+    print("==> All DB Engine options")
+    for attr in dir(db.engine):
+        print("    --> db.engine." + attr + " = " + str(getattr(db.engine, attr)))
+        # print("db.engine.%s = %s") % (attr, getattr(db.engine, attr))
 
 cache = Cache(config={'CACHE_TYPE': 'simple'})
 cache.init_app(application)
@@ -73,7 +75,7 @@ api = Api(application, prefix='/api/v1', doc='/api/v1/')
 
 #  For some strange, and as yet unknown reason, the following initialization
 #  must be done, or the front end queue isn't updated properly in IE browsers.
-from app.patches.flask_oidc_patched import OpenIDConnect
+from flask_oidc import OpenIDConnect
 oidc = OpenIDConnect(application)
 
 from app import admin
@@ -104,6 +106,10 @@ logging.basicConfig(format=application.config['LOGGING_FORMAT'], level=logging.W
 logger = logging.getLogger("myapp.sqltime")
 logger.setLevel(logging.DEBUG)
 
+def my_print(string):
+    if application.config['PRINT_ENABLED']:
+        print(string)
+
 def api_call_with_retry(f, max_time=15000, max_tries=12, delay_first=100, delay_start=200, delay_mult=1.5):
 
     @wraps(f)
@@ -119,10 +125,11 @@ def api_call_with_retry(f, max_time=15000, max_tries=12, delay_first=100, delay_
 
         while (current_try <= max_tries) and (total_delay <= max_time):
 
-            print("==> api_call_with_retry: Try #: " + str(current_try) + "; time: " + str(time_current))
-            print("    --> delay:   " + str(current_delay) + "; total delay: " + str(total_delay))
-            print("    --> elapsed: " + str(time_current - time_save) + "; total elapsed: " + \
-                  str(time_current - time_start))
+            if (application.config['PRINT_ENABLE']) or (current_try > 1):
+                print("==> api_call_with_retry: Try #: " + str(current_try) + "; time: " + str(time_current))
+                print("    --> delay:   " + str(current_delay) + "; total delay: " + str(total_delay))
+                print("    --> elapsed: " + str(time_current - time_save) + "; total elapsed: " + \
+                      str(time_current - time_start))
 
             try:
                 return f(*args, **kwargs)
@@ -131,10 +138,11 @@ def api_call_with_retry(f, max_time=15000, max_tries=12, delay_first=100, delay_
                     time_db_before = datetime.datetime.now()
                     db.session.rollback()
                     time_db_after = datetime.datetime.now()
-                    print("        --> SQLAlchemyError: " + str(datetime.datetime.now()))
-                    print("        --> Message:         " + str(err))
-                    print("        --> rollback time:   " + str(time_db_after - time_db_before))
-                    time_current = time_db_after
+                    if (application.config['PRINT_ENABLE']) or (current_try > 1):
+                        print("        --> SQLAlchemyError: " + str(datetime.datetime.now()))
+                        print("        --> Message:         " + str(err))
+                        print("        --> rollback time:   " + str(time_db_after - time_db_before))
+                        time_current = time_db_after
                 else:
                     raise
 
