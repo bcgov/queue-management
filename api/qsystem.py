@@ -42,10 +42,11 @@ print("    --> pre ping:     " + str(db.engine.pool._pre_ping))
 print("    --> Database URI: " + application.config['SQLALCHEMY_DATABASE_URI_DISPLAY'])
 
 #  Debugging the engine in general.
-print("==> All DB Engine options")
-for attr in dir(db.engine):
-    print("    --> db.engine." + attr + " = " + str(getattr(db.engine, attr)))
-    # print("db.engine.%s = %s") % (attr, getattr(db.engine, attr))
+if (1==2):
+    print("==> All DB Engine options")
+    for attr in dir(db.engine):
+        print("    --> db.engine." + attr + " = " + str(getattr(db.engine, attr)))
+        # print("db.engine.%s = %s") % (attr, getattr(db.engine, attr))
 
 cache = Cache(config={'CACHE_TYPE': 'simple'})
 cache.init_app(application)

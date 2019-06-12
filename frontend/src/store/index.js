@@ -780,6 +780,8 @@ export const store = new Vuex.Store({
       return new Promise((resolve, reject) => {
         let url = '/csrs/me/'
         Axios(context).get(url).then(resp=>{
+          console.log("==> After getUser (/csrs/me/: User is:")
+          console.log(resp.data.csr)
           context.commit('setUser', resp.data.csr)
           let officeType = resp.data.csr.office.sb.sb_type
           context.commit('setOffice', officeType)
@@ -792,6 +794,7 @@ export const store = new Vuex.Store({
             groupExamBoolean = true
             context.commit('setGroupExam', groupExamBoolean)
           } else {
+            console.log("==> Result of /csrs/me/ is Not Found")
             context.commit('setGroupExam', groupExamBoolean)
           }
 
@@ -815,7 +818,7 @@ export const store = new Vuex.Store({
           }
           resolve(resp)
         }, error => {
-          context.commit('setLoginAlert', "Your are not setup in TheQ, please contact RMSHelp to be setup.")
+          context.commit('setLoginAlert', "You are not setup in TheQ, please contact RMSHelp to be setup.")
           reject(error)
         })
       })
