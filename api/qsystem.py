@@ -34,7 +34,8 @@ db = SQLAlchemy(application)
 db.init_app(application)
 
 #  See whether options took.
-if application.config['PRINT_ENABLE']:
+print_flag = application.config['PRINT_ENABLE']
+if print_flag:
      print("==> DB Engine options")
      print("    --> pool size:    " + str(db.engine.pool.size()))
      print("    --> max overflow: " + str(db.engine.pool._max_overflow))
@@ -107,7 +108,7 @@ logger = logging.getLogger("myapp.sqltime")
 logger.setLevel(logging.DEBUG)
 
 def my_print(string):
-    if application.config['PRINT_ENABLED']:
+    if print_flag:
         print(string)
 
 def api_call_with_retry(f, max_time=15000, max_tries=12, delay_first=100, delay_start=200, delay_mult=1.5):
@@ -125,7 +126,7 @@ def api_call_with_retry(f, max_time=15000, max_tries=12, delay_first=100, delay_
 
         while (current_try <= max_tries) and (total_delay <= max_time):
 
-            if (application.config['PRINT_ENABLE']) or (current_try > 1):
+            if (print_flag) or (current_try > 1):
                 print("==> api_call_with_retry: Try #: " + str(current_try) + "; time: " + str(time_current))
                 print("    --> delay:   " + str(current_delay) + "; total delay: " + str(total_delay))
                 print("    --> elapsed: " + str(time_current - time_save) + "; total elapsed: " + \
