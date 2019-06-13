@@ -815,7 +815,7 @@ export const store = new Vuex.Store({
           }
           resolve(resp)
         }, error => {
-          context.commit('setLoginAlert', "Your are not setup in TheQ, please contact RMSHelp to be setup.")
+          context.commit('setLoginAlert', "You are not setup in TheQ, please contact RMSHelp to be setup.")
           reject(error)
         })
       })
