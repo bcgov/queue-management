@@ -315,7 +315,7 @@ class Bootstrap(Command):
             service_desc = "Batching",
             parent_id = category_back_office.service_id,
             prefix = "B",
-            display_dashboard_ind = 1,
+            display_dashboard_ind = 0,
             actual_service_ind = 1
         )
         service_bo2 = theq.Service(
@@ -324,7 +324,7 @@ class Bootstrap(Command):
             service_desc = "Cash Out",
             parent_id = category_back_office.service_id,
             prefix = "B",
-            display_dashboard_ind = 1,
+            display_dashboard_ind = 0,
             actual_service_ind = 1
         )
         service_exams = theq.Service(
@@ -396,14 +396,18 @@ class Bootstrap(Command):
             timezone_id=timezone_one.timezone_id
         )
         office_test.counters.append(counter)
+        office_test.counters.append(qt_counter)
+
         office_100 = theq.Office(
             office_name="100 Mile House",
             office_number=1,
             sb_id=smartboard_no_call.sb_id,
             exams_enabled_ind=0,
-            timezone_id=timezone_one.timezone_id
+            timezone_id=timezone_four.timezone_id
         )
         office_100.counters.append(counter)
+        office_100.counters.append(qt_counter)
+
         office_victoria = theq.Office(
             office_name="Victoria",
             office_number=61,
@@ -412,6 +416,8 @@ class Bootstrap(Command):
             timezone_id=timezone_one.timezone_id
         )
         office_victoria.counters.append(counter)
+        office_victoria.counters.append(qt_counter)
+
         db.session.add(office_test)
         db.session.add(office_100)
         db.session.add(office_victoria)
@@ -419,6 +425,7 @@ class Bootstrap(Command):
 
         #-- CSR values ------------------------------------------------------
         print("--> CSRs")
+        add_developers = False;
         cfms_postman_operator = theq.CSR(
             username="cfms-postman-operator",
             office_id=office_test.office_id,
@@ -445,71 +452,72 @@ class Bootstrap(Command):
             finance_designate=0,
             liaison_designate=0
         )
-        akroon3r = theq.CSR(
-            username="akroon3r",
-            office_id=office_test.office_id,
-            role_id=role_csr.role_id,
-            counter_id=counter.counter_id,
-            receptionist_ind=1,
-            deleted=None,
-            csr_state_id=csr_state_logout.csr_state_id,
-            ita_designate=0,
-            pesticide_designate=0,
-            finance_designate=0,
-            liaison_designate=0
-        )
-        sjrumsby = theq.CSR(
-            username="sjrumsby",
-            office_id=office_test.office_id,
-            role_id=role_csr.role_id,
-            counter_id=counter.counter_id,
-            receptionist_ind=1,
-            deleted=None,
-            csr_state_id=csr_state_logout.csr_state_id,
-            ita_designate=0,
-            pesticide_designate=0,
-            finance_designate=0,
-            liaison_designate=0
-        )
-        scottrumsby = theq.CSR(
-            username="scottrumsby",
-            office_id=office_test.office_id,
-            role_id=role_csr.role_id,
-            counter_id=counter.counter_id,
-            receptionist_ind=1,
-            deleted=None,
-            csr_state_id=csr_state_logout.csr_state_id,
-            ita_designate=0,
-            pesticide_designate=0,
-            finance_designate=0,
-            liaison_designate=0
-        )
-        chrisdmac = theq.CSR(
-            username="ChrisDMac",
-            office_id=office_test.office_id,
-            role_id=role_csr.role_id,
-            counter_id=counter.counter_id,
-            receptionist_ind=1,
-            deleted=None,
-            csr_state_id=csr_state_logout.csr_state_id,
-            ita_designate=0,
-            pesticide_designate=0,
-            finance_designate=0,
-            liaison_designate=0
-        )
-        gil0109 = theq.CSR(
-            username="gil0109",
-            office_id=office_test.office_id,
-            role_id=role_csr.role_id,
-            counter_id=counter.counter_id,
-            receptionist_ind=1,
-            deleted=None,
-            csr_state_id=csr_state_logout.csr_state_id,
-            ita_designate=0,
-            pesticide_designate=0,
-            finance_designate=0,
-            liaison_designate=0
-        )
+        if add_developers:
+            akroon3r = theq.CSR(
+                username="akroon3r",
+                office_id=office_test.office_id,
+                role_id=role_csr.role_id,
+                counter_id=counter.counter_id,
+                receptionist_ind=1,
+                deleted=None,
+                csr_state_id=csr_state_logout.csr_state_id,
+                ita_designate=0,
+                pesticide_designate=0,
+                finance_designate=0,
+                liaison_designate=0
+            )
+            sjrumsby = theq.CSR(
+                username="sjrumsby",
+                office_id=office_test.office_id,
+                role_id=role_csr.role_id,
+                counter_id=counter.counter_id,
+                receptionist_ind=1,
+                deleted=None,
+                csr_state_id=csr_state_logout.csr_state_id,
+                ita_designate=0,
+                pesticide_designate=0,
+                finance_designate=0,
+                liaison_designate=0
+            )
+            scottrumsby = theq.CSR(
+                username="scottrumsby",
+                office_id=office_test.office_id,
+                role_id=role_csr.role_id,
+                counter_id=counter.counter_id,
+                receptionist_ind=1,
+                deleted=None,
+                csr_state_id=csr_state_logout.csr_state_id,
+                ita_designate=0,
+                pesticide_designate=0,
+                finance_designate=0,
+                liaison_designate=0
+            )
+            chrisdmac = theq.CSR(
+                username="ChrisDMac",
+                office_id=office_test.office_id,
+                role_id=role4.role_id,
+                counter_id=counter.counter_id,
+                receptionist_ind=1,
+                deleted=None,
+                csr_state_id=csr_state_logout.csr_state_id,
+                ita_designate=0,
+                pesticide_designate=0,
+                finance_designate=0,
+                liaison_designate=0
+            )
+            gil0109 = theq.CSR(
+                username="gil0109",
+                office_id=office_test.office_id,
+                role_id=role4.role_id,
+                counter_id=counter.counter_id,
+                receptionist_ind=1,
+                deleted=None,
+                csr_state_id=csr_state_logout.csr_state_id,
+                ita_designate=0,
+                pesticide_designate=0,
+                finance_designate=0,
+                liaison_designate=0
+            )
         demo_ga = theq.CSR(
             username="admin",
             office_id=office_test.office_id,
@@ -540,11 +548,12 @@ class Bootstrap(Command):
         db.session.add(cfms_postman_non_operator)
         db.session.add(demo_ga)
         db.session.add(demo_csr)
-        db.session.add(akroon3r)
-        db.session.add(sjrumsby)
-        db.session.add(scottrumsby)
-        db.session.add(chrisdmac)
-        db.session.add(gil0109)
+        if add_developers:
+            db.session.add(akroon3r)
+            db.session.add(sjrumsby)
+            db.session.add(scottrumsby)
+            db.session.add(chrisdmac)
+            db.session.add(gil0109)
         db.session.commit()
 
         #-- The Office / Services values ------------------------------------
