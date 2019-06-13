@@ -519,7 +519,7 @@ class Bootstrap(Command):
                 liaison_designate=0
             )
         demo_ga = theq.CSR(
-            username="admin",
+            username="demoga",
             office_id=office_test.office_id,
             role_id=role_ga.role_id,
             counter_id=counter.counter_id,
@@ -532,6 +532,32 @@ class Bootstrap(Command):
             liaison_designate=0
         )
         demo_csr = theq.CSR(
+            username="democsr",
+            office_id=office_test.office_id,
+            role_id=role_csr.role_id,
+            counter_id=counter.counter_id,
+            receptionist_ind=1,
+            deleted=None,
+            csr_state_id=csr_state_logout.csr_state_id,
+            ita_designate=0,
+            pesticide_designate=0,
+            finance_designate=0,
+            liaison_designate=0
+        )
+        demo_admin = theq.CSR(
+            username="admin",
+            office_id=office_test.office_id,
+            role_id=role4.role_id,
+            counter_id=counter.counter_id,
+            receptionist_ind=1,
+            deleted=None,
+            csr_state_id=csr_state_logout.csr_state_id,
+            ita_designate=0,
+            pesticide_designate=0,
+            finance_designate=0,
+            liaison_designate=0
+        )
+        demo_user = theq.CSR(
             username="user",
             office_id=office_test.office_id,
             role_id=role_csr.role_id,
@@ -548,6 +574,8 @@ class Bootstrap(Command):
         db.session.add(cfms_postman_non_operator)
         db.session.add(demo_ga)
         db.session.add(demo_csr)
+        db.session.add(demo_admin)
+        db.session.add(demo_user)
         if add_developers:
             db.session.add(akroon3r)
             db.session.add(sjrumsby)
