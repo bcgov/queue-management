@@ -1,0 +1,65 @@
+kind: "BuildConfig"
+apiVersion: "v1"
+metadata:
+  name: "nodejs-sample-pipeline"
+spec:
+  strategy:
+    jenkinsPipelineStrategy: |-
+      def label = "mypod-${UUID.randomUUID().toString()}"
+      podTemplate( 
+        label: label, 
+        name: 'jenkins-python3nodejs', 
+        serviceAccount: 'jenkins', 
+        cloud: 'openshift', 
+        containers: [
+          containerTemplate(
+            name: 'jnlp',
+            image: '172.50.0.2:5000/openshift/jenkins-slave-python3nodejs',
+            resourceRequestCpu: '1000m',
+            resourceLimitCpu: '2000m',
+            resourceRequestMemory: '2Gi',
+            resourceLimitMemory: '4Gi',
+            workingDir: '/tmp',
+            command: '',
+            args: '${computer.jnlpmac} ${computer.name}'
+          )
+        ]
+      ){
+        node(label) {
+          stage('Checkout Source') {
+            echo "checking out source"
+            checkout scm
+          } 
+
+          stage('Build ${label}') {
+            script: {
+              openshift.withCluster() {
+                openshift.withProject() {
+                  // Find all of the build configurations associated to the application using labels ...
+                  def buildconfigs = openshift.selector("bc", [ app : 'queue-management-api' ])
+                  echo "Found ${buildconfigs.count()} buildconfigs for app label (app='queue-management-api'): ${buildconfigs.names()}"
+
+                  // Kick off all the builds in parallel ...
+                  def builds = buildconfigs.startBuild()
+                  echo "Started ${builds.count()} builds: ${builds.names()}"
+                        
+                  timeout(WAIT_TIMEOUT) 
+                    // Wait for all the builds to complete ...
+                    // This section will exit after the last build completes.
+                    echo ">>> building queue-management <<<"
+                    builds.withEach {
+                    // untilEach and watch - do not support watching multiple named resources,
+                    // so we have to feed it one at a time.
+                    it.untilEach(1) {
+                      echo "${it.object().status.phase} - ${it.name()}"
+                      return (it.object().status.phase == "Complete")
+                      }
+                    }
+                }
+              }
+            }
+              echo "Builds complete ..."
+          }
+        }
+      }
+    type: JenkinsPipeline
