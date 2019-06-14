@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from flask import g
 from flask_restplus import Resource
-from qsystem import api, oidc
+from qsystem import api, oidc, my_print
 from app.models.theq import Citizen, CSR
 from app.schemas.theq import ServiceReqSchema
 from sqlalchemy import exc
@@ -31,7 +31,7 @@ class CitizenServiceRequests(Resource):
             csr = CSR.find_by_username(g.oidc_token_info['username'])
 
             citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
-            print("==> GET /citizens/" + str(citizen.citizen_id) + '/service_requests/, Ticket: ' + citizen.ticket_number)
+            my_print("==> GET /citizens/" + str(citizen.citizen_id) + '/service_requests/, Ticket: ' + citizen.ticket_number)
             result = self.service_requests_schema.dump(citizen.service_reqs)
             return {'service_requests': result.data,
                     'errors': result.errors}
