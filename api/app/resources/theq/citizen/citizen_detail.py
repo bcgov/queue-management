@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from flask import request, g
 from flask_restplus import Resource
-from qsystem import api, api_call_with_retry, db, oidc, socketio
+from qsystem import api, api_call_with_retry, db, oidc, socketio, my_print
 from app.models.theq import Citizen, CSR, Counter
 from marshmallow import ValidationError
 from app.schemas.theq import CitizenSchema
@@ -31,6 +31,7 @@ class CitizenDetail(Resource):
         try:
             csr = CSR.find_by_username(g.oidc_token_info['username'])
             citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
+            my_print("==> GET /citizens/" + str(citizen.citizen_id) + '/, Ticket: ' + citizen.ticket_number)
             result = self.citizen_schema.dump(citizen)
             return {'citizen': result.data,
                     'errors': result.errors}
@@ -53,6 +54,7 @@ class CitizenDetail(Resource):
 
         csr = CSR.find_by_username(g.oidc_token_info['username'])
         citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
+        my_print("==> PUT /citizens/" + str(citizen.citizen_id) + '/, Ticket: ' + str(citizen.ticket_number))
 
         try:
             citizen = self.citizen_schema.load(json_data, instance=citizen, partial=True).data

@@ -43,6 +43,15 @@ limitations under the License.*/
              <template slot='priority' slot-scope='data'>
                {{ showPriority(data.item.priority) }}
              </template>
+             <template slot="citizen_comments" slot-scope="row">
+               <template v-if="row.item.citizen_name">
+                 <span style="color: teal">{{ parseComments(row.item).appt }}</span><br>
+                 <span class="mr-2">{{ parseComments(row.item).text }}</span>
+               </template>
+               <template v-else>
+                 {{ parseComments(row.item) }}
+               </template>
+             </template>
     </b-table>
   </div>
 </template>
@@ -69,7 +78,7 @@ limitations under the License.*/
     },
 
     computed: {
-      ...mapState(['citizens', 'citizenInvited', 'performingAction', 'user']),
+      ...mapState(['citizens', 'citizenInvited', 'performingAction', 'showTimeTrackingIcon', 'user']),
       ...mapGetters([
         'on_hold_queue',
         'citizens_queue',
@@ -99,8 +108,26 @@ limitations under the License.*/
         let display = date.toLocaleTimeString()
         return display
       },
-
+      parseComments(item) {
+        if (!item.citizen_comments) {
+          return ''
+        }
+        let comments = item.citizen_comments
+        if (!comments.includes('|||')) {
+          return comments
+        } else {
+          let bits = comments.split('|||')
+          return {
+            appt: `${bits[0]} Appt: ${item.citizen_name}`,
+            text: bits[1]
+          }
+        }
+      },
       rowClicked(item, index) {
+        if (this.showTimeTrackingIcon) {
+          this.$store.commit('setMainAlert', 'You are already serving a citizen.  Click the Stopwatch to resume')
+          return null
+        }
         if (this.performingAction) {
           return null
         }

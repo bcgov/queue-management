@@ -94,6 +94,10 @@ import GAScreen from './../ga-screen/ga-screen'
       }
     },
     beforeRouteLeave(to, from, next) {
+      if (this.showTimeTrackingIcon) {
+        next()
+        return
+      }
       if (to.path === '/exams' || to.path === '/booking') {
         this.clickAddCitizen()
         next()
@@ -103,18 +107,19 @@ import GAScreen from './../ga-screen/ga-screen'
     computed: {
       ...mapGetters(['citizens_queue', 'on_hold_queue', 'reception']),
       ...mapState([
-        'isLoggedIn',
-        'showAddModal',
         'citizenInvited',
         'dismissCountDown',
         'examsTrackingIP',
+        'isLoggedIn',
         'performingAction',
-        'showAdmin',
-        'showGAScreenModal',
-        'showServiceModal',
         'serveNowStyle',
         'serviceBegun',
         'serviceModalForm',
+        'showAddModal',
+        'showAdmin',
+        'showGAScreenModal',
+        'showServiceModal',
+        'showTimeTrackingIcon',
         'toggleShowAdmin',
         'user',
         'userLoadingFail'

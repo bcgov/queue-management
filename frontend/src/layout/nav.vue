@@ -18,8 +18,10 @@
   <div style="">
     <div class="dash-button-flex-button-container pb-0 mb-3">
       <!-- SLOT FOR EACH VIEW'S BUTTON CONTROLS-->
-      <div v-if="this.$route.path === '/booking' || this.$route.path === '/exams' ">
-        <b-button :variant="showIcon ? 'warning' : 'primary'"
+      <div style="width: 75px" v-show="$route.path !=='/queue' || showTimeTrackingIcon">
+      <b-button :variant="showIcon.style"
+                  v-if="showIcon.show"
+                  v-show="flashIcon"
                   class="mr-3"
                   @click="clickIcon">
           <font-awesome-icon icon="stopwatch"
@@ -34,7 +36,7 @@
            style="flex-grow: 8"
            class="q-inline-title">{{ calendarSetup.title }}</div>
     <div />
-      <div v-if="!scheduling && !rescheduling && !citizenInvited">
+      <div v-if="showHamburger">
         <b-dropdown variant="outline-primary"
                     class="pl-0 ml-0 mr-3"
                     right
@@ -90,11 +92,14 @@
   export default {
     name: 'Nav',
     components: { AddCitizen, ServeCitizen },
+    data() {
+      return {
+        flashIcon: true,
+        showSpacer: false,
+      }
+    },
     computed: {
-      ...mapGetters([
-        'showExams',
-        'showAppointments'
-      ]),
+      ...mapGetters([ 'showExams', 'showAppointments', ]),
       ...mapState([
         'citizenInvited',
         'showServiceModal',
@@ -105,18 +110,30 @@
         'serviceBegun',
         'showGAScreenModal',
         'showServiceModal',
+        'showTimeTrackingIcon',
         'showAddModal',
         'user',
       ]),
-      showIcon() {
-        if (this.$route.path !== '/queue' &&
-            !this.showServiceModal &&
-            !this.showAddModal &&
-            this.serviceModalForm &&
-            this.serviceModalForm.citizen_id) {
-          return true
+      showHamburger() {
+        if (this.scheduling || this.rescheduling) {
+          return false
         }
-        return false
+        if (this.$route.path === '/queue' && this.citizenInvited) {
+          return false
+        }
+        return true
+      },
+      showIcon() {
+        if (this.$route.path !== '/queue') {
+          if ( this.serviceModalForm &&
+            this.serviceModalForm.citizen_id &&
+            !this.showServiceModal &&
+            !this.showAddModal ) {
+            return { show: true, style: 'warning' }
+          }
+          return { show: true, style: 'primary'}
+        }
+        return this.showTimeTrackingIcon ? {show: true, style: 'warning'} : { show: false, style: null}
       },
       isGAorCSR() {
         if (this.user && this.user.role) {
@@ -144,9 +161,31 @@
         return false
       },
     },
+    watch: {
+      showIcon(newV, oldV) {
+        if (this.$route.path === '/queue' && newV.show && !oldV.show) {
+          this.showSpacer = true
+          let k = 4
+          let flash = () => {
+            this.flashIcon = !this.flashIcon
+            k -= 1
+            if (k > 0) {
+              setTimeout(() => { flash()}, 140 )
+            }
+          }
+          flash()
+        }
+      }
+    },
     methods: {
       ...mapActions(['clickGAScreen', 'clickAddCitizen', 'clickRefresh']),
-      ...mapMutations(['toggleFeedbackModal', 'toggleServiceModal']),
+      ...mapMutations(['toggleFeedbackModal', 'toggleServiceModal', 'toggleTrackingIcon', ]),
+      toggleTrackingIcon(bool) {
+        if (!bool) {
+          this.showSpacer = false
+        }
+        this.toggleTimeTrackingIcon(bool)
+      },
       clickFeedback() {
         this.toggleFeedbackModal(true)
       },

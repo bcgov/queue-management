@@ -21,13 +21,13 @@
     name: 'ButtonsAgenda',
     methods: {
       next() {
-        this.$root.$emit('next')
+        this.$root.$emit('agenda-next')
       },
       prev() {
-        this.$root.$emit('prev')
+        this.$root.$emit('agenda-prev')
       },
       today() {
-        this.$root.$emit('today')
+        this.$root.$emit('agenda-today')
       },
     }
   }

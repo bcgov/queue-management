@@ -37,22 +37,23 @@ class RoomConfig(Base):
 
     def on_model_change(self, form, model, is_created):
 
-        room_id = get_mdict_item_or_list(request.args, 'id')
-        today = datetime.now()
-        today_aware = pytz.utc.localize(today)
+        if not is_created:
+            room_id = get_mdict_item_or_list(request.args, 'id')
+            today = datetime.now()
+            today_aware = pytz.utc.localize(today)
 
-        booking_room = Booking.query.filter_by(room_id=room_id)\
-                                    .filter(Booking.start_time > today_aware).count()
+            booking_room = Booking.query.filter_by(room_id=room_id)\
+                                        .filter(Booking.start_time > today_aware).count()
 
-        specific_room = Room.query.filter_by(room_id=room_id).first()
-        room_name = specific_room.room_name
+            specific_room = Room.query.filter_by(room_id=room_id).first()
+            room_name = specific_room.room_name
 
-        if model.deleted is not None and booking_room > 0:
-            message = "'" + room_name + "' is currently being used for bookings. " \
+            if model.deleted is not None and booking_room > 0:
+                message = "'" + room_name + "' is currently being used for bookings. " \
                                         "Reschedule bookings that use this room before setting the deleted date."
-            flash(gettext(message), 'warning')
-            model.deleted = None
-            form.deleted.data = None
+                flash(gettext(message), 'warning')
+                model.deleted = None
+                form.deleted.data = None
 
     create_modal = False
     edit_modal = False

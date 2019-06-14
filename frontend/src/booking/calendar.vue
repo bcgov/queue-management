@@ -11,11 +11,22 @@
           <b-form-input v-model="searchTerm"
                         size="sm"
                         @input="filter"></b-form-input>
-          <b-button class="btn-secondary btn-sm ml-3"
-                    v-if="!show_scheduling_indicator"
-                    @click="toggleOffsite(!offsiteVisible)">
-            {{ offsiteVisible ? 'Hide Offsite' : 'Show Offsite' }}
-          </b-button>
+          <b-button-group horizontal
+                          class="ml-3 mb-2 pt-2"
+                          label="Show Bookings in">
+            <b-button size="sm"
+                      variant="primary"
+                      :pressed="!offsiteVisible"
+                      @click="toggleOffsite(false)">On-site</b-button>
+            <b-button size="sm"
+                      variant="primary"
+                      :pressed="offsiteOnly"
+                      @click="toggleOffsiteOnly('offsite-only')">Off-site</b-button>
+            <b-button size="sm"
+                      variant="primary"
+                      :pressed="offsiteVisible && !offsiteOnly"
+                      @click="toggleOffsiteOnly('both')"><span class="mx-1">Both</span></b-button>
+          </b-button-group>
         </b-form>
       </div>
       <div class="w-50 mt-2 ml-3 pl-3"
@@ -40,7 +51,7 @@
                      @view-render="viewRender"
                      @event-created="selectEvent"
                      @event-render="eventRender"
-                     :events="events()"
+                     :events="events"
                      :config="config">
       </full-calendar>
     </keep-alive>
@@ -112,25 +123,8 @@
     },
     data() {
       return {
-        tempEvent: false,
-        savedSelection: null,
-        listView: false,
-        searchTerm: '',
         config: {
           columnHeaderFormat: 'ddd/D',
-          selectAllow: (info) => {
-            if (info.resourceId === '_offsite') {
-              return false
-            }
-            let today = moment()
-            if(info.start.isBefore(today)){
-              return false
-            }
-            if (this.scheduling || this.rescheduling) {
-              return true
-            }
-            return false
-          },
           defaultView: 'agendaWeek',
           editable: false,
           eventConstraint: {
@@ -151,6 +145,14 @@
             this.getRooms().then( resources => {
               setResources(resources)
               this.$nextTick(function() {
+                if (this.offsiteOnly) {
+                  this.toggleOffsiteOnly('setup')
+                  return
+                }
+                if (this.offsiteVisible) {
+                  this.toggleOffsiteOnly('both')
+                  return
+                }
                 if (!this.offsiteVisible) {
                   this.toggleOffsite(false)
                 }
@@ -158,10 +160,24 @@
             })
           },
           schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+          selectAllow: (info) => {
+            if (info.resourceId === '_offsite') {
+              return false
+            }
+            let today = moment()
+            if(info.start.isBefore(today)){
+              return false
+            }
+            if (this.scheduling || this.rescheduling) {
+              return true
+            }
+            return false
+          },
           selectConstraint: {
             start: '08:00:00',
             end: '18:00:00',
           },
+          setResources: null,
           showNonCurrentDates: false,
           timezone: 'local',
           unselectCancel: '.modal, .modal-content',
@@ -184,6 +200,14 @@
           },
           weekends: false,
         },
+        intervalStart: '',
+        intervalEnd: '',
+        listView: false,
+        previousView: 'agendaWeek',
+        viewRestore: [],
+        savedSelection: null,
+        searchTerm: '',
+        tempEvent: false,
       }
     },
     computed: {
@@ -194,6 +218,7 @@
         'editedBooking',
         'editedBookingOriginal',
         'exams',
+        'offsiteOnly',
         'offsiteVisible',
         'rescheduling',
         'roomResources',
@@ -203,6 +228,18 @@
         'showExamInventoryModal',
         'showStartDateModal',
       ]),
+      events() {
+        if (this.searchTerm) {
+          return this.filtered_calendar_events(this.searchTerm)
+        }
+        if (!this.offsiteVisible) {
+          return this.calendarEvents.filter(ev => ev.resourceId !== '_offsite')
+        }
+        if (this.offsiteOnly) {
+          return this.calendarEvents.filter(ev => ev.resourceId === '_offsite')
+        }
+        return this.calendarEvents
+      },
       adjustment() {
         if (this.scheduling || this.rescheduling) {
           return 240
@@ -253,6 +290,7 @@
         'setClickedDate',
         'setEditedBooking',
         'setEditedBookingOriginal',
+        'setOffsiteOnly',
         'setSelectedExam',
         'setSelectionIndicator',
         'toggleBookingModal',
@@ -317,12 +355,6 @@
           `
           )
         }
-      },
-      events() {
-        if (this.searchTerm) {
-          return this.filtered_calendar_events(this.searchTerm)
-        }
-        return this.calendarEvents
       },
       eventSelected(event, jsEvent, view) {
         if (this.scheduling || this.rescheduling || event.resourceId === '_offsite') {
@@ -479,6 +511,35 @@
       today() {
         this.$refs.bookingcal.fireMethod('today')
       },
+      toggleOffsiteOnly(mode) {
+        if (mode === 'both') {
+          if (this.offsiteOnly) {
+            let addRooms = this.roomResources.filter(room => room.id !== '_offsite')
+            addRooms.forEach(room => {
+              this.$refs.bookingcal.fireMethod('addResource', room)
+            })
+            this.setOffsiteOnly(false)
+            return
+          }
+          if (!this.offsiteVisible) this.toggleOffsite(true)
+          return
+        }
+        let setOffsiteOnly = () => {
+          if (!this.offsiteVisible) this.toggleOffsite(true)
+          let removeRooms = this.roomResources.filter(room => room.id !== '_offsite')
+          removeRooms.forEach(room => {
+            this.$refs.bookingcal.fireMethod('removeResource', room.id)
+          })
+          this.toggleOffsiteVisible(true)
+          this.setOffsiteOnly(true)
+        }
+        if (mode === 'offsite-only' && !this.offsiteOnly) {
+          setOffsiteOnly()
+        }
+        if (mode === 'setup') {
+          setOffsiteOnly()
+        }
+      },
       toggleOffsite(bool) {
         this.toggleOffsiteVisible(bool)
         if (bool) {
@@ -489,7 +550,14 @@
           })
         }
         if (!bool) {
+          if (this.offsiteOnly) {
+            let addRooms = this.roomResources.filter(room => room.id !== '_offsite')
+            addRooms.forEach(room => {
+              this.$refs.bookingcal.fireMethod('addResource', room)
+            })
+          }
           this.$refs.bookingcal.fireMethod('removeResource', '_offsite')
+          this.setOffsiteOnly(false)
         }
       },
       unselect() {
@@ -520,7 +588,7 @@
         if (view.name === 'agendaDay' || view.name === 'agendaWeek') {
           this.options({ name: 'height', value: 'auto' })
         }
-        if(this.selectedExam && this.selectedExam.gotoDate) {
+        if (this.selectedExam && this.selectedExam.gotoDate) {
           this.$refs.bookingcal.fireMethod('changeView', 'agendaDay')
           this.goToDate(this.selectedExam.gotoDate)
         }
@@ -553,5 +621,9 @@
   }
   .exam-table-holder {
     border: 1px solid dimgrey;
+  }
+  .btn:active, .btn.active {
+    background-color: #184368 !important;
+    color: white !important;
   }
 </style>

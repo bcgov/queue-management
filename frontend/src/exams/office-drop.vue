@@ -140,14 +140,6 @@
           this.setOffice(e.target.value)
           this.searchingNumber = false
         }
-        let officeSet = (num) => {
-          this.setOffice(num)
-          if (this.offices.find(office=>office.office_number == num)) {
-            let office = this.offices.find(office=>office.office_number == num)
-          } else {
-            this.search = 'Invalid office number entered.'
-          }
-        }
       },
       officeSearchOnBlur() {
         this.searching = false
