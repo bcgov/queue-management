@@ -113,6 +113,7 @@ export const store = new Vuex.Store({
     officeFilter: null,
     offices: [],
     officeType: null,
+    offsiteOnly: false,
     offsiteVisible: true,
     performingAction: false,
     rescheduling: false,
@@ -154,6 +155,7 @@ export const store = new Vuex.Store({
     showSelectInvigilatorModal: false,
     showServeCitizenSpinner: false,
     showServiceModal: false,
+    showTimeTrackingIcon: false,
     user: {
       counter_id: null,
       csr_id: null,
@@ -813,7 +815,7 @@ export const store = new Vuex.Store({
           }
           resolve(resp)
         }, error => {
-          context.commit('setLoginAlert', "Your are not setup in TheQ, please contact RMSHelp to be setup.")
+          context.commit('setLoginAlert', "You are not setup in TheQ, please contact RMSHelp to be setup.")
           reject(error)
         })
       })
@@ -2547,5 +2549,9 @@ export const store = new Vuex.Store({
     toggleServeCitizenSpinner(state, payload) {
       state.showServeCitizenSpinner = payload
     },
+    
+    setOffsiteOnly: (state, payload) => state.offsiteOnly = payload,
+    
+    toggleTimeTrackingIcon: (state, payload) => state.showTimeTrackingIcon = payload,
   }
 })

@@ -10,7 +10,7 @@
                  id="simplified_service_input"
                  ></input>
       </b-col>
-      <b-col v-if="!simplified || addModalSetup === 'add_mode'">
+      <b-col>
         <b-select id="add_citizen_catagories_select"
                   style="height: 38px; font-size: .8rem;"
                   :options="categories_options"
@@ -32,12 +32,19 @@
         if (this.$refs && this.$refs.filterref) {
           this.$refs.filterref.focus()
         }
+        if (this.categories && this.categories.length > 0) {
+          if (['/booking', '/exams'].includes(this.$route.path)) {
+            let { service_id } = this.categories .find(cat => cat.service_name === 'Exams')
+            this.updateAddModalForm({type: 'category', value: service_id})
+          }
+        }
       })
     },
     computed: {
       ...mapGetters(['categories_options', 'form_data']),
       ...mapState({
         addModalSetup: 'addModalSetup',
+        categories: state => state.categories,
         suspendFilter: state => state.addModalForm.suspendFilter,
         selectedItem: state => state.addModalForm.selectedItem,
       }),
@@ -66,6 +73,16 @@
       category: {
         get() { return this.form_data.category },
         set(value) { this.updateAddModalForm({type: 'category', value}) }
+      }
+    },
+    watch: {
+      categories(newVal, oldVal) {
+        if (newVal && newVal.length > 0) {
+          if (['/booking', '/exams'].includes(this.$route.path)) {
+            let { service_id } = newVal.find(cat => cat.service_name === 'Exams')
+            this.updateAddModalForm({type: 'category', value: service_id})
+          }
+        }
       }
     },
     methods: {

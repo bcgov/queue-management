@@ -15,7 +15,7 @@ limitations under the License.'''
 from filelock import FileLock
 from flask import g
 from flask_restplus import Resource
-from qsystem import api, api_call_with_retry, db, oidc, socketio
+from qsystem import api, api_call_with_retry, db, oidc, socketio, my_print
 from app.models.theq import Citizen, CSR
 from app.models.theq import SRState
 from app.schemas.theq import CitizenSchema
@@ -33,7 +33,8 @@ class CitizenSpecificInvite(Resource):
         lock = FileLock("lock/invite_citizen_{}.lock".format(csr.office_id))
 
         with lock:
-            citizen = db.session.query(Citizen).with_lockmode('update').filter_by(citizen_id=id).first()
+            citizen = db.session.query(Citizen).filter_by(citizen_id=id).first()
+            my_print("==> POST /citizens/" + str(citizen.citizen_id) + '/invite/, Ticket: ' + citizen.ticket_number)
             active_service_state = SRState.get_state_by_name("Active")
 
             active_service_request = citizen.get_active_service_request()

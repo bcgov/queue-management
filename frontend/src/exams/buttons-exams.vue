@@ -35,7 +35,7 @@
 </template>
 
 <script>
-  import { mapActions, mapMutations, mapState, mapGetters } from 'vuex'
+  import { mapMutations, mapState, mapGetters } from 'vuex'
   import FinancialReportModal from './generate-financial-report-modal'
 
   export default {

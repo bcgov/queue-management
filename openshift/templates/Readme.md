@@ -4,7 +4,8 @@ Prerequesite: Keycloak instance running and setup for authentication.
 
 ## Deployment Configuration Templates:
 
-- percona-dc.yml - Creates a high availability MySQL Statefull set.
+- We are using Patroni for HA Postgresql database. Please following the following instruction here to install Postgresql. https://github.com/BCDevOps/platform-services/tree/master/apps/pgsql/patroni
+
 - rabbit-mq-dc.yml - Creates a RabbitMQ Statefull set. Used for to support high availability API interactivity. This syncs the requests between pods.
 - queue-management-api-dc.yml - Creates the queue management API Pods. Please note that this also creates a Config Map that needs to be updated with your Openshift & Keycloak variables.
 - queue-management-frontend-dc.yml - Creates the queue management Front End Pods. Please note that this also creates a Config Map that needs to be updated with your Openshift & Keycloak variables.

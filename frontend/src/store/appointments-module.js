@@ -1,4 +1,3 @@
-import Vue from 'vue'
 import { Axios } from './helpers'
 import moment from 'moment'
 
@@ -71,10 +70,17 @@ export default {
       commit('setSelectedService', null)
     },
   
-    resetAddModalForm({commit}) {
-      commit('resetAddModalForm', null, {root: true})
+    deleteAppointment({dispatch, rootState}, payload) {
+      let state = rootState
+      return new Promise((resolve, reject) => {
+        Axios({state}).delete(`/appointments/${payload}/`).then( () => {
+          dispatch('getAppointments').then( () => {
+            resolve()
+          })
+        })
+      })
     },
-    
+  
     getAppointments({commit, rootState}) {
       let state = rootState
       let output = []
@@ -92,17 +98,6 @@ export default {
     
     getChannels({dispatch}) {
       dispatch('getChannels', null, {root: true})
-    },
-    
-    putAppointment({dispatch, rootState}, payload) {
-      let state = rootState
-      let { id } = payload
-      return new Promise((resolve, reject) => {
-        Axios({state}).put(`/appointments/${id}/`, payload.data).then( resp => {
-          dispatch('getAppointments')
-          resolve()
-        })
-      })
     },
     
     getServices({dispatch, commit}) {
@@ -148,14 +143,15 @@ export default {
       })
     },
     
-    postServiceReq({rootState}, payload) {
+    postServiceReq({rootState}, {citizen_id, payload}) {
       let state = rootState
+      let { channel_id } = rootState.channels.find(ch => ch.channel_name.includes('Person'))
       let service_request = {
+        channel_id,
+        citizen_id,
+        priority: 1,
+        quantity: 1,
         service_id: payload.service_id,
-        citizen_id: payload.citizen_id,
-        quantity: payload.quantity,
-        channel_id: payload.channel_id,
-        priority: payload.priority,
       }
       return new Promise((resolve, reject) => {
         let url = `/service_requests/`
@@ -167,16 +163,30 @@ export default {
       })
     },
   
-    putCitizen({rootState}, payload) {
+    putAppointment({dispatch, rootState}, payload) {
       let state = rootState
-      let {
-        citizen_id
-      } = payload
+      let { id } = payload
+      return new Promise((resolve, reject) => {
+        Axios({state}).put(`/appointments/${id}/`, payload.data).then( resp => {
+          dispatch('getAppointments')
+          resolve()
+        })
+      })
+    },
+    
+    putCitizen({rootState}, {citizen_id, payload}) {
+      let start = moment(payload.start).clone().format('h:mm')
+      if (!payload.comments) {
+        payload.comments = ''
+      }
       let data = {
         priority: 1,
-        citizen_comments: `APPOINTMENT: ${payload.citizen_name}`,
+        citizen_comments: `${start}|||${payload.comments}`,
+        citizen_name: payload.title,
       }
+      
       return new Promise((resolve, reject) => {
+        let state = rootState
         let url = `/citizens/${citizen_id}/`
         Axios({state}).put(url, data).then(resp => {
           resolve(resp)
@@ -186,31 +196,19 @@ export default {
       })
     },
     
-    deleteAppointment({dispatch, rootState}, payload) {
-      let state = rootState
-      return new Promise((resolve, reject) => {
-        Axios({state}).delete(`/appointments/${payload}/`).then( () => {
-          dispatch('getAppointments').then( () => {
-            resolve()
-          })
-        })
-      })
+    resetAddModalForm({commit}) {
+      commit('resetAddModalForm', null, {root: true})
     },
-  
+    
     sendToQueue({dispatch, commit, rootState}, payload) {
       let state = rootState
       Axios({state}).post('/citizens/', {}).then(resp => {
         let { citizen_id } = resp.data.citizen
-        let { channel_id } = rootState.channels.find(ch => ch.channel_name.includes('Person'))
-        let { service_id } = payload
-        let citizen_name = payload.title
-        let quantity = 1
-        let priority  = 1
-        let data = { service_id, citizen_id, channel_id, quantity, priority, citizen_name }
-        commit('setAppointmentsStateInfo', data, { root: true })
-        dispatch('putCitizen', data).then( () => {
-          dispatch('postServiceReq', data).then( () => {
-            dispatch('postAddToQueue', data.citizen_id).then( () => {
+        
+        commit('setAppointmentsStateInfo', payload, { root: true })
+        dispatch('putCitizen', {citizen_id, payload}).then( () => {
+          dispatch('postServiceReq', {citizen_id, payload}).then( () => {
+            dispatch('postAddToQueue', citizen_id).then( () => {
               dispatch('getAppointments').then( () => {
                 commit('toggleCheckInModal', false)
               })
@@ -219,6 +217,7 @@ export default {
         })
       })
     },
+    
     toggleAddModal({commit}, payload) {
       commit('toggleAddModal', payload, {root: true})
       if (payload) {

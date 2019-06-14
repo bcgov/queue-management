@@ -15,7 +15,7 @@ limitations under the License.'''
 from filelock import FileLock
 from flask import g, request
 from flask_restplus import Resource
-from qsystem import api, api_call_with_retry, db, oidc, socketio
+from qsystem import api, api_call_with_retry, db, oidc, socketio, my_print
 from app.models.theq import Citizen, CSR, CitizenState, Period, PeriodState, ServiceReq, SRState
 from app.schemas.theq import CitizenSchema
 
@@ -66,6 +66,8 @@ class CitizenGenericInvite(Resource):
 
             if citizen is None:
                 return {"message": "There is no citizen to invite"}, 400
+
+            my_print("==> POST /citizens/invite/ Citizen: " + str(citizen.citizen_id) + ', Ticket: ' + citizen.ticket_number)
 
             db.session.refresh(citizen)
             active_service_request = citizen.get_active_service_request()

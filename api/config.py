@@ -22,8 +22,9 @@ class BaseConfig(object):
     DEBUG = True
     LOGGING_LOCATION = "logs/qsystem.log"
     LOGGING_LEVEL = DEBUG
-    LOGGING_FORMAT = '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
-    LOG_ERRORS = (os.getenv("LOG_ERRORS","FALSE")).upper() == "TRUE"
+    LOGGING_FORMAT = '[%(asctime)s.%(msecs)03d] %(levelname)-8s (%(name)s) <%(module)s.py>.%(funcName)s: %(message)s'
+    LOG_ENABLE = (os.getenv("LOG_ENABLE","FALSE")).upper() == "TRUE"
+    PRINT_ENABLE = (os.getenv("PRINT_ENABLE","FALSE")).upper() == "TRUE"
 
     SECRET_KEY = os.getenv('SECRET_KEY')
     OIDC_OPENID_REALM = os.getenv('OIDC_OPENID_REALM','nest')
@@ -55,14 +56,42 @@ class BaseConfig(object):
     DB_NAME = os.getenv('DATABASE_NAME','')
     DB_HOST = os.getenv('DATABASE_HOST','')
     DB_PORT = os.getenv('DATABASE_PORT','')
-    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}'.format(
+    DB_TIMEOUT_STRING = os.getenv('DATABASE_TIMEOUT_STRING', '')
+    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}{timeout}'.format(
         engine=DB_ENGINE,
         user=DB_USER,
         password=DB_PASSWORD,
         host=DB_HOST,
         port=DB_PORT,
-        name=DB_NAME
+        name=DB_NAME,
+        timeout=DB_TIMEOUT_STRING
     )
+
+    SQLALCHEMY_DATABASE_URI_DISPLAY = '{engine}://{user}:<password>@{host}:{port}/{name}{timeout}'.format(
+        engine=DB_ENGINE,
+        user=DB_USER,
+        host=DB_HOST,
+        port=DB_PORT,
+        name=DB_NAME,
+        timeout=DB_TIMEOUT_STRING
+    )
+
+    #  Get SQLAlchemy environment variables.
+    pool_size = int(os.getenv('SQLALCHEMY_POOL_SIZE', '9'))
+    max_overflow = int(os.getenv('SQLALCHEMY_MAX_OVERFLOW', '18'))
+
+    #  Try to set some options to avoid long delays.
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_size' : pool_size,
+        'max_overflow' : max_overflow,
+        'pool_pre_ping' : False
+    }
+
+    #  Set echo appropriately.
+    if (os.getenv('SQLALCHEMY_ECHO', "False")).upper() == "TRUE":
+        SQLALCHEMY_ECHO=True
+    else:
+        SQLALCHEMY_ECHO=False
 
     THEQ_FEEDBACK = (os.getenv('THEQ_FEEDBACK','')).upper().replace(" ","").split(",")
     SLACK_URL = os.getenv('SLACK_URL', '')
@@ -89,24 +118,8 @@ class LocalConfig(BaseConfig):
     SERVER_NAME = None
     SESSION_COOKIE_DOMAIN = None
     CORS_ALLOWED_ORIGINS = ["http://localhost:8080"]
-    SQLALCHEMY_ECHO = False
     SECRET_KEY = "pancakes"
     LOCALHOST_DB_IP = "127.0.0.1"
-
-    DB_ENGINE = os.getenv('DATABASE_ENGINE', 'mysql')
-    DB_USER = os.getenv('DATABASE_USERNAME', 'root')
-    DB_PASSWORD = os.getenv('DATABASE_PASSWORD', 'root')
-    DB_NAME = os.getenv('DATABASE_NAME', 'qsystem')
-    DB_HOST = os.getenv('DATABASE_HOST', LOCALHOST_DB_IP)
-    DB_PORT = os.getenv('DATABASE_PORT', '3306')
-    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}'.format(
-        engine=DB_ENGINE,
-        user=DB_USER,
-        password=DB_PASSWORD,
-        host=DB_HOST,
-        port=DB_PORT,
-        name=DB_NAME
-    )
 
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
@@ -117,12 +130,6 @@ class DevelopmentConfig(BaseConfig):
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
 
-    if os.getenv('SQLALCHEMY_ECHO', "False") == "True":
-        SQLALCHEMY_ECHO=True
-    else:
-        SQLALCHEMY_ECHO=False
-
-
 class TestConfig(BaseConfig):
     DEBUG = True
     REDIS_DEBUG = True
@@ -131,12 +138,6 @@ class TestConfig(BaseConfig):
 
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
-
-    if os.getenv('SQLALCHEMY_ECHO', "False") == "True":
-        SQLALCHEMY_ECHO=True
-    else:
-        SQLALCHEMY_ECHO=False
-
 
 class ProductionConfig(BaseConfig):
     DEBUG = True
@@ -147,20 +148,121 @@ class ProductionConfig(BaseConfig):
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
 
-    if os.getenv('SQLALCHEMY_ECHO', "False") == "True":
-        SQLALCHEMY_ECHO=True
-    else:
-        SQLALCHEMY_ECHO=False
-
-
 def configure_app(app):
     config_name = os.getenv('FLASK_CONFIGURATION', 'default')
     app.config.from_object(config[config_name])
     app.config.from_pyfile('config.cfg', silent=True)
+    print_flag = app.config['PRINT_ENABLE']
 
-    # Configure logging
-    handler = logging.FileHandler(app.config['LOGGING_LOCATION'])
-    handler.setLevel(app.config['LOGGING_LEVEL'])
-    formatter = logging.Formatter(app.config['LOGGING_FORMAT'])
-    handler.setFormatter(formatter)
-    app.logger.addHandler(handler)
+    #  See if any logging is wanted.
+    if app.config['LOG_ENABLE']:
+
+        #  Get list of available loggers.
+        if False:
+            print("==> List of available loggers")
+            for name in logging.root.manager.loggerDict:
+                print("    --> Logger name: " + name)
+
+        # Configure logging for the app.
+        if print_flag:
+            print("==> Setting up logging")
+        location = app.config['LOGGING_LOCATION']
+        formatter = logging.Formatter(app.config['LOGGING_FORMAT'])
+        handler = logging.FileHandler(location)
+        handler.setFormatter(formatter)
+        stringLevel = os.getenv('LOG_BASIC', "")
+        msgLevel = max(logging.DEBUG, debug_string_to_debug_level(stringLevel))
+        if print_flag:
+            print("    --> Setting logging for default app.logger; stringLevel: " + stringLevel + "; msgLevel: " + str(msgLevel))
+        app.logger.setLevel(msgLevel)
+        app.logger.addHandler(handler)
+
+        #  Configure logging for all other loggers.
+        setupLogger(print_flag, location, 'asyncio', 'LOG_ASYNCIO', formatter)
+        setupLogger(print_flag, location, 'concurrent', 'LOG_CONCURRENT', formatter)
+        setupLogger(print_flag, location, 'flask_caching', 'LOG_FLASK_CACHING', formatter)
+        setupLogger(print_flag, location, 'flask_cors', 'LOG_FLASK_CORS', formatter)
+        setupLogger(print_flag, location, 'flask_restplus', 'LOG_FLASK_RESTPLUS', formatter)
+        setupLogger(print_flag, location, 'gunicorn', 'LOG_GUNICORN', formatter)
+        setupLogger(print_flag, location, 'psycopg2', 'LOG_PSYCOPG2', formatter)
+        setupLogger(print_flag, location, 'requests', 'LOG_REQUESTS', formatter)
+        setupLogger(print_flag, location, 'sqlalchemy', 'LOG_SQLALCHEMY', formatter)
+        setupLogger(print_flag, location, 'sqlalchemy.orm', 'LOG_SQLALCHEMY_ORM', formatter)
+        setupLogger(print_flag, location, 'urllib3', 'LOG_URLLIB3', formatter)
+
+        # #  Test logging.
+        # test = logging.getLogger('asyncio')
+        # test.debug(">>> This is a debugging message")
+        # test.info(">>> This is an info message")
+        # test.warning(">>> This is a warning message")
+        # test.error(">>> This is an error message")
+        # test.critical(">>> This is a critical message")
+        #
+        # test2 = logging.getLogger('requests')
+        # test2.debug(">>> This is a debugging message")
+        # test2.info(">>> This is an info message")
+        # test2.warning(">>> This is a warning message")
+        # test2.error(">>> This is an error message")
+        # test2.critical(">>> This is a critical message")
+
+def configure_engineio_socketio(app):
+
+    #  See if any logging is wanted.
+    print_flag = app.config['PRINT_ENABLE']
+    if app.config['LOG_ENABLE']:
+        if print_flag:
+            print("==> Setting up engionio and socketio")
+        location = app.config['LOGGING_LOCATION']
+        formatter = logging.Formatter(app.config['LOGGING_FORMAT'])
+
+        #  Set up logging for last two loggers.
+        setupLogger(print_flag, location, 'engineio', 'LOG_ENGINEIO', formatter)
+        setupLogger(print_flag, location, 'socketio', 'LOG_SOCKETIO', formatter)
+
+def setupLogger(print_flag, location, log_name, config_name, formatter):
+
+    #  Translate the logging level.
+    stringLevel = os.getenv(config_name, "")
+    msgLevel = debug_string_to_debug_level(stringLevel)
+    if print_flag:
+        print("    --> Setting logging for " + log_name + "; stringLevel: " + stringLevel + "; msgLevel: " + str(msgLevel))
+
+    #  Take action depending on the level.
+    if msgLevel == -10:
+        if print_flag:
+            print("    --> " + config_name + " env var not present.  Logger " + log_name + " logging not set up")
+    elif msgLevel == -20:
+        if print_flag:
+            print("    --> " + config_name + " env var value '" + stringLevel + \
+                  "' invalid.  Logger " + log_name + " logging not set up")
+    else:
+
+        #  All OK.  Set up logging options
+        logFileHandler = logging.FileHandler(location)
+        logFileHandler.setFormatter(formatter)
+        logStreamHandler = logging.StreamHandler()
+        logStreamHandler.setFormatter(formatter)
+        moduleLogger = logging.getLogger(log_name)
+        moduleLogger.setLevel(msgLevel)
+        moduleLogger.addHandler(logFileHandler)
+        moduleLogger.addHandler(logStreamHandler)
+
+def debug_string_to_debug_level(debug_string):
+    input_string = debug_string.lower()
+    result = -20
+    if input_string == 'critical':
+        result = logging.CRITICAL
+    elif input_string == 'error':
+        result = logging.ERROR
+    elif input_string == 'warning':
+        result = logging.WARNING
+    elif input_string == 'info':
+        result = logging.INFO
+    elif input_string == 'debug':
+        result = logging.DEBUG
+    elif input_string == 'notset':
+        result = logging.NOTSET
+    elif input_string == '':
+        result = -10
+
+    return result
