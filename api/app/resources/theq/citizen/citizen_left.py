@@ -39,23 +39,10 @@ class CitizenLeft(Resource):
         citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
 
         my_print("    ++> Time before citizen ID statement: " + str(datetime.now()))
-        if citizen is not None:
-            if citizen.citizen_id is not None:
-                citizen_id_string = str(citizen.citizen_id)
-            else:
-                citizen_id_string = "No ID"
-        else:
-            citizen_id_string = "No citizen"
+        citizen_id_string = self.get_citizen_string(citizen)
+        citizen_ticket = self.get_ticket_string(citizen)
 
         my_print("    ++> Time before citizen ticket statement: " + str(datetime.now()))
-        if citizen is not None:
-            if citizen.ticket_number is not None:
-                citizen_ticket = citizen.ticket_number
-            else:
-                citizen_ticket = "None"
-        else:
-            citizen_ticket = "No citizen"
-
         my_print("    ++> POST /citizens/" + citizen_id_string + '/citizen_left/, Ticket: ' + citizen_ticket)
         my_print("    ++> Time before sr_state statement: " + str(datetime.now()))
         sr_state = SRState.get_state_by_name("Complete")
@@ -118,3 +105,23 @@ class CitizenLeft(Resource):
         my_print("    ++> Time before return result call: " + str(datetime.now()))
         return {'citizen': result.data,
                 'errors': result.errors}, 200
+
+    def get_citizen_string(self, citizen):
+        if citizen is not None:
+            if citizen.citizen_id is not None:
+                citizen_id_string = str(citizen.citizen_id)
+            else:
+                citizen_id_string = "No ID"
+        else:
+            citizen_id_string = "No citizen"
+        return citizen_id_string
+
+    def get_ticket_string(self, citizen):
+        if citizen is not None:
+            if citizen.ticket_number is not None:
+                citizen_ticket = citizen.ticket_number
+            else:
+                citizen_ticket = "None"
+        else:
+            citizen_ticket = "No citizen"
+        return citizen_ticket
