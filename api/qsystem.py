@@ -126,7 +126,10 @@ def api_call_with_retry(f, max_time=15000, max_tries=12, delay_first=100, delay_
 
         while (current_try <= max_tries) and (total_delay <= max_time):
 
-            if (print_flag) or (current_try > 1):
+            # Determine whether to print debug statements or not.
+            print_debug = print_flag or (current_try > 1)
+
+            if print_debug:
                 print("==> api_call_with_retry: Try #: " + str(current_try) + "; time: " + str(time_current))
                 print("    --> delay:   " + str(current_delay) + "; total delay: " + str(total_delay))
                 print("    --> elapsed: " + str(time_current - time_save) + "; total elapsed: " + \
@@ -139,7 +142,7 @@ def api_call_with_retry(f, max_time=15000, max_tries=12, delay_first=100, delay_
                     time_db_before = datetime.datetime.now()
                     db.session.rollback()
                     time_db_after = datetime.datetime.now()
-                    if (application.config['PRINT_ENABLE']) or (current_try > 1):
+                    if print_debug:
                         print("        --> SQLAlchemyError: " + str(datetime.datetime.now()))
                         print("        --> Message:         " + str(err))
                         print("        --> rollback time:   " + str(time_db_after - time_db_before))
@@ -148,12 +151,7 @@ def api_call_with_retry(f, max_time=15000, max_tries=12, delay_first=100, delay_
                     raise
 
             #  Update variables.
-            if current_try == 1:
-                current_delay = delay_first
-            elif current_try == 2:
-                current_delay = delay_start
-            else:
-                current_delay = current_delay * delay_mult
+            current_delay = update_delay(current_delay, current_try, delay_first, delay_start, delay_mult)
 
             #  Update variables.
             current_try += 1
@@ -167,6 +165,16 @@ def api_call_with_retry(f, max_time=15000, max_tries=12, delay_first=100, delay_
             time_current = datetime.datetime.now()
 
     return decorated_function
+
+def update_delay(current_delay, current_try, delay_first, delay_start, delay_mult):
+    if current_try == 1:
+        output_delay = delay_first
+    elif current_try == 2:
+        output_delay = delay_start
+    else:
+        output_delay = current_delay * delay_mult
+    return output_delay
+
 
 import app.resources.theq.categories
 import app.resources.theq.channels

@@ -170,25 +170,25 @@ def configure_app(app):
         formatter = logging.Formatter(app.config['LOGGING_FORMAT'])
         handler = logging.FileHandler(location)
         handler.setFormatter(formatter)
-        stringLevel = os.getenv('LOG_BASIC', "")
-        msgLevel = max(logging.DEBUG, debug_string_to_debug_level(stringLevel))
+        string_level = os.getenv('LOG_BASIC', "")
+        msg_level = max(logging.DEBUG, debug_string_to_debug_level(string_level))
         if print_flag:
-            print("    --> Setting logging for default app.logger; stringLevel: " + stringLevel + "; msgLevel: " + str(msgLevel))
-        app.logger.setLevel(msgLevel)
+            print("    --> Setting logging for default app.logger; string_level: " + string_level + "; msg_level: " + str(msg_level))
+        app.logger.setLevel(msg_level)
         app.logger.addHandler(handler)
 
         #  Configure logging for all other loggers.
-        setupLogger(print_flag, location, 'asyncio', 'LOG_ASYNCIO', formatter)
-        setupLogger(print_flag, location, 'concurrent', 'LOG_CONCURRENT', formatter)
-        setupLogger(print_flag, location, 'flask_caching', 'LOG_FLASK_CACHING', formatter)
-        setupLogger(print_flag, location, 'flask_cors', 'LOG_FLASK_CORS', formatter)
-        setupLogger(print_flag, location, 'flask_restplus', 'LOG_FLASK_RESTPLUS', formatter)
-        setupLogger(print_flag, location, 'gunicorn', 'LOG_GUNICORN', formatter)
-        setupLogger(print_flag, location, 'psycopg2', 'LOG_PSYCOPG2', formatter)
-        setupLogger(print_flag, location, 'requests', 'LOG_REQUESTS', formatter)
-        setupLogger(print_flag, location, 'sqlalchemy', 'LOG_SQLALCHEMY', formatter)
-        setupLogger(print_flag, location, 'sqlalchemy.orm', 'LOG_SQLALCHEMY_ORM', formatter)
-        setupLogger(print_flag, location, 'urllib3', 'LOG_URLLIB3', formatter)
+        setup_logger(print_flag, location, 'asyncio', 'LOG_ASYNCIO', formatter)
+        setup_logger(print_flag, location, 'concurrent', 'LOG_CONCURRENT', formatter)
+        setup_logger(print_flag, location, 'flask_caching', 'LOG_FLASK_CACHING', formatter)
+        setup_logger(print_flag, location, 'flask_cors', 'LOG_FLASK_CORS', formatter)
+        setup_logger(print_flag, location, 'flask_restplus', 'LOG_FLASK_RESTPLUS', formatter)
+        setup_logger(print_flag, location, 'gunicorn', 'LOG_GUNICORN', formatter)
+        setup_logger(print_flag, location, 'psycopg2', 'LOG_PSYCOPG2', formatter)
+        setup_logger(print_flag, location, 'requests', 'LOG_REQUESTS', formatter)
+        setup_logger(print_flag, location, 'sqlalchemy', 'LOG_SQLALCHEMY', formatter)
+        setup_logger(print_flag, location, 'sqlalchemy.orm', 'LOG_SQLALCHEMY_ORM', formatter)
+        setup_logger(print_flag, location, 'urllib3', 'LOG_URLLIB3', formatter)
 
         # #  Test logging.
         # test = logging.getLogger('asyncio')
@@ -216,10 +216,10 @@ def configure_engineio_socketio(app):
         formatter = logging.Formatter(app.config['LOGGING_FORMAT'])
 
         #  Set up logging for last two loggers.
-        setupLogger(print_flag, location, 'engineio', 'LOG_ENGINEIO', formatter)
-        setupLogger(print_flag, location, 'socketio', 'LOG_SOCKETIO', formatter)
+        setup_logger(print_flag, location, 'engineio', 'LOG_ENGINEIO', formatter)
+        setup_logger(print_flag, location, 'socketio', 'LOG_SOCKETIO', formatter)
 
-def setupLogger(print_flag, location, log_name, config_name, formatter):
+def setup_logger(print_flag, location, log_name, config_name, formatter):
 
     #  Translate the logging level.
     stringLevel = os.getenv(config_name, "")
@@ -238,14 +238,14 @@ def setupLogger(print_flag, location, log_name, config_name, formatter):
     else:
 
         #  All OK.  Set up logging options
-        logFileHandler = logging.FileHandler(location)
-        logFileHandler.setFormatter(formatter)
-        logStreamHandler = logging.StreamHandler()
-        logStreamHandler.setFormatter(formatter)
-        moduleLogger = logging.getLogger(log_name)
-        moduleLogger.setLevel(msgLevel)
-        moduleLogger.addHandler(logFileHandler)
-        moduleLogger.addHandler(logStreamHandler)
+        log_file_handler = logging.FileHandler(location)
+        log_file_handler.setFormatter(formatter)
+        log_stream_handler = logging.StreamHandler()
+        log_stream_handler.setFormatter(formatter)
+        module_logger = logging.getLogger(log_name)
+        module_logger.setLevel(msgLevel)
+        module_logger.addHandler(log_file_handler)
+        module_logger.addHandler(log_stream_handler)
 
 def debug_string_to_debug_level(debug_string):
     input_string = debug_string.lower()
