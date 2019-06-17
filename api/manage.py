@@ -425,7 +425,6 @@ class Bootstrap(Command):
 
         #-- CSR values ------------------------------------------------------
         print("--> CSRs")
-        add_developers = False;
         cfms_postman_operator = theq.CSR(
             username="cfms-postman-operator",
             office_id=office_test.office_id,
@@ -452,72 +451,6 @@ class Bootstrap(Command):
             finance_designate=0,
             liaison_designate=0
         )
-        if add_developers:
-            akroon3r = theq.CSR(
-                username="akroon3r",
-                office_id=office_test.office_id,
-                role_id=role_csr.role_id,
-                counter_id=counter.counter_id,
-                receptionist_ind=1,
-                deleted=None,
-                csr_state_id=csr_state_logout.csr_state_id,
-                ita_designate=0,
-                pesticide_designate=0,
-                finance_designate=0,
-                liaison_designate=0
-            )
-            sjrumsby = theq.CSR(
-                username="sjrumsby",
-                office_id=office_test.office_id,
-                role_id=role_csr.role_id,
-                counter_id=counter.counter_id,
-                receptionist_ind=1,
-                deleted=None,
-                csr_state_id=csr_state_logout.csr_state_id,
-                ita_designate=0,
-                pesticide_designate=0,
-                finance_designate=0,
-                liaison_designate=0
-            )
-            scottrumsby = theq.CSR(
-                username="scottrumsby",
-                office_id=office_test.office_id,
-                role_id=role_csr.role_id,
-                counter_id=counter.counter_id,
-                receptionist_ind=1,
-                deleted=None,
-                csr_state_id=csr_state_logout.csr_state_id,
-                ita_designate=0,
-                pesticide_designate=0,
-                finance_designate=0,
-                liaison_designate=0
-            )
-            chrisdmac = theq.CSR(
-                username="ChrisDMac",
-                office_id=office_test.office_id,
-                role_id=role4.role_id,
-                counter_id=counter.counter_id,
-                receptionist_ind=1,
-                deleted=None,
-                csr_state_id=csr_state_logout.csr_state_id,
-                ita_designate=0,
-                pesticide_designate=0,
-                finance_designate=0,
-                liaison_designate=0
-            )
-            gil0109 = theq.CSR(
-                username="gil0109",
-                office_id=office_test.office_id,
-                role_id=role4.role_id,
-                counter_id=counter.counter_id,
-                receptionist_ind=1,
-                deleted=None,
-                csr_state_id=csr_state_logout.csr_state_id,
-                ita_designate=0,
-                pesticide_designate=0,
-                finance_designate=0,
-                liaison_designate=0
-            )
         demo_ga = theq.CSR(
             username="demoga",
             office_id=office_test.office_id,
@@ -576,12 +509,6 @@ class Bootstrap(Command):
         db.session.add(demo_csr)
         db.session.add(demo_admin)
         db.session.add(demo_user)
-        if add_developers:
-            db.session.add(akroon3r)
-            db.session.add(sjrumsby)
-            db.session.add(scottrumsby)
-            db.session.add(chrisdmac)
-            db.session.add(gil0109)
         db.session.commit()
 
         #-- The Office / Services values ------------------------------------
@@ -895,108 +822,8 @@ class Bootstrap(Command):
         db.session.add(exam_type_twenty)
         db.session.commit()
 
-        print("--> Bookings: Exam")
-        exam_one = bookings.Exam(
-            exam_type_id = exam_type_one.exam_type_id,
-            office_id = office_test.office_id,
-            event_id = "1234abcd",
-            exam_name = "Carpentry Red Seal",
-            examinee_name = "Chandler Bing",
-            expiry_date = "2018-11-29 11:19:53.5",
-            notes = "This student is extremely s-m-r-t",
-            exam_received_date= "2018-12-25 9:00:00.000",
-            session_number = 1,
-            number_of_students = 1,
-            exam_method = "paper",
-        )
-
-        exam_two = bookings.Exam(
-            exam_type_id = exam_type_two.exam_type_id,
-            office_id = office_test.office_id,
-            event_id = "e-000001",
-            exam_name = "Plumbing Red Seal",
-            examinee_name = "Joey Fatone",
-            expiry_date = "2018-11-29 11:19:53.5",
-            notes = "Speak slowly with this student, hearing impaired",
-            exam_received_date="2018-12-24 9:00:00.000",
-            session_number = 2,
-            number_of_students = 12,
-            exam_method = "online",
-        )
-
-        exam_three = bookings.Exam(
-            exam_type_id=exam_type_three.exam_type_id,
-            office_id=office_test.office_id,
-            event_id="e-000002",
-            exam_name="Culinary Red Seal",
-            examinee_name="Anthony Bourdain",
-            expiry_date="2018-11-29 11:19:53.5",
-            notes="Student is extremely verbally obscene",
-            exam_received_date="2018-12-23 9:00:00.000",
-            session_number=3,
-            number_of_students=10,
-            exam_method="paper",
-        )
-
-        exam_four = bookings.Exam(
-            exam_type_id=exam_type_four.exam_type_id,
-            office_id=office_test.office_id,
-            event_id="e-000005",
-            exam_name="Lyrical Flow Exam",
-            examinee_name="Celine Dion",
-            expiry_date="2019-01-31 15:00:00.000",
-            notes="Not sure if she uses a ghost writer or not",
-            exam_received_date="2018-12-25 9:00:00.000",
-            session_number=4,
-            number_of_students=25,
-            exam_method="online",
-        )
-
-        exam_five = bookings.Exam(
-            exam_type_id=exam_type_five.exam_type_id,
-            office_id=office_test.office_id,
-            event_id="e-000005",
-            exam_name="Lyrical Flow Exam",
-            examinee_name="Luciano Pavarotti",
-            expiry_date="2019-01-31 15:00:00.000",
-            notes="Use ear plugs, quite loud",
-            exam_received_date="2018-12-25 9:00:00.000",
-            session_number=4,
-            number_of_students=25,
-            exam_method="paper",
-        )
-
-        db.session.add(exam_one)
-        db.session.add(exam_two)
-        db.session.add(exam_three)
-        db.session.add(exam_four)
-        db.session.add(exam_five)
-        db.session.commit()
-
-        start_time = datetime(2019, 3, 28, 9, 0, 0)
-        end_time = datetime(2019, 3, 28, 9, 15, 0)
-        checked_in_time = datetime(2019, 3, 28, 9, 3, 0)
-
-        start_time_aware = pytz.utc.localize(start_time)
-        end_time_aware = pytz.utc.localize(end_time)
-        checked_in_time_aware = pytz.utc.localize(checked_in_time)
-
-        print("--> Bookings: Appointments")
-
-        appointment_one = bookings.Appointment(
-            office_id=office_test.office_id,
-            service_id=service_exams.service_id,
-            start_time=start_time_aware,
-            end_time=end_time_aware,
-            checked_in_time=checked_in_time_aware,
-            comments="Consultation",
-            citizen_name="Adam Kroon",
-            contact_information="adam@olivewood.io"
-        )
-
-        db.session.add(appointment_one)
-        db.session.commit()
-
+        print("--> Bookings: Exam - No exams added")
+        print("--> Bookings: Appointments - No appointments added")
 
 class FetchData(Command):
 
