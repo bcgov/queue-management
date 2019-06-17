@@ -58,17 +58,12 @@ class CsrSelf(Resource):
 
     @oidc.accept_token(require_token=True)
     def get(self):
-
-        print("==> Python /csrs/me/")
-        print("    --> g.oidc_token_info['username']: '" + g.oidc_token_info['username'] + "'")
         try:
             csr = CSR.find_by_username(g.oidc_token_info['username'])
 
             if not csr:
-                print("    --> csr not found in TheQ csrs database")
                 return {'Message': 'User Not Found'}, 404
 
-            print("    --> CSR found: '" + csr.username + "'")
             db.session.add(csr)
             active_sr_state = SRState.get_state_by_name("Active")
             today = datetime.now()

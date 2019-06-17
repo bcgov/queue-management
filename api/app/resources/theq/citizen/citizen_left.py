@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from flask import request, g
 from flask_restplus import Resource
-from qsystem import api, api_call_with_retry, db, oidc, socketio
+from qsystem import api, api_call_with_retry, db, oidc, socketio, my_print
 from app.models.theq import Citizen, CSR, CitizenState
 from app.schemas.theq import CitizenSchema, ServiceReqSchema
 from app.models.theq import SRState
@@ -33,12 +33,12 @@ class CitizenLeft(Resource):
     @api_call_with_retry
     def post(self, id):
 
-        print("++> POST API call time before csr = statement: " + str(datetime.now()))
+        my_print("++> POST API call time before csr = statement: " + str(datetime.now()))
         csr = CSR.find_by_username(g.oidc_token_info['username'])
-        print("    ++> Time before citizen = statement: " + str(datetime.now()))
+        my_print("    ++> Time before citizen = statement: " + str(datetime.now()))
         citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
 
-        print("    ++> Time before citizen ID statement: " + str(datetime.now()))
+        my_print("    ++> Time before citizen ID statement: " + str(datetime.now()))
         if citizen is not None:
             if citizen.citizen_id is not None:
                 citizen_id_string = str(citizen.citizen_id)
@@ -47,7 +47,7 @@ class CitizenLeft(Resource):
         else:
             citizen_id_string = "No citizen"
 
-        print("    ++> Time before citizen ticket statement: " + str(datetime.now()))
+        my_print("    ++> Time before citizen ticket statement: " + str(datetime.now()))
         if citizen is not None:
             if citizen.ticket_number is not None:
                 citizen_ticket = citizen.ticket_number
@@ -56,8 +56,8 @@ class CitizenLeft(Resource):
         else:
             citizen_ticket = "No citizen"
 
-        print("    ++> POST /citizens/" + citizen_id_string + '/citizen_left/, Ticket: ' + citizen_ticket)
-        print("    ++> Time before sr_state statement: " + str(datetime.now()))
+        my_print("    ++> POST /citizens/" + citizen_id_string + '/citizen_left/, Ticket: ' + citizen_ticket)
+        my_print("    ++> Time before sr_state statement: " + str(datetime.now()))
         sr_state = SRState.get_state_by_name("Complete")
 
         #  Create parameters for and make snowplow call.  Default is no service request, CSR pressed cancel.
@@ -76,11 +76,11 @@ class CitizenLeft(Resource):
             else:
                 status = "being-served"
 
-        print("    ++> Time before Snowplow call: " + str(datetime.now()))
+        my_print("    ++> Time before Snowplow call: " + str(datetime.now()))
         SnowPlow.snowplow_event(citizen.citizen_id, csr, ("left/" + status),
                                 quantity = quantity, current_sr_number= sr_number)
 
-        print("    ++> Time before closing non-active service requests: " + str(datetime.now()))
+        my_print("    ++> Time before closing non-active service requests: " + str(datetime.now()))
         for service_request in citizen.service_reqs:
 
             service_request.sr_state_id = sr_state.sr_state_id
@@ -95,7 +95,7 @@ class CitizenLeft(Resource):
                                         quantity = service_request.quantity,
                                         current_sr_number= service_request.sr_number)
 
-        print("    ++> Time before updating citizen state: " + str(datetime.now()))
+        my_print("    ++> Time before updating citizen state: " + str(datetime.now()))
         citizen.cs = CitizenState.query.filter_by(cs_state_name='Left before receiving services').first()
         if self.clear_comments_flag:
             citizen.citizen_comments = None
@@ -103,18 +103,18 @@ class CitizenLeft(Resource):
         if citizen.start_time.date() != datetime.now().date():
             citizen.accurate_time_ind = 0
 
-        print("    ++> Time before updating citizen database: " + str(datetime.now()))
+        my_print("    ++> Time before updating citizen database: " + str(datetime.now()))
         db.session.add(citizen)
-        print("    ++> Time before database commit: " + str(datetime.now()))
+        my_print("    ++> Time before database commit: " + str(datetime.now()))
         db.session.commit()
 
-        print("    ++> Time before socket io invited call: " + str(datetime.now()))
+        my_print("    ++> Time before socket io invited call: " + str(datetime.now()))
         socketio.emit('citizen_invited', {}, room='sb-%s' % csr.office.office_number)
-        print("    ++> Time before creating the result: " + str(datetime.now()))
+        my_print("    ++> Time before creating the result: " + str(datetime.now()))
         result = self.citizen_schema.dump(citizen)
-        print("    ++> Time before socket io update call: " + str(datetime.now()))
+        my_print("    ++> Time before socket io update call: " + str(datetime.now()))
         socketio.emit('update_active_citizen', result.data, room=csr.office_id)
 
-        print("    ++> Time before return result call: " + str(datetime.now()))
+        my_print("    ++> Time before return result call: " + str(datetime.now()))
         return {'citizen': result.data,
                 'errors': result.errors}, 200

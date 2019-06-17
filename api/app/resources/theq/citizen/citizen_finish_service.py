@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from flask import g, request
 from flask_restplus import Resource
-from qsystem import api, api_call_with_retry, db, oidc, socketio
+from qsystem import api, api_call_with_retry, db, oidc, socketio, my_print
 from app.models.theq import Citizen, CSR, CitizenState
 from app.models.theq import SRState
 from app.schemas.theq import CitizenSchema
@@ -33,7 +33,7 @@ class CitizenFinishService(Resource):
     def post(self, id):
         csr = CSR.find_by_username(g.oidc_token_info['username'])
         citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
-        print("==> POST /citizens/" + str(citizen.citizen_id) + '/finish_service/, Ticket: ' + citizen.ticket_number)
+        my_print("==> POST /citizens/" + str(citizen.citizen_id) + '/finish_service/, Ticket: ' + citizen.ticket_number)
         active_service_request = citizen.get_active_service_request()
         inaccurate = request.args.get('inaccurate')
 
