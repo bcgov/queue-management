@@ -24,7 +24,12 @@ limitations under the License.*/
 
     <div v-show="this.$store.state.isLoggedIn"
          style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
-
+      <div>
+        <div v-if="!$route.meta.hideCitizenWaiting && citizenSBType"
+             class="citizen_waiting">
+          Citizens Waiting: {{ queueLength }}
+        </div>
+      </div>
       <div style="margin-right: 22px;margin-top: 9px;">
         <label id="break-switch">
           <input type="checkbox" v-model="break_toggle">
@@ -68,9 +73,14 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
       _.defer(this.initSessionStorage)
     },
     computed: {
-      ...mapState(['user', 'csr_states']),
-      ...mapGetters(['quick_trans_status', 'reception', 'receptionist_status']),
-      
+      ...mapState(['user',
+                   'csr_states'
+                  ]),
+      ...mapGetters(['quick_trans_status',
+                     'reception',
+                     'receptionist_status',
+                     'citizens_queue',
+                    ]),
       counter_selection: {
         get() {
           console.log(this.receptionist_status)
@@ -117,6 +127,17 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
             this.setCSRState(id)
             this.setUserCSRStateName(name)
             this.updateCSRState()
+        }
+      },
+      queueLength() {
+        return this.citizens_queue.length
+      },
+      citizenSBType() {
+        if(this.user.office.sb.sb_type === 'nocallonsmartboard'){
+          return true
+        }
+        else {
+          return false
         }
       },
     },
@@ -347,5 +368,12 @@ input:checked + .circle1 + .circle2 {
     text-align: center;
     color: white;
     font-size: 14px;
+}
+.citizen_waiting {
+  padding-top: 5px;
+  padding-right: 40px;
+  white-space: pre-wrap;
+  font-size: 1.25em;
+  color: white;
 }
 </style>
