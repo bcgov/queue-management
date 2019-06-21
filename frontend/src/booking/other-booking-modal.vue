@@ -220,6 +220,7 @@
           }
           this.postBooking(booking).then( () => {
             this.finishBooking()
+            this.contact_information = ''
           })
         } else {
           this.message = ' (Required)'
