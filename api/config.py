@@ -184,26 +184,12 @@ def configure_app(app):
         setup_logger(print_flag, location, 'flask_cors', 'LOG_FLASK_CORS', formatter)
         setup_logger(print_flag, location, 'flask_restplus', 'LOG_FLASK_RESTPLUS', formatter)
         setup_logger(print_flag, location, 'gunicorn', 'LOG_GUNICORN', formatter)
+        setup_logger(print_flag, location, 'gunicorn.access', 'LOG_GUNICORN', formatter)
         setup_logger(print_flag, location, 'psycopg2', 'LOG_PSYCOPG2', formatter)
         setup_logger(print_flag, location, 'requests', 'LOG_REQUESTS', formatter)
         setup_logger(print_flag, location, 'sqlalchemy', 'LOG_SQLALCHEMY', formatter)
         setup_logger(print_flag, location, 'sqlalchemy.orm', 'LOG_SQLALCHEMY_ORM', formatter)
         setup_logger(print_flag, location, 'urllib3', 'LOG_URLLIB3', formatter)
-
-        # #  Test logging.
-        # test = logging.getLogger('asyncio')
-        # test.debug(">>> This is a debugging message")
-        # test.info(">>> This is an info message")
-        # test.warning(">>> This is a warning message")
-        # test.error(">>> This is an error message")
-        # test.critical(">>> This is a critical message")
-        #
-        # test2 = logging.getLogger('requests')
-        # test2.debug(">>> This is a debugging message")
-        # test2.info(">>> This is an info message")
-        # test2.warning(">>> This is a warning message")
-        # test2.error(">>> This is an error message")
-        # test2.critical(">>> This is a critical message")
 
 def configure_engineio_socketio(app):
 

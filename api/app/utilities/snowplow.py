@@ -21,6 +21,9 @@ from app.models.theq.service import Service
 from app.models.theq.smartboard import SmartBoard
 from snowplow_tracker import Subject, Tracker, AsyncEmitter
 from snowplow_tracker import SelfDescribingJson
+from qsystem import application, my_print
+from config import setup_logger
+import logging
 import os
 import json
 
@@ -221,3 +224,9 @@ if SnowPlow.call_snowplow_flag:
     s = Subject()  # .set_platform("app")
     e = AsyncEmitter(SnowPlow.sp_endpoint, on_failure=SnowPlow.failure, protocol="https")
     t = Tracker(e, encode_base64=False, app_id=SnowPlow.sp_appid, namespace=SnowPlow.sp_namespace)
+
+    #  Set up the correct level of logging.
+    print_flag = application.config['PRINT_ENABLE']
+    location = application.config['LOGGING_LOCATION']
+    formatter = logging.Formatter(application.config['LOGGING_FORMAT'])
+    setup_logger(print_flag, location, 'snowplow_tracker.emitters', 'LOG_SNOWPLOW', formatter)

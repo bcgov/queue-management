@@ -16,7 +16,7 @@ from flask import request
 from flask_socketio import emit, join_room
 from jose import jwt
 from app.models.theq import CSR
-from qsystem import oidc, socketio
+from qsystem import oidc, socketio, my_print
 import json
 
 @socketio.on('joinRoom')
@@ -53,7 +53,7 @@ def on_join_smartboard(message):
         office_id = int(message['office_id'])
         room = "sb-%s" % office_id
 
-        print("Joining room: %s" % room)
+        my_print("Joining room: %s" % room)
 
         join_room(room)
         emit('joinSmartboardRoomSuccess')
