@@ -31,7 +31,7 @@ objects:
         password_nonqtxn=<cfms-postman-non-operator userid password>
         client_secret=<keycloak client secret>
         zap_with_url=<zap command including dev url for analysis> 
-        dev_namespace=<dev namespace to run tests>
+        namespace=< project namespace>
         url=<url of api>/api/v1/
         auth_url=<Keycloak domain>
         clientid=<keycload Client ID>
@@ -91,7 +91,7 @@ objects:
           name: queue-management-api:latest
       resources: {}
       postCommit: {}
-      ? nodeSelector
+      nodeSelector:
       successfulBuildsHistoryLimit: 10
       failedBuildsHistoryLimit: 10
     status:
@@ -136,7 +136,7 @@ objects:
           cpu: "1"
           memory: 4Gi
       postCommit: {}
-      ? nodeSelector
+      nodeSelector:
       successfulBuildsHistoryLimit: 10
       failedBuildsHistoryLimit: 10
   - kind: BuildConfig
@@ -176,7 +176,7 @@ objects:
           name: queue-management-frontend:latest
       resources: {}
       postCommit: {}
-      ? nodeSelector
+      nodeSelector:
       successfulBuildsHistoryLimit: 10
       failedBuildsHistoryLimit: 10
   - kind: BuildConfig
@@ -200,6 +200,6 @@ objects:
       output: {}
       resources: {}
       postCommit: {}
-      ? nodeSelector
+      nodeSelector:
     status:
       lastVersion: 0

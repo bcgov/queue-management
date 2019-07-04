@@ -4,13 +4,148 @@
 // password_nonqtxn=<cfms-postman-non-operator userid password>
 // client_secret=<keycloak client secret>
 // zap_with_url=<zap command including dev url for analysis> 
-// dev_namespace=<dev namespace to run tests>
+// namespace=<openshift project namespace>
 // url=<url of api>/api/v1/
 // authurl=<Keycloak domain>
 // clientid=<keycload Client ID>
 // realm=<keycloak realm>
 
+def WAIT_TIMEOUT = 10
+def TAG_NAMES = ['dev', 'test', 'productions']
+def BUILDS = ['queue-management-api', 'queue-management-npm-build', 'queue-management-frontend']
+def DEP_ENV_NAMES = ['dev', 'test', 'prod']
 def label = "mypod-${UUID.randomUUID().toString()}"
+
+String getNameSpace() {
+    def NAMESPACE = sh (
+        script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^namespace/{print $2}\'',
+        returnStdout: true
+    ).trim()
+    return NAMESPACE
+}
+
+// Get an image's hash tag
+String getImageTagHash(String imageName, String tag = "") {
+
+  if(!tag?.trim()) {
+    tag = "latest"
+  }
+
+  def istag = openshift.raw("get istag ${imageName}:${tag} -o template --template='{{.image.dockerImageReference}}'")
+  return istag.out.tokenize('@')[1].trim()
+}
+
+node {
+    stage('Checkout Source') {
+        echo "checking out source"
+        checkout scm
+    }
+        
+    stage('SonarQube Analysis') {
+        echo ">>> Performing static analysis <<<"
+        SONARQUBE_PWD = sh (
+            script: 'oc set env dc/sonarqube --list | awk  -F  "=" \'/SONARQUBE_ADMINPW/{print $2}\'',
+            returnStdout: true
+        ).trim()
+
+        SONARQUBE_URL = sh (
+            script: 'oc get routes -o wide --no-headers | awk \'/sonarqube/{ print match($0,/edge/) ?  "https://"$2 : "http://"$2 }\'',
+            returnStdout: true
+        ).trim()
+
+        echo "PWD: ${SONARQUBE_PWD}"
+        echo "URL: ${SONARQUBE_URL}"
+
+        dir('sonar-runner') {
+            sh (
+                returnStdout: true, 
+                script: "./gradlew sonarqube -Dsonar.host.url=${SONARQUBE_URL} --stacktrace --info"
+            )
+        }
+    }
+
+    stage("Build API..") {
+        script: {
+            openshift.withCluster() {
+                openshift.withProject() {
+
+                    // Find all of the build configurations associated to the application using labels ...
+                    def bc = openshift.selector("bc", "${BUILDS[0]}")
+                    echo "Started builds: ${bc.names()}"
+                    bc.startBuild("--wait").logs("-f")
+                }
+                echo "API Build complete ..."
+            }
+        }
+    }
+    stage("Build Front End..") {
+        script: {
+            openshift.withCluster() {
+                openshift.withProject() {
+
+                    // Find all of the build configurations associated to the application using labels ...
+                    bc = openshift.selector("bc", "${BUILDS[1]}")
+                    echo "Started builds: ${bc.names()}"
+                    bc.startBuild("--wait").logs("-f")
+
+                    bc = openshift.selector("bc", "${BUILDS[2]}")
+                    echo "Started builds: ${bc.names()}"
+                    bc.startBuild("--wait").logs("-f")
+                }
+                echo "Front End complete ..."
+            }
+        }
+    }
+    
+    stage("Deploy API to Dev") {
+        script: {
+            openshift.withCluster() {
+                openshift.withProject() {
+                    echo "Tagging ${BUILDS[0]} for deployment to ${TAG_NAMES[0]} ..."
+
+                    // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
+                    // Tag the images for deployment based on the image's hash
+                    def IMAGE_HASH = getImageTagHash("${BUILDS[0]}")
+                    echo "IMAGE_HASH: ${IMAGE_HASH}"
+                    openshift.tag("${BUILDS[0]}@${IMAGE_HASH}", "${BUILDS[0]}:${TAG_NAMES[0]}")
+                }
+
+                def NAME_SPACE = getNameSpace()
+                openshift.withProject("${NAME_SPACE}-${DEP_ENV_NAMES[0]}") {
+                    def dc = openshift.selector('dc', "${BUILDS[0]}")
+                    // Wait for the deployment to complete.
+                    // This will wait until the desired replicas are all available
+                    dc.rollout().status()
+                }
+                echo "API Deployment Complete."
+            }
+        }
+    }
+    stage("Deploy Frontend to Dev") {
+        script: {
+            openshift.withCluster() {
+                openshift.withProject() {
+                    echo "Tagging ${BUILDS[2]} for deployment to ${TAG_NAMES[0]} ..."
+
+                    // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
+                    // Tag the images for deployment based on the image's hash
+                    def IMAGE_HASH = getImageTagHash("${BUILDS[2]}")
+                    echo "IMAGE_HASH: ${IMAGE_HASH}"
+                    openshift.tag("${BUILDS[2]}@${IMAGE_HASH}", "${BUILDS[2]}:${TAG_NAMES[0]}")
+                }
+
+                def NAME_SPACE = getNameSpace()
+                openshift.withProject("${NAME_SPACE}-${DEP_ENV_NAMES[0]}") {
+                    dc = openshift.selector('dc', "${BUILDS[2]}")
+                    // Wait for the deployment to complete.
+                    // This will wait until the desired replicas are all available
+                    dc.rollout().status()
+                }
+                echo "Front End Deployment Complete."
+            }
+        }
+    }
+} 
 podTemplate(
     label: label, 
     name: 'jenkins-python3nodejs', 
@@ -29,115 +164,26 @@ podTemplate(
             args: '${computer.jnlpmac} ${computer.name}'
         )
     ]
-){
+) { 
     node(label) {
+
         stage('Checkout Source') {
             echo "checking out source"
             checkout scm
         }
-        
-        stage('SonarQube Analysis') {
-          echo ">>> Performing static analysis <<<"
-          SONARQUBE_PWD = sh (
-            script: 'oc env dc/sonarqube --list | awk  -F  "=" \'/SONARQUBE_ADMINPW/{print $2}\'',
-            returnStdout: true
-          ).trim()
-
-          SONARQUBE_URL = sh (
-            script: 'oc get routes -o wide --no-headers | awk \'/sonarqube/{ print match($0,/edge/) ?  "https://"$2 : "http://"$2 }\'',
-            returnStdout: true
-          ).trim()
-
-          echo "PWD: ${SONARQUBE_PWD}"
-          echo "URL: ${SONARQUBE_URL}"
-
-          dir('sonar-runner') {
-            sh (
-              returnStdout: true, 
-              script: "./gradlew sonarqube -Dsonar.host.url=${SONARQUBE_URL} --stacktrace --info"
-            )
-          }
-        }
-        stage('Build API') {
-            echo ">>> building queue-management-api <<<"
-            openshiftBuild bldCfg: 'queue-management-api', showBuildLogs: 'true'
-        }
-        stage('Build Frontend') {
-            echo ">>> building intermediate image: queue-management-npm-build <<<"
-            openshiftBuild bldCfg: 'queue-management-npm-build', showBuildLogs: 'true'
-
-            echo ">>> building final image: queue-management-frontend <<<"
-            openshiftBuild bldCfg: 'queue-management-frontend',
-                           showBuildLogs: 'true'
-        }
-        stage('Deploy API'){
-            echo ">>> get api image hash <<<"
-            API_IMAGE_HASH = sh (
-                script: 'oc get istag queue-management-api:latest -o template --template="{{.image.dockerImageReference}}"|awk -F ":" \'{print $3}\'',
-                returnStdout: true
-            ).trim()
-
-            echo ">>> image_hash: $API_IMAGE_HASH"
-
-            openshiftTag destStream: 'queue-management-api', 
-                         verbose: 'true', 
-                         destTag: 'dev', 
-                         srcStream: 'queue-management-api', 
-                         srcTag: "${API_IMAGE_HASH}"
-
-            // Sleep to ensure that the deployment has started when we begin the verification stage
-            sleep 5
-
-            DEV_NAMESPACE = sh (
-                    script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^dev_namespace/{print $2}\'',
-                    returnStdout: true
-                ).trim()
-            openshiftVerifyDeployment depCfg: 'queue-management-api', 
-                                      namespace: "${DEV_NAMESPACE}", 
-                                      replicaCount: 3, 
-                                      verbose: 'false', 
-                                      verifyReplicaCount: 'false'
-
-            echo ">>> deployment complete <<<"
-        }
-        stage('Deploy Frontend'){
-            echo ">>> get frontend image hash <<<"
-            FRONTEND_IMAGE_HASH = sh (
-                script: 'oc get istag queue-management-frontend:latest -o template --template="{{.image.dockerImageReference}}"|awk -F ":" \'{print $3}\'',
-                returnStdout: true
-            ).trim()
-
-            echo ">>> image_hash: $FRONTEND_IMAGE_HASH"
-
-            openshiftTag destStream: 'queue-management-frontend', 
-                         verbose: 'true', 
-                         destTag: 'dev', 
-                         srcStream: 'queue-management-frontend', 
-                         srcTag: "${FRONTEND_IMAGE_HASH}"
-
-            // Sleep to ensure that the deployment has started when we begin the verification stage
-            sleep 5
-
-            openshiftVerifyDeployment depCfg: 'queue-management-frontend', 
-                                      namespace: "${DEV_NAMESPACE}", 
-                                      replicaCount: 3, 
-                                      verbose: 'false', 
-                                      verifyReplicaCount: 'false'
-
-            echo ">>> deployment complete <<<"
-        }
+    
         stage('Newman Tests') {
             dir('api/postman') {
                 sh "ls -alh"
 
                 sh (
-                  returnStdout: true,
-                  script: "npm init -y"
+                    returnStdout: true,
+                    script: "npm init -y"
                 )
 
                 sh (
-                  returnStdout: true,
-                  script: "npm install newman"
+                    returnStdout: true,
+                    script: "npm install newman"
                 )
 
                 PASSWORD = sh (
@@ -183,7 +229,6 @@ podTemplate(
         }
     }
 }
-
 def owaspPodLabel = "owasp-zap-${UUID.randomUUID().toString()}"
 podTemplate(
     label: owaspPodLabel, 
@@ -233,35 +278,106 @@ podTemplate(
         }
     }
 } 
+
 node {
-    stage('deploy test') {
+    stage("Deploy API - test") {
         input "Deploy to test?"
-        openshiftTag destStream: 'queue-management-api',
-                     verbose: 'true',
-                     destTag: 'test',
-                     srcStream: 'queue-management-api',
-                     srcTag: "${API_IMAGE_HASH}"
+        script: {
+            openshift.withCluster() {
+                openshift.withProject() {
+                    echo "Tagging ${BUILDS[0]} for deployment to ${TAG_NAMES[1]} ..."
 
-        openshiftTag destStream: 'queue-management-frontend',
-                     verbose: 'true',
-                     destTag: 'test',
-                     srcStream: 'queue-management-frontend',
-                     srcTag: "${FRONTEND_IMAGE_HASH}"
+                    // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
+                    // Tag the images for deployment based on the image's hash
+                    def IMAGE_HASH = getImageTagHash("${BUILDS[0]}")
+                    echo "IMAGE_HASH: ${IMAGE_HASH}"
+                    openshift.tag("${BUILDS[0]}@${IMAGE_HASH}", "${BUILDS[0]}:${TAG_NAMES[1]}")
+                }
+
+                def NAME_SPACE = getNameSpace()
+                openshift.withProject("${NAME_SPACE}-${DEP_ENV_NAMES[1]}") {
+                    def dc = openshift.selector('dc', "${BUILDS[0]}")
+                    // Wait for the deployment to complete.
+                    // This will wait until the desired replicas are all available
+                    dc.rollout().status()
+                }
+                echo "API Deployment Complete."
+            }
+        }
     }
-} 
+    stage("Deploy Frontend - Test") {
+        script: {
+            openshift.withCluster() {
+                openshift.withProject() {
+                    echo "Tagging ${BUILDS[2]} for deployment to ${TAG_NAMES[1]} ..."
+
+                    // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
+                    // Tag the images for deployment based on the image's hash
+                    IMAGE_HASH = getImageTagHash("${BUILDS[2]}")
+                    echo "IMAGE_HASH: ${IMAGE_HASH}"
+                    openshift.tag("${BUILDS[2]}@${IMAGE_HASH}", "${BUILDS[2]}:${TAG_NAMES[1]}")
+                }
+
+                def NAME_SPACE = getNameSpace()
+                openshift.withProject("${NAME_SPACE}-${DEP_ENV_NAMES[1]}") {
+                    dc = openshift.selector('dc', "${BUILDS[2]}")
+                    // Wait for the deployment to complete.
+                    // This will wait until the desired replicas are all available
+                    dc.rollout().status()
+                }
+                echo "Front End Deployment Complete."
+            }
+        }
+    } 
+}
 node {
-    stage('deploy prod') {
-        input "Deploy to prod?"
-        openshiftTag destStream: 'queue-management-api',
-                     verbose: 'true',
-                     destTag: 'production',
-                     srcStream: 'queue-management-api',
-                     srcTag: "${API_IMAGE_HASH}"
+    stage("Deploy API - Prod") {
+        input "Deploy to Prod?"
+        script: {
+            openshift.withCluster() {
+                openshift.withProject() {
+                    echo "Tagging ${BUILDS[0]} for deployment to ${TAG_NAMES[2]} ..."
 
-        openshiftTag destStream: 'queue-management-frontend',
-                     verbose: 'true',
-                     destTag: 'production',
-                     srcStream: 'queue-management-frontend',
-                     srcTag: "${FRONTEND_IMAGE_HASH}"
+                    // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
+                    // Tag the images for deployment based on the image's hash
+                    def IMAGE_HASH = getImageTagHash("${BUILDS[0]}")
+                    echo "IMAGE_HASH: ${IMAGE_HASH}"
+                    openshift.tag("${BUILDS[0]}@${IMAGE_HASH}", "${BUILDS[0]}:${TAG_NAMES[2]}")
+                }
+
+                def NAME_SPACE = getNameSpace()
+                openshift.withProject("${NAME_SPACE}-${DEP_ENV_NAMES[2]}") {
+                    def dc = openshift.selector('dc', "${BUILDS[0]}")
+                    // Wait for the deployment to complete.
+                    // This will wait until the desired replicas are all available
+                    dc.rollout().status()
+                }
+                echo "API Deployment Complete."
+            }
+        }
     }
+    stage("Deploy Frontend - Prod") {
+        script: {
+            openshift.withCluster() {
+                openshift.withProject() {
+                    echo "Tagging ${BUILDS[2]} for deployment to ${TAG_NAMES[2]} ..."
+
+                    // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
+                    // Tag the images for deployment based on the image's hash
+                    IMAGE_HASH = getImageTagHash("${BUILDS[2]}")
+                    echo "IMAGE_HASH: ${IMAGE_HASH}"
+                    openshift.tag("${BUILDS[2]}@${IMAGE_HASH}", "${BUILDS[2]}:${TAG_NAMES[2]}")
+                }
+
+                def NAME_SPACE = getNameSpace()
+                openshift.withProject("${NAME_SPACE}-${DEP_ENV_NAMES[2]}") {
+                    dc = openshift.selector('dc', "${BUILDS[2]}")
+                    // Wait for the deployment to complete.
+                    // This will wait until the desired replicas are all available
+                    dc.rollout().status()
+                }
+                echo "Front End Deployment Complete."
+            }
+        }
+    } 
 }
