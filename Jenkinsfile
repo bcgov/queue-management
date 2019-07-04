@@ -53,7 +53,7 @@ podTemplate(
             args: '${computer.jnlpmac} ${computer.name}'
         )
     ]
-)
+){
 node(label) {
     stage('Checkout Source') {
         echo "checking out source"
@@ -222,6 +222,7 @@ node(label) {
             )
         }
     }
+}
 }
 def owaspPodLabel = "owasp-zap-${UUID.randomUUID().toString()}"
 podTemplate(
