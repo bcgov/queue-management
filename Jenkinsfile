@@ -35,7 +35,6 @@ String getImageTagHash(String imageName, String tag = "") {
   return istag.out.tokenize('@')[1].trim()
 }
 
-def label = "mypod-${UUID.randomUUID().toString()}"
 podTemplate(
     label: label, 
     name: 'jenkins-python3nodejs', 
