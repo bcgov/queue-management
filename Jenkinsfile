@@ -11,7 +11,7 @@
 // realm=<keycloak realm>
 
 def WAIT_TIMEOUT = 10
-def TAG_NAMES = ['dev', 'test', 'productions']
+def TAG_NAMES = ['dev', 'test', 'production']
 def BUILDS = ['queue-management-api', 'queue-management-npm-build', 'queue-management-frontend']
 def DEP_ENV_NAMES = ['dev', 'test', 'prod']
 def label = "mypod-${UUID.randomUUID().toString()}"
