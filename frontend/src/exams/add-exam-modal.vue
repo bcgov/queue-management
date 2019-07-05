@@ -248,8 +248,6 @@
             let { office_id, office_number } = this.user.office
             office_id = parseInt(office_id)
             office_number = parseInt(office_number)
-            this.captureExamDetail({ key: 'office_id', value: office_id })
-            this.setAddExamModalSetting({ office_number })
             return
           case 'other':
             this.resetModal()
