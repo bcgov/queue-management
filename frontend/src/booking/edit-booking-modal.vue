@@ -222,6 +222,7 @@
         state: null,
         title: '',
         booking_contact_information: '',
+        rescheduling: false,
       }
     },
     computed: {
@@ -427,6 +428,8 @@
         }
         this.toggleRescheduling(true)
         this.toggleEditBookingModal(false)
+        this.rescheduling = true
+        this.editedFields.push('invigilator')
       },
       resetModal() {
         this.added = null
@@ -469,10 +472,16 @@
         }
         if (this.event.exam && this.event.exam.booking) {
           if (!this.editedFields.includes('invigilator')) {
+            if(this.rescheduling){
+              this.invigilator = null
+            }
             this.invigilator = this.event.exam.booking.invigilator_id || null
           }
           if (this.event.exam.booking.sbc_staff_invigilated) {
             if (!this.editedFields.includes('invigilator')) {
+              if (this.rescheduling) {
+                this.invigilator = null
+              }
               this.invigilator = 'sbc'
             }
           }
@@ -485,6 +494,9 @@
         }
         if (!this.editedFields.includes('booking_contact_information')){
           this.booking_contact_information = this.event.booking_contact_information
+        }
+        if(this.rescheduling){
+          this.invigilator = null
         }
       },
       submit(e) {
@@ -529,6 +541,11 @@
           if (changes.invigilator_id === 'sbc') {
             changes.invigilator_id = null
             changes.sbc_staff_invigilated = 1
+          }
+          if (this.rescheduling){
+            changes.invigilator_id = null
+            changes.sbc_staff_invigilated = 0
+            this.rescheduling = false
           }
         }
         if (this.editedFields.includes('contact_information')){
