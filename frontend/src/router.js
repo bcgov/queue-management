@@ -47,41 +47,47 @@ export default new Router({
             default: Dash,
             buttons: ButtonsDash,
           },
+          meta: { hideCitizenWaiting: true },
         },
         {
           path: 'admin',
           components: {
             default: Admin,
-            buttons: ButtonsAdmin
-          }
+            buttons: ButtonsAdmin,
+          },
+          meta: { hideCitizenWaiting: true },
         },
         {
           path: 'exams',
           components: {
             default: Exams,
-            buttons: ButtonsExams
-          }
+            buttons: ButtonsExams,
+          },
+          meta: { hideCitizenWaiting: false },
         },
         {
           path: 'agenda',
           components: {
             default: Agenda,
             buttons: ButtonsAgenda,
-          }
+          },
+          meta: { hideCitizenWaiting: true },
         },
         {
           path: 'appointments',
           components: {
             default: Appointments,
             buttons: ButtonsAppointments,
-          }
+          },
+          meta: { hideCitizenWaiting: true },
         },
         {
           path: 'booking',
           components: {
             default: Calendar,
             buttons: ButtonsCalendar,
-          }
+          },
+          meta: { hideCitizenWaiting: false },
         },
       ]
     },
