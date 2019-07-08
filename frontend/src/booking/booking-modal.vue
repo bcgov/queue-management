@@ -423,6 +423,7 @@
               })
             })
           })
+          this.booking_contact_information = ''
         })
       }
     },
