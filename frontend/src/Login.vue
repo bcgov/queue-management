@@ -133,7 +133,7 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
         return this.citizens_queue.length
       },
       citizenSBType() {
-        if(this.user.office.sb.sb_type === 'nocallonsmartboard'){
+        if(this.user.office.sb.sb_type !== 'nocallonsmartboard'){
           return true
         }
         else {
