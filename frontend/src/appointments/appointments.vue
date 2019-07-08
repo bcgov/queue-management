@@ -59,7 +59,7 @@
         clickedAppt: null,
         clickedTime: null,
         config: {
-          selectOverlap: false,
+          selectOverlap: true,
           columnHeaderFormat: 'ddd/D',
           selectAllow: () => {
             return true
@@ -68,6 +68,7 @@
           editable: false,
           eventRender: (evt, el, view) => {
             el.css('font-size', '.9rem')
+            el.css('max-width', '85%')
           },
           eventColor: 'pink',
           eventConstraint: {

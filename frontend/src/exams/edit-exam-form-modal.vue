@@ -151,7 +151,7 @@
           </b-col>
         </b-form-row>
 
-        <b-form-row v-if="examType === 'individual' || examType === 'other'">
+        <b-form-row v-if="examType === 'individual' || examType === 'other' || examType === 'pest'" >
           <b-col>
             <b-form-group>
               <label class="my-0">Candidate's Name</label>
