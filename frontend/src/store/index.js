@@ -103,6 +103,7 @@ export const store = new Vuex.Store({
       groupFilter: 'both',
       returnedFilter: 'unreturned',
       office_number: 'default',
+      requireAttentionFilter: 'default',
     },
     invigilators: [],
     isLoggedIn: false,
@@ -2527,7 +2528,7 @@ export const store = new Vuex.Store({
     setInventoryFilters(state, payload) {
       state.inventoryFilters[payload.type] = payload.value
     },
-  
+
     restoreSavedModal(state, payload) {
       Object.keys(payload.item).forEach(key => {
         Vue.set(

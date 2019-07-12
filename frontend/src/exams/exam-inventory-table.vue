@@ -38,69 +38,57 @@
           <b-btn-group v-if="is_liaison_designate" class="pt-2">
             <b-btn @click="officeFilterModal=true"
                    :variant="officeFilter === userOffice || officeFilter === 'default' ? 'primary' : 'warning'"
-                   class="btn-sm">Office # {{ officeNumber }} - {{ officeName }}</b-btn>
+                   class="btn-sm mr-2">Office # {{ officeNumber }} - {{ officeName }}</b-btn>
           </b-btn-group>
-          <b-button-group horizontal
-                          class="ml-2 pt-2"
-                          label="Expired Exam Filters">
-            <b-button size="sm"
-                      :pressed="inventoryFilters.expiryFilter==='all'"
-                      @click="setInventoryFilters({type:'expiryFilter', value:'all'})"
-                      variant="primary">
-              <span class="mx-2">All</span>
-            </b-button>
-            <b-button size="sm"
-                      :pressed="inventoryFilters.expiryFilter==='expired'"
-                      @click="setInventoryFilters({type:'expiryFilter', value:'expired'})"
-                      variant="primary">Expired</b-button>
-            <b-button size="sm"
-                      :pressed="inventoryFilters.expiryFilter==='current'"
-                      @click="setInventoryFilters({type:'expiryFilter', value:'current'})"
-                      variant="primary">Current</b-button>
-          </b-button-group>
-          <b-btn-group horizontal class="ml-2 pt-2">
-            <b-btn size="sm"
-                   :pressed="inventoryFilters.scheduledFilter==='both'"
-                   @click="setInventoryFilters({type:'scheduledFilter', value:'both'})"
-                   variant="primary">
-              <span class="mx-2">Both</span>
-            </b-btn>
-            <b-btn size="sm"
-                   :pressed="inventoryFilters.scheduledFilter==='unscheduled'"
-                   @click="setInventoryFilters({type:'scheduledFilter', value:'unscheduled'})"
-                   variant="primary">Not Ready</b-btn>
-            <b-btn size="sm"
-                   :pressed="inventoryFilters.scheduledFilter==='scheduled'"
-                   @click="setInventoryFilters({type:'scheduledFilter', value:'scheduled'})"
-                   variant="primary">Ready</b-btn>
+        </b-input-group>
+        <b-input-group>
+          <b-btn-group v-if="selectedExamTypeFilter === ''">
+            <b-dropdown size="sm"
+                        variant="primary"
+                        text="Exam Type Filters"
+                        v-model="selectedExamTypeFilter"
+                        class="mt-2 mr-2">
+              <b-dropdown-item v-for="option in examTypeOptions"
+                               @click="setExamTypeFilter(option)">
+                {{ option.text }}
+              </b-dropdown-item>
+            </b-dropdown>
           </b-btn-group>
-          <b-btn-group horizontal class="ml-2 pt-2">
-            <b-btn size="sm"
-                   :pressed="inventoryFilters.groupFilter==='both'"
-                   @click="setInventoryFilters({type:'groupFilter', value:'both'})"
-                   variant="primary"><span class="mx-2">Both</span></b-btn>
-            <b-btn size="sm"
-                   :pressed="inventoryFilters.groupFilter==='individual'"
-                   @click="setInventoryFilters({type:'groupFilter', value:'individual'})"
-                   variant="primary">Individual</b-btn>
-            <b-btn size="sm"
-                   :pressed="inventoryFilters.groupFilter==='group'"
-                   @click="setInventoryFilters({type:'groupFilter', value:'group'})"
-                   variant="primary">Group</b-btn>
+          <b-btn-group v-else>
+            <b-dropdown size="sm"
+                        variant="primary"
+                        :text="this.selectedExamTypeFilter"
+                        v-model="selectedExamTypeFilter"
+                        class="mt-2 mr-2">
+              <b-dropdown-item v-for="option in examTypeOptions"
+                               @click="setExamTypeFilter(option)">
+                {{ option.text }}
+              </b-dropdown-item>
+            </b-dropdown>
           </b-btn-group>
-          <b-btn-group horizontal class="ml-2 pt-2">
-            <b-btn size="sm"
-                   :pressed="inventoryFilters.returnedFilter==='both'"
-                   @click="setFilter({type:'returnedFilter', value:'both'})"
-                   variant="primary"><span class="mx-2">Both</span></b-btn>
-            <b-btn size="sm"
-                   :pressed="inventoryFilters.returnedFilter==='returned'"
-                   @click="setFilter({type:'returnedFilter', value:'returned'})"
-                   variant="primary">Returned</b-btn>
-            <b-btn size="sm"
-                   :pressed="inventoryFilters.returnedFilter==='unreturned'"
-                   @click="setFilter({type:'returnedFilter', value:'unreturned'})"
-                   variant="primary">Not Returned</b-btn>
+          <b-btn-group v-if="selectedQuickActionFilter === ''">
+            <b-dropdown size="sm"
+                        variant="primary"
+                        text="Quick Action Filters"
+                        v-model="selectedQuickActionFilter"
+                        class="mt-2 mr-2">
+              <b-dropdown-item v-for="option in quickActionOptions"
+                               @click="setQuickActionFilter(option)">
+                {{ option.text }}
+              </b-dropdown-item>
+            </b-dropdown>
+          </b-btn-group>
+          <b-btn-group v-else>
+            <b-dropdown size="sm"
+                        variant="primary"
+                        :text="this.selectedQuickActionFilter"
+                        v-model="selectedQuickActionFilter"
+                        class="mt-2 mr-2">
+              <b-dropdown-item v-for="option in quickActionOptions"
+                               @click="setQuickActionFilter(option)">
+                {{ option.text }}
+              </b-dropdown-item>
+            </b-dropdown>
           </b-btn-group>
         </b-input-group>
       </b-form>
@@ -319,6 +307,23 @@
         buttonH: 45,
         qLengthH: 28,
         totalH: 0,
+        examTypeOptions: [
+          {text: 'Individual', value: 'individual'},
+          {text: 'Group', value: 'group'},
+          {text: 'All', value: 'all'},
+        ],
+        quickActionOptions: [
+          {text: 'Current', value: 'current'},
+          {text: 'Not Returned', value: 'not_returned'},
+          {text: 'Returned', value: 'returned'},
+          {text: 'Require Invigilator', value: 'require_invigilator'},
+          {text: 'Exams require Attention', value: 'require_attention'},
+          {text: 'All', value: 'all'}
+        ],
+        selectedExamType: '',
+        selectedExamTypeFilter: '',
+        selectedQuickAction: '',
+        selectedQuickActionFilter: '',
       }
     },
     computed: {
@@ -470,12 +475,26 @@
         }
         return false
       },
+      examReturnedAttention(item){
+        if (item.exam_returned_date ){
+          return true
+        }
+        return false
+      },
       filterByGroup(ex) {
         if (ex.exam_type.exam_type_name === 'Monthly Session Exam' || ex.exam_type.group_exam_ind) {
           return true
         }
         if (ex.number_of_students && parseInt(ex.number_of_students) > 1) {
           return true
+        }
+        return false
+      },
+      filterByExpiry(ex){
+        if (moment(ex.expiry_date).isValid()){
+          if (moment(ex.expiry_date).isBefore(moment(), 'day')) {
+            return true
+          }
         }
         return false
       },
@@ -497,6 +516,19 @@
         }
         return false
       },
+      checkAllAttention(ex) {
+        if(this.examReturnedAttention(ex)){
+          return false
+        }
+        if(this.filterByGroup(ex)){
+            return !this.filterByScheduled(ex)
+        }else {
+          if(this.filterByExpiry(ex)){
+            return true
+          }
+        }
+        return false
+      },
       filteredExams() {
         let examInventory = this.exam_inventory
         let office_number = this.inventoryFilters.office_number === 'default' ?
@@ -511,6 +543,9 @@
             return evenMoreFiltered.filter(ex => ex.office_id == office_id)
           }
           let exams = examInventory.filter(ex => ex.office.office_number == office_number)
+          if(this.inventoryFilters.requireAttentionFilter === 'both'){
+            return exams.filter(ex => this.checkAllAttention(ex))
+          }
           switch (this.inventoryFilters.expiryFilter) {
             case 'all':
               filtered = exams
@@ -634,6 +669,81 @@
       returnExam(item) {
         this.actionedExam = item
         this.toggleReturnExamModal(true)
+      },
+      setExamTypeFilter(option){
+        this.selectedExamType = option.value
+        this.selectedExamTypeFilter = option.text
+
+        if(option.value === 'individual'){
+          this.setInventoryFilters({type:'groupFilter', value:'individual'})
+          this.selectedQuickActionFilter = ''
+          this.selectedQuickAction = ''
+          this.setInventoryFilters({type:'expiryFilter', value:'all'})
+          this.setInventoryFilters({type:'returnedFilter', value:'both'})
+          this.setInventoryFilters({type:'scheduledFilter', value:'both'})
+          this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
+        }else if (option.value === 'group'){
+          this.setInventoryFilters({type:'groupFilter', value:'group'})
+          this.selectedQuickActionFilter = ''
+          this.selectedQuickAction = ''
+          this.setInventoryFilters({type:'expiryFilter', value:'all'})
+          this.setInventoryFilters({type:'returnedFilter', value:'both'})
+          this.setInventoryFilters({type:'scheduledFilter', value:'both'})
+          this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
+        }else if (option.value === 'all'){
+          this.selectedQuickActionFilter = ''
+          this.selectedQuickAction = ''
+          this.setInventoryFilters({type:'expiryFilter', value:'all'})
+          this.setInventoryFilters({type:'returnedFilter', value:'both'})
+          this.setInventoryFilters({type:'scheduledFilter', value:'both'})
+          this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
+          this.setInventoryFilters({type:'groupFilter', value:'both'})
+        }
+      },
+      setQuickActionFilter(option){
+        this.selectedQuickAction = option.value
+        this.selectedQuickActionFilter = option.text
+
+        if(option.value === 'current'){
+          this.setInventoryFilters({type:'expiryFilter', value:'current'})
+          this.setInventoryFilters({type:'returnedFilter', value:'both'})
+          this.setInventoryFilters({type:'scheduledFilter', value:'both'})
+          this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
+        }else if(option.value === 'not_returned'){
+          this.setInventoryFilters({type:'returnedFilter', value:'unreturned'})
+          this.setInventoryFilters({type:'expiryFilter', value:'all'})
+          this.setInventoryFilters({type:'scheduledFilter', value:'both'})
+          this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
+        }else if(option.value === 'returned'){
+          this.setInventoryFilters({type:'returnedFilter', value:'returned'})
+          this.setInventoryFilters({type:'expiryFilter', value:'all'})
+          this.setInventoryFilters({type:'scheduledFilter', value:'both'})
+          this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
+        }else if(option.value === 'require_invigilator'){
+          this.setInventoryFilters({type:'scheduledFilter', value:'unscheduled'})
+          this.setInventoryFilters({type:'expiryFilter', value:'current'})
+          this.setInventoryFilters({type:'returnedFilter', value:'unreturned'})
+          this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
+        }else if(option.value === 'require_attention'){
+          if(this.selectedExamType === 'individual') {
+            this.setInventoryFilters({type:'returnedFilter', value:'unreturned'})
+            this.setInventoryFilters({type:'expiryFilter', value:'expired'})
+            this.setInventoryFilters({type:'scheduledFilter', value:'both'})
+            this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
+          }else if(this.selectedExamType === 'group'){
+            this.setInventoryFilters({type:'returnedFilter', value:'both'})
+            this.setInventoryFilters({type:'expiryFilter', value:'all'})
+            this.setInventoryFilters({type:'scheduledFilter', value:'unscheduled'})
+            this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
+          }else if(this.selectedExamType === 'all'){
+            this.setInventoryFilters({type:'requireAttentionFilter', value:'both'})
+          }
+        }else if(option.value === 'all'){
+          this.setInventoryFilters({type: 'expiryFilter', value: 'all'})
+          this.setInventoryFilters({type:'scheduledFilter', value:'both'})
+          this.setInventoryFilters({type:'returnedFilter', value:'both'})
+          this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
+        }
       },
       setFilter(e) {
         this.setInventoryFilters(e)
