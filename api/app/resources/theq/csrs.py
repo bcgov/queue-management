@@ -16,11 +16,12 @@ from datetime import datetime
 from flask import g
 from flask_restplus import Resource
 from qsystem import api, db, oidc
-from sqlalchemy import exc
+from sqlalchemy import exc, or_
 from app.models.bookings import Exam, ExamType, Booking
 from app.models.theq import Citizen, CSR, Period, ServiceReq, SRState
 from app.schemas.bookings import ExamSchema, ExamTypeSchema
 from app.schemas.theq import CitizenSchema, CSRSchema
+import pytz
 
 
 @api.route("/csrs/", methods=["GET"])
@@ -55,6 +56,7 @@ class CsrSelf(Resource):
     citizen_schema = CitizenSchema(many=True)
     exam_schema = ExamSchema(many=True)
     exam_type_schema = ExamTypeSchema()
+    timezone = pytz.timezone("US/Pacific")
 
     @oidc.accept_token(require_token=True)
     def get(self):
@@ -67,6 +69,7 @@ class CsrSelf(Resource):
             db.session.add(csr)
             active_sr_state = SRState.get_state_by_name("Active")
             today = datetime.now()
+            start_date = self.timezone.localize(today)
 
             active_citizens = Citizen.query \
                 .join(Citizen.service_reqs) \
@@ -83,6 +86,13 @@ class CsrSelf(Resource):
                 .join(ExamType, Exam.exam_type_id == ExamType.exam_type_id) \
                 .filter(ExamType.group_exam_ind == 0).count()
 
+            individual_exams_past_schedule = Exam.query \
+                .join(Booking, Exam.booking_id == Booking.booking_id)\
+                .filter(Booking.start_time < start_date)\
+                .filter_by(office_id=csr.office_id) \
+                .join(ExamType, Exam.exam_type_id == ExamType.exam_type_id) \
+                .filter(ExamType.group_exam_ind == 0).count()
+
             group_exams = Exam.query \
                 .filter_by(office_id=csr.office_id) \
                 .filter(Exam.deleted_date.is_(None)) \
@@ -92,12 +102,26 @@ class CsrSelf(Resource):
                 .filter(Booking.invigilator_id.is_(None))\
                 .filter(Booking.sbc_staff_invigilated == 0).count()
 
+            group_attention = Exam.query \
+                .filter_by(office_id=csr.office_id)\
+                .filter(Exam.deleted_date.is_(None))\
+                .filter(Exam.exam_returned_date.is_(None))\
+                .join(ExamType, Exam.exam_type_id == ExamType.exam_type_id)\
+                .filter(ExamType.group_exam_ind == 1)\
+                .join(Booking, Exam.booking_id == Booking.booking_id)\
+                .filter(Booking.start_time < start_date).count()
+
+            if group_attention > 0 and individual_exams > 0:
+                group_attention += individual_exams
+
             result = self.csr_schema.dump(csr)
             active_citizens = self.citizen_schema.dump(active_citizens)
 
             return {'csr': result.data,
                     'individual_exams': individual_exams,
+                    'individual_exams_past_schedule': individual_exams_past_schedule,
                     'group_exams': group_exams,
+                    'group_individual_attention': group_attention,
                     'active_citizens': active_citizens.data,
                     'errors': result.errors}
 
