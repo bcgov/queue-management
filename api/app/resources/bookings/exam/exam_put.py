@@ -53,4 +53,4 @@ class ExamPut(Resource):
         result = self.exam_schema.dump(exam)
 
         return {"exam": result.data,
-                "errors": result.data}, 201
+                "errors": result.errors}, 201
