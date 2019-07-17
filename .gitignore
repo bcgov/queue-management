@@ -126,6 +126,7 @@ sonar-runner/.gradle
 /frontend/static/keycloak-local.pathfinder.json
 /frontend/static/keycloak-local.pathfinder-test.json
 /frontend/static/keycloak-local.pathfinder-dev.json
+loadlogs
 
 # Docker
 api/Dockerfile
@@ -143,3 +144,4 @@ keys-generated
 /frontend/static/videos/*.mp4
 /frontend/static/keycloak.js.Debug
 /frontend/static/keycloak.js.Original
+/api/postman/postman_globals.json
