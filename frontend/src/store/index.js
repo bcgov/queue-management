@@ -1114,9 +1114,7 @@ export const store = new Vuex.Store({
           }).catch(() => {
             context.commit('setPerformingAction', false)
           })
-        }).finally(() => {
-        context.commit('setPerformingAction', false)
-      })
+        })
 
       let setupChannels = () => {
         let index = -1
