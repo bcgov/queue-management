@@ -1190,12 +1190,17 @@ export const store = new Vuex.Store({
         context.dispatch('getChannels')
         context.dispatch('getServices')
       }
+
       context.dispatch('putServiceRequest').then(() => {
-        context.commit('switchAddModalMode', 'edit_mode')
-        context.dispatch('setAddModalData')
-        context.commit('toggleAddModal', true)
-        context.commit('toggleServiceModal', false)
-        context.commit('setPerformingAction', false)
+        context.dispatch('putCitizen').then(() => {
+          context.commit('switchAddModalMode', 'edit_mode')
+          context.dispatch('setAddModalData')
+          context.commit('toggleAddModal', true)
+          context.commit('toggleServiceModal', false)
+          context.commit('setPerformingAction', false)
+        }).finally(() => {
+          context.commit('setPerformingAction', false)
+        })
       }).catch(() => {
         context.commit('setPerformingAction', false)
       })
