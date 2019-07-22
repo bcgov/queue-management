@@ -160,7 +160,7 @@ class SnowPlow():
         csr_qtxn = (csr.qt_xn_csr_ind == 1)
 
         #  Set up the CSR context.
-        agent = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/agent/jsonschema/2-0-0',
+        agent = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/agent/jsonschema/2-0-1',
                                    {"agent_id": csr.csr_id, "role": role_name, "quick_txn": csr_qtxn})
 
         return agent
