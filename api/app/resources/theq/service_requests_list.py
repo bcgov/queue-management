@@ -20,6 +20,8 @@ from app.models.theq import Citizen, CitizenState, CSR, Period, PeriodState, Ser
 from app.schemas.theq import CitizenSchema, ServiceReqSchema
 from marshmallow import ValidationError
 from app.utilities.snowplow import SnowPlow
+from pprint import pprint
+import json
 
 @api.route("/service_requests/", methods=["POST"])
 class ServiceRequestsList(Resource):
@@ -32,10 +34,17 @@ class ServiceRequestsList(Resource):
     def post(self):
         json_data = request.get_json()
 
+        csr = CSR.find_by_username(g.oidc_token_info['username'])
+
         if not json_data:
+            print("==> No json_data in POST /service_requests/")
+            print("    --> CSR:       " + csr.username)
             return {"message": "No input data received for creating service request"}, 400
 
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
+        if not 'service_request' in json_data.keys():
+            print("==> No service_request parameter in POST /service_requests/")
+            print("    --> CSR:       " + csr.username)
+            print("    --> json_data: " + json.dumps(json_data))
 
         try:
             service_request = self.service_request_schema.load(json_data['service_request']).data
@@ -46,11 +55,30 @@ class ServiceRequestsList(Resource):
             print (err)
             return {"message": str(err)}
 
+        #  If service request is null, an error.
+        if service_request is None:
+            print("==> service_request is None in POST /service_requests/, error in schema.load")
+            print("    --> CSR:       " + csr.username)
+            print("    --> json_data: " + json.dumps(json_data['service_request']))
+
         active_sr_state = SRState.get_state_by_name("Active")
         complete_sr_state = SRState.get_state_by_name("Complete")
         citizen_state = CitizenState.query.filter_by(cs_state_name="Active").first()
-        citizen = Citizen.query.get(service_request.citizen_id)
-        service = Service.query.get(service_request.service_id)
+        citizen = None
+        try:
+            citizen = Citizen.query.get(service_request.citizen_id)
+        except:
+            print("==> An exception getting citizen info")
+            print("    --> CSR:       " + csr.username)
+            print("    --> json_data: " + json.dumps(json_data['service_request']))
+
+        service = None
+        try:
+            service = Service.query.get(service_request.service_id)
+        except:
+            print("==> An exception getting service info")
+            print("    --> CSR:       " + csr.username)
+            print("    --> json_data: " + json.dumps(json_data['service_request']))
 
         if citizen is None:
             return {"message": "No matching citizen found for citizen_id"}, 400
