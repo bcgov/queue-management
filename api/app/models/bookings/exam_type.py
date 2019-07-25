@@ -28,7 +28,11 @@ class ExamType(Base):
     group_exam_ind = db.Column(db.Integer,  nullable=False)
     pesticide_exam_ind = db.Column(db.Integer, nullable=False)
 
-    exam = db.relationship("Exam", lazy=False)
+    # TODO changed lazy=false to lazy=raise
+    exam = db.relationship("Exam", lazy='raise')
+
+    # TODO changed lazy4-false to no lazy option
+    #exam = db.relationship("Exam", lazy=False)
 
     def __repr__(self):
         return '<Exam Type Name: (name={self.exam_type_name!r})>'.format(self=self)

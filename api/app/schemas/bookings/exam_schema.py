@@ -48,4 +48,6 @@ class ExamSchema(ma.ModelSchema):
 
     booking = fields.Nested(BookingSchema())
     exam_type = fields.Nested(ExamTypeSchema())
-    office = fields.Nested(OfficeSchema(exclude=("csrs",)))
+    office = fields.Nested(OfficeSchema(only=('appointments_enabled_ind', 'exams_enabled_ind', 'office_id',
+                                              'office_name', 'office_number', 'timezone')))
+
