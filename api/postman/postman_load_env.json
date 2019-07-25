@@ -1,0 +1,49 @@
+{
+	"id": "3bdd95fe-76f8-4799-9fdb-ff156d9096c1",
+	"name": "queue-management-dev",
+	"values": [
+		{
+			"key": "current_add_name",
+			"value": "Postman test client #1",
+			"enabled": true
+		},
+		{
+			"key": "citizen_name",
+			"value": "\"Test Postman Citizen\"",
+			"enabled": true
+		},
+		{
+			"key": "citizen_comment",
+			"value": "\"Postman Citizen here for MSP\"",
+			"enabled": true
+		},
+		{
+			"key": "citizen_quantity",
+			"value": "3",
+			"enabled": true
+		},
+		{
+			"key": "citizen_quantity_update",
+			"value": "5",
+			"enabled": true
+		},
+		{
+			"key": "citizen_name_quick",
+			"value": "\"Test Postman Citizen here for QTxn\"",
+			"enabled": true
+		},
+		{
+			"key": "event_number",
+			"value": "9200",
+			"enabled": true
+		},
+		{
+			"key": "citizen_comment_quick",
+			"value": "\"Postman citizen wants to pay taxes quickly\"",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2018-10-22T23:54:35.167Z",
+	"_postman_exported_using": "Postman/6.4.4"
+}
