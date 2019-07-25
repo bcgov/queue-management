@@ -37,6 +37,7 @@ class BookingSchema(ma.ModelSchema):
     sbc_staff_invigilated = fields.Int()
     booking_contact_information = fields.Str()
 
-    invigilator = fields.Nested(InvigilatorSchema())
+    invigilator = fields.Nested(InvigilatorSchema(only=('invigilator_id', 'invigilator_name', 'invigilator_notes')))
     room = fields.Nested(RoomSchema(exclude=("booking", "office",)))
-    office = fields.Nested(OfficeSchema())
+    office = fields.Nested(OfficeSchema(only=('appointments_enabled_ind', 'exams_enabled_ind', 'office_id',
+                                              'office_name', 'office_number', 'timezone')))
