@@ -216,7 +216,8 @@ def setup_logger(print_flag, location, log_name, config_name, formatter):
     string_level = os.getenv(config_name, "")
     msg_level = debug_string_to_debug_level(string_level)
     if print_flag:
-        print("    --> Setting logging for " + log_name + "; string_level: " + string_level + "; msg_level: " + str(msg_level))
+        print("    --> Setting logging for " + log_name + "; string_level: " + string_level + "; msg_level: "
+              + str(msg_level))
 
     #  Take action depending on the level.
     if msg_level == -10:
