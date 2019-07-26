@@ -208,18 +208,19 @@ def configure_engineio_socketio(app):
 def setup_logger(print_flag, location, log_name, config_name, formatter):
 
     #  Translate the logging level.
-    stringLevel = os.getenv(config_name, "")
-    msgLevel = debug_string_to_debug_level(stringLevel)
+    string_level = os.getenv(config_name, "")
+    msg_level = debug_string_to_debug_level(string_level)
     if print_flag:
-        print("    --> Setting logging for " + log_name + "; stringLevel: " + stringLevel + "; msgLevel: " + str(msgLevel))
+        print("    --> Setting logging for " + log_name + "; string_level: " + string_level + "; msg_level: "
+              + str(msg_level))
 
     #  Take action depending on the level.
-    if msgLevel == -10:
+    if msg_level == -10:
         if print_flag:
             print("    --> " + config_name + " env var not present.  Logger " + log_name + " logging not set up")
-    elif msgLevel == -20:
+    elif msg_level == -20:
         if print_flag:
-            print("    --> " + config_name + " env var value '" + stringLevel + \
+            print("    --> " + config_name + " env var value '" + string_level + \
                   "' invalid.  Logger " + log_name + " logging not set up")
     else:
 
@@ -229,7 +230,7 @@ def setup_logger(print_flag, location, log_name, config_name, formatter):
         log_stream_handler = logging.StreamHandler()
         log_stream_handler.setFormatter(formatter)
         module_logger = logging.getLogger(log_name)
-        module_logger.setLevel(msgLevel)
+        module_logger.setLevel(msg_level)
         module_logger.addHandler(log_file_handler)
         module_logger.addHandler(log_stream_handler)
 
