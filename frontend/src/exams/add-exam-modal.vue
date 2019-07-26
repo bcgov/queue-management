@@ -246,9 +246,6 @@
             return
           case 'group':
             this.resetModal()
-            let { office_id, office_number } = this.user.office
-            office_id = parseInt(office_id)
-            office_number = parseInt(office_number)
             return
           case 'other':
             this.resetModal()
