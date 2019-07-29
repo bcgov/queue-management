@@ -163,6 +163,125 @@
             </b-col>
           </b-form-row>
           <b-form-row>
+            <template v-if="this.currentShadowInvigilator != null">
+              <b-row style="display: flex;" class="w-100 ml-0 mb-2">
+                <b-col class="w-50 ml-1 mr-1 pr-1">
+                  <b-button v-if="this.changeState"
+                            v-b-toggle.collapse-1
+                            variant="primary"
+                            @click="setRemove">
+                    Change Shadow Invigilator
+                  </b-button>
+                  <b-button v-else-if="!this.changeState"
+                            disabled
+                            variant="primary">
+                    Change Shadow Invigilator
+                  </b-button>
+                </b-col>
+                <b-col class="w-50 ml-1 mr-1 pl-1">
+                  <b-button v-if="this.removeState"
+                            v-b-toggle.collapse-2
+                            variant="danger"
+                            @click="setChange">
+                    Remove Shadow Invigilator
+                  </b-button>
+                  <b-button v-else-if="!this.removeState"
+                            disabled
+                            variant="danger">
+                    Remove Shadow Invigilator
+                  </b-button>
+                </b-col>
+              </b-row>
+            </template>
+            <template v-else>
+              <b-button v-b-toggle.collapse-1
+                      variant="primary"
+                      class="w-100 m-1">
+                Add Shadow Invigilator
+              </b-button>
+            </template>
+            <b-collapse id="collapse-1"
+                        class="mt-2 w-100">
+              <b-form-group class="q-info-display-grid-container">
+                <label>Shadow Invigilators</label>
+                <b-form>
+                  <b-row>
+                    <b-col>
+                      <b-table selectable
+                               select-mode="single"
+                               :fields="shadowFields"
+                               :items="shadow_invigilator_options"
+                               @row-selected="rowSelectedShadow"
+                               responsive
+                               selected-variant="success"
+                               style="height: 100px;"
+                               bordered
+                               striped>
+                        <template slot="selected" slot-scope=" { rowSelected } ">
+                          <span v-if="rowSelected">✔</span>
+                        </template>
+                      </b-table>
+                    </b-col>
+                    <b-col>
+                      <b-row>
+                        Shadow Invigilator Limit: 1
+                      </b-row>
+                      <b-row v-if="this.currentShadowInvigilator != null"
+                             class="mb-1">
+                        Current Invigilator
+                      </b-row>
+                      <b-row v-if="this.currentShadowInvigilator != null"
+                             style="justify-content: center;"
+                             class="mb-1">
+                        {{ this.currentShadowInvigilatorName }}
+                      </b-row>
+                      <b-row style="font-weight: bold;"
+                             class="mb-1">
+                        Selected Invigilators
+                      </b-row>
+                      <b-row v-for="select in selectedShadow"
+                             style="justify-content: center;"
+                             class="mb-1">
+                        {{ select.name }}
+                      </b-row>
+                    </b-col>
+                  </b-row>
+                </b-form>
+              </b-form-group>
+            </b-collapse>
+            <b-collapse id="collapse-2"
+                        class="mt-2 w-100">
+              <b-form-group class="q-info-display-grid-container">
+                <b-row class="ml-1">
+                  <span style="font-weight: bold;">Current Shadow Invigilator: </span>
+                </b-row>
+                <b-row class="mb-2"
+                       style="justify-content: center;">
+                  <span>{{ this.currentShadowInvigilatorName}}</span>
+                </b-row>
+                <b-row class="ml-1">
+                  <span style="font-weight: bold;">Would you like to remove this shadow invigilator?</span>
+                </b-row>
+                <template>
+                  <b-row style="display: flex; justify-content: center;"
+                         class="w-100 mb-0">
+                    <b-button class="mr-2 mt-1"
+                              variant="danger"
+                              @click="setSelectedShadowNull">
+                      Yes
+                    </b-button>
+                    <b-button class="ml-2 mt-1"
+                              variant="primary"
+                              v-b-toggle.collapse-2
+                              @click="setChange">
+                      No
+                    </b-button>
+                  </b-row>
+                </template>
+              </b-form-group>
+            </b-collapse>
+          </b-form-row>
+          <b-form-row class="mt-0">
             <b-col>
               <b-form-group>
                 <label>Delete Booking?</label><br>
@@ -214,6 +333,9 @@
         confirm: false,
         added: 0,
         invigilator: null,
+        shadowInvigilator: null,
+        currentShadowInvigilator: null,
+        currentShadowInvigilatorName: '',
         editedFields: [],
         fees: '',
         feesOptions: [
@@ -236,11 +358,20 @@
         title: '',
         booking_contact_information: '',
         rescheduling: false,
-        blackout_notes: ''
+        blackout_notes: '',
+        selectedShadow: [],
+        shadowFields: ['selected', 'name'],
+        changeState: true,
+        removeState: true,
+        removeFlag: false,
       }
     },
     computed: {
-      ...mapGetters(['invigilator_dropdown']),
+      ...mapGetters([
+        'invigilator_dropdown',
+        'shadow_invigilators',
+        'shadow_invigilator_options',
+      ]),
       ...mapState(
         {
           event: state => state.editedBooking,
@@ -249,6 +380,7 @@
           showModal: state => state.showEditBookingModal,
           invigilators: state => state.invigilators,
           selectedExam: state => state.selectedExam,
+          shadowInvigilators: state => state.shadowInvigilators,
         }
       ),
       checkBookingBlackout(){
@@ -355,6 +487,7 @@
         'getInvigilators',
         'postBooking',
         'putBooking',
+        'putInvigilatorShadow',
       ]),
       ...mapMutations([
         'setClickedDate',
@@ -486,16 +619,28 @@
         this.invigilator = e
       },
       show() {
+        this.changeState = true
+        this.removeState = true
         if (this.newEvent && this.newEvent.start) {
           this.newStart = new moment(this.newEvent.start)
           this.newEnd = new moment(this.newEvent.end)
         }
         if (this.event.exam && this.event.exam.booking) {
+          let currentID = this.currentShadowInvigilator = this.event.exam.booking.shadow_invigilator_id || null
+          let currentName = ''
+          this.shadow_invigilators.forEach(function(invigilator) {
+            if(invigilator['id'] == currentID){
+              currentName = invigilator['name']
+            }
+          })
+          this.currentShadowInvigilatorName = currentName
           if (!this.editedFields.includes('invigilator')) {
             if(this.rescheduling){
               this.invigilator = null
             }
-            this.invigilator = this.event.exam.booking.invigilator_id || null
+            if(this.event.exam.booking.invigilators.length == 1){
+              this.invigilator = this.event.exam.booking.invigilators[0] || null
+            }
           }
           if (this.event.exam.booking.sbc_staff_invigilated) {
             if (!this.editedFields.includes('invigilator')) {
@@ -522,8 +667,27 @@
           this.invigilator = null
         }
       },
-      submit(e) {
-        e.preventDefault()
+      rowSelectedShadow(shadows, e){
+        this.message = ''
+        this.selectedShadow = shadows
+        if (this.event.exam && this.event.exam.booking) {
+          if (this.event.exam.booking.shadow_invigilator_id !== e) {
+            if (!this.editedFields.includes('shadow_invigilator')) {
+              this.editedFields.push('shadow_invigilator')
+            }
+          }else if (this.event.exam.booking.shadow_invigilator_id == e) {
+            if (this.editedFields.includes('shadow_invigilator')) {
+              this.editedFields.splice(this.editedFields.indexOf('shadow_invigilator'), 1)
+            }
+          }
+        }
+        if(shadows[0] == null){
+          this.shadowInvigilator = null
+        }else{
+          this.shadowInvigilator = shadows[0].id
+        }
+      },
+      submit() {
         if (this.title.length === 0) {
           this.labelColor = 'red'
           this.state = 'danger'
@@ -558,6 +722,7 @@
         }
         if (this.editedFields.includes('invigilator')) {
           changes.invigilator_id = this.invigilator
+          console.log('INVIGILATOR', changes.invigilator_id)
           if (changes.invigilator_id !== 'sbc') {
             changes.sbc_staff_invigilated = 0
           }
@@ -571,18 +736,57 @@
             this.rescheduling = false
           }
         }
+        if (this.editedFields.includes('shadow_invigilator')){
+          if(this.removeFlag){
+            changes['shadow_invigilator_id'] = null
+          } else {
+            changes['shadow_invigilator_id'] = this.shadowInvigilator
+          }
+        }
         if (this.editedFields.includes('contact_information')){
           changes['booking_contact_information'] = this.booking_contact_information
+          changes['invigilator_id'] = this.invigilator
         }
         if(this.editedFields.includes('blackout_notes')){
           changes['blackout_notes'] = this.blackout_notes
         }
         if (Object.keys(changes).length === 0) {
           this.message = 'No Changes Made'
-        } else {
+        }
+        else {
+          let invigilatorPayload = {
+            id: null,
+            params: null,
+          }
+          let changePayload = {
+            id: null,
+            params: null,
+          }
+          if (this.removeFlag) {
+            invigilatorPayload.id = this.currentShadowInvigilator
+            invigilatorPayload.params = '?add=False&subtract=True'
+          } else if (this.shadowInvigilator && this.currentShadowInvigilator) {
+            invigilatorPayload.id = this.shadowInvigilator
+            invigilatorPayload.params = '?add=True&subtract=False'
+            changePayload.id = this.currentShadowInvigilator
+            changePayload.params = '?add=False&subtract=True'
+          } else if (this.shadowInvigilator && !this.currentShadowInvigilator) {
+            invigilatorPayload.id = this.shadowInvigilator
+            invigilatorPayload.params = '?add=True&subtract=False'
+          }
+          changes.invigilator_id = this.invigilator
+          if(invigilatorPayload.id ){
+            this.putInvigilatorShadow(invigilatorPayload)
+          }
+          if(changePayload.id){
+            this.putInvigilatorShadow(changePayload)
+          }
           let payload = {
             id: this.event.id,
             changes
+          }
+          if(changes.invigilator_id === 'sbc'){
+            delete changes.invigilator_id
           }
           this.putBooking(payload).then( () => {
             setTimeout( () => {
@@ -592,6 +796,28 @@
             }, 250)
           })
         }
+        this.selectedShadow = []
+        this.removeFlag = false
+      },
+      setChange(){
+        this.changeState = !this.changeState
+        return
+      },
+      setRemove(){
+        this.removeState = !this.removeState
+        return
+      },
+      setSelectedShadowNull(e){
+        this.removeFlag = true
+         if (this.event.exam && this.event.exam.booking) {
+          if (this.event.exam.booking.shadow_invigilator_id !== e) {
+            if (!this.editedFields.includes('shadow_invigilator')) {
+              this.editedFields.push('shadow_invigilator')
+            }
+          }
+        }
+        this.shadowInvigilator = null
+        this.submit()
       },
     }
   }

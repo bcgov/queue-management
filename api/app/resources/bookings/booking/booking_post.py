@@ -17,6 +17,7 @@ from flask_restplus import Resource
 from flask import request, g
 from app.models.bookings import Room
 from app.schemas.bookings import BookingSchema
+from app.models.bookings import Invigilator
 from app.models.theq import CSR
 from qsystem import api, api_call_with_retry, db, oidc
 
@@ -33,6 +34,7 @@ class BookingPost(Resource):
         csr = CSR.find_by_username(g.oidc_token_info['username'])
 
         json_data = request.get_json()
+        i_id = json_data.get('invigilator_id')
 
         if not json_data:
             return {"message": "No input data received for creating a booking"}, 400
@@ -47,8 +49,17 @@ class BookingPost(Resource):
             booking.office_id = csr.office_id
 
         if booking.office_id == csr.office_id or csr.liaison_designate == 1:
-            db.session.add(booking)
-            db.session.commit()
+
+            if i_id is None:
+
+                db.session.add(booking)
+                db.session.commit()
+
+            else:
+
+                booking.invigilators.append(Invigilator.query.filter_by(invigilator_id=i_id).first_or_404())
+                db.session.add(booking)
+                db.session.commit()
 
             result = self.booking_schema.dump(booking)
 

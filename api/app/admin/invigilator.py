@@ -16,6 +16,7 @@ from app.models.bookings import Invigilator
 from .base import Base
 from flask_login import current_user
 from qsystem import db
+from wtforms import validators
 
 
 class InvigilatorConfig(Base):
@@ -42,18 +43,33 @@ class InvigilatorConfig(Base):
         'contract_number',
         'contract_expiry_date',
         'invigilator_notes',
-        'deleted'
+        'shadow_count',
+        'shadow_flag',
+        'deleted',
     ]
+
+    form_args = {
+        'shadow_count': {'default': '0'},
+        'shadow_flag': {'default': 'N'}
+    }
 
     form_excluded_columns = [
         'bookings'
     ]
 
-    column_labels = {'office.office_name': 'Office Name',
-                     'deleted': 'Deleted'}
+    column_labels = {
+        'office.office_name': 'Office Name',
+        'shadow_count': 'Shadow Session Count',
+        'shadow_flag': 'Shadow Sessions Completed',
+        'deleted': 'Deleted'
+    }
 
-    column_searchable_list = {'invigilator_name',
-                              'deleted'}
+    column_searchable_list = {
+        'invigilator_name',
+        'shadow_count',
+        'shadow_flag',
+        'deleted',
+    }
 
     form_create_rules = (
         'office',
@@ -63,8 +79,22 @@ class InvigilatorConfig(Base):
         'contract_number',
         'contract_expiry_date',
         'invigilator_notes',
+        'shadow_count',
+        'shadow_flag',
         'deleted'
     )
+
+    form_choices = {
+        'shadow_count': [
+            ('0', '0'),
+            ('1', '1'),
+            ('2', '2')
+        ],
+        'shadow_flag': [
+            ('N', 'No'),
+            ('Y', 'Yes')
+        ]
+    }
 
     form_edit_rules = (
         'office',
@@ -74,7 +104,9 @@ class InvigilatorConfig(Base):
         'contract_number',
         'contract_expiry_date',
         'invigilator_notes',
-        'deleted'
+        'shadow_count',
+        'shadow_flag',
+        'deleted',
     )
 
     column_sortable_list = [
@@ -82,10 +114,23 @@ class InvigilatorConfig(Base):
         'contact_email',
         'contract_number',
         'contract_expiry_date',
-        'deleted'
+        'shadow_count',
+        'shadow_flag',
+        'deleted',
     ]
 
     column_default_sort = 'invigilator_name'
+
+    def on_model_change(self, form, model, is_created):
+
+        shadow_count = int(model.shadow_count)
+        shadow_flag = model.shadow_flag
+
+        if shadow_count < 0 or shadow_count > 2:
+            raise validators.ValidationError('Invigilator Shadow Count is outside of set range.')
+        if shadow_flag == 'Y' and shadow_count < 2:
+            raise validators.ValidationError('Invigilator Shadow Sessions Completed is set to YES with a Shadow '
+                                             'Session Count less than 2.')
 
 
 InvigilatorModelView = InvigilatorConfig(Invigilator, db.session)

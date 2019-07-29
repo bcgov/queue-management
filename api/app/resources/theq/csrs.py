@@ -101,8 +101,8 @@ class CsrSelf(Resource):
                 .join(ExamType, Exam.exam_type_id == ExamType.exam_type_id) \
                 .filter(ExamType.group_exam_ind == 1) \
                 .join(Booking, Exam.booking_id == Booking.booking_id) \
-                .filter(Booking.invigilator_id.is_(None))\
                 .filter(Booking.sbc_staff_invigilated == 0).count()
+                #.filter(Booking.invigilator_id.is_(None))\ TODO: Update this plz
 
             group_attention = Exam.query \
                 .filter_by(office_id=csr.office_id)\

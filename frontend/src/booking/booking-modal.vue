@@ -90,7 +90,7 @@
             </b-form-row>
             <b-form-row>
               <b-col>
-                <b-table :items="invigilators"
+                <b-table :items="invigilator_multi_select"
                          :fields="fields"
                          outlined
                          inverse
@@ -100,10 +100,11 @@
                          class="mr-3 mt-1 mb-0 pr-3 pl-3"
                          small>
                   <template slot="invigilator_name" slot-scope="row">
-                    <div class="table-pointer">{{ row.item.invigilator_name }}</div>
+                    <div class="table-pointer">{{ row.item.name }}</div>
                     <div style="display: none">
-                      {{ row.item.invigilator_id == invigilatorId ?
-                      row.item._rowVariant='info' : row.item._rowVariant=''
+                      {{
+                        row.item.value == invigilatorId ?
+                        row.item._rowVariant='info' : row.item._rowVariant=''
                       }}
                     </div>
                   </template>
@@ -138,7 +139,7 @@
 </template>
 
 <script>
-  import { mapActions, mapMutations, mapState } from 'vuex'
+  import { mapActions, mapMutations, mapState, mapGetters } from 'vuex'
   import moment from 'moment'
   import DataSummaryTable from './../exams/data-summary-table'
 
@@ -185,6 +186,9 @@
         module: 'addExamModule',
         capturedExam: 'capturedExam',
       }),
+      ...mapGetters([
+        'invigilator_multi_select'
+      ]),
       buttonStatus() {
         if (!this.selectedOption) {
           return true
@@ -363,7 +367,7 @@
       },
       rowClicked(item) {
         this.clickedRow = item
-        this.invigilatorId = item.invigilator_id
+        this.invigilatorId = item.value
         this.invigilator = item
       },
       setRef(e) {
