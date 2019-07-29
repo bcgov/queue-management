@@ -18,17 +18,17 @@ flask-cors
 flask_marshmallow
 flask-socketio==4.1.0
 gunicorn
-httplib2==0.13.0
-importlib-metadata==0.18
+httplib2==0.13.0              # added to fix breaking flask-socketio changes
+importlib-metadata==0.18      # added to fix breaking flask-socketio changes
 marshmallow-sqlalchemy
 psycopg2-binary
-pyrsistent==0.15.3
+pyrsistent==0.15.3            # added to fix breaking flask-socketio changes
 pysnow
 pytest
 python-dotenv
-python-engineio==3.8.2.post1
+python-engineio==3.8.2.post1  # added to fix breaking flask-socketio changes
 python-jose
-python-socketio==4.2.0
+python-socketio==4.2.0        # added to fix breaking flask-socketio changes
 SQLAlchemy-Utc
 toastedmarshmallow==0.2.6
 flask_oidc
