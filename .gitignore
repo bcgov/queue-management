@@ -145,3 +145,4 @@ keys-generated
 /frontend/static/keycloak.js.Debug
 /frontend/static/keycloak.js.Original
 /api/postman/postman_globals.json
+/api/postman/bookings-env-postman-contains-secrets.json
