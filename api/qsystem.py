@@ -74,10 +74,13 @@ my_print("    --> log:    " + str(log_enable_flag))
 my_print("    --> socket: " + os.getenv('LOG_SOCKETIO', '') + '; flag: ' + str(socket_flag))
 my_print("    --> engine: " + os.getenv('LOG_ENGINEIO', '') + '; flag: ' + str(engine_flag))
 
-socketio = SocketIO(logger=socket_flag, engineio_logger=engine_flag)
+socketio = SocketIO(logger=socket_flag, engineio_logger=engine_flag,
+                    cors_allowed_origins=application.config['CORS_ALLOWED_ORIGINS'])
 
 if application.config['ACTIVE_MQ_URL'] is not None:
-    socketio.init_app(application, async_mode='eventlet', message_queue=application.config['ACTIVE_MQ_URL'], path='/api/v1/socket.io')
+    socketio.init_app(application, async_mode='eventlet',
+                      message_queue=application.config['ACTIVE_MQ_URL'],
+                      path='/api/v1/socket.io')
 else:
     socketio.init_app(application, path='/api/v1/socket.io')
 

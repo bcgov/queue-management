@@ -179,6 +179,7 @@
         'captureExamDetail',
         'resetCaptureForm',
         'resetAddExamModal',
+        'resetLogAnotherExamModal',
         'resetCaptureTab',
         'setAddExamModalSetting',
         'updateCaptureTab',
@@ -267,11 +268,14 @@
         }
       },
       logAnother() {
+        let { setup } = this.addExamModal
         this.resetModal()
         this.unSubmitted = true
         this.submitMsg = ''
         this.status = 'unknown'
         this.captureExamDetail({ key: 'exam_method', value: 'paper' })
+        this.resetLogAnotherExamModal(setup)
+
         this.initialize()
       },
       resetModal() {

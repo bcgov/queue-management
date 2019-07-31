@@ -2399,7 +2399,16 @@ export const store = new Vuex.Store({
         office_number: null,
       }
     },
-  
+
+    resetLogAnotherExamModal: (state, setup) => {
+      state.addExamModal = {
+        visible: true,
+        setup: setup,
+        step1MenuOpen: true,
+        office_number: null,
+      }
+    },
+
     toggleGenFinReport(state, payload) {
       state.showGenFinReportModal = payload
     },
