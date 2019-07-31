@@ -91,7 +91,8 @@ export default {
       showAddModal: 'showAddModal',
       addModalSetup: 'addModalSetup',
       serviceModalForm: 'serviceModalForm',
-      user: 'user'
+      user: 'user',
+      hideBackOffice: 'hideBackOffice'
     }),
     ...mapGetters(['form_data', 'reception',]),
     simplified() {
@@ -109,6 +110,9 @@ export default {
       }
       if (this.simplified) {
         return 'Begin Tracking'
+      }
+      if (!this.hideBackOffice) {
+        return "Back Office"
       }
       return 'Add Citizen'
     },
