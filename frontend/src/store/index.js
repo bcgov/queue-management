@@ -96,6 +96,7 @@ export const store = new Vuex.Store({
     examSuccessDismiss : 0,
     examTypes: [],
     feedbackMessage: '',
+    groupIndividualExam: false,
     iframeLogedIn: false,
     inventoryFilters: {
       expiryFilter: 'current',
@@ -103,6 +104,8 @@ export const store = new Vuex.Store({
       groupFilter: 'both',
       returnedFilter: 'unreturned',
       office_number: 'default',
+      requireAttentionFilter: 'default',
+      requireOEMAttentionFilter: 'default',
     },
     invigilators: [],
     isLoggedIn: false,
@@ -122,6 +125,10 @@ export const store = new Vuex.Store({
     rooms: [],
     scheduling: false,
     selectedExam: {},
+    selectedExamType: '',
+    selectedExamTypeFilter: '',
+    selectedQuickAction: '',
+    selectedQuickActionFilter: '',
     selectedOffice: {},
     selectionIndicator: false,
     serveModalAlert: '',
@@ -787,7 +794,15 @@ export const store = new Vuex.Store({
             c => c.counter_name === DEFAULT_COUNTER_NAME)[0])
           let individualExamBoolean = false
           let groupExamBoolean = false
-          
+          let groupIndividualBoolean = false
+
+          if(resp.data.group_individual_attention > 0){
+            groupIndividualBoolean = true
+            context.commit('setGroupIndividualExam', groupIndividualBoolean)
+          }else{
+            context.commit('setGroupIndividualExam', groupIndividualBoolean)
+          }
+
           if (resp.data.group_exams > 0) {
             groupExamBoolean = true
             context.commit('setGroupExam', groupExamBoolean)
@@ -808,6 +823,8 @@ export const store = new Vuex.Store({
             context.commit('setExamAlert', 'There are Group Exams that require attention')
           }else if (individualExamBoolean) {
             context.commit('setExamAlert', 'There are Individual Exams that require attention')
+          }else if (groupIndividualBoolean){
+            context.commit('setExamAlert', '')
           }
 
           if (resp.data.active_citizens && resp.data.active_citizens.length > 0) {
@@ -2348,6 +2365,8 @@ export const store = new Vuex.Store({
     setUserLoadingFail: (state, payload) => state.userLoadingFail = payload,
   
     setGroupExam: (state, payload) => state.groupExam = payload,
+
+    setGroupIndividualExam: (state, payload) => state.groupIndividualExam = payload,
   
     setIndividualExam: (state, payload) => state.individualExam = payload,
   
@@ -2539,7 +2558,15 @@ export const store = new Vuex.Store({
     setInventoryFilters(state, payload) {
       state.inventoryFilters[payload.type] = payload.value
     },
-  
+
+    setSelectedExamType: (state, payload) => state.selectedExamType = payload,
+
+    setSelectedExamTypeFilter: (state, payload) => state.selectedExamTypeFilter = payload,
+
+    setSelectedQuickAction: (state, payload) => state.selectedQuickAction = payload,
+
+    setSelectedQuickActionFilter: (state, payload) => state.selectedQuickActionFilter = payload,
+
     restoreSavedModal(state, payload) {
       Object.keys(payload.item).forEach(key => {
         Vue.set(

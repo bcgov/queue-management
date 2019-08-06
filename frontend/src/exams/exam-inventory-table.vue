@@ -25,85 +25,160 @@
                   @click="officeFilterModal=false">Ok</b-button>
       </div>
     </b-modal>
-    <div class="q-w100-flex-fs">
-      <b-form inline class="ml-3">
-        <b-input-group>
-          <b-input-group-prepend><label class="mx-1 pt-1 my-auto label-text">Search</label></b-input-group-prepend>
-          <b-input size="sm" class="mb-1 mt-3" v-model="searchTerm"></b-input>
-        </b-input-group>
-        <b-input-group class="ml-3" v-if="!showExamInventoryModal">
-          <b-input-group-prepend>
-            <label class="mx-1 pt-1 my-auto label-text">Filters</label>
-          </b-input-group-prepend>
-          <b-btn-group v-if="is_liaison_designate" class="pt-2">
-            <b-btn @click="officeFilterModal=true"
-                   :variant="officeFilter === userOffice || officeFilter === 'default' ? 'primary' : 'warning'"
-                   class="btn-sm">Office # {{ officeNumber }} - {{ officeName }}</b-btn>
-          </b-btn-group>
-          <b-button-group horizontal
-                          class="ml-2 pt-2"
-                          label="Expired Exam Filters">
-            <b-button size="sm"
-                      :pressed="inventoryFilters.expiryFilter==='all'"
-                      @click="setInventoryFilters({type:'expiryFilter', value:'all'})"
-                      variant="primary">
-              <span class="mx-2">All</span>
-            </b-button>
-            <b-button size="sm"
-                      :pressed="inventoryFilters.expiryFilter==='expired'"
-                      @click="setInventoryFilters({type:'expiryFilter', value:'expired'})"
-                      variant="primary">Expired</b-button>
-            <b-button size="sm"
-                      :pressed="inventoryFilters.expiryFilter==='current'"
-                      @click="setInventoryFilters({type:'expiryFilter', value:'current'})"
-                      variant="primary">Current</b-button>
-          </b-button-group>
-          <b-btn-group horizontal class="ml-2 pt-2">
-            <b-btn size="sm"
-                   :pressed="inventoryFilters.scheduledFilter==='both'"
-                   @click="setInventoryFilters({type:'scheduledFilter', value:'both'})"
-                   variant="primary">
-              <span class="mx-2">Both</span>
-            </b-btn>
-            <b-btn size="sm"
-                   :pressed="inventoryFilters.scheduledFilter==='unscheduled'"
-                   @click="setInventoryFilters({type:'scheduledFilter', value:'unscheduled'})"
-                   variant="primary">Not Ready</b-btn>
-            <b-btn size="sm"
-                   :pressed="inventoryFilters.scheduledFilter==='scheduled'"
-                   @click="setInventoryFilters({type:'scheduledFilter', value:'scheduled'})"
-                   variant="primary">Ready</b-btn>
-          </b-btn-group>
-          <b-btn-group horizontal class="ml-2 pt-2">
-            <b-btn size="sm"
-                   :pressed="inventoryFilters.groupFilter==='both'"
-                   @click="setInventoryFilters({type:'groupFilter', value:'both'})"
-                   variant="primary"><span class="mx-2">Both</span></b-btn>
-            <b-btn size="sm"
-                   :pressed="inventoryFilters.groupFilter==='individual'"
-                   @click="setInventoryFilters({type:'groupFilter', value:'individual'})"
-                   variant="primary">Individual</b-btn>
-            <b-btn size="sm"
-                   :pressed="inventoryFilters.groupFilter==='group'"
-                   @click="setInventoryFilters({type:'groupFilter', value:'group'})"
-                   variant="primary">Group</b-btn>
-          </b-btn-group>
-          <b-btn-group horizontal class="ml-2 pt-2">
-            <b-btn size="sm"
-                   :pressed="inventoryFilters.returnedFilter==='both'"
-                   @click="setFilter({type:'returnedFilter', value:'both'})"
-                   variant="primary"><span class="mx-2">Both</span></b-btn>
-            <b-btn size="sm"
-                   :pressed="inventoryFilters.returnedFilter==='returned'"
-                   @click="setFilter({type:'returnedFilter', value:'returned'})"
-                   variant="primary">Returned</b-btn>
-            <b-btn size="sm"
-                   :pressed="inventoryFilters.returnedFilter==='unreturned'"
-                   @click="setFilter({type:'returnedFilter', value:'unreturned'})"
-                   variant="primary">Not Returned</b-btn>
-          </b-btn-group>
-        </b-input-group>
-      </b-form>
+    <div style="display: flex; justify-content: space-between" class="q-w100-flex-fs">
+      <div>
+        <b-form inline class="ml-3">
+        <!-- TODO Pagination Left goes here if required-->
+          <b-input-group>
+            <b-input-group-prepend><label class="mx-1 pt-3 ml-2 my-auto label-text">Search</label></b-input-group-prepend>
+            <b-input size="sm" class="mb-1 mt-3" v-model="searchTerm"></b-input>
+          </b-input-group>
+          <b-input-group class="ml-3" v-if="!showExamInventoryModal">
+            <b-input-group-prepend>
+              <label class="mx-1 pt-3 mr-2 my-auto label-text">Filters</label>
+            </b-input-group-prepend>
+            <b-btn-group v-if="is_liaison_designate" class="pt-2">
+              <b-btn @click="officeFilterModal=true"
+                     :variant="officeFilter === userOffice || officeFilter === 'default' ? 'primary' : 'warning'"
+                     class="btn-sm mr-2">Office # {{ officeNumber }} - {{ officeName }}</b-btn>
+            </b-btn-group>
+          </b-input-group>
+          <b-input-group>
+            <b-btn-group v-if="selectedExamTypeFilter === ''">
+              <b-dropdown size="sm"
+                          variant="primary"
+                          text="Exam Type Filters"
+                          v-model="selectedExamTypeFilter"
+                          class="mt-2 mr-2">
+                <b-dropdown-item v-for="option in examTypeOptions"
+                                 @click="setExamTypeFilter(option)">
+                  {{ option.text }}
+                </b-dropdown-item>
+              </b-dropdown>
+            </b-btn-group>
+            <b-btn-group v-else>
+              <b-dropdown size="sm"
+                          variant="primary"
+                          :text="this.selectedExamTypeFilter"
+                          v-model="selectedExamTypeFilter"
+                          class="mt-2 mr-2">
+                <b-dropdown-item v-for="option in examTypeOptions"
+                                 @click="setExamTypeFilter(option)">
+                  {{ option.text }}
+                </b-dropdown-item>
+              </b-dropdown>
+            </b-btn-group>
+            <template v-if="is_ita_designate || role_code === 'GA' ">
+              <b-btn-group v-if="selectedQuickActionFilter === ''">
+                <b-dropdown size="sm"
+                            variant="primary"
+                            text="Quick Action Filters"
+                            v-model="selectedQuickActionFilter"
+                            class="mt-2 mr-2">
+                  <b-dropdown-item v-for="option in newQuickActionOptions"
+                                   @click="setQuickActionFilter(option)">
+                    <div style="display: flex; justify-content: space-between;">
+                      <div class="mr-3">{{ option.text }}</div>
+                      <div v-if="option.text === 'Ready'">
+                        <font-awesome-icon icon='clipboard-check'
+                                           style="fontSize: 1rem; color: green;"/>
+                      </div>
+                      <div v-if="option.text === 'Requires Attention'">
+                        <font-awesome-icon icon='life-ring'
+                                           style="fontSize: 1rem; color: red;"/>
+                        <font-awesome-icon icon='exclamation-triangle'
+                                           style="fontSize: 1rem; color: #FFC32B;"/>
+                      </div>
+                    </div>
+                  </b-dropdown-item>
+                </b-dropdown>
+              </b-btn-group>
+              <b-btn-group v-else>
+                <b-dropdown size="sm"
+                            variant="primary"
+                            :text="this.selectedQuickActionFilter"
+                            v-model="selectedQuickActionFilter"
+                            class="mt-2 mr-2">
+                  <b-dropdown-item v-for="option in newQuickActionOptions"
+                                   @click="setQuickActionFilter(option)">
+                    <div style="display: flex; justify-content: space-between;">
+                      <div class="mr-3">{{ option.text }}</div>
+                      <div v-if="option.text === 'Ready'">
+                        <font-awesome-icon icon='clipboard-check'
+                                           style="fontSize: 1rem; color: green;"/>
+                      </div>
+                      <div v-if="option.text === 'Requires Attention'">
+                        <font-awesome-icon icon='life-ring'
+                                           style="fontSize: 1rem; color: red;"/>
+                        <font-awesome-icon icon='exclamation-triangle'
+                                           style="fontSize: 1rem; color: #FFC32B;"/>
+                      </div>
+                    </div>
+                  </b-dropdown-item>
+                </b-dropdown>
+              </b-btn-group>
+            </template>
+            <template v-else>
+              <b-btn-group v-if="selectedQuickActionFilter === ''">
+                <b-dropdown size="sm"
+                            variant="primary"
+                            text="Quick Action Filters"
+                            v-model="selectedQuickActionFilter"
+                            class="mt-2 mr-2">
+                  <b-dropdown-item v-for="option in newQuickActionOptionsNoOEM"
+                                   @click="setQuickActionFilter(option)">
+                    <div style="display: flex; justify-content: space-between;">
+                      <div class="mr-3">{{ option.text }}</div>
+                      <div v-if="option.text === 'Ready'">
+                        <font-awesome-icon icon='clipboard-check'
+                                           style="fontSize: 1rem; color: green;"/>
+                      </div>
+                      <div v-if="option.text === 'Requires Attention'">
+                        <font-awesome-icon icon='life-ring'
+                                           style="fontSize: 1rem; color: red;"/>
+                        <font-awesome-icon icon='exclamation-triangle'
+                                           style="fontSize: 1rem; color: #FFC32B;"/>
+                      </div>
+                    </div>
+                  </b-dropdown-item>
+                </b-dropdown>
+              </b-btn-group>
+              <b-btn-group v-else>
+                <b-dropdown size="sm"
+                            variant="primary"
+                            :text="this.selectedQuickActionFilter"
+                            v-model="selectedQuickActionFilter"
+                            class="mt-2 mr-2">
+                  <b-dropdown-item v-for="option in newQuickActionOptionsNoOEM"
+                                   @click="setQuickActionFilter(option)">
+                    <div style="display: flex; justify-content: space-between;">
+                      <div class="mr-3">{{ option.text }}</div>
+                      <div v-if="option.text === 'Ready'">
+                        <font-awesome-icon icon='clipboard-check'
+                                           style="fontSize: 1rem; color: green;"/>
+                      </div>
+                      <div v-if="option.text === 'Requires Attention'">
+                        <font-awesome-icon icon='life-ring'
+                                           style="fontSize: 1rem; color: red;"/>
+                        <font-awesome-icon icon='exclamation-triangle'
+                                           style="fontSize: 1rem; color: #FFC32B;"/>
+                      </div>
+                    </div>
+                  </b-dropdown-item>
+                </b-dropdown>
+              </b-btn-group>
+            </template>
+          </b-input-group>
+        </b-form>
+      </div>
+      <div>
+        <b-pagination :total-rows="totalRows"
+                      :per-page="10"
+                      v-if="filteredExams().length > 10"
+                      v-model="page"
+                      class="mb-0 pt-2 mr-4 mt-1"
+                      style="display: flex; justify-content: flex-end;"/>
+      </div>
     </div>
     <div :style="tableStyle" class="my-0 mx-3">
       <b-table :items="filteredExams()"
@@ -133,10 +208,34 @@
           {{ row.item.exam_type.exam_type_name }}
         </template>
 
+        <template slot="start_time" slot-scope="row">
+          <span v-if="!row.item.booking">
+            -
+          </span>
+          <span v-else-if="checkStartDate(row.item.booking.start_time)"
+                class="expired">
+            {{ formatDate(row.item.booking.start_time) }}
+          </span>
+          <span v-else>
+            {{ formatDate(row.item.booking.start_time) }}
+          </span>
+        </template>
+
         <template slot="expiry_date" slot-scope="row">
-          <span v-if="row.item.exam_type.exam_type_name === 'Monthly Session Exam'">–</span>
-          <span v-else-if="row.item.exam_type.group_exam_ind">–</span>
-          <span v-else>{{ formatDate(row.item.expiry_date) }}</span>
+          <span v-if="row.item.exam_type.exam_type_name === 'Monthly Session Exam'
+                      && !checkExpiryDate(row.item.expiry_date)">
+            –
+          </span>
+          <span v-else-if="row.item.exam_type.group_exam_ind && !checkExpiryDate(row.item.expiry_date)">
+            –
+          </span>
+          <span v-else-if="checkExpiryDate(row.item.expiry_date)"
+                class="expired">
+            {{ formatDate(row.item.expiry_date) }}
+          </span>
+          <span v-else>
+            {{ formatDate(row.item.expiry_date) }}
+          </span>
         </template>
 
         <template slot="scheduled" slot-scope="row">
@@ -266,10 +365,6 @@
         </template>
       </b-table>
     </div>
-    <b-pagination :total-rows="totalRows"
-                  :per-page="10"
-                  v-if="filteredExams().length > 10"
-                  v-model="page" />
   </fragment>
 </template>
 
@@ -319,16 +414,44 @@
         buttonH: 45,
         qLengthH: 28,
         totalH: 0,
+        examTypeOptions: [
+          {text: 'Individual', value: 'individual'},
+          {text: 'Group', value: 'group'},
+          {text: 'All', value: 'all'},
+        ],
+        newQuickActionOptions: [
+          {text: 'Ready', value: 'ready'},
+          {text: 'Requires Attention', value:'require_attention'},
+          {text: 'Office Exam Manager Action Items', value:'oemai'},
+          {text: 'Expired', value: 'expired'},
+          {text: 'Returned', value: 'returned'},
+          {text: 'All', value: 'all'},
+        ],
+        newQuickActionOptionsNoOEM: [
+          {text: 'Ready', value: 'ready'},
+          {text: 'Requires Attention', value:'require_attention'},
+          {text: 'Expired', value: 'expired'},
+          {text: 'Returned', value: 'returned'},
+          {text: 'All', value: 'all'},
+        ],
       }
     },
     computed: {
-      ...mapGetters(['calendar_events', 'exam_inventory', 'role_code', 'is_liaison_designate' ]),
+      ...mapGetters(['calendar_events',
+                     'exam_inventory',
+                     'role_code',
+                     'is_liaison_designate',
+                     'is_ita_designate']),
       ...mapState([
         'bookings',
         'calendarSetup',
         'calendarEvents',
         'exams',
         'inventoryFilters',
+        'selectedExamType',
+        'selectedExamTypeFilter',
+        'selectedQuickAction',
+        'selectedQuickActionFilter',
         'showDeleteExamModal',
         'showEditExamModal',
         'showExamInventoryModal',
@@ -346,6 +469,7 @@
             { key: 'event_id', label: 'Event ID', sortable: false, thStyle: 'width: 6%' },
             { key: 'exam_type_name', label: 'Exam Type', sortable: true },
             { key: 'exam_name', label: 'Exam Name', sortable: true, thStyle: 'width: 11%' },
+            { key: 'start_time', label: 'Scheduled Date', sortable: true, thStyle: 'width: 9%' },
             { key: 'exam_method', label: 'Method', sortable: false, thStyle: 'width: 5%' },
             { key: 'expiry_date', label: 'Expiry Date', sortable: true, thStyle: 'width: 8%' },
             { key: 'exam_received', label: 'Received?', sortable: true, thStyle: 'width: 5%' },
@@ -360,6 +484,7 @@
             { key: 'event_id', label: 'Event ID', sortable: false, thStyle: 'width: 6%' },
             { key: 'exam_type.exam_type_name', label: 'Exam Type', sortable: true},
             { key: 'exam_name', label: 'Exam Name', sortable: true, thStyle: 'width: 15%' },
+            { key: 'booking.start_time', label: 'Scheduled Date', sortable: true, thStyle: 'width: 9%' },
             { key: 'exam_method', label: 'Method', sortable: true, thStyle: 'width: 5%' },
             { key: 'expiry_date', label: 'Expiry Date', sortable: true, thStyle: 'width: 8%' },
             { key: 'exam_received', label: 'Received?', sortable: true, thStyle: 'width: 5%' },
@@ -421,6 +546,10 @@
         'setEditExamInfo',
         'setInventoryFilters',
         'setSelectedExam',
+        'setSelectedExamType',
+        'setSelectedExamTypeFilter',
+        'setSelectedQuickAction',
+        'setSelectedQuickActionFilter',
         'toggleDeleteExamModal',
         'toggleEditBookingModal',
         'toggleEditExamModal',
@@ -470,6 +599,12 @@
         }
         return false
       },
+      examReturnedAttention(item){
+        if (item.exam_returned_date ){
+          return true
+        }
+        return false
+      },
       filterByGroup(ex) {
         if (ex.exam_type.exam_type_name === 'Monthly Session Exam' || ex.exam_type.group_exam_ind) {
           return true
@@ -479,7 +614,22 @@
         }
         return false
       },
+      filterByExpiry(ex){
+        if (moment(ex.expiry_date).isValid()){
+          if (moment(ex.expiry_date).isBefore(moment(), 'day')) {
+            return true
+          }
+        }
+        return false
+      },
       filterByScheduled(ex) {
+        if(this.inventoryFilters.expiryFilter === 'current'){
+          if(ex.booking){
+            if(moment(ex.booking.start_time).isBefore(moment(), 'day')){
+              return false
+            }
+          }
+        }
         if (ex.exam_received_date) {
           if (ex.booking && ( ex.booking.invigilator_id || ex.booking.sbc_staff_invigilated )) {
             if (ex.booking.invigilator && ex.booking.invigilator.deleted) {
@@ -497,12 +647,139 @@
         }
         return false
       },
+      checkAllAttention(ex) {
+        if(this.examReturnedAttention(ex)){
+          return false
+        }
+        if(this.filterByGroup(ex)){
+            return !this.filterByScheduled(ex)
+        }else {
+          if(!ex.booking){
+            return true
+          }
+          if(this.filterByExpiry(ex)){
+            return true
+          }
+        }
+        return false
+      },
+      checkIndividualAttention(ex){
+        if(!this.filterByGroup(ex) && this.examReturnedAttention(ex)){
+          return false
+        }
+        if(!this.filterByGroup(ex) && ex.booking && !ex.exam_received_date){
+          return true
+        }
+        if(!this.filterByGroup(ex) && this.filterByExpiry(ex) && !this.examReturnedAttention(ex)){
+          return true
+        }else if(!this.filterByGroup(ex) && ex.booking){
+          if(moment(ex.booking.start_time).isValid()){
+            if(moment(ex.booking.start_time).isBefore(moment(), 'day')){
+              return true
+            }
+          }
+        }else if(!this.filterByGroup(ex) && !ex.booking){
+          return true
+        }
+        return false
+      },
+      checkGroupAttention(ex){
+        if(this.filterByGroup(ex)){
+          if(moment(ex.booking.start_time).isValid()){
+            if(moment(ex.booking.start_time).isBefore(moment(), 'day')){
+              if(!this.examReturnedAttention(ex)){
+                return true
+              }
+              return false
+            }
+          }
+          if(ex.booking && (ex.booking.invigilator_id || ex.booking.sbc_staff_invigilated)){
+            return false
+          }else if(ex.booking && (!ex.booking.invigilator_id || !ex.booking.sbc_staff_invigilated)) {
+            return true
+          }
+        }
+        return false
+      },
+      checkExpiryDate(date){
+        if(moment(date).isValid() && moment(date).isBefore(moment(), 'day')){
+          return true
+        }
+        return false
+      },
+      checkStartDate(date){
+        if(moment(date).isValid() && moment(date).isBefore(moment(), 'day')){
+          return true
+        }
+        return false
+      },
+      checkOEMAttention(ex) {
+        if(this.selectedExamType == 'all'){
+          if(this.examReturnedAttention(ex)){
+            return false
+          }
+          if(this.filterByExpiry(ex) && !this.examReturnedAttention(ex)){
+            return true
+          }
+          if(ex.booking){
+            if(moment(ex.booking.start_time).isValid()){
+              if(moment(ex.booking.start_time).isBefore(moment(), 'day')){
+                return true
+              }
+            }
+          }
+          if(ex.booking){
+            if(moment(ex.booking.start_time).isValid()){
+              if(moment(ex.booking.start_time).isBefore(moment(), 'day')){
+                if(!this.examReturnedAttention(ex)){
+                  return true
+                }
+                return false
+              }
+            }
+          }
+          if(ex.booking && (ex.booking.invigilator_id || ex.booking.sbc_staff_invigilated)){
+            return false
+          }else if(ex.booking && (!ex.booking.invigilator_id || !ex.booking.sbc_staff_invigilated)) {
+            return true
+          }
+        }
+        if(!this.filterByGroup(ex) && this.selectedExamType === 'individual'){
+          if(this.filterByExpiry(ex) && !this.examReturnedAttention(ex)){
+            return true
+          }
+          if(ex.booking){
+            if(moment(ex.booking.start_time).isValid()){
+              if(moment(ex.booking.start_time).isBefore(moment(), 'day')){
+                return true
+              }
+            }
+          }
+        }
+        if(this.filterByGroup(ex) && this.selectedExamType === 'group'){
+          if(moment(ex.booking.start_time).isValid()){
+            if(moment(ex.booking.start_time).isBefore(moment(), 'day')){
+              if(!this.examReturnedAttention(ex)){
+                return true
+              }
+              return false
+            }
+          }
+          if(ex.booking && (ex.booking.invigilator_id || ex.booking.sbc_staff_invigilated)){
+            return false
+          }else if(ex.booking && (!ex.booking.invigilator_id || !ex.booking.sbc_staff_invigilated)) {
+            return true
+          }
+        }
+        return false
+      },
       filteredExams() {
         let examInventory = this.exam_inventory
         let office_number = this.inventoryFilters.office_number === 'default' ?
           this.user.office.office_number : this.inventoryFilters.office_number
         let filtered = []
         if (examInventory.length > 0) {
+
           if (this.showExamInventoryModal) {
             filtered = examInventory.filter(ex => moment(ex.expiry_date).isSameOrAfter(moment(), 'day'))
             let moreFiltered = filtered.filter(ex => !ex.booking)
@@ -510,7 +787,21 @@
             let { office_id } = this.user
             return evenMoreFiltered.filter(ex => ex.office_id == office_id)
           }
+
           let exams = examInventory.filter(ex => ex.office.office_number == office_number)
+
+          if(this.inventoryFilters.requireAttentionFilter === 'both'){
+            return exams.filter(ex => this.checkAllAttention(ex))
+          }else if(this.inventoryFilters.requireAttentionFilter === 'individual'){
+            return exams.filter(ex => this.checkIndividualAttention(ex))
+          }else if(this.inventoryFilters.requireAttentionFilter === 'group'){
+            return exams.filter(ex => this.checkGroupAttention(ex))
+          }
+
+          if(this.inventoryFilters.requireOEMAttentionFilter === 'both'){
+            return exams.filter(ex => this.checkOEMAttention(ex))
+          }
+
           switch (this.inventoryFilters.expiryFilter) {
             case 'all':
               filtered = exams
@@ -616,10 +907,6 @@
           if (item.booking.room_id) {
             output.Room = item.booking.room.room_name
           }
-          if (item.booking.start_time) {
-            output.Date = this.formatDate(item.booking.start_time)
-            output.Time = this.formatTime(item.booking)
-          }
         }
         return output
       },
@@ -634,6 +921,99 @@
       returnExam(item) {
         this.actionedExam = item
         this.toggleReturnExamModal(true)
+      },
+      setExamTypeFilter(option){
+        this.setSelectedExamType(option.value)
+        this.setSelectedExamTypeFilter(option.text)
+        this.page = 1
+
+        if(option.value === 'individual'){
+          this.setSelectedQuickAction('')
+          this.setSelectedQuickActionFilter('')
+          this.setInventoryFilters({type:'groupFilter', value:'individual'})
+          this.setInventoryFilters({type:'expiryFilter', value:'all'})
+          this.setInventoryFilters({type:'returnedFilter', value:'both'})
+          this.setInventoryFilters({type:'scheduledFilter', value:'both'})
+          this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
+        }else if (option.value === 'group'){
+          this.setSelectedQuickAction('')
+          this.setSelectedQuickActionFilter('')
+          this.setInventoryFilters({type:'groupFilter', value:'group'})
+          this.setInventoryFilters({type:'expiryFilter', value:'all'})
+          this.setInventoryFilters({type:'returnedFilter', value:'both'})
+          this.setInventoryFilters({type:'scheduledFilter', value:'both'})
+          this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
+        }else if (option.value === 'all'){
+          this.setSelectedQuickAction('')
+          this.setSelectedQuickActionFilter('')
+          this.setInventoryFilters({type:'expiryFilter', value:'all'})
+          this.setInventoryFilters({type:'returnedFilter', value:'both'})
+          this.setInventoryFilters({type:'scheduledFilter', value:'both'})
+          this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
+          this.setInventoryFilters({type:'groupFilter', value:'both'})
+        }
+      },
+      setQuickActionFilter(option){
+        this.setSelectedQuickAction(option.value)
+        this.setSelectedQuickActionFilter(option.text)
+        this.page = 1
+
+        if(option.value === 'returned'){
+          this.setInventoryFilters({type:'returnedFilter', value:'returned'})
+          this.setInventoryFilters({type:'expiryFilter', value:'all'})
+          this.setInventoryFilters({type:'scheduledFilter', value:'both'})
+          this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
+          this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
+        }else if(option.value === 'require_attention') {
+          if (this.selectedExamType === 'individual') {
+            this.setInventoryFilters({type: 'returnedFilter', value: 'both'})
+            this.setInventoryFilters({type: 'expiryFilter', value: 'all'})
+            this.setInventoryFilters({type: 'scheduledFilter', value: 'both'})
+            this.setInventoryFilters({type: 'requireAttentionFilter', value: 'individual'})
+            this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
+          } else if (this.selectedExamType === 'group') {
+            this.setInventoryFilters({type: 'returnedFilter', value: 'unreturned'})
+            this.setInventoryFilters({type: 'expiryFilter', value: 'current'})
+            this.setInventoryFilters({type: 'scheduledFilter', value: 'unscheduled'})
+            this.setInventoryFilters({type: 'requireAttentionFilter', value: 'default'})
+            this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
+          } else if (this.selectedExamType === 'all') {
+            this.setInventoryFilters({type: 'requireAttentionFilter', value: 'both'})
+            this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
+          }
+        }
+        else if(option.value === 'ready'){
+          this.setInventoryFilters({type:'expiryFilter', value:'current'})
+          this.setInventoryFilters({type:'returnedFilter', value:'unreturned'})
+          this.setInventoryFilters({type:'scheduledFilter', value:'scheduled'})
+          this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
+          this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
+        }else if(option.value === 'expired'){
+          this.setInventoryFilters({type:'expiryFilter', value:'expired'})
+          this.setInventoryFilters({type:'returnedFilter', value:'unreturned'})
+          this.setInventoryFilters({type:'scheduledFilter', value:'both'})
+          this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
+          this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
+        }else if(option.value === 'oemai'){
+          if(this.selectedExamType === 'individual'){
+            this.setInventoryFilters({type:'returnedFilter', value:'both'})
+            this.setInventoryFilters({type:'expiryFilter', value:'all'})
+            this.setInventoryFilters({type:'scheduledFilter', value:'both'})
+            this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
+            this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'both'})
+          }else if(this.selectedExamType === 'group'){
+            this.setInventoryFilters({type:'requireAttentionFilter', value:'group'})
+            this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
+          }else if(this.selectedExamType === 'all'){
+            this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'both'})
+          }
+        }else if(option.value === 'all'){
+          this.setInventoryFilters({type: 'expiryFilter', value: 'all'})
+          this.setInventoryFilters({type:'scheduledFilter', value:'both'})
+          this.setInventoryFilters({type:'returnedFilter', value:'both'})
+          this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
+          this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
+        }
       },
       setFilter(e) {
         this.setInventoryFilters(e)
@@ -790,6 +1170,9 @@
     font-size: .85rem !important;
     color: #007bff !important;
     font-weight: 300 !important;
+  }
+  .expired {
+    color: red;
   }
   .view-details-link {
     text-decoration: #007bff underline !important;
