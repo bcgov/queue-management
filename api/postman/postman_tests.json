@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "413b9c8c-fb9e-4106-9e25-80296812bb0c",
+		"_postman_id": "426762d0-830f-492b-ad61-537d08019856",
 		"name": "Queue-Management API Tests",
 		"description": "Test the back end APIs",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -51,10 +51,6 @@
 								"value": "no-cache"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{postman_bdd_path}}",
 							"host": [
@@ -85,7 +81,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "auth_url = globals.auth_url;\nrealm = globals.realm;\nclientid = globals.clientid;\nuserid = environment.userid;\npassword = globals.password;\nclient_secret = globals.client_secret;\n\nconst echoPostRequest = {\n  url: auth_url + '/auth/realms/' + realm + '/protocol/openid-connect/token',\n  method: 'POST',\n  header: 'Content-Type:application/x-www-form-urlencoded',\n  body: {\n    mode: 'raw',\n    raw: 'grant_type=password&client_id=' + clientid \n          + '&username=' + userid \n          + '&password=' + password\n          + '&client_secret=' + client_secret\n  }\n};\npm.sendRequest(echoPostRequest, function (err, res) {\n    var jsonData = res.json();\n    if (jsonData.hasOwnProperty('access_token')) {\n    \tpm.environment.set(\"token\", jsonData.access_token);\n\t    pm.environment.set(\"refresh_token\", jsonData.refresh_token);\n\t    console.log(err ? err : res.json());\n\t} else {\n\t    pm.environment.set(\"token\", 0);\n\t    pm.environment.set(\"refresh_token\", 0);\n\t    pm.environment.set(\"token_expires\", 0);\n\t    pm.environment.set(\"refresh_token_expires\", 0);\n\t}\n});"
+							"raw": "auth_url = globals.auth_url;\nrealm = globals.realm;\nclientid = globals.clientid;\nuserid = globals.userid;\npassword = globals.password;\nclient_secret = globals.client_secret;\n\nconst echoPostRequest = {\n  url: auth_url + '/auth/realms/' + realm + '/protocol/openid-connect/token',\n  method: 'POST',\n  header: 'Content-Type:application/x-www-form-urlencoded',\n  body: {\n    mode: 'raw',\n    raw: 'grant_type=password&client_id=' + clientid \n          + '&username=' + userid \n          + '&password=' + password\n          + '&client_secret=' + client_secret\n  }\n};\npm.sendRequest(echoPostRequest, function (err, res) {\n    var jsonData = res.json();\n    if (jsonData.hasOwnProperty('access_token')) {\n    \tpm.environment.set(\"token\", jsonData.access_token);\n\t    pm.environment.set(\"refresh_token\", jsonData.refresh_token);\n\t    console.log(err ? err : res.json());\n\t} else {\n\t    pm.environment.set(\"token\", 0);\n\t    pm.environment.set(\"refresh_token\", 0);\n\t    pm.environment.set(\"token_expires\", 0);\n\t    pm.environment.set(\"refresh_token_expires\", 0);\n\t}\n});"
 						},
 						"url": {
 							"raw": "https://postman-echo.com/post",
@@ -122,7 +118,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "auth_url = globals.auth_url;\nrealm = globals.realm;\nclientid = globals.clientid;\nuserid = environment.userid_nonqtxn;\npassword = globals.password_nonqtxn;\nclient_secret = globals.client_secret;\n\nconst echoPostRequest = {\n  url: auth_url + '/auth/realms/' + realm + '/protocol/openid-connect/token',\n  method: 'POST',\n  header: 'Content-Type:application/x-www-form-urlencoded',\n  body: {\n    mode: 'raw',\n    raw: 'grant_type=password&client_id=' + clientid \n          + '&username=' + userid \n          + '&password=' + password\n          + '&client_secret=' + client_secret\n  }\n};\npm.sendRequest(echoPostRequest, function (err, res) {\n    var jsonData = res.json();\n    if (jsonData.hasOwnProperty('access_token')) {\n    \tpm.environment.set(\"token_nonqtxn\", jsonData.access_token);\n\t    pm.environment.set(\"refresh_token_nonqtxn\", jsonData.refresh_token);\n\t    console.log(err ? err : res.json());\n\t} else {\n\t    pm.environment.set(\"token_nonqtxn\", 0);\n\t    pm.environment.set(\"refresh_token_nonqtxn\", 0);\n\t    pm.environment.set(\"token_expires_nonqtxn\", 0);\n\t    pm.environment.set(\"refresh_token_expires_nonqtxn\", 0);\n\t}\n});"
+							"raw": "auth_url = globals.auth_url;\nrealm = globals.realm;\nclientid = globals.clientid;\nuserid = globals.userid_nonqtxn;\npassword = globals.password_nonqtxn;\nclient_secret = globals.client_secret;\n\nconst echoPostRequest = {\n  url: auth_url + '/auth/realms/' + realm + '/protocol/openid-connect/token',\n  method: 'POST',\n  header: 'Content-Type:application/x-www-form-urlencoded',\n  body: {\n    mode: 'raw',\n    raw: 'grant_type=password&client_id=' + clientid \n          + '&username=' + userid \n          + '&password=' + password\n          + '&client_secret=' + client_secret\n  }\n};\npm.sendRequest(echoPostRequest, function (err, res) {\n    var jsonData = res.json();\n    if (jsonData.hasOwnProperty('access_token')) {\n    \tpm.environment.set(\"token_nonqtxn\", jsonData.access_token);\n\t    pm.environment.set(\"refresh_token_nonqtxn\", jsonData.refresh_token);\n\t    console.log(err ? err : res.json());\n\t} else {\n\t    pm.environment.set(\"token_nonqtxn\", 0);\n\t    pm.environment.set(\"refresh_token_nonqtxn\", 0);\n\t    pm.environment.set(\"token_expires_nonqtxn\", 0);\n\t    pm.environment.set(\"refresh_token_expires_nonqtxn\", 0);\n\t}\n});"
 						},
 						"url": {
 							"raw": "https://postman-echo.com/post",
@@ -159,7 +155,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "auth_url = globals.auth_url;\nrealm = globals.realm;\nclientid = globals.clientid;\nuserid = environment.userid;\npassword = globals.password;\nclient_secret = globals.client_secret;\n"
+							"raw": "auth_url = globals.auth_url;\nrealm = globals.realm;\nclientid = globals.clientid;\nuserid = globals.userid;\npassword = globals.password;\nclient_secret = globals.client_secret;\n"
 						},
 						"url": {
 							"raw": "https://postman-echo.com/post",
@@ -196,7 +192,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "auth_url = globals.auth_url;\nrealm = globals.realm;\nclientid = globals.clientid;\nuserid = environment.userid;\npassword = globals.password;\nclient_secret = globals.client_secret;\n\nconst echoPostRequest = {\n  url: authurl + '/auth/realms/' + realm + '/protocol/openid-connect/token',\n  method: 'POST',\n  header: 'Content-Type:application/x-www-form-urlencoded',\n  body: {\n    mode: 'raw',\n    raw: 'grant_type=password&client_id=' + clientid \n         + '&username=' + userid \n         + '&password=' + password\n         + '&client_secret=' + client_secret\n  }\n};\n\npm.sendRequest(echoPostRequest, function (err, res) {\n    if (err) { console.log(err); }\n    else {\n      var jsonData = res.json();\n      pm.environment.set(\"token\", jsonData.access_token);\n      pm.environment.set(\"refresh_token\", jsonData.refresh_token);\n      pm.environment.set(\"token_expires\", Date.now()+(jsonData.expires_in * 1000));\n      pm.environment.set(\"refresh_token_expires\", Date.now()+(jsonData.refresh_expires_in * 1000));\n    }\n    //console.log(err ? err : res.json());\n});"
+							"raw": "auth_url = globals.auth_url;\nrealm = globals.realm;\nclientid = globals.clientid;\nuserid = globals.userid;\npassword = globals.password;\nclient_secret = globals.client_secret;\n\nconst echoPostRequest = {\n  url: authurl + '/auth/realms/' + realm + '/protocol/openid-connect/token',\n  method: 'POST',\n  header: 'Content-Type:application/x-www-form-urlencoded',\n  body: {\n    mode: 'raw',\n    raw: 'grant_type=password&client_id=' + clientid \n         + '&username=' + userid \n         + '&password=' + password\n         + '&client_secret=' + client_secret\n  }\n};\n\npm.sendRequest(echoPostRequest, function (err, res) {\n    if (err) { console.log(err); }\n    else {\n      var jsonData = res.json();\n      pm.environment.set(\"token\", jsonData.access_token);\n      pm.environment.set(\"refresh_token\", jsonData.refresh_token);\n      pm.environment.set(\"token_expires\", Date.now()+(jsonData.expires_in * 1000));\n      pm.environment.set(\"refresh_token_expires\", Date.now()+(jsonData.refresh_expires_in * 1000));\n    }\n    //console.log(err ? err : res.json());\n});"
 						},
 						"url": {
 							"raw": "https://postman-echo.com/post",
@@ -368,11 +364,11 @@
 							"listen": "test",
 							"script": {
 								"id": "8cebcf78-f5a2-4694-b108-60e146791a78",
-								"type": "text/javascript",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"citizen_response_test\", jsonData.data);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -381,7 +377,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "var schema = {\n    \"properties\" : {\n        \"start_time\" : {\n            \"type\" : \"string\"\n        },\n        \"citizen_name\" : {\n            \"type\" : [\"string\", \"null\"]\n        },\n        \"citizen_id\" : {\n            \"type\" : [\"number\", \"object\"]\n        },\n        \"qt_xn_citizen_ind\" : {\n            \"type\" : \"number\"\n        },\n        \"ticket_number\" : {\n            \"type\" : [\"string\", \"null\"]\n        },\n        \"service_reqs\" : {\n            \"type\" : \"array\"\n        },\n        \"office_id\" : {\n            \"type\" : [\"object\", \"number\"]\n        },\n        \"cs\" : {\n            \"type\" : \"object\"\n        },\n        \"citizen_comments\" : {\n            \"type\" : [\"string\", \"null\"]\n        },\n        \n    },\n    \"required\" : [\"start_time\", \"citizen_name\", \"citizen_id\",\n                  \"qt_xn_citizen_ind\", \"ticket_number\", \"service_reqs\",\n                  \"office_id\", \"cs\", \"citizen_comments\"]\n};\n\n//  Declare, initialize variables.\nvar allElements = null;\n\nif (jsonData.hasOwnProperty(\"citizens\")) {\n\tallElements = jsonData.citizens;\n};\n\nif (jsonData.hasOwnProperty(\"citizen\")) {\n\tallElements = [];\n\tallElements.push(jsonData.citizen);\n};\n\nvar elementCount = 0;\n\n//  If there are some citizens, proceed with tests.\nif (allElements !== null) {\n\n    //  Loop to validate schema of each channel, create list of citizen ids.\n    allElements.forEach(function(element) {\n        elementCount ++;\n        var testTitle = \"Citizen (\" + elementCount + \"): \" + element.citizen_id + \" - \";\n        tests[testTitle + \"conforms to schema\"] = tv4.validate(element, schema);\n\n        //  Test the authenticate response.\n        describe(\"--> \" + testTitle + \"fields have valid values\", function() {\n            it('qt_xn_citizen_ind must be 0 or 1', function() {\n                element.qt_xn_citizen_ind.should.be.within(0,1);\n            });\n        });\n    });\n};"
+							"raw": "var schema = {\n    \"properties\" : {\n        \"start_time\" : {\n            \"type\" : \"string\"\n        },\n        \"citizen_name\" : {\n            \"type\" : [\"string\", \"null\"]\n        },\n        \"citizen_id\" : {\n            \"type\" : [\"number\", \"object\"]\n        },\n        \"qt_xn_citizen_ind\" : {\n            \"type\" : \"number\"\n        },\n        \"ticket_number\" : {\n            \"type\" : [\"string\", \"null\"]\n        },\n        \"service_reqs\" : {\n            \"type\" : \"array\"\n        },\n        \"office_id\" : {\n            \"type\" : [\"object\", \"number\"]\n        },\n        \"cs\" : {\n            \"type\" : \"object\"\n        },\n        \"citizen_comments\" : {\n            \"type\" : [\"string\", \"null\"]\n        },\n        \n    },\n    \"required\" : [\"start_time\", \"citizen_name\", \"citizen_id\",\n                  \"qt_xn_citizen_ind\", \"ticket_number\", \"service_reqs\",\n                  \"office_id\", \"cs\", \"citizen_comments\"]\n};\n\n//  Declare, initialize variables.\nvar allElements = null;\nconsole.log(\"==> In citizen response test\");\n\nif (jsonData.hasOwnProperty(\"citizens\")) {\n\tallElements = jsonData.citizens;\n\tconsole.log(\"    --> has property citizens\");\n\tconsole.log(\"    --> citizens is\");\n\tconsole.log(allElements);\n};\n\nif (jsonData.hasOwnProperty(\"citizen\")) {\n\tconsole.log(\"    --> has property citizen\");\n\tconsole.log(\"    --> citizen is\");\n\tconsole.log(allElements);\n\tallElements = [];\n\tallElements.push(jsonData.citizen);\n};\n\nvar elementCount = 0;\n\n//  If there are some citizens, proceed with tests.\nif (allElements !== null) {\n\n    //  Loop to validate schema of each channel, create list of citizen ids.\n    allElements.forEach(function(element) {\n        elementCount ++;\n        var testTitle = \"Citizen (\" + elementCount + \"): \" + element.citizen_id + \" - \";\n        tests[testTitle + \"conforms to schema\"] = tv4.validate(element, schema);\n\n        //  Test the authenticate response.\n        describe(\"--> \" + testTitle + \"fields have valid values\", function() {\n            it('qt_xn_citizen_ind must be 0 or 1', function() {\n                element.qt_xn_citizen_ind.should.be.within(0,1);\n            });\n        });\n    });\n};"
 						},
 						"url": {
 							"raw": "https://postman-echo.com/post",
@@ -542,10 +538,6 @@
 								"value": "Bearer {{token}}"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}healthz/",
 							"host": [
@@ -636,10 +628,6 @@
 								"value": "Bearer {{token}}"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}healthz/",
 							"host": [
@@ -702,10 +690,6 @@
 								"value": "Bearer {{token}}"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}readyz/",
 							"host": [
@@ -898,19 +882,18 @@
 							"listen": "prerequest",
 							"script": {
 								"id": "2b71673c-4aa2-47b3-8594-15f02b390ee0",
-								"type": "text/javascript",
 								"exec": [
 									"//  Ensure the client is logged in.",
-									"eval(environment.auth_first);",
+									"// eval(environment.auth_first);",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
 								"id": "42742c4c-505d-472d-857b-fdba74cc49ac",
-								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD",
 									"eval(globals.postmanBDD);",
@@ -966,7 +949,8 @@
 									"//  Store this ID for future use.",
 									"postman.setEnvironmentVariable(\"channel_telephone_id\", JSON.stringify(phoneId));",
 									"postman.setEnvironmentVariable(\"channel_email_id\", JSON.stringify(emailId));"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -978,10 +962,6 @@
 								"value": "Bearer {{token}}"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}channels/",
 							"host": [
@@ -1098,10 +1078,6 @@
 								"value": "Bearer {{token}}"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}categories/",
 							"host": [
@@ -1257,10 +1233,6 @@
 								"value": "Bearer {{token}}"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}services/",
 							"host": [
@@ -1286,32 +1258,37 @@
 							"listen": "prerequest",
 							"script": {
 								"id": "7f6d8d4e-e4fe-451f-a5d9-119fcefcd527",
-								"type": "text/javascript",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_first);",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
 								"id": "27f63d12-7c7c-42e1-9647-85480ee17cb8",
-								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
 									"eval(globals.postmanBDD);",
 									"eval(globals.json_bigint_parse);",
+									"console.log(\"==> After BDD, bigint\");",
 									"",
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
+									"console.log(\"    --> After complex test\");",
 									"",
 									"//  Get json return data.",
 									"var jsonData = JSON.parse(responseBody);",
+									"console.log(\"    --> After parse responseBody\");",
 									"",
 									"//  Run citizen tests.",
 									"eval(environment.citizen_response_test);",
+									"console.log(\"    --> After eval citizen response test\");",
+									"console.log(\"    --> allElements is\");",
+									"console.log(allElements);",
 									"",
 									"//  Declare, initialize variables.",
 									"var citizenIds = [];",
@@ -1347,7 +1324,8 @@
 									"        postman.setNextRequest(\"End clear queue via healthz endpoint\");",
 									"    }",
 									"}"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -1363,10 +1341,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -1735,10 +1709,6 @@
 								"value": "Bearer {{token}}"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}healthz/",
 							"host": [
@@ -1825,10 +1795,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -2215,10 +2181,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/{{current_client}}/",
 							"host": [
@@ -2845,10 +2807,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -3235,10 +3193,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/{{current_client}}/",
 							"host": [
@@ -3637,10 +3591,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/{{current_client}}/service_requests/",
 							"host": [
@@ -3989,10 +3939,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -4289,10 +4235,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -4679,10 +4621,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/{{current_client}}/",
 							"host": [
@@ -5037,10 +4975,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -5431,10 +5365,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/{{current_client}}/",
 							"host": [
@@ -5949,10 +5879,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -6339,10 +6265,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/{{first_client}}/",
 							"host": [
@@ -6867,10 +6789,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/{{second_client}}/",
 							"host": [
@@ -7088,10 +7006,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -7851,10 +7765,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -8242,10 +8152,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/{{first_client}}/",
 							"host": [
@@ -8769,10 +8675,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/{{second_client}}/",
 							"host": [
@@ -8990,10 +8892,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
