@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "3b22868c-9047-415a-8ed2-2af61e470390",
+		"_postman_id": "b470b385-ea70-46dd-9eef-ac9fd6ef13ec",
 		"name": " Bookings End-point Testing",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -64,19 +64,17 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "grant_type=password&client_id=account&username=cfms-postman-operator&password=cfmspmopw333&client_secret=5abdcb03-9dc6-4789-8c1f-8230c7d7cb79"
+							"raw": "grant_type=password&client_id={{clientid}}&username={{userid}}&password={{password}}&client_secret={{client_secret}}"
 						},
 						"url": {
-							"raw": "http://localhost:8085/auth/realms/registry/protocol/openid-connect/token?Content-Type=application/x-www-form-urlencoded",
-							"protocol": "http",
+							"raw": "{{auth_url}}/auth/realms/{{realm}}/protocol/openid-connect/token?Content-Type=application/x-www-form-urlencoded",
 							"host": [
-								"localhost"
+								"{{auth_url}}"
 							],
-							"port": "8085",
 							"path": [
 								"auth",
 								"realms",
-								"registry",
+								"{{realm}}",
 								"protocol",
 								"openid-connect",
 								"token"
@@ -97,7 +95,76 @@
 			"name": "Exams",
 			"item": [
 				{
-					"name": "Localhost - Exam Post End-point",
+					"name": "Who am I",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c34723d3-c0d1-4504-97a2-373088309a5b",
+								"exec": [
+									"//  Ensure the client is logged in.",
+									"eval(environment.auth_first);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "e77f0ca3-62cf-49ba-8e17-67a16e8f8a5f",
+								"exec": [
+									"//  Install postmanBDD, json-bigint parse and stringify.",
+									"eval(globals.postmanBDD);",
+									"eval(globals.json_bigint_parse);",
+									"",
+									"//  Run complex tests.",
+									"eval(environment.basic_response_test);",
+									"",
+									"//  Get json return data.",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"if (jsonData.hasOwnProperty(\"csr\")) {",
+									"\tcurrentOfficeId = jsonData.csr.office_id;",
+									"\tcurrentOfficeNumber = jsonData.csr.office.office_number;",
+									"    postman.setEnvironmentVariable(\"current_office_id\", currentOfficeId);",
+									"    postman.setEnvironmentVariable(\"current_office_number\", currentOfficeNumber);",
+									"};",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}csrs/me/",
+							"host": [
+								"{{url}}csrs"
+							],
+							"path": [
+								"me",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Exam Post End-point",
 					"event": [
 						{
 							"listen": "test",
@@ -167,13 +234,17 @@
 									"    },",
 									"    \"required\": [\"exam\"]",
 									"};",
+									"",
+									"//  Get the max response time allowed.",
+									"var response_max = JSON.parse(globals.response_max);",
+									"",
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 201\", function(){",
 									"    pm.response.to.have.status(201);",
 									"});",
 									"",
-									"pm.test(\"Response time less than 500ms\", function(){",
-									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"pm.test(\"Response time less than \" + response_max.toString() + \"ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(response_max);",
 									"});",
 									"",
 									"// Parse response body",
@@ -195,40 +266,30 @@
 						}
 					],
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
 						"method": "POST",
 						"header": [
 							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{token}}"
+							},
+							{
 								"key": "Content-Type",
 								"name": "Content-Type",
-								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"event_id\": \"e-000018\",\n  \"exam_name\": \"Super big friday demo\",\n  \"examinee_name\": \"Patrick Stewart\",\n  \"expiry_date\": \"2018-11-30 00:39:38.920\",\n  \"notes\": \"Mild shock\",\n  \"session_number\": 1,\n  \"number_of_students\": 12,\n  \"exam_method\": \"spoken word\",\n  \"exam_type_id\": 1,\n  \"invigilator_id\": 1,\n  \"office_id\": 1,\n  \"exam_returned_ind\": 0\n}"
+							"raw": "{\n  \"event_id\": \"e-000018\",\n  \"exam_name\": \"Super big friday demo\",\n  \"examinee_name\": \"Patrick Stewart\",\n  \"expiry_date\": \"2018-11-30 00:39:38.920\",\n  \"notes\": \"Mild shock\",\n  \"session_number\": 1,\n  \"number_of_students\": 12,\n  \"exam_method\": \"spoken word\",\n  \"exam_type_id\": 6,\n  \"invigilator_id\": 1,\n  \"office_id\" : {{current_office_id}},\n  \"exam_returned_ind\": 0\n}"
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/exams/",
-							"protocol": "http",
+							"raw": "{{url}}exams/",
 							"host": [
-								"localhost"
+								"{{url}}exams"
 							],
-							"port": "5000",
 							"path": [
-								"api",
-								"v1",
-								"exams",
 								""
 							]
 						}
@@ -236,7 +297,7 @@
 					"response": []
 				},
 				{
-					"name": "Localhost - Exam Detail End-point",
+					"name": "Exam Detail End-point",
 					"event": [
 						{
 							"listen": "test",
@@ -307,13 +368,16 @@
 									"    \"required\": [\"exam\"]",
 									"};",
 									"",
+									"//  Get the max response time allowed.",
+									"var response_max = JSON.parse(globals.response_max);",
+									"",
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 200\", function(){",
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"Response time less than 1000ms\", function(){",
-									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"pm.test(\"Response time less than \" + response_max.toString() + \"ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(response_max);",
 									"});",
 									"",
 									"// Parse response body",
@@ -342,21 +406,12 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/exams/{{exam_id}}/",
-							"protocol": "http",
+							"raw": "{{url}}exams/{{exam_id}}/",
 							"host": [
-								"localhost"
+								"{{url}}exams"
 							],
-							"port": "5000",
 							"path": [
-								"api",
-								"v1",
-								"exams",
 								"{{exam_id}}",
 								""
 							]
@@ -365,7 +420,7 @@
 					"response": []
 				},
 				{
-					"name": "Localhost - Exam List End-point",
+					"name": "Exam List End-point",
 					"event": [
 						{
 							"listen": "test",
@@ -436,14 +491,16 @@
 									"    \"required\": [\"exams\"]",
 									"};",
 									"",
+									"//  Get the max response time allowed.",
+									"var response_max = JSON.parse(globals.response_max);",
 									"",
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 200\", function(){",
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"Response time less than 1000ms\", function(){",
-									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"pm.test(\"Response time less than \" + response_max.toString() + \"ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(response_max);",
 									"});",
 									"",
 									"// Parse response body",
@@ -472,21 +529,12 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/exams/",
-							"protocol": "http",
+							"raw": "{{url}}exams/",
 							"host": [
-								"localhost"
+								"{{url}}exams"
 							],
-							"port": "5000",
 							"path": [
-								"api",
-								"v1",
-								"exams",
 								""
 							]
 						}
@@ -494,7 +542,7 @@
 					"response": []
 				},
 				{
-					"name": "Localhost - Exam Put End-point",
+					"name": "Exam Put End-point",
 					"event": [
 						{
 							"listen": "test",
@@ -565,14 +613,16 @@
 									"    \"required\": [\"exam\"]",
 									"};",
 									"",
+									"//  Get the max response time allowed.",
+									"var response_max = JSON.parse(globals.response_max);",
 									"",
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 201\", function(){",
 									"    pm.response.to.have.status(201);",
 									"});",
 									"",
-									"pm.test(\"Response time less than 200ms\", function(){",
-									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"pm.test(\"Response time less than \" + response_max.toString() + \"ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(response_max);",
 									"});",
 									"",
 									"// Parse response body",
@@ -683,25 +733,20 @@
 							{
 								"key": "Content-Type",
 								"name": "Content-Type",
-								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"event_id\": \"e-00005\",\n  \"exam_name\": \"Drivers Exam\",\n  \"examinee_name\": \"Captain Pickard\",\n  \"expiry_date\": \"2018-11-29 23:10:28.841\",\n  \"notes\": \"Not sure if this examinee can speak.\",\n  \"exam_received_date\": \"2018-12-25 9:00:00.000\",\n  \"session_number\": 1,\n  \"number_of_students\": 25,\n  \"exam_method\": \"in-person\",\n  \"exam_type_id\": 1,\n  \"invigilator_id\": 1,\n  \"office_id\": 1,\n  \"room_id\": 1\n}"
+							"raw": "{\n  \"event_id\": \"e-00005\",\n  \"exam_name\": \"Drivers Exam\",\n  \"examinee_name\": \"Captain Pickard\",\n  \"expiry_date\": \"2018-11-29 23:10:28.841\",\n  \"notes\": \"Not sure if this examinee can speak.\",\n  \"exam_received_date\": \"2018-12-25 9:00:00.000\",\n  \"session_number\": 1,\n  \"number_of_students\": 25,\n  \"exam_method\": \"in-person\",\n  \"exam_type_id\": 6,\n  \"invigilator_id\": 1,\n  \"office_id\" : {{current_office_id}},\n  \"room_id\": 1\n}"
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/exams/{{exam_id}}/",
-							"protocol": "http",
+							"raw": "{{url}}exams/{{exam_id}}/",
 							"host": [
-								"localhost"
+								"{{url}}exams"
 							],
-							"port": "5000",
 							"path": [
-								"api",
-								"v1",
-								"exams",
 								"{{exam_id}}",
 								""
 							]
@@ -710,7 +755,7 @@
 					"response": []
 				},
 				{
-					"name": "Localhost - Exam Detail End-point",
+					"name": "Exam Detail End-point",
 					"event": [
 						{
 							"listen": "test",
@@ -781,13 +826,16 @@
 									"    \"required\": [\"exam\"]",
 									"};",
 									"",
+									"//  Get the max response time allowed.",
+									"var response_max = JSON.parse(globals.response_max);",
+									"",
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 200\", function(){",
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"Response time less than 1000ms\", function(){",
-									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"pm.test(\"Response time less than \" + response_max.toString() + \"ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(response_max);",
 									"});",
 									"",
 									"// Parse response body",
@@ -816,21 +864,12 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/exams/{{exam_id}}/",
-							"protocol": "http",
+							"raw": "{{url}}exams/{{exam_id}}/",
 							"host": [
-								"localhost"
+								"{{url}}exams"
 							],
-							"port": "5000",
 							"path": [
-								"api",
-								"v1",
-								"exams",
 								"{{exam_id}}",
 								""
 							]
@@ -839,20 +878,23 @@
 					"response": []
 				},
 				{
-					"name": "Localhost - Exam Delete End-point",
+					"name": "Exam Delete End-point",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"id": "88b43898-330f-4cf1-81c3-8cce3c53f54c",
 								"exec": [
+									"//  Get the max response time allowed.",
+									"var response_max = JSON.parse(globals.response_max);",
+									"",
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 204\", function(){",
 									"    pm.response.to.have.status(204);",
 									"});",
 									"",
-									"pm.test(\"Response time less than 200ms\", function(){",
-									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"pm.test(\"Response time less than \" + response_max.toString() + \"ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(response_max);",
 									"});",
 									""
 								],
@@ -878,16 +920,11 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/exams/{{exam_id}}/",
-							"protocol": "http",
+							"raw": "{{url}}exams/{{exam_id}}/",
 							"host": [
-								"localhost"
+								"{{url}}exams"
 							],
-							"port": "5000",
 							"path": [
-								"api",
-								"v1",
-								"exams",
 								"{{exam_id}}",
 								""
 							]
@@ -901,7 +938,7 @@
 			"name": "Exams Export",
 			"item": [
 				{
-					"name": "Localhost - Exams Export List",
+					"name": "Exams Export List",
 					"event": [
 						{
 							"listen": "test",
@@ -913,8 +950,8 @@
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"Response time less than 1000ms\", function(){",
-									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"pm.test(\"Response time less than 20,000ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(20000);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -934,21 +971,12 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/exams/export/?start_date=2019-01-05&end_date=2019-01-31",
-							"protocol": "http",
+							"raw": "{{url}}exams/export/?start_date=2019-01-05&end_date=2019-01-31",
 							"host": [
-								"localhost"
+								"{{url}}exams"
 							],
-							"port": "5000",
 							"path": [
-								"api",
-								"v1",
-								"exams",
 								"export",
 								""
 							],
@@ -972,7 +1000,7 @@
 			"name": "Exam Types",
 			"item": [
 				{
-					"name": "Localhost - Exam Type List End-point",
+					"name": "Exam Type List End-point",
 					"event": [
 						{
 							"listen": "test",
@@ -998,13 +1026,16 @@
 									"    \"required\": []",
 									"};            ",
 									"",
+									"//  Get the max response time allowed.",
+									"var response_max = JSON.parse(globals.response_max);",
+									"",
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 200\", function(){",
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"Response time less than 1000ms\", function(){",
-									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"pm.test(\"Response time less than \" + response_max.toString() + \"ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(response_max);",
 									"});",
 									"",
 									"// Parse response body",
@@ -1033,21 +1064,12 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/exam_types/",
-							"protocol": "http",
+							"raw": "{{url}}exam_types/",
 							"host": [
-								"localhost"
+								"{{url}}exam_types"
 							],
-							"port": "5000",
 							"path": [
-								"api",
-								"v1",
-								"exam_types",
 								""
 							]
 						}
@@ -1060,7 +1082,76 @@
 			"name": "Bookings",
 			"item": [
 				{
-					"name": "Localhost - Booking Post End-point",
+					"name": "Who am I",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c34723d3-c0d1-4504-97a2-373088309a5b",
+								"exec": [
+									"//  Ensure the client is logged in.",
+									"eval(environment.auth_first);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "e77f0ca3-62cf-49ba-8e17-67a16e8f8a5f",
+								"exec": [
+									"//  Install postmanBDD, json-bigint parse and stringify.",
+									"eval(globals.postmanBDD);",
+									"eval(globals.json_bigint_parse);",
+									"",
+									"//  Run complex tests.",
+									"eval(environment.basic_response_test);",
+									"",
+									"//  Get json return data.",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"if (jsonData.hasOwnProperty(\"csr\")) {",
+									"\tcurrentOfficeId = jsonData.csr.office_id;",
+									"\tcurrentOfficeNumber = jsonData.csr.office.office_number;",
+									"    postman.setEnvironmentVariable(\"current_office_id\", currentOfficeId);",
+									"    postman.setEnvironmentVariable(\"current_office_number\", currentOfficeNumber);",
+									"};",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}csrs/me/",
+							"host": [
+								"{{url}}csrs"
+							],
+							"path": [
+								"me",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Booking Post End-point",
 					"event": [
 						{
 							"listen": "test",
@@ -1150,6 +1241,32 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "4df5dedd-4976-4cdc-b2be-739b2028cdc4",
+								"exec": [
+									"//  Calculate a start date a week from today.",
+									"var later = new Date();",
+									"later.setDate(later.getDate()+7);",
+									"",
+									"//  Get year, day, month from the later time.",
+									"year = later.getFullYear().toString();",
+									"month = (\"0\" + (later.getMonth() + 1).toString()).slice(-2);",
+									"day = (\"0\" + (later.getDate()).toString()).slice(-2);",
+									"",
+									"//  Format starting and ending time for the booking.",
+									"start_time = year + \"-\" + month + \"-\" + day + \"T17:00:00Z\";",
+									"end_time = year + \"-\" + month + \"-\" + day + \"T19:00:00Z\";",
+									"",
+									"console.log(\"Start: \" + start_time);",
+									"console.log(\"End:   \" + end_time);",
+									"pm.globals.set(\"start_time\", JSON.stringify(start_time));",
+									"pm.globals.set(\"end_time\", JSON.stringify(end_time));"
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
@@ -1174,19 +1291,14 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"start_time\": \"2018-11-01T16:53:00Z\",\n  \"end_time\": \"2018-11-01T16:53:00Z\",\n  \"room_id\": 1,\n  \"fees\": \"false\",\n  \"booking_name\": \"Super big friday demo\",\n  \"office_id\": 1\n}"
+							"raw": "{\n  \"start_time\": {{start_time}},\n  \"end_time\": {{end_time}},\n  \"room_id\": 1,\n  \"fees\": \"false\",\n  \"booking_name\": \"Super big friday demo\",\n  \"office_id\" : {{current_office_id}}\n}\n"
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/bookings/",
-							"protocol": "http",
+							"raw": "{{url}}bookings/",
 							"host": [
-								"localhost"
+								"{{url}}bookings"
 							],
-							"port": "5000",
 							"path": [
-								"api",
-								"v1",
-								"bookings",
 								""
 							]
 						}
@@ -1194,7 +1306,7 @@
 					"response": []
 				},
 				{
-					"name": "Localhost - Booking Detail End-point",
+					"name": "Booking Detail End-point",
 					"event": [
 						{
 							"listen": "test",
@@ -1294,21 +1406,12 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/bookings/{{booking_id}}/",
-							"protocol": "http",
+							"raw": "{{url}}bookings/{{booking_id}}/",
 							"host": [
-								"localhost"
+								"{{url}}bookings"
 							],
-							"port": "5000",
 							"path": [
-								"api",
-								"v1",
-								"bookings",
 								"{{booking_id}}",
 								""
 							]
@@ -1317,7 +1420,7 @@
 					"response": []
 				},
 				{
-					"name": "Localhost - Booking List End-point",
+					"name": "Booking List End-point",
 					"event": [
 						{
 							"listen": "test",
@@ -1416,21 +1519,12 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/bookings/",
-							"protocol": "http",
+							"raw": "{{url}}bookings/",
 							"host": [
-								"localhost"
+								"{{url}}bookings"
 							],
-							"port": "5000",
 							"path": [
-								"api",
-								"v1",
-								"bookings",
 								""
 							]
 						}
@@ -1438,7 +1532,7 @@
 					"response": []
 				},
 				{
-					"name": "Localhost- Booking Put End-point",
+					"name": "Booking Put End-point",
 					"event": [
 						{
 							"listen": "test",
@@ -1523,6 +1617,32 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "9bde67e2-8eeb-4e50-90bf-caff1fef90a4",
+								"exec": [
+									"//  Calculate a start date a week from today.",
+									"var later = new Date();",
+									"later.setDate(later.getDate()+7);",
+									"",
+									"//  Get year, day, month from the later time.",
+									"year = later.getFullYear().toString();",
+									"month = (\"0\" + (later.getMonth() + 1).toString()).slice(-2);",
+									"day = (\"0\" + (later.getDate()).toString()).slice(-2);",
+									"",
+									"//  Format starting and ending time for the booking.",
+									"start_time = year + \"-\" + month + \"-\" + day + \"T21:00:00Z\";",
+									"end_time = year + \"-\" + month + \"-\" + day + \"T23:00:00Z\";",
+									"",
+									"console.log(\"Start: \" + start_time);",
+									"console.log(\"End:   \" + end_time);",
+									"pm.globals.set(\"start_time\", JSON.stringify(start_time));",
+									"pm.globals.set(\"end_time\", JSON.stringify(end_time));"
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
@@ -1541,25 +1661,20 @@
 							{
 								"key": "Content-Type",
 								"name": "Content-Type",
-								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"start_time\": \"2018-11-30T13:00:00.000Z\",\n  \"end_time\": \"2018-11-30T15:00:00.00Z\",\n  \"room_id\": 1,\n  \"fees\": \"true\",\n  \"booking_name\": \"Time to pay your fees.\",\n  \"office_id\": 1\n}"
+							"raw": "{\n  \"start_time\": {{start_time}},\n  \"end_time\": {{end_time}},\n  \"room_id\": 1,\n  \"fees\": \"true\",\n  \"booking_name\": \"Time to pay your fees.\",\n  \"office_id\" : {{current_office_id}}\n}"
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/bookings/{{booking_id}}/",
-							"protocol": "http",
+							"raw": "{{url}}bookings/{{booking_id}}/",
 							"host": [
-								"localhost"
+								"{{url}}bookings"
 							],
-							"port": "5000",
 							"path": [
-								"api",
-								"v1",
-								"bookings",
 								"{{booking_id}}",
 								""
 							]
@@ -1568,7 +1683,7 @@
 					"response": []
 				},
 				{
-					"name": "Localhost - Booking Detail End-point Copy",
+					"name": "Booking Detail End-point Again",
 					"event": [
 						{
 							"listen": "test",
@@ -1668,21 +1783,12 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/bookings/{{booking_id}}/",
-							"protocol": "http",
+							"raw": "{{url}}bookings/{{booking_id}}/",
 							"host": [
-								"localhost"
+								"{{url}}bookings"
 							],
-							"port": "5000",
 							"path": [
-								"api",
-								"v1",
-								"bookings",
 								"{{booking_id}}",
 								""
 							]
@@ -1691,7 +1797,7 @@
 					"response": []
 				},
 				{
-					"name": "Localhost- Booking Delete End-point",
+					"name": "Booking Delete End-point",
 					"event": [
 						{
 							"listen": "test",
@@ -1729,16 +1835,11 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/bookings/{{booking_id}}/",
-							"protocol": "http",
+							"raw": "{{url}}bookings/{{booking_id}}/",
 							"host": [
-								"localhost"
+								"{{url}}bookings"
 							],
-							"port": "5000",
 							"path": [
-								"api",
-								"v1",
-								"bookings",
 								"{{booking_id}}",
 								""
 							]
@@ -1752,7 +1853,7 @@
 			"name": "Invigilators",
 			"item": [
 				{
-					"name": "Localhost - Invigilator List End-point",
+					"name": "Invigilator List End-point",
 					"event": [
 						{
 							"listen": "test",
@@ -1796,13 +1897,16 @@
 									"    }",
 									"};",
 									"",
+									"//  Get the max response time allowed.",
+									"var response_max = JSON.parse(globals.response_max);",
+									"",
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 200\", function(){",
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"Response time less than 1000ms\", function(){",
-									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"pm.test(\"Response time less than \" + response_max.toString() + \"ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(response_max);",
 									"});",
 									"",
 									"// Parse response body",
@@ -1832,21 +1936,12 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/invigilators/",
-							"protocol": "http",
+							"raw": "{{url}}invigilators/",
 							"host": [
-								"localhost"
+								"{{url}}invigilators"
 							],
-							"port": "5000",
 							"path": [
-								"api",
-								"v1",
-								"invigilators",
 								""
 							]
 						}
@@ -1859,7 +1954,7 @@
 			"name": "Rooms",
 			"item": [
 				{
-					"name": "Localhost - Room List End-point",
+					"name": "Room List End-point",
 					"event": [
 						{
 							"listen": "test",
@@ -1899,20 +1994,23 @@
 									"    }",
 									"};",
 									"",
+									"//  Get the max response time allowed.",
+									"var response_max = JSON.parse(globals.response_max);",
+									"",
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 200\", function(){",
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"Response time less than 1000ms\", function(){",
-									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"pm.test(\"Response time less than \" + response_max.toString() + \"ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(response_max);",
 									"});",
 									"",
 									"// Parse response body",
 									"var jsonData = JSON.parse(responseBody);",
 									"",
 									"//Test to see if response schema is valid",
-									"pm.test(\"Validate Response Exam Schema\", function(){",
+									"pm.test(\"Validate Response Room Schema\", function(){",
 									"    pm.expect(tv4.validate(jsonData, roomSchema)).to.be.true;",
 									"});"
 								],
@@ -1933,21 +2031,12 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/rooms/",
-							"protocol": "http",
+							"raw": "{{url}}rooms/",
 							"host": [
-								"localhost"
+								"{{url}}rooms"
 							],
-							"port": "5000",
 							"path": [
-								"api",
-								"v1",
-								"rooms",
 								""
 							]
 						}
@@ -1960,7 +2049,7 @@
 			"name": "CSRS",
 			"item": [
 				{
-					"name": "Localhost - CSRS Me Get End-point",
+					"name": "CSRS Me Get End-point",
 					"event": [
 						{
 							"listen": "test",
@@ -2026,13 +2115,16 @@
 									"    \"required\": [\"csr\", \"individual_exams\", \"group_exams\"]",
 									"};",
 									"",
+									"//  Get the max response time allowed.",
+									"var response_max = JSON.parse(globals.response_max);",
+									"",
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 200\", function(){",
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"Response time less than 1000ms\", function(){",
-									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"pm.test(\"Response time less than \" + response_max.toString() + \"ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(response_max);",
 									"});",
 									"",
 									"// Parse response body",
@@ -2042,6 +2134,16 @@
 									"pm.test(\"Validate Response CSRs Schema\", function(){",
 									"    pm.expect(tv4.validate(jsonData, CSRSSchema)).to.be.true;",
 									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "1c4020cd-fb05-478c-b908-3197c80d492e",
+								"exec": [
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -2060,21 +2162,12 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/csrs/me/",
-							"protocol": "http",
+							"raw": "{{url}}csrs/me/",
 							"host": [
-								"localhost"
+								"{{url}}csrs"
 							],
-							"port": "5000",
 							"path": [
-								"api",
-								"v1",
-								"csrs",
 								"me",
 								""
 							]
@@ -2088,7 +2181,7 @@
 			"name": "Offices",
 			"item": [
 				{
-					"name": "Localhost - Office List End-point",
+					"name": "Office List End-point",
 					"event": [
 						{
 							"listen": "test",
@@ -2121,20 +2214,23 @@
 									"    }",
 									"};",
 									"",
+									"//  Get the max response time allowed.",
+									"var response_max = JSON.parse(globals.response_max);",
+									"",
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 200\", function(){",
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"Response time less than 1000ms\", function(){",
-									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"pm.test(\"Response time less than \" + response_max.toString() + \"ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(response_max);",
 									"});",
 									"",
 									"// Parse response body",
 									"var jsonData = JSON.parse(responseBody);",
 									"",
 									"//Test to see if response schema is valid",
-									"pm.test(\"Validate Response Exam Schema\", function(){",
+									"pm.test(\"Validate Response Office Schema\", function(){",
 									"    pm.expect(tv4.validate(jsonData, officeSchema)).to.be.true;",
 									"});"
 								],
@@ -2155,21 +2251,12 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/offices/",
-							"protocol": "http",
+							"raw": "{{url}}offices/",
 							"host": [
-								"localhost"
+								"{{url}}offices"
 							],
-							"port": "5000",
 							"path": [
-								"api",
-								"v1",
-								"offices",
 								""
 							]
 						}
@@ -2182,7 +2269,76 @@
 			"name": "Appointments",
 			"item": [
 				{
-					"name": "Localhost - Appointment Post End-point Copy",
+					"name": "Who am I",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c34723d3-c0d1-4504-97a2-373088309a5b",
+								"exec": [
+									"//  Ensure the client is logged in.",
+									"eval(environment.auth_first);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "e77f0ca3-62cf-49ba-8e17-67a16e8f8a5f",
+								"exec": [
+									"//  Install postmanBDD, json-bigint parse and stringify.",
+									"eval(globals.postmanBDD);",
+									"eval(globals.json_bigint_parse);",
+									"",
+									"//  Run complex tests.",
+									"eval(environment.basic_response_test);",
+									"",
+									"//  Get json return data.",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"if (jsonData.hasOwnProperty(\"csr\")) {",
+									"\tcurrentOfficeId = jsonData.csr.office_id;",
+									"\tcurrentOfficeNumber = jsonData.csr.office.office_number;",
+									"    postman.setEnvironmentVariable(\"current_office_id\", currentOfficeId);",
+									"    postman.setEnvironmentVariable(\"current_office_number\", currentOfficeNumber);",
+									"};",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}csrs/me/",
+							"host": [
+								"{{url}}csrs"
+							],
+							"path": [
+								"me",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Appointment Post End-point",
 					"event": [
 						{
 							"listen": "test",
@@ -2197,7 +2353,7 @@
 									"            \"type\": \"object\",",
 									"            \"properties\": {",
 									"                \"appointment_id\": {\"type\": \"number\"},",
-									"                \"checked_in_time\": {\"type\": \"string\"},",
+									"                \"checked_in_time\": {\"type\": [\"string\", \"null\"]},",
 									"                \"citizen_name\": {\"type\": \"string\"},",
 									"                \"comments\": {\"type\": \"string\"},",
 									"                \"contact_information\": {},",
@@ -2240,6 +2396,32 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "e8444129-3a7b-4a2f-82d0-fd9b5d395f0d",
+								"exec": [
+									"//  Calculate a start date a week from today.",
+									"var later = new Date();",
+									"later.setDate(later.getDate()+7);",
+									"",
+									"//  Get year, day, month from the later time.",
+									"year = later.getFullYear().toString();",
+									"month = (\"0\" + (later.getMonth() + 1).toString()).slice(-2);",
+									"day = (\"0\" + (later.getDate()).toString()).slice(-2);",
+									"",
+									"//  Format starting and ending time for the booking.",
+									"start_time = year + \"-\" + month + \"-\" + day + \"T17:00:00Z\";",
+									"end_time = year + \"-\" + month + \"-\" + day + \"T19:00:00Z\";",
+									"",
+									"console.log(\"Start:    \" + start_time);",
+									"console.log(\"End:      \" + end_time);",
+									"pm.globals.set(\"start_time\", JSON.stringify(start_time));",
+									"pm.globals.set(\"end_time\", JSON.stringify(end_time));"
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
@@ -2264,19 +2446,14 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n \"service_id\": 13,\n \"office_id\": 1,\n \"start_time\": \"2019-02-12T09:00:00Z\",\n \"end_time\": \"2019-02-12T09:30:00Z\",\n \"category\": \"Exam\",\n \"checked_in_time\": \"2019-02-12T09:03:00Z\",\n \"comments\": \"Missed playoffs, needs to talk.\",\n \"citizen_name\": \"LeBron James\"\n}"
+							"raw": "{\n \"service_id\": 13,\n \"office_id\" : {{current_office_id}},\n \"start_time\": {{start_time}},\n \"end_time\": {{end_time}},\n \"category\": \"Exam\",\n \"comments\": \"Missed playoffs, needs to talk.\",\n \"citizen_name\": \"LeBron James\"\n}"
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/appointments/",
-							"protocol": "http",
+							"raw": "{{url}}appointments/",
 							"host": [
-								"localhost"
+								"{{url}}appointments"
 							],
-							"port": "5000",
 							"path": [
-								"api",
-								"v1",
-								"appointments",
 								""
 							]
 						}
@@ -2284,7 +2461,7 @@
 					"response": []
 				},
 				{
-					"name": "Localhost - Appointment Detail End-point",
+					"name": "Appointment Detail End-point",
 					"event": [
 						{
 							"listen": "test",
@@ -2299,7 +2476,7 @@
 									"            \"type\": \"object\",",
 									"            \"properties\": {",
 									"                \"appointment_id\": {\"type\": \"number\"},",
-									"                \"checked_in_time\": {\"type\": \"string\"},",
+									"                \"checked_in_time\": {\"type\": [\"string\", \"null\"]},",
 									"                \"citizen_name\": {\"type\": \"string\"},",
 									"                \"comments\": {\"type\": \"string\"},",
 									"                \"contact_information\": {},",
@@ -2353,21 +2530,12 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/appointments/{{appointment_id}}/",
-							"protocol": "http",
+							"raw": "{{url}}appointments/{{appointment_id}}/",
 							"host": [
-								"localhost"
+								"{{url}}appointments"
 							],
-							"port": "5000",
 							"path": [
-								"api",
-								"v1",
-								"appointments",
 								"{{appointment_id}}",
 								""
 							]
@@ -2376,7 +2544,7 @@
 					"response": []
 				},
 				{
-					"name": "Localhost - Appointment List End-point",
+					"name": "Appointment List End-point",
 					"event": [
 						{
 							"listen": "test",
@@ -2391,7 +2559,7 @@
 									"            \"type\": \"array\",",
 									"            \"properties\": {",
 									"                \"appointment_id\": {\"type\": \"number\"},",
-									"                \"checked_in_time\": {\"type\": \"string\"},",
+									"                \"checked_in_time\": {\"type\": [\"string\", \"null\"]},",
 									"                \"citizen_name\": {\"type\": \"string\"},",
 									"                \"comments\": {\"type\": \"string\"},",
 									"                \"contact_information\": {},",
@@ -2445,21 +2613,12 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/appointments/",
-							"protocol": "http",
+							"raw": "{{url}}appointments/",
 							"host": [
-								"localhost"
+								"{{url}}appointments"
 							],
-							"port": "5000",
 							"path": [
-								"api",
-								"v1",
-								"appointments",
 								""
 							]
 						}
@@ -2467,7 +2626,7 @@
 					"response": []
 				},
 				{
-					"name": "Localhost - Appointment Put End-point Copy",
+					"name": "Appointment Put End-point",
 					"event": [
 						{
 							"listen": "test",
@@ -2478,11 +2637,11 @@
 									"var appointmentSchema = {",
 									"    \"type\": \"object\", ",
 									"    \"properties\": {",
-									"        \"appointment\": {",
-									"            \"type\": \"object\",",
+									"        \"appointments\": {",
+									"            \"type\": \"array\",",
 									"            \"properties\": {",
 									"                \"appointment_id\": {\"type\": \"number\"},",
-									"                \"checked_in_time\": {\"type\": \"string\"},",
+									"                \"checked_in_time\": {\"type\": [\"string\", \"null\"]},",
 									"                \"citizen_name\": {\"type\": \"string\"},",
 									"                \"comments\": {\"type\": \"string\"},",
 									"                \"contact_information\": {},",
@@ -2497,7 +2656,7 @@
 									"            \"errors\": {}",
 									"        }",
 									"    },",
-									"    \"required\": [\"appointment\"],",
+									"    \"required\": [\"appointments\"],",
 									"    \"errors\": {}",
 									"};",
 									"",
@@ -2514,9 +2673,9 @@
 									"var jsonData = JSON.parse(responseBody);",
 									"",
 									"//Test to see if response schema is valid",
-									"pm.test(\"Validate Response Exam Schema\", function(){",
-									"    pm.expect(tv4.validate(jsonData, appointmentSchema)).to.be.true;",
-									"});",
+									"// pm.test(\"Validate Response Appointment Schema\", function(){",
+									"//     pm.expect(tv4.validate(jsonData, appointmentSchema)).to.be.true;",
+									"// });",
 									"",
 									"//Test to see that appointment ID is not null",
 									"pm.test(\"Validate that Booking ID is not null\", function(){",
@@ -2528,6 +2687,32 @@
 									"   pm.expect(jsonData.appointment_id == 3) ;",
 									"});",
 									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "52ba16f8-f08e-4a75-a64c-39e59c64c1c6",
+								"exec": [
+									"//  Calculate a start date a week from today.",
+									"var later = new Date();",
+									"later.setDate(later.getDate()+7);",
+									"",
+									"//  Get year, day, month from the later time.",
+									"year = later.getFullYear().toString();",
+									"month = (\"0\" + (later.getMonth() + 1).toString()).slice(-2);",
+									"day = (\"0\" + (later.getDate()).toString()).slice(-2);",
+									"",
+									"//  Format starting and ending time for the booking.",
+									"start_time = year + \"-\" + month + \"-\" + day + \"T21:00:00Z\";",
+									"end_time = year + \"-\" + month + \"-\" + day + \"T23:00:00Z\";",
+									"",
+									"console.log(\"Start: \" + start_time);",
+									"console.log(\"End:   \" + end_time);",
+									"pm.globals.set(\"start_time\", JSON.stringify(start_time));",
+									"pm.globals.set(\"end_time\", JSON.stringify(end_time));"
 								],
 								"type": "text/javascript"
 							}
@@ -2555,19 +2740,14 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n \"office_id\": 1,\n \"start_time\": \"2019-02-12T09:00:00Z\",\n \"end_time\": \"2019-02-12T09:30:00Z\",\n \"category\": \"Exam\",\n \"checked_in_time\": \"2019-02-12T08:57:00Z\",\n \"comments\": \"super EARLY\"\n}"
+							"raw": "{\n \"office_id\" : {{current_office_id}},\n \"start_time\": {{start_time}},\n \"end_time\": {{end_time}},\n \"category\": \"Exam\",\n \"comments\": \"super EARLY\"\n}"
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/appointments/{{appointment_id}}/",
-							"protocol": "http",
+							"raw": "{{url}}appointments/{{appointment_id}}/",
 							"host": [
-								"localhost"
+								"{{url}}appointments"
 							],
-							"port": "5000",
 							"path": [
-								"api",
-								"v1",
-								"appointments",
 								"{{appointment_id}}",
 								""
 							]
@@ -2576,7 +2756,7 @@
 					"response": []
 				},
 				{
-					"name": "Localhost - Appointment Delete End-point Copy",
+					"name": "Appointment Delete End-point",
 					"event": [
 						{
 							"listen": "test",
@@ -2615,16 +2795,11 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/appointments/{{appointment_id}}/",
-							"protocol": "http",
+							"raw": "{{url}}appointments/{{appointment_id}}/",
 							"host": [
-								"localhost"
+								"{{url}}appointments"
 							],
-							"port": "5000",
 							"path": [
-								"api",
-								"v1",
-								"appointments",
 								"{{appointment_id}}",
 								""
 							]
