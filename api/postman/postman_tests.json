@@ -715,13 +715,12 @@
 							"listen": "test",
 							"script": {
 								"id": "43df8e47-2b93-48b0-a5ff-bb3396d12537",
-								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD",
 									"eval(globals.postmanBDD);",
 									"",
 									"//  Test the authenticate response.",
-									"describe('Testing authentication ' + pm.environment.get(\"userid\"), function() {",
+									"describe('Testing authentication ' + globals.userid, function() {",
 									"    it('Response time should be below 5000ms', function() {",
 									"        pm.response.responseTime.should.be.below(5000);",
 									"    });",
@@ -749,7 +748,8 @@
 									"pm.environment.set(\"token_expires\", Date.now()+(jsonData.expires_in * 1000));",
 									"pm.environment.set(\"refresh_token_expires\", Date.now()+(jsonData.refresh_expires_in * 1000));",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -796,13 +796,12 @@
 							"listen": "test",
 							"script": {
 								"id": "bb3fda97-b9c4-44bb-96da-a04e82f3d850",
-								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD",
 									"eval(globals.postmanBDD);",
 									"",
 									"//  Test the authenticate response.",
-									"describe('Testing authentication ' + pm.environment.get(\"userid\"), function() {",
+									"describe('Testing authentication ' + globals.userid_nonqtxn, function() {",
 									"    it('Response time should be below 5000ms', function() {",
 									"        pm.response.responseTime.should.be.below(5000);",
 									"    });",
@@ -830,7 +829,8 @@
 									"pm.environment.set(\"token_expires_nonqtxn\", Date.now()+(jsonData.expires_in * 1000));",
 									"pm.environment.set(\"refresh_token_expires_nonqtxn\", Date.now()+(jsonData.refresh_expires_in * 1000));",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
