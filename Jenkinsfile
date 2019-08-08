@@ -226,7 +226,7 @@ node(label) {
                 returnStdout: true
             ).trim()
 
-            NODE_OPTIONS=--max_old_space_size=2048
+            NODE_OPTIONS='--max_old_space_size=2048'
 
             sh (
                 returnStdout: true,
