@@ -106,9 +106,9 @@ node(label) {
 
                     // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
                     // Tag the images for deployment based on the image's hash
-                    def IMAGE_HASH = getImageTagHash("${BUILDS[0]}")
-                    echo "IMAGE_HASH: ${IMAGE_HASH}"
-                    openshift.tag("${BUILDS[0]}@${IMAGE_HASH}", "${BUILDS[0]}:${TAG_NAMES[0]}")
+                    def API_IMAGE_HASH = getImageTagHash("${BUILDS[0]}")
+                    echo "API_IMAGE_HASH: ${API_IMAGE_HASH}"
+                    openshift.tag("${BUILDS[0]}@${API_IMAGE_HASH}", "${BUILDS[0]}:${TAG_NAMES[0]}")
                 }
 
                 def NAME_SPACE = getNameSpace()
@@ -150,9 +150,9 @@ node(label) {
 
                     // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
                     // Tag the images for deployment based on the image's hash
-                    def IMAGE_HASH = getImageTagHash("${BUILDS[2]}")
-                    echo "IMAGE_HASH: ${IMAGE_HASH}"
-                    openshift.tag("${BUILDS[2]}@${IMAGE_HASH}", "${BUILDS[2]}:${TAG_NAMES[0]}")
+                    def FRONTEND_IMAGE_HASH = getImageTagHash("${BUILDS[2]}")
+                    echo "FRONTEND_IMAGE_HASH: ${FRONTEND_IMAGE_HASH}"
+                    openshift.tag("${BUILDS[2]}@${FRONTEND_IMAGE_HASH}", "${BUILDS[2]}:${TAG_NAMES[0]}")
                 }
 
                 def NAME_SPACE = getNameSpace()
@@ -296,9 +296,8 @@ node {
 
                     // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
                     // Tag the images for deployment based on the image's hash
-                    def IMAGE_HASH = getImageTagHash("${BUILDS[0]}")
-                    echo "IMAGE_HASH: ${IMAGE_HASH}"
-                    openshift.tag("${BUILDS[0]}@${IMAGE_HASH}", "${BUILDS[0]}:${TAG_NAMES[1]}")
+                    echo "API_IMAGE_HASH: ${API_IMAGE_HASH}"
+                    openshift.tag("${BUILDS[0]}@${API_IMAGE_HASH}", "${BUILDS[0]}:${TAG_NAMES[1]}")
                 }
 
                 def NAME_SPACE = getNameSpace()
@@ -320,9 +319,8 @@ node {
 
                     // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
                     // Tag the images for deployment based on the image's hash
-                    IMAGE_HASH = getImageTagHash("${BUILDS[2]}")
-                    echo "IMAGE_HASH: ${IMAGE_HASH}"
-                    openshift.tag("${BUILDS[2]}@${IMAGE_HASH}", "${BUILDS[2]}:${TAG_NAMES[1]}")
+                    echo "FRONTEND_IMAGE_HASH: ${FRONTEND_IMAGE_HASH}"
+                    openshift.tag("${BUILDS[2]}@${FRONTEND_IMAGE_HASH}", "${BUILDS[2]}:${TAG_NAMES[1]}")
                 }
 
                 def NAME_SPACE = getNameSpace()
@@ -347,9 +345,8 @@ node {
 
                     // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
                     // Tag the images for deployment based on the image's hash
-                    def IMAGE_HASH = getImageTagHash("${BUILDS[0]}")
-                    echo "IMAGE_HASH: ${IMAGE_HASH}"
-                    openshift.tag("${BUILDS[0]}@${IMAGE_HASH}", "${BUILDS[0]}:${TAG_NAMES[2]}")
+                    echo "API_IMAGE_HASH: ${API_IMAGE_HASH}"
+                    openshift.tag("${BUILDS[0]}@${API_IMAGE_HASH}", "${BUILDS[0]}:${TAG_NAMES[2]}")
                 }
 
                 def NAME_SPACE = getNameSpace()
@@ -371,9 +368,8 @@ node {
 
                     // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
                     // Tag the images for deployment based on the image's hash
-                    IMAGE_HASH = getImageTagHash("${BUILDS[2]}")
-                    echo "IMAGE_HASH: ${IMAGE_HASH}"
-                    openshift.tag("${BUILDS[2]}@${IMAGE_HASH}", "${BUILDS[2]}:${TAG_NAMES[2]}")
+                    echo "FRONTEND_IMAGE_HASH: ${FRONTEND_IMAGE_HASH}"
+                    openshift.tag("${BUILDS[2]}@${FRONTEND_IMAGE_HASH}", "${BUILDS[2]}:${TAG_NAMES[2]}")
                 }
 
                 def NAME_SPACE = getNameSpace()
