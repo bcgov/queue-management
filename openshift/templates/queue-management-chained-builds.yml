@@ -27,7 +27,9 @@ objects:
       name: jenkin-config
     data:
       jenkin-config: |
+        user_qtxn=<set to cfms-postman-operator>
         password_qtxn=<cfms-postman-operator userid password>
+        userid_nonqtxn=<set to cfms-postman-non-operator>
         password_nonqtxn=<cfms-postman-non-operator userid password>
         client_secret=<keycloak client secret>
         zap_with_url=<zap command including dev url for analysis> 
