@@ -15,6 +15,8 @@ def TAG_NAMES = ['dev', 'test', 'production']
 def BUILDS = ['queue-management-api', 'queue-management-npm-build', 'queue-management-frontend']
 def DEP_ENV_NAMES = ['dev', 'test', 'prod']
 def label = "mypod-${UUID.randomUUID().toString()}"
+def API_IMAGE_HASH = ""
+def FRONTEND_IMAGE_HASH = ""
 
 String getNameSpace() {
     def NAMESPACE = sh (
@@ -106,7 +108,7 @@ node(label) {
 
                     // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
                     // Tag the images for deployment based on the image's hash
-                    def API_IMAGE_HASH = getImageTagHash("${BUILDS[0]}")
+                    API_IMAGE_HASH = getImageTagHash("${BUILDS[0]}")
                     echo "API_IMAGE_HASH: ${API_IMAGE_HASH}"
                     openshift.tag("${BUILDS[0]}@${API_IMAGE_HASH}", "${BUILDS[0]}:${TAG_NAMES[0]}")
                 }
@@ -150,7 +152,7 @@ node(label) {
 
                     // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
                     // Tag the images for deployment based on the image's hash
-                    def FRONTEND_IMAGE_HASH = getImageTagHash("${BUILDS[2]}")
+                    FRONTEND_IMAGE_HASH = getImageTagHash("${BUILDS[2]}")
                     echo "FRONTEND_IMAGE_HASH: ${FRONTEND_IMAGE_HASH}"
                     openshift.tag("${BUILDS[2]}@${FRONTEND_IMAGE_HASH}", "${BUILDS[2]}:${TAG_NAMES[0]}")
                 }
