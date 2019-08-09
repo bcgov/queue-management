@@ -15,6 +15,8 @@ def TAG_NAMES = ['dev', 'test', 'production']
 def BUILDS = ['queue-management-api', 'queue-management-npm-build', 'queue-management-frontend']
 def DEP_ENV_NAMES = ['dev', 'test', 'prod']
 def label = "mypod-${UUID.randomUUID().toString()}"
+def API_IMAGE_HASH = ""
+def FRONTEND_IMAGE_HASH = ""
 
 String getNameSpace() {
     def NAMESPACE = sh (
@@ -106,9 +108,9 @@ node(label) {
 
                     // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
                     // Tag the images for deployment based on the image's hash
-                    def IMAGE_HASH = getImageTagHash("${BUILDS[0]}")
-                    echo "IMAGE_HASH: ${IMAGE_HASH}"
-                    openshift.tag("${BUILDS[0]}@${IMAGE_HASH}", "${BUILDS[0]}:${TAG_NAMES[0]}")
+                    API_IMAGE_HASH = getImageTagHash("${BUILDS[0]}")
+                    echo "API_IMAGE_HASH: ${API_IMAGE_HASH}"
+                    openshift.tag("${BUILDS[0]}@${API_IMAGE_HASH}", "${BUILDS[0]}:${TAG_NAMES[0]}")
                 }
 
                 def NAME_SPACE = getNameSpace()
@@ -150,9 +152,9 @@ node(label) {
 
                     // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
                     // Tag the images for deployment based on the image's hash
-                    def IMAGE_HASH = getImageTagHash("${BUILDS[2]}")
-                    echo "IMAGE_HASH: ${IMAGE_HASH}"
-                    openshift.tag("${BUILDS[2]}@${IMAGE_HASH}", "${BUILDS[2]}:${TAG_NAMES[0]}")
+                    FRONTEND_IMAGE_HASH = getImageTagHash("${BUILDS[2]}")
+                    echo "FRONTEND_IMAGE_HASH: ${FRONTEND_IMAGE_HASH}"
+                    openshift.tag("${BUILDS[2]}@${FRONTEND_IMAGE_HASH}", "${BUILDS[2]}:${TAG_NAMES[0]}")
                 }
 
                 def NAME_SPACE = getNameSpace()
@@ -181,8 +183,18 @@ node(label) {
                 script: "npm install newman"
             )
 
+            USERID = sh (
+                script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^userid_qtxn/{print $2}\'',
+                returnStdout: true
+            ).trim()
+
             PASSWORD = sh (
                 script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^password_qtxn/{print $2}\'',
+                returnStdout: true
+            ).trim()
+
+            USERID_NONQTXN = sh (
+                script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^userid_nonqtxn/{print $2}\'',
                 returnStdout: true
             ).trim()
 
@@ -216,9 +228,11 @@ node(label) {
                 returnStdout: true
             ).trim()
 
+            NODE_OPTIONS='--max_old_space_size=2048'
+
             sh (
                 returnStdout: true,
-                script: "./node_modules/newman/bin/newman.js run postman_tests.json -e postman_env.json --global-var 'password=${PASSWORD}' --global-var 'password_nonqtxn=${PASSWORD_NONQTXN}' --global-var 'client_secret=${CLIENT_SECRET}' --global-var 'url=${API_URL}' --global-var 'auth_url=${AUTH_URL}' --global-var 'clientid=${CLIENTID}' --global-var 'realm=${REALM}'"
+                script: "./node_modules/newman/bin/newman.js run postman_tests.json -e postman_env.json --global-var 'userid=${USERID}' --global-var 'password=${PASSWORD}' --global-var 'userid_nonqtxn=${USERID_NONQTXN}' --global-var 'password_nonqtxn=${PASSWORD_NONQTXN}' --global-var 'client_secret=${CLIENT_SECRET}' --global-var 'url=${API_URL}' --global-var 'auth_url=${AUTH_URL}' --global-var 'clientid=${CLIENTID}' --global-var 'realm=${REALM}'"
             )
         }
     }
@@ -284,9 +298,8 @@ node {
 
                     // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
                     // Tag the images for deployment based on the image's hash
-                    def IMAGE_HASH = getImageTagHash("${BUILDS[0]}")
-                    echo "IMAGE_HASH: ${IMAGE_HASH}"
-                    openshift.tag("${BUILDS[0]}@${IMAGE_HASH}", "${BUILDS[0]}:${TAG_NAMES[1]}")
+                    echo "API_IMAGE_HASH: ${API_IMAGE_HASH}"
+                    openshift.tag("${BUILDS[0]}@${API_IMAGE_HASH}", "${BUILDS[0]}:${TAG_NAMES[1]}")
                 }
 
                 def NAME_SPACE = getNameSpace()
@@ -308,9 +321,8 @@ node {
 
                     // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
                     // Tag the images for deployment based on the image's hash
-                    IMAGE_HASH = getImageTagHash("${BUILDS[2]}")
-                    echo "IMAGE_HASH: ${IMAGE_HASH}"
-                    openshift.tag("${BUILDS[2]}@${IMAGE_HASH}", "${BUILDS[2]}:${TAG_NAMES[1]}")
+                    echo "FRONTEND_IMAGE_HASH: ${FRONTEND_IMAGE_HASH}"
+                    openshift.tag("${BUILDS[2]}@${FRONTEND_IMAGE_HASH}", "${BUILDS[2]}:${TAG_NAMES[1]}")
                 }
 
                 def NAME_SPACE = getNameSpace()
@@ -335,9 +347,8 @@ node {
 
                     // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
                     // Tag the images for deployment based on the image's hash
-                    def IMAGE_HASH = getImageTagHash("${BUILDS[0]}")
-                    echo "IMAGE_HASH: ${IMAGE_HASH}"
-                    openshift.tag("${BUILDS[0]}@${IMAGE_HASH}", "${BUILDS[0]}:${TAG_NAMES[2]}")
+                    echo "API_IMAGE_HASH: ${API_IMAGE_HASH}"
+                    openshift.tag("${BUILDS[0]}@${API_IMAGE_HASH}", "${BUILDS[0]}:${TAG_NAMES[2]}")
                 }
 
                 def NAME_SPACE = getNameSpace()
@@ -359,9 +370,8 @@ node {
 
                     // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
                     // Tag the images for deployment based on the image's hash
-                    IMAGE_HASH = getImageTagHash("${BUILDS[2]}")
-                    echo "IMAGE_HASH: ${IMAGE_HASH}"
-                    openshift.tag("${BUILDS[2]}@${IMAGE_HASH}", "${BUILDS[2]}:${TAG_NAMES[2]}")
+                    echo "FRONTEND_IMAGE_HASH: ${FRONTEND_IMAGE_HASH}"
+                    openshift.tag("${BUILDS[2]}@${FRONTEND_IMAGE_HASH}", "${BUILDS[2]}:${TAG_NAMES[2]}")
                 }
 
                 def NAME_SPACE = getNameSpace()

@@ -19,7 +19,9 @@ It is assumed that you will already have a Jenkins & SonarQube instance.
 
 Required information in the ConfigMap includes:
 
-1. `password_qtxn=<<cfms-postman-operator userid password>`
+1. `userid_qtxn=<set to cfms-postman-operator>`
+1. `password_qtxn=<cfms-postman-operator userid password>`
+1. `userid_nonqtxn=<set to cfms-postman-non-operator>`
 1. `password_nonqtxn=<cfms-postman-non-operator userid password>`
 1. `client_secret=<keycloak client secret></keycloak>`
 1. `zap_with_url=/zap/zap-baseline.py -r baseline.html -t <queue management frontend URL>`
