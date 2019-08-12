@@ -19,7 +19,7 @@ class BaseConfig(object):
     PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     TESTING = True,
-    DEBUG = True
+    DEBUG = False
     LOGGING_LOCATION = "logs/qsystem.log"
     LOGGING_LEVEL = DEBUG
     LOGGING_FORMAT = '[%(asctime)s.%(msecs)03d] %(levelname)-8s (%(name)s) <%(module)s.py>.%(funcName)s: %(message)s'
@@ -91,7 +91,7 @@ class BaseConfig(object):
 
     #  Set echo appropriately.
     if (os.getenv('SQLALCHEMY_ECHO', "False")).upper() == "TRUE":
-        SQLALCHEMY_ECHO=True
+        SQLALCHEMY_ECHO=False
     else:
         SQLALCHEMY_ECHO=False
 

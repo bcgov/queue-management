@@ -28,22 +28,39 @@
           Non-Exam Event
         </b-dropdown-item>
       </b-dropdown>
+      <b-button v-if="role_code === 'GA'"
+                variant="primary"
+                @click="clickBlackout">
+        Create Blackout
+      </b-button>
     </form>
   </div>
 </template>
 
 <script>
-  import { mapMutations, mapState } from 'vuex'
+  import { mapMutations, mapState, mapGetters } from 'vuex'
   import DropdownCalendar from './dropdown-calendar'
 
   export default {
     name: 'ButtonsCalendar',
     components: { DropdownCalendar },
     computed: {
-      ...mapState(['scheduling', 'rescheduling'])
+      ...mapState([
+        'scheduling',
+        'rescheduling',
+        'showBookingBlackoutModal',
+      ]),
+      ...mapGetters([
+        'role_code',
+      ])
     },
     methods: {
-      ...mapMutations(['setSelectedExam', 'toggleExamInventoryModal', 'toggleScheduling',]),
+      ...mapMutations([
+        'setSelectedExam',
+        'toggleExamInventoryModal',
+        'toggleScheduling',
+        'toggleBookingBlackoutModal',
+      ]),
       showExamModal() {
         this.toggleExamInventoryModal(true)
       },
@@ -60,6 +77,9 @@
       today() {
         this.$root.$emit('today')
       },
+      clickBlackout(){
+        this.toggleBookingBlackoutModal(!this.showBookingBlackoutModal)
+      }
     }
   }
 </script>

@@ -152,7 +152,9 @@ export const store = new Vuex.Store({
     services: [],
     showAddModal: false,
     showAdmin: false,
+    showAppointmentBlackoutModal: false,
     showBookingModal: false,
+    showBookingBlackoutModal: false,
     showDeleteExamModal: false,
     showEditBookingModal: false,
     showEditExamModal: false,
@@ -659,6 +661,8 @@ export const store = new Vuex.Store({
             booking.exam = context.state.exams.find(ex => ex.booking_id == b.booking_id) || false
             booking.booking_contact_information = b.booking_contact_information
             booking.fees = b.fees
+            booking.blackout_flag = b.blackout_flag
+            booking.blackout_notes = b.blackout_notes
             calendarEvents.push(booking)
           })
           context.commit('setEvents', calendarEvents)
@@ -2311,7 +2315,9 @@ export const store = new Vuex.Store({
     setDisplayServices: (state, payload) => state.displayServices = payload,
 
     setBackOfficeDisplay: (state, payload) => state.backOfficeDisplay = payload,
-  
+
+    toggleBookingBlackoutModal: (state, payload) => state.showBookingBlackoutModal = payload,
+
     setServiceModalForm(state, citizen) {
       let citizen_comments = citizen.citizen_comments
       let activeService = citizen.service_reqs.filter(sr => sr.periods.some(p => p.time_end === null))
@@ -2550,7 +2556,7 @@ export const store = new Vuex.Store({
     toggleGenFinReport(state, payload) {
       state.showGenFinReportModal = payload
     },
-  
+
     captureExamDetail(state, payload) {
       if (payload.key === 'exam_type_id') {
         payload.value = Number(payload.value)

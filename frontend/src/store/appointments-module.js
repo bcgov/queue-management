@@ -13,6 +13,7 @@ export default {
     },
     selectedService: null,
     showApptBookingModal: false,
+    showAppointmentBlackoutModal: false,
     showCheckInModal: false,
     services: [],
   },
@@ -39,6 +40,7 @@ export default {
             contact_information: apt.contact_information,
             comments: apt.comments,
             color: '#B5E0B8',
+            blackout_flag: apt.blackout_flag
           })
         )
       }
@@ -62,7 +64,13 @@ export default {
         return rootState.services
       }
       return []
-    }
+    },
+    is_GA(state, getters, rootState){
+      if(rootState.user && rootState.user.role && rootState.user.role.role_code === 'GA'){
+        return true
+      }
+      return false
+    },
   },
   actions: {
     clearAddModal({commit}) {
@@ -239,5 +247,6 @@ export default {
       state.selectedService = payload
     },
     setRescheduling: (state, payload) => state.reschedulinng = payload,
+    toggleAppointmentBlackoutModal: (state, payload) => state.showAppointmentBlackoutModal = payload,
   },
 }

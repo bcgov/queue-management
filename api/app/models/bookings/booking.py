@@ -29,6 +29,8 @@ class Booking(Base):
     booking_name = db.Column(db.String(150), nullable=True)
     sbc_staff_invigilated = db.Column(db.Integer, default=0)
     booking_contact_information = db.Column(db.String(256), nullable=True)
+    blackout_flag = db.Column(db.String(1), default='N', nullable=False)
+    blackout_notes = db.Column(db.String(255), nullable=True)
 
     room = db.relationship("Room")
     invigilator = db.relationship("Invigilator")
