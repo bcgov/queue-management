@@ -39,7 +39,7 @@ limitations under the License.*/
         <p class="switch-p">{{user.csr_state_id === csr_states['Break'] ? 'On Break' : 'Active' }}</p>
       </div>
       <div id="select-wrapper" style="padding-right: 20px" v-if="reception">
-        <select id="counter-selection" class="custom-select" v-model="counter_selection">
+        <select id="counter-selection-csr" class="custom-select" v-model="counter_selection">
             <option value='receptionist'>Receptionist</option>
             <option v-for="counter in user.office.counters"
                   :value="counter.counter_id"

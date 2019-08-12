@@ -119,7 +119,9 @@ limitations under the License.*/
     font-weight: 500;
     font-size:1.90rem;
   }
-  #counter-selection,
+  #counter-selection-csr,
+  #counter-selection-add,
+  #counter-selection-serve,
   #priority-selection {
     display: inline-block;
     width: 135px;
