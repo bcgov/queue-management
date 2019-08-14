@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from app.models.theq import Citizen, CSR, CitizenState, Period, PeriodState, ServiceReq, SRState
+from app.models.theq import Citizen, CSR, CitizenState, Period, PeriodState, ServiceReq, SRState, Counter
 from flask import flash, redirect, request
 from .base import Base
 from flask_admin.babel import gettext
@@ -57,18 +57,32 @@ class CSRConfig(Base):
                             'finance_designate', 'liaison_designate', 'role.role_desc', 'deleted')
     column_default_sort = 'username'
     form_args = {
-        'qt_xn_csr_ind': {'default': '0'},
-        'receptionist_ind': {'default': '0'},
         'csr_state': {'default': 'Logout'},
         'ita_designate': {'default': '0'},
         'pesticide_designate': {'default': '0'},
         'finance_designate': {'default': '0'},
         'liaison_designate': {'default': '0'},
     }
-    form_excluded_columns = ('periods')
-    form_create_rules = ('username', 'qt_xn_csr_ind', 'receptionist_ind', 'ita_designate', 'pesticide_designate',
+
+    #   The defaults if you are SUPPORT
+    form_choices = {
+        'ita_designate': [
+            ("0", 'No - not an Exam Manager'), ("1", 'Yes - an Exam Manager')
+        ],
+        'pesticide_designate': [
+            ("0", 'No - not a Pesticide Specialist'), ("1", 'Yes - a Pesticide Specialist')
+        ],
+        'finance_designate': [
+            ("0", 'No - not in Finance team'), ("1", 'Yes - for Finance team reporting')
+        ],
+        'liaison_designate': [
+            ("0", 'No - not an ITA Liaison'), ("1", 'Yes - an ITA Liaison')
+        ]
+    }
+    form_excluded_columns = ('periods', 'qt_xn_csr_ind', 'receptionist_ind')
+    form_create_rules = ('username', 'ita_designate', 'pesticide_designate',
                          'finance_designate', 'liaison_designate', 'csr_state', 'role', 'office','deleted', 'counter')
-    form_edit_rules = ('username', 'qt_xn_csr_ind', 'receptionist_ind', 'ita_designate', 'pesticide_designate',
+    form_edit_rules = ('username', 'ita_designate', 'pesticide_designate',
                        'finance_designate', 'liaison_designate', 'csr_state', 'role', 'office', 'deleted','counter')
 
     def get_return_url(self):
@@ -108,6 +122,16 @@ class CSRConfig(Base):
 
         return model
 
+    def on_model_change(self, form, model, is_created):
+
+        if is_created:
+            if model.receptionist_ind is None:
+                model.receptionist_ind = 0
+
+            if model.counter is None:
+                counter = Counter.query.filter(Counter.counter_name == 'Counter').first()
+                model.counter = counter
+
     @expose('/edit/', methods=('GET', 'POST'))
     def edit_view(self):
         """
@@ -130,7 +154,7 @@ class CSRConfig(Base):
             #  Trim the user name, if necessary.
             updated_csr = CSR.query.filter_by(csr_id=csr_id).first()
 
-            trim_username(updated_csr)
+            check_uservalues(updated_csr)
 
             socketio.emit('clear_csr_cache', { "id": csr_id})
             socketio.emit('csr_update',
@@ -161,15 +185,25 @@ class CSRConfig(Base):
 
 CSRModelView = CSRConfig(CSR, db.session)
 
+def check_uservalues(updated_csr):
 
-def trim_username(updated_csr):
+    #  Assume data does not need to be updated
+    update_data = False;
 
+    #  See if spaces at start or end of user name.
     if updated_csr.username != updated_csr.username.strip():
         updated_csr.username = updated_csr.username.strip()
+        update_data = True
+
+    if updated_csr.counter_id is None:
+        counter = Counter.query.filter(Counter.counter_name=='Counter').first()
+        updated_csr.counter_id = counter.counter_id
+        update_data = True
+
+    if update_data:
         db.session.add(updated_csr)
         db.session.commit()
     return
-
 
 def request_redirect(self, return_url, model, request_parameter):
 
