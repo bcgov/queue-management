@@ -73,7 +73,7 @@ class CSRConfig(Base):
             ("0", 'No - not a Pesticide Specialist'), ("1", 'Yes - a Pesticide Specialist')
         ],
         'finance_designate': [
-            ("0", 'No - not a Financial Reporting Designate'), ("1", 'Yes - a Financial Reporting Designate')
+            ("0", 'No - not in Finance team'), ("1", 'Yes - for Finance team reporting')
         ],
         'liaison_designate': [
             ("0", 'No - not an ITA Liaison'), ("1", 'Yes - an ITA Liaison')
