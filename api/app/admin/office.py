@@ -33,6 +33,7 @@ class OfficeConfig(Base):
     form_edit_rules = ('office_name', 'office_number', 'sb', 'services', 'deleted', 'exams_enabled_ind',
                        'appointments_enabled_ind', 'timezone')
     column_labels = {'sb': 'Smartboard', 'timezone.timezone_name': 'Timezone Name'}
+    column_searchable_list = ('office_name',)
     column_sortable_list = ['office_name', 'sb', 'deleted', 'exams_enabled_ind']
     column_list = ['office_name',
                    'sb',
