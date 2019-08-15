@@ -27,27 +27,27 @@ afterAll(() => {
 });
 
 describe("Serve Citizens", () => {
-      test(
-        "Login",
-        async () => {
-          await page.goto(process.env.CFMS_DEV_URL);
-          await page.waitForSelector("#keycloak-login");
+  test(
+    "Login",
+    async () => {
+      await page.goto(process.env.CFMS_DEV_URL);
+      await page.waitForSelector("#keycloak-login");
 
-          const navigationPromise = page.waitForNavigation();
-          await page.click("#keycloak-login");
-          await navigationPromise;
+      const navigationPromise = page.waitForNavigation();
+      await page.click("#keycloak-login");
+      await navigationPromise;
 
-          await page.waitForSelector("#username");
-          await page.type("#username", "cfms-postman-operator");
-          await page.type("#password", process.env.POSTMAN_OPERATOR_PASSWORD);
+      await page.waitForSelector("#username");
+      await page.type("#username", "cfms-postman-operator");
+      await page.type("#password", process.env.POSTMAN_OPERATOR_PASSWORD);
 
-          await page.click("#kc-login");
-          await navigationPromise;
+      await page.click("#kc-login");
+      await navigationPromise;
 
-          await page.waitForSelector("label.navbar-user");
-        },
-        maxTestCaseTime
-      );
+      await page.waitForSelector("label.navbar-user");
+    },
+    maxTestCaseTime
+  );
 
   test(
     "Invite and serve citizen from queue",
@@ -107,12 +107,15 @@ describe("Serve Citizens", () => {
     maxTestCaseTime
   );
 
-  test('Begin service from add citizen modal', async () => {
-    await addCitizenFromDash();
-    await populateAddCitizen();
-    await beginServiceFromAddCitizenModal();
-    await finishService();
-  }, maxTestCaseTime);
+  test('Begin service from add citizen modal',
+    async () => {
+      await addCitizenFromDash();
+      await populateAddCitizen();
+      await beginServiceFromAddCitizenModal();
+      await finishService();
+    },
+    maxTestCaseTime
+  );
 
   test(
     "Cancel service from add citizen modal",
@@ -129,16 +132,31 @@ describe("Serve Citizens", () => {
     async () => {
       await addCitizenToQueue(); //Add regular first
       await addQuickCitizenToQueue(); //Add quick second
-      await page.select("#counter-selection", "quick"); //Select quick transaction counter
-
+      await setCsrToQuickTxn();  //  Ensure the CSR is a Quick Txn CSR
       await inviteCitizenFromDash();
-      await page.waitForSelector(".quick-span"); //Invite should bring up the quick first
+      const value_qtxn = await getServeQTxnValue();
+      const value_first = await getServeSelectedValue();
       await beginServiceFromServeCitizenModal();
       await finishService();
 
       await inviteCitizenFromDash(); //Second invite bring up remaining regular
+      const value_counter = await getServeCounterValue();
+      const value_second = await getServeSelectedValue();
       await beginServiceFromServeCitizenModal();
       await finishService();
+      await setCsrToCounter();  //  Set CSR back to Counter
+
+      //  Make sure 1st citizen from invite was QTxn, 2nd was Counter.
+      let OK1 = "First citizen was Quick Transaction";
+      let OK2 = "Second citizen was Counter Transaction";
+      let message1 = "";
+      let message2 = "";
+      if (value_qtxn == value_first) { message1 = OK1; }
+      else { message1 = "First citizen was not Quick Transaction"; }
+      if (value_counter == value_second ) { message2 = OK2; }
+      else { message2 = "Second citizen was not Counter Transaction"; }
+      expect(message1).toBe(OK1);
+      expect(message2).toBe(OK2);
     },
     maxTestCaseTime
   );
@@ -151,9 +169,17 @@ describe("Serve Citizens", () => {
       await editQuickTransFromServeCitizenModal() //Edit to quick transaction
       await returnToQueue();
       await inviteCitizenFromDash();
-      await page.waitForSelector(".quick-span"); //Should be quick transaction now
+      const value_qtxn = await getServeQTxnValue();
+      const value_citizen = await getServeSelectedValue();
       await beginServiceFromServeCitizenModal();
       await finishService();
+
+      //  Make sure 1st citizen from invite was QTxn, 2nd was Counter.
+      let OK = "Citizen was Quick Transaction";
+      let message = "";
+      if (value_qtxn == value_citizen) { message = OK; }
+      else { message = "Citizen was not Quick Transaction"; }
+      expect(message).toBe(OK);
     },
     maxTestCaseTime
   );
@@ -161,29 +187,42 @@ describe("Serve Citizens", () => {
   test(
     "Invite low, normal, high priority citizens",
     async () => {
-      let priorityValue;
       // Add low, then normal, and then high priority citizen
       await addCitizenLowPriorityToQueue();
       await addCitizenToQueue();
       await addCitizenHighPriorityToQueue();
 
       await inviteCitizenFromDash();
-      priorityValue = await page.$eval("#priority-selection", el => el.value);
-      if(priorityValue != '1') throw('Not high priority') // First should be high
+      let priorityValueHigh = await page.$eval("#priority-selection", el => el.value);
       await beginServiceFromServeCitizenModal();
       await finishService();
 
       await inviteCitizenFromDash();
-      priorityValue = await page.$eval("#priority-selection", el => el.value);
-      if (priorityValue != '2') throw ('Not normal priority') // Second should be normal
+      let priorityValueNormal = await page.$eval("#priority-selection", el => el.value);
       await beginServiceFromServeCitizenModal();
       await finishService();
 
       await inviteCitizenFromDash();
-      priorityValue = await page.$eval("#priority-selection", el => el.value);
-      if(priorityValue != '3') throw('Not low priority') // Third should be low
+      let priorityValueLow = await page.$eval("#priority-selection", el => el.value);
       await beginServiceFromServeCitizenModal();
       await finishService();
+
+      //  Make sure priority values were OK.
+      let OkHigh = "First citizen was High Priority";
+      let OkNormal = "Second citizen was Normal Priority";
+      let OkLow = "Third citizen was Low Priority";
+      let MsgHigh = "";
+      let MsgNormal = "";
+      let MsgLow = "";
+      if (priorityValueHigh == 1) { MsgHigh = OkHigh; }
+      else { MsgHigh = "First citizen was not High Priority"; }
+      if (priorityValueNormal == 2) { MsgNormal = OkNormal; }
+      else { MsgNormal = "Second citizen was not Normal Priority"; }
+      if (priorityValueLow == 3) { MsgLow = OkLow; }
+      else { MsgLow = "Third citizen was not Low Priority"; }
+      expect(MsgHigh).toBe(OkHigh);
+      expect(MsgNormal).toBe(OkNormal);
+      expect(MsgLow).toBe(OkLow);
     },
     maxTestCaseTime
   );
@@ -193,6 +232,41 @@ function delay(time) {
   return new Promise(function(resolve) {
     setTimeout(resolve, time);
   });
+}
+
+const getCSRQTxnValue = async() => {
+  const option = (await page.$x('//*[@id = "counter-selection-csr"]/option[contains(text(), "Quick")]'))[0];
+  const value = await (await option.getProperty('value')).jsonValue();
+  return value;
+}
+
+const getCSRCounterValue = async() => {
+  const option = (await page.$x('//*[@id = "counter-selection-csr"]/option[contains(text(), "Counter")]'))[0];
+  const value = await (await option.getProperty('value')).jsonValue();
+  return value;
+}
+
+const getServeQTxnValue = async() => {
+  const option = (await page.$x('//*[@id = "counter-selection-serve"]/option[contains(text(), "Quick")]'))[0];
+  const value = await (await option.getProperty('value')).jsonValue();
+  return value;
+}
+
+const getServeCounterValue = async() => {
+  const option = (await page.$x('//*[@id = "counter-selection-serve"]/option[contains(text(), "Counter")]'))[0];
+  const value = await (await option.getProperty('value')).jsonValue();
+  return value;
+}
+
+const getServeSelectedValue = async() => {
+  var selectedValue = await page.$eval("#counter-selection-serve", selectedValue=> selectedValue.value)
+  return selectedValue;
+}
+
+const getAddQTxnValue = async() => {
+  const option = (await page.$x('//*[@id = "counter-selection-add"]/option[contains(text(), "Quick")]'))[0];
+  const value = await (await option.getProperty('value')).jsonValue();
+  return value;
 }
 
 async function addCitizenToQueue() {
@@ -225,13 +299,30 @@ async function addCitizenLowPriorityToQueue() {
 
 async function populateAddCitizen() {
   await page.waitForSelector("#add_citizen_channels_select");
-  await page.select("#add_citizen_channels_select", "1");
+  const option = (await page.$x('//*[@id = "add_citizen_channels_select"]/option[text() = "In Person"]'))[0];
+  const value = await (await option.getProperty('value')).jsonValue();
+  await page.select('#add_citizen_channels_select', value);
   await page.click(".add_citizen_categories_table > tbody > tr > td");
+}
+
+async function setCsrToQuickTxn() {
+  const value = await getCSRQTxnValue();
+  await page.select('#counter-selection-csr', value);  //Select quick transaction counter
+}
+
+async function setCsrToCounter() {
+  const value = await getCSRCounterValue();
+  await page.select('#counter-selection-csr', value);  //Select quick transaction counter
+}
+
+async function getValueQTxnCsr() {
+  const option = (await page.$x('//*[@id = "counter-selection-csr"]/option[contains(text(), "Quick")]'))[0];
+  const value = await (await option.getProperty('value')).jsonValue();
 }
 
 async function inviteFromQueue() {
   await page.waitForSelector("#client-waiting-table");
-  await page.click("#client-waiting-table > tbody > tr > td");
+  await page.click("#client-waiting-table > table > tbody > tr > td");
   await delay(1000);
   await page.waitForSelector(".serve-modal-content");
 }
@@ -272,7 +363,8 @@ async function addToQueue() {
 }
 
 async function addToQuickQueue() {
-  await page.click(".quick");
+  const quick_value = await getAddQTxnValue();
+  await page.select("#counter-selection-add", quick_value); // Select Quick Transaction
   await page.click("#add-citizen-add-to-queue");
   await delay(1000);
   await page.waitForSelector(".add_citizen_template", { hidden: true });
@@ -317,8 +409,8 @@ async function beginServiceFromServeCitizenModal() {
 }
 
 async function editQuickTransFromServeCitizenModal() {
-  await page.waitForSelector(".quick-checkbox");
-  await page.click(".quick-checkbox");
+  const quick_value = await getServeQTxnValue();
+  await page.select("#counter-selection-serve", quick_value); // Select Quick Transaction
 }
 
 async function returnToQueue() {
