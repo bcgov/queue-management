@@ -52,17 +52,22 @@
         }
       },
       url() {
+        //  The default admin edit URL is for GA csr view.
+        return_url = process.env.SOCKET_URL + '/admin/csrga/'
+
+        //  Set a default, if the current URL is blank, depending on role.
         if (this.adminNavigation == '') {
-          if (this.user && this.user.role && (this.user.role.role_code === 'GA' || this.user.role.role_code === 'HELPDESK')) {
-            return process.env.SOCKET_URL + '/admin/csrga/'
+          if (this.user && this.user.role && this.user.role.role_code === 'ANALYTICS') {
+            return_url = process.env.SOCKET_URL + '/admin/service/'
           }
-          else {
-            return process.env.SOCKET_URL + '/admin/csr/'
+          if (this.user && this.user.role && this.user.role.role_code === 'SUPPORT') {
+            return_url = process.env.SOCKET_URL + '/admin/csr/'
           }
         }
         else {
-          return process.env.SOCKET_URL + '/admin/' + this.adminNavigation + '/'
+          return_url = process.env.SOCKET_URL + '/admin/' + this.adminNavigation + '/'
         }
+        return return_url
       }
     },
     methods: {
