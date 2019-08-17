@@ -53,7 +53,7 @@
       },
       url() {
         //  The default admin edit URL is for GA csr view.
-        return_url = process.env.SOCKET_URL + '/admin/csrga/'
+        let return_url = process.env.SOCKET_URL + '/admin/csrga/'
 
         //  Set a default, if the current URL is blank, depending on role.
         if (this.adminNavigation == '') {
