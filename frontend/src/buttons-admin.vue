@@ -25,7 +25,7 @@
     <template v-else-if="user.role && user.role.role_code==='GA' ">
       <div style="display: inline-flex;">
         <span style="font-size: 1.4rem; font-weight: 600; margin-right: 1em"> Editing: </span>
-        <b-form-select :options="optionsGA" @input="handleInput" :value="option" />
+        <b-form-select :options="optionsGA" @input="handleInput" :value="optionGA" />
       </div>
     </template>
     <template v-else>
@@ -42,6 +42,7 @@
     data() {
       return {
         option: 'csr',
+        optionGA: 'csrga',
         options: [
           {value: 'csr', text: 'CSRs'},
           {value: 'office', text: 'ServiceBC Offices'},
@@ -55,7 +56,7 @@
           {value: 'counter', text: 'Counters'}
         ],
         optionsGA: [
-          {value: 'csr', text: 'CSRs'},
+          {value: 'csrga', text: 'CSRs'},
           {value: 'invigilator', text: 'Invigilators'},
           {value: 'room', text: 'Rooms'}
         ]
@@ -65,12 +66,16 @@
       ...mapState(['user']),
       name() {
         if (this.user && this.user.role && (this.user.role.role_code === 'GA' || this.user.role.role_code === 'HELPDESK')) {
-          this.changeAdminView('csr')
+          this.changeAdminView('csrga')
           return 'CSRs'
         }
         if (this.user && this.user.role && this.user.role.role_code === 'ANALYTICS') {
           this.changeAdminView('service')
           return 'Services Provided'
+        }
+        if (this.user && this.user.role && this.user.role.role_code === 'SUPPORT') {
+          this.changeAdminView('csr')
+          return 'CSRs'
         }
       }
     },

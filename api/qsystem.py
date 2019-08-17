@@ -1,4 +1,5 @@
 import logging
+import logging
 import socket
 import time
 import traceback
@@ -101,6 +102,7 @@ flask_admin = Admin(application, name='Admin Console', template_mode='bootstrap3
 flask_admin.add_view(admin.ChannelModelView)
 flask_admin.add_view(admin.CounterModelView)
 flask_admin.add_view(admin.CSRModelView)
+flask_admin.add_view(admin.CSRGAModelView)
 flask_admin.add_view(admin.InvigilatorModelView)
 flask_admin.add_view(admin.OfficeModelView)
 flask_admin.add_view(admin.RoleModelView)

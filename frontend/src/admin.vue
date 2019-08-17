@@ -37,7 +37,7 @@
       this.loginIframe()
     },
     computed: {
-      ...mapState(['iframeLogedIn', 'adminNavigation']),
+      ...mapState(['iframeLogedIn', 'adminNavigation', 'user']),
       viewPort() {
         let h = window.innerHeight - 100
         let w = window.innerWidth
@@ -52,7 +52,17 @@
         }
       },
       url() {
-        return process.env.SOCKET_URL + '/admin/' + this.adminNavigation + '/'
+        if (this.adminNavigation == '') {
+          if (this.user && this.user.role && (this.user.role.role_code === 'GA' || this.user.role.role_code === 'HELPDESK')) {
+            return process.env.SOCKET_URL + '/admin/csrga/'
+          }
+          else {
+            return process.env.SOCKET_URL + '/admin/csr/'
+          }
+        }
+        else {
+          return process.env.SOCKET_URL + '/admin/' + this.adminNavigation + '/'
+        }
       }
     },
     methods: {

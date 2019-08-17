@@ -53,7 +53,7 @@ export const store = new Vuex.Store({
     },
     addModalSetup: null,
     addNextService: false,
-    adminNavigation: 'csr',
+    adminNavigation: '',
     appointmentsStateInfo: {
       channel_id: null,
       service_id: null,
