@@ -30,13 +30,14 @@
 </template>
 
 <script>
-  import { mapState, mapActions } from 'vuex'
+  import { mapState, mapActions, mapGetters } from 'vuex'
   export default {
     name: "Admin",
     created() {
       this.loginIframe()
     },
     computed: {
+      ...mapGetters(['admin_navigation_nonblank']),
       ...mapState(['iframeLogedIn', 'adminNavigation', 'user']),
       viewPort() {
         let h = window.innerHeight - 100
@@ -53,21 +54,7 @@
       },
       url() {
         //  The default admin edit URL is for GA csr view.
-        let return_url = process.env.SOCKET_URL + '/admin/csrga/'
-
-        //  Set a default, if the current URL is blank, depending on role.
-        if (this.adminNavigation == '') {
-          if (this.user && this.user.role && this.user.role.role_code === 'ANALYTICS') {
-            return_url = process.env.SOCKET_URL + '/admin/service/'
-          }
-          if (this.user && this.user.role && this.user.role.role_code === 'SUPPORT') {
-            return_url = process.env.SOCKET_URL + '/admin/csr/'
-          }
-        }
-        else {
-          return_url = process.env.SOCKET_URL + '/admin/' + this.adminNavigation + '/'
-        }
-        return return_url
+        return process.env.SOCKET_URL + '/admin/' + this.admin_navigation_nonblank + '/'
       }
     },
     methods: {

@@ -18,9 +18,8 @@ from .base import Base
 from flask_login import current_user
 from qsystem import db
 
-
 class OfficeConfig(Base):
-    roles_allowed = ['SUPPORT']
+    roles_allowed = ['SUPPORT', 'GA']
 
     def is_accessible(self):
         return current_user.is_authenticated and current_user.role.role_code in self.roles_allowed
@@ -97,5 +96,31 @@ class OfficeConfig(Base):
 
     column_default_sort = 'office_name'
 
+class OfficeConfigGA(OfficeConfig):
+
+    #  Change what GAs are allowed to do from what SUPPORT can do.
+    form_edit_rules = ('office_name',
+                       'quick_list',
+                       'back_office_list'
+                       )
+    form_excluded_columns = ('citizens',
+                             'csrs',
+                             'exams',
+                             'rooms',
+                             'invigilators',
+                             'office_number',
+                             'sb',
+                             'services',
+                             'deleted',
+                             'exams_enabled_ind',
+                             'counters',
+                             'timezone'
+                             )
+    form_widget_args = {
+        'office_name': {
+            'readonly': True
+        }
+    }
 
 OfficeModelView = OfficeConfig(Office, db.session)
+OfficeGAModelView = OfficeConfigGA(Office, db.session, endpoint='officega')
