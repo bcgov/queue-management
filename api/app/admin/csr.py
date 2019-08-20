@@ -126,6 +126,9 @@ class CSRConfig(Base):
     def on_model_change(self, form, model, is_created):
 
         if is_created:
+
+            model.username = model.username.strip()
+
             if model.receptionist_ind is None:
                 model.receptionist_ind = 0
 
