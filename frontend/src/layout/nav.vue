@@ -19,7 +19,7 @@
     <div class="dash-button-flex-button-container pb-0 mb-3">
       <!-- SLOT FOR EACH VIEW'S BUTTON CONTROLS-->
       <div style="width: 75px" v-show="$route.path !=='/queue' || showTimeTrackingIcon">
-      <b-button :variant="showIcon.style"
+        <b-button :variant="showIcon.style"
                   v-if="showIcon.show"
                   v-show="flashIcon"
                   class="mr-3"
@@ -35,7 +35,7 @@
       <div v-if="calendarSetup && (this.$route.path === '/booking' || this.$route.path === '/agenda')"
            style="flex-grow: 8"
            class="q-inline-title">{{ calendarSetup.title }}</div>
-    <div />
+      <div />
       <div v-if="showHamburger">
         <b-dropdown variant="outline-primary"
                     class="pl-0 ml-0 mr-3"

@@ -1,6 +1,6 @@
 <template>
-  <div style="position: relative" ref="calcontainer">
-    {{headerMessage}}
+  <div style="position: relative">
+    This is some text to upload a file
   </div>
 </template>
 
@@ -17,9 +17,9 @@
 
 </script>
 
-  var express = require("express");
-  var app = express();
-
+  export default {
+    name: 'Upload'
+  }
 
 <style scoped>
 </style>
