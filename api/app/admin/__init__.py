@@ -15,10 +15,12 @@ limitations under the License.'''
 
 from .channel import ChannelModelView
 from .csr import CSRModelView
+from .csr import CSRGAModelView
 from .index import HomeView
 from .login import LoginMenuLink
 from .logout import LogoutMenuLink
 from .office import OfficeModelView
+from .office import OfficeGAModelView
 from .role import RoleModelView
 from .service import ServiceModelView
 from .smartboard import SmartBoardModelView

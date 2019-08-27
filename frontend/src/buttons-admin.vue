@@ -19,32 +19,33 @@
     <template v-if="user.role && user.role.role_code==='SUPPORT' ">
       <div style="display: inline-flex;">
         <span style="font-size: 1.4rem; font-weight: 600; margin-right: 1em"> Editing: </span>
-        <b-form-select :options="options" @input="handleInput" :value="option" />
+        <b-form-select :options="options" @input="handleInput" :value="currentOption" />
       </div>
     </template>
     <template v-else-if="user.role && user.role.role_code==='GA' ">
       <div style="display: inline-flex;">
         <span style="font-size: 1.4rem; font-weight: 600; margin-right: 1em"> Editing: </span>
-        <b-form-select :options="optionsGA" @input="handleInput" :value="option" />
+        <b-form-select :options="optionsGA" @input="handleInput" :value="currentOption" />
       </div>
     </template>
     <template v-else>
-      <span style="font-size: 1.4rem; font-weight: 600"> Editing: {{this.name}}</span>
+      <span style="font-size: 1.4rem; font-weight: 600"> Editing: {{currentName}}</span>
     </template>
   </b-form>
 </template>
 
 <script>
-  import {  mapActions, mapState } from 'vuex'
+  import {  mapActions, mapState, mapGetters } from 'vuex'
 
   export default {
     name: "ButtonsAdmin",
     data() {
       return {
         option: 'csr',
+        optionGA: 'csrga',
         options: [
           {value: 'csr', text: 'CSRs'},
-          {value: 'office', text: 'ServiceBC Offices'},
+          {value: 'office', text: 'Offices'},
           {value: 'channel', text: 'Delivery Channels'},
           {value: 'role', text: 'User roles'},
           {value: 'service', text: 'Provided Services'},
@@ -55,22 +56,25 @@
           {value: 'counter', text: 'Counters'}
         ],
         optionsGA: [
-          {value: 'csr', text: 'CSRs'},
+          {value: 'csrga', text: 'CSRs'},
           {value: 'invigilator', text: 'Invigilators'},
-          {value: 'room', text: 'Rooms'}
+          {value: 'room', text: 'Rooms'},
+          {value: 'officega', text: 'Offices'}
         ]
       }
     },
     computed: {
-      ...mapState(['user']),
-      name() {
-        if (this.user && this.user.role && (this.user.role.role_code === 'GA' || this.user.role.role_code === 'HELPDESK')) {
-          this.changeAdminView('csr')
-          return 'CSRs'
-        }
+      ...mapGetters(['admin_navigation_nonblank']),
+      ...mapState(['user', 'adminNavigation']),
+      currentOption() {
+        return this.admin_navigation_nonblank
+      },
+      currentName() {
         if (this.user && this.user.role && this.user.role.role_code === 'ANALYTICS') {
-          this.changeAdminView('service')
-          return 'Services Provided'
+          return 'Provided Services'
+        }
+        else {
+          return 'CSRs'
         }
       }
     },

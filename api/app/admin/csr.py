@@ -79,6 +79,7 @@ class CSRConfig(Base):
             ("0", 'No - not an ITA Liaison'), ("1", 'Yes - an ITA Liaison')
         ]
     }
+
     form_excluded_columns = ('periods', 'qt_xn_csr_ind', 'receptionist_ind')
     form_create_rules = ('username', 'ita_designate', 'pesticide_designate',
                          'finance_designate', 'liaison_designate', 'csr_state', 'role', 'office','deleted', 'counter')
@@ -125,6 +126,9 @@ class CSRConfig(Base):
     def on_model_change(self, form, model, is_created):
 
         if is_created:
+
+            model.username = model.username.strip()
+
             if model.receptionist_ind is None:
                 model.receptionist_ind = 0
 
@@ -182,8 +186,16 @@ class CSRConfig(Base):
                            form_opts=form_opts,
                            return_url=return_url)
 
+class CSRConfigGA(CSRConfig):
+
+    form_excluded_columns = ('periods', 'qt_xn_csr_ind', 'receptionist_ind', 'deleted', 'finance_designate',
+                             'csr_state', 'counter')
+    form_create_rules = ('username', 'ita_designate', 'pesticide_designate',
+                         'finance_designate', 'liaison_designate', 'csr_state', 'role', 'office', 'counter')
+    form_edit_rules = ('username', 'ita_designate', 'pesticide_designate', 'liaison_designate', 'role', 'office')
 
 CSRModelView = CSRConfig(CSR, db.session)
+CSRGAModelView = CSRConfigGA(CSR, db.session, endpoint='csrga')
 
 def check_uservalues(updated_csr):
 

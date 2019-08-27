@@ -53,7 +53,7 @@ export const store = new Vuex.Store({
     },
     addModalSetup: null,
     addNextService: false,
-    adminNavigation: 'csr',
+    adminNavigation: '',
     appointmentsStateInfo: {
       channel_id: null,
       service_id: null,
@@ -209,7 +209,26 @@ export const store = new Vuex.Store({
         }
       }
     },
-    
+
+    admin_navigation_nonblank(state) {
+      if (state.adminNavigation != '') { return state.adminNavigation }
+      else {
+        //  Default navigation is to the GA Edit CSR screen.
+        let nav = 'csrga'
+
+        //  Calculate if it needs to be changed.
+        if (state.user && state.user.role && state.user.role.role_code == 'SUPPORT') {
+          nav = 'csr'
+        }
+        if (state.user && state.user.role && state.user.role.role_code == 'ANALYTICS') {
+          nav = 'service'
+        }
+
+        //  Return the right option
+        return nav
+      }
+    },
+
     invigilator_dropdown(state) {
       let invigilators = [
         {value: null, text: 'unassigned'},
