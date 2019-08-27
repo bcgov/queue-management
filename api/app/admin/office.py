@@ -28,6 +28,12 @@ class OfficeConfig(Base):
     def can_create(self):
         return current_user.role.role_code != 'GA'
 
+    def get_query(self):
+        if current_user.role.role_code == 'SUPPORT':
+            return self.session.query(self.model)
+        elif current_user.role.role_code == 'GA':
+            return self.session.query(self.model).filter_by(office_id=current_user.office_id)
+
     create_modal = False
     edit_modal = False
     can_delete = False
@@ -101,6 +107,14 @@ class OfficeConfig(Base):
     column_default_sort = 'office_name'
 
 class OfficeConfigGA(OfficeConfig):
+
+    #  Change what GA sees on the Office List view.
+    column_labels = {'quick_list': 'Quick List', 'back_office_list': 'Back Office List'}
+    column_list =   ['office_name',
+                     'quick_list',
+                     'back_office_list'
+                    ]
+
 
     #  Change what GAs are allowed to do from what SUPPORT can do.
     form_edit_rules = ('office_name',
