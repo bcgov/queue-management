@@ -32,6 +32,8 @@ import Appointments from './appointments/appointments'
 import ButtonsAppointments from './appointments/buttons-appointments'
 import Upload from './upload/upload'
 import ButtonsUpload from './upload/buttons-upload'
+import UploadFile from './upload/uploadfile'
+import ButtonsUploadFile from './upload/buttons-uploadfile'
 
 Vue.use(Router)
 
@@ -96,6 +98,14 @@ export default new Router({
           components: {
             default: Upload,
             buttons: ButtonsUpload
+          },
+          meta: { hideCitizenWaiting: false },
+        },
+        {
+          path: 'uploadfile',
+          components: {
+            default: UploadFile,
+            buttons: ButtonsUploadFile
           },
           meta: { hideCitizenWaiting: false },
         },

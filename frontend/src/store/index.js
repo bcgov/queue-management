@@ -28,6 +28,23 @@ Vue.use(Vuex)
 const DEFAULT_COUNTER_NAME = "Counter";
 var _default_counter_id = null;
 
+// *******************  Start of upload code here *****************
+// var express = require('express');
+//
+// var app = express();
+//
+// app.post('/upload', (req, res) => {
+//
+//     console.log("==>  In the receive routine from the front end")
+//
+// });
+//
+// var server = app.listen(3000,() => {
+//     console.log('port used ', server.address().port);
+// });
+//
+// ***********************  End of code used here ****************
+
 export const store = new Vuex.Store({
   modules: {
     addExamModule, appointmentsModule,

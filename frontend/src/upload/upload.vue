@@ -108,7 +108,16 @@
           //   });
 
           // Post the data to the front end.
-          axios.post("http://localhost:3000/uploadfile", formData, contenttype)
+          // axios.post("http://localhost:3000/uploadfile", formData, contenttype)
+          //   .then(function() {
+          //     console.log("Success!");
+          //   })
+          //   .catch(function() {
+          //     console.log("Failure");
+          //   });
+
+          // Get the data to the front end.
+          axios.get("/uploadfile/", formData, contenttype)
             .then(function() {
               console.log("Success!");
             })
