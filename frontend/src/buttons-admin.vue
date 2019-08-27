@@ -29,7 +29,7 @@
       </div>
     </template>
     <template v-else>
-      <span style="font-size: 1.4rem; font-weight: 600"> Editing: {{currentOption}}</span>
+      <span style="font-size: 1.4rem; font-weight: 600"> Editing: {{currentName}}</span>
     </template>
   </b-form>
 </template>
@@ -68,6 +68,14 @@
       ...mapState(['user', 'adminNavigation']),
       currentOption() {
         return this.admin_navigation_nonblank
+      },
+      currentName() {
+        if (this.user && this.user.role && this.user.role.role_code === 'ANALYTICS') {
+          return 'Provided Services'
+        }
+        else {
+          return 'CSRs'
+        }
       }
     },
     methods: {
