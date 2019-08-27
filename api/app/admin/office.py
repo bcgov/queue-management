@@ -24,6 +24,10 @@ class OfficeConfig(Base):
     def is_accessible(self):
         return current_user.is_authenticated and current_user.role.role_code in self.roles_allowed
 
+    @property
+    def can_create(self):
+        return current_user.role.role_code != 'GA'
+
     create_modal = False
     edit_modal = False
     can_delete = False

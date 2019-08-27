@@ -45,7 +45,7 @@
         optionGA: 'csrga',
         options: [
           {value: 'csr', text: 'CSRs'},
-          {value: 'office', text: 'ServiceBC Offices'},
+          {value: 'office', text: 'Offices'},
           {value: 'channel', text: 'Delivery Channels'},
           {value: 'role', text: 'User roles'},
           {value: 'service', text: 'Provided Services'},
@@ -59,7 +59,7 @@
           {value: 'csrga', text: 'CSRs'},
           {value: 'invigilator', text: 'Invigilators'},
           {value: 'room', text: 'Rooms'},
-          {value: 'officega', text: 'ServiceBC Offices'}
+          {value: 'officega', text: 'Offices'}
         ]
       }
     },
