@@ -266,7 +266,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "//  Get the max response time allowed.\r\nvar response_max = JSON.parse(globals.response_max);\r\npm.test('Response time less than ' + response_max.toString() + 'ms', function(){\r\n    pm.expect(pm.response.responseTime).to.be.below(response_max);\r\n});\r\n\r\npm.test(\"Response code for request is 200\", function(){\r\n    pm.response.to.have.status(200);\r\n});\r\npm.test('Response header should have Content-Type of application/json', function() {\r\n    pm.response.to.have.header('content-type', 'application/json');\r\n});\r\npm.test('Response body be in JSON format', function() {\r\n    pm.response.to.be.json; \r\n});"
+							"raw": "//  If no maximum response defined, set a default.\r\nresponse_max = 0;\r\nif (globals.response_max) {\r\n    response_max = JSON.parse(globals.response_max);\r\n}\r\nelse {\r\n    response_max = 1509;\r\n    pm.globals.set(\"response_max\", JSON.stringify(response_max));\r\n};\r\n\r\n//  Get the max response time allowed.\r\npm.test('Response time less than ' + response_max.toString() + 'ms', function(){\r\n    pm.expect(pm.response.responseTime).to.be.below(response_max);\r\n});\r\n"
 						},
 						"url": {
 							"raw": "https://postman-echo.com/post",
