@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "426762d0-830f-492b-ad61-537d08019856",
-		"name": "Queue-Management API Tests",
+		"name": "Queue Management API Tests",
 		"description": "Test the back end APIs",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -266,7 +266,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "//  Test the authenticate response.\ndescribe('Basic response tests', function() {\n    it('Response time should be below 1500ms', function() {\n        pm.response.responseTime.should.be.below(1500);\n    });\n    it('Response statusCode should be 200 OK', function() {\n        response.should.have.status(200);\n    });\n    it('Response header should have Content-Type of application/json', function() {\n        response.should.have.header('content-type', 'application/json');\n    });\n    it('Response body be in JSON format', function() {\n        response.should.be.json; \n    });\n});\n"
+							"raw": "//  Get the max response time allowed.\r\nvar response_max = JSON.parse(globals.response_max);\r\npm.test('Response time less than ' + response_max.toString() + 'ms', function(){\r\n    pm.expect(pm.response.responseTime).to.be.below(response_max);\r\n});\r\n\r\npm.test(\"Response code for request is 200\", function(){\r\n    pm.response.to.have.status(200);\r\n});\r\npm.test('Response header should have Content-Type of application/json', function() {\r\n    pm.response.to.have.header('content-type', 'application/json');\r\n});\r\npm.test('Response body be in JSON format', function() {\r\n    pm.response.to.be.json; \r\n});"
 						},
 						"url": {
 							"raw": "https://postman-echo.com/post",
@@ -290,11 +290,11 @@
 							"listen": "test",
 							"script": {
 								"id": "f006b951-3205-4f21-a315-369f85591929",
-								"type": "text/javascript",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"complex_response_test\", jsonData.data);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -327,11 +327,11 @@
 							"listen": "test",
 							"script": {
 								"id": "382b7b65-d736-4a03-a44a-3891f33b617d",
-								"type": "text/javascript",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"create_response_test\", jsonData.data);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -377,7 +377,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "var schema = {\n    \"properties\" : {\n        \"start_time\" : {\n            \"type\" : \"string\"\n        },\n        \"citizen_name\" : {\n            \"type\" : [\"string\", \"null\"]\n        },\n        \"citizen_id\" : {\n            \"type\" : [\"number\", \"object\"]\n        },\n        \"qt_xn_citizen_ind\" : {\n            \"type\" : \"number\"\n        },\n        \"ticket_number\" : {\n            \"type\" : [\"string\", \"null\"]\n        },\n        \"service_reqs\" : {\n            \"type\" : \"array\"\n        },\n        \"office_id\" : {\n            \"type\" : [\"object\", \"number\"]\n        },\n        \"cs\" : {\n            \"type\" : \"object\"\n        },\n        \"citizen_comments\" : {\n            \"type\" : [\"string\", \"null\"]\n        },\n        \n    },\n    \"required\" : [\"start_time\", \"citizen_name\", \"citizen_id\",\n                  \"qt_xn_citizen_ind\", \"ticket_number\", \"service_reqs\",\n                  \"office_id\", \"cs\", \"citizen_comments\"]\n};\n\n//  Declare, initialize variables.\nvar allElements = null;\nconsole.log(\"==> In citizen response test\");\n\nif (jsonData.hasOwnProperty(\"citizens\")) {\n\tallElements = jsonData.citizens;\n\tconsole.log(\"    --> has property citizens\");\n\tconsole.log(\"    --> citizens is\");\n\tconsole.log(allElements);\n};\n\nif (jsonData.hasOwnProperty(\"citizen\")) {\n\tconsole.log(\"    --> has property citizen\");\n\tconsole.log(\"    --> citizen is\");\n\tconsole.log(allElements);\n\tallElements = [];\n\tallElements.push(jsonData.citizen);\n};\n\nvar elementCount = 0;\n\n//  If there are some citizens, proceed with tests.\nif (allElements !== null) {\n\n    //  Loop to validate schema of each channel, create list of citizen ids.\n    allElements.forEach(function(element) {\n        elementCount ++;\n        var testTitle = \"Citizen (\" + elementCount + \"): \" + element.citizen_id + \" - \";\n        tests[testTitle + \"conforms to schema\"] = tv4.validate(element, schema);\n\n        //  Test the authenticate response.\n        describe(\"--> \" + testTitle + \"fields have valid values\", function() {\n            it('qt_xn_citizen_ind must be 0 or 1', function() {\n                element.qt_xn_citizen_ind.should.be.within(0,1);\n            });\n        });\n    });\n};"
+							"raw": "var schema = {\n    \"properties\" : {\n        \"start_time\" : {\n            \"type\" : \"string\"\n        },\n        \"citizen_name\" : {\n            \"type\" : [\"string\", \"null\"]\n        },\n        \"citizen_id\" : {\n            \"type\" : [\"number\", \"object\"]\n        },\n        \"qt_xn_citizen_ind\" : {\n            \"type\" : \"number\"\n        },\n        \"ticket_number\" : {\n            \"type\" : [\"string\", \"null\"]\n        },\n        \"service_reqs\" : {\n            \"type\" : \"array\"\n        },\n        \"office_id\" : {\n            \"type\" : [\"object\", \"number\"]\n        },\n        \"cs\" : {\n            \"type\" : \"object\"\n        },\n        \"citizen_comments\" : {\n            \"type\" : [\"string\", \"null\"]\n        },\n        \n    },\n    \"required\" : [\"start_time\", \"citizen_name\", \"citizen_id\",\n                  \"qt_xn_citizen_ind\", \"ticket_number\", \"service_reqs\",\n                  \"office_id\", \"cs\", \"citizen_comments\"]\n};\n\n//  Declare, initialize variables.\nvar allElements = null;\n\nif (jsonData.hasOwnProperty(\"citizens\")) {\n\tallElements = jsonData.citizens;\n};\n\nif (jsonData.hasOwnProperty(\"citizen\")) {\n\tallElements = [];\n\tallElements.push(jsonData.citizen);\n};\n\nvar elementCount = 0;\n\n//  If there are some citizens, proceed with tests.\nif (allElements !== null) {\n\n    //  Loop to validate schema of each channel, create list of citizen ids.\n    allElements.forEach(function(element) {\n        elementCount ++;\n        var testTitle = \"Citizen (\" + elementCount + \"): \" + element.citizen_id + \" - \";\n        tests[testTitle + \"conforms to schema\"] = tv4.validate(element, schema);\n\n        //  Test the authenticate response.\n        describe(\"--> \" + testTitle + \"fields have valid values\", function() {\n            it('qt_xn_citizen_ind must be 0 or 1', function() {\n                element.qt_xn_citizen_ind.should.be.within(0,1);\n            });\n        });\n    });\n};"
 						},
 						"url": {
 							"raw": "https://postman-echo.com/post",
@@ -401,11 +401,11 @@
 							"listen": "test",
 							"script": {
 								"id": "0e6c4264-28b3-4a49-b6bb-1199aef2cb13",
-								"type": "text/javascript",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"service_response_test\", jsonData.data);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -438,11 +438,11 @@
 							"listen": "test",
 							"script": {
 								"id": "8856712d-73ca-4172-89ba-590e8b015c6b",
-								"type": "text/javascript",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"get_active_citizens_test\", jsonData.data);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -972,6 +972,203 @@
 							]
 						},
 						"description": "Get a list of clients in the queue"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Check counters",
+			"item": [
+				{
+					"name": "Store CSR and Office Info",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c34723d3-c0d1-4504-97a2-373088309a5b",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "e77f0ca3-62cf-49ba-8e17-67a16e8f8a5f",
+								"exec": [
+									"// Define the JSON Schema expected in response",
+									"var CSRSSchema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"csr_id\": {\"type\": \"number\"},",
+									"        \"csr_state\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {",
+									"                \"csr_state_desc\": {\"type\": \"string\"},",
+									"                \"csr_state_id\": {\"type\": \"number\"},",
+									"                \"csr_state_name\": {\"type\": \"string\"}",
+									"            },",
+									"            \"required\": [\"csr_state_desc\", \"csr_state_id\", \"csr_state_name\"]",
+									"        },",
+									"        \"csr_state_id\": {\"type\": \"number\"},",
+									"        \"deleted\": {},",
+									"        \"finance_designate\": {\"type\": \"number\"},",
+									"        \"ita_designate\": {\"type\": \"number\"},",
+									"        \"liaison_designate\": {\"type\": \"number\"},",
+									"        \"office\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {",
+									"                \"appointments_enabled_ind\": {\"type\": \"number\"},",
+									"                \"exams_enabled_ind\": {\"type\": \"number\"},",
+									"                \"office_id\": {\"type\": \"number\"},",
+									"                \"office_name\": {\"type\": \"string\"},",
+									"                \"office_number\": {\"type\": \"number\"},",
+									"                \"sb\":{",
+									"                    \"type\": \"object\",",
+									"                    \"properties\": {",
+									"                        \"sb_id\": {\"type\": \"number\"},",
+									"                        \"sb_type\": {\"type\": \"string\"}",
+									"                    },",
+									"                    \"required\": [\"sb_id\", \"sb_type\"]",
+									"                }",
+									"            },",
+									"            \"required\": [\"appointments_enabled_ind\", \"exams_enabled_ind\", \"office_id\", \"office_name\", \"office_number\", \"sb\"]",
+									"        },",
+									"        \"office_name\": {\"type\": \"string\"},",
+									"        \"pesticide_designate\": {\"type\": \"number\"},",
+									"        \"qt_xn_csr_ind\": {\"type\": \"number\"},",
+									"        \"receptionist_ind\": {\"type\": \"number\"},",
+									"        \"role\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {",
+									"                \"role_code\": {\"type\": \"string\"},",
+									"                \"role_desc\": {\"type\": \"string\"},",
+									"                \"role_id\": {\"type\": \"number\"}",
+									"            },",
+									"            \"required\": [\"role_code\", \"role_desc\", \"role_id\"]",
+									"        },",
+									"        \"role_id\": {\"type\": \"number\"},",
+									"        \"username\": {\"type\": \"string\"}",
+									"    },",
+									"    \"individual_exams\": {\"type\": \"number\"},",
+									"    \"group_exams\": {\"type\": \"number\"},",
+									"    \"required\": [\"csr\", \"individual_exams\", \"group_exams\"]",
+									"};",
+									"",
+									"//  Run basic response tests.",
+									"eval(environment.basic_response_test);",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"pm.test(\"Validate Response CSRs Schema\", function(){",
+									"    pm.expect(tv4.validate(jsonData, CSRSSchema)).to.be.true;",
+									"});",
+									"",
+									"//  Make sure that jsonData has an csr property.",
+									"pm.test(\"Response should have csr property\", function(){",
+									"    pm.expect(jsonData.hasOwnProperty(\"csr\")).to.be.true;",
+									"});",
+									"",
+									"var csr = 0;",
+									"var office = 0;",
+									"var counters = 0;",
+									"var counter_text = \"Counter\";",
+									"var counter_id = 0;",
+									"var qtxn_text = \"Quick Trans\";",
+									"var qtxn_id = 0;",
+									"",
+									"if (jsonData.hasOwnProperty(\"csr\")) {",
+									"\tcurrentOfficeId = jsonData.csr.office_id;",
+									"\tcurrentOfficeNumber = jsonData.csr.office.office_number;",
+									"    postman.setEnvironmentVariable(\"current_office_id\", currentOfficeId);",
+									"    postman.setEnvironmentVariable(\"current_office_number\", currentOfficeNumber);",
+									"    postman.setEnvironmentVariable(\"current_csr_id\", jsonData.csr.csr_id);",
+									"    ",
+									"    csr = jsonData.csr;",
+									"    counter_id = 0;",
+									"    qtxn_id = 0;",
+									"",
+									"    //  Make sure that jsonData has an booking property.",
+									"    pm.test(\"CSR should have office property\", function(){",
+									"        pm.expect(csr.hasOwnProperty(\"office\")).to.be.true;",
+									"    });",
+									"    ",
+									"    //  Make sure office has counter property.",
+									"    if (csr.hasOwnProperty(\"office\")) {",
+									"        office = csr.office;",
+									"        ",
+									"        //  Make sure that jsonData has an booking property.",
+									"        pm.test(\"Office should have counters property\", function(){",
+									"            pm.expect(office.hasOwnProperty(\"counters\")).to.be.true;",
+									"        });",
+									"",
+									"        //  Make sure office has counter property.",
+									"        if (office.hasOwnProperty(\"counters\")) {",
+									"            counters = office.counters;",
+									"            ",
+									"            //  Search for Counter and Quick Trans counters",
+									"            counters.forEach(function(counter) {",
+									"                if (counter.counter_name === counter_text) {",
+									"                    counter_id = counter.counter_id;",
+									"                }",
+									"                if (counter.counter_name === qtxn_text) {",
+									"                    qtxn_id = counter.counter_id;",
+									"                }",
+									"            });",
+									"            ",
+									"            //  Make sure you found the right IDs.",
+									"            pm.test(\"Counter ID (\" + counter_id.toString() + \") should not be 0\", function(){",
+									"                pm.expect(counter_id).to.not.be.eql(0);",
+									"            });",
+									"            pm.test(\"Quick Transaction ID (\" + qtxn_id.toString() + \") should not be 0\", function(){",
+									"                pm.expect(qtxn_id).to.not.be.eql(0);",
+									"            });",
+									"            ",
+									"            //  Store the ids for future use.",
+									"            // postman.setEnvironmentVariable(\"counter_id\", counter_id);",
+									"            // postman.setEnvironmentVariable(\"qtxn_id\", qtxn_id);",
+									"            postman.setEnvironmentVariable(\"counter_id\", JSON.stringify(counter_id.toString()));",
+									"            postman.setEnvironmentVariable(\"qtxn_id\", JSON.stringify(qtxn_id.toString()));",
+									"        }",
+									"",
+									"        ",
+									"    }",
+									"",
+									"};",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}csrs/me/",
+							"host": [
+								"{{url}}csrs"
+							],
+							"path": [
+								"me",
+								""
+							]
+						}
 					},
 					"response": []
 				}
@@ -6084,7 +6281,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"citizen_name\" : {{citizen_name}},\n    \"citizen_comments\" : {{citizen_comment}},\n    \"counter_id\": 2\n}"
+							"raw": "{\n\t\"citizen_name\" : {{citizen_name}},\n    \"citizen_comments\" : {{citizen_comment}},\n    \"counter_id\": {{counter_id}}\n}"
 						},
 						"url": {
 							"raw": "{{url}}citizens/{{first_client}}/",
@@ -6608,7 +6805,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"citizen_name\" : {{citizen_name_quick}},\n    \"citizen_comments\" : {{citizen_comment_quick}},\n    \"qt_xn_citizen_ind\" : 1,\n    \"counter_id\": 1\n}"
+							"raw": "{\n\t\"citizen_name\" : {{citizen_name_quick}},\n    \"citizen_comments\" : {{citizen_comment_quick}},\n    \"qt_xn_citizen_ind\" : 1,\n    \"counter_id\": {{qtxn_id}}\n}"
 						},
 						"url": {
 							"raw": "{{url}}citizens/{{second_client}}/",
@@ -7020,6 +7217,128 @@
 					"response": []
 				},
 				{
+					"name": "Set CSR to QTxn",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "070b3e97-88a9-4e82-ae4e-cf476625b4b9",
+								"exec": [
+									"//  Ensure the client is logged in.",
+									"eval(environment.auth_script);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "09e9a82d-d782-4916-b84d-970d41f0e231",
+								"exec": [
+									"// Define the JSON Schema expected in response",
+									"var CSRSSchema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"csr_id\": {\"type\": \"number\"},",
+									"        \"csr_state\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {",
+									"                \"csr_state_desc\": {\"type\": \"string\"},",
+									"                \"csr_state_id\": {\"type\": \"number\"},",
+									"                \"csr_state_name\": {\"type\": \"string\"}",
+									"            },",
+									"            \"required\": [\"csr_state_desc\", \"csr_state_id\", \"csr_state_name\"]",
+									"        },",
+									"        \"csr_state_id\": {\"type\": \"number\"},",
+									"        \"deleted\": {},",
+									"        \"finance_designate\": {\"type\": \"number\"},",
+									"        \"ita_designate\": {\"type\": \"number\"},",
+									"        \"liaison_designate\": {\"type\": \"number\"},",
+									"        \"office\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {",
+									"                \"appointments_enabled_ind\": {\"type\": \"number\"},",
+									"                \"exams_enabled_ind\": {\"type\": \"number\"},",
+									"                \"office_id\": {\"type\": \"number\"},",
+									"                \"office_name\": {\"type\": \"string\"},",
+									"                \"office_number\": {\"type\": \"number\"},",
+									"                \"sb\":{",
+									"                    \"type\": \"object\",",
+									"                    \"properties\": {",
+									"                        \"sb_id\": {\"type\": \"number\"},",
+									"                        \"sb_type\": {\"type\": \"string\"}",
+									"                    },",
+									"                    \"required\": [\"sb_id\", \"sb_type\"]",
+									"                }",
+									"            },",
+									"            \"required\": [\"appointments_enabled_ind\", \"exams_enabled_ind\", \"office_id\", \"office_name\", \"office_number\", \"sb\"]",
+									"        },",
+									"        \"pesticide_designate\": {\"type\": \"number\"},",
+									"        \"qt_xn_csr_ind\": {\"type\": \"number\"},",
+									"        \"receptionist_ind\": {\"type\": \"number\"},",
+									"        \"role\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {",
+									"                \"role_code\": {\"type\": \"string\"},",
+									"                \"role_desc\": {\"type\": \"string\"},",
+									"                \"role_id\": {\"type\": \"number\"}",
+									"            },",
+									"            \"required\": [\"role_code\", \"role_desc\", \"role_id\"]",
+									"        },",
+									"        \"role_id\": {\"type\": \"number\"},",
+									"        \"username\": {\"type\": \"string\"}",
+									"    },",
+									"    \"required\": [\"csr\"]",
+									"};",
+									"",
+									"//  Run basic response tests.",
+									"eval(environment.basic_response_test);",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"pm.test(\"Validate Response CSRs Schema\", function(){",
+									"    pm.expect(tv4.validate(jsonData, CSRSSchema)).to.be.true;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"counter_id\": {{qtxn_id}}\n}"
+						},
+						"url": {
+							"raw": "{{url}}csrs/{{current_csr_id}}/",
+							"host": [
+								"{{url}}csrs"
+							],
+							"path": [
+								"{{current_csr_id}}",
+								""
+							]
+						},
+						"description": "Get a list of clients in the queue"
+					},
+					"response": []
+				},
+				{
 					"name": "Invite next citizen - should be second one",
 					"event": [
 						{
@@ -7135,14 +7454,14 @@
 								"value": "Bearer {{token}}"
 							},
 							{
-								"key": "",
-								"value": "",
+								"key": "Content-Type",
+								"value": "application/json",
 								"disabled": true
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"counter_id\":1\n}"
+							"raw": ""
 						},
 						"url": {
 							"raw": "{{url}}citizens/invite/",
@@ -7971,7 +8290,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"citizen_name\" : {{citizen_name_quick}},\n    \"citizen_comments\" : {{citizen_comment_quick}},\n    \"qt_xn_citizen_ind\" : 1,\n    \"counter_id\": 1\n}"
+							"raw": "{\n\t\"citizen_name\" : {{citizen_name_quick}},\n    \"citizen_comments\" : {{citizen_comment_quick}},\n    \"qt_xn_citizen_ind\" : 1,\n    \"counter_id\": {{qtxn_id}}\n}"
 						},
 						"url": {
 							"raw": "{{url}}citizens/{{first_client}}/",
@@ -8494,7 +8813,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"citizen_name\" : {{citizen_name}},\n    \"citizen_comments\" : {{citizen_comment}},\n    \"counter_id\": 2\n}"
+							"raw": "{\n\t\"citizen_name\" : {{citizen_name}},\n    \"citizen_comments\" : {{citizen_comment}},\n    \"counter_id\": {{counter_id}}\n}"
 						},
 						"url": {
 							"raw": "{{url}}citizens/{{second_client}}/",
@@ -8906,25 +9225,146 @@
 					"response": []
 				},
 				{
+					"name": "Set CSR to Counter",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "070b3e97-88a9-4e82-ae4e-cf476625b4b9",
+								"exec": [
+									"//  Ensure the client is logged in.",
+									"eval(environment.auth_script);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "09e9a82d-d782-4916-b84d-970d41f0e231",
+								"exec": [
+									"// Define the JSON Schema expected in response",
+									"var CSRSSchema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"csr_id\": {\"type\": \"number\"},",
+									"        \"csr_state\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {",
+									"                \"csr_state_desc\": {\"type\": \"string\"},",
+									"                \"csr_state_id\": {\"type\": \"number\"},",
+									"                \"csr_state_name\": {\"type\": \"string\"}",
+									"            },",
+									"            \"required\": [\"csr_state_desc\", \"csr_state_id\", \"csr_state_name\"]",
+									"        },",
+									"        \"csr_state_id\": {\"type\": \"number\"},",
+									"        \"deleted\": {},",
+									"        \"finance_designate\": {\"type\": \"number\"},",
+									"        \"ita_designate\": {\"type\": \"number\"},",
+									"        \"liaison_designate\": {\"type\": \"number\"},",
+									"        \"office\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {",
+									"                \"appointments_enabled_ind\": {\"type\": \"number\"},",
+									"                \"exams_enabled_ind\": {\"type\": \"number\"},",
+									"                \"office_id\": {\"type\": \"number\"},",
+									"                \"office_name\": {\"type\": \"string\"},",
+									"                \"office_number\": {\"type\": \"number\"},",
+									"                \"sb\":{",
+									"                    \"type\": \"object\",",
+									"                    \"properties\": {",
+									"                        \"sb_id\": {\"type\": \"number\"},",
+									"                        \"sb_type\": {\"type\": \"string\"}",
+									"                    },",
+									"                    \"required\": [\"sb_id\", \"sb_type\"]",
+									"                }",
+									"            },",
+									"            \"required\": [\"appointments_enabled_ind\", \"exams_enabled_ind\", \"office_id\", \"office_name\", \"office_number\", \"sb\"]",
+									"        },",
+									"        \"pesticide_designate\": {\"type\": \"number\"},",
+									"        \"qt_xn_csr_ind\": {\"type\": \"number\"},",
+									"        \"receptionist_ind\": {\"type\": \"number\"},",
+									"        \"role\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {",
+									"                \"role_code\": {\"type\": \"string\"},",
+									"                \"role_desc\": {\"type\": \"string\"},",
+									"                \"role_id\": {\"type\": \"number\"}",
+									"            },",
+									"            \"required\": [\"role_code\", \"role_desc\", \"role_id\"]",
+									"        },",
+									"        \"role_id\": {\"type\": \"number\"},",
+									"        \"username\": {\"type\": \"string\"}",
+									"    },",
+									"    \"required\": [\"csr\"]",
+									"};",
+									"",
+									"//  Run basic response tests.",
+									"eval(environment.basic_response_test);",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"pm.test(\"Validate Response CSRs Schema\", function(){",
+									"    pm.expect(tv4.validate(jsonData, CSRSSchema)).to.be.true;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"counter_id\": {{counter_id}}\n}"
+						},
+						"url": {
+							"raw": "{{url}}csrs/{{current_csr_id}}/",
+							"host": [
+								"{{url}}csrs"
+							],
+							"path": [
+								"{{current_csr_id}}",
+								""
+							]
+						},
+						"description": "Get a list of clients in the queue"
+					},
+					"response": []
+				},
+				{
 					"name": "Invite next citizen - should be second one",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
 								"id": "becda71c-71d6-4d2f-bad5-1a7a17da6128",
-								"type": "text/javascript",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
 								"id": "cfcc38e7-765f-48aa-8600-159bbeda4994",
-								"type": "text/javascript",
 								"exec": [
 									"//  Install postmanBDD, json-bigint parse and stringify.",
 									"eval(globals.postmanBDD);",
@@ -9009,7 +9449,8 @@
 									"//  Store the ID of the citizen just invited.",
 									"postman.setEnvironmentVariable(\"current_client\", JSON.stringify(currentCitizenId));",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -9021,8 +9462,8 @@
 								"value": "Bearer {{token_nonqtxn}}"
 							},
 							{
-								"key": "",
-								"value": "",
+								"key": "Content-Type",
+								"value": "application/json",
 								"disabled": true
 							}
 						],

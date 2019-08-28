@@ -56,5 +56,5 @@ class Services(Resource):
         # Purge cache of old CSR record so the new one can be fetched by the next request for it.
         CSR.delete_user_cache(g.oidc_token_info['username'])
 
-        return {'service_request': result.data,
+        return {'csr': result.data,
                 'errors': result.errors}, 200
