@@ -18,6 +18,7 @@ from qsystem import api, oidc
 from app.models.theq import Service
 from sqlalchemy import exc
 from app.schemas.theq import ServiceSchema
+from requests_toolbelt.multipart import decoder
 
 
 @api.route("/upload/", methods=["POST"])
@@ -25,3 +26,4 @@ class Categories(Resource):
 
     def post(self):
         print("==> In the /upload/ python method")
+

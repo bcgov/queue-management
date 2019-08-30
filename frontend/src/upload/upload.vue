@@ -89,7 +89,7 @@
           alert("No files to send.  Select something.")
         }
         else {
-          alert("Trying to send files");
+          // alert("Trying to send files");
           let formData = new FormData();
           formData.append("file", this.file);
           var contenttype = {
@@ -99,13 +99,13 @@
           };
 
           // Post the data to the back end.
-          // axios.post("http://localhost:5000/api/v1/upload/", formData, contenttype)
-          //   .then(function() {
-          //     console.log("Success!");
-          //   })
-          //   .catch(function() {
-          //     console.log("Failure");
-          //   });
+          axios.post("http://localhost:5000/api/v1/upload/", formData, contenttype)
+            .then(function() {
+              console.log("Success!");
+            })
+            .catch(function() {
+              console.log("Failure");
+            });
 
           // Post the data to the front end.
           // axios.post("http://localhost:3000/uploadfile", formData, contenttype)
@@ -116,14 +116,14 @@
           //     console.log("Failure");
           //   });
 
-          // Get the data to the front end.
-          axios.get("/uploadfile/", formData, contenttype)
-            .then(function() {
-              console.log("Success!");
-            })
-            .catch(function() {
-              console.log("Failure");
-            });
+          // // Get the data to the front end.
+          // axios.get("/uploadfile/", formData, contenttype)
+          //   .then(function() {
+          //     console.log("Success!");
+          //   })
+          //   .catch(function() {
+          //     console.log("Failure");
+          //   });
         }
       },
       handleFileUpload() {
