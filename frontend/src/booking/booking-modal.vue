@@ -4,7 +4,7 @@
       <div style="display: flex; justify-content: space-between">
         <div style="font-weight: 600; font-size: 1.3rem;">
           {{ formStep === 1 ?  'Confirm Booking' : ''}}
-          {{ formStep === 2 ? 'Assign Imvigilator' : '' }}
+          {{ formStep === 2 ? 'Assign Invigilator' : '' }}
         </div>
         <div>
           <button class="btn btn-link"

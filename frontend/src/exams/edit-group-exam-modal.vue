@@ -106,22 +106,6 @@
                   disabled>
           Add Invigilators
         </b-button>
-        <!--
-        <b-button v-if="this.invigilatorBoolean && this.currentInvigilatorList.length > 0"
-                  v-b-toggle.collapse-invigilators
-                  variant="primary"
-                  style="width: 95%; margin-left: 10px;"
-                  @click="setShadowInvigilatorBoolean">
-          Change Invigilators
-        </b-button>
-        <b-button v-if="!this.invigilatorBoolean && this.currentInvigilatorList.length > 0"
-                  v-b-toggle.collapse-invigilators
-                  variant="primary"
-                  style="width: 95%; margin-left: 10px;"
-                  disabled>
-          Change Invigilators
-        </b-button>
-        -->
       </template>
       <template>
         <b-row style="display: inline-flex;" class="w-100 ml-0 mb-1">
@@ -191,7 +175,7 @@
       <b-collapse id="collapse-invigilators"
                   class="mt-2 mb-1 w-100">
         <label class="mb-1">Add Invigilators</label>
-        <b-form >
+        <b-form class="q-info-display-grid-container">
           <b-row>
             <b-col>
               <b-table selectable
@@ -200,7 +184,7 @@
                        :items="invigilator_multi_select"
                        responsive
                        selected-variant="success"
-                       style="height: 175px;"
+                       style="width: 250px;"
                        @row-selected="rowSelected"
                        bordered
                        striped>
@@ -342,9 +326,10 @@
                              @row-selected="rowSelectedShadow"
                              responsive
                              selected-variant="success"
-                             style="height: 150px;"
+                             style="height: 150px; width: 250px;"
                              bordered
-                             striped>
+                             striped
+                             class="pl-2">
                       <template slot="selected" slot-scope=" { rowSelected } ">
                         <span v-if="rowSelected">✔</span>
                       </template>

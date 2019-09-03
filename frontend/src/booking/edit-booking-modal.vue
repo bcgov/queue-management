@@ -1,7 +1,6 @@
 <template>
   <b-modal v-model="modalVisible"
            :no-close-on-backdrop="true"
-           :no-close-on-esc="true"
            :no-enforce-focus="true"
            :lazy="true"
            :centered="confirm && !minimized"
@@ -195,8 +194,8 @@
             </template>
             <template v-else>
               <b-button v-b-toggle.collapse-1
-                      variant="primary"
-                      class="w-100 m-1">
+                        variant="primary"
+                        class="w-100 m-1">
                 Add Shadow Invigilator
               </b-button>
             </template>
@@ -214,7 +213,7 @@
                                @row-selected="rowSelectedShadow"
                                responsive
                                selected-variant="success"
-                               style="height: 100px;"
+                               style="height: 75px; width: 250px;"
                                bordered
                                striped>
                         <template slot="selected" slot-scope=" { rowSelected } ">
@@ -822,3 +821,9 @@
     }
   }
 </script>
+
+<style>
+  .table-responsive {
+    line-height: 5px;
+  }
+</style>
