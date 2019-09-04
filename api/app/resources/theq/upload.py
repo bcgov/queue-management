@@ -33,16 +33,10 @@ class Categories(Resource):
         fullpath = os.path.dirname(os.path.abspath(__file__))
         print("    --> Full path is: " + fullpath)
         end = fullpath.find("/api/")
-        uploadpath = fullpath[:end+4] + "/static" # /api/static/videos/
+        uploadpath = fullpath[:end+4] + "/videos" # /api/static/videos/
         print("    --> Upload path part 1 is: " + uploadpath)
 
         #  Make first part of the directory if it doesn't already exist.
-        if not os.path.isdir(uploadpath):
-            os.mkdir(uploadpath)
-
-        #  Make second part of the directory if it doesn't already exist.
-        uploadpath = uploadpath + "/videos"
-        print("    --> Upload path part 2 is: " + uploadpath)
         if not os.path.isdir(uploadpath):
             os.mkdir(uploadpath)
 
