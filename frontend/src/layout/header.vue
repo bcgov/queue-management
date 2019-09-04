@@ -51,14 +51,15 @@ export default {
     }
   },
   created() {
-    switch(window.location.host) {
-      case "localhost:8080":
+    let prefix = window.location.host.substring(0,4)
+    switch(prefix) {
+      case "loca":
+        this.navbarStyle.backgroundColor = 'grey'
+        break;
+      case "dev-":
         this.navbarStyle.backgroundColor = 'green'
         break;
-      case "dev-theq.pathfinder.gov.bc.ca":
-        this.navbarStyle.backgroundColor = 'green'
-        break;
-      case "test-theq.pathfinder.gov.bc.ca":
+      case "test":
         this.navbarStyle.backgroundColor = 'orange'
         break;
       default:
