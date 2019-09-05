@@ -36,6 +36,9 @@ class Categories(Resource):
         uploadpath = fullpath[:end+4] + "/videos" # /api/static/videos/
         print("    --> Upload path part 1 is: " + uploadpath)
 
+        #  NOTE:  Openshift path is /opt/app-root/src/videos  Need to fix this tomorrow
+        #  xxxxxx  Start here.
+
         #  Make first part of the directory if it doesn't already exist.
         if not os.path.isdir(uploadpath):
             os.mkdir(uploadpath)
