@@ -494,6 +494,42 @@ export const store = new Vuex.Store({
       })
     },
 
+    clickUploadFile(context, file) {
+      // alert("Trying to send files");
+      let formData = new FormData();
+      formData.append("file", file);
+      var contenttype = {
+        headers: {
+          "content-type" : "multipart/form-data"
+        }
+      };
+
+      // Post the data to the back end.
+      // axios.post("http://localhost:5000/api/v1/upload/", formData, contenttype)
+      Axios(context).post('/upload/', {})
+        .then(
+          resp => {
+            alert("All OK!!!");
+          },
+          error => {
+            alert("Ooops.  An upload error");
+          })
+        .catch(() => {
+          alert("An exception.")
+        })
+        .finally(() => {
+            alert("We're all done here.");
+          })
+
+      // axios.post("/upload/", formData, contenttype)
+      //   .then(function() {
+      //     console.log("Success!");
+      //   })
+      //   .catch(function() {
+      //     console.log("Failure");
+      //   });
+    },
+
     changeAdminView(context, view) {
       if (view !== null) {
         context.commit("setNavigation", view)

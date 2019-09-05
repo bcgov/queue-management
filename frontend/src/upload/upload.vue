@@ -10,7 +10,7 @@
     </label>
     {{fileName}}
     <br>
-    <button @click="clickSend">Send</button>
+    <button @click="uploadFile">Upload File</button>
     <br>
     <br>
     <br>
@@ -31,23 +31,18 @@
 
 <script>
 
-  import axios from 'axios'
-  // import express from 'express'
+  // import axios from 'axios'
+  // // import express from 'express'
+  //
+  // const Axios = axios.create({
+  //   baseURL: process.env.API_URL,
+  //   withCredentials: true,
+  //   headers: {
+  //     'Accept': 'application/json'
+  //   }
+  // });
 
-  const Axios = axios.create({
-    baseURL: process.env.API_URL,
-    withCredentials: true,
-    headers: {
-      'Accept': 'application/json'
-    }
-  });
-
-  // var express = require('express');
-  // let app = express();
-
-  // app.post('/upload', (req, res) => {
-  //   console.log("==> In the receive post part of the code")
-  // }
+  import { mapActions } from 'vuex'
 
   function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -83,41 +78,26 @@
       }
     },
     methods: {
-      clickSend() {
+      ...mapActions(['clickUploadFile']),
+      uploadFile() {
 
         if (this.filesCount == 0) {
           alert("No files to send.  Select something.")
         }
         else {
-          // alert("Trying to send files");
-          let formData = new FormData();
-          formData.append("file", this.file);
-          var contenttype = {
-            headers: {
-              "content-type" : "multipart/form-data"
-            }
-          };
-
-          // Post the data to the back end.
-          axios.post("http://localhost:5000/api/v1/upload/", formData, contenttype)
-            .then(function() {
-              console.log("Success!");
-            })
-            .catch(function() {
-              console.log("Failure");
-            });
-
-          // Post the data to the front end.
-          // axios.post("http://localhost:3000/uploadfile", formData, contenttype)
-          //   .then(function() {
-          //     console.log("Success!");
-          //   })
-          //   .catch(function() {
-          //     console.log("Failure");
-          //   });
-
-          // // Get the data to the front end.
-          // axios.get("/uploadfile/", formData, contenttype)
+          this.clickUploadFile(this.file);
+          // // alert("Trying to send files");
+          // let formData = new FormData();
+          // formData.append("file", this.file);
+          // var contenttype = {
+          //   headers: {
+          //     "content-type" : "multipart/form-data"
+          //   }
+          // };
+          //
+          // // Post the data to the back end.
+          // // axios.post("http://localhost:5000/api/v1/upload/", formData, contenttype)
+          // axios.post("/upload/", formData, contenttype)
           //   .then(function() {
           //     console.log("Success!");
           //   })
@@ -132,8 +112,6 @@
       }
     },
   }
-
-
 
 </script>
 
