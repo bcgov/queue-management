@@ -38,6 +38,8 @@ configure_app(application)
 db = SQLAlchemy(application)
 db.init_app(application)
 
+query_limit = application.config['DB_LONG_RUNNING_QUERY']
+
 #  See whether options took.
 print_flag = application.config['PRINT_ENABLE']
 if print_flag:
@@ -272,7 +274,7 @@ def after_cursor_execute(conn, cursor, statement,
                         parameters, context, executemany):
     total = time.time() - conn.info['query_start_time'].pop(-1)
 
-    if total > 0.2:
+    if total > query_limit:
         logger.debug("Long running Query (%s s): %s" % (total, statement))
         logger.debug("Parameters: %s", parameters)
 
