@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 
-from app.models.theq import Office
+from app.models.theq import Office, Service
 from .base import Base
 from flask_login import current_user
 from qsystem import db
@@ -86,6 +86,16 @@ class OfficeConfig(Base):
                        'back_office_list',
                        'timezone'
                        )
+
+    form_args = {
+        'quick_list': {
+            'query_factory': lambda: db.session.query(Service).filter(Service.parent_id.isnot(None))
+        },
+        'back_office_list': {
+            'query_factory': lambda: db.session.query(Service).filter(Service.parent_id.isnot(None))
+        }
+    }
+
 
     column_labels = {'sb': 'Smartboard',
                      'timezone.timezone_name': 'Timezone Name',
