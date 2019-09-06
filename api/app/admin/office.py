@@ -16,7 +16,10 @@ limitations under the License.'''
 from app.models.theq import Office, Service
 from .base import Base
 from flask_login import current_user
+from flask import flash
+from flask_admin.babel import gettext
 from qsystem import db
+from sqlalchemy import and_
 
 class OfficeConfig(Base):
     roles_allowed = ['SUPPORT', 'GA']
@@ -89,10 +92,14 @@ class OfficeConfig(Base):
 
     form_args = {
         'quick_list': {
-            'query_factory': lambda: db.session.query(Service).filter(Service.parent_id.isnot(None))
+            'query_factory': lambda: db.session.query(Service) \
+                                               .filter(and_(Service.parent_id.isnot(None)), \
+                                                            Service.display_dashboard_ind == 1)
         },
         'back_office_list': {
-            'query_factory': lambda: db.session.query(Service).filter(Service.parent_id.isnot(None))
+            'query_factory': lambda: db.session.query(Service) \
+                                               .filter(and_(Service.parent_id.isnot(None)), \
+                                                            Service.display_dashboard_ind == 0)
         }
     }
 
@@ -115,6 +122,16 @@ class OfficeConfig(Base):
                             ]
 
     column_default_sort = 'office_name'
+
+    def on_model_change(self, form, model, is_created):
+        invalid = []
+        for service in model.quick_list:
+            if service not in model.services:
+                invalid.append(str(service))
+                model.quick_list.remove(service)
+        if len(invalid) != 0:
+            message = ", ".join(invalid)
+            flash(gettext("Services saved minus services not offered at this office: " + message), 'warning')
 
 class OfficeConfigGA(OfficeConfig):
 
