@@ -45,6 +45,7 @@ class ServiceRequestsList(Resource):
             print("==> No service_request parameter in POST /service_requests/")
             print("    --> CSR:       " + csr.username)
             print("    --> json_data: " + json.dumps(json_data))
+            return {"message": "No input data received for creating service request"}, 400
 
         try:
             service_request = self.service_request_schema.load(json_data['service_request']).data
@@ -60,6 +61,7 @@ class ServiceRequestsList(Resource):
             print("==> service_request is None in POST /service_requests/, error in schema.load")
             print("    --> CSR:       " + csr.username)
             print("    --> json_data: " + json.dumps(json_data['service_request']))
+            return {"message": "Service request is none trying to create service request"}, 400
 
         active_sr_state = SRState.get_state_by_name("Active")
         complete_sr_state = SRState.get_state_by_name("Complete")
@@ -79,12 +81,17 @@ class ServiceRequestsList(Resource):
             print("==> An exception getting service info")
             print("    --> CSR:       " + csr.username)
             print("    --> json_data: " + json.dumps(json_data['service_request']))
+            return {"error": "Could not find service for service_id: " + str(service_request.service_id)}, 400
 
         if citizen is None:
             return {"message": "No matching citizen found for citizen_id"}, 400
 
         if service is None:
             return {"message": "No matching service found for service_id"}, 400
+
+        if service.parent_id is None:
+            print("==> CSR has selected a category, rather than a service.  This should not be possible")
+            return {"message": "CSR has selected a category, rather than a service. Should not be possible"}, 400
 
         # Find the currently active service_request and close it (if it exists)
         current_sr_number = 0
