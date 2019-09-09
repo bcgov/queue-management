@@ -32,8 +32,8 @@ class Categories(Resource):
         #  Get the file name where to put the file.
         fullpath = os.path.dirname(os.path.abspath(__file__))
         print("    --> Full path is: " + fullpath)
-        end = fullpath.find("/api/")
-        uploadpath = fullpath[:end+4] + "/videos" # /api/static/videos/
+        end = fullpath.find("/app/")
+        uploadpath = fullpath[:end] + "/videos" # /api/static/videos/
         print("    --> Upload path part 1 is: " + uploadpath)
 
         #  NOTE:  Openshift path is /opt/app-root/src/videos  Need to fix this tomorrow
