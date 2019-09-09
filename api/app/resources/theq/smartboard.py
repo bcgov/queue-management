@@ -46,17 +46,25 @@ class Smartboard(Resource):
             for c in citizens:
                 active_service_request = c.get_active_service_request()
 
-                # Filter Back Office out of services
-                if active_service_request.service.parent.service_name == "Back Office":
-                    continue
+                #  Make sure a category, rather than a service, hasn't slipped in somehow.
+                if active_service_request.service.parent:
 
-                active_period = active_service_request.get_active_period()
-                period = self.period_schema.dump(active_period)
+                  # Filter Back Office out of services
+                  if active_service_request.service.parent.service_name == "Back Office":
+                      continue
 
-                citizens_waiting.append({
-                    "ticket_number": c.ticket_number,
-                    "active_period": period.data
-                })
+                  active_period = active_service_request.get_active_period()
+                  period = self.period_schema.dump(active_period)
+
+                  citizens_waiting.append({
+                      "ticket_number": c.ticket_number,
+                      "active_period": period.data
+                  })
+
+                else:
+                    #  Display error to console, no other action taken.
+                    print("==> Error in Smartboard: Citizen has no active service request. " \
+                            + "Possible cause, category, not service, selected.")
 
             return {
                 "office_type": office.sb.sb_type,
