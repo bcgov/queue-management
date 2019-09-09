@@ -50,6 +50,8 @@ class BaseConfig(object):
         amq_port=ACTIVE_MQ_PORT
     )
 
+    DB_LONG_RUNNING_QUERY = float(os.getenv("DATABASE_LONG_RUNNING_QUERY", '0.5'))
+
     DB_ENGINE = os.getenv('DATABASE_ENGINE', '')
     DB_USER = os.getenv('DATABASE_USERNAME', '')
     DB_PASSWORD = os.getenv('DATABASE_PASSWORD','')
