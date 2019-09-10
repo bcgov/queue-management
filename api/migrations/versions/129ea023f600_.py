@@ -35,9 +35,7 @@ def upgrade():
     op.add_column('invigilator', sa.Column('shadow_flag', sa.String(length=1), server_default='Y', nullable=True))
     op.alter_column('invigilator', 'shadow_flag', nullable=False)
     op.add_column('appointment', sa.Column('blackout_flag', sa.String(length=1), server_default='N', nullable=False))
-    op.alter_column('appointment', 'service_id',
-                    existing_type=sa.INTEGER(),
-                    nullable=True)
+    op.alter_column('appointment', 'service_id', existing_type=sa.INTEGER(), nullable=True)
     op.add_column('booking', sa.Column('blackout_flag', sa.String(length=1), server_default='N', nullable=False))
     op.add_column('booking', sa.Column('blackout_notes', sa.String(length=255), nullable=True))
     # ### end Alembic commands ###
@@ -53,8 +51,6 @@ def downgrade():
     op.drop_table('booking_invigilators')
     op.drop_column('booking', 'blackout_notes')
     op.drop_column('booking', 'blackout_flag')
-    op.alter_column('appointment', 'service_id',
-                    existing_type=sa.INTEGER(),
-                    nullable=False)
+    # op.alter_column('appointment', 'service_id', existing_type=sa.INTEGER(), nullable=False) TODO Add back if causing problems post downgrade
     op.drop_column('appointment', 'blackout_flag')
     # ### end Alembic commands ###

@@ -705,6 +705,7 @@ export const store = new Vuex.Store({
             booking.exam = context.state.exams.find(ex => ex.booking_id == b.booking_id) || false
             booking.booking_contact_information = b.booking_contact_information
             booking.fees = b.fees
+            booking.shadow_invigilator_id = b.shadow_invigilator_id
             booking.blackout_flag = b.blackout_flag
             booking.blackout_notes = b.blackout_notes
             calendarEvents.push(booking)

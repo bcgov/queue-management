@@ -99,13 +99,6 @@
                   @click="setShadowInvigilatorBoolean">
           Add Invigilators
         </b-button>
-        <b-button v-if="this.currentInvigilatorList.length == 0 && !this.groupInvigilatorBoolean"
-                  variant="primary"
-                  style="width: 95%; margin-left: 10px;"
-                  class="mb-0"
-                  disabled>
-          Add Invigilators
-        </b-button>
       </template>
       <template>
         <b-row style="display: inline-flex;" class="w-100 ml-0 mb-1">
@@ -165,7 +158,7 @@
                   </b-button>
                   <b-button class="ml-2 mt-1"
                             variant="primary"
-                            v-b-toggle.collapse-2>
+                            @click="closeRemoveInvigilator">
                     No
                   </b-button>
                 </b-row>
@@ -177,14 +170,14 @@
         <label class="mb-1">Add Invigilators</label>
         <b-form class="q-info-display-grid-container">
           <b-row>
-            <b-col>
+            <b-col cols="7">
               <b-table selectable
                        select-mode="multi"
                        :fields="fields"
                        :items="invigilator_multi_select"
                        responsive
                        selected-variant="success"
-                       style="width: 250px;"
+                       style="height: 110px; width: 250px;"
                        @row-selected="rowSelected"
                        bordered
                        striped>
@@ -193,7 +186,7 @@
                 </template>
               </b-table>
             </b-col>
-            <b-col>
+            <b-col cols="4">
               <b-row class="mb-2"
                      style="font-weight: bold;">
                 Required Invigilators: {{ Math.ceil(actionedExam.number_of_students / 24) }}
@@ -295,20 +288,11 @@
             </b-row>
           </template>
           <template v-else>
-            <b-button v-if="this.shadowInvigilatorBoolean"
-                      v-b-toggle.collapse-1
+            <b-button v-b-toggle.collapse-1
                       variant="primary"
                       class="mt-2"
                       style="width: 93%; margin-left: 15px;"
                       @click="setInvigilatorBoolean">
-              Add Shadow Invigilator
-            </b-button>
-            <b-button v-else-if="!this.shadowInvigilatorBoolean"
-                      v-b-toggle.collapse-1
-                      variant="primary"
-                      class="mt-2"
-                      style="width: 93%; margin-left: 15px;"
-                      disabled>
               Add Shadow Invigilator
             </b-button>
           </template>
@@ -318,7 +302,7 @@
               <label>Shadow Invigilators</label>
               <b-form>
                 <b-row>
-                  <b-col>
+                  <b-col cols="7">
                     <b-table selectable
                              select-mode="single"
                              :fields="shadowFields"
@@ -335,7 +319,7 @@
                       </template>
                     </b-table>
                   </b-col>
-                  <b-col>
+                  <b-col cols="4">
                     <b-row>
                       Shadow Invigilator Limit: 1
                     </b-row>
@@ -617,6 +601,20 @@
           }
         }
       },
+      hideCollapse(div_id){
+        if(document.getElementById(div_id)){
+          if(document.getElementById(div_id).classList.contains('show')){
+            this.$root.$emit('bv::toggle::collapse', div_id)
+          }
+        }
+      },
+      showCollapse(div_id){
+        if(document.getElementById(div_id)){
+          if(document.getElementById(div_id).style.display === 'none'){
+            this.$root.$emit('bv::toggle::collapse', div_id)
+          }
+        }
+      },
       checkInput(e) {
         let { name } = e.target
         let { value } = e.target
@@ -785,6 +783,11 @@
 
           putRequests.push({url:`/bookings/${this.itemCopy.booking.booking_id}/`, data: bookingChanges})
 
+          // Ensure that removing a shadow invigilator doesn't remove invigilators from booking
+          if(this.removeFlag && !this.removeCurrentInvigilatorFlag){
+            delete bookingChanges.invigilator_id
+          }
+
           if(this.removeFlag == true){
             putRequests.push({url:`/invigilator/${this.currentShadowInvigilator}/?add=False&subtract=True`})
             this.removeFlag = false
@@ -800,6 +803,15 @@
           examChanges['offsite_location'] = this.offsite_location
           putRequests.push({url:`/exams/${this.itemCopy.exam_id}/`, data: examChanges})
         }
+
+        // Ensure that if a user isn't removing either invigilator or shadow invigilator, and submitting a shadow
+        // Invigilator, that the submission doesn't remove invigilators from the booking
+        if(!this.removeFlag && !this.removeCurrentInvigilatorFlag && bookingChanges.shadow_invigilator_id && bookingChanges.invigilator_id){
+          if(bookingChanges.invigilator_id.length == 0){
+            delete bookingChanges.invigilator_id
+          }
+        }
+
         let promises = []
         putRequests.forEach( put => {
           promises.push(this.putRequest(put))
@@ -900,9 +912,15 @@
       },
       setInvigilatorBoolean(){
         this.invigilatorBoolean = !this.invigilatorBoolean
+        if(document.getElementById('collapse-invigilators').classList.contains('show')){
+          this.hideCollapse('collapse-invigilators')
+        }
       },
       setShadowInvigilatorBoolean(){
         this.shadowInvigilatorBoolean = !this.shadowInvigilatorBoolean
+        if(document.getElementById('collapse-1').classList.contains('show')){
+          this.hideCollapse('collapse-1')
+        }
       },
       setChangeShadowInvigilatorBoolean(){
         this.shadowInvigilatorBoolean = !this.shadowInvigilatorBoolean
@@ -933,6 +951,7 @@
          if (this.actionedExam && this.actionedExam.booking) {
           if (this.actionedExam.booking.shadow_invigilator_id !== e) {
             if (!this.editedFields.includes('shadow_invigilator')) {
+
               this.editedFields.push('shadow_invigilator')
             }
           }
@@ -950,9 +969,18 @@
             }
           }
         }
-        this.currentInvigilatorList = null
+        this.currentInvigilatorList = []
         this.submit()
-      }
+      },
+      closeRemoveInvigilator(){
+        if(document.getElementById('collapse-remove-invigilators')
+          && document.getElementById('collapse-remove-invigilators').classList.contains('show')){
+          this.$root.$emit('bv::toggle::collapse', 'collapse-remove-invigilators')
+        }
+        this.shadowInvigilatorBoolean = !this.shadowInvigilatorBoolean
+        this.changeInvigilatorState = !this.changeInvigilatorState
+        this.groupInvigilatorBoolean = !this.groupInvigilatorBoolean
+      },
     },
   }
 </script>

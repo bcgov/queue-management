@@ -46,7 +46,8 @@ class BookingPut(Resource):
 
         if booking.office_id == csr.office_id or csr.liaison_designate == 1:
 
-            booking.invigilators = []
+            if 'invigilator_id' in json_data:
+                booking.invigilators = []
 
             if type(i_id_list) == int:
 
