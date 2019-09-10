@@ -21,6 +21,7 @@ from app.schemas.theq import ServiceSchema
 from requests_toolbelt.multipart import decoder
 from flask import request
 import os
+from pprint import pprint
 
 
 @api.route("/upload/", methods=["POST"])
@@ -36,16 +37,16 @@ class Categories(Resource):
         uploadpath = fullpath[:end] + "/videos" # /api/static/videos/
         print("    --> Upload path part 1 is: " + uploadpath)
 
-        #  NOTE:  Openshift path is /opt/app-root/src/videos  Need to fix this tomorrow
-        #  xxxxxx  Start here.
-
         #  Make first part of the directory if it doesn't already exist.
         if not os.path.isdir(uploadpath):
             os.mkdir(uploadpath)
 
+        print("==> About to upload files:")
+        filenumber = 0
         for file in request.files.getlist("file"):
-            print(file.filename)
+            filenumber = filenumber + 1
+            print("    --> File number (" + str(filenumber) + "): " + file.filename)
             filename = file.filename
             destination = "/".join([uploadpath, filename])
-            print(destination)
+            print("        --> Destination: " + destination)
             file.save(destination)

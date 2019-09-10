@@ -4,7 +4,7 @@
     <br>
     <label class="btn-primary mr-1" id="myLabel">
       <!--<input type="file" name="myfile" id="myfile" accept="video/mp4" required><br>-->
-      <input type="file" name="myfile" id="myfile" ref="myfile" accept="video/mp4" required
+      <input type="file" name="myfile" id="myfile" ref="myfile" accept="video/mp4" required multiple
              @change="handleFileUpload($event)"><br>
       <span>Select Digital Video file to upload: </span>
     </label>
@@ -30,17 +30,6 @@
 </template>
 
 <script>
-
-  // import axios from 'axios'
-  // // import express from 'express'
-  //
-  // const Axios = axios.create({
-  //   baseURL: process.env.API_URL,
-  //   withCredentials: true,
-  //   headers: {
-  //     'Accept': 'application/json'
-  //   }
-  // });
 
   import { mapActions } from 'vuex'
 
@@ -86,24 +75,6 @@
         }
         else {
           this.clickUploadFile(this.file);
-          // // alert("Trying to send files");
-          // let formData = new FormData();
-          // formData.append("file", this.file);
-          // var contenttype = {
-          //   headers: {
-          //     "content-type" : "multipart/form-data"
-          //   }
-          // };
-          //
-          // // Post the data to the back end.
-          // // axios.post("http://localhost:5000/api/v1/upload/", formData, contenttype)
-          // axios.post("/upload/", formData, contenttype)
-          //   .then(function() {
-          //     console.log("Success!");
-          //   })
-          //   .catch(function() {
-          //     console.log("Failure");
-          //   });
         }
       },
       handleFileUpload() {

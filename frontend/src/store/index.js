@@ -496,6 +496,9 @@ export const store = new Vuex.Store({
 
     clickUploadFile(context, file) {
       // alert("Trying to send files");
+      console.log("==> About to send the index.js file below <=========================")
+      console.log(file)
+
       let formData = new FormData();
       formData.append("file", file);
       var contenttype = {
@@ -505,29 +508,20 @@ export const store = new Vuex.Store({
       };
 
       // Post the data to the back end.
-      // axios.post("http://localhost:5000/api/v1/upload/", formData, contenttype)
-      Axios(context).post('/upload/', {})
+      Axios(context).post('/upload/', formData, contenttype)
         .then(
           resp => {
-            alert("All OK!!!");
+            console.log("    --> Index.js upload all OK!!!");
           },
           error => {
-            alert("Ooops.  An upload error");
+            console.log("    --> Index.js Ooops.  An upload error");
           })
         .catch(() => {
-          alert("An exception.")
+          console.log("    --> Index.js an exception happened.")
         })
         .finally(() => {
-            alert("We're all done here.");
+            console.log("    --> Index.js is all done.");
           })
-
-      // axios.post("/upload/", formData, contenttype)
-      //   .then(function() {
-      //     console.log("Success!");
-      //   })
-      //   .catch(function() {
-      //     console.log("Failure");
-      //   });
     },
 
     changeAdminView(context, view) {
