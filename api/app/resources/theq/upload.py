@@ -27,6 +27,7 @@ from pprint import pprint
 @api.route("/upload/", methods=["POST"])
 class Categories(Resource):
 
+    @oidc.accept_token(require_token=True)
     def post(self):
         print("==> In the /upload/ python method")
 

@@ -219,6 +219,7 @@ import app.resources.theq.services
 import app.resources.theq.service_requests_list
 import app.resources.theq.service_requests_detail
 import app.resources.theq.smartboard
+import app.resources.theq.videofiles
 import app.resources.theq.websocket
 
 import app.resources.bookings.appointment.appointment_detail

@@ -28,23 +28,6 @@ Vue.use(Vuex)
 const DEFAULT_COUNTER_NAME = "Counter";
 var _default_counter_id = null;
 
-// *******************  Start of upload code here *****************
-// var express = require('express');
-//
-// var app = express();
-//
-// app.post('/upload', (req, res) => {
-//
-//     console.log("==>  In the receive routine from the front end")
-//
-// });
-//
-// var server = app.listen(3000,() => {
-//     console.log('port used ', server.address().port);
-// });
-//
-// ***********************  End of code used here ****************
-
 export const store = new Vuex.Store({
   modules: {
     addExamModule, appointmentsModule,
@@ -127,6 +110,7 @@ export const store = new Vuex.Store({
     },
     invigilators: [],
     isLoggedIn: false,
+    manifestdata: '',
     loginAlertMessage: '',
     loginDismissCount: 0,
     nonITAExam: false,
@@ -205,6 +189,7 @@ export const store = new Vuex.Store({
       receptionist_ind: null
     },
     userLoadingFail: false,
+    videofiles: []
   },
 
   getters: {
@@ -522,6 +507,22 @@ export const store = new Vuex.Store({
         .finally(() => {
             console.log("    --> Index.js is all done.");
           })
+    },
+
+    requestVideoFileInfo(context) {
+      // Get video file info from the back end.
+      Axios(context).get('/videofiles/')
+        .then (resp => {
+          let videofiles = resp.data.videofiles;
+          let manifestdata = resp.data.manifest;
+          context.commit('setVideoFiles', videofiles)
+          context.commit('setManifestData', manifestdata)
+        })
+        .catch(error => {
+          console.log('error in requestVideoFileInfo')
+          console.log(error.response)
+          console.log(error.message)
+        })
     },
 
     changeAdminView(context, view) {
@@ -2180,7 +2181,17 @@ export const store = new Vuex.Store({
     },
   
     setReturnExamInfo: (state, payload) => state.returnExam = payload,
-  
+
+    setManifestData(state, payload) {
+      state.manifestdata = ''
+      state.manifestdata = payload
+    },
+
+    setVideoFiles(state, payload) {
+      state.videofiles = []
+      state.videofiles = payload
+    },
+
     toggleAddModal: (state, payload) => state.showAddModal = payload,
   
     updateAddModalForm(state, payload) {
