@@ -479,13 +479,10 @@ export const store = new Vuex.Store({
       })
     },
 
-    clickUploadFile(context, file) {
-      // alert("Trying to send files");
-      console.log("==> About to send the index.js file below <=========================")
-      console.log(file)
-
+    clickUploadFile(context, payload) {
       let formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", payload.file);
+      formData.append("manifest", payload.data);
       var contenttype = {
         headers: {
           "content-type" : "multipart/form-data"

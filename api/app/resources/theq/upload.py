@@ -14,14 +14,11 @@ limitations under the License.'''
 
 
 from flask_restplus import Resource
-from qsystem import api, oidc
-from app.models.theq import Service
-from sqlalchemy import exc
-from app.schemas.theq import ServiceSchema
-from requests_toolbelt.multipart import decoder
+from qsystem import api, oidc, application
 from flask import request
 import os
-from pprint import pprint
+from os.path import isfile, join
+from shutil import copy2
 
 
 @api.route("/upload/", methods=["POST"])
@@ -29,25 +26,31 @@ class Categories(Resource):
 
     @oidc.accept_token(require_token=True)
     def post(self):
-        print("==> In the /upload/ python method")
 
         #  Get the file name where to put the file.
         fullpath = os.path.dirname(os.path.abspath(__file__))
-        print("    --> Full path is: " + fullpath)
         end = fullpath.find("/app/")
         uploadpath = fullpath[:end] + "/videos" # /api/static/videos/
-        print("    --> Upload path part 1 is: " + uploadpath)
 
-        #  Make first part of the directory if it doesn't already exist.
+        #  Make the directory if it doesn't already exist.
         if not os.path.isdir(uploadpath):
             os.mkdir(uploadpath)
 
-        print("==> About to upload files:")
-        filenumber = 0
+        #   Save uploaded video file
         for file in request.files.getlist("file"):
-            filenumber = filenumber + 1
-            print("    --> File number (" + str(filenumber) + "): " + file.filename)
             filename = file.filename
             destination = "/".join([uploadpath, filename])
-            print("        --> Destination: " + destination)
+            dest_save = destination + ".bak"
+            if isfile(destination):
+                copy2(destination, dest_save)
             file.save(destination)
+
+        #  Get and save the updated manifest.
+        form = request.form.to_dict()
+        data = form.get("manifest")
+        video_path = application.config['VIDEO_PATH']
+        save_file = join(video_path, 'manifest.json.bak')
+        output_file = join(video_path, 'manifest.json')
+        copy2(output_file, save_file)
+        with open(output_file, "w") as myfile:
+          myfile.write(data)

@@ -16,22 +16,19 @@
       <br>
       <div class="container-fluid">
         <div class="row">
-          <div class="col-md-3">
+          <b-col col cols="5" >
             <div class="file_header">Existing Files</div>
             <ExistingFiles />
-          </div>
-          <div class="col-md-3">
+          </b-col>
+          <b-col col cols="*" style="text-align: left" class="pr-2">
             <div class="file_header">Manifest File</div>
-            <div class="file_info_border formatted-text">
-              {{manifestdata}}
+            <div>
+              <b-textarea id="serve_comment_textarea"
+                          v-model="userdata"
+                          :rows="15"
+                          size="sm" />
             </div>
-          </div>
-          <div class="col-md-3">
-            <div class="file_header">Manifest File</div>
-            <div class="file_info_border">
-              {{manifestdata}}
-            </div>
-          </div>
+          </b-col>
         </div>
         <br><br>
       </div>
@@ -53,8 +50,7 @@
     components: {ExistingFiles},
     data() {
       return {
-        file: '',
-        testmessage: 'Nothing set yet'
+        file: ''
       }
     },
     mounted() {
@@ -63,6 +59,14 @@
 
     computed: {
       ...mapState(['videofiles', 'manifestdata']),
+      userdata: {
+        get() {
+          return this.manifestdata;
+        },
+        set(value) {
+          this.$store.commit('setManifestData', value)
+        }
+      },
       filesCount() {
         if (this.file) { return 1; }
         else { return 0; }
@@ -70,18 +74,6 @@
       fileName() {
         if (this.file) { return this.file.name; }
         else { return "No file selected"; }
-      },
-      lastModified() {
-        if (this.file) { return this.file.lastModifiedDate; }
-        else { return ""; }
-      },
-      fileSize() {
-        if (this.file) { return numberWithCommas(this.file.size); }
-        else { return ""; }
-      },
-      fileType() {
-        if (this.file) { return this.file.type; }
-        else { return ""; }
       }
     },
     methods: {
@@ -92,24 +84,16 @@
           alert("No files to send.  Select something.")
         }
         else {
-          this.clickUploadFile(this.file);
+          let request = { "file" : this.file, "data" : this.userdata}
+          this.clickUploadFile(request);
         }
       },
       handleFileUpload() {
         this.file = this.$refs.myfile.files[0];
-        console.log(this.$refs.myfile.files[0]);
       },
       getCurrentFileinfo() {
         this.requestVideoFileInfo();
-        var videoPath = '/static/videos/sbc.mp4'
-
-        this.testmessage = "Function called."
       }
-
-  // var videoPath = '/static/videos/sbc.mp4';
-  //     /var/www/html/static/videos
-
-
     },
   }
 
