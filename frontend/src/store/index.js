@@ -110,6 +110,7 @@ export const store = new Vuex.Store({
     },
     invigilators: [],
     isLoggedIn: false,
+    isUploadingFile: false,
     manifestdata: '',
     loginAlertMessage: '',
     loginDismissCount: 0,
@@ -480,6 +481,7 @@ export const store = new Vuex.Store({
     },
 
     clickUploadFile(context, payload) {
+      context.commit('setIsUploadingFile', true)
       let formData = new FormData();
       formData.append("file", payload.file);
       formData.append("manifest", payload.data);
@@ -503,6 +505,7 @@ export const store = new Vuex.Store({
         })
         .finally(() => {
             console.log("    --> Index.js is all done.");
+            context.commit('setIsUploadingFile', false)
           })
     },
 
@@ -2182,6 +2185,10 @@ export const store = new Vuex.Store({
     setManifestData(state, payload) {
       state.manifestdata = ''
       state.manifestdata = payload
+    },
+
+    setIsUploadingFile(state, payload) {
+      state.isUploadingFile = payload
     },
 
     setVideoFiles(state, payload) {

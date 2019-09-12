@@ -13,6 +13,10 @@
       <br><br>
       <button class="btn btn-success btn-secondary" @click="uploadFile">Upload File</button>
       <br>
+      <div v-if="this.isUploadingFile">
+        <div class="q-loader" />
+      </div>
+
       <br>
       <div class="container-fluid">
         <div class="row">
@@ -50,7 +54,8 @@
     components: {ExistingFiles},
     data() {
       return {
-        file: ''
+        file: '',
+        isLoading: false
       }
     },
     mounted() {
@@ -58,7 +63,7 @@
     },
 
     computed: {
-      ...mapState(['videofiles', 'manifestdata']),
+      ...mapState(['videofiles', 'manifestdata', 'isUploadingFile']),
       userdata: {
         get() {
           return this.manifestdata;
@@ -85,6 +90,7 @@
         }
         else {
           let request = { "file" : this.file, "data" : this.userdata}
+          this.isLoading = true;
           this.clickUploadFile(request);
         }
       },
