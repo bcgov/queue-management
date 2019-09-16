@@ -146,4 +146,5 @@ keys-generated
 /frontend/static/keycloak.js.Original
 /api/postman/postman_globals.json
 /api/postman/bookings-env-postman-contains-secrets.json
-/api/videos/sbc.mp4
+/api/videos/*.mp4
+/api/videos/*.bak
