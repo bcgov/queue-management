@@ -42,7 +42,7 @@
 
 <script>
 
-  import { mapActions, mapState } from 'vuex'
+  import { mapActions, mapMutations, mapState } from 'vuex'
   import ExistingFiles from './existingfiles'
 
   function numberWithCommas(x) {
@@ -83,10 +83,11 @@
     },
     methods: {
       ...mapActions(['clickUploadFile', 'requestVideoFileInfo']),
+      ...mapMutations(['setMainAlert']),
       uploadFile() {
 
         if (this.filesCount == 0) {
-          alert("No files to send.  Select something.")
+          this.setMainAlert('Select a file to upload before pressing Upload File')
         }
         else {
           let request = { "file" : this.file, "data" : this.userdata}

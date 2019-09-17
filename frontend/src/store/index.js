@@ -495,16 +495,15 @@ export const store = new Vuex.Store({
       Axios(context).post('/upload/', formData, contenttype)
         .then(
           resp => {
-            console.log("    --> Index.js upload all OK!!!");
+            context.commit('setMainAlert', 'File uploaded successfully.')
           },
           error => {
-            console.log("    --> Index.js Ooops.  An upload error");
+            context.commit('setMainAlert', 'An error occurred uploading your file.')
           })
         .catch(() => {
-          console.log("    --> Index.js an exception happened.")
+          context.commit('setMainAlert', 'An exceptoin occurred uploading your file.')
         })
         .finally(() => {
-            console.log("    --> Index.js is all done.");
             context.commit('setIsUploadingFile', false)
           })
     },
