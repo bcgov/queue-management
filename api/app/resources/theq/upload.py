@@ -27,30 +27,40 @@ class Categories(Resource):
     @oidc.accept_token(require_token=True)
     def post(self):
 
-        #  Get the file name where to put the file.
+        #  Get the path name where to put the file, form where manifest, new file name are
         fullpath = os.path.dirname(os.path.abspath(__file__))
         end = fullpath.find("/app/")
         uploadpath = fullpath[:end] + "/videos" # /api/static/videos/
+        form = request.form.to_dict()
 
         #  Make the directory if it doesn't already exist.
-        if not os.path.isdir(uploadpath):
-            os.mkdir(uploadpath)
+        try:
+            if not os.path.isdir(uploadpath):
+                os.mkdir(uploadpath)
+        except Exception as error:
+            print("==> Error trying to create directory: " + uploadpath)
+            print("    --> Message: " + str(error))
 
         #   Save uploaded video file
         for file in request.files.getlist("file"):
             filename = file.filename
+            if "newname" in form:
+                filename = form.get("newname")
+
             destination = "/".join([uploadpath, filename])
-            dest_save = destination + ".bak"
-            if isfile(destination):
-                copy2(destination, dest_save)
-            file.save(destination)
+            try:
+                file.save(destination)
+            except Exception as error:
+                print("==> Error trying to save file: " + filename)
+                print("    --> Message: " + str(error))
 
         #  Get and save the updated manifest.
-        form = request.form.to_dict()
         data = form.get("manifest")
         video_path = application.config['VIDEO_PATH']
-        save_file = join(video_path, 'manifest.json.bak')
         output_file = join(video_path, 'manifest.json')
-        copy2(output_file, save_file)
-        with open(output_file, "w") as myfile:
-          myfile.write(data)
+        try:
+            with open(output_file, "w") as myfile:
+                myfile.write(data)
+        except Exception as error:
+            print("==> Error trying to update file: " + output_file)
+            print("    --> Message: " + str(error))
