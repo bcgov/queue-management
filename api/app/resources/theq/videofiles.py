@@ -18,15 +18,23 @@ from app.models.theq import CSR
 from flask import g
 import os
 from os.path import isfile
-from pprint import pprint
 from datetime import datetime
 
 def ReadFile(entry):
-    with open(entry, "r") as myfile:
-        manifest_data = myfile.read()
-        # print("==> Manifest data")
-        # print(">>" + manifest_data + "<<")
-        return manifest_data
+    try:
+        with open(entry, "r") as myfile:
+            manifest_data = myfile.read()
+            return {
+                'data': manifest_data,
+                'errors' : '',
+                'code' : 200
+            }
+    except Exception as err:
+        return {
+            'data' : '',
+            'errors' : str(err),
+            'code' : 501
+        }
 
 def GetUrl(office_number, manifest_data):
 
@@ -42,9 +50,8 @@ def GetUrl(office_number, manifest_data):
     #  If neither office or default found, an error in the manifest.
     if (index < 0):
         return { 'videourl' : '',
-                 'errors' : error}
-
-    print("==> In GetURL: Office: " + str(office_number) + "; Search: " + search + "; Index: " + str(index))
+                 'errors' : error,
+                 'code' : 501 }
 
     #  Found the right office.  Now look for it's URL.
     left = manifest_data[index:]
@@ -54,11 +61,10 @@ def GetUrl(office_number, manifest_data):
     left = left[index+1:]
     index = left.find('"')
     url = left[:index]
-    print("    --> URL is: " + url)
 
     return {'videourl': url,
             'errors': '',
-            'test': 'Hi there'}
+            'code': 200}
 
 @api.route("/videofiles/", methods=["GET"])
 class VideoFiles(Resource):
@@ -67,32 +73,40 @@ class VideoFiles(Resource):
     def get(self):
 
         video_path = application.config['VIDEO_PATH']
-        print("==> In VideoFiles, path is " + video_path)
         newfiles = []
+        manifest_data = ''
+        errors = ''
+        code = 201
 
-        with os.scandir(video_path) as dir_entries:
-            for entry in dir_entries:
-                if isfile(entry):
-                    file_name, file_extension = os.path.splitext(entry.name)
-                    if file_extension.lower() == '.mp4':
-                        info = entry.stat()
-                        new_info = {}
-                        new_info['name'] = entry.name
-                        new_info['date'] = datetime.utcfromtimestamp(info.st_mtime).strftime('%Y-%m-%d %I:%H:%M %p')
-                        new_info['size'] = info.st_size
-                        newfiles.append(new_info)
+        try:
+            with os.scandir(video_path) as dir_entries:
+                for entry in dir_entries:
+                    if isfile(entry):
+                        file_name, file_extension = os.path.splitext(entry.name)
+                        if file_extension.lower() == '.mp4':
+                            info = entry.stat()
+                            new_info = {}
+                            new_info['name'] = entry.name
+                            new_info['date'] = datetime.utcfromtimestamp(info.st_mtime).strftime('%Y-%m-%d %I:%H:%M %p')
+                            new_info['size'] = info.st_size
+                            newfiles.append(new_info)
 
-                    if entry.name.lower() == 'manifest.json':
-                        manifest_data = ReadFile(entry)
-                        # ToDo xxx PUT IN ERROR CHECKING!!!
-                        # with open (entry, "r") as myfile:
-                        #     manifest_data = myfile.read()
-                        #     print("==> Manifest data")
-                        #     print(">>" + manifest_data + "<<")
+                        if entry.name.lower() == 'manifest.json':
+                            result = ReadFile(entry)
+                            manifest_data = result['data']
+                            errors = result['errors']
+                            code = result['code']
+
+        except Exception as error:
+            manifest_data = ''
+            newfiles = []
+            errors = str(error)
+            code = 501
 
         return {'videofiles': newfiles,
                 'manifest' : manifest_data,
-                'errors': ''}
+                'errors': errors,
+                'code': code}
 
 @api.route("/videofiles/<int:office_number>", methods=["GET"])
 class VideoFileSelf(Resource):
@@ -100,26 +114,32 @@ class VideoFileSelf(Resource):
     # @oidc.accept_token(require_token=True)
     def get(self, office_number):
 
-        # try:
+        try:
 
             office = office_number
             manifest_data = ""
-
-            print("==> In GET /videofiles/me/: Office number is: " + str(office))
 
             video_path = application.config['VIDEO_PATH']
             with os.scandir(video_path) as dir_entries:
                 for entry in dir_entries:
                     if isfile(entry):
                         if entry.name.lower() == 'manifest.json':
-                            manifest_data = ReadFile(entry)
+                            result = ReadFile(entry)
+                            manifest_data = result['data']
+                            errors = result['errors']
+                            code = result['code']
 
-            print("    --> Manifest data is:")
-            print(manifest_data)
+            if code == 200:
+                result = GetUrl(office, manifest_data)
+                return result
+            else:
+                return {
+                    'videourl': '',
+                    'errors': errors,
+                    'code': code
+                }
 
-            result = GetUrl(office, manifest_data)
-
-            return result
-
-    # except:
-        #     print("==> Error in VideoFileSelf")
+        except Exception as error:
+            return {'videourl': '',
+                    'errors': str(error),
+                    'code': 501}
