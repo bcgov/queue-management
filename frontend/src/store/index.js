@@ -483,7 +483,12 @@ export const store = new Vuex.Store({
     clickUploadFile(context, payload) {
       context.commit('setIsUploadingFile', true)
       let formData = new FormData();
-      formData.append("file", payload.file);
+      if (payload.file) {
+        formData.append("file", payload.file);
+        if (payload.newname) {
+          formData.append("newname", payload.newname);
+        }
+      }
       formData.append("manifest", payload.data);
       var contenttype = {
         headers: {

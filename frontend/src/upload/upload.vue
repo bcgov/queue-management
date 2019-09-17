@@ -2,23 +2,43 @@
   <fragment>
     <div style="position: relative" class="q-upload-margins">
 
-      <br>
-      <label class="btn-primary mr-1" id="myLabel">
-        <!--<input type="file" name="myfile" id="myfile" accept="video/mp4" required><br>-->
-        <input type="file" name="myfile" id="myfile" ref="myfile" accept="video/mp4" required multiple
-               @change="handleFileUpload($event)"><br>
-        <span>Select Digital Video file to upload: </span>
-      </label>
-      <span class="file_information">{{fileName}}</span>
-      <br><br>
-      <button class="btn btn-success btn-secondary" @click="uploadFile">Upload File</button>
-      <br>
       <div v-if="this.isUploadingFile">
         <div class="q-loader" />
       </div>
-
       <br>
+
       <div class="container-fluid">
+        <div class="row">
+          <b-col col cols="2">
+            <label class="btn-primary mr-1" id="myLabel">
+              <!--<input type="file" name="myfile" id="myfile" ref="myfile" accept="video/mp4" required multiple-->
+              <input type="file" name="myfile" id="myfile" ref="myfile" accept="video/mp4" required
+                     @change="handleFileUpload($event)"><br>
+              <span>Select Digital Video file to upload: </span>
+            </label>
+          </b-col>
+          <b-col col cols="3" style="text-align: left" class="pr-2">
+            <span class="file_information">{{fileName}}</span>
+          </b-col>
+          <b-col col cols="2">
+            <span class="file_information">Optional new filename: </span>
+          </b-col>
+          <b-col col cols="*" class="file_information">
+            <!--<span class="file_information">-->
+              <input type="text" style="width:100%" v-model="newfilename"
+                     placeholder="Type optional new filename here">
+            <!--</span>-->
+          </b-col>
+        </div>
+        <hr />
+        <div class="row top-buffer">
+          <b-col col cols="5">
+            <button class="btn btn-success btn-secondary" @click="uploadFile">Upload Video and Manifest Files</button>
+          </b-col>
+          <b-col col cols="*" style="text-align: left" class="pr-2">
+            <button class="btn btn-success btn-secondary" @click="uploadManifest">Update Manifest File Only</button>
+          </b-col>
+        </div>
         <div class="row">
           <b-col col cols="5" >
             <div class="file_header">Existing Files</div>
@@ -55,11 +75,13 @@
     data() {
       return {
         file: '',
-        isLoading: false
+        isLoading: false,
+        newfilename: ''
       }
     },
     mounted() {
       this.getCurrentFileinfo();
+      this.newfilename = '';
     },
 
     computed: {
@@ -85,15 +107,19 @@
       ...mapActions(['clickUploadFile', 'requestVideoFileInfo']),
       ...mapMutations(['setMainAlert']),
       uploadFile() {
-
         if (this.filesCount == 0) {
           this.setMainAlert('Select a file to upload before pressing Upload File')
         }
         else {
-          let request = { "file" : this.file, "data" : this.userdata}
+          let request = { "file" : this.file, "data" : this.userdata, "newname": this.newfilename }
           this.isLoading = true;
           this.clickUploadFile(request);
         }
+      },
+      uploadManifest() {
+        let request = { "data" : this.userdata }
+        this.isLoading = true;
+        this.clickUploadFile(request);
       },
       handleFileUpload() {
         this.file = this.$refs.myfile.files[0];
@@ -101,7 +127,7 @@
       getCurrentFileinfo() {
         this.requestVideoFileInfo();
       }
-    },
+    }
   }
 
 </script>
@@ -115,6 +141,10 @@
   #myfile {
     position:absolute;
     top: -1000px;
+  }
+
+  .top-buffer {
+    margin-top: 25px;
   }
 
   .q-upload-margins {
