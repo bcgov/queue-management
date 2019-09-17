@@ -24,7 +24,6 @@ pysnow
 pytest
 python-dotenv
 python-jose
-requests-toolbelt
 SQLAlchemy-Utc
 toastedmarshmallow==0.2.6
 flask_oidc
