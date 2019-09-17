@@ -34,6 +34,8 @@ limitations under the License.*/
     }
   })
 
+  const defaultVideoFile = '/static/videos/sbc.mp4';
+
   export default {
     name: 'Video',
     components: {
@@ -56,10 +58,9 @@ limitations under the License.*/
         return decodeURIComponent(results[2].replace(/\+/g, ' '));
       }
 
-      var videoPath = '/static/videos/sbc.mp4';
+      var videoPath = this.defaultVideoFile;
       if (getParameterByName("localvideo") == "1") {
         videoPath = "http://localhost/videos/video.mp4";
-        console.log("==> Video path is: " + videoPath)
       }
 
       return {
@@ -80,9 +81,13 @@ limitations under the License.*/
     methods: {
       getOfficeVideoUrl() {
         let url = '/videofiles/' + this.office_number.toString();
-        Axios.get(url).then( resp => {
-          this.playerOptions.sources[0].src = resp.data.videourl
-        })
+        Axios.get(url)
+          .then( resp => {
+            this.playerOptions.sources[0].src = resp.data.videourl;
+          })
+          .catch(() => {
+            this.playerOptions.sources[0].src = this.defaultVideoFile;
+          })
       },
       playerStateChanged(playerCurrentState) {
         if (playerCurrentState && playerCurrentState.playing) {
