@@ -17,7 +17,7 @@ limitations under the License.*/
   <div style="display: flex; height: 75%; width: 100%; justify-content: center">
     <div class="board-85-video">
       <div class="board-video-div">
-        <Video :title="smartboardData.office_number" />
+        <Video :office_number="smartboardData.office_number" />
       </div>
       <div v-if="!networkStatus.networkDown" class="bottom-flex-div">
         <div class="flex-title"> Currently waiting: {{waiting}}</div>

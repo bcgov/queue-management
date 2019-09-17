@@ -13,15 +13,12 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 
 <template>
-  <div>
   <videoPlayer class="video-player-box"
                ref="videoPlayer"
                :options="playerOptions"
                :playsinline="true"
                @statechanged="playerStateChanged($event)">
   </videoPlayer>
-  {{title}}
-  </div>
 </template>
 
 <script>
@@ -42,7 +39,7 @@ limitations under the License.*/
     components: {
       videoPlayer
     },
-    props: ['title'],
+    props: ['office_number'],
     // mounted() {
     //   this.getOfficeVideoUrl()
     // },
@@ -52,18 +49,10 @@ limitations under the License.*/
     data() {
       function getParameterByName(name, url) {
         url = window.location.href;
-        console.log("==> in getParameterByName");
-        console.log("    --> name: " + name);
-        console.log("    --> url: " + url);
         name = name.replace(/[\[\]]/g, '\\$&');
-        console.log("    --> name updated: " + name);
         var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'), results = regex.exec(url);
-        console.log("    --> results: ");
-        console.log(results);
         if (!results) return null;
         if (!results[2]) return '';
-        console.log("    --> decode")
-        console.log(decodeURIComponent(results[2].replace(/\+/g, ' ')));
         return decodeURIComponent(results[2].replace(/\+/g, ' '));
       }
 
@@ -81,7 +70,7 @@ limitations under the License.*/
           muted: true,
           sources: [{
             type: 'video/mp4',
-            src: ''
+            src: videoPath
           }],
           fluid: true
         },
@@ -90,18 +79,9 @@ limitations under the License.*/
     },
     methods: {
       getOfficeVideoUrl() {
-        let url = '/videofiles/' + this.title.toString();
+        let url = '/videofiles/' + this.office_number.toString();
         Axios.get(url).then( resp => {
-          console.log("==> in getOfficeVideoURL().  Result is")
-          console.log(resp);
-          console.log("    --> Path: " + resp.data.videourl)
-          console.log("    --> Data component")
-          console.log(this.playerOptions)
-          console.log("    --> Player Options: " + this.playerOptions.sources[0].src)
           this.playerOptions.sources[0].src = resp.data.videourl
-          // this.officeType = resp.data.office_type
-          // this.citizens = resp.data.citizens
-          // this.$root.$emit('boardConnect', this.office_id)
         })
       },
       playerStateChanged(playerCurrentState) {
