@@ -501,6 +501,7 @@ export const store = new Vuex.Store({
         .then(
           resp => {
             context.commit('setMainAlert', 'File uploaded successfully.')
+            context.dispatch('requestVideoFileInfo')
           },
           error => {
             context.commit('setMainAlert', 'An error occurred uploading your file.')
