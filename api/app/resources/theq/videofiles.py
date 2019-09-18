@@ -15,6 +15,7 @@ limitations under the License.'''
 from flask_restplus import Resource
 from qsystem import api, oidc, application
 from flask import request, g
+import shutil
 
 import os
 from os.path import isfile, join
@@ -76,6 +77,10 @@ class VideoFiles(Resource):
         newfiles = []
         manifest_data = ''
         errors = ''
+        space = {}
+        space['total'] = 0
+        space['used'] = 0
+        space['free'] = 0
         code = 201
 
         try:
@@ -88,7 +93,7 @@ class VideoFiles(Resource):
                             new_info = {}
                             new_info['name'] = entry.name
                             new_info['date'] = datetime.utcfromtimestamp(info.st_mtime).strftime('%Y-%m-%d %I:%H:%M %p')
-                            new_info['size'] = info.st_size
+                            new_info['size'] = "{:10.3f}".format(info.st_size / 2**20) + "Mb"
                             newfiles.append(new_info)
 
                         if entry.name.lower() == 'manifest.json':
@@ -103,10 +108,20 @@ class VideoFiles(Resource):
             errors = str(error)
             code = 501
 
+        try:
+            total, used, free = shutil.disk_usage(video_path)
+            space['total'] = total // 2**30
+            space['used'] = used // 2**30
+            space['free'] = free // 2**30
+
+        except Exception as error:
+            errors = str(error)
+
         return {'videofiles': newfiles,
                 'manifest' : manifest_data,
                 'errors': errors,
-                'code': code}
+                'code': code,
+                'space': space}
 
 @api.route("/videofiles/<int:office_number>", methods=["GET"])
 class VideoFileSelf(Resource):
