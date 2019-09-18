@@ -32,6 +32,12 @@
         </div>
       </template>
     </b-table>
+    <div style="font-size:15px; font-weight: 700">
+      Disk Space ->
+      <span style="padding-left: 1em">Total: {{diskspace.total}}Gb,</span>
+      <span style="padding-left: 1em">Used: {{diskspace.used}}Gb,</span>
+      <span style="padding-left: 1em">Free: {{diskspace.free}}Gb</span>
+    </div>
   </b-container>
 </template>
 
@@ -43,7 +49,7 @@
     name: 'ExistingFiles',
 
     computed: {
-      ...mapState(['videofiles', 'manifestdata']),
+      ...mapState(['videofiles', 'manifestdata', 'diskspace']),
       fields() {
         return [
           { key: 'name', label: 'Name', thStyle: 'text-align: left'},

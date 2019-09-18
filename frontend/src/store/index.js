@@ -82,6 +82,7 @@ export const store = new Vuex.Store({
     csr_states: [],
     csrs: [],
     dismissCount: 0,
+    diskspace: {},
     editedBooking: null,
     editedBookingOriginal: null,
     editedGroupBooking: null,
@@ -537,8 +538,10 @@ export const store = new Vuex.Store({
         .then (resp => {
           let videofiles = resp.data.videofiles;
           let manifestdata = resp.data.manifest;
-          context.commit('setVideoFiles', videofiles)
-          context.commit('setManifestData', manifestdata)
+          let diskspace = resp.data.space;
+          context.commit('setVideoFiles', videofiles);
+          context.commit('setManifestData', manifestdata);
+          context.commit('setDiskSpace', diskspace);
         })
         .catch(error => {
           console.log('error in requestVideoFileInfo')
@@ -2207,6 +2210,11 @@ export const store = new Vuex.Store({
     setManifestData(state, payload) {
       state.manifestdata = ''
       state.manifestdata = payload
+    },
+
+    setDiskSpace(state, payload) {
+      state.diskspace = {}
+      state.diskspace = payload
     },
 
     setIsUploadingFile(state, payload) {
