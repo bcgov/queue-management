@@ -34,9 +34,9 @@
     </b-table>
     <div style="font-size:15px; font-weight: 700">
       Disk Space ->
-      <span style="padding-left: 1em">Total: {{diskspace.total}}Mb,</span>
-      <span style="padding-left: 1em">Used: {{diskspace.used}}Mb,</span>
-      <span style="padding-left: 1em">Free: {{diskspace.free}}Mb</span>
+      <span style="padding-left: 1em">Total: {{numberWithCommas(diskspace.total)}}Mb,</span>
+      <span style="padding-left: 1em">Used: {{numberWithCommas(diskspace.used)}}Mb,</span>
+      <span style="padding-left: 1em">Free: {{numberWithCommas(diskspace.free)}}Mb</span>
     </div>
   </b-container>
 </template>
@@ -62,6 +62,9 @@
     methods: {
       ...mapMutations(['setMainAlert']),
       ...mapActions(['clickDeleteFile']),
+      numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      },
       clickDelete(name) {
         if (this.manifestdata.includes(name)) {
           this.setMainAlert('You may not delete file ' + name + '.  It is used in manifest.json.')
