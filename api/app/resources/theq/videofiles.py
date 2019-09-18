@@ -14,10 +14,10 @@ limitations under the License.'''
 
 from flask_restplus import Resource
 from qsystem import api, oidc, application
-from app.models.theq import CSR
-from flask import g
+from flask import request, g
+
 import os
-from os.path import isfile
+from os.path import isfile, join
 from datetime import datetime
 
 def ReadFile(entry):
@@ -143,3 +143,22 @@ class VideoFileSelf(Resource):
             return {'videourl': '',
                     'errors': str(error),
                     'code': 501}
+
+@api.route("/videofiles/", methods=["DELETE"])
+class VideoFiles(Resource):
+
+    @oidc.accept_token(require_token=True)
+    def delete(self):
+
+        json_data = request.get_json()
+        if not json_data:
+            return {'message': 'No input filename received in DELETE /videofiles/'}, 400
+        if 'name' not in json_data:
+            return {'message': 'No name key received in DELETE /videofiles/'}, 400
+
+        #  Try to delete the file.
+        video_path = application.config['VIDEO_PATH']
+        delete_name = "/".join([video_path, json_data['name']])
+        os.remove(delete_name)
+
+        return {}, 204

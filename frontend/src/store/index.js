@@ -513,6 +513,23 @@ export const store = new Vuex.Store({
           })
     },
 
+    clickDeleteFile(context, payload) {
+
+      // Post the file name to delete to the back end.
+      Axios(context).delete('/videofiles/', { 'data' : payload })
+        .then(
+          resp => {
+            context.commit('setMainAlert', 'File deleted successfully.')
+            context.dispatch('requestVideoFileInfo')
+          },
+          error => {
+            context.commit('setMainAlert', 'File could not be deleted.')
+          })
+        // .catch(() => {
+        //   context.commit('setMainAlert', 'An exception occurred trying to delete file.')
+        // })
+    },
+
     requestVideoFileInfo(context) {
       // Get video file info from the back end.
       Axios(context).get('/videofiles/')

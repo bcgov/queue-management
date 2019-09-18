@@ -28,7 +28,7 @@
           </b-col>
         </div>
         <hr />
-        <div class="row top-buffer">
+        <div class="row">
           <b-col col cols="5">
             <button class="btn btn-success btn-secondary" @click="uploadFile">Upload Video and Manifest Files</button>
           </b-col>
@@ -36,6 +36,7 @@
             <button class="btn btn-success btn-secondary" @click="uploadManifest">Update Manifest File Only</button>
           </b-col>
         </div>
+        <hr />
         <div class="row">
           <b-col col cols="5" >
             <div class="file_header">Existing Files</div>
@@ -181,18 +182,4 @@
     white-space: pre;
   }
 
-/*
-  #myLabel:hover {
-    background: #CCC;
-  }
-  #myLabel:active {
-    background: #CCF;
-  }
-  #myLabel :invalid + span {
-    color: #A44;
-  }
-  #myLabel :valid + span {
-    color: #4A4;
-  }
-*/
 </style>

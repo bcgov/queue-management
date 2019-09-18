@@ -7,45 +7,37 @@
                       padding-right: 0px;
                       padding-bottom: 5px;"
                       >
-    <b-form-row no-gutters class="m-0 existing_files_header">
-      <b-col class="m-0 p-0">File Name</b-col>
-      <b-col class="m-0 p-0">File Modified</b-col>
-      <b-col class="m-0 p-0">File Size</b-col>
-    </b-form-row>
-    <b-form-row no-gutters>
-      <b-col>
-        <div id="innertable"
-             style="height: 200px;
-                    overflow-y: scroll;
-                    margin: 0px;
-                    background-color: #fcfcfc">
-          <b-table :items="videofiles"
-                   :fields="fields"
-                   sort-by="name"
-                   id="table2"
-                   class="existing_files_table">
-                   <!--@row-clicked="rowClicked"-->
-            <template slot="Name" slot-scope="data">
-              <div>
-                <span v-bind:title="data.item.name">
-                  {{data.item.name}}
-                </span>
-                <div style="display: none">
-                  {{ data.item.service_id==form_data.service ?
-                      data.item._rowVariant='active' : data.item._rowVariant='' }}
-                </div>
-              </div>
-            </template>
-          </b-table>
+    <b-table :fields="fields"
+             :items="videofiles"
+             head-variant="light"
+             class="m-0 p-0 align-left"
+             small
+             id="video-files"
+             fixed
+             bordered>
+             <!--style="text-align: center">-->
+
+      <!--  This is the file name -->
+      <template slot="name" slot-scope="row">
+        {{ row.item.name }}
+      </template>
+
+      <!--  This is the delete button -->
+      <template slot="deleteBut" slot-scope="row">
+        <div >
+          <b-button size="sm"
+                    @click="clickDelete(row.item.name)"
+                    variant="link">Delete
+          </b-button>
         </div>
-      </b-col>
-    </b-form-row>
+      </template>
+    </b-table>
   </b-container>
 </template>
 
 <script>
 
-  import { mapState } from 'vuex'
+  import { mapState, mapMutations, mapActions } from 'vuex'
 
   export default {
     name: 'ExistingFiles',
@@ -54,13 +46,25 @@
       ...mapState(['videofiles', 'manifestdata']),
       fields() {
         return [
-          { key: 'name', label: 'Name', sortable: false, thClass: 'd-none', tdClass: 'file-td',},
-          { key: 'date', label: 'Date', sortable: false, thClass: 'd-none', tdClass: 'file-td',},
-          { key: 'size', label: 'Size', sortable: false, thClass: 'd-none', tdClass: 'file-td',}
+          { key: 'name', label: 'Name', thStyle: 'text-align: left'},
+          { key: 'date', label: 'Date', thStyle: 'text-align: left'},
+          { key: 'size', label: 'Size', thStyle: 'text-align: right', tdClass: 'file-size' },
+          { key: 'deleteBut', label:'Delete file', thStyle:'text-align: center;', tdClass: 'delete-file'}
         ]
       },
-
     },
+    methods: {
+      ...mapMutations(['setMainAlert']),
+      ...mapActions(['clickDeleteFile']),
+      clickDelete(name) {
+        if (this.manifestdata.includes(name)) {
+          this.setMainAlert('You may not delete file ' + name + '.  It is used in manifest.json.')
+        }
+        else {
+          this.clickDeleteFile({ 'name': name});
+        }
+      }
+    }
   }
 
 </script>
@@ -69,7 +73,8 @@
     name: 'Upload'
   }
 
-<style scoped>
+<!--<style scoped>-->
+<style>
 
   .existing_files_table {
     padding: 0px;
@@ -90,8 +95,12 @@
     text-shadow: 0px 0px 2px #a5a5a5;
   }
 
-  .addcit-td {
-    cursor: pointer;
+  table .file-size {
+    text-align: right;
+  }
+
+  table .delete-file {
+    text-align: center;
   }
 
 </style>
