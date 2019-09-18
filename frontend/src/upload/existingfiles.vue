@@ -34,9 +34,9 @@
     </b-table>
     <div style="font-size:15px; font-weight: 700">
       Disk Space ->
-      <span style="padding-left: 1em">Total: {{diskspace.total}}Gb,</span>
-      <span style="padding-left: 1em">Used: {{diskspace.used}}Gb,</span>
-      <span style="padding-left: 1em">Free: {{diskspace.free}}Gb</span>
+      <span style="padding-left: 1em">Total: {{diskspace.total}}Mb,</span>
+      <span style="padding-left: 1em">Used: {{diskspace.used}}Mb,</span>
+      <span style="padding-left: 1em">Free: {{diskspace.free}}Mb</span>
     </div>
   </b-container>
 </template>

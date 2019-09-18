@@ -110,9 +110,9 @@ class VideoFiles(Resource):
 
         try:
             total, used, free = shutil.disk_usage(video_path)
-            space['total'] = total // 2**30
-            space['used'] = used // 2**30
-            space['free'] = free // 2**30
+            space['total'] = total // 2**20
+            space['used'] = used // 2**20
+            space['free'] = free // 2**20
 
         except Exception as error:
             errors = str(error)
