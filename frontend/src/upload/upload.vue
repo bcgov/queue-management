@@ -11,7 +11,6 @@
         <div class="row">
           <b-col col cols="2">
             <label class="btn-primary mr-1" id="myLabel">
-              <!--<input type="file" name="myfile" id="myfile" ref="myfile" accept="video/mp4" required multiple-->
               <input type="file" name="myfile" id="myfile" ref="myfile" accept="video/mp4" required
                      @change="handleFileUpload($event)"><br>
               <span>Select Digital Video file to upload: </span>
@@ -24,10 +23,8 @@
             <span class="file_information">Optional new filename: </span>
           </b-col>
           <b-col col cols="*" class="file_information">
-            <!--<span class="file_information">-->
               <input type="text" style="width:100%" v-model="newfilename"
                      placeholder="Type optional new filename here">
-            <!--</span>-->
           </b-col>
         </div>
         <hr />
