@@ -105,14 +105,14 @@
           this.setMainAlert('Select a file to upload before pressing Upload File')
         }
         else {
-          let file_size = (this.file.size / Math.pow(2,20)).toFixed(1);
-          let space_left = this.diskspace.freespace.toFixed(1);
-          console.log("==> File size:  " + file_size.toString() + "Mb");
-          console.log("==> Space left: " + space_left.toString() + "Mb");
+          let file_size = this.file.size / Math.pow(2,20);
+          let space_left = this.diskspace.freespace;
+          console.log("==> File size:  " + file_size.toFixed(1).toString() + "Mb");
+          console.log("==> Space left: " + space_left.toFixed(1).toString() + "Mb");
 
           if (space_left < file_size) {
-            this.setMainAlert("File too large (" + file_size.toString()
-              + "Mb) to upload to disk (" + space_left.toString() + "Mb free)");
+            this.setMainAlert("File too large (" + file_size.toFixed(1).toString()
+              + "Mb) to upload to disk (" + space_left.toFixed(1).toString() + "Mb free)");
           }
           else {
             let request = { "file" : this.file, "data" : this.userdata, "newname": this.newfilename }
