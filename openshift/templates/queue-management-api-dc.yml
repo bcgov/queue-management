@@ -159,8 +159,8 @@ objects:
                   value: "${SECRET_KEY}"
                 - name: SERVER_NAME
                   value: "${API_APPLICATION_DOMAIN}"
-                - name: LOG_ERRORS
-                  value: "${LOG_ERRORS}"
+                - name: LOG_ENABLE
+                  value: "${LOG_ENABLE}"
                 - name: THEQ_FEEDBACK
                   value: "${THEQ_FEEDBACK}"
                 - name: SERVICENOW_INSTANCE
@@ -169,6 +169,8 @@ objects:
                   value: "${SERVICENOW_USER}"
                 - name: SERVICENOW_PASSWORD
                   value: "${SERVICENOW_PASSWORD}"
+                - name: VIDEO_PATH
+                  value: /opt/app-root/src/videos
 
               ports:
                 - containerPort: 8080
@@ -194,6 +196,8 @@ objects:
                   readOnly: true
                 - mountPath: /opt/app-root/src/lock
                   name: lockdir
+                - mountPath: /opt/app-root/src/videos
+                  name: frontend-videos
               terminationMessagePath: "/dev/termination-log"
               terminationMessagePolicy: File
               imagePullPolicy: Always
@@ -217,6 +221,9 @@ objects:
             - name: lockdir
               persistentVolumeClaim:
                 claimName: lockdir
+            - name: frontend-videos
+              persistentVolumeClaim:
+                claimName: frontend-videos
           affinity:
             podAntiAffinity:
               requiredDuringSchedulingIgnoredDuringExecution:
@@ -293,10 +300,10 @@ parameters:
     description: "Snowplow Namespace"
     required: false
     value: ""
-  - name: LOG_ERRORS
+  - name: LOG_ENABLE
     description: "Enable/Disable Logging of Socketio errors"
     required: false
-    value: ""
+    value: "false"
   - name: THEQ_FEEDBACK
     description: "Where feedback should go (eg. 'Slack, Service Now')"
     required: false
