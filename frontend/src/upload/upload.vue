@@ -83,7 +83,7 @@
     },
 
     computed: {
-      ...mapState(['videofiles', 'manifestdata', 'isUploadingFile']),
+      ...mapState(['videofiles', 'manifestdata', 'isUploadingFile', 'diskspace']),
       userdata: {
         get() {
           return this.manifestdata;
@@ -109,9 +109,16 @@
           this.setMainAlert('Select a file to upload before pressing Upload File')
         }
         else {
-          let request = { "file" : this.file, "data" : this.userdata, "newname": this.newfilename }
-          this.isLoading = true;
-          this.clickUploadFile(request);
+          if (this.diskspace.free < this.file.size / Math.pow(2,20)) {
+            let file_size = (this.file.size / Math.pow(2,20)).toFixed(1).toString() + "Mb";
+            let space_left = (this.diskspace.free.toFixed(1).toString()) + "Mb";
+            this.setMainAlert("File too large (" + file_size + ") to upload to disk (" + space_left + " free)");
+          }
+          else {
+            let request = { "file" : this.file, "data" : this.userdata, "newname": this.newfilename }
+            this.isLoading = true;
+            this.clickUploadFile(request);
+          }
         }
       },
       uploadManifest() {
