@@ -36,7 +36,7 @@
       Disk Space ->
       <span style="padding-left: 1em">Total: {{numberWithCommas(diskspace.total)}}Mb,</span>
       <span style="padding-left: 1em">Used: {{numberWithCommas(diskspace.used)}}Mb,</span>
-      <span style="padding-left: 1em">Free: {{numberWithCommas(diskspace.free)}}Mb</span>
+      <span style="padding-left: 1em">Free: {{numberWithCommas(diskspace.freespace)}}Mb</span>
     </div>
   </b-container>
 </template>

@@ -80,7 +80,7 @@ class VideoFiles(Resource):
         space = {}
         space['total'] = 0
         space['used'] = 0
-        space['free'] = 0
+        space['freespace'] = 0
         code = 201
 
         try:
@@ -112,7 +112,7 @@ class VideoFiles(Resource):
             total, used, free = shutil.disk_usage(video_path)
             space['total'] = total // 2**20
             space['used'] = used // 2**20
-            space['free'] = free // 2**20
+            space['freespace'] = free // 2**20
 
         except Exception as error:
             errors = str(error)

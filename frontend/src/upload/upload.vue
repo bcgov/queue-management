@@ -63,10 +63,6 @@
   import { mapActions, mapMutations, mapState } from 'vuex'
   import ExistingFiles from './existingfiles'
 
-  function numberWithCommas(x) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  }
-
   export default {
     name: 'Upload',
     components: {ExistingFiles},
@@ -110,7 +106,7 @@
         }
         else {
           let file_size = (this.file.size / Math.pow(2,20)).toFixed(1);
-          let space_left = this.diskspace.free.toFixed(1);
+          let space_left = this.diskspace.freespace.toFixed(1);
           console.log("==> File size:  " + file_size.toString() + "Mb");
           console.log("==> Space left: " + space_left.toString() + "Mb");
 
