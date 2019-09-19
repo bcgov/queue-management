@@ -41,18 +41,15 @@ class ServiceRequestsList(Resource):
             print("    --> CSR:       " + csr.username)
             return {"message": "No input data received for creating service request"}, 400
 
-        if not 'service_request' in json_data.keys():
-            print("==> No service_request parameter in POST /service_requests/")
-            print("    --> CSR:       " + csr.username)
-            print("    --> json_data: " + json.dumps(json_data))
-            return {"message": "No input data received for creating service request"}, 400
-
         try:
             service_request = self.service_request_schema.load(json_data['service_request']).data
 
         except ValidationError as err:
             return {"message": err.messages}, 422
         except KeyError as err:
+            print("==> No service_request parameter in POST /service_requests/")
+            print("    --> CSR:       " + csr.username)
+            print("    --> json_data: " + json.dumps(json_data))
             print (err)
             return {"message": str(err)}
 
