@@ -196,6 +196,7 @@ def update_delay(current_delay, current_try, delay_first, delay_start, delay_mul
 
 
 import app.resources.theq.categories
+import app.resources.theq.upload
 import app.resources.theq.channels
 import app.resources.theq.citizen.citizen_add_to_queue
 import app.resources.theq.citizen.citizen_begin_service
@@ -218,6 +219,7 @@ import app.resources.theq.services
 import app.resources.theq.service_requests_list
 import app.resources.theq.service_requests_detail
 import app.resources.theq.smartboard
+import app.resources.theq.videofiles
 import app.resources.theq.websocket
 
 import app.resources.bookings.appointment.appointment_detail

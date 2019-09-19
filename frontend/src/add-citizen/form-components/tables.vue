@@ -7,8 +7,7 @@
                       padding-right: 0px;
                       padding-bottom: 5px;"
                       >
-    <b-form-row no-gutters class="m-0 add_citizen_table_header"
-                       >
+    <b-form-row no-gutters class="m-0 add_citizen_table_header">
       <b-col class="m-0 p-0">&nbsp&nbspService</b-col>
       <b-col class="m-0 p-0" v-if="!simplifiedModal">Category</b-col>
     </b-form-row>

@@ -105,6 +105,8 @@ class BaseConfig(object):
     SERVICENOW_TENANT = os.getenv('SERVICENOW_TENANT', '')
     SERVICENOW_ASSIGN_GROUP = os.getenv('SERVICENOW_ASSIGN_GROUP', '')
 
+    VIDEO_PATH = os.getenv('VIDEO_PATH', '')
+
 class LocalConfig(BaseConfig):
     DEBUG = True
     TESTING = False

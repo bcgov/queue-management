@@ -17,7 +17,7 @@ limitations under the License.*/
   <div style="display: flex; height: 75%; width: 100%; justify-content: center">
       <div class="board-85-video">
         <div class="board-video-div">
-          <Video />
+          <Video :office_number="smartboardData.office_number" />
         </div>
       </div>
     </div>
@@ -29,6 +29,7 @@ import Video from './video'
 export default {
   name: 'NonReception',
   components: { Video },
+  props: ['smartboardData']
 }
 </script>
 

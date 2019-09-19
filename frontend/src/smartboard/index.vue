@@ -21,7 +21,9 @@ limitations under the License.*/
                   :smartboardData="{office_number}" :networkStatus="{networkDown}"></CallByTicket>
     <CallByName v-else-if="officetype==='callbyname' || officetype==='reception'"
                 :smartboardData="{office_number}" :networkStatus="{networkDown}"></CallByName>
-    <NonReception v-else-if="officetype==='nocallonsmartboard'"></NonReception>
+    <NonReception v-else-if="officetype==='nocallonsmartboard'"
+                :smartboardData="{office_number}"></NonReception>
+
     <div v-else>Please stand by...</div>
     <BoardSocket :smartboardData="{office_number}"></BoardSocket>
 

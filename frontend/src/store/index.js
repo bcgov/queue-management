@@ -82,6 +82,7 @@ export const store = new Vuex.Store({
     csr_states: [],
     csrs: [],
     dismissCount: 0,
+    diskspace: {},
     editedBooking: null,
     editedBookingOriginal: null,
     editedGroupBooking: null,
@@ -110,6 +111,8 @@ export const store = new Vuex.Store({
     },
     invigilators: [],
     isLoggedIn: false,
+    isUploadingFile: false,
+    manifestdata: '',
     loginAlertMessage: '',
     loginDismissCount: 0,
     nonITAExam: false,
@@ -188,6 +191,7 @@ export const store = new Vuex.Store({
       receptionist_ind: null
     },
     userLoadingFail: false,
+    videofiles: []
   },
 
   getters: {
@@ -475,6 +479,75 @@ export const store = new Vuex.Store({
       Axios(context).get('/login/').then( () => {
         context.commit('setiframeLogedIn', true)
       })
+    },
+
+    clickUploadFile(context, payload) {
+      context.commit('setIsUploadingFile', true)
+      let formData = new FormData();
+      if (payload.file) {
+        formData.append("file", payload.file);
+        if (payload.newname) {
+          formData.append("newname", payload.newname);
+        }
+      }
+      formData.append("manifest", payload.data);
+      var contenttype = {
+        headers: {
+          "content-type" : "multipart/form-data"
+        }
+      };
+
+      // Post the data to the back end.
+      Axios(context).post('/upload/', formData, contenttype)
+        .then(
+          resp => {
+            context.commit('setMainAlert', 'File uploaded successfully.')
+            context.dispatch('requestVideoFileInfo')
+          },
+          error => {
+            context.commit('setMainAlert', 'An error occurred uploading your file.')
+          })
+        .catch(() => {
+          context.commit('setMainAlert', 'An exceptoin occurred uploading your file.')
+        })
+        .finally(() => {
+            context.commit('setIsUploadingFile', false)
+          })
+    },
+
+    clickDeleteFile(context, payload) {
+
+      // Post the file name to delete to the back end.
+      Axios(context).delete('/videofiles/', { 'data' : payload })
+        .then(
+          resp => {
+            context.commit('setMainAlert', 'File deleted successfully.')
+            context.dispatch('requestVideoFileInfo')
+          },
+          error => {
+            context.commit('setMainAlert', 'File could not be deleted.')
+          })
+        // .catch(() => {
+        //   context.commit('setMainAlert', 'An exception occurred trying to delete file.')
+        // })
+    },
+
+    requestVideoFileInfo(context) {
+      // Get video file info from the back end.
+      Axios(context).get('/videofiles/')
+        .then (resp => {
+          let videofiles = resp.data.videofiles;
+          let manifestdata = resp.data.manifest;
+          let diskspace = resp.data.space;
+          context.commit('setVideoFiles', videofiles);
+          context.commit('setManifestData', manifestdata);
+          context.commit('setDiskSpace', diskspace);
+        })
+        .catch(error => {
+          console.log('error in requestVideoFileInfo')
+          console.log(error.response)
+          console.log(error.message)
+        })
     },
 
     changeAdminView(context, view) {
@@ -2133,7 +2206,26 @@ export const store = new Vuex.Store({
     },
   
     setReturnExamInfo: (state, payload) => state.returnExam = payload,
-  
+
+    setManifestData(state, payload) {
+      state.manifestdata = ''
+      state.manifestdata = payload
+    },
+
+    setDiskSpace(state, payload) {
+      state.diskspace = {}
+      state.diskspace = payload
+    },
+
+    setIsUploadingFile(state, payload) {
+      state.isUploadingFile = payload
+    },
+
+    setVideoFiles(state, payload) {
+      state.videofiles = []
+      state.videofiles = payload
+    },
+
     toggleAddModal: (state, payload) => state.showAddModal = payload,
   
     updateAddModalForm(state, payload) {

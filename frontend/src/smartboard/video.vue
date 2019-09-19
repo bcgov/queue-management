@@ -22,18 +22,35 @@ limitations under the License.*/
 </template>
 
 <script>
+  import axios from 'axios'
   import 'video.js/dist/video-js.css'
   import { videoPlayer } from 'vue-video-player'
+
+  const Axios = axios.create({
+    baseURL: process.env.API_URL,
+    withCredentials: true,
+    headers: {
+      'Accept': 'application/json'
+    }
+  })
+
+  const defaultVideoFile = '/static/videos/sbc.mp4';
 
   export default {
     name: 'Video',
     components: {
       videoPlayer
     },
+    props: ['office_number'],
+    // mounted() {
+    //   this.getOfficeVideoUrl()
+    // },
+    beforeMount() {
+      this.getOfficeVideoUrl()
+    },
     data() {
       function getParameterByName(name, url) {
         url = window.location.href;
-
         name = name.replace(/[\[\]]/g, '\\$&');
         var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'), results = regex.exec(url);
         if (!results) return null;
@@ -41,7 +58,7 @@ limitations under the License.*/
         return decodeURIComponent(results[2].replace(/\+/g, ' '));
       }
 
-      var videoPath = '/static/videos/sbc.mp4';
+      var videoPath = this.defaultVideoFile;
       if (getParameterByName("localvideo") == "1") {
         videoPath = "http://localhost/videos/video.mp4";
       }
@@ -62,6 +79,16 @@ limitations under the License.*/
       }
     },
     methods: {
+      getOfficeVideoUrl() {
+        let url = '/videofiles/' + this.office_number.toString();
+        Axios.get(url)
+          .then( resp => {
+            this.playerOptions.sources[0].src = resp.data.videourl;
+          })
+          .catch(() => {
+            this.playerOptions.sources[0].src = this.defaultVideoFile;
+          })
+      },
       playerStateChanged(playerCurrentState) {
         if (playerCurrentState && playerCurrentState.playing) {
           this.playing = true

@@ -30,6 +30,8 @@ import Calendar from './booking/calendar'
 import ButtonsCalendar from './booking/buttons-calendar'
 import Appointments from './appointments/appointments'
 import ButtonsAppointments from './appointments/buttons-appointments'
+import Upload from './upload/upload'
+import ButtonsUpload from './upload/buttons-upload'
 
 Vue.use(Router)
 
@@ -86,6 +88,14 @@ export default new Router({
           components: {
             default: Calendar,
             buttons: ButtonsCalendar,
+          },
+          meta: { hideCitizenWaiting: false },
+        },
+        {
+          path: 'upload',
+          components: {
+            default: Upload,
+            buttons: ButtonsUpload
           },
           meta: { hideCitizenWaiting: false },
         },
