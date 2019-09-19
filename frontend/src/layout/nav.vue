@@ -64,7 +64,7 @@
             </template>
             <b-dropdown-item v-if="showAdmin" to="/admin">Administration</b-dropdown-item>
             <b-dropdown-item v-if="showAdmin" @click="clickRefresh">Refresh</b-dropdown-item>
-            <b-dropdown-item v-if="showAdmin" to="/upload">Upload File</b-dropdown-item>
+            <b-dropdown-item v-if="showSupport" to="/upload">Upload File</b-dropdown-item>
             <b-dropdown-divider v-if="showAdmin" />
             <b-dropdown-item>
               <b-button class="btn-primary w-100 m-0"
@@ -156,6 +156,14 @@
         let roles = ['GA', 'ANALYTICS', 'HELPDESK', 'SUPPORT']
         if (this.user && this.user.role && this.user.role.role_code) {
           if (roles.indexOf(this.user.role.role_code) > -1) {
+            return true
+          }
+        }
+        return false
+      },
+      showSupport() {
+        if (this.user && this.user.role && this.user.role.role_code) {
+          if (this.user.role.role_code == 'SUPPORT') {
             return true
           }
         }
