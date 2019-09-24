@@ -65,7 +65,11 @@ class ServiceRequestsList(Resource):
     @oidc.accept_token(require_token=True)
     @api_call_with_retry
     def post(self):
-        json_data = request.get_json()
+        try:
+            json_data = request.get_json()
+        except Exception as error:
+            return {"message": str(error)}, 401
+
         csr = CSR.find_by_username(g.oidc_token_info['username'])
         service_request, message, code = get_service_request(self, json_data, csr)
         if (service_request is None):
