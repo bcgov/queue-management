@@ -21,7 +21,7 @@ import os
 from os.path import isfile, join
 from datetime import datetime
 
-def ReadFile(entry):
+def read_file(entry):
     try:
         with open(entry, "r") as myfile:
             manifest_data = myfile.read()
@@ -37,7 +37,7 @@ def ReadFile(entry):
             'code' : 501
         }
 
-def GetUrl(office_number, manifest_data):
+def get_url(office_number, manifest_data):
 
     error = "Neither office " + str(office_number) + ' "default" found in manifest.json'
 
@@ -97,7 +97,7 @@ class VideoFiles(Resource):
                             newfiles.append(new_info)
 
                         if entry.name.lower() == 'manifest.json':
-                            result = ReadFile(entry)
+                            result = read_file(entry)
                             manifest_data = result['data']
                             errors = result['errors']
                             code = result['code']
@@ -129,6 +129,10 @@ class VideoFileSelf(Resource):
     # @oidc.accept_token(require_token=True)
     def get(self, office_number):
 
+        code = 0
+        errors = ''
+        manifest_data = ''
+
         try:
 
             office = office_number
@@ -137,15 +141,14 @@ class VideoFileSelf(Resource):
             video_path = application.config['VIDEO_PATH']
             with os.scandir(video_path) as dir_entries:
                 for entry in dir_entries:
-                    if isfile(entry):
-                        if entry.name.lower() == 'manifest.json':
-                            result = ReadFile(entry)
-                            manifest_data = result['data']
-                            errors = result['errors']
-                            code = result['code']
+                    if isfile(entry) and entry.name.lower() == 'manifest.json':
+                        result = read_file(entry)
+                        manifest_data = result['data']
+                        errors = result['errors']
+                        code = result['code']
 
             if code == 200:
-                result = GetUrl(office, manifest_data)
+                result = get_url(office, manifest_data)
                 return result
             else:
                 return {

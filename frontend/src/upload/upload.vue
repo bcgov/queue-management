@@ -3,7 +3,7 @@
     <div style="position: relative" class="q-upload-margins">
 
       <div v-if="this.isUploadingFile">
-        <div class="q-loader" />
+        <div class="q-loader"></div>
       </div>
       <br>
 
@@ -101,7 +101,7 @@
       ...mapActions(['clickUploadFile', 'requestVideoFileInfo']),
       ...mapMutations(['setMainAlert']),
       uploadFile() {
-        if (this.filesCount == 0) {
+        if (this.filesCount === 0) {
           this.setMainAlert('Select a file to upload before pressing Upload File')
         }
         else {

@@ -23,6 +23,39 @@ from app.utilities.snowplow import SnowPlow
 from pprint import pprint
 import json
 
+
+def get_service_request(self, json_data, csr):
+
+    if not json_data:
+        print("==> No json_data in POST /service_requests/")
+        print("    --> CSR:       " + csr.username)
+        return (None, "No input data received for creating service request", 400)
+
+    try:
+        service_request = self.service_request_schema.load(json_data['service_request']).data
+
+    except ValidationError as err:
+        print("==> ValidationError in POST /service_requests/")
+        print("    --> CSR:       " + csr.username)
+        print(err)
+        return (None, err.messages, 422)
+    except KeyError as err:
+        print("==> No service_request parameter in POST /service_requests/")
+        print("    --> CSR:       " + csr.username)
+        print("    --> json_data: " + json.dumps(json_data))
+        print(err)
+        return (None, str(err), 422)
+
+    #  If service request is null, an error.
+    if service_request is None:
+        print("==> service_request is None in POST /service_requests/, error in schema.load")
+        print("    --> CSR:       " + csr.username)
+        print("    --> json_data: " + json.dumps(json_data['service_request']))
+        return (None, "Service request is none trying to create service request", 400)
+
+    #  All OK.  Return the service request.
+    return (service_request, "", 200)
+
 @api.route("/service_requests/", methods=["POST"])
 class ServiceRequestsList(Resource):
 
@@ -32,36 +65,15 @@ class ServiceRequestsList(Resource):
     @oidc.accept_token(require_token=True)
     @api_call_with_retry
     def post(self):
-        json_data = request.get_json()
+        try:
+            json_data = request.get_json()
+        except Exception as error:
+            return {"message": str(error)}, 401
 
         csr = CSR.find_by_username(g.oidc_token_info['username'])
-
-        if not json_data:
-            print("==> No json_data in POST /service_requests/")
-            print("    --> CSR:       " + csr.username)
-            return {"message": "No input data received for creating service request"}, 400
-
-        if not 'service_request' in json_data.keys():
-            print("==> No service_request parameter in POST /service_requests/")
-            print("    --> CSR:       " + csr.username)
-            print("    --> json_data: " + json.dumps(json_data))
-            return {"message": "No input data received for creating service request"}, 400
-
-        try:
-            service_request = self.service_request_schema.load(json_data['service_request']).data
-
-        except ValidationError as err:
-            return {"message": err.messages}, 422
-        except KeyError as err:
-            print (err)
-            return {"message": str(err)}
-
-        #  If service request is null, an error.
-        if service_request is None:
-            print("==> service_request is None in POST /service_requests/, error in schema.load")
-            print("    --> CSR:       " + csr.username)
-            print("    --> json_data: " + json.dumps(json_data['service_request']))
-            return {"message": "Service request is none trying to create service request"}, 400
+        service_request, message, code = get_service_request(self, json_data, csr)
+        if (service_request is None):
+            return {"message": message}, code
 
         active_sr_state = SRState.get_state_by_name("Active")
         complete_sr_state = SRState.get_state_by_name("Complete")
