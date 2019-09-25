@@ -1,5 +1,12 @@
 <template>
   <div class="add_citizen_form mt-0">
+    <b-alert :show="comments_too_long"
+             style="h-align: center"
+             variant="danger">
+             You have entered more than the 1,000 characters allowed for comments.
+    </b-alert>
+    <b-form-row no-gutters>
+    </b-form-row>
     <b-form-row no-gutters>
       <b-col cols="auto">
         <label class="add_citizen_form_label">
@@ -34,7 +41,7 @@
     },
 
     computed: {
-      ...mapGetters(['form_data']),
+      ...mapGetters(['form_data', 'comments_too_long']),
 
       comments: {
         get() { return this.form_data.comments },

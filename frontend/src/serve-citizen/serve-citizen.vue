@@ -25,6 +25,11 @@
         </div>
         <template v-if="!simplifiedModal">
           <b-container id="serve-citizen-modal-top" fluid v-if="!minimizeWindow">
+            <b-alert :show="comments_too_long"
+                     style="h-align: center"
+                     variant="danger">
+                     You have entered more than the 1,000 characters allowed for comments.
+            </b-alert>
             <b-row no-gutters class="p-2">
               <b-col col cols="4">
                 <div v-if="appointment">
@@ -239,6 +244,11 @@ export default {
         return {ticket_number: ''}
       }
       return this.invited_citizen
+    },
+    comments_too_long: {
+      get() {
+        return this.serviceModalForm.citizen_comments.length > 50;
+      }
     },
     comments: {
       get() {

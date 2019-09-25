@@ -37,7 +37,7 @@
                     id="add-citizen-cancel">Cancel</b-button>
           <div style="display:inline-block">
             <b-button @click="addToQueue"
-                      :disabled="performingAction"
+                      :disabled="performingAction || comments_too_long"
                       class="btn-white"
                       id="add-citizen-add-to-queue">Add to queue</b-button>
             <b-button @click="beginService"
@@ -81,6 +81,7 @@
       ...mapGetters({
         form_data: 'form_data',
         reception: 'reception',
+        comments_too_long: 'comments_too_long'
       }),
       ...mapState({
         setup: 'addModalSetup',

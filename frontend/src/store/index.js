@@ -233,6 +233,10 @@ export const store = new Vuex.Store({
       }
     },
 
+    comments_too_long(state) {
+      return state.addModalForm.comments.length > 1000;
+    },
+
     invigilator_dropdown(state) {
       let invigilators = [
         {value: null, text: 'unassigned'},
