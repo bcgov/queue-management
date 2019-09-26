@@ -60,6 +60,7 @@ export const store = new Vuex.Store({
     },
     alertMessage: '',
     allCitizens: [],
+    backOfficeDisplay: 'BackOffice',
     bearer: '',
     bookings: [],
     calendarEvents: [],
@@ -895,6 +896,7 @@ export const store = new Vuex.Store({
           context.commit('setOffice', officeType)
           context.commit('setDefaultCounter', resp.data.csr.office.counters.filter(
             c => c.counter_name === DEFAULT_COUNTER_NAME)[0])
+          context.commit('setBackOfficeDisplay', resp.data.back_office_display)
           let individualExamBoolean = false
           let groupExamBoolean = false
           let groupIndividualBoolean = false
@@ -1169,7 +1171,7 @@ export const store = new Vuex.Store({
     },
 
     clickBackOffice(context) {
-      context.commit('setDisplayServices', 'BackOffice')
+      context.commit('setDisplayServices', context.state.backOfficeDisplay)
       context.commit('setPerformingAction', true)
       context.dispatch('toggleModalBack')
 
@@ -2307,6 +2309,8 @@ export const store = new Vuex.Store({
     toggleServiceModal: (state, payload) => state.showServiceModal = payload,
 
     setDisplayServices: (state, payload) => state.displayServices = payload,
+
+    setBackOfficeDisplay: (state, payload) => state.backOfficeDisplay = payload,
   
     setServiceModalForm(state, citizen) {
       let citizen_comments = citizen.citizen_comments
