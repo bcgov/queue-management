@@ -83,6 +83,7 @@ export const store = new Vuex.Store({
     csrs: [],
     dismissCount: 0,
     diskspace: {},
+    displayServices: 'All',
     editedBooking: null,
     editedBookingOriginal: null,
     editedGroupBooking: null,
@@ -97,7 +98,6 @@ export const store = new Vuex.Store({
     examSuccessDismiss : 0,
     examTypes: [],
     feedbackMessage: '',
-    hideBackOffice: false,
     groupIndividualExam: false,
     iframeLogedIn: false,
     inventoryFilters: {
@@ -441,10 +441,7 @@ export const store = new Vuex.Store({
     },
 
     categories_options: (state, getters) => {
-      let opts = state.categories.filter(o => state.services.some(s => s.parent_id === o.service_id))
-      if (state.hideBackOffice) {
-        opts = opts.filter(cat=>cat.service_name !== 'Back Office')
-      }
+      let opts = state.categories.filter(o => getters.filtered_services.some(s => s.parent_id === o.service_id))
 
       let mappedOpts = opts.map(opt =>
         ({value: opt.service_id, text: opt.service_name})
@@ -455,8 +452,11 @@ export const store = new Vuex.Store({
 
     filtered_services: (state, getters) => {
       let services = state.services
-      if (state.hideBackOffice) {
-        services = services.filter(service=>service.parent.service_name !== 'Back Office')
+      if (state.displayServices === "Dashboard") {
+        services = services.filter(service=>service.display_dashboard_ind === 1)
+      }
+      if (state.displayServices === "BackOffice") {
+        services = services.filter(service=>service.display_dashboard_ind === 0)
       }
 
       if (getters.form_data.category) {
@@ -952,7 +952,7 @@ export const store = new Vuex.Store({
     },
   
     clickAddCitizen(context) {
-      context.commit('toggleHideBackOffice', true)
+      context.commit('setDisplayServices', 'Dashboard')
       context.commit('setPerformingAction', true)
       context.dispatch('toggleModalBack')
       context.commit('toggleAddModal', true)
@@ -986,7 +986,7 @@ export const store = new Vuex.Store({
     },
 
     clickAddService(context) {
-      context.commit('toggleHideBackOffice', false)
+      context.commit('setDisplayServices', 'All')
       context.commit('setPerformingAction', true)
 
       if (context.state.channels.length === 0) {
@@ -1169,7 +1169,7 @@ export const store = new Vuex.Store({
     },
 
     clickBackOffice(context) {
-      context.commit('toggleHideBackOffice', false)
+      context.commit('setDisplayServices', 'BackOffice')
       context.commit('setPerformingAction', true)
       context.dispatch('toggleModalBack')
 
@@ -1306,7 +1306,7 @@ export const store = new Vuex.Store({
     },
 
     clickEdit(context) {
-      context.commit('toggleHideBackOffice', false)
+      context.commit('setDisplayServices', 'All')
       context.commit('setPerformingAction', true)
 
       if (context.state.channels.length === 0) {
@@ -2306,7 +2306,7 @@ export const store = new Vuex.Store({
   
     toggleServiceModal: (state, payload) => state.showServiceModal = payload,
 
-    toggleHideBackOffice: (state, payload) => state.hideBackOffice = payload,
+    setDisplayServices: (state, payload) => state.displayServices = payload,
   
     setServiceModalForm(state, citizen) {
       let citizen_comments = citizen.citizen_comments

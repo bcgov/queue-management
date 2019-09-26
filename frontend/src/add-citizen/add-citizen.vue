@@ -92,7 +92,7 @@ export default {
       addModalSetup: 'addModalSetup',
       serviceModalForm: 'serviceModalForm',
       user: 'user',
-      hideBackOffice: 'hideBackOffice'
+      displayServices: 'displayServices'
     }),
     ...mapGetters(['form_data', 'reception',]),
     simplified() {
@@ -111,7 +111,7 @@ export default {
       if (this.simplified) {
         return 'Begin Tracking'
       }
-      if (!this.hideBackOffice) {
+      if (this.displayServices === "BackOffice") {
         return "Back Office"
       }
       return 'Add Citizen'
