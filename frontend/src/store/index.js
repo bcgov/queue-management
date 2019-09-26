@@ -233,7 +233,7 @@ export const store = new Vuex.Store({
       }
     },
 
-    comments_too_long(state) {
+    commentsTooLong(state) {
       return state.addModalForm.comments.length > 1000;
     },
 
