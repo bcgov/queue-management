@@ -263,7 +263,7 @@ export default {
       return this.invited_citizen
     },
     commentsTooLong() {
-      return this.serviceModalForm.citizen_comments.length > 50;
+      return this.serviceModalForm.citizen_comments.length > 1000;
     },
     commentsAlert() {
       return this.commentsTooLong ? "You have entered more than the 1,000 characters allowed for comments." : "";
