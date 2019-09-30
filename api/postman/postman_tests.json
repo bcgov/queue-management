@@ -266,7 +266,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "//  If no maximum response defined, set a default.\r\nresponse_max = 0;\r\nif (globals.response_max) {\r\n    response_max = JSON.parse(globals.response_max);\r\n}\r\nelse {\r\n    response_max = 1509;\r\n    pm.globals.set(\"response_max\", JSON.stringify(response_max));\r\n};\r\n\r\n//  Get the max response time allowed.\r\npm.test('Response time less than ' + response_max.toString() + 'ms', function(){\r\n    pm.expect(pm.response.responseTime).to.be.below(response_max);\r\n});\r\n"
+							"raw": "//  If no maximum response defined, set a default.\r\nresponse_max = 0;\r\nif (globals.response_max) {\r\n    response_max = JSON.parse(globals.response_max);\r\n}\r\nelse {\r\n    response_max = 5009;\r\n    pm.globals.set(\"response_max\", JSON.stringify(response_max));\r\n};\r\n\r\n//  Get the max response time allowed.\r\npm.test('Response time less than ' + response_max.toString() + 'ms', function(){\r\n    pm.expect(pm.response.responseTime).to.be.below(response_max);\r\n});\r\n"
 						},
 						"url": {
 							"raw": "https://postman-echo.com/post",
