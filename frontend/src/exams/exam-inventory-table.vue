@@ -488,7 +488,7 @@
             { key: 'exam_method', label: 'Method', sortable: true, thStyle: 'width: 5%' },
             { key: 'expiry_date', label: 'Expiry Date', sortable: true, thStyle: 'width: 8%' },
             { key: 'exam_received', label: 'Received?', sortable: true, thStyle: 'width: 5%' },
-            { key: 'examinee_name', label: 'Candidategit Name', sortable: true, thStyle: 'width: 20%' },
+            { key: 'examinee_name', label: 'Candidate Name', sortable: true, thStyle: 'width: 20%' },
             { key: 'notes', label: 'Notes', sortable: false, },
           ]
         }
