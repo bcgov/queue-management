@@ -30,8 +30,6 @@ class ExamDetail(Resource):
     @oidc.accept_token(require_token=True)
     def get(self, id):
 
-        print("==> In Python GET /exams/<id>/ endpoint")
-
         csr = CSR.find_by_username(g.oidc_token_info['username'])
 
         try:
