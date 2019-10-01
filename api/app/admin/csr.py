@@ -130,9 +130,10 @@ class CSRConfig(Base):
 
     def on_model_change(self, form, model, is_created):
 
-        if is_created:
+        #  Trim idir name, convert to lower case, regardless of whether edit or create.
+        model.username = model.username.strip().lower()
 
-            model.username = model.username.strip().lower()
+        if is_created:
 
             if model.receptionist_ind is None:
                 model.receptionist_ind = 0
