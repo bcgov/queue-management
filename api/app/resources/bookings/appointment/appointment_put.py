@@ -29,8 +29,6 @@ class AppointmentPut(Resource):
     @oidc.accept_token(require_token=True)
     def put(self, id):
 
-        print("==> In Python PUT /appointments/<id>/ endpoint")
-
         csr = CSR.find_by_username(g.oidc_token_info['username'])
 
         json_data = request.get_json()

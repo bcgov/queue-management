@@ -30,8 +30,6 @@ class AppointmentList(Resource):
     @oidc.accept_token(require_token=True)
     def get(self):
 
-        print("==> In Python GET /appointments/<id>/ ")
-
         csr = CSR.find_by_username(g.oidc_token_info['username'])
 
         try:

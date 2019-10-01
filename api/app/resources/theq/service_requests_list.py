@@ -56,6 +56,25 @@ def get_service_request(self, json_data, csr):
     #  All OK.  Return the service request.
     return (service_request, "", 200)
 
+def get_service(service_request, json_data, csr):
+
+    service = None
+    try:
+        service = Service.query.get(service_request.service_id)
+    except:
+        print("==> An exception getting service info")
+        print("    --> CSR:       " + csr.username)
+        print("    --> json_data: " + json.dumps(json_data['service_request']))
+        return (None, ("Could not find service for service_id: " + str(service_request.service_id)), 400)
+
+    if service.parent_id is None:
+        print("==> CSR has selected a category, rather than a service.  This should not be possible")
+        print("    --> CSR:       " + csr.username)
+        print("    --> Service:   " + service.service_name)
+        return (None, "CSR has selected a category, rather than a service. Should not be possible", 400)
+
+    return (service, "", 200)
+
 @api.route("/service_requests/", methods=["POST"])
 class ServiceRequestsList(Resource):
 
@@ -78,6 +97,7 @@ class ServiceRequestsList(Resource):
         active_sr_state = SRState.get_state_by_name("Active")
         complete_sr_state = SRState.get_state_by_name("Complete")
         citizen_state = CitizenState.query.filter_by(cs_state_name="Active").first()
+
         citizen = None
         try:
             citizen = Citizen.query.get(service_request.citizen_id)
@@ -86,24 +106,12 @@ class ServiceRequestsList(Resource):
             print("    --> CSR:       " + csr.username)
             print("    --> json_data: " + json.dumps(json_data['service_request']))
 
-        service = None
-        try:
-            service = Service.query.get(service_request.service_id)
-        except:
-            print("==> An exception getting service info")
-            print("    --> CSR:       " + csr.username)
-            print("    --> json_data: " + json.dumps(json_data['service_request']))
-            return {"error": "Could not find service for service_id: " + str(service_request.service_id)}, 400
-
         if citizen is None:
             return {"message": "No matching citizen found for citizen_id"}, 400
 
-        if service is None:
-            return {"message": "No matching service found for service_id"}, 400
-
-        if service.parent_id is None:
-            print("==> CSR has selected a category, rather than a service.  This should not be possible")
-            return {"message": "CSR has selected a category, rather than a service. Should not be possible"}, 400
+        service, message, code = get_service(service_request, json_data, csr)
+        if (service is None):
+            return {"message": message}, code
 
         # Find the currently active service_request and close it (if it exists)
         current_sr_number = 0

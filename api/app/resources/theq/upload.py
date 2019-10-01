@@ -47,6 +47,11 @@ class Categories(Resource):
             if "newname" in form:
                 filename = form.get("newname")
 
+                #  If the filename doesn't end in .mp4, then add .mp4 as an extension
+                file_name, file_extension = os.path.splitext(filename)
+                if file_extension.lower() != '.mp4':
+                    filename = filename + ".mp4"
+
             destination = "/".join([uploadpath, filename])
             try:
                 file.save(destination)

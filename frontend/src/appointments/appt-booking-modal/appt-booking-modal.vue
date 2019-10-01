@@ -200,7 +200,8 @@
         }
       },
       service_name() {
-        let { services } = this.$store.state
+        this.$store.commit('setDisplayServices', 'Dashboard')
+        let { services } = this.$store.getters.filtered_services;
         if (services && services.length > 0) {
           if (this.selectedService) {
             return services.find(srv => srv.service_id === this.selectedService).service_name
