@@ -106,6 +106,7 @@ class BaseConfig(object):
     SERVICENOW_ASSIGN_GROUP = os.getenv('SERVICENOW_ASSIGN_GROUP', '')
 
     VIDEO_PATH = os.getenv('VIDEO_PATH', '')
+    BACK_OFFICE_DISPLAY = os.getenv("BACK_OFFICE_DISPLAY", "BackOffice")
 
 class LocalConfig(BaseConfig):
     DEBUG = True

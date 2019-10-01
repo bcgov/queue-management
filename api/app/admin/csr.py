@@ -22,8 +22,8 @@ from flask_admin.helpers import get_redirect_target
 from flask_admin.model.helpers import get_mdict_item_or_list
 from flask_login import current_user
 from sqlalchemy import or_
+from sqlalchemy.exc import IntegrityError
 from qsystem import db, cache, socketio
-
 
 class CSRConfig(Base):
     roles_allowed = ['GA', 'HELPDESK', 'SUPPORT']
@@ -123,11 +123,17 @@ class CSRConfig(Base):
 
         return model
 
+    def handle_view_exception(self, exc):
+        if isinstance(exc, IntegrityError):
+            flash(gettext('Username already exists in the database.  Duplicate record not created.'))
+            return True
+
     def on_model_change(self, form, model, is_created):
 
-        if is_created:
+        #  Trim idir name, convert to lower case, regardless of whether edit or create.
+        model.username = model.username.strip().lower()
 
-            model.username = model.username.strip()
+        if is_created:
 
             if model.receptionist_ind is None:
                 model.receptionist_ind = 0

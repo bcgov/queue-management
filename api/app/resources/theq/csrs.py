@@ -15,7 +15,7 @@ limitations under the License.'''
 from datetime import datetime
 from flask import g
 from flask_restplus import Resource
-from qsystem import api, db, oidc
+from qsystem import api, db, oidc, application
 from sqlalchemy import exc, or_
 from app.models.bookings import Exam, ExamType, Booking
 from app.models.theq import Citizen, CSR, Period, ServiceReq, SRState
@@ -57,6 +57,7 @@ class CsrSelf(Resource):
     exam_schema = ExamSchema(many=True)
     exam_type_schema = ExamTypeSchema()
     timezone = pytz.timezone("US/Pacific")
+    back_office_display = application.config['BACK_OFFICE_DISPLAY']
 
     @oidc.accept_token(require_token=True)
     def get(self):
@@ -123,6 +124,7 @@ class CsrSelf(Resource):
                     'group_exams': group_exams,
                     'group_individual_attention': group_attention,
                     'active_citizens': active_citizens.data,
+                    'back_office_display': self.back_office_display,
                     'errors': result.errors}
 
         except exc.SQLAlchemyError as e:

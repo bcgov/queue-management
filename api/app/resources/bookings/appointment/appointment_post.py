@@ -29,8 +29,6 @@ class AppointmentPost(Resource):
     @api_call_with_retry
     def post(self):
 
-        print("==> In Python POST /appointments/ endpoint")
-
         csr = CSR.find_by_username(g.oidc_token_info['username'])
         json_data = request.get_json()
 

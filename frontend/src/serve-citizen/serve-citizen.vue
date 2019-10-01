@@ -7,9 +7,9 @@
         <div class="q-loader" />
       </template>
       <template v-else>
-        <b-alert :show="this.serveModalAlert != ''"
+        <b-alert :show="this.alertMessage != ''"
                   style="h-align: center"
-                  variant="warning">{{this.serveModalAlert}}</b-alert>
+                  variant="warning">{{this.alertMessage}}</b-alert>
         <div class="modal_header" v-dragged="onDrag">
           <div>
             <h4 style="font-weight:900; color:#6e6e6e">
@@ -47,6 +47,7 @@
             </b-row>
           </b-container>
           <b-container id="serve-top-buttons-container"
+                       :style="{ top: topSpace }"
                        :class="appointment ? 'serve-top-buttons-container-2' : 'serve-top-buttons-container' "
                        v-if="!minimizeWindow">
             <div>
@@ -220,6 +221,27 @@ export default {
       }
       return false
     },
+    alertMessage() {
+      let serveMessageBlank = this.serveModalAlert === "";
+      let commentsMessageBlank = this.commentsAlert === "";
+      if (serveMessageBlank && commentsMessageBlank) {
+        return "";
+      }
+      if (serveMessageBlank && !commentsMessageBlank) {
+        return this.commentsAlert;
+      }
+      if ((!serveMessageBlank) && commentsMessageBlank) {
+        return this.serveModalAlert;
+      }
+      return this.serveModalAlert + "  " + this.commentsAlert;
+    },
+    topSpace() {
+      let top = this.appointment ? 210 : 178;
+      if (this.alertMessage != "") {
+        top = top + 60;
+      }
+      return top.toString() + "px";
+    },
     simplifiedModal() {
       if (this.$route.path !== '/queue') {
         return true
@@ -239,6 +261,12 @@ export default {
         return {ticket_number: ''}
       }
       return this.invited_citizen
+    },
+    commentsTooLong() {
+      return this.serviceModalForm.citizen_comments.length > 1000;
+    },
+    commentsAlert() {
+      return this.commentsTooLong ? "You have entered more than the 1,000 characters allowed for comments." : "";
     },
     comments: {
       get() {
