@@ -21,8 +21,6 @@ from app.exceptions import AuthError
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 
-from pprint import pprint
-
 import datetime
 
 def my_print(string):
