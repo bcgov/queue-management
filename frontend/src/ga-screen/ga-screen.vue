@@ -34,6 +34,9 @@ limitations under the License.*/
       </div>
       <div></div>
     </div>
+    <div>
+      The time is now: {{time_now}}
+    </div>
     <b-table small
              head-variant="light"
              :items="this.computed_csrs()"
@@ -53,6 +56,7 @@ limitations under the License.*/
 
 <script>
 
+import moment from 'moment'
 import {
   mapState, mapGetters, mapActions
 }
@@ -60,6 +64,14 @@ from 'vuex'
 
 export default {
   name: 'GAScreen',
+
+  mounted() {
+    this.interval = setInterval(this.time, 1000);
+  },
+
+  beforeDestroy() {
+    clearInterval(this.interval)
+  },
 
   data() {
     return {
@@ -95,6 +107,7 @@ export default {
             label: 'End Service'
         }
       ],
+      time_now: 'Sometime',
       timer: null
     }
   },
@@ -104,6 +117,11 @@ export default {
   },
   methods: {
     ...mapActions(['closeGAScreenModal', 'getCsrs', 'finishServiceFromGA']),
+    time() {
+      // this.time_now = new Date();
+      // this.time_now = moment().format();
+      this.time_now = moment()
+    },
     clickEnd(citizen_id){
         this.finishServiceFromGA(citizen_id)
     },
@@ -147,7 +165,8 @@ export default {
     },
     computed_csrs() {
       let computed_csrs = []
-      let currentDate = new Date()
+      // let currentDate = new Date()
+      let currentDate = this.time_now;
       const breakStateID = this.csr_states['Break'];
       this.csrs.forEach(csr => {
         let activeCitizen = this.get_citizen_for_csr(csr)
