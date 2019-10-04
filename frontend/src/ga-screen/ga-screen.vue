@@ -113,7 +113,13 @@ export default {
   },
   computed: {
     ...mapState(['showGAScreenModal', 'csrs', 'citizens', 'csr_states']),
-    ...mapGetters(['citizens_queue', 'on_hold_queue', 'reception'])
+    ...mapGetters(['citizens_queue', 'on_hold_queue', 'reception']),
+    sortedCsrs() {
+      return this.csrs.sort(function(a,b) {
+                                            if (a.username < b.username) return -1;
+                                            else if (a.username === b.username) return 0;
+                                            else return 1;});
+    }
   },
   methods: {
     ...mapActions(['closeGAScreenModal', 'getCsrs', 'finishServiceFromGA']),
@@ -168,86 +174,106 @@ export default {
       // let currentDate = new Date()
       let currentDate = this.time_now;
       const breakStateID = this.csr_states['Break'];
-      this.csrs.forEach(csr => {
+      // console.log("==> Sorted CSRs in computed_csrs");
+      // this.sortedCsrs.forEach(csr => {
+      //   console.log("    --> CSR name: " + csr.username)
+      // });
+      // console.log("==> Processing CSRs")
+      this.sortedCsrs.forEach(csr => {
         let activeCitizen = this.get_citizen_for_csr(csr)
+        if ((csr.csr_state.csr_state_name !== "Logout") || (activeCitizen !== null)) {
+          // console.log("    --> Logged in or active citizen: Csr: " + csr.username + "; State: " + csr.csr_state.csr_state_name);
 
-        if (activeCitizen === null) {
+          if (activeCitizen === null) {
 
-          csr.csr_state_id === breakStateID ? csr['wait_time'] = 'ON BREAK' : csr['wait_time'] = null;
+            csr.csr_state_id === breakStateID ? csr['wait_time'] = 'ON BREAK' : csr['wait_time'] = null;
+            csr['serving_time'] = null
+            csr['citizen'] = null
+            csr['service_request'] = null
+            csr['end_service'] = null
+            computed_csrs.push(csr)
+          } else {
+            let activeServiceRequest = activeCitizen.service_reqs.filter(sr => sr.periods.some(p => p.time_end === null))[0]
+
+            // Add Wait time and Serve time when service begins
+            if (activeCitizen.service_reqs[0].periods.filter(p => p.ps.ps_name === "Being Served")[0]) {
+              let firstServedPeriod = activeCitizen.service_reqs[0].periods.filter(p => p.ps.ps_name === "Being Served")[0]
+              let citizenStartDate = new Date(activeCitizen.start_time)
+              let firstServedPeriodDate = new Date(firstServedPeriod.time_start)
+
+              // console.log("==> Periods for Active Service Request: " + activeServiceRequest.service.service_name);
+              let timeServeClosed = 0
+              // console.log("==> timeServeClosed")
+              // console.log(timeServeClosed)
+              // console.log(timeServeClosed.toString())
+              let timeServeOpen = timeServeClosed
+              activeServiceRequest.periods.forEach(p => {
+                // console.log("    --> Name: " + p.ps.ps_name + "; Start: " + p.time_start.toString() + "; End: " + (p.time_end === null ? "N/A" : p.time_end.toString()));
+                if (p.ps.ps_name === "Being Served") {
+                  if (p.time_end != null) {
+                    let dateEnd = new Date(p.time_end)
+                    let dateStart = new Date(p.time_start)
+                    // console.log("        --> Being served, done. Served: " + timeServeClosed.toString() + "; Added: " + (p.time_end - p.time_start).toString())
+                    // console.log("        --> Being served, done. dateEnd: " + dateEnd.toString() + "; dateStart: " + dateStart.toString())
+                    // console.log("        --> Being served, done. Served: " + timeServeClosed.toString() + "; Added: " + (dateEnd - dateStart).toString())
+                    timeServeClosed = timeServeClosed + (dateEnd - dateStart)
+                  } else {
+                    let dateStart = new Date(p.time_start)
+                    timeServeOpen = Math.max(0, currentDate - dateStart)
+                    // console.log("        --> Being served, active. Time Started: " + p.time_start.toString() + "; Time Open: " + timeServeOpen.toString())
+                  }
+                }
+              })
+              let waitSeconds = (firstServedPeriodDate - citizenStartDate) / 1000
+              // console.log("==> waitSeconds");
+              // console.log(waitSeconds);
+              // console.log("==> serveClosed");
+              // console.log(timeServeClosed);
+              // console.log("==> serveOpen")
+              // console.log(timeServeOpen)
+              let timeServeTotal = (timeServeClosed + timeServeOpen)
+              // console.log("==> serveTotal")
+              // console.log(timeServeTotal)
+
+              let waitDate = new Date(null)
+              waitDate.setSeconds(waitSeconds)
+              // let sd = new Date(null)
+              // sd.setSeconds(serveClosed)
+              // serveClosed = (currentDate - firstServedPeriodDate) / 1000
+
+              let serveDate = new Date(null)
+              serveDate.setSeconds(timeServeTotal / 1000)
+              // console.log("            ==> Wait: " + `${waitDate.getUTCHours()}:${waitDate.getMinutes()}:${waitDate.getSeconds()}`
+              //                        + "; Serve: " + `${serveDate.getUTCHours()}:${serveDate.getMinutes()}:${serveDate.getSeconds()}`)
+              // csr['wait_time'] = `${waitDate.getUTCHours()}h ${waitDate.getMinutes()}min`
+              // csr['serving_time'] = `${serveDate.getUTCHours()}h ${serveDate.getMinutes()}min`
+              csr['wait_time'] = `${waitDate.getUTCHours()}h ${waitDate.getMinutes()}m ${waitDate.getSeconds()}s`
+              csr['serving_time'] = `${serveDate.getUTCHours()}h ${serveDate.getMinutes()}m ${serveDate.getSeconds()}s`
+            } else {
+              csr['wait_time'] = null
+              csr['serving_time'] = null
+            }
+
+            csr['citizen'] = activeCitizen
+            csr['service_request'] = activeServiceRequest
+            csr['end_service'] = {label: 'End Service', id: activeCitizen.citizen_id}
+            computed_csrs.push(csr)
+          }
+        }
+      });
+
+      this.sortedCsrs.forEach(csr => {
+        if (csr.csr_state.csr_state_name === "Logout") {
+          // console.log("    --> Logged out: csr: " + csr.username + "; State: " + csr.csr_state.csr_state_name);
+
+          csr['wait_time'] = 'Logout';
           csr['serving_time'] = null
           csr['citizen'] = null
           csr['service_request'] = null
           csr['end_service'] = null
           computed_csrs.push(csr)
-        } else {
-          let activeServiceRequest = activeCitizen.service_reqs.filter(sr => sr.periods.some(p => p.time_end === null))[0]
-
-          // Add Wait time and Serve time when service begins
-          if(activeCitizen.service_reqs[0].periods.filter(p => p.ps.ps_name === "Being Served")[0]){
-            let firstServedPeriod = activeCitizen.service_reqs[0].periods.filter(p => p.ps.ps_name === "Being Served")[0]
-            let citizenStartDate = new Date(activeCitizen.start_time)
-            let firstServedPeriodDate = new Date(firstServedPeriod.time_start)
-
-            // console.log("==> Periods for Active Service Request: " + activeServiceRequest.service.service_name);
-            let timeServeClosed = 0
-            // console.log("==> timeServeClosed")
-            // console.log(timeServeClosed)
-            // console.log(timeServeClosed.toString())
-            let timeServeOpen = timeServeClosed
-            activeServiceRequest.periods.forEach(p => {
-              // console.log("    --> Name: " + p.ps.ps_name + "; Start: " + p.time_start.toString() + "; End: " + (p.time_end === null ? "N/A" : p.time_end.toString()));
-              if (p.ps.ps_name === "Being Served") {
-                if (p.time_end != null) {
-                  let dateEnd = new Date(p.time_end)
-                  let dateStart = new Date(p.time_start)
-                  // console.log("        --> Being served, done. Served: " + timeServeClosed.toString() + "; Added: " + (p.time_end - p.time_start).toString())
-                  // console.log("        --> Being served, done. dateEnd: " + dateEnd.toString() + "; dateStart: " + dateStart.toString())
-                  // console.log("        --> Being served, done. Served: " + timeServeClosed.toString() + "; Added: " + (dateEnd - dateStart).toString())
-                  timeServeClosed = timeServeClosed + (dateEnd - dateStart)
-                }
-                else {
-                  let dateStart = new Date(p.time_start)
-                  timeServeOpen = Math.max(0, currentDate - dateStart)
-                  // console.log("        --> Being served, active. Time Started: " + p.time_start.toString() + "; Time Open: " + timeServeOpen.toString())
-                }
-              }
-            })
-            let waitSeconds = (firstServedPeriodDate - citizenStartDate) / 1000
-            // console.log("==> waitSeconds");
-            // console.log(waitSeconds);
-            // console.log("==> serveClosed");
-            // console.log(timeServeClosed);
-            // console.log("==> serveOpen")
-            // console.log(timeServeOpen)
-            let timeServeTotal = (timeServeClosed + timeServeOpen)
-            // console.log("==> serveTotal")
-            // console.log(timeServeTotal)
-
-            let waitDate = new Date(null)
-            waitDate.setSeconds(waitSeconds)
-            // let sd = new Date(null)
-            // sd.setSeconds(serveClosed)
-            // serveClosed = (currentDate - firstServedPeriodDate) / 1000
-
-            let serveDate = new Date(null)
-            serveDate.setSeconds(timeServeTotal / 1000)
-            // console.log("            ==> Wait: " + `${waitDate.getUTCHours()}:${waitDate.getMinutes()}:${waitDate.getSeconds()}`
-            //                        + "; Serve: " + `${serveDate.getUTCHours()}:${serveDate.getMinutes()}:${serveDate.getSeconds()}`)
-            // csr['wait_time'] = `${waitDate.getUTCHours()}h ${waitDate.getMinutes()}min`
-            // csr['serving_time'] = `${serveDate.getUTCHours()}h ${serveDate.getMinutes()}min`
-            csr['wait_time'] = `${waitDate.getUTCHours()}h ${waitDate.getMinutes()}m ${waitDate.getSeconds()}s`
-            csr['serving_time'] = `${serveDate.getUTCHours()}h ${serveDate.getMinutes()}m ${serveDate.getSeconds()}s`
-          } else {
-            csr['wait_time'] = null
-            csr['serving_time'] = null
-          }
-
-          csr['citizen'] = activeCitizen
-          csr['service_request'] = activeServiceRequest
-          csr['end_service'] = {label:'End Service', id: activeCitizen.citizen_id}
-          computed_csrs.push(csr)
         }
-      })
+      });
 
       return computed_csrs
     },
