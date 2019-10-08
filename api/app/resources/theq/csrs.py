@@ -15,7 +15,7 @@ limitations under the License.'''
 from datetime import datetime
 from flask import g
 from flask_restplus import Resource
-from qsystem import api, db, oidc, application
+from qsystem import api, db, oidc, application, api_call_with_retry
 from sqlalchemy import exc, or_
 from app.models.bookings import Exam, ExamType, Booking
 from app.models.theq import Citizen, CSR, Period, ServiceReq, SRState
@@ -60,6 +60,7 @@ class CsrSelf(Resource):
     back_office_display = application.config['BACK_OFFICE_DISPLAY']
 
     @oidc.accept_token(require_token=True)
+    @api_call_with_retry
     def get(self):
         try:
             csr = CSR.find_by_username(g.oidc_token_info['username'])
