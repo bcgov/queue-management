@@ -57,6 +57,9 @@
       handleClick(type) {
         this.setAddExamModalSetting({setup: type})
         this.setAddExamModalSetting(true)
+        if (type === 'pesticide') {
+          this.$store.dispatch('getPesticideExamTypes')
+        }
       },
       clickGenFinReport() {
         this.toggleGenFinReport(true)

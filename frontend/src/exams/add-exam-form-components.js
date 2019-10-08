@@ -4,6 +4,66 @@ import DatePicker from 'vue2-datepicker'
 import moment from 'moment'
 import OfficeDrop from './office-drop'
 
+export const AddExamCounter = Vue.component('add-exam-counter', {
+  props: ['error', 'q', 'validationObj', 'handleInput', 'exam'],
+  components: { checkmark },
+  computed: {
+    ...mapState({
+      setup: state => state.addExamModal.setup,
+      candidates: state => state.addExamModule.candidates,
+    }),
+    numberOfStudents() {
+      return this.exam.number_of_students
+    },
+    currentNumber() {
+      if ( Array.isArray(this.candidates) ) {
+        return this.candidates.length
+      }
+      return 0
+    },
+  },
+  watch: {
+    numberOfStudents(newVal) {
+      if ( newVal == this.currentNumber ) {
+        this.$store.commit('captureExamDetail', { key: 'add_exam_counter', value: 1 })
+      } else {
+        this.$store.commit('deleteCapturedExamDetail', 'add_exam_counter')
+      }
+    },
+    currentNumber(newVal) {
+      if ( newVal == this.exam.number_of_students ) {
+        this.$store.commit('captureExamDetail', { key: 'add_exam_counter', value: 1 })
+      } else {
+        this.$store.commit('deleteCapturedExamDetail', 'add_exam_counter')
+      }
+    }
+  },
+  template: `
+    <fragment>
+      <b-row no-gutters class="mx-2">
+        <b-col cols="2">
+          <b-form-group>
+            <label class="m-0">Total</label>
+            <b-input class="my-0 w-50" disabled size="sm" :value="currentNumber" />
+          </b-form-group>
+        </b-col>
+        
+      </b-row>
+      <b-row no-gutters v-if="error && !validationObj['add_exam_counter'].valid">
+        <b-col cols="11" class="mt-1">
+          <span style="color: red">Number of selected exams does not equal the number of candidates</span>
+        </b-col>
+      </b-row>
+      <b-row no-gutters>
+        <b-col cols="12" class="text-right">
+          <b-btn class="btn-warning">Save Draft</b-btn>
+         </b-col>
+        <checkmark :validated="validationObj[q.key].valid" />
+      </b-row>
+    </fragment>
+  `
+})
+
 export const checkmark = Vue.component('checkmark', {
   props: ['validated'],
   template: `
@@ -192,12 +252,12 @@ export const ExamReceivedQuestion = Vue.component('exam-received-question', {
     return {
       date: null,
       options: [
-        {text: 'Yes', value: true},
-        {text: 'No', value: false}
+        { text: 'Yes', value: true },
+        { text: 'No', value: false }
       ],
       otherOptions: [
-        {text: 'No', value: true},
-        {text: 'Yes', value: false}
+        { text: 'No', value: true },
+        { text: 'Yes', value: false }
       ]
     }
   },
@@ -213,7 +273,7 @@ export const ExamReceivedQuestion = Vue.component('exam-received-question', {
       }
     },
     modalSetup() {
-      if (this.addExamModal && this.addExamModal.setup) {
+      if ( this.addExamModal && this.addExamModal.setup ) {
         return this.addExamModal.setup
       }
       return ''
@@ -222,7 +282,7 @@ export const ExamReceivedQuestion = Vue.component('exam-received-question', {
   methods: {
     ...mapMutations(['captureExamDetail', 'toggleIndividualCaptureTabRadio']),
     unsetDate(e) {
-      if (!e && this.modalSetup === 'individual') {
+      if ( !e && this.modalSetup === 'individual' ) {
         this.handleInput({
           target: {
             name: 'exam_received_date',
@@ -232,7 +292,7 @@ export const ExamReceivedQuestion = Vue.component('exam-received-question', {
       }
     },
     preSetDate() {
-      if (this.modalSetup === 'other' || this.modalSetup === 'pesticide') {
+      if ( this.modalSetup === 'other' || this.modalSetup === 'pesticide' ) {
         this.handleInput({
           target: {
             name: 'exam_received_date',
@@ -254,7 +314,7 @@ export const ExamReceivedQuestion = Vue.component('exam-received-question', {
     <b-row no-gutters>
       <b-col cols="6">
         <b-form-group v-if="showRadio">
-          <label>{{ q.text1 }}
+          <labe>{{ q.text1 }}
             <span v-if="error" style="color: red">{{ validationObj[q.key].message }}</span>
           </label><br>
           <b-form-radio-group v-model="showRadio"
@@ -331,7 +391,62 @@ export const InputQuestion = Vue.component('input-question', {
   `
 })
 
-export const LocationInput = Vue.component('input-question', {
+export const InputQuestion2 = Vue.component('input-question-2', {
+  props: ['error', 'q', 'validationObj', 'handleInput', 'exam'],
+  components: { checkmark },
+  data() {
+    return {
+      options: [
+        {text: 'No', value: false},
+        {text: 'Yes', value: true}
+      ]
+    }
+  },
+  computed: {
+    ...mapState({
+      setup: state => state.addExamModal.setup
+    }),
+    capture_names: {
+      get() {
+        return this.exam.capture_names
+      }, set(value) {
+        this.$store.commit('captureExamDetail', {key: 'capture_names', value})
+      }
+    }
+  },
+  methods: {
+    preHandleInput(e) {
+      this.handleInput(e)
+    },
+  },
+  template: `
+    <fragment>
+      <b-row no-gutters>
+        <b-col cols="3">
+          <label>{{q.text}}
+              <span v-if="error" style="color: red">{{ validationObj[q.key].message }}</span>
+          </label>
+        </b-col>
+        <b-col cols="9" />
+      </b-row>
+      <b-row no-gutters class="mb-1">
+        <b-col cols="1"><b-form-input :value="exam[q.key]"
+                          :name="q.key"
+                          :key="q.key"
+                          size="sm"
+                          class="w-50"
+                          :id="q.key"
+                          autocomplete="off"
+                          @input.native="preHandleInput" />
+        </b-col>
+        
+        <checkmark :validated="validationObj[q.key].valid" />
+      </b-row>
+    </fragment>
+  `
+})
+
+export const LocationInput = Vue.component('location-input-question', {
   props: ['error', 'q', 'validationObj', 'handleInput', 'exam'],
   components: { checkmark },
   computed: {
@@ -410,7 +525,7 @@ export const LocationInput = Vue.component('input-question', {
   },
   template: `
     <fragment>
-      <template v-if="capturedExam.on_or_off === 'off'">
+      <template v-if="capturedExam.on_or_off === 'off' || setup === 'pesticide' ">
         <b-row no-gutters>
           <b-col cols="11">
             <b-form-group>
@@ -463,34 +578,6 @@ export const LocationInput = Vue.component('input-question', {
       </template>
       </fragment>
   `
-})
-
-export const SelectQuestion = Vue.component('select-question', {
-  props: ['error', 'q', 'validationObj', 'handleInput', 'exam'],
-  components: { checkmark },
-  computed: {
-    ...mapState({
-      addExamModal: state => state.addExamModal,
-    }),
-  },
-  template: `
-    <b-row no-gutters>
-      <b-col cols="11">
-        <b-form-group>
-          <label>{{q.text}}
-            <span v-if="error" style="color: red">{{ validationObj[q.key].message }}</span>
-          </label><br>
-          <b-form-select :options="q.options"
-                         :value="exam[q.key]"
-                         autocomplete="off"
-                         @change.native="handleInput"
-                         :class="addExamModal.setup === 'group' ? 'w-50' : '' "
-                         :name="q.key" />
-        </b-form-group>
-      </b-col>
-      <checkmark :validated="validationObj[q.key].valid"  />
-    </b-row>
-  `,
 })
 
 export const NotesQuestion = Vue.component('notes-question', {
@@ -565,6 +652,48 @@ export const OffsiteSelect = Vue.component('offsite-select', {
         </b-form-group>
       </b-col>
       <checkmark :validated="validationObj[q.key].valid" />
+    </b-row>
+  `,
+})
+
+export const SelectQuestion = Vue.component('select-question', {
+  props: ['error', 'q', 'validationObj', 'handleInput', 'exam'],
+  components: { checkmark },
+  computed: {
+    ...mapState({
+      addExamModal: state => state.addExamModal,
+      capturedExam: 'capturedExam'
+    }),
+    ind_or_group() {
+      if (this.capturedExam.ind_or_group) {
+        return this.capturedExam.ind_or_group
+      }
+      return null
+    },
+  },
+  watch: {
+    ind_or_group(newVal, oldVal) {
+      if (this.addExamModal.setup === 'pesticide' && newVal === 'group') {
+        this.$store.commit('captureExamDetail', {key: 'capture_names', value: false})
+      }
+    }
+  },
+  template: `
+    <b-row no-gutters>
+      <b-col cols="11">
+        <b-form-group>
+          <label>{{q.text}}
+            <span v-if="error" style="color: red">{{ validationObj[q.key].message }}</span>
+          </label><br>
+          <b-form-select :options="q.options"
+                         :value="exam[q.key]"
+                         autocomplete="off"
+                         @change.native="handleInput"
+                         :class="addExamModal.setup === 'group' ? 'w-50' : '' "
+                         :name="q.key" />
+        </b-form-group>
+      </b-col>
+      <checkmark :validated="validationObj[q.key].valid"  />
     </b-row>
   `,
 })

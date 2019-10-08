@@ -9,258 +9,384 @@
     <FailureExamAlert class="m-0 p-0" />
     <div v-if="exam">
       <span style="font-size: 1.4rem; font-weight: 600;">Edit Exam Details</span>
+      <template v-if="examType === 'pest'">
+        <b-form>
+          <b-form-row>
+            <b-col>
+              <b-form-group>
+                <label class="mb-0 mt-1">Exam Type</label>
+                <b-form-input :value="exam.exam_name"
+                              class="less-10-mb form-control"
+                              disabled
+                              id="exam_name"
+                              type="text" />
+              </b-form-group>
+            </b-col>
+          </b-form-row>
+          <b-form-row v-if="!otherOfficeExam">
+            <b-col :col="!this.fields.exam_received_date" :cols="this.exam_received ? '' : 3 ">
+              <b-form-group>
+                <label class="my-0">Exam Printed?</label>
+                <b-select id="exam_received"
+                          v-model="exam_received"
+                          @input="updateExamReceived"
+                          class="less-10-mb"
+                          :options="examReceivedOptions" />
+              </b-form-group>
+            </b-col>
 
-      <b-form v-if="showAllFields">
-        <b-form-row v-if="is_liaison_designate && (examType === 'group' || examType === 'pest')">
-          <OfficeDrop :columnW="10" :office_number="office_number" :setOffice="setOffice" />
-        </b-form-row>
+            <b-col v-if="!this.fields.exam_received_date">
+              <label class="my-0">Retrieve Exam and Print</label>
+              <b-btn class="btn-success w-100" @click="testing = false" :disabled="!testing">Print</b-btn>
+            </b-col>
 
-        <b-form-row>
-          <b-col cols="6">
-            <b-form-group>
-              <label class="my-0">Event ID</label>
-              <b-form-input id="event_id"
-                            type="text"
-                            class="less-10-mb"
-                            v-model="fields.event_id" />
-            </b-form-group>
-          </b-col>
+            <b-col v-if="exam_received">
+              <b-form-group>
+                <label class="my-0">Printed Date</label><br>
+                <DatePicker :value="fields.exam_received_date"
+                            @input="handleDate"
+                            format="YYYY-MM-DD"
+                            value-type="format"
+                            lang="en"
+                            id="exam_received_date"
+                            input-class="form-control"
+                            class="w-100 my-0 less-10-mb">
+                </DatePicker>
+              </b-form-group>
+            </b-col>
+          </b-form-row>
+          <b-form-row v-if="!testing">
+            <b-col cols="12" style="color: red">
+              This exam is not yet ready for retrieval.  Please try again in no less than 15 minutes.
+            </b-col>
+          </b-form-row>
+          <b-form-row>
+            <b-col>
+              <b-form-group>
+                <label class="my-0">Candidate's Name</label>
+                <b-form-input id="examinee_name"
+                              class="less-10-mb"
+                              type="text"
+                              v-model="fields.examinee_name" />
+              </b-form-group>
+            </b-col>
+          </b-form-row>
+          <b-form-row>
+            <b-col>
+              <b-form-group>
+                <label class="my-0">Candidate's Email</label>
+                <b-form-input id="examinee_email"
+                              class="less-10-mb"
+                              type="text" />
+              </b-form-group>
+            </b-col>
+          </b-form-row>
+          <b-form-row>
+            <b-col cols="6">
+              <b-form-group>
+                <label class="my-0">Telephone</label><br>
+                <b-input />
+              </b-form-group>
+            </b-col>
+            <b-col cols="6">
+              <b-form-group>
+                <label class="my-0">Expiry Date</label><br>
+                <DatePicker v-model="fields.expiry_date"
+                            lang="en"
+                            id="exam_expiry"
+                            format="YYYY-MM-DD"
+                            value-type="format"
+                            input-class="form-control"
+                            class="w-100 less-10-mb">
+                  <template slot="calendar-icon">
+                    <font-awesome-icon icon="clock"
+                                       class="m-0 p-0"
+                                       style="font-size: .9rem;" />
+                  </template>
+                </DatePicker>
+              </b-form-group>
+            </b-col>
+          </b-form-row>
+          <b-form-row>
+            <b-col :cols="feesOptions === 'collect' ? 12 : 5">
+              <b-form-group><label class="my-0">Fees</label>
+                <b-form-select v-model="feesOptions" :disabled="feesOptions === 'liaison'">
+                  <option value="liaison">Collected By Liason</option>
+                  <option value="paid">Collect Now</option>
+                  <option value="collect">Collect at Exam Time</option>
+                </b-form-select>
+              </b-form-group>
+            </b-col>
+            <b-col cols="7" v-if="feesOptions !== 'collect'">
+              <b-form-group><label class="my-0">Receipt</label>
+                <b-input :disabled="feesOptions === 'liaison'" />
+              </b-form-group>
+            </b-col>
+          </b-form-row>
 
-          <b-col cols="6">
-            <b-form-group>
-              <label class="my-0">Exam Method</label><br>
-              <b-select id="exam_method"
-                        class="less-10-mb"
-                        v-model="fields.exam_method"
-                        :options="methodOptions" />
-            </b-form-group>
-          </b-col>
-        </b-form-row>
+        </b-form>
+      </template>
 
-        <b-form-row>
-          <b-col>
-            <b-form-group v-if="!['pest', 'challenger'].includes(examType)">
-              <label class="my-0">Exam Type</label><br>
-              <div @click="handleExamInputClick">
-                <b-input :style="examInputStyle"
-                         :value="examInputText"
-                         class="less-15-mb"
-                         placeholder="click here to see options"
-                         read-only />
-              </div>
-              <div :class="examTypeDropClass"
-                   style="border: 1px solid grey;"
-                   @click="handleExamInputClick">
-                <template v-for="(type, i) in examTypeDropItems">
-                  <b-dd-header v-if="type.header"
-                               :key="i+'exam-type-dd-h'"
-                               :style="type.exam_color !== '#FFFFF' ? {backgroundColor: type.exam_color} : null">
-                    {{type.exam_type_name }}
-                  </b-dd-header>
-                  <b-dd-item v-else
-                             :id="type.exam_type_id"
-                             :key="i+'exam-type-dd'"
-                             :style="type.exam_color !== '#FFFFF' ? {backgroundColor: type.exam_color} : null"
-                             :value="type.exam_type_id"
-                             @click="handleExamDropClick">{{ type.exam_type_name }}</b-dd-item>
-                </template>
-              </div>
-            </b-form-group>
+      <template v-else>
+        <b-form v-if="showAllFields">
+          <b-form-row v-if="is_liaison_designate && (examType === 'group')">
+            <OfficeDrop :columnW="10" :office_number="office_number" :setOffice="setOffice" />
+          </b-form-row>
 
-            <b-form-group v-else>
-              <label class="mb-0 mt-1">Exam Type</label>
-              <b-form-input :value="exam.exam_type.exam_type_name"
-                            class="less-10-mb form-control"
-                            disabled
-                            id="exam_name"
-                            type="text" />
-            </b-form-group>
-          </b-col>
-        </b-form-row>
+          <b-form-row>
+            <b-col cols="6">
+              <b-form-group>
+                <label class="my-0">Event ID</label>
+                <b-form-input id="event_id"
+                              type="text"
+                              class="less-10-mb"
+                              v-model="fields.event_id" />
+              </b-form-group>
+            </b-col>
 
-        <b-form-row>
-          <b-col>
-            <b-form-group>
-              <label v-if="!lengthError"
-                     class="mb-0 mt-1">Exam Name</label>
-              <label v-if="lengthError"
-                     style="color: red"
-                     class="mb-0 mt-1">Maximum field length reached.</label>
-              <b-form-input id="exam_name"
-                            type="text"
-                            class="less-10-mb"
-                            @blur="removeError"
-                            v-on:keydown="checkInputLength"
-                            v-model="fields.exam_name" />
-            </b-form-group>
-          </b-col>
-        </b-form-row>
+            <b-col cols="6">
+              <b-form-group>
+                <label class="my-0">Exam Method</label><br>
+                <b-select id="exam_method"
+                          class="less-10-mb"
+                          v-model="fields.exam_method"
+                          :options="methodOptions" />
+              </b-form-group>
+            </b-col>
+          </b-form-row>
 
-        <b-form-row v-if="!otherOfficeExam">
-          <b-col :col="!this.fields.exam_received_date" :cols="this.exam_received ? 3 : '' ">
-            <b-form-group>
-              <label class="my-0">Exam Received?</label>
-              <b-select id="exam_received"
-                        v-model="exam_received"
-                        @input="updateExamReceived"
-                        class="less-10-mb"
-                        :options="examReceivedOptions" />
-            </b-form-group>
-          </b-col>
-
-          <b-col v-if="exam_received">
-            <b-form-group>
-              <label class="my-0">Received Date</label><br>
-              <DatePicker :value="fields.exam_received_date"
-                          @input="handleDate"
-                          format="YYYY-MM-DD"
-                          value-type="format"
-                          lang="en"
-                          id="exam_received_date"
-                          input-class="form-control"
-                          class="w-100 my-0 less-10-mb">
-              </DatePicker>
-            </b-form-group>
-          </b-col>
-
-          <b-col v-if="examType === 'group' || examType === 'challenger'" col>
-            <b-form-group>
-              <label class="my-0"># of Writers</label><br>
-              <b-input v-model="fields.number_of_students"
-                       id="number_of_students" />
-            </b-form-group>
-          </b-col>
-
-          <b-col class="w-100" v-if="examType === 'individual'">
-            <b-form-group>
-              <label class="my-0">Expiry Date</label><br>
-              <DatePicker v-model="fields.expiry_date"
-                          lang="en"
-                          id="exam_expiry"
-                          format="YYYY-MM-DD"
-                          value-type="format"
-                          input-class="form-control"
-                          class="w-100 less-10-mb">
-                <template slot="calendar-icon">
-                  <font-awesome-icon icon="clock"
-                                     class="m-0 p-0"
-                                     style="font-size: .9rem;"/>
-                </template>
-              </DatePicker>
-            </b-form-group>
-          </b-col>
-        </b-form-row>
-
-        <b-form-row v-if="examType === 'individual' || examType === 'other' || examType === 'pest'" >
-          <b-col>
-            <b-form-group>
-              <label class="my-0">Candidate's Name</label>
-              <b-form-input id="examinee_name"
-                            class="less-10-mb"
-                            type="text"
-                            v-model="fields.examinee_name" />
-            </b-form-group>
-          </b-col>
-        </b-form-row>
-
-        <b-form-row>
-          <b-col>
-            <b-form-group>
-              <label class="my-0">Notes</label><br>
-              <b-textarea id="notes" v-model="fields.notes" :rows="2" />
-            </b-form-group>
-          </b-col>
-        </b-form-row>
-      </b-form>
-
-      <b-form v-if="!showAllFields">
-        <b-form-row>
-          <b-col class="mb-2">
-            <div class="q-info-display-grid-container">
-              <div class="q-id-grid-outer">
-                <div class="q-id-grid-head">Exam Details:</div>
-                <div class="q-id-grid-col">
-                  <div>Exam:</div>
-                  <div>{{ exam.exam_name }}</div>
+          <b-form-row>
+            <b-col>
+              <b-form-group v-if="!['challenger'].includes(examType)">
+                <label class="my-0">Exam Type</label><br>
+                <div @click="handleExamInputClick">
+                  <b-input :style="examInputStyle"
+                           :value="examInputText"
+                           class="less-15-mb"
+                           placeholder="click here to see options"
+                           read-only />
                 </div>
-                <div class="q-id-grid-col">
-                  <div>Event ID:</div>
-                  <div>{{ exam.event_id }}</div>
+                <div :class="examTypeDropClass"
+                     style="border: 1px solid grey;"
+                     @click="handleExamInputClick">
+                  <template v-for="(type, i) in examTypeDropItems">
+                    <b-dd-header v-if="type.header"
+                                 :key="i+'exam-type-dd-h'"
+                                 :style="type.exam_color !== '#FFFFF' ? {backgroundColor: type.exam_color} : null">
+                      {{type.exam_type_name }}
+                    </b-dd-header>
+                    <b-dd-item v-else
+                               :id="type.exam_type_id"
+                               :key="i+'exam-type-dd'"
+                               :style="type.exam_color !== '#FFFFF' ? {backgroundColor: type.exam_color} : null"
+                               :value="type.exam_type_id"
+                               @click="handleExamDropClick">{{ type.exam_type_name }}
+                    </b-dd-item>
+                  </template>
                 </div>
-                <div class="q-id-grid-col">
-                  <div>Type:</div>
-                  <div v-if="isITAGropOrSingleExam(exam)"
-                       :style="{ backgroundColor: exam.exam_type.exam_color,
+              </b-form-group>
+
+              <b-form-group v-else>
+                <label class="mb-0 mt-1">Exam Type</label>
+                <b-form-input :value="exam.exam_type.exam_type_name"
+                              class="less-10-mb form-control"
+                              disabled
+                              id="exam_name"
+                              type="text" />
+              </b-form-group>
+            </b-col>
+          </b-form-row>
+
+          <b-form-row>
+            <b-col>
+              <b-form-group>
+                <label v-if="!lengthError"
+                       class="mb-0 mt-1">Exam Name</label>
+                <label v-if="lengthError"
+                       style="color: red"
+                       class="mb-0 mt-1">Maximum field length reached.</label>
+                <b-form-input id="exam_name"
+                              type="text"
+                              class="less-10-mb"
+                              @blur="removeError"
+                              v-on:keydown="checkInputLength"
+                              v-model="fields.exam_name" />
+              </b-form-group>
+            </b-col>
+          </b-form-row>
+
+          <b-form-row v-if="!otherOfficeExam">
+            <b-col :col="!this.fields.exam_received_date" :cols="this.exam_received ? 3 : '' ">
+              <b-form-group>
+                <label class="my-0">Exam Received?</label>
+                <b-select id="exam_received"
+                          v-model="exam_received"
+                          @input="updateExamReceived"
+                          class="less-10-mb"
+                          :options="examReceivedOptions" />
+              </b-form-group>
+            </b-col>
+
+            <b-col v-if="exam_received">
+              <b-form-group>
+                <label class="my-0">Received Date</label><br>
+                <DatePicker :value="fields.exam_received_date"
+                            @input="handleDate"
+                            format="YYYY-MM-DD"
+                            value-type="format"
+                            lang="en"
+                            id="exam_received_date"
+                            input-class="form-control"
+                            class="w-100 my-0 less-10-mb">
+                </DatePicker>
+              </b-form-group>
+            </b-col>
+
+            <b-col v-if="examType === 'group' || examType === 'challenger'" col>
+              <b-form-group>
+                <label class="my-0"># of Writers</label><br>
+                <b-input v-model="fields.number_of_students"
+                         id="number_of_students" />
+              </b-form-group>
+            </b-col>
+
+            <b-col class="w-100" v-if="examType === 'individual'">
+              <b-form-group>
+                <label class="my-0">Expiry Date</label><br>
+                <DatePicker v-model="fields.expiry_date"
+                            lang="en"
+                            id="exam_expiry"
+                            format="YYYY-MM-DD"
+                            value-type="format"
+                            input-class="form-control"
+                            class="w-100 less-10-mb">
+                  <template slot="calendar-icon">
+                    <font-awesome-icon icon="clock"
+                                       class="m-0 p-0"
+                                       style="font-size: .9rem;" />
+                  </template>
+                </DatePicker>
+              </b-form-group>
+            </b-col>
+          </b-form-row>
+
+          <b-form-row v-if="examType === 'individual' || examType === 'other' ">
+            <b-col>
+              <b-form-group>
+                <label class="my-0">Candidate's Name</label>
+                <b-form-input id="examinee_name"
+                              class="less-10-mb"
+                              type="text"
+                              v-model="fields.examinee_name" />
+              </b-form-group>
+            </b-col>
+          </b-form-row>
+
+          <b-form-row>
+            <b-col>
+              <b-form-group>
+                <label class="my-0">Notes</label><br>
+                <b-textarea id="notes" v-model="fields.notes" :rows="2" />
+              </b-form-group>
+            </b-col>
+          </b-form-row>
+        </b-form>
+
+        <b-form v-if="!showAllFields">
+          <b-form-row>
+            <b-col class="mb-2">
+              <div class="q-info-display-grid-container">
+                <div class="q-id-grid-outer">
+                  <div class="q-id-grid-head">Exam Details:</div>
+                  <div class="q-id-grid-col">
+                    <div>Exam:</div>
+                    <div>{{ exam.exam_name }}</div>
+                  </div>
+                  <div class="q-id-grid-col">
+                    <div>Event ID:</div>
+                    <div>{{ exam.event_id }}</div>
+                  </div>
+                  <div class="q-id-grid-col">
+                    <div>Type:</div>
+                    <div v-if="isITAGropOrSingleExam(exam)"
+                         :style="{ backgroundColor: exam.exam_type.exam_color,
                                  height: 10+'px',
                                  margin: '4px 0px 0px 0px',
                                  width: 10+'px', }"></div>
-                  <div>{{ exam.exam_type.exam_type_name }}</div>
-                </div>
-                <div class="q-id-grid-col">
-                  <div>Method:</div>
-                  <div>{{ exam.exam_method }}</div>
+                    <div>{{ exam.exam_type.exam_type_name }}</div>
+                  </div>
+                  <div class="q-id-grid-col">
+                    <div>Method:</div>
+                    <div>{{ exam.exam_method }}</div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </b-col>
-        </b-form-row>
+            </b-col>
+          </b-form-row>
 
-        <b-form-row>
-          <b-col>
-            <b-form-group>
-              <label class="my-0">Exam Received?</label>
-              <b-select id="exam_received"
-                        class="less-10-mb"
-                        @input="updateExamReceived"
-                        :options="examReceivedOptions"
-                        v-model="exam_received" />
-            </b-form-group>
-          </b-col>
+          <b-form-row>
+            <b-col>
+              <b-form-group>
+                <label class="my-0">Exam Received?</label>
+                <b-select id="exam_received"
+                          class="less-10-mb"
+                          @input="updateExamReceived"
+                          :options="examReceivedOptions"
+                          v-model="exam_received" />
+              </b-form-group>
+            </b-col>
 
-          <b-col v-if="exam_received" cols="6">
-            <b-form-group>
-              <label class="my-0">Date Received</label><br>
-              <DatePicker v-model="fields.exam_received_date"
-                          id="exam_received_date"
-                          format="YYYY-MM-DD"
-                          value-type="format"
-                          input-class="form-control"
-                          class="w-100 my-0 less-10-mb"
-                          type="date"
-                          lang="en"/>
-            </b-form-group>
-          </b-col>
-        </b-form-row>
+            <b-col v-if="exam_received" cols="6">
+              <b-form-group>
+                <label class="my-0">Date Received</label><br>
+                <DatePicker v-model="fields.exam_received_date"
+                            id="exam_received_date"
+                            format="YYYY-MM-DD"
+                            value-type="format"
+                            input-class="form-control"
+                            class="w-100 my-0 less-10-mb"
+                            type="date"
+                            lang="en" />
+              </b-form-group>
+            </b-col>
+          </b-form-row>
 
-        <b-form-row>
-          <b-col>
-            <b-form-group>
-              <label class="my-0">Notes</label><br>
-              <b-textarea id="notes" v-model="fields.notes" :rows="2" />
-            </b-form-group>
-          </b-col>
-        </b-form-row>
-      </b-form>
+          <b-form-row>
+            <b-col>
+              <b-form-group>
+                <label class="my-0">Notes</label><br>
+                <b-textarea id="notes" v-model="fields.notes" :rows="2" />
+              </b-form-group>
+            </b-col>
+          </b-form-row>
+        </b-form>
+      </template>
 
-      <div v-if="showMessage"
-           class="mb-3"
-           style="color: red;">{{ this.message }}</div>
+        <div v-if="showMessage"
+             class="mb-3"
+             style="color: red;">{{ this.message }}
+        </div>
 
-      <div style="display: flex; justify-content: flex-end; width: 100%">
-        <b-btn v-if="is_ita_designate || role_code === 'GA' || is_liaison_designate"
-               class="btn-danger mr-2"
-               @click="deleteExam()">Delete Exam</b-btn>
-        <b-btn class="btn-secondary mr-2"
-               @click="toggleEditExamModal(false)">Cancel</b-btn>
-        <b-btn v-if="!allowSubmit"
-               id="edit_submit_not_allow"
-               class="btn-primary disabled"
-               @click="setMessage">Submit</b-btn>
-        <b-btn v-else-if="allowSubmit"
-               id="edit_submit_allow"
-               class="btn-primary"
-               @click="submit">Submit</b-btn>
-      </div>
+        <div style="display: flex; justify-content: flex-end; width: 100%">
+          <b-btn v-if="is_ita_designate || role_code === 'GA' || is_liaison_designate"
+                 class="btn-danger mr-2"
+                 @click="deleteExam()">Delete Exam
+          </b-btn>
+          <b-btn class="btn-secondary mr-2"
+                 @click="toggleEditExamModal(false)">Cancel
+          </b-btn>
+          <b-btn v-if="!allowSubmit"
+                 id="edit_submit_not_allow"
+                 class="btn-primary disabled"
+                 @click="setMessage">Submit
+          </b-btn>
+          <b-btn v-else-if="allowSubmit"
+                 id="edit_submit_allow"
+                 class="btn-primary"
+                 @click="submit">Submit
+          </b-btn>
+        </div>
+
     </div>
   </b-modal>
 </template>
@@ -280,6 +406,8 @@
     props: ['actionedExam', 'resetExam'],
     data () {
       return {
+        testing: true,
+        feesOptions: 'collect',
         clickedMenu: false,
         examReceivedOptions: [
           { value: false, text: 'No' },

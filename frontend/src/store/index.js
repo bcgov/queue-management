@@ -75,6 +75,7 @@ export const store = new Vuex.Store({
       showRadio: true,
       status: 'unknown',
       notes: false,
+      capturePayee: false,
     },
     categories: [],
     channels: [],
@@ -302,8 +303,14 @@ export const store = new Vuex.Store({
     },
 
     exam_inventory(state) {
-      if (state.showExamInventoryModal) {
+      if ( state.showExamInventoryModal ) {
         return state.exams.filter(exam => exam.booking_id === null)
+      }
+      if ( state.addExamModule.showAllPesticideExams ) {
+        if ( Array.isArray(state.addExamModule.allPesticideExams) ) {
+          return state.addExamModule.allPesticideExams
+        }
+        return []
       }
       return state.exams
     },
@@ -2614,6 +2621,12 @@ export const store = new Vuex.Store({
 
     setUserLoadingFail: (state, payload) => state.userLoadingFail = payload,
 
+    setGroupExam: (state, payload) => state.groupExam = payload,
+
+    setGroupIndividualExam: (state, payload) => state.groupIndividualExam = payload,
+
+    setIndividualExam: (state, payload) => state.individualExam = payload,
+
     showHideResponseModal(state) {
       state.showResponseModal = true
       setTimeout(() => {state.showResponseModal = false}, 3000)
@@ -2836,5 +2849,12 @@ export const store = new Vuex.Store({
     setOffsiteOnly: (state, payload) => state.offsiteOnly = payload,
 
     toggleTimeTrackingIcon: (state, payload) => state.showTimeTrackingIcon = payload,
+
+    deleteCapturedExamKey(state, payload) {
+      Vue.delete(
+        state.capturedExam,
+        payload
+      )
+    }
   }
 })

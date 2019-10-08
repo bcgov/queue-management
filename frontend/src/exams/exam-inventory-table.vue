@@ -1,5 +1,6 @@
 <template>
   <fragment>
+    <UploadPesticideModal :actionedExam="actionedExam" :resetExam="resetActionedExam" />
     <EditExamModal :actionedExam="actionedExam" :resetExam="resetActionedExam" />
     <ReturnExamModal :actionedExam="actionedExam" :resetExam="resetActionedExam" />
     <EditGroupExamBookingModal :actionedExam="actionedExam" :resetExam="resetActionedExam" />
@@ -9,7 +10,7 @@
     <b-modal v-model="officeFilterModal"
              size="sm"
              centered
-             hide-backdrop
+             hide-backdrop+
              @hide="resetInvalidOfficeOnHide()"
              hide-header
              hide-footer>
@@ -50,6 +51,17 @@
                      class="btn-sm mr-2">Office # {{ officeNumber }} - {{ officeName }}
               </b-btn>
             </b-btn-group>
+              <b-dd v-if="is_ita_designate"
+                    split
+                    size="sm"
+                    :variant="officeFilter === userOffice || officeFilter === 'default' ? 'primary' : 'warning'"
+                    class="btn-sm mr-2 mt-2"
+                    :text="officeFilterText"
+                    @click="officeFilterModal=true">
+                <b-dd-item @click="viewAllOfficePesticideExams">
+                  {{ showAllPesticide ? 'Pesticide Office Only' : 'View All Offices' }}
+                </b-dd-item>
+              </b-dd>
           </b-input-group>
 
           <!--  The Exam Type filter.  -->
@@ -57,6 +69,18 @@
             <!--  The Exam Type filter, initial set up if filter not yet set.  -->
             <b-btn-group v-if="selectedExamTypeFilter === ''">
               <b-dropdown size="sm"
+                          v-if="!isPesticideOffice"
+                          variant="primary"
+                          text="Exam Type Filters"
+                          v-model="selectedExamTypeFilter"
+                          class="mt-2 mr-2">
+                <b-dropdown-item v-for="option in examTypeOptions"
+                                 @click="setExamTypeFilter(option)">
+                  {{ option.text }}
+                </b-dropdown-item>
+              </b-dropdown>
+              <b-dropdown size="sm"
+                          v-if="isPesticideOffice"
                           variant="primary"
                           text="Exam Type Filters"
                           v-model="selectedExamTypeFilter"
@@ -397,11 +421,12 @@
                   </template>
                 </template>
 
-                <!--  These options always allowed if editing an exam for the office you're in.  -->
-                <b-dropdown-item size="sm"
-                                 @click="editExamDetails(row.item)">Edit Exam Details</b-dropdown-item>
-                <b-dropdown-item size="sm"
-                                 @click="returnExam(row.item)">Return Exam</b-dropdown-item>
+                  <b-dropdown-item size="sm"
+                                   @click="editExamDetails(row.item)">Edit Exam Details</b-dropdown-item>
+                  <b-dropdown-item size="sm"
+                                   @click="returnExam(row.item)">
+                    {{ row.item.exam_type.pesticide_exam_ind ? 'Upload Exam' : 'Return Exam' }}
+                  </b-dropdown-item>
               </template>
 
               <!--  Options for if you're editing an exam for a different office.  -->
@@ -421,8 +446,9 @@
             </template>
           </b-dropdown>
         </template>
-        <!--  End the Actions dropdown field  -->
-
+        <template slot="office" slot-scope="row">
+         {{ row.item.office.office_name }}
+        </template>
       </b-table>
     </div>
     <!--  End of exam display.  -->
@@ -441,10 +467,12 @@
   import DeleteExamModal from './delete-exam-modal'
   import AddCitizen from '../add-citizen/add-citizen'
   import zone from 'moment-timezone'
+  import UploadPesticideModal from './upload-pesticide-exam'
 
   export default {
     name: "ExamInventoryTable",
     components: {
+      UploadPesticideModal,
       AddCitizen,
       DeleteExamModal,
       EditExamModal,
@@ -521,13 +549,28 @@
         'user',
         'invigilators',
       ]),
+      ...mapState({
+        showAllPesticide: state => state.addExamModule.showAllPesticideExams,
+      }),
       availableH() {
         let h = this.totalH - 240
         return { height:`${h}px`, border: '1px solid dimgrey' }
       },
+      isPesticideOffice() {
+        //TODO - Karim has envisioned creating a pesticide office (an office in offices table like Victoria or
+        //100 mile house, etc) that isn't a real office but which would hold in-progress pesticide exams
+        //and trigger a different setup of the exam_inventory_table
+        //as this is not implemented yet, this computed value can simply return true or false depending on what
+        //features of the exam_inventory_table you want to see/use/test
+        return true
+      },
       fields() {
         if (!this.showExamInventoryModal) {
-          return [
+          let pesticideFields = [
+            { key: 'office', sortable: true, thStyle: 'width: 5%' },
+
+          ]
+          let fields = [
             { key: 'event_id', label: 'Event ID', sortable: false, thStyle: 'width: 6%' },
             { key: 'exam_type_name', label: 'Exam Type', sortable: true },
             { key: 'exam_name', label: 'Exam Name', sortable: true, thStyle: 'width: 11%' },
@@ -535,11 +578,22 @@
             { key: 'exam_method', label: 'Method', sortable: false, thStyle: 'width: 5%' },
             { key: 'expiry_date', label: 'Expiry Date', sortable: true, thStyle: 'width: 8%' },
             { key: 'exam_received', label: 'Received?', sortable: true, thStyle: 'width: 5%' },
-            { key: 'examinee_name', label: 'Candidate Name', sortable: true, thStyle: 'width: 12%' },
             { key: 'notes', label: 'Notes', sortable: false, thStyle: 'width: 21%' },
             { key: 'scheduled', label: 'Status', sortable: true, thStyle: 'width: 5%', tdClass: 'text-center'},
             { key: 'actions', label: 'Actions', sortable: false, thStyle: 'width: 5%' },
+            {
+              key: 'examinee_name',
+              label: 'Candidate Name',
+              sortable: true,
+              thStyle: this.showAllPesticide ? 'width: 7%' : 'width: 12%'
+            },
           ]
+          if (!this.showAllPesticide) {
+            return fields
+          }
+          if (this.showAllPesticide) {
+            return fields.concat(pesticideFields)
+          }
         }
         if (this.showExamInventoryModal) {
           return [
@@ -560,6 +614,12 @@
           return this.inventoryFilters.office_number
         }
         return ''
+      },
+      officeFilterText() {
+        if (this.showAllPesticide) {
+          return 'Exams from All Offices'
+        }
+        return 'Office # ' + this.officeNumber + ' - ' + this.officeName
       },
       officeName() {
         if (this.offices && this.offices.length > 0) {
@@ -619,6 +679,7 @@
         'toggleExamInventoryModal',
         'toggleReturnExamModal',
         'toggleScheduling',
+        'toggleUploadExamModal',
       ]),
       addCalendarBooking(item) {
         this.toggleScheduling(true)
@@ -626,6 +687,13 @@
         this.setSelectedExam(item)
         this.$router.push('/booking')
         this.toggleExamInventoryModal(false)
+      },
+      viewAllOfficePesticideExams() {
+        if (!this.showAllPesticide) {
+          this.$store.dispatch('getAllPesticideExams')
+          return
+        }
+        this.$store.commit('toggleShowAllPesticideExams', false)
       },
       checkChallenger(item) {
         if (item.event_id && item.booking.invigilator_id && item.number_of_students) {
@@ -904,7 +972,8 @@
             return evenMoreFiltered.filter(ex => ex.office_id == office_id)
           }
 
-          let exams = examInventory.filter(ex => ex.office.office_number == office_number)
+          let exams = this.showAllPesticide ? examInventory :
+            examInventory.filter(ex => ex.office.office_number == office_number)
 
           if(this.inventoryFilters.requireAttentionFilter === 'both'){
             return exams.filter(ex => this.checkAllAttention(ex))
@@ -1059,7 +1128,11 @@
       },
       returnExam(item) {
         this.actionedExam = item
-        this.toggleReturnExamModal(true)
+        if (item.exam_type.pesticide_exam_ind) {
+          this.toggleUploadExamModal(true)
+        } else {
+          this.toggleReturnExamModal(true)
+        }
       },
       setExamTypeFilter(option){
         this.setSelectedExamType(option.value)
@@ -1171,10 +1244,12 @@
       },
       setOfficeFilter(office_number) {
         this.setFilter({type:'office_number', value: office_number})
+        this.$store.commit('toggleShowAllPesticideExams', false)
       },
       setHomeOffice() {
         this.setFilter({type: 'office_number', value: 'default'})
         this.officeFilterModal = false
+        this.$store.commit('toggleShowAllPesticideExams', false)
       },
       sortCompare(a, b, key) {
         if (key === 'scheduled') {
