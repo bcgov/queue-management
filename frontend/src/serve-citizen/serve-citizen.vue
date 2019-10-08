@@ -53,19 +53,19 @@
             <div>
               <b-button @click="clickServiceBeginService"
                       v-if="reception"
-                      :disabled="serviceBegun===true || performingAction"
+                      :disabled="serviceBegun===true || performingAction || commentsTooLong"
                       v-bind:class="buttonStyle"
                       style="margin-right:8px; opacity:1"
                       id="serve-citizen-begin-service-button">Begin Service</b-button>
               <b-button @click="clickReturnToQueue"
                       v-if="reception"
-                      :disabled="performingAction"
+                      :disabled="performingAction || commentsTooLong"
                       class="btn serve-btn"
                       id="serve-citizen-return-to-queue-button">Return to Queue</b-button>
             </div>
             <div>
               <b-button @click="clickCitizenLeft"
-                      :disabled="performingAction"
+                      :disabled="performingAction || commentsTooLong"
                       class="btn-danger serve-btn"
                       v-if="reception"
                       id="serve-citizen-citizen-left-button">Citizen Left</b-button>
@@ -95,7 +95,8 @@
             </select>
             <b-button class="btn-primary serve-btn"
                       @click="clickAddService"
-                      :disabled="serviceBegun===false || performingAction">Add Next Service</b-button>
+                      :disabled="serviceBegun===false || performingAction || commentsTooLong">Add Next Service
+            </b-button>
           </b-col>
           <b-col cols="2" />
         </b-row>
@@ -113,12 +114,12 @@
                                         <span  style="font: 400 16px Myriad-Pro;">Inaccurate Time</span>
                                         </b-form-checkbox>
                         <b-button @click="clickServiceFinish"
-                                :disabled="serviceBegun===false || performingAction"
+                                :disabled="serviceBegun===false || performingAction || commentsTooLong"
                                 class="btn-success serve-btn"
                                 id="serve-citizen-finish-button">Finish</b-button>
                     </div>
                   <b-button @click="clickHold"
-                            :disabled="serviceBegun===false || performingAction"
+                            :disabled="serviceBegun===false || performingAction || commentsTooLong"
                             class="btn-warning serve-btn"
                             id="serve-citizen-place-on-hold-button">Place on Hold</b-button>
             </b-container>

@@ -17,9 +17,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO
 from functools import wraps
 from sqlalchemy.exc import SQLAlchemyError
-
 from app.exceptions import AuthError
-
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 
@@ -150,9 +148,14 @@ def api_call_with_retry(f, max_time=15000, max_tries=12, delay_first=100, delay_
 
             if print_debug:
                 print("==> api_call_with_retry: Try #: " + str(current_try) + "; time: " + str(time_current))
-                print("    --> delay:   " + str(current_delay) + "; total delay: " + str(total_delay))
-                print("    --> elapsed: " + str(time_current - time_save) + "; total elapsed: " + \
+                print("    --> delay:        " + str(current_delay) + "; total delay: " + str(total_delay))
+                print("    --> elapsed:      " + str(time_current - time_save) + "; total elapsed: " + \
                       str(time_current - time_start))
+                print("    --> @wraps(f)->f: " + str(f))
+                if kwargs is not None:
+                    print("    --> **kwargs:     " + str(kwargs))
+                else:
+                    print("    --> **kwargs:     None")
 
             try:
                 return f(*args, **kwargs)

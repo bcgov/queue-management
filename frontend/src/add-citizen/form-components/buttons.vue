@@ -41,7 +41,7 @@
                       class="btn-white"
                       id="add-citizen-add-to-queue">Add to queue</b-button>
             <b-button @click="beginService"
-                      :disabled="performingAction"
+                      :disabled="performingAction || commentsTooLong"
                       class="btn-success"
                       id="add-citizen-begin-service">Begin service</b-button>
           </div>
