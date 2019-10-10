@@ -58,6 +58,7 @@ class CsrSelf(Resource):
     exam_type_schema = ExamTypeSchema()
     timezone = pytz.timezone("US/Pacific")
     back_office_display = application.config['BACK_OFFICE_DISPLAY']
+    recurring_feature_flag = application.config['RECURRING_FEATURE_FLAG']
 
     @oidc.accept_token(require_token=True)
     @api_call_with_retry
@@ -126,6 +127,7 @@ class CsrSelf(Resource):
                     'group_individual_attention': group_attention,
                     'active_citizens': active_citizens.data,
                     'back_office_display': self.back_office_display,
+                    'recurring_feature_flag': self.recurring_feature_flag,
                     'errors': result.errors}
 
         except exc.SQLAlchemyError as e:

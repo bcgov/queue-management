@@ -93,7 +93,8 @@
                 Create Single Blackout
               </b-button>
             </b-col>
-            <b-col class="w-50">
+            <b-col v-if='is_recurring_enabled'
+                   class="w-50">
               <b-button variant="primary"
                         class="w-100"
                         @click="setSingle"
@@ -483,7 +484,7 @@
 </template>
 
 <script>
-    import { mapActions, mapMutations, mapState } from 'vuex'
+    import { mapActions, mapMutations, mapState, mapGetters } from 'vuex'
     import DatePicker from 'vue2-datepicker'
     import moment from 'moment'
     import { RRule } from 'rrule'
@@ -782,6 +783,7 @@
           if(isNaN(start_year) == false || isNaN(end_year) == false){
 
             // TODO Might be Deprecated -- IF RRule Breaks, this is where it will happen
+            // TODO remove tzid from rule object
             // Removed hours and minutes from date_start and until
             let date_start = new Date(Date.UTC(start_year, start_month -1, start_day))
             let until = new Date(Date.UTC(end_year, end_month -1, end_day))
@@ -888,6 +890,9 @@
           rooms: state => state.rooms,
           roomResources: state => state.roomResources,
         }),
+        ...mapGetters([
+          'is_recurring_enabled',
+        ]),
         modal: {
           get() {
             return this.showBookingBlackoutModal

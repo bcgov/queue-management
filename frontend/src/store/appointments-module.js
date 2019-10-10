@@ -71,6 +71,12 @@ export default {
       }
       return false
     },
+    is_recurring_enabled(state, getters, rootState) {
+      if(rootState.recurringFeatureFlag === 'On'){
+        return true
+      }
+      return false
+    }
   },
   actions: {
     clearAddModal({commit}) {

@@ -71,7 +71,7 @@
             <label>Step 1: Select Event Type</label>
           </b-form-row>
           <b-form-row>
-            <b-col cols="6">
+            <b-col class="w-50">
               <b-button variant="primary"
                         class="w-100 mb-2"
                         v-b-toggle.collapse-single-event
@@ -79,7 +79,8 @@
                 Create Single Event
               </b-button>
             </b-col>
-            <b-col cols="6">
+            <b-col v-if="is_recurring_enabled"
+                   class="w-50">
               <b-button variant="primary"
                         class="w-100 mb-2"
                         v-b-toggle.collapse-recurring-event
@@ -418,7 +419,7 @@
 </template>
 
 <script>
-  import { mapActions, mapMutations, mapState } from 'vuex'
+  import { mapActions, mapMutations, mapState, mapGetters } from 'vuex'
   import moment from 'moment'
   import { FullCalendar } from 'vue-full-calendar'
   import 'fullcalendar/dist/fullcalendar.css'
@@ -489,6 +490,9 @@
           selectionIndicator: state => state.selectionIndicator,
         }
       ),
+      ...mapGetters([
+        'is_recurring_enabled',
+      ]),
       modalVisible: {
         get() {
           return this.showModal
@@ -730,6 +734,7 @@
 
         if(isNaN(start_year) == false || isNaN(end_year) == false){
           // TODO Might be Deprecated -- IF RRule Breaks, this is where it will happen
+          // TODO remove tzid from rule object
           let date_start = new Date(Date.UTC(start_year, start_month-1, start_day))
           let until = new Date(Date.UTC(end_year, end_month-1, end_day))
 

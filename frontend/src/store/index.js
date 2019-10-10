@@ -61,6 +61,7 @@ export const store = new Vuex.Store({
     alertMessage: '',
     allCitizens: [],
     backOfficeDisplay: 'BackOffice',
+    recurringFeatureFlag: '',
     bearer: '',
     bookings: [],
     calendarEvents: [],
@@ -378,6 +379,13 @@ export const store = new Vuex.Store({
 
     is_ita_designate(state) {
       if(state.user.ita_designate){
+        return true
+      }
+      return false
+    },
+
+    is_recurring_enabled(state){
+      if(state.recurringFeatureFlag === 'On'){
         return true
       }
       return false
@@ -960,6 +968,7 @@ export const store = new Vuex.Store({
           context.commit('setDefaultCounter', resp.data.csr.office.counters.filter(
             c => c.counter_name === DEFAULT_COUNTER_NAME)[0])
           context.commit('setBackOfficeDisplay', resp.data.back_office_display)
+          context.commit('setRecurringFeatureFlag', resp.data.recurring_feature_flag)
           let individualExamBoolean = false
           let groupExamBoolean = false
           let groupIndividualBoolean = false
@@ -2374,6 +2383,8 @@ export const store = new Vuex.Store({
     setDisplayServices: (state, payload) => state.displayServices = payload,
 
     setBackOfficeDisplay: (state, payload) => state.backOfficeDisplay = payload,
+
+    setRecurringFeatureFlag: (state, payload) => state.recurringFeatureFlag = payload,
 
     toggleBookingBlackoutModal: (state, payload) => state.showBookingBlackoutModal = payload,
 

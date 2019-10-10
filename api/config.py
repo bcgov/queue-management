@@ -107,6 +107,7 @@ class BaseConfig(object):
 
     VIDEO_PATH = os.getenv('VIDEO_PATH', '')
     BACK_OFFICE_DISPLAY = os.getenv("BACK_OFFICE_DISPLAY", "BackOffice")
+    RECURRING_FEATURE_FLAG = os.getenv("RECURRING_FEATURE_FLAG", "On")
 
 class LocalConfig(BaseConfig):
     DEBUG = True

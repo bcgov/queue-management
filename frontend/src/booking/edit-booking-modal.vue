@@ -766,7 +766,7 @@
             changes['shadow_invigilator_id'] = this.shadowInvigilator
           }
           if(this.rescheduleShadowInvigilator !== null){
-            changes['shadow_invigilator_id'] = null
+            changes['shadow_invigilator_id'] = this.shadowInvigilator
           }
         }
         if (this.editedFields.includes('contact_information')){
@@ -780,8 +780,7 @@
         }
         if (Object.keys(changes).length === 0) {
           this.message = 'No Changes Made'
-        }
-        else {
+        } else {
           let invigilatorPayload = {
             id: null,
             params: null,
