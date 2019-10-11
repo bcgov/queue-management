@@ -220,7 +220,11 @@ export default {
               let serveDate = new Date(null)
               serveDate.setSeconds(timeServeTotal / 1000)
               csr['wait_time'] = `${waitDate.getUTCHours()}h ${waitDate.getMinutes()}m ${waitDate.getSeconds()}s`
-              csr['serving_time'] = `${serveDate.getUTCHours()}h ${serveDate.getMinutes()}m ${serveDate.getSeconds()}s`
+              let serveTime = ''
+              if (!isNaN(serveDate.getUTCHours())) {
+                serveTime = `${serveDate.getUTCHours()}h ${serveDate.getMinutes()}m ${serveDate.getSeconds()}s`
+              }
+              csr['serving_time'] = serveTime
             } else {
               csr['wait_time'] = null
               csr['serving_time'] = null
