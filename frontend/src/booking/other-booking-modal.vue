@@ -108,7 +108,8 @@
         fees: '',
         feesOptions: [
           {text: 'No', value: "false"},
-          {text: 'Yes', value: "true"}
+          {text: 'Yes', value: "true"},
+          {text: 'HQ to Invoice', value: "HQFin"}
         ],
         added: 0,
         invoice: null,
