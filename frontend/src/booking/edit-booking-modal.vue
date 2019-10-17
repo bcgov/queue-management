@@ -65,7 +65,7 @@
                          v-model="title" />
               </b-form-group>
             </b-col>
-            <b-col cols="3">
+            <b-col cols="4">
               <b-form-group>
                 <label>Collect Fees</label><br>
                 <b-select id="fees"
@@ -207,6 +207,7 @@
         feesOptions: [
           {text: 'No', value: "false"},
           {text: 'Yes', value: "true"},
+          {text: 'HQ to Invoice', value: "HQFin"}
         ],
         invoice: null,
         invoiceOptions: [ {text: 'Custom', value: 'custom'} ],
