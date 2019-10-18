@@ -32,12 +32,13 @@ class BookingSchema(ma.ModelSchema):
     fees = fields.Str()
     room_id = fields.Int()
     start_time = fields.DateTime()
-    invigilator_id = fields.Int(allow_none=True)
+    shadow_invigilator_id = fields.Int(allow_none=True)
     office_id = fields.Int()
     sbc_staff_invigilated = fields.Int()
     booking_contact_information = fields.Str()
+    blackout_flag = fields.Str(allow_none=True)
+    blackout_notes = fields.Str(allow_none=True)
 
-    invigilator = fields.Nested(InvigilatorSchema(only=('invigilator_id', 'invigilator_name', 'invigilator_notes')))
     room = fields.Nested(RoomSchema(exclude=("booking", "office",)))
     office = fields.Nested(OfficeSchema(only=('appointments_enabled_ind', 'exams_enabled_ind', 'office_id',
                                               'office_name', 'office_number', 'timezone')))

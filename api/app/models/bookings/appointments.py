@@ -21,13 +21,14 @@ class Appointment(Base):
 
     appointment_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     office_id = db.Column(db.Integer, db.ForeignKey("office.office_id"), nullable=False)
-    service_id = db.Column(db.Integer, db.ForeignKey("service.service_id"), nullable=False)
+    service_id = db.Column(db.Integer, db.ForeignKey("service.service_id"), nullable=True)
     start_time = db.Column(UtcDateTime, nullable=False)
     end_time = db.Column(UtcDateTime, nullable=False)
     checked_in_time = db.Column(UtcDateTime, nullable=True)
     comments = db.Column(db.String(255), nullable=True)
     citizen_name = db.Column(db.String(255), nullable=False)
     contact_information = db.Column(db.String(255), nullable=True)
+    blackout_flag = db.Column(db.String(1), default='N', nullable=False)
 
     office = db.relationship("Office")
     service = db.relationship("Service")

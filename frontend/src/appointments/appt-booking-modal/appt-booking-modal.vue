@@ -24,16 +24,21 @@
           <b-col cols="6">
             <b-form-group class="mb-0 mt-2">
               <label class="mb-0">Citizen Name</label><br>
-              <b-form-input v-model="citizen_name"
-                            @input="clearMessage()"
-                            :state="validated.citizen_name"/>
+              <b-form-input v-if="checkBlackoutFlag"
+                            v-model="citizen_name"/>
+              <b-form-input v-else
+                            v-model="citizen_name"
+                            readonly/>
             </b-form-group>
           </b-col>
           <b-col cols="6">
             <b-form-group class="mb-0 mt-2">
               <label class="mb-0">Contact Info</label><br>
-              <b-form-input v-model="contact_information"
-                            @input="clearMessage()"/>
+              <b-form-input v-if="checkBlackoutFlag"
+                            v-model="contact_information"/>
+              <b-form-input v-else
+                            v-model="contact_information"
+                            readonly/>
             </b-form-group>
           </b-col>
         </b-form-row>
@@ -57,14 +62,16 @@
 
         <b-form-row>
           <b-col>
-            <b-form-group class="mb-0 mt-2">
+            <b-form-group v-if="checkBlackoutFlag"
+                          class="mb-0 mt-2">
               <label class="mb-0">Length</label><br>
               <b-select v-model="length"
                         :options="timeOptions" />
             </b-form-group>
           </b-col>
           <b-col>
-            <b-form-group class="mb-0 mt-2">
+            <b-form-group v-if="checkBlackoutFlag"
+                          class="mb-0 mt-2">
               <label class="mb-0">Change Date/Time</label><br>
               <b-button @click="reschedule"
                         class="btn-secondary w-100">Reschedule</b-button>
@@ -72,7 +79,7 @@
           </b-col>
           <b-col v-if="clickedAppt">
             <b-form-group class="mb-0 mt-2" >
-              <label class="mb-0">Remove Appointment?</label><br>
+              <label class="mb-0">Remove Blackout Period?</label><br>
               <b-button @click="deleteAppt"
                         v-if="clickedAppt"
                         class="btn-danger w-100">Delete</b-button>
@@ -82,7 +89,8 @@
 
         <b-form-row>
           <b-col>
-            <b-form-group class="mb-0 mt-2">
+            <b-form-group v-if="checkBlackoutFlag"
+                          class="mb-0 mt-2">
               <label class="mb-0">Service Required by Citizen</label><br>
               <div style="width: 100%; display: flex;">
                 <b-input-group>
@@ -167,6 +175,20 @@
           appointments.splice(i,1)
           return appointments
         }
+      },
+      checkBlackoutFlag(){
+        if(this.clickedAppt){
+          if(this.clickedAppt.blackout_flag){
+            if(this.clickedAppt.blackout_flag == 'Y'){
+              return false
+            }else if(this.clickedAppt.blackout_flag == 'N'){
+              return true
+            }
+          }else {
+            return true
+          }
+        }
+        return true
       },
       end() {
         if (this.clickedTime) {
@@ -327,14 +349,14 @@
           return
         }
         if (this.clickedTime) {
-          this.citizen_name = null
+          this.citizen_name =
           this.comments = null
           this.contact_information = null
           this.length = 15
           this.start = this.clickedTime.start.clone()
           this.clearAddModal()
         }
-        if (this.clickedAppt) {
+        if (this.clickedAppt && this.clickedAppt.end) {
           this.citizen_name = this.clickedAppt.title
           this.comments = this.clickedAppt.comments
           this.contact_information = this.clickedAppt.contact_information
@@ -343,6 +365,11 @@
           let { service_id } = this.clickedAppt
           this.setSelectedService(service_id)
           this.$store.commit('updateAddModalForm', {type: 'service', value: service_id})
+        }else {
+          this.citizen_name = ''
+          this.comments = ''
+          this.contact_information = ''
+          this.start = this.clickedTime.start.clone()
         }
       },
       submit() {
@@ -382,7 +409,7 @@
             finish()
           })
         })
-      }
+      },
     },
   }
 </script>

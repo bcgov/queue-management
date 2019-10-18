@@ -1,6 +1,7 @@
 <template>
   <fragment>
     <ApptBookingModal :clickedTime="clickedTime"  :clickedAppt="clickedAppt"/>
+    <AppointmentBlackoutModal/>
     <CheckInModal :clickedAppt="clickedAppt" />
     <keep-alive>
       <full-calendar ref="appointments"
@@ -25,6 +26,7 @@
   import 'fullcalendar-scheduler'
   import 'fullcalendar/dist/fullcalendar.css'
   import ApptBookingModal from './appt-booking-modal/appt-booking-modal'
+  import AppointmentBlackoutModal from './appt-booking-modal/appt-blackout-modal'
   import CheckInModal from './checkin-modal'
   import AddCitizen from '../add-citizen/add-citizen'
 
@@ -33,6 +35,7 @@
   export default {
     name: 'Appointments',
     components: {
+      AppointmentBlackoutModal,
       AddCitizen,
       CheckInModal,
       ApptBookingModal,
@@ -67,8 +70,19 @@
           defaultView: 'agendaWeek',
           editable: false,
           eventRender: (evt, el, view) => {
-            el.css('font-size', '.9rem')
-            el.css('max-width', '85%')
+            if(evt.blackout_flag === 'Y'){
+              el.css('font-size', '.9rem')
+              el.css('max-width', '100%')
+              el.css('background-color', '#000000')
+              el.css('border-color', '#000000')
+              el.css('color', 'white')
+            }else {
+              el.css('font-size', '.9rem')
+              el.css('max-width', '85%')
+              el.css('background-color', '#EFD469')
+              el.css('border-color', '#EFD469')
+              el.css('color', 'black')
+            }
           },
           eventColor: 'pink',
           eventConstraint: {

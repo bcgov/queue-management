@@ -71,12 +71,14 @@
   <ExamInventoryModal v-if="showExamInventoryModal" />
   <OtherBookingModal :editSelection="editSelection" :getEvent="getEvent" />
   <EditBookingModal :tempEvent="tempEvent" />
+  <BookingBlackoutModal v-if="showBookingBlackoutModal"></BookingBlackoutModal>
 </div>
 </template>
 
 <script>
   import { FullCalendar } from 'vue-full-calendar'
   import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+  import BookingBlackoutModal from './booking-blackout-modal'
   import BookingModal from './booking-modal'
   import DropdownCalendar from './dropdown-calendar'
   import EditBookingModal from './edit-booking-modal'
@@ -91,6 +93,7 @@
   export default {
     name: 'Calendar',
     components: {
+      BookingBlackoutModal,
       OfficeDropDownFilter,
       BookingModal,
       DropdownCalendar,
@@ -213,6 +216,7 @@
     computed: {
       ...mapGetters(['filtered_calendar_events', 'show_scheduling_indicator']),
       ...mapState([
+        'showBookingBlackoutModal',
         'calendarEvents',
         'calendarSetup',
         'editedBooking',
@@ -326,6 +330,13 @@
       },
       eventRender(event, el, view) {
         el.css('max-width', '85%')
+        if(event.blackout_flag === 'Y'){
+          el.css('font-size', '.9rem')
+          el.css('max-width', '100%')
+          el.css('background-color', '#000000')
+          el.css('border-color', '#000000')
+          el.css('color', 'white')
+        }
         if (event.exam && view.name === 'listYear') {
           el.find('td.fc-list-item-title.fc-widget-content').html(
           `<div style="display: flex; justify-content: center; width: 100%;">
