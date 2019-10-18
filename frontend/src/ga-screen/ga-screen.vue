@@ -189,6 +189,14 @@ export default {
           });
 
           if (activeCitizen.service_reqs[0].periods.filter(p => p.ps.ps_name === "Being Served")[0]) {
+            let waitPeriods = sortedSRs[0].periods.filter(p => p.ps.ps_name === "Waiting")
+            let waitDate = new Date(null)
+            if (0 !== waitPeriods.length) {
+              let waitStart = new Date(waitPeriods[0].time_start);
+              let waitEnd = new Date(waitPeriods[0].time_end);
+              let waitTime = waitEnd - waitStart;
+              waitDate.setSeconds(waitTime / 1000)
+            }
             let firstServedPeriod = sortedSRs[0].periods.filter(p => p.ps.ps_name === "Being Served")[0]
             let citizenStartDate = new Date(activeCitizen.start_time)
             let firstServedPeriodDate = new Date(firstServedPeriod.time_start)
@@ -208,8 +216,6 @@ export default {
             })
             let waitSeconds = (firstServedPeriodDate - citizenStartDate) / 1000
             let timeServeTotal = (timeServeClosed + timeServeOpen)
-            let waitDate = new Date(null)
-            waitDate.setSeconds(waitSeconds)
             let serveDate = new Date(null)
             serveDate.setSeconds(timeServeTotal / 1000)
             csr['wait_time'] = `${waitDate.getUTCHours()}h ${waitDate.getMinutes()}m ${waitDate.getSeconds()}s`
