@@ -16,7 +16,7 @@ import logging
 from flask import request, g
 from flask_restplus import Resource
 from qsystem import api, db, oidc
-from app.models.bookings import Booking, Room
+from app.models.bookings import Booking, Room, Invigilator
 from app.models.theq import CSR
 from app.schemas.bookings import BookingSchema
 
@@ -32,12 +32,12 @@ class BookingPut(Resource):
         csr = CSR.find_by_username(g.oidc_token_info['username'])
 
         json_data = request.get_json()
+        i_id_list = json_data.get('invigilator_id')
 
         if not json_data:
-            return {"message": "No input data received for updating a booking"}
+            return {"message": "No input data received for updating a ooking"}
 
         booking = Booking.query.filter_by(booking_id=id).first_or_404()
-
         booking, warning = self.booking_schema.load(json_data, instance=booking, partial=True)
 
         if warning:
@@ -46,8 +46,33 @@ class BookingPut(Resource):
 
         if booking.office_id == csr.office_id or csr.liaison_designate == 1:
 
-            db.session.add(booking)
-            db.session.commit()
+            if 'invigilator_id' in json_data:
+                booking.invigilators = []
+
+            if type(i_id_list) == int:
+
+                booking.invigilators.append(Invigilator.query.filter_by(invigilator_id=i_id_list).first_or_404())
+                db.session.add(booking)
+                db.session.commit()
+
+            elif type(i_id_list) == list:
+
+                if len(i_id_list) == 0:
+
+                    db.session.add(booking)
+                    db.session.commit()
+
+                else:
+
+                    for value in i_id_list:
+                        booking.invigilators.append(Invigilator.query.filter_by(invigilator_id=value).first_or_404())
+                        db.session.add(booking)
+                        db.session.commit()
+
+            elif i_id_list is None:
+
+                db.session.add(booking)
+                db.session.commit()
 
             result = self.booking_schema.dump(booking)
 

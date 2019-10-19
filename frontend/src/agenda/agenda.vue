@@ -42,10 +42,18 @@
               </template>
 
               <template slot="invigilator" slot-scope="row">
-                <span v-if="!showInvigilator(row.item)" class="no-way-jose">NOT ASSIGNED</span>
-                <span v-if="showInvigilator(row.item)"
-                      :style="row.item.exam.booking.invigilator_id ? null : {color: '#ff9f17'}">
-                  {{ showInvigilator(row.item) }}
+                <span v-if="showInvigilator(row.item).length == 0" class="no-way-jose">NOT ASSIGNED</span>
+                <span v-if="showInvigilator(row.item).length > 0"
+                      v-for="invigilator in showInvigilator(row.item)"
+                      :style="row.item.exam.booking.invigilators ? null : {color: '#ff9f17'}">
+                  {{ invigilator }}<br>
+                </span>
+              </template>
+
+              <template slot="shadow_invigilator" slot-scope="row">
+                <span v-if="!showShadowInvigilator(row.item)"> - </span>
+                <span v-else-if="showShadowInvigilator(row.item)">
+                  {{ showShadowInvigilator(row.item) }}
                 </span>
               </template>
 
@@ -98,7 +106,7 @@
 </template>
 
 <script>
-  import { mapState, mapMutations, mapActions } from 'vuex'
+  import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
   import moment from 'moment'
   import Vue from 'vue'
 
@@ -111,6 +119,7 @@
       this.$root.$on('agenda-today', () => { this.today() })
       this.weekStart = moment().day(1)
       this.updateButtonsDate()
+      this.getInvigilators()
     },
     destroyed() {
       this.setCalendarSetup(null)
@@ -123,6 +132,7 @@
           {key: 'room', label: 'Location', thStyle: 'width: 8%;font-size:.9rem;'},
           {key: 'exam.exam_type.exam_type_name', label: 'Exam Type', thStyle:'font-size:.9rem;'},
           {key: 'invigilator', thStyle: 'width: 10%;font-size:.9rem;'},
+          {key: 'shadow_invigilator', thStyle: 'width: 10%;font-size:.9rem;'},
           {key: 'materials', label: 'Materials?', thStyle: 'width: 6%;font-size:.9rem;'},
           {key: 'exam.exam_name', label: 'Exam Name', thStyle: 'font-size:.9rem;'},
           {key: 'writer', label: "Candidate's Name", thStyle: 'font-size:.9rem;'},
@@ -140,7 +150,15 @@
       }
     },
     computed: {
-      ...mapState(['calendarEvents', 'calendarSetup', ]),
+      ...mapState([
+        'calendarEvents',
+        'calendarSetup',
+        'invigilators',
+      ]),
+      ...mapGetters([
+        'invigilator_multi_select',
+        'all_invigilator_options'
+      ]),
       examDates() {
         if (this.examEvents && this.examEvents.length > 0) {
           let dates = this.examEvents.map(ex => ex.start)
@@ -197,8 +215,13 @@
       },
     },
     methods: {
-      ...mapActions(['initializeAgenda']),
-      ...mapMutations(['setCalendarSetup']),
+      ...mapActions([
+        'initializeAgenda',
+        'getInvigilators',
+      ]),
+      ...mapMutations([
+        'setCalendarSetup',
+      ]),
       duration({exam}) {
         let start = moment(exam.booking.start_time).clone()
         let end = moment(exam.booking.end_time).clone()
@@ -231,13 +254,28 @@
         return this.examEvents.filter(exam => moment(exam.start).clone().format('dddd, MMM Do, YYYY') === dateString)
       },
       showInvigilator({exam}) {
+        let self = this
+        let invigilator_name_list = []
+        exam.booking.invigilators.forEach(function(invigilator) {
+          let i = self.invigilator_multi_select.filter(i => i.value == invigilator)
+          if(i[0] && i[0].name){
+            invigilator_name_list.push(i[0].name)
+          }
+        })
         if (exam.booking.sbc_staff_invigilated) {
           return 'SBC Staff'
         }
-        if (exam.booking.invigilator_id) {
-          return exam.booking.invigilator.invigilator_name
+        if (exam.booking.invigilators) {
+          return invigilator_name_list
         }
         return false
+      },
+      showShadowInvigilator({exam}){
+        let shadow_invigilator = this.all_invigilator_options.filter(i => i.id == exam.booking.shadow_invigilator_id)
+        if(shadow_invigilator[0] && shadow_invigilator[0].name) {
+          return shadow_invigilator[0].name
+        }else
+          return false
       },
       showLocation({exam}) {
         if (exam.offsite_location) {

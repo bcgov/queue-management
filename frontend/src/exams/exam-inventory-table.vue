@@ -28,7 +28,6 @@
     <div style="display: flex; justify-content: space-between" class="q-w100-flex-fs">
       <div>
         <b-form inline class="ml-3">
-        <!-- TODO Pagination Left goes here if required-->
           <b-input-group>
             <b-input-group-prepend><label class="mx-1 pt-3 ml-2 my-auto label-text">Search</label></b-input-group-prepend>
             <b-input size="sm" class="mb-1 mt-3" v-model="searchTerm"></b-input>
@@ -572,8 +571,28 @@
         return false
       },
       checkInvigilator(item) {
-        if (item.booking && (item.booking.invigilator_id || item.booking.sbc_staff_invigilated)) {
+        let length_of_invigilator_array = 0
+        let number_of_invigilators = Math.ceil(item.number_of_students / 24)
+        if (!item.booking) {
+          length_of_invigilator_array = 0
+        } else {
+          length_of_invigilator_array = item.booking.invigilators.length
+        }
+        if (item.exam_type.group_exam_ind === 1 && length_of_invigilator_array == 0) {
+          return false
+        } else if (item.exam_type.group_exam_ind === 1 && length_of_invigilator_array >= number_of_invigilators) {
           return true
+        } else if (item.exam_type.group_exam_ind === 1 && length_of_invigilator_array < number_of_invigilators) {
+          return false
+        } else if (item.exam_type.group_exam_ind === 0 && item.booking && (number_of_invigilators == 1 ||
+          item.booking.sbc_staff_invigilated)) {
+          return true
+        } else if (item.exam_type.exam_type_name === 'Monthly Session Exam'
+          && length_of_invigilator_array >= number_of_invigilators) {
+          return true
+        } else if (item.exam_type.exam_type_name === 'Monthly Session Exam'
+          && length_of_invigilator_array < number_of_invigilators ) {
+          return false
         }
         return false
       },
@@ -1062,6 +1081,14 @@
         }
       },
       statusIcon(item) {
+        let number_of_students = item.number_of_students
+        let number_of_invigilators = Math.ceil(number_of_students / 24)
+        let length_of_invigilator_array = 0
+        if(!item.booking){
+          length_of_invigilator_array = 0
+        }else{
+          length_of_invigilator_array = item.booking.invigilators.length
+        }
         let lifeRing = {
           icon: 'life-ring',
           rank: 4,
@@ -1092,7 +1119,7 @@
           if (!item.booking) {
             return lifeRing
           }
-          if (!item.booking.invigilator_id && !item.booking.sbc_staff_invigilated) {
+          if ((number_of_invigilators < length_of_invigilator_array || length_of_invigilator_array == 0) && !item.booking.sbc_staff_invigilated) {
             return lifeRing
           }
           if (!item.event_id || !item.number_of_students || !item.exam_received_date) {
@@ -1104,7 +1131,7 @@
           if (!item.booking) {
             return lifeRing
           }
-          if (!item.booking.invigilator_id && !item.booking.sbc_staff_invigilated) {
+          if ((number_of_invigilators < length_of_invigilator_array || length_of_invigilator_array == 0) && !item.booking.sbc_staff_invigilated) {
             return lifeRing
           }
           if (!item.exam_received_date) {
@@ -1112,7 +1139,7 @@
           }
           return clipboardCheck
         }
-        if (item.booking && (item.booking.invigilator_id || item.booking.sbc_staff_invigilated) &&
+        if (item.booking && (number_of_invigilators >= length_of_invigilator_array || item.booking.sbc_staff_invigilated) &&
             item.exam_received_date) {
           return clipboardCheck
         }
@@ -1120,6 +1147,13 @@
       },
       stillRequires(item) {
         let output = []
+        let length_of_invigilator_array = 0
+        if(!item.booking){
+          length_of_invigilator_array = 0
+        }else{
+          length_of_invigilator_array = item.booking.invigilators.length
+        }
+        let number_of_invigilators = Math.ceil(item.number_of_students / 24)
         if (item.exam_returned_date) {
           return output
         }
@@ -1138,11 +1172,18 @@
           }
         }
         if (item.booking) {
-          if (item.booking.invigilator && item.booking.invigilator.deleted) {
-            output.push('Re-assignment of Invigilator')
-          }
-          if (!item.booking.invigilator_id && !item.booking.sbc_staff_invigilated) {
-            output.push('Assignment of Invigilator')
+          if(item.exam_type.group_exam_ind == 1){
+            if(length_of_invigilator_array == 0 && number_of_invigilators == 1){
+              output.push('Assignment of Invigilator')
+            }else if(length_of_invigilator_array == 0 && number_of_invigilators > 1){
+              output.push('Assignment of Invigilators')
+            }else if(length_of_invigilator_array > 0 && length_of_invigilator_array < number_of_invigilators){
+              output.push('Assignment of More Invigilators')
+            }
+          }else if(item.exam_type.group_exam_ind == 0){
+            if(length_of_invigilator_array == 0 && !item.booking.sbc_staff_invigilated){
+              output.push('Assignment of Invigilator')
+            }
           }
         }
         return output
