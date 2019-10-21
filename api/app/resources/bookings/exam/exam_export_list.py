@@ -24,6 +24,7 @@ from datetime import datetime, timedelta
 import pytz
 import csv
 import io
+import re
 
 
 @api.route("/exams/export/", methods=["GET"])
@@ -65,7 +66,6 @@ class ExamList(Resource):
             exams = Exam.query.join(Booking, Exam.booking_id == Booking.booking_id) \
                               .filter(Booking.start_time >= start_date) \
                               .filter(Booking.start_time < end_date) \
-                              .join(Invigilator, Booking.invigilator_id == Invigilator.invigilator_id, isouter=True) \
                               .join(Room, Booking.room_id == Room.room_id, isouter=True) \
                               .join(Office, Booking.office_id == Office.office_id) \
                               .join(ExamType, Exam.exam_type_id == ExamType.exam_type_id)
@@ -91,7 +91,7 @@ class ExamList(Resource):
             dest = io.StringIO()
             out = csv.writer(dest)
             out.writerow(['Office Name', 'Exam Type', 'Exam ID', 'Exam Name', 'Examinee Name', 'Event ID', 'Room Name',
-                          'Invigilator Name', 'SBC Invigilator', 'Start Time', 'End Time', 'Booking ID', 'Booking Name',
+                          'Invigilator Name(s)', 'Shadow Invigilator Name', 'SBC Invigilator', 'Start Time', 'End Time', 'Booking ID', 'Booking Name',
                           'Number Of Students', 'Exam Received', 'Exam Written', 'Exam Returned', 'Notes',
                           'Collect Fees'])
 
@@ -103,7 +103,8 @@ class ExamList(Resource):
                 "examinee_name",
                 "event_id",
                 "room_name",
-                "invigilator_name",
+                "invigilator_names",
+                "shadow_invigilator_id",
                 "sbc_staff_invigilated",
                 "start_time",
                 "end_time",
@@ -140,12 +141,18 @@ class ExamList(Resource):
 
             for exam in exams:
                 row = []
+                if exam.booking.shadow_invigilator_id:
+                    shadow_invigilator_id = exam.booking.shadow_invigilator_id
+                else:
+                    shadow_invigilator_id = None
                 try:
                     for key in keys:
                         if key == "room_name":
                             write_room(row, exam)
-                        elif key == "invigilator_name":
+                        elif key == "invigilator_names":
                             write_invigilator(row, exam)
+                        elif key == "shadow_invigilator_id":
+                            write_shadow_invigilator(row, shadow_invigilator_id)
                         elif key == "sbc_staff_invigilated":
                             write_sbc(row, exam)
                         elif key == "exam_received_date":
@@ -180,6 +187,8 @@ class ExamList(Resource):
                             if key == "room_name":
                                 write_booking_room(row, non_exam)
                             elif key == "invigilator_name":
+                                row.append("")
+                            elif key == "shadow_invigilator_id":
                                 row.append("")
                             elif key == "sbc_staff_invigilated":
                                 row.append("")
@@ -244,10 +253,29 @@ def write_room(row, exam):
 
 
 def write_invigilator(row, exam):
-    if exam.booking.invigilator is None:
+    if exam.booking.invigilators is None:
         row.append("")
     else:
-        row.append(exam.booking.invigilator.invigilator_name)
+        array_length = len(exam.booking.invigilators)
+        name_list = ''
+        iterator = 1
+        for invigilator_name in exam.booking.invigilators:
+            if iterator < array_length:
+                name_list += getattr(invigilator_name, 'invigilator_name')
+                name_list += ', '
+            elif iterator == array_length:
+                name_list += (getattr(invigilator_name, 'invigilator_name'))
+            iterator += 1
+        row.append(name_list)
+
+
+def write_shadow_invigilator(row, shadow_invigilator_id):
+    if shadow_invigilator_id is None:
+        row.append("")
+    else:
+        invigilator = Invigilator.query.filter_by(invigilator_id=shadow_invigilator_id).first_or_404()
+        shadow_name = invigilator.invigilator_name
+        row.append(shadow_name)
 
 
 def write_sbc(row, exam):

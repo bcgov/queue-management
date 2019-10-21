@@ -19,9 +19,21 @@ from sqlalchemy_utc import UtcDateTime
 
 class Booking(Base):
 
+    booking_invigilators = db.Table('booking_invigilators',
+                                    db.Column('booking_id',
+                                              db.Integer,
+                                              db.ForeignKey('booking.booking_id',
+                                                            ondelete='CASCADE'),
+                                                            primary_key=True),
+                                    db.Column('invigilator_id',
+                                              db.Integer,
+                                              db.ForeignKey('invigilator.invigilator_id',
+                                                            ondelete='CASCADE'),
+                                                            primary_key=True))
+
     booking_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     room_id = db.Column(db.Integer, db.ForeignKey("room.room_id"), nullable=True)
-    invigilator_id = db.Column(db.Integer, db.ForeignKey("invigilator.invigilator_id"), nullable=True)
+    shadow_invigilator_id = db.Column(db.Integer, nullable=True)
     office_id = db.Column(db.Integer, db.ForeignKey("office.office_id"), nullable=False)
     start_time = db.Column(UtcDateTime, nullable=False)
     end_time = db.Column(UtcDateTime, nullable=False)
@@ -29,9 +41,11 @@ class Booking(Base):
     booking_name = db.Column(db.String(150), nullable=True)
     sbc_staff_invigilated = db.Column(db.Integer, default=0)
     booking_contact_information = db.Column(db.String(256), nullable=True)
+    blackout_flag = db.Column(db.String(1), default='N', nullable=False)
+    blackout_notes = db.Column(db.String(255), nullable=True)
 
     room = db.relationship("Room")
-    invigilator = db.relationship("Invigilator")
+    invigilators = db.relationship("Invigilator", secondary=booking_invigilators)
     office = db.relationship("Office")
 
     def __repr__(self):
@@ -39,3 +53,4 @@ class Booking(Base):
 
     def __init__(self, **kwargs):
         super(Booking, self).__init__(**kwargs)
+

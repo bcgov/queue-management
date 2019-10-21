@@ -61,6 +61,7 @@ export const store = new Vuex.Store({
     alertMessage: '',
     allCitizens: [],
     backOfficeDisplay: 'BackOffice',
+    recurringFeatureFlag: '',
     bearer: '',
     bookings: [],
     calendarEvents: [],
@@ -111,6 +112,7 @@ export const store = new Vuex.Store({
       requireOEMAttentionFilter: 'default',
     },
     invigilators: [],
+    shadowInvigilators: [],
     isLoggedIn: false,
     isUploadingFile: false,
     manifestdata: '',
@@ -152,7 +154,9 @@ export const store = new Vuex.Store({
     services: [],
     showAddModal: false,
     showAdmin: false,
+    showAppointmentBlackoutModal: false,
     showBookingModal: false,
+    showBookingBlackoutModal: false,
     showDeleteExamModal: false,
     showEditBookingModal: false,
     showEditExamModal: false,
@@ -240,13 +244,45 @@ export const store = new Vuex.Store({
 
     invigilator_dropdown(state) {
       let invigilators = [
-        {value: null, text: 'unassigned'},
-        {value: 'sbc', text: 'SBC Staff'}
+        {value: null, text: 'unassigned', shadow_count: 2},
+        {value: 'sbc', text: 'SBC Staff', shadow_count: 2}
       ]
       state.invigilators.forEach( i => {
-        invigilators.push({ value: i.invigilator_id, text: i.invigilator_name })
+        invigilators.push({ value: i.invigilator_id, text: i.invigilator_name, shadow_count: i.shadow_count })
+      })
+      return invigilators.filter(i => i.shadow_count == 2)
+    },
+
+    shadow_invigilator_options(state){
+      let invigilators = []
+      state.invigilators.forEach(i => {
+        invigilators.push({ id: i.invigilator_id, name: i.invigilator_name, shadow_count: i.shadow_count })
+      })
+      return invigilators.filter( i => i.shadow_count < 2)
+    },
+
+    shadow_invigilators(state){
+      let invigilators = []
+      state.invigilators.forEach(i => {
+        invigilators.push({ id: i.invigilator_id, name: i.invigilator_name, shadow_count: i.shadow_count })
       })
       return invigilators
+    },
+
+    all_invigilator_options(state){
+      let invigilators = []
+      state.invigilators.forEach(i => {
+        invigilators.push({ id: i.invigilator_id, name: i.invigilator_name})
+      })
+      return invigilators
+    },
+
+    invigilator_multi_select(state) {
+      let invigilators = []
+      state.invigilators.forEach( i => {
+        invigilators.push({ value: i.invigilator_id, name: i.invigilator_name, shadow_count: i.shadow_count })
+      })
+      return invigilators.filter(i => i.shadow_count == 2)
     },
 
     show_scheduling_indicator: (state) => {
@@ -343,6 +379,13 @@ export const store = new Vuex.Store({
 
     is_ita_designate(state) {
       if(state.user.ita_designate){
+        return true
+      }
+      return false
+    },
+
+    is_recurring_enabled(state){
+      if(state.recurringFeatureFlag === 'On'){
         return true
       }
       return false
@@ -604,6 +647,17 @@ export const store = new Vuex.Store({
       })
     },
 
+    putInvigilatorShadow(context, payload){
+      return new Promise((resolve, reject) => {
+        Axios(context).put(`/invigilator/${payload.id}/${payload.params}`).then(resp => {
+          resolve(resp.data)
+        })
+          .catch(error => {
+            reject(error)
+          })
+      })
+    },
+
     flashServeNow(context, payload) {
       let flash = () => {
         if (!context.state.showServiceModal) {
@@ -659,6 +713,9 @@ export const store = new Vuex.Store({
             booking.exam = context.state.exams.find(ex => ex.booking_id == b.booking_id) || false
             booking.booking_contact_information = b.booking_contact_information
             booking.fees = b.fees
+            booking.shadow_invigilator_id = b.shadow_invigilator_id
+            booking.blackout_flag = b.blackout_flag
+            booking.blackout_notes = b.blackout_notes
             calendarEvents.push(booking)
           })
           context.commit('setEvents', calendarEvents)
@@ -830,6 +887,20 @@ export const store = new Vuex.Store({
       })
     },
 
+    getInvigilatorsWithShadowFlag(context) {
+      return new Promise ((resolve, reject) => {
+        Axios(context).get('/invigilators/')
+          .then(resp => {
+            context.commit('setInvigilators', resp.data.invigilators)
+            resolve(resp)
+          })
+          .catch(error => {
+            console.log(error)
+            reject(error)
+          })
+      })
+    },
+
     getOffices(context, payload=null) {
       if (context.state.user.liaison_designate === 1 || payload === 'force' || context.state.user.pesticide_designate === 1) {
         return new Promise((resolve, reject) => {
@@ -897,6 +968,7 @@ export const store = new Vuex.Store({
           context.commit('setDefaultCounter', resp.data.csr.office.counters.filter(
             c => c.counter_name === DEFAULT_COUNTER_NAME)[0])
           context.commit('setBackOfficeDisplay', resp.data.back_office_display)
+          context.commit('setRecurringFeatureFlag', resp.data.recurring_feature_flag)
           let individualExamBoolean = false
           let groupExamBoolean = false
           let groupIndividualBoolean = false
@@ -2311,7 +2383,11 @@ export const store = new Vuex.Store({
     setDisplayServices: (state, payload) => state.displayServices = payload,
 
     setBackOfficeDisplay: (state, payload) => state.backOfficeDisplay = payload,
-  
+
+    setRecurringFeatureFlag: (state, payload) => state.recurringFeatureFlag = payload,
+
+    toggleBookingBlackoutModal: (state, payload) => state.showBookingBlackoutModal = payload,
+
     setServiceModalForm(state, citizen) {
       let citizen_comments = citizen.citizen_comments
       let activeService = citizen.service_reqs.filter(sr => sr.periods.some(p => p.time_end === null))
@@ -2550,7 +2626,7 @@ export const store = new Vuex.Store({
     toggleGenFinReport(state, payload) {
       state.showGenFinReportModal = payload
     },
-  
+
     captureExamDetail(state, payload) {
       if (payload.key === 'exam_type_id') {
         payload.value = Number(payload.value)

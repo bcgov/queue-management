@@ -4,7 +4,7 @@
       <div style="display: flex; justify-content: space-between">
         <div style="font-weight: 600; font-size: 1.3rem;">
           {{ formStep === 1 ?  'Confirm Booking' : ''}}
-          {{ formStep === 2 ? 'Assign Imvigilator' : '' }}
+          {{ formStep === 2 ? 'Assign Invigilator' : '' }}
         </div>
         <div>
           <button class="btn btn-link"
@@ -90,7 +90,7 @@
             </b-form-row>
             <b-form-row>
               <b-col>
-                <b-table :items="invigilators"
+                <b-table :items="invigilator_multi_select"
                          :fields="fields"
                          outlined
                          inverse
@@ -100,10 +100,11 @@
                          class="mr-3 mt-1 mb-0 pr-3 pl-3"
                          small>
                   <template slot="invigilator_name" slot-scope="row">
-                    <div class="table-pointer">{{ row.item.invigilator_name }}</div>
+                    <div class="table-pointer">{{ row.item.name }}</div>
                     <div style="display: none">
-                      {{ row.item.invigilator_id == invigilatorId ?
-                      row.item._rowVariant='info' : row.item._rowVariant=''
+                      {{
+                        row.item.value == invigilatorId ?
+                        row.item._rowVariant='info' : row.item._rowVariant=''
                       }}
                     </div>
                   </template>
@@ -128,9 +129,18 @@
                                  class="ml-1 p-0"
                                  style="font-size: 1rem;"/></b-button></div>
           <div v-if="selectedOption !== 'invigilator' || formStep === 2">
-            <b-button @click="clickOk"
-                      :disabled="buttonStatus"
-                      class="mt-3 ml-1 btn-primary">Submit</b-button></div>
+            <b-button v-if="!pressedSubmit"
+                      @click="clickOk"
+                      class="mt-3 ml-1 btn-primary">
+              Submit
+            </b-button>
+            <b-button v-else
+                      variant="primary"
+                      class="mt-3 ml-1"
+                      disbabled>
+              Submit
+            </b-button>
+          </div>
         </div>
       </div>
     </div>
@@ -138,7 +148,7 @@
 </template>
 
 <script>
-  import { mapActions, mapMutations, mapState } from 'vuex'
+  import { mapActions, mapMutations, mapState, mapGetters } from 'vuex'
   import moment from 'moment'
   import DataSummaryTable from './../exams/data-summary-table'
 
@@ -174,6 +184,7 @@
           {text: 'Contract Invigilator', value: 'invigilator'},
         ],
         minimized: false,
+        pressedSubmit: false,
       }
     },
     computed: {
@@ -185,6 +196,9 @@
         module: 'addExamModule',
         capturedExam: 'capturedExam',
       }),
+      ...mapGetters([
+        'invigilator_multi_select'
+      ]),
       buttonStatus() {
         if (!this.selectedOption) {
           return true
@@ -335,6 +349,7 @@
       },
       setupModal() {
         this.resetModal()
+        this.pressedSubmit = false
         if (this.exam.notes) { this.notes = this.exam.notes.valueOf() }
         this.$nextTick( function() {
           if (this.$refs.contact_information) {
@@ -363,68 +378,73 @@
       },
       rowClicked(item) {
         this.clickedRow = item
-        this.invigilatorId = item.invigilator_id
+        this.invigilatorId = item.value
         this.invigilator = item
       },
       setRef(e) {
         this.savedRef = e.target.id
       },
       submit() {
-        let { exam_id } = this.exam
-        let notes = null
-        let putNotes = false
+        if(this.pressedSubmit == false) {
+          this.pressedSubmit = true
+          let {exam_id} = this.exam
+          let notes = null
+          let putNotes = false
 
-        if (this.notes && !this.exam.notes) {
-          notes = this.notes
-          putNotes = true
-          }
-        if (!this.notes && this.exam.notes) {
-          putNotes = true
-        }
-        if (this.notes && this.exam.notes) {
-          if (this.notes !== this.exam.notes) {
+          if (this.notes && !this.exam.notes) {
             notes = this.notes
             putNotes = true
           }
-        }
-        let start = new moment(this.date.start).utc()
-        let end = new moment(this.endTime).utc()
-        let booking = {
-          room_id: this.date.resource.id,
-          start_time: start.format('DD-MMM-YYYY[T]HH:mm:ssZ'),
-          end_time: end.format('DD-MMM-YYYY[T]HH:mm:ssZ'),
-          fees: 'false',
-          booking_name: this.exam.exam_name,
-          sbc_staff_invigilated: 0,
-          booking_contact_information: this.booking_contact_information
-        }
-        if (this.selectedOption === 'sbc') {
-          booking.sbc_staff_invigilated = 1
-        }
-        if (this.selectedOption === 'invigilator') {
-          booking.invigilator_id = this.invigilatorId
-        }
-        this.scheduleExam(booking).then( () => {
-          let payload = {
-            url:  `/exams/${exam_id}/`
+          if (!this.notes && this.exam.notes) {
+            putNotes = true
           }
-          putNotes ? payload.data = { notes } : null
-          let redirect = false
-          if  (this.exam.referrer === 'inventory') {
-            redirect = true
+          if (this.notes && this.exam.notes) {
+            if (this.notes !== this.exam.notes) {
+              notes = this.notes
+              putNotes = true
+            }
           }
-          this.putRequest(payload).then( () => {
-            this.getExams().then( () => {
-              this.getBookings().then( () => {
-                this.finishBooking()
-              if (redirect) {
-                this.$router.push('/exams')
-              }
+          let start = new moment(this.date.start).utc()
+          let end = new moment(this.endTime).utc()
+          let booking = {
+            room_id: this.date.resource.id,
+            start_time: start.format('DD-MMM-YYYY[T]HH:mm:ssZ'),
+            end_time: end.format('DD-MMM-YYYY[T]HH:mm:ssZ'),
+            fees: 'false',
+            booking_name: this.exam.exam_name,
+            sbc_staff_invigilated: 0,
+            booking_contact_information: this.booking_contact_information
+          }
+          if (this.selectedOption === 'sbc') {
+            booking.sbc_staff_invigilated = 1
+          }
+          if (this.selectedOption === 'invigilator') {
+            booking.invigilator_id = this.invigilatorId
+          }
+          this.scheduleExam(booking).then(() => {
+            let payload = {
+              url: `/exams/${exam_id}/`
+            }
+            putNotes ? payload.data = {notes} : null
+            let redirect = false
+            if (this.exam.referrer === 'inventory') {
+              redirect = true
+            }
+            this.putRequest(payload).then(() => {
+              this.getExams().then(() => {
+                this.getBookings().then(() => {
+                  this.finishBooking()
+                  if (redirect) {
+                    this.$router.push('/exams')
+                  }
+                })
               })
             })
+            this.booking_contact_information = ''
           })
-          this.booking_contact_information = ''
-        })
+        } else {
+          console.log('you have pressed submit already!')
+        }
       }
     },
   }

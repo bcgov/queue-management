@@ -21,6 +21,7 @@ from flask_admin.babel import gettext
 from qsystem import db
 from sqlalchemy import and_
 
+
 class OfficeConfig(Base):
     roles_allowed = ['SUPPORT', 'GA']
 
@@ -136,36 +137,46 @@ class OfficeConfig(Base):
 class OfficeConfigGA(OfficeConfig):
 
     #  Change what GA sees on the Office List view.
-    column_labels = {'quick_list': 'Quick List', 'back_office_list': 'Back Office List'}
-    column_list =   ['office_name',
-                     'quick_list',
-                     'back_office_list'
-                    ]
+    column_labels = {
+        'quick_list': 'Quick List',
+        'back_office_list': 'Back Office List'
+    }
 
+    column_list = [
+        'office_name',
+        'quick_list',
+        'back_office_list'
+    ]
 
     #  Change what GAs are allowed to do from what SUPPORT can do.
-    form_edit_rules = ('office_name',
-                       'quick_list',
-                       'back_office_list'
-                       )
-    form_excluded_columns = ('citizens',
-                             'csrs',
-                             'exams',
-                             'rooms',
-                             'invigilators',
-                             'office_number',
-                             'sb',
-                             'services',
-                             'deleted',
-                             'exams_enabled_ind',
-                             'counters',
-                             'timezone'
-                             )
+    form_edit_rules = (
+        'office_name',
+        'quick_list',
+        'back_office_list'
+    )
+
+    form_excluded_columns = (
+        'citizens',
+        'csrs',
+        'exams',
+        'rooms',
+        'invigilators',
+        'office_number',
+        'sb',
+        'services',
+        'deleted',
+        'exams_enabled_ind',
+        'appointments_enabled_ind',
+        'counters',
+        'timezone'
+    )
+
     form_widget_args = {
         'office_name': {
             'readonly': True
         }
     }
+
 
 OfficeModelView = OfficeConfig(Office, db.session)
 OfficeGAModelView = OfficeConfigGA(Office, db.session, endpoint='officega')
