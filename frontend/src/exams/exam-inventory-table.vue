@@ -1116,6 +1116,9 @@
           return lifeRing
         }
         if (item.exam_type.exam_type_name === 'Monthly Session Exam') {
+          if(item.number_of_students === null && length_of_invigilator_array > 0){
+            return exclamationTriangle
+          }
           if (!item.booking) {
             return lifeRing
           }
