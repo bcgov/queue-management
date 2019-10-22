@@ -485,17 +485,32 @@ export const store = new Vuex.Store({
     },
 
     categories_options: (state, getters) => {
-      let opts = state.categories.filter(o => state.services.some(s => s.parent_id === o.service_id))
-      console.log("==> Categories are:")
-      console.log(opts)
-      console.log("    --> Item 1")
-      console.log(opts[1])
+      let services = state.services
+      if (state.displayServices === "Dashboard") {
+        services = getters.services_dashboard
+      }
+      if (state.displayServices === "BackOffice") {
+        services = getters.services_backoffice
+      }
+      let opts = state.categories.filter(o => services.some(s => s.parent_id === o.service_id))
 
       let mappedOpts = opts.map(opt =>
         ({value: opt.service_id, text: opt.service_name})
       )
       let blankOpt = [{value:'', text:'Categories'}]
       return blankOpt.concat(mappedOpts)
+    },
+
+    services_dashboard: (state) => {
+      let services = state.services
+      services = services.filter(service=>service.display_dashboard_ind === 1)
+      return services
+    },
+
+    services_backoffice: (state) => {
+      let services = state.services
+      services = services.filter(service=>service.display_dashboard_ind === 0)
+      return services
     },
 
     filtered_services: (state, getters) => {
