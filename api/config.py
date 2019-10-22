@@ -35,7 +35,6 @@ class BaseConfig(object):
     MARSHMALLOW_SCHEMA_DEFAULT_JIT = "toastedmarshmallow.Jit"
 
     REMEMBER_COOKIE_DURATION = 86400
-    SERVER_NAME = os.getenv('SERVER_NAME', '')
     SESSION_COOKIE_DOMAIN = os.getenv('SERVER_NAME', '')
     CORS_ALLOWED_ORIGINS = ["https://" + SESSION_COOKIE_DOMAIN]
 
@@ -121,7 +120,6 @@ class LocalConfig(BaseConfig):
     #  For running rabbitmq locally, use the line below.
     # ACTIVE_MQ_URL = 'amqp://guest:guest@localhost:5672'
 
-    SERVER_NAME = None
     SESSION_COOKIE_DOMAIN = None
     CORS_ALLOWED_ORIGINS = ["http://localhost:8080"]
     SECRET_KEY = "pancakes"
