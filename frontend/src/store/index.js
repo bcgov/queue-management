@@ -486,6 +486,10 @@ export const store = new Vuex.Store({
 
     categories_options: (state, getters) => {
       let opts = state.categories.filter(o => state.services.some(s => s.parent_id === o.service_id))
+      console.log("==> Categories are:")
+      console.log(opts)
+      console.log("    --> Item 1")
+      console.log(opts[1])
 
       let mappedOpts = opts.map(opt =>
         ({value: opt.service_id, text: opt.service_name})
