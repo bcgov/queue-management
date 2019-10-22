@@ -457,6 +457,7 @@
         'showReturnExamModalVisible',
         'offices',
         'user',
+        'invigilators',
       ]),
       availableH() {
         let h = this.totalH - 240
@@ -920,8 +921,26 @@
           if (item.booking.sbc_staff_invigilated) {
             output.Invigilator = 'SBC Staff'
           }
-          if (item.booking.invigilator_id && !item.booking.invigilator.deleted) {
-            output.Invigilator = item.booking.invigilator.invigilator_name
+          if (item.booking.invigilators) {
+            let invigilator_name_list = []
+            item.booking.invigilators.forEach(exam_invigilator => {
+              this.invigilators.forEach(office_invigilator => {
+                if (exam_invigilator == office_invigilator.invigilator_id) {
+                  invigilator_name_list.push(office_invigilator.invigilator_name)
+                }
+              })
+            })
+            let invigilator_string = ''
+            if (invigilator_name_list.length > 0) {
+              invigilator_name_list.forEach(invigilator => {
+                invigilator_string += invigilator
+                invigilator_string += ', '
+              })
+              invigilator_string = invigilator_string.replace(/,\s*$/, "")
+            }
+            if (invigilator_string.length > 0) {
+              output.Invigilators = invigilator_string
+            }
           }
           if (item.booking.room_id) {
             output.Room = item.booking.room.room_name
