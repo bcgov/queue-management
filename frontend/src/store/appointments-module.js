@@ -36,6 +36,7 @@ export default {
             end: apt.end_time,
             appointment_id: apt.appointment_id,
             service_id: parseInt(apt.service_id),
+            citizen_id: apt.citizen_id,
             title: apt.citizen_name,
             contact_information: apt.contact_information,
             comments: apt.comments,
@@ -150,6 +151,7 @@ export default {
         service_id: payload.service_id,
         citizen_name: payload.title,
       }
+      payload.start_time = data.checked_in_time
       return new Promise((resolve, reject) => {
         Axios({state}).put(`/appointments/${payload.appointment_id}/`, data).then( () => {
           dispatch('sendToQueue', payload)
@@ -197,6 +199,7 @@ export default {
         priority: 1,
         citizen_comments: `${start}|||${payload.comments}`,
         citizen_name: payload.title,
+        start_time: payload.start_time
       }
       
       return new Promise((resolve, reject) => {
@@ -213,25 +216,22 @@ export default {
     resetAddModalForm({commit}) {
       commit('resetAddModalForm', null, {root: true})
     },
-    
+
     sendToQueue({dispatch, commit, rootState}, payload) {
       let state = rootState
-      Axios({state}).post('/citizens/', {}).then(resp => {
-        let { citizen_id } = resp.data.citizen
-        
-        commit('setAppointmentsStateInfo', payload, { root: true })
-        dispatch('putCitizen', {citizen_id, payload}).then( () => {
-          dispatch('postServiceReq', {citizen_id, payload}).then( () => {
-            dispatch('postAddToQueue', citizen_id).then( () => {
-              dispatch('getAppointments').then( () => {
-                commit('toggleCheckInModal', false)
-              })
+      let citizen_id = payload.citizen_id
+      commit('setAppointmentsStateInfo', payload, { root: true })
+      dispatch('putCitizen', {citizen_id, payload}).then( () => {
+        dispatch('postServiceReq', {citizen_id, payload}).then( () => {
+          dispatch('postAddToQueue', citizen_id).then( () => {
+            dispatch('getAppointments').then( () => {
+              commit('toggleCheckInModal', false)
             })
           })
         })
       })
     },
-    
+
     toggleAddModal({commit}, payload) {
       commit('toggleAddModal', payload, {root: true})
       if (payload) {
