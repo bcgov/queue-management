@@ -16,20 +16,33 @@ import logging
 from flask_restplus import Resource
 from flask import request, g
 from app.schemas.bookings import AppointmentSchema
-from app.models.theq import CSR
+from app.schemas.theq import CitizenSchema
+from app.models.theq import CSR, CitizenState
 from qsystem import api, api_call_with_retry, db, oidc
-
+from datetime import datetime
 
 @api.route("/appointments/", methods=["POST"])
 class AppointmentPost(Resource):
 
     appointment_schema = AppointmentSchema()
+    citizen_schema = CitizenSchema()
 
     @oidc.accept_token(require_token=True)
     @api_call_with_retry
     def post(self):
 
         csr = CSR.find_by_username(g.oidc_token_info['username'])
+
+        #  Create a citizen for later use.
+        citizen = self.citizen_schema.load({}).data
+        citizen.office_id = csr.office_id
+        citizen.qt_xn_citizen_ind = 0;
+        citizen_state = CitizenState.query.filter_by(cs_state_name="Appointment booked").first()
+        citizen.cs_id = citizen_state.cs_id
+        citizen.start_time = datetime.now()
+        db.session.add(citizen)
+        db.session.commit()
+
         json_data = request.get_json()
 
         if not json_data:
@@ -42,6 +55,7 @@ class AppointmentPost(Resource):
             return {"message": warning}, 422
 
         if appointment.office_id == csr.office_id:
+            appointment.citizen_id = citizen.citizen_id
             db.session.add(appointment)
             db.session.commit()
 
