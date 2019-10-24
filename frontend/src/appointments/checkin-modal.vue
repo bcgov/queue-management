@@ -14,7 +14,8 @@
     <b-form autocomplete="off">
       <b-form-row>
         <b-col>
-          <b-form-group class="mb-0 mt-2">
+          <b-form-group v-if="checkBlackoutFlag"
+                        class="mb-0 mt-2">
             <label class="mb-0">Citizen Has Arrived?</label><br>
             <b-button class="w-100 btn-success"
                       @click="checkIn">Check-In</b-button>
@@ -47,7 +48,17 @@
       modalVisible: {
         get() { return this.showCheckInModal },
         set(e) { this.toggleCheckInModal(e) }
-      }
+      },
+      checkBlackoutFlag(){
+        if(this.clickedAppt && this.clickedAppt.blackout_flag){
+          if(this.clickedAppt.blackout_flag === 'Y'){
+            return false
+          } else if (this.clickedAppt.blackout_flag === 'N') {
+            return true
+          }
+        }
+        return false
+      },
     },
     methods: {
       ...mapActions(['getAppointments', 'postCheckIn']),
@@ -69,7 +80,7 @@
         this.toggleApptBookingModal(true)
         this.toggleCheckInModal(false)
         this.getAppointments()
-      }
+      },
     }
   }
 </script>

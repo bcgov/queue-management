@@ -134,59 +134,69 @@ def api_call_with_retry(f, max_time=15000, max_tries=12, delay_first=100, delay_
     def decorated_function(*args, **kwargs):
 
         #  Initialize variables
-        current_try = 1
-        current_delay = 0
-        total_delay = 0
-        time_start = datetime.datetime.now()
-        time_current = time_start
-        time_save = time_current
+        parameters = {}
+        parameters['current_try'] = 1
+        parameters['current_delay'] = 0
+        parameters['total_delay'] = 0
+        parameters['time_start'] = datetime.datetime.now()
+        parameters['time_current'] = parameters['time_start']
+        parameters['time_save'] = parameters['time_current']
+        parameters['key'] = get_key()
 
-        while (current_try <= max_tries) and (total_delay <= max_time):
+        while (parameters['current_try'] <= max_tries) and (parameters['total_delay'] <= max_time):
 
             # Determine whether to print debug statements or not.
-            print_debug = print_flag or (current_try > 1)
+            print_debug = print_flag or (parameters['current_try'] > 1)
 
-            if print_debug:
-                print("==> api_call_with_retry: Try #: " + str(current_try) + "; time: " + str(time_current))
-                print("    --> delay:        " + str(current_delay) + "; total delay: " + str(total_delay))
-                print("    --> elapsed:      " + str(time_current - time_save) + "; total elapsed: " + \
-                      str(time_current - time_start))
-                print("    --> @wraps(f)->f: " + str(f))
-                if kwargs is not None:
-                    print("    --> **kwargs:     " + str(kwargs))
-                else:
-                    print("    --> **kwargs:     None")
+            print_retry_info(print_debug, parameters, f, kwargs)
 
             try:
                 return f(*args, **kwargs)
             except SQLAlchemyError as err:
-                if current_try < max_tries:
-                    time_db_before = datetime.datetime.now()
+                print_error_info(print_debug, parameters, err)
+                if parameters['current_try'] < max_tries:
                     db.session.rollback()
-                    time_db_after = datetime.datetime.now()
-                    if print_debug:
-                        print("        --> SQLAlchemyError: " + str(datetime.datetime.now()))
-                        print("        --> Message:         " + str(err))
-                        print("        --> rollback time:   " + str(time_db_after - time_db_before))
-                        time_current = time_db_after
+                    parameters['time_current'] = datetime.datetime.now()
                 else:
                     raise
 
             #  Update variables.
-            current_delay = update_delay(current_delay, current_try, delay_first, delay_start, delay_mult)
+            parameters['current_delay'] = update_delay(parameters['current_delay'], \
+                                                       parameters['current_try'], delay_first, \
+                                                       delay_start, delay_mult)
 
             #  Update variables.
-            current_try += 1
-            total_delay = total_delay + current_delay
+            parameters['current_try'] += 1
+            parameters['total_delay'] = parameters['total_delay'] + parameters['current_delay']
 
             #  Sleep a bit.
-            time.sleep(current_delay / 1000.0)
+            time.sleep(parameters['current_delay'] / 1000.0)
 
             #  Update more variables.
-            time_save = time_current
-            time_current = datetime.datetime.now()
+            parameters['time_save'] = parameters['time_current']
+            parameters['time_current'] = datetime.datetime.now()
 
     return decorated_function
+
+def print_retry_info(print_debug, parameters, f, kwargs):
+
+    if print_debug:
+        msg = "==> RT K:" + parameters['key'] + "; T:" + str(parameters['current_try']) \
+            + "; F:" + str(f) + "; KW:" + str(kwargs) if kwargs is not None else "None"
+        print(msg)
+
+def print_error_info(print_debug, parameters, err):
+    if print_debug:
+        msg = "==> AE K:" + parameters['key'] + "; T:" + str(parameters['current_try']) \
+            + "; E:" + str(err).replace("\n", ">").replace("\r", ">")
+        print(msg)
+
+        #  Print more info, if the builtins.dict error.
+        # if "builtins.dict" in str(err):
+        # if "could not connect" in str(err):
+        if parameters['current_try'] == 2:
+            print("==> TB K:" + parameters['key'] + "; T:" + str(parameters['current_try']))
+            traceback.print_tb(err.__traceback__)
 
 def update_delay(current_delay, current_try, delay_first, delay_start, delay_mult):
     if current_try == 1:
@@ -197,6 +207,16 @@ def update_delay(current_delay, current_try, delay_first, delay_start, delay_mul
         output_delay = current_delay * delay_mult
     return output_delay
 
+def get_key():
+    time_now = datetime.datetime.today()
+    alpha = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    char_year = alpha[time_now.year - 2019]
+    char_month = alpha[time_now.month - 1]
+    char_day = alpha[time_now.day - 1]
+    char_hour = alpha[time_now.hour]
+    char_minute = alpha[time_now.minute]
+    char_ms = str(time_now.microsecond)[:2]
+    return char_year + char_month + char_day + char_hour + char_minute + char_ms
 
 import app.resources.theq.categories
 import app.resources.theq.upload
@@ -242,6 +262,7 @@ import app.resources.bookings.exam.exam_post
 import app.resources.bookings.exam.exam_put
 import app.resources.bookings.exam.exam_export_list
 import app.resources.bookings.invigilator.invigilator_list
+import app.resources.bookings.invigilator.invigilator_put
 import app.resources.bookings.room.room_list
 import app.resources.bookings.exam_type.exam_type_list
 

@@ -34,8 +34,10 @@
         }
         if (this.categories && this.categories.length > 0) {
           if (['/booking', '/exams'].includes(this.$route.path)) {
+            this.setDisplayServices("All")
             let { service_id } = this.categories .find(cat => cat.service_name === 'Exams')
             this.updateAddModalForm({type: 'category', value: service_id})
+
           }
         }
       })
@@ -86,7 +88,7 @@
       }
     },
     methods: {
-      ...mapMutations(['updateAddModalForm']),
+      ...mapMutations(['updateAddModalForm', 'setDisplayServices']),
       focus() {
         if (this.$refs && this.$refs.inputref) {
           this.$refs.inputref.focus()

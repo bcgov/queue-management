@@ -19,7 +19,7 @@ class BaseConfig(object):
     PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     TESTING = True,
-    DEBUG = True
+    DEBUG = False
     LOGGING_LOCATION = "logs/qsystem.log"
     LOGGING_LEVEL = DEBUG
     LOGGING_FORMAT = '[%(asctime)s.%(msecs)03d] %(levelname)-8s (%(name)s) <%(module)s.py>.%(funcName)s: %(message)s'
@@ -35,7 +35,6 @@ class BaseConfig(object):
     MARSHMALLOW_SCHEMA_DEFAULT_JIT = "toastedmarshmallow.Jit"
 
     REMEMBER_COOKIE_DURATION = 86400
-    SERVER_NAME = os.getenv('SERVER_NAME', '')
     SESSION_COOKIE_DOMAIN = os.getenv('SERVER_NAME', '')
     CORS_ALLOWED_ORIGINS = ["https://" + SESSION_COOKIE_DOMAIN]
 
@@ -91,7 +90,7 @@ class BaseConfig(object):
 
     #  Set echo appropriately.
     if (os.getenv('SQLALCHEMY_ECHO', "False")).upper() == "TRUE":
-        SQLALCHEMY_ECHO=True
+        SQLALCHEMY_ECHO=False
     else:
         SQLALCHEMY_ECHO=False
 
@@ -107,6 +106,7 @@ class BaseConfig(object):
 
     VIDEO_PATH = os.getenv('VIDEO_PATH', '')
     BACK_OFFICE_DISPLAY = os.getenv("BACK_OFFICE_DISPLAY", "BackOffice")
+    RECURRING_FEATURE_FLAG = os.getenv("RECURRING_FEATURE_FLAG", "On")
 
 class LocalConfig(BaseConfig):
     DEBUG = True
@@ -120,7 +120,6 @@ class LocalConfig(BaseConfig):
     #  For running rabbitmq locally, use the line below.
     # ACTIVE_MQ_URL = 'amqp://guest:guest@localhost:5672'
 
-    SERVER_NAME = None
     SESSION_COOKIE_DOMAIN = None
     CORS_ALLOWED_ORIGINS = ["http://localhost:8080"]
     SECRET_KEY = "pancakes"
@@ -216,7 +215,8 @@ def setup_logger(print_flag, location, log_name, config_name, formatter):
     string_level = os.getenv(config_name, "")
     msg_level = debug_string_to_debug_level(string_level)
     if print_flag:
-        print("    --> Setting logging for " + log_name + "; string_level: " + string_level + "; msg_level: " + str(msg_level))
+        print("    --> Setting logging for " + log_name + "; string_level: " + string_level + "; msg_level: "
+              + str(msg_level))
 
     #  Take action depending on the level.
     if msg_level == -10:

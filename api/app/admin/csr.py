@@ -192,6 +192,7 @@ class CSRConfig(Base):
                            form_opts=form_opts,
                            return_url=return_url)
 
+
 class CSRConfigGA(CSRConfig):
 
     form_excluded_columns = ('periods', 'qt_xn_csr_ind', 'receptionist_ind', 'deleted', 'finance_designate',
@@ -200,8 +201,10 @@ class CSRConfigGA(CSRConfig):
                          'finance_designate', 'liaison_designate', 'csr_state', 'role', 'office', 'counter')
     form_edit_rules = ('username', 'ita_designate', 'pesticide_designate', 'liaison_designate', 'role', 'office')
 
+
 CSRModelView = CSRConfig(CSR, db.session)
 CSRGAModelView = CSRConfigGA(CSR, db.session, endpoint='csrga')
+
 
 def check_uservalues(updated_csr):
 
@@ -222,6 +225,7 @@ def check_uservalues(updated_csr):
         db.session.add(updated_csr)
         db.session.commit()
     return
+
 
 def request_redirect(self, return_url, model, request_parameter):
 
