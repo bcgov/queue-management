@@ -241,7 +241,7 @@ export const store = new Vuex.Store({
     invigilator_dropdown(state) {
       let invigilators = [
         {value: null, text: 'unassigned'},
-        {value: 'sbc', text: 'SBC Staff'}
+        {value: 'sbc', text: 'SBC Employee'}
       ]
       state.invigilators.forEach( i => {
         invigilators.push({ value: i.invigilator_id, text: i.invigilator_name })

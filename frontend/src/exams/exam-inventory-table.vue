@@ -899,7 +899,7 @@
         }
         if (item.booking) {
           if (item.booking.sbc_staff_invigilated) {
-            output.Invigilator = 'SBC Staff'
+            output.Invigilator = 'SBC Employee'
           }
           if (item.booking.invigilator_id && !item.booking.invigilator.deleted) {
             output.Invigilator = item.booking.invigilator.invigilator_name
@@ -1126,6 +1126,7 @@
         if (!item.booking) {
           output.push('Scheduling and Assignment of Invigilator')
         }
+
         if (!item.exam_received_date) {
           output.push('Receipt of Materials')
         }

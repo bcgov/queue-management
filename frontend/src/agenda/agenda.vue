@@ -125,7 +125,7 @@
           {key: 'invigilator', thStyle: 'width: 10%;font-size:.9rem;'},
           {key: 'materials', label: 'Materials?', thStyle: 'width: 6%;font-size:.9rem;'},
           {key: 'exam.exam_name', label: 'Exam Name', thStyle: 'font-size:.9rem;'},
-          {key: 'writer', label: "Candidate's Name", thStyle: 'font-size:.9rem;'},
+          {key: 'writer', label: "Candidate Name", thStyle: 'font-size:.9rem;'},
           {key: 'exam.notes', label: 'Notes', thStyle: 'font-size:.9rem;'},
         ],
         fieldsOther: [
@@ -232,7 +232,7 @@
       },
       showInvigilator({exam}) {
         if (exam.booking.sbc_staff_invigilated) {
-          return 'SBC Staff'
+          return 'SBC Employee'
         }
         if (exam.booking.invigilator_id) {
           return exam.booking.invigilator.invigilator_name

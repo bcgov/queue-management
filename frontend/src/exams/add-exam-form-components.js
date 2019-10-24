@@ -361,7 +361,7 @@ export const LocationInput = Vue.component('input-question', {
         if (this.exam.invigilator === 'sbc') {
           return {
             show: true,
-            text: 'SBC Staff'
+            text: 'SBC Employee'
           }
         }
         if (this.exam.invigilator.invigilator_id) {

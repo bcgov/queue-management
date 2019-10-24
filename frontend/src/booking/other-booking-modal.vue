@@ -19,18 +19,19 @@
         <template v-if="!minimized">
           <b-form autocomplete="off">
             <b-form-group>
-              <label>Scheduling Party<span style="color: red">{{ message }}</span></label><br>
-              <b-input :state="state" type="text" v-model="title" />
+              <label>Scheduling Party<span style="color: red">{{ messageSP }}</span></label><br>
+              <b-input :state="stateSP" type="text" v-model="title" />
             </b-form-group>
             <b-form-group>
-              <label>Contact Information(Email or Phone Number)</label><br>
-              <b-input :state="state" type="text" v-model="contact_information"/>
+              <label>Contact Information(Email or Phone Number)<span style="color: red">{{ messageCI }}</span></label><br>
+              <b-input :state="stateCI" type="text" v-model="contact_information"/>
             </b-form-group>
             <b-form-row>
               <b-col cols="5">
                 <b-form-group>
-                  <label>Collect Fees</label><br>
+                  <label>Collect Fees<span style="color: red">{{ messageCF }}</span></label><br>
                   <b-select v-model="fees"
+                            :state="stateCF"
                             :options="feesOptions" />
                 </b-form-group>
               </b-col>
@@ -103,8 +104,12 @@
         contact_information: '',
         minimized: false,
         title: '',
-        state: null,
-        message: '',
+        stateSP: null,
+        stateCI: null,
+        stateCF: null,
+        messageSP: '',
+        messageCI: '',
+        messageCF: '',
         fees: '',
         feesOptions: [
           {text: 'No', value: "false"},
@@ -141,7 +146,7 @@
         return ''
       },
       okDisabled() {
-        if (this.title.length > 0) {
+        if (this.title.length > 0 && this.contact_information.length > 0 && this.fees.length > 0) {
           return false
         }
         return true
@@ -175,13 +180,19 @@
       ]),
       cancel() {
         this.$root.$emit('removeSavedSelection')
-        this.message = ''
+        this.messageSP = ''
+        this.messageCI = ''
+        this.messageCF = ''
       },
       show() {
-        this.message = ''
+        this.messageSP = ''
+        this.messageCI = ''
+        this.messageCF = ''
         this.added = 0
         this.title = ''
-        this.state = null
+        this.stateSP = null
+        this.stateCI = null
+        this.stateCF = null
       },
       incrementDuration() {
         if (this.endTime.format('H') == 18) {
@@ -205,9 +216,35 @@
       },
       postEvent(e) {
         e.preventDefault()
-        if (this.title.length > 0) {
-          this.message = ''
-          this.state = null
+
+        if (this.title.length === 0 ) {
+          this.messageSP = ' (Required)'
+          this.stateSP = 'invalid'
+
+        } else {
+           this.messageSP = ''
+           this.stateSP = null
+        }
+         if (this.contact_information.length === 0 ) {
+
+          this.messageCI = ' (Required)'
+          this.stateCI = 'invalid'
+
+        } else {
+           this.messageCI = ''
+           this.stateCI = null
+        }
+         if (this.fees.length === 0 ) {
+
+          this.messageCF = ' (Required)'
+          this.stateCF = 'invalid'
+
+        } else {
+           this.messageCF = ''
+           this.stateCF = null
+        }
+
+        if (this.title.length > 0 && this.contact_information.length > 0 && this.fees.length > 0)  {
           let start = new moment(this.startTime).utc()
           let end = new moment(this.endTime).utc()
           let booking = {
@@ -222,11 +259,14 @@
             this.finishBooking()
             this.contact_information = ''
           })
-        } else {
-          this.message = ' (Required)'
-          this.state = 'invalid'
         }
       }
+
+
+
+
+
+
     }
   }
 </script>]
