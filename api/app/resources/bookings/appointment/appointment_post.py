@@ -20,6 +20,7 @@ from app.schemas.theq import CitizenSchema
 from app.models.theq import CSR, CitizenState
 from qsystem import api, api_call_with_retry, db, oidc
 from datetime import datetime
+from app.utilities.snowplow import SnowPlow
 
 @api.route("/appointments/", methods=["POST"])
 class AppointmentPost(Resource):
@@ -40,8 +41,12 @@ class AppointmentPost(Resource):
         citizen_state = CitizenState.query.filter_by(cs_state_name="Appointment booked").first()
         citizen.cs_id = citizen_state.cs_id
         citizen.start_time = datetime.now()
+        citizen.service_count = 1
         db.session.add(citizen)
         db.session.commit()
+
+        #  Don't forget to make a Snowplow call for the citizen.
+        SnowPlow.add_citizen(citizen, csr)
 
         json_data = request.get_json()
 
