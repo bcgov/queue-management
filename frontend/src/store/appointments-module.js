@@ -152,6 +152,7 @@ export default {
         citizen_name: payload.title,
       }
       payload.start_time = data.checked_in_time
+      payload.snowplow_addcitizen = true
       return new Promise((resolve, reject) => {
         Axios({state}).put(`/appointments/${payload.appointment_id}/`, data).then( () => {
           dispatch('sendToQueue', payload)
@@ -195,11 +196,15 @@ export default {
       if (!payload.comments) {
         payload.comments = ''
       }
+      if (!payload.snowplow_addcitizen) {
+        payload.snowplow_addcitizen = false
+      }
       let data = {
         priority: 1,
         citizen_comments: `${start}|||${payload.comments}`,
         citizen_name: payload.title,
-        start_time: payload.start_time
+        start_time: payload.start_time,
+        snowplow_addcitizen: payload.snowplow_addcitizen
       }
       
       return new Promise((resolve, reject) => {
