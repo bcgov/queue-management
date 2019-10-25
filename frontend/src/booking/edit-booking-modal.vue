@@ -408,11 +408,11 @@
         return false
       },
       displayDates() {
-        if (this.start && this.end) {
+        if (this.event.start && this.event.end) {
           return {
-            end: this.end.format('h:mm a'),
-            start: this.start.format('h:mm a'),
-            date: this.start.format('ddd MMM D, YYYY')
+            end: this.event.end.format('h:mm a'),
+            start: this.event.start.format('h:mm a'),
+            date: this.event.start.format('ddd MMM D, YYYY')
           }
         }
         return {end: '', start: '', date: ''}
