@@ -706,6 +706,7 @@
         let start_day = parseInt(moment(this.other_recurring_start_date).utc().clone().format('DD'))
         //let start_hour = parseInt(moment(this.other_recurring_start_time).utc().clone().format('HH'))
         let local_start_hour = parseInt(moment(this.other_recurring_start_time).clone().format('HH'))
+        let local_start_minute = parseInt(moment(this.other_recurring_start_time).clone().format('mm'))
         //let start_minute = parseInt(moment(this.other_recurring_start_time).utc().clone().format('mm'))
         let end_year = parseInt(moment(this.other_recurring_end_date).utc().clone().format('YYYY'))
         let end_month = parseInt(moment(this.other_recurring_end_date).utc().clone().format('MM'))
@@ -734,7 +735,6 @@
 
         if(isNaN(start_year) == false || isNaN(end_year) == false){
           // TODO Might be Deprecated -- IF RRule Breaks, this is where it will happen
-          // TODO remove tzid from rule object
           let date_start = new Date(Date.UTC(start_year, start_month-1, start_day))
           let until = new Date(Date.UTC(end_year, end_month-1, end_day))
 
@@ -743,17 +743,19 @@
             count: this.other_selected_count,
             byweekday: this.other_selected_weekdays,
             dtstart: date_start,
-            until: until,
-            tzid: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            until: until
           })
 
           let array = rule.all()
           this.other_rrule_text = rule.toText()
 
           array.forEach(date => {
-            let date_with_offset = moment(date).clone().set({hour: local_start_hour}).add(new Date().getTimezoneOffset(), 'minutes')
-            let formatted_start_date = moment(date_with_offset).clone().set({hour: local_start_hour}).format('YYYY-MM-DD HH:mm:ssZ')
-            let formatted_end_date = moment(date_with_offset).clone().set({hour: local_start_hour}).add(duration_minutes, 'minutes').format('YYYY-MM-DD HH:mm:ssZ')
+            let date_with_offset = moment(date).clone().set({hour: local_start_hour, minute: local_start_minute}).add(new Date().getTimezoneOffset(), 'minutes')
+            if(local_start_hour >= 8 && local_start_hour < 15){
+                date_with_offset.add(1, 'day')
+            }
+            let formatted_start_date = moment(date_with_offset).clone().set({hour: local_start_hour, minute: local_start_minute}).format('YYYY-MM-DD HH:mm:ssZ')
+            let formatted_end_date = moment(date_with_offset).clone().set({hour: local_start_hour, minute: local_start_minute}).add(duration_minutes, 'minutes').format('YYYY-MM-DD HH:mm:ssZ')
             local_other_dates_array.push({start: formatted_start_date, end: formatted_end_date})
           })
         }
