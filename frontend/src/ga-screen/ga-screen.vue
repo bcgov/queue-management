@@ -169,11 +169,23 @@ export default {
     },
     computed_csrs() {
       let computed_csrs = []
+      let inactive_csrs = []
       let currentDate = this.time_now;
       const breakStateID = this.csr_states['Break'];
       this.sortedCsrs.forEach(csr => {
         let activeCitizen = this.get_citizen_for_csr(csr)
-        if (activeCitizen !== null) {
+        if (activeCitizen === null) {
+          csr.csr_state_id === breakStateID ? csr['wait_time'] = 'ON BREAK' : csr['wait_time'] = null;
+          csr['serving_time'] = null
+          csr['citizen'] = null
+          csr['service_request'] = null
+          csr['end_service'] = null
+
+          if (csr.csr_state_id === breakStateID) { computed_csrs.push(csr); }
+          else { inactive_csrs.push(csr); }
+        }
+
+        else {
           let activeServiceRequest = activeCitizen.service_reqs.filter(sr => sr.periods.some(p => p.time_end === null))[0]
 
           //  Need to sort Service Requests by ID, to get first one, for wait time.
@@ -189,6 +201,14 @@ export default {
           });
 
           if (activeCitizen.service_reqs[0].periods.filter(p => p.ps.ps_name === "Being Served")[0]) {
+            let waitPeriods = sortedSRs[0].periods.filter(p => p.ps.ps_name === "Waiting")
+            let waitDate = new Date(null)
+            if (0 !== waitPeriods.length) {
+              let waitStart = new Date(waitPeriods[0].time_start);
+              let waitEnd = new Date(waitPeriods[0].time_end);
+              let waitTime = waitEnd - waitStart;
+              waitDate.setSeconds(waitTime / 1000)
+            }
             let firstServedPeriod = sortedSRs[0].periods.filter(p => p.ps.ps_name === "Being Served")[0]
             let citizenStartDate = new Date(activeCitizen.start_time)
             let firstServedPeriodDate = new Date(firstServedPeriod.time_start)
@@ -208,8 +228,6 @@ export default {
             })
             let waitSeconds = (firstServedPeriodDate - citizenStartDate) / 1000
             let timeServeTotal = (timeServeClosed + timeServeOpen)
-            let waitDate = new Date(null)
-            waitDate.setSeconds(waitSeconds)
             let serveDate = new Date(null)
             serveDate.setSeconds(timeServeTotal / 1000)
             csr['wait_time'] = `${waitDate.getUTCHours()}h ${waitDate.getMinutes()}m ${waitDate.getSeconds()}s`
@@ -230,19 +248,9 @@ export default {
         }
       });
 
-      this.sortedCsrs.forEach(csr => {
-        let activeCitizen = this.get_citizen_for_csr(csr)
-        if (activeCitizen === null) {
-          // console.log("    --> Logged out: csr: " + csr.username + "; State: " + csr.csr_state.csr_state_name);
-          csr.csr_state_id === breakStateID ? csr['wait_time'] = 'ON BREAK' : csr['wait_time'] = null;
-
-          // csr['wait_time'] = 'Logout';
-          csr['serving_time'] = null
-          csr['citizen'] = null
-          csr['service_request'] = null
-          csr['end_service'] = null
-          computed_csrs.push(csr)
-        }
+      //  Add inactive CSRs to bottom of list of computed CSRs.
+      inactive_csrs.forEach(csr => {
+        computed_csrs.push(csr);
       });
 
       return computed_csrs

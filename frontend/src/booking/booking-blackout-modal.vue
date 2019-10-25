@@ -683,7 +683,6 @@
                 }
                 self.postBooking(blackout_booking).then( () => {
                   self.getBookings()
-                  self.toggleBookingBlackoutModal(false)
                 })
               })
             }
@@ -736,8 +735,9 @@
               })
             }
             booking_array.forEach(booking => {
-              this.postBooking(booking)
-              this.getBookings()
+              self.postBooking(booking).then( () => {
+                self.getBookings()
+              })
             })
             this.toggleBookingBlackoutModal(false)
           }
@@ -754,7 +754,7 @@
           let start_day = parseInt(moment(this.recurring_booking_start_date).clone().format('DD'))
           //let start_hour = parseInt(moment(this.recurring_booking_start_time).utc().clone().format('HH'))
           let local_start_hour = parseInt(moment(this.recurring_booking_start_time).clone().format('HH'))
-          //let start_minute = parseInt(moment(this.recurring_booking_start_time).utc().clone().format('mm'))
+          let start_minute = parseInt(moment(this.recurring_booking_start_time).utc().clone().format('mm'))
           let end_year = parseInt(moment(this.recurring_booking_end_date).clone().format('YYYY'))
           let end_month = parseInt(moment(this.recurring_booking_end_date).clone().format('MM'))
           let end_day = parseInt(moment(this.recurring_booking_end_date).clone().format('DD'))
@@ -783,7 +783,6 @@
           if(isNaN(start_year) == false || isNaN(end_year) == false){
 
             // TODO Might be Deprecated -- IF RRule Breaks, this is where it will happen
-            // TODO remove tzid from rule object
             // Removed hours and minutes from date_start and until
             let date_start = new Date(Date.UTC(start_year, start_month -1, start_day))
             let until = new Date(Date.UTC(end_year, end_month -1, end_day))
@@ -794,16 +793,18 @@
               byweekday: this.selected_booking_weekdays,
               dtstart: date_start,
               until: until,
-              tzid: Intl.DateTimeFormat().resolvedOptions().timeZone
             })
 
             let array = rule.all()
             this.booking_rrule_text = rule.toText()
             array.forEach(date => {
               // created date_with_offset to fix pst -> utc 5pm bug
-              let date_with_offset = moment(date).clone().set({hour: local_start_hour}).add(new Date().getTimezoneOffset(), 'minutes')
-              let formatted_start_date = moment(date_with_offset).clone().set({hour: local_start_hour}).format('YYYY-MM-DD HH:mm:ssZ')
-              let formatted_end_date = moment(date_with_offset).clone().set({hour: local_start_hour}).add(duration_minutes, 'minutes').format('YYYY-MM-DD HH:mm:ssZ')
+              let date_with_offset = moment(date).clone().set({hour: local_start_hour, minute: start_minute}).add(new Date().getTimezoneOffset(), 'minutes')
+              if(local_start_hour >= 8 && local_start_hour < 15){
+                date_with_offset.add(1, 'day')
+              }
+              let formatted_start_date = moment(date_with_offset).clone().set({hour: local_start_hour, minute: start_minute}).format('YYYY-MM-DD HH:mm:ssZ')
+              let formatted_end_date = moment(date_with_offset).clone().set({hour: local_start_hour, minute: start_minute}).add(duration_minutes, 'minutes').format('YYYY-MM-DD HH:mm:ssZ')
               local_booking_dates_array.push({start: formatted_start_date, end: formatted_end_date})
             })
           }
