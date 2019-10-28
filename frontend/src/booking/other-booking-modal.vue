@@ -633,6 +633,7 @@
               recurring_uuid: recurring_uuid
             }
             self.postBooking(booking).then( () => {
+              self.finishBooking()
               self.getBookings()
             })
           })
@@ -758,7 +759,14 @@
                 date_with_offset.add(1, 'day')
             }
             let formatted_start_date = moment(date_with_offset).clone().set({hour: local_start_hour, minute: local_start_minute}).format('YYYY-MM-DD HH:mm:ssZ')
-            let formatted_end_date = moment(date_with_offset).clone().set({hour: local_start_hour, minute: local_start_minute}).add(duration_minutes, 'minutes').format('YYYY-MM-DD HH:mm:ssZ')
+            // TODO For the night is dark and full of terror
+            if(num_days < 0) {
+              num_days = 0
+            }
+            let formatted_end_date = moment(date_with_offset).clone().set({hour: local_start_hour, minute: local_start_minute}).add(duration_minutes, 'minutes').add(num_days, 'd').format('YYYY-MM-DD HH:mm:ssZ')
+            if (new Date(array[0]).getTimezoneOffset() !== new Date(date).getTimezoneOffset()) {
+              formatted_end_date = moment(formatted_end_date).add( new Date().getTimezoneOffset() - new Date(date).getTimezoneOffset(), 'minutes').format('YYYY-MM-DD HH:mm:ssZ')
+            }
             local_other_dates_array.push({start: formatted_start_date, end: formatted_end_date})
           })
         }

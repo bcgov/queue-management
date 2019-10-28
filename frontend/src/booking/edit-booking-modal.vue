@@ -112,7 +112,7 @@
               </b-form-group>
             </b-col>
           </b-form-row>
-          <b-form-row>
+          <b-form-row v-if="!edit_recurring">
             <b-col class="w-100">
               <b-form-group>
                 <label>Start Time</label><br>
@@ -934,7 +934,6 @@
       },
       toggleEditRecurring(){
         this.edit_recurring = !this.edit_recurring
-        console.log('EDIT RECURRING', this.edit_recurring)
       },
       toggleConfirmDeleteRecurringCollapse() {
         if(document.getElementById('delete_recurring_collapse')){

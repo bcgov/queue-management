@@ -197,7 +197,6 @@
             messages[key] = ''
             return
           }
-          let event_box = document.getElementById('event_id')
           // TODO Turn this on for event ID checks only on group exams. Add && group_exam_indicator to the if block
           // below as well
           /*let group_exam_indicator = false
@@ -206,18 +205,24 @@
               group_exam_indicator = true
             }
           })*/
-          if (key === 'event_id' && answer && answer.length >= 4 && document.activeElement === event_box) {
-            this.getExamEventIDs(answer)
+          if (key === 'event_id' && answer && answer.length >= 4) {
+            if(document.activeElement.id === 'event_id') {
+              this.getExamEventIDs(answer)
+            }
             if(this.event_ids === false) {
               valid['event_id'] = true
               messages['event_id'] = ""
+              // Should handle next button bug
+              this.tab.stepsValidated = [1, 2]
               return
             }
             valid['event_id'] = false
             messages['event_id'] = 'Event ID already in Use'
+            // Should handle next button bug
+            this.tab.stepsValidated = [1]
             return
           }
-          if (key === 'exam_name' && answer && answer.length > 50) {
+          if (key === 'exam_name' && answer && answer.length > 50 && document.activeElement.id == 'exam_name') {
             valid['exam_name'] = false
             messages['exam_name'] = 'Maximum Field Length Exceeded'
             return
@@ -300,6 +305,8 @@
             valid: valid[key],
           })
         })
+        console.log('OUTPUT', output)
+        console.log('TABS', this.tab.stepsValidated)
         return output
       },
     },

@@ -9,16 +9,15 @@
            hide-header>
     <template slot="modal-footer">
       <div class="d-flex flex-row-reverse">
-        <b-button class="disabled btn-primary ml-2"
-                  v-if="submitDisabled"
-                  @click="validate=true">Submit</b-button>
         <b-button class="btn-primary ml-2"
-                  @click="submit"
-                  v-if="!submitDisabled">Submit</b-button>
+                  @click="submit">
+          Submit
+        </b-button>
         <b-button @click="cancel()">Cancel</b-button>
       </div>
     </template>
-      <span style="font-size:1.75rem;">Book Service Appointment</span><br>
+      <span v-if="this.editDeleteSeries" style="font-size:1.75rem;">Book Service Appointment Series</span>
+      <span v-else style="font-size:1.75rem;">Book Service Appointment</span><br>
       <b-form autocomplete="off">
         <b-form-row>
           <b-col cols="6">
@@ -78,11 +77,19 @@
             </b-form-group>
           </b-col>
           <b-col v-if="clickedAppt">
-            <b-form-group class="mb-0 mt-2" >
-              <label class="mb-0">Remove Blackout Period?</label><br>
-              <b-button @click="deleteAppt"
-                        v-if="clickedAppt"
-                        class="btn-danger w-100">Delete</b-button>
+            <b-form-group class="mb-0 mt-2">
+              <label v-if="this.editDeleteSeries" class="mb-0">Remove Blackout Series?</label>
+              <label v-else class="mb-0">Remove Blackout Period?</label><br>
+              <b-button v-if="clickedAppt && !this.editDeleteSeries"
+                        @click="deleteAppt"
+                        class="btn-danger w-100">
+                Delete
+              </b-button>
+              <b-button v-else
+                        @click="deleteRecurringAppts"
+                        class="btn-danger w-100">
+                Delete Series
+              </b-button>
             </b-form-group>
           </b-col>
         </b-form-row>
@@ -116,13 +123,12 @@
             </b-form-group>
           </b-col>
         </b-form-row>
-
         <b-form-row>
           <b-col>
             <b-form-group class="mb-0 mt-2">
               <label class="mb-0">Notes</label><br>
               <b-textarea v-model="comments"
-                          rows="2" />
+                          rows="2"/>
             </b-form-group>
           </b-col>
         </b-form-row>
@@ -167,8 +173,15 @@
       }
     },
     computed: {
-      ...mapGetters(['services', 'appointment_events']),
-      ...mapState(['showApptBookingModal', 'selectedService' ]),
+      ...mapGetters([
+        'services',
+        'appointment_events'
+      ]),
+      ...mapState([
+        'showApptBookingModal',
+        'selectedService',
+        'editDeleteSeries',
+      ]),
       appointments() {
         if (this.clickedAppt) {
           let appointments = Object.assign([], this.appointment_events)
@@ -249,7 +262,7 @@
         set(e) { this.toggleApptBookingModal(e) }
       },
       submitDisabled() {
-        if (this.citizen_name && this.selectedService) {
+        if (this.citizen_name && this.selectedService ) {
           return false
         }
         return true
@@ -277,14 +290,22 @@
       ...mapActions([
         'clearAddModal',
         'deleteAppointment',
+        'deleteRecurringAppointments',
         'getAppointments',
         'getServices',
         'postAppointment',
         'putAppointment',
+        'putRecurringAppointment',
         'resetAddModalForm',
         'toggleAddModal',
       ]),
-      ...mapMutations(['setEditedStatus', 'setSelectedService', 'setRescheduling', 'toggleApptBookingModal', ]),
+      ...mapMutations([
+        'setEditedStatus',
+        'setSelectedService',
+        'setRescheduling',
+        'toggleApptBookingModal',
+        'toggleEditDeleteSeries',
+      ]),
       addService() {
         this.selectingService = true
         this.clearMessage()
@@ -313,6 +334,11 @@
       },
       deleteAppt() {
         this.deleteAppointment(this.clickedAppt.appointment_id).then( () => {
+          this.cancel()
+        })
+      },
+      deleteRecurringAppts() {
+        this.deleteRecurringAppointments(this.clickedAppt.recurring_uuid).then( () => {
           this.cancel()
         })
       },
@@ -398,11 +424,32 @@
             id: this.clickedAppt.appointment_id,
             data: e
           }
-          this.putAppointment(payload).then( () => {
-            this.getAppointments().then( () => {
-              finish()
+          if(this.editDeleteSeries === true){
+            // IFF further fields are added to the appointment model that are intended to be edited,
+            // and they belong to blackouts, and them to the following object below. Ensure that dates are
+            // not included as all events in this series will be under the start/end time of the event
+            // that is clicked in the calendar
+            this.toggleEditDeleteSeries(false)
+            let re_e = {
+              comments: this.comments
+            }
+            let re_payload = {
+              id: this.clickedAppt.appointment_id,
+              data: re_e,
+              recurring_uuid: this.clickedAppt.recurring_uuid
+            }
+            this.putRecurringAppointment(re_payload).then(() => {
+              this.getAppointments().then( () => {
+                finish()
+              })
             })
-          })
+          }else {
+            this.putAppointment(payload).then( () => {
+              this.getAppointments().then( () => {
+                finish()
+              })
+            })
+          }
           return
         }
         this.postAppointment(e).then( () => {

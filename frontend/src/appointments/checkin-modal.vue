@@ -18,16 +18,31 @@
                         class="mb-0 mt-2">
             <label class="mb-0">Citizen Has Arrived?</label><br>
             <b-button class="w-100 btn-success"
-                      @click="checkIn">Check-In</b-button>
+                      @click="checkIn">
+              Check-In
+            </b-button>
           </b-form-group>
         </b-col>
       </b-form-row>
       <b-form-row>
         <b-col>
           <b-form-group class="mb-0 mt-2">
-            <label class="mb-0">Edit or Cancel Appointment</label><br>
+            <label class="mb-0">Edit or Cancel Appointment?</label><br>
             <b-button class="w-100 btn-secondary"
-                      @click="editAppt">Edit Appointment</b-button>
+                      @click="editAppt">
+              Edit Appointment
+            </b-button>
+          </b-form-group>
+        </b-col>
+      </b-form-row>
+      <b-form-row v-if="checkRecurringStatus">
+        <b-col>
+          <b-form-group class="mb-0 mt-2">
+            <label class="mb-0">Edit or Cancel Recurring Series?</label><br>
+            <b-button class="w-100 btn-secondary"
+                      @click="editSeries">
+              Edit Recurring Series
+            </b-button>
           </b-form-group>
         </b-col>
       </b-form-row>
@@ -59,10 +74,23 @@
         }
         return false
       },
+      checkRecurringStatus() {
+        if(this.clickedAppt && this.clickedAppt.recurring_uuid === null) {
+          return false
+        }
+        return true
+      },
     },
     methods: {
-      ...mapActions(['getAppointments', 'postCheckIn']),
-      ...mapMutations(['toggleCheckInModal', 'toggleApptBookingModal']),
+      ...mapActions([
+        'getAppointments',
+        'postCheckIn'
+      ]),
+      ...mapMutations([
+        'toggleCheckInModal',
+        'toggleApptBookingModal',
+        'toggleEditDeleteSeries',
+      ]),
       checkIn() {
         this.postCheckIn(this.clickedAppt).then( () => {
           this.hide()
@@ -79,6 +107,13 @@
       editAppt() {
         this.toggleApptBookingModal(true)
         this.toggleCheckInModal(false)
+        this.toggleEditDeleteSeries(false)
+        this.getAppointments()
+      },
+      editSeries() {
+        this.toggleApptBookingModal(true)
+        this.toggleCheckInModal(false)
+        this.toggleEditDeleteSeries(true)
         this.getAppointments()
       },
     }
