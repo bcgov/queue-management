@@ -5,7 +5,7 @@ import traceback
 import os
 import datetime
 
-from config import configure_app, configure_logging
+from config import configure_app, configure_logging, debug_level_to_debug_string
 from flask import Flask
 from flask_admin import Admin
 from flask_caching import Cache
@@ -34,7 +34,6 @@ application.url_map.strict_slashes = True
 #   Do basic application configuration
 configure_app(application)
 print_flag = application.config['PRINT_ENABLE']
-log_enable_flag = application.config['LOG_ENABLE']
 socket_flag = application.config['SOCKET_FLAG']
 engine_flag = application.config['ENGINE_FLAG']
 
@@ -113,7 +112,6 @@ if print_flag:
      print("")
 
      print("==> Socket/Engine options")
-     print("    --> log:    " + str(log_enable_flag))
      print("    --> socket: " + os.getenv('LOG_SOCKETIO', '') + '; flag: ' + str(socket_flag))
      print("    --> engine: " + os.getenv('LOG_ENGINEIO', '') + '; flag: ' + str(engine_flag))
      print("")
@@ -124,8 +122,10 @@ if print_flag:
     for name in logging.root.manager.loggerDict:
         temp_logger = logging.getLogger(name)
         temp_handlers = temp_logger.handlers
-        print("    --> Logger name: " + name + '; Handler count: ' + str(len(temp_handlers)) + '; Level: ' \
-              + str(temp_logger.getEffectiveLevel()) + "; Propagate: " + str(temp_logger.propagate))
+        print("    --> Logger name: " + name + '; Handler count: ' \
+              + str(len(temp_handlers)) + '; Level: ' \
+              + debug_level_to_debug_string(temp_logger.getEffectiveLevel()) \
+              + "; Propagate: " + str(temp_logger.propagate))
         for h in temp_handlers:
             if h.__class__.__name__ != "NullHandler":
                 print("        --> name: " + name + "; handler type: " + h.__class__.__name__)

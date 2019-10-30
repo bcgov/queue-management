@@ -24,10 +24,8 @@ class BaseConfig(object):
     DEBUG = False
 
     #   Set up logging
-    LOGGING_LOCATION = "logs/qsystem.log"
     LOGGING_LEVEL = DEBUG
     LOGGING_FORMAT = '[%(asctime)s] %(levelname)-8s (%(name)s) <%(module)s.py>.%(funcName)s: %(message)s'
-    LOG_ENABLE = (os.getenv("LOG_ENABLE","FALSE")).upper() == "TRUE"
     PRINT_ENABLE = (os.getenv("PRINT_ENABLE","FALSE")).upper() == "TRUE"
     SOCKET_STRING = os.getenv('LOG_SOCKETIO', 'WARNING')
     ENGINE_STRING = os.getenv('LOG_ENGINEIO', 'WARNING')
@@ -169,22 +167,26 @@ def configure_app(app):
     app.config.from_pyfile('config.cfg', silent=True)
 
     #   Set up various variables used later.
-    app.config['SOCKET_FLAG'] = (logging.DEBUG == debug_string_to_debug_level(app.config['SOCKET_STRING'])) \
-                                 and app.config['LOG_ENABLE']
-    app.config['ENGINE_FLAG'] = logging.DEBUG == debug_string_to_debug_level(app.config['ENGINE_STRING']) \
-                                and app.config['LOG_ENABLE']
+    app.config['SOCKET_FLAG'] = logging.DEBUG == debug_string_to_debug_level(app.config['SOCKET_STRING'])
+    app.config['ENGINE_FLAG'] = logging.DEBUG == debug_string_to_debug_level(app.config['ENGINE_STRING'])
 
     #   Set up basic logging for the application.
-    log_basic = debug_string_to_debug_level(os.getenv('LOG_BASIC', "WARNING"))
-    log_file = app.config['LOGGING_LOCATION']
-    logging.basicConfig(filename=log_file, \
-                        format=app.config['LOGGING_FORMAT'], \
-                        level=log_basic)
+    log_string = os.getenv('LOG_BASIC', "WARNING").upper()
+    if log_string == "DEFAULT":
+        logging.basicConfig(format=app.config['LOGGING_FORMAT'])
+    else:
+        log_level = debug_string_to_debug_level(log_string)
+        logging.basicConfig(format=app.config['LOGGING_FORMAT'], \
+                            level=log_level)
 
 def configure_logging(app):
 
     #   Set up defaults.
     print_flag = app.config['PRINT_ENABLE']
+    basic_string = os.getenv('LOG_BASIC', "WARNING").upper()
+    basic_level = 0
+    if basic_string != "DEFAULT":
+        basic_level = debug_string_to_debug_level(basic_string)
 
     if print_flag:
         print("==> List of loggers to be specifically set:")
@@ -197,6 +199,11 @@ def configure_logging(app):
             module_logger = logging.getLogger(name)
             log_level = debug_string_to_debug_level(log_string)
             module_logger.setLevel(log_level)
+        if (basic_string != "DEFAULT"):
+            print("        --> Logger " + name + " set to level LOG_BASIC level of " + basic_string)
+            module_logger = logging.getLogger(name)
+            module_logger.setLevel(basic_level)
+
     if print_flag:
         print("")
 
@@ -220,5 +227,21 @@ def debug_string_to_debug_level(debug_string):
         result = logging.NOTSET
     elif input_string == '':
         result = -10
+
+    return result
+
+def debug_level_to_debug_string(debug_level):
+    if debug_level == logging.CRITICAL:
+        result = "CRITICAL"
+    elif debug_level == logging.ERROR:
+        result = "ERROR"
+    elif debug_level == logging.WARNING:
+        result = "WARNING"
+    elif debug_level == logging.INFO:
+        result = "INFO"
+    elif debug_level == logging.DEBUG:
+        result = "DEBUG"
+    elif debug_level == logging.NOTSET:
+        result = "NOTSET"
 
     return result
