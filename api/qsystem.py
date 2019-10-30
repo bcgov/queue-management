@@ -3,8 +3,9 @@ import socket
 import time
 import traceback
 import os
+import datetime
 
-from config import configure_app, configure_engineio_socketio, debug_string_to_debug_level
+from config import configure_app, configure_logging
 from flask import Flask
 from flask_admin import Admin
 from flask_caching import Cache
@@ -21,8 +22,6 @@ from app.exceptions import AuthError
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 
-import datetime
-
 def my_print(string):
     if print_flag:
         print(string)
@@ -31,49 +30,25 @@ application = Flask(__name__, instance_relative_config=True)
 
 # Make sure we 404 when the trailing slash is not present on ALL routes
 application.url_map.strict_slashes = True
-configure_app(application)
 
+#   Do basic application configuration
+configure_app(application)
+print_flag = application.config['PRINT_ENABLE']
+log_enable_flag = application.config['LOG_ENABLE']
+socket_flag = application.config['SOCKET_FLAG']
+engine_flag = application.config['ENGINE_FLAG']
+
+#   Set up SQL Alchemy, caching, marshmallow
 db = SQLAlchemy(application)
 db.init_app(application)
-
 query_limit = application.config['DB_LONG_RUNNING_QUERY']
-
-#  See whether options took.
-print_flag = application.config['PRINT_ENABLE']
-if print_flag:
-     print("==> DB Engine options")
-     print("    --> pool size:    " + str(db.engine.pool.size()))
-     print("    --> max overflow: " + str(db.engine.pool._max_overflow))
-     print("    --> echo:         " + str(db.engine.echo))
-     print("    --> pre ping:     " + str(db.engine.pool._pre_ping))
-     print("    --> Database URI: " + application.config['SQLALCHEMY_DATABASE_URI_DISPLAY'])
-
-#  Debugging the engine in general.
-if False:
-    print("==> All DB Engine options")
-    for attr in dir(db.engine):
-        print("    --> db.engine." + attr + " = " + str(getattr(db.engine, attr)))
-        # print("db.engine.%s = %s") % (attr, getattr(db.engine, attr))
 
 cache = Cache(config={'CACHE_TYPE': 'simple'})
 cache.init_app(application)
 
 ma = Marshmallow(application)
 
-#  NOTE!!  Log levels for socketio and engineio set in configure_app
-log_enable_flag = application.config['LOG_ENABLE']
-if log_enable_flag:
-    socket_flag = logging.DEBUG == debug_string_to_debug_level(os.getenv('LOG_SOCKETIO', ''))
-    engine_flag = logging.DEBUG == debug_string_to_debug_level(os.getenv('LOG_ENGINEIO', ''))
-else:
-    socket_flag = False
-    engine_flag = False
-
-my_print("==> Log / Socket / Engine flags")
-my_print("    --> log:    " + str(log_enable_flag))
-my_print("    --> socket: " + os.getenv('LOG_SOCKETIO', '') + '; flag: ' + str(socket_flag))
-my_print("    --> engine: " + os.getenv('LOG_ENGINEIO', '') + '; flag: ' + str(engine_flag))
-
+#   Set up socket io and rabbit mq.
 socketio = SocketIO(logger=socket_flag, engineio_logger=engine_flag,
                     cors_allowed_origins=application.config['CORS_ALLOWED_ORIGINS'])
 
@@ -84,8 +59,6 @@ if application.config['ACTIVE_MQ_URL'] is not None:
 else:
     socketio.init_app(application, path='/api/v1/socket.io')
 
-configure_engineio_socketio(application)
-
 if application.config['CORS_ALLOWED_ORIGINS'] is not None:
     CORS(application, supports_credentials=True, origins=application.config['CORS_ALLOWED_ORIGINS'])
 
@@ -94,10 +67,9 @@ api = Api(application, prefix='/api/v1', doc='/api/v1/')
 from flask_oidc import OpenIDConnect
 oidc = OpenIDConnect(application)
 
+#  Set up Flask Admin.
 from app import admin
-
 flask_admin = Admin(application, name='Admin Console', template_mode='bootstrap3', index_view=admin.HomeView())
-
 flask_admin.add_view(admin.ChannelModelView)
 flask_admin.add_view(admin.CounterModelView)
 flask_admin.add_view(admin.CSRModelView)
@@ -120,13 +92,43 @@ import app.auth
 compress = Compress()
 compress.init_app(application)
 
-logging.basicConfig(format=application.config['LOGGING_FORMAT'], level=logging.WARNING)
-logger = logging.getLogger("myapp.sqltime")
-logger.setLevel(logging.DEBUG)
+#   Configure all logging except basic logging
+configure_logging(application)
 
-def my_print(string):
-    if print_flag:
-        print(string)
+#  Code to determine all db.engine properties and sub-properties, as necessary.
+if False:
+    print("==> All DB Engine options")
+    for attr in dir(db.engine):
+        print("    --> db.engine." + attr + " = " + str(getattr(db.engine, attr)))
+        # print("db.engine.%s = %s") % (attr, getattr(db.engine, attr))
+
+#  See whether options took.
+if print_flag:
+     print("==> DB Engine options")
+     print("    --> pool size:    " + str(db.engine.pool.size()))
+     print("    --> max overflow: " + str(db.engine.pool._max_overflow))
+     print("    --> echo:         " + str(db.engine.echo))
+     print("    --> pre ping:     " + str(db.engine.pool._pre_ping))
+     print("    --> Database URI: " + application.config['SQLALCHEMY_DATABASE_URI_DISPLAY'])
+     print("")
+
+     print("==> Socket/Engine options")
+     print("    --> log:    " + str(log_enable_flag))
+     print("    --> socket: " + os.getenv('LOG_SOCKETIO', '') + '; flag: ' + str(socket_flag))
+     print("    --> engine: " + os.getenv('LOG_ENGINEIO', '') + '; flag: ' + str(engine_flag))
+     print("")
+
+#  Get list of available loggers.
+if print_flag:
+    print("==> List of available loggers and associated information:")
+    for name in logging.root.manager.loggerDict:
+        temp_logger = logging.getLogger(name)
+        temp_handlers = temp_logger.handlers
+        print("    --> Logger name: " + name + '; Handler count: ' + str(len(temp_handlers)) + '; Level: ' \
+              + str(temp_logger.getEffectiveLevel()) + "; Propagate: " + str(temp_logger.propagate))
+        for h in temp_handlers:
+            if h.__class__.__name__ != "NullHandler":
+                print("        --> name: " + name + "; handler type: " + h.__class__.__name__)
 
 def api_call_with_retry(f, max_time=15000, max_tries=12, delay_first=100, delay_start=200, delay_mult=1.5):
 
