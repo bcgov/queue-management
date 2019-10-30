@@ -34,7 +34,7 @@ class AppointmentPut(Resource):
         json_data = request.get_json()
 
         if not json_data:
-            return  {"message": "No input data received for updating an appointment"}
+            return {"message": "No input data received for updating an appointment"}
 
         appointment = Appointment.query.filter_by(appointment_id=id)\
                                        .filter_by(office_id=csr.office_id)\

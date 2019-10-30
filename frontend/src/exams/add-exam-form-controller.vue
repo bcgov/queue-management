@@ -132,6 +132,7 @@
       }),
       ...mapState({
         exam: state => state.capturedExam,
+        event_ids: state => state.event_ids,
         addExamModal: state => state.addExamModal,
         addGroupSteps: state => state.addExamModule.addGroupSteps,
         addChallengerSteps: state => state.addExamModule.addChallengerSteps,
@@ -310,8 +311,15 @@
       },
     },
     methods: {
-      ...mapMutations(['captureExamDetail', 'updateCaptureTab',]),
-      ...mapActions(['getExamTypes', 'getOffices']),
+      ...mapMutations([
+        'captureExamDetail',
+        'updateCaptureTab',
+      ]),
+      ...mapActions([
+        'getExamTypes',
+        'getExamEventIDs',
+        'getOffices',
+      ]),
       handleInput(e) {
         let payload = {
           key: e.target.name,

@@ -618,6 +618,8 @@
       postEvent(e) {
         e.preventDefault()
         this.submitting_flag = true
+        const uuidv4 = require('uuid/v4')
+        let recurring_uuid = uuidv4()
         let self = this
         if(this.other_rrule_array.length > 0){
           this.other_rrule_array.forEach(date => {
@@ -628,6 +630,7 @@
               fees: self.recurring_fees,
               booking_name: self.recurring_title,
               booking_contact_information: self.recurring_contact_information,
+              recurring_uuid: recurring_uuid
             }
             self.postBooking(booking).then( () => {
               self.getBookings()
