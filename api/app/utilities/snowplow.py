@@ -21,10 +21,7 @@ from app.models.theq.service import Service
 from app.models.theq.smartboard import SmartBoard
 from snowplow_tracker import Subject, Tracker, AsyncEmitter
 from snowplow_tracker import SelfDescribingJson
-from qsystem import application, my_print
-import logging
 import os
-import json
 
 class SnowPlow():
 
