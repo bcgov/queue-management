@@ -4,6 +4,10 @@ from io import StringIO
 import logging
 import os
 import time
+import dotenv
+
+# Load all the environment variables from a .env file located in some directory above.
+dotenv.load_dotenv(dotenv.find_dotenv())
 
 PROFILE_LIMIT = int(os.environ.get("PROFILE_LIMIT", 20))
 PROFILER = bool(int(os.environ.get("PROFILER", 0)))
