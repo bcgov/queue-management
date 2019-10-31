@@ -171,13 +171,9 @@ def configure_app(app):
     app.config['ENGINE_FLAG'] = logging.DEBUG == debug_string_to_debug_level(app.config['ENGINE_STRING'])
 
     #   Set up basic logging for the application.
-    log_string = os.getenv('LOG_BASIC', "WARNING").upper()
-    if log_string == "DEFAULT":
-        logging.basicConfig(format=app.config['LOGGING_FORMAT'])
-    else:
-        log_level = debug_string_to_debug_level(log_string)
-        logging.basicConfig(format=app.config['LOGGING_FORMAT'], \
-                            level=log_level)
+    log_string = os.getenv('LOG_ROOT', "WARNING").upper()
+    log_level = debug_string_to_debug_level(log_string)
+    logging.basicConfig(format=app.config['LOGGING_FORMAT'], level=log_level)
 
 def configure_logging(app):
 
