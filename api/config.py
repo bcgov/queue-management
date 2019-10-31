@@ -175,6 +175,9 @@ def configure_app(app):
     log_level = debug_string_to_debug_level(log_string)
     logging.basicConfig(format=app.config['LOGGING_FORMAT'], level=log_level)
 
+    if app.config['PRINT_ENABLE']:
+        print("==> Root logger set to level: " + log_string)
+
 def configure_logging(app):
 
     #   Set up defaults.
@@ -185,7 +188,7 @@ def configure_logging(app):
         basic_level = debug_string_to_debug_level(basic_string)
 
     if print_flag:
-        print("==> List of loggers to be specifically set:")
+        print("==> List of loggers being specifically set:")
     for name in logging.root.manager.loggerDict:
         env_name = make_env_name(name)
         log_string = os.getenv(env_name, "None")
