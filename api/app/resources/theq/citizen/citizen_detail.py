@@ -19,7 +19,7 @@ from app.models.theq import Citizen, CSR, Counter
 from marshmallow import ValidationError
 from app.schemas.theq import CitizenSchema
 from sqlalchemy import exc
-
+from app.utilities.snowplow import SnowPlow
 
 @api.route("/citizens/<int:id>/", methods=["GET", "PUT"])
 class CitizenDetail(Resource):
@@ -64,6 +64,10 @@ class CitizenDetail(Resource):
 
         db.session.add(citizen)
         db.session.commit()
+
+        #  If this put request is the result of an appointment checkin, make a Snowplow call.
+        if ('snowplow_addcitizen' in json_data) and (json_data['snowplow_addcitizen'] == True):
+            SnowPlow.add_citizen(citizen, csr)
 
         result = self.citizen_schema.dump(citizen)
         socketio.emit('update_active_citizen', result.data, room=csr.office_id)

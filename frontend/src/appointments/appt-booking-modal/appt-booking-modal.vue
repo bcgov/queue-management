@@ -147,6 +147,7 @@
       return {
         baseEnd: null,
         booking: false,
+        citizen_id: null,
         citizen_name: null,
         oldLength: null,
         comments: null,
