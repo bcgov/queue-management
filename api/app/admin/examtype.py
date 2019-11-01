@@ -79,6 +79,17 @@ class ExamTypeConfig(Base):
         'group_exam_ind': 'Group Exam Flag',
         'pesticide_exam_ind': 'Pesticide Exam Flag',
     }
+    form_choices = {
+        'ita_ind': [
+            ("0", 'No - this is not an ITA exam'), ("1", 'Yes - this is an ITA exam')
+        ],
+        'group_exam_ind': [
+            ("0", 'No - this is not a Group exam'), ("1", 'Yes - this is a Group exam')
+        ],
+        'pesticide_exam_ind': [
+            ("0", 'No - this is not a Pesticide exam'), ("1", 'Yes - this is a Pesticide exam')
+        ]
+    }
 
     column_sortable_list = [
         'exam_type_name',
