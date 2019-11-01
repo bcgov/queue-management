@@ -22,6 +22,7 @@ class Appointment(Base):
     appointment_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     office_id = db.Column(db.Integer, db.ForeignKey("office.office_id"), nullable=False)
     service_id = db.Column(db.Integer, db.ForeignKey("service.service_id"), nullable=True)
+    citizen_id = db.Column(db.Integer, db.ForeignKey("citizen.citizen_id"), nullable=True)
     start_time = db.Column(UtcDateTime, nullable=False)
     end_time = db.Column(UtcDateTime, nullable=False)
     checked_in_time = db.Column(UtcDateTime, nullable=True)
