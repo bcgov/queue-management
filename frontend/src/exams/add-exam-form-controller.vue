@@ -196,6 +196,26 @@
             messages[key] = ''
             return
           }
+          let event_box = document.getElementById('event_id')
+          // TODO Turn this on for event ID checks only on group exams. Add && group_exam_indicator to the if block
+          // below as well
+          /*let group_exam_indicator = false
+          this.examTypes.forEach(exam_type => {
+            if (exam_type.exam_type_id === this.exam.exam_type_id && exam_type.group_exam_ind === 1) {
+              group_exam_indicator = true
+            }
+          })*/
+          if (key === 'event_id' && answer && answer.length >= 4 && document.activeElement === event_box) {
+            this.getExamEventIDs(answer)
+            if(this.event_ids === false) {
+              valid['event_id'] = true
+              messages['event_id'] = ""
+              return
+            }
+            valid['event_id'] = false
+            messages['event_id'] = 'Event ID already in Use'
+            return
+          }
           if (key === 'exam_name' && answer && answer.length > 50) {
             valid['exam_name'] = false
             messages['exam_name'] = 'Maximum Field Length Exceeded'
