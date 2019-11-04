@@ -1,7 +1,7 @@
 {
     "info": {
         "_postman_id": "c859f370-565d-4e52-aae0-bde4ba9a8447",
-        "name": "Room Bookings End-point Testing",
+        "name": "API-Test-Booking",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
     },
     "item": [
@@ -146,7 +146,7 @@
                         "header": [],
                         "body": {
                             "mode": "raw",
-                            "raw": "//  Get the max response time allowed.\nvar response_max = JSON.parse(globals.response_max);\npm.test('Response time less than ' + response_max.toString() + 'ms', function(){\n    pm.expect(pm.response.responseTime).to.be.below(response_max);\n});\n\npm.test(\"Response code for request is 200\", function(){\n    pm.response.to.have.status(200);\n});\npm.test('Response header should have Content-Type of application/json', function() {\n    pm.response.to.have.header('content-type', 'application/json');\n});\npm.test('Response body be in JSON format', function() {\n    pm.response.to.be.json; \n});"
+                            "raw": "//  If no maximum response defined, set a default.\nresponse_max = 0;\nif (globals.response_max) {\n    response_max = JSON.parse(globals.response_max);\n}\nelse {\n    response_max = 5009;\n    pm.globals.set(\"response_max\", JSON.stringify(response_max));\n};\n\n//  Get the max response time allowed.\npm.test('Response time less than ' + response_max.toString() + 'ms', function(){\n    pm.expect(pm.response.responseTime).to.be.below(response_max);\n});\n\npm.test(\"Response code for request is 200\", function(){\n    pm.response.to.have.status(200);\n});\npm.test('Response header should have Content-Type of application/json', function() {\n    pm.response.to.have.header('content-type', 'application/json');\n});\npm.test('Response body be in JSON format', function() {\n    pm.response.to.be.json; \n});"
                         },
                         "url": {
                             "raw": "https://postman-echo.com/post",
