@@ -49,6 +49,14 @@
                     <div>Expiry:</div>
                     <div>{{ expiryDate }}</div>
                   </div>
+                  <div class="q-id-grid-col">
+                    <div>Exam Type:</div>
+                    <div>{{ this.event.exam.exam_type.exam_type_name }}</div>
+                  </div>
+                  <div class="q-id-grid-col">
+                    <div>Candidate Name:</div>
+                    <div>{{ this.event.exam.examinee_name }}</div>
+                  </div>
                 </div>
               </div>
             </b-col>
@@ -56,7 +64,7 @@
           <b-form-row v-if="!examAssociated">
             <b-col>
               <b-form-group>
-                <label :style="{color: labelColor}">Scheduling Party</label><br>
+                <label :style="{color: labelColorSP}">Scheduling Party</label><br>
                 <b-input :state="state"
                          id="title"
                          type="text"
@@ -66,8 +74,9 @@
             </b-col>
             <b-col cols="4">
               <b-form-group>
-                <label>Collect Fees</label><br>
-                <b-select id="fees"
+                <label :style="{color: labelColorCF}">Collect Fees</label><br>
+                <b-select
+                          id="fees"
                           v-model="fees"
                           @change.native="checkValue"
                           :options="feesOptions" />
@@ -77,9 +86,9 @@
           <b-form-row>
             <b-col>
               <b-form-group>
-                <label>Contact Information (Email or Phone Number)</label><br>
+                <label :style="{color: labelColorCI}">Contact Information (Email or Phone Number)</label><br>
                 <b-input autocomplete="off"
-                         id="contact_information"
+                         id="booking_contact_information"
                          type="text"
                          @change.native="checkValue"
                          v-model="booking_contact_information"/>
@@ -349,7 +358,9 @@
         ],
         invoice: null,
         invoiceOptions: [ {text: 'Custom', value: 'custom'} ],
-        labelColor: 'black',
+        labelColorSP: 'black',
+        labelColorCF: 'black',
+        labelColorCI: 'black',
         message: '',
         newEnd: null,
         newStart: null,
@@ -519,8 +530,23 @@
         }
       },
       checkValue(e) {
-        if (this.labelColor === 'red') {
+
+        if (this.labelColorSP === 'red') {
           if (e.target.id === 'title' && e.target.value.length > 0) {
+            this.labelColor = 'black'
+            this.message = ''
+          }
+        }
+
+        if (this.labelColorCF === 'red') {
+           if (e.target.id === 'fees' && e.target.value.length > 0) {
+            this.labelColor = 'black'
+            this.message = ''
+          }
+        }
+
+        if (this.labelColorCI === 'red') {
+           if (e.target.id === 'booking_contact_information' && e.target.value.length > 0) {
             this.labelColor = 'black'
             this.message = ''
           }
@@ -603,7 +629,9 @@
         this.newEnd = null
         this.editedFields = []
         this.fee = false
-        this.labelColor = 'black'
+        this.labelColorSP = 'black'
+        this.labelColorCF = 'black'
+        this.labelColorCI = 'black'
         this.message = null
         this.state = null
         this.title = null
@@ -713,9 +741,19 @@
       },
       submit() {
         if (this.title.length === 0) {
-          this.labelColor = 'red'
+          this.labelColorSP = 'red'
           this.state = 'danger'
           this.message = 'A title is required'
+          return
+        }
+        if (this.fees.length === 0) {
+          this.labelColorCF = 'red'
+          this.message = 'Fees are required'
+          return
+        }
+        if (this.booking_contact_information.length === 0) {
+          this.labelColorCI = 'red'
+          this.message = 'Contact Information is required'
           return
         }
         let changes = {}
@@ -769,7 +807,7 @@
             changes['shadow_invigilator_id'] = this.shadowInvigilator
           }
         }
-        if (this.editedFields.includes('contact_information')){
+        if (this.editedFields.includes('booking_contact_information')){
           changes['booking_contact_information'] = this.booking_contact_information
         }
         if (this.editedFields.includes('invigilator_id')){
