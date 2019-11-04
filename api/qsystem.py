@@ -91,6 +91,10 @@ import app.auth
 compress = Compress()
 compress.init_app(application)
 
+#   Get long running query logger.
+logger = logging.getLogger("myapp.sqltime")
+logger.setLevel(logging.DEBUG)
+
 #   Configure all logging except basic logging
 configure_logging(application)
 
