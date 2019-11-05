@@ -33,13 +33,13 @@
 			"enabled": true
 		},
 		{
-			"key": "health_tries",
-			"value": "",
+			"key": "max_response_time",
+			"value": "7500",
 			"enabled": true
 		},
 		{
-			"key": "max_response_time",
-			"value": "",
+			"key": "event_number",
+			"value": "9200",
 			"enabled": true
 		}
 	],
