@@ -174,9 +174,9 @@ def configure_app(app):
     log_string = os.getenv('LOG_ROOT', "WARNING").upper()
     log_level = debug_string_to_debug_level(log_string)
     logging.basicConfig(format=app.config['LOGGING_FORMAT'], level=log_level)
-
+    temp_logger = logging.getLogger()
     if app.config['PRINT_ENABLE']:
-        print("==> Root logger set to level: " + log_string)
+        print("==> Root logger of '" + temp_logger.name + "' set to level: " + log_string)
 
 def configure_logging(app):
 
@@ -194,12 +194,13 @@ def configure_logging(app):
         log_string = os.getenv(env_name, "None")
         if (log_string != "None"):
             if print_flag:
-              print("        --> Logger " + name + " set to level = " + log_string)
+                print("        --> Logger " + name + " set to level = " + log_string)
             module_logger = logging.getLogger(name)
             log_level = debug_string_to_debug_level(log_string)
             module_logger.setLevel(log_level)
-        if (basic_string != "DEFAULT"):
-            print("        --> Logger " + name + " set to level LOG_BASIC level of " + basic_string)
+        elif (basic_string != "DEFAULT"):
+            if print_flag:
+                print("        --> Logger " + name + " set to level LOG_BASIC level of " + basic_string)
             module_logger = logging.getLogger(name)
             module_logger.setLevel(basic_level)
 
