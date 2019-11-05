@@ -263,7 +263,7 @@
           }
         })
         if (exam.booking.sbc_staff_invigilated) {
-          return 'SBC Employee'
+          return ['SBC Employee']
         }
         if (exam.booking.invigilators) {
           return invigilator_name_list
