@@ -309,7 +309,13 @@ def after_cursor_execute(conn, cursor, statement,
     if total > query_limit:
         logger.debug("Long running Query (%s s): %s" % (total, statement))
         logger.debug("Parameters: %s", parameters)
-
+        try:
+            print("==> Current stack:")
+            for line in traceback.format_stack():
+                print("    --> Line: " + line.strip())
+                # traceback.print_stack()
+        except Exception as err:
+            print("==> Error:" + str(err))
 
 @application.after_request
 def apply_header(response):
