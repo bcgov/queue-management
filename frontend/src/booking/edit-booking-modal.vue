@@ -696,6 +696,7 @@
         if(this.event.recurring_uuid) {
           this.toggleEditDeleteSeries(true)
         }
+        this.edit_recurring = false
         this.changeState = true
         this.removeState = true
         if (this.newEvent && this.newEvent.start) {

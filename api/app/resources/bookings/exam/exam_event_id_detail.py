@@ -20,7 +20,7 @@ from app.schemas.bookings import ExamSchema
 from qsystem import api, oidc
 
 
-@api.route("/exams/event_id/<int:id>", methods=["GET"])
+@api.route("/exams/event_id/<int:id>/", methods=["GET"])
 class ExamEventIDDetail(Resource):
 
     exam_schema = ExamSchema()

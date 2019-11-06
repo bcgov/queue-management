@@ -868,7 +868,7 @@ export const store = new Vuex.Store({
 
     getExamEventIDs(context, id){
       return new Promise((resolve, reject) => {
-        let url = `/exams/event_id/${id}`
+        let url = `/exams/event_id/${id}/`
         Axios(context).get(url).then(resp=>{
           context.commit('setExamEventIDs', resp.data.message)
           resolve(resp.data)

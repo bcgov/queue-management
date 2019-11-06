@@ -33,6 +33,7 @@
     "lodash": "^4.17.14",
     "luxon": "^1.10.0",
     "moment": "^2.23.0",
+    "moment-range": "^4.0.2",
     "moment-timezone": "^0.5.23",
     "popper.js": "^1.14.4",
     "rrule": "^2.6.2",

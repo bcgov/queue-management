@@ -564,15 +564,8 @@
       show() {
         this.showCollapse('collapse-other-booking-event-selection')
         this.hideCollapse('collapse-single-event')
-        /* TODO Start setting start time/date on modal load here
-        let start = new moment(this.startTime)
-        this.other_recurring_display_date = moment(start).clone().format('YYYY-MM-DD')
-        this.other_recurring_display_time = moment(start).clone().format('HH:mm a')
         this.other_recurring_start_time = new moment(this.startTime).clone()
         this.other_recurring_start_date = new moment(this.startTime).clone()
-        console.log('show time', this.other_recurring_start_time)
-        console.log('show date', this.other_recurring_start_date)
-        */
 
         // clear single event fields
         this.title = ''
@@ -707,7 +700,7 @@
         // Removed these variables from the date_start and until variable declarations
         let start_year = parseInt(moment(this.other_recurring_start_date).utc().clone().format('YYYY'))
         let start_month = parseInt(moment(this.other_recurring_start_date).utc().clone().format('MM'))
-        let start_day = parseInt(moment(this.other_recurring_start_date).utc().clone().format('DD'))
+        let start_day = parseInt(moment(this.other_recurring_start_date).utc().clone().subtract(4, 'hours').format('DD'))
         //let start_hour = parseInt(moment(this.other_recurring_start_time).utc().clone().format('HH'))
         let local_start_hour = parseInt(moment(this.other_recurring_start_time).clone().format('HH'))
         let local_start_minute = parseInt(moment(this.other_recurring_start_time).clone().format('mm'))
@@ -717,7 +710,9 @@
         let end_day = parseInt(moment(this.other_recurring_end_date).utc().clone().format('DD'))
         //let end_hour = parseInt(moment(this.other_recurring_end_time).utc().clone().format('HH'))
         //let end_minute = parseInt(moment(this.other_recurring_end_time).utc().clone().format('mm'))
-        let duration = moment.duration(moment(this.other_recurring_end_time).diff(moment(this.other_recurring_start_time)))
+        let duration_start = moment(this.other_recurring_start_time).utc()
+        let duration_end = moment(this.other_recurring_end_time).utc()
+        let duration = moment.duration(duration_end.diff(duration_start))
         let duration_minutes = duration.asMinutes()
         let input_frequency = null
         let local_other_dates_array = []
@@ -752,11 +747,15 @@
 
           let array = rule.all()
           this.other_rrule_text = rule.toText()
+          // TODO For the night is dark and full of terror
+          let first_event_start_day = moment(this.startTime).clone().set({hour: local_start_hour, minute: local_start_minute}).add(new Date(this.startTime).getTimezoneOffset(), 'minutes')
+          let num_days = Math.floor(moment.duration(first_event_start_day.diff(moment(new Date()))).asDays())
 
           array.forEach(date => {
-            let date_with_offset = moment(date).clone().set({hour: local_start_hour, minute: local_start_minute}).add(new Date().getTimezoneOffset(), 'minutes')
-            if(local_start_hour >= 8 && local_start_hour < 15){
-                date_with_offset.add(1, 'day')
+            // TODO For the night is dark and full of terror
+            let date_with_offset = moment(date).clone().set({hour: local_start_hour, minute: local_start_minute}).add(new Date(date).getTimezoneOffset(), 'minutes')
+            if(local_start_hour >= 8 && local_start_hour < 16){
+                date_with_offset.add(1, 'd')
             }
             let formatted_start_date = moment(date_with_offset).clone().set({hour: local_start_hour, minute: local_start_minute}).format('YYYY-MM-DD HH:mm:ssZ')
             // TODO For the night is dark and full of terror
