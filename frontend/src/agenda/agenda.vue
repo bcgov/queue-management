@@ -23,6 +23,10 @@
                      small
                      fixed
                      hover>
+<!--              <template slot="event_id" slot-scope="row">-->
+<!--                {{ row.item.exam.booking.event_id }}-->
+<!--              </template>-->
+
               <template slot="start" slot-scope="row">
                 {{ formatDetail(row.item.exam.booking.start_time) }}
               </template>
@@ -127,10 +131,12 @@
     data() {
       return {
         fields: [
+          {key: 'exam.event_id', label: 'Event ID', thStyle: 'width: 8%;font-size:.9rem;'},
           {key: 'start', label: 'Time', thStyle: 'width: 6%;font-size:.9rem;'},
           {key: 'length', label:'Duration', thStyle: 'width: 6%;font-size:.9rem;'},
           {key: 'room', label: 'Location', thStyle: 'width: 8%;font-size:.9rem;'},
           {key: 'exam.exam_type.exam_type_name', label: 'Exam Type', thStyle:'font-size:.9rem;'},
+          {key: 'exam.exam_method', label: 'Exam Method', thStyle: 'font-size:.9rem;'},
           {key: 'invigilator', thStyle: 'width: 10%;font-size:.9rem;'},
           {key: 'shadow_invigilator', thStyle: 'width: 10%;font-size:.9rem;'},
           {key: 'materials', label: 'Materials?', thStyle: 'width: 6%;font-size:.9rem;'},
