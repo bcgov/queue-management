@@ -23,10 +23,6 @@
                      small
                      fixed
                      hover>
-<!--              <template slot="event_id" slot-scope="row">-->
-<!--                {{ row.item.exam.booking.event_id }}-->
-<!--              </template>-->
-
               <template slot="start" slot-scope="row">
                 {{ formatDetail(row.item.exam.booking.start_time) }}
               </template>
