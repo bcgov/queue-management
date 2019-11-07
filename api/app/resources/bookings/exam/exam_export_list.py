@@ -186,7 +186,7 @@ class ExamList(Resource):
                         for key in keys:
                             if key == "room_name":
                                 write_booking_room(row, non_exam)
-                            elif key == "invigilator_name":
+                            elif key == "invigilator_names":
                                 row.append("")
                             elif key == "shadow_invigilator_id":
                                 row.append("")
@@ -333,3 +333,5 @@ def which_non_exam_key(booking, row, key):
             row.append("N")
         elif booking.fees == 'true':
             row.append("Y")
+        elif booking.fees == 'HQFin':
+            row.append("Finance to Invoice")
