@@ -310,10 +310,14 @@ def after_cursor_execute(conn, cursor, statement,
         logger.debug("Long running Query (%s s): %s" % (total, statement))
         logger.debug("Parameters: %s", parameters)
         try:
-            print("==> Current stack:")
+            count = 0
             for line in traceback.format_stack():
-                print("    --> Line: " + line.strip())
-                # traceback.print_stack()
+                if  (('opt' in line) or ('api' in line)) \
+                        and ('qsystem' not in line) \
+                        and ((('opt' in line) and ('src' in line)) \
+                             or (('opt' not in line) and ('venv' not in line))):
+                    count = count + 1
+                    logger.debug("--> Line " + str(count) + ": " + line.strip().replace('\n', '>').replace('\r', ''))
         except Exception as err:
             print("==> Error:" + str(err))
 
