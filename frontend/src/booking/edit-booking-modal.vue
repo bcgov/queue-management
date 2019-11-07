@@ -77,7 +77,10 @@
           <b-form-row>
             <b-col>
               <b-form-group>
-                <label>Contact Information (Email or Phone Number)</label><br>
+                <label>Contact Information (Email or Phone Number)</label>
+                 <font-awesome-icon v-if="this.booking_contact_information !== ''"
+                                   icon='check'
+                                   style="fontSize: 1rem; color: green;"/>
                 <b-input autocomplete="off"
                          id="contact_information"
                          type="text"
