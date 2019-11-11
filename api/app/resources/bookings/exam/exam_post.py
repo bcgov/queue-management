@@ -16,14 +16,17 @@ import logging
 from flask import request, g
 from flask_restx import Resource
 from app.models.theq import CSR
+from app.models.bookings import ExamType
 from app.schemas.bookings import ExamSchema
 from qsystem import api, api_call_with_retry, db, oidc
+from app.utilities.bcmp_service import BCMPService
 
 
 @api.route("/exams/", methods=["POST"])
 class ExamPost(Resource):
 
     exam_schema = ExamSchema()
+    bcmp_service = BCMPService()
 
     @oidc.accept_token(require_token=True)
     @api_call_with_retry
@@ -40,6 +43,20 @@ class ExamPost(Resource):
             return {"message": warning}, 422
 
         if exam.office_id == csr.office_id or csr.liaison_designate == 1:
+
+            exam_type = ExamType.query.filter_by(exam_type_id=exam.exam_type_id).first()
+
+            if exam_type.pesticide_exam_ind:
+                logging.info("Create BCMP exam since this is a pesticide exam")
+
+                if exam_type.group_exam_ind:
+                    logging.info("Creating group pesticide exam")
+                    bcmp_response = self.bcmp_service.create_group_exam(exam)
+                else:
+                    logging.info("Creating individual pesticide exam")
+                    bcmp_response = self.bcmp_service.create_group_exam(exam)
+
+                exam.bcmp_job_id = bcmp_response['jobId']
 
             db.session.add(exam)
             db.session.commit()

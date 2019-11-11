@@ -805,6 +805,36 @@ class Bootstrap(Command):
             pesticide_exam_ind=1,
         )
 
+        exam_type_twenty_one = bookings.ExamType(
+            exam_type_name="Industrial Vegetation",
+            exam_color="#FFFFFF",
+            number_of_hours=3,
+            method_type="written",
+            ita_ind=0,
+            group_exam_ind=1,
+            pesticide_exam_ind=1,
+        )
+
+        exam_type_twenty_two = bookings.ExamType(
+            exam_type_name="Structural - General",
+            exam_color="#FFFFFF",
+            number_of_hours=3,
+            method_type="written",
+            ita_ind=0,
+            group_exam_ind=1,
+            pesticide_exam_ind=1,
+        )
+
+        exam_type_twenty_three = bookings.ExamType(
+            exam_type_name="Act and Regulation - Forestry/Mosquito",
+            exam_color="#FFFFFF",
+            number_of_hours=1,
+            method_type="written",
+            ita_ind=0,
+            group_exam_ind=1,
+            pesticide_exam_ind=1,
+        )
+
         db.session.add(exam_type_one)
         db.session.add(exam_type_two)
         db.session.add(exam_type_three)
@@ -825,6 +855,9 @@ class Bootstrap(Command):
         db.session.add(exam_type_eighteen)
         db.session.add(exam_type_nineteen)
         db.session.add(exam_type_twenty)
+        db.session.add(exam_type_twenty_one)
+        db.session.add(exam_type_twenty_two)
+        db.session.add(exam_type_twenty_three)
         db.session.commit()
 
         print("--> Bookings: Exam - No exams added")

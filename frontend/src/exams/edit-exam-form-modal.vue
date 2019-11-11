@@ -37,7 +37,7 @@
 
             <b-col v-if="!this.fields.exam_received_date">
               <label class="my-0">Retrieve Exam and Print</label>
-              <b-btn class="btn-success w-100" @click="testing = false" :disabled="!testing">Print</b-btn>
+              <b-btn class="btn-success w-100" @click="checkAndDownloadExam()">Print</b-btn>
             </b-col>
 
             <b-col v-if="exam_received">
@@ -55,7 +55,7 @@
               </b-form-group>
             </b-col>
           </b-form-row>
-          <b-form-row v-if="!testing">
+          <b-form-row v-if="examNotReady">
             <b-col cols="12" style="color: red">
               This exam is not yet ready for retrieval.  Please try again in no less than 15 minutes.
             </b-col>
@@ -308,7 +308,7 @@
                   </div>
                   <div class="q-id-grid-col">
                     <div>Type:</div>
-                    <div v-if="isITAGropOrSingleExam(exam)"
+                    <div v-if="isITAGroupOrSingleExam(exam)"
                          :style="{ backgroundColor: exam.exam_type.exam_color,
                                  height: 10+'px',
                                  margin: '4px 0px 0px 0px',
@@ -397,6 +397,7 @@
   import moment from 'moment'
   import Vue from 'vue'
   import DeleteExamModal from './delete-exam-modal'
+  const FileDownload = require('js-file-download')
   import OfficeDrop from './office-drop'
   import FailureExamAlert from './failure-exam-alert'
 
@@ -406,7 +407,7 @@
     props: ['actionedExam', 'resetExam'],
     data () {
       return {
-        testing: true,
+        examNotReady: false,
         feesOptions: 'collect',
         clickedMenu: false,
         examReceivedOptions: [
@@ -583,7 +584,7 @@
       },
     },
     methods: {
-      ...mapActions(['getBookings', 'getExams', 'getOffices', 'putExamInfo',]),
+      ...mapActions(['downloadExam', 'getBookings', 'getExams', 'getOffices', 'putExamInfo',]),
       ...mapMutations([
         'setEditExamFailure',
         'setEditExamSuccess',
@@ -600,8 +601,22 @@
           date
         )
       },
-      isITAGropOrSingleExam(ex) {
+      isITAGroupOrSingleExam(ex) {
         return ex.exam_type.ita_ind ? true : false
+      },
+      checkAndDownloadExam() {
+        console.log("blah")
+        this.downloadExam(this.exam)
+          .then((resp) => {
+            console.log(resp)
+            let filename = `${this.exam.exam_id}.pdf`
+            FileDownload(resp.data, filename, "application/pdf")
+          })
+          .catch((error) => {
+            console.error(error)
+            this.examNotReady = true
+            setTimeout(() => { this.examNotReady = false }, 5000)
+          })
       },
       checkInputLength(e) {
         if (e.keyCode == 8 || e.keyCode == 46) {

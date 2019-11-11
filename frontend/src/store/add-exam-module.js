@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import { Axios } from './helpers'
+import axios from 'axios'
 
 //question definition mixins
 const addExamCounterQ = {
@@ -207,6 +208,30 @@ export const addExamModule = {
       commit('clearChallengerBooking')
       commit('clearAddExamModalFromCalendarStatus')
     },
+    downloadExam(context, payload) {
+      console.log(context)
+      return new Promise(( resolve, reject ) => {
+        const url = `/exams/${payload.exam_id}/download/`
+        axios({
+          baseURL: process.env.API_URL,
+          url: url,
+          withCredentials: true,
+          headers: {
+            'Accept': 'application/pdf',
+            'Authorization': `Bearer ${context.rootState.bearer}`
+          },
+          method: 'GET',
+          responseType: 'blob', // important
+        })
+          .then(resp => {
+            resolve(resp)
+          })
+          .catch(error => {
+            console.log(error)
+            reject(error)
+          })
+      });
+    },
     getAllPesticideExams({ commit, rootState }) {
       return new Promise((resolve, reject) => {
         let url = "/exams/"
@@ -224,44 +249,23 @@ export const addExamModule = {
           })
       })
     },
-    getBCMPlusExamStatus({ commit, rootState, dispatch }) {
-      //TO-DO
-    },
-    getBCMPlusID({ commit, dispatch }) {
-      Axios.get().then(resp => {
+    getPesticideExamTypes({ commit, rootState }) {
+      console.log('getPesticideExamTypes')
+      return new Promise((resolve, reject) => {
+        let url = "/exam_types/"
 
+        Axios(rootState.bearer).get(url)
+          .then(resp => {
+            let pesticideExams = resp.data.exam_types.filter(exam_type => exam_type.pesticide_exam_ind)
+            console.log('pesticideExams', pesticideExams)
+            commit('setPesticideExamTypes', pesticideExams)
+            resolve()
+          })
+          .catch(error => {
+            console.log(error)
+            reject(error)
+          })
       })
-    },
-    getPesticideExamTypes({ commit, dispatch }) {
-      //TO-DO.  Make this work with the actual end point
-      let response = {}
-      response.data = [
-        { examName: `Industrial Vegetation`, examTypeId: 1, numberOfHours: 3, numberOfMinutes: 0 },
-        { examName: `Landscape`, examTypeId: 2, numberOfHours: 3, numberOfMinutes: 0 },
-        { examName: `Structural - General`, examTypeId: 3, numberOfHours: 3, numberOfMinutes: 0 },
-        { examName: `Dispenser - Commercial`, examTypeId: 4, numberOfHours: 3, numberOfMinutes: 0 },
-        { examName: `Dispenser - Domestic`, examTypeId: 5, numberOfHours: 3, numberOfMinutes: 0 },
-        { examName: `Agriculture - Greenhouse`, examTypeId: 6, numberOfHours: 3, numberOfMinutes: 0 },
-        { examName: `Agriculture - Field Crop & Orchard`, examTypeId: 7, numberOfHours: 3, numberOfMinutes: 0 },
-        { examName: `Forestry - General`, examTypeId: 8, numberOfHours: 3, numberOfMinutes: 0 },
-        { examName: `Forestry - Seed Orchard`, examTypeId: 9, numberOfHours: 3, numberOfMinutes: 0 },
-        { examName: `Forestry - Seedling Nursery`, examTypeId: 10, numberOfHours: 3, numberOfMinutes: 0 },
-        { examName: `Forestry - Non-broadcast`, examTypeId: 11, numberOfHours: 3, numberOfMinutes: 0 },
-        { examName: `Act and Regulation - Forestry/Mosquito`, examTypeId: 12, numberOfHours: 1, numberOfMinutes: 0 },
-        { examName: `Act and Regulation - Landscape/Structural`, examTypeId: 13, numberOfHours: 1, numberOfMinutes: 0 },
-        { examName: `Act and Regulation - Industrial VegJNox ous Weed`, examTypeId: 14, numberOfHours: 1 },
-        { examName: `Mosquito and Biting Fly`, examTypeId: 15, numberOfHours: 3, numberOfMinutes: 0 },
-        { examName: `Mosquito - Aerial - Granular`, examTypeId: 16, numberOfHours: 1, numberOfMinutes: 30 },
-        { examName: `Mosquito - Ground Application`, examTypeId: 17, numberOfHours: 1, numberOfMinutes: 30 },
-        { examName: `Structural - Wood Preservation`, examTypeId: 18, numberOfHours: 3, numberOfMinutes: 0 },
-        { examName: `Fumigation - C02`, examTypeId: 19, numberOfHours: 3, numberOfMinutes: 0 },
-        { examName: `Dispenser - C02 - Fumigant`, examTypeId: 20, numberOfHours: 3, numberOfMinutes: 0 },
-        { examName: `Aquaculture - Marine, Hydrogen Peroxide`, examTypeId: 21, numberOfHours: 3, numberOfMinutes: 0 },
-        { examName: `Fumigation - Ship & Structure`, examTypeId: 22, numberOfHours: 3, numberOfMinutes: 0 },
-        { examName: `Fumigation - Container`, examTypeId: 23, numberOfHours: 3, numberOfMinutes: 0 },
-        { examName: `Aircraft - Disinsection`, examTypeId: 24, numberOfHours: 2, numberOfMinutes: 0 },
-      ]
-      commit('setPesticideExamTypes', response.data)
     },
     submitExam() {
 
@@ -302,10 +306,10 @@ export const addExamModule = {
     pesticideStep1(state, getters, rootState) {
       let { capturedExam } = rootState
       let pesticideTypeQ = {
-        key: 'pesticide_type',
+        key: 'exam_type_id',
         text: 'Type of Pesticide Exam',
         kind: 'select',
-        options: state.pesticideExamTypes.map(type => ({ text: type.examName, value: type.examTypeId })),
+        options: state.pesticideExamTypes.map(type => ({ text: type.exam_type_name, value: type.exam_type_id })),
         minLength: 1,
         digit: false,
       }

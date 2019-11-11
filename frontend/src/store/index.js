@@ -204,24 +204,6 @@ export const store = new Vuex.Store({
   },
 
   getters: {
-    add_modal_steps(state) {
-      if (state.addExamModal && state.addExamModal.setup)  {
-        switch(state.addExamModal.setup) {
-          case 'challenger':
-            return state.addExamModule.addChallengerSteps
-          case 'group':
-            return state.addExamModule.addGroupSteps
-          case 'individual':
-            return state.addExamModule.addIndividualSteps
-          case 'pesticide':
-            return state.addExamModule.addPesticideSteps
-          case 'other':
-            return state.addExamModule.addOtherSteps
-          default:
-            return []
-        }
-      }
-    },
 
     admin_navigation_nonblank(state) {
       if (state.adminNavigation != '') { return state.adminNavigation }
@@ -1176,6 +1158,8 @@ export const store = new Vuex.Store({
     },
 
     clickAddExamSubmit(context, type) {
+    console.log("Submitting exam")
+    console.log(context)
       return new Promise((resolve, reject) => {
         if (type === 'challenger') {
           context.dispatch('postITAChallengerExam').then(() => {
@@ -2006,6 +1990,7 @@ export const store = new Vuex.Store({
 
     postITAIndividualExam(context) {
       let responses = Object.assign( {}, context.state.capturedExam)
+      console.log(responses)
       if (responses.on_or_off) {
         if (responses.on_or_off === 'off') {
           responses.offsite_location = '_offsite'
@@ -2030,6 +2015,11 @@ export const store = new Vuex.Store({
           delete responses.exam_received_date
         }
       }
+
+      if (context.state.addExamModal.setup === 'pesticide' && !responses.exam_name) {
+        responses.exam_name = "pesticide"
+      }
+
       let postData = {...responses, ...defaultValues}
 
       return new Promise((resolve, reject) => {
