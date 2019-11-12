@@ -11,7 +11,8 @@
                @click="resetModal()">{{ submitted ? 'Done' : 'Cancel' }}</b-btn>
         <b-btn class="btn-primary"
                v-if="!submitted"
-               @click.prevent="submitted = true">Submit</b-btn>
+               @click.prevent="submitted = true"
+               @click="submit()">Submit</b-btn>
       </div>
     </template>
 
@@ -46,7 +47,7 @@
       </b-form-row>
       <template v-if="!submitted">
         <b-form-row>
-          <b-col :cols="status === 'written' ? 6 : 12">
+          <b-col :cols="6">
             <b-form-group class="mb-0">
               <label class="mb-0">Exam Status</label><br>
               <b-select id="exam-returned-select"
@@ -54,19 +55,17 @@
                         :options="statusOptions" />
             </b-form-group>
           </b-col>
-          <b-col cols="6" v-if="status === 'written'">
-            <b-form-group class="mb-0">
-              <label class="mb-0">Attach Scanned Exam</label><br>
-              <b-btn class="btn-primary w-100">Choose File...</b-btn>
-            </b-form-group>
-
-          </b-col>
         </b-form-row>
         <b-form-row class="mt-2" v-if="status === 'written'">
           <b-col>
             <b-form-group class="mb-0">
-              <label class="mb-0">Selected File</label><br>
-              <b-input />
+              <label class="mb-0">Attach Scanned Exam</label><br>
+              <b-form-file
+                v-model="file"
+                :state="file"
+                placeholder="Choose a file or drop it here..."
+                no-drop
+              ></b-form-file>
             </b-form-group>
           </b-col>
         </b-form-row>
@@ -86,7 +85,7 @@
           <b-col>
             <b-form-group class="mb-0">
               <label class="mb-0">Notes</label><br>
-              <b-textarea />
+              <b-textarea v-model="examNotes"/>
             </b-form-group>
           </b-col>
         </b-form-row>
@@ -99,14 +98,15 @@
 <script>
   import { mapActions, mapMutations, mapState } from 'vuex'
 
-
   export default {
     name: "UploadPesticideModal",
     props: ['actionedExam', 'resetExam'],
     data() {
       return {
-        status: 'unwritten',
-        destroyed: false,
+        file: null,
+        examNotes: this.actionedExam.notes,
+        status: this.actionedExam.exam_destroyed_date !== null ? 'noshow' : 'unwritten',
+        destroyed: this.actionedExam.exam_destroyed_date !== null ? true : false,
         submitted: false,
         statusOptions: [
           { value: 'unwritten', text: 'Unwritten' },
@@ -119,6 +119,10 @@
       ...mapState({
         showModal: state => state.addExamModule.uploadPesticideModalVisible,
       }),
+      examNotes: {
+        get() { return this.feedbackMessage },
+        set(value) { this.examNotes = value }
+      },
       exam() {
         if (this.actionedExam) {
           return this.actionedExam
@@ -135,23 +139,29 @@
       },
     },
     methods: {
-      ...mapActions(['putExamInfo', 'getExams', 'getBCMPlusExamStatus' ]),
-      ...mapMutations(['toggleUploadExamModal', 'setEditExamFailure',  ]),
+      ...mapActions(['putExamInfo', 'getExams', 'getBCMPlusExamStatus', 'submitExam', 'toggleUploadExamModal' ]),
+      ...mapMutations(['toggleUploadExamModal', 'setEditExamFailure' ]),
       resetModal() {
         this.resetExam()
+        this.toggleUploadExamModal(false)
       },
       submit() {
-        if (this.okButton.title === 'Cancel') {
-          this.resetModal()
-          return
-        }
         let putData = {
           exam_id: this.exam.exam_id,
           exam_returned_tracking_number: this.exam_returned_tracking_number,
-          notes: this.notes,
-          exam_written_ind: this.exam_written_ind
+          notes: this.examNotes,
+          exam_written_ind: 0,
+          exam_destroyed_date: null
         }
-        if (!this.writtemn && this.modalUse === 'edit') {
+
+        if (this.statusOptions === 'written') {
+          putData.exam_written_ind = 1
+        }
+        if (this.destroyed) {
+          putData.exam_destroyed_date = new Date().toISOString()
+        }
+
+        if (!this.written && this.modalUse === 'edit') {
           putData = {
             exam_id: this.exam.exam_id,
             exam_returned_date: null,
@@ -163,11 +173,20 @@
           putData.notes = this.notes
         }
         this.putExamInfo(putData).then( () => {
-          this.getExams().then( () => {
-            this.resetModal()
-          })
-        }).catch( () => {
-          this.setExamEditFailureMessage(10)
+          console.log(this.exam)
+          this.submitExam({file: this.file, exam: this.exam})
+            .then(() => {
+              this.getExams()
+                .then( () => {
+                  this.resetModal()
+                })
+                .catch((error) => {
+                  console.error(error)
+                })
+            })
+            .catch( (error) => {
+              console.error(error)
+            })
         })
       }
     },

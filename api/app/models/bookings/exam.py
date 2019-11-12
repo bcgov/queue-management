@@ -37,6 +37,8 @@ class Exam(Base):
     exam_written_ind = db.Column(db.Integer, nullable=False, default=0)
     offsite_location = db.Column(db.String(50), nullable=True)
     bcmp_job_id = db.Column(db.String(100), nullable=True)
+    exam_destroyed_date = db.Column(db.String(50), nullable=True)
+    upload_received_ind = db.Column(db.Integer, nullable=True, default=0)
 
     booking = db.relationship("Booking")
     exam_type = db.relationship("ExamType")

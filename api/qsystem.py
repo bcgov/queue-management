@@ -274,6 +274,9 @@ import app.resources.bookings.exam.exam_put
 import app.resources.bookings.exam.exam_export_list
 import app.resources.bookings.exam.exam_event_id_detail
 import app.resources.bookings.exam.exam_status
+import app.resources.bookings.exam.exam_download
+import app.resources.bookings.exam.exam_transfer
+import app.resources.bookings.exam.exam_upload
 import app.resources.bookings.invigilator.invigilator_list
 import app.resources.bookings.invigilator.invigilator_put
 import app.resources.bookings.room.room_list

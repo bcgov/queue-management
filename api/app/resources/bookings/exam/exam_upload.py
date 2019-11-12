@@ -12,26 +12,21 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask import g, Response, send_file
+from flask import g, request
 from flask_restplus import Resource
-import io
 import logging
-import urllib
-from werkzeug.wsgi import FileWrapper
 from sqlalchemy import exc
 from app.models.theq import CSR
 from app.models.bookings import Exam
-from app.utilities.bcmp_service import BCMPService
-from qsystem import api, oidc
+from app.utilities.document_service import DocumentService
+from qsystem import api, application, oidc
 
 
-@api.route("/exams/<int:exam_id>/download/", methods=["GET"])
+@api.route("/exams/<int:exam_id>/upload/", methods=["GET"])
 class ExamStatus(Resource):
-    bcmp_service = BCMPService()
 
     @oidc.accept_token(require_token=True)
     def get(self, exam_id):
-
         csr = CSR.find_by_username(g.oidc_token_info['username'])
 
         try:
@@ -39,25 +34,18 @@ class ExamStatus(Resource):
 
             if not (exam.office_id == csr.office_id or csr.liaison_designate == 1):
                 return {"The Exam Office ID and CSR Office ID do not match!"}, 403
+            client = DocumentService(
+                application.config["MINIO_HOST"],
+                application.config["MINIO_BUCKET"],
+                application.config["MINIO_ACCESS_KEY"],
+                application.config["MINIO_SECRET_KEY"],
+                application.config["MINIO_USE_SECURE"]
+            )
 
-            status = self.bcmp_service.check_exam_status(exam)
+            object_name = "%s.pdf" % exam_id
+            url = client.get_presigned_put_url(object_name)
 
-            if status["jobStatus"] == 'PACKAGE_GENERATED':
-                package_url = status["jobProperties"]["EXAM_PACKAGE_URL"]
-                # Do some shit here
-            else:
-                test_url = 'http://www.pdf995.com/samples/pdf.pdf'
-                req = urllib.request.Request(test_url)
-                response = urllib.request.urlopen(req).read()
-                exam_file = io.BytesIO(response)
-                file_wrapper = FileWrapper(exam_file)
-                return Response(file_wrapper,
-                                mimetype="application/pdf",
-                                direct_passthrough=True,
-                                headers={
-                                    "Content-Disposition": 'attachment; filename="%s.csv"' % exam.exam_id,
-                                    "Content-Type": "application/pdf"
-                                })
+            return {"url": url}
 
         except exc.SQLAlchemyError as error:
             logging.error(error, exc_info=True)

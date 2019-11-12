@@ -1,6 +1,8 @@
 <template>
   <fragment>
-    <UploadPesticideModal :actionedExam="actionedExam" :resetExam="resetActionedExam" />
+    <template v-if="showPesticideModal">
+      <UploadPesticideModal :actionedExam="actionedExam" :resetExam="resetActionedExam" />
+    </template>
     <EditExamModal :actionedExam="actionedExam" :resetExam="resetActionedExam" />
     <ReturnExamModal :actionedExam="actionedExam" :resetExam="resetActionedExam" />
     <EditGroupExamBookingModal :actionedExam="actionedExam" :resetExam="resetActionedExam" />
@@ -551,6 +553,7 @@
       ]),
       ...mapState({
         showAllPesticide: state => state.addExamModule.showAllPesticideExams,
+        showPesticideModal: state => state.addExamModule.uploadPesticideModalVisible
       }),
       availableH() {
         let h = this.totalH - 240

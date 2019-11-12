@@ -149,6 +149,11 @@ class LocalConfig(BaseConfig):
     )
     BCMP_BASE_URL = 'https://bcmaildirect.gov.bc.ca/JOB_TEST'
     BCMP_AUTH_TOKEN = 'f697697a090c4f349545a09d21b3eb08'
+    MINIO_HOST = 'localhost:9000'
+    MINIO_BUCKET = 'exams'
+    MINIO_ACCESS_KEY = 'minio'
+    MINIO_SECRET_KEY = 'minio1234'
+    MINIO_USE_SECURE = 0
 
 
 class DevelopmentConfig(BaseConfig):

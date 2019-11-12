@@ -209,7 +209,6 @@ export const addExamModule = {
       commit('clearAddExamModalFromCalendarStatus')
     },
     downloadExam(context, payload) {
-      console.log(context)
       return new Promise(( resolve, reject ) => {
         const url = `/exams/${payload.exam_id}/download/`
         axios({
@@ -267,8 +266,51 @@ export const addExamModule = {
           })
       })
     },
-    submitExam() {
+    submitExam(context, payload) {
+      console.log(context)
+      console.log(payload)
+      return new Promise(( resolve, reject ) => {
+        const url = `/exams/${payload.exam.exam_id}/upload/`
 
+        Axios(context.rootState.bearer).get(url)
+          .then((resp) => {
+            console.log(resp)
+            let putUrl = resp.data.url
+
+            const config = {
+              headers: {
+                'Content-Type': payload.file.type
+              },
+              transformRequest: (data, headers) => {
+                // delete Authorization header for file upload requests (credentials are via a presigned link)
+                delete headers.common['Authorization']
+                return data
+              }
+            }
+
+            axios.put(putUrl, payload.file, config)
+              .then((putResponse) => {
+                console.log(putResponse)
+                let bcmpUrl =  `/exams/${payload.exam.exam_id}/transfer/`
+
+                Axios(context.rootState.bearer).post(bcmpUrl)
+                  .then((transferResponse) => {
+                    console.log(transferResponse)
+                    resolve()
+                  })
+                  .error((error) => {
+                    console.error(error)
+                  })
+              })
+              .catch((error) => {
+                console.error(error)
+              })
+          })
+          .error((error) => {
+            console.error(error)
+            reject(error)
+          })
+      })
     }
   },
   getters: {
