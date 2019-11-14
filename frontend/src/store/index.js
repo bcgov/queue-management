@@ -86,6 +86,7 @@ export const store = new Vuex.Store({
     dismissCount: 0,
     diskspace: {},
     displayServices: 'All',
+    editDeleteSeries: false,
     editedBooking: null,
     editedBookingOriginal: null,
     editedGroupBooking: null,
@@ -96,6 +97,7 @@ export const store = new Vuex.Store({
     examEditFailureMessage: '',
     examEditSuccessMessage: '',
     exams: [],
+    event_ids: null,
     examsTrackingIP: false,
     examSuccessDismiss : 0,
     examTypes: [],
@@ -634,6 +636,16 @@ export const store = new Vuex.Store({
       })
     },
 
+    deleteRecurringBooking(context, id) {
+      return new Promise((resolve, reject) => {
+        Axios(context).delete(`/bookings/recurring/${id}`).then(resp => {
+          resolve(resp.data)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
     deleteExam(context, id) {
       return new Promise((resolve, reject) => {
         Axios(context).delete(`/exams/${id}/`).then(resp => {
@@ -661,6 +673,16 @@ export const store = new Vuex.Store({
           resolve(resp.data)
         })
         .catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    putRecurringBooking(context, payload) {
+      return new Promise((resolve, reject) => {
+        Axios(context).put(`/bookings/recurring/${payload.recurring_uuid}`, payload.changes).then(resp => {
+          resolve(resp.data)
+        }).catch(error => {
           reject(error)
         })
       })
@@ -735,6 +757,7 @@ export const store = new Vuex.Store({
             booking.shadow_invigilator_id = b.shadow_invigilator_id
             booking.blackout_flag = b.blackout_flag
             booking.blackout_notes = b.blackout_notes
+            booking.recurring_uuid = b.recurring_uuid
             calendarEvents.push(booking)
           })
           context.commit('setEvents', calendarEvents)
@@ -840,6 +863,18 @@ export const store = new Vuex.Store({
             console.log(error)
             reject(error)
           })
+      })
+    },
+
+    getExamEventIDs(context, id){
+      return new Promise((resolve, reject) => {
+        let url = `/exams/event_id/${id}/`
+        Axios(context).get(url).then(resp=>{
+          context.commit('setExamEventIDs', resp.data.message)
+          resolve(resp.data)
+        }, error => {
+          reject(error)
+        })
       })
     },
 
@@ -2407,6 +2442,8 @@ export const store = new Vuex.Store({
 
     toggleBookingBlackoutModal: (state, payload) => state.showBookingBlackoutModal = payload,
 
+    toggleEditDeleteSeries: (state, payload) => state.editDeleteSeries = payload,
+
     setServiceModalForm(state, citizen) {
       let citizen_comments = citizen.citizen_comments
       let activeService = citizen.service_reqs.filter(sr => sr.periods.some(p => p.time_end === null))
@@ -2510,6 +2547,10 @@ export const store = new Vuex.Store({
     setExams(state, payload) {
       state.exams = []
       state.exams = payload
+    },
+
+    setExamEventIDs(state, payload) {
+      state.event_ids = payload
     },
   
     setExamTypes(state, payload) {

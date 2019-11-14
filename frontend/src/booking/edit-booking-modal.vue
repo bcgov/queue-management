@@ -112,7 +112,7 @@
               </b-form-group>
             </b-col>
           </b-form-row>
-          <b-form-row>
+          <b-form-row v-if="!edit_recurring">
             <b-col class="w-100">
               <b-form-group>
                 <label>Start Time</label><br>
@@ -300,6 +300,50 @@
               </b-form-group>
             </b-col>
           </b-form-row>
+          <b-collapse id="delete_recurring_collapse"
+                      visible>
+            <b-form-row v-if="this.event.recurring_uuid">
+              <b-col class="w-100">
+                <b-form-group>
+                  <label>Delete Booking Series?</label>
+                  <b-button class="w-100 btn-danger"
+                            @click="toggleConfirmDeleteRecurringCollapse">
+                    Delete Booking Series
+                  </b-button>
+                </b-form-group>
+              </b-col>
+              <b-col class="w-100">
+                <label>Edit Entire Series?</label>
+                <b-form-checkbox switch
+                                 size="lg"
+                                 @change="toggleEditRecurring">
+                  <span v-if="this.edit_recurring" style="font-size: 0.75em;">Editing entire series.</span>
+                  <span v-else style="font-size: 0.75em;">Editing single event</span>
+                </b-form-checkbox>
+              </b-col>
+            </b-form-row>
+          </b-collapse>
+          <b-collapse id="confirm_delete_recurring_collapse">
+            <b-form-row>
+                <b-form-group>
+                  <label>Are you sure you want to delete this booking series?</label><br>
+                  <b-row style="display: flex; justify-content: center; margin-left: 150px;">
+                    <b-button size="sm"
+                              variant="primary"
+                              class="ml-1 mr-1"
+                              @click="toggleDeleteRecurringCollapse">
+                      No
+                    </b-button>
+                    <b-button size="sm"
+                              variant="danger"
+                              class="ml-1 mr-1"
+                              @click="clickYesRecurring">
+                      Yes
+                    </b-button>
+                  </b-row>
+                </b-form-group>
+            </b-form-row>
+          </b-collapse>
           <b-form-row v-if="message">
             <b-col>
               <div style="display: flex; justify-content: flex-end; width: 100%;">
@@ -311,12 +355,16 @@
       </template>
       <template v-if="confirm">
         <template v-if="!minimized">
-          Are you sure you want to delete this booking?<br>
+          <span>Are you sure you want to delete this booking?<br></span>
           <div style="display:flex; justify-content: center">
             <b-button class="mr-2 btn-primary"
-                      @click="confirm = false">No</b-button>
+                      @click="confirm = false">
+              No
+            </b-button>
             <b-button class="ml-2 btn-danger"
-                      @click="clickYes">Yes</b-button>
+                      @click="clickYes">
+              Yes
+            </b-button>
           </div>
         </template>
       </template>
@@ -371,6 +419,8 @@
         rescheduleInvigilator: null,
         rescheduleShadowInvigilator: null,
         cancel_flag: false,
+        delete_recurring: false,
+        edit_recurring: false,
       }
     },
     computed: {
@@ -388,6 +438,7 @@
           invigilators: state => state.invigilators,
           selectedExam: state => state.selectedExam,
           shadowInvigilators: state => state.shadowInvigilators,
+          editDeleteSeries: state => state.editDeleteSeries,
         }
       ),
       checkBookingBlackout(){
@@ -491,10 +542,12 @@
       ...mapActions([
         'getBookings',
         'deleteBooking',
+        'deleteRecurringBooking',
         'finishBooking',
         'getInvigilators',
         'postBooking',
         'putBooking',
+        'putRecurringBooking',
         'putInvigilatorShadow',
       ]),
       ...mapMutations([
@@ -504,6 +557,7 @@
         'toggleEditBookingModal',
         'toggleScheduling',
         'toggleRescheduling',
+        'toggleEditDeleteSeries',
       ]),
       cancel() {
         this.cancel_flag = true
@@ -549,6 +603,14 @@
           this.finishBooking()
           this.resetModal()
         })
+      },
+      clickYesRecurring(e) {
+        let re_id = this.event.recurring_uuid
+        this.deleteRecurringBooking(re_id).then(() => {
+          this.finishBooking()
+          this.resetModal()
+        })
+        this.toggleEditDeleteSeries(false)
       },
       decrement() {
         if (this.duration == .5) {
@@ -631,6 +693,10 @@
         this.invigilator = e
       },
       show() {
+        if(this.event.recurring_uuid) {
+          this.toggleEditDeleteSeries(true)
+        }
+        this.edit_recurring = false
         this.changeState = true
         this.removeState = true
         if (this.newEvent && this.newEvent.start) {
@@ -819,13 +885,29 @@
           if(changes.invigilator_id === 'sbc'){
             delete changes.invigilator_id
           }
-          this.putBooking(payload).then( () => {
-            setTimeout( () => {
-              this.$root.$emit('initialize')
-              this.finishBooking()
-              this.resetModal()
-            }, 250)
-          })
+          if(!this.edit_recurring) {
+            this.putBooking(payload).then(() => {
+              setTimeout(() => {
+                this.$root.$emit('initialize')
+                this.finishBooking()
+                this.resetModal()
+              }, 250)
+            })
+          }else {
+            // remove start and end times to ensure that recurring events do get moved to the date of
+            // the event that was clicked
+            delete changes.start_time
+            delete changes.end_time
+            payload.recurring_uuid = this.event.recurring_uuid
+            this.putRecurringBooking(payload).then(() => {
+              setTimeout(() => {
+                this.$root.$emit('initialize')
+                this.finishBooking()
+                this.resetModal()
+                this.edit_recurring = false
+              }, 250)
+            })
+          }
         }
         this.selectedShadow = []
         this.shadowInvigilator = null
@@ -850,6 +932,33 @@
         }
         this.shadowInvigilator = null
         this.submit()
+      },
+      toggleEditRecurring(){
+        this.edit_recurring = !this.edit_recurring
+      },
+      toggleConfirmDeleteRecurringCollapse() {
+        if(document.getElementById('delete_recurring_collapse')){
+          if(document.getElementById('delete_recurring_collapse').classList.contains('show')){
+            this.$root.$emit('bv::toggle::collapse', 'delete_recurring_collapse')
+          }
+        }
+        if(document.getElementById('confirm_delete_recurring_collapse')){
+          if(document.getElementById('confirm_delete_recurring_collapse').style.display === 'none'){
+            this.$root.$emit('bv::toggle::collapse', 'confirm_delete_recurring_collapse')
+          }
+        }
+      },
+      toggleDeleteRecurringCollapse() {
+        if(document.getElementById('delete_recurring_collapse')){
+          if(document.getElementById('delete_recurring_collapse').style.display === 'none'){
+            this.$root.$emit('bv::toggle::collapse', 'delete_recurring_collapse')
+          }
+        }
+        if(document.getElementById('confirm_delete_recurring_collapse')){
+          if(document.getElementById('confirm_delete_recurring_collapse').classList.contains('show')){
+            this.$root.$emit('bv::toggle::collapse', 'confirm_delete_recurring_collapse')
+          }
+        }
       },
     }
   }

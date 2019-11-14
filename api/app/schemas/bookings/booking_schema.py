@@ -38,6 +38,7 @@ class BookingSchema(ma.ModelSchema):
     booking_contact_information = fields.Str()
     blackout_flag = fields.Str(allow_none=True)
     blackout_notes = fields.Str(allow_none=True)
+    recurring_uuid = fields.Str(allow_none=True)
 
     room = fields.Nested(RoomSchema(exclude=("booking", "office",)))
     office = fields.Nested(OfficeSchema(only=('appointments_enabled_ind', 'exams_enabled_ind', 'office_id',

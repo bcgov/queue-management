@@ -514,7 +514,8 @@
             let start_date = moment(date + " " + start).format('YYYY-MM-DD HH:mm:ssZ')
             let end = moment(this.end_time).clone().format('HH:mm:ss')
             let end_date = moment(date + " " + end).format('YYYY-MM-DD HH:mm:ssZ')
-
+            const uuidv4 = require('uuid/v4')
+            let recurring_uuid = uuidv4()
             if(this.rrule_array.length > 0){
               this.rrule_array.forEach(item => {
                 let e = {
@@ -523,6 +524,7 @@
                   citizen_name: this.user_name,
                   contact_information: this.user_contact_info,
                   blackout_flag: 'Y',
+                  recurring_uuid: recurring_uuid
                 }
                 if(this.notes){
                   e.comments = this.notes

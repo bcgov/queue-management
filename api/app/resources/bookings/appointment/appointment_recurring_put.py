@@ -21,8 +21,8 @@ from app.models.theq import CSR
 from app.schemas.bookings import AppointmentSchema
 
 
-@api.route("/appointments/<int:id>/", methods=["PUT"])
-class AppointmentPut(Resource):
+@api.route("/appointments/recurring/<string:id>", methods=["PUT"])
+class AppointmentRecurringPut(Resource):
 
     appointment_schema = AppointmentSchema()
 
@@ -34,22 +34,26 @@ class AppointmentPut(Resource):
         json_data = request.get_json()
 
         if not json_data:
-            return {"message": "No input data received for updating an appointment"}
+            return {"message": "No input data received for updating an series of appointments"}
 
-        appointment = Appointment.query.filter_by(appointment_id=id)\
-                                       .filter_by(office_id=csr.office_id)\
-                                       .first_or_404()
+        appointments = Appointment.query.filter_by(recurring_uuid=id)\
+                                  .filter_by(office_id=csr.office_id)\
+                                  .all()
 
-        appointment, warning = self.appointment_schema.load(json_data, instance=appointment, partial=True)
+        for appointment in appointments:
 
-        if warning:
-            logging.warning("WARNING: %s", warning)
-            return {"message": warning}, 422
+            appointment, warning = self.appointment_schema.load(json_data, instance=appointment, partial=True)
 
-        db.session.add(appointment)
-        db.session.commit()
+            if warning:
+                logging.warning('WARNING: %s', warning)
+                return {"message": warning}, 422
 
-        result = self.appointment_schema.dump(appointment)
+            db.session.add(appointment)
+            db.session.commit()
 
-        return {"appointment": result.data,
-                    "errors": result.errors}, 200
+        result = self.appointment_schema.dump(appointments)
+
+        return {
+            "appointments": result.data,
+            "errors": result.errors
+        }, 200
