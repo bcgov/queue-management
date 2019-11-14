@@ -24,7 +24,6 @@ from datetime import datetime, timedelta
 import pytz
 import csv
 import io
-import re
 
 
 @api.route("/exams/export/", methods=["GET"])

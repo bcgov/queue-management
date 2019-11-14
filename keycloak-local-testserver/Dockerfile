@@ -13,7 +13,7 @@ USER keycloak
 ENV KEYCLOAK_VERSION 3.4.3.Final
 ENV KEYCLOAK_HOME /opt/keycloak/keycloak-$KEYCLOAK_VERSION
 
-RUN curl http://download.jboss.org/keycloak/$KEYCLOAK_VERSION/keycloak-$KEYCLOAK_VERSION.tar.gz | tar -C $HOME -zx 
+RUN curl https://download.jboss.org/keycloak/$KEYCLOAK_VERSION/keycloak-$KEYCLOAK_VERSION.tar.gz | tar -C $HOME -zx 
 RUN $KEYCLOAK_HOME/bin/add-user-keycloak.sh -r master -u admin -p admin
 
 ADD . /opt/keycloak

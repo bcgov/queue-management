@@ -30,6 +30,7 @@ class Appointment(Base):
     citizen_name = db.Column(db.String(255), nullable=False)
     contact_information = db.Column(db.String(255), nullable=True)
     blackout_flag = db.Column(db.String(1), default='N', nullable=False)
+    recurring_uuid = db.Column(db.String(255), nullable=True)
 
     office = db.relationship("Office")
     service = db.relationship("Service")
