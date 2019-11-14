@@ -10,6 +10,93 @@
 			"name": "Setup",
 			"item": [
 				{
+					"name": "Setup-Variables",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5409b66d-67a4-449b-8633-9aeca632b388",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "e9eed831-7955-4218-a400-ae6e1e7e2e10",
+								"exec": [
+									"//  See if the use-prefix global has been set.  Use default if not.",
+									"let usePrefix = '';",
+									"if (pm.globals.get('use-prefix')) {",
+									"    console.log(\"==> use-prefix exists\");",
+									"    usePrefix = pm.globals.get('use-prefix');",
+									"    console.log(\"    --> Prefix is: \" + usePrefix);",
+									"    ",
+									"    //  Set up all globals, using the correct prefix.",
+									"    pm.globals.set('auth_url', pm.globals.get(usePrefix + 'auth_url'));",
+									"    pm.globals.set('realm', pm.globals.get(usePrefix + 'realm'));",
+									"    pm.globals.set('clientid', pm.globals.get(usePrefix + 'clientid'));",
+									"    pm.globals.set('client_secret', pm.globals.get(usePrefix + 'client_secret'));",
+									"    pm.globals.set('url', pm.globals.get(usePrefix + 'url'));",
+									"}",
+									"else {",
+									"    console.log(\"==> use-prefix does not exist\");",
+									"    console.log(\"    --> No default globals set.\");",
+									"}",
+									"",
+									"//  If no maximum load time defined, set a default.",
+									"if (!pm.globals.get('max_load_time')) {",
+									"    console.log(\"==> max_load_time not present, default set.\");",
+									"    pm.globals.set(\"max_load_time\", JSON.stringify(1503));",
+									"}",
+									"",
+									"//  If no maximum response defined, set a default.",
+									"if (!pm.globals.get('max_response_time')) {",
+									"    console.log(\"==> max_response_time not present, default set.\");",
+									"    pm.globals.set(\"max_response_time\", JSON.stringify(15005));",
+									"}",
+									"",
+									"//  Display the values of all globals.",
+									"console.log(\"\");",
+									"console.log(\"==> Globals are:\");",
+									"console.log(\"    --> auth_url:          \" + pm.globals.get(\"auth_url\"));",
+									"console.log(\"    --> realm:             \" + pm.globals.get(\"realm\"));",
+									"console.log(\"    --> clientid:          \" + pm.globals.get(\"clientid\"));",
+									"console.log(\"    --> client_secret:     \" + pm.globals.get(\"client_secret\"));",
+									"console.log(\"    --> url:               \" + pm.globals.get(\"url\"));",
+									"console.log(\"    --> max_load_time:     \" + pm.globals.get(\"max_load_time\"));",
+									"console.log(\"    --> max_response_time: \" + pm.globals.get(\"max_response_time\"));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "// Dummy data."
+						},
+						"url": {
+							"raw": "https://postman-echo.com/post",
+							"protocol": "https",
+							"host": [
+								"postman-echo",
+								"com"
+							],
+							"path": [
+								"post"
+							]
+						},
+						"description": "Sets the authentication script"
+					},
+					"response": []
+				},
+				{
 					"name": "Install Postman BDD",
 					"event": [
 						{
@@ -81,44 +168,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "auth_url = globals.auth_url;\nrealm = globals.realm;\nclientid = globals.clientid;\nuserid = globals.userid;\npassword = globals.password;\nclient_secret = globals.client_secret;\n\nconst echoPostRequest = {\n  url: auth_url + '/auth/realms/' + realm + '/protocol/openid-connect/token',\n  method: 'POST',\n  header: 'Content-Type:application/x-www-form-urlencoded',\n  body: {\n    mode: 'raw',\n    raw: 'grant_type=password&client_id=' + clientid \n          + '&username=' + userid \n          + '&password=' + password\n          + '&client_secret=' + client_secret\n  }\n};\npm.sendRequest(echoPostRequest, function (err, res) {\n    var jsonData = res.json();\n    if (jsonData.hasOwnProperty('access_token')) {\n    \tpm.globals.set(\"token\", jsonData.access_token);\n\t    pm.globals.set(\"refresh_token\", jsonData.refresh_token);\n\t    console.log(err ? err : res.json());\n\t} else {\n\t    pm.globals.set(\"token\", 0);\n\t    pm.globals.set(\"refresh_token\", 0);\n\t    pm.globals.set(\"token_expires\", 0);\n\t    pm.globals.set(\"refresh_token_expires\", 0);\n\t}\n});"
-						},
-						"url": {
-							"raw": "https://postman-echo.com/post",
-							"protocol": "https",
-							"host": [
-								"postman-echo",
-								"com"
-							],
-							"path": [
-								"post"
-							]
-						},
-						"description": "Sets the authentication script"
-					},
-					"response": []
-				},
-				{
-					"name": "CFMS-Install-Auth-NonQTxn",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "d4115f4c-a05c-4de1-8020-da1181a82656",
-								"exec": [
-									"var jsonData = pm.response.json();",
-									"pm.environment.set(\"auth_first_nonqtxn\", jsonData.data);"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "auth_url = globals.auth_url;\nrealm = globals.realm;\nclientid = globals.clientid;\nuserid = globals.userid_nonqtxn;\npassword = globals.password_nonqtxn;\nclient_secret = globals.client_secret;\n\nconst echoPostRequest = {\n  url: auth_url + '/auth/realms/' + realm + '/protocol/openid-connect/token',\n  method: 'POST',\n  header: 'Content-Type:application/x-www-form-urlencoded',\n  body: {\n    mode: 'raw',\n    raw: 'grant_type=password&client_id=' + clientid \n          + '&username=' + userid \n          + '&password=' + password\n          + '&client_secret=' + client_secret\n  }\n};\npm.sendRequest(echoPostRequest, function (err, res) {\n    var jsonData = res.json();\n    if (jsonData.hasOwnProperty('access_token')) {\n    \tpm.globals.set(\"token_nonqtxn\", jsonData.access_token);\n\t    pm.globals.set(\"refresh_token_nonqtxn\", jsonData.refresh_token);\n\t    console.log(err ? err : res.json());\n\t} else {\n\t    pm.globals.set(\"token_nonqtxn\", 0);\n\t    pm.globals.set(\"refresh_token_nonqtxn\", 0);\n\t    pm.globals.set(\"token_expires_nonqtxn\", 0);\n\t    pm.globals.set(\"refresh_token_expires_nonqtxn\", 0);\n\t}\n});"
+							"raw": "auth_url = globals.auth_url;\nrealm = globals.realm;\nclientid = globals.clientid;\nuserid = globals.userid;\npassword = globals.password;\nclient_secret = globals.client_secret;\n\nconst echoPostRequest = {\n  url: auth_url + '/auth/realms/' + realm + '/protocol/openid-connect/token',\n  method: 'POST',\n  header: 'Content-Type:application/x-www-form-urlencoded',\n  body: {\n    mode: 'raw',\n    raw: 'grant_type=password&client_id=' + clientid \n          + '&username=' + userid \n          + '&password=' + password\n          + '&client_secret=' + client_secret\n  }\n};\npm.sendRequest(echoPostRequest, function (err, res) {\n    var jsonData = res.json();\n    if (jsonData.hasOwnProperty('access_token')) {\n    \tpm.globals.set(\"token\", jsonData.access_token);\n\t    pm.globals.set(\"refresh_token\", jsonData.refresh_token);\n\t    if (err) {\n\t        console.log(err);\n\t    }\n\t    // console.log(err ? err : res.json());\n\t} else {\n\t    pm.globals.set(\"token\", 0);\n\t    pm.globals.set(\"refresh_token\", 0);\n\t    pm.globals.set(\"token_expires\", 0);\n\t    pm.globals.set(\"refresh_token_expires\", 0);\n\t}\n});"
 						},
 						"url": {
 							"raw": "https://postman-echo.com/post",
@@ -266,7 +316,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "//  If no maximum response defined, set a default.\r\nresponse_max = 0;\r\nif (globals.response_max) {\r\n    response_max = JSON.parse(globals.response_max);\r\n}\r\nelse {\r\n    response_max = 5009;\r\n    pm.globals.set(\"response_max\", JSON.stringify(response_max));\r\n};\r\n\r\n//  Get the max response time allowed.\r\npm.test('Response time less than ' + response_max.toString() + 'ms', function(){\r\n    pm.expect(pm.response.responseTime).to.be.below(response_max);\r\n});\r\n"
+							"raw": "//  Get the maximum response time allowed.\r\nmax_response_time = JSON.parse(globals.max_response_time);\r\n\r\n//  Check to make sure the response time was within the maximum allowed.\r\npm.test('Response time less than ' + max_response_time.toString() + 'ms', function(){\r\n    pm.expect(pm.response.responseTime).to.be.below(max_response_time);\r\n});\r\n\r\n//  Other tests.\r\npm.test(\"Response code for request is 200\", function(){\r\n    pm.response.to.have.status(200);\r\n});\r\npm.test('Response header should have Content-Type of application/json', function() {\r\n    pm.response.to.have.header('content-type', 'application/json');\r\n});\r\npm.test('Response body be in JSON format', function() {\r\n    pm.response.to.be.json; \r\n});"
 						},
 						"url": {
 							"raw": "https://postman-echo.com/post",
@@ -303,7 +353,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "//  Test the authenticate response.\ndescribe('Complex response tests', function() {\n    it('Response time should be below 25000ms', function() {\n        pm.response.responseTime.should.be.below(25000);\n    });\n    it('Response statusCode should be 200 OK', function() {\n        response.should.have.status(200);\n    });\n    it('Response header should have Content-Type of application/json', function() {\n        response.should.have.header('content-type', 'application/json');\n    });\n    it('Response body be in JSON format', function() {\n        response.should.be.json; \n    });\n});\n"
+							"raw": "//  Get the maximum response time allowed.\nmax_response_time = JSON.parse(globals.max_response_time);\n\n//  Check to make sure the response time was within the maximum allowed.\npm.test('Response time less than ' + max_response_time.toString() + 'ms', function(){\n    pm.expect(pm.response.responseTime).to.be.below(max_response_time);\n});\n\n//  Other tests.\npm.test(\"Response code for request is 200\", function(){\n    pm.response.to.have.status(200);\n});\npm.test('Response header should have Content-Type of application/json', function() {\n    pm.response.to.have.header('content-type', 'application/json');\n});\npm.test('Response body be in JSON format', function() {\n    pm.response.to.be.json; \n});\n"
 						},
 						"url": {
 							"raw": "https://postman-echo.com/post",
@@ -340,7 +390,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "//  Test the authenticate response.\ndescribe('Create response tests', function() {\n    it('Response time should be below 20000ms', function() {\n        pm.response.responseTime.should.be.below(20000);\n    });\n    it('Response statusCode should be 201 CREATED', function() {\n        response.should.have.status(201);\n    });\n    it('Response header should have Content-Type of application/json', function() {\n        response.should.have.header('content-type', 'application/json');\n    });\n    it('Response body be in JSON format', function() {\n        response.should.be.json; \n    });\n});"
+							"raw": "//  Get the maximum response time allowed.\nmax_response_time = JSON.parse(globals.max_response_time);\n\n//  Check to make sure the response time was within the maximum allowed.\npm.test('Response time less than ' + max_response_time.toString() + 'ms', function(){\n    pm.expect(pm.response.responseTime).to.be.below(max_response_time);\n});\n\n//  Other tests.\npm.test(\"Response status code should be 201 CREATED\", function(){\n    pm.response.to.have.status(201);\n});\npm.test('Response header should have Content-Type of application/json', function() {\n    pm.response.to.have.header('content-type', 'application/json');\n});\npm.test('Response body be in JSON format', function() {\n    pm.response.to.be.json; \n});\n"
 						},
 						"url": {
 							"raw": "https://postman-echo.com/post",
@@ -377,7 +427,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "var schema = {\n    \"properties\" : {\n        \"start_time\" : {\n            \"type\" : \"string\"\n        },\n        \"citizen_name\" : {\n            \"type\" : [\"string\", \"null\"]\n        },\n        \"citizen_id\" : {\n            \"type\" : [\"number\", \"object\"]\n        },\n        \"qt_xn_citizen_ind\" : {\n            \"type\" : \"number\"\n        },\n        \"ticket_number\" : {\n            \"type\" : [\"string\", \"null\"]\n        },\n        \"service_reqs\" : {\n            \"type\" : \"array\"\n        },\n        \"office_id\" : {\n            \"type\" : [\"object\", \"number\"]\n        },\n        \"cs\" : {\n            \"type\" : \"object\"\n        },\n        \"citizen_comments\" : {\n            \"type\" : [\"string\", \"null\"]\n        },\n        \n    },\n    \"required\" : [\"start_time\", \"citizen_name\", \"citizen_id\",\n                  \"qt_xn_citizen_ind\", \"ticket_number\", \"service_reqs\",\n                  \"office_id\", \"cs\", \"citizen_comments\"]\n};\n\n//  Declare, initialize variables.\nvar allElements = null;\n\nif (jsonData.hasOwnProperty(\"citizens\")) {\n\tallElements = jsonData.citizens;\n};\n\nif (jsonData.hasOwnProperty(\"citizen\")) {\n\tallElements = [];\n\tallElements.push(jsonData.citizen);\n};\n\nvar elementCount = 0;\n\n//  If there are some citizens, proceed with tests.\nif (allElements !== null) {\n\n    //  Loop to validate schema of each channel, create list of citizen ids.\n    allElements.forEach(function(element) {\n        elementCount ++;\n        var testTitle = \"Citizen (\" + elementCount + \"): \" + element.citizen_id + \" - \";\n        tests[testTitle + \"conforms to schema\"] = tv4.validate(element, schema);\n\n        //  Test the authenticate response.\n        describe(\"--> \" + testTitle + \"fields have valid values\", function() {\n            it('qt_xn_citizen_ind must be 0 or 1', function() {\n                element.qt_xn_citizen_ind.should.be.within(0,1);\n            });\n        });\n    });\n};"
+							"raw": "var schema = {\n    \"properties\" : {\n        \"start_time\" : {\n            \"type\" : \"string\"\n        },\n        \"citizen_name\" : {\n            \"type\" : [\"string\", \"null\"]\n        },\n        \"citizen_id\" : {\n            \"type\" : [\"number\", \"object\"]\n        },\n        \"qt_xn_citizen_ind\" : {\n            \"type\" : \"number\"\n        },\n        \"ticket_number\" : {\n            \"type\" : [\"string\", \"null\"]\n        },\n        \"service_reqs\" : {\n            \"type\" : \"array\"\n        },\n        \"office_id\" : {\n            \"type\" : [\"object\", \"number\"]\n        },\n        \"cs\" : {\n            \"type\" : \"object\"\n        },\n        \"citizen_comments\" : {\n            \"type\" : [\"string\", \"null\"]\n        },\n        \n    },\n    \"required\" : [\"start_time\", \"citizen_name\", \"citizen_id\",\n                  \"qt_xn_citizen_ind\", \"ticket_number\", \"service_reqs\",\n                  \"office_id\", \"cs\", \"citizen_comments\"]\n};\n\n//  Declare, initialize variables.\nvar allElements = null;\n\nif (jsonData.hasOwnProperty(\"citizens\")) {\n\tallElements = jsonData.citizens;\n};\n\nif (jsonData.hasOwnProperty(\"citizen\")) {\n\tallElements = [];\n\tallElements.push(jsonData.citizen);\n};\n\nvar elementCount = 0;\n\n//  If there are some citizens, proceed with tests.\nif (allElements !== null) {\n\n    //  Loop to validate schema of each channel, create list of citizen ids.\n    allElements.forEach(function(element) {\n        elementCount ++;\n        var testTitle = \"Citizen (\" + elementCount + \"): \" + element.citizen_id + \" - \";\n        tests[testTitle + \"conforms to schema\"] = tv4.validate(element, schema);\n        \n        //  Test the authenticate response.\n        pm.test(testTitle + \"qt_xn_citizen_ind must be 0 or 1\", function() {\n            pm.expect(element.qt_xn_citizen_ind).to.be.within(0,1);\n        });\n    });\n};"
 						},
 						"url": {
 							"raw": "https://postman-echo.com/post",
@@ -482,31 +532,29 @@
 							"script": {
 								"id": "74adc5ce-caa5-452a-bd96-8ac90a4c11d7",
 								"exec": [
-									"//  Install postmanBDD",
-									"eval(globals.postmanBDD);",
+									"//  Get the maximum response time allowed.",
+									"max_load_time = JSON.parse(globals.max_load_time);",
 									"",
 									"//  Set health response time variable.",
-									"max_response_time = 1500;",
 									"health_tries = 15;",
 									"counter = 1;",
-									"postman.setEnvironmentVariable(\"max_response_time\", JSON.stringify(max_response_time));",
 									"postman.setEnvironmentVariable(\"health_tries\", JSON.stringify(health_tries));",
 									"postman.setEnvironmentVariable(\"health_counter\", JSON.stringify(counter));",
 									"",
+									"//  Get the response.",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
 									"//  Test the health response.",
-									"describe('Testing application health Driver: Try ' + counter.toString(), function() {",
-									"    it(\"Response should have 'message' property\", function() {",
-									"        var jsonData = response.body;",
-									"        jsonData.should.have.property('message');",
-									"    });",
-									"    it(\"Response message should be 'api is healthy'\", function() {",
-									"        var jsonData = response.body;",
-									"        jsonData.message.should.equal('api is healthy');",
-									"    });",
+									"pm.test(\"Health Driver: Try \" + counter.toString() + \": Response should have 'message' property\", function() {",
+									"    pm.expect(jsonData).to.have.property('message');",
+									"});",
+									"",
+									"pm.test(\"Response message should be 'api is healthy'\", function() {",
+									"    pm.expect(jsonData.message).to.be.eql('api is healthy');",
 									"});",
 									"",
 									"//  If response time is OK, proceed to the next test.",
-									"if (pm.response.responseTime < max_response_time) {",
+									"if (pm.response.responseTime < max_load_time) {",
 									"    postman.setNextRequest(\"Check the readyz endpoint\");",
 									"}",
 									"    ",
@@ -558,29 +606,28 @@
 							"script": {
 								"id": "74adc5ce-caa5-452a-bd96-8ac90a4c11d7",
 								"exec": [
-									"//  Install postmanBDD",
-									"eval(globals.postmanBDD);",
+									"//  Get the maximum load time allowed.",
+									"max_load_time = JSON.parse(postman.getEnvironmentVariable(\"max_load_time\"));",
 									"",
 									"//  Get and update variables.",
-									"max_response_time = JSON.parse(postman.getEnvironmentVariable(\"max_response_time\"));",
 									"health_tries = JSON.parse(postman.getEnvironmentVariable(\"health_tries\"));",
 									"counter = JSON.parse(postman.getEnvironmentVariable(\"health_counter\")) + 1;",
 									"postman.setEnvironmentVariable(\"health_counter\", JSON.stringify(counter));",
 									"",
+									"//  Get the response.",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
 									"//  Test the health response.",
-									"describe('Testing application health Endpoint: Try ' + counter.toString(), function() {",
-									"    it(\"Response should have 'message' property\", function() {",
-									"        var jsonData = response.body;",
-									"        jsonData.should.have.property('message');",
-									"    });",
-									"    it(\"Response message should be 'api is healthy'\", function() {",
-									"        var jsonData = response.body;",
-									"        jsonData.message.should.equal('api is healthy');",
-									"    });",
+									"pm.test(\"Health Driver: Try \" + counter.toString() + \": Response should have 'message' property\", function() {",
+									"    pm.expect(jsonData).to.have.property('message');",
+									"});",
+									"",
+									"pm.test(\"Response message should be 'api is healthy'\", function() {",
+									"    pm.expect(jsonData.message).to.be.eql('api is healthy');",
 									"});",
 									"",
 									"//  If response time is OK, proceed to the next test.",
-									"if (pm.response.responseTime < max_response_time) {",
+									"if (pm.response.responseTime < max_load_time) {",
 									"    postman.setNextRequest(\"Check the readyz endpoint\");",
 									"}",
 									"    ",
@@ -594,11 +641,8 @@
 									"    ",
 									"    //   You have reached the maximum.  An error, go to next test.",
 									"    else {",
-									"        describe('Health response should be below ' + max_response_time.toString() + ' in ' + health_tries.toString() + ' tries.', function() {",
-									"            it('Response time should be OK', function() {",
-									"                (health_tries).should.be.below(health_tries);",
-									"               response.should.equal(23); ",
-									"            });",
+									"        pm.test(\"Response should be below \" + max_load_time.toString() + ' in ' + health_tries.toString() + ' tries.', function() {",
+									"            pm.expect(counter).to.be.below(health_tries);",
 									"        });",
 									"        postman.setNextRequest(\"Check the readyz endpoint\");",
 									"    }",
@@ -648,22 +692,18 @@
 							"script": {
 								"id": "661c33c4-4a3d-4396-a549-9969edafbfa6",
 								"exec": [
-									"//  Install postmanBDD",
-									"eval(globals.postmanBDD);",
-									"",
 									"//  Perform the standard tests.",
 									"eval(environment.basic_response_test);",
 									"",
-									"//  Test the authenticate response.",
-									"describe('Testing application readiness', function() {",
-									"    it(\"Response should have 'message' property\", function() {",
-									"        var jsonData = response.body;",
-									"        jsonData.should.have.property('message');",
-									"    });",
-									"    it(\"Response message should be 'api is healthy'\", function() {",
-									"        var jsonData = response.body;",
-									"        jsonData.message.should.equal('api is ready');",
-									"    });",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//  Test the health response.",
+									"pm.test(\"Response should have 'message' property\", function() {",
+									"    pm.expect(jsonData).to.have.property('message');",
+									"});",
+									"",
+									"pm.test(\"Response message should be 'api is ready'\", function() {",
+									"    pm.expect(jsonData.message).to.be.eql('api is ready');",
 									"});",
 									""
 								],
@@ -717,36 +757,37 @@
 								"id": "43df8e47-2b93-48b0-a5ff-bb3396d12537",
 								"exec": [
 									"//  Install postmanBDD",
-									"eval(globals.postmanBDD);",
+									"//eval(globals.postmanBDD);",
 									"",
-									"//  Test the authenticate response.",
-									"describe('Testing authentication ' + globals.userid, function() {",
-									"    it('Response time should be below 5000ms', function() {",
-									"        pm.response.responseTime.should.be.below(5000);",
-									"    });",
-									"   it('Response statusCode should be 200', function() {",
-									"     response.should.have.status(200);",
-									"   });",
-									"   it('Response header should have Content-Type of application/json', function() {",
-									"    response.should.have.header('content-type', 'application/json');",
-									"   });",
-									"   it('Response body be in JSON format', function() {",
-									"      response.should.be.json; ",
-									"   });",
-									"   it(\"Response should have expected properties\", function() {",
-									"       var jsonData = response.body;",
-									"       jsonData.should.have.property('access_token');",
-									"       jsonData.should.have.property('refresh_token');",
-									"       jsonData.should.have.property('expires_in');",
-									"       jsonData.should.have.property('refresh_expires_in');",
-									"   });",
+									"//  Do the basic checks.",
+									"eval(environment.basic_response_test);",
+									"",
+									"//  Get the response.",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to make sure that the access token field is not null",
+									"pm.test(\"Access Token is not null\", function(){",
+									"    var access_token = jsonData.access_token;",
+									"    pm.expect(access_token).not.eql(null);",
 									"});",
 									"",
-									"var jsonData = pm.response.json();",
-									"pm.environment.set(\"token\", jsonData.access_token);",
-									"pm.environment.set(\"refresh_token\", jsonData.refresh_token);",
-									"pm.environment.set(\"token_expires\", Date.now()+(jsonData.expires_in * 1000));",
-									"pm.environment.set(\"refresh_token_expires\", Date.now()+(jsonData.refresh_expires_in * 1000));",
+									"//Test to make sure that the refresh token response field is not null",
+									"pm.test(\"Refresh Token is not null\", function(){",
+									"    var refresh_token = jsonData.refresh_token;",
+									"    pm.expect(refresh_token).not.eql(null);",
+									"});",
+									"",
+									"//Test to make sure that expires in response field is not nullf",
+									"pm.test(\"Expires In is not null\", function(){",
+									"    var expires_in = jsonData.expires_in;",
+									"    pm.expect(expires_in).not.eql(null);",
+									"});",
+									"",
+									"//Test to make sure that refresh expires in response fiels is not null",
+									"pm.test(\"Refresh Expires In is not null\", function(){",
+									"    var refresh_expires_in = jsonData.refresh_expires_in;",
+									"    pm.expect(refresh_expires_in).not.eql(null);",
+									"});",
 									""
 								],
 								"type": "text/javascript"
@@ -788,514 +829,6 @@
 						"description": "Make sure the operator ID can log in"
 					},
 					"response": []
-				},
-				{
-					"name": "Authenticate NonQTxn user",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "bb3fda97-b9c4-44bb-96da-a04e82f3d850",
-								"exec": [
-									"//  Install postmanBDD",
-									"eval(globals.postmanBDD);",
-									"",
-									"//  Test the authenticate response.",
-									"describe('Testing authentication ' + globals.userid_nonqtxn, function() {",
-									"    it('Response time should be below 5000ms', function() {",
-									"        pm.response.responseTime.should.be.below(5000);",
-									"    });",
-									"   it('Response statusCode should be 200', function() {",
-									"     response.should.have.status(200);",
-									"   });",
-									"   it('Response header should have Content-Type of application/json', function() {",
-									"    response.should.have.header('content-type', 'application/json');",
-									"   });",
-									"   it('Response body be in JSON format', function() {",
-									"      response.should.be.json; ",
-									"   });",
-									"   it(\"Response should have expected properties\", function() {",
-									"       var jsonData = response.body;",
-									"       jsonData.should.have.property('access_token');",
-									"       jsonData.should.have.property('refresh_token');",
-									"       jsonData.should.have.property('expires_in');",
-									"       jsonData.should.have.property('refresh_expires_in');",
-									"   });",
-									"});",
-									"",
-									"var jsonData = pm.response.json();",
-									"pm.environment.set(\"token_nonqtxn\", jsonData.access_token);",
-									"pm.environment.set(\"refresh_token_nonqtxn\", jsonData.refresh_token);",
-									"pm.environment.set(\"token_expires_nonqtxn\", Date.now()+(jsonData.expires_in * 1000));",
-									"pm.environment.set(\"refresh_token_expires_nonqtxn\", Date.now()+(jsonData.refresh_expires_in * 1000));",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/x-www-form-urlencoded"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "grant_type=password&client_id={{clientid}}&username={{userid_nonqtxn}}&password={{password_nonqtxn}}&client_secret={{client_secret}}"
-						},
-						"url": {
-							"raw": "{{auth_url}}/auth/realms/{{realm}}/protocol/openid-connect/token?Content-Type=application/x-www-form-urlencoded",
-							"host": [
-								"{{auth_url}}"
-							],
-							"path": [
-								"auth",
-								"realms",
-								"{{realm}}",
-								"protocol",
-								"openid-connect",
-								"token"
-							],
-							"query": [
-								{
-									"key": "Content-Type",
-									"value": "application/x-www-form-urlencoded"
-								}
-							]
-						},
-						"description": "Make sure the operator ID can log in"
-					},
-					"response": []
-				},
-				{
-					"name": "Authenticate admin user",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "43df8e47-2b93-48b0-a5ff-bb3396d12537",
-								"exec": [
-									"//  Install postmanBDD",
-									"eval(globals.postmanBDD);",
-									"",
-									"//  Test the authenticate response.",
-									"describe('Testing authentication ' + globals.userid, function() {",
-									"    it('Response time should be below 5000ms', function() {",
-									"        pm.response.responseTime.should.be.below(5000);",
-									"    });",
-									"   it('Response statusCode should be 200', function() {",
-									"     response.should.have.status(200);",
-									"   });",
-									"   it('Response header should have Content-Type of application/json', function() {",
-									"    response.should.have.header('content-type', 'application/json');",
-									"   });",
-									"   it('Response body be in JSON format', function() {",
-									"      response.should.be.json; ",
-									"   });",
-									"   it(\"Response should have expected properties\", function() {",
-									"       var jsonData = response.body;",
-									"       jsonData.should.have.property('access_token');",
-									"       jsonData.should.have.property('refresh_token');",
-									"       jsonData.should.have.property('expires_in');",
-									"       jsonData.should.have.property('refresh_expires_in');",
-									"   });",
-									"});",
-									"",
-									"var jsonData = pm.response.json();",
-									"pm.environment.set(\"token\", jsonData.access_token);",
-									"pm.environment.set(\"refresh_token\", jsonData.refresh_token);",
-									"pm.environment.set(\"token_expires\", Date.now()+(jsonData.expires_in * 1000));",
-									"pm.environment.set(\"refresh_token_expires\", Date.now()+(jsonData.refresh_expires_in * 1000));",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/x-www-form-urlencoded"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "grant_type=password&client_id=account&username=admin&password=admin&client_secret=5abdcb03-9dc6-4789-8c1f-8230c7d7cb79"
-						},
-						"url": {
-							"raw": "http://localhost:8085/auth/realms/registry/protocol/openid-connect/token?Content-Type=application/x-www-form-urlencoded",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8085",
-							"path": [
-								"auth",
-								"realms",
-								"registry",
-								"protocol",
-								"openid-connect",
-								"token"
-							],
-							"query": [
-								{
-									"key": "Content-Type",
-									"value": "application/x-www-form-urlencoded"
-								}
-							]
-						},
-						"description": "Make sure the operator ID can log in"
-					},
-					"response": []
-				},
-				{
-					"name": "Get User Sessions",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "bb3fda97-b9c4-44bb-96da-a04e82f3d850",
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{token}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "http://localhost:8085/auth/registry/clients/5b221d6b-38be-44c0-b08b-d6d169b6c71f/user-sessions/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8085",
-							"path": [
-								"auth",
-								"registry",
-								"clients",
-								"5b221d6b-38be-44c0-b08b-d6d169b6c71f",
-								"user-sessions",
-								""
-							]
-						},
-						"description": "Make sure the operator ID can log in"
-					},
-					"response": []
-				},
-				{
-					"name": "Store CSR and Office Info Copy",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "c34723d3-c0d1-4504-97a2-373088309a5b",
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"id": "e77f0ca3-62cf-49ba-8e17-67a16e8f8a5f",
-								"exec": [
-									"// Define the JSON Schema expected in response",
-									"var CSRSSchema = {",
-									"    \"type\": \"object\",",
-									"    \"properties\": {",
-									"        \"csr_id\": {\"type\": \"number\"},",
-									"        \"csr_state\": {",
-									"            \"type\": \"object\",",
-									"            \"properties\": {",
-									"                \"csr_state_desc\": {\"type\": \"string\"},",
-									"                \"csr_state_id\": {\"type\": \"number\"},",
-									"                \"csr_state_name\": {\"type\": \"string\"}",
-									"            },",
-									"            \"required\": [\"csr_state_desc\", \"csr_state_id\", \"csr_state_name\"]",
-									"        },",
-									"        \"csr_state_id\": {\"type\": \"number\"},",
-									"        \"deleted\": {},",
-									"        \"finance_designate\": {\"type\": \"number\"},",
-									"        \"ita_designate\": {\"type\": \"number\"},",
-									"        \"liaison_designate\": {\"type\": \"number\"},",
-									"        \"office\": {",
-									"            \"type\": \"object\",",
-									"            \"properties\": {",
-									"                \"appointments_enabled_ind\": {\"type\": \"number\"},",
-									"                \"exams_enabled_ind\": {\"type\": \"number\"},",
-									"                \"office_id\": {\"type\": \"number\"},",
-									"                \"office_name\": {\"type\": \"string\"},",
-									"                \"office_number\": {\"type\": \"number\"},",
-									"                \"sb\":{",
-									"                    \"type\": \"object\",",
-									"                    \"properties\": {",
-									"                        \"sb_id\": {\"type\": \"number\"},",
-									"                        \"sb_type\": {\"type\": \"string\"}",
-									"                    },",
-									"                    \"required\": [\"sb_id\", \"sb_type\"]",
-									"                }",
-									"            },",
-									"            \"required\": [\"appointments_enabled_ind\", \"exams_enabled_ind\", \"office_id\", \"office_name\", \"office_number\", \"sb\"]",
-									"        },",
-									"        \"office_name\": {\"type\": \"string\"},",
-									"        \"pesticide_designate\": {\"type\": \"number\"},",
-									"        \"qt_xn_csr_ind\": {\"type\": \"number\"},",
-									"        \"receptionist_ind\": {\"type\": \"number\"},",
-									"        \"role\": {",
-									"            \"type\": \"object\",",
-									"            \"properties\": {",
-									"                \"role_code\": {\"type\": \"string\"},",
-									"                \"role_desc\": {\"type\": \"string\"},",
-									"                \"role_id\": {\"type\": \"number\"}",
-									"            },",
-									"            \"required\": [\"role_code\", \"role_desc\", \"role_id\"]",
-									"        },",
-									"        \"role_id\": {\"type\": \"number\"},",
-									"        \"username\": {\"type\": \"string\"}",
-									"    },",
-									"    \"individual_exams\": {\"type\": \"number\"},",
-									"    \"group_exams\": {\"type\": \"number\"},",
-									"    \"required\": [\"csr\", \"individual_exams\", \"group_exams\"]",
-									"};",
-									"",
-									"//  Run basic response tests.",
-									"eval(environment.basic_response_test);",
-									"",
-									"// Parse response body",
-									"var jsonData = JSON.parse(responseBody);",
-									"",
-									"//Test to see if response schema is valid",
-									"pm.test(\"Validate Response CSRs Schema\", function(){",
-									"    pm.expect(tv4.validate(jsonData, CSRSSchema)).to.be.true;",
-									"});",
-									"",
-									"//  Make sure that jsonData has an csr property.",
-									"pm.test(\"Response should have csr property\", function(){",
-									"    pm.expect(jsonData.hasOwnProperty(\"csr\")).to.be.true;",
-									"});",
-									"",
-									"var csr = 0;",
-									"var office = 0;",
-									"var counters = 0;",
-									"var counter_text = \"Counter\";",
-									"var counter_id = 0;",
-									"var qtxn_text = \"Quick Trans\";",
-									"var qtxn_id = 0;",
-									"",
-									"if (jsonData.hasOwnProperty(\"csr\")) {",
-									"\tcurrentOfficeId = jsonData.csr.office_id;",
-									"\tcurrentOfficeNumber = jsonData.csr.office.office_number;",
-									"    postman.setEnvironmentVariable(\"current_office_id\", currentOfficeId);",
-									"    postman.setEnvironmentVariable(\"current_office_number\", currentOfficeNumber);",
-									"    postman.setEnvironmentVariable(\"current_csr_id\", jsonData.csr.csr_id);",
-									"    ",
-									"    csr = jsonData.csr;",
-									"    counter_id = 0;",
-									"    qtxn_id = 0;",
-									"",
-									"    //  Make sure that jsonData has an booking property.",
-									"    pm.test(\"CSR should have office property\", function(){",
-									"        pm.expect(csr.hasOwnProperty(\"office\")).to.be.true;",
-									"    });",
-									"    ",
-									"    //  Make sure office has counter property.",
-									"    if (csr.hasOwnProperty(\"office\")) {",
-									"        office = csr.office;",
-									"        ",
-									"        //  Make sure that jsonData has an booking property.",
-									"        pm.test(\"Office should have counters property\", function(){",
-									"            pm.expect(office.hasOwnProperty(\"counters\")).to.be.true;",
-									"        });",
-									"",
-									"        //  Make sure office has counter property.",
-									"        if (office.hasOwnProperty(\"counters\")) {",
-									"            counters = office.counters;",
-									"            ",
-									"            //  Search for Counter and Quick Trans counters",
-									"            counters.forEach(function(counter) {",
-									"                if (counter.counter_name === counter_text) {",
-									"                    counter_id = counter.counter_id;",
-									"                }",
-									"                if (counter.counter_name === qtxn_text) {",
-									"                    qtxn_id = counter.counter_id;",
-									"                }",
-									"            });",
-									"            ",
-									"            //  Make sure you found the right IDs.",
-									"            pm.test(\"Counter ID (\" + counter_id.toString() + \") should not be 0\", function(){",
-									"                pm.expect(counter_id).to.not.be.eql(0);",
-									"            });",
-									"            pm.test(\"Quick Transaction ID (\" + qtxn_id.toString() + \") should not be 0\", function(){",
-									"                pm.expect(qtxn_id).to.not.be.eql(0);",
-									"            });",
-									"            ",
-									"            //  Store the ids for future use.",
-									"            // postman.setEnvironmentVariable(\"counter_id\", counter_id);",
-									"            // postman.setEnvironmentVariable(\"qtxn_id\", qtxn_id);",
-									"            postman.setEnvironmentVariable(\"counter_id\", JSON.stringify(counter_id.toString()));",
-									"            postman.setEnvironmentVariable(\"qtxn_id\", JSON.stringify(qtxn_id.toString()));",
-									"        }",
-									"",
-									"        ",
-									"    }",
-									"",
-									"};",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"type": "text",
-								"value": "Bearer {{token}}"
-							},
-							{
-								"key": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{url}}csrs/me/",
-							"host": [
-								"{{url}}csrs"
-							],
-							"path": [
-								"me",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Logout",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "2b71673c-4aa2-47b3-8594-15f02b390ee0",
-								"exec": [
-									"//  Ensure the client is logged in.",
-									"// eval(environment.auth_first);",
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"id": "42742c4c-505d-472d-857b-fdba74cc49ac",
-								"exec": [
-									"//  Install postmanBDD",
-									"eval(globals.postmanBDD);",
-									"eval(globals.json_bigint_parse);",
-									"",
-									"//  Run basic tests.",
-									"eval(environment.basic_response_test);",
-									"",
-									"//  Get json return data.",
-									"var jsonData = JSON.parse(responseBody);",
-									"",
-									"var schema = {",
-									"    \"properties\" : {",
-									"        \"channel_name\" : {",
-									"            \"type\" : \"string\"",
-									"        },",
-									"        \"channel_id\" : {",
-									"            \"type\" : [\"number\", \"object\"]",
-									"        }",
-									"    },",
-									"    \"required\" : [\"channel_name\", \"channel_id\"]",
-									"};",
-									"",
-									"//  Loop to validate schema of each channel.",
-									"var allChannels = jsonData.channels;",
-									"var channelCount = 0;",
-									"var phoneId = 0;",
-									"var emailId = 0;",
-									"var phoneText = \"Phone\";",
-									"var emailText = \"Email/Fax/Mail\"",
-									"allChannels.forEach(function(channel) {",
-									"    channelCount ++;",
-									"    var testTitle = \"Channel (\" + channelCount + \"): ID \" + channel.channel_id + \" Name \" + channel.channel_name + \" conforms to schema\";",
-									"    tests[testTitle] = tv4.validate(channel, schema);",
-									"    if (channel.channel_name === phoneText) {",
-									"        phoneId = channel.channel_id;",
-									"    }",
-									"    if (channel.channel_name === emailText) {",
-									"        emailId = channel.channel_id;",
-									"    }",
-									"});",
-									"",
-									"//  Check that you found the phone ID.",
-									"describe(\"Found the two channel IDs\", function() {",
-									"    it(phoneText + ' id was ' + phoneId + ' (should not equal to 0)', function() {",
-									"        phoneId.should.not.be.eql(0);",
-									"    });",
-									"    it(emailText + ' id was ' + emailId + ' (should not equal to 0)', function() {",
-									"        emailId.should.not.be.eql(0);",
-									"    });",
-									"});",
-									"",
-									"//  Store this ID for future use.",
-									"postman.setEnvironmentVariable(\"channel_telephone_id\", JSON.stringify(phoneId));",
-									"postman.setEnvironmentVariable(\"channel_email_id\", JSON.stringify(emailId));"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{token}}"
-							}
-						],
-						"url": {
-							"raw": "{{url}}csrs/me/logout/",
-							"host": [
-								"{{url}}csrs"
-							],
-							"path": [
-								"me",
-								"logout",
-								""
-							]
-						},
-						"description": "Get a list of clients in the queue"
-					},
-					"response": []
 				}
 			]
 		},
@@ -1311,7 +844,7 @@
 								"id": "2b71673c-4aa2-47b3-8594-15f02b390ee0",
 								"exec": [
 									"//  Ensure the client is logged in.",
-									"// eval(environment.auth_first);",
+									"eval(environment.auth_first);",
 									""
 								],
 								"type": "text/javascript"
@@ -1322,10 +855,6 @@
 							"script": {
 								"id": "42742c4c-505d-472d-857b-fdba74cc49ac",
 								"exec": [
-									"//  Install postmanBDD",
-									"eval(globals.postmanBDD);",
-									"eval(globals.json_bigint_parse);",
-									"",
 									"//  Run basic tests.",
 									"eval(environment.basic_response_test);",
 									"",
@@ -1350,7 +879,7 @@
 									"var phoneId = 0;",
 									"var emailId = 0;",
 									"var phoneText = \"Phone\";",
-									"var emailText = \"Email/Fax/Mail\"",
+									"var emailText = \"Email/Fax/Mail\";",
 									"allChannels.forEach(function(channel) {",
 									"    channelCount ++;",
 									"    var testTitle = \"Channel (\" + channelCount + \"): ID \" + channel.channel_id + \" Name \" + channel.channel_name + \" conforms to schema\";",
@@ -1364,13 +893,13 @@
 									"});",
 									"",
 									"//  Check that you found the phone ID.",
-									"describe(\"Found the two channel IDs\", function() {",
-									"    it(phoneText + ' id was ' + phoneId + ' (should not equal to 0)', function() {",
-									"        phoneId.should.not.be.eql(0);",
-									"    });",
-									"    it(emailText + ' id was ' + emailId + ' (should not equal to 0)', function() {",
-									"        emailId.should.not.be.eql(0);",
-									"    });",
+									"pm.test(phoneText + ' id was ' + phoneId.toString() + ' (should not equal 0)', function() {",
+									"    pm.expect(phoneId).to.not.be.eql(0);",
+									"});",
+									"",
+									"//  Check that you found the email ID.",
+									"pm.test(emailText + ' id was ' + emailId.toString() + ' (should not equal 0)', function() {",
+									"    pm.expect(emailId).to.not.be.eql(0);",
 									"});",
 									"",
 									"//  Store this ID for future use.",
@@ -1415,6 +944,8 @@
 							"script": {
 								"id": "c34723d3-c0d1-4504-97a2-373088309a5b",
 								"exec": [
+									"//  Ensure the client is logged in.",
+									"eval(environment.auth_first);",
 									""
 								],
 								"type": "text/javascript"
@@ -1565,7 +1096,7 @@
 									"        ",
 									"    }",
 									"",
-									"};",
+									"}",
 									""
 								],
 								"type": "text/javascript"
@@ -1611,24 +1142,19 @@
 							"listen": "prerequest",
 							"script": {
 								"id": "e99f23ee-5a03-43d9-9075-75dbf06aadcc",
-								"type": "text/javascript",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_first);",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
 								"id": "1a9c9ff5-8475-4dd2-a6c7-ffb5d4689145",
-								"type": "text/javascript",
 								"exec": [
-									"//  Install postmanBDD",
-									"eval(globals.postmanBDD);",
-									"eval(globals.json_bigint_parse);",
-									"",
 									"//  Run basic tests.",
 									"eval(environment.basic_response_test);",
 									"",
@@ -1676,21 +1202,24 @@
 									"    categoryCount ++;",
 									"    var testTitle = \"Category (\" + categoryCount + \"): \" + category.service_name + \" - \";",
 									"    tests[testTitle + \"conforms to schema\"] = tv4.validate(category, schema);",
+									"    var displayInd = category.display_dashboard_ind;",
+									"    var serviceInd = category.actual_service_ind;",
+									"",
+									"    //  Test that returned data is valid.",
+									"    pm.test(\"--> \" + testTitle + \"display_dashboard_ind must be 0 (is \" + displayInd.toString() + \")\", function(){",
+									"        pm.expect(displayInd).to.be.eql(0);",
+									"    });",
+									"",
+									"    pm.test(\"--> \" + testTitle + \"actual_service_ind must be 0 (is \" + serviceInd.toString() + \")\", function(){",
+									"        pm.expect(serviceInd).to.be.eql(0);",
+									"    });",
 									"    ",
-									"    //  Test the authenticate response.",
-									"    describe(\"--> \" + testTitle + \"fields have valid values\", function() {",
-									"        it('display_dashboard_ind must be 0', function() {",
-									"            category.display_dashboard_ind.should.be.eql(0);",
-									"        });",
-									"        it('actual_service_ind for categories must be 0', function() {",
-									"            category.actual_service_ind.should.be.eql(0);",
-									"        });",
-									"        it('parent_id for categories must be null', function() {",
-									"            (category.parent_id === null).should.be.eql(true);",
-									"        });",
+									"    pm.test(\"--> \" + testTitle + \"parent_id must be null\", function(){",
+									"        pm.expect(category.parent_id).to.be.null;",
 									"    });",
 									"});"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -1727,24 +1256,19 @@
 							"listen": "prerequest",
 							"script": {
 								"id": "d01c3826-dc28-4cce-957b-ec70d0393e7e",
-								"type": "text/javascript",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_first);",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
 								"id": "3b11031e-4031-4569-91f2-49e23517ffee",
-								"type": "text/javascript",
 								"exec": [
-									"//  Install postmanBDD",
-									"eval(globals.postmanBDD);",
-									"eval(globals.json_bigint_parse);",
-									"",
 									"//  Run basic tests.",
 									"eval(environment.basic_response_test);",
 									"",
@@ -1795,24 +1319,23 @@
 									"    elementCount ++;",
 									"    var testTitle = \"Service (\" + elementCount + \"): \" + element.service_name + \" - \";",
 									"    tests[testTitle + \"conforms to schema\"] = tv4.validate(element, schema);",
-									"    ",
-									"    //  Test the authenticate response.",
-									"    describe(\"--> \" + testTitle + \"fields have valid values\", function() {",
-									"        it('display_dashboard_ind must be 0 or 1', function() {",
-									"            element.display_dashboard_ind.should.be.within(0,1);",
-									"        });",
-									"        it('actual_service_ind for services must be 1', function() {",
-									"            //  Test for only returning services.",
-									"            element.actual_service_ind.should.be.eql(1);",
-									"            //  Test for returning services and categories.",
-									"            // element.actual_service_ind.should.be.within(0,1);",
-									"        });",
-									"        //  Test for only returning services",
-									"        it('parent_id for categories must not be null', function() {",
-									"            (element.parent_id === null).should.be.eql(false);",
-									"        });",
+									"    displayInd = element.display_dashboard_ind;",
+									"    serviceInd = element.actual_service_ind;",
+									"",
+									"    //  Test that returned data is valid.",
+									"    pm.test(\"--> \" + testTitle + \"display_dashboard_ind must be 0 or 1 (is \" + displayInd.toString() + \")\", function(){",
+									"        pm.expect(displayInd).to.be.within(0, 1);",
 									"    });",
-									"//});",
+									"",
+									"    //  Test that returned data is valid.",
+									"    pm.test(\"--> \" + testTitle + \"actual_service_ind must be 1 (is \" + serviceInd.toString() + \")\", function(){",
+									"        pm.expect(serviceInd).to.be.eql(1);",
+									"    });",
+									"    ",
+									"    //  Test that returned data is valid.",
+									"    pm.test(\"--> \" + testTitle + \"parent_id must not be null\", function(){",
+									"        pm.expect(element.parent_id).to.not.be.null;",
+									"    });",
 									"}",
 									"",
 									"//  Declare and initialize variables.",
@@ -1831,21 +1354,21 @@
 									"    }",
 									"});",
 									"",
-									"//  Check that you found these IDs.",
-									"describe(\"Found the MSP and Property Tax IDs\", function() {",
-									"    ",
-									"    it(mspText + ' id was found (was ' + mspId + ', should not equal to 0)', function() {",
-									"        mspId.should.not.be.eql(0);",
-									"    });",
-									"    it(propTaxText + ' id was found (was ' + taxId + ', should not equal to 0)', function() {",
-									"        taxId.should.not.be.eql(0);",
-									"    });",
+									"//  Check that you found the MSP service.",
+									"pm.test(mspText + ' id was ' + mspId.toString() + ' (should not equal 0)', function() {",
+									"    pm.expect(mspId).to.not.be.eql(0);",
+									"});",
+									"",
+									"//  Check that you found the Property Tax service.",
+									"pm.test(propTaxText + ' id was ' + taxId.toString() + ' (should not equal 0)', function() {",
+									"    pm.expect(taxId).to.not.be.eql(0);",
 									"});",
 									"",
 									"//  Store these IDs for future use.",
 									"postman.setEnvironmentVariable(\"service_MSP_id\", JSON.stringify(mspId));",
 									"postman.setEnvironmentVariable(\"service_PropTax_id\", JSON.stringify(taxId));"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -1895,24 +1418,14 @@
 							"script": {
 								"id": "27f63d12-7c7c-42e1-9647-85480ee17cb8",
 								"exec": [
-									"//  Install postmanBDD, json-bigint parse and stringify.",
-									"eval(globals.postmanBDD);",
-									"eval(globals.json_bigint_parse);",
-									"console.log(\"==> After BDD, bigint\");",
-									"",
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
-									"console.log(\"    --> After complex test\");",
 									"",
 									"//  Get json return data.",
 									"var jsonData = JSON.parse(responseBody);",
-									"console.log(\"    --> After parse responseBody\");",
 									"",
 									"//  Run citizen tests.",
 									"eval(environment.citizen_response_test);",
-									"console.log(\"    --> After eval citizen response test\");",
-									"console.log(\"    --> allElements is\");",
-									"console.log(allElements);",
 									"",
 									"//  Declare, initialize variables.",
 									"var citizenIds = [];",
@@ -1985,24 +1498,19 @@
 							"listen": "prerequest",
 							"script": {
 								"id": "becda71c-71d6-4d2f-bad5-1a7a17da6128",
-								"type": "text/javascript",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
 								"id": "e516a2b7-0555-43b5-8058-ccd92b5b6e95",
-								"type": "text/javascript",
 								"exec": [
-									"// Install postmanBDD",
-									"eval(globals.postmanBDD);",
-									"eval(globals.json_bigint_parse);",
-									"",
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
 									"",
@@ -2012,30 +1520,26 @@
 									"//  Run citizen tests.",
 									"eval(environment.citizen_response_test);",
 									"",
-									"// Ensure citizen to be deleted was citizen actually deleted.",
-									"//var citizenIds = JSON.parse(postman.getEnvironmentVariable(\"current_queue\"));",
-									"",
 									"var citizenToBeDeleted = JSON.parse(postman.getEnvironmentVariable(\"current_client\"));",
 									"var citizenData = jsonData.citizen;",
 									"var testTitle = \"Check citizen finish service\";",
 									"",
-									"//  Test the authenticate response.",
-									"describe(testTitle, function() {",
-									"    it('Response should have property \"citizen\"', function() {",
-									"        jsonData.hasOwnProperty(\"citizen\").should.equal(true);",
-									"    });",
-									"    it('Response should not have have property \"message\" indicating an error', function() {",
-									"        jsonData.hasOwnProperty(\"message\").should.equal(false);",
-									"    });",
-									"    it('Citizen marked as finished should be citizen ' + citizenToBeDeleted, function() {",
-									"        citizenData.citizen_id.should.eql(citizenToBeDeleted);",
-									"    });",
+									"//  Make sure the response is valid.",
+									"pm.test(testTitle + \": Response should have property 'citizen'\", function(){",
+									"    pm.expect(jsonData.hasOwnProperty(\"citizen\")).to.be.true;",
+									"});",
+									"pm.test(testTitle + \": Response should not have property 'message' indicating an error\", function(){",
+									"    pm.expect(jsonData.hasOwnProperty(\"message\")).to.be.false;",
+									"});",
+									"pm.test(testTitle + \": Citizen marked as finished should be citizen \" + citizenToBeDeleted.toString(), function(){",
+									"    pm.expect(citizenData.citizen_id).to.be.eql(citizenToBeDeleted);",
 									"});",
 									"",
 									"//  Go back to the delete citizen queue driver.",
 									"postman.setNextRequest(\"Delete citizen queue driver\");",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -2077,24 +1581,19 @@
 							"listen": "prerequest",
 							"script": {
 								"id": "becda71c-71d6-4d2f-bad5-1a7a17da6128",
-								"type": "text/javascript",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
 								"id": "6caff547-493f-4f0d-a121-f8e3398f11c3",
-								"type": "text/javascript",
 								"exec": [
-									"//  Install postmanBDD, json-bigint parse and stringify.",
-									"eval(globals.postmanBDD);",
-									"eval(globals.json_bigint_parse);",
-									"",
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
 									"",
@@ -2114,21 +1613,20 @@
 									"    //  Get environment variables.",
 									"    var currentCitizenId = JSON.parse(postman.getEnvironmentVariable(\"current_client\"));",
 									"",
-									"    //  Perform tests.",
-									"    describe(\"Check for correct citizen left\", function() {",
-									"        it('Must be only one citizen that left', function() {",
-									"            citizenIds.length.should.be.eql(0);",
-									"        });",
-									"        it('citizen_id must equal \"' + currentCitizenId + '\"', function() {",
-									"            (currentCitizen.citizen_id).should.be.eql(currentCitizenId);",
-									"        });",
+									"    //  Perform checks.",
+									"    pm.test(\"Check there are no citizens waiting\", function(){",
+									"        pm.expect(citizenIds.length).to.be.eql(0);",
+									"    });",
+									"    pm.test(\"Citizen that left must be \" + currentCitizen.citizen_id.toString() + \" (is \" + currentCitizenId.toString(), function(){",
+									"        pm.expect(currentCitizen.citizen_id).to.be.eql(currentCitizenId);",
 									"    });",
 									"}",
 									"",
 									"//  Go back to the delete citizen queue driver.",
 									"postman.setNextRequest(\"Delete citizen queue driver\");",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -2170,32 +1668,25 @@
 							"listen": "prerequest",
 							"script": {
 								"id": "becda71c-71d6-4d2f-bad5-1a7a17da6128",
-								"type": "text/javascript",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
 								"id": "c2ec515b-209f-4d91-81c1-c72a14600685",
-								"type": "text/javascript",
 								"exec": [
-									"//  Install postmanBDD, json-bigint parse and stringify.",
-									"eval(globals.postmanBDD);",
-									"eval(globals.json_bigint_parse);",
-									"",
 									"//  Run create tests.",
 									"eval(environment.create_response_test);",
 									"",
 									"//  Get json return data.",
 									"var jsonData = JSON.parse(responseBody);",
 									"var svcReq = jsonData.service_request;",
-									"",
-									"console.log(svcReq);",
 									"",
 									"//  Set schema of the service_request property.",
 									"var schema = {",
@@ -2236,21 +1727,20 @@
 									"                  \"citizen\", \"citizen_id\", \"channel\", \"channel_id\"]",
 									"};",
 									"",
-									"//  Check the result.",
-									"describe(\"Response schema is correct\", function() {",
-									"    it('service_request property present', function() {",
-									"        jsonData.should.have.property(\"service_request\");",
-									"    });",
-									"    it('errors property present', function() {",
-									"        jsonData.should.have.property(\"errors\");",
-									"    });",
-									"    tests[\"service_request property has correct schema\"] = tv4.validate(svcReq, schema);",
+									"//  Make sure the response is valid.",
+									"pm.test(\"Response has service_request property\", function(){",
+									"    pm.expect(jsonData.hasOwnProperty(\"service_request\")).to.be.true;",
 									"});",
+									"pm.test(\"Response has errors property\", function(){",
+									"    pm.expect(jsonData.hasOwnProperty(\"errors\")).to.be.true;",
+									"});",
+									"tests[\"Service_request property has correct schema\"] = tv4.validate(svcReq, schema);",
 									"",
 									"//  Go back to the clear citizen driver.",
 									"postman.setNextRequest(\"Next citizen finish service\");",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -2290,38 +1780,35 @@
 							"listen": "test",
 							"script": {
 								"id": "74adc5ce-caa5-452a-bd96-8ac90a4c11d7",
-								"type": "text/javascript",
 								"exec": [
-									"//  Install postmanBDD",
-									"eval(globals.postmanBDD);",
-									"",
 									"//  Perform the standard tests.",
 									"eval(environment.basic_response_test);",
 									"",
-									"//  Test the authenticate response.",
-									"describe('Testing application health', function() {",
-									"    it(\"Response should have 'message' property\", function() {",
-									"        var jsonData = response.body;",
-									"        jsonData.should.have.property('message');",
-									"    });",
-									"    it(\"Response message should be 'api is healthy'\", function() {",
-									"        var jsonData = response.body;",
-									"        jsonData.message.should.equal('api is healthy');",
-									"    });",
+									"//  Get json return data.",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//  Test the health response.",
+									"pm.test(\"Response should have 'message' property\", function() {",
+									"    pm.expect(jsonData).to.have.property('message');",
+									"});",
+									"",
+									"pm.test(\"Response message should be 'api is healthy'\", function() {",
+									"    pm.expect(jsonData.message).to.be.eql('api is healthy');",
 									"});",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						},
 						{
 							"listen": "prerequest",
 							"script": {
 								"id": "9e00b481-ef9a-440b-8e83-025fc49026c4",
-								"type": "text/javascript",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -2357,24 +1844,19 @@
 							"listen": "prerequest",
 							"script": {
 								"id": "9f95832a-57ef-4dcf-bdfe-916d2eb5d006",
-								"type": "text/javascript",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_first);",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
 								"id": "2cbca8d4-50d9-4dde-9239-af3c987949b8",
-								"type": "text/javascript",
 								"exec": [
-									"//  Install postmanBDD, json-bigint parse and stringify.",
-									"eval(globals.postmanBDD);",
-									"eval(globals.json_bigint_parse);",
-									"",
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
 									"",
@@ -2390,6 +1872,7 @@
 									"var allOK = true;",
 									"",
 									"//  If citizen property was present.",
+									"",
 									"if (allElements !== null) {",
 									"",
 									"    //  Make sure it had a length of 0.",
@@ -2398,12 +1881,12 @@
 									"    }",
 									"}",
 									"",
-									"describe(\"There should be no citizens in the office\", function() {",
-									"    it(\"Length of citizen queue should be 0\", function() {",
-									"        allOK.should.be.eql(true);",
-									"    });",
-									"});"
-								]
+									"pm.test(\"There should be no citizens in the office\", function() {",
+									"    pm.expect(allOK).to.be.true;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -2439,24 +1922,19 @@
 							"listen": "prerequest",
 							"script": {
 								"id": "becda71c-71d6-4d2f-bad5-1a7a17da6128",
-								"type": "text/javascript",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
 								"id": "7896261d-7d88-4eba-860b-98472655c4a7",
-								"type": "text/javascript",
 								"exec": [
-									"//  Install postmanBDD, json-bigint parse and stringify.",
-									"eval(globals.postmanBDD);",
-									"eval(globals.json_bigint_parse);",
-									"",
 									"//  Run complex tests.",
 									"eval(environment.create_response_test);",
 									"",
@@ -2475,27 +1953,25 @@
 									"",
 									"    //  Run citizen tests.",
 									"    eval(environment.get_active_citizens_test);",
-									"",
-									"    //  Perform tests.",
-									"    describe(\"Check for one added citizen, correct initial values\", function() {",
-									"        it('Only one citizen should be created', function() {",
-									"            citizenIds.length.should.be.eql(1);",
-									"        });",
-									"        it('citizen_name must be null', function() {",
-									"            (!currentCitizen.citizen_name).should.be.eql(true);",
-									"        });",
-									"        it('citizen_comments must be null', function() {",
-									"            (!currentCitizen.citizen_comments).should.be.eql(true);",
-									"        });",
-									"        it('service_reqs must empty (no service requests)', function() {",
-									"            (currentCitizen.service_reqs.length).should.be.eql(0);",
-									"        });",
+									"    ",
+									"    pm.test(\"Only one citizen should be in the office\", function() {",
+									"        pm.expect(citizenIds.length).to.be.eql(1);",
 									"    });",
-									"",
+									"    pm.test(\"Current citizen name should be null\", function() {",
+									"        pm.expect(currentCitizen.citizen_name).to.be.null;",
+									"    });",
+									"    pm.test(\"Current citizen comments should be null\", function() {",
+									"        pm.expect(currentCitizen.citizen_comments).to.be.null;",
+									"    });",
+									"    pm.test(\"Citizen should have no service requests\", function() {",
+									"        pm.expect(currentCitizen.service_reqs.length).to.be.eql(0);",
+									"    });",
+									"    ",
 									"    //  Store the ID of the citizen just created.",
 									"    postman.setEnvironmentVariable(\"current_client\", JSON.stringify(citizenIds.shift()));",
 									"}"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -2535,34 +2011,18 @@
 							"listen": "prerequest",
 							"script": {
 								"id": "b72e7756-5de1-4a13-9609-8917ea63dee7",
-								"type": "text/javascript",
 								"exec": [
 									"//  Ensure the client is logged in.",
-									"eval(environment.auth_script);",
-									"",
-									"// //  Get data, create JSON body.",
-									"// var citizenName = postman.getEnvironmentVariable(\"citizen_name\");",
-									"// var citizenComments = postman.getEnvironmentVariable(\"citizen_comment\");",
-									"// var bodyData = {",
-									"//     \"citizen_name\" : citizenName,",
-									"//     \"citizen_comments\" : citizenComments",
-									"// }",
-									"",
-									"// //  Store the data in an environment variable.",
-									"// postman.setEnvironmentVariable(\"putBody\", JSON.stringify(bodyData));"
-								]
+									"eval(environment.auth_script);"
+								],
+								"type": "text/javascript"
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
 								"id": "73110fdd-6476-403d-b6c9-c108032fbd66",
-								"type": "text/javascript",
 								"exec": [
-									"//  Install postmanBDD, json-bigint parse and stringify.",
-									"eval(globals.postmanBDD);",
-									"eval(globals.json_bigint_parse);",
-									"",
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
 									"",
@@ -2588,25 +2048,24 @@
 									"    var citizenComment = JSON.parse(postman.getEnvironmentVariable(\"citizen_comment\"));",
 									"",
 									"    //  Perform tests.",
-									"    describe(\"Check for correct citizen updates\", function() {",
-									"        it('Must be one active citizen in the office', function() {",
-									"            citizenIds.length.should.be.eql(1);",
-									"        });",
-									"        it('citizen_id must equal \"' + currentCitizenId + '\"', function() {",
-									"            (currentCitizen.citizen_id).should.be.eql(currentCitizenId);",
-									"        });",
-									"        it('citizen_name must equal \"' + citizenName + '\"', function() {",
-									"            (currentCitizen.citizen_name).should.be.eql(citizenName);",
-									"        });",
-									"        it('citizen_comment must equal \"' + citizenComment + '\"', function() {",
-									"            (currentCitizen.citizen_comments).should.be.eql(citizenComment);",
-									"        });",
-									"        it('service_reqs must empty (no service requests)', function() {",
-									"            (currentCitizen.service_reqs.length).should.be.eql(0);",
-									"        });",
+									"    pm.test(\"Must be one active citizen in the office\", function() {",
+									"        pm.expect(citizenIds.length).to.be.eql(1);",
+									"    });",
+									"    pm.test('Citizen Id must equal \"' + currentCitizenId + '\"', function() {",
+									"        pm.expect(currentCitizen.citizen_id).to.be.eql(currentCitizenId);",
+									"    });",
+									"    pm.test('Citizen name must equal \"' + citizenName + '\"', function() {",
+									"        pm.expect(currentCitizen.citizen_name).to.be.eql(citizenName);",
+									"    });",
+									"    pm.test('Citizen comment must equal \"' + citizenComment + '\"', function() {",
+									"        pm.expect(currentCitizen.citizen_comments).to.be.eql(citizenComment);",
+									"    });",
+									"    pm.test(\"Citizen should have no service requests\", function() {",
+									"        pm.expect(currentCitizen.service_reqs.length).to.be.eql(0);",
 									"    });",
 									"}"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -2647,27 +2106,23 @@
 							"listen": "prerequest",
 							"script": {
 								"id": "becda71c-71d6-4d2f-bad5-1a7a17da6128",
-								"type": "text/javascript",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
 								"id": "fa6f6a3b-e4e7-42b6-a8d3-ecda3840418a",
-								"type": "text/javascript",
 								"exec": [
-									"//  Install postmanBDD, json-bigint parse and stringify.",
-									"eval(globals.postmanBDD);",
-									"eval(globals.json_bigint_parse);",
-									"",
 									"//  Run complex tests.",
 									"eval(environment.create_response_test);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -2707,24 +2162,19 @@
 							"listen": "prerequest",
 							"script": {
 								"id": "becda71c-71d6-4d2f-bad5-1a7a17da6128",
-								"type": "text/javascript",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
 								"id": "66ca9683-be00-478b-92c0-6ac698d9088b",
-								"type": "text/javascript",
 								"exec": [
-									"//  Install postmanBDD, json-bigint parse and stringify.",
-									"eval(globals.postmanBDD);",
-									"eval(globals.json_bigint_parse);",
-									"",
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
 									"",
@@ -2753,43 +2203,42 @@
 									"    var currentCitizenId = JSON.parse(postman.getEnvironmentVariable(\"current_client\"));",
 									"",
 									"    //  Perform tests.",
-									"    describe(\"Check for correct service updates\", function() {",
-									"        it('Must be one active citizen in the office', function() {",
-									"            citizenIds.length.should.be.eql(1);",
-									"        });",
-									"        it('citizen_id must equal \"' + currentCitizenId + '\"', function() {",
-									"            (currentCitizen.citizen_id).should.be.eql(currentCitizenId);",
-									"        });",
-									"        it('citizen_name must equal \"' + citizenName + '\"', function() {",
-									"            (currentCitizen.citizen_name).should.be.eql(citizenName);",
-									"        });",
-									"        it('citizen_comment must equal \"' + citizenComment + '\"', function() {",
-									"            (currentCitizen.citizen_comments).should.be.eql(citizenComment);",
-									"        });",
-									"        it('service_reqs length must be 1 (single service request)', function() {",
-									"            (currentCitizen.service_reqs.length).should.be.eql(1);",
-									"        });",
-									"        it('service_reqs state must be \"Active\"', function() {",
-									"            (currentCitizen.service_reqs[0].sr_state.sr_code).should.be.eql(\"Active\");",
-									"        });",
-									"        it('service_reqs service must be ' + citizenService, function() {",
-									"            (currentCitizen.service_reqs[0].service_id).should.be.eql(citizenService);",
-									"        });",
-									"        it('service_reqs quantity must be ' + citizenQuantity, function() {",
-									"            (currentCitizen.service_reqs[0].quantity).should.be.eql(citizenQuantity);",
-									"        });",
-									"        it('service_reqs periods length must be 1 (single period)', function() {",
-									"            (currentCitizen.service_reqs[0].periods.length).should.be.eql(1);",
-									"        });",
-									"        it('service_reqs periods channel must be ' + citizenChannel, function() {",
-									"            (currentCitizen.service_reqs[0].channel_id).should.be.eql(citizenChannel);",
-									"        });",
-									"        it('service_reqs periods state must be \"Ticket Creation\"', function() {",
-									"            (currentCitizen.service_reqs[0].periods[0].ps.ps_name).should.be.eql(\"Ticket Creation\");",
-									"        });",
+									"    pm.test('Must be one active citizen in the office', function() {",
+									"        pm.expect(citizenIds.length).to.be.eql(1);",
+									"    });",
+									"    pm.test('Citizen id must equal \"' + currentCitizenId + '\"', function() {",
+									"        pm.expect(currentCitizen.citizen_id).to.be.eql(currentCitizenId);",
+									"    });",
+									"    pm.test('Citizen name must equal \"' + citizenName + '\"', function() {",
+									"        pm.expect(currentCitizen.citizen_name).to.be.eql(citizenName);",
+									"    });",
+									"    pm.test('Citizen comment must equal \"' + citizenComment + '\"', function() {",
+									"        pm.expect(currentCitizen.citizen_comments).to.be.eql(citizenComment);",
+									"    });",
+									"    pm.test('There must be only one service request', function() {",
+									"        pm.expect(currentCitizen.service_reqs.length).to.be.eql(1);",
+									"    });",
+									"    pm.test('Service request state must be \"Active\"', function() {",
+									"        pm.expect(currentCitizen.service_reqs[0].sr_state.sr_code).to.be.eql(\"Active\");",
+									"    });",
+									"    pm.test('Service request service must be ' + citizenService, function() {",
+									"        pm.expect(currentCitizen.service_reqs[0].service_id).to.be.eql(citizenService);",
+									"    });",
+									"    pm.test('Service request quantity must be ' + citizenQuantity, function() {",
+									"        pm.expect(currentCitizen.service_reqs[0].quantity).to.be.eql(citizenQuantity);",
+									"    });",
+									"    pm.test('Service request must have one period', function() {",
+									"        pm.expect(currentCitizen.service_reqs[0].periods.length).to.be.eql(1);",
+									"    });",
+									"    pm.test('Service request period channel must be ' + citizenChannel, function() {",
+									"        pm.expect(currentCitizen.service_reqs[0].channel_id).to.be.eql(citizenChannel);",
+									"    });",
+									"    pm.test('Service request period state must be \"Ticket Creation\"', function() {",
+									"        pm.expect(currentCitizen.service_reqs[0].periods[0].ps.ps_name).to.be.eql(\"Ticket Creation\");",
 									"    });",
 									"}"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -2826,24 +2275,19 @@
 							"listen": "prerequest",
 							"script": {
 								"id": "becda71c-71d6-4d2f-bad5-1a7a17da6128",
-								"type": "text/javascript",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
 								"id": "8a294876-edfa-4d5b-ada4-399f5339cd8f",
-								"type": "text/javascript",
 								"exec": [
-									"//  Install postmanBDD, json-bigint parse and stringify.",
-									"eval(globals.postmanBDD);",
-									"eval(globals.json_bigint_parse);",
-									"",
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
 									"",
@@ -2883,43 +2327,42 @@
 									"    });",
 									"",
 									"    //  Perform tests.",
-									"    describe(\"Check for correct service updates\", function() {",
-									"        it('Must be one active citizen in the office', function() {",
-									"            citizenIds.length.should.be.eql(1);",
-									"        });",
-									"        it('citizen_id must equal \"' + currentCitizenId + '\"', function() {",
-									"            (currentCitizen.citizen_id).should.be.eql(currentCitizenId);",
-									"        });",
-									"        it('citizen_name must equal \"' + citizenName + '\"', function() {",
-									"            (currentCitizen.citizen_name).should.be.eql(citizenName);",
-									"        });",
-									"        it('citizen_comment must equal \"' + citizenComment + '\"', function() {",
-									"            (currentCitizen.citizen_comments).should.be.eql(citizenComment);",
-									"        });",
-									"        it('service_reqs length must be 1 (single service request)', function() {",
-									"            (currentCitizen.service_reqs.length).should.be.eql(1);",
-									"        });",
-									"        it('service_reqs state must be \"Pending\"', function() {",
-									"            (currentCitizen.service_reqs[0].sr_state.sr_code).should.be.eql(\"Pending\");",
-									"        });",
-									"        it('service_reqs service must be ' + citizenService, function() {",
-									"            (currentCitizen.service_reqs[0].service_id).should.be.eql(citizenService);",
-									"        });",
-									"        it('service_reqs quantity must be ' + citizenQuantity, function() {",
-									"            (currentCitizen.service_reqs[0].quantity).should.be.eql(citizenQuantity);",
-									"        });",
-									"        it('service_reqs periods length must be 2 (now two periods)', function() {",
-									"            (allPeriods.length).should.be.eql(2);",
-									"        });",
-									"        it('must only be one open period', function() {",
-									"            openPeriodCount.should.be.eql(1);",
-									"        });",
-									"        it('open period state must be \"Waiting\"', function() {",
-									"            openPeriod.ps.ps_name.should.be.eql(\"Waiting\");",
-									"        });",
+									"    pm.test('Must be one active citizen in the office', function() {",
+									"        pm.expect(citizenIds.length).to.be.eql(1);",
+									"    });",
+									"    pm.test('Citizen Id must equal \"' + currentCitizenId + '\"', function() {",
+									"        pm.expect(currentCitizen.citizen_id).to.be.eql(currentCitizenId);",
+									"    });",
+									"    pm.test('Citizen name must equal \"' + citizenName + '\"', function() {",
+									"        pm.expect(currentCitizen.citizen_name).to.be.eql(citizenName);",
+									"    });",
+									"    pm.test('Citizen comment must equal \"' + citizenComment + '\"', function() {",
+									"        pm.expect(currentCitizen.citizen_comments).to.be.eql(citizenComment);",
+									"    });",
+									"    pm.test('There must be only one service request', function() {",
+									"        pm.expect(currentCitizen.service_reqs.length).to.be.eql(1);",
+									"    });",
+									"    pm.test('Service request state must be \"Pending\"', function() {",
+									"        pm.expect(currentCitizen.service_reqs[0].sr_state.sr_code).to.be.eql(\"Pending\");",
+									"    });",
+									"    pm.test('Service reqeust service must be ' + citizenService, function() {",
+									"        pm.expect(currentCitizen.service_reqs[0].service_id).to.be.eql(citizenService);",
+									"    });",
+									"    pm.test('Service request quantity must be ' + citizenQuantity, function() {",
+									"        pm.expect(currentCitizen.service_reqs[0].quantity).to.be.eql(citizenQuantity);",
+									"    });",
+									"    pm.test('Service request periods length must be 2 (now two periods)', function() {",
+									"        pm.expect(allPeriods.length).to.be.eql(2);",
+									"    });",
+									"    pm.test('There must only be one open period', function() {",
+									"        pm.expect(openPeriodCount).to.be.eql(1);",
+									"    });",
+									"    pm.test('The open period state must be \"Waiting\"', function() {",
+									"        pm.expect(openPeriod.ps.ps_name).to.be.eql(\"Waiting\");",
 									"    });",
 									"}"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
