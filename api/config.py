@@ -198,8 +198,9 @@ def configure_logging(app):
             module_logger = logging.getLogger(name)
             log_level = debug_string_to_debug_level(log_string)
             module_logger.setLevel(log_level)
-        if (basic_string != "DEFAULT"):
-            print("        --> Logger " + name + " set to level LOG_BASIC level of " + basic_string)
+        elif (basic_string != "DEFAULT"):
+            if print_flag:
+                print("        --> Logger " + name + " set to level LOG_BASIC level of " + basic_string)
             module_logger = logging.getLogger(name)
             module_logger.setLevel(basic_level)
 
