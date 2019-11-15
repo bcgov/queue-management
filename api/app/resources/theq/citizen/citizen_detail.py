@@ -30,7 +30,7 @@ class CitizenDetail(Resource):
     def get(self, id):
         try:
             csr = CSR.find_by_username(g.oidc_token_info['username'])
-            citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
+            citizen = Citizen.query.filter_by(citizen_id=id).first()
             my_print("==> GET /citizens/" + str(citizen.citizen_id) + '/, Ticket: ' + citizen.ticket_number)
             result = self.citizen_schema.dump(citizen)
             return {'citizen': result.data,
