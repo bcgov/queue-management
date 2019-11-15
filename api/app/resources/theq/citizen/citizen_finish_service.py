@@ -32,7 +32,7 @@ class CitizenFinishService(Resource):
     @api_call_with_retry
     def post(self, id):
         csr = CSR.find_by_username(g.oidc_token_info['username'])
-        citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
+        citizen = Citizen.query.filter_by(citizen_id=id).first()
         my_print("==> POST /citizens/" + str(citizen.citizen_id) + '/finish_service/, Ticket: ' + citizen.ticket_number)
         active_service_request = citizen.get_active_service_request()
         inaccurate = request.args.get('inaccurate')
