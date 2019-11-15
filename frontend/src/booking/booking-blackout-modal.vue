@@ -904,10 +904,6 @@
           },
           set(e) {
             this.toggleBookingBlackoutModal(e)
-            let all_rooms_local = []
-            this.roomResources.forEach(function(room){
-              all_rooms_local.push(room.title)
-            })
           }
         },
       }
