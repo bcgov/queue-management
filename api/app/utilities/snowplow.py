@@ -57,9 +57,8 @@ class SnowPlow():
         if SnowPlow.call_snowplow_flag:
 
             # Set up the contexts for the call.
-            citizen_obj = Citizen.query.get(service_request.citizen_id)
             current_sr_number = service_request.sr_number
-            citizen = SnowPlow.get_citizen(citizen_obj, False, svc_number = current_sr_number)
+            citizen = SnowPlow.get_citizen(service_request.citizen, False, svc_number = current_sr_number)
             office = SnowPlow.get_office(csr.office_id)
             agent = SnowPlow.get_csr(csr)
 
