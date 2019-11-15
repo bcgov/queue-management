@@ -51,7 +51,7 @@ class CitizenDetail(Resource):
             return {'message': 'No input data received for updating citizen'}, 400
 
         csr = CSR.find_by_username(g.oidc_token_info['username'])
-        citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
+        citizen = Citizen.query.filter_by(citizen_id=id).first()
         my_print("==> PUT /citizens/" + str(citizen.citizen_id) + '/, Ticket: ' + str(citizen.ticket_number))
 
         try:
