@@ -96,7 +96,6 @@ class ServiceRequestsList(Resource):
 
         active_sr_state = SRState.get_state_by_name("Active")
         complete_sr_state = SRState.get_state_by_name("Complete")
-        citizen_state = CitizenState.query.filter_by(cs_state_name="Active").first()
 
         citizen = None
         try:
@@ -161,7 +160,7 @@ class ServiceRequestsList(Resource):
             )
             service_request.periods.append(ticket_create_period)
 
-        citizen.cs_id = citizen_state.cs_id
+        citizen.cs_id = active_id
 
         #  If first service, just choose it.  If additional service, more work needed.
         if len(citizen.service_reqs) == 0:
@@ -191,3 +190,6 @@ class ServiceRequestsList(Resource):
 
         return {'service_request': result.data,
                 'errors': result.errors}, 201
+
+citizen_state = CitizenState.query.filter_by(cs_state_name="Active").first()
+active_id = citizen_state.cs_id
