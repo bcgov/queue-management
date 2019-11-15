@@ -248,7 +248,6 @@ export default {
     },
 
     sendToQueue({dispatch, commit, rootState}, payload) {
-      let state = rootState
       let citizen_id = payload.citizen_id
       commit('setAppointmentsStateInfo', payload, { root: true })
       dispatch('putCitizen', {citizen_id, payload}).then( () => {
