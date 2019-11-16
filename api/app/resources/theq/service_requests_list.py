@@ -20,9 +20,7 @@ from app.models.theq import Citizen, CitizenState, CSR, Period, PeriodState, Ser
 from app.schemas.theq import CitizenSchema, ServiceReqSchema
 from marshmallow import ValidationError
 from app.utilities.snowplow import SnowPlow
-from pprint import pprint
 import json
-
 
 def get_service_request(self, json_data, csr):
 
