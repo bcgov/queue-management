@@ -129,9 +129,8 @@ class SnowPlow():
         #  Set up office variables.
         curr_office = Office.query.get(id)
         office_num = curr_office.office_number
-        my_board = SmartBoard.query.get(curr_office.sb_id)
         office_type = "non-reception"
-        if (my_board.sb_type == "callbyname") or (my_board.sb_type == "callbyticket"):
+        if (curr_office.sb.sb_type == "callbyname") or (curr_office.sb.sb_type == "callbyticket"):
             office_type = "reception"
 
         #  Set up the office context.
