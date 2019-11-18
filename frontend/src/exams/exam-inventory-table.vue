@@ -572,7 +572,7 @@
         return false
       },
       checkInvigilator(item) {
-        let length_of_invigilator_array = 0
+        let length_of_invigilator_array = null
         let number_of_invigilators = Math.ceil(item.number_of_students / 24)
         if (!item.booking) {
           length_of_invigilator_array = 0
@@ -1102,7 +1102,7 @@
       statusIcon(item) {
         let number_of_students = item.number_of_students
         let number_of_invigilators = Math.ceil(number_of_students / 24)
-        let length_of_invigilator_array = 0
+        let length_of_invigilator_array = null
         if(!item.booking){
           length_of_invigilator_array = 0
         }else{
@@ -1169,7 +1169,7 @@
       },
       stillRequires(item) {
         let output = []
-        let length_of_invigilator_array = 0
+        let length_of_invigilator_array = null
         if(!item.booking){
           length_of_invigilator_array = 0
         }else{
