@@ -81,17 +81,43 @@ class CsrSelf(Resource):
                 .filter_by(csr_id=csr.csr_id) \
                 .filter(Period.time_end.is_(None))
 
+            print("==> Exam attention required")
+
+            #   New business requirement, individual exam needs attention.
             individual_attention = Exam.query \
-                .filter_by(office_id=csr.office_id) \
-                .filter(Exam.exam_returned_date.is_(None), \
-                        Exam.deleted_date.is_(None), \
-                        Exam.expiry_date <= today) \
+                .filter(Exam.office_id == csr.office_id, \
+                        Exam.exam_returned_date.is_(None), \
+                        Exam.deleted_date.is_(None)) \
                 .join(ExamType, Exam.exam_type_id == ExamType.exam_type_id) \
                 .filter(ExamType.group_exam_ind == 0) \
                 .join(Booking, Exam.booking_id == Booking.booking_id) \
-                .filter(Booking.start_time < start_date).count()
+                .filter(or_(Booking.end_time < start_date, Exam.expiry_date <= today)).count()
 
-            print("==> In GET /csrs/me/ -> Individual Attention Count: " + str(individual_attention))
+            print("    --> Individual attention required count: " + str(individual_attention))
+
+            # New business requirement, monthly session exam needs attention.
+            session_attention = Exam.query \
+                .filter_by(office_id = csr.office_id) \
+                .join(ExamType, Exam.exam_type_id == ExamType.exam_type_id) \
+                .filter(ExamType.exam_type_name == 'Monthly Session Exam') \
+                .join(Booking, Exam.booking_id == Booking.booking_id) \
+                .outerjoin(Booking.booking_invigilators) \
+                .count()
+                # .filter(Booking.booking_invigilators.c.invigilator_id.is_(None)) \
+                # .first()
+                # .outerjoin(Booking.booking_invigilators, Booking.booking_id == Booking.booking_invigilators.c.invigilator_id) \
+                # .filter(Booking.end_time < start_date) \
+                # .join(Booking.booking_invigilators, Booking.booking_id == Booking.booking_invigilators.c.invigilator_id) \
+                # .filter(Booking.booking_invigilators.c.invigilator_id.isnot(None)) \
+                # .count()
+
+            print("    --> Session attention required count: " + str(session_attention))
+            # print("==> Session attention")
+            # print(session_attention)
+            # for attr in dir(session_attention.booking.booking_invigilators):
+            #     print("    --> session_attention.booking.booking_invigilators." + attr + " = " + str(getattr(session_attention.booking.booking_invigilators, attr)))
+
+            # print("    --> Monthly Session attention required count: " + str(session_attention))
 
             individual_exams = Exam.query \
                 .filter_by(office_id=csr.office_id) \
