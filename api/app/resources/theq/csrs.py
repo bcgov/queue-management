@@ -22,6 +22,7 @@ from app.models.theq import Citizen, CSR, Period, ServiceReq, SRState
 from app.schemas.bookings import ExamSchema, ExamTypeSchema
 from app.schemas.theq import CitizenSchema, CSRSchema
 import pytz
+from pprint import pprint
 
 @api.route("/csrs/", methods=["GET"])
 class CsrList(Resource):
@@ -87,7 +88,11 @@ class CsrSelf(Resource):
                         Exam.deleted_date.is_(None)) \
                 .join(ExamType, Exam.exam_type_id == ExamType.exam_type_id) \
                 .outerjoin(Booking, Exam.booking_id == Booking.booking_id) \
-                .outerjoin(Booking.booking_invigilators, Booking.booking_id == Booking.booking_invigilators.c.invigilator_id)
+                .outerjoin(Booking.booking_invigilators, Booking.booking_id == Booking.booking_invigilators.c.invigilator_id) \
+                .all()
+
+            print("==> All current office exams: " + str(len(office_exams)))
+            pprint(self.exam_schema.dump(office_exams).data)
 
             #   Default condition ... attention is not needed for any exam.
             attention_needed = False
@@ -102,6 +107,10 @@ class CsrSelf(Resource):
                             attention_needed = True
                     if attention_needed:
                         individual.append(exam)
+
+            print("==> Individual attention: " + str(len(individual)))
+            pprint(self.exam_schema.dump(individual).data)
+
 
             #   Check for attention needed, monthly session exam, only if attention not already needed.
 
@@ -120,6 +129,10 @@ class CsrSelf(Resource):
                         if attention_needed:
                             monthly.append(exam)
 
+            print("==> Monthly Session attention: " + str(len(monthly)))
+            pprint(self.exam_schema.dump(monthly).data)
+
+
             # if not attention_needed:
             #   TAKE OUT!!!!!
             attention_needed = False
@@ -134,6 +147,17 @@ class CsrSelf(Resource):
                             attention_needed = attention_needed or exam.booking.end_time < start_date
                         if attention_needed:
                             group.append(exam)
+
+            print("==> Group attention: " + str(len(group)))
+            pprint(self.exam_schema.dump(group).data)
+
+            print("==> Exam summary:")
+            print("    --> All current office exams:  " + str(len(office_exams)))
+            for exam in office_exams:
+                print("        --> ID: " + str(exam.exam_id) + "; Event: " + str(exam.event_id) + "; Name: " + exam.exam_type.exam_type_name)
+            print("    --> Individual attention:      " + str(len(individual)))
+            print("    --> Monthly Session attention: " + str(len(monthly)))
+            print("    --> Group attention:           " + str(len(group)))
 
             result = self.csr_schema.dump(csr)
             active_citizens = self.citizen_schema.dump(active_citizens)
