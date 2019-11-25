@@ -40,7 +40,7 @@ class SnowPlow():
 
             # Set up contexts for the call.
             citizen_obj = Citizen.query.get(new_citizen.citizen_id)
-            citizen = SnowPlow.get_citizen(citizen_obj, True)
+            citizen = SnowPlow.get_citizen(citizen_obj, csr.counter.counter_name)
             office = SnowPlow.get_office(new_citizen.office_id)
             agent = SnowPlow.get_csr(csr)
 
@@ -59,7 +59,7 @@ class SnowPlow():
             # Set up the contexts for the call.
             citizen_obj = Citizen.query.get(service_request.citizen_id)
             current_sr_number = service_request.sr_number
-            citizen = SnowPlow.get_citizen(citizen_obj, False, svc_number = current_sr_number)
+            citizen = SnowPlow.get_citizen(citizen_obj, csr.counter.counter_name, svc_number = current_sr_number)
             office = SnowPlow.get_office(csr.office_id)
             agent = SnowPlow.get_csr(csr)
 
@@ -76,7 +76,7 @@ class SnowPlow():
 
             #  Set up the contexts for the call.
             citizen_obj = Citizen.query.get(citizen_id)
-            citizen = SnowPlow.get_citizen(citizen_obj, False, svc_number = current_sr_number)
+            citizen = SnowPlow.get_citizen(citizen_obj, csr.counter.counter_name, svc_number = current_sr_number)
             office = SnowPlow.get_office(csr.office_id)
             agent = SnowPlow.get_csr(csr)
 
@@ -109,18 +109,16 @@ class SnowPlow():
             print(event_dict)
 
     @staticmethod
-    def get_citizen(citizen_obj, add_flag, close_previous = False, svc_number = 1):
+    def get_citizen(citizen_obj, counter_name, svc_number = 1):
 
-        #  Set up citizen variables.
-        if add_flag:
-            citizen_qtxn = False
-        else:
-            citizen_qtxn = (citizen_obj.qt_xn_citizen_ind == 1)
+        citizen_type = counter_name
+        if citizen_obj.counter is not None:
+            citizen_type = citizen_obj.counter.counter_name
 
         # Set up the citizen context.
         citizen = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/citizen/jsonschema/3-0-0',
                                       {"client_id": citizen_obj.citizen_id, "service_count": svc_number,
-                                       "quick_txn": citizen_qtxn})
+                                       "counter_type": citizen_type})
 
         return citizen
 
