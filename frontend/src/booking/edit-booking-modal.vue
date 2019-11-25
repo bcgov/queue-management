@@ -290,7 +290,7 @@
                        @click="confirm = true">Delete Booking</b-btn>
               </b-form-group>
             </b-col>
-            <b-col>
+            <b-col v-if="!this.edit_recurring">
               <b-form-group>
                 <label>Change Date, Time or Room?</label><br>
                 <b-btn class="w-100 mb-0"
@@ -299,6 +299,7 @@
                 </b-btn>
               </b-form-group>
             </b-col>
+            <b-col v-else></b-col>
           </b-form-row>
           <b-collapse id="delete_recurring_collapse"
                       visible>

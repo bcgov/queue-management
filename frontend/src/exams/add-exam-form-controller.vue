@@ -107,6 +107,7 @@
       SelectOffice
     },
     mounted() {
+      this.event_form_validation = false
       this.getExamTypes()
       this.getOffices()
       this.$root.$on('validateform', () => {
@@ -125,6 +126,7 @@
     computed: {
       ...mapGetters({
         steps: 'add_modal_steps',
+        event_id_warning: 'event_id_warning',
         exam_object: 'exam_object',
         role_code: 'role_code',
         is_pesticide_designate: 'is_pesticide_designate',
@@ -133,6 +135,7 @@
       ...mapState({
         exam: state => state.capturedExam,
         event_ids: state => state.event_ids,
+        event_id_warning: state => state.event_id_warning,
         addExamModal: state => state.addExamModal,
         addGroupSteps: state => state.addExamModule.addGroupSteps,
         addChallengerSteps: state => state.addExamModule.addChallengerSteps,
@@ -206,6 +209,14 @@
             }
           })*/
           if (key === 'event_id' && answer && answer.length >= 4) {
+            if(this.event_id_warning){
+              valid['event_id'] = true
+              messages['event_id'] = "Event ID already in Use"
+              // Should handle next button bug
+              this.tab.stepsValidated = [1, 2]
+              this.setError()
+              return
+            }
             if(document.activeElement.id === 'event_id') {
               this.getExamEventIDs(answer)
             }
@@ -305,8 +316,6 @@
             valid: valid[key],
           })
         })
-        console.log('OUTPUT', output)
-        console.log('TABS', this.tab.stepsValidated)
         return output
       },
     },
@@ -321,6 +330,7 @@
       ...mapMutations([
         'captureExamDetail',
         'updateCaptureTab',
+        'setEventWarning'
       ]),
       ...mapActions([
         'getExamTypes',

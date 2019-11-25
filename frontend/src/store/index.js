@@ -98,6 +98,7 @@ export const store = new Vuex.Store({
     examEditSuccessMessage: '',
     exams: [],
     event_ids: null,
+    event_id_warning: false,
     examsTrackingIP: false,
     examSuccessDismiss : 0,
     examTypes: [],
@@ -2549,10 +2550,14 @@ export const store = new Vuex.Store({
       state.exams = payload
     },
 
+    setEventWarning(state, payload) {
+      state.event_id_warning = payload
+    },
+
     setExamEventIDs(state, payload) {
       state.event_ids = payload
     },
-  
+
     setExamTypes(state, payload) {
       state.examTypes = []
       state.examTypes = payload
