@@ -90,9 +90,6 @@ class CsrSelf(Resource):
                 .outerjoin(Booking.booking_invigilators, Booking.booking_id == Booking.booking_invigilators.c.invigilator_id) \
                 .all()
 
-            print("==> All current office exams: " + str(len(office_exams)))
-            pprint(self.exam_schema.dump(office_exams).data)
-
             #   Default condition ... attention is not needed for any exam.
             attention_needed = False
 
