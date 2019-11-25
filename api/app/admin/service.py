@@ -40,7 +40,9 @@ class ServiceConfig(Base):
     ]
     column_labels = {
         'service_desc': 'Description',
-        'deleted': 'Deleted'
+        'deleted': 'Deleted',
+        'display_dashboard_ind': 'Display Add Citizen/Back Office',
+        'actual_service_ind': 'Category or Service'
     }
     column_searchable_list = ('service_code','service_name',)
     column_sortable_list = [
@@ -68,6 +70,14 @@ class ServiceConfig(Base):
         'prefix',
         'deleted',
     )
-
+    form_choices = {
+        'actual_service_ind': [
+            ("0", 'This is a category'), ("1", 'This is a service')
+        ],
+        'display_dashboard_ind': [
+            ("0", 'No, do not display in the Add Citizen service list'),\
+            ("1", 'Yes, display in the Add Citizen service list')
+        ]
+    }
 
 ServiceModelView = ServiceConfig(Service, db.session)
