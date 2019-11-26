@@ -103,6 +103,23 @@ class SnowPlow():
             SnowPlow.make_tracking_call(snowplow_event, citizen, office, agent)
 
     @staticmethod
+    def snowplow_appointment(citizen_obj, csr, appointment, schema):
+
+        #  Make sure you want to track calls.
+        if SnowPlow.call_snowplow_flag:
+
+            #  Set up the contexts for the call.
+            citizen = SnowPlow.get_citizen(citizen_obj, csr.counter.counter_name)
+            office = SnowPlow.get_office(csr.office_id)
+            agent = SnowPlow.get_csr(csr)
+
+            #  Initialize appointment schema version.
+            snowplow_event = SnowPlow.get_appointment(appointment)
+
+            #  Make the call.
+            SnowPlow.make_tracking_call(snowplow_event, citizen, office, agent)
+
+    @staticmethod
     def failure(count, failed):
         print("###################  " + str(count) + " events sent successfuly.  Events below failed:")
         for event_dict in failed:
@@ -191,7 +208,9 @@ class SnowPlow():
 
         # for chooseservices, we build a JSON array and pass it
         chooseservice = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/chooseservice/jsonschema/3-0-0',
-                                           {"channel": snowplow_channel, "program_id": svc_code, "parent_id": pgm_code,
+                                           {"channel": snowplow_channel,
+                                            "program_id": svc_code,
+                                            "parent_id": pgm_code,
                                             "program_name": pgm_name,
                                             "transaction_name": svc_name})
 
@@ -209,6 +228,29 @@ class SnowPlow():
                                                {"quantity": svc_quantity})
 
         return finishservice
+
+    @staticmethod
+    def get_appointment(appointment):
+
+        print("==> In appointment module")
+        print("    --> ID:        " + str(appointment.appointment_id))
+        print("    --> Start:     " + str(appointment.start_time))
+        print("    --> End:       " + str(appointment.end_time))
+        print("    --> Pgm ID:    " + str(appointment.service.service_code))
+        print("    --> Parent ID: " + str(appointment.service.parent.service_code))
+        print("    --> Pgm Name:  " + str(appointment.service.parent.service_code))
+        print("    --> Txn Name:  " + str(appointment.service.service_name))
+
+        appointment = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/appointment_create/jsonschema/1-0-0',
+                                         {"appointment_id": appointment.appointment_id,
+                                          "appointment_start_timestamp": str(appointment.start_time),
+                                          "appointment_end_timestamp": str(appointment.end_time),
+                                          "program_id": appointment.service.service_code,
+                                          "parent_id": appointment.service.parent.service_code,
+                                          "program_name": appointment.service.parent.service_name,
+                                          "transaction_name": appointment.service.service_name})
+
+        return appointment
 
     @staticmethod
     def make_tracking_call(schema, citizen, office, agent):
