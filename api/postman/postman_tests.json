@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "426762d0-830f-492b-ad61-537d08019856",
+		"_postman_id": "b0e5bba9-0cec-498e-9686-38c749e8d1f8",
 		"name": "Queue Management API Tests",
 		"description": "Test the back end APIs",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -469,7 +469,8 @@
 					"response": []
 				}
 			],
-			"description": "This folder performs basic authentication features."
+			"description": "This folder performs basic authentication features.",
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "Check app health",
@@ -703,7 +704,8 @@
 					"response": []
 				}
 			],
-			"description": "Checks the application health by calling the healthz and readyz endpoints"
+			"description": "Checks the application health by calling the healthz and readyz endpoints",
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "Check user login",
@@ -870,7 +872,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "Check channels",
@@ -975,7 +978,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "Check counters",
@@ -1052,9 +1056,8 @@
 									"        \"role_id\": {\"type\": \"number\"},",
 									"        \"username\": {\"type\": \"string\"}",
 									"    },",
-									"    \"individual_exams\": {\"type\": \"number\"},",
-									"    \"group_exams\": {\"type\": \"number\"},",
-									"    \"required\": [\"csr\", \"individual_exams\", \"group_exams\"]",
+									"    \"attention_needed\": {\"type\": \"boolean\"},",
+									"    \"required\": [\"csr\", \"attention_needed\"]",
 									"};",
 									"",
 									"//  Run basic response tests.",
@@ -1172,7 +1175,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "Check categories",
@@ -1288,7 +1292,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "Check services",
@@ -1443,7 +1448,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "Clear queue for tests",
@@ -1918,7 +1924,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "Check citizen through queue",
@@ -2930,7 +2937,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "Check citizen begin-hold-finish",
@@ -4062,7 +4070,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "Check citizen leave after create",
@@ -4358,7 +4367,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "Check citizen leave after waiting",
@@ -5098,7 +5108,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "Check update service information",
@@ -6004,7 +6015,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "Check pick qtxn customer",
@@ -8012,7 +8024,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "Check pick non-qtxn customer",
@@ -10020,7 +10033,9 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		}
-	]
+	],
+	"protocolProfileBehavior": {}
 }
