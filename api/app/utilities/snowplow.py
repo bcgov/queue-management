@@ -142,20 +142,11 @@ class SnowPlow():
     @staticmethod
     def get_csr(csr):
 
-        #  If csr is a receptionist, that is their role.
-        if csr.receptionist_ind == 1:
-            role_name = "Reception"
-
-        #  If not a receptionist, get role from their role id
-        else:
-            role_obj = Role.query.get(csr.role_id)
-            role_name = role_obj.role_code
-
         csr_qtxn = (csr.qt_xn_csr_ind == 1)
 
         #  Set up the CSR context.
         agent = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/agent/jsonschema/2-0-1',
-                                   {"agent_id": csr.csr_id, "role": role_name, "quick_txn": csr_qtxn})
+                                   {"agent_id": csr.csr_id, "role": csr.role.role_code, "quick_txn": csr_qtxn})
 
         return agent
 
