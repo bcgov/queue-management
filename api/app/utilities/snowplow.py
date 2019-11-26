@@ -116,7 +116,7 @@ class SnowPlow():
             citizen_type = citizen_obj.counter.counter_name
 
         # Set up the citizen context.
-        citizen = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/citizen/jsonschema/3-0-0',
+        citizen = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/citizen/jsonschema/4-0-0',
                                       {"client_id": citizen_obj.citizen_id, "service_count": svc_number,
                                        "counter_type": citizen_type})
 
@@ -154,8 +154,9 @@ class SnowPlow():
         csr_qtxn = (csr.qt_xn_csr_ind == 1)
 
         #  Set up the CSR context.
-        agent = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/agent/jsonschema/2-0-1',
-                                   {"agent_id": csr.csr_id, "role": role_name, "quick_txn": csr_qtxn})
+        agent = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/agent/jsonschema/3-0-0',
+                                   {"agent_id": csr.csr_id, "role": csr.role.role_code,
+                                    "counter_type": csr.counter.counter_name})
 
         return agent
 
