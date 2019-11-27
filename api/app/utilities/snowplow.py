@@ -24,6 +24,7 @@ from snowplow_tracker import SelfDescribingJson
 import logging
 import os
 from qsystem import application, my_print
+from datetime import datetime, timezone
 
 class SnowPlow():
 
@@ -171,14 +172,20 @@ class SnowPlow():
 
         #  If not a receptionist, get role from their role id
         else:
-            role_obj = Role.query.get(csr.role_id)
-            role_name = role_obj.role_code
+            role_name = csr.role.role_code
 
-        csr_qtxn = (csr.qt_xn_csr_ind == 1)
+            #  Translate the role code from upper to mixed case.
+            if (role_name == 'SUPPORT'):
+                role_name = "Support"
+            elif (role_name == 'ANALYTICS'):
+                role_name = "Analytics"
+            elif (role_name == 'HELPDESK'):
+                role_name = "Helpdesk"
 
         #  Set up the CSR context.
         agent = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/agent/jsonschema/3-0-0',
-                                   {"agent_id": csr.csr_id, "role": csr.role.role_code,
+                                   {"agent_id": csr.csr_id,
+                                    "role": role_name,
                                     "counter_type": csr.counter.counter_name})
 
         return agent
@@ -238,14 +245,49 @@ class SnowPlow():
     @staticmethod
     def get_appointment(appointment, schema):
 
-        appointment = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/' + schema +'/jsonschema/1-0-0',
-                                         {"appointment_id": appointment.appointment_id,
-                                          "appointment_start_timestamp": str(appointment.start_time),
-                                          "appointment_end_timestamp": str(appointment.end_time),
-                                          "program_id": appointment.service.service_code,
-                                          "parent_id": appointment.service.parent.service_code,
-                                          "program_name": appointment.service.parent.service_name,
-                                          "transaction_name": appointment.service.service_name})
+        #   Take action depending on the schema.
+        if schema == "appointment_checkin":
+
+            appointment = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/' + schema + '/jsonschema/1-0-0',
+                                             {"appointment_id": appointment.appointment_id})
+
+        else:
+
+            #   Convert dates to utc format strings.
+            utcstart = appointment.start_time.astimezone(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+            utcend = appointment.end_time.astimezone(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+
+            if schema == "appointment_create":
+
+                appointment = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/' + schema +'/jsonschema/1-0-0',
+                                                 {"appointment_id": appointment.appointment_id,
+                                                  "appointment_start_timestamp": utcstart,
+                                                  "appointment_end_timestamp": utcend,
+                                                  "program_id": appointment.service.service_code,
+                                                  "parent_id": appointment.service.parent.service_code,
+                                                  "program_name": appointment.service.parent.service_name,
+                                                  "transaction_name": appointment.service.service_name})
+            if schema == "appointment_update":
+                appointment = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/' + schema +'/jsonschema/1-0-0',
+                                                 {"appointment_id": appointment.appointment_id,
+                                                  "appointment_start_timestamp": utcstart,
+                                                  "appointment_end_timestamp": utcend,
+                                                  "status": "update",
+                                                  "program_id": appointment.service.service_code,
+                                                  "parent_id": appointment.service.parent.service_code,
+                                                  "program_name": appointment.service.parent.service_name,
+                                                  "transaction_name": appointment.service.service_name})
+
+            if schema == "appointment_delete":
+                appointment = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/appointment_update/jsonschema/1-0-0',
+                                                 {"appointment_id": appointment.appointment_id,
+                                                  "appointment_start_timestamp": utcstart,
+                                                  "appointment_end_timestamp": utcend,
+                                                  "status": "cancel",
+                                                  "program_id": appointment.service.service_code,
+                                                  "parent_id": appointment.service.parent.service_code,
+                                                  "program_name": appointment.service.parent.service_name,
+                                                  "transaction_name": appointment.service.service_name})
 
         return appointment
 
@@ -255,7 +297,6 @@ class SnowPlow():
             module_logger.critical("------------------------------")
         else:
             sp_string = jsondata.to_string()
-            sp_schema = sp_string[0:sp_string.find(":")]
             sp_array = sp_string.split("/")
             sp_output = '{"schema": "' + sp_array[1] + '/' + sp_array[3]
             module_logger.critical(sp_output)
