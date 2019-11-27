@@ -41,8 +41,8 @@ class ServiceRequestsDetail(Resource):
         csr = CSR.find_by_username(g.oidc_token_info['username'])
 
         service_request = ServiceReq.query.filter_by(sr_id=id) \
-                .join(ServiceReq.citizen, aliased=True) \
-                .filter_by(office_id=csr.office_id).first_or_404()
+                .join(ServiceReq.citizen, aliased=True).first_or_404()
+
         try:
             service_request = self.service_request_schema.load(json_data, instance=service_request, partial=True).data
 
