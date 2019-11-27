@@ -110,13 +110,17 @@ class SnowPlow():
         #  Make sure you want to track calls.
         if SnowPlow.call_snowplow_flag:
 
+            #  If no citizen object, get citizen information.
+            if citizen_obj is None:
+                citizen_obj = Citizen.query.get(appointment.citizen_id)
+
             #  Set up the contexts for the call.
             citizen = SnowPlow.get_citizen(citizen_obj, csr.counter.counter_name)
             office = SnowPlow.get_office(csr.office_id)
             agent = SnowPlow.get_csr(csr)
 
             #  Initialize appointment schema version.
-            snowplow_event = SnowPlow.get_appointment(appointment)
+            snowplow_event = SnowPlow.get_appointment(appointment, schema)
 
             #  Make the call.
             SnowPlow.make_tracking_call(snowplow_event, citizen, office, agent)
@@ -232,18 +236,9 @@ class SnowPlow():
         return finishservice
 
     @staticmethod
-    def get_appointment(appointment):
+    def get_appointment(appointment, schema):
 
-        print("==> In appointment module")
-        print("    --> ID:        " + str(appointment.appointment_id))
-        print("    --> Start:     " + str(appointment.start_time))
-        print("    --> End:       " + str(appointment.end_time))
-        print("    --> Pgm ID:    " + str(appointment.service.service_code))
-        print("    --> Parent ID: " + str(appointment.service.parent.service_code))
-        print("    --> Pgm Name:  " + str(appointment.service.parent.service_code))
-        print("    --> Txn Name:  " + str(appointment.service.service_name))
-
-        appointment = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/appointment_create/jsonschema/1-0-0',
+        appointment = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/' + schema +'/jsonschema/1-0-0',
                                          {"appointment_id": appointment.appointment_id,
                                           "appointment_start_timestamp": str(appointment.start_time),
                                           "appointment_end_timestamp": str(appointment.end_time),
@@ -256,15 +251,18 @@ class SnowPlow():
 
     @staticmethod
     def log_snowplow_call(jsondata):
-        sp_string=jsondata.to_string()
-        print(sp_string)
-        sp_schema = sp_string[0:sp_string.find(":")]
-        sp_array = sp_string.split("/")
-        sp_output = '{"schema": "' + sp_array[1] + '/' + sp_array[3]
-        module_logger.critical(sp_output)
+        if isinstance(jsondata, str):
+            module_logger.critical("------------------------------")
+        else:
+            sp_string = jsondata.to_string()
+            sp_schema = sp_string[0:sp_string.find(":")]
+            sp_array = sp_string.split("/")
+            sp_output = '{"schema": "' + sp_array[1] + '/' + sp_array[3]
+            module_logger.critical(sp_output)
 
     @staticmethod
     def make_tracking_call(schema, citizen, office, agent):
+        SnowPlow.log_snowplow_call("")
         SnowPlow.log_snowplow_call(schema)
         SnowPlow.log_snowplow_call(citizen)
         SnowPlow.log_snowplow_call(office)
