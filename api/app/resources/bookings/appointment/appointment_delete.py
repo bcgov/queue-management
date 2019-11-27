@@ -18,7 +18,7 @@ from app.models.bookings import Appointment
 from app.schemas.bookings import AppointmentSchema
 from app.models.theq import CSR
 from qsystem import api, db, oidc
-
+from app.utilities.snowplow import SnowPlow
 
 @api.route("/appointments/<int:id>/", methods=["DELETE"])
 class AppointmentDelete(Resource):
@@ -34,6 +34,9 @@ class AppointmentDelete(Resource):
                                        .filter_by(office_id=csr.office_id)\
                                        .first_or_404()
 
+        SnowPlow.snowplow_appointment(None, csr, appointment, 'appointment_delete')
+
         db.session.delete(appointment)
         db.session.commit()
+
         return {}, 204
