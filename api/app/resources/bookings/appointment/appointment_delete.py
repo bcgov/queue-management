@@ -28,8 +28,6 @@ class AppointmentDelete(Resource):
     @oidc.accept_token(require_token=True)
     def delete(self, id):
 
-        print("==> In the Python DELETE /appointments/<id>/ endpoint")
-
         csr = CSR.find_by_username(g.oidc_token_info['username'])
 
         appointment = Appointment.query.filter_by(appointment_id=id)\
