@@ -14,7 +14,7 @@
     <b-form autocomplete="off">
       <b-form-row>
         <b-col>
-          <b-form-group v-if="checkBlackoutFlag"
+          <b-form-group v-if="isNotBlackoutFlag"
                         class="mb-0 mt-2">
             <label class="mb-0">Citizen Has Arrived?</label><br>
             <b-button class="w-100 btn-success"
@@ -64,7 +64,7 @@
         get() { return this.showCheckInModal },
         set(e) { this.toggleCheckInModal(e) }
       },
-      checkBlackoutFlag(){
+      isNotBlackoutFlag(){
         if(this.clickedAppt && this.clickedAppt.blackout_flag){
           if(this.clickedAppt.blackout_flag === 'Y'){
             return false
