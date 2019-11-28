@@ -29,8 +29,7 @@ class CitizenDetail(Resource):
     @oidc.accept_token(require_token=True)
     def get(self, id):
         try:
-            csr = CSR.find_by_username(g.oidc_token_info['username'])
-            citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
+            citizen = Citizen.query.filter_by(citizen_id=id).first()
             my_print("==> GET /citizens/" + str(citizen.citizen_id) + '/, Ticket: ' + citizen.ticket_number)
             result = self.citizen_schema.dump(citizen)
             return {'citizen': result.data,
@@ -45,15 +44,14 @@ class CitizenDetail(Resource):
     def put(self, id):
         json_data = request.get_json()
 
-        counter = Counter.query.filter(Counter.counter_name=="Counter")[0]
         if 'counter_id' not in json_data:
-            json_data['counter_id'] = counter.counter_id
+            json_data['counter_id'] = counter_id
 
         if not json_data:
             return {'message': 'No input data received for updating citizen'}, 400
 
         csr = CSR.find_by_username(g.oidc_token_info['username'])
-        citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
+        citizen = Citizen.query.filter_by(citizen_id=id).first()
         my_print("==> PUT /citizens/" + str(citizen.citizen_id) + '/, Ticket: ' + str(citizen.ticket_number))
 
         try:
@@ -74,3 +72,6 @@ class CitizenDetail(Resource):
 
         return {'citizen': result.data,
                 'errors': result.errors}, 200
+
+counter = Counter.query.filter(Counter.counter_name=="Counter")[0]
+counter_id = counter.counter_id

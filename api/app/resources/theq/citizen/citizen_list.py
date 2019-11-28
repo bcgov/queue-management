@@ -65,8 +65,7 @@ class CitizenList(Resource):
             print(err)
             return {"message": err.messages}, 422
 
-        citizen_state = CitizenState.query.filter_by(cs_state_name="Active").first()
-        citizen.cs_id = citizen_state.cs_id
+        citizen.cs_id = active_id
         citizen.service_count = 1
         db.session.add(citizen)
         db.session.commit()
@@ -77,3 +76,6 @@ class CitizenList(Resource):
 
         return {'citizen': result.data,
                 'errors': result.errors}, 201
+
+citizen_state = CitizenState.query.filter_by(cs_state_name="Active").first()
+active_id = citizen_state.cs_id

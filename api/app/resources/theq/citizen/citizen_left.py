@@ -36,7 +36,7 @@ class CitizenLeft(Resource):
         my_print("++> POST API call time before csr = statement: " + str(datetime.now()))
         csr = CSR.find_by_username(g.oidc_token_info['username'])
         my_print("    ++> Time before citizen = statement: " + str(datetime.now()))
-        citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
+        citizen = Citizen.query.filter_by(citizen_id=id).first()
 
         my_print("    ++> Time before citizen ID statement: " + str(datetime.now()))
         citizen_id_string = self.get_citizen_string(citizen)

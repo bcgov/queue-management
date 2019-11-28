@@ -45,6 +45,16 @@ class OfficeConfig(Base):
                          'appointments_enabled_ind', 'timezone')
     form_edit_rules = ('office_name', 'office_number', 'sb', 'services', 'deleted', 'exams_enabled_ind',
                        'appointments_enabled_ind', 'timezone')
+    form_choices = {
+        'exams_enabled_ind': [
+            ("0", 'No - Exams are not enabled for this office'), \
+            ("1", 'Yes - Exams are enabled for this office')
+        ],
+        'appointments_enabled_ind': [
+            ("0", 'No - Appointments are not enabled for this office'), \
+            ("1", 'Yes - Appointments are enabled for this office')
+        ]
+    }
     column_labels = {'sb': 'Smartboard', 'timezone.timezone_name': 'Timezone Name'}
     column_searchable_list = ('office_name',)
     column_sortable_list = ['office_name', 'sb', 'deleted', 'exams_enabled_ind']

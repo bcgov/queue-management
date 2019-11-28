@@ -60,9 +60,8 @@ class SnowPlow():
         if SnowPlow.call_snowplow_flag:
 
             # Set up the contexts for the call.
-            citizen_obj = Citizen.query.get(service_request.citizen_id)
             current_sr_number = service_request.sr_number
-            citizen = SnowPlow.get_citizen(citizen_obj, csr.counter.counter_name, svc_number = current_sr_number)
+            citizen = SnowPlow.get_citizen(service_request.citizen, False, svc_number = current_sr_number)
             office = SnowPlow.get_office(csr.office_id)
             agent = SnowPlow.get_csr(csr)
 
@@ -152,9 +151,8 @@ class SnowPlow():
         #  Set up office variables.
         curr_office = Office.query.get(id)
         office_num = curr_office.office_number
-        my_board = SmartBoard.query.get(curr_office.sb_id)
         office_type = "non-reception"
-        if (my_board.sb_type == "callbyname") or (my_board.sb_type == "callbyticket"):
+        if (curr_office.sb.sb_type == "callbyname") or (curr_office.sb.sb_type == "callbyticket"):
             office_type = "reception"
 
         #  Set up the office context.
@@ -166,21 +164,15 @@ class SnowPlow():
     @staticmethod
     def get_csr(csr):
 
-        #  If csr is a receptionist, that is their role.
-        if csr.receptionist_ind == 1:
-            role_name = "Reception"
+        role_name = csr.role.role_code
 
-        #  If not a receptionist, get role from their role id
-        else:
-            role_name = csr.role.role_code
-
-            #  Translate the role code from upper to mixed case.
-            if (role_name == 'SUPPORT'):
-                role_name = "Support"
-            elif (role_name == 'ANALYTICS'):
-                role_name = "Analytics"
-            elif (role_name == 'HELPDESK'):
-                role_name = "Helpdesk"
+        #  Translate the role code from upper to mixed case.
+        if (role_name == 'SUPPORT'):
+            role_name = "Support"
+        elif (role_name == 'ANALYTICS'):
+            role_name = "Analytics"
+        elif (role_name == 'HELPDESK'):
+            role_name = "Helpdesk"
 
         #  Set up the CSR context.
         agent = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/agent/jsonschema/3-0-0',
