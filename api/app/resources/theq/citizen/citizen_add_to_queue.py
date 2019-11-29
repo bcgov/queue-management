@@ -29,7 +29,7 @@ class CitizenAddToQueue(Resource):
     @api_call_with_retry
     def post(self, id):
         csr = CSR.find_by_username(g.oidc_token_info['username'])
-        citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
+        citizen = Citizen.query.filter_by(citizen_id=id).first()
         active_service_request = citizen.get_active_service_request()
 
         my_print("==> POST /citizens/" + str(citizen.citizen_id) + '/add_to_queue, Ticket: ' + citizen.ticket_number)

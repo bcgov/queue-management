@@ -7,23 +7,26 @@
            no-close-on-backdrop
            no-close-on-esc
            hide-header>
-    <template slot="modal-footer">
-      <div class="d-flex flex-row-reverse">
-        <b-button class="btn-primary ml-2"
-                  @click="submit">
-          Submit
-        </b-button>
-        <b-button @click="cancel()">Cancel</b-button>
-      </div>
-    </template>
+      <template slot="modal-footer">
+        <div class="d-flex flex-row-reverse">
+          <b-button class="disabled btn-primary ml-2"
+                    v-if="submitDisabled"
+                    @click="validate=true">Submit</b-button>
+          <b-button class="btn-primary ml-2"
+                    @click="submit"
+                    v-if="!submitDisabled">Submit</b-button>
+          <b-button @click="cancel()">Cancel</b-button>
+        </div>
+      </template>
       <span v-if="this.editDeleteSeries" style="font-size:1.75rem;">Book Service Appointment Series</span>
       <span v-else style="font-size:1.75rem;">Book Service Appointment</span><br>
       <b-form autocomplete="off">
+        <!--  Citizen Name and Contact Info row -->
         <b-form-row>
           <b-col cols="6">
             <b-form-group class="mb-0 mt-2">
               <label class="mb-0">Citizen Name</label><br>
-              <b-form-input v-if="checkBlackoutFlag"
+              <b-form-input v-if="isNotBlackoutFlag"
                             v-model="citizen_name"/>
               <b-form-input v-else
                             v-model="citizen_name"
@@ -33,7 +36,7 @@
           <b-col cols="6">
             <b-form-group class="mb-0 mt-2">
               <label class="mb-0">Contact Info</label><br>
-              <b-form-input v-if="checkBlackoutFlag"
+              <b-form-input v-if="isNotBlackoutFlag"
                             v-model="contact_information"/>
               <b-form-input v-else
                             v-model="contact_information"
@@ -41,7 +44,9 @@
             </b-form-group>
           </b-col>
         </b-form-row>
+        <!--  End of Citizen Name and Contact Info row -->
 
+        <!--  The Time and Date row. -->
         <b-form-row>
           <b-col cols="4">
             <b-form-group class="mb-0 mt-2">
@@ -58,10 +63,12 @@
             </b-form-group>
           </b-col>
         </b-form-row>
+        <!--  End of the Time and Date row. -->
 
+        <!--  The Date/Time row -->
         <b-form-row>
           <b-col>
-            <b-form-group v-if="checkBlackoutFlag"
+            <b-form-group v-if="isNotBlackoutFlag"
                           class="mb-0 mt-2">
               <label class="mb-0">Length</label><br>
               <b-select v-model="length"
@@ -69,13 +76,14 @@
             </b-form-group>
           </b-col>
           <b-col>
-            <b-form-group v-if="checkBlackoutFlag"
+            <b-form-group v-if="isNotBlackoutFlag"
                           class="mb-0 mt-2">
               <label class="mb-0">Change Date/Time</label><br>
               <b-button @click="reschedule"
                         class="btn-secondary w-100">Reschedule</b-button>
             </b-form-group>
           </b-col>
+          <!--  Column to delete blackout period or series (if a clicked appointment?) -->
           <b-col v-if="clickedAppt">
             <b-form-group class="mb-0 mt-2">
               <label v-if="this.editDeleteSeries" class="mb-0">Remove Blackout Series?</label>
@@ -93,10 +101,12 @@
             </b-form-group>
           </b-col>
         </b-form-row>
+        <!--  End of the Date/Time row -->
 
+        <!--  Service selected by the citizen row -->
         <b-form-row>
           <b-col>
-            <b-form-group v-if="checkBlackoutFlag"
+            <b-form-group v-if="isNotBlackoutFlag"
                           class="mb-0 mt-2">
               <label class="mb-0">Service Required by Citizen</label><br>
               <div style="width: 100%; display: flex;">
@@ -123,6 +133,9 @@
             </b-form-group>
           </b-col>
         </b-form-row>
+        <!--  End of service selected by the citizen row -->
+
+        <!--  The Notes row. -->
         <b-form-row>
           <b-col>
             <b-form-group class="mb-0 mt-2">
@@ -132,6 +145,8 @@
             </b-form-group>
           </b-col>
         </b-form-row>
+        <!--  End of the Notes row. -->
+
       </b-form>
       <div class="d-flex flex-row-reverse mt-2 mb-0">
         <div v-if="showMessage"
@@ -190,7 +205,7 @@
           return appointments
         }
       },
-      checkBlackoutFlag(){
+      isNotBlackoutFlag(){
         if(this.clickedAppt){
           if(this.clickedAppt.blackout_flag){
             if(this.clickedAppt.blackout_flag == 'Y'){

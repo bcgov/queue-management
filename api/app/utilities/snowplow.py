@@ -57,9 +57,8 @@ class SnowPlow():
         if SnowPlow.call_snowplow_flag:
 
             # Set up the contexts for the call.
-            citizen_obj = Citizen.query.get(service_request.citizen_id)
             current_sr_number = service_request.sr_number
-            citizen = SnowPlow.get_citizen(citizen_obj, False, svc_number = current_sr_number)
+            citizen = SnowPlow.get_citizen(service_request.citizen, False, svc_number = current_sr_number)
             office = SnowPlow.get_office(csr.office_id)
             agent = SnowPlow.get_csr(csr)
 
@@ -130,9 +129,8 @@ class SnowPlow():
         #  Set up office variables.
         curr_office = Office.query.get(id)
         office_num = curr_office.office_number
-        my_board = SmartBoard.query.get(curr_office.sb_id)
         office_type = "non-reception"
-        if (my_board.sb_type == "callbyname") or (my_board.sb_type == "callbyticket"):
+        if (curr_office.sb.sb_type == "callbyname") or (curr_office.sb.sb_type == "callbyticket"):
             office_type = "reception"
 
         #  Set up the office context.
@@ -144,20 +142,11 @@ class SnowPlow():
     @staticmethod
     def get_csr(csr):
 
-        #  If csr is a receptionist, that is their role.
-        if csr.receptionist_ind == 1:
-            role_name = "Reception"
-
-        #  If not a receptionist, get role from their role id
-        else:
-            role_obj = Role.query.get(csr.role_id)
-            role_name = role_obj.role_code
-
         csr_qtxn = (csr.qt_xn_csr_ind == 1)
 
         #  Set up the CSR context.
         agent = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/agent/jsonschema/2-0-1',
-                                   {"agent_id": csr.csr_id, "role": role_name, "quick_txn": csr_qtxn})
+                                   {"agent_id": csr.csr_id, "role": csr.role.role_code, "quick_txn": csr_qtxn})
 
         return agent
 
