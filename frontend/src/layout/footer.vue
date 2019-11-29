@@ -24,7 +24,7 @@
           <a href="#" @click="keycloakLogin()" id="keycloak-login">Keycloak Login</a>
         </div>
         <div class="footer-anchor-item-last" style="display:inline-block; color: white; margin-right:15px;">
-          v1.0.68
+          v1.0.69
         </div>
       </div>
     </div>
