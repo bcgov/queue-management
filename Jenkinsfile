@@ -314,6 +314,7 @@ node {
         }
     }
     stage("Deploy Frontend - Test") {
+        input "Deploy to Prod?"
         script: {
             openshift.withCluster() {
                 openshift.withProject() {
@@ -339,7 +340,6 @@ node {
 }
 node {
     stage("Deploy API - Prod") {
-        input "Deploy to Prod?"
         script: {
             openshift.withCluster() {
                 openshift.withProject() {
