@@ -73,5 +73,12 @@ class CitizenDetail(Resource):
         return {'citizen': result.data,
                 'errors': result.errors}, 200
 
-counter = Counter.query.filter(Counter.counter_name=="Counter")[0]
-counter_id = counter.counter_id
+try:
+    counter = Counter.query.filter(Counter.counter_name=="Counter")[0]
+    counter_id = counter.counter_id
+#  NOTE!!  There should ONLY be an exception when first building the database
+#          from a python3 manage.py db upgrade command.
+except:
+    counter_id = 1
+    print("==> In citizen_detail.py")
+    print("    --> NOTE!!  You should only see this if doing a 'python3 manage.py db upgrade'")
