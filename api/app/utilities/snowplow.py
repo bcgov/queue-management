@@ -21,7 +21,6 @@ from app.models.theq.service import Service
 from app.models.theq.smartboard import SmartBoard
 from snowplow_tracker import Subject, Tracker, AsyncEmitter
 from snowplow_tracker import SelfDescribingJson
-import logging
 import os
 from qsystem import application, my_print
 from datetime import datetime, timezone
@@ -290,22 +289,7 @@ class SnowPlow():
         return appointment
 
     @staticmethod
-    def log_snowplow_call(jsondata):
-        if isinstance(jsondata, str):
-            module_logger.critical("------------------------------")
-        else:
-            sp_string = jsondata.to_string()
-            sp_array = sp_string.split("/")
-            sp_output = '{"schema": "' + sp_array[1] + '/' + sp_array[3]
-            module_logger.critical(sp_output)
-
-    @staticmethod
     def make_tracking_call(schema, citizen, office, agent):
-        SnowPlow.log_snowplow_call("")
-        SnowPlow.log_snowplow_call(schema)
-        SnowPlow.log_snowplow_call(citizen)
-        SnowPlow.log_snowplow_call(office)
-        SnowPlow.log_snowplow_call(agent)
         t.track_self_describing_event(schema, [citizen, office, agent])
 
 # Set up core Snowplow environment
@@ -313,21 +297,3 @@ if SnowPlow.call_snowplow_flag:
     s = Subject()  # .set_platform("app")
     e = AsyncEmitter(SnowPlow.sp_endpoint, on_failure=SnowPlow.failure, protocol="https")
     t = Tracker(e, encode_base64=False, app_id=SnowPlow.sp_appid, namespace=SnowPlow.sp_namespace)
-
-    #  Set up the correct level of logging.
-    print_flag = application.config['PRINT_ENABLE']
-    location = "logs/snowplow.log"
-    formatter = logging.Formatter('[%(asctime)s.] %(message)s')
-
-    #  Translate the logging level.
-    msg_level = logging.CRITICAL
-
-    #  All OK.  Set up logging options
-    log_file_handler = logging.FileHandler(location)
-    log_file_handler.setFormatter(formatter)
-    log_stream_handler = logging.StreamHandler()
-    log_stream_handler.setFormatter(formatter)
-    module_logger = logging.getLogger("slowplow-logger")
-    module_logger.setLevel(msg_level)
-    module_logger.addHandler(log_file_handler)
-    module_logger.addHandler(log_stream_handler)
