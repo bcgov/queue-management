@@ -151,6 +151,8 @@
         if (event.id === '_tempEvent') {
           return
         }
+        console.log("==> In eventSelected")
+        console.log(event)
         this.clickedAppt = event
         this.highlightEvent(event)
         this.toggleCheckInModal(true)

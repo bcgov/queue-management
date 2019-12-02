@@ -19,6 +19,7 @@ from app.schemas.bookings import AppointmentSchema
 from app.schemas.theq import CitizenSchema
 from app.models.theq import CSR, CitizenState
 from qsystem import api, api_call_with_retry, db, oidc
+from app.utilities.snowplow import SnowPlow
 from datetime import datetime
 
 @api.route("/appointments/", methods=["POST"])
@@ -59,6 +60,8 @@ class AppointmentPost(Resource):
             appointment.citizen_id = citizen.citizen_id
             db.session.add(appointment)
             db.session.commit()
+
+            SnowPlow.snowplow_appointment(citizen, csr, appointment, 'appointment_create')
 
             result = self.appointment_schema.dump(appointment)
 

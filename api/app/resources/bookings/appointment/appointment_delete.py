@@ -18,7 +18,7 @@ from app.models.bookings import Appointment
 from app.schemas.bookings import AppointmentSchema
 from app.models.theq import CSR
 from qsystem import api, db, oidc
-
+from app.utilities.snowplow import SnowPlow
 
 @api.route("/appointments/<int:id>/", methods=["DELETE"])
 class AppointmentDelete(Resource):
@@ -28,14 +28,15 @@ class AppointmentDelete(Resource):
     @oidc.accept_token(require_token=True)
     def delete(self, id):
 
-        print("==> In the Python DELETE /appointments/<id>/ endpoint")
-
         csr = CSR.find_by_username(g.oidc_token_info['username'])
 
         appointment = Appointment.query.filter_by(appointment_id=id)\
                                        .filter_by(office_id=csr.office_id)\
                                        .first_or_404()
 
+        SnowPlow.snowplow_appointment(None, csr, appointment, 'appointment_delete')
+
         db.session.delete(appointment)
         db.session.commit()
+
         return {}, 204
