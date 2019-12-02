@@ -164,8 +164,14 @@ class SnowPlow():
     @staticmethod
     def get_csr(csr):
 
-        role_name = csr.role.role_code
+        #   Get the counter type.  Receptioninst is separate case.
+        if csr.receptionist_ind == 1:
+            counter_name = "Receptionist"
+        else:
+            counter_name = csr.counter.counter_name
 
+        #   Get the role of the agent, convert to correct case
+        role_name = csr.role.role_code
         #  Translate the role code from upper to mixed case.
         if (role_name == 'SUPPORT'):
             role_name = "Support"
@@ -178,7 +184,7 @@ class SnowPlow():
         agent = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/agent/jsonschema/3-0-0',
                                    {"agent_id": csr.csr_id,
                                     "role": role_name,
-                                    "counter_type": csr.counter.counter_name})
+                                    "counter_type": counter_name})
 
         return agent
 
