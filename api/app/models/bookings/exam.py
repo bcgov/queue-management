@@ -39,6 +39,14 @@ class Exam(Base):
     bcmp_job_id = db.Column(db.String(100), nullable=True)
     exam_destroyed_date = db.Column(db.String(50), nullable=True)
     upload_received_ind = db.Column(db.Integer, nullable=True, default=0)
+    sbc_managed_ind = db.Column(db.Integer, nullable=True, default=0)
+    receipt = db.Column(db.String(50), nullable=True)
+    payee_ind = db.Column(db.Integer, nullable=True, default=0)
+    receipt_sent_ind = db.Column(db.Integer, nullable=True, default=0)
+    payee_email = db.Column(db.String(50), nullable=True)
+    payee_name = db.Column(db.String(50), nullable=True)
+    payee_phone = db.Column(db.String(50), nullable=True)
+
 
     booking = db.relationship("Booking")
     exam_type = db.relationship("ExamType")

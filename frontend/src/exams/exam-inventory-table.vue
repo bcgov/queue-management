@@ -378,7 +378,7 @@
                     </b-dropdown-item>
                   </template>
 
-                  <template v-if="!row.item.offsite_location">
+                  <template v-if="!row.item.offsite_location || (row.item.exam_name === 'pesticide')">
                     <b-dropdown-item size="sm"
                                        v-if="row.item.booking && Object.keys(row.item.booking).length > 0"
                                      @click="updateCalendarBooking(row.item)">
@@ -391,10 +391,11 @@
 
                 <!--  Options for group exam ind (???).  -->
                 <template v-else-if="row.item.exam_type.group_exam_ind">
+                  <b-dropdown-item size="sm"> 444 </b-dropdown-item>
                   <b-dropdown-item size="sm"
                                    v-if="row.item.offsite_location"
                                    @click="editGroupBooking(row.item)">
-                    {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}
+                    {{ checkInvigilator(row.item) ? 'Update Bookingeee' : 'Add Invigilatoreee' }}
                   </b-dropdown-item>
                 </template>
 
@@ -412,7 +413,7 @@
                       {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}
                     </b-dropdown-item>
                   </template>
-                  <template template v-if="!row.item.offsite_location">
+                  <template template v-if="!row.item.offsite_location || (row.item.exam_name === 'pesticide')">
                     <b-dropdown-item size="sm"
                                      v-if="row.item.booking && Object.keys(row.item.booking).length > 0"
                                      @click="updateCalendarBooking(row.item)">
@@ -516,6 +517,9 @@
           {text: 'Office Exam Manager Action Items', value:'oemai'},
           {text: 'Expired', value: 'expired'},
           {text: 'Returned', value: 'returned'},
+          {text: 'Saved Drafts', value: 'saved_drafts'},
+          {text: 'Awaiting Upload', value: 'awaiting_upload'},
+          {text: 'Awaiting Receipt', value: 'awaiting_receipt'},
           {text: 'All', value: 'all'},
         ],
         newQuickActionOptionsNoOEM: [
@@ -664,7 +668,7 @@
       },
     },
     methods: {
-      ...mapActions(['getBookings', 'getExams', 'getExamsForOffice', 'getInvigilators', 'getOffices',]),
+      ...mapActions(['getBookings', 'getExams', 'getExamsForOffice', 'getInvigilators', 'getOffices', 'updateExamStatus']),
       ...mapMutations([
         'setEditedBooking',
         'setEditedBookingOriginal',
@@ -1230,6 +1234,17 @@
             this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
             this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'both'})
           }
+        }else if(option.value === 'saved_drafts'){
+          this.setInventoryFilters({type: 'expiryFilter', value: 'all'})
+        }else if(option.value === 'awaiting_upload'){
+          this.setInventoryFilters({type: 'expiryFilter', value: 'current'})
+          this.setInventoryFilters({type: 'groupFilter', value: 'both'})
+          this.setInventoryFilters({type: 'office_number', value: 'default'})
+          this.setInventoryFilters({type: 'returnedFilter', value: 'unreturned'})
+          this.setInventoryFilters({type: 'scheduledFilter', value: 'both'})
+          this.setInventoryFilters({type: 'uploaded', value: 'all'})
+
+          this.updateExamStatus()
         }else if(option.value === 'all'){
           this.setInventoryFilters({type: 'expiryFilter', value: 'all'})
           this.setInventoryFilters({type:'scheduledFilter', value:'both'})

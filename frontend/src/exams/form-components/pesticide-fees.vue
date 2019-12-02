@@ -23,11 +23,17 @@
       </b-col>
       <checkmark :validated="isValidated" />
     </b-row>
-    <b-row>
-      <b-col cols="11">
+    <b-row v-if="showReceiptField">
+      <b-col cols="5">
         <b-form-group>
           <label>Payee is not candidate</label>
           <b-form-checkbox v-model="capturePayeeDetails"/>
+        </b-form-group>
+      </b-col>
+      <b-col cols="5">
+        <b-form-group>
+          <label>Payee has been sent receipt</label>
+          <b-form-checkbox v-model="capturePayeeSentReceipt"/>
         </b-form-group>
       </b-col>
     </b-row>
@@ -52,6 +58,7 @@
       ...mapState({
         addExamModal: state => state.addExamModal,
         capturePayee: state => state.captureITAExamTabSetup.capturePayee,
+        payeeSentReceipt: state => state.captureITAExamTabSetup.payeeSentReceipt,
       }),
       feesSelect: {
         get() {
@@ -88,6 +95,14 @@
         },
         set(value) {
           this.$store.commit('updateCaptureTab', { capturePayee: value })
+        }
+      },
+      capturePayeeSentReceipt: {
+        get() {
+          return this.payeeSentReceipt
+        },
+        set(value) {
+          this.$store.commit('updateCaptureTab', { payeeSentReceipt: value })
         }
       },
       isValidated() {

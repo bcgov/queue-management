@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask import g, Response, send_file
+from flask import g, Response
 from flask_restplus import Resource
 import io
 import logging
@@ -57,19 +57,20 @@ class ExamStatus(Resource):
                                     "Content-Type": "application/pdf"
                                 })
             else:
-                test_url = 'http://www.pdf995.com/samples/pdf.pdf'
-                req = urllib.request.Request(test_url)
-                response = urllib.request.urlopen(req).read()
-                exam_file = io.BytesIO(response)
-                file_wrapper = FileWrapper(exam_file)
-
-                return Response(file_wrapper,
-                                mimetype="application/pdf",
-                                direct_passthrough=True,
-                                headers={
-                                    "Content-Disposition": 'attachment; filename="%s.csv"' % exam.exam_id,
-                                    "Content-Type": "application/pdf"
-                                })
+                return {'message': 'API is down'}, 400
+                # test_url = 'http://www.pdf995.com/samples/pdf.pdf'
+                # req = urllib.request.Request(test_url)
+                # response = urllib.request.urlopen(req).read()
+                # exam_file = io.BytesIO(response)
+                # file_wrapper = FileWrapper(exam_file)
+                #
+                # return Response(file_wrapper,
+                #                 mimetype="application/pdf",
+                #                 direct_passthrough=True,
+                #                 headers={
+                #                     "Content-Disposition": 'attachment; filename="%s.csv"' % exam.exam_id,
+                #                     "Content-Type": "application/pdf"
+                #                 })
 
         except exc.SQLAlchemyError as error:
             logging.error(error, exc_info=True)

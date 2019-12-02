@@ -76,6 +76,7 @@ export const store = new Vuex.Store({
       status: 'unknown',
       notes: false,
       capturePayee: false,
+      capturePayeeSentReceipt: false,
     },
     categories: [],
     channels: [],
@@ -999,6 +1000,13 @@ export const store = new Vuex.Store({
             console.log(error.response)
             console.log(error.message)
           })
+    },
+
+    updateExamStatus(context) {
+      Axios(context).post(`/exams/bcmp_status/`)
+        .then( resp => {
+          context.dispatch('getExams')
+        })
     },
 
     getUser(context) {
@@ -2019,6 +2027,11 @@ export const store = new Vuex.Store({
       if (context.state.addExamModal.setup === 'pesticide' && !responses.exam_name) {
         responses.exam_name = "pesticide"
       }
+
+      responses.receipt = responses.receipt_number
+      responses.payee_ind = context.state.captureITAExamTabSetup.capturePayee
+      responses.receipt_sent_ind = context.state.captureITAExamTabSetup.payeeSentReceipt
+      responses.sbc_managed_ind = responses.sbc_managed === "sbc" ? 1 : 0
 
       let postData = {...responses, ...defaultValues}
 

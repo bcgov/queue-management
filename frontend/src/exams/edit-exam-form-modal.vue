@@ -23,7 +23,7 @@
               </b-form-group>
             </b-col>
           </b-form-row>
-          <b-form-row v-if="!otherOfficeExam">
+          <b-form-row>
             <b-col :col="!this.fields.exam_received_date" :cols="this.exam_received ? '' : 3 ">
               <b-form-group>
                 <label class="my-0">Exam Printed?</label>
@@ -35,7 +35,7 @@
               </b-form-group>
             </b-col>
 
-            <b-col v-if="!this.fields.exam_received_date">
+            <b-col>
               <label class="my-0">Retrieve Exam and Print</label>
               <b-btn class="btn-success w-100" @click="checkAndDownloadExam()">Print</b-btn>
             </b-col>
@@ -426,7 +426,7 @@
           { text: 'paper', value: 'paper'},
           { text: 'online', value: 'online'},
         ],
-        exam_received: false,
+        exam_received: this.actionedExam.exam_received_date !== null ? true : false,
         office_number: null,
         officeChoices: [],
         showMessage: false,

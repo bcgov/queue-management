@@ -45,6 +45,13 @@ class ExamSchema(ma.ModelSchema):
     exam_returned_tracking_number = fields.String(allow_none=True)
     exam_written_ind = fields.Int()
     offsite_location = fields.String()
+    sbc_managed_ind = fields.Int()
+    receipt = fields.String()
+    payee_ind = fields.Int()
+    receipt_sent_ind = fields.Int()
+    payee_name = fields.String()
+    payee_email = fields.String()
+    payee_phone = fields.String()
 
     booking = fields.Nested(BookingSchema())
     exam_type = fields.Nested(ExamTypeSchema())

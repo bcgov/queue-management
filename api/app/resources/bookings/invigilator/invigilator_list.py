@@ -43,3 +43,25 @@ class InvigilatorList(Resource):
         except exc.SQLAlchemyError as error:
             logging.error(error, exc_info=True)
             return {"message": "api is down"}, 500
+
+@api.route("/pesticide_invigilators/", methods=["GET"])
+class InvigilatorList(Resource):
+
+    invigilator_schema = InvigilatorSchema(many=True)
+
+    @oidc.accept_token(require_token=True)
+    def get(self):
+
+        csr = CSR.find_by_username(g.oidc_token_info['username'])
+
+        try:
+            invigilators = Invigilator.query.filter_by(office_id=csr.office_id)\
+                                            .filter(Invigilator.deleted.is_(None))
+
+            result = self.invigilator_schema.dump(invigilators)
+            return {'invigilators': result.data,
+                    'errors': result.errors}, 200
+
+        except exc.SQLAlchemyError as error:
+            logging.error(error, exc_info=True)
+            return {"message": "api is down"}, 500

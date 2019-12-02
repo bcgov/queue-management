@@ -537,7 +537,7 @@ export const addExamModule = {
     pesticideStep3: {
       step: 3,
       title: 'Notes',
-      questions: [ offsiteQ, notesQ ]
+      questions: [ notesQ ]
     },
     pesticideStep3_payee: {
       step: 3,

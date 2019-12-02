@@ -1,5 +1,4 @@
 import json
-import logging
 import urllib
 from qsystem import application
 from app.utilities.document_service import DocumentService
@@ -23,21 +22,36 @@ class BCMPService:
         print('request')
         print(req)
 
-        response = urllib.request.urlopen(req).read()
+        response = urllib.request.urlopen(req)
 
         print('response')
-        print(response)
+        print(response.status)
 
-        return json.loads(response.decode('utf-8'))
+        return json.loads(response.read().decode('utf-8'))
 
     def check_exam_status(self, exam):
-        url = "%s/auth=env_exam;%s/JSON/create:ENV-IPM-EXAM" % (self.base_url, self.auth_token)
+        url = "%s/auth=env_exam;%s/JSON/status:ENV-IPM-EXAM" % (self.base_url, self.auth_token)
         data = {
             "jobs": [
                 exam.bcmp_job_id
             ]
         }
         response = self.send_request(url, 'POST', data)
+        print(response)
+
+        return response
+
+    def bulk_check_exam_status(self, exams):
+        url = "%s/auth=env_exam;%s/JSON/status:ENV-IPM-EXAM" % (self.base_url, self.auth_token)
+        data = {
+            "jobs": []
+        }
+
+        for exam in exams:
+            data["jobs"].append(exam.bcmp_job_id)
+
+        response = self.send_request(url, 'POST', data)
+        print(response)
 
         return response
 

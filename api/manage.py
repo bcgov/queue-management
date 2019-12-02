@@ -423,9 +423,20 @@ class Bootstrap(Command):
         office_victoria.counters.append(counter)
         office_victoria.counters.append(qt_counter)
 
+        office_pesticide_office = theq.Office(
+            office_name="Pesticide Offsite",
+            office_number=987,
+            sb_id=smartboard_call_name.sb_id,
+            exams_enabled_ind=1,
+            timezone_id=timezone_one.timezone_id
+        )
+        office_pesticide_office.counters.append(counter)
+        office_pesticide_office.counters.append(qt_counter)
+
         db.session.add(office_test)
         db.session.add(office_100)
         db.session.add(office_victoria)
+        db.session.add(office_pesticide_office)
         db.session.commit()
 
         #-- CSR values ------------------------------------------------------
@@ -490,10 +501,10 @@ class Bootstrap(Command):
             receptionist_ind=1,
             deleted=None,
             csr_state_id=csr_state_logout.csr_state_id,
-            ita_designate=0,
-            pesticide_designate=0,
-            finance_designate=0,
-            liaison_designate=0
+            ita_designate=1,
+            pesticide_designate=1,
+            finance_designate=1,
+            liaison_designate=1
         )
         demo_user = theq.CSR(
             username="user",
@@ -599,9 +610,31 @@ class Bootstrap(Command):
             contract_expiry_date="2019-01-31"
         )
 
+        pesticide_invigilator_one = bookings.Invigilator(
+            invigilator_name="Pest 1",
+            office_id=office_pesticide_office.office_id,
+            invigilator_notes="Loves using chalk boards to communicate to examinees",
+            contact_phone="555-555-5555",
+            contact_email="bartwuzhere@gmail.com",
+            contract_number="c-000003",
+            contract_expiry_date="2019-01-31"
+        )
+
+        pesticide_invigilator_two = bookings.Invigilator(
+            invigilator_name="Pest 2",
+            office_id=office_pesticide_office.office_id,
+            invigilator_notes="Loves using chalk boards to communicate to examinees",
+            contact_phone="555-555-5555",
+            contact_email="bartwuzhere@gmail.com",
+            contract_number="c-000003",
+            contract_expiry_date="2019-01-31"
+        )
+
         db.session.add(invigilator_one)
         db.session.add(invigilator_two)
         db.session.add(invigilator_three)
+        db.session.add(pesticide_invigilator_one)
+        db.session.add(pesticide_invigilator_two)
         db.session.commit()
 
         print("--> Bookings: Exam Types")
