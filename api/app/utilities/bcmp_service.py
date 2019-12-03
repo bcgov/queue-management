@@ -17,6 +17,10 @@ class BCMPService:
         else:
             request_data = None
 
+        print("=== SENDING BCMP REQUEST ===")
+        print("  ==> url: %s" % path)
+        print("  ==> method: %s" % method)
+        print("  ==> data: %s" % request_data)
         req = urllib.request.Request(path, data=request_data, method=method)
         req.add_header('Content-Type', 'application/json')
         print('request')
@@ -30,7 +34,7 @@ class BCMPService:
         return json.loads(response.read().decode('utf-8'))
 
     def check_exam_status(self, exam):
-        url = "%s/auth=env_exam;%s/JSON/status:ENV-IPM-EXAM" % (self.base_url, self.auth_token)
+        url = "%s/auth=env_exam;%s/JSON/status" % (self.base_url, self.auth_token)
         data = {
             "jobs": [
                 exam.bcmp_job_id
@@ -42,7 +46,7 @@ class BCMPService:
         return response
 
     def bulk_check_exam_status(self, exams):
-        url = "%s/auth=env_exam;%s/JSON/status:ENV-IPM-EXAM" % (self.base_url, self.auth_token)
+        url = "%s/auth=env_exam;%s/JSON/status" % (self.base_url, self.auth_token)
         data = {
             "jobs": []
         }
@@ -58,7 +62,9 @@ class BCMPService:
     def create_individual_exam(self, exam):
         url = "%s/auth=env_exam;%s/JSON/create:ENV-IPM-EXAM" % (self.base_url, self.auth_token)
         bcmp_exam = {
-            "name": exam.examinee_name,
+            "students": [
+                {"name": exam.examinee_name}
+            ]
         }
 
         response = self.send_request(url, 'POST', bcmp_exam)
@@ -68,10 +74,11 @@ class BCMPService:
         url = "%s/auth=env_exam;%s/JSON/create:ENV-IPM-EXAM" % (self.base_url, self.auth_token)
 
         bcmp_exam = {
-            "students": [{
-                "name": "",
-            }]
+            "students": []
         }
+
+        for s in exam.students:
+            bcmp_exam["students"].append({"name": s.name})
 
         response = self.send_request(url, 'POST', bcmp_exam)
         return response

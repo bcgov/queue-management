@@ -41,6 +41,7 @@ class ExamStatus(Resource):
                 return {"The Exam Office ID and CSR Office ID do not match!"}, 403
 
             status = self.bcmp_service.check_exam_status(exam)
+            print(status)
 
             if status["jobStatus"] == 'PACKAGE_GENERATED':
                 package_url = status["jobProperties"]["EXAM_PACKAGE_URL"]

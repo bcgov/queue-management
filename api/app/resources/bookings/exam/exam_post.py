@@ -42,6 +42,7 @@ class ExamPost(Resource):
         if warning:
             logging.warning("WARNING: %s", warning)
             return {"message": warning}, 422
+        print("+=+=+=+= NAME: %s +=+=+=+=" % exam.examinee_name)
 
         exam_type = ExamType.query.filter_by(exam_type_id=exam.exam_type_id).first()
 
@@ -58,7 +59,7 @@ class ExamPost(Resource):
                 bcmp_response = self.bcmp_service.create_group_exam(exam)
             else:
                 logging.info("Creating individual pesticide exam")
-                bcmp_response = self.bcmp_service.create_group_exam(exam)
+                bcmp_response = self.bcmp_service.create_individual_exam(exam)
 
             exam.bcmp_job_id = bcmp_response['jobId']
         else:
