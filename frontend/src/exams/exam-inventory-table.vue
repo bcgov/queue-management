@@ -12,7 +12,7 @@
     <b-modal v-model="officeFilterModal"
              size="sm"
              centered
-             hide-backdrop+
+             hide-backdrop
              @hide="resetInvalidOfficeOnHide()"
              hide-header
              hide-footer>
