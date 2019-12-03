@@ -40,6 +40,18 @@
                 </div>
               </div>
             </template>
+            <template slot="service_code" slot-scope="data">
+              {{data.item.service_code}}
+            </template>
+            <template slot="deleteBut" slot-scope="data">
+              <div>
+                <b-button size="sm"
+                          @click="doSomething"
+                          variant="link">
+                  Do something
+                </b-button>
+              </div>
+            </template>
           </b-table>
         </div>
       </b-col>
@@ -80,9 +92,12 @@
       fields() {
         if (!this.simplifiedModal) {
           return [
-            { key: 'service_name', label: 'Service', sortable: false, thClass: 'd-none', tdClass: 'addcit-td',},
+            // { key: 'service_name', label: 'Service', sortable: false, thClass: 'd-none', tdClass: 'addcit-td',},
             { key: 'parent.service_name', label: 'Category', sortable: false, thClass: 'd-none', tdClass: 'addcit-td',},
-            { key: 'service_desc', label: 'Description', sortable: false, thClass: 'd-none', tdClass: 'd-none',}
+            { key: 'service_name', label: 'The Service', sortable: false, thClass: 'd-none', tdClass: 'addcit-td'},
+            { key: 'service_desc', label: 'Description', sortable: false, thClass: 'd-none', tdClass: 'd-none',},
+            { key: 'service_code', label: 'Code', sortable: false, thClass: 'd-none', tdClass: 'addcit-td',},
+            { key: 'deleteBut', label: 'Delete', sortable: false, thClass: 'd-none', tdClass: 'addcit-td'}
           ]
         }
         return [
@@ -101,6 +116,9 @@
         let id = item.service_id
         this.setAddModalSelectedItem(item.service_name)
         this.$store.commit('updateAddModalForm', {type:'service',value:id})
+      },
+      doSomething() {
+        console.log("==> I want to do something.")
       }
     }
   }
