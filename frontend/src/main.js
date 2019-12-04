@@ -40,6 +40,7 @@ import {
   faPlus,
   faSort,
   faStopwatch,
+  faUserCheck,
   faWindowMaximize,
   faWindowRestore,
 } from '@fortawesome/free-solid-svg-icons'
@@ -76,6 +77,7 @@ library.add(
   faPlus,
   faSort,
   faStopwatch,
+  faUserCheck,
   faWindowMaximize,
   faWindowRestore,
 )
