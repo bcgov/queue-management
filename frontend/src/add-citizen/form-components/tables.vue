@@ -8,8 +8,9 @@
                       padding-bottom: 5px;"
                       >
     <b-form-row no-gutters class="m-0 add_citizen_table_header">
-      <b-col class="m-0 p-0">&nbsp&nbspService</b-col>
+      <b-col class="m-0 p-0">&nbsp;Service</b-col>
       <b-col class="m-0 p-0" v-if="!simplifiedModal">Category</b-col>
+      <b-col class="m-0 p-0" v-if="!simplifiedModal">Serve Now</b-col>
     </b-form-row>
     <b-form-row no-gutters>
       <b-col>
@@ -20,7 +21,7 @@
                     background-color: #fcfcfc">
           <b-table :items="filtered_services"
                    :fields="fields"
-                   sort-by="parrent.service_name"
+                   sort-by="parent.service_name"
                    :filter="filter"
                    :small="t"
                    :bordered="f"
@@ -40,16 +41,11 @@
                 </div>
               </div>
             </template>
-            <template slot="service_code" slot-scope="data">
-              {{data.item.service_code}}
-            </template>
             <template slot="deleteBut" slot-scope="data">
-              <div>
-                <b-button size="sm"
-                          @click="doSomething"
-                          variant="link">
-                  Do something
-                </b-button>
+              <div @click="doSomething(data.item.service_name)">
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  <font-awesome-icon icon="user-check"
+                                     style="fontSize: 1rem; color: green;"/>
               </div>
             </template>
           </b-table>
@@ -92,12 +88,10 @@
       fields() {
         if (!this.simplifiedModal) {
           return [
-            // { key: 'service_name', label: 'Service', sortable: false, thClass: 'd-none', tdClass: 'addcit-td',},
-            { key: 'parent.service_name', label: 'Category', sortable: false, thClass: 'd-none', tdClass: 'addcit-td',},
-            { key: 'service_name', label: 'The Service', sortable: false, thClass: 'd-none', tdClass: 'addcit-td'},
-            { key: 'service_desc', label: 'Description', sortable: false, thClass: 'd-none', tdClass: 'd-none',},
-            { key: 'service_code', label: 'Code', sortable: false, thClass: 'd-none', tdClass: 'addcit-td',},
-            { key: 'deleteBut', label: 'Delete', sortable: false, thClass: 'd-none', tdClass: 'addcit-td'}
+            { key: 'service_name', label: 'Service', thClass: 'd-none', sortable: false, style: "width: 5%", tdClass: 'addcit-td'},
+            { key: 'parent.service_name', label: 'Category', thClass: 'd-none', sortable: false, tdClass: 'addcit-td',},
+            { key: 'service_desc', label: '', thClass: 'd-none', sortable: false, tdClass: 'd-none',},
+            { key: 'deleteBut', label: 'Begin Service', thClass: 'd-none', sortable: false, tdClass: 'addcit-td'}
           ]
         }
         return [
@@ -117,8 +111,8 @@
         this.setAddModalSelectedItem(item.service_name)
         this.$store.commit('updateAddModalForm', {type:'service',value:id})
       },
-      doSomething() {
-        console.log("==> I want to do something.")
+      doSomething(service) {
+        console.log("==> I want to get service " + service + ".")
       }
     }
   }
@@ -134,7 +128,7 @@
     height: 35px;
     padding-top: 6px;
     padding-left: 0px;
-    text-align: center;
+    text-align: left;
     font-size: 17px;
     text-shadow: 0px 0px 2px #a5a5a5;
 }
