@@ -45,7 +45,7 @@ class SnowPlow():
             citizen_obj = Citizen.query.get(new_citizen.citizen_id)
             citizen = SnowPlow.get_citizen(citizen_obj, csr.counter.counter_name)
             office = SnowPlow.get_office(new_citizen.office_id)
-            agent = SnowPlow.get_csr(csr)
+            agent = SnowPlow.get_csr(csr, office)
 
             # the addcitizen event has no parameters of its own so we pass an empty array "{}"
             addcitizen = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/addcitizen/jsonschema/1-0-0', {})
@@ -63,7 +63,7 @@ class SnowPlow():
             current_sr_number = service_request.sr_number
             citizen = SnowPlow.get_citizen(service_request.citizen, csr.counter.counter_name, svc_number = current_sr_number)
             office = SnowPlow.get_office(csr.office_id)
-            agent = SnowPlow.get_csr(csr)
+            agent = SnowPlow.get_csr(csr, office)
 
             #  The choose service event has parameters, needs to be built.
             chooseservice = SnowPlow.get_service(service_request)
@@ -80,7 +80,7 @@ class SnowPlow():
             citizen_obj = Citizen.query.get(citizen_id)
             citizen = SnowPlow.get_citizen(citizen_obj, csr.counter.counter_name, svc_number = current_sr_number)
             office = SnowPlow.get_office(csr.office_id)
-            agent = SnowPlow.get_csr(csr)
+            agent = SnowPlow.get_csr(csr, office)
 
             #  Initialize schema version.
             schema_version = "1-0-0"
@@ -117,7 +117,7 @@ class SnowPlow():
             #  Set up the contexts for the call.
             citizen = SnowPlow.get_citizen(citizen_obj, csr.counter.counter_name)
             office = SnowPlow.get_office(csr.office_id)
-            agent = SnowPlow.get_csr(csr)
+            agent = SnowPlow.get_csr(csr, office)
 
             #  Initialize appointment schema version.
             snowplow_event = SnowPlow.get_appointment(appointment, schema)
@@ -164,10 +164,10 @@ class SnowPlow():
         return office
 
     @staticmethod
-    def get_csr(csr):
+    def get_csr(csr, office):
 
         #   Get the counter type.  Receptioninst is separate case.
-        if csr.office.sb.sb_type == "nocallonsmartboard":
+        if office.data['office_type'] != "reception":
             counter_name = "Counter"
         elif csr.receptionist_ind == 1:
             counter_name = "Receptionist"
