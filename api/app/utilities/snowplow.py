@@ -61,7 +61,7 @@ class SnowPlow():
 
             # Set up the contexts for the call.
             current_sr_number = service_request.sr_number
-            citizen = SnowPlow.get_citizen(service_request.citizen, False, svc_number = current_sr_number)
+            citizen = SnowPlow.get_citizen(service_request.citizen, csr.counter.counter_name, svc_number = current_sr_number)
             office = SnowPlow.get_office(csr.office_id)
             agent = SnowPlow.get_csr(csr)
 
@@ -135,7 +135,9 @@ class SnowPlow():
     def get_citizen(citizen_obj, counter_name, svc_number = 1):
 
         citizen_type = counter_name
-        if citizen_obj.counter is not None:
+        if citizen_obj.office.sb.sb_type == "nocallonsmartboard":
+            citizen_type = "Counter"
+        elif citizen_obj.counter is not None:
             citizen_type = citizen_obj.counter.counter_name
 
         # Set up the citizen context.
@@ -165,7 +167,9 @@ class SnowPlow():
     def get_csr(csr):
 
         #   Get the counter type.  Receptioninst is separate case.
-        if csr.receptionist_ind == 1:
+        if csr.office.sb.sb_type == "nocallonsmartboard":
+            counter_name = "Counter"
+        elif csr.receptionist_ind == 1:
             counter_name = "Receptionist"
         else:
             counter_name = csr.counter.counter_name
@@ -292,12 +296,12 @@ class SnowPlow():
     @staticmethod
     def log_snowplow_call(jsondata):
         if isinstance(jsondata, str):
-            module_logger.critical("------------------------------")
+            module_logger.info("------------------------------")
         else:
             sp_string = jsondata.to_string()
             sp_array = sp_string.split("/")
             sp_output = '{"schema": "' + sp_array[1] + '/' + sp_array[3]
-            module_logger.critical(sp_output)
+            module_logger.info(sp_output)
 
     @staticmethod
     def make_tracking_call(schema, citizen, office, agent):
