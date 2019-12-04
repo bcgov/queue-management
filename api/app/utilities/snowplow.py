@@ -21,6 +21,7 @@ from app.models.theq.service import Service
 from app.models.theq.smartboard import SmartBoard
 from snowplow_tracker import Subject, Tracker, AsyncEmitter
 from snowplow_tracker import SelfDescribingJson
+import logging
 import os
 from qsystem import application, my_print
 from datetime import datetime, timezone
@@ -44,7 +45,7 @@ class SnowPlow():
             citizen_obj = Citizen.query.get(new_citizen.citizen_id)
             citizen = SnowPlow.get_citizen(citizen_obj, csr.counter.counter_name)
             office = SnowPlow.get_office(new_citizen.office_id)
-            agent = SnowPlow.get_csr(csr)
+            agent = SnowPlow.get_csr(csr, office)
 
             # the addcitizen event has no parameters of its own so we pass an empty array "{}"
             addcitizen = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/addcitizen/jsonschema/1-0-0', {})
@@ -60,9 +61,9 @@ class SnowPlow():
 
             # Set up the contexts for the call.
             current_sr_number = service_request.sr_number
-            citizen = SnowPlow.get_citizen(service_request.citizen, False, svc_number = current_sr_number)
+            citizen = SnowPlow.get_citizen(service_request.citizen, csr.counter.counter_name, svc_number = current_sr_number)
             office = SnowPlow.get_office(csr.office_id)
-            agent = SnowPlow.get_csr(csr)
+            agent = SnowPlow.get_csr(csr, office)
 
             #  The choose service event has parameters, needs to be built.
             chooseservice = SnowPlow.get_service(service_request)
@@ -79,7 +80,7 @@ class SnowPlow():
             citizen_obj = Citizen.query.get(citizen_id)
             citizen = SnowPlow.get_citizen(citizen_obj, csr.counter.counter_name, svc_number = current_sr_number)
             office = SnowPlow.get_office(csr.office_id)
-            agent = SnowPlow.get_csr(csr)
+            agent = SnowPlow.get_csr(csr, office)
 
             #  Initialize schema version.
             schema_version = "1-0-0"
@@ -116,7 +117,7 @@ class SnowPlow():
             #  Set up the contexts for the call.
             citizen = SnowPlow.get_citizen(citizen_obj, csr.counter.counter_name)
             office = SnowPlow.get_office(csr.office_id)
-            agent = SnowPlow.get_csr(csr)
+            agent = SnowPlow.get_csr(csr, office)
 
             #  Initialize appointment schema version.
             snowplow_event = SnowPlow.get_appointment(appointment, schema)
@@ -134,7 +135,9 @@ class SnowPlow():
     def get_citizen(citizen_obj, counter_name, svc_number = 1):
 
         citizen_type = counter_name
-        if citizen_obj.counter is not None:
+        if citizen_obj.office.sb.sb_type == "nocallonsmartboard":
+            citizen_type = "Counter"
+        elif citizen_obj.counter is not None:
             citizen_type = citizen_obj.counter.counter_name
 
         # Set up the citizen context.
@@ -161,10 +164,12 @@ class SnowPlow():
         return office
 
     @staticmethod
-    def get_csr(csr):
+    def get_csr(csr, office):
 
         #   Get the counter type.  Receptioninst is separate case.
-        if csr.receptionist_ind == 1:
+        if office.data['office_type'] != "reception":
+            counter_name = "Counter"
+        elif csr.receptionist_ind == 1:
             counter_name = "Receptionist"
         else:
             counter_name = csr.counter.counter_name
@@ -289,7 +294,27 @@ class SnowPlow():
         return appointment
 
     @staticmethod
+    def log_snowplow_call(jsondata):
+        if isinstance(jsondata, str):
+            module_logger.info("------------------------------")
+        else:
+            sp_string = jsondata.to_string()
+            sp_array = sp_string.split("/")
+            sp_output = '{"schema": "' + sp_array[1] + '/' + sp_array[3]
+            module_logger.info(sp_output)
+
+    @staticmethod
     def make_tracking_call(schema, citizen, office, agent):
+
+        #   Log call info, if level is info or below.
+        if (module_logger.level <= 20):
+            SnowPlow.log_snowplow_call("")
+            SnowPlow.log_snowplow_call(schema)
+            SnowPlow.log_snowplow_call(citizen)
+            SnowPlow.log_snowplow_call(office)
+            SnowPlow.log_snowplow_call(agent)
+
+        #   Make the Snowplow call.
         t.track_self_describing_event(schema, [citizen, office, agent])
 
 # Set up core Snowplow environment
@@ -297,3 +322,14 @@ if SnowPlow.call_snowplow_flag:
     s = Subject()  # .set_platform("app")
     e = AsyncEmitter(SnowPlow.sp_endpoint, on_failure=SnowPlow.failure, protocol="https")
     t = Tracker(e, encode_base64=False, app_id=SnowPlow.sp_appid, namespace=SnowPlow.sp_namespace)
+
+    #  Set up the correct level of logging.
+    print_flag = application.config['PRINT_ENABLE']
+    formatter = logging.Formatter('[%(asctime)s.] %(message)s')
+
+    #  All OK.  Set up logging options
+    # log_stream_handler = logging.StreamHandler()
+    # log_stream_handler.setFormatter(formatter)
+    module_logger = logging.getLogger("snowplow-logger")
+    # module_logger.addHandler(log_stream_handler)
+
