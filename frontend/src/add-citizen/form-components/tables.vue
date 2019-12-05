@@ -8,6 +8,7 @@
                       padding-bottom: 5px;"
                       >
     <b-form-row no-gutters class="m-0 add_citizen_table_header">
+      <b-col cols="1" class="m-0 p-0" v-if="reception && receptionist_status && setup != 'add_mode'">To Q</b-col>
       <b-col cols="1" class="m-0 p-0">Serve</b-col>
       <b-col cols="5" class="m-0 p-0">Service</b-col>
       <b-col cols="*" class="m-0 p-0" v-if="!simplifiedModal">Category</b-col>
@@ -29,7 +30,14 @@
                    id="table2"
                    @row-clicked="rowClicked"
                    class="add_citizen_categories_table">
-            <template slot="deleteBut" slot-scope="data">
+            <template slot="queueBut" slot-scope="data" v-if="reception && receptionist_status && !simplifiedModal">
+              <div @click="sendToQueue(data.item)">
+                &nbsp;&nbsp;&nbsp;
+                <font-awesome-icon icon="user-check"
+                                   style="fontSize: 1rem; color: blue;"/>
+              </div>
+            </template>
+            <template slot="serveBut" slot-scope="data">
               <div @click="serveCustomer(data.item)">
                 &nbsp;&nbsp;&nbsp;
                 <font-awesome-icon icon="user-check"
@@ -75,9 +83,15 @@
         addModalSetup: 'addModalSetup',
         addCitizenModal: 'addCitizenModal',
         serviceModalForm: 'serviceModalForm',
-        addModalForm: 'addModalForm'
+        addModalForm: 'addModalForm',
+        setup: 'addModalSetup'
       }),
-      ...mapGetters({form_data: 'form_data', filtered_services: 'filtered_services',}),
+      ...mapGetters({
+        form_data: 'form_data',
+        filtered_services: 'filtered_services',
+        reception: 'reception',
+        receptionist_status: 'receptionist_status'
+      }),
       simplified() {
         if (this.$route.path !== '/queue') {
           return true
@@ -99,18 +113,34 @@
         return false
       },
       fields() {
+        let displayFields = null
         if (!this.simplifiedModal) {
-          return [
-            { key: 'deleteBut', label: 'Begin Service', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-icon' },
-            { key: 'service_name', label: 'Service', thClass: 'd-none', sortable: false, style: "width: 5%", tdClass: 'addcit-td width-service' },
-            { key: 'parent.service_name', label: 'Category', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-category', },
-            {key: 'service_desc', label: '', thClass: 'd-none', sortable: false, tdClass: 'd-none',}
+          if (this.reception && this.receptionist_status && this.setup != "add_mode") {
+            displayFields = [
+              { key: 'queueBut', label: 'To Q', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-icon' },
+              { key: 'serveBut', label: 'Begin Service', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-icon' },
+              { key: 'service_name', label: 'Service', thClass: 'd-none', sortable: false, style: "width: 5%", tdClass: 'addcit-td width-service' },
+              { key: 'parent.service_name', label: 'Category', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-category', },
+              {key: 'service_desc', label: '', thClass: 'd-none', sortable: false, tdClass: 'd-none',}
+            ]
+          }
+          else {
+            displayFields = [
+              { key: 'serveBut', label: 'Begin Service', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-icon' },
+              { key: 'service_name', label: 'Service', thClass: 'd-none', sortable: false, style: "width: 5%", tdClass: 'addcit-td width-service' },
+              { key: 'parent.service_name', label: 'Category', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-category', },
+              {key: 'service_desc', label: '', thClass: 'd-none', sortable: false, tdClass: 'd-none',}
+              ]
+          }
+        }
+        else {
+          displayFields = [
+            { key: 'serveBut', label: 'Begin Service', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-icon'},
+            { key: 'service_name', label: 'Service', sortable: false, thClass: 'd-none', tdClass: 'addcit-td',}
           ]
         }
-        return [
-          { key: 'deleteBut', label: 'Begin Service', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-icon'},
-          { key: 'service_name', label: 'Service', sortable: false, thClass: 'd-none', tdClass: 'addcit-td',},
-        ]
+
+        return displayFields
       },
       filter(value) {
         return this.form_data.search
@@ -119,19 +149,20 @@
 
     methods: {
       ...mapMutations(['setAddModalSelectedItem', 'toggleExamsTrackingIP']),
-      ...mapActions(['clickQuickServe', 'clickAddServiceApply', 'clickBeginService', 'resetAddCitizenModal']),
+      ...mapActions(['clickQuickServe', 'clickAddServiceApply',
+        'clickBeginService', 'resetAddCitizenModal', 'clickAddToQueue']),
 
       rowClicked(item, index) {
         let id = item.service_id
         this.setAddModalSelectedItem(item.service_name)
         this.$store.commit('updateAddModalForm', {type:'service',value:id})
       },
+      sendToQueue(service) {
+        this.setAddModalSelectedItem(service.service_name)
+        this.$store.commit('updateAddModalForm', {type: 'service', value: service.service_id})
+        this.clickAddToQueue()
+      },
       serveCustomer(service) {
-        console.log("==> Serve icon clicked. Variables are:")
-        console.log("    --> this.addModalSetup:           " + this.addModalSetup)
-        console.log("    --> this.$route.path:             " + this.$route.path)
-        console.log("    --> this.simplified:              " + this.simplified)
-        console.log("    --> this.simplifiedTicketStarted: " + this.simplifiedTicketStarted)
         this.setAddModalSelectedItem(service.service_name)
         this.$store.commit('updateAddModalForm', {type: 'service', value: service.service_id})
         if (this.$route.path == "/exams") {
