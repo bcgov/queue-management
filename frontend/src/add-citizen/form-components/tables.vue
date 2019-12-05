@@ -8,9 +8,9 @@
                       padding-bottom: 5px;"
                       >
     <b-form-row no-gutters class="m-0 add_citizen_table_header">
-      <b-col class="m-0 p-0">&nbsp;Service</b-col>
-      <b-col class="m-0 p-0" v-if="!simplifiedModal">Category</b-col>
       <b-col class="m-0 p-0" v-if="!simplifiedModal">Serve Now</b-col>
+      <b-col class="m-0 p-0">Service</b-col>
+      <b-col class="m-0 p-0" v-if="!simplifiedModal">Category</b-col>
     </b-form-row>
     <b-form-row no-gutters>
       <b-col>
@@ -88,10 +88,10 @@
       fields() {
         if (!this.simplifiedModal) {
           return [
+            { key: 'deleteBut', label: 'Begin Service', thClass: 'd-none', sortable: false, tdClass: 'addcit-td'},
             { key: 'service_name', label: 'Service', thClass: 'd-none', sortable: false, style: "width: 5%", tdClass: 'addcit-td'},
             { key: 'parent.service_name', label: 'Category', thClass: 'd-none', sortable: false, tdClass: 'addcit-td',},
-            { key: 'service_desc', label: '', thClass: 'd-none', sortable: false, tdClass: 'd-none',},
-            { key: 'deleteBut', label: 'Begin Service', thClass: 'd-none', sortable: false, tdClass: 'addcit-td'}
+            { key: 'service_desc', label: '', thClass: 'd-none', sortable: false, tdClass: 'd-none',}
           ]
         }
         return [
