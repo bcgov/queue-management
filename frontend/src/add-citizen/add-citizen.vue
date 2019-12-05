@@ -1,7 +1,7 @@
 <template>
   <b-modal :visible="showAddModal"
            v-if="showAddModal"
-           :size="simplified ? 'md' : 'lg'"
+           :size="simplified ? 'lg' : 'lg'"
            hide-header
            hide-footer
            no-close-on-backdrop
