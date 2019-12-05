@@ -114,10 +114,12 @@
         let service_id = e.target.dataset.id
         let service_name = e.target.innerText
 
+        //  If CSR is on reception, and a reception office, bring up add citizen form with defaults.
         if(this.user.receptionist_ind && this.user.office.sb.sb_type !== "nocallonsmartboard"){
           this.clickAddCitizen()
           this.$store.commit('updateAddModalForm', {type:'service',value:service_id})
           this.$store.commit('updateAddModalForm', {type:'search',value:service_name})
+        //  If CSR NOT on reception or NOT a reception office just serve the citizen.
         } else {
           this.setAddModalSelectedItem(service_name)
           this.$store.commit('updateAddModalForm', {type:'service',value:service_id})
