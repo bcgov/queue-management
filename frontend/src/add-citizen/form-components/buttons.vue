@@ -3,7 +3,6 @@
     <template v-if="$route.path === '/appointments' ">
       <div class="button-row">
         <b-button class="btn-success ml-3"
-                  v-if="1==2"
                   @click="addService">Add</b-button>
         <b-button class="btn-danger"
                   @click="closeAddServiceModal">Cancel</b-button>
@@ -44,7 +43,6 @@
             <b-button @click="beginService"
                       :disabled="performingAction || commentsTooLong"
                       class="btn-success"
-                      v-if="1==2"
                       id="add-citizen-begin-service">Begin service</b-button>
           </div>
         </div>
@@ -56,7 +54,6 @@
           <b-button @click="beginService"
                     :disabled="performingAction"
                     class="btn-success"
-                    v-if="1==2"
                     id="add-citizen-begin-service">Begin service</b-button>
         </div>
         <div v-if="simplified" class="buttons-div">
@@ -67,7 +64,6 @@
           <b-button @click="beginServiceSimplified"
                     :disabled="performingAction"
                     class="btn-success"
-                    v-if="1==2"
                     id="add-citizen-begin-service">Begin service</b-button>
         </div>
       </template>
