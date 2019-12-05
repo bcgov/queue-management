@@ -8,9 +8,9 @@
                       padding-bottom: 5px;"
                       >
     <b-form-row no-gutters class="m-0 add_citizen_table_header">
-      <b-col class="m-0 p-0" v-if="!simplifiedModal">Serve Now</b-col>
-      <b-col class="m-0 p-0">Service</b-col>
-      <b-col class="m-0 p-0" v-if="!simplifiedModal">Category</b-col>
+      <b-col cols="1" class="m-0 p-0" v-if="!simplifiedModal">Serve</b-col>
+      <b-col cols="5" class="m-0 p-0">Service</b-col>
+      <b-col cols="*" class="m-0 p-0" v-if="!simplifiedModal">Category</b-col>
     </b-form-row>
     <b-form-row no-gutters>
       <b-col>
@@ -26,10 +26,16 @@
                    :small="t"
                    :bordered="f"
                    :striped="f"
-                   :fixed="t"
                    id="table2"
                    @row-clicked="rowClicked"
                    class="add_citizen_categories_table">
+            <template slot="deleteBut" slot-scope="data">
+              <div @click="doSomething(data.item.service_name)">
+                &nbsp;&nbsp;&nbsp;
+                <font-awesome-icon icon="user-check"
+                                   style="fontSize: 1rem; color: green;"/>
+              </div>
+            </template>
             <template slot="service_name" slot-scope="data">
               <div>
                 <span v-bind:title="data.item.service_desc">
@@ -41,11 +47,9 @@
                 </div>
               </div>
             </template>
-            <template slot="deleteBut" slot-scope="data">
-              <div @click="doSomething(data.item.service_name)">
-                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  <font-awesome-icon icon="user-check"
-                                     style="fontSize: 1rem; color: green;"/>
+            <template slot="parent.service_name" slot-scope="data">
+              <div>
+                {{data.item.parent.service_name}}
               </div>
             </template>
           </b-table>
@@ -88,9 +92,9 @@
       fields() {
         if (!this.simplifiedModal) {
           return [
-            { key: 'deleteBut', label: 'Begin Service', thClass: 'd-none', sortable: false, tdClass: 'addcit-td'},
-            { key: 'service_name', label: 'Service', thClass: 'd-none', sortable: false, style: "width: 5%", tdClass: 'addcit-td'},
-            { key: 'parent.service_name', label: 'Category', thClass: 'd-none', sortable: false, tdClass: 'addcit-td',},
+            { key: 'deleteBut', label: 'Begin Service', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-icon'},
+            { key: 'service_name', label: 'Service', thClass: 'd-none', sortable: false, style: "width: 5%", tdClass: 'addcit-td width-service'},
+            { key: 'parent.service_name', label: 'Category', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-category',},
             { key: 'service_desc', label: '', thClass: 'd-none', sortable: false, tdClass: 'd-none',}
           ]
         }
@@ -134,5 +138,26 @@
 }
 .addcit-td {
   cursor: pointer;
+}
+.width-icon {
+  width: 8%;
+}
+.width-service {
+  width: 42%;
+}
+.width-category {
+  width: 50%;
+}
+.color-blue {
+  color: blue;
+  width: 5%;
+}
+.color-green {
+  color: green;
+  width: 90%;
+}
+.color-red {
+  color: red;
+  width: 5%;
 }
 </style>
