@@ -74,7 +74,8 @@
       ...mapState({
         addModalSetup: 'addModalSetup',
         addCitizenModal: 'addCitizenModal',
-        serviceModalForm: 'serviceModalForm'
+        serviceModalForm: 'serviceModalForm',
+        addModalForm: 'addModalForm'
       }),
       ...mapGetters({form_data: 'form_data', filtered_services: 'filtered_services',}),
       simplified() {
@@ -117,8 +118,8 @@
     },
 
     methods: {
-      ...mapMutations(['setAddModalSelectedItem']),
-      ...mapActions(['clickQuickServe', 'clickAddServiceApply']),
+      ...mapMutations(['setAddModalSelectedItem', 'toggleExamsTrackingIP']),
+      ...mapActions(['clickQuickServe', 'clickAddServiceApply', 'clickBeginService', 'resetAddCitizenModal']),
 
       rowClicked(item, index) {
         let id = item.service_id
@@ -126,14 +127,31 @@
         this.$store.commit('updateAddModalForm', {type:'service',value:id})
       },
       serveCustomer(service) {
+        console.log("==> Serve icon clicked. Variables are:")
+        console.log("    --> this.addModalSetup:           " + this.addModalSetup)
+        console.log("    --> this.$route.path:             " + this.$route.path)
+        console.log("    --> this.simplified:              " + this.simplified)
+        console.log("    --> this.simplifiedTicketStarted: " + this.simplifiedTicketStarted)
         this.setAddModalSelectedItem(service.service_name)
-        this.$store.commit('updateAddModalForm', {type:'service',value:service.service_id})
-        if (!this.simplifiedTicketStarted) {
+        this.$store.commit('updateAddModalForm', {type: 'service', value: service.service_id})
+        if (this.$route.path == "/exams") {
+          this.toggleExamsTrackingIP(true)
+          this.clickBeginService({simple: true})
+        }
+        else if (this.$route.path == "/appointments") {
+          this.$store.commit('appointmentsModule/setSelectedService', this.addModalForm.service)
+          this.closeAddServiceModal()
+        }
+        else if (!this.simplifiedTicketStarted) {
           this.clickQuickServe()
         }
         else {
           this.clickAddServiceApply()
         }
+      },
+      closeAddServiceModal() {
+        this.resetAddCitizenModal()
+        this.$store.commit('appointmentsModule/toggleApptBookingModal', true)
       },
     }
   }
@@ -164,17 +182,5 @@
 }
 .width-category {
   width: 50%;
-}
-.color-blue {
-  color: blue;
-  width: 5%;
-}
-.color-green {
-  color: green;
-  width: 90%;
-}
-.color-red {
-  color: red;
-  width: 5%;
 }
 </style>
