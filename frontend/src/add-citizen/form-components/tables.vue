@@ -74,7 +74,7 @@
       ...mapState({
         addModalSetup: 'addModalSetup',
         addCitizenModal: 'addCitizenModal',
-
+        serviceModalForm: 'serviceModalForm'
       }),
       ...mapGetters({form_data: 'form_data', filtered_services: 'filtered_services',}),
       simplified() {
@@ -89,13 +89,21 @@
         }
         return false
       },
+      simplifiedTicketStarted() {
+        if (this.$route.path == '/queue') {
+          if (this.serviceModalForm.citizen_id) {
+            return true
+          }
+        }
+        return false
+      },
       fields() {
         if (!this.simplifiedModal) {
           return [
-            { key: 'deleteBut', label: 'Begin Service', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-icon'},
-            { key: 'service_name', label: 'Service', thClass: 'd-none', sortable: false, style: "width: 5%", tdClass: 'addcit-td width-service'},
-            { key: 'parent.service_name', label: 'Category', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-category',},
-            { key: 'service_desc', label: '', thClass: 'd-none', sortable: false, tdClass: 'd-none',}
+            { key: 'deleteBut', label: 'Begin Service', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-icon' },
+            { key: 'service_name', label: 'Service', thClass: 'd-none', sortable: false, style: "width: 5%", tdClass: 'addcit-td width-service' },
+            { key: 'parent.service_name', label: 'Category', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-category', },
+            {key: 'service_desc', label: '', thClass: 'd-none', sortable: false, tdClass: 'd-none',}
           ]
         }
         return [
@@ -110,7 +118,7 @@
 
     methods: {
       ...mapMutations(['setAddModalSelectedItem']),
-      ...mapActions(['clickQuickServe']),
+      ...mapActions(['clickQuickServe', 'clickAddServiceApply']),
 
       rowClicked(item, index) {
         let id = item.service_id
@@ -118,11 +126,15 @@
         this.$store.commit('updateAddModalForm', {type:'service',value:id})
       },
       serveCustomer(service) {
-        console.log("==> I want to get service " + service.service_id.toString() + ": " + service.service_name + ".")
         this.setAddModalSelectedItem(service.service_name)
         this.$store.commit('updateAddModalForm', {type:'service',value:service.service_id})
-        this.clickQuickServe()
-      }
+        if (!this.simplifiedTicketStarted) {
+          this.clickQuickServe()
+        }
+        else {
+          this.clickAddServiceApply()
+        }
+      },
     }
   }
 </script>
