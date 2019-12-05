@@ -8,7 +8,7 @@
                       padding-bottom: 5px;"
                       >
     <b-form-row no-gutters class="m-0 add_citizen_table_header">
-      <b-col cols="1" class="m-0 p-0" v-if="!simplifiedModal">Serve</b-col>
+      <b-col cols="1" class="m-0 p-0">Serve</b-col>
       <b-col cols="5" class="m-0 p-0">Service</b-col>
       <b-col cols="*" class="m-0 p-0" v-if="!simplifiedModal">Category</b-col>
     </b-form-row>
@@ -30,7 +30,7 @@
                    @row-clicked="rowClicked"
                    class="add_citizen_categories_table">
             <template slot="deleteBut" slot-scope="data">
-              <div @click="doSomething(data.item.service_name)">
+              <div @click="serveCustomer(data.item)">
                 &nbsp;&nbsp;&nbsp;
                 <font-awesome-icon icon="user-check"
                                    style="fontSize: 1rem; color: green;"/>
@@ -60,7 +60,7 @@
 </template>
 
 <script>
-  import { mapState, mapGetters, mapMutations } from 'vuex'
+  import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 
   export default {
     name: 'Tables',
@@ -99,6 +99,7 @@
           ]
         }
         return [
+          { key: 'deleteBut', label: 'Begin Service', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-icon'},
           { key: 'service_name', label: 'Service', sortable: false, thClass: 'd-none', tdClass: 'addcit-td',},
         ]
       },
@@ -109,14 +110,18 @@
 
     methods: {
       ...mapMutations(['setAddModalSelectedItem']),
+      ...mapActions(['clickQuickServe']),
 
       rowClicked(item, index) {
         let id = item.service_id
         this.setAddModalSelectedItem(item.service_name)
         this.$store.commit('updateAddModalForm', {type:'service',value:id})
       },
-      doSomething(service) {
-        console.log("==> I want to get service " + service + ".")
+      serveCustomer(service) {
+        console.log("==> I want to get service " + service.service_id.toString() + ": " + service.service_name + ".")
+        this.setAddModalSelectedItem(service.service_name)
+        this.$store.commit('updateAddModalForm', {type:'service',value:service.service_id})
+        this.clickQuickServe()
       }
     }
   }
