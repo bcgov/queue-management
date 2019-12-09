@@ -48,7 +48,10 @@ class CSR(Base):
 
     @classmethod
     def find_by_username(cls, username):
+        #   Possible keycloak->TheQ id values are user@idir->user, idir/user->user or user@bceid->user@bceid
         idir_id = username.split("idir/")[-1].lower()
+        if "@idir" in username:
+            idir_id = username.split("@idir")[0].lower()
         key = CSR.format_string % idir_id
         if cache.get(key):
             return cache.get(key)
