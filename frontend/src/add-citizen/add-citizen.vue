@@ -34,6 +34,13 @@
         <b-container class="add-buttons add_citizen_padding">
           <div v-bind:class="{'button-row-reversed' : citizenButtons, 'button-row' : !citizenButtons }"
                style="padding-bottom:6px;">
+            <select v-show="reception && !simplified" id="counter-selection-add" class="custom-select" v-model="counter_selection">
+              <option v-for="counter in sortedCounters"
+                    :value="counter.counter_id"
+                    :key="counter.counter_id">
+                {{counter.counter_name}}
+              </option>
+            </select>
             <div id="select-wrapper">
               <select id="priority-selection"
                       v-if="!simplified"
@@ -44,13 +51,6 @@
                 <option value="3">Low Priority</option>
               </select>
             </div>
-            <select v-show="reception && !simplified" id="counter-selection-add" class="custom-select" v-model="counter_selection">
-              <option v-for="counter in sortedCounters"
-                    :value="counter.counter_id"
-                    :key="counter.counter_id">
-                {{counter.counter_name}}
-              </option>
-            </select>
           </div>
           <div class="button-row">
             <Buttons />
