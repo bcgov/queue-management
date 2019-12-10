@@ -8,7 +8,7 @@
                       padding-bottom: 5px;"
                       >
     <b-form-row no-gutters class="m-0 add_citizen_table_header">
-      <b-col cols="1" class="m-0 p-0" v-if="reception && receptionist_status && setup != 'add_mode'">To Q</b-col>
+      <b-col cols="1" class="m-0 p-0" v-if="showQuickQIcon">To Q</b-col>
       <b-col cols="1" class="m-0 p-0">Serve</b-col>
       <b-col cols="5" class="m-0 p-0">Service</b-col>
       <b-col cols="*" class="m-0 p-0" v-if="!simplifiedModal">Category</b-col>
@@ -30,7 +30,8 @@
                    id="table2"
                    @row-clicked="rowClicked"
                    class="add_citizen_categories_table">
-            <template slot="queueBut" slot-scope="data" v-if="reception && receptionist_status && !simplifiedModal">
+            <template slot="queueBut" slot-scope="data"
+                      v-if="showQuickQIcon">
               <div @click="sendToQueue(data.item)">
                 &nbsp;&nbsp;&nbsp;
                 <font-awesome-icon icon="share-square"
@@ -83,8 +84,7 @@
         addModalSetup: 'addModalSetup',
         addCitizenModal: 'addCitizenModal',
         serviceModalForm: 'serviceModalForm',
-        addModalForm: 'addModalForm',
-        setup: 'addModalSetup'
+        addModalForm: 'addModalForm'
       }),
       ...mapGetters({
         form_data: 'form_data',
@@ -92,6 +92,9 @@
         reception: 'reception',
         receptionist_status: 'receptionist_status'
       }),
+      showQuickQIcon() {
+        return this.reception && this.receptionist_status && this.addModalSetup == 'reception'
+      },
       simplified() {
         if (this.$route.path !== '/queue') {
           return true
@@ -114,8 +117,10 @@
       },
       fields() {
         let displayFields = null
+        console.log("==> In Fields")
+        console.log("    --> addModalSetup: " + this.addModalSetup.toString())
         if (!this.simplifiedModal) {
-          if (this.reception && this.receptionist_status && this.setup != "add_mode") {
+          if (this.showQuickQIcon) {
             displayFields = [
               { key: 'queueBut', label: 'To Q', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-icon' },
               { key: 'serveBut', label: 'Begin Service', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-icon' },
@@ -150,7 +155,8 @@
     methods: {
       ...mapMutations(['setAddModalSelectedItem', 'toggleExamsTrackingIP']),
       ...mapActions(['clickQuickServe', 'clickAddServiceApply',
-        'clickBeginService', 'resetAddCitizenModal', 'clickAddToQueue']),
+        'clickBeginService', 'resetAddCitizenModal', 'clickAddToQueue',
+        'clickEditApply']),
 
       rowClicked(item, index) {
         let id = item.service_id
@@ -158,26 +164,48 @@
         this.$store.commit('updateAddModalForm', {type:'service',value:id})
       },
       sendToQueue(service) {
+        console.log("==> In tables.vue, sendToQueue")
         this.setAddModalSelectedItem(service.service_name)
         this.$store.commit('updateAddModalForm', {type: 'service', value: service.service_id})
         this.clickAddToQueue()
       },
       serveCustomer(service) {
+        console.log("==> In tables.vue, serveCustomer")
+        console.log("    --> this.$route.path:             " + this.$route.path)
+        console.log("    --> this.addModalSetup:           " + this.addModalSetup)
+        console.log("    --> this.simplifiedTicketStarted: " + this.simplifiedTicketStarted.toString())
         this.setAddModalSelectedItem(service.service_name)
         this.$store.commit('updateAddModalForm', {type: 'service', value: service.service_id})
         if (this.$route.path == "/exams") {
+          console.log("    --> Exam code")
           this.toggleExamsTrackingIP(true)
           this.clickBeginService({simple: true})
         }
         else if (this.$route.path == "/appointments") {
+          console.log("    --> Appointment code")
           this.$store.commit('appointmentsModule/setSelectedService', this.addModalForm.service)
           this.closeAddServiceModal()
+          // this.clickBeginService({simple: false})
         }
-        else if (!this.simplifiedTicketStarted) {
-          this.clickQuickServe()
+        else if ((!this.simplifiedTicketStarted) && (this.addModalSetup == "reception" || this.addModalSetup == "non_reception")) {
+          console.log("    --> Add Service (reception or non_reception mode)")
+          this.clickBeginService({simple: false})
+        }
+        else if (this.simplifiedTicketStarted) {
+          if (this.addModalSetup == "add_mode") {
+            console.log("    --> Add Next Service")
+            this.clickAddServiceApply()
+          }
+          else if (this.addModalSetup == "edit_mode") {
+            console.log("    --> Edit service")
+            this.clickEditApply()
+          }
+          else {
+            console.log("==> No service selected.")
+          }
         }
         else {
-          this.clickAddServiceApply()
+          console.log("==> Still no service selected")
         }
       },
       closeAddServiceModal() {
