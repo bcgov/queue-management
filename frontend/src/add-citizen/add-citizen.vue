@@ -32,7 +32,7 @@
       <div v-else>
         <AddCitizenForm />
         <b-container class="add-buttons add_citizen_padding">
-          <div class="button-row"
+          <div v-bind:class="{'button-row-reversed' : citizenButtons, 'button-row' : !citizenButtons }"
                style="padding-bottom:6px;">
             <div id="select-wrapper">
               <select id="priority-selection"
@@ -92,7 +92,8 @@ export default {
       addModalSetup: 'addModalSetup',
       serviceModalForm: 'serviceModalForm',
       user: 'user',
-      displayServices: 'displayServices'
+      displayServices: 'displayServices',
+      citizenButtons: 'citizenButtons'
     }),
     ...mapGetters(['form_data', 'reception',]),
     simplified() {
@@ -207,9 +208,13 @@ export default {
   justify-content: space-between;
 }
 
-.button-row {
+.button-row-reversed {
   background: #504e4f;
   display: flex;
   flex-direction: row-reverse;
+}
+.button-row {
+  background: #504e4f;
+  display: flex;
 }
 </style>

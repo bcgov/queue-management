@@ -3,6 +3,7 @@
     <template v-if="$route.path === '/appointments' ">
       <div class="button-row">
         <b-button class="btn-success ml-3"
+                  v-if="citizenButtons"
                   @click="addService">Add</b-button>
         <b-button class="btn-danger"
                   @click="closeAddServiceModal">Cancel</b-button>
@@ -15,7 +16,8 @@
                     :disabled="performingAction"
                     class="btn-danger"
                     id="add-citizen-cancel">Cancel</b-button>
-          <b-button @click="clickEditApply"
+          <b-button v-if="citizenButtons"
+                    @click="clickEditApply"
                     :disabled="performingAction"
                     class="btn-success"
                     id="add-citizen-apply">Apply</b-button>
@@ -24,7 +26,8 @@
           <b-button @click="clickEditCancel"
                     :disabled="performingAction"
                     class="btn-danger" >Cancel</b-button>
-          <b-button @click="addServiceApply"
+          <b-button v-if="citizenButtons"
+                    @click="addServiceApply"
                     :disabled="performingAction"
                     class="btn-success" >Apply</b-button>
         </div>
@@ -37,10 +40,12 @@
                     id="add-citizen-cancel">Cancel</b-button>
           <div style="display:inline-block">
             <b-button @click="addToQueue"
+                      v-if="citizenButtons"
                       :disabled="performingAction || commentsTooLong"
                       class="btn-white"
                       id="add-citizen-add-to-queue">Add to queue</b-button>
             <b-button @click="beginService"
+                      v-if="citizenButtons"
                       :disabled="performingAction || commentsTooLong"
                       class="btn-success"
                       id="add-citizen-begin-service">Begin service</b-button>
@@ -52,6 +57,7 @@
                     class="btn-danger"
                     id="add-citizen-cancel">Cancel</b-button>
           <b-button @click="beginService"
+                    v-if="citizenButtons"
                     :disabled="performingAction"
                     class="btn-success"
                     id="add-citizen-begin-service">Begin service</b-button>
@@ -62,6 +68,7 @@
                     class="btn-danger"
                     id="add-citizen-cancel">Cancel</b-button>
           <b-button @click="beginServiceSimplified"
+                    v-if="citizenButtons"
                     :disabled="performingAction"
                     class="btn-success"
                     id="add-citizen-begin-service">Begin service</b-button>
@@ -87,6 +94,7 @@
         setup: 'addModalSetup',
         performingAction: 'performingAction',
         addModalForm: 'addModalForm',
+        citizenButtons: 'citizenButtons'
       }),
       simplified() {
         if (this.$route.path !== '/queue') {

@@ -33,14 +33,14 @@
             <template slot="queueBut" slot-scope="data" v-if="reception && receptionist_status && !simplifiedModal">
               <div @click="sendToQueue(data.item)">
                 &nbsp;&nbsp;&nbsp;
-                <font-awesome-icon icon="user-check"
+                <font-awesome-icon icon="share-square"
                                    style="fontSize: 1rem; color: blue;"/>
               </div>
             </template>
             <template slot="serveBut" slot-scope="data">
               <div @click="serveCustomer(data.item)">
                 &nbsp;&nbsp;&nbsp;
-                <font-awesome-icon icon="user-check"
+                <font-awesome-icon icon="hands-helping"
                                    style="fontSize: 1rem; color: green;"/>
               </div>
             </template>
