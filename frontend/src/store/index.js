@@ -1044,6 +1044,7 @@ export const store = new Vuex.Store({
     },
 
     cancelAddCitizensModal(context) {
+      console.log("==> In index.js, cancelAddCitizensModal")
       let { citizen_id } = context.getters.form_data.citizen
 
       context.dispatch('postCitizenLeft', citizen_id)
@@ -1453,6 +1454,7 @@ export const store = new Vuex.Store({
     },
 
     clickEditCancel(context) {
+      console.log("==> In index.js, clickEditCancel")
       context.commit('toggleAddModal', false)
       context.dispatch('toggleModalBack')
       context.commit('resetAddModalForm')

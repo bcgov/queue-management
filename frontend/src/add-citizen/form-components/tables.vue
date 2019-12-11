@@ -185,7 +185,6 @@
           console.log("    --> Appointment code")
           this.$store.commit('appointmentsModule/setSelectedService', this.addModalForm.service)
           this.closeAddServiceModal()
-          // this.clickBeginService({simple: false})
         }
         else if ((!this.simplifiedTicketStarted) && (this.addModalSetup == "reception" || this.addModalSetup == "non_reception")) {
           console.log("    --> Add Service (reception or non_reception mode)")

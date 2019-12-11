@@ -51,6 +51,12 @@
                 <option value="3">Low Priority</option>
               </select>
             </div>
+            <!--  Cancel button goes here. -->
+            <b-button @click="cancelAction"
+                      :disabled="performingAction"
+                      class="btn-danger"
+                      v-bind:style="marginStyle"
+                      id="add-citizen-cancel">Cancel</b-button>
           </div>
           <div class="button-row">
             <Buttons />
@@ -93,9 +99,20 @@ export default {
       serviceModalForm: 'serviceModalForm',
       user: 'user',
       displayServices: 'displayServices',
-      citizenButtons: 'citizenButtons'
+      citizenButtons: 'citizenButtons',
+      performingAction: 'performingAction',
     }),
     ...mapGetters(['form_data', 'reception',]),
+    marginStyle() {
+      let style = ''
+      if (this.citizenButtons) {
+        style = {marginRight: '50%'}
+      }
+      else {
+        style = {marginLeft: '50%'}
+      }
+      return style
+    },
     simplified() {
       if (this.$route.path !== '/queue') {
         return true
@@ -143,10 +160,47 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['cancelAddCitizensModal']),
-    ...mapMutations(['setDefaultChannel', 'toggleAddModal',  'updateAddModalForm',]),
+    ...mapActions(['cancelAddCitizensModal', 'cancelAddCitizensModal',
+      'clickEditCancel', 'resetAddCitizenModal']),
+    ...mapMutations(['setDefaultChannel', 'toggleAddModal',  'updateAddModalForm']),
     Alert() {
       this.dismissCountDown = this.dismissSecs
+    },
+    cancelAction() {
+      console.log("==> In add-citizen, cancel Action")
+      console.log("    --> this.simplified: " + this.simplified.toString())
+      console.log("    --> this.reception:  " + this.reception.toString())
+      console.log("    --> this.$route.path:             " + this.$route.path)
+      console.log("    --> this.addModalSetup:           " + this.addModalSetup)
+      // console.log("    --> this.simplifiedTicketStarted: " + this.simplifiedTicketStarted.toString())
+      if (this.$route.path == "/exams") {
+        console.log("    --> Cancelling from Exams")
+        this.cancelAddCitizensModal()
+      }
+      else if (this.$route.path == "/appointments") {
+        console.log("    --> Cancelling from Appointments")
+        this.closeAddServiceModal()
+      }
+      else if ((this.addModalSetup == 'reception') || (this.addModalSetup == 'non_reception')) {
+        console.log("    --> Cancelling from Add Citizen")
+        this.cancelAddCitizensModal()
+      }
+      else if (this.addModalSetup == "add_mode") {
+        console.log("    --> Cancelling from Add Next Service")
+        this.clickEditCancel()
+      }
+      else if (this.addModalSetup == "edit_mode") {
+        console.log("    --> Cancelling from Edit Service")
+        this.clickEditCancel()
+      }
+      else {
+        console.log("    --> Cancelling from the Else statement")
+        this.cancelAddCitizensModal()
+      }
+    },
+    closeAddServiceModal() {
+      this.resetAddCitizenModal()
+      this.$store.commit('appointmentsModule/toggleApptBookingModal', true)
     },
     countDownChanged(dismissCountDown) {
       this.dismissCountDown = dismissCountDown
