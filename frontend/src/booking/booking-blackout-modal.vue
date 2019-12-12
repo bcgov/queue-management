@@ -636,6 +636,8 @@
           let start_date = moment(date + " " + start).format()
           let end = moment(this.end_time).clone().format('HH:mm:ss')
           let end_date = moment(date + " " + end).format()
+          const uuidv4 = require('uuid/v4')
+          let recurring_uuid = uuidv4()
 
           if(this.booking_rrule_array.length === 0){
             if(this.room_id_list.length === 1){
@@ -699,6 +701,7 @@
                   booking.booking_contact_information = self.user_contact_info
                   booking.blackout_flag = 'Y'
                   booking.blackout_notes = self.notes
+                  booking.recurring_uuid = recurring_uuid
                   booking_array.push(booking)
                 })
               }else{
@@ -711,6 +714,7 @@
                   booking.blackout_flag = 'Y'
                   booking.blackout_notes = self.notes
                   booking.room_id = self.selected[0].id
+                  booking.recurring_uuid = recurring_uuid
                   booking_array.push(booking)
                 })
               }
@@ -725,7 +729,7 @@
                   booking.booking_contact_information = self.user_contact_info
                   booking.blackout_flag = 'Y'
                   booking.blackout_notes = self.notes
-
+                  booking.recurring_uuid = recurring_uuid
                   if(booking.room_id === '_offsite'){
                     delete booking.room_id
                   }
@@ -900,10 +904,6 @@
           },
           set(e) {
             this.toggleBookingBlackoutModal(e)
-            let all_rooms_local = []
-            this.roomResources.forEach(function(room){
-              all_rooms_local.push(room.title)
-            })
           }
         },
       }

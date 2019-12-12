@@ -314,7 +314,6 @@ node {
         }
     }
     stage("Deploy Frontend - Test") {
-        input "Deploy to Prod?"
         script: {
             openshift.withCluster() {
                 openshift.withProject() {
@@ -339,7 +338,21 @@ node {
     } 
 }
 node {
+    stage("Update Stable") {
+        script: {
+            openshift.withCluster() {
+                openshift.withProject() {
+                    echo "Tagging Production to Stable"
+                    openshift.tag("${BUILDS[0]}:production", "${BUILDS[0]}:stable")
+                    openshift.tag("${BUILDS[2]}:production", "${BUILDS[2]}:stable")
+                }
+            }
+        }
+    }
+}
+node {
     stage("Deploy API - Prod") {
+        input "Deploy to Prod?"
         script: {
             openshift.withCluster() {
                 openshift.withProject() {

@@ -20,11 +20,10 @@ from app.models.bookings import Exam, Booking, Invigilator, Room, ExamType
 from app.models.theq import CSR, Office
 from app.schemas.bookings import ExamSchema
 from qsystem import api, oidc
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import pytz
 import csv
 import io
-import re
 
 
 @api.route("/exams/export/", methods=["GET"])
@@ -166,7 +165,12 @@ class ExamList(Resource):
                         elif key == "exam_type_name":
                             row.append(getattr(exam.exam_type, key))
                         elif key in booking_keys:
-                            row.append(getattr(exam.booking, key))
+                            value = getattr(exam.booking, key)
+                            if isinstance(value, datetime):
+                                time_string = value.strftime("%Y-%m-%d %I:%M %p")
+                                row.append('="' + time_string + '"')
+                            else:
+                                row.append(value)
                         elif key in exam_keys:
                             row.append(getattr(exam, key))
                         elif key == "fees":
@@ -203,7 +207,12 @@ class ExamList(Resource):
                             elif key == "exam_type_name":
                                 row.append("Non Exam Booking")
                             elif key in booking_keys:
-                                row.append(getattr(non_exam, key))
+                                value = getattr(non_exam, key)
+                                if isinstance(value, datetime):
+                                    time_string = value.strftime("%Y-%m-%d %I:%M %p")
+                                    row.append('="' + time_string + '"')
+                                else:
+                                    row.append(value)
                             elif key in non_exam_keys:
                                 which_non_exam_key(non_exam, row, key)
                             elif key == "exam_id":
@@ -325,6 +334,8 @@ def which_non_exam_key(booking, row, key):
     elif key == 'notes':
         write_contact_info(booking, row)
     elif key == 'start_time':
+        value = getattr(booking.start_time, key)
+        print("==> which_non_exam_key of '" + key + "', type is: " + str(type(value)))
         row.append(getattr(booking.start_time, key))
     elif key == 'end_time':
         row.append(getattr(booking.end_time, key))

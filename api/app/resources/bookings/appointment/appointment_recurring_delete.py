@@ -12,16 +12,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask import abort, g
+from flask import abort, g, request
 from flask_restplus import Resource
 from app.models.bookings import Appointment
 from app.schemas.bookings import AppointmentSchema
 from app.models.theq import CSR
 from qsystem import api, db, oidc
-from app.utilities.snowplow import SnowPlow
 
-@api.route("/appointments/<int:id>/", methods=["DELETE"])
-class AppointmentDelete(Resource):
+
+@api.route("/appointments/recurring/<string:id>", methods=["DELETE"])
+class AppointmentRecurringDelete(Resource):
 
     appointment_schema = AppointmentSchema()
 
@@ -30,13 +30,12 @@ class AppointmentDelete(Resource):
 
         csr = CSR.find_by_username(g.oidc_token_info['username'])
 
-        appointment = Appointment.query.filter_by(appointment_id=id)\
-                                       .filter_by(office_id=csr.office_id)\
-                                       .first_or_404()
+        appointments = Appointment.query.filter_by(recurring_uuid=id)\
+                                        .filter_by(office_id=csr.office_id)\
+                                        .all()
 
-        SnowPlow.snowplow_appointment(None, csr, appointment, 'appointment_delete')
-
-        db.session.delete(appointment)
-        db.session.commit()
+        for appointment in appointments:
+            db.session.delete(appointment)
+            db.session.commit()
 
         return {}, 204

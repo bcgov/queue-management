@@ -19,7 +19,7 @@ from qsystem import api, db, oidc
 from app.models.bookings import Appointment
 from app.models.theq import CSR
 from app.schemas.bookings import AppointmentSchema
-
+from app.utilities.snowplow import SnowPlow
 
 @api.route("/appointments/<int:id>/", methods=["PUT"])
 class AppointmentPut(Resource):
@@ -34,7 +34,7 @@ class AppointmentPut(Resource):
         json_data = request.get_json()
 
         if not json_data:
-            return  {"message": "No input data received for updating an appointment"}
+            return {"message": "No input data received for updating an appointment"}
 
         appointment = Appointment.query.filter_by(appointment_id=id)\
                                        .filter_by(office_id=csr.office_id)\
@@ -48,6 +48,12 @@ class AppointmentPut(Resource):
 
         db.session.add(appointment)
         db.session.commit()
+
+        #   Make Snowplow call.
+        schema = 'appointment_update'
+        if "checked_in_time" in json_data:
+            schema = 'appointment_checkin'
+        SnowPlow.snowplow_appointment(None, csr, appointment, schema)
 
         result = self.appointment_schema.dump(appointment)
 

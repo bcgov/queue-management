@@ -32,7 +32,7 @@ class CitizenBeginService(Resource):
         lock = FileLock("lock/begin_citizen_{}.lock".format(csr.office_id))
 
         with lock:
-            citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
+            citizen = Citizen.query.filter_by(citizen_id=id).first()
             pending_service_state = SRState.get_state_by_name("Active")
 
             if citizen is None:

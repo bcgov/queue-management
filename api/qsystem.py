@@ -256,17 +256,22 @@ import app.resources.bookings.appointment.appointment_list
 import app.resources.bookings.appointment.appointment_post
 import app.resources.bookings.appointment.appointment_put
 import app.resources.bookings.appointment.appointment_delete
+import app.resources.bookings.appointment.appointment_recurring_delete
+import app.resources.bookings.appointment.appointment_recurring_put
 import app.resources.bookings.booking.booking_delete
 import app.resources.bookings.booking.booking_detail
 import app.resources.bookings.booking.booking_list
 import app.resources.bookings.booking.booking_post
 import app.resources.bookings.booking.booking_put
+import app.resources.bookings.booking.booking_recurring_delete
+import app.resources.bookings.booking.booking_recurring_put
 import app.resources.bookings.exam.exam_delete
 import app.resources.bookings.exam.exam_detail
 import app.resources.bookings.exam.exam_list
 import app.resources.bookings.exam.exam_post
 import app.resources.bookings.exam.exam_put
 import app.resources.bookings.exam.exam_export_list
+import app.resources.bookings.exam.exam_event_id_detail
 import app.resources.bookings.invigilator.invigilator_list
 import app.resources.bookings.invigilator.invigilator_put
 import app.resources.bookings.room.room_list
@@ -307,9 +312,26 @@ def after_cursor_execute(conn, cursor, statement,
     total = time.time() - conn.info['query_start_time'].pop(-1)
 
     if total > query_limit:
-        logger.debug("Long running Query (%s s): %s" % (total, statement))
-        logger.debug("Parameters: %s", parameters)
-
+        logger.debug("Long running Query (%s s)" % (total))
+        output_string = str(parameters)
+        if len(output_string) > 90:
+            output_string = output_string[:85] + " ...}"
+        logger.debug("Parameters: %s", output_string)
+        try:
+            count = 0
+            for line in traceback.format_stack():
+                if  (('opt' in line) or ('api' in line)) \
+                        and ('qsystem' not in line) \
+                        and ((('opt' in line) and ('src' in line)) \
+                             or (('opt' not in line) and ('venv' not in line))):
+                    count = count + 1
+                    output_string = line.strip().split('\n')[0]
+                    start = output_string.find("/app/")
+                    if start != -1:
+                        output_string = output_string[start:]
+                    logger.debug("--> Line " + str(count) + ": " + output_string)
+        except Exception as err:
+            print("==> Error:" + str(err))
 
 @application.after_request
 def apply_header(response):

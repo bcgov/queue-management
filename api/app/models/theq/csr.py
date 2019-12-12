@@ -48,12 +48,15 @@ class CSR(Base):
 
     @classmethod
     def find_by_username(cls, username):
-        idir_id = username.split("idir/")[-1]
-        key = (CSR.format_string % idir_id).lower()
+        #   Possible keycloak->TheQ id values are user@idir->user, idir/user->user or user@bceid->user@bceid
+        idir_id = username.split("idir/")[-1].lower()
+        if "@idir" in username:
+            idir_id = username.split("@idir")[0].lower()
+        key = CSR.format_string % idir_id
         if cache.get(key):
             return cache.get(key)
 
-        csr = CSR.query.filter(CSR.deleted.is_(None)).filter(func.lower(CSR.username)==func.lower(idir_id)).first()
+        csr = CSR.query.filter(CSR.deleted.is_(None)).filter(CSR.username==idir_id).first()
 
         cache.set(key, csr)
         return csr

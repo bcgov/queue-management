@@ -86,6 +86,7 @@ export const store = new Vuex.Store({
     dismissCount: 0,
     diskspace: {},
     displayServices: 'All',
+    editDeleteSeries: false,
     editedBooking: null,
     editedBookingOriginal: null,
     editedGroupBooking: null,
@@ -96,11 +97,12 @@ export const store = new Vuex.Store({
     examEditFailureMessage: '',
     examEditSuccessMessage: '',
     exams: [],
+    event_ids: null,
+    event_id_warning: false,
     examsTrackingIP: false,
     examSuccessDismiss : 0,
     examTypes: [],
     feedbackMessage: '',
-    groupIndividualExam: false,
     iframeLogedIn: false,
     inventoryFilters: {
       expiryFilter: 'current',
@@ -476,7 +478,6 @@ export const store = new Vuex.Store({
     },
 
     form_data: state => {
-      console.log(state.addModalForm)
       return state.addModalForm
     },
 
@@ -634,6 +635,16 @@ export const store = new Vuex.Store({
       })
     },
 
+    deleteRecurringBooking(context, id) {
+      return new Promise((resolve, reject) => {
+        Axios(context).delete(`/bookings/recurring/${id}`).then(resp => {
+          resolve(resp.data)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
     deleteExam(context, id) {
       return new Promise((resolve, reject) => {
         Axios(context).delete(`/exams/${id}/`).then(resp => {
@@ -661,6 +672,16 @@ export const store = new Vuex.Store({
           resolve(resp.data)
         })
         .catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    putRecurringBooking(context, payload) {
+      return new Promise((resolve, reject) => {
+        Axios(context).put(`/bookings/recurring/${payload.recurring_uuid}`, payload.changes).then(resp => {
+          resolve(resp.data)
+        }).catch(error => {
           reject(error)
         })
       })
@@ -735,6 +756,7 @@ export const store = new Vuex.Store({
             booking.shadow_invigilator_id = b.shadow_invigilator_id
             booking.blackout_flag = b.blackout_flag
             booking.blackout_notes = b.blackout_notes
+            booking.recurring_uuid = b.recurring_uuid
             calendarEvents.push(booking)
           })
           context.commit('setEvents', calendarEvents)
@@ -840,6 +862,18 @@ export const store = new Vuex.Store({
             console.log(error)
             reject(error)
           })
+      })
+    },
+
+    getExamEventIDs(context, id){
+      return new Promise((resolve, reject) => {
+        let url = `/exams/event_id/${id}/`
+        Axios(context).get(url).then(resp=>{
+          context.commit('setExamEventIDs', resp.data.message)
+          resolve(resp.data)
+        }, error => {
+          reject(error)
+        })
       })
     },
 
@@ -988,38 +1022,12 @@ export const store = new Vuex.Store({
             c => c.counter_name === DEFAULT_COUNTER_NAME)[0])
           context.commit('setBackOfficeDisplay', resp.data.back_office_display)
           context.commit('setRecurringFeatureFlag', resp.data.recurring_feature_flag)
-          let individualExamBoolean = false
-          let groupExamBoolean = false
-          let groupIndividualBoolean = false
+          let examManagerBoolean = resp.data.attention_needed
 
-          if(resp.data.group_individual_attention > 0){
-            groupIndividualBoolean = true
-            context.commit('setGroupIndividualExam', groupIndividualBoolean)
-          }else{
-            context.commit('setGroupIndividualExam', groupIndividualBoolean)
+          if (examManagerBoolean === true) {
+            context.commit('setExamAlert', 'Office Exam Manager Action Items are present')
           }
-
-          if (resp.data.group_exams > 0) {
-            groupExamBoolean = true
-            context.commit('setGroupExam', groupExamBoolean)
-          } else {
-            context.commit('setGroupExam', groupExamBoolean)
-          }
-
-          if (resp.data.individual_exams > 0) {
-            individualExamBoolean = true
-            context.commit('setIndividualExam', individualExamBoolean)
-          } else {
-            context.commit('setIndividualExam', individualExamBoolean)
-          }
-
-          if (groupExamBoolean && individualExamBoolean) {
-            context.commit('setExamAlert', 'There are Individual Exams and Group Exams that require attention')
-          }else if (groupExamBoolean) {
-            context.commit('setExamAlert', 'There are Group Exams that require attention')
-          }else if (individualExamBoolean) {
-            context.commit('setExamAlert', 'There are Individual Exams that require attention')
-          }else if (groupIndividualBoolean){
+          else {
             context.commit('setExamAlert', '')
           }
 
@@ -2082,8 +2090,6 @@ export const store = new Vuex.Store({
         return new Promise((resolve, reject) => { resolve(' ') })
       }
 
-      console.log(citizen_id)
-      console.log(data)
       return new Promise((resolve, reject) => {
         let url = `/citizens/${citizen_id}/`
 
@@ -2236,7 +2242,6 @@ export const store = new Vuex.Store({
       } else {
         if (citizen.service_reqs && citizen.service_reqs.length > 0) {
           if (citizen.service_reqs[0].periods && citizen.service_reqs[0].periods.length > 0) {
-            console.log("Adding citizen")
             context.commit('addCitizen', citizen)
           }
         }
@@ -2407,6 +2412,8 @@ export const store = new Vuex.Store({
 
     toggleBookingBlackoutModal: (state, payload) => state.showBookingBlackoutModal = payload,
 
+    toggleEditDeleteSeries: (state, payload) => state.editDeleteSeries = payload,
+
     setServiceModalForm(state, citizen) {
       let citizen_comments = citizen.citizen_comments
       let activeService = citizen.service_reqs.filter(sr => sr.periods.some(p => p.time_end === null))
@@ -2478,7 +2485,12 @@ export const store = new Vuex.Store({
   
     setExamAlert(state, payload) {
       state.examAlertMessage = payload
-      state.examDismissCount = 999
+      if (payload) {
+        state.examDismissCount = 999
+      }
+      else {
+        state.examDismissCount = 0
+      }
     },
   
     setLoginAlert(state, payload) {
@@ -2511,7 +2523,15 @@ export const store = new Vuex.Store({
       state.exams = []
       state.exams = payload
     },
-  
+
+    setEventWarning(state, payload) {
+      state.event_id_warning = payload
+    },
+
+    setExamEventIDs(state, payload) {
+      state.event_ids = payload
+    },
+
     setExamTypes(state, payload) {
       state.examTypes = []
       state.examTypes = payload
@@ -2590,12 +2610,6 @@ export const store = new Vuex.Store({
     setPerformingAction: (state, payload) => state.performingAction = payload,
   
     setUserLoadingFail: (state, payload) => state.userLoadingFail = payload,
-  
-    setGroupExam: (state, payload) => state.groupExam = payload,
-
-    setGroupIndividualExam: (state, payload) => state.groupIndividualExam = payload,
-  
-    setIndividualExam: (state, payload) => state.individualExam = payload,
   
     showHideResponseModal(state) {
       state.showResponseModal = true

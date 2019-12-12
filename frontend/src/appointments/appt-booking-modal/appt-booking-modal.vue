@@ -7,24 +7,26 @@
            no-close-on-backdrop
            no-close-on-esc
            hide-header>
-    <template slot="modal-footer">
-      <div class="d-flex flex-row-reverse">
-        <b-button class="disabled btn-primary ml-2"
-                  v-if="submitDisabled"
-                  @click="validate=true">Submit</b-button>
-        <b-button class="btn-primary ml-2"
-                  @click="submit"
-                  v-if="!submitDisabled">Submit</b-button>
-        <b-button @click="cancel()">Cancel</b-button>
-      </div>
-    </template>
-      <span style="font-size:1.75rem;">Book Service Appointment</span><br>
+      <template slot="modal-footer">
+        <div class="d-flex flex-row-reverse">
+          <b-button class="disabled btn-primary ml-2"
+                    v-if="submitDisabled"
+                    @click="validate=true">Submit</b-button>
+          <b-button class="btn-primary ml-2"
+                    @click="submit"
+                    v-if="!submitDisabled">Submit</b-button>
+          <b-button @click="cancel()">Cancel</b-button>
+        </div>
+      </template>
+      <span v-if="this.editDeleteSeries" style="font-size:1.75rem;">Book Service Appointment Series</span>
+      <span v-else style="font-size:1.75rem;">Book Service Appointment</span><br>
       <b-form autocomplete="off">
+        <!--  Citizen Name and Contact Info row -->
         <b-form-row>
           <b-col cols="6">
             <b-form-group class="mb-0 mt-2">
               <label class="mb-0">Citizen Name</label><br>
-              <b-form-input v-if="checkBlackoutFlag"
+              <b-form-input v-if="isNotBlackoutFlag"
                             v-model="citizen_name"/>
               <b-form-input v-else
                             v-model="citizen_name"
@@ -34,7 +36,7 @@
           <b-col cols="6">
             <b-form-group class="mb-0 mt-2">
               <label class="mb-0">Contact Info</label><br>
-              <b-form-input v-if="checkBlackoutFlag"
+              <b-form-input v-if="isNotBlackoutFlag"
                             v-model="contact_information"/>
               <b-form-input v-else
                             v-model="contact_information"
@@ -42,7 +44,9 @@
             </b-form-group>
           </b-col>
         </b-form-row>
+        <!--  End of Citizen Name and Contact Info row -->
 
+        <!--  The Time and Date row. -->
         <b-form-row>
           <b-col cols="4">
             <b-form-group class="mb-0 mt-2">
@@ -59,10 +63,12 @@
             </b-form-group>
           </b-col>
         </b-form-row>
+        <!--  End of the Time and Date row. -->
 
+        <!--  The Date/Time row -->
         <b-form-row>
           <b-col>
-            <b-form-group v-if="checkBlackoutFlag"
+            <b-form-group v-if="isNotBlackoutFlag"
                           class="mb-0 mt-2">
               <label class="mb-0">Length</label><br>
               <b-select v-model="length"
@@ -70,26 +76,37 @@
             </b-form-group>
           </b-col>
           <b-col>
-            <b-form-group v-if="checkBlackoutFlag"
+            <b-form-group v-if="isNotBlackoutFlag"
                           class="mb-0 mt-2">
               <label class="mb-0">Change Date/Time</label><br>
               <b-button @click="reschedule"
                         class="btn-secondary w-100">Reschedule</b-button>
             </b-form-group>
           </b-col>
+          <!--  Column to delete blackout period or series (if a clicked appointment?) -->
           <b-col v-if="clickedAppt">
-            <b-form-group class="mb-0 mt-2" >
-              <label class="mb-0">Remove Blackout Period?</label><br>
-              <b-button @click="deleteAppt"
-                        v-if="clickedAppt"
-                        class="btn-danger w-100">Delete</b-button>
+            <b-form-group class="mb-0 mt-2">
+              <label v-if="this.editDeleteSeries" class="mb-0">Remove Blackout Series?</label>
+              <label v-else class="mb-0">Remove Blackout Period?</label><br>
+              <b-button v-if="clickedAppt && !this.editDeleteSeries"
+                        @click="deleteAppt"
+                        class="btn-danger w-100">
+                Delete
+              </b-button>
+              <b-button v-else
+                        @click="deleteRecurringAppts"
+                        class="btn-danger w-100">
+                Delete Series
+              </b-button>
             </b-form-group>
           </b-col>
         </b-form-row>
+        <!--  End of the Date/Time row -->
 
+        <!--  Service selected by the citizen row -->
         <b-form-row>
           <b-col>
-            <b-form-group v-if="checkBlackoutFlag"
+            <b-form-group v-if="isNotBlackoutFlag"
                           class="mb-0 mt-2">
               <label class="mb-0">Service Required by Citizen</label><br>
               <div style="width: 100%; display: flex;">
@@ -116,16 +133,20 @@
             </b-form-group>
           </b-col>
         </b-form-row>
+        <!--  End of service selected by the citizen row -->
 
+        <!--  The Notes row. -->
         <b-form-row>
           <b-col>
             <b-form-group class="mb-0 mt-2">
               <label class="mb-0">Notes</label><br>
               <b-textarea v-model="comments"
-                          rows="2" />
+                          rows="2"/>
             </b-form-group>
           </b-col>
         </b-form-row>
+        <!--  End of the Notes row. -->
+
       </b-form>
       <div class="d-flex flex-row-reverse mt-2 mb-0">
         <div v-if="showMessage"
@@ -167,8 +188,15 @@
       }
     },
     computed: {
-      ...mapGetters(['services', 'appointment_events']),
-      ...mapState(['showApptBookingModal', 'selectedService' ]),
+      ...mapGetters([
+        'services',
+        'appointment_events'
+      ]),
+      ...mapState([
+        'showApptBookingModal',
+        'selectedService',
+        'editDeleteSeries',
+      ]),
       appointments() {
         if (this.clickedAppt) {
           let appointments = Object.assign([], this.appointment_events)
@@ -177,7 +205,7 @@
           return appointments
         }
       },
-      checkBlackoutFlag(){
+      isNotBlackoutFlag(){
         if(this.clickedAppt){
           if(this.clickedAppt.blackout_flag){
             if(this.clickedAppt.blackout_flag == 'Y'){
@@ -249,7 +277,7 @@
         set(e) { this.toggleApptBookingModal(e) }
       },
       submitDisabled() {
-        if (this.citizen_name && this.selectedService) {
+        if (this.citizen_name && this.selectedService ) {
           return false
         }
         return true
@@ -277,14 +305,22 @@
       ...mapActions([
         'clearAddModal',
         'deleteAppointment',
+        'deleteRecurringAppointments',
         'getAppointments',
         'getServices',
         'postAppointment',
         'putAppointment',
+        'putRecurringAppointment',
         'resetAddModalForm',
         'toggleAddModal',
       ]),
-      ...mapMutations(['setEditedStatus', 'setSelectedService', 'setRescheduling', 'toggleApptBookingModal', ]),
+      ...mapMutations([
+        'setEditedStatus',
+        'setSelectedService',
+        'setRescheduling',
+        'toggleApptBookingModal',
+        'toggleEditDeleteSeries',
+      ]),
       addService() {
         this.selectingService = true
         this.clearMessage()
@@ -313,6 +349,11 @@
       },
       deleteAppt() {
         this.deleteAppointment(this.clickedAppt.appointment_id).then( () => {
+          this.cancel()
+        })
+      },
+      deleteRecurringAppts() {
+        this.deleteRecurringAppointments(this.clickedAppt.recurring_uuid).then( () => {
           this.cancel()
         })
       },
@@ -398,11 +439,32 @@
             id: this.clickedAppt.appointment_id,
             data: e
           }
-          this.putAppointment(payload).then( () => {
-            this.getAppointments().then( () => {
-              finish()
+          if(this.editDeleteSeries === true){
+            // IFF further fields are added to the appointment model that are intended to be edited,
+            // and they belong to blackouts, and them to the following object below. Ensure that dates are
+            // not included as all events in this series will be under the start/end time of the event
+            // that is clicked in the calendar
+            this.toggleEditDeleteSeries(false)
+            let re_e = {
+              comments: this.comments
+            }
+            let re_payload = {
+              id: this.clickedAppt.appointment_id,
+              data: re_e,
+              recurring_uuid: this.clickedAppt.recurring_uuid
+            }
+            this.putRecurringAppointment(re_payload).then(() => {
+              this.getAppointments().then( () => {
+                finish()
+              })
             })
-          })
+          }else {
+            this.putAppointment(payload).then( () => {
+              this.getAppointments().then( () => {
+                finish()
+              })
+            })
+          }
           return
         }
         this.postAppointment(e).then( () => {
