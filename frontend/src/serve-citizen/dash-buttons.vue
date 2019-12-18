@@ -112,7 +112,7 @@
       },
       quickServeCitizen(e) {
         let service_id = e.target.dataset.id
-        let service_name = e.target.innerText
+        let service_name = e.target.innerText.trim()
 
         //  If CSR is on reception, and a reception office, bring up add citizen form with defaults.
         if(this.user.receptionist_ind && this.user.office.sb.sb_type !== "nocallonsmartboard"){
