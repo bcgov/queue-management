@@ -255,7 +255,7 @@
             let today = moment(d).format('YYYY-MM-DD')
             this.captureExamDetail({ key: 'exam_received_date', value: today })
             let recd = moment().add(90, 'd')
-            this.captureExamDetail({ key: 'expiry_date', value: recd })
+            this.captureExamDetail({ key: 'expiry_date', value: '' })
             return
           case 'group':
             this.resetModal()
@@ -264,7 +264,7 @@
             this.resetModal()
             this.captureExamDetail({ key: 'on_or_off', value: 'on' })
             let exp = moment().add(60, 'd')
-            this.captureExamDetail({ key: 'expiry_date', value: exp })
+            this.captureExamDetail({ key: 'expiry_date', value: '' })
             return
           case 'pesticide':
             this.resetModal()
