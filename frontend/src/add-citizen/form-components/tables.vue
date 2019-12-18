@@ -177,6 +177,10 @@
           this.$store.commit('appointmentsModule/setSelectedService', this.addModalForm.service)
           this.closeAddServiceModal()
         }
+        else if (this.$route.path == "/booking") {
+          this.toggleExamsTrackingIP(true)
+          this.clickBeginService({simple: true})
+        }
         else if ((!this.simplifiedTicketStarted) && (this.addModalSetup == "reception" || this.addModalSetup == "non_reception")) {
           this.clickBeginService({simple: false})
         }
