@@ -1044,7 +1044,6 @@ export const store = new Vuex.Store({
     },
 
     cancelAddCitizensModal(context) {
-      console.log("==> In index.js, cancelAddCitizensModal")
       let { citizen_id } = context.getters.form_data.citizen
 
       context.dispatch('postCitizenLeft', citizen_id)
@@ -1131,7 +1130,6 @@ export const store = new Vuex.Store({
     },
 
     clickAddServiceApply(context) {
-      console.log("==> In index.js, clickAddServiceApply")
       context.commit('setPerformingAction', true)
 
       context.dispatch('postServiceReq').then(() => {
@@ -1150,7 +1148,6 @@ export const store = new Vuex.Store({
     },
 
     clickAddToQueue(context) {
-      console.log("==> In index.js, clickAddToQueue")
       let { citizen_id } = context.getters.form_data.citizen
       context.commit('setPerformingAction', true)
 
@@ -1196,7 +1193,6 @@ export const store = new Vuex.Store({
     },
   
     clickBeginService(context, payload) {
-      console.log("==> In index.js method clickBeginService")
       context.commit('toggleServeCitizenSpinner', true)
       let { citizen_id } = context.getters.form_data.citizen
       context.commit('setPerformingAction', true)
@@ -1454,7 +1450,6 @@ export const store = new Vuex.Store({
     },
 
     clickEditCancel(context) {
-      console.log("==> In index.js, clickEditCancel")
       context.commit('toggleAddModal', false)
       context.dispatch('toggleModalBack')
       context.commit('resetAddModalForm')

@@ -117,8 +117,6 @@
       },
       fields() {
         let displayFields = null
-        console.log("==> In Fields")
-        console.log("    --> addModalSetup: " + this.addModalSetup.toString())
         if (!this.simplifiedModal) {
           if (this.showQuickQIcon) {
             displayFields = [
@@ -164,39 +162,29 @@
         this.$store.commit('updateAddModalForm', {type:'service',value:id})
       },
       sendToQueue(service) {
-        console.log("==> In tables.vue, sendToQueue")
         this.setAddModalSelectedItem(service.service_name)
         this.$store.commit('updateAddModalForm', {type: 'service', value: service.service_id})
         this.clickAddToQueue()
       },
       serveCustomer(service) {
-        console.log("==> In tables.vue, serveCustomer")
-        console.log("    --> this.$route.path:             " + this.$route.path)
-        console.log("    --> this.addModalSetup:           " + this.addModalSetup)
-        console.log("    --> this.simplifiedTicketStarted: " + this.simplifiedTicketStarted.toString())
         this.setAddModalSelectedItem(service.service_name)
         this.$store.commit('updateAddModalForm', {type: 'service', value: service.service_id})
         if (this.$route.path == "/exams") {
-          console.log("    --> Exam code")
           this.toggleExamsTrackingIP(true)
           this.clickBeginService({simple: true})
         }
         else if (this.$route.path == "/appointments") {
-          console.log("    --> Appointment code")
           this.$store.commit('appointmentsModule/setSelectedService', this.addModalForm.service)
           this.closeAddServiceModal()
         }
         else if ((!this.simplifiedTicketStarted) && (this.addModalSetup == "reception" || this.addModalSetup == "non_reception")) {
-          console.log("    --> Add Service (reception or non_reception mode)")
           this.clickBeginService({simple: false})
         }
         else if (this.simplifiedTicketStarted) {
           if (this.addModalSetup == "add_mode") {
-            console.log("    --> Add Next Service")
             this.clickAddServiceApply()
           }
           else if (this.addModalSetup == "edit_mode") {
-            console.log("    --> Edit service")
             this.clickEditApply()
           }
           else {
