@@ -8,8 +8,10 @@
                       padding-bottom: 5px;"
                       >
     <b-form-row no-gutters class="m-0 add_citizen_table_header">
-      <b-col class="m-0 p-0">&nbsp&nbspService</b-col>
-      <b-col class="m-0 p-0" v-if="!simplifiedModal">Category</b-col>
+      <b-col cols="1" class="m-0 p-0" v-if="showQuickQIcon">To Q</b-col>
+      <b-col cols="1" class="m-0 p-0">Serve</b-col>
+      <b-col cols="5" class="m-0 p-0">Service</b-col>
+      <b-col cols="*" class="m-0 p-0" v-if="!simplifiedModal">Category</b-col>
     </b-form-row>
     <b-form-row no-gutters>
       <b-col>
@@ -20,15 +22,29 @@
                     background-color: #fcfcfc">
           <b-table :items="filtered_services"
                    :fields="fields"
-                   sort-by="parrent.service_name"
+                   sort-by="parent.service_name"
                    :filter="filter"
                    :small="t"
                    :bordered="f"
                    :striped="f"
-                   :fixed="t"
                    id="table2"
                    @row-clicked="rowClicked"
                    class="add_citizen_categories_table">
+            <template slot="queueBut" slot-scope="data"
+                      v-if="showQuickQIcon">
+              <div @click="sendToQueue(data.item)">
+                &nbsp;&nbsp;&nbsp;
+                <font-awesome-icon icon="share-square"
+                                   style="fontSize: 1rem; color: blue;"/>
+              </div>
+            </template>
+            <template slot="serveBut" slot-scope="data">
+              <div @click="serveCustomer(data.item)">
+                &nbsp;&nbsp;&nbsp;
+                <font-awesome-icon icon="hands-helping"
+                                   style="fontSize: 1rem; color: green;"/>
+              </div>
+            </template>
             <template slot="service_name" slot-scope="data">
               <div>
                 <span v-bind:title="data.item.service_desc">
@@ -40,6 +56,11 @@
                 </div>
               </div>
             </template>
+            <template slot="parent.service_name" slot-scope="data">
+              <div>
+                {{data.item.parent.service_name}}
+              </div>
+            </template>
           </b-table>
         </div>
       </b-col>
@@ -48,7 +69,7 @@
 </template>
 
 <script>
-  import { mapState, mapGetters, mapMutations } from 'vuex'
+  import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 
   export default {
     name: 'Tables',
@@ -62,9 +83,18 @@
       ...mapState({
         addModalSetup: 'addModalSetup',
         addCitizenModal: 'addCitizenModal',
-
+        serviceModalForm: 'serviceModalForm',
+        addModalForm: 'addModalForm'
       }),
-      ...mapGetters({form_data: 'form_data', filtered_services: 'filtered_services',}),
+      ...mapGetters({
+        form_data: 'form_data',
+        filtered_services: 'filtered_services',
+        reception: 'reception',
+        receptionist_status: 'receptionist_status'
+      }),
+      showQuickQIcon() {
+        return this.reception && this.receptionist_status && this.addModalSetup == 'reception'
+      },
       simplified() {
         if (this.$route.path !== '/queue') {
           return true
@@ -77,17 +107,43 @@
         }
         return false
       },
+      simplifiedTicketStarted() {
+        if (this.$route.path == '/queue') {
+          if (this.serviceModalForm.citizen_id) {
+            return true
+          }
+        }
+        return false
+      },
       fields() {
+        let displayFields = null
         if (!this.simplifiedModal) {
-          return [
-            { key: 'service_name', label: 'Service', sortable: false, thClass: 'd-none', tdClass: 'addcit-td',},
-            { key: 'parent.service_name', label: 'Category', sortable: false, thClass: 'd-none', tdClass: 'addcit-td',},
-            { key: 'service_desc', label: 'Description', sortable: false, thClass: 'd-none', tdClass: 'd-none',}
+          if (this.showQuickQIcon) {
+            displayFields = [
+              { key: 'queueBut', label: 'To Q', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-icon' },
+              { key: 'serveBut', label: 'Begin Service', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-icon' },
+              { key: 'service_name', label: 'Service', thClass: 'd-none', sortable: false, style: "width: 5%", tdClass: 'addcit-td width-service' },
+              { key: 'parent.service_name', label: 'Category', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-category', },
+              {key: 'service_desc', label: '', thClass: 'd-none', sortable: false, tdClass: 'd-none',}
+            ]
+          }
+          else {
+            displayFields = [
+              { key: 'serveBut', label: 'Begin Service', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-icon' },
+              { key: 'service_name', label: 'Service', thClass: 'd-none', sortable: false, style: "width: 5%", tdClass: 'addcit-td width-service' },
+              { key: 'parent.service_name', label: 'Category', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-category', },
+              {key: 'service_desc', label: '', thClass: 'd-none', sortable: false, tdClass: 'd-none',}
+              ]
+          }
+        }
+        else {
+          displayFields = [
+            { key: 'serveBut', label: 'Begin Service', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-icon'},
+            { key: 'service_name', label: 'Service', sortable: false, thClass: 'd-none', tdClass: 'addcit-td',}
           ]
         }
-        return [
-          { key: 'service_name', label: 'Service', sortable: false, thClass: 'd-none', tdClass: 'addcit-td',},
-        ]
+
+        return displayFields
       },
       filter(value) {
         return this.form_data.search
@@ -95,13 +151,58 @@
     },
 
     methods: {
-      ...mapMutations(['setAddModalSelectedItem']),
+      ...mapMutations(['setAddModalSelectedItem', 'toggleExamsTrackingIP']),
+      ...mapActions(['clickQuickServe', 'clickAddServiceApply',
+        'clickBeginService', 'resetAddCitizenModal', 'clickAddToQueue',
+        'clickEditApply']),
 
       rowClicked(item, index) {
         let id = item.service_id
         this.setAddModalSelectedItem(item.service_name)
         this.$store.commit('updateAddModalForm', {type:'service',value:id})
-      }
+      },
+      sendToQueue(service) {
+        this.setAddModalSelectedItem(service.service_name)
+        this.$store.commit('updateAddModalForm', {type: 'service', value: service.service_id})
+        this.clickAddToQueue()
+      },
+      serveCustomer(service) {
+        this.setAddModalSelectedItem(service.service_name)
+        this.$store.commit('updateAddModalForm', {type: 'service', value: service.service_id})
+        if (this.$route.path == "/exams") {
+          this.toggleExamsTrackingIP(true)
+          this.clickBeginService({simple: true})
+        }
+        else if (this.$route.path == "/appointments") {
+          this.$store.commit('appointmentsModule/setSelectedService', this.addModalForm.service)
+          this.closeAddServiceModal()
+        }
+        else if (this.$route.path == "/booking") {
+          this.toggleExamsTrackingIP(true)
+          this.clickBeginService({simple: true})
+        }
+        else if ((!this.simplifiedTicketStarted) && (this.addModalSetup == "reception" || this.addModalSetup == "non_reception")) {
+          this.clickBeginService({simple: false})
+        }
+        else if (this.simplifiedTicketStarted) {
+          if (this.addModalSetup == "add_mode") {
+            this.clickAddServiceApply()
+          }
+          else if (this.addModalSetup == "edit_mode") {
+            this.clickEditApply()
+          }
+          else {
+            console.log("==> No service selected.")
+          }
+        }
+        else {
+          console.log("==> Still no service selected")
+        }
+      },
+      closeAddServiceModal() {
+        this.resetAddCitizenModal()
+        this.$store.commit('appointmentsModule/toggleApptBookingModal', true)
+      },
     }
   }
 </script>
@@ -116,11 +217,20 @@
     height: 35px;
     padding-top: 6px;
     padding-left: 0px;
-    text-align: center;
+    text-align: left;
     font-size: 17px;
     text-shadow: 0px 0px 2px #a5a5a5;
 }
 .addcit-td {
   cursor: pointer;
+}
+.width-icon {
+  width: 8%;
+}
+.width-service {
+  width: 42%;
+}
+.width-category {
+  width: 50%;
 }
 </style>

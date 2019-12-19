@@ -187,7 +187,6 @@ export default {
   updated() {
     if (!this.citizen && this.citizen.ticket_number === "") {
       this.$store.commit('toggleServeCitizenSpinner', true)
-      console.log("Screen All Citizens")
       this.screenAllCitizens(this.$route).then(() => {
         this.$store.commit('toggleServeCitizenSpinner', false)
       })
