@@ -78,6 +78,7 @@ export const store = new Vuex.Store({
     },
     categories: [],
     channels: [],
+    citizenButtons: false,
     citizenInvited: false,
     citizens: [],
     clickedDate: '',
