@@ -17,8 +17,9 @@ from flask import g, request, make_response
 from flask_restplus import Resource
 from sqlalchemy import exc
 from app.models.bookings import Exam, Booking, Invigilator, Room, ExamType
-from app.models.theq import CSR, Office
+from app.models.theq import CSR, Office, Timezone
 from app.schemas.bookings import ExamSchema
+from app.schemas.theq import OfficeSchema, TimezoneSchema
 from qsystem import api, oidc
 from datetime import datetime, timedelta, timezone
 import pytz
@@ -30,8 +31,8 @@ import io
 class ExamList(Resource):
 
     exam_schema = ExamSchema(many=True)
-
-    timezone = pytz.timezone("US/Pacific")
+    office_schema = OfficeSchema(many=True)
+    timezone_schema = TimezoneSchema(many=True)
 
     @oidc.accept_token(require_token=True)
     def get(self):
@@ -39,7 +40,6 @@ class ExamList(Resource):
         try:
 
             csr = CSR.find_by_username(g.oidc_token_info['username'])
-
             is_designate = csr.finance_designate
 
             start_param = request.args.get("start_date")
@@ -56,23 +56,34 @@ class ExamList(Resource):
                 print(err)
                 return {"message", "Unable to return date time string"}, 422
 
-            start_date = self.timezone.localize(start_date)
-
+            #   Code for UTC time.
+            csr_office = Office.query.filter(Office.office_id == csr.office_id).first()
+            csr_timezone = Timezone.query.filter(Timezone.timezone_id == csr_office.timezone_id).first()
+            csr_timename = csr_timezone.timezone_name
+            timezone = pytz.timezone(csr_timename)
+            start_local = timezone.localize(start_date)
             end_date += timedelta(days=1)
+            end_local = timezone.localize(end_date)
 
-            end_date = self.timezone.localize(end_date)
+            print("==> In exams.  Parameters are:")
+            print("    --> office name:   " + str(csr_office.office_name))
+            print("    --> timezone_id:   " + str(csr_office.timezone_id))
+            print("    --> CSR time zone: " + csr_timename)
+            print("    --> start_param:   " + str(start_param))
+            print("    --> start_date:    " + str(start_date))
+            print("    --> start_local:   " + str(start_local))
 
             exams = Exam.query.join(Booking, Exam.booking_id == Booking.booking_id) \
-                              .filter(Booking.start_time >= start_date) \
-                              .filter(Booking.start_time < end_date) \
+                              .filter(Booking.start_time >= start_local) \
+                              .filter(Booking.start_time < end_local) \
                               .join(Room, Booking.room_id == Room.room_id, isouter=True) \
                               .join(Office, Booking.office_id == Office.office_id) \
                               .join(ExamType, Exam.exam_type_id == ExamType.exam_type_id)
 
             if exam_type == 'all_bookings':
                 non_exams = Booking.query.join(Exam, Booking.booking_id == Exam.booking_id, isouter=True) \
-                                         .filter(Booking.start_time >= start_date) \
-                                         .filter(Booking.start_time < end_date) \
+                                         .filter(Booking.start_time >= start_local) \
+                                         .filter(Booking.start_time < end_local) \
                                          .filter(Exam.booking_id.is_(None)) \
                                          .join(Room, Booking.room_id == Room.room_id, isouter=True) \
                                          .join(Office,  Booking.office_id == Office.office_id) \
@@ -167,7 +178,13 @@ class ExamList(Resource):
                         elif key in booking_keys:
                             value = getattr(exam.booking, key)
                             if isinstance(value, datetime):
+                                print("    --> key " + key + " value: " + str(value))
+                                value_local = value.astimezone(timezone)
                                 time_string = value.strftime("%Y-%m-%d %I:%M %p")
+                                time_local = value_local.strftime("%Y-%m-%d %I:%M %p")
+                                print("    --> time_string: " + time_string)
+                                print("    --> value_local: " + str(value_local))
+                                print("    --> time_local:  " + time_local)
                                 row.append('="' + time_string + '"')
                             else:
                                 row.append(value)
