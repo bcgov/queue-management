@@ -65,14 +65,6 @@ class ExamList(Resource):
             end_date += timedelta(days=1)
             end_local = timezone.localize(end_date)
 
-            print("==> In exams.  Parameters are:")
-            print("    --> office name:   " + str(csr_office.office_name))
-            print("    --> timezone_id:   " + str(csr_office.timezone_id))
-            print("    --> CSR time zone: " + csr_timename)
-            print("    --> start_param:   " + str(start_param))
-            print("    --> start_date:    " + str(start_date))
-            print("    --> start_local:   " + str(start_local))
-
             exams = Exam.query.join(Booking, Exam.booking_id == Booking.booking_id) \
                               .filter(Booking.start_time >= start_local) \
                               .filter(Booking.start_time < end_local) \
