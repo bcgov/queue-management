@@ -21,7 +21,7 @@ limitations under the License.*/
              :show="examDismissCount"
              style="h-align: center; font-size:1rem; border-radius: 0px;"
              @dismissed="onDismissedExam">
-      Office Exam Manager Action Items are Present
+             {{examAlertMessage}}
       <b-button id="showExams"
                 variant="primary"
                 @click="goShow"
@@ -39,11 +39,8 @@ export default {
   name: 'ExamAlert',
   computed: {
     ...mapGetters([ 'is_ita_designate',
-                    'role_code', ]),
-    ...mapState([ 'examDismissCount',
-                  'groupExam',
-                  'groupIndividualExam',
-                  'individualExam'])
+                    'role_code' ]),
+    ...mapState([ 'examDismissCount', 'examAlertMessage' ])
   },
   methods: {
     ...mapMutations(['examDismissCountDown',
@@ -54,62 +51,61 @@ export default {
                      'setSelectedQuickActionFilter',]),
     goShow() {
       this.$router.push('/exams')
-      if(this.groupExam && this.individualExam && this.groupIndividualExam){
-        this.setSelectedExamType('all')
-        this.setSelectedExamTypeFilter('All')
-        this.setSelectedQuickAction('oemai')
-        this.setSelectedQuickActionFilter('Office Exam Manager Exam Items')
-        this.setInventoryFilters({type:'groupFilter', value:'all'})
-        this.setInventoryFilters({type:'requireOEMAttentionFilter', value:'both'})
-      }
-      else if(this.groupExam && !this.individualExam && this.groupIndividualExam){
-        this.setSelectedExamType('group')
-        this.setSelectedExamTypeFilter('Group')
-        this.setSelectedQuickAction('oemai')
-        this.setSelectedQuickActionFilter('Office Exam Manager Exam Items')
-        this.setInventoryFilters({type:'groupFilter', value:'group'})
-        this.setInventoryFilters({type:'requireOEMAttentionFilter', value:'both'})
-      }
-      else if(this.groupExam && !this.individualExam && !this.groupIndividualExam){
-        this.setSelectedExamType('group')
-        this.setSelectedExamTypeFilter('Group')
-        this.setSelectedQuickAction('oemai')
-        this.setSelectedQuickActionFilter('Office Exam Manager Exam Items')
-        this.setInventoryFilters({type:'groupFilter', value:'group'})
-        this.setInventoryFilters({type:'requireAttentionFilter', value: 'group'})
-      }
-      else if(this.groupExam && this.individualExam && !this.groupIndividualExam){
-        this.setSelectedExamType('all')
-        this.setSelectedExamTypeFilter('All')
-        this.setSelectedQuickAction('oemai')
-        this.setSelectedQuickActionFilter('Office Exam Manager Exam Items')
-        this.setInventoryFilters({type:'groupFilter', value:'all'})
-        this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'both'})
-      }
-      else if(!this.groupExam && this.individualExam && this.groupIndividualExam){
-        this.setSelectedExamType('all')
-        this.setSelectedExamTypeFilter('All')
-        this.setSelectedQuickAction('oemai')
-        this.setSelectedQuickActionFilter('Office Exam Manager Exam Items')
-        this.setInventoryFilters({type:'groupFilter', value:'all'})
-        this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'both'})
-      }
-      else if(!this.groupExam && this.individualExam && !this.groupIndividualExam){
-        this.setSelectedExamType('individual')
-        this.setSelectedExamTypeFilter('Individual')
-        this.setSelectedQuickAction('oemai')
-        this.setSelectedQuickActionFilter('Office Exam Manager Exam Items')
-        this.setInventoryFilters({type:'groupFilter', value:'individual'})
-        this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'both'})
-      }
-      else if(!this.groupExam && !this.individualExam && this.groupIndividualExam){
-        this.setSelectedExamType('all')
-        this.setSelectedExamTypeFilter('ALl')
-        this.setSelectedQuickAction('oemai')
-        this.setSelectedQuickActionFilter('Office Exam Manager Exam Items')
-        this.setInventoryFilters({type:'groupFilter', value:'all'})
-        this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'both'})
-      }
+      this.setSelectedExamType('all')
+      this.setSelectedExamTypeFilter('All')
+      this.setSelectedQuickAction('oemai')
+      this.setSelectedQuickActionFilter('Office Exam Manager Action Items')
+      this.setInventoryFilters({type:'groupFilter', value:'all'})
+      this.setInventoryFilters({type:'requireOEMAttentionFilter', value:'both'})
+      // }
+      // else if(this.groupExam && !this.individualExam && this.groupIndividualExam){
+      //   this.setSelectedExamType('group')
+      //   this.setSelectedExamTypeFilter('Group')
+      //   this.setSelectedQuickAction('oemai')
+      //   this.setSelectedQuickActionFilter('Office Exam Manager Exam Items')
+      //   this.setInventoryFilters({type:'groupFilter', value:'group'})
+      //   this.setInventoryFilters({type:'requireOEMAttentionFilter', value:'both'})
+      // }
+      // else if(this.groupExam && !this.individualExam && !this.groupIndividualExam){
+      //   this.setSelectedExamType('group')
+      //   this.setSelectedExamTypeFilter('Group')
+      //   this.setSelectedQuickAction('oemai')
+      //   this.setSelectedQuickActionFilter('Office Exam Manager Exam Items')
+      //   this.setInventoryFilters({type:'groupFilter', value:'group'})
+      //   this.setInventoryFilters({type:'requireAttentionFilter', value: 'group'})
+      // }
+      // else if(this.groupExam && this.individualExam && !this.groupIndividualExam){
+      //   this.setSelectedExamType('all')
+      //   this.setSelectedExamTypeFilter('All')
+      //   this.setSelectedQuickAction('oemai')
+      //   this.setSelectedQuickActionFilter('Office Exam Manager Exam Items')
+      //   this.setInventoryFilters({type:'groupFilter', value:'all'})
+      //   this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'both'})
+      // }
+      // else if(!this.groupExam && this.individualExam && this.groupIndividualExam){
+      //   this.setSelectedExamType('all')
+      //   this.setSelectedExamTypeFilter('All')
+      //   this.setSelectedQuickAction('oemai')
+      //   this.setSelectedQuickActionFilter('Office Exam Manager Exam Items')
+      //   this.setInventoryFilters({type:'groupFilter', value:'all'})
+      //   this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'both'})
+      // }
+      // else if(!this.groupExam && this.individualExam && !this.groupIndividualExam){
+      //   this.setSelectedExamType('individual')
+      //   this.setSelectedExamTypeFilter('Individual')
+      //   this.setSelectedQuickAction('oemai')
+      //   this.setSelectedQuickActionFilter('Office Exam Manager Exam Items')
+      //   this.setInventoryFilters({type:'groupFilter', value:'individual'})
+      //   this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'both'})
+      // }
+      // else if(!this.groupExam && !this.individualExam && this.groupIndividualExam){
+      //   this.setSelectedExamType('all')
+      //   this.setSelectedExamTypeFilter('ALl')
+      //   this.setSelectedQuickAction('oemai')
+      //   this.setSelectedQuickActionFilter('Office Exam Manager Exam Items')
+      //   this.setInventoryFilters({type:'groupFilter', value:'all'})
+      //   this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'both'})
+      // }
 
     },
     onDismissedExam() {

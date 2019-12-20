@@ -132,6 +132,8 @@
         button: 'add_exam_modal_navigation_buttons',
       }),
       ...mapState({
+        event_ids: 'event_ids',
+        event_id_warning: 'event_id_warning',
         exam: 'capturedExam',
         examTypes: 'examTypes',
         addExamModal: 'addExamModal',
@@ -183,6 +185,7 @@
         'resetCaptureTab',
         'setAddExamModalSetting',
         'updateCaptureTab',
+        'setEventWarning',
       ]),
       clickBack() {
         let step = this.step - 1
@@ -193,11 +196,21 @@
         this.resetAddExamModal()
       },
       clickNext() {
+        if(this.event_id_warning) {
+          this.removeError(2)
+          this.setEventWarning(false)
+        }
         let step = this.step + 1
         this.updateCaptureTab({ step })
         if (step > this.tab.highestStep) {
           this.updateCaptureTab({ highestStep: step })
         }
+      },
+      removeError(step) {
+        let i = this.errors.indexOf(step)
+        let errors = this.errors
+        errors.splice(i, 1)
+        this.updateCaptureTab({errors})
       },
       clickTab(e) {
         this.updateCaptureTab({ step: e })
@@ -242,7 +255,7 @@
             let today = moment(d).format('YYYY-MM-DD')
             this.captureExamDetail({ key: 'exam_received_date', value: today })
             let recd = moment().add(90, 'd')
-            this.captureExamDetail({ key: 'expiry_date', value: recd })
+            this.captureExamDetail({ key: 'expiry_date', value: '' })
             return
           case 'group':
             this.resetModal()
@@ -251,7 +264,7 @@
             this.resetModal()
             this.captureExamDetail({ key: 'on_or_off', value: 'on' })
             let exp = moment().add(60, 'd')
-            this.captureExamDetail({ key: 'expiry_date', value: exp })
+            this.captureExamDetail({ key: 'expiry_date', value: '' })
             return
           case 'pesticide':
             this.resetModal()
@@ -284,6 +297,7 @@
         this.captureExamDetail({ key: 'exam_method', value: 'paper' })
       },
       setWarning() {
+        this.setEventWarning(true)
         if (!this.errors.includes(this.step)) {
           let errors = this.errors.concat([ this.step ])
           this.updateCaptureTab({ errors })

@@ -78,6 +78,7 @@ export const store = new Vuex.Store({
     },
     categories: [],
     channels: [],
+    citizenButtons: false,
     citizenInvited: false,
     citizens: [],
     clickedDate: '',
@@ -98,11 +99,11 @@ export const store = new Vuex.Store({
     examEditSuccessMessage: '',
     exams: [],
     event_ids: null,
+    event_id_warning: false,
     examsTrackingIP: false,
     examSuccessDismiss : 0,
     examTypes: [],
     feedbackMessage: '',
-    groupIndividualExam: false,
     iframeLogedIn: false,
     inventoryFilters: {
       expiryFilter: 'current',
@@ -478,7 +479,6 @@ export const store = new Vuex.Store({
     },
 
     form_data: state => {
-      console.log(state.addModalForm)
       return state.addModalForm
     },
 
@@ -1023,38 +1023,12 @@ export const store = new Vuex.Store({
             c => c.counter_name === DEFAULT_COUNTER_NAME)[0])
           context.commit('setBackOfficeDisplay', resp.data.back_office_display)
           context.commit('setRecurringFeatureFlag', resp.data.recurring_feature_flag)
-          let individualExamBoolean = false
-          let groupExamBoolean = false
-          let groupIndividualBoolean = false
+          let examManagerBoolean = resp.data.attention_needed
 
-          if(resp.data.group_individual_attention > 0){
-            groupIndividualBoolean = true
-            context.commit('setGroupIndividualExam', groupIndividualBoolean)
-          }else{
-            context.commit('setGroupIndividualExam', groupIndividualBoolean)
+          if (examManagerBoolean === true) {
+            context.commit('setExamAlert', 'Office Exam Manager Action Items are present')
           }
-
-          if (resp.data.group_exams > 0) {
-            groupExamBoolean = true
-            context.commit('setGroupExam', groupExamBoolean)
-          } else {
-            context.commit('setGroupExam', groupExamBoolean)
-          }
-
-          if (resp.data.individual_exams > 0) {
-            individualExamBoolean = true
-            context.commit('setIndividualExam', individualExamBoolean)
-          } else {
-            context.commit('setIndividualExam', individualExamBoolean)
-          }
-
-          if (groupExamBoolean && individualExamBoolean) {
-            context.commit('setExamAlert', 'There are Individual Exams and Group Exams that require attention')
-          }else if (groupExamBoolean) {
-            context.commit('setExamAlert', 'There are Group Exams that require attention')
-          }else if (individualExamBoolean) {
-            context.commit('setExamAlert', 'There are Individual Exams that require attention')
-          }else if (groupIndividualBoolean){
+          else {
             context.commit('setExamAlert', '')
           }
 
@@ -2117,8 +2091,6 @@ export const store = new Vuex.Store({
         return new Promise((resolve, reject) => { resolve(' ') })
       }
 
-      console.log(citizen_id)
-      console.log(data)
       return new Promise((resolve, reject) => {
         let url = `/citizens/${citizen_id}/`
 
@@ -2271,7 +2243,6 @@ export const store = new Vuex.Store({
       } else {
         if (citizen.service_reqs && citizen.service_reqs.length > 0) {
           if (citizen.service_reqs[0].periods && citizen.service_reqs[0].periods.length > 0) {
-            console.log("Adding citizen")
             context.commit('addCitizen', citizen)
           }
         }
@@ -2515,7 +2486,12 @@ export const store = new Vuex.Store({
   
     setExamAlert(state, payload) {
       state.examAlertMessage = payload
-      state.examDismissCount = 999
+      if (payload) {
+        state.examDismissCount = 999
+      }
+      else {
+        state.examDismissCount = 0
+      }
     },
   
     setLoginAlert(state, payload) {
@@ -2549,10 +2525,14 @@ export const store = new Vuex.Store({
       state.exams = payload
     },
 
+    setEventWarning(state, payload) {
+      state.event_id_warning = payload
+    },
+
     setExamEventIDs(state, payload) {
       state.event_ids = payload
     },
-  
+
     setExamTypes(state, payload) {
       state.examTypes = []
       state.examTypes = payload
@@ -2631,12 +2611,6 @@ export const store = new Vuex.Store({
     setPerformingAction: (state, payload) => state.performingAction = payload,
   
     setUserLoadingFail: (state, payload) => state.userLoadingFail = payload,
-  
-    setGroupExam: (state, payload) => state.groupExam = payload,
-
-    setGroupIndividualExam: (state, payload) => state.groupIndividualExam = payload,
-  
-    setIndividualExam: (state, payload) => state.individualExam = payload,
   
     showHideResponseModal(state) {
       state.showResponseModal = true

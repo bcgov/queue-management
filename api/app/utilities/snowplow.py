@@ -21,7 +21,10 @@ from app.models.theq.service import Service
 from app.models.theq.smartboard import SmartBoard
 from snowplow_tracker import Subject, Tracker, AsyncEmitter
 from snowplow_tracker import SelfDescribingJson
+import logging
 import os
+from qsystem import application, my_print
+from datetime import datetime, timezone
 
 class SnowPlow():
 
@@ -40,9 +43,9 @@ class SnowPlow():
 
             # Set up contexts for the call.
             citizen_obj = Citizen.query.get(new_citizen.citizen_id)
-            citizen = SnowPlow.get_citizen(citizen_obj, True)
+            citizen = SnowPlow.get_citizen(citizen_obj, csr.counter.counter_name)
             office = SnowPlow.get_office(new_citizen.office_id)
-            agent = SnowPlow.get_csr(csr)
+            agent = SnowPlow.get_csr(csr, office)
 
             # the addcitizen event has no parameters of its own so we pass an empty array "{}"
             addcitizen = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/addcitizen/jsonschema/1-0-0', {})
@@ -57,11 +60,10 @@ class SnowPlow():
         if SnowPlow.call_snowplow_flag:
 
             # Set up the contexts for the call.
-            citizen_obj = Citizen.query.get(service_request.citizen_id)
             current_sr_number = service_request.sr_number
-            citizen = SnowPlow.get_citizen(citizen_obj, False, svc_number = current_sr_number)
+            citizen = SnowPlow.get_citizen(service_request.citizen, csr.counter.counter_name, svc_number = current_sr_number)
             office = SnowPlow.get_office(csr.office_id)
-            agent = SnowPlow.get_csr(csr)
+            agent = SnowPlow.get_csr(csr, office)
 
             #  The choose service event has parameters, needs to be built.
             chooseservice = SnowPlow.get_service(service_request)
@@ -76,9 +78,9 @@ class SnowPlow():
 
             #  Set up the contexts for the call.
             citizen_obj = Citizen.query.get(citizen_id)
-            citizen = SnowPlow.get_citizen(citizen_obj, False, svc_number = current_sr_number)
+            citizen = SnowPlow.get_citizen(citizen_obj, csr.counter.counter_name, svc_number = current_sr_number)
             office = SnowPlow.get_office(csr.office_id)
-            agent = SnowPlow.get_csr(csr)
+            agent = SnowPlow.get_csr(csr, office)
 
             #  Initialize schema version.
             schema_version = "1-0-0"
@@ -103,24 +105,45 @@ class SnowPlow():
             SnowPlow.make_tracking_call(snowplow_event, citizen, office, agent)
 
     @staticmethod
+    def snowplow_appointment(citizen_obj, csr, appointment, schema):
+
+        #  Make sure you want to track calls.
+        if SnowPlow.call_snowplow_flag:
+
+            #  If no citizen object, get citizen information.
+            if citizen_obj is None:
+                citizen_obj = Citizen.query.get(appointment.citizen_id)
+
+            #  Set up the contexts for the call.
+            citizen = SnowPlow.get_citizen(citizen_obj, csr.counter.counter_name)
+            office = SnowPlow.get_office(csr.office_id)
+            agent = SnowPlow.get_csr(csr, office)
+
+            #  Initialize appointment schema version.
+            snowplow_event = SnowPlow.get_appointment(appointment, schema)
+
+            #  Make the call.
+            SnowPlow.make_tracking_call(snowplow_event, citizen, office, agent)
+
+    @staticmethod
     def failure(count, failed):
         print("###################  " + str(count) + " events sent successfuly.  Events below failed:")
         for event_dict in failed:
             print(event_dict)
 
     @staticmethod
-    def get_citizen(citizen_obj, add_flag, close_previous = False, svc_number = 1):
+    def get_citizen(citizen_obj, counter_name, svc_number = 1):
 
-        #  Set up citizen variables.
-        if add_flag:
-            citizen_qtxn = False
-        else:
-            citizen_qtxn = (citizen_obj.qt_xn_citizen_ind == 1)
+        citizen_type = counter_name
+        if citizen_obj.office.sb.sb_type == "nocallonsmartboard":
+            citizen_type = "Counter"
+        elif citizen_obj.counter is not None:
+            citizen_type = citizen_obj.counter.counter_name
 
         # Set up the citizen context.
-        citizen = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/citizen/jsonschema/3-0-0',
+        citizen = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/citizen/jsonschema/4-0-0',
                                       {"client_id": citizen_obj.citizen_id, "service_count": svc_number,
-                                       "quick_txn": citizen_qtxn})
+                                       "counter_type": citizen_type})
 
         return citizen
 
@@ -130,9 +153,8 @@ class SnowPlow():
         #  Set up office variables.
         curr_office = Office.query.get(id)
         office_num = curr_office.office_number
-        my_board = SmartBoard.query.get(curr_office.sb_id)
         office_type = "non-reception"
-        if (my_board.sb_type == "callbyname") or (my_board.sb_type == "callbyticket"):
+        if (curr_office.sb.sb_type == "callbyname") or (curr_office.sb.sb_type == "callbyticket"):
             office_type = "reception"
 
         #  Set up the office context.
@@ -142,22 +164,31 @@ class SnowPlow():
         return office
 
     @staticmethod
-    def get_csr(csr):
+    def get_csr(csr, office):
 
-        #  If csr is a receptionist, that is their role.
-        if csr.receptionist_ind == 1:
-            role_name = "Reception"
-
-        #  If not a receptionist, get role from their role id
+        #   Get the counter type.  Receptioninst is separate case.
+        if office.data['office_type'] != "reception":
+            counter_name = "Counter"
+        elif csr.receptionist_ind == 1:
+            counter_name = "Receptionist"
         else:
-            role_obj = Role.query.get(csr.role_id)
-            role_name = role_obj.role_code
+            counter_name = csr.counter.counter_name
 
-        csr_qtxn = (csr.qt_xn_csr_ind == 1)
+        #   Get the role of the agent, convert to correct case
+        role_name = csr.role.role_code
+        #  Translate the role code from upper to mixed case.
+        if (role_name == 'SUPPORT'):
+            role_name = "Support"
+        elif (role_name == 'ANALYTICS'):
+            role_name = "Analytics"
+        elif (role_name == 'HELPDESK'):
+            role_name = "Helpdesk"
 
         #  Set up the CSR context.
-        agent = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/agent/jsonschema/2-0-1',
-                                   {"agent_id": csr.csr_id, "role": role_name, "quick_txn": csr_qtxn})
+        agent = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/agent/jsonschema/3-0-0',
+                                   {"agent_id": csr.csr_id,
+                                    "role": role_name,
+                                    "counter_type": counter_name})
 
         return agent
 
@@ -192,7 +223,9 @@ class SnowPlow():
 
         # for chooseservices, we build a JSON array and pass it
         chooseservice = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/chooseservice/jsonschema/3-0-0',
-                                           {"channel": snowplow_channel, "program_id": svc_code, "parent_id": pgm_code,
+                                           {"channel": snowplow_channel,
+                                            "program_id": svc_code,
+                                            "parent_id": pgm_code,
                                             "program_name": pgm_name,
                                             "transaction_name": svc_name})
 
@@ -212,7 +245,76 @@ class SnowPlow():
         return finishservice
 
     @staticmethod
+    def get_appointment(appointment, schema):
+
+        #   Take action depending on the schema.
+        if schema == "appointment_checkin":
+
+            appointment = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/' + schema + '/jsonschema/1-0-0',
+                                             {"appointment_id": appointment.appointment_id})
+
+        else:
+
+            #   Convert dates to utc format strings.
+            utcstart = appointment.start_time.astimezone(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+            utcend = appointment.end_time.astimezone(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+
+            if schema == "appointment_create":
+
+                appointment = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/' + schema +'/jsonschema/1-0-0',
+                                                 {"appointment_id": appointment.appointment_id,
+                                                  "appointment_start_timestamp": utcstart,
+                                                  "appointment_end_timestamp": utcend,
+                                                  "program_id": appointment.service.service_code,
+                                                  "parent_id": appointment.service.parent.service_code,
+                                                  "program_name": appointment.service.parent.service_name,
+                                                  "transaction_name": appointment.service.service_name})
+            if schema == "appointment_update":
+                appointment = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/' + schema +'/jsonschema/1-0-0',
+                                                 {"appointment_id": appointment.appointment_id,
+                                                  "appointment_start_timestamp": utcstart,
+                                                  "appointment_end_timestamp": utcend,
+                                                  "status": "update",
+                                                  "program_id": appointment.service.service_code,
+                                                  "parent_id": appointment.service.parent.service_code,
+                                                  "program_name": appointment.service.parent.service_name,
+                                                  "transaction_name": appointment.service.service_name})
+
+            if schema == "appointment_delete":
+                appointment = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/appointment_update/jsonschema/1-0-0',
+                                                 {"appointment_id": appointment.appointment_id,
+                                                  "appointment_start_timestamp": utcstart,
+                                                  "appointment_end_timestamp": utcend,
+                                                  "status": "cancel",
+                                                  "program_id": appointment.service.service_code,
+                                                  "parent_id": appointment.service.parent.service_code,
+                                                  "program_name": appointment.service.parent.service_name,
+                                                  "transaction_name": appointment.service.service_name})
+
+        return appointment
+
+    @staticmethod
+    def log_snowplow_call(jsondata):
+        if isinstance(jsondata, str):
+            module_logger.info("------------------------------")
+        else:
+            sp_string = jsondata.to_string()
+            sp_array = sp_string.split("/")
+            sp_output = '{"schema": "' + sp_array[1] + '/' + sp_array[3]
+            module_logger.info(sp_output)
+
+    @staticmethod
     def make_tracking_call(schema, citizen, office, agent):
+
+        #   Log call info, if level is info or below.
+        if (module_logger.level <= 20):
+            SnowPlow.log_snowplow_call("")
+            SnowPlow.log_snowplow_call(schema)
+            SnowPlow.log_snowplow_call(citizen)
+            SnowPlow.log_snowplow_call(office)
+            SnowPlow.log_snowplow_call(agent)
+
+        #   Make the Snowplow call.
         t.track_self_describing_event(schema, [citizen, office, agent])
 
 # Set up core Snowplow environment
@@ -220,3 +322,14 @@ if SnowPlow.call_snowplow_flag:
     s = Subject()  # .set_platform("app")
     e = AsyncEmitter(SnowPlow.sp_endpoint, on_failure=SnowPlow.failure, protocol="https")
     t = Tracker(e, encode_base64=False, app_id=SnowPlow.sp_appid, namespace=SnowPlow.sp_namespace)
+
+    #  Set up the correct level of logging.
+    print_flag = application.config['PRINT_ENABLE']
+    formatter = logging.Formatter('[%(asctime)s.] %(message)s')
+
+    #  All OK.  Set up logging options
+    # log_stream_handler = logging.StreamHandler()
+    # log_stream_handler.setFormatter(formatter)
+    module_logger = logging.getLogger("snowplow-logger")
+    # module_logger.addHandler(log_stream_handler)
+

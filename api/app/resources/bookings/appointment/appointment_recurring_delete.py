@@ -28,8 +28,6 @@ class AppointmentRecurringDelete(Resource):
     @oidc.accept_token(require_token=True)
     def delete(self, id):
 
-        print("==> In the Python DELETE /appointments/recurring/<id> endpoint")
-
         csr = CSR.find_by_username(g.oidc_token_info['username'])
 
         appointments = Appointment.query.filter_by(recurring_uuid=id)\

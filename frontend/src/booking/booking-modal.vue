@@ -18,7 +18,11 @@
           <b-form-row v-if="!challengerExam">
             <b-col>
               <b-form-group>
-                <label>Contact Information (Email or Phone Number)</label><br>
+                <label>Contact Information (Email or Phone Number)</label>
+                 <font-awesome-icon v-if="this.booking_contact_information !== ''"
+                                   icon='check'
+                                   style="fontSize: 1rem; color: green;"/>
+                <br>
                 <input id="contact_information"
                        style="height: 38px; font-size: .8rem;"
                        class="form-control"
@@ -129,17 +133,23 @@
                                  class="ml-1 p-0"
                                  style="font-size: 1rem;"/></b-button></div>
           <div v-if="selectedOption !== 'invigilator' || formStep === 2">
-            <b-button v-if="!pressedSubmit"
-                      @click="clickOk"
-                      class="mt-3 ml-1 btn-primary">
-              Submit
-            </b-button>
-            <b-button v-else
-                      variant="primary"
-                      class="mt-3 ml-1"
-                      disbabled>
-              Submit
-            </b-button>
+
+             <b-button v-if="this.booking_contact_information.length > 0 "
+                  class="mt-3 ml-1 btn-primary"
+                  size="md"
+                  id="final-submit"
+                  @click="clickOk">
+          Submit
+        </b-button>
+        <b-button v-else
+                  disabled
+                  variant="primary"
+                  class="mt-3 ml-1"
+                  id="disabled-submit"
+                  size="md">
+          Submit
+        </b-button>
+
           </div>
         </div>
       </div>
@@ -339,6 +349,8 @@
         this.invigilatorId = null
         this.invigilator = null
         this.notes = ''
+        this.expiry_date = ""
+
       },
       handleSelect(e) {
         this.savedRef = null

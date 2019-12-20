@@ -77,7 +77,10 @@
           <b-form-row>
             <b-col>
               <b-form-group>
-                <label>Contact Information (Email or Phone Number)</label><br>
+                <label>Contact Information (Email or Phone Number)</label>
+                 <font-awesome-icon v-if="this.booking_contact_information !== ''"
+                                   icon='check'
+                                   style="fontSize: 1rem; color: green;"/>
                 <b-input autocomplete="off"
                          id="contact_information"
                          type="text"
@@ -290,7 +293,7 @@
                        @click="confirm = true">Delete Booking</b-btn>
               </b-form-group>
             </b-col>
-            <b-col>
+            <b-col v-if="!this.edit_recurring">
               <b-form-group>
                 <label>Change Date, Time or Room?</label><br>
                 <b-btn class="w-100 mb-0"
@@ -299,6 +302,7 @@
                 </b-btn>
               </b-form-group>
             </b-col>
+            <b-col v-else></b-col>
           </b-form-row>
           <b-collapse id="delete_recurring_collapse"
                       visible>

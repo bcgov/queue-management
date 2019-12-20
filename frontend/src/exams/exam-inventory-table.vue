@@ -4,6 +4,8 @@
     <ReturnExamModal :actionedExam="actionedExam" :resetExam="resetActionedExam" />
     <EditGroupExamBookingModal :actionedExam="actionedExam" :resetExam="resetActionedExam" />
     <DeleteExamModal v-if="showDeleteExamModal" :actionedExam="actionedExam" :resetExam="resetActionedExam" />
+
+    <!--  Modal that allows user to choose a new office -->
     <b-modal v-model="officeFilterModal"
              size="sm"
              centered
@@ -25,13 +27,19 @@
                   @click="officeFilterModal=false">Ok</b-button>
       </div>
     </b-modal>
+
+    <!--  Top part of the screen, including filters and pagination.-->
     <div style="display: flex; justify-content: space-between" class="q-w100-flex-fs">
       <div>
         <b-form inline class="ml-3">
+
+          <!--  The Search label and input box.  -->
           <b-input-group>
             <b-input-group-prepend><label class="mx-1 pt-3 ml-2 my-auto label-text">Search</label></b-input-group-prepend>
             <b-input size="sm" class="mb-1 mt-3" v-model="searchTerm"></b-input>
           </b-input-group>
+
+          <!--  The filters label, and the Office filter.  -->
           <b-input-group class="ml-3" v-if="!showExamInventoryModal">
             <b-input-group-prepend>
               <label class="mx-1 pt-3 mr-2 my-auto label-text">Filters</label>
@@ -39,10 +47,14 @@
             <b-btn-group v-if="is_liaison_designate" class="pt-2">
               <b-btn @click="officeFilterModal=true"
                      :variant="officeFilter === userOffice || officeFilter === 'default' ? 'primary' : 'warning'"
-                     class="btn-sm mr-2">Office # {{ officeNumber }} - {{ officeName }}</b-btn>
+                     class="btn-sm mr-2">Office # {{ officeNumber }} - {{ officeName }}
+              </b-btn>
             </b-btn-group>
           </b-input-group>
+
+          <!--  The Exam Type filter.  -->
           <b-input-group>
+            <!--  The Exam Type filter, initial set up if filter not yet set.  -->
             <b-btn-group v-if="selectedExamTypeFilter === ''">
               <b-dropdown size="sm"
                           variant="primary"
@@ -55,6 +67,8 @@
                 </b-dropdown-item>
               </b-dropdown>
             </b-btn-group>
+
+            <!--  The Exam Type filter, if the filter has previously been set.  -->
             <b-btn-group v-else>
               <b-dropdown size="sm"
                           variant="primary"
@@ -67,7 +81,10 @@
                 </b-dropdown-item>
               </b-dropdown>
             </b-btn-group>
+
+            <!--  The Quick Action filter, if ITA designate or GA.  -->
             <template v-if="is_ita_designate || role_code === 'GA' ">
+              <!--  The Quick Action filter if no filter has been set.  -->
               <b-btn-group v-if="selectedQuickActionFilter === ''">
                 <b-dropdown size="sm"
                             variant="primary"
@@ -76,6 +93,7 @@
                             class="mt-2 mr-2">
                   <b-dropdown-item v-for="option in newQuickActionOptions"
                                    @click="setQuickActionFilter(option)">
+                    <!--  The various Quick Action options. -->
                     <div style="display: flex; justify-content: space-between;">
                       <div class="mr-3">{{ option.text }}</div>
                       <div v-if="option.text === 'Ready'">
@@ -92,6 +110,8 @@
                   </b-dropdown-item>
                 </b-dropdown>
               </b-btn-group>
+
+              <!--  The Quick Action filter if a filter has been previously set.  -->
               <b-btn-group v-else>
                 <b-dropdown size="sm"
                             variant="primary"
@@ -100,6 +120,7 @@
                             class="mt-2 mr-2">
                   <b-dropdown-item v-for="option in newQuickActionOptions"
                                    @click="setQuickActionFilter(option)">
+                    <!--  The various Quick Action options. -->
                     <div style="display: flex; justify-content: space-between;">
                       <div class="mr-3">{{ option.text }}</div>
                       <div v-if="option.text === 'Ready'">
@@ -117,6 +138,8 @@
                 </b-dropdown>
               </b-btn-group>
             </template>
+
+            <!--  The Quick Action filter, if NOT ITA designate or GA.  -->
             <template v-else>
               <b-btn-group v-if="selectedQuickActionFilter === ''">
                 <b-dropdown size="sm"
@@ -168,8 +191,13 @@
               </b-btn-group>
             </template>
           </b-input-group>
+          <!--  End of all the Exam Type filter.  -->
+
         </b-form>
       </div>
+      <!--  End of all the Exam Type filter division.  -->
+
+      <!--  Display pagination options, if too many items for the screen. -->
       <div>
         <b-pagination :total-rows="totalRows"
                       :per-page="10"
@@ -179,6 +207,9 @@
                       style="display: flex; justify-content: flex-end;"/>
       </div>
     </div>
+    <!--  End of top part of the screen, including filters and pagination.-->
+
+    <!--  Display of exams.  -->
     <div :style="tableStyle" class="my-0 mx-3">
       <b-table :items="filteredExams()"
                :fields="fields"
@@ -199,14 +230,14 @@
                :filter="searchTerm"
                id="exam_inventory_table">
 
-        <template slot="exam_received" slot-scope="row">
-          {{ row.item.exam_received_date ? 'Yes' : 'No' }}
-        </template>
-
+        <!--  Field 1 - Event id??? Don't see it.  -->
+        <!--  Field 2 - Exam Type -->
         <template slot="exam_type_name" slot-scope="row">
           {{ row.item.exam_type.exam_type_name }}
         </template>
 
+        <!--  Field 3 - Exam name??? Don't see it.  -->
+        <!--  Field 4 - Scheduled Date -->
         <template slot="start_time" slot-scope="row">
           <span v-if="!row.item.booking">
             -
@@ -220,6 +251,8 @@
           </span>
         </template>
 
+        <!--  Field 5 - Exam method??? Don't see it.  -->
+        <!--  Field 6 - Expiry Date. -->
         <template slot="expiry_date" slot-scope="row">
           <span v-if="row.item.exam_type.exam_type_name === 'Monthly Session Exam'
                       && !checkExpiryDate(row.item.expiry_date)">
@@ -237,6 +270,14 @@
           </span>
         </template>
 
+        <!--  Field 7 - Exam Received -->
+        <template slot="exam_received" slot-scope="row">
+          {{ row.item.exam_received_date ? 'Yes' : 'No' }}
+        </template>
+
+        <!--  Field 8 - Candidate name??? Don't see it.  -->
+        <!--  Field 9 - Notes??? Don't see it.  -->
+        <!--  Field 10 - The Status column/flag -->
         <template slot="scheduled" slot-scope="row">
           <font-awesome-icon v-if="!row.detailsShowing"
                              :icon="statusIcon(row.item).icon"
@@ -249,7 +290,9 @@
                     @click.stop="row.toggleDetails()">Hide</b-button>
         </template>
 
+        <!--  Expanded row - Details and still required. -->
         <template slot="row-details" slot-scope="row">
+          <!--  If no items to be done, display some (debugging?) info. -->
           <template v-if="stillRequires(row.item).length === 0">
             <div class="details-slot-div">
               <template v-for="(val, key) in readyDetailsMap(row.item)">
@@ -259,13 +302,16 @@
             </div>
           </template>
 
+          <!--  There are some items to be done.  Display them. -->
           <template v-if="stillRequires(row.item).length > 0">
             <div class="details-slot-div">
+              <!--  The Still Requires info. -->
               <div class="ml-3" style="font-size: 1rem; flex-grow: 1;">Still Requires:</div>
               <template v-for="(req, i) in stillRequires(row.item)">
                 <div :key="i+'it'" class="ml-3 mt-1" style="flex-grow: 1;">{{ req }}</div>
               </template>
               <div style="flex-grow: 6" />
+              <!--  The Details info. -->
               <div style="flex-grow: 1; font-size: 1rem;">Details</div>
               <template v-for="(val, key) in readyDetailsMap(row.item)">
                 <div class="ml-3 mt-1" style="flex-grow: 1;"><b>{{ key }}: </b> {{ val }} </div>
@@ -275,20 +321,28 @@
           </template>
         </template>
 
+        <!--  Field 11 - the actions column.-->
         <template slot="actions" slot-scope="row">
+          <!--  The various dropdown actions allowed.  -->
           <b-dropdown variant="link"
                       no-caret
                       size="sm"
                       class="pl-0 ml-0 mr-3"
                       id="nav-dropdown"
                       right>
+            <!--  The down caret to open up the dropdown list.  -->
             <template slot="button-content">
               <font-awesome-icon icon="caret-down"
                                  style="padding: -2px; margin: -2px; font-size: 1rem; color: dimgray"/>
             </template>
+
+            <!--  Various options, if the exam hasn't been returned.  -->
             <template v-if="!row.item.exam_returned_date">
+
+              <!--  Options for if you're editing an exam for the office you're in.  -->
               <template v-if="officeFilter == userOffice || officeFilter == 'default'">
 
+                <!--  Options for Monthly Session Exam.  -->
                 <template v-if="row.item.exam_type.exam_type_name === 'Monthly Session Exam' ">
                   <template v-if="row.item.offsite_location">
                     <b-dropdown-item size="sm"
@@ -309,6 +363,7 @@
                   </template>
                 </template>
 
+                <!--  Options for group exam ind (???).  -->
                 <template v-else-if="row.item.exam_type.group_exam_ind">
                   <b-dropdown-item size="sm"
                                    v-if="row.item.offsite_location"
@@ -317,6 +372,7 @@
                   </b-dropdown-item>
                 </template>
 
+                <!--  Options for all other exams.  -->
                 <template v-else>
                   <template v-if="row.item.offsite_location && row.item.offsite_location === '_offsite'">
                     <b-dropdown-item size="sm"
@@ -341,12 +397,14 @@
                   </template>
                 </template>
 
-                  <b-dropdown-item size="sm"
-                                   @click="editExamDetails(row.item)">Edit Exam Details</b-dropdown-item>
-                  <b-dropdown-item size="sm"
-                                   @click="returnExam(row.item)">Return Exam</b-dropdown-item>
+                <!--  These options always allowed if editing an exam for the office you're in.  -->
+                <b-dropdown-item size="sm"
+                                 @click="editExamDetails(row.item)">Edit Exam Details</b-dropdown-item>
+                <b-dropdown-item size="sm"
+                                 @click="returnExam(row.item)">Return Exam</b-dropdown-item>
               </template>
 
+              <!--  Options for if you're editing an exam for a different office.  -->
               <template v-if="officeFilter != userOffice && officeFilter != 'default'">
                 <b-dropdown-item size="sm"
                                  v-if="row.item.offsite_location"
@@ -356,14 +414,18 @@
               </template>
             </template>
 
+            <!--  If a returned exam, show Edit Return Details option.  -->
             <template v-if="examReturnedFilter(row.item)">
               <b-dropdown-item size="sm"
                                @click="returnExam(row.item)">Edit Return Details</b-dropdown-item>
             </template>
           </b-dropdown>
         </template>
+        <!--  End the Actions dropdown field  -->
+
       </b-table>
     </div>
+    <!--  End of exam display.  -->
   </fragment>
 </template>
 
@@ -572,7 +634,7 @@
         return false
       },
       checkInvigilator(item) {
-        let length_of_invigilator_array = 0
+        let length_of_invigilator_array = null
         let number_of_invigilators = Math.ceil(item.number_of_students / 24)
         if (!item.booking) {
           length_of_invigilator_array = 0
@@ -889,7 +951,7 @@
         return []
       },
       formatDate(d) {
-        return new moment(d).utc().format('ddd MMM DD, YYYY')
+        return new moment(d).format('ddd MMM DD, YYYY')
       },
       formatTime(d) {
         let tz = d.office.timezone.timezone_name
@@ -1102,7 +1164,7 @@
       statusIcon(item) {
         let number_of_students = item.number_of_students
         let number_of_invigilators = Math.ceil(number_of_students / 24)
-        let length_of_invigilator_array = 0
+        let length_of_invigilator_array = null
         if(!item.booking){
           length_of_invigilator_array = 0
         }else{
@@ -1169,7 +1231,7 @@
       },
       stillRequires(item) {
         let output = []
-        let length_of_invigilator_array = 0
+        let length_of_invigilator_array = null
         if(!item.booking){
           length_of_invigilator_array = 0
         }else{

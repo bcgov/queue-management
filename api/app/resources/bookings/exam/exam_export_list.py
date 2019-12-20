@@ -17,10 +17,11 @@ from flask import g, request, make_response
 from flask_restplus import Resource
 from sqlalchemy import exc
 from app.models.bookings import Exam, Booking, Invigilator, Room, ExamType
-from app.models.theq import CSR, Office
+from app.models.theq import CSR, Office, Timezone
 from app.schemas.bookings import ExamSchema
+from app.schemas.theq import OfficeSchema, TimezoneSchema
 from qsystem import api, oidc
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import pytz
 import csv
 import io
@@ -30,8 +31,8 @@ import io
 class ExamList(Resource):
 
     exam_schema = ExamSchema(many=True)
-
-    timezone = pytz.timezone("US/Pacific")
+    office_schema = OfficeSchema(many=True)
+    timezone_schema = TimezoneSchema(many=True)
 
     @oidc.accept_token(require_token=True)
     def get(self):
@@ -39,7 +40,6 @@ class ExamList(Resource):
         try:
 
             csr = CSR.find_by_username(g.oidc_token_info['username'])
-
             is_designate = csr.finance_designate
 
             start_param = request.args.get("start_date")
@@ -56,23 +56,26 @@ class ExamList(Resource):
                 print(err)
                 return {"message", "Unable to return date time string"}, 422
 
-            start_date = self.timezone.localize(start_date)
-
+            #   Code for UTC time.
+            csr_office = Office.query.filter(Office.office_id == csr.office_id).first()
+            csr_timezone = Timezone.query.filter(Timezone.timezone_id == csr_office.timezone_id).first()
+            csr_timename = csr_timezone.timezone_name
+            timezone = pytz.timezone(csr_timename)
+            start_local = timezone.localize(start_date)
             end_date += timedelta(days=1)
-
-            end_date = self.timezone.localize(end_date)
+            end_local = timezone.localize(end_date)
 
             exams = Exam.query.join(Booking, Exam.booking_id == Booking.booking_id) \
-                              .filter(Booking.start_time >= start_date) \
-                              .filter(Booking.start_time < end_date) \
+                              .filter(Booking.start_time >= start_local) \
+                              .filter(Booking.start_time < end_local) \
                               .join(Room, Booking.room_id == Room.room_id, isouter=True) \
                               .join(Office, Booking.office_id == Office.office_id) \
                               .join(ExamType, Exam.exam_type_id == ExamType.exam_type_id)
 
             if exam_type == 'all_bookings':
                 non_exams = Booking.query.join(Exam, Booking.booking_id == Exam.booking_id, isouter=True) \
-                                         .filter(Booking.start_time >= start_date) \
-                                         .filter(Booking.start_time < end_date) \
+                                         .filter(Booking.start_time >= start_local) \
+                                         .filter(Booking.start_time < end_local) \
                                          .filter(Exam.booking_id.is_(None)) \
                                          .join(Room, Booking.room_id == Room.room_id, isouter=True) \
                                          .join(Office,  Booking.office_id == Office.office_id) \
@@ -165,7 +168,11 @@ class ExamList(Resource):
                         elif key == "exam_type_name":
                             row.append(getattr(exam.exam_type, key))
                         elif key in booking_keys:
-                            row.append(getattr(exam.booking, key))
+                            value = getattr(exam.booking, key)
+                            if isinstance(value, datetime):
+                                row.append('="' + localize_time(value, timezone) + '"')
+                            else:
+                                row.append(value)
                         elif key in exam_keys:
                             row.append(getattr(exam, key))
                         elif key == "fees":
@@ -202,7 +209,11 @@ class ExamList(Resource):
                             elif key == "exam_type_name":
                                 row.append("Non Exam Booking")
                             elif key in booking_keys:
-                                row.append(getattr(non_exam, key))
+                                value = getattr(non_exam, key)
+                                if isinstance(value, datetime):
+                                    row.append('="' + localize_time(value, timezone) + '"')
+                                else:
+                                    row.append(value)
                             elif key in non_exam_keys:
                                 which_non_exam_key(non_exam, row, key)
                             elif key == "exam_id":
@@ -237,6 +248,10 @@ class ExamList(Resource):
             logging.error(error, exc_info=True)
             return {"message": "api is down"}, 500
 
+def localize_time(value, timezone):
+    value_local = value.astimezone(timezone)
+    time_local = value_local.strftime("%Y-%m-%d %I:%M %p")
+    return time_local
 
 def write_booking_room(row, booking):
     if booking.room is None:
@@ -324,6 +339,8 @@ def which_non_exam_key(booking, row, key):
     elif key == 'notes':
         write_contact_info(booking, row)
     elif key == 'start_time':
+        value = getattr(booking.start_time, key)
+        print("==> which_non_exam_key of '" + key + "', type is: " + str(type(value)))
         row.append(getattr(booking.start_time, key))
     elif key == 'end_time':
         row.append(getattr(booking.end_time, key))
