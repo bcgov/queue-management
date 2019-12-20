@@ -185,7 +185,7 @@ class ExamList(Resource):
                                 print("    --> time_string: " + time_string)
                                 print("    --> value_local: " + str(value_local))
                                 print("    --> time_local:  " + time_local)
-                                row.append('="' + time_string + '"')
+                                row.append('="' + time_local + '"')
                             else:
                                 row.append(value)
                         elif key in exam_keys:
