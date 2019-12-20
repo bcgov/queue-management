@@ -178,14 +178,7 @@ class ExamList(Resource):
                         elif key in booking_keys:
                             value = getattr(exam.booking, key)
                             if isinstance(value, datetime):
-                                print("    --> key " + key + " value: " + str(value))
-                                value_local = value.astimezone(timezone)
-                                time_string = value.strftime("%Y-%m-%d %I:%M %p")
-                                time_local = value_local.strftime("%Y-%m-%d %I:%M %p")
-                                print("    --> time_string: " + time_string)
-                                print("    --> value_local: " + str(value_local))
-                                print("    --> time_local:  " + time_local)
-                                row.append('="' + time_local + '"')
+                                row.append('="' + localize_time(value, timezone) + '"')
                             else:
                                 row.append(value)
                         elif key in exam_keys:
@@ -226,8 +219,7 @@ class ExamList(Resource):
                             elif key in booking_keys:
                                 value = getattr(non_exam, key)
                                 if isinstance(value, datetime):
-                                    time_string = value.strftime("%Y-%m-%d %I:%M %p")
-                                    row.append('="' + time_string + '"')
+                                    row.append('="' + localize_time(value, timezone) + '"')
                                 else:
                                     row.append(value)
                             elif key in non_exam_keys:
@@ -264,6 +256,10 @@ class ExamList(Resource):
             logging.error(error, exc_info=True)
             return {"message": "api is down"}, 500
 
+def localize_time(value, timezone):
+    value_local = value.astimezone(timezone)
+    time_local = value_local.strftime("%Y-%m-%d %I:%M %p")
+    return time_local
 
 def write_booking_room(row, booking):
     if booking.room is None:
