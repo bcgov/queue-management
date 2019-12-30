@@ -164,9 +164,14 @@
       },
 
       sendToQueue(service) {
-        this.setAddModalSelectedItem(service.service_name)
-        this.$store.commit('updateAddModalForm', {type: 'service', value: service.service_id})
-        this.clickAddToQueue()
+        if (this.performingAction == false) {
+          this.setAddModalSelectedItem(service.service_name)
+          this.$store.commit('updateAddModalForm', {type: 'service', value: service.service_id})
+          this.clickAddToQueue()
+        }
+        else {
+          console.log("==> Cannot send to queue, citizen is being quick served")
+        }
       },
       serveCustomer(service) {
         if (this.performingAction == false) {
