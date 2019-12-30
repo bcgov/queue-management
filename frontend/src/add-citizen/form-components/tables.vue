@@ -32,14 +32,14 @@
                    class="add_citizen_categories_table">
             <template slot="queueBut" slot-scope="data"
                       v-if="showQuickQIcon">
-              <div @click="sendToQueue(data.item)">
+              <div @click.once="sendToQueue(data.item)">
                 &nbsp;&nbsp;&nbsp;
                 <font-awesome-icon icon="share-square"
                                    style="fontSize: 1rem; color: blue;"/>
               </div>
             </template>
             <template slot="serveBut" slot-scope="data">
-              <div @click="serveCustomer(data.item)">
+              <div @click.once="serveCustomer(data.item)">
                 &nbsp;&nbsp;&nbsp;
                 <font-awesome-icon icon="hands-helping"
                                    style="fontSize: 1rem; color: green;"/>
