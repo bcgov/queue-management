@@ -10626,8 +10626,7 @@
 									"    ",
 									"//  Response time is too long.  Try again, give pod a chance to spin up.",
 									"else {",
-									"    postman.setNextRequest(\"Check the healthz endpoint Booking",
-									"    \");",
+									"    postman.setNextRequest(\"Check the healthz endpoint Booking\");",
 									"}"
 								],
 								"type": "text/javascript"
