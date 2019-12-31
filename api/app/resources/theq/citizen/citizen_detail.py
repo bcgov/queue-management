@@ -30,7 +30,10 @@ class CitizenDetail(Resource):
     def get(self, id):
         try:
             citizen = Citizen.query.filter_by(citizen_id=id).first()
-            my_print("==> GET /citizens/" + str(citizen.citizen_id) + '/, Ticket: ' + citizen.ticket_number)
+            citizen_ticket = "None"
+            if hasattr(citizen, 'ticket_number'):
+                citizen_ticket = str(citizen.ticket_number)
+            my_print("==> GET /citizens/" + str(citizen.citizen_id) + '/, Ticket: ' + citizen_ticket)
             result = self.citizen_schema.dump(citizen)
             return {'citizen': result.data,
                     'errors': result.errors}
