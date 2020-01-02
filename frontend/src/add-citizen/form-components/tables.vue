@@ -30,6 +30,8 @@
                    id="table2"
                    @row-clicked="rowClicked"
                    class="add_citizen_categories_table">
+
+            <!--  This is for the quick send to queue column  -->
             <template slot="queueBut" slot-scope="data"
                       v-if="showQuickQIcon">
               <div @click.once="sendToQueue(data.item)">
@@ -38,6 +40,8 @@
                                    style="fontSize: 1rem; color: blue;"/>
               </div>
             </template>
+
+            <!--  This is for the quick serve column  -->
             <template slot="serveBut" slot-scope="data">
               <div @click.once="serveCustomer(data.item)">
                 &nbsp;&nbsp;&nbsp;
@@ -45,6 +49,8 @@
                                    style="fontSize: 1rem; color: green;"/>
               </div>
             </template>
+
+            <!--  Service name column. Active variant is for row selected, bind to description.  -->
             <template slot="service_name" slot-scope="data">
               <div>
                 <span v-bind:title="data.item.service_desc">
@@ -56,6 +62,8 @@
                 </div>
               </div>
             </template>
+
+            <!--  This is for the category, the parent name.  -->
             <template slot="parent.service_name" slot-scope="data">
               <div>
                 {{data.item.parent.service_name}}
@@ -77,6 +85,7 @@
       return {
         f:false,
         t:true,
+        executeAction: false
       }
     },
     computed: {
@@ -161,6 +170,9 @@
         let id = item.service_id
         this.setAddModalSelectedItem(item.service_name)
         this.$store.commit('updateAddModalForm', {type:'service',value:id})
+        if (this.executeAction == true) {
+          this.serveCustomer(item)
+        }
       },
 
       sendToQueue(service) {
@@ -173,31 +185,42 @@
           console.log("==> Cannot send to queue, citizen is being quick served")
         }
       },
+
       serveCustomer(service) {
         if (this.performingAction == false) {
-          this.setAddModalSelectedItem(service.service_name)
-          this.$store.commit('updateAddModalForm', {type: 'service', value: service.service_id})
-          if (this.$route.path == "/exams") {
-            this.toggleExamsTrackingIP(true)
-            this.clickBeginService({simple: true})
-          } else if (this.$route.path == "/appointments") {
-            this.$store.commit('appointmentsModule/setSelectedService', this.addModalForm.service)
-            this.closeAddServiceModal()
-          } else if (this.$route.path == "/booking") {
-            this.toggleExamsTrackingIP(true)
-            this.clickBeginService({simple: true})
-          } else if ((!this.simplifiedTicketStarted) && (this.addModalSetup == "reception" || this.addModalSetup == "non_reception")) {
-            this.clickBeginService({simple: false})
-          } else if (this.simplifiedTicketStarted) {
-            if (this.addModalSetup == "add_mode") {
-              this.clickAddServiceApply()
-            } else if (this.addModalSetup == "edit_mode") {
-              this.clickEditApply()
+
+          //  NOTE!!     This routine needs the rowClicked routine to be executed first to set globals.
+          //  NOWEVER:   The rowClicked event, and routine, gets executed after this event/routine is executed.
+          //  THEREFORE: The executeAction flag is used to execute this routine after the rowClicked event fires.
+          if (this.executeAction == true) {
+            this.setAddModalSelectedItem(service.service_name)
+            this.$store.commit('updateAddModalForm', {type: 'service', value: service.service_id})
+            if (this.$route.path == "/exams") {
+              this.toggleExamsTrackingIP(true)
+              this.clickBeginService({simple: true})
+            } else if (this.$route.path == "/appointments") {
+              this.$store.commit('appointmentsModule/setSelectedService', this.addModalForm.service)
+              this.closeAddServiceModal()
+            } else if (this.$route.path == "/booking") {
+              this.toggleExamsTrackingIP(true)
+              this.clickBeginService({simple: true})
+            } else if ((!this.simplifiedTicketStarted) && (this.addModalSetup == "reception" || this.addModalSetup == "non_reception")) {
+              this.clickBeginService({simple: false})
+            } else if (this.simplifiedTicketStarted) {
+              if (this.addModalSetup == "add_mode") {
+                this.clickAddServiceApply()
+              } else if (this.addModalSetup == "edit_mode") {
+                this.clickEditApply()
+              } else {
+                console.log("==> No service selected.")
+              }
             } else {
-              console.log("==> No service selected.")
+              console.log("==> Still no service selected")
             }
-          } else {
-            console.log("==> Still no service selected")
+            this.executeAction = false
+          }
+          else {
+            this.executeAction = true
           }
         }
         else {
