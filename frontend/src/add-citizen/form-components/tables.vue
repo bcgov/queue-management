@@ -103,7 +103,8 @@
         receptionist_status: 'receptionist_status'
       }),
       showQuickQIcon() {
-        return this.reception && this.receptionist_status && this.addModalSetup == 'reception'
+        return this.reception && this.receptionist_status
+               && this.addModalSetup == 'reception' && this.$route.path == '/queue'
       },
       simplified() {
         if (this.$route.path !== '/queue') {
