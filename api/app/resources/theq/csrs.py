@@ -53,7 +53,7 @@ class CsrSelf(Resource):
 
     csr_schema = CSRSchema()
     citizen_schema = CitizenSchema(many=True)
-    exam_schema = ExamSchema(many=True)
+    exam_schema = ExamSchema()
     exam_type_schema = ExamTypeSchema()
     timezone = pytz.timezone("US/Pacific")
     back_office_display = application.config['BACK_OFFICE_DISPLAY']
@@ -96,11 +96,13 @@ class CsrSelf(Resource):
             #   Check for attention needed, individual exam.
             individual = []
             for exam in office_exams:
+
                 if exam.exam_type.group_exam_ind == 0 and exam.exam_type.exam_type_name != 'Monthly Session Exam':
-                    attention_needed = attention_needed or exam.expiry_date <= start_date
-                    if exam.booking is not None:
-                        if exam.booking.end_time < start_date:
-                            attention_needed = True
+                    if exam.expiry_date is not None:
+                        attention_needed = attention_needed or exam.expiry_date <= start_date
+                        if exam.booking is not None:
+                            if exam.booking.end_time < start_date:
+                                attention_needed = True
                     if attention_needed:
                         individual.append(exam)
 
