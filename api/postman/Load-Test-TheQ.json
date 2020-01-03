@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "e469c1db-49b0-410f-9aa2-98a26cd089e2",
-		"name": "QM-API-LoadTests",
+		"_postman_id": "cda6659f-7e26-412f-9a1c-979b54507ea2",
+		"name": "Load-Test-TheQ",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -357,7 +357,8 @@
 					"response": []
 				}
 			],
-			"description": "This folder performs basic authentication features."
+			"description": "This folder performs basic authentication features.",
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "Check app health",
@@ -591,7 +592,8 @@
 					"response": []
 				}
 			],
-			"description": "Checks the application health by calling the healthz and readyz endpoints"
+			"description": "Checks the application health by calling the healthz and readyz endpoints",
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "Check user login",
@@ -677,7 +679,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "Check channels",
@@ -782,7 +785,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "Check categories",
@@ -898,7 +902,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "Check services",
@@ -1053,7 +1058,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "Check citizen through queue",
@@ -1977,7 +1983,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "Check citizen begin-hold-finish",
@@ -3021,7 +3028,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "Check citizen leave after create",
@@ -3232,7 +3240,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "Check citizen leave after waiting",
@@ -3887,7 +3896,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "Check update service information",
@@ -4708,7 +4718,9 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		}
-	]
+	],
+	"protocolProfileBehavior": {}
 }
