@@ -10938,6 +10938,21 @@
 									"postman.setEnvironmentVariable(\"notes\", JSON.stringify(\"Postman Test Notes\"));",
 									"postman.setEnvironmentVariable(\"number_of_students\", JSON.stringify(\"19\"));",
 									"postman.setEnvironmentVariable(\"offsite_location\", JSON.stringify(\"Postman test location\"));",
+									"",
+									"//  Calculate an expiry date a week from today.",
+									"var later = new Date();",
+									"later.setDate(later.getDate()+7);",
+									"",
+									"//  Get year, day, month from the later time.",
+									"year = later.getFullYear().toString();",
+									"month = (\"0\" + (later.getMonth() + 1).toString()).slice(-2);",
+									"day = (\"0\" + (later.getDate()).toString()).slice(-2);",
+									"",
+									"//  Format expiry date for the exam.",
+									"expiry_date = year + \"-\" + month + \"-\" + day + \"T19:00:00Z\";",
+									"",
+									"//  Store globals.",
+									"pm.globals.set(\"expiry_date\", JSON.stringify(expiry_date));",
 									""
 								],
 								"type": "text/javascript"
@@ -10994,7 +11009,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\n\t\"event_id\" : {{event_id}},\n    \"exam_method\" : \"paper\",\n    \"exam_name\" : \"Postman Group Exam Name\",\n    \"exam_type_id\" : {{random_exam_type_id}},\n    \"exam_written_ind\" : \"0\",\n    \"examinee_name\" : \"Pm examinee name\",\n    \"notes\" : \"Pm sample notes\",\n    \"number_of_students\" : \"19\",\n    \"office_id\" : {{current_office_id}},\n    \"offsite_location\" : \"Pm test location\"\n}"
+							"raw": "{\n\t\n\t\"event_id\" : {{event_id}},\n    \"exam_method\" : \"paper\",\n    \"exam_name\" : \"Postman Group Exam Name\",\n    \"exam_type_id\" : {{random_exam_type_id}},\n    \"exam_written_ind\" : \"0\",\n    \"examinee_name\" : \"Pm examinee name\",\n    \"notes\" : \"Pm sample notes\",\n    \"number_of_students\" : \"19\",\n    \"office_id\" : {{current_office_id}},\n    \"offsite_location\" : \"Pm test location\",\n    \"expiry_date\": {{expiry_date}}\n}"
 						},
 						"url": {
 							"raw": "{{url}}exams/",
