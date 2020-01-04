@@ -846,44 +846,59 @@
 			"protocolProfileBehavior": {}
 		},
 		{
-			"name": "Exams",
+			"name": "Get Exam Types",
 			"item": [
 				{
-					"name": "Who am I",
+					"name": "Exam Type List",
 					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "c34723d3-c0d1-4504-97a2-373088309a5b",
-								"exec": [
-									"//  Ensure the client is logged in.",
-									"eval(environment.auth_first);",
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
 						{
 							"listen": "test",
 							"script": {
-								"id": "e77f0ca3-62cf-49ba-8e17-67a16e8f8a5f",
+								"id": "2df2a851-6a71-48e6-b44f-ccf096fe9d83",
 								"exec": [
-									"//  Install postmanBDD, json-bigint parse and stringify.",
-									"eval(globals.postmanBDD);",
-									"eval(globals.json_bigint_parse);",
+									"// Define the JSON Schema expected in response",
+									"var examTypeSchema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"exam_color\": {\"type\": \"string\"},",
+									"            \"exam_type_id\": {\"type\": \"number\"},",
+									"            \"exam_type_name\": {\"type\": \"string\"},",
+									"            \"ita_ind\": {\"type\": \"number\"},",
+									"            \"method_type\": {\"type\": \"string\"},",
+									"            \"number_of_hours\": {\"type\": \"number\"},",
+									"            \"group_exam_ind\": {\"type\": \"number\"}",
+									"        },",
+									"        \"required\": [\"exam_color\", \"exam_type_id\", \"exam_type_name\", \"ita_ind\", \"method_type\", \"number_of_hours\", \"group_exam_ind\"]",
+									"    },",
+									"    \"required\": []",
+									"};           ",
 									"",
-									"//  Run complex tests.",
+									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
 									"",
-									"//  Get json return data.",
+									"// Parse response body",
 									"var jsonData = JSON.parse(responseBody);",
 									"",
-									"if (jsonData.hasOwnProperty(\"csr\")) {",
-									"\tcurrentOfficeId = jsonData.csr.office_id;",
-									"\tcurrentOfficeNumber = jsonData.csr.office.office_number;",
-									"    postman.setEnvironmentVariable(\"current_office_id\", currentOfficeId);",
-									"    postman.setEnvironmentVariable(\"current_office_number\", currentOfficeNumber);",
-									"};",
+									"//Test to see if response schema is valid",
+									"pm.test(\"Validate Response Exam Type Schema\", function(){",
+									"    pm.expect(tv4.validate(jsonData, examTypeSchema)).to.be.true;",
+									"});",
+									"",
+									"//  Store all exam type IDs for future use in adding exams",
+									"var allExamIds = [];",
+									"",
+									"//  Make sure some data returned.",
+									"pm.test(\"Response has exam_types property\", function(){",
+									"    pm.expect(jsonData.hasOwnProperty(\"exam_types\")).to.be.true;",
+									"});",
+									"pm.test(\"Response has at least one exam_type\", function(){",
+									"    pm.expect(jsonData.exam_types.length).to.be.above(0);",
+									"});",
+									"",
+									"// Set up list of valid exam types, create random functions.",
+									"eval(environment.init_exam_type_data);",
 									""
 								],
 								"type": "text/javascript"
@@ -891,32 +906,36 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"type": "text",
-								"value": "Bearer {{token}}"
-							},
-							{
-								"key": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
+						"header": [],
 						"url": {
-							"raw": "{{url}}csrs/me/",
+							"raw": "{{url}}exam_types/",
 							"host": [
-								"{{url}}csrs"
+								"{{url}}exam_types"
 							],
 							"path": [
-								"me",
 								""
 							]
 						}
 					},
 					"response": []
-				},
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Exams",
+			"item": [
 				{
 					"name": "Exam Post End-point",
 					"event": [
