@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "cda6659f-7e26-412f-9a1c-979b54507ea2",
-		"name": "Load-Test-TheQ",
+		"name": "Load_Test_TheQ",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [

@@ -9888,7 +9888,7 @@
 					"response": []
 				},
 				{
-					"name": "CFMS-Install-Exam-Get-Random Copy",
+					"name": "CFMS-Install-Exam-Get-Random",
 					"event": [
 						{
 							"listen": "test",
@@ -10258,13 +10258,15 @@
 					"response": []
 				},
 				{
-					"name": "Who am I",
+					"name": "Who am I TheQ",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
 								"id": "c34723d3-c0d1-4504-97a2-373088309a5b",
 								"exec": [
+									"//  Ensure the client is logged in.",
+									"eval(environment.auth_first);",
 									""
 								],
 								"type": "text/javascript"
@@ -10284,8 +10286,10 @@
 									"if (jsonData.hasOwnProperty(\"csr\")) {",
 									"\tcurrentOfficeId = jsonData.csr.office_id;",
 									"\tcurrentOfficeNumber = jsonData.csr.office.office_number;",
+									"\tcurrentCsrId = jsonData.csr.csr_id;",
 									"    postman.setEnvironmentVariable(\"current_office_id\", currentOfficeId);",
 									"    postman.setEnvironmentVariable(\"current_office_number\", currentOfficeNumber);",
+									"    postman.setEnvironmentVariable(\"current_csr_id\", currentCsrId);",
 									"};",
 									""
 								],
