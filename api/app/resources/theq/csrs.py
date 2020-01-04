@@ -53,7 +53,7 @@ class CsrSelf(Resource):
 
     csr_schema = CSRSchema()
     citizen_schema = CitizenSchema(many=True)
-    exam_schema = ExamSchema()
+    exam_schema = ExamSchema(many=True)
     exam_type_schema = ExamTypeSchema()
     timezone = pytz.timezone("US/Pacific")
     back_office_display = application.config['BACK_OFFICE_DISPLAY']
