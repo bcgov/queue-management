@@ -1,0 +1,2795 @@
+{
+	"info": {
+		"_postman_id": "a0066296-ea47-4c6a-834a-ec58a02f8dea",
+		"name": "Load_Test_Booking",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Setup",
+			"item": [
+				{
+					"name": "Setup-Variables",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5409b66d-67a4-449b-8633-9aeca632b388",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "e9eed831-7955-4218-a400-ae6e1e7e2e10",
+								"exec": [
+									"//  See if the use-prefix global has been set.  Use default if not.",
+									"let usePrefix = '';",
+									"if (pm.globals.get('use-prefix')) {",
+									"    console.log(\"==> use-prefix exists\");",
+									"    usePrefix = pm.globals.get('use-prefix');",
+									"    console.log(\"    --> Prefix is: \" + usePrefix);",
+									"    ",
+									"    //  Set up all globals, using the correct prefix.",
+									"    pm.globals.set('auth_url', pm.globals.get(usePrefix + 'auth_url'));",
+									"    pm.globals.set('realm', pm.globals.get(usePrefix + 'realm'));",
+									"    pm.globals.set('clientid', pm.globals.get(usePrefix + 'clientid'));",
+									"    pm.globals.set('client_secret', pm.globals.get(usePrefix + 'client_secret'));",
+									"    pm.globals.set('url', pm.globals.get(usePrefix + 'url'));",
+									"}",
+									"else {",
+									"    console.log(\"==> use-prefix does not exist\");",
+									"    console.log(\"    --> No default globals set.\");",
+									"}",
+									"",
+									"//  If no maximum load time defined, set a default.",
+									"if (!pm.globals.get('max_load_time')) {",
+									"    console.log(\"==> max_load_time not present, default set.\");",
+									"    pm.globals.set(\"max_load_time\", JSON.stringify(1503));",
+									"}",
+									"",
+									"//  If no maximum response defined, set a default.",
+									"if (!pm.globals.get('max_response_time')) {",
+									"    console.log(\"==> max_response_time not present, default set.\");",
+									"    pm.globals.set(\"max_response_time\", JSON.stringify(15005));",
+									"}",
+									"",
+									"//  Display the values of all globals.",
+									"console.log(\"\");",
+									"console.log(\"==> Globals are:\");",
+									"console.log(\"    --> auth_url:          \" + pm.globals.get(\"auth_url\"));",
+									"console.log(\"    --> realm:             \" + pm.globals.get(\"realm\"));",
+									"console.log(\"    --> clientid:          \" + pm.globals.get(\"clientid\"));",
+									"console.log(\"    --> client_secret:     \" + pm.globals.get(\"client_secret\"));",
+									"console.log(\"    --> url:               \" + pm.globals.get(\"url\"));",
+									"console.log(\"    --> max_load_time:     \" + pm.globals.get(\"max_load_time\"));",
+									"console.log(\"    --> max_response_time: \" + pm.globals.get(\"max_response_time\"));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "// Dummy data."
+						},
+						"url": {
+							"raw": "https://postman-echo.com/post",
+							"protocol": "https",
+							"host": [
+								"postman-echo",
+								"com"
+							],
+							"path": [
+								"post"
+							]
+						},
+						"description": "Sets the authentication script"
+					},
+					"response": []
+				},
+				{
+					"name": "Authentication Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "454ea7d6-4c7e-4571-8bc1-be7eed57d03a",
+								"exec": [
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"//Test to make sure that the access token field is not null",
+									"pm.test(\"Access Token is not null\", function(){",
+									"    var access_token = jsonData.access_token;",
+									"    if (pm.expect(access_token).not.eql(null)){",
+									"        pm.globals.set(\"token\", access_token);",
+									"    }",
+									"});",
+									"//Test to make sure that the refresh token response field is not null",
+									"pm.test(\"Refresh Token is not null\", function(){",
+									"    var refresh_token = jsonData.refresh_token;",
+									"    if (pm.expect(refresh_token).not.eql(null)){",
+									"        pm.globals.set(\"refresh_token\", refresh_token);",
+									"    }",
+									"});",
+									"//Test to make sure that expires in response field is not nullf",
+									"pm.test(\"Expires In is not null\", function(){",
+									"    var expires_in = jsonData.expires_in;",
+									"    if (pm.expect(expires_in).not.eql(null)){",
+									"        pm.globals.set(\"expires_in\", expires_in);",
+									"    }",
+									"});",
+									"//Test to make sure that refresh expires in response fiels is not null",
+									"pm.test(\"Refresh Expires In is not null\", function(){",
+									"    var refresh_expires_in = jsonData.refresh_expires_in;",
+									"    if (pm.expect(refresh_expires_in).not.eql(null)){",
+									"        pm.globals.set(\"refresh_expires_in\", refresh_expires_in);",
+									"    }",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "grant_type=password&client_id={{clientid}}&username={{userid}}&password={{password}}&client_secret={{client_secret}}"
+						},
+						"url": {
+							"raw": "{{auth_url}}/auth/realms/{{realm}}/protocol/openid-connect/token?Content-Type=application/x-www-form-urlencoded",
+							"host": [
+								"{{auth_url}}"
+							],
+							"path": [
+								"auth",
+								"realms",
+								"{{realm}}",
+								"protocol",
+								"openid-connect",
+								"token"
+							],
+							"query": [
+								{
+									"key": "Content-Type",
+									"value": "application/x-www-form-urlencoded"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CFMS-Install-Basic-Response-Tests",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a0d8e240-3b40-4654-a32b-bf2e676fdeb9",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"basic_response_test\", jsonData.data);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "//  If no maximum response defined, set a default.\nresponse_max = 0;\nif (globals.response_max) {\n    response_max = JSON.parse(globals.response_max);\n}\nelse {\n    response_max = 5009;\n    pm.globals.set(\"response_max\", JSON.stringify(response_max));\n};\n\n//  Get the max response time allowed.\npm.test('Response time less than ' + response_max.toString() + 'ms', function(){\n    pm.expect(pm.response.responseTime).to.be.below(response_max);\n});\n\npm.test(\"Response code for request is 200\", function(){\n    pm.response.to.have.status(200);\n});\npm.test('Response header should have Content-Type of application/json', function() {\n    pm.response.to.have.header('content-type', 'application/json');\n});\npm.test('Response body be in JSON format', function() {\n    pm.response.to.be.json; \n});"
+						},
+						"url": {
+							"raw": "https://postman-echo.com/post",
+							"protocol": "https",
+							"host": [
+								"postman-echo",
+								"com"
+							],
+							"path": [
+								"post"
+							]
+						},
+						"description": "Sets the authentication script"
+					},
+					"response": []
+				},
+				{
+					"name": "CFMS-Install-Exam-Type-Data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "382b7b65-d736-4a03-a44a-3891f33b617d",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"init_exam_type_data\", jsonData.data);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "//  Finds an exam name in the JSON list allTypes of exam types.\nfunction find_exam(input_exam_name, allTypes) {\n\texam_id_value = -1;\n\n    //  Loop to look for the input exam name.\n    if (allTypes) {\n        allTypes.forEach(function(type) {\n            if ((type.exam_type_name) == input_exam_name) {\n            exam_id_value = type.exam_type_id;\n            }\n        });\n    }\n    \n    //  Return the exam_id_type of the input exam name.\n    return exam_id_value;\n}\n\n//  Get the list of all possible exam types.\nallTypes = null;\nvar jsonData = JSON.parse(responseBody);\nif (jsonData.hasOwnProperty(\"exam_types\")) {\n\tallTypes = jsonData.exam_types;\n}\n\nexam_array = [];\nexam_array.push({name: \"Pesticide\", weight: 40.2, id: find_exam(\"Pesticide\", allTypes)});\nname = \"IPSE - 4HR Single Exam\";\nexam_array.push({name: name, weight: exam_array[0].weight + 14.5, id: find_exam(name, allTypes)});\nname = \"SLE - 3HR Group Exam\";\nexam_array.push({name: name, weight: exam_array[1].weight + 7.4, id: find_exam(name, allTypes)});\nname = \"COFQ - 3HR Group Exam\";\nexam_array.push({name: name, weight: exam_array[2].weight + 5.8, id: find_exam(name, allTypes)});\nname = \"IPSE - 4HR Group Exam\";\nexam_array.push({name: name, weight: exam_array[3].weight + 5.7, id: find_exam(name, allTypes)});\nname = \"COFQ - 3HR Single Exam\";\nexam_array.push({name: name, weight: exam_array[4].weight + 5.5, id: find_exam(name, allTypes)});\nname = \"Monthly Session Exam\";\nexam_array.push({name: name, weight: exam_array[5].weight + 3.8, id: find_exam(name, allTypes)});\nname = \"SLE - 3HR Single Exam\";\nexam_array.push({name: name, weight: exam_array[6].weight + 3.5, id: find_exam(name, allTypes)});\nname = \"Angling Guide Outfitter\";\nexam_array.push({name: name, weight: exam_array[7].weight + 2.4, id: find_exam(name, allTypes)});\nname = \"IPSE - 5HR Single Exam - Time Extension\";\nexam_array.push({name: name, weight: exam_array[8].weight + 2.3, id: find_exam(name, allTypes)});\nname = \"Exam Booking - 3 Hour Miscellaneous\";\nexam_array.push({name: name, weight: exam_array[9].weight + 1.7, id: find_exam(name, allTypes)});\n\n//  Store the initialized exam data for later use.\npostman.setEnvironmentVariable(\"exam_array_data\", JSON.stringify(exam_array));"
+						},
+						"url": {
+							"raw": "https://postman-echo.com/post",
+							"protocol": "https",
+							"host": [
+								"postman-echo",
+								"com"
+							],
+							"path": [
+								"post"
+							]
+						},
+						"description": "Sets the authentication script"
+					},
+					"response": []
+				},
+				{
+					"name": "CFMS-Install-Exam-Get-Random",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "382b7b65-d736-4a03-a44a-3891f33b617d",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"create_random_functions\", jsonData.data);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "//  Function returns a weighted randomized exam type index.\nfunction get_random_index(exam_array) {\n\n    //  Generate a random number up to the maximum weight allowed.\n    random_number = Math.floor(Math.random() * exam_array[exam_array.length - 1].weight);\n    \n    //  Get the index of the exam type corresponding to that weight.\n    index = get_index(random_number, exam_array);\n\n    //  Return the index.\n    return index;\n}\n\n//  Based on a random number, turns it into a weighted randomized exam type index.\nfunction get_index(random_value, exam_array) {\n    index = 0;\n    var i;\n    for (i = 0; i < exam_array.length; i++) {\n        if (random_value <= exam_array[i].weight) {\n            index = i;\n            break;\n        }\n    }\n    \n    return index;\n}\n"
+						},
+						"url": {
+							"raw": "https://postman-echo.com/post",
+							"protocol": "https",
+							"host": [
+								"postman-echo",
+								"com"
+							],
+							"path": [
+								"post"
+							]
+						},
+						"description": "Sets the authentication script"
+					},
+					"response": []
+				},
+				{
+					"name": "CFMS-Install-Exam-Data-Check",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8cebcf78-f5a2-4694-b108-60e146791a78",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"exam_data_check\", jsonData.data);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "//  Make sure that jsonData has an exam property.\npm.test(\"Response should have exam property\", function(){\n    pm.expect(jsonData.hasOwnProperty(\"exam\")).to.be.true;\n});\n\n//  If jsonData has exam property, check data.\nif (jsonData.hasOwnProperty(\"exam\")) {\n\n    //Test to see if Event ID field remains unchanged\n    pm.test(\"Validate Event Id has expected value\", function(){\n        pm.expect(jsonData.event_id === environment.event_id);\n    });\n\n    //Test to see if exam method field remains unchanged\n    pm.test(\"Validate exam method has expected value\", function(){\n        pm.expect(jsonData.exam_method === environment.exam_method);\n    });\n\n    //Test to see if exam name field remains unchanged\n    pm.test(\"Validate exam name has expected value\", function(){\n        pm.expect(jsonData.exam_name === environment.exam_name);\n    });\n\n    //Test to see if exam type field remains unchanged\n    pm.test(\"Validate exam type id has expected value\", function(){\n        pm.expect(jsonData.exam_type_id === environment.random_exam_type_id);\n    });\n\n    //Test to see if exam written indicator field remains unchanged\n    pm.test(\"Validate exam written indicator has expected value\", function(){\n        pm.expect(jsonData.exam_written_ind === environment.exam_written_ind);\n    });\n\n    //Test to see if examinee name field remains unchanged\n    pm.test(\"Validate examinee name has expected value\", function(){\n        pm.expect(jsonData.examinee_name === environment.examinee_name);\n    });\n\n    //Test to see if notes field remains unchanged\n    pm.test(\"Validate notes has expected value\", function(){\n        pm.expect(jsonData.notes === environment.notes);\n    });\n\n    //Test to see if number of students field remains unchanged\n    pm.test(\"Validate number of students has expected value\", function(){\n        pm.expect(jsonData.number_of_students === environment.number_of_students);\n    });\n\n    //Test to see if office id remains unchanged\n    pm.test(\"Validate office id has expected value\", function(){\n        pm.expect(jsonData.office_id === environment.current_office_id);\n    });\n\n    //Test to see if offsite location is expected\n    pm.test(\"Validate offsite location has expected value\", function(){\n        pm.expect(jsonData.offsite_location === environment.offsite_location);\n    });\n}\n"
+						},
+						"url": {
+							"raw": "https://postman-echo.com/post",
+							"protocol": "https",
+							"host": [
+								"postman-echo",
+								"com"
+							],
+							"path": [
+								"post"
+							]
+						},
+						"description": "Sets the authentication script"
+					},
+					"response": []
+				},
+				{
+					"name": "CFMS-Install-Exam-Schema-Check",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8cebcf78-f5a2-4694-b108-60e146791a78",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"exam_schema_check\", jsonData.data);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "// Define the JSON Schema expected in response\nvar examSchema = {\n    \"type\": \"object\",\n    \"properties\": {\n        \"exam\": {\n            \"type\": \"object\",\n            \"properties\": {\n                \"booking_id\": {},\n                \"deleted_date\": {},\n                \"event_id\": {\"type\": \"string\"},\n                \"exam_id\": {\"type\": \"number\"},\n                \"exam_method\": {\"type\": \"string\"},\n                \"exam_name\": {\"type\": \"string\"},\n                \"exam_received_date\": {},\n                \"exam_returned_tracking_number\": {},\n                \"exam_type\": {\n                    \"type\": \"object\",\n                    \"properties\": {\n                        \"exam_color\": {\"type\": \"string\"},\n                        \"exam_type_id\": {\"type\": \"number\"},\n                        \"exam_type_name\": {\"type\": \"string\"},\n                        \"group_exam_ind\": {\"type\": \"number\"},\n                        \"ita_ind\": {\"type\": \"number\"},\n                        \"method_type\": {\"type\": \"string\"},\n                        \"number_of_hours\": {\"type\": \"number\"},\n                        \"number_of_minutes\": {\"type\": [\"number\", \"null\"]},\n                        \"pesticide_exam_ind\": {\"type\": \"number\" }\n                    },\n                    \"required\": [\"exam_color\", \"exam_type_id\", \"exam_type_name\", \"group_exam_ind\", \"ita_ind\", \"method_type\", \"number_of_hours\", \"number_of_minutes\", \"pesticide_exam_ind\"]\n                },\n                \"exam_type_id\": {\"type\": \"number\"},\n                \"exam_written_ind\": {\"type\": \"number\"},\n                \"examinee_name\": {\"type\": \"string\"},\n                \"expiry_date\": {\"type\": [\"string\", \"null\"]},\n                \"notes\": {\"type\": \"string\"},\n                \"number_of_students\": {\"type\": \"number\"},\n                \"office\":{\n                    \"type\": \"object\",\n                    \"properties\": {\n                        \"appointments_enabled_ind\": {\"type\": \"number\"},\n                        \"exams_enabled_ind\": {\"type\": \"number\"},\n                        \"office_id\": {\"type\": \"number\"},\n                        \"office_name\": {\"type\": \"string\"},\n                        \"office_number\": {\"type\": \"number\" },\n                        \"timezone\": {\n                            \"type\": \"object\",\n                            \"properties\": {\n                                \"timezone_id\": {\"type\" : \"number\"},\n                                \"timezone_name\": {\"type\": \"string\"}\n                            },\n                            \"required\": [\"timezone_id\", \"timezone_name\"]\n                        },\n                    },\n                    \"required\": []\n                },\n                \"office_id\": {\"type\": \"number\"},\n                \"offsite_location\": {},\n                \"session_number\": {\"type\": [\"number\", \"null\"]},\n                \"booking\": {}\n            },\n            \"required\": [\"booking\", \"booking_id\", \"deleted_date\", \"event_id\", \"exam_id\", \"exam_method\", \"exam_name\", \"exam_received_date\", \"exam_returned_tracking_number\", \"exam_type\", \"exam_type_id\", \"exam_written_ind\", \"examinee_name\", \"expiry_date\", \"notes\", \"number_of_students\", \"office\", \"office_id\", \"offsite_location\", \"session_number\"]\n        }\n    },\n    \"required\": [\"exam\"]\n};\n\n//Test to see if response schema is valid\npm.test(\"Validate Response Exam Schema\", function(){\n    pm.expect(tv4.validate(jsonData, examSchema)).to.be.true;\n});\n"
+						},
+						"url": {
+							"raw": "https://postman-echo.com/post",
+							"protocol": "https",
+							"host": [
+								"postman-echo",
+								"com"
+							],
+							"path": [
+								"post"
+							]
+						},
+						"description": "Sets the authentication script"
+					},
+					"response": []
+				},
+				{
+					"name": "CFMS-Install-Exam-List-Schema-Check",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8cebcf78-f5a2-4694-b108-60e146791a78",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"exam_schema_list_check\", jsonData.data);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "// Define the JSON Schema expected in response\nvar examSchema = {\n    \"type\": \"object\",\n    \"properties\": {\n        \"exams\": {\n            \"type\": \"array\",\n            \"properties\": {\n                \"booking_id\": {},\n                \"deleted_date\": {},\n                \"event_id\": {\"type\": \"string\"},\n                \"exam_id\": {\"type\": \"number\"},\n                \"exam_method\": {\"type\": \"string\"},\n                \"exam_name\": {\"type\": \"string\"},\n                \"exam_received_date\": {},\n                \"exam_returned_tracking_number\": {},\n                \"exam_type\": {\n                    \"type\": \"object\",\n                    \"properties\": {\n                        \"exam_color\": {\"type\": \"string\"},\n                        \"exam_type_id\": {\"type\": \"number\"},\n                        \"exam_type_name\": {\"type\": \"string\"},\n                        \"group_exam_ind\": {\"type\": \"number\"},\n                        \"ita_ind\": {\"type\": \"number\"},\n                        \"method_type\": {\"type\": \"string\"},\n                        \"number_of_hours\": {\"type\": \"number\"},\n                        \"number_of_minutes\": {\"type\": \"number\"},\n                        \"pesticide_exam_ind\": {\"type\": \"number\" }\n                    },\n                    \"required\": [\"exam_color\", \"exam_type_id\", \"exam_type_name\", \"group_exam_ind\", \"ita_ind\", \"method_type\", \"number_of_hours\", \"number_of_minutes\", \"pesticide_exam_ind\"]\n                },\n                \"exam_type_id\": {\"type\": \"number\"},\n                \"exam_written_ind\": {\"type\": \"number\"},\n                \"examinee_name\": {\"type\": \"string\"},\n                \"expiry_date\": {\"type\": [\"string\", \"null\"]},\n                \"notes\": {\"type\": \"string\"},\n                \"number_of_students\": {\"type\": \"number\"},\n                \"office\":{\n                    \"type\": \"object\",\n                    \"properties\": {\n                        \"appointments_enabled_ind\": {\"type\": \"number\"},\n                        \"exams_enabled_ind\": {\"type\": \"number\"},\n                        \"office_id\": {\"type\": \"number\"},\n                        \"office_name\": {\"type\": \"string\"},\n                        \"office_number\": {\"type\": \"number\" },\n                        \"timezone\": {\n                            \"type\": \"object\",\n                            \"properties\": {\n                                \"timezone_id\": {\"type\" : \"number\"},\n                                \"timezone_name\": {\"type\": \"string\"}\n                            },\n                            \"required\": [\"timezone_id\", \"timezone_name\"]\n                        },\n                    },\n                    \"required\": []\n                },\n                \"office_id\": {\"type\": \"number\"},\n                \"offsite_location\": {},\n                \"session_number\": {\"type\": [\"number\", \"null\"]},\n                \"booking\": {}\n            },\n            \"required\": [\"booking\", \"booking_id\", \"deleted_date\", \"event_id\", \"exam_id\", \"exam_method\", \"exam_name\", \"exam_received_date\", \"exam_returned_tracking_number\", \"exam_type\", \"exam_type_id\", \"exam_written_ind\", \"examinee_name\", \"expiry_date\", \"notes\", \"number_of_students\", \"office\", \"office_id\", \"offsite_location\", \"session_number\"]\n        }\n    },\n    \"required\": [\"exams\"]\n};\n\n//Test to see if response schema is valid\npm.test(\"Validate Response Exam List Schema\", function(){\n    pm.expect(tv4.validate(jsonData, examSchema)).to.be.true;\n});\n"
+						},
+						"url": {
+							"raw": "https://postman-echo.com/post",
+							"protocol": "https",
+							"host": [
+								"postman-echo",
+								"com"
+							],
+							"path": [
+								"post"
+							]
+						},
+						"description": "Sets the authentication script"
+					},
+					"response": []
+				},
+				{
+					"name": "CFMS-Install-Booking-Schema-Check",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8cebcf78-f5a2-4694-b108-60e146791a78",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"booking_schema_check\", jsonData.data);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "// Define the JSON Schema expected in response\nvar bookingSchema = {\n    \"type\": \"object\",\n    \"properties\": {\n        \"booking\": {\n          \"type\": \"object\",\n          \"properties\": {\n            \"blackout_flag\": {\"type\": \"string\"},\n            \"blackout_notes\": {\"type\": [\"string\", \"null\"]},\n            \"booking_contact_information\": {\"type\": [\"string\", \"null\"]},\n            \"booking_id\": {\"type\": \"number\"},\n            \"booking_name\": {\"type\": [\"string\", \"null\"]},\n            \"end_time\": {\"type\": \"string\"},\n            \"fees\": {\"type\": \"string\"},\n            \"invigilators\": {\"type\": \"array\"},\n            \"office\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"appointments_enabled_ind\": {\"type\": \"number\"},\n                    \"exams_enabled_ind\": {\"type\": \"number\"},\n                    \"office_id\": {\"type\": \"number\"},\n                    \"office_name\": {\"type\": \"string\"},\n                    \"office_number\": {\"type\": \"number\"},\n                    \"timezone\": {}\n                },\n                \"required\": [\"appointments_enabled_ind\", \"exams_enabled_ind\", \"office_id\", \"office_name\", \"office_number\", \"timezone\"]\n            },\n            \"office_id\": {\"type\": \"number\"},\n            \"recurring_uuid\": {\"type\": [\"string\", \"null\"]},\n            \"room\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"capacity\": {\"type\": \"number\"},\n                    \"color\": {\"type\": \"string\"},\n                    \"deleted\": {\"type\": [\"string\", \"null\"]},\n                    \"room_id\": {\"type\": \"number\"},\n                    \"room_name\": {\"type\": \"string\"}\n                },\n                \"required\": [\"capacity\", \"color\", \"room_id\", \"room_name\", \"deleted\"]\n            },\n            \n            \"room_id\": {\"type\": \"number\"},\n            \"sbc_staff_invigilated\": {\"type\": \"number\"},\n            \"shadow_invigilator_id\": {\"type\": [\"number\", \"null\"]},\n            \"start_time\": {\"type\": \"string\"}\n          },\n          \"required\": [\"blackout_flag\", \"blackout_notes\", \"booking_contact_information\", \"booking_id\",\n                       \"booking_name\", \"end_time\", \"fees\", \"invigilators\", \"office\", \"office_id\",\n                       \"recurring_uuid\", \"room\", \"room_id\", \"sbc_staff_invigilated\", \"shadow_invigilator_id\",\n                       \"start_time\"]\n        },\n        \"errors\": { \"type\": \"object\" }\n    },\n    \"required\": [\"booking\", \"errors\"]\n}\n\n//Test to see if response schema is valid\npm.test(\"Validate Response Booking Schema\", function(){\n    pm.expect(tv4.validate(jsonData, bookingSchema)).to.be.true;\n});\n"
+						},
+						"url": {
+							"raw": "https://postman-echo.com/post",
+							"protocol": "https",
+							"host": [
+								"postman-echo",
+								"com"
+							],
+							"path": [
+								"post"
+							]
+						},
+						"description": "Sets the authentication script"
+					},
+					"response": []
+				},
+				{
+					"name": "CFMS-Install-Booking-Data-Check",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8cebcf78-f5a2-4694-b108-60e146791a78",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"booking_data_check\", jsonData.data);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "//  Make sure that jsonData has an booking property.\npm.test(\"Response should have booking property\", function(){\n    pm.expect(jsonData.hasOwnProperty(\"booking\")).to.be.true;\n});\n\n//  If jsonData has booking property, check data.\nif (jsonData.hasOwnProperty(\"booking\")) {\n\n    //Test to see if booking name has expected value\n    pm.test(\"Validate Booking Name has expected value\", function(){\n        pm.expect(jsonData.booking_name === environment.booking_name);\n    });\n\n    //Test to see if start time has expected value\n    pm.test(\"Validate start time has expected value\", function(){\n        pm.expect(jsonData.start_time === environment.start_time);\n    });\n\n    //Test to see if end time has expected value\n    pm.test(\"Validate end time has expected value\", function(){\n        pm.expect(jsonData.end_time === environment.end_time);\n    });\n\n    //Test to see if room id has expected value\n    pm.test(\"Validate room id has expected value\", function(){\n        pm.expect(jsonData.room_id === environment.room_id_1);\n    });\n\n    //Test to see if fees field has expected value\n    pm.test(\"Validate fees has expected value\", function(){\n        pm.expect(jsonData.fees === environment.fees);\n    });\n\n    //Test to see if office id field has expected value\n    pm.test(\"Validate office id has expected value\", function(){\n        pm.expect(jsonData.office_id === environment.current_office_id);\n    });\n}\n"
+						},
+						"url": {
+							"raw": "https://postman-echo.com/post",
+							"protocol": "https",
+							"host": [
+								"postman-echo",
+								"com"
+							],
+							"path": [
+								"post"
+							]
+						},
+						"description": "Sets the authentication script"
+					},
+					"response": []
+				},
+				{
+					"name": "CFMS-Install-Booking-List-Schema-Check",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8cebcf78-f5a2-4694-b108-60e146791a78",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"booking_list_schema_check\", jsonData.data);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "var bookingSchema = {\n    \"type\": \"object\",\n    \"properties\": {\n        \"bookings\": {\n            \"type\": \"array\",\n            \"properties\": {\n                \"booking_contact_information\": {},\n                \"booking_id\": {\"type\": \"number\"},\n                \"booking_name\": {\"type\": \"string\"},\n                \"end_time\": {\"type\": \"string\"},\n                \"fees\": {\"type\": \"string\"},\n                \"invigilator\": {},\n                \"invigilator_id\": {},\n                \"office\": {\n                    \"type\": \"object\",\n                    \"properties\": {\n                        \"appointments_enabled_ind\": {\"type\": \"number\"},\n                        \"exams_enabled_ind\": {\"type\": \"number\"},\n                        \"office_id\": {\"type\": \"number\"},\n                        \"office_name\": {\"type\": \"string\"},\n                        \"office_number\": {\"type\": \"number\"},\n                        \"sb_id\": {\"type\": \"number\"},\n                        \"timezone\": {}\n                    },\n                    \"required\": [\"appointments_enabled_ind\", \"exams_enabled_ind\", \"office_id\", \"office_name\", \"office_number\", \"sb\", \"sb_id\"]\n                },\n                \"office_id\": {\"type\": \"number\"},\n                \"room\": {\n                    \"type\": \"object\",\n                    \"properties\": {\n                        \"capacity\": {\"type\": \"number\"},\n                        \"color\": {\"type\": \"string\"},\n                        \"room_id\": {\"type\": \"number\"},\n                        \"room_name\": {\"type\": \"string\"}\n                    },\n                    \"required\": [\"capacity\", \"color\", \"room_id\", \"room_name\"]\n                },\n                \"room_id\": {\"type\": \"number\"},\n                \"start_time\": {\"type\": \"string\"},\n            },\n            \"required\": [\"booking_contact_information\", \"booking_id\", \"booking_name\", \"end_time\", \"fees\", \"room\", \"room_id\", \"start_time\", \"invigilator_id\", \"office\", \"office_id\"]\n        },\n        \"errors\": {\n            \"type\": \"object\",\n            \"properties\": {}\n        }\n    },\n    \"required\": [\"bookings\", \"errors\"]\n};\n\n//Test to see if response schema is valid\npm.test(\"Validate Response Booking List Schema\", function(){\n    pm.expect(tv4.validate(jsonData, bookingSchema)).to.be.true;\n});"
+						},
+						"url": {
+							"raw": "https://postman-echo.com/post",
+							"protocol": "https",
+							"host": [
+								"postman-echo",
+								"com"
+							],
+							"path": [
+								"post"
+							]
+						},
+						"description": "Sets the authentication script"
+					},
+					"response": []
+				},
+				{
+					"name": "Who am I TheQ",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c34723d3-c0d1-4504-97a2-373088309a5b",
+								"exec": [
+									"//  Ensure the client is logged in.",
+									"eval(environment.auth_first);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "e77f0ca3-62cf-49ba-8e17-67a16e8f8a5f",
+								"exec": [
+									"//  Run basic response tests.",
+									"eval(environment.basic_response_test);",
+									"",
+									"//  Get json return data.",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"if (jsonData.hasOwnProperty(\"csr\")) {",
+									"\tcurrentOfficeId = jsonData.csr.office_id;",
+									"\tcurrentOfficeNumber = jsonData.csr.office.office_number;",
+									"\tcurrentCsrId = jsonData.csr.csr_id;",
+									"    postman.setEnvironmentVariable(\"current_office_id\", currentOfficeId);",
+									"    postman.setEnvironmentVariable(\"current_office_number\", currentOfficeNumber);",
+									"    postman.setEnvironmentVariable(\"current_csr_id\", currentCsrId);",
+									"};",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}csrs/me/",
+							"host": [
+								"{{url}}csrs"
+							],
+							"path": [
+								"me",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Room IDs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "859ae114-22c4-4f3e-9f1f-9f0e06fbc29d",
+								"exec": [
+									"// Define the JSON Schema expected in response",
+									"var roomSchema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"rooms\": {",
+									"            \"type\": \"array\",",
+									"            \"properties\": {",
+									"                \"capacity\": {\"type\": \"number\"},",
+									"                \"color\": {\"type\": \"string\"},",
+									"                \"office\": {",
+									"                    \"type\": \"object\",",
+									"                    \"properties\": {",
+									"                        \"office_id\": {\"type\": \"number\"},",
+									"                        \"office_name\": {\"type\": \"string\"},",
+									"                        \"office_number\": {\"type\": \"number\"},",
+									"                        \"sb\": {",
+									"                            \"type\": \"object\",",
+									"                            \"properties\": {",
+									"                                \"sb_id\": {\"type\": \"number\"},",
+									"                                \"sb_type\": {\"type\": \"string\"}",
+									"                            },",
+									"                            \"required\": [\"sb_id\", \"sb_type\"]",
+									"                        },",
+									"                    \"sb_id\": {\"type\": \"number\"}                        ",
+									"                    },",
+									"                    \"required\": [\"office_id\", \"office_name\", \"office_number\", \"sb\", \"sb_id\"]",
+									"                }",
+									"            },",
+									"            \"required\": [\"capacity\", \"color\", \"office\", \"room_id\", \"room_name\"]",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"//  Run basic response tests.",
+									"eval(environment.basic_response_test);",
+									"",
+									"//  Get the max response time allowed.",
+									"var response_max = JSON.parse(globals.response_max);",
+									"",
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 200\", function(){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time less than \" + response_max.toString() + \"ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(response_max);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"pm.test(\"Validate Response Room Schema\", function(){",
+									"    pm.expect(tv4.validate(jsonData, roomSchema)).to.be.true;",
+									"});",
+									"",
+									"//  Get json return data.",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"if (jsonData.hasOwnProperty(\"rooms\")) {",
+									"    console.log(\"==> Rooms\");",
+									"    room_id_1 = jsonData.rooms[0].room_id;",
+									"    room_id_2 = room_id_1;",
+									"    if (jsonData.rooms.length > 1) {",
+									"        room_id_2 = jsonData.rooms[1].room_id;",
+									"    }",
+									"    postman.setEnvironmentVariable(\"room_id_1\", JSON.stringify(room_id_1.toString()));",
+									"    postman.setEnvironmentVariable(\"room_id_2\", JSON.stringify(room_id_2.toString()));",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "462566f5-d6cd-4c14-9b11-0cbf7abc0caf",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}rooms/",
+							"host": [
+								"{{url}}rooms"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Service IDs",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "d01c3826-dc28-4cce-957b-ec70d0393e7e",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "3b11031e-4031-4569-91f2-49e23517ffee",
+								"exec": [
+									"//  Run basic tests.",
+									"eval(environment.basic_response_test);",
+									"",
+									"//  Get json return data.",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"var schema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"services\": {",
+									"            \"type\": \"array\",",
+									"            \"properties\": {",
+									"                \"display_dashboard_ind\" : {",
+									"                    \"type\" : \"number\"",
+									"                },",
+									"                \"deleted\" : {",
+									"                    \"type\" : [\"object\", \"null\"]",
+									"                },",
+									"                \"actual_service_ind\" : {",
+									"                    \"type\" : \"number\"",
+									"                },",
+									"                \"service_id\" : {",
+									"                    \"type\" : [\"number\", \"object\"]",
+									"                },",
+									"                \"service_code\" : {",
+									"                    \"type\" : \"string\"",
+									"                },",
+									"                \"prefix\" : {",
+									"                    \"type\" : \"string\"",
+									"                },",
+									"                \"service_name\" : {",
+									"                    \"type\" : \"string\"",
+									"                },",
+									"                \"parent_id\" : {",
+									"                    \"type\" : [\"object\", \"number\", \"null\" ]",
+									"                },",
+									"                \"service_desc\" : {",
+									"                    \"type\" : \"string\"",
+									"                }",
+									"            },",
+									"            \"required\" : [\"display_dashboard_ind\", \"deleted\", \"actual_service_ind\", \"service_id\", \"service_code\",",
+									"                          \"prefix\", \"service_name\", \"parent_id\", \"service_desc\"]",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"//Test to see if response schema is valid",
+									"pm.test(\"Validate Service  Schema\", function(){",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"//  Loop to validate schema of each channel.",
+									"var allElements = jsonData.services;",
+									"var elementCount = 0;",
+									"var elementMax = Math.min(10, allElements.length);",
+									"//allElements.forEach(function(element) {",
+									"for (var currentElement = 0; currentElement < elementMax; currentElement++) {",
+									"    element = allElements[currentElement];",
+									"    elementCount ++;",
+									"    var testTitle = \"Service (\" + elementCount + \"): \" + element.service_name;",
+									"    pm.test(\"Validate Schema for \" + testTitle, function(){",
+									"        pm.expect(tv4.validate(element, schema)).to.be.true;",
+									"    });",
+									"    ",
+									"    //  Test the authenticate response.",
+									"    pm.test(\"--> \" + testTitle + \" dashboard_ind must be 0 or 1\", function() {",
+									"        pm.expect(element.display_dashboard_ind).to.be.within(0,1);",
+									"    });",
+									"    pm.test(\"--> \" + testTitle + \" actual_service_ind must be 1\", function() {",
+									"        pm.expect(element.actual_service_ind).to.be.eql(1);",
+									"    });",
+									"    pm.test(\"--> \" + testTitle + \" parent_id must not be null\", function() {",
+									"        pm.expect(element.parent_id).to.not.be.null;",
+									"    });",
+									"}",
+									"",
+									"//  Declare and initialize variables.",
+									"var mspId = 0;",
+									"var taxId = 0;",
+									"var mspText = \"Payment - MSP\";",
+									"var propTaxText = \"Other - PTAX\";",
+									"",
+									"//  Look for the MSP and Property Tax IDs.",
+									"allElements.forEach(function(element) {",
+									"    if (element.service_name === mspText) {",
+									"        mspId = element.service_id;",
+									"    }",
+									"    if (element.service_name === propTaxText) {",
+									"        taxId = element.service_id;",
+									"    }",
+									"});",
+									"",
+									"//  Check that you found the service IDs.",
+									"pm.test(\"The \" + mspText + \" service ID (\" + mspId.toString() + \") should not equal 0\", function() {",
+									"    pm.expect(mspId).to.not.be.eql(0);",
+									"});",
+									"",
+									"pm.test(\"The \" + propTaxText + \" service ID (\" + taxId.toString() + \") should not equal 0\", function() {",
+									"    pm.expect(taxId).to.not.be.eql(0);",
+									"});",
+									"",
+									"//  Store these IDs for future use.",
+									"postman.setEnvironmentVariable(\"service_MSP_id\", JSON.stringify(mspId));",
+									"postman.setEnvironmentVariable(\"service_PropTax_id\", JSON.stringify(taxId));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{url}}services/",
+							"host": [
+								"{{url}}services"
+							],
+							"path": [
+								""
+							]
+						},
+						"description": "Get a list of clients in the queue"
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Get Exam Types",
+			"item": [
+				{
+					"name": "Exam Type List",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2df2a851-6a71-48e6-b44f-ccf096fe9d83",
+								"exec": [
+									"// Define the JSON Schema expected in response",
+									"var examTypeSchema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"exam_color\": {\"type\": \"string\"},",
+									"            \"exam_type_id\": {\"type\": \"number\"},",
+									"            \"exam_type_name\": {\"type\": \"string\"},",
+									"            \"ita_ind\": {\"type\": \"number\"},",
+									"            \"method_type\": {\"type\": \"string\"},",
+									"            \"number_of_hours\": {\"type\": \"number\"},",
+									"            \"group_exam_ind\": {\"type\": \"number\"}",
+									"        },",
+									"        \"required\": [\"exam_color\", \"exam_type_id\", \"exam_type_name\", \"ita_ind\", \"method_type\", \"number_of_hours\", \"group_exam_ind\"]",
+									"    },",
+									"    \"required\": []",
+									"};           ",
+									"",
+									"//  Run basic response tests.",
+									"eval(environment.basic_response_test);",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"pm.test(\"Validate Response Exam Type Schema\", function(){",
+									"    pm.expect(tv4.validate(jsonData, examTypeSchema)).to.be.true;",
+									"});",
+									"",
+									"//  Store all exam type IDs for future use in adding exams",
+									"var allExamIds = [];",
+									"",
+									"//  Make sure some data returned.",
+									"pm.test(\"Response has exam_types property\", function(){",
+									"    pm.expect(jsonData.hasOwnProperty(\"exam_types\")).to.be.true;",
+									"});",
+									"pm.test(\"Response has at least one exam_type\", function(){",
+									"    pm.expect(jsonData.exam_types.length).to.be.above(0);",
+									"});",
+									"",
+									"// Set up list of valid exam types, create random functions.",
+									"eval(environment.init_exam_type_data);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}exam_types/",
+							"host": [
+								"{{url}}exam_types"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Exams",
+			"item": [
+				{
+					"name": "Exam Post End-point",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c34723d3-c0d1-4504-97a2-373088309a5b",
+								"exec": [
+									"//  Get exam type data and functions.",
+									"exam_array = JSON.parse(postman.getEnvironmentVariable(\"exam_array_data\"));",
+									"eval(environment.create_random_functions);",
+									"",
+									"//  Create an event number based on the time.",
+									"var ms = (new Date().getTime()).toString() + \"00\";",
+									"eventNumber = Number(ms.substring(ms.length-6, ms.len)) + 1;",
+									"postman.setEnvironmentVariable(\"event_number\", eventNumber);",
+									"",
+									"//  Update the next event ID.",
+									"var eventId = \"pm\" + eventNumber.toString();",
+									"postman.setEnvironmentVariable(\"update_number\", 0);",
+									"postman.setEnvironmentVariable(\"event_id\", JSON.stringify(eventId));",
+									"postman.setEnvironmentVariable(\"event_delete\", eventId);",
+									"",
+									"//  Calculate a random exam type to use.",
+									"random_index = get_random_index(exam_array);",
+									"",
+									"//  Store for use.",
+									"random_exam_type_id = exam_array[random_index].id;",
+									"postman.setEnvironmentVariable(\"random_exam_type_id\", JSON.stringify(random_exam_type_id.toString()));",
+									"",
+									"//  Store other variables for later use.",
+									"postman.setEnvironmentVariable(\"exam_method\", JSON.stringify(\"paper\"));",
+									"postman.setEnvironmentVariable(\"exam_name\", JSON.stringify(\"Postman Group Exam Name\"));",
+									"postman.setEnvironmentVariable(\"exam_written_ind\", JSON.stringify(\"0\"));",
+									"postman.setEnvironmentVariable(\"examinee_name\", JSON.stringify(\"Postman Examinee Name\"));",
+									"postman.setEnvironmentVariable(\"notes\", JSON.stringify(\"Postman Test Notes\"));",
+									"postman.setEnvironmentVariable(\"number_of_students\", JSON.stringify(\"19\"));",
+									"postman.setEnvironmentVariable(\"offsite_location\", JSON.stringify(\"Postman test location\"));",
+									"",
+									"//  Calculate an expiry date a week from today.",
+									"var later = new Date();",
+									"later.setDate(later.getDate()+7);",
+									"",
+									"//  Get year, day, month from the later time.",
+									"year = later.getFullYear().toString();",
+									"month = (\"0\" + (later.getMonth() + 1).toString()).slice(-2);",
+									"day = (\"0\" + (later.getDate()).toString()).slice(-2);",
+									"",
+									"//  Format expiry date for the exam.",
+									"expiry_date = year + \"-\" + month + \"-\" + day + \"T19:00:00Z\";",
+									"",
+									"//  Store globals.",
+									"pm.globals.set(\"expiry_date\", JSON.stringify(expiry_date));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "e77f0ca3-62cf-49ba-8e17-67a16e8f8a5f",
+								"exec": [
+									"//  Get the max response time allowed.",
+									"var response_max = JSON.parse(globals.response_max);",
+									"",
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 201\", function(){",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Response time less than \" + response_max.toString() + \"ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(response_max);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"eval(environment.exam_schema_check);",
+									"eval(environment.exam_data_check);",
+									"",
+									"//  If jsonData has an exam property, save exam ID.",
+									"if (jsonData.hasOwnProperty(\"exam\")) {",
+									"\tcurrentExamId = jsonData.exam.exam_id;",
+									"    postman.setEnvironmentVariable(\"current_exam_id\", currentExamId);",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\n\t\"event_id\" : {{event_id}},\n    \"exam_method\" : \"paper\",\n    \"exam_name\" : \"Postman Group Exam Name\",\n    \"exam_type_id\" : {{random_exam_type_id}},\n    \"exam_written_ind\" : \"0\",\n    \"examinee_name\" : \"Pm examinee name\",\n    \"notes\" : \"Pm sample notes\",\n    \"number_of_students\" : \"19\",\n    \"office_id\" : {{current_office_id}},\n    \"offsite_location\" : \"Pm test location\",\n    \"expiry_date\": {{expiry_date}}\n}"
+						},
+						"url": {
+							"raw": "{{url}}exams/",
+							"host": [
+								"{{url}}exams"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Exam Detail End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5206f620-8220-4ba4-860a-13c1bb452e6d",
+								"exec": [
+									"//  Get the max response time allowed.",
+									"var response_max = JSON.parse(globals.response_max);",
+									"",
+									"//  Run basic response tests.",
+									"eval(environment.basic_response_test);",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"eval(environment.exam_schema_check);",
+									"eval(environment.exam_data_check);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}exams/{{current_exam_id}}/",
+							"host": [
+								"{{url}}exams"
+							],
+							"path": [
+								"{{current_exam_id}}",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Exam List End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2a7432b9-ffb0-4e23-a224-c3a48171d6c4",
+								"exec": [
+									"//  Run basic response tests.",
+									"eval(environment.basic_response_test);",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"eval(environment.exam_schema_list_check);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}exams/",
+							"host": [
+								"{{url}}exams"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Exam Put End-point",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c34723d3-c0d1-4504-97a2-373088309a5b",
+								"exec": [
+									"//  Update the next event ID.",
+									"var eventNumber = JSON.parse(postman.getEnvironmentVariable(\"event_number\"));",
+									"var updateNumber = JSON.parse(postman.getEnvironmentVariable(\"update_number\")) + 1;",
+									"var updateEventId = \"pm-up\" + updateNumber.toString() + \"-\" + eventNumber.toString();",
+									"postman.setEnvironmentVariable(\"update_number\", updateNumber);",
+									"postman.setEnvironmentVariable(\"update_id\", JSON.stringify(updateEventId));",
+									"postman.setEnvironmentVariable(\"exam_name\", JSON.stringify(\"PM exam name - Update \" + updateNumber.toString()));",
+									"postman.setEnvironmentVariable(\"examinee_name\", JSON.stringify(\"PM examinee - Update \" + updateNumber.toString()));",
+									"postman.setEnvironmentVariable(\"notes\", JSON.stringify(\"PM exam notes - Update \" + updateNumber.toString()));",
+									"postman.setEnvironmentVariable(\"offsite_location\", JSON.stringify(\"PM offsite location - Update \" + updateNumber.toString()));",
+									"postman.setEnvironmentVariable(\"number_of_students\", JSON.stringify(\"21\"));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "e77f0ca3-62cf-49ba-8e17-67a16e8f8a5f",
+								"exec": [
+									"//  Get the max response time allowed.",
+									"var response_max = JSON.parse(globals.response_max);",
+									"",
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 201\", function(){",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Response time less than \" + response_max.toString() + \"ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(response_max);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"eval(environment.exam_schema_check);",
+									"eval(environment.exam_data_check);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"event_id\" : {{update_id}},\n    \"exam_method\" : {{exam_method}},\n    \"exam_name\" : {{exam_name}},\n    \"exam_type_id\" : {{random_exam_type_id}},\n    \"exam_written_ind\" : {{exam_written_ind}},\n    \"examinee_name\" : {{examinee_name}},\n    \"notes\" : {{notes}},\n    \"number_of_students\" : \"119\",\n    \"office_id\" : {{current_office_id}},\n    \"offsite_location\" : {{offsite_location}}\n}\n"
+						},
+						"url": {
+							"raw": "{{url}}exams/{{current_exam_id}}/",
+							"host": [
+								"{{url}}exams"
+							],
+							"path": [
+								"{{current_exam_id}}",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Exam Detail End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "3efcb554-1e5a-4e0a-91b8-aa32eb14a5e6",
+								"exec": [
+									"//  Run basic response tests.",
+									"eval(environment.basic_response_test);",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"eval(environment.exam_schema_check);",
+									"eval(environment.exam_data_check);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}exams/{{current_exam_id}}/",
+							"host": [
+								"{{url}}exams"
+							],
+							"path": [
+								"{{current_exam_id}}",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Exam Delete End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "88b43898-330f-4cf1-81c3-8cce3c53f54c",
+								"exec": [
+									"//  Get the max response time allowed.",
+									"var response_max = JSON.parse(globals.response_max);",
+									"",
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 204\", function(){",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"Response time less than \" + response_max.toString() + \"ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(response_max);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}exams/{{current_exam_id}}/",
+							"host": [
+								"{{url}}exams"
+							],
+							"path": [
+								"{{current_exam_id}}",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Exams Export",
+			"item": [
+				{
+					"name": "Exams Export List",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "9e02fbaf-627e-43db-b516-226b1a2874e8",
+								"exec": [
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 200\", function(){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time less than 20,000ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(20000);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "caf977c6-da22-4f6c-b0c9-ca5f0fc3ec29",
+								"exec": [
+									"//  Calculate a start date four weeks prior to today.",
+									"var start = new Date();",
+									"start.setDate(start.getDate()-28);",
+									"",
+									"//  Get year, day, month from the start time.",
+									"start_year = start.getFullYear().toString();",
+									"start_month = (\"0\" + (start.getMonth() + 1).toString()).slice(-2);",
+									"start_day = (\"0\" + (start.getDate()).toString()).slice(-2);",
+									"start_date = start_year + \"-\" + start_month + \"-\" + start_day;",
+									"",
+									"//  Get year, day, month from the current day.",
+									"var today = new Date();",
+									"end_year = today.getFullYear().toString();",
+									"end_month = (\"0\" + (today.getMonth() + 1).toString()).slice(-2);",
+									"end_day = (\"0\" + (today.getDate()).toString()).slice(-2);",
+									"end_date = end_year + \"-\" + end_month + \"-\" + end_day;",
+									"",
+									"console.log(\"Start: \" + start_date);",
+									"console.log(\"End:   \" + end_date);",
+									"pm.globals.set(\"start_date\", start_date);",
+									"pm.globals.set(\"end_date\", end_date);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}exams/export/?start_date={{start_date}}&end_date={{end_date}}",
+							"host": [
+								"{{url}}exams"
+							],
+							"path": [
+								"export",
+								""
+							],
+							"query": [
+								{
+									"key": "start_date",
+									"value": "{{start_date}}"
+								},
+								{
+									"key": "end_date",
+									"value": "{{end_date}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Exam Types",
+			"item": [
+				{
+					"name": "Exam Type List End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2df2a851-6a71-48e6-b44f-ccf096fe9d83",
+								"exec": [
+									"// Define the JSON Schema expected in response",
+									"var examTypeSchema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"exam_color\": {\"type\": \"string\"},",
+									"            \"exam_type_id\": {\"type\": \"number\"},",
+									"            \"exam_type_name\": {\"type\": \"string\"},",
+									"            \"ita_ind\": {\"type\": \"number\"},",
+									"            \"method_type\": {\"type\": \"string\"},",
+									"            \"number_of_hours\": {\"type\": \"number\"},",
+									"            \"group_exam_ind\": {\"type\": \"number\"}",
+									"        },",
+									"        \"required\": [\"exam_color\", \"exam_type_id\", \"exam_type_name\", \"ita_ind\", \"method_type\", \"number_of_hours\", \"group_exam_ind\"]",
+									"    },",
+									"    \"required\": []",
+									"};            ",
+									"",
+									"//  Get the max response time allowed.",
+									"var response_max = JSON.parse(globals.response_max);",
+									"",
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 200\", function(){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time less than \" + response_max.toString() + \"ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(response_max);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"pm.test(\"Validate Response Exam Type Schema\", function(){",
+									"    pm.expect(tv4.validate(jsonData, examTypeSchema)).to.be.true;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}exam_types/",
+							"host": [
+								"{{url}}exam_types"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Bookings",
+			"item": [
+				{
+					"name": "Booking Post End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a4099862-1c9a-48f7-adbf-0240e6eb185a",
+								"exec": [
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 201\", function(){",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"//  Check if response time less than max allowed.",
+									"var response_max = JSON.parse(globals.response_max);",
+									"pm.test(\"Response time less than \" + response_max.toString() + \"ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(response_max);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"eval(environment.booking_schema_check);",
+									"eval(environment.booking_data_check);",
+									"",
+									"var booking_id = jsonData.booking.booking_id;",
+									"",
+									"//Dynamic variable used for end-point testing later on",
+									"postman.setEnvironmentVariable(\"booking_id\", JSON.stringify(booking_id));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "4df5dedd-4976-4cdc-b2be-739b2028cdc4",
+								"exec": [
+									"//  Calculate a start date a week from today.",
+									"var later = new Date();",
+									"later.setDate(later.getDate()+7);",
+									"",
+									"//  Get year, day, month from the later time.",
+									"year = later.getFullYear().toString();",
+									"month = (\"0\" + (later.getMonth() + 1).toString()).slice(-2);",
+									"day = (\"0\" + (later.getDate()).toString()).slice(-2);",
+									"",
+									"//  Format starting and ending time for the booking.",
+									"start_time = year + \"-\" + month + \"-\" + day + \"T17:00:00Z\";",
+									"end_time = year + \"-\" + month + \"-\" + day + \"T19:00:00Z\";",
+									"",
+									"//  Store globals.",
+									"pm.globals.set(\"start_time\", JSON.stringify(start_time));",
+									"pm.globals.set(\"end_time\", JSON.stringify(end_time));",
+									"pm.globals.set(\"fees\", JSON.stringify(\"false\"));",
+									"pm.globals.set(\"booking_name\", JSON.stringify(\"Super big demo next week\"));",
+									"pm.globals.set(\"room_id\", pm.environment.get(\"room_id_1\"));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"start_time\": {{start_time}},\n  \"end_time\": {{end_time}},\n  \"room_id\": {{room_id}},\n  \"fees\": {{fees}},\n  \"booking_name\": {{booking_name}},\n  \"office_id\" : {{current_office_id}}\n}\n"
+						},
+						"url": {
+							"raw": "{{url}}bookings/",
+							"host": [
+								"{{url}}bookings"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Booking Detail End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "232f5232-de75-4f55-b999-2e39e39a12a8",
+								"exec": [
+									"//  Run basic response tests.",
+									"eval(environment.basic_response_test);",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"eval(environment.booking_schema_check);",
+									"eval(environment.booking_data_check);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}bookings/{{booking_id}}/",
+							"host": [
+								"{{url}}bookings"
+							],
+							"path": [
+								"{{booking_id}}",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Booking List End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "59fc7e18-6df0-48d9-822c-6518fbece309",
+								"exec": [
+									"//  Run basic response tests.",
+									"eval(environment.basic_response_test);",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"eval(environment.booking_list_schema_check);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}bookings/",
+							"host": [
+								"{{url}}bookings"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Booking Put End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b127046f-b399-4e66-b76f-b6e79268b8ce",
+								"exec": [
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 200\", function(){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"//  Check if response time less than max allowed.",
+									"var response_max = JSON.parse(globals.response_max);",
+									"pm.test(\"Response time less than \" + response_max.toString() + \"ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(response_max);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"eval(environment.booking_schema_check);",
+									"eval(environment.booking_data_check);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "9bde67e2-8eeb-4e50-90bf-caff1fef90a4",
+								"exec": [
+									"//  Calculate a start date a week from today.",
+									"var later = new Date();",
+									"later.setDate(later.getDate()+7);",
+									"",
+									"//  Get year, day, month from the later time.",
+									"year = later.getFullYear().toString();",
+									"month = (\"0\" + (later.getMonth() + 1).toString()).slice(-2);",
+									"day = (\"0\" + (later.getDate()).toString()).slice(-2);",
+									"",
+									"//  Format starting and ending time for the booking.",
+									"start_time = year + \"-\" + month + \"-\" + day + \"T21:00:00Z\";",
+									"end_time = year + \"-\" + month + \"-\" + day + \"T23:00:00Z\";",
+									"",
+									"pm.globals.set(\"start_time\", JSON.stringify(start_time));",
+									"pm.globals.set(\"end_time\", JSON.stringify(end_time));",
+									"pm.globals.set(\"fees\", JSON.stringify(\"true\"));",
+									"pm.globals.set(\"booking_name\", JSON.stringify(\"Time to pay your fees!\"));",
+									"pm.globals.set(\"room_id\", pm.environment.get(\"room_id_2\"));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"start_time\": {{start_time}},\n  \"end_time\": {{end_time}},\n  \"room_id\": {{room_id}},\n  \"fees\": {{fees}},\n  \"booking_name\": {{booking_name}},\n  \"office_id\" : {{current_office_id}}\n}"
+						},
+						"url": {
+							"raw": "{{url}}bookings/{{booking_id}}/",
+							"host": [
+								"{{url}}bookings"
+							],
+							"path": [
+								"{{booking_id}}",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Booking Detail End-point Again",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b5e53be0-ddda-4c99-b563-5a3b449e0f79",
+								"exec": [
+									"//  Run basic response tests.",
+									"eval(environment.basic_response_test);",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"eval(environment.booking_schema_check);",
+									"eval(environment.booking_data_check);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}bookings/{{booking_id}}/",
+							"host": [
+								"{{url}}bookings"
+							],
+							"path": [
+								"{{booking_id}}",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Booking Delete End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1e7c1d71-ea74-4a78-9ef2-ee9a7a47d915",
+								"exec": [
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 204\", function(){",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"//  Check if response time less than max allowed.",
+									"var response_max = JSON.parse(globals.response_max);",
+									"pm.test(\"Response time less than \" + response_max.toString() + \"ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(response_max);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}bookings/{{booking_id}}/",
+							"host": [
+								"{{url}}bookings"
+							],
+							"path": [
+								"{{booking_id}}",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Invigilators",
+			"item": [
+				{
+					"name": "Invigilator List End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0e68858e-985c-4fb0-bca6-04d33f65c28d",
+								"exec": [
+									"// Define the JSON Schema expected in response",
+									"var invigilatorSchema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"invigilators\": {",
+									"            \"type\": \"array\",",
+									"            \"properties\": {",
+									"                \"contact_email\": {\"type\": \"string\"},",
+									"                \"contact_phone\": {\"type\": \"string\"},",
+									"                \"contract_expiry_date\": {\"type\": \"string\"},",
+									"                \"contract_number\": {\"type\": \"string\"},",
+									"                \"invigilator_id\": {\"type\": \"number\"},",
+									"                \"invigilator_name\": {\"type\": \"string\"},",
+									"                \"invigilator_notes\": {\"type\": \"string\"},",
+									"                \"office\":{",
+									"                    \"type\": \"object\",",
+									"                    \"properties\": {",
+									"                        \"office_id\": {\"type\": \"number\"},",
+									"                        \"office_name\": {\"type\": \"string\"},",
+									"                        \"office_number\": {\"type\": \"number\"},",
+									"                        \"sb\": {",
+									"                            \"type\": \"object\",",
+									"                            \"properties\": {",
+									"                                \"sb_id\": {\"type\": \"number\"},",
+									"                                \"sb_type\": {\"type\": \"string\"}",
+									"                            },",
+									"                            \"required\": [\"sb_id\", \"sb_type\"]",
+									"                        }",
+									"                    },",
+									"                    \"required\": [\"office_id\", \"office_name\", \"office_number\", \"sb\", \"sb_id\"]",
+									"                }",
+									"            },",
+									"            \"required\": [\"contact_email\", \"contact_phone\", \"contract_expiry_date\", \"contract_number\", \"invigilator_id\", \"invigilator_name\", \"invigilator_notes\", \"office\"]",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"//  Get the max response time allowed.",
+									"var response_max = JSON.parse(globals.response_max);",
+									"",
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 200\", function(){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time less than \" + response_max.toString() + \"ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(response_max);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"pm.test(\"Validate Response Invigilator Schema\", function(){",
+									"    pm.expect(tv4.validate(jsonData, invigilatorSchema)).to.be.true;",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}invigilators/",
+							"host": [
+								"{{url}}invigilators"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Rooms",
+			"item": [
+				{
+					"name": "Room List End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "859ae114-22c4-4f3e-9f1f-9f0e06fbc29d",
+								"exec": [
+									"// Define the JSON Schema expected in response",
+									"var roomSchema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"rooms\": {",
+									"            \"type\": \"array\",",
+									"            \"properties\": {",
+									"                \"capacity\": {\"type\": \"number\"},",
+									"                \"color\": {\"type\": \"string\"},",
+									"                \"office\": {",
+									"                    \"type\": \"object\",",
+									"                    \"properties\": {",
+									"                        \"office_id\": {\"type\": \"number\"},",
+									"                        \"office_name\": {\"type\": \"string\"},",
+									"                        \"office_number\": {\"type\": \"number\"},",
+									"                        \"sb\": {",
+									"                            \"type\": \"object\",",
+									"                            \"properties\": {",
+									"                                \"sb_id\": {\"type\": \"number\"},",
+									"                                \"sb_type\": {\"type\": \"string\"}",
+									"                            },",
+									"                            \"required\": [\"sb_id\", \"sb_type\"]",
+									"                        },",
+									"                    \"sb_id\": {\"type\": \"number\"}                        ",
+									"                    },",
+									"                    \"required\": [\"office_id\", \"office_name\", \"office_number\", \"sb\", \"sb_id\"]",
+									"                }",
+									"            },",
+									"            \"required\": [\"capacity\", \"color\", \"office\", \"room_id\", \"room_name\"]",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"//  Get the max response time allowed.",
+									"var response_max = JSON.parse(globals.response_max);",
+									"",
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 200\", function(){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time less than \" + response_max.toString() + \"ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(response_max);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"pm.test(\"Validate Response Room Schema\", function(){",
+									"    pm.expect(tv4.validate(jsonData, roomSchema)).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}rooms/",
+							"host": [
+								"{{url}}rooms"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "CSRS",
+			"item": [
+				{
+					"name": "CSRS Me Get End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1ed052a0-06cc-45c7-ae49-b19b96e02d51",
+								"exec": [
+									"// Define the JSON Schema expected in response",
+									"var CSRSSchema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"csr\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {",
+									"                \"csr_id\": {\"type\": \"number\"},",
+									"                \"csr_state\": {",
+									"                    \"type\": \"object\",",
+									"                    \"properties\": {",
+									"                        \"csr_state_desc\": {\"type\": \"string\"},",
+									"                        \"csr_state_id\": {\"type\": \"number\"},",
+									"                        \"csr_state_name\": {\"type\": \"string\"}",
+									"                    },",
+									"                    \"required\": [\"csr_state_desc\", \"csr_state_id\", \"csr_state_name\"]",
+									"                },",
+									"                \"csr_state_id\": {\"type\": \"number\"},",
+									"                \"deleted\": {},",
+									"                \"finance_designate\": {\"type\": \"number\"},",
+									"                \"ita_designate\": {\"type\": \"number\"},",
+									"                \"liaison_designate\": {\"type\": \"number\"},",
+									"                \"office\": {",
+									"                    \"type\": \"object\",",
+									"                    \"properties\": {",
+									"                        \"appointments_enabled_ind\": {\"type\": \"number\"},",
+									"                        \"back_office_list\": {",
+									"                            \"type\": \"array\",",
+									"                            \"properties\": {",
+									"                                \"actual_service_ind\": {\"type\": \"number\"},",
+									"                                \"deleted\": {},",
+									"                                \"display_dashboard_ind\": {\"type\": \"number\"},",
+									"                                \"parent\": {",
+									"                                    \"type\": \"object\",",
+									"                                    \"properties\": {",
+									"                                        \"service_name\": {\"type\": \"string\"}",
+									"                                    },",
+									"                                    \"required\": [\"service_name\"]",
+									"                                },",
+									"                                \"parent_id\": {\"type\": \"number\"},",
+									"                                \"prefix\": {\"type\": \"string\"},",
+									"                                \"service_code\": {\"type\": \"string\"},",
+									"                                \"service_desc\": {\"type\": \"string\"},",
+									"                                \"service_id\": {\"type\": \"number\"},",
+									"                                \"service_name\": {\"type\": \"string\"},",
+									"                            },",
+									"                            \"required\": [\"actual_service_ind\", \"deleted\", \"display_dashboard_ind\", \"parent\",",
+									"                                        \"parent_id\", \"prefix\", \"service_code\", \"service_desc\", \"service_id\",",
+									"                                        \"service_name\"]",
+									"                        },",
+									"                        \"counters\": {",
+									"                            \"type\": \"array\",",
+									"                            \"properties\": {",
+									"                                \"counter_id\": {\"type\": \"number\"},",
+									"                                \"counter_name\": {\"type\": \"string\"}",
+									"                            },",
+									"                            \"required\": [\"counter_id\", \"counter_name\"]",
+									"                        },",
+									"                        \"exams_enabled_ind\": {\"type\": \"number\"},",
+									"                        \"office_id\": {\"type\": \"number\"},",
+									"                        \"office_name\": {\"type\": \"string\"},",
+									"                        \"office_number\": {\"type\": \"number\"},",
+									"                        \"quick_list\": {",
+									"                            \"type\": \"array\",",
+									"                            \"properties\": {",
+									"                                \"actual_service_ind\": {\"type\": \"number\"},",
+									"                                \"deleted\": {},",
+									"                                \"display_dashboard_ind\": {\"type\": \"number\"},",
+									"                                \"parent\": {",
+									"                                    \"type\": \"object\",",
+									"                                    \"properties\": {",
+									"                                        \"service_name\": {\"type\": \"string\"}",
+									"                                    },",
+									"                                    \"required\": [\"service_name\"]",
+									"                                },",
+									"                                \"parent_id\": {\"type\": \"number\"},",
+									"                                \"prefix\": {\"type\": \"string\"},",
+									"                                \"service_code\": {\"type\": \"string\"},",
+									"                                \"service_desc\": {\"type\": \"string\"},",
+									"                                \"service_id\": {\"type\": \"number\"},",
+									"                                \"service_name\": {\"type\": \"string\"},",
+									"                            },",
+									"                            \"required\": [\"actual_service_ind\", \"deleted\", \"display_dashboard_ind\", \"parent\",",
+									"                                        \"parent_id\", \"prefix\", \"service_code\", \"service_desc\", \"service_id\",",
+									"                                        \"service_name\"]",
+									"                        },",
+									"                        \"sb\":{",
+									"                            \"type\": \"object\",",
+									"                            \"properties\": {",
+									"                                \"sb_id\": {\"type\": \"number\"},",
+									"                                \"sb_type\": {\"type\": \"string\"}",
+									"                            },",
+									"                            \"required\": [\"sb_id\", \"sb_type\"]",
+									"                        },",
+									"                        \"sb_id\": {\"type\": \"number\"},",
+									"                        \"timezone\": {",
+									"                            \"type\": \"object\",",
+									"                            \"properties\": {",
+									"                                \"timezone_id\": {\"type\": \"number\"},",
+									"                                \"timezone_name\": {\"type\": \"string\"}",
+									"                            },",
+									"                            \"required\": [\"timezone_id\", \"timezone_name\"]",
+									"                        }",
+									"                    },",
+									"                    \"required\": [\"appointments_enabled_ind\", \"back_office_list\", \"counters\",",
+									"                                 \"exams_enabled_ind\", \"office_id\", \"office_name\", \"office_number\",",
+									"                                 \"quick_list\", \"sb\", \"sb_id\", ]",
+									"                },",
+									"                \"office_id\": {\"type\": \"number\"},",
+									"                \"pesticide_designate\": {\"type\": \"number\"},",
+									"                \"qt_xn_csr_ind\": {\"type\": \"number\"},",
+									"                \"receptionist_ind\": {\"type\": \"number\"},",
+									"                \"role\": {",
+									"                    \"type\": \"object\",",
+									"                    \"properties\": {",
+									"                        \"role_code\": {\"type\": \"string\"},",
+									"                        \"role_desc\": {\"type\": \"string\"},",
+									"                        \"role_id\": {\"type\": \"number\"}",
+									"                    },",
+									"                    \"required\": [\"role_code\", \"role_desc\", \"role_id\"]",
+									"                },",
+									"                \"role_id\": {\"type\": \"number\"},",
+									"                \"username\": {\"type\": \"string\"}",
+									"            },",
+									"        },",
+									"        \"attention_needed\": {\"type\": \"boolean\"},",
+									"        \"active_citizens\" : {\"type\": \"array\"},",
+									"        \"back_office_display\": {\"type\": \"string\"},",
+									"        \"recurring_feature_flag\": {\"type\": \"string\"}",
+									"    },",
+									"    \"required\": [\"csr\", \"attention_needed\", \"active_citizens\", \"back_office_display\", \"recurring_feature_flag\"]",
+									"};",
+									"",
+									"//  Run basic response tests.",
+									"eval(environment.basic_response_test);",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"console.log(jsonData);",
+									"",
+									"//Test to see if response schema is valid",
+									"pm.test(\"Validate Response CSRs Schema\", function(){",
+									"    pm.expect(tv4.validate(jsonData, CSRSSchema)).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "1c4020cd-fb05-478c-b908-3197c80d492e",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}csrs/me/",
+							"host": [
+								"{{url}}csrs"
+							],
+							"path": [
+								"me",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Offices",
+			"item": [
+				{
+					"name": "Office List End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ad6ffb6d-efad-4e11-b4a9-99e49f457bbd",
+								"exec": [
+									"// Define the JSON Schema expected in response",
+									"var officeSchema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"offices\": {",
+									"            \"type\": \"array\",",
+									"            \"properties\": {",
+									"                \"exams_enabled\": {\"type\": \"number\"},",
+									"                \"office_id\": {\"type\": \"number\"},",
+									"                \"office_name\": {\"type\": \"string\"},",
+									"                \"office_number\": {\"type\": \"number\"},",
+									"                \"sb\": {",
+									"                    \"type\": \"object\",",
+									"                    \"properties\": {",
+									"                        \"sb_id\": {\"type\": \"number\"},",
+									"                        \"sb_type\": {\"type\": \"string\"}",
+									"                    },",
+									"                    \"required\": [\"sb_id\", \"sb_type\"]",
+									"                },",
+									"                \"sb_id\": {\"type\": \"number\"}",
+									"            },",
+									"            \"required\": [\"exams_enabled\", \"office_id\", \"office_name\", \"office_number\", \"sb\", \"sb_id\"]",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"//  Get the max response time allowed.",
+									"var response_max = JSON.parse(globals.response_max);",
+									"",
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 200\", function(){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time less than \" + response_max.toString() + \"ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(response_max);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"pm.test(\"Validate Response Office Schema\", function(){",
+									"    pm.expect(tv4.validate(jsonData, officeSchema)).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}offices/",
+							"host": [
+								"{{url}}offices"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Appointments",
+			"item": [
+				{
+					"name": "Appointment Post End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "851b530c-92d7-482c-9e80-2a1f542b280c",
+								"exec": [
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 201\", function(){",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"//  Check if response time less than max allowed.",
+									"var response_max = JSON.parse(globals.response_max);",
+									"pm.test(\"Response time less than \" + response_max.toString() + \"ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(response_max);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"eval(environment.appointment_schema_check);",
+									"eval(environment.appointment_data_check);",
+									"",
+									"var appointment_id = jsonData.appointment.appointment_id;",
+									"",
+									"//Dynamic variable used for end-point testing later on",
+									"postman.setEnvironmentVariable(\"appointment_id\", JSON.stringify(appointment_id));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "e8444129-3a7b-4a2f-82d0-fd9b5d395f0d",
+								"exec": [
+									"//  Calculate a start date a week from today.",
+									"var later = new Date();",
+									"later.setDate(later.getDate()+7);",
+									"",
+									"//  Get year, day, month from the later time.",
+									"year = later.getFullYear().toString();",
+									"month = (\"0\" + (later.getMonth() + 1).toString()).slice(-2);",
+									"day = (\"0\" + (later.getDate()).toString()).slice(-2);",
+									"",
+									"//  Format starting and ending time for the booking.",
+									"start_time = year + \"-\" + month + \"-\" + day + \"T17:00:00Z\";",
+									"end_time = year + \"-\" + month + \"-\" + day + \"T19:00:00Z\";",
+									"",
+									"pm.globals.set(\"start_time\", JSON.stringify(start_time));",
+									"pm.globals.set(\"end_time\", JSON.stringify(end_time));",
+									"pm.globals.set(\"category\", JSON.stringify(\"Exam\"));",
+									"pm.globals.set(\"comments\", JSON.stringify(\"Missed playoffs, needs to talk #1.\"));",
+									"pm.globals.set(\"citizen_name\", JSON.stringify(\"LeBron James Appointment #1\"));",
+									"pm.globals.set(\"service_id\", pm.environment.get(\"service_PropTax_id\"));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n \"service_id\": {{service_id}},\n \"office_id\" : {{current_office_id}},\n \"start_time\": {{start_time}},\n \"end_time\": {{end_time}},\n \"category\": {{category}},\n \"comments\": {{comments}},\n \"citizen_name\": {{citizen_name}}\n}"
+						},
+						"url": {
+							"raw": "{{url}}appointments/",
+							"host": [
+								"{{url}}appointments"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Appointment Detail End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5206f620-8220-4ba4-860a-13c1bb452e6d",
+								"exec": [
+									"//  Run basic response tests.",
+									"eval(environment.basic_response_test);",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"eval(environment.appointment_schema_check);",
+									"eval(environment.appointment_data_check);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}appointments/{{appointment_id}}/",
+							"host": [
+								"{{url}}appointments"
+							],
+							"path": [
+								"{{appointment_id}}",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Appointment List End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2a7432b9-ffb0-4e23-a224-c3a48171d6c4",
+								"exec": [
+									"//  Run basic response tests.",
+									"eval(environment.basic_response_test);",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid\\",
+									"eval(environment.appointment_list_schema_check);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}appointments/",
+							"host": [
+								"{{url}}appointments"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Appointment Put End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1cf958af-12dd-44f4-a624-d070cc6d90cb",
+								"exec": [
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 200\", function(){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"//  Check if response time less than max allowed.",
+									"var response_max = JSON.parse(globals.response_max);",
+									"pm.test(\"Response time less than \" + response_max.toString() + \"ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(response_max);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"eval(environment.appointment_schema_check);",
+									"eval(environment.appointment_data_check);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "52ba16f8-f08e-4a75-a64c-39e59c64c1c6",
+								"exec": [
+									"//  Calculate a start date a week from today.",
+									"var later = new Date();",
+									"later.setDate(later.getDate()+7);",
+									"",
+									"//  Get year, day, month from the later time.",
+									"year = later.getFullYear().toString();",
+									"month = (\"0\" + (later.getMonth() + 1).toString()).slice(-2);",
+									"day = (\"0\" + (later.getDate()).toString()).slice(-2);",
+									"",
+									"//  Format starting and ending time for the booking.",
+									"start_time = year + \"-\" + month + \"-\" + day + \"T21:00:00Z\";",
+									"end_time = year + \"-\" + month + \"-\" + day + \"T23:00:00Z\";",
+									"",
+									"pm.globals.set(\"start_time\", JSON.stringify(start_time));",
+									"pm.globals.set(\"end_time\", JSON.stringify(end_time));",
+									"pm.globals.set(\"comments\", JSON.stringify(\"super EARLY\"));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n \"office_id\" : {{current_office_id}},\n \"start_time\": {{start_time}},\n \"end_time\": {{end_time}},\n \"category\": {{category}},\n \"comments\": {{comments}}\n}"
+						},
+						"url": {
+							"raw": "{{url}}appointments/{{appointment_id}}/",
+							"host": [
+								"{{url}}appointments"
+							],
+							"path": [
+								"{{appointment_id}}",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Appointment Delete End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "88b43898-330f-4cf1-81c3-8cce3c53f54c",
+								"exec": [
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 204\", function(){",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"//  Check if response time less than max allowed.",
+									"var response_max = JSON.parse(globals.response_max);",
+									"pm.test(\"Response time less than \" + response_max.toString() + \"ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(response_max);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}appointments/{{appointment_id}}/",
+							"host": [
+								"{{url}}appointments"
+							],
+							"path": [
+								"{{appointment_id}}",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "1bfedebf-df09-4b2b-8c49-78fc3b07e34b",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "787fad5e-5387-4a35-a8f5-0fdb115be54a",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "278ecdd2-62d5-4df1-8d7f-b4cc71138575",
+			"key": "auth_variable",
+			"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI1NXhiZzcyaml6NWQ3cEtkbzdwNFhLdTB2VFA2UXMtemthZzFaY1ZKWTZVIn0.eyJqdGkiOiJmZWVlYzU4YS0zOTY0LTQwZDgtOTk3Ni02OTg1ZjNiNmQ2NzYiLCJleHAiOjE1NDQwMzY2NzQsIm5iZiI6MCwiaWF0IjoxNTQ0MDM0ODc0LCJpc3MiOiJodHRwczovL3Nzby10ZXN0LnBhdGhmaW5kZXIuZ292LmJjLmNhL2F1dGgvcmVhbG1zL3NiYyIsImF1ZCI6ImNmbXMtREVWIiwic3ViIjoiY2ZmNTQ3MDItZTkzMC00YjZlLTlhYzgtMmZkMTRjY2FmNzUxIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiY2Ztcy1ERVYiLCJub25jZSI6ImM1Zjg1NzBmLTgwNDktNDUxNC04Mjg4LTJjN2RmMzdkZTc5NSIsImF1dGhfdGltZSI6MTU0NDAzMjgxNywic2Vzc2lvbl9zdGF0ZSI6IjM4YjhiYzY4LTdmZDktNDE0NC04YWQ1LTI4ZGRlNmMwYWE1MCIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJuYW1lIjoiQ0ZNUyBQb3N0bWFuIE9wZXJhdG9yIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiY2Ztcy1wb3N0bWFuLW9wZXJhdG9yIiwiZ2l2ZW5fbmFtZSI6IkNGTVMgUG9zdG1hbiIsImZhbWlseV9uYW1lIjoiT3BlcmF0b3IifQ.CaDq7kLDMu1oqUVm6fhiAw4ubu_D4jVdkXrqLjfCxu9b-9GzyNSIK1Gy0NCesN3caG684-Ofv3LlragMOwdoRhx-xkO6j5rqPhh2EdEDYTGkrnmQrVBjgHECLYN3RSAUWk4oKsp7gRMLDorU6QWLZNRWe9qlzulbss08Mut4nZz1RV0CirvJQ9oshBdpstQIPBM7ZEptcF2AOnc8swcFMJ3mqdrs0ImytArwZEzYwRzSIAR0-kYW-AXq-TK1dk2R7fqkMXmy3ZdHoQlFRfNtfYILVPzBAq3zPftrD-lmCcfUWz-0UcwhmNELQ-Pej-t_Z_eFSPPGkAVIuv_kkHbqQw",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}

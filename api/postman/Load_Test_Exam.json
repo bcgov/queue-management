@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "b8ea4228-164b-4447-a63e-d2c384530553",
-		"name": "Load-Test-Exam",
+		"name": "Load_Test_Exam",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -9,54 +9,89 @@
 			"name": "Setup",
 			"item": [
 				{
-					"name": "Install Postman BDD",
+					"name": "Setup-Variables",
 					"event": [
 						{
-							"listen": "prerequest",
+							"listen": "test",
 							"script": {
-								"id": "34b6afaf-8d76-4adf-a628-2c4ccd57c881",
+								"id": "5409b66d-67a4-449b-8633-9aeca632b388",
 								"exec": [
-									"// If the \"postman_bdd_path\" environment variable is set, then we'll use it.",
-									"// Otherwise, we'll default to the published version",
-									"if (!globals.postman_bdd_path) {",
-									"    //  Original URL from Registries.  Now appears to be blocked from gov't workstations, not from Openshift, however.",
-									"    //  postman.setGlobalVariable('postman_bdd_path', 'http://bigstickcarpet.com/postman-bdd/dist/postman-bdd.min.js');",
-									"",
-									"    //  New link, which appears to work.",
-									"    postman.setGlobalVariable('postman_bdd_path', 'https://raw.githubusercontent.com/JamesMessinger/postman-bdd/master/dist/postman-bdd.min.js');",
-									"}",
 									""
 								],
 								"type": "text/javascript"
 							}
 						},
 						{
-							"listen": "test",
+							"listen": "prerequest",
 							"script": {
-								"id": "47e65f0f-09a2-4eda-a006-edfc894218b1",
+								"id": "e9eed831-7955-4218-a400-ae6e1e7e2e10",
 								"exec": [
-									"// \"install\" Postman BDD",
-									"postman.setGlobalVariable('postmanBDD', responseBody);"
+									"//  See if the use-prefix global has been set.  Use default if not.",
+									"let usePrefix = '';",
+									"if (pm.globals.get('use-prefix')) {",
+									"    console.log(\"==> use-prefix exists\");",
+									"    usePrefix = pm.globals.get('use-prefix');",
+									"    console.log(\"    --> Prefix is: \" + usePrefix);",
+									"    ",
+									"    //  Set up all globals, using the correct prefix.",
+									"    pm.globals.set('auth_url', pm.globals.get(usePrefix + 'auth_url'));",
+									"    pm.globals.set('realm', pm.globals.get(usePrefix + 'realm'));",
+									"    pm.globals.set('clientid', pm.globals.get(usePrefix + 'clientid'));",
+									"    pm.globals.set('client_secret', pm.globals.get(usePrefix + 'client_secret'));",
+									"    pm.globals.set('url', pm.globals.get(usePrefix + 'url'));",
+									"}",
+									"else {",
+									"    console.log(\"==> use-prefix does not exist\");",
+									"    console.log(\"    --> No default globals set.\");",
+									"}",
+									"",
+									"//  If no maximum load time defined, set a default.",
+									"if (!pm.globals.get('max_load_time')) {",
+									"    console.log(\"==> max_load_time not present, default set.\");",
+									"    pm.globals.set(\"max_load_time\", JSON.stringify(1503));",
+									"}",
+									"",
+									"//  If no maximum response defined, set a default.",
+									"if (!pm.globals.get('max_response_time')) {",
+									"    console.log(\"==> max_response_time not present, default set.\");",
+									"    pm.globals.set(\"max_response_time\", JSON.stringify(15005));",
+									"}",
+									"",
+									"//  Display the values of all globals.",
+									"console.log(\"\");",
+									"console.log(\"==> Globals are:\");",
+									"console.log(\"    --> auth_url:          \" + pm.globals.get(\"auth_url\"));",
+									"console.log(\"    --> realm:             \" + pm.globals.get(\"realm\"));",
+									"console.log(\"    --> clientid:          \" + pm.globals.get(\"clientid\"));",
+									"console.log(\"    --> client_secret:     \" + pm.globals.get(\"client_secret\"));",
+									"console.log(\"    --> url:               \" + pm.globals.get(\"url\"));",
+									"console.log(\"    --> max_load_time:     \" + pm.globals.get(\"max_load_time\"));",
+									"console.log(\"    --> max_response_time: \" + pm.globals.get(\"max_response_time\"));",
+									""
 								],
 								"type": "text/javascript"
 							}
 						}
 					],
 					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Cache-Control",
-								"value": "no-cache"
-							}
-						],
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "// Dummy data."
+						},
 						"url": {
-							"raw": "{{postman_bdd_path}}",
+							"raw": "https://postman-echo.com/post",
+							"protocol": "https",
 							"host": [
-								"{{postman_bdd_path}}"
+								"postman-echo",
+								"com"
+							],
+							"path": [
+								"post"
 							]
 						},
-						"description": "This request downloads [Postman BDD](https://github.com/BigstickCarpet/postman-bdd) and then \"installs\" it by setting a global variable\n"
+						"description": "Sets the authentication script"
 					},
 					"response": []
 				},
@@ -318,6 +353,73 @@
 						"description": "Sets the authentication script"
 					},
 					"response": []
+				},
+				{
+					"name": "Who am I",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c34723d3-c0d1-4504-97a2-373088309a5b",
+								"exec": [
+									"//  Ensure the client is logged in.",
+									"eval(environment.auth_first);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "e77f0ca3-62cf-49ba-8e17-67a16e8f8a5f",
+								"exec": [
+									"//  Run basic response tests.",
+									"eval(environment.basic_response_test);",
+									"",
+									"//  Get json return data.",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"if (jsonData.hasOwnProperty(\"csr\")) {",
+									"\tcurrentOfficeId = jsonData.csr.office_id;",
+									"\tcurrentOfficeNumber = jsonData.csr.office.office_number;",
+									"\tcurrentCsrId = jsonData.csr.csr_id;",
+									"    postman.setEnvironmentVariable(\"current_office_id\", currentOfficeId);",
+									"    postman.setEnvironmentVariable(\"current_office_number\", currentOfficeNumber);",
+									"    postman.setEnvironmentVariable(\"current_csr_id\", currentCsrId);",
+									"};",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}csrs/me/",
+							"host": [
+								"{{url}}csrs"
+							],
+							"path": [
+								"me",
+								""
+							]
+						}
+					},
+					"response": []
 				}
 			],
 			"description": "This folder performs basic authentication features.",
@@ -327,44 +429,42 @@
 			"name": "Check app health",
 			"item": [
 				{
-					"name": "Check healthz driver",
+					"name": "Check healthz driver TheQ",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"id": "74adc5ce-caa5-452a-bd96-8ac90a4c11d7",
 								"exec": [
-									"//  Install postmanBDD",
-									"eval(globals.postmanBDD);",
+									"//  Get the maximum response time allowed.",
+									"max_load_time = JSON.parse(globals.max_load_time);",
 									"",
 									"//  Set health response time variable.",
-									"max_response_time = 1500;",
 									"health_tries = 15;",
 									"counter = 1;",
-									"postman.setEnvironmentVariable(\"max_response_time\", JSON.stringify(max_response_time));",
 									"postman.setEnvironmentVariable(\"health_tries\", JSON.stringify(health_tries));",
 									"postman.setEnvironmentVariable(\"health_counter\", JSON.stringify(counter));",
 									"",
+									"//  Get the response.",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
 									"//  Test the health response.",
-									"describe('Testing application health Driver: Try ' + counter.toString(), function() {",
-									"    it(\"Response should have 'message' property\", function() {",
-									"        var jsonData = response.body;",
-									"        jsonData.should.have.property('message');",
-									"    });",
-									"    it(\"Response message should be 'api is healthy'\", function() {",
-									"        var jsonData = response.body;",
-									"        jsonData.message.should.equal('api is healthy');",
-									"    });",
+									"pm.test(\"Health Driver: Try \" + counter.toString() + \": Response should have 'message' property\", function() {",
+									"    pm.expect(jsonData).to.have.property('message');",
+									"});",
+									"",
+									"pm.test(\"Response message should be 'api is healthy'\", function() {",
+									"    pm.expect(jsonData.message).to.be.eql('api is healthy');",
 									"});",
 									"",
 									"//  If response time is OK, proceed to the next test.",
-									"if (pm.response.responseTime < max_response_time) {",
-									"    postman.setNextRequest(\"Check the readyz endpoint\");",
+									"if (pm.response.responseTime < max_load_time) {",
+									"    postman.setNextRequest(\"Check the readyz endpoint TheQ\");",
 									"}",
 									"    ",
 									"//  Response time is too long.  Try again, give pod a chance to spin up.",
 									"else {",
-									"    postman.setNextRequest(\"Check the healthz endpoint\");",
+									"    postman.setNextRequest(\"Check the healthz endpoint TheQ\");",
 									"}"
 								],
 								"type": "text/javascript"
@@ -403,37 +503,36 @@
 					"response": []
 				},
 				{
-					"name": "Check the healthz endpoint",
+					"name": "Check the healthz endpoint TheQ",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"id": "74adc5ce-caa5-452a-bd96-8ac90a4c11d7",
 								"exec": [
-									"//  Install postmanBDD",
-									"eval(globals.postmanBDD);",
+									"//  Get the maximum load time allowed.",
+									"max_load_time = JSON.parse(postman.getEnvironmentVariable(\"max_load_time\"));",
 									"",
 									"//  Get and update variables.",
-									"max_response_time = JSON.parse(postman.getEnvironmentVariable(\"max_response_time\"));",
 									"health_tries = JSON.parse(postman.getEnvironmentVariable(\"health_tries\"));",
 									"counter = JSON.parse(postman.getEnvironmentVariable(\"health_counter\")) + 1;",
 									"postman.setEnvironmentVariable(\"health_counter\", JSON.stringify(counter));",
 									"",
+									"//  Get the response.",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
 									"//  Test the health response.",
-									"describe('Testing application health Endpoint: Try ' + counter.toString(), function() {",
-									"    it(\"Response should have 'message' property\", function() {",
-									"        var jsonData = response.body;",
-									"        jsonData.should.have.property('message');",
-									"    });",
-									"    it(\"Response message should be 'api is healthy'\", function() {",
-									"        var jsonData = response.body;",
-									"        jsonData.message.should.equal('api is healthy');",
-									"    });",
+									"pm.test(\"Health Driver: Try \" + counter.toString() + \": Response should have 'message' property\", function() {",
+									"    pm.expect(jsonData).to.have.property('message');",
+									"});",
+									"",
+									"pm.test(\"Response message should be 'api is healthy'\", function() {",
+									"    pm.expect(jsonData.message).to.be.eql('api is healthy');",
 									"});",
 									"",
 									"//  If response time is OK, proceed to the next test.",
-									"if (pm.response.responseTime < max_response_time) {",
-									"    postman.setNextRequest(\"Check the readyz endpoint\");",
+									"if (pm.response.responseTime < max_load_time) {",
+									"    postman.setNextRequest(\"Check the readyz endpoint TheQ\");",
 									"}",
 									"    ",
 									"//  Response time is too long.",
@@ -446,13 +545,10 @@
 									"    ",
 									"    //   You have reached the maximum.  An error, go to next test.",
 									"    else {",
-									"        describe('Health response should be below ' + max_response_time.toString() + ' in ' + health_tries.toString() + ' tries.', function() {",
-									"            it('Response time should be OK', function() {",
-									"                (health_tries).should.be.below(health_tries);",
-									"               response.should.equal(23); ",
-									"            });",
+									"        pm.test(\"Response should be below \" + max_load_time.toString() + ' in ' + health_tries.toString() + ' tries.', function() {",
+									"            pm.expect(counter).to.be.below(health_tries);",
 									"        });",
-									"        postman.setNextRequest(\"Check the readyz endpoint\");",
+									"        postman.setNextRequest(\"Check the readyz endpoint TheQ\");",
 									"    }",
 									"}",
 									""
@@ -493,29 +589,25 @@
 					"response": []
 				},
 				{
-					"name": "Check the readyz endpoint",
+					"name": "Check the readyz endpoint TheQ",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"id": "661c33c4-4a3d-4396-a549-9969edafbfa6",
 								"exec": [
-									"//  Install postmanBDD",
-									"eval(globals.postmanBDD);",
-									"",
 									"//  Perform the standard tests.",
 									"eval(environment.basic_response_test);",
 									"",
-									"//  Test the authenticate response.",
-									"describe('Testing application readiness', function() {",
-									"    it(\"Response should have 'message' property\", function() {",
-									"        var jsonData = response.body;",
-									"        jsonData.should.have.property('message');",
-									"    });",
-									"    it(\"Response message should be 'api is healthy'\", function() {",
-									"        var jsonData = response.body;",
-									"        jsonData.message.should.equal('api is ready');",
-									"    });",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//  Test the health response.",
+									"pm.test(\"Response should have 'message' property\", function() {",
+									"    pm.expect(jsonData).to.have.property('message');",
+									"});",
+									"",
+									"pm.test(\"Response message should be 'api is ready'\", function() {",
+									"    pm.expect(jsonData.message).to.be.eql('api is ready');",
 									"});",
 									""
 								],
@@ -569,37 +661,41 @@
 							"script": {
 								"id": "43df8e47-2b93-48b0-a5ff-bb3396d12537",
 								"exec": [
-									"//  Install postmanBDD",
-									"eval(globals.postmanBDD);",
+									"//  Do the basic checks.",
+									"eval(environment.basic_response_test);",
 									"",
-									"//  Test the authenticate response.",
-									"describe('Testing authentication ' + postman.getGlobalVariable(\"userid\"), function() {",
-									"    it('Response time should be below 5000ms', function() {",
-									"        pm.response.responseTime.should.be.below(5000);",
-									"    });",
-									"   it('Response statusCode should be 200', function() {",
-									"     response.should.have.status(200);",
-									"   });",
-									"   it('Response header should have Content-Type of application/json', function() {",
-									"    response.should.have.header('content-type', 'application/json');",
-									"   });",
-									"   it('Response body be in JSON format', function() {",
-									"      response.should.be.json; ",
-									"   });",
-									"   it(\"Response should have expected properties\", function() {",
-									"       var jsonData = response.body;",
-									"       jsonData.should.have.property('access_token');",
-									"       jsonData.should.have.property('refresh_token');",
-									"       jsonData.should.have.property('expires_in');",
-									"       jsonData.should.have.property('refresh_expires_in');",
-									"   });",
+									"//  Get the response.",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to make sure that the access token field is not null",
+									"pm.test(\"Access Token is not null\", function(){",
+									"    var access_token = jsonData.access_token;",
+									"    pm.expect(access_token).not.eql(null);",
+									"});",
+									"",
+									"//Test to make sure that the refresh token response field is not null",
+									"pm.test(\"Refresh Token is not null\", function(){",
+									"    var refresh_token = jsonData.refresh_token;",
+									"    pm.expect(refresh_token).not.eql(null);",
+									"});",
+									"",
+									"//Test to make sure that expires in response field is not nullf",
+									"pm.test(\"Expires In is not null\", function(){",
+									"    var expires_in = jsonData.expires_in;",
+									"    pm.expect(expires_in).not.eql(null);",
+									"});",
+									"",
+									"//Test to make sure that refresh expires in response fiels is not null",
+									"pm.test(\"Refresh Expires In is not null\", function(){",
+									"    var refresh_expires_in = jsonData.refresh_expires_in;",
+									"    pm.expect(refresh_expires_in).not.eql(null);",
 									"});",
 									"",
 									"var jsonData = pm.response.json();",
-									"pm.environment.set(\"token\", jsonData.access_token);",
-									"pm.environment.set(\"refresh_token\", jsonData.refresh_token);",
-									"pm.environment.set(\"token_expires\", Date.now()+(jsonData.expires_in * 1000));",
-									"pm.environment.set(\"refresh_token_expires\", Date.now()+(jsonData.refresh_expires_in * 1000));",
+									"pm.globals.set(\"token\", jsonData.access_token);",
+									"pm.globals.set(\"refresh_token\", jsonData.refresh_token);",
+									"pm.globals.set(\"token_expires\", Date.now()+(jsonData.expires_in * 1000));",
+									"pm.globals.set(\"refresh_token_expires\", Date.now()+(jsonData.refresh_expires_in * 1000));",
 									""
 								],
 								"type": "text/javascript"
@@ -745,71 +841,6 @@
 		{
 			"name": "Exam test 5 updates",
 			"item": [
-				{
-					"name": "Who am I",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "c34723d3-c0d1-4504-97a2-373088309a5b",
-								"exec": [
-									"//  Ensure the client is logged in.",
-									"eval(environment.auth_first);",
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"id": "e77f0ca3-62cf-49ba-8e17-67a16e8f8a5f",
-								"exec": [
-									"// //  Run complex tests.",
-									"eval(environment.basic_response_test);",
-									"",
-									"//  Get json return data.",
-									"var jsonData = JSON.parse(responseBody);",
-									"",
-									"if (jsonData.hasOwnProperty(\"csr\")) {",
-									"\tcurrentOfficeId = jsonData.csr.office_id;",
-									"\tcurrentOfficeNumber = jsonData.csr.office.office_number;",
-									"    postman.setEnvironmentVariable(\"current_office_id\", currentOfficeId);",
-									"    postman.setEnvironmentVariable(\"current_office_number\", currentOfficeNumber);",
-									"};",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"type": "text",
-								"value": "Bearer {{token}}"
-							},
-							{
-								"key": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{url}}csrs/me/",
-							"host": [
-								"{{url}}csrs"
-							],
-							"path": [
-								"me",
-								""
-							]
-						}
-					},
-					"response": []
-				},
 				{
 					"name": "Create exam",
 					"event": [
@@ -1358,71 +1389,6 @@
 			"name": "Exam test 3 updates",
 			"item": [
 				{
-					"name": "Who am I",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "c34723d3-c0d1-4504-97a2-373088309a5b",
-								"exec": [
-									"//  Ensure the client is logged in.",
-									"eval(environment.auth_first);",
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"id": "e77f0ca3-62cf-49ba-8e17-67a16e8f8a5f",
-								"exec": [
-									"// //  Run complex tests.",
-									"eval(environment.basic_response_test);",
-									"",
-									"//  Get json return data.",
-									"var jsonData = JSON.parse(responseBody);",
-									"",
-									"if (jsonData.hasOwnProperty(\"csr\")) {",
-									"\tcurrentOfficeId = jsonData.csr.office_id;",
-									"\tcurrentOfficeNumber = jsonData.csr.office.office_number;",
-									"    postman.setEnvironmentVariable(\"current_office_id\", currentOfficeId);",
-									"    postman.setEnvironmentVariable(\"current_office_number\", currentOfficeNumber);",
-									"};",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"type": "text",
-								"value": "Bearer {{token}}"
-							},
-							{
-								"key": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{url}}csrs/me/",
-							"host": [
-								"{{url}}csrs"
-							],
-							"path": [
-								"me",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Create exam",
 					"event": [
 						{
@@ -1833,71 +1799,6 @@
 		{
 			"name": "Exam tests 8 updates",
 			"item": [
-				{
-					"name": "Who am I",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "c34723d3-c0d1-4504-97a2-373088309a5b",
-								"exec": [
-									"//  Ensure the client is logged in.",
-									"eval(environment.auth_first);",
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"id": "e77f0ca3-62cf-49ba-8e17-67a16e8f8a5f",
-								"exec": [
-									"// //  Run complex tests.",
-									"eval(environment.basic_response_test);",
-									"",
-									"//  Get json return data.",
-									"var jsonData = JSON.parse(responseBody);",
-									"",
-									"if (jsonData.hasOwnProperty(\"csr\")) {",
-									"\tcurrentOfficeId = jsonData.csr.office_id;",
-									"\tcurrentOfficeNumber = jsonData.csr.office.office_number;",
-									"    postman.setEnvironmentVariable(\"current_office_id\", currentOfficeId);",
-									"    postman.setEnvironmentVariable(\"current_office_number\", currentOfficeNumber);",
-									"};",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"type": "text",
-								"value": "Bearer {{token}}"
-							},
-							{
-								"key": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{url}}csrs/me/",
-							"host": [
-								"{{url}}csrs"
-							],
-							"path": [
-								"me",
-								""
-							]
-						}
-					},
-					"response": []
-				},
 				{
 					"name": "Create exam",
 					"event": [
@@ -2650,71 +2551,6 @@
 			"name": "Exam 1 test single update",
 			"item": [
 				{
-					"name": "Who am I",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "c34723d3-c0d1-4504-97a2-373088309a5b",
-								"exec": [
-									"//  Ensure the client is logged in.",
-									"eval(environment.auth_first);",
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"id": "e77f0ca3-62cf-49ba-8e17-67a16e8f8a5f",
-								"exec": [
-									"// //  Run complex tests.",
-									"eval(environment.basic_response_test);",
-									"",
-									"//  Get json return data.",
-									"var jsonData = JSON.parse(responseBody);",
-									"",
-									"if (jsonData.hasOwnProperty(\"csr\")) {",
-									"\tcurrentOfficeId = jsonData.csr.office_id;",
-									"\tcurrentOfficeNumber = jsonData.csr.office.office_number;",
-									"    postman.setEnvironmentVariable(\"current_office_id\", currentOfficeId);",
-									"    postman.setEnvironmentVariable(\"current_office_number\", currentOfficeNumber);",
-									"};",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"type": "text",
-								"value": "Bearer {{token}}"
-							},
-							{
-								"key": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{url}}csrs/me/",
-							"host": [
-								"{{url}}csrs"
-							],
-							"path": [
-								"me",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Create exam",
 					"event": [
 						{
@@ -2990,71 +2826,6 @@
 			"name": "Exam 2 test single update",
 			"item": [
 				{
-					"name": "Who am I",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "c34723d3-c0d1-4504-97a2-373088309a5b",
-								"exec": [
-									"//  Ensure the client is logged in.",
-									"eval(environment.auth_first);",
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"id": "e77f0ca3-62cf-49ba-8e17-67a16e8f8a5f",
-								"exec": [
-									"// //  Run complex tests.",
-									"eval(environment.basic_response_test);",
-									"",
-									"//  Get json return data.",
-									"var jsonData = JSON.parse(responseBody);",
-									"",
-									"if (jsonData.hasOwnProperty(\"csr\")) {",
-									"\tcurrentOfficeId = jsonData.csr.office_id;",
-									"\tcurrentOfficeNumber = jsonData.csr.office.office_number;",
-									"    postman.setEnvironmentVariable(\"current_office_id\", currentOfficeId);",
-									"    postman.setEnvironmentVariable(\"current_office_number\", currentOfficeNumber);",
-									"};",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"type": "text",
-								"value": "Bearer {{token}}"
-							},
-							{
-								"key": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{url}}csrs/me/",
-							"host": [
-								"{{url}}csrs"
-							],
-							"path": [
-								"me",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Create exam",
 					"event": [
 						{
@@ -3329,71 +3100,6 @@
 		{
 			"name": "Exam 3 test single update",
 			"item": [
-				{
-					"name": "Who am I",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "c34723d3-c0d1-4504-97a2-373088309a5b",
-								"exec": [
-									"//  Ensure the client is logged in.",
-									"eval(environment.auth_first);",
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"id": "e77f0ca3-62cf-49ba-8e17-67a16e8f8a5f",
-								"exec": [
-									"// //  Run complex tests.",
-									"eval(environment.basic_response_test);",
-									"",
-									"//  Get json return data.",
-									"var jsonData = JSON.parse(responseBody);",
-									"",
-									"if (jsonData.hasOwnProperty(\"csr\")) {",
-									"\tcurrentOfficeId = jsonData.csr.office_id;",
-									"\tcurrentOfficeNumber = jsonData.csr.office.office_number;",
-									"    postman.setEnvironmentVariable(\"current_office_id\", currentOfficeId);",
-									"    postman.setEnvironmentVariable(\"current_office_number\", currentOfficeNumber);",
-									"};",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"type": "text",
-								"value": "Bearer {{token}}"
-							},
-							{
-								"key": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{url}}csrs/me/",
-							"host": [
-								"{{url}}csrs"
-							],
-							"path": [
-								"me",
-								""
-							]
-						}
-					},
-					"response": []
-				},
 				{
 					"name": "Create exam",
 					"event": [
