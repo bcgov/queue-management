@@ -2272,7 +2272,6 @@
 									"",
 									"// Parse response body",
 									"var jsonData = JSON.parse(responseBody);",
-									"console.log(jsonData);",
 									"",
 									"//Test to see if response schema is valid",
 									"pm.test(\"Validate Response CSRs Schema\", function(){",
