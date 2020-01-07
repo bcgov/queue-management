@@ -355,6 +355,117 @@
 					"response": []
 				},
 				{
+					"name": "CFMS-Install-Exam-Schema-Check",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8cebcf78-f5a2-4694-b108-60e146791a78",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"exam_schema_check\", jsonData.data);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "// Define the JSON Schema expected in response\nvar examSchema = {\n    \"type\": \"object\",\n    \"properties\": {\n        \"exam\": {\n            \"type\": \"object\",\n            \"properties\": {\n                \"booking_id\": {},\n                \"deleted_date\": {},\n                \"event_id\": {\"type\": \"string\"},\n                \"exam_id\": {\"type\": \"number\"},\n                \"exam_method\": {\"type\": \"string\"},\n                \"exam_name\": {\"type\": \"string\"},\n                \"exam_received_date\": {},\n                \"exam_returned_tracking_number\": {},\n                \"exam_type\": {\n                    \"type\": \"object\",\n                    \"properties\": {\n                        \"exam_color\": {\"type\": \"string\"},\n                        \"exam_type_id\": {\"type\": \"number\"},\n                        \"exam_type_name\": {\"type\": \"string\"},\n                        \"group_exam_ind\": {\"type\": \"number\"},\n                        \"ita_ind\": {\"type\": \"number\"},\n                        \"method_type\": {\"type\": \"string\"},\n                        \"number_of_hours\": {\"type\": \"number\"},\n                        \"number_of_minutes\": {\"type\": [\"number\", \"null\"]},\n                        \"pesticide_exam_ind\": {\"type\": \"number\" }\n                    },\n                    \"required\": [\"exam_color\", \"exam_type_id\", \"exam_type_name\", \"group_exam_ind\", \"ita_ind\", \"method_type\", \"number_of_hours\", \"number_of_minutes\", \"pesticide_exam_ind\"]\n                },\n                \"exam_type_id\": {\"type\": \"number\"},\n                \"exam_written_ind\": {\"type\": \"number\"},\n                \"examinee_name\": {\"type\": \"string\"},\n                \"expiry_date\": {\"type\": [\"string\", \"null\"]},\n                \"notes\": {\"type\": \"string\"},\n                \"number_of_students\": {\"type\": \"number\"},\n                \"office\":{\n                    \"type\": \"object\",\n                    \"properties\": {\n                        \"appointments_enabled_ind\": {\"type\": \"number\"},\n                        \"exams_enabled_ind\": {\"type\": \"number\"},\n                        \"office_id\": {\"type\": \"number\"},\n                        \"office_name\": {\"type\": \"string\"},\n                        \"office_number\": {\"type\": \"number\" },\n                        \"timezone\": {\n                            \"type\": \"object\",\n                            \"properties\": {\n                                \"timezone_id\": {\"type\" : \"number\"},\n                                \"timezone_name\": {\"type\": \"string\"}\n                            },\n                            \"required\": [\"timezone_id\", \"timezone_name\"]\n                        },\n                    },\n                    \"required\": []\n                },\n                \"office_id\": {\"type\": \"number\"},\n                \"offsite_location\": {},\n                \"session_number\": {\"type\": [\"number\", \"null\"]},\n                \"booking\": {}\n            },\n            \"required\": [\"booking\", \"booking_id\", \"deleted_date\", \"event_id\", \"exam_id\", \"exam_method\", \"exam_name\", \"exam_received_date\", \"exam_returned_tracking_number\", \"exam_type\", \"exam_type_id\", \"exam_written_ind\", \"examinee_name\", \"expiry_date\", \"notes\", \"number_of_students\", \"office\", \"office_id\", \"offsite_location\", \"session_number\"]\n        }\n    },\n    \"required\": [\"exam\"]\n};\n\n//Test to see if response schema is valid\npm.test(\"Validate Response Exam Schema\", function(){\n    pm.expect(tv4.validate(jsonData, examSchema)).to.be.true;\n});\n"
+						},
+						"url": {
+							"raw": "https://postman-echo.com/post",
+							"protocol": "https",
+							"host": [
+								"postman-echo",
+								"com"
+							],
+							"path": [
+								"post"
+							]
+						},
+						"description": "Sets the authentication script"
+					},
+					"response": []
+				},
+				{
+					"name": "CFMS-Install-Exam-Data-Check",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8cebcf78-f5a2-4694-b108-60e146791a78",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"exam_data_check\", jsonData.data);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "//  Make sure that jsonData has an exam property.\npm.test(\"Response should have exam property\", function(){\n    pm.expect(jsonData.hasOwnProperty(\"exam\")).to.be.true;\n});\n\n//  If jsonData has exam property, check data.\nif (jsonData.hasOwnProperty(\"exam\")) {\n\n    //Test to see if Event ID field remains unchanged\n    pm.test(\"Validate Event Id has expected value\", function(){\n        pm.expect(jsonData.event_id === environment.event_id);\n    });\n\n    //Test to see if exam method field remains unchanged\n    pm.test(\"Validate exam method has expected value\", function(){\n        pm.expect(jsonData.exam_method === environment.exam_method);\n    });\n\n    //Test to see if exam name field remains unchanged\n    pm.test(\"Validate exam name has expected value\", function(){\n        pm.expect(jsonData.exam_name === environment.exam_name);\n    });\n\n    //Test to see if exam type field remains unchanged\n    pm.test(\"Validate exam type id has expected value\", function(){\n        pm.expect(jsonData.exam_type_id === environment.random_exam_type_id);\n    });\n\n    //Test to see if exam written indicator field remains unchanged\n    pm.test(\"Validate exam written indicator has expected value\", function(){\n        pm.expect(jsonData.exam_written_ind === environment.exam_written_ind);\n    });\n\n    //Test to see if examinee name field remains unchanged\n    pm.test(\"Validate examinee name has expected value\", function(){\n        pm.expect(jsonData.examinee_name === environment.examinee_name);\n    });\n\n    //Test to see if notes field remains unchanged\n    pm.test(\"Validate notes has expected value\", function(){\n        pm.expect(jsonData.notes === environment.notes);\n    });\n\n    //Test to see if number of students field remains unchanged\n    pm.test(\"Validate number of students has expected value\", function(){\n        pm.expect(jsonData.number_of_students === environment.number_of_students);\n    });\n\n    //Test to see if office id remains unchanged\n    pm.test(\"Validate office id has expected value\", function(){\n        pm.expect(jsonData.office_id === environment.current_office_id);\n    });\n\n    //Test to see if offsite location is expected\n    pm.test(\"Validate offsite location has expected value\", function(){\n        pm.expect(jsonData.offsite_location === environment.offsite_location);\n    });\n}\n"
+						},
+						"url": {
+							"raw": "https://postman-echo.com/post",
+							"protocol": "https",
+							"host": [
+								"postman-echo",
+								"com"
+							],
+							"path": [
+								"post"
+							]
+						},
+						"description": "Sets the authentication script"
+					},
+					"response": []
+				},
+				{
+					"name": "CFMS-Install-Exam-List-Schema-Check",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8cebcf78-f5a2-4694-b108-60e146791a78",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"exam_schema_list_check\", jsonData.data);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "// Define the JSON Schema expected in response\nvar examSchema = {\n    \"type\": \"object\",\n    \"properties\": {\n        \"exams\": {\n            \"type\": \"array\",\n            \"properties\": {\n                \"booking_id\": {},\n                \"deleted_date\": {},\n                \"event_id\": {\"type\": \"string\"},\n                \"exam_id\": {\"type\": \"number\"},\n                \"exam_method\": {\"type\": \"string\"},\n                \"exam_name\": {\"type\": \"string\"},\n                \"exam_received_date\": {},\n                \"exam_returned_tracking_number\": {},\n                \"exam_type\": {\n                    \"type\": \"object\",\n                    \"properties\": {\n                        \"exam_color\": {\"type\": \"string\"},\n                        \"exam_type_id\": {\"type\": \"number\"},\n                        \"exam_type_name\": {\"type\": \"string\"},\n                        \"group_exam_ind\": {\"type\": \"number\"},\n                        \"ita_ind\": {\"type\": \"number\"},\n                        \"method_type\": {\"type\": \"string\"},\n                        \"number_of_hours\": {\"type\": \"number\"},\n                        \"number_of_minutes\": {\"type\": \"number\"},\n                        \"pesticide_exam_ind\": {\"type\": \"number\" }\n                    },\n                    \"required\": [\"exam_color\", \"exam_type_id\", \"exam_type_name\", \"group_exam_ind\", \"ita_ind\", \"method_type\", \"number_of_hours\", \"number_of_minutes\", \"pesticide_exam_ind\"]\n                },\n                \"exam_type_id\": {\"type\": \"number\"},\n                \"exam_written_ind\": {\"type\": \"number\"},\n                \"examinee_name\": {\"type\": \"string\"},\n                \"expiry_date\": {\"type\": [\"string\", \"null\"]},\n                \"notes\": {\"type\": \"string\"},\n                \"number_of_students\": {\"type\": \"number\"},\n                \"office\":{\n                    \"type\": \"object\",\n                    \"properties\": {\n                        \"appointments_enabled_ind\": {\"type\": \"number\"},\n                        \"exams_enabled_ind\": {\"type\": \"number\"},\n                        \"office_id\": {\"type\": \"number\"},\n                        \"office_name\": {\"type\": \"string\"},\n                        \"office_number\": {\"type\": \"number\" },\n                        \"timezone\": {\n                            \"type\": \"object\",\n                            \"properties\": {\n                                \"timezone_id\": {\"type\" : \"number\"},\n                                \"timezone_name\": {\"type\": \"string\"}\n                            },\n                            \"required\": [\"timezone_id\", \"timezone_name\"]\n                        },\n                    },\n                    \"required\": []\n                },\n                \"office_id\": {\"type\": \"number\"},\n                \"offsite_location\": {},\n                \"session_number\": {\"type\": [\"number\", \"null\"]},\n                \"booking\": {}\n            },\n            \"required\": [\"booking\", \"booking_id\", \"deleted_date\", \"event_id\", \"exam_id\", \"exam_method\", \"exam_name\", \"exam_received_date\", \"exam_returned_tracking_number\", \"exam_type\", \"exam_type_id\", \"exam_written_ind\", \"examinee_name\", \"expiry_date\", \"notes\", \"number_of_students\", \"office\", \"office_id\", \"offsite_location\", \"session_number\"]\n        }\n    },\n    \"required\": [\"exams\"]\n};\n\n//Test to see if response schema is valid\npm.test(\"Validate Response Exam List Schema\", function(){\n    pm.expect(tv4.validate(jsonData, examSchema)).to.be.true;\n});\n"
+						},
+						"url": {
+							"raw": "https://postman-echo.com/post",
+							"protocol": "https",
+							"host": [
+								"postman-echo",
+								"com"
+							],
+							"path": [
+								"post"
+							]
+						},
+						"description": "Sets the authentication script"
+					},
+					"response": []
+				},
+				{
 					"name": "Who am I",
 					"event": [
 						{
@@ -772,37 +883,46 @@
 									"};           ",
 									"",
 									"//  Get the max response time allowed.",
-									"var response_max = JSON.parse(globals.response_max);",
+									"console.log(\"==> Before getting response max\");",
+									"var response_max = JSON.parse(globals.max_response_time);",
 									"",
 									"// Check Response code for request",
+									"console.log(\"==> Before checking response code\");",
 									"pm.test(\"Response code for request is 200\", function(){",
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
+									"console.log(\"==> Before checking response time\");",
 									"pm.test(\"Response time less than \" + response_max.toString() + \"ms\", function(){",
 									"    pm.expect(pm.response.responseTime).to.be.below(response_max);",
 									"});",
 									"",
 									"// Parse response body",
+									"console.log(\"==> Before getting response body\");",
 									"var jsonData = JSON.parse(responseBody);",
 									"",
 									"//Test to see if response schema is valid",
+									"console.log(\"==> Before checking schema\");",
 									"pm.test(\"Validate Response Exam Type Schema\", function(){",
 									"    pm.expect(tv4.validate(jsonData, examTypeSchema)).to.be.true;",
 									"});",
 									"",
 									"//  Store all exam type IDs for future use in adding exams",
+									"console.log(\"==> Before allelements\");",
 									"var allExamIds = [];",
 									"",
 									"//  Make sure some data returned.",
+									"console.log(\"==> Before checking there is an exam_types property\");",
 									"pm.test(\"Response has exam_types property\", function(){",
 									"    pm.expect(jsonData.hasOwnProperty(\"exam_types\")).to.be.true;",
 									"});",
+									"console.log(\"==> Before checking at least one exam type\");",
 									"pm.test(\"Response has at least one exam_type\", function(){",
 									"    pm.expect(jsonData.exam_types.length).to.be.above(0);",
 									"});",
 									"",
 									"// Set up list of valid exam types, create random functions.",
+									"console.log(\"==> setting environment variables\");",
 									"eval(environment.init_exam_type_data);",
 									""
 								],
