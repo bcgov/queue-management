@@ -49,8 +49,8 @@ class ExamPost(Resource):
         if exam_type.pesticide_exam_ind:
             logging.info("Create BCMP exam since this is a pesticide exam")
 
-            if json_data["sbc_managed"] == "sbc":
-                print("Setting sbc_managed shit")
+            if json_data["sbc_managed"] != "sbc":
+                print("Setting non-SBC shit")
                 pesticide_office = Office.query.filter_by(office_name="Pesticide Offsite").first()
                 exam.office_id = pesticide_office.office_id
 
@@ -59,7 +59,7 @@ class ExamPost(Resource):
                 bcmp_response = self.bcmp_service.create_group_exam(exam)
             else:
                 logging.info("Creating individual pesticide exam")
-                bcmp_response = self.bcmp_service.create_individual_exam(exam)
+                bcmp_response = self.bcmp_service.create_individual_exam(exam, exam_type)
 
             exam.bcmp_job_id = bcmp_response['jobId']
         else:

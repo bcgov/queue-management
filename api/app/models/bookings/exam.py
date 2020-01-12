@@ -25,6 +25,8 @@ class Exam(Base):
     event_id = db.Column(db.String(25), nullable=True)
     exam_name = db.Column(db.String(50), nullable=False)
     examinee_name = db.Column(db.String(50), nullable=True)
+    examinee_email = db.Column(db.String(400), nullable=True)
+    examinee_phone = db.Column(db.String(400), nullable=True)
     expiry_date = db.Column(db.DateTime, nullable=True)
     notes = db.Column(db.String(400), nullable=True)
     exam_received_date = db.Column(db.DateTime, nullable=True)
@@ -46,7 +48,6 @@ class Exam(Base):
     payee_email = db.Column(db.String(50), nullable=True)
     payee_name = db.Column(db.String(50), nullable=True)
     payee_phone = db.Column(db.String(50), nullable=True)
-
 
     booking = db.relationship("Booking")
     exam_type = db.relationship("ExamType")

@@ -43,6 +43,11 @@ class BCMPService:
         response = self.send_request(url, 'POST', data)
         print(response)
 
+        for job in response['jobs']:
+            print(job)
+            if job['jobId'] == exam.bcmp_job_id:
+                return job['jobStatus']
+
         return response
 
     def bulk_check_exam_status(self, exams):
@@ -59,9 +64,10 @@ class BCMPService:
 
         return response
 
-    def create_individual_exam(self, exam):
+    def create_individual_exam(self, exam, exam_type):
         url = "%s/auth=env_exam;%s/JSON/create:ENV-IPM-EXAM" % (self.base_url, self.auth_token)
         bcmp_exam = {
+            "category": exam_type.exam_type_name,
             "students": [
                 {"name": exam.examinee_name}
             ]

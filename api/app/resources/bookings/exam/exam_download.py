@@ -43,7 +43,7 @@ class ExamStatus(Resource):
             status = self.bcmp_service.check_exam_status(exam)
             print(status)
 
-            if status["jobStatus"] == 'PACKAGE_GENERATED':
+            if status == 'PACKAGE_GENERATED':
                 package_url = status["jobProperties"]["EXAM_PACKAGE_URL"]
                 req = urllib.request.Request(package_url)
                 response = urllib.request.urlopen(req).read()

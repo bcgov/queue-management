@@ -77,7 +77,8 @@
                 <label class="my-0">Candidate's Email</label>
                 <b-form-input id="examinee_email"
                               class="less-10-mb"
-                              type="text" />
+                              type="text"
+                              v-model="fields.examinee_email" />
               </b-form-group>
             </b-col>
           </b-form-row>
@@ -85,7 +86,10 @@
             <b-col cols="6">
               <b-form-group>
                 <label class="my-0">Telephone</label><br>
-                <b-input />
+                <b-form-input id="examinee_phone"
+                              class="less-10-mb"
+                              type="text"
+                              v-model="fields.examinee_phone" />
               </b-form-group>
             </b-col>
             <b-col cols="6">
