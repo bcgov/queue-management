@@ -46,23 +46,30 @@ class ExamPost(Resource):
 
         exam_type = ExamType.query.filter_by(exam_type_id=exam.exam_type_id).first()
 
+        if not exam_type:
+            exam_type = ExamType.query.filter_by(pesticide_exam_ind=1, group_exam_ind=1).first()
+            exam.exam_type = exam_type
+
         if exam_type.pesticide_exam_ind:
-            logging.info("Create BCMP exam since this is a pesticide exam")
+            if not exam_type.group_exam_ind:
+                logging.info("Create BCMP exam since this is a pesticide exam")
 
-            if json_data["sbc_managed"] != "sbc":
-                print("Setting non-SBC shit")
-                pesticide_office = Office.query.filter_by(office_name="Pesticide Offsite").first()
-                exam.office_id = pesticide_office.office_id
+                if json_data["sbc_managed"] != "sbc":
+                    print("Setting non-SBC shit")
+                    pesticide_office = Office.query.filter_by(office_name="Pesticide Offsite").first()
+                    exam.office_id = pesticide_office.office_id
 
-            if exam_type.group_exam_ind:
-                logging.info("Creating group pesticide exam")
-                bcmp_response = self.bcmp_service.create_group_exam(exam)
+                if exam_type.group_exam_ind:
+                    logging.info("Creating group pesticide exam")
+                    bcmp_response = self.bcmp_service.create_group_exam(exam)
+                else:
+                    logging.info("Creating individual pesticide exam")
+                    bcmp_response = self.bcmp_service.create_individual_exam(exam, exam_type)
+
+                if bcmp_response:
+                    exam.bcmp_job_id = bcmp_response['jobId']
             else:
-                logging.info("Creating individual pesticide exam")
-                bcmp_response = self.bcmp_service.create_individual_exam(exam, exam_type)
-
-            if bcmp_response:
-                exam.bcmp_job_id = bcmp_response['jobId']
+                print("Do the group exam shit here")
         else:
             if not (exam.office_id == csr.office_id or csr.liaison_designate == 1):
                 return {"The Exam Office ID and CSR Office ID do not match!"}, 403

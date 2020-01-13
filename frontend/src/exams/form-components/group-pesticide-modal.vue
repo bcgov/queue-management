@@ -178,7 +178,7 @@
               </div>
               <div>{{ row.item.name }}</div>
               <div v-show="false">
-                {{ currentlyEditing === 'exam' && row.item.examTypeId === highlightedTableRow.examTypeId ?
+                {{ currentlyEditing === 'exam' && row.item.exam_type_id === highlightedTableRow.exam_type_id ?
                 row.item._rowVariant = 'primary' : row.item._rowVariant = 'secondary' }}
               </div>
             </div>
@@ -315,9 +315,10 @@
         return false
       },
       examTypes() {
+        console.log(this.pesticideExamTypes)
         return this.pesticideExamTypes.map(type =>
           ({
-            text: type.examName,
+            text: type.exam_type_name,
             value: type,
           })
         )
@@ -325,21 +326,23 @@
       tableData() {
         let examsObj = {}
         this.candidates.forEach(candidate => {
-          if ( candidate.examTypeId in examsObj ) {
-            examsObj[candidate.examTypeId].push(candidate)
+          console.log(candidate)
+          if ( candidate.exam_type_id in examsObj ) {
+            examsObj[candidate.exam_type_id].push(candidate)
           } else {
-            examsObj[candidate.examTypeId] = [candidate]
+            examsObj[candidate.exam_type_id] = [candidate]
           }
         })
         let output = []
-        for ( let examTypeId in examsObj ) {
-          let exam = this.pesticideExamTypes.find(pesticideExam => pesticideExam.examTypeId == examTypeId)
+        console.log(examsObj)
+        for ( let exam_type_id in examsObj ) {
+          let exam = this.pesticideExamTypes.find(pesticideExam => pesticideExam.exam_type_id == exam_type_id)
           output.push({
-            name: exam.examName,
+            name: exam.exam_name,
             ...exam,
-            qty: examsObj[examTypeId].length,
+            qty: examsObj[exam_type_id].length,
           })
-          for ( let candidate of examsObj[examTypeId] ) {
+          for ( let candidate of examsObj[exam_type_id] ) {
             let { firstName, lastName } = candidate
             candidate.name = `${ firstName || '' }${ lastName ? ' ' : '' }${ lastName || '' }`
             output.push(candidate)
@@ -352,10 +355,12 @@
       addCandidate()  {
         if (!this.selectedExamType) return
         let id = Array.isArray(this.candidates) ? this.candidates.length + 1 : 1
+
+        console.log(this.selectedExamType)
         let newCandidate = {
           id,
-          examTypeId: this.selectedExamType.examTypeId,
-          examName: this.selectedExamType.examName,
+          exam_type_id: this.selectedExamType.exam_type_id,
+          exam_name: this.selectedExamType.exam_name,
         }
         this.formFields.forEach(field => {
           if (this[field]) {
@@ -377,7 +382,7 @@
             this[field] = examRow[field]
           }
         })
-        this.selectedExamType = this.pesticideExamTypes.find(type => type.examTypeId === examRow.examTypeId)
+        this.selectedExamType = this.pesticideExamTypes.find(type => type.exam_type_id === examRow.exam_type_id)
 
       },
       deleteExam({ id }) {
@@ -402,7 +407,6 @@
         if (event.key !== 'Enter') {
           return event
         } else {
-          event.preventDefault()
           this.handleClick()
           this.$refs['first-name-input'].focus()
         }
@@ -428,8 +432,8 @@
         let index = candidatesCopy.findIndex(candidate => candidate.id === this.highlightedTableRow.id)
         let updatedCandidate = { ...this.highlightedTableRow }
         if (this.selectedExamType) {
-          updatedCandidate.examTypeId = this.selectedExamType.examTypeId
-          updatedCandidate.examName = this.selectedExamType.examName
+          updatedCandidate.exam_type_id = this.selectedExamType.exam_type_id
+          updatedCandidate.exam_name = this.selectedExamType.exam_name
         }
         this.formFields.forEach(field => {
           if ( this[field] ) {
@@ -447,9 +451,9 @@
         let oldExam = this.highlightedTableRow
         let newExam = this.selectedExamType
         candidatesCopy.forEach(candidate => {
-          if (candidate.examTypeId === oldExam.examTypeId) {
-            candidate.examTypeId = newExam.examTypeId
-            candidate.examName = newExam.examName
+          if (candidate.exam_type_id === oldExam.exam_type_id) {
+            candidate.exam_type_id = newExam.exam_type_id
+            candidate.exam_name = newExam.exam_name
           }
         })
         this.candidates = candidatesCopy

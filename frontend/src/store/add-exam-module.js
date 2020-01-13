@@ -391,8 +391,15 @@ export const addExamModule = {
       return [step2]
     },
     pesticideStep3(state, getters, rootState) {
-      if ( rootState.captureITAExamTabSetup.capturePayee ) {
-        return [ state.pesticideStep3_payee ]
+      let { capturedExam } = rootState
+
+      if ( capturedExam.ind_or_group === 'individual' ) {
+        if ( rootState.captureITAExamTabSetup.capturePayee ) {
+          return [ state.pesticideStep3_payee ]
+        }
+      }
+      if ( capturedExam.ind_or_group === 'group' ) {
+        return [ state.pesticideStep3_group ]
       }
       return [ state.pesticideStep3 ]
     },
@@ -543,6 +550,11 @@ export const addExamModule = {
       step: 3,
       title: 'Payee/Notes',
       questions: [ payeeNameQ, payeeEmailQ, payeePhoneQ, offsiteQ, notesQ ]
+    },
+    pesticideStep3_group: {
+      step: 3,
+      title: 'Date, Time & Format',
+      questions: [ dateTimeQ, timeQ, offsiteQ, notesQ ]
     },
     showAllPesticideExams: false,
     uploadPesticideModalVisible: false,

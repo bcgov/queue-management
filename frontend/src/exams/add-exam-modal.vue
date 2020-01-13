@@ -181,7 +181,6 @@
       },
       tabs() {
         if (this.steps && Array.isArray(this.steps)) {
-          console.log("blah", this.steps.slice(0, this.tab.highestStep));
           return this.steps.slice(0, this.tab.highestStep)
         }
       },

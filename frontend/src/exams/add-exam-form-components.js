@@ -4,6 +4,21 @@ import DatePicker from 'vue2-datepicker'
 import moment from 'moment'
 import OfficeDrop from './office-drop'
 
+export const checkmark = Vue.component('checkmark', {
+  props: ['validated'],
+  template: `
+    <b-col align-self="center"
+           cols="1"
+           v-if="validated">
+      <font-awesome-icon icon="check"
+                         class="p-0 ml-2"
+                         style="color: green;
+                         font-weight: 400;
+                         font-size: 1.3rem;" />
+    </b-col>
+  `
+})
+
 export const AddExamCounter = Vue.component('add-exam-counter', {
   props: ['error', 'q', 'validationObj', 'handleInput', 'exam'],
   components: { checkmark },
@@ -22,19 +37,22 @@ export const AddExamCounter = Vue.component('add-exam-counter', {
       return 0
     },
   },
+  methods: {
+    ...mapMutations(['captureExamDetail', 'deleteCapturedExamDetail']),
+  },
   watch: {
     numberOfStudents(newVal) {
       if ( newVal == this.currentNumber ) {
         this.$store.commit('captureExamDetail', { key: 'add_exam_counter', value: 1 })
       } else {
-        this.$store.commit('deleteCapturedExamDetail', 'add_exam_counter')
+        //this.$store.commit('deleteCapturedExamDetail', 'add_exam_counter')
       }
     },
     currentNumber(newVal) {
       if ( newVal == this.exam.number_of_students ) {
         this.$store.commit('captureExamDetail', { key: 'add_exam_counter', value: 1 })
       } else {
-        this.$store.commit('deleteCapturedExamDetail', 'add_exam_counter')
+        //this.$store.commit('deleteCapturedExamDetail', 'add_exam_counter')
       }
     }
   },
@@ -61,21 +79,6 @@ export const AddExamCounter = Vue.component('add-exam-counter', {
         <checkmark :validated="validationObj[q.key].valid" />
       </b-row>
     </fragment>
-  `
-})
-
-export const checkmark = Vue.component('checkmark', {
-  props: ['validated'],
-  template: `
-    <b-col align-self="center"
-               cols="1"
-               v-if="validated">
-      <font-awesome-icon icon="check"
-                         class="p-0 ml-2"
-                         style="color: green;
-                                font-weight: 400;
-                                font-size: 1.3rem;" />
-    </b-col>
   `
 })
 

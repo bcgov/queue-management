@@ -20,7 +20,7 @@ class Exam(Base):
 
     exam_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     booking_id = db.Column(db.Integer, db.ForeignKey("booking.booking_id", ondelete="set null"), nullable=True)
-    exam_type_id = db.Column(db.Integer, db.ForeignKey("examtype.exam_type_id"), nullable=False)
+    exam_type_id = db.Column(db.Integer, db.ForeignKey("examtype.exam_type_id"), nullable=True)
     office_id = db.Column(db.Integer, db.ForeignKey("office.office_id"), nullable=False)
     invigilator_id = db.Column(db.Integer, db.ForeignKey("invigilator.invigilator_id"), nullable=True)
     event_id = db.Column(db.String(25), nullable=True)

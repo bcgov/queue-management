@@ -2,7 +2,6 @@
   <fragment>
     <AddPesticideFinalStep :submitMsg="submitMsg" v-if="modalSetup === 'pesticide'" />
     <AddExamFinalStep :submitMsg="submitMsg" v-else />
-
   </fragment>
 </template>
 
