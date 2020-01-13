@@ -22,6 +22,7 @@ class Exam(Base):
     booking_id = db.Column(db.Integer, db.ForeignKey("booking.booking_id", ondelete="set null"), nullable=True)
     exam_type_id = db.Column(db.Integer, db.ForeignKey("examtype.exam_type_id"), nullable=False)
     office_id = db.Column(db.Integer, db.ForeignKey("office.office_id"), nullable=False)
+    invigilator_id = db.Column(db.Integer, db.ForeignKey("invigilator.invigilator_id"), nullable=True)
     event_id = db.Column(db.String(25), nullable=True)
     exam_name = db.Column(db.String(50), nullable=False)
     examinee_name = db.Column(db.String(50), nullable=True)
@@ -52,6 +53,7 @@ class Exam(Base):
     booking = db.relationship("Booking")
     exam_type = db.relationship("ExamType")
     office = db.relationship("Office")
+    invigilator = db.relationship("Invigilator")
 
     def __repr__(self):
         return '<Exam Name: (name={self.exam_name!r})>'.format(self=self)

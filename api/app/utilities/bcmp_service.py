@@ -1,4 +1,5 @@
 import json
+import logging
 import urllib
 from qsystem import application
 from app.utilities.document_service import DocumentService
@@ -31,7 +32,14 @@ class BCMPService:
         print('response')
         print(response.status)
 
-        return json.loads(response.read().decode('utf-8'))
+        response_data = response.read().decode('utf-8')
+        print(response_data)
+
+        try:
+            return json.loads(response.read().decode('utf-8'))
+        except json.decoder.JSONDecodeError:
+            logging.warning("Error decoding JSON response data. Response data: %s" % response_data)
+            return False
 
     def check_exam_status(self, exam):
         url = "%s/auth=env_exam;%s/JSON/status" % (self.base_url, self.auth_token)
@@ -43,12 +51,13 @@ class BCMPService:
         response = self.send_request(url, 'POST', data)
         print(response)
 
-        for job in response['jobs']:
-            print(job)
-            if job['jobId'] == exam.bcmp_job_id:
-                return job['jobStatus']
+        if response:
+            for job in response['jobs']:
+                print(job)
+                if job['jobId'] == exam.bcmp_job_id:
+                    return job['jobStatus']
 
-        return response
+        return False
 
     def bulk_check_exam_status(self, exams):
         url = "%s/auth=env_exam;%s/JSON/status" % (self.base_url, self.auth_token)
@@ -112,3 +121,20 @@ class BCMPService:
         }
 
         self.send_request(url, "POST", json_data)
+
+    def email_exam_invigilator(self, exam, invigilator_name, invigilator_email, invigilator_phone):
+        url = "%s/auth=env_exam;%s/JSON/create:ENV-IPM-EXAM-API-ACTION" % (self.base_url, self.auth_token)
+
+        json_data = {
+            "action": {
+                "jobId": exam.bcmp_job_id,
+                "actionName": "SEND_TO_INVIGILATOR",
+                "invigilatorName": invigilator_name,
+                "invigilatorEmailAddress": invigilator_email,
+                "invigilatorPhoneNumber": invigilator_phone
+            }
+        }
+
+        response = self.send_request(url, "POST", json_data)
+
+        return response

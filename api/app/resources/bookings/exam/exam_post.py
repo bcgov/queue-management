@@ -61,7 +61,8 @@ class ExamPost(Resource):
                 logging.info("Creating individual pesticide exam")
                 bcmp_response = self.bcmp_service.create_individual_exam(exam, exam_type)
 
-            exam.bcmp_job_id = bcmp_response['jobId']
+            if bcmp_response:
+                exam.bcmp_job_id = bcmp_response['jobId']
         else:
             if not (exam.office_id == csr.office_id or csr.liaison_designate == 1):
                 return {"The Exam Office ID and CSR Office ID do not match!"}, 403

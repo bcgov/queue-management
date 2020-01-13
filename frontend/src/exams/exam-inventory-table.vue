@@ -7,6 +7,7 @@
     <ReturnExamModal :actionedExam="actionedExam" :resetExam="resetActionedExam" />
     <EditGroupExamBookingModal :actionedExam="actionedExam" :resetExam="resetActionedExam" />
     <DeleteExamModal v-if="showDeleteExamModal" :actionedExam="actionedExam" :resetExam="resetActionedExam" />
+    <SelectInvigilatorModal />
 
     <!--  Modal that allows user to choose a new office -->
     <b-modal v-model="officeFilterModal"
@@ -395,8 +396,23 @@
                   <b-dropdown-item size="sm"
                                    v-if="row.item.offsite_location"
                                    @click="editGroupBooking(row.item)">
-                    {{ checkInvigilator(row.item) ? 'Update Bookingeee' : 'Add Invigilatoreee' }}
+                    {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}
                   </b-dropdown-item>
+                </template>
+                <template v-else-if="row.item.exam_type.pesticide_exam_ind">
+                  <template template v-if="row.item.sbc_managed_ind === 1">
+                    <b-dropdown-item size="sm"
+                                     v-if="row.item.booking && Object.keys(row.item.booking).length > 0"
+                                     @click="updateCalendarBooking(row.item)">
+                      {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}</b-dropdown-item>
+                    <b-dropdown-item size="sm"
+                                     v-if="!row.item.booking || Object.keys(row.item.booking).length === 0"
+                                     @click="addCalendarBooking(row.item)">Schedule Exam</b-dropdown-item>
+                  </template>
+                  <template v-else>
+                    <b-dropdown-item size="sm"
+                                     @click="openInvigilatorModal(row.item)">Email Invigilator</b-dropdown-item>
+                  </template>
                 </template>
 
                 <!--  Options for all other exams.  -->
@@ -413,7 +429,7 @@
                       {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}
                     </b-dropdown-item>
                   </template>
-                  <template template v-if="!row.item.offsite_location || (row.item.exam_name === 'pesticide')">
+                  <template template v-if="!row.item.offsite_location">
                     <b-dropdown-item size="sm"
                                      v-if="row.item.booking && Object.keys(row.item.booking).length > 0"
                                      @click="updateCalendarBooking(row.item)">
@@ -463,6 +479,7 @@
   import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
   import EditExamModal from './edit-exam-form-modal'
   import EditGroupExamBookingModal from './edit-group-exam-modal'
+  import SelectInvigilatorModal from './select-invigilator-modal'
   import FailureExamAlert from './failure-exam-alert'
   import OfficeDrop from './office-drop'
   import ReturnExamModal from './return-exam-form-modal'
@@ -484,6 +501,7 @@
       OfficeDrop,
       ReturnExamModal,
       SuccessExamAlert,
+      SelectInvigilatorModal
     },
     mounted() {
       this.getExams().then( () => { this.getBookings() })
@@ -684,6 +702,7 @@
         'toggleEditExamModal',
         'toggleEditGroupBookingModal',
         'toggleExamInventoryModal',
+        'toggleSelectInvigilatorModal',
         'toggleReturnExamModal',
         'toggleScheduling',
         'toggleUploadExamModal',
@@ -1459,6 +1478,10 @@
         this.setEditedBookingOriginal(booking)
         this.toggleEditBookingModal(true)
         this.$router.push('/booking')
+      },
+      openInvigilatorModal(item) {
+        this.setSelectedExam(item)
+        this.toggleSelectInvigilatorModal(true)
       },
     },
   }

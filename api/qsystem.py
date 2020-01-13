@@ -269,6 +269,7 @@ import app.resources.bookings.booking.booking_recurring_put
 import app.resources.bookings.exam.exam_bulk_status
 import app.resources.bookings.exam.exam_delete
 import app.resources.bookings.exam.exam_detail
+import app.resources.bookings.exam.exam_email_invigilator
 import app.resources.bookings.exam.exam_list
 import app.resources.bookings.exam.exam_post
 import app.resources.bookings.exam.exam_put

@@ -117,6 +117,7 @@ export const store = new Vuex.Store({
       requireOEMAttentionFilter: 'default',
     },
     invigilators: [],
+    pesticide_invigilators: [],
     shadowInvigilators: [],
     isLoggedIn: false,
     isUploadingFile: false,
@@ -931,12 +932,48 @@ export const store = new Vuex.Store({
       })
     },
 
+    getPesticideOfficeInvigilators(context) {
+      return new Promise ((resolve, reject) => {
+        Axios(context).get('/invigilators/')
+          .then(resp => {
+            context.commit('setPesticideInvigilators', resp.data.invigilators)
+            resolve(resp)
+          })
+          .catch(error => {
+            console.log(error)
+            reject(error)
+          })
+      })
+    },
+
     getInvigilatorsWithShadowFlag(context) {
       return new Promise ((resolve, reject) => {
         Axios(context).get('/invigilators/')
           .then(resp => {
             context.commit('setInvigilators', resp.data.invigilators)
             resolve(resp)
+          })
+          .catch(error => {
+            console.log(error)
+            reject(error)
+          })
+      })
+    },
+
+    emailInvigilator(context, payload) {
+      console.log(payload)
+      const postData = {
+        invigilator_id: payload.invigilator_id,
+        invigilator_name: payload.invigilator_name,
+        invigilator_email: payload.contact_email,
+        invigilator_phone: payload.contact_phone,
+      }
+      const exam = context.state.selectedExam
+
+      return new Promise ((resolve, reject) => {
+        Axios(context).post(`/exams/${exam.exam_id}/email_invigilator/`, postData)
+          .then(resp => {
+            resolve(resp.data)
           })
           .catch(error => {
             console.log(error)
@@ -2554,6 +2591,10 @@ export const store = new Vuex.Store({
       state.invigilators = payload
     },
 
+    setPesticideInvigilators(state, payload) {
+      state.pesticide_invigilators = payload
+    },
+
     updateCitizen(state, payload) {
       Vue.set(state.citizens, payload.index, payload.citizen)
     },
@@ -2752,6 +2793,8 @@ export const store = new Vuex.Store({
     toggleExamInventoryModal: (state, payload) => state.showExamInventoryModal = payload,
 
     toggleEditExamModal: (state, payload) => state.showEditExamModal = payload,
+
+    toggleSelectInvigilatorModal: (state, payload) => state.showSelectInvigilatorModal = payload,
 
     toggleReturnExamModal: (state, payload) => state.showReturnExamModal = payload,
 
