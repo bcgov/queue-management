@@ -46,15 +46,24 @@ limitations under the License.*/
     //   this.getOfficeVideoUrl()
     // },
     beforeMount() {
+      console.log("==> Video.vue: In beforeMount()")
       this.getOfficeVideoUrl()
     },
     data() {
       function getParameterByName(name, url) {
+        console.log("==> Video.vue: In getParameterByName()");
+        console.log("    --> name:         " + name);
+        console.log("    --> url:          " + url);
         url = window.location.href;
+        console.log("    --> updated url:  " + url);
         name = name.replace(/[\[\]]/g, '\\$&');
+        console.log("    --> updated name: " + name);
         var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'), results = regex.exec(url);
+        console.log("    --> results:");
+        console.log(results);
         if (!results) return null;
         if (!results[2]) return '';
+        console.log("    --> decodeURIComponent" + decodeURIComponent(results[2].replace(/\+/g, ' ')));
         return decodeURIComponent(results[2].replace(/\+/g, ' '));
       }
 
@@ -80,14 +89,19 @@ limitations under the License.*/
     },
     methods: {
       getOfficeVideoUrl() {
+        console.log("==> Video.vue: getOfficeVideoUrl()");
         let url = '/videofiles/' + this.office_number.toString();
+        console.log("    --> url: " + url);
         Axios.get(url)
           .then( resp => {
             this.playerOptions.sources[0].src = resp.data.videourl;
+            console.log("    --> resp.data.videourl: " + resp.data.videourl);
           })
           .catch(() => {
             this.playerOptions.sources[0].src = this.defaultVideoFile;
           })
+        console.log("    --> this.playerOptions.sources")
+        console.log(this.playerOptions.sources)
       },
       playerStateChanged(playerCurrentState) {
         if (playerCurrentState && playerCurrentState.playing) {
