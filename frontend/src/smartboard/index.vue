@@ -58,7 +58,7 @@ export default {
 
     var fetchNetworkStatus = () => {
       axios
-        .get('http://localhost/health')
+        .get('http://localhost/health23')
         .then(response => {
           this.networkDown = !response.data.connected;
           this.$forceUpdate()
