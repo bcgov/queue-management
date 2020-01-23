@@ -63,14 +63,19 @@ limitations under the License.*/
         console.log(results);
         if (!results) return null;
         if (!results[2]) return '';
-        console.log("    --> decodeURIComponent" + decodeURIComponent(results[2].replace(/\+/g, ' ')));
+        console.log("    --> decodeURIComponent: " + decodeURIComponent(results[2].replace(/\+/g, ' ')));
         return decodeURIComponent(results[2].replace(/\+/g, ' '));
       }
 
       var videoPath = this.defaultVideoFile;
+      var test = getParameterByName("localvideo")
+      console.log("==> In video.vue, localvideo = " + test.toString())
       if (getParameterByName("localvideo") == "1") {
+        console.log("    --> localvideo was 1")
         videoPath = "http://localhost/videos/video.mp4";
       }
+
+      console.log("    --> videoPath: " + videoPath)
 
       return {
         playerOptions: {
