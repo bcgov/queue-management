@@ -85,7 +85,7 @@ limitations under the License.*/
           muted: true,
           sources: [{
             type: 'video/mp4',
-            src: videoPath
+            src: 'http://localhost/videos/video.mp4'
           }],
           fluid: true
         },
