@@ -86,8 +86,8 @@
           <!--  Column to delete blackout period or series (if a clicked appointment?) -->
           <b-col v-if="clickedAppt">
             <b-form-group class="mb-0 mt-2">
-              <label v-if="this.editDeleteSeries" class="mb-0">Remove Blackout Series?</label>
-              <label v-else class="mb-0">Remove Blackout Period?</label><br>
+              <label v-if="this.editDeleteSeries" class="mb-0">Remove Appointment</label>
+              <label v-else class="mb-0">Remove Appointment</label><br>
               <b-button v-if="clickedAppt && !this.editDeleteSeries"
                         @click="deleteAppt"
                         class="btn-danger w-100">
