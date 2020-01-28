@@ -67,8 +67,11 @@ limitations under the License.*/
         return decodeURIComponent(results[2].replace(/\+/g, ' '));
       }
 
+      console.log("==> In video.vue: office_number is:")
+      console.log(this.office_number)
       var videoPath = this.defaultVideoFile;
       var test = getParameterByName("localvideo")
+      if (!test) { test = "NULL"}
       console.log("==> In video.vue, localvideo = " + test.toString())
       if (getParameterByName("localvideo") == "1") {
         console.log("    --> localvideo was 1")

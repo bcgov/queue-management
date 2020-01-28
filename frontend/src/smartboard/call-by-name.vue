@@ -60,6 +60,10 @@ export default {
 
   computed: {
     url() {
+      console.log("==> In call-by-name.vue")
+      console.log("    --> URL is: " + `/smartboard/?office_number=${this.smartboardData.office_number}`)
+      console.log("    --> smartboardData is:")
+      console.log(this.smartboardData)
       return `/smartboard/?office_number=${this.smartboardData.office_number}`
     },
     waiting() {
