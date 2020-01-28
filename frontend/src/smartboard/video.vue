@@ -47,31 +47,17 @@ limitations under the License.*/
     //   this.getOfficeVideoUrl()
     // },
     beforeMount() {
-      console.log("==> Video.vue: In beforeMount()")
       this.getOfficeVideoUrl()
     },
     data() {
 
-      console.log("==> In video.vue data(): office_number is:")
-      console.log(this.office_number)
       let videoPath = defaultVideoFile;
-      console.log("    --> defaultVideoFile:      " + defaultVideoFile)
-      console.log("    --> videoPath:             " + videoPath)
-      let test = this.getParameterByName("localvideo")
-      if (!test) { test = "NULL"}
-      console.log("==> In video.vue, localvideo = " + test.toString())
       if (this.getParameterByName("localvideo") == "1") {
-        console.log("    --> localvideo was 1")
         videoPath = localVideoFile;
-        console.log("    --> videoPath local=1: " + videoPath)
       }
       else {
-        console.log("    --> local video was not 1")
         videoPath = defaultVideoFile
-        console.log("    --> videoPath local=null: " + videoPath)
       }
-
-      console.log("    --> videoPath: " + videoPath)
 
       return {
         playerOptions: {
@@ -90,29 +76,20 @@ limitations under the License.*/
     },
     methods: {
       getOfficeVideoUrl() {
-        console.log("==> Video.vue: getOfficeVideoUrl()");
 
         if (this.getParameterByName("localvideo") == 1) {
-          console.log("    --> User wants local video")
           this.playerOptions.sources[0].src = localVideoFile
-          console.log("    --> this.playerOptions.sources")
-          console.log(this.playerOptions.sources)
         }
 
         else {
-          console.log("    --> User does not want local video")
           let url = '/videofiles/' + this.office_number.toString();
-          console.log("    --> url: " + url);
           Axios.get(url)
             .then(resp => {
               this.playerOptions.sources[0].src = resp.data.videourl;
-              console.log("    --> resp.data.videourl: " + resp.data.videourl);
             })
             .catch(() => {
               this.playerOptions.sources[0].src = defaultVideoFile;
             })
-          console.log("    --> this.playerOptions.sources")
-          console.log(this.playerOptions.sources)
         }
       },
       playerStateChanged(playerCurrentState) {
