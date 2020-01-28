@@ -134,3 +134,11 @@ limitations under the License.*/
     }
   }
 </script>
+
+<style scoped>
+
+  .vjs-loading-spinner {
+    display: none!important;
+  }
+
+</style>
