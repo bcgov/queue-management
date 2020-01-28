@@ -35,6 +35,7 @@ limitations under the License.*/
   })
 
   const defaultVideoFile = '/static/videos/sbc.mp4';
+  const localVideoFile = 'http://localhost/videos/video.mp4';
 
   export default {
     name: 'Video',
@@ -50,32 +51,24 @@ limitations under the License.*/
       this.getOfficeVideoUrl()
     },
     data() {
-      function getParameterByName(name, url) {
-        console.log("==> Video.vue: In getParameterByName()");
-        console.log("    --> name:         " + name);
-        console.log("    --> url:          " + url);
-        url = window.location.href;
-        console.log("    --> updated url:  " + url);
-        name = name.replace(/[\[\]]/g, '\\$&');
-        console.log("    --> updated name: " + name);
-        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'), results = regex.exec(url);
-        console.log("    --> results:");
-        console.log(results);
-        if (!results) return null;
-        if (!results[2]) return '';
-        console.log("    --> decodeURIComponent: " + decodeURIComponent(results[2].replace(/\+/g, ' ')));
-        return decodeURIComponent(results[2].replace(/\+/g, ' '));
-      }
 
-      console.log("==> In video.vue: office_number is:")
+      console.log("==> In video.vue data(): office_number is:")
       console.log(this.office_number)
-      var videoPath = this.defaultVideoFile;
-      var test = getParameterByName("localvideo")
+      let videoPath = defaultVideoFile;
+      console.log("    --> defaultVideoFile:      " + defaultVideoFile)
+      console.log("    --> videoPath:             " + videoPath)
+      let test = this.getParameterByName("localvideo")
       if (!test) { test = "NULL"}
       console.log("==> In video.vue, localvideo = " + test.toString())
-      if (getParameterByName("localvideo") == "1") {
+      if (this.getParameterByName("localvideo") == "1") {
         console.log("    --> localvideo was 1")
-        videoPath = "http://localhost/videos/video.mp4";
+        videoPath = localVideoFile;
+        console.log("    --> videoPath local=1: " + videoPath)
+      }
+      else {
+        console.log("    --> local video was not 1")
+        videoPath = defaultVideoFile
+        console.log("    --> videoPath local=null: " + videoPath)
       }
 
       console.log("    --> videoPath: " + videoPath)
@@ -88,7 +81,7 @@ limitations under the License.*/
           muted: true,
           sources: [{
             type: 'video/mp4',
-            src: 'http://localhost/videos/video.mp4'
+            src: videoPath
           }],
           fluid: true
         },
@@ -98,18 +91,29 @@ limitations under the License.*/
     methods: {
       getOfficeVideoUrl() {
         console.log("==> Video.vue: getOfficeVideoUrl()");
-        let url = '/videofiles/' + this.office_number.toString();
-        console.log("    --> url: " + url);
-        Axios.get(url)
-          .then( resp => {
-            this.playerOptions.sources[0].src = resp.data.videourl;
-            console.log("    --> resp.data.videourl: " + resp.data.videourl);
-          })
-          .catch(() => {
-            this.playerOptions.sources[0].src = this.defaultVideoFile;
-          })
-        console.log("    --> this.playerOptions.sources")
-        console.log(this.playerOptions.sources)
+
+        if (this.getParameterByName("localvideo") == 1) {
+          console.log("    --> User wants local video")
+          this.playerOptions.sources[0].src = localVideoFile
+          console.log("    --> this.playerOptions.sources")
+          console.log(this.playerOptions.sources)
+        }
+
+        else {
+          console.log("    --> User does not want local video")
+          let url = '/videofiles/' + this.office_number.toString();
+          console.log("    --> url: " + url);
+          Axios.get(url)
+            .then(resp => {
+              this.playerOptions.sources[0].src = resp.data.videourl;
+              console.log("    --> resp.data.videourl: " + resp.data.videourl);
+            })
+            .catch(() => {
+              this.playerOptions.sources[0].src = defaultVideoFile;
+            })
+          console.log("    --> this.playerOptions.sources")
+          console.log(this.playerOptions.sources)
+        }
       },
       playerStateChanged(playerCurrentState) {
         if (playerCurrentState && playerCurrentState.playing) {
@@ -118,6 +122,14 @@ limitations under the License.*/
           //This probably means that the video has been updated, try to refresh the page
           setTimeout(() => { window.location.reload(true);}, 5000);
         }
+      },
+      getParameterByName(name, url) {
+        url = window.location.href;
+        name = name.replace(/[\[\]]/g, '\\$&');
+        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'), results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, ' '));
       }
     }
   }

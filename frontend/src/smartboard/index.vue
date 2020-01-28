@@ -74,14 +74,9 @@ export default {
   components: { CallByName, CallByTicket, BoardSocket, NonReception },
 
   data() {
-    console.log("==> In Index.vue: data")
     let tz = this.getParameterByName("tz")
-    console.log("    --> initial tz")
-    console.log(tz)
     if (!tz) {
       tz = Intl.DateTimeFormat().resolvedOptions().timeZone
-      console.log("    --> updated tz")
-      console.log(tz)
     }
 
     return {
@@ -106,8 +101,6 @@ export default {
 
   computed: {
     url() {
-      console.log("==> In index.vue: computed")
-      console.log("    --> return: " + `/smartboard/?office_number=${this.office_number}`)
       return `/smartboard/?office_number=${this.office_number}`
     }
   },
@@ -127,20 +120,11 @@ export default {
       this.time = d.toLocaleTimeString('en-CA', this.timeOpts)
     },
     getParameterByName(name, url) {
-      console.log("==> In index.vue: getParameterByName")
-      console.log("    --> name:          " + name)
-      console.log("    --> url:           " + url)
       url = window.location.href;
-      console.log("    --> updated url:   " + url)
       name = name.replace(/[\[\]]/g, '\\$&');
-      console.log("    --> updated name:  " + name)
       var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'), results = regex.exec(url);
-      console.log("    --> results")
-      console.log(results)
       if (!results) return null;
       if (!results[2]) return '';
-      console.log("    --> decodeURIComponent")
-      console.log(decodeURIComponent(results[2].replace(/\+/g, ' ')))
       return decodeURIComponent(results[2].replace(/\+/g, ' '));
     }
   }
