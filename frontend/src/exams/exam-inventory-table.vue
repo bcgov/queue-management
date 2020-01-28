@@ -766,6 +766,9 @@
         return false
       },
       checkGroupAttention(ex){
+         if(this.examReturnedAttention(ex)) {
+          return false
+        }
         if(this.filterByGroup(ex)){
           if(moment(ex.booking.start_time).isValid()){
             if(moment(ex.booking.start_time).isBefore(moment(), 'day')){
@@ -797,18 +800,8 @@
       },
       checkOEMAttention(ex) {
         if(this.selectedExamType == 'all'){
-          if(this.examReturnedAttention(ex)){
-            return false
-          }
           if(this.filterByExpiry(ex) && !this.examReturnedAttention(ex)){
             return true
-          }
-          if(ex.booking){
-            if(moment(ex.booking.start_time).isValid()){
-              if(moment(ex.booking.start_time).isBefore(moment(), 'day')){
-                return true
-              }
-            }
           }
           if(ex.booking){
             if(moment(ex.booking.start_time).isValid()){
@@ -816,14 +809,13 @@
                 if(!this.examReturnedAttention(ex)){
                   return true
                 }
-                return false
               }
             }
           }
-          if(ex.booking && (ex.booking.invigilator_id || ex.booking.sbc_staff_invigilated)){
-            return false
-          }else if(ex.booking && (!ex.booking.invigilator_id || !ex.booking.sbc_staff_invigilated)) {
-            return true
+          if(ex.exam_type.group_exam_ind === 1) {
+            if(ex.booking && ((!ex.booking.invigilator_id || !ex.booking.sbc_staff_invigilated) && !this.examReturnedAttention(ex))) {
+              return true
+            }
           }
         }
         if(!this.filterByGroup(ex) && this.selectedExamType === 'individual'){
@@ -833,23 +825,24 @@
           if(ex.booking){
             if(moment(ex.booking.start_time).isValid()){
               if(moment(ex.booking.start_time).isBefore(moment(), 'day')){
-                return true
+                if(!this.examReturnedAttention(ex)){
+                  return true
+                }
               }
             }
           }
         }
         if(this.filterByGroup(ex) && this.selectedExamType === 'group'){
-          if(moment(ex.booking.start_time).isValid()){
-            if(moment(ex.booking.start_time).isBefore(moment(), 'day')){
-              if(!this.examReturnedAttention(ex)){
-                return true
+          if(ex.booking){
+            if(moment(ex.booking.start_time).isValid()){
+              if(moment(ex.booking.start_time).isBefore(moment(), 'day')){
+                if(!this.examReturnedAttention(ex)){
+                  return true
+                }
               }
-              return false
             }
           }
-          if(ex.booking && (ex.booking.invigilator_id || ex.booking.sbc_staff_invigilated)){
-            return false
-          }else if(ex.booking && (!ex.booking.invigilator_id || !ex.booking.sbc_staff_invigilated)) {
+          if(ex.booking && ((!ex.booking.invigilator_id || !ex.booking.sbc_staff_invigilated) && !this.examReturnedAttention(ex))) {
             return true
           }
         }
@@ -1066,7 +1059,7 @@
           this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
         }else if(option.value === 'require_attention') {
           if (this.selectedExamType === 'individual') {
-            this.setInventoryFilters({type: 'returnedFilter', value: 'both'})
+            this.setInventoryFilters({type: 'returnedFilter', value: 'unreturned'})
             this.setInventoryFilters({type: 'expiryFilter', value: 'all'})
             this.setInventoryFilters({type: 'scheduledFilter', value: 'both'})
             this.setInventoryFilters({type: 'requireAttentionFilter', value: 'individual'})
@@ -1075,7 +1068,7 @@
             this.setInventoryFilters({type: 'returnedFilter', value: 'unreturned'})
             this.setInventoryFilters({type: 'expiryFilter', value: 'current'})
             this.setInventoryFilters({type: 'scheduledFilter', value: 'unscheduled'})
-            this.setInventoryFilters({type: 'requireAttentionFilter', value: 'default'})
+            this.setInventoryFilters({type: 'requireAttentionFilter', value: 'group'})
             this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
           } else if (this.selectedExamType === 'all') {
             this.setInventoryFilters({type: 'requireAttentionFilter', value: 'both'})
@@ -1090,21 +1083,28 @@
           this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
         }else if(option.value === 'expired'){
           this.setInventoryFilters({type:'expiryFilter', value:'expired'})
-          this.setInventoryFilters({type:'returnedFilter', value:'unreturned'})
+          this.setInventoryFilters({type:'returnedFilter', value:'both'})
           this.setInventoryFilters({type:'scheduledFilter', value:'both'})
           this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
           this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
         }else if(option.value === 'oemai'){
           if(this.selectedExamType === 'individual'){
-            this.setInventoryFilters({type:'returnedFilter', value:'both'})
+            this.setInventoryFilters({type:'returnedFilter', value:'unreturned'})
             this.setInventoryFilters({type:'expiryFilter', value:'all'})
             this.setInventoryFilters({type:'scheduledFilter', value:'both'})
             this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
             this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'both'})
           }else if(this.selectedExamType === 'group'){
-            this.setInventoryFilters({type:'requireAttentionFilter', value:'group'})
-            this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
+            this.setInventoryFilters({type:'returnedFilter', value:'unreturned'})
+            this.setInventoryFilters({type:'expiryFilter', value:'all'})
+            this.setInventoryFilters({type:'scheduledFilter', value:'both'})
+            this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
+            this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'both'})
           }else if(this.selectedExamType === 'all'){
+            this.setInventoryFilters({type:'returnedFilter', value:'unreturned'})
+            this.setInventoryFilters({type:'expiryFilter', value:'all'})
+            this.setInventoryFilters({type:'scheduledFilter', value:'both'})
+            this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
             this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'both'})
           }
         }else if(option.value === 'all'){
