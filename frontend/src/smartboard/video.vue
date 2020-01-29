@@ -35,6 +35,7 @@ limitations under the License.*/
   })
 
   const defaultVideoFile = '/static/videos/sbc.mp4';
+  const localVideoFile = 'http://localhost/videos/video.mp4';
 
   export default {
     name: 'Video',
@@ -49,18 +50,13 @@ limitations under the License.*/
       this.getOfficeVideoUrl()
     },
     data() {
-      function getParameterByName(name, url) {
-        url = window.location.href;
-        name = name.replace(/[\[\]]/g, '\\$&');
-        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'), results = regex.exec(url);
-        if (!results) return null;
-        if (!results[2]) return '';
-        return decodeURIComponent(results[2].replace(/\+/g, ' '));
-      }
 
-      var videoPath = this.defaultVideoFile;
-      if (getParameterByName("localvideo") == "1") {
-        videoPath = "http://localhost/videos/video.mp4";
+      let videoPath = defaultVideoFile;
+      if (this.getParameterByName("localvideo") == "1") {
+        videoPath = localVideoFile;
+      }
+      else {
+        videoPath = defaultVideoFile
       }
 
       return {
@@ -80,14 +76,21 @@ limitations under the License.*/
     },
     methods: {
       getOfficeVideoUrl() {
-        let url = '/videofiles/' + this.office_number.toString();
-        Axios.get(url)
-          .then( resp => {
-            this.playerOptions.sources[0].src = resp.data.videourl;
-          })
-          .catch(() => {
-            this.playerOptions.sources[0].src = this.defaultVideoFile;
-          })
+
+        if (this.getParameterByName("localvideo") == 1) {
+          this.playerOptions.sources[0].src = localVideoFile
+        }
+
+        else {
+          let url = '/videofiles/' + this.office_number.toString();
+          Axios.get(url)
+            .then(resp => {
+              this.playerOptions.sources[0].src = resp.data.videourl;
+            })
+            .catch(() => {
+              this.playerOptions.sources[0].src = defaultVideoFile;
+            })
+        }
       },
       playerStateChanged(playerCurrentState) {
         if (playerCurrentState && playerCurrentState.playing) {
@@ -96,7 +99,23 @@ limitations under the License.*/
           //This probably means that the video has been updated, try to refresh the page
           setTimeout(() => { window.location.reload(true);}, 5000);
         }
+      },
+      getParameterByName(name, url) {
+        url = window.location.href;
+        name = name.replace(/[\[\]]/g, '\\$&');
+        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'), results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, ' '));
       }
     }
   }
 </script>
+
+<style scoped>
+
+  .vjs-loading-spinner {
+    display: none!important;
+  }
+
+</style>
