@@ -713,7 +713,7 @@
           }
         }
         if (ex.exam_received_date) {
-          if (ex.booking && ( ex.booking.invigilator_id || ex.booking.sbc_staff_invigilated )) {
+          if (ex.booking && ((ex.booking.invigilators.length > 0) || ex.booking.sbc_staff_invigilated )) {
             if (ex.booking.invigilator && ex.booking.invigilator.deleted) {
               return false
             }
@@ -733,9 +733,13 @@
         if(this.examReturnedAttention(ex)){
           return false
         }
-        if(this.filterByGroup(ex)){
-            return !this.filterByScheduled(ex)
-        }else {
+         if(this.filterByGroup(ex)){
+          if(ex.booking && ((ex.booking.invigilators.length > 0) || ex.booking.sbc_staff_invigilated)){
+            return false
+          }else if(ex.booking && ((ex.booking.invigilators.length == 0) && !ex.booking.sbc_staff_invigilated)) {
+            return true
+          }
+         } else {
           if(!ex.booking){
             return true
           }
@@ -766,18 +770,13 @@
         return false
       },
       checkGroupAttention(ex){
+       if(this.filterByGroup(ex) && this.examReturnedAttention(ex)){
+          return false
+        }
         if(this.filterByGroup(ex)){
-          if(moment(ex.booking.start_time).isValid()){
-            if(moment(ex.booking.start_time).isBefore(moment(), 'day')){
-              if(!this.examReturnedAttention(ex)){
-                return true
-              }
-              return false
-            }
-          }
-          if(ex.booking && (ex.booking.invigilator_id || ex.booking.sbc_staff_invigilated)){
+          if(ex.booking && ((ex.booking.invigilators.length > 0) || ex.booking.sbc_staff_invigilated)){
             return false
-          }else if(ex.booking && (!ex.booking.invigilator_id || !ex.booking.sbc_staff_invigilated)) {
+          }else if(ex.booking && ((ex.booking.invigilators.length == 0) && !ex.booking.sbc_staff_invigilated)) {
             return true
           }
         }
@@ -806,13 +805,6 @@
           if(ex.booking){
             if(moment(ex.booking.start_time).isValid()){
               if(moment(ex.booking.start_time).isBefore(moment(), 'day')){
-                return true
-              }
-            }
-          }
-          if(ex.booking){
-            if(moment(ex.booking.start_time).isValid()){
-              if(moment(ex.booking.start_time).isBefore(moment(), 'day')){
                 if(!this.examReturnedAttention(ex)){
                   return true
                 }
@@ -820,9 +812,9 @@
               }
             }
           }
-          if(ex.booking && (ex.booking.invigilator_id || ex.booking.sbc_staff_invigilated)){
+          if(ex.booking && ((ex.booking.invigilators.length > 0) || ex.booking.sbc_staff_invigilated)){
             return false
-          }else if(ex.booking && (!ex.booking.invigilator_id || !ex.booking.sbc_staff_invigilated)) {
+          }else if(ex.booking && ((ex.booking.invigilators.length == 0) && !ex.booking.sbc_staff_invigilated)) {
             return true
           }
         }
@@ -839,6 +831,9 @@
           }
         }
         if(this.filterByGroup(ex) && this.selectedExamType === 'group'){
+         if(this.examReturnedAttention(ex)){
+            return false
+          }
           if(moment(ex.booking.start_time).isValid()){
             if(moment(ex.booking.start_time).isBefore(moment(), 'day')){
               if(!this.examReturnedAttention(ex)){
@@ -847,9 +842,9 @@
               return false
             }
           }
-          if(ex.booking && (ex.booking.invigilator_id || ex.booking.sbc_staff_invigilated)){
+          if(ex.booking && ((ex.booking.invigilators.length > 0) || ex.booking.sbc_staff_invigilated)){
             return false
-          }else if(ex.booking && (!ex.booking.invigilator_id || !ex.booking.sbc_staff_invigilated)) {
+          }else if(ex.booking && ((ex.booking.invigilators.length == 0) && !ex.booking.sbc_staff_invigilated)) {
             return true
           }
         }
@@ -1073,13 +1068,14 @@
             this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
           } else if (this.selectedExamType === 'group') {
             this.setInventoryFilters({type: 'returnedFilter', value: 'unreturned'})
-            this.setInventoryFilters({type: 'expiryFilter', value: 'current'})
+            this.setInventoryFilters({type: 'expiryFilter', value: 'all'})
             this.setInventoryFilters({type: 'scheduledFilter', value: 'unscheduled'})
-            this.setInventoryFilters({type: 'requireAttentionFilter', value: 'default'})
+            this.setInventoryFilters({type: 'requireAttentionFilter', value: 'group'})
             this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
           } else if (this.selectedExamType === 'all') {
             this.setInventoryFilters({type: 'requireAttentionFilter', value: 'both'})
             this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
+            this.setInventoryFilters({type: 'expiryFilter', value: 'all'})
           }
         }
         else if(option.value === 'ready'){
@@ -1102,9 +1098,10 @@
             this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
             this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'both'})
           }else if(this.selectedExamType === 'group'){
-            this.setInventoryFilters({type:'requireAttentionFilter', value:'group'})
-            this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
+            this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
+            this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'both'})
           }else if(this.selectedExamType === 'all'){
+            this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
             this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'both'})
           }
         }else if(option.value === 'all'){
