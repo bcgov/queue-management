@@ -733,6 +733,9 @@
         if(this.examReturnedAttention(ex)){
           return false
         }
+        if(ex.booking && !ex.exam_received_date){
+          return true
+        }
          if(this.filterByGroup(ex)){
           if(ex.booking && ((ex.booking.invigilators.length > 0) || ex.booking.sbc_staff_invigilated)){
             return false
@@ -772,6 +775,9 @@
       checkGroupAttention(ex){
        if(this.filterByGroup(ex) && this.examReturnedAttention(ex)){
           return false
+        }
+        if(this.filterByGroup(ex) && ex.booking && !ex.exam_received_date){
+          return true
         }
         if(this.filterByGroup(ex)){
           if(ex.booking && ((ex.booking.invigilators.length > 0) || ex.booking.sbc_staff_invigilated)){
