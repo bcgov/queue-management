@@ -212,11 +212,11 @@
         } else {
           console.log("==> Still no service selected")
         }
-    },
-    closeAddServiceModal() {
+      },
+      closeAddServiceModal() {
         this.resetAddCitizenModal()
         this.$store.commit('appointmentsModule/toggleApptBookingModal', true)
-    },
+      },
     }
   }
 </script>
