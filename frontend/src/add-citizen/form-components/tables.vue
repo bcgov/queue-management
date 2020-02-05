@@ -85,7 +85,6 @@
       return {
         f:false,
         t:true,
-        executeAction: false,
         actionToExecute: 'NOTHING'
       }
     },
