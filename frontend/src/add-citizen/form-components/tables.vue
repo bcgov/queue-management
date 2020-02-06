@@ -85,7 +85,7 @@
       return {
         f:false,
         t:true,
-        executeAction: false
+        actionToExecute: 'NOTHING'
       }
     },
     computed: {
@@ -167,65 +167,49 @@
         'clickBeginService', 'resetAddCitizenModal', 'clickAddToQueue',
         'clickEditApply']),
 
-      rowClicked(item, index) {
-        let id = item.service_id
-        this.setAddModalSelectedItem(item.service_name)
-        this.$store.commit('updateAddModalForm', {type:'service',value:id})
-        if (this.executeAction == true) {
-          this.serveCustomer(item)
-        }
-      },
-
-      sendToQueue(service) {
+    rowClicked(item, index) {
         if (this.performingAction == false) {
-          this.setAddModalSelectedItem(service.service_name)
-          this.$store.commit('updateAddModalForm', {type: 'service', value: service.service_id})
-          this.clickAddToQueue()
-        }
-        else {
-          console.log("==> Cannot send to queue, citizen is being quick served")
-        }
-      },
-
-      serveCustomer(service) {
-        if (this.performingAction == false) {
-
-          //  NOTE!!     This routine needs the rowClicked routine to be executed first to set globals.
-          //  NOWEVER:   The rowClicked event, and routine, gets executed after this event/routine is executed.
-          //  THEREFORE: The executeAction flag is used to execute this routine after the rowClicked event fires.
-          if (this.executeAction == true) {
-            this.setAddModalSelectedItem(service.service_name)
-            this.$store.commit('updateAddModalForm', {type: 'service', value: service.service_id})
-            if (this.$route.path == "/exams") {
-              this.toggleExamsTrackingIP(true)
-              this.clickBeginService({simple: true})
-            } else if (this.$route.path == "/appointments") {
-              this.$store.commit('appointmentsModule/setSelectedService', this.addModalForm.service)
-              this.closeAddServiceModal()
-            } else if (this.$route.path == "/booking") {
-              this.toggleExamsTrackingIP(true)
-              this.clickBeginService({simple: true})
-            } else if ((!this.simplifiedTicketStarted) && (this.addModalSetup == "reception" || this.addModalSetup == "non_reception")) {
-              this.clickBeginService({simple: false})
-            } else if (this.simplifiedTicketStarted) {
-              if (this.addModalSetup == "add_mode") {
-                this.clickAddServiceApply()
-              } else if (this.addModalSetup == "edit_mode") {
-                this.clickEditApply()
-              } else {
-                console.log("==> No service selected.")
-              }
-            } else {
-              console.log("==> Still no service selected")
-            }
-            this.executeAction = false
-          }
-          else {
-            this.executeAction = true
+          let id = item.service_id
+          this.setAddModalSelectedItem(item.service_name)
+          this.$store.commit('updateAddModalForm', {type:'service',value:id})
+          if (this.actionToExecute == 'sendToQueue') {
+            this.clickAddToQueue()
+          } else if (this.actionToExecute == 'serveCustomer') {
+            this.serveCustomerAction(item)
+          } else {
+            console.log("unknown action: ",this.actionToExecute)
           }
         }
-        else {
-          console.log("==> Cannot quick serve customer, they are being added to the queue.")
+    },
+    sendToQueue() {
+        this.actionToExecute = 'sendToQueue'
+    },
+    serveCustomer() {
+        this.actionToExecute = 'serveCustomer'
+    },
+    serveCustomerAction() {
+        //  NOTE!!     When actionToTake is serveCustomer then we execute this code
+        if (this.$route.path == "/exams") {
+          this.toggleExamsTrackingIP(true)
+          this.clickBeginService({simple: true})
+        } else if (this.$route.path == "/appointments") {
+          this.$store.commit('appointmentsModule/setSelectedService', this.addModalForm.service)
+          this.closeAddServiceModal()
+        } else if (this.$route.path == "/booking") {
+          this.toggleExamsTrackingIP(true)
+          this.clickBeginService({simple: true})
+        } else if ((!this.simplifiedTicketStarted) && (this.addModalSetup == "reception" || this.addModalSetup == "non_reception")) {
+          this.clickBeginService({simple: false})
+        } else if (this.simplifiedTicketStarted) {
+          if (this.addModalSetup == "add_mode") {
+             this.clickAddServiceApply()
+          } else if (this.addModalSetup == "edit_mode") {
+            this.clickEditApply()
+          } else {
+            console.log("==> No service selected.")
+          }
+        } else {
+          console.log("==> Still no service selected")
         }
       },
       closeAddServiceModal() {
