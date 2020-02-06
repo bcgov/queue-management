@@ -114,7 +114,10 @@ class CsrSelf(Resource):
                         if exam.booking is None:
                             attention_needed = True
                         else:
-                            attention_needed = attention_needed or len(exam.booking.invigilators) == 0
+                            attention_needed = attention_needed or (len(exam.booking.invigilators) < 1
+                                                                    and exam.number_of_students < 25)
+                            attention_needed = attention_needed or (len(exam.booking.invigilators) < 2
+                                                                    and exam.number_of_students > 24)
                             attention_needed = attention_needed or exam.booking.end_time < start_date
                         if attention_needed:
                             monthly.append(exam)
@@ -127,7 +130,10 @@ class CsrSelf(Resource):
                         if exam.booking is None:
                             attention_needed = True
                         else:
-                            attention_needed = attention_needed or len(exam.booking.invigilators) == 0
+                            attention_needed = attention_needed or (len(exam.booking.invigilators) < 1
+                                                                    and exam.number_of_students < 25)
+                            attention_needed = attention_needed or (len(exam.booking.invigilators) < 2
+                                                                    and exam.number_of_students > 24)
                             attention_needed = attention_needed or exam.booking.end_time < start_date
                         if attention_needed:
                             group.append(exam)
