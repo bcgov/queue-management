@@ -28,3 +28,4 @@ python-jose
 SQLAlchemy-Utc
 toastedmarshmallow==0.2.6
 flask_oidc
+Werkzeug==0.16.1
