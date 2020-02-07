@@ -824,16 +824,16 @@
            return true
         }
         if (this.filterByGroup(ex)){
-           if (ex.booking){
+           if (!this.checkInvigilator(ex)){
+              return true
+           }
+        }
+        if (ex.booking){
               if (moment(ex.booking.start_time).isValid()){
                  if (moment(ex.booking.start_time).isBefore(moment(), 'day')){
                     return true
                  }
               }
-              if (!this.checkInvigilator(ex)){
-                 return true
-              }
-           }
         }
         return false
       },
