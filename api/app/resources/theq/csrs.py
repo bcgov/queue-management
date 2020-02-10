@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from datetime import datetime
 from flask import g
-from flask_restplus import Resource
+from flask_restx import Resource
 from qsystem import api, db, oidc, application, api_call_with_retry
 from sqlalchemy import exc, or_
 from app.models.bookings import Exam, ExamType, Booking

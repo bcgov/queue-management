@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import logging
-from flask_restplus import Resource
+from flask_restx import Resource
 from flask import request, g
 from app.models.bookings import Room
 from app.schemas.bookings import BookingSchema

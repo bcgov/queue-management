@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 from flask import abort, g, request
-from flask_restplus import Resource
+from flask_restx import Resource
 from app.models.bookings import Booking
 from app.schemas.bookings import BookingSchema
 from app.models.theq import CSR

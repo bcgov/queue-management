@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 from flask import g, request
-from flask_restplus import Resource
+from flask_restx import Resource
 from marshmallow import ValidationError
 from qsystem import api, api_call_with_retry, db, oidc, cache, socketio
 from app.models.theq import CSR

@@ -14,7 +14,7 @@ limitations under the License.'''
 
 import logging
 from flask import request, g
-from flask_restplus import Resource
+from flask_restx import Resource
 from app.models.theq import CSR
 from app.schemas.bookings import ExamSchema
 from qsystem import api, api_call_with_retry, db, oidc

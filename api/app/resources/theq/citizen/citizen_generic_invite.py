@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from filelock import FileLock
 from flask import g, request
-from flask_restplus import Resource
+from flask_restx import Resource
 from qsystem import api, api_call_with_retry, db, oidc, socketio, my_print
 from app.models.theq import Citizen, CSR, CitizenState, Period, PeriodState, ServiceReq, SRState
 from app.schemas.theq import CitizenSchema

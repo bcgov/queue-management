@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from datetime import datetime
 from flask import g
-from flask_restplus import Resource
+from flask_restx import Resource
 from app.models.bookings import Exam
 from app.models.theq import CSR
 from app.schemas.bookings import ExamSchema

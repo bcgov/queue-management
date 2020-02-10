@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask_restplus import Resource
+from flask_restx import Resource
 from qsystem import api, oidc, application
 from flask import request, g
 import shutil

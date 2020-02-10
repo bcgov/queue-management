@@ -11,7 +11,7 @@ limitations under the License.'''
 
 import logging
 from flask import request, jsonify
-from flask_restplus import Resource
+from flask_restx import Resource
 from sqlalchemy import exc
 from qsystem import api, db, oidc
 from app.models.bookings import Invigilator
