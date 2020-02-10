@@ -652,9 +652,11 @@
           return true
         } else if (item.exam_type.exam_type_name === 'Monthly Session Exam'
           && length_of_invigilator_array >= number_of_invigilators) {
+          console.log('TRUE',item.exam_name,length_of_invigilator_array,number_of_invigilators)
           return true
         } else if (item.exam_type.exam_type_name === 'Monthly Session Exam'
           && length_of_invigilator_array < number_of_invigilators ) {
+          console.log('FALSE',item.exam_name,length_of_invigilator_array,number_of_invigilators)
           return false
         }
         return false
@@ -1247,7 +1249,10 @@
           if (!item.booking) {
             return lifeRing
           }
-          if (item.booking && (!this.checkInvigilator(item))) {
+          console.log(item.exam_name)
+          console.log(this.checkInvigilator(item))
+          if (!this.checkInvigilator(item)) {
+            console.log('checkInvigilator is false')
             return lifeRing
           }
           if (this.filterByExpiry(item)){
