@@ -652,9 +652,11 @@
           return true
         } else if (item.exam_type.exam_type_name === 'Monthly Session Exam'
           && length_of_invigilator_array >= number_of_invigilators) {
+          console.log('TRUE',item.exam_name,length_of_invigilator_array,number_of_invigilators)
           return true
         } else if (item.exam_type.exam_type_name === 'Monthly Session Exam'
           && length_of_invigilator_array < number_of_invigilators ) {
+          console.log('FALSE',item.exam_name,length_of_invigilator_array,number_of_invigilators)
           return false
         }
         return false
@@ -713,7 +715,7 @@
           }
         }
         if (ex.exam_received_date) {
-          if (ex.booking && ( ex.booking.invigilator_id || ex.booking.sbc_staff_invigilated )) {
+          if (ex.booking && ((ex.booking.invigilators.length > 0) || ex.booking.sbc_staff_invigilated )) {
             if (ex.booking.invigilator && ex.booking.invigilator.deleted) {
               return false
             }
@@ -730,56 +732,150 @@
         return false
       },
       checkAllAttention(ex) {
-        if(this.examReturnedAttention(ex)){
+        if (this.examReturnedAttention(ex)){
           return false
         }
-        if(this.filterByGroup(ex)){
-            return !this.filterByScheduled(ex)
-        }else {
-          if(!ex.booking){
-            return true
+        if (ex.booking && !ex.exam_received_date){
+          return true
+        }
+        if (!ex.booking){
+           return true
+        }
+        if (this.filterByExpiry(ex)){
+           return true
+        }
+        if (this.filterByGroup(ex)){
+           if (ex.booking && (this.checkInvigilator(ex))){
+               return false
+           }   else if(ex.booking && (!this.checkInvigilator(ex))) {
+               return true
+           }
+        }
+        if (ex.booking){
+           if (moment(ex.booking.start_time).isValid()){
+              if (moment(ex.booking.start_time).isBefore(moment(), 'day')){
+                return true
+            }
           }
-          if(this.filterByExpiry(ex)){
-            return true
-          }
+        }
+        if (ex.exam_type.exam_type_name === 'Monthly Session Exam') {
+           if (!ex.number_of_students || !ex.event_id) {
+              return true
+           }
         }
         return false
       },
       checkIndividualAttention(ex){
-        if(!this.filterByGroup(ex) && this.examReturnedAttention(ex)){
-          return false
+        if (this.filterByGroup(ex)) {
+           return false
         }
-        if(!this.filterByGroup(ex) && ex.booking && !ex.exam_received_date){
-          return true
+        if (this.examReturnedAttention(ex)){
+           return false
         }
-        if(!this.filterByGroup(ex) && this.filterByExpiry(ex) && !this.examReturnedAttention(ex)){
-          return true
-        }else if(!this.filterByGroup(ex) && ex.booking){
-          if(moment(ex.booking.start_time).isValid()){
-            if(moment(ex.booking.start_time).isBefore(moment(), 'day')){
-              return true
+        if (ex.booking && !ex.exam_received_date){
+           return true
+        }
+        if (!ex.booking){
+           return true
+        }
+        if (this.filterByExpiry(ex)){
+           return true
+        }
+        if (ex.booking){
+           if (moment(ex.booking.start_time).isValid()){
+              if (moment(ex.booking.start_time).isBefore(moment(), 'day')){
+                return true
             }
           }
-        }else if(!this.filterByGroup(ex) && !ex.booking){
-          return true
         }
         return false
       },
       checkGroupAttention(ex){
-        if(this.filterByGroup(ex)){
-          if(moment(ex.booking.start_time).isValid()){
-            if(moment(ex.booking.start_time).isBefore(moment(), 'day')){
-              if(!this.examReturnedAttention(ex)){
+        if (this.filterByGroup(ex) && this.examReturnedAttention(ex)){
+           return false
+        }
+        if (this.filterByGroup(ex) && ex.booking && !ex.exam_received_date){
+           return true
+        }
+        if (this.filterByGroup(ex)){
+           if (ex.booking && (this.checkInvigilator(ex))){
+               return false
+           }   else if(ex.booking && (!this.checkInvigilator(ex))) {
+               return true
+           }
+        }
+        if (this.filterByGroup(ex) && ex.booking){
+           if (moment(ex.booking.start_time).isValid()){
+              if (moment(ex.booking.start_time).isBefore(moment(), 'day')){
                 return true
               }
-              return false
+           }
+        }
+        if (ex.exam_type.exam_type_name === 'Monthly Session Exam') {
+           if (!ex.number_of_students || !ex.event_id) {
+              return true
+           }
+        }
+        return false
+      },
+      checkOEMAllAttention(ex) {
+        if (this.examReturnedAttention(ex)){
+           return false
+        }
+        if (this.filterByExpiry(ex)){
+           return true
+        }
+        if (this.filterByGroup(ex)){
+           if (!this.checkInvigilator(ex)){
+              return true
+           }
+        }
+        if (ex.booking){
+              if (moment(ex.booking.start_time).isValid()){
+                 if (moment(ex.booking.start_time).isBefore(moment(), 'day')){
+                    return true
+                 }
+              }
+        }
+        return false
+      },
+      checkOEMIndividualAttention(ex){
+        if (this.filterByGroup(ex)) {
+           return false
+        }
+        if (this.examReturnedAttention(ex)){
+           return false
+        }
+        if (this.filterByExpiry(ex)){
+           return true
+        }
+        if (ex.booking){
+           if (moment(ex.booking.start_time).isValid()){
+              if (moment(ex.booking.start_time).isBefore(moment(), 'day')){
+                return true
             }
           }
-          if(ex.booking && (ex.booking.invigilator_id || ex.booking.sbc_staff_invigilated)){
-            return false
-          }else if(ex.booking && (!ex.booking.invigilator_id || !ex.booking.sbc_staff_invigilated)) {
-            return true
-          }
+        }
+        return false
+      },
+      checkOEMGroupAttention(ex){
+        if (this.filterByGroup(ex) && this.examReturnedAttention(ex)){
+           return false
+        }
+        if (this.filterByGroup(ex) && this.filterByExpiry(ex)){
+           return true
+        }
+        if (this.filterByGroup(ex)){
+           if (ex.booking){
+              if (moment(ex.booking.start_time).isValid()){
+                 if (moment(ex.booking.start_time).isBefore(moment(), 'day')){
+                    return true
+                 }
+              }
+              if (!this.checkInvigilator(ex)){
+                 return true
+              }
+           }
         }
         return false
       },
@@ -792,66 +888,6 @@
       checkStartDate(date){
         if(moment(date).isValid() && moment(date).isBefore(moment(), 'day')){
           return true
-        }
-        return false
-      },
-      checkOEMAttention(ex) {
-        if(this.selectedExamType == 'all'){
-          if(this.examReturnedAttention(ex)){
-            return false
-          }
-          if(this.filterByExpiry(ex) && !this.examReturnedAttention(ex)){
-            return true
-          }
-          if(ex.booking){
-            if(moment(ex.booking.start_time).isValid()){
-              if(moment(ex.booking.start_time).isBefore(moment(), 'day')){
-                return true
-              }
-            }
-          }
-          if(ex.booking){
-            if(moment(ex.booking.start_time).isValid()){
-              if(moment(ex.booking.start_time).isBefore(moment(), 'day')){
-                if(!this.examReturnedAttention(ex)){
-                  return true
-                }
-                return false
-              }
-            }
-          }
-          if(ex.booking && (ex.booking.invigilator_id || ex.booking.sbc_staff_invigilated)){
-            return false
-          }else if(ex.booking && (!ex.booking.invigilator_id || !ex.booking.sbc_staff_invigilated)) {
-            return true
-          }
-        }
-        if(!this.filterByGroup(ex) && this.selectedExamType === 'individual'){
-          if(this.filterByExpiry(ex) && !this.examReturnedAttention(ex)){
-            return true
-          }
-          if(ex.booking){
-            if(moment(ex.booking.start_time).isValid()){
-              if(moment(ex.booking.start_time).isBefore(moment(), 'day')){
-                return true
-              }
-            }
-          }
-        }
-        if(this.filterByGroup(ex) && this.selectedExamType === 'group'){
-          if(moment(ex.booking.start_time).isValid()){
-            if(moment(ex.booking.start_time).isBefore(moment(), 'day')){
-              if(!this.examReturnedAttention(ex)){
-                return true
-              }
-              return false
-            }
-          }
-          if(ex.booking && (ex.booking.invigilator_id || ex.booking.sbc_staff_invigilated)){
-            return false
-          }else if(ex.booking && (!ex.booking.invigilator_id || !ex.booking.sbc_staff_invigilated)) {
-            return true
-          }
         }
         return false
       },
@@ -881,8 +917,13 @@
           }
 
           if(this.inventoryFilters.requireOEMAttentionFilter === 'both'){
-            return exams.filter(ex => this.checkOEMAttention(ex))
+            return exams.filter(ex => this.checkOEMAllAttention(ex))
+          } else if(this.inventoryFilters.requireOEMAttentionFilter === 'individual'){
+            return exams.filter(ex => this.checkOEMIndividualAttention(ex))
+          } else if(this.inventoryFilters.requireOEMAttentionFilter === 'group'){
+            return exams.filter(ex => this.checkOEMGroupAttention(ex))
           }
+
 
           switch (this.inventoryFilters.expiryFilter) {
             case 'all':
@@ -1073,13 +1114,14 @@
             this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
           } else if (this.selectedExamType === 'group') {
             this.setInventoryFilters({type: 'returnedFilter', value: 'unreturned'})
-            this.setInventoryFilters({type: 'expiryFilter', value: 'current'})
+            this.setInventoryFilters({type: 'expiryFilter', value: 'all'})
             this.setInventoryFilters({type: 'scheduledFilter', value: 'unscheduled'})
-            this.setInventoryFilters({type: 'requireAttentionFilter', value: 'default'})
+            this.setInventoryFilters({type: 'requireAttentionFilter', value: 'group'})
             this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
           } else if (this.selectedExamType === 'all') {
             this.setInventoryFilters({type: 'requireAttentionFilter', value: 'both'})
             this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
+            this.setInventoryFilters({type: 'expiryFilter', value: 'all'})
           }
         }
         else if(option.value === 'ready'){
@@ -1100,11 +1142,18 @@
             this.setInventoryFilters({type:'expiryFilter', value:'all'})
             this.setInventoryFilters({type:'scheduledFilter', value:'both'})
             this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
-            this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'both'})
+            this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'individual'})
           }else if(this.selectedExamType === 'group'){
-            this.setInventoryFilters({type:'requireAttentionFilter', value:'group'})
-            this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
+            this.setInventoryFilters({type:'returnedFilter', value:'both'})
+            this.setInventoryFilters({type:'expiryFilter', value:'all'})
+            this.setInventoryFilters({type:'scheduledFilter', value:'both'})
+            this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
+            this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'group'})
           }else if(this.selectedExamType === 'all'){
+            this.setInventoryFilters({type:'returnedFilter', value:'both'})
+            this.setInventoryFilters({type:'expiryFilter', value:'all'})
+            this.setInventoryFilters({type:'scheduledFilter', value:'both'})
+            this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
             this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'both'})
           }
         }else if(option.value === 'all'){
@@ -1197,37 +1246,72 @@
           return lifeRing
         }
         if (item.exam_type.exam_type_name === 'Monthly Session Exam') {
-          if(item.number_of_students === null && length_of_invigilator_array > 0){
-            return exclamationTriangle
-          }
           if (!item.booking) {
             return lifeRing
           }
-          if ((number_of_invigilators < length_of_invigilator_array || length_of_invigilator_array == 0) && !item.booking.sbc_staff_invigilated) {
+          console.log(item.exam_name)
+          console.log(this.checkInvigilator(item))
+          if (!this.checkInvigilator(item)) {
+            console.log('checkInvigilator is false')
             return lifeRing
+          }
+          if (this.filterByExpiry(item)){
+           return lifeRing
+          }
+          if (item.booking){
+             if (moment(item.booking.start_time).isValid()){
+                if (moment(item.booking.start_time).isBefore(moment(), 'day')){
+                   return lifeRing
+                }
+             }
+          }
+          if(item.number_of_students === null && length_of_invigilator_array > 0){
+            return exclamationTriangle
           }
           if (!item.event_id || !item.number_of_students || !item.exam_received_date) {
             return exclamationTriangle
           }
           return clipboardCheck
-        }
-        if (item.exam_type.group_exam_ind) {
+       }
+       if (item.exam_type.group_exam_ind) {
           if (!item.booking) {
             return lifeRing
           }
-          if ((number_of_invigilators < length_of_invigilator_array || length_of_invigilator_array == 0) && !item.booking.sbc_staff_invigilated) {
+          if (item.booking && (!this.checkInvigilator(item))) {
             return lifeRing
+          }
+          if (this.filterByExpiry(item)){
+           return lifeRing
+          }
+          if (item.booking){
+             if (moment(item.booking.start_time).isValid()){
+                if (moment(item.booking.start_time).isBefore(moment(), 'day')){
+                   return lifeRing
+                }
+             }
           }
           if (!item.exam_received_date) {
             return exclamationTriangle
           }
           return clipboardCheck
         }
-        if (item.booking && (number_of_invigilators >= length_of_invigilator_array || item.booking.sbc_staff_invigilated) &&
-            item.exam_received_date) {
-          return clipboardCheck
+        if (this.filterByExpiry(item)){
+           return lifeRing
         }
-        return exclamationTriangle
+        if (item.booking){
+           if (moment(item.booking.start_time).isValid()){
+              if (moment(item.booking.start_time).isBefore(moment(), 'day')){
+                 return lifeRing
+              }
+           }
+        }
+        if (!item.booking) {
+            return exclamationTriangle
+        }
+        if (!item.exam_received_date) {
+            return exclamationTriangle
+        }
+        return clipboardCheck
       },
       stillRequires(item) {
         let output = []
