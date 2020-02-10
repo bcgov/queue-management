@@ -6,7 +6,6 @@ Flask-Cache
 Flask-Login
 Flask-Migrate
 Flask-Moment
-Flask-OIDC
 Flask-RESTplus
 Flask-Script
 Flask-SQLAlchemy
