@@ -8,11 +8,12 @@
                       padding-bottom: 5px;"
                       >
     <b-form-row no-gutters class="m-0 add_citizen_table_header">
-      <b-col cols="1" class="m-0 p-0" v-if="showQuickQIcon">To Q</b-col>
-      <b-col cols="1" class="m-0 p-0">Serve</b-col>
-      <b-col cols="5" class="m-0 p-0">Service</b-col>
+      <b-col cols="2" class="m-0 p-0" v-if="showQuickQIcon">To Q</b-col>
+      <b-col cols="2" class="m-0 p-0">Serve</b-col>
+      <b-col cols="4" class="m-0 p-0">Service</b-col>
       <b-col cols="*" class="m-0 p-0" v-if="!simplifiedModal">Category</b-col>
     </b-form-row>
+
     <b-form-row no-gutters>
       <b-col>
         <div id="innertable"
@@ -131,8 +132,8 @@
         if (!this.simplifiedModal) {
           if (this.showQuickQIcon) {
             displayFields = [
-              { key: 'queueBut', label: 'To Q', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-icon' },
-              { key: 'serveBut', label: 'Begin Service', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-icon' },
+              { key: 'queueBut', label: 'To Q', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-queue' },
+              { key: 'serveBut', label: 'Begin Service', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-servenow-recp' },
               { key: 'service_name', label: 'Service', thClass: 'd-none', sortable: false, style: "width: 5%", tdClass: 'addcit-td width-service' },
               { key: 'parent.service_name', label: 'Category', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-category', },
               {key: 'service_desc', label: '', thClass: 'd-none', sortable: false, tdClass: 'd-none',}
@@ -140,7 +141,7 @@
           }
           else {
             displayFields = [
-              { key: 'serveBut', label: 'Begin Service', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-icon' },
+              { key: 'serveBut', label: 'Begin Service', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-servenow-other' },
               { key: 'service_name', label: 'Service', thClass: 'd-none', sortable: false, style: "width: 5%", tdClass: 'addcit-td width-service' },
               { key: 'parent.service_name', label: 'Category', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-category', },
               {key: 'service_desc', label: '', thClass: 'd-none', sortable: false, tdClass: 'd-none',}
@@ -149,7 +150,7 @@
         }
         else {
           displayFields = [
-            { key: 'serveBut', label: 'Begin Service', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-icon'},
+            { key: 'serveBut', label: 'Begin Service', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-servenow-other'},
             { key: 'service_name', label: 'Service', sortable: false, thClass: 'd-none', tdClass: 'addcit-td',}
           ]
         }
@@ -237,11 +238,18 @@
 .addcit-td {
   cursor: pointer;
 }
-.width-icon {
-  width: 8%;
+.width-queue {
+  width: 16%;
+}
+.width-servenow-recp {
+  width: 16%;
+}
+
+.width-servenow-other {
+  width: 16%;
 }
 .width-service {
-  width: 42%;
+  width: 35%;
 }
 .width-category {
   width: 50%;
