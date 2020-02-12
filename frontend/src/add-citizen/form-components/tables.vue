@@ -21,6 +21,10 @@
                     overflow-y: scroll;
                     margin: 0px;
                     background-color: #fcfcfc">
+        <div>
+                <template v-if="showServeCitizenSpinner">
+                   <div class="q-loader2" ></div>
+                </template>
           <b-table :items="filtered_services"
                    :fields="fields"
                    sort-by="parent.service_name"
@@ -71,6 +75,7 @@
               </div>
             </template>
           </b-table>
+          </div>
         </div>
       </b-col>
     </b-form-row>
@@ -95,7 +100,8 @@
         addCitizenModal: 'addCitizenModal',
         serviceModalForm: 'serviceModalForm',
         addModalForm: 'addModalForm',
-        performingAction: 'performingAction'
+        performingAction: 'performingAction',
+        showServeCitizenSpinner: 'showServeCitizenSpinner',
       }),
       ...mapGetters({
         form_data: 'form_data',
@@ -183,9 +189,11 @@
         }
     },
     sendToQueue() {
+        this.$store.commit('toggleServeCitizenSpinner', true)
         this.actionToExecute = 'sendToQueue'
     },
     serveCustomer() {
+        this.$store.commit('toggleServeCitizenSpinner', true)
         this.actionToExecute = 'serveCustomer'
     },
     serveCustomerAction() {
@@ -237,6 +245,21 @@
 }
 .addcit-td {
   cursor: pointer;
+}
+.q-loader2 {
+  position: relative;
+  text-align: center;
+  margin: 15px auto 35px auto;
+  z-index: 9999;
+  display: block;
+  width: 50px;
+  height: 50px;
+  border: 10px solid LightGrey;
+  opacity:0.9;
+  border-radius: 50%;
+  border-top-color: DodgerBlue;
+  animation: spin 1s ease-in-out infinite;
+  -webkit-animation: spin 1s ease-in-out infinite;
 }
 .width-queue {
   width: 16%;

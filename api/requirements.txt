@@ -31,6 +31,6 @@ pytest
 python-dotenv
 python-jose
 SQLAlchemy-Utc
-# removed 0.2.6 restriction.  Testing to ensure no issues.
+# We need to find alternative to toastedmarshmellow. pydantic
 toastedmarshmallow==0.2.6
 
