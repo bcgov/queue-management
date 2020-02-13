@@ -18,7 +18,7 @@ from flask_restplus import Resource
 from jose import jwt
 from app.models.theq import CSR
 from qsystem import api, application, oidc
-
+import time
 
 @api.route("/login/", methods=["GET"])
 class Login(Resource):
@@ -29,7 +29,7 @@ class Login(Resource):
         if cookie is None:
             return abort(401, self.auth_string)
 
-        if not oidc.validate_token(cookie):
+        if not self.check_cookie(cookie):
             return abort(401, self.auth_string)
 
         claims = jwt.get_unverified_claims(cookie)
@@ -57,6 +57,15 @@ class Login(Resource):
         else:
             return abort(401, self.auth_string)
 
+    def check_cookie(self, cookie):
+        wait = 200.0
+        for count in range(1,6):
+            print("    --> Inside check_cookie: Time " + str(count))
+            valid = oidc.validate_token(cookie)
+            if valid:
+                return valid
+            else:
+                time.sleep(wait / 1000);
 
 @api.route("/logout/", methods=["GET"])
 class Logout(Resource):
