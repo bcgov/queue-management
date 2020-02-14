@@ -97,38 +97,33 @@ class CsrSelf(Resource):
             individual = []
             for exam in office_exams:
 
-                if exam.exam_type.group_exam_ind == 0 and exam.exam_type.exam_type_name != 'Monthly Session Exam':
+                if exam.exam_type.group_exam_ind == 0:
+                    if exam.booking is not None:
+                        attention_needed = attention_needed or exam.booking.start_time < start_date
                     if exam.expiry_date is not None:
-                        attention_needed = attention_needed or exam.expiry_date <= start_date
-                        if exam.booking is not None:
-                            if exam.booking.end_time < start_date:
-                                attention_needed = True
+                        attention_needed = attention_needed or exam.expiry_date < start_date
+                    if exam.exam_returned_date is not None:
+                        attention_needed = False
                     if attention_needed:
                         individual.append(exam)
 
-            #   Only do further checks if attention not already needed.
-            monthly = []
-            if not attention_needed:
-                for exam in office_exams:
-                    if exam.exam_type.exam_type_name == 'Monthly Session Exam':
-                        if exam.booking is None:
-                            attention_needed = True
-                        else:
-                            attention_needed = attention_needed or len(exam.booking.invigilators) == 0
-                            attention_needed = attention_needed or exam.booking.end_time < start_date
-                        if attention_needed:
-                            monthly.append(exam)
 
             #   Only do further checks if attention not already needed.
             group = []
             if not attention_needed:
                 for exam in office_exams:
                     if exam.exam_type.group_exam_ind == 1:
-                        if exam.booking is None:
-                            attention_needed = True
-                        else:
-                            attention_needed = attention_needed or len(exam.booking.invigilators) == 0
-                            attention_needed = attention_needed or exam.booking.end_time < start_date
+                        attention_needed = attention_needed or exam.booking.start_time < start_date
+                        if exam.expiry_date is not None:
+                            attention_needed = attention_needed or exam.expiry_date < start_date
+                        if exam.booking is not None and exam.number_of_students is not None:
+                            attention_needed = attention_needed or exam.booking.start_time < start_date
+                            attention_needed = attention_needed or (len(exam.booking.invigilators) < 1
+                                                                    and exam.number_of_students < 25)
+                            attention_needed = attention_needed or (len(exam.booking.invigilators) < 2
+                                                                    and exam.number_of_students > 24)
+                        if exam.exam_returned_date is not None:
+                            attention_needed = False
                         if attention_needed:
                             group.append(exam)
 

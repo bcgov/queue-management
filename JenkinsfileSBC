@@ -273,8 +273,8 @@ podTemplate(
                 keepAll: true, 
                 reportDir: '/zap/wrk', 
                 reportFiles: 'baseline.html', 
-                reportName: 'ZAP Baseline Scan', 
-                reportTitles: 'ZAP Baseline Scan'
+                reportName: 'ZAP_Baseline_Scan', 
+                reportTitles: 'ZAP_Baseline_Scan'
             ])
             echo "Return value is: ${retVal}"
 
