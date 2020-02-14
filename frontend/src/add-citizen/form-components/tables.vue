@@ -8,10 +8,10 @@
                       padding-bottom: 5px;"
                       >
     <b-form-row no-gutters class="m-0 add_citizen_table_header">
-      <b-col cols="2" class="m-0 p-0" v-if="showQuickQIcon">To Q</b-col>
-      <b-col cols="2" class="m-0 p-0">Serve</b-col>
-      <b-col cols="4" class="m-0 p-0">Service</b-col>
-      <b-col cols="*" class="m-0 p-0" v-if="!simplifiedModal">Category</b-col>
+      <b-col cols="1"  style="text-align: center;" class="m-0 p-0" v-if="showQuickQIcon">To Q</b-col>
+      <b-col cols="2" style="text-align: center;" class="m-0 p-0">Serve</b-col>
+      <b-col cols="4" style="text-align: left;" class="m-0 p-0">Service</b-col>
+      <b-col cols="*" style="text-align: left;" class="m-0 p-0" v-if="!simplifiedModal">&nbsp;&nbsp;&nbsp;&nbsp;Category</b-col>
     </b-form-row>
 
     <b-form-row no-gutters>
@@ -19,6 +19,7 @@
         <div id="innertable"
              style="height: 200px;
                     overflow-y: scroll;
+                    overflow-x: hidden;
                     margin: 0px;
                     background-color: #fcfcfc">
           <div id="navi">
@@ -30,7 +31,7 @@
                      sort-by="parent.service_name"
                      :filter="filter"
                      :small="t"
-                     :bordered="f"
+                     :bordered="t"
                      :striped="f"
                      id="table2"
                      @row-clicked="rowClicked"
@@ -140,7 +141,7 @@
             displayFields = [
               { key: 'queueBut', label: 'To Q', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-queue' },
               { key: 'serveBut', label: 'Begin Service', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-servenow-recp' },
-              { key: 'service_name', label: 'Service', thClass: 'd-none', sortable: false, style: "width: 5%", tdClass: 'addcit-td width-service' },
+              { key: 'service_name', label: 'Service', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-service' },
               { key: 'parent.service_name', label: 'Category', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-category', },
               {key: 'service_desc', label: '', thClass: 'd-none', sortable: false, tdClass: 'd-none',}
             ]
@@ -148,7 +149,7 @@
           else {
             displayFields = [
               { key: 'serveBut', label: 'Begin Service', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-servenow-other' },
-              { key: 'service_name', label: 'Service', thClass: 'd-none', sortable: false, style: "width: 5%", tdClass: 'addcit-td width-service' },
+              { key: 'service_name', label: 'Service', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-service' },
               { key: 'parent.service_name', label: 'Category', thClass: 'd-none', sortable: false, tdClass: 'addcit-td width-category', },
               {key: 'service_desc', label: '', thClass: 'd-none', sortable: false, tdClass: 'd-none',}
               ]
@@ -175,6 +176,7 @@
         'clickEditApply']),
 
     rowClicked(item, index) {
+        this.$store.commit('toggleServeCitizenSpinner', true)
         if (this.performingAction == false) {
           let id = item.service_id
           this.setAddModalSelectedItem(item.service_name)
@@ -189,11 +191,9 @@
         }
     },
     sendToQueue() {
-        this.$store.commit('toggleServeCitizenSpinner', true)
         this.actionToExecute = 'sendToQueue'
     },
-    serveCustomer() {
-        this.$store.commit('toggleServeCitizenSpinner', true)
+    serveCustomer(){
         this.actionToExecute = 'serveCustomer'
     },
     serveCustomerAction() {
@@ -204,7 +204,6 @@
         } else if (this.$route.path == "/appointments") {
           this.$store.commit('appointmentsModule/setSelectedService', this.addModalForm.service)
           this.closeAddServiceModal()
-          this.$store.commit('toggleServeCitizenSpinner', false)
         } else if (this.$route.path == "/booking") {
           this.toggleExamsTrackingIP(true)
           this.clickBeginService({simple: true})
@@ -233,9 +232,6 @@
 <style>
   #navi {
     position: relative;
-    display: block;
-    width: 100%;
-    height: 100%;
   }
   .q-loader2 {
     position: absolute;
@@ -260,7 +256,7 @@
     height: 35px;
     padding-top: 6px;
     padding-left: 0px;
-    text-align: left;
+    text-align: center;
     font-size: 17px;
     text-shadow: 0px 0px 2px #a5a5a5;
     z-index: 1;
@@ -269,19 +265,24 @@
   cursor: pointer;
 }
 .width-queue {
-  width: 16%;
+  width: 8%;
+  text-align: center;
 }
 .width-servenow-recp {
-  width: 16%;
+  width: 10%;
+  text-align: center;
 }
 
 .width-servenow-other {
   width: 16%;
+  text-align: center;
 }
 .width-service {
-  width: 35%;
+  width: 32%;
+  text-align: left;
 }
 .width-category {
-  width: 50%;
+  width: 32%;
+  text-align: left;
 }
 </style>
