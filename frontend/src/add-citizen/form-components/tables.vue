@@ -176,7 +176,6 @@
         'clickEditApply']),
 
     rowClicked(item, index) {
-        this.$store.commit('toggleServeCitizenSpinner', true)
         if (this.performingAction == false) {
           let id = item.service_id
           this.setAddModalSelectedItem(item.service_name)
@@ -191,9 +190,11 @@
         }
     },
     sendToQueue() {
+        this.$store.commit('toggleServeCitizenSpinner', true)
         this.actionToExecute = 'sendToQueue'
     },
     serveCustomer(){
+        this.$store.commit('toggleServeCitizenSpinner', true)
         this.actionToExecute = 'serveCustomer'
     },
     serveCustomerAction() {
