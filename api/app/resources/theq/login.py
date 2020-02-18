@@ -25,6 +25,7 @@ class Login(Resource):
     auth_string = 'Unable to authenticate request. You must be signed in prior to authenticated to the admin pages'
 
     def get(self):
+        print("==> In Python /login/")
         cookie = request.cookies.get("oidc-jwt", None)
         if cookie is None:
             return abort(401, self.auth_string)
@@ -60,12 +61,18 @@ class Login(Resource):
     def check_cookie(self, cookie):
         wait = 200.0
         for count in range(1,6):
-            print("    --> Inside check_cookie: Time " + str(count))
+            print("    --> Inside check_cookie: Time " + str(count) + "; wait on fail: " + str(wait))
             valid = oidc.validate_token(cookie)
+            print("    --> valid was: " + str(valid) + "; setting to False for testing")
+            valid = False
             if valid:
                 return valid
             else:
                 time.sleep(wait / 1000);
+                wait = wait * 1.25
+
+        print("    --> All retries failed")
+        return False
 
 @api.route("/logout/", methods=["GET"])
 class Logout(Resource):
