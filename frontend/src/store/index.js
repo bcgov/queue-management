@@ -546,6 +546,8 @@ export const store = new Vuex.Store({
   actions: {
 
     loginIframe(context) {
+      console.log("==> In loginIframe: context.state.user is")
+      console.log(context.state.user)
       Axios(context).get('/login/')
         .then( () => {
           context.commit('setiframeLogedIn', true)
@@ -2484,6 +2486,14 @@ export const store = new Vuex.Store({
     setMainAlert(state, payload) {
       state.alertMessage = payload
       state.dismissCount = 5
+    },
+
+    setMainAlertLong(state, payload) {
+      console.log("==> In setMainAlertWithTime")
+      console.log("    --> payload:")
+      console.log(payload)
+      state.alertMessage = payload
+      state.dismissCount = 999
     },
 
     setSelectedOffice(state, payload) {

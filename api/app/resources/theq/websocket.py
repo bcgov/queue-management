@@ -18,16 +18,34 @@ from jose import jwt
 from app.models.theq import CSR
 from qsystem import oidc, socketio, my_print
 import json
+import time
 
 @socketio.on('joinRoom')
 def on_join(message):
+
+    def check_cookie(cookie):
+        wait = 200.0
+        for count in range(1,6):
+            print("    --> Inside websocket.py:check_cookie: Time " + str(count) + "; wait on fail: " + str(wait))
+            valid = oidc.validate_token(cookie)
+            print("    --> valid was: " + str(valid) + "; setting to False for testing")
+            valid = False
+            if valid:
+                return valid
+            else:
+                time.sleep(wait / 1000);
+                wait = wait * 1.25
+
+        print("    --> All retries failed")
+        return False
+
     cookie = request.cookies.get("oidc-jwt", None)
     if cookie is None:
         emit('joinRoomFail', {"sucess": False})
         return
 
-    if not oidc.validate_token(cookie):
-        print("Cookie failed validation")
+    if not check_cookie(cookie):
+        print("Cookie failed validation in joinRoom")
         emit('joinRoomFail', {"sucess": False})
         return
 

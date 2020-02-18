@@ -19,7 +19,8 @@ limitations under the License.*/
 </template>
 
 <script>
-  import { mapActions } from 'vuex'
+  import { mapActions, mapMutations } from 'vuex'
+  import Login from "./Login";
 
   var io = require('socket.io-client')
   var socket
@@ -45,6 +46,7 @@ limitations under the License.*/
 
     methods: {
       ...mapActions(['screenIncomingCitizen']),
+      ...mapMutations(['setMainAlertLong']),
 
       connect() {
         socket = io(process.env.SOCKET_URL, {
@@ -105,6 +107,12 @@ limitations under the License.*/
           console.log('socket received: "joinRoomSuccess"')
         } else if (!success) {
           console.log('socket received: "joinRoomFailed"')
+          console.log("--> Login is")
+          console.log(Login)
+          console.log("--> Login methods")
+          console.log(Login.methods)
+          // Login.methods.logout()
+          this.setMainAlertLong('Authentication error.  Authentication servers may be down.  Please try refreshing with PF5.')
         }
       },
 
