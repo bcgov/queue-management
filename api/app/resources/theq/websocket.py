@@ -19,17 +19,20 @@ from app.models.theq import CSR
 from qsystem import oidc, socketio, my_print
 import json
 import time
+import os
 
 @socketio.on('joinRoom')
 def on_join(message):
 
     def check_cookie(cookie):
+        force_fail = os.getenv('FAIL_JOINROOM', 'False').upper() == 'TRUE'
         wait = 200.0
         for count in range(1,6):
             print("    --> Inside websocket.py:check_cookie: Time " + str(count) + "; wait on fail: " + str(wait))
             valid = oidc.validate_token(cookie)
             print("    --> valid was: " + str(valid) + "; setting to False for testing")
-            valid = False
+            if force_fail:
+                valid = False
             if valid:
                 return valid
             else:

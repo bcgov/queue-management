@@ -19,10 +19,12 @@ from jose import jwt
 from app.models.theq import CSR
 from qsystem import api, application, oidc
 import time
+import os
 
 @api.route("/login/", methods=["GET"])
 class Login(Resource):
     auth_string = 'Unable to authenticate request. You must be signed in prior to authenticated to the admin pages'
+    force_fail = os.getenv('FAIL_ADMIN', 'False').upper() == 'TRUE'
 
     def get(self):
         print("==> In Python /login/")
@@ -64,7 +66,8 @@ class Login(Resource):
             print("    --> Inside check_cookie: Time " + str(count) + "; wait on fail: " + str(wait))
             valid = oidc.validate_token(cookie)
             print("    --> valid was: " + str(valid) + "; setting to False for testing")
-            valid = False
+            if self.force_fail:
+                valid = False
             if valid:
                 return valid
             else:
