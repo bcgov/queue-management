@@ -14,7 +14,7 @@ limitations under the License.'''
 
 import logging
 from flask import g
-from flask_restplus import Resource
+from flask_restx import Resource
 from sqlalchemy import exc
 from app.models.bookings import Room
 from app.models.theq import CSR

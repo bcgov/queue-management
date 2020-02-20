@@ -13,7 +13,7 @@ from flask_compress import Compress
 from flask_cors import CORS
 from flask_login import LoginManager
 from flask_marshmallow import Marshmallow
-from flask_restplus import Api
+from flask_restx import Api
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO
 from functools import wraps
@@ -21,6 +21,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.exceptions import AuthError
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
+
 
 def my_print(string):
     if print_flag:

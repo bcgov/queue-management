@@ -161,9 +161,14 @@ class Bootstrap(Command):
             cs_state_name="Left before receiving services",
             cs_state_desc="Citizen left, after ticket creation, before service was started for them"
         )
+        cs4 = theq.CitizenState(
+            cs_state_name="Appointment booked",
+            cs_state_desc="Citizen has booked an appointment"
+        )
         db.session.add(cs1)
         db.session.add(cs2)
         db.session.add(cs3)
+        db.session.add(cs4)
         db.session.commit()
 
         #-- CSR state values     --------------------------------------------

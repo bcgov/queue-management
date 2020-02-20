@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 from flask import g
-from flask_restplus import Resource
+from flask_restx import Resource
 from qsystem import api, db, oidc
 from sqlalchemy import exc
 from app.models.theq import CSRState

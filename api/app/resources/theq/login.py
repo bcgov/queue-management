@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from flask import abort, redirect, request, url_for
 from flask_login import login_user, logout_user
-from flask_restplus import Resource
+from flask_restx import Resource
 from jose import jwt
 from app.models.theq import CSR
 from qsystem import api, application, oidc
