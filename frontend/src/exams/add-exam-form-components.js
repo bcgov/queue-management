@@ -447,7 +447,7 @@ export const LocationInput = Vue.component('input-question', {
                             disabled />
             </b-form-group>
           </b-col>
-          
+
         </b-row>
         <b-row no-gutters v-if="invigilator.show">
           <b-col cols="12">
@@ -524,6 +524,7 @@ export const NotesQuestion = Vue.component('notes-question', {
                       @input.native="handleInput"
                       :rows="3"
                       autocomplete="off"
+                      maxlength="400"
                       :name="q.key"
                       :id="q.key" />
         </b-form-group>

@@ -242,7 +242,7 @@
           <span v-if="!row.item.booking">
             -
           </span>
-          <span v-else-if="checkStartDate(row.item.booking.start_time)"
+          <span v-else-if="checkStartDate(row.item.booking.start_time,row.item.exam_returned_date)"
                 class="expired">
             {{ formatDate(row.item.booking.start_time) }}
           </span>
@@ -255,13 +255,13 @@
         <!--  Field 6 - Expiry Date. -->
         <template slot="expiry_date" slot-scope="row">
           <span v-if="row.item.exam_type.exam_type_name === 'Monthly Session Exam'
-                      && !checkExpiryDate(row.item.expiry_date)">
+                      && !checkExpiryDate(row.item.expiry_date, row.item.exam_returned_date)">
             –
           </span>
-          <span v-else-if="row.item.exam_type.group_exam_ind && !checkExpiryDate(row.item.expiry_date)">
+          <span v-else-if="row.item.exam_type.group_exam_ind && !checkExpiryDate(row.item.expiry_date,row.item.exam_returned_date)">
             –
           </span>
-          <span v-else-if="checkExpiryDate(row.item.expiry_date)"
+          <span v-else-if="checkExpiryDate(row.item.expiry_date,row.item.exam_returned_date)"
                 class="expired">
             {{ formatDate(row.item.expiry_date) }}
           </span>
@@ -879,14 +879,14 @@
         }
         return false
       },
-      checkExpiryDate(date){
-        if(moment(date).isValid() && moment(date).isBefore(moment(), 'day')){
+      checkExpiryDate(date,rdate){
+        if(moment(date).isValid() && moment(date).isBefore(moment(), 'day') && rdate){
           return true
         }
         return false
       },
-      checkStartDate(date){
-        if(moment(date).isValid() && moment(date).isBefore(moment(), 'day')){
+      checkStartDate(date, rdate){
+        if(moment(date).isValid() && moment(date).isBefore(moment(), 'day') && rdate){
           return true
         }
         return false

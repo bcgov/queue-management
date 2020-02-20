@@ -167,7 +167,7 @@
           <b-col>
             <b-form-group>
               <label class="my-0">Notes</label><br>
-              <b-textarea id="notes" v-model="fields.notes" :rows="2" />
+              <b-textarea id="notes" v-model="fields.notes" :rows="2" maxlength="400" />
             </b-form-group>
           </b-col>
         </b-form-row>
@@ -236,7 +236,7 @@
           <b-col>
             <b-form-group>
               <label class="my-0">Notes</label><br>
-              <b-textarea id="notes" v-model="fields.notes" :rows="2" />
+              <b-textarea id="notes" v-model="fields.notes" :rows="2" maxlength = "400" />
             </b-form-group>
           </b-col>
         </b-form-row>
