@@ -15,7 +15,7 @@ limitations under the License.'''
 from functools import cmp_to_key
 from flask import request
 from flask import g
-from flask_restplus import Resource
+from flask_restx import Resource
 from qsystem import api, oidc
 from qsystem import db
 from app.models.theq import Service

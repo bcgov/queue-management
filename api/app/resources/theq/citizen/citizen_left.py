@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 from flask import request, g
-from flask_restplus import Resource
+from flask_restx import Resource
 from qsystem import api, api_call_with_retry, db, oidc, socketio, my_print
 from app.models.theq import Citizen, CSR, CitizenState
 from app.schemas.theq import CitizenSchema, ServiceReqSchema
