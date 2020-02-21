@@ -64,24 +64,23 @@ class BaseConfig(object):
     DB_NAME = os.getenv('DATABASE_NAME','')
     DB_HOST = os.getenv('DATABASE_HOST','')
     DB_PORT = os.getenv('DATABASE_PORT','')
-    DB_TIMEOUT_STRING = os.getenv('DATABASE_TIMEOUT_STRING', '')
-    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}{timeout}'.format(
+    DB_POOL_TIMEOUT_STRING = os.getenv('DATABASE_TIMEOUT_STRING', '')
+    DB_CONNECT_TIMEOUT_STRING = os.getenv('DATABASE_CONNECT_TIMEOUT_STRING', '')
+    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}'.format(
         engine=DB_ENGINE,
         user=DB_USER,
         password=DB_PASSWORD,
         host=DB_HOST,
         port=DB_PORT,
         name=DB_NAME,
-        timeout=DB_TIMEOUT_STRING
     )
 
-    SQLALCHEMY_DATABASE_URI_DISPLAY = '{engine}://{user}:<password>@{host}:{port}/{name}{timeout}'.format(
+    SQLALCHEMY_DATABASE_URI_DISPLAY = '{engine}://{user}:<password>@{host}:{port}/{name}'.format(
         engine=DB_ENGINE,
         user=DB_USER,
         host=DB_HOST,
         port=DB_PORT,
         name=DB_NAME,
-        timeout=DB_TIMEOUT_STRING
     )
 
     #  Get SQLAlchemy environment variables.
@@ -105,10 +104,10 @@ class BaseConfig(object):
         'pool_size' : pool_size,
         'max_overflow' : max_overflow,
         'pool_pre_ping' : True,
-        'pool_timeout': 5,
+        'pool_timeout': DB_POOL_TIMEOUT_STRING,
         'pool_recycle': 3600,
         'connect_args': {
-        'connect_timeout': 3
+        'connect_timeout': DB_CONNECT_TIMEOUT_STRING
         }
     }
 

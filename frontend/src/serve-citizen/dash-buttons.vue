@@ -144,6 +144,7 @@
         if (this.queueLength === 0) {
           this.setMainAlert('The are currently no citizens to invite.')
         } else {
+          console.log('====>dash-buttons.vue ===>invite')
           this.clickInvite()
         }
       },

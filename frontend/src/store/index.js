@@ -1193,6 +1193,7 @@ export const store = new Vuex.Store({
     },
 
     clickBeginService(context, payload) {
+      console.log('====>index.js==> clickBeginService ===>toggleServeCitizenSpinner is TRUE')
       context.commit('toggleServeCitizenSpinner', true)
       let { citizen_id } = context.getters.form_data.citizen
       context.commit('setPerformingAction', true)
@@ -1395,6 +1396,7 @@ export const store = new Vuex.Store({
     },
 
     clickDashTableRow(context, citizen_id) {
+      console.log('====>index.js==> clickDashTableRow ===>toggleServeCitizenSpinner is TRUE')
       context.commit('toggleServeCitizenSpinner', true)
       context.commit('setPerformingAction', true)
 
@@ -1485,6 +1487,7 @@ export const store = new Vuex.Store({
     },
 
     clickInvite(context) {
+      console.log('====>index.js==> clickInvite ===>toggleServeCitizenSpinner is TRUE')
       context.commit('toggleServeCitizenSpinner', true)
       context.commit('setPerformingAction', true)
 
@@ -1589,6 +1592,7 @@ export const store = new Vuex.Store({
     },
 
     clickRowHoldQueue(context, citizen_id) {
+      console.log('====>index.js==> clickRowHoldQueue ===>toggleServeCitizenSpinner is TRUE')
       context.commit('toggleServeCitizenSpinner', true)
       context.commit('setPerformingAction', true)
 
