@@ -4,8 +4,8 @@
  you may not use this file except in compliance with the License.
  You may obtain a copy of the License at
 
- http://www.apache.org/licenses/LICENSE-2.0
 
+ http://www.apache.org/licenses/LICENSE-2.0
  Unless required by applicable law or agreed to in writing, software
  distributed under the License is distributed on an "AS IS" BASIS,
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -1059,7 +1059,7 @@ export const store = new Vuex.Store({
       context.dispatch('toggleModalBack')
       context.commit('toggleAddModal', true)
 
-      Axios(context).post('/citizens/', {})
+      Axios(context).post('/citizens/', {timeout:5000})
         .then(resp => {
             let value = resp.data.citizen
             context.commit('updateAddModalForm', {type:'citizen',value})
@@ -1231,7 +1231,7 @@ export const store = new Vuex.Store({
         context.commit('setDefaultChannel')
       }
 
-      Axios(context).post('/citizens/', {})
+      Axios(context).post('/citizens/', {{timeout:5000}})
         .then(resp => {
           let value = resp.data.citizen
           context.commit('updateAddModalForm', {type:'citizen',value})
@@ -1276,7 +1276,7 @@ export const store = new Vuex.Store({
       context.commit('setPerformingAction', true)
       context.dispatch('toggleModalBack')
 
-      Axios(context).post('/citizens/', {})
+      Axios(context).post('/citizens/', {timeout:5000})
         .then(resp => {
           let value = resp.data.citizen
           context.commit('updateAddModalForm', {type:'citizen',value})
@@ -1318,7 +1318,7 @@ export const store = new Vuex.Store({
       context.commit('setPerformingAction', true)
       context.dispatch('toggleModalBack')
 
-      Axios(context).post('/citizens/', {})
+      Axios(context).post('/citizens/', {timeout:5000})
         .then(resp => {
           let value = resp.data.citizen
           context.commit('updateAddModalForm', {type:'citizen',value})
@@ -1500,6 +1500,8 @@ export const store = new Vuex.Store({
       }).catch(() => {
         console.log('====>clickInvite==> There are no citizens waiting.')
         context.commit('setMainAlert', 'There are no citizens waiting.')
+        console.log('====>index.js==> clickInvite ==> after setMainAlert ===>toggleServeCitizenSpinner is false')
+        context.commit('toggleServeCitizenSpinner', false)
       }).finally(() => {
         console.log('====>clickInvite==> setPerformingAction FALSE')
         context.commit('setPerformingAction', false)
