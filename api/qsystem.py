@@ -334,6 +334,20 @@ def after_cursor_execute(conn, cursor, statement,
         except Exception as err:
             print("==> Error:" + str(err))
 
+
+@event.listens_for(db.engine, 'invalidate')
+def receive_invalidate(dbapi_connection, connection_record, exception):
+    "listen for the 'invalidate' event"
+    print('==> Calling receive_invalidate... try rollback')
+    print('==> Calling receive_invalidate... connection_record=',connection_record)
+    print('==> Calling receive_invalidate... exception=',exception)
+    # ... (event handling logic) ...
+    db.session.rollback()
+    print('==> Calling receive_invalidate... after rollback')
+    db.session.commit()
+    print('==> Calling receive_invalidate... after Commit')
+    print('==> Calling receive_invalidate... exception value after rollback commited=', exception)
+
 @application.after_request
 def apply_header(response):
     response.headers["X-Node-Hostname"] = hostname

@@ -88,11 +88,28 @@ class BaseConfig(object):
     pool_size = int(os.getenv('SQLALCHEMY_POOL_SIZE', '9'))
     max_overflow = int(os.getenv('SQLALCHEMY_MAX_OVERFLOW', '18'))
 
+    # Karims settings
+    # SQLALCHEMY_ENGINE_OPTIONS = {
+    #     'pool_size': pool_size,
+    #     'max_overflow': max_overflow,
+    #     'pool_pre_ping': True,
+    #     'pool_timeout': 5,
+    #     'pool_recycle': 3600,
+    #     'connect_args': {
+    #         'connect_timeout': 3
+    #     }
+    # }
+
     #  Try to set some options to avoid long delays.
-    SQLALCHEMY_ENGINE_OPTIONS = {
+    SQLALCHEMY_ENGINE_OPTIONS  = {
         'pool_size' : pool_size,
         'max_overflow' : max_overflow,
-        'pool_pre_ping' : False
+        'pool_pre_ping' : True,
+        'pool_timeout': 5,
+        'pool_recycle': 3600,
+        'connect_args': {
+        'connect_timeout': 3
+        }
     }
 
     #  Set echo appropriately.

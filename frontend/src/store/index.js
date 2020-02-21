@@ -2145,7 +2145,7 @@ export const store = new Vuex.Store({
       context.commit('toggleAddModal', false)
       context.dispatch('toggleModalBack')
       context.commit('resetAddModalForm')
-      // console.log("====> resetAddCitizenModal set SPINNER to FALSE")
+      console.log("====> resetAddCitizenModal ===>set SPINNER to FALSE")
       context.commit('toggleServeCitizenSpinner', false)
     },
 
@@ -2241,6 +2241,7 @@ export const store = new Vuex.Store({
 
       if (index >= 0) {
         context.commit('updateCitizen', {citizen, index})
+        console.log('===>screenIncomingCitizen  ===> After Update Citizen we turn spinner off')
         context.commit('toggleServeCitizenSpinner', false)
 
       } else {
