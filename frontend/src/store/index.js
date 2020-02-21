@@ -1489,16 +1489,22 @@ export const store = new Vuex.Store({
     clickInvite(context) {
       console.log('====>index.js==> clickInvite ===>toggleServeCitizenSpinner is TRUE')
       context.commit('toggleServeCitizenSpinner', true)
+      console.log('====>clickInvite==> setPerformingAction TRUE')
       context.commit('setPerformingAction', true)
-
+      console.log('====>clickInvite==> dispatch postInvite next')
       context.dispatch('postInvite', 'next').then(() => {
+        console.log('====>clickInvite==> toggleInvitedStatus')
         context.commit('toggleInvitedStatus', true)
+        console.log('====>clickInvite==> toggleServiceModal')
         context.commit('toggleServiceModal', true)
       }).catch(() => {
+        console.log('====>clickInvite==> There are no citizens waiting.')
         context.commit('setMainAlert', 'There are no citizens waiting.')
       }).finally(() => {
+        console.log('====>clickInvite==> setPerformingAction FALSE')
         context.commit('setPerformingAction', false)
       })
+      console.log('====>clickInvite==> flashServeNow STOP')
       context.dispatch('flashServeNow', 'stop')
     },
 
@@ -1796,14 +1802,18 @@ export const store = new Vuex.Store({
 
       let data = { counter_id }
       if (payload==='next') {
+        console.log('====>postInvite ==> calling axios citizens/invite')
         return new Promise((resolve, reject) => {
           let url = `/citizens/invite/`
           Axios(context).post(url, data).then(resp=>{
             resolve(resp)
           }, error => {
+            console.log('====>postInvite ==> ERROR axios citizens/invite')
             reject(error)
           })
+          console.log('====>postInvite ==> AFTER axios citizens/invite call')
         })
+
       } else {
         return new Promise((resolve, reject) => {
           let url = `/citizens/${payload}/invite/`
