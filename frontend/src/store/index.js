@@ -1231,7 +1231,7 @@ export const store = new Vuex.Store({
         context.commit('setDefaultChannel')
       }
 
-      Axios(context).post('/citizens/', {{timeout:5000}})
+      Axios(context).post('/citizens/', {timeout:5000})
         .then(resp => {
           let value = resp.data.citizen
           context.commit('updateAddModalForm', {type:'citizen',value})
