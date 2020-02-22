@@ -1802,12 +1802,13 @@ export const store = new Vuex.Store({
     postInvite(context, payload) {
       let { counter_id } = context.state.user
 
-      let data = { counter_id }
+      let data = {counter_id}
+      let timeout = {timeout:1000}
       if (payload==='next') {
-        console.log('====>postInvite ==> calling axios citizens/invite')
+        console.log('====>postInvite ==> calling axios citizens/invite', data, counter_id, timeout)
         return new Promise((resolve, reject) => {
           let url = `/citizens/invite/`
-          Axios(context).post(url, data).then(resp=>{
+          Axios(context).post(url, data,timeout).then(resp=>{
             resolve(resp)
           }, error => {
             console.log('====>postInvite ==> ERROR axios citizens/invite')
