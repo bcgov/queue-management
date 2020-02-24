@@ -48,8 +48,8 @@ limitations under the License.*/
 
       connect() {
         socket = io(process.env.SOCKET_URL, {
-          timeout: '3000',
-          reconnectionDelayMax: '1000',
+          timeout: '10',
+          reconnectionDelayMax: '1',
           path: '/api/v1/socket.io',
           transports: ['websocket']
         })
