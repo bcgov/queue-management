@@ -631,6 +631,8 @@ export const store = new Vuex.Store({
           resolve(resp.data)
         })
           .catch(error => {
+            console.log('====>index.js==> deleteBooking ===>toggleServeCitizenSpinner is false')
+            context.commit('toggleServeCitizenSpinner', false)
             reject(error)
           })
       })
@@ -641,6 +643,8 @@ export const store = new Vuex.Store({
         Axios(context).delete(`/bookings/recurring/${id}`).then(resp => {
           resolve(resp.data)
         }).catch(error => {
+          console.log('====>index.js==> deleteRecurringBooking ===>toggleServeCitizenSpinner is false')
+          context.commit('toggleServeCitizenSpinner', false)
           reject(error)
         })
       })
@@ -1059,7 +1063,7 @@ export const store = new Vuex.Store({
       context.dispatch('toggleModalBack')
       context.commit('toggleAddModal', true)
 
-      Axios(context).post('/citizens/', {timeout:5000})
+      Axios(context).post('/citizens/', {timeout:3000})
         .then(resp => {
             let value = resp.data.citizen
             context.commit('updateAddModalForm', {type:'citizen',value})
@@ -1125,6 +1129,8 @@ export const store = new Vuex.Store({
         })
       }, error => {
         console.log(error)
+        console.log('====>index.js==> clickAddService ===>toggleServeCitizenSpinner is false')
+        context.commit('toggleServeCitizenSpinner', false)
         context.commit('setPerformingAction', false)
       })
     },
@@ -1143,6 +1149,8 @@ export const store = new Vuex.Store({
           context.commit('setPerformingAction', false)
         })
       }).catch(() => {
+        console.log('====>index.js==> clickAddServiceApply ===>toggleServeCitizenSpinner is false')
+        context.commit('toggleServeCitizenSpinner', false)
         context.commit('setPerformingAction', false)
       })
     },
@@ -1162,9 +1170,13 @@ export const store = new Vuex.Store({
           })
         }).catch(() => {
           context.commit('setPerformingAction', false)
+          console.log('====>index.js==> clickAddToQueue ===>toggleServeCitizenSpinner is false')
+          context.commit('toggleServeCitizenSpinner', false)
         })
       }).catch(() => {
         context.commit('setPerformingAction', false)
+        console.log('====>index.js==> clickAddToQueue ===>toggleServeCitizenSpinner is false')
+        context.commit('toggleServeCitizenSpinner', false)
       })
     },
 
@@ -1213,9 +1225,13 @@ export const store = new Vuex.Store({
           })
         }).catch(() => {
           context.commit('setPerformingAction', false)
+          console.log('====>index.js==> clickBeginService ===>toggleServeCitizenSpinner is false')
+          context.commit('toggleServeCitizenSpinner', false)
         })
       }).catch(() => {
         context.commit('setPerformingAction', false)
+        console.log('====>index.js==> clickBeginService ===>toggleServeCitizenSpinner is false')
+        context.commit('toggleServeCitizenSpinner', false)
       })
     },
 
@@ -1231,7 +1247,7 @@ export const store = new Vuex.Store({
         context.commit('setDefaultChannel')
       }
 
-      Axios(context).post('/citizens/', {timeout:5000})
+      Axios(context).post('/citizens/', {timeout:3000})
         .then(resp => {
           let value = resp.data.citizen
           context.commit('updateAddModalForm', {type:'citizen',value})
@@ -1249,13 +1265,19 @@ export const store = new Vuex.Store({
               })
             }).catch(() => {
               context.commit('setPerformingAction', false)
+              console.log('====>index.js==> clickQuickServe ===>toggleServeCitizenSpinner is false')
+              context.commit('toggleServeCitizenSpinner', false)
             })
           }).catch(() => {
             context.commit('setPerformingAction', false)
+            console.log('====>index.js==> clickQuickServe ===>toggleServeCitizenSpinner is false')
+            context.commit('toggleServeCitizenSpinner', false)
           })
         },
         error => {
           context.commit('setMainAlert', 'An error occurred adding a citizen.')
+          console.log('====>index.js==> An error adding a citizen ===>toggleServeCitizenSpinner is false')
+          context.commit('toggleServeCitizenSpinner', false)
         })
 
       if (context.state.channels.length === 0) {
@@ -1276,7 +1298,7 @@ export const store = new Vuex.Store({
       context.commit('setPerformingAction', true)
       context.dispatch('toggleModalBack')
 
-      Axios(context).post('/citizens/', {timeout:5000})
+      Axios(context).post('/citizens/', {timeout:3000})
         .then(resp => {
           let value = resp.data.citizen
           context.commit('updateAddModalForm', {type:'citizen',value})
@@ -1318,7 +1340,7 @@ export const store = new Vuex.Store({
       context.commit('setPerformingAction', true)
       context.dispatch('toggleModalBack')
 
-      Axios(context).post('/citizens/', {timeout:5000})
+      Axios(context).post('/citizens/', {timeout:3000})
         .then(resp => {
           let value = resp.data.citizen
           context.commit('updateAddModalForm', {type:'citizen',value})
@@ -1336,9 +1358,13 @@ export const store = new Vuex.Store({
               })
             }).catch(() => {
               context.commit('setPerformingAction', false)
+              console.log('====>index.js==> clickQuickBackOffice ===>toggleServeCitizenSpinner is false')
+              context.commit('toggleServeCitizenSpinner', false)
             })
           }).catch(() => {
             context.commit('setPerformingAction', false)
+             console.log('====>index.js==> clickQuickBackOffice ===>toggleServeCitizenSpinner is false')
+          context.commit('toggleServeCitizenSpinner', false)
           })
         })
 
@@ -1431,6 +1457,8 @@ export const store = new Vuex.Store({
         })
       }).catch(() => {
         context.commit('setPerformingAction', false)
+        console.log('====>index.js==> clickEdit ===>toggleServeCitizenSpinner is false')
+        context.commit('toggleServeCitizenSpinner', false)
       })
     },
 
@@ -1448,6 +1476,8 @@ export const store = new Vuex.Store({
         })
       }).catch(() => {
         context.commit('setPerformingAction', false)
+         console.log('====>index.js==> clickEditApply ===>toggleServeCitizenSpinner is false')
+        context.commit('toggleServeCitizenSpinner', false)
       })
     },
 
@@ -1480,9 +1510,13 @@ export const store = new Vuex.Store({
           })
         }).catch(() => {
           context.commit('setPerformingAction', false)
+          console.log('====>index.js==> clickHold ===>toggleServeCitizenSpinner is false')
+          context.commit('toggleServeCitizenSpinner', false)
         })
       }).catch(() => {
         context.commit('setPerformingAction', false)
+        console.log('====>index.js==> clickHold ===>toggleServeCitizenSpinner is false')
+        context.commit('toggleServeCitizenSpinner', false)
       })
     },
 
@@ -1572,9 +1606,13 @@ export const store = new Vuex.Store({
           })
         }).catch(() => {
           context.commit('setPerformingAction', false)
+          console.log('====>index.js==> clickMakeActive ===>toggleServeCitizenSpinner is false')
+          context.commit('toggleServeCitizenSpinner', false)
         })
       }).catch(() => {
         context.commit('setPerformingAction', false)
+        console.log('====>index.js==> clickMakeActive ===>toggleServeCitizenSpinner is false')
+        context.commit('toggleServeCitizenSpinner', false)
       })
     },
 
@@ -1593,9 +1631,13 @@ export const store = new Vuex.Store({
           })
         }).catch(() => {
           context.commit('setPerformingAction', false)
+          console.log('====>index.js==> clickReturnToQueue ===>toggleServeCitizenSpinner is false')
+        context.commit('toggleServeCitizenSpinner', false)
         })
       }).catch(() => {
         context.commit('setPerformingAction', false)
+        console.log('====>index.js==> clickReturnToQueue ===>toggleServeCitizenSpinner is false')
+        context.commit('toggleServeCitizenSpinner', false)
       })
     },
 
@@ -1643,9 +1685,13 @@ export const store = new Vuex.Store({
           })
         }).catch(() => {
           context.commit('setPerformingAction', false)
+           console.log('====>index.js==> clickServiceBeginService ===>toggleServeCitizenSpinner is false')
+        context.commit('toggleServeCitizenSpinner', false)
         })
       }).catch(() => {
         context.commit('setPerformingAction', false)
+         console.log('====>index.js==> clickServiceBeginService ===>toggleServeCitizenSpinner is false')
+        context.commit('toggleServeCitizenSpinner', false)
       })
     },
 
@@ -1670,9 +1716,13 @@ export const store = new Vuex.Store({
           })
         }).catch(() => {
           context.commit('setPerformingAction', false)
+          console.log('====>index.js==> clickServiceFinish ===>toggleServeCitizenSpinner is false')
+        context.commit('toggleServeCitizenSpinner', false)
         })
       }).catch(() => {
         context.commit('setPerformingAction', false)
+        console.log('====>index.js==> clickServiceFinish ===>toggleServeCitizenSpinner is false')
+        context.commit('toggleServeCitizenSpinner', false)
       })
     },
 
@@ -1803,7 +1853,7 @@ export const store = new Vuex.Store({
       let { counter_id } = context.state.user
 
       let data = {counter_id}
-      let timeout = {timeout:1000}
+      let timeout = {timeout:3000}
       if (payload==='next') {
         console.log('====>postInvite ==> calling axios citizens/invite', data, counter_id, timeout)
         return new Promise((resolve, reject) => {
