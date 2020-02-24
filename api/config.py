@@ -64,8 +64,9 @@ class BaseConfig(object):
     DB_NAME = os.getenv('DATABASE_NAME','')
     DB_HOST = os.getenv('DATABASE_HOST','')
     DB_PORT = os.getenv('DATABASE_PORT','')
-    DB_POOL_TIMEOUT_STRING = os.getenv('DATABASE_TIMEOUT_STRING', '')
-    DB_CONNECT_TIMEOUT_STRING = os.getenv('DATABASE_CONNECT_TIMEOUT_STRING', '')
+    DB_POOL_TIMEOUT = int(os.getenv('DATABASE_TIMEOUT_STRING', ''))
+    DB_CONNECT_TIMEOUT = int(os.getenv('DATABASE_CONNECT_TIMEOUT_STRING', ''))
+
     SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}'.format(
         engine=DB_ENGINE,
         user=DB_USER,
@@ -86,6 +87,7 @@ class BaseConfig(object):
     #  Get SQLAlchemy environment variables.
     pool_size = int(os.getenv('SQLALCHEMY_POOL_SIZE', '9'))
     max_overflow = int(os.getenv('SQLALCHEMY_MAX_OVERFLOW', '18'))
+    timeout = int(os.getenv('SQLALCHEMY_TIMEOUT', '10'))
 
     # Karims settings
     # SQLALCHEMY_ENGINE_OPTIONS = {
@@ -104,10 +106,11 @@ class BaseConfig(object):
         'pool_size' : pool_size,
         'max_overflow' : max_overflow,
         'pool_pre_ping' : True,
-        'pool_timeout': 10,
+        'pool_timeout': DB_POOL_TIMEOUT,
         'pool_recycle': 3600,
+        'timeout': timeout,
         'connect_args': {
-        'connect_timeout': 10
+            'connect_timeout': DB_CONNECT_TIMEOUT
         }
     }
 
