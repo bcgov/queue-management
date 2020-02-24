@@ -60,10 +60,13 @@ limitations under the License.*/
       },
 
       addListeners() {
+        console.log("Begin Add Listener");
         socket.on('reconnecting',()=>{this.onReconnecting()})
         socket.on('joinRoomSuccess',()=>{this.onJoinRoom(true)})
         socket.on('joinRoomFail',()=>{this.onJoinRoom(false)})
+        console.log("Call get csr State IDS");
         socket.on('get_Csr_State_IDs',()=>{this.getCsrStateIDs()})
+        console.log("DO WE SEE THIS MESSAGE BEFORE POP UP")
         socket.on('update_customer_list',()=>{this.onUpdateCustomerList()})
         socket.on('update_active_citizen', (citizen) => { this.onUpdateActiveCitizen(citizen) } )
         socket.on('csr_update', (data)=>{this.onCSRUpdate(data)})

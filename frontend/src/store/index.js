@@ -821,12 +821,15 @@ export const store = new Vuex.Store({
     },
 
     getCsrStateIDs(context) {
+      console.log("START getCsrStateIDs");
       Axios(context).get("/csr_states/")
         .then(resp => {
           var states = resp.data.csr_states;
           states.forEach(x => {
+            console.log("Inside for each statement ==>x.csr_state_id",x.csr_state_id);
             context.state.csr_states[x.csr_state_name] = x.csr_state_id;
           });
+          console.log("Outside for each statement ==>x.csr_state_id",x.csr_state_id);
         })
         .catch(error => {
           console.log("error @ store.actions.getCsrStateIDs");
