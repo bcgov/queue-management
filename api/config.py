@@ -104,10 +104,10 @@ class BaseConfig(object):
         'pool_size' : pool_size,
         'max_overflow' : max_overflow,
         'pool_pre_ping' : True,
-        'pool_timeout': DB_POOL_TIMEOUT_STRING,
+        'pool_timeout': 10,
         'pool_recycle': 3600,
         'connect_args': {
-        'connect_timeout': DB_CONNECT_TIMEOUT_STRING
+        'connect_timeout': 10
         }
     }
 

@@ -771,18 +771,20 @@ export const store = new Vuex.Store({
     },
 
     getAllCitizens(context) {
+      console.log('CALL getAllCitizens')
       let url = '/citizens/'
       return new Promise((resolve, reject) => {
         Axios(context).get(url).then( resp => {
           if (!resp.data.citizens) {
+            console.log('inside !resp.data.citzens')
             context.commit('updateQueue', [])
             resolve()
             return
           }
+          console.log('Always execute updateQueue from here')
           context.commit('updateQueue', resp.data.citizens)
           resolve()
         })
-      })
     },
 
     getCategories(context) {
@@ -1864,10 +1866,9 @@ export const store = new Vuex.Store({
           Axios(context).post(url, data,timeout).then(resp=>{
             resolve(resp)
           }, error => {
-            console.log('====>postInvite ==> ERROR axios citizens/invite')
+            console.log('====>postInvite ==> ERROR axios citizens/invite',error)
             reject(error)
           })
-          console.log('====>postInvite ==> AFTER axios citizens/invite call')
         })
 
       } else {
