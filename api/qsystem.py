@@ -122,7 +122,7 @@ if print_flag:
      print("    --> engine: " + os.getenv('LOG_ENGINEIO', '') + '; flag: ' + str(engine_flag))
      print("    --> pool timeout: " + os.getenv('DATABASE_TIMEOUT_STRING', ''))
      print("    --> connect timeout: " + os.getenv('DATABASE_CONNECT_TIMEOUT_STRING', ''))
-     print("    --> timeout: " + os.getenv('SQLALCHEMY_TIMEOUT', '10'))
+     # print("    --> timeout: " + os.getenv('SQLALCHEMY_TIMEOUT', '10'))
      print("    --> pool size: " + os.getenv('SQLALCHEMY_POOL_SIZE', '9'))
      print("    --> max overflow: " + os.getenv('SQLALCHEMY_MAX_OVERFLOW', '18'))
 

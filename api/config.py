@@ -87,7 +87,7 @@ class BaseConfig(object):
     #  Get SQLAlchemy environment variables.
     pool_size = int(os.getenv('SQLALCHEMY_POOL_SIZE', '9'))
     max_overflow = int(os.getenv('SQLALCHEMY_MAX_OVERFLOW', '18'))
-    db_timeout = int(os.getenv('SQLALCHEMY_TIMEOUT', '10'))
+    # db_timeout = int(os.getenv('SQLALCHEMY_TIMEOUT', '10'))
 
     # Karims settings
     # SQLALCHEMY_ENGINE_OPTIONS = {
@@ -109,8 +109,7 @@ class BaseConfig(object):
         'pool_timeout': DB_POOL_TIMEOUT,
         'pool_recycle': 3600,
         'connect_args': {
-            'connect_timeout': DB_CONNECT_TIMEOUT,
-            'timeout': db_timeout
+            'connect_timeout': DB_CONNECT_TIMEOUT
         }
     }
 
