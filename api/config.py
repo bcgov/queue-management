@@ -109,7 +109,8 @@ class BaseConfig(object):
         'pool_timeout': DB_POOL_TIMEOUT,
         'pool_recycle': 3600,
         'connect_args': {
-            'connect_timeout': DB_CONNECT_TIMEOUT
+            'connect_timeout': DB_CONNECT_TIMEOUT,
+            'options' : '-c statement_timeout=1000'
         }
     }
 
