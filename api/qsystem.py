@@ -49,7 +49,7 @@ cache.init_app(application)
 ma = Marshmallow(application)
 
 #   Set up socket io and rabbit mq.
-socketio = SocketIO(logger=socket_flag, engineio_logger=engine_flag,ping_timeout=3,ping_interval=3,
+socketio = SocketIO(logger=socket_flag, engineio_logger=engine_flag,ping_timeout=6,ping_interval=3,
                     cors_allowed_origins=application.config['CORS_ALLOWED_ORIGINS'])
 
 if application.config['ACTIVE_MQ_URL'] is not None:
