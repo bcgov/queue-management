@@ -781,10 +781,11 @@ export const store = new Vuex.Store({
             resolve()
             return
           }
-          console.log('Always execute updateQueue from here')
+          console.log('Always execute resp.data.citzens',resp.data.citizens)
           context.commit('updateQueue', resp.data.citizens)
           resolve()
         })
+      })
     },
 
     getCategories(context) {
@@ -1860,13 +1861,19 @@ export const store = new Vuex.Store({
       let data = {counter_id}
       let timeout = {timeout:3000}
       if (payload==='next') {
-        console.log('====>postInvite ==> calling axios citizens/invite', data, counter_id, timeout)
+        console.log('====>postInvite ==> calling axios /citizens/invite')
         return new Promise((resolve, reject) => {
           let url = `/citizens/invite/`
           Axios(context).post(url, data,timeout).then(resp=>{
+            console.log('====>postInvite ==> Inside Axios call')
+            console.log('url',url)
+            console.log('data',data)
+            console.log('counter_id',counter_id)
+            console.log('timeout',timeout)
             resolve(resp)
           }, error => {
-            console.log('====>postInvite ==> ERROR axios citizens/invite',error)
+            console.log('====>postInvite ==> ERROR axios citizens/invite')
+            console.log('error',error)
             reject(error)
           })
         })
