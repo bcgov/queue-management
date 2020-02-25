@@ -2,6 +2,7 @@ import logging
 import os
 import dotenv
 from psycopg2.extensions import parse_dsn
+from pprint import pprint
 
 # Load all the environment variables from a .env file located in some directory above.
 dotenv.load_dotenv(dotenv.find_dotenv())
@@ -114,6 +115,9 @@ class BaseConfig(object):
             'options' : '-c statement_timeout=1000'
         }
     }
+
+    print("==> SQLALCHEMY_ENGINE_OPTIONS are:")
+    pprint(SQLALCHEMY_ENGINE_OPTIONS)
 
     #  Set echo appropriately.
     if (os.getenv('SQLALCHEMY_ECHO', "False")).upper() == "TRUE":

@@ -100,10 +100,10 @@ logger.setLevel(logging.DEBUG)
 configure_logging(application)
 
 #  Code to determine all db.engine properties and sub-properties, as necessary.
-if False:
+if True:
     print("==> All DB Engine options")
-    for attr in dir(db.engine):
-        print("    --> db.engine." + attr + " = " + str(getattr(db.engine, attr)))
+    for attr in dir(db._engine_options.keys):
+        print("    --> db._engine_options.keys." + attr + " = " + str(getattr(db._engine_options.keys, attr)))
         # print("db.engine.%s = %s") % (attr, getattr(db.engine, attr))
 
 #  See whether options took.
