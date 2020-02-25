@@ -1,6 +1,7 @@
 import logging
 import os
 import dotenv
+from psycopg2.extensions import parse_dsn
 
 # Load all the environment variables from a .env file located in some directory above.
 dotenv.load_dotenv(dotenv.find_dotenv())
@@ -64,10 +65,10 @@ class BaseConfig(object):
     DB_NAME = os.getenv('DATABASE_NAME','')
     DB_HOST = os.getenv('DATABASE_HOST','')
     DB_PORT = os.getenv('DATABASE_PORT','')
-    DB_POOL_TIMEOUT = int(os.getenv('DATABASE_TIMEOUT_STRING', ''))
-    DB_CONNECT_TIMEOUT = int(os.getenv('DATABASE_CONNECT_TIMEOUT_STRING', ''))
+    DB_POOL_TIMEOUT = os.getenv('DATABASE_TIMEOUT_STRING', '')
+    DB_CONNECT_TIMEOUT = os.getenv('DATABASE_CONNECT_TIMEOUT_STRING', '')
 
-    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}'.format(
+    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}?connect_timeout=3'.format(
         engine=DB_ENGINE,
         user=DB_USER,
         password=DB_PASSWORD,
@@ -133,6 +134,12 @@ class BaseConfig(object):
     VIDEO_PATH = os.getenv('VIDEO_PATH', '')
     BACK_OFFICE_DISPLAY = os.getenv("BACK_OFFICE_DISPLAY", "BackOffice")
     RECURRING_FEATURE_FLAG = os.getenv("RECURRING_FEATURE_FLAG", "On")
+
+
+    #print(parse_dsn(("postgresql://localhost:5000?connect_timeout=10")))
+    #quote_ident("connect_timeout", scope)
+
+
 
 class LocalConfig(BaseConfig):
     DEBUG = True
