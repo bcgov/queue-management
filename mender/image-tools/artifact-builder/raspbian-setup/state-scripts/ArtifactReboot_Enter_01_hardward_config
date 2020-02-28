@@ -9,7 +9,11 @@ disable_splash=1
 hdmi_force_hotplug=1
 
 # To remove the undervoltage warning:
-avoid_warnings=1 
+avoid_warnings=1
+
+# Increase GPU Memory
+gpu_mem_1024=128
+
 END_TEXT
 
 cat << END_TEXT > /uboot/cmdline.txt

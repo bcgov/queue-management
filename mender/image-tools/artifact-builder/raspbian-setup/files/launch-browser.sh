@@ -1,8 +1,14 @@
 #!/bin/bash
 
+until timedatectl status | grep -q "NTP synchronized: yes";
+do
+  sleep 1;
+done
+
+
 sudo systemctl stop splashscreen
 
-xsetroot -solid white 
+xsetroot -solid white
 xsetbg -onroot -shrink -fullscreen -smooth -background white /var/flaskapp/web-service/static/splash.png
 
 # disable DPMS (Energy Star) features.
@@ -24,10 +30,27 @@ while true ; do
 	# to try load the smart board. This ensures that the network is up
 	# before hitting the smartboard
 
-	chromium-browser --ignore-gpu-blacklist --force-gpu-rasterization --enable-zero-copy \
-		--enable-native-gpu-memory-buffers --disable-infobars --disable-session-crashed-bubble \
-		--noerrdialogs --incognito --kiosk \
-		"http://localhost/splash.html"
+	chromium-browser \
+		--ignore-blacklist \
+		--disable-features=TranslateUI \
+		--disable-infobars  --disable-translate \
+		--bwsi --disable-logging \
+		--disable-infobars \
+		--disable-session-crashed-bubble \
+		--noerrdialogs \
+		--start-fullscreen \
+		--ignore-certificate-errors \
+		--disk-cache-size=0 \
+		--use-gl=egl \
+		--gles \
+		--disable-quic \
+		--enable-fast-unload \
+		--enable-checker-imaging \
+		--enable-tcp-fast-open \
+		--enable-native-gpu-memory-buffers \
+		--force-gpu-rasterization \
+		--enable-zero-copy \
+		--kiosk "http://localhost/splash.html"
 
 	sleep 1
 	# Clean out any lingering processes if the browser has died
