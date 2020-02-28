@@ -25,6 +25,7 @@ flask_marshmallow
 flask-socketio
 gunicorn
 marshmallow-sqlalchemy
+minio<6
 psycopg2-binary
 pysnow
 pytest

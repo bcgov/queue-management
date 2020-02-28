@@ -35,6 +35,7 @@ export const examsModule = {
       office_number: 'default',
       returnedFilter: 'unreturned',
       scheduledFilter: 'both',
+      uploaded: 'all'
     },
     invigilators: [],
     examsTrackingIP: false,

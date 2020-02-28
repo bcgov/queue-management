@@ -7,7 +7,7 @@
            hide-cancel
            @shown="initialize"
            @hidden="hideModal"
-           size="md">
+           :size="modalSize">
     <template slot="modal-footer">
       <template v-if="unSubmitted">
         <div v-if="step < lastStep"
@@ -155,6 +155,12 @@
           return []
         }
       },
+      modalSize() {
+        if (this.step == 2 && this.setup === 'pesticide' && this.exam.ind_or_group === 'group') {
+          return 'xl'
+        }
+        return 'md'
+      },
       modalVisible: {
         get() {
           return this.addExamModal.visible
@@ -168,6 +174,10 @@
           return this.tab.step
         }
         return 1
+      },
+      setup() {
+        if (this.addExamModal && this.addExamModal.setup) return this.addExamModal.setup
+        return ''
       },
       tabs() {
         if (this.steps && Array.isArray(this.steps)) {
@@ -218,6 +228,7 @@
       filterKeyPress(e) {
         if (e.keyCode === 13) {
           e.preventDefault()
+          return e
         }
       },
       hideModal() {

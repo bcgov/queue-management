@@ -75,6 +75,8 @@ export const store = new Vuex.Store({
       showRadio: true,
       status: 'unknown',
       notes: false,
+      capturePayee: false,
+      capturePayeeSentReceipt: false,
     },
     categories: [],
     channels: [],
@@ -115,6 +117,7 @@ export const store = new Vuex.Store({
       requireOEMAttentionFilter: 'default',
     },
     invigilators: [],
+    pesticide_invigilators: [],
     shadowInvigilators: [],
     isLoggedIn: false,
     isUploadingFile: false,
@@ -204,24 +207,6 @@ export const store = new Vuex.Store({
   },
 
   getters: {
-    add_modal_steps(state) {
-      if (state.addExamModal && state.addExamModal.setup)  {
-        switch(state.addExamModal.setup) {
-          case 'challenger':
-            return state.addExamModule.addChallengerSteps
-          case 'group':
-            return state.addExamModule.addGroupSteps
-          case 'individual':
-            return state.addExamModule.addIndividualSteps
-          case 'pesticide':
-            return state.addExamModule.addPesticideSteps
-          case 'other':
-            return state.addExamModule.addOtherSteps
-          default:
-            return []
-        }
-      }
-    },
 
     admin_navigation_nonblank(state) {
       if (state.adminNavigation != '') { return state.adminNavigation }
@@ -303,8 +288,14 @@ export const store = new Vuex.Store({
     },
 
     exam_inventory(state) {
-      if (state.showExamInventoryModal) {
+      if ( state.showExamInventoryModal ) {
         return state.exams.filter(exam => exam.booking_id === null)
+      }
+      if ( state.addExamModule.showAllPesticideExams ) {
+        if ( Array.isArray(state.addExamModule.allPesticideExams) ) {
+          return state.addExamModule.allPesticideExams
+        }
+        return []
       }
       return state.exams
     },
@@ -942,12 +933,48 @@ export const store = new Vuex.Store({
       })
     },
 
+    getPesticideOfficeInvigilators(context) {
+      return new Promise ((resolve, reject) => {
+        Axios(context).get('/invigilators/')
+          .then(resp => {
+            context.commit('setPesticideInvigilators', resp.data.invigilators)
+            resolve(resp)
+          })
+          .catch(error => {
+            console.log(error)
+            reject(error)
+          })
+      })
+    },
+
     getInvigilatorsWithShadowFlag(context) {
       return new Promise ((resolve, reject) => {
         Axios(context).get('/invigilators/')
           .then(resp => {
             context.commit('setInvigilators', resp.data.invigilators)
             resolve(resp)
+          })
+          .catch(error => {
+            console.log(error)
+            reject(error)
+          })
+      })
+    },
+
+    emailInvigilator(context, payload) {
+      console.log(payload)
+      const postData = {
+        invigilator_id: payload.invigilator_id,
+        invigilator_name: payload.invigilator_name,
+        invigilator_email: payload.contact_email,
+        invigilator_phone: payload.contact_phone,
+      }
+      const exam = context.state.selectedExam
+
+      return new Promise ((resolve, reject) => {
+        Axios(context).post(`/exams/${exam.exam_id}/email_invigilator/`, postData)
+          .then(resp => {
+            resolve(resp.data)
           })
           .catch(error => {
             console.log(error)
@@ -1011,6 +1038,13 @@ export const store = new Vuex.Store({
             console.log(error.response)
             console.log(error.message)
           })
+    },
+
+    updateExamStatus(context) {
+      Axios(context).post(`/exams/bcmp_status/`)
+        .then( resp => {
+          context.dispatch('getExams')
+        })
     },
 
     getUser(context) {
@@ -1172,6 +1206,8 @@ export const store = new Vuex.Store({
     },
 
     clickAddExamSubmit(context, type) {
+    console.log("Submitting exam")
+    console.log(context)
       return new Promise((resolve, reject) => {
         if (type === 'challenger') {
           context.dispatch('postITAChallengerExam').then(() => {
@@ -2013,6 +2049,7 @@ export const store = new Vuex.Store({
 
     postITAIndividualExam(context) {
       let responses = Object.assign( {}, context.state.capturedExam)
+      console.log(responses)
       if (responses.on_or_off) {
         if (responses.on_or_off === 'off') {
           responses.offsite_location = '_offsite'
@@ -2037,6 +2074,16 @@ export const store = new Vuex.Store({
           delete responses.exam_received_date
         }
       }
+
+      if (context.state.addExamModal.setup === 'pesticide' && !responses.exam_name) {
+        responses.exam_name = "pesticide"
+      }
+
+      responses.receipt = responses.receipt_number
+      responses.payee_ind = context.state.captureITAExamTabSetup.capturePayee
+      responses.receipt_sent_ind = context.state.captureITAExamTabSetup.payeeSentReceipt
+      responses.sbc_managed_ind = responses.sbc_managed === "sbc" ? 1 : 0
+
       let postData = {...responses, ...defaultValues}
 
       return new Promise((resolve, reject) => {
@@ -2557,6 +2604,10 @@ export const store = new Vuex.Store({
       state.invigilators = payload
     },
 
+    setPesticideInvigilators(state, payload) {
+      state.pesticide_invigilators = payload
+    },
+
     updateCitizen(state, payload) {
       Vue.set(state.citizens, payload.index, payload.citizen)
     },
@@ -2626,6 +2677,12 @@ export const store = new Vuex.Store({
     setPerformingAction: (state, payload) => state.performingAction = payload,
 
     setUserLoadingFail: (state, payload) => state.userLoadingFail = payload,
+
+    setGroupExam: (state, payload) => state.groupExam = payload,
+
+    setGroupIndividualExam: (state, payload) => state.groupIndividualExam = payload,
+
+    setIndividualExam: (state, payload) => state.individualExam = payload,
 
     showHideResponseModal(state) {
       state.showResponseModal = true
@@ -2750,6 +2807,8 @@ export const store = new Vuex.Store({
 
     toggleEditExamModal: (state, payload) => state.showEditExamModal = payload,
 
+    toggleSelectInvigilatorModal: (state, payload) => state.showSelectInvigilatorModal = payload,
+
     toggleReturnExamModal: (state, payload) => state.showReturnExamModal = payload,
 
     toggleDeleteExamModalVisible: (state, payload) => state.showDeleteExamModal = payload,
@@ -2852,5 +2911,12 @@ export const store = new Vuex.Store({
     setOffsiteOnly: (state, payload) => state.offsiteOnly = payload,
 
     toggleTimeTrackingIcon: (state, payload) => state.showTimeTrackingIcon = payload,
+
+    deleteCapturedExamKey(state, payload) {
+      Vue.delete(
+        state.capturedExam,
+        payload
+      )
+    }
   }
 })
