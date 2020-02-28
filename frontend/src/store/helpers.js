@@ -1,13 +1,15 @@
 import axios from 'axios'
 
 export function Axios(context) {
+  let bearer = typeof context === 'object' ? context.state.bearer : context
+
   return(
     axios.create({
       baseURL: process.env.API_URL,
       withCredentials: true,
       headers: {
         'Accept': 'application/json',
-        'Authorization': `Bearer ${context.state.bearer}`
+        'Authorization': `Bearer ${bearer}`
       }
     })
   )
