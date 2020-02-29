@@ -28,6 +28,9 @@ shopt -s extglob
 rm -rf /usr/share/locale/!(en|en*|locale.alias)
 rm -rf /usr/share/i18n/locales/!(en|en*|translit)
 
+# Add Reboot at Midnight
+cp crontab /etc/
+
 # Restore init_resize
 mkdir -p /usr/lib/raspi-config/
 cp /root/init_resize.sh /usr/lib/raspi-config/
