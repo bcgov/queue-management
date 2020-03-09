@@ -158,7 +158,7 @@ class CitizenGenericInvite(Resource):
                 return {"message": "Error inviting citizen. Please try again."}, 400
 
 
-            active_service_state = find_active_ss(citizen)
+            active_service_state = find_active_ss()
             print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_active_ss:", active_service_state)
             active_service_request.sr_state_id = active_service_state.sr_state_id
             db.session.add(citizen)
