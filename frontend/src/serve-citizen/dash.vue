@@ -213,6 +213,7 @@ import GAScreen from './../ga-screen/ga-screen'
         if (this.queueLength === 0) {
           this.setMainAlert('The are currently no citizens to invite.')
         } else {
+          console.log('====>dash.vue ===>invite')
           this.clickInvite()
         }
       },

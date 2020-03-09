@@ -1,6 +1,8 @@
 import logging
 import os
 import dotenv
+from psycopg2.extensions import parse_dsn
+from pprint import pprint
 
 # Load all the environment variables from a .env file located in some directory above.
 dotenv.load_dotenv(dotenv.find_dotenv())
@@ -64,36 +66,58 @@ class BaseConfig(object):
     DB_NAME = os.getenv('DATABASE_NAME','')
     DB_HOST = os.getenv('DATABASE_HOST','')
     DB_PORT = os.getenv('DATABASE_PORT','')
-    DB_TIMEOUT_STRING = os.getenv('DATABASE_TIMEOUT_STRING', '')
-    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}{timeout}'.format(
+    DB_POOL_TIMEOUT = os.getenv('DATABASE_TIMEOUT_STRING', '')
+    DB_CONNECT_TIMEOUT = os.getenv('DATABASE_CONNECT_TIMEOUT_STRING', '')
+
+    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}?connect_timeout=3'.format(
         engine=DB_ENGINE,
         user=DB_USER,
         password=DB_PASSWORD,
         host=DB_HOST,
         port=DB_PORT,
         name=DB_NAME,
-        timeout=DB_TIMEOUT_STRING
     )
 
-    SQLALCHEMY_DATABASE_URI_DISPLAY = '{engine}://{user}:<password>@{host}:{port}/{name}{timeout}'.format(
+    SQLALCHEMY_DATABASE_URI_DISPLAY = '{engine}://{user}:<password>@{host}:{port}/{name}'.format(
         engine=DB_ENGINE,
         user=DB_USER,
         host=DB_HOST,
         port=DB_PORT,
         name=DB_NAME,
-        timeout=DB_TIMEOUT_STRING
     )
 
     #  Get SQLAlchemy environment variables.
     pool_size = int(os.getenv('SQLALCHEMY_POOL_SIZE', '9'))
     max_overflow = int(os.getenv('SQLALCHEMY_MAX_OVERFLOW', '18'))
+    # db_timeout = int(os.getenv('SQLALCHEMY_TIMEOUT', '10'))
+
+    # Karims settings
+    # SQLALCHEMY_ENGINE_OPTIONS = {
+    #     'pool_size': pool_size,
+    #     'max_overflow': max_overflow,
+    #     'pool_pre_ping': True,
+    #     'pool_timeout': 5,
+    #     'pool_recycle': 3600,
+    #     'connect_args': {
+    #         'connect_timeout': 3
+    #     }
+    # }
 
     #  Try to set some options to avoid long delays.
-    SQLALCHEMY_ENGINE_OPTIONS = {
+    SQLALCHEMY_ENGINE_OPTIONS  = {
         'pool_size' : pool_size,
         'max_overflow' : max_overflow,
-        'pool_pre_ping' : False
+        'pool_pre_ping' : True,
+        'pool_timeout': DB_POOL_TIMEOUT,
+        'pool_recycle': 3600,
+        'connect_args': {
+            'connect_timeout': DB_CONNECT_TIMEOUT,
+            'options' : '-c statement_timeout=1000'
+        }
     }
+
+    print("==> SQLALCHEMY_ENGINE_OPTIONS are:")
+    pprint(SQLALCHEMY_ENGINE_OPTIONS)
 
     #  Set echo appropriately.
     if (os.getenv('SQLALCHEMY_ECHO', "False")).upper() == "TRUE":
@@ -114,6 +138,12 @@ class BaseConfig(object):
     VIDEO_PATH = os.getenv('VIDEO_PATH', '')
     BACK_OFFICE_DISPLAY = os.getenv("BACK_OFFICE_DISPLAY", "BackOffice")
     RECURRING_FEATURE_FLAG = os.getenv("RECURRING_FEATURE_FLAG", "On")
+
+
+    #print(parse_dsn(("postgresql://localhost:5000?connect_timeout=10")))
+    #quote_ident("connect_timeout", scope)
+
+
 
 class LocalConfig(BaseConfig):
     DEBUG = True

@@ -49,7 +49,7 @@ cache.init_app(application)
 ma = Marshmallow(application)
 
 #   Set up socket io and rabbit mq.
-socketio = SocketIO(logger=socket_flag, engineio_logger=engine_flag,
+socketio = SocketIO(logger=socket_flag, engineio_logger=engine_flag,ping_timeout=6,ping_interval=3,
                     cors_allowed_origins=application.config['CORS_ALLOWED_ORIGINS'])
 
 if application.config['ACTIVE_MQ_URL'] is not None:
@@ -100,15 +100,16 @@ logger.setLevel(logging.DEBUG)
 configure_logging(application)
 
 #  Code to determine all db.engine properties and sub-properties, as necessary.
-if False:
+if True:
     print("==> All DB Engine options")
-    for attr in dir(db.engine):
-        print("    --> db.engine." + attr + " = " + str(getattr(db.engine, attr)))
+    for attr in dir(db._engine_options.keys):
+        print("    --> db._engine_options.keys." + attr + " = " + str(getattr(db._engine_options.keys, attr)))
         # print("db.engine.%s = %s") % (attr, getattr(db.engine, attr))
 
 #  See whether options took.
 if print_flag:
      print("==> DB Engine options")
+     print("    --> db options:    " + str(db.engine))
      print("    --> pool size:    " + str(db.engine.pool.size()))
      print("    --> max overflow: " + str(db.engine.pool._max_overflow))
      print("    --> echo:         " + str(db.engine.echo))
@@ -119,6 +120,12 @@ if print_flag:
      print("==> Socket/Engine options")
      print("    --> socket: " + os.getenv('LOG_SOCKETIO', '') + '; flag: ' + str(socket_flag))
      print("    --> engine: " + os.getenv('LOG_ENGINEIO', '') + '; flag: ' + str(engine_flag))
+     print("    --> pool timeout: " + os.getenv('DATABASE_TIMEOUT_STRING', ''))
+     print("    --> connect timeout: " + os.getenv('DATABASE_CONNECT_TIMEOUT_STRING', ''))
+     # print("    --> timeout: " + os.getenv('SQLALCHEMY_TIMEOUT', '10'))
+     print("    --> pool size: " + os.getenv('SQLALCHEMY_POOL_SIZE', '9'))
+     print("    --> max overflow: " + os.getenv('SQLALCHEMY_MAX_OVERFLOW', '18'))
+
      print("")
 
 #  Get list of available loggers.
@@ -333,6 +340,19 @@ def after_cursor_execute(conn, cursor, statement,
                     logger.debug("--> Line " + str(count) + ": " + output_string)
         except Exception as err:
             print("==> Error:" + str(err))
+
+
+@event.listens_for(db.engine, 'invalidate')
+def receive_invalidate(dbapi_connection, connection_record, exception):
+    "listen for the 'invalidate' event"
+    print('==> Calling receive_invalidate... try rollback')
+    # ... (event handling logic) ...
+    if exception != "connection already closed" :
+        print('==> Calling receive_invalidate... exception=', exception)
+        db.session.rollback()
+        print('==> Calling receive_invalidate... after rollback')
+        db.session.commit()
+        print('==> Calling receive_invalidate... after Commit exception value =', exception)
 
 @application.after_request
 def apply_header(response):
