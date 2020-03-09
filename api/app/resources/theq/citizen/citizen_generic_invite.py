@@ -167,8 +167,9 @@ class CitizenGenericInvite(Resource):
                 socketio.emit('update_active_citizen', result.data, room=csr.office_id)
 
                 print("DATETIME:", datetime.now(), "end loop:     ", y , "==>Key : ", key)
-            return {'citizen': result.data,
-                    'errors': result.errors}, 200
+
+        return {'citizen': result.data,
+                'errors': result.errors}, 200
 
 try:
     citizen_state = CitizenState.query.filter_by(cs_state_name="Active").first()
