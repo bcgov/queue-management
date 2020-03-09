@@ -1492,7 +1492,7 @@ export const store = new Vuex.Store({
         context.commit('toggleInvitedStatus', true)
         context.commit('toggleServiceModal', true)
       }).catch(() => {
-        context.commit('setMainAlert', 'There are no citizens waiting.')
+        context.commit('setMainAlert', 'There are no citizens waiting ====> INDEX STORE')
       }).finally(() => {
         context.commit('setPerformingAction', false)
       })
@@ -1793,7 +1793,7 @@ export const store = new Vuex.Store({
       let data = { counter_id }
       if (payload==='next') {
         return new Promise((resolve, reject) => {
-          let url = `/citizens/invite/`
+          let url = `/citizens/invitetest/`
           Axios(context).post(url, data).then(resp=>{
             resolve(resp)
           }, error => {
