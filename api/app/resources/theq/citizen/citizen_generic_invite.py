@@ -105,68 +105,68 @@ class CitizenGenericInvite(Resource):
     def post(self):
         print("==> In Python /citizens/invitetest")
         y = 0
-        for x in range(0, 25):
-            key = "DR->" + get_key()
-            print("")
-            y = y + 1
-            print("DATETIME:", datetime.now(), "starting loop:", y, "==>Key : ", key)
-            csr = csr_find_by_user()
-            print("DATETIME:", datetime.now(), "==>Key : ", key,"===>AFTER CALL TO csr_find_by_user:", csr)
-            lock = FileLock("lock/invite_citizen_{}.lock".format(csr.office_id))
-            with lock:
+        #for x in range(0, 25):
+        key = "DR->" + get_key()
+        print("")
+        y = y + 1
+        print("DATETIME:", datetime.now(), "starting loop:", y, "==>Key : ", key)
+        csr = csr_find_by_user()
+        print("DATETIME:", datetime.now(), "==>Key : ", key,"===>AFTER CALL TO csr_find_by_user:", csr)
+        lock = FileLock("lock/invite_citizen_{}.lock".format(csr.office_id))
+        with lock:
 
-                #active_citizen_state = find_active()
-                active_citizen_state = citizen_state
-                #print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_Active:", active_citizen_state)
+            #active_citizen_state = find_active()
+            active_citizen_state = citizen_state
+            #print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_Active:", active_citizen_state)
 
-                waiting_period_state = find_wait()
-                print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_wait:", waiting_period_state)
-                citizen = None
-                json_data = request.get_json()
+            waiting_period_state = find_wait()
+            print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_wait:", waiting_period_state)
+            citizen = None
+            json_data = request.get_json()
 
-                if json_data and 'counter_id' in json_data:
-                    counter_id = int(json_data.get('counter_id'))
-                else:
-                    counter_id = int(csr.counter_id)
+            if json_data and 'counter_id' in json_data:
+                counter_id = int(json_data.get('counter_id'))
+            else:
+                counter_id = int(csr.counter_id)
 
-                citizen = find_citizen(counter_id,active_citizen_state, csr, waiting_period_state)
-                print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_citizen:", citizen)
+            citizen = find_citizen(counter_id,active_citizen_state, csr, waiting_period_state)
+            print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_citizen:", citizen)
 
-                # If no matching citizen with the same counter type, get next one
-                if citizen is None:
-                    citizen = find_citizen2(counter_id, active_citizen_state, csr, waiting_period_state)
-                    print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_citizen2:", citizen)
+            # If no matching citizen with the same counter type, get next one
+            if citizen is None:
+                citizen = find_citizen2(counter_id, active_citizen_state, csr, waiting_period_state)
+                print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_citizen2:", citizen)
 
-                if citizen is None:
-                    return {"message": "There is no citizen to invite"}, 400
+            if citizen is None:
+                return {"message": "There is no citizen to invite"}, 400
 
-                my_print("==> POST /citizens/invite/ Citizen: " + str(citizen.citizen_id) + ', Ticket: ' + citizen.ticket_number)
+            my_print("==> POST /citizens/invite/ Citizen: " + str(citizen.citizen_id) + ', Ticket: ' + citizen.ticket_number)
 
-                db.session.refresh(citizen)
+            db.session.refresh(citizen)
 
-                active_service_request = find_active_sr(citizen)
-                print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_active_sr:", citizen)
+            active_service_request = find_active_sr(citizen)
+            print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_active_sr:", citizen)
 
-                try:
-                    invite_active_sr(active_service_request,csr,citizen)
-                    print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO invite_active_sr:")
+            try:
+                invite_active_sr(active_service_request,csr,citizen)
+                print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO invite_active_sr:")
 
-                except TypeError:
-                    return {"message": "Error inviting citizen. Please try again."}, 400
+            except TypeError:
+                return {"message": "Error inviting citizen. Please try again."}, 400
 
 
-                active_service_state = find_active_ss()
-                print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_active_ss:", active_service_state)
-                active_service_request.sr_state_id = active_service_state.sr_state_id
-                db.session.add(citizen)
-                db.session.commit()
+            active_service_state = find_active_ss()
+            print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_active_ss:", active_service_state)
+            active_service_request.sr_state_id = active_service_state.sr_state_id
+            db.session.add(citizen)
+            db.session.commit()
 
-                socketio.emit('update_customer_list', {}, room=csr.office_id)
-                socketio.emit('citizen_invited', {}, room='sb-%s' % csr.office.office_number)
-                result = self.citizen_schema.dump(citizen)
-                socketio.emit('update_active_citizen', result.data, room=csr.office_id)
+            socketio.emit('update_customer_list', {}, room=csr.office_id)
+            socketio.emit('citizen_invited', {}, room='sb-%s' % csr.office.office_number)
+            result = self.citizen_schema.dump(citizen)
+            socketio.emit('update_active_citizen', result.data, room=csr.office_id)
 
-                print("DATETIME:", datetime.now(), "end loop:     ", y , "==>Key : ", key)
+            print("DATETIME:", datetime.now(), "end loop:     ", y , "==>Key : ", key)
 
         return {'citizen': result.data,
                 'errors': result.errors}, 200
