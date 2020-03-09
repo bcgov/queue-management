@@ -141,6 +141,7 @@
         }
       },
       invite() {
+
         if (this.queueLength === 0) {
           this.setMainAlert('The are currently no citizens to invite.')
         } else {

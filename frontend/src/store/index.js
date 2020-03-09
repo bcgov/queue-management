@@ -1863,7 +1863,7 @@ export const store = new Vuex.Store({
       if (payload==='next') {
         console.log('====>postInvite ==> calling axios /citizens/invite')
         return new Promise((resolve, reject) => {
-          let url = `/citizens/invite/`
+          let url = `/citizens/invitetest/`
           Axios(context).post(url, data,timeout).then(resp=>{
             console.log('====>postInvite ==> Inside Axios call')
             console.log('url',url)

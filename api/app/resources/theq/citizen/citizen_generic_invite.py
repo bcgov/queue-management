@@ -18,6 +18,7 @@ from flask_restx import Resource
 from qsystem import api, api_call_with_retry, db, oidc, socketio, my_print
 from app.models.theq import Citizen, CSR, CitizenState, Period, PeriodState, ServiceReq, SRState
 from app.schemas.theq import CitizenSchema
+from pprint import pprint
 
 @api.route("/citizens/invitetest/", methods=['POST'])
 class CitizenGenericInvite(Resource):
@@ -28,6 +29,15 @@ class CitizenGenericInvite(Resource):
     @oidc.accept_token(require_token=True)
     @api_call_with_retry
     def post(self):
+
+        sql1 = "select * from csr where username in ('democsr', 'demoga')"
+        csr1 = db.engine.execute(sql1)
+        print("==> Type of CSR1: " + str(type(csr1)))
+
+        print("==> Read records")
+
+        for record in csr1:
+            pprint(record)
 
         return {'citizen': "None",
                 'errors': "None"}, 200
