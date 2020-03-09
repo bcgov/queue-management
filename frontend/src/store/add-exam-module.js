@@ -357,15 +357,15 @@ export const addExamModule = {
       }
 
       let step1 = { ...state.pesticideStep1 }
-      if ( capturedExam.sbc_managed === 'sbc' ) {
-        step1.questions = [...step1.questions, officeSelectQ]
-      }
 
       if ( capturedExam.ind_or_group === 'individual' ) {
         if ( step1.questions.findIndex(step => step.key === 'pesticide_type') === -1 ) {
           step1.questions = [...step1.questions, pesticideTypeQ]
-          return [step1]
         }
+      }
+      if ( capturedExam.sbc_managed === 'sbc' ) {
+        step1.questions = [...step1.questions, officeSelectQ]
+        return [step1]
       }
       return [step1]
     },
