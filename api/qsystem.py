@@ -22,10 +22,15 @@ from app.exceptions import AuthError
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 
-
 def my_print(string):
     if print_flag:
-        print(string)
+        print(time_string() + string)
+
+def time_string():
+    now = datetime.datetime.now()
+    ms = now.strftime("%f")[:3]
+    now_string = now.strftime("%Y-%m-%d %H:%M:%S,")
+    return "[" + now_string + ms + "] "
 
 application = Flask(__name__, instance_relative_config=True)
 
@@ -191,13 +196,13 @@ def print_retry_info(print_debug, parameters, f, kwargs):
     if print_debug:
         msg = "==> RT K:" + parameters['key'] + "; T:" + str(parameters['current_try']) \
             + "; F:" + str(f) + "; KW:" + str(kwargs) if kwargs is not None else "None"
-        print(msg)
+        print(time_string() + msg)
 
 def print_error_info(print_debug, parameters, err):
     if print_debug:
         msg = "==> AE K:" + parameters['key'] + "; T:" + str(parameters['current_try']) \
             + "; E:" + str(err).replace("\n", ">").replace("\r", ">")
-        print(msg)
+        print(time_string() + msg)
 
         #  Print more info, if the builtins.dict error.
         # if "builtins.dict" in str(err):
