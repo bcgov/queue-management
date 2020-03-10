@@ -523,7 +523,6 @@ export const NotesQuestion = Vue.component('notes-question', {
                       @input.native="handleInput"
                       :rows="3"
                       autocomplete="off"
-                      maxlength="400"
                       :name="q.key"
                       :id="q.key" />
         </b-form-group>

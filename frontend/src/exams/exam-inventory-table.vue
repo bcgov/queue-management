@@ -878,7 +878,7 @@
         return false
       },
       checkExpiryDate(date){
-        if(moment(date).isValid() && moment(date).isBefore(moment(), 'day') && rdate){
+        if(moment(date).isValid() && moment(date).isBefore(moment(), 'day')){
           return true
         }
         return false
