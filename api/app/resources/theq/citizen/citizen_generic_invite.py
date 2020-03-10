@@ -103,15 +103,15 @@ class CitizenGenericInvite(Resource):
     @oidc.accept_token(require_token=True)
     #@api_call_with_retry
     def post(self):
-        print("==> In Python /citizens/invitetest")
+        #print("==> In Python /citizens/invitetest")
         y = 0
         #for x in range(0, 25):
         key = "DR->" + get_key()
-        print("")
+        #print("")
         y = y + 1
-        print("DATETIME:", datetime.now(), "starting loop:", y, "==>Key : ", key)
+        #print("DATETIME:", datetime.now(), "starting loop:", y, "==>Key : ", key)
         csr = csr_find_by_user()
-        print("DATETIME:", datetime.now(), "==>Key : ", key,"===>AFTER CALL TO csr_find_by_user:", csr)
+        #print("DATETIME:", datetime.now(), "==>Key : ", key,"===>AFTER CALL TO csr_find_by_user:", csr)
         lock = FileLock("lock/invite_citizen_{}.lock".format(csr.office_id))
         with lock:
 
@@ -120,7 +120,7 @@ class CitizenGenericInvite(Resource):
             #print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_Active:", active_citizen_state)
 
             waiting_period_state = find_wait()
-            print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_wait:", waiting_period_state)
+            #print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_wait:", waiting_period_state)
             citizen = None
             json_data = request.get_json()
 
@@ -130,12 +130,12 @@ class CitizenGenericInvite(Resource):
                 counter_id = int(csr.counter_id)
 
             citizen = find_citizen(counter_id,active_citizen_state, csr, waiting_period_state)
-            print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_citizen:", citizen)
+            #print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_citizen:", citizen)
 
             # If no matching citizen with the same counter type, get next one
             if citizen is None:
                 citizen = find_citizen2(counter_id, active_citizen_state, csr, waiting_period_state)
-                print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_citizen2:", citizen)
+                #print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_citizen2:", citizen)
 
             if citizen is None:
                 return {"message": "There is no citizen to invite"}, 400
@@ -145,18 +145,18 @@ class CitizenGenericInvite(Resource):
             db.session.refresh(citizen)
 
             active_service_request = find_active_sr(citizen)
-            print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_active_sr:", citizen)
+            #print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_active_sr:", citizen)
 
             try:
                 invite_active_sr(active_service_request,csr,citizen)
-                print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO invite_active_sr:")
+                #print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO invite_active_sr:")
 
             except TypeError:
                 return {"message": "Error inviting citizen. Please try again."}, 400
 
 
             active_service_state = find_active_ss()
-            print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_active_ss:", active_service_state)
+            #print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_active_ss:", active_service_state)
             active_service_request.sr_state_id = active_service_state.sr_state_id
             db.session.add(citizen)
             db.session.commit()
@@ -166,7 +166,7 @@ class CitizenGenericInvite(Resource):
             result = self.citizen_schema.dump(citizen)
             socketio.emit('update_active_citizen', result.data, room=csr.office_id)
 
-            print("DATETIME:", datetime.now(), "end loop:     ", y , "==>Key : ", key)
+            #print("DATETIME:", datetime.now(), "end loop:     ", y , "==>Key : ", key)
 
         return {'citizen': result.data,
                 'errors': result.errors}, 200
