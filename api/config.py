@@ -1,7 +1,6 @@
 import logging
 import os
 import dotenv
-from psycopg2.extensions import parse_dsn
 from pprint import pprint
 
 # Load all the environment variables from a .env file located in some directory above.
@@ -69,7 +68,7 @@ class BaseConfig(object):
     DB_POOL_TIMEOUT = os.getenv('DATABASE_TIMEOUT_STRING', '')
     DB_CONNECT_TIMEOUT = os.getenv('DATABASE_CONNECT_TIMEOUT_STRING', '')
 
-    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}?connect_timeout=3'.format(
+    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}'.format(
         engine=DB_ENGINE,
         user=DB_USER,
         password=DB_PASSWORD,
@@ -104,19 +103,47 @@ class BaseConfig(object):
     # }
 
     #  Try to set some options to avoid long delays.
-    SQLALCHEMY_ENGINE_OPTIONS  = {
-        'pool_size' : pool_size,
-        'max_overflow' : max_overflow,
-        'pool_pre_ping' : True,
-        'pool_timeout': DB_POOL_TIMEOUT,
-        'pool_recycle': 3600,
-        'connect_args': {
-            'connect_timeout': DB_CONNECT_TIMEOUT,
-            'options' : '-c statement_timeout=1000'
-        }
+    # SQLALCHEMY_ENGINE_OPTIONS  = {
+    #     'pool_size' : pool_size,
+    #     'max_overflow' : max_overflow,
+    #     'pool_pre_ping' : True,
+    #     'pool_timeout': DB_POOL_TIMEOUT,
+    #     'pool_recycle': 3600,
+    #     'connect_args': {
+    #         'connect_timeout': DB_CONNECT_TIMEOUT,
+    #         'options' : '-c statement_timeout=1000'
+    #     }
+    # }
+
+    #  Get SQLAlchemy environment variables.
+    pool_size = int(os.getenv('SQLALCHEMY_POOL_SIZE', '9'))
+    pool_timeout = os.getenv('SQLALCHEMY_POOL_TIMEOUT', '')
+    connect_timeout_string = os.getenv('SQLALCHEMY_CONNECT_TIMEOUT', '')
+    max_overflow = int(os.getenv('SQLALCHEMY_MAX_OVERFLOW', '18'))
+    pool_pre_ping = (os.getenv('SQLALCHEMY_POOL_PRE_PING', 'False')).upper() == "TRUE"
+
+    #  Try to set some options to avoid long delays.
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_size': pool_size,
+        'max_overflow': max_overflow,
+        'pool_pre_ping': pool_pre_ping
     }
 
-    print("==> SQLALCHEMY_ENGINE_OPTIONS are:")
+    if pool_timeout != "":
+        SQLALCHEMY_ENGINE_OPTIONS['pool_timeout'] = pool_timeout
+
+    if connect_timeout_string != "":
+        connect_timeout = int(connect_timeout_string)
+
+        #   Determine which database engine being used, to use correct syntax.
+        if "PG8000" in DB_ENGINE.upper():
+            SQLALCHEMY_ENGINE_OPTIONS['connect_args'] = {'timeout': connect_timeout}
+            # SQLALCHEMY_ENGINE_OPTIONS['connect_args'] = {'timeout': connect_timeout, 'tcp_user_timeout': 500 }
+        else:
+            # SQLALCHEMY_ENGINE_OPTIONS['connect_args'] = { 'connect_timeout': connect_timeout, 'tcp_user_timeout': 500 }
+            SQLALCHEMY_ENGINE_OPTIONS['connect_args'] = {'connect_timeout': connect_timeout}
+
+    print("==> SQLALCHEMY_ENGINE_OPTIONS (Engine: " + DB_ENGINE)
     pprint(SQLALCHEMY_ENGINE_OPTIONS)
 
     #  Set echo appropriately.

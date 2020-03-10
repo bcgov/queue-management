@@ -1492,7 +1492,7 @@ export const store = new Vuex.Store({
         context.commit('toggleInvitedStatus', true)
         context.commit('toggleServiceModal', true)
       }).catch(() => {
-        context.commit('setMainAlert', 'There are no citizens waiting ====> INDEX STORE')
+        context.commit('setMainAlert', 'There are no citizens waiting.')
       }).finally(() => {
         context.commit('setPerformingAction', false)
       })
@@ -1793,7 +1793,7 @@ export const store = new Vuex.Store({
       let data = { counter_id }
       if (payload==='next') {
         return new Promise((resolve, reject) => {
-          let url = `/citizens/invitetest/`
+          let url = `/citizens/invite/`
           Axios(context).post(url, data).then(resp=>{
             resolve(resp)
           }, error => {
@@ -2145,6 +2145,7 @@ export const store = new Vuex.Store({
       context.commit('toggleAddModal', false)
       context.dispatch('toggleModalBack')
       context.commit('resetAddModalForm')
+      context.commit('toggleServeCitizenSpinner', false)
     },
 
     screenAllCitizens(context, route) {
@@ -2235,11 +2236,11 @@ export const store = new Vuex.Store({
           }
         }
       }
-
       const index = context.state.citizens.map(c => c.citizen_id).indexOf(citizen.citizen_id);
 
       if (index >= 0) {
         context.commit('updateCitizen', {citizen, index})
+        context.commit('toggleServeCitizenSpinner', false)
       } else {
         if (citizen.service_reqs && citizen.service_reqs.length > 0) {
           if (citizen.service_reqs[0].periods && citizen.service_reqs[0].periods.length > 0) {
@@ -2247,7 +2248,6 @@ export const store = new Vuex.Store({
           }
         }
       }
-      context.commit('toggleServeCitizenSpinner', false)
     },
 
     setAddModalData(context) {

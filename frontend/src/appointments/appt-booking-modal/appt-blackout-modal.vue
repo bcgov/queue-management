@@ -396,7 +396,6 @@
                         placeholder="Enter notes about blackout period"
                         rows="3"
                         max-rows="6"
-                        maxlength = "400"
                         size="md">
             </b-textarea>
           </b-form-row>
