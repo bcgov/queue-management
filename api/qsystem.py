@@ -141,7 +141,8 @@ if print_flag:
             if h.__class__.__name__ != "NullHandler":
                 print("        --> name: " + name + "; handler type: " + h.__class__.__name__)
 
-def api_call_with_retry(f, max_time=15000, max_tries=12, delay_first=100, delay_start=200, delay_mult=1.5):
+# def api_call_with_retry(f, max_time=15000, max_tries=12, delay_first=100, delay_start=200, delay_mult=1.5):
+def api_call_with_retry(f, max_time=15000, max_tries=12, delay_first=175, delay_start=175, delay_mult=1.0):
 
     @wraps(f)
     def decorated_function(*args, **kwargs):
