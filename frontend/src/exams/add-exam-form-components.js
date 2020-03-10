@@ -447,6 +447,7 @@ export const LocationInput = Vue.component('input-question', {
                             disabled />
             </b-form-group>
           </b-col>
+
         </b-row>
         <b-row no-gutters v-if="invigilator.show">
           <b-col cols="12">

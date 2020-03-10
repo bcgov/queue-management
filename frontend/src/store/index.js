@@ -2241,6 +2241,7 @@ export const store = new Vuex.Store({
       if (index >= 0) {
         context.commit('updateCitizen', {citizen, index})
         context.commit('toggleServeCitizenSpinner', false)
+        
       } else {
         if (citizen.service_reqs && citizen.service_reqs.length > 0) {
           if (citizen.service_reqs[0].periods && citizen.service_reqs[0].periods.length > 0) {

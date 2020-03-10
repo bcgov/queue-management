@@ -221,8 +221,6 @@
         } else {
           console.log("==> Still no service selected")
         }
-        /*console.log('===> at the end of Serve Customer we should turn off spinner')
-        this.$store.commit('toggleServeCitizenSpinner', false)*/
       },
       closeAddServiceModal() {
         this.resetAddCitizenModal()
