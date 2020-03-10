@@ -94,7 +94,7 @@ def find_active_sr(citizen):
     active_service_request = citizen.get_active_service_request()
     return active_service_request
 
-@api.route("/citizens/invitetest/", methods=['POST'])
+@api.route("/citizens/invite/", methods=['POST'])
 class CitizenGenericInvite(Resource):
 
     citizen_schema = CitizenSchema()
