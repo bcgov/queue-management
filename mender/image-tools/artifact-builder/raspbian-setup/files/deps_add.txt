@@ -11,6 +11,7 @@ xinit
 unclutter
 matchbox-window-manager
 x11-xserver-utils
+xserver-xorg-video-fbturbo
 nginx
 supervisor
 python3-venv
@@ -18,7 +19,6 @@ fim
 fuse
 xloadimage
 jq
-libgtk-3-0
 xcompmgr
 gldriver-test
 libdrm-amdgpu1
