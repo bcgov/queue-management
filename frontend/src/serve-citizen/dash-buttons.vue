@@ -16,7 +16,10 @@
 
 <template>
   <div id="dash-flex-button-container">
-    <div>
+    <div id="navi">
+            <template v-if="showServeCitizenSpinner">
+              <div class="q-loader2" ></div>
+            </template>
       <b-button class="btn-primary mr-1"
                 @click="invite"
                 :disabled="citizenInvited || showTimeTrackingIcon || performingAction || showAdmin"
@@ -86,6 +89,7 @@
         'showTimeTrackingIcon',
         'serveNowStyle',
         'user',
+        'showServeCitizenSpinner'
       ]),
       queueLength() {
         return this.citizens_queue.length
@@ -155,11 +159,30 @@
 </script>
 
 <style scoped>
+  #navi {
+    position: relative;
+    z-index: 1000;
+  }
+  .q-loader2 {
+    position: absolute;
+    text-align: center;
+    margin: 250px auto auto 900px;
+    width: 50px;
+    height: 50px;
+    border: 10px solid LightGrey;
+    opacity:0.9;
+    border-radius: 50%;
+    border-top-color: DodgerBlue;
+    animation: spin 1s ease-in-out infinite;
+    -webkit-animation: spin 1s ease-in-out infinite;
+    z-index: 1500;
+}
   #dash-flex-button-container {
     display: flex;
     justify-content: space-between;
     width: 100%;
     height: 100% !important;
+    z-index: 1;
   }
   .btn-highlighted {
     color: black;
