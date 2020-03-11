@@ -3,8 +3,9 @@
 <template>
   <div id="serveModal" class="serve-modal">
     <div class="serve-modal-content">
+      <div class="navi">
       <template v-if="showServeCitizenSpinner">
-        <div class="q-loader" />
+        <div class="q-loader2" />
       </template>
       <template v-else>
         <b-alert :show="this.alertMessage != ''"
@@ -156,6 +157,7 @@
           </b-container>
         </template>
       </template>
+      </div>
     </div>
   </div>
 </template>
@@ -186,8 +188,10 @@ export default {
   },
   updated() {
     if (!this.citizen && this.citizen.ticket_number === "") {
+      console.log('==> serve-citizen ==> CALLED FROM UPDATED ==> toggleServeCitizenSpinner = TRUE')
       this.$store.commit('toggleServeCitizenSpinner', true)
       this.screenAllCitizens(this.$route).then(() => {
+        console.log('==> serve-citizen ==> CALLED FROM UPDATED ==> toggleServeCitizenSpinner = FALSE')
         this.$store.commit('toggleServeCitizenSpinner', false)
       })
     }
@@ -419,6 +423,19 @@ export default {
   background-color: rgb(0,0,0);
   background-color: rgba(0,0,0,0.4);
   transition: display 1s;
+}
+.q-loader2 {
+    position: absolute;
+    text-align: center;
+    margin: 50px auto auto 300px;
+    width: 50px;
+    height: 50px;
+    border: 10px solid LightGrey;
+    opacity:0.9;
+    border-radius: 50%;
+    border-top-color: DodgerBlue;
+    animation: spin 1s ease-in-out infinite;
+    -webkit-animation: spin 1s ease-in-out infinite;
 }
 .modal_header {
   display: flex;
