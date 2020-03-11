@@ -1,6 +1,6 @@
 #!/bin/bash
 
-until timedatectl status | grep -q "NTP synchronized: yes";
+until timedatectl status | grep -q "synchronized: yes";
 do
   sleep 1;
 done
@@ -39,16 +39,12 @@ while true ; do
 		--disable-session-crashed-bubble \
 		--noerrdialogs \
 		--start-fullscreen \
-		--ignore-certificate-errors \
 		--disk-cache-size=0 \
-		--use-gl=egl \
-		--gles \
 		--disable-quic \
 		--enable-fast-unload \
-		--enable-checker-imaging \
 		--enable-tcp-fast-open \
 		--enable-native-gpu-memory-buffers \
-		--force-gpu-rasterization \
+		--enable-gpu-rasterization \
 		--enable-zero-copy \
 		--kiosk "http://localhost/splash.html"
 

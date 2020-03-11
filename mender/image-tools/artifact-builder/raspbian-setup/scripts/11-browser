@@ -6,13 +6,11 @@ set -ex
 cp launch-browser.sh $home_dir/
 cp sites.txt /root/
 
-# Updates auto-login for X11 to point to tty2
-envsubst '${username}' < autologin@.service > /etc/systemd/system/autologin@.service
-
-chown $username:$username $home_dir/launch-browser.sh
-
+#systemctl set-default multi-user.target
 systemctl set-default graphical.target
-gpasswd -a $username tty
 
-mkdir -p /etc/systemd/system/getty.target.wants
-ln -fs /etc/systemd/system/autologin@.service /etc/systemd/system/getty.target.wants/getty@tty2.service
+ln -fs /lib/systemd/system/getty@.service /etc/systemd/system/getty.target.wants/getty@tty2.service
+# Updates auto-login for X11 to point to tty2
+envsubst '${username}' < autologin.conf > /etc/systemd/system/getty@tty2.service.d/autologin.conf
+chown $username:$username $home_dir/launch-browser.sh
+gpasswd -a $username tty
