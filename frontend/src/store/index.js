@@ -1068,7 +1068,6 @@ export const store = new Vuex.Store({
           error => {
             context.commit('toggleAddModal', false)
             context.commit('setMainAlert', 'An error occurred adding a citizen.')
-            console.log('===>clickAddCitizen=======> Added Spinner FALSE ======')
             context.commit('toggleServeCitizenSpinner', false)
           }).finally(() => {
             context.commit('setPerformingAction', false)
@@ -1164,7 +1163,6 @@ export const store = new Vuex.Store({
           })
         }).catch(() => {
           context.commit('setPerformingAction', false)
-          console.log('===>clickAddToQueue=======> Added Spinner FALSE ======')
           context.commit('toggleServeCitizenSpinner', false)
         })
       }).catch(() => {
@@ -1197,7 +1195,6 @@ export const store = new Vuex.Store({
     },
 
     clickBeginService(context, payload) {
-      console.log('===>clickBeginService=======> Added Spinner True ======')
       context.commit('toggleServeCitizenSpinner', true)
       let { citizen_id } = context.getters.form_data.citizen
       context.commit('setPerformingAction', true)
@@ -1260,7 +1257,6 @@ export const store = new Vuex.Store({
         },
         error => {
           context.commit('setMainAlert', 'An error occurred adding a citizen.')
-          console.log('===>clickQuickServe=======> Added Spinner FALSE ======')
           context.commit('toggleServeCitizenSpinner', false)
         })
 
@@ -1493,7 +1489,6 @@ export const store = new Vuex.Store({
 
     clickInvite(context) {
       context.commit('toggleServeCitizenSpinner', true)
-      console.log('===>clickInvite=======> Added Spinner true ======')
       context.commit('setPerformingAction', true)
 
       context.dispatch('postInvite', 'next').then(() => {
@@ -1501,7 +1496,6 @@ export const store = new Vuex.Store({
         context.commit('toggleServiceModal', true)
       }).catch(() => {
         context.commit('setMainAlert', 'There are no citizens waiting.')
-        console.log('===>clickInvite=======> Added Spinner FALSE ======')
         context.commit('toggleServeCitizenSpinner', false)
       }).finally(() => {
         context.commit('setPerformingAction', false)
@@ -1629,7 +1623,6 @@ export const store = new Vuex.Store({
     },
 
     clickServiceBeginService(context) {
-      console.log('===>clickServiceBeginService=======> Added Spinner True ======')
       context.commit('toggleServeCitizenSpinner', true)
       let { citizen_id } = context.state.serviceModalForm
       context.commit('setPerformingAction', true)
@@ -1643,12 +1636,10 @@ export const store = new Vuex.Store({
           })
         }).catch(() => {
           context.commit('setPerformingAction', false)
-          console.log('===>clickServiceBeginService=======> Added Spinner false ======')
           context.commit('toggleServeCitizenSpinner', false)
         })
       }).catch(() => {
         context.commit('setPerformingAction', false)
-        console.log('===>clickServiceBeginService=======> Added Spinner false ======')
         context.commit('toggleServeCitizenSpinner', false)
       })
     },

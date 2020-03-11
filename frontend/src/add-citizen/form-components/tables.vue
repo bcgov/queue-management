@@ -201,17 +201,14 @@
         //  NOTE!!     When actionToTake is serveCustomer then we execute this code
         if (this.$route.path == "/exams") {
           this.toggleExamsTrackingIP(true)
-          console.log('===>serveCustomerAction====> route.path=exams===> call BeginService')
           this.clickBeginService({simple: true})
         } else if (this.$route.path == "/appointments") {
           this.$store.commit('appointmentsModule/setSelectedService', this.addModalForm.service)
           this.closeAddServiceModal()
         } else if (this.$route.path == "/booking") {
           this.toggleExamsTrackingIP(true)
-          console.log('===>serveCustomerAction====> route.path=booking===> call BeginService')
           this.clickBeginService({simple: true})
         } else if ((!this.simplifiedTicketStarted) && (this.addModalSetup == "reception" || this.addModalSetup == "non_reception")) {
-          console.log('===>serveCustomerAction====> route.path=reception/nonreception===> call BeginService')
           this.clickBeginService({simple: false})
         } else if (this.simplifiedTicketStarted) {
           if (this.addModalSetup == "add_mode") {
