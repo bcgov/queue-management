@@ -17,7 +17,7 @@
 <template>
   <div id="dash-flex-button-container">
     <div id="navi">
-            <template v-if="showServeCitizenSpinner">
+            <template v-if="showInviteCitizenSpinner">
               <div class="q-loader2" ></div>
             </template>
       <b-button class="btn-primary mr-1"
@@ -89,7 +89,7 @@
         'showTimeTrackingIcon',
         'serveNowStyle',
         'user',
-        'showServeCitizenSpinner'
+        'showInviteCitizenSpinner'
       ]),
       queueLength() {
         return this.citizens_queue.length
@@ -166,7 +166,7 @@
   .q-loader2 {
     position: absolute;
     text-align: center;
-    margin: 250px auto auto 900px;
+    margin: 50px auto auto 50px;
     width: 50px;
     height: 50px;
     border: 10px solid LightGrey;

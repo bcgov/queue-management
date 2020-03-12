@@ -173,6 +173,7 @@ export const store = new Vuex.Store({
     showReturnExamModal: false,
     showSelectInvigilatorModal: false,
     showServeCitizenSpinner: false,
+    showInviteCitizenSpinner: false,
     showServiceModal: false,
     showTimeTrackingIcon: false,
     user: {
@@ -1195,10 +1196,9 @@ export const store = new Vuex.Store({
     },
 
     clickBeginService(context, payload) {
+      context.commit('setPerformingAction', true)
       context.commit('toggleServeCitizenSpinner', true)
       let { citizen_id } = context.getters.form_data.citizen
-      context.commit('setPerformingAction', true)
-
       context.dispatch('putCitizen').then( () => {
         context.dispatch('postServiceReq').then( () => {
           context.dispatch('postBeginService', citizen_id).then( () => {
@@ -1214,9 +1214,11 @@ export const store = new Vuex.Store({
           })
         }).catch(() => {
           context.commit('setPerformingAction', false)
+          context.commit('toggleServeCitizenSpinner', false)
         })
       }).catch(() => {
         context.commit('setPerformingAction', false)
+        context.commit('toggleServeCitizenSpinner', false)
       })
     },
 
@@ -1488,7 +1490,7 @@ export const store = new Vuex.Store({
     },
 
     clickInvite(context) {
-      context.commit('toggleServeCitizenSpinner', true)
+      context.commit('toggleInviteCitizenSpinner', true)
       context.commit('setPerformingAction', true)
 
       context.dispatch('postInvite', 'next').then(() => {
@@ -1496,9 +1498,10 @@ export const store = new Vuex.Store({
         context.commit('toggleServiceModal', true)
       }).catch(() => {
         context.commit('setMainAlert', 'There are no citizens waiting.')
-        context.commit('toggleServeCitizenSpinner', false)
+        context.commit('toggleInviteCitizenSpinner', false)
       }).finally(() => {
         context.commit('setPerformingAction', false)
+        context.commit('toggleInviteCitizenSpinner', false)
       })
       context.dispatch('flashServeNow', 'stop')
     },
@@ -1623,9 +1626,10 @@ export const store = new Vuex.Store({
     },
 
     clickServiceBeginService(context) {
+      context.commit('setPerformingAction', true)
       context.commit('toggleServeCitizenSpinner', true)
       let { citizen_id } = context.state.serviceModalForm
-      context.commit('setPerformingAction', true)
+
 
       context.dispatch('putCitizen').then( () => {
         context.dispatch('putServiceRequest').then( () => {
@@ -1652,6 +1656,7 @@ export const store = new Vuex.Store({
         inaccurate_flag = 'false'
       }
       context.commit('setPerformingAction', true)
+      context.commit('toggleServeCitizenSpinner', true)
 
       context.dispatch('putCitizen').then( (resp) => {
         context.dispatch('putServiceRequest').then( () => {
@@ -1665,9 +1670,11 @@ export const store = new Vuex.Store({
           })
         }).catch(() => {
           context.commit('setPerformingAction', false)
+          context.commit('toggleServeCitizenSpinner', false)
         })
       }).catch(() => {
         context.commit('setPerformingAction', false)
+        context.commit('toggleServeCitizenSpinner', false)
       })
     },
 
@@ -2837,6 +2844,9 @@ export const store = new Vuex.Store({
 
     toggleServeCitizenSpinner(state, payload) {
       state.showServeCitizenSpinner = payload
+    },
+    toggleInviteCitizenSpinner(state, payload) {
+      state.showInviteCitizenSpinner = payload
     },
 
     setOffsiteOnly: (state, payload) => state.offsiteOnly = payload,
