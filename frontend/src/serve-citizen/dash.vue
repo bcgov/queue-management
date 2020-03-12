@@ -211,7 +211,7 @@ import GAScreen from './../ga-screen/ga-screen'
       },
       invite() {
         if (this.queueLength === 0) {
-          this.setMainAlert('(dash) The are currently no citizens to invite.')
+          this.setMainAlert('The are currently no citizens to invite.')
         } else {
           this.clickInvite()
         }

@@ -1497,7 +1497,7 @@ export const store = new Vuex.Store({
         context.commit('toggleInvitedStatus', true)
         context.commit('toggleServiceModal', true)
       }).catch(() => {
-        context.commit('setMainAlert', '(index) There are no citizens waiting.')
+        // context.commit('setMainAlert', '(index) There are no citizens waiting.')
         context.commit('toggleInviteCitizenSpinner', false)
       }).finally(() => {
         context.commit('setPerformingAction', false)

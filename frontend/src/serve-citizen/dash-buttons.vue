@@ -146,7 +146,7 @@
       },
       invite() {
         if (this.queueLength === 0) {
-          this.setMainAlert('(dashb) The are currently no citizens to invite.')
+          this.setMainAlert('The are currently no citizens to invite.')
         } else {
           this.clickInvite()
         }
