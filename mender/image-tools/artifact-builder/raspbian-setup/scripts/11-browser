@@ -12,10 +12,11 @@ envsubst '${username}' < autologin@.service > /etc/systemd/system/autologin@.ser
 systemctl set-default graphical.target
 
 ln -fs /lib/systemd/system/getty@.service /etc/systemd/system/getty.target.wants/getty@tty2.service
+mkdir /etc/systemd/system/getty@tty2.service.d/
 
 # Updates auto-login for X11 to point to tty2
 
-#envsubst '${username}' < autologin.conf > /etc/systemd/system/getty@tty2.service.d/autologin.conf
+envsubst '${username}' < autologin.conf > /etc/systemd/system/getty@tty2.service.d/autologin.conf
 
 chown $username:$username $home_dir/launch-browser.sh
 gpasswd -a $username tty
