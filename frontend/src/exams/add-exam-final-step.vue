@@ -177,7 +177,7 @@
         <span class="confirm-item">{{ formatDate(exam.expiry_date) }}</span>
       </b-col>
     </b-row>
-    <b-row no-gutters align-h="between" align-v="end"">
+    <b-row no-gutters align-h="between" align-v="end">
       <b-col cols="1" />
       <b-col cols="3">
         <span class="confirm-header">Exam Time

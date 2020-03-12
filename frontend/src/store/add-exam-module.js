@@ -338,15 +338,11 @@ export const addExamModule = {
         ...getters.pesticideStep1,
         ...getters.pesticideStep2,
         ...getters.pesticideStep3,
-        ...[{
-          step: 4,
-          title: 'Summary',
-          questions: [summaryQ]
-        }],
+        ...getters.pesticideStep4,
       ]
     },
     pesticideStep1(state, getters, rootState) {
-      let { capturedExam } = rootState
+      let { capturedExam, pesticide_invigilators } = rootState
       let pesticideTypeQ = {
         key: 'exam_type_id',
         text: 'Type of Pesticide Exam',
@@ -365,7 +361,17 @@ export const addExamModule = {
       }
       if ( capturedExam.sbc_managed === 'sbc' ) {
         step1.questions = [...step1.questions, officeSelectQ]
-        return [step1]
+      }
+      if ( capturedExam.sbc_managed === 'non-sbc' ) {
+        let inivigilatorQ = {
+          key: 'invigilator',
+          text: 'Invigilator',
+          kind: 'select',
+          options: pesticide_invigilators.map(invigilator => ({ text: invigilator.invigilator_name, value: invigilator.invigilator_id })),
+          minLength: 1,
+          digit: false,
+        }
+        step1.questions = [...step1.questions, offsiteQ, inivigilatorQ]
       }
       return [step1]
     },
@@ -402,6 +408,13 @@ export const addExamModule = {
         return [ state.pesticideStep3_group ]
       }
       return [ state.pesticideStep3 ]
+    },
+    pesticideStep4(state, getters, rootState) {
+      let { capturedExam } = rootState
+
+      let step4 = { ...state.pesticideStep4_summary }
+      
+      return [ step4 ]
     },
   },
   mutations: {
@@ -521,6 +534,7 @@ export const addExamModule = {
     candidates: [],
     challengerBooking: {},
     pesticideExamTypes: [],
+    invigilators: [],
     pesticideGroupStep3: {
       step: 3,
       title: 'Notes',
@@ -555,6 +569,11 @@ export const addExamModule = {
       step: 3,
       title: 'Date, Time & Format',
       questions: [ dateTimeQ, timeQ, offsiteQ, notesQ ]
+    },
+    pesticideStep4_summary: {
+      step: 4,
+      title: 'Summary',
+      questions: [ offsiteQ ]
     },
     showAllPesticideExams: false,
     uploadPesticideModalVisible: false,
