@@ -19,6 +19,21 @@
           {{ item.text }}
       </b-col>
     </b-row>
+    <!-- for SBC Based exam flow -->
+    <template v-if="exam.sbc_managed=='sbc'">
+      <b-row>
+        <b-col cols="12">
+          <span style="font-size:1rem">Request exam to be generated</span>
+        </b-col>
+      </b-row>
+      <b-row class="mt-2" align-v="end">
+        <b-col cols="6" offset="1">
+          <b-button variant="primary">Request Exam</b-button>
+        </b-col>
+        <b-col>
+        </b-col>
+      </b-row>
+    </template>
 
   </b-form>
 </template>

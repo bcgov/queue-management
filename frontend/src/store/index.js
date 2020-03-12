@@ -1227,6 +1227,14 @@ export const store = new Vuex.Store({
       })
     },
 
+    clickRequestExam(context, type) {
+      return new Promise((resolve, reject) => {
+        context.dispatch('postRequestExam').then(() => {
+          resolve('success')
+        }).catch(() => { reject('failed') })
+      })
+    },
+
     clickAdmin(context) {
       context.commit('toggleShowAdmin')
     },
@@ -2087,7 +2095,26 @@ export const store = new Vuex.Store({
       let postData = {...responses, ...defaultValues}
 
       return new Promise((resolve, reject) => {
-        Axios(context).post('/exams/', postData).then( () => { resolve() }).catch( () => { reject() })
+        Axios(context).post('/exams/', postData).then( examResp => {
+          resolve() 
+        }).catch( (err) => { 
+          reject() 
+        })
+      })
+    },
+
+    postRequestExam(context) {
+      let responses = Object.assign( {}, context.state.requestExam)
+      console.log(responses)
+      let postData = {...responses}
+
+      return new Promise((resolve, reject) => {
+        Axios(context).post('/exams/request', postData).then( examResp => { 
+          resolve() 
+        }).catch( (err) => { 
+          console.log(err)
+          reject() 
+        })
       })
     },
 
