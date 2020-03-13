@@ -64,6 +64,7 @@ def find_citizen2(active_citizen_state, csr, waiting_period_state):
         .filter(Period.time_end.is_(None)) \
         .order_by(Citizen.priority, Citizen.citizen_id) \
         .first()
+    return citizen
 
 @oidc.accept_token(require_token=True)
 @api_call_with_retry
@@ -134,7 +135,7 @@ class CitizenGenericInvite(Resource):
 
             # If no matching citizen with the same counter type, get next one
             if citizen is None:
-                citizen = find_citizen2(counter_id, active_citizen_state, csr, waiting_period_state)
+                citizen = find_citizen2(active_citizen_state, csr, waiting_period_state)
                 #print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_citizen2:", citizen)
 
             if citizen is None:
