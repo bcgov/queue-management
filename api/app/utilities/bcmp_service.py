@@ -73,12 +73,29 @@ class BCMPService:
 
         return response
 
-    def create_individual_exam(self, exam, exam_type):
+    def create_individual_exam(self, exam, exam_type, exam_fees, invigilator):
         url = "%s/auth=env_exam;%s/JSON/create:ENV-IPM-EXAM" % (self.base_url, self.auth_token)
+
+        receipt_number = "%s fees" % exam_fees
+        if exam.receipt:
+            receipt_number = exam.receipt
+        
+        invigilator_name = None
+        if invigilator:
+            invigilator_name = invigilator.invigilator_name
+
         bcmp_exam = {
-            "category": exam_type.exam_type_name,
             "students": [
-                {"name": exam.examinee_name}
+                {
+                    "REGISTRAR_name": invigilator_name,
+                    "EXAM_CATEGORY": exam_type.exam_type_name,
+                    "STUDENT_LEGAL_NAME_first": exam.examinee_name,
+                    "STUDENT_LEGAL_NAME_last": exam.examinee_name,
+                    "STUDENT_emailAddress": exam.examinee_email,
+                    "STUDENT_phoneNumber": exam.examinee_phone,
+                    "REGISTRATION_NOTES": exam.notes,
+                    "RECEIPT_RMS_NUMBER": receipt_number
+                }
             ]
         }
 
