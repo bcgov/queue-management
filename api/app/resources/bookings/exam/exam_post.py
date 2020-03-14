@@ -17,11 +17,10 @@ from flask import request, g
 from flask_restx import Resource
 from app.models.theq import CSR, Office
 from flask_restplus import Resource
-from app.models.bookings import ExamType
+from app.models.bookings import ExamType, Invigilator
 from app.schemas.bookings import ExamSchema
 from qsystem import api, api_call_with_retry, db, oidc
 from app.utilities.bcmp_service import BCMPService
-
 
 @api.route("/exams/", methods=["POST"])
 class ExamPost(Resource):
@@ -39,6 +38,13 @@ class ExamPost(Resource):
 
         exam, warning = self.exam_schema.load(json_data)
 
+        print("json_data: ")
+        print(json_data)
+        print(json_data["invigilator_id"])
+        print(json_data["fees"])
+
+        exam_fees = json_data["fees"]
+
         if warning:
             logging.warning("WARNING: %s", warning)
             return {"message": warning}, 422
@@ -50,29 +56,48 @@ class ExamPost(Resource):
             exam_type = ExamType.query.filter_by(pesticide_exam_ind=1, group_exam_ind=1).first()
             exam.exam_type = exam_type
 
-        if exam_type.pesticide_exam_ind:
-            if not exam_type.group_exam_ind:
-                logging.info("Create BCMP exam since this is a pesticide exam")
+        invigilator = None
+        if exam.invigilator_id:
+            invigilator = Invigilator.query.filter_by(invigilator_id=exam.invigilator_id).first()
 
+        if (json_data["ind_or_group"] == "individual"):
+            if exam_type.pesticide_exam_ind:
                 if json_data["sbc_managed"] != "sbc":
-                    print("Setting non-SBC shit")
                     pesticide_office = Office.query.filter_by(office_name="Pesticide Offsite").first()
                     exam.office_id = pesticide_office.office_id
-
-                if exam_type.group_exam_ind:
-                    logging.info("Creating group pesticide exam")
-                    bcmp_response = self.bcmp_service.create_group_exam(exam)
-                else:
-                    logging.info("Creating individual pesticide exam")
-                    bcmp_response = self.bcmp_service.create_individual_exam(exam, exam_type)
+                
+                logging.info("Creating individual pesticide exam")
+                bcmp_response = self.bcmp_service.create_individual_exam(exam, exam_type, exam_fees, invigilator)
 
                 if bcmp_response:
                     exam.bcmp_job_id = bcmp_response['jobId']
             else:
-                print("Do the group exam shit here")
-        else:
-            if not (exam.office_id == csr.office_id or csr.liaison_designate == 1):
-                return {"The Exam Office ID and CSR Office ID do not match!"}, 403
+                if not (exam.office_id == csr.office_id or csr.liaison_designate == 1):
+                    return {"The Exam Office ID and CSR Office ID do not match!"}, 403
+
+                    
+        # if exam_type.pesticide_exam_ind:
+        #     if not exam_type.group_exam_ind:
+        #         logging.info("Create BCMP exam since this is a pesticide exam")
+
+        #         if json_data["sbc_managed"] != "sbc":
+        #             pesticide_office = Office.query.filter_by(office_name="Pesticide Offsite").first()
+        #             exam.office_id = pesticide_office.office_id
+
+        #         if exam_type.group_exam_ind:
+        #             logging.info("Creating group pesticide exam")
+        #             bcmp_response = self.bcmp_service.create_group_exam(exam)
+        #         else:
+        #             logging.info("Creating individual pesticide exam")
+        #             bcmp_response = self.bcmp_service.create_individual_exam(exam, exam_type)
+
+        #         if bcmp_response:
+        #             exam.bcmp_job_id = bcmp_response['jobId']
+        #     else:
+        #         print("Do the group exam shit here")
+        # else:
+        #     if not (exam.office_id == csr.office_id or csr.liaison_designate == 1):
+        #         return {"The Exam Office ID and CSR Office ID do not match!"}, 403
 
         db.session.add(exam)
         db.session.commit()

@@ -364,12 +364,12 @@ export const addExamModule = {
       }
       if ( capturedExam.sbc_managed === 'non-sbc' ) {
         let inivigilatorQ = {
-          key: 'invigilator',
+          key: 'invigilator_id',
           text: 'Invigilator',
           kind: 'select',
-          options: pesticide_invigilators.map(invigilator => ({ text: invigilator.invigilator_name, value: invigilator.invigilator_id })),
+          options: pesticide_invigilators.map(invigilator => ({ text: invigilator.invigilator_name, value: parseInt(invigilator.invigilator_id) })),
           minLength: 1,
-          digit: false,
+          digit: true,
         }
         step1.questions = [...step1.questions, offsiteQ, inivigilatorQ]
       }

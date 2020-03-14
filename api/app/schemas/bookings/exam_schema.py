@@ -15,7 +15,7 @@ limitations under the License.'''
 from marshmallow import fields
 import toastedmarshmallow
 from app.models.bookings import Exam
-from app.schemas.bookings import BookingSchema, ExamTypeSchema
+from app.schemas.bookings import BookingSchema, ExamTypeSchema, InvigilatorSchema
 from app.schemas.theq import OfficeSchema
 from qsystem import ma
 
@@ -36,25 +36,32 @@ class ExamSchema(ma.ModelSchema):
     exam_received_date = fields.DateTime(allow_none=True)
     exam_type_id = fields.Int()
     examinee_name = fields.Str()
+    examinee_phone = fields.Str()
+    examinee_email = fields.Str()
     expiry_date = fields.DateTime()
     notes = fields.Str(allow_none=True)
     number_of_students = fields.Int()
     office_id = fields.Int()
+    invigilator_id = fields.Int()
     session_number = fields.Int()
+    exam_returned_ind = fields.Int()
     exam_returned_date = fields.Str(allow_none=True)
-    exam_returned_tracking_number = fields.String(allow_none=True)
+    exam_returned_tracking_number = fields.Str(allow_none=True)
     exam_written_ind = fields.Int()
-    offsite_location = fields.String()
+    offsite_location = fields.Str()
     sbc_managed_ind = fields.Int()
-    receipt = fields.String()
+    receipt = fields.Str()
+    receipt_number = fields.Str()
+    fees = fields.Str()
     payee_ind = fields.Int()
     receipt_sent_ind = fields.Int()
-    payee_name = fields.String()
-    payee_email = fields.String()
-    payee_phone = fields.String()
+    payee_name = fields.Str()
+    payee_email = fields.Str()
+    payee_phone = fields.Str()
 
     booking = fields.Nested(BookingSchema())
     exam_type = fields.Nested(ExamTypeSchema())
+    invigilator = fields.Nested(InvigilatorSchema())
     office = fields.Nested(OfficeSchema(only=('appointments_enabled_ind', 'exams_enabled_ind', 'office_id',
                                               'office_name', 'office_number', 'timezone')))
 
