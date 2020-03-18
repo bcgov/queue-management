@@ -12,8 +12,7 @@
                        autocomplete="off"
                        class="my-0 pb-0"
                        size="sm"
-                       @click.prevent
-                       @input.prevent="clickSelectItem"
+                       @click="clickSelectItem"
                        :select-size="6" />
       </b-col>
     </b-row>

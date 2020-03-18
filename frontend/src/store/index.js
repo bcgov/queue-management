@@ -2094,6 +2094,10 @@ export const store = new Vuex.Store({
 
       let postData = {...responses, ...defaultValues}
 
+      if(responses['ind_or_group'] === 'group') {
+        postData.candidates = (context.state.addExamModule && context.state.addExamModule.candidates) ? context.state.addExamModule.candidates : []
+      }
+
       return new Promise((resolve, reject) => {
         Axios(context).post('/exams/', postData).then( examResp => {
           resolve() 

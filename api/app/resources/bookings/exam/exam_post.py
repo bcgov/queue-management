@@ -13,6 +13,8 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import logging
+import uuid
+import copy
 from flask import request, g
 from flask_restx import Resource
 from app.models.theq import CSR, Office
@@ -40,10 +42,6 @@ class ExamPost(Resource):
 
         print("json_data: ")
         print(json_data)
-        print(json_data["invigilator_id"])
-        print(json_data["fees"])
-
-        exam_fees = json_data["fees"]
 
         if warning:
             logging.warning("WARNING: %s", warning)
@@ -60,11 +58,14 @@ class ExamPost(Resource):
         if exam.invigilator_id:
             invigilator = Invigilator.query.filter_by(invigilator_id=exam.invigilator_id).first()
 
+        if json_data["sbc_managed"] != "sbc":
+            pesticide_office = Office.query.filter_by(office_name="Pesticide Offsite").first()
+            exam.office_id = pesticide_office.office_id
+
         if (json_data["ind_or_group"] == "individual"):
             if exam_type.pesticide_exam_ind:
-                if json_data["sbc_managed"] != "sbc":
-                    pesticide_office = Office.query.filter_by(office_name="Pesticide Offsite").first()
-                    exam.office_id = pesticide_office.office_id
+                
+                exam_fees = json_data["fees"]
                 
                 logging.info("Creating individual pesticide exam")
                 bcmp_response = self.bcmp_service.create_individual_exam(exam, exam_type, exam_fees, invigilator)
@@ -74,7 +75,32 @@ class ExamPost(Resource):
             else:
                 if not (exam.office_id == csr.office_id or csr.liaison_designate == 1):
                     return {"The Exam Office ID and CSR Office ID do not match!"}, 403
+        else:
+            logging.info("For Group Exams")
+            print(json_data["candidates"])
 
+            if json_data["candidates"]:
+                group_exam_id = uuid.uuid4()
+                print(group_exam_id)
+                candidates = json_data["candidates"]
+                exam_list = []
+                for candidate in candidates:
+                    exam_temp = copy.deepcopy(exam)
+                    # exam_temp.group_exam_id = group_exam_id
+                    exam_temp.examinee_name = candidate["name"]
+                    exam_temp.examinee_email = candidate["email"]
+                    exam_temp.exam_type_id = candidate["exam_type_id"]
+                    exam_temp.number_of_students = 1
+                    exam_temp.fees = candidate["fees"]
+                    exam_temp.payee_ind = 1 if (candidate["billTo"] == "candidate") else 0
+                    exam_temp.receipt = candidate["receipt"]
+                    exam_temp.receipt_number = candidate["receipt"]
+                    exam_temp.payee_name = candidate["payeeName"]
+                    exam_temp.payee_email = candidate["payeeEmail"]
+                    exam_list.append(exam_temp)
+
+                print(exam_list)
+                print(exam_list[1])
                     
         # if exam_type.pesticide_exam_ind:
         #     if not exam_type.group_exam_ind:

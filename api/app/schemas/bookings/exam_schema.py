@@ -58,6 +58,7 @@ class ExamSchema(ma.ModelSchema):
     payee_name = fields.Str()
     payee_email = fields.Str()
     payee_phone = fields.Str()
+    group_exam_id = fields.Str()
 
     booking = fields.Nested(BookingSchema())
     exam_type = fields.Nested(ExamTypeSchema())

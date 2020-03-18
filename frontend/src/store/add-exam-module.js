@@ -573,7 +573,7 @@ export const addExamModule = {
     pesticideStep4_summary: {
       step: 4,
       title: 'Summary',
-      questions: [ offsiteQ ]
+      questions: [ summaryQ ]
     },
     showAllPesticideExams: false,
     uploadPesticideModalVisible: false,
