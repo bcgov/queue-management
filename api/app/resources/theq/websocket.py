@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 from flask import request
-from flask_socketio import emit, join_room
+from flask_socketio import emit, join_room, leave_room
 from jose import jwt
 from app.models.theq import CSR
 from qsystem import oidc, socketio, my_print
@@ -36,6 +36,10 @@ def on_join(message):
     if claims["preferred_username"]:
         csr = CSR.find_by_username(claims["preferred_username"])
         if csr:
+            #  Just in case you're already in the room, leave it first.
+            leave_room(csr.office_id)
+
+            #  Now you can join it, without a duplicate sid.
             join_room(csr.office_id)
             print("==> In websocket.py, CSR: " + csr.username + "; request sid: " + str(request.sid))
             emit('joinRoomSuccess', {"sucess": True})
