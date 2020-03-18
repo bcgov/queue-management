@@ -72,6 +72,11 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
       this.setupKeycloakCallbacks()
       _.defer(this.initSessionStorage)
     },
+    data: function() {
+      return {
+        indent: 0
+      }
+    },
     computed: {
       ...mapState(['user',
                    'csr_states'
@@ -143,7 +148,24 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
     methods: {
       ...mapActions(['updateCSRCounterTypeState', 'updateCSRCounterTypeState', 'updateCSRState']),
       ...mapMutations(['setQuickTransactionState', 'setReceptionistState', 'setCSRState', 'setUserCSRStateName', 'setCounterStatusState']),
+      enter_fn(fnname) {
+        let msg_prefix = "==> "
+        if (this.indent != 0) {
+          msg_prefix = Array(1+4*this.indent).join(" ") + "--> "
+        }
+        console.log(msg_prefix + "Enter: " + fnname)
+        this.indent++
+      },
+      leave_fn(fnname) {
+        let msg_prefix = "==> "
+        this.indent--
+        if (this.indent != 0) {
+          msg_prefix = Array(1+4*this.indent).join(" ") + "--> "
+        }
+        console.log(msg_prefix + "Leave: " + fnname)
+      },
       initSessionStorage() {
+        this.enter_fn('initSessionStorage')
         if(sessionStorage.getItem('token')) {
           let tokenExp = sessionStorage.getItem('tokenExp')
           let timeUntilExp = Math.round(tokenExp - new Date().getTime() / 1000)
@@ -173,9 +195,11 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
         } else if (!sessionStorage.getItem('token')) {
           this.init()
         }
+        this.leave_fn('initSessionStorage')
       },
 
       init() {
+        this.enter_fn('init')
         this.$keycloak.init({
             responseMode: 'fragment',
             flow: 'standard'
@@ -185,9 +209,11 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
             this.refreshToken(process.env.REFRESH_TOKEN_SECONDS_LEFT);
             }, 60*1000)
         })
+        this.leave_fn('init')
       },
 
       setupKeycloakCallbacks(authenticated) {
+        this.enter_fn('setupKeycloakCallbacks')
 
         this.$keycloak.onAuthSuccess = () => {
           this.$store.dispatch('logIn', this.$keycloak.token)
@@ -205,9 +231,11 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
           this.setTokenToSessionStorage()
           this.$store.commit('setBearer', this.$keycloak.token)
         }
+        this.leave_fn('setupKeycloakCallbacks')
       },
 
       setTokenToSessionStorage() {
+        this.enter_fn('setTokenToSessionStorage')
         let tokenParsed = this.$keycloak.tokenParsed
         let token = this.$keycloak.token
         let refreshToken = this.$keycloak.refreshToken
@@ -222,44 +250,58 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
         document.cookie = "oidc-jwt=" + this.$keycloak.token
         sessionStorage.setItem("tokenExp", tokenExpiry)
         sessionStorage.setItem("refreshToken", refreshToken)
+        this.leave_fn('setTokenToSessionStorage')
       },
 
       login() {
+        this.enter_fn('login')
         this.$keycloak.login({idpHint: 'idir', scope: 'offline_access'})
+        this.leave_fn('login')
       },
 
       logoutTokenExpired() {
+        this.enter_fn('logoutTokenExpired')
         console.log("==> In logoutTokenExpired")
         this.clearStorage()
         // this.init()
+        this.leave_fn('logoutTokenExpired')
         location.href = "/queue"
       },
 
       logout() {
+        this.enter_fn('logout')
         this.$keycloak.logout()
         this.clearStorage()
+        this.leave_fn('logout')
       },
 
       clearStorage() {
+        this.enter_fn('clearStorage')
         sessionStorage.removeItem("token")
         sessionStorage.removeItem("tokenExp")
         sessionStorage.removeItem("refreshToken")
+        this.leave_fn('clearStorage')
       },
 
       setBreakClickEvent(){
         // Click anywhere on screen to end "Break"
+        this.enter_fn('setBreakClickEvent')
         document.body.addEventListener('click', this.stopBreak);
         document.getElementById('break-switch').style.pointerEvents = 'none'; //Prevent double click event
+        this.leave_fn('setBreakClickEvent')
       },
 
       stopBreak(){
+        this.enter_fn('stopBreak')
         const loginStateID = this.csr_states['Login'];
         this.setCSRState(loginStateID)
         this.setUserCSRStateName('Login')
         this.updateCSRState()
+        this.leave_fn('stopBreak')
       },
 
       refreshToken(minValidity) {
+        this.enter_fn('refreshToken')
         let secondsLeft = Math.round(this.$keycloak.tokenParsed.exp + this.$keycloak.timeSkew - new Date().getTime() / 1000)
         console.log('==> Updating token.  Currently valid for ' + secondsLeft + ' seconds')
         this.$keycloak.updateToken(minValidity).success(refreshed => {
@@ -282,17 +324,21 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
             this.logoutTokenExpired()
           }
         })
+        this.leave_fn('refreshToken')
       },
     },
     updated(){
-        var csr_status = this.user.csr_state.csr_state_name
+      this.enter_fn('updated')
 
-        if(csr_status === 'Break'){
-            this.setBreakClickEvent();
-        } else {
-          document.body.removeEventListener('click', this.stopBreak)
-          document.getElementById('break-switch').style.pointerEvents = 'all';
-        }
+      var csr_status = this.user.csr_state.csr_state_name
+
+      if(csr_status === 'Break'){
+        this.setBreakClickEvent();
+      } else {
+        document.body.removeEventListener('click', this.stopBreak)
+        document.getElementById('break-switch').style.pointerEvents = 'all';
+      }
+      this.leave_fn('updated')
     },
   }
 </script>
