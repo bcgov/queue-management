@@ -20,6 +20,18 @@ from app.schemas.theq import OfficeSchema
 from qsystem import ma
 
 
+class CandidateSchema(ma.Schema):
+    examinee_name = fields.String()
+    examinee_email = fields.String()
+    exam_type_id = fields.String()
+    fees = fields.String()
+    payee_ind = fields.String()
+    receipt = fields.String()
+    receipt_number = fields.String()
+    payee_name = fields.String()
+    payee_email = fields.String()
+
+
 class ExamSchema(ma.ModelSchema):
 
     class Meta:
@@ -58,7 +70,7 @@ class ExamSchema(ma.ModelSchema):
     payee_name = fields.Str()
     payee_email = fields.Str()
     payee_phone = fields.Str()
-    group_exam_id = fields.Str()
+    candidates_list = fields.Nested(CandidateSchema)
 
     booking = fields.Nested(BookingSchema())
     exam_type = fields.Nested(ExamTypeSchema())

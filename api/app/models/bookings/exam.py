@@ -49,7 +49,7 @@ class Exam(Base):
     payee_email = db.Column(db.String(50), nullable=True)
     payee_name = db.Column(db.String(50), nullable=True)
     payee_phone = db.Column(db.String(50), nullable=True)
-    # group_exam_id = db.Column(db.String(36), nullable=True)
+    candidates_list = db.Column(db.JSON, nullable=True)
 
     booking = db.relationship("Booking")
     exam_type = db.relationship("ExamType")

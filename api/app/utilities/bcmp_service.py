@@ -3,6 +3,7 @@ import logging
 import urllib
 from qsystem import application
 from app.utilities.document_service import DocumentService
+from datetime import datetime
 
 
 class BCMPService:
@@ -98,6 +99,49 @@ class BCMPService:
                 }
             ]
         }
+
+        response = self.send_request(url, 'POST', bcmp_exam)
+        return response
+
+    def create_group_exam_bcmp(self, exam, candiate_list, invigilator, pesticide_office):
+        url = "%s/auth=env_exam;%s/JSON/create:ENV-IPM-EXAM-GROUP" % (self.base_url, self.auth_token)
+
+        invigilator_name = None
+        if invigilator:
+            invigilator_name = invigilator.invigilator_name
+
+        office_name = None
+        if pesticide_office:
+            office_name = pesticide_office.office_name
+
+        print(exam.expiry_date.strftime("%a %b %d, %Y at %-I:%M %p"))
+        
+        bcmp_exam = {
+            "EXAM_SESSION_LOCATION": office_name,
+            "SESSION_DATE_TIME": exam.expiry_date.strftime("%a %b %d, %Y at %-I:%M %p"),
+            "REGISTRAR_name": invigilator_name,
+            "RECIPIENT_EMAIL_ADDRESS": "",
+            "REGISTRAR_phoneNumber": "",
+            "students": []
+        }
+
+        for candiate in candiate_list:
+            bcmp_exam["students"].append({
+                "EXAM_CATEGORY": candiate["exam_type"],
+                "STUDENT_LEGAL_NAME_first": candiate["examinee_name"],
+                "STUDENT_LEGAL_NAME_last": candiate["examinee_name"],
+                "STUDENT_emailAddress": candiate["examinee_email"],
+                "STUDENT_phoneNumber": "",
+                "STUDENT_ADDRESS_line1": "",
+                "STUDENT_ADDRESS_line2": "",
+                "STUDENT_ADDRESS_city": "",
+                "STUDENT_ADDRESS_province": "",
+                "STUDENT_ADDRESS_postalCode": "",
+                "REGISTRATION_NOTES": "",
+                "RECEIPT_RMS_NUMBER": candiate["receipt"],
+                "PAYMENT_METHOD": candiate["fees"],
+                "FEE_PAYMENT_NOTES": ""
+            })
 
         response = self.send_request(url, 'POST', bcmp_exam)
         return response
