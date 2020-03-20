@@ -847,6 +847,16 @@ class Bootstrap(Command):
             group_exam_ind=0,
             pesticide_exam_ind=1,
         )
+        
+        exam_type_twenty_four = bookings.ExamType(
+            exam_type_name="Group Pesticide Exam",
+            exam_color="#FFFFFF",
+            number_of_hours=0,
+            method_type="written",
+            ita_ind=0,
+            group_exam_ind=0,
+            pesticide_exam_ind=0,
+        )
 
         db.session.add(exam_type_one)
         db.session.add(exam_type_two)
@@ -869,6 +879,7 @@ class Bootstrap(Command):
         db.session.add(exam_type_twenty_one)
         db.session.add(exam_type_twenty_two)
         db.session.add(exam_type_twenty_three)
+        db.session.add(exam_type_twenty_four)
         db.session.commit()
 
         print("--> Bookings: Exam - No exams added")

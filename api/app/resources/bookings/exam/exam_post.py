@@ -48,27 +48,31 @@ class ExamPost(Resource):
             return {"message": warning}, 422
         print("+=+=+=+= NAME: %s +=+=+=+=" % exam.examinee_name)
 
-        exam_type = ExamType.query.filter_by(exam_type_id=exam.exam_type_id).first()
-
-        if not exam_type:
-            exam_type = ExamType.query.filter_by(pesticide_exam_ind=1, group_exam_ind=1).first()
-            exam.exam_type = exam_type
-
         invigilator = None
         if exam.invigilator_id:
             invigilator = Invigilator.query.filter_by(invigilator_id=exam.invigilator_id).first()
-
-        if json_data["sbc_managed"] != "sbc":
+        
+        pesticide_office = None
+        if json_data["sbc_managed"] == "sbc":
+            pesticide_office = Office.query.filter_by(office_id=exam.office_id).first()
+        else:
             pesticide_office = Office.query.filter_by(office_name="Pesticide Offsite").first()
             exam.office_id = pesticide_office.office_id
 
         if (json_data["ind_or_group"] == "individual"):
+            
+            exam_type = ExamType.query.filter_by(exam_type_id=exam.exam_type_id).first()
+
+            if not exam_type:
+                exam_type = ExamType.query.filter_by(pesticide_exam_ind=1, group_exam_ind=1).first()
+            exam.exam_type = exam_type
+            
             if exam_type.pesticide_exam_ind:
                 
                 exam_fees = json_data["fees"]
                 
                 logging.info("Creating individual pesticide exam")
-                bcmp_response = self.bcmp_service.create_individual_exam(exam, exam_type, exam_fees, invigilator)
+                bcmp_response = self.bcmp_service.create_individual_exam(exam, exam_fees, invigilator, pesticide_office, g.oidc_token_info)
 
                 if bcmp_response:
                     exam.bcmp_job_id = bcmp_response['jobId']
@@ -78,6 +82,11 @@ class ExamPost(Resource):
         else:
             logging.info("For Group Exams")
             print(json_data["candidates"])
+
+            exam_type = ExamType.query.filter_by(exam_type_name="Group Pesticide Exam").first()
+            if exam_type:
+                exam.exam_type_id = exam_type.exam_type_id
+                exam.exam_type = exam_type
 
             if json_data["candidates"]:
                 candidates = json_data["candidates"]
@@ -110,10 +119,8 @@ class ExamPost(Resource):
                 
                 exam.candidates_list = candidates_list
 
-                pesticide_office = Office.query.filter_by(office_id=exam.office_id).first()
-
                 logging.info("Creating Group pesticide exam")
-                bcmp_response = self.bcmp_service.create_group_exam_bcmp(exam, candidates_list_bcmp, invigilator, pesticide_office)
+                bcmp_response = self.bcmp_service.create_group_exam_bcmp(exam, candidates_list_bcmp, invigilator, pesticide_office, g.oidc_token_info)
 
                 if bcmp_response:
                     exam.bcmp_job_id = bcmp_response['jobId']

@@ -12,6 +12,9 @@ class BCMPService:
 
     def __init__(self):
         return
+    
+    def __exam_time_format(self, date_value):
+        return date_value.strftime("%a %b %d, %Y at %-I:%M %p")
 
     def send_request(self, path, method, data):
         if method == 'POST':
@@ -74,22 +77,35 @@ class BCMPService:
 
         return response
 
-    def create_individual_exam(self, exam, exam_type, exam_fees, invigilator):
+    def create_individual_exam(self, exam, exam_fees, invigilator, pesticide_office, oidc_token_info):
         url = "%s/auth=env_exam;%s/JSON/create:ENV-IPM-EXAM" % (self.base_url, self.auth_token)
+
+        office_name = None
+        if pesticide_office:
+            office_name = pesticide_office.office_name
 
         receipt_number = "%s fees" % exam_fees
         if exam.receipt:
             receipt_number = exam.receipt
         
+        exam_type_name = None
+        if exam.exam_type:
+            exam_type_name = exam.exam_type.exam_type_name
+
         invigilator_name = None
         if invigilator:
             invigilator_name = invigilator.invigilator_name
 
         bcmp_exam = {
+            "EXAM_SESSION_LOCATION" : office_name,
+            "SESSION_DATE_TIME" : self.__exam_time_format(exam.expiry_date),
+            "REGISTRAR_name" : oidc_token_info['preferred_username'],
+            "RECIPIENT_EMAIL_ADDRESS" : oidc_token_info['email'],
+            "REGISTRAR_phoneNumber" : "",
             "students": [
                 {
                     "REGISTRAR_name": invigilator_name,
-                    "EXAM_CATEGORY": exam_type.exam_type_name,
+                    "EXAM_CATEGORY": exam_type_name,
                     "STUDENT_LEGAL_NAME_first": exam.examinee_name,
                     "STUDENT_LEGAL_NAME_last": exam.examinee_name,
                     "STUDENT_emailAddress": exam.examinee_email,
@@ -103,7 +119,7 @@ class BCMPService:
         response = self.send_request(url, 'POST', bcmp_exam)
         return response
 
-    def create_group_exam_bcmp(self, exam, candiate_list, invigilator, pesticide_office):
+    def create_group_exam_bcmp(self, exam, candiate_list, invigilator, pesticide_office, oidc_token_info):
         url = "%s/auth=env_exam;%s/JSON/create:ENV-IPM-EXAM-GROUP" % (self.base_url, self.auth_token)
 
         invigilator_name = None
@@ -118,9 +134,9 @@ class BCMPService:
         
         bcmp_exam = {
             "EXAM_SESSION_LOCATION": office_name,
-            "SESSION_DATE_TIME": exam.expiry_date.strftime("%a %b %d, %Y at %-I:%M %p"),
-            "REGISTRAR_name": invigilator_name,
-            "RECIPIENT_EMAIL_ADDRESS": "",
+            "SESSION_DATE_TIME" : self.__exam_time_format(exam.expiry_date),
+            "REGISTRAR_name" : oidc_token_info['preferred_username'],
+            "RECIPIENT_EMAIL_ADDRESS" : oidc_token_info['email'],
             "REGISTRAR_phoneNumber": "",
             "students": []
         }
