@@ -175,7 +175,7 @@
                                    class="mr-2"
                                    style="font-size: 1rem;" />
               </div>
-              <div>{{ row.item.name }}</div>
+              <div>{{ row.item.exam_type_name }}</div>
               <div v-show="false">
                 {{ currentlyEditing === 'exam' && row.item.exam_type_id === highlightedTableRow.exam_type_id ?
                 row.item._rowVariant = 'primary' : row.item._rowVariant = 'secondary' }}

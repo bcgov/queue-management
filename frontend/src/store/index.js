@@ -2749,6 +2749,7 @@ export const store = new Vuex.Store({
         step1MenuOpen: false,
         office_number: null,
       }
+      state.addExamModule.candidates = []
     },
 
     resetLogAnotherExamModal: (state, setup) => {

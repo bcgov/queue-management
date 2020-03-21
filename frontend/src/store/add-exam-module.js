@@ -568,7 +568,7 @@ export const addExamModule = {
     pesticideStep3_group: {
       step: 3,
       title: 'Date, Time & Format',
-      questions: [ dateTimeQ, timeQ, offsiteQ, notesQ ]
+      questions: [ dateTimeQ, timeQ, notesQ ]
     },
     pesticideStep4_summary: {
       step: 4,
