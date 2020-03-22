@@ -81,14 +81,36 @@ sudo systemctl restart systemd-binfmt.service
 git clone https://www.github.com/bcgov/queue-management
 cd queue-management/mender/image-tools
 ```
-Download and unzip the latest [Raspbian Lite Image](https://downloads.raspberrypi.org/raspbian_lite_latest) and copy it into the `./mender/image-tools` directory.
+Download and unzip the latest [Raspbian Lite Image](https://downloads.raspberrypi.org/raspbian_lite_latest) and 
+You will need to resize the ext4 partition.
+
+Need to increase size of root filesystem of buster-lite
+https://www.codepool.biz/resize-raspbian-image-qemu-windows.html
+
+cp 2020-02-13-raspbian-buster-lite.img raspbian.img
+truncate -s +1G raspbian.img
+fdisk -l raspbian.img
+** Get partition start sector  and write it down (532480)
+fdisk raspbian.img
+--> d ,2 (partion 2 has need deleted)
+--> n, p, 2, 532480, enter for default end
+(Remove the signature?) Yes
+--> w (write)
+sudo losetup -f and write down output (/dev/loop2)
+sudo losetup -o $((532480*512)) /dev/loop2 raspbian.img
+sudo e2fsck -f /dev/loop2
+fix if errors
+sudo resize2fs /dev/loop2
+sudo losetup -d /dev/loop2
+
+copy it into the `./mender/image-tools` directory.
 
 **Note**: This step installs `chromium`. This will result in a large blue screen showing up and will require user input to continue. This is a good sign, do not be alarmed.
 
 Then, run:
 ```
-RASPI_IMG=<raspberry pi image filename>
-ENV_FILE=<config.env>
+export RASPI_IMG=<raspberry pi image filename>
+export ENV_FILE=<config.env>
 bootstrap-builder/generate-image.sh ${RASPI_IMG} ${ENV_FILE}
 ```
 
@@ -159,8 +181,8 @@ Shrunk Image:
 It is possible to run the bootstrapping stage without shrinking the image. The image produced by this step can be useful for debugging and quick prototyping since it takes less time to generate than a fully bootstrapped image. Image shrinking takes time and can sometimes interact adversely with other modifications to the image.
 
 ```
-RASPI_IMG=<raspberry pi image filename>
-ENV_FILE=<config.env>
+export RASPI_IMG=<raspberry pi image filename>
+export ENV_FILE=<config.env>
 bootstrap-builder/prepare-raspbian/prepare-raspbian ${RASPI_IMG} ${ENV_FILE}
 ```
 
@@ -173,39 +195,45 @@ First, download and build the `mender-convert` docker tool:
 ```
 git clone https://github.com/mendersoftware/mender-convert.git
 cd mender-convert
-git checkout 2743366
+git checkout 2.0.x
 
 ./docker-build
 ```
 
+Next create mender convert settings:
+
+1. Update the mender convert config to your needs: nano configs/mender_convert_config
+
+MENDER_BOOT_PART_SIZE_MB="256"
+MENDER_DATA_PART_SIZE_MB="1000" 
+
+export server-url=<your mender server>
+
+And update config by running this script:
+./scripts/bootstrap-rootfs-overlay-production-server.sh \
+    --output-dir ${PWD}/rootfs_overlay_demo \
+    --server-url ${server-url}
+
 Next, to generate the **Menderized** image you will need to provide some information to the conversion tool:
 
 1. `raw-disk-image` - the base Image (Built in **Step #1**), which must be copied into the `./mender-convert/input` directory
-2. `artifact-name` - the name of the output image, also stored as metadata within the image itself to be read by Mender
-3. `server-url` - URL Which will be Hosting Mender - e.g. [https://mender.pathfinder.gov.bc.ca]
-4. `storage-total-size-mb` - total Image size (Mb) - The total store needs to be more than double the size of the base Image
-5. `data-part-size-mb` - total size of persistent data partition
 
 **Note**: copy the Raspberry PI Bootstrap image (from previous step) into `./mender-convert/input`.
 
 ```
-BOOTSTRAP_IMG=<bootstrapped image file>
-ARTIFACT_NAME=<artifact name>
-SERVER_URL=<https://your.mender.application.com>
-./docker-mender-convert from-raw-disk-image \
-    --raw-disk-image "${BOOTSTRAP_IMG}" \
-    --artifact-name "${ARTIFACT_NAME}" \
-    --device-type "raspberrypi3" \
-    --mender-client "/mender" \
-    --bootloader-toolchain "arm-linux-gnueabihf" \
-    --server-url "${SERVER_URL}" \
-    --storage-total-size-mb "5000" \
-    --data-part-size-mb "1000"
-```
+export INPUT_DISK_IMAGE=<bootstrapped image file> 
+export ARTIFACT_NAME=<artifact name>
+
+cp ~/git/queue-management/mender/image-tools/output/smartboard-bootstrap-image.img input/
+
+MENDER_ARTIFACT_NAME=SBCRPI3Base ./docker-mender-convert \
+   --disk-image input/$INPUT_DISK_IMAGE \
+   --config configs/raspberrypi3_config \
+   --overlay rootfs_overlay_demo/
 
 This step will produce 3 files:
 * `.ext4` - the filesystem of the Menderized image. This file is used later to produce deployment artifacts **(i.e. store it somewhere safe)**
-* `.sdimg` - the modified OS which can be flashed to an SD card and run directly on the PI. **(i.e. store it somewhere safe)**
+* `.img.gz` - the modified OS which can be flashed to an SD card and run directly on the PI. **(i.e. store it somewhere safe)**
 * `.mender` - a deployment artifact, the one produced by this stage will not be used for anything.
 
 #### Example Output
@@ -274,8 +302,10 @@ Once we've menderized our base image the files system and mender configuration w
 
 Return to the `image-tools` directory and run:
 
+Gunzip the .img.gz file
+
 ```
-MENDER_SDIMG=<location of previously produced .sdimg>
+MENDER_SDIMG=<location of previously produced .img>
 mender-image-patcher/mender-image-patcher \
     ${MENDER_SDIMG}
 ```
@@ -283,11 +313,11 @@ mender-image-patcher/mender-image-patcher \
 **Note**: The above step modifies the `.sdimg` in place. Store the output file somewhere reliable because it is now the core image for flashing SD cards to enable Mender updates on the PI.
 
 ### Step 3b: Flashing the Base
-The patched `.sdimg` produced above can now be flashed onto SD cards and put into Raspberry PIs.   
+The patched `.img` produced above can now be flashed onto SD cards and put into Raspberry PIs.   
 
 You can do this with `dd` or your favorite flashing tool:
 ```
-MENDER_SDIMG=<location of previously produced .sdimg>
+MENDER_SDIMG=<location of previously produced .img>
 dd if=${MENDER_SDIMG} of=/dev/<your-sd-card-device> bs=1m
 ```
 
