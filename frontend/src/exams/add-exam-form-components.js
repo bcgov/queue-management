@@ -528,7 +528,7 @@ export const LocationInput = Vue.component('location-input-question', {
   },
   template: `
     <fragment>
-      <template v-if="capturedExam.on_or_off === 'off' || setup === 'pesticide' ">
+      <template v-if="capturedExam.on_or_off === 'off' || setup === 'pesticide' || setup === 'group' ">
         <b-row no-gutters>
           <b-col cols="11">
             <b-form-group>

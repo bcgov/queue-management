@@ -36,11 +36,11 @@ class BCMPService:
         print('response')
         print(response.status)
 
-        response_data = response.read().decode('utf-8')
+        response_data = response.read().decode('utf8')
         print(response_data)
 
         try:
-            return json.loads(response.read().decode('utf-8'))
+            return json.loads(response_data)
         except json.decoder.JSONDecodeError:
             logging.warning("Error decoding JSON response data. Response data: %s" % response_data)
             return False

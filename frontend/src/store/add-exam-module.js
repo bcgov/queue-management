@@ -478,7 +478,7 @@ export const addExamModule = {
       {
         step: 3,
         title: 'Date, Time & Format',
-        questions: [ dateTimeQ, timeQ, examMethodQ, offsiteQ, notesQ ]
+        questions: [ dateTimeQ, timeQ, examMethodQ, offsiteQ, notesQ, ]
       },
       {
         step: 4,
@@ -563,7 +563,7 @@ export const addExamModule = {
     pesticideStep3_payee: {
       step: 3,
       title: 'Payee/Notes',
-      questions: [ payeeNameQ, payeeEmailQ, payeePhoneQ, offsiteQ, notesQ ]
+      questions: [ payeeNameQ, payeeEmailQ, payeePhoneQ, notesQ ]
     },
     pesticideStep3_group: {
       step: 3,
