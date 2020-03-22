@@ -9,6 +9,7 @@ cp nginx.conf /etc/nginx/
 mkdir -p /var/flaskapp
 cp -R web-service /var/flaskapp
 tar -C /var/flaskapp/web-service -xvf venv.tar
+chmod +x /var/flaskapp/web-service/start.sh
 chown -R www-data:www-data /var/flaskapp/web-service
 
 cp web-service.conf /etc/supervisor/conf.d/
