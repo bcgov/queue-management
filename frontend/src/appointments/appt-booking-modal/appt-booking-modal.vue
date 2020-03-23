@@ -348,14 +348,18 @@
         this.resetAddModalForm()
       },
       deleteAppt() {
+        this.$store.commit('toggleServeCitizenSpinner', true)
         this.deleteAppointment(this.clickedAppt.appointment_id).then( () => {
           this.cancel()
         })
+        this.$store.commit('toggleServeCitizenSpinner', false)
       },
       deleteRecurringAppts() {
+        this.$store.commit('toggleServeCitizenSpinner', true)
         this.deleteRecurringAppointments(this.clickedAppt.recurring_uuid).then( () => {
           this.cancel()
         })
+        this.$store.commit('toggleServeCitizenSpinner', false)
       },
       reschedule() {
         if (this.clickedTime) {
@@ -415,6 +419,7 @@
         }
       },
       submit() {
+        this.$store.commit('toggleServeCitizenSpinner', true)
         this.clearMessage()
         let service_id = this.selectedService
         let start = moment(this.start).clone()
@@ -465,6 +470,7 @@
               })
             })
           }
+          this.$store.commit('toggleServeCitizenSpinner', false)
           return
         }
         this.postAppointment(e).then( () => {
@@ -472,6 +478,7 @@
             finish()
           })
         })
+        this.$store.commit('toggleServeCitizenSpinner', false)
       },
     },
   }
