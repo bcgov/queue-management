@@ -20,4 +20,4 @@ mkdir -p /etc/systemd/system/getty.target.wants
 ln -fs /lib/systemd/system/getty@.service /etc/systemd/system/getty.target.wants/getty@tty2.service
 
 #Update Xwrapper to remove Virtual Console permission denied error
-cp Xwrapper.conf /etc/X11/
+cp Xwrapper.config /etc/X11/

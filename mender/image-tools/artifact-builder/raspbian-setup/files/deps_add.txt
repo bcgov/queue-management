@@ -21,13 +21,4 @@ xloadimage
 jq
 xcompmgr
 gldriver-test
-libdrm-amdgpu1
-libdrm-common
-libdrm-nouveau2
-libdrm-radeon1
-libdrm2
 libgl1-mesa-dri
-libglapi-mesa
-libllvm9
-libsensors-config
-libsensors5

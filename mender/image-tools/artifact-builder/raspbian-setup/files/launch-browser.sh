@@ -1,15 +1,14 @@
 #!/bin/bash
 
-until timedatectl status | grep -q "synchronized: yes";
-do
-  sleep 1;
-done
-
-
 sudo systemctl stop splashscreen
 
 xsetroot -solid white
 xsetbg -onroot -shrink -fullscreen -smooth -background white /var/flaskapp/web-service/static/splash.png
+
+until timedatectl status | grep -q "synchronized: yes";
+do
+  sleep 1;
+done
 
 # disable DPMS (Energy Star) features.
 xset -dpms
@@ -31,7 +30,7 @@ while true ; do
 	# before hitting the smartboard
 
 	chromium-browser \
-		--ignore-blacklist \
+		--ignore-blacklist --ignore-gpu-blacklist \
 		--disable-features=TranslateUI \
 		--disable-infobars  --disable-translate \
 		--bwsi --disable-logging \
@@ -39,18 +38,11 @@ while true ; do
 		--disable-session-crashed-bubble \
 		--noerrdialogs \
 		--start-fullscreen \
-		--disk-cache-size=0 \
-		--disable-quic \
-		--enable-fast-unload \
-		--enable-tcp-fast-open \
-		--enable-native-gpu-memory-buffers \
-		--enable-gpu-rasterization \
-		--enable-zero-copy \
-		--kiosk "http://localhost/splash.html"
+		--kiosk --app="http://localhost/splash.html"
 
 	sleep 1
 	# Clean out any lingering processes if the browser has died
 
-	killall -HUP chromium-browser
+	pkill -f -- "chromium-browser"
 	sleep 2
 done 
