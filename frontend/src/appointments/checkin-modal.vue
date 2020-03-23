@@ -18,7 +18,7 @@
                         class="mb-0 mt-2">
             <label class="mb-0">Citizen Has Arrived?</label><br>
             <b-button class="w-100 btn-success"
-                      @click="checkIn">
+                      @click.once="checkIn">
               Check-In
             </b-button>
           </b-form-group>
