@@ -55,7 +55,7 @@ Thus, it is this stage where the majority of updates will be produced.
 ## Building Images to Prepare for Mender Deployment
 ### Prerequisites
 
-- **Ubuntu 18.04**
+- **Ubuntu 19.04**
 - 10 gigabytes of storage
 - qemu
 - docker.io
