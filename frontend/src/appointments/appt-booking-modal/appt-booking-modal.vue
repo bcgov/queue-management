@@ -13,7 +13,7 @@
                     v-if="submitDisabled"
                     @click="validate=true">Submit</b-button>
           <b-button class="btn-primary ml-2"
-                    @click="submit"
+                    @click.once="submit"
                     v-if="!submitDisabled">Submit</b-button>
           <b-button @click="cancel()">Cancel</b-button>
         </div>
