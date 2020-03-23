@@ -9,7 +9,7 @@
            size="sm">
     <template slot="modal-footer">
       <b-button class="btn-secondary"
-                @click="hide">Close</b-button>
+                @click.once="hide">Close</b-button>
     </template>
     <b-form autocomplete="off">
       <b-form-row>
@@ -29,7 +29,7 @@
           <b-form-group class="mb-0 mt-2">
             <label class="mb-0">Edit or Cancel Appointment?</label><br>
             <b-button class="w-100 btn-secondary"
-                      @click="editAppt">
+                      @click.once="editAppt">
               Edit Appointment
             </b-button>
           </b-form-group>
@@ -40,7 +40,7 @@
           <b-form-group class="mb-0 mt-2">
             <label class="mb-0">Edit or Cancel Recurring Series?</label><br>
             <b-button class="w-100 btn-secondary"
-                      @click="editSeries">
+                      @click.once="editSeries">
               Edit Recurring Series
             </b-button>
           </b-form-group>
