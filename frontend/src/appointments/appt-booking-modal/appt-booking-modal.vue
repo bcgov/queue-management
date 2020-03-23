@@ -419,7 +419,6 @@
         }
       },
       submit() {
-        this.$store.commit('toggleServeCitizenSpinner', true)
         this.clearMessage()
         let service_id = this.selectedService
         let start = moment(this.start).clone()
@@ -470,7 +469,6 @@
               })
             })
           }
-          this.$store.commit('toggleServeCitizenSpinner', false)
           return
         }
         this.postAppointment(e).then( () => {
@@ -478,7 +476,6 @@
             finish()
           })
         })
-        this.$store.commit('toggleServeCitizenSpinner', false)
       },
     },
   }
