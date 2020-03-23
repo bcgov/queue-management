@@ -13,9 +13,9 @@
                     v-if="submitDisabled"
                     @click="validate=true">Submit</b-button>
           <b-button class="btn-primary ml-2"
-                    @click="submit"
+                    @click.once="submit"
                     v-if="!submitDisabled">Submit</b-button>
-          <b-button @click="cancel()">Cancel</b-button>
+          <b-button @click.once="cancel()">Cancel</b-button>
         </div>
       </template>
       <span v-if="this.editDeleteSeries" style="font-size:1.75rem;">Book Service Appointment Series</span>
@@ -79,7 +79,7 @@
             <b-form-group v-if="isNotBlackoutFlag"
                           class="mb-0 mt-2">
               <label class="mb-0">Change Date/Time</label><br>
-              <b-button @click="reschedule"
+              <b-button @click.once="reschedule"
                         class="btn-secondary w-100">Reschedule</b-button>
             </b-form-group>
           </b-col>
@@ -89,12 +89,12 @@
               <label v-if="this.editDeleteSeries" class="mb-0">Remove Appointment</label>
               <label v-else class="mb-0">Remove Appointment</label><br>
               <b-button v-if="clickedAppt && !this.editDeleteSeries"
-                        @click="deleteAppt"
+                        @click.once="deleteAppt"
                         class="btn-danger w-100">
                 Delete
               </b-button>
               <b-button v-else
-                        @click="deleteRecurringAppts"
+                        @click.once="deleteRecurringAppts"
                         class="btn-danger w-100">
                 Delete Series
               </b-button>
@@ -116,12 +116,12 @@
                       <b-button variant="primary"
                                 class="px-0"
                                 style="width: 52px"
-                                @click="addService">{{ selectedService ? 'Edit' : 'Set' }}</b-button>
+                                @click.once="addService">{{ selectedService ? 'Edit' : 'Set' }}</b-button>
                       <b-button variant="secondary"
                                 v-if="selectedService"
                                 class="px-0"
                                 style="width: 52px;border-radius: 0px;"
-                                @click="clearService">Clear</b-button>
+                                @click.once="clearService">Clear</b-button>
                     </b-button-group>
                   </b-input-group-prepend>
                   <b-form-input disabled
