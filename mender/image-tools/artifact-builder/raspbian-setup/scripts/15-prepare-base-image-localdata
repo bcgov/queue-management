@@ -25,3 +25,5 @@ ln -snf /data/mender /var.base/lib/mender
 # These lines make it so mender-convert doesn't complain
 mkdir -p /var/lib
 ln -snf /data/mender /var/lib/mender
+
+echo Completed All Scripts!!!
