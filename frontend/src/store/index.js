@@ -1234,6 +1234,20 @@ export const store = new Vuex.Store({
         }).catch(() => { reject('failed') })
       })
     },
+    
+    clickPesticideRequestExam(context) {
+      return new Promise((resolve, reject) => {
+        context.dispatch('postITAIndividualExam', true).then((resp) => {
+          if(resp && resp.data && resp.data.bcmp_job_id) {
+            resolve(resp.data.bcmp_job_id)
+          } else {
+            reject(resp)
+          }
+        }).catch((err) => { 
+          reject(err) 
+        })
+      })
+    },
 
     clickAdmin(context) {
       context.commit('toggleShowAdmin')
@@ -2055,7 +2069,8 @@ export const store = new Vuex.Store({
       })
     },
 
-    postITAIndividualExam(context) {
+    postITAIndividualExam(context, isRequestExam) {
+      let isRequestExamReq = isRequestExam || false 
       let responses = Object.assign( {}, context.state.capturedExam)
       console.log(responses)
       if (responses.on_or_off) {
@@ -2098,11 +2113,15 @@ export const store = new Vuex.Store({
         postData.candidates = (context.state.addExamModule && context.state.addExamModule.candidates) ? context.state.addExamModule.candidates : []
       }
 
+      let apiUrl = (isRequestExamReq) ? '/exams/bcmp/' : '/exams/'
+
       return new Promise((resolve, reject) => {
-        Axios(context).post('/exams/', postData).then( examResp => {
-          resolve() 
+        Axios(context).post(apiUrl, postData).then( examResp => {
+          console.log(examResp)
+          resolve(examResp) 
         }).catch( (err) => { 
-          reject() 
+          console.log(err)
+          reject(err) 
         })
       })
     },
@@ -2949,6 +2968,10 @@ export const store = new Vuex.Store({
         state.capturedExam,
         payload
       )
-    }
+    },
+
+    setBCMPJobId: (state, payload) => {
+      state.capturedExam.bcmp_job_id = payload
+    },
   }
 })

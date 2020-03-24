@@ -22,8 +22,38 @@
     <!-- for SBC Based exam flow -->
     <template>
       <b-row class="mt-2" align-v="end">
-        <b-col cols="6" offset="1">
-          <b-button variant="primary" @click="requestExam()">Request Exam</b-button>
+        <b-col cols="12">
+          <b-button
+            variant="primary"
+            @click="requestExam()"
+            :disabled="isExamReqFailed"
+          >Request Exam</b-button>
+        </b-col>
+        <b-col cols="12" class="mt-4" v-if="generatedJobId">
+          <b-alert variant="success" show>
+            Job Id generated from BCMP: {{generatedJobId}}
+            <br><br>
+            <strong>Click on the "Submit" button to finish adding the pesticide exam</strong>
+          </b-alert>
+        </b-col>
+      </b-row>
+      <b-row class="mt-4" align-v="end" v-if="isExamReqFailed">
+        <b-col cols="12">
+          <b-alert variant="warning" show>
+            Failed to request exam from BCMP, please follow the manual steps and enter the generated job id in the input below, then
+            <br>
+            <strong>Click on the "Submit" button to finish adding the pesticide exam</strong>
+          </b-alert>
+          <label for="bcmp-job-id">BCMP Job Id:</label>
+          <b-form-input
+            id="bcmp-job-id"
+            v-model="bcmpJobId"
+            type="text"
+            aria-describedby="generated-bcmp-jobid"
+            placeholder="Enter generated BCMP job id"
+            trim
+            @blur="addBCMPJobId()"
+          ></b-form-input>
         </b-col>
         <b-col>
         </b-col>
@@ -34,7 +64,7 @@
 </template>
 
 <script>
-  import { mapState, mapGetters } from 'vuex'
+  import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
   import moment from 'moment'
 
   export default {
@@ -53,7 +83,10 @@
           payee_email: "Payee Email",
           payee_phone: "Payee Phone",
           offsite_location: "Location"
-        }
+        },
+        bcmpJobId: '',
+        isExamReqFailed: false,
+        generatedJobId: '',
       }
     },
     computed: {
@@ -101,12 +134,30 @@
 
     },
     methods: {
+      ...mapActions([
+        'clickPesticideRequestExam',
+      ]),
+      ...mapMutations([
+        'setBCMPJobId',
+      ]),
       formatDate(d) {
         return new moment(d).format('MMM D, YYYY')
       },
-      
-      requestExam() {
 
+      requestExam() {
+        this.clickPesticideRequestExam().then(bcmp_job_id => {
+          console.log("bcmp_job_id: ", bcmp_job_id)
+          this.setBCMPJobId(bcmp_job_id);
+          this.generatedJobId = bcmp_job_id;
+        }).catch(error => {
+          console.log(error)
+          this.isExamReqFailed = true;
+        })
+      },
+
+      addBCMPJobId() {
+        console.log(this.bcmpJobId)
+        this.setBCMPJobId(this.bcmpJobId)
       }
     }
   }
