@@ -28,7 +28,6 @@ from app.utilities.bcmp_service import BCMPService
 class ExamPost(Resource):
 
     exam_schema = ExamSchema()
-    bcmp_service = BCMPService()
 
     @oidc.accept_token(require_token=True)
     @api_call_with_retry
@@ -56,41 +55,8 @@ class ExamPost(Resource):
             return {"The Exam Office ID and CSR Office ID do not match!"}, 403   
         
         if json_data["exam_name"] and json_data["exam_name"] == "pesticide":
-            
-            formatted_data = self.__format_data(json_data, exam)
-
+            formatted_data = self.format_data(json_data, exam)
             exam = formatted_data["exam"]
-
-            if is_bcmp_req: # if the request is to create exam in BCMP
-
-                invigilator = None
-                if exam.invigilator_id:
-                    invigilator = Invigilator.query.filter_by(invigilator_id=exam.invigilator_id).first()
-
-                if json_data["ind_or_group"] == "individual":
-                    
-                    exam_fees = json_data["fees"]
-                    
-                    logging.info("Creating individual pesticide exam")
-                    bcmp_response = self.bcmp_service.create_individual_exam(exam, exam_fees, invigilator, formatted_data["pesticide_office"], g.oidc_token_info)
-
-                    if bcmp_response:
-                        return {"bcmp_job_id": bcmp_response['jobId'],
-                            "errors": {}}, 201
-                    else:
-                        return {"message": "create_individual_exam failed",
-                            "error": bcmp_response}, 403 
-                else:
-
-                    logging.info("Creating Group pesticide exam")
-                    bcmp_response = self.bcmp_service.create_group_exam_bcmp(exam, formatted_data["candidates_list_bcmp"], invigilator, formatted_data["pesticide_office"], g.oidc_token_info)
-                    
-                    if bcmp_response:
-                        return {"bcmp_job_id": bcmp_response['jobId'],
-                            "errors": {}}, 201
-                    else:
-                        return {"message": "create_group_exam_bcmp failed",
-                            "error": bcmp_response}, 403 
                 
 
         db.session.add(exam)
@@ -101,8 +67,10 @@ class ExamPost(Resource):
         return {"exam": result.data,
                 "errors": result.errors}, 201
 
-        
-    def __format_data(self, json_data, exam):
+
+
+    ## formating data to save on bcmp
+    def format_data(self, json_data, exam):
 
         candidates_list_bcmp = []
 

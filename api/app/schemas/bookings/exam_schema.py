@@ -70,6 +70,7 @@ class ExamSchema(ma.ModelSchema):
     payee_name = fields.Str()
     payee_email = fields.Str()
     payee_phone = fields.Str()
+    bcmp_job_id = fields.Str(allow_none=True)
     candidates_list = fields.Nested(CandidateSchema)
 
     booking = fields.Nested(BookingSchema())
