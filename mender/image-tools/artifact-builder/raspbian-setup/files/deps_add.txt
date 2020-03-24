@@ -1,4 +1,4 @@
-rpi-chromium-mods
+chromium-browser
 python3
 avahi-daemon
 ufw
@@ -22,3 +22,8 @@ jq
 xcompmgr
 gldriver-test
 libgl1-mesa-dri
+mesa-vdpau-drivers
+mesa-utils
+
+
+

@@ -15,10 +15,13 @@ avoid_warnings=1
 gpu_mem_1024=128
 
 #enable GPU Driver
-dtoverlay=vc4-kms-v3d
+dispmanx_offline=1
+dtoverlay=vc4-fkms-v3d
+dtparam=audio=off
 
 END_TEXT
 
 cat << END_TEXT > /uboot/cmdline.txt
 dwc_otg.lpm_enable=0 console=serial0,115200 root=\${mender_kernel_root} rootfstype=ext4 elevator=deadline fsck.repair=yes rootwait logo.nologo
 END_TEXT
+exit 0

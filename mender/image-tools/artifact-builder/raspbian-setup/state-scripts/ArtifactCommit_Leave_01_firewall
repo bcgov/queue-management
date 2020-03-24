@@ -2,6 +2,8 @@
 
 mount / -o remount,rw
 
+sed -i 's/IPV6=yes/IPV6=no/g' /etc/default/ufw
+systemctl daemon-reload
 ufw default deny incoming 
 ufw default allow outgoing
 ufw allow 443
@@ -10,3 +12,4 @@ ufw allow ntp
 ufw --force enable
 
 mount / -o remount,ro
+exit 0

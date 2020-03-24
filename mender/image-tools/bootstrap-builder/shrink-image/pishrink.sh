@@ -166,7 +166,8 @@ fi
 
 #Add some free space to the end of the filesystem
 extra_space=$(($currentsize - $minsize))
-for space in 5000 1000 100; do
+#for space in 5000 1000 100; do
+for space in 9000 5000 500; do
   if [[ $extra_space -gt $space ]]; then
     minsize=$(($minsize + $space))
     break
