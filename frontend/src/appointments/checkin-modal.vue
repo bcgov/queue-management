@@ -105,9 +105,10 @@
         this.$store.commit('toggleServeCitizenSpinner', true)
         this.postCheckIn(this.clickedAppt).then( () => {
           this.hide()
+          this.$store.commit('toggleServeCitizenSpinner', false)
         })
-        setTimeout(()=>{ this.$store.commit('toggleServeCitizenSpinner', false) }, 500);
-        //this.$store.commit('toggleServeCitizenSpinner', false)
+        /*setTimeout(()=>{ this.$store.commit('toggleServeCitizenSpinner', false) }, 500);
+        this.$store.commit('toggleServeCitizenSpinner', false)*/
       },
       clearTime() {
         this.$root.$emit('cleardate')

@@ -463,26 +463,25 @@
             this.putRecurringAppointment(re_payload).then(() => {
               this.getAppointments().then( () => {
                 finish()
+                this.$store.commit('toggleServeCitizenSpinner', false)
               })
             })
           }else {
             this.putAppointment(payload).then( () => {
               this.getAppointments().then( () => {
                 finish()
+                this.$store.commit('toggleServeCitizenSpinner', false)
               })
             })
           }
-          setTimeout(()=>{ this.$store.commit('toggleServeCitizenSpinner', false) }, 500);
-          //this.$store.commit('toggleServeCitizenSpinner', false)
-          return
+         return
         }
         this.postAppointment(e).then( () => {
           this.getAppointments().then( () => {
             finish()
+            this.$store.commit('toggleServeCitizenSpinner', false)
           })
         })
-        setTimeout(()=>{ this.$store.commit('toggleServeCitizenSpinner', false) }, 500);
-        //this.$store.commit('toggleServeCitizenSpinner', false)
       },
     },
   }
