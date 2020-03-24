@@ -7,9 +7,14 @@
            no-close-on-esc
            hide-header
            size="sm">
+     <div id="navi">
+        <template v-if="this.$store.state.showServeCitizenSpinner">
+          <div class="q-loader2" ></div>
+        </template>
+     </div>
     <template slot="modal-footer">
       <b-button class="btn-secondary"
-                @click.once="hide">Close</b-button>
+                @click="hide">Close</b-button>
     </template>
     <b-form autocomplete="off">
       <b-form-row>
@@ -18,7 +23,7 @@
                         class="mb-0 mt-2">
             <label class="mb-0">Citizen Has Arrived?</label><br>
             <b-button class="w-100 btn-success"
-                      @click.once="checkIn">
+                      @click="checkIn">
               Check-In
             </b-button>
           </b-form-group>
@@ -29,7 +34,7 @@
           <b-form-group class="mb-0 mt-2">
             <label class="mb-0">Edit or Cancel Appointment?</label><br>
             <b-button class="w-100 btn-secondary"
-                      @click.once="editAppt">
+                      @click="editAppt">
               Edit Appointment
             </b-button>
           </b-form-group>
@@ -40,7 +45,7 @@
           <b-form-group class="mb-0 mt-2">
             <label class="mb-0">Edit or Cancel Recurring Series?</label><br>
             <b-button class="w-100 btn-secondary"
-                      @click.once="editSeries">
+                      @click="editSeries">
               Edit Recurring Series
             </b-button>
           </b-form-group>
@@ -58,8 +63,13 @@
   export default {
     name: "CheckInModal",
     props: ['clickedAppt'],
+    data() {
+      return {
+        showcheckInSpinner: false
+      }
+    },
     computed: {
-      ...mapState(['showCheckInModal']),
+      ...mapState(['showCheckInModal','showServeCitizenSpinner'],),
       modalVisible: {
         get() { return this.showCheckInModal },
         set(e) { this.toggleCheckInModal(e) }
@@ -92,9 +102,12 @@
         'toggleEditDeleteSeries',
       ]),
       checkIn() {
+        this.$store.commit('toggleServeCitizenSpinner', true)
         this.postCheckIn(this.clickedAppt).then( () => {
           this.hide()
         })
+        setTimeout(()=>{ this.$store.commit('toggleServeCitizenSpinner', false) }, 500);
+        //this.$store.commit('toggleServeCitizenSpinner', false)
       },
       clearTime() {
         this.$root.$emit('cleardate')
@@ -121,5 +134,21 @@
 </script>
 
 <style scoped>
-
+  #navi {
+    position: relative;
+  }
+  .q-loader2 {
+    position: absolute;
+    z-index: 1100;
+    text-align: center;
+    margin: 50px auto auto 100px;
+    width: 50px;
+    height: 50px;
+    border: 10px solid LightGrey;
+    opacity:0.9;
+    border-radius: 50%;
+    border-top-color: DodgerBlue;
+    animation: spin 1s ease-in-out infinite;
+    -webkit-animation: spin 1s ease-in-out infinite;
+}
 </style>

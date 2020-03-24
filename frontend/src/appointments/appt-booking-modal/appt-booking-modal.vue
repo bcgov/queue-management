@@ -1,4 +1,5 @@
 <template>
+
   <b-modal v-model="modalVisible"
            @shown="show"
            size="md"
@@ -7,15 +8,20 @@
            no-close-on-backdrop
            no-close-on-esc
            hide-header>
+    <div id="navi">
+      <template v-if="this.$store.state.showServeCitizenSpinner">
+        <div class="q-loader2" ></div>
+      </template>
+    </div>
       <template slot="modal-footer">
         <div class="d-flex flex-row-reverse">
           <b-button class="disabled btn-primary ml-2"
                     v-if="submitDisabled"
                     @click="validate=true">Submit</b-button>
           <b-button class="btn-primary ml-2"
-                    @click.once="submit"
+                    @click="submit"
                     v-if="!submitDisabled">Submit</b-button>
-          <b-button @click.once="cancel()">Cancel</b-button>
+          <b-button @click="cancel()">Cancel</b-button>
         </div>
       </template>
       <span v-if="this.editDeleteSeries" style="font-size:1.75rem;">Book Service Appointment Series</span>
@@ -79,7 +85,7 @@
             <b-form-group v-if="isNotBlackoutFlag"
                           class="mb-0 mt-2">
               <label class="mb-0">Change Date/Time</label><br>
-              <b-button @click.once="reschedule"
+              <b-button @click="reschedule"
                         class="btn-secondary w-100">Reschedule</b-button>
             </b-form-group>
           </b-col>
@@ -89,12 +95,12 @@
               <label v-if="this.editDeleteSeries" class="mb-0">Remove Appointment</label>
               <label v-else class="mb-0">Remove Appointment</label><br>
               <b-button v-if="clickedAppt && !this.editDeleteSeries"
-                        @click.once="deleteAppt"
+                        @click="deleteAppt"
                         class="btn-danger w-100">
                 Delete
               </b-button>
               <b-button v-else
-                        @click.once="deleteRecurringAppts"
+                        @click="deleteRecurringAppts"
                         class="btn-danger w-100">
                 Delete Series
               </b-button>
@@ -116,12 +122,12 @@
                       <b-button variant="primary"
                                 class="px-0"
                                 style="width: 52px"
-                                @click.once="addService">{{ selectedService ? 'Edit' : 'Set' }}</b-button>
+                                @click="addService">{{ selectedService ? 'Edit' : 'Set' }}</b-button>
                       <b-button variant="secondary"
                                 v-if="selectedService"
                                 class="px-0"
                                 style="width: 52px;border-radius: 0px;"
-                                @click.once="clearService">Clear</b-button>
+                                @click="clearService">Clear</b-button>
                     </b-button-group>
                   </b-input-group-prepend>
                   <b-form-input disabled
@@ -415,6 +421,7 @@
         }
       },
       submit() {
+        this.$store.commit('toggleServeCitizenSpinner', true)
         this.clearMessage()
         let service_id = this.selectedService
         let start = moment(this.start).clone()
@@ -465,6 +472,8 @@
               })
             })
           }
+          setTimeout(()=>{ this.$store.commit('toggleServeCitizenSpinner', false) }, 500);
+          //this.$store.commit('toggleServeCitizenSpinner', false)
           return
         }
         this.postAppointment(e).then( () => {
@@ -472,7 +481,31 @@
             finish()
           })
         })
+        setTimeout(()=>{ this.$store.commit('toggleServeCitizenSpinner', false) }, 500);
+        //this.$store.commit('toggleServeCitizenSpinner', false)
       },
     },
   }
 </script>
+
+
+<style scoped>
+  #navi {
+    position: relative;
+  }
+  .q-loader2 {
+    position: absolute;
+    z-index: 1100;
+    text-align: center;
+    margin: 250px auto auto 175px;
+    width: 50px;
+    height: 50px;
+    border: 10px solid LightGrey;
+    opacity:0.9;
+    border-radius: 50%;
+    border-top-color: DodgerBlue;
+    animation: spin 1s ease-in-out infinite;
+    -webkit-animation: spin 1s ease-in-out infinite;
+}
+</style>
+
