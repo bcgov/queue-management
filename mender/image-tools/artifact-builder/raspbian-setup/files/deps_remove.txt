@@ -2,10 +2,6 @@ samba-common
 manpages
 manpages-dev
 man-db
-firmware-atheros
-firmware-libertas
-firmware-misc-nonfree
-firmware-realtek
 gdb
 plymouth
 libplymouth4
