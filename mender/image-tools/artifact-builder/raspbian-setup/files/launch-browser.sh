@@ -29,6 +29,11 @@ while true ; do
 	# to try load the smart board. This ensures that the network is up
 	# before hitting the smartboard
 
+		# --enable-fast-unload --enable-checker-imaging --enable-tcp-fast-open \
+		# -check-for-update-interval=0 --disable-background-networking \
+		# --enable-native-gpu-memory-buffers --enable-gpu-rasterization --enable-zero-copy \
+		# --use-gl=egl --gles --disable-quic \
+
 	chromium-browser \
 		--ignore-blacklist --ignore-gpu-blacklist \
 		--disable-translate --disable-features=TranslateUI \
@@ -36,10 +41,6 @@ while true ; do
 		--disable-logging --noerrdialogs --start-fullscreen \
 		--disk-cache-size=0  \
 		--check-for-update-interval=0 --disable-background-networking \
-		# --enable-fast-unload --enable-checker-imaging --enable-tcp-fast-open \
-		# -check-for-update-interval=0 --disable-background-networking \
-		# --enable-native-gpu-memory-buffers --enable-gpu-rasterization --enable-zero-copy \
-		# --use-gl=egl --gles --disable-quic \
 		--app="http://localhost/splash.html"
 
 
