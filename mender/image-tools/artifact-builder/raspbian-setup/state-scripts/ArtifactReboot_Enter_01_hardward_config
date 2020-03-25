@@ -12,11 +12,10 @@ hdmi_force_hotplug=1
 avoid_warnings=1
 
 # Increase GPU Memory
-gpu_mem_1024=128
+gpu_mem_1024=64
 
 #enable GPU Driver
-dtoverlay=vc4-fkms-v3d
-dtparam=audio=off
+dtoverlay=vc4-kms-v3d
 
 END_TEXT
 

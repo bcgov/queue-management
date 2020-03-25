@@ -41,7 +41,7 @@ while true ; do
 		--disable-logging --noerrdialogs --start-fullscreen \
 		--disk-cache-size=0  \
 		--check-for-update-interval=0 --disable-background-networking \
-		--app="http://localhost/splash.html"
+		--kiosk "http://localhost/splash.html"
 
 
 	sleep 1
