@@ -54,7 +54,7 @@ class ExamPost(Resource):
         if not (exam.office_id == csr.office_id or csr.liaison_designate == 1):
             return {"The Exam Office ID and CSR Office ID do not match!"}, 403   
         
-        if json_data["exam_name"] and json_data["exam_name"] == "pesticide":
+        if exam.is_pesticide:
             formatted_data = self.format_data(json_data, exam)
             exam = formatted_data["exam"]
                 

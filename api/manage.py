@@ -854,7 +854,7 @@ class Bootstrap(Command):
             number_of_hours=0,
             method_type="written",
             ita_ind=0,
-            group_exam_ind=0,
+            group_exam_ind=1,
             pesticide_exam_ind=0,
         )
 
