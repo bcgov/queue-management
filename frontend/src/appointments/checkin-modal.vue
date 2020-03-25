@@ -69,7 +69,7 @@
       }
     },
     computed: {
-      ...mapState(['showCheckInModal','showServeCitizenSpinner'],),
+      ...mapState(['showCheckInModal','showServeCitizenSpinner', 'checkInClicked'],),
       modalVisible: {
         get() { return this.showCheckInModal },
         set(e) { this.toggleCheckInModal(e) }
@@ -100,15 +100,17 @@
         'toggleCheckInModal',
         'toggleApptBookingModal',
         'toggleEditDeleteSeries',
+        'toggleCheckInClicked'
       ]),
       checkIn() {
-        this.$store.commit('toggleServeCitizenSpinner', true)
-        this.postCheckIn(this.clickedAppt).then( () => {
-          this.hide()
-          this.$store.commit('toggleServeCitizenSpinner', false)
-        })
-        /*setTimeout(()=>{ this.$store.commit('toggleServeCitizenSpinner', false) }, 500);
-        this.$store.commit('toggleServeCitizenSpinner', false)*/
+        if (!this.checkInClicked) {
+          this.toggleCheckInClicked(true)
+          this.$store.commit('toggleServeCitizenSpinner', true)
+          this.postCheckIn(this.clickedAppt).then(() => {
+            this.hide()
+            this.$store.commit('toggleServeCitizenSpinner', false)
+          })
+        }
       },
       clearTime() {
         this.$root.$emit('cleardate')
