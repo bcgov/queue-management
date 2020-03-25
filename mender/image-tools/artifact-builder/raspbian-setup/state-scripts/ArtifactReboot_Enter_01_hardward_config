@@ -15,7 +15,6 @@ avoid_warnings=1
 gpu_mem_1024=128
 
 #enable GPU Driver
-dispmanx_offline=1
 dtoverlay=vc4-fkms-v3d
 dtparam=audio=off
 

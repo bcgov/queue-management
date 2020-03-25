@@ -24,6 +24,3 @@ gldriver-test
 libgl1-mesa-dri
 mesa-vdpau-drivers
 mesa-utils
-
-
-

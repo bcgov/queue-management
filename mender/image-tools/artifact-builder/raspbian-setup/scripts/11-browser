@@ -3,6 +3,9 @@ cd $files
 
 set -ex
 
+ln -sf /opt/vc/lib/libbrcmGLESv2.so /opt/vc/lib/libGLESv2.so.2
+ln -sf /opt/vc/lib/libbrcmEGL.so /opt/vc/lib/libEGL.so
+ldconfig
 cp launch-browser.sh $home_dir/
 cp sites.txt /root/
 
