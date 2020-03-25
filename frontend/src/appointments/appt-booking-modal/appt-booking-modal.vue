@@ -202,6 +202,7 @@
         'showApptBookingModal',
         'selectedService',
         'editDeleteSeries',
+        'submitClicked'
       ]),
       appointments() {
         if (this.clickedAppt) {
@@ -326,6 +327,7 @@
         'setRescheduling',
         'toggleApptBookingModal',
         'toggleEditDeleteSeries',
+        'toggleSubmitClicked'
       ]),
       addService() {
         this.selectingService = true
@@ -354,13 +356,17 @@
         this.resetAddModalForm()
       },
       deleteAppt() {
+        this.$store.commit('toggleServeCitizenSpinner', true)
         this.deleteAppointment(this.clickedAppt.appointment_id).then( () => {
           this.cancel()
+          this.$store.commit('toggleServeCitizenSpinner', false)
         })
       },
       deleteRecurringAppts() {
+        this.$store.commit('toggleServeCitizenSpinner', true)
         this.deleteRecurringAppointments(this.clickedAppt.recurring_uuid).then( () => {
           this.cancel()
+          this.$store.commit('toggleServeCitizenSpinner', false)
         })
       },
       reschedule() {
@@ -421,67 +427,72 @@
         }
       },
       submit() {
-        this.$store.commit('toggleServeCitizenSpinner', true)
-        this.clearMessage()
-        let service_id = this.selectedService
-        let start = moment(this.start).clone()
-        let end = moment(this.end).clone()
-        let e = {
-          start_time: moment.utc(start).format(),
-          end_time: moment.utc(end).format(),
-          service_id,
-          citizen_name: this.citizen_name,
-          contact_information: this.contact_information,
-        }
-        if (this.comments) {
-          e.comments = this.comments
-        }
-        let finish = () => {
-          this.cancel()
-          this.$root.$emit('clear-clicked-appt')
-          this.$root.$emit('clear-clicked-time')
-        }
-        if (this.clickedAppt) {
-          let payload = {
-            id: this.clickedAppt.appointment_id,
-            data: e
+        if (!this.submitClicked) {
+          this.toggleSubmitClicked(true)
+          this.$store.commit('toggleServeCitizenSpinner', true)
+          this.clearMessage()
+          let service_id = this.selectedService
+          let start = moment(this.start).clone()
+          let end = moment(this.end).clone()
+          let e = {
+            start_time: moment.utc(start).format(),
+            end_time: moment.utc(end).format(),
+            service_id,
+            citizen_name: this.citizen_name,
+            contact_information: this.contact_information,
           }
-          if(this.editDeleteSeries === true){
-            // IFF further fields are added to the appointment model that are intended to be edited,
-            // and they belong to blackouts, and them to the following object below. Ensure that dates are
-            // not included as all events in this series will be under the start/end time of the event
-            // that is clicked in the calendar
-            this.toggleEditDeleteSeries(false)
-            let re_e = {
-              comments: this.comments
-            }
-            let re_payload = {
+          if (this.comments) {
+            e.comments = this.comments
+          }
+          let finish = () => {
+            this.cancel()
+            this.$root.$emit('clear-clicked-appt')
+            this.$root.$emit('clear-clicked-time')
+          }
+          if (this.clickedAppt) {
+            let payload = {
               id: this.clickedAppt.appointment_id,
-              data: re_e,
-              recurring_uuid: this.clickedAppt.recurring_uuid
+              data: e
             }
-            this.putRecurringAppointment(re_payload).then(() => {
-              this.getAppointments().then( () => {
-                finish()
-                this.$store.commit('toggleServeCitizenSpinner', false)
+            if (this.editDeleteSeries === true) {
+              // IFF further fields are added to the appointment model that are intended to be edited,
+              // and they belong to blackouts, and them to the following object below. Ensure that dates are
+              // not included as all events in this series will be under the start/end time of the event
+              // that is clicked in the calendar
+              this.toggleEditDeleteSeries(false)
+              let re_e = {
+                comments: this.comments
+              }
+              let re_payload = {
+                id: this.clickedAppt.appointment_id,
+                data: re_e,
+                recurring_uuid: this.clickedAppt.recurring_uuid
+              }
+              this.putRecurringAppointment(re_payload).then(() => {
+                this.getAppointments().then(() => {
+                  finish()
+                  this.$store.commit('toggleServeCitizenSpinner', false)
+                })
               })
-            })
-          }else {
-            this.putAppointment(payload).then( () => {
-              this.getAppointments().then( () => {
-                finish()
-                this.$store.commit('toggleServeCitizenSpinner', false)
+            } else {
+              this.putAppointment(payload).then(() => {
+                this.getAppointments().then(() => {
+                  finish()
+                  this.$store.commit('toggleServeCitizenSpinner', false)
+                  setTimeout(()=>{ this.toggleSubmitClicked(false) }, 2000);
+                })
               })
-            })
+            }
+            return
           }
-         return
-        }
-        this.postAppointment(e).then( () => {
-          this.getAppointments().then( () => {
-            finish()
-            this.$store.commit('toggleServeCitizenSpinner', false)
+          this.postAppointment(e).then(() => {
+            this.getAppointments().then(() => {
+              finish()
+              this.$store.commit('toggleServeCitizenSpinner', false)
+              setTimeout(()=>{ this.toggleSubmitClicked(false) }, 2000);
+            })
           })
-        })
+        }
       },
     },
   }
