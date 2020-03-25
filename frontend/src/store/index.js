@@ -2020,27 +2020,7 @@ export const store = new Vuex.Store({
 
     postITAGroupExam(context) {
       let responses = Object.assign( {}, context.state.capturedExam)
-      let timezone_name = context.state.user.office.timezone
-      let booking_office = context.state.offices.find(office => office.office_id == responses.office_id)
-      let booking_timezone_name = booking_office.timezone.timezone_name
-      let date = new moment(responses.expiry_date).format('YYYY-MM-DD')
-      let time = new moment(responses.exam_time).format('HH:mm:ss')
-      let datetime = date+'T'+time
-      let start
-      if (booking_timezone_name != timezone_name) {
-        start = new tZone.tz(datetime, booking_timezone_name)
-      } else {
-        start = new moment(datetime).local()
-      }
-      let length = context.state.examTypes.find(ex => ex.exam_type_id == responses.exam_type_id).number_of_hours
-      let end = start.clone().add(length, 'hours')
-      let booking = {
-        start_time: start.clone().utc().format('YYYY-MM-DD[T]HH:mm:ssZ'),
-        end_time: end.clone().utc().format('YYYY-MM-DD[T]HH:mm:ssZ'),
-        fees: 'false',
-        booking_name: responses.exam_name,
-        office_id: responses.office_id,
-      }
+      let booking = makeBookingReqObj(context, responses)
       let defaultValues = {
         exam_returned_ind: 0,
         examinee_name: 'group exam',
@@ -2098,8 +2078,9 @@ export const store = new Vuex.Store({
         }
       }
 
-      if (context.state.addExamModal.setup === 'pesticide' && !responses.exam_name) {
-        responses.exam_name = "pesticide"
+      if (context.state.addExamModal.setup === 'pesticide') {
+        responses.exam_name = responses.exam_name || "pesticide"
+        responses.is_pesticide = 1
       }
 
       responses.receipt = responses.receipt_number
@@ -2110,15 +2091,33 @@ export const store = new Vuex.Store({
       let postData = {...responses, ...defaultValues}
 
       if(responses['ind_or_group'] === 'group') {
+        let examType = context.state.examTypes.find(type => (type.group_exam_ind && !type.ita_ind && !type.pesticide_exam_ind));
+        postData.exam_type_id = responses.exam_type_id = examType.exam_type_id
         postData.candidates = (context.state.addExamModule && context.state.addExamModule.candidates) ? context.state.addExamModule.candidates : []
       }
+
+      let booking = makeBookingReqObj(context, responses)
 
       let apiUrl = (isRequestExamReq) ? '/exams/bcmp/' : '/exams/'
 
       return new Promise((resolve, reject) => {
         Axios(context).post(apiUrl, postData).then( examResp => {
           console.log(examResp)
-          resolve(examResp) 
+          if ((responses['ind_or_group'] === 'group') && !isRequestExamReq) {
+            let { exam_id } = examResp.data.exam
+            context.dispatch('postBooking', booking).then( bookingResp => {
+              let putObject = {
+                examId: exam_id,
+                bookingId: bookingResp,
+                officeId: responses.office_id
+              }
+              context.dispatch('putExam', putObject).then( (examResp) => {
+                resolve(examResp)
+              }).catch( () => { reject() })
+            }).catch( () => { reject() })
+          } else {
+            resolve(examResp)
+          }
         }).catch( (err) => { 
           console.log(err)
           reject(err) 
@@ -2975,3 +2974,28 @@ export const store = new Vuex.Store({
     },
   }
 })
+
+let makeBookingReqObj = (context, responses) => {
+    let timezone_name = context.state.user.office.timezone
+    let booking_office = context.state.offices.find(office => office.office_id == responses.office_id)
+    let booking_timezone_name = booking_office.timezone.timezone_name
+    let date = new moment(responses.expiry_date).format('YYYY-MM-DD')
+    let time = new moment(responses.exam_time).format('HH:mm:ss')
+    let datetime = date+'T'+time
+    let start
+    if (booking_timezone_name != timezone_name) {
+      start = new tZone.tz(datetime, booking_timezone_name)
+    } else {
+      start = new moment(datetime).local()
+    }
+    let length = context.state.examTypes.find(ex => ex.exam_type_id == responses.exam_type_id).number_of_hours
+    let end = start.clone().add(length, 'hours')
+    let booking = {
+      start_time: start.clone().utc().format('YYYY-MM-DD[T]HH:mm:ssZ'),
+      end_time: end.clone().utc().format('YYYY-MM-DD[T]HH:mm:ssZ'),
+      fees: 'false',
+      booking_name: responses.exam_name,
+      office_id: responses.office_id,
+    }
+    return booking;
+}

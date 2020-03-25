@@ -379,7 +379,7 @@
                     </b-dropdown-item>
                   </template>
 
-                  <template v-if="!row.item.offsite_location || (row.item.exam_name === 'pesticide')">
+                  <template v-if="!row.item.offsite_location || row.item.is_pesticide">
                     <b-dropdown-item size="sm"
                                        v-if="row.item.booking && Object.keys(row.item.booking).length > 0"
                                      @click="updateCalendarBooking(row.item)">
@@ -392,9 +392,8 @@
 
                 <!--  Options for group exam ind (???).  -->
                 <template v-else-if="row.item.exam_type.group_exam_ind">
-                  <b-dropdown-item size="sm"> 444 </b-dropdown-item>
                   <b-dropdown-item size="sm"
-                                   v-if="row.item.offsite_location"
+                                   v-if="row.item.offsite_location || row.item.is_pesticide"
                                    @click="editGroupBooking(row.item)">
                     {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}
                   </b-dropdown-item>
@@ -441,9 +440,10 @@
                 </template>
 
                   <b-dropdown-item size="sm"
-                                   @click="editExamDetails(row.item)">Edit Exam Details</b-dropdown-item>
+                      v-if="!(row.item.exam_type.group_exam_ind && row.item.is_pesticide)"
+                      @click="editExamDetails(row.item)">Edit Exam Details</b-dropdown-item>
                   <b-dropdown-item size="sm"
-                                   @click="returnExam(row.item)">
+                      @click="returnExam(row.item)">
                     {{ row.item.exam_type.pesticide_exam_ind ? 'Upload Exam' : 'Return Exam' }}
                   </b-dropdown-item>
               </template>

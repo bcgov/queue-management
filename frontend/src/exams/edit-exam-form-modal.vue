@@ -619,7 +619,7 @@
           .catch((error) => {
             console.error(error)
             this.examNotReady = true
-            setTimeout(() => { this.examNotReady = false }, 5000)
+            setTimeout(() => { this.examNotReady = false }, 15000)
           })
       },
       checkInputLength(e) {
