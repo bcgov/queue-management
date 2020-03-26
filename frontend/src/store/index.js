@@ -2064,6 +2064,7 @@ export const store = new Vuex.Store({
         exam_returned_ind: 0,
         number_of_students: 1
       }
+      defaultValues.number_of_students = (responses['ind_or_group'] === 'group') ? responses.number_of_students : 1
       let exp = new moment(responses.expiry_date).format('YYYY-MM-DD').toString()
       responses.expiry_date = new moment(exp).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
       if (responses.exam_received_date) {

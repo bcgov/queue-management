@@ -609,7 +609,6 @@
         return ex.exam_type.ita_ind ? true : false
       },
       checkAndDownloadExam() {
-        console.log("blah")
         this.downloadExam(this.exam)
           .then((resp) => {
             console.log(resp)
