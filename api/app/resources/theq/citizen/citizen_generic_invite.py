@@ -15,9 +15,85 @@ limitations under the License.'''
 from filelock import FileLock
 from flask import g, request
 from flask_restx import Resource
-from qsystem import api, api_call_with_retry, db, oidc, socketio, my_print
+from qsystem import api, api_call_with_retry, db, oidc, socketio, my_print, get_key
 from app.models.theq import Citizen, CSR, CitizenState, Period, PeriodState, ServiceReq, SRState
 from app.schemas.theq import CitizenSchema
+from datetime import datetime
+from pprint import pprint
+
+
+@oidc.accept_token(require_token=True)
+@api_call_with_retry
+def csr_find_by_user():
+    csr = CSR.find_by_username(g.oidc_token_info['username'])
+    return csr
+
+@oidc.accept_token(require_token=True)
+@api_call_with_retry
+def find_active():
+    active_citizen_state = CitizenState.query.filter_by(cs_state_name='Active').first()
+    return active_citizen_state
+
+@oidc.accept_token(require_token=True)
+@api_call_with_retry
+def find_wait():
+    waiting_period_state = PeriodState.get_state_by_name("Waiting")
+    return waiting_period_state
+
+@oidc.accept_token(require_token=True)
+@api_call_with_retry
+def find_citizen(counter_id, active_citizen_state, csr, waiting_period_state):
+    citizen = Citizen.query \
+        .filter_by(counter_id=counter_id, cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
+        .join(Citizen.service_reqs) \
+        .join(ServiceReq.periods) \
+        .filter_by(ps_id=waiting_period_state.ps_id) \
+        .filter(Period.time_end.is_(None)) \
+        .order_by(Citizen.priority, Citizen.citizen_id) \
+        .first()
+    return citizen
+
+@oidc.accept_token(require_token=True)
+@api_call_with_retry
+def find_citizen2(active_citizen_state, csr, waiting_period_state):
+    citizen = Citizen.query \
+        .filter_by(cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
+        .join(Citizen.service_reqs) \
+        .join(ServiceReq.periods) \
+        .filter_by(ps_id=waiting_period_state.ps_id) \
+        .filter(Period.time_end.is_(None)) \
+        .order_by(Citizen.priority, Citizen.citizen_id) \
+        .first()
+    return citizen
+
+@oidc.accept_token(require_token=True)
+@api_call_with_retry
+def find_active_sr(citizen):
+    active_service_request = citizen.get_active_service_request()
+    return active_service_request
+
+@oidc.accept_token(require_token=True)
+@api_call_with_retry
+def invite_active_sr(active_service_request,csr,citizen):
+    active_service_request.invite(csr, invite_type="generic", sr_count=len(citizen.service_reqs))
+
+@oidc.accept_token(require_token=True)
+@api_call_with_retry
+def find_active_ss():
+    active_service_state = SRState.get_state_by_name("Active")
+    return active_service_state
+
+@oidc.accept_token(require_token=True)
+@api_call_with_retry
+def find_active_sr(citizen):
+    active_service_request = citizen.get_active_service_request()
+    return active_service_request
+
+@oidc.accept_token(require_token=True)
+@api_call_with_retry
+def find_active_sr(citizen):
+    active_service_request = citizen.get_active_service_request()
+    return active_service_request
 
 @api.route("/citizens/invite/", methods=['POST'])
 class CitizenGenericInvite(Resource):
@@ -26,16 +102,26 @@ class CitizenGenericInvite(Resource):
     citizens_schema = CitizenSchema(many=True)
 
     @oidc.accept_token(require_token=True)
-    @api_call_with_retry
+    #@api_call_with_retry
     def post(self):
-
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
+        #print("==> In Python /citizens/invitetest")
+        y = 0
+        #for x in range(0, 25):
+        key = "DR->" + get_key()
+        #print("")
+        y = y + 1
+        #print("DATETIME:", datetime.now(), "starting loop:", y, "==>Key : ", key)
+        csr = csr_find_by_user()
+        #print("DATETIME:", datetime.now(), "==>Key : ", key,"===>AFTER CALL TO csr_find_by_user:", csr)
         lock = FileLock("lock/invite_citizen_{}.lock".format(csr.office_id))
-
         with lock:
 
-            active_citizen_state = CitizenState.query.filter_by(cs_state_name='Active').first()
-            waiting_period_state = PeriodState.get_state_by_name("Waiting")
+            #active_citizen_state = find_active()
+            active_citizen_state = citizen_state
+            #print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_Active:", active_citizen_state)
+
+            waiting_period_state = find_wait()
+            #print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_wait:", waiting_period_state)
             citizen = None
             json_data = request.get_json()
 
@@ -44,25 +130,13 @@ class CitizenGenericInvite(Resource):
             else:
                 counter_id = int(csr.counter_id)
 
-            citizen = Citizen.query \
-                .filter_by(counter_id=counter_id, cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
-                .join(Citizen.service_reqs) \
-                .join(ServiceReq.periods) \
-                .filter_by(ps_id=waiting_period_state.ps_id) \
-                .filter(Period.time_end.is_(None)) \
-                .order_by(Citizen.priority, Citizen.citizen_id) \
-                .first()
+            citizen = find_citizen(counter_id,active_citizen_state, csr, waiting_period_state)
+            #print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_citizen:", citizen)
 
             # If no matching citizen with the same counter type, get next one
             if citizen is None:
-                citizen = Citizen.query \
-                    .filter_by(cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
-                    .join(Citizen.service_reqs) \
-                    .join(ServiceReq.periods) \
-                    .filter_by(ps_id=waiting_period_state.ps_id) \
-                    .filter(Period.time_end.is_(None)) \
-                    .order_by(Citizen.priority, Citizen.citizen_id) \
-                    .first()
+                citizen = find_citizen2(active_citizen_state, csr, waiting_period_state)
+                #print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_citizen2:", citizen)
 
             if citizen is None:
                 return {"message": "There is no citizen to invite"}, 400
@@ -70,16 +144,21 @@ class CitizenGenericInvite(Resource):
             my_print("==> POST /citizens/invite/ Citizen: " + str(citizen.citizen_id) + ', Ticket: ' + citizen.ticket_number)
 
             db.session.refresh(citizen)
-            active_service_request = citizen.get_active_service_request()
+
+            active_service_request = find_active_sr(citizen)
+            #print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_active_sr:", citizen)
 
             try:
-                active_service_request.invite(csr, invite_type="generic", sr_count = len(citizen.service_reqs))
+                invite_active_sr(active_service_request,csr,citizen)
+                #print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO invite_active_sr:")
+
             except TypeError:
                 return {"message": "Error inviting citizen. Please try again."}, 400
 
-            active_service_state = SRState.get_state_by_name("Active")
-            active_service_request.sr_state_id = active_service_state.sr_state_id
 
+            active_service_state = find_active_ss()
+            #print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_active_ss:", active_service_state)
+            active_service_request.sr_state_id = active_service_state.sr_state_id
             db.session.add(citizen)
             db.session.commit()
 
@@ -88,5 +167,15 @@ class CitizenGenericInvite(Resource):
             result = self.citizen_schema.dump(citizen)
             socketio.emit('update_active_citizen', result.data, room=csr.office_id)
 
+            #print("DATETIME:", datetime.now(), "end loop:     ", y , "==>Key : ", key)
+
         return {'citizen': result.data,
                 'errors': result.errors}, 200
+
+try:
+    citizen_state = CitizenState.query.filter_by(cs_state_name="Active").first()
+    active_id = citizen_state.cs_id
+except:
+    active_id = 1
+    print("==> In citizen_generic_invite.py")
+    print("    --> NOTE!!  You should only see this if doing a 'python3 manage.py db upgrade'")

@@ -16,7 +16,7 @@ threads = int(os.environ.get('GUNICORN_THREADS', '1'))
 
 worker_class = 'eventlet'
 worker_connections = 500
-timeout = 60
+timeout = 10
 keepalive = 20
 
 def profiler_enable(worker, req):

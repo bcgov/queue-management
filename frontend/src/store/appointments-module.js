@@ -11,12 +11,14 @@ export default {
       title: null,
       name: null
     },
+    checkInClicked: false,
     editDeleteSeries: false,
     selectedService: null,
     showApptBookingModal: false,
     showAppointmentBlackoutModal: false,
     showCheckInModal: false,
     services: [],
+    submitClicked: false
   },
   getters: {
     service_name: (state, getters, rootState) => {
@@ -86,7 +88,7 @@ export default {
       commit('updateAddModalForm', { type: 'search', value: null}, {root: true})
       commit('setSelectedService', null)
     },
-  
+
     deleteAppointment({dispatch, rootState}, payload) {
       let state = rootState
       return new Promise((resolve, reject) => {
@@ -108,7 +110,7 @@ export default {
         })
       })
     },
-  
+
     getAppointments({commit, rootState}) {
       let state = rootState
       let output = []
@@ -123,17 +125,17 @@ export default {
         })
       })
     },
-    
+
     getChannels({dispatch}) {
       dispatch('getChannels', null, {root: true})
     },
-    
+
     getServices({dispatch, commit}) {
       dispatch('getServices', null, {root: true})
       dispatch('getCategories', null, {root: true})
       dispatch('getChannels', null, {root: true})
     },
-    
+
     postAddToQueue({rootState}, payload) {
       let state = rootState
       return new Promise((resolve, reject) => {
@@ -145,7 +147,7 @@ export default {
         })
       })
     },
-  
+
     postAppointment({rootState}, payload) {
       let state = rootState
       payload.office_id = rootState.user.office_id
@@ -155,8 +157,8 @@ export default {
         })
       })
     },
-    
-    postCheckIn({ dispatch, rootState }, payload) {
+
+    postCheckIn({ commit, dispatch, rootState }, payload) {
       let state = rootState
       let data = {
         checked_in_time: moment.utc().format(),
@@ -169,10 +171,11 @@ export default {
       return new Promise((resolve, reject) => {
         Axios({state}).put(`/appointments/${payload.appointment_id}/`, data).then( () => {
           dispatch('sendToQueue', payload)
+          setTimeout(()=>{ commit('toggleCheckInClicked', false) }, 2000);
         })
       })
     },
-    
+
     postServiceReq({rootState}, {citizen_id, payload}) {
       let state = rootState
       let { channel_id } = rootState.channels.find(ch => ch.channel_name.includes('Person'))
@@ -192,7 +195,7 @@ export default {
         })
       })
     },
-  
+
     putAppointment({dispatch, rootState}, payload) {
       let state = rootState
       let { id } = payload
@@ -215,7 +218,7 @@ export default {
         })
       })
     },
-    
+
     putCitizen({rootState}, {citizen_id, payload}) {
       let start = moment(payload.start).clone().format('h:mm')
       if (!payload.comments) {
@@ -231,7 +234,7 @@ export default {
         start_time: payload.start_time,
         snowplow_addcitizen: payload.snowplow_addcitizen
       }
-      
+
       return new Promise((resolve, reject) => {
         let state = rootState
         let url = `/citizens/${citizen_id}/`
@@ -242,7 +245,7 @@ export default {
         })
       })
     },
-    
+
     resetAddModalForm({commit}) {
       commit('resetAddModalForm', null, {root: true})
     },
@@ -276,8 +279,10 @@ export default {
       state.calendarSetup = { title, name }
     },
     toggleApptBookingModal: (state, payload) => state.showApptBookingModal = payload,
+    toggleCheckInClicked: (state, payload) => state.checkInClicked = payload,
     toggleCheckInModal: (state, payload) => state.showCheckInModal = payload,
     toggleEditDeleteSeries: (state, payload) => state.editDeleteSeries = payload,
+    toggleSubmitClicked: (state, payload) => state.submitClicked = payload,
     setSelectedService: (state, payload) => {
       state.selectedService = null
       state.selectedService = payload

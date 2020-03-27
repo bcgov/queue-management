@@ -1,12 +1,11 @@
-
-
 <template>
   <div id="serveModal" class="serve-modal">
     <div class="serve-modal-content">
-      <template v-if="showServeCitizenSpinner">
-        <div class="q-loader" />
-      </template>
-      <template v-else>
+      <div id="navi">
+        <template v-if="showServeCitizenSpinner">
+          <div class="q-loader2" ></div>
+        </template>
+      </div>
         <b-alert :show="this.alertMessage != ''"
                   style="h-align: center"
                   variant="warning">{{this.alertMessage}}</b-alert>
@@ -155,7 +154,6 @@
             </b-row>
           </b-container>
         </template>
-      </template>
     </div>
   </div>
 </template>
@@ -408,6 +406,23 @@ export default {
 </script>
 
 <style scoped>
+   #navi {
+    position: relative;
+  }
+  .q-loader2 {
+    position: absolute;
+    z-index: 1100;
+    text-align: center;
+    margin: 250px auto auto 450px;
+    width: 50px;
+    height: 50px;
+    border: 10px solid LightGrey;
+    opacity:0.9;
+    border-radius: 50%;
+    border-top-color: DodgerBlue;
+    animation: spin 1s ease-in-out infinite;
+    -webkit-animation: spin 1s ease-in-out infinite;
+}
 .serve-modal {
   position: fixed;
   z-index: 1040;

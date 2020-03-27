@@ -22,10 +22,15 @@ from app.exceptions import AuthError
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 
-
 def my_print(string):
     if print_flag:
-        print(string)
+        print(time_string() + string)
+
+def time_string():
+    now = datetime.datetime.now()
+    ms = now.strftime("%f")[:3]
+    now_string = now.strftime("%Y-%m-%d %H:%M:%S,")
+    return "[" + now_string + ms + "] "
 
 application = Flask(__name__, instance_relative_config=True)
 
@@ -49,7 +54,7 @@ cache.init_app(application)
 ma = Marshmallow(application)
 
 #   Set up socket io and rabbit mq.
-socketio = SocketIO(logger=socket_flag, engineio_logger=engine_flag,
+socketio = SocketIO(logger=socket_flag, engineio_logger=engine_flag,ping_timeout=6,ping_interval=3,
                     cors_allowed_origins=application.config['CORS_ALLOWED_ORIGINS'])
 
 if application.config['ACTIVE_MQ_URL'] is not None:
@@ -102,13 +107,14 @@ configure_logging(application)
 #  Code to determine all db.engine properties and sub-properties, as necessary.
 if False:
     print("==> All DB Engine options")
-    for attr in dir(db.engine):
-        print("    --> db.engine." + attr + " = " + str(getattr(db.engine, attr)))
+    for attr in dir(db._engine_options.keys):
+        print("    --> db._engine_options.keys." + attr + " = " + str(getattr(db._engine_options.keys, attr)))
         # print("db.engine.%s = %s") % (attr, getattr(db.engine, attr))
 
 #  See whether options took.
 if print_flag:
      print("==> DB Engine options")
+     print("    --> db options:    " + str(db.engine))
      print("    --> pool size:    " + str(db.engine.pool.size()))
      print("    --> max overflow: " + str(db.engine.pool._max_overflow))
      print("    --> echo:         " + str(db.engine.echo))
@@ -135,7 +141,8 @@ if print_flag:
             if h.__class__.__name__ != "NullHandler":
                 print("        --> name: " + name + "; handler type: " + h.__class__.__name__)
 
-def api_call_with_retry(f, max_time=15000, max_tries=12, delay_first=100, delay_start=200, delay_mult=1.5):
+# def api_call_with_retry(f, max_time=15000, max_tries=12, delay_first=100, delay_start=200, delay_mult=1.5):
+def api_call_with_retry(f, max_time=15000, max_tries=12, delay_first=175, delay_start=175, delay_mult=1.0):
 
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -190,13 +197,13 @@ def print_retry_info(print_debug, parameters, f, kwargs):
     if print_debug:
         msg = "==> RT K:" + parameters['key'] + "; T:" + str(parameters['current_try']) \
             + "; F:" + str(f) + "; KW:" + str(kwargs) if kwargs is not None else "None"
-        print(msg)
+        print(time_string() + msg)
 
 def print_error_info(print_debug, parameters, err):
     if print_debug:
         msg = "==> AE K:" + parameters['key'] + "; T:" + str(parameters['current_try']) \
             + "; E:" + str(err).replace("\n", ">").replace("\r", ">")
-        print(msg)
+        print(time_string() + msg)
 
         #  Print more info, if the builtins.dict error.
         # if "builtins.dict" in str(err):
