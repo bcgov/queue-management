@@ -40,11 +40,11 @@ class ExamStatus(Resource):
             if not (exam.office_id == csr.office_id or csr.liaison_designate == 1):
                 return {"The Exam Office ID and CSR Office ID do not match!"}, 403
 
-            status = self.bcmp_service.check_exam_status(exam)
-            print(status)
+            job = self.bcmp_service.check_exam_status(exam)
+            print(job)
 
-            if status == 'PACKAGE_GENERATED':
-                package_url = status["jobProperties"]["EXAM_PACKAGE_URL"]
+            if job['jobStatus'] == 'PACKAGE_GENERATED':
+                package_url = job["jobProperties"]["EXAM_PACKAGE_URL"]
                 req = urllib.request.Request(package_url)
                 response = urllib.request.urlopen(req).read()
                 exam_file = io.BytesIO(response)

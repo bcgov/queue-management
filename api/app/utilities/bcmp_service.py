@@ -59,7 +59,7 @@ class BCMPService:
             for job in response['jobs']:
                 print(job)
                 if job['jobId'] == exam.bcmp_job_id:
-                    return job['jobStatus']
+                    return job
 
         return False
 
