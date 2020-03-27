@@ -131,7 +131,7 @@
             <b-form-group>
               <label class="my-0">Invigilator</label>
               <b-form-select 
-                v-model="actionedExam.invigilator_id"
+                v-model="invigilator_id"
                 :options="invigilatorList"
                 @change="invigilatorChanged()"
               >
@@ -506,11 +506,7 @@
         invigilatorBoolean: true,
         shadowInvigilatorBoolean: true,
         groupInvigilatorBoolean: true,
-        exam_received: this.actionedExam.exam_received_date !== null ? true : false,
-        examReceivedOptions: [
-          { value: false, text: 'No' },
-          { value: true, text: 'Yes' },
-        ],
+        exam_received: false,
         examNotReady: false,
       }
     },
@@ -580,13 +576,26 @@
         return ''
       },
       exam() {
+        console.log(this.actionedExam)
         if (Object.keys(this.actionedExam).length > 0) {
           return this.actionedExam
         }
         return false
       },
       invigilatorList() {
+        if(this.actionedExam.is_pesticide && this.actionedExam.invigilator_id) {
+          this.invigilator_id = parseInt(this.actionedExam.invigilator_id)
+        }
+        console.log(this.invigilator_id)
         return this.pesticide_invigilators.map(invigilator => ({ text: invigilator.invigilator_name, value: parseInt(invigilator.invigilator_id) }))
+      },
+      examReceivedOptions() {
+        this.exam_received = this.actionedExam.exam_received_date !== null ? true : false;
+        this.fields.exam_received_date = this.actionedExam.exam_received_date
+        return [
+          { value: false, text: 'No' },
+          { value: true, text: 'Yes' },
+        ];
       },
       fieldDisabled() {
         if ((this.role_code !== 'GA' && !this.is_liaison_designate) && this.examType != 'other') {
@@ -846,18 +855,23 @@
             bookingChanges['shadow_invigilator_id'] = this.currentShadowInvigilator
           }
 
-          if(current_invigilator_id_list.length === 0){
-            bookingChanges['invigilator_id'] = invigilator_id_list
+          if(this.actionedExam.is_pesticide) {
+            bookingChanges['invigilator_id'] = [this.invigilator_id]
+          } else {
+            if(current_invigilator_id_list.length === 0){
+              bookingChanges['invigilator_id'] = invigilator_id_list
+            }
+            else if(invigilator_id_list.length >= current_invigilator_id_list.length){
+              bookingChanges['invigilator_id'] = invigilator_id_list
+            }
+            else if(invigilator_id_list.length < current_invigilator_id_list.length){
+              bookingChanges['invigilator_id'] = invigilator_id_list
+            }
+            else {
+              bookingChanges['invigilator_id'] = current_invigilator_id_list
+            }
           }
-          else if(invigilator_id_list.length >= current_invigilator_id_list.length){
-            bookingChanges['invigilator_id'] = invigilator_id_list
-          }
-          else if(invigilator_id_list.length < current_invigilator_id_list.length){
-            bookingChanges['invigilator_id'] = invigilator_id_list
-          }
-          else {
-            bookingChanges['invigilator_id'] = current_invigilator_id_list
-          }
+          
 
           if (this.removeCurrentInvigilatorFlag) {
             bookingChanges.invigilator_id = null
@@ -881,8 +895,12 @@
           }
         }
         let examChanges = {}
-        if (edits.includes('offsite_location')) {
+        console.log(edits)
+        console.log(this.itemCopy)
+        if (edits.includes('offsite_location') || edits.includes('invigilator_id') || edits.includes('exam_received')) {
           examChanges['offsite_location'] = this.offsite_location
+          examChanges['invigilator_id'] = this.invigilator_id
+          examChanges['exam_received_date'] = this.fields.exam_received_date
           putRequests.push({url:`/exams/${this.itemCopy.exam_id}/`, data: examChanges})
         }
 
@@ -961,6 +979,7 @@
         this.invigilator_id = null
         this.itemCopy = {}
         this.editedFields = []
+        this.exam_received = false
       },
       rowSelected(invigilator_multi_select){
         this.selected = invigilator_multi_select
@@ -1065,6 +1084,7 @@
       },
       updateExamReceived(e) {
         let { exam_received_date } = this.fields
+        this.editedFields.push('exam_received')
         if (e && !exam_received_date) {
           this.fields.exam_received_date = new moment().format('YYYY-MM-DD')
           return
