@@ -414,10 +414,6 @@
         examNotReady: false,
         feesOptions: 'collect',
         clickedMenu: false,
-        examReceivedOptions: [
-          { value: false, text: 'No' },
-          { value: true, text: 'Yes' },
-        ],
         fields: {
           exam_received_date: null,
           notes: null,
@@ -569,6 +565,14 @@
         }
         return []
       },
+      examReceivedOptions() {
+        this.exam_received = this.actionedExam.exam_received_date !== null ? true : false;
+        this.fields.exam_received_date = this.actionedExam.exam_received_date
+        return [
+          { value: false, text: 'No' },
+          { value: true, text: 'Yes' },
+        ];
+      },
       showAllFields() {
         if (this.role_code === 'GA' || this.is_liaison_designate || this.is_ita_designate) {
           return true
@@ -611,9 +615,10 @@
       checkAndDownloadExam() {
         this.downloadExam(this.exam)
           .then((resp) => {
-            console.log(resp)
+            console.log(resp.statusText)
             let filename = `${this.exam.exam_id}.pdf`
             FileDownload(resp.data, filename, "application/pdf")
+            this.updateExamReceived(new Event('exam-downloaded'))
           })
           .catch((error) => {
             console.error(error)
@@ -748,6 +753,9 @@
       },
       updateExamReceived(e) {
         let { exam_received_date } = this.fields
+        if(e.type == 'exam-downloaded') {
+          this.exam_received = true
+        }
         if (e && !exam_received_date) {
           this.fields.exam_received_date = new moment().format('YYYY-MM-DD')
           return

@@ -1085,6 +1085,9 @@
       updateExamReceived(e) {
         let { exam_received_date } = this.fields
         this.editedFields.push('exam_received')
+        if(e.type == 'exam-downloaded') {
+          this.exam_received = true
+        }
         if (e && !exam_received_date) {
           this.fields.exam_received_date = new moment().format('YYYY-MM-DD')
           return
@@ -1096,9 +1099,10 @@
       checkAndDownloadExam() {
         this.downloadExam(this.exam)
           .then((resp) => {
-            console.log(resp)
+            console.log(resp.statusText)
             let filename = `${this.exam.exam_id}.pdf`
             FileDownload(resp.data, filename, "application/pdf")
+            this.updateExamReceived(new Event('exam-downloaded'))
           })
           .catch((error) => {
             console.error(error)
@@ -1107,6 +1111,7 @@
           })
       },
       handleDate(date) {
+        console.log(date)
         Vue.set(
           this.fields,
           'exam_received_date',
