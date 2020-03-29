@@ -204,6 +204,7 @@ Next create mender convert settings:
 
 1. Update the mender convert config to your needs: nano configs/mender_convert_config
 
+MENDER_COMPRESS_DISK_IMAGE=none
 MENDER_BOOT_PART_SIZE_MB="256"
 MENDER_DATA_PART_SIZE_MB="1000"
 IMAGE_ROOTFS_SIZE="-1"
@@ -234,7 +235,7 @@ MENDER_ARTIFACT_NAME=SBCRPI3Base ./docker-mender-convert \
 
 This step will produce 3 files:
 * `.ext4` - the filesystem of the Menderized image. This file is used later to produce deployment artifacts **(i.e. store it somewhere safe)**
-* `.img.gz` - the modified OS which can be flashed to an SD card and run directly on the PI. **(i.e. store it somewhere safe)**
+* `.img` - the modified OS which can be flashed to an SD card and run directly on the PI. **(i.e. store it somewhere safe)**
 * `.mender` - a deployment artifact, the one produced by this stage will not be used for anything.
 
 #### Example Output
@@ -303,15 +304,13 @@ Once we've menderized our base image the files system and mender configuration w
 
 Return to the `image-tools` directory and run:
 
-Gunzip the .img.gz file
-
 ```
 MENDER_SDIMG=<location of previously produced .img>
 mender-image-patcher/mender-image-patcher \
     ${MENDER_SDIMG}
 ```
 
-**Note**: The above step modifies the `.sdimg` in place. Store the output file somewhere reliable because it is now the core image for flashing SD cards to enable Mender updates on the PI.
+**Note**: The above step modifies the `.img` in place. Store the output file somewhere reliable because it is now the core image for flashing SD cards to enable Mender updates on the PI.
 
 ### Step 3b: Flashing the Base
 The patched `.img` produced above can now be flashed onto SD cards and put into Raspberry PIs.   
