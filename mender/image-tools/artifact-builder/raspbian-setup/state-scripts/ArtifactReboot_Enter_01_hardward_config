@@ -16,6 +16,7 @@ gpu_mem_1024=64
 
 #enable GPU Driver
 dtoverlay=vc4-kms-v3d
+dtparam=watchdog=on
 
 END_TEXT
 
