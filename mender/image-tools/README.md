@@ -205,7 +205,8 @@ Next create mender convert settings:
 1. Update the mender convert config to your needs: nano configs/mender_convert_config
 
 MENDER_BOOT_PART_SIZE_MB="256"
-MENDER_DATA_PART_SIZE_MB="1000" 
+MENDER_DATA_PART_SIZE_MB="1000"
+IMAGE_ROOTFS_SIZE="-1"
 
 export server-url=<your mender server>
 
