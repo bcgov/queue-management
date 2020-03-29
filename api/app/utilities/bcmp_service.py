@@ -197,7 +197,8 @@ class BCMPService:
             }
         }
 
-        self.send_request(url, "POST", json_data)
+        response = self.send_request(url, 'POST', json_data)
+        return response
 
     def email_exam_invigilator(self, exam, invigilator_name, invigilator_email, invigilator_phone):
         url = "%s/auth=env_exam;%s/JSON/create:ENV-IPM-EXAM-API-ACTION" % (self.base_url, self.auth_token)

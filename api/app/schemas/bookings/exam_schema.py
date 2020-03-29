@@ -60,6 +60,7 @@ class ExamSchema(ma.ModelSchema):
     exam_returned_date = fields.Str(allow_none=True)
     exam_returned_tracking_number = fields.Str(allow_none=True)
     exam_written_ind = fields.Int()
+    upload_received_ind = fields.Int()
     offsite_location = fields.Str()
     sbc_managed_ind = fields.Int()
     receipt = fields.Str()
