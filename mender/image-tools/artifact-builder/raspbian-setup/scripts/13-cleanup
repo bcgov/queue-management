@@ -39,7 +39,7 @@ watchdog-device = /dev/watchdog
 watchdog-timeout=15
 END_TEXT
 
-sed -i 's/default.target/multi-user.target/g' input.txt
+sed -i 's/default.target/multi-user.target/g' /lib/systemd/system/watchdog.service
 
 # Restore init_resize
 mkdir -p /usr/lib/raspi-config/
