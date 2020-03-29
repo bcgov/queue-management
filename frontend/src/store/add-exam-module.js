@@ -296,9 +296,9 @@ export const addExamModule = {
                 Axios(context.rootState.bearer).post(bcmpUrl)
                   .then((transferResponse) => {
                     console.log(transferResponse)
-                    resolve()
+                    resolve(transferResponse)
                   })
-                  .error((error) => {
+                  .catch((error) => {
                     console.error(error)
                   })
               })
@@ -306,7 +306,7 @@ export const addExamModule = {
                 console.error(error)
               })
           })
-          .error((error) => {
+          .catch((error) => {
             console.error(error)
             reject(error)
           })

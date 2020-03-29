@@ -1,18 +1,17 @@
 <template>
-  <b-modal v-model="modal"
+  <b-modal v-model="modalVisible"
            @shown="showModal"
            :no-close-on-backdrop="true"
            hide-header
            size="md"
-           @hidden="resetModal()">
+           @hidden="resetModal">
     <template slot="modal-footer">
       <div style="display: flex; justify-content: flex-end; width: 100%">
         <b-btn class="btn-secondary mr-2"
-               @click="resetModal()">{{ submitted ? 'Done' : 'Cancel' }}</b-btn>
+               @click="resetModal">{{ submitted ? 'Done' : 'Cancel' }}</b-btn>
         <b-btn class="btn-primary"
                v-if="!submitted"
-               @click.prevent="submitted = true"
-               @click="submit()">Submit</b-btn>
+               @click.once="submit">Submit</b-btn>
       </div>
     </template>
 
@@ -39,13 +38,22 @@
               </div>
               <div class="q-id-grid-col px-2">
                 <div>Upload Status:</div>
-                <div style="color: red">Not Received</div>
+                <div style="color: green" v-if="actionedExam.upload_received_ind">Received</div>
+                <div style="color: red" v-else>Not Received</div>
               </div>
             </div>
           </div>
         </b-col>
       </b-form-row>
       <template v-if="!submitted">
+        <b-form-row v-if="actionedExam.upload_received_ind">
+          <b-col :cols="12">
+            <b-form-group class="mt-2 mb-0">
+              <label class="mb-0">Upload Again?</label><br>
+              <p>This exam appears to be received, however you can submit it again if needed.</p>
+            </b-form-group>
+          </b-col>
+        </b-form-row>
         <b-form-row>
           <b-col :cols="6">
             <b-form-group class="mb-0">
@@ -62,9 +70,7 @@
               <label class="mb-0">Attach Scanned Exam</label><br>
               <b-form-file
                 v-model="file"
-                :state="file"
                 placeholder="Choose a file or drop it here..."
-                no-drop
               ></b-form-file>
             </b-form-group>
           </b-col>
@@ -105,7 +111,7 @@
       return {
         file: null,
         examNotes: this.actionedExam.notes,
-        status: this.actionedExam.exam_destroyed_date !== null ? 'noshow' : 'unwritten',
+        status: this.examStatus,
         destroyed: this.actionedExam.exam_destroyed_date !== null ? true : false,
         submitted: false,
         statusOptions: [
@@ -119,17 +125,14 @@
       ...mapState({
         showModal: state => state.addExamModule.uploadPesticideModalVisible,
       }),
-      examNotes: {
-        get() { return this.feedbackMessage },
-        set(value) { this.examNotes = value }
-      },
       exam() {
         if (this.actionedExam) {
+          console.log("this.actionedExam ", this.actionedExam)
           return this.actionedExam
         }
         return {}
       },
-      modal: {
+      modalVisible: {
         get() {
           return this.showModal
         },
@@ -138,8 +141,17 @@
         },
       },
     },
+    mounted() {
+      if(this.actionedExam.exam_destroyed_date !== null) {
+        this.status = 'noshow'
+      } else if(this.actionedExam.upload_received_ind && this.actionedExam.exam_written_ind) {
+        this.status = 'written'
+      } else {
+        this.status = 'unwritten'
+      }
+    },
     methods: {
-      ...mapActions(['putExamInfo', 'getExams', 'getBCMPlusExamStatus', 'submitExam', 'toggleUploadExamModal' ]),
+      ...mapActions(['putExamInfo', 'getExams', 'getBCMPlusExamStatus', 'submitExam' ]),
       ...mapMutations(['toggleUploadExamModal', 'setEditExamFailure' ]),
       resetModal() {
         this.resetExam()
@@ -148,47 +160,40 @@
       submit() {
         let putData = {
           exam_id: this.exam.exam_id,
-          exam_returned_tracking_number: this.exam_returned_tracking_number,
           notes: this.examNotes,
-          exam_written_ind: 0,
-          exam_destroyed_date: null
+          exam_written_ind: (this.status === 'written') ? 1 : 0,
+          exam_destroyed_date: (this.destroyed) ? new Date().toISOString() : null,
         }
 
-        if (this.statusOptions === 'written') {
-          putData.exam_written_ind = 1
-        }
-        if (this.destroyed) {
-          putData.exam_destroyed_date = new Date().toISOString()
-        }
+        console.log(this.exam)
+        console.log(this.status)
 
-        if (!this.written && this.modalUse === 'edit') {
-          putData = {
-            exam_id: this.exam.exam_id,
-            exam_returned_date: null,
-            exam_returned_tracking_number: null,
-            notes: ''
-          }
-        }
-        if (this.notes) {
-          putData.notes = this.notes
-        }
-        this.putExamInfo(putData).then( () => {
-          console.log(this.exam)
+        if (this.status === 'written' && this.file) {
           this.submitExam({file: this.file, exam: this.exam})
-            .then(() => {
-              this.getExams()
-                .then( () => {
-                  this.resetModal()
-                })
-                .catch((error) => {
-                  console.error(error)
-                })
+            .then((bcmpResponse) => {
+              this.submitted = true
+              console.log(bcmpResponse)
+              putData['upload_received_ind'] = this.actionedExam.upload_received_ind = 1
+              this.updateExam(putData)
             })
             .catch( (error) => {
               console.error(error)
             })
-        })
-      }
+        } else {
+          this.updateExam(putData)
+        }
+      },
+      updateExam(putData) {
+        this.putExamInfo(putData)
+          .then(() => {
+            setTimeout(()=> {
+              this.resetModal()
+            }, 3000)
+          })
+          .catch( (error) => {
+            console.error(error)
+          })
+      },
     },
   }
 </script>

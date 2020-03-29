@@ -444,7 +444,7 @@
                       @click="editExamDetails(row.item)">Edit Exam Details</b-dropdown-item>
                   <b-dropdown-item size="sm"
                       @click="returnExam(row.item)">
-                    {{ row.item.exam_type.pesticide_exam_ind ? 'Upload Exam' : 'Return Exam' }}
+                    {{ row.item.is_pesticide ? 'Upload Exam' : 'Return Exam' }}
                   </b-dropdown-item>
               </template>
 
@@ -1154,7 +1154,7 @@
       },
       returnExam(item) {
         this.actionedExam = item
-        if (item.exam_type.pesticide_exam_ind) {
+        if (item.is_pesticide) {
           this.toggleUploadExamModal(true)
         } else {
           this.toggleReturnExamModal(true)
