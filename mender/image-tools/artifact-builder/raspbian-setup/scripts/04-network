@@ -17,6 +17,7 @@ if [ -f /etc/network/interfaces ]; then
 	rm /etc/network/interfaces
 fi
 
+cp network/rfkill-unblock.service /etc/systemd/system/
 cp network/01-wired.network /etc/systemd/network/
 cp network/02-wireless.network /etc/systemd/network/
 
@@ -41,3 +42,4 @@ chmod +x /root/first-boot.sh
 cp first-boot.service /etc/systemd/system/
 
 systemctl enable first-boot.service
+systemctl enable rfkill-unblock.service

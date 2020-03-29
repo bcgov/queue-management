@@ -17,4 +17,5 @@ mount / -o remount,ro
 systemctl restart network-watchdog.service
 systemctl restart video-updater.service
 
-killall chromium-browser
+pkill -f -- "chromium-browser"
+exit 0

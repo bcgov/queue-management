@@ -3,11 +3,16 @@ cd $files
 
 set -ex
 
+ln -sf /opt/vc/lib/libbrcmGLESv2.so /opt/vc/lib/libGLESv2.so.2
+ln -sf /opt/vc/lib/libbrcmEGL.so /opt/vc/lib/libEGL.so
+ldconfig
 cp launch-browser.sh $home_dir/
 cp sites.txt /root/
 
 # Updates auto-login for X11 to point to tty2
 envsubst '${username}' < autologin@.service > /etc/systemd/system/autologin@.service
+mkdir -p /etc/systemd/system/getty@tty2.service.d
+envsubst '${username}' < autologin.conf > /etc/systemd/system/getty@tty2.service.d/autologin.conf
 
 chown $username:$username $home_dir/launch-browser.sh
 
@@ -15,4 +20,7 @@ systemctl set-default graphical.target
 gpasswd -a $username tty
 
 mkdir -p /etc/systemd/system/getty.target.wants
-ln -fs /etc/systemd/system/autologin@.service /etc/systemd/system/getty.target.wants/getty@tty2.service
+ln -fs /lib/systemd/system/getty@.service /etc/systemd/system/getty.target.wants/getty@tty2.service
+
+#Update Xwrapper to remove Virtual Console permission denied error
+cp Xwrapper.config /etc/X11/
