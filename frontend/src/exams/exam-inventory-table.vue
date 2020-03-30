@@ -1349,6 +1349,11 @@
           rank: 1,
           style: {fontSize: '1rem', color: '#4e9de0'}
         }
+        let feePending = {
+          icon: 'dollar-sign',
+          rank: 2,
+          style: {fontSize: '1rem', color: 'green'}
+        }
         if (item.exam_returned_date) {
           return envelopeOpenText
         }
@@ -1420,6 +1425,9 @@
         }
         if (!item.exam_received_date) {
             return exclamationTriangle
+        }
+        if (item.is_pesticide && item.exam_received_date && !item.receipt) {
+          return feePending
         }
         return clipboardCheck
       },

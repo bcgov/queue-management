@@ -162,8 +162,8 @@ const pesticideFeesQ = {
   kind: 'pesticideFees',
   minLength: 0,
   options: [
-    { text: 'Collect', value: 'collect' },
-    { text: 'Paid', value: 'paid' }
+    { text: 'Collect at Exam Time', value: 'collect' },
+    { text: 'Paid with Liasion', value: 'paid' }
   ],
   text: 'Fees',
 }

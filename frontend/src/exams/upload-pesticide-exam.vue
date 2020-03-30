@@ -111,7 +111,7 @@
       return {
         file: null,
         examNotes: this.actionedExam.notes,
-        status: this.examStatus,
+        status: 'unwritten',
         destroyed: this.actionedExam.exam_destroyed_date !== null ? true : false,
         submitted: false,
         statusOptions: [

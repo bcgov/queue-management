@@ -115,7 +115,7 @@
             <b-col :cols="feesOptions === 'collect' ? 12 : 5">
               <b-form-group><label class="my-0">Fees</label>
                 <b-form-select v-model="feesOptions" :disabled="feesOptions === 'liaison'">
-                  <option value="liaison">Collected By Liason</option>
+                  <option value="liaison" disabled>Collected By Liason</option>
                   <option value="paid">Collect Now</option>
                   <option value="collect">Collect at Exam Time</option>
                 </b-form-select>
@@ -123,7 +123,7 @@
             </b-col>
             <b-col cols="7" v-if="feesOptions !== 'collect'">
               <b-form-group><label class="my-0">Receipt</label>
-                <b-input :disabled="feesOptions === 'liaison'" />
+                <b-input :disabled="feesOptions === 'liaison'" v-model="fields.receipt" />
               </b-form-group>
             </b-col>
           </b-form-row>
@@ -419,6 +419,7 @@
           notes: null,
           event_id: null,
           exam_name: null,
+          receipt: null,
         },
         lengthError: false,
         message: '',
@@ -497,6 +498,9 @@
       },
       exam() {
         if (Object.keys(this.actionedExam).length > 0) {
+          console.log("this.actionedExam ", this.actionedExam)
+          this.feesOptions = (this.actionedExam.receipt) ? 'liaison' : 'collect'
+          this.fields.receipt = this.actionedExam.receipt
           return this.actionedExam
         }
         return false
