@@ -42,8 +42,8 @@
                     @click="logAnother">Start Again</b-button>
           </div>
           <div style="display: flex">
-            <b-button v-if="errors.length > 0"
-                      @click="submitMsg='You have an error on a previous step.  Click on the red tab.'"
+            <b-button v-if="errors.length > 0 || (addExamModal.setup=='pesticide' && !exam.bcmp_job_id)"
+                      @click="showErrorMsg"
                       class="btn-primary disabled"
                       id="add_exam_submit">Submit</b-button>
             <b-button v-else
@@ -148,6 +148,7 @@
         return 4
       },
       errors() {
+        console.log(this.exam)
         if (this.tab.errors) {
           return this.tab.errors
         } else {
@@ -383,6 +384,10 @@
         }
         return []
       },
+      showErrorMsg() {
+        this.submitMsg = (this.addExamModal.setup=='pesticide' && !this.exam.bcmp_job_id) ? 'Please click on the Request Exam button to generate BCMP Job Id' : 'You have an error on a previous step.  Click on the red tab.'
+        
+      }
     }
   }
 </script>
