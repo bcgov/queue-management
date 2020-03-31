@@ -47,12 +47,12 @@ class DocumentService():
 
     def get_presigned_put_url(self, object_name):
         """Retrieves the a presigned URL for putting objects into an S3 source"""
-        url = self.client.presigned_put_object(self.bucket, object_name, expires=timedelta(minutes=30))
+        url = self.client.presigned_put_object(self.bucket, object_name, expires=timedelta(days=7))
 
         return url
 
     def get_presigned_get_url(self, object_name):
         """Retrieves the presigned URL for GETting objects out of an S3 source"""
-        url = self.client.presigned_get_object(self.bucket, object_name, expires=timedelta(minutes=30))
+        url = self.client.presigned_get_object(self.bucket, object_name, expires=timedelta(days=7))
 
         return url
