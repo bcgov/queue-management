@@ -80,6 +80,7 @@ limitations under the License.*/
 //LISTENER METHODS
       onConnect() {
         console.log('boardSocket connected')
+        console.log("==> In board-socket.vue, onConnect, socket.io.engine.id is: " + socket.io.engine.id.toString())
         clearInterval(this.reconnectInterval)
         this.join()
       },
