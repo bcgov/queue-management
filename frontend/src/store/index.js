@@ -118,6 +118,7 @@ export const store = new Vuex.Store({
     },
     invigilators: [],
     pesticide_invigilators: [],
+    pesticide_offsite_invigilators: [],
     shadowInvigilators: [],
     isLoggedIn: false,
     isUploadingFile: false,
@@ -938,6 +939,20 @@ export const store = new Vuex.Store({
         Axios(context).get('/invigilators/')
           .then(resp => {
             context.commit('setPesticideInvigilators', resp.data.invigilators)
+            resolve(resp)
+          })
+          .catch(error => {
+            console.log(error)
+            reject(error)
+          })
+      })
+    },
+
+    getPesticideOffsiteInvigilators(context) {
+      return new Promise ((resolve, reject) => {
+        Axios(context).get('/invigilators/offsite/')
+          .then(resp => {
+            context.commit('setPesticideOffsiteInvigilators', resp.data.invigilators)
             resolve(resp)
           })
           .catch(error => {
@@ -2656,6 +2671,10 @@ export const store = new Vuex.Store({
 
     setPesticideInvigilators(state, payload) {
       state.pesticide_invigilators = payload
+    },
+
+    setPesticideOffsiteInvigilators(state, payload) {
+      state.pesticide_offsite_invigilators = payload
     },
 
     updateCitizen(state, payload) {

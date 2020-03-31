@@ -45,6 +45,7 @@
     components: { },
     mounted() {
       this.getPesticideOfficeInvigilators()
+      this.getPesticideOffsiteInvigilators()
     },
     props: [],
     data () {
@@ -76,7 +77,7 @@
       },
     },
     methods: {
-      ...mapActions(['emailInvigilator', 'getPesticideOfficeInvigilators']),
+      ...mapActions(['emailInvigilator', 'getPesticideOfficeInvigilators', 'getPesticideOffsiteInvigilators']),
       ...mapMutations([
         'setSelectedExam',
         'toggleSelectInvigilatorModal',

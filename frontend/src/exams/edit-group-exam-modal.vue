@@ -524,6 +524,7 @@
         showModal: state => state.showEditGroupBookingModal,
         invigilators: 'invigilators',
         pesticide_invigilators: 'pesticide_invigilators',
+        pesticide_offsite_invigilators: 'pesticide_offsite_invigilators',
         user: 'user',
         shadowInvigilators: state => state.shadowInvigilators,
       }),
@@ -587,7 +588,11 @@
           this.invigilator_id = parseInt(this.actionedExam.invigilator_id)
         }
         console.log(this.invigilator_id)
-        return this.pesticide_invigilators.map(invigilator => ({ text: invigilator.invigilator_name, value: parseInt(invigilator.invigilator_id) }))
+        let invigilators = (this.actionedExam.office && this.actionedExam.office.office_name == 'Pesticide Offsite') ? this.pesticide_offsite_invigilators : this.pesticide_invigilators;
+        console.log( this.pesticide_offsite_invigilators)
+        console.log( this.pesticide_invigilators)
+        console.log(invigilators)
+        return invigilators.map(invigilator => ({ text: invigilator.invigilator_name, value: parseInt(invigilator.invigilator_id) }))
       },
       examReceivedOptions() {
         this.exam_received = this.actionedExam.exam_received_date !== null ? true : false;
@@ -940,13 +945,15 @@
         this.changeState = true
         this.selectedShadow = null
         this.removeFlag = false
-        this.actionedExam.booking.invigilators.forEach(function(invigilator) {
-          let indexOfInvigilator = self.invigilators.findIndex(x => x.invigilator_id == invigilator)
-          let index_invigilator_id = self.invigilators[indexOfInvigilator].invigilator_id
-          let index_invigilator_name = self.invigilators[indexOfInvigilator].invigilator_name
-          let invigilator_json = {name: index_invigilator_name, value: index_invigilator_id}
-          self.currentInvigilatorList.push(invigilator_json)
-        })
+        if(this.actionedExam.booking && this.actionedExam.booking.invigilators) {
+          this.actionedExam.booking.invigilators.forEach(function(invigilator) {
+            let indexOfInvigilator = self.invigilators.findIndex(x => x.invigilator_id == invigilator)
+            let index_invigilator_id = self.invigilators[indexOfInvigilator].invigilator_id
+            let index_invigilator_name = self.invigilators[indexOfInvigilator].invigilator_name
+            let invigilator_json = {name: index_invigilator_name, value: index_invigilator_id}
+            self.currentInvigilatorList.push(invigilator_json)
+          })
+        }
         let tempItem = Object.assign({}, this.actionedExam)
         if (tempItem.booking && tempItem.booking.start_time) {
           let { start_time } = tempItem.booking

@@ -342,7 +342,7 @@ export const addExamModule = {
       ]
     },
     pesticideStep1(state, getters, rootState) {
-      let { capturedExam, pesticide_invigilators } = rootState
+      let { capturedExam, pesticide_invigilators, pesticide_offsite_invigilators } = rootState
       let pesticideTypeQ = {
         key: 'exam_type_id',
         text: 'Type of Pesticide Exam',
@@ -361,17 +361,20 @@ export const addExamModule = {
       }
       if ( capturedExam.sbc_managed === 'sbc' ) {
         step1.questions = [...step1.questions, officeSelectQ]
+        if( capturedExam.ind_or_group === 'group' ) {
+          step1.questions.push(offsiteQ)
+        }
       }
       if ( capturedExam.sbc_managed === 'non-sbc' ) {
-        let inivigilatorQ = {
+        let invigilatorQ = {
           key: 'invigilator_id',
           text: 'Invigilator',
           kind: 'select',
-          options: pesticide_invigilators.map(invigilator => ({ text: invigilator.invigilator_name, value: parseInt(invigilator.invigilator_id) })),
+          options: pesticide_offsite_invigilators.map(invigilator => ({ text: invigilator.invigilator_name, value: parseInt(invigilator.invigilator_id) })),
           minLength: 1,
           digit: true,
         }
-        step1.questions = [...step1.questions, offsiteQ, inivigilatorQ]
+        step1.questions = [...step1.questions, offsiteQ, invigilatorQ]
       }
       return [step1]
     },
