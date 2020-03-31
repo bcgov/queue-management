@@ -978,13 +978,14 @@ export const store = new Vuex.Store({
 
     emailInvigilator(context, payload) {
       console.log(payload)
+      const invigilator = payload.invigilator
       const postData = {
-        invigilator_id: payload.invigilator_id,
-        invigilator_name: payload.invigilator_name,
-        invigilator_email: payload.contact_email,
-        invigilator_phone: payload.contact_phone,
+        invigilator_id: invigilator.invigilator_id,
+        invigilator_name: invigilator.invigilator_name,
+        invigilator_email: invigilator.contact_email,
+        invigilator_phone: invigilator.contact_phone,
       }
-      const exam = context.state.selectedExam
+      const exam = payload.exam
 
       return new Promise ((resolve, reject) => {
         Axios(context).post(`/exams/${exam.exam_id}/email_invigilator/`, postData)
@@ -1237,7 +1238,9 @@ export const store = new Vuex.Store({
         if (type === 'individual') {
           context.dispatch('postITAIndividualExam').then(() => {
             resolve('success')
-          }).catch(() => { reject('failed') })
+          }, (err) => {
+            reject(err)
+          }).catch((err) => { reject(err) })
         }
       })
     },
@@ -2119,7 +2122,7 @@ export const store = new Vuex.Store({
       return new Promise((resolve, reject) => {
         Axios(context).post(apiUrl, postData).then( examResp => {
           console.log(examResp)
-          if ((responses['ind_or_group'] === 'group') && !isRequestExamReq) {
+          if ((responses['ind_or_group'] === 'group' || responses['sbc_managed'] === 'non-sbc') && !isRequestExamReq) {
             let { exam_id } = examResp.data.exam
             context.dispatch('postBooking', booking).then( bookingResp => {
               let putObject = {
@@ -2128,7 +2131,21 @@ export const store = new Vuex.Store({
                 officeId: responses.office_id
               }
               context.dispatch('putExam', putObject).then( (examResp) => {
-                resolve(examResp)
+                if(responses['sbc_managed'] === 'non-sbc') {
+                  if(examResp.data && examResp.data.exam && examResp.data.exam.invigilator) {
+                    context.dispatch('emailInvigilator', {
+                      invigilator: examResp.data.exam.invigilator,
+                      exam: examResp.data.exam
+                    }).then( emailResp => {
+                      resolve(examResp)
+                    }).catch( () => { 
+                      console.log('EMAIL_FAILED')
+                      reject('EMAIL_FAILED') 
+                    })
+                  }
+                } else {
+                  resolve(examResp)
+                }
               }).catch( () => { reject() })
             }).catch( () => { reject() })
           } else {

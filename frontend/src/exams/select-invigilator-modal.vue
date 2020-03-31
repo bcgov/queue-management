@@ -62,6 +62,7 @@
       ...mapState({
         showSelectInvigilatorModal: state => state.showSelectInvigilatorModal,
         pesticide_invigilators: state => state.pesticide_invigilators,
+        selectedExam: 'selectedExam',
       }),
       modal: {
         get() {
@@ -99,15 +100,18 @@
       },
       submit() {
         this.loading = true
-        this.emailInvigilator(this.selected_invigilator)
-          .then(() => {
-            this.toggleSelectInvigilatorModal(false);
-            this.loading = false
-          })
-          .catch(() => {
-            this.alertMessage = "An error occurred emailing the invigilator"
-            this.loading = false
-          })
+        this.emailInvigilator({
+          'invigilator': this.selected_invigilator,
+          'exam': selectedExam,
+        })
+        .then(() => {
+          this.toggleSelectInvigilatorModal(false);
+          this.loading = false
+        })
+        .catch(() => {
+          this.alertMessage = "An error occurred emailing the invigilator"
+          this.loading = false
+        })
       },
     },
   }

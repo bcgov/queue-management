@@ -106,6 +106,18 @@
           </b-row>
         </b-container>
       </div>
+      <div v-if="status==='EMAIL_FAILED'">
+        <b-container>
+          <b-row align-v="center"
+                 align-h="center"
+                 align-content="center">
+            <b-col>
+              <h5>Exam Details Added, <strong>Email to invigilator Failed.</strong></h5>
+              <p class="message-text">Please notify the invigilator manually</p>
+            </b-col>
+          </b-row>
+        </b-container>
+      </div>
     </template>
   </b-modal>
 </template>
@@ -343,8 +355,12 @@
           this.clickAddExamSubmit('individual').then(resp => {
             this.status = resp
             this.getExams()
+          }, err => {
+            this.status = err
+            console.log(this.status)
           }).catch(error => {
             this.status = error
+            console.log(this.status)
             this.getExams()
           })
         }
