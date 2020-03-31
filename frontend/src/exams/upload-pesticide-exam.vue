@@ -174,6 +174,7 @@
               this.submitted = true
               console.log(bcmpResponse)
               putData['upload_received_ind'] = this.actionedExam.upload_received_ind = 1
+              putData['exam_returned_date'] = this.actionedExam.exam_returned_date = new Date().toISOString()
               this.updateExam(putData)
             })
             .catch( (error) => {
