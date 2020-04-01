@@ -1065,19 +1065,27 @@
               evenMoreFiltered = moreFiltered
               break
           }
+          let receptSentFiltered = []
+          switch(this.inventoryFilters.receptSentFilter) {
+            case 'notsent':
+              receptSentFiltered = evenMoreFiltered.filter(exam => !exam.receipt_sent_ind)
+              break
+            default:
+              receptSentFiltered = evenMoreFiltered
+          } 
           let finalFiltered = []
           switch (this.inventoryFilters.returnedFilter) {
             case 'both':
-              finalFiltered = evenMoreFiltered
+              finalFiltered = receptSentFiltered
               break
             case 'returned':
-              finalFiltered = evenMoreFiltered.filter(ex => ex.exam_returned_date)
+              finalFiltered = receptSentFiltered.filter(ex => ex.exam_returned_date)
               break
             case 'unreturned':
-              finalFiltered = evenMoreFiltered.filter(ex => !ex.exam_returned_date)
+              finalFiltered = receptSentFiltered.filter(ex => !ex.exam_returned_date)
               break
             default:
-              finalFiltered = evenMoreFiltered
+              finalFiltered = receptSentFiltered
               break
           }
           return finalFiltered
@@ -1173,6 +1181,7 @@
           this.setInventoryFilters({type:'returnedFilter', value:'both'})
           this.setInventoryFilters({type:'scheduledFilter', value:'both'})
           this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
+          this.setInventoryFilters({type:'receptSentFilter', value:'default'})
         }else if (option.value === 'group'){
           this.setSelectedQuickAction('')
           this.setSelectedQuickActionFilter('')
@@ -1181,6 +1190,7 @@
           this.setInventoryFilters({type:'returnedFilter', value:'both'})
           this.setInventoryFilters({type:'scheduledFilter', value:'both'})
           this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
+          this.setInventoryFilters({type:'receptSentFilter', value:'default'})
         }else if (option.value === 'all'){
           this.setSelectedQuickAction('')
           this.setSelectedQuickActionFilter('')
@@ -1188,6 +1198,7 @@
           this.setInventoryFilters({type:'returnedFilter', value:'both'})
           this.setInventoryFilters({type:'scheduledFilter', value:'both'})
           this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
+          this.setInventoryFilters({type:'receptSentFilter', value:'default'})
           this.setInventoryFilters({type:'groupFilter', value:'both'})
         }
       },
@@ -1202,6 +1213,7 @@
           this.setInventoryFilters({type:'scheduledFilter', value:'both'})
           this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
           this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
+          this.setInventoryFilters({type:'receptSentFilter', value: 'default'})
         }else if(option.value === 'require_attention') {
           if (this.selectedExamType === 'individual') {
             this.setInventoryFilters({type: 'returnedFilter', value: 'both'})
@@ -1209,15 +1221,18 @@
             this.setInventoryFilters({type: 'scheduledFilter', value: 'both'})
             this.setInventoryFilters({type: 'requireAttentionFilter', value: 'individual'})
             this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
+            this.setInventoryFilters({type:'receptSentFilter', value: 'default'})
           } else if (this.selectedExamType === 'group') {
             this.setInventoryFilters({type: 'returnedFilter', value: 'unreturned'})
             this.setInventoryFilters({type: 'expiryFilter', value: 'all'})
             this.setInventoryFilters({type: 'scheduledFilter', value: 'unscheduled'})
             this.setInventoryFilters({type: 'requireAttentionFilter', value: 'group'})
             this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
+            this.setInventoryFilters({type:'receptSentFilter', value: 'default'})
           } else if (this.selectedExamType === 'all') {
             this.setInventoryFilters({type: 'requireAttentionFilter', value: 'both'})
             this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
+            this.setInventoryFilters({type:'receptSentFilter', value: 'default'})
             this.setInventoryFilters({type: 'expiryFilter', value: 'all'})
           }
         }
@@ -1227,12 +1242,14 @@
           this.setInventoryFilters({type:'scheduledFilter', value:'scheduled'})
           this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
           this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
+          this.setInventoryFilters({type:'receptSentFilter', value: 'default'})
         }else if(option.value === 'expired'){
           this.setInventoryFilters({type:'expiryFilter', value:'expired'})
           this.setInventoryFilters({type:'returnedFilter', value:'unreturned'})
           this.setInventoryFilters({type:'scheduledFilter', value:'both'})
           this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
           this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
+          this.setInventoryFilters({type:'receptSentFilter', value:'default'})
         }else if(option.value === 'oemai'){
           if(this.selectedExamType === 'individual'){
             this.setInventoryFilters({type:'returnedFilter', value:'both'})
@@ -1240,18 +1257,21 @@
             this.setInventoryFilters({type:'scheduledFilter', value:'both'})
             this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
             this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'individual'})
+            this.setInventoryFilters({type:'receptSentFilter', value:'default'})
           }else if(this.selectedExamType === 'group'){
             this.setInventoryFilters({type:'returnedFilter', value:'both'})
             this.setInventoryFilters({type:'expiryFilter', value:'all'})
             this.setInventoryFilters({type:'scheduledFilter', value:'both'})
             this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
             this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'group'})
+            this.setInventoryFilters({type:'receptSentFilter', value:'default'})
           }else if(this.selectedExamType === 'all'){
             this.setInventoryFilters({type:'returnedFilter', value:'both'})
             this.setInventoryFilters({type:'expiryFilter', value:'all'})
             this.setInventoryFilters({type:'scheduledFilter', value:'both'})
             this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
             this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'both'})
+            this.setInventoryFilters({type:'receptSentFilter', value:'default'})
           }
         }else if(option.value === 'saved_drafts'){
           this.setInventoryFilters({type: 'expiryFilter', value: 'all'})
@@ -1261,15 +1281,24 @@
           this.setInventoryFilters({type: 'office_number', value: 'default'})
           this.setInventoryFilters({type: 'returnedFilter', value: 'unreturned'})
           this.setInventoryFilters({type: 'scheduledFilter', value: 'both'})
+          this.setInventoryFilters({type: 'receptSentFilter', value: 'default'})
           this.setInventoryFilters({type: 'uploaded', value: 'all'})
 
           this.updateExamStatus()
-        }else if(option.value === 'all'){
+        } else if(option.value === 'awaiting_receipt'){
           this.setInventoryFilters({type: 'expiryFilter', value: 'all'})
           this.setInventoryFilters({type:'scheduledFilter', value:'both'})
           this.setInventoryFilters({type:'returnedFilter', value:'both'})
           this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
           this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
+          this.setInventoryFilters({type:'receptSentFilter', value: 'notsent'})
+        } else if(option.value === 'all'){
+          this.setInventoryFilters({type: 'expiryFilter', value: 'all'})
+          this.setInventoryFilters({type:'scheduledFilter', value:'both'})
+          this.setInventoryFilters({type:'returnedFilter', value:'both'})
+          this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
+          this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
+          this.setInventoryFilters({type:'receptSentFilter', value: 'default'})
         }
       },
       setFilter(e) {

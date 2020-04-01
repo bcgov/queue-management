@@ -115,6 +115,7 @@ export const store = new Vuex.Store({
       office_number: 'default',
       requireAttentionFilter: 'default',
       requireOEMAttentionFilter: 'default',
+      receptSentFilter: 'default',
     },
     invigilators: [],
     pesticide_invigilators: [],
