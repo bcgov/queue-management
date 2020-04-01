@@ -10,13 +10,16 @@
         <span style="font-size:1rem; color: red">{{ submitMsg }}</span>
       </b-col>
     </b-row>
-    <b-row no-gutters class="mt-2" align-v="end" v-for="(item, i) of displayData" :key="i+'sumary'">
-      <b-col cols="1" />
-      <b-col cols="3">
-        <span class="confirm-header">{{ item.heading }}</span>
+    <b-row no-gutters class="summary-box my-3" align-v="end">
+      <b-col v-if="isGroupExam" cols="12" class="summary-box-col group-exam" v-for="(candidate, i) of candidateTableData" :key="i+'groupsumary'">
+        <div class="summary-heading" v-if="candidate.exam_type_name">{{ candidate.exam_type_name }}
+          <span class="qty">candidates: {{candidate.qty}}</span>
+        </div>
+        <div class="summary-text" v-if="candidate.name"> - {{ candidate.name }}</div>
       </b-col>
-      <b-col>
-          {{ item.text }}
+      <b-col cols="6" class="summary-box-col" v-for="(item, i) of displayData" :key="i+'sumary'">
+        <div class="summary-heading">{{ item.heading }}:</div>
+        <div class="summary-text">{{ item.text }}</div>
       </b-col>
     </b-row>
     <!-- for SBC Based exam flow -->
@@ -73,8 +76,8 @@
     data() {
       return {
         headings: {
-          pesticide_type: "Pesticide Exam Type",
-          fees: "Fees",
+          exam_type: "Exam Type",
+          fees: "Exam Fees",
           examinee_name: "Candidate",
           examinee_phone: "Candidate's Phone",
           examinee_email: "Candidate's Email",
@@ -82,11 +85,14 @@
           payee_name: "Payee Name",
           payee_email: "Payee Email",
           payee_phone: "Payee Phone",
-          offsite_location: "Location"
+          offsite_location: "Location",
+          exam_time_str: "Exam Time",
+          notes: "Notes"
         },
         bcmpJobId: '',
         isExamReqFailed: false,
         generatedJobId: '',
+        isGroupExam: false,
       }
     },
     computed: {
@@ -97,17 +103,27 @@
         user: state => state.user,
         addExamModal: state => state.addExamModal,
         offices: state => state.offices,
+        candidateTableData: state => state.addExamModule.candidateTableData,
       }),
       displayData() {
-        let keys = Object.keys(this.exam)
+        this.isGroupExam = (this.exam.ind_or_group == "group")
+        let examObj = this.exam
+        if(this.exam.exam_type_id) {
+          const examType = this.examTypes.find(examType => (examType.exam_type_id == this.exam.exam_type_id))
+          examObj.exam_type = (examType) ? examType.exam_type_name : ''
+        }
+        if(this.exam.exam_time) {
+          examObj.exam_time_str = moment(this.exam.exam_time).format('YYYY-MMM-DD hh:mm A');
+        }
+        let keys = Object.keys(examObj)
         let headings = Object.keys(this.headings)
         let output = []
         keys.forEach(key => {
           if (headings.includes(key)) {
-            if (this.exam[key]) {
+            if (examObj[key]) {
               output.push({
                 heading: this.headings[key],
-                text: this.exam[key]
+                text: examObj[key]
               })
             }
           }
@@ -166,6 +182,32 @@
 <style scoped>
   .confirm-item {
     font-weight: 500; font-size: 1.05rem;
+  }
+
+  .summary-box {
+    padding: 10px 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  .summary-box-col{
+    padding-bottom: 8px;
+  }
+  .summary-heading {
+    font-weight: 700
+  }
+  .summary-text {
+    padding-left: 12px;
+  }
+  .group-exam .summary-heading {
+    background: #ddd;
+    padding: 3px 6px;
+    border-radius: 4px;
+  }
+  .group-exam .summary-heading .qty{
+    float: right;
+  }
+  .group-exam .summary-box-col {
+    padding-bottom: 4px;
   }
 
 </style>

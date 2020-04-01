@@ -347,6 +347,7 @@
             output.push(candidate)
           }
         }
+        this.$store.commit('setCandidateTableData', output)
         return output
       },
     },

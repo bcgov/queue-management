@@ -58,7 +58,7 @@ class ExamStatus(Resource):
                                     "Content-Type": "application/pdf"
                                 })
             else:
-                return {'message': 'API is down'}, 400
+                return {'message': 'Package not yet generated', 'status': job['jobStatus']}, 400
                 # test_url = 'http://www.pdf995.com/samples/pdf.pdf'
                 # req = urllib.request.Request(test_url)
                 # response = urllib.request.urlopen(req).read()
