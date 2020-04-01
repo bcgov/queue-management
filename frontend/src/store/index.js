@@ -116,6 +116,7 @@ export const store = new Vuex.Store({
       requireAttentionFilter: 'default',
       requireOEMAttentionFilter: 'default',
       receptSentFilter: 'default',
+      uploadFilter: 'default',
     },
     invigilators: [],
     pesticide_invigilators: [],

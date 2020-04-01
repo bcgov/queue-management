@@ -1065,13 +1065,21 @@
               evenMoreFiltered = moreFiltered
               break
           }
+          let uploadFiltered = []
+          switch(this.inventoryFilters.uploadFilter) {
+            case 'notuploaded':
+              uploadFiltered = evenMoreFiltered.filter(exam => !exam.upload_received_ind)
+              break
+            default:
+              uploadFiltered = evenMoreFiltered
+          } 
           let receptSentFiltered = []
           switch(this.inventoryFilters.receptSentFilter) {
             case 'notsent':
-              receptSentFiltered = evenMoreFiltered.filter(exam => !exam.receipt_sent_ind)
+              receptSentFiltered = uploadFiltered.filter(exam => !exam.receipt_sent_ind)
               break
             default:
-              receptSentFiltered = evenMoreFiltered
+              receptSentFiltered = uploadFiltered
           } 
           let finalFiltered = []
           switch (this.inventoryFilters.returnedFilter) {
@@ -1182,6 +1190,7 @@
           this.setInventoryFilters({type:'scheduledFilter', value:'both'})
           this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
           this.setInventoryFilters({type:'receptSentFilter', value:'default'})
+          this.setInventoryFilters({type:'uploadFilter', value:'default'})
         }else if (option.value === 'group'){
           this.setSelectedQuickAction('')
           this.setSelectedQuickActionFilter('')
@@ -1191,6 +1200,7 @@
           this.setInventoryFilters({type:'scheduledFilter', value:'both'})
           this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
           this.setInventoryFilters({type:'receptSentFilter', value:'default'})
+          this.setInventoryFilters({type:'uploadFilter', value:'default'})
         }else if (option.value === 'all'){
           this.setSelectedQuickAction('')
           this.setSelectedQuickActionFilter('')
@@ -1199,6 +1209,7 @@
           this.setInventoryFilters({type:'scheduledFilter', value:'both'})
           this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
           this.setInventoryFilters({type:'receptSentFilter', value:'default'})
+          this.setInventoryFilters({type:'uploadFilter', value:'default'})
           this.setInventoryFilters({type:'groupFilter', value:'both'})
         }
       },
@@ -1214,6 +1225,7 @@
           this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
           this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
           this.setInventoryFilters({type:'receptSentFilter', value: 'default'})
+          this.setInventoryFilters({type:'uploadFilter', value: 'default'})
         }else if(option.value === 'require_attention') {
           if (this.selectedExamType === 'individual') {
             this.setInventoryFilters({type: 'returnedFilter', value: 'both'})
@@ -1222,6 +1234,7 @@
             this.setInventoryFilters({type: 'requireAttentionFilter', value: 'individual'})
             this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
             this.setInventoryFilters({type:'receptSentFilter', value: 'default'})
+            this.setInventoryFilters({type:'uploadFilter', value: 'default'})
           } else if (this.selectedExamType === 'group') {
             this.setInventoryFilters({type: 'returnedFilter', value: 'unreturned'})
             this.setInventoryFilters({type: 'expiryFilter', value: 'all'})
@@ -1229,10 +1242,12 @@
             this.setInventoryFilters({type: 'requireAttentionFilter', value: 'group'})
             this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
             this.setInventoryFilters({type:'receptSentFilter', value: 'default'})
+            this.setInventoryFilters({type:'uploadFilter', value: 'default'})
           } else if (this.selectedExamType === 'all') {
             this.setInventoryFilters({type: 'requireAttentionFilter', value: 'both'})
             this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
             this.setInventoryFilters({type:'receptSentFilter', value: 'default'})
+            this.setInventoryFilters({type:'uploadFilter', value: 'default'})
             this.setInventoryFilters({type: 'expiryFilter', value: 'all'})
           }
         }
@@ -1243,6 +1258,7 @@
           this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
           this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
           this.setInventoryFilters({type:'receptSentFilter', value: 'default'})
+          this.setInventoryFilters({type:'uploadFilter', value: 'default'})
         }else if(option.value === 'expired'){
           this.setInventoryFilters({type:'expiryFilter', value:'expired'})
           this.setInventoryFilters({type:'returnedFilter', value:'unreturned'})
@@ -1250,6 +1266,7 @@
           this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
           this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
           this.setInventoryFilters({type:'receptSentFilter', value:'default'})
+          this.setInventoryFilters({type:'uploadFilter', value:'default'})
         }else if(option.value === 'oemai'){
           if(this.selectedExamType === 'individual'){
             this.setInventoryFilters({type:'returnedFilter', value:'both'})
@@ -1258,6 +1275,7 @@
             this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
             this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'individual'})
             this.setInventoryFilters({type:'receptSentFilter', value:'default'})
+            this.setInventoryFilters({type:'uploadFilter', value:'default'})
           }else if(this.selectedExamType === 'group'){
             this.setInventoryFilters({type:'returnedFilter', value:'both'})
             this.setInventoryFilters({type:'expiryFilter', value:'all'})
@@ -1265,6 +1283,7 @@
             this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
             this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'group'})
             this.setInventoryFilters({type:'receptSentFilter', value:'default'})
+            this.setInventoryFilters({type:'uploadFilter', value:'default'})
           }else if(this.selectedExamType === 'all'){
             this.setInventoryFilters({type:'returnedFilter', value:'both'})
             this.setInventoryFilters({type:'expiryFilter', value:'all'})
@@ -1272,6 +1291,7 @@
             this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
             this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'both'})
             this.setInventoryFilters({type:'receptSentFilter', value:'default'})
+            this.setInventoryFilters({type:'uploadFilter', value:'default'})
           }
         }else if(option.value === 'saved_drafts'){
           this.setInventoryFilters({type: 'expiryFilter', value: 'all'})
@@ -1282,15 +1302,16 @@
           this.setInventoryFilters({type: 'returnedFilter', value: 'unreturned'})
           this.setInventoryFilters({type: 'scheduledFilter', value: 'both'})
           this.setInventoryFilters({type: 'receptSentFilter', value: 'default'})
-          this.setInventoryFilters({type: 'uploaded', value: 'all'})
+          this.setInventoryFilters({type: 'uploadFilter', value: 'notuploaded'})
 
           this.updateExamStatus()
         } else if(option.value === 'awaiting_receipt'){
-          this.setInventoryFilters({type: 'expiryFilter', value: 'all'})
+          this.setInventoryFilters({type: 'expiryFilter', value: 'current'})
           this.setInventoryFilters({type:'scheduledFilter', value:'both'})
-          this.setInventoryFilters({type:'returnedFilter', value:'both'})
+          this.setInventoryFilters({type:'returnedFilter', value:'unreturned'})
           this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
           this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
+          this.setInventoryFilters({type:'uploadFilter', value: 'default'})
           this.setInventoryFilters({type:'receptSentFilter', value: 'notsent'})
         } else if(option.value === 'all'){
           this.setInventoryFilters({type: 'expiryFilter', value: 'all'})
@@ -1298,6 +1319,7 @@
           this.setInventoryFilters({type:'returnedFilter', value:'both'})
           this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
           this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
+          this.setInventoryFilters({type:'uploadFilter', value: 'default'})
           this.setInventoryFilters({type:'receptSentFilter', value: 'default'})
         }
       },

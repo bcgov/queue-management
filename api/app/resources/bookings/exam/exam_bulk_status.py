@@ -13,18 +13,21 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import logging
+import json
 from flask import g
 from flask_restplus import Resource
 from sqlalchemy import exc
 from app.models.bookings import Exam
+from app.schemas.bookings import ExamSchema
 from app.models.theq import CSR
 from app.utilities.bcmp_service import BCMPService
-from qsystem import api, oidc
+from qsystem import api, oidc, db
 
 
 @api.route("/exams/bcmp_status/", methods=["POST"])
 class ExamList(Resource):
     bcmp_service = BCMPService()
+    exam_schema = ExamSchema()
 
     @oidc.accept_token(require_token=True)
     def post(self):
@@ -32,9 +35,32 @@ class ExamList(Resource):
 
         try:
             exams = Exam.query.filter_by(upload_received_ind=0).filter(Exam.bcmp_job_id.isnot(None))
-            self.bcmp_service.bulk_check_exam_status(exams)
+            bcmp_response = self.bcmp_service.bulk_check_exam_status(exams)
 
-            return {}, 200
+            job_ids = []
+            for job in bcmp_response["jobs"]:
+                if job["jobStatus"] == "RESPONSE_UPLOADED":
+                    job_ids.append(job["jobId"])
+
+            print("job_ids to update: ")
+            print(job_ids)
+
+            exams_tobe_updated = None
+
+            if len(job_ids) != 0:
+                exams_tobe_updated = Exam.query.filter(Exam.bcmp_job_id.in_(job_ids))
+
+                for exam in exams_tobe_updated:
+                    exam_upd, warn = self.exam_schema.load({'upload_received_ind': 1}, instance=exam, partial=True)
+                    db.session.add(exam_upd)
+
+                try:
+                    db.session.commit()
+                except:
+                    db.session.rollback()
+                    raise
+
+            return {"exams_updated": exams_tobe_updated}, 200
 
         except exc.SQLAlchemyError as error:
             logging.error(error, exc_info=True)
