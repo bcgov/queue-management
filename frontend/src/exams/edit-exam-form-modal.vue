@@ -126,8 +126,20 @@
                 <b-input :disabled="feesOptions === 'liaison'" v-model="fields.receipt" />
               </b-form-group>
             </b-col>
+            <b-col cols="12" v-if="feesOptions !== 'collect'">
+              <b-form-group>
+                <b-form-checkbox
+                  id="receipt-sent"
+                  v-model="fields.receipt_sent_ind"
+                  name="receipt-sent"
+                  value="1"
+                  unchecked-value="0"
+                >
+                  Receipt Sent?
+                </b-form-checkbox>
+              </b-form-group>
+            </b-col>
           </b-form-row>
-
         </b-form>
       </template>
 
@@ -420,6 +432,7 @@
           event_id: null,
           exam_name: null,
           receipt: null,
+          receipt_sent_ind: null,
         },
         lengthError: false,
         message: '',
@@ -501,6 +514,7 @@
           console.log("this.actionedExam ", this.actionedExam)
           this.feesOptions = (this.actionedExam.receipt) ? 'liaison' : 'collect'
           this.fields.receipt = this.actionedExam.receipt
+          this.fields.receipt_sent_ind = this.actionedExam.receipt_sent_ind
           return this.actionedExam
         }
         return false
