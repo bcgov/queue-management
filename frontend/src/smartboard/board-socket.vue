@@ -40,6 +40,8 @@ limitations under the License.*/
     methods: {
       connect(data) {
         socket = io(process.env.SOCKET_URL, {
+          timeout: '3000',
+          reconnectionDelayMax: '100',
           path: '/api/v1/socket.io',
           transports: ['websocket']
         })
