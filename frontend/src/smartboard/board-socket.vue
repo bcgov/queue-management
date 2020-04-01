@@ -40,7 +40,10 @@ limitations under the License.*/
     methods: {
       connect(data) {
         socket = io(process.env.SOCKET_URL, {
-          path: '/api/v1/socket.io'
+          timeout: '3000',
+          reconnectionDelayMax: '100',
+          path: '/api/v1/socket.io',
+          transports: ['websocket']
         })
         socket.on('connect',()=>{this.onConnect()})
         socket.on('disconnect',()=>{this.onDisconnect()})
