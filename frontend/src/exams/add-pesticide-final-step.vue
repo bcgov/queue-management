@@ -76,7 +76,7 @@
     data() {
       return {
         headings: {
-          exam_type: "Exam Type",
+          exam_type_name: "Exam Type",
           fees: "Exam Fees",
           examinee_name: "Candidate",
           examinee_phone: "Candidate's Phone",
@@ -110,7 +110,7 @@
         let examObj = this.exam
         if(this.exam.exam_type_id) {
           const examType = this.examTypes.find(examType => (examType.exam_type_id == this.exam.exam_type_id))
-          examObj.exam_type = (examType) ? examType.exam_type_name : ''
+          examObj.exam_type_name = (examType) ? examType.exam_type_name : ''
         }
         if(this.exam.exam_time) {
           examObj.exam_time_str = moment(this.exam.exam_time).format('YYYY-MMM-DD hh:mm A');
