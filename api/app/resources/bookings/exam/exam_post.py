@@ -28,6 +28,7 @@ from app.utilities.bcmp_service import BCMPService
 class ExamPost(Resource):
 
     exam_schema = ExamSchema()
+    bcmp_service = BCMPService()
 
     @oidc.accept_token(require_token=True)
     @api_call_with_retry
@@ -57,7 +58,11 @@ class ExamPost(Resource):
         if exam.is_pesticide:
             formatted_data = self.format_data(json_data, exam)
             exam = formatted_data["exam"]
-                
+
+        job = self.bcmp_service.check_exam_status(exam)
+        print(job)
+        if job['jobProperties'] and job['jobProperties']['JOB_ID']:
+            exam.event_id = job['jobProperties']['JOB_ID']
 
         db.session.add(exam)
         db.session.commit()
