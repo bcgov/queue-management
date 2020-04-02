@@ -15,7 +15,7 @@ limitations under the License.'''
 import logging
 import json
 from flask import g
-from flask_restplus import Resource
+from flask_restx import Resource
 from sqlalchemy import exc
 from app.models.bookings import Exam
 from app.schemas.bookings import ExamSchema

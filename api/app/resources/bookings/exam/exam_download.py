@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 from flask import g, Response
-from flask_restplus import Resource
+from flask_restx import Resource
 import io
 import logging
 import urllib
