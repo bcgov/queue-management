@@ -58,11 +58,10 @@ class ExamPost(Resource):
         if exam.is_pesticide:
             formatted_data = self.format_data(json_data, exam)
             exam = formatted_data["exam"]
-
-        job = self.bcmp_service.check_exam_status(exam)
-        print(job)
-        if job['jobProperties'] and job['jobProperties']['JOB_ID']:
-            exam.event_id = job['jobProperties']['JOB_ID']
+            job = self.bcmp_service.check_exam_status(exam)
+            print(job)
+            if job['jobProperties'] and job['jobProperties']['JOB_ID']:
+                exam.event_id = job['jobProperties']['JOB_ID']
 
         db.session.add(exam)
         db.session.commit()
