@@ -205,12 +205,13 @@ class LocalConfig(BaseConfig):
         name=DB_NAME
     )
     BCMP_BASE_URL = 'https://bcmaildirect.gov.bc.ca/JOB_TEST'
-    BCMP_AUTH_TOKEN = 'f697697a090c4f349545a09d21b3eb08'
-    MINIO_HOST = 'localhost:9000'
-    MINIO_BUCKET = 'exams'
-    MINIO_ACCESS_KEY = 'minio'
-    MINIO_SECRET_KEY = 'minio1234'
-    MINIO_USE_SECURE = 0
+    BCMP_AUTH_TOKEN = os.getenv('BCMP_AUTH_TOKEN')
+
+    MINIO_HOST = os.getenv('MINIO_HOST', 'localhost:9000')
+    MINIO_BUCKET = os.getenv('MINIO_BUCKET', 'exams')
+    MINIO_ACCESS_KEY = os.getenv('MINIO_ACCESS_KEY', 'minio')
+    MINIO_SECRET_KEY = os.getenv('MINIO_SECRET_KEY', 'minio1234')
+    MINIO_USE_SECURE = os.getenv('MINIO_USE_SECURE', 0)
 
 
 class DevelopmentConfig(BaseConfig):
@@ -222,7 +223,7 @@ class DevelopmentConfig(BaseConfig):
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
     BCMP_BASE_URL = 'https://bcmaildirect.gov.bc.ca/JOB_TEST'
-    BCMP_AUTH_TOKEN = 'f697697a090c4f349545a09d21b3eb08'
+    BCMP_AUTH_TOKEN = os.getenv('BCMP_AUTH_TOKEN')
 
 
 class TestConfig(BaseConfig):
@@ -234,7 +235,7 @@ class TestConfig(BaseConfig):
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
     BCMP_BASE_URL = 'https://bcmaildirect.gov.bc.ca/JOB_TEST'
-    BCMP_AUTH_TOKEN = 'f697697a090c4f349545a09d21b3eb08'
+    BCMP_AUTH_TOKEN = os.getenv('BCMP_AUTH_TOKEN')
 
 
 class ProductionConfig(BaseConfig):
@@ -246,7 +247,7 @@ class ProductionConfig(BaseConfig):
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
     BCMP_BASE_URL = 'https://bcmaildirect.gov.bc.ca/JOB'
-    BCMP_AUTH_TOKEN = 'f697697a090c4f349545a09d21b3eb08'
+    BCMP_AUTH_TOKEN = os.getenv('BCMP_AUTH_TOKEN')
 
 
 def configure_app(app):
