@@ -204,7 +204,7 @@ class LocalConfig(BaseConfig):
         port=DB_PORT,
         name=DB_NAME
     )
-    BCMP_BASE_URL = 'https://bcmaildirect.gov.bc.ca/JOB_TEST'
+    BCMP_BASE_URL = os.getenv('BCMP_BASE_URL')
     BCMP_AUTH_TOKEN = os.getenv('BCMP_AUTH_TOKEN')
 
     MINIO_HOST = os.getenv('MINIO_HOST', 'localhost:9000')
