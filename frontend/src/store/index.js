@@ -3042,5 +3042,8 @@ let makeBookingReqObj = (context, responses) => {
       booking_name: responses.exam_name,
       office_id: responses.office_id,
     }
+    if(responses.is_pesticide && !responses.sbc_managed_ind && responses.invigilator_id) {
+      booking.invigilator_id = [responses.invigilator_id]
+    }
     return booking;
 }
