@@ -42,7 +42,7 @@
                     @click="logAnother">Start Again</b-button>
           </div>
           <div style="display: flex">
-            <b-button v-if="errors.length > 0 || (addExamModal.setup=='pesticide' && !exam.bcmp_job_id)"
+            <b-button v-if="errors.length > 0 || (addExamModal.setup=='pesticide' && !examBcmpJobId)"
                       @click="showErrorMsg"
                       class="btn-primary disabled"
                       id="add_exam_submit">Submit</b-button>
@@ -152,6 +152,7 @@
         tab: 'captureITAExamTabSetup',
         user: 'user',
         module: 'addExamModule',
+        examBcmpJobId: 'examBcmpJobId',
       }),
       lastStep() {
         if (this.addExamModal.setup === 'challenger') {

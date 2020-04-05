@@ -11,12 +11,14 @@
       </b-col>
     </b-row>
     <b-row no-gutters class="summary-box my-3" align-v="end">
-      <b-col v-if="isGroupExam" cols="12" class="summary-box-col group-exam" v-for="(candidate, i) of candidateTableData" :key="i+'groupsumary'">
-        <div class="summary-heading" v-if="candidate.exam_type_name">{{ candidate.exam_type_name }}
-          <span class="qty">candidates: {{candidate.qty}}</span>
-        </div>
-        <div class="summary-text" v-if="candidate.name"> - {{ candidate.name }}</div>
-      </b-col>
+      <template v-if="isGroupExam" >
+        <b-col cols="12" class="summary-box-col group-exam" v-for="(candidate, i) of candidateTableData" :key="i+'groupsumary'">
+          <div class="summary-heading" v-if="candidate.exam_type_name">{{ candidate.exam_type_name }}
+            <span class="qty">candidates: {{candidate.qty}}</span>
+          </div>
+          <div class="summary-text" v-if="candidate.name"> - {{ candidate.name }}</div>
+        </b-col>
+      </template>
       <b-col cols="6" class="summary-box-col" v-for="(item, i) of displayData" :key="i+'sumary'">
         <div class="summary-heading">{{ item.heading }}:</div>
         <div class="summary-text">{{ item.text }}</div>
@@ -86,7 +88,7 @@
           payee_email: "Payee Email",
           payee_phone: "Payee Phone",
           offsite_location: "Location",
-          exam_time_str: "Exam Time",
+          exam_time_str: "Exam Date",
           notes: "Notes"
         },
         bcmpJobId: '',
@@ -113,7 +115,7 @@
           examObj.exam_type_name = (examType) ? examType.exam_type_name : ''
         }
         if(this.exam.exam_time) {
-          examObj.exam_time_str = moment(this.exam.exam_time).format('YYYY-MMM-DD hh:mm A');
+          examObj.exam_time_str = `${this.exam.expiry_date.format('YYYY-MMM-DD')} ${moment(this.exam.exam_time).format('hh:mm A')}`;
         }
         let keys = Object.keys(examObj)
         let headings = Object.keys(this.headings)

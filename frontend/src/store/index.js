@@ -66,6 +66,7 @@ export const store = new Vuex.Store({
     bookings: [],
     calendarEvents: [],
     calendarSetup: null,
+    examBcmpJobId: null,
     capturedExam: {},
     captureITAExamTabSetup: {
       step: 1,
@@ -2842,6 +2843,9 @@ export const store = new Vuex.Store({
     resetCaptureForm(state) {
       state.capturedExam = {}
       state.addExamModule.candidates = []
+      state.captureITAExamTabSetup.capturePayee = false
+      state.captureITAExamTabSetup.payeeSentReceipt = false
+      state.examBcmpJobId = null
     },
 
     resetCaptureTab(state) {
@@ -3011,6 +3015,7 @@ export const store = new Vuex.Store({
 
     setBCMPJobId: (state, payload) => {
       state.capturedExam.bcmp_job_id = payload
+      state.examBcmpJobId = payload
     },
   }
 })

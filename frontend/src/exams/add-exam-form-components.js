@@ -72,12 +72,6 @@ export const AddExamCounter = Vue.component('add-exam-counter', {
           <span style="color: red">Number of selected exams does not equal the number of candidates</span>
         </b-col>
       </b-row>
-      <b-row no-gutters>
-        <b-col cols="12" class="text-right">
-          <b-btn class="btn-warning">Save Draft</b-btn>
-         </b-col>
-        <checkmark :validated="validationObj[q.key].valid" />
-      </b-row>
     </fragment>
   `
 })
@@ -108,7 +102,7 @@ export const DateQuestion = Vue.component('date-question', {
       <b-col cols="11">
         <b-form-group>
           <label>
-            {{ addExamModal.setup == 'group' || addExamModal.setup == 'challenger' ? 'Exam Date' : 'Expiry Date' }}
+            {{ addExamModal.setup == 'group' || addExamModal.setup == 'challenger' || addExamModal.setup == 'pesticide' ? 'Exam Date' : 'Expiry Date' }}
             <span v-if="error" style="color: red">{{ validationObj[q.key].message }}</span>
           </label><br>
           <DatePicker :value="exam[q.key]"

@@ -341,7 +341,7 @@
               <!--  The Details info. -->
               <div style="flex-grow: 1; font-size: 1rem;">Details</div>
               <template v-for="(val, key) in readyDetailsMap(row.item)">
-                <div class="ml-3 mt-1" style="flex-grow: 1;"><b>{{ key }}: </b> {{ val }} </div>
+                <div class="ml-3 mt-1" style="flex-grow: 1;" :key="key"><b>{{ key }}: </b> {{ val }} </div>
               </template>
               <div style="flex-grow: 12" />
             </div>
@@ -504,6 +504,14 @@
       SelectInvigilatorModal
     },
     mounted() {
+      if(this.is_pesticide_designate) {
+        const pestFilterOptions = [
+          {text: 'Awaiting Upload', value: 'awaiting_upload'},
+          {text: 'Awaiting Receipt', value: 'awaiting_receipt'},
+          {text: 'All', value: 'all'},
+        ]
+        this.newQuickActionOptions = this.newQuickActionOptions.concat(pestFilterOptions)
+      }
       this.getExams().then( () => { this.getBookings() })
       this.getOffices()
       this.getInvigilators()
@@ -535,10 +543,6 @@
           {text: 'Office Exam Manager Action Items', value:'oemai'},
           {text: 'Expired', value: 'expired'},
           {text: 'Returned', value: 'returned'},
-          {text: 'Saved Drafts', value: 'saved_drafts'},
-          {text: 'Awaiting Upload', value: 'awaiting_upload'},
-          {text: 'Awaiting Receipt', value: 'awaiting_receipt'},
-          {text: 'All', value: 'all'},
         ],
         newQuickActionOptionsNoOEM: [
           {text: 'Ready', value: 'ready'},
@@ -554,6 +558,7 @@
                      'exam_inventory',
                      'role_code',
                      'is_liaison_designate',
+                     'is_pesticide_designate',
                      'is_ita_designate']),
       ...mapState([
         'bookings',
@@ -1293,9 +1298,7 @@
             this.setInventoryFilters({type:'receptSentFilter', value:'default'})
             this.setInventoryFilters({type:'uploadFilter', value:'default'})
           }
-        }else if(option.value === 'saved_drafts'){
-          this.setInventoryFilters({type: 'expiryFilter', value: 'all'})
-        }else if(option.value === 'awaiting_upload'){
+        } else if(option.value === 'awaiting_upload'){
           this.setInventoryFilters({type: 'expiryFilter', value: 'current'})
           this.setInventoryFilters({type: 'groupFilter', value: 'both'})
           this.setInventoryFilters({type: 'office_number', value: 'default'})
