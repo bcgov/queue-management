@@ -115,7 +115,7 @@
           examObj.exam_type_name = (examType) ? examType.exam_type_name : ''
         }
         if(this.exam.exam_time) {
-          examObj.exam_time_str = `${this.exam.expiry_date.format('YYYY-MMM-DD')} ${moment(this.exam.exam_time).format('hh:mm A')}`;
+          examObj.exam_time_str = `${moment(this.exam.expiry_date).format('YYYY-MMM-DD')} ${moment(this.exam.exam_time).format('hh:mm A')}`;
         }
         let keys = Object.keys(examObj)
         let headings = Object.keys(this.headings)
