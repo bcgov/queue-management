@@ -2841,6 +2841,7 @@ export const store = new Vuex.Store({
 
     resetCaptureForm(state) {
       state.capturedExam = {}
+      state.addExamModule.candidates = []
     },
 
     resetCaptureTab(state) {
