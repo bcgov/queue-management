@@ -667,7 +667,10 @@
       officeNumber() {
         if (this.inventoryFilters && this.inventoryFilters.office_number) {
           let { office_number } = this.inventoryFilters
-          if (office_number !== 'default') {
+          if (this.inventoryFilters.office_number === 'pesticide_offsite') {
+            let office = (this.offices.find(office => office.office_name == 'Pesticide Offsite'))
+            return office.office_number
+          } else if (office_number !== 'default') {
             return office_number
           }
         }
@@ -992,6 +995,10 @@
         let examInventory = this.exam_inventory
         let office_number = this.inventoryFilters.office_number === 'default' ?
           this.user.office.office_number : this.inventoryFilters.office_number
+        if (this.inventoryFilters.office_number === 'pesticide_offsite') {
+          office_number = (this.offices.find(office => office.office_name == 'Pesticide Offsite')).office_number
+          this.inventoryFilters.office_number = office_number
+        }
         let filtered = []
         if (examInventory.length > 0) {
 
@@ -1301,7 +1308,7 @@
         } else if(option.value === 'awaiting_upload'){
           this.setInventoryFilters({type: 'expiryFilter', value: 'current'})
           this.setInventoryFilters({type: 'groupFilter', value: 'both'})
-          this.setInventoryFilters({type: 'office_number', value: 'default'})
+          this.setInventoryFilters({type: 'office_number', value: 'pesticide_offsite'})
           this.setInventoryFilters({type: 'returnedFilter', value: 'unreturned'})
           this.setInventoryFilters({type: 'scheduledFilter', value: 'both'})
           this.setInventoryFilters({type: 'receptSentFilter', value: 'default'})
@@ -1512,6 +1519,7 @@
             output.push('Event ID')
           }
         }
+        console.log(item)
         if (item.booking) {
           if(item.exam_type.group_exam_ind == 1){
             if(length_of_invigilator_array == 0 && number_of_invigilators == 1){

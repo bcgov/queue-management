@@ -945,7 +945,7 @@
         this.changeState = true
         this.selectedShadow = null
         this.removeFlag = false
-        if(this.actionedExam.booking && this.actionedExam.booking.invigilators) {
+        if(this.actionedExam.booking && this.actionedExam.booking.invigilators && !this.actionedExam.is_pesticide && !this.actionedExam.sbc_managed_ind) {
           this.actionedExam.booking.invigilators.forEach(function(invigilator) {
             let indexOfInvigilator = self.invigilators.findIndex(x => x.invigilator_id == invigilator)
             let index_invigilator_id = self.invigilators[indexOfInvigilator].invigilator_id
