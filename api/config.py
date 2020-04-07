@@ -222,7 +222,7 @@ class DevelopmentConfig(BaseConfig):
 
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
-    BCMP_BASE_URL = 'https://bcmaildirect.gov.bc.ca/JOB_TEST'
+    BCMP_BASE_URL = os.getenv('BCMP_BASE_URL')
     BCMP_AUTH_TOKEN = os.getenv('BCMP_AUTH_TOKEN')
 
 
@@ -234,7 +234,7 @@ class TestConfig(BaseConfig):
 
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
-    BCMP_BASE_URL = 'https://bcmaildirect.gov.bc.ca/JOB_TEST'
+    BCMP_BASE_URL = os.getenv('BCMP_BASE_URL')
     BCMP_AUTH_TOKEN = os.getenv('BCMP_AUTH_TOKEN')
 
 
@@ -246,7 +246,7 @@ class ProductionConfig(BaseConfig):
 
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
-    BCMP_BASE_URL = 'https://bcmaildirect.gov.bc.ca/JOB'
+    BCMP_BASE_URL = os.getenv('BCMP_BASE_URL')
     BCMP_AUTH_TOKEN = os.getenv('BCMP_AUTH_TOKEN')
 
 
