@@ -294,7 +294,7 @@
           case 'pesticide':
             this.resetModal()
             let expiry = moment().add(60, 'd')
-            this.captureExamDetail({ key: 'expiry_date', value: '' })
+            this.captureExamDetail({ key: 'expiry_date', value: expiry })
             return
           default:
             this.resetModal()

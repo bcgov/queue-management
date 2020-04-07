@@ -87,6 +87,11 @@ export const DateQuestion = Vue.component('date-question', {
   computed: {
     ...mapState(['user', 'addExamModal', 'capturedExam']),
   },
+  beforeMount() {
+    if (this.exam.ind_or_group === "group") {
+      this.exam.expiry_date = null
+    }
+  },
   methods: {
     selectDate(e) {
       this.handleInput({
