@@ -455,6 +455,9 @@
                                  @click="editGroupBooking(row.item)">Edit Booking</b-dropdown-item>
                 <b-dropdown-item size="sm"
                                  @click="editExamDetails(row.item)">Edit Exam Details</b-dropdown-item>
+                <b-dropdown-item size="sm" v-if="row.item.is_pesticide"
+                      @click="returnExam(row.item)">Upload Exam
+                </b-dropdown-item>
               </template>
             </template>
 
@@ -1316,6 +1319,10 @@
 
           this.updateExamStatus()
         } else if(option.value === 'awaiting_receipt'){
+
+          this.showAllPesticide = true
+          this.viewAllOfficePesticideExams()
+
           this.setInventoryFilters({type: 'expiryFilter', value: 'current'})
           this.setInventoryFilters({type:'scheduledFilter', value:'both'})
           this.setInventoryFilters({type:'returnedFilter', value:'unreturned'})
