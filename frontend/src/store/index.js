@@ -1060,10 +1060,15 @@ export const store = new Vuex.Store({
     },
 
     updateExamStatus(context) {
-      Axios(context).post(`/exams/bcmp_status/`)
+      return new Promise((resolve, reject) => {
+        Axios(context).post(`/exams/bcmp_status/`)
         .then( resp => {
           context.dispatch('getExams')
+          resolve(resp.data)
+        }, err => {
+          reject(err)
         })
+      })
     },
 
     getUser(context) {

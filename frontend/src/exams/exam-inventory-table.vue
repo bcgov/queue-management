@@ -255,6 +255,7 @@
                :current-page="page"
                :per-page="10"
                :filter="searchTerm"
+               v-if="!isLoading"
                id="exam_inventory_table">
 
         <!--  Field 1 - Event id??? Don't see it.  -->
@@ -472,6 +473,9 @@
          {{ row.item.office.office_name }}
         </template>
       </b-table>
+      <div class="text-center" v-if="isLoading">
+        <b-spinner variant="primary" label="Loading"></b-spinner>
+      </div>
     </div>
     <!--  End of exam display.  -->
   </fragment>
@@ -554,6 +558,7 @@
           {text: 'Returned', value: 'returned'},
           {text: 'All', value: 'all'},
         ],
+        isLoading: false,
       }
     },
     computed: {
@@ -1309,18 +1314,26 @@
             this.setInventoryFilters({type:'uploadFilter', value:'default'})
           }
         } else if(option.value === 'awaiting_upload'){
-          this.setInventoryFilters({type: 'expiryFilter', value: 'current'})
-          this.setInventoryFilters({type: 'groupFilter', value: 'both'})
-          this.setInventoryFilters({type: 'office_number', value: 'pesticide_offsite'})
-          this.setInventoryFilters({type: 'returnedFilter', value: 'unreturned'})
-          this.setInventoryFilters({type: 'scheduledFilter', value: 'both'})
-          this.setInventoryFilters({type: 'receptSentFilter', value: 'default'})
-          this.setInventoryFilters({type: 'uploadFilter', value: 'notuploaded'})
-
-          this.updateExamStatus()
+          this.isLoading = true;
+          this.updateExamStatus().then(success => {
+            console.log(success)
+            this.setInventoryFilters({type: 'expiryFilter', value: 'current'})
+            this.setInventoryFilters({type: 'groupFilter', value: 'both'})
+            this.setInventoryFilters({type: 'office_number', value: 'pesticide_offsite'})
+            this.setInventoryFilters({type: 'returnedFilter', value: 'unreturned'})
+            this.setInventoryFilters({type: 'scheduledFilter', value: 'both'})
+            this.setInventoryFilters({type: 'receptSentFilter', value: 'default'})
+            this.setInventoryFilters({type: 'uploadFilter', value: 'notuploaded'})
+            this.isLoading = false;
+          }, err => {
+            console.error(err)
+            this.isLoading = false;
+          }).catch(err => {
+            this.isLoading = false;
+          })
         } else if(option.value === 'awaiting_receipt'){
 
-          this.showAllPesticide = true
+          this.$store.commit('toggleShowAllPesticideExams', false)
           this.viewAllOfficePesticideExams()
 
           this.setInventoryFilters({type: 'expiryFilter', value: 'current'})
