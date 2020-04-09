@@ -31,12 +31,20 @@
           <b-button
             variant="primary"
             @click="requestExam()"
-            :disabled="isExamReqFailed"
-          >Request Exam</b-button>
+            :disabled="isRequestExamBtnLoading || !!examBcmpJobId"
+          >
+            <span v-if="isRequestExamBtnLoading">
+              <b-spinner small></b-spinner>
+              Please Wait...
+            </span>
+            <span v-else>
+              Request Exam
+            </span>
+          </b-button>
         </b-col>
-        <b-col cols="12" class="mt-4" v-if="generatedJobId">
+        <b-col cols="12" class="mt-4" v-if="examBcmpJobId">
           <b-alert variant="success" show>
-            Job Id generated from BCMP: {{generatedJobId}}
+            Job Id generated from BCMP: {{examBcmpJobId}}
             <br><br>
             <strong>Click on the "Submit" button to finish adding the pesticide exam</strong>
           </b-alert>
@@ -95,6 +103,7 @@
         isExamReqFailed: false,
         generatedJobId: '',
         isGroupExam: false,
+        isRequestExamBtnLoading: false,
       }
     },
     computed: {
@@ -106,6 +115,7 @@
         addExamModal: state => state.addExamModal,
         offices: state => state.offices,
         candidateTableData: state => state.addExamModule.candidateTableData,
+        examBcmpJobId: state => state.examBcmpJobId
       }),
       displayData() {
         this.isGroupExam = (this.exam.ind_or_group == "group")
@@ -163,13 +173,16 @@
       },
 
       requestExam() {
+        this.isRequestExamBtnLoading = true
         this.clickPesticideRequestExam().then(bcmp_job_id => {
           console.log("bcmp_job_id: ", bcmp_job_id)
           this.setBCMPJobId(bcmp_job_id);
           this.generatedJobId = bcmp_job_id;
+          this.isRequestExamBtnLoading = false
         }).catch(error => {
           console.log(error)
           this.isExamReqFailed = true;
+          this.isRequestExamBtnLoading = false
         })
       },
 
