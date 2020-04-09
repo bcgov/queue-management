@@ -19,8 +19,8 @@
       <b-form-row>
         <b-col class="q-modal-header">Upload Completed Exam</b-col>
       </b-form-row>
-      <b-form-row>
-        <b-col v-if="submitted" class="text-center mt-2">
+      <b-form-row v-if="submitted">
+        <b-col class="text-center mt-2">
           <font-awesome-icon icon="check"
                              class="m-0 p-0"
                              style="font-size: 5rem; color: green" />
@@ -45,7 +45,7 @@
           </div>
         </b-col>
       </b-form-row>
-      <template v-if="!submitted">
+      <template v-if="!submitted && !isLoading">
         <b-form-row v-if="actionedExam.upload_received_ind">
           <b-col :cols="12">
             <b-form-group class="mt-2 mb-0">
@@ -102,6 +102,9 @@
           File upload failed, please try again.
           </b-alert>
       </template>
+      <div class="text-center" v-if="isLoading && !submitted">
+        <b-spinner variant="primary" label="Loading"></b-spinner>
+      </div>
     </b-form>
 
   </b-modal>
@@ -126,6 +129,7 @@
           { value: 'noshow', text: 'No Show' }
         ],
         uploadFailed: false,
+        isLoading: false,
       }
     },
     computed: {
@@ -167,6 +171,7 @@
       },
       submit() {
         this.uploadFailed = false
+        this.isLoading = true
         let putData = {
           exam_id: this.exam.exam_id,
           notes: this.examNotes,
@@ -180,6 +185,7 @@
         if (this.status === 'written' && this.file) {
           this.submitExam({file: this.file, exam: this.exam})
             .then((bcmpResponse) => {
+              this.isLoading = false
               this.submitted = true
               console.log(bcmpResponse)
               putData['upload_received_ind'] = this.actionedExam.upload_received_ind = 1
@@ -188,6 +194,7 @@
             })
             .catch( (error) => {
               this.uploadFailed = true
+              this.isLoading = false
               console.error(error)
             })
         } else {
@@ -197,9 +204,9 @@
       updateExam(putData) {
         this.putExamInfo(putData)
           .then(() => {
-            setTimeout(()=> {
-              this.resetModal()
-            }, 3000)
+            // setTimeout(()=> {
+            //   this.resetModal()
+            // }, 3000)
           })
           .catch( (error) => {
             console.error(error)
