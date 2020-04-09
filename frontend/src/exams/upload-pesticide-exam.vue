@@ -58,7 +58,7 @@
           <b-col :cols="6">
             <b-form-group class="mb-0">
               <label class="mb-0">Exam Status</label><br>
-              <b-select id="exam-returned-select"
+              <b-select id="exam-status-select"
                         v-model="status"
                         :options="statusOptions" />
             </b-form-group>
@@ -95,6 +95,12 @@
             </b-form-group>
           </b-col>
         </b-form-row>
+        <b-alert
+          class="mt-2"
+          :show="uploadFailed"
+          variant="danger">
+          File upload failed, please try again.
+          </b-alert>
       </template>
     </b-form>
 
@@ -119,6 +125,7 @@
           { value: 'written', text: 'Written' },
           { value: 'noshow', text: 'No Show' }
         ],
+        uploadFailed: false,
       }
     },
     computed: {
@@ -142,6 +149,7 @@
       },
     },
     mounted() {
+      this.uploadFailed = false
       if(this.actionedExam.exam_destroyed_date !== null) {
         this.status = 'noshow'
       } else if(this.actionedExam.upload_received_ind && this.actionedExam.exam_written_ind) {
@@ -158,6 +166,7 @@
         this.toggleUploadExamModal(false)
       },
       submit() {
+        this.uploadFailed = false
         let putData = {
           exam_id: this.exam.exam_id,
           notes: this.examNotes,
@@ -178,6 +187,7 @@
               this.updateExam(putData)
             })
             .catch( (error) => {
+              this.uploadFailed = true
               console.error(error)
             })
         } else {

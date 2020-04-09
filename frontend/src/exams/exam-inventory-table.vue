@@ -48,23 +48,23 @@
             <b-input-group-prepend>
               <label class="mx-1 pt-3 mr-2 my-auto label-text">Filters</label>
             </b-input-group-prepend>
-            <b-btn-group v-if="is_liaison_designate" class="pt-2">
+            <!-- <b-btn-group v-if="is_liaison_designate" class="pt-2">
               <b-btn @click="officeFilterModal=true"
                      :variant="officeFilter === userOffice || officeFilter === 'default' ? 'primary' : 'warning'"
                      class="btn-sm mr-2">Office # {{ officeNumber }} - {{ officeName }}
               </b-btn>
-            </b-btn-group>
-              <b-dd v-if="is_ita_designate"
-                    split
-                    size="sm"
-                    :variant="officeFilter === userOffice || officeFilter === 'default' ? 'primary' : 'warning'"
-                    class="btn-sm mr-2 mt-2"
-                    :text="officeFilterText"
-                    @click="officeFilterModal=true">
-                <b-dd-item @click="viewAllOfficePesticideExams">
-                  {{ showAllPesticide ? 'Pesticide Office Only' : 'View All Offices' }}
-                </b-dd-item>
-              </b-dd>
+            </b-btn-group> -->
+            <b-dd v-if="is_ita_designate"
+                  split
+                  size="sm"
+                  :variant="officeFilter === userOffice || officeFilter === 'default' ? 'primary' : 'warning'"
+                  class="btn-sm mr-2 mt-2"
+                  :text="officeFilterText"
+                  @click="officeFilterModal=true">
+              <b-dd-item @click="viewAllOfficePesticideExams">
+                {{ showAllPesticide ? 'Pesticide Office Only' : 'View All Offices' }}
+              </b-dd-item>
+            </b-dd>
           </b-input-group>
 
           <!--  The Exam Type filter.  -->
@@ -1317,6 +1317,7 @@
           this.isLoading = true;
           this.updateExamStatus().then(success => {
             console.log(success)
+            this.$store.commit('toggleShowAllPesticideExams', false)
             this.setInventoryFilters({type: 'expiryFilter', value: 'current'})
             this.setInventoryFilters({type: 'groupFilter', value: 'both'})
             this.setInventoryFilters({type: 'office_number', value: 'pesticide_offsite'})
