@@ -613,6 +613,7 @@
           return this.showModal
         },
         set(e) {
+          this.examNotReady = false
           this.toggleEditGroupBookingModal(e)
         }
       },

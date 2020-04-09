@@ -605,6 +605,7 @@
           return this.showEditExamModal
         },
         set(e) {
+          this.examNotReady = false
           this.toggleEditExamModal(e)
         }
       },
