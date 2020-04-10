@@ -146,7 +146,7 @@
               <b-form-select 
                 v-model="invigilator_id"
                 :options="invigilatorList"
-                @change="invigilatorChanged()"
+                @change="invigilatorChanged"
               >
               </b-form-select>
             </b-form-group>
@@ -207,7 +207,8 @@
             </b-row>
             <b-row v-for="current in this.currentInvigilatorList"
                       style="justify-content: center"
-                      class="mb-1">
+                      class="mb-1"
+                      v-bind:key="current">
                 {{ current.name }}
               </b-row>
             <b-row class="ml-1">
@@ -263,7 +264,8 @@
                   </b-row >
                   <b-row v-for="current in this.currentInvigilatorList"
                         style="justify-content: center"
-                        class="mb-1">
+                        class="mb-1"
+                        v-bind:key="current">
                     {{ current.name }}
                   </b-row>
                 </template>
@@ -271,7 +273,8 @@
                   Selected Invigilators
                 </b-row>
                 <b-row v-for="select in selected"
-                      style="justify-content: center;">
+                      style="justify-content: center;"
+                      v-bind:key="select">
                   {{ select.name }}
                 </b-row>
                 <b-row style="justify-content: center;"
@@ -406,7 +409,8 @@
                       </b-row>
                       <b-row v-for="select in selectedShadow"
                             style="justify-content: center;"
-                            class="mb-0">
+                            class="mb-0"
+                            v-bind:key="select">
                         {{ select.name }}
                       </b-row>
                       <b-row style="justify-content: center;"
@@ -598,14 +602,8 @@
         return false
       },
       invigilatorList() {
-        if(this.actionedExam.is_pesticide && this.actionedExam.invigilator_id) {
-          this.invigilator_id = parseInt(this.actionedExam.invigilator_id)
-        }
         console.log(this.invigilator_id)
         let invigilators = (this.actionedExam.office && this.actionedExam.office.office_name == 'Pesticide Offsite') ? this.pesticide_offsite_invigilators : this.pesticide_invigilators;
-        console.log( this.pesticide_offsite_invigilators)
-        console.log( this.pesticide_invigilators)
-        console.log(invigilators)
         return invigilators.map(invigilator => ({ text: invigilator.invigilator_name, value: parseInt(invigilator.invigilator_id) }))
       },
       examReceivedOptions() {
@@ -1009,6 +1007,10 @@
         }
         this.offsite_location = tempItem.offsite_location === '_offsite' ? null : tempItem.offsite_location
         this.eventId = tempItem.event_id
+        if(tempItem.is_pesticide && tempItem.invigilator_id) {
+          this.invigilator_id = parseInt(tempItem.invigilator_id)
+        }
+        console.log('invigilator_id: ', this.invigilator_id)
         this.editedFields = []
         this.itemCopy = tempItem
       },
@@ -1159,8 +1161,9 @@
           date
         )
       },
-      invigilatorChanged() {
-        console.log(this.actionedExam.invigilator_id)
+      invigilatorChanged(value) {
+        console.log(value)
+        this.invigilator_id = value
         if (!this.editedFields.includes('invigilator_id')) {
           this.editedFields.push('invigilator_id')
         }
