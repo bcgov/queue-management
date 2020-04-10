@@ -32,9 +32,7 @@ class BCMPService:
         print(req)
 
         response = urllib.request.urlopen(req)
-
-        print('response')
-        print(response.status)
+        
 
         response_data = response.read().decode('utf8')
         print(response_data)
@@ -53,9 +51,8 @@ class BCMPService:
             ]
         }
         response = self.send_request(url, 'POST', data)
-        print(response)
 
-        if response:
+        if response and response['jobs']:
             for job in response['jobs']:
                 print(job)
                 if job['jobId'] == exam.bcmp_job_id:

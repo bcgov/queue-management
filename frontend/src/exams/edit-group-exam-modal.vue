@@ -92,6 +92,19 @@
       </b-form>
       <template v-if="actionedExam.is_pesticide">
         <b-form-row>
+          <b-col>
+            <b-form-group>
+              <label>Event ID</label><br>
+              <b-form-input v-model="eventId"
+                          :disabled="fieldDisabled"
+                          type="text"
+                          class="less-10-mb"
+                          @input.native="checkInput"
+                          name="event_id" />
+            </b-form-group>
+          </b-col>
+        </b-form-row>
+        <b-form-row>
           <b-col :col="!this.fields.exam_received_date" :cols="this.exam_received ? '' : 3 ">
             <b-form-group>
               <label class="my-0">Exam Printed?</label>
@@ -479,6 +492,7 @@
         date: '',
         time: '',
         offsite_location: '',
+        eventId: '',
         editedFields: [],
         showMessage: false,
         itemCopy: {},
@@ -732,6 +746,21 @@
             return
           }
         }
+        if (name === 'event_id') {
+          if (value !== this.itemCopy[name]) {
+            if (!this.editedFields.includes(e.target.name)) {
+              this.editedFields.push(e.target.name)
+            }
+            return
+          }
+          if (value === this.itemCopy[name]) {
+            if (this.editedFields.includes(e.target.name)) {
+              let i = this.editedFields.indexOf(e.target.name)
+              this.editedFields.splice(i, 1)
+            }
+            return
+          }
+        }
         if (name === 'invigilator_id') {
           if (!this.itemCopy.booking) {
             if (!this.editedFields.includes(name)) {
@@ -803,7 +832,8 @@
           }
 
           let examPut = {
-            offsite_location: this.offsite_location
+            offsite_location: this.offsite_location,
+            event_id: this.eventId
           }
           this.postBooking(bookingPost).then( booking_id => {
             examPut.booking_id = booking_id
@@ -903,8 +933,9 @@
         let examChanges = {}
         console.log(edits)
         console.log(this.itemCopy)
-        if (edits.includes('offsite_location') || edits.includes('invigilator_id') || edits.includes('exam_received')) {
+        if (edits.includes('offsite_location') || edits.includes('invigilator_id') || edits.includes('exam_received') || edits.includes('event_id')) {
           examChanges['offsite_location'] = this.offsite_location
+          examChanges['event_id'] = this.eventId
           examChanges['invigilator_id'] = this.invigilator_id
           examChanges['exam_received_date'] = this.fields.exam_received_date
           putRequests.push({url:`/exams/${this.itemCopy.exam_id}/`, data: examChanges})
@@ -977,6 +1008,7 @@
           this.currentShadowInvigilatorName = currentName
         }
         this.offsite_location = tempItem.offsite_location === '_offsite' ? null : tempItem.offsite_location
+        this.eventId = tempItem.event_id
         this.editedFields = []
         this.itemCopy = tempItem
       },
@@ -984,6 +1016,7 @@
         this.time = null
         this.date = null
         this.offsite_location = null
+        this.eventId = null
         this.invigilator_id = null
         this.itemCopy = {}
         this.editedFields = []

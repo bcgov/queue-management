@@ -83,13 +83,24 @@
             </b-col>
           </b-form-row>
           <b-form-row>
-            <b-col cols="6">
+            <b-col>
               <b-form-group>
                 <label class="my-0">Telephone</label><br>
                 <b-form-input id="examinee_phone"
                               class="less-10-mb"
                               type="text"
                               v-model="fields.examinee_phone" />
+              </b-form-group>
+            </b-col>
+          </b-form-row>
+          <b-form-row>
+            <b-col cols="6">
+              <b-form-group>
+                <label class="my-0">Event ID</label>
+                <b-form-input id="event_id"
+                              type="text"
+                              class="less-10-mb"
+                              v-model="fields.event_id" />
               </b-form-group>
             </b-col>
             <b-col cols="6">
