@@ -1,0 +1,76 @@
+// Layout style rules shared across the app
+.container {
+  padding-right: 1rem;
+  padding-left: 1rem;
+  max-width: 1360px;
+}
+
+.view-container {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.view-header {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 2.65rem;
+
+  h1 + p {
+    margin-top: 0.75rem;
+  }
+
+  .back-btn {
+    margin-top: -0.25rem;
+  }
+
+  &.align-center {
+    align-items: center;
+  }
+
+  &.block {
+    display: block;
+  }
+}
+
+.view-header__title {
+  margin-bottom: 0;
+}
+
+@media (min-width: 1200px) and (min-height: 900px) {
+  .view-header {
+    .back-btn {
+      margin-top: 0;
+    }
+  }
+}
+
+// Increase column padding to 1rem (16px)
+// ~32px gutters to provide some additional space between columns
+
+.row {
+  margin-right: -1rem;
+  margin-left: -1rem;
+}
+
+.col {
+  padding: 1rem;
+}
+
+.intro-text {
+  margin-bottom: 2rem;
+  letter-spacing: -0.01rem;
+  font-size: 1rem;
+  font-weight: 300;
+
+  em {
+    font-style: normal;
+    font-weight: 700;
+  }
+}
+
+// Layout styling for different device sizes
+@media (max-width: 480px) {
+  h1 span {
+    display: block;
+  }
+}
