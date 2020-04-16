@@ -1,5 +1,5 @@
 import Keycloak, { KeycloakInitOptions, KeycloakInstance, KeycloakLoginOptions, KeycloakTokenParsed } from 'keycloak-js'
-import AuthModule from '@/store/modules/auth'
+import { AuthModule } from '@/store/modules'
 import ConfigHelper from '@/utils/config-helper'
 import { KCUserProfile } from '@/models/KCUserProfile'
 import { SessionStorageKeys } from '@/utils/constants'

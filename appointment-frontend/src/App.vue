@@ -2,7 +2,7 @@
   <v-app id="app">
     <div class="app-body">
       <app-header></app-header>
-      <main>
+      <main class="main-block">
         <router-view />
       </main>
       <app-footer></app-footer>
@@ -24,6 +24,9 @@ import KeyCloakService from '@/services/keycloak.services'
 })
 export default class App extends Vue {
   private async mounted () {
+  }
+
+  private async beforeMount () {
     await KeyCloakService.setKeycloakConfigUrl(`${process.env.VUE_APP_PATH}config/kc/keycloak.json`)
   }
 }
@@ -31,9 +34,12 @@ export default class App extends Vue {
 
 <style lang="scss">
 #app {
-   -webkit-font-smoothing: antialiased;
-   -moz-osx-font-smoothing: grayscale;
-   text-align: center;
-   color: #2c3e50;
- }
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+}
+.main-block {
+  margin-top: 64px;
+}
 </style>

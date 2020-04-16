@@ -1,10 +1,13 @@
 import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
 import ConfigHelper from '@/utils/config-helper'
 import { SessionStorageKeys } from '@/utils/constants'
+import { store } from '@/store'
 
 @Module({
   name: 'auth',
-  namespaced: true
+  namespaced: true,
+  store,
+  dynamic: true
 })
 export default class AuthModule extends VuexModule {
   token: string = ''

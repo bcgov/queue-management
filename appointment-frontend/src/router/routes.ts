@@ -1,5 +1,6 @@
 import Home from '@/views/Home.vue'
 import MixinExample from '@/views/MixinExample.vue'
+import SigninView from '@/views/SigninView.vue'
 import StateExample from '@/views/StateExample.vue'
 
 export const routes = [
@@ -26,6 +27,13 @@ export const routes = [
     meta: {
       requiresAuth: false
     }
+  },
+  {
+    path: '/signin/:idpHint',
+    name: 'signin',
+    component: SigninView,
+    props: true,
+    meta: { requiresAuth: false }
   },
   {
     // default/fallback route

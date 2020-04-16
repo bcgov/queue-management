@@ -1,6 +1,7 @@
 <template>
   <v-app-bar
     dark
+    fixed
     height="64"
   >
     <v-img
@@ -15,6 +16,7 @@
 
     <v-btn
       light
+      @click="login"
       >
       Login
     </v-btn>
@@ -26,6 +28,9 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 
 @Component
 export default class AppHeader extends Vue {
+  login () {
+    this.$router.push('/signin/bcsc')
+  }
 }
 </script>
 
