@@ -5,19 +5,21 @@
       <main>
         <router-view />
       </main>
+      <app-footer></app-footer>
     </div>
 
   </v-app>
 </template>
 
 <script lang="ts">
+import { AppFooter, AppHeader } from '@/components/common'
 import { Component, Vue } from 'vue-property-decorator'
-import { AppHeader } from '@/components/common'
 import KeyCloakService from '@/services/keycloak.services'
 
 @Component({
   components: {
-    AppHeader
+    AppHeader,
+    AppFooter
   }
 })
 export default class App extends Vue {
@@ -29,7 +31,6 @@ export default class App extends Vue {
 
 <style lang="scss">
 #app {
-   font-family: 'Avenir', Helvetica, Arial, sans-serif;
    -webkit-font-smoothing: antialiased;
    -moz-osx-font-smoothing: grayscale;
    text-align: center;

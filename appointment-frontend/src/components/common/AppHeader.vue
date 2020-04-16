@@ -1,8 +1,14 @@
 <template>
   <v-app-bar
-    color="navBg"
     dark
+    height="64"
   >
+    <v-img
+      class="mx-2"
+      src="@/assets/img/gov3_bc_logo.png"
+      max-width="132"
+      contain
+    ></v-img>
     <v-toolbar-title>Service BC Appointments</v-toolbar-title>
 
     <v-spacer></v-spacer>
@@ -24,4 +30,10 @@ export default class AppHeader extends Vue {
 </script>
 
 <style lang="scss" scoped>
+@import "@/assets/scss/theme.scss";
+
+.v-app-bar {
+  background-color: $BCgovBlue5 !important;
+  border-bottom: 2px solid $BCgovGold5 !important;
+}
 </style>
