@@ -1,3 +1,4 @@
+import AppointmentBookingView from '@/views/AppointmentBookingView.vue'
 import Home from '@/views/Home.vue'
 import MixinExample from '@/views/MixinExample.vue'
 import SigninView from '@/views/SigninView.vue'
@@ -8,6 +9,14 @@ export const routes = [
     path: '/',
     name: 'home',
     component: Home,
+    meta: {
+      requiresAuth: false
+    }
+  },
+  {
+    path: '/appointment',
+    name: 'appointment',
+    component: AppointmentBookingView,
     meta: {
       requiresAuth: false
     }
