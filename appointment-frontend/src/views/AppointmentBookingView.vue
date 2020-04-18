@@ -29,6 +29,8 @@
         :key="`${bookingStep.step}-content`"
         :step="bookingStep.step"
       >
+        <ServiceSelection></ServiceSelection>
+
         <v-card
           class="mb-12"
           color="grey lighten-1"
@@ -55,11 +57,11 @@
 import { Component, Vue } from 'vue-property-decorator'
 
 // Components
-import { HelloWorld } from '@/components/Home'
+import { ServiceSelection } from '@/components/appointment'
 
 @Component({
   components: {
-    HelloWorld
+    ServiceSelection
   }
 })
 export default class AppointmentBookingView extends Vue {

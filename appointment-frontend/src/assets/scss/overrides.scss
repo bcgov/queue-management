@@ -124,3 +124,10 @@ input:-webkit-autofill:active {
 .v-toolbar__title {
   font-weight: 600;
 }
+
+.v-application {
+  .subtitle-2,
+  .subtitle-1 {
+    font-family: 'BCSans', Verdana, Arial, sans-serif !important; 
+  }
+}
