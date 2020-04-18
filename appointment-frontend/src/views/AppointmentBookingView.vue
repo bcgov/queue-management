@@ -29,7 +29,9 @@
         :key="`${bookingStep.step}-content`"
         :step="bookingStep.step"
       >
-        <ServiceSelection></ServiceSelection>
+        <LocationsList></LocationsList>
+
+        <!-- <ServiceSelection></ServiceSelection> -->
 
         <v-card
           class="mb-12"
@@ -57,11 +59,12 @@
 import { Component, Vue } from 'vue-property-decorator'
 
 // Components
-import { ServiceSelection } from '@/components/appointment'
+import { LocationsList, ServiceSelection } from '@/components/appointment'
 
 @Component({
   components: {
-    ServiceSelection
+    ServiceSelection,
+    LocationsList
   }
 })
 export default class AppointmentBookingView extends Vue {

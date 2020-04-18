@@ -41,5 +41,6 @@ export default class App extends Vue {
 }
 .main-block {
   margin-top: 64px;
+  margin-bottom: 50px;
 }
 </style>
