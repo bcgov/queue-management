@@ -166,6 +166,11 @@ class BaseConfig(object):
     BACK_OFFICE_DISPLAY = os.getenv("BACK_OFFICE_DISPLAY", "BackOffice")
     RECURRING_FEATURE_FLAG = os.getenv("RECURRING_FEATURE_FLAG", "On")
 
+    MINIO_HOST = os.getenv('MINIO_HOST', 'localhost:9000')
+    MINIO_BUCKET = os.getenv('MINIO_BUCKET', 'exams')
+    MINIO_ACCESS_KEY = os.getenv('MINIO_ACCESS_KEY', 'minio')
+    MINIO_SECRET_KEY = os.getenv('MINIO_SECRET_KEY', 'minio1234')
+    MINIO_USE_SECURE = os.getenv('MINIO_USE_SECURE', 0)
 
     #print(parse_dsn(("postgresql://localhost:5000?connect_timeout=10")))
     #quote_ident("connect_timeout", scope)
