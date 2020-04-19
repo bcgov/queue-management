@@ -74,6 +74,7 @@ limitations under the License.*/
       },
 
       join() {
+        console.log("==> In Socket.vue.join, socket.io.engine.id is: " + socket.io.engine.id.toString())
         socket.emit('joinRoom',{count:0}, ()=>{console.log('socket emit: "joinRoom"')}
         )
       },

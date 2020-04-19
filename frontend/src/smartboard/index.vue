@@ -143,7 +143,8 @@ export default {
   .flashing-ticket {color: red; font-size: 1rem }
   .board-content-div { background-color: white; box-shadow: 2px 3px 10px rgba(0, 0, 0, .5); text-align: center; }
   .board-table-style { width: 100%; background-color: white; text-align: center; }
-  .board-85-video { display: inline-block; width: 74%; padding-left: 1%; padding-right: 1%; margin: 8px auto 0 auto; }
+  .board-nameticket-video { display: inline-block; width: 74%; }
+  .board-noticket-video { display: inline-block; width: 85%; }
   .board-25-table { display: inline-block; width: 24%; max-height: 60vh; padding-left: 1%; padding-right: 1%; vertical-align: top; }
   .flex-title { font-size: 4.0rem; color: midnightblue; margin-top: -4px; }
   .video-js { background-color: white; }

@@ -1,6 +1,6 @@
-FROM ubuntu:18.04
+FROM ubuntu:19.04
 
-ARG MENDER_ARTIFACT_VERSION=2.3.0
+ARG MENDER_ARTIFACT_VERSION=3.3.0
 
 RUN apt-get update && apt-get install -y \
     simg2img img2simg \

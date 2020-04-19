@@ -16,6 +16,8 @@ mount / -o remount,rw
 
 ssh-keygen -A
 
+sed -i 's/IPV6=yes/IPV6=no/g' /etc/default/ufw
+systemctl daemon-reload
 ufw default deny incoming 
 ufw default allow outgoing
 ufw allow 443

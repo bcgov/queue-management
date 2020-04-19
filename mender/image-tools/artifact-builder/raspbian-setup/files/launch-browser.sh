@@ -2,8 +2,13 @@
 
 sudo systemctl stop splashscreen
 
-xsetroot -solid white 
+xsetroot -solid white
 xsetbg -onroot -shrink -fullscreen -smooth -background white /var/flaskapp/web-service/static/splash.png
+
+until timedatectl status | grep -q "synchronized: yes";
+do
+  sleep 1;
+done
 
 # disable DPMS (Energy Star) features.
 xset -dpms
@@ -24,14 +29,25 @@ while true ; do
 	# to try load the smart board. This ensures that the network is up
 	# before hitting the smartboard
 
-	chromium-browser --ignore-gpu-blacklist --force-gpu-rasterization --enable-zero-copy \
-		--enable-native-gpu-memory-buffers --disable-infobars --disable-session-crashed-bubble \
-		--noerrdialogs --incognito --kiosk \
-		"http://localhost/splash.html"
+		# --enable-fast-unload --enable-checker-imaging --enable-tcp-fast-open \
+		# -check-for-update-interval=0 --disable-background-networking \
+		# --enable-native-gpu-memory-buffers --enable-gpu-rasterization --enable-zero-copy \
+		# --use-gl=egl --gles --disable-quic \
+
+	chromium-browser \
+		--ignore-blacklist --ignore-gpu-blacklist \
+		--disable-translate --disable-features=TranslateUI \
+		--disable-infobars --disable-session-crashed-bubble \
+		--disable-logging --noerrdialogs --start-fullscreen \
+		--disk-cache-size=0  \
+		--check-for-update-interval=0 --disable-background-networking \
+		--kiosk "http://localhost/splash.html"
+
 
 	sleep 1
 	# Clean out any lingering processes if the browser has died
 
-	killall -HUP chromium-browser
+	pkill -f -- "chromium-browser"
 	sleep 2
-done 
+done
+

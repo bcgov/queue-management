@@ -7,6 +7,11 @@
            no-close-on-esc
            hide-header
            size="sm">
+     <div id="navi">
+        <template v-if="this.$store.state.showServeCitizenSpinner">
+          <div class="q-loader2" ></div>
+        </template>
+     </div>
     <template slot="modal-footer">
       <b-button class="btn-secondary"
                 @click="hide">Close</b-button>
@@ -58,8 +63,13 @@
   export default {
     name: "CheckInModal",
     props: ['clickedAppt'],
+    data() {
+      return {
+        showcheckInSpinner: false
+      }
+    },
     computed: {
-      ...mapState(['showCheckInModal']),
+      ...mapState(['showCheckInModal','showServeCitizenSpinner', 'checkInClicked'],),
       modalVisible: {
         get() { return this.showCheckInModal },
         set(e) { this.toggleCheckInModal(e) }
@@ -90,11 +100,17 @@
         'toggleCheckInModal',
         'toggleApptBookingModal',
         'toggleEditDeleteSeries',
+        'toggleCheckInClicked'
       ]),
       checkIn() {
-        this.postCheckIn(this.clickedAppt).then( () => {
-          this.hide()
-        })
+        if (!this.checkInClicked) {
+          this.toggleCheckInClicked(true)
+          this.$store.commit('toggleServeCitizenSpinner', true)
+          this.postCheckIn(this.clickedAppt).then(() => {
+            this.hide()
+            this.$store.commit('toggleServeCitizenSpinner', false)
+          })
+        }
       },
       clearTime() {
         this.$root.$emit('cleardate')
@@ -121,5 +137,21 @@
 </script>
 
 <style scoped>
-
+  #navi {
+    position: relative;
+  }
+  .q-loader2 {
+    position: absolute;
+    z-index: 1100;
+    text-align: center;
+    margin: 50px auto auto 100px;
+    width: 50px;
+    height: 50px;
+    border: 10px solid LightGrey;
+    opacity:0.9;
+    border-radius: 50%;
+    border-top-color: DodgerBlue;
+    animation: spin 1s ease-in-out infinite;
+    -webkit-animation: spin 1s ease-in-out infinite;
+}
 </style>
