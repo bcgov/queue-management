@@ -237,7 +237,7 @@ export const addExamModule = {
 
         Axios(rootState.bearer).get(url)
           .then(resp => {
-            let pesticideExams = resp.data.exams.filter(exam => exam.exam_type.pesticide_exam_ind)
+            let pesticideExams = resp.data.exams.filter(exam => exam.is_pesticide)
             commit('setAllPesticideExams', pesticideExams)
             commit('toggleShowAllPesticideExams', true)
             resolve()

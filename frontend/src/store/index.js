@@ -1068,6 +1068,9 @@ export const store = new Vuex.Store({
         }, err => {
           reject(err)
         })
+        .catch(err => {
+          reject(err)
+        })
       })
     },
 

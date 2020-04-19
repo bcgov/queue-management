@@ -62,7 +62,7 @@
                   :text="officeFilterText"
                   @click="officeFilterModal=true">
               <b-dd-item @click="viewAllOfficePesticideExams">
-                {{ showAllPesticide ? 'Pesticide Office Only' : 'View All Offices' }}
+                View All Offices
               </b-dd-item>
             </b-dd>
           </b-input-group>
@@ -78,7 +78,7 @@
                           v-model="selectedExamTypeFilter"
                           class="mt-2 mr-2">
                 <b-dropdown-item v-for="option in examTypeOptions"
-                                 @click="setExamTypeFilter(option)">
+                                 @click="setExamTypeFilter(option)" v-bind:key="option.value">
                   {{ option.text }}
                 </b-dropdown-item>
               </b-dropdown>
@@ -89,7 +89,7 @@
                           v-model="selectedExamTypeFilter"
                           class="mt-2 mr-2">
                 <b-dropdown-item v-for="option in examTypeOptions"
-                                 @click="setExamTypeFilter(option)">
+                                 @click="setExamTypeFilter(option)" v-bind:key="option.value">
                   {{ option.text }}
                 </b-dropdown-item>
               </b-dropdown>
@@ -103,7 +103,7 @@
                           v-model="selectedExamTypeFilter"
                           class="mt-2 mr-2">
                 <b-dropdown-item v-for="option in examTypeOptions"
-                                 @click="setExamTypeFilter(option)">
+                                 @click="setExamTypeFilter(option)" v-bind:key="option.value">
                   {{ option.text }}
                 </b-dropdown-item>
               </b-dropdown>
@@ -119,7 +119,7 @@
                             v-model="selectedQuickActionFilter"
                             class="mt-2 mr-2">
                   <b-dropdown-item v-for="option in newQuickActionOptions"
-                                   @click="setQuickActionFilter(option)">
+                                   @click="setQuickActionFilter(option)" v-bind:key="option.value">
                     <!--  The various Quick Action options. -->
                     <div style="display: flex; justify-content: space-between;">
                       <div class="mr-3">{{ option.text }}</div>
@@ -146,7 +146,7 @@
                             v-model="selectedQuickActionFilter"
                             class="mt-2 mr-2">
                   <b-dropdown-item v-for="option in newQuickActionOptions"
-                                   @click="setQuickActionFilter(option)">
+                                   @click="setQuickActionFilter(option)" v-bind:key="option.value">
                     <!--  The various Quick Action options. -->
                     <div style="display: flex; justify-content: space-between;">
                       <div class="mr-3">{{ option.text }}</div>
@@ -175,7 +175,7 @@
                             v-model="selectedQuickActionFilter"
                             class="mt-2 mr-2">
                   <b-dropdown-item v-for="option in newQuickActionOptionsNoOEM"
-                                   @click="setQuickActionFilter(option)">
+                                   @click="setQuickActionFilter(option)" v-bind:key="option.value">
                     <div style="display: flex; justify-content: space-between;">
                       <div class="mr-3">{{ option.text }}</div>
                       <div v-if="option.text === 'Ready'">
@@ -199,7 +199,7 @@
                             v-model="selectedQuickActionFilter"
                             class="mt-2 mr-2">
                   <b-dropdown-item v-for="option in newQuickActionOptionsNoOEM"
-                                   @click="setQuickActionFilter(option)">
+                                   @click="setQuickActionFilter(option)" v-bind:key="option.value">
                     <div style="display: flex; justify-content: space-between;">
                       <div class="mr-3">{{ option.text }}</div>
                       <div v-if="option.text === 'Ready'">
@@ -324,7 +324,7 @@
           <template v-if="stillRequires(row.item).length === 0">
             <div class="details-slot-div">
               <template v-for="(val, key) in readyDetailsMap(row.item)">
-                <div class="ml-3 mt-1" style="flex-grow: 1;"><b>{{ key }}: </b> {{ val }} </div>
+                <div class="ml-3 mt-1" style="flex-grow: 1;" v-bind:key="key"><b>{{ key }}: </b> {{ val }} </div>
               </template>
               <div style="flex-grow: 6"></div>
             </div>
@@ -731,10 +731,7 @@
         this.toggleExamInventoryModal(false)
       },
       viewAllOfficePesticideExams() {
-        if (!this.showAllPesticide) {
-          this.$store.dispatch('getAllPesticideExams')
-          return
-        }
+        this.$store.dispatch('getAllPesticideExams')
         this.$store.commit('toggleShowAllPesticideExams', false)
       },
       checkChallenger(item) {
@@ -1315,12 +1312,12 @@
           }
         } else if(option.value === 'awaiting_upload'){
           this.isLoading = true;
+          this.setInventoryFilters({type: 'office_number', value: 'pesticide_offsite'})
           this.updateExamStatus().then(success => {
             console.log(success)
             this.$store.commit('toggleShowAllPesticideExams', false)
             this.setInventoryFilters({type: 'expiryFilter', value: 'current'})
             this.setInventoryFilters({type: 'groupFilter', value: 'both'})
-            this.setInventoryFilters({type: 'office_number', value: 'pesticide_offsite'})
             this.setInventoryFilters({type: 'returnedFilter', value: 'unreturned'})
             this.setInventoryFilters({type: 'scheduledFilter', value: 'both'})
             this.setInventoryFilters({type: 'receptSentFilter', value: 'default'})
@@ -1334,7 +1331,7 @@
           })
         } else if(option.value === 'awaiting_receipt'){
 
-          this.$store.commit('toggleShowAllPesticideExams', false)
+          // this.$store.commit('toggleShowAllPesticideExams', false)
           this.viewAllOfficePesticideExams()
 
           this.setInventoryFilters({type: 'expiryFilter', value: 'current'})
@@ -1347,6 +1344,7 @@
         } else if(option.value === 'all'){
           this.setInventoryFilters({type: 'expiryFilter', value: 'all'})
           this.setInventoryFilters({type:'scheduledFilter', value:'both'})
+          this.setInventoryFilters({type:'groupFilter', value:'both'})
           this.setInventoryFilters({type:'returnedFilter', value:'both'})
           this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
           this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
@@ -1394,7 +1392,7 @@
           if (!value) {
             return ''
           } else if (value instanceof Object) {
-            return keys(value)
+            return Object.keys(value)
             .sort()
             .map(key => toString(value[key]))
             .join(' ')
