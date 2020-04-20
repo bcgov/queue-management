@@ -8,6 +8,15 @@ const url = `${process.env.VUE_APP_PATH}config/configuration.json`
 
 export default class ConfigHelper {
   static keycloakConfigUrl: string = ''
+  static mapConfiguration = {
+    zoomControl: false,
+    mapTypeControl: false,
+    scaleControl: false,
+    streetViewControl: false,
+    rotateControl: false,
+    fullscreenControl: false,
+    disableDefaultUi: false
+  }
 
   static async fetchConfig () {
     const response = await Axios.get(url)
@@ -74,5 +83,9 @@ export default class ConfigHelper {
 
   static getKeycloakConfigUrl (): string {
     return this.keycloakConfigUrl
+  }
+
+  static getMapConfigurations () {
+    return this.mapConfiguration
   }
 }

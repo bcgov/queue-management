@@ -1,6 +1,7 @@
 import 'core-js/stable' // to polyfill ECMAScript features
 import '@mdi/font/css/materialdesignicons.min.css' // icon library (https://materialdesignicons.com/)
 import 'regenerator-runtime/runtime' // to use transpiled generator functions
+import * as VueGoogleMaps from 'vue2-google-maps'
 import App from './App.vue'
 import ConfigHelper from '@/utils/config-helper'
 import TokenService from '@/services/token.services'
@@ -13,6 +14,12 @@ import vuetify from './plugins/vuetify'
 Vue.config.productionTip = false
 Vue.prototype.$tokenService = new TokenService()
 
+Vue.use(VueGoogleMaps, {
+  load: {
+    key: 'AIzaSyDkGT3Fi4Y8FCLswRuHlKrjtFuRous3q0I',
+    libraries: 'places'
+  }
+})
 /**
  * The server side configs are necessary for app to work , since they are reference in templates and all
  *  Two ways , either reload Vue after we get the settings or load vue after we get the configs..going for second

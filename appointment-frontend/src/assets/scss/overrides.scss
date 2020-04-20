@@ -127,7 +127,13 @@ input:-webkit-autofill:active {
 
 .v-application {
   .subtitle-2,
-  .subtitle-1 {
+  .subtitle-1,
+  .caption,
+  .overline,
+  .title,
+  .headline,
+  .body-1,
+  .body-2 {
     font-family: 'BCSans', Verdana, Arial, sans-serif !important; 
   }
 }

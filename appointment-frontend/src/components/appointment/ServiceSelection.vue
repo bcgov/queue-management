@@ -5,7 +5,7 @@
     </v-card-title>
     <v-divider class="mx-4"></v-divider>
     <v-card-text>
-      <p class="subtitle-1 text-center">Please select the service you'd like to receive</p>
+      <p class="step-desc">Please select the service you'd like to receive</p>
       <v-row justify="center">
         <v-col cols="12" sm="6">
           <v-select
@@ -106,6 +106,7 @@ export default class ServiceSelection extends Vue {
 </script>
 
 <style lang="scss" scoped>
+@import "@/assets/scss/theme.scss";
 .service-message {
   font-size: 10px;
   margin-left: 12px;

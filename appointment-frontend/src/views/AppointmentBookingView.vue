@@ -10,6 +10,7 @@
           :complete="stepElement > bookingStep.step"
           :step="bookingStep.step"
           editable
+          edit-icon="mdi-check"
         >
           <div class="step-label">
             {{bookingStep.label}}
@@ -29,11 +30,25 @@
         :key="`${bookingStep.step}-content`"
         :step="bookingStep.step"
       >
-        <LocationsList></LocationsList>
+        <template v-if="bookingStep.code === 'location'">
+          <v-card>
+            <v-card-title class="justify-center">
+              <h3>Location Selection</h3>
+            </v-card-title>
+            <v-divider class="mx-4"></v-divider>
+            <LocationsList></LocationsList>
+          </v-card>
+        </template>
 
-        <!-- <ServiceSelection></ServiceSelection> -->
+        <ServiceSelection v-if="bookingStep.code === 'service'"></ServiceSelection>
 
-        <v-card
+        <DateSelection v-if="bookingStep.code === 'date'"></DateSelection>
+
+        <AppointmentSummary v-if="bookingStep.code === 'summary'"></AppointmentSummary>
+
+        <LoginToConfirm v-if="bookingStep.code === 'login'"></LoginToConfirm>
+
+        <!-- <v-card
           class="mb-12"
           color="grey lighten-1"
           height="200px"
@@ -48,22 +63,22 @@
           Continue
         </v-btn>
 
-        <v-btn text>Cancel</v-btn>
+        <v-btn text>Cancel</v-btn> -->
       </v-stepper-content>
     </v-stepper-items>
   </v-stepper>
 </template>
 
 <script lang="ts">
-// Libraries
+import { AppointmentSummary, DateSelection, LocationsList, LoginToConfirm, ServiceSelection } from '@/components/appointment'
 import { Component, Vue } from 'vue-property-decorator'
-
-// Components
-import { LocationsList, ServiceSelection } from '@/components/appointment'
 
 @Component({
   components: {
+    AppointmentSummary,
+    DateSelection,
     ServiceSelection,
+    LoginToConfirm,
     LocationsList
   }
 })
@@ -72,23 +87,28 @@ export default class AppointmentBookingView extends Vue {
   private bookingSteppers = [
     {
       step: 1,
-      label: 'Select Service'
+      label: 'Select Location',
+      code: 'location'
     },
     {
       step: 2,
-      label: 'Select Location'
+      label: 'Select Service',
+      code: 'service'
     },
     {
       step: 3,
-      label: 'Select a Date'
+      label: 'Select a Date',
+      code: 'date'
     },
     {
       step: 4,
-      label: 'Appointment Summary'
+      label: 'Appointment Summary',
+      code: 'summary'
     },
     {
       step: 5,
-      label: 'Login to Confirm Appointment'
+      label: 'Login to Confirm Appointment',
+      code: 'login'
     }
   ]
 
