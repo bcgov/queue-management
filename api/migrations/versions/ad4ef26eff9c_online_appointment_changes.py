@@ -33,6 +33,7 @@ def upgrade():
                     sa.Column('user_id', sa.Integer(), autoincrement=True, nullable=False),
                     sa.Column('username', sa.String(length=100), nullable=True),
                     sa.Column('display_name', sa.String(length=200), nullable=True),
+                    sa.Column('last_name', sa.String(length=200), nullable=True),
                     sa.Column('email', sa.String(length=200), nullable=True),
                     sa.Column('telephone', sa.String(length=20), nullable=True),
                     sa.PrimaryKeyConstraint('user_id')

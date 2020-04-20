@@ -28,16 +28,19 @@ class AppointmentPut(Resource):
 
     @oidc.accept_token(require_token=True)
     def put(self, id):
-
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
-
         json_data = request.get_json()
-
         if not json_data:
             return {"message": "No input data received for updating an appointment"}
 
+        office_id = False
+        if json_data.get('user_id', None):
+            office_id = json_data.get('office_id')
+        else:
+            csr = CSR.find_by_username(g.oidc_token_info['username'])
+            office_id = csr.office_id
+
         appointment = Appointment.query.filter_by(appointment_id=id)\
-                                       .filter_by(office_id=csr.office_id)\
+                                       .filter_by(office_id=office_id)\
                                        .first_or_404()
 
         appointment, warning = self.appointment_schema.load(json_data, instance=appointment, partial=True)

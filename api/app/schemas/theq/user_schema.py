@@ -14,27 +14,13 @@ limitations under the License.'''
 
 import toastedmarshmallow
 from marshmallow import fields
-from app.models.theq import Citizen
+from app.models.theq import PublicUser
 from app.schemas.theq import ServiceReqSchema, CitizenStateSchema, OfficeSchema
 from qsystem import ma
 
 
-class CitizenSchema(ma.ModelSchema):
+class UserSchema(ma.ModelSchema):
 
     class Meta:
-        model = Citizen
-        jit = toastedmarshmallow.Jit
-        exclude = ('office_citizens','office',)
+        model = PublicUser
 
-    citizen_id = fields.Int(dump_only=True)
-    office_id = fields.Int()
-    ticket_number = fields.Str(dump_only=True)
-    citizen_comments = fields.Str()
-    qt_xn_citizen_ind = fields.Int()
-    counter_id = fields.Int()
-    start_time = fields.DateTime()
-    accurate_time_ind = fields.Int()
-    service_reqs = fields.Nested(ServiceReqSchema(exclude=('citizen',)), many=True)
-    cs = fields.Nested(CitizenStateSchema(exclude=('cs_state_desc', 'cs_id', 'citizens', 'state_citizens')))
-    priority = fields.Int()
-    user_id = fields.Int()

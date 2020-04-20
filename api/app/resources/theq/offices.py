@@ -25,7 +25,7 @@ class OfficeList(Resource):
 
     office_schema = OfficeSchema(many=True)
 
-    @oidc.accept_token(require_token=True)
+    @oidc.accept_token(require_token=False)
     def get(self):
         try:
 

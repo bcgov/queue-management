@@ -18,7 +18,6 @@ from sqlalchemy_utc import UtcDateTime
 
 
 class Appointment(Base):
-
     appointment_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     office_id = db.Column(db.Integer, db.ForeignKey("office.office_id"), nullable=False)
     service_id = db.Column(db.Integer, db.ForeignKey("service.service_id"), nullable=True)

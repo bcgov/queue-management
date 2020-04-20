@@ -36,7 +36,10 @@ class ServiceConfig(Base):
         'actual_service_ind',
         'display_dashboard_ind',
         'prefix',
-        'deleted'
+        'deleted',
+        'external_service_name',
+        'online_link',
+        'online_availability'
     ]
     column_labels = {
         'service_desc': 'Description',
@@ -69,6 +72,9 @@ class ServiceConfig(Base):
         'display_dashboard_ind',
         'prefix',
         'deleted',
+        'external_service_name',
+        'online_link',
+        'online_availability'
     )
     form_choices = {
         'actual_service_ind': [
