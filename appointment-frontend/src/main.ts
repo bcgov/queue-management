@@ -16,7 +16,7 @@ Vue.prototype.$tokenService = new TokenService()
 
 Vue.use(VueGoogleMaps, {
   load: {
-    key: 'AIzaSyDkGT3Fi4Y8FCLswRuHlKrjtFuRous3q0I',
+    key: process.env.GOOGLE_MAP_API_KEY || '',
     libraries: 'places'
   }
 })
