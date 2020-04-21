@@ -15,7 +15,17 @@
     <v-spacer></v-spacer>
 
     <v-btn
+      dark
+      outlined
+      class="mr-3"
+      min-width="90"
+      @click="register"
+      >
+      Register
+    </v-btn>
+    <v-btn
       light
+      min-width="90"
       @click="login"
       >
       Login
@@ -29,6 +39,9 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 @Component
 export default class AppHeader extends Vue {
   login () {
+    this.$router.push('/signin/bcsc')
+  }
+  register () {
     this.$router.push('/signin/bcsc')
   }
 }
