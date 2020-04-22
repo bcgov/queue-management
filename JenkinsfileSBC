@@ -180,7 +180,7 @@ node(label) {
 
             sh (
                 returnStdout: true,
-                script: "npm install newman"
+                script: "npm install -g newman@4.6.1"
             )
 
             USERID = sh (
