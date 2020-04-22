@@ -44,11 +44,44 @@
       <template v-if="selectedService">
         <p class="text-center mb-6">Do you want to book an appointment with a Service BC Center for the selected service?</p>
         <div class="d-flex justify-center mb-6">
-          <v-btn large outlined color="primary" class="mr-3">No, Book With Another Option</v-btn>
+          <v-btn
+            large
+            outlined
+            color="primary"
+            class="mr-3"
+            @click="otherBookingOptionModel = true"
+          >No, Book With Another Option</v-btn>
           <v-btn large color="primary">Yes, Book With The Service BC Centre</v-btn>
         </div>
       </template>
     </v-card-text>
+    <!-- Other Booking Option Model Popup -->
+    <v-dialog
+      v-model="otherBookingOptionModel"
+      max-width="600"
+    >
+      <v-card>
+        <v-toolbar flat color="grey lighten-3">
+          <v-toolbar-title>Other Booking Options for BC Service Card</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="otherBookingOptionModel = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-toolbar>
+        <v-card-text>
+          <p class="mt-4 mb-6">Please use one of the below methods to book your appointment</p>
+          <p>
+            <strong>Phone: </strong> (250)-387-6121
+          </p>
+          <p>
+            <strong>Email: </strong> info@gov.bc.ca
+          </p>
+          <p>
+            <strong>Fax: </strong> (250)-952-4124
+          </p>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>
 
@@ -65,6 +98,7 @@ export default class ServiceSelection extends Vue {
 
   private selectedService = null
   private additionalOptions = ''
+  private otherBookingOptionModel = false
 
   private serviceList = [
     {

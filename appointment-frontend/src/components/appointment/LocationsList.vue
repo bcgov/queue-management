@@ -106,6 +106,7 @@
               color="primary"
               outlined
               large
+              @click="showLocationServices(location)"
             >
               View Location Services
             </v-btn>
@@ -122,6 +123,72 @@
         </v-card>
       </v-col>
     </v-row>
+    <!-- Service Model Popup -->
+    <v-dialog
+      v-model="locationServicesModel"
+      max-width="600"
+    >
+      <v-card>
+        <v-toolbar dark flat color="primary">
+          <v-toolbar-title>Location Services for Service BC</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn icon dark @click="locationServicesModel = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-toolbar>
+        <v-card-text>
+          <v-row>
+            <v-col>
+              <v-select
+                :items="categoriesList"
+                label="Radius"
+                outlined
+                color="primary"
+                class="text-left"
+                v-model="selectedCategory"
+                name="categories-select"
+                hide-details
+                dense
+              >
+              </v-select>
+            </v-col>
+            <v-col>
+              <v-text-field
+                prepend-inner-icon="mdi-magnify"
+                type="text"
+                name="search-service"
+                label="Search Service"
+                outlined
+                hide-details
+                dense
+              ></v-text-field>
+            </v-col>
+          </v-row>
+          <v-simple-table
+            fixed-header
+            height="300"
+          >
+            <template v-slot:default>
+              <thead>
+                <tr>
+                  <th class="text-left">Service</th>
+                  <th class="text-left">Service Information</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="item in serviceList" :key="item.id">
+                  <td>{{ item.name }}</td>
+                  <td>
+                    <span v-if="item.isAvailable">{{item.info}}</span>
+                    <span v-else class="service-unavailable">Unavailable</span>
+                  </td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-card-text>
 </template>
 
@@ -133,7 +200,10 @@ import ConfigHelper from '@/utils/config-helper'
 export default class ServiceSelection extends Vue {
   private mapConfigurations = ConfigHelper.getMapConfigurations()
   private selectedRadius = null
+  private selectedCategory = null
   private radiusList = [2, 4, 6, 10]
+  private categoriesList = ['Category 1', 'Category 2']
+  private locationServicesModel = false
 
   private locationListData = [
     {
@@ -194,14 +264,43 @@ export default class ServiceSelection extends Vue {
     }
   ]
 
+  private serviceList = [
+    {
+      id: 1,
+      name: 'Affordable Child Care Benefit',
+      info: 'Online options available',
+      isAvailable: true
+    },
+    {
+      id: 2,
+      name: 'Community Crisis Fund',
+      info: 'Online options available',
+      isAvailable: true
+    },
+    {
+      id: 3,
+      name: 'Identity Verification',
+      info: '',
+      isAvailable: false
+    },
+    {
+      id: 4,
+      name: 'Passcode Issuance',
+      info: '',
+      isAvailable: false
+    }
+  ]
+
   private mounted () {
-    // eslint-disable-next-line no-console
-    console.log(this.selectedRadius)
   }
 
   private fetchLocation () {
     // eslint-disable-next-line no-console
     console.log('fetchLocation')
+  }
+
+  private showLocationServices (location) {
+    this.locationServicesModel = true
   }
 }
 </script>
@@ -222,5 +321,9 @@ export default class ServiceSelection extends Vue {
 .map-view {
   width: 100%;
   height: 100%;
+}
+.service-unavailable {
+  color: $BCgovInputError;
+  font-weight: 600;
 }
 </style>

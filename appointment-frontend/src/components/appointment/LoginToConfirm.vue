@@ -25,6 +25,11 @@
             <v-icon small class="mr-2">mdi-open-in-new</v-icon>
             <span>Don't have a BCeID? Click Here</span>
           </a>
+          <a class="link-w-icon mt-3" href="https://www2.gov.bc.ca/gov/content/home/privacy"
+            target="_blank" rel="noopener noreferrer">
+            <v-icon small class="mr-2">mdi-open-in-new</v-icon>
+            <span>Privacy Statement</span>
+          </a>
         </v-col>
         <v-col cols="12" sm="5" class="text-center">
           <v-btn
