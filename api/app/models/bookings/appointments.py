@@ -15,6 +15,8 @@ limitations under the License.'''
 from app.models.bookings import Base
 from qsystem import db
 from sqlalchemy_utc import UtcDateTime
+from sqlalchemy import func
+from datetime import datetime
 
 
 class Appointment(Base):
@@ -39,4 +41,21 @@ class Appointment(Base):
 
     def __init__(self, **kwargs):
         super(Appointment, self).__init__(**kwargs)
+
+    @classmethod
+    def find_appointment_availability(cls, office_id: int, first_date: datetime, last_date: datetime):
+        """Find appointment availability for dates in a month"""
+        query = db.session.query(Appointment).filter(func.date_trunc('day', func.timezone('PST', Appointment.start_time)).between(first_date, last_date))
+        query = query.filter(Appointment.office_id == office_id)
+        query = query.order_by(Appointment.start_time.asc())
+        return query.all()
+        #
+        # query = db.session.query(
+        #     func.date_trunc('day', func.timezone('PST', Appointment.start_time)).label('day'),
+        #     func.count(func.timezone('PST', Appointment.start_time)).label('no_of_appointments')
+        # )
+        # return query.group_by(
+        #     func.date_trunc('day', func.timezone('PST', Appointment.start_time))
+        # ).all()
+
 

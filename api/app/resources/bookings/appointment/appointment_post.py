@@ -51,6 +51,8 @@ class AppointmentPost(Resource):
             csr = CSR.find_by_username(g.oidc_token_info['username'])
             office_id = csr.office_id
 
+        #TODO Check if there is an appointment for this time
+
         citizen.office_id = office_id
         citizen.qt_xn_citizen_ind = 0
         citizen_state = CitizenState.query.filter_by(cs_state_name="Appointment booked").first()

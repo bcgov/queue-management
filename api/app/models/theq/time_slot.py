@@ -24,8 +24,17 @@ class TimeSlot(Base):
     day_of_week = db.Column(db.Integer)
     no_of_slots = db.Column(db.Integer, nullable=False)
 
+    offices = db.relationship('Office', secondary='office_timeslot')
+
+    format_string = 'time_slot_%s'
+
+
     def __repr__(self):
-        return '<Citizen Name:(name={self.citizen_name!r})>'.format(self=self)
+        return '<Timselot :(name={self.time_slot_id!r})>'.format(self=self)
 
     def __init__(self, **kwargs):
         super(TimeSlot, self).__init__(**kwargs)
+
+    @classmethod
+    def find_by_office_id(cls, office_id: int):
+        return cls.query.filter(office_id==office_id).all()
