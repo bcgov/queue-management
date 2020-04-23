@@ -6,11 +6,11 @@
       type="warning"
       close-text="Close Alert"
       color="warning"
-      icon="mdi-alert-circle"
+      icon="mdi-alert-circle-outline"
       dense
       dismissible
     >
-      Please configure your email address to receive notifications
+      Please <span class="clickable" @click="goToAccountSettings">configure your email address</span> to receive notifications
     </v-alert>
     <v-row>
       <v-col>
@@ -134,6 +134,10 @@ export default class Home extends Vue {
       isAppointmentConfirmed: false
     }
   ]
+
+  private goToAccountSettings () {
+    this.$router.push('/account-settings')
+  }
 }
 </script>
 
@@ -146,5 +150,10 @@ export default class Home extends Vue {
 .appointment-confirmed {
   font-weight: 600;
   color: $BCgovInputSuccess;
+}
+.clickable {
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
 }
 </style>

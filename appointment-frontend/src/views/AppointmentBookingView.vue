@@ -102,13 +102,13 @@ export default class AppointmentBookingView extends Vue {
     },
     {
       step: 4,
-      label: 'Appointment Summary',
-      code: 'summary'
+      label: 'Login to Confirm Appointment',
+      code: 'login'
     },
     {
       step: 5,
-      label: 'Login to Confirm Appointment',
-      code: 'login'
+      label: 'Appointment Summary',
+      code: 'summary'
     }
   ]
 
@@ -123,6 +123,7 @@ export default class AppointmentBookingView extends Vue {
 </script>
 
 <style lang="scss" scoped>
+@import "@/assets/scss/theme.scss";
 .step-label {
   text-align: center;
   line-height: 1.25;

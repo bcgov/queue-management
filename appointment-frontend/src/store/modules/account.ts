@@ -17,6 +17,10 @@ export default class AccountModule extends VuexModule {
     this.currentUser = currentUser
   }
 
+  get username (): string {
+    return `${this.currentUser?.firstName || '-'} ${this.currentUser?.lastName || ''}`
+  }
+
   @Action({ rawError: true, commit: 'setCurrentUser' })
   public loadUserInfo () {
     // Load User Info

@@ -14,30 +14,56 @@
 
     <v-spacer></v-spacer>
 
-    <v-btn
-      dark
-      outlined
-      class="mr-3"
-      min-width="90"
-      @click="register"
-      >
-      Register
-    </v-btn>
-    <v-btn
-      light
-      min-width="90"
-      @click="login"
-      >
-      Login
-    </v-btn>
+    <template v-if="!isAuthenticated">
+      <div class="mb-1">
+        <v-btn
+          dark
+          outlined
+          class="mr-3"
+          min-width="90"
+          @click="register"
+          >
+          Register
+        </v-btn>
+        <v-btn
+          light
+          min-width="90"
+          @click="login"
+          >
+          Login
+        </v-btn>
+      </div>
+    </template>
+    <template v-else>
+      <SignedUser :username="username"></SignedUser>
+    </template>
   </v-app-bar>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { AccountModule, AuthModule } from '@/store/modules'
+import { Component, Vue } from 'vue-property-decorator'
+import SignedUser from './SignedUser.vue'
+import { mapGetters } from 'vuex'
 
-@Component
+@Component({
+  components: {
+    SignedUser
+  },
+  computed: {
+    ...mapGetters('auth', ['isAuthenticated']),
+    ...mapGetters('account', ['username'])
+  }
+})
 export default class AppHeader extends Vue {
+  private readonly isAuthenticated!: boolean
+  private readonly username!: string
+
+  async mounted () {
+    // eslint-disable-next-line no-console
+    console.log('isAuthenticated ', this.isAuthenticated)
+  }
+
   login () {
     this.$router.push('/signin/bcsc')
   }
@@ -53,5 +79,9 @@ export default class AppHeader extends Vue {
 .v-app-bar {
   background-color: $BCgovBlue5 !important;
   border-bottom: 2px solid $BCgovGold5 !important;
+}
+.user-name {
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
 }
 </style>

@@ -1,3 +1,4 @@
+import AccountSettingsView from '@/views/AccountSettingsView.vue'
 import AppointmentBookingView from '@/views/AppointmentBookingView.vue'
 import BookedAppointmentsView from '@/views/BookedAppointmentsView.vue'
 import Home from '@/views/Home.vue'
@@ -8,11 +9,7 @@ import StateExample from '@/views/StateExample.vue'
 export const routes = [
   {
     path: '/',
-    name: 'home',
-    component: Home,
-    meta: {
-      requiresAuth: false
-    }
+    redirect: '/appointment'
   },
   {
     path: '/appointment',
@@ -26,6 +23,14 @@ export const routes = [
     path: '/booked-appointments',
     name: 'booked-appointments',
     component: BookedAppointmentsView,
+    meta: {
+      requiresAuth: false
+    }
+  },
+  {
+    path: '/account-settings',
+    name: 'account-settings',
+    component: AccountSettingsView,
     meta: {
       requiresAuth: false
     }
@@ -56,6 +61,6 @@ export const routes = [
   {
     // default/fallback route
     path: '*',
-    redirect: '/'
+    redirect: '/appointment'
   }
 ]
