@@ -9,10 +9,6 @@ metadata:
 labels:
   template: python
 parameters:
-  - name: S2I_NAMESPACE
-    displayName: Namespace
-    description: The OpenShift Namespace where the S2I ImageStream resides.
-    value: openshift
   - name: SOURCE_REPOSITORY_URL
     displayName: Git Repository URL
     description: The URL of the repository with your application source code.
@@ -24,55 +20,19 @@ objects:
   - kind: ImageStream
     apiVersion: v1
     metadata:
-      name: queue-management-frontend-build
+      name: appointment-frontend-build
       annotations:
         description: "Keeps track of changes in the application image"
       labels:
-        app: queue-management-frontend-build
+        app: appointment-frontend-build
   - kind: ImageStream
     apiVersion: v1
     metadata:
-      name: queue-management-frontend
+      name: appointment-frontend
       annotations:
         description: "Keeps track of changes in the application image"
       labels:
-        app: queue-management-frontend
-  - kind: BuildConfig
-    apiVersion: v1
-    metadata:
-      name: queue-management-api
-      labels:
-        app: queue-management-api
-    spec:
-      triggers:
-        - type: ImageChange
-          imageChange: {}
-        - type: ConfigChange
-      runPolicy: Serial
-      source:
-        type: Git
-        git:
-          uri: "${SOURCE_REPOSITORY_URL}"
-          ref: "${SOURCE_REPOSITORY_REF}"
-        contextDir: api
-      strategy:
-        type: Source
-        sourceStrategy:
-          from:
-            kind: ImageStreamTag
-            namespace: openshift
-            name: python:latest
-      output:
-        to:
-          kind: ImageStreamTag
-          name: queue-management-api:latest
-      resources: {}
-      postCommit: {}
-      nodeSelector:
-      successfulBuildsHistoryLimit: 10
-      failedBuildsHistoryLimit: 10
-    status:
-      lastVersion: 0
+        app: appointment-frontend
   - kind: BuildConfig
     apiVersion: v1
     metadata:
@@ -90,7 +50,7 @@ objects:
         git:
           uri: "${SOURCE_REPOSITORY_URL}"
           ref: "${SOURCE_REPOSITORY_REF}"
-        contextDir: frontend
+        contextDir: appointment-frontend
       strategy:
         type: Source
         sourceStrategy:
@@ -104,7 +64,7 @@ objects:
       output:
         to:
           kind: ImageStreamTag
-          name: queue-management-frontend-build:latest
+          name: appointment-frontend-build:latest
       resources:
         limits:
           cpu: "1"
@@ -119,9 +79,9 @@ objects:
   - kind: BuildConfig
     apiVersion: v1
     metadata:
-      name: queue-management-frontend
+      name: appointment-frontend
       labels:
-        app: queue-management-frontend
+        app: appointment-frontend
     spec:
       triggers:
         - type: ImageChange
@@ -134,7 +94,7 @@ objects:
         images:
           - from:
               kind: ImageStreamTag
-              name: queue-management-frontend-build:latest
+              name: appointment-frontend-build:latest
             paths:
               - sourcePath: "/opt/app-root/src/dist"
                 destinationDir: "./"
@@ -150,33 +110,9 @@ objects:
       output:
         to:
           kind: ImageStreamTag
-          name: queue-management-frontend:latest
+          name: appointment-frontend:latest
       resources: {}
       postCommit: {}
       nodeSelector:
       successfulBuildsHistoryLimit: 10
       failedBuildsHistoryLimit: 10
-  - kind: BuildConfig
-    apiVersion: v1
-    metadata:
-      name: queue-management-pipeline
-      labels:
-        app: queue-management-pipeline
-        name: queue-management-pipeline
-    spec:
-      runPolicy: Parallel
-      source:
-        type: Git
-        git:
-          uri: "${SOURCE_REPOSITORY_URL}"
-          ref: "${SOURCE_REPOSITORY_REF}"
-      strategy:
-        type: JenkinsPipeline
-        jenkinsPipelineStrategy:
-          jenkinsfilePath: Jenkinsfile
-      output: {}
-      resources: {}
-      postCommit: {}
-      nodeSelector:
-    status:
-      lastVersion: 0
