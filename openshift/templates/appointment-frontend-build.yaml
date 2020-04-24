@@ -13,13 +13,11 @@ parameters:
     displayName: Git Repository URL
     description: The URL of the repository with your application source code.
     # TODO - Revert value here when merged into mrain branch.
-    # value: https://github.com/bcgov/queue-management.git
-    value: https://github.com/nitheesh-aot/queue-management
+    value: https://github.com/bcgov/queue-management.git
   - name: SOURCE_REPOSITORY_REF
     displayName: Git Reference
     description: Set this to a branch name, tag or other ref of your repository if you are not using the default branch.
-    # TODO - Revert to master when merged into main branch
-    value: openshift
+    value: master
 objects:
   - kind: ImageStream
     apiVersion: v1
