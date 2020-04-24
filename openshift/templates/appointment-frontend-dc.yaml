@@ -100,7 +100,7 @@ objects:
           volumes:
             - configMap:
                 defaultMode: 420
-                name: keycloak
+                name: keycloak.json
               name: keycloak
           affinity:
             podAntiAffinity:
