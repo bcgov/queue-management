@@ -1,10 +1,10 @@
 kind: Template
 apiVersion: v1
 metadata:
-  name: queue-management-chained-build
+  name: appointment-chained-build
   annotations:
     description: ""
-    tags: queue-management,python
+    tags: appointment,python
     iconClass: icon-python
 labels:
   template: python
@@ -40,9 +40,9 @@ objects:
   - kind: BuildConfig
     apiVersion: v1
     metadata:
-      name: queue-management-npm-build
+      name: appointment-npm-build
       labels:
-        app: queue-management-npm-build
+        app: appointment-npm-build
     spec:
       triggers:
         - type: ImageChange
