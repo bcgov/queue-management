@@ -15,8 +15,9 @@ limitations under the License.'''
 from app.models.bookings import Base
 from qsystem import db
 from sqlalchemy_utc import UtcDateTime
-from sqlalchemy import func
-from datetime import datetime
+from sqlalchemy import func, or_
+from datetime import datetime, timedelta
+from dateutil.parser import parse
 
 
 class Appointment(Base):
@@ -43,19 +44,38 @@ class Appointment(Base):
         super(Appointment, self).__init__(**kwargs)
 
     @classmethod
-    def find_appointment_availability(cls, office_id: int, first_date: datetime, last_date: datetime):
+    def find_appointment_availability(cls, office_id: int, timezone:str, first_date: datetime, last_date: datetime):
         """Find appointment availability for dates in a month"""
-        query = db.session.query(Appointment).filter(func.date_trunc('day', func.timezone('PST', Appointment.start_time)).between(first_date, last_date))
+        query = db.session.query(Appointment).filter(func.date_trunc('day', func.timezone(timezone, Appointment.start_time)).between(func.date_trunc('day', func.timezone(timezone, first_date)), func.date_trunc('day', func.timezone(timezone, last_date))))
         query = query.filter(Appointment.office_id == office_id)
         query = query.order_by(Appointment.start_time.asc())
         return query.all()
-        #
-        # query = db.session.query(
-        #     func.date_trunc('day', func.timezone('PST', Appointment.start_time)).label('day'),
-        #     func.count(func.timezone('PST', Appointment.start_time)).label('no_of_appointments')
-        # )
-        # return query.group_by(
-        #     func.date_trunc('day', func.timezone('PST', Appointment.start_time))
-        # ).all()
 
+    @classmethod
+    def validate_appointment_conflict(cls, office_id: int, start_time: str, end_time: str, appointment_id=None):
+        """Find appointment availability for dates in a month"""
+        start_datetime = parse(start_time)
+        end_datetime = parse(end_time)
+        start_time_1 = start_datetime
+        end_time_1 = end_datetime - timedelta(minutes=1)
 
+        start_time_2 = start_datetime + timedelta(minutes=1)
+        end_time_2 = end_datetime
+
+        query = db.session.query(Appointment).filter(or_(Appointment.start_time.between(start_time_1, end_time_1), Appointment.end_time.between( start_time_2, end_time_2)))
+        query = query.filter(Appointment.office_id == office_id)
+        if appointment_id:
+            query = query.filter(Appointment.appointment_id != appointment_id)
+        return query.all()
+
+    @classmethod
+    def find_by_citizen_id_and_office_id(cls, office_id: int, citizen_id:int, start_time, timezone, appointment_id=None):
+        """Find appointment availability for dates in a month"""
+        start_datetime = parse(start_time)
+        query = db.session.query(Appointment). \
+            filter(func.date_trunc('day', func.timezone(timezone, Appointment.start_time))==(func.date_trunc('day', func.timezone(timezone, start_datetime)))). \
+            filter(Appointment.office_id == office_id). \
+            filter(Appointment.citizen_id == citizen_id)
+        if appointment_id:
+            query = query.filter(Appointment.appointment_id != appointment_id)
+        return query.all()

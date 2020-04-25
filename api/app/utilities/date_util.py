@@ -27,6 +27,16 @@ import datetime as dt
 #     return start_date, end_date
 
 
-def add_delta_to_time(time: time, delta: int):
+def add_delta_to_time(time: time, minutes: int=0, seconds:int=0):
     """Add delta in minutes to the time"""
-    return (dt.datetime.combine(dt.date(1, 1, 1), time) + timedelta(minutes=delta)).time()
+    time_combine = dt.datetime.combine(dt.date(1, 1, 1), time)
+    if minutes > 0 :
+        delta_time = time_combine + timedelta(minutes=minutes)
+    else:
+        delta_time = time_combine - timedelta(minutes=minutes)
+    if seconds > 0:
+        delta_time += timedelta(seconds=seconds)
+    else:
+        delta_time -= timedelta(seconds=seconds)
+
+    return delta_time.time()

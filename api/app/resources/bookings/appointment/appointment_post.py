@@ -17,7 +17,8 @@ from flask_restx import Resource
 from flask import request, g
 from app.schemas.bookings import AppointmentSchema
 from app.schemas.theq import CitizenSchema
-from app.models.theq import CSR, CitizenState, PublicUser
+from app.models.theq import CSR, CitizenState, PublicUser, Citizen, Office
+from app.models.bookings import Appointment
 from qsystem import api, api_call_with_retry, db, oidc
 from app.utilities.snowplow import SnowPlow
 from datetime import datetime
@@ -38,6 +39,7 @@ class AppointmentPost(Resource):
 
         #  Create a citizen for later use.
         citizen = self.citizen_schema.load({}).data
+        is_existing_citizen:bool = False
 
         # Check if the appointment is created by public user. Can't depend on the IDP as BCeID is used by other users as well
         is_public_user_appointment = False
@@ -45,23 +47,42 @@ class AppointmentPost(Resource):
             is_public_user_appointment = True
             office_id = json_data.get('office_id')
             user = PublicUser.find_by_username(g.oidc_token_info['username'])
-            citizen.user_id = user.user_id
-            citizen.citizen_name = user.display_name
+            existing_citizen = Citizen.find_citizen_by_user_id(user.user_id, office_id)
+            if existing_citizen:
+                citizen = existing_citizen
+                is_existing_citizen = True
+                office = Office.find_by_id(office_id)
+                # Validate if the same user has other appointments for same day at same office
+                appointments = Appointment.find_by_citizen_id_and_office_id(office_id=office_id,
+                                                                            citizen_id=existing_citizen.citizen_id,
+                                                                            start_time=json_data.get('start_time'),
+                                                                            timezone=office.timezone.timezone_name)
+                if appointments and len(appointments) >= office.max_person_appointment_per_day:
+                    return {"code": "MAX_NO_OF_APPOINTMENTS_REACHED", "message": "Maximum number of appoinments reached"}, 400
+
+            else:
+                citizen.user_id = user.user_id
+                citizen.citizen_name = user.display_name
+
         else:
             csr = CSR.find_by_username(g.oidc_token_info['username'])
             office_id = csr.office_id
 
-        #TODO Check if there is an appointment for this time
+        # Check if there is an appointment for this time
+        conflict_appointments = Appointment.validate_appointment_conflict(office_id, json_data.get('start_time'), json_data.get('end_time'))
+        if conflict_appointments:
+            return {"code": "CONFLICT", "message": "Conflict while creating appointment"}, 400
 
-        citizen.office_id = office_id
-        citizen.qt_xn_citizen_ind = 0
-        citizen_state = CitizenState.query.filter_by(cs_state_name="Appointment booked").first()
-        citizen.cs_id = citizen_state.cs_id
-        citizen.start_time = datetime.now()
-        citizen.service_count = 1
+        if not is_existing_citizen:
+            citizen.office_id = office_id
+            citizen.qt_xn_citizen_ind = 0
+            citizen_state = CitizenState.query.filter_by(cs_state_name="Appointment booked").first()
+            citizen.cs_id = citizen_state.cs_id
+            citizen.start_time = datetime.now()
+            citizen.service_count = 1
 
-        db.session.add(citizen)
-        db.session.commit()
+            db.session.add(citizen)
+            db.session.commit()
 
         appointment, warning = self.appointment_schema.load(json_data)
         if is_public_user_appointment:

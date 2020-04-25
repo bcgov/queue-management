@@ -64,3 +64,8 @@ class Citizen(Base):
                 time_end = sorted_periods[-1].time_end
 
         return time_end
+
+    @classmethod
+    def find_citizen_by_user_id(cls, user_id, office_id):
+        """Find citizen record by user id."""
+        return cls.query.filter(Citizen.user_id == user_id).filter(Citizen.office_id == office_id).one_or_none()

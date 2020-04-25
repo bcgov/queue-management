@@ -67,6 +67,8 @@ class Office(Base):
     longitude = db.Column(db.Float)
     office_appointment_message = db.Column(db.String(1000))
     appointments_days_limit = db.Column(db.Integer, default=30)
+    appointment_duration = db.Column(db.Integer, default=30)
+    max_person_appointment_per_day = db.Column(db.Integer, default=1)
 
     counters = db.relationship("Counter", secondary='office_counter')
     services = db.relationship("Service", secondary='office_service')
