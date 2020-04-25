@@ -35,10 +35,11 @@ class PublicUser(Resource):
             if not user:
                 user = PublicUserModel()
                 user.username = user_info.get('username')
-                user.display_name = user_info.get('name')
-                user.email = user_info.get('email')
-                db.session.add(user)
-                db.session.commit()
+            user.display_name = user_info.get('name')
+            user.last_name = user_info.get('last_name')
+            user.email = user_info.get('email')
+            db.session.add(user)
+            db.session.commit()
 
             result = self.user_schema.dump(user)
             return result, 200

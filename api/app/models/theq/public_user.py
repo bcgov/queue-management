@@ -37,12 +37,15 @@ class PublicUser(Base):
     @classmethod
     def find_by_username(cls, username):
         """Find User records by username."""
+        print('>>>>>>', username)
         key = PublicUser.format_string % username
+        print(key)
         if cache.get(key):
+            print('>>>>From Cache>>>>>')
             return cache.get(key)
 
         user = cls.query.filter_by(username=username).one_or_none()
-
+        print('user ', user)
         cache.set(key, user)
         return user
 
@@ -52,6 +55,6 @@ class PublicUser(Base):
         query = db.session.query(Appointment) \
             .join(Citizen) \
             .join(PublicUser) \
-            .filter(PublicUser.username == username, Citizen.user_id == PublicUser.user_id)
+            .filter(PublicUser.username == username, Citizen.user_id == PublicUser.user_id, Appointment.citizen_id == Citizen.citizen_id)
 
         return query.all()
