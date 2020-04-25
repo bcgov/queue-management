@@ -38,47 +38,47 @@
         cols="12"
         sm="10"
         v-for="location in locationListData"
-        :key="location.id"
+        :key="location.office_id"
       >
         <v-card
-          :disabled="location.isTemporarlyClosed"
+          :disabled="location.appointments_enabled_ind"
           class="mx-auto">
           <v-card-text>
             <v-row class="d-flex" justify="space-around">
               <v-col cols="6" align-self="stretch">
                 <GmapMap
-                  :center="location.coordinates"
+                  :center="getCoordinates(location)"
                   :zoom="14"
                   class="map-view"
                   :options="mapConfigurations"
                 >
                   <GmapMarker
-                    :position="location.coordinates"
+                    :position="getCoordinates(location)"
                     :clickable="true"
                     :draggable="false"
-                    :label='{text: location.name, fontWeight: "600"}'
+                    :label='{text: location.office_name, fontWeight: "600"}'
                   />
                 </GmapMap>
-                <div class="text-center mt-2 body-2">
+                <div class="text-center mt-2 body-2" v-if="location.address">
                   {{location.address}}
                 </div>
               </v-col>
               <v-col cols="6" align-self="stretch">
                 <h4 class="mb-3 location-name">
-                  {{location.name}}
+                  {{location.office_name}}
                   <span class="body-1 ml-2">
                   {{location.distance}}Km
                 </span>
                 </h4>
                 <v-alert
                   dense
-                  :text=(!location.isTemporarlyClosed)
+                  :text=(!location.appointments_enabled_ind)
                   border="left"
-                  :type="(location.isTemporarlyClosed) ? 'error' : 'info'"
+                  :type="(location.appointments_enabled_ind) ? 'error' : 'info'"
                   class="subtitle-2 font-weight-bold"
-                  v-if="location.message"
+                  v-if="location.office_appointment_message"
                 >
-                  {{location.message}}
+                  {{location.office_appointment_message}}
                 </v-alert>
                 <v-alert
                   type="info"
@@ -195,74 +195,25 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import ConfigHelper from '@/utils/config-helper'
+import { Office } from '@/models/office'
+import { OfficeModule } from '@/store/modules'
+import { mapActions } from 'vuex'
 
-@Component
+@Component({
+  methods: {
+    ...mapActions('office', ['getOffices'])
+  }
+})
 export default class ServiceSelection extends Vue {
   private mapConfigurations = ConfigHelper.getMapConfigurations()
+  private readonly getOffices!: () => Promise<any>
   private selectedRadius = null
   private selectedCategory = null
   private radiusList = [2, 4, 6, 10]
   private categoriesList = ['Category 1', 'Category 2']
   private locationServicesModel = false
 
-  private locationListData = [
-    {
-      id: 1,
-      name: 'Service BC Centre Victoria(Gateway Village)',
-      message: 'Hours may vary based on staff availability',
-      address: '4000 Seymour Pl, Victoria, BC V8X 4S7',
-      distance: '2',
-      coordinates: {
-        lat: 48.452540,
-        lng: -123.369040
-      },
-      isTemporarlyClosed: false,
-      hours: [
-        {
-          day: 'Monday',
-          startTime: '9:30am',
-          endTime: '4:30pm',
-          isClosed: false
-        },
-        {
-          day: 'Tuesday',
-          startTime: '9:30am',
-          endTime: '4:30pm',
-          isClosed: false
-        },
-        {
-          day: 'Wednesday',
-          startTime: '9:30am',
-          endTime: '4:30pm',
-          isClosed: false
-        },
-        {
-          day: 'Thursday',
-          startTime: '9:30am',
-          endTime: '4:30pm',
-          isClosed: false
-        },
-        {
-          day: 'Friday',
-          startTime: '9:30am',
-          endTime: '4:30pm',
-          isClosed: false
-        },
-        {
-          day: 'Saturday',
-          startTime: '9:30am',
-          endTime: '4:30pm',
-          isClosed: true
-        },
-        {
-          day: 'Sunday',
-          startTime: '9:30am',
-          endTime: '4:30pm',
-          isClosed: true
-        }
-      ]
-    }
-  ]
+  private locationListData: Office[] = []
 
   private serviceList = [
     {
@@ -291,7 +242,10 @@ export default class ServiceSelection extends Vue {
     }
   ]
 
-  private mounted () {
+  private async mounted () {
+    this.locationListData = await this.getOffices()
+    // eslint-disable-next-line no-console
+    console.log(this.locationListData)
   }
 
   private fetchLocation () {
@@ -301,6 +255,13 @@ export default class ServiceSelection extends Vue {
 
   private showLocationServices (location) {
     this.locationServicesModel = true
+  }
+
+  private getCoordinates (location) {
+    return {
+      lat: location.latitude,
+      lng: location.longitude
+    }
   }
 }
 </script>
@@ -321,6 +282,7 @@ export default class ServiceSelection extends Vue {
 .map-view {
   width: 100%;
   height: 100%;
+  min-height: 240px;
 }
 .service-unavailable {
   color: $BCgovInputError;
