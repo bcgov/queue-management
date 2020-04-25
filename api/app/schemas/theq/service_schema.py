@@ -35,3 +35,6 @@ class ServiceSchema(ma.ModelSchema):
     prefix = fields.Str(dump_only=True)
     display_dashboard_ind = fields.Int(dump_only=True)
     actual_service_ind = fields.Int(dump_only=True)
+    external_service_name = fields.Str(dump_only=True)
+    online_link = fields.Str(dump_only=True)
+    online_availability = fields.Str(dump_only=True)

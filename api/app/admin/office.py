@@ -66,6 +66,9 @@ class OfficeConfig(Base):
                    'appointments_enabled_ind',
                    'counters',
                    'timezone.timezone_name',
+                   'latitude',
+                   'longitude',
+                   'office_appointment_message'
                    ]
 
     form_excluded_columns = ('citizens',
@@ -86,6 +89,9 @@ class OfficeConfig(Base):
                          'quick_list',
                          'back_office_list',
                          'timezone',
+                         'latitude',
+                         'longitude',
+                         'office_appointment_message'
                          )
 
     form_edit_rules = ('office_name',
@@ -98,7 +104,10 @@ class OfficeConfig(Base):
                        'counters',
                        'quick_list',
                        'back_office_list',
-                       'timezone'
+                       'timezone',
+                       'latitude',
+                       'longitude',
+                       'office_appointment_message'
                        )
 
     form_args = {
@@ -113,6 +122,7 @@ class OfficeConfig(Base):
                                                             Service.display_dashboard_ind == 0)
         }
     }
+
 
 
     column_labels = {'sb': 'Smartboard',

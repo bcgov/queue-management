@@ -12,29 +12,28 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-import toastedmarshmallow
 from marshmallow import fields
-from app.models.theq import Citizen
-from app.schemas.theq import ServiceReqSchema, CitizenStateSchema, OfficeSchema
+import toastedmarshmallow
+from app.models.bookings import Appointment
+from app.schemas.theq import OfficeSchema
 from qsystem import ma
 
 
-class CitizenSchema(ma.ModelSchema):
+class AppointmentAvailabilitySchema(ma.ModelSchema):
 
     class Meta:
-        model = Citizen
+        model = Appointment
         jit = toastedmarshmallow.Jit
-        exclude = ('office_citizens','office',)
 
-    citizen_id = fields.Int(dump_only=True)
+    appointment_id = fields.Int(dump_only=True)
     office_id = fields.Int()
-    ticket_number = fields.Str(dump_only=True)
-    citizen_comments = fields.Str()
-    qt_xn_citizen_ind = fields.Int()
-    counter_id = fields.Int()
+    service_id = fields.Int(allow_none=True)
+    citizen_id = fields.Int()
     start_time = fields.DateTime()
-    accurate_time_ind = fields.Int()
-    service_reqs = fields.Nested(ServiceReqSchema(exclude=('citizen',)), many=True)
-    cs = fields.Nested(CitizenStateSchema(exclude=('cs_state_desc', 'cs_id', 'citizens', 'state_citizens')))
-    priority = fields.Int()
-    user_id = fields.Int()
+    end_time = fields.DateTime()
+    checked_in_time = fields.DateTime()
+    comments = fields.String(allow_none=True)
+    citizen_name = fields.String()
+    contact_information = fields.String(allow_none=True)
+    blackout_flag = fields.String(allow_none=True)
+    recurring_uuid = fields.String(allow_none=True)

@@ -133,7 +133,7 @@ class Services(Resource):
             else:
                 return 1
 
-    @oidc.accept_token(require_token=True)
+    @oidc.accept_token(require_token=False)
     def get(self):
         if request.args.get('office_id'):
             try:

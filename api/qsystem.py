@@ -104,6 +104,10 @@ logger.setLevel(logging.DEBUG)
 #   Configure all logging except basic logging
 configure_logging(application)
 
+# Build application cache
+from app.models.theq.office import Office
+Office.build_cache()
+
 #  Code to determine all db.engine properties and sub-properties, as necessary.
 if False:
     print("==> All DB Engine options")
@@ -258,7 +262,10 @@ import app.resources.theq.service_requests_detail
 import app.resources.theq.smartboard
 import app.resources.theq.videofiles
 import app.resources.theq.websocket
+import app.resources.theq.user.user
+import app.resources.theq.user.user_appointments
 
+import app.resources.bookings.appointment.appointment_availability
 import app.resources.bookings.appointment.appointment_detail
 import app.resources.bookings.appointment.appointment_list
 import app.resources.bookings.appointment.appointment_post

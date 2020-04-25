@@ -13,11 +13,11 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import logging
-from flask import request, g
+from flask import request, g, abort
 from flask_restx import Resource
 from qsystem import api, db, oidc
 from app.models.bookings import Appointment
-from app.models.theq import CSR
+from app.models.theq import CSR, PublicUser, Citizen, Office
 from app.schemas.bookings import AppointmentSchema
 from app.utilities.snowplow import SnowPlow
 
@@ -28,17 +28,43 @@ class AppointmentPut(Resource):
 
     @oidc.accept_token(require_token=True)
     def put(self, id):
-
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
-
         json_data = request.get_json()
-
+        csr = None
         if not json_data:
             return {"message": "No input data received for updating an appointment"}
+        is_public_user = False
+        if json_data.get('user_id', None):
+            office_id = json_data.get('office_id')
+            office = Office.find_by_id(office_id)
+            user = PublicUser.find_by_username(g.oidc_token_info['username'])
+            citizen = Citizen.find_citizen_by_user_id(user.user_id, office_id)
+            is_public_user = True
+            # Validate if the same user has other appointments for same day at same office
+            appointments = Appointment.find_by_citizen_id_and_office_id(office_id=office_id,
+                                                                        citizen_id=citizen.citizen_id,
+                                                                        start_time=json_data.get('start_time'),
+                                                                        timezone=office.timezone.timezone_name,
+                                                                        appointment_id=id)
+            if appointments and len(appointments) >= office.max_person_appointment_per_day:
+                return {"code": "MAX_NO_OF_APPOINTMENTS_REACHED",
+                        "message": "Maximum number of appoinments reached"}, 400
+        else:
+            csr = CSR.find_by_username(g.oidc_token_info['username'])
+            office_id = csr.office_id
+
+        # Check if there is an appointment for this time
+        conflict_appointments = Appointment.validate_appointment_conflict(office_id, json_data.get('start_time'),
+                                                                          json_data.get('end_time'), appointment_id=id)
+        if conflict_appointments:
+            return {"code": "CONFLICT", "message": "Conflict while creating appointment"}, 400
 
         appointment = Appointment.query.filter_by(appointment_id=id)\
-                                       .filter_by(office_id=csr.office_id)\
+                                       .filter_by(office_id=office_id)\
                                        .first_or_404()
+
+        # If appointment is not made by same user, throw error
+        if is_public_user and appointment.citizen_id != citizen.citizen_id:
+            abort(403)
 
         appointment, warning = self.appointment_schema.load(json_data, instance=appointment, partial=True)
 
@@ -53,7 +79,10 @@ class AppointmentPut(Resource):
         schema = 'appointment_update'
         if "checked_in_time" in json_data:
             schema = 'appointment_checkin'
-        SnowPlow.snowplow_appointment(None, csr, appointment, schema)
+
+        #TODO handle public user login
+        if csr:
+            SnowPlow.snowplow_appointment(None, csr, appointment, schema)
 
         result = self.appointment_schema.dump(appointment)
 

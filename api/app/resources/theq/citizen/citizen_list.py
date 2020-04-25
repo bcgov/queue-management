@@ -22,6 +22,7 @@ from sqlalchemy import exc
 from datetime import datetime
 from app.utilities.snowplow import SnowPlow
 
+
 @api.route("/citizens/", methods=['GET', 'POST'])
 class CitizenList(Resource):
 

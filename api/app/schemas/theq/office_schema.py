@@ -39,3 +39,8 @@ class OfficeSchema(ma.ModelSchema):
     quick_list = fields.Nested(ServiceSchema(), many=True)
     back_office_list = fields.Nested(ServiceSchema(), many=True)
     timezone = fields.Nested(TimezoneSchema())
+
+    latitude = fields.Float()
+    longitude = fields.Float()
+    office_appointment_message = fields.Str()
+

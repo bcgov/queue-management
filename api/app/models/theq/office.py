@@ -15,6 +15,7 @@ limitations under the License.'''
 from qsystem import db
 from app.models.theq import Base
 from app.models.bookings import Exam, Room
+from qsystem import cache, db
 
 
 class Office(Base):
@@ -47,6 +48,13 @@ class Office(Base):
         db.Column('counter_id', db.Integer,
                 db.ForeignKey('counter.counter_id', ondelete="CASCADE"), primary_key=True))
 
+    office_timeslot = db.Table(
+        'office_timeslot',
+        db.Column('office_id', db.Integer,
+                  db.ForeignKey('office.office_id', ondelete="CASCADE"), primary_key=True),
+        db.Column('time_slot_id', db.Integer,
+                  db.ForeignKey('timeslot.time_slot_id', ondelete="CASCADE"), primary_key=True))
+
     office_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     office_name = db.Column(db.String(100))
     office_number = db.Column(db.Integer)
@@ -55,6 +63,12 @@ class Office(Base):
     exams_enabled_ind = db.Column(db.Integer, nullable=False)
     appointments_enabled_ind = db.Column(db.Integer, nullable=False, default=0)
     timezone_id = db.Column(db.Integer, db.ForeignKey('timezone.timezone_id'), nullable=True)
+    latitude = db.Column(db.Float)
+    longitude = db.Column(db.Float)
+    office_appointment_message = db.Column(db.String(1000))
+    appointments_days_limit = db.Column(db.Integer, default=30)
+    appointment_duration = db.Column(db.Integer, default=30)
+    max_person_appointment_per_day = db.Column(db.Integer, default=1)
 
     counters = db.relationship("Counter", secondary='office_counter')
     services = db.relationship("Service", secondary='office_service')
@@ -62,6 +76,7 @@ class Office(Base):
     back_office_list = db.relationship("Service", secondary='office_back_office_list')
     csrs = db.relationship('CSR')
     citizens = db.relationship('Citizen', backref='office_citizens')
+    timeslots = db.relationship('TimeSlot', secondary='office_timeslot')
 
     sb = db.relationship('SmartBoard')
     timezone = db.relationship('Timezone')
@@ -69,8 +84,36 @@ class Office(Base):
     exams = db.relationship("Exam")
     rooms = db.relationship('Room')
 
+    format_string = 'office_%s'
+
     def __repr__(self):
         return self.office_name
 
     def __init__(self, **kwargs):
         super(Office, self).__init__(**kwargs)
+
+    @classmethod
+    def find_by_id(cls, office_id: int):
+        """Return a Office by office_id."""
+        key = Office.format_string % office_id
+        office = cache.get(key)
+        if not office:
+            office = cls.query.get(office_id)
+            office.timeslots
+            office.timezone
+        cache.set(key, office)
+        # print(office.timeslots)
+        return office
+
+    @classmethod
+    def build_cache(cls):
+        """Build cache."""
+        try:
+            all_offices = cls.query.all()
+            for office in all_offices:
+                key = Office.format_string % office.office_id
+                office.timeslots
+                office.timezone
+                cache.set(key, office)
+        except Exception as e:
+            print('Error on building cache')

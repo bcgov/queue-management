@@ -12,27 +12,29 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-
+from flask import g
 from flask_restx import Resource
-from qsystem import api, oidc
-from app.models.theq import Service
 from sqlalchemy import exc
-from app.schemas.theq import ServiceSchema
+
+from app.models.theq import PublicUser
+from app.schemas.bookings import AppointmentSchema
+from qsystem import api, oidc
 
 
-@api.route("/categories/", methods=["GET"])
-class Categories(Resource):
+@api.route("/users/appointments/", methods=["GET"])
+class UserAppointments(Resource):
+    appointments_schema = AppointmentSchema(many=True)
 
-    categories_schema = ServiceSchema(many=True)
-
-    @oidc.accept_token(require_token=False)
+    @oidc.accept_token(require_token=True)
     def get(self):
+
+        # Get all appointments for the citizen
         try:
-            services = Service.query.filter_by(actual_service_ind=0).order_by(Service.service_name).all()
-            result = self.categories_schema.dump(services)
-            return {'categories': result.data,
-                    'errors': result.errors}, 200
+            appointments = PublicUser.find_appointments_by_username(g.oidc_token_info['username'])
+
+            result = self.appointments_schema.dump(appointments)
+            return {'appointments': result.data}
 
         except exc.SQLAlchemyError as e:
             print(e)
-            return {"message": "API is down"}, 500
+            return {'message': 'API is down'}, 500
