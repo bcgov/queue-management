@@ -41,7 +41,7 @@
         :key="location.office_id"
       >
         <v-card
-          :disabled="location.appointments_enabled_ind"
+          :disabled="!!location.appointments_enabled_ind"
           class="mx-auto">
           <v-card-text>
             <v-row class="d-flex" justify="space-around">
@@ -115,6 +115,7 @@
               color="primary"
               class="pl-5"
               large
+              @click="selectLocation(location)"
             >
               Select Location
               <v-icon right small class="ml-1">mdi-arrow-right</v-icon>
@@ -124,128 +125,52 @@
       </v-col>
     </v-row>
     <!-- Service Model Popup -->
-    <v-dialog
-      v-model="locationServicesModel"
-      max-width="600"
-    >
-      <v-card>
-        <v-toolbar dark flat color="primary">
-          <v-toolbar-title>Location Services for Service BC</v-toolbar-title>
-          <v-spacer></v-spacer>
-          <v-btn icon dark @click="locationServicesModel = false">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </v-toolbar>
-        <v-card-text>
-          <v-row>
-            <v-col>
-              <v-select
-                :items="categoriesList"
-                label="Radius"
-                outlined
-                color="primary"
-                class="text-left"
-                v-model="selectedCategory"
-                name="categories-select"
-                hide-details
-                dense
-              >
-              </v-select>
-            </v-col>
-            <v-col>
-              <v-text-field
-                prepend-inner-icon="mdi-magnify"
-                type="text"
-                name="search-service"
-                label="Search Service"
-                outlined
-                hide-details
-                dense
-              ></v-text-field>
-            </v-col>
-          </v-row>
-          <v-simple-table
-            fixed-header
-            height="300"
-          >
-            <template v-slot:default>
-              <thead>
-                <tr>
-                  <th class="text-left">Service</th>
-                  <th class="text-left">Service Information</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="item in serviceList" :key="item.id">
-                  <td>{{ item.name }}</td>
-                  <td>
-                    <span v-if="item.isAvailable">{{item.info}}</span>
-                    <span v-else class="service-unavailable">Unavailable</span>
-                  </td>
-                </tr>
-              </tbody>
-            </template>
-          </v-simple-table>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
+    <ServiceListPopup
+      :locationServicesModal="locationServicesModal"
+      :serviceList="serviceList"
+      :selectedLocationName="selectedLocationName"
+    ></ServiceListPopup>
   </v-card-text>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import { mapActions, mapMutations } from 'vuex'
 import ConfigHelper from '@/utils/config-helper'
 import { Office } from '@/models/office'
 import { OfficeModule } from '@/store/modules'
-import { mapActions } from 'vuex'
+import { Service } from '@/models/service'
+import ServiceListPopup from './ServiceListPopup.vue'
 
 @Component({
+  components: {
+    ServiceListPopup
+  },
   methods: {
-    ...mapActions('office', ['getOffices'])
+    ...mapMutations('office', [
+      'setcurrentOffice'
+    ]),
+    ...mapActions('office', [
+      'getOffices',
+      'getServiceByOffice'
+    ])
   }
 })
-export default class ServiceSelection extends Vue {
+export default class LocationsList extends Vue {
   private mapConfigurations = ConfigHelper.getMapConfigurations()
-  private readonly getOffices!: () => Promise<any>
+  private readonly getOffices!: () => Promise<Office[]>
+  private readonly getServiceByOffice!: (officeId: number) => Promise<Service[]>
+  private readonly setcurrentOffice!: (office: Office) => void
   private selectedRadius = null
-  private selectedCategory = null
   private radiusList = [2, 4, 6, 10]
-  private categoriesList = ['Category 1', 'Category 2']
-  private locationServicesModel = false
+  private selectedLocationName: string = ''
+  private locationServicesModal = false
 
   private locationListData: Office[] = []
-
-  private serviceList = [
-    {
-      id: 1,
-      name: 'Affordable Child Care Benefit',
-      info: 'Online options available',
-      isAvailable: true
-    },
-    {
-      id: 2,
-      name: 'Community Crisis Fund',
-      info: 'Online options available',
-      isAvailable: true
-    },
-    {
-      id: 3,
-      name: 'Identity Verification',
-      info: '',
-      isAvailable: false
-    },
-    {
-      id: 4,
-      name: 'Passcode Issuance',
-      info: '',
-      isAvailable: false
-    }
-  ]
+  private serviceList: Service[] = []
 
   private async mounted () {
     this.locationListData = await this.getOffices()
-    // eslint-disable-next-line no-console
-    console.log(this.locationListData)
   }
 
   private fetchLocation () {
@@ -253,8 +178,12 @@ export default class ServiceSelection extends Vue {
     console.log('fetchLocation')
   }
 
-  private showLocationServices (location) {
-    this.locationServicesModel = true
+  private async showLocationServices (location) {
+    // eslint-disable-next-line no-console
+    console.log(location)
+    this.serviceList = await this.getServiceByOffice(location.office_id)
+    this.selectedLocationName = location.office_name
+    this.locationServicesModal = true
   }
 
   private getCoordinates (location) {
@@ -262,6 +191,13 @@ export default class ServiceSelection extends Vue {
       lat: location.latitude,
       lng: location.longitude
     }
+  }
+
+  private async selectLocation (location) {
+    // eslint-disable-next-line no-console
+    console.log(location)
+    this.setcurrentOffice(location)
+    await this.getServiceByOffice(location.office_id)
   }
 }
 </script>
