@@ -15,7 +15,7 @@ limitations under the License.'''
 import toastedmarshmallow
 from marshmallow import fields
 from app.models.theq import Office
-from app.schemas.theq import SmartBoardSchema, CounterSchema, ServiceSchema, TimezoneSchema
+from app.schemas.theq import SmartBoardSchema, CounterSchema, ServiceSchema, TimezoneSchema, TimeslotSchema
 from qsystem import ma
 
 
@@ -39,6 +39,7 @@ class OfficeSchema(ma.ModelSchema):
     quick_list = fields.Nested(ServiceSchema(), many=True)
     back_office_list = fields.Nested(ServiceSchema(), many=True)
     timezone = fields.Nested(TimezoneSchema())
+    timeslots = fields.Nested(TimeslotSchema(), many=True)
 
     latitude = fields.Float()
     longitude = fields.Float()
