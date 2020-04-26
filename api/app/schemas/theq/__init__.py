@@ -22,6 +22,7 @@ from .smartboard_schema import SmartBoardSchema
 from .role_schema import RoleSchema
 from .service_schema import ServiceSchema
 from .timezone_schema import TimezoneSchema
+from .timeslot_schema import TimeslotSchema
 from .office_schema import OfficeSchema
 from .csr_schema import CSRSchema
 from .metadata_schema import MetaDataSchema
