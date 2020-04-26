@@ -13,6 +13,8 @@ import { store } from '@/store'
 export default class OfficeModule extends VuexModule {
   officeList: Office[] = []
   serviceList: Service[] = []
+  availableAppointmentSlots: Service[] = []
+  categoryList = []
   currentOffice: Office
   currentService: Service
 
@@ -28,6 +30,16 @@ export default class OfficeModule extends VuexModule {
   @Mutation
   public setServiceList (serviceList) {
     this.serviceList = serviceList
+  }
+
+  @Mutation
+  public setAvailableAppointmentSlots (appointments) {
+    this.availableAppointmentSlots = appointments
+  }
+
+  @Mutation
+  public setCategoryList (categoryList) {
+    this.categoryList = categoryList
   }
 
   @Mutation
@@ -54,6 +66,18 @@ export default class OfficeModule extends VuexModule {
   public async getServiceByOffice (officeId: number) {
     const response = await OfficeService.getServiceByOffice(officeId)
     return response?.data?.services || []
+  }
+
+  @Action({ commit: 'setAvailableAppointmentSlots', rawError: true })
+  public async getAvailableAppointmentSlots (officeId: number) {
+    const response = await OfficeService.getAvailableAppointmentSlots(officeId)
+    return response?.data || []
+  }
+
+  @Action({ commit: 'setCategoryList', rawError: true })
+  public async getCategories () {
+    const response = await OfficeService.getCategories()
+    return response?.data || []
   }
 
   @Action({ rawError: true })

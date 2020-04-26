@@ -134,13 +134,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
 import { mapActions, mapMutations } from 'vuex'
 import ConfigHelper from '@/utils/config-helper'
 import { Office } from '@/models/office'
 import { OfficeModule } from '@/store/modules'
 import { Service } from '@/models/service'
 import ServiceListPopup from './ServiceListPopup.vue'
+import StepperMixin from '@/mixins/StepperMixin.vue'
 
 @Component({
   components: {
@@ -152,14 +153,18 @@ import ServiceListPopup from './ServiceListPopup.vue'
     ]),
     ...mapActions('office', [
       'getOffices',
-      'getServiceByOffice'
+      'getServiceByOffice',
+      'getAvailableAppointmentSlots',
+      'getCategories'
     ])
   }
 })
-export default class LocationsList extends Vue {
+export default class LocationsList extends Mixins(StepperMixin) {
   private mapConfigurations = ConfigHelper.getMapConfigurations()
   private readonly getOffices!: () => Promise<Office[]>
   private readonly getServiceByOffice!: (officeId: number) => Promise<Service[]>
+  private readonly getAvailableAppointmentSlots!: (officeId: number) => Promise<any>
+  private readonly getCategories!: () => Promise<any>
   private readonly setCurrentOffice!: (office: Office) => void
   private selectedRadius = null
   private radiusList = [2, 4, 6, 10]
@@ -171,6 +176,7 @@ export default class LocationsList extends Vue {
 
   private async mounted () {
     this.locationListData = await this.getOffices()
+    await this.getCategories()
   }
 
   private fetchLocation () {
@@ -198,6 +204,8 @@ export default class LocationsList extends Vue {
     console.log(location)
     this.setCurrentOffice(location)
     await this.getServiceByOffice(location.office_id)
+    await this.getAvailableAppointmentSlots(location.office_id)
+    this.stepNext()
   }
 }
 </script>

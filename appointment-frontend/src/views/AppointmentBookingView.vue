@@ -1,13 +1,13 @@
 <template>
   <v-stepper
-    v-model="stepElement"
+    v-model="stepCounter"
     alt-labels
   >
     <v-stepper-header>
       <template v-for="bookingStep in bookingSteppers">
         <v-stepper-step
           :key="`${bookingStep.step}-step`"
-          :complete="stepElement > bookingStep.step"
+          :complete="stepCounter > bookingStep.step"
           :step="bookingStep.step"
           editable
           edit-icon="mdi-check"
@@ -36,34 +36,23 @@
               <h3>Location Selection</h3>
             </v-card-title>
             <v-divider class="mx-4"></v-divider>
-            <LocationsList></LocationsList>
+            <LocationsList
+              :stepNext="stepNext"
+              :stepBack="stepBack"
+            />
           </v-card>
         </template>
+        <template>
+          <component
+            :is="bookingStep.component"
+            :stepNext="stepNext"
+            :stepBack="stepBack"
+            keep-alive
+            transition="fade"
+            mode="out-in"
+          />
+        </template>
 
-        <ServiceSelection v-if="bookingStep.code === 'service'"></ServiceSelection>
-
-        <DateSelection v-if="bookingStep.code === 'date'"></DateSelection>
-
-        <AppointmentSummary v-if="bookingStep.code === 'summary'"></AppointmentSummary>
-
-        <LoginToConfirm v-if="bookingStep.code === 'login'"></LoginToConfirm>
-
-        <!-- <v-card
-          class="mb-12"
-          color="grey lighten-1"
-          height="200px"
-        >
-          {{bookingStep.label}}
-        </v-card>
-
-        <v-btn
-          color="primary"
-          @click="nextStep(bookingStep.step)"
-        >
-          Continue
-        </v-btn>
-
-        <v-btn text>Cancel</v-btn> -->
       </v-stepper-content>
     </v-stepper-items>
   </v-stepper>
@@ -72,6 +61,7 @@
 <script lang="ts">
 import { AppointmentSummary, DateSelection, LocationsList, LoginToConfirm, ServiceSelection } from '@/components/appointment'
 import { Component, Vue } from 'vue-property-decorator'
+import StepperMixin from '@/mixins/StepperMixin.vue'
 
 @Component({
   components: {
@@ -83,41 +73,55 @@ import { Component, Vue } from 'vue-property-decorator'
   }
 })
 export default class AppointmentBookingView extends Vue {
-  private stepElement = 1
+  private stepCounter = 1
   private bookingSteppers = [
     {
       step: 1,
       label: 'Select Location',
-      code: 'location'
+      code: 'location',
+      component: LocationsList
     },
     {
       step: 2,
       label: 'Select Service',
-      code: 'service'
+      code: 'service',
+      component: ServiceSelection
     },
     {
       step: 3,
       label: 'Select a Date',
-      code: 'date'
+      code: 'date',
+      component: DateSelection
     },
     {
       step: 4,
       label: 'Login to Confirm Appointment',
-      code: 'login'
+      code: 'login',
+      component: LoginToConfirm
     },
     {
       step: 5,
       label: 'Appointment Summary',
-      code: 'summary'
+      code: 'summary',
+      component: AppointmentSummary
     }
   ]
 
-  private nextStep (step) {
-    if (step === this.bookingSteppers.length) {
-      this.stepElement = 1
+  private stepNext () {
+    if (this.stepCounter < this.bookingSteppers.length) {
+      this.stepCounter++
     } else {
-      this.stepElement = step + 1
+      this.stepCounter = 1
     }
+  }
+
+  private stepBack () {
+    if (this.stepCounter !== 1) {
+      this.stepCounter--
+    }
+  }
+
+  private async updated () {
   }
 }
 </script>
