@@ -30,7 +30,7 @@ class TimeSlot(Base):
 
 
     def __repr__(self):
-        return '<Timselot :(name={self.time_slot_id!r})>'.format(self=self)
+        return '<Timselot :(start_time={self.start_time!r}, end_time={self.end_time!r}, day_of_week={self.day_of_week!r})>'.format(self=self)
 
     def __init__(self, **kwargs):
         super(TimeSlot, self).__init__(**kwargs)

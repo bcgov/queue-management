@@ -57,7 +57,7 @@ class OfficeSlots(Resource):
 
                 for timeslot in office.timeslots:
                     # Calculate the slots per day
-                    if timeslot.day_of_week == day_in_month.weekday():
+                    if timeslot.day_of_week == day_in_month.weekday() + 1:
                         start_time = timeslot.start_time
                         end_time = add_delta_to_time(timeslot.start_time, minutes=appointment_duration)
                         # print(start_time, end_time)

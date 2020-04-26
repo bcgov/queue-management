@@ -87,6 +87,7 @@ flask_admin.add_view(admin.ServiceModelView)
 flask_admin.add_view(admin.SmartBoardModelView)
 flask_admin.add_view(admin.RoomModelView)
 flask_admin.add_view(admin.ExamTypeModelView)
+flask_admin.add_view(admin.TimeslotModelView)
 flask_admin.add_link(admin.LoginMenuLink(name='Login', category='', url="/api/v1/login/"))
 flask_admin.add_link(admin.LogoutMenuLink(name='Logout', category='', url="/api/v1/logout/"))
 
@@ -104,9 +105,9 @@ logger.setLevel(logging.DEBUG)
 #   Configure all logging except basic logging
 configure_logging(application)
 
-# Build application cache
-from app.models.theq.office import Office
-Office.build_cache()
+# # Build application cache
+# from app.models.theq.office import Office
+# Office.build_cache()
 
 #  Code to determine all db.engine properties and sub-properties, as necessary.
 if False:
