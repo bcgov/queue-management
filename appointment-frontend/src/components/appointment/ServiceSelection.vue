@@ -10,22 +10,24 @@
         <v-col cols="12" sm="6">
           <v-select
             :items="serviceList"
-            :item-disabled="'isUnavailable'"
+            item-disabled="online_availability"
             label="Select Service"
             outlined
             color="primary"
-            class="text-left"
+            class="service-selection text-left"
             v-model="selectedService"
             name="service-select"
-            @change="changed"
+            persistent-hint
+            :hint="(selectedService) ? selectedService.service_desc : ''"
+            @change="serviceSelection"
           >
             <template v-slot:selection="data">
-              {{ data.item.serviceName }}
+              {{ data.item.service_name }}
             </template>
             <template v-slot:item="data">
-              <div class="d-flex align-center">
-                <div>{{ data.item.serviceName }}</div>
-                <div class="align-self-end service-message">{{ data.item.message }}</div>
+              <div class="">
+                <div>{{ data.item.service_name }}</div>
+                <div class="service-message">{{ data.item.service_desc }}</div>
               </div>
             </template>
           </v-select>
@@ -42,7 +44,7 @@
         </v-col>
       </v-row>
       <template v-if="selectedService">
-        <p class="text-center mb-6">Do you want to book an appointment with a Service BC Center for the selected service?</p>
+        <p class="text-center mb-6">Do you want to book an appointment with <strong>{{currentOffice.office_name}}</strong> for <strong>{{selectedService.service_name}}</strong> service?</p>
         <div class="d-flex justify-center mb-6">
           <v-btn
             large
@@ -87,64 +89,48 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import { mapMutations, mapState } from 'vuex'
+import { Office } from '@/models/office'
+import { Service } from '@/models/service'
 
-@Component
+@Component({
+  computed: {
+    ...mapState('office', [
+      'currentOffice',
+      'serviceList'
+    ])
+  },
+  methods: {
+    ...mapMutations('office', [
+      'setCurrentService'
+    ])
+  }
+})
 export default class ServiceSelection extends Vue {
-  @Prop({ default: '' })
-  private name!: string
-
-  @Prop({ default: '' })
-  private message!: string
-
-  private selectedService = null
+  private readonly serviceList!: Service[]
+  private readonly currentOffice!: Office
+  private readonly setCurrentService!: (service: Service) => void
+  private selectedService: Service = null
   private additionalOptions = ''
   private otherBookingOptionModel = false
 
-  private serviceList = [
-    {
-      id: 1,
-      serviceName: 'BC Online Searches',
-      isUnavailable: true,
-      message: 'Unavailable due to COVID-19'
-    },
-    {
-      id: 2,
-      serviceName: 'Manufactured Homes',
-      isUnavailable: false,
-      message: ''
-    },
-    {
-      id: 3,
-      serviceName: 'Roadtest Booking Online',
-      isUnavailable: false,
-      message: 'Online Options Available'
-    },
-    {
-      id: 3,
-      serviceName: 'Notary',
-      isUnavailable: false,
-      message: ''
-    }
-  ]
-
-  private mounted () {
-    // eslint-disable-next-line no-console
-    console.log(this.selectedService)
-  }
-
-  private changed (value) {
+  private serviceSelection (value) {
     // eslint-disable-next-line no-console
     console.log(value)
+    this.setCurrentService(value)
   }
 }
 </script>
 
 <style lang="scss" scoped>
 @import "@/assets/scss/theme.scss";
+.v-list-item {
+  border-bottom: 1px solid $gray6;
+}
 .service-message {
   font-size: 10px;
-  margin-left: 12px;
   font-style: italic;
   margin-bottom: 1px;
+  max-width: 450px;
 }
 </style>

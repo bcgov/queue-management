@@ -148,7 +148,7 @@ import ServiceListPopup from './ServiceListPopup.vue'
   },
   methods: {
     ...mapMutations('office', [
-      'setcurrentOffice'
+      'setCurrentOffice'
     ]),
     ...mapActions('office', [
       'getOffices',
@@ -160,7 +160,7 @@ export default class LocationsList extends Vue {
   private mapConfigurations = ConfigHelper.getMapConfigurations()
   private readonly getOffices!: () => Promise<Office[]>
   private readonly getServiceByOffice!: (officeId: number) => Promise<Service[]>
-  private readonly setcurrentOffice!: (office: Office) => void
+  private readonly setCurrentOffice!: (office: Office) => void
   private selectedRadius = null
   private radiusList = [2, 4, 6, 10]
   private selectedLocationName: string = ''
@@ -196,7 +196,7 @@ export default class LocationsList extends Vue {
   private async selectLocation (location) {
     // eslint-disable-next-line no-console
     console.log(location)
-    this.setcurrentOffice(location)
+    this.setCurrentOffice(location)
     await this.getServiceByOffice(location.office_id)
   }
 }

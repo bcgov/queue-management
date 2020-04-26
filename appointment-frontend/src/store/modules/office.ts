@@ -14,6 +14,7 @@ export default class OfficeModule extends VuexModule {
   officeList: Office[] = []
   serviceList: Service[] = []
   currentOffice: Office
+  currentService: Service
 
   /**
     Mutations in this Module
@@ -30,8 +31,13 @@ export default class OfficeModule extends VuexModule {
   }
 
   @Mutation
-  public setcurrentOffice (office: Office) {
+  public setCurrentOffice (office: Office) {
     this.currentOffice = office
+  }
+
+  @Mutation
+  public setCurrentService (service: Service) {
+    this.currentService = service
   }
 
   /**
@@ -53,5 +59,10 @@ export default class OfficeModule extends VuexModule {
   @Action({ rawError: true })
   public async getCurrentOffice () {
     return this.currentOffice
+  }
+
+  @Action({ rawError: true })
+  public async getCurrentService () {
+    return this.currentService
   }
 }
