@@ -69,9 +69,10 @@ class AppointmentPost(Resource):
             office_id = csr.office_id
 
         # Check if there is an appointment for this time
-        conflict_appointments = Appointment.validate_appointment_conflict(office_id, json_data.get('start_time'), json_data.get('end_time'))
-        if conflict_appointments:
-            return {"code": "CONFLICT", "message": "Conflict while creating appointment"}, 400
+        if json_data.get('blackout_flag', 'N') == 'N':
+            conflict_appointments = Appointment.validate_appointment_conflict(office_id, json_data.get('start_time'), json_data.get('end_time'))
+            if conflict_appointments:
+                return {"code": "CONFLICT", "message": "Conflict while creating appointment"}, 400
 
         if not is_existing_citizen:
             citizen.office_id = office_id
