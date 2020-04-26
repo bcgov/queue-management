@@ -43,4 +43,5 @@ class OfficeSchema(ma.ModelSchema):
     latitude = fields.Float()
     longitude = fields.Float()
     office_appointment_message = fields.Str()
+    civic_address = fields.Str()
 

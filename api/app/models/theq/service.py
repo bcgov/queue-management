@@ -40,8 +40,8 @@ class Service(Base):
     display_dashboard_ind = db.Column(db.Integer, nullable=False)
     actual_service_ind = db.Column(db.Integer, nullable=False)
 
-    external_service_name = db.Column(db.String(500), nullable=True)
-    online_link = db.Column(db.String(500), nullable=True)
+    external_service_name = db.Column(db.String(100), nullable=True)
+    online_link = db.Column(db.String(200), nullable=True)
     online_availability = db.Column(Enum(Availability))
 
     offices = db.relationship("Office", secondary='office_service')
