@@ -18,6 +18,7 @@ import pytz
 from flask import current_app
 from flask_restx import Resource
 from sqlalchemy import exc
+from typing import Dict
 
 from app.models.bookings import Appointment
 from app.models.theq import Office
@@ -93,7 +94,7 @@ class OfficeSlots(Resource):
                     actual_slot['start_time'] = actual_slot['start_time'].strftime('%H:%M')
                     actual_slot['end_time'] = actual_slot['end_time'].strftime('%H:%M')
 
-            return available_slots_per_day
+            return prune_appointments(available_slots_per_day)
 
         except exc.SQLAlchemyError as e:
             print(e)
@@ -113,3 +114,12 @@ def group_appointments(appointments, timezone: str):
             'blackout_flag': app.blackout_flag == 'Y'
         })
     return filtered_appointments
+
+
+def prune_appointments(available_slots_per_day: Dict):
+    for key, slots in available_slots_per_day.items():
+        for slot in reversed(slots):
+            if slot['no_of_slots'] <= 0:
+                slots.remove(slot)
+
+    return available_slots_per_day
