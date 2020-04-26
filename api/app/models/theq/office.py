@@ -69,6 +69,7 @@ class Office(Base):
     appointments_days_limit = db.Column(db.Integer, default=30)
     appointment_duration = db.Column(db.Integer, default=30)
     max_person_appointment_per_day = db.Column(db.Integer, default=1)
+    civic_address = db.Column(db.String(200))
 
     counters = db.relationship("Counter", secondary='office_counter')
     services = db.relationship("Service", secondary='office_service')
@@ -101,7 +102,7 @@ class Office(Base):
             office = cls.query.get(office_id)
             office.timeslots
             office.timezone
-        cache.set(key, office)
+        #TODO cache.set(key, office)
         # print(office.timeslots)
         return office
 
