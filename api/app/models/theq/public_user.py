@@ -25,8 +25,9 @@ class PublicUser(Base):
     display_name = db.Column(db.String(200))
     email = db.Column(db.String(200))
     telephone = db.Column(db.String(20))
+    send_reminders = db.Column(db.Boolean())
 
-    format_string = 'public_user_%s'
+    # format_string = 'public_user_%s'
 
     def __repr__(self):
         return '<Public User Name:(name={self.display_name!r})>'.format(self=self)
@@ -38,15 +39,30 @@ class PublicUser(Base):
     def find_by_username(cls, username):
         """Find User records by username."""
         print('>>>>>>', username)
-        key = PublicUser.format_string % username
-        print(key)
-        if cache.get(key):
-            print('>>>>From Cache>>>>>')
-            return cache.get(key)
+        # key = PublicUser.format_string % username
+        # print(key)
+        # if cache.get(key):
+        #     print('>>>>From Cache>>>>>')
+        #     return cache.get(key)
 
         user = cls.query.filter_by(username=username).one_or_none()
         print('user ', user)
-        cache.set(key, user)
+        # cache.set(key, user)
+        return user
+
+    @classmethod
+    def find_by_user_id(cls, user_id):
+        """Find User records by user_id."""
+        print('>>>>>>user_id', user_id)
+        # key = PublicUser.format_string % username
+        # print(key)
+        # if cache.get(key):
+        #     print('>>>>From Cache>>>>>')
+        #     return cache.get(key)
+
+        user = cls.query.get(user_id)
+        print('user ', user)
+        # cache.set(key, user)
         return user
 
     @classmethod
@@ -58,3 +74,12 @@ class PublicUser(Base):
             .filter(PublicUser.username == username, Citizen.user_id == PublicUser.user_id, Appointment.citizen_id == Citizen.citizen_id)
 
         return query.all()
+
+    @classmethod
+    def find_by_citizen_id(cls, citizen_id: int):
+        """Find user by citizen_id."""
+        query = db.session.query(PublicUser) \
+            .join(Citizen) \
+            .filter(PublicUser.user_id == Citizen.user_id, Citizen.citizen_id == citizen_id)
+
+        return query.one_or_none()

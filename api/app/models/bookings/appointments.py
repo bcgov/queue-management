@@ -52,7 +52,7 @@ class Appointment(Base):
         return query.all()
 
     @classmethod
-    def validate_appointment_conflict(cls, office_id: int, start_time: str, end_time: str, appointment_id=None):
+    def get_appointment_conflicts(cls, office_id: int, start_time: str, end_time: str, appointment_id=None):
         """Find appointment availability for dates in a month"""
         start_datetime = parse(start_time)
         end_datetime = parse(end_time)
