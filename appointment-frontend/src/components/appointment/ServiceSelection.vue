@@ -53,7 +53,11 @@
             class="mr-3"
             @click="otherBookingOptionModel = true"
           >No, Book With Another Option</v-btn>
-          <v-btn large color="primary">Yes, Book With The Service BC Centre</v-btn>
+          <v-btn
+            large
+            @click="proceedBooking"
+            color="primary"
+          >Yes, Book With The Service BC Centre</v-btn>
         </div>
       </template>
     </v-card-text>
@@ -88,10 +92,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
 import { mapMutations, mapState } from 'vuex'
 import { Office } from '@/models/office'
 import { Service } from '@/models/service'
+import StepperMixin from '@/mixins/StepperMixin.vue'
 
 @Component({
   computed: {
@@ -106,7 +111,7 @@ import { Service } from '@/models/service'
     ])
   }
 })
-export default class ServiceSelection extends Vue {
+export default class ServiceSelection extends Mixins(StepperMixin) {
   private readonly serviceList!: Service[]
   private readonly currentOffice!: Office
   private readonly setCurrentService!: (service: Service) => void
@@ -115,9 +120,11 @@ export default class ServiceSelection extends Vue {
   private otherBookingOptionModel = false
 
   private serviceSelection (value) {
-    // eslint-disable-next-line no-console
-    console.log(value)
     this.setCurrentService(value)
+  }
+
+  private proceedBooking () {
+    this.stepNext()
   }
 }
 </script>
