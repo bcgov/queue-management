@@ -47,7 +47,7 @@ def read(filepath):
 REQUIREMENTS = read_requirements('requirements.txt')
 
 setup(
-    name="q_api",
+    name="api",
     packages=find_packages('app'),
     package_dir={'': 'app'},
     py_modules=[splitext(basename(path))[0] for path in glob('app/*.py')],
