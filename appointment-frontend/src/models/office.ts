@@ -12,8 +12,25 @@ export interface Office {
   office_name: string
   office_number: number
   sb_id: number
+  timeslots: TimeSlots[]
+  timezone: TimeZone
 }
 
 export interface Offices {
   offices: Office[]
+}
+
+export interface TimeSlots {
+  day_of_week: number
+  end_time: string
+  start_time: string
+  no_of_slots: number
+  day_str?: string
+  end_time_str?: string
+  start_time_str?: string
+}
+
+export interface TimeZone {
+  timezone_id: number
+  timezone_name: string
 }

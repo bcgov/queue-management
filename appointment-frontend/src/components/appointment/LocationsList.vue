@@ -41,7 +41,7 @@
         :key="location.office_id"
       >
         <v-card
-          :disabled="!!location.appointments_enabled_ind"
+          :disabled="!location.appointments_enabled_ind"
           class="mx-auto">
           <v-card-text>
             <v-row class="d-flex" justify="space-around">
@@ -59,22 +59,22 @@
                     :label='{text: location.office_name, fontWeight: "600"}'
                   />
                 </GmapMap>
-                <div class="text-center mt-2 body-2" v-if="location.address">
-                  {{location.address}}
+                <div class="text-center mt-2 body-2" v-if="location.civic_address">
+                  {{location.civic_address}}
                 </div>
               </v-col>
               <v-col cols="6" align-self="stretch">
                 <h4 class="mb-3 location-name">
                   {{location.office_name}}
-                  <span class="body-1 ml-2">
-                  {{location.distance}}Km
-                </span>
+                  <span class="body-1 ml-2" v-if="location.distance">
+                    {{location.distance}}Km
+                  </span>
                 </h4>
                 <v-alert
                   dense
                   :text=(!location.appointments_enabled_ind)
                   border="left"
-                  :type="(location.appointments_enabled_ind) ? 'error' : 'info'"
+                  :type="(!location.appointments_enabled_ind) ? 'error' : 'info'"
                   class="subtitle-2 font-weight-bold"
                   v-if="location.office_appointment_message"
                 >
@@ -87,15 +87,14 @@
                   icon="mdi-clock"
                   class="mb-0"
                 >
-                  <v-row no-gutters v-for="hourDay in location.hours" :key="hourDay.day">
-                    <v-col cols="5" class="px-5">{{hourDay.day}}</v-col>
+                  <v-row no-gutters v-for="timeslot in location.timeslots" :key="timeslot.day_of_week">
+                    <v-col cols="5" class="px-5">{{timeslot.day_str}}</v-col>
                     <v-col cols="7">
-                      <span v-if="hourDay.isClosed" class="hours-closed">Closed</span>
+                      <span v-if="!(timeslot.start_time_str && timeslot.end_time_str)" class="hours-closed">Closed</span>
                       <span v-else>
-                        {{`${hourDay.startTime} - ${hourDay.endTime}`}}
+                        {{`${timeslot.start_time_str} - ${timeslot.end_time_str}`}}
                       </span>
                     </v-col>
-                    <v-col class="hours-time closed" v-if="hourDay.isClosed"></v-col>
                   </v-row>
                 </v-alert>
               </v-col>
@@ -176,6 +175,8 @@ export default class LocationsList extends Mixins(StepperMixin) {
 
   private async mounted () {
     this.locationListData = await this.getOffices()
+    // eslint-disable-next-line no-console
+    console.log(this.locationListData)
     await this.getCategories()
   }
 

@@ -16,15 +16,19 @@
         <v-row>
           <v-col>
             <v-select
-              :items="categoriesList"
-              label="Radius"
+              :items="categoryList"
+              label="Categories"
               outlined
               color="primary"
               class="text-left"
               v-model="selectedCategory"
               name="categories-select"
+              :item-text="'service_name'"
+              :item-value="'service_name'"
               hide-details
               dense
+              clearable
+              @change="filterUsingCategory"
             >
             </v-select>
           </v-col>
@@ -52,7 +56,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="item in serviceList" :key="item.service_id">
+              <tr v-for="item in filteredServiceList" :key="item.service_id">
                 <td>{{ item.service_name }}</td>
                 <td>
                   <span v-if="!item.online_availability">{{item.service_desc}}</span>
@@ -69,12 +73,22 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Office } from '@/models/office'
 import { Service } from '@/models/service'
+import { mapState } from 'vuex'
 
-@Component
+@Component({
+  computed: {
+    ...mapState('office', [
+      'categoryList'
+    ])
+  }
+})
 export default class ServiceListPopup extends Vue {
-  private selectedCategory = null
-  private categoriesList = ['Category 1', 'Category 2']
+  private selectedCategory:string = ''
+  private filteredServiceList: Service[] = []
+  private readonly categoryList!: Service[]
+  private isFiltered = false
 
   @Prop({ default: false })
   private locationServicesModal!: boolean
@@ -84,6 +98,21 @@ export default class ServiceListPopup extends Vue {
 
   @Prop({ default: '' })
   private selectedLocationName!: string
+
+  private async beforeUpdate () {
+    this.filteredServiceList = (!this.isFiltered) ? { ...this.serviceList } : this.filteredServiceList
+  }
+
+  private filterUsingCategory () {
+    if (this.selectedCategory) {
+      this.filteredServiceList = this.serviceList.filter((service) => {
+        return (service?.parent?.service_name === this.selectedCategory)
+      })
+      this.isFiltered = true
+    } else {
+      this.isFiltered = false
+    }
+  }
 }
 </script>
 

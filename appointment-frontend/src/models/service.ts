@@ -6,14 +6,23 @@ export interface Service {
   external_service_name: string
   online_availability: number
   online_link: string
-  parent_id: number
   prefix: string
   service_code: string
   service_desc: string
   service_id: number
   service_name: string
+  parent_id: number,
+  parent?: ServiceParent
 }
 
 export interface Services {
   services: Service[]
+}
+
+export interface ServiceParent {
+  service_name: string
+}
+
+export interface Categories {
+  categories: Service[]
 }

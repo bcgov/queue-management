@@ -42,7 +42,7 @@
             />
           </v-card>
         </template>
-        <template>
+        <template v-else>
           <component
             :is="bookingStep.component"
             :stepNext="stepNext"

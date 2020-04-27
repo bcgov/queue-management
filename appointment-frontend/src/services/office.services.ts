@@ -1,7 +1,7 @@
 import Axios, { AxiosResponse } from 'axios'
+import { Categories, Services } from '@/models/service'
 import ConfigHelper from '@/utils/config-helper'
 import { Offices } from '@/models/office'
-import { Services } from '@/models/service'
 import { addAxiosInterceptors } from '@/utils/interceptors'
 
 const axios = addAxiosInterceptors(Axios.create())
@@ -15,7 +15,7 @@ export default class OfficeService {
     return axios.get(`${ConfigHelper.getAppAPIUrl()}/services/?office_id=${officeId}`)
   }
 
-  public static async getCategories (): Promise<AxiosResponse<any>> {
+  public static async getCategories (): Promise<AxiosResponse<Categories>> {
     return axios.get(`${ConfigHelper.getAppAPIUrl()}/categories/`)
   }
 

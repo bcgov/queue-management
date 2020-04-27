@@ -1,4 +1,5 @@
 import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
+import CommonUtils from '@/utils/common-util'
 import { Office } from '@/models/office'
 import OfficeService from '@/services/office.services'
 import { Service } from '@/models/service'
@@ -14,7 +15,7 @@ export default class OfficeModule extends VuexModule {
   officeList: Office[] = []
   serviceList: Service[] = []
   availableAppointmentSlots: Service[] = []
-  categoryList = []
+  categoryList: Service[] = [] // category and service shares similar data model
   currentOffice: Office
   currentService: Service
 
@@ -59,7 +60,23 @@ export default class OfficeModule extends VuexModule {
   @Action({ commit: 'setOfficeList', rawError: true })
   public async getOffices () {
     const response = await OfficeService.getOffices()
-    return response?.data?.offices || []
+    let offices = []
+    if (response?.data?.offices) {
+      offices = response.data.offices
+      offices.forEach(office => {
+        if (office?.timeslots) {
+          office.timeslots = office.timeslots.map(timeslot => {
+            return {
+              ...timeslot,
+              day_str: CommonUtils.getDayOfWeek(timeslot.day_of_week),
+              end_time_str: CommonUtils.get12HTimeString(timeslot.end_time),
+              start_time_str: CommonUtils.get12HTimeString(timeslot.start_time)
+            }
+          })
+        }
+      })
+    }
+    return offices
   }
 
   @Action({ commit: 'setServiceList', rawError: true })
@@ -77,7 +94,7 @@ export default class OfficeModule extends VuexModule {
   @Action({ commit: 'setCategoryList', rawError: true })
   public async getCategories () {
     const response = await OfficeService.getCategories()
-    return response?.data || []
+    return response?.data?.categories || []
   }
 
   @Action({ rawError: true })
