@@ -16,7 +16,8 @@ import { mapActions } from 'vuex'
     LoadingScreen
   },
   methods: {
-    ...mapActions('account', ['loadUserInfo'])
+    ...mapActions('account', ['loadUserInfo']),
+    ...mapActions('auth', ['postCreateUser'])
   }
 })
 export default class SigninView extends Vue {
@@ -25,6 +26,7 @@ export default class SigninView extends Vue {
   @Prop({ default: 'bcsc' }) idpHint!: string
   @Prop({ default: '' }) redirectUrlLoginFail!: string
   private readonly loadUserInfo!: () => KCUserProfile
+  private readonly postCreateUser!: () => void
 
   private async mounted () {
     // Initialize keycloak session
@@ -35,6 +37,7 @@ export default class SigninView extends Vue {
         KeyCloakService.initSession()
         // tell KeycloakServices to load the user info
         this.loadUserInfo()
+        await this.postCreateUser()
         // eslint-disable-next-line no-console
         console.info('[SignIn.vue]Logged in User.Starting refreshTimer')
         let tokenService = new TokenService()

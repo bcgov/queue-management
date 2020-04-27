@@ -12,6 +12,7 @@
             min-width="150"
             large
             color="primary"
+            @click="login(idpHint.BCEID)"
           >
             BCeID
           </v-btn>
@@ -36,6 +37,7 @@
             min-width="150"
             large
             color="primary"
+            @click="login(idpHint.BCSC)"
           >
             BC Service Card
           </v-btn>
@@ -51,10 +53,29 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
+import { AuthModule } from '@/store/modules'
+import { IdpHint } from '@/utils/constants'
+import StepperMixin from '@/mixins/StepperMixin.vue'
+import { User } from '@/models/user'
+import { mapState } from 'vuex'
 
-@Component
-export default class LoginToConfirm extends Vue {
+@Component({
+  computed: {
+    ...mapState('auth', [
+      'currentUserProfile'
+    ])
+  }
+})
+export default class LoginToConfirm extends Mixins(StepperMixin) {
+  private idpHint = IdpHint
+  private readonly currentUserProfile!: User
+
+  private login (idpHint) {
+    // eslint-disable-next-line no-console
+    console.log('currentUserProfile ', this.currentUserProfile)
+    this.stepNext()
+  }
 }
 </script>
 

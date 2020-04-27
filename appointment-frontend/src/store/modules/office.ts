@@ -1,4 +1,5 @@
 import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
+import { AppointmentSlot } from '@/models/appointment'
 import CommonUtils from '@/utils/common-util'
 import { Office } from '@/models/office'
 import OfficeService from '@/services/office.services'
@@ -18,6 +19,7 @@ export default class OfficeModule extends VuexModule {
   categoryList: Service[] = [] // category and service shares similar data model
   currentOffice: Office
   currentService: Service
+  currentAppointmentSlot: AppointmentSlot
 
   /**
     Mutations in this Module
@@ -51,6 +53,11 @@ export default class OfficeModule extends VuexModule {
   @Mutation
   public setCurrentService (service: Service) {
     this.currentService = service
+  }
+
+  @Mutation
+  public setCurrentAppointmentSlot (slots: AppointmentSlot) {
+    this.currentAppointmentSlot = slots
   }
 
   /**
@@ -105,5 +112,10 @@ export default class OfficeModule extends VuexModule {
   @Action({ rawError: true })
   public async getCurrentService () {
     return this.currentService
+  }
+
+  @Action({ rawError: true })
+  public async getCurrentAppointmentSlot () {
+    return this.currentAppointmentSlot
   }
 }

@@ -62,31 +62,40 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
+import { mapMutations, mapState } from 'vuex'
+import { AppointmentSlot } from '@/models/appointment'
 import CommonUtils from '@/utils/common-util'
 import { OfficeModule } from '@/store/modules'
+import StepperMixin from '@/mixins/StepperMixin.vue'
 import { format } from 'date-fns'
-import { mapState } from 'vuex'
+import { utcToZonedTime } from 'date-fns-tz'
 
 @Component({
   computed: {
     ...mapState('office', [
       'availableAppointmentSlots'
     ])
+  },
+  methods: {
+    ...mapMutations('office', [
+      'setCurrentAppointmentSlot'
+    ])
   }
 })
-export default class DateSelection extends Vue {
+export default class DateSelection extends Mixins(StepperMixin) {
   private readonly availableAppointmentSlots!: any
-  private selectedDate = new Date().toISOString().substr(0, 10)
+  private readonly setCurrentAppointmentSlot!: (slot: AppointmentSlot) => void
+  private selectedDate = format(utcToZonedTime(new Date(), 'America/Vancouver'), 'yyyy-MM-dd')
   private selectedDateTimeSlots = []
 
   private get selectedDateFormatted () {
-    return format(new Date(this.selectedDate), 'MMM dd, yyyy')
+    return format(utcToZonedTime(this.selectedDate, 'America/Vancouver'), 'MMM dd, yyyy')
   }
 
   private dateClicked () {
     this.selectedDateTimeSlots = []
-    const slots = this.availableAppointmentSlots[format(new Date(this.selectedDate), 'MM/dd/yyyy')]
+    const slots = this.availableAppointmentSlots[format(utcToZonedTime(this.selectedDate, 'America/Vancouver'), 'MM/dd/yyyy')]
     slots?.forEach(slot => {
       this.selectedDateTimeSlots.push({
         ...slot,
@@ -97,8 +106,12 @@ export default class DateSelection extends Vue {
   }
 
   selectTimeSlot (slot) {
-    // eslint-disable-next-line no-console
-    console.log(slot)
+    const selectedSlot: AppointmentSlot = {
+      start_time: new Date(`${this.selectedDate} ${slot.start_time}`).toISOString(),
+      end_time: new Date(`${this.selectedDate} ${slot.end_time}`).toISOString()
+    }
+    this.setCurrentAppointmentSlot(selectedSlot)
+    this.stepNext()
   }
 }
 </script>
