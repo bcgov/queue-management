@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask import g
+from flask import g, request
 from flask_restx import Resource
 from sqlalchemy import exc
 
@@ -22,7 +22,7 @@ from qsystem import api, db, oidc
 
 
 @api.route("/users/", methods=['POST'])
-class PublicUser(Resource):
+class PublicUsers(Resource):
     user_schema = UserSchema(many=False)
 
     @oidc.accept_token(require_token=True)
@@ -47,3 +47,29 @@ class PublicUser(Resource):
         except exc.SQLAlchemyError as e:
             print(e)
             return {'message': 'API is down'}, 500
+
+
+@api.route("/users/<int:user_id>/", methods=['PUT'])
+class PublicUser(Resource):
+    user_schema = UserSchema(many=False)
+
+    @oidc.accept_token(require_token=True)
+    def put(self, user_id: int):
+        try:
+            json_data = request.get_json()
+            user_info = g.oidc_token_info
+            user: PublicUserModel = PublicUserModel.find_by_username(user_info.get('username'))
+            user.email = json_data.get('email')
+            user.telephone = json_data.get('telephone')
+            user.send_reminders = json_data.get('send_reminders')
+            db.session.add(user)
+            db.session.commit()
+
+            result = self.user_schema.dump(user)
+            return result, 200
+
+        except exc.SQLAlchemyError as e:
+            print(e)
+            return {'message': 'API is down'}, 500
+
+

@@ -19,6 +19,8 @@ from app.schemas.bookings import AppointmentSchema
 from app.models.theq import CSR, PublicUser, Citizen
 from qsystem import api, db, oidc
 from app.utilities.snowplow import SnowPlow
+from app.utilities.email import send_cancel_email
+
 
 @api.route("/appointments/<int:id>/", methods=["DELETE"])
 class AppointmentDelete(Resource):
@@ -32,19 +34,24 @@ class AppointmentDelete(Resource):
                                        .first_or_404()
 
         csr = CSR.find_by_username(g.oidc_token_info['username'])
+        citizen = Citizen.find_citizen_by_id(appointment.citizen_id)
+        user:PublicUser = PublicUser.find_by_user_id(citizen.user_id) if citizen.user_id else None
         if not csr:
             # Check if it's a public user
-            user: PublicUser = PublicUser.find_by_username(g.oidc_token_info['username'])
             if user:
-                citizen = Citizen.find_citizen_by_user_id(user.user_id)
                 if not citizen or citizen.citizen_id != appointment.citizen_id:
                     abort(403)
 
-        #TODO handle public user case here
+        # TODO handle public user case here
         if csr:
             SnowPlow.snowplow_appointment(None, csr, appointment, 'appointment_delete')
 
         db.session.delete(appointment)
         db.session.commit()
+
+        # If the appointment is public user's and if staff deletes it send email
+        if csr and user and user.email and user.send_reminders:
+            print('Sending email')
+            send_cancel_email(user.email)
 
         return {}, 204
