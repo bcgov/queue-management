@@ -52,7 +52,6 @@ setup(
     package_dir={'': 'app'},
     py_modules=[splitext(basename(path))[0] for path in glob('app/*.py')],
     include_package_data=True,
-    long_description=read('README.md'),
     zip_safe=False,
     install_requires=REQUIREMENTS,
     setup_requires=[],
