@@ -10,6 +10,7 @@
           label="Postal Code"
           outlined
           hide-details
+          dense
           @click:append="fetchLocation"
         ></v-text-field>
       </v-col>
@@ -22,6 +23,7 @@
           class="text-left"
           v-model="selectedRadius"
           name="radius-select"
+          dense
           hide-details
         >
           <template v-slot:selection="data">
@@ -37,7 +39,7 @@
       <v-col
         cols="12"
         sm="10"
-        v-for="location in locationListData"
+        v-for="(location) in locationListData"
         :key="location.office_id"
       >
         <v-card
@@ -87,7 +89,7 @@
                   icon="mdi-clock"
                   class="mb-0"
                 >
-                  <v-row no-gutters v-for="timeslot in location.timeslots" :key="timeslot.day_of_week">
+                  <v-row no-gutters v-for="(timeslot, index) in location.timeslots" :key="index">
                     <v-col cols="5" class="px-5">{{timeslot.day_str}}</v-col>
                     <v-col cols="7">
                       <span v-if="!(timeslot.start_time_str && timeslot.end_time_str)" class="hours-closed">Closed</span>

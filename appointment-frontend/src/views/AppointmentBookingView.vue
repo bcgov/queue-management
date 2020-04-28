@@ -26,33 +26,29 @@
 
     <v-stepper-items>
       <v-stepper-content
-        v-for="bookingStep in bookingSteppers"
+        v-for="(bookingStep) in bookingSteppers"
         :key="`${bookingStep.step}-content`"
         :step="bookingStep.step"
       >
-        <template v-if="bookingStep.code === 'location'">
-          <v-card>
-            <v-card-title class="justify-center">
-              <h3>Location Selection</h3>
-            </v-card-title>
-            <v-divider class="mx-4"></v-divider>
-            <LocationsList
-              :stepNext="stepNext"
-              :stepBack="stepBack"
-            />
-          </v-card>
-        </template>
-        <template v-else>
-          <component
-            :is="bookingStep.component"
+        <v-card v-if="bookingStep.code === 'location'">
+          <v-card-title class="justify-center">
+            <h3>Location Selection</h3>
+          </v-card-title>
+          <v-divider class="mx-4"></v-divider>
+          <LocationsList
             :stepNext="stepNext"
             :stepBack="stepBack"
-            keep-alive
-            transition="fade"
-            mode="out-in"
           />
-        </template>
-
+        </v-card>
+        <component
+          v-else
+          :is="bookingStep.component"
+          :stepNext="stepNext"
+          :stepBack="stepBack"
+          keep-alive
+          transition="fade"
+          mode="out-in"
+        />
       </v-stepper-content>
     </v-stepper-items>
   </v-stepper>

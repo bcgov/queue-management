@@ -1,5 +1,6 @@
 import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
-import { AppointmentSlot } from '@/models/appointment'
+import { AppointmentRequestBody, AppointmentSlot } from '@/models/appointment'
+import AppointmentService from '@/services/appointment.services'
 import CommonUtils from '@/utils/common-util'
 import { Office } from '@/models/office'
 import OfficeService from '@/services/office.services'
@@ -117,5 +118,20 @@ export default class OfficeModule extends VuexModule {
   @Action({ rawError: true })
   public async getCurrentAppointmentSlot () {
     return this.currentAppointmentSlot
+  }
+
+  @Action({ rawError: true })
+  public async createAppointment () {
+    const userId = this.context.rootState.auth.currentUserProfile?.user_id || null
+    const appointmentBody: AppointmentRequestBody = {
+      start_time: this.context.state['currentAppointmentSlot'].start_time,
+      end_time: this.context.state['currentAppointmentSlot'].end_time,
+      service_id: this.context.state['currentService'].service_id,
+      comments: '',
+      office_id: this.context.state['currentOffice'].office_id,
+      user_id: userId
+    }
+    const response = await AppointmentService.createAppointment(appointmentBody)
+    return response?.data?.appointment || {}
   }
 }

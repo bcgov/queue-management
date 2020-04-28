@@ -57,9 +57,9 @@
             </thead>
             <tbody>
               <tr v-for="item in filteredServiceList" :key="item.service_id">
-                <td>{{ item.service_name }}</td>
+                <td>{{ item.external_service_name }}</td>
                 <td>
-                  <span v-if="!item.online_availability">{{item.service_desc}}</span>
+                  <span v-if="item.online_availability === ServiceAvailability.SHOW">{{item.service_desc}}</span>
                   <span v-else class="service-unavailable">Unavailable</span>
                 </td>
               </tr>
@@ -75,6 +75,7 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { Office } from '@/models/office'
 import { Service } from '@/models/service'
+import { ServiceAvailability } from '@/utils/constants'
 import { mapState } from 'vuex'
 
 @Component({
@@ -89,6 +90,7 @@ export default class ServiceListPopup extends Vue {
   private filteredServiceList: Service[] = []
   private readonly categoryList!: Service[]
   private isFiltered = false
+  private ServiceAvailability = ServiceAvailability
 
   @Prop({ default: false })
   private locationServicesModal!: boolean

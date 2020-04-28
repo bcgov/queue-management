@@ -3,6 +3,7 @@ export interface Office {
   appointment_duration: number
   appointments_days_limit: number
   appointments_enabled_ind: boolean
+  civic_address: string
   exams_enabled_ind: boolean
   latitude: number
   longitude: number

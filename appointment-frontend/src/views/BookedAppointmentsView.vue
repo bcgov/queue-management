@@ -20,6 +20,7 @@
         <v-btn
           large
           color="primary"
+          @click="bookNewAppointment"
         >
           <v-icon class="mr-1">mdi-plus</v-icon>
           Book a New Appointment
@@ -98,15 +99,26 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import { Appointment } from '@/models/appointment'
+import { AppointmentModule } from '@/store/modules'
 import ConfigHelper from '@/utils/config-helper'
+import { mapActions } from 'vuex'
 
 @Component({
   components: {
+  },
+  methods: {
+    ...mapActions('appointment', [
+      'getAppointmentList'
+    ])
   }
 })
 export default class Home extends Vue {
   private mapConfigurations = ConfigHelper.getMapConfigurations()
   private showEmailAlert: boolean = true
+
+  private readonly getAppointmentList!: () => Promise<Appointment[]>
+  private appointmentList: Appointment[] = []
 
   private bookingData = [
     {
@@ -135,8 +147,16 @@ export default class Home extends Vue {
     }
   ]
 
+  private async beforeMount () {
+    this.appointmentList = await this.getAppointmentList()
+  }
+
   private goToAccountSettings () {
     this.$router.push('/account-settings')
+  }
+
+  private bookNewAppointment () {
+    this.$router.push('/appointment')
   }
 }
 </script>

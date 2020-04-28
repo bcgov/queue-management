@@ -40,3 +40,9 @@ export enum LoginSource {
     IDIR = 'IDIR',
     BCSC = 'BCSC'
 }
+
+export enum ServiceAvailability {
+    SHOW = 'Availability.SHOW',
+    HIDE = 'Availability.HIDE',
+    DISABLE = 'Availability.DISABLE'
+}

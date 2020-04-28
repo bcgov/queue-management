@@ -10,7 +10,7 @@
         <v-col cols="12" sm="6">
           <v-select
             :items="serviceList"
-            item-disabled="online_availability"
+            :item-disabled="checkDisabled"
             label="Select Service"
             outlined
             color="primary"
@@ -22,11 +22,11 @@
             @change="serviceSelection"
           >
             <template v-slot:selection="data">
-              {{ data.item.service_name }}
+              {{ data.item.external_service_name }}
             </template>
             <template v-slot:item="data">
               <div class="">
-                <div>{{ data.item.service_name }}</div>
+                <div>{{ data.item.external_service_name }}</div>
                 <div class="service-message">{{ data.item.service_desc }}</div>
               </div>
             </template>
@@ -44,7 +44,7 @@
         </v-col>
       </v-row>
       <template v-if="selectedService">
-        <p class="text-center mb-6">Do you want to book an appointment with <strong>{{currentOffice.office_name}}</strong> for <strong>{{selectedService.service_name}}</strong> service?</p>
+        <p class="text-center mb-6">Do you want to book an appointment with <strong>{{currentOffice.office_name}}</strong> for <strong>{{selectedService.external_service_name}}</strong> service?</p>
         <div class="d-flex justify-center mb-6">
           <v-btn
             large
@@ -68,7 +68,7 @@
     >
       <v-card>
         <v-toolbar flat color="grey lighten-3">
-          <v-toolbar-title>Other Booking Options for BC Service Card</v-toolbar-title>
+          <v-toolbar-title>Other Booking Options for BC Services Card</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn icon @click="otherBookingOptionModel = false">
             <v-icon>mdi-close</v-icon>
@@ -96,6 +96,7 @@ import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
 import { mapMutations, mapState } from 'vuex'
 import { Office } from '@/models/office'
 import { Service } from '@/models/service'
+import { ServiceAvailability } from '@/utils/constants'
 import StepperMixin from '@/mixins/StepperMixin.vue'
 
 @Component({
@@ -126,6 +127,10 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
   private proceedBooking () {
     this.stepNext()
   }
+
+  private checkDisabled (value) {
+    return (value.online_availability === ServiceAvailability.DISABLE)
+  }
 }
 </script>
 
@@ -137,7 +142,7 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
 .service-message {
   font-size: 10px;
   font-style: italic;
-  margin-bottom: 1px;
+  margin-bottom: 8px;
   max-width: 450px;
 }
 </style>

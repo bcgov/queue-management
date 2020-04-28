@@ -39,12 +39,12 @@
             color="primary"
             @click="login(idpHint.BCSC)"
           >
-            BC Service Card
+            BC Services Card
           </v-btn>
           <a class="link-w-icon mt-6" href="https://www2.gov.bc.ca/gov/content/governments/government-id/bc-services-card"
             target="_blank" rel="noopener noreferrer">
             <v-icon small class="mr-2">mdi-open-in-new</v-icon>
-            <span>About the BC Service Card</span>
+            <span>About the BC Services Card</span>
           </a>
         </v-col>
       </v-row>

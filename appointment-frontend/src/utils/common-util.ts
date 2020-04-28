@@ -5,7 +5,7 @@ export default class CommonUtils {
   // get Day of the week by its index
   static getDayOfWeek (dayIndex: number) {
     enum Days {
-      Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday
+      Monday = 1, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday
     }
     return Days[dayIndex]
   }

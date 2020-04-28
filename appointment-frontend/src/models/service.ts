@@ -4,7 +4,7 @@ export interface Service {
   deleted: string
   display_dashboard_ind: number
   external_service_name: string
-  online_availability: number
+  online_availability: string
   online_link: string
   prefix: string
   service_code: string
