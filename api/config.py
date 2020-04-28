@@ -194,7 +194,10 @@ class DevelopmentConfig(BaseConfig):
     REDIS_DEBUG = True
     TESTING = False
     ENV = 'dev'
-    CORS_ALLOWED_ORIGINS = ["https://dev-bookanappointment.pathfinder.gov.bc.ca"]
+
+    # Only allowed 1 origin, but need to work for 
+    # queue-frontend and appointment-frontend
+    CORS_ALLOWED_ORIGINS = ["*"]
 
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
@@ -204,7 +207,6 @@ class TestConfig(BaseConfig):
     REDIS_DEBUG = True
     TESTING = False
     ENV = 'test'
-    CORS_ALLOWED_ORIGINS = ["https://test-bookanappointment.pathfinder.gov.bc.ca"]
 
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
