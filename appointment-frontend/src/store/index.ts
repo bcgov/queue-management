@@ -17,11 +17,22 @@ Vue.use(Vuex)
 export const store: Store<any> = new Vuex.Store<any>({
   state: {
     stateModel,
-    resourceModel
+    resourceModel,
+    loading: true,
+    refreshKey: 0
+  },
+  getters: {
+    loading: (state) => state.loading
   },
   mutations: {
     mutateName,
-    mutateResource
+    mutateResource,
+    loadComplete (state) {
+      state.loading = false
+    },
+    updateHeader (state) {
+      state.refreshKey++
+    }
   },
   actions: {
     setName,

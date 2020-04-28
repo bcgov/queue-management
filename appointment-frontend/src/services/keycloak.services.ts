@@ -67,14 +67,14 @@ class KeyCloakService {
       this.parsedToken = this.decodeToken()
     }
     return {
-      lastName: this.parsedToken.lastname,
-      firstName: this.parsedToken.firstname,
-      email: this.parsedToken.email,
-      roles: this.parsedToken.realm_access.roles,
-      keycloakGuid: this.parsedToken.sub,
-      userName: this.parsedToken.username,
-      fullName: `${this.parsedToken.firstname} ${this.parsedToken.lastname}`,
-      loginSource: this.parsedToken.loginSource
+      lastName: this.parsedToken?.lastname,
+      firstName: this.parsedToken?.firstname,
+      email: this.parsedToken?.email,
+      roles: this.parsedToken?.realm_access.roles,
+      keycloakGuid: this.parsedToken?.sub,
+      userName: this.parsedToken?.username,
+      fullName: `${this.parsedToken?.firstname} ${this.parsedToken?.lastname}`,
+      loginSource: this.parsedToken?.loginSource
     }
   }
 

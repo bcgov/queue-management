@@ -43,8 +43,8 @@
 <script lang="ts">
 import { AccountModule, AuthModule } from '@/store/modules'
 import { Component, Vue } from 'vue-property-decorator'
+import { mapActions, mapGetters } from 'vuex'
 import SignedUser from './SignedUser.vue'
-import { mapGetters } from 'vuex'
 
 @Component({
   components: {
@@ -60,8 +60,6 @@ export default class AppHeader extends Vue {
   private readonly username!: string
 
   async mounted () {
-    // eslint-disable-next-line no-console
-    console.log('isAuthenticated ', this.isAuthenticated)
   }
 
   login () {
