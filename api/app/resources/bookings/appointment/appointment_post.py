@@ -22,6 +22,7 @@ from app.models.bookings import Appointment
 from qsystem import api, api_call_with_retry, db, oidc
 from app.utilities.snowplow import SnowPlow
 from datetime import datetime
+from app.utilities.email import send_blackout_email
 
 
 @api.route("/appointments/", methods=["POST"])
@@ -37,6 +38,9 @@ class AppointmentPost(Resource):
         if not json_data:
             return {"message": "No input data received for creating an appointment"}, 400
 
+        is_blackout_appt = json_data.get('blackout_flag', 'N') == 'Y'
+        csr = None
+
         #  Create a citizen for later use.
         citizen = self.citizen_schema.load({}).data
         is_existing_citizen:bool = False
@@ -47,6 +51,10 @@ class AppointmentPost(Resource):
             is_public_user_appointment = True
             office_id = json_data.get('office_id')
             user = PublicUser.find_by_username(g.oidc_token_info['username'])
+            # Add values for contact info and notes
+            json_data['contact_information'] = user.email
+            json_data['comments'] = json_data.get('comments', '') + f'\nPhone: {user.telephone}' if user.telephone else ''
+
             existing_citizen = Citizen.find_citizen_by_user_id(user.user_id, office_id)
             if existing_citizen:
                 citizen = existing_citizen
@@ -70,7 +78,7 @@ class AppointmentPost(Resource):
 
         # Check if there is an appointment for this time
         if json_data.get('blackout_flag', 'N') == 'N':
-            conflict_appointments = Appointment.validate_appointment_conflict(office_id, json_data.get('start_time'), json_data.get('end_time'))
+            conflict_appointments = Appointment.get_appointment_conflicts(office_id, json_data.get('start_time'), json_data.get('end_time'))
             if conflict_appointments:
                 return {"code": "CONFLICT", "message": "Conflict while creating appointment"}, 400
 
@@ -101,6 +109,11 @@ class AppointmentPost(Resource):
                 SnowPlow.snowplow_appointment(citizen, csr, appointment, 'appointment_create')
 
             result = self.appointment_schema.dump(appointment)
+
+            # TODO If staff us creating a blackout event then send email to all of the citizens with appointments for that day
+            if csr and is_blackout_appt:
+                appointments_for_the_day = Appointment.get_appointment_conflicts(office_id, json_data.get('start_time'), json_data.get('end_time'))
+                send_blackout_email(appointments_for_the_day)
 
             return {"appointment": result.data,
                     "errors": result.errors}, 201

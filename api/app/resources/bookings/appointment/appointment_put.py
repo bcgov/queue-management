@@ -21,6 +21,7 @@ from app.models.theq import CSR, PublicUser, Citizen, Office
 from app.schemas.bookings import AppointmentSchema
 from app.utilities.snowplow import SnowPlow
 
+
 @api.route("/appointments/<int:id>/", methods=["PUT"])
 class AppointmentPut(Resource):
 
@@ -30,14 +31,15 @@ class AppointmentPut(Resource):
     def put(self, id):
         json_data = request.get_json()
         csr = None
+        is_blackout_appt = json_data.get('blackout_flag', 'N') == 'Y'
         if not json_data:
             return {"message": "No input data received for updating an appointment"}
         is_public_user = False
         if json_data.get('user_id', None):
             office_id = json_data.get('office_id')
             office = Office.find_by_id(office_id)
-            user = PublicUser.find_by_username(g.oidc_token_info['username'])
-            citizen = Citizen.find_citizen_by_user_id(user.user_id, office_id)
+            # user = PublicUser.find_by_username(g.oidc_token_info['username'])
+            citizen = Citizen.find_citizen_by_username(g.oidc_token_info['username'], office_id)
             is_public_user = True
             # Validate if the same user has other appointments for same day at same office
             appointments = Appointment.find_by_citizen_id_and_office_id(office_id=office_id,
@@ -52,9 +54,9 @@ class AppointmentPut(Resource):
             csr = CSR.find_by_username(g.oidc_token_info['username'])
             office_id = csr.office_id
 
-        if json_data.get('blackout_flag', 'N') == 'N':
+        if not is_blackout_appt:
             # Check if there is an appointment for this time
-            conflict_appointments = Appointment.validate_appointment_conflict(office_id, json_data.get('start_time'),
+            conflict_appointments = Appointment.get_appointment_conflicts(office_id, json_data.get('start_time'),
                                                                               json_data.get('end_time'), appointment_id=id)
             if conflict_appointments:
                 return {"code": "CONFLICT", "message": "Conflict while creating appointment"}, 400
