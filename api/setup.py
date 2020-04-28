@@ -49,7 +49,7 @@ REQUIREMENTS = read_requirements('requirements.txt')
 setup(
     name="app",
     packages=find_packages('app'),
-    package_dir={'': 'app'},
+    package_dir={'app': 'app'},
     py_modules=[splitext(basename(path))[0] for path in glob('app/*.py')],
     include_package_data=True,
     zip_safe=False,
