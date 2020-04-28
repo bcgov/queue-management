@@ -40,7 +40,10 @@ export default class ConfigHelper {
   }
 
   static getAppAPIUrl () {
-    return ConfigHelper.getValue('VUE_APP_ROOT_API')
+    // return ConfigHelper.getValue('VUE_APP_ROOT_API')
+    // Temporarily commented out above line for demo.
+    // TODO - Restore above
+    return 'https://dev-theq.pathfinder.gov.bc.ca/api/v1';
   }
 
   static getValue (key: String) {
