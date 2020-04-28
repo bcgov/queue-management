@@ -40,6 +40,14 @@
                 outlined
               ></v-text-field>
 
+              <v-text-field
+                v-model="phoneNumber"
+                :rules="phoneNumberRules"
+                label="Phone"
+                required
+                outlined
+              ></v-text-field>
+
               <v-switch
                 v-model="enableReminder"
                 label="Send me appointment reminders via email"
@@ -75,6 +83,7 @@ export default class AccountSettingsView extends Vue {
   private valid:boolean = false
   private name:string = 'Jon Snow'
   private email:string = ''
+  private phoneNumber:string = ''
   private enableReminder:boolean = false
 
   $refs: {
@@ -88,6 +97,10 @@ export default class AccountSettingsView extends Vue {
   private emailRules = [
     v => !!v || 'Email is required',
     v => /.+@.+\..+/.test(v) || 'Email must be valid'
+  ]
+
+  private phoneNumberRules = [
+    v => !!v || 'Phone number is required'
   ]
 
   private goToAppointments () {

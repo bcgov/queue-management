@@ -48,7 +48,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 
 @Component({
 })
-export default class AppHeader extends Vue {
+export default class SignedUser extends Vue {
   @Prop({ default: '' })
   private username:string
 

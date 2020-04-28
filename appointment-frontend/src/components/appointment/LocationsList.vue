@@ -10,6 +10,7 @@
           label="Postal Code"
           outlined
           hide-details
+          dense
           @click:append="fetchLocation"
         ></v-text-field>
       </v-col>
@@ -22,6 +23,7 @@
           class="text-left"
           v-model="selectedRadius"
           name="radius-select"
+          dense
           hide-details
         >
           <template v-slot:selection="data">
@@ -37,48 +39,48 @@
       <v-col
         cols="12"
         sm="10"
-        v-for="location in locationListData"
-        :key="location.id"
+        v-for="(location) in locationListData"
+        :key="location.office_id"
       >
         <v-card
-          :disabled="location.isTemporarlyClosed"
+          :disabled="!location.appointments_enabled_ind"
           class="mx-auto">
           <v-card-text>
             <v-row class="d-flex" justify="space-around">
               <v-col cols="6" align-self="stretch">
                 <GmapMap
-                  :center="location.coordinates"
+                  :center="getCoordinates(location)"
                   :zoom="14"
                   class="map-view"
                   :options="mapConfigurations"
                 >
                   <GmapMarker
-                    :position="location.coordinates"
+                    :position="getCoordinates(location)"
                     :clickable="true"
                     :draggable="false"
-                    :label='{text: location.name, fontWeight: "600"}'
+                    :label='{text: location.office_name, fontWeight: "600"}'
                   />
                 </GmapMap>
-                <div class="text-center mt-2 body-2">
-                  {{location.address}}
+                <div class="text-center mt-2 body-2" v-if="location.civic_address">
+                  {{location.civic_address}}
                 </div>
               </v-col>
               <v-col cols="6" align-self="stretch">
                 <h4 class="mb-3 location-name">
-                  {{location.name}}
-                  <span class="body-1 ml-2">
-                  {{location.distance}}Km
-                </span>
+                  {{location.office_name}}
+                  <span class="body-1 ml-2" v-if="location.distance">
+                    {{location.distance}}Km
+                  </span>
                 </h4>
                 <v-alert
                   dense
-                  :text=(!location.isTemporarlyClosed)
+                  :text=(!location.appointments_enabled_ind)
                   border="left"
-                  :type="(location.isTemporarlyClosed) ? 'error' : 'info'"
+                  :type="(!location.appointments_enabled_ind) ? 'error' : 'info'"
                   class="subtitle-2 font-weight-bold"
-                  v-if="location.message"
+                  v-if="location.office_appointment_message"
                 >
-                  {{location.message}}
+                  {{location.office_appointment_message}}
                 </v-alert>
                 <v-alert
                   type="info"
@@ -87,15 +89,14 @@
                   icon="mdi-clock"
                   class="mb-0"
                 >
-                  <v-row no-gutters v-for="hourDay in location.hours" :key="hourDay.day">
-                    <v-col cols="5" class="px-5">{{hourDay.day}}</v-col>
+                  <v-row no-gutters v-for="(timeslot, index) in location.timeslots" :key="index">
+                    <v-col cols="5" class="px-5">{{timeslot.day_str}}</v-col>
                     <v-col cols="7">
-                      <span v-if="hourDay.isClosed" class="hours-closed">Closed</span>
+                      <span v-if="!(timeslot.start_time_str && timeslot.end_time_str)" class="hours-closed">Closed</span>
                       <span v-else>
-                        {{`${hourDay.startTime} - ${hourDay.endTime}`}}
+                        {{`${timeslot.start_time_str} - ${timeslot.end_time_str}`}}
                       </span>
                     </v-col>
-                    <v-col class="hours-time closed" v-if="hourDay.isClosed"></v-col>
                   </v-row>
                 </v-alert>
               </v-col>
@@ -115,6 +116,7 @@
               color="primary"
               class="pl-5"
               large
+              @click="selectLocation(location)"
             >
               Select Location
               <v-icon right small class="ml-1">mdi-arrow-right</v-icon>
@@ -124,174 +126,60 @@
       </v-col>
     </v-row>
     <!-- Service Model Popup -->
-    <v-dialog
-      v-model="locationServicesModel"
-      max-width="600"
-    >
-      <v-card>
-        <v-toolbar dark flat color="primary">
-          <v-toolbar-title>Location Services for Service BC</v-toolbar-title>
-          <v-spacer></v-spacer>
-          <v-btn icon dark @click="locationServicesModel = false">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </v-toolbar>
-        <v-card-text>
-          <v-row>
-            <v-col>
-              <v-select
-                :items="categoriesList"
-                label="Radius"
-                outlined
-                color="primary"
-                class="text-left"
-                v-model="selectedCategory"
-                name="categories-select"
-                hide-details
-                dense
-              >
-              </v-select>
-            </v-col>
-            <v-col>
-              <v-text-field
-                prepend-inner-icon="mdi-magnify"
-                type="text"
-                name="search-service"
-                label="Search Service"
-                outlined
-                hide-details
-                dense
-              ></v-text-field>
-            </v-col>
-          </v-row>
-          <v-simple-table
-            fixed-header
-            height="300"
-          >
-            <template v-slot:default>
-              <thead>
-                <tr>
-                  <th class="text-left">Service</th>
-                  <th class="text-left">Service Information</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="item in serviceList" :key="item.id">
-                  <td>{{ item.name }}</td>
-                  <td>
-                    <span v-if="item.isAvailable">{{item.info}}</span>
-                    <span v-else class="service-unavailable">Unavailable</span>
-                  </td>
-                </tr>
-              </tbody>
-            </template>
-          </v-simple-table>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
+    <ServiceListPopup
+      :locationServicesModal="locationServicesModal"
+      :serviceList="serviceList"
+      :selectedLocationName="selectedLocationName"
+    ></ServiceListPopup>
   </v-card-text>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
+import { mapActions, mapMutations } from 'vuex'
 import ConfigHelper from '@/utils/config-helper'
+import { Office } from '@/models/office'
+import { OfficeModule } from '@/store/modules'
+import { Service } from '@/models/service'
+import ServiceListPopup from './ServiceListPopup.vue'
+import StepperMixin from '@/mixins/StepperMixin.vue'
 
-@Component
-export default class ServiceSelection extends Vue {
+@Component({
+  components: {
+    ServiceListPopup
+  },
+  methods: {
+    ...mapMutations('office', [
+      'setCurrentOffice'
+    ]),
+    ...mapActions('office', [
+      'getOffices',
+      'getServiceByOffice',
+      'getAvailableAppointmentSlots',
+      'getCategories'
+    ])
+  }
+})
+export default class LocationsList extends Mixins(StepperMixin) {
   private mapConfigurations = ConfigHelper.getMapConfigurations()
+  private readonly getOffices!: () => Promise<Office[]>
+  private readonly getServiceByOffice!: (officeId: number) => Promise<Service[]>
+  private readonly getAvailableAppointmentSlots!: (officeId: number) => Promise<any>
+  private readonly getCategories!: () => Promise<any>
+  private readonly setCurrentOffice!: (office: Office) => void
   private selectedRadius = null
-  private selectedCategory = null
   private radiusList = [2, 4, 6, 10]
-  private categoriesList = ['Category 1', 'Category 2']
-  private locationServicesModel = false
+  private selectedLocationName: string = ''
+  private locationServicesModal = false
 
-  private locationListData = [
-    {
-      id: 1,
-      name: 'Service BC Centre Victoria(Gateway Village)',
-      message: 'Hours may vary based on staff availability',
-      address: '4000 Seymour Pl, Victoria, BC V8X 4S7',
-      distance: '2',
-      coordinates: {
-        lat: 48.452540,
-        lng: -123.369040
-      },
-      isTemporarlyClosed: false,
-      hours: [
-        {
-          day: 'Monday',
-          startTime: '9:30am',
-          endTime: '4:30pm',
-          isClosed: false
-        },
-        {
-          day: 'Tuesday',
-          startTime: '9:30am',
-          endTime: '4:30pm',
-          isClosed: false
-        },
-        {
-          day: 'Wednesday',
-          startTime: '9:30am',
-          endTime: '4:30pm',
-          isClosed: false
-        },
-        {
-          day: 'Thursday',
-          startTime: '9:30am',
-          endTime: '4:30pm',
-          isClosed: false
-        },
-        {
-          day: 'Friday',
-          startTime: '9:30am',
-          endTime: '4:30pm',
-          isClosed: false
-        },
-        {
-          day: 'Saturday',
-          startTime: '9:30am',
-          endTime: '4:30pm',
-          isClosed: true
-        },
-        {
-          day: 'Sunday',
-          startTime: '9:30am',
-          endTime: '4:30pm',
-          isClosed: true
-        }
-      ]
-    }
-  ]
+  private locationListData: Office[] = []
+  private serviceList: Service[] = []
 
-  private serviceList = [
-    {
-      id: 1,
-      name: 'Affordable Child Care Benefit',
-      info: 'Online options available',
-      isAvailable: true
-    },
-    {
-      id: 2,
-      name: 'Community Crisis Fund',
-      info: 'Online options available',
-      isAvailable: true
-    },
-    {
-      id: 3,
-      name: 'Identity Verification',
-      info: '',
-      isAvailable: false
-    },
-    {
-      id: 4,
-      name: 'Passcode Issuance',
-      info: '',
-      isAvailable: false
-    }
-  ]
-
-  private mounted () {
+  private async mounted () {
+    this.locationListData = await this.getOffices()
+    // eslint-disable-next-line no-console
+    console.log(this.locationListData)
+    await this.getCategories()
   }
 
   private fetchLocation () {
@@ -299,8 +187,28 @@ export default class ServiceSelection extends Vue {
     console.log('fetchLocation')
   }
 
-  private showLocationServices (location) {
-    this.locationServicesModel = true
+  private async showLocationServices (location) {
+    // eslint-disable-next-line no-console
+    console.log(location)
+    this.serviceList = await this.getServiceByOffice(location.office_id)
+    this.selectedLocationName = location.office_name
+    this.locationServicesModal = true
+  }
+
+  private getCoordinates (location) {
+    return {
+      lat: location.latitude,
+      lng: location.longitude
+    }
+  }
+
+  private async selectLocation (location) {
+    // eslint-disable-next-line no-console
+    console.log(location)
+    this.setCurrentOffice(location)
+    await this.getServiceByOffice(location.office_id)
+    await this.getAvailableAppointmentSlots(location.office_id)
+    this.stepNext()
   }
 }
 </script>
@@ -321,6 +229,7 @@ export default class ServiceSelection extends Vue {
 .map-view {
   width: 100%;
   height: 100%;
+  min-height: 240px;
 }
 .service-unavailable {
   color: $BCgovInputError;

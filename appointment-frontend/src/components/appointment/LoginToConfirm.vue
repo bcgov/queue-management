@@ -12,6 +12,7 @@
             min-width="150"
             large
             color="primary"
+            @click="login(idpHint.BCEID)"
           >
             BCeID
           </v-btn>
@@ -36,13 +37,14 @@
             min-width="150"
             large
             color="primary"
+            @click="login(idpHint.BCSC)"
           >
-            BC Service Card
+            BC Services Card
           </v-btn>
           <a class="link-w-icon mt-6" href="https://www2.gov.bc.ca/gov/content/governments/government-id/bc-services-card"
             target="_blank" rel="noopener noreferrer">
             <v-icon small class="mr-2">mdi-open-in-new</v-icon>
-            <span>About the BC Service Card</span>
+            <span>About the BC Services Card</span>
           </a>
         </v-col>
       </v-row>
@@ -51,10 +53,29 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
+import { AuthModule } from '@/store/modules'
+import { IdpHint } from '@/utils/constants'
+import StepperMixin from '@/mixins/StepperMixin.vue'
+import { User } from '@/models/user'
+import { mapState } from 'vuex'
 
-@Component
-export default class LoginToConfirm extends Vue {
+@Component({
+  computed: {
+    ...mapState('auth', [
+      'currentUserProfile'
+    ])
+  }
+})
+export default class LoginToConfirm extends Mixins(StepperMixin) {
+  private idpHint = IdpHint
+  private readonly currentUserProfile!: User
+
+  private login (idpHint) {
+    // eslint-disable-next-line no-console
+    console.log('currentUserProfile ', this.currentUserProfile)
+    this.stepNext()
+  }
 }
 </script>
 

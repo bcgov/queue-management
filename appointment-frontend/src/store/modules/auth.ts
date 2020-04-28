@@ -1,6 +1,8 @@
 import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
 import ConfigHelper from '@/utils/config-helper'
 import { SessionStorageKeys } from '@/utils/constants'
+import { User } from '@/models/user'
+import UserService from '@/services/user.services'
 import { store } from '@/store'
 
 @Module({
@@ -16,6 +18,7 @@ export default class AuthModule extends VuexModule {
   userFullName: string = ''
   kcGuid: string = ''
   loginSource: string = ''
+  currentUserProfile: User
 
   get isAuthenticated (): boolean {
     return !!this.token
@@ -46,6 +49,12 @@ export default class AuthModule extends VuexModule {
   }
 
   @Mutation
+  public setUserProfile (userProfile: User): void {
+    this.currentUserProfile = userProfile
+    ConfigHelper.addToSession(SessionStorageKeys.CurrentUserProfile, (typeof userProfile === 'string') ? userProfile : JSON.stringify(userProfile))
+  }
+
+  @Mutation
   public setKCGuid (kcGuid: string): void {
     this.kcGuid = kcGuid
     ConfigHelper.addToSession(SessionStorageKeys.UserKcId, kcGuid)
@@ -63,6 +72,7 @@ export default class AuthModule extends VuexModule {
     this.context.commit('setIDToken', '')
     this.context.commit('setRefreshToken', '')
     this.context.commit('setUserFullName', '')
+    this.context.commit('setUserProfile', {})
     this.context.commit('setKCGuid', '')
     this.context.commit('setLoginSource', '')
   }
@@ -73,7 +83,14 @@ export default class AuthModule extends VuexModule {
     this.context.commit('setIDToken', ConfigHelper.getFromSession(SessionStorageKeys.KeyCloakIdToken) || '')
     this.context.commit('setRefreshToken', ConfigHelper.getFromSession(SessionStorageKeys.KeyCloakRefreshToken) || '')
     this.context.commit('setUserFullName', ConfigHelper.getFromSession(SessionStorageKeys.UserFullName) || '')
+    this.context.commit('setUserProfile', ConfigHelper.getFromSession(SessionStorageKeys.CurrentUserProfile) || '')
     this.context.commit('setKCGuid', ConfigHelper.getFromSession(SessionStorageKeys.UserKcId) || '')
     this.context.commit('setLoginSource', ConfigHelper.getFromSession(SessionStorageKeys.UserAccountType) || '')
+  }
+
+  @Action({ commit: 'setUserProfile', rawError: true })
+  public async postCreateUser () {
+    const response = await UserService.createUser()
+    return (response?.data?.length ? response.data[0] : {}) || {}
   }
 }

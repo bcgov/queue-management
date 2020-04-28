@@ -67,14 +67,14 @@ class KeyCloakService {
       this.parsedToken = this.decodeToken()
     }
     return {
-      lastName: this.parsedToken.lastname,
-      firstName: this.parsedToken.firstname,
-      email: this.parsedToken.email,
-      roles: this.parsedToken.realm_access.roles,
-      keycloakGuid: this.parsedToken.sub,
-      userName: this.parsedToken.username,
-      fullName: `${this.parsedToken.firstname} ${this.parsedToken.lastname}`,
-      loginSource: this.parsedToken.loginSource
+      lastName: this.parsedToken?.lastname,
+      firstName: this.parsedToken?.firstname,
+      email: this.parsedToken?.email,
+      roles: this.parsedToken?.realm_access.roles,
+      keycloakGuid: this.parsedToken?.sub,
+      userName: this.parsedToken?.username,
+      fullName: `${this.parsedToken?.firstname} ${this.parsedToken?.lastname}`,
+      loginSource: this.parsedToken?.loginSource
     }
   }
 
@@ -93,7 +93,7 @@ class KeyCloakService {
       // Here we clear session storage, and add a flag in to prevent the app from
       // putting tokens back in from returning async calls  (see #2341)
       ConfigHelper.clearSession()
-      ConfigHelper.addToSession(SessionStorageKeys.PreventStorageSync, true)
+      // ConfigHelper.addToSession(SessionStorageKeys.PreventStorageSync, true)
       return new Promise((resolve, reject) => {
         this.kc && this.kc.init(kcOptions)
           .success(authenticated => {
@@ -141,17 +141,6 @@ class KeyCloakService {
       .error(() => {
         this.cleanupSession()
       })
-  }
-
-  verifyRoles (allowedRoles:[], disabledRoles:[]) {
-    let isAuthorized = false
-    if (allowedRoles || disabledRoles) {
-      let userInfo = this.getUserInfo()
-      isAuthorized = allowedRoles ? allowedRoles.some(role => userInfo.roles.includes(role)) : !disabledRoles.some(role => userInfo.roles.includes(role))
-    } else {
-      isAuthorized = true
-    }
-    return isAuthorized
   }
 
   decodeToken () {
