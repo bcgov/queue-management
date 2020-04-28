@@ -35,7 +35,7 @@ class PublicUsers(Resource):
             if not user:
                 user = PublicUserModel()
                 user.username = user_info.get('username')
-            user.display_name = user_info.get('name')
+            user.display_name = user_info.get('display_name')
             user.last_name = user_info.get('last_name')
             user.email = user_info.get('email')
             db.session.add(user)
