@@ -64,6 +64,9 @@
                 <div class="text-center mt-2 body-2" v-if="location.civic_address">
                   {{location.civic_address}}
                 </div>
+                <div class="text-center mt-2 green--text" v-if='location.latitude && location.longitude && hasCoordinates'>
+                  {{ getDistance(location.latitude, location.longitude) }}
+                </div>
               </v-col>
               <v-col cols="6" align-self="stretch">
                 <h4 class="mb-3 location-name">
@@ -137,7 +140,7 @@
 <script lang="ts">
 import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
 import { GeoModule, OfficeModule } from '@/store/modules'
-import { mapActions, mapMutations } from 'vuex'
+import { mapActions, mapMutations, mapState } from 'vuex'
 import ConfigHelper from '@/utils/config-helper'
 import GeocoderService from '@/services/geocoder.services'
 import { Office } from '@/models/office'
@@ -161,7 +164,10 @@ import StepperMixin from '@/mixins/StepperMixin.vue'
     ]),
     ...mapActions('geo', [
       'getCurrentLocation'
-    ])
+    ]),
+    ...mapState('geo', {
+      coords: state => state.currentCoordinates
+    })
   }
 })
 export default class LocationsList extends Mixins(StepperMixin) {
@@ -187,14 +193,33 @@ export default class LocationsList extends Mixins(StepperMixin) {
   }
 
   private async fetchLocation () {
+    // TODO - Potentially enable spinner / loading icon at this point
     // eslint-disable-next-line no-console
     console.log('fetching location')
-    // const geo = await GeocoderService.getCurrentLocation()
-    // const geo = await GeoModule.getCurrentLocation()
-    // const geo = this.$store.
-    const geo = this.getCurrentLocation()
+    const geo = await this.getCurrentLocation()
     // eslint-disable-next-line no-console
     console.log('fetchLocation', { geo })
+    this.$forceUpdate()
+  }
+
+  private getDistance (latitude, longitude) {
+    // eslint-disable-next-line no-console
+    console.log('currentCoordinates', this.$store.state.geo.currentCoordinates)
+    if (!this.hasCoordinates()) {
+      return null
+    }
+
+    // return GeocoderService.distance(this.$store.state.geo.currentCoordinates, destination)
+    const destination = { latitude, longitude }
+    const dist = GeocoderService.distance(this.coords(), destination)
+    // eslint-disable-next-line no-console
+    // console.log('getDistance', { dist, destination, current: this.$store.state.geo.currentCoordinates })
+    return dist.toFixed(0) + 'km'
+  }
+
+  private hasCoordinates (): boolean {
+    // return !!this.$store.state.geo.currentCoordinates
+    return !!this.coords()
   }
 
   private async showLocationServices (location) {

@@ -10,7 +10,7 @@ import { store } from '@/store'
   dynamic: true
 })
 export default class GeoModule extends VuexModule {
-  currentCoordinates: LatLng // TODO - TYPE
+  currentCoordinates: LatLng
 
   /**
     Mutations in this Module
@@ -18,7 +18,11 @@ export default class GeoModule extends VuexModule {
 
   @Mutation
   public setCurrentLocation (currentCoordinates: LatLng) {
-    this.currentCoordinates = currentCoordinates
+    // Need to break out into line for vuex persistence
+    this.currentCoordinates = {
+      latitude: currentCoordinates.latitude,
+      longitude: currentCoordinates.longitude
+    }
   }
 
   /**

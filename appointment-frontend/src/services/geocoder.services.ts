@@ -1,6 +1,5 @@
 import Axios, { AxiosResponse } from 'axios'
-import ConfigHelper from '@/utils/config-helper'
-import { GeolocatorSuccess } from '@/models/geo'
+import { GeolocatorSuccess, LatLng } from '@/models/geo'
 import { addAxiosInterceptors } from '@/utils/interceptors'
 
 const axios = addAxiosInterceptors(Axios.create())
@@ -49,11 +48,15 @@ export default class GeocoderService {
   }
 
   public static async getCurrentLocation (): Promise<GeolocatorSuccess> {
+    // eslint-disable-next-line no-console
+    console.log('geocoder service, getCurrentLocation called')
     const options = {
       enableHighAccuracy: true,
       timeout: 5000,
       maximumAge: 0
     }
+
+    // const authModule = getModule(AuthModule, this.store)
 
     return new Promise((resolve, reject) => {
       navigator.geolocation.getCurrentPosition((pos: GeolocatorSuccess) => {
@@ -69,8 +72,13 @@ export default class GeocoderService {
     })
   }
 
+  public static distance (origin: LatLng, destination: LatLng) {
+    return GeocoderService.distanceSplit(origin.latitude, origin.longitude, destination.latitude, destination.longitude)
+  }
+
   // https://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula
-  public static distance (lat1, lon1, lat2, lon2) {
+  // public static distance (lat1, lon1, lat2, lon2) {
+  public static distanceSplit (lat1, lon1, lat2, lon2) {
     var p = 0.017453292519943295 // Math.PI / 180
     var c = Math.cos
     var a = 0.5 - c((lat2 - lat1) * p) / 2 +
