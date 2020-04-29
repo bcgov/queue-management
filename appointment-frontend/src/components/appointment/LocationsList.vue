@@ -3,7 +3,7 @@
     <p class="step-desc">To book an appointment, please find your nearest BC Service Location</p>
     <v-row justify="center">
       <v-col cols="6" sm="4">
-        <v-text-field
+        <!-- <v-text-field
           append-icon="mdi-map-marker-radius"
           type="text"
           name="address"
@@ -12,7 +12,8 @@
           hide-details
           dense
           @click:append="fetchLocation"
-        ></v-text-field>
+        ></v-text-field> -->
+        <geocoder-input></geocoder-input>
       </v-col>
       <v-col cols="6" sm="4">
         <v-select
@@ -34,7 +35,10 @@
     </v-row>
     <v-row justify="center">
       <v-col cols="12">
-        <p class="text-center mb-0">Locations sorted by nearest to you</p>
+        <p class="text-center mb-0">Locations sorted by nearest to you
+          <br><br>
+          Coords: {{ this.coords() }}
+        </p>
       </v-col>
       <v-col
         cols="12"
@@ -142,6 +146,7 @@ import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
 import { GeoModule, OfficeModule } from '@/store/modules'
 import { mapActions, mapMutations, mapState } from 'vuex'
 import ConfigHelper from '@/utils/config-helper'
+import GeocoderInput from './GeocoderInput.vue'
 import GeocoderService from '@/services/geocoder.services'
 import { Office } from '@/models/office'
 import { Service } from '@/models/service'
@@ -150,7 +155,8 @@ import StepperMixin from '@/mixins/StepperMixin.vue'
 
 @Component({
   components: {
-    ServiceListPopup
+    ServiceListPopup,
+    GeocoderInput
   },
   methods: {
     ...mapMutations('office', [
@@ -162,12 +168,19 @@ import StepperMixin from '@/mixins/StepperMixin.vue'
       'getAvailableAppointmentSlots',
       'getCategories'
     ]),
-    ...mapActions('geo', [
-      'getCurrentLocation'
-    ]),
+    // ...mapActions('geo', [
+    //   'getCurrentLocation'
+    // ]),
     ...mapState('geo', {
+      // eslint-disable-next-line
       coords: state => state.currentCoordinates
     })
+  },
+  watch: {
+    coords: (a, b) => {
+      // eslint-disable-next-line no-console
+      console.log('WATCH WATCH, coords changed', { a, b })
+    }
   }
 })
 export default class LocationsList extends Mixins(StepperMixin) {
@@ -177,6 +190,10 @@ export default class LocationsList extends Mixins(StepperMixin) {
   private readonly getAvailableAppointmentSlots!: (officeId: number) => Promise<any>
   private readonly getCategories!: () => Promise<any>
   private readonly setCurrentOffice!: (office: Office) => void
+  private readonly coords!: () => any;
+
+  // private readonly getCurrentLocation!: () => any;
+
   private selectedRadius = null
   private radiusList = [2, 4, 6, 10]
   private selectedLocationName: string = ''
@@ -192,15 +209,15 @@ export default class LocationsList extends Mixins(StepperMixin) {
     await this.getCategories()
   }
 
-  private async fetchLocation () {
-    // TODO - Potentially enable spinner / loading icon at this point
-    // eslint-disable-next-line no-console
-    console.log('fetching location')
-    const geo = await this.getCurrentLocation()
-    // eslint-disable-next-line no-console
-    console.log('fetchLocation', { geo })
-    this.$forceUpdate()
-  }
+  // private async fetchLocation () {
+  //   // TODO - Potentially enable spinner / loading icon at this point
+  //   // eslint-disable-next-line no-console
+  //   console.log('fetching location')
+  //   const geo = await this.getCurrentLocation()
+  //   // eslint-disable-next-line no-console
+  //   console.log('fetchLocation', { geo })
+  //   this.$forceUpdate()
+  // }
 
   private getDistance (latitude, longitude) {
     // eslint-disable-next-line no-console

@@ -18,24 +18,7 @@ const BASE_URL = 'https://geocoder.api.gov.bc.ca'
 const ADDRESS_URL = `${BASE_URL}/addresses.json?`
 
 export default class GeocoderService {
-  // protecteds _headers: HttpHeaders = new HttpHeaders();
-  // protected BASE_URL = 'https://geocoder.api.gov.bc.ca';
-  // protected ADDRESS_URL = `${this.BASE_URL}/addresses.json?`;
-
-  // https://github.com/bcgov/api-specs/blob/master/geocoder/geocoder-developer-guide.md
-  // lookupOLD(address: string): Observable<GeoAddressResult[]> {
-  //     const params = new HttpParams()
-  //         .set('minScore', '50')
-  //         .set('maxResults', '10')
-  //         .set('echo', 'true')
-  //         .set('interpolation', 'adaptive')
-  //         .set('addressString', address);
-
-  //     return this.get(this.ADDRESS_URL, params).pipe(map(this.processResponse));
-  // }
-
   public static async lookup (address: string): Promise<AxiosResponse<GeoAddressResult[]>> {
-    // return axios.post(`${ConfigHelper.getAppAPIUrl()}/users/`, {})
     const params = {
       minScore: 50,
       maxResults: 10,
@@ -44,7 +27,19 @@ export default class GeocoderService {
       addressString: address
     }
 
-    return axios.get(ADDRESS_URL, { params })
+    const response = await axios.get(ADDRESS_URL, { params })
+    // Strip out useless data
+    // Convert response into array of
+    // {name: string, coords: lat/lng}
+    return response?.data?.features?.map(item => {
+      return {
+        name: item.properties.fullAddress,
+        coords: {
+          latitude: item.geometry.coordinates[1],
+          longitude: item.geometry.coordinates[0]
+        }
+      }
+    })
   }
 
   public static async getCurrentLocation (): Promise<GeolocatorSuccess> {
@@ -56,17 +51,10 @@ export default class GeocoderService {
       maximumAge: 0
     }
 
-    // const authModule = getModule(AuthModule, this.store)
-
     return new Promise((resolve, reject) => {
       navigator.geolocation.getCurrentPosition((pos: GeolocatorSuccess) => {
-        // eslint-disable-next-line no-console
-        console.log('success', pos)
-        // TODO - NEED TO STORE IT TOO
         resolve(pos)
       }, (error) => {
-        // eslint-disable-next-line no-console
-        console.log('error', error)
         reject(error)
       }, options)
     })
