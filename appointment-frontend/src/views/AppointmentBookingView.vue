@@ -37,6 +37,7 @@
           <v-divider class="mx-4"></v-divider>
           <LocationsList
             v-bind="getPropsForStep(bookingStep)"
+            :key="stepCounter"
           />
         </v-card>
         <component
