@@ -86,6 +86,7 @@ import { utcToZonedTime } from 'date-fns-tz'
 export default class DateSelection extends Mixins(StepperMixin) {
   private readonly availableAppointmentSlots!: any
   private readonly setCurrentAppointmentSlot!: (slot: AppointmentSlot) => void
+  // TODO: take timezone from office data from state
   private selectedDate = format(utcToZonedTime(new Date(), 'America/Vancouver'), 'yyyy-MM-dd')
   private selectedDateTimeSlots = []
 

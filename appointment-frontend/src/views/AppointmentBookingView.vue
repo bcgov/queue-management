@@ -36,16 +36,16 @@
           </v-card-title>
           <v-divider class="mx-4"></v-divider>
           <LocationsList
-            :stepNext="stepNext"
-            :stepBack="stepBack"
+            v-bind="getPropsForStep(bookingStep)"
+            :key="stepCounter"
           />
         </v-card>
         <component
           v-else
           :is="bookingStep.component"
-          :stepNext="stepNext"
-          :stepBack="stepBack"
+          v-bind="getPropsForStep(bookingStep)"
           keep-alive
+          :key="stepCounter"
           transition="fade"
           mode="out-in"
         />
@@ -70,40 +70,47 @@ import StepperMixin from '@/mixins/StepperMixin.vue'
 })
 export default class AppointmentBookingView extends Vue {
   private stepCounter = 1
+  private updateViewCounter = 0
   private bookingSteppers = [
     {
       step: 1,
       label: 'Select Location',
       code: 'location',
-      component: LocationsList
+      component: LocationsList,
+      componentProps: {}
     },
     {
       step: 2,
       label: 'Select Service',
       code: 'service',
-      component: ServiceSelection
+      component: ServiceSelection,
+      componentProps: {}
     },
     {
       step: 3,
       label: 'Select a Date',
       code: 'date',
-      component: DateSelection
+      component: DateSelection,
+      componentProps: {}
     },
     {
       step: 4,
       label: 'Login to Confirm Appointment',
       code: 'login',
-      component: LoginToConfirm
+      component: LoginToConfirm,
+      componentProps: {}
     },
     {
       step: 5,
       label: 'Appointment Summary',
       code: 'summary',
-      component: AppointmentSummary
+      component: AppointmentSummary,
+      componentProps: {}
     }
   ]
 
   private stepNext () {
+    this.updateViewCounter++
     if (this.stepCounter < this.bookingSteppers.length) {
       this.stepCounter++
     } else {
@@ -118,6 +125,12 @@ export default class AppointmentBookingView extends Vue {
   }
 
   private async updated () {
+    // eslint-disable-next-line no-console
+    console.log('stepCounter', this.stepCounter)
+  }
+
+  private getPropsForStep (step): Record<string, any> {
+    return { ...step.componentProps, stepNext: this.stepNext, stepBack: this.stepBack }
   }
 }
 </script>

@@ -17,8 +17,6 @@
             class="service-selection text-left"
             v-model="selectedService"
             name="service-select"
-            persistent-hint
-            :hint="(selectedService) ? selectedService.service_desc : ''"
             @change="serviceSelection"
           >
             <template v-slot:selection="data">
@@ -27,7 +25,7 @@
             <template v-slot:item="data">
               <div class="">
                 <div>{{ data.item.external_service_name }}</div>
-                <div class="service-message">{{ data.item.service_desc }}</div>
+                <!-- <div class="service-message">{{ data.item.service_desc }}</div> -->
               </div>
             </template>
           </v-select>
