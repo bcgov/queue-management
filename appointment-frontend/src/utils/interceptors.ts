@@ -13,5 +13,9 @@ export function addAxiosInterceptors (axiosInstance: AxiosInstance): AxiosInstan
   err => {
     return Promise.reject(err)
   })
+  axiosInstance.interceptors.response.use(
+    response => response,
+    error => Promise.reject(error)
+  )
   return axiosInstance
 }

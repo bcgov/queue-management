@@ -50,7 +50,7 @@ export default class AuthModule extends VuexModule {
 
   @Mutation
   public setUserProfile (userProfile: User): void {
-    this.currentUserProfile = userProfile
+    this.currentUserProfile = (userProfile && typeof userProfile === 'string') ? JSON.parse(userProfile) : userProfile
     ConfigHelper.addToSession(SessionStorageKeys.CurrentUserProfile, (typeof userProfile === 'string') ? userProfile : JSON.stringify(userProfile))
   }
 
