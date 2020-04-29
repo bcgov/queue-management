@@ -6,8 +6,8 @@
         <v-text-field
           append-icon="mdi-map-marker-radius"
           type="text"
-          name="postal-code"
-          label="Postal Code"
+          name="address"
+          label="Address"
           outlined
           hide-details
           dense
@@ -136,10 +136,11 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
+import { GeoModule, OfficeModule } from '@/store/modules'
 import { mapActions, mapMutations } from 'vuex'
 import ConfigHelper from '@/utils/config-helper'
+import GeocoderService from '@/services/geocoder.services'
 import { Office } from '@/models/office'
-import { OfficeModule } from '@/store/modules'
 import { Service } from '@/models/service'
 import ServiceListPopup from './ServiceListPopup.vue'
 import StepperMixin from '@/mixins/StepperMixin.vue'
@@ -157,6 +158,9 @@ import StepperMixin from '@/mixins/StepperMixin.vue'
       'getServiceByOffice',
       'getAvailableAppointmentSlots',
       'getCategories'
+    ]),
+    ...mapActions('geo', [
+      'getCurrentLocation'
     ])
   }
 })
@@ -182,9 +186,15 @@ export default class LocationsList extends Mixins(StepperMixin) {
     await this.getCategories()
   }
 
-  private fetchLocation () {
+  private async fetchLocation () {
     // eslint-disable-next-line no-console
-    console.log('fetchLocation')
+    console.log('fetching location')
+    // const geo = await GeocoderService.getCurrentLocation()
+    // const geo = await GeoModule.getCurrentLocation()
+    // const geo = this.$store.
+    const geo = this.getCurrentLocation()
+    // eslint-disable-next-line no-console
+    console.log('fetchLocation', { geo })
   }
 
   private async showLocationServices (location) {

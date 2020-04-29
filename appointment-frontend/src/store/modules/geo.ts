@@ -4,7 +4,7 @@ import GeocoderService from '@/services/geocoder.services'
 import { store } from '@/store'
 
 @Module({
-  name: 'appointment',
+  name: 'geo',
   namespaced: true,
   store,
   dynamic: true
