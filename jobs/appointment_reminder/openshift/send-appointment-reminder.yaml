@@ -1,7 +1,7 @@
 kind: Template
 apiVersion: v1
 metadata:
-  name: send-appoinment-reminder
+  name: send-appointment-reminder
   annotations:
     description: 'Scheduled Task to send appointment reminders'
     tags: cronjob
@@ -10,11 +10,11 @@ objects:
     kind: CronJob
     apiVersion: batch/v1beta1
     metadata:
-      name: send-appoinment-reminder
+      name: send-appointment-reminder
     spec:
       successfulJobsHistoryLimit: 5
       failedJobsHistoryLimit: 5
-      schedule: '0 */4 * * *'
+      schedule: '*/5 * * * *'
       suspend: false
       jobTemplate:
         spec:
@@ -22,8 +22,8 @@ objects:
             spec:
               containers:
                 -
-                  name: send-appoinment-reminder
-                  image: 'docker-registry.default.svc:5000/servicebc-cfms-tools/send-appoinment-reminder:${ENV_TAG}'
+                  name: send-appointment-reminder
+                  image: 'docker-registry.default.svc:5000/servicebc-cfms-tools/send-appointment-reminder:${ENV_TAG}'
                   imagePullPolicy: Always
                   args:
                     - /bin/sh
@@ -31,7 +31,7 @@ objects:
                     - 'cd /opt/app-root/src; ./run.sh'
                   envFrom:
                     - configMapRef:
-                        name: appoinment-reminder-${TAG_NAME}-config
+                        name: appointment-reminder-${TAG_NAME}-config
 
               restartPolicy: Never
               concurrencyPolicy: Forbid

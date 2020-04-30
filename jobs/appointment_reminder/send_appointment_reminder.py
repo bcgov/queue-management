@@ -82,7 +82,8 @@ def send_reminders(app):
         'Content-Type': 'application/json'
     }
 
-    requests.post(reminders_endpoint, data=None, headers=headers)
+    response = requests.post(reminders_endpoint, data=None, headers=headers)
+    response.raise_for_status()
     app.logger.debug('Ending job>>>')
 
 
