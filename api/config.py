@@ -174,7 +174,7 @@ class BaseConfig(object):
     MAIL_SERVER = os.getenv('MAIL_SERVER', 'apps.smtp.gov.bc.ca')
     MAIL_PORT = os.getenv('MAIL_PORT', '25')
     MAIL_USE_TLS = False
-    MAIL_USE_SSL = True
+    MAIL_USE_SSL = False
     MAIL_USERNAME = os.getenv('MAIL_USERNAME', None)
     MAIL_PASSWORD = os.getenv('MAIL_PASSWORD', None)
     MAIL_FROM_ID = os.getenv('MAIL_FROM_ID', 'sbc@gov.bc.ca')
