@@ -101,7 +101,7 @@
       "displayName": "Source Image Name Space",
       "required": true,
       "description": "The name space of the  source image.",
-      "value": "servicebc-cfms-tools"
+      "value": "openshift"
     },
     {
       "name": "SOURCE_IMAGE_NAME",
@@ -115,7 +115,7 @@
       "displayName": "Source Image Tag",
       "required": true,
       "description": "The tag of the source image.",
-      "value": "3.6.3"
+      "value": "latest"
     },
     {
       "name": "OUTPUT_IMAGE_TAG",
