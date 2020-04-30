@@ -16,7 +16,7 @@ from flask import abort, g
 from flask_restx import Resource
 from app.models.bookings import Appointment
 from app.schemas.bookings import AppointmentSchema
-from app.models.theq import CSR, PublicUser, Citizen
+from app.models.theq import CSR, PublicUser, Citizen, Office, Timezone
 from qsystem import api, db, oidc
 from app.utilities.snowplow import SnowPlow
 from app.utilities.email import send_cancel_email
@@ -52,6 +52,7 @@ class AppointmentDelete(Resource):
 
         # If the appointment is public user's and if staff deletes it send email
         if csr:
-            send_cancel_email(appointment, user)
+            office = Office.find_by_id(appointment.office_id)
+            send_cancel_email(appointment, user, office, office.timezone)
 
         return {}, 204
