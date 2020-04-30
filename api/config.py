@@ -170,6 +170,17 @@ class BaseConfig(object):
     #print(parse_dsn(("postgresql://localhost:5000?connect_timeout=10")))
     #quote_ident("connect_timeout", scope)
 
+    # Email variables
+    MAIL_SERVER = os.getenv('MAIL_SERVER', 'apps.smtp.gov.bc.ca')
+    MAIL_PORT = os.getenv('MAIL_PORT', '25')
+    MAIL_USE_TLS = False
+    MAIL_USE_SSL = True
+    MAIL_USERNAME = os.getenv('MAIL_USERNAME', None)
+    MAIL_PASSWORD = os.getenv('MAIL_PASSWORD', None)
+    MAIL_FROM_ID = os.getenv('MAIL_FROM_ID', 'sbc@gov.bc.ca')
+
+    # Email variables
+    EMAIL_APPOINTMENT_APP_URL = os.getenv('EMAIL_APPOINTMENT_APP_URL', None)
 
 
 class LocalConfig(BaseConfig):

@@ -20,6 +20,7 @@ from app.models.bookings import Appointment
 from app.models.theq import CSR, PublicUser, Citizen, Office
 from app.schemas.bookings import AppointmentSchema
 from app.utilities.snowplow import SnowPlow
+from app.utilities.auth_util import is_public_user
 
 
 @api.route("/appointments/<int:id>/", methods=["PUT"])
@@ -34,13 +35,12 @@ class AppointmentPut(Resource):
         is_blackout_appt = json_data.get('blackout_flag', 'N') == 'Y'
         if not json_data:
             return {"message": "No input data received for updating an appointment"}
-        is_public_user = False
-        if json_data.get('user_id', None):
+        is_public_user_appt = is_public_user()
+        if is_public_user_appt:
             office_id = json_data.get('office_id')
             office = Office.find_by_id(office_id)
             # user = PublicUser.find_by_username(g.oidc_token_info['username'])
             citizen = Citizen.find_citizen_by_username(g.oidc_token_info['username'], office_id)
-            is_public_user = True
             # Validate if the same user has other appointments for same day at same office
             appointments = Appointment.find_by_citizen_id_and_office_id(office_id=office_id,
                                                                         citizen_id=citizen.citizen_id,
@@ -54,19 +54,19 @@ class AppointmentPut(Resource):
             csr = CSR.find_by_username(g.oidc_token_info['username'])
             office_id = csr.office_id
 
-        if not is_blackout_appt:
-            # Check if there is an appointment for this time
-            conflict_appointments = Appointment.get_appointment_conflicts(office_id, json_data.get('start_time'),
-                                                                              json_data.get('end_time'), appointment_id=id)
-            if conflict_appointments:
-                return {"code": "CONFLICT", "message": "Conflict while creating appointment"}, 400
+        # if not is_blackout_appt:
+        #     # Check if there is an appointment for this time
+        #     conflict_appointments = Appointment.get_appointment_conflicts(office_id, json_data.get('start_time'),
+        #                                                                       json_data.get('end_time'), appointment_id=id)
+        #     if conflict_appointments:
+        #         return {"code": "CONFLICT", "message": "Conflict while creating appointment"}, 400
 
         appointment = Appointment.query.filter_by(appointment_id=id)\
                                        .filter_by(office_id=office_id)\
                                        .first_or_404()
 
         # If appointment is not made by same user, throw error
-        if is_public_user and appointment.citizen_id != citizen.citizen_id:
+        if is_public_user_appt and appointment.citizen_id != citizen.citizen_id:
             abort(403)
 
         appointment, warning = self.appointment_schema.load(json_data, instance=appointment, partial=True)
