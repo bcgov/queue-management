@@ -34,10 +34,6 @@ import { LatLng } from '@/models/geo'
     ...mapActions('geo', [
       'getCurrentLocation'
     ])
-    // ...mapState('geo', {
-    //   // eslint-disable-next-line
-    //   coords: state => state.currentCoordinates
-    // })
   }
 })
 export default class GeocoderInput extends Vue {
@@ -56,28 +52,24 @@ export default class GeocoderInput extends Vue {
   }
 
   async onAddressSelection (address) {
-    console.log('onAddressSelection', address, { coords: address.coords.latitude })
-    // const selectedAddress: LatLng = await address.coordinates
-    // console.log('geo/setCurrentLocation', { address, selectedAddress, model: this.model.coordinates })
-    const selectedAddress = { latitude: address.coords.latitude, longitude: address.coords.longitude }
-    console.log('geo/setCurrentLocation', { address, selectedAddress })
+    const selectedAddress = {
+      latitude: address.coords.latitude,
+      longitude: address.coords.longitude
+    }
     this.$store.commit('geo/setCurrentLocation', selectedAddress)
 
-    // PROBLEM - This forceUpdate does not cause parent to update UI
-    // If you cause a hotreload of a component it does update though
-    // and data is in store according to Vuex
-    this.$forceUpdate()
+    // Due to Vue rendering, we must call this event to trigger a UI update.
+    this.$emit('set-location-event', selectedAddress)
   }
 
   private async fetchLocation () {
     // TODO - Potentially enable spinner / loading icon at this point
-    console.log('fetching location')
     const geo = await this.getCurrentLocation()
-    console.log('fetchLocation', { geo })
-    // this.$forceUpdate()
+    this.$emit('set-location-event', {
+      latitude: geo.latitude,
+      longitude: geo.longitude
+    })
   }
-
-  // TODO - On selection, update geostore's currentCoordinates lat/lng
 }
 </script>
 

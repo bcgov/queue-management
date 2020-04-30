@@ -13,7 +13,7 @@
           dense
           @click:append="fetchLocation"
         ></v-text-field> -->
-        <geocoder-input></geocoder-input>
+        <geocoder-input v-on:set-location-event='onGeoSelect'></geocoder-input>
       </v-col>
       <v-col cols="6" sm="4">
         <v-select
@@ -209,29 +209,24 @@ export default class LocationsList extends Mixins(StepperMixin) {
     await this.getCategories()
   }
 
-  // private async fetchLocation () {
-  //   // TODO - Potentially enable spinner / loading icon at this point
-  //   // eslint-disable-next-line no-console
-  //   console.log('fetching location')
-  //   const geo = await this.getCurrentLocation()
-  //   // eslint-disable-next-line no-console
-  //   console.log('fetchLocation', { geo })
-  //   this.$forceUpdate()
-  // }
+  private async onGeoSelect (input) {
+    // eslint-disable-next-line no-console
+    console.log('onGeoSelect', input)
+    this.$forceUpdate()
+  }
 
   private getDistance (latitude, longitude) {
-    // eslint-disable-next-line no-console
-    console.log('currentCoordinates', this.$store.state.geo.currentCoordinates)
     if (!this.hasCoordinates()) {
       return null
     }
-
-    // return GeocoderService.distance(this.$store.state.geo.currentCoordinates, destination)
     const destination = { latitude, longitude }
     const dist = GeocoderService.distance(this.coords(), destination)
-    // eslint-disable-next-line no-console
-    // console.log('getDistance', { dist, destination, current: this.$store.state.geo.currentCoordinates })
-    return dist.toFixed(0) + 'km'
+
+    if (dist < 1) {
+      return '>1km'
+    } else {
+      return dist.toFixed(0) + 'km'
+    }
   }
 
   private hasCoordinates (): boolean {
