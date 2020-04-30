@@ -8,9 +8,10 @@
       <p class="step-desc">Please select the service you'd like to receive</p>
       <v-row justify="center">
         <v-col cols="12" sm="6">
-          <v-select
+          <v-combobox
             :items="serviceList"
             :item-disabled="checkDisabled"
+            :item-text="'external_service_name'"
             label="Select Service"
             outlined
             color="primary"
@@ -28,7 +29,7 @@
                 <!-- <div class="service-message">{{ data.item.service_desc }}</div> -->
               </div>
             </template>
-          </v-select>
+          </v-combobox>
         </v-col>
       </v-row>
       <v-row justify="center">
@@ -38,6 +39,7 @@
             name="additional-options"
             label="Is there any additional info you'd like to add? (Optional)"
             v-model="additionalOptions"
+            @change="changeAdditionalOptions"
         ></v-textarea>
         </v-col>
       </v-row>
@@ -101,25 +103,40 @@ import StepperMixin from '@/mixins/StepperMixin.vue'
   computed: {
     ...mapState('office', [
       'currentOffice',
+      'currentService',
+      'additionalNotes',
       'serviceList'
     ])
   },
   methods: {
     ...mapMutations('office', [
-      'setCurrentService'
+      'setCurrentService',
+      'setAdditionalNotes'
     ])
   }
 })
 export default class ServiceSelection extends Mixins(StepperMixin) {
   private readonly serviceList!: Service[]
   private readonly currentOffice!: Office
+  private readonly currentService!: Service
+  private readonly additionalNotes!: string
   private readonly setCurrentService!: (service: Service) => void
+  private readonly setAdditionalNotes!: (notes: string) => void
   private selectedService: Service = null
   private additionalOptions = ''
   private otherBookingOptionModel = false
 
+  private mounted () {
+    this.selectedService = this.currentService || null
+    this.additionalOptions = this.additionalNotes || ''
+  }
+
   private serviceSelection (value) {
     this.setCurrentService(value)
+  }
+
+  private changeAdditionalOptions () {
+    this.setAdditionalNotes(this.additionalOptions)
   }
 
   private proceedBooking () {

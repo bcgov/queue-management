@@ -5,6 +5,7 @@ import AppointmentService from '@/services/appointment.services'
 import { Office } from '@/models/office'
 import OfficeService from '@/services/office.services'
 import { Service } from '@/models/service'
+import { ServiceAvailability } from '@/utils'
 import { store } from '@/store'
 
 @Module({
@@ -18,6 +19,7 @@ export default class OfficeModule extends VuexModule {
   serviceList: Service[] = []
   availableAppointmentSlots: Service[] = []
   categoryList: Service[] = [] // category and service shares similar data model
+  additionalNotes: string
   currentOffice: Office
   currentService: Service
   currentAppointmentSlot: AppointmentSlot
@@ -61,6 +63,11 @@ export default class OfficeModule extends VuexModule {
     this.currentAppointmentSlot = slots
   }
 
+  @Mutation
+  public setAdditionalNotes (notes: string) {
+    this.additionalNotes = notes
+  }
+
   /**
     Actions in this Module
   **/
@@ -83,7 +90,13 @@ export default class OfficeModule extends VuexModule {
   @Action({ commit: 'setServiceList', rawError: true })
   public async getServiceByOffice (officeId: number) {
     const response = await OfficeService.getServiceByOffice(officeId)
-    return response?.data?.services || []
+    let services = []
+    if (response?.data?.services?.length) {
+      services = response.data.services.filter(service => {
+        return service.online_availability !== ServiceAvailability.HIDE
+      })
+    }
+    return services
   }
 
   @Action({ commit: 'setAvailableAppointmentSlots', rawError: true })
@@ -120,7 +133,7 @@ export default class OfficeModule extends VuexModule {
       start_time: this.context.state['currentAppointmentSlot'].start_time,
       end_time: this.context.state['currentAppointmentSlot'].end_time,
       service_id: this.context.state['currentService'].service_id,
-      comments: '',
+      comments: this.context.state['additionalNotes'],
       office_id: this.context.state['currentOffice'].office_id,
       user_id: userId
     }

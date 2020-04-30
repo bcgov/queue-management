@@ -74,7 +74,8 @@ import { utcToZonedTime } from 'date-fns-tz'
 @Component({
   computed: {
     ...mapState('office', [
-      'availableAppointmentSlots'
+      'availableAppointmentSlots',
+      'currentAppointmentSlot'
     ])
   },
   methods: {
@@ -85,6 +86,7 @@ import { utcToZonedTime } from 'date-fns-tz'
 })
 export default class DateSelection extends Mixins(StepperMixin) {
   private readonly availableAppointmentSlots!: any
+  private readonly currentAppointmentSlot!: AppointmentSlot
   private readonly setCurrentAppointmentSlot!: (slot: AppointmentSlot) => void
   // TODO: take timezone from office data from state
   private selectedDate = format(utcToZonedTime(new Date(), 'America/Vancouver'), 'yyyy-MM-dd')
@@ -92,6 +94,12 @@ export default class DateSelection extends Mixins(StepperMixin) {
 
   private get selectedDateFormatted () {
     return format(utcToZonedTime(this.selectedDate, 'America/Vancouver'), 'MMM dd, yyyy')
+  }
+
+  private mounted () {
+    const dateSelected = utcToZonedTime(this.currentAppointmentSlot?.start_time || new Date(), 'America/Vancouver')
+    this.selectedDate = format(dateSelected, 'yyyy-MM-dd')
+    this.dateClicked()
   }
 
   private dateClicked () {
