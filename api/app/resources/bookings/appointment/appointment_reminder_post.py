@@ -21,7 +21,7 @@ from app.utilities.email import send_reminder_email
 from qsystem import api, api_call_with_retry, oidc
 
 
-@api.route("/appointments/reminders/", methods=["POST"])
+@api.route("/appointment/reminders/", methods=["POST"])
 class AppointmentRemindersPost(Resource):
 
     @oidc.accept_token(require_token=True)
