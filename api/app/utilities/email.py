@@ -53,11 +53,10 @@ def async_email(subject, appt: Appointment, user: PublicUser, html_body):
     thread.start()
 
 
-def send_cancel_email(appt: Appointment, user):
+def send_cancel_email(appt: Appointment, user, office, timezone):
     """Send cancellation email"""
     template = ENV.get_template('email_templates/blackout_email.html')
-    office = appt.office
-    date = formatted_date(appt.start_time, office.timezone)
+    date = formatted_date(appt.start_time, timezone)
     subject = f'Cancelled – Your appointment on {date}'
     body = template.render(display_name=appt.citizen_name,
                            location=office.office_name,
