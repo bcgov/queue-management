@@ -52,8 +52,27 @@ class Appointment(Base):
         return query.all()
 
     @classmethod
+    def find_next_day_appointments(cls):
+        """Find next day appointments."""
+        from app.models.theq import Office, PublicUser, Citizen, Timezone
+
+        tomorrow = datetime.now() + timedelta(days=1)
+        query = db.session.query(Appointment, Office, Timezone, PublicUser). \
+            join(Citizen, Citizen.citizen_id == Appointment.citizen_id). \
+            join(Office, Office.office_id == Appointment.office_id). \
+            join(Timezone, Timezone.timezone_id == Office.timezone_id). \
+            outerjoin(PublicUser, PublicUser.user_id == Citizen.user_id). \
+            filter(func.date_trunc('day',
+                                   func.timezone(Timezone.timezone_name,Appointment.start_time)) ==
+                   func.date_trunc('day',  tomorrow))
+
+        return query.all()
+
+    @classmethod
     def get_appointment_conflicts(cls, office_id: int, start_time: str, end_time: str, appointment_id=None):
         """Find appointment availability for dates in a month"""
+        from app.models.theq import Office, PublicUser, Citizen, Timezone
+
         start_datetime = parse(start_time)
         end_datetime = parse(end_time)
         start_time_1 = start_datetime
@@ -62,7 +81,11 @@ class Appointment(Base):
         start_time_2 = start_datetime + timedelta(minutes=1)
         end_time_2 = end_datetime
 
-        query = db.session.query(Appointment).filter(or_(Appointment.start_time.between(start_time_1, end_time_1), Appointment.end_time.between( start_time_2, end_time_2)))
+        query = db.session.query(Appointment, Office, Timezone, PublicUser). \
+            join(Office, Office.office_id == Appointment.office_id). \
+            join(Timezone, Timezone.timezone_id == Office.timezone_id). \
+            outerjoin(PublicUser, PublicUser.user_id == Citizen.user_id). \
+            filter(or_(Appointment.start_time.between(start_time_1, end_time_1), Appointment.end_time.between( start_time_2, end_time_2)))
         query = query.filter(Appointment.office_id == office_id)
         if appointment_id:
             query = query.filter(Appointment.appointment_id != appointment_id)
