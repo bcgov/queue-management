@@ -2,6 +2,8 @@
 import Vuex, { Store } from 'vuex'
 import Vue from 'vue'
 
+import VuexPersistence from 'vuex-persist'
+
 // Mutations
 // eslint-disable-next-line sort-imports
 import { mutateName, mutateResource } from '@/store/mutations'
@@ -13,6 +15,10 @@ import { resourceModel, stateModel } from './state'
 import { setName, setResource } from './actions'
 
 Vue.use(Vuex)
+
+const vuexLocal = new VuexPersistence({
+  storage: window.localStorage
+})
 
 export const store: Store<any> = new Vuex.Store<any>({
   state: {
@@ -32,10 +38,12 @@ export const store: Store<any> = new Vuex.Store<any>({
     },
     updateHeader (state) {
       state.refreshKey++
-    }
+    },
+    RESTORE_MUTATION: vuexLocal.RESTORE_MUTATION
   },
   actions: {
     setName,
     setResource
-  }
+  },
+  plugins: [vuexLocal.plugin]
 })
