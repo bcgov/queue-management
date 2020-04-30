@@ -1,7 +1,7 @@
 import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
 import { AppointmentRequestBody, AppointmentSlot } from '@/models/appointment'
+import CommonUtils, { Days } from '@/utils/common-util'
 import AppointmentService from '@/services/appointment.services'
-import CommonUtils from '@/utils/common-util'
 import { Office } from '@/models/office'
 import OfficeService from '@/services/office.services'
 import { Service } from '@/models/service'
@@ -73,14 +73,7 @@ export default class OfficeModule extends VuexModule {
       offices = response.data.offices
       offices.forEach(office => {
         if (office?.timeslots) {
-          office.timeslots = office.timeslots.map(timeslot => {
-            return {
-              ...timeslot,
-              day_str: CommonUtils.getDayOfWeek(timeslot.day_of_week),
-              end_time_str: CommonUtils.get12HTimeString(timeslot.end_time),
-              start_time_str: CommonUtils.get12HTimeString(timeslot.start_time)
-            }
-          })
+          office.timeslots = CommonUtils.getFormattedTimeslots(office.timeslots)
         }
       })
     }
