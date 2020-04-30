@@ -43,8 +43,6 @@ export default class GeocoderService {
   }
 
   public static async getCurrentLocation (): Promise<GeolocatorSuccess> {
-    // eslint-disable-next-line no-console
-    console.log('geocoder service, getCurrentLocation called')
     const options = {
       enableHighAccuracy: true,
       timeout: 5000,
