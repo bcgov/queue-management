@@ -13,16 +13,15 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import datetime
+from typing import Dict
 
 import pytz
-from flask import current_app
 from flask_restx import Resource
 from sqlalchemy import exc
-from typing import Dict
 
 from app.models.bookings import Appointment
 from app.models.theq import Office
-from app.utilities.date_util import add_delta_to_time
+from app.utilities.date_util import add_delta_to_time, day_indexes
 from qsystem import api, oidc
 
 
@@ -58,7 +57,7 @@ class OfficeSlots(Resource):
 
                 for timeslot in office.timeslots:
                     # Calculate the slots per day
-                    if timeslot.day_of_week == day_in_month.weekday() + 1:
+                    if day_in_month.isoweekday() in day_indexes(timeslot.day_of_week):
                         start_time = timeslot.start_time
                         end_time = add_delta_to_time(timeslot.start_time, minutes=appointment_duration)
                         # print(start_time, end_time)

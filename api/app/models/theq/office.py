@@ -71,6 +71,7 @@ class Office(Base):
     max_person_appointment_per_day = db.Column(db.Integer, default=1)
     civic_address = db.Column(db.String(200))
     telephone = db.Column(db.String(20))
+    disable_online_appointment = db.Column(db.Boolean, default=False)
 
     counters = db.relationship("Counter", secondary='office_counter')
     services = db.relationship("Service", secondary='office_service')

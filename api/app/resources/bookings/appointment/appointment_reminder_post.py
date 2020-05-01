@@ -28,13 +28,12 @@ class AppointmentRemindersPost(Resource):
     @api_call_with_retry
     def post(self):
         """Create appointment reminders."""
-        print('g.oidc_token_info-->', g.oidc_token_info)
         if not is_job():
             abort(403)
 
         appointments = Appointment.find_next_day_appointments()
+        print('sending {} reminders'.format(len(appointments)))
 
-        print(appointments)
         if appointments:
             for (appointment, office, timezone, user) in appointments:
                 send_reminder_email(appointment, user, office, timezone)
