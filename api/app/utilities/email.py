@@ -103,7 +103,7 @@ def is_valid_email(email: str):
 
 def formatted_date(dt: datetime, timezone):
     dt_local = dt.astimezone(pytz.timezone(timezone.timezone_name))
-    return dt_local.strftime('%Y-%m-%d at %I:%M %p')
+    return dt_local.strftime('%B %d, %Y at %I:%M %p')
 
 
 def get_duration(start_time: datetime, end_time: datetime):
