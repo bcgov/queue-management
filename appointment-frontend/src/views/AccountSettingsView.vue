@@ -59,6 +59,7 @@
                 <v-btn
                   color="primary"
                   large
+                  @click="updateProfile"
                 >
                   Update
                 </v-btn>
@@ -73,13 +74,31 @@
 
 <script lang="ts">
 // Libraries
+import { AccountModule, AuthModule } from '@/store/modules'
 import { Component, Vue } from 'vue-property-decorator'
+import { User, UserUpdateBody } from '@/models/user'
+import { mapActions, mapState } from 'vuex'
+import { getModule } from 'vuex-module-decorators'
 
 @Component({
   components: {
+  },
+  computed: {
+    ...mapState('auth', [
+      'currentUserProfile'
+    ])
+  },
+  methods: {
+    ...mapActions('account', [
+      'updateUserAccount'
+    ])
   }
 })
 export default class AccountSettingsView extends Vue {
+  private accountModule = getModule(AccountModule, this.$store)
+  private authModule = getModule(AuthModule, this.$store)
+  private readonly currentUserProfile!: User
+  private readonly updateUserAccount!: (userBody: UserUpdateBody) => Promise<any>
   private valid:boolean = false
   private name:string = 'Jon Snow'
   private email:string = ''
@@ -102,6 +121,26 @@ export default class AccountSettingsView extends Vue {
   private phoneNumberRules = [
     v => !!v || 'Phone number is required'
   ]
+
+  private async beforeMount () {
+    if (this.currentUserProfile) {
+      this.name = this.currentUserProfile.display_name
+      this.email = this.currentUserProfile.email
+      this.phoneNumber = this.currentUserProfile.telephone
+      this.enableReminder = this.currentUserProfile.send_reminders
+    }
+  }
+
+  private async updateProfile () {
+    const userUpdate: UserUpdateBody = {
+      email: this.email,
+      telephone: this.phoneNumber,
+      send_reminders: this.enableReminder
+    }
+    const response = await this.updateUserAccount(userUpdate)
+    // eslint-disable-next-line no-console
+    console.log(response)
+  }
 
   private goToAppointments () {
     this.$router.push('/booked-appointments')
