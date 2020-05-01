@@ -106,7 +106,11 @@ class AppointmentPost(Resource):
             db.session.add(appointment)
             db.session.commit()
             if not is_public_user_appointment:
-                SnowPlow.snowplow_appointment(citizen, csr, appointment, 'appointment_create')
+                #TODO
+                try:
+                    SnowPlow.snowplow_appointment(citizen, csr, appointment, 'appointment_create')
+                except Exception as e:
+                    print(e)
 
             result = self.appointment_schema.dump(appointment)
 

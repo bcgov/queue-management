@@ -14,7 +14,7 @@ objects:
     spec:
       successfulJobsHistoryLimit: 5
       failedJobsHistoryLimit: 5
-      schedule: '*/5 * * * *'
+      schedule: '0 16 * * *'
       suspend: false
       jobTemplate:
         spec:
