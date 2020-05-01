@@ -7,7 +7,7 @@ flask-restx
 SQLAlchemy==1.3.12
 snowplow-tracker
 Flask
-Flask-Admin==1.5.5
+Flask-Admin
 Flask-Cache
 Flask-Login
 Flask-Migrate
@@ -19,12 +19,12 @@ certifi
 eventlet
 filelock
 flask-caching
-Flask-Compress==1.4.0
+flask-compress
 flask-cors
-flask_marshmallow==0.11.0
+flask-marshmallow==0.11.0
 flask-socketio
 gunicorn
-marshmallow-sqlalchemy==0.22.3
+marshmallow-sqlalchemy
 psycopg2-binary
 pysnow
 pytest
@@ -33,5 +33,4 @@ python-jose
 SQLAlchemy-Utc
 # We need to find alternative to toastedmarshmellow. pydantic
 toastedmarshmallow==0.2.6
-Flask-Mail
-Jinja2
+
