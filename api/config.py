@@ -208,7 +208,7 @@ class DevelopmentConfig(BaseConfig):
 
     # Only allowed 1 origin, but need to work for 
     # queue-frontend and appointment-frontend
-    CORS_ALLOWED_ORIGINS = ["*"]
+    CORS_ALLOWED_ORIGINS = ["https://dev-theq.pathfinder.gov.bc.ca/"]
 
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
