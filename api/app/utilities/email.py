@@ -18,14 +18,14 @@ from threading import Thread
 
 import pytz
 from flask import copy_current_request_context, current_app
-from flask_mail import Mail
-from flask_mail import Message
+# from flask_mail import Mail
+# from flask_mail import Message
 from jinja2 import Environment, FileSystemLoader
 
 from app.models.bookings import Appointment
 from app.models.theq import PublicUser
 
-mail = Mail()  # pylint: disable=invalid-name
+# mail = Mail()  # pylint: disable=invalid-name
 ENV = Environment(loader=FileSystemLoader('.'), autoescape=True)
 
 
@@ -45,9 +45,9 @@ def async_email(subject, appt: Appointment, user: PublicUser, html_body):
         print('recipients : ', email)
         print('html_body : ', html_body)
 
-        msg = Message(subject, sender=sender, recipients=email.split())
-        msg.html = html_body
-        mail.send(msg)
+        # msg = Message(subject, sender=sender, recipients=email.split())
+        # msg.html = html_body
+        # mail.send(msg)
 
     thread = Thread(target=run_job)
     thread.start()
