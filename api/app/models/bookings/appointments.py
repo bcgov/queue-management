@@ -18,6 +18,7 @@ from sqlalchemy_utc import UtcDateTime
 from sqlalchemy import func, or_
 from datetime import datetime, timedelta
 from dateutil.parser import parse
+from dateutil import tz
 
 
 class Appointment(Base):
@@ -57,6 +58,7 @@ class Appointment(Base):
         from app.models.theq import Office, PublicUser, Citizen, Timezone
 
         tomorrow = datetime.now() + timedelta(days=1)
+        tomorrow = tomorrow.astimezone(tz.tzlocal())
         query = db.session.query(Appointment, Office, Timezone, PublicUser). \
             join(Citizen, Citizen.citizen_id == Appointment.citizen_id). \
             join(Office, Office.office_id == Appointment.office_id). \

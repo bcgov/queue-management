@@ -12,29 +12,31 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from qsystem import db
+from sqlalchemy import String
+from sqlalchemy.dialects import postgresql
+
 from app.models.theq import Base
+from qsystem import db
 
 
 class TimeSlot(Base):
-
     time_slot_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     start_time = db.Column(db.Time, nullable=False)
     end_time = db.Column(db.Time, nullable=False)
-    day_of_week = db.Column(db.Integer)
+    day_of_week = db.Column(postgresql.ARRAY(String), nullable=False)
     no_of_slots = db.Column(db.Integer, nullable=False)
 
     offices = db.relationship('Office', secondary='office_timeslot')
 
     format_string = 'time_slot_%s'
 
-
     def __repr__(self):
-        return '<Timselot :(start_time={self.start_time!r}, end_time={self.end_time!r}, day_of_week={self.day_of_week!r})>'.format(self=self)
+        return '<Timselot :(start_time={self.start_time!r}, end_time={self.end_time!r}, day_of_week={self.day_of_week!r})>'.format(
+            self=self)
 
     def __init__(self, **kwargs):
         super(TimeSlot, self).__init__(**kwargs)
 
     @classmethod
     def find_by_office_id(cls, office_id: int):
-        return cls.query.filter(office_id==office_id).all()
+        return cls.query.filter(office_id == office_id).all()

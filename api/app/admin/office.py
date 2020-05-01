@@ -43,10 +43,10 @@ class OfficeConfig(Base):
     can_delete = False
     form_create_rules = ('office_name', 'office_number', 'sb', 'services', 'deleted', 'exams_enabled_ind',
                          'appointments_enabled_ind', 'timezone', 'latitude', 'longitude', 'office_appointment_message',
-                         'appointments_days_limit', 'appointment_duration', 'max_person_appointment_per_day', 'civic_address')
+                         'appointments_days_limit', 'appointment_duration', 'max_person_appointment_per_day', 'civic_address', 'telephone', 'disable_online_appointment')
     form_edit_rules = ('office_name', 'office_number', 'sb', 'services', 'deleted', 'exams_enabled_ind',
                        'appointments_enabled_ind', 'timezone', 'latitude', 'longitude', 'office_appointment_message',
-                         'appointments_days_limit', 'appointment_duration', 'max_person_appointment_per_day', 'civic_address')
+                         'appointments_days_limit', 'appointment_duration', 'max_person_appointment_per_day', 'civic_address', 'telephone', 'disable_online_appointment')
     form_choices = {
         'exams_enabled_ind': [
             ("0", 'No - Exams are not enabled for this office'), \
@@ -103,6 +103,8 @@ class OfficeConfig(Base):
                          'appointment_duration',
                          'max_person_appointment_per_day',
                          'civic_address',
+                         'telephone',
+                         'disable_online_appointment',
                          'timeslots'
                          )
 
@@ -124,6 +126,8 @@ class OfficeConfig(Base):
                        'appointment_duration',
                        'max_person_appointment_per_day',
                        'civic_address',
+                       'telephone',
+                       'disable_online_appointment',
                        'timeslots'
                        )
 
@@ -178,6 +182,7 @@ class OfficeConfig(Base):
             message = ", ".join(invalid)
             flash(gettext("Services saved minus services not offered at this office: " + message), 'warning')
 
+
 class OfficeConfigGA(OfficeConfig):
 
     #  Change what GA sees on the Office List view.
@@ -220,6 +225,8 @@ class OfficeConfigGA(OfficeConfig):
         'appointment_duration',
         'max_person_appointment_per_day',
         'civic_address',
+        'telephone',
+        'disable_online_appointment',
         'timeslots'
     )
 
