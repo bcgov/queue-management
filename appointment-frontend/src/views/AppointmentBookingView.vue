@@ -12,7 +12,7 @@
           editable
           edit-icon="mdi-check"
         >
-          <div class="step-label">
+          <div class="step-label" v-bind:class="{'font-weight-bold': (bookingStep.step === stepCounter)}">
             {{bookingStep.label}}
           </div>
         </v-stepper-step>
@@ -57,7 +57,9 @@
 <script lang="ts">
 import { AppointmentSummary, DateSelection, LocationsList, LoginToConfirm, ServiceSelection } from '@/components/appointment'
 import { Component, Vue } from 'vue-property-decorator'
+import { AuthModule } from '@/store/modules'
 import StepperMixin from '@/mixins/StepperMixin.vue'
+import { mapGetters } from 'vuex'
 
 @Component({
   components: {
@@ -66,9 +68,13 @@ import StepperMixin from '@/mixins/StepperMixin.vue'
     ServiceSelection,
     LoginToConfirm,
     LocationsList
+  },
+  computed: {
+    ...mapGetters('auth', ['isAuthenticated'])
   }
 })
 export default class AppointmentBookingView extends Vue {
+  private readonly isAuthenticated!: boolean
   private stepCounter = 1
   private updateViewCounter = 0
   private bookingSteppers = [
@@ -98,7 +104,9 @@ export default class AppointmentBookingView extends Vue {
       label: 'Login to Confirm Appointment',
       code: 'login',
       component: LoginToConfirm,
-      componentProps: {}
+      componentProps: {
+        isStepperView: true
+      }
     },
     {
       step: 5,
@@ -125,8 +133,17 @@ export default class AppointmentBookingView extends Vue {
   }
 
   private async updated () {
+    this.$store.commit('stepperCurrentStep', this.stepCounter)
+  }
+
+  private async mounted () {
     // eslint-disable-next-line no-console
-    console.log('stepCounter', this.stepCounter)
+    console.log('g', this.isAuthenticated)
+    if (this.isAuthenticated) {
+      this.bookingSteppers = this.bookingSteppers.filter(step => !(step.code === 'login'))
+      this.bookingSteppers[this.bookingSteppers.length - 1].step = this.bookingSteppers.length
+    }
+    this.stepCounter = this.$store.state.stepperCurrentStep
   }
 
   private getPropsForStep (step): Record<string, any> {

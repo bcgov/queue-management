@@ -5,9 +5,7 @@ import { store } from '@/store'
 
 @Module({
   name: 'account',
-  namespaced: true,
-  store,
-  dynamic: true
+  namespaced: true
 })
 export default class AccountModule extends VuexModule {
   currentUser: KCUserProfile | null = null

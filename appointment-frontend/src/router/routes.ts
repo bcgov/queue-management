@@ -2,9 +2,8 @@ import AccountSettingsView from '@/views/AccountSettingsView.vue'
 import AppointmentBookingView from '@/views/AppointmentBookingView.vue'
 import BookedAppointmentsView from '@/views/BookedAppointmentsView.vue'
 import Home from '@/views/Home.vue'
-import MixinExample from '@/views/MixinExample.vue'
+import LoginSelectorView from '@/views/LoginSelectorView.vue'
 import SigninView from '@/views/SigninView.vue'
-import StateExample from '@/views/StateExample.vue'
 
 export const routes = [
   {
@@ -36,25 +35,16 @@ export const routes = [
     }
   },
   {
-    path: '/MixinExample',
-    name: 'mixinExample',
-    component: MixinExample,
-    meta: {
-      requiresAuth: false
-    }
-  },
-  {
-    path: '/StateExample',
-    name: 'stateExample',
-    component: StateExample,
-    meta: {
-      requiresAuth: false
-    }
-  },
-  {
     path: '/signin/:idpHint',
     name: 'signin',
     component: SigninView,
+    props: true,
+    meta: { requiresAuth: false }
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: LoginSelectorView,
     props: true,
     meta: { requiresAuth: false }
   },

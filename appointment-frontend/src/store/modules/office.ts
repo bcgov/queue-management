@@ -10,9 +10,7 @@ import { store } from '@/store'
 
 @Module({
   name: 'office',
-  namespaced: true,
-  store,
-  dynamic: true
+  namespaced: true
 })
 export default class OfficeModule extends VuexModule {
   officeList: Office[] = []

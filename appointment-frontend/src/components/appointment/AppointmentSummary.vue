@@ -143,8 +143,6 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   }
 
   private get appointmentDisplayData () {
-    // eslint-disable-next-line no-console
-    console.log(this.currentAppointmentSlot)
     return {
       serviceForAppointment: this.currentService?.external_service_name,
       locationName: this.currentOffice?.office_name || '',

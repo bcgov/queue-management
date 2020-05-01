@@ -63,10 +63,10 @@ export default class AppHeader extends Vue {
   }
 
   login () {
-    this.$router.push('/signin/bcsc')
+    this.$router.push('/login')
   }
   register () {
-    this.$router.push('/signin/bcsc')
+    this.$router.push('/login')
   }
 }
 </script>

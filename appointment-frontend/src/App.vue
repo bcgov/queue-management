@@ -22,6 +22,7 @@ import KeyCloakService from '@/services/keycloak.services'
 import { SessionStorageKeys } from '@/utils'
 import TokenService from '@/services/token.services'
 import { User } from './models/user'
+import { getModule } from 'vuex-module-decorators'
 
 @Component({
   components: {
@@ -39,6 +40,8 @@ import { User } from './models/user'
   }
 })
 export default class App extends Vue {
+  private authModule = getModule(AuthModule, this.$store)
+  private accountModule = getModule(AccountModule, this.$store)
   private readonly loadUserInfo!: () => KCUserProfile
   private readonly syncWithSessionStorage!: () => void
   private readonly isAuthenticated!: boolean

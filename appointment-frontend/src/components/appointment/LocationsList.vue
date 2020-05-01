@@ -143,6 +143,7 @@ import { OfficeModule } from '@/store/modules'
 import { Service } from '@/models/service'
 import ServiceListPopup from './ServiceListPopup.vue'
 import StepperMixin from '@/mixins/StepperMixin.vue'
+import { getModule } from 'vuex-module-decorators'
 
 @Component({
   components: {
@@ -161,6 +162,7 @@ import StepperMixin from '@/mixins/StepperMixin.vue'
   }
 })
 export default class LocationsList extends Mixins(StepperMixin) {
+  private officeModule = getModule(OfficeModule, this.$store)
   private mapConfigurations = ConfigHelper.getMapConfigurations()
   private readonly getOffices!: () => Promise<Office[]>
   private readonly getServiceByOffice!: (officeId: number) => Promise<Service[]>
@@ -177,8 +179,6 @@ export default class LocationsList extends Mixins(StepperMixin) {
 
   private async mounted () {
     this.locationListData = await this.getOffices()
-    // eslint-disable-next-line no-console
-    console.log(this.locationListData)
     await this.getCategories()
   }
 
@@ -188,8 +188,6 @@ export default class LocationsList extends Mixins(StepperMixin) {
   }
 
   private async showLocationServices (location) {
-    // eslint-disable-next-line no-console
-    console.log(location)
     this.serviceList = await this.getServiceByOffice(location.office_id)
     this.selectedLocationName = location.office_name
     this.locationServicesModal = true
@@ -203,11 +201,7 @@ export default class LocationsList extends Mixins(StepperMixin) {
   }
 
   private async selectLocation (location) {
-    // eslint-disable-next-line no-console
-    console.log(location)
     this.setCurrentOffice(location)
-    await this.getServiceByOffice(location.office_id)
-    await this.getAvailableAppointmentSlots(location.office_id)
     this.stepNext()
   }
 }

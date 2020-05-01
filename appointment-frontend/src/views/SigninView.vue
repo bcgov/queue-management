@@ -54,10 +54,9 @@ export default class SigninView extends Vue {
         if (this.isAuthenticated) {
           this.$root.$emit('signin-complete', () => {
             // perform redirection here
+            this.$router.push('/appointment')
           })
         }
-
-        this.$router.push('/appointment')
       }
     })
       .error(() => {

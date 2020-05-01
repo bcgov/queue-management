@@ -6,9 +6,7 @@ import { store } from '@/store'
 
 @Module({
   name: 'appointment',
-  namespaced: true,
-  store,
-  dynamic: true
+  namespaced: true
 })
 export default class AppointmentModule extends VuexModule {
   appointmentList: Appointment[] = []

@@ -46,13 +46,13 @@
       <template v-if="selectedService">
         <p class="text-center mb-6">Do you want to book an appointment with <strong>{{currentOffice.office_name}}</strong> for <strong>{{selectedService.external_service_name}}</strong> service?</p>
         <div class="d-flex justify-center mb-6">
-          <v-btn
+          <!-- <v-btn
             large
             outlined
             color="primary"
             class="mr-3"
             @click="otherBookingOptionModel = true"
-          >No, Book With Another Option</v-btn>
+          >No, Book With Another Option</v-btn> -->
           <v-btn
             large
             @click="proceedBooking"
@@ -93,7 +93,7 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
-import { mapMutations, mapState } from 'vuex'
+import { mapActions, mapMutations, mapState } from 'vuex'
 import { Office } from '@/models/office'
 import { Service } from '@/models/service'
 import { ServiceAvailability } from '@/utils/constants'
@@ -112,6 +112,9 @@ import StepperMixin from '@/mixins/StepperMixin.vue'
     ...mapMutations('office', [
       'setCurrentService',
       'setAdditionalNotes'
+    ]),
+    ...mapActions('office', [
+      'getServiceByOffice'
     ])
   }
 })
@@ -122,11 +125,15 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
   private readonly additionalNotes!: string
   private readonly setCurrentService!: (service: Service) => void
   private readonly setAdditionalNotes!: (notes: string) => void
+  private readonly getServiceByOffice!: (officeId: number) => Promise<Service[]>
   private selectedService: Service = null
   private additionalOptions = ''
   private otherBookingOptionModel = false
 
-  private mounted () {
+  private async mounted () {
+    if (this.currentOffice?.office_id) {
+      await this.getServiceByOffice(this.currentOffice.office_id)
+    }
     this.selectedService = this.currentService || null
     this.additionalOptions = this.additionalNotes || ''
   }
