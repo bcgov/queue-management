@@ -1,0 +1,129 @@
+@import "theme.scss";
+
+@font-face{
+  font-family: 'BCSans';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/BCSans/BCSans-Regular.woff2') format('woff2'), /* Optimized for very modern browsers */
+       url('../fonts/BCSans/BCSans-Regular.woff') format('woff'), local('BCSans'); /* Modern Browsers */
+  font-display: swap;
+}
+@font-face{
+  font-family: 'BCSans';
+  font-style: italic;
+  src: url('../fonts/BCSans/BCSans-Italic.woff2') format('woff2'), /* Optimized for very modern browsers */
+       url('../fonts/BCSans/BCSans-Italic.woff') format('woff'), local('BCSans'); /* Modern Browsers */
+  font-display: swap;
+}
+@font-face{
+  font-family: 'BCSans';
+  font-weight: 700; 
+  src: url('../fonts/BCSans/BCSans-Bold.woff2') format('woff2'), /* Optimized for very modern browsers */
+       url('../fonts/BCSans/BCSans-Bold.woff') format('woff'), local('BCSans'); /* Modern Browsers */
+  font-display: swap;
+}
+@font-face{
+  font-family: 'BCSans';
+  font-style: italic;
+  font-weight: 700; 
+  src: url('../fonts/BCSans/BCSans-BoldItalic.woff2') format('woff2'), /* Optimized for very modern browsers */
+       url('../fonts/BCSans/BCSans-BoldItalic.woff') format('woff'), local('BCSans'); /* Modern Browsers */
+  font-display: swap;
+}
+
+html,
+body {
+  min-height: 100vh;
+  font-family: 'BCSans', Verdana, Arial, sans-serif; 
+}
+
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 1224px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+body {
+  font-size: 1rem;
+}
+
+h1, h2, h3, h4 {
+  color: $gray9;
+}
+
+h1, h2, h3 {
+  letter-spacing: -0.04rem;
+  font-weight: 700;
+}
+
+h1 {
+  line-height: 1.25;
+  font-size: 2rem;
+}
+
+h2 {
+  font-size: 1.75rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+}
+
+p {
+  font-weight: 400;
+}
+
+strong {
+  letter-spacing: -0.01rem;
+}
+
+.v-application {
+  font-family: 'BCSans', Verdana, Arial, sans-serif;  // BC Government Font
+
+  .title,
+  .caption {
+    font-family: 'BCSans', Verdana, Arial, sans-serif !important;  // BC Government Font
+  }
+
+  .caption {
+    letter-spacing: 0 !important;
+  }
+}
+
+.theme--light.v-application {
+  color: $gray7;
+  background-color: $gray1;
+}
+
+// Fieldsets
+fieldset {
+  border: none;
+}
+
+legend {
+  display: block;
+  color: $gray9;
+  font-weight: 700;
+}
+
+// Helpers
+.nobr {
+  white-space: nowrap; // Utility class to prevent orphaned text
+}
+
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 2;
+  background: $gray2;
+}

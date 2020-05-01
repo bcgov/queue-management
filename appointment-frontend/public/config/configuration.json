@@ -1,0 +1,4 @@
+{
+  "KEYCLOAK_CONFIG_URL": "./public/config/kc/keycloak.json",
+  "VUE_APP_ROOT_API": "http://localhost:5000/api/v1"
+}

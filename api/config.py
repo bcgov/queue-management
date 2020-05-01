@@ -206,6 +206,10 @@ class DevelopmentConfig(BaseConfig):
     TESTING = False
     ENV = 'dev'
 
+    # Only allowed 1 origin, but need to work for 
+    # queue-frontend and appointment-frontend
+    CORS_ALLOWED_ORIGINS = ["*"]
+
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
 

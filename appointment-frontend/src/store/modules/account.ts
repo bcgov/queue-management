@@ -1,0 +1,38 @@
+import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
+import { User, UserUpdateBody } from '@/models/user'
+import { KCUserProfile } from '@/models/KCUserProfile'
+import KeyCloakService from '@/services/keycloak.services'
+import UserService from '@/services/user.services'
+import { store } from '@/store'
+
+@Module({
+  name: 'account',
+  namespaced: true
+})
+export default class AccountModule extends VuexModule {
+  currentUser: KCUserProfile | null = null
+
+  @Mutation
+  public setCurrentUser (currentUser: KCUserProfile) {
+    this.currentUser = currentUser
+  }
+
+  get username (): string {
+    return `${this.currentUser?.firstName || '-'} ${this.currentUser?.lastName || ''}`
+  }
+
+  @Action({ rawError: true, commit: 'setCurrentUser' })
+  public loadUserInfo () {
+    // Load User Info
+    return KeyCloakService.getUserInfo()
+  }
+
+  @Action({ rawError: true })
+  public async updateUserAccount (userUpdateBody: UserUpdateBody) {
+    const userId = this.context.rootState.auth.currentUserProfile?.user_id || null
+    const response = await UserService.updateUser(userId, userUpdateBody)
+    const returnData = response?.data?.length ? response.data[0] : {}
+    this.context.commit('auth/setUserProfile', returnData, { root: true })
+    return returnData
+  }
+}

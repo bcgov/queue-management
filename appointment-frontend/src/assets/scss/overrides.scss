@@ -1,0 +1,139 @@
+// Vuetify Overrides
+@import "theme.scss";
+
+// Buttons
+.v-btn {
+  letter-spacing: 0;
+  text-transform: none;
+  font-weight: 600;
+
+  .v-icon:first-child {
+    margin-right: 0.25rem;
+  }
+
+  .v-icon:only-child {
+    margin: 0;
+  }
+}
+
+// Overflow Button 
+.v-overflow-btn .v-input__control:before {
+  display: none;
+}
+
+.v-overflow-btn .v-select__slot {
+  height: auto;
+  border: none;
+}
+
+.v-overflow-btn .v-input__slot {
+  border: none;
+}
+
+.v-overflow-btn .v-input__append-inner {
+  margin-top: 0 !important;
+}
+
+// Updating sizing 
+.v-btn.v-size--small {
+  font-size: 0.8125rem;
+}
+
+// v-dialog 
+.v-dialog > .v-card > .v-card__title {
+  padding: 1.5rem;
+  letter-spacing: -0.03rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.v-dialog--fullscreen > .v-sheet {
+  border-radius: 0;
+}
+
+// v-alert 
+.v-alert {
+  font-size: 1rem;
+}
+
+.v-alert__icon.v-icon {
+  font-size: 1.5rem;
+}
+
+// v-card
+// Add space between elements in case we use a close button
+.v-card__title {
+  justify-content: space-between;
+}
+
+// Increase the default font-size the default size of v-card__text
+.v-card__text {
+  line-height: 1.5;
+  font-size: 1rem;
+}
+
+.v-card__actions {
+  padding: 1.5rem;
+}
+
+.theme--light.v-card >.v-card__text {
+  color: rgba($gray9, 0.8);
+}
+
+// Form Inputs
+
+// Adjust font size of help messages
+// Do this to prevent unexpected sizing if using any transitions
+.v-text-field__details {
+  min-height: 1.25rem;
+}
+
+// Fix weird blue highlight in autocomplete boxes (Chrome)
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  transition: "color 9999s ease-out, background-color 9999s ease-out";
+  -webkit-transition: "color 9999s ease-out, background-color 9999s ease-out";
+  transition-delay: 9999s;
+  -webkit-transition-delay: 9999s;
+}
+
+// Tab Navigation
+.v-tab {
+  min-width: auto;
+  letter-spacing: 0;
+  text-transform: none;
+  font-weight: 700;
+
+  .v-badge__badge {
+    font-weight: 400;
+  }
+}
+
+// Tables
+.v-data-table th {
+  font-weight: 400;
+}
+
+// Aside Navigation
+.v-application--is-ltr .v-list-item__icon:first-child {
+  margin-right: 1rem;
+}
+
+.v-toolbar__title {
+  font-weight: 600;
+}
+
+.v-application {
+  .subtitle-2,
+  .subtitle-1,
+  .caption,
+  .overline,
+  .title,
+  .headline,
+  .body-1,
+  .body-2 {
+    font-family: 'BCSans', Verdana, Arial, sans-serif !important; 
+  }
+}
