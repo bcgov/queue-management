@@ -7,9 +7,7 @@ import { store } from '@/store'
 
 @Module({
   name: 'auth',
-  namespaced: true,
-  store,
-  dynamic: true
+  namespaced: true
 })
 export default class AuthModule extends VuexModule {
   token: string = ''

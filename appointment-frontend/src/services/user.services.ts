@@ -9,4 +9,8 @@ export default class UserService {
   public static async createUser (): Promise<AxiosResponse<User[]>> {
     return axios.post(`${ConfigHelper.getAppAPIUrl()}/users/`, {})
   }
+
+  public static async updateUser (userId: number, updateBody): Promise<AxiosResponse<User[]>> {
+    return axios.put(`${ConfigHelper.getAppAPIUrl()}/users/${userId}/`, updateBody)
+  }
 }

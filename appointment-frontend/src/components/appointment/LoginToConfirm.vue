@@ -70,11 +70,11 @@ import { mapState } from 'vuex'
 export default class LoginToConfirm extends Mixins(StepperMixin) {
   private idpHint = IdpHint
   private readonly currentUserProfile!: User
+  @Prop({ default: false }) isStepperView: boolean
 
   private login (idpHint) {
-    // eslint-disable-next-line no-console
-    console.log('currentUserProfile ', this.currentUserProfile)
-    this.stepNext()
+    this.$router.push(`/signin/${idpHint}`)
+    // this.stepNext()
   }
 }
 </script>
