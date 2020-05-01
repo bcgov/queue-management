@@ -12,7 +12,7 @@
           editable
           edit-icon="mdi-check"
         >
-          <div class="step-label">
+          <div class="step-label" v-bind:class="{'font-weight-bold': (bookingStep.step === stepCounter)}">
             {{bookingStep.label}}
           </div>
         </v-stepper-step>
@@ -36,16 +36,16 @@
           </v-card-title>
           <v-divider class="mx-4"></v-divider>
           <LocationsList
-            :stepNext="stepNext"
-            :stepBack="stepBack"
+            v-bind="getPropsForStep(bookingStep)"
+            :key="stepCounter"
           />
         </v-card>
         <component
           v-else
           :is="bookingStep.component"
-          :stepNext="stepNext"
-          :stepBack="stepBack"
+          v-bind="getPropsForStep(bookingStep)"
           keep-alive
+          :key="stepCounter"
           transition="fade"
           mode="out-in"
         />
@@ -57,7 +57,9 @@
 <script lang="ts">
 import { AppointmentSummary, DateSelection, LocationsList, LoginToConfirm, ServiceSelection } from '@/components/appointment'
 import { Component, Vue } from 'vue-property-decorator'
+import { AuthModule } from '@/store/modules'
 import StepperMixin from '@/mixins/StepperMixin.vue'
+import { mapGetters } from 'vuex'
 
 @Component({
   components: {
@@ -66,44 +68,57 @@ import StepperMixin from '@/mixins/StepperMixin.vue'
     ServiceSelection,
     LoginToConfirm,
     LocationsList
+  },
+  computed: {
+    ...mapGetters('auth', ['isAuthenticated'])
   }
 })
 export default class AppointmentBookingView extends Vue {
+  private readonly isAuthenticated!: boolean
   private stepCounter = 1
+  private updateViewCounter = 0
   private bookingSteppers = [
     {
       step: 1,
       label: 'Select Location',
       code: 'location',
-      component: LocationsList
+      component: LocationsList,
+      componentProps: {}
     },
     {
       step: 2,
       label: 'Select Service',
       code: 'service',
-      component: ServiceSelection
+      component: ServiceSelection,
+      componentProps: {}
     },
     {
       step: 3,
       label: 'Select a Date',
       code: 'date',
-      component: DateSelection
+      component: DateSelection,
+      componentProps: {}
     },
     {
       step: 4,
       label: 'Login to Confirm Appointment',
       code: 'login',
-      component: LoginToConfirm
+      component: LoginToConfirm,
+      componentProps: {
+        isStepperView: true
+      }
     },
     {
       step: 5,
       label: 'Appointment Summary',
       code: 'summary',
-      component: AppointmentSummary
+      component: AppointmentSummary,
+      componentProps: {}
     }
   ]
 
   private stepNext () {
+    this.updateViewCounter++
     if (this.stepCounter < this.bookingSteppers.length) {
       this.stepCounter++
     } else {
@@ -118,6 +133,21 @@ export default class AppointmentBookingView extends Vue {
   }
 
   private async updated () {
+    this.$store.commit('stepperCurrentStep', this.stepCounter)
+  }
+
+  private async mounted () {
+    // eslint-disable-next-line no-console
+    console.log('g', this.isAuthenticated)
+    if (this.isAuthenticated) {
+      this.bookingSteppers = this.bookingSteppers.filter(step => !(step.code === 'login'))
+      this.bookingSteppers[this.bookingSteppers.length - 1].step = this.bookingSteppers.length
+    }
+    this.stepCounter = this.$store.state.stepperCurrentStep
+  }
+
+  private getPropsForStep (step): Record<string, any> {
+    return { ...step.componentProps, stepNext: this.stepNext, stepBack: this.stepBack }
   }
 }
 </script>

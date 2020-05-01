@@ -3,16 +3,17 @@
     <p class="step-desc">To book an appointment, please find your nearest BC Service Location</p>
     <v-row justify="center">
       <v-col cols="6" sm="4">
-        <v-text-field
+        <!-- <v-text-field
           append-icon="mdi-map-marker-radius"
           type="text"
-          name="postal-code"
-          label="Postal Code"
+          name="address"
+          label="Address"
           outlined
           hide-details
           dense
           @click:append="fetchLocation"
-        ></v-text-field>
+        ></v-text-field> -->
+        <geocoder-input v-on:set-location-event='onGeoSelect'></geocoder-input>
       </v-col>
       <v-col cols="6" sm="4">
         <v-select
@@ -34,7 +35,10 @@
     </v-row>
     <v-row justify="center">
       <v-col cols="12">
-        <p class="text-center mb-0">Locations sorted by nearest to you</p>
+        <p class="text-center mb-0">Locations sorted by nearest to you
+          <br><br>
+          Coords: {{ this.coords() }}
+        </p>
       </v-col>
       <v-col
         cols="12"
@@ -63,6 +67,9 @@
                 </GmapMap>
                 <div class="text-center mt-2 body-2" v-if="location.civic_address">
                   {{location.civic_address}}
+                </div>
+                <div class="text-center mt-2 green--text" v-if='location.latitude && location.longitude && hasCoordinates'>
+                  {{ getDistance(location.latitude, location.longitude) }}
                 </div>
               </v-col>
               <v-col cols="6" align-self="stretch">
@@ -136,17 +143,21 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
-import { mapActions, mapMutations } from 'vuex'
+import { GeoModule, OfficeModule } from '@/store/modules'
+import { mapActions, mapMutations, mapState } from 'vuex'
 import ConfigHelper from '@/utils/config-helper'
+import GeocoderInput from './GeocoderInput.vue'
+import GeocoderService from '@/services/geocoder.services'
 import { Office } from '@/models/office'
-import { OfficeModule } from '@/store/modules'
 import { Service } from '@/models/service'
 import ServiceListPopup from './ServiceListPopup.vue'
 import StepperMixin from '@/mixins/StepperMixin.vue'
+import { getModule } from 'vuex-module-decorators'
 
 @Component({
   components: {
-    ServiceListPopup
+    ServiceListPopup,
+    GeocoderInput
   },
   methods: {
     ...mapMutations('office', [
@@ -157,16 +168,34 @@ import StepperMixin from '@/mixins/StepperMixin.vue'
       'getServiceByOffice',
       'getAvailableAppointmentSlots',
       'getCategories'
-    ])
+    ]),
+    // ...mapActions('geo', [
+    //   'getCurrentLocation'
+    // ]),
+    ...mapState('geo', {
+      // eslint-disable-next-line
+      coords: state => state.currentCoordinates
+    })
+  },
+  watch: {
+    coords: (a, b) => {
+      // eslint-disable-next-line no-console
+      console.log('WATCH WATCH, coords changed', { a, b })
+    }
   }
 })
 export default class LocationsList extends Mixins(StepperMixin) {
+  private officeModule = getModule(OfficeModule, this.$store)
   private mapConfigurations = ConfigHelper.getMapConfigurations()
   private readonly getOffices!: () => Promise<Office[]>
   private readonly getServiceByOffice!: (officeId: number) => Promise<Service[]>
   private readonly getAvailableAppointmentSlots!: (officeId: number) => Promise<any>
   private readonly getCategories!: () => Promise<any>
   private readonly setCurrentOffice!: (office: Office) => void
+  private readonly coords!: () => any;
+
+  // private readonly getCurrentLocation!: () => any;
+
   private selectedRadius = null
   private radiusList = [2, 4, 6, 10]
   private selectedLocationName: string = ''
@@ -177,19 +206,35 @@ export default class LocationsList extends Mixins(StepperMixin) {
 
   private async mounted () {
     this.locationListData = await this.getOffices()
-    // eslint-disable-next-line no-console
-    console.log(this.locationListData)
     await this.getCategories()
   }
 
-  private fetchLocation () {
+  private async onGeoSelect (input) {
     // eslint-disable-next-line no-console
-    console.log('fetchLocation')
+    console.log('onGeoSelect', input)
+    this.$forceUpdate()
+  }
+
+  private getDistance (latitude, longitude) {
+    if (!this.hasCoordinates()) {
+      return null
+    }
+    const destination = { latitude, longitude }
+    const dist = GeocoderService.distance(this.coords(), destination)
+
+    if (dist < 1) {
+      return '>1km'
+    } else {
+      return dist.toFixed(0) + 'km'
+    }
+  }
+
+  private hasCoordinates (): boolean {
+    // return !!this.$store.state.geo.currentCoordinates
+    return !!this.coords()
   }
 
   private async showLocationServices (location) {
-    // eslint-disable-next-line no-console
-    console.log(location)
     this.serviceList = await this.getServiceByOffice(location.office_id)
     this.selectedLocationName = location.office_name
     this.locationServicesModal = true
@@ -203,11 +248,7 @@ export default class LocationsList extends Mixins(StepperMixin) {
   }
 
   private async selectLocation (location) {
-    // eslint-disable-next-line no-console
-    console.log(location)
     this.setCurrentOffice(location)
-    await this.getServiceByOffice(location.office_id)
-    await this.getAvailableAppointmentSlots(location.office_id)
     this.stepNext()
   }
 }

@@ -8,17 +8,16 @@
       <p class="step-desc">Please select the service you'd like to receive</p>
       <v-row justify="center">
         <v-col cols="12" sm="6">
-          <v-select
+          <v-combobox
             :items="serviceList"
             :item-disabled="checkDisabled"
+            :item-text="'external_service_name'"
             label="Select Service"
             outlined
             color="primary"
             class="service-selection text-left"
             v-model="selectedService"
             name="service-select"
-            persistent-hint
-            :hint="(selectedService) ? selectedService.service_desc : ''"
             @change="serviceSelection"
           >
             <template v-slot:selection="data">
@@ -27,10 +26,10 @@
             <template v-slot:item="data">
               <div class="">
                 <div>{{ data.item.external_service_name }}</div>
-                <div class="service-message">{{ data.item.service_desc }}</div>
+                <!-- <div class="service-message">{{ data.item.service_desc }}</div> -->
               </div>
             </template>
-          </v-select>
+          </v-combobox>
         </v-col>
       </v-row>
       <v-row justify="center">
@@ -40,19 +39,20 @@
             name="additional-options"
             label="Is there any additional info you'd like to add? (Optional)"
             v-model="additionalOptions"
+            @change="changeAdditionalOptions"
         ></v-textarea>
         </v-col>
       </v-row>
       <template v-if="selectedService">
         <p class="text-center mb-6">Do you want to book an appointment with <strong>{{currentOffice.office_name}}</strong> for <strong>{{selectedService.external_service_name}}</strong> service?</p>
         <div class="d-flex justify-center mb-6">
-          <v-btn
+          <!-- <v-btn
             large
             outlined
             color="primary"
             class="mr-3"
             @click="otherBookingOptionModel = true"
-          >No, Book With Another Option</v-btn>
+          >No, Book With Another Option</v-btn> -->
           <v-btn
             large
             @click="proceedBooking"
@@ -93,7 +93,7 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
-import { mapMutations, mapState } from 'vuex'
+import { mapActions, mapMutations, mapState } from 'vuex'
 import { Office } from '@/models/office'
 import { Service } from '@/models/service'
 import { ServiceAvailability } from '@/utils/constants'
@@ -103,25 +103,47 @@ import StepperMixin from '@/mixins/StepperMixin.vue'
   computed: {
     ...mapState('office', [
       'currentOffice',
+      'currentService',
+      'additionalNotes',
       'serviceList'
     ])
   },
   methods: {
     ...mapMutations('office', [
-      'setCurrentService'
+      'setCurrentService',
+      'setAdditionalNotes'
+    ]),
+    ...mapActions('office', [
+      'getServiceByOffice'
     ])
   }
 })
 export default class ServiceSelection extends Mixins(StepperMixin) {
   private readonly serviceList!: Service[]
   private readonly currentOffice!: Office
+  private readonly currentService!: Service
+  private readonly additionalNotes!: string
   private readonly setCurrentService!: (service: Service) => void
+  private readonly setAdditionalNotes!: (notes: string) => void
+  private readonly getServiceByOffice!: (officeId: number) => Promise<Service[]>
   private selectedService: Service = null
   private additionalOptions = ''
   private otherBookingOptionModel = false
 
+  private async mounted () {
+    if (this.currentOffice?.office_id) {
+      await this.getServiceByOffice(this.currentOffice.office_id)
+    }
+    this.selectedService = this.currentService || null
+    this.additionalOptions = this.additionalNotes || ''
+  }
+
   private serviceSelection (value) {
     this.setCurrentService(value)
+  }
+
+  private changeAdditionalOptions () {
+    this.setAdditionalNotes(this.additionalOptions)
   }
 
   private proceedBooking () {

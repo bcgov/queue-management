@@ -63,9 +63,10 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
-import { mapMutations, mapState } from 'vuex'
+import { mapActions, mapMutations, mapState } from 'vuex'
 import { AppointmentSlot } from '@/models/appointment'
 import CommonUtils from '@/utils/common-util'
+import { Office } from '@/models/office'
 import { OfficeModule } from '@/store/modules'
 import StepperMixin from '@/mixins/StepperMixin.vue'
 import { format } from 'date-fns'
@@ -74,23 +75,41 @@ import { utcToZonedTime } from 'date-fns-tz'
 @Component({
   computed: {
     ...mapState('office', [
-      'availableAppointmentSlots'
+      'availableAppointmentSlots',
+      'currentAppointmentSlot',
+      'currentOffice'
     ])
   },
   methods: {
     ...mapMutations('office', [
       'setCurrentAppointmentSlot'
+    ]),
+    ...mapActions('office', [
+      'getAvailableAppointmentSlots'
     ])
   }
 })
 export default class DateSelection extends Mixins(StepperMixin) {
   private readonly availableAppointmentSlots!: any
+  private readonly currentOffice!: Office
+  private readonly currentAppointmentSlot!: AppointmentSlot
+  private readonly getAvailableAppointmentSlots!: (officeId: number) => Promise<any>
   private readonly setCurrentAppointmentSlot!: (slot: AppointmentSlot) => void
+  // TODO: take timezone from office data from state
   private selectedDate = format(utcToZonedTime(new Date(), 'America/Vancouver'), 'yyyy-MM-dd')
   private selectedDateTimeSlots = []
 
   private get selectedDateFormatted () {
     return format(utcToZonedTime(this.selectedDate, 'America/Vancouver'), 'MMM dd, yyyy')
+  }
+
+  private async mounted () {
+    if (this.currentOffice?.office_id) {
+      await this.getAvailableAppointmentSlots(this.currentOffice.office_id)
+    }
+    const dateSelected = utcToZonedTime(this.currentAppointmentSlot?.start_time || new Date(), 'America/Vancouver')
+    this.selectedDate = format(dateSelected, 'yyyy-MM-dd')
+    this.dateClicked()
   }
 
   private dateClicked () {

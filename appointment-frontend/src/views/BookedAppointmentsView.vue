@@ -99,13 +99,18 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import { mapActions, mapState } from 'vuex'
 import { Appointment } from '@/models/appointment'
 import { AppointmentModule } from '@/store/modules'
 import ConfigHelper from '@/utils/config-helper'
-import { mapActions } from 'vuex'
+import { User } from '@/models/user'
+import { getModule } from 'vuex-module-decorators'
 
 @Component({
-  components: {
+  computed: {
+    ...mapState('auth', [
+      'currentUserProfile'
+    ])
   },
   methods: {
     ...mapActions('appointment', [
@@ -114,8 +119,10 @@ import { mapActions } from 'vuex'
   }
 })
 export default class Home extends Vue {
+  private officeModule = getModule(AppointmentModule, this.$store)
+  private readonly currentUserProfile!: User
   private mapConfigurations = ConfigHelper.getMapConfigurations()
-  private showEmailAlert: boolean = true
+  private showEmailAlert: boolean = false
 
   private readonly getAppointmentList!: () => Promise<Appointment[]>
   private appointmentList: Appointment[] = []
@@ -149,6 +156,7 @@ export default class Home extends Vue {
 
   private async beforeMount () {
     this.appointmentList = await this.getAppointmentList()
+    this.showEmailAlert = !this.currentUserProfile?.email
   }
 
   private goToAccountSettings () {
