@@ -177,7 +177,7 @@ class BaseConfig(object):
     MAIL_USE_SSL = False
     MAIL_USERNAME = os.getenv('MAIL_USERNAME', None)
     MAIL_PASSWORD = os.getenv('MAIL_PASSWORD', None)
-    MAIL_FROM_ID = os.getenv('MAIL_FROM_ID', 'sbc@gov.bc.ca')
+    MAIL_FROM_ID = os.getenv('MAIL_FROM_ID', 'donotreply@gov.bc.ca')
 
     # Email variables
     EMAIL_APPOINTMENT_APP_URL = os.getenv('EMAIL_APPOINTMENT_APP_URL', None)
