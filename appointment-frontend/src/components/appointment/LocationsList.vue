@@ -37,7 +37,7 @@
       <v-col cols="12">
         <p class="text-center mb-0">Locations sorted by nearest to you
           <br><br>
-          Coords: {{ this.coords() }}
+          Coords: {{ this.currentCoordinates() }}
         </p>
       </v-col>
       <v-col
@@ -169,32 +169,22 @@ import { getModule } from 'vuex-module-decorators'
       'getAvailableAppointmentSlots',
       'getCategories'
     ]),
-    // ...mapActions('geo', [
-    //   'getCurrentLocation'
-    // ]),
-    ...mapState('geo', {
-      // eslint-disable-next-line
-      coords: state => state.currentCoordinates
-    })
-  },
-  watch: {
-    coords: (a, b) => {
-      // eslint-disable-next-line no-console
-      console.log('WATCH WATCH, coords changed', { a, b })
-    }
+    ...mapState('geo', [
+      'currentCoordinates'
+    ])
   }
 })
 export default class LocationsList extends Mixins(StepperMixin) {
   private officeModule = getModule(OfficeModule, this.$store)
+  private geoModule = getModule(GeoModule, this.$store)
   private mapConfigurations = ConfigHelper.getMapConfigurations()
   private readonly getOffices!: () => Promise<Office[]>
   private readonly getServiceByOffice!: (officeId: number) => Promise<Service[]>
   private readonly getAvailableAppointmentSlots!: (officeId: number) => Promise<any>
   private readonly getCategories!: () => Promise<any>
   private readonly setCurrentOffice!: (office: Office) => void
-  private readonly coords!: () => any;
-
-  // private readonly getCurrentLocation!: () => any;
+  // private readonly coords!: () => any;
+  private readonly currentCoordinates!: () => any;
 
   private selectedRadius = null
   private radiusList = [2, 4, 6, 10]
@@ -220,10 +210,10 @@ export default class LocationsList extends Mixins(StepperMixin) {
       return null
     }
     const destination = { latitude, longitude }
-    const dist = GeocoderService.distance(this.coords(), destination)
+    const dist = GeocoderService.distance(this.currentCoordinates(), destination)
 
     if (dist < 1) {
-      return '>1km'
+      return '<1km'
     } else {
       return dist.toFixed(0) + 'km'
     }
@@ -231,7 +221,7 @@ export default class LocationsList extends Mixins(StepperMixin) {
 
   private hasCoordinates (): boolean {
     // return !!this.$store.state.geo.currentCoordinates
-    return !!this.coords()
+    return !!this.currentCoordinates()
   }
 
   private async showLocationServices (location) {

@@ -1,13 +1,11 @@
 import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
-import { GeolocatorSuccess, LatLng } from '@/models/geo'
 import GeocoderService from '@/services/geocoder.services'
+import { LatLng } from '@/models/geo'
 import { store } from '@/store'
 
 @Module({
   name: 'geo',
-  namespaced: true,
-  store,
-  dynamic: true
+  namespaced: true
 })
 export default class GeoModule extends VuexModule {
   currentCoordinates: LatLng

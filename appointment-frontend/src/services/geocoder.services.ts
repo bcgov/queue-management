@@ -4,14 +4,19 @@ import { addAxiosInterceptors } from '@/utils/interceptors'
 
 const axios = addAxiosInterceptors(Axios.create())
 
+// export interface GeoAddressResult {
+//   /** String from the API that includes street, city, province, and country. */
+//   fullAddress: string;
+//   city: string;
+//   street: string;
+//   // Set to defaults in response
+//   country: string;
+//   province: string;
+// }
+
 export interface GeoAddressResult {
-  /** String from the API that includes street, city, province, and country. */
-  fullAddress: string;
-  city: string;
-  street: string;
-  // Set to defaults in response
-  country: string;
-  province: string;
+  name: string,
+  coords: LatLng
 }
 
 const BASE_URL = 'https://geocoder.api.gov.bc.ca'

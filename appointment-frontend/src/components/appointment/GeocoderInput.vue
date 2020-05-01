@@ -34,10 +34,12 @@
 <script lang="ts">
 /* eslint-disable no-console */
 import { Component, Mixins, Prop, Vue, Watch } from 'vue-property-decorator'
+import { GeolocatorSuccess, LatLng } from '@/models/geo'
 import { mapActions, mapState } from 'vuex'
+import { GeoModule } from '@/store/modules'
 import GeocoderService from '@/services/geocoder.services'
-import { LatLng } from '@/models/geo'
 import { debounce } from '@/utils/common-util'
+import { getModule } from 'vuex-module-decorators'
 
 @Component({
   methods: {
@@ -47,16 +49,18 @@ import { debounce } from '@/utils/common-util'
   }
 })
 export default class GeocoderInput extends Vue {
+  private geoModule = getModule(GeoModule, this.$store)
   private results = []
   private isLoading = false
   private model = null
   private search = null;
   private debouncedSearch: (value: string, oldValue: string) => void
+  private readonly getCurrentLocation!: () => Promise<GeolocatorSuccess>
 
   constructor () {
     super()
     // Only trigger search after user has stopped typing for 250ms
-    this.debouncedSearch = debounce(this.handleSearchUpdate, 250)
+    this.debouncedSearch = debounce(this.handleSearchUpdate, 250, undefined)
   }
 
   @Watch('search')
@@ -68,7 +72,7 @@ export default class GeocoderInput extends Vue {
   async handleSearchUpdate (value: string, oldValue: string) {
     const res = await GeocoderService.lookup(value)
     this.isLoading = false
-    this.results = res
+    this.results = (res as any)
   }
 
   async onAddressSelection (address) {
@@ -88,8 +92,8 @@ export default class GeocoderInput extends Vue {
     const geo = await this.getCurrentLocation()
     this.isLoading = false
     this.$emit('set-location-event', {
-      latitude: geo.latitude,
-      longitude: geo.longitude
+      latitude: (geo as any).latitude,
+      longitude: (geo as any).longitude
     })
   }
 }
