@@ -21,7 +21,7 @@ filelock
 flask-caching
 flask-compress
 flask-cors
-flask_marshmallow
+flask-marshmallow==0.11.0
 flask-socketio
 gunicorn
 marshmallow-sqlalchemy
