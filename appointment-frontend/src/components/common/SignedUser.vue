@@ -61,7 +61,7 @@ export default class SignedUser extends Vue {
         break
       case 'account': this.$router.push('/account-settings')
         break
-      case 'logout': // TODO Logout
+      case 'logout': this.$router.push('/signout')
         break
     }
   }

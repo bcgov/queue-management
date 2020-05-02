@@ -4,6 +4,7 @@ import BookedAppointmentsView from '@/views/BookedAppointmentsView.vue'
 import Home from '@/views/Home.vue'
 import LoginSelectorView from '@/views/LoginSelectorView.vue'
 import SigninView from '@/views/SigninView.vue'
+import SignoutView from '@/views/SignoutView.vue'
 
 export const routes = [
   {
@@ -40,6 +41,13 @@ export const routes = [
     component: SigninView,
     props: true,
     meta: { requiresAuth: false }
+  },
+  {
+    path: '/signout',
+    name: 'signout',
+    component: SignoutView,
+    props: true,
+    meta: { requiresAuth: true }
   },
   {
     path: '/login',
