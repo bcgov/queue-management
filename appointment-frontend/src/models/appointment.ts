@@ -1,3 +1,5 @@
+import { Office } from './office'
+import { Service } from './service'
 /* eslint-disable camelcase */
 
 export interface AppointmentSlot {
@@ -23,12 +25,15 @@ export interface Appointment {
   comments: string,
   contact_information: string,
   end_time: string,
-  office: number,
+  office: number | Office,
   office_id: number,
   recurring_uuid: string,
-  service: number,
+  service: number | Service,
   service_id: number,
-  start_time: string
+  start_time: string,
+  appointmentDate?: string,
+  appointmentStartTime?: string
+  appointmentEndTime?: string
 }
 
 export interface AppointmentResponse {

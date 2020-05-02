@@ -1,6 +1,9 @@
 /**
  * Place to put all the custom utility methods
  */
+import { format } from 'date-fns'
+import { utcToZonedTime } from 'date-fns-tz'
+
 export enum Days {
   Monday = 1, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday
 }
@@ -63,5 +66,13 @@ export default class CommonUtils {
       index++
     } while (index <= (Object.keys(Days).length / 2))
     return returnArray
+  }
+
+  static getFormattedFromDate (date, type) {
+    if (type === 'date') {
+      return format(utcToZonedTime(date || new Date(), 'America/Vancouver'), 'MMM dd, yyyy')
+    } else {
+      return format(utcToZonedTime(date || new Date(), 'America/Vancouver'), 'hh:mmaaaa')
+    }
   }
 }
