@@ -15,7 +15,6 @@ import { store } from '@/store'
 export default class OfficeModule extends VuexModule {
   officeList: Office[] = []
   serviceList: Service[] = []
-  allServiceList: Service[] = []
   availableAppointmentSlots = []
   categoryList: Service[] = [] // category and service shares similar data model
   additionalNotes: string
