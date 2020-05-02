@@ -21,6 +21,8 @@ from app.models.theq import SRState
 from datetime import datetime
 from app.utilities.snowplow import SnowPlow
 import os
+from app.utilities.auth_util import Role, has_any_role
+
 
 @api.route("/citizens/<int:id>/citizen_left/", methods=['POST'])
 class CitizenLeft(Resource):
@@ -30,6 +32,7 @@ class CitizenLeft(Resource):
     clear_comments_flag = (os.getenv("THEQ_CLEAR_COMMENTS_FLAG", "True")).upper() == "TRUE"
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value])
     @api_call_with_retry
     def post(self, id):
 

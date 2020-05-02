@@ -21,6 +21,7 @@ from app.models.theq import CSR, Period, PeriodState, ServiceReq, SRState
 from app.schemas.theq import CitizenSchema, ServiceReqSchema
 from app.models.theq.citizen import Citizen
 from app.utilities.snowplow import SnowPlow
+from app.utilities.auth_util import Role, has_any_role
 
 
 @api.route("/service_requests/<int:id>/", methods=["PUT"])
@@ -31,6 +32,7 @@ class ServiceRequestsDetail(Resource):
     service_request_schema = ServiceReqSchema()
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value])
     @api_call_with_retry
     def put(self, id):
         json_data = request.get_json()
@@ -70,6 +72,7 @@ class ServiceRequestActivate(Resource):
     service_request_schema = ServiceReqSchema()
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value])
     @api_call_with_retry
     def post(self, id):
         csr = CSR.find_by_username(g.oidc_token_info['username'])

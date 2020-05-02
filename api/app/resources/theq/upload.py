@@ -19,12 +19,14 @@ from flask import request
 import os
 from os.path import isfile, join
 from shutil import copy2
+from app.utilities.auth_util import Role, has_any_role
 
 
 @api.route("/upload/", methods=["POST"])
 class Categories(Resource):
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value])
     def post(self):
 
         #  Get the path name where to put the file, form where manifest, new file name are

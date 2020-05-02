@@ -18,6 +18,7 @@ from marshmallow import ValidationError
 from qsystem import api, api_call_with_retry, db, oidc, cache, socketio
 from app.models.theq import CSR
 from app.schemas.theq import CSRSchema
+from app.utilities.auth_util import Role, has_any_role
 
 
 @api.route("/csrs/<int:id>/", methods=["PUT"])
@@ -26,6 +27,7 @@ class Services(Resource):
     csr_schema = CSRSchema()
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value])
     @api_call_with_retry
     def put(self, id):
         json_data = request.get_json()

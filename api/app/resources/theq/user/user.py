@@ -19,6 +19,7 @@ from sqlalchemy import exc
 from app.models.theq import PublicUser as PublicUserModel
 from app.schemas.theq import UserSchema
 from qsystem import api, db, oidc
+from app.utilities.auth_util import Role, has_any_role
 
 
 @api.route("/users/", methods=['POST'])
@@ -26,12 +27,12 @@ class PublicUsers(Resource):
     user_schema = UserSchema(many=False)
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.online_appointment_user.value])
     def post(self):
         try:
             user_info = g.oidc_token_info
             print('user_info', user_info)
             user: PublicUserModel = PublicUserModel.find_by_username(user_info.get('username'))
-            print('-----', user)
             if not user:
                 user = PublicUserModel()
                 user.username = user_info.get('username')
@@ -54,6 +55,7 @@ class PublicUser(Resource):
     user_schema = UserSchema(many=False)
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.online_appointment_user.value])
     def put(self, user_id: int):
         try:
             json_data = request.get_json()
@@ -78,6 +80,7 @@ class CurrentUser(Resource):
     user_schema = UserSchema(many=False)
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.online_appointment_user.value])
     def get(self):
         try:
             user_info = g.oidc_token_info

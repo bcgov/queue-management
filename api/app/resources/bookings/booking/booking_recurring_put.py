@@ -19,6 +19,7 @@ from qsystem import api, db, oidc
 from app.models.bookings import Booking, Room, Invigilator
 from app.models.theq import CSR
 from app.schemas.bookings import BookingSchema
+from app.utilities.auth_util import Role, has_any_role
 
 
 @api.route("/bookings/recurring/<string:id>", methods=["PUT"])
@@ -27,6 +28,7 @@ class BookingRecurringPut(Resource):
     booking_schema = BookingSchema()
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value])
     def put(self, id):
 
         csr = CSR.find_by_username(g.oidc_token_info['username'])

@@ -21,6 +21,7 @@ from app.schemas.theq import CitizenSchema
 from sqlalchemy import exc
 from datetime import datetime
 from app.utilities.snowplow import SnowPlow
+from app.utilities.auth_util import Role, has_any_role
 
 
 @api.route("/citizens/", methods=['GET', 'POST'])
@@ -30,6 +31,7 @@ class CitizenList(Resource):
     citizens_schema = CitizenSchema(many=True)
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value])
     def get(self):
         try:
             csr = CSR.find_by_username(g.oidc_token_info['username'])
@@ -48,6 +50,7 @@ class CitizenList(Resource):
             return {'message': 'API is down'}, 500
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value])
     @api_call_with_retry
     def post(self):
 

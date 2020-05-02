@@ -18,6 +18,7 @@ from qsystem import api, oidc
 from app.models.theq import Channel
 from app.schemas.theq import ChannelSchema
 from sqlalchemy import exc
+from app.utilities.auth_util import Role, has_any_role
 
 
 @api.route("/channels/", methods=["GET"])
@@ -26,6 +27,7 @@ class ChannelList(Resource):
     channels_schema = ChannelSchema(many=True)
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value])
     def get(self):
         try:
             channels = Channel.query.all()

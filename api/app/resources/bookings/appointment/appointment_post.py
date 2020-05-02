@@ -24,6 +24,7 @@ from app.utilities.snowplow import SnowPlow
 from datetime import datetime
 from app.utilities.email import send_blackout_email
 from app.utilities.auth_util import is_public_user
+from app.utilities.auth_util import Role, has_any_role
 
 
 @api.route("/appointments/", methods=["POST"])
@@ -34,6 +35,7 @@ class AppointmentPost(Resource):
 
     @oidc.accept_token(require_token=True)
     @api_call_with_retry
+    @has_any_role(roles=[Role.internal_user.value, Role.online_appointment_user.value])
     def post(self):
         json_data = request.get_json()
         if not json_data:
