@@ -109,9 +109,9 @@ configure_logging(application)
 # from app.models.theq.office import Office
 # Office.build_cache()
 
-# Init mail service #TODO
-# from app.utilities.email import mail
-# mail.init_app(application)
+# Init mail service
+from app.utilities.email import mail
+mail.init_app(application)
 
 #  Code to determine all db.engine properties and sub-properties, as necessary.
 if False:
