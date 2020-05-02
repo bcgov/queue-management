@@ -87,7 +87,6 @@ export default class GeocoderInput extends Vue {
   }
 
   private async fetchLocation () {
-    // TODO - Potentially enable spinner / loading icon at this point
     this.isLoading = true
     const geo = await this.getCurrentLocation()
     this.isLoading = false
