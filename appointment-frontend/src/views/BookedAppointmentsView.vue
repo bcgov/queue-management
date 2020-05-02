@@ -77,15 +77,16 @@
             <v-btn
               outlined
               color="primary"
-              min-width="180"
+              min-width="195"
             >
+              <v-icon class="mr-1">mdi-pencil-outline</v-icon>
               Change Appointment
             </v-btn>
             <v-btn
-              text
+              outlined
               color="error lighten-1"
               class="mt-4"
-              min-width="180"
+              min-width="195"
             >
               <v-icon class="mr-1">mdi-delete-outline</v-icon>
               Cancel Appointment
