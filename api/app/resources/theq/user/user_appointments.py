@@ -19,6 +19,7 @@ from sqlalchemy import exc
 from app.models.theq import PublicUser
 from app.schemas.bookings import AppointmentSchema
 from qsystem import api, oidc
+from app.utilities.auth_util import Role, has_any_role
 
 
 @api.route("/users/appointments/", methods=["GET"])
@@ -26,6 +27,7 @@ class UserAppointments(Resource):
     appointments_schema = AppointmentSchema(many=True)
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.online_appointment_user.value])
     def get(self):
 
         # Get all appointments for the citizen

@@ -16,7 +16,7 @@ from flask import abort, g
 from flask_restx import Resource
 
 from app.models.bookings import Appointment
-from app.utilities.auth_util import is_job
+from app.utilities.auth_util import Role, has_any_role
 from app.utilities.email import send_reminder_email
 from qsystem import api, api_call_with_retry, oidc
 
@@ -26,10 +26,11 @@ class AppointmentRemindersPost(Resource):
 
     @oidc.accept_token(require_token=True)
     @api_call_with_retry
+    @has_any_role(roles=[Role.reminder_job.value])
     def post(self):
         """Create appointment reminders."""
-        if not is_job():
-            abort(403)
+        # if not is_job():
+        #     abort(403)
 
         appointments = Appointment.find_next_day_appointments()
         print('sending {} reminders'.format(len(appointments)))

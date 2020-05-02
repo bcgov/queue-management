@@ -22,6 +22,8 @@ from app.models.theq import Citizen, CSR, Period, ServiceReq, SRState
 from app.schemas.bookings import ExamSchema, ExamTypeSchema
 from app.schemas.theq import CitizenSchema, CSRSchema
 import pytz
+from app.utilities.auth_util import Role, has_any_role
+
 
 @api.route("/csrs/", methods=["GET"])
 class CsrList(Resource):
@@ -29,6 +31,7 @@ class CsrList(Resource):
     csr_schema = CSRSchema(many=True, exclude=('office', 'periods',))
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value])
     def get(self):
         try:
             csr = CSR.find_by_username(g.oidc_token_info['username'])
@@ -60,6 +63,7 @@ class CsrSelf(Resource):
     recurring_feature_flag = application.config['RECURRING_FEATURE_FLAG']
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value])
     @api_call_with_retry
     def get(self):
         try:

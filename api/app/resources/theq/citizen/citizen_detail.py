@@ -20,6 +20,8 @@ from marshmallow import ValidationError
 from app.schemas.theq import CitizenSchema
 from sqlalchemy import exc
 from app.utilities.snowplow import SnowPlow
+from app.utilities.auth_util import Role, has_any_role
+
 
 @api.route("/citizens/<int:id>/", methods=["GET", "PUT"])
 class CitizenDetail(Resource):
@@ -27,6 +29,7 @@ class CitizenDetail(Resource):
     citizen_schema = CitizenSchema()
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value])
     def get(self, id):
         try:
             citizen = Citizen.query.filter_by(citizen_id=id).first()
@@ -43,6 +46,7 @@ class CitizenDetail(Resource):
             return {'message': 'API is down'}, 500
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value])
     @api_call_with_retry
     def put(self, id):
         json_data = request.get_json()

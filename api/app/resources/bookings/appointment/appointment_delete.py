@@ -21,6 +21,7 @@ from qsystem import api, db, oidc
 from app.utilities.snowplow import SnowPlow
 from app.utilities.email import send_cancel_email
 from app.utilities.auth_util import is_public_user
+from app.utilities.auth_util import Role, has_any_role
 
 
 @api.route("/appointments/<int:id>/", methods=["DELETE"])
@@ -29,6 +30,7 @@ class AppointmentDelete(Resource):
     appointment_schema = AppointmentSchema()
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value, Role.online_appointment_user.value])
     def delete(self, id):
 
         appointment = Appointment.query.filter_by(appointment_id=id)\

@@ -21,6 +21,7 @@ from app.models.theq import CSR, PublicUser, Citizen, Office
 from app.schemas.bookings import AppointmentSchema
 from app.utilities.snowplow import SnowPlow
 from app.utilities.auth_util import is_public_user
+from app.utilities.auth_util import Role, has_any_role
 
 
 @api.route("/appointments/<int:id>/", methods=["PUT"])
@@ -29,6 +30,7 @@ class AppointmentPut(Resource):
     appointment_schema = AppointmentSchema()
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value, Role.online_appointment_user.value])
     def put(self, id):
         json_data = request.get_json()
         csr = None

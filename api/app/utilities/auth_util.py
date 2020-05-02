@@ -11,14 +11,42 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
-from flask import g
+from enum import Enum
+from functools import wraps
+
+from flask import g, abort
+
+
+class Role(Enum):
+    """Roles."""
+    online_appointment_user = 'online_appointment_user'
+    internal_user = 'internal_user'
+    reminder_job = 'reminder_job'
 
 
 def is_public_user() -> bool:
     """Return if the user is a public user or not."""
-    return 'internal_user' not in g.oidc_token_info['realm_access']['roles'] and 'online_appointment_user' in g.oidc_token_info['realm_access']['roles']
+    return Role.internal_user.value not in g.oidc_token_info['realm_access'][
+        'roles'] and Role.online_appointment_user.value in \
+           g.oidc_token_info['realm_access']['roles']
 
 
-def is_job() -> bool:
-    """Return if the user is a reminder job."""
-    return 'reminder_job' in g.oidc_token_info['realm_access']['roles']
+# def is_job() -> bool:
+#     """Return if the user is a reminder job."""
+#     return Role.reminder_job.value in g.oidc_token_info['realm_access']['roles']
+#
+
+def has_any_role(roles: list):
+    """Check if the user has any role listed in roles."""
+
+    def decorated(f):
+        @wraps(f)
+        def wrapper(*args, **kwargs):
+            token_roles = g.oidc_token_info['realm_access']['roles']
+            if any(role in token_roles for role in roles):
+                return f(*args, **kwargs)
+            abort(403)
+
+        return wrapper
+
+    return decorated
