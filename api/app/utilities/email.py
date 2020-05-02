@@ -43,7 +43,7 @@ def async_email(subject, appt: Appointment, user: PublicUser, html_body):
         print('subject : ', subject)
         print('sender : ', sender)
         print('recipients : ', email)
-        print('html_body : ', html_body)
+        # print('html_body : ', html_body)
 
         msg = Message(subject, sender=sender, recipients=email.split())
         msg.html = html_body

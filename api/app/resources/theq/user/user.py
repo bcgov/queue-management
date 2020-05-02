@@ -73,3 +73,21 @@ class PublicUser(Resource):
             return {'message': 'API is down'}, 500
 
 
+@api.route("/users/me/", methods=['GET'])
+class CurrentUser(Resource):
+    user_schema = UserSchema(many=False)
+
+    @oidc.accept_token(require_token=True)
+    def get(self):
+        try:
+            user_info = g.oidc_token_info
+            user: PublicUserModel = PublicUserModel.find_by_username(user_info.get('username'))
+
+            result = self.user_schema.dump(user)
+            return result, 200
+
+        except exc.SQLAlchemyError as e:
+            print(e)
+            return {'message': 'API is down'}, 500
+
+

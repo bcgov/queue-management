@@ -94,13 +94,19 @@ class Appointment(Base):
         return query.all()
 
     @classmethod
-    def find_by_citizen_id_and_office_id(cls, office_id: int, citizen_id:int, start_time, timezone, appointment_id=None):
-        """Find appointment availability for dates in a month"""
+    def find_by_username_and_office_id(cls, office_id: int, user_name: str, start_time, timezone, appointment_id=None):
+        """Find apponintment for the user at an office for a date."""
+        from app.models.theq import PublicUser, Citizen
+
         start_datetime = parse(start_time)
         query = db.session.query(Appointment). \
-            filter(func.date_trunc('day', func.timezone(timezone, Appointment.start_time))==(func.date_trunc('day', func.timezone(timezone, start_datetime)))). \
+            join(Citizen). \
+            join(PublicUser). \
+            filter(Appointment.citizen_id == Citizen.citizen_id). \
+            filter(Citizen.user_id == PublicUser.user_id). \
+            filter(func.date_trunc('day', func.timezone(timezone, Appointment.start_time)) == (func.date_trunc('day', func.timezone(timezone, start_datetime)))). \
             filter(Appointment.office_id == office_id). \
-            filter(Appointment.citizen_id == citizen_id)
+            filter(PublicUser.username == user_name)
         if appointment_id:
             query = query.filter(Appointment.appointment_id != appointment_id)
         return query.all()

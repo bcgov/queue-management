@@ -55,23 +55,17 @@ class AppointmentPost(Resource):
             json_data['contact_information'] = user.email
             json_data['comments'] = json_data.get('comments', '') + f'\nPhone: {user.telephone}' if user.telephone else ''
 
-            existing_citizen = Citizen.find_citizen_by_user_id(user.user_id, office_id)
-            if existing_citizen:
-                citizen = existing_citizen
-                is_existing_citizen = True
-                office = Office.find_by_id(office_id)
-                # Validate if the same user has other appointments for same day at same office
-                appointments = Appointment.find_by_citizen_id_and_office_id(office_id=office_id,
-                                                                            citizen_id=existing_citizen.citizen_id,
-                                                                            start_time=json_data.get('start_time'),
-                                                                            timezone=office.timezone.timezone_name)
-                if appointments and len(appointments) >= office.max_person_appointment_per_day:
-                    return {"code": "MAX_NO_OF_APPOINTMENTS_REACHED", "message": "Maximum number of appoinments reached"}, 400
+            citizen.user_id = user.user_id
+            citizen.citizen_name = user.display_name
 
-            else:
-                citizen.user_id = user.user_id
-                citizen.citizen_name = user.display_name
-
+            office = Office.find_by_id(office_id)
+            # Validate if the same user has other appointments for same day at same office
+            appointments = Appointment.find_by_username_and_office_id(office_id=office_id,
+                                                                      user_name=g.oidc_token_info['username'],
+                                                                      start_time=json_data.get('start_time'),
+                                                                      timezone=office.timezone.timezone_name)
+            if appointments and len(appointments) >= office.max_person_appointment_per_day:
+                return {"code": "MAX_NO_OF_APPOINTMENTS_REACHED", "message": "Maximum number of appoinments reached"}, 400
         else:
             csr = CSR.find_by_username(g.oidc_token_info['username'])
             office_id = csr.office_id
