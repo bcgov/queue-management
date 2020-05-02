@@ -28,7 +28,7 @@
       </v-col>
     </v-row>
     <v-divider class="mb-4"></v-divider>
-    <v-card v-for="booking in bookingData" :key="booking.id" class="my-4">
+    <v-card v-for="appointment in appointmentList" :key="appointment.appointment_id" class="my-4">
       <v-card-text>
         <v-row>
           <v-col
@@ -36,16 +36,16 @@
             sm="5"
           >
             <GmapMap
-              :center="booking.coordinates"
+              :center="getCoordinates(appointment)"
               :zoom="14"
               class="map-view"
               :options="mapConfigurations"
             >
               <GmapMarker
-                :position="booking.coordinates"
+                :position="getCoordinates(appointment)"
                 :clickable="true"
                 :draggable="false"
-                :label='{text: booking.locationName, fontWeight: "600"}'
+                :label='{text: getOfficeName(appointment), fontWeight: "600"}'
               />
             </GmapMap>
           </v-col>
@@ -54,18 +54,18 @@
             sm="4"
           >
             <p>
-              <strong>Service: </strong> {{booking.serviceName}}
+              <strong>Service: </strong> {{getServiceName(appointment)}}
             </p>
             <p>
-              <strong>Location: </strong> {{booking.locationName}}
+              <strong>Location: </strong> {{getOfficeName(appointment)}}
             </p>
             <p>
-              <strong>Date: </strong> {{booking.bookingDate}}
+              <strong>Date: </strong> {{appointment.appointmentDate}}
             </p>
             <p>
-              <strong>Time: </strong> {{booking.bookingTime}}
+              <strong>Time: </strong> {{`${appointment.appointmentStartTime} - ${appointment.appointmentEndTime} `}}
             </p>
-            <p class="appointment-confirmed" v-if="booking.isAppointmentConfirmed">
+            <p class="appointment-confirmed">
               Appointment Confirmed
             </p>
           </v-col>
@@ -156,7 +156,24 @@ export default class Home extends Vue {
 
   private async beforeMount () {
     this.appointmentList = await this.getAppointmentList()
+    // eslint-disable-next-line no-console
+    console.log(this.appointmentList)
     this.showEmailAlert = !this.currentUserProfile?.email
+  }
+
+  private getCoordinates (appointment) {
+    return {
+      lat: appointment?.office?.latitude || 0,
+      lng: appointment?.office?.longitude || 0
+    }
+  }
+
+  private getOfficeName (appointment) {
+    return appointment?.office?.office_name || ''
+  }
+
+  private getServiceName (appointment) {
+    return appointment?.service?.external_service_name || ''
   }
 
   private goToAccountSettings () {

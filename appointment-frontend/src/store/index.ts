@@ -18,7 +18,7 @@ import { setName, setResource } from './actions'
 Vue.use(Vuex)
 
 const vuexLocal = new VuexPersistence({
-  storage: window.localStorage
+  storage: window.sessionStorage
 })
 
 export const store: Store<any> = new Vuex.Store<any>({

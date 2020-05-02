@@ -100,7 +100,7 @@ export default class AccountSettingsView extends Vue {
   private readonly currentUserProfile!: User
   private readonly updateUserAccount!: (userBody: UserUpdateBody) => Promise<any>
   private valid:boolean = false
-  private name:string = 'Jon Snow'
+  private name:string = ''
   private email:string = ''
   private phoneNumber:string = ''
   private enableReminder:boolean = false

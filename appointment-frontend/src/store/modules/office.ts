@@ -15,7 +15,8 @@ import { store } from '@/store'
 export default class OfficeModule extends VuexModule {
   officeList: Office[] = []
   serviceList: Service[] = []
-  availableAppointmentSlots: Service[] = []
+  allServiceList: Service[] = []
+  availableAppointmentSlots = []
   categoryList: Service[] = [] // category and service shares similar data model
   additionalNotes: string
   currentOffice: Office
@@ -88,10 +89,12 @@ export default class OfficeModule extends VuexModule {
   @Action({ commit: 'setServiceList', rawError: true })
   public async getServiceByOffice (officeId: number) {
     const response = await OfficeService.getServiceByOffice(officeId)
-    let services = []
-    if (response?.data?.services?.length) {
+    let services = response?.data?.services || []
+    if (services.length) {
       services = response.data.services.filter(service => {
-        return service.online_availability !== ServiceAvailability.HIDE
+        return (service.actual_service_ind &&
+          service.display_dashboard_ind &&
+          service.online_availability !== ServiceAvailability.HIDE)
       })
     }
     return services

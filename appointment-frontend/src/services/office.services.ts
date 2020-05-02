@@ -15,6 +15,10 @@ export default class OfficeService {
     return axios.get(`${ConfigHelper.getAppAPIUrl()}/services/?office_id=${officeId}`)
   }
 
+  public static async getServices (): Promise<AxiosResponse<Services>> {
+    return axios.get(`${ConfigHelper.getAppAPIUrl()}/services/`)
+  }
+
   public static async getCategories (): Promise<AxiosResponse<Categories>> {
     return axios.get(`${ConfigHelper.getAppAPIUrl()}/categories/`)
   }
