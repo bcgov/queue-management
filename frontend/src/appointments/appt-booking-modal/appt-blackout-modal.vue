@@ -380,11 +380,11 @@
           <b-form-row>
             <label v-if="this.recurring_input_boolean"
                    stlye="font-weight: bold;">
-              Step 3 (optional): Event Notes
+              Step 3 (optional): Event Notes. <br/><em>This will be included in cancellation email.</em>
             </label>
             <label v-if="this.single_input_boolean"
                    stlye="font-weight: bold;">
-              Step 2 (optional): Event Notes
+              Step 2 (optional): Event Notes. <br/><em>This will be included in cancellation email.</em>
             </label>
             <font-awesome-icon v-if="this.notes !== ''"
                                icon='check'
