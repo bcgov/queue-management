@@ -15,7 +15,6 @@ import { store } from '@/store'
 export default class OfficeModule extends VuexModule {
   officeList: Office[] = []
   serviceList: Service[] = []
-  allServiceList: Service[] = []
   availableAppointmentSlots = []
   categoryList: Service[] = [] // category and service shares similar data model
   additionalNotes: string
@@ -140,5 +139,13 @@ export default class OfficeModule extends VuexModule {
     }
     const response = await AppointmentService.createAppointment(appointmentBody)
     return response?.data?.appointment || {}
+  }
+
+  @Action({ rawError: true })
+  public clearSelectedValues (): void {
+    this.context.commit('setCurrentOffice', undefined)
+    this.context.commit('setCurrentService', undefined)
+    this.context.commit('setCurrentAppointmentSlot', undefined)
+    this.context.commit('setAdditionalNotes', undefined)
   }
 }

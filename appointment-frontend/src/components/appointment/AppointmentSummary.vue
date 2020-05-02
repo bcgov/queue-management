@@ -125,7 +125,8 @@ import { utcToZonedTime } from 'date-fns-tz'
   },
   methods: {
     ...mapActions('office', [
-      'createAppointment'
+      'createAppointment',
+      'clearSelectedValues'
     ])
   }
 })
@@ -135,6 +136,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   private readonly currentService!: Service
   private readonly currentAppointmentSlot!: AppointmentSlot
   private readonly createAppointment!: () => Appointment
+  private readonly clearSelectedValues!: () => void
   private dialogPopup = {
     showDialog: false,
     isSuccess: false,
@@ -178,6 +180,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
         this.dialogPopup.title = 'Success! Your appointment has been booked.'
         this.dialogPopup.subTitle = `Please review your booking in the details below.
             If you need to cancel or reschedule your appointment, please contact Service BC`
+        this.clearSelectedValues()
       }
     } catch (error) {
       this.dialogPopup.showDialog = true
