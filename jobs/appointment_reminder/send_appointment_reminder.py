@@ -72,7 +72,7 @@ def send_reminders(app):
     }
 
     token_response = requests.post(token_url, data=data, headers=headers)
-    print(token_response.json())
+    # print(token_response.json())
     access_token = token_response.json().get('access_token')
 
     # Add this token as bearer token to invoke the reminders endpoint

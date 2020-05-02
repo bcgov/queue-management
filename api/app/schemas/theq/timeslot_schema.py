@@ -26,5 +26,5 @@ class TimeslotSchema(ma.ModelSchema):
 
     start_time = fields.Time()
     end_time = fields.Time()
-    day_of_week = fields.String()
+    day_of_week = fields.List(fields.String)
     no_of_slots = fields.Integer()
