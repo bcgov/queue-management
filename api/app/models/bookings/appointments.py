@@ -86,6 +86,7 @@ class Appointment(Base):
         query = db.session.query(Appointment, Office, Timezone, PublicUser). \
             join(Office, Office.office_id == Appointment.office_id). \
             join(Timezone, Timezone.timezone_id == Office.timezone_id). \
+            join(Citizen, Citizen.citizen_id == Appointment.citizen_id). \
             outerjoin(PublicUser, PublicUser.user_id == Citizen.user_id). \
             filter(or_(Appointment.start_time.between(start_time_1, end_time_1), Appointment.end_time.between( start_time_2, end_time_2)))
         query = query.filter(Appointment.office_id == office_id)
