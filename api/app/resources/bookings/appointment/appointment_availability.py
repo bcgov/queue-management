@@ -74,9 +74,9 @@ class OfficeSlots(Resource):
                 # Check if the slots are already booked
                 for actual_slot in available_slots_per_day[formatted_date]:
                     for booked_slot in grouped_appointments.get(formatted_date, []):
-                        print('>>>>>>', booked_slot.get('start_time'), actual_slot.get('start_time'), booked_slot.get('end_time'))
-                        print('<<<<<<', booked_slot.get('end_time'), actual_slot.get('end_time'),
-                              booked_slot.get('start_time'))
+                        # print('>>>>>>', booked_slot.get('start_time'), actual_slot.get('start_time'), booked_slot.get('end_time'))
+                        # print('<<<<<<', booked_slot.get('end_time'), actual_slot.get('end_time'),
+                        #       booked_slot.get('start_time'))
 
                         if booked_slot.get('start_time') \
                                 <= actual_slot.get('start_time') \
@@ -106,7 +106,7 @@ def group_appointments(appointments, timezone: str):
         formatted_date = app.start_time.strftime('%m/%d/%Y')
         if not filtered_appointments.get(formatted_date, None):
             filtered_appointments[formatted_date] = []
-        print('app.blackout_flag', app.blackout_flag)
+        # print('app.blackout_flag', app.blackout_flag)
         filtered_appointments[formatted_date].append({
             'start_time': app.start_time.astimezone(pytz.timezone(timezone)).time(),
             'end_time': app.end_time.astimezone(pytz.timezone(timezone)).time(),

@@ -70,12 +70,6 @@ class AppointmentPost(Resource):
             csr = CSR.find_by_username(g.oidc_token_info['username'])
             office_id = csr.office_id
 
-        # # Check if there is an appointment for this time
-        # if json_data.get('blackout_flag', 'N') == 'N':
-        #     conflict_appointments = Appointment.get_appointment_conflicts(office_id, json_data.get('start_time'), json_data.get('end_time'))
-        #     if conflict_appointments:
-        #         return {"code": "CONFLICT", "message": "Conflict while creating appointment"}, 400
-
         if not is_existing_citizen:
             citizen.office_id = office_id
             citizen.qt_xn_citizen_ind = 0
@@ -100,6 +94,19 @@ class AppointmentPost(Resource):
             appointment.citizen_id = citizen.citizen_id
             db.session.add(appointment)
             db.session.commit()
+
+            # If staff user is creating a blackout event then send email to all of the citizens with appointments for that period
+            if is_blackout_appt:
+                appointment_ids_to_delete = []
+                appointments_for_the_day = Appointment.get_appointment_conflicts(office_id, json_data.get('start_time'),
+                                                                                 json_data.get('end_time'))
+                for (cancelled_appointment, office, timezone, user) in appointments_for_the_day:
+                    send_blackout_email(appointment, cancelled_appointment, office, timezone, user)
+                    appointment_ids_to_delete.append(cancelled_appointment.appointment_id)
+                # Delete appointments
+                if appointment_ids_to_delete:
+                    Appointment.delete_appointments(appointment_ids_to_delete)
+
             if not is_public_user_appointment:
                 #TODO
                 try:
@@ -108,12 +115,6 @@ class AppointmentPost(Resource):
                     print(e)
 
             result = self.appointment_schema.dump(appointment)
-
-            # TODO If staff us creating a blackout event then send email to all of the citizens with appointments for that day
-            if is_blackout_appt:
-                appointments_for_the_day = Appointment.get_appointment_conflicts(office_id, json_data.get('start_time'), json_data.get('end_time'))
-                for (cancelled_appointment, office, timezone, user) in appointments_for_the_day:
-                    send_blackout_email(appointment, cancelled_appointment, office, timezone, user)
 
             return {"appointment": result.data,
                     "errors": result.errors}, 201

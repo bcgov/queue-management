@@ -112,3 +112,11 @@ class Appointment(Base):
         if appointment_id:
             query = query.filter(Appointment.appointment_id != appointment_id)
         return query.all()
+
+    @classmethod
+    def delete_appointments(cls, appointment_ids: list):
+        """Delete all appointments with ids in the list provided."""
+        delete_qry = Appointment.__table__.delete().where(Appointment.appointment_id.in_(appointment_ids))
+        db.session.execute(delete_qry)
+        db.session.commit()
+
