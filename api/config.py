@@ -41,7 +41,10 @@ class BaseConfig(object):
     #  Set up session and communication variables.
     REMEMBER_COOKIE_DURATION = 86400
     SESSION_COOKIE_DOMAIN = os.getenv('SERVER_NAME', '')
-    CORS_ALLOWED_ORIGINS = ["https://" + SESSION_COOKIE_DOMAIN]
+    if os.getenv('CORS_ALLOWED_ORIGINS', None):
+        CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS').split(',')
+    else:
+        CORS_ALLOWED_ORIGINS = ["https://" + SESSION_COOKIE_DOMAIN]
 
     #   Set up RabbitMQ variables.
     ACTIVE_MQ_USER = os.getenv('ACTIVE_MQ_USER', '')
