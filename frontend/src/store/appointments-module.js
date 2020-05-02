@@ -46,6 +46,7 @@ export default {
             color: '#B5E0B8',
             blackout_flag: apt.blackout_flag,
             recurring_uuid: apt.recurring_uuid,
+            online_flag: apt.online_flag
           })
         )
       }

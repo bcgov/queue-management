@@ -54,13 +54,6 @@ class AppointmentPut(Resource):
             csr = CSR.find_by_username(g.oidc_token_info['username'])
             office_id = csr.office_id
 
-        # if not is_blackout_appt:
-        #     # Check if there is an appointment for this time
-        #     conflict_appointments = Appointment.get_appointment_conflicts(office_id, json_data.get('start_time'),
-        #                                                                       json_data.get('end_time'), appointment_id=id)
-        #     if conflict_appointments:
-        #         return {"code": "CONFLICT", "message": "Conflict while creating appointment"}, 400
-
         appointment = Appointment.query.filter_by(appointment_id=id)\
                                        .filter_by(office_id=office_id)\
                                        .first_or_404()
