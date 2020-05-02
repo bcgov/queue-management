@@ -90,6 +90,7 @@ class AppointmentPost(Resource):
         appointment, warning = self.appointment_schema.load(json_data)
         if is_public_user_appointment:
             appointment.citizen_name = user.display_name
+            appointment.online_flag = True
 
         if warning:
             logging.warning("WARNING: %s", warning)
