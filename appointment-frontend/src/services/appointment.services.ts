@@ -11,7 +11,7 @@ export default class AppointmentService {
   }
 
   public static async updateAppointment (appointmentId: number, appointmentBody: AppointmentRequestBody): Promise<AxiosResponse<AppointmentResponse>> {
-    return axios.post(`${ConfigHelper.getAppAPIUrl()}/appointments/${appointmentId}/`, appointmentBody)
+    return axios.put(`${ConfigHelper.getAppAPIUrl()}/appointments/${appointmentId}/`, appointmentBody)
   }
 
   public static async deleteAppointment (appointmentId: number): Promise<AxiosResponse<any>> {

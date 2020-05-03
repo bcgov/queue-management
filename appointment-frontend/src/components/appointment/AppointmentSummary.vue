@@ -108,11 +108,14 @@
 import { Appointment, AppointmentSlot } from '@/models/appointment'
 import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
 import { mapActions, mapState } from 'vuex'
+import { AuthModule } from '@/store/modules'
 import ConfigHelper from '@/utils/config-helper'
 import { Office } from '@/models/office'
 import { Service } from '@/models/service'
 import StepperMixin from '@/mixins/StepperMixin.vue'
+import { User } from '@/models/user'
 import { format } from 'date-fns'
+import { getModule } from 'vuex-module-decorators'
 import { utcToZonedTime } from 'date-fns-tz'
 
 @Component({
@@ -121,6 +124,9 @@ import { utcToZonedTime } from 'date-fns-tz'
       'currentOffice',
       'currentService',
       'currentAppointmentSlot'
+    ]),
+    ...mapState('auth', [
+      'currentUserProfile'
     ])
   },
   methods: {
@@ -131,10 +137,12 @@ import { utcToZonedTime } from 'date-fns-tz'
   }
 })
 export default class AppointmentSummary extends Mixins(StepperMixin) {
+  private authModule = getModule(AuthModule, this.$store)
   private mapConfigurations = ConfigHelper.getMapConfigurations()
   private readonly currentOffice!: Office
   private readonly currentService!: Service
   private readonly currentAppointmentSlot!: AppointmentSlot
+  private readonly currentUserProfile!: User
   private readonly createAppointment!: () => Appointment
   private readonly clearSelectedValues!: () => void
   private dialogPopup = {
@@ -175,6 +183,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
     try {
       const resp = await this.createAppointment()
       if (resp.appointment_id) {
+        this.appointmentDisplayData.phoneNumber = this.currentUserProfile?.telephone || ''
         this.dialogPopup.showDialog = true
         this.dialogPopup.isSuccess = true
         this.dialogPopup.title = 'Success! Your appointment has been booked.'
@@ -195,7 +204,6 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   private clickOk () {
     this.dialogPopup.showDialog = false
     if (this.dialogPopup.isSuccess) {
-      // TODO Clear all selected states before navigating
       this.$router.push('/booked-appointments')
     }
   }

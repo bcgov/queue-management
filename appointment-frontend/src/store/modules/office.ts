@@ -1,12 +1,12 @@
 import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
 import { AppointmentRequestBody, AppointmentSlot } from '@/models/appointment'
-import CommonUtils, { Days } from '@/utils/common-util'
+import { Appointment } from './../../models/appointment'
 import AppointmentService from '@/services/appointment.services'
+import CommonUtils from '@/utils/common-util'
 import { Office } from '@/models/office'
 import OfficeService from '@/services/office.services'
 import { Service } from '@/models/service'
 import { ServiceAvailability } from '@/utils'
-import { store } from '@/store'
 
 @Module({
   name: 'office',
@@ -21,6 +21,7 @@ export default class OfficeModule extends VuexModule {
   currentOffice: Office
   currentService: Service
   currentAppointmentSlot: AppointmentSlot
+  currentAppointment: Appointment
 
   /**
     Mutations in this Module
@@ -64,6 +65,11 @@ export default class OfficeModule extends VuexModule {
   @Mutation
   public setAdditionalNotes (notes: string) {
     this.additionalNotes = notes
+  }
+
+  @Mutation
+  public setACurrentAppointment (appointment: Appointment) {
+    this.currentAppointment = appointment
   }
 
   /**
@@ -137,7 +143,14 @@ export default class OfficeModule extends VuexModule {
       office_id: this.context.state['currentOffice'].office_id,
       user_id: userId
     }
-    const response = await AppointmentService.createAppointment(appointmentBody)
+    let response
+    if (this.context.rootState.isAppointmentEditMode) {
+      if (this.context.state['currentAppointment']?.appointment_id) {
+        response = await AppointmentService.updateAppointment(this.context.state['currentAppointment'].appointment_id, appointmentBody)
+      }
+    } else {
+      response = await AppointmentService.createAppointment(appointmentBody)
+    }
     return response?.data?.appointment || {}
   }
 
@@ -147,5 +160,20 @@ export default class OfficeModule extends VuexModule {
     this.context.commit('setCurrentService', undefined)
     this.context.commit('setCurrentAppointmentSlot', undefined)
     this.context.commit('setAdditionalNotes', undefined)
+    this.context.rootState.stepperCurrentStep = 1
+    this.context.rootState.isAppointmentEditMode = false
+  }
+
+  @Action({ rawError: true })
+  public setAppointmentValues (appointment: Appointment): void {
+    const apppointmentSlot: AppointmentSlot = {
+      start_time: appointment?.start_time,
+      end_time: appointment?.end_time
+    }
+    this.context.commit('setCurrentOffice', appointment?.office)
+    this.context.commit('setCurrentService', appointment?.service)
+    this.context.commit('setCurrentAppointmentSlot', apppointmentSlot)
+    this.context.commit('setAdditionalNotes', appointment?.comments)
+    this.context.commit('setACurrentAppointment', appointment)
   }
 }

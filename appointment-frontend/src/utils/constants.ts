@@ -13,7 +13,7 @@ export enum SessionStorageKeys {
 }
 
 export enum Role {
-    Staff = 'staff',
+    OnlineAppointmentUser = 'online_appointment_user',
     Public = 'public_user',
     Edit = 'edit',
     Basic = 'basic',
@@ -23,10 +23,6 @@ export enum Pages {
     SIGNIN = 'signin',
     SIGNOUT = 'signout',
     HOME = 'home'
-}
-
-export enum Account {
-    ANONYMOUS = 'ANONYMOUS'
 }
 
 export enum IdpHint {

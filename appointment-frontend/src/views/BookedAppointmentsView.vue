@@ -78,6 +78,7 @@
               outlined
               color="primary"
               min-width="195"
+              @click="changeAppointment(appointment)"
             >
               <v-icon class="mr-1">mdi-pencil-outline</v-icon>
               Change Appointment
@@ -105,6 +106,7 @@
       <v-icon>mdi-information-outline</v-icon>
       No appointments found!
     </v-alert>
+    <!-- Confirmation dialog -->
     <v-dialog
       v-model="confirmDialog"
       max-width="290"
@@ -139,10 +141,10 @@
 </template>
 
 <script lang="ts">
+import { AppointmentModule, OfficeModule } from '@/store/modules'
 import { Component, Vue } from 'vue-property-decorator'
 import { mapActions, mapState } from 'vuex'
 import { Appointment } from '@/models/appointment'
-import { AppointmentModule } from '@/store/modules'
 import ConfigHelper from '@/utils/config-helper'
 import { User } from '@/models/user'
 import { getModule } from 'vuex-module-decorators'
@@ -157,11 +159,16 @@ import { getModule } from 'vuex-module-decorators'
     ...mapActions('appointment', [
       'getAppointmentList',
       'deleteAppointment'
+    ]),
+    ...mapActions('office', [
+      'setAppointmentValues',
+      'clearSelectedValues'
     ])
   }
 })
 export default class Home extends Vue {
-  private officeModule = getModule(AppointmentModule, this.$store)
+  private appointmentModule = getModule(AppointmentModule, this.$store)
+  private officeModule = getModule(OfficeModule, this.$store)
   private readonly currentUserProfile!: User
   private mapConfigurations = ConfigHelper.getMapConfigurations()
   private showEmailAlert: boolean = false
@@ -171,6 +178,8 @@ export default class Home extends Vue {
 
   private readonly getAppointmentList!: () => Promise<Appointment[]>
   private readonly deleteAppointment!: (appointmentId: number) => Promise<any>
+  private readonly setAppointmentValues!: (appointment: Appointment) => void
+  private readonly clearSelectedValues!: () => void
 
   private async beforeMount () {
     this.fetchAppointments()
@@ -201,6 +210,14 @@ export default class Home extends Vue {
   }
 
   private bookNewAppointment () {
+    this.clearSelectedValues()
+    this.$router.push('/appointment')
+  }
+
+  private changeAppointment (appointment) {
+    this.setAppointmentValues(appointment)
+    this.$store.commit('stepperCurrentStep', 1)
+    this.$store.commit('setAppointmentEditMode', true)
     this.$router.push('/appointment')
   }
 
