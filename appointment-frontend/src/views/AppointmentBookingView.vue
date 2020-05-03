@@ -133,12 +133,10 @@ export default class AppointmentBookingView extends Vue {
   }
 
   private async updated () {
-    this.$store.commit('stepperCurrentStep', this.stepCounter)
+    this.$store.commit('setStepperCurrentStep', this.stepCounter)
   }
 
   private async mounted () {
-    // eslint-disable-next-line no-console
-    console.log('g', this.isAuthenticated)
     if (this.isAuthenticated) {
       this.bookingSteppers = this.bookingSteppers.filter(step => !(step.code === 'login'))
       this.bookingSteppers[this.bookingSteppers.length - 1].step = this.bookingSteppers.length

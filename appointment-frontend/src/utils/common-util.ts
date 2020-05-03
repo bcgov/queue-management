@@ -69,12 +69,8 @@ export default class CommonUtils {
     return returnArray
   }
 
-  static getFormattedFromDate (date, type) {
-    if (type === 'date') {
-      return format(utcToZonedTime(date || new Date(), 'America/Vancouver'), 'MMM dd, yyyy')
-    } else {
-      return format(utcToZonedTime(date || new Date(), 'America/Vancouver'), 'hh:mmaaaa')
-    }
+  static getTzFormattedDate (date, dateFormat = 'yyyy-MM-dd') {
+    return format(utcToZonedTime(date || new Date(), 'America/Vancouver'), dateFormat)
   }
 }
 

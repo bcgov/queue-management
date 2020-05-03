@@ -42,7 +42,7 @@ export const store: Store<any> = new Vuex.Store<any>({
     updateHeader (state) {
       state.refreshKey++
     },
-    stepperCurrentStep (state, step) {
+    setStepperCurrentStep (state, step) {
       state.stepperCurrentStep = step
     },
     setAppointmentEditMode (state, isEdit) {

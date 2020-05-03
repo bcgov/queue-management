@@ -72,8 +72,6 @@ import CommonUtils from '@/utils/common-util'
 import { Office } from '@/models/office'
 import { OfficeModule } from '@/store/modules'
 import StepperMixin from '@/mixins/StepperMixin.vue'
-import { format } from 'date-fns'
-import { utcToZonedTime } from 'date-fns-tz'
 
 @Component({
   computed: {
@@ -99,12 +97,12 @@ export default class DateSelection extends Mixins(StepperMixin) {
   private readonly getAvailableAppointmentSlots!: (officeId: number) => Promise<any>
   private readonly setCurrentAppointmentSlot!: (slot: AppointmentSlot) => void
   // TODO: take timezone from office data from state
-  private selectedDate = format(utcToZonedTime(new Date(), 'America/Vancouver'), 'yyyy-MM-dd')
+  private selectedDate = CommonUtils.getTzFormattedDate(new Date())
   private selectedDateTimeSlots = []
   private availableDates = []
 
   private get selectedDateFormatted () {
-    return format(utcToZonedTime(this.selectedDate, 'America/Vancouver'), 'MMM dd, yyyy')
+    return CommonUtils.getTzFormattedDate(this.selectedDate, 'MMM dd, yyyy')
   }
 
   private async mounted () {
@@ -112,12 +110,11 @@ export default class DateSelection extends Mixins(StepperMixin) {
       const availableAppoinments = await this.getAvailableAppointmentSlots(this.currentOffice.office_id)
       Object.keys(availableAppoinments).forEach(date => {
         if (availableAppoinments[date]?.length) {
-          this.availableDates.push(format(utcToZonedTime(new Date(date), 'America/Vancouver'), 'yyyy-MM-dd'))
+          this.availableDates.push(CommonUtils.getTzFormattedDate(new Date(date)))
         }
       })
     }
-    const dateSelected = utcToZonedTime(this.currentAppointmentSlot?.start_time || new Date(), 'America/Vancouver')
-    this.selectedDate = format(dateSelected, 'yyyy-MM-dd')
+    this.selectedDate = CommonUtils.getTzFormattedDate(this.currentAppointmentSlot?.start_time)
     this.dateClicked()
   }
 
@@ -127,7 +124,7 @@ export default class DateSelection extends Mixins(StepperMixin) {
 
   private dateClicked () {
     this.selectedDateTimeSlots = []
-    const slots = this.availableAppointmentSlots[format(utcToZonedTime(this.selectedDate, 'America/Vancouver'), 'MM/dd/yyyy')]
+    const slots = this.availableAppointmentSlots[CommonUtils.getTzFormattedDate(this.selectedDate, 'MM/dd/yyyy')]
     slots?.forEach(slot => {
       this.selectedDateTimeSlots.push({
         ...slot,
