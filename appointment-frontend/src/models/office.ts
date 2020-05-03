@@ -22,7 +22,7 @@ export interface Offices {
 }
 
 export interface TimeSlots {
-  day_of_week: number
+  day_of_week: string[]
   end_time: string
   start_time: string
   no_of_slots: number

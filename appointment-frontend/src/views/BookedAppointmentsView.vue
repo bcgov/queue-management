@@ -28,7 +28,7 @@
       </v-col>
     </v-row>
     <v-divider class="mb-4"></v-divider>
-    <v-card v-for="booking in bookingData" :key="booking.id" class="my-4">
+    <v-card v-for="appointment in appointmentList" :key="appointment.appointment_id" class="my-4">
       <v-card-text>
         <v-row>
           <v-col
@@ -36,16 +36,16 @@
             sm="5"
           >
             <GmapMap
-              :center="booking.coordinates"
+              :center="getCoordinates(appointment)"
               :zoom="14"
               class="map-view"
               :options="mapConfigurations"
             >
               <GmapMarker
-                :position="booking.coordinates"
+                :position="getCoordinates(appointment)"
                 :clickable="true"
                 :draggable="false"
-                :label='{text: booking.locationName, fontWeight: "600"}'
+                :label='{text: getOfficeName(appointment), fontWeight: "600"}'
               />
             </GmapMap>
           </v-col>
@@ -54,18 +54,18 @@
             sm="4"
           >
             <p>
-              <strong>Service: </strong> {{booking.serviceName}}
+              <strong>Service: </strong> {{getServiceName(appointment)}}
             </p>
             <p>
-              <strong>Location: </strong> {{booking.locationName}}
+              <strong>Location: </strong> {{getOfficeName(appointment)}}
             </p>
             <p>
-              <strong>Date: </strong> {{booking.bookingDate}}
+              <strong>Date: </strong> {{appointment.appointmentDate}}
             </p>
             <p>
-              <strong>Time: </strong> {{booking.bookingTime}}
+              <strong>Time: </strong> {{`${appointment.appointmentStartTime} - ${appointment.appointmentEndTime} `}}
             </p>
-            <p class="appointment-confirmed" v-if="booking.isAppointmentConfirmed">
+            <p class="appointment-confirmed">
               Appointment Confirmed
             </p>
           </v-col>
@@ -77,15 +77,18 @@
             <v-btn
               outlined
               color="primary"
-              min-width="180"
+              min-width="195"
+              @click="changeAppointment(appointment)"
             >
+              <v-icon class="mr-1">mdi-pencil-outline</v-icon>
               Change Appointment
             </v-btn>
             <v-btn
-              text
+              outlined
               color="error lighten-1"
               class="mt-4"
-              min-width="180"
+              min-width="195"
+              @click="cancelAppointment(appointment)"
             >
               <v-icon class="mr-1">mdi-delete-outline</v-icon>
               Cancel Appointment
@@ -94,14 +97,54 @@
         </v-row>
       </v-card-text>
     </v-card>
+    <v-alert
+      v-if="!appointmentList.length"
+      outlined
+      color="grey darken-3"
+      class="text-center mt-10"
+    >
+      <v-icon>mdi-information-outline</v-icon>
+      No appointments found!
+    </v-alert>
+    <!-- Confirmation dialog -->
+    <v-dialog
+      v-model="confirmDialog"
+      max-width="290"
+    >
+      <v-card>
+        <v-card-title class="headline">
+          Are you sure?
+        </v-card-title>
+        <v-card-text>
+          Are you sure that you want to cancel this appointment?
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="red darken-1"
+            text
+            @click="confirmDelete(false)"
+          >
+            No
+          </v-btn>
+          <v-btn
+            color="red darken-1"
+            text
+            @click="confirmDelete(true)"
+          >
+            Yes, Cancel it
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script lang="ts">
+import { AppointmentModule, OfficeModule } from '@/store/modules'
 import { Component, Vue } from 'vue-property-decorator'
 import { mapActions, mapState } from 'vuex'
 import { Appointment } from '@/models/appointment'
-import { AppointmentModule } from '@/store/modules'
 import ConfigHelper from '@/utils/config-helper'
 import { User } from '@/models/user'
 import { getModule } from 'vuex-module-decorators'
@@ -114,49 +157,52 @@ import { getModule } from 'vuex-module-decorators'
   },
   methods: {
     ...mapActions('appointment', [
-      'getAppointmentList'
+      'getAppointmentList',
+      'deleteAppointment'
+    ]),
+    ...mapActions('office', [
+      'setAppointmentValues',
+      'clearSelectedValues'
     ])
   }
 })
 export default class Home extends Vue {
-  private officeModule = getModule(AppointmentModule, this.$store)
+  private appointmentModule = getModule(AppointmentModule, this.$store)
+  private officeModule = getModule(OfficeModule, this.$store)
   private readonly currentUserProfile!: User
   private mapConfigurations = ConfigHelper.getMapConfigurations()
   private showEmailAlert: boolean = false
+  private confirmDialog: boolean = false
+  private appointmentList: Appointment[] = []
+  private selectedAppointment: Appointment = null
 
   private readonly getAppointmentList!: () => Promise<Appointment[]>
-  private appointmentList: Appointment[] = []
-
-  private bookingData = [
-    {
-      id: 1,
-      locationName: 'Service BC Victoria',
-      coordinates: {
-        lat: 48.452540,
-        lng: -123.369040
-      },
-      serviceName: 'Legal Name Change',
-      bookingDate: 'Apr 20, 2020',
-      bookingTime: '9:15 am',
-      isAppointmentConfirmed: true
-    },
-    {
-      id: 2,
-      locationName: 'Service BC Langford',
-      coordinates: {
-        lat: 48.452540,
-        lng: -123.369040
-      },
-      serviceName: 'Legal Name Change',
-      bookingDate: 'Apr 22, 2020',
-      bookingTime: '10:45 am',
-      isAppointmentConfirmed: false
-    }
-  ]
+  private readonly deleteAppointment!: (appointmentId: number) => Promise<any>
+  private readonly setAppointmentValues!: (appointment: Appointment) => void
+  private readonly clearSelectedValues!: () => void
 
   private async beforeMount () {
-    this.appointmentList = await this.getAppointmentList()
+    this.fetchAppointments()
     this.showEmailAlert = !this.currentUserProfile?.email
+  }
+
+  private async fetchAppointments () {
+    this.appointmentList = await this.getAppointmentList()
+  }
+
+  private getCoordinates (appointment) {
+    return {
+      lat: appointment?.office?.latitude || 0,
+      lng: appointment?.office?.longitude || 0
+    }
+  }
+
+  private getOfficeName (appointment) {
+    return appointment?.office?.office_name || ''
+  }
+
+  private getServiceName (appointment) {
+    return appointment?.service?.external_service_name || ''
   }
 
   private goToAccountSettings () {
@@ -164,7 +210,32 @@ export default class Home extends Vue {
   }
 
   private bookNewAppointment () {
+    this.clearSelectedValues()
     this.$router.push('/appointment')
+  }
+
+  private changeAppointment (appointment) {
+    this.setAppointmentValues(appointment)
+    this.$store.commit('stepperCurrentStep', 1)
+    this.$store.commit('setAppointmentEditMode', true)
+    this.$router.push('/appointment')
+  }
+
+  private cancelAppointment (appointment) {
+    this.confirmDialog = true
+    this.selectedAppointment = appointment
+  }
+
+  private async confirmDelete (isAgree: boolean) {
+    if (isAgree) {
+      const resp = await this.deleteAppointment(this.selectedAppointment?.appointment_id)
+      if (resp?.status === 204) {
+        this.confirmDialog = false
+      }
+      this.fetchAppointments()
+    } else {
+      this.confirmDialog = false
+    }
   }
 }
 </script>

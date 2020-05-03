@@ -7,7 +7,7 @@
     <v-card-text>
       <p class="step-desc">Please select the service you'd like to receive</p>
       <v-row justify="center">
-        <v-col cols="12" sm="6">
+        <v-col cols="12" sm="6" class="text-center">
           <v-combobox
             :items="serviceList"
             :item-disabled="checkDisabled"
@@ -26,10 +26,20 @@
             <template v-slot:item="data">
               <div class="">
                 <div>{{ data.item.external_service_name }}</div>
-                <!-- <div class="service-message">{{ data.item.service_desc }}</div> -->
               </div>
             </template>
           </v-combobox>
+          <v-btn
+            v-if="selectedService && selectedService.online_link"
+            text
+            link
+            color="primary"
+            target="_blank"
+            :href="selectedService.online_link"
+          >
+            Click here for more options
+            <v-icon small class="ml-1">mdi-open-in-new</v-icon>
+          </v-btn>
         </v-col>
       </v-row>
       <v-row justify="center">

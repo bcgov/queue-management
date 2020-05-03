@@ -1,6 +1,9 @@
 /**
  * Place to put all the custom utility methods
  */
+import { format } from 'date-fns'
+import { utcToZonedTime } from 'date-fns-tz'
+
 export enum Days {
   Monday = 1, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday
 }
@@ -34,20 +37,21 @@ export default class CommonUtils {
     let timeslotArray = []
     // this loop will get the minimum start time and maximum end time of a timeslot
     timeslots.forEach(timeslot => {
-      if (timeslotArray[timeslot.day_of_week]) {
-        if (!this.compareTime(timeslotArray[timeslot.day_of_week].startTime, timeslot.start_time)) {
-          timeslotArray[timeslot.day_of_week].startTime = timeslot.start_time
+      timeslot.day_of_week.forEach(day => {
+        if (timeslotArray[Days[day]]) {
+          if (!this.compareTime(timeslotArray[Days[day]].startTime, timeslot.start_time)) {
+            timeslotArray[Days[day]].startTime = timeslot.start_time
+          }
+          if (this.compareTime(timeslotArray[Days[day]].endTime, timeslot.end_time)) {
+            timeslotArray[Days[day]].endTime = timeslot.end_time
+          }
+        } else {
+          timeslotArray[Days[day]] = {
+            startTime: timeslot.start_time,
+            endTime: timeslot.end_time
+          }
         }
-        if (this.compareTime(timeslotArray[timeslot.day_of_week].endTime, timeslot.end_time)) {
-          timeslotArray[timeslot.day_of_week].endTime = timeslot.end_time
-        }
-      } else {
-        timeslotArray[timeslot.day_of_week] = {
-          ...timeslot,
-          startTime: timeslot.start_time,
-          endTime: timeslot.end_time
-        }
-      }
+      })
     })
     let index = 1
     let returnArray = []
@@ -63,6 +67,14 @@ export default class CommonUtils {
       index++
     } while (index <= (Object.keys(Days).length / 2))
     return returnArray
+  }
+
+  static getFormattedFromDate (date, type) {
+    if (type === 'date') {
+      return format(utcToZonedTime(date || new Date(), 'America/Vancouver'), 'MMM dd, yyyy')
+    } else {
+      return format(utcToZonedTime(date || new Date(), 'America/Vancouver'), 'hh:mmaaaa')
+    }
   }
 }
 

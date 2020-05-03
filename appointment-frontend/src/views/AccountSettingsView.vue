@@ -9,7 +9,7 @@
           @click="goToAppointments"
         >
           <v-icon left class="mr-2">mdi-arrow-left</v-icon>
-          Return to My Appointments
+          My Appointments
         </v-btn>
         <v-card>
           <v-card-title>
@@ -90,7 +90,8 @@ import { getModule } from 'vuex-module-decorators'
   },
   methods: {
     ...mapActions('account', [
-      'updateUserAccount'
+      'updateUserAccount',
+      'getUser'
     ])
   }
 })
@@ -99,8 +100,9 @@ export default class AccountSettingsView extends Vue {
   private authModule = getModule(AuthModule, this.$store)
   private readonly currentUserProfile!: User
   private readonly updateUserAccount!: (userBody: UserUpdateBody) => Promise<any>
+  private readonly getUser!: () => void
   private valid:boolean = false
-  private name:string = 'Jon Snow'
+  private name:string = ''
   private email:string = ''
   private phoneNumber:string = ''
   private enableReminder:boolean = false
@@ -123,8 +125,11 @@ export default class AccountSettingsView extends Vue {
   ]
 
   private async beforeMount () {
+    if (!this.currentUserProfile.user_id) {
+      await this.getUser()
+    }
     if (this.currentUserProfile) {
-      this.name = this.currentUserProfile.display_name
+      this.name = this.currentUserProfile?.display_name || 'no_name'
       this.email = this.currentUserProfile.email
       this.phoneNumber = this.currentUserProfile.telephone
       this.enableReminder = this.currentUserProfile.send_reminders

@@ -35,4 +35,12 @@ export default class AccountModule extends VuexModule {
     this.context.commit('auth/setUserProfile', returnData, { root: true })
     return returnData
   }
+
+  @Action({ rawError: true })
+  public async getUser () {
+    const response = await UserService.getUser()
+    const returnData = response?.data?.length ? response.data[0] : {}
+    this.context.commit('auth/setUserProfile', returnData, { root: true })
+    return returnData
+  }
 }

@@ -35,7 +35,7 @@ import { getModule } from 'vuex-module-decorators'
     ])
   },
   methods: {
-    ...mapActions('account', ['loadUserInfo']),
+    ...mapActions('account', ['loadUserInfo', 'getUser']),
     ...mapActions('auth', ['syncWithSessionStorage'])
   }
 })
@@ -44,6 +44,7 @@ export default class App extends Vue {
   private accountModule = getModule(AccountModule, this.$store)
   private readonly loadUserInfo!: () => KCUserProfile
   private readonly syncWithSessionStorage!: () => void
+  private readonly getUser!: () => void
   private readonly isAuthenticated!: boolean
   private tokenService = new TokenService()
 
@@ -58,7 +59,10 @@ export default class App extends Vue {
     // eslint-disable-next-line no-console
     console.log('this.isAuthenticated ', this.isAuthenticated)
     this.$store.commit('updateHeader')
-    this.loadUserInfo()
+    if (this.isAuthenticated) {
+      this.loadUserInfo()
+      this.getUser()
+    }
     // Listen for event from signin component so it can initiate setup
     this.$root.$on('signin-complete', async (callback) => {
       await this.initSetup()
@@ -75,6 +79,7 @@ export default class App extends Vue {
     console.log('this.isAuthenticated ', this.isAuthenticated)
     if (this.isAuthenticated) {
       this.loadUserInfo()
+      this.getUser()
       try {
         await this.tokenService.init(this.$store)
         this.tokenService.scheduleRefreshTimer()
