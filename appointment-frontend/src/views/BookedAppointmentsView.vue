@@ -87,6 +87,7 @@
               color="error lighten-1"
               class="mt-4"
               min-width="195"
+              @click="cancelAppointment(appointment)"
             >
               <v-icon class="mr-1">mdi-delete-outline</v-icon>
               Cancel Appointment
@@ -95,6 +96,45 @@
         </v-row>
       </v-card-text>
     </v-card>
+    <v-alert
+      v-if="!appointmentList.length"
+      outlined
+      color="grey darken-3"
+      class="text-center mt-10"
+    >
+      <v-icon>mdi-information-outline</v-icon>
+      No appointments found!
+    </v-alert>
+    <v-dialog
+      v-model="confirmDialog"
+      max-width="290"
+    >
+      <v-card>
+        <v-card-title class="headline">
+          Are you sure?
+        </v-card-title>
+        <v-card-text>
+          Are you sure that you want to cancel this appointment?
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="red darken-1"
+            text
+            @click="confirmDelete(false)"
+          >
+            No
+          </v-btn>
+          <v-btn
+            color="red darken-1"
+            text
+            @click="confirmDelete(true)"
+          >
+            Yes, Cancel it
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -115,7 +155,8 @@ import { getModule } from 'vuex-module-decorators'
   },
   methods: {
     ...mapActions('appointment', [
-      'getAppointmentList'
+      'getAppointmentList',
+      'deleteAppointment'
     ])
   }
 })
@@ -124,42 +165,20 @@ export default class Home extends Vue {
   private readonly currentUserProfile!: User
   private mapConfigurations = ConfigHelper.getMapConfigurations()
   private showEmailAlert: boolean = false
+  private confirmDialog: boolean = false
+  private appointmentList: Appointment[] = []
+  private selectedAppointment: Appointment = null
 
   private readonly getAppointmentList!: () => Promise<Appointment[]>
-  private appointmentList: Appointment[] = []
-
-  private bookingData = [
-    {
-      id: 1,
-      locationName: 'Service BC Victoria',
-      coordinates: {
-        lat: 48.452540,
-        lng: -123.369040
-      },
-      serviceName: 'Legal Name Change',
-      bookingDate: 'Apr 20, 2020',
-      bookingTime: '9:15 am',
-      isAppointmentConfirmed: true
-    },
-    {
-      id: 2,
-      locationName: 'Service BC Langford',
-      coordinates: {
-        lat: 48.452540,
-        lng: -123.369040
-      },
-      serviceName: 'Legal Name Change',
-      bookingDate: 'Apr 22, 2020',
-      bookingTime: '10:45 am',
-      isAppointmentConfirmed: false
-    }
-  ]
+  private readonly deleteAppointment!: (appointmentId: number) => Promise<any>
 
   private async beforeMount () {
-    this.appointmentList = await this.getAppointmentList()
-    // eslint-disable-next-line no-console
-    console.log(this.appointmentList)
+    this.fetchAppointments()
     this.showEmailAlert = !this.currentUserProfile?.email
+  }
+
+  private async fetchAppointments () {
+    this.appointmentList = await this.getAppointmentList()
   }
 
   private getCoordinates (appointment) {
@@ -183,6 +202,23 @@ export default class Home extends Vue {
 
   private bookNewAppointment () {
     this.$router.push('/appointment')
+  }
+
+  private cancelAppointment (appointment) {
+    this.confirmDialog = true
+    this.selectedAppointment = appointment
+  }
+
+  private async confirmDelete (isAgree: boolean) {
+    if (isAgree) {
+      const resp = await this.deleteAppointment(this.selectedAppointment?.appointment_id)
+      if (resp?.status === 204) {
+        this.confirmDialog = false
+      }
+      this.fetchAppointments()
+    } else {
+      this.confirmDialog = false
+    }
   }
 }
 </script>

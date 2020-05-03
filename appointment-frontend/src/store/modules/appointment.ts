@@ -44,4 +44,16 @@ export default class AppointmentModule extends VuexModule {
     }
     return appointmentsList
   }
+
+  // @Action({ rawError: true })
+  // public async updateAppointments () {
+  //   const response = await AppointmentService.updateAppointment()
+  //   return response?.data || []
+  // }
+
+  @Action({ rawError: true })
+  public async deleteAppointment (appointmentId: number) {
+    const response = await AppointmentService.deleteAppointment(appointmentId)
+    return response || {}
+  }
 }
