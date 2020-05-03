@@ -80,8 +80,6 @@ objects:
                   port: 2015
                 timeoutSeconds: 3
               volumeMounts:
-                # - mountPath: /var/www/html/static/keycloak
-                # config/kc/keycloak.json
                 - mountPath: /var/www/html/config/kc
                   name: keycloak
               terminationMessagePath: "/dev/termination-log"
@@ -102,7 +100,7 @@ objects:
           volumes:
             - configMap:
                 defaultMode: 420
-                name: keycloak.json
+                name: keycloak-public.json
               name: keycloak
           affinity:
             podAntiAffinity:
@@ -125,27 +123,6 @@ objects:
               kind: ImageStreamTag
               namespace: ${TOOLS_WORKSPACE}
               name: "${NAME}:${IMAGE_TAG}"
-  - apiVersion: v1
-    kind: Route
-    metadata:
-      name: "${API_NAME}-ratelimited"
-      annotations: 
-        # https://docs.openshift.com/container-platform/3.11/architecture/networking/routes.html
-        # https://github.com/openshift/router/blob/master/images/router/haproxy/conf/haproxy-config.template
-        # Defaults to 10 HTTP requests per 30 seconds.
-        haproxy.router.openshift.io/rate-limiting-connections: true
-        # To deviate from default HAProxy values, enable below commented out line
-        # Below line allows 20 HTTP requests per IP per 30 sceonds.  (Interval is always 30 seconds.)
-        # haproxy.router.openshift.io/rate-limit-connections.rate-http: 20
-    spec:
-      host: "${RATE_LIMITED_API_HOSTNAME}"
-      path: /api
-      to:
-        kind: Service
-        name: "${API_NAME}"
-      tls:
-        insecureEdgeTerminationPolicy: Redirect
-        termination: edge
   - apiVersion: v1
     kind: Route
     metadata:
