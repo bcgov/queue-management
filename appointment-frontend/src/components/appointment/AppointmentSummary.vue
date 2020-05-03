@@ -41,7 +41,7 @@
                   large
                   @click="confirmAppointment"
                   color="primary"
-                >Confirm Appointment</v-btn>
+                >{{submitBtnText}}</v-btn>
               </div>
             </v-col>
           </v-row>
@@ -170,6 +170,10 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
     let start = this.dateTimeFormatted(this.currentAppointmentSlot?.start_time, 'hh:mmaaaa')
     let end = this.dateTimeFormatted(this.currentAppointmentSlot?.end_time, 'hh:mmaaaa')
     return `${date} ${start} - ${end}`
+  }
+
+  private get submitBtnText () {
+    return (this.$store.state.isAppointmentEditMode) ? 'Update Appointment' : 'Confirm Appointment'
   }
 
   dateTimeFormatted (date, formatStr) {

@@ -13,6 +13,7 @@
             label="Address"
             outlined
             hide-details
+            class="map-address-input"
             dense
 
             @click:append="fetchLocation"
@@ -101,7 +102,7 @@ export default class GeocoderInput extends Vue {
 
 <style lang="scss" scope>
 // @import "@/assets/scss/theme.scss";
-.v-input.v-autocomplete {
+.map-address-input {
   max-width: calc(100% - 100px);
 }
 </style>
