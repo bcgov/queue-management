@@ -20,6 +20,7 @@ from app.models.bookings import Booking
 from app.models.theq import CSR
 from app.schemas.bookings import BookingSchema
 from qsystem import api, oidc
+from app.utilities.auth_util import Role, has_any_role
 
 
 @api.route("/bookings/", methods=["GET"])
@@ -28,6 +29,7 @@ class BookingList(Resource):
     booking_schema = BookingSchema(many=True)
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value])
     def get(self):
 
         csr = CSR.find_by_username(g.oidc_token_info['username'])

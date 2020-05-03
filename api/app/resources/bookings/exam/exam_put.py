@@ -19,6 +19,7 @@ from app.models.bookings import Exam
 from app.models.theq import CSR
 from app.schemas.bookings import ExamSchema
 from qsystem import api, api_call_with_retry, db, oidc
+from app.utilities.auth_util import Role, has_any_role
 
 
 @api.route("/exams/<int:id>/", methods=["PUT"])
@@ -27,6 +28,7 @@ class ExamPut(Resource):
     exam_schema = ExamSchema()
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value])
     @api_call_with_retry
     def put(self, id):
 

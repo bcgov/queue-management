@@ -20,6 +20,7 @@ from app.schemas.bookings import BookingSchema
 from app.models.bookings import Invigilator
 from app.models.theq import CSR
 from qsystem import api, api_call_with_retry, db, oidc
+from app.utilities.auth_util import Role, has_any_role
 
 
 @api.route("/bookings/", methods=["POST"])
@@ -28,6 +29,7 @@ class BookingPost(Resource):
     booking_schema = BookingSchema()
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value])
     @api_call_with_retry
     def post(self):
 

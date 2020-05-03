@@ -21,6 +21,7 @@ from app.models.theq import CSR, PublicUser, Citizen, Office
 from app.schemas.bookings import AppointmentSchema
 from app.utilities.snowplow import SnowPlow
 from app.utilities.auth_util import is_public_user
+from app.utilities.auth_util import Role, has_any_role
 
 
 @api.route("/appointments/<int:id>/", methods=["PUT"])
@@ -29,6 +30,7 @@ class AppointmentPut(Resource):
     appointment_schema = AppointmentSchema()
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value, Role.online_appointment_user.value])
     def put(self, id):
         json_data = request.get_json()
         csr = None
@@ -42,7 +44,7 @@ class AppointmentPut(Resource):
             # user = PublicUser.find_by_username(g.oidc_token_info['username'])
             citizen = Citizen.find_citizen_by_username(g.oidc_token_info['username'], office_id)
             # Validate if the same user has other appointments for same day at same office
-            appointments = Appointment.find_by_citizen_id_and_office_id(office_id=office_id,
+            appointments = Appointment.find_by_username_and_office_id(office_id=office_id,
                                                                         user_name=g.oidc_token_info['username'],
                                                                         start_time=json_data.get('start_time'),
                                                                         timezone=office.timezone.timezone_name,

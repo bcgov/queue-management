@@ -19,6 +19,8 @@ from qsystem import api, api_call_with_retry, db, oidc, socketio, my_print
 from app.models.theq import Citizen, CSR
 from app.models.theq import SRState
 from app.schemas.theq import CitizenSchema
+from app.utilities.auth_util import Role, has_any_role
+
 
 @api.route("/citizens/<int:id>/begin_service/", methods=["POST"])
 class CitizenBeginService(Resource):
@@ -26,6 +28,7 @@ class CitizenBeginService(Resource):
     citizen_schema = CitizenSchema()
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value])
     @api_call_with_retry
     def post(self, id):
         csr = CSR.find_by_username(g.oidc_token_info['username'])

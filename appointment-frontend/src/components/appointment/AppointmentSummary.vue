@@ -21,7 +21,17 @@
               <p>{{appointmentDisplayData.locationName}}, <small v-if="appointmentDisplayData.locationAddress">{{appointmentDisplayData.locationAddress}}</small></p>
             </v-col>
             <v-col cols="12">
-              <GmapMap
+              <div class="d-flex justify-center">
+                <v-btn
+                  large
+                  @click="confirmAppointment"
+                  color="primary"
+                >Confirm Appointment</v-btn>
+              </div>
+            </v-col>
+            <v-col cols="12">
+              <img :src='getMapUrl(staticMapData)' :alt="staticMapData.civic_address" class='map-view'>
+              <!-- <GmapMap
                 :center="appointmentDisplayData.locationCoordinates"
                 :zoom="14"
                 class="map-view"
@@ -33,7 +43,7 @@
                   :draggable="false"
                   :label='{text: appointmentDisplayData.locationName, fontWeight: "600"}'
                 />
-              </GmapMap>
+              </GmapMap> -->
             </v-col>
             <v-col cols="12">
               <div class="d-flex justify-center">
@@ -110,6 +120,7 @@ import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
 import { mapActions, mapState } from 'vuex'
 import { AuthModule } from '@/store/modules'
 import ConfigHelper from '@/utils/config-helper'
+import GeocoderService from '@/services/geocoder.services'
 import { Office } from '@/models/office'
 import { Service } from '@/models/service'
 import StepperMixin from '@/mixins/StepperMixin.vue'
@@ -176,6 +187,14 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
     return (this.$store.state.isAppointmentEditMode) ? 'Update Appointment' : 'Confirm Appointment'
   }
 
+  private get staticMapData () {
+    return {
+      civic_address: this.currentOffice?.civic_address || '',
+      latitude: this.currentOffice?.latitude || 0,
+      longitude: this.currentOffice?.longitude || 0
+    }
+  }
+
   dateTimeFormatted (date, formatStr) {
     if (!date) {
       return ''
@@ -211,6 +230,10 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
       this.$router.push('/booked-appointments')
     }
   }
+
+  private getMapUrl (location) {
+    return GeocoderService.generateStaticMapURL(location, { height: 200, width: 1200, scale: 2 })
+  }
 }
 </script>
 
@@ -223,7 +246,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   color: $gray9 !important;
 }
 .map-view {
-  width: 100%;
-  height: 45vh;
+  max-width: 100%;
+  max-height: 100%
 }
 </style>

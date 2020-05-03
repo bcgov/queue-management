@@ -18,6 +18,8 @@ from flask_restx import Resource
 from qsystem import api, api_call_with_retry, db, oidc, socketio, my_print
 from app.models.theq import Citizen, CSR, CitizenState, Period, PeriodState, ServiceReq, SRState
 from app.schemas.theq import CitizenSchema
+from app.utilities.auth_util import Role, has_any_role
+
 
 @api.route("/citizens/invite/", methods=['POST'])
 class CitizenGenericInvite(Resource):
@@ -26,6 +28,7 @@ class CitizenGenericInvite(Resource):
     citizens_schema = CitizenSchema(many=True)
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value])
     @api_call_with_retry
     def post(self):
 

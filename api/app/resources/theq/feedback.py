@@ -22,6 +22,8 @@ import os
 import pysnow
 import requests
 import json
+from app.utilities.auth_util import Role, has_any_role
+
 
 @api.route("/feedback/", methods=['POST'])
 class Feedback(Resource):
@@ -32,6 +34,7 @@ class Feedback(Resource):
     flag_rocket_chat = "ROCKETCHAT" in feedback_destinations
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value])
     def post(self):
         json_data = request.get_json()
         if not json_data:

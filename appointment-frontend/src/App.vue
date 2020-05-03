@@ -50,8 +50,8 @@ export default class App extends Vue {
 
   private async beforeMount () {
     // eslint-disable-next-line no-console
-    console.log(`${process.env.VUE_APP_PATH}config/kc/keycloak.json`)
-    await KeyCloakService.setKeycloakConfigUrl(`${process.env.VUE_APP_PATH}config/kc/keycloak.json`)
+    console.log(`${process.env.VUE_APP_PATH}config/kc/keycloak-public.json`)
+    await KeyCloakService.setKeycloakConfigUrl(`${process.env.VUE_APP_PATH}config/kc/keycloak-public.json`)
     this.syncWithSessionStorage()
   }
 

@@ -3,16 +3,6 @@
     <p class="step-desc">To book an appointment, please find your nearest BC Service Location</p>
     <v-row justify="center">
       <v-col cols="6" sm="4">
-        <!-- <v-text-field
-          append-icon="mdi-map-marker-radius"
-          type="text"
-          name="address"
-          label="Address"
-          outlined
-          hide-details
-          dense
-          @click:append="fetchLocation"
-        ></v-text-field> -->
         <geocoder-input v-on:set-location-event='onGeoSelect'></geocoder-input>
       </v-col>
       <v-col cols="6" sm="4">
@@ -36,8 +26,8 @@
     <v-row justify="center">
       <v-col cols="12">
         <p class="text-center mb-0">Locations sorted by nearest to you
-          <br><br>
-          Coords: {{ this.currentCoordinates() }}
+          <!-- <br><br>
+          Coords: {{ this.currentCoordinates() }} -->
         </p>
       </v-col>
       <v-col
@@ -52,7 +42,10 @@
           <v-card-text>
             <v-row class="d-flex" justify="space-around">
               <v-col cols="6" align-self="stretch">
-                <GmapMap
+
+                <img :src='getMapUrl(location)' :alt="location.civic_address" class='static-map'>
+
+                <!-- <GmapMap
                   :center="getCoordinates(location)"
                   :zoom="14"
                   class="map-view"
@@ -64,7 +57,7 @@
                     :draggable="false"
                     :label='{text: location.office_name, fontWeight: "600"}'
                   />
-                </GmapMap>
+                </GmapMap> -->
                 <div class="text-center mt-2 body-2" v-if="location.civic_address">
                   {{location.civic_address}}
                 </div>
@@ -196,12 +189,50 @@ export default class LocationsList extends Mixins(StepperMixin) {
 
   private async mounted () {
     this.locationListData = await this.getOffices()
+    this.locationListData = this.sortOfficesByDistance(this.locationListData)
+    // eslint-disable-next-line no-console
+    console.log('locationListData', this.locationListData)
     await this.getCategories()
   }
 
+  private sortOfficesByDistance (locationList) {
+    // If we have no distance, we can't sort
+    if (!this.hasCoordinates()) {
+      return locationList
+    } else {
+      // Add a "calculated_distance" to every location that has lat/lng
+      // Then sort array based on that value
+      return this.locationListData.map(location => {
+        const locationCoords = { latitude: location.latitude, longitude: location.longitude }
+        let result
+
+        if (!location.latitude || !location.longitude) {
+          result = null
+        } else {
+          result = GeocoderService.distance(this.currentCoordinates(), locationCoords)
+        }
+        location['calculated_distance'] = result
+        return location
+      })
+        .sort((a, b) => {
+          // Put all null values at bottom of list
+          let aDist = a['calculated_distance']
+          let bDist = b['calculated_distance']
+
+          if (aDist === null) {
+            aDist = 999
+          }
+          if (bDist === null) {
+            bDist = 999
+          }
+
+          return aDist - bDist
+        })
+    }
+  }
+
   private async onGeoSelect (input) {
-    // eslint-disable-next-line no-console
-    console.log('onGeoSelect', input)
+    this.locationListData = this.sortOfficesByDistance(this.locationListData)
     this.$forceUpdate()
   }
 
@@ -241,6 +272,10 @@ export default class LocationsList extends Mixins(StepperMixin) {
     this.setCurrentOffice(location)
     this.stepNext()
   }
+
+  private getMapUrl (location) {
+    return GeocoderService.generateStaticMapURL(location)
+  }
 }
 </script>
 
@@ -265,5 +300,8 @@ export default class LocationsList extends Mixins(StepperMixin) {
 .service-unavailable {
   color: $BCgovInputError;
   font-weight: 600;
+}
+.static-map {
+  max-width: 100%;
 }
 </style>
