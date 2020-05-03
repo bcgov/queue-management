@@ -15,6 +15,9 @@
             v-model="selectedDate"
             show-current
             light
+            :allowed-dates="getAllowedDates"
+            :events="availableDates"
+            event-color="green lighten-1"
             color="success"
             header-color="primary"
             full-width
@@ -98,6 +101,7 @@ export default class DateSelection extends Mixins(StepperMixin) {
   // TODO: take timezone from office data from state
   private selectedDate = format(utcToZonedTime(new Date(), 'America/Vancouver'), 'yyyy-MM-dd')
   private selectedDateTimeSlots = []
+  private availableDates = []
 
   private get selectedDateFormatted () {
     return format(utcToZonedTime(this.selectedDate, 'America/Vancouver'), 'MMM dd, yyyy')
@@ -105,11 +109,20 @@ export default class DateSelection extends Mixins(StepperMixin) {
 
   private async mounted () {
     if (this.currentOffice?.office_id) {
-      await this.getAvailableAppointmentSlots(this.currentOffice.office_id)
+      const availableAppoinments = await this.getAvailableAppointmentSlots(this.currentOffice.office_id)
+      Object.keys(availableAppoinments).forEach(date => {
+        if (availableAppoinments[date]?.length) {
+          this.availableDates.push(format(utcToZonedTime(new Date(date), 'America/Vancouver'), 'yyyy-MM-dd'))
+        }
+      })
     }
     const dateSelected = utcToZonedTime(this.currentAppointmentSlot?.start_time || new Date(), 'America/Vancouver')
     this.selectedDate = format(dateSelected, 'yyyy-MM-dd')
     this.dateClicked()
+  }
+
+  private getAllowedDates (val) {
+    return this.availableDates.find(date => date === val)
   }
 
   private dateClicked () {
