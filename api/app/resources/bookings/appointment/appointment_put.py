@@ -44,7 +44,7 @@ class AppointmentPut(Resource):
             # user = PublicUser.find_by_username(g.oidc_token_info['username'])
             citizen = Citizen.find_citizen_by_username(g.oidc_token_info['username'], office_id)
             # Validate if the same user has other appointments for same day at same office
-            appointments = Appointment.find_by_citizen_id_and_office_id(office_id=office_id,
+            appointments = Appointment.find_by_username_and_office_id(office_id=office_id,
                                                                         user_name=g.oidc_token_info['username'],
                                                                         start_time=json_data.get('start_time'),
                                                                         timezone=office.timezone.timezone_name,
