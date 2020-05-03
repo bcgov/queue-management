@@ -125,6 +125,48 @@ objects:
               kind: ImageStreamTag
               namespace: ${TOOLS_WORKSPACE}
               name: "${NAME}:${IMAGE_TAG}"
+  - apiVersion: v1
+    kind: Route
+    metadata:
+      name: "${API_NAME}-ratelimited"
+      annotations: 
+        # https://docs.openshift.com/container-platform/3.11/architecture/networking/routes.html
+        # https://github.com/openshift/router/blob/master/images/router/haproxy/conf/haproxy-config.template
+        # Defaults to 10 HTTP requests per 30 seconds.
+        haproxy.router.openshift.io/rate-limiting-connections: true
+        # To deviate from default HAProxy values, enable below commented out line
+        # Below line allows 20 HTTP requests per IP per 30 sceonds.  (Interval is always 30 seconds.)
+        # haproxy.router.openshift.io/rate-limit-connections.rate-http: 20
+    spec:
+      host: "${RATE_LIMITED_API_HOSTNAME}"
+      path: /api
+      to:
+        kind: Service
+        name: "${API_NAME}"
+      tls:
+        insecureEdgeTerminationPolicy: Redirect
+        termination: edge
+  - apiVersion: v1
+    kind: Route
+    metadata:
+      name: "${API_NAME}-rate-limited"
+      annotations:
+        # https://docs.openshift.com/container-platform/3.11/architecture/networking/routes.html
+        # https://github.com/openshift/router/blob/master/images/router/haproxy/conf/haproxy-config.template
+        # To deviate from default HAProxy values, enable below commented out line
+        # Values must be enclosed ins trings for HAproxy annotations
+        haproxy.router.openshift.io/rate-limit-connections: 'true'
+        # Below line allows 20 HTTP requests per IP per 30 sceonds.  (Interval is always 30 seconds.)
+        # haproxy.router.openshift.io/rate-limit-connections.rate-http: '20'
+    spec:
+      host: "${RATE_LIMITED_API_HOSTNAME}"
+      path: /api
+      to:
+        kind: Service
+        name: "${API_NAME}"
+      tls:
+        insecureEdgeTerminationPolicy: Redirect
+        termination: edge
 parameters:
   - name: NAME
     displayName: Name
@@ -134,6 +176,14 @@ parameters:
   - name: APPLICATION_DOMAIN
     description: "The exposed hostname that will route to the Vue application"
     value: dev-bookanappointment.pathfinder.gov.bc.ca
+  - name: API_NAME
+    displayName: API Name
+    description: The name of the API that this uses as a backend (to create a rate limited route).
+    required: false
+    value: queue-management-api
+  - name: RATE_LIMITED_API_HOSTNAME
+    description: "The new route to API which will be rate limited"
+    value: theq-public.pathfinder.gov.bc.ca
   - name: IMAGE_TAG
     description: The image tag to pull for the deployment.
     required: true
