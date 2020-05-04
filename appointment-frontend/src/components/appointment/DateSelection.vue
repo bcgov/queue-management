@@ -29,7 +29,10 @@
           sm="6"
           class="text-center"
         >
-          <div>
+          <div v-if="selectedTimeSlot">
+            <strong class="mr-1">Appointment Date: </strong> {{selectedDateFormatted}}, {{selectedTimeSlot}}
+          </div>
+          <div v-else>
             <strong class="mr-1">Date Selected: </strong> {{selectedDateFormatted}}
           </div>
           <template v-if="selectedDateTimeSlots.length">
@@ -103,6 +106,13 @@ export default class DateSelection extends Mixins(StepperMixin) {
 
   private get selectedDateFormatted () {
     return CommonUtils.getTzFormattedDate(this.selectedDate, 'MMM dd, yyyy')
+  }
+
+  private get selectedTimeSlot () {
+    return (this.currentAppointmentSlot?.start_time && this.currentAppointmentSlot?.end_time)
+      ? `${CommonUtils.getTzFormattedDate(this.currentAppointmentSlot?.start_time, 'hh:mm aaa')} -
+        ${CommonUtils.getTzFormattedDate(this.currentAppointmentSlot?.end_time, 'hh:mm aaa')}`
+      : ''
   }
 
   private async mounted () {
