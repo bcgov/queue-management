@@ -105,10 +105,11 @@
               </v-col>
             </v-row>
           </v-card-text>
-          <v-card-actions>
+          <v-card-actions class='flex-column flex-sm-row'>
             <v-btn
               color="primary"
               outlined
+              class='mt-4 mt-sm-0'
               large
               @click="showLocationServices(location)"
             >
@@ -117,7 +118,7 @@
             <v-spacer></v-spacer>
             <v-btn
               color="primary"
-              class="pl-5"
+              class="pl-5 mt-4 mt-sm-0"
               large
               @click="selectLocation(location)"
             >
@@ -313,4 +314,7 @@ export default class LocationsList extends Mixins(StepperMixin) {
 .static-map {
   max-width: 100%;
 }
+// .mobile-stack-buttons {
+
+// }
 </style>
