@@ -70,16 +70,16 @@ class Citizen(Base):
         """Find citizen record by user id."""
         return cls.query.filter(Citizen.user_id == user_id).filter(Citizen.office_id == office_id).one_or_none()
 
-    @classmethod
-    def find_citizen_by_username(cls, username, office_id):
-        """Find citizen record by user name."""
-        from .public_user import PublicUser
-
-        query = db.session.query(Citizen) \
-            .join(PublicUser) \
-            .filter(PublicUser.username == username, Citizen.user_id == PublicUser.user_id, Citizen.office_id == office_id)
-
-        return query.one_or_none()
+    # @classmethod
+    # def find_citizen_by_username(cls, username, office_id):
+    #     """Find citizen record by user name."""
+    #     from .public_user import PublicUser
+    #
+    #     query = db.session.query(Citizen) \
+    #         .join(PublicUser) \
+    #         .filter(PublicUser.username == username, Citizen.user_id == PublicUser.user_id, Citizen.office_id == office_id)
+    #
+    #     return query.one_or_none()
 
     @classmethod
     def find_citizen_by_id(cls, citizen_id):
