@@ -26,7 +26,6 @@ from app.utilities.auth_util import Role, has_any_role
 
 @api.route("/appointments/<int:id>/", methods=["PUT"])
 class AppointmentPut(Resource):
-
     appointment_schema = AppointmentSchema()
 
     @oidc.accept_token(require_token=True)
@@ -34,7 +33,7 @@ class AppointmentPut(Resource):
     def put(self, id):
         json_data = request.get_json()
         csr = None
-        is_blackout_appt = json_data.get('blackout_flag', 'N') == 'Y'
+        # is_blackout_appt = json_data.get('blackout_flag', 'N') == 'Y'
         if not json_data:
             return {"message": "No input data received for updating an appointment"}
         is_public_user_appt = is_public_user()
@@ -42,13 +41,13 @@ class AppointmentPut(Resource):
             office_id = json_data.get('office_id')
             office = Office.find_by_id(office_id)
             # user = PublicUser.find_by_username(g.oidc_token_info['username'])
-            citizen = Citizen.find_citizen_by_username(g.oidc_token_info['username'], office_id)
+            # citizen = Citizen.find_citizen_by_username(g.oidc_token_info['username'], office_id)
             # Validate if the same user has other appointments for same day at same office
             appointments = Appointment.find_by_username_and_office_id(office_id=office_id,
-                                                                        user_name=g.oidc_token_info['username'],
-                                                                        start_time=json_data.get('start_time'),
-                                                                        timezone=office.timezone.timezone_name,
-                                                                        appointment_id=id)
+                                                                      user_name=g.oidc_token_info['username'],
+                                                                      start_time=json_data.get('start_time'),
+                                                                      timezone=office.timezone.timezone_name,
+                                                                      appointment_id=id)
             if appointments and len(appointments) >= office.max_person_appointment_per_day:
                 return {"code": "MAX_NO_OF_APPOINTMENTS_REACHED",
                         "message": "Maximum number of appoinments reached"}, 400
@@ -56,13 +55,16 @@ class AppointmentPut(Resource):
             csr = CSR.find_by_username(g.oidc_token_info['username'])
             office_id = csr.office_id
 
-        appointment = Appointment.query.filter_by(appointment_id=id)\
-                                       .filter_by(office_id=office_id)\
-                                       .first_or_404()
+        appointment = Appointment.query.filter_by(appointment_id=id) \
+            .filter_by(office_id=office_id) \
+            .first_or_404()
 
         # If appointment is not made by same user, throw error
-        if is_public_user_appt and appointment.citizen_id != citizen.citizen_id:
-            abort(403)
+        if is_public_user_appt:
+            citizen = Citizen.find_citizen_by_id(appointment.citizen_id)
+            user = PublicUser.find_by_username(g.oidc_token_info['username'])
+            if citizen.user_id != user.user_id:
+                abort(403)
 
         appointment, warning = self.appointment_schema.load(json_data, instance=appointment, partial=True)
 
@@ -78,11 +80,11 @@ class AppointmentPut(Resource):
         if "checked_in_time" in json_data:
             schema = 'appointment_checkin'
 
-        #TODO handle public user login
+        # TODO handle public user login
         if csr:
             SnowPlow.snowplow_appointment(None, csr, appointment, schema)
 
         result = self.appointment_schema.dump(appointment)
 
         return {"appointment": result.data,
-                    "errors": result.errors}, 200
+                "errors": result.errors}, 200
