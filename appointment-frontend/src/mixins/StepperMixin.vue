@@ -6,5 +6,6 @@ import Vue from 'vue'
 export default class StepperMixin extends Vue {
   @Prop() stepNext!: () => void
   @Prop() stepBack!: () => void
+  @Prop() isOnCurrentStep!: boolean
 }
 </script>

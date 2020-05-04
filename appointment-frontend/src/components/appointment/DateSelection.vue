@@ -106,16 +106,18 @@ export default class DateSelection extends Mixins(StepperMixin) {
   }
 
   private async mounted () {
-    if (this.currentOffice?.office_id) {
-      const availableAppoinments = await this.getAvailableAppointmentSlots(this.currentOffice.office_id)
-      Object.keys(availableAppoinments).forEach(date => {
-        if (availableAppoinments[date]?.length) {
-          this.availableDates.push(CommonUtils.getTzFormattedDate(new Date(date)))
-        }
-      })
+    if (this.isOnCurrentStep) {
+      if (this.currentOffice?.office_id) {
+        const availableAppoinments = await this.getAvailableAppointmentSlots(this.currentOffice.office_id)
+        Object.keys(availableAppoinments).forEach(date => {
+          if (availableAppoinments[date]?.length) {
+            this.availableDates.push(CommonUtils.getTzFormattedDate(new Date(date)))
+          }
+        })
+      }
+      this.selectedDate = CommonUtils.getTzFormattedDate(this.currentAppointmentSlot?.start_time)
+      this.dateClicked()
     }
-    this.selectedDate = CommonUtils.getTzFormattedDate(this.currentAppointmentSlot?.start_time)
-    this.dateClicked()
   }
 
   private getAllowedDates (val) {

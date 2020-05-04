@@ -15,6 +15,7 @@
           v-model="selectedRadius"
           name="radius-select"
           dense
+          clearable
           hide-details
         >
           <template v-slot:selection="data">
@@ -188,11 +189,11 @@ export default class LocationsList extends Mixins(StepperMixin) {
   private serviceList: Service[] = []
 
   private async mounted () {
-    this.locationListData = await this.getOffices()
-    this.locationListData = this.sortOfficesByDistance(this.locationListData)
-    // eslint-disable-next-line no-console
-    console.log('locationListData', this.locationListData)
-    await this.getCategories()
+    if (this.isOnCurrentStep) {
+      this.locationListData = await this.getOffices()
+      this.locationListData = this.sortOfficesByDistance(this.locationListData)
+      await this.getCategories()
+    }
   }
 
   private sortOfficesByDistance (locationList) {
