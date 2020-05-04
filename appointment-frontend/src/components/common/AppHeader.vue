@@ -15,7 +15,7 @@
     <v-spacer></v-spacer>
 
     <template v-if="!isAuthenticated">
-      <div class="mb-1">
+      <div class='d-flex'>
         <v-btn
           dark
           outlined
