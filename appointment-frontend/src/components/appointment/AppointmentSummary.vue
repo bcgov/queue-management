@@ -206,7 +206,6 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
         this.dialogPopup.title = 'Success! Your appointment has been booked.'
         this.dialogPopup.subTitle = `Please review your booking in the details below.
             If you need to cancel or reschedule your appointment, please contact Service BC`
-        this.clearSelectedValues()
       }
     } catch (error) {
       this.dialogPopup.showDialog = true
@@ -221,6 +220,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   private clickOk () {
     this.dialogPopup.showDialog = false
     if (this.dialogPopup.isSuccess) {
+      this.clearSelectedValues()
       this.$router.push('/booked-appointments')
     }
   }
