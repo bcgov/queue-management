@@ -15,6 +15,7 @@
           v-model="selectedRadius"
           name="radius-select"
           dense
+          clearable
           hide-details
         >
           <template v-slot:selection="data">
@@ -38,6 +39,8 @@
       >
         <v-card
           :disabled="!location.appointments_enabled_ind"
+          :outlined="(currentOffice && currentOffice.office_id === location.office_id)"
+          :color="(currentOffice && currentOffice.office_id === location.office_id) ? 'blue-grey lighten-5' : ''"
           class="mx-auto">
           <v-card-text>
             <v-row class="d-flex" justify="space-around">
@@ -152,6 +155,11 @@ import { getModule } from 'vuex-module-decorators'
     ServiceListPopup,
     GeocoderInput
   },
+  computed: {
+    ...mapState('office', [
+      'currentOffice'
+    ])
+  },
   methods: {
     ...mapMutations('office', [
       'setCurrentOffice'
@@ -176,6 +184,7 @@ export default class LocationsList extends Mixins(StepperMixin) {
   private readonly getAvailableAppointmentSlots!: (officeId: number) => Promise<any>
   private readonly getCategories!: () => Promise<any>
   private readonly setCurrentOffice!: (office: Office) => void
+  private readonly currentOffice!: Office
   // private readonly coords!: () => any;
   private readonly currentCoordinates!: () => any;
 
@@ -188,11 +197,11 @@ export default class LocationsList extends Mixins(StepperMixin) {
   private serviceList: Service[] = []
 
   private async mounted () {
-    this.locationListData = await this.getOffices()
-    this.locationListData = this.sortOfficesByDistance(this.locationListData)
-    // eslint-disable-next-line no-console
-    console.log('locationListData', this.locationListData)
-    await this.getCategories()
+    if (this.isOnCurrentStep) {
+      this.locationListData = await this.getOffices()
+      this.locationListData = this.sortOfficesByDistance(this.locationListData)
+      await this.getCategories()
+    }
   }
 
   private sortOfficesByDistance (locationList) {

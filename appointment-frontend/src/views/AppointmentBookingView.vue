@@ -133,12 +133,10 @@ export default class AppointmentBookingView extends Vue {
   }
 
   private async updated () {
-    this.$store.commit('stepperCurrentStep', this.stepCounter)
+    this.$store.commit('setStepperCurrentStep', this.stepCounter)
   }
 
   private async mounted () {
-    // eslint-disable-next-line no-console
-    console.log('g', this.isAuthenticated)
     if (this.isAuthenticated) {
       this.bookingSteppers = this.bookingSteppers.filter(step => !(step.code === 'login'))
       this.bookingSteppers[this.bookingSteppers.length - 1].step = this.bookingSteppers.length
@@ -147,7 +145,14 @@ export default class AppointmentBookingView extends Vue {
   }
 
   private getPropsForStep (step): Record<string, any> {
-    return { ...step.componentProps, stepNext: this.stepNext, stepBack: this.stepBack }
+    /**  NOTE: isOnCurrentStep is used to identify the stepper view loaded is in the current step, and execute the steps inside mounted.
+     * otherwise, mounted cycle of all views will executed during a step change
+    */
+    return { ...step.componentProps, stepNext: this.stepNext, stepBack: this.stepBack, isOnCurrentStep: this.isOnCurrentStep(step) }
+  }
+
+  private isOnCurrentStep (step) {
+    return !!(step.step === this.stepCounter)
   }
 }
 </script>

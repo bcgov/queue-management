@@ -15,6 +15,9 @@
             v-model="selectedDate"
             show-current
             light
+            :allowed-dates="getAllowedDates"
+            :events="availableDates"
+            event-color="green lighten-1"
             color="success"
             header-color="primary"
             full-width
@@ -26,7 +29,10 @@
           sm="6"
           class="text-center"
         >
-          <div>
+          <div v-if="selectedTimeSlot">
+            <strong class="mr-1">Appointment Date: </strong> {{selectedDateFormatted}}, {{selectedTimeSlot}}
+          </div>
+          <div v-else>
             <strong class="mr-1">Date Selected: </strong> {{selectedDateFormatted}}
           </div>
           <template v-if="selectedDateTimeSlots.length">
@@ -69,8 +75,6 @@ import CommonUtils from '@/utils/common-util'
 import { Office } from '@/models/office'
 import { OfficeModule } from '@/store/modules'
 import StepperMixin from '@/mixins/StepperMixin.vue'
-import { format } from 'date-fns'
-import { utcToZonedTime } from 'date-fns-tz'
 
 @Component({
   computed: {
@@ -96,25 +100,43 @@ export default class DateSelection extends Mixins(StepperMixin) {
   private readonly getAvailableAppointmentSlots!: (officeId: number) => Promise<any>
   private readonly setCurrentAppointmentSlot!: (slot: AppointmentSlot) => void
   // TODO: take timezone from office data from state
-  private selectedDate = format(utcToZonedTime(new Date(), 'America/Vancouver'), 'yyyy-MM-dd')
+  private selectedDate = CommonUtils.getTzFormattedDate(new Date())
   private selectedDateTimeSlots = []
+  private availableDates = []
 
   private get selectedDateFormatted () {
-    return format(utcToZonedTime(this.selectedDate, 'America/Vancouver'), 'MMM dd, yyyy')
+    return CommonUtils.getTzFormattedDate(this.selectedDate, 'MMM dd, yyyy')
+  }
+
+  private get selectedTimeSlot () {
+    return (this.currentAppointmentSlot?.start_time && this.currentAppointmentSlot?.end_time)
+      ? `${CommonUtils.getTzFormattedDate(this.currentAppointmentSlot?.start_time, 'hh:mm aaa')} -
+        ${CommonUtils.getTzFormattedDate(this.currentAppointmentSlot?.end_time, 'hh:mm aaa')}`
+      : ''
   }
 
   private async mounted () {
-    if (this.currentOffice?.office_id) {
-      await this.getAvailableAppointmentSlots(this.currentOffice.office_id)
+    if (this.isOnCurrentStep) {
+      if (this.currentOffice?.office_id) {
+        const availableAppoinments = await this.getAvailableAppointmentSlots(this.currentOffice.office_id)
+        Object.keys(availableAppoinments).forEach(date => {
+          if (availableAppoinments[date]?.length) {
+            this.availableDates.push(CommonUtils.getTzFormattedDate(new Date(date)))
+          }
+        })
+      }
+      this.selectedDate = CommonUtils.getTzFormattedDate(this.currentAppointmentSlot?.start_time)
+      this.dateClicked()
     }
-    const dateSelected = utcToZonedTime(this.currentAppointmentSlot?.start_time || new Date(), 'America/Vancouver')
-    this.selectedDate = format(dateSelected, 'yyyy-MM-dd')
-    this.dateClicked()
+  }
+
+  private getAllowedDates (val) {
+    return this.availableDates.find(date => date === val)
   }
 
   private dateClicked () {
     this.selectedDateTimeSlots = []
-    const slots = this.availableAppointmentSlots[format(utcToZonedTime(this.selectedDate, 'America/Vancouver'), 'MM/dd/yyyy')]
+    const slots = this.availableAppointmentSlots[CommonUtils.getTzFormattedDate(this.selectedDate, 'MM/dd/yyyy')]
     slots?.forEach(slot => {
       this.selectedDateTimeSlots.push({
         ...slot,

@@ -5,7 +5,9 @@
     </v-card-title>
     <v-divider class="mx-4"></v-divider>
     <v-card-text>
-      <p class="step-desc">To complete your appointment booking, please login using one of the following</p>
+      <p class="step-desc">
+        {{description}}
+      </p>
       <v-row justify="center">
         <v-col cols="12" sm="5" class="text-center">
           <v-btn
@@ -71,6 +73,12 @@ export default class LoginToConfirm extends Mixins(StepperMixin) {
   private idpHint = IdpHint
   private readonly currentUserProfile!: User
   @Prop({ default: false }) isStepperView: boolean
+
+  private get description () {
+    return (this.isStepperView)
+      ? `To complete your appointment booking, please login using one of the following`
+      : `Please login using one of the following`
+  }
 
   private login (idpHint) {
     this.$router.push(`/signin/${idpHint}`)

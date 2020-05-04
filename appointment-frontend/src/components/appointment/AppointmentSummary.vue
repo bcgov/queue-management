@@ -26,7 +26,7 @@
                   large
                   @click="confirmAppointment"
                   color="primary"
-                >Confirm Appointment</v-btn>
+                >{{submitBtnText}}</v-btn>
               </div>
             </v-col>
             <v-col cols="12">
@@ -44,15 +44,6 @@
                   :label='{text: appointmentDisplayData.locationName, fontWeight: "600"}'
                 />
               </GmapMap> -->
-            </v-col>
-            <v-col cols="12">
-              <div class="d-flex justify-center">
-                <v-btn
-                  large
-                  @click="confirmAppointment"
-                  color="primary"
-                >{{submitBtnText}}</v-btn>
-              </div>
             </v-col>
           </v-row>
         </v-card>
@@ -117,17 +108,16 @@
 <script lang="ts">
 import { Appointment, AppointmentSlot } from '@/models/appointment'
 import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 import { AuthModule } from '@/store/modules'
+import CommonUtils from '@/utils/common-util'
 import ConfigHelper from '@/utils/config-helper'
 import GeocoderService from '@/services/geocoder.services'
 import { Office } from '@/models/office'
 import { Service } from '@/models/service'
 import StepperMixin from '@/mixins/StepperMixin.vue'
 import { User } from '@/models/user'
-import { format } from 'date-fns'
 import { getModule } from 'vuex-module-decorators'
-import { utcToZonedTime } from 'date-fns-tz'
 
 @Component({
   computed: {
@@ -138,6 +128,9 @@ import { utcToZonedTime } from 'date-fns-tz'
     ]),
     ...mapState('auth', [
       'currentUserProfile'
+    ]),
+    ...mapGetters('auth', [
+      'isAuthenticated'
     ])
   },
   methods: {
@@ -156,6 +149,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   private readonly currentUserProfile!: User
   private readonly createAppointment!: () => Appointment
   private readonly clearSelectedValues!: () => void
+  private readonly isAuthenticated!: boolean
   private dialogPopup = {
     showDialog: false,
     isSuccess: false,
@@ -199,7 +193,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
     if (!date) {
       return ''
     }
-    return format(utcToZonedTime(date, 'America/Vancouver'), formatStr)
+    return CommonUtils.getTzFormattedDate(date, formatStr)
   }
 
   private async confirmAppointment () {

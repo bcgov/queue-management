@@ -141,11 +141,13 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
   private otherBookingOptionModel = false
 
   private async mounted () {
-    if (this.currentOffice?.office_id) {
-      await this.getServiceByOffice(this.currentOffice.office_id)
+    if (this.isOnCurrentStep) {
+      if (this.currentOffice?.office_id) {
+        await this.getServiceByOffice(this.currentOffice.office_id)
+      }
+      this.selectedService = this.currentService || null
+      this.additionalOptions = this.additionalNotes || ''
     }
-    this.selectedService = this.currentService || null
-    this.additionalOptions = this.additionalNotes || ''
   }
 
   private serviceSelection (value) {
