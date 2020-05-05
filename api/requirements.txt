@@ -19,12 +19,12 @@ certifi
 eventlet
 filelock
 flask-caching
-flask-compress
+Flask-Compress==1.4.0
 flask-cors
 flask_marshmallow==0.11.0
 flask-socketio
 gunicorn
-marshmallow-sqlalchemy
+marshmallow-sqlalchemy==0.22.3
 psycopg2-binary
 pysnow
 pytest
