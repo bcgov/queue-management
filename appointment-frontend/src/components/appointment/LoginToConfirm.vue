@@ -24,7 +24,7 @@
             <span>About the BCeID</span>
           </a>
           <a class="link-w-icon mt-3" href="https://www.test.bceid.ca/os/?7521&SkipTo=Basic"
-            target="_blank" rel="noopener noreferrer">
+            target="_self" rel="noopener noreferrer">
             <v-icon small class="mr-2">mdi-open-in-new</v-icon>
             <span>Don't have a BCeID? Click Here</span>
           </a>
