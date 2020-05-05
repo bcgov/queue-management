@@ -114,9 +114,18 @@ class SnowPlow():
             if citizen_obj is None:
                 citizen_obj = Citizen.query.get(appointment.citizen_id)
 
+            # Online CSR has a default of Counter for Counter Name and csr id of 1000001
+            if csr is None:
+                #csr_id = 1000001
+                counter_name = 'Counter'
+                office_id = citizen_obj.office_id
+            else:
+                office_id = csr.office_id
+                counter_name = csr.counter.counter_name
+
             #  Set up the contexts for the call.
-            citizen = SnowPlow.get_citizen(citizen_obj, csr.counter.counter_name)
-            office = SnowPlow.get_office(csr.office_id)
+            citizen = SnowPlow.get_citizen(citizen_obj, counter_name)
+            office = SnowPlow.get_office(office_id)
             agent = SnowPlow.get_csr(csr, office)
 
             #  Initialize appointment schema version.
@@ -166,27 +175,37 @@ class SnowPlow():
     @staticmethod
     def get_csr(csr, office):
 
+        if csr is None:
+            csr_id = 1000001
+            counter_name = 'Counter'
+        else:
+            csr_id = csr.csr_id
+            if csr.receptionist_ind == 1:
+                counter_name = "Receptionist"
+            else:
+                counter_name = csr.counter.counter_name
+
         #   Get the counter type.  Receptioninst is separate case.
         if office.data['office_type'] != "reception":
             counter_name = "Counter"
-        elif csr.receptionist_ind == 1:
-            counter_name = "Receptionist"
-        else:
-            counter_name = csr.counter.counter_name
 
         #   Get the role of the agent, convert to correct case
-        role_name = csr.role.role_code
-        #  Translate the role code from upper to mixed case.
-        if (role_name == 'SUPPORT'):
-            role_name = "Support"
-        elif (role_name == 'ANALYTICS'):
-            role_name = "Analytics"
-        elif (role_name == 'HELPDESK'):
-            role_name = "Helpdesk"
+        if csr is None:
+            role_name = "WebSelfServe"
+        else:
+            role_name = csr.role.role_code
+            #  Translate the role code from upper to mixed case.
+            if (role_name == 'SUPPORT'):
+                role_name = "Support"
+            elif (role_name == 'ANALYTICS'):
+                role_name = "Analytics"
+            elif (role_name == 'HELPDESK'):
+                role_name = "Helpdesk"
+
 
         #  Set up the CSR context.
         agent = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/agent/jsonschema/3-0-0',
-                                   {"agent_id": csr.csr_id,
+                                   {"agent_id": csr_id,
                                     "role": role_name,
                                     "counter_type": counter_name})
 
