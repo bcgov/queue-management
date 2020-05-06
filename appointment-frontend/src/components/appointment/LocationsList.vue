@@ -2,10 +2,10 @@
   <v-card-text>
     <p class="step-desc">To book an appointment, please find your nearest BC Service Location</p>
     <v-row justify="center">
-      <v-col cols="6" sm="4">
+      <v-col cols="12" md="6">
         <geocoder-input v-on:set-location-event='onGeoSelect'></geocoder-input>
       </v-col>
-      <v-col cols="6" sm="4">
+      <v-col cols="12" md="6">
         <v-select
           :items="radiusList"
           label="Radius"
@@ -44,9 +44,9 @@
           class="mx-auto">
           <v-card-text>
             <v-row class="d-flex" justify="space-around">
-              <v-col cols="6" align-self="stretch">
+              <v-col cols="12" md="6" align-self="stretch" align="center">
 
-                <img :src='getMapUrl(location)' :alt="location.civic_address" class='static-map'>
+                <img :src='getMapUrl(location)' :alt="location.civic_address || 'No address'" class='static-map'>
 
                 <!-- <GmapMap
                   :center="getCoordinates(location)"
@@ -68,7 +68,7 @@
                   {{ getDistance(location.latitude, location.longitude) }}
                 </div>
               </v-col>
-              <v-col cols="6" align-self="stretch">
+              <v-col cols="12" md="6" align-self="stretch">
                 <h4 class="mb-3 location-name">
                   {{location.office_name}}
                   <span class="body-1 ml-2" v-if="location.distance">
@@ -93,11 +93,11 @@
                   class="mb-0"
                 >
                   <v-row no-gutters v-for="(timeslot, index) in location.timeslots" :key="index">
-                    <v-col cols="5" class="px-5">{{timeslot.day_str}}</v-col>
-                    <v-col cols="7">
+                    <v-col cols="6" md="5" class="px-5 nobr">{{timeslot.day_str}}</v-col>
+                    <v-col cols="6" md="7">
                       <span v-if="!(timeslot.start_time_str && timeslot.end_time_str)" class="hours-closed">Closed</span>
                       <span v-else>
-                        {{`${timeslot.start_time_str} - ${timeslot.end_time_str}`}}
+                        {{`${timeslot.start_time_str}` }} -<br class='d-sm-none' />  {{ `${timeslot.end_time_str}`}}
                       </span>
                     </v-col>
                   </v-row>
@@ -105,10 +105,11 @@
               </v-col>
             </v-row>
           </v-card-text>
-          <v-card-actions>
+          <v-card-actions class='flex-column flex-sm-row'>
             <v-btn
               color="primary"
               outlined
+              class='mt-4 mt-sm-0'
               large
               @click="showLocationServices(location)"
             >
@@ -117,7 +118,7 @@
             <v-spacer></v-spacer>
             <v-btn
               color="primary"
-              class="pl-5"
+              class="pl-5 mt-4 mt-sm-0"
               large
               @click="selectLocation(location)"
             >
@@ -295,7 +296,10 @@ export default class LocationsList extends Mixins(StepperMixin) {
   margin-right: 24px;
 }
 .hours-closed {
-    color: $BCgovInputError;
+    // color: $BCgovInputError;
+    // We can't use the $BCgovInputError on the background here, as it will break accessibility.
+    // The only colour which works on the background is black, or this muddy dark red
+    color: black;
     font-weight: 600;
 }
 .location-name {
@@ -313,4 +317,7 @@ export default class LocationsList extends Mixins(StepperMixin) {
 .static-map {
   max-width: 100%;
 }
+// .mobile-stack-buttons {
+
+// }
 </style>

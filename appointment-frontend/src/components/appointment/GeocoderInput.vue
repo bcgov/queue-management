@@ -1,35 +1,23 @@
 <template>
-  <v-row justify="end">
-     <v-progress-circular
-      v-if='isLoading'
-      indeterminate
-      :width="5"
-      color="primary"
-    ></v-progress-circular>
-    <v-autocomplete
-            append-icon="mdi-map-marker-radius"
-            type="text"
-            name="address"
-            label="Address"
-            outlined
-            hide-details
-            class="map-address-input"
-            dense
-
-            @click:append="fetchLocation"
-
-            v-model="model"
-            :search-input.sync="search"
-            cache-items
-            :items="results"
-            item-text="name"
-            item-value="coords"
-            v-on:change='onAddressSelection'
-            return-object
-    ></v-autocomplete>
-  </v-row>
-  <!-- TODO - NOt sure fetchLocation above is working, may need to separate to separate icon -->
-          <!-- @click:append="fetchLocation" -->
+  <v-autocomplete
+    append-icon="mdi-map-marker-radius"
+    type="text"
+    name="address"
+    label="Address"
+    outlined
+    hide-details
+    dense
+    @click:append="fetchLocation"
+    v-model="model"
+    :search-input.sync="search"
+    cache-items
+    :items="results"
+    item-text="name"
+    item-value="coords"
+    v-on:change='onAddressSelection'
+    return-object
+    :loading='isLoading'
+  ></v-autocomplete>
 </template>
 
 <script lang="ts">
@@ -100,8 +88,4 @@ export default class GeocoderInput extends Vue {
 </script>
 
 <style lang="scss" scope>
-// @import "@/assets/scss/theme.scss";
-.map-address-input {
-  max-width: calc(100% - 100px);
-}
 </style>
