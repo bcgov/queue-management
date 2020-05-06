@@ -23,7 +23,7 @@
             <v-icon small class="mr-2">mdi-open-in-new</v-icon>
             <span>About the BCeID</span>
           </a>
-          <a class="link-w-icon mt-3" href="https://www.test.bceid.ca/os/?7521&SkipTo=Basic"
+          <a class="link-w-icon mt-3" :href="BCEIDRegistrationURL"
             target="_self" rel="noopener noreferrer">
             <v-icon small class="mr-2">mdi-open-in-new</v-icon>
             <span>Don't have a BCeID? Click Here</span>
@@ -88,6 +88,11 @@ export default class LoginToConfirm extends Mixins(StepperMixin) {
 
   private get hideBCServicesCard (): boolean {
     return ConfigHelper.getValue('hideBCServicesCard')
+  }
+
+  private get BCEIDRegistrationURL (): string {
+    // return 'https://www.test.bceid.ca/os/?7521&SkipTo=Basic'
+    return ConfigHelper.getValue('BCEIDRegistrationUrl')
   }
 }
 </script>
