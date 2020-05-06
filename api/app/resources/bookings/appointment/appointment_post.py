@@ -67,7 +67,7 @@ class AppointmentPost(Resource):
                                                                       start_time=json_data.get('start_time'),
                                                                       timezone=office.timezone.timezone_name)
             if appointments and len(appointments) >= office.max_person_appointment_per_day:
-                return {"code": "MAX_NO_OF_APPOINTMENTS_REACHED", "message": "Maximum number of appoinments reached"}, 400
+                return {"code": "MAX_NO_OF_APPOINTMENTS_REACHED", "message": "Maximum number of appointments reached"}, 400
         else:
             csr = CSR.find_by_username(g.oidc_token_info['username'])
             office_id = csr.office_id
@@ -103,7 +103,7 @@ class AppointmentPost(Resource):
                 appointments_for_the_day = Appointment.get_appointment_conflicts(office_id, json_data.get('start_time'),
                                                                                  json_data.get('end_time'))
                 for (cancelled_appointment, office, timezone, user) in appointments_for_the_day:
-                    if cancelled_appointment.appointment_id != appointment.appointment_id:
+                    if cancelled_appointment.appointment_id != appointment.appointment_id and not appointment.checked_in_time:
                         send_blackout_email(appointment, cancelled_appointment, office, timezone, user)
                         appointment_ids_to_delete.append(cancelled_appointment.appointment_id)
                 # Delete appointments
