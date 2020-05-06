@@ -34,7 +34,7 @@
             <span>Privacy Statement</span>
           </a>
         </v-col>
-        <v-col cols="12" sm="5" class="text-center">
+        <v-col cols="12" sm="5" class="text-center" v-if="!hideBCServicesCard">
           <v-btn
             min-width="150"
             large
@@ -57,6 +57,7 @@
 <script lang="ts">
 import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
 import { AuthModule } from '@/store/modules'
+import ConfigHelper from '@/utils/config-helper'
 import { IdpHint } from '@/utils/constants'
 import StepperMixin from '@/mixins/StepperMixin.vue'
 import { User } from '@/models/user'
@@ -83,6 +84,10 @@ export default class LoginToConfirm extends Mixins(StepperMixin) {
   private login (idpHint) {
     this.$router.push(`/signin/${idpHint}`)
     // this.stepNext()
+  }
+
+  private get hideBCServicesCard (): boolean {
+    return ConfigHelper.getValue('hideBCServicesCard')
   }
 }
 </script>

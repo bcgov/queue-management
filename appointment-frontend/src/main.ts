@@ -24,7 +24,7 @@ Vue.use(VueGoogleMaps, {
  * The server side configs are necessary for app to work , since they are reference in templates and all
  *  Two ways , either reload Vue after we get the settings or load vue after we get the configs..going for second
  */
-ConfigHelper.saveConfigToSessionStorage().then((_data: any) => {
+ConfigHelper.fetchConfig().then((_data: any) => {
   renderVue()
 })
 

@@ -27,6 +27,7 @@ export default class ConfigHelper {
  * this will run everytime when vue is being loaded..so do the call only when session storage doesnt have the values
  */
   static saveConfigToSessionStorage () {
+    // NOTE: Problem -> this caches sessions for ever, would never update with new build.
     if (sessionStorage.getItem(SessionStorageKeys.ApiConfigKey)) {
       return Promise.resolve()
     } else {
