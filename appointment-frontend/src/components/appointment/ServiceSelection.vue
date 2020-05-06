@@ -10,26 +10,32 @@
         <v-col cols="12" sm="6" class="text-center">
           <v-combobox
             :items="serviceList"
-            :item-disabled="checkDisabled"
             :item-text="'external_service_name'"
             label="Select Service"
             outlined
             color="primary"
-            class="service-selection text-left"
+            class="service-selection"
             v-model="selectedService"
             name="service-select"
             @change="serviceSelection"
+            @input="clickSelection"
           >
             <template v-slot:selection="data">
               {{ data.item.external_service_name }}
             </template>
             <template v-slot:item="data">
-              <div class="">
+              <div
+                v-bind:class="{'disabled-selection': checkDisabled(data.item)}"
+                class="service-selection-options"
+              >
                 <div>{{ data.item.external_service_name }}</div>
+                <div v-if="data.item.online_link" class="service-link" @click="goToServiceLink(data.item.online_link)">
+                  Options Available <v-icon small>mdi-open-in-new</v-icon>
+                </div>
               </div>
             </template>
           </v-combobox>
-          <v-btn
+          <!-- <v-btn
             v-if="selectedService && selectedService.online_link"
             text
             link
@@ -39,7 +45,7 @@
           >
             Click here for more options
             <v-icon small class="ml-1">mdi-open-in-new</v-icon>
-          </v-btn>
+          </v-btn> -->
         </v-col>
       </v-row>
       <v-row justify="center">
@@ -154,6 +160,15 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
     this.setCurrentService(value)
   }
 
+  private clickSelection (value) {
+    if (!this.checkDisabled(value)) {
+      this.setCurrentService(value)
+    } else {
+      this.selectedService = null
+      this.setCurrentService(undefined)
+    }
+  }
+
   private changeAdditionalOptions () {
     this.setAdditionalNotes(this.additionalOptions)
   }
@@ -163,7 +178,11 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
   }
 
   private checkDisabled (value) {
-    return (value.online_availability === ServiceAvailability.DISABLE)
+    return (value?.online_availability === ServiceAvailability.DISABLE)
+  }
+
+  private goToServiceLink (url) {
+    window.open(url, '_blank')
   }
 }
 </script>
@@ -178,5 +197,25 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
   font-style: italic;
   margin-bottom: 8px;
   max-width: 450px;
+}
+.disabled-selection {
+  color: rgba(0, 0, 0, 0.38);
+}
+.service-selection-options {
+  width: 100%;
+  border-bottom: 1px solid $gray2;
+  padding-bottom: 6px;
+  padding-top: 4px;
+  .service-link {
+    font-weight: 600;
+    font-size: .85rem;
+    display: block;
+    float: right;
+    padding: 8px;
+    padding-right: 4px;
+    padding-left: 14px;
+    margin-top: -10px;
+    color: $BCgovBlue8;
+  }
 }
 </style>
