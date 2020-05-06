@@ -103,8 +103,9 @@ class AppointmentPost(Resource):
                 appointments_for_the_day = Appointment.get_appointment_conflicts(office_id, json_data.get('start_time'),
                                                                                  json_data.get('end_time'))
                 for (cancelled_appointment, office, timezone, user) in appointments_for_the_day:
-                    send_blackout_email(appointment, cancelled_appointment, office, timezone, user)
-                    appointment_ids_to_delete.append(cancelled_appointment.appointment_id)
+                    if cancelled_appointment.appointment_id != appointment.appointment_id:
+                        send_blackout_email(appointment, cancelled_appointment, office, timezone, user)
+                        appointment_ids_to_delete.append(cancelled_appointment.appointment_id)
                 # Delete appointments
                 if appointment_ids_to_delete:
                     Appointment.delete_appointments(appointment_ids_to_delete)

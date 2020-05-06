@@ -9,14 +9,14 @@ oc process -f send-appointment-reminder-build.json |oc create -f -
 ## Tag the image for TEST and PROD migration
 Run the script in tools namespace
 
-`oc tag send-appointment-reminder:latest update-stale-payment:test`
+`oc tag send-appointment-reminder:dev update-stale-payment:test`
 
-`oc tag send-appointment-reminder:latest update-stale-payment:prod`
+`oc tag send-appointment-reminder:test update-stale-payment:prod`
 
 ## Run the Job
 Now switch to DEV namepace
 
-`oc project l4ygcl-dev`
+`oc project servicebc-cfms-dev`
 
 Run the cron in DEV namespace
 
@@ -29,7 +29,12 @@ Run the cron in DEV namespace
 ### PROD
 `oc process -f send-appointment-reminder.yaml -p ENV_TAG=prod -p TAG_NAME=prod | oc create -f -`
 
-## Find the job running
+
+## Find if the job is configured properly 
+
+`oc get cronjob/send-appointment-reminder`
+
+## Find last executed jobs
 
 `oc get jobs`
 

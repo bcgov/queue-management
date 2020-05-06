@@ -7,7 +7,7 @@ flask-restx
 SQLAlchemy==1.3.12
 snowplow-tracker
 Flask
-Flask-Admin
+Flask-Admin==1.5.5
 Flask-Cache
 Flask-Login
 Flask-Migrate
@@ -19,12 +19,12 @@ certifi
 eventlet
 filelock
 flask-caching
-flask-compress
+Flask-Compress==1.4.0
 flask-cors
 flask_marshmallow==0.11.0
 flask-socketio
 gunicorn
-marshmallow-sqlalchemy
+marshmallow-sqlalchemy==0.22.3
 psycopg2-binary
 pysnow
 pytest

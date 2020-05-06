@@ -1,22 +1,3 @@
 Flask
 requests
 python-dotenv
-# certifi
-# eventlet
-# filelock
-# flask-caching
-# flask-compress
-# flask-cors
-# flask_marshmallow
-# flask-socketio
-# gunicorn
-# marshmallow-sqlalchemy
-# psycopg2-binary
-# pysnow
-# pytest
-# python-dotenv
-# python-jose
-# SQLAlchemy-Utc
-# # We need to find alternative to toastedmarshmellow. pydantic
-# toastedmarshmallow==0.2.6
-# Flask-Mail==0.9.1
