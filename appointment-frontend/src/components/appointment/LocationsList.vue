@@ -46,7 +46,7 @@
             <v-row class="d-flex" justify="space-around">
               <v-col cols="12" md="6" align-self="stretch" align="center">
 
-                <img :src='getMapUrl(location)' :alt="location.civic_address" class='static-map'>
+                <img :src='getMapUrl(location)' :alt="location.civic_address || 'No address'" class='static-map'>
 
                 <!-- <GmapMap
                   :center="getCoordinates(location)"
@@ -296,7 +296,10 @@ export default class LocationsList extends Mixins(StepperMixin) {
   margin-right: 24px;
 }
 .hours-closed {
-    color: $BCgovInputError;
+    // color: $BCgovInputError;
+    // We can't use the $BCgovInputError on the background here, as it will break accessibility.
+    // The only colour which works on the background is black, or this muddy dark red
+    color: black;
     font-weight: 600;
 }
 .location-name {

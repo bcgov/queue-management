@@ -7,9 +7,7 @@
     outlined
     hide-details
     dense
-
     @click:append="fetchLocation"
-
     v-model="model"
     :search-input.sync="search"
     cache-items
