@@ -5,7 +5,7 @@
       <v-col cols="12" md="6">
         <geocoder-input v-on:set-location-event='onGeoSelect'></geocoder-input>
       </v-col>
-      <v-col cols="12" sm="6">
+      <v-col cols="12" md="6">
         <v-select
           :items="radiusList"
           label="Radius"
