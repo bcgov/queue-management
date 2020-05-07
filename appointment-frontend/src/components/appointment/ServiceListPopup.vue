@@ -40,6 +40,9 @@
               label="Search Service"
               outlined
               hide-details
+              v-model="categorySearchInput"
+              clearable
+              @input="categorySearch"
               dense
             ></v-text-field>
           </v-col>
@@ -87,6 +90,7 @@ import { mapState } from 'vuex'
 })
 export default class ServiceListPopup extends Vue {
   private selectedCategory:string = ''
+  private categorySearchInput:string = ''
   private filteredServiceList: Service[] = []
   private readonly categoryList!: Service[]
   private isFiltered = false
@@ -106,9 +110,22 @@ export default class ServiceListPopup extends Vue {
   }
 
   private filterUsingCategory () {
+    this.categorySearchInput = ''
     if (this.selectedCategory) {
       this.filteredServiceList = this.serviceList.filter((service) => {
         return (service?.parent?.service_name === this.selectedCategory)
+      })
+      this.isFiltered = true
+    } else {
+      this.isFiltered = false
+    }
+  }
+
+  private categorySearch (value: string) {
+    this.selectedCategory = ''
+    if (value) {
+      this.filteredServiceList = this.filteredServiceList.filter((service) => {
+        return service?.external_service_name.toLowerCase().includes(value.toLowerCase())
       })
       this.isFiltered = true
     } else {

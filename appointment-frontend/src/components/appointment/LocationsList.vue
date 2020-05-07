@@ -201,7 +201,6 @@ export default class LocationsList extends Mixins(StepperMixin) {
     if (this.isOnCurrentStep) {
       this.locationListData = await this.getOffices()
       this.locationListData = this.sortOfficesByDistance(this.locationListData)
-      await this.getCategories()
     }
   }
 
@@ -267,6 +266,7 @@ export default class LocationsList extends Mixins(StepperMixin) {
 
   private async showLocationServices (location) {
     this.serviceList = await this.getServiceByOffice(location.office_id)
+    await this.getCategories()
     this.selectedLocationName = location.office_name
     this.locationServicesModal = true
   }

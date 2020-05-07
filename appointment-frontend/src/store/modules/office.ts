@@ -114,7 +114,14 @@ export default class OfficeModule extends VuexModule {
   @Action({ commit: 'setCategoryList', rawError: true })
   public async getCategories () {
     const response = await OfficeService.getCategories()
-    return response?.data?.categories || []
+    let categories = response?.data?.categories || []
+    if (categories.length) {
+      const services = this.context.state['serviceList'] || []
+      categories = response.data.categories.filter(cat => {
+        return services.some(s => s.parent_id === cat.service_id)
+      })
+    }
+    return categories
   }
 
   @Action({ rawError: true })
