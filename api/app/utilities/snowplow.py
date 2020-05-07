@@ -108,16 +108,28 @@ class SnowPlow():
     def snowplow_appointment(citizen_obj, csr, appointment, schema):
 
         #  Make sure you want to track calls.
-        if SnowPlow.call_snowplow_flag:
+        if SnowPlow.call_snowplow_flag and appointment.blackout_flag == 'N':
 
             #  If no citizen object, get citizen information.
             if citizen_obj is None:
                 citizen_obj = Citizen.query.get(appointment.citizen_id)
 
+            # Online CSR has a default of Counter for Counter Name and csr id of 1000001
+            if csr is None:
+                csr_id = 1000001
+                counter_name = 'Counter'
+                office_id = citizen_obj.office_id
+                role_name = "WebSelfServe"
+            else:
+                csr_id = csr.csr_id
+                counter_name = csr.counter.counter_name
+                office_id = csr.office_id
+                role_name = "TBD"
+
             #  Set up the contexts for the call.
-            citizen = SnowPlow.get_citizen(citizen_obj, csr.counter.counter_name)
-            office = SnowPlow.get_office(csr.office_id)
-            agent = SnowPlow.get_csr(csr, office)
+            citizen = SnowPlow.get_citizen(citizen_obj, counter_name)
+            office = SnowPlow.get_office(office_id)
+            agent = SnowPlow.get_csr(csr, office, csr_id, counter_name, role_name)
 
             #  Initialize appointment schema version.
             snowplow_event = SnowPlow.get_appointment(appointment, schema)
@@ -164,29 +176,33 @@ class SnowPlow():
         return office
 
     @staticmethod
-    def get_csr(csr, office):
+    def get_csr(csr, office, csr_id = 1000001, counter_name = "Counter", role_name="WebSelfServe"):
+
+        if csr is not None:
+            if csr.receptionist_ind == 1:
+                counter_name = "Receptionist"
+            else:
+                counter_name = csr.counter.counter_name
 
         #   Get the counter type.  Receptioninst is separate case.
         if office.data['office_type'] != "reception":
             counter_name = "Counter"
-        elif csr.receptionist_ind == 1:
-            counter_name = "Receptionist"
-        else:
-            counter_name = csr.counter.counter_name
 
         #   Get the role of the agent, convert to correct case
-        role_name = csr.role.role_code
-        #  Translate the role code from upper to mixed case.
-        if (role_name == 'SUPPORT'):
-            role_name = "Support"
-        elif (role_name == 'ANALYTICS'):
-            role_name = "Analytics"
-        elif (role_name == 'HELPDESK'):
-            role_name = "Helpdesk"
+        if csr is not None:
+            role_name = csr.role.role_code
+
+            #  Translate the role code from upper to mixed case.
+            if (role_name == 'SUPPORT'):
+                role_name = "Support"
+            elif (role_name == 'ANALYTICS'):
+                role_name = "Analytics"
+            elif (role_name == 'HELPDESK'):
+                role_name = "Helpdesk"
 
         #  Set up the CSR context.
         agent = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/agent/jsonschema/3-0-0',
-                                   {"agent_id": csr.csr_id,
+                                   {"agent_id": csr_id,
                                     "role": role_name,
                                     "counter_type": counter_name})
 
@@ -332,4 +348,3 @@ if SnowPlow.call_snowplow_flag:
     # log_stream_handler.setFormatter(formatter)
     module_logger = logging.getLogger("snowplow-logger")
     # module_logger.addHandler(log_stream_handler)
-

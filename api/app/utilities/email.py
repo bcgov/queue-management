@@ -96,6 +96,20 @@ def send_blackout_email(blackout_appt: Appointment, cancelled_appointment: Appoi
     async_email(subject, cancelled_appointment, user, body)
 
 
+def send_confirmation_email(appointment: Appointment, office, timezone, user):
+    """Send confirmation email"""
+    template = ENV.get_template('email_templates/confirmation_email.html')
+    date = formatted_date(appointment.start_time, timezone)
+    subject = f'Confirmation – Your appointment on {date}'
+    body = template.render(display_name=appointment.citizen_name,
+                           location=office.office_name,
+                           formatted_date=date,
+                           duration=get_duration(appointment.start_time, appointment.end_time),
+                           telephone=office.telephone,
+                           url=current_app.config.get('EMAIL_APPOINTMENT_APP_URL'))
+    async_email(subject, appointment, user, body)
+
+
 def is_valid_email(email: str):
     """Return if the email is valid or not."""
     return re.match(r'[^@]+@[^@]+\.[^@]+', email) is not None
