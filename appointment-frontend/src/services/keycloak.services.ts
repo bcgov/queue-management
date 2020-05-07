@@ -74,7 +74,8 @@ class KeyCloakService {
       keycloakGuid: this.parsedToken?.sub,
       userName: this.parsedToken?.username,
       fullName: `${this.parsedToken?.firstname} ${this.parsedToken?.lastname}`,
-      loginSource: this.parsedToken?.loginSource
+      loginSource: this.parsedToken?.loginSource,
+      display_name: this.parsedToken?.display_name
     }
   }
 
