@@ -80,9 +80,7 @@ class AppointmentPut(Resource):
         if "checked_in_time" in json_data:
             schema = 'appointment_checkin'
 
-        # TODO handle public user login
-        if csr:
-            SnowPlow.snowplow_appointment(None, csr, appointment, schema)
+        SnowPlow.snowplow_appointment(None, csr, appointment, schema)
 
         result = self.appointment_schema.dump(appointment)
 

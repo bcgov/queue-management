@@ -45,9 +45,7 @@ class AppointmentDelete(Resource):
             if not citizen or citizen.citizen_id != appointment.citizen_id:
                 abort(403)
 
-        # TODO handle public user case here
-        if csr:
-            SnowPlow.snowplow_appointment(None, csr, appointment, 'appointment_delete')
+        SnowPlow.snowplow_appointment(None, csr, appointment, 'appointment_delete')
 
         db.session.delete(appointment)
         db.session.commit()

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Confirmation</title>
+    <style>
+        /* Global Resets */
+        body, table, div, a, p {
+            font-family: Verdana, Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        img {
+            border: none;
+        }
+
+        p.text-content {
+            margin-top: 25px;
+            margin-bottom: 0;
+            line-height: 24px;
+            font-family: Verdana, Arial, sans-serif;
+            font-size: 16px;
+        }
+    </style>
+    <meta name="referrer" content="origin-when-cross-origin"/>
+    <link rel="icon" sizes="16x16" type="image/png" href="assets/favicon_16.png"/>
+    <link rel="icon" sizes="32x32" type="image/png" href="assets/favicon_32.png"/>
+    <link rel="icon" sizes="any" type="image/svg+xml" href="assets/favicon.svg"/>
+    <title>chat.pathfinder.gov.bc.ca</title>
+    <meta name="application-name" content="sbc online appointment">
+    <meta name="apple-mobile-web-app-title" content="sbc online appointment">
+    <meta http-equiv="content-language" content="">
+    <meta name="language" content="">
+    <meta name="robots" content="INDEX,FOLLOW">
+    <meta name="msvalidate.01" content="">
+    <meta name="google-site-verification" content="">
+    <meta property="fb:app_id" content="">
+    <base href="/">
+</head>
+<body>
+<table style="width: 100%;" cellspacing="0" cellpadding="0">
+    <tr>
+        <td style="padding-left: 20px; padding-right: 20px;">
+            <table style="max-width: 640px; margin: 0 auto; border: 0; border-collapse: collapse; border-radius: 6px; background-color: #ffffff;"
+                   cellspacing="0" cellpadding="0">
+                <tr>
+                    <td>
+                        <p class="text-content">
+                            Hello {{ display_name }}
+                        </p>
+                        <p class="text-content">
+                            You have an appointment with Service BC {{ location }} on {{ formatted_date }} for a total of {{ duration }} minutes. Plan to arrive 15 minutes early.
+                        </p>
+                        <p class="text-content">
+                            To ensure we can assist you at your confirmed appointment, you must present two pieces of valid identification documents (ID).
+                            Along with your Primary ID (driver’s licence, passport), please bring ONE of the following valid foundation documents: Canadian Birth Certificate, Canadian Citizenship card, a Permanent Resident card or an immigration document (IM1442).
+                        </p>
+                        <p class="text-content">
+                            If the name displayed on your foundation document does not exactly match the name on your current ID you will need to bring supporting documentation that shows how your name was changed (marriage certificate, legal change of name, for example).
+                            If the required valid ID are not presented at the time of the scheduled appointment, you may be required to reschedule your appointment for a later date.
+                        </p>
+                        <p class="text-content">
+                            All documents must be originals. Photocopies or photographs will not be accepted.
+                        </p>
+                        <p class="text-content">
+                            If you have any further questions about required documentation, please call us at {{ telephone }}.
+                        </p>
+                        <p class="text-content">
+                            To change or cancel your appointment, please visit Service BC Book an Appointment and sign in.
+                        </p>
+                        <div style="margin-top: 45px;">
+                            <!--[if mso]> <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{ url }}" style="height:30px; v-text-anchor:middle; width:400px;" arcsize="10%" stroke="f" fillcolor="#003366" alias="CTA1">Change or Cancel my Appointment with Service BC<w:anchorlock/> <center> <![endif]-->
+                            <a style="display: inline-block; width: 400px; color: #ffffff; border: none; border-radius: 6px; background-color: #003366; line-height: 30px; text-align: center; text-decoration: none; font-size: 15px; font-weight: bold;"
+                               href="{{ url }}">Change or Cancel my Appointment with Service BC</a>
+                            <!--[if mso]> </center> </v:roundrect> <![endif]-->
+                        </div>
+                        <p class="text-content">
+                            Thank you, <br/> <br/>
+                            Service BC {{ location }} <br/>
+                            {{ telephone }} <br/>
+                        </p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
