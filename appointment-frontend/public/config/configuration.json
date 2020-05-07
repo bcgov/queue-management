@@ -2,5 +2,6 @@
   "KEYCLOAK_CONFIG_URL": "./public/config/kc/keycloak-public.json",
   "VUE_APP_ROOT_API": "http://localhost:8080/api/v1",
   "hideBCServicesCard": true,
-  "BCEIDRegistrationUrl": "https://www.test.bceid.ca/os/?7521&SkipTo=Basic"
+  "BCEIDRegistrationUrl": "https://www.test.bceid.ca/os/?7521&SkipTo=Basic",
+  "VUE_APP_GOOGLE_STATIC_MAP_API_KEY": "AIzaSyDdUTtNy6pLWILtlqHtcaXsFSprFQ9UroI"
 }
