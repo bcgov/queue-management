@@ -59,7 +59,7 @@ class OfficeSlots(Resource):
                     # Calculate the slots per day
                     if day_in_month.isoweekday() in day_indexes(timeslot.day_of_week):
                         start_time = timeslot.start_time
-                        end_time = add_delta_to_time(timeslot.start_time, minutes=appointment_duration)
+                        end_time = add_delta_to_time(timeslot.start_time, minutes=appointment_duration, timezone=office.timezone.timezone_name)
                         # print(start_time, end_time)
                         while end_time <= timeslot.end_time:
                             slot = {
@@ -69,7 +69,7 @@ class OfficeSlots(Resource):
                             }
                             available_slots_per_day[formatted_date].append(slot)
                             start_time = end_time
-                            end_time = add_delta_to_time(end_time, minutes=appointment_duration)
+                            end_time = add_delta_to_time(end_time, minutes=appointment_duration, timezone=office.timezone.timezone_name)
 
                 # Check if the slots are already booked
                 for actual_slot in available_slots_per_day[formatted_date]:
