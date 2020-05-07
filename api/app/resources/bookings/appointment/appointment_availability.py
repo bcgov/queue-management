@@ -58,7 +58,7 @@ class OfficeSlots(Resource):
                 for timeslot in office.timeslots:
                     # Calculate the slots per day
                     if day_in_month.isoweekday() in day_indexes(timeslot.day_of_week):
-                        start_time = timeslot.start_time
+                        start_time = timeslot.start_time.replace(tzinfo=pytz.timezone(office.timezone.timezone_name))
                         end_time = add_delta_to_time(timeslot.start_time, minutes=appointment_duration, timezone=office.timezone.timezone_name)
                         # print(start_time, end_time)
                         while end_time <= timeslot.end_time:
