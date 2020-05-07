@@ -73,6 +73,7 @@ class AppointmentPost(Resource):
         else:
             csr = CSR.find_by_username(g.oidc_token_info['username'])
             office_id = csr.office_id
+            office = Office.find_by_id(office_id)
 
         if not is_existing_citizen:
             citizen.office_id = office_id
@@ -105,6 +106,8 @@ class AppointmentPost(Resource):
                 appointments_for_the_day = Appointment.get_appointment_conflicts(office_id, json_data.get('start_time'),
                                                                                  json_data.get('end_time'))
                 for (cancelled_appointment, office, timezone, user) in appointments_for_the_day:
+                    print('appointment.checked_in_time--->', appointment.checked_in_time)
+                    print(cancelled_appointment.appointment_id != appointment.appointment_id)
                     if cancelled_appointment.appointment_id != appointment.appointment_id and not appointment.checked_in_time:
                         send_blackout_email(appointment, cancelled_appointment, office, timezone, user)
                         appointment_ids_to_delete.append(cancelled_appointment.appointment_id)
@@ -114,8 +117,6 @@ class AppointmentPost(Resource):
 
             else:
                 # Send confirmation email
-                if not office:
-                    office = Office.find_by_id(office_id)
                 send_confirmation_email(appointment, office, office.timezone, user)
 
             SnowPlow.snowplow_appointment(citizen, csr, appointment, 'appointment_create')
