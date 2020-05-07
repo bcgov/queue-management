@@ -35,19 +35,7 @@
             cols="12"
             sm="5"
           >
-            <GmapMap
-              :center="getCoordinates(appointment)"
-              :zoom="14"
-              class="map-view"
-              :options="mapConfigurations"
-            >
-              <GmapMarker
-                :position="getCoordinates(appointment)"
-                :clickable="true"
-                :draggable="false"
-                :label='{text: getOfficeName(appointment), fontWeight: "600"}'
-              />
-            </GmapMap>
+          <img :src='getMapUrl(appointment)' :alt="getMapAltText(appointment)" class='static-map'>
           </v-col>
           <v-col
             cols="6"
@@ -146,6 +134,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { mapActions, mapState } from 'vuex'
 import { Appointment } from '@/models/appointment'
 import ConfigHelper from '@/utils/config-helper'
+import GeocoderService from '@/services/geocoder.services'
 import { User } from '@/models/user'
 import { getModule } from 'vuex-module-decorators'
 
@@ -236,6 +225,15 @@ export default class Home extends Vue {
     } else {
       this.confirmDialog = false
     }
+  }
+
+  private getMapUrl (appointment) {
+    if (!appointment.office) { return '' }
+    return GeocoderService.generateStaticMapURL(appointment.office)
+  }
+
+  private getMapAltText (appointment) {
+    return appointment?.office?.civic_address || 'No address'
   }
 }
 </script>

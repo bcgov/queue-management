@@ -31,19 +31,6 @@
             </v-col>
             <v-col cols="12">
               <img :src='getMapUrl(staticMapData)' :alt="staticMapData.civic_address" class='map-view'>
-              <!-- <GmapMap
-                :center="appointmentDisplayData.locationCoordinates"
-                :zoom="14"
-                class="map-view"
-                :options="mapConfigurations"
-              >
-                <GmapMarker
-                  :position="appointmentDisplayData.locationCoordinates"
-                  :clickable="true"
-                  :draggable="false"
-                  :label='{text: appointmentDisplayData.locationName, fontWeight: "600"}'
-                />
-              </GmapMap> -->
             </v-col>
           </v-row>
         </v-card>
