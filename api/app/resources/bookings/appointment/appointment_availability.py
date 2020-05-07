@@ -49,7 +49,7 @@ class OfficeSlots(Resource):
             grouped_appointments = group_appointments(appointments, office.timezone.timezone_name)
 
             # Dictionary to store the available slots per day
-
+            tz = pytz.timezone(office.timezone.timezone_name)
             # For each of the day calculate the slots based on time slots
             for day_in_month in days:
                 formatted_date = day_in_month.strftime('%m/%d/%Y')
@@ -57,11 +57,14 @@ class OfficeSlots(Resource):
 
                 for timeslot in office.timeslots:
                     # Calculate the slots per day
+                    timeslot_end_time = timeslot.end_time.replace(tzinfo=tz)
+                    timeslot_start_time = timeslot.start_time.replace(tzinfo=tz)
+
                     if day_in_month.isoweekday() in day_indexes(timeslot.day_of_week):
-                        start_time = timeslot.start_time.replace(tzinfo=pytz.timezone(office.timezone.timezone_name))
-                        end_time = add_delta_to_time(timeslot.start_time, minutes=appointment_duration, timezone=office.timezone.timezone_name)
+                        start_time = timeslot_start_time
+                        end_time = add_delta_to_time(timeslot_start_time, minutes=appointment_duration, timezone=office.timezone.timezone_name)
                         # print(start_time, end_time)
-                        while end_time <= timeslot.end_time:
+                        while end_time <= timeslot_end_time:
                             slot = {
                                 'start_time': start_time,
                                 'end_time': end_time,
