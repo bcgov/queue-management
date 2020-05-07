@@ -33,13 +33,14 @@
         <v-row>
           <v-col
             cols="12"
-            sm="5"
+            md="5"
           >
           <img :src='getMapUrl(appointment)' :alt="getMapAltText(appointment)" class='static-map'>
           </v-col>
           <v-col
-            cols="6"
-            sm="4"
+            cols="12"
+            sm="6"
+            md="4"
           >
             <p>
               <strong>Service: </strong> {{getServiceName(appointment)}}
@@ -58,10 +59,11 @@
             </p>
           </v-col>
           <v-col
-            cols="6"
-            sm="3"
+            cols="12"
+            sm="6"
+            md="3"
             align-self="center"
-            class="text-right">
+            class="text-right d-flex flex-column">
             <v-btn
               outlined
               color="primary"
