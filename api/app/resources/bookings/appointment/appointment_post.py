@@ -22,7 +22,7 @@ from app.models.bookings import Appointment
 from qsystem import api, api_call_with_retry, db, oidc
 from app.utilities.snowplow import SnowPlow
 from datetime import datetime
-from app.utilities.email import send_blackout_email
+from app.utilities.email import send_blackout_email, send_confirmation_email
 from app.utilities.auth_util import is_public_user
 from app.utilities.auth_util import Role, has_any_role
 
@@ -43,6 +43,8 @@ class AppointmentPost(Resource):
 
         is_blackout_appt = json_data.get('blackout_flag', 'N') == 'Y'
         csr = None
+        user = None
+        office = None
 
         #  Create a citizen for later use.
         citizen = self.citizen_schema.load({}).data
@@ -110,12 +112,13 @@ class AppointmentPost(Resource):
                 if appointment_ids_to_delete:
                     Appointment.delete_appointments(appointment_ids_to_delete)
 
-            if not is_public_user_appointment:
-                #TODO
-                try:
-                    SnowPlow.snowplow_appointment(citizen, csr, appointment, 'appointment_create')
-                except Exception as e:
-                    print(e)
+            else:
+                # Send confirmation email
+                if not office:
+                    office = Office.find_by_id(office_id)
+                send_confirmation_email(appointment, office, office.timezone, user)
+
+            SnowPlow.snowplow_appointment(citizen, csr, appointment, 'appointment_create')
 
             result = self.appointment_schema.dump(appointment)
 
