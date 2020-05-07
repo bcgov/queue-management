@@ -68,7 +68,7 @@ class OfficeSlots(Resource):
                                 'no_of_slots': timeslot.no_of_slots
                             }
                             available_slots_per_day[formatted_date].append(slot)
-                            start_time = end_time
+                            start_time = end_time.replace(tzinfo=pytz.timezone(office.timezone.timezone_name))
                             end_time = add_delta_to_time(end_time, minutes=appointment_duration, timezone=office.timezone.timezone_name)
 
                 # Check if the slots are already booked
