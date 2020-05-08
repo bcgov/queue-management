@@ -68,7 +68,7 @@
       }
     },
     computed: {
-      ...mapState(['showCheckInModal','showServeCitizenSpinner', 'checkInClicked','showServeCitizen'],),
+      ...mapState(['showCheckInModal','showServeCitizenSpinner', 'checkInClicked'],),
       modalVisible: {
         get() { return this.showCheckInModal },
         set(e) { this.toggleCheckInModal(e) }
