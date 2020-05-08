@@ -11,6 +11,7 @@
           <v-combobox
             :items="serviceList"
             :item-text="'external_service_name'"
+            :filter="serviceSearchFilter"
             label="Select Service"
             outlined
             color="primary"
@@ -183,6 +184,10 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
 
   private goToServiceLink (url) {
     window.open(url, '_blank')
+  }
+
+  private serviceSearchFilter (item, queryText, itemText) {
+    return `${item?.external_service_name || ''} ${item?.service_desc || ''}`.toLowerCase().indexOf((queryText || '').toLowerCase()) > -1
   }
 }
 </script>
