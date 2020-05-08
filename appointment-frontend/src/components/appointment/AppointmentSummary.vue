@@ -1,9 +1,6 @@
 <template>
   <div>
     <v-card>
-      <v-card-title class="justify-center">
-        <h3>Appointment Summary</h3>
-      </v-card-title>
       <v-divider class="mx-4"></v-divider>
       <v-card-text>
         <v-card flat color="grey lighten-4">
@@ -22,9 +19,21 @@
             </v-col>
             <v-col cols="12">
               <div class="d-flex justify-center">
+                <v-checkbox
+                  v-model="termsOfServiceConsent"
+                >
+                  <template v-slot:label>
+                    <div>
+                      I agree to the <span class='clickable-link' @click.stop.prevent='openToS'>Terms of Service</span>
+                    </div>
+                  </template>
+                </v-checkbox>
+              </div>
+              <div class="d-flex justify-center">
                 <v-btn
                   large
                   @click="confirmAppointment"
+                  :disabled="!termsOfServiceConsent"
                   color="primary"
                 >{{submitBtnText}}</v-btn>
               </div>
@@ -89,6 +98,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <terms-of-service-popup ref='TermsOfServicePopup'></terms-of-service-popup>
   </div>
 </template>
 
@@ -103,6 +113,7 @@ import GeocoderService from '@/services/geocoder.services'
 import { Office } from '@/models/office'
 import { Service } from '@/models/service'
 import StepperMixin from '@/mixins/StepperMixin.vue'
+import TermsOfServicePopup from './TermsOfServicePopup.vue'
 import { User } from '@/models/user'
 import { getModule } from 'vuex-module-decorators'
 
@@ -126,7 +137,8 @@ import { getModule } from 'vuex-module-decorators'
       'createAppointment',
       'clearSelectedValues'
     ])
-  }
+  },
+  components: { TermsOfServicePopup }
 })
 export default class AppointmentSummary extends Mixins(StepperMixin) {
   private authModule = getModule(AuthModule, this.$store)
@@ -139,6 +151,8 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   private readonly createAppointment!: () => Appointment
   private readonly clearSelectedValues!: () => void
   private readonly isAuthenticated!: boolean
+  private showTermsOfServiceModal: boolean = false
+  private termsOfServiceConsent: boolean = false
   private dialogPopup = {
     showDialog: false,
     isSuccess: false,
@@ -216,6 +230,10 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   private getMapUrl (location) {
     return GeocoderService.generateStaticMapURL(location, { height: 200, width: 1200, scale: 2 })
   }
+
+  private openToS () {
+    (this.$refs.TermsOfServicePopup as TermsOfServicePopup).open()
+  }
 }
 </script>
 
@@ -230,5 +248,10 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
 .map-view {
   max-width: 100%;
   max-height: 100%
+}
+.clickable-link {
+  text-decoration: underline;
+  color: $BCgovBlue5;
+  cursor: pointer;
 }
 </style>
