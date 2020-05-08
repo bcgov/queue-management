@@ -3,7 +3,7 @@
     <v-row justify="center">
       <v-col
         cols="12"
-        sm="6"
+        md="6"
       >
         <v-date-picker
           v-model="selectedDate"
@@ -20,7 +20,7 @@
       </v-col>
       <v-col
         cols="12"
-        sm="6"
+        md="6"
         class="text-center"
       >
         <div v-if="selectedTimeSlot">
