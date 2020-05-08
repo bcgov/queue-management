@@ -1,54 +1,48 @@
 <template>
   <div>
-    <v-card>
-      <v-card-title class="justify-center">
-        <h3>Appointment Summary</h3>
-      </v-card-title>
-      <v-divider class="mx-4"></v-divider>
-      <v-card-text>
-        <v-card flat color="grey lighten-4">
-          <v-row class="pa-8">
-            <v-col cols="12" sm="6">
-              <v-label>Reason for Appointment</v-label>
-              <p>{{appointmentDisplayData.serviceForAppointment}}</p>
-            </v-col>
-            <v-col cols="12" sm="6">
-              <v-label>Date of Appointment</v-label>
-              <p>{{appointmentDateTime}}</p>
-            </v-col>
-            <v-col cols="12">
-              <v-label>Location</v-label>
-              <p>{{appointmentDisplayData.locationName}}, <small v-if="appointmentDisplayData.locationAddress">{{appointmentDisplayData.locationAddress}}</small></p>
-            </v-col>
-            <v-col cols="12">
-              <div class="d-flex justify-center">
-                <v-btn
-                  large
-                  @click="confirmAppointment"
-                  color="primary"
-                >{{submitBtnText}}</v-btn>
-              </div>
-            </v-col>
-            <v-col cols="12">
-              <img :src='getMapUrl(staticMapData)' :alt="staticMapData.civic_address" class='map-view'>
-              <!-- <GmapMap
-                :center="appointmentDisplayData.locationCoordinates"
-                :zoom="14"
-                class="map-view"
-                :options="mapConfigurations"
-              >
-                <GmapMarker
-                  :position="appointmentDisplayData.locationCoordinates"
-                  :clickable="true"
-                  :draggable="false"
-                  :label='{text: appointmentDisplayData.locationName, fontWeight: "600"}'
-                />
-              </GmapMap> -->
-            </v-col>
-          </v-row>
-        </v-card>
-      </v-card-text>
-    </v-card>
+    <v-card-text>
+      <v-card flat color="grey lighten-4">
+        <v-row class="pa-8">
+          <v-col cols="12" sm="6">
+            <v-label>Reason for Appointment</v-label>
+            <p>{{appointmentDisplayData.serviceForAppointment}}</p>
+          </v-col>
+          <v-col cols="12" sm="6">
+            <v-label>Date of Appointment</v-label>
+            <p>{{appointmentDateTime}}</p>
+          </v-col>
+          <v-col cols="12">
+            <v-label>Location</v-label>
+            <p>{{appointmentDisplayData.locationName}}, <small v-if="appointmentDisplayData.locationAddress">{{appointmentDisplayData.locationAddress}}</small></p>
+          </v-col>
+          <v-col cols="12">
+            <div class="d-flex justify-center">
+              <v-btn
+                large
+                @click="confirmAppointment"
+                color="primary"
+              >{{submitBtnText}}</v-btn>
+            </div>
+          </v-col>
+          <v-col cols="12">
+            <img :src='getMapUrl(staticMapData)' :alt="staticMapData.civic_address" class='map-view'>
+            <!-- <GmapMap
+              :center="appointmentDisplayData.locationCoordinates"
+              :zoom="14"
+              class="map-view"
+              :options="mapConfigurations"
+            >
+              <GmapMarker
+                :position="appointmentDisplayData.locationCoordinates"
+                :clickable="true"
+                :draggable="false"
+                :label='{text: appointmentDisplayData.locationName, fontWeight: "600"}'
+              />
+            </GmapMap> -->
+          </v-col>
+        </v-row>
+      </v-card>
+    </v-card-text>
     <v-dialog
       v-model="dialogPopup.showDialog"
       max-width="540"

@@ -1,14 +1,14 @@
 <template>
   <!-- Service Model Popup -->
   <v-dialog
-    v-model="locationServicesModal"
-    max-width="600"
+    v-model="isModelOpen"
+    max-width="570"
   >
     <v-card>
       <v-toolbar dark flat color="primary">
         <v-toolbar-title>Location Services for {{selectedLocationName}}</v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-btn icon dark @click="locationServicesModal = false">
+        <v-btn icon dark @click="close">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-toolbar>
@@ -55,15 +55,22 @@
             <thead>
               <tr>
                 <th class="text-left">Service</th>
-                <th class="text-left">Service Information</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="item in filteredServiceList" :key="item.service_id">
-                <td>{{ item.external_service_name }}</td>
                 <td>
-                  <span v-if="item.online_availability === ServiceAvailability.SHOW">{{item.service_desc}}</span>
-                  <span v-else class="service-unavailable">Unavailable</span>
+                  <div
+                    v-bind:class="{'unavailable-service': item.online_availability === ServiceAvailability.DISABLE}"
+                  >
+                    {{ item.external_service_name }}
+                  </div>
+                </td>
+                <td>
+                  <div v-if="item.online_link" class="service-link" @click="goToServiceLink(item.online_link)">
+                    Options Available <v-icon small>mdi-open-in-new</v-icon>
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -93,7 +100,8 @@ export default class ServiceListPopup extends Vue {
   private categorySearchInput:string = ''
   private filteredServiceList: Service[] = []
   private readonly categoryList!: Service[]
-  private isFiltered = false
+  private isFiltered: boolean = false
+  private isModelOpen: boolean = false
   private ServiceAvailability = ServiceAvailability
 
   @Prop({ default: false })
@@ -104,6 +112,17 @@ export default class ServiceListPopup extends Vue {
 
   @Prop({ default: '' })
   private selectedLocationName!: string
+
+  public open () {
+    this.isModelOpen = true
+  }
+
+  public close () {
+    this.isFiltered = false
+    this.selectedCategory = ''
+    this.categorySearchInput = ''
+    this.isModelOpen = false
+  }
 
   private async beforeUpdate () {
     this.filteredServiceList = (!this.isFiltered) ? { ...this.serviceList } : this.filteredServiceList
@@ -124,13 +143,17 @@ export default class ServiceListPopup extends Vue {
   private categorySearch (value: string) {
     this.selectedCategory = ''
     if (value) {
-      this.filteredServiceList = this.filteredServiceList.filter((service) => {
-        return service?.external_service_name.toLowerCase().includes(value.toLowerCase())
+      this.filteredServiceList = this.serviceList.filter((service) => {
+        return `${service?.external_service_name || ''} ${service?.service_desc || ''}`.toLowerCase().includes(value.toLowerCase())
       })
       this.isFiltered = true
     } else {
       this.isFiltered = false
     }
+  }
+
+  private goToServiceLink (url) {
+    window.open(url, '_blank')
   }
 }
 </script>
@@ -140,5 +163,15 @@ export default class ServiceListPopup extends Vue {
 .service-unavailable {
   color: $BCgovInputError;
   font-weight: 600;
+}
+.unavailable-service {
+  color: $gray6;
+}
+.service-link {
+  font-weight: 600;
+  font-size: .85rem;
+  color: $BCgovBlue8;
+  cursor: pointer;
+  text-align: end;
 }
 </style>

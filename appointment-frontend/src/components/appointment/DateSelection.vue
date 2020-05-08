@@ -1,70 +1,63 @@
 <template>
-  <v-card>
-    <v-card-title class="justify-center">
-      <h3>Select a Date</h3>
-    </v-card-title>
-    <v-divider class="mx-4"></v-divider>
-    <v-card-text>
-      <p class="step-desc">What day would you like to have the appointment?</p>
-      <v-row justify="center">
-        <v-col
-          cols="12"
-          sm="6"
-        >
-          <v-date-picker
-            v-model="selectedDate"
-            show-current
-            light
-            :allowed-dates="getAllowedDates"
-            :events="availableDates"
-            event-color="green lighten-1"
-            color="success"
-            header-color="primary"
-            full-width
-            @click:date="dateClicked"
-          ></v-date-picker>
-        </v-col>
-        <v-col
-          cols="12"
-          sm="6"
-          class="text-center"
-        >
-          <div v-if="selectedTimeSlot">
-            <strong class="mr-1">Appointment Date: </strong> {{selectedDateFormatted}}, {{selectedTimeSlot}}
+  <v-card-text>
+    <v-row justify="center">
+      <v-col
+        cols="12"
+        sm="6"
+      >
+        <v-date-picker
+          v-model="selectedDate"
+          show-current
+          light
+          :allowed-dates="getAllowedDates"
+          :events="availableDates"
+          event-color="green lighten-1"
+          color="success"
+          header-color="primary"
+          full-width
+          @click:date="dateClicked"
+        ></v-date-picker>
+      </v-col>
+      <v-col
+        cols="12"
+        sm="6"
+        class="text-center"
+      >
+        <div v-if="selectedTimeSlot">
+          <strong class="mr-1">Appointment Date: </strong> {{selectedDateFormatted}}, {{selectedTimeSlot}}
+        </div>
+        <div v-else>
+          <strong class="mr-1">Date Selected: </strong> {{selectedDateFormatted}}
+        </div>
+        <template v-if="selectedDateTimeSlots.length">
+          <div class="mt-6">
+            <strong>Available Time Slots</strong>
           </div>
-          <div v-else>
-            <strong class="mr-1">Date Selected: </strong> {{selectedDateFormatted}}
+          <v-row>
+            <v-col
+              cols="6"
+              v-for="(timeslot, index) in selectedDateTimeSlots"
+              :key="index"
+            >
+              <v-btn
+                large
+                outlined
+                block
+                @click="selectTimeSlot(timeslot)"
+                color="primary">
+                {{`${timeslot.startTimeStr} - ${timeslot.endTimeStr}`}}
+              </v-btn>
+            </v-col>
+          </v-row>
+        </template>
+        <template v-else>
+          <div class="mt-6 error-text">
+            <strong>No time slots available on the selected date</strong>
           </div>
-          <template v-if="selectedDateTimeSlots.length">
-            <div class="mt-6">
-              <strong>Available Time Slots</strong>
-            </div>
-            <v-row>
-              <v-col
-                cols="6"
-                v-for="(timeslot, index) in selectedDateTimeSlots"
-                :key="index"
-              >
-                <v-btn
-                  large
-                  outlined
-                  block
-                  @click="selectTimeSlot(timeslot)"
-                  color="primary">
-                  {{`${timeslot.startTimeStr} - ${timeslot.endTimeStr}`}}
-                </v-btn>
-              </v-col>
-            </v-row>
-          </template>
-          <template v-else>
-            <div class="mt-6 error-text">
-              <strong>No time slots available on the selected date</strong>
-            </div>
-          </template>
-        </v-col>
-      </v-row>
-    </v-card-text>
-  </v-card>
+        </template>
+      </v-col>
+    </v-row>
+  </v-card-text>
 </template>
 
 <script lang="ts">

@@ -1,16 +1,12 @@
 <template>
-  <v-card>
-    <v-card-title class="justify-center">
-      <h3>Service Selection</h3>
-    </v-card-title>
-    <v-divider class="mx-4"></v-divider>
+  <div>
     <v-card-text>
-      <p class="step-desc">Please select the service you'd like to receive</p>
       <v-row justify="center">
         <v-col cols="12" sm="6" class="text-center">
           <v-combobox
             :items="serviceList"
             :item-text="'external_service_name'"
+            :filter="serviceSearchFilter"
             label="Select Service"
             outlined
             color="primary"
@@ -73,7 +69,10 @@
             large
             @click="proceedBooking"
             color="primary"
-          >Yes, Book With The Service BC Centre</v-btn>
+          >
+            Yes, Book With The Service BC Centre
+            <v-icon right small class="ml-1">mdi-arrow-right</v-icon>
+          </v-btn>
         </div>
       </template>
     </v-card-text>
@@ -104,7 +103,7 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-  </v-card>
+  </div>
 </template>
 
 <script lang="ts">
@@ -183,6 +182,10 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
 
   private goToServiceLink (url) {
     window.open(url, '_blank')
+  }
+
+  private serviceSearchFilter (item, queryText, itemText) {
+    return `${item?.external_service_name || ''} ${item?.service_desc || ''}`.toLowerCase().indexOf((queryText || '').toLowerCase()) > -1
   }
 }
 </script>
