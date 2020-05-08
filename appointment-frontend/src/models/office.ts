@@ -4,6 +4,7 @@ export interface Office {
   appointments_days_limit: number
   appointments_enabled_ind: boolean
   civic_address: string
+  disable_online_appointment: boolean
   exams_enabled_ind: boolean
   latitude: number
   longitude: number
@@ -13,6 +14,7 @@ export interface Office {
   office_name: string
   office_number: number
   sb_id: number
+  telephone: string
   timeslots: TimeSlots[]
   timezone: TimeZone
 }

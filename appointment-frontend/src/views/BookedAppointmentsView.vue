@@ -216,7 +216,7 @@ export default class Home extends Vue {
 
   private changeAppointment (appointment) {
     this.setAppointmentValues(appointment)
-    this.$store.commit('setStepperCurrentStep', 1)
+    this.$store.commit('setStepperCurrentStep', 3)
     this.$store.commit('setAppointmentEditMode', true)
     this.$router.push('/appointment')
   }
