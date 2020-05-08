@@ -193,23 +193,18 @@ export default {
       return new Promise((resolve, reject) => {
         Axios({state}).put(`/appointments/${payload.appointment_id}/`, data).then( () => {
           if (state.officeType != "nocallonsmartboard") {
-            console.log("===> This is a reception office -----> Normal Processing")
             dispatch('sendToQueue', payload)
             setTimeout(()=>{ commit('toggleCheckInClicked', false) }, 2000);
             resolve()
           } else {
-            console.log("===> This is a non-reception office")
             if (rootState.serviceModalForm.citizen_id) {
-              console.log("==> Non-reception office, tracking time, cannot check in, place on hold")
               dispatch('sendToHoldQueue', payload)
               setTimeout(()=>{ commit('toggleCheckInClicked', false) }, 2000);
               resolve()
             } else {
-              console.log("==> Non-reception office, not tracking time, you can check in")
               dispatch('sendToService', payload)
               setTimeout(()=>{ commit('toggleCheckInClicked', false) }, 2000);
               resolve()
-              console.log("RESOLVED Should go back to calling program")
             }
           }
         })
@@ -308,7 +303,6 @@ export default {
       commit('setAppointmentsStateInfo', payload, { root: true })
       dispatch('putCitizen', {citizen_id, payload}).then( () => {
         dispatch('postServiceReq', {citizen_id, payload}).then( () => {
-          console.log("==> In sendToHoldQueue ===> Before call to postHoldQueue",citizen_id)
           dispatch('postHoldQueue', citizen_id).then( () => {
             dispatch('getAppointments').then( () => {
               commit('toggleCheckInModal', false)
@@ -322,7 +316,6 @@ export default {
       commit('setAppointmentsStateInfo', payload, { root: true })
       dispatch('putCitizen', {citizen_id, payload}).then( () => {
         dispatch('postServiceReq', {citizen_id, payload}).then( () => {
-          console.log("==> In SendToService ===> Before call to postBeginService",citizen_id)
           dispatch('postBeginService', citizen_id).then( () => {
             dispatch('getAppointments').then( () => {
               commit('toggleCheckInModal', false)

@@ -105,22 +105,19 @@
         if (!this.checkInClicked) {
           this.toggleCheckInClicked(true)
           this.$store.commit('toggleServeCitizenSpinner', true)
-          console.log("======> Before postCheck-in ---> checking the this.clickedAppt value", this.clickedAppt)
           this.postCheckIn(this.clickedAppt).then(response => {
             this.hide()
-            console.log("======> response() After postCheck-in --->")
-            console.log("======> After postCheck-in ---> state.officeType = ",this.$store.state.officeType)
-            console.log("======> After postCheck-in ---> state.officeType = ",this.$store.state.serviceModalForm.citizen_id)
-
-            if ((this.$store.state.officeType == "nocallonsmartboard") && (!this.$store.state.serviceModalForm.citizen_id)) {
-              console.log("=====> showServeCitizen has a value of", this.showServeCitizen)
-              this.$store.commit('toggleBegunStatus', true)
-              this.$store.commit('toggleInvitedStatus', false)
-              this.$store.commit('toggleServiceModal', true)
+            if (this.$store.state.officeType == "nocallonsmartboard") {
+               if (this.$store.state.serviceModalForm.citizen_id) {
+                  this.$store.commit('setMainAlert', 'Citizen placed on Hold Queue.  Citizen Waiting...')
+               } else {
+                  this.$store.commit('toggleBegunStatus', true)
+                  this.$store.commit('toggleInvitedStatus', false)
+                  this.$store.commit('toggleServiceModal', true)
+               }
             }
             this.$store.commit('toggleServeCitizenSpinner', false)
           })
-          console.log("=====> After postCheck-in  --->  This code should be fired last")
         }
       },
       clearTime() {
