@@ -142,9 +142,12 @@ export default class DateSelection extends Mixins(StepperMixin) {
   }
 
   selectTimeSlot (slot) {
+    // Note - For cross browser, we must use specific date string format below
+    // Chrome/FF pass with "2020-05-08 09:00" but Safari fails.
+    // Safari needs format from spec, "2020-05-08T09:00"
     const selectedSlot: AppointmentSlot = {
-      start_time: CommonUtils.getTzDate(new Date(`${this.selectedDate} ${slot.start_time}`), this.currentOfficeTimezone).toISOString(),
-      end_time: CommonUtils.getTzDate(new Date(`${this.selectedDate} ${slot.end_time}`), this.currentOfficeTimezone).toISOString()
+      start_time: CommonUtils.getTzDate(new Date(`${this.selectedDate}T${slot.start_time}`), this.currentOfficeTimezone).toISOString(),
+      end_time: CommonUtils.getTzDate(new Date(`${this.selectedDate}T${slot.end_time}`), this.currentOfficeTimezone).toISOString()
     }
     this.setCurrentAppointmentSlot(selectedSlot)
     this.stepNext()
