@@ -147,6 +147,28 @@ export default {
         })
       })
     },
+    postBeginService({rootState}, payload) {
+      let state = rootState
+      return new Promise((resolve, reject) => {
+        let url = `/citizens/${payload}/begin_service/`
+        Axios({state}).post(url,{}).then(resp=>{
+          resolve(resp)
+        }, error => {
+          reject(error)
+        })
+      })
+    },
+    postHoldQueue({rootState}, payload) {
+      let state = rootState
+      return new Promise((resolve, reject) => {
+        let url = `/citizens/${payload}/place_on_hold/`
+        Axios({state}).post(url,{}).then(resp=>{
+          resolve(resp)
+        }, error => {
+          reject(error)
+        })
+      })
+    },
 
     postAppointment({rootState}, payload) {
       let state = rootState
@@ -170,8 +192,26 @@ export default {
       payload.snowplow_addcitizen = true
       return new Promise((resolve, reject) => {
         Axios({state}).put(`/appointments/${payload.appointment_id}/`, data).then( () => {
-          dispatch('sendToQueue', payload)
-          setTimeout(()=>{ commit('toggleCheckInClicked', false) }, 2000);
+          if (state.officeType != "nocallonsmartboard") {
+            console.log("===> This is a reception office -----> Normal Processing")
+            dispatch('sendToQueue', payload)
+            setTimeout(()=>{ commit('toggleCheckInClicked', false) }, 2000);
+            resolve()
+          } else {
+            console.log("===> This is a non-reception office")
+            if (rootState.serviceModalForm.citizen_id) {
+              console.log("==> Non-reception office, tracking time, cannot check in, place on hold")
+              dispatch('sendToHoldQueue', payload)
+              setTimeout(()=>{ commit('toggleCheckInClicked', false) }, 2000);
+              resolve()
+            } else {
+              console.log("==> Non-reception office, not tracking time, you can check in")
+              dispatch('sendToService', payload)
+              setTimeout(()=>{ commit('toggleCheckInClicked', false) }, 2000);
+              resolve()
+              console.log("RESOLVED Should go back to calling program")
+            }
+          }
         })
       })
     },
@@ -256,6 +296,34 @@ export default {
       dispatch('putCitizen', {citizen_id, payload}).then( () => {
         dispatch('postServiceReq', {citizen_id, payload}).then( () => {
           dispatch('postAddToQueue', citizen_id).then( () => {
+            dispatch('getAppointments').then( () => {
+              commit('toggleCheckInModal', false)
+            })
+          })
+        })
+      })
+    },
+    sendToHoldQueue({dispatch, commit, rootState}, payload) {
+      let citizen_id = payload.citizen_id
+      commit('setAppointmentsStateInfo', payload, { root: true })
+      dispatch('putCitizen', {citizen_id, payload}).then( () => {
+        dispatch('postServiceReq', {citizen_id, payload}).then( () => {
+          console.log("==> In sendToHoldQueue ===> Before call to postHoldQueue",citizen_id)
+          dispatch('postHoldQueue', citizen_id).then( () => {
+            dispatch('getAppointments').then( () => {
+              commit('toggleCheckInModal', false)
+            })
+          })
+        })
+      })
+    },
+    sendToService({dispatch, commit, rootState}, payload) {
+      let citizen_id = payload.citizen_id
+      commit('setAppointmentsStateInfo', payload, { root: true })
+      dispatch('putCitizen', {citizen_id, payload}).then( () => {
+        dispatch('postServiceReq', {citizen_id, payload}).then( () => {
+          console.log("==> In SendToService ===> Before call to postBeginService",citizen_id)
+          dispatch('postBeginService', citizen_id).then( () => {
             dispatch('getAppointments').then( () => {
               commit('toggleCheckInModal', false)
             })

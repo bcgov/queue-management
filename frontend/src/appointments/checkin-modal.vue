@@ -56,7 +56,6 @@
 </template>
 
 <script>
-  import moment from 'moment'
   import { createNamespacedHelpers } from 'vuex'
   const { mapActions, mapGetters, mapMutations, mapState } = createNamespacedHelpers('appointmentsModule')
 
@@ -69,7 +68,7 @@
       }
     },
     computed: {
-      ...mapState(['showCheckInModal','showServeCitizenSpinner', 'checkInClicked'],),
+      ...mapState(['showCheckInModal','showServeCitizenSpinner', 'checkInClicked','showServeCitizen'],),
       modalVisible: {
         get() { return this.showCheckInModal },
         set(e) { this.toggleCheckInModal(e) }
@@ -106,10 +105,22 @@
         if (!this.checkInClicked) {
           this.toggleCheckInClicked(true)
           this.$store.commit('toggleServeCitizenSpinner', true)
-          this.postCheckIn(this.clickedAppt).then(() => {
+          console.log("======> Before postCheck-in ---> checking the this.clickedAppt value", this.clickedAppt)
+          this.postCheckIn(this.clickedAppt).then(response => {
             this.hide()
+            console.log("======> response() After postCheck-in --->")
+            console.log("======> After postCheck-in ---> state.officeType = ",this.$store.state.officeType)
+            console.log("======> After postCheck-in ---> state.officeType = ",this.$store.state.serviceModalForm.citizen_id)
+
+            if ((this.$store.state.officeType == "nocallonsmartboard") && (!this.$store.state.serviceModalForm.citizen_id)) {
+              console.log("=====> showServeCitizen has a value of", this.showServeCitizen)
+              this.$store.commit('toggleBegunStatus', true)
+              this.$store.commit('toggleInvitedStatus', false)
+              this.$store.commit('toggleServiceModal', true)
+            }
             this.$store.commit('toggleServeCitizenSpinner', false)
           })
+          console.log("=====> After postCheck-in  --->  This code should be fired last")
         }
       },
       clearTime() {
