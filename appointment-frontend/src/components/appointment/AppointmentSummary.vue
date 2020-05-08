@@ -111,7 +111,8 @@ import { getModule } from 'vuex-module-decorators'
     ...mapState('office', [
       'currentOffice',
       'currentService',
-      'currentAppointmentSlot'
+      'currentAppointmentSlot',
+      'currentOfficeTimezone'
     ]),
     ...mapState('auth', [
       'currentUserProfile'
@@ -133,6 +134,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   private readonly currentOffice!: Office
   private readonly currentService!: Service
   private readonly currentAppointmentSlot!: AppointmentSlot
+  private readonly currentOfficeTimezone!: string
   private readonly currentUserProfile!: User
   private readonly createAppointment!: () => Appointment
   private readonly clearSelectedValues!: () => void
@@ -149,7 +151,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
       serviceForAppointment: this.currentService?.external_service_name,
       locationName: this.currentOffice?.office_name || '',
       locationAddress: this.currentOffice?.civic_address || '',
-      phoneNumber: '',
+      phoneNumber: this.currentOffice?.telephone,
       locationCoordinates: {
         lat: this.currentOffice?.latitude || 0,
         lng: this.currentOffice?.longitude || 0
@@ -180,14 +182,13 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
     if (!date) {
       return ''
     }
-    return CommonUtils.getTzFormattedDate(date, formatStr)
+    return CommonUtils.getTzFormattedDate(date, this.currentOfficeTimezone, formatStr)
   }
 
   private async confirmAppointment () {
     try {
       const resp = await this.createAppointment()
       if (resp.appointment_id) {
-        this.appointmentDisplayData.phoneNumber = this.currentUserProfile?.telephone || ''
         this.dialogPopup.showDialog = true
         this.dialogPopup.isSuccess = true
         this.dialogPopup.title = 'Success! Your appointment has been booked.'

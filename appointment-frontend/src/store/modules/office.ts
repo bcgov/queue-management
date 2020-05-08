@@ -19,6 +19,7 @@ export default class OfficeModule extends VuexModule {
   categoryList: Service[] = [] // category and service shares similar data model
   additionalNotes: string
   currentOffice: Office
+  currentOfficeTimezone: string
   currentService: Service
   currentAppointmentSlot: AppointmentSlot
   currentAppointment: Appointment
@@ -50,6 +51,7 @@ export default class OfficeModule extends VuexModule {
   @Mutation
   public setCurrentOffice (office: Office) {
     this.currentOffice = office
+    this.currentOfficeTimezone = office?.timezone?.timezone_name || undefined
   }
 
   @Mutation
@@ -114,7 +116,14 @@ export default class OfficeModule extends VuexModule {
   @Action({ commit: 'setCategoryList', rawError: true })
   public async getCategories () {
     const response = await OfficeService.getCategories()
-    return response?.data?.categories || []
+    let categories = response?.data?.categories || []
+    if (categories.length) {
+      const services = this.context.state['serviceList'] || []
+      categories = response.data.categories.filter(cat => {
+        return services.some(s => s.parent_id === cat.service_id)
+      })
+    }
+    return categories
   }
 
   @Action({ rawError: true })

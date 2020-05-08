@@ -2,7 +2,14 @@
   <v-container>
     <v-row justify="center">
       <v-col cols="12" sm="9">
-        <LoginToConfirm></LoginToConfirm>
+        <v-card>
+          <v-card-title class="justify-center">
+            <h3>Login</h3>
+          </v-card-title>
+          <v-divider class="mx-4"></v-divider>
+          <p class="text-center mt-2">Please login using one of the following</p>
+          <LoginToConfirm></LoginToConfirm>
+        </v-card>
       </v-col>
     </v-row>
   </v-container>

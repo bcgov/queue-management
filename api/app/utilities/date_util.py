@@ -13,6 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 import datetime as dt
 from datetime import timedelta, time
+import pytz
 
 days_mapping = {
     'Monday': 1,
@@ -25,7 +26,7 @@ days_mapping = {
 }
 
 
-def add_delta_to_time(time: time, minutes: int = 0, seconds: int = 0):
+def add_delta_to_time(time: time, timezone, minutes: int = 0, seconds: int = 0):
     """Add delta in minutes to the time"""
     time_combine = dt.datetime.combine(dt.date(1, 1, 1), time)
     if minutes > 0:
@@ -37,7 +38,7 @@ def add_delta_to_time(time: time, minutes: int = 0, seconds: int = 0):
     else:
         delta_time -= timedelta(seconds=seconds)
 
-    return delta_time.time()
+    return delta_time.replace(tzinfo=pytz.timezone(timezone)).time()
 
 
 def day_indexes(days):

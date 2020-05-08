@@ -1,11 +1,10 @@
 <template>
   <v-card-text>
-    <p class="step-desc">To book an appointment, please find your nearest BC Service Location</p>
     <v-row justify="center">
-      <v-col cols="12" md="6">
+      <v-col cols="12" sm="6" md="4">
         <geocoder-input v-on:set-location-event='onGeoSelect'></geocoder-input>
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" sm="6" md="4">
         <v-select
           :items="radiusList"
           label="Radius"
@@ -116,6 +115,7 @@
     </v-row>
     <!-- Service Model Popup -->
     <ServiceListPopup
+      ref="locationServiceListPopup"
       :locationServicesModal="locationServicesModal"
       :serviceList="serviceList"
       :selectedLocationName="selectedLocationName"
@@ -182,11 +182,14 @@ export default class LocationsList extends Mixins(StepperMixin) {
   private locationListData: Office[] = []
   private serviceList: Service[] = []
 
+  $refs: {
+    locationServiceListPopup: ServiceListPopup
+  }
+
   private async mounted () {
     if (this.isOnCurrentStep) {
       this.locationListData = await this.getOffices()
       this.locationListData = this.sortOfficesByDistance(this.locationListData)
-      await this.getCategories()
     }
   }
 
@@ -252,8 +255,9 @@ export default class LocationsList extends Mixins(StepperMixin) {
 
   private async showLocationServices (location) {
     this.serviceList = await this.getServiceByOffice(location.office_id)
+    await this.getCategories()
     this.selectedLocationName = location.office_name
-    this.locationServicesModal = true
+    this.$refs.locationServiceListPopup.open()
   }
 
   private getCoordinates (location) {

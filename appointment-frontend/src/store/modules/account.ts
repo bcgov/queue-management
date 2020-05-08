@@ -18,7 +18,7 @@ export default class AccountModule extends VuexModule {
   }
 
   get username (): string {
-    return this.currentUser?.display_name || ''
+    return this.currentUser?.display_name || this.context.rootState.auth.userFullName || ''
   }
 
   @Action({ rawError: true, commit: 'setCurrentUser' })

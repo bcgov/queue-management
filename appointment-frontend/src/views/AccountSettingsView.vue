@@ -42,9 +42,7 @@
 
               <v-text-field
                 v-model="phoneNumber"
-                :rules="phoneNumberRules"
                 label="Phone"
-                required
                 outlined
               ></v-text-field>
 
@@ -121,7 +119,7 @@ export default class AccountSettingsView extends Vue {
   ]
 
   private phoneNumberRules = [
-    v => !!v || 'Phone number is required'
+    v => /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(v) || 'Phone number must be valid'
   ]
 
   private async beforeMount () {
