@@ -10,7 +10,6 @@
           :complete="stepCounter > bookingStep.step"
           :step="bookingStep.step"
           edit-icon="mdi-check"
-          :editable="bypassStepper"
         >
           <div class="step-label" v-bind:class="{'font-weight-bold': (bookingStep.step === stepCounter)}">
             {{bookingStep.label}}
@@ -175,12 +174,6 @@ export default class AppointmentBookingView extends Vue {
 
   private isOnCurrentStep (step) {
     return !!(step.step === this.stepCounter)
-  }
-
-  private get bypassStepper (): boolean {
-    // Dev only - add `VUE_APP_BYPASS_STEPPER=true` to your .env.local.
-    // Never set in OpenShift
-    return process.env.VUE_APP_BYPASS_STEPPER === 'true'
   }
 }
 </script>
