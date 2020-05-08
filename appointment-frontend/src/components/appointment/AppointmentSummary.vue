@@ -1,9 +1,6 @@
 <template>
   <div>
     <v-card>
-      <v-card-title class="justify-center">
-        <h3>Appointment Summary</h3>
-      </v-card-title>
       <v-divider class="mx-4"></v-divider>
       <v-card-text>
         <v-card flat color="grey lighten-4">
