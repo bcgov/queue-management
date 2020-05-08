@@ -115,7 +115,8 @@ class AppointmentPost(Resource):
 
             else:
                 # Send confirmation email
-                send_confirmation_email(appointment, office, office.timezone, user)
+                #TODO send_confirmation_email(appointment, office, office.timezone, user)
+                pass
 
             SnowPlow.snowplow_appointment(citizen, csr, appointment, 'appointment_create')
 
