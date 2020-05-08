@@ -19,12 +19,12 @@ certifi
 eventlet
 filelock
 flask-caching
-flask-compress
+Flask-Compress
 flask-cors
-flask-marshmallow==0.11.0
+flask_marshmallow==0.11.0
 flask-socketio
 gunicorn
-marshmallow-sqlalchemy
+marshmallow-sqlalchemy==0.22.3
 psycopg2-binary
 pysnow
 pytest
@@ -33,4 +33,5 @@ python-jose
 SQLAlchemy-Utc
 # We need to find alternative to toastedmarshmellow. pydantic
 toastedmarshmallow==0.2.6
-
+Flask-Mail
+Jinja2
