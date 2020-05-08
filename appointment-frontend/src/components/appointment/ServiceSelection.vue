@@ -1,11 +1,6 @@
 <template>
-  <v-card>
-    <v-card-title class="justify-center">
-      <h3>Service Selection</h3>
-    </v-card-title>
-    <v-divider class="mx-4"></v-divider>
+  <div>
     <v-card-text>
-      <p class="step-desc">Please select the service you'd like to receive</p>
       <v-row justify="center">
         <v-col cols="12" sm="6" class="text-center">
           <v-combobox
@@ -74,7 +69,10 @@
             large
             @click="proceedBooking"
             color="primary"
-          >Yes, Book With The Service BC Centre</v-btn>
+          >
+            Yes, Book With The Service BC Centre
+            <v-icon right small class="ml-1">mdi-arrow-right</v-icon>
+          </v-btn>
         </div>
       </template>
     </v-card-text>
@@ -105,7 +103,7 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-  </v-card>
+  </div>
 </template>
 
 <script lang="ts">

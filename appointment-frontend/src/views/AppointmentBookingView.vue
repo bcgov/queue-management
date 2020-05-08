@@ -9,7 +9,6 @@
           :key="`${bookingStep.step}-step`"
           :complete="stepCounter > bookingStep.step"
           :step="bookingStep.step"
-          editable
           edit-icon="mdi-check"
         >
           <div class="step-label" v-bind:class="{'font-weight-bold': (bookingStep.step === stepCounter)}">
@@ -30,25 +29,28 @@
         :key="`${bookingStep.step}-content`"
         :step="bookingStep.step"
       >
-        <v-card v-if="bookingStep.code === 'location'">
-          <v-card-title class="justify-center">
-            <h3>Location Selection</h3>
+        <v-card>
+          <v-card-title >
+            <div class="step-back-btn" v-if="showBackButton(bookingStep)">
+              <v-btn text large @click="stepBack">
+                <v-icon left class="mr-1">mdi-arrow-left</v-icon> Back
+              </v-btn>
+            </div>
+            <v-spacer></v-spacer>
+            <h3>{{bookingStep.title}}</h3>
+            <v-spacer></v-spacer>
           </v-card-title>
           <v-divider class="mx-4"></v-divider>
-          <LocationsList
+          <p v-if="bookingStep.subTitle" class="step-desc mt-2">{{bookingStep.subTitle}}</p>
+          <component
+            :is="bookingStep.component"
             v-bind="getPropsForStep(bookingStep)"
+            keep-alive
             :key="stepCounter"
+            transition="fade"
+            mode="out-in"
           />
         </v-card>
-        <component
-          v-else
-          :is="bookingStep.component"
-          v-bind="getPropsForStep(bookingStep)"
-          keep-alive
-          :key="stepCounter"
-          transition="fade"
-          mode="out-in"
-        />
       </v-stepper-content>
     </v-stepper-items>
   </v-stepper>
@@ -81,6 +83,8 @@ export default class AppointmentBookingView extends Vue {
     {
       step: 1,
       label: 'Select Location',
+      title: 'Location Selection',
+      subTitle: `To book an appointment, please find your nearest BC Service Location`,
       code: 'location',
       component: LocationsList,
       componentProps: {}
@@ -88,13 +92,17 @@ export default class AppointmentBookingView extends Vue {
     {
       step: 2,
       label: 'Select Service',
+      title: 'Service Selection',
+      subTitle: `Please select the service you'd like to receive`,
       code: 'service',
       component: ServiceSelection,
       componentProps: {}
     },
     {
       step: 3,
-      label: 'Select a Date',
+      label: 'Select Date',
+      title: 'Select a Date',
+      subTitle: `What day would you like to have the appointment?`,
       code: 'date',
       component: DateSelection,
       componentProps: {}
@@ -102,6 +110,8 @@ export default class AppointmentBookingView extends Vue {
     {
       step: 4,
       label: 'Login to Confirm Appointment',
+      title: 'Login',
+      subTitle: `To complete your appointment booking, please login using one of the following`,
       code: 'login',
       component: LoginToConfirm,
       componentProps: {
@@ -111,11 +121,22 @@ export default class AppointmentBookingView extends Vue {
     {
       step: 5,
       label: 'Appointment Summary',
+      title: 'Appointment Summary',
+      subTitle: '',
       code: 'summary',
       component: AppointmentSummary,
       componentProps: {}
     }
   ]
+
+  private showBackButton (bookingStep) {
+    if (bookingStep.step <= 1) {
+      return false
+    } else if (bookingStep.step === 3 && this.$store.state.isAppointmentEditMode) {
+      return false
+    }
+    return true
+  }
 
   private stepNext () {
     this.updateViewCounter++
@@ -162,5 +183,16 @@ export default class AppointmentBookingView extends Vue {
 .step-label {
   text-align: center;
   line-height: 1.25;
+}
+.step-desc {
+  text-align: center!important;
+  font-size: 1rem!important;
+  letter-spacing: .009375em!important;
+  line-height: 1.75rem;
+  color: $gray7;
+}
+.step-back-btn {
+  float: left;
+  position: absolute;
 }
 </style>

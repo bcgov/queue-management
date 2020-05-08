@@ -1,14 +1,14 @@
 <template>
   <!-- Service Model Popup -->
   <v-dialog
-    v-model="locationServicesModal"
+    v-model="isModelOpen"
     max-width="570"
   >
     <v-card>
       <v-toolbar dark flat color="primary">
         <v-toolbar-title>Location Services for {{selectedLocationName}}</v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-btn icon dark @click="locationServicesModal = false">
+        <v-btn icon dark @click="close">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-toolbar>
@@ -100,7 +100,8 @@ export default class ServiceListPopup extends Vue {
   private categorySearchInput:string = ''
   private filteredServiceList: Service[] = []
   private readonly categoryList!: Service[]
-  private isFiltered = false
+  private isFiltered: boolean = false
+  private isModelOpen: boolean = false
   private ServiceAvailability = ServiceAvailability
 
   @Prop({ default: false })
@@ -111,6 +112,17 @@ export default class ServiceListPopup extends Vue {
 
   @Prop({ default: '' })
   private selectedLocationName!: string
+
+  public open () {
+    this.isModelOpen = true
+  }
+
+  public close () {
+    this.isFiltered = false
+    this.selectedCategory = ''
+    this.categorySearchInput = ''
+    this.isModelOpen = false
+  }
 
   private async beforeUpdate () {
     this.filteredServiceList = (!this.isFiltered) ? { ...this.serviceList } : this.filteredServiceList
@@ -160,5 +172,6 @@ export default class ServiceListPopup extends Vue {
   font-size: .85rem;
   color: $BCgovBlue8;
   cursor: pointer;
+  text-align: end;
 }
 </style>
