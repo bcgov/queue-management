@@ -124,7 +124,8 @@ import { getModule } from 'vuex-module-decorators'
     ...mapState('office', [
       'currentOffice',
       'currentService',
-      'currentAppointmentSlot'
+      'currentAppointmentSlot',
+      'currentOfficeTimezone'
     ]),
     ...mapState('auth', [
       'currentUserProfile'
@@ -146,6 +147,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   private readonly currentOffice!: Office
   private readonly currentService!: Service
   private readonly currentAppointmentSlot!: AppointmentSlot
+  private readonly currentOfficeTimezone!: string
   private readonly currentUserProfile!: User
   private readonly createAppointment!: () => Appointment
   private readonly clearSelectedValues!: () => void
@@ -193,7 +195,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
     if (!date) {
       return ''
     }
-    return CommonUtils.getTzFormattedDate(date, formatStr)
+    return CommonUtils.getTzFormattedDate(date, this.currentOfficeTimezone, formatStr)
   }
 
   private async confirmAppointment () {

@@ -19,6 +19,7 @@ export default class OfficeModule extends VuexModule {
   categoryList: Service[] = [] // category and service shares similar data model
   additionalNotes: string
   currentOffice: Office
+  currentOfficeTimezone: string
   currentService: Service
   currentAppointmentSlot: AppointmentSlot
   currentAppointment: Appointment
@@ -50,6 +51,7 @@ export default class OfficeModule extends VuexModule {
   @Mutation
   public setCurrentOffice (office: Office) {
     this.currentOffice = office
+    this.currentOfficeTimezone = office?.timezone?.timezone_name || undefined
   }
 
   @Mutation
