@@ -213,9 +213,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
       this.dialogPopup.showDialog = true
       this.dialogPopup.isSuccess = false
       this.dialogPopup.title = 'Failed!'
-      this.dialogPopup.subTitle = 'Unable to book the appointment.'
-      // eslint-disable-next-line no-console
-      console.log(error)
+      this.dialogPopup.subTitle = error?.response?.data?.message || 'Unable to book the appointment.'
     }
   }
 

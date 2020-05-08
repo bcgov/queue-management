@@ -30,8 +30,8 @@
         :step="bookingStep.step"
       >
         <v-card>
-          <v-card-title >
-            <div class="step-back-btn" v-if="showBackButton(bookingStep)">
+          <v-card-title class='flex-column flex-sm-row'>
+            <div v-if="showBackButton(bookingStep)">
               <v-btn text large @click="stepBack">
                 <v-icon left class="mr-1">mdi-arrow-left</v-icon> Back
               </v-btn>
@@ -190,9 +190,5 @@ export default class AppointmentBookingView extends Vue {
   letter-spacing: .009375em!important;
   line-height: 1.75rem;
   color: $gray7;
-}
-.step-back-btn {
-  float: left;
-  position: absolute;
 }
 </style>
