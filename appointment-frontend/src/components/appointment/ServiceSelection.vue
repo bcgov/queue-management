@@ -26,7 +26,7 @@
               >
                 <div>{{ data.item.external_service_name }}</div>
                 <div v-if="data.item.online_link" class="service-link" @click="goToServiceLink(data.item.online_link)">
-                  Options Available <v-icon small>mdi-open-in-new</v-icon>
+                  Online Option <v-icon small>mdi-open-in-new</v-icon>
                 </div>
               </div>
             </template>
