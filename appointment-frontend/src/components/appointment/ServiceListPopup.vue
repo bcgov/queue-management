@@ -23,7 +23,7 @@
               class="text-left"
               v-model="selectedCategory"
               name="categories-select"
-              :item-text="'service_name'"
+              :item-text="'external_service_name'"
               :item-value="'service_name'"
               hide-details
               dense
