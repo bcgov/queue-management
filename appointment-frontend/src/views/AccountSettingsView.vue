@@ -23,14 +23,10 @@
               v-model="valid"
               lazy-validation
             >
-              <v-text-field
-                v-model="name"
-                :rules="nameRules"
-                label="Name"
-                required
-                outlined
-                readonly
-              ></v-text-field>
+              <div class="mb-6">
+                <div class="caption">Name</div>
+                <div class="title font-weight-bold">{{name}}</div>
+              </div>
 
               <v-text-field
                 v-model="email"
@@ -47,6 +43,7 @@
               ></v-text-field>
 
               <v-switch
+                inset
                 v-model="enableReminder"
                 label="Send me appointment reminders via email"
               ></v-switch>
@@ -67,6 +64,14 @@
         </v-card>
       </v-col>
     </v-row>
+    <v-snackbar
+      multi-line
+      :color="showMsg.msgType"
+      v-model="showMsg.isShow"
+      class="font-weight-bold"
+    >
+      {{ showMsg.msgText }}
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -75,7 +80,7 @@
 import { AccountModule, AuthModule } from '@/store/modules'
 import { Component, Vue } from 'vue-property-decorator'
 import { User, UserUpdateBody } from '@/models/user'
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 
 @Component({
@@ -84,7 +89,8 @@ import { getModule } from 'vuex-module-decorators'
   computed: {
     ...mapState('auth', [
       'currentUserProfile'
-    ])
+    ]),
+    ...mapGetters('account', ['username'])
   },
   methods: {
     ...mapActions('account', [
@@ -99,11 +105,17 @@ export default class AccountSettingsView extends Vue {
   private readonly currentUserProfile!: User
   private readonly updateUserAccount!: (userBody: UserUpdateBody) => Promise<any>
   private readonly getUser!: () => void
+  private readonly username!: string
   private valid:boolean = false
   private name:string = ''
   private email:string = ''
   private phoneNumber:string = ''
   private enableReminder:boolean = false
+  private showMsg = {
+    isShow: false,
+    msgText: '',
+    msgType: 'info'
+  }
 
   $refs: {
     accountSettingsForm: HTMLFormElement
@@ -127,7 +139,7 @@ export default class AccountSettingsView extends Vue {
       await this.getUser()
     }
     if (this.currentUserProfile) {
-      this.name = this.currentUserProfile?.display_name || 'no_name'
+      this.name = this.username || ' '
       this.email = this.currentUserProfile.email
       this.phoneNumber = this.currentUserProfile.telephone
       this.enableReminder = this.currentUserProfile.send_reminders
@@ -135,14 +147,23 @@ export default class AccountSettingsView extends Vue {
   }
 
   private async updateProfile () {
-    const userUpdate: UserUpdateBody = {
-      email: this.email,
-      telephone: this.phoneNumber,
-      send_reminders: this.enableReminder
+    try {
+      const userUpdate: UserUpdateBody = {
+        email: this.email,
+        telephone: this.phoneNumber,
+        send_reminders: this.enableReminder
+      }
+      const response = await this.updateUserAccount(userUpdate)
+      if (response?.user_id) {
+        this.showMsg.isShow = true
+        this.showMsg.msgText = 'Profile Successfully Updated!'
+        this.showMsg.msgType = 'success'
+      }
+    } catch (error) {
+      this.showMsg.isShow = true
+      this.showMsg.msgText = 'Error! Unable to Update Profile'
+      this.showMsg.msgType = 'error'
     }
-    const response = await this.updateUserAccount(userUpdate)
-    // eslint-disable-next-line no-console
-    console.log(response)
   }
 
   private goToAppointments () {

@@ -24,7 +24,9 @@
         class="text-center"
       >
         <div v-if="selectedTimeSlot">
-          <strong class="mr-1">Appointment Date: </strong> {{selectedDateFormatted}}, {{selectedTimeSlot}}
+          <strong class="mr-1">Appointment Date: </strong>
+          <br class='d-sm-none' />
+          {{selectedDateFormatted}}, {{selectedTimeSlot}}
         </div>
         <div v-else>
           <strong class="mr-1">Date Selected: </strong> {{selectedDateFormatted}}

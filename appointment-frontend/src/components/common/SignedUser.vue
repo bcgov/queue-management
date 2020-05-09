@@ -1,11 +1,11 @@
 <template>
   <v-menu bottom left fixed transition="slide-y-transition" content-class="account-menu">
     <template v-slot:activator="{ on }">
-      <v-btn text large v-on="on" class="mb-1">
+      <v-btn text large v-on="on" class="mb-1" :class="{'pr-0': $vuetify.breakpoint.xs}">
         <v-avatar color="grey lighten-1" light left size="32" class="black--text mr-2">
           {{ username.slice(0,1) }}
         </v-avatar>
-        <div class="user-info">
+        <div class="user-info" v-if="!$vuetify.breakpoint.xs">
           <div class="user-name" data-test="user-name">{{ username }}</div>
         </div>
         <v-icon small class="ml-2">mdi-chevron-down</v-icon>

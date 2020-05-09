@@ -1,10 +1,10 @@
 <template>
-  <div>
+  <div :class="{'summary-mobile': $vuetify.breakpoint.xs}">
     <v-card>
       <v-divider class="mx-4"></v-divider>
       <v-card-text>
         <v-card flat color="grey lighten-4">
-          <v-row class="pa-8">
+          <v-row class="pa-8 summary-grid">
             <v-col cols="12" sm="6">
               <v-label>Reason for Appointment</v-label>
               <p>{{appointmentDisplayData.serviceForAppointment}}</p>
@@ -34,6 +34,7 @@
                   large
                   @click="confirmAppointment"
                   :disabled="!termsOfServiceConsent"
+                  :loading="isLoading"
                   color="primary"
                 >{{submitBtnText}}</v-btn>
               </div>
@@ -83,6 +84,9 @@
               <div class="body-1 font-weight-bold">{{appointmentDateTime}}</div>
             </v-col>
           </v-row>
+          <v-row>
+            <NoEmailAlert></NoEmailAlert>
+          </v-row>
         </v-card-text>
 
         <v-card-actions>
@@ -110,6 +114,7 @@ import { AuthModule } from '@/store/modules'
 import CommonUtils from '@/utils/common-util'
 import ConfigHelper from '@/utils/config-helper'
 import GeocoderService from '@/services/geocoder.services'
+import { NoEmailAlert } from '@/components/common'
 import { Office } from '@/models/office'
 import { Service } from '@/models/service'
 import StepperMixin from '@/mixins/StepperMixin.vue'
@@ -125,9 +130,6 @@ import { getModule } from 'vuex-module-decorators'
       'currentAppointmentSlot',
       'currentOfficeTimezone'
     ]),
-    ...mapState('auth', [
-      'currentUserProfile'
-    ]),
     ...mapGetters('auth', [
       'isAuthenticated'
     ])
@@ -138,7 +140,10 @@ import { getModule } from 'vuex-module-decorators'
       'clearSelectedValues'
     ])
   },
-  components: { TermsOfServicePopup }
+  components: {
+    TermsOfServicePopup,
+    NoEmailAlert
+  }
 })
 export default class AppointmentSummary extends Mixins(StepperMixin) {
   private authModule = getModule(AuthModule, this.$store)
@@ -147,12 +152,12 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   private readonly currentService!: Service
   private readonly currentAppointmentSlot!: AppointmentSlot
   private readonly currentOfficeTimezone!: string
-  private readonly currentUserProfile!: User
   private readonly createAppointment!: () => Appointment
   private readonly clearSelectedValues!: () => void
   private readonly isAuthenticated!: boolean
   private showTermsOfServiceModal: boolean = false
   private termsOfServiceConsent: boolean = false
+  private isLoading: boolean = false
   private dialogPopup = {
     showDialog: false,
     isSuccess: false,
@@ -200,6 +205,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   }
 
   private async confirmAppointment () {
+    this.isLoading = true
     try {
       const resp = await this.createAppointment()
       if (resp.appointment_id) {
@@ -209,7 +215,9 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
         this.dialogPopup.subTitle = `Please review your booking in the details below.
             If you need to cancel or reschedule your appointment, please contact Service BC`
       }
+      this.isLoading = false
     } catch (error) {
+      this.isLoading = false
       this.dialogPopup.showDialog = true
       this.dialogPopup.isSuccess = false
       this.dialogPopup.title = 'Failed!'
@@ -251,5 +259,12 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   text-decoration: underline;
   color: $BCgovBlue5;
   cursor: pointer;
+}
+.summary-mobile {
+  .summary-grid {
+    p {
+      margin-bottom: 0;
+    }
+  }
 }
 </style>

@@ -1,22 +1,11 @@
 <template>
-  <div>
-    <v-alert
-      v-model="showEmailAlert"
-      border="left"
-      type="warning"
-      close-text="Close Alert"
-      color="warning"
-      icon="mdi-alert-circle-outline"
-      dense
-      dismissible
-    >
-      Please <span class="clickable" @click="goToAccountSettings">configure your email address</span> to receive notifications
-    </v-alert>
-    <v-row>
-      <v-col>
-        <h2>Your Appointments</h2>
+  <v-container :class="{'booked-appointments-mobile': $vuetify.breakpoint.xs}">
+    <NoEmailAlert></NoEmailAlert>
+    <v-row class="page-heading">
+      <v-col cols="12" sm="6">
+        <h2>My Appointments</h2>
       </v-col>
-      <v-col class="text-right">
+      <v-col class="book-new-btn" cols="12" sm="6">
         <v-btn
           large
           color="primary"
@@ -127,24 +116,23 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </div>
+  </v-container>
 </template>
 
 <script lang="ts">
 import { AppointmentModule, OfficeModule } from '@/store/modules'
 import { Component, Vue } from 'vue-property-decorator'
-import { mapActions, mapState } from 'vuex'
 import { Appointment } from '@/models/appointment'
 import ConfigHelper from '@/utils/config-helper'
 import GeocoderService from '@/services/geocoder.services'
+import { NoEmailAlert } from '@/components/common'
 import { User } from '@/models/user'
 import { getModule } from 'vuex-module-decorators'
+import { mapActions } from 'vuex'
 
 @Component({
-  computed: {
-    ...mapState('auth', [
-      'currentUserProfile'
-    ])
+  components: {
+    NoEmailAlert
   },
   methods: {
     ...mapActions('appointment', [
@@ -160,9 +148,7 @@ import { getModule } from 'vuex-module-decorators'
 export default class Home extends Vue {
   private appointmentModule = getModule(AppointmentModule, this.$store)
   private officeModule = getModule(OfficeModule, this.$store)
-  private readonly currentUserProfile!: User
   private mapConfigurations = ConfigHelper.getMapConfigurations()
-  private showEmailAlert: boolean = false
   private confirmDialog: boolean = false
   private appointmentList: Appointment[] = []
   private selectedAppointment: Appointment = null
@@ -174,7 +160,6 @@ export default class Home extends Vue {
 
   private async beforeMount () {
     this.fetchAppointments()
-    this.showEmailAlert = !this.currentUserProfile?.email
   }
 
   private async fetchAppointments () {
@@ -250,9 +235,23 @@ export default class Home extends Vue {
   font-weight: 600;
   color: $BCgovInputSuccess;
 }
-.clickable {
-  font-weight: 600;
-  text-decoration: underline;
-  cursor: pointer;
+.book-new-btn {
+  text-align: right;
+}
+.static-map {
+  max-width: 100%;
+}
+.booked-appointments-mobile {
+  .page-heading {
+    margin-top: -1rem;
+    text-align: center !important;
+    .book-new-btn {
+      padding-top: 0;
+      text-align: center;
+    }
+  }
+  .appointment-confirmed {
+    margin-bottom: 0;
+  }
 }
 </style>

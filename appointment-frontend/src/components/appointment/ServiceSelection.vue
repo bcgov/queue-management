@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="{'service-selection-mobile': $vuetify.breakpoint.xs}">
     <v-card-text>
       <v-row justify="center">
         <v-col cols="12" sm="6" class="text-center">
@@ -15,6 +15,7 @@
             name="service-select"
             @change="serviceSelection"
             @input="clickSelection"
+            hide-details
           >
             <template v-slot:selection="data">
               {{ data.item.external_service_name }}
@@ -25,8 +26,8 @@
                 class="service-selection-options"
               >
                 <div>{{ data.item.external_service_name }}</div>
-                <div v-if="data.item.online_link" class="service-link" @click="goToServiceLink(data.item.online_link)">
-                  Options Available <v-icon small>mdi-open-in-new</v-icon>
+                <div v-if="data.item.online_link" class="service-link" :class="{'service-link-mobile': $vuetify.breakpoint.xs}" @click="goToServiceLink(data.item.online_link)">
+                  Online Option <v-icon small>mdi-open-in-new</v-icon>
                 </div>
               </div>
             </template>
@@ -47,6 +48,7 @@
       <v-row justify="center">
         <v-col cols="12" sm="6">
           <v-textarea
+            class="mt-3"
             outlined
             name="additional-options"
             label="Is there any additional info you'd like to add? (Optional)"
@@ -220,5 +222,10 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
     margin-top: -10px;
     color: $BCgovBlue8;
   }
+}
+
+.service-link-mobile {
+  margin-top: 0 !important;
+  margin-bottom: -4px;
 }
 </style>

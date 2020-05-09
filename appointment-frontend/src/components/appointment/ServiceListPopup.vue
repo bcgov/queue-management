@@ -23,7 +23,7 @@
               class="text-left"
               v-model="selectedCategory"
               name="categories-select"
-              :item-text="'service_name'"
+              :item-text="'external_service_name'"
               :item-value="'service_name'"
               hide-details
               dense
@@ -69,7 +69,7 @@
                 </td>
                 <td>
                   <div v-if="item.online_link" class="service-link" @click="goToServiceLink(item.online_link)">
-                    Options Available <v-icon small>mdi-open-in-new</v-icon>
+                    Online Option <v-icon small>mdi-open-in-new</v-icon>
                   </div>
                 </td>
               </tr>

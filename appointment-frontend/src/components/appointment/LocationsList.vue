@@ -1,5 +1,7 @@
 <template>
-  <v-card-text>
+  <v-card-text
+    :class="{'location-list-mobile': $vuetify.breakpoint.xs}"
+  >
     <v-row justify="center">
       <v-col cols="12" sm="6" md="4">
         <geocoder-input v-on:set-location-event='onGeoSelect'></geocoder-input>
@@ -24,7 +26,7 @@
       </v-col>
     </v-row>
     <v-row justify="center">
-      <v-col cols="12">
+      <v-col cols="12" class="location-sorted-msg">
         <p class="text-center mb-0">Locations sorted by nearest to you
           <!-- <br><br>
           Coords: {{ this.currentCoordinates() }} -->
@@ -40,16 +42,16 @@
           :disabled="!location.appointments_enabled_ind"
           :outlined="(currentOffice && currentOffice.office_id === location.office_id)"
           :color="(currentOffice && currentOffice.office_id === location.office_id) ? 'blue-grey lighten-5' : ''"
-          class="mx-auto">
+          class="mx-auto location-card">
           <v-card-text>
             <v-row class="d-flex" justify="space-around">
-              <v-col cols="12" md="6" align-self="stretch" align="center">
+              <v-col cols="12" md="6" align-self="stretch" align="center" class="loc-map">
                 <v-img v-if="location.civic_address" :src='getMapUrl(location)' :alt="location.civic_address || 'No address'" class='static-map'>
                 </v-img>
                 <div class="text-center mt-2 body-2" v-if="location.civic_address">
                   {{location.civic_address}}
                 </div>
-                <div class="text-center mt-2 green--text" v-if='location.latitude && location.longitude && hasCoordinates'>
+                <div class="text-center mt-2 body-2 green--text font-weight-bold" v-if='location.latitude && location.longitude && hasCoordinates'>
                   {{ getDistance(location.latitude, location.longitude) }}
                 </div>
               </v-col>
@@ -71,10 +73,10 @@
                   {{location.office_appointment_message}}
                 </v-alert>
                 <v-alert
-                  type="info"
+                  :type="(!$vuetify.breakpoint.xs) ? 'info' : undefined"
                   text
                   color="blue-grey darken-4"
-                  icon="mdi-clock"
+                  :icon="(!$vuetify.breakpoint.xs) ? 'mdi-clock' : false"
                   class="mb-0"
                 >
                   <v-row no-gutters v-for="(timeslot, index) in location.timeslots" :key="index">
@@ -82,7 +84,7 @@
                     <v-col cols="6" md="7">
                       <span v-if="!(timeslot.start_time_str && timeslot.end_time_str)" class="hours-closed">Closed</span>
                       <span v-else>
-                        {{`${timeslot.start_time_str}` }} -<br class='d-sm-none' />  {{ `${timeslot.end_time_str}`}}
+                        {{`${timeslot.start_time_str}` }} - {{ `${timeslot.end_time_str}`}}
                       </span>
                     </v-col>
                   </v-row>
@@ -90,24 +92,24 @@
               </v-col>
             </v-row>
           </v-card-text>
-          <v-card-actions class='flex-column flex-sm-row'>
+          <v-card-actions>
             <v-btn
               color="primary"
               outlined
-              class='mt-4 mt-sm-0'
+              class='mt-0 mt-md-2'
               large
               @click="showLocationServices(location)"
             >
-              View Location Services
+              View {{(!$vuetify.breakpoint.xs) ? 'Location' : ''}} Services
             </v-btn>
             <v-spacer></v-spacer>
             <v-btn
               color="primary"
-              class="pl-5 mt-4 mt-sm-0"
+              class="pl-5 mt-0 mt-md-2"
               large
               @click="selectLocation(location)"
             >
-              Select Location
+              Select {{(!$vuetify.breakpoint.xs) ? 'Location' : ''}}
               <v-icon right small class="ml-1">mdi-arrow-right</v-icon>
             </v-btn>
           </v-card-actions>
@@ -307,7 +309,30 @@ export default class LocationsList extends Mixins(StepperMixin) {
 .static-map {
   max-width: 100%;
 }
-// .mobile-stack-buttons {
-
-// }
+.location-list-mobile {
+  .location-sorted-msg {
+    padding: 0;
+    font-size: .85rem;
+  }
+  .location-card {
+    .v-card__text {
+      padding-top: 2px;
+      .loc-map {
+        padding: 0;
+        .body-2 {
+          display: inline-block;
+          &:last-child {
+            margin-left: 12px;
+          }
+        }
+      }
+      .location-name {
+        text-align: center;
+      }
+    }
+    .v-card__actions {
+      padding-top: 0px;
+    }
+  }
+}
 </style>

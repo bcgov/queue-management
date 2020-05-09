@@ -2,6 +2,7 @@
   <v-stepper
     v-model="stepCounter"
     alt-labels
+    :class="{'stepper-mobile': $vuetify.breakpoint.xs}"
   >
     <v-stepper-header>
       <template v-for="bookingStep in bookingSteppers">
@@ -31,11 +32,16 @@
       >
         <v-card>
           <v-card-title class='flex-column flex-sm-row'>
-            <div v-if="showBackButton(bookingStep)">
-              <v-btn text large @click="stepBack">
-                <v-icon left class="mr-1">mdi-arrow-left</v-icon> Back
-              </v-btn>
-            </div>
+            <v-btn
+              text
+              large
+              @click="stepBack"
+              v-if="showBackButton(bookingStep)"
+              class="stepper-back-button"
+            >
+              <v-icon left class="mr-1">mdi-arrow-left</v-icon>
+              {{(!$vuetify.breakpoint.xs) ? 'Back' : ''}}
+            </v-btn>
             <v-spacer></v-spacer>
             <h3>{{bookingStep.title}}</h3>
             <v-spacer></v-spacer>
@@ -190,5 +196,30 @@ export default class AppointmentBookingView extends Vue {
   letter-spacing: .009375em!important;
   line-height: 1.75rem;
   color: $gray7;
+}
+.stepper-back-button {
+  position: absolute;
+  left: 0;
+  top: 10px;
+}
+.stepper-mobile {
+  .v-stepper__content {
+    padding: 4px;
+    .step-desc {
+      padding: 0 16px;
+      margin-bottom: 0;
+    }
+  }
+  .v-stepper__step {
+    padding: 12px;
+    .v-stepper__step__step {
+      margin-bottom: 3px;
+    }
+  }
+  .v-stepper__header {
+    .v-divider {
+      margin-top: 23px;
+    }
+  }
 }
 </style>
