@@ -5,10 +5,11 @@
     height="64"
   >
     <v-img
-      class="mx-2"
-      src="@/assets/img/gov3_bc_logo.png"
+      class="mx-2 bc-logo"
+      :src="($vuetify.breakpoint.xs) ? require('@/assets/img/gov3_bc_logo_mobile.png') : require('@/assets/img/gov3_bc_logo.png')"
       max-width="132"
       contain
+      @click="goTo('home')"
     ></v-img>
     <v-toolbar-title>Service BC Appointments</v-toolbar-title>
 
@@ -21,14 +22,14 @@
           outlined
           class="mr-3"
           min-width="90"
-          @click="register"
+          @click="goTo('register')"
           >
           Register
         </v-btn>
         <v-btn
           light
           min-width="90"
-          @click="login"
+          @click="goTo('login')"
           >
           Login
         </v-btn>
@@ -68,6 +69,15 @@ export default class AppHeader extends Vue {
   register () {
     this.$router.push('/login')
   }
+  private goTo (page) {
+    switch (page) {
+      case 'register':
+      case 'login': this.$router.push('/login')
+        break
+      case 'home': this.$router.push('/')
+        break
+    }
+  }
 }
 </script>
 
@@ -81,5 +91,8 @@ export default class AppHeader extends Vue {
 .user-name {
   font-weight: 600 !important;
   text-transform: uppercase !important;
+}
+.bc-logo {
+  cursor: pointer;
 }
 </style>
