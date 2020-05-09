@@ -1,6 +1,6 @@
 <template>
   <v-app id="app">
-    <div class="app-body">
+    <div class="app-body" :class="{'app-mobile': $vuetify.breakpoint.xs}">
       <app-header :key="$store.state.refreshKey"></app-header>
       <main class="main-block container">
         <router-view />
@@ -110,5 +110,11 @@ export default class App extends Vue {
 .main-block {
   margin-top: 64px;
   margin-bottom: 50px;
+}
+.app-mobile {
+  .main-block {
+    padding: 0;
+    padding-top: 4px;
+  }
 }
 </style>

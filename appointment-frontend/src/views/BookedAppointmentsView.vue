@@ -1,11 +1,11 @@
 <template>
-  <div>
+  <v-container :class="{'booked-appointments-mobile': $vuetify.breakpoint.xs}">
     <NoEmailAlert></NoEmailAlert>
-    <v-row>
-      <v-col>
-        <h2>Your Appointments</h2>
+    <v-row class="page-heading">
+      <v-col cols="12" sm="6">
+        <h2>My Appointments</h2>
       </v-col>
-      <v-col class="text-right">
+      <v-col class="book-new-btn" cols="12" sm="6">
         <v-btn
           large
           color="primary"
@@ -116,7 +116,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </div>
+  </v-container>
 </template>
 
 <script lang="ts">
@@ -234,5 +234,24 @@ export default class Home extends Vue {
 .appointment-confirmed {
   font-weight: 600;
   color: $BCgovInputSuccess;
+}
+.book-new-btn {
+  text-align: right;
+}
+.static-map {
+  max-width: 100%;
+}
+.booked-appointments-mobile {
+  .page-heading {
+    margin-top: -1rem;
+    text-align: center !important;
+    .book-new-btn {
+      padding-top: 0;
+      text-align: center;
+    }
+  }
+  .appointment-confirmed {
+    margin-bottom: 0;
+  }
 }
 </style>

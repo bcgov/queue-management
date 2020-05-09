@@ -1,10 +1,10 @@
 <template>
-  <div>
+  <div :class="{'summary-mobile': $vuetify.breakpoint.xs}">
     <v-card>
       <v-divider class="mx-4"></v-divider>
       <v-card-text>
         <v-card flat color="grey lighten-4">
-          <v-row class="pa-8">
+          <v-row class="pa-8 summary-grid">
             <v-col cols="12" sm="6">
               <v-label>Reason for Appointment</v-label>
               <p>{{appointmentDisplayData.serviceForAppointment}}</p>
@@ -34,6 +34,7 @@
                   large
                   @click="confirmAppointment"
                   :disabled="!termsOfServiceConsent"
+                  :loading="isLoading"
                   color="primary"
                 >{{submitBtnText}}</v-btn>
               </div>
@@ -156,6 +157,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   private readonly isAuthenticated!: boolean
   private showTermsOfServiceModal: boolean = false
   private termsOfServiceConsent: boolean = false
+  private isLoading: boolean = false
   private dialogPopup = {
     showDialog: false,
     isSuccess: false,
@@ -203,6 +205,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   }
 
   private async confirmAppointment () {
+    this.isLoading = true
     try {
       const resp = await this.createAppointment()
       if (resp.appointment_id) {
@@ -212,7 +215,9 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
         this.dialogPopup.subTitle = `Please review your booking in the details below.
             If you need to cancel or reschedule your appointment, please contact Service BC`
       }
+      this.isLoading = false
     } catch (error) {
+      this.isLoading = false
       this.dialogPopup.showDialog = true
       this.dialogPopup.isSuccess = false
       this.dialogPopup.title = 'Failed!'
@@ -254,5 +259,12 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   text-decoration: underline;
   color: $BCgovBlue5;
   cursor: pointer;
+}
+.summary-mobile {
+  .summary-grid {
+    p {
+      margin-bottom: 0;
+    }
+  }
 }
 </style>

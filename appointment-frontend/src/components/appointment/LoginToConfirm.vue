@@ -1,5 +1,5 @@
 <template>
-  <v-card-text>
+  <v-card-text :class="{'login-selection-mobile': $vuetify.breakpoint.xs}">
     <v-row justify="center">
       <v-col cols="12" sm="5" class="text-center">
         <v-btn
@@ -26,7 +26,7 @@
           <span>Privacy Statement</span>
         </a>
       </v-col>
-      <v-col cols="12" sm="5" class="text-center" v-if="!hideBCServicesCard">
+      <v-col cols="12" sm="5" class="text-center bcsc-btn" v-if="!hideBCServicesCard">
         <v-btn
           min-width="150"
           large
@@ -95,6 +95,13 @@ export default class LoginToConfirm extends Mixins(StepperMixin) {
   display: block;
   span {
     text-decoration: underline;
+  }
+}
+.login-selection-mobile {
+  .bcsc-btn {
+    padding-top: 24px;
+    border-top: thin solid $gray3;
+    margin-top: 16px;
   }
 }
 </style>

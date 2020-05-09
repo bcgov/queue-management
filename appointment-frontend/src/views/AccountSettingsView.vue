@@ -43,6 +43,7 @@
               ></v-text-field>
 
               <v-switch
+                inset
                 v-model="enableReminder"
                 label="Send me appointment reminders via email"
               ></v-switch>
@@ -156,7 +157,7 @@ export default class AccountSettingsView extends Vue {
       if (response?.user_id) {
         this.showMsg.isShow = true
         this.showMsg.msgText = 'Profile Successfully Updated!'
-        this.showMsg.msgType = 'info'
+        this.showMsg.msgType = 'success'
       }
     } catch (error) {
       this.showMsg.isShow = true
