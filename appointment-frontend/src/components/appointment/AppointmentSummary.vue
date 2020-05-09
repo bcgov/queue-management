@@ -83,6 +83,9 @@
               <div class="body-1 font-weight-bold">{{appointmentDateTime}}</div>
             </v-col>
           </v-row>
+          <v-row>
+            <NoEmailAlert></NoEmailAlert>
+          </v-row>
         </v-card-text>
 
         <v-card-actions>
@@ -110,6 +113,7 @@ import { AuthModule } from '@/store/modules'
 import CommonUtils from '@/utils/common-util'
 import ConfigHelper from '@/utils/config-helper'
 import GeocoderService from '@/services/geocoder.services'
+import { NoEmailAlert } from '@/components/common'
 import { Office } from '@/models/office'
 import { Service } from '@/models/service'
 import StepperMixin from '@/mixins/StepperMixin.vue'
@@ -125,9 +129,6 @@ import { getModule } from 'vuex-module-decorators'
       'currentAppointmentSlot',
       'currentOfficeTimezone'
     ]),
-    ...mapState('auth', [
-      'currentUserProfile'
-    ]),
     ...mapGetters('auth', [
       'isAuthenticated'
     ])
@@ -138,7 +139,10 @@ import { getModule } from 'vuex-module-decorators'
       'clearSelectedValues'
     ])
   },
-  components: { TermsOfServicePopup }
+  components: {
+    TermsOfServicePopup,
+    NoEmailAlert
+  }
 })
 export default class AppointmentSummary extends Mixins(StepperMixin) {
   private authModule = getModule(AuthModule, this.$store)
@@ -147,7 +151,6 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   private readonly currentService!: Service
   private readonly currentAppointmentSlot!: AppointmentSlot
   private readonly currentOfficeTimezone!: string
-  private readonly currentUserProfile!: User
   private readonly createAppointment!: () => Appointment
   private readonly clearSelectedValues!: () => void
   private readonly isAuthenticated!: boolean
