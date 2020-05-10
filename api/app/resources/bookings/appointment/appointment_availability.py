@@ -50,6 +50,8 @@ class OfficeSlots(Resource):
 
             # Dictionary to store the available slots per day
             tz = pytz.timezone(office.timezone.timezone_name)
+            # today's date and time
+            today = datetime.datetime.now().replace(tzinfo=tz)
             # For each of the day calculate the slots based on time slots
             for day_in_month in days:
                 formatted_date = day_in_month.strftime('%m/%d/%Y')
@@ -59,7 +61,6 @@ class OfficeSlots(Resource):
                     # Calculate the slots per day
                     timeslot_end_time = timeslot.end_time.replace(tzinfo=tz)
                     timeslot_start_time = timeslot.start_time.replace(tzinfo=tz)
-
                     if day_in_month.isoweekday() in day_indexes(timeslot.day_of_week):
                         start_time = timeslot_start_time
                         end_time = add_delta_to_time(timeslot_start_time, minutes=appointment_duration, timezone=office.timezone.timezone_name)
@@ -70,8 +71,11 @@ class OfficeSlots(Resource):
                                 'end_time': end_time,
                                 'no_of_slots': timeslot.no_of_slots
                             }
-                            available_slots_per_day[formatted_date].append(slot)
-                            start_time = end_time.replace(tzinfo=pytz.timezone(office.timezone.timezone_name))
+                            # Check if today's time is past appointment slot
+                            if not (today.date() == day_in_month.date() and today.time() > start_time):
+                                available_slots_per_day[formatted_date].append(slot)
+
+                            start_time = end_time.replace(tzinfo=tz)
                             end_time = add_delta_to_time(end_time, minutes=appointment_duration, timezone=office.timezone.timezone_name)
 
                 # Check if the slots are already booked

@@ -67,7 +67,7 @@ class MultipleSelect2Field(Select2Field):
 
 
 class TimeslotConfig(Base):
-    roles_allowed = ['ANALYTICS', 'SUPPORT']
+    roles_allowed = ['SUPPORT', 'GA']
 
     def is_accessible(self):
         return current_user.is_authenticated and current_user.role.role_code in self.roles_allowed

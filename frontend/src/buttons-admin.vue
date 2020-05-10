@@ -61,7 +61,8 @@
           {value: 'csrga', text: 'CSRs'},
           {value: 'invigilator', text: 'Invigilators'},
           {value: 'room', text: 'Rooms'},
-          {value: 'officega', text: 'Offices'}
+          {value: 'officega', text: 'Offices'},
+          {value: 'timeslot', text: 'Time Slots'}
         ]
       }
     },

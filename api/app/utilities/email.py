@@ -14,47 +14,39 @@ limitations under the License.'''
 
 import re
 from datetime import datetime
-from threading import Thread
 
 import pytz
-from flask import copy_current_request_context, current_app
+from flask import current_app
 from flask_mail import Mail
 from flask_mail import Message
 from jinja2 import Environment, FileSystemLoader
 
 from app.models.bookings import Appointment
-from app.models.theq import PublicUser
 
 mail = Mail()  # pylint: disable=invalid-name
 ENV = Environment(loader=FileSystemLoader('.'), autoescape=True)
 
 
-def async_email(subject, appt: Appointment, user: PublicUser, html_body):
+def send_email(subject, email, sender, html_body):
     """Send the email asynchronously, using the given details."""
 
+    if not is_valid_email(email):
+        print(f'Invalid email {email}. Skipping send.')
+        return
+
+    print('subject : ', subject)
+    print('sender : ', sender)
+    print('recipients : ', email)
+
+    msg = Message(subject, sender=sender, recipients=email.split())
+    msg.html = html_body
+    mail.send(msg)
+
+
+def get_cancel_email_contents(appt: Appointment, user, office, timezone):
+    """Send cancellation email"""
     sender = current_app.config.get('MAIL_FROM_ID')
 
-    @copy_current_request_context
-    def run_job():
-        email = user.email if user else appt.contact_information
-        if not is_valid_email(email):
-            print(f'Invalid email {email}. Skipping send.')
-            return
-        print('subject : ', subject)
-        print('sender : ', sender)
-        print('recipients : ', email)
-        # print('html_body : ', html_body)
-
-        msg = Message(subject, sender=sender, recipients=email.split())
-        msg.html = html_body
-        mail.send(msg)
-
-    thread = Thread(target=run_job)
-    thread.start()
-
-
-def send_cancel_email(appt: Appointment, user, office, timezone):
-    """Send cancellation email"""
     template = ENV.get_template('email_templates/delete_email.html')
     date = formatted_date(appt.start_time, timezone)
     subject = f'Cancelled – Your appointment on {date}'
@@ -64,11 +56,13 @@ def send_cancel_email(appt: Appointment, user, office, timezone):
                            duration=get_duration(appt.start_time, appt.end_time),
                            telephone=office.telephone,
                            url=current_app.config.get('EMAIL_APPOINTMENT_APP_URL'))
-    async_email(subject, appt, user, body)
+    return subject, get_email(user, appt), sender, body
 
 
-def send_reminder_email(appt: Appointment, user, office, timezone):
+def get_reminder_email_contents(appt: Appointment, user, office, timezone):
     """Send cancellation email"""
+    sender = current_app.config.get('MAIL_FROM_ID')
+
     template = ENV.get_template('email_templates/reminder_email.html')
     date = formatted_date(appt.start_time, timezone)
     subject = f'Reminder – Your appointment on {date}'
@@ -78,11 +72,13 @@ def send_reminder_email(appt: Appointment, user, office, timezone):
                            duration=get_duration(appt.start_time, appt.end_time),
                            telephone=office.telephone,
                            url=current_app.config.get('EMAIL_APPOINTMENT_APP_URL'))
-    async_email(subject, appt, user, body)
+    return subject, get_email(user, appt), sender, body
 
 
-def send_blackout_email(blackout_appt: Appointment, cancelled_appointment: Appointment, office, timezone, user):
+def get_blackout_email_contents(blackout_appt: Appointment, cancelled_appointment: Appointment, office, timezone, user):
     """Send cancellation email"""
+    sender = current_app.config.get('MAIL_FROM_ID')
+
     template = ENV.get_template('email_templates/blackout_email.html')
     date = formatted_date(cancelled_appointment.start_time, timezone)
     subject = f'Cancelled – Your appointment on {date}'
@@ -93,11 +89,13 @@ def send_blackout_email(blackout_appt: Appointment, cancelled_appointment: Appoi
                            telephone=office.telephone,
                            url=current_app.config.get('EMAIL_APPOINTMENT_APP_URL'),
                            blackout_notes=blackout_appt.comments)
-    async_email(subject, cancelled_appointment, user, body)
+    return subject, get_email(user, cancelled_appointment), sender, body
 
 
-def send_confirmation_email(appointment: Appointment, office, timezone, user):
+def get_confirmation_email_contents(appointment: Appointment, office, timezone, user):
     """Send confirmation email"""
+    sender = current_app.config.get('MAIL_FROM_ID')
+
     template = ENV.get_template('email_templates/confirmation_email.html')
     date = formatted_date(appointment.start_time, timezone)
     subject = f'Confirmation – Your appointment on {date}'
@@ -107,7 +105,7 @@ def send_confirmation_email(appointment: Appointment, office, timezone, user):
                            duration=get_duration(appointment.start_time, appointment.end_time),
                            telephone=office.telephone,
                            url=current_app.config.get('EMAIL_APPOINTMENT_APP_URL'))
-    async_email(subject, appointment, user, body)
+    return subject, get_email(user, appointment), sender, body
 
 
 def is_valid_email(email: str):
@@ -122,3 +120,7 @@ def formatted_date(dt: datetime, timezone):
 
 def get_duration(start_time: datetime, end_time: datetime):
     return int((end_time - start_time).total_seconds() / 60)
+
+
+def get_email(user, appointment):
+    return user.email if user else appointment.contact_information
