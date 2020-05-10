@@ -35,6 +35,7 @@ class AppointmentPut(Resource):
     def put(self, id):
         json_data = request.get_json()
         csr = None
+        user = None
 
         if not json_data:
             return {"message": "No input data received for updating an appointment"}
@@ -71,6 +72,13 @@ class AppointmentPut(Resource):
 
         appointment, warning = self.appointment_schema.load(json_data, instance=appointment, partial=True)
 
+        if warning:
+            logging.warning("WARNING: %s", warning)
+            return {"message": warning}, 422
+
+        db.session.add(appointment)
+        db.session.commit()
+
         # Send confirmation email
         @copy_current_request_context
         def async_email(subject, email, sender, body):
@@ -78,13 +86,6 @@ class AppointmentPut(Resource):
 
         thread = Thread(target=async_email, args=get_confirmation_email_contents(appointment, office, office.timezone, user))
         thread.start()
-
-        if warning:
-            logging.warning("WARNING: %s", warning)
-            return {"message": warning}, 422
-
-        db.session.add(appointment)
-        db.session.commit()
 
         #   Make Snowplow call.
         schema = 'appointment_update'
