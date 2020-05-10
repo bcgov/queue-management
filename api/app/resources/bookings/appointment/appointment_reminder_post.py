@@ -12,12 +12,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask import abort, g
+from threading import Thread
+
+from flask import copy_current_request_context, current_app
 from flask_restx import Resource
 
 from app.models.bookings import Appointment
 from app.utilities.auth_util import Role, has_any_role
-from app.utilities.email import send_reminder_email
+from app.utilities.email import get_reminder_email_contents, send_email
 from qsystem import api, api_call_with_retry, oidc
 
 
@@ -29,12 +31,14 @@ class AppointmentRemindersPost(Resource):
     @has_any_role(roles=[Role.reminder_job.value])
     def post(self):
         """Create appointment reminders."""
-        # if not is_job():
-        #     abort(403)
-
         appointments = Appointment.find_next_day_appointments()
         print('sending {} reminders'.format(len(appointments)))
 
         if appointments:
             for (appointment, office, timezone, user) in appointments:
-                send_reminder_email(appointment, user, office, timezone)
+                @copy_current_request_context
+                def async_email(subject, email, sender, body):
+                    send_email(subject, email, sender, body)
+
+                thread = Thread(target=async_email, args=get_reminder_email_contents(appointment, user, office, timezone))
+                thread.start()

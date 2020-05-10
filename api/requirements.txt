@@ -28,6 +28,7 @@ marshmallow-sqlalchemy==0.22.3
 psycopg2-binary
 pysnow
 pytest
+pytz
 python-dotenv
 python-jose
 SQLAlchemy-Utc

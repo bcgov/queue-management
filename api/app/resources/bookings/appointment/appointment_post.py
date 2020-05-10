@@ -13,18 +13,22 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import logging
+from datetime import datetime
+from threading import Thread
+
+from flask import copy_current_request_context
+from flask import request, g, current_app
 from flask_restx import Resource
-from flask import request, g
+
+from app.models.bookings import Appointment
+from app.models.theq import CSR, CitizenState, PublicUser, Office
 from app.schemas.bookings import AppointmentSchema
 from app.schemas.theq import CitizenSchema
-from app.models.theq import CSR, CitizenState, PublicUser, Citizen, Office
-from app.models.bookings import Appointment
-from qsystem import api, api_call_with_retry, db, oidc
-from app.utilities.snowplow import SnowPlow
-from datetime import datetime
-from app.utilities.email import send_blackout_email, send_confirmation_email
-from app.utilities.auth_util import is_public_user
 from app.utilities.auth_util import Role, has_any_role
+from app.utilities.auth_util import is_public_user
+from app.utilities.email import get_confirmation_email_contents, send_email, get_blackout_email_contents
+from app.utilities.snowplow import SnowPlow
+from qsystem import api, api_call_with_retry, db, oidc
 
 
 @api.route("/appointments/", methods=["POST"])
@@ -108,16 +112,28 @@ class AppointmentPost(Resource):
                                                                                  json_data.get('end_time'))
                 for (cancelled_appointment, office, timezone, user) in appointments_for_the_day:
                     if cancelled_appointment.appointment_id != appointment.appointment_id and not cancelled_appointment.checked_in_time:
-                        send_blackout_email(appointment, cancelled_appointment, office, timezone, user)
                         appointment_ids_to_delete.append(cancelled_appointment.appointment_id)
+
+                        # Send blackout email
+                        @copy_current_request_context
+                        def async_email(subject, email, sender, body):
+                            send_email(subject, email, sender, body)
+
+                        thread = Thread(target=async_email, args=get_blackout_email_contents(appointment, cancelled_appointment, office, timezone, user))
+                        thread.start()
+
                 # Delete appointments
                 if appointment_ids_to_delete:
                     Appointment.delete_appointments(appointment_ids_to_delete)
 
             else:
                 # Send confirmation email
-                #TODO send_confirmation_email(appointment, office, office.timezone, user)
-                pass
+                @copy_current_request_context
+                def async_email(subject, email, sender, body):
+                    send_email(subject, email, sender, body)
+
+                thread = Thread(target=async_email, args=get_confirmation_email_contents(appointment, office, office.timezone, user))
+                thread.start()
 
             SnowPlow.snowplow_appointment(citizen, csr, appointment, 'appointment_create')
 
