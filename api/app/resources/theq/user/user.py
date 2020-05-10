@@ -31,14 +31,16 @@ class PublicUsers(Resource):
     def post(self):
         try:
             user_info = g.oidc_token_info
-            print('user_info', user_info)
             user: PublicUserModel = PublicUserModel.find_by_username(user_info.get('username'))
             if not user:
                 user = PublicUserModel()
                 user.username = user_info.get('username')
+                user.email = user_info.get('email')
+            else:  # update email only if the email is None for existing user
+                if not user.email:
+                    user.email = user_info.get('email')
             user.display_name = user_info.get('display_name')
             user.last_name = user_info.get('last_name')
-            user.email = user_info.get('email')
             db.session.add(user)
             db.session.commit()
 

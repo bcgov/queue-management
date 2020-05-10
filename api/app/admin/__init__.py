@@ -29,4 +29,3 @@ from .room import RoomModelView
 from .counter import CounterModelView
 from .examtype import ExamTypeModelView
 from .timeslot import TimeslotModelView
-

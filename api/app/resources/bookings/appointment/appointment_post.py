@@ -57,7 +57,8 @@ class AppointmentPost(Resource):
             user = PublicUser.find_by_username(g.oidc_token_info['username'])
             # Add values for contact info and notes
             json_data['contact_information'] = user.email
-            json_data['comments'] = json_data.get('comments', '') + f'\nPhone: {user.telephone}' if user.telephone else ''
+            telephone = user.telephone if user.telephone else ''
+            json_data['comments'] = json_data.get('comments', '') + f'\nPhone: {telephone}'
 
             citizen.user_id = user.user_id
             citizen.citizen_name = user.display_name

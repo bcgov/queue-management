@@ -201,7 +201,17 @@ class OfficeConfigGA(OfficeConfig):
     form_edit_rules = (
         'office_name',
         'quick_list',
-        'back_office_list'
+        'back_office_list',
+        'latitude',
+        'longitude',
+        'office_appointment_message',
+        'appointments_days_limit',
+        'appointment_duration',
+        'max_person_appointment_per_day',
+        'civic_address',
+        'telephone',
+        'disable_online_appointment',
+        'timeslots'
     )
 
     form_excluded_columns = (
@@ -217,17 +227,7 @@ class OfficeConfigGA(OfficeConfig):
         'exams_enabled_ind',
         'appointments_enabled_ind',
         'counters',
-        'timezone',
-        'latitude',
-        'longitude',
-        'office_appointment_message',
-        'appointments_days_limit',
-        'appointment_duration',
-        'max_person_appointment_per_day',
-        'civic_address',
-        'telephone',
-        'disable_online_appointment',
-        'timeslots'
+        'timezone'
     )
 
     form_widget_args = {
