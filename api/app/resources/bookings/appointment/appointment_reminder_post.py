@@ -36,9 +36,10 @@ class AppointmentRemindersPost(Resource):
 
         if appointments:
             for (appointment, office, timezone, user) in appointments:
-                @copy_current_request_context
-                def async_email(subject, email, sender, body):
-                    send_email(subject, email, sender, body)
+                if user.send_reminders:
+                    @copy_current_request_context
+                    def async_email(subject, email, sender, body):
+                        send_email(subject, email, sender, body)
 
-                thread = Thread(target=async_email, args=get_reminder_email_contents(appointment, user, office, timezone))
-                thread.start()
+                    thread = Thread(target=async_email, args=get_reminder_email_contents(appointment, user, office, timezone))
+                    thread.start()
