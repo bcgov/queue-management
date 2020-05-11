@@ -148,7 +148,17 @@ export default {
         })
       })
     },
-
+    postBeginService({rootState}, payload) {
+      let state = rootState
+      return new Promise((resolve, reject) => {
+        let url = `/citizens/${payload}/begin_service/`
+        Axios({state}).post(url,{}).then(resp=>{
+          resolve(resp)
+        }, error => {
+          reject(error)
+        })
+      })
+    },
     postAppointment({rootState}, payload) {
       let state = rootState
       payload.office_id = rootState.user.office_id
@@ -171,8 +181,15 @@ export default {
       payload.snowplow_addcitizen = true
       return new Promise((resolve, reject) => {
         Axios({state}).put(`/appointments/${payload.appointment_id}/`, data).then( () => {
-          dispatch('sendToQueue', payload)
-          setTimeout(()=>{ commit('toggleCheckInClicked', false) }, 2000);
+          if (state.officeType != "nocallonsmartboard") {
+            dispatch('sendToQueue', payload)
+            setTimeout(()=>{ commit('toggleCheckInClicked', false) }, 2000);
+            resolve()
+          } else {
+              dispatch('sendToService', payload)
+              setTimeout(()=>{ commit('toggleCheckInClicked', false) }, 2000);
+              resolve()
+            }
         })
       })
     },
@@ -257,6 +274,19 @@ export default {
       dispatch('putCitizen', {citizen_id, payload}).then( () => {
         dispatch('postServiceReq', {citizen_id, payload}).then( () => {
           dispatch('postAddToQueue', citizen_id).then( () => {
+            dispatch('getAppointments').then( () => {
+              commit('toggleCheckInModal', false)
+            })
+          })
+        })
+      })
+    },
+    sendToService({dispatch, commit, rootState}, payload) {
+      let citizen_id = payload.citizen_id
+      commit('setAppointmentsStateInfo', payload, { root: true })
+      dispatch('putCitizen', {citizen_id, payload}).then( () => {
+        dispatch('postServiceReq', {citizen_id, payload}).then( () => {
+          dispatch('postBeginService', citizen_id).then( () => {
             dispatch('getAppointments').then( () => {
               commit('toggleCheckInModal', false)
             })

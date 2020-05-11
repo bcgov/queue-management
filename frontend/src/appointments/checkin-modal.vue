@@ -56,7 +56,6 @@
 </template>
 
 <script>
-  import moment from 'moment'
   import { createNamespacedHelpers } from 'vuex'
   const { mapActions, mapGetters, mapMutations, mapState } = createNamespacedHelpers('appointmentsModule')
 
@@ -103,13 +102,21 @@
         'toggleCheckInClicked'
       ]),
       checkIn() {
-        if (!this.checkInClicked) {
-          this.toggleCheckInClicked(true)
-          this.$store.commit('toggleServeCitizenSpinner', true)
-          this.postCheckIn(this.clickedAppt).then(() => {
-            this.hide()
-            this.$store.commit('toggleServeCitizenSpinner', false)
-          })
+        if (this.$store.state.serviceModalForm.citizen_id) {
+          this.hide()
+          this.$store.commit('setMainAlert', 'Already have appointment in progress.  Please close ticket then check-in citizen')
+        } else {
+          if (!this.checkInClicked) {
+            this.toggleCheckInClicked(true)
+            this.$store.commit('toggleServeCitizenSpinner', true)
+            this.postCheckIn(this.clickedAppt).then(response => {
+              this.hide()
+              if (this.$store.state.officeType == "nocallonsmartboard") {
+                this.$router.push('/queue')
+              }
+              this.$store.commit('toggleServeCitizenSpinner', false)
+            })
+          }
         }
       },
       clearTime() {
