@@ -72,8 +72,8 @@ class OfficeSlots(Resource):
                                 'no_of_slots': timeslot.no_of_slots
                             }
                             # Check if today's time is past appointment slot
-                            print('today.time()---->', today.time(), '\nstart_time---->',start_time)
-                            if not (today.date() == day_in_month.replace(tzinfo=tz).date() and today.time() > start_time):
+                            # print('today.time()---->', today.time(), '\nstart_time---->',start_time)
+                            if not (today.date() == day_in_month.date() and today.astimezone(pytz.timezone(office.timezone.timezone_name)).time() > start_time):
                                 available_slots_per_day[formatted_date].append(slot)
 
                             start_time = end_time.replace(tzinfo=tz)
