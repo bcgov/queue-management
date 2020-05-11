@@ -102,22 +102,21 @@
         'toggleCheckInClicked'
       ]),
       checkIn() {
-        if (!this.checkInClicked) {
-          this.toggleCheckInClicked(true)
-          this.$store.commit('toggleServeCitizenSpinner', true)
-          this.postCheckIn(this.clickedAppt).then(response => {
-            this.hide()
-            if (this.$store.state.officeType == "nocallonsmartboard") {
-               if (this.$store.state.serviceModalForm.citizen_id) {
-                  this.$store.commit('setMainAlert', 'Citizen placed on Hold Queue.  Citizen Waiting...')
-               } else {
-                  this.$store.commit('toggleBegunStatus', true)
-                  this.$store.commit('toggleInvitedStatus', false)
-                  this.$store.commit('toggleServiceModal', true)
-               }
-            }
-            this.$store.commit('toggleServeCitizenSpinner', false)
-          })
+        if (this.$store.state.serviceModalForm.citizen_id) {
+          this.hide()
+          this.$store.commit('setMainAlert', 'Already have appointment in progress.  Please close ticket then check-in citizen')
+        } else {
+          if (!this.checkInClicked) {
+            this.toggleCheckInClicked(true)
+            this.$store.commit('toggleServeCitizenSpinner', true)
+            this.postCheckIn(this.clickedAppt).then(response => {
+              this.hide()
+              if (this.$store.state.officeType == "nocallonsmartboard") {
+                this.$router.push('/queue')
+              }
+              this.$store.commit('toggleServeCitizenSpinner', false)
+            })
+          }
         }
       },
       clearTime() {
