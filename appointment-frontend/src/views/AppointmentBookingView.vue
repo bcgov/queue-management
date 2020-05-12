@@ -217,6 +217,7 @@ export default class AppointmentBookingView extends Vue {
     }
   }
   .v-stepper__header {
+    flex-wrap: nowrap; // For super small mobile <340px;
     .v-divider {
       margin-top: 23px;
     }
