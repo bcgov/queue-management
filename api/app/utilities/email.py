@@ -30,7 +30,7 @@ ENV = Environment(loader=FileSystemLoader('.'), autoescape=True)
 def send_email(subject, email, sender, html_body):
     """Send the email asynchronously, using the given details."""
 
-    if not is_valid_email(email):
+    if not email or not is_valid_email(email):
         print(f'Invalid email {email}. Skipping send.')
         return
 
