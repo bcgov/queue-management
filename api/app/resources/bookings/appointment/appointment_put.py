@@ -85,6 +85,7 @@ class AppointmentPut(Resource):
             send_email(subject, email, sender, body)
 
         thread = Thread(target=async_email, args=get_confirmation_email_contents(appointment, office, office.timezone, user))
+        thread.daemon = True
         thread.start()
 
         #   Make Snowplow call.
