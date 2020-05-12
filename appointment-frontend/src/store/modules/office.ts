@@ -105,12 +105,10 @@ export default class OfficeModule extends VuexModule {
       })
       // Sort alphabetically on displayed external_service_name
       services = services.sort((a, b) => {
-        if (a.external_service_name === null) {
-          return 1
-        } else if (b.external_service_name === null) {
-          return 0
-        }
-        return a.external_service_name.localeCompare(b.external_service_name)
+        // If external_service_name is null, sort it to last of list.
+        let aName = a.external_service_name || 'zzz'
+        let bName = b.external_service_name || 'zzz'
+        return aName.localeCompare(bName)
       })
     }
     return services
