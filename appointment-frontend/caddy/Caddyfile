@@ -24,4 +24,8 @@ header / {
 	# Turn off all caddy caching
 	Cache-Control no-cache,no-store,must-revalidate
 	Pragma no-cache
+
+	# Content Security Policy
+	Content-Security-Policy "default-src 'none';frame-src 'self' *.gov.bc.ca; script-src 'self' 'unsafe-inline' *.gov.bc.ca; style-src 'self' 'unsafe-inline'; font-src 'self' *.gov.bc.ca; img-src 'self' *.gov.bc.ca; connect-src 'self' *.gov.bc.ca";
+
 }
