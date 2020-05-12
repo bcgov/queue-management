@@ -23,6 +23,8 @@ module.exports = {
         changeOrigin: true,
         logLevel: 'debug'
       }
-    }
+    },
+    // Allow using the local proxy across other devices on LAN
+    headers: { 'Access-Control-Allow-Origin': '*' }
   }
 }
