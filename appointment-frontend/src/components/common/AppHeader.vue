@@ -11,7 +11,7 @@
       contain
       @click="goTo('home')"
     ></v-img>
-    <v-toolbar-title>Service BC Appointments</v-toolbar-title>
+    <v-toolbar-title>Service BC Appointments <v-chip pill color='success'>Alpha</v-chip></v-toolbar-title>
 
     <v-spacer></v-spacer>
 
