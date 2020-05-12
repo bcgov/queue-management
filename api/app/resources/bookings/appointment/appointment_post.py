@@ -117,13 +117,14 @@ class AppointmentPost(Resource):
                         # Send blackout email
                         @copy_current_request_context
                         def async_email(subject, email, sender, body):
-                            send_email(subject, email, sender, body)
+                            return send_email(subject, email, sender, body)
 
                         thread = Thread(target=async_email, args=get_blackout_email_contents(appointment, cancelled_appointment, office, timezone, user))
+                        thread.daemon = True
                         thread.start()
 
                 # Delete appointments
-                if appointment_ids_to_delete:
+                if len(appointment_ids_to_delete) > 0:
                     Appointment.delete_appointments(appointment_ids_to_delete)
 
             else:
