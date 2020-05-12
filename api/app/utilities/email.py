@@ -38,7 +38,7 @@ def send_email(subject, email, sender, html_body):
     print('sender : ', sender)
     print('recipients : ', email)
 
-    msg = Message(subject.encode('utf-8'), sender=sender, recipients=email.split())
+    msg = Message(subject.replace('\n', ''), sender=sender, recipients=email.split())
     msg.html = html_body
     mail.send(msg)
 
