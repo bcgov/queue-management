@@ -63,6 +63,7 @@ class AppointmentDelete(Resource):
                 send_email(subject, email, sender, body)
 
             thread = Thread(target=async_email, args=get_cancel_email_contents(appointment, user, office, office.timezone))
+            thread.daemon = True
             thread.start()
 
         return {}, 204

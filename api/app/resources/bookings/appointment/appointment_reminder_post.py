@@ -42,4 +42,5 @@ class AppointmentRemindersPost(Resource):
                         send_email(subject, email, sender, body)
 
                     thread = Thread(target=async_email, args=get_reminder_email_contents(appointment, user, office, timezone))
+                    thread.daemon = True
                     thread.start()
