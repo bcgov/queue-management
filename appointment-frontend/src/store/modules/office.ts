@@ -103,6 +103,15 @@ export default class OfficeModule extends VuexModule {
           service.display_dashboard_ind &&
           service.online_availability !== ServiceAvailability.HIDE)
       })
+      // Sort alphabetically on displayed external_service_name
+      services = services.sort((a, b) => {
+        if (a.external_service_name === null) {
+          return 1
+        } else if (b.external_service_name === null) {
+          return 0
+        }
+        return a.external_service_name.localeCompare(b.external_service_name)
+      })
     }
     return services
   }
