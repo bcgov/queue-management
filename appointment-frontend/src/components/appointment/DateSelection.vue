@@ -37,7 +37,8 @@
           </div>
           <v-row>
             <v-col
-              cols="6"
+              cols="12"
+              sm="6"
               v-for="(timeslot, index) in selectedDateTimeSlots"
               :key="index"
             >
