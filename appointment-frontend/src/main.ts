@@ -11,6 +11,8 @@ import router from './router'
 import { store } from './store'
 import vuetify from './plugins/vuetify'
 
+require('date-time-format-timezone') // IE 11 polyfill to work with timezones
+
 Vue.config.productionTip = false
 Vue.prototype.$tokenService = new TokenService()
 

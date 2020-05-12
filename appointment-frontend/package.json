@@ -15,6 +15,7 @@
     "css-loader": "^0.28.11",
     "date-fns": "^2.12.0",
     "date-fns-tz": "^1.0.10",
+    "date-time-format-timezone": "^1.0.22",
     "keycloak-js": "^6.0.0",
     "regenerator-runtime": "^0.13.3",
     "sbc-common-components": "2.0.29",
