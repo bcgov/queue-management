@@ -51,7 +51,7 @@ class OfficeSlots(Resource):
             # Dictionary to store the available slots per day
             tz = pytz.timezone(office.timezone.timezone_name)
             # today's date and time
-            today = datetime.datetime.now().replace(tzinfo=tz)
+            today = datetime.datetime.now().astimezone(pytz.timezone(office.timezone.timezone_name))
             # For each of the day calculate the slots based on time slots
             for day_in_month in days:
                 formatted_date = day_in_month.strftime('%m/%d/%Y')
@@ -73,7 +73,7 @@ class OfficeSlots(Resource):
                             }
                             # Check if today's time is past appointment slot
                             print('today.time()---->', today.astimezone(pytz.timezone(office.timezone.timezone_name)).time(), '\nstart_time---->',start_time)
-                            if not (today.date() == day_in_month.date() and today.astimezone(pytz.timezone(office.timezone.timezone_name)).time() > start_time):
+                            if not (today.date() == day_in_month.date() and today.time() > start_time):
                                 available_slots_per_day[formatted_date].append(slot)
 
                             start_time = end_time.replace(tzinfo=tz)
