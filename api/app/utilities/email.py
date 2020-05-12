@@ -38,7 +38,7 @@ def send_email(subject, email, sender, html_body):
     print('sender : ', sender)
     print('recipients : ', email)
 
-    msg = Message(subject.replace('\n', ''), sender=sender, recipients=email.split())
+    msg = Message(subject, sender=sender, recipients=email.split())
     msg.html = html_body
     mail.send(msg)
 
@@ -49,7 +49,7 @@ def get_cancel_email_contents(appt: Appointment, user, office, timezone):
 
     template = ENV.get_template('email_templates/delete_email.html')
     date = formatted_date(appt.start_time, timezone)
-    subject = f'Cancelled – Your appointment on {date}'
+    subject = f'Cancelled – Appointment on {date}'
     body = template.render(display_name=appt.citizen_name,
                            location=office.office_name,
                            formatted_date=date,
@@ -65,7 +65,7 @@ def get_reminder_email_contents(appt: Appointment, user, office, timezone):
 
     template = ENV.get_template('email_templates/reminder_email.html')
     date = formatted_date(appt.start_time, timezone)
-    subject = f'Reminder – Your appointment on {date}'
+    subject = f'Reminder – Appointment on {date}'
     body = template.render(display_name=appt.citizen_name,
                            location=office.office_name,
                            formatted_date=date,
@@ -81,7 +81,7 @@ def get_blackout_email_contents(blackout_appt: Appointment, cancelled_appointmen
 
     template = ENV.get_template('email_templates/blackout_email.html')
     date = formatted_date(cancelled_appointment.start_time, timezone)
-    subject = f'Cancelled – Your appointment on {date}'
+    subject = f'Cancelled – Appointment on {date}'
     body = template.render(display_name=cancelled_appointment.citizen_name,
                            location=office.office_name,
                            formatted_date=date,
@@ -98,7 +98,7 @@ def get_confirmation_email_contents(appointment: Appointment, office, timezone, 
 
     template = ENV.get_template('email_templates/confirmation_email.html')
     date = formatted_date(appointment.start_time, timezone)
-    subject = f'Confirmation – Your appointment on {date}'
+    subject = f'Confirmation – Appointment on {date}'
     body = template.render(display_name=appointment.citizen_name,
                            location=office.office_name,
                            formatted_date=date,
@@ -115,7 +115,7 @@ def is_valid_email(email: str):
 
 def formatted_date(dt: datetime, timezone):
     dt_local = dt.astimezone(pytz.timezone(timezone.timezone_name))
-    return dt_local.strftime('%B %d, %Y-%I:%M%p')
+    return dt_local.strftime('%B %d, %Y at %I:%M %p')
 
 
 def get_duration(start_time: datetime, end_time: datetime):
