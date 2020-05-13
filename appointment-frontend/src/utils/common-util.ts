@@ -1,7 +1,7 @@
 /**
  * Place to put all the custom utility methods
  */
-import { format } from 'date-fns'
+import { format, parseISO } from 'date-fns'
 import { utcToZonedTime } from 'date-fns-tz'
 
 export enum Days {
@@ -75,6 +75,10 @@ export default class CommonUtils {
 
   static getTzDate (date, timezone = 'America/Vancouver') {
     return utcToZonedTime(date || new Date(), timezone)
+  }
+
+  static getFormattedDate (date, dateFormat = 'yyyy-MM-dd') {
+    return format(parseISO(date || new Date().toISOString()), dateFormat)
   }
 }
 

@@ -103,13 +103,13 @@ export default class DateSelection extends Mixins(StepperMixin) {
   private availableDates = []
 
   private get selectedDateFormatted () {
-    return CommonUtils.getTzFormattedDate(this.selectedDate, this.currentOfficeTimezone, 'MMM dd, yyyy')
+    return CommonUtils.getFormattedDate(this.selectedDate, 'MMM dd, yyyy')
   }
 
   private get selectedTimeSlot () {
     return (this.currentAppointmentSlot?.start_time && this.currentAppointmentSlot?.end_time)
-      ? `${CommonUtils.getTzFormattedDate(this.currentAppointmentSlot?.start_time, this.currentOfficeTimezone, 'hh:mm aaa')} -
-        ${CommonUtils.getTzFormattedDate(this.currentAppointmentSlot?.end_time, this.currentOfficeTimezone, 'hh:mm aaa')}`
+      ? `${CommonUtils.getFormattedDate(this.currentAppointmentSlot?.start_time, 'hh:mm aaa')} -
+        ${CommonUtils.getFormattedDate(this.currentAppointmentSlot?.end_time, 'hh:mm aaa')}`
       : ''
   }
 
@@ -149,8 +149,8 @@ export default class DateSelection extends Mixins(StepperMixin) {
     // Chrome/FF pass with "2020-05-08 09:00" but Safari fails.
     // Safari needs format from spec, "2020-05-08T09:00"
     const selectedSlot: AppointmentSlot = {
-      start_time: CommonUtils.getTzDate(new Date(`${this.selectedDate}T${slot.start_time}`), this.currentOfficeTimezone).toISOString(),
-      end_time: CommonUtils.getTzDate(new Date(`${this.selectedDate}T${slot.end_time}`), this.currentOfficeTimezone).toISOString()
+      start_time: new Date(`${this.selectedDate}T${slot.start_time}`).toISOString(),
+      end_time: new Date(`${this.selectedDate}T${slot.end_time}`).toISOString()
     }
     this.setCurrentAppointmentSlot(selectedSlot)
     this.stepNext()
