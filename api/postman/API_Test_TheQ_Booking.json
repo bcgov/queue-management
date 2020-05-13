@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "de97748a-b409-4d3d-93ed-a0444d5c767c",
+		"_postman_id": "1c30decd-7b40-4a76-aa2b-e092dc3eb9dc",
 		"name": "API_Test_TheQ_Booking",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -466,8 +466,7 @@
 					"response": []
 				}
 			],
-			"description": "This folder performs basic authentication features.",
-			"protocolProfileBehavior": {}
+			"description": "This folder performs basic authentication features."
 		},
 		{
 			"name": "Check app health",
@@ -534,6 +533,10 @@
 								"value": "Bearer {{token}}"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}healthz/",
 							"host": [
@@ -620,6 +623,10 @@
 								"value": "Bearer {{token}}"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}healthz/",
 							"host": [
@@ -678,6 +685,10 @@
 								"value": "Bearer {{token}}"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}readyz/",
 							"host": [
@@ -691,8 +702,7 @@
 					"response": []
 				}
 			],
-			"description": "Checks the application health by calling the healthz and readyz endpoints",
-			"protocolProfileBehavior": {}
+			"description": "Checks the application health by calling the healthz and readyz endpoints"
 		},
 		{
 			"name": "Check user login",
@@ -830,6 +840,10 @@
 								"value": "application/json"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}csrs/me/",
 							"host": [
@@ -843,8 +857,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Check channels",
@@ -932,6 +945,10 @@
 								"value": "Bearer {{token}}"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}channels/",
 							"host": [
@@ -945,8 +962,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Check counters",
@@ -1131,6 +1147,10 @@
 								"value": "application/json"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}csrs/me/",
 							"host": [
@@ -1144,8 +1164,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Check categories",
@@ -1246,6 +1265,10 @@
 								"value": "Bearer {{token}}"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}categories/",
 							"host": [
@@ -1259,8 +1282,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Check services",
@@ -1396,6 +1418,10 @@
 								"value": "Bearer {{token}}"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}services/",
 							"host": [
@@ -1409,8 +1435,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Clear queue for tests",
@@ -1495,6 +1520,10 @@
 								"value": "application/json"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -1837,6 +1866,10 @@
 								"value": "Bearer {{token}}"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}healthz/",
 							"host": [
@@ -1849,8 +1882,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Check citizen through queue (QT1)",
@@ -1920,6 +1952,10 @@
 								"value": "application/json"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -2272,6 +2308,10 @@
 								"value": "application/json"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}citizens/{{current_client}}/",
 							"host": [
@@ -2799,8 +2839,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Check citizen begin-hold-finish (QT2)",
@@ -2869,6 +2908,10 @@
 								"value": "application/json"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -3238,6 +3281,10 @@
 								"value": "application/json"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}citizens/{{current_client}}/",
 							"host": [
@@ -3613,6 +3660,10 @@
 								"value": "application/json"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}citizens/{{current_client}}/service_requests/",
 							"host": [
@@ -3884,8 +3935,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Check citizen leave after create (QT3)",
@@ -3954,6 +4004,10 @@
 								"value": "application/json"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -4173,8 +4227,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Check citizen leave after waiting (QT4)",
@@ -4243,6 +4296,10 @@
 								"value": "application/json"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -4607,6 +4664,10 @@
 								"value": "application/json"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}citizens/{{current_client}}/",
 							"host": [
@@ -4938,6 +4999,10 @@
 								"value": "application/json"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -4951,8 +5016,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Check update service information (QT5)",
@@ -5021,6 +5085,10 @@
 								"value": "application/json"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -5389,6 +5457,10 @@
 								"value": "application/json"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}citizens/{{current_client}}/",
 							"host": [
@@ -5806,8 +5878,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Check pick qtxn customer (QT6)",
@@ -5874,6 +5945,10 @@
 								"value": "application/json"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -6232,6 +6307,10 @@
 								"value": "application/json"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}citizens/{{first_client}}/",
 							"host": [
@@ -6728,6 +6807,10 @@
 								"value": "application/json"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}citizens/{{second_client}}/",
 							"host": [
@@ -6934,6 +7017,10 @@
 								"value": "application/json"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -7711,8 +7798,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Check pick non-qtxn customer (QT7)",
@@ -7779,6 +7865,10 @@
 								"value": "application/json"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -8133,6 +8223,10 @@
 								"value": "application/json"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}citizens/{{first_client}}/",
 							"host": [
@@ -8618,6 +8712,10 @@
 								"value": "application/json"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}citizens/{{second_client}}/",
 							"host": [
@@ -8824,6 +8922,10 @@
 								"value": "application/json"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -9601,8 +9703,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Setup Booking",
@@ -10311,6 +10412,10 @@
 								"value": "application/json"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}csrs/me/",
 							"host": [
@@ -10430,6 +10535,10 @@
 						},
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}rooms/",
 							"host": [
@@ -10577,6 +10686,10 @@
 								"value": "Bearer {{token}}"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}services/",
 							"host": [
@@ -10590,8 +10703,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Check app health",
@@ -10655,6 +10767,10 @@
 								"value": "Bearer {{token}}"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}healthz/",
 							"host": [
@@ -10740,6 +10856,10 @@
 								"value": "Bearer {{token}}"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}healthz/",
 							"host": [
@@ -10797,6 +10917,10 @@
 								"value": "Bearer {{token}}"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}readyz/",
 							"host": [
@@ -10810,8 +10934,7 @@
 					"response": []
 				}
 			],
-			"description": "Checks the application health by calling the healthz and readyz endpoints",
-			"protocolProfileBehavior": {}
+			"description": "Checks the application health by calling the healthz and readyz endpoints"
 		},
 		{
 			"name": "Get Exam Types",
@@ -10886,6 +11009,10 @@
 						},
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}exam_types/",
 							"host": [
@@ -10898,8 +11025,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Exams",
@@ -11065,6 +11191,10 @@
 						},
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}exams/{{current_exam_id}}/",
 							"host": [
@@ -11113,6 +11243,10 @@
 						},
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}exams/",
 							"host": [
@@ -11245,6 +11379,10 @@
 						},
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}exams/{{current_exam_id}}/",
 							"host": [
@@ -11313,8 +11451,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Exams Export",
@@ -11383,6 +11520,10 @@
 						},
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}exams/export/?start_date={{start_date}}&end_date={{end_date}}",
 							"host": [
@@ -11406,8 +11547,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Bookings",
@@ -11548,6 +11688,10 @@
 						},
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}bookings/{{booking_id}}/",
 							"host": [
@@ -11596,6 +11740,10 @@
 						},
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}bookings/",
 							"host": [
@@ -11740,6 +11888,10 @@
 						},
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}bookings/{{booking_id}}/",
 							"host": [
@@ -11807,8 +11959,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Invigilators",
@@ -11888,6 +12039,10 @@
 						},
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}invigilators/",
 							"host": [
@@ -11900,8 +12055,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Rooms",
@@ -11975,6 +12129,10 @@
 						},
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}rooms/",
 							"host": [
@@ -11987,8 +12145,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "CSRS",
@@ -12172,6 +12329,10 @@
 						},
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}csrs/me/",
 							"host": [
@@ -12185,8 +12346,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Offices",
@@ -12253,6 +12413,10 @@
 						},
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}offices/",
 							"host": [
@@ -12265,8 +12429,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Appointments",
@@ -12407,6 +12570,10 @@
 						},
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}appointments/{{appointment_id}}/",
 							"host": [
@@ -12455,6 +12622,10 @@
 						},
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{url}}appointments/",
 							"host": [
@@ -12614,9 +12785,496 @@
 					},
 					"response": []
 				}
+			]
+		},
+		{
+			"name": "Public User Appointments",
+			"item": [
+				{
+					"name": "Authenticate and create user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c8d8da75-f3d8-4d1f-83c7-cc41d2ad4317",
+								"exec": [
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 200\", function(){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"//  Check if response time less than max allowed.",
+									"var response_max = JSON.parse(globals.response_max);",
+									"pm.test(\"Response time less than \" + response_max.toString() + \"ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(response_max);",
+									"});",
+									"",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"",
+									"var user_id = jsonData[0].user_id;",
+									"",
+									"//Dynamic variable used for end-point testing later on",
+									"postman.setEnvironmentVariable(\"user_id\", JSON.stringify(user_id));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{public_user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Typea",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n}"
+						},
+						"url": {
+							"raw": "{{public_url}}users/",
+							"host": [
+								"{{public_url}}users"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Book an appointment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "851b530c-92d7-482c-9e80-2a1f542b280c",
+								"exec": [
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 201\", function(){",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"//  Check if response time less than max allowed.",
+									"var response_max = JSON.parse(globals.response_max);",
+									"pm.test(\"Response time less than \" + response_max.toString() + \"ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(response_max);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"eval(environment.appointment_schema_check);",
+									"eval(environment.appointment_data_check);",
+									"",
+									"var appointment_id = jsonData.appointment.appointment_id;",
+									"",
+									"//Dynamic variable used for end-point testing later on",
+									"postman.setEnvironmentVariable(\"appointment_id\", JSON.stringify(appointment_id));",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "e8444129-3a7b-4a2f-82d0-fd9b5d395f0d",
+								"exec": [
+									"//  Calculate a start date a week from today.",
+									"var later = new Date();",
+									"later.setDate(later.getDate()+7);",
+									"",
+									"//  Get year, day, month from the later time.",
+									"year = later.getFullYear().toString();",
+									"month = (\"0\" + (later.getMonth() + 1).toString()).slice(-2);",
+									"day = (\"0\" + (later.getDate()).toString()).slice(-2);",
+									"",
+									"//  Format starting and ending time for the booking.",
+									"start_time = year + \"-\" + month + \"-\" + day + \"T17:00:00Z\";",
+									"end_time = year + \"-\" + month + \"-\" + day + \"T19:00:00Z\";",
+									"",
+									"pm.globals.set(\"start_time\", JSON.stringify(start_time));",
+									"pm.globals.set(\"end_time\", JSON.stringify(end_time));",
+									"pm.globals.set(\"category\", JSON.stringify(\"Exam\"));",
+									"pm.globals.set(\"comments\", JSON.stringify(\"Missed playoffs, needs to talk #1.\"));",
+									"pm.globals.set(\"citizen_name\", JSON.stringify(\"LeBron James Appointment #1\"));",
+									"pm.globals.set(\"service_id\", pm.environment.get(\"service_PropTax_id\"));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{public_user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n \"service_id\": {{service_id}},\n \"office_id\" : {{current_office_id}},\n \"start_time\": {{start_time}},\n \"end_time\": {{end_time}},\n \"category\": {{category}},\n \"comments\": {{comments}}\n}"
+						},
+						"url": {
+							"raw": "{{public_url}}appointments/",
+							"host": [
+								"{{public_url}}appointments"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit user profile",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5206f620-8220-4ba4-860a-13c1bb452e6d",
+								"exec": [
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 200\", function(){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"//  Check if response time less than max allowed.",
+									"var response_max = JSON.parse(globals.response_max);",
+									"pm.test(\"Response time less than \" + response_max.toString() + \"ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(response_max);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{public_user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"test@test.com\",\n    \"telephone\": \"7787777777\",\n    \"send_reminders\": true\n}"
+						},
+						"url": {
+							"raw": "{{public_url}}users/{{user_id}}/",
+							"host": [
+								"{{public_url}}users"
+							],
+							"path": [
+								"{{user_id}}",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List all appointments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2a7432b9-ffb0-4e23-a224-c3a48171d6c4",
+								"exec": [
+									"//  Run basic response tests.",
+									"eval(environment.basic_response_test);",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid\\",
+									"eval(environment.appointment_list_schema_check);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{public_user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{public_url}}users/appointments/",
+							"host": [
+								"{{public_url}}users"
+							],
+							"path": [
+								"appointments",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Appointment Put End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1cf958af-12dd-44f4-a624-d070cc6d90cb",
+								"exec": [
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 200\", function(){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"//  Check if response time less than max allowed.",
+									"var response_max = JSON.parse(globals.response_max);",
+									"pm.test(\"Response time less than \" + response_max.toString() + \"ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(response_max);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"eval(environment.appointment_schema_check);",
+									"eval(environment.appointment_data_check);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "52ba16f8-f08e-4a75-a64c-39e59c64c1c6",
+								"exec": [
+									"//  Calculate a start date a week from today.",
+									"var later = new Date();",
+									"later.setDate(later.getDate()+7);",
+									"",
+									"//  Get year, day, month from the later time.",
+									"year = later.getFullYear().toString();",
+									"month = (\"0\" + (later.getMonth() + 1).toString()).slice(-2);",
+									"day = (\"0\" + (later.getDate()).toString()).slice(-2);",
+									"",
+									"//  Format starting and ending time for the booking.",
+									"start_time = year + \"-\" + month + \"-\" + day + \"T21:00:00Z\";",
+									"end_time = year + \"-\" + month + \"-\" + day + \"T23:00:00Z\";",
+									"",
+									"pm.globals.set(\"start_time\", JSON.stringify(start_time));",
+									"pm.globals.set(\"end_time\", JSON.stringify(end_time));",
+									"pm.globals.set(\"comments\", JSON.stringify(\"super EARLY\"));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{public_user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n \"office_id\" : {{current_office_id}},\n \"start_time\": {{start_time}},\n \"end_time\": {{end_time}},\n \"category\": {{category}},\n \"comments\": {{comments}}\n}"
+						},
+						"url": {
+							"raw": "{{public_url}}appointments/{{appointment_id}}/",
+							"host": [
+								"{{public_url}}appointments"
+							],
+							"path": [
+								"{{appointment_id}}",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Appointment Delete End-point",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "88b43898-330f-4cf1-81c3-8cce3c53f54c",
+								"exec": [
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 204\", function(){",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"//  Check if response time less than max allowed.",
+									"var response_max = JSON.parse(globals.response_max);",
+									"pm.test(\"Response time less than \" + response_max.toString() + \"ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(response_max);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{public_user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{public_url}}appointments/{{appointment_id}}/",
+							"host": [
+								"{{public_url}}appointments"
+							],
+							"path": [
+								"{{appointment_id}}",
+								""
+							]
+						}
+					},
+					"response": []
+				}
 			],
-			"protocolProfileBehavior": {}
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "7f0ff870-49a0-4df2-9496-e6bf98e60a05",
+						"type": "text/javascript",
+						"exec": [
+							"auth_url = globals.auth_url;",
+							"realm = globals.realm;",
+							"clientid = globals.clientid;",
+							"userid = globals.public_user_id;",
+							"password = globals.public_user_password;",
+							"client_secret = globals.client_secret;",
+							"",
+							"const echoPostRequest = {",
+							"  url: auth_url + '/auth/realms/' + realm + '/protocol/openid-connect/token',",
+							"  method: 'POST',",
+							"  header: 'Content-Type:application/x-www-form-urlencoded',",
+							"  body: {",
+							"    mode: 'raw',",
+							"    raw: 'grant_type=password&client_id=' + clientid ",
+							"          + '&username=' + userid ",
+							"          + '&password=' + password",
+							"          + '&client_secret=' + client_secret",
+							"  }",
+							"};",
+							"pm.sendRequest(echoPostRequest, function (err, res) {",
+							"    var jsonData = res.json();",
+							"    if (jsonData.hasOwnProperty('access_token')) {",
+							"    \tpm.globals.set(\"public_user_token\", jsonData.access_token);",
+							"\t    pm.globals.set(\"public_user_refresh_token\", jsonData.refresh_token);",
+							"\t    if (err) {",
+							"\t        console.log(err);",
+							"\t    }",
+							"\t    // console.log(err ? err : res.json());",
+							"\t} else {",
+							"\t    pm.globals.set(\"public_user_token\", 0);",
+							"\t    pm.globals.set(\"public_user_refresh_token\", 0);",
+							"\t}",
+							"});"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "e331a1b0-a6b1-40a6-8a50-de4d357eecb6",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }

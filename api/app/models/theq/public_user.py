@@ -71,7 +71,8 @@ class PublicUser(Base):
         query = db.session.query(Appointment) \
             .join(Citizen) \
             .join(PublicUser) \
-            .filter(PublicUser.username == username, Citizen.user_id == PublicUser.user_id, Appointment.citizen_id == Citizen.citizen_id)
+            .filter(PublicUser.username == username, Citizen.user_id == PublicUser.user_id, Appointment.citizen_id == Citizen.citizen_id) \
+            .filter(Appointment.checked_in_time.is_(None))
 
         return query.all()
 

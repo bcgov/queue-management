@@ -126,10 +126,15 @@ For tests to run, you require two additional IDs created in your keycloak:
 
 Below is an example suing the localhost keycloak created above:
 
+- The application is now secured by roles. To add roels to the token, go to the client (id : account) and enable 'Full Scope Allowed' under Scope tab.
+- Create internal_user role and assign to anyone who will be accessing the application as a staff user
+- Create online_appointment_user role and assign to anyone who will be accessing the application as a public user
+
 - Create users & set passwords for the postman users in your keycloak instance:
 
-1. cfms-postman-operator
-1. cfms-postman-non-operator
+1. cfms-postman-operator (role: internal_user)
+1. cfms-postman-non-operator (role: internal_user)
+2. cfms-postman-public-user (role: online_appointment_user, with an attribute displayName and map it as display_name in token)
 
 Go \queue-manaement\api\postman & run the following command:
 
@@ -144,10 +149,14 @@ You will need the following information:
 1. auth_url=http://localhost:8085
 1. clientid=account
 1. realm=registry
+1. public_url=http://localhost:5000/api/v1/
+1. public_user_id=cfms-postman-public-user
+1. public_user_password=<cfms-postman-public-user userid password>
 
 For this test, I created the password for the two users as demo. From the postman folder run the following command to run the postman tests:
 
-`./node_modules/newman/bin/newman.js run postman_tests.json -e postman_env.json --global-var password=demo --global-var password_nonqtxn=demo --global-var client_secret=5abdcb03-9dc6-4789-8c1f-8230c7d7cb79 --global-var url=http://localhost:5000/api/v1/ --global-var auth_url=http://localhost:8085 --global-var clientid=account --global-var realm=registry`
+`./node_modules/newman/bin/newman.js run API_Test_TheQ_Booking.json -e postman_env.json --global-var userid=cfms-postman-operator --global-var password=demo --global-var userid_nonqtxn=cfms-postman-non-operator --global-var password_nonqtxn=demo --global-var client_secret=5abdcb03-9dc6-4789-8c1f-8230c7d7cb79 --global-var url=http://localhost:5000/api/v1/ --global-var auth_url=http://localhost:8085 --global-var clientid=account --global-var realm=registry --global-var public_url=http://localhost:5000/api/v1/ --global-var public_user_id=cfms-postman-public-user --global-var public_user_password=password
+`
 
 ## Jest Test
 
