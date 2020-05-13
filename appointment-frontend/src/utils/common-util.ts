@@ -69,7 +69,7 @@ export default class CommonUtils {
     return returnArray
   }
 
-  static getTzFormattedDate (date, timezone = 'America/Vancouver', dateFormat = 'yyyy-MM-dd') {
+  static getTzFormattedDate (date: string, timezone = 'America/Vancouver', dateFormat = 'yyyy-MM-dd') {
     return format(utcToZonedTime(date || new Date(), timezone), dateFormat)
   }
 
@@ -96,3 +96,16 @@ export function debounce (func, wait, immediate) {
     if (callNow) func.apply(context, args)
   }
 };
+
+// https://stackoverflow.com/a/50069453
+// returns e.g. "-7:00" and can be appended to end of date string
+// appending timezone string is important for Safari which otherwise
+// defaults to UTC
+export function timezoneOffset () {
+  let date = new Date()
+  let timezoneOffset = date.getTimezoneOffset()
+  let hours = ('00' + Math.floor(Math.abs(timezoneOffset / 60))).slice(-2)
+  let minutes = ('00' + Math.abs(timezoneOffset % 60)).slice(-2)
+  let string = (timezoneOffset >= 0 ? '-' : '+') + hours + ':' + minutes
+  return string
+}
