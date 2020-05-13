@@ -64,10 +64,10 @@
 </template>
 
 <script lang="ts">
+import CommonUtils, { timezoneOffset } from '@/utils/common-util'
 import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
 import { mapActions, mapMutations, mapState } from 'vuex'
 import { AppointmentSlot } from '@/models/appointment'
-import CommonUtils from '@/utils/common-util'
 import { Office } from '@/models/office'
 import { OfficeModule } from '@/store/modules'
 import StepperMixin from '@/mixins/StepperMixin.vue'
@@ -147,10 +147,12 @@ export default class DateSelection extends Mixins(StepperMixin) {
   selectTimeSlot (slot) {
     // Note - For cross browser, we must use specific date string format below
     // Chrome/FF pass with "2020-05-08 09:00" but Safari fails.
-    // Safari needs format from spec, "2020-05-08T09:00"
+    // Safari needs format from spec, "2020-05-08T09:00-07:00"
+    // (safari also needs timezone offset)
+
     const selectedSlot: AppointmentSlot = {
-      start_time: new Date(`${this.selectedDate}T${slot.start_time}`).toISOString(),
-      end_time: new Date(`${this.selectedDate}T${slot.end_time}`).toISOString()
+      start_time: new Date(`${this.selectedDate}T${slot.start_time}${timezoneOffset()}`).toISOString(),
+      end_time: new Date(`${this.selectedDate}T${slot.end_time}${timezoneOffset()}`).toISOString()
     }
     this.setCurrentAppointmentSlot(selectedSlot)
     this.stepNext()
