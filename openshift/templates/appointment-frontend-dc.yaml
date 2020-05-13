@@ -46,6 +46,24 @@ objects:
             "VUE_APP_GOOGLE_STATIC_MAP_API_KEY": "AIzaSyDdUTtNy6pLWILtlqHtcaXsFSprFQ9UroI"
           }
   - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: "keycloak-public.json"
+      labels:
+        app: "keycloak-public.json"
+    data:
+        configuration.json: |-
+          {
+            "realm": "",
+            "auth-server-url": "https://sso-dev.pathfinder.gov.bc.ca/auth",
+            "ssl-required": "external",
+            "resource": "",
+            "credentials": {
+              "secret": ""
+            },
+            "confidential-port": 0
+          }
+  - apiVersion: v1
     kind: DeploymentConfig
     metadata:
       annotations:
