@@ -69,7 +69,7 @@ export default class CommonUtils {
     return returnArray
   }
 
-  static getTzFormattedDate (date: string, timezone = 'America/Vancouver', dateFormat = 'yyyy-MM-dd') {
+  static getTzFormattedDate (date: string | Date, timezone = 'America/Vancouver', dateFormat = 'yyyy-MM-dd') {
     return format(utcToZonedTime(date || new Date(), timezone), dateFormat)
   }
 
