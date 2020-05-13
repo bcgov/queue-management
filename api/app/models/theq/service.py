@@ -14,6 +14,14 @@ limitations under the License.'''
 
 from qsystem import db
 from app.models.theq import Base
+import enum
+from sqlalchemy import Enum
+
+
+class Availability(enum.Enum):
+    SHOW = 'SHOW'
+    HIDE = 'HIDE'
+    DISABLE = 'DISABLE'
 
 
 class Service(Base):
@@ -31,6 +39,10 @@ class Service(Base):
     prefix = db.Column(db.String(10), nullable=False)
     display_dashboard_ind = db.Column(db.Integer, nullable=False)
     actual_service_ind = db.Column(db.Integer, nullable=False)
+
+    external_service_name = db.Column(db.String(100), nullable=True)
+    online_link = db.Column(db.String(200), nullable=True)
+    online_availability = db.Column(Enum(Availability))
 
     offices = db.relationship("Office", secondary='office_service')
     parent = db.relationship("Service", remote_side=[service_id])

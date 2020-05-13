@@ -18,6 +18,7 @@ from app.models.bookings import Appointment
 from app.schemas.bookings import AppointmentSchema
 from app.models.theq import CSR
 from qsystem import api, db, oidc
+from app.utilities.auth_util import Role, has_any_role
 
 
 @api.route("/appointments/recurring/<string:id>", methods=["DELETE"])
@@ -26,6 +27,7 @@ class AppointmentRecurringDelete(Resource):
     appointment_schema = AppointmentSchema()
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value])
     def delete(self, id):
 
         csr = CSR.find_by_username(g.oidc_token_info['username'])

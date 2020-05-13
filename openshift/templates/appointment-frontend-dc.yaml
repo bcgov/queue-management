@@ -1,0 +1,210 @@
+apiVersion: v1
+kind: Template
+labels:
+  template: appointment-frontend
+metadata:
+  name: appointment-frontend
+objects:
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      name: "${NAME}"
+      labels:
+        app: "${NAME}"
+    spec:
+      ports:
+        - name: web
+          port: 2015
+          targetPort: 2015
+      selector:
+        app: "${NAME}"
+  - apiVersion: v1
+    kind: Route
+    metadata:
+      name: "${NAME}"
+    spec:
+      host: "${APPLICATION_DOMAIN}"
+      to:
+        kind: Service
+        name: "${NAME}"
+      tls:
+        insecureEdgeTerminationPolicy: Redirect
+        termination: edge
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: "configuration.json"
+      labels:
+        app: "configuration.json"
+    data:
+        configuration.json: |-
+          {
+            "KEYCLOAK_CONFIG_URL": "./public/config/kc/keycloak-public.json",
+            "VUE_APP_ROOT_API": "https://theq-public.pathfinder.gov.bc.ca/api/v1",
+            "hideBCServicesCard": true,
+            "BCEIDRegistrationUrl": "https://www.test.bceid.ca/os/?7521&SkipTo=Basic",
+            "VUE_APP_GOOGLE_STATIC_MAP_API_KEY": "AIzaSyDdUTtNy6pLWILtlqHtcaXsFSprFQ9UroI"
+          }
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: "keycloak-public.json"
+      labels:
+        app: "keycloak-public.json"
+    data:
+        configuration.json: |-
+          {
+            "realm": "",
+            "auth-server-url": "https://sso-dev.pathfinder.gov.bc.ca/auth",
+            "ssl-required": "external",
+            "resource": "",
+            "credentials": {
+              "secret": ""
+            },
+            "confidential-port": 0
+          }
+  - apiVersion: v1
+    kind: DeploymentConfig
+    metadata:
+      annotations:
+        description: "Defines how to deploy the application server"
+      name: "${NAME}"
+    spec:
+      replicas: 2
+      selector:
+        name: ${NAME}
+      strategy:
+        type: Rolling
+        rollingParams:
+          updatePeriodSeconds: 1
+          intervalSeconds: 1
+          timeoutSeconds: 60
+          maxSurge: 2
+          maxUnavailable: 1
+        resources: {}
+        activeDeadlineSeconds: 3600
+      template:
+        metadata:
+          labels:
+            app: "${NAME}"
+            name: "${NAME}"
+        spec:
+          containers:
+            - name: "${NAME}"
+              image: " "
+              args:
+                - "/tmp/scripts/run"
+              ports:
+                - containerPort: 2015
+              readinessProbe:
+                failureThreshold: 3
+                initialDelaySeconds: 3
+                periodSeconds: 10
+                successThreshold: 1
+                tcpSocket:
+                  port: 2015
+                timeoutSeconds: 3
+              livenessProbe:
+                failureThreshold: 3
+                initialDelaySeconds: 3
+                periodSeconds: 10
+                successThreshold: 1
+                tcpSocket:
+                  port: 2015
+                timeoutSeconds: 3
+              volumeMounts:
+                - mountPath: /var/www/html/config/kc
+                  name: keycloak
+                - mountPath: /var/www/html/config
+                  name: configuration
+              terminationMessagePath: "/dev/termination-log"
+              terminationMessagePolicy: File
+              imagePullPolicy: Always
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 256Mi
+                limits:
+                  cpu: 100m
+                  memory: 512Mi
+          restartPolicy: Always
+          terminationGracePeriodSeconds: 30
+          dnsPolicy: ClusterFirst
+          securityContext: {}
+          schedulerName: default-scheduler
+          volumes:
+            - configMap:
+                defaultMode: 420
+                name: keycloak-public.json
+              name: keycloak
+            - configMap:
+                defaultMode: 420
+                name: appointment-configuration.json
+              name: appointment-configuration
+          affinity:
+            podAntiAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchExpressions:
+                      - key: name
+                        operator: In
+                        values:
+                          - "${NAME}"
+                  topologyKey: kubernetes.io/hostname
+      triggers:
+        - type: ConfigChange
+        - type: ImageChange
+          imageChangeParams:
+            automatic: true
+            containerNames:
+              - "${NAME}"
+            from:
+              kind: ImageStreamTag
+              namespace: ${TOOLS_WORKSPACE}
+              name: "${NAME}:${IMAGE_TAG}"
+  - apiVersion: v1
+    kind: Route
+    metadata:
+      name: "${API_NAME}-rate-limited"
+      annotations:
+        # https://docs.openshift.com/container-platform/3.11/architecture/networking/routes.html
+        # https://github.com/openshift/router/blob/master/images/router/haproxy/conf/haproxy-config.template
+        # To deviate from default HAProxy values, enable below commented out line
+        # Values must be enclosed ins trings for HAproxy annotations
+        haproxy.router.openshift.io/rate-limit-connections: 'true'
+        # Below line allows 20 HTTP requests per IP per 30 sceonds.  (Interval is always 30 seconds.)
+        # haproxy.router.openshift.io/rate-limit-connections.rate-http: '20'
+    spec:
+      host: "${RATE_LIMITED_API_HOSTNAME}"
+      path: /api
+      to:
+        kind: Service
+        name: "${API_NAME}"
+      tls:
+        insecureEdgeTerminationPolicy: Redirect
+        termination: edge
+parameters:
+  - name: NAME
+    displayName: Name
+    description: The suffix for all created objects
+    required: false
+    value: appointment-frontend
+  - name: APPLICATION_DOMAIN
+    description: "The exposed hostname that will route to the Vue application"
+    value: dev-appointment.pathfinder.gov.bc.ca
+  - name: API_NAME
+    displayName: API Name
+    description: The name of the API that this uses as a backend (to create a rate limited route).
+    required: false
+    value: queue-management-api
+  - name: RATE_LIMITED_API_HOSTNAME
+    description: "The new route to API which will be rate limited"
+    value: theq-public.pathfinder.gov.bc.ca
+  - name: IMAGE_TAG
+    description: The image tag to pull for the deployment.
+    required: true
+    value: latest
+  - name: TOOLS_WORKSPACE
+    description: The Location for your image streams (Tools Workspace)
+    required: true
+    value: servicebc-cfms-tools

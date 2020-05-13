@@ -1,0 +1,177 @@
+<template>
+  <!-- Service Model Popup -->
+  <v-dialog
+    v-model="isModelOpen"
+    max-width="570"
+  >
+    <v-card>
+      <v-toolbar dark flat color="primary">
+        <v-toolbar-title>Location Services for {{selectedLocationName}}</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-btn icon dark @click="close">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-toolbar>
+      <v-card-text>
+        <v-row>
+          <v-col>
+            <v-select
+              :items="categoryList"
+              label="Categories"
+              outlined
+              color="primary"
+              class="text-left"
+              v-model="selectedCategory"
+              name="categories-select"
+              :item-text="'external_service_name'"
+              :item-value="'service_name'"
+              hide-details
+              dense
+              clearable
+              @change="filterUsingCategory"
+            >
+            </v-select>
+          </v-col>
+          <v-col>
+            <v-text-field
+              prepend-inner-icon="mdi-magnify"
+              type="text"
+              name="search-service"
+              label="Search Service"
+              outlined
+              hide-details
+              v-model="categorySearchInput"
+              clearable
+              @input="categorySearch"
+              dense
+            ></v-text-field>
+          </v-col>
+        </v-row>
+        <v-simple-table
+          fixed-header
+          height="300"
+        >
+          <template v-slot:default>
+            <thead>
+              <tr>
+                <th class="text-left">Service</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in filteredServiceList" :key="item.service_id">
+                <td>
+                  <div
+                    v-bind:class="{'unavailable-service': item.online_availability === ServiceAvailability.DISABLE}"
+                  >
+                    {{ item.external_service_name }}
+                  </div>
+                </td>
+                <td>
+                  <div v-if="item.online_link" class="service-link" @click="goToServiceLink(item.online_link)">
+                    Online Option <v-icon small>mdi-open-in-new</v-icon>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </template>
+        </v-simple-table>
+      </v-card-text>
+    </v-card>
+  </v-dialog>
+</template>
+
+<script lang="ts">
+import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Office } from '@/models/office'
+import { Service } from '@/models/service'
+import { ServiceAvailability } from '@/utils/constants'
+import { mapState } from 'vuex'
+
+@Component({
+  computed: {
+    ...mapState('office', [
+      'categoryList'
+    ])
+  }
+})
+export default class ServiceListPopup extends Vue {
+  private selectedCategory:string = ''
+  private categorySearchInput:string = ''
+  private filteredServiceList: Service[] = []
+  private readonly categoryList!: Service[]
+  private isFiltered: boolean = false
+  private isModelOpen: boolean = false
+  private ServiceAvailability = ServiceAvailability
+
+  @Prop({ default: false })
+  private locationServicesModal!: boolean
+
+  @Prop({ default: [] })
+  private serviceList!: Service[]
+
+  @Prop({ default: '' })
+  private selectedLocationName!: string
+
+  public open () {
+    this.isModelOpen = true
+  }
+
+  public close () {
+    this.isFiltered = false
+    this.selectedCategory = ''
+    this.categorySearchInput = ''
+    this.isModelOpen = false
+  }
+
+  private async beforeUpdate () {
+    this.filteredServiceList = (!this.isFiltered) ? { ...this.serviceList } : this.filteredServiceList
+  }
+
+  private filterUsingCategory () {
+    this.categorySearchInput = ''
+    if (this.selectedCategory) {
+      this.filteredServiceList = this.serviceList.filter((service) => {
+        return (service?.parent?.service_name === this.selectedCategory)
+      })
+      this.isFiltered = true
+    } else {
+      this.isFiltered = false
+    }
+  }
+
+  private categorySearch (value: string) {
+    this.selectedCategory = ''
+    if (value) {
+      this.filteredServiceList = this.serviceList.filter((service) => {
+        return `${service?.external_service_name || ''} ${service?.service_desc || ''}`.toLowerCase().includes(value.toLowerCase())
+      })
+      this.isFiltered = true
+    } else {
+      this.isFiltered = false
+    }
+  }
+
+  private goToServiceLink (url) {
+    window.open(url, '_blank')
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+@import "@/assets/scss/theme.scss";
+.service-unavailable {
+  color: $BCgovInputError;
+  font-weight: 600;
+}
+.unavailable-service {
+  color: $gray6;
+}
+.service-link {
+  font-weight: 600;
+  font-size: .85rem;
+  color: $BCgovBlue8;
+  cursor: pointer;
+  text-align: end;
+}
+</style>

@@ -25,11 +25,14 @@ from sqlalchemy import exc
 import json
 import urllib.request
 import urllib.parse
+from app.utilities.auth_util import Role, has_any_role
+
 
 @api.route("/slack/", methods=['POST'])
 class Slack(Resource):
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value])
     def post(self):
         json_data = request.get_json()
         if not json_data:

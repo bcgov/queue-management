@@ -53,13 +53,16 @@
           {value: 'invigilator', text: 'Invigilators'},
           {value: 'room', text: 'Rooms'},
           {value: 'examtype', text: 'Exam Types'},
-          {value: 'counter', text: 'Counters'}
+          {value: 'counter', text: 'Counters'},
+          {value: 'timeslot', text: 'Time Slots'},
+
         ],
         optionsGA: [
           {value: 'csrga', text: 'CSRs'},
           {value: 'invigilator', text: 'Invigilators'},
           {value: 'room', text: 'Rooms'},
-          {value: 'officega', text: 'Offices'}
+          {value: 'officega', text: 'Offices'},
+          {value: 'timeslot', text: 'Time Slots'}
         ]
       }
     },

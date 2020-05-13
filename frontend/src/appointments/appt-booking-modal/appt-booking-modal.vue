@@ -25,7 +25,9 @@
         </div>
       </template>
       <span v-if="this.editDeleteSeries" style="font-size:1.75rem;">Book Service Appointment Series</span>
-      <span v-else style="font-size:1.75rem;">Book Service Appointment</span><br>
+      <span v-if="!this.editDeleteSeries && online_flag" style="font-size:1.75rem;">Book Service Appointment (Online)</span><br>
+      <span v-if="!this.editDeleteSeries && !online_flag" style="font-size:1.75rem;">Book Service Appointment</span><br>
+
       <b-form autocomplete="off">
         <!--  Citizen Name and Contact Info row -->
         <b-form-row>
@@ -186,6 +188,7 @@
         showMessage: false,
         start: null,
         validate: false,
+        online_flag: false
       }
     },
     mounted() {
@@ -416,6 +419,7 @@
           this.contact_information = this.clickedAppt.contact_information
           this.start = this.clickedAppt.start.clone()
           this.length = this.clickedAppt.end.clone().diff(this.start, 'minutes')
+          this.online_flag = this.clickedAppt.online_flag
           let { service_id } = this.clickedAppt
           this.setSelectedService(service_id)
           this.$store.commit('updateAddModalForm', {type: 'service', value: service_id})

@@ -24,6 +24,7 @@ from app.models.theq import ServiceReq, Citizen, CSR
 from sqlalchemy import exc
 from app.schemas.theq import ServiceSchema, OfficeSchema
 from sqlalchemy.orm import noload, joinedload
+from app.utilities.auth_util import Role, has_any_role
 
 
 @api.route("/services/refresh/", methods=["GET"])
@@ -33,6 +34,7 @@ class Refresh(Resource):
     Returns the resulting office object with updated lists indicated.
     """
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value])
     def get(self):
         if request.args.get('office_id'):
             office_id = int(request.args.get('office_id'))
@@ -133,7 +135,7 @@ class Services(Resource):
             else:
                 return 1
 
-    @oidc.accept_token(require_token=True)
+    @oidc.accept_token(require_token=False)
     def get(self):
         if request.args.get('office_id'):
             try:

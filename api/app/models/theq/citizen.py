@@ -21,6 +21,8 @@ class Citizen(Base):
     citizen_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     office_id = db.Column(db.Integer, db.ForeignKey('office.office_id'), nullable=False)
     counter_id = db.Column(db.Integer, db.ForeignKey('counter.counter_id'), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('publicuser.user_id'), nullable=True)
+
     ticket_number = db.Column(db.String(50), nullable=True)
     citizen_name = db.Column(db.String(150), nullable=True)
     citizen_comments = db.Column(db.String(1000), nullable=True)
@@ -35,6 +37,7 @@ class Citizen(Base):
     cs = db.relationship('CitizenState', lazy='joined')
     office = db.relationship('Office', lazy='joined')
     counter = db.relationship('Counter', lazy='joined')
+    user = db.relationship('PublicUser', lazy='joined')
 
     def __repr__(self):
         return '<Citizen Name:(name={self.citizen_name!r})>'.format(self=self)
@@ -61,3 +64,24 @@ class Citizen(Base):
                 time_end = sorted_periods[-1].time_end
 
         return time_end
+
+    @classmethod
+    def find_citizen_by_user_id(cls, user_id, office_id):
+        """Find citizen record by user id."""
+        return cls.query.filter(Citizen.user_id == user_id).filter(Citizen.office_id == office_id).one_or_none()
+
+    # @classmethod
+    # def find_citizen_by_username(cls, username, office_id):
+    #     """Find citizen record by user name."""
+    #     from .public_user import PublicUser
+    #
+    #     query = db.session.query(Citizen) \
+    #         .join(PublicUser) \
+    #         .filter(PublicUser.username == username, Citizen.user_id == PublicUser.user_id, Citizen.office_id == office_id)
+    #
+    #     return query.one_or_none()
+
+    @classmethod
+    def find_citizen_by_id(cls, citizen_id):
+        """Find citizen record by user id."""
+        return cls.query.get(citizen_id)

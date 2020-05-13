@@ -20,6 +20,7 @@ from app.models.theq import CSR
 from qsystem import api, db, oidc
 from datetime import datetime, timedelta, date
 import pytz
+from app.utilities.auth_util import Role, has_any_role
 
 
 @api.route("/bookings/recurring/<string:id>", methods=["DELETE"])
@@ -29,6 +30,7 @@ class BookingRecurringDelete(Resource):
     timezone = pytz.timezone("US/Pacific")
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value])
     def delete(self, id):
 
         today = datetime.today()

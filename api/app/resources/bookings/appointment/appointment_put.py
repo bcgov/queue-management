@@ -13,32 +13,62 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import logging
-from flask import request, g
+from flask import request, g, abort, copy_current_request_context
 from flask_restx import Resource
 from qsystem import api, db, oidc
 from app.models.bookings import Appointment
-from app.models.theq import CSR
+from app.models.theq import CSR, PublicUser, Citizen, Office
 from app.schemas.bookings import AppointmentSchema
 from app.utilities.snowplow import SnowPlow
+from app.utilities.auth_util import is_public_user
+from app.utilities.auth_util import Role, has_any_role
+from app.utilities.email import send_email, get_confirmation_email_contents
+from threading import Thread
+
 
 @api.route("/appointments/<int:id>/", methods=["PUT"])
 class AppointmentPut(Resource):
-
     appointment_schema = AppointmentSchema()
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value, Role.online_appointment_user.value])
     def put(self, id):
-
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
-
         json_data = request.get_json()
+        csr = None
+        user = None
 
         if not json_data:
             return {"message": "No input data received for updating an appointment"}
+        is_public_user_appt = is_public_user()
+        if is_public_user_appt:
+            office_id = json_data.get('office_id')
+            office = Office.find_by_id(office_id)
+            # user = PublicUser.find_by_username(g.oidc_token_info['username'])
+            # citizen = Citizen.find_citizen_by_username(g.oidc_token_info['username'], office_id)
+            # Validate if the same user has other appointments for same day at same office
+            appointments = Appointment.find_by_username_and_office_id(office_id=office_id,
+                                                                      user_name=g.oidc_token_info['username'],
+                                                                      start_time=json_data.get('start_time'),
+                                                                      timezone=office.timezone.timezone_name,
+                                                                      appointment_id=id)
+            if appointments and len(appointments) >= office.max_person_appointment_per_day:
+                return {"code": "MAX_NO_OF_APPOINTMENTS_REACHED",
+                        "message": "Maximum number of appoinments reached"}, 400
+        else:
+            csr = CSR.find_by_username(g.oidc_token_info['username'])
+            office_id = csr.office_id
+            office = Office.find_by_id(office_id)
 
-        appointment = Appointment.query.filter_by(appointment_id=id)\
-                                       .filter_by(office_id=csr.office_id)\
-                                       .first_or_404()
+        appointment = Appointment.query.filter_by(appointment_id=id) \
+            .filter_by(office_id=office_id) \
+            .first_or_404()
+
+        # If appointment is not made by same user, throw error
+        if is_public_user_appt:
+            citizen = Citizen.find_citizen_by_id(appointment.citizen_id)
+            user = PublicUser.find_by_username(g.oidc_token_info['username'])
+            if citizen.user_id != user.user_id:
+                abort(403)
 
         appointment, warning = self.appointment_schema.load(json_data, instance=appointment, partial=True)
 
@@ -49,13 +79,23 @@ class AppointmentPut(Resource):
         db.session.add(appointment)
         db.session.commit()
 
+        # Send confirmation email
+        @copy_current_request_context
+        def async_email(subject, email, sender, body):
+            send_email(subject, email, sender, body)
+
+        thread = Thread(target=async_email, args=get_confirmation_email_contents(appointment, office, office.timezone, user))
+        thread.daemon = True
+        thread.start()
+
         #   Make Snowplow call.
         schema = 'appointment_update'
         if "checked_in_time" in json_data:
             schema = 'appointment_checkin'
+
         SnowPlow.snowplow_appointment(None, csr, appointment, schema)
 
         result = self.appointment_schema.dump(appointment)
 
         return {"appointment": result.data,
-                    "errors": result.errors}, 200
+                "errors": result.errors}, 200

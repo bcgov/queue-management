@@ -20,6 +20,8 @@ import shutil
 import os
 from os.path import isfile, join
 from datetime import datetime
+from app.utilities.auth_util import Role, has_any_role
+
 
 def read_file(entry):
     try:
@@ -71,6 +73,7 @@ def get_url(office_number, manifest_data):
 class VideoFiles(Resource):
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value])
     def get(self):
 
         video_path = application.config['VIDEO_PATH']
@@ -166,6 +169,7 @@ class VideoFileSelf(Resource):
 class VideoFiles(Resource):
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value])
     def delete(self):
 
         json_data = request.get_json()

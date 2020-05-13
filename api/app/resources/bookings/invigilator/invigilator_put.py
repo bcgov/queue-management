@@ -16,6 +16,7 @@ from sqlalchemy import exc
 from qsystem import api, db, oidc
 from app.models.bookings import Invigilator
 from app.schemas.bookings import InvigilatorSchema
+from app.utilities.auth_util import Role, has_any_role
 
 
 @api.route("/invigilator/<int:id>/", methods=["PUT"])
@@ -24,6 +25,7 @@ class InvigilatorPut(Resource):
     invigilator_schema = InvigilatorSchema()
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value])
     def put(self, id):
 
         try:

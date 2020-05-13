@@ -41,7 +41,10 @@ class BaseConfig(object):
     #  Set up session and communication variables.
     REMEMBER_COOKIE_DURATION = 86400
     SESSION_COOKIE_DOMAIN = os.getenv('SERVER_NAME', '')
-    CORS_ALLOWED_ORIGINS = ["https://" + SESSION_COOKIE_DOMAIN]
+    if os.getenv('CORS_ALLOWED_ORIGINS', None):
+        CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS').split(',')
+    else:
+        CORS_ALLOWED_ORIGINS = ["https://" + SESSION_COOKIE_DOMAIN]
 
     #   Set up RabbitMQ variables.
     ACTIVE_MQ_USER = os.getenv('ACTIVE_MQ_USER', '')
@@ -170,6 +173,17 @@ class BaseConfig(object):
     #print(parse_dsn(("postgresql://localhost:5000?connect_timeout=10")))
     #quote_ident("connect_timeout", scope)
 
+    # Email variables
+    MAIL_SERVER = os.getenv('MAIL_SERVER', 'apps.smtp.gov.bc.ca')
+    MAIL_PORT = os.getenv('MAIL_PORT', '25')
+    MAIL_USE_TLS = False
+    MAIL_USE_SSL = False
+    MAIL_USERNAME = os.getenv('MAIL_USERNAME', None)
+    MAIL_PASSWORD = os.getenv('MAIL_PASSWORD', None)
+    MAIL_FROM_ID = os.getenv('MAIL_FROM_ID', 'donotreply@gov.bc.ca')
+
+    # Email variables
+    EMAIL_APPOINTMENT_APP_URL = os.getenv('EMAIL_APPOINTMENT_APP_URL', None)
 
 
 class LocalConfig(BaseConfig):
@@ -194,6 +208,10 @@ class DevelopmentConfig(BaseConfig):
     REDIS_DEBUG = True
     TESTING = False
     ENV = 'dev'
+
+    # # Only allowed 1 origin, but need to work for
+    # # queue-frontend and appointment-frontend
+    # CORS_ALLOWED_ORIGINS = ["https://dev-theq.pathfinder.gov.bc.ca/"]
 
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'

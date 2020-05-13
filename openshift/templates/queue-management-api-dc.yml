@@ -171,6 +171,14 @@ objects:
                   value: "${SERVICENOW_PASSWORD}"
                 - name: VIDEO_PATH
                   value: /opt/app-root/src/videos
+                - name: MAIL_PORT
+                  value: 25
+                - name: MAIL_FROM_ID
+                  value: donotreply@gov.bc.ca
+                - name: EMAIL_APPOINTMENT_APP_URL
+                  value: "${EMAIL_APPOINTMENT_APP_URL}"
+                - name: CORS_ALLOWED_ORIGINS
+                  value: "${CORS_ALLOWED_ORIGINS}"
 
               ports:
                 - containerPort: 8080
@@ -315,4 +323,16 @@ parameters:
     required: false
   - name: SERVICENOW_PASSWORD
     description: "The password of the SERVICENOW_USER account"
+    required: false
+  - name: MAIL_PORT
+    description: "Mail port for the smtp server"
+    required: false
+  - name: MAIL_FROM_ID
+    description: "Mail from address to appear on emails"
+    required: false
+  - name: EMAIL_APPOINTMENT_APP_URL
+    description: "Appointment Url to provide in email"
+    required: true
+  - name: CORS_ALLOWED_ORIGINS
+    description: "Comma separated cors origin for the api."
     required: false

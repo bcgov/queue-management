@@ -87,6 +87,7 @@ flask_admin.add_view(admin.ServiceModelView)
 flask_admin.add_view(admin.SmartBoardModelView)
 flask_admin.add_view(admin.RoomModelView)
 flask_admin.add_view(admin.ExamTypeModelView)
+flask_admin.add_view(admin.TimeslotModelView)
 flask_admin.add_link(admin.LoginMenuLink(name='Login', category='', url="/api/v1/login/"))
 flask_admin.add_link(admin.LogoutMenuLink(name='Logout', category='', url="/api/v1/logout/"))
 
@@ -103,6 +104,14 @@ logger.setLevel(logging.DEBUG)
 
 #   Configure all logging except basic logging
 configure_logging(application)
+
+# # Build application cache
+# from app.models.theq.office import Office
+# Office.build_cache()
+
+# Init mail service
+from app.utilities.email import mail
+mail.init_app(application)
 
 #  Code to determine all db.engine properties and sub-properties, as necessary.
 if False:
@@ -258,7 +267,10 @@ import app.resources.theq.service_requests_detail
 import app.resources.theq.smartboard
 import app.resources.theq.videofiles
 import app.resources.theq.websocket
+import app.resources.theq.user.user
+import app.resources.theq.user.user_appointments
 
+import app.resources.bookings.appointment.appointment_availability
 import app.resources.bookings.appointment.appointment_detail
 import app.resources.bookings.appointment.appointment_list
 import app.resources.bookings.appointment.appointment_post
@@ -284,6 +296,8 @@ import app.resources.bookings.invigilator.invigilator_list
 import app.resources.bookings.invigilator.invigilator_put
 import app.resources.bookings.room.room_list
 import app.resources.bookings.exam_type.exam_type_list
+import app.resources.bookings.appointment.appointment_reminder_post
+
 
 # Hostname for debug purposes
 hostname = socket.gethostname()

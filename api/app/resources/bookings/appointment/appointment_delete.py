@@ -12,13 +12,20 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask import abort, g
+from threading import Thread
+
+from flask import abort, g, copy_current_request_context
 from flask_restx import Resource
+
 from app.models.bookings import Appointment
+from app.models.theq import CSR, PublicUser, Citizen, Office
 from app.schemas.bookings import AppointmentSchema
-from app.models.theq import CSR
-from qsystem import api, db, oidc
+from app.utilities.auth_util import Role, has_any_role
+from app.utilities.auth_util import is_public_user
+from app.utilities.email import get_cancel_email_contents, send_email
 from app.utilities.snowplow import SnowPlow
+from qsystem import api, db, oidc
+
 
 @api.route("/appointments/<int:id>/", methods=["DELETE"])
 class AppointmentDelete(Resource):
@@ -26,17 +33,38 @@ class AppointmentDelete(Resource):
     appointment_schema = AppointmentSchema()
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value, Role.online_appointment_user.value])
     def delete(self, id):
 
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
-
         appointment = Appointment.query.filter_by(appointment_id=id)\
-                                       .filter_by(office_id=csr.office_id)\
                                        .first_or_404()
+
+        csr = None if is_public_user() else CSR.find_by_username(g.oidc_token_info['username'])
+
+        user: PublicUser = PublicUser.find_by_username(g.oidc_token_info['username']) if is_public_user() else None
+        if is_public_user():
+            # Check if it's a public user
+            citizen = Citizen.find_citizen_by_id(appointment.citizen_id)
+            if not citizen or citizen.citizen_id != appointment.citizen_id:
+                abort(403)
 
         SnowPlow.snowplow_appointment(None, csr, appointment, 'appointment_delete')
 
         db.session.delete(appointment)
         db.session.commit()
 
+        # If the appointment is public user's and if staff deletes it send email
+        if csr:
+            office = Office.find_by_id(appointment.office_id)
+
+            # Send blackout email
+            @copy_current_request_context
+            def async_email(subject, email, sender, body):
+                send_email(subject, email, sender, body)
+
+            thread = Thread(target=async_email, args=get_cancel_email_contents(appointment, user, office, office.timezone))
+            thread.daemon = True
+            thread.start()
+
         return {}, 204
+

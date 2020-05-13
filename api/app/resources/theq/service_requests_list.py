@@ -21,6 +21,8 @@ from app.schemas.theq import CitizenSchema, ServiceReqSchema
 from marshmallow import ValidationError
 from app.utilities.snowplow import SnowPlow
 import json
+from app.utilities.auth_util import Role, has_any_role
+
 
 def get_service_request(self, json_data, csr):
 
@@ -80,6 +82,7 @@ class ServiceRequestsList(Resource):
     service_request_schema = ServiceReqSchema()
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value])
     @api_call_with_retry
     def post(self):
         try:

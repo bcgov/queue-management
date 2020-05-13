@@ -18,6 +18,7 @@ from qsystem import api, db, oidc
 from sqlalchemy import exc
 from app.models.theq import CSRState
 from app.schemas.theq import CSRStateSchema
+from app.utilities.auth_util import Role, has_any_role
 
 
 @api.route("/csr_states/", methods=["GET"])
@@ -26,6 +27,7 @@ class CsrStateList(Resource):
     csr_state_schema = CSRStateSchema(many=True, exclude=('csrs'))
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value])
     def get(self):
         try:
 

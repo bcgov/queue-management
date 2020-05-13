@@ -18,6 +18,7 @@ from sqlalchemy import exc
 from app.models.bookings import ExamType
 from app.schemas.bookings import ExamTypeSchema
 from qsystem import api, oidc
+from app.utilities.auth_util import Role, has_any_role
 
 
 @api.route("/exam_types/", methods=["GET"])
@@ -26,6 +27,7 @@ class ExamTypeList(Resource):
     exam_type_schema = ExamTypeSchema(many=True)
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value])
     def get(self):
 
         try:

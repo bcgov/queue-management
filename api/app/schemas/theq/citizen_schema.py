@@ -37,3 +37,4 @@ class CitizenSchema(ma.ModelSchema):
     service_reqs = fields.Nested(ServiceReqSchema(exclude=('citizen',)), many=True)
     cs = fields.Nested(CitizenStateSchema(exclude=('cs_state_desc', 'cs_id', 'citizens', 'state_citizens')))
     priority = fields.Int()
+    user_id = fields.Int()

@@ -20,27 +20,35 @@ from app.models.theq import Citizen, CSR, CitizenState, Period, PeriodState, Ser
 from app.schemas.theq import CitizenSchema
 from datetime import datetime
 from pprint import pprint
+from app.utilities.auth_util import Role, has_any_role
 
 
 @oidc.accept_token(require_token=True)
+@has_any_role(roles=[Role.internal_user.value])
 @api_call_with_retry
 def csr_find_by_user():
     csr = CSR.find_by_username(g.oidc_token_info['username'])
     return csr
 
+
 @oidc.accept_token(require_token=True)
+@has_any_role(roles=[Role.internal_user.value])
 @api_call_with_retry
 def find_active():
     active_citizen_state = CitizenState.query.filter_by(cs_state_name='Active').first()
     return active_citizen_state
 
+
 @oidc.accept_token(require_token=True)
+@has_any_role(roles=[Role.internal_user.value])
 @api_call_with_retry
 def find_wait():
     waiting_period_state = PeriodState.get_state_by_name("Waiting")
     return waiting_period_state
 
+
 @oidc.accept_token(require_token=True)
+@has_any_role(roles=[Role.internal_user.value])
 @api_call_with_retry
 def find_citizen(counter_id, active_citizen_state, csr, waiting_period_state):
     citizen = Citizen.query \
@@ -53,7 +61,9 @@ def find_citizen(counter_id, active_citizen_state, csr, waiting_period_state):
         .first()
     return citizen
 
+
 @oidc.accept_token(require_token=True)
+@has_any_role(roles=[Role.internal_user.value])
 @api_call_with_retry
 def find_citizen2(active_citizen_state, csr, waiting_period_state):
     citizen = Citizen.query \
@@ -66,30 +76,40 @@ def find_citizen2(active_citizen_state, csr, waiting_period_state):
         .first()
     return citizen
 
+
 @oidc.accept_token(require_token=True)
+@has_any_role(roles=[Role.internal_user.value])
 @api_call_with_retry
 def find_active_sr(citizen):
     active_service_request = citizen.get_active_service_request()
     return active_service_request
 
+
 @oidc.accept_token(require_token=True)
+@has_any_role(roles=[Role.internal_user.value])
 @api_call_with_retry
 def invite_active_sr(active_service_request,csr,citizen):
     active_service_request.invite(csr, invite_type="generic", sr_count=len(citizen.service_reqs))
 
+
 @oidc.accept_token(require_token=True)
+@has_any_role(roles=[Role.internal_user.value])
 @api_call_with_retry
 def find_active_ss():
     active_service_state = SRState.get_state_by_name("Active")
     return active_service_state
 
+
 @oidc.accept_token(require_token=True)
+@has_any_role(roles=[Role.internal_user.value])
 @api_call_with_retry
 def find_active_sr(citizen):
     active_service_request = citizen.get_active_service_request()
     return active_service_request
 
+
 @oidc.accept_token(require_token=True)
+@has_any_role(roles=[Role.internal_user.value])
 @api_call_with_retry
 def find_active_sr(citizen):
     active_service_request = citizen.get_active_service_request()
@@ -102,6 +122,7 @@ class CitizenGenericInvite(Resource):
     citizens_schema = CitizenSchema(many=True)
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value])
     #@api_call_with_retry
     def post(self):
         #print("==> In Python /citizens/invitetest")

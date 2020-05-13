@@ -37,3 +37,4 @@ class AppointmentSchema(ma.ModelSchema):
     contact_information = fields.String(allow_none=True)
     blackout_flag = fields.String(allow_none=True)
     recurring_uuid = fields.String(allow_none=True)
+    online_flag = fields.Boolean(allow_none=True)

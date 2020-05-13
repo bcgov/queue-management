@@ -18,6 +18,7 @@ from qsystem import api, oidc, my_print
 from app.models.theq import Citizen, CSR
 from app.schemas.theq import ServiceReqSchema
 from sqlalchemy import exc
+from app.utilities.auth_util import Role, has_any_role
 
 
 @api.route("/citizens/<int:id>/service_requests/", methods=["GET"])
@@ -26,6 +27,7 @@ class CitizenServiceRequests(Resource):
     service_requests_schema = ServiceReqSchema(many=True)
 
     @oidc.accept_token(require_token=True)
+    @has_any_role(roles=[Role.internal_user.value])
     def get(self, id):
         try:
             csr = CSR.find_by_username(g.oidc_token_info['username'])

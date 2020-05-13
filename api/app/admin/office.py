@@ -42,9 +42,11 @@ class OfficeConfig(Base):
     edit_modal = False
     can_delete = False
     form_create_rules = ('office_name', 'office_number', 'sb', 'services', 'deleted', 'exams_enabled_ind',
-                         'appointments_enabled_ind', 'timezone')
+                         'appointments_enabled_ind', 'timezone', 'latitude', 'longitude', 'office_appointment_message',
+                         'appointments_days_limit', 'appointment_duration', 'max_person_appointment_per_day', 'civic_address', 'telephone', 'disable_online_appointment')
     form_edit_rules = ('office_name', 'office_number', 'sb', 'services', 'deleted', 'exams_enabled_ind',
-                       'appointments_enabled_ind', 'timezone')
+                       'appointments_enabled_ind', 'timezone', 'latitude', 'longitude', 'office_appointment_message',
+                         'appointments_days_limit', 'appointment_duration', 'max_person_appointment_per_day', 'civic_address', 'telephone', 'disable_online_appointment')
     form_choices = {
         'exams_enabled_ind': [
             ("0", 'No - Exams are not enabled for this office'), \
@@ -66,6 +68,14 @@ class OfficeConfig(Base):
                    'appointments_enabled_ind',
                    'counters',
                    'timezone.timezone_name',
+                   'latitude',
+                   'longitude',
+                   'office_appointment_message',
+                   'appointments_days_limit',
+                   'appointment_duration',
+                   'max_person_appointment_per_day',
+                   'civic_address',
+                   'timeslots'
                    ]
 
     form_excluded_columns = ('citizens',
@@ -86,6 +96,16 @@ class OfficeConfig(Base):
                          'quick_list',
                          'back_office_list',
                          'timezone',
+                         'latitude',
+                         'longitude',
+                         'office_appointment_message',
+                         'appointments_days_limit',
+                         'appointment_duration',
+                         'max_person_appointment_per_day',
+                         'civic_address',
+                         'telephone',
+                         'disable_online_appointment',
+                         'timeslots'
                          )
 
     form_edit_rules = ('office_name',
@@ -98,7 +118,17 @@ class OfficeConfig(Base):
                        'counters',
                        'quick_list',
                        'back_office_list',
-                       'timezone'
+                       'timezone',
+                       'latitude',
+                       'longitude',
+                       'office_appointment_message',
+                       'appointments_days_limit',
+                       'appointment_duration',
+                       'max_person_appointment_per_day',
+                       'civic_address',
+                       'telephone',
+                       'disable_online_appointment',
+                       'timeslots'
                        )
 
     form_args = {
@@ -111,14 +141,22 @@ class OfficeConfig(Base):
             'query_factory': lambda: db.session.query(Service) \
                                                .filter(and_(Service.parent_id.isnot(None)), \
                                                             Service.display_dashboard_ind == 0)
-        }
+        },
+        'appointments_days_limit': {'default': '30'},
+        'appointment_duration': {'default': '30'},
+        'max_person_appointment_per_day': {'default': '1'}
+
     }
+
 
 
     column_labels = {'sb': 'Smartboard',
                      'timezone.timezone_name': 'Timezone Name',
                      'exams_enabled_ind': 'Exams Enabled',
                      'appointments_enabled_ind': 'Appointments Enabled',
+                     'office_appointment_message': 'Online Appointment Message',
+                     'appointments_days_limit': 'Appointment Days Limit',
+                     'max_person_appointment_per_day': 'Maximum number of appointments allowed for same person per day'
                      }
 
     column_sortable_list = ['office_name',
@@ -144,6 +182,7 @@ class OfficeConfig(Base):
             message = ", ".join(invalid)
             flash(gettext("Services saved minus services not offered at this office: " + message), 'warning')
 
+
 class OfficeConfigGA(OfficeConfig):
 
     #  Change what GA sees on the Office List view.
@@ -162,7 +201,17 @@ class OfficeConfigGA(OfficeConfig):
     form_edit_rules = (
         'office_name',
         'quick_list',
-        'back_office_list'
+        'back_office_list',
+        'latitude',
+        'longitude',
+        'office_appointment_message',
+        'appointments_days_limit',
+        'appointment_duration',
+        'max_person_appointment_per_day',
+        'civic_address',
+        'telephone',
+        'disable_online_appointment',
+        'timeslots'
     )
 
     form_excluded_columns = (
