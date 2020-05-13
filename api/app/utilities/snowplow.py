@@ -179,6 +179,7 @@ class SnowPlow():
     def get_csr(csr, office, csr_id = 1000001, counter_name = "Counter", role_name="WebSelfServe"):
 
         if csr is not None:
+            csr_id = csr.csr_id
             if csr.receptionist_ind == 1:
                 counter_name = "Receptionist"
             else:
