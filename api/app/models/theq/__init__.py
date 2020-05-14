@@ -30,7 +30,5 @@ from app.models.theq.service_req import ServiceReq
 from app.models.theq.smartboard import SmartBoard
 from app.models.theq.sr_state import SRState
 from app.models.theq.counter import Counter
-from app.models.theq.holiday import Holiday
-from app.models.theq.office_closure import OfficeClosure
 from app.models.theq.public_user import PublicUser
 from app.models.theq.time_slot import TimeSlot
