@@ -16,6 +16,14 @@ from qsystem import db
 from app.models.theq import Base
 from app.models.bookings import Exam, Room
 from qsystem import cache, db
+import enum
+from sqlalchemy import Enum
+
+
+class Status(enum.Enum):
+    SHOW = 'SHOW'
+    HIDE = 'HIDE'
+    DISABLE = 'DISABLE'
 
 
 class Office(Base):
@@ -71,7 +79,8 @@ class Office(Base):
     max_person_appointment_per_day = db.Column(db.Integer, default=1)
     civic_address = db.Column(db.String(200))
     telephone = db.Column(db.String(20))
-    disable_online_appointment = db.Column(db.Boolean, default=False)
+    # disable_online_appointment = db.Column(db.Boolean, default=False)
+    online_status = db.Column(Enum(Status))
 
     counters = db.relationship("Counter", secondary='office_counter')
     services = db.relationship("Service", secondary='office_service')

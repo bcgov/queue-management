@@ -15,11 +15,18 @@
           <v-icon small class="mr-2">mdi-open-in-new</v-icon>
           <span>About the BCeID</span>
         </a>
-        <a class="link-w-icon mt-3" :href="BCEIDRegistrationURL"
+        <v-btn :href="BCEIDRegistrationURL"
+          min-width="150"
+          large class="create-bceid"
+          color="primary"
+        >
+        Create BCeID
+        </v-btn>
+        <!--a class="link-w-icon mt-3" :href="BCEIDRegistrationURL"
           target="_self" rel="noopener noreferrer">
           <v-icon small class="mr-2">mdi-open-in-new</v-icon>
           <span>Don't have a BCeID? Click Here</span>
-        </a>
+        </a-->
         <a class="link-w-icon mt-3" href="https://www2.gov.bc.ca/gov/content/home/privacy"
           target="_blank" rel="noopener noreferrer">
           <v-icon small class="mr-2">mdi-open-in-new</v-icon>
@@ -103,5 +110,8 @@ export default class LoginToConfirm extends Mixins(StepperMixin) {
     border-top: thin solid $gray3;
     margin-top: 16px;
   }
+}
+.create-bceid {
+  margin-top: 15px
 }
 </style>
