@@ -39,7 +39,8 @@
         :key="location.office_id"
       >
         <v-card
-          :disabled="!location.appointments_enabled_ind"
+          v-if="location.online_status != 'Status.HIDE'"
+          :disabled="location.online_status === 'Status.DISABLE'"
           :outlined="(currentOffice && currentOffice.office_id === location.office_id)"
           :color="(currentOffice && currentOffice.office_id === location.office_id) ? 'blue-grey lighten-5' : ''"
           class="mx-auto location-card">
