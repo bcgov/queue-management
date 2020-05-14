@@ -108,7 +108,8 @@ class Appointment(Base):
             filter(Citizen.user_id == PublicUser.user_id). \
             filter(func.date_trunc('day', func.timezone(timezone, Appointment.start_time)) == (func.date_trunc('day', func.timezone(timezone, start_datetime)))). \
             filter(Appointment.office_id == office_id). \
-            filter(PublicUser.username == user_name)
+            filter(PublicUser.username == user_name). \
+            filter(Appointment.checked_in_time.is_(None))
         if appointment_id:
             query = query.filter(Appointment.appointment_id != appointment_id)
         return query.all()
