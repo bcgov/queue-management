@@ -137,3 +137,7 @@ input:-webkit-autofill:active {
     font-family: 'BCSans', Verdana, Arial, sans-serif !important; 
   }
 }
+
+.v-card__text, .v-card__title {
+  word-break: break-word !important; 
+}
