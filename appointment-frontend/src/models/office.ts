@@ -17,6 +17,7 @@ export interface Office {
   telephone: string
   timeslots: TimeSlots[]
   timezone: TimeZone
+  online_status: string
 }
 
 export interface Offices {
