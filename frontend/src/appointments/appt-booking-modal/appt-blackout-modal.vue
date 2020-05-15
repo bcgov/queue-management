@@ -279,8 +279,8 @@
               <b-form-checkbox-group id="frequency-checkboxes"
                                      v-model="selected_frequency"
                                      @input="checkRecurringInput">
-                <b-form-checkbox :value="yearly">Yearly</b-form-checkbox>
-                <b-form-checkbox :value="monthly">Monthly</b-form-checkbox>
+<!--                <b-form-checkbox :value="yearly">Yearly</b-form-checkbox>-->
+<!--                <b-form-checkbox :value="monthly">Monthly</b-form-checkbox>-->
                 <b-form-checkbox :value="weekly">Weekly</b-form-checkbox>
                 <b-form-checkbox :value="daily">Daily</b-form-checkbox>
               </b-form-checkbox-group>
