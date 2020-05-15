@@ -43,7 +43,9 @@
               {{(!$vuetify.breakpoint.xs) ? 'Back' : ''}}
             </v-btn>
             <v-spacer></v-spacer>
-            <h3>{{bookingStep.title}}</h3>
+            <h3
+              :class="{'mobile-step-title': (bookingStep.code === 'summary')}"
+            >{{bookingStep.title}}</h3>
             <v-spacer></v-spacer>
           </v-card-title>
           <v-divider class="mx-4"></v-divider>
@@ -221,6 +223,9 @@ export default class AppointmentBookingView extends Vue {
     .v-divider {
       margin-top: 23px;
     }
+  }
+  .mobile-step-title {
+    font-size: 1.25rem;
   }
 }
 </style>

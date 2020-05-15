@@ -3,9 +3,19 @@
     <div class="app-body" :class="{'app-mobile': $vuetify.breakpoint.xs}">
       <app-header :key="$store.state.refreshKey"></app-header>
       <main class="main-block container">
+        <v-btn
+          color="secondary"
+          fixed
+          bottom
+          right
+          fab
+          @click="scrollTo"
+        >
+          <v-icon color="black">{{(isScrolled) ? 'mdi-chevron-double-up' : 'mdi-chevron-double-down'}}</v-icon>
+        </v-btn>
         <router-view />
       </main>
-      <app-footer></app-footer>
+      <app-footer id="footer"></app-footer>
     </div>
 
   </v-app>
@@ -48,6 +58,7 @@ export default class App extends Vue {
   private readonly getUser!: () => void
   private readonly isAuthenticated!: boolean
   private tokenService = new TokenService()
+  private isScrolled = false
 
   private async beforeMount () {
     // eslint-disable-next-line no-console
@@ -97,6 +108,15 @@ export default class App extends Vue {
 
   private destroyed () {
     this.$root.$off('signin-complete')
+  }
+
+  private scrollTo () {
+    if (this.isScrolled) {
+      this.$vuetify.goTo(0)
+    } else {
+      this.$vuetify.goTo('#footer')
+    }
+    this.isScrolled = !this.isScrolled
   }
 }
 </script>

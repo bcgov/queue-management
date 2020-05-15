@@ -24,7 +24,7 @@
                 >
                   <template v-slot:label>
                     <div>
-                      I agree to the <span class='clickable-link' @click.stop.prevent='openToS'>Terms of Service</span>
+                      I agree to the <span class='clickable-link' @click.stop.prevent='openToS'>Terms of Use</span>
                     </div>
                   </template>
                 </v-checkbox>

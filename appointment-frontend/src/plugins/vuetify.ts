@@ -27,6 +27,7 @@ export default new Vuetify({
         navBg: '#003366',
         navMenuBg: '#26527d',
         primary: '#003366',
+        secondary: '#fcba19',
         success: '#3a833c', // Darkened for accessibility w/ white text
         info: '#1274c4' // Darken for accessibility with white text on it,
       },
