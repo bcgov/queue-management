@@ -112,6 +112,8 @@ configure_logging(application)
 # Init mail service
 from app.utilities.email import mail
 mail.init_app(application)
+application.extensions['mail'].debug = 0
+
 
 #  Code to determine all db.engine properties and sub-properties, as necessary.
 if False:

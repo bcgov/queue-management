@@ -152,7 +152,8 @@ import { getModule } from 'vuex-module-decorators'
   },
   methods: {
     ...mapMutations('office', [
-      'setCurrentOffice'
+      'setCurrentOffice',
+      'setCurrentService'
     ]),
     ...mapActions('office', [
       'getOffices',
@@ -174,6 +175,7 @@ export default class LocationsList extends Mixins(StepperMixin) {
   private readonly getAvailableAppointmentSlots!: (officeId: number) => Promise<any>
   private readonly getCategories!: () => Promise<any>
   private readonly setCurrentOffice!: (office: Office) => void
+  private readonly setCurrentService!: (service: Service) => void
   private readonly currentOffice!: Office
   // private readonly coords!: () => any;
   private readonly currentCoordinates!: () => any;
@@ -272,7 +274,10 @@ export default class LocationsList extends Mixins(StepperMixin) {
   }
 
   private async selectLocation (location) {
-    this.setCurrentOffice(location)
+    if (this.currentOffice?.office_id !== location?.office_id) {
+      this.setCurrentOffice(location)
+      this.setCurrentService(undefined)
+    }
     this.stepNext()
   }
 

@@ -6,7 +6,7 @@
   >
     <v-card>
       <v-toolbar dark flat color="primary">
-        <v-toolbar-title>Terms of Service</v-toolbar-title>
+        <v-toolbar-title>Terms of Use</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn icon dark @click="close">
           <v-icon>mdi-close</v-icon>
@@ -14,6 +14,7 @@
       </v-toolbar>
       <v-card-text>
         <h3 class='text-center my-4'>TERMS OF USE </h3>
+        <h4 class='text-center my-4'>Version 1.0, May 19th, 2020</h4>
         <p>The "Book an Appointment" application (the <span class="bold">"Service"</span>) allows you, the user to book an appointment at a Service BC location for services offered at that location. </p>
         <p>These Terms of Use are an agreement between you and Her Majesty the Queen in Right of the Province of British Columbia, represented by the Minister of Citizens' Services, IDIM (the <span class="bold">"Province"</span>), and govern your use of the Service. By indicating that you agree to these Terms of Use, and in consideration of the use of the Service, you agree to the following:</p>
 
@@ -21,7 +22,7 @@
         <p>In order to accept these Terms of Use and use the Service, you must: (a) have a BCeID or a BC Service Card; and (b) be at least 19 years of age.</p>
 
         <p class="bold">2. Responsibility for Use</p>
-        <p>You are solely responsible for your use of the Service, including without limitation for taking reasonable precautions to ensure that any information that you provide in connection with your use of the Service (such as your BCeID, your BC Services Card number, and any "personal information", as that term is defined in the Freedom of Information and Protection of Privacy Act (B.C.)) is kept confidential.</p>
+        <p>You are solely responsible for your use of the Service, including without limitation for taking reasonable precautions to ensure that any information that you provide in connection with your use of the Service (such as your BCeID, your BC Services Card number, and any "personal information", as that term is defined in the <span class="italic">Freedom of Information and Protection of Privacy Act</span> (B.C.)) is kept confidential.</p>
 
         <p class="bold">3. Ownership</p>
         <p>The Service, the website through which the Service is accessed, and all other information and works made available, displayed or transmitted in connection with the Service, including without limitation data, text, audio, video, trademarks, trade names, logos, domain names, images, graphics, graphical user interface elements and designs, in any form or medium whatsoever (collectively, the <span class="bold">"Content"</span>), are owned by the Province or its licensors and are protected by copyright, patent, trademark and other laws protecting intellectual property rights.  </p>
@@ -37,7 +38,7 @@
 
         <p class="bold">7. Acceptable Use</p>
         <p>You must not take any action in connection with your use of the Service that would jeopardize the security, integrity and/or availability of the Service, including without limitation:</p>
-        <ol class='mb-4'>
+        <ol class='mb-4' type="a">
           <li>using the Service for any unlawful or inappropriate purpose;</li>
           <li>decompiling, disassembling, reverse engineering or otherwise copying any software associated with the Service;</li>
           <li>tampering with any portion of the Service;</li>
@@ -51,8 +52,8 @@
         <p>When you use the Service, "personal information" (as that term is defined in the <span class="italic">Freedom of Information and Protection of Privacy Act</span> (B.C.)) that you have entered to log in with your BCeID or BC Services Card is collected by the Ministry of Citizen’s Services via the Service.  The Ministry of Citizens’ Services also collects your address in order to provide you with the nearest Service BC office location.   The authority for the collection of this information is sections 26(c), 27(1)(b), 33.1(5) and 33.2(a) of the <span class="italic">Freedom of Information and Protection of Privacy Act</span>.  Any questions that you may have about the collection of your personal information can be direct to: Director, Service Delivery, PO BOX 9412 STN PROV GOVT, Victoria, BC, V8W 9V1, 1 800 663-7867</p>
 
         <p class="bold">9. Service Provided "As Is"</p>
-        <p>The Service is provided to you "as is", and the Province disclaims all representations, warranties, conditions, obligations and liabilities of any kind, whether express or implied, in relation to the Service, including without limitation implied warranties with respect to merchantability, satisfactory quality, fitness for a particular purpose and non-infringement.  Without limiting the general nature of the previous sentence, the Province does not represent or warrant that:</p>
-        <ol class='mb-4'>
+        <p>The Service is provided to you “as is”, and the Province disclaims all representations, warranties, conditions, obligations and liabilities of any kind, whether express or implied, in relation to the Service, including without limitation implied warranties with respect to merchantability, satisfactory quality, fitness for a particular purpose and non-infringement.  Without limiting the general nature of the previous sentence, the Province does not represent or warrant that:</p>
+        <ol class='mb-4' type="a">
           <li>the Service will be available;</li>
           <li>your use of the Service will be timely, uninterrupted or error free;</li>
           <li>any errors in the Service will be corrected; or</li>
