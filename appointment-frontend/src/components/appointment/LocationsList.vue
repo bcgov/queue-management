@@ -39,7 +39,6 @@
         :key="location.office_id"
       >
         <v-card
-          v-if="location.online_status != 'Status.HIDE'"
           :disabled="location.online_status === 'Status.DISABLE'"
           :outlined="(currentOffice && currentOffice.office_id === location.office_id)"
           :color="(currentOffice && currentOffice.office_id === location.office_id) ? 'blue-grey lighten-5' : ''"
@@ -195,6 +194,7 @@ export default class LocationsList extends Mixins(StepperMixin) {
   private async mounted () {
     if (this.isOnCurrentStep) {
       this.locationListData = await this.getOffices()
+      this.locationListData = this.locationListData.filter(location => location.online_status !== 'Status.HIDE')
       this.locationListData = this.sortOfficesByDistance(this.locationListData)
     }
   }
