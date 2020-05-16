@@ -226,6 +226,7 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
     padding-left: 14px;
     margin-top: -10px;
     color: $BCgovBlue8;
+    word-break: normal;
   }
 }
 
