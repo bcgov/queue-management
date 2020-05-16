@@ -159,6 +159,17 @@ class KeyCloakService {
     }
   }
 
+  async isRolesAvailable (roles: string[]) {
+    const user = await this.getUserInfo()
+    let isAvailable = false
+    if (user?.roles?.length) {
+      roles.forEach(role => {
+        isAvailable = user.roles.some(userRole => userRole === role)
+      })
+    }
+    return isAvailable
+  }
+
   // Setting keycloak config url as a static configuration to access from other parts of the app if needed
   async setKeycloakConfigUrl (keyCloakConfigurl: string) {
     ConfigHelper.setKeycloakConfigUrl(keyCloakConfigurl)
