@@ -80,6 +80,34 @@ export default class CommonUtils {
   static getFormattedDate (date, dateFormat = 'yyyy-MM-dd') {
     return format(parseISO(date || new Date().toISOString()), dateFormat)
   }
+
+  static isAllowedIEVersion () {
+    let ua = window.navigator.userAgent
+    // IE 9
+    // ua = 'Mozilla/5.0 (compatible; MSIE 9.0; InfoChannel RNSafeBrowser/v.1.1.0G)'
+
+    // IE 10
+    // ua = 'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)'
+
+    // IE 11
+    // ua = 'Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko'
+
+    let version = 0
+    let msie = ua.indexOf('MSIE ')
+    if (msie > 0) {
+      // IE 10 or older => return version number
+      version = parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10)
+    }
+
+    let trident = ua.indexOf('Trident/')
+    if (!version && trident > 0) {
+      // IE 11 => return version number
+      var rv = ua.indexOf('rv:')
+      version = parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10)
+    }
+    // returning true if version is IE and greater than 11
+    return (version && version < 11)
+  }
 }
 
 export function debounce (func, wait, immediate) {

@@ -19,6 +19,7 @@
           >
             <template v-slot:selection="data">
               {{ data.item.external_service_name }}
+              <span v-if="checkDisabled(data.item)" class="ml-1 caption">(Unavailable)</span>
             </template>
             <template v-slot:item="data">
               <div
@@ -167,11 +168,11 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
   }
 
   private clickSelection (value) {
-    if (!this.checkDisabled(value)) {
-      this.setCurrentService(value)
-    } else {
+    if (this.checkDisabled(value)) {
       this.selectedService = null
       this.setCurrentService(undefined)
+    } else {
+      this.setCurrentService(value)
     }
   }
 

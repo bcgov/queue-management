@@ -61,20 +61,13 @@ export default class App extends Vue {
   private isScrolled = false
 
   private async beforeMount () {
-    // eslint-disable-next-line no-console
-    console.log(`${process.env.VUE_APP_PATH}config/kc/keycloak-public.json`)
     await KeyCloakService.setKeycloakConfigUrl(`${process.env.VUE_APP_PATH}config/kc/keycloak-public.json`)
     this.syncWithSessionStorage()
   }
 
   private async mounted () {
-    // eslint-disable-next-line no-console
-    console.log('this.isAuthenticated ', this.isAuthenticated)
     this.$store.commit('updateHeader')
-    if (this.isAuthenticated) {
-      this.loadUserInfo()
-      this.getUser()
-    }
+    await this.initSetup()
     // Listen for event from signin component so it can initiate setup
     this.$root.$on('signin-complete', async (callback) => {
       await this.initSetup()
@@ -90,8 +83,8 @@ export default class App extends Vue {
     // eslint-disable-next-line no-console
     console.log('this.isAuthenticated ', this.isAuthenticated)
     if (this.isAuthenticated) {
-      this.loadUserInfo()
-      this.getUser()
+      await this.loadUserInfo()
+      await this.getUser()
       try {
         await this.tokenService.init(this.$store)
         this.tokenService.scheduleRefreshTimer()
