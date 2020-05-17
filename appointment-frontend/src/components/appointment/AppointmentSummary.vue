@@ -201,7 +201,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
     if (!date) {
       return ''
     }
-    return CommonUtils.getFormattedDate(date, formatStr)
+    return CommonUtils.getTzFormattedDate(date, this.currentOfficeTimezone, formatStr)
   }
 
   private async confirmAppointment () {

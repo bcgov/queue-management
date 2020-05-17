@@ -19,7 +19,7 @@ from flask_restx import Resource
 
 from app.models.bookings import Appointment
 from app.utilities.auth_util import Role, has_any_role
-from app.utilities.email import get_reminder_email_contents, send_email
+from app.utilities.email import get_reminder_email_contents, send_email, is_valid_email
 from qsystem import api, api_call_with_retry, oidc
 
 
@@ -36,7 +36,13 @@ class AppointmentRemindersPost(Resource):
 
         if appointments:
             for (appointment, office, timezone, user) in appointments:
-                if user.send_reminders:
+                send_reminder = False
+                if user and user.send_reminders:
+                    send_reminder = True
+                elif not user and is_valid_email(appointment.contact_information):
+                    send_reminder = True
+
+                if send_reminder:
                     @copy_current_request_context
                     def async_email(subject, email, sender, body):
                         send_email(subject, email, sender, body)

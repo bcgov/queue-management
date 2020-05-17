@@ -71,6 +71,7 @@ import { AppointmentSlot } from '@/models/appointment'
 import { Office } from '@/models/office'
 import { OfficeModule } from '@/store/modules'
 import StepperMixin from '@/mixins/StepperMixin.vue'
+import { zonedTimeToUtc } from 'date-fns-tz'
 
 @Component({
   computed: {
@@ -103,13 +104,13 @@ export default class DateSelection extends Mixins(StepperMixin) {
   private availableDates = []
 
   private get selectedDateFormatted () {
-    return CommonUtils.getFormattedDate(this.selectedDate, 'MMM dd, yyyy')
+    return CommonUtils.getTzFormattedDate(this.selectedDate, this.currentOfficeTimezone, 'MMM dd, yyyy')
   }
 
   private get selectedTimeSlot () {
     return (this.currentAppointmentSlot?.start_time && this.currentAppointmentSlot?.end_time)
-      ? `${CommonUtils.getFormattedDate(this.currentAppointmentSlot?.start_time, 'hh:mm aaa')} -
-        ${CommonUtils.getFormattedDate(this.currentAppointmentSlot?.end_time, 'hh:mm aaa')}`
+      ? `${CommonUtils.getTzFormattedDate(this.currentAppointmentSlot?.start_time, this.currentOfficeTimezone, 'hh:mm aaa')} -
+        ${CommonUtils.getTzFormattedDate(this.currentAppointmentSlot?.end_time, this.currentOfficeTimezone, 'hh:mm aaa')}`
       : ''
   }
 
@@ -149,10 +150,11 @@ export default class DateSelection extends Mixins(StepperMixin) {
     // Chrome/FF pass with "2020-05-08 09:00" but Safari fails.
     // Safari needs format from spec, "2020-05-08T09:00-07:00"
     // (safari also needs timezone offset)
-
     const selectedSlot: AppointmentSlot = {
-      start_time: new Date(`${this.selectedDate}T${slot.start_time}${timezoneOffset()}`).toISOString(),
-      end_time: new Date(`${this.selectedDate}T${slot.end_time}${timezoneOffset()}`).toISOString()
+      // start_time: new Date(`${this.selectedDate}T${slot.start_time}${timezoneOffset()}`).toISOString(),
+      // end_time: new Date(`${this.selectedDate}T${slot.end_time}${timezoneOffset()}`).toISOString()
+      start_time: zonedTimeToUtc(`${this.selectedDate}T${slot.start_time}`, this.currentOfficeTimezone).toISOString(),
+      end_time: zonedTimeToUtc(`${this.selectedDate}T${slot.end_time}`, this.currentOfficeTimezone).toISOString()
     }
     this.setCurrentAppointmentSlot(selectedSlot)
     this.stepNext()

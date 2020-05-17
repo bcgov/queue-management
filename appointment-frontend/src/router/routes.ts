@@ -1,8 +1,8 @@
 import AccountSettingsView from '@/views/AccountSettingsView.vue'
 import AppointmentBookingView from '@/views/AppointmentBookingView.vue'
 import BookedAppointmentsView from '@/views/BookedAppointmentsView.vue'
-import Home from '@/views/Home.vue'
 import LoginSelectorView from '@/views/LoginSelectorView.vue'
+import NoContentView from '@/views/NoContentView.vue'
 import SigninView from '@/views/SigninView.vue'
 import SignoutView from '@/views/SignoutView.vue'
 
@@ -24,7 +24,7 @@ export const routes = [
     name: 'booked-appointments',
     component: BookedAppointmentsView,
     meta: {
-      requiresAuth: false
+      requiresAuth: true
     }
   },
   {
@@ -32,7 +32,7 @@ export const routes = [
     name: 'account-settings',
     component: AccountSettingsView,
     meta: {
-      requiresAuth: false
+      requiresAuth: true
     }
   },
   {
@@ -55,6 +55,13 @@ export const routes = [
     component: LoginSelectorView,
     props: true,
     meta: { requiresAuth: false }
+  },
+  {
+    path: '/no-content/:msgType',
+    name: 'no-content',
+    component: NoContentView,
+    props: true,
+    meta: { requiresAuth: false, skipNoContent: true }
   },
   {
     // default/fallback route

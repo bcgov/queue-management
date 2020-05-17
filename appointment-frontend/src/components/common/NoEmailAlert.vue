@@ -10,7 +10,8 @@
     dense
     dismissible
 >
-    Please <span class="clickable" @click="goToAccountSettings">configure your email address</span> to receive notifications
+  <div v-html="alertText"></div>
+
 </v-alert>
 </template>
 
@@ -33,8 +34,15 @@ export default class NoEmailAlert extends Vue {
   private readonly currentUserProfile!: User
   private showEmailAlert: boolean = false
 
+  private alertText: string = ''
+
   private mounted () {
-    this.showEmailAlert = !this.currentUserProfile?.email
+    this.showEmailAlert = !this.currentUserProfile?.email || !this.currentUserProfile?.send_reminders
+    if (!this.currentUserProfile?.email) {
+      this.alertText = 'Please <span class="clickable" @click="goToAccountSettings">configure your email address</span> to receive notifications'
+    } else if (!this.currentUserProfile?.send_reminders) {
+      this.alertText = 'Please <span class="clickable" @click="goToAccountSettings">subscribe to email reminders</span> to receive appointment reminders'
+    }
   }
 
   private goToAccountSettings () {
