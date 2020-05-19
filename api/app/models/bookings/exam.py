@@ -49,6 +49,8 @@ class Exam(Base):
     payee_email = db.Column(db.String(50), nullable=True)
     payee_name = db.Column(db.String(50), nullable=True)
     payee_phone = db.Column(db.String(50), nullable=True)
+    candidates_list = db.Column(db.JSON, nullable=True)
+    is_pesticide = db.Column(db.Integer, nullable=True, default=0)
 
     booking = db.relationship("Booking")
     exam_type = db.relationship("ExamType")

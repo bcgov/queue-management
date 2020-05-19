@@ -26,7 +26,7 @@ while true ; do
 		then
 			wget -O "/data/videos/video.mp4.tmp" "$BASE_URL$URL"
 			# Once a new video is downloaded the browser needs to be restarted
-			killall chromium-browser
+			pkill -f -- "chromium-browser"
 
 			mv /data/videos/video.mp4.tmp /data/videos/video.mp4
 			echo $UPDATED > /data/videos/updated

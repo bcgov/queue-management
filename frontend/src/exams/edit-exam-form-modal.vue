@@ -83,13 +83,24 @@
             </b-col>
           </b-form-row>
           <b-form-row>
-            <b-col cols="6">
+            <b-col>
               <b-form-group>
                 <label class="my-0">Telephone</label><br>
                 <b-form-input id="examinee_phone"
                               class="less-10-mb"
                               type="text"
                               v-model="fields.examinee_phone" />
+              </b-form-group>
+            </b-col>
+          </b-form-row>
+          <b-form-row>
+            <b-col cols="6">
+              <b-form-group>
+                <label class="my-0">Event ID</label>
+                <b-form-input id="event_id"
+                              type="text"
+                              class="less-10-mb"
+                              v-model="fields.event_id" />
               </b-form-group>
             </b-col>
             <b-col cols="6">
@@ -115,7 +126,7 @@
             <b-col :cols="feesOptions === 'collect' ? 12 : 5">
               <b-form-group><label class="my-0">Fees</label>
                 <b-form-select v-model="feesOptions" :disabled="feesOptions === 'liaison'">
-                  <option value="liaison">Collected By Liason</option>
+                  <option value="liaison" disabled>Collected By Liason</option>
                   <option value="paid">Collect Now</option>
                   <option value="collect">Collect at Exam Time</option>
                 </b-form-select>
@@ -123,11 +134,23 @@
             </b-col>
             <b-col cols="7" v-if="feesOptions !== 'collect'">
               <b-form-group><label class="my-0">Receipt</label>
-                <b-input :disabled="feesOptions === 'liaison'" />
+                <b-input :disabled="feesOptions === 'liaison'" v-model="fields.receipt" />
+              </b-form-group>
+            </b-col>
+            <b-col cols="12" v-if="feesOptions !== 'collect'">
+              <b-form-group>
+                <b-form-checkbox
+                  id="receipt-sent"
+                  v-model="fields.receipt_sent_ind"
+                  name="receipt-sent"
+                  value="1"
+                  unchecked-value="0"
+                >
+                  Receipt Sent?
+                </b-form-checkbox>
               </b-form-group>
             </b-col>
           </b-form-row>
-
         </b-form>
       </template>
 
@@ -414,15 +437,13 @@
         examNotReady: false,
         feesOptions: 'collect',
         clickedMenu: false,
-        examReceivedOptions: [
-          { value: false, text: 'No' },
-          { value: true, text: 'Yes' },
-        ],
         fields: {
           exam_received_date: null,
           notes: null,
           event_id: null,
           exam_name: null,
+          receipt: null,
+          receipt_sent_ind: null,
         },
         lengthError: false,
         message: '',
@@ -501,6 +522,10 @@
       },
       exam() {
         if (Object.keys(this.actionedExam).length > 0) {
+          console.log("this.actionedExam ", this.actionedExam)
+          this.feesOptions = (this.actionedExam.receipt) ? 'liaison' : 'collect'
+          this.fields.receipt = this.actionedExam.receipt
+          this.fields.receipt_sent_ind = this.actionedExam.receipt_sent_ind
           return this.actionedExam
         }
         return false
@@ -569,6 +594,14 @@
         }
         return []
       },
+      examReceivedOptions() {
+        this.exam_received = this.actionedExam.exam_received_date !== null ? true : false;
+        this.fields.exam_received_date = this.actionedExam.exam_received_date
+        return [
+          { value: false, text: 'No' },
+          { value: true, text: 'Yes' },
+        ];
+      },
       showAllFields() {
         if (this.role_code === 'GA' || this.is_liaison_designate || this.is_ita_designate) {
           return true
@@ -583,6 +616,7 @@
           return this.showEditExamModal
         },
         set(e) {
+          this.examNotReady = false
           this.toggleEditExamModal(e)
         }
       },
@@ -609,17 +643,17 @@
         return ex.exam_type.ita_ind ? true : false
       },
       checkAndDownloadExam() {
-        console.log("blah")
         this.downloadExam(this.exam)
           .then((resp) => {
-            console.log(resp)
+            console.log(resp.statusText)
             let filename = `${this.exam.exam_id}.pdf`
             FileDownload(resp.data, filename, "application/pdf")
+            this.updateExamReceived(new Event('exam-downloaded'))
           })
           .catch((error) => {
             console.error(error)
             this.examNotReady = true
-            setTimeout(() => { this.examNotReady = false }, 5000)
+            setTimeout(() => { this.examNotReady = false }, 15000)
           })
       },
       checkInputLength(e) {
@@ -749,6 +783,9 @@
       },
       updateExamReceived(e) {
         let { exam_received_date } = this.fields
+        if(e.type == 'exam-downloaded') {
+          this.exam_received = true
+        }
         if (e && !exam_received_date) {
           this.fields.exam_received_date = new moment().format('YYYY-MM-DD')
           return

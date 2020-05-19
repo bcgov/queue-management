@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 from flask import g
-from flask_restplus import Resource
+from flask_restx import Resource
 import logging
 from sqlalchemy import exc
 from app.models.theq import CSR
@@ -37,8 +37,14 @@ class ExamStatus(Resource):
             if not (exam.office_id == csr.office_id or csr.liaison_designate == 1):
                 return {"The Exam Office ID and CSR Office ID do not match!"}, 403
 
-            self.bcmp_service.send_exam_to_bcmp(exam)
-            return {}
+            bcmp_response = self.bcmp_service.send_exam_to_bcmp(exam)
+
+            if bcmp_response:
+                return {"bcmp": bcmp_response,
+                "errors": {}}, 202
+            else:
+                return {"message": "create_group_exam_bcmp failed",
+                    "error": bcmp_response}, 403
 
         except exc.SQLAlchemyError as error:
             logging.error(error, exc_info=True)

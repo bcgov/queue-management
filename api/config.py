@@ -1,6 +1,7 @@
 import logging
 import os
 import dotenv
+from pprint import pprint
 
 # Load all the environment variables from a .env file located in some directory above.
 dotenv.load_dotenv(dotenv.find_dotenv())
@@ -64,36 +65,86 @@ class BaseConfig(object):
     DB_NAME = os.getenv('DATABASE_NAME','')
     DB_HOST = os.getenv('DATABASE_HOST','')
     DB_PORT = os.getenv('DATABASE_PORT','')
-    DB_TIMEOUT_STRING = os.getenv('DATABASE_TIMEOUT_STRING', '')
-    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}{timeout}'.format(
+    DB_POOL_TIMEOUT = os.getenv('DATABASE_TIMEOUT_STRING', '')
+    DB_CONNECT_TIMEOUT = os.getenv('DATABASE_CONNECT_TIMEOUT_STRING', '')
+
+    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}'.format(
         engine=DB_ENGINE,
         user=DB_USER,
         password=DB_PASSWORD,
         host=DB_HOST,
         port=DB_PORT,
         name=DB_NAME,
-        timeout=DB_TIMEOUT_STRING
     )
 
-    SQLALCHEMY_DATABASE_URI_DISPLAY = '{engine}://{user}:<password>@{host}:{port}/{name}{timeout}'.format(
+    SQLALCHEMY_DATABASE_URI_DISPLAY = '{engine}://{user}:<password>@{host}:{port}/{name}'.format(
         engine=DB_ENGINE,
         user=DB_USER,
         host=DB_HOST,
         port=DB_PORT,
         name=DB_NAME,
-        timeout=DB_TIMEOUT_STRING
     )
 
     #  Get SQLAlchemy environment variables.
     pool_size = int(os.getenv('SQLALCHEMY_POOL_SIZE', '9'))
     max_overflow = int(os.getenv('SQLALCHEMY_MAX_OVERFLOW', '18'))
+    # db_timeout = int(os.getenv('SQLALCHEMY_TIMEOUT', '10'))
+
+    # Karims settings
+    # SQLALCHEMY_ENGINE_OPTIONS = {
+    #     'pool_size': pool_size,
+    #     'max_overflow': max_overflow,
+    #     'pool_pre_ping': True,
+    #     'pool_timeout': 5,
+    #     'pool_recycle': 3600,
+    #     'connect_args': {
+    #         'connect_timeout': 3
+    #     }
+    # }
+
+    #  Try to set some options to avoid long delays.
+    # SQLALCHEMY_ENGINE_OPTIONS  = {
+    #     'pool_size' : pool_size,
+    #     'max_overflow' : max_overflow,
+    #     'pool_pre_ping' : True,
+    #     'pool_timeout': DB_POOL_TIMEOUT,
+    #     'pool_recycle': 3600,
+    #     'connect_args': {
+    #         'connect_timeout': DB_CONNECT_TIMEOUT,
+    #         'options' : '-c statement_timeout=1000'
+    #     }
+    # }
+
+    #  Get SQLAlchemy environment variables.
+    pool_size = int(os.getenv('SQLALCHEMY_POOL_SIZE', '9'))
+    pool_timeout = os.getenv('SQLALCHEMY_POOL_TIMEOUT', '')
+    connect_timeout_string = os.getenv('SQLALCHEMY_CONNECT_TIMEOUT', '')
+    max_overflow = int(os.getenv('SQLALCHEMY_MAX_OVERFLOW', '18'))
+    pool_pre_ping = (os.getenv('SQLALCHEMY_POOL_PRE_PING', 'False')).upper() == "TRUE"
 
     #  Try to set some options to avoid long delays.
     SQLALCHEMY_ENGINE_OPTIONS = {
-        'pool_size' : pool_size,
-        'max_overflow' : max_overflow,
-        'pool_pre_ping' : False
+        'pool_size': pool_size,
+        'max_overflow': max_overflow,
+        'pool_pre_ping': pool_pre_ping
     }
+
+    if pool_timeout != "":
+        SQLALCHEMY_ENGINE_OPTIONS['pool_timeout'] = pool_timeout
+
+    if connect_timeout_string != "":
+        connect_timeout = int(connect_timeout_string)
+
+        #   Determine which database engine being used, to use correct syntax.
+        if "PG8000" in DB_ENGINE.upper():
+            SQLALCHEMY_ENGINE_OPTIONS['connect_args'] = {'timeout': connect_timeout}
+            # SQLALCHEMY_ENGINE_OPTIONS['connect_args'] = {'timeout': connect_timeout, 'tcp_user_timeout': 500 }
+        else:
+            # SQLALCHEMY_ENGINE_OPTIONS['connect_args'] = { 'connect_timeout': connect_timeout, 'tcp_user_timeout': 500 }
+            SQLALCHEMY_ENGINE_OPTIONS['connect_args'] = {'connect_timeout': connect_timeout}
+
+    print("==> SQLALCHEMY_ENGINE_OPTIONS (Engine: " + DB_ENGINE)
+    pprint(SQLALCHEMY_ENGINE_OPTIONS)
 
     #  Set echo appropriately.
     if (os.getenv('SQLALCHEMY_ECHO', "False")).upper() == "TRUE":
@@ -114,6 +165,17 @@ class BaseConfig(object):
     VIDEO_PATH = os.getenv('VIDEO_PATH', '')
     BACK_OFFICE_DISPLAY = os.getenv("BACK_OFFICE_DISPLAY", "BackOffice")
     RECURRING_FEATURE_FLAG = os.getenv("RECURRING_FEATURE_FLAG", "On")
+
+    MINIO_HOST = os.getenv('MINIO_HOST', 'localhost:9000')
+    MINIO_BUCKET = os.getenv('MINIO_BUCKET', 'exams')
+    MINIO_ACCESS_KEY = os.getenv('MINIO_ACCESS_KEY', 'minio')
+    MINIO_SECRET_KEY = os.getenv('MINIO_SECRET_KEY', 'minio1234')
+    MINIO_USE_SECURE = os.getenv('MINIO_USE_SECURE', 0)
+
+    #print(parse_dsn(("postgresql://localhost:5000?connect_timeout=10")))
+    #quote_ident("connect_timeout", scope)
+
+
 
 class LocalConfig(BaseConfig):
     DEBUG = True
@@ -147,13 +209,14 @@ class LocalConfig(BaseConfig):
         port=DB_PORT,
         name=DB_NAME
     )
-    BCMP_BASE_URL = 'https://bcmaildirect.gov.bc.ca/JOB_TEST'
-    BCMP_AUTH_TOKEN = 'f697697a090c4f349545a09d21b3eb08'
-    MINIO_HOST = 'localhost:9000'
-    MINIO_BUCKET = 'exams'
-    MINIO_ACCESS_KEY = 'minio'
-    MINIO_SECRET_KEY = 'minio1234'
-    MINIO_USE_SECURE = 0
+    BCMP_BASE_URL = os.getenv('BCMP_BASE_URL')
+    BCMP_AUTH_TOKEN = os.getenv('BCMP_AUTH_TOKEN')
+
+    MINIO_HOST = os.getenv('MINIO_HOST', 'localhost:9000')
+    MINIO_BUCKET = os.getenv('MINIO_BUCKET', 'exams')
+    MINIO_ACCESS_KEY = os.getenv('MINIO_ACCESS_KEY', 'minio')
+    MINIO_SECRET_KEY = os.getenv('MINIO_SECRET_KEY', 'minio1234')
+    MINIO_USE_SECURE = os.getenv('MINIO_USE_SECURE', 0)
 
 
 class DevelopmentConfig(BaseConfig):
@@ -164,8 +227,8 @@ class DevelopmentConfig(BaseConfig):
 
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
-    BCMP_BASE_URL = 'https://bcmaildirect.gov.bc.ca/JOB_TEST'
-    BCMP_AUTH_TOKEN = 'f697697a090c4f349545a09d21b3eb08'
+    BCMP_BASE_URL = os.getenv('BCMP_BASE_URL')
+    BCMP_AUTH_TOKEN = os.getenv('BCMP_AUTH_TOKEN')
 
 
 class TestConfig(BaseConfig):
@@ -176,8 +239,8 @@ class TestConfig(BaseConfig):
 
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
-    BCMP_BASE_URL = 'https://bcmaildirect.gov.bc.ca/JOB_TEST'
-    BCMP_AUTH_TOKEN = 'f697697a090c4f349545a09d21b3eb08'
+    BCMP_BASE_URL = os.getenv('BCMP_BASE_URL')
+    BCMP_AUTH_TOKEN = os.getenv('BCMP_AUTH_TOKEN')
 
 
 class ProductionConfig(BaseConfig):
@@ -188,8 +251,8 @@ class ProductionConfig(BaseConfig):
 
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
-    BCMP_BASE_URL = 'https://bcmaildirect.gov.bc.ca/JOB'
-    BCMP_AUTH_TOKEN = 'f697697a090c4f349545a09d21b3eb08'
+    BCMP_BASE_URL = os.getenv('BCMP_BASE_URL')
+    BCMP_AUTH_TOKEN = os.getenv('BCMP_AUTH_TOKEN')
 
 
 def configure_app(app):

@@ -101,7 +101,7 @@ class CsrSelf(Resource):
                     if exam.booking is not None:
                         attention_needed = attention_needed or exam.booking.start_time < start_date
                     if exam.expiry_date is not None:
-                        attention_needed = attention_needed or exam.expiry_date < start_date
+                        attention_needed = attention_needed or self.timezone.localize(exam.expiry_date) < start_date
                     if exam.exam_returned_date is not None:
                         attention_needed = False
                     if attention_needed:
@@ -113,9 +113,12 @@ class CsrSelf(Resource):
             if not attention_needed:
                 for exam in office_exams:
                     if exam.exam_type.group_exam_ind == 1:
-                        attention_needed = attention_needed or exam.booking.start_time < start_date
+                        if exam.booking is not None:
+                            attention_needed = attention_needed or exam.booking.start_time < start_date
+                        else:
+                            attention_needed = True
                         if exam.expiry_date is not None:
-                            attention_needed = attention_needed or exam.expiry_date < start_date
+                            attention_needed = attention_needed or self.timezone.localize(exam.expiry_date) < start_date
                         if exam.booking is not None and exam.number_of_students is not None:
                             attention_needed = attention_needed or exam.booking.start_time < start_date
                             attention_needed = attention_needed or (len(exam.booking.invigilators) < 1

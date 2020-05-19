@@ -66,6 +66,7 @@ export const store = new Vuex.Store({
     bookings: [],
     calendarEvents: [],
     calendarSetup: null,
+    examBcmpJobId: null,
     capturedExam: {},
     captureITAExamTabSetup: {
       step: 1,
@@ -115,9 +116,12 @@ export const store = new Vuex.Store({
       office_number: 'default',
       requireAttentionFilter: 'default',
       requireOEMAttentionFilter: 'default',
+      receptSentFilter: 'default',
+      uploadFilter: 'default',
     },
     invigilators: [],
     pesticide_invigilators: [],
+    pesticide_offsite_invigilators: [],
     shadowInvigilators: [],
     isLoggedIn: false,
     isUploadingFile: false,
@@ -176,6 +180,7 @@ export const store = new Vuex.Store({
     showReturnExamModal: false,
     showSelectInvigilatorModal: false,
     showServeCitizenSpinner: false,
+    showInviteCitizenSpinner: false,
     showServiceModal: false,
     showTimeTrackingIcon: false,
     user: {
@@ -946,6 +951,20 @@ export const store = new Vuex.Store({
       })
     },
 
+    getPesticideOffsiteInvigilators(context) {
+      return new Promise ((resolve, reject) => {
+        Axios(context).get('/invigilators/offsite/')
+          .then(resp => {
+            context.commit('setPesticideOffsiteInvigilators', resp.data.invigilators)
+            resolve(resp)
+          })
+          .catch(error => {
+            console.log(error)
+            reject(error)
+          })
+      })
+    },
+
     getInvigilatorsWithShadowFlag(context) {
       return new Promise ((resolve, reject) => {
         Axios(context).get('/invigilators/')
@@ -962,13 +981,14 @@ export const store = new Vuex.Store({
 
     emailInvigilator(context, payload) {
       console.log(payload)
+      const invigilator = payload.invigilator
       const postData = {
-        invigilator_id: payload.invigilator_id,
-        invigilator_name: payload.invigilator_name,
-        invigilator_email: payload.contact_email,
-        invigilator_phone: payload.contact_phone,
+        invigilator_id: invigilator.invigilator_id,
+        invigilator_name: invigilator.invigilator_name,
+        invigilator_email: invigilator.contact_email,
+        invigilator_phone: invigilator.contact_phone,
       }
-      const exam = context.state.selectedExam
+      const exam = payload.exam
 
       return new Promise ((resolve, reject) => {
         Axios(context).post(`/exams/${exam.exam_id}/email_invigilator/`, postData)
@@ -1040,10 +1060,18 @@ export const store = new Vuex.Store({
     },
 
     updateExamStatus(context) {
-      Axios(context).post(`/exams/bcmp_status/`)
+      return new Promise((resolve, reject) => {
+        Axios(context).post(`/exams/bcmp_status/`)
         .then( resp => {
           context.dispatch('getExams')
+          resolve(resp.data)
+        }, err => {
+          reject(err)
         })
+        .catch(err => {
+          reject(err)
+        })
+      })
     },
 
     getUser(context) {
@@ -1102,6 +1130,7 @@ export const store = new Vuex.Store({
           error => {
             context.commit('toggleAddModal', false)
             context.commit('setMainAlert', 'An error occurred adding a citizen.')
+            context.commit('toggleServeCitizenSpinner', false)
           }).finally(() => {
             context.commit('setPerformingAction', false)
           })
@@ -1196,6 +1225,7 @@ export const store = new Vuex.Store({
           })
         }).catch(() => {
           context.commit('setPerformingAction', false)
+          context.commit('toggleServeCitizenSpinner', false)
         })
       }).catch(() => {
         context.commit('setPerformingAction', false)
@@ -1219,8 +1249,32 @@ export const store = new Vuex.Store({
         if (type === 'individual') {
           context.dispatch('postITAIndividualExam').then(() => {
             resolve('success')
-          }).catch(() => { reject('failed') })
+          }, (err) => {
+            reject(err)
+          }).catch((err) => { reject(err) })
         }
+      })
+    },
+
+    clickRequestExam(context, type) {
+      return new Promise((resolve, reject) => {
+        context.dispatch('postRequestExam').then(() => {
+          resolve('success')
+        }).catch(() => { reject('failed') })
+      })
+    },
+    
+    clickPesticideRequestExam(context) {
+      return new Promise((resolve, reject) => {
+        context.dispatch('postITAIndividualExam', true).then((resp) => {
+          if(resp && resp.data && resp.data.bcmp_job_id) {
+            resolve(resp.data.bcmp_job_id)
+          } else {
+            reject(resp)
+          }
+        }).catch((err) => { 
+          reject(err) 
+        })
       })
     },
 
@@ -1229,10 +1283,9 @@ export const store = new Vuex.Store({
     },
 
     clickBeginService(context, payload) {
+      context.commit('setPerformingAction', true)
       context.commit('toggleServeCitizenSpinner', true)
       let { citizen_id } = context.getters.form_data.citizen
-      context.commit('setPerformingAction', true)
-
       context.dispatch('putCitizen').then( () => {
         context.dispatch('postServiceReq').then( () => {
           context.dispatch('postBeginService', citizen_id).then( () => {
@@ -1248,9 +1301,11 @@ export const store = new Vuex.Store({
           })
         }).catch(() => {
           context.commit('setPerformingAction', false)
+          context.commit('toggleServeCitizenSpinner', false)
         })
       }).catch(() => {
         context.commit('setPerformingAction', false)
+        context.commit('toggleServeCitizenSpinner', false)
       })
     },
 
@@ -1291,6 +1346,7 @@ export const store = new Vuex.Store({
         },
         error => {
           context.commit('setMainAlert', 'An error occurred adding a citizen.')
+          context.commit('toggleServeCitizenSpinner', false)
         })
 
       if (context.state.channels.length === 0) {
@@ -1521,16 +1577,18 @@ export const store = new Vuex.Store({
     },
 
     clickInvite(context) {
-      context.commit('toggleServeCitizenSpinner', true)
+      context.commit('toggleInviteCitizenSpinner', true)
       context.commit('setPerformingAction', true)
 
       context.dispatch('postInvite', 'next').then(() => {
         context.commit('toggleInvitedStatus', true)
         context.commit('toggleServiceModal', true)
       }).catch(() => {
-        context.commit('setMainAlert', 'There are no citizens waiting.')
+        // context.commit('setMainAlert', '(index) There are no citizens waiting.')
+        context.commit('toggleInviteCitizenSpinner', false)
       }).finally(() => {
         context.commit('setPerformingAction', false)
+        context.commit('toggleInviteCitizenSpinner', false)
       })
       context.dispatch('flashServeNow', 'stop')
     },
@@ -1655,8 +1713,10 @@ export const store = new Vuex.Store({
     },
 
     clickServiceBeginService(context) {
-      let { citizen_id } = context.state.serviceModalForm
       context.commit('setPerformingAction', true)
+      context.commit('toggleServeCitizenSpinner', true)
+      let { citizen_id } = context.state.serviceModalForm
+
 
       context.dispatch('putCitizen').then( () => {
         context.dispatch('putServiceRequest').then( () => {
@@ -1667,9 +1727,11 @@ export const store = new Vuex.Store({
           })
         }).catch(() => {
           context.commit('setPerformingAction', false)
+          context.commit('toggleServeCitizenSpinner', false)
         })
       }).catch(() => {
         context.commit('setPerformingAction', false)
+        context.commit('toggleServeCitizenSpinner', false)
       })
     },
 
@@ -1681,6 +1743,7 @@ export const store = new Vuex.Store({
         inaccurate_flag = 'false'
       }
       context.commit('setPerformingAction', true)
+      context.commit('toggleServeCitizenSpinner', true)
 
       context.dispatch('putCitizen').then( (resp) => {
         context.dispatch('putServiceRequest').then( () => {
@@ -1694,9 +1757,11 @@ export const store = new Vuex.Store({
           })
         }).catch(() => {
           context.commit('setPerformingAction', false)
+          context.commit('toggleServeCitizenSpinner', false)
         })
       }).catch(() => {
         context.commit('setPerformingAction', false)
+        context.commit('toggleServeCitizenSpinner', false)
       })
     },
 
@@ -1984,27 +2049,7 @@ export const store = new Vuex.Store({
 
     postITAGroupExam(context) {
       let responses = Object.assign( {}, context.state.capturedExam)
-      let timezone_name = context.state.user.office.timezone
-      let booking_office = context.state.offices.find(office => office.office_id == responses.office_id)
-      let booking_timezone_name = booking_office.timezone.timezone_name
-      let date = new moment(responses.expiry_date).format('YYYY-MM-DD')
-      let time = new moment(responses.exam_time).format('HH:mm:ss')
-      let datetime = date+'T'+time
-      let start
-      if (booking_timezone_name != timezone_name) {
-        start = new tZone.tz(datetime, booking_timezone_name)
-      } else {
-        start = new moment(datetime).local()
-      }
-      let length = context.state.examTypes.find(ex => ex.exam_type_id == responses.exam_type_id).number_of_hours
-      let end = start.clone().add(length, 'hours')
-      let booking = {
-        start_time: start.clone().utc().format('YYYY-MM-DD[T]HH:mm:ssZ'),
-        end_time: end.clone().utc().format('YYYY-MM-DD[T]HH:mm:ssZ'),
-        fees: 'false',
-        booking_name: responses.exam_name,
-        office_id: responses.office_id,
-      }
+      let booking = makeBookingReqObj(context, responses)
       let defaultValues = {
         exam_returned_ind: 0,
         examinee_name: 'group exam',
@@ -2033,7 +2078,8 @@ export const store = new Vuex.Store({
       })
     },
 
-    postITAIndividualExam(context) {
+    postITAIndividualExam(context, isRequestExam) {
+      let isRequestExamReq = isRequestExam || false 
       let responses = Object.assign( {}, context.state.capturedExam)
       console.log(responses)
       if (responses.on_or_off) {
@@ -2047,6 +2093,7 @@ export const store = new Vuex.Store({
         exam_returned_ind: 0,
         number_of_students: 1
       }
+      defaultValues.number_of_students = (responses['ind_or_group'] === 'group') ? responses.number_of_students : 1
       let exp = new moment(responses.expiry_date).format('YYYY-MM-DD').toString()
       responses.expiry_date = new moment(exp).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
       if (responses.exam_received_date) {
@@ -2061,8 +2108,9 @@ export const store = new Vuex.Store({
         }
       }
 
-      if (context.state.addExamModal.setup === 'pesticide' && !responses.exam_name) {
-        responses.exam_name = "pesticide"
+      if (context.state.addExamModal.setup === 'pesticide') {
+        responses.exam_name = responses.exam_name || "pesticide"
+        responses.is_pesticide = 1
       }
 
       responses.receipt = responses.receipt_number
@@ -2072,8 +2120,67 @@ export const store = new Vuex.Store({
 
       let postData = {...responses, ...defaultValues}
 
+      if(responses['ind_or_group'] === 'group') {
+        let examType = context.state.examTypes.find(type => (type.group_exam_ind && !type.ita_ind && !type.pesticide_exam_ind));
+        postData.exam_type_id = responses.exam_type_id = examType.exam_type_id
+        postData.candidates = (context.state.addExamModule && context.state.addExamModule.candidates) ? context.state.addExamModule.candidates : []
+      }
+
+      let booking = makeBookingReqObj(context, responses)
+
+      let apiUrl = (isRequestExamReq) ? '/exams/bcmp/' : '/exams/'
+
       return new Promise((resolve, reject) => {
-        Axios(context).post('/exams/', postData).then( () => { resolve() }).catch( () => { reject() })
+        Axios(context).post(apiUrl, postData).then( examResp => {
+          console.log(examResp)
+          if ((responses['ind_or_group'] === 'group' || responses['sbc_managed'] === 'non-sbc') && !isRequestExamReq) {
+            let { exam_id } = examResp.data.exam
+            context.dispatch('postBooking', booking).then( bookingResp => {
+              let putObject = {
+                examId: exam_id,
+                bookingId: bookingResp,
+                officeId: responses.office_id
+              }
+              context.dispatch('putExam', putObject).then( (examResp) => {
+                if(responses['sbc_managed'] === 'non-sbc') {
+                  if(examResp.data && examResp.data.exam && examResp.data.exam.invigilator) {
+                    context.dispatch('emailInvigilator', {
+                      invigilator: examResp.data.exam.invigilator,
+                      exam: examResp.data.exam
+                    }).then( emailResp => {
+                      resolve(examResp)
+                    }).catch( () => { 
+                      console.log('EMAIL_FAILED')
+                      reject('EMAIL_FAILED') 
+                    })
+                  }
+                } else {
+                  resolve(examResp)
+                }
+              }).catch( () => { reject() })
+            }).catch( () => { reject() })
+          } else {
+            resolve(examResp)
+          }
+        }).catch( (err) => { 
+          console.log(err)
+          reject(err) 
+        })
+      })
+    },
+
+    postRequestExam(context) {
+      let responses = Object.assign( {}, context.state.requestExam)
+      console.log(responses)
+      let postData = {...responses}
+
+      return new Promise((resolve, reject) => {
+        Axios(context).post('/exams/request', postData).then( examResp => { 
+          resolve() 
+        }).catch( (err) => { 
+          console.log(err)
+          reject() 
+        })
       })
     },
 
@@ -2192,7 +2299,6 @@ export const store = new Vuex.Store({
       context.commit('toggleAddModal', false)
       context.dispatch('toggleModalBack')
       context.commit('resetAddModalForm')
-      // console.log("====> resetAddCitizenModal set SPINNER to FALSE")
       context.commit('toggleServeCitizenSpinner', false)
     },
 
@@ -2595,6 +2701,10 @@ export const store = new Vuex.Store({
       state.pesticide_invigilators = payload
     },
 
+    setPesticideOffsiteInvigilators(state, payload) {
+      state.pesticide_offsite_invigilators = payload
+    },
+
     updateCitizen(state, payload) {
       Vue.set(state.citizens, payload.index, payload.citizen)
     },
@@ -2705,6 +2815,7 @@ export const store = new Vuex.Store({
         step1MenuOpen: false,
         office_number: null,
       }
+      state.addExamModule.candidates = []
     },
 
     resetLogAnotherExamModal: (state, setup) => {
@@ -2739,6 +2850,10 @@ export const store = new Vuex.Store({
 
     resetCaptureForm(state) {
       state.capturedExam = {}
+      state.addExamModule.candidates = []
+      state.captureITAExamTabSetup.capturePayee = false
+      state.captureITAExamTabSetup.payeeSentReceipt = false
+      state.examBcmpJobId = null
     },
 
     resetCaptureTab(state) {
@@ -2891,6 +3006,9 @@ export const store = new Vuex.Store({
     toggleServeCitizenSpinner(state, payload) {
       state.showServeCitizenSpinner = payload
     },
+    toggleInviteCitizenSpinner(state, payload) {
+      state.showInviteCitizenSpinner = payload
+    },
 
     setOffsiteOnly: (state, payload) => state.offsiteOnly = payload,
 
@@ -2901,6 +3019,39 @@ export const store = new Vuex.Store({
         state.capturedExam,
         payload
       )
-    }
+    },
+
+    setBCMPJobId: (state, payload) => {
+      state.capturedExam.bcmp_job_id = payload
+      state.examBcmpJobId = payload
+    },
   }
 })
+
+let makeBookingReqObj = (context, responses) => {
+    let timezone_name = context.state.user.office.timezone
+    let booking_office = context.state.offices.find(office => office.office_id == responses.office_id)
+    let booking_timezone_name = booking_office.timezone.timezone_name
+    let date = new moment(responses.expiry_date).format('YYYY-MM-DD')
+    let time = new moment(responses.exam_time).format('HH:mm:ss')
+    let datetime = date+'T'+time
+    let start
+    if (booking_timezone_name != timezone_name) {
+      start = new tZone.tz(datetime, booking_timezone_name)
+    } else {
+      start = new moment(datetime).local()
+    }
+    let length = context.state.examTypes.find(ex => ex.exam_type_id == responses.exam_type_id).number_of_hours
+    let end = start.clone().add(length, 'hours')
+    let booking = {
+      start_time: start.clone().utc().format('YYYY-MM-DD[T]HH:mm:ssZ'),
+      end_time: end.clone().utc().format('YYYY-MM-DD[T]HH:mm:ssZ'),
+      fees: 'false',
+      booking_name: responses.exam_name,
+      office_id: responses.office_id,
+    }
+    if(responses.is_pesticide && !responses.sbc_managed_ind && responses.invigilator_id) {
+      booking.invigilator_id = [responses.invigilator_id]
+    }
+    return booking;
+}

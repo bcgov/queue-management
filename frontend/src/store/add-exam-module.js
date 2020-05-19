@@ -162,8 +162,8 @@ const pesticideFeesQ = {
   kind: 'pesticideFees',
   minLength: 0,
   options: [
-    { text: 'Collect', value: 'collect' },
-    { text: 'Paid', value: 'paid' }
+    { text: 'Collect at Exam Time', value: 'collect' },
+    { text: 'Paid with Liasion', value: 'paid' }
   ],
   text: 'Fees',
 }
@@ -237,7 +237,7 @@ export const addExamModule = {
 
         Axios(rootState.bearer).get(url)
           .then(resp => {
-            let pesticideExams = resp.data.exams.filter(exam => exam.exam_type.pesticide_exam_ind)
+            let pesticideExams = resp.data.exams.filter(exam => exam.is_pesticide)
             commit('setAllPesticideExams', pesticideExams)
             commit('toggleShowAllPesticideExams', true)
             resolve()
@@ -296,9 +296,9 @@ export const addExamModule = {
                 Axios(context.rootState.bearer).post(bcmpUrl)
                   .then((transferResponse) => {
                     console.log(transferResponse)
-                    resolve()
+                    resolve(transferResponse)
                   })
-                  .error((error) => {
+                  .catch((error) => {
                     console.error(error)
                   })
               })
@@ -306,7 +306,7 @@ export const addExamModule = {
                 console.error(error)
               })
           })
-          .error((error) => {
+          .catch((error) => {
             console.error(error)
             reject(error)
           })
@@ -338,15 +338,11 @@ export const addExamModule = {
         ...getters.pesticideStep1,
         ...getters.pesticideStep2,
         ...getters.pesticideStep3,
-        ...[{
-          step: 4,
-          title: 'Summary',
-          questions: [summaryQ]
-        }],
+        ...getters.pesticideStep4,
       ]
     },
     pesticideStep1(state, getters, rootState) {
-      let { capturedExam } = rootState
+      let { capturedExam, pesticide_invigilators, pesticide_offsite_invigilators } = rootState
       let pesticideTypeQ = {
         key: 'exam_type_id',
         text: 'Type of Pesticide Exam',
@@ -357,15 +353,28 @@ export const addExamModule = {
       }
 
       let step1 = { ...state.pesticideStep1 }
-      if ( capturedExam.sbc_managed === 'sbc' ) {
-        step1.questions = [...step1.questions, officeSelectQ]
-      }
 
       if ( capturedExam.ind_or_group === 'individual' ) {
         if ( step1.questions.findIndex(step => step.key === 'pesticide_type') === -1 ) {
           step1.questions = [...step1.questions, pesticideTypeQ]
-          return [step1]
         }
+      }
+      if ( capturedExam.sbc_managed === 'sbc' ) {
+        step1.questions = [...step1.questions, officeSelectQ]
+        if( capturedExam.ind_or_group === 'group' ) {
+          step1.questions.push(offsiteQ)
+        }
+      }
+      if ( capturedExam.sbc_managed === 'non-sbc' ) {
+        let invigilatorQ = {
+          key: 'invigilator_id',
+          text: 'Invigilator',
+          kind: 'select',
+          options: pesticide_offsite_invigilators.map(invigilator => ({ text: invigilator.invigilator_name, value: parseInt(invigilator.invigilator_id) })),
+          minLength: 1,
+          digit: true,
+        }
+        step1.questions = [...step1.questions, offsiteQ, invigilatorQ]
       }
       return [step1]
     },
@@ -403,6 +412,13 @@ export const addExamModule = {
       }
       return [ state.pesticideStep3 ]
     },
+    pesticideStep4(state, getters, rootState) {
+      let { capturedExam } = rootState
+
+      let step4 = { ...state.pesticideStep4_summary }
+      
+      return [ step4 ]
+    },
   },
   mutations: {
     clearChallengerBooking(state) {
@@ -425,6 +441,7 @@ export const addExamModule = {
     setAllPesticideExams: (state, payload) => state.allPesticideExams = payload,
     setPesticideExamTypes: (state, payload) => state.pesticideExamTypes = payload,
     setSelectedExams: (state, payload) => state.candidates = payload,
+    setCandidateTableData: (state, payload) => state.candidateTableData = payload,
     toggleShowAllPesticideExams: (state, payload) => state.showAllPesticideExams = payload,
     toggleUploadExamModal: (state, payload) => state.uploadPesticideModalVisible = payload,
   },
@@ -465,7 +482,7 @@ export const addExamModule = {
       {
         step: 3,
         title: 'Date, Time & Format',
-        questions: [ dateTimeQ, timeQ, examMethodQ, offsiteQ, notesQ ]
+        questions: [ dateTimeQ, timeQ, examMethodQ, offsiteQ, notesQ, ]
       },
       {
         step: 4,
@@ -519,8 +536,10 @@ export const addExamModule = {
     ],
     allPesticideExams: null,
     candidates: [],
+    candidateTableData: [],
     challengerBooking: {},
     pesticideExamTypes: [],
+    invigilators: [],
     pesticideGroupStep3: {
       step: 3,
       title: 'Notes',
@@ -549,12 +568,17 @@ export const addExamModule = {
     pesticideStep3_payee: {
       step: 3,
       title: 'Payee/Notes',
-      questions: [ payeeNameQ, payeeEmailQ, payeePhoneQ, offsiteQ, notesQ ]
+      questions: [ payeeNameQ, payeeEmailQ, payeePhoneQ, notesQ ]
     },
     pesticideStep3_group: {
       step: 3,
       title: 'Date, Time & Format',
-      questions: [ dateTimeQ, timeQ, offsiteQ, notesQ ]
+      questions: [ dateTimeQ, timeQ, notesQ ]
+    },
+    pesticideStep4_summary: {
+      step: 4,
+      title: 'Summary',
+      questions: [ summaryQ ]
     },
     showAllPesticideExams: false,
     uploadPesticideModalVisible: false,

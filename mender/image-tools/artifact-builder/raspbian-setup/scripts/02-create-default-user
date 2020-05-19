@@ -13,7 +13,7 @@ fi
 
 # Create new user that is a sudo user
 useradd --create-home \
-	--groups sudo,adm,dialout,cdrom,audio,plugdev,games,users,input,netdev,gpio,i2c,spi \
+	--groups sudo,adm,dialout,cdrom,audio,plugdev,games,users,input,netdev,gpio,i2c,video,spi \
 	--shell /bin/bash \
 	$username 
 echo "$username:$password" | chpasswd

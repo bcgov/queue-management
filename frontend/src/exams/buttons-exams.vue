@@ -59,6 +59,8 @@
         this.setAddExamModalSetting(true)
         if (type === 'pesticide') {
           this.$store.dispatch('getPesticideExamTypes')
+          this.$store.dispatch('getPesticideOfficeInvigilators')
+          this.$store.dispatch('getPesticideOffsiteInvigilators')
         }
       },
       clickGenFinReport() {

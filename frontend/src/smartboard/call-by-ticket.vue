@@ -15,7 +15,7 @@ limitations under the License.*/
 <template>
 <div style="width: 100%; height: 100%;">
   <div style="display: flex; height: 75%; width: 100%;">
-    <div class="board-85-video">
+    <div class="board-nameticket-video">
       <div class="board-video-div">
         <Video :office_number="smartboardData.office_number" />
       </div>

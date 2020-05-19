@@ -27,7 +27,7 @@
              @dismiss-count-down="countDownChanged">{{this.$store.state.alertMessage}}</b-alert>
     <div v-if="!minimizeWindow">
       <div v-if="!this.addModalForm.citizen && !this.addModalForm.setup === 'add_mode'">
-        <div class="q-loader" />
+        <div class="q-loader2" />
       </div>
       <div v-else>
         <AddCitizenForm />
@@ -230,6 +230,19 @@ export default {
 </script>
 
 <style>
+  .q-loader2 {
+    position: absolute;
+    text-align: center;
+    margin: 50px auto auto 300px;
+    width: 50px;
+    height: 50px;
+    border: 10px solid LightGrey;
+    opacity:0.9;
+    border-radius: 50%;
+    border-top-color: DodgerBlue;
+    animation: spin 1s ease-in-out infinite;
+    -webkit-animation: spin 1s ease-in-out infinite;
+}
 .modal_header {
   display: flex;
   flex-direction: row;

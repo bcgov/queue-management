@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 from flask import g, Response
-from flask_restplus import Resource
+from flask_restx import Resource
 import io
 import logging
 import urllib
@@ -40,11 +40,11 @@ class ExamStatus(Resource):
             if not (exam.office_id == csr.office_id or csr.liaison_designate == 1):
                 return {"The Exam Office ID and CSR Office ID do not match!"}, 403
 
-            status = self.bcmp_service.check_exam_status(exam)
-            print(status)
+            job = self.bcmp_service.check_exam_status(exam)
+            print(job)
 
-            if status == 'PACKAGE_GENERATED':
-                package_url = status["jobProperties"]["EXAM_PACKAGE_URL"]
+            if job['jobStatus'] == 'PACKAGE_GENERATED':
+                package_url = job["jobProperties"]["EXAM_PACKAGE_URL"]
                 req = urllib.request.Request(package_url)
                 response = urllib.request.urlopen(req).read()
                 exam_file = io.BytesIO(response)
@@ -58,7 +58,7 @@ class ExamStatus(Resource):
                                     "Content-Type": "application/pdf"
                                 })
             else:
-                return {'message': 'API is down'}, 400
+                return {'message': 'Package not yet generated', 'status': job['jobStatus']}, 400
                 # test_url = 'http://www.pdf995.com/samples/pdf.pdf'
                 # req = urllib.request.Request(test_url)
                 # response = urllib.request.urlopen(req).read()

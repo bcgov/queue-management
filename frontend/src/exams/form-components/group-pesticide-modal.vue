@@ -12,8 +12,7 @@
                        autocomplete="off"
                        class="my-0 pb-0"
                        size="sm"
-                       @click.prevent
-                       @input.prevent="clickSelectItem"
+                       @click="clickSelectItem"
                        :select-size="6" />
       </b-col>
     </b-row>
@@ -176,7 +175,7 @@
                                    class="mr-2"
                                    style="font-size: 1rem;" />
               </div>
-              <div>{{ row.item.name }}</div>
+              <div>{{ row.item.exam_type_name }}</div>
               <div v-show="false">
                 {{ currentlyEditing === 'exam' && row.item.exam_type_id === highlightedTableRow.exam_type_id ?
                 row.item._rowVariant = 'primary' : row.item._rowVariant = 'secondary' }}
@@ -348,6 +347,7 @@
             output.push(candidate)
           }
         }
+        this.$store.commit('setCandidateTableData', output)
         return output
       },
     },
