@@ -158,7 +158,7 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
       if (this.currentOffice?.office_id) {
         await this.getServiceByOffice(this.currentOffice.office_id)
       }
-      this.selectedService = this.currentService || null
+      this.selectedService = (!this.checkDisabled(this.currentService)) ? this.currentService : null
       this.additionalOptions = this.additionalNotes || ''
     }
   }
