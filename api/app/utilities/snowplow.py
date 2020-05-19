@@ -202,7 +202,7 @@ class SnowPlow():
                 role_name = "Helpdesk"
 
         #  Set up the CSR context.
-        agent = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/agent/jsonschema/3-0-0',
+        agent = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/agent/jsonschema/3-0-2',
                                    {"agent_id": csr_id,
                                     "role": role_name,
                                     "counter_type": counter_name})
