@@ -29,6 +29,8 @@ from app.utilities.auth_util import is_public_user
 from app.utilities.email import get_confirmation_email_contents, send_email, get_blackout_email_contents
 from app.utilities.snowplow import SnowPlow
 from qsystem import api, api_call_with_retry, db, oidc
+from app.services import AvailabilityService
+from dateutil.parser import parse
 
 
 @api.route("/appointments/", methods=["POST"])
@@ -52,7 +54,6 @@ class AppointmentPost(Resource):
 
         #  Create a citizen for later use.
         citizen = self.citizen_schema.load({}).data
-        is_existing_citizen:bool = False
 
         # Check if the appointment is created by public user. Can't depend on the IDP as BCeID is used by other users as well
         is_public_user_appointment = is_public_user()
@@ -75,21 +76,28 @@ class AppointmentPost(Resource):
                                                                       timezone=office.timezone.timezone_name)
             if appointments and len(appointments) >= office.max_person_appointment_per_day:
                 return {"code": "MAX_NO_OF_APPOINTMENTS_REACHED", "message": "Maximum number of appointments reached"}, 400
+
+            # Check for race condition
+            start_time = parse(json_data.get('start_time'))
+            end_time = parse(json_data.get('end_time'))
+            if not AvailabilityService.has_available_slots(office=office, start_time=start_time, end_time=end_time):
+                return {"code": "CONFLICT_APPOINTMENT",
+                        "message": "Cannot create appointment due to conflict in time"}, 400
+
         else:
             csr = CSR.find_by_username(g.oidc_token_info['username'])
             office_id = csr.office_id
             office = Office.find_by_id(office_id)
 
-        if not is_existing_citizen:
-            citizen.office_id = office_id
-            citizen.qt_xn_citizen_ind = 0
-            citizen_state = CitizenState.query.filter_by(cs_state_name="Appointment booked").first()
-            citizen.cs_id = citizen_state.cs_id
-            citizen.start_time = datetime.now()
-            citizen.service_count = 1
+        citizen.office_id = office_id
+        citizen.qt_xn_citizen_ind = 0
+        citizen_state = CitizenState.query.filter_by(cs_state_name="Appointment booked").first()
+        citizen.cs_id = citizen_state.cs_id
+        citizen.start_time = datetime.now()
+        citizen.service_count = 1
 
-            db.session.add(citizen)
-            db.session.commit()
+        db.session.add(citizen)
+        db.session.commit()
 
         appointment, warning = self.appointment_schema.load(json_data)
         if is_public_user_appointment:
