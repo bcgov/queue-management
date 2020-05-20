@@ -34,6 +34,7 @@ def on_join(message):
     claims = jwt.get_unverified_claims(cookie)
 
     if claims["preferred_username"]:
+        print("==> In Python, @socketio.on('joinRoom'): claims['preferred_username'] is: " + str(claims["preferred_username"]))
         csr = CSR.find_by_username(claims["preferred_username"])
         if csr:
             join_room(csr.office_id)
