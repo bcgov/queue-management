@@ -44,7 +44,7 @@ class OfficeSlots(Resource):
             today = datetime.datetime.now().astimezone(pytz.timezone(office.timezone.timezone_name))
 
             # Get all the dates from today until booking is allowed
-            days = [datetime.datetime.now() + datetime.timedelta(days=x) for x in range(appointments_days_limit)]
+            days = [today + datetime.timedelta(days=x) for x in range(appointments_days_limit)]
 
             # Find all appointments between the dates
             appointments = Appointment.find_appointment_availability(office_id=office_id, first_date=today,
