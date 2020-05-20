@@ -39,9 +39,9 @@ export default class NoEmailAlert extends Vue {
   private mounted () {
     this.showEmailAlert = !this.currentUserProfile?.email || !this.currentUserProfile?.send_reminders
     if (!this.currentUserProfile?.email) {
-      this.alertText = 'Please <a href="#" @click="goToAccountSettings">configure your email address</a> to receive notifications'
+      this.alertText = 'Please <a @click="goToAccountSettings">configure your email address</a> to receive notifications'
     } else if (!this.currentUserProfile?.send_reminders) {
-      this.alertText = 'Please <a href="#" @click="goToAccountSettings">subscribe to email reminders</a> to receive appointment reminders'
+      this.alertText = 'Please <a @click="goToAccountSettings">subscribe to email reminders</a> to receive appointment reminders'
     }
   }
 
