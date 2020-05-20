@@ -24,6 +24,8 @@ from app.utilities.auth_util import is_public_user
 from app.utilities.auth_util import Role, has_any_role
 from app.utilities.email import send_email, get_confirmation_email_contents
 from threading import Thread
+from app.services import AvailabilityService
+from dateutil.parser import parse
 
 
 @api.route("/appointments/<int:id>/", methods=["PUT"])
@@ -54,6 +56,14 @@ class AppointmentPut(Resource):
             if appointments and len(appointments) >= office.max_person_appointment_per_day:
                 return {"code": "MAX_NO_OF_APPOINTMENTS_REACHED",
                         "message": "Maximum number of appoinments reached"}, 400
+
+            # Check for race condition
+            start_time = parse(json_data.get('start_time'))
+            end_time = parse(json_data.get('end_time'))
+            if not AvailabilityService.has_available_slots(office=office, start_time=start_time, end_time=end_time):
+                return {"code": "CONFLICT_APPOINTMENT",
+                        "message": "Cannot create appointment due to conflict in time"}, 400
+
         else:
             csr = CSR.find_by_username(g.oidc_token_info['username'])
             office_id = csr.office_id
