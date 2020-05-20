@@ -83,9 +83,9 @@ class OfficeSlots(Resource):
                 # Check if the slots are already booked
                 for actual_slot in available_slots_per_day[formatted_date]:
                     for booked_slot in grouped_appointments.get(formatted_date, []):
-                        # print('>>>>>>', booked_slot.get('start_time'), actual_slot.get('start_time'), booked_slot.get('end_time'))
-                        # print('<<<<<<', booked_slot.get('end_time'), actual_slot.get('end_time'),
-                        #       booked_slot.get('start_time'))
+                        print('>>>>>>', booked_slot.get('start_time'), actual_slot.get('start_time'), booked_slot.get('end_time'))
+                        print('<<<<<<', booked_slot.get('end_time'), actual_slot.get('end_time'),
+                              booked_slot.get('start_time'))
 
                         if booked_slot.get('start_time') \
                                 <= actual_slot.get('start_time') \
