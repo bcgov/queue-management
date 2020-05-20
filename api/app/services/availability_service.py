@@ -111,11 +111,9 @@ class AvailabilityService():
         end_time = end_time.astimezone(pytz.timezone(office.timezone.timezone_name))
 
         available_day_slots = AvailabilityService.get_available_slots(office=office, days=[start_time], format_time=False)
-        print(available_day_slots)
+
         has_available_slot = False
         for slot in available_day_slots[start_time.strftime('%m/%d/%Y')]:  # Iterate the only item from the list
-            # print(slot)
-            print(slot['start_time'], start_time.time(), slot['end_time'], end_time.time())
             if slot['start_time'] == start_time.time() and slot['end_time'] == end_time.time():
                 has_available_slot = True
 
