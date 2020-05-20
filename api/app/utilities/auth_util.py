@@ -43,6 +43,8 @@ def has_any_role(roles: list):
         @wraps(f)
         def wrapper(*args, **kwargs):
             token_roles = g.oidc_token_info['realm_access']['roles']
+            print("==> In Python, has_any_role, roles: " + str(roles))
+            print("    --> token_roles: " + str(token_roles))
             if any(role in token_roles for role in roles):
                 return f(*args, **kwargs)
             abort(403)

@@ -56,6 +56,7 @@ class CSR(Base):
         if cache.get(key):
             return cache.get(key)
 
+        print("==> In Python, csr.py, find_by_username: username=" + str(username) + "; idir_id=" + str(idir_id))
         csr = CSR.query.filter(CSR.deleted.is_(None)).filter(CSR.username==idir_id).first()
 
         cache.set(key, csr)
