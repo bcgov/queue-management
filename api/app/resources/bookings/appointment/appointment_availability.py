@@ -112,7 +112,7 @@ class OfficeSlots(Resource):
 def group_appointments(appointments, timezone: str):
     filtered_appointments = {}
     for app in appointments:
-        formatted_date = app.start_time.strftime('%m/%d/%Y')
+        formatted_date = app.start_time.astimezone(pytz.timezone(timezone)).strftime('%m/%d/%Y')
         if not filtered_appointments.get(formatted_date, None):
             filtered_appointments[formatted_date] = []
         # print('app.blackout_flag', app.blackout_flag)
