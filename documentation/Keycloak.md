@@ -58,7 +58,7 @@ To not allow users to link a verified account with a unverified account. There c
 To import the BC Services Card configuration,
 1. Login to Keycloak as a realm administrator
 2. Click on 'Import' Link
-3. Select the file [keycloak config](/keycloak-config/config.json) for 'Exported json file'
+3. Select the file [keycloak config](/documentation/keycloak-config/config.json) for 'Exported json file'
 4. Select 'Skip' for 'If a resource exists'
 5. Import
 
