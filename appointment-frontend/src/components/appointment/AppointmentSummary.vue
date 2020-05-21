@@ -85,7 +85,9 @@
             </v-col>
           </v-row>
           <v-row>
-            <NoEmailAlert></NoEmailAlert>
+            <v-col cols="12">
+              <NoEmailAlert></NoEmailAlert>
+            </v-col>
           </v-row>
         </v-card-text>
 
