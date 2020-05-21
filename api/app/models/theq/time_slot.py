@@ -36,7 +36,3 @@ class TimeSlot(Base):
 
     def __init__(self, **kwargs):
         super(TimeSlot, self).__init__(**kwargs)
-
-    @classmethod
-    def find_by_office_id(cls, office_id: int):
-        return cls.query.filter(office_id == office_id).all()
