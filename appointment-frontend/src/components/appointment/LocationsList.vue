@@ -6,24 +6,6 @@
       <v-col cols="12" sm="6" md="4">
         <geocoder-input v-on:set-location-event='onGeoSelect'></geocoder-input>
       </v-col>
-      <v-col cols="12" sm="6" md="4">
-        <v-select
-          :items="radiusList"
-          label="Radius"
-          outlined
-          color="primary"
-          class="text-left"
-          v-model="selectedRadius"
-          name="radius-select"
-          dense
-          clearable
-          hide-details
-        >
-          <template v-slot:selection="data">
-            {{ data.item }} Km
-          </template>
-        </v-select>
-      </v-col>
     </v-row>
     <v-row justify="center">
       <v-col cols="12" class="location-sorted-msg">

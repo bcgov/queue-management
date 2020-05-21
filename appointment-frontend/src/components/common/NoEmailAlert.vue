@@ -10,7 +10,8 @@
     dense
     dismissible
 >
-  <div v-html="alertText"></div>
+  <div v-if="isEmailMissing">Please <router-link to="account-settings">configure your email address</router-link> to receive notifications</div>
+  <div v-if="isReminderFlagMissing">Please <router-link to="account-settings">subscribe to email reminders</router-link> to receive appointment reminders</div>
 
 </v-alert>
 </template>
@@ -34,19 +35,16 @@ export default class NoEmailAlert extends Vue {
   private readonly currentUserProfile!: User
   private showEmailAlert: boolean = false
 
-  private alertText: string = ''
+  private isEmailMissing:boolean = false
+  private isReminderFlagMissing:boolean = false
 
   private mounted () {
     this.showEmailAlert = !this.currentUserProfile?.email || !this.currentUserProfile?.send_reminders
     if (!this.currentUserProfile?.email) {
-      this.alertText = 'Please <a @click="goToAccountSettings">configure your email address</a> to receive notifications'
+      this.isEmailMissing = true
     } else if (!this.currentUserProfile?.send_reminders) {
-      this.alertText = 'Please <a @click="goToAccountSettings">subscribe to email reminders</a> to receive appointment reminders'
+      this.isReminderFlagMissing = true
     }
-  }
-
-  private goToAccountSettings () {
-    this.$router.push('/account-settings')
   }
 }
 </script>
