@@ -76,6 +76,9 @@ class AvailabilityService():
                             end_time = add_delta_to_time(end_time, minutes=appointment_duration,
                                                          timezone=office.timezone.timezone_name)
 
+                # Sort the slot by time for the day
+                available_slots_per_day[formatted_date].sort(key=lambda x: x['start_time'])
+
                 # Check if the slots are already booked
                 for actual_slot in available_slots_per_day[formatted_date]:
                     for booked_slot in grouped_appointments.get(formatted_date, []):
@@ -133,7 +136,6 @@ class AvailabilityService():
                 'blackout_flag': app.blackout_flag == 'Y'
             })
         return filtered_appointments
-
 
     @staticmethod
     def prune_appointments(available_slots_per_day: Dict):
