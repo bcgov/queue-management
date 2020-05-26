@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from flask import request, g
 from flask_restx import Resource
-from qsystem import api, api_call_with_retry, db, oidc, socketio
+from qsystem import api, api_call_with_retry, db, oidc, socketio, time_print, get_key
 from app.models.theq import Citizen, CSR, CitizenState
 from marshmallow import ValidationError
 from app.schemas.theq import CitizenSchema
@@ -22,7 +22,6 @@ from sqlalchemy import exc
 from datetime import datetime
 from app.utilities.snowplow import SnowPlow
 from app.utilities.auth_util import Role, has_any_role
-
 
 @api.route("/citizens/", methods=['GET', 'POST'])
 class CitizenList(Resource):
@@ -34,11 +33,16 @@ class CitizenList(Resource):
     @has_any_role(roles=[Role.internal_user.value])
     def get(self):
         try:
+            user = g.oidc_token_info['username']
+            key = get_key()
+            time_print("==> K<" + key + "> In CitizenList get, before csr call, user: " + user)
             csr = CSR.find_by_username(g.oidc_token_info['username'])
+            time_print("--> K<" + key + "> In CitizenList get, after  csr call, user: " + user)
             if not csr:
                 raise Exception('no user found with username: `{}`'.format(g.oidc_token_info['username']))
+            time_print("==> K<" + key + "> In CitizenList get, before active call, user: " + user)
             active_state = CitizenState.query.filter_by(cs_state_name="Active").first()
-            print("==> In Python, citizen_list.py: active_state.cs_id: " + str(active_state.cs_id) + "; active_id: " + str(active_id))
+            time_print("--> K<" + key + "> In CitizenList get, after  active call, cs_id: " + str(active_state.cs_id) + "; active_id: " + str(active_id))
             citizens = Citizen.query.filter_by(office_id=csr.office_id, cs_id=active_state.cs_id) \
                 .order_by(Citizen.priority) \
                 .join(Citizen.service_reqs).all()
@@ -55,9 +59,14 @@ class CitizenList(Resource):
     @api_call_with_retry
     def post(self):
 
+        user = g.oidc_token_info['username']
+        key = get_key()
+
         json_data = request.get_json()
 
+        time_print("==> K<" + key + "> In CitizenList post, before csr call, user: " + user)
         csr = CSR.find_by_username(g.oidc_token_info['username'])
+        time_print("--> K<" + key + "> In CitizenList post, after  csr call, user: " + user)
         if not csr:
             raise Exception('no user found with username: `{}`'.format(g.oidc_token_info['username']))
 
@@ -83,7 +92,11 @@ class CitizenList(Resource):
                 'errors': result.errors}, 201
 
 try:
+    key = get_key()
+    user = 'Startup'
+    time_print("==> K<" + key + "> In CitizenList startup, before call, user: " + user)
     citizen_state = CitizenState.query.filter_by(cs_state_name="Active").first()
+    time_print("--> K<" + key + "> In CitizenList startup, after  call, user: " + user)
     active_id = citizen_state.cs_id
 except:
     active_id = 1
