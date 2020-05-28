@@ -26,6 +26,9 @@ def my_print(string):
     if print_flag:
         print(time_string() + string)
 
+def time_print(string):
+    print(time_string() + string)
+
 def time_string():
     now = datetime.datetime.now()
     ms = now.strftime("%f")[:3]

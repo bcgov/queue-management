@@ -148,3 +148,5 @@ keys-generated
 /api/postman/bookings-env-postman-contains-secrets.json
 /api/videos/*.mp4
 /api/videos/*.bak
+/appointment-frontend/public/config/kc
+/appointment-frontend/.env.local

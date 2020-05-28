@@ -13,6 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 from enum import Enum
 from functools import wraps
+from qsystem import time_print
 
 from flask import g, abort
 
@@ -43,9 +44,10 @@ def has_any_role(roles: list):
         @wraps(f)
         def wrapper(*args, **kwargs):
             token_roles = g.oidc_token_info['realm_access']['roles']
-            print("==> In Python, has_any_role, roles: " + str(roles))
-            print("    --> token_roles: " + str(token_roles))
+            time_print("==> has_any_role, R: " + str(roles) + "; T: " + str(token_roles))
+            time_print("    --> C:  " + str(f))
             if any(role in token_roles for role in roles):
+                time_print(f'    --> KW: {kwargs}')
                 return f(*args, **kwargs)
             abort(403)
 
