@@ -42,6 +42,10 @@ Run the cron in DEV namespace
 
 `oc delete cronjob/send-appointment-reminder`
 
+## Execute job manually
+
+`oc create job --from=cronjob/send-appointment-reminder <temporary name for job>`
+
 
 ## How to check logs in Kibana
 
