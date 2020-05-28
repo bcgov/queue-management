@@ -110,7 +110,9 @@ def get_confirmation_email_contents(appointment: Appointment, office, timezone, 
 
 def is_valid_email(email: str):
     """Return if the email is valid or not."""
-    return re.match(r'[^@]+@[^@]+\.[^@]+', email) is not None
+    if email:
+        return re.match(r'[^@]+@[^@]+\.[^@]+', email) is not None
+    return False
 
 
 def formatted_date(dt: datetime, timezone):

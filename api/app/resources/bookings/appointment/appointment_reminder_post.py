@@ -32,8 +32,8 @@ class AppointmentRemindersPost(Resource):
     def post(self):
         """Create appointment reminders."""
         appointments = Appointment.find_next_day_appointments()
-        print('sending {} reminders'.format(len(appointments)))
 
+        reminder_count: int = 0
         if appointments:
             for (appointment, office, timezone, user) in appointments:
                 send_reminder = False
@@ -47,6 +47,9 @@ class AppointmentRemindersPost(Resource):
                     def async_email(subject, email, sender, body):
                         send_email(subject, email, sender, body)
 
+                    reminder_count += 1
                     thread = Thread(target=async_email, args=get_reminder_email_contents(appointment, user, office, timezone))
                     thread.daemon = True
                     thread.start()
+
+        print(f'Sending {reminder_count} reminders')
