@@ -57,11 +57,23 @@ class BookingPost(Resource):
                 db.session.add(booking)
                 db.session.commit()
 
-            else:
+            elif type(i_id) == int:
 
                 booking.invigilators.append(Invigilator.query.filter_by(invigilator_id=i_id).first_or_404())
                 db.session.add(booking)
                 db.session.commit()
+            
+            elif type(i_id) == list:
+
+                if len(i_id) == 0:
+                    db.session.add(booking)
+                    db.session.commit()
+
+                else:
+                    for value in i_id:
+                        booking.invigilators.append(Invigilator.query.filter_by(invigilator_id=value).first_or_404())
+                        db.session.add(booking)
+                        db.session.commit()
 
             result = self.booking_schema.dump(booking)
 

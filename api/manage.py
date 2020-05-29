@@ -423,9 +423,20 @@ class Bootstrap(Command):
         office_victoria.counters.append(counter)
         office_victoria.counters.append(qt_counter)
 
+        office_pesticide_office = theq.Office(
+            office_name="Pesticide Offsite",
+            office_number=987,
+            sb_id=smartboard_call_name.sb_id,
+            exams_enabled_ind=1,
+            timezone_id=timezone_one.timezone_id
+        )
+        office_pesticide_office.counters.append(counter)
+        office_pesticide_office.counters.append(qt_counter)
+
         db.session.add(office_test)
         db.session.add(office_100)
         db.session.add(office_victoria)
+        db.session.add(office_pesticide_office)
         db.session.commit()
 
         #-- CSR values ------------------------------------------------------
@@ -490,10 +501,10 @@ class Bootstrap(Command):
             receptionist_ind=1,
             deleted=None,
             csr_state_id=csr_state_logout.csr_state_id,
-            ita_designate=0,
-            pesticide_designate=0,
-            finance_designate=0,
-            liaison_designate=0
+            ita_designate=1,
+            pesticide_designate=1,
+            finance_designate=1,
+            liaison_designate=1
         )
         demo_user = theq.CSR(
             username="user",
@@ -599,9 +610,31 @@ class Bootstrap(Command):
             contract_expiry_date="2019-01-31"
         )
 
+        pesticide_invigilator_one = bookings.Invigilator(
+            invigilator_name="Pest 1",
+            office_id=office_pesticide_office.office_id,
+            invigilator_notes="Loves using chalk boards to communicate to examinees",
+            contact_phone="555-555-5555",
+            contact_email="bartwuzhere@gmail.com",
+            contract_number="c-000003",
+            contract_expiry_date="2019-01-31"
+        )
+
+        pesticide_invigilator_two = bookings.Invigilator(
+            invigilator_name="Pest 2",
+            office_id=office_pesticide_office.office_id,
+            invigilator_notes="Loves using chalk boards to communicate to examinees",
+            contact_phone="555-555-5555",
+            contact_email="bartwuzhere@gmail.com",
+            contract_number="c-000003",
+            contract_expiry_date="2019-01-31"
+        )
+
         db.session.add(invigilator_one)
         db.session.add(invigilator_two)
         db.session.add(invigilator_three)
+        db.session.add(pesticide_invigilator_one)
+        db.session.add(pesticide_invigilator_two)
         db.session.commit()
 
         print("--> Bookings: Exam Types")
@@ -785,24 +818,44 @@ class Bootstrap(Command):
             pesticide_exam_ind=0,
         )
 
-        exam_type_nineteen = bookings.ExamType(
-            exam_type_name="Pesticide",
+        exam_type_twenty_one = bookings.ExamType(
+            exam_type_name="Industrial Vegetation",
             exam_color="#FFFFFF",
-            number_of_hours=2,
+            number_of_hours=3,
             method_type="written",
             ita_ind=0,
             group_exam_ind=0,
             pesticide_exam_ind=1,
         )
 
-        exam_type_twenty = bookings.ExamType(
-            exam_type_name="Group Pesticide",
+        exam_type_twenty_two = bookings.ExamType(
+            exam_type_name="Structural-General",
             exam_color="#FFFFFF",
-            number_of_hours=2,
+            number_of_hours=3,
+            method_type="written",
+            ita_ind=0,
+            group_exam_ind=0,
+            pesticide_exam_ind=1,
+        )
+
+        exam_type_twenty_three = bookings.ExamType(
+            exam_type_name="Dispenser-Commercial",
+            exam_color="#FFFFFF",
+            number_of_hours=1,
+            method_type="written",
+            ita_ind=0,
+            group_exam_ind=0,
+            pesticide_exam_ind=1,
+        )
+        
+        exam_type_twenty_four = bookings.ExamType(
+            exam_type_name="Group Pesticide Exam",
+            exam_color="#FFFFFF",
+            number_of_hours=0,
             method_type="written",
             ita_ind=0,
             group_exam_ind=1,
-            pesticide_exam_ind=1,
+            pesticide_exam_ind=0,
         )
 
         db.session.add(exam_type_one)
@@ -823,8 +876,10 @@ class Bootstrap(Command):
         db.session.add(exam_type_sixteen)
         db.session.add(exam_type_seventeen)
         db.session.add(exam_type_eighteen)
-        db.session.add(exam_type_nineteen)
-        db.session.add(exam_type_twenty)
+        db.session.add(exam_type_twenty_one)
+        db.session.add(exam_type_twenty_two)
+        db.session.add(exam_type_twenty_three)
+        db.session.add(exam_type_twenty_four)
         db.session.commit()
 
         print("--> Bookings: Exam - No exams added")

@@ -159,6 +159,7 @@ export default {
         })
       })
     },
+
     postAppointment({rootState}, payload) {
       let state = rootState
       payload.office_id = rootState.user.office_id

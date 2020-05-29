@@ -169,6 +169,11 @@ class BaseConfig(object):
     BACK_OFFICE_DISPLAY = os.getenv("BACK_OFFICE_DISPLAY", "BackOffice")
     RECURRING_FEATURE_FLAG = os.getenv("RECURRING_FEATURE_FLAG", "On")
 
+    MINIO_HOST = os.getenv('MINIO_HOST', 'localhost:9000')
+    MINIO_BUCKET = os.getenv('MINIO_BUCKET', 'exams')
+    MINIO_ACCESS_KEY = os.getenv('MINIO_ACCESS_KEY', 'minio')
+    MINIO_SECRET_KEY = os.getenv('MINIO_SECRET_KEY', 'minio1234')
+    MINIO_USE_SECURE = os.getenv('MINIO_USE_SECURE', 0)
 
     #print(parse_dsn(("postgresql://localhost:5000?connect_timeout=10")))
     #quote_ident("connect_timeout", scope)
@@ -198,10 +203,35 @@ class LocalConfig(BaseConfig):
     #  For running rabbitmq locally, use the line below.
     # ACTIVE_MQ_URL = 'amqp://guest:guest@localhost:5672'
 
+    SERVER_NAME = None
     SESSION_COOKIE_DOMAIN = None
     CORS_ALLOWED_ORIGINS = ["http://localhost:8080"]
+    SQLALCHEMY_ECHO = False
     SECRET_KEY = "pancakes"
-    LOCALHOST_DB_IP = "127.0.0.1"
+
+    DB_ENGINE = os.getenv('DATABASE_ENGINE', 'postgres')
+    DB_USER = os.getenv('DATABASE_USERNAME', 'postgres')
+    DB_PASSWORD = os.getenv('DATABASE_PASSWORD', 'root')
+    DB_NAME = os.getenv('DATABASE_NAME', 'qsystem')
+    DB_HOST = os.getenv('DATABASE_HOST', '127.0.0.1')
+    DB_PORT = os.getenv('DATABASE_PORT', '5432')
+    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}'.format(
+        engine=DB_ENGINE,
+        user=DB_USER,
+        password=DB_PASSWORD,
+        host=DB_HOST,
+        port=DB_PORT,
+        name=DB_NAME
+    )
+    BCMP_BASE_URL = os.getenv('BCMP_BASE_URL')
+    BCMP_AUTH_TOKEN = os.getenv('BCMP_AUTH_TOKEN')
+
+    MINIO_HOST = os.getenv('MINIO_HOST', 'localhost:9000')
+    MINIO_BUCKET = os.getenv('MINIO_BUCKET', 'exams')
+    MINIO_ACCESS_KEY = os.getenv('MINIO_ACCESS_KEY', 'minio')
+    MINIO_SECRET_KEY = os.getenv('MINIO_SECRET_KEY', 'minio1234')
+    MINIO_USE_SECURE = os.getenv('MINIO_USE_SECURE', 0)
+
 
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
@@ -215,6 +245,9 @@ class DevelopmentConfig(BaseConfig):
 
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
+    BCMP_BASE_URL = os.getenv('BCMP_BASE_URL')
+    BCMP_AUTH_TOKEN = os.getenv('BCMP_AUTH_TOKEN')
+
 
 class TestConfig(BaseConfig):
     DEBUG = True
@@ -224,6 +257,9 @@ class TestConfig(BaseConfig):
 
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
+    BCMP_BASE_URL = os.getenv('BCMP_BASE_URL')
+    BCMP_AUTH_TOKEN = os.getenv('BCMP_AUTH_TOKEN')
+
 
 class ProductionConfig(BaseConfig):
     DEBUG = True
@@ -233,6 +269,9 @@ class ProductionConfig(BaseConfig):
 
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
+    BCMP_BASE_URL = os.getenv('BCMP_BASE_URL')
+    BCMP_AUTH_TOKEN = os.getenv('BCMP_AUTH_TOKEN')
+
 
 def configure_app(app):
 

@@ -25,6 +25,7 @@ flask_marshmallow==0.11.0
 flask-socketio
 gunicorn
 marshmallow-sqlalchemy==0.22.3
+minio<6
 psycopg2-binary
 pysnow
 pytest
