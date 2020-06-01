@@ -38,7 +38,11 @@ If you want to just try out the application, here are some instructions to get i
 1. `docker run -it --name keycloak -p 8085:8080 keycloak`
 
 You should be able to login in with admin/admin on http://localhost:8085/auth
-
+1. Go to Groups, add new.  theq_internal_user
+1. Go to Users, view all users, edit 'admin', 
+    - under Groups, under Available Groups, join theq_internal_user
+    - under Role Mappings, select internal_user, add selected, should see under assigned role
+1. Go to Clients, edit account, scope, set full scope allowed to ON
 ## Setup Flask Python API Container:
 
 Ensure you have python 3. I also had to install: gcc, python3-venv, libmysqlclient-dev and python3-dev installed.

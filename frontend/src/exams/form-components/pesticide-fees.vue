@@ -32,7 +32,7 @@
       </b-col>
       <b-col cols="5">
         <b-form-group>
-          <label>Payee has been sent receipt</label>
+          <label>Payee has been sent confirmation/receipt</label>
           <b-form-checkbox v-model="capturePayeeSentReceipt"/>
         </b-form-group>
       </b-col>

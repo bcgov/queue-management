@@ -384,7 +384,7 @@
                     <b-dropdown-item size="sm"
                                        v-if="row.item.booking && Object.keys(row.item.booking).length > 0"
                                      @click="updateCalendarBooking(row.item)">
-                        {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}</b-dropdown-item>
+                        {{ checkInvigilator(row.item) ? 'Update Booking' : 'Edit/Print/Add Invigilator' }}</b-dropdown-item>
                     <b-dropdown-item size="sm"
                                      v-if="!row.item.booking || Object.keys(row.item.booking).length === 0"
                                      @click="addCalendarBooking(row.item)">Schedule Exam</b-dropdown-item>
@@ -396,7 +396,7 @@
                   <b-dropdown-item size="sm"
                                    v-if="row.item.offsite_location || row.item.is_pesticide"
                                    @click="editGroupBooking(row.item)">
-                    {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}
+                    {{ checkInvigilator(row.item) ? 'Update Booking' : 'Edit/Print/Add Invigilator' }}
                   </b-dropdown-item>
                 </template>
                 <template v-else-if="row.item.exam_type.pesticide_exam_ind">
@@ -404,7 +404,7 @@
                     <b-dropdown-item size="sm"
                                      v-if="row.item.booking && Object.keys(row.item.booking).length > 0"
                                      @click="updateCalendarBooking(row.item)">
-                      {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}</b-dropdown-item>
+                      {{ checkInvigilator(row.item) ? 'Update Booking' : 'Edit/Print/Add Invigilator' }}</b-dropdown-item>
                     <b-dropdown-item size="sm"
                                      v-if="!row.item.booking || Object.keys(row.item.booking).length === 0"
                                      @click="addCalendarBooking(row.item)">Schedule Exam</b-dropdown-item>
@@ -442,7 +442,7 @@
 
                   <b-dropdown-item size="sm"
                       v-if="!(row.item.exam_type.group_exam_ind && row.item.is_pesticide)"
-                      @click="editExamDetails(row.item)">Edit Exam Details</b-dropdown-item>
+                      @click="editExamDetails(row.item)">Edit/Print Exam Details</b-dropdown-item>
                   <b-dropdown-item size="sm"
                       @click="returnExam(row.item)">
                     {{ row.item.is_pesticide ? 'Upload Exam' : 'Return Exam' }}
@@ -1089,7 +1089,7 @@
               break
             default:
               uploadFiltered = evenMoreFiltered
-          } 
+          }
           let receptSentFiltered = []
           switch(this.inventoryFilters.receptSentFilter) {
             case 'notsent':
@@ -1097,7 +1097,7 @@
               break
             default:
               receptSentFiltered = uploadFiltered
-          } 
+          }
           let finalFiltered = []
           switch (this.inventoryFilters.returnedFilter) {
             case 'both':
@@ -1528,7 +1528,11 @@
         }
 
         if (!item.exam_received_date) {
-          output.push('Receipt of Materials')
+          if (item.is_pesticide) {
+            output.push('Print Materials')
+          } else {
+            output.push('Receipt of Materials')
+          }
         }
         if (item.exam_type.exam_type_name === 'Monthly Session Exam') {
           if (!item.number_of_students) {

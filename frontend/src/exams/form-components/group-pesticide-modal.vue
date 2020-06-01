@@ -378,9 +378,7 @@
       clickTableRow(examRow) {
         this.highlightedTableRow = examRow
         this.formFields.forEach(field => {
-          if ( examRow[field] ) {
             this[field] = examRow[field]
-          }
         })
         this.selectedExamType = this.pesticideExamTypes.find(type => type.exam_type_id === examRow.exam_type_id)
 

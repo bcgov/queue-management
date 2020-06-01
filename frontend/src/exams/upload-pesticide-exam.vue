@@ -198,6 +198,7 @@
               console.error(error)
             })
         } else {
+          this.isLoading = false
           this.updateExam(putData)
         }
       },
