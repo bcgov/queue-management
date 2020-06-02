@@ -43,15 +43,19 @@ def has_any_role(roles: list):
     def decorated(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
-            user = g.oidc_token_info['username']
             token_roles = g.oidc_token_info['realm_access']['roles']
-            time_print("==> has_any_role, R: " + str(roles) + "; T: " + str(token_roles))
-            time_print("    --> U: " + user + "; C:  " + str(f))
             if any(role in token_roles for role in roles):
-                time_print(f'    --> KW: {kwargs}')
                 return f(*args, **kwargs)
             abort(403)
 
         return wrapper
 
     return decorated
+
+def has_role(need_roles: list, all_roles: list, user, caller):
+    if any(role in all_roles for role in need_roles):
+        return
+    else:
+        time_print("==> has_role, R: " + str(need_roles) + "; T: " + str(all_roles))
+        time_print("    --> U: " + user + "; C:  " + caller)
+        abort(403)
