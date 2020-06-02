@@ -18,7 +18,7 @@ from qsystem import api, db, oidc, time_print, get_key
 from sqlalchemy import exc
 from app.models.theq import CSRState
 from app.schemas.theq import CSRStateSchema
-from app.utilities.auth_util import Role, has_any_role
+from app.utilities.auth_util import Role, has_any_role, has_role
 
 
 @api.route("/csr_states/", methods=["GET"])
@@ -27,14 +27,11 @@ class CsrStateList(Resource):
     csr_state_schema = CSRStateSchema(many=True, exclude=('csrs'))
 
     @oidc.accept_token(require_token=True)
-    @has_any_role(roles=[Role.internal_user.value])
     def get(self):
         try:
             user = g.oidc_token_info['username']
-            key = get_key()
-            time_print("==> K<" + key + "> In CsrStateList, before call, user: " + user)
+            has_role([Role.internal_user.value], g.oidc_token_info['realm_access']['roles'], user, "CsrStateList GET /csr_states/")
             states = CSRState.query.all()
-            time_print("--> K<" + key + "> In CsrStateList, after  call, user: " + user)
             result = self.csr_state_schema.dump(states)
 
             return {'csr_states': result.data,
