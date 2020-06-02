@@ -43,6 +43,7 @@ class AppointmentPost(Resource):
     @api_call_with_retry
     @has_any_role(roles=[Role.internal_user.value, Role.online_appointment_user.value])
     def post(self):
+        print("==> In AppointmentPost, POST /appointments/")
         json_data = request.get_json()
         if not json_data:
             return {"message": "No input data received for creating an appointment"}, 400
