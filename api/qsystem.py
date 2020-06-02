@@ -27,7 +27,8 @@ def my_print(string):
         print(time_string() + string)
 
 def time_print(string):
-    print(time_string() + string)
+    if debug_type_error_flag:
+        print(time_string() + string)
 
 def time_string():
     now = datetime.datetime.now()
@@ -43,6 +44,7 @@ application.url_map.strict_slashes = True
 #   Do basic application configuration
 configure_app(application)
 print_flag = application.config['PRINT_ENABLE']
+debug_type_error_flag = application.config['PRINT_ENABLE_DEBUG_TYPEERROR']
 socket_flag = application.config['SOCKET_FLAG']
 engine_flag = application.config['ENGINE_FLAG']
 
