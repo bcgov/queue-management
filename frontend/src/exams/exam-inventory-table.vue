@@ -518,6 +518,13 @@
           {text: 'All', value: 'all'},
         ]
         this.newQuickActionOptions = this.newQuickActionOptions.concat(pestFilterOptions)
+        this.newQuickActionOptionsNoOEM = this.newQuickActionOptionsNoOEM.concat(pestFilterOptions)
+      } else {
+        const nonpestFilterOptions = [
+          {text: 'All', value: 'all'}
+        ]
+        this.newQuickActionOptions = this.newQuickActionOptions.concat(nonpestFilterOptions)
+        this.newQuickActionOptionsNoOEM = this.newQuickActionOptionsNoOEM.concat(nonpestFilterOptions)
       }
       this.getExams().then( () => { this.getBookings() })
       this.getOffices()
@@ -556,7 +563,6 @@
           {text: 'Requires Attention', value:'require_attention'},
           {text: 'Expired', value: 'expired'},
           {text: 'Returned', value: 'returned'},
-          {text: 'All', value: 'all'},
         ],
         isLoading: false,
       }
