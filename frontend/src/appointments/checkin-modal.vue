@@ -110,10 +110,13 @@
             this.toggleCheckInClicked(true)
             this.$store.commit('toggleServeCitizenSpinner', true)
             this.postCheckIn(this.clickedAppt).then(response => {
+              this.$root.$emit('clear-clicked-appt')
+              this.$root.$emit('clear-clicked-time')
               this.hide()
               if (this.$store.state.officeType == "nocallonsmartboard") {
                 this.$router.push('/queue')
               }
+
               this.$store.commit('toggleServeCitizenSpinner', false)
             })
           }
