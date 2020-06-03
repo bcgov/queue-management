@@ -21,7 +21,7 @@ from app.schemas.theq import CitizenSchema
 from sqlalchemy import exc
 from datetime import datetime
 from app.utilities.snowplow import SnowPlow
-from app.utilities.auth_util import Role, has_any_role
+from app.utilities.auth_util import Role, has_any_role, has_role
 
 @api.route("/citizens/", methods=['GET', 'POST'])
 class CitizenList(Resource):
@@ -30,20 +30,15 @@ class CitizenList(Resource):
     citizens_schema = CitizenSchema(many=True)
 
     @oidc.accept_token(require_token=True)
-    @has_any_role(roles=[Role.internal_user.value])
     def get(self):
         try:
             user = g.oidc_token_info['username']
-            key = get_key()
-            time_print("==> K<" + key + "> In CitizenList get, before csr call, user: " + user)
+            has_role([Role.internal_user.value], g.oidc_token_info['realm_access']['roles'], user, "CitizenList GET /citizens/")
             csr = CSR.find_by_username(g.oidc_token_info['username'])
-            time_print("--> K<" + key + "> In CitizenList get, after  csr call, user: " + user)
             if not csr:
                 raise Exception('no user found with username: `{}`'.format(g.oidc_token_info['username']))
-            time_print("==> K<" + key + "> In CitizenList get, before active call, user: " + user)
             active_state = CitizenState.query.filter_by(cs_state_name="Active").first()
-            time_print("--> K<" + key + "> In CitizenList get, after  active call, cs_id: " + str(active_state.cs_id) + "; active_id: " + str(active_id))
-            citizens = Citizen.query.filter_by(office_id=csr.office_id, cs_id=active_state.cs_id) \
+            citizens = Citizen.query.filter_by(office_id=csr.office_id, cs_id=active_id) \
                 .order_by(Citizen.priority) \
                 .join(Citizen.service_reqs).all()
             result = self.citizens_schema.dump(citizens)
@@ -60,13 +55,12 @@ class CitizenList(Resource):
     def post(self):
 
         user = g.oidc_token_info['username']
-        key = get_key()
+        has_role([Role.internal_user.value], g.oidc_token_info['realm_access']['roles'], user,
+                 "CitizenList POST /citizens/")
 
         json_data = request.get_json()
 
-        time_print("==> K<" + key + "> In CitizenList post, before csr call, user: " + user)
         csr = CSR.find_by_username(g.oidc_token_info['username'])
-        time_print("--> K<" + key + "> In CitizenList post, after  csr call, user: " + user)
         if not csr:
             raise Exception('no user found with username: `{}`'.format(g.oidc_token_info['username']))
 
@@ -93,10 +87,7 @@ class CitizenList(Resource):
 
 try:
     key = get_key()
-    user = 'Startup'
-    time_print("==> K<" + key + "> In CitizenList startup, before call, user: " + user)
     citizen_state = CitizenState.query.filter_by(cs_state_name="Active").first()
-    time_print("--> K<" + key + "> In CitizenList startup, after  call, user: " + user)
     active_id = citizen_state.cs_id
 except:
     active_id = 1

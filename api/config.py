@@ -28,6 +28,7 @@ class BaseConfig(object):
     LOGGING_LEVEL = DEBUG
     LOGGING_FORMAT = '[%(asctime)s] %(levelname)-8s (%(name)s) <%(module)s.py>.%(funcName)s: %(message)s'
     PRINT_ENABLE = (os.getenv("PRINT_ENABLE","FALSE")).upper() == "TRUE"
+    PRINT_ENABLE_DEBUG_TYPEERROR = (os.getenv("PRINT_ENABLE_DEBUG_TYPEERROR","FALSE")).upper() == "TRUE"
     SOCKET_STRING = os.getenv('LOG_SOCKETIO', 'WARNING')
     ENGINE_STRING = os.getenv('LOG_ENGINEIO', 'WARNING')
 
