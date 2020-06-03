@@ -102,7 +102,7 @@
           File upload failed, please try again.
           </b-alert>
       </template>
-      <div class="text-center" v-if="isLoading && !submitted">
+      <div class="text-center" v-if="isLoading">
         <b-spinner variant="primary" label="Loading"></b-spinner>
       </div>
     </b-form>
@@ -185,12 +185,13 @@
         if (this.status === 'written' && this.file) {
           this.submitExam({file: this.file, exam: this.exam})
             .then((bcmpResponse) => {
-              this.isLoading = false
               this.submitted = true
               console.log(bcmpResponse)
               putData['upload_received_ind'] = this.actionedExam.upload_received_ind = 1
               putData['exam_returned_date'] = this.actionedExam.exam_returned_date = new Date().toISOString()
+              console.log(this.actionedExam)
               this.updateExam(putData)
+              this.isLoading = false
             })
             .catch( (error) => {
               this.uploadFailed = true
@@ -198,8 +199,15 @@
               console.error(error)
             })
         } else {
-          this.isLoading = false
+          console.log("=====> Submit Exam ===> this.status",this.status)
+          console.log("=====> Submit Exam ===> this.upload received_ind",this.actionedExam.upload_received_ind)
+          console.log("=====> Submit Exam ===> this returned date",this.actionedExam.exam_returned_date)
+          this.submitted = true
+          putData['upload_received_ind'] = this.actionedExam.upload_received_ind = 0
+          putData['exam_returned_date'] = this.actionedExam.exam_returned_date = new Date().toISOString()
+          console.log(this.actionedExam)
           this.updateExam(putData)
+          this.isLoading = false
         }
       },
       updateExam(putData) {
