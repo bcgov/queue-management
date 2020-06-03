@@ -37,7 +37,6 @@ class CitizenList(Resource):
             csr = CSR.find_by_username(g.oidc_token_info['username'])
             if not csr:
                 raise Exception('no user found with username: `{}`'.format(g.oidc_token_info['username']))
-            active_state = CitizenState.query.filter_by(cs_state_name="Active").first()
             citizens = Citizen.query.filter_by(office_id=csr.office_id, cs_id=active_id) \
                 .order_by(Citizen.priority) \
                 .join(Citizen.service_reqs).all()
