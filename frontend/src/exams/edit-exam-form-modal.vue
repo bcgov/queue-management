@@ -8,7 +8,7 @@
            size="md">
     <FailureExamAlert class="m-0 p-0" />
     <div v-if="exam">
-      <span style="font-size: 1.4rem; font-weight: 600;">Edit Exam Details</span>
+      <span style="font-size: 1.4rem; font-weight: 600;">Edit/Print Exam Details</span>
       <template v-if="examType === 'pest'">
         <b-form>
           <b-form-row>
@@ -146,7 +146,7 @@
                   value="1"
                   unchecked-value="0"
                 >
-                  Receipt Sent?
+                  Confirmation/Receipt Sent?
                 </b-form-checkbox>
               </b-form-group>
             </b-col>

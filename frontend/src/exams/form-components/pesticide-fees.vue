@@ -76,10 +76,11 @@
         }
       },
       showReceiptField() {
-        if (this.exam.fees === 'paid') {
-          return true
-        }
-        return false
+        // if (this.exam.fees === 'paid') {
+        //   return true
+        // }
+        // return false
+        return true
       },
       receiptNumber: {
         get() {
