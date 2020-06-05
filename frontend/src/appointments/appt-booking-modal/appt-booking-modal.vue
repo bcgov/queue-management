@@ -397,6 +397,7 @@
           return
         }
         if (this.apptRescheduling) {
+          this.$store.commit('toggleRescheduling', false)
           this.setRescheduling(false)
           this.start = this.clickedTime.start.clone()
           this.length = this.clickedTime.end.clone().diff(this.start, 'minutes')
