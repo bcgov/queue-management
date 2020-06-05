@@ -3,10 +3,10 @@ import moment from 'moment'
 
 export default {
   editing: false,
-  rescheduling: false,
   namespaced: true,
   state: {
     appointments: [],
+    apptRescheduling: false,
     calendarSetup: {
       title: null,
       name: null
@@ -318,7 +318,7 @@ export default {
       state.selectedService = null
       state.selectedService = payload
     },
-    setRescheduling: (state, payload) => state.reschedulinng = payload,
+    setRescheduling: (state, payload) => state.apptRescheduling = payload,
     toggleAppointmentBlackoutModal: (state, payload) => state.showAppointmentBlackoutModal = payload,
   },
 }

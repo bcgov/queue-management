@@ -1,5 +1,4 @@
 <template>
-
   <b-modal v-model="modalVisible"
            @shown="show"
            size="md"
@@ -183,7 +182,6 @@
         contact_information: null,
         fieldsEdited: false,
         length: 0,
-        rescheduling: false,
         selectingService: false,
         showMessage: false,
         start: null,
@@ -205,6 +203,7 @@
         'showApptBookingModal',
         'selectedService',
         'editDeleteSeries',
+        'apptRescheduling',
         'submitClicked'
       ]),
       appointments() {
@@ -345,7 +344,7 @@
       },
       clearEvents() {
         this.$root.$emit('clear-clicked-time')
-        if (!this.rescheduling && !this.selectingService) {
+        if (!this.apptRescheduling && !this.selectingService) {
           this.$root.$emit('clear-clicked-appt')
         }
       },
@@ -376,16 +375,20 @@
         if (this.clickedTime) {
           this.$root.$emit('removeTempEvent')
         }
-        this.rescheduling = true
+        this.$store.commit('toggleEditApptModal', false)
+        this.$store.commit('toggleRescheduling', true)
+        this.$store.commit('toggleApptEditMode', true)
         this.clearMessage()
         this.oldLength = this.length
         this.toggleApptBookingModal(false)
+        this.setRescheduling(true)
       },
       cancel() {
         this.$root.$emit('removeTempEvent')
         this.$root.$emit('clear-clicked-time')
         this.$root.$emit('clear-clicked-appt')
         this.toggleApptBookingModal(false)
+        this.setRescheduling(false)
       },
       show() {
         this.clearMessage()
@@ -393,8 +396,8 @@
           this.selectingService = false
           return
         }
-        if (this.rescheduling) {
-          this.rescheduling = false
+        if (this.apptRescheduling) {
+          this.setRescheduling(false)
           this.start = this.clickedTime.start.clone()
           this.length = this.clickedTime.end.clone().diff(this.start, 'minutes')
           if (this.oldLength) {
@@ -453,6 +456,8 @@
             this.$root.$emit('clear-clicked-appt')
             this.$root.$emit('clear-clicked-time')
           }
+          this.$store.commit('toggleRescheduling', false)
+          this.$store.commit('toggleApptEditMode', false)
           if (this.clickedAppt) {
             let payload = {
               id: this.clickedAppt.appointment_id,
