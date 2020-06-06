@@ -72,13 +72,14 @@
     },
     methods: {
       ...mapActions(['finishBooking','finishAppointment', ]),
-      ...mapMutations(['toggleEditBookingModal','toggleEditApptModal','toggleRescheduling']),
+      ...mapMutations(['toggleEditBookingModal','toggleEditApptModal','toggleRescheduling','toggleApptRescheduleCancel']),
       cancel() {
 
         if (this.isAppointmentEditMode) {
           if (this.rescheduling) {
             this.toggleEditApptModal(true)
             this.toggleRescheduling(false)
+            this.toggleApptRescheduleCancel(true)
             return
           }
           this.finishAppointment()

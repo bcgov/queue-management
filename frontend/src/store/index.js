@@ -58,6 +58,7 @@ export const store = new Vuex.Store({
       channel_id: null,
       service_id: null,
     },
+    apptRescheduleCancel: false,
     alertMessage: '',
     allCitizens: [],
     backOfficeDisplay: 'BackOffice',
@@ -1905,6 +1906,7 @@ export const store = new Vuex.Store({
     finishAppointment(context) {
       context.commit('setSelectionIndicator', false)
       context.commit('toggleRescheduling', false)
+      context.commit('toggleApptRescheduleCancel', true)
       context.commit('toggleApptEditMode', false)
       context.commit('toggleEditApptModal', false)
     },
@@ -2804,6 +2806,8 @@ export const store = new Vuex.Store({
     },
 
     toggleRescheduling: (state, payload) => state.rescheduling = payload,
+
+    toggleApptRescheduleCancel: (state, payload) => state.apptRescheduleCancel = payload,
 
     setEditedBookingOriginal: (state, payload) => state.editedBookingOriginal = payload,
 

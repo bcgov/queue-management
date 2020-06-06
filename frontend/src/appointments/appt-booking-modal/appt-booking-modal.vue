@@ -396,7 +396,7 @@
           this.selectingService = false
           return
         }
-        if (this.apptRescheduling) {
+        if (this.apptRescheduling && !this.$store.state.apptRescheduleCancel) {
           this.$store.commit('toggleRescheduling', false)
           this.setRescheduling(false)
           this.start = this.clickedTime.start.clone()
@@ -417,7 +417,7 @@
           this.start = this.clickedTime.start.clone()
           this.clearAddModal()
         }
-        if (this.clickedAppt && this.clickedAppt.end) {
+        if (this.clickedAppt && this.clickedAppt.end && !this.$store.state.apptRescheduleCancel) {
           this.citizen_name = this.clickedAppt.title
           this.comments = this.clickedAppt.comments
           this.contact_information = this.clickedAppt.contact_information
@@ -432,6 +432,7 @@
           this.comments = ''
           this.contact_information = ''
           this.start = this.clickedTime.start.clone()
+          this.$store.commit('toggleApptRescheduleCancel', false)
         }
       },
       submit() {
