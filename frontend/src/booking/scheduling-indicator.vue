@@ -2,14 +2,18 @@
   <div class="scheduling-indicator"
        v-if="show_scheduling_indicator">
     <div style="display: flex; justify-content: flex-start; border-radius: 24">
-      <div class="m-2 flex-min" style="font-weight:600; font-size:1.2rem">Now Scheduling | </div>
-      <div style="font-size: 1.1rem;" class="flex-min ml-1 mr-2 mt-2">
+      <div class="m-2 flex-min" style="font-weight:600; font-size:1.2rem" v-if="!isAppointmentEditMode">Now Scheduling | </div>
+      <div class="m-2 flex-min" style="font-weight:600; font-size:1.2rem" v-if="isAppointmentEditMode">Now ReScheduling | </div>
+      <div style="font-size: 1.1rem;" class="flex-min ml-1 mr-2 mt-2" v-if="isAppointmentEditMode">
+        Appointment
+      </div>
+       <div style="font-size: 1.1rem;" class="flex-min ml-1 mr-2 mt-2" v-if="!isAppointmentEditMode">
         {{ examAssociated ? 'Exam Event | ' : 'Non-Exam Event' }}
       </div>
-      <div class="mr-1 mt-2 flex-min" v-if="examAssociated" style="font-size: 1.1rem">
+      <div class="mr-1 mt-2 flex-min" v-if="examAssociated && !isAppointmentEditMode" style="font-size: 1.1rem">
         <span>{{ `Duration: ${selectedExam.exam_type.number_of_hours} HRS | ` }}</span><br>
       </div>
-      <div class="m-2 flex-min" v-if="examAssociated">
+      <div class="m-2 flex-min" v-if="examAssociated && !isAppointmentEditMode">
         <span><b>Exam: </b> {{ selectedExam.exam_name }}</span><br>
         <span><b>Expiry Date: </b>{{ expiryDateFormat }}</span><br>
       </div>
@@ -41,7 +45,8 @@
         'selectedExam',
         'showEditBookingModal',
         'showBookingModal',
-        'showOtherBookingModal'
+        'showOtherBookingModal',
+        'isAppointmentEditMode',
       ]),
       examAssociated() {
         if (this.selectedExam && Object.keys(this.selectedExam).length > 0) {
@@ -66,20 +71,32 @@
       }
     },
     methods: {
-      ...mapActions(['finishBooking', ]),
-      ...mapMutations(['toggleEditBookingModal']),
+      ...mapActions(['finishBooking','finishAppointment', ]),
+      ...mapMutations(['toggleEditBookingModal','toggleEditApptModal','toggleRescheduling','toggleApptRescheduleCancel']),
       cancel() {
-        if (this.rescheduling) {
-          this.toggleEditBookingModal(true)
-          return
-        }
-        let pushToExams = false
-        if (this.selectedExam && this.selectedExam.referrer === 'inventory') {
-          pushToExams = true
-        }
-        this.finishBooking()
-        if (pushToExams) {
-          this.$router.push('/exams')
+
+        if (this.isAppointmentEditMode) {
+          if (this.rescheduling) {
+            this.toggleEditApptModal(true)
+            this.toggleRescheduling(false)
+            this.toggleApptRescheduleCancel(true)
+            return
+          }
+          this.finishAppointment()
+        } else {
+          if (this.rescheduling) {
+            this.toggleEditBookingModal(true)
+            return
+          }
+
+          let pushToExams = false
+          if (this.selectedExam && this.selectedExam.referrer === 'inventory') {
+            pushToExams = true
+          }
+          this.finishBooking()
+          if (pushToExams) {
+            this.$router.push('/exams')
+          }
         }
       }
     }

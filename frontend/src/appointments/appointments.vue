@@ -124,14 +124,15 @@
     },
     computed: {
       ...mapGetters(['calendar_setup', 'appointment_events']),
-      ...mapState([]),
+       ...mapState({
+        apptRescheduling: state => state.apptRescheduling,
+      }),
     },
     methods: {
       ...mapActions(['getAppointments', 'getChannels', 'getServices']),
       ...mapMutations([
         'setCalendarSetup',
         'setEditedStatus',
-        'setRescheduling',
         'toggleApptBookingModal',
         'toggleCheckInModal',
       ]),
@@ -148,7 +149,7 @@
         return null
       },
       eventSelected(event) {
-        if (event.id === '_tempEvent') {
+        if ((this.apptRescheduling && this.$store.state.rescheduling) || event.id === '_tempEvent') {
           return
         }
         console.log("==> In eventSelected")

@@ -58,6 +58,7 @@ export const store = new Vuex.Store({
       channel_id: null,
       service_id: null,
     },
+    apptRescheduleCancel: false,
     alertMessage: '',
     allCitizens: [],
     backOfficeDisplay: 'BackOffice',
@@ -118,6 +119,7 @@ export const store = new Vuex.Store({
     shadowInvigilators: [],
     isLoggedIn: false,
     isUploadingFile: false,
+    isAppointmentEditMode: false,
     manifestdata: '',
     loginAlertMessage: '',
     loginDismissCount: 0,
@@ -158,6 +160,7 @@ export const store = new Vuex.Store({
     showAddModal: false,
     showAdmin: false,
     showAppointmentBlackoutModal: false,
+    showEditApptModal: false,
     showBookingModal: false,
     showBookingBlackoutModal: false,
     showDeleteExamModal: false,
@@ -291,7 +294,7 @@ export const store = new Vuex.Store({
 
     show_scheduling_indicator: (state) => {
       if (state.scheduling || state.rescheduling) {
-        if (!state.showOtherBookingModal && !state.showBookingModal && !state.showEditBookingModal) {
+        if (!state.showOtherBookingModal && !state.showBookingModal && !state.showEditBookingModal && !state.showEditApptModal) {
           return true
         }
       }
@@ -1900,6 +1903,13 @@ export const store = new Vuex.Store({
       context.commit('toggleEditBookingModal', false)
       context.commit('toggleEditGroupBookingModal', false)
     },
+    finishAppointment(context) {
+      context.commit('setSelectionIndicator', false)
+      context.commit('toggleRescheduling', false)
+      context.commit('toggleApptRescheduleCancel', true)
+      context.commit('toggleApptEditMode', false)
+      context.commit('toggleEditApptModal', false)
+    },
 
     postITAChallengerExam(context) {
       let responses = Object.assign( {}, context.state.capturedExam)
@@ -2781,6 +2791,10 @@ export const store = new Vuex.Store({
 
     toggleEditBookingModal: (state, payload) => state.showEditBookingModal = payload,
 
+    toggleEditApptModal: (state, payload) => state.showEditBookingModal = payload,
+
+    toggleApptEditMode: (state, payload) => state.isAppointmentEditMode = payload,
+
     setEditedBooking(state, payload) {
       if (typeof payload === 'object' && payload !== null) {
         state.editedBooking = Object.assign({}, payload)
@@ -2792,6 +2806,8 @@ export const store = new Vuex.Store({
     },
 
     toggleRescheduling: (state, payload) => state.rescheduling = payload,
+
+    toggleApptRescheduleCancel: (state, payload) => state.apptRescheduleCancel = payload,
 
     setEditedBookingOriginal: (state, payload) => state.editedBookingOriginal = payload,
 
