@@ -9077,7 +9077,8 @@
 								"exec": [
 									"//  Calculate a start date a week from today.",
 									"var later = new Date();",
-									"later.setDate(later.getDate()+7);",
+									"var day = later.getDay();",
+									"later.setDate(later.getDate() + 5 + (day === 6 ? 2 : +!day) + (Math.floor((5 - 1 + (day % 6 || 1)) / 5) * 2));",
 									"",
 									"//  Get year, day, month from the later time.",
 									"year = later.getFullYear().toString();",
