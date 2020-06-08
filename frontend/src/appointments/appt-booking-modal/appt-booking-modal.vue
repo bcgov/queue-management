@@ -240,7 +240,6 @@
         let options = []
         if (this.clickedTime) {
           let event = this.clickedTime
-          //let time = moment(event.end).clone().diff(event.start, 'minutes')
           let time = 60
           for (let l = 15; l <= time; l += 15) {
             options.push(l)
@@ -249,14 +248,19 @@
         }
         if (this.clickedAppt) {
           let event = this.clickedAppt
-          let start = moment(event.start).clone()
-          for (let l of [15, 30, 45, 60]) {
-            let testEnd = start.clone().add(l, 'minutes')
-            if (this.appointments.find(appt => moment(appt.start).isBetween(start, testEnd))) {
-              break
-            }
+          //let start = moment(event.start).clone()
+          //for (let l of [15, 30, 45, 60]) {
+            // let testEnd = start.clone().add(l, 'minutes')
+            // if (this.appointments.find(appt => moment(appt.start).isBetween(start, testEnd))) {
+            //   break
+            // }
+            //options.push(l)
+          //}
+          let time = 60
+          for (let l = 15; l <= time; l += 15) {
             options.push(l)
           }
+
           return options
         }
       },
