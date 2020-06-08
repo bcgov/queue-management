@@ -240,7 +240,8 @@
         let options = []
         if (this.clickedTime) {
           let event = this.clickedTime
-          let time = moment(event.end).clone().diff(event.start, 'minutes')
+          //let time = moment(event.end).clone().diff(event.start, 'minutes')
+          let time = 60
           for (let l = 15; l <= time; l += 15) {
             options.push(l)
           }
