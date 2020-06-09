@@ -121,7 +121,7 @@ class BaseConfig(object):
 
     #  Get SQLAlchemy environment variables.
     pool_size = int(os.getenv('SQLALCHEMY_POOL_SIZE', '9'))
-    pool_timeout = os.getenv('SQLALCHEMY_POOL_TIMEOUT', '')
+    pool_timeout_string = os.getenv('SQLALCHEMY_POOL_TIMEOUT', '')
     connect_timeout_string = os.getenv('SQLALCHEMY_CONNECT_TIMEOUT', '')
     max_overflow = int(os.getenv('SQLALCHEMY_MAX_OVERFLOW', '18'))
     pool_pre_ping = (os.getenv('SQLALCHEMY_POOL_PRE_PING', 'False')).upper() == "TRUE"
@@ -133,7 +133,8 @@ class BaseConfig(object):
         'pool_pre_ping': pool_pre_ping
     }
 
-    if pool_timeout != "":
+    if pool_timeout_string != "":
+        pool_timeout = int(pool_timeout_string)
         SQLALCHEMY_ENGINE_OPTIONS['pool_timeout'] = pool_timeout
 
     if connect_timeout_string != "":
