@@ -4,7 +4,7 @@ flask-restx
 #  SQLAlchemy needs to point to version 1.3.12 because there is a bug with
 #  with inviting Citizens expected to be fixed with Release 1.3.14
 #
-SQLAlchemy==1.3.12
+SQLAlchemy
 snowplow-tracker
 Flask
 Flask-Admin
@@ -24,7 +24,7 @@ flask-cors
 flask_marshmallow==0.11.0
 flask-socketio
 gunicorn
-marshmallow-sqlalchemy==0.22.3
+marshmallow-sqlalchemy
 psycopg2-binary
 pysnow
 pytest
