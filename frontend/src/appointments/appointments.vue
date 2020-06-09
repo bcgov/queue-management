@@ -135,6 +135,7 @@
         'setEditedStatus',
         'toggleApptBookingModal',
         'toggleCheckInModal',
+        'setRescheduling',
       ]),
       agendaDay() {
         this.$refs.appointments.fireMethod('changeView', 'agendaDay')
@@ -149,6 +150,7 @@
         return null
       },
       eventSelected(event) {
+        this.checkRescheduleCancel()
         if ((this.apptRescheduling && this.$store.state.rescheduling) || event.id === '_tempEvent') {
           return
         }
@@ -176,7 +178,18 @@
       renderEvent(event) {
         this.$refs.appointments.fireMethod('renderEvent', event)
       },
+      checkRescheduleCancel() {
+        if (this.$store.state.apptRescheduleCancel) {
+         this.removeTempEvent()
+         this.clearClickedTime()
+         this.clearClickedAppt()
+         this.setRescheduling(false)
+         this.toggleApptBookingModal(false)
+         this.$store.commit('toggleApptRescheduleCancel', false)
+        }
+      },
       selectEvent(event) {
+        this.checkRescheduleCancel()
         this.blockEventSelect = true
         this.unselect()
         let start = event.start.clone()
