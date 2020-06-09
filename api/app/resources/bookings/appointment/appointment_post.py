@@ -28,7 +28,7 @@ from app.utilities.auth_util import Role, has_any_role
 from app.utilities.auth_util import is_public_user
 from app.utilities.email import get_confirmation_email_contents, send_email, get_blackout_email_contents
 from app.utilities.snowplow import SnowPlow
-from qsystem import api, api_call_with_retry, db, oidc
+from qsystem import api, api_call_with_retry, db, oidc, my_print
 from app.services import AvailabilityService
 from dateutil.parser import parse
 
@@ -43,7 +43,7 @@ class AppointmentPost(Resource):
     @api_call_with_retry
     @has_any_role(roles=[Role.internal_user.value, Role.online_appointment_user.value])
     def post(self):
-        print("==> In AppointmentPost, POST /appointments/")
+        my_print("==> In AppointmentPost, POST /appointments/")
         json_data = request.get_json()
         if not json_data:
             return {"message": "No input data received for creating an appointment"}, 400
