@@ -160,7 +160,7 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
   private textCharsPrefix = 'Additional info you would like to add? (Optional - '
   private textCharsLeft = this.textCharsPrefix + this.charsLeft + ' chars left)'
   private textStyle = 'color:black !important;'
-  private keyPressed = false
+  private keyPressed = true
 
   private otherBookingOptionModel = false
 
