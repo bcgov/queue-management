@@ -378,7 +378,7 @@
       "enabled": true,
       "totp": false,
       "emailVerified": false,
-      "email": "admin@email.com",
+      "email": "omid.x.zamani@gov.bc.ca",
       "credentials": [
         {
           "type": "password",
