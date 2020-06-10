@@ -27,8 +27,7 @@ def my_print(string):
         print(time_string() + string)
 
 def time_print(string):
-    if debug_type_error_flag:
-        print(time_string() + string)
+    print(time_string() + string)
 
 def time_string():
     now = datetime.datetime.now()

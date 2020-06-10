@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from qsystem import cache, db
+from qsystem import cache, db, my_print
 from app.models.theq import Base
 from sqlalchemy import func
 
@@ -56,7 +56,7 @@ class CSR(Base):
         if cache.get(key):
             return cache.get(key)
 
-        print("==> In Python, csr.py, find_by_username: username=" + str(username) + "; idir_id=" + str(idir_id))
+        my_print("==> In Python, csr.py, find_by_username: username=" + str(username) + "; idir_id=" + str(idir_id))
         csr = CSR.query.filter(CSR.deleted.is_(None)).filter(CSR.username==idir_id).first()
 
         cache.set(key, csr)
