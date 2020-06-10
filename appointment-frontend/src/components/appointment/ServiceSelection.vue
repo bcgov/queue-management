@@ -49,12 +49,14 @@
       <v-row justify="center">
         <v-col cols="12" sm="6">
           <v-textarea
+            :label=this.textCharsLeft
+            :style=this.textStyle
             class="mt-3"
             outlined
             name="additional-options"
-            label="Is there any additional info you'd like to add? (Optional)"
             v-model="additionalOptions"
             @change="changeAdditionalOptions"
+            @keyup="setCharsLeft"
         ></v-textarea>
         </v-col>
       </v-row>
@@ -150,7 +152,14 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
   private readonly setAdditionalNotes!: (notes: string) => void
   private readonly getServiceByOffice!: (officeId: number) => Promise<Service[]>
   private selectedService: Service = null
+  private selectedServiceType = typeof this.selectedService
   private additionalOptions = ''
+  private maxChars = 255
+  private charsLeft = this.maxChars
+  private textCharsPrefix = 'Additional info you would like to add? (Optional - '
+  private textCharsLeft = this.textCharsPrefix + this.charsLeft + ' chars left)'
+  private textStyle = 'color:black !important;'
+
   private otherBookingOptionModel = false
 
   private async mounted () {
@@ -177,11 +186,24 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
   }
 
   private changeAdditionalOptions () {
+    this.setCharsLeft()
     this.setAdditionalNotes(this.additionalOptions)
   }
 
   private proceedBooking () {
     this.stepNext()
+  }
+
+  private setCharsLeft () {
+    if (this.additionalOptions.length <= this.maxChars) {
+      this.charsLeft = this.maxChars - this.additionalOptions.length
+      this.textStyle = 'color:black !important;'
+    } else {
+      this.charsLeft = 0
+      this.additionalOptions = this.additionalOptions.substring(0, this.maxChars)
+      this.textStyle = 'color:red !important;'
+    }
+    this.textCharsLeft = this.textCharsPrefix + this.charsLeft + ' chars left)'
   }
 
   private checkDisabled (value) {
