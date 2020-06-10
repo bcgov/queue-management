@@ -124,16 +124,18 @@
     },
     computed: {
       ...mapGetters(['calendar_setup', 'appointment_events']),
-      ...mapState([]),
+       ...mapState({
+        apptRescheduling: state => state.apptRescheduling,
+      }),
     },
     methods: {
       ...mapActions(['getAppointments', 'getChannels', 'getServices']),
       ...mapMutations([
         'setCalendarSetup',
         'setEditedStatus',
-        'setRescheduling',
         'toggleApptBookingModal',
         'toggleCheckInModal',
+        'setRescheduling',
       ]),
       agendaDay() {
         this.$refs.appointments.fireMethod('changeView', 'agendaDay')
@@ -148,7 +150,8 @@
         return null
       },
       eventSelected(event) {
-        if (event.id === '_tempEvent') {
+        this.checkRescheduleCancel()
+        if ((this.apptRescheduling && this.$store.state.rescheduling) || event.id === '_tempEvent') {
           return
         }
         console.log("==> In eventSelected")
@@ -175,7 +178,18 @@
       renderEvent(event) {
         this.$refs.appointments.fireMethod('renderEvent', event)
       },
+      checkRescheduleCancel() {
+        if (this.$store.state.apptRescheduleCancel) {
+         this.removeTempEvent()
+         this.clearClickedTime()
+         this.clearClickedAppt()
+         this.setRescheduling(false)
+         this.toggleApptBookingModal(false)
+         this.$store.commit('toggleApptRescheduleCancel', false)
+        }
+      },
       selectEvent(event) {
+        this.checkRescheduleCancel()
         this.blockEventSelect = true
         this.unselect()
         let start = event.start.clone()

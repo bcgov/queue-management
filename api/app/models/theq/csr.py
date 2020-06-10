@@ -80,9 +80,15 @@ class CSR(Base):
 
     @classmethod
     def update_user_cache(cls, userid):
-        csr_db = CSR.query.filter_by(csr_id=userid).first()
-        key = (CSR.format_string % csr_db.username).lower()
-        cache.set(key, csr_db)
+        try:
+            if type(userid) is str:
+                userid = int(userid)
+            csr_db = CSR.query.filter_by(csr_id=userid).first()
+            key = (CSR.format_string % csr_db.username).lower()
+            cache.set(key, csr_db)
+        except Exception as ex:
+            print("==> csr.py, update_user_cache, userid: " + str(userid) + "; type: " + str(type(userid)))
+            print("    --> Exception: " + str(ex))
 
     def get_id(self):
         return str(self.csr_id)

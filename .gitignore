@@ -127,6 +127,8 @@ sonar-runner/.gradle
 /frontend/static/keycloak-local.pathfinder-test.json
 /frontend/static/keycloak-local.pathfinder-dev.json
 loadlogs
+api/client_secrets/
+frontend/static/keycloak_dev.json
 
 # Docker
 api/Dockerfile
