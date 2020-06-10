@@ -15,6 +15,7 @@
             name="service-select"
             @change="serviceSelection"
             @input="clickSelection"
+            @keyup="setKeyPressed"
             hide-details
           >
             <template v-slot:selection="data">
@@ -60,7 +61,7 @@
         ></v-textarea>
         </v-col>
       </v-row>
-      <template v-if="selectedService">
+      <template v-if="!keyPressed">
         <p class="text-center mb-6">Do you want to book an appointment with <strong>{{currentOffice.office_name}}</strong> for <strong>{{selectedService.external_service_name}}</strong> service?</p>
         <div class="d-flex justify-center mb-6">
           <!-- <v-btn
@@ -159,6 +160,7 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
   private textCharsPrefix = 'Additional info you would like to add? (Optional - '
   private textCharsLeft = this.textCharsPrefix + this.charsLeft + ' chars left)'
   private textStyle = 'color:black !important;'
+  private keyPressed = false
 
   private otherBookingOptionModel = false
 
@@ -173,7 +175,12 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
   }
 
   private serviceSelection (value) {
+    this.keyPressed = false
     this.setCurrentService(value)
+  }
+
+  private setKeyPressed () {
+    this.keyPressed = true
   }
 
   private clickSelection (value) {
