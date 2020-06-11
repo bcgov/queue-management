@@ -194,12 +194,16 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
   }
 
   private clickSelection (value) {
-    // this.mylog('-> clickSelection')
-    if (this.checkDisabled(value)) {
+    if (!value?.service_name) {
       this.selectedService = null
       this.setCurrentService(undefined)
     } else {
-      this.setCurrentService(value)
+      if (this.checkDisabled(value)) {
+        this.selectedService = null
+        this.setCurrentService(undefined)
+      } else {
+        this.setCurrentService(value)
+      }
     }
   }
 
