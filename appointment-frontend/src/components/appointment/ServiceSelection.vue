@@ -47,11 +47,14 @@
           </v-btn> -->
         </v-col>
       </v-row>
+<!--      <v-row>-->
+<!--        {{myMessage}}-->
+<!--      </v-row>-->
       <v-row justify="center">
         <v-col cols="12" sm="6">
           <v-textarea
+            :maxlength="maxChars"
             :label=this.textCharsLeft
-            :style=this.textStyle
             class="mt-3"
             outlined
             name="additional-options"
@@ -61,7 +64,7 @@
         ></v-textarea>
         </v-col>
       </v-row>
-      <template v-if="!keyPressed">
+      <template v-if="selectedService && !keyPressed">
         <p class="text-center mb-6">Do you want to book an appointment with <strong>{{currentOffice.office_name}}</strong> for <strong>{{selectedService.external_service_name}}</strong> service?</p>
         <div class="d-flex justify-center mb-6">
           <!-- <v-btn
@@ -157,10 +160,11 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
   private additionalOptions = ''
   private maxChars = 255
   private charsLeft = this.maxChars
-  private textCharsPrefix = 'Additional info you would like to add? (Optional - '
-  private textCharsLeft = this.textCharsPrefix + this.charsLeft + ' chars left)'
-  private textStyle = 'color:black !important;'
+  private textCharsPrefix = 'Additional information? (Optional - '
+  private textCharsSuffix = ' characters left)'
+  private textCharsLeft = this.textCharsPrefix + this.charsLeft + this.textCharsSuffix
   private keyPressed = true
+  private myMessage = ''
 
   private otherBookingOptionModel = false
 
@@ -175,15 +179,22 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
   }
 
   private serviceSelection (value) {
+    // this.mylog('-> serviceSelection')
     this.keyPressed = false
     this.setCurrentService(value)
   }
 
+  private mylog (myText) {
+    this.myMessage = this.myMessage + '\r\n' + myText
+  }
+
   private setKeyPressed () {
+    // this.mylog('-> setKeyPressed')
     this.keyPressed = true
   }
 
   private clickSelection (value) {
+    // this.mylog('-> clickSelection')
     if (this.checkDisabled(value)) {
       this.selectedService = null
       this.setCurrentService(undefined)
@@ -204,13 +215,11 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
   private setCharsLeft () {
     if (this.additionalOptions.length <= this.maxChars) {
       this.charsLeft = this.maxChars - this.additionalOptions.length
-      this.textStyle = 'color:black !important;'
     } else {
       this.charsLeft = 0
       this.additionalOptions = this.additionalOptions.substring(0, this.maxChars)
-      this.textStyle = 'color:red !important;'
     }
-    this.textCharsLeft = this.textCharsPrefix + this.charsLeft + ' chars left)'
+    this.textCharsLeft = this.textCharsPrefix + this.charsLeft + this.textCharsSuffix
   }
 
   private checkDisabled (value) {
