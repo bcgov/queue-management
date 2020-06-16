@@ -44,7 +44,7 @@
           </b-input-group>
 
           <!--  The filters label, and the Office filter.  -->
-          <b-input-group class="ml-3" v-if="!showExamInventoryModal">
+          <b-input-group class="ml-3">
             <b-input-group-prepend>
               <label class="mx-1 pt-3 mr-2 my-auto label-text">Filters:</label>
             </b-input-group-prepend>
