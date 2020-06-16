@@ -643,14 +643,18 @@
         return ex.exam_type.ita_ind ? true : false
       },
       checkAndDownloadExam() {
+        console.log('===> edit-exam-form-modal====>checkAndDownloadExam')
+        console.log('===> edit-exam-form-modal====>checkAndDownloadExam',this.exam)
         this.downloadExam(this.exam)
           .then((resp) => {
+            console.log('===> edit-exam-form-modal====>resp.statusText')
             console.log(resp.statusText)
             let filename = `${this.exam.exam_id}.pdf`
             FileDownload(resp.data, filename, "application/pdf")
             this.updateExamReceived(new Event('exam-downloaded'))
           })
           .catch((error) => {
+            console.log('===> edit-exam-form-modal====>error',error)
             console.error(error)
             this.examNotReady = true
             setTimeout(() => { this.examNotReady = false }, 15000)

@@ -46,15 +46,9 @@
           <!--  The filters label, and the Office filter.  -->
           <b-input-group class="ml-3" v-if="!showExamInventoryModal">
             <b-input-group-prepend>
-              <label class="mx-1 pt-3 mr-2 my-auto label-text">Filters</label>
+              <label class="mx-1 pt-3 mr-2 my-auto label-text">Filters:</label>
             </b-input-group-prepend>
-            <!-- <b-btn-group v-if="is_liaison_designate" class="pt-2">
-              <b-btn @click="officeFilterModal=true"
-                     :variant="officeFilter === userOffice || officeFilter === 'default' ? 'primary' : 'warning'"
-                     class="btn-sm mr-2">Office # {{ officeNumber }} - {{ officeName }}
-              </b-btn>
-            </b-btn-group> -->
-            <b-dd v-if="is_ita_designate"
+            <b-dd v-if="(is_liaison_designate || is_pesticide_designate)"
                   split
                   size="sm"
                   :variant="officeFilter === userOffice || officeFilter === 'default' ? 'primary' : 'warning'"
@@ -324,7 +318,7 @@
           <template v-if="stillRequires(row.item).length === 0">
             <div class="details-slot-div">
               <template v-for="(val, key) in readyDetailsMap(row.item)">
-                <div class="ml-3 mt-1" style="flex-grow: 1;" v-bind:key="key"><b>{{ key }}: </b> {{ val }} </div>
+                <div class="ml-3 mt-1" style="flex-grow: 1;" v-bind:key="key"><strong>{{ key }}: </strong> {{ val }} </div>
               </template>
               <div style="flex-grow: 6"></div>
             </div>
@@ -342,7 +336,7 @@
               <!--  The Details info. -->
               <div style="flex-grow: 1; font-size: 1rem;">Details</div>
               <template v-for="(val, key) in readyDetailsMap(row.item)">
-                <div class="ml-3 mt-1" style="flex-grow: 1;" :key="key"><b>{{ key }}: </b> {{ val }} </div>
+                <div class="ml-3 mt-1" style="flex-grow: 1;" :key="key"><strong>{{ key }}: </strong> {{ val }} </div>
               </template>
               <div style="flex-grow: 12" />
             </div>
@@ -933,6 +927,9 @@
         if (this.examReturnedAttention(ex)){
            return false
         }
+        if (ex.is_pesticide && !ex.exam_received_date) {
+          return true
+        }
         if (this.filterByExpiry(ex)){
            return true
         }
@@ -957,6 +954,9 @@
         if (this.examReturnedAttention(ex)){
            return false
         }
+        if (ex.is_pesticide && !ex.exam_received_date) {
+          return true
+        }
         if (this.filterByExpiry(ex)){
            return true
         }
@@ -975,6 +975,9 @@
         }
         if (this.filterByGroup(ex) && this.filterByExpiry(ex)){
            return true
+        }
+        if (this.filterByGroup(ex) && ex.is_pesticide && !ex.exam_received_date) {
+          return true
         }
         if (this.filterByGroup(ex)){
            if (ex.booking){
@@ -1440,6 +1443,11 @@
           rank: 2,
           style: {fontSize: '1rem', color: 'green'}
         }
+
+        if (item.is_pesticide && !item.exam_received_date) {
+          return lifeRing
+        }
+
         if (item.exam_returned_date) {
           return envelopeOpenText
         }

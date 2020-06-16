@@ -106,10 +106,10 @@ class CsrSelf(Resource):
                         attention_needed = attention_needed or exam.booking.start_time < start_date
                     if exam.expiry_date is not None:
                         attention_needed = attention_needed or exam.expiry_date < start_date
-                    if exam.exam_returned_date is not None:
-                        attention_needed = False
                     if exam.is_pesticide and exam.exam_received_date is None:
                         attention_needed = True
+                    if exam.exam_returned_date is not None:
+                        attention_needed = False
                     if attention_needed:
                         individual.append(exam)
 
@@ -131,10 +131,10 @@ class CsrSelf(Resource):
                                                                     and exam.number_of_students < 25)
                             attention_needed = attention_needed or (len(exam.booking.invigilators) < 2
                                                                     and exam.number_of_students > 24)
-                        if exam.exam_returned_date is not None:
-                            attention_needed = False
                         if exam.is_pesticide and exam.exam_received_date is None:
                             attention_needed = True
+                        if exam.exam_returned_date is not None:
+                            attention_needed = False
                         if attention_needed:
                             group.append(exam)
 

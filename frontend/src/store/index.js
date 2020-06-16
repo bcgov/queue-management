@@ -1266,7 +1266,7 @@ export const store = new Vuex.Store({
         }).catch(() => { reject('failed') })
       })
     },
-    
+
     clickPesticideRequestExam(context) {
       return new Promise((resolve, reject) => {
         context.dispatch('postITAIndividualExam', true).then((resp) => {
@@ -1275,8 +1275,8 @@ export const store = new Vuex.Store({
           } else {
             reject(resp)
           }
-        }).catch((err) => { 
-          reject(err) 
+        }).catch((err) => {
+          reject(err)
         })
       })
     },
@@ -2089,7 +2089,7 @@ export const store = new Vuex.Store({
     },
 
     postITAIndividualExam(context, isRequestExam) {
-      let isRequestExamReq = isRequestExam || false 
+      let isRequestExamReq = isRequestExam || false
       let responses = Object.assign( {}, context.state.capturedExam)
       console.log(responses)
       if (responses.on_or_off) {
@@ -2159,9 +2159,9 @@ export const store = new Vuex.Store({
                       exam: examResp.data.exam
                     }).then( emailResp => {
                       resolve(examResp)
-                    }).catch( () => { 
+                    }).catch( () => {
                       console.log('EMAIL_FAILED')
-                      reject('EMAIL_FAILED') 
+                      reject('EMAIL_FAILED')
                     })
                   }
                 } else {
@@ -2172,9 +2172,9 @@ export const store = new Vuex.Store({
           } else {
             resolve(examResp)
           }
-        }).catch( (err) => { 
+        }).catch( (err) => {
           console.log(err)
-          reject(err) 
+          reject(err)
         })
       })
     },
@@ -2185,11 +2185,11 @@ export const store = new Vuex.Store({
       let postData = {...responses}
 
       return new Promise((resolve, reject) => {
-        Axios(context).post('/exams/request', postData).then( examResp => { 
-          resolve() 
-        }).catch( (err) => { 
+        Axios(context).post('/exams/request', postData).then( examResp => {
+          resolve()
+        }).catch( (err) => {
           console.log(err)
-          reject() 
+          reject()
         })
       })
     },
