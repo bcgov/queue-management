@@ -137,7 +137,7 @@ limitations under the License.*/
 
       onUpdateOfficesCache() {
         console.log('socket received: "update_offices_cache"')
-        socket.emit('update_offices_cache')
+        socket.emit('sync_offices_cache')
       },
 
       close() {

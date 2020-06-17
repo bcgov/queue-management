@@ -73,6 +73,6 @@ def clear_csr_user_id(csr_id):
     CSR.update_user_cache(csr_id)
 
 
-@socketio.on('update_offices_cache')
-def update_offices_cache():
+@socketio.on('sync_offices_cache')
+def sync_offices_cache():
     Office.clear_offices_cache()

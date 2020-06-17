@@ -188,9 +188,11 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
     this.myMessage = this.myMessage + '\r\n' + myText
   }
 
-  private setKeyPressed () {
+  private setKeyPressed (e) {
     // this.mylog('-> setKeyPressed')
-    this.keyPressed = true
+    if (e.key !== 'Enter') {
+      this.keyPressed = true
+    }
   }
 
   private clickSelection (value) {
