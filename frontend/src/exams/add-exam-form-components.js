@@ -65,7 +65,7 @@ export const AddExamCounter = Vue.component('add-exam-counter', {
             <b-input class="my-0 w-50" disabled size="sm" :value="currentNumber" />
           </b-form-group>
         </b-col>
-        
+
       </b-row>
       <b-row no-gutters v-if="error && !validationObj['add_exam_counter'].valid">
         <b-col cols="11" class="mt-1">
@@ -162,7 +162,7 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
       }
       if (this.addExamModal.setup === 'group') {
         let exams = this.examTypes.filter(type =>
-          type.group_exam_ind === 1
+          (type.group_exam_ind === 1 && type.exam_type_name != 'Group Pesticide Exam')
         );
         return exams.sort((a,b) => sorter(a,b))
       }
@@ -441,7 +441,7 @@ export const InputQuestion2 = Vue.component('input-question-2', {
                           autocomplete="off"
                           @input.native="preHandleInput" />
         </b-col>
-        
+
         <checkmark :validated="validationObj[q.key].valid" />
       </b-row>
     </fragment>

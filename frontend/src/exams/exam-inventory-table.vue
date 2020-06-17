@@ -1444,7 +1444,7 @@
           style: {fontSize: '1rem', color: 'green'}
         }
 
-        if (item.is_pesticide && !item.exam_received_date) {
+        if (item.is_pesticide && !item.exam_received_date && !item.exam_returned_date) {
           return lifeRing
         }
 
