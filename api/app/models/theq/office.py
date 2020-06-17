@@ -145,6 +145,5 @@ class Office(Base):
     @classmethod
     def clear_offices_cache(cls):
         """Clear active offices cache."""
-        print(f'Clearing {Office.offices_cache_key} cache')
         cache.delete(Office.offices_cache_key)
         Office.get_all_active_offices()

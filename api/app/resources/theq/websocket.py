@@ -21,7 +21,6 @@ import json
 
 @socketio.on('joinRoom')
 def on_join(message):
-    print('REMOVE:: joinRoom event received')
     cookie = request.cookies.get("oidc-jwt", None)
     if cookie is None:
         emit('joinRoomFail', {"sucess": False})
@@ -71,11 +70,9 @@ def on_join_smartboard(message):
 
 @socketio.on('clear_csr_user_id')
 def clear_csr_user_id(csr_id):
-    print('REMOVE:: clear_csr_user_id event received')
     CSR.update_user_cache(csr_id)
 
 
 @socketio.on('sync_offices_cache')
 def sync_offices_cache():
-    print('REMOVE:: sync_offices_cache event received')
     Office.clear_offices_cache()
