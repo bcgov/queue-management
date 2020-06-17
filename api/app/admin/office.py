@@ -20,6 +20,7 @@ from flask import flash
 from flask_admin.babel import gettext
 from qsystem import db
 from sqlalchemy import and_
+from qsystem import db, cache, socketio
 
 
 class OfficeConfig(Base):
@@ -173,6 +174,9 @@ class OfficeConfig(Base):
     column_default_sort = 'office_name'
 
     def on_model_change(self, form, model, is_created):
+        """Invoked on model change."""
+        socketio.emit('update_offices_cache')
+
         invalid = []
         for service in model.quick_list:
             if service not in model.services:
