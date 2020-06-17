@@ -15,7 +15,7 @@ limitations under the License.'''
 from flask import request
 from flask_socketio import emit, join_room
 from jose import jwt
-from app.models.theq import CSR
+from app.models.theq import CSR, Office
 from qsystem import oidc, socketio, my_print
 import json
 
@@ -71,3 +71,8 @@ def on_join_smartboard(message):
 @socketio.on('clear_csr_user_id')
 def clear_csr_user_id(csr_id):
     CSR.update_user_cache(csr_id)
+
+
+@socketio.on('update_offices_cache')
+def update_offices_cache():
+    Office.clear_offices_cache()

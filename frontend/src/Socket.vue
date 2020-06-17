@@ -71,6 +71,7 @@ limitations under the License.*/
         socket.on('update_active_citizen', (citizen) => { this.onUpdateActiveCitizen(citizen) } )
         socket.on('csr_update', (data)=>{this.onCSRUpdate(data)})
         socket.on('clear_csr_cache', (data)=>{this.onClearCsrCache(data)})
+        socket.on('update_offices_cache', ()=>{this.onUpdateOfficesCache()})
       },
 
       join() {
@@ -132,6 +133,11 @@ limitations under the License.*/
       getCsrStateIDs() {
           console.log('socket received: "getCsrStateIDs"')
           this.$store.dispatch('getCsrStateIDs')
+      },
+
+      onUpdateOfficesCache() {
+        console.log('socket received: "update_offices_cache"')
+        socket.emit('update_offices_cache')
       },
 
       close() {
