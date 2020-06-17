@@ -21,6 +21,7 @@ import json
 
 @socketio.on('joinRoom')
 def on_join(message):
+    print('REMOVE:: joinRoom event received')
     cookie = request.cookies.get("oidc-jwt", None)
     if cookie is None:
         emit('joinRoomFail', {"sucess": False})
