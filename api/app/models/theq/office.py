@@ -97,6 +97,7 @@ class Office(Base):
     rooms = db.relationship('Room')
 
     format_string = 'office_%s'
+    offices_cache_key: str = 'active_offices'
 
     def __repr__(self):
         return self.office_name
@@ -113,8 +114,6 @@ class Office(Base):
             office = cls.query.get(office_id)
             office.timeslots
             office.timezone
-        #TODO cache.set(key, office)
-        # print(office.timeslots)
         return office
 
     @classmethod
@@ -129,3 +128,22 @@ class Office(Base):
                 cache.set(key, office)
         except Exception as e:
             print('Error on building cache')
+
+    @classmethod
+    def get_all_active_offices(cls):
+        """Return all active offices."""
+        from app.schemas.theq import OfficeSchema
+
+        active_offices = cache.get(Office.offices_cache_key)
+        if not active_offices:
+            office_schema = OfficeSchema(many=True)
+            print(f'Cache {Office.offices_cache_key} not present, fetching from DB.')
+            active_offices = office_schema.dump(Office.query.filter(Office.deleted.is_(None)))
+            cache.set(Office.offices_cache_key, active_offices)
+        return active_offices
+
+    @classmethod
+    def clear_offices_cache(cls):
+        """Clear active offices cache."""
+        cache.delete(Office.offices_cache_key)
+        Office.get_all_active_offices()

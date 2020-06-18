@@ -17,20 +17,16 @@ from flask_restx import Resource
 from qsystem import api, db, oidc
 from sqlalchemy import exc
 from app.models.theq import CSR, Office
-from app.schemas.theq import OfficeSchema
 
 
 @api.route("/offices/", methods=["GET"])
 class OfficeList(Resource):
 
-    office_schema = OfficeSchema(many=True)
-
     @oidc.accept_token(require_token=False)
     def get(self):
         try:
 
-            offices = Office.query.filter(Office.deleted.is_(None))
-            result = self.office_schema.dump(offices)
+            result = Office.get_all_active_offices()
 
             return {'offices': result.data,
                     'errors': result.errors}
