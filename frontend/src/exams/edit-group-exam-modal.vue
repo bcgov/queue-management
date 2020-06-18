@@ -143,7 +143,7 @@
           <b-col cols="12">
             <b-form-group>
               <label class="my-0">Invigilator</label>
-              <b-form-select 
+              <b-form-select
                 v-model="invigilator_id"
                 :options="invigilatorList"
                 @change="invigilatorChanged"
@@ -905,7 +905,7 @@
               bookingChanges['invigilator_id'] = current_invigilator_id_list
             }
           }
-          
+
 
           if (this.removeCurrentInvigilatorFlag) {
             bookingChanges.invigilator_id = null
@@ -970,6 +970,7 @@
         this.groupInvigilatorBoolean = true
       },
       show() {
+        console.log('===>edit-group-exam-modal===>SHOW SHOW SHOW')
         let self = this
         this.removeState = true
         this.changeState = true
@@ -1126,17 +1127,23 @@
         this.groupInvigilatorBoolean = !this.groupInvigilatorBoolean
       },
       updateExamReceived(e) {
+        console.log('===>edit-group-exam-modal===>updateExamReceived')
         let { exam_received_date } = this.fields
+        console.log('===>edit-group-exam-modal===>updateExamReceived===>exam_received_date',exam_received_date)
         this.editedFields.push('exam_received')
+        console.log('===>edit-group-exam-modal===>updateExamReceived===>this.editedFields')
         if(e.type == 'exam-downloaded') {
+          console.log('===>edit-group-exam-modal===>updateExamReceived===>this.exam_received is true')
           this.exam_received = true
         }
         if (e && !exam_received_date) {
           this.fields.exam_received_date = new moment().format('YYYY-MM-DD')
+          console.log('===>edit-group-exam-modal===>updateExamReceived===>this.fields.exam_received_date',this.fields.exam_received_date)
           return
         }
         if (!e) {
           this.fields.exam_received_date = null
+          console.log('===>edit-group-exam-modal===>updateExamReceived===>this.fields.exam_received_date is null',this.fields.exam_received_date)
         }
       },
       checkAndDownloadExam() {
@@ -1145,7 +1152,17 @@
             console.log(resp.statusText)
             let filename = `${this.exam.exam_id}.pdf`
             FileDownload(resp.data, filename, "application/pdf")
+            console.log('===>edit-group-exam-modal===>after FileDownload',filename)
+            console.log('===>edit-group-exam-modal===>BEFORE updateExamReceived',filename)
             this.updateExamReceived(new Event('exam-downloaded'))
+            // let event;
+            // let eventName = 'exam-downloaded'
+            // if (typeof(Event) === 'function') {
+            //   this.updateExamReceived(new Event(eventName))
+            // } else {
+            //   event = document.createEvent('Event');
+            //   this.updateExamReceived(new event.initEvent(eventName, true, true))
+            // }
           })
           .catch((error) => {
             console.error(error)

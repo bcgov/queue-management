@@ -60,6 +60,7 @@ const examNameQ = {
   key: 'exam_name',
   kind: 'input',
   minLength: 2,
+  maxLength: 50,
   text: 'Exam Name',
 }
 const examReceivedQ = {
@@ -416,7 +417,7 @@ export const addExamModule = {
       let { capturedExam } = rootState
 
       let step4 = { ...state.pesticideStep4_summary }
-      
+
       return [ step4 ]
     },
   },
