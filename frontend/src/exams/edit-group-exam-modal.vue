@@ -1154,15 +1154,24 @@
             FileDownload(resp.data, filename, "application/pdf")
             console.log('===>edit-group-exam-modal===>after FileDownload',filename)
             console.log('===>edit-group-exam-modal===>BEFORE updateExamReceived',filename)
+            //current code breaks in IE
             this.updateExamReceived(new Event('exam-downloaded'))
-            // let event;
-            // let eventName = 'exam-downloaded'
+            //
+            //new code doesnt work june 19th 2020
+            //
             // if (typeof(Event) === 'function') {
-            //   this.updateExamReceived(new Event(eventName))
+            //   console.log('===> edit-exam-form-modal====>typeof(Event)')
+            //   this.updateExamReceived(new Event('exam-downloaded'))
             // } else {
-            //   event = document.createEvent('Event');
-            //   this.updateExamReceived(new event.initEvent(eventName, true, true))
+            //    console.log('===> edit-exam-form-modal====>document.createEvent')
+            //    event = document.createEvent('exam-downloaded');
+            //    console.log('===> edit-exam-form-modal====>updateExamReceived -  LAST STATEMENT?')
+            //    this.updateExamReceived(new event.initEvent('exam-downloaded', true, true))
+            //   console.log('===> edit-exam-form-modal====>YAY IT WORKS')
             // }
+            //
+             //new code doesnt work    june 19th 2020
+            //
           })
           .catch((error) => {
             console.error(error)

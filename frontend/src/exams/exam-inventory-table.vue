@@ -404,8 +404,16 @@
                                      @click="addCalendarBooking(row.item)">Schedule Exam</b-dropdown-item>
                   </template>
                   <template v-else>
-                    <b-dropdown-item size="sm"
-                                     @click="openInvigilatorModal(row.item)">Email Invigilator</b-dropdown-item>
+<!--                    TEMPORARY FIX - AFTER ALL PESTICIDE EXAMS ARE ENTERED IN NEW WORLD-->
+<!--                    <b-dropdown-item size="sm"-->
+<!--                                     @click="openInvigilatorModal(row.item)">Email Invigilator</b-dropdown-item>-->
+                     <b-dropdown-item size="sm"
+                                     v-if="row.item.booking && Object.keys(row.item.booking).length > 0"
+                                     @click="updateCalendarBooking(row.item)">
+                      {{ checkInvigilator(row.item) ? 'Update Booking' : 'Edit/Print/Add Invigilator' }}</b-dropdown-item>
+                     <b-dropdown-item size="sm"
+                                     v-if="!row.item.booking || Object.keys(row.item.booking).length === 0"
+                                     @click="addCalendarBooking(row.item)">Schedule Exam</b-dropdown-item>
                   </template>
                 </template>
 

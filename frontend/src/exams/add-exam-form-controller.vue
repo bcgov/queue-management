@@ -270,7 +270,7 @@
             this.tab.stepsValidated = [1]
             return
           }
-          if (key === 'exam_name' && answer && answer.length > 50 && document.activeElement.id == 'exam_name') {
+          if (key === 'exam_name' && answer && answer.length > 50) {
             valid['exam_name'] = false
             messages['exam_name'] = 'Maximum Field Length Exceeded'
             return
