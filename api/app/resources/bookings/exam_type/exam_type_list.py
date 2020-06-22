@@ -14,7 +14,7 @@ limitations under the License.'''
 
 import logging
 from flask_restx import Resource
-from sqlalchemy import exc
+from sqlalchemy import exc,asc
 from app.models.bookings import ExamType
 from app.schemas.bookings import ExamTypeSchema
 from qsystem import api, oidc
@@ -31,7 +31,7 @@ class ExamTypeList(Resource):
     def get(self):
 
         try:
-            exam_types = ExamType.query.all()
+            exam_types = ExamType.query.order_by(asc(ExamType.exam_type_name))
             result = self.exam_type_schema.dump(exam_types)
             return {'exam_types': result.data,
                     'errors': result.errors }, 200
