@@ -105,6 +105,10 @@
           </b-col>
         </b-form-row>
         <b-form-row>
+          <b-col>
+            <label class="my-0">Retrieve Exam and Print</label>
+            <b-btn class="btn-success w-100" @click="checkAndDownloadExam()">Print</b-btn>
+          </b-col>
           <b-col :col="!this.fields.exam_received_date" :cols="this.exam_received ? '' : 3 ">
             <b-form-group>
               <label class="my-0">Exam Printed?</label>
@@ -114,10 +118,6 @@
                         class="less-10-mb"
                         :options="examReceivedOptions" />
             </b-form-group>
-          </b-col>
-          <b-col>
-            <label class="my-0">Retrieve Exam and Print</label>
-            <b-btn class="btn-success w-100" @click="checkAndDownloadExam()">Print</b-btn>
           </b-col>
           <b-col v-if="exam_received">
             <b-form-group>
@@ -970,7 +970,6 @@
         this.groupInvigilatorBoolean = true
       },
       show() {
-        console.log('===>edit-group-exam-modal===>SHOW SHOW SHOW')
         let self = this
         this.removeState = true
         this.changeState = true
@@ -1127,51 +1126,35 @@
         this.groupInvigilatorBoolean = !this.groupInvigilatorBoolean
       },
       updateExamReceived(e) {
-        console.log('===>edit-group-exam-modal===>updateExamReceived')
         let { exam_received_date } = this.fields
-        console.log('===>edit-group-exam-modal===>updateExamReceived===>exam_received_date',exam_received_date)
         this.editedFields.push('exam_received')
-        console.log('===>edit-group-exam-modal===>updateExamReceived===>this.editedFields')
         if(e.type == 'exam-downloaded') {
-          console.log('===>edit-group-exam-modal===>updateExamReceived===>this.exam_received is true')
           this.exam_received = true
         }
         if (e && !exam_received_date) {
           this.fields.exam_received_date = new moment().format('YYYY-MM-DD')
-          console.log('===>edit-group-exam-modal===>updateExamReceived===>this.fields.exam_received_date',this.fields.exam_received_date)
           return
         }
         if (!e) {
           this.fields.exam_received_date = null
-          console.log('===>edit-group-exam-modal===>updateExamReceived===>this.fields.exam_received_date is null',this.fields.exam_received_date)
+        }
+      },
+       updatePrintExamReceived(strExam) {
+        let { exam_received_date } = this.fields
+        if(strExam == 'exam-downloaded') {
+          this.exam_received = true
+        }
+        if (strExam && !exam_received_date) {
+          this.fields.exam_received_date = new moment().format('YYYY-MM-DD')
+          return
         }
       },
       checkAndDownloadExam() {
         this.downloadExam(this.exam)
           .then((resp) => {
-            console.log(resp.statusText)
             let filename = `${this.exam.exam_id}.pdf`
             FileDownload(resp.data, filename, "application/pdf")
-            console.log('===>edit-group-exam-modal===>after FileDownload',filename)
-            console.log('===>edit-group-exam-modal===>BEFORE updateExamReceived',filename)
-            //current code breaks in IE
-            this.updateExamReceived(new Event('exam-downloaded'))
-            //
-            //new code doesnt work june 19th 2020
-            //
-            // if (typeof(Event) === 'function') {
-            //   console.log('===> edit-exam-form-modal====>typeof(Event)')
-            //   this.updateExamReceived(new Event('exam-downloaded'))
-            // } else {
-            //    console.log('===> edit-exam-form-modal====>document.createEvent')
-            //    event = document.createEvent('exam-downloaded');
-            //    console.log('===> edit-exam-form-modal====>updateExamReceived -  LAST STATEMENT?')
-            //    this.updateExamReceived(new event.initEvent('exam-downloaded', true, true))
-            //   console.log('===> edit-exam-form-modal====>YAY IT WORKS')
-            // }
-            //
-             //new code doesnt work    june 19th 2020
-            //
+            this.updatePrintExamReceived('exam-downloaded')
           })
           .catch((error) => {
             console.error(error)
