@@ -161,8 +161,9 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
         return exams.sort((a,b) => sorter(a,b))
       }
       if (this.addExamModal.setup === 'group') {
+
         let exams = this.examTypes.filter(type =>
-          (type.group_exam_ind === 1 && type.exam_type_name != 'Group Pesticide Exam')
+          (type.group_exam_ind === 1 && type.exam_type_name != 'Group Pesticide Exam' && type.exam_type_name !=  'Pesticide Group Exam')
         );
         return exams.sort((a,b) => sorter(a,b))
       }
