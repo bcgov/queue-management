@@ -196,7 +196,7 @@
                 </b-col>
               </b-row>
             </template>
-            <template v-else>
+            <template v-else-if="!this.event.exam.is_pesticide">
               <b-button v-if="examAssociated"
                         v-b-toggle.collapse-1
                         variant="primary"

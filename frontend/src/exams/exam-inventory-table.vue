@@ -1,9 +1,13 @@
 <template>
   <fragment>
+    <template v-if="showPesticideModal">
+      <UploadPesticideModal :actionedExam="actionedExam" :resetExam="resetActionedExam" />
+    </template>
     <EditExamModal :actionedExam="actionedExam" :resetExam="resetActionedExam" />
     <ReturnExamModal :actionedExam="actionedExam" :resetExam="resetActionedExam" />
     <EditGroupExamBookingModal :actionedExam="actionedExam" :resetExam="resetActionedExam" />
     <DeleteExamModal v-if="showDeleteExamModal" :actionedExam="actionedExam" :resetExam="resetActionedExam" />
+    <SelectInvigilatorModal />
 
     <!--  Modal that allows user to choose a new office -->
     <b-modal v-model="officeFilterModal"
@@ -40,16 +44,21 @@
           </b-input-group>
 
           <!--  The filters label, and the Office filter.  -->
-          <b-input-group class="ml-3" v-if="!showExamInventoryModal">
+          <b-input-group class="ml-3">
             <b-input-group-prepend>
-              <label class="mx-1 pt-3 mr-2 my-auto label-text">Filters</label>
+              <label class="mx-1 pt-3 mr-2 my-auto label-text">Filters:</label>
             </b-input-group-prepend>
-            <b-btn-group v-if="is_liaison_designate" class="pt-2">
-              <b-btn @click="officeFilterModal=true"
-                     :variant="officeFilter === userOffice || officeFilter === 'default' ? 'primary' : 'warning'"
-                     class="btn-sm mr-2">Office # {{ officeNumber }} - {{ officeName }}
-              </b-btn>
-            </b-btn-group>
+            <b-dd v-if="(is_liaison_designate || is_pesticide_designate)"
+                  split
+                  size="sm"
+                  :variant="officeFilter === userOffice || officeFilter === 'default' ? 'primary' : 'warning'"
+                  class="btn-sm mr-2 mt-2"
+                  :text="officeFilterText"
+                  @click="officeFilterModal=true">
+              <b-dd-item @click="viewAllOfficePesticideExams">
+                View All Offices
+              </b-dd-item>
+            </b-dd>
           </b-input-group>
 
           <!--  The Exam Type filter.  -->
@@ -57,12 +66,24 @@
             <!--  The Exam Type filter, initial set up if filter not yet set.  -->
             <b-btn-group v-if="selectedExamTypeFilter === ''">
               <b-dropdown size="sm"
+                          v-if="!isPesticideOffice"
                           variant="primary"
                           text="Exam Type Filters"
                           v-model="selectedExamTypeFilter"
                           class="mt-2 mr-2">
                 <b-dropdown-item v-for="option in examTypeOptions"
-                                 @click="setExamTypeFilter(option)">
+                                 @click="setExamTypeFilter(option)" v-bind:key="option.value">
+                  {{ option.text }}
+                </b-dropdown-item>
+              </b-dropdown>
+              <b-dropdown size="sm"
+                          v-if="isPesticideOffice"
+                          variant="primary"
+                          text="Exam Type Filters"
+                          v-model="selectedExamTypeFilter"
+                          class="mt-2 mr-2">
+                <b-dropdown-item v-for="option in examTypeOptions"
+                                 @click="setExamTypeFilter(option)" v-bind:key="option.value">
                   {{ option.text }}
                 </b-dropdown-item>
               </b-dropdown>
@@ -76,7 +97,7 @@
                           v-model="selectedExamTypeFilter"
                           class="mt-2 mr-2">
                 <b-dropdown-item v-for="option in examTypeOptions"
-                                 @click="setExamTypeFilter(option)">
+                                 @click="setExamTypeFilter(option)" v-bind:key="option.value">
                   {{ option.text }}
                 </b-dropdown-item>
               </b-dropdown>
@@ -92,7 +113,7 @@
                             v-model="selectedQuickActionFilter"
                             class="mt-2 mr-2">
                   <b-dropdown-item v-for="option in newQuickActionOptions"
-                                   @click="setQuickActionFilter(option)">
+                                   @click="setQuickActionFilter(option)" v-bind:key="option.value">
                     <!--  The various Quick Action options. -->
                     <div style="display: flex; justify-content: space-between;">
                       <div class="mr-3">{{ option.text }}</div>
@@ -119,7 +140,7 @@
                             v-model="selectedQuickActionFilter"
                             class="mt-2 mr-2">
                   <b-dropdown-item v-for="option in newQuickActionOptions"
-                                   @click="setQuickActionFilter(option)">
+                                   @click="setQuickActionFilter(option)" v-bind:key="option.value">
                     <!--  The various Quick Action options. -->
                     <div style="display: flex; justify-content: space-between;">
                       <div class="mr-3">{{ option.text }}</div>
@@ -148,7 +169,7 @@
                             v-model="selectedQuickActionFilter"
                             class="mt-2 mr-2">
                   <b-dropdown-item v-for="option in newQuickActionOptionsNoOEM"
-                                   @click="setQuickActionFilter(option)">
+                                   @click="setQuickActionFilter(option)" v-bind:key="option.value">
                     <div style="display: flex; justify-content: space-between;">
                       <div class="mr-3">{{ option.text }}</div>
                       <div v-if="option.text === 'Ready'">
@@ -172,7 +193,7 @@
                             v-model="selectedQuickActionFilter"
                             class="mt-2 mr-2">
                   <b-dropdown-item v-for="option in newQuickActionOptionsNoOEM"
-                                   @click="setQuickActionFilter(option)">
+                                   @click="setQuickActionFilter(option)" v-bind:key="option.value">
                     <div style="display: flex; justify-content: space-between;">
                       <div class="mr-3">{{ option.text }}</div>
                       <div v-if="option.text === 'Ready'">
@@ -228,6 +249,7 @@
                :current-page="page"
                :per-page="10"
                :filter="searchTerm"
+               v-if="!isLoading"
                id="exam_inventory_table">
 
         <!--  Field 1 - Event id??? Don't see it.  -->
@@ -296,7 +318,7 @@
           <template v-if="stillRequires(row.item).length === 0">
             <div class="details-slot-div">
               <template v-for="(val, key) in readyDetailsMap(row.item)">
-                <div class="ml-3 mt-1" style="flex-grow: 1;"><b>{{ key }}: </b> {{ val }} </div>
+                <div class="ml-3 mt-1" style="flex-grow: 1;" v-bind:key="key"><strong>{{ key }}: </strong> {{ val }} </div>
               </template>
               <div style="flex-grow: 6"></div>
             </div>
@@ -314,7 +336,7 @@
               <!--  The Details info. -->
               <div style="flex-grow: 1; font-size: 1rem;">Details</div>
               <template v-for="(val, key) in readyDetailsMap(row.item)">
-                <div class="ml-3 mt-1" style="flex-grow: 1;"><b>{{ key }}: </b> {{ val }} </div>
+                <div class="ml-3 mt-1" style="flex-grow: 1;" :key="key"><strong>{{ key }}: </strong> {{ val }} </div>
               </template>
               <div style="flex-grow: 12" />
             </div>
@@ -352,11 +374,11 @@
                     </b-dropdown-item>
                   </template>
 
-                  <template v-if="!row.item.offsite_location">
+                  <template v-if="!row.item.offsite_location || row.item.is_pesticide">
                     <b-dropdown-item size="sm"
                                        v-if="row.item.booking && Object.keys(row.item.booking).length > 0"
                                      @click="updateCalendarBooking(row.item)">
-                        {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}</b-dropdown-item>
+                        {{ checkInvigilator(row.item) ? 'Update Booking' : 'Edit/Print/Add Invigilator' }}</b-dropdown-item>
                     <b-dropdown-item size="sm"
                                      v-if="!row.item.booking || Object.keys(row.item.booking).length === 0"
                                      @click="addCalendarBooking(row.item)">Schedule Exam</b-dropdown-item>
@@ -366,10 +388,33 @@
                 <!--  Options for group exam ind (???).  -->
                 <template v-else-if="row.item.exam_type.group_exam_ind">
                   <b-dropdown-item size="sm"
-                                   v-if="row.item.offsite_location"
+                                   v-if="row.item.offsite_location || row.item.is_pesticide"
                                    @click="editGroupBooking(row.item)">
-                    {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}
+                    {{ checkInvigilator(row.item) ? 'Update Booking' : 'Edit/Print/Add Invigilator' }}
                   </b-dropdown-item>
+                </template>
+                <template v-else-if="row.item.exam_type.pesticide_exam_ind">
+                  <template template v-if="row.item.sbc_managed_ind === 1">
+                    <b-dropdown-item size="sm"
+                                     v-if="row.item.booking && Object.keys(row.item.booking).length > 0"
+                                     @click="updateCalendarBooking(row.item)">
+                      {{ checkInvigilator(row.item) ? 'Update Booking' : 'Edit/Print/Add Invigilator' }}</b-dropdown-item>
+                    <b-dropdown-item size="sm"
+                                     v-if="!row.item.booking || Object.keys(row.item.booking).length === 0"
+                                     @click="addCalendarBooking(row.item)">Schedule Exam</b-dropdown-item>
+                  </template>
+                  <template v-else>
+<!--                    TEMPORARY FIX - AFTER ALL PESTICIDE EXAMS ARE ENTERED IN NEW WORLD-->
+<!--                    <b-dropdown-item size="sm"-->
+<!--                                     @click="openInvigilatorModal(row.item)">Email Invigilator</b-dropdown-item>-->
+                     <b-dropdown-item size="sm"
+                                     v-if="row.item.booking && Object.keys(row.item.booking).length > 0"
+                                     @click="updateCalendarBooking(row.item)">
+                      {{ checkInvigilator(row.item) ? 'Update Booking' : 'Edit/Print/Add Invigilator' }}</b-dropdown-item>
+                     <b-dropdown-item size="sm"
+                                     v-if="!row.item.booking || Object.keys(row.item.booking).length === 0"
+                                     @click="addCalendarBooking(row.item)">Schedule Exam</b-dropdown-item>
+                  </template>
                 </template>
 
                 <!--  Options for all other exams.  -->
@@ -397,11 +442,13 @@
                   </template>
                 </template>
 
-                <!--  These options always allowed if editing an exam for the office you're in.  -->
-                <b-dropdown-item size="sm"
-                                 @click="editExamDetails(row.item)">Edit Exam Details</b-dropdown-item>
-                <b-dropdown-item size="sm"
-                                 @click="returnExam(row.item)">Return Exam</b-dropdown-item>
+                  <b-dropdown-item size="sm"
+                      v-if="!(row.item.exam_type.group_exam_ind && row.item.is_pesticide)"
+                      @click="editExamDetails(row.item)">Edit/Print Exam Details</b-dropdown-item>
+                  <b-dropdown-item size="sm"
+                      @click="returnExam(row.item)">
+                    {{ row.item.is_pesticide ? 'Upload Exam' : 'Return Exam' }}
+                  </b-dropdown-item>
               </template>
 
               <!--  Options for if you're editing an exam for a different office.  -->
@@ -411,6 +458,9 @@
                                  @click="editGroupBooking(row.item)">Edit Booking</b-dropdown-item>
                 <b-dropdown-item size="sm"
                                  @click="editExamDetails(row.item)">Edit Exam Details</b-dropdown-item>
+                <b-dropdown-item size="sm" v-if="row.item.is_pesticide"
+                      @click="returnExam(row.item)">Upload Exam
+                </b-dropdown-item>
               </template>
             </template>
 
@@ -421,9 +471,13 @@
             </template>
           </b-dropdown>
         </template>
-        <!--  End the Actions dropdown field  -->
-
+        <template slot="office" slot-scope="row">
+         {{ row.item.office.office_name }}
+        </template>
       </b-table>
+      <div class="text-center" v-if="isLoading">
+        <b-spinner variant="primary" label="Loading"></b-spinner>
+      </div>
     </div>
     <!--  End of exam display.  -->
   </fragment>
@@ -434,6 +488,7 @@
   import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
   import EditExamModal from './edit-exam-form-modal'
   import EditGroupExamBookingModal from './edit-group-exam-modal'
+  import SelectInvigilatorModal from './select-invigilator-modal'
   import FailureExamAlert from './failure-exam-alert'
   import OfficeDrop from './office-drop'
   import ReturnExamModal from './return-exam-form-modal'
@@ -441,10 +496,12 @@
   import DeleteExamModal from './delete-exam-modal'
   import AddCitizen from '../add-citizen/add-citizen'
   import zone from 'moment-timezone'
+  import UploadPesticideModal from './upload-pesticide-exam'
 
   export default {
     name: "ExamInventoryTable",
     components: {
+      UploadPesticideModal,
       AddCitizen,
       DeleteExamModal,
       EditExamModal,
@@ -453,8 +510,24 @@
       OfficeDrop,
       ReturnExamModal,
       SuccessExamAlert,
+      SelectInvigilatorModal
     },
     mounted() {
+      if(this.is_pesticide_designate) {
+        const pestFilterOptions = [
+          {text: 'Awaiting Upload', value: 'awaiting_upload'},
+          {text: 'Awaiting Receipt', value: 'awaiting_receipt'},
+          {text: 'All', value: 'all'},
+        ]
+        this.newQuickActionOptions = this.newQuickActionOptions.concat(pestFilterOptions)
+        this.newQuickActionOptionsNoOEM = this.newQuickActionOptionsNoOEM.concat(pestFilterOptions)
+      } else {
+        const nonpestFilterOptions = [
+          {text: 'All', value: 'all'}
+        ]
+        this.newQuickActionOptions = this.newQuickActionOptions.concat(nonpestFilterOptions)
+        this.newQuickActionOptionsNoOEM = this.newQuickActionOptionsNoOEM.concat(nonpestFilterOptions)
+      }
       this.getExams().then( () => { this.getBookings() })
       this.getOffices()
       this.getInvigilators()
@@ -486,15 +559,14 @@
           {text: 'Office Exam Manager Action Items', value:'oemai'},
           {text: 'Expired', value: 'expired'},
           {text: 'Returned', value: 'returned'},
-          {text: 'All', value: 'all'},
         ],
         newQuickActionOptionsNoOEM: [
           {text: 'Ready', value: 'ready'},
           {text: 'Requires Attention', value:'require_attention'},
           {text: 'Expired', value: 'expired'},
           {text: 'Returned', value: 'returned'},
-          {text: 'All', value: 'all'},
         ],
+        isLoading: false,
       }
     },
     computed: {
@@ -502,6 +574,7 @@
                      'exam_inventory',
                      'role_code',
                      'is_liaison_designate',
+                     'is_pesticide_designate',
                      'is_ita_designate']),
       ...mapState([
         'bookings',
@@ -521,13 +594,29 @@
         'user',
         'invigilators',
       ]),
+      ...mapState({
+        showAllPesticide: state => state.addExamModule.showAllPesticideExams,
+        showPesticideModal: state => state.addExamModule.uploadPesticideModalVisible
+      }),
       availableH() {
         let h = this.totalH - 240
         return { height:`${h}px`, border: '1px solid dimgrey' }
       },
+      isPesticideOffice() {
+        //TODO - Karim has envisioned creating a pesticide office (an office in offices table like Victoria or
+        //100 mile house, etc) that isn't a real office but which would hold in-progress pesticide exams
+        //and trigger a different setup of the exam_inventory_table
+        //as this is not implemented yet, this computed value can simply return true or false depending on what
+        //features of the exam_inventory_table you want to see/use/test
+        return true
+      },
       fields() {
         if (!this.showExamInventoryModal) {
-          return [
+          let pesticideFields = [
+            { key: 'office', sortable: true, thStyle: 'width: 5%' },
+
+          ]
+          let fields = [
             { key: 'event_id', label: 'Event ID', sortable: false, thStyle: 'width: 6%' },
             { key: 'exam_type_name', label: 'Exam Type', sortable: true },
             { key: 'exam_name', label: 'Exam Name', sortable: true, thStyle: 'width: 11%' },
@@ -535,11 +624,22 @@
             { key: 'exam_method', label: 'Method', sortable: false, thStyle: 'width: 5%' },
             { key: 'expiry_date', label: 'Expiry Date', sortable: true, thStyle: 'width: 8%' },
             { key: 'exam_received', label: 'Received?', sortable: true, thStyle: 'width: 5%' },
-            { key: 'examinee_name', label: 'Candidate Name', sortable: true, thStyle: 'width: 12%' },
             { key: 'notes', label: 'Notes', sortable: false, thStyle: 'width: 21%' },
             { key: 'scheduled', label: 'Status', sortable: true, thStyle: 'width: 5%', tdClass: 'text-center'},
             { key: 'actions', label: 'Actions', sortable: false, thStyle: 'width: 5%' },
+            {
+              key: 'examinee_name',
+              label: 'Candidate Name',
+              sortable: true,
+              thStyle: this.showAllPesticide ? 'width: 7%' : 'width: 12%'
+            },
           ]
+          if (!this.showAllPesticide) {
+            return fields
+          }
+          if (this.showAllPesticide) {
+            return fields.concat(pesticideFields)
+          }
         }
         if (this.showExamInventoryModal) {
           return [
@@ -561,6 +661,12 @@
         }
         return ''
       },
+      officeFilterText() {
+        if (this.showAllPesticide) {
+          return 'Exams from All Offices'
+        }
+        return 'Office # ' + this.officeNumber + ' - ' + this.officeName
+      },
       officeName() {
         if (this.offices && this.offices.length > 0) {
           let office = this.offices.find( office => office.office_number==this.officeNumber)
@@ -577,7 +683,10 @@
       officeNumber() {
         if (this.inventoryFilters && this.inventoryFilters.office_number) {
           let { office_number } = this.inventoryFilters
-          if (office_number !== 'default') {
+          if (this.inventoryFilters.office_number === 'pesticide_offsite') {
+            let office = (this.offices.find(office => office.office_name == 'Pesticide Offsite'))
+            return office.office_number
+          } else if (office_number !== 'default') {
             return office_number
           }
         }
@@ -601,7 +710,7 @@
       },
     },
     methods: {
-      ...mapActions(['getBookings', 'getExams', 'getExamsForOffice', 'getInvigilators', 'getOffices',]),
+      ...mapActions(['getBookings', 'getExams', 'getExamsForOffice', 'getInvigilators', 'getOffices', 'updateExamStatus']),
       ...mapMutations([
         'setEditedBooking',
         'setEditedBookingOriginal',
@@ -617,8 +726,10 @@
         'toggleEditExamModal',
         'toggleEditGroupBookingModal',
         'toggleExamInventoryModal',
+        'toggleSelectInvigilatorModal',
         'toggleReturnExamModal',
         'toggleScheduling',
+        'toggleUploadExamModal',
       ]),
       addCalendarBooking(item) {
         this.toggleScheduling(true)
@@ -626,6 +737,10 @@
         this.setSelectedExam(item)
         this.$router.push('/booking')
         this.toggleExamInventoryModal(false)
+      },
+      viewAllOfficePesticideExams() {
+        this.$store.dispatch('getAllPesticideExams')
+        this.$store.commit('toggleShowAllPesticideExams', false)
       },
       checkChallenger(item) {
         if (item.event_id && item.booking.invigilator_id && item.number_of_students) {
@@ -820,6 +935,9 @@
         if (this.examReturnedAttention(ex)){
            return false
         }
+        if (ex.is_pesticide && !ex.exam_received_date) {
+          return true
+        }
         if (this.filterByExpiry(ex)){
            return true
         }
@@ -844,6 +962,9 @@
         if (this.examReturnedAttention(ex)){
            return false
         }
+        if (ex.is_pesticide && !ex.exam_received_date) {
+          return true
+        }
         if (this.filterByExpiry(ex)){
            return true
         }
@@ -862,6 +983,9 @@
         }
         if (this.filterByGroup(ex) && this.filterByExpiry(ex)){
            return true
+        }
+        if (this.filterByGroup(ex) && ex.is_pesticide && !ex.exam_received_date) {
+          return true
         }
         if (this.filterByGroup(ex)){
            if (ex.booking){
@@ -893,6 +1017,10 @@
         let examInventory = this.exam_inventory
         let office_number = this.inventoryFilters.office_number === 'default' ?
           this.user.office.office_number : this.inventoryFilters.office_number
+        if (this.inventoryFilters.office_number === 'pesticide_offsite') {
+          office_number = (this.offices.find(office => office.office_name == 'Pesticide Offsite')).office_number
+          this.inventoryFilters.office_number = office_number
+        }
         let filtered = []
         if (examInventory.length > 0) {
 
@@ -904,7 +1032,8 @@
             return evenMoreFiltered.filter(ex => ex.office_id == office_id)
           }
 
-          let exams = examInventory.filter(ex => ex.office.office_number == office_number)
+          let exams = this.showAllPesticide ? examInventory :
+            examInventory.filter(ex => ex.office.office_number == office_number)
 
           if(this.inventoryFilters.requireAttentionFilter === 'both'){
             return exams.filter(ex => this.checkAllAttention(ex))
@@ -970,19 +1099,35 @@
               evenMoreFiltered = moreFiltered
               break
           }
+          let uploadFiltered = []
+          switch(this.inventoryFilters.uploadFilter) {
+            case 'notuploaded':
+              uploadFiltered = evenMoreFiltered.filter(exam => !exam.upload_received_ind)
+              break
+            default:
+              uploadFiltered = evenMoreFiltered
+          }
+          let receptSentFiltered = []
+          switch(this.inventoryFilters.receptSentFilter) {
+            case 'notsent':
+              receptSentFiltered = uploadFiltered.filter(exam => !exam.receipt_sent_ind)
+              break
+            default:
+              receptSentFiltered = uploadFiltered
+          }
           let finalFiltered = []
           switch (this.inventoryFilters.returnedFilter) {
             case 'both':
-              finalFiltered = evenMoreFiltered
+              finalFiltered = receptSentFiltered
               break
             case 'returned':
-              finalFiltered = evenMoreFiltered.filter(ex => ex.exam_returned_date)
+              finalFiltered = receptSentFiltered.filter(ex => ex.exam_returned_date)
               break
             case 'unreturned':
-              finalFiltered = evenMoreFiltered.filter(ex => !ex.exam_returned_date)
+              finalFiltered = receptSentFiltered.filter(ex => !ex.exam_returned_date)
               break
             default:
-              finalFiltered = evenMoreFiltered
+              finalFiltered = receptSentFiltered
               break
           }
           return finalFiltered
@@ -1059,7 +1204,11 @@
       },
       returnExam(item) {
         this.actionedExam = item
-        this.toggleReturnExamModal(true)
+        if (item.is_pesticide) {
+          this.toggleUploadExamModal(true)
+        } else {
+          this.toggleReturnExamModal(true)
+        }
       },
       setExamTypeFilter(option){
         this.setSelectedExamType(option.value)
@@ -1074,6 +1223,8 @@
           this.setInventoryFilters({type:'returnedFilter', value:'both'})
           this.setInventoryFilters({type:'scheduledFilter', value:'both'})
           this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
+          this.setInventoryFilters({type:'receptSentFilter', value:'default'})
+          this.setInventoryFilters({type:'uploadFilter', value:'default'})
         }else if (option.value === 'group'){
           this.setSelectedQuickAction('')
           this.setSelectedQuickActionFilter('')
@@ -1082,6 +1233,8 @@
           this.setInventoryFilters({type:'returnedFilter', value:'both'})
           this.setInventoryFilters({type:'scheduledFilter', value:'both'})
           this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
+          this.setInventoryFilters({type:'receptSentFilter', value:'default'})
+          this.setInventoryFilters({type:'uploadFilter', value:'default'})
         }else if (option.value === 'all'){
           this.setSelectedQuickAction('')
           this.setSelectedQuickActionFilter('')
@@ -1089,6 +1242,8 @@
           this.setInventoryFilters({type:'returnedFilter', value:'both'})
           this.setInventoryFilters({type:'scheduledFilter', value:'both'})
           this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
+          this.setInventoryFilters({type:'receptSentFilter', value:'default'})
+          this.setInventoryFilters({type:'uploadFilter', value:'default'})
           this.setInventoryFilters({type:'groupFilter', value:'both'})
         }
       },
@@ -1103,6 +1258,8 @@
           this.setInventoryFilters({type:'scheduledFilter', value:'both'})
           this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
           this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
+          this.setInventoryFilters({type:'receptSentFilter', value: 'default'})
+          this.setInventoryFilters({type:'uploadFilter', value: 'default'})
         }else if(option.value === 'require_attention') {
           if (this.selectedExamType === 'individual') {
             this.setInventoryFilters({type: 'returnedFilter', value: 'both'})
@@ -1110,15 +1267,21 @@
             this.setInventoryFilters({type: 'scheduledFilter', value: 'both'})
             this.setInventoryFilters({type: 'requireAttentionFilter', value: 'individual'})
             this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
+            this.setInventoryFilters({type:'receptSentFilter', value: 'default'})
+            this.setInventoryFilters({type:'uploadFilter', value: 'default'})
           } else if (this.selectedExamType === 'group') {
             this.setInventoryFilters({type: 'returnedFilter', value: 'unreturned'})
             this.setInventoryFilters({type: 'expiryFilter', value: 'all'})
             this.setInventoryFilters({type: 'scheduledFilter', value: 'unscheduled'})
             this.setInventoryFilters({type: 'requireAttentionFilter', value: 'group'})
             this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
+            this.setInventoryFilters({type:'receptSentFilter', value: 'default'})
+            this.setInventoryFilters({type:'uploadFilter', value: 'default'})
           } else if (this.selectedExamType === 'all') {
             this.setInventoryFilters({type: 'requireAttentionFilter', value: 'both'})
             this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
+            this.setInventoryFilters({type:'receptSentFilter', value: 'default'})
+            this.setInventoryFilters({type:'uploadFilter', value: 'default'})
             this.setInventoryFilters({type: 'expiryFilter', value: 'all'})
           }
         }
@@ -1128,12 +1291,16 @@
           this.setInventoryFilters({type:'scheduledFilter', value:'scheduled'})
           this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
           this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
+          this.setInventoryFilters({type:'receptSentFilter', value: 'default'})
+          this.setInventoryFilters({type:'uploadFilter', value: 'default'})
         }else if(option.value === 'expired'){
           this.setInventoryFilters({type:'expiryFilter', value:'expired'})
           this.setInventoryFilters({type:'returnedFilter', value:'unreturned'})
           this.setInventoryFilters({type:'scheduledFilter', value:'both'})
           this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
           this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
+          this.setInventoryFilters({type:'receptSentFilter', value:'default'})
+          this.setInventoryFilters({type:'uploadFilter', value:'default'})
         }else if(option.value === 'oemai'){
           if(this.selectedExamType === 'individual'){
             this.setInventoryFilters({type:'returnedFilter', value:'both'})
@@ -1141,25 +1308,65 @@
             this.setInventoryFilters({type:'scheduledFilter', value:'both'})
             this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
             this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'individual'})
+            this.setInventoryFilters({type:'receptSentFilter', value:'default'})
+            this.setInventoryFilters({type:'uploadFilter', value:'default'})
           }else if(this.selectedExamType === 'group'){
             this.setInventoryFilters({type:'returnedFilter', value:'both'})
             this.setInventoryFilters({type:'expiryFilter', value:'all'})
             this.setInventoryFilters({type:'scheduledFilter', value:'both'})
             this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
             this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'group'})
+            this.setInventoryFilters({type:'receptSentFilter', value:'default'})
+            this.setInventoryFilters({type:'uploadFilter', value:'default'})
           }else if(this.selectedExamType === 'all'){
             this.setInventoryFilters({type:'returnedFilter', value:'both'})
             this.setInventoryFilters({type:'expiryFilter', value:'all'})
             this.setInventoryFilters({type:'scheduledFilter', value:'both'})
             this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
             this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'both'})
+            this.setInventoryFilters({type:'receptSentFilter', value:'default'})
+            this.setInventoryFilters({type:'uploadFilter', value:'default'})
           }
-        }else if(option.value === 'all'){
+        } else if(option.value === 'awaiting_upload'){
+          this.isLoading = true;
+          this.setInventoryFilters({type: 'office_number', value: 'pesticide_offsite'})
+          this.updateExamStatus().then(success => {
+            console.log(success)
+            this.$store.commit('toggleShowAllPesticideExams', false)
+            this.setInventoryFilters({type: 'expiryFilter', value: 'current'})
+            this.setInventoryFilters({type: 'groupFilter', value: 'both'})
+            this.setInventoryFilters({type: 'returnedFilter', value: 'unreturned'})
+            this.setInventoryFilters({type: 'scheduledFilter', value: 'both'})
+            this.setInventoryFilters({type: 'receptSentFilter', value: 'default'})
+            this.setInventoryFilters({type: 'uploadFilter', value: 'notuploaded'})
+            this.isLoading = false;
+          }, err => {
+            console.error(err)
+            this.isLoading = false;
+          }).catch(err => {
+            this.isLoading = false;
+          })
+        } else if(option.value === 'awaiting_receipt'){
+
+          // this.$store.commit('toggleShowAllPesticideExams', false)
+          this.viewAllOfficePesticideExams()
+
+          this.setInventoryFilters({type: 'expiryFilter', value: 'current'})
+          this.setInventoryFilters({type:'scheduledFilter', value:'both'})
+          this.setInventoryFilters({type:'returnedFilter', value:'unreturned'})
+          this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
+          this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
+          this.setInventoryFilters({type:'uploadFilter', value: 'default'})
+          this.setInventoryFilters({type:'receptSentFilter', value: 'notsent'})
+        } else if(option.value === 'all'){
           this.setInventoryFilters({type: 'expiryFilter', value: 'all'})
           this.setInventoryFilters({type:'scheduledFilter', value:'both'})
+          this.setInventoryFilters({type:'groupFilter', value:'both'})
           this.setInventoryFilters({type:'returnedFilter', value:'both'})
           this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
           this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
+          this.setInventoryFilters({type:'uploadFilter', value: 'default'})
+          this.setInventoryFilters({type:'receptSentFilter', value: 'default'})
         }
       },
       setFilter(e) {
@@ -1171,10 +1378,12 @@
       },
       setOfficeFilter(office_number) {
         this.setFilter({type:'office_number', value: office_number})
+        this.$store.commit('toggleShowAllPesticideExams', false)
       },
       setHomeOffice() {
         this.setFilter({type: 'office_number', value: 'default'})
         this.officeFilterModal = false
+        this.$store.commit('toggleShowAllPesticideExams', false)
       },
       sortCompare(a, b, key) {
         if (key === 'scheduled') {
@@ -1200,7 +1409,7 @@
           if (!value) {
             return ''
           } else if (value instanceof Object) {
-            return keys(value)
+            return Object.keys(value)
             .sort()
             .map(key => toString(value[key]))
             .join(' ')
@@ -1237,6 +1446,16 @@
           rank: 1,
           style: {fontSize: '1rem', color: '#4e9de0'}
         }
+        let feePending = {
+          icon: 'dollar-sign',
+          rank: 2,
+          style: {fontSize: '1rem', color: 'green'}
+        }
+
+        if (item.is_pesticide && !item.exam_received_date && !item.exam_returned_date) {
+          return lifeRing
+        }
+
         if (item.exam_returned_date) {
           return envelopeOpenText
         }
@@ -1309,6 +1528,9 @@
         if (!item.exam_received_date) {
             return exclamationTriangle
         }
+        if (item.is_pesticide && item.exam_received_date && !item.receipt) {
+          return feePending
+        }
         return clipboardCheck
       },
       stillRequires(item) {
@@ -1328,7 +1550,11 @@
         }
 
         if (!item.exam_received_date) {
-          output.push('Receipt of Materials')
+          if (item.is_pesticide) {
+            output.push('Print Materials')
+          } else {
+            output.push('Receipt of Materials')
+          }
         }
         if (item.exam_type.exam_type_name === 'Monthly Session Exam') {
           if (!item.number_of_students) {
@@ -1338,6 +1564,7 @@
             output.push('Event ID')
           }
         }
+        console.log(item)
         if (item.booking) {
           if(item.exam_type.group_exam_ind == 1){
             if(length_of_invigilator_array == 0 && number_of_invigilators == 1){
@@ -1366,6 +1593,10 @@
         this.setEditedBookingOriginal(booking)
         this.toggleEditBookingModal(true)
         this.$router.push('/booking')
+      },
+      openInvigilatorModal(item) {
+        this.setSelectedExam(item)
+        this.toggleSelectInvigilatorModal(true)
       },
     },
   }

@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import logging
-from flask import g
+from flask import request, g
 from flask_restx import Resource
 from sqlalchemy import exc
 from app.models.bookings import Invigilator
@@ -45,3 +45,4 @@ class InvigilatorList(Resource):
         except exc.SQLAlchemyError as error:
             logging.error(error, exc_info=True)
             return {"message": "api is down"}, 500
+

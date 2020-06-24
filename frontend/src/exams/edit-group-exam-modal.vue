@@ -90,307 +90,382 @@
           </b-col>
         </b-form-row>
       </b-form>
-      <template>
-        <b-button v-if="this.currentInvigilatorList.length == 0 && this.groupInvigilatorBoolean"
-                  v-b-toggle.collapse-invigilators
-                  variant="primary"
-                  style="width: 95%; margin-left: 10px;"
-                  class="mb-0"
-                  @click="setShadowInvigilatorBoolean">
-          Add Invigilators
-        </b-button>
-      </template>
-      <template>
-        <b-row style="display: inline-flex;" class="w-100 ml-0 mb-1">
-          <b-col class="w-50">
-            <b-button v-if="this.currentInvigilatorList.length > 0 && this.changeInvigilatorState "
-                      v-b-toggle.collapse-invigilators
-                      variant="primary"
-                      style="padding-left: 40px; padding-right: 25px; margin-left: -4px; white-space: nowrap;"
-                      @click="setRemoveShadowInvigilatorBoolean">
-              <span>Change Invigilator(s)</span>
-            </b-button>
-            <b-button v-if="this.currentInvigilatorList.length > 0 && !this.groupInvigilatorBoolean && !this.changeInvigilatorState"
-                      style="padding-left: 40px; padding-right: 25px; margin-left: -4px; white-space: nowrap;"
-                      variant="primary"
-                      disabled>
-              <span>Change Invigilator(s)</span>
-            </b-button>
-          </b-col>
-          <b-col class="w-50">
-            <b-button v-if="this.currentInvigilatorList.length > 0 && this.removeInvigilatorState"
-                      v-b-toggle.collapse-remove-invigilators
-                      variant="danger"
-                      style="padding-left: 40px; padding-right: 28px; margin-left: -11px; white-space: nowrap;"
-                      @click="setChangeShadowInvigilatorBoolean">
-              Remove Invigilator(s)
-            </b-button>
-            <b-button v-if="this.currentInvigilatorList.length > 0 && !this.groupInvigilatorBoolean && !this.removeInvigilatorState"
-                      style="padding-left: 40px; padding-right: 28px; margin-left: -11px; white-space: nowrap;"
-                      variant="danger"
-                      disabled>
-              <span>Remove Invigilator(s)</span>
-            </b-button>
-          </b-col>
-        </b-row>
-      </template>
-      <b-collapse id="collapse-remove-invigilators"
-                      class="mt-2 w-100">
-            <b-form-group class="q-info-display-grid-container">
-              <b-row class="ml-1">
-                <span style="font-weight: bold;">Current Invigilator(s): </span>
-              </b-row>
-              <b-row v-for="current in this.currentInvigilatorList"
-                       style="justify-content: center"
-                       class="mb-1">
-                  {{ current.name }}
-                </b-row>
-              <b-row class="ml-1">
-                <span style="font-weight: bold;">Would you like to remove invigilator(s)?</span>
-              </b-row>
-              <template>
-                <b-row style="display: flex; justify-content: center;"
-                       class="w-100 mb-0">
-                  <b-button class="mr-2 mt-1"
-                            variant="danger"
-                            @click="setSelectedInvigilator">
-                    Yes
-                  </b-button>
-                  <b-button class="ml-2 mt-1"
-                            variant="primary"
-                            @click="closeRemoveInvigilator">
-                    No
-                  </b-button>
-                </b-row>
-              </template>
+      <template v-if="actionedExam.is_pesticide">
+        <b-form-row>
+          <b-col>
+            <b-form-group>
+              <label>Event ID</label><br>
+              <b-form-input v-model="eventId"
+                          :disabled="fieldDisabled"
+                          type="text"
+                          class="less-10-mb"
+                          @input.native="checkInput"
+                          name="event_id" />
             </b-form-group>
-          </b-collapse>
-      <b-collapse id="collapse-invigilators"
-                  class="mt-2 mb-1 w-100">
-        <label class="mb-1">Add Invigilators</label>
-        <b-form class="q-info-display-grid-container">
-          <b-row>
-            <b-col cols="7">
-              <b-table selectable
-                       select-mode="multi"
-                       :fields="fields"
-                       :items="invigilator_multi_select"
-                       responsive
-                       selected-variant="success"
-                       style="height: 110px; width: 250px;"
-                       @row-selected="rowSelected"
-                       bordered
-                       striped>
-                <template slot="selected" slot-scope="{ rowSelected }">
-                  <span v-if="rowSelected">✔</span>
-                </template>
-              </b-table>
+          </b-col>
+        </b-form-row>
+        <b-form-row>
+          <b-col>
+            <label class="my-0">Retrieve Exam and Print</label>
+            <b-btn class="btn-success w-100" @click="checkAndDownloadExam()">Print</b-btn>
+          </b-col>
+          <b-col :col="!this.fields.exam_received_date" :cols="this.exam_received ? '' : 3 ">
+            <b-form-group>
+              <label class="my-0">Exam Printed?</label>
+              <b-select id="exam_received"
+                        v-model="exam_received"
+                        @input="updateExamReceived"
+                        class="less-10-mb"
+                        :options="examReceivedOptions" />
+            </b-form-group>
+          </b-col>
+          <b-col v-if="exam_received">
+            <b-form-group>
+              <label class="my-0">Printed Date</label><br>
+              <DatePicker :value="fields.exam_received_date"
+                          @input="handleDate"
+                          format="YYYY-MM-DD"
+                          value-type="format"
+                          lang="en"
+                          id="exam_received_date"
+                          input-class="form-control"
+                          class="w-100 my-0 less-10-mb">
+              </DatePicker>
+            </b-form-group>
+          </b-col>
+        </b-form-row>
+        <b-form-row v-if="examNotReady">
+          <b-col cols="12" style="color: red">
+            This exam is not yet ready for retrieval.  Please try again in no less than 15 minutes.
+          </b-col>
+        </b-form-row>
+        <b-form-row>
+          <b-col cols="12">
+            <b-form-group>
+              <label class="my-0">Invigilator</label>
+              <b-form-select
+                v-model="invigilator_id"
+                :options="invigilatorList"
+                @change="invigilatorChanged"
+              >
+              </b-form-select>
+            </b-form-group>
+          </b-col>
+        </b-form-row>
+      </template>
+      <template v-else>
+        <!-- Invigilator Start -->
+        <template>
+          <b-button v-if="this.currentInvigilatorList.length == 0 && this.groupInvigilatorBoolean"
+                    v-b-toggle.collapse-invigilators
+                    variant="primary"
+                    style="width: 95%; margin-left: 10px;"
+                    class="mb-0"
+                    @click="setShadowInvigilatorBoolean">
+            Add Invigilators
+          </b-button>
+        </template>
+        <template>
+          <b-row style="display: inline-flex;" class="w-100 ml-0 mb-1">
+            <b-col class="w-50">
+              <b-button v-if="this.currentInvigilatorList.length > 0 && this.changeInvigilatorState "
+                        v-b-toggle.collapse-invigilators
+                        variant="primary"
+                        style="padding-left: 40px; padding-right: 25px; margin-left: -4px; white-space: nowrap;"
+                        @click="setRemoveShadowInvigilatorBoolean">
+                <span>Change Invigilator(s)</span>
+              </b-button>
+              <b-button v-if="this.currentInvigilatorList.length > 0 && !this.groupInvigilatorBoolean && !this.changeInvigilatorState"
+                        style="padding-left: 40px; padding-right: 25px; margin-left: -4px; white-space: nowrap;"
+                        variant="primary"
+                        disabled>
+                <span>Change Invigilator(s)</span>
+              </b-button>
             </b-col>
-            <b-col cols="4">
-              <b-row class="mb-2"
-                     style="font-weight: bold;">
-                Required Invigilators: {{ Math.ceil(actionedExam.number_of_students / 24) }}
-              </b-row>
-              <template v-if="checkCurrentLength">
-                <b-row class="mb-2"
-                       style="font-weight: bold;">
-                  Current Invigilators:
-                </b-row >
-                <b-row v-for="current in this.currentInvigilatorList"
-                       style="justify-content: center"
-                       class="mb-1">
-                  {{ current.name }}
-                </b-row>
-              </template>
-              <b-row style="font-weight: bold;" class="mb-2">
-                Selected Invigilators
-              </b-row>
-              <b-row v-for="select in selected"
-                     style="justify-content: center;">
-                {{ select.name }}
-              </b-row>
-              <b-row style="justify-content: center;"
-                     v-if="this.currentInvigilatorList.length == 0 && this.selected.length == 0"
-                     class="mt-2">
-                <font-awesome-icon icon="life-ring"
-                                   style="font-size: 3.0rem; color: red;"
-                                   class="p-1"/>
-              </b-row>
-              <b-row style="justify-content: center;"
-                     v-else-if="(selected.length > 0 && selected.length < Math.ceil(actionedExam.number_of_students / 24)) ||
-                            (selected.length > Math.ceil(actionedExam.number_of_students / 24))"
-                     class="mt-2">
-                <font-awesome-icon icon="exclamation-triangle"
-                                   style="font-size: 3.0rem; color: #FFC32B;"
-                                   class="p-1"/>
-
-              </b-row>
-              <b-row style="justify-content: center;"
-                     v-else-if="(selected.length == 0 && this.currentInvigilatorList.length < Math.ceil(actionedExam.number_of_students / 24))"
-                     class="mt-2">
-                <font-awesome-icon icon="exclamation-triangle"
-                                   style="font-size: 3.0rem; color: #FFC32B;"
-                                   class="p-1"/>
-
-              </b-row>
-              <b-row style="justify-content: center;"
-                     v-else-if="(selected.length > 0 && selected.length == Math.ceil(actionedExam.number_of_students / 24))"
-                     class="mt-2">
-                <font-awesome-icon icon="check"
-                                   style="font-size: 3.0rem; color: green;"
-                                   class="p-1"/>
-              </b-row>
-              <b-row style="justify-content: center;"
-                     v-else-if="(this.currentInvigilatorList.length == Math.ceil(actionedExam.number_of_students / 24))"
-                     class="mt-2">
-                <font-awesome-icon icon="check"
-                                   style="font-size: 3.0rem; color: green;"
-                                   class="p-1"/>
-              </b-row>
+            <b-col class="w-50">
+              <b-button v-if="this.currentInvigilatorList.length > 0 && this.removeInvigilatorState"
+                        v-b-toggle.collapse-remove-invigilators
+                        variant="danger"
+                        style="padding-left: 40px; padding-right: 28px; margin-left: -11px; white-space: nowrap;"
+                        @click="setChangeShadowInvigilatorBoolean">
+                Remove Invigilator(s)
+              </b-button>
+              <b-button v-if="this.currentInvigilatorList.length > 0 && !this.groupInvigilatorBoolean && !this.removeInvigilatorState"
+                        style="padding-left: 40px; padding-right: 28px; margin-left: -11px; white-space: nowrap;"
+                        variant="danger"
+                        disabled>
+                <span>Remove Invigilator(s)</span>
+              </b-button>
             </b-col>
           </b-row>
-        </b-form>
-      </b-collapse>
-      <b-form-group>
-        <b-form-row>
-          <template v-if="this.currentShadowInvigilator != null">
-          <b-row style="display: flex;" class="w-100 ml-0 mb-2">
-              <b-col class="w-50 ml-0 mr-0 pr-1">
-                <b-button v-if="this.changeState && this.shadowInvigilatorBoolean"
-                          v-b-toggle.collapse-1
-                          variant="primary"
-                          @click="setRemove"
-                          class="mt-1 ml-0">
-                  Change Shadow Invigilator
+        </template>
+        <b-collapse id="collapse-remove-invigilators"
+                    class="mt-2 w-100">
+          <b-form-group class="q-info-display-grid-container">
+            <b-row class="ml-1">
+              <span style="font-weight: bold;">Current Invigilator(s): </span>
+            </b-row>
+            <b-row v-for="current in this.currentInvigilatorList"
+                      style="justify-content: center"
+                      class="mb-1"
+                      v-bind:key="current">
+                {{ current.name }}
+              </b-row>
+            <b-row class="ml-1">
+              <span style="font-weight: bold;">Would you like to remove invigilator(s)?</span>
+            </b-row>
+            <template>
+              <b-row style="display: flex; justify-content: center;"
+                      class="w-100 mb-0">
+                <b-button class="mr-2 mt-1"
+                          variant="danger"
+                          @click="setSelectedInvigilator">
+                  Yes
                 </b-button>
-                <b-button v-else-if="!this.changeState || !this.shadowInvigilatorBoolean"
-                          disabled
+                <b-button class="ml-2 mt-1"
                           variant="primary"
-                          class="mt-1 ml-0">
-                  Change Shadow Invigilator
+                          @click="closeRemoveInvigilator">
+                  No
                 </b-button>
+              </b-row>
+            </template>
+          </b-form-group>
+        </b-collapse>
+        <b-collapse id="collapse-invigilators"
+                    class="mt-2 mb-1 w-100">
+          <label class="mb-1">Add Invigilators</label>
+          <b-form class="q-info-display-grid-container">
+            <b-row>
+              <b-col cols="7">
+                <b-table selectable
+                        select-mode="multi"
+                        :fields="invigilatorFields"
+                        :items="invigilator_multi_select"
+                        responsive
+                        selected-variant="success"
+                        style="height: 110px; width: 250px;"
+                        @row-selected="rowSelected"
+                        bordered
+                        striped>
+                  <template slot="selected" slot-scope="{ rowSelected }">
+                    <span v-if="rowSelected">✔</span>
+                  </template>
+                </b-table>
               </b-col>
-              <b-col class="w-50 ml-1 mr-1 pl-1">
-                <b-button v-if="this.removeState && this.shadowInvigilatorBoolean"
-                          v-b-toggle.collapse-2
-                          variant="danger"
-                          @click="setChange"
-                          class="mt-1 mr-0">
-                  Remove Shadow Invigilator
-                </b-button>
-                <b-button v-else-if="!this.removeState || !this.shadowInvigilatorBoolean"
-                          disabled
-                          variant="danger"
-                          class="mt-1 mr-0">
-                  Remove Shadow Invigilator
-                </b-button>
+              <b-col cols="4">
+                <b-row class="mb-2"
+                      style="font-weight: bold;">
+                  Required Invigilators: {{ Math.ceil(actionedExam.number_of_students / 24) }}
+                </b-row>
+                <template v-if="checkCurrentLength">
+                  <b-row class="mb-2"
+                        style="font-weight: bold;">
+                    Current Invigilators:
+                  </b-row >
+                  <b-row v-for="current in this.currentInvigilatorList"
+                        style="justify-content: center"
+                        class="mb-1"
+                        v-bind:key="current">
+                    {{ current.name }}
+                  </b-row>
+                </template>
+                <b-row style="font-weight: bold;" class="mb-2">
+                  Selected Invigilators
+                </b-row>
+                <b-row v-for="select in selected"
+                      style="justify-content: center;"
+                      v-bind:key="select">
+                  {{ select.name }}
+                </b-row>
+                <b-row style="justify-content: center;"
+                      v-if="this.currentInvigilatorList.length == 0 && this.selected.length == 0"
+                      class="mt-2">
+                  <font-awesome-icon icon="life-ring"
+                                    style="font-size: 3.0rem; color: red;"
+                                    class="p-1"/>
+                </b-row>
+                <b-row style="justify-content: center;"
+                      v-else-if="(selected.length > 0 && selected.length < Math.ceil(actionedExam.number_of_students / 24)) ||
+                              (selected.length > Math.ceil(actionedExam.number_of_students / 24))"
+                      class="mt-2">
+                  <font-awesome-icon icon="exclamation-triangle"
+                                    style="font-size: 3.0rem; color: #FFC32B;"
+                                    class="p-1"/>
+
+                </b-row>
+                <b-row style="justify-content: center;"
+                      v-else-if="(selected.length == 0 && this.currentInvigilatorList.length < Math.ceil(actionedExam.number_of_students / 24))"
+                      class="mt-2">
+                  <font-awesome-icon icon="exclamation-triangle"
+                                    style="font-size: 3.0rem; color: #FFC32B;"
+                                    class="p-1"/>
+
+                </b-row>
+                <b-row style="justify-content: center;"
+                      v-else-if="(selected.length > 0 && selected.length == Math.ceil(actionedExam.number_of_students / 24))"
+                      class="mt-2">
+                  <font-awesome-icon icon="check"
+                                    style="font-size: 3.0rem; color: green;"
+                                    class="p-1"/>
+                </b-row>
+                <b-row style="justify-content: center;"
+                      v-else-if="(this.currentInvigilatorList.length == Math.ceil(actionedExam.number_of_students / 24))"
+                      class="mt-2">
+                  <font-awesome-icon icon="check"
+                                    style="font-size: 3.0rem; color: green;"
+                                    class="p-1"/>
+                </b-row>
               </b-col>
             </b-row>
-          </template>
-          <template v-else>
-            <b-button v-b-toggle.collapse-1
-                      variant="primary"
-                      class="mt-2"
-                      style="width: 93%; margin-left: 15px;"
-                      @click="setInvigilatorBoolean">
-              Add Shadow Invigilator
-            </b-button>
-          </template>
-          <b-collapse id="collapse-1"
-                      class="mt-2 mb-2 w-100">
-            <b-form-group class="q-info-display-grid-container">
-              <label>Shadow Invigilators</label>
-              <b-form>
-                <b-row>
-                  <b-col cols="7">
-                    <b-table selectable
-                             select-mode="single"
-                             :fields="shadowFields"
-                             :items="shadow_invigilator_options"
-                             @row-selected="rowSelectedShadow"
-                             responsive
-                             selected-variant="success"
-                             style="height: 150px; width: 250px;"
-                             bordered
-                             striped
-                             class="pl-2">
-                      <template slot="selected" slot-scope=" { rowSelected } ">
-                        <span v-if="rowSelected">✔</span>
-                      </template>
-                    </b-table>
-                  </b-col>
-                  <b-col cols="4">
-                    <b-row>
-                      Shadow Invigilator Limit: 1
-                    </b-row>
-                    <b-row v-if="this.currentShadowInvigilator != null"
-                           class="mb-1">
-                      Current Invigilator
-                    </b-row>
-                    <b-row v-if="this.currentShadowInvigilator != null"
-                           style="justify-content: center;"
-                           class="mb-1">
-                      {{ this.currentShadowInvigilatorName }}
-                    </b-row>
-                    <b-row style="font-weight: bold;"
-                           class="mb-0">
-                      Selected Invigilators
-                    </b-row>
-                    <b-row v-for="select in selectedShadow"
-                           style="justify-content: center;"
-                           class="mb-0">
-                      {{ select.name }}
-                    </b-row>
-                    <b-row style="justify-content: center;"
-                           v-if="this.selectedShadow"
-                           class="mt-2">
-                      <font-awesome-icon icon="check"
-                                         style="font-size: 3.0rem; color: green;"
-                                         class="p-1"/>
-                    </b-row>
-                  </b-col>
-                </b-row>
-              </b-form>
-            </b-form-group>
-          </b-collapse>
-          <b-collapse id="collapse-2"
-                      class="mt-2 w-100">
-            <b-form-group class="q-info-display-grid-container">
-              <b-row class="ml-1">
-                <span style="font-weight: bold;">Current Shadow Invigilator: </span>
-              </b-row>
-              <b-row class="mb-2"
-                     style="justify-content: center;">
-                <span>{{ this.currentShadowInvigilatorName}}</span>
-              </b-row>
-              <b-row class="ml-1">
-                <span style="font-weight: bold;">Would you like to remove this shadow invigilator?</span>
-              </b-row>
-              <template>
-                <b-row style="display: flex; justify-content: center;"
-                       class="w-100 mb-0">
-                  <b-button class="mr-2 mt-1"
-                            variant="danger"
-                            @click="setSelectedShadowNull">
-                    Yes
-                  </b-button>
-                  <b-button class="ml-2 mt-1"
+          </b-form>
+        </b-collapse>
+        <!-- Invigilator End -->
+
+        <!-- Shadow Invigilator Start -->
+        <b-form-group>
+          <b-form-row>
+            <template v-if="this.currentShadowInvigilator != null">
+            <b-row style="display: flex;" class="w-100 ml-0 mb-2">
+                <b-col class="w-50 ml-0 mr-0 pr-1">
+                  <b-button v-if="this.changeState && this.shadowInvigilatorBoolean"
+                            v-b-toggle.collapse-1
                             variant="primary"
-                            v-b-toggle.collapse-2
-                            @click="setChange">
-                    No
+                            @click="setRemove"
+                            class="mt-1 ml-0">
+                    Change Shadow Invigilator
                   </b-button>
+                  <b-button v-else-if="!this.changeState || !this.shadowInvigilatorBoolean"
+                            disabled
+                            variant="primary"
+                            class="mt-1 ml-0">
+                    Change Shadow Invigilator
+                  </b-button>
+                </b-col>
+                <b-col class="w-50 ml-1 mr-1 pl-1">
+                  <b-button v-if="this.removeState && this.shadowInvigilatorBoolean"
+                            v-b-toggle.collapse-2
+                            variant="danger"
+                            @click="setChange"
+                            class="mt-1 mr-0">
+                    Remove Shadow Invigilator
+                  </b-button>
+                  <b-button v-else-if="!this.removeState || !this.shadowInvigilatorBoolean"
+                            disabled
+                            variant="danger"
+                            class="mt-1 mr-0">
+                    Remove Shadow Invigilator
+                  </b-button>
+                </b-col>
+              </b-row>
+            </template>
+            <template v-else>
+              <b-button v-b-toggle.collapse-1
+                        variant="primary"
+                        class="mt-2"
+                        style="width: 93%; margin-left: 15px;"
+                        @click="setInvigilatorBoolean">
+                Add Shadow Invigilator
+              </b-button>
+            </template>
+            <b-collapse id="collapse-1"
+                        class="mt-2 mb-2 w-100">
+              <b-form-group class="q-info-display-grid-container">
+                <label>Shadow Invigilators</label>
+                <b-form>
+                  <b-row>
+                    <b-col cols="7">
+                      <b-table selectable
+                              select-mode="single"
+                              :fields="shadowFields"
+                              :items="shadow_invigilator_options"
+                              @row-selected="rowSelectedShadow"
+                              responsive
+                              selected-variant="success"
+                              style="height: 150px; width: 250px;"
+                              bordered
+                              striped
+                              class="pl-2">
+                        <template slot="selected" slot-scope=" { rowSelected } ">
+                          <span v-if="rowSelected">✔</span>
+                        </template>
+                      </b-table>
+                    </b-col>
+                    <b-col cols="4">
+                      <b-row>
+                        Shadow Invigilator Limit: 1
+                      </b-row>
+                      <b-row v-if="this.currentShadowInvigilator != null"
+                            class="mb-1">
+                        Current Invigilator
+                      </b-row>
+                      <b-row v-if="this.currentShadowInvigilator != null"
+                            style="justify-content: center;"
+                            class="mb-1">
+                        {{ this.currentShadowInvigilatorName }}
+                      </b-row>
+                      <b-row style="font-weight: bold;"
+                            class="mb-0">
+                        Selected Invigilators
+                      </b-row>
+                      <b-row v-for="select in selectedShadow"
+                            style="justify-content: center;"
+                            class="mb-0"
+                            v-bind:key="select">
+                        {{ select.name }}
+                      </b-row>
+                      <b-row style="justify-content: center;"
+                            v-if="this.selectedShadow"
+                            class="mt-2">
+                        <font-awesome-icon icon="check"
+                                          style="font-size: 3.0rem; color: green;"
+                                          class="p-1"/>
+                      </b-row>
+                    </b-col>
+                  </b-row>
+                </b-form>
+              </b-form-group>
+            </b-collapse>
+            <b-collapse id="collapse-2"
+                        class="mt-2 w-100">
+              <b-form-group class="q-info-display-grid-container">
+                <b-row class="ml-1">
+                  <span style="font-weight: bold;">Current Shadow Invigilator: </span>
                 </b-row>
-              </template>
-            </b-form-group>
-          </b-collapse>
-        </b-form-row>
-      </b-form-group>
+                <b-row class="mb-2"
+                      style="justify-content: center;">
+                  <span>{{ this.currentShadowInvigilatorName}}</span>
+                </b-row>
+                <b-row class="ml-1">
+                  <span style="font-weight: bold;">Would you like to remove this shadow invigilator?</span>
+                </b-row>
+                <template>
+                  <b-row style="display: flex; justify-content: center;"
+                        class="w-100 mb-0">
+                    <b-button class="mr-2 mt-1"
+                              variant="danger"
+                              @click="setSelectedShadowNull">
+                      Yes
+                    </b-button>
+                    <b-button class="ml-2 mt-1"
+                              variant="primary"
+                              v-b-toggle.collapse-2
+                              @click="setChange">
+                      No
+                    </b-button>
+                  </b-row>
+                </template>
+              </b-form-group>
+            </b-collapse>
+          </b-form-row>
+        </b-form-group>
+        <!-- Shadow Invigilator End -->
+      </template>
 
       <div v-if="showMessage"
             class="mb-3"
             style="color: red;">Nothing has changed.  All fields contain their initial values.</div>
       <div style="display: flex; justify-content: flex-end; width: 100%">
+        <b-btn class="w-12 mr-2 btn-warning" @click="show">Reset</b-btn>
         <b-btn class="btn-secondary mr-2" @click="cancel">Cancel</b-btn>
         <b-btn v-if="!allowSubmit"
                class="btn-primary disabled"
@@ -398,7 +473,6 @@
         <b-btn v-else-if="allowSubmit"
                class="btn-primary"
                @click="submit">Submit</b-btn>
-        <b-btn class="w-12 ml-2 btn-warning" @click="show">Reset</b-btn>
       </div>
     </div>
   </b-modal>
@@ -409,6 +483,8 @@
   import moment from 'moment'
   import zone from 'moment-timezone'
   import DatePicker from 'vue2-datepicker'
+  import Vue from 'vue'
+  const FileDownload = require('js-file-download')
 
   export default {
     name: "EditGroupExamBookingModal",
@@ -420,6 +496,7 @@
         date: '',
         time: '',
         offsite_location: '',
+        eventId: '',
         editedFields: [],
         showMessage: false,
         itemCopy: {},
@@ -434,13 +511,21 @@
         removeInvigilatorState: true,
         removeFlag: false,
         removeCurrentInvigilatorFlag: false,
-        fields: ['selected', 'name',],
+        invigilatorFields: ['selected', 'name',],
+        fields: {
+          exam_received_date: null,
+          notes: null,
+          event_id: null,
+          exam_name: null,
+        },
         numberOfInvigilators: 0,
         selected: [],
         currentInvigilatorList: [],
         invigilatorBoolean: true,
         shadowInvigilatorBoolean: true,
         groupInvigilatorBoolean: true,
+        exam_received: false,
+        examNotReady: false,
       }
     },
     computed: {
@@ -456,6 +541,8 @@
       ...mapState({
         showModal: state => state.showEditGroupBookingModal,
         invigilators: 'invigilators',
+        pesticide_invigilators: 'pesticide_invigilators',
+        pesticide_offsite_invigilators: 'pesticide_offsite_invigilators',
         user: 'user',
         shadowInvigilators: state => state.shadowInvigilators,
       }),
@@ -507,6 +594,26 @@
         }
         return ''
       },
+      exam() {
+        console.log(this.actionedExam)
+        if (Object.keys(this.actionedExam).length > 0) {
+          return this.actionedExam
+        }
+        return false
+      },
+      invigilatorList() {
+        console.log(this.invigilator_id)
+        let invigilators = (this.actionedExam.office && this.actionedExam.office.office_name == 'Pesticide Offsite') ? this.pesticide_offsite_invigilators : this.pesticide_invigilators;
+        return invigilators.map(invigilator => ({ text: invigilator.invigilator_name, value: parseInt(invigilator.invigilator_id) }))
+      },
+      examReceivedOptions() {
+        this.exam_received = this.actionedExam.exam_received_date !== null ? true : false;
+        this.fields.exam_received_date = this.actionedExam.exam_received_date
+        return [
+          { value: false, text: 'No' },
+          { value: true, text: 'Yes' },
+        ];
+      },
       fieldDisabled() {
         if ((this.role_code !== 'GA' && !this.is_liaison_designate) && this.examType != 'other') {
           return true
@@ -518,6 +625,7 @@
           return this.showModal
         },
         set(e) {
+          this.examNotReady = false
           this.toggleEditGroupBookingModal(e)
         }
       },
@@ -527,7 +635,8 @@
         'getBookings',
         'getExams',
         'postBooking',
-        'putRequest'
+        'putRequest',
+        'downloadExam',
       ]),
       ...mapMutations([
         'toggleEditGroupBookingModal'
@@ -635,6 +744,21 @@
             return
           }
         }
+        if (name === 'event_id') {
+          if (value !== this.itemCopy[name]) {
+            if (!this.editedFields.includes(e.target.name)) {
+              this.editedFields.push(e.target.name)
+            }
+            return
+          }
+          if (value === this.itemCopy[name]) {
+            if (this.editedFields.includes(e.target.name)) {
+              let i = this.editedFields.indexOf(e.target.name)
+              this.editedFields.splice(i, 1)
+            }
+            return
+          }
+        }
         if (name === 'invigilator_id') {
           if (!this.itemCopy.booking) {
             if (!this.editedFields.includes(name)) {
@@ -706,7 +830,8 @@
           }
 
           let examPut = {
-            offsite_location: this.offsite_location
+            offsite_location: this.offsite_location,
+            event_id: this.eventId
           }
           this.postBooking(bookingPost).then( booking_id => {
             examPut.booking_id = booking_id
@@ -764,18 +889,23 @@
             bookingChanges['shadow_invigilator_id'] = this.currentShadowInvigilator
           }
 
-          if(current_invigilator_id_list.length === 0){
-            bookingChanges['invigilator_id'] = invigilator_id_list
+          if(this.actionedExam.is_pesticide) {
+            bookingChanges['invigilator_id'] = [this.invigilator_id]
+          } else {
+            if(current_invigilator_id_list.length === 0){
+              bookingChanges['invigilator_id'] = invigilator_id_list
+            }
+            else if(invigilator_id_list.length >= current_invigilator_id_list.length){
+              bookingChanges['invigilator_id'] = invigilator_id_list
+            }
+            else if(invigilator_id_list.length < current_invigilator_id_list.length){
+              bookingChanges['invigilator_id'] = invigilator_id_list
+            }
+            else {
+              bookingChanges['invigilator_id'] = current_invigilator_id_list
+            }
           }
-          else if(invigilator_id_list.length >= current_invigilator_id_list.length){
-            bookingChanges['invigilator_id'] = invigilator_id_list
-          }
-          else if(invigilator_id_list.length < current_invigilator_id_list.length){
-            bookingChanges['invigilator_id'] = invigilator_id_list
-          }
-          else {
-            bookingChanges['invigilator_id'] = current_invigilator_id_list
-          }
+
 
           if (this.removeCurrentInvigilatorFlag) {
             bookingChanges.invigilator_id = null
@@ -799,8 +929,13 @@
           }
         }
         let examChanges = {}
-        if (edits.includes('offsite_location')) {
+        console.log(edits)
+        console.log(this.itemCopy)
+        if (edits.includes('offsite_location') || edits.includes('invigilator_id') || edits.includes('exam_received') || edits.includes('event_id')) {
           examChanges['offsite_location'] = this.offsite_location
+          examChanges['event_id'] = this.eventId
+          examChanges['invigilator_id'] = this.invigilator_id
+          examChanges['exam_received_date'] = this.fields.exam_received_date
           putRequests.push({url:`/exams/${this.itemCopy.exam_id}/`, data: examChanges})
         }
 
@@ -840,13 +975,15 @@
         this.changeState = true
         this.selectedShadow = null
         this.removeFlag = false
-        this.actionedExam.booking.invigilators.forEach(function(invigilator) {
-          let indexOfInvigilator = self.invigilators.findIndex(x => x.invigilator_id == invigilator)
-          let index_invigilator_id = self.invigilators[indexOfInvigilator].invigilator_id
-          let index_invigilator_name = self.invigilators[indexOfInvigilator].invigilator_name
-          let invigilator_json = {name: index_invigilator_name, value: index_invigilator_id}
-          self.currentInvigilatorList.push(invigilator_json)
-        })
+        if(this.actionedExam.booking && this.actionedExam.booking.invigilators && !this.actionedExam.is_pesticide && !this.actionedExam.sbc_managed_ind) {
+          this.actionedExam.booking.invigilators.forEach(function(invigilator) {
+            let indexOfInvigilator = self.invigilators.findIndex(x => x.invigilator_id == invigilator)
+            let index_invigilator_id = self.invigilators[indexOfInvigilator].invigilator_id
+            let index_invigilator_name = self.invigilators[indexOfInvigilator].invigilator_name
+            let invigilator_json = {name: index_invigilator_name, value: index_invigilator_id}
+            self.currentInvigilatorList.push(invigilator_json)
+          })
+        }
         let tempItem = Object.assign({}, this.actionedExam)
         if (tempItem.booking && tempItem.booking.start_time) {
           let { start_time } = tempItem.booking
@@ -869,6 +1006,11 @@
           this.currentShadowInvigilatorName = currentName
         }
         this.offsite_location = tempItem.offsite_location === '_offsite' ? null : tempItem.offsite_location
+        this.eventId = tempItem.event_id
+        if(tempItem.is_pesticide && tempItem.invigilator_id) {
+          this.invigilator_id = parseInt(tempItem.invigilator_id)
+        }
+        console.log('invigilator_id: ', this.invigilator_id)
         this.editedFields = []
         this.itemCopy = tempItem
       },
@@ -876,9 +1018,11 @@
         this.time = null
         this.date = null
         this.offsite_location = null
+        this.eventId = null
         this.invigilator_id = null
         this.itemCopy = {}
         this.editedFields = []
+        this.exam_received = false
       },
       rowSelected(invigilator_multi_select){
         this.selected = invigilator_multi_select
@@ -981,6 +1125,58 @@
         this.changeInvigilatorState = !this.changeInvigilatorState
         this.groupInvigilatorBoolean = !this.groupInvigilatorBoolean
       },
+      updateExamReceived(e) {
+        let { exam_received_date } = this.fields
+        this.editedFields.push('exam_received')
+        if(e.type == 'exam-downloaded') {
+          this.exam_received = true
+        }
+        if (e && !exam_received_date) {
+          this.fields.exam_received_date = new moment().format('YYYY-MM-DD')
+          return
+        }
+        if (!e) {
+          this.fields.exam_received_date = null
+        }
+      },
+       updatePrintExamReceived(strExam) {
+        let { exam_received_date } = this.fields
+        if(strExam == 'exam-downloaded') {
+          this.exam_received = true
+        }
+        if (strExam && !exam_received_date) {
+          this.fields.exam_received_date = new moment().format('YYYY-MM-DD')
+          return
+        }
+      },
+      checkAndDownloadExam() {
+        this.downloadExam(this.exam)
+          .then((resp) => {
+            let filename = `${this.exam.exam_id}.pdf`
+            FileDownload(resp.data, filename, "application/pdf")
+            this.updatePrintExamReceived('exam-downloaded')
+          })
+          .catch((error) => {
+            console.error(error)
+            this.examNotReady = true
+            setTimeout(() => { this.examNotReady = false }, 15000)
+          })
+      },
+      handleDate(date) {
+        console.log(date)
+        Vue.set(
+          this.fields,
+          'exam_received_date',
+          date
+        )
+      },
+      invigilatorChanged(value) {
+        console.log(value)
+        this.invigilator_id = value
+        if (!this.editedFields.includes('invigilator_id')) {
+          this.editedFields.push('invigilator_id')
+        }
+      }
     },
   }
 </script>

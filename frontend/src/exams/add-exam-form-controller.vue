@@ -1,6 +1,12 @@
 <template>
   <b-form id="capture-ind-ita-form" autocomplete="off">
     <div v-for="q in questions" :key="q.key">
+      <AddExamCounter v-if="q.kind==='add_exam_counter'"
+                      :error="error"
+                      :q="q"
+                      :validationObj="validationObj"
+                      :handleInput="handleInput"
+                      :exam="exam" />
       <DropdownQuestion v-if="q.kind==='dropdown'"
                         :question="q"
                         :exam="exam"
@@ -16,8 +22,14 @@
                      :validationObj="validationObj"
                      :handleInput="handleInput"
                      :exam="exam" />
+      <InputQuestion2 v-if="q.kind==='number_of_students' && addExamModal.setup === 'pesticide'"
+                     :error="error"
+                     :q="q"
+                     :validationObj="validationObj"
+                     :handleInput="handleInput"
+                     :exam="exam" />
       <LocationInput v-if="q.kind==='locationInput'"
-                     v-show="addExamModal.setup !== 'other' || q.key !== 'event_id'"
+                     v-show="addExamModal.setup != 'other' || q.key != 'event_id'"
                      :error="error"
                      :q="q"
                      :validationObj="validationObj"
@@ -35,6 +47,18 @@
                       :validationObj="validationObj"
                       :handleInput="handleInput"
                       :exam="exam" />
+      <GroupPesticideModal v-if="q.kind==='group_exam_types'"
+                           :error="error"
+                           :q="q"
+                           :validationObj="validationObj"
+                           :handleInput="handleInput"
+                           :exam="exam" />
+      <PesticideFees v-if="q.kind==='pesticideFees'"
+                     :error="error"
+                     :q="q"
+                     :validationObj="validationObj"
+                     :handleInput="handleInput"
+                     :exam="exam" />
       <SelectOffice v-if="q.kind==='office'"
                     v-show="is_liaison_designate || is_pesticide_designate"
                     :error="error"
@@ -77,34 +101,41 @@
 <script>
   import { mapState, mapMutations, mapGetters, mapActions } from 'vuex'
   import {
+    AddExamCounter,
     checkmark,
     DateQuestion,
-    TimeQuestion,
     DropdownQuestion,
     ExamReceivedQuestion,
-    LocationInput,
-    OffsiteSelect,
     InputQuestion,
+    InputQuestion2,
+    LocationInput,
     NotesQuestion,
+    OffsiteSelect,
+    SelectOffice,
     SelectQuestion,
-    SelectOffice
+    TimeQuestion,
   } from './add-exam-form-components.js'
-  import moment from 'moment'
+  import GroupPesticideModal from './form-components/group-pesticide-modal'
+  import PesticideFees from './form-components/pesticide-fees'
 
   export default {
     name: "AddExamFormController",
     components: {
+      PesticideFees,
+      AddExamCounter,
       checkmark,
       DateQuestion,
       DropdownQuestion,
       ExamReceivedQuestion,
+      GroupPesticideModal,
       InputQuestion,
       LocationInput,
-      OffsiteSelect,
-      TimeQuestion,
+      InputQuestion2,
       NotesQuestion,
+      OffsiteSelect,
+      SelectOffice,
       SelectQuestion,
-      SelectOffice
+      TimeQuestion,
     },
     mounted() {
       this.event_form_validation = false
@@ -141,16 +172,22 @@
         addChallengerSteps: state => state.addExamModule.addChallengerSteps,
         addIndividualSteps: state => state.addExamModule.addIndividualSteps,
         addOtherSteps: state => state.addExamModule.addOtherSteps,
-        addPesticideSteps: state => state.addExamModule.addPesticideSteps,
         tab: state => state.captureITAExamTabSetup,
         examTypes: state => state.examTypes,
         user: state => state.user,
       }),
+      ...mapGetters(['addPesticideSteps']),
       error() {
         if (this.errors.includes(this.step)) {
           return true
         }
         return false
+      },
+      ind_or_group() {
+        if (this.exam) {
+          return this.exam.ind_or_group
+        }
+        return null
       },
       errors() {
         if (this.tab && this.tab.errors) {
@@ -233,7 +270,7 @@
             this.tab.stepsValidated = [1]
             return
           }
-          if (key === 'exam_name' && answer && answer.length > 50 && document.activeElement.id == 'exam_name') {
+          if (key === 'exam_name' && answer && answer.length > 50) {
             valid['exam_name'] = false
             messages['exam_name'] = 'Maximum Field Length Exceeded'
             return
@@ -325,6 +362,15 @@
           this.validate()
         })
       },
+      validationObj() {
+        //calling validate() with every change in validationObj() is untested with any workflow except 'pesticide',
+        //and other workflows don't seem to require this additional step, so limiting this call to fire only when
+        //setup === pesticide
+          this.validate()
+          this.$nextTick(function() {
+            this.validate()
+          })
+      }
     },
     methods: {
       ...mapMutations([

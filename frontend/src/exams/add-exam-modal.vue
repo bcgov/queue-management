@@ -7,7 +7,7 @@
            hide-cancel
            @shown="initialize"
            @hidden="hideModal"
-           size="md">
+           :size="modalSize">
     <template slot="modal-footer">
       <template v-if="unSubmitted">
         <div v-if="step < lastStep"
@@ -42,8 +42,8 @@
                     @click="logAnother">Start Again</b-button>
           </div>
           <div style="display: flex">
-            <b-button v-if="errors.length > 0"
-                      @click="submitMsg='You have an error on a previous step.  Click on the red tab.'"
+            <b-button v-if="errors.length > 0 || (addExamModal.setup=='pesticide' && !examBcmpJobId)"
+                      @click="showErrorMsg"
                       class="btn-primary disabled"
                       id="add_exam_submit">Submit</b-button>
             <b-button v-else
@@ -88,7 +88,7 @@
                  align-h="center"
                  align-content="center">
             <b-col>
-              <p><h5>Success.  Exam Details Added.</h5></p>
+              <div><h5>Success.  Exam Details Added.</h5></div>
               <p><b-button @click="logAnother" class="btn-primary">Log Another Exam</b-button></p>
             </b-col>
           </b-row>
@@ -102,6 +102,18 @@
             <b-col>
               <p class="message-text">Something Went Wrong</p>
               <p><b-button @click="tryAgain">Try Again</b-button></p>
+            </b-col>
+          </b-row>
+        </b-container>
+      </div>
+      <div v-if="status==='EMAIL_FAILED'">
+        <b-container>
+          <b-row align-v="center"
+                 align-h="center"
+                 align-content="center">
+            <b-col>
+              <h5>Exam Details Added, <strong>Email to invigilator Failed.</strong></h5>
+              <p class="message-text">Please notify the invigilator manually</p>
             </b-col>
           </b-row>
         </b-container>
@@ -140,6 +152,7 @@
         tab: 'captureITAExamTabSetup',
         user: 'user',
         module: 'addExamModule',
+        examBcmpJobId: 'examBcmpJobId',
       }),
       lastStep() {
         if (this.addExamModal.setup === 'challenger') {
@@ -148,12 +161,19 @@
         return 4
       },
       errors() {
+        console.log(this.exam)
         if (this.tab.errors) {
           return this.tab.errors
         } else {
           this.submitMsg = ''
           return []
         }
+      },
+      modalSize() {
+        if (this.step == 2 && this.setup === 'pesticide' && this.exam.ind_or_group === 'group') {
+          return 'xl'
+        }
+        return 'md'
       },
       modalVisible: {
         get() {
@@ -168,6 +188,10 @@
           return this.tab.step
         }
         return 1
+      },
+      setup() {
+        if (this.addExamModal && this.addExamModal.setup) return this.addExamModal.setup
+        return ''
       },
       tabs() {
         if (this.steps && Array.isArray(this.steps)) {
@@ -218,6 +242,7 @@
       filterKeyPress(e) {
         if (e.keyCode === 13) {
           e.preventDefault()
+          return e
         }
       },
       hideModal() {
@@ -331,8 +356,12 @@
           this.clickAddExamSubmit('individual').then(resp => {
             this.status = resp
             this.getExams()
+          }, err => {
+            this.status = err
+            console.log(this.status)
           }).catch(error => {
             this.status = error
+            console.log(this.status)
             this.getExams()
           })
         }
@@ -372,6 +401,10 @@
         }
         return []
       },
+      showErrorMsg() {
+        this.submitMsg = (this.addExamModal.setup=='pesticide' && !this.exam.bcmp_job_id) ? 'Please click on the Request Exam button to generate BCMP Job Id' : 'You have an error on a previous step.  Click on the red tab.'
+        
+      }
     }
   }
 </script>
