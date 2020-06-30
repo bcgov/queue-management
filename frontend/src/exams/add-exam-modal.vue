@@ -329,7 +329,9 @@
         }
       },
       submit() {
+        console.log("==> In submit()")
         let { setup } = this.addExamModal
+        console.log("    --> setup: " + setup.toString())
         this.unSubmitted = false
         this.submitMsg = ''
         if (setup === 'group') {
@@ -403,7 +405,7 @@
       },
       showErrorMsg() {
         this.submitMsg = (this.addExamModal.setup=='pesticide' && !this.exam.bcmp_job_id) ? 'Please click on the Request Exam button to generate BCMP Job Id' : 'You have an error on a previous step.  Click on the red tab.'
-        
+
       }
     }
   }
