@@ -1236,8 +1236,6 @@ export const store = new Vuex.Store({
     },
 
     clickAddExamSubmit(context, type) {
-    console.log("Submitting exam")
-    console.log(context)
       return new Promise((resolve, reject) => {
         if (type === 'challenger') {
           context.dispatch('postITAChallengerExam').then(() => {
@@ -2089,12 +2087,8 @@ export const store = new Vuex.Store({
     },
 
     postITAIndividualExam(context, isRequestExam) {
-      console.log("==> In postITAIndividualExam, isRequestExam is:")
-      console.log(isRequestExam)
       let isRequestExamReq = isRequestExam || false
       let responses = Object.assign( {}, context.state.capturedExam)
-      console.log("    --> responses:")
-      console.log(responses)
       if (responses.on_or_off) {
         if (responses.on_or_off === 'off') {
           responses.offsite_location = '_offsite'
@@ -2102,6 +2096,7 @@ export const store = new Vuex.Store({
         delete responses.on_or_off
       }
       responses.office_id = responses.office_id ? responses.office_id : context.state.user.office_id
+
       let defaultValues = {
         exam_returned_ind: 0,
         number_of_students: 1
@@ -2121,7 +2116,6 @@ export const store = new Vuex.Store({
         }
       }
 
-      console.log("    --> context.state.addExamModal.setup: " + context.state.addExamModal.setup.toString())
       if (context.state.addExamModal.setup === 'pesticide') {
         responses.exam_name = responses.exam_name || "pesticide"
         responses.is_pesticide = 1
@@ -2146,7 +2140,6 @@ export const store = new Vuex.Store({
 
       return new Promise((resolve, reject) => {
         Axios(context).post(apiUrl, postData).then( examResp => {
-          console.log(examResp)
           if ((responses['ind_or_group'] === 'group' || responses['sbc_managed'] === 'non-sbc') && !isRequestExamReq) {
             let { exam_id } = examResp.data.exam
             context.dispatch('postBooking', booking).then( bookingResp => {
@@ -3050,7 +3043,19 @@ export const store = new Vuex.Store({
 
 let makeBookingReqObj = (context, responses) => {
     let timezone_name = context.state.user.office.timezone
-    let booking_office = context.state.offices.find(office => office.office_id == responses.office_id)
+
+    //  NOTE!!!!  The following lines of code are to allow booking an ITA individual exam
+    //            when both the ITA liaison flag and Pesticide liaison flags are false.
+    //            If both flags are false, then there are no offices, so the .find statement
+    //            doesn't work.  In this case, set the booking office to be the CSR office
+    //            This is NOT really how this should be done, but time is tight, as always.
+    let booking_office = null
+    if (context.state.offices.length === 0) {
+      booking_office = context.state.user.office
+    }
+    else {
+      booking_office = context.state.offices.find(office => office.office_id == responses.office_id)
+    }
     let booking_timezone_name = booking_office.timezone.timezone_name
     let date = new moment(responses.expiry_date).format('YYYY-MM-DD')
     let time = new moment(responses.exam_time).format('HH:mm:ss')
