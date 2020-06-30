@@ -2089,8 +2089,11 @@ export const store = new Vuex.Store({
     },
 
     postITAIndividualExam(context, isRequestExam) {
+      console.log("==> In postITAIndividualExam, isRequestExam is:")
+      console.log(isRequestExam)
       let isRequestExamReq = isRequestExam || false
       let responses = Object.assign( {}, context.state.capturedExam)
+      console.log("    --> responses:")
       console.log(responses)
       if (responses.on_or_off) {
         if (responses.on_or_off === 'off') {
@@ -2118,6 +2121,7 @@ export const store = new Vuex.Store({
         }
       }
 
+      console.log("    --> context.state.addExamModal.setup: " + context.state.addExamModal.setup.toString())
       if (context.state.addExamModal.setup === 'pesticide') {
         responses.exam_name = responses.exam_name || "pesticide"
         responses.is_pesticide = 1
