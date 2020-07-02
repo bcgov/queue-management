@@ -317,7 +317,7 @@ export const ExamReceivedQuestion = Vue.component('exam-received-question', {
     <b-row no-gutters>
       <b-col cols="6">
         <b-form-group v-if="showRadio">
-          <labe>{{ q.text1 }}
+          <label>{{ q.text1 }}
             <span v-if="error" style="color: red">{{ validationObj[q.key].message }}</span>
           </label><br>
           <b-form-radio-group v-model="showRadio"
