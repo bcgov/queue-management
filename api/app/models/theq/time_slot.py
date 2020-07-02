@@ -21,12 +21,16 @@ from qsystem import db
 
 class TimeSlot(Base):
     time_slot_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    office_id = db.Column(db.Integer, db.ForeignKey('office.office_id'), nullable=True)
     start_time = db.Column(db.Time, nullable=False)
     end_time = db.Column(db.Time, nullable=False)
     day_of_week = db.Column(postgresql.ARRAY(String), nullable=False)
     no_of_slots = db.Column(db.Integer, nullable=False)
+    deleted = db.Column(db.DateTime, nullable=True)
 
-    offices = db.relationship('Office', secondary='office_timeslot')
+    #offices = db.relationship('Office', secondary='office_timeslot')
+    office = db.relationship("Office", lazy='joined')
+
 
     format_string = 'time_slot_%s'
 
