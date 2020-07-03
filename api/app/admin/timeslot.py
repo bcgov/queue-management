@@ -126,7 +126,7 @@ class TimeslotConfig(Base):
 
 
     form_create_rules = (
-        'office.office_name',
+        'office',
         'start_time',
         'end_time',
         'day_of_week',
