@@ -57,7 +57,7 @@ class AvailabilityService():
                     # Calculate the slots per day
                     print("Inside Availability Service==>  checking timeslot.deleted")
                     print(timeslot)
-                    if timeslot.deleted == "" :
+                    if timeslot.deleted is None:
                         timeslot_end_time = timeslot.end_time.replace(tzinfo=tz)
                         timeslot_start_time = timeslot.start_time.replace(tzinfo=tz)
                         if day_in_month.isoweekday() in day_indexes(timeslot.day_of_week):
