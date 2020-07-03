@@ -72,7 +72,6 @@ class TimeslotConfig(Base):
     def is_accessible(self):
         return current_user.is_authenticated and current_user.role.role_code in self.roles_allowed
 
-####  i need to figure out how to filter GA - only your own office, SUPPORT EVERYONE
     def get_query(self):
         if current_user.role.role_code == 'SUPPORT':
             return self.session.query(self.model)
@@ -95,7 +94,7 @@ class TimeslotConfig(Base):
         'start_time': 'Start Time (HH:MM format)',
         'end_time': 'End Time (HH:MM format)',
         'day_of_week': 'Day of week',
-        'no_of_slots': 'No of appointment available per slot',
+        'no_of_slots': 'No of appointment available per slot'
     }
     column_searchable_list = ()
     column_sortable_list = [
