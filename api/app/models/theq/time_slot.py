@@ -26,7 +26,6 @@ class TimeSlot(Base):
     end_time = db.Column(db.Time, nullable=False)
     day_of_week = db.Column(postgresql.ARRAY(String), nullable=False)
     no_of_slots = db.Column(db.Integer, nullable=False)
-    deleted = db.Column(db.DateTime, nullable=True)
 
     #offices = db.relationship('Office', secondary='office_timeslot')
     office = db.relationship("Office", lazy='joined')

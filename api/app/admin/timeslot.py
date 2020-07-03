@@ -80,14 +80,13 @@ class TimeslotConfig(Base):
 
     create_modal = False
     edit_modal = False
-    can_delete = False
+
     column_list = [
         'office.office_name',
         'start_time',
         'end_time',
         'day_of_week',
-        'no_of_slots',
-        'deleted'
+        'no_of_slots'
     ]
     column_labels = {
         'office.office_name': 'Office Name',
@@ -102,8 +101,7 @@ class TimeslotConfig(Base):
         'start_time',
         'end_time',
         'day_of_week',
-        'no_of_slots',
-        'deleted'
+        'no_of_slots'
     ]
     column_default_sort = 'start_time'
 
@@ -130,7 +128,6 @@ class TimeslotConfig(Base):
         'end_time',
         'day_of_week',
         'no_of_slots',
-        'deleted'
     )
 
     def on_model_change(self, form, model, is_created):
