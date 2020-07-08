@@ -21,7 +21,7 @@ from app.models.bookings import Exam
 from app.schemas.bookings import ExamSchema
 from app.models.theq import CSR
 from app.utilities.bcmp_service import BCMPService
-from qsystem import api, oidc, db
+from qsystem import api, oidc, db, my_print
 
 
 @api.route("/exams/bcmp_status/", methods=["POST"])
@@ -42,8 +42,8 @@ class ExamList(Resource):
                 if job["jobStatus"] == "RESPONSE_UPLOADED":
                     job_ids.append(job["jobId"])
 
-            print("job_ids to update: ")
-            print(job_ids)
+            my_print("job_ids to update: ")
+            my_print(job_ids)
 
             exams_tobe_updated = None
 
