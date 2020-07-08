@@ -37,7 +37,7 @@ class ExamList(Resource):
 
             ninety_day_filter = datetime.now() - timedelta(days=90)
 
-            if csr.liaison_designate == 1:
+            if csr.ita2_designate == 1:
                 if request.args and request.args.get("office_number"):
                     exams = Exam.query.filter(Exam.deleted_date.is_(None)) \
                         .filter(or_(Exam.exam_returned_date.is_(None),

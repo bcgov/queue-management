@@ -29,7 +29,7 @@
                   <div>Writers: </div>
                   <div>{{ actionedExam.number_of_students }}</div>
                 </div>
-                <div class="q-id-grid-col" v-if="is_liaison_designate">
+                <div class="q-id-grid-col" v-if="is_ita2_designate">
                   <div>Office: </div>
                   <div>{{ actionedExam.office.office_name }}</div>
                 </div>
@@ -532,9 +532,9 @@
       ...mapGetters([
         'role_code',
         'invigilator_dropdown',
-        'is_liaison_designate',
+        'is_ita2_designate',
         'invigilator_multi_select',
-        'is_liaison_designate',
+        'is_ita2_designate',
         'shadow_invigilator_options',
         'shadow_invigilators',
       ]),
@@ -615,7 +615,7 @@
         ];
       },
       fieldDisabled() {
-        if ((this.role_code !== 'GA' && !this.is_liaison_designate) && this.examType != 'other') {
+        if ((this.role_code !== 'GA' && !this.is_ita2_designate) && this.examType != 'other') {
           return true
         }
         return false

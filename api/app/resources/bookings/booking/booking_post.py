@@ -50,7 +50,7 @@ class BookingPost(Resource):
         if booking.office_id is None:
             booking.office_id = csr.office_id
 
-        if booking.office_id == csr.office_id or csr.liaison_designate == 1:
+        if booking.office_id == csr.office_id or csr.ita2_designate == 1:
 
             if i_id is None:
 

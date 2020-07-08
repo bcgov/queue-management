@@ -158,7 +158,7 @@
       <!--  Start of template for all non-pesticide exams -->
       <template v-else>
         <b-form v-if="showAllFields">
-          <b-form-row v-if="is_liaison_designate && (examType === 'group')">
+          <b-form-row v-if="is_ita2_designate && (examType === 'group')">
             <OfficeDrop :columnW="10" :office_number="office_number" :setOffice="setOffice" />
           </b-form-row>
 
@@ -463,7 +463,7 @@
       }
     },
     computed: {
-      ...mapGetters(['exam_object_id', 'role_code', 'is_liaison_designate', 'is_ita_designate', "is_pesticide_designate" ]),
+      ...mapGetters(['exam_object_id', 'role_code', 'is_ita2_designate', 'is_office_manager', "is_pesticide_designate" ]),
       ...mapState(['editExamFailure',
                    'editExamSuccess',
                    'examTypes',
@@ -481,7 +481,7 @@
 
         //  If not an individual pesticide exam, do the old, standard test.
         if (this.examType !== 'pest') {
-          examCanBeDeleted = this.is_ita_designate || this.role_code === 'GA' || this.is_liaison_designate
+          examCanBeDeleted = this.is_office_manager || this.role_code === 'GA' || this.is_ita2_designate
         }
         return examCanBeDeleted
       },
@@ -531,7 +531,7 @@
         return false
       },
       otherOfficeExam() {
-        if (!this.is_liaison_designate) {
+        if (!this.is_ita2_designate) {
           return false
         }
         if (this.actionedExam && this.actionedExam.office_id != this.user.office_id) {
@@ -622,7 +622,7 @@
         ];
       },
       showAllFields() {
-        if (this.role_code === 'GA' || this.is_liaison_designate || this.is_ita_designate) {
+        if (this.role_code === 'GA' || this.is_ita2_designate || this.is_office_manager) {
           return true
         }
         if (this.examType && ['individual', 'other'].includes(this.examType)) {
