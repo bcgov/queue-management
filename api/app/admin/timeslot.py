@@ -86,8 +86,7 @@ class TimeslotConfig(Base):
         'start_time',
         'end_time',
         'day_of_week',
-        'no_of_slots',
-        'offices'
+        'no_of_slots'
     ]
     column_labels = {
         'office.office_name': 'Office Name',
@@ -129,7 +128,6 @@ class TimeslotConfig(Base):
         'end_time',
         'day_of_week',
         'no_of_slots',
-        'offices'
     )
 
     def on_model_change(self, form, model, is_created):
