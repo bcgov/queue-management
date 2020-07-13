@@ -88,7 +88,8 @@ class Office(Base):
     back_office_list = db.relationship("Service", secondary='office_back_office_list')
     csrs = db.relationship('CSR')
     citizens = db.relationship('Citizen', backref='office_citizens')
-    timeslots = db.relationship('TimeSlot', secondary='office_timeslot')
+    #timeslots = db.relationship('TimeSlot', secondary='office_timeslot')
+    timeslots = db.relationship('TimeSlot')
 
     sb = db.relationship('SmartBoard')
     timezone = db.relationship('Timezone')

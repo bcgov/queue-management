@@ -72,17 +72,24 @@ class TimeslotConfig(Base):
     def is_accessible(self):
         return current_user.is_authenticated and current_user.role.role_code in self.roles_allowed
 
+    def get_query(self):
+        if current_user.role.role_code == 'SUPPORT':
+            return self.session.query(self.model)
+        elif current_user.role.role_code == 'GA':
+            return self.session.query(self.model).filter_by(office_id=current_user.office_id)
+
     create_modal = False
     edit_modal = False
-    can_delete = False
+
     column_list = [
+        'office.office_name',
         'start_time',
         'end_time',
         'day_of_week',
-        'no_of_slots',
-        'offices'
+        'no_of_slots'
     ]
     column_labels = {
+        'office.office_name': 'Office Name',
         'start_time': 'Start Time (HH:MM format)',
         'end_time': 'End Time (HH:MM format)',
         'day_of_week': 'Day of week',
@@ -90,6 +97,7 @@ class TimeslotConfig(Base):
     }
     column_searchable_list = ()
     column_sortable_list = [
+        'office.office_name',
         'start_time',
         'end_time',
         'day_of_week',
@@ -115,11 +123,11 @@ class TimeslotConfig(Base):
 
 
     form_create_rules = (
+        'office',
         'start_time',
         'end_time',
         'day_of_week',
         'no_of_slots',
-        'offices'
     )
 
     def on_model_change(self, form, model, is_created):
