@@ -128,6 +128,8 @@
       hide() {
         this.getAppointments().then( () => {
           this.toggleCheckInModal(false)
+          this.$root.$emit('clear-clicked-appt')
+          this.$root.$emit('clear-clicked-time')
         })
       },
       editAppt() {
