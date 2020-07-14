@@ -1,7 +1,7 @@
 import json
 import logging
 import urllib
-from qsystem import application
+from qsystem import application, my_print
 from app.utilities.document_service import DocumentService
 from datetime import datetime
 
@@ -22,20 +22,20 @@ class BCMPService:
         else:
             request_data = None
 
-        print("=== SENDING BCMP REQUEST ===")
-        print("  ==> url: %s" % path)
-        print("  ==> method: %s" % method)
-        print("  ==> data: %s" % request_data)
+        my_print("=== SENDING BCMP REQUEST ===")
+        my_print("  ==> url: %s" % path)
+        my_print("  ==> method: %s" % method)
+        my_print("  ==> data: %s" % request_data)
         req = urllib.request.Request(path, data=request_data, method=method)
         req.add_header('Content-Type', 'application/json')
-        print('request')
-        print(req)
+        my_print('request')
+        my_print(req)
 
         response = urllib.request.urlopen(req)
         
 
         response_data = response.read().decode('utf8')
-        print(response_data)
+        my_print(response_data)
 
         try:
             return json.loads(response_data)
@@ -54,7 +54,7 @@ class BCMPService:
 
         if response and response['jobs']:
             for job in response['jobs']:
-                print(job)
+                my_print(job)
                 if job['jobId'] == exam.bcmp_job_id:
                     return job
 
@@ -70,7 +70,7 @@ class BCMPService:
             data["jobs"].append(exam.bcmp_job_id)
 
         response = self.send_request(url, 'POST', data)
-        print(response)
+        my_print(response)
 
         return response
 
@@ -127,7 +127,7 @@ class BCMPService:
         if pesticide_office:
             office_name = pesticide_office.office_name
 
-        print(exam.expiry_date.strftime("%a %b %d, %Y at %-I:%M %p"))
+        my_print(exam.expiry_date.strftime("%a %b %d, %Y at %-I:%M %p"))
         
         bcmp_exam = {
             "EXAM_SESSION_LOCATION": office_name,

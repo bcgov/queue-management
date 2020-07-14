@@ -46,7 +46,7 @@ class BookingPut(Resource):
             logging.warning("WARNING: %s", warning)
             return {"message": warning}, 422
 
-        if booking.office_id == csr.office_id or csr.liaison_designate == 1:
+        if booking.office_id == csr.office_id or csr.ita2_designate == 1:
 
             if 'invigilator_id' in json_data:
                 booking.invigilators = []

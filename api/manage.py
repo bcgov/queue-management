@@ -449,10 +449,10 @@ class Bootstrap(Command):
             receptionist_ind=1,
             deleted=None,
             csr_state_id=csr_state_logout.csr_state_id,
-            ita_designate=0,
+            office_manager=0,
             pesticide_designate=0,
             finance_designate=0,
-            liaison_designate=0
+            ita2_designate=0
         )
         cfms_postman_non_operator = theq.CSR(
             username="cfms-postman-non-operator",
@@ -462,10 +462,10 @@ class Bootstrap(Command):
             receptionist_ind=1,
             deleted=None,
             csr_state_id=csr_state_logout.csr_state_id,
-            ita_designate=0,
+            office_manager=0,
             pesticide_designate=0,
             finance_designate=0,
-            liaison_designate=0
+            ita2_designate=0
         )
         demo_ga = theq.CSR(
             username="demoga",
@@ -475,10 +475,10 @@ class Bootstrap(Command):
             receptionist_ind=1,
             deleted=None,
             csr_state_id=csr_state_logout.csr_state_id,
-            ita_designate=0,
+            office_manager=0,
             pesticide_designate=0,
             finance_designate=0,
-            liaison_designate=0
+            ita2_designate=0
         )
         demo_csr = theq.CSR(
             username="democsr",
@@ -488,10 +488,10 @@ class Bootstrap(Command):
             receptionist_ind=1,
             deleted=None,
             csr_state_id=csr_state_logout.csr_state_id,
-            ita_designate=0,
+            office_manager=0,
             pesticide_designate=0,
             finance_designate=0,
-            liaison_designate=0
+            ita2_designate=0
         )
         demo_admin = theq.CSR(
             username="admin",
@@ -501,10 +501,10 @@ class Bootstrap(Command):
             receptionist_ind=1,
             deleted=None,
             csr_state_id=csr_state_logout.csr_state_id,
-            ita_designate=1,
+            office_manager=1,
             pesticide_designate=1,
             finance_designate=1,
-            liaison_designate=1
+            ita2_designate=1
         )
         demo_user = theq.CSR(
             username="user",
@@ -514,10 +514,10 @@ class Bootstrap(Command):
             receptionist_ind=1,
             deleted=None,
             csr_state_id=csr_state_logout.csr_state_id,
-            ita_designate=0,
+            office_manager=0,
             pesticide_designate=0,
             finance_designate=0,
-            liaison_designate=0
+            ita2_designate=0
         )
         db.session.add(cfms_postman_operator)
         db.session.add(cfms_postman_non_operator)

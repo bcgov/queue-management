@@ -48,7 +48,7 @@
             <b-input-group-prepend>
               <label class="mx-1 pt-3 mr-2 my-auto label-text">Filters:</label>
             </b-input-group-prepend>
-            <b-dd v-if="(is_liaison_designate || is_pesticide_designate)"
+            <b-dd v-if="is_pesticide_designate"
                   split
                   size="sm"
                   :variant="officeFilter === userOffice || officeFilter === 'default' ? 'primary' : 'warning'"
@@ -104,7 +104,7 @@
             </b-btn-group>
 
             <!--  The Quick Action filter, if ITA designate or GA.  -->
-            <template v-if="is_ita_designate || role_code === 'GA' ">
+            <template v-if="is_office_manager || role_code === 'GA' ">
               <!--  The Quick Action filter if no filter has been set.  -->
               <b-btn-group v-if="selectedQuickActionFilter === ''">
                 <b-dropdown size="sm"
@@ -393,6 +393,8 @@
                     {{ checkInvigilator(row.item) ? 'Update Booking' : 'Edit/Print/Add Invigilator' }}
                   </b-dropdown-item>
                 </template>
+
+                <!--  Options for a pesticide exam -->
                 <template v-else-if="row.item.exam_type.pesticide_exam_ind">
                   <template template v-if="row.item.sbc_managed_ind === 1">
                     <b-dropdown-item size="sm"
@@ -442,13 +444,13 @@
                   </template>
                 </template>
 
-                  <b-dropdown-item size="sm"
-                      v-if="!(row.item.exam_type.group_exam_ind && row.item.is_pesticide)"
-                      @click="editExamDetails(row.item)">Edit/Print Exam Details</b-dropdown-item>
-                  <b-dropdown-item size="sm"
-                      @click="returnExam(row.item)">
-                    {{ row.item.is_pesticide ? 'Upload Exam' : 'Return Exam' }}
-                  </b-dropdown-item>
+                <b-dropdown-item size="sm"
+                    v-if="!(row.item.exam_type.group_exam_ind && row.item.is_pesticide)"
+                    @click="editExamDetails(row.item)">Edit/Print Exam Details</b-dropdown-item>
+                <b-dropdown-item size="sm"
+                                 @click="returnExam(row.item)">
+                  {{ row.item.is_pesticide ? 'Upload Exam' : 'Return Exam' }}
+                </b-dropdown-item>
               </template>
 
               <!--  Options for if you're editing an exam for a different office.  -->
@@ -457,7 +459,7 @@
                                  v-if="row.item.offsite_location"
                                  @click="editGroupBooking(row.item)">Edit Booking</b-dropdown-item>
                 <b-dropdown-item size="sm"
-                                 @click="editExamDetails(row.item)">Edit Exam Details</b-dropdown-item>
+                                 @click="editExamDetails(row.item)">Edit/Print Exam Details</b-dropdown-item>
                 <b-dropdown-item size="sm" v-if="row.item.is_pesticide"
                       @click="returnExam(row.item)">Upload Exam
                 </b-dropdown-item>
@@ -573,9 +575,9 @@
       ...mapGetters(['calendar_events',
                      'exam_inventory',
                      'role_code',
-                     'is_liaison_designate',
+                     'is_ita2_designate',
                      'is_pesticide_designate',
-                     'is_ita_designate']),
+                     'is_office_manager']),
       ...mapState([
         'bookings',
         'calendarSetup',

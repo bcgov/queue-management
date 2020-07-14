@@ -22,12 +22,20 @@ from app.exceptions import AuthError
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 
-def my_print(string):
+def my_print(my_data):
     if print_flag:
-        print(time_string() + string)
+        if type(my_data) is str:
+            print(time_string() + my_data)
+        else:
+            print(time_string() + "==> " + str(type(my_data)) + " data is:")
+            print(my_data)
 
-def time_print(string):
-    print(time_string() + string)
+def time_print(my_data):
+    if type(my_data) is str:
+        print(time_string() + my_data)
+    else:
+        print(time_string() + "==> " + str(type(my_data)) + " data is:")
+        print(my_data)
 
 def time_string():
     now = datetime.datetime.now()

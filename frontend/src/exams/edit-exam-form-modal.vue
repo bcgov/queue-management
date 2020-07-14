@@ -9,6 +9,8 @@
     <FailureExamAlert class="m-0 p-0" />
     <div v-if="exam">
       <span style="font-size: 1.4rem; font-weight: 600;">Edit/Print Exam Details</span>
+
+      <!--  Start of template for pesticide exams  -->
       <template v-if="examType === 'pest'">
         <b-form>
           <b-form-row>
@@ -151,10 +153,12 @@
           </b-form-row>
         </b-form>
       </template>
+      <!--  End of template for pesticide exams  -->
 
+      <!--  Start of template for all non-pesticide exams -->
       <template v-else>
         <b-form v-if="showAllFields">
-          <b-form-row v-if="is_liaison_designate && (examType === 'group')">
+          <b-form-row v-if="is_ita2_designate && (examType === 'group')">
             <OfficeDrop :columnW="10" :office_number="office_number" :setOffice="setOffice" />
           </b-form-row>
 
@@ -386,31 +390,34 @@
           </b-form-row>
         </b-form>
       </template>
+      <!--  Start of template for all non-pesticide exams -->
 
-        <div v-if="showMessage"
-             class="mb-3"
-             style="color: red;">{{ this.message }}
-        </div>
+      <!--  Placeholder for any message -->
+      <div v-if="showMessage"
+           class="mb-3"
+           style="color: red;">{{ this.message }}
+      </div>
 
-        <div style="display: flex; justify-content: flex-end; width: 100%">
-          <b-btn v-if="is_ita_designate || role_code === 'GA' || is_liaison_designate"
-                 class="btn-danger mr-2"
-                 @click="deleteExam()">Delete Exam
-          </b-btn>
-          <b-btn class="btn-secondary mr-2"
-                 @click="toggleEditExamModal(false)">Cancel
-          </b-btn>
-          <b-btn v-if="!allowSubmit"
-                 id="edit_submit_not_allow"
-                 class="btn-primary disabled"
-                 @click="setMessage">Submit
-          </b-btn>
-          <b-btn v-else-if="allowSubmit"
-                 id="edit_submit_allow"
-                 class="btn-primary"
-                 @click="submit">Submit
-          </b-btn>
-        </div>
+      <!--  Row of buttons, delete, edit, submit -->
+      <div style="display: flex; justify-content: flex-end; width: 100%">
+        <b-btn v-if="canDelete"
+               class="btn-danger mr-2"
+               @click="deleteExam()">Delete Exam
+        </b-btn>
+        <b-btn class="btn-secondary mr-2"
+               @click="toggleEditExamModal(false)">Cancel
+        </b-btn>
+        <b-btn v-if="!allowSubmit"
+               id="edit_submit_not_allow"
+               class="btn-primary disabled"
+               @click="setMessage">Submit
+        </b-btn>
+        <b-btn v-else-if="allowSubmit"
+               id="edit_submit_allow"
+               class="btn-primary"
+               @click="submit">Submit
+        </b-btn>
+      </div>
 
     </div>
   </b-modal>
@@ -456,7 +463,7 @@
       }
     },
     computed: {
-      ...mapGetters(['exam_object_id', 'role_code', 'is_liaison_designate', 'is_ita_designate' ]),
+      ...mapGetters(['exam_object_id', 'role_code', 'is_ita2_designate', 'is_office_manager', "is_pesticide_designate" ]),
       ...mapState(['editExamFailure',
                    'editExamSuccess',
                    'examTypes',
@@ -464,6 +471,20 @@
                    'showEditExamModal',
                    'showDeleteExamModal',
                    'user', ]),
+      canDelete() {
+        let examCanBeDeleted = false
+
+        //  If an individual pesticide exam, can only delete if a pesticide liaison
+        if (this.examType === 'pest' && this.is_pesticide_designate) {
+          examCanBeDeleted = true
+        }
+
+        //  If not an individual pesticide exam, do the old, standard test.
+        if (this.examType !== 'pest') {
+          examCanBeDeleted = this.is_office_manager || this.role_code === 'GA' || this.is_ita2_designate
+        }
+        return examCanBeDeleted
+      },
       fieldsEdited() {
         let fieldsEdited = []
         let data = Object.assign({}, this.fields)
@@ -510,7 +531,7 @@
         return false
       },
       otherOfficeExam() {
-        if (!this.is_liaison_designate) {
+        if (!this.is_ita2_designate) {
           return false
         }
         if (this.actionedExam && this.actionedExam.office_id != this.user.office_id) {
@@ -601,7 +622,7 @@
         ];
       },
       showAllFields() {
-        if (this.role_code === 'GA' || this.is_liaison_designate || this.is_ita_designate) {
+        if (this.role_code === 'GA' || this.is_ita2_designate || this.is_office_manager) {
           return true
         }
         if (this.examType && ['individual', 'other'].includes(this.examType)) {

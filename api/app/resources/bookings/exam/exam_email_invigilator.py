@@ -34,7 +34,7 @@ class ExamEmailInvigilator(Resource):
         try:
             exam = Exam.query.filter_by(exam_id=exam_id).first()
 
-            if not (exam.office_id == csr.office_id or csr.liaison_designate == 1):
+            if not (exam.office_id == csr.office_id or csr.ita2_designate == 1):
                 return {"The Exam Office ID and CSR Office ID do not match!"}, 403
 
             json_data = request.get_json()

@@ -20,7 +20,7 @@ from flask_restx import Resource
 from app.models.theq import CSR, Office
 from app.models.bookings import ExamType, Invigilator
 from app.schemas.bookings import ExamSchema, CandidateSchema
-from qsystem import api, api_call_with_retry, db, oidc
+from qsystem import api, api_call_with_retry, db, oidc, my_print
 from app.utilities.bcmp_service import BCMPService
 
 from app.resources.bookings.exam.exam_post import ExamPost
@@ -41,14 +41,14 @@ class ExamBcmpPost(Resource):
 
         exam, warning = self.exam_schema.load(json_data)
 
-        print("json_data: ")
-        print(json_data)
+        my_print("json_data: ")
+        my_print(json_data)
 
         if warning:
             logging.warning("WARNING: %s", warning)
             return {"message": warning}, 422
         
-        if not (exam.office_id == csr.office_id or csr.liaison_designate == 1):
+        if not (exam.office_id == csr.office_id or csr.ita2_designate == 1):
             return {"The Exam Office ID and CSR Office ID do not match!"}, 403   
             
         formatted_data = ExamPost.format_data(self, json_data, exam)

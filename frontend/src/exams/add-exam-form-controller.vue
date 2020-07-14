@@ -60,7 +60,7 @@
                      :handleInput="handleInput"
                      :exam="exam" />
       <SelectOffice v-if="q.kind==='office'"
-                    v-show="is_liaison_designate || is_pesticide_designate"
+                    v-show="is_ita2_designate || is_pesticide_designate"
                     :error="error"
                     :q="q"
                     :validationObj="validationObj"
@@ -161,7 +161,7 @@
         exam_object: 'exam_object',
         role_code: 'role_code',
         is_pesticide_designate: 'is_pesticide_designate',
-        is_liaison_designate: 'is_liaison_designate',
+        is_ita2_designate: 'is_ita2_designate',
       }),
       ...mapState({
         exam: state => state.capturedExam,

@@ -41,7 +41,7 @@ class ExamPut(Resource):
         # TODO Deleted date filter original
         exam = Exam.query.filter_by(exam_id=id).first_or_404()
 
-        if not (exam.office_id == csr.office_id or csr.liaison_designate == 1):
+        if not (exam.office_id == csr.office_id or csr.ita2_designate == 1):
             return {"The Exam Office ID and CSR Office ID do not match!"}, 403
 
         exam, warning = self.exam_schema.load(json_data, instance=exam, partial=True)

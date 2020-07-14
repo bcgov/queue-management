@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 
 <template>
-  <div v-if="is_ita_designate || role_code === 'GA' "
+  <div v-if="is_office_manager || role_code === 'GA' "
        id="EXAMALERT">
     <b-alert
              variant="primary"
@@ -38,7 +38,7 @@ import { mapGetters, mapMutations, mapState } from 'vuex'
 export default {
   name: 'ExamAlert',
   computed: {
-    ...mapGetters([ 'is_ita_designate',
+    ...mapGetters([ 'is_office_manager',
                     'role_code' ]),
     ...mapState([ 'examDismissCount', 'examAlertMessage' ])
   },
