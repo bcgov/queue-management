@@ -157,12 +157,19 @@
 
       <!--  Start of template for all non-pesticide exams -->
       <template v-else>
+
+        <!-- All fields are to be shown.  Not sure what this means just now. -->
         <b-form v-if="showAllFields">
+
+          <!--  For group exams, except Monthly Sessional (Challenger)  -->
           <b-form-row v-if="is_ita2_designate && (examType === 'group')">
             <OfficeDrop :columnW="10" :office_number="office_number" :setOffice="setOffice" />
           </b-form-row>
 
+          <!-- The Event ID and Exam Method labels row -->
           <b-form-row>
+
+            <!-- The Event ID label and data colum -->
             <b-col cols="6">
               <b-form-group>
                 <label class="my-0">Event ID</label>
@@ -173,6 +180,7 @@
               </b-form-group>
             </b-col>
 
+            <!-- The Exam method label and data colum -->
             <b-col cols="6">
               <b-form-group>
                 <label class="my-0">Exam Method</label><br>
@@ -184,8 +192,11 @@
             </b-col>
           </b-form-row>
 
+          <!-- The Exam Type row -->
           <b-form-row>
             <b-col>
+
+              <!-- If not a challenger exam, display the exam type -->
               <b-form-group v-if="!['challenger'].includes(examType)">
                 <label class="my-0">Exam Type</label><br>
                 <div @click="handleExamInputClick">
@@ -215,6 +226,7 @@
                 </div>
               </b-form-group>
 
+              <!-- A Monthly Session (Challenger) exam  -->
               <b-form-group v-else>
                 <label class="mb-0 mt-1">Exam Type</label>
                 <b-form-input :value="exam.exam_type.exam_type_name"
@@ -225,7 +237,9 @@
               </b-form-group>
             </b-col>
           </b-form-row>
+          <!-- End of the Exam Type row -->
 
+          <!-- The Exam Name label and data row -->
           <b-form-row>
             <b-col>
               <b-form-group>
@@ -244,7 +258,10 @@
             </b-col>
           </b-form-row>
 
+          <!-- The Exam Received and number of writers row -->
           <b-form-row v-if="!otherOfficeExam">
+
+            <!--  The Exam received flag label and data column, if exam not received yet -->
             <b-col :col="!this.fields.exam_received_date" :cols="this.exam_received ? 3 : '' ">
               <b-form-group>
                 <label class="my-0">Exam Received?</label>
@@ -256,6 +273,7 @@
               </b-form-group>
             </b-col>
 
+            <!--  The Exam received date and data column, if the exam has been received -->
             <b-col v-if="exam_received">
               <b-form-group>
                 <label class="my-0">Received Date</label><br>
@@ -271,6 +289,7 @@
               </b-form-group>
             </b-col>
 
+            <!-- If a group or Monthly Session (challenger) exam, display number of writers. -->
             <b-col v-if="examType === 'group' || examType === 'challenger'" col>
               <b-form-group>
                 <label class="my-0"># of Writers</label><br>
@@ -279,6 +298,7 @@
               </b-form-group>
             </b-col>
 
+            <!--  If an individual exam, display the expiry date  -->
             <b-col class="w-100" v-if="examType === 'individual'">
               <b-form-group>
                 <label class="my-0">Expiry Date</label><br>
@@ -298,7 +318,9 @@
               </b-form-group>
             </b-col>
           </b-form-row>
+          <!-- End of the Exam Received and number of writers row -->
 
+          <!-- An individual or other exam  -->
           <b-form-row v-if="examType === 'individual' || examType === 'other' ">
             <b-col>
               <b-form-group>
@@ -311,6 +333,7 @@
             </b-col>
           </b-form-row>
 
+          <!-- The notes field. -->
           <b-form-row>
             <b-col>
               <b-form-group>
@@ -320,7 +343,9 @@
             </b-col>
           </b-form-row>
         </b-form>
+        <!-- End of the all fields are to be shown form.  Not sure what this means just now. -->
 
+        <!-- All fields are not to be shown form.  Not sure what this means just now. -->
         <b-form v-if="!showAllFields">
           <b-form-row>
             <b-col class="mb-2">
@@ -389,8 +414,10 @@
             </b-col>
           </b-form-row>
         </b-form>
+        <!-- End of the all fields are not to be shown form.  Not sure what this means just now. -->
+
       </template>
-      <!--  Start of template for all non-pesticide exams -->
+      <!--  End of template for all non-pesticide exams -->
 
       <!--  Placeholder for any message -->
       <div v-if="showMessage"
@@ -541,7 +568,6 @@
       },
       exam() {
         if (Object.keys(this.actionedExam).length > 0) {
-          console.log("this.actionedExam ", this.actionedExam)
           this.feesOptions = (this.actionedExam.receipt) ? 'liaison' : 'collect'
           this.fields.receipt = this.actionedExam.receipt
           this.fields.receipt_sent_ind = this.actionedExam.receipt_sent_ind
@@ -776,7 +802,9 @@
         }
       },
       submit() {
+        console.log("==> In submit.  Data is")
         let data = Object.assign({}, this.fields)
+        console.log(data)
         let putRequest = {
           exam_id: this.fields.exam_id
         }

@@ -1333,7 +1333,7 @@
           this.isLoading = true;
           this.setInventoryFilters({type: 'office_number', value: 'pesticide_offsite'})
           this.updateExamStatus().then(success => {
-            console.log(success)
+            console.log("==> In this.updateExamStatus().then()", success)
             this.$store.commit('toggleShowAllPesticideExams', false)
             this.setInventoryFilters({type: 'expiryFilter', value: 'current'})
             this.setInventoryFilters({type: 'groupFilter', value: 'both'})
@@ -1420,6 +1420,9 @@
         }
       },
       statusIcon(item) {
+        console.log("==> In statusIcon(item), item.exam_name: ", item.exam_name)
+        console.log("    --> Item type: " + item.constructor.name + "; Item is:")
+        console.log(item)
         let number_of_students = item.number_of_students
         let number_of_invigilators = Math.ceil(number_of_students / 24)
         let length_of_invigilator_array = null
@@ -1428,6 +1431,9 @@
         }else{
           length_of_invigilator_array = item.booking.invigilators.length
         }
+        console.log("    --> # students:   " + number_of_students.toString())
+        console.log("    --> # invig:      " + number_of_invigilators.toString())
+        console.log("    --> # len(invig): ", length_of_invigilator_array)
         let lifeRing = {
           icon: 'life-ring',
           rank: 4,
@@ -1454,42 +1460,73 @@
           style: {fontSize: '1rem', color: 'green'}
         }
 
+        console.log("============= Start of Tests =======================")
+        console.log("==> Test 1")
+        console.log("    --> pesticide:    ", item.is_pesticide ? "True" : "False")
+        console.log("    --> receive date: ", item.exam_received_date)
+        console.log("    --> return date:  ", item.exam_returned_date)
+        console.log("        --> Test: item.is_pesticide && !item.exam_received_date && !item.exam_returned_date -> ",
+                        item.is_pesticide && !item.exam_received_date && !item.exam_returned_date ? "True" : "False")
         if (item.is_pesticide && !item.exam_received_date && !item.exam_returned_date) {
+          console.log("        --> True: returning lifeRing")
           return lifeRing
         }
 
+        console.log("==> Test 2")
+        console.log("    --> return date:  ", item.exam_returned_date)
+        console.log("        --> Test: item.exam_returned_date -> ", item.exam_returned_date ? "True" : "False")
         if (item.exam_returned_date) {
+          console.log("        --> True: returning enveloopeOpenText")
           return envelopeOpenText
         }
+
+        console.log("==> Test 3")
+        console.log("    --> booking:      ", item.booking)
+        if (item.booking) {
+          console.log("    --> invig:        ", item.booking.invigilator)
+        }
+        if (item.booking && item.booking.invigilator) {
+          console.log("    --> invig.delete: ", item.booking.invigilator.deleted)
+        }
+        console.log("        --> Test: item.booking && item.booking.invigilator && item.booking.invigilator.deleted -> ",
+          item.booking && item.booking.invigilator && item.booking.invigilator.deleted ? "True" : "False")
         if (item.booking && item.booking.invigilator && item.booking.invigilator.deleted) {
+          console.log("        --> True: returning lifeRing")
           return lifeRing
         }
+
+        console.log("==> Test 4")
         if (item.exam_type.exam_type_name === 'Monthly Session Exam') {
           if (!item.booking) {
+            console.log("!item.booking, returning lifeRing")
             return lifeRing
           }
-          console.log(item.exam_name)
-          console.log(this.checkInvigilator(item))
+          console.log("    --> this.checkInvigilator(item): ", this.checkInvigilator(item))
           if (!this.checkInvigilator(item)) {
-            console.log('checkInvigilator is false')
+            console.log('checkInvigilator is false, returning lifeRing')
             return lifeRing
           }
           if (this.filterByExpiry(item)){
-           return lifeRing
+            console.log("this.filterByExpiry(item) is true, returning lifeRing")
+            return lifeRing
           }
           if (item.booking){
              if (moment(item.booking.start_time).isValid()){
                 if (moment(item.booking.start_time).isBefore(moment(), 'day')){
+                   console.log("item.booking and start_time valid and start time before today, returning lifeRing")
                    return lifeRing
                 }
              }
           }
           if(item.number_of_students === null && length_of_invigilator_array > 0){
+            console.log("item.number_of_students is null and length_of_invigilator_array > 0, returning exclamationTriangle")
             return exclamationTriangle
           }
           if (!item.event_id || !item.number_of_students || !item.exam_received_date) {
+            console.log("No event_id or no students or no received date, returning exclamationTriangle")
             return exclamationTriangle
           }
+          console.log("No errors found, returning clipboardCheck")
           return clipboardCheck
        }
        if (item.exam_type.group_exam_ind) {
@@ -1566,7 +1603,7 @@
             output.push('Event ID')
           }
         }
-        console.log(item)
+        console.log("==> In stillRequires(item), item: ", item)
         if (item.booking) {
           if(item.exam_type.group_exam_ind == 1){
             if(length_of_invigilator_array == 0 && number_of_invigilators == 1){
