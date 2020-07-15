@@ -95,7 +95,7 @@ class TimeslotConfig(Base):
         'day_of_week': 'Day of week',
         'no_of_slots': 'No of appointment available per slot'
     }
-    column_searchable_list = ()
+    column_searchable_list = ('office_name',)
     column_sortable_list = [
         'office.office_name',
         'start_time',
