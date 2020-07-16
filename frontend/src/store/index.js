@@ -856,6 +856,8 @@ export const store = new Vuex.Store({
         Axios(context).get(url)
           .then(resp => {
             context.commit('setExams', resp.data.exams)
+            console.log("==> getExams(context), exams are:")
+            console.log(resp.data.exams)
             resolve(resp)
           })
           .catch(error => {
