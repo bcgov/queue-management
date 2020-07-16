@@ -758,14 +758,20 @@
         } else {
           length_of_invigilator_array = item.booking.invigilators.length
         }
+        console.log("==> checkInvigilator, item.name: " + item.exam_name)
+        console.log("    --> item.exam_type.group_exam_ind:      " + item.exam_type.group_exam_ind.toString())
+        console.log("    --> item.exam_type.exam_type_name:      " + item.exam_type.exam_type_name)
+        console.log("    --> number_of_invigilators:             " + number_of_invigilators.toString())
+        console.log("    --> item.booking.sbc_staff_invigilated: " + item.booking.sbc_staff_invigilated.toString())
+        console.log("    --> length_of_invigilator_array:        " + length_of_invigilator_array.toString())
         if (item.exam_type.group_exam_ind === 1 && length_of_invigilator_array == 0) {
           return false
         } else if (item.exam_type.group_exam_ind === 1 && length_of_invigilator_array >= number_of_invigilators) {
           return true
         } else if (item.exam_type.group_exam_ind === 1 && length_of_invigilator_array < number_of_invigilators) {
           return false
-        } else if (item.exam_type.group_exam_ind === 0 && item.booking && (number_of_invigilators == 1 ||
-          item.booking.sbc_staff_invigilated)) {
+        } else if (item.exam_type.group_exam_ind === 0 && item.booking && item.exam_type.exam_type_name !== "Monthly Session Exam" &&
+          (number_of_invigilators == 1 || item.booking.sbc_staff_invigilated)) {
           return true
         } else if (item.exam_type.exam_type_name === 'Monthly Session Exam'
           && length_of_invigilator_array >= number_of_invigilators) {
@@ -1499,11 +1505,14 @@
 
         // console.log("==> Test 4")
         if (item.exam_type.exam_type_name === 'Monthly Session Exam') {
+          console.log("    --> Monthly Session Exam, name: " + item.exam_name)
+          console.log("    --> item.booking: ", item.booking)
           if (!item.booking) {
             // console.log("!item.booking, returning lifeRing")
             return lifeRing
           }
           // console.log("    --> this.checkInvigilator(item): ", this.checkInvigilator(item))
+          console.log("    --> this.checkInvigilator(item): ", this.checkInvigilator(item))
           if (!this.checkInvigilator(item)) {
             // console.log('checkInvigilator is false, returning lifeRing')
             return lifeRing

@@ -39,14 +39,6 @@
                   <div>Office: </div>
                   <div>{{ actionedExam.office.office_name }}</div>
                 </div>
-
-                <!--  Start of temporary debugging -->
-                <div class="q-id-grid-col" v-if="is_ita2_designate">
-                  <div>Received: </div>
-                  <div>{{ actionedExam.exam_received_date }}</div>
-                </div>
-                <!--  End of temporary debugging -->
-
               </div>
             </div>
           </b-col>
@@ -528,7 +520,7 @@
                @click="showMessage=true">Submit</b-btn>
         <b-btn v-else-if="allowSubmit"
                class="btn-primary"
-               @click="submit">Submit {{actionedExam.exam_received_date}}</b-btn>
+               @click="submit">Submit</b-btn>
       </div>
       <!-- End of the button row, Reset, Cancel, Submit. -->
     </div>
