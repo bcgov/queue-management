@@ -19,7 +19,7 @@ module.exports = {
     // Configure local API calls to hit OpenShift dev
     proxy: {
       '/api/v1': {
-        target: 'https://dev-theq-public.pathfinder.gov.bc.ca',
+        target: 'http://localhost:5000',
         changeOrigin: true,
         logLevel: 'debug'
       }

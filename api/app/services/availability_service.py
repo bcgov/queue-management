@@ -52,7 +52,6 @@ class AvailabilityService():
             for day_in_month in days:
                 formatted_date = day_in_month.strftime('%m/%d/%Y')
                 available_slots_per_day[formatted_date] = []
-
                 for timeslot in office.timeslots:
                     # Calculate the slots per day
                     timeslot_end_time = timeslot.end_time.replace(tzinfo=tz)
@@ -86,13 +85,13 @@ class AvailabilityService():
                         # print('<<<<<<', booked_slot.get('end_time'), actual_slot.get('end_time'),
                         #       booked_slot.get('start_time'))
 
-                        if booked_slot.get('start_time') \
-                                <= actual_slot.get('start_time') \
-                                < booked_slot.get('end_time') \
-                                or \
-                                booked_slot.get('end_time') \
+                        if actual_slot.get('start_time') \
+                                <= booked_slot.get('start_time') \
                                 < actual_slot.get('end_time') \
-                                <= booked_slot.get('start_time'):
+                                or \
+                                actual_slot.get('start_time') \
+                                < booked_slot.get('end_time') \
+                                <= actual_slot.get('end_time'):
                             if booked_slot.get('blackout_flag', False):  # If it's blackout override the no of slots
                                 actual_slot['no_of_slots'] = 0
                             else:
