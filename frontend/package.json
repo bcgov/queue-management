@@ -30,7 +30,7 @@
     "fullcalendar-scheduler": "1.9.4",
     "jquery": "3.4.0",
     "js-file-download": "0.4.5",
-    "lodash": "4.17.14",
+    "lodash": "4.17.19",
     "luxon": "1.12.1",
     "moment": "2.24.0",
     "moment-range": "4.0.2",
