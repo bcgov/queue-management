@@ -81,17 +81,18 @@ class AvailabilityService():
                 # Check if the slots are already booked
                 for actual_slot in available_slots_per_day[formatted_date]:
                     for booked_slot in grouped_appointments.get(formatted_date, []):
-                        # print('>>>>>>', booked_slot.get('start_time'), actual_slot.get('start_time'), booked_slot.get('end_time'))
-                        # print('<<<<<<', booked_slot.get('end_time'), actual_slot.get('end_time'),
-                        #       booked_slot.get('start_time'))
-
-                        if actual_slot.get('start_time') \
-                                <= booked_slot.get('start_time') \
-                                < actual_slot.get('end_time') \
-                                or \
-                                actual_slot.get('start_time') \
+                        if booked_slot.get('start_time') \
+                                <= actual_slot.get('start_time') \
                                 < booked_slot.get('end_time') \
-                                <= actual_slot.get('end_time'):
+                                or \
+                                actual_slot.get('end_time') \
+                                > booked_slot.get('start_time') \
+                                >= actual_slot.get('start_time'):
+                            # print('>>>actual_slot.get(start_time)', actual_slot.get('start_time'))
+                            # print('>>>actual_slot.get(end_time)', actual_slot.get('end_time'))
+                            # print('>>>booked_slot.get(start_time)', booked_slot.get('start_time'))
+                            # print('>>>booked_slot.get(end_time)', booked_slot.get('end_time'))
+                            # print('>>>booked_slot.get(blackout_flag)', booked_slot.get('blackout_flag', False))
                             if booked_slot.get('blackout_flag', False):  # If it's blackout override the no of slots
                                 actual_slot['no_of_slots'] = 0
                             else:
