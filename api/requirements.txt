@@ -14,7 +14,9 @@ Flask-Migrate
 Flask-Moment
 flask_oidc
 Flask-Script
-Flask-SQLAlchemy
+###  dnspython 1.20.0 breaks this was found due to Flask-SQLAlchemy changing to version 2.4.4, downgrading both
+Flask-SQLAlchemy==2.4.3
+dnspython==1.16.0
 certifi
 eventlet
 filelock
