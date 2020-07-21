@@ -1,4 +1,5 @@
 <template>
+  <!--  Non challenger (Monthly Sessional) exams.  -->
   <b-form v-if="addExamModal.setup !== 'challenger'">
     <b-row no-gutters>
       <b-col cols="12">
@@ -130,6 +131,9 @@
       </b-col>
     </b-row>
   </b-form>
+  <!--  End of non challenger (Monthly Sessional) exams.  -->
+
+  <!--  Challenger (Monthly Sessional) exams.  -->
   <b-form v-else>
     <b-row no-gutters>
       <b-col cols="12">
@@ -201,6 +205,7 @@
       </b-col>
     </b-row>
   </b-form>
+  <!--  End of Challenger (Monthly Sessional) exams.  -->
 </template>
 
 <script>

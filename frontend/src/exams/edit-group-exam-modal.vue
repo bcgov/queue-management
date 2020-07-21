@@ -6,8 +6,14 @@
            hide-footer
            size="md">
     <div v-if="showModal">
+
+      <!-- Main header/title -->
       <span class="q-modal-header">Edit {{ titleText }} Exam Booking</span>
+
+      <!--  Start of the form with Exam details, dates/times, location box -->
       <b-form autocomplete="off">
+
+        <!--  Start of the Exam Details box -->
         <b-form-row>
           <b-col class="mb-2">
             <div class="q-info-display-grid-container">
@@ -29,7 +35,7 @@
                   <div>Writers: </div>
                   <div>{{ actionedExam.number_of_students }}</div>
                 </div>
-                <div class="q-id-grid-col" v-if="is_liaison_designate">
+                <div class="q-id-grid-col" v-if="is_ita2_designate">
                   <div>Office: </div>
                   <div>{{ actionedExam.office.office_name }}</div>
                 </div>
@@ -37,6 +43,9 @@
             </div>
           </b-col>
         </b-form-row>
+        <!--  End of the Exam Details box -->
+
+        <!--  Start of the Exam Date and Exam Time boxes -->
         <b-form-row>
           <b-col cols="6">
             <b-form-group>
@@ -75,6 +84,9 @@
             </b-form-group>
           </b-col>
         </b-form-row>
+        <!--  End of the Exam Date and Exam Time boxes -->
+
+        <!--  Start of the location box -->
         <b-form-row>
           <b-col>
             <b-form-group>
@@ -89,7 +101,11 @@
             </b-form-group>
           </b-col>
         </b-form-row>
+        <!--  End of the location box -->
       </b-form>
+      <!--  End of the form with Exam details, dates/times, location box -->
+
+      <!-- Start of data needed for pesticide exam -->
       <template v-if="actionedExam.is_pesticide">
         <b-form-row>
           <b-col>
@@ -153,8 +169,12 @@
           </b-col>
         </b-form-row>
       </template>
+      <!-- End of data needed for pesticide exam -->
+
+      <!-- Start of data needed for all non-pesticide exams -->
       <template v-else>
-        <!-- Invigilator Start -->
+
+        <!-- You don't have any invigilators, and need to add some. -->
         <template>
           <b-button v-if="this.currentInvigilatorList.length == 0 && this.groupInvigilatorBoolean"
                     v-b-toggle.collapse-invigilators
@@ -165,9 +185,15 @@
             Add Invigilators
           </b-button>
         </template>
+
+        <!-- Start of you have some invigilators, and want to change or delete them. -->
         <template>
           <b-row style="display: inline-flex;" class="w-100 ml-0 mb-1">
+
+            <!-- Start of changing invigilators -->
             <b-col class="w-50">
+
+              <!-- You want to change some invigilators -->
               <b-button v-if="this.currentInvigilatorList.length > 0 && this.changeInvigilatorState "
                         v-b-toggle.collapse-invigilators
                         variant="primary"
@@ -175,6 +201,8 @@
                         @click="setRemoveShadowInvigilatorBoolean">
                 <span>Change Invigilator(s)</span>
               </b-button>
+
+              <!-- You have some invigilators, but aren't allowed (???) to change them. -->
               <b-button v-if="this.currentInvigilatorList.length > 0 && !this.groupInvigilatorBoolean && !this.changeInvigilatorState"
                         style="padding-left: 40px; padding-right: 25px; margin-left: -4px; white-space: nowrap;"
                         variant="primary"
@@ -182,7 +210,12 @@
                 <span>Change Invigilator(s)</span>
               </b-button>
             </b-col>
+            <!-- End of changing invigilators -->
+
+            <!-- Start of deleting invigilators. -->
             <b-col class="w-50">
+
+              <!-- You have some invigilators and want to remove them. -->
               <b-button v-if="this.currentInvigilatorList.length > 0 && this.removeInvigilatorState"
                         v-b-toggle.collapse-remove-invigilators
                         variant="danger"
@@ -190,6 +223,8 @@
                         @click="setChangeShadowInvigilatorBoolean">
                 Remove Invigilator(s)
               </b-button>
+
+              <!--  You have some invigilators, but aren't allowed (???) to remove them -->
               <b-button v-if="this.currentInvigilatorList.length > 0 && !this.groupInvigilatorBoolean && !this.removeInvigilatorState"
                         style="padding-left: 40px; padding-right: 28px; margin-left: -11px; white-space: nowrap;"
                         variant="danger"
@@ -197,8 +232,12 @@
                 <span>Remove Invigilator(s)</span>
               </b-button>
             </b-col>
+            <!-- End of deleting invigilators. -->
           </b-row>
         </template>
+        <!-- End of you have some invigilators, and want to change or delete them. -->
+
+        <!-- Start of list of invigilators, which ones to remove -->
         <b-collapse id="collapse-remove-invigilators"
                     class="mt-2 w-100">
           <b-form-group class="q-info-display-grid-container">
@@ -231,6 +270,9 @@
             </template>
           </b-form-group>
         </b-collapse>
+        <!-- End of list of invigilators, which ones to delete? -->
+
+        <!-- Start of changing invigilators, by adding some -->
         <b-collapse id="collapse-invigilators"
                     class="mt-2 mb-1 w-100">
           <label class="mb-1">Add Invigilators</label>
@@ -319,9 +361,9 @@
             </b-row>
           </b-form>
         </b-collapse>
-        <!-- Invigilator End -->
+        <!-- Start of changing invigilators, by adding some -->
 
-        <!-- Shadow Invigilator Start -->
+        <!-- Start of Shadow Invigilator -->
         <b-form-group>
           <b-form-row>
             <template v-if="this.currentShadowInvigilator != null">
@@ -458,12 +500,18 @@
             </b-collapse>
           </b-form-row>
         </b-form-group>
-        <!-- Shadow Invigilator End -->
-      </template>
+        <!-- End of Shadow Invigilator -->
 
+      </template>
+      <!-- End of data needed for all non-pesticide exams -->
+
+      <!-- Place for messages -->
       <div v-if="showMessage"
             class="mb-3"
-            style="color: red;">Nothing has changed.  All fields contain their initial values.</div>
+            style="color: red;">Nothing has changed.  All fields contain their initial values.
+      </div>
+
+      <!-- Start of the button row, Reset, Cancel, Submit. -->
       <div style="display: flex; justify-content: flex-end; width: 100%">
         <b-btn class="w-12 mr-2 btn-warning" @click="show">Reset</b-btn>
         <b-btn class="btn-secondary mr-2" @click="cancel">Cancel</b-btn>
@@ -474,6 +522,7 @@
                class="btn-primary"
                @click="submit">Submit</b-btn>
       </div>
+      <!-- End of the button row, Reset, Cancel, Submit. -->
     </div>
   </b-modal>
 </template>
@@ -532,9 +581,9 @@
       ...mapGetters([
         'role_code',
         'invigilator_dropdown',
-        'is_liaison_designate',
+        'is_ita2_designate',
         'invigilator_multi_select',
-        'is_liaison_designate',
+        'is_ita2_designate',
         'shadow_invigilator_options',
         'shadow_invigilators',
       ]),
@@ -615,7 +664,7 @@
         ];
       },
       fieldDisabled() {
-        if ((this.role_code !== 'GA' && !this.is_liaison_designate) && this.examType != 'other') {
+        if ((this.role_code !== 'GA' && !this.is_ita2_designate) && this.examType != 'other') {
           return true
         }
         return false
@@ -807,7 +856,14 @@
         }
       },
       submit() {
+        console.log("==> In submit(), actionedExam.exam_received_date")
+        console.log(this.actionedExam.exam_received_date)
+        console.log("    --> this.actionedExam")
+        console.log(this.actionedExam)
+        console.log("    --> this.itemCopy")
+        console.log(this.itemCopy)
         if (!this.actionedExam.booking || !this.actionedExam.booking.start_time) {
+          console.log("    --> The exam is not booked, or is booked but does not have a start time")
           let { exam_id } = this.actionedExam
           let date = new moment(this.date).format('YYYY-MM-DD').toString()
           let time = new moment(this.time).format('HH:mm:ssZ').toString()
@@ -845,7 +901,14 @@
           })
           return
         }
+        else {
+          console.log("    --> The Exam is booked, with a start time")
+        }
         let edits = this.editedFields
+        console.log("    --> edits")
+        console.log(edits)
+        console.log("    --> this.fields")
+        console.log(this.fields)
         let putRequests = []
         let local_timezone_name = this.user.office.timezone.timezone_name
         let edit_timezone_name = this.actionedExam.booking.office.timezone.timezone_name
@@ -865,6 +928,7 @@
 
         if (edits.includes('time') || edits.includes('date') || edits.includes('invigilator_id') ||
           edits.includes('shadow_invigilator')) {
+          console.log("    --> Edits include time, date, invigilator, or shadow invigilator")
           let baseDate = moment(this.date).clone().format('YYYY-MM-DD')
           let baseTime = moment(this.time).clone().format('HH:mm:ss')
           if (local_timezone_name !== edit_timezone_name) {
@@ -928,15 +992,33 @@
             putRequests.push({url:`/invigilator/${this.shadowInvigilator}/?add=True&subtract=False`})
           }
         }
+        else {
+          console.log("    --> Edits DO NOT include time, date, invigilator, or shadow invigilator")
+        }
         let examChanges = {}
-        console.log(edits)
+        console.log("    --> this.itemCopy")
         console.log(this.itemCopy)
-        if (edits.includes('offsite_location') || edits.includes('invigilator_id') || edits.includes('exam_received') || edits.includes('event_id')) {
+        if (edits.includes('offsite_location')) {
           examChanges['offsite_location'] = this.offsite_location
-          examChanges['event_id'] = this.eventId
+        }
+        if (edits.includes('invigilator_id')) {
           examChanges['invigilator_id'] = this.invigilator_id
+        }
+        if (edits.includes('exam_received')) {
           examChanges['exam_received_date'] = this.fields.exam_received_date
+        }
+        if (edits.includes('event_id')) {
+          examChanges['event_id'] = this.eventId
+        }
+        console.log("    --> examChanges")
+        console.log(examChanges)
+        console.log("    --> examChanges.length: " + Object.keys(examChanges).length.toString())
+        if (Object.keys(examChanges).length > 0) {
+          console.log("    --> Edits include offsite location, invigilator, exam_received or event_id")
           putRequests.push({url:`/exams/${this.itemCopy.exam_id}/`, data: examChanges})
+        }
+        else {
+          console.log("    --> Edits DO NOT include offsite location, invigilator, exam_received or event_id")
         }
 
         // Ensure that if a user isn't removing either invigilator or shadow invigilator, and submitting a shadow
@@ -946,6 +1028,11 @@
             delete bookingChanges.invigilator_id
           }
         }
+
+        console.log("    --> bookingChanges")
+        console.log(bookingChanges)
+        console.log("    --> putRequests")
+        console.log(putRequests)
 
         let promises = []
         putRequests.forEach( put => {

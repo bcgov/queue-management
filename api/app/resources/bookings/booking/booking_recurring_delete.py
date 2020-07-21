@@ -45,7 +45,7 @@ class BookingRecurringDelete(Resource):
                                 .all()
 
         for booking in bookings:
-            if booking.office_id != csr.office_id and csr.liaison_designate != 1:
+            if booking.office_id != csr.office_id and csr.ita2_designate != 1:
                 abort(404)
 
             if booking.start_time.year == today.year and booking.start_time.month == today.month \

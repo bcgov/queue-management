@@ -372,15 +372,15 @@ export const store = new Vuex.Store({
       return false
     },
 
-    is_liaison_designate(state) {
-      if(state.user.liaison_designate){
+    is_ita2_designate(state) {
+      if(state.user.ita2_designate){
         return true
       }
       return false
     },
 
-    is_ita_designate(state) {
-      if(state.user.ita_designate){
+    is_office_manager(state) {
+      if(state.user.office_manager){
         return true
       }
       return false
@@ -856,6 +856,8 @@ export const store = new Vuex.Store({
         Axios(context).get(url)
           .then(resp => {
             context.commit('setExams', resp.data.exams)
+            console.log("==> getExams(context), exams are:")
+            console.log(resp.data.exams)
             resolve(resp)
           })
           .catch(error => {
@@ -1006,7 +1008,7 @@ export const store = new Vuex.Store({
     },
 
     getOffices(context, payload=null) {
-      if (context.state.user.liaison_designate === 1 || payload === 'force' || context.state.user.pesticide_designate === 1) {
+      if (context.state.user.ita2_designate === 1 || payload === 'force' || context.state.user.pesticide_designate === 1) {
         return new Promise((resolve, reject) => {
           Axios(context).get('/offices/').then(resp => {
             context.commit('setOffices', resp.data.offices)

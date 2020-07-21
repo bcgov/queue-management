@@ -72,7 +72,7 @@
       }
     },
     computed: {
-      ...mapGetters([ 'role_code', 'is_pesticide_designate', 'is_liaison_designate' ]),
+      ...mapGetters([ 'role_code', 'is_pesticide_designate', 'is_ita2_designate' ]),
       ...mapState([ 'offices', 'capturedExam' ]),
       office_id() {
         if (this.capturedExam && this.capturedExam.office_id) {

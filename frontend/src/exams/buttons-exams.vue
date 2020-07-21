@@ -1,7 +1,7 @@
 <template v-if="showExams">
   <div class="q-w100-flex-fs">
     <b-form inline>
-      <b-dd v-if="role_code === 'GA' || is_ita_designate"
+      <b-dd v-if="role_code === 'GA' || is_office_manager"
             id="add-ita"
             split
             class="mr-1"
@@ -11,11 +11,11 @@
         <b-dd-item id="add_session"
                    @click="handleClick('challenger')">Add Monthly Session Exam</b-dd-item>
       </b-dd>
-      <b-button v-if="!(role_code === 'GA' || is_ita_designate)"
+      <b-button v-if="!(role_code === 'GA' || is_office_manager)"
                 id="add_ita"
                 class="mr-1 btn-primary"
                 @click="handleClick('individual')">Add ITA Exam</b-button>
-      <b-button v-if="is_liaison_designate"
+      <b-button v-if="is_ita2_designate"
                 id="add_group"
                 class="mr-1 btn-primary"
                 @click="handleClick('group')">Add Group Exam</b-button>
@@ -26,7 +26,7 @@
                 class="mr-1 btn-primary"
                 id="add_pesticide"
                 @click="handleClick('pesticide')">Add Pesticide Exam</b-button>
-      <b-button v-if="is_financial_designate || role_code === 'GA' || is_ita_designate"
+      <b-button v-if="is_financial_designate || role_code === 'GA' || is_office_manager"
                 class="btn-primary mr-3"
                 @click="clickGenFinReport">Generate Financial Report</b-button>
     <FinancialReportModal />
@@ -45,8 +45,8 @@
       ...mapState(['addNonITA', 'showGenFinReportModal', 'user' ]),
       ...mapGetters([
         'is_financial_designate',
-        'is_ita_designate',
-        'is_liaison_designate',
+        'is_office_manager',
+        'is_ita2_designate',
         'is_pesticide_designate',
         'role_code',
         'showExams',

@@ -22,7 +22,7 @@ from sqlalchemy import exc
 from app.models.theq import CSR
 from app.models.bookings import Exam
 from app.utilities.bcmp_service import BCMPService
-from qsystem import api, oidc
+from qsystem import api, oidc, my_print
 
 
 @api.route("/exams/<int:exam_id>/download/", methods=["GET"])
@@ -37,11 +37,11 @@ class ExamStatus(Resource):
         try:
             exam = Exam.query.filter_by(exam_id=exam_id).first()
 
-            if not (exam.office_id == csr.office_id or csr.liaison_designate == 1):
+            if not (exam.office_id == csr.office_id or csr.ita2_designate == 1):
                 return {"The Exam Office ID and CSR Office ID do not match!"}, 403
 
             job = self.bcmp_service.check_exam_status(exam)
-            print(job)
+            my_print(job)
 
             if job['jobStatus'] == 'PACKAGE_GENERATED':
                 package_url = job["jobProperties"]["EXAM_PACKAGE_URL"]

@@ -36,4 +36,4 @@ class PeriodSchema(ma.ModelSchema):
     sr = fields.Nested("ServiceReqSchema", exclude=('periods',))
     csr = fields.Nested(CSRSchema(exclude=('csr_id', 'csr_state', 'csr_state_id', 'deleted', 'office', 'office_id',
                                            'periods', 'receptionist_ind', 'role', 'role_id', 'finance_designate',
-                                           'ita_designate', 'liaison_designate', 'pesticide_designate', 'counter')))
+                                           'office_manager', 'ita2_designate', 'pesticide_designate', 'counter')))

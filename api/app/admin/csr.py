@@ -40,33 +40,33 @@ class CSRConfig(Base):
 
     can_delete = False
 
-    column_list = ['username', 'office.office_name', 'ita_designate', 'pesticide_designate', 'finance_designate',
-                   'liaison_designate', 'role.role_desc', 'deleted']
+    column_list = ['username', 'office.office_name', 'office_manager', 'pesticide_designate', 'finance_designate',
+                   'ita2_designate', 'role.role_desc', 'deleted']
     column_labels = {
         'username': 'Username',
         'office.office_name': 'Office',
-        'ita_designate': 'Office Exam Manager',
+        'office_manager': 'Office Exam Manager',
         'pesticide_designate': 'Pesticide Client Liaison/Program Specialist',
         'finance_designate': 'Financial Reporting Designate',
-        'liaison_designate': 'ITA Liaison/Program Specialist',
+        'ita2_designate': 'ITA Liaison/Program Specialist',
         'role.role_desc': 'Role',
         'deleted': 'Deleted'
     }
     column_searchable_list = ('username',)
-    column_sortable_list = ('username', 'office.office_name', 'ita_designate', 'pesticide_designate',
-                            'finance_designate', 'liaison_designate', 'role.role_desc', 'deleted')
+    column_sortable_list = ('username', 'office.office_name', 'office_manager', 'pesticide_designate',
+                            'finance_designate', 'ita2_designate', 'role.role_desc', 'deleted')
     column_default_sort = 'username'
     form_args = {
         'csr_state': {'default': 'Logout'},
-        'ita_designate': {'default': '0'},
+        'office_manager': {'default': '0'},
         'pesticide_designate': {'default': '0'},
         'finance_designate': {'default': '0'},
-        'liaison_designate': {'default': '0'},
+        'ita2_designate': {'default': '0'},
     }
 
     #   The defaults if you are SUPPORT
     form_choices = {
-        'ita_designate': [
+        'office_manager': [
             ("0", 'No - not an Exam Manager'), ("1", 'Yes - an Exam Manager')
         ],
         'pesticide_designate': [
@@ -75,16 +75,16 @@ class CSRConfig(Base):
         'finance_designate': [
             ("0", 'No - not in Finance team'), ("1", 'Yes - for Finance team reporting')
         ],
-        'liaison_designate': [
+        'ita2_designate': [
             ("0", 'No - not an ITA Liaison'), ("1", 'Yes - an ITA Liaison')
         ]
     }
 
     form_excluded_columns = ('periods', 'qt_xn_csr_ind', 'receptionist_ind')
-    form_create_rules = ('username', 'ita_designate', 'pesticide_designate',
-                         'finance_designate', 'liaison_designate', 'csr_state', 'role', 'office','deleted', 'counter')
-    form_edit_rules = ('username', 'ita_designate', 'pesticide_designate',
-                       'finance_designate', 'liaison_designate', 'csr_state', 'role', 'office', 'deleted','counter')
+    form_create_rules = ('username', 'office_manager', 'pesticide_designate',
+                         'finance_designate', 'ita2_designate', 'csr_state', 'role', 'office','deleted', 'counter')
+    form_edit_rules = ('username', 'office_manager', 'pesticide_designate',
+                       'finance_designate', 'ita2_designate', 'csr_state', 'role', 'office', 'deleted','counter')
 
     def get_return_url(self):
         return get_redirect_target() or self.get_url('.index_view')
@@ -197,9 +197,9 @@ class CSRConfigGA(CSRConfig):
 
     form_excluded_columns = ('periods', 'qt_xn_csr_ind', 'receptionist_ind', 'deleted', 'finance_designate',
                              'csr_state', 'counter')
-    form_create_rules = ('username', 'ita_designate', 'pesticide_designate',
-                         'finance_designate', 'liaison_designate', 'csr_state', 'role', 'office', 'counter')
-    form_edit_rules = ('username', 'ita_designate', 'pesticide_designate', 'liaison_designate', 'role', 'office')
+    form_create_rules = ('username', 'office_manager', 'pesticide_designate',
+                         'finance_designate', 'ita2_designate', 'csr_state', 'role', 'office', 'counter')
+    form_edit_rules = ('username', 'office_manager', 'pesticide_designate', 'ita2_designate', 'role', 'office')
 
 
 CSRModelView = CSRConfig(CSR, db.session)

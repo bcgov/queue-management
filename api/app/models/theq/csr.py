@@ -31,6 +31,8 @@ class CSR(Base):
     pesticide_designate = db.Column(db.Integer, default=0, nullable=False)
     finance_designate = db.Column(db.Integer, default=0, nullable=False)
     liaison_designate = db.Column(db.Integer, default=0, nullable=False)
+    office_manager = db.Column(db.Integer, default=0, nullable=False)
+    ita2_designate = db.Column(db.Integer, default=0, nullable=False)
 
     role = db.relationship("Role", lazy='joined')
     office = db.relationship("Office", lazy='joined')

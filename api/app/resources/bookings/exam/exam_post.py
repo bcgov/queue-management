@@ -21,7 +21,7 @@ from app.models.theq import CSR, Office
 from flask_restx import Resource
 from app.models.bookings import ExamType, Invigilator
 from app.schemas.bookings import ExamSchema, CandidateSchema
-from qsystem import api, api_call_with_retry, db, oidc
+from qsystem import api, api_call_with_retry, db, oidc, my_print
 from app.utilities.auth_util import Role, has_any_role
 from app.utilities.bcmp_service import BCMPService
 
@@ -38,8 +38,8 @@ class ExamPost(Resource):
 
         is_bcmp_req = True if request.args.get('bcmp_pesticide') else False
 
-        print("is_bcmp_req: ")
-        print(is_bcmp_req)
+        my_print("is_bcmp_req: ")
+        my_print(is_bcmp_req)
 
         csr = CSR.find_by_username(g.oidc_token_info['username'])
 
@@ -47,21 +47,21 @@ class ExamPost(Resource):
 
         exam, warning = self.exam_schema.load(json_data)
 
-        print("json_data: ")
-        print(json_data)
+        my_print("json_data: ")
+        my_print(json_data)
 
         if warning:
             logging.warning("WARNING: %s", warning)
             return {"message": warning}, 422
         
-        if not (exam.office_id == csr.office_id or csr.liaison_designate == 1):
+        if not (exam.office_id == csr.office_id or csr.ita2_designate == 1):
             return {"The Exam Office ID and CSR Office ID do not match!"}, 403   
         
         if exam.is_pesticide:
             formatted_data = self.format_data(json_data, exam)
             exam = formatted_data["exam"]
             job = self.bcmp_service.check_exam_status(exam)
-            print(job)
+            my_print(job)
             if job and job['jobProperties'] and job['jobProperties']['JOB_ID']:
                 exam.event_id = job['jobProperties']['JOB_ID']
 

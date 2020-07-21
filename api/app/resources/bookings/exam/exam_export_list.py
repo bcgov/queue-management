@@ -20,7 +20,7 @@ from app.models.bookings import Exam, Booking, Invigilator, Room, ExamType
 from app.models.theq import CSR, Office, Timezone
 from app.schemas.bookings import ExamSchema
 from app.schemas.theq import OfficeSchema, TimezoneSchema
-from qsystem import api, oidc
+from qsystem import api, oidc, my_print
 from datetime import datetime, timedelta, timezone
 import pytz
 import csv
@@ -342,7 +342,7 @@ def which_non_exam_key(booking, row, key):
         write_contact_info(booking, row)
     elif key == 'start_time':
         value = getattr(booking.start_time, key)
-        print("==> which_non_exam_key of '" + key + "', type is: " + str(type(value)))
+        my_print("==> which_non_exam_key of '" + key + "', type is: " + str(type(value)))
         row.append(getattr(booking.start_time, key))
     elif key == 'end_time':
         row.append(getattr(booking.end_time, key))
