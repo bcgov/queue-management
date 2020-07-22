@@ -24,7 +24,7 @@
             cols="12"
             md="5"
           >
-          <img :src="require('@/assets/img/officemaps/' + location.office_number.toString() + '.png')" :alt="getMapAltText(appointment)" class='static-map'>
+          <img :src="require('@/assets/img/officemaps/' + getOfficeNumber(appointment).toString() + '.png')" :alt="getMapAltText(appointment)" class='static-map'>
           </v-col>
           <v-col
             cols="12"
@@ -175,6 +175,10 @@ export default class Home extends Vue {
 
   private getOfficeName (appointment) {
     return appointment?.office?.office_name || ''
+  }
+
+  private getOfficeNumber (appointment) {
+    return appointment?.office?.office_number || ''
   }
 
   private getServiceName (appointment) {
