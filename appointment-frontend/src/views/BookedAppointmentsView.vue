@@ -24,7 +24,7 @@
             cols="12"
             md="5"
           >
-          <img :src='getMapUrl(appointment)' :alt="getMapAltText(appointment)" class='static-map'>
+          <img :src="require('@/assets/img/officemaps/' + location.office_number.toString() + '.png')" :alt="getMapAltText(appointment)" class='static-map'>
           </v-col>
           <v-col
             cols="12"

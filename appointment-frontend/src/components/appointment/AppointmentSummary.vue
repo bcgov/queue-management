@@ -40,7 +40,7 @@
               </div>
             </v-col>
             <v-col cols="12">
-              <img :src='getMapUrl(staticMapData)' :alt="staticMapData.civic_address" class='map-view'>
+              <img :src="require('@/assets/img/officemaps/' + location.office_number.toString() + '.png')" :alt="staticMapData.civic_address" class='map-view'>
             </v-col>
           </v-row>
         </v-card>
