@@ -40,7 +40,7 @@
               </div>
             </v-col>
             <v-col cols="12">
-              <img :src="require('@/assets/img/officemaps/' + staticMapData.office_number.toString() + '.png')" :alt="staticMapData.civic_address" class='map-view'>
+              <img :src="require('@/assets/img/officemaps/' + staticMapData.office_number)" :alt="staticMapData.civic_address" class='map-view'>
             </v-col>
           </v-row>
         </v-card>
@@ -193,7 +193,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
 
   private get staticMapData () {
     return {
-      office_number: this.currentOffice?.office_number,
+      office_number: this.currentOffice?.office_number ? this.currentOffice?.office_number.toString() + '.png' : '999.png',
       civic_address: this.currentOffice?.civic_address || '',
       latitude: this.currentOffice?.latitude || 0,
       longitude: this.currentOffice?.longitude || 0
