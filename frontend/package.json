@@ -28,7 +28,7 @@
     "es6-promise": "4.2.6",
     "es6-shim": "0.35.5",
     "fullcalendar-scheduler": "1.9.4",
-    "jquery": "3.4.0",
+    "jquery": "3.5.1",
     "js-file-download": "0.4.5",
     "lodash": "^4.17.19",
     "luxon": "1.12.1",
