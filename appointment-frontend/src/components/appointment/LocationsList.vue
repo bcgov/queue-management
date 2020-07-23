@@ -30,7 +30,7 @@
               <v-col cols="12" md="6" align-self="stretch" align="center" class="loc-map">
 <!--                <v-img v-if="location.civic_address" :src='getMapUrl(location)' :alt="location.civic_address || 'No address'" class='static-map'>-->
 <!--                </v-img>-->
-               <v-img v-if="location.civic_address" :src="require('@/assets/img/officemaps/' + location.office_number.toString() + '.png')"
+               <v-img v-if="location.civic_address" :src="require('@/assets/img/officemaps/' + (location.office_number ? location.office_number.toString() + '.png' : '999.png'))"
                 :alt="location.civic_address || 'No address'" class='static-map'>
                </v-img>
                 <div class="text-center mt-2 body-2" v-if="location.civic_address">
