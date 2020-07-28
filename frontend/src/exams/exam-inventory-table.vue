@@ -48,14 +48,14 @@
             <b-input-group-prepend>
               <label class="mx-1 pt-3 mr-2 my-auto label-text">Filters:</label>
             </b-input-group-prepend>
-            <b-dd v-if="is_pesticide_designate"
+            <b-dd v-if="is_pesticide_designate || is_ita2_designate"
                   split
                   size="sm"
                   :variant="officeFilter === userOffice || officeFilter === 'default' ? 'primary' : 'warning'"
                   class="btn-sm mr-2 mt-2"
                   :text="officeFilterText"
                   @click="officeFilterModal=true">
-              <b-dd-item @click="viewAllOfficePesticideExams">
+              <b-dd-item v-if="is_pesticide_designate" @click="viewAllOfficePesticideExams">
                 View All Offices
               </b-dd-item>
             </b-dd>
