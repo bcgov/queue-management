@@ -20,10 +20,12 @@ from app.schemas.theq import OfficeSchema
 from qsystem import ma
 
 
-class BookingSchema(ma.ModelSchema):
+class BookingSchema(ma.SQLAlchemySchema):
 
     class Meta:
         model = Booking
+        include_relationships = True
+        load_instance = True
         jit = toastedmarshmallow.Jit
 
     booking_id = fields.Int(dump_only=True)

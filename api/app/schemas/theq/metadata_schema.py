@@ -18,10 +18,12 @@ from app.models.theq import MetaData
 from qsystem import ma
 
 
-class MetaDataSchema(ma.ModelSchema):
+class MetaDataSchema(ma.SQLAlchemySchema):
 
     class Meta:
         model = MetaData
+        include_relationships = True
+        load_instance = True
         jit = toastedmarshmallow.Jit
 
     metadata_id = fields.Int()

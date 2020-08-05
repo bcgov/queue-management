@@ -18,10 +18,12 @@ from app.models.theq import CitizenState
 from qsystem import ma
 
 
-class CitizenStateSchema(ma.ModelSchema):
+class CitizenStateSchema(ma.SQLAlchemySchema):
 
     class Meta:
         model = CitizenState
+        include_relationships = True
+        load_instance = True
         jit = toastedmarshmallow.Jit
 
     cs_id = fields.Int()

@@ -18,12 +18,14 @@ from app.models.bookings import ExamType
 from qsystem import ma
 
 
-class ExamTypeSchema(ma.ModelSchema):
+class ExamTypeSchema(ma.SQLAlchemySchema):
 
     class Meta:
         model = ExamType
-        exclude = ("exam",)
+        include_relationships = True
+        load_instance = True
         jit = toastedmarshmallow.Jit
+        # exclude = ("exam",)
 
     exam_type_id = fields.Int(dump_only=True)
     exam_type_name = fields.Str()

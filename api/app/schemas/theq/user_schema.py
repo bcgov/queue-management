@@ -19,8 +19,10 @@ from app.schemas.theq import ServiceReqSchema, CitizenStateSchema, OfficeSchema
 from qsystem import ma
 
 
-class UserSchema(ma.ModelSchema):
+class UserSchema(ma.SQLAlchemySchema):
 
     class Meta:
         model = PublicUser
+        include_relationships = True
+        load_instance = True
 

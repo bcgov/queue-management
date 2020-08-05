@@ -19,10 +19,12 @@ from app.schemas.theq import OfficeSchema
 from qsystem import ma
 
 
-class AppointmentSchema(ma.ModelSchema):
+class AppointmentSchema(ma.SQLAlchemySchema):
 
     class Meta:
         model = Appointment
+        include_relationships = True
+        load_instance = True
         jit = toastedmarshmallow.Jit
 
     appointment_id = fields.Int(dump_only=True)

@@ -19,12 +19,14 @@ from app.schemas.theq import SmartBoardSchema, CounterSchema, ServiceSchema, Tim
 from qsystem import ma
 
 
-class OfficeSchema(ma.ModelSchema):
+class OfficeSchema(ma.SQLAlchemySchema):
 
     class Meta:
         model = Office
+        include_relationships = True
+        load_instance = True
         jit = toastedmarshmallow.Jit
-        exclude = ('citizens', 'csrs', 'deleted', 'exams', 'rooms', 'services',)
+        # exclude = ('citizens', 'csrs', 'deleted', 'exams', 'rooms', 'services',)
 
     office_id = fields.Int()
     office_name = fields.Str()

@@ -18,11 +18,13 @@ from app.models.theq import TimeSlot
 from qsystem import ma
 
 
-class TimeslotSchema(ma.ModelSchema):
+class TimeslotSchema(ma.SQLAlchemySchema):
     class Meta:
         model = TimeSlot
+        include_relationships = True
+        load_instance = True
         jit = toastedmarshmallow.Jit
-        exclude = ('offices','time_slot_id')
+        # exclude = ('offices','time_slot_id')
 
     start_time = fields.Time()
     end_time = fields.Time()

@@ -19,12 +19,14 @@ from app.schemas.theq import OfficeSchema
 from qsystem import ma
 
 
-class RoomSchema(ma.ModelSchema):
+class RoomSchema(ma.SQLAlchemySchema):
 
     class Meta:
         model = Room
-        exclude = ("booking",)
+        include_relationships = True
+        load_instance = True
         jit = toastedmarshmallow.Jit
+        #exclude = ("booking",)
 
     capacity = fields.Int()
     color = fields.Str()

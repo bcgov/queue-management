@@ -19,12 +19,13 @@ from app.schemas.theq import ServiceReqSchema, CitizenStateSchema, OfficeSchema
 from qsystem import ma
 
 
-class CitizenSchema(ma.ModelSchema):
+class CitizenSchema(ma.SQLAlchemySchema):
 
     class Meta:
         model = Citizen
+        include_relationships = True
+        load_instance = True
         jit = toastedmarshmallow.Jit
-        exclude = ('office_citizens','office',)
 
     citizen_id = fields.Int(dump_only=True)
     office_id = fields.Int()

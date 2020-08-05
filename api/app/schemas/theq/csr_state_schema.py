@@ -18,10 +18,12 @@ from app.models.theq import CSRState
 from qsystem import ma
 
 
-class CSRStateSchema(ma.ModelSchema):
+class CSRStateSchema(ma.SQLAlchemySchema):
 
     class Meta:
         model = CSRState
+        include_relationships = True
+        load_instance = True
         jit = toastedmarshmallow.Jit
 
     csr_state_id = fields.Int()
