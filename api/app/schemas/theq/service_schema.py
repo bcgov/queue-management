@@ -33,6 +33,7 @@ class ServiceSchema(ma.SQLAlchemySchema):
     service_name = fields.Str(dump_only=True)
     service_desc = fields.Str(dump_only=True)
     parent = fields.Nested('self', only=('service_name',))
+    parent_id = fields.Nested('self', only=('service_id',))
     deleted = fields.DateTime(dump_only=True)
     prefix = fields.Str(dump_only=True)
     display_dashboard_ind = fields.Int(dump_only=True)
