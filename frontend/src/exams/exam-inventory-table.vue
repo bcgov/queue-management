@@ -758,12 +758,6 @@
         } else {
           length_of_invigilator_array = item.booking.invigilators.length
         }
-        console.log("==> checkInvigilator, item.name: " + item.exam_name)
-        console.log("    --> item.exam_type.group_exam_ind:      " + item.exam_type.group_exam_ind.toString())
-        console.log("    --> item.exam_type.exam_type_name:      " + item.exam_type.exam_type_name)
-        console.log("    --> number_of_invigilators:             " + number_of_invigilators.toString())
-        console.log("    --> item.booking.sbc_staff_invigilated: " + item.booking.sbc_staff_invigilated.toString())
-        console.log("    --> length_of_invigilator_array:        " + length_of_invigilator_array.toString())
         if (item.exam_type.group_exam_ind === 1 && length_of_invigilator_array == 0) {
           return false
         } else if (item.exam_type.group_exam_ind === 1 && length_of_invigilator_array >= number_of_invigilators) {
@@ -1426,9 +1420,6 @@
         }
       },
       statusIcon(item) {
-        console.log("==> In statusIcon(item), item.exam_name: ", item.exam_name)
-        // console.log("    --> Item type: " + item.constructor.name + "; Item is:")
-        // console.log(item)
         let number_of_students = item.number_of_students
         let number_of_invigilators = Math.ceil(number_of_students / 24)
         let length_of_invigilator_array = null
@@ -1437,9 +1428,6 @@
         }else{
           length_of_invigilator_array = item.booking.invigilators.length
         }
-        // console.log("    --> # students:   " + number_of_students.toString())
-        // console.log("    --> # invig:      " + number_of_invigilators.toString())
-        // console.log("    --> # len(invig): ", length_of_invigilator_array)
         let lifeRing = {
           icon: 'life-ring',
           rank: 4,
