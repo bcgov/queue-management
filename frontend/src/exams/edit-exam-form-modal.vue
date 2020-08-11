@@ -24,8 +24,6 @@
                               type="text" />
               </b-form-group>
             </b-col>
-          </b-form-row>
-          <b-form-row>
             <b-col>
               <label class="my-0">Retrieve Exam and Print</label>
               <b-btn class="btn-success w-100" @click="checkAndDownloadExam()">Print</b-btn>
@@ -70,6 +68,15 @@
                               v-model="fields.examinee_name" />
               </b-form-group>
             </b-col>
+            <b-col>
+              <b-form-group>
+                <label class="my-0">Telephone</label><br>
+                <b-form-input id="examinee_phone"
+                              class="less-10-mb"
+                              type="text"
+                              v-model="fields.examinee_phone" />
+              </b-form-group>
+            </b-col>
           </b-form-row>
           <b-form-row>
             <b-col>
@@ -82,14 +89,11 @@
               </b-form-group>
             </b-col>
           </b-form-row>
-          <b-form-row>
+          <b-form-row class="mt-2">
             <b-col>
-              <b-form-group>
-                <label class="my-0">Telephone</label><br>
-                <b-form-input id="examinee_phone"
-                              class="less-10-mb"
-                              type="text"
-                              v-model="fields.examinee_phone" />
+              <b-form-group class="mb-0">
+                <label class="mb-0">Notes</label><br>
+                <b-textarea v-model="fields.notes"/>
               </b-form-group>
             </b-col>
           </b-form-row>
@@ -802,9 +806,7 @@
         }
       },
       submit() {
-        console.log("==> In submit.  Data is")
         let data = Object.assign({}, this.fields)
-        console.log(data)
         let putRequest = {
           exam_id: this.fields.exam_id
         }
