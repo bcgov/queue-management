@@ -472,6 +472,7 @@
                           id="appointment_blackout_notes"
                           placeholder="Enter notes about blackout period"
                           rows="3"
+                          maxlength="255"
                           max-rows="6"
                           size="md">
               </b-textarea>

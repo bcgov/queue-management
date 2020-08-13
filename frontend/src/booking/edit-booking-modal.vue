@@ -96,6 +96,7 @@
                 <b-form-textarea id="blackout_notes"
                                  v-model="blackout_notes"
                                  class="mb-2"
+                                 maxlength="255"
                                  @change.native="checkValue">
                 </b-form-textarea>
               </b-form-group>

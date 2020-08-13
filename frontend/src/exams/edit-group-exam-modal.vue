@@ -107,6 +107,7 @@
                           style="color: #525252"
                           class="mb-0 custom-disabled-fields"
                           :rows="2"
+                          :maxlength="50"
                           name="offsite_location"
                           @input.native="checkInput" />
             </b-form-group>
@@ -127,6 +128,7 @@
                           class="mb-0"
                           :rows="2"
                           name="notes"
+                          :maxlength="400"
                           @input.native="checkInput"
                           />
             </b-form-group>

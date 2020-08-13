@@ -40,6 +40,7 @@
                   <b-textarea id="serve_comment_textarea"
                               v-model="comments"
                               :rows="4"
+                              :maxlength="1000"
                               size="sm" />
                 </div>
               </b-col>

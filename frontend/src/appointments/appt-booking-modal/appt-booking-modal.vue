@@ -148,6 +148,7 @@
             <b-form-group class="mb-0 mt-2">
               <label class="mb-0">Notes</label><br>
               <b-textarea v-model="comments"
+                          maxlength="255"
                           rows="2"/>
             </b-form-group>
           </b-col>
