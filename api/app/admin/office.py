@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 
-from app.models.theq import Office, Service
+from app.models.theq import Office, Service, Counter
 from .base import Base
 from flask_login import current_user
 from flask import flash
@@ -185,6 +185,19 @@ class OfficeConfig(Base):
         if len(invalid) != 0:
             message = ", ".join(invalid)
             flash(gettext("Services saved minus services not offered at this office: " + message), 'warning')
+        # print('==>on_model_change  ===> office.py Flask Admin')
+        # if is_created:
+        #     print('==>on_model_change  ===> is_created True')
+        #     print('==>on_model_change  ===> Office.counters', Office.counters)
+        #     print('==>on_model_change  ===> Office.counters.counter_id', Office.counters.counter_id)
+        #     print('==>on_model_change  ===> Counter.counter_id:', Counter.counter_id)
+        #     print('==>on_model_change  ===> Counter.counter_name:', Counter.counter_name)
+        #     print('==>on_model_change  ===> model.counters:', model.counters)
+        #     if model.counters is None:
+        #         counter = Office.query.filter(Office.counters.counter_id == 2).first()
+        #         print('==>on_model_change  ===> counter:',counter)
+        #         model.counters = counter
+        #         print('==>on_model_change  ===> model.counter:',model.counter)
 
 
 class OfficeConfigGA(OfficeConfig):
