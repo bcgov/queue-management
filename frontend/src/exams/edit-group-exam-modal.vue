@@ -18,7 +18,11 @@
           <b-col class="mb-2">
             <div class="q-info-display-grid-container">
               <div class="q-id-grid-outer">
-                <div class="q-id-grid-head">Exam Details</div>
+                <div class="q-id-grid-col">Exam Details</div>
+                <div class="q-id-grid-col" v-if="is_ita2_designate">
+                  <div>Office: </div>
+                  <div>{{ actionedExam.office.office_name }}</div>
+                </div>
                 <div class="q-id-grid-col">
                   <div>Exam: </div>
                   <div>{{ actionedExam.exam_name }}</div>
@@ -35,10 +39,6 @@
                   <div>Writers: </div>
                   <div>{{ actionedExam.number_of_students }}</div>
                 </div>
-                <div class="q-id-grid-col" v-if="is_ita2_designate">
-                  <div>Office: </div>
-                  <div>{{ actionedExam.office.office_name }}</div>
-                </div>
               </div>
             </div>
           </b-col>
@@ -47,7 +47,18 @@
 
         <!--  Start of the Exam Date and Exam Time boxes -->
         <b-form-row>
-          <b-col cols="6">
+          <b-col cols="3">
+            <b-form-group>
+              <label>Event ID</label><br>
+              <b-form-input v-model="eventId"
+                          :disabled="fieldDisabled"
+                          type="text"
+                          class="less-10-mb"
+                          @input.native="checkInput"
+                          name="event_id" />
+            </b-form-group>
+          </b-col>
+          <b-col cols="5">
             <b-form-group>
               <label>Exam Date</label><br>
               <DatePicker :value="date"
@@ -62,7 +73,7 @@
             </b-form-group>
           </b-col>
 
-          <b-col cols="6">
+          <b-col cols="4">
             <b-form-group>
               <label>Exam Time</label><br>
               <DatePicker v-model="time"
@@ -96,6 +107,7 @@
                           style="color: #525252"
                           class="mb-0 custom-disabled-fields"
                           :rows="2"
+                          :maxlength="50"
                           name="offsite_location"
                           @input.native="checkInput" />
             </b-form-group>
@@ -107,19 +119,22 @@
 
       <!-- Start of data needed for pesticide exam -->
       <template v-if="actionedExam.is_pesticide">
-        <b-form-row>
+        <b-form-row class="mt-0">
           <b-col>
-            <b-form-group>
-              <label>Event ID</label><br>
-              <b-form-input v-model="eventId"
-                          :disabled="fieldDisabled"
-                          type="text"
-                          class="less-10-mb"
+            <b-form-group class="mb-0">
+              <label class="mb-0">Notes</label><br>
+              <b-textarea v-model="notes"
+                          style="color: #525252"
+                          class="mb-0"
+                          :rows="2"
+                          name="notes"
+                          :maxlength="400"
                           @input.native="checkInput"
-                          name="event_id" />
+                          />
             </b-form-group>
           </b-col>
         </b-form-row>
+
         <b-form-row>
           <b-col>
             <label class="my-0">Retrieve Exam and Print</label>
@@ -545,6 +560,7 @@
         date: '',
         time: '',
         offsite_location: '',
+        notes: '',
         eventId: '',
         editedFields: [],
         showMessage: false,
@@ -563,7 +579,6 @@
         invigilatorFields: ['selected', 'name',],
         fields: {
           exam_received_date: null,
-          notes: null,
           event_id: null,
           exam_name: null,
         },
@@ -644,14 +659,12 @@
         return ''
       },
       exam() {
-        console.log(this.actionedExam)
         if (Object.keys(this.actionedExam).length > 0) {
           return this.actionedExam
         }
         return false
       },
       invigilatorList() {
-        console.log(this.invigilator_id)
         let invigilators = (this.actionedExam.office && this.actionedExam.office.office_name == 'Pesticide Offsite') ? this.pesticide_offsite_invigilators : this.pesticide_invigilators;
         return invigilators.map(invigilator => ({ text: invigilator.invigilator_name, value: parseInt(invigilator.invigilator_id) }))
       },
@@ -793,6 +806,21 @@
             return
           }
         }
+        if (name === 'notes') {
+          if (value !== this.itemCopy[name]) {
+            if (!this.editedFields.includes(e.target.name)) {
+              this.editedFields.push(e.target.name)
+            }
+            return
+          }
+          if (value === this.itemCopy[name]) {
+            if (this.editedFields.includes(e.target.name)) {
+              let i = this.editedFields.indexOf(e.target.name)
+              this.editedFields.splice(i, 1)
+            }
+            return
+          }
+        }
         if (name === 'event_id') {
           if (value !== this.itemCopy[name]) {
             if (!this.editedFields.includes(e.target.name)) {
@@ -856,12 +884,6 @@
         }
       },
       submit() {
-        console.log("==> In submit(), actionedExam.exam_received_date")
-        console.log(this.actionedExam.exam_received_date)
-        console.log("    --> this.actionedExam")
-        console.log(this.actionedExam)
-        console.log("    --> this.itemCopy")
-        console.log(this.itemCopy)
         if (!this.actionedExam.booking || !this.actionedExam.booking.start_time) {
           console.log("    --> The exam is not booked, or is booked but does not have a start time")
           let { exam_id } = this.actionedExam
@@ -887,7 +909,8 @@
 
           let examPut = {
             offsite_location: this.offsite_location,
-            event_id: this.eventId
+            event_id: this.eventId,
+            notes: this.notes
           }
           this.postBooking(bookingPost).then( booking_id => {
             examPut.booking_id = booking_id
@@ -905,10 +928,6 @@
           console.log("    --> The Exam is booked, with a start time")
         }
         let edits = this.editedFields
-        console.log("    --> edits")
-        console.log(edits)
-        console.log("    --> this.fields")
-        console.log(this.fields)
         let putRequests = []
         let local_timezone_name = this.user.office.timezone.timezone_name
         let edit_timezone_name = this.actionedExam.booking.office.timezone.timezone_name
@@ -970,7 +989,6 @@
             }
           }
 
-
           if (this.removeCurrentInvigilatorFlag) {
             bookingChanges.invigilator_id = null
           }
@@ -996,10 +1014,11 @@
           console.log("    --> Edits DO NOT include time, date, invigilator, or shadow invigilator")
         }
         let examChanges = {}
-        console.log("    --> this.itemCopy")
-        console.log(this.itemCopy)
         if (edits.includes('offsite_location')) {
           examChanges['offsite_location'] = this.offsite_location
+        }
+        if (edits.includes('notes')) {
+          examChanges['notes'] = this.notes
         }
         if (edits.includes('invigilator_id')) {
           examChanges['invigilator_id'] = this.invigilator_id
@@ -1010,15 +1029,12 @@
         if (edits.includes('event_id')) {
           examChanges['event_id'] = this.eventId
         }
-        console.log("    --> examChanges")
-        console.log(examChanges)
-        console.log("    --> examChanges.length: " + Object.keys(examChanges).length.toString())
         if (Object.keys(examChanges).length > 0) {
-          console.log("    --> Edits include offsite location, invigilator, exam_received or event_id")
+          console.log("    --> Edits include offsite location, notes, invigilator, exam_received or event_id")
           putRequests.push({url:`/exams/${this.itemCopy.exam_id}/`, data: examChanges})
         }
         else {
-          console.log("    --> Edits DO NOT include offsite location, invigilator, exam_received or event_id")
+          console.log("    --> Edits DO NOT include offsite location, notes, invigilator, exam_received or event_id")
         }
 
         // Ensure that if a user isn't removing either invigilator or shadow invigilator, and submitting a shadow
@@ -1028,11 +1044,6 @@
             delete bookingChanges.invigilator_id
           }
         }
-
-        console.log("    --> bookingChanges")
-        console.log(bookingChanges)
-        console.log("    --> putRequests")
-        console.log(putRequests)
 
         let promises = []
         putRequests.forEach( put => {
@@ -1093,11 +1104,11 @@
           this.currentShadowInvigilatorName = currentName
         }
         this.offsite_location = tempItem.offsite_location === '_offsite' ? null : tempItem.offsite_location
+        this.notes = tempItem.notes
         this.eventId = tempItem.event_id
         if(tempItem.is_pesticide && tempItem.invigilator_id) {
           this.invigilator_id = parseInt(tempItem.invigilator_id)
         }
-        console.log('invigilator_id: ', this.invigilator_id)
         this.editedFields = []
         this.itemCopy = tempItem
       },
@@ -1105,6 +1116,7 @@
         this.time = null
         this.date = null
         this.offsite_location = null
+        this.notes = null
         this.eventId = null
         this.invigilator_id = null
         this.itemCopy = {}

@@ -53,6 +53,7 @@
                           id="booking_notes"
                           class="form-control"
                           ref="booking_notes"
+                          maxlength="255"
                           @focus="setRef"
                           v-model="notes" />
               </b-form-group>
