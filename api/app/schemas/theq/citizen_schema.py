@@ -28,6 +28,7 @@ class CitizenSchema(ma.SQLAlchemySchema):
         jit = toastedmarshmallow.Jit
 
     citizen_id = fields.Int(dump_only=True)
+    citizen_name = fields.Str()
     office_id = fields.Int()
     ticket_number = fields.Str(dump_only=True)
     citizen_comments = fields.Str()

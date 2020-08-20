@@ -27,6 +27,7 @@ class ServiceReqSchema(ma.SQLAlchemySchema):
         load_instance = True
         jit = toastedmarshmallow.Jit
 
+    sr_id = fields.Int()
     citizen_id = fields.Int()
     channel_id = fields.Int()
     service_id = fields.Int()
