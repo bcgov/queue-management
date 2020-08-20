@@ -18,6 +18,7 @@
                     v-model="comments"
                     :rows="2"
                     size="sm"
+                    maxlength="1000"
                     placeholder="add comments here">
 
         </b-textarea>

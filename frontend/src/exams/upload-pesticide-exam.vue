@@ -87,6 +87,9 @@
             </b-form-group>
           </b-col>
         </b-form-row>
+
+        <!--  Delete the notes field.  Can no longer edit notes when uploading. -->
+        <!--
         <b-form-row class="mt-2">
           <b-col>
             <b-form-group class="mb-0">
@@ -95,6 +98,7 @@
             </b-form-group>
           </b-col>
         </b-form-row>
+        -->
         <b-alert
           class="mt-2"
           :show="uploadFailed"

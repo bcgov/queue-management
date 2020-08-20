@@ -9,14 +9,15 @@
     <link rel="icon" href="<%= BASE_URL %>favicon.png">
     <link rel="preload" href="<%= BASE_URL %>fonts/materialdesignicons-webfont.927457ed.woff2" as="font" type="font/woff2" crossorigin>
     <script type="text/javascript">
-      // <!-- Snowplow starts plowing - Standalone vA.2.10.2 -->
+      // <!-- Snowplow starts plowing - Standalone vE.2.14.0 -->
       ;(function(p,l,o,w,i,n,g){if(!p[i]){p.GlobalSnowplowNamespace=p.GlobalSnowplowNamespace||[];
       p.GlobalSnowplowNamespace.push(i);p[i]=function(){(p[i].q=p[i].q||[]).push(arguments)
       };p[i].q=p[i].q||[];n=l.createElement(o);g=l.getElementsByTagName(o)[0];n.async=1;
-      n.src=w;g.parentNode.insertBefore(n,g)}}(window,document,"script","https://sp-js.apps.gov.bc.ca/MDWay3UqFnIiGVLIo7aoMi4xMC4y.js","snowplow"));
+      n.src=w;g.parentNode.insertBefore(n,g)}}(window,document,"script","https://www2.gov.bc.ca/StaticWebResources/static/sp/sp-2-14-0.js","snowplow"));
       var collector = 'spt.apps.gov.bc.ca';
       window.snowplow('newTracker','rt',collector, {
         appId: "Snowplow_standalone",
+        cookieLifetime: 86400 * 548,
         platform: 'web',
         post: true,
         forceSecureTracker: true,
