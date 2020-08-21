@@ -45,3 +45,4 @@ class BookingSchema(ma.SQLAlchemySchema):
     room = fields.Nested(RoomSchema(exclude=("booking", "office",)))
     office = fields.Nested(OfficeSchema(only=('appointments_enabled_ind', 'exams_enabled_ind', 'office_id',
                                               'office_name', 'office_number', 'timezone')))
+    invigilators = fields.Nested(InvigilatorSchema(), many=True)
