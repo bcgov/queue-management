@@ -29,7 +29,6 @@ class AppointmentSchema(ma.SQLAlchemySchema):
 
     appointment_id = fields.Int(dump_only=True)
     office_id = fields.Int()
-    office = fields.Int()
     service_id = fields.Int(allow_none=True)
     citizen_id = fields.Int()
     start_time = fields.DateTime()
@@ -41,5 +40,4 @@ class AppointmentSchema(ma.SQLAlchemySchema):
     blackout_flag = fields.String(allow_none=True)
     recurring_uuid = fields.String(allow_none=True)
     online_flag = fields.Boolean(allow_none=True)
-    # service = fields.Nested(ServiceSchema(only='service_id'))
-    # office = fields.Nested(OfficeSchema(only='office_id'))
+    office = fields.Int(attribute="office_id")
