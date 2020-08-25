@@ -29,6 +29,7 @@ class AppointmentSchema(ma.SQLAlchemySchema):
 
     appointment_id = fields.Int(dump_only=True)
     office_id = fields.Int()
+    office = fields.Int()
     service_id = fields.Int(allow_none=True)
     citizen_id = fields.Int()
     start_time = fields.DateTime()
