@@ -40,5 +40,5 @@ class AppointmentSchema(ma.SQLAlchemySchema):
     blackout_flag = fields.String(allow_none=True)
     recurring_uuid = fields.String(allow_none=True)
     online_flag = fields.Boolean(allow_none=True)
-    service = fields.Nested(ServiceSchema(only='service_id'))
-    office = fields.Nested(OfficeSchema(only='office_id'))
+    # service = fields.Nested(ServiceSchema(only='service_id'))
+    # office = fields.Nested(OfficeSchema(only='office_id'))
