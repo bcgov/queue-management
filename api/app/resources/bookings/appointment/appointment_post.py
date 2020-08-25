@@ -31,6 +31,7 @@ from app.utilities.snowplow import SnowPlow
 from qsystem import api, api_call_with_retry, db, oidc, my_print
 from app.services import AvailabilityService
 from dateutil.parser import parse
+from pprint import pprint
 
 
 @api.route("/appointments/", methods=["POST"])
@@ -148,6 +149,7 @@ class AppointmentPost(Resource):
 
             SnowPlow.snowplow_appointment(citizen, csr, appointment, 'appointment_create')
 
+            pprint(appointment)
             result = self.appointment_schema.dump(appointment)
 
             return {"appointment": result.data,
