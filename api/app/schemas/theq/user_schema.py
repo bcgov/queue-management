@@ -26,3 +26,25 @@ class UserSchema(ma.SQLAlchemySchema):
         include_relationships = True
         load_instance = True
 
+    telephone = fields.Int()
+    send_reminder = fields.String()
+    email = fields.String()
+    display_name = fields.String()
+    last_name = fields.String()
+    username = fields.String()
+    user_id = fields.Int(dump_only=True)
+
+    # appointment_id = fields.Int(dump_only=True)
+    # office_id = fields.Int()
+    # service_id = fields.Int(allow_none=True)
+    # citizen_id = fields.Int()
+    # start_time = fields.DateTime()
+    # end_time = fields.DateTime()
+    # checked_in_time = fields.DateTime()
+    # comments = fields.String(allow_none=True)
+    # citizen_name = fields.String()
+    # contact_information = fields.String(allow_none=True)
+    # blackout_flag = fields.String(allow_none=True)
+    # recurring_uuid = fields.String(allow_none=True)
+    # online_flag = fields.Boolean(allow_none=True)
+    # office = fields.Int(attribute="office_id")

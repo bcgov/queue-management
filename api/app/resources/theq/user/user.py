@@ -32,7 +32,7 @@ class PublicUsers(Resource):
     def post(self):
         try:
             user_info = g.oidc_token_info
-            print("==> PublicUsers POST /users/", user_info)
+            print("==> PublicUsers POST /users/, user_info")
             pprint(user_info)
             print("    --> user_info.get('username'): " + user_info.get('username'))
             user: PublicUserModel = PublicUserModel.find_by_username(user_info.get('username'))
