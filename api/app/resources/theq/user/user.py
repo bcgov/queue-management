@@ -15,6 +15,7 @@ limitations under the License.'''
 from flask import g, request
 from flask_restx import Resource
 from sqlalchemy import exc
+from pprint import pprint
 
 from app.models.theq import PublicUser as PublicUserModel
 from app.schemas.theq import UserSchema
@@ -31,6 +32,9 @@ class PublicUsers(Resource):
     def post(self):
         try:
             user_info = g.oidc_token_info
+            print("==> PublicUsers POST /users/", user_info)
+            pprint(user_info)
+            print("    --> user_info.get('username'): " + user_info.get('username'))
             user: PublicUserModel = PublicUserModel.find_by_username(user_info.get('username'))
             if not user:
                 user = PublicUserModel()
