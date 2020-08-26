@@ -15,7 +15,7 @@ limitations under the License.'''
 from qsystem import cache, db, my_print
 from app.models.theq import Base
 from sqlalchemy import func
-from sqlalchemy_utc import UtcDateTime
+
 
 class CSR(Base):
 
@@ -26,7 +26,7 @@ class CSR(Base):
     role_id = db.Column(db.Integer, db.ForeignKey('role.role_id'), nullable=False)
     qt_xn_csr_ind = db.Column(db.Integer, nullable=False, default=0) # deprecated
     receptionist_ind = db.Column(db.Integer, nullable=False)
-    deleted = db.Column(UtcDateTime, nullable=True)
+    deleted = db.Column(db.DateTime, nullable=True)
     csr_state_id = db.Column(db.Integer, db.ForeignKey('csrstate.csr_state_id'), nullable=False)
     # ita_designate = db.Column(db.Integer, default=0, nullable=False)
     pesticide_designate = db.Column(db.Integer, default=0, nullable=False)

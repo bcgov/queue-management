@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from qsystem import db
 from app.models.theq import Base
-from sqlalchemy_utc import UtcDateTime
+
 
 class Period(Base):
 
@@ -23,8 +23,8 @@ class Period(Base):
     csr_id = db.Column(db.Integer, db.ForeignKey('csr.csr_id'), nullable=False)
     reception_csr_ind = db.Column(db.Integer, nullable=False)
     ps_id = db.Column(db.Integer, db.ForeignKey('periodstate.ps_id'), nullable=False)
-    time_start = db.Column(UtcDateTime, nullable=False)
-    time_end = db.Column(UtcDateTime, nullable=True)
+    time_start = db.Column(db.DateTime, nullable=False)
+    time_end = db.Column(db.DateTime, nullable=True)
 
     csr = db.relationship("CSR", lazy='joined')
     ps = db.relationship("PeriodState", lazy='joined')

@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from app.models.bookings import Base
 from qsystem import db
-from sqlalchemy_utc import UtcDateTime
+
 
 class Invigilator(Base):
 
@@ -26,7 +26,7 @@ class Invigilator(Base):
     contact_email = db.Column(db.String(50), nullable=True)
     contract_number = db.Column(db.String(50), nullable=False)
     contract_expiry_date = db.Column(db.String(50), nullable=False)
-    deleted = db.Column(UtcDateTime, nullable=True)
+    deleted = db.Column(db.DateTime, nullable=True)
     shadow_count = db.Column(db.Integer, default=2, nullable=False)
     shadow_flag = db.Column(db.String(1), default='Y', nullable=False)
 

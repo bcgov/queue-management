@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from app.models.bookings import Base
 from qsystem import db
-from sqlalchemy_utc import UtcDateTime
+
 
 class Room(Base):
 
@@ -23,7 +23,7 @@ class Room(Base):
     room_name = db.Column(db.String(50), nullable=False)
     capacity = db.Column(db.Integer, nullable=False)
     color = db.Column(db.String(25), nullable=False)
-    deleted = db.Column(UtcDateTime, nullable=True)
+    deleted = db.Column(db.DateTime, nullable=True)
 
     booking = db.relationship("Booking")
     office = db.relationship("Office", lazy='joined')
