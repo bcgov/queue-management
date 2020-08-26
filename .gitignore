@@ -154,3 +154,4 @@ keys-generated
 /appointment-frontend/.env.local
 /frontend/static/test-keycloak.json
 /frontend/static/local-keycloak.json
+/frontend/static/dev-keycloak.json
