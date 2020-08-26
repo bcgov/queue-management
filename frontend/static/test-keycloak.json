@@ -1,9 +1,0 @@
-{
-  "realm": "vtkayq4c",
-  "auth-server-url": "https://sso-test.pathfinder.gov.bc.ca/auth" ,
-  "ssl-required": "external",
-  "resource": "cfms-TEST",
-  "credentials": {
-    "secret": "ef8d3934-ac13-40f4-b793-60b0f4681e5d"
-  }
-}
