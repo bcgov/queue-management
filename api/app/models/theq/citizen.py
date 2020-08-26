@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from qsystem import db
 from app.models.theq import Base
-
+from sqlalchemy_utc import UtcDateTime
 
 class Citizen(Base):
 
@@ -29,7 +29,7 @@ class Citizen(Base):
     qt_xn_citizen_ind = db.Column(db.Integer, default=0, nullable=False)
 
     cs_id = db.Column(db.Integer, db.ForeignKey('citizenstate.cs_id'), nullable=False)
-    start_time = db.Column(db.DateTime, nullable=False)
+    start_time = db.Column(UtcDateTime, nullable=False)
     accurate_time_ind = db.Column(db.Integer, nullable=False, default=1)
     priority = db.Column(db.Integer, nullable=False, default=2)
 

@@ -18,7 +18,7 @@ from app.models.bookings import Exam, Room
 from qsystem import cache, db
 import enum
 from sqlalchemy import Enum
-
+from sqlalchemy_utc import UtcDateTime
 
 class Status(enum.Enum):
     SHOW = 'SHOW'
@@ -67,7 +67,7 @@ class Office(Base):
     office_name = db.Column(db.String(100))
     office_number = db.Column(db.Integer)
     sb_id = db.Column(db.Integer, db.ForeignKey('smartboard.sb_id'))
-    deleted = db.Column(db.DateTime, nullable=True)
+    deleted = db.Column(UtcDateTime, nullable=True)
     exams_enabled_ind = db.Column(db.Integer, nullable=False)
     appointments_enabled_ind = db.Column(db.Integer, nullable=False, default=0)
     timezone_id = db.Column(db.Integer, db.ForeignKey('timezone.timezone_id'), nullable=True)

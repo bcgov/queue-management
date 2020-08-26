@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from app.models.bookings import Base
 from qsystem import db
-
+from sqlalchemy_utc import UtcDateTime
 
 class Exam(Base):
 
@@ -28,14 +28,14 @@ class Exam(Base):
     examinee_name = db.Column(db.String(50), nullable=True)
     examinee_email = db.Column(db.String(400), nullable=True)
     examinee_phone = db.Column(db.String(400), nullable=True)
-    expiry_date = db.Column(db.DateTime, nullable=True)
+    expiry_date = db.Column(UtcDateTime, nullable=True)
     notes = db.Column(db.String(400), nullable=True)
-    exam_received_date = db.Column(db.DateTime, nullable=True)
+    exam_received_date = db.Column(UtcDateTime, nullable=True)
     session_number = db.Column(db.Integer, nullable=True)
     number_of_students = db.Column(db.Integer, nullable=True)
     exam_method = db.Column(db.String(15), nullable=False)
     deleted_date = db.Column(db.String(50), nullable=True)
-    exam_returned_date = db.Column(db.DateTime, nullable=True)
+    exam_returned_date = db.Column(UtcDateTime, nullable=True)
     exam_returned_tracking_number = db.Column(db.String(255), nullable=True)
     exam_written_ind = db.Column(db.Integer, nullable=False, default=0)
     offsite_location = db.Column(db.String(50), nullable=True)

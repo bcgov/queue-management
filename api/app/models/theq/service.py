@@ -16,7 +16,7 @@ from qsystem import db
 from app.models.theq import Base
 import enum
 from sqlalchemy import Enum
-
+from sqlalchemy_utc import UtcDateTime
 
 class Availability(enum.Enum):
     SHOW = 'SHOW'
@@ -35,7 +35,7 @@ class Service(Base):
     service_name = db.Column(db.String(500), nullable=False)
     service_desc = db.Column(db.String(2000), nullable=False)
     parent_id = db.Column(db.Integer, db.ForeignKey('service.service_id'), nullable=True)
-    deleted = db.Column(db.DateTime, nullable=True)
+    deleted = db.Column(UtcDateTime, nullable=True)
     prefix = db.Column(db.String(10), nullable=False)
     display_dashboard_ind = db.Column(db.Integer, nullable=False)
     actual_service_ind = db.Column(db.Integer, nullable=False)
