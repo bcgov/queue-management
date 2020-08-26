@@ -19,17 +19,19 @@ class Bootstrap(Command):
         theq.PeriodState.query.delete()
         theq.ServiceReq.query.delete()
         theq.SRState.query.delete()
+        bookings.Appointment.query.delete()
+        bookings.Booking.query.delete()
+        bookings.Exam.query.delete()
         theq.Citizen.query.delete()
         theq.CitizenState.query.delete()
         theq.CSR.query.delete()
         theq.CSRState.query.delete()
         bookings.Booking.query.delete()
-        bookings.Appointment.query.delete()
         # theq.OfficeService.query.delete()   #  This needs to be updated.
-        bookings.Exam.query.delete()
         bookings.ExamType.query.delete()
         bookings.Room.query.delete()
         bookings.Invigilator.query.delete()
+        theq.TimeSlot.query.delete()
         theq.Office.query.delete()
         theq.SmartBoard.query.delete()
         theq.Counter.query.delete()
@@ -471,6 +473,30 @@ class Bootstrap(Command):
         db.session.add(office_victoria)
         db.session.add(office_pesticide_office)
         db.session.commit()
+
+        #-- Timeslot values ---------------------------------------------------
+        print("--> Time Slots")
+        timeslot1 = theq.TimeSlot(
+            start_time="08:30:00-07:00",
+            end_time="09:30:00-07:00",
+            no_of_slots=2,
+            day_of_week="{Monday,Wednesday}",
+            office_id=office_100.office_id
+        )
+        timeslot2 = theq.TimeSlot(
+            start_time="09:30:00-07:00",
+            end_time="10:30:00-07:00",
+            no_of_slots=2,
+            day_of_week="{Tuesday}",
+            office_id=office_100.office_id
+        )
+        timeslot3 = theq.TimeSlot(
+            start_time="13:30:00-07:00",
+            end_time="14:30:00-07:00",
+            no_of_slots=2,
+            day_of_week="{Tuesday,Wednesday,Thursday}",
+            office_id=office_100.office_id
+        )
 
         #-- CSR values ------------------------------------------------------
         print("--> CSRs")
