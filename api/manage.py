@@ -19,17 +19,19 @@ class Bootstrap(Command):
         theq.PeriodState.query.delete()
         theq.ServiceReq.query.delete()
         theq.SRState.query.delete()
+        bookings.Appointment.query.delete()
+        bookings.Booking.query.delete()
+        bookings.Exam.query.delete()
         theq.Citizen.query.delete()
         theq.CitizenState.query.delete()
         theq.CSR.query.delete()
         theq.CSRState.query.delete()
         bookings.Booking.query.delete()
-        bookings.Appointment.query.delete()
         # theq.OfficeService.query.delete()   #  This needs to be updated.
-        bookings.Exam.query.delete()
         bookings.ExamType.query.delete()
         bookings.Room.query.delete()
         bookings.Invigilator.query.delete()
+        theq.TimeSlot.query.delete()
         theq.Office.query.delete()
         theq.SmartBoard.query.delete()
         theq.Counter.query.delete()
@@ -398,7 +400,17 @@ class Bootstrap(Command):
             office_number=999,
             sb_id=smartboard_call_ticket.sb_id,
             exams_enabled_ind=1,
-            timezone_id=timezone_one.timezone_id
+            timezone_id=timezone_one.timezone_id,
+            appointments_enabled_ind=1,
+            latitude=48.458359,
+            longitude=-123.377106,
+            office_appointment_message="Test Message",
+            appointments_days_limit=30,
+            appointment_duration=30,
+            max_person_appointment_per_day=10,
+            civic_address="4000 Seymour",
+            telephone="999-999-9999",
+            online_status="SHOW"
         )
         office_test.counters.append(counter)
         office_test.counters.append(qt_counter)
@@ -408,7 +420,16 @@ class Bootstrap(Command):
             office_number=1,
             sb_id=smartboard_no_call.sb_id,
             exams_enabled_ind=0,
-            timezone_id=timezone_four.timezone_id
+            timezone_id=timezone_four.timezone_id,
+            appointments_enabled_ind=1,
+            latitude=51.644,
+            longitude=-121.295,
+            appointments_days_limit=30,
+            appointment_duration=30,
+            max_person_appointment_per_day=1,
+            civic_address="100 Mile House, BC",
+            telephone="999-999-9999",
+            online_status="SHOW"
         )
         office_100.counters.append(counter)
         office_100.counters.append(qt_counter)
@@ -418,17 +439,31 @@ class Bootstrap(Command):
             office_number=61,
             sb_id=smartboard_call_name.sb_id,
             exams_enabled_ind=0,
-            timezone_id=timezone_one.timezone_id
+            timezone_id=timezone_one.timezone_id,
+            appointments_enabled_ind=1,
+            latitude=51.644,
+            longitude=-121.295,
+            appointments_days_limit=30,
+            appointment_duration=30,
+            max_person_appointment_per_day=1,
+            civic_address="100 Mile House, BC",
+            telephone="999-999-9999",
+            online_status="SHOW"
         )
         office_victoria.counters.append(counter)
         office_victoria.counters.append(qt_counter)
 
         office_pesticide_office = theq.Office(
             office_name="Pesticide Offsite",
-            office_number=987,
+            office_number=997,
             sb_id=smartboard_call_name.sb_id,
             exams_enabled_ind=1,
-            timezone_id=timezone_one.timezone_id
+            timezone_id=timezone_one.timezone_id,
+            appointments_enabled_ind=0,
+            appointments_days_limit=30,
+            appointment_duration=30,
+            max_person_appointment_per_day=1,
+            online_status="HIDE"
         )
         office_pesticide_office.counters.append(counter)
         office_pesticide_office.counters.append(qt_counter)
@@ -438,6 +473,30 @@ class Bootstrap(Command):
         db.session.add(office_victoria)
         db.session.add(office_pesticide_office)
         db.session.commit()
+
+        #-- Timeslot values ---------------------------------------------------
+        print("--> Time Slots")
+        timeslot1 = theq.TimeSlot(
+            start_time="08:30:00-07:00",
+            end_time="09:30:00-07:00",
+            no_of_slots=2,
+            day_of_week="{Monday,Wednesday}",
+            office_id=office_100.office_id
+        )
+        timeslot2 = theq.TimeSlot(
+            start_time="09:30:00-07:00",
+            end_time="10:30:00-07:00",
+            no_of_slots=2,
+            day_of_week="{Tuesday}",
+            office_id=office_100.office_id
+        )
+        timeslot3 = theq.TimeSlot(
+            start_time="13:30:00-07:00",
+            end_time="14:30:00-07:00",
+            no_of_slots=2,
+            day_of_week="{Tuesday,Wednesday,Thursday}",
+            office_id=office_100.office_id
+        )
 
         #-- CSR values ------------------------------------------------------
         print("--> CSRs")
@@ -475,10 +534,10 @@ class Bootstrap(Command):
             receptionist_ind=1,
             deleted=None,
             csr_state_id=csr_state_logout.csr_state_id,
-            office_manager=0,
-            pesticide_designate=0,
-            finance_designate=0,
-            ita2_designate=0
+            office_manager=1,
+            pesticide_designate=1,
+            finance_designate=1,
+            ita2_designate=1
         )
         demo_csr = theq.CSR(
             username="democsr",
