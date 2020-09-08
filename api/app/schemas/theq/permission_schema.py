@@ -18,10 +18,12 @@ from app.models.theq import Permission
 from qsystem import ma
 
 
-class PermissionSchema(ma.ModelSchema):
+class PermissionSchema(ma.SQLAlchemySchema):
 
     class Meta:
         model = Permission
+        include_relationships = True
+        load_instance = True
         jit = toastedmarshmallow.Jit
 
     permission_id = fields.Int()

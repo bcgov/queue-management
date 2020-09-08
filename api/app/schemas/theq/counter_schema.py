@@ -18,10 +18,12 @@ from app.models.theq import Counter
 from qsystem import ma
 
 
-class CounterSchema(ma.ModelSchema):
+class CounterSchema(ma.SQLAlchemySchema):
 
     class Meta:
         model = Counter
+        include_relationships = True
+        load_instance = True
         jit = toastedmarshmallow.Jit
 
     counter_id = fields.Int()

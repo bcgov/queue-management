@@ -18,10 +18,12 @@ from app.models.theq import SmartBoard
 from qsystem import ma
 
 
-class SmartBoardSchema(ma.ModelSchema):
+class SmartBoardSchema(ma.SQLAlchemySchema):
 
     class Meta:
         model = SmartBoard
+        include_relationships = True
+        load_instance = True
         jit = toastedmarshmallow.Jit
 
     sb_id = fields.Int()

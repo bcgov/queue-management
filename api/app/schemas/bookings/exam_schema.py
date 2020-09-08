@@ -32,10 +32,12 @@ class CandidateSchema(ma.Schema):
     payee_email = fields.String()
 
 
-class ExamSchema(ma.ModelSchema):
+class ExamSchema(ma.SQLAlchemySchema):
 
     class Meta:
         model = Exam
+        include_relationships = True
+        load_instance = True
         jit = toastedmarshmallow.Jit
 
     booking_id = fields.Int()

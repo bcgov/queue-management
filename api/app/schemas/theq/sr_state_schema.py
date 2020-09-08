@@ -18,10 +18,12 @@ from app.models.theq import SRState
 from qsystem import ma
 
 
-class SRStateSchema(ma.ModelSchema):
+class SRStateSchema(ma.SQLAlchemySchema):
 
     class Meta:
         model = SRState
+        include_relationships = True
+        load_instance = True
         jit = toastedmarshmallow.Jit
 
     sr_state_id = fields.Int()

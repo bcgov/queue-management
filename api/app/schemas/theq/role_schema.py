@@ -18,10 +18,12 @@ from app.models.theq import Role
 from qsystem import ma
 
 
-class RoleSchema(ma.ModelSchema):
+class RoleSchema(ma.SQLAlchemySchema):
 
     class Meta:
         model = Role
+        include_relationships = True
+        load_instance = True
         jit = toastedmarshmallow.Jit
 
     role_id = fields.Int()

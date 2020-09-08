@@ -13,7 +13,8 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 
-from app.models.theq import Office, Service
+
+from app.models.theq import Office, Service, Counter
 from .base import Base
 from flask_login import current_user
 from flask import flash
@@ -21,6 +22,11 @@ from flask_admin.babel import gettext
 from qsystem import db
 from sqlalchemy import and_
 from qsystem import db, cache, socketio
+from pprint import pprint
+
+
+def on_form_prefill(counters):
+    print('==>on_form_prefill ===> office.py Flask Admin ===> counters',counters)
 
 
 class OfficeConfig(Base):
@@ -149,8 +155,6 @@ class OfficeConfig(Base):
 
     }
 
-
-
     column_labels = {'sb': 'Smartboard',
                      'timezone.timezone_name': 'Timezone Name',
                      'exams_enabled_ind': 'Exams Enabled',
@@ -173,7 +177,24 @@ class OfficeConfig(Base):
 
     column_default_sort = 'office_name'
 
+    #     if is_created:
+    #         print('==>init_formdata  ===> is_created True')
+    #     #     print('==>on_model_change  ===> Office.counters', Office.counters)
+    #     print('==>init_formdata  ===> Office.counters.counter_id', Office.counters.counter_id)
+    #     #     print('==>on_model_change  ===> Counter.counter_id:', Counter.counter_id)
+    #     #     print('==>on_model_change  ===> Counter.counter_name:', Counter.counter_name)
+    #     #     print('==>on_model_change  ===> model.counters:', model.counters)
+    #     counter = Office.query.filter(Office.counters.counter_id == 2).first()
+    #     print('==>on_model_change  ===> init_formdata:', counter)
+    #     form.Office.process_formdata(counter)
+    #     #     if model.counters is None:
+    #     #
+    #     #
+    #     #         model.counters = counter
+    #     #         print('==>on_model_change  ===> model.counter:',model.counter)
+
     def on_model_change(self, form, model, is_created):
+        print('==>on_model_change  ===> office.py Flask Admin')
         """Invoked on model change."""
         socketio.emit('update_offices_cache')
 
@@ -185,6 +206,23 @@ class OfficeConfig(Base):
         if len(invalid) != 0:
             message = ", ".join(invalid)
             flash(gettext("Services saved minus services not offered at this office: " + message), 'warning')
+
+        print("==> on_model_change for Office")
+        print("    --> Counter.counter_name")
+        pprint(Counter.counter_name)
+        # print("    --> Counter.counter_name")
+        # pprint(Counter.counter_name)
+        # print("    --> model.counters")
+        # pprint(model.counters)
+        counterItem = Counter.query.filter(Counter.counter_id == 2).first()
+        print("    --> counterItem.counter_name")
+        pprint(counterItem.counter_id)
+        pprint(counterItem.counter_name)
+        Office.counters.model.counters.counter_id = counterItem.counter_id
+        model.counters.counter_name = counterItem.counter_name
+        print("    --> model.counters  last line, what is value")
+        pprint(model.counters.counter_id)
+        pprint(model.counters.counter_name)
 
 
 class OfficeConfigGA(OfficeConfig):

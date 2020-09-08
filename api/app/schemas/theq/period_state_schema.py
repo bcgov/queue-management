@@ -18,10 +18,12 @@ from app.models.theq import PeriodState
 from qsystem import ma
 
 
-class PeriodStateSchema(ma.ModelSchema):
+class PeriodStateSchema(ma.SQLAlchemySchema):
 
     class Meta:
         model = PeriodState
+        include_relationships = True
+        load_instance = True
         jit = toastedmarshmallow.Jit
 
     ps_id = fields.Int()
