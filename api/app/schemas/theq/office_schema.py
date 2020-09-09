@@ -35,6 +35,10 @@ class OfficeSchema(ma.SQLAlchemySchema):
     deleted = fields.DateTime()
     exams_enabled_ind = fields.Int()
     appointments_enabled_ind = fields.Int()
+    max_person_appointment_per_day = fields.Int()
+    telephone = fields.Str()
+    appointments_days_limit = fields.Int()
+    appointment_duration = fields.Int()
 
     sb = fields.Nested(SmartBoardSchema())
     counters = fields.Nested(CounterSchema(), many=True)
