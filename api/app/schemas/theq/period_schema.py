@@ -19,10 +19,12 @@ from app.schemas.theq import PeriodStateSchema, ChannelSchema, CSRSchema
 from qsystem import ma
 
 
-class PeriodSchema(ma.ModelSchema):
+class PeriodSchema(ma.SQLAlchemySchema):
 
     class Meta:
         model = Period
+        include_relationships = True
+        load_instance = True
         jit = toastedmarshmallow.Jit
 
     period_id = fields.Int()

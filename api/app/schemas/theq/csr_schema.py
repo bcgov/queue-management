@@ -19,12 +19,14 @@ from app.schemas.theq import CSRStateSchema, OfficeSchema, RoleSchema
 from qsystem import ma
 
 
-class CSRSchema(ma.ModelSchema):
+class CSRSchema(ma.SQLAlchemySchema):
 
     class Meta:
         model = CSR
+        include_relationships = True
+        load_instance = True
         jit = toastedmarshmallow.Jit
-        exclude = ('periods',)
+        # exclude = ('periods',)
 
     csr_id = fields.Int()
     username = fields.Str()

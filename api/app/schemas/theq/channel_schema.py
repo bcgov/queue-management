@@ -18,10 +18,12 @@ from app.models.theq import Channel
 from qsystem import ma
 
 
-class ChannelSchema(ma.ModelSchema):
+class ChannelSchema(ma.SQLAlchemySchema):
 
     class Meta:
         model = Channel
+        include_relationships = True
+        load_instance = True
         jit = toastedmarshmallow.Jit
 
     channel_id = fields.Int(dump_only=True)

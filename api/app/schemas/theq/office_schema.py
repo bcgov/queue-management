@@ -19,12 +19,14 @@ from app.schemas.theq import SmartBoardSchema, CounterSchema, ServiceSchema, Tim
 from qsystem import ma
 
 
-class OfficeSchema(ma.ModelSchema):
+class OfficeSchema(ma.SQLAlchemySchema):
 
     class Meta:
         model = Office
+        include_relationships = True
+        load_instance = True
         jit = toastedmarshmallow.Jit
-        exclude = ('citizens', 'csrs', 'deleted', 'exams', 'rooms', 'services',)
+        # exclude = ('citizens', 'csrs', 'deleted', 'exams', 'rooms', 'services',)
 
     office_id = fields.Int()
     office_name = fields.Str()
@@ -33,6 +35,10 @@ class OfficeSchema(ma.ModelSchema):
     deleted = fields.DateTime()
     exams_enabled_ind = fields.Int()
     appointments_enabled_ind = fields.Int()
+    max_person_appointment_per_day = fields.Int()
+    telephone = fields.Str()
+    appointments_days_limit = fields.Int()
+    appointment_duration = fields.Int()
 
     sb = fields.Nested(SmartBoardSchema())
     counters = fields.Nested(CounterSchema(), many=True)

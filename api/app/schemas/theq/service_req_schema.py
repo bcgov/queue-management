@@ -19,12 +19,15 @@ from app.schemas.theq import ChannelSchema, PeriodStateSchema, SRStateSchema, Se
 from qsystem import ma
 
 
-class ServiceReqSchema(ma.ModelSchema):
+class ServiceReqSchema(ma.SQLAlchemySchema):
 
     class Meta:
         model = ServiceReq
+        include_relationships = True
+        load_instance = True
         jit = toastedmarshmallow.Jit
 
+    sr_id = fields.Int()
     citizen_id = fields.Int()
     channel_id = fields.Int()
     service_id = fields.Int()

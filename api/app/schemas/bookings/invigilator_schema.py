@@ -19,11 +19,13 @@ from app.models.bookings import Invigilator
 from app.schemas.theq import OfficeSchema
 
 
-class InvigilatorSchema(ma.ModelSchema):
+class InvigilatorSchema(ma.SQLAlchemySchema):
 
     class Meta:
         model = Invigilator
-        exclude = ("invigilators",)
+        #exclude = ("invigilators",)
+        include_relationships = True
+        load_instance = True
         jit = toastedmarshmallow.Jit
 
     contact_phone = fields.Str()

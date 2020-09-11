@@ -18,10 +18,12 @@ from app.models.theq import Timezone
 from qsystem import ma
 
 
-class TimezoneSchema(ma.ModelSchema):
+class TimezoneSchema(ma.SQLAlchemySchema):
 
     class Meta:
         model = Timezone
+        include_relationships = True
+        load_instance = True
         jit = toastedmarshmallow.Jit
 
     timezone_id = fields.Int()

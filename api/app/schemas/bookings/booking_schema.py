@@ -20,10 +20,12 @@ from app.schemas.theq import OfficeSchema
 from qsystem import ma
 
 
-class BookingSchema(ma.ModelSchema):
+class BookingSchema(ma.SQLAlchemySchema):
 
     class Meta:
         model = Booking
+        include_relationships = True
+        load_instance = True
         jit = toastedmarshmallow.Jit
 
     booking_id = fields.Int(dump_only=True)
@@ -43,3 +45,4 @@ class BookingSchema(ma.ModelSchema):
     room = fields.Nested(RoomSchema(exclude=("booking", "office",)))
     office = fields.Nested(OfficeSchema(only=('appointments_enabled_ind', 'exams_enabled_ind', 'office_id',
                                               'office_name', 'office_number', 'timezone')))
+    invigilators = fields.Nested(InvigilatorSchema(), many=True)

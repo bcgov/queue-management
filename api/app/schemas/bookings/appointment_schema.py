@@ -15,14 +15,16 @@ limitations under the License.'''
 from marshmallow import fields
 import toastedmarshmallow
 from app.models.bookings import Appointment
-from app.schemas.theq import OfficeSchema
+from app.schemas.theq import OfficeSchema, ServiceSchema
 from qsystem import ma
 
 
-class AppointmentSchema(ma.ModelSchema):
+class AppointmentSchema(ma.SQLAlchemySchema):
 
     class Meta:
         model = Appointment
+        include_relationships = True
+        load_instance = True
         jit = toastedmarshmallow.Jit
 
     appointment_id = fields.Int(dump_only=True)
@@ -38,3 +40,5 @@ class AppointmentSchema(ma.ModelSchema):
     blackout_flag = fields.String(allow_none=True)
     recurring_uuid = fields.String(allow_none=True)
     online_flag = fields.Boolean(allow_none=True)
+    office = fields.Int(attribute="office_id")
+    service = fields.Int(attribute="service_id")
