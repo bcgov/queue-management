@@ -193,36 +193,36 @@ class OfficeConfig(Base):
     #     #         model.counters = counter
     #     #         print('==>on_model_change  ===> model.counter:',model.counter)
 
-    def on_model_change(self, form, model, is_created):
-        print('==>on_model_change  ===> office.py Flask Admin')
-        """Invoked on model change."""
-        socketio.emit('update_offices_cache')
-
-        invalid = []
-        for service in model.quick_list:
-            if service not in model.services:
-                invalid.append(str(service))
-                model.quick_list.remove(service)
-        if len(invalid) != 0:
-            message = ", ".join(invalid)
-            flash(gettext("Services saved minus services not offered at this office: " + message), 'warning')
-
-        print("==> on_model_change for Office")
-        print("    --> Counter.counter_name")
-        pprint(Counter.counter_name)
-        # print("    --> Counter.counter_name")
-        # pprint(Counter.counter_name)
-        # print("    --> model.counters")
-        # pprint(model.counters)
-        counterItem = Counter.query.filter(Counter.counter_id == 2).first()
-        print("    --> counterItem.counter_name")
-        pprint(counterItem.counter_id)
-        pprint(counterItem.counter_name)
-        Office.counters.model.counters.counter_id = counterItem.counter_id
-        model.counters.counter_name = counterItem.counter_name
-        print("    --> model.counters  last line, what is value")
-        pprint(model.counters.counter_id)
-        pprint(model.counters.counter_name)
+    # def on_model_change(self, form, model, is_created):
+    #     print('==>on_model_change  ===> office.py Flask Admin')
+    #     """Invoked on model change."""
+    #     socketio.emit('update_offices_cache')
+    #
+    #     invalid = []
+    #     for service in model.quick_list:
+    #         if service not in model.services:
+    #             invalid.append(str(service))
+    #             model.quick_list.remove(service)
+    #     if len(invalid) != 0:
+    #         message = ", ".join(invalid)
+    #         flash(gettext("Services saved minus services not offered at this office: " + message), 'warning')
+    #
+    #     print("==> on_model_change for Office")
+    #     print("    --> Counter.counter_name")
+    #     pprint(Counter.counter_name)
+    #     # print("    --> Counter.counter_name")
+    #     # pprint(Counter.counter_name)
+    #     # print("    --> model.counters")
+    #     # pprint(model.counters)
+    #     counterItem = Counter.query.filter(Counter.counter_id == 2).first()
+    #     print("    --> counterItem.counter_name")
+    #     pprint(counterItem.counter_id)
+    #     pprint(counterItem.counter_name)
+    #     Office.counters.model.counters.counter_id = counterItem.counter_id
+    #     model.counters.counter_name = counterItem.counter_name
+    #     print("    --> model.counters  last line, what is value")
+    #     pprint(model.counters.counter_id)
+    #     pprint(model.counters.counter_name)
 
 
 class OfficeConfigGA(OfficeConfig):
