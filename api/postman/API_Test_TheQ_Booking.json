@@ -464,6 +464,43 @@
 						"description": "Sets the authentication script"
 					},
 					"response": []
+				},
+				{
+					"name": "CFMS-Install-CSR-Schema-Check",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d9e7f478-c8dd-4eb0-8ad4-3ebb80d8bd31",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"csr_schema_check\", jsonData.data);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "// Define the JSON Schema expected in response\nvar csrSchema = {\n    \"type\": \"object\",\n    \"properties\": {\n        \"csr\": {\n            \"type\": \"object\",\n            \"properties\": {\n                \"counter\": {\"type\": \"number\"},\n                \"counter_id\": {\"type\": \"number\"},\n                \"csr_id\": {\"type\": \"number\"},\n                \"csr_state\": {\n                    \"type\": \"object\",\n                    \"properties\": {\n                        \"csr_state_desc\": {\"type\": \"string\"},\n                        \"csr_state_id\": {\"type\": \"number\"},\n                        \"csr_state_name\": {\"type\": \"string\"}\n                    },\n                    \"required\": [\"csr_state_desc\", \"csr_state_id\", \"csr_state_name\"]\n                },\n                \"csr_state_id\": {\"type\": \"number\"},\n                \"deleted\": {\"type\": [\"null\", \"string\"]},\n                \"finance_designate\": {\"type\": \"number\"},\n                \"ita2_designate\": {\"type\": \"number\"},\n                \"office\": {\n                    \"type\": \"object\",\n                    \"properties\": {\n                        \"appointment_duration\": {\"type\": [\"null\", \"number\"]},\n                        \"appointments_days_limit\": {\"type\": [\"null\", \"number\"]},\n                        \"appointments_enabled_ind\": {\"type\": \"number\"},\n                        \"back_office_list\": {\"type\": \"array\"},\n                        \"civic_address\": {\"type\": [\"null\", \"string\"]},\n                        \"counters\": {\"type\": \"array\"},\n                        \"deleted\": {\"type\": [\"null\", \"string\"]},\n                        \"exams_enabled_ind\": {\"type\": \"number\"},\n                        \"latitude\": {\"type\": \"number\"},\n                        \"longitude\": {\"type\": \"number\"},\n                        \"max_person_appointment_per_day\": {\"type\": [\"null\", \"number\"]},\n                        \"office_appointment_message\": {\"type\": [\"null\", \"string\"]},\n                        \"office_id\": {\"type\": \"number\"},\n                        \"office_name\": {\"type\": \"string\"},\n                        \"office_number\": {\"type\": \"number\"},\n                        \"online_status\": {\"type\": \"string\"},\n                        \"quick_list\": {\"type\": \"array\"},\n                        \"sb\": {\n                            \"type\": \"object\",\n                            \"properties\": {\n                                \"sb_id\": {\"type\": \"number\"},\n                                \"sb_type\": {\"type\": \"string\"}\n                            },\n                            \"required\": [\"sb_id\", \"sb_type\"]\n                        },\n                        \"sb_id\": {\"type\": \"number\"},\n                        \"telephone\": {\"type\": [\"null\", \"string\"]},\n                        \"timeslots\": {\n                            \"type\": \"array\",\n                            \"items\": [{\n                                \"day_of_week\": {\"type\": [\"null\", \"array\"]},\n                                \"end_time\": {\"type\": \"string\"},\n                                \"no_of_slots\": {\"type\": \"number\"},\n                                \"office\": {\"type\": \"number\"},\n                                \"start_time\": {\"type\": \"string\"}\n                            }]\n                        },\n                        \"timezone\": {\n                            \"type\": \"object\",\n                            \"properties\": {\n                                \"timezone_id\": {\"type\": \"number\"},\n                                \"timezone_name\": {\"type\": \"string\"}\n                            },\n                            \"required\": [\"timezone_id\", \"timezone_name\"]\n                        }\n                    },\n                    \"required\": [\"appointment_duration\", \"appointments_days_limit\",\n                                 \"appointments_enabled_ind\", \"back_office_list\", \"civic_address\",\n                                 \"counters\", \"deleted\", \"exams_enabled_ind\", \"latitude\", \"longitude\",\n                                 \"max_person_appointment_per_day\", \"office_appointment_message\",\n                                 \"office_id\", \"office_name\", \"office_number\", \"online_status\",\n                                 \"quick_list\", \"sb\", \"sb_id\", \"telephone\", \"timeslots\", \"timezone\"]\n                }\n            },\n            \"required\": [\"counter\", \"counter_id\", \"csr_id\", \"csr_state\", \"csr_state_id\",\n                         \"deleted\", \"finance_designate\", \"ita2_designate\", \"office\"]\n        },\n        \"attention_needed\": {\"type\": \"boolean\"},\n        \"active_citizens\": {\"type\": \"array\"},\n        \"back_office_display\": {\"type\": \"string\"},\n        \"recurring_feature_flag\": {\"type\": \"string\"},\n    },\n    \"required\": [\"csr\", \"attention_needed\", \"active_citizens\",\n                 \"back_office_display\", \"recurring_feature_flag\"]\n};\n\n//Test to see if response schema is valid\npm.test(\"Validate CSR Schema\", function(){\n    pm.expect(tv4.validate(jsonData, csrSchema)).to.be.true;\n});\n"
+						},
+						"url": {
+							"raw": "https://postman-echo.com/post",
+							"protocol": "https",
+							"host": [
+								"postman-echo",
+								"com"
+							],
+							"path": [
+								"post"
+							]
+						},
+						"description": "Sets the authentication script"
+					},
+					"response": []
 				}
 			],
 			"description": "This folder performs basic authentication features.",
@@ -799,8 +836,9 @@
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
 									"",
-									"//  Get json return data.",
+									"//  Get json return data, make sure schema is OK.",
 									"var jsonData = JSON.parse(responseBody);",
+									"eval(environment.csr_schema_check)",
 									"",
 									"if (jsonData.hasOwnProperty(\"csr\")) {",
 									"\tcurrentOfficeId = jsonData.csr.office_id;",
@@ -6484,6 +6522,9 @@
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
+									"",
+									"//  Make sure the CSR schema is OK.",
+									"eval(environment.csr_schema_check)",
 									"",
 									"//  Get json return data.",
 									"var jsonData = JSON.parse(responseBody);",
