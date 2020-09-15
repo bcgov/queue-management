@@ -45,4 +45,13 @@ class BookingSchema(ma.SQLAlchemySchema):
     room = fields.Nested(RoomSchema(exclude=("booking", "office",)))
     office = fields.Nested(OfficeSchema(only=('appointments_enabled_ind', 'exams_enabled_ind', 'office_id',
                                               'office_name', 'office_number', 'timezone')))
-    invigilators = fields.Nested(InvigilatorSchema(), many=True)
+    #  NOTE:  The reason for the exclude, rather than just a single include, is because
+    #         an include with a single field didn't seem to work.  When I added a second field, it worked.
+    #         I only want a single field, so had to use an exclude instead.  ?????
+    invigilators = fields.Nested(InvigilatorSchema(exclude=('contact_name', 'contact_email', 'contract_number',
+                                                            'contract_expiry_date', 'invigilator_name',
+                                                            'invigilator_notes', 'shadow_count', 'shadow_flag',
+                                                            'contact_phone', 'deleted', 'office', 'office_id'
+                                                            )), many=True)
+
+    # invigilators = fields.Nested(InvigilatorSchema(), many=True)
