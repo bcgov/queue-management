@@ -20,7 +20,7 @@ from app.schemas.theq import OfficeSchema
 from qsystem import ma
 
 
-class CandidateSchema(ma.Schema):
+class CandidateSchema(ma.SQLAlchemySchema):
     examinee_name = fields.String()
     examinee_email = fields.String()
     exam_type_id = fields.String()
@@ -43,6 +43,7 @@ class ExamSchema(ma.SQLAlchemySchema):
     booking_id = fields.Int()
     deleted_date = fields.Str()
     event_id = fields.Str()
+    exam_destroyed_date = fields.Str()
     exam_id = fields.Int(dump_only=True)
     exam_method = fields.Str()
     exam_name = fields.Str()
