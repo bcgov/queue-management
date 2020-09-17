@@ -27,7 +27,7 @@ class UserSchema(ma.SQLAlchemySchema):
         load_instance = True
 
     telephone = fields.Int()
-    send_reminder = fields.Boolean(allow_none=True)
+    send_reminder = fields.Boolean()
     email = fields.String()
     display_name = fields.String()
     last_name = fields.String()
