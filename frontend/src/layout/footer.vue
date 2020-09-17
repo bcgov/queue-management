@@ -32,16 +32,16 @@
 </template>
 
 <script>
-  import SchedulingIndicator from '../booking/scheduling-indicator'
-  export default {
-    name: 'Footer',
-    components: { SchedulingIndicator },
-    methods: {
-      keycloakLogin() {
-        this.$keycloak.login()
-      }
+import SchedulingIndicator from '../booking/scheduling-indicator'
+export default {
+  name: 'Footer',
+  components: { SchedulingIndicator },
+  methods: {
+    keycloakLogin () {
+      this.$keycloak.login()
     }
   }
+}
 </script>
 
 <style scoped>

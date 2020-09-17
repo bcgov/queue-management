@@ -35,37 +35,37 @@
 </template>
 
 <script>
-  import { mapMutations, mapState, mapGetters } from 'vuex'
-  import FinancialReportModal from './generate-financial-report-modal'
+import { mapGetters, mapMutations, mapState } from 'vuex'
+import FinancialReportModal from './generate-financial-report-modal'
 
-  export default {
-    name: "ButtonsExams",
-    components: { FinancialReportModal },
-    computed: {
-      ...mapState(['addNonITA', 'showGenFinReportModal', 'user' ]),
-      ...mapGetters([
-        'is_financial_designate',
-        'is_office_manager',
-        'is_ita2_designate',
-        'is_pesticide_designate',
-        'role_code',
-        'showExams',
-      ]),
+export default {
+  name: 'ButtonsExams',
+  components: { FinancialReportModal },
+  computed: {
+    ...mapState(['addNonITA', 'showGenFinReportModal', 'user']),
+    ...mapGetters([
+      'is_financial_designate',
+      'is_office_manager',
+      'is_ita2_designate',
+      'is_pesticide_designate',
+      'role_code',
+      'showExams'
+    ])
+  },
+  methods: {
+    ...mapMutations(['setAddExamModalSetting', 'toggleGenFinReport']),
+    handleClick (type) {
+      this.setAddExamModalSetting({ setup: type })
+      this.setAddExamModalSetting(true)
+      if (type === 'pesticide') {
+        this.$store.dispatch('getPesticideExamTypes')
+        this.$store.dispatch('getPesticideOfficeInvigilators')
+        this.$store.dispatch('getPesticideOffsiteInvigilators')
+      }
     },
-    methods: {
-      ...mapMutations(['setAddExamModalSetting', 'toggleGenFinReport',]),
-      handleClick(type) {
-        this.setAddExamModalSetting({setup: type})
-        this.setAddExamModalSetting(true)
-        if (type === 'pesticide') {
-          this.$store.dispatch('getPesticideExamTypes')
-          this.$store.dispatch('getPesticideOfficeInvigilators')
-          this.$store.dispatch('getPesticideOffsiteInvigilators')
-        }
-      },
-      clickGenFinReport() {
-        this.toggleGenFinReport(true)
-      },
+    clickGenFinReport () {
+      this.toggleGenFinReport(true)
     }
   }
+}
 </script>

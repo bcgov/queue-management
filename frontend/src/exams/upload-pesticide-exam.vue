@@ -115,116 +115,116 @@
 </template>
 
 <script>
-  import { mapActions, mapMutations, mapState } from 'vuex'
+import { mapActions, mapMutations, mapState } from 'vuex'
 
-  export default {
-    name: "UploadPesticideModal",
-    props: ['actionedExam', 'resetExam'],
-    data() {
-      return {
-        file: null,
-        examNotes: this.actionedExam.notes,
-        status: 'unwritten',
-        destroyed: this.actionedExam.exam_destroyed_date !== null ? true : false,
-        submitted: false,
-        statusOptions: [
-          { value: 'unwritten', text: 'Unwritten' },
-          { value: 'written', text: 'Written' },
-          { value: 'noshow', text: 'No Show' }
-        ],
-        uploadFailed: false,
-        isLoading: false,
+export default {
+  name: 'UploadPesticideModal',
+  props: ['actionedExam', 'resetExam'],
+  data () {
+    return {
+      file: null,
+      examNotes: this.actionedExam.notes,
+      status: 'unwritten',
+      destroyed: this.actionedExam.exam_destroyed_date !== null,
+      submitted: false,
+      statusOptions: [
+        { value: 'unwritten', text: 'Unwritten' },
+        { value: 'written', text: 'Written' },
+        { value: 'noshow', text: 'No Show' }
+      ],
+      uploadFailed: false,
+      isLoading: false
+    }
+  },
+  computed: {
+    ...mapState({
+      showModal: state => state.addExamModule.uploadPesticideModalVisible
+    }),
+    exam () {
+      if (this.actionedExam) {
+        console.log('this.actionedExam ', this.actionedExam)
+        return this.actionedExam
       }
+      return {}
     },
-    computed: {
-      ...mapState({
-        showModal: state => state.addExamModule.uploadPesticideModalVisible,
-      }),
-      exam() {
-        if (this.actionedExam) {
-          console.log("this.actionedExam ", this.actionedExam)
-          return this.actionedExam
-        }
-        return {}
+    modalVisible: {
+      get () {
+        return this.showModal
       },
-      modalVisible: {
-        get() {
-          return this.showModal
-        },
-        set(e) {
-          this.toggleUploadExamModal(e)
-        },
-      },
+      set (e) {
+        this.toggleUploadExamModal(e)
+      }
+    }
+  },
+  mounted () {
+    this.uploadFailed = false
+    if (this.actionedExam.exam_destroyed_date !== null) {
+      this.status = 'noshow'
+    } else if (this.actionedExam.upload_received_ind && this.actionedExam.exam_written_ind) {
+      this.status = 'written'
+    } else {
+      this.status = 'unwritten'
+    }
+  },
+  methods: {
+    ...mapActions(['putExamInfo', 'getExams', 'getBCMPlusExamStatus', 'submitExam']),
+    ...mapMutations(['toggleUploadExamModal', 'setEditExamFailure']),
+    resetModal () {
+      this.resetExam()
+      this.toggleUploadExamModal(false)
     },
-    mounted() {
+    submit () {
       this.uploadFailed = false
-      if(this.actionedExam.exam_destroyed_date !== null) {
-        this.status = 'noshow'
-      } else if(this.actionedExam.upload_received_ind && this.actionedExam.exam_written_ind) {
-        this.status = 'written'
-      } else {
-        this.status = 'unwritten'
+      this.isLoading = true
+      const putData = {
+        exam_id: this.exam.exam_id,
+        notes: this.examNotes,
+        exam_written_ind: (this.status === 'written') ? 1 : 0,
+        exam_destroyed_date: (this.destroyed) ? new Date().toISOString() : null
       }
-    },
-    methods: {
-      ...mapActions(['putExamInfo', 'getExams', 'getBCMPlusExamStatus', 'submitExam' ]),
-      ...mapMutations(['toggleUploadExamModal', 'setEditExamFailure' ]),
-      resetModal() {
-        this.resetExam()
-        this.toggleUploadExamModal(false)
-      },
-      submit() {
-        this.uploadFailed = false
-        this.isLoading = true
-        let putData = {
-          exam_id: this.exam.exam_id,
-          notes: this.examNotes,
-          exam_written_ind: (this.status === 'written') ? 1 : 0,
-          exam_destroyed_date: (this.destroyed) ? new Date().toISOString() : null,
-        }
 
-        console.log(this.exam)
-        console.log(this.status)
+      console.log(this.exam)
+      console.log(this.status)
 
-        if (this.status === 'written' && this.file) {
-          this.submitExam({file: this.file, exam: this.exam})
-            .then((bcmpResponse) => {
-              this.submitted = true
-              console.log(bcmpResponse)
-              putData['upload_received_ind'] = this.actionedExam.upload_received_ind = 1
-              putData['exam_returned_date'] = this.actionedExam.exam_returned_date = new Date().toISOString()
-              console.log(this.actionedExam)
-              this.updateExam(putData)
-              this.isLoading = false
-            })
-            .catch( (error) => {
-              this.uploadFailed = true
-              this.isLoading = false
-              console.error(error)
-            })
-        } else {
-          console.log("=====> Submit Exam ===> this.status",this.status)
-          console.log("=====> Submit Exam ===> this.upload received_ind",this.actionedExam.upload_received_ind)
-          console.log("=====> Submit Exam ===> this returned date",this.actionedExam.exam_returned_date)
-          this.submitted = true
-          putData['upload_received_ind'] = this.actionedExam.upload_received_ind = 0
-          putData['exam_returned_date'] = this.actionedExam.exam_returned_date = new Date().toISOString()
-          console.log(this.actionedExam)
-          this.updateExam(putData)
-          this.isLoading = false
-        }
-      },
-      updateExam(putData) {
-        this.putExamInfo(putData)
-          .then(() => {
-            // setTimeout(()=> {
-            //   this.resetModal()
-            // }, 3000)
+      if (this.status === 'written' && this.file) {
+        this.submitExam({ file: this.file, exam: this.exam })
+          .then((bcmpResponse) => {
+            this.submitted = true
+            console.log(bcmpResponse)
+            putData.upload_received_ind = this.actionedExam.upload_received_ind = 1
+            putData.exam_returned_date = this.actionedExam.exam_returned_date = new Date().toISOString()
+            console.log(this.actionedExam)
+            this.updateExam(putData)
+            this.isLoading = false
           })
-          .catch( (error) => {
+          .catch((error) => {
+            this.uploadFailed = true
+            this.isLoading = false
             console.error(error)
           })
-      },
+      } else {
+        console.log('=====> Submit Exam ===> this.status', this.status)
+        console.log('=====> Submit Exam ===> this.upload received_ind', this.actionedExam.upload_received_ind)
+        console.log('=====> Submit Exam ===> this returned date', this.actionedExam.exam_returned_date)
+        this.submitted = true
+        putData.upload_received_ind = this.actionedExam.upload_received_ind = 0
+        putData.exam_returned_date = this.actionedExam.exam_returned_date = new Date().toISOString()
+        console.log(this.actionedExam)
+        this.updateExam(putData)
+        this.isLoading = false
+      }
     },
+    updateExam (putData) {
+      this.putExamInfo(putData)
+        .then(() => {
+          // setTimeout(()=> {
+          //   this.resetModal()
+          // }, 3000)
+        })
+        .catch((error) => {
+          console.error(error)
+        })
+    }
   }
+}
 </script>

@@ -56,96 +56,96 @@
 </template>
 
 <script>
-  import { createNamespacedHelpers } from 'vuex'
-  const { mapActions, mapGetters, mapMutations, mapState } = createNamespacedHelpers('appointmentsModule')
+import { createNamespacedHelpers } from 'vuex'
+const { mapActions, mapGetters, mapMutations, mapState } = createNamespacedHelpers('appointmentsModule')
 
-  export default {
-    name: "CheckInModal",
-    props: ['clickedAppt'],
-    data() {
-      return {
-        showcheckInSpinner: false
+export default {
+  name: 'CheckInModal',
+  props: ['clickedAppt'],
+  data () {
+    return {
+      showcheckInSpinner: false
+    }
+  },
+  computed: {
+    ...mapState(['showCheckInModal', 'showServeCitizenSpinner', 'checkInClicked']),
+    modalVisible: {
+      get () { return this.showCheckInModal },
+      set (e) { this.toggleCheckInModal(e) }
+    },
+    isNotBlackoutFlag () {
+      if (this.clickedAppt && this.clickedAppt.blackout_flag) {
+        if (this.clickedAppt.blackout_flag === 'Y') {
+          return false
+        } else if (this.clickedAppt.blackout_flag === 'N') {
+          return true
+        }
+      }
+      return false
+    },
+    checkRecurringStatus () {
+      if (this.clickedAppt && this.clickedAppt.recurring_uuid === null) {
+        return false
+      }
+      return true
+    }
+  },
+  methods: {
+    ...mapActions([
+      'getAppointments',
+      'postCheckIn'
+    ]),
+    ...mapMutations([
+      'toggleCheckInModal',
+      'toggleApptBookingModal',
+      'toggleEditDeleteSeries',
+      'toggleCheckInClicked'
+    ]),
+    checkIn () {
+      if (this.$store.state.serviceModalForm.citizen_id) {
+        this.hide()
+        this.$store.commit('setMainAlert', 'Already have appointment in progress.  Please close ticket then check-in citizen')
+      } else {
+        if (!this.checkInClicked) {
+          this.toggleCheckInClicked(true)
+          this.$store.commit('toggleServeCitizenSpinner', true)
+          this.postCheckIn(this.clickedAppt).then(response => {
+            this.$root.$emit('clear-clicked-appt')
+            this.$root.$emit('clear-clicked-time')
+            this.hide()
+            if (this.$store.state.officeType == 'nocallonsmartboard') {
+              this.$router.push('/queue')
+            }
+
+            this.$store.commit('toggleServeCitizenSpinner', false)
+          })
+        }
       }
     },
-    computed: {
-      ...mapState(['showCheckInModal','showServeCitizenSpinner', 'checkInClicked'],),
-      modalVisible: {
-        get() { return this.showCheckInModal },
-        set(e) { this.toggleCheckInModal(e) }
-      },
-      isNotBlackoutFlag(){
-        if(this.clickedAppt && this.clickedAppt.blackout_flag){
-          if(this.clickedAppt.blackout_flag === 'Y'){
-            return false
-          } else if (this.clickedAppt.blackout_flag === 'N') {
-            return true
-          }
-        }
-        return false
-      },
-      checkRecurringStatus() {
-        if(this.clickedAppt && this.clickedAppt.recurring_uuid === null) {
-          return false
-        }
-        return true
-      },
+    clearTime () {
+      this.$root.$emit('cleardate')
     },
-    methods: {
-      ...mapActions([
-        'getAppointments',
-        'postCheckIn'
-      ]),
-      ...mapMutations([
-        'toggleCheckInModal',
-        'toggleApptBookingModal',
-        'toggleEditDeleteSeries',
-        'toggleCheckInClicked'
-      ]),
-      checkIn() {
-        if (this.$store.state.serviceModalForm.citizen_id) {
-          this.hide()
-          this.$store.commit('setMainAlert', 'Already have appointment in progress.  Please close ticket then check-in citizen')
-        } else {
-          if (!this.checkInClicked) {
-            this.toggleCheckInClicked(true)
-            this.$store.commit('toggleServeCitizenSpinner', true)
-            this.postCheckIn(this.clickedAppt).then(response => {
-              this.$root.$emit('clear-clicked-appt')
-              this.$root.$emit('clear-clicked-time')
-              this.hide()
-              if (this.$store.state.officeType == "nocallonsmartboard") {
-                this.$router.push('/queue')
-              }
-
-              this.$store.commit('toggleServeCitizenSpinner', false)
-            })
-          }
-        }
-      },
-      clearTime() {
-        this.$root.$emit('cleardate')
-      },
-      hide() {
-        this.getAppointments().then( () => {
-          this.toggleCheckInModal(false)
-          this.$root.$emit('clear-clicked-appt')
-          this.$root.$emit('clear-clicked-time')
-        })
-      },
-      editAppt() {
-        this.toggleApptBookingModal(true)
+    hide () {
+      this.getAppointments().then(() => {
         this.toggleCheckInModal(false)
-        this.toggleEditDeleteSeries(false)
-        this.getAppointments()
-      },
-      editSeries() {
-        this.toggleApptBookingModal(true)
-        this.toggleCheckInModal(false)
-        this.toggleEditDeleteSeries(true)
-        this.getAppointments()
-      },
+        this.$root.$emit('clear-clicked-appt')
+        this.$root.$emit('clear-clicked-time')
+      })
+    },
+    editAppt () {
+      this.toggleApptBookingModal(true)
+      this.toggleCheckInModal(false)
+      this.toggleEditDeleteSeries(false)
+      this.getAppointments()
+    },
+    editSeries () {
+      this.toggleApptBookingModal(true)
+      this.toggleCheckInModal(false)
+      this.toggleEditDeleteSeries(true)
+      this.getAppointments()
     }
   }
+}
 </script>
 
 <style scoped>

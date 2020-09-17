@@ -16,40 +16,40 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex'
+import { mapState } from 'vuex'
 
-  export default {
-    name: "DropdownCalendar",
-    computed: {
-      ...mapState(['calendarSetup']),
-      view() {
-        if (this.calendarSetup) {
-          switch (this.calendarSetup.viewName) {
-            case 'agendaDay':
-              return 'Single Day'
-            case 'agendaWeek':
-              return 'Weekly Planner'
-            case 'month':
-              return 'Monthly Planner'
-            case 'listYear':
-              return 'Search Results'
-            default:
-              return 'Weekly Planner'
-          }
+export default {
+  name: 'DropdownCalendar',
+  computed: {
+    ...mapState(['calendarSetup']),
+    view () {
+      if (this.calendarSetup) {
+        switch (this.calendarSetup.viewName) {
+          case 'agendaDay':
+            return 'Single Day'
+          case 'agendaWeek':
+            return 'Weekly Planner'
+          case 'month':
+            return 'Monthly Planner'
+          case 'listYear':
+            return 'Search Results'
+          default:
+            return 'Weekly Planner'
         }
-        return 'Weekly Schedule'
       }
+      return 'Weekly Schedule'
+    }
+  },
+  methods: {
+    month () {
+      this.$root.$emit('month')
     },
-    methods: {
-      month() {
-        this.$root.$emit('month')
-      },
-      agendaWeek() {
-        this.$root.$emit('agendaWeek')
-      },
-      agendaDay() {
-        this.$root.$emit('agendaDay')
-      },
+    agendaWeek () {
+      this.$root.$emit('agendaWeek')
+    },
+    agendaDay () {
+      this.$root.$emit('agendaDay')
     }
   }
+}
 </script>

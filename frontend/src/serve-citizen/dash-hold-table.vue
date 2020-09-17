@@ -12,8 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
 
-
-
 <template>
 
   <div id='client-hold-table'>
@@ -57,118 +55,117 @@ limitations under the License.*/
 </template>
 
 <script>
-  import { mapState, mapGetters, mapActions } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 
-  export default {
-    name: 'DashHoldTable',
-    data() {
-      return {
-        t:true,
-        f:false,
-        fields: [
-          {key: 'citizen_id', thClass:'d-none', tdClass:'d-none' },
-          {key: 'start_time', label: 'Time', sortable: true, thStyle: 'width: 10%'},
-          {key: 'ticket_number', label: 'Ticket', sortable: false, thStyle: 'width: 6%'},
-          {key: 'csr', label: 'Served By', sortable: false, thStyle: 'width: 10%'},
-          {key: 'category', label: 'Category', sortable: false, thStyle: 'width: 17%'},
-          {key: 'service', label: 'Service', sortable: false, thStyle: 'width: 17%'},
-          {key: 'citizen_comments', label: 'Comments', sortable: false, thStyle: 'width: 17%'}
-        ]
-      }
-    },
+export default {
+  name: 'DashHoldTable',
+  data () {
+    return {
+      t: true,
+      f: false,
+      fields: [
+        { key: 'citizen_id', thClass: 'd-none', tdClass: 'd-none' },
+        { key: 'start_time', label: 'Time', sortable: true, thStyle: 'width: 10%' },
+        { key: 'ticket_number', label: 'Ticket', sortable: false, thStyle: 'width: 6%' },
+        { key: 'csr', label: 'Served By', sortable: false, thStyle: 'width: 10%' },
+        { key: 'category', label: 'Category', sortable: false, thStyle: 'width: 17%' },
+        { key: 'service', label: 'Service', sortable: false, thStyle: 'width: 17%' },
+        { key: 'citizen_comments', label: 'Comments', sortable: false, thStyle: 'width: 17%' }
+      ]
+    }
+  },
 
-    computed: {
-      ...mapState(['citizens', 'citizenInvited', 'performingAction', 'showTimeTrackingIcon', 'user']),
-      ...mapGetters([
-        'on_hold_queue',
-        'citizens_queue',
-        'active_service',
-        'active_index',
-        'active_service_id',
-        'reception'
-      ]),
-      getFields: function() {
-        if (this.reception) {
-          let temp = this.fields
-          temp.unshift({key: 'counter_id', label: 'Counter', sortable: false, thStyle: 'width: 8%'})
-          temp.unshift({key: 'priority', label: 'Priority', sortable: false, thStyle: 'width: 8%'})
-          return temp
-        }
-        else {
-          let temp = this.fields
-          temp.unshift({key: 'priority', label: 'Priority', sortable: false, thStyle: 'width: 10%'})
-          return temp
-        }
-      }
-    },
-    methods: {
-      ...mapActions(['clickRowHoldQueue']),
-      formatTime(data) {
-        let date = new Date(data)
-        let display = date.toLocaleTimeString()
-        return display
-      },
-      parseComments(item) {
-        if (!item.citizen_comments) {
-          return ''
-        }
-        let comments = item.citizen_comments
-        if (!comments.includes('|||')) {
-          return comments
-        } else {
-          let bits = comments.split('|||')
-          return {
-            appt: `${bits[0]} Appt: ${item.citizen_name}`,
-            text: bits[1]
-          }
-        }
-      },
-      rowClicked(item, index) {
-        if (this.showTimeTrackingIcon) {
-          this.$store.commit('setMainAlert', 'You are already serving a citizen.  Click the Stopwatch to resume')
-          return null
-        }
-        if (this.performingAction) {
-          return null
-        }
-        if (this.citizenInvited===true) {
-          this.$store.commit('setMainAlert', 'You are already serving a citizen.  Click Serve Now to resume.')
-        } else if (this.citizenInvited===false) {
-          this.clickRowHoldQueue(item.citizen_id)
-        }
-      },
-      showCounter(value) {
-        for(let i = 0; i < this.user.office.counters.length; i++){
-          if(this.user.office.counters[i].counter_id == value){
-            return this.user.office.counters[i].counter_name
-          }
-        }
-      },
-      showCSR(id) {
-        let service = this.active_service_id(id)
-        if (!service) {
-          return null
-        }
-        let n = service.periods.findIndex(p => p.time_end === null)
-        return service.periods[n].csr.username
-      },
-      showCategory(id) {
-        let service = this.active_service_id(id)
-        if (!service) {
-          return null
-        }
-        return service.service.parent.service_name
-      },
-      showService(id) {
-        let service = this.active_service_id(id)
-        if (!service) {
-          return null
-        }
-        return service.service.service_name
-      },
-      showPriority(priority) {
-        return priority == 1 ? 'High' : priority == 2 ? 'Default' : priority == 3 ? 'Low' : null
+  computed: {
+    ...mapState(['citizens', 'citizenInvited', 'performingAction', 'showTimeTrackingIcon', 'user']),
+    ...mapGetters([
+      'on_hold_queue',
+      'citizens_queue',
+      'active_service',
+      'active_index',
+      'active_service_id',
+      'reception'
+    ]),
+    getFields: function () {
+      if (this.reception) {
+        const temp = this.fields
+        temp.unshift({ key: 'counter_id', label: 'Counter', sortable: false, thStyle: 'width: 8%' })
+        temp.unshift({ key: 'priority', label: 'Priority', sortable: false, thStyle: 'width: 8%' })
+        return temp
+      } else {
+        const temp = this.fields
+        temp.unshift({ key: 'priority', label: 'Priority', sortable: false, thStyle: 'width: 10%' })
+        return temp
       }
     }
+  },
+  methods: {
+    ...mapActions(['clickRowHoldQueue']),
+    formatTime (data) {
+      const date = new Date(data)
+      const display = date.toLocaleTimeString()
+      return display
+    },
+    parseComments (item) {
+      if (!item.citizen_comments) {
+        return ''
+      }
+      const comments = item.citizen_comments
+      if (!comments.includes('|||')) {
+        return comments
+      } else {
+        const bits = comments.split('|||')
+        return {
+          appt: `${bits[0]} Appt: ${item.citizen_name}`,
+          text: bits[1]
+        }
+      }
+    },
+    rowClicked (item, index) {
+      if (this.showTimeTrackingIcon) {
+        this.$store.commit('setMainAlert', 'You are already serving a citizen.  Click the Stopwatch to resume')
+        return null
+      }
+      if (this.performingAction) {
+        return null
+      }
+      if (this.citizenInvited === true) {
+        this.$store.commit('setMainAlert', 'You are already serving a citizen.  Click Serve Now to resume.')
+      } else if (this.citizenInvited === false) {
+        this.clickRowHoldQueue(item.citizen_id)
+      }
+    },
+    showCounter (value) {
+      for (let i = 0; i < this.user.office.counters.length; i++) {
+        if (this.user.office.counters[i].counter_id == value) {
+          return this.user.office.counters[i].counter_name
+        }
+      }
+    },
+    showCSR (id) {
+      const service = this.active_service_id(id)
+      if (!service) {
+        return null
+      }
+      const n = service.periods.findIndex(p => p.time_end === null)
+      return service.periods[n].csr.username
+    },
+    showCategory (id) {
+      const service = this.active_service_id(id)
+      if (!service) {
+        return null
+      }
+      return service.service.parent.service_name
+    },
+    showService (id) {
+      const service = this.active_service_id(id)
+      if (!service) {
+        return null
+      }
+      return service.service.service_name
+    },
+    showPriority (priority) {
+      return priority == 1 ? 'High' : priority == 2 ? 'Default' : priority == 3 ? 'Low' : null
+    }
   }
+}
 </script>

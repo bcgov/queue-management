@@ -35,60 +35,59 @@
 </template>
 
 <script>
-  import {  mapActions, mapState, mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 
-  export default {
-    name: "ButtonsAdmin",
-    data() {
-      return {
-        option: 'csr',
-        optionGA: 'csrga',
-        options: [
-          {value: 'csr', text: 'CSRs'},
-          {value: 'office', text: 'Offices'},
-          {value: 'channel', text: 'Delivery Channels'},
-          {value: 'role', text: 'User roles'},
-          {value: 'service', text: 'Provided Services'},
-          {value: 'smartboard', text: 'Smartboard Content'},
-          {value: 'invigilator', text: 'Invigilators'},
-          {value: 'room', text: 'Rooms'},
-          {value: 'examtype', text: 'Exam Types'},
-          {value: 'counter', text: 'Counters'},
-          {value: 'timeslot', text: 'Time Slots'},
+export default {
+  name: 'ButtonsAdmin',
+  data () {
+    return {
+      option: 'csr',
+      optionGA: 'csrga',
+      options: [
+        { value: 'csr', text: 'CSRs' },
+        { value: 'office', text: 'Offices' },
+        { value: 'channel', text: 'Delivery Channels' },
+        { value: 'role', text: 'User roles' },
+        { value: 'service', text: 'Provided Services' },
+        { value: 'smartboard', text: 'Smartboard Content' },
+        { value: 'invigilator', text: 'Invigilators' },
+        { value: 'room', text: 'Rooms' },
+        { value: 'examtype', text: 'Exam Types' },
+        { value: 'counter', text: 'Counters' },
+        { value: 'timeslot', text: 'Time Slots' }
 
-        ],
-        optionsGA: [
-          {value: 'csrga', text: 'CSRs'},
-          {value: 'invigilator', text: 'Invigilators'},
-          {value: 'room', text: 'Rooms'},
-          {value: 'officega', text: 'Offices'},
-          {value: 'timeslot', text: 'Time Slots'}
-        ]
-      }
+      ],
+      optionsGA: [
+        { value: 'csrga', text: 'CSRs' },
+        { value: 'invigilator', text: 'Invigilators' },
+        { value: 'room', text: 'Rooms' },
+        { value: 'officega', text: 'Offices' },
+        { value: 'timeslot', text: 'Time Slots' }
+      ]
+    }
+  },
+  computed: {
+    ...mapGetters(['admin_navigation_nonblank']),
+    ...mapState(['user', 'adminNavigation']),
+    currentOption () {
+      return this.admin_navigation_nonblank
     },
-    computed: {
-      ...mapGetters(['admin_navigation_nonblank']),
-      ...mapState(['user', 'adminNavigation']),
-      currentOption() {
-        return this.admin_navigation_nonblank
-      },
-      currentName() {
-        if (this.user && this.user.role && this.user.role.role_code === 'ANALYTICS') {
-          return 'Provided Services'
-        }
-        else {
-          return 'CSRs'
-        }
-      }
-    },
-    methods: {
-      ...mapActions(['changeAdminView']),
-      handleInput(e) {
-        this.view = e
-        this.changeAdminView(e)
+    currentName () {
+      if (this.user && this.user.role && this.user.role.role_code === 'ANALYTICS') {
+        return 'Provided Services'
+      } else {
+        return 'CSRs'
       }
     }
+  },
+  methods: {
+    ...mapActions(['changeAdminView']),
+    handleInput (e) {
+      this.view = e
+      this.changeAdminView(e)
+    }
   }
+}
 </script>
 
 <style scoped>

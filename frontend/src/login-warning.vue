@@ -25,16 +25,16 @@ limitations under the License.*/
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 export default {
   name: 'LoginWarning',
   computed: {
-    ...mapState([ 'loginAlertMessage', 'loginDismissCount', 'user', 'isLoggedIn' ])
+    ...mapState(['loginAlertMessage', 'loginDismissCount', 'user', 'isLoggedIn'])
   },
   methods: {
     ...mapMutations(['loginDismissCountDown']),
 
-    onDismissedLogin() {
+    onDismissedLogin () {
       this.loginDismissCountDown(999)
     }
   }

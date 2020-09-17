@@ -22,59 +22,59 @@
 </template>
 
 <script>
-  import { mapActions, mapState, mapMutations } from 'vuex'
+import { mapActions, mapMutations, mapState } from 'vuex'
 
-  export default {
-    name: "OfficeDropDownFilter",
-    created() {
-      this.getOffices()
-    },
-    data() {
-      return {
-        clicked: false,
-        menuClass: 'dropdown-menu',
-        search: '',
-        searching: false,
-      }
-    },
-    computed: {
-      ...mapState([ 'offices', 'selectedOffice' ]),
-      officeList() {
-        if (this.searching === true) {
-          if (this.offices && this.offices.length > 0) {
-            if (this.search) {
-              return this.offices.filter(o => o.office_name.toLowerCase().includes(this.search.toLowerCase()))
-            }
+export default {
+  name: 'OfficeDropDownFilter',
+  created () {
+    this.getOffices()
+  },
+  data () {
+    return {
+      clicked: false,
+      menuClass: 'dropdown-menu',
+      search: '',
+      searching: false
+    }
+  },
+  computed: {
+    ...mapState(['offices', 'selectedOffice']),
+    officeList () {
+      if (this.searching === true) {
+        if (this.offices && this.offices.length > 0) {
+          if (this.search) {
+            return this.offices.filter(o => o.office_name.toLowerCase().includes(this.search.toLowerCase()))
           }
         }
-        return []
-      },
-    },
-    methods: {
-      ...mapActions(['getOffices']),
-      handleInput(e) {
-        if (this.searching === false) {
-          this.search = ''
-          this.searching = true
-        }
-        this.search = e
-        if (this.search.length > 1 && this.searching === true) {
-          this.menuClass = 'dropdown-menu show py-0 my-0 w-100'
-          this.setSelectedOffice(this.search)
-        }
-        if (this.search.length <= 1) {
-          this.searching = false
-          this.menuClass = 'dropdown-menu'
-        }
-      },
-      handleClick(e) {
-        this.search = e.target.innerText
+      }
+      return []
+    }
+  },
+  methods: {
+    ...mapActions(['getOffices']),
+    handleInput (e) {
+      if (this.searching === false) {
+        this.search = ''
+        this.searching = true
+      }
+      this.search = e
+      if (this.search.length > 1 && this.searching === true) {
+        this.menuClass = 'dropdown-menu show py-0 my-0 w-100'
+        this.setSelectedOffice(this.search)
+      }
+      if (this.search.length <= 1) {
         this.searching = false
         this.menuClass = 'dropdown-menu'
-      },
-      ...mapMutations(['setSelectedOffice'])
+      }
     },
+    handleClick (e) {
+      this.search = e.target.innerText
+      this.searching = false
+      this.menuClass = 'dropdown-menu'
+    },
+    ...mapMutations(['setSelectedOffice'])
   }
+}
 </script>
 
 <style scoped>

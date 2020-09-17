@@ -33,54 +33,54 @@
 </template>
 
 <script>
-    import { mapActions, mapMutations, mapState } from 'vuex'
-    export default {
-        name: "DeleteExamModal",
-        methods: {
-          ...mapActions([
-            'deleteBooking',
-            'deleteExam',
-            'getExams',
-          ]),
-          ...mapMutations([
-            'toggleDeleteExamModalVisible',
-            'toggleEditExamModal',
-          ]),
-          clickYes() {
-            let exam_id = this.returnExam.exam_id
-            this.deleteExam(exam_id)
-                .then(() => { this.getExams() })
-            this.toggleDeleteExamModalVisible(false)
-            this.toggleEditExamModal(false)
-            if (this.returnExam.booking_id){
-              this.deleteBooking(this.returnExam.booking_id)
-            }
-          },
-          clickNo() {
-            this.toggleDeleteExamModalVisible(false)
-          }
-        },
-        computed: {
-            ...mapState({
-              showDeleteExamModal: state => state.showDeleteExamModal,
-              returnExam: state => state.returnExam,
-            }),
-            deleteModalVisible: {
-                get() {
-                    return this.showDeleteExamModal
-                },
-                set(e) {
-                    this.toggleDeleteExamModalVisible(e)
-                }
-            },
-            exam() {
-              if(Object.keys(this.actionedExam).length > 0){
-                return this.actionedExam
-              }
-              return false
-            }
-        }
+import { mapActions, mapMutations, mapState } from 'vuex'
+export default {
+  name: 'DeleteExamModal',
+  methods: {
+    ...mapActions([
+      'deleteBooking',
+      'deleteExam',
+      'getExams'
+    ]),
+    ...mapMutations([
+      'toggleDeleteExamModalVisible',
+      'toggleEditExamModal'
+    ]),
+    clickYes () {
+      const exam_id = this.returnExam.exam_id
+      this.deleteExam(exam_id)
+        .then(() => { this.getExams() })
+      this.toggleDeleteExamModalVisible(false)
+      this.toggleEditExamModal(false)
+      if (this.returnExam.booking_id) {
+        this.deleteBooking(this.returnExam.booking_id)
+      }
+    },
+    clickNo () {
+      this.toggleDeleteExamModalVisible(false)
     }
+  },
+  computed: {
+    ...mapState({
+      showDeleteExamModal: state => state.showDeleteExamModal,
+      returnExam: state => state.returnExam
+    }),
+    deleteModalVisible: {
+      get () {
+        return this.showDeleteExamModal
+      },
+      set (e) {
+        this.toggleDeleteExamModalVisible(e)
+      }
+    },
+    exam () {
+      if (Object.keys(this.actionedExam).length > 0) {
+        return this.actionedExam
+      }
+      return false
+    }
+  }
+}
 </script>
 
 <style scoped>

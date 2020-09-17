@@ -38,25 +38,25 @@ import { mapGetters, mapMutations, mapState } from 'vuex'
 export default {
   name: 'ExamAlert',
   computed: {
-    ...mapGetters([ 'is_office_manager',
-                    'role_code' ]),
-    ...mapState([ 'examDismissCount', 'examAlertMessage' ])
+    ...mapGetters(['is_office_manager',
+      'role_code']),
+    ...mapState(['examDismissCount', 'examAlertMessage'])
   },
   methods: {
     ...mapMutations(['examDismissCountDown',
-                     'setInventoryFilters',
-                     'setSelectedExamType',
-                     'setSelectedExamTypeFilter',
-                     'setSelectedQuickAction',
-                     'setSelectedQuickActionFilter',]),
-    goShow() {
+      'setInventoryFilters',
+      'setSelectedExamType',
+      'setSelectedExamTypeFilter',
+      'setSelectedQuickAction',
+      'setSelectedQuickActionFilter']),
+    goShow () {
       this.$router.push('/exams')
       this.setSelectedExamType('all')
       this.setSelectedExamTypeFilter('All')
       this.setSelectedQuickAction('oemai')
       this.setSelectedQuickActionFilter('Office Exam Manager Action Items')
-      this.setInventoryFilters({type:'groupFilter', value:'all'})
-      this.setInventoryFilters({type:'requireOEMAttentionFilter', value:'both'})
+      this.setInventoryFilters({ type: 'groupFilter', value: 'all' })
+      this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'both' })
       // }
       // else if(this.groupExam && !this.individualExam && this.groupIndividualExam){
       //   this.setSelectedExamType('group')
@@ -106,9 +106,8 @@ export default {
       //   this.setInventoryFilters({type:'groupFilter', value:'all'})
       //   this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'both'})
       // }
-
     },
-    onDismissedExam() {
+    onDismissedExam () {
       this.examDismissCountDown(999)
     }
   }

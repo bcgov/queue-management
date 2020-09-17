@@ -16,34 +16,34 @@
 </template>
 
 <script>
-  import { mapMutations, mapGetters, mapState } from 'vuex'
-  import ExamInventoryTable from './exam-inventory-table'
+import { mapGetters, mapMutations, mapState } from 'vuex'
+import ExamInventoryTable from './exam-inventory-table'
 
-  export default {
-    name: "Exams",
-    components: { ExamInventoryTable },
-    mounted() {
-      document.addEventListener('keydown', this.filterKeyPress)
-      this.$store.dispatch('getOffices')
-    },
-    computed: {
-      ...mapState({
-        serviceBegun: 'serviceBegun',
-        showServiceModal: 'showServiceModal',
-        serviceModalPath: 'serviceModalPath',
-        user: 'user',
-      }),
-      ...mapGetters(['showExams', ]),
-    },
-    methods: {
-      ...mapMutations(['toggleServiceModal', ]),
-      filterKeyPress(e) {
-        if (e.keyCode === 13) {
-          e.preventDefault()
-        }
-      },
+export default {
+  name: 'Exams',
+  components: { ExamInventoryTable },
+  mounted () {
+    document.addEventListener('keydown', this.filterKeyPress)
+    this.$store.dispatch('getOffices')
+  },
+  computed: {
+    ...mapState({
+      serviceBegun: 'serviceBegun',
+      showServiceModal: 'showServiceModal',
+      serviceModalPath: 'serviceModalPath',
+      user: 'user'
+    }),
+    ...mapGetters(['showExams'])
+  },
+  methods: {
+    ...mapMutations(['toggleServiceModal']),
+    filterKeyPress (e) {
+      if (e.keyCode === 13) {
+        e.preventDefault()
+      }
     }
   }
+}
 </script>
 
 <style scoped>

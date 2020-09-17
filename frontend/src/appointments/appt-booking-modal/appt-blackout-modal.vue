@@ -407,315 +407,313 @@
 </template>
 
 <script>
-    import { createNamespacedHelpers } from 'vuex'
-    import moment from 'moment'
-    import DatePicker from 'vue2-datepicker'
-    import { RRule } from 'rrule'
-    const { mapMutations, mapState, mapActions, mapGetters } = createNamespacedHelpers( 'appointmentsModule' )
+import { createNamespacedHelpers } from 'vuex'
+import moment from 'moment'
+import DatePicker from 'vue2-datepicker'
+import { RRule } from 'rrule'
+const { mapMutations, mapState, mapActions, mapGetters } = createNamespacedHelpers('appointmentsModule')
 
-    export default {
-        name: "AppointmentBlackoutModal",
-        components: { DatePicker },
-        created(){
-          this.user_name = "BLACKOUT PERIOD"
-          this.user_contact_info = this.$store.state.user.username
-        },
-        mounted(){
-        },
-        data() {
-          return {
-            blackout_date: null,
-            start_time: null,
-            end_time: null,
-            notes: '',
-            user_name: '',
-            user_contact_info: '',
-            selected_frequency: [],
-            selected_weekdays: [],
-            selected_count: '',
-            recurring_start_time: null,
-            recurring_end_time: null,
-            recurring_start_date: null,
-            recurring_end_date: null,
-            recurring_array: '',
-            yearly: RRule.YEARLY,
-            monthly: RRule.MONTHLY,
-            weekly: RRule.WEEKLY,
-            daily: RRule.DAILY,
-            monday: RRule.MO,
-            tuesday: RRule.TU,
-            wednesday: RRule.WE,
-            thursday: RRule.TH,
-            friday: RRule.FR,
-            single_blackout_boolean: true,
-            recurring_blackout_boolean: true,
-            rrule_array: [],
-            rrule_text: '',
-            recurring_input_boolean: false,
-            single_input_boolean: false,
-            next_boolean: false,
-            single_input_state: '',
-            recurring_input_state: ''
-          }
-        },
-        methods: {
-          ...mapActions([
-            'getAppointments',
-            'postAppointment',
-          ]),
-          ...mapMutations([
-            'toggleAppointmentBlackoutModal'
-          ]),
-          hideCollapse(div_id){
-            if(document.getElementById(div_id)){
-              if(document.getElementById(div_id).classList.contains('show')){
-                this.$root.$emit('bv::toggle::collapse', div_id)
-              }
-            }
-          },
-          showCollapse(div_id){
-            if(document.getElementById(div_id)){
-              if(document.getElementById(div_id).style.display === 'none'){
-                this.$root.$emit('bv::toggle::collapse', div_id)
-              }
-            }
-          },
-          show(){
-            this.showCollapse('collapse-event-selection')
-            this.hideCollapse('collapse-single-event')
-            this.hideCollapse('collapse-information-audit')
-            this.hideCollapse('collapse-blackout-notes')
-            // clear single event information
-            this.start_time = null
-            this.end_time = null
-            this.blackout_date = null
-
-            // clear recurring event information
-            this.recurring_start_date = null
-            this.recurring_end_date = null
-            this.recurring_start_time = null
-            this.recurring_end_time = null
-            this.selected_frequency = []
-            this.selected_weekdays = []
-            this.selected_count = ''
-            this.notes = ''
-          },
-          cancel(){
-            this.recurring_blackout_boolean = true
-            this.single_blackout_boolean = true
-            this.single_input_boolean = false
-            this.recurring_input_boolean =false
-            this.rrule_text = ''
-            this.rrule_array = []
-            this.toggleAppointmentBlackoutModal(false)
-          },
-          submit(){
-            let date = moment(this.blackout_date).clone().format('YYYY-MM-DD')
-            let start = moment(this.start_time).clone().format('HH:mm:ss')
-            let start_date = moment(date + " " + start).format('YYYY-MM-DD HH:mm:ssZ')
-            let end = moment(this.end_time).clone().format('HH:mm:ss')
-            let end_date = moment(date + " " + end).format('YYYY-MM-DD HH:mm:ssZ')
-            const uuidv4 = require('uuid/v4')
-            let recurring_uuid = uuidv4()
-            if(this.rrule_array.length > 0){
-              this.rrule_array.forEach(item => {
-                let e = {
-                  start_time: item.start,
-                  end_time: item.end,
-                  citizen_name: this.user_name,
-                  contact_information: this.user_contact_info,
-                  blackout_flag: 'Y',
-                  recurring_uuid: recurring_uuid
-                }
-                if(this.notes){
-                  e.comments = this.notes
-                }
-                this.postAppointment(e)
-                this.getAppointments()
-              })
-            }else if(this.rrule_array.length === 0) {
-              let e = {
-                start_time: start_date,
-                end_time: end_date,
-                citizen_name: this.user_name,
-                contact_information: this.user_contact_info,
-                blackout_flag: 'Y'
-              }
-              if (this.notes) {
-                e.comments = this.notes
-              }
-
-              this.postAppointment(e)
-              this.getAppointments()
-            }
-
-            this.recurring_blackout_boolean = true
-            this.single_blackout_boolean = true
-            this.getAppointments()
-            this.toggleAppointmentBlackoutModal(false)
-            this.rrule_text = ''
-            this.rrule_array = []
-            this.recurring_input_state = ''
-            this.single_input_boolean = ''
-          },
-          formatStartDate(date){
-            let formatted_start_date = moment(date).format('YYYY-MM-DD HH:mm')
-            return formatted_start_date
-          },
-          formatEndDate(date){
-            let formatted_end_date = moment(date).format('HH:mm')
-            return formatted_end_date
-          },
-          generateRule(){
-
-            this.hideCollapse('collapse-event-selection')
-            this.hideCollapse('collapse-recurring-events')
-            this.recurring_blackout_boolean = true
-            this.single_blackout_boolean = true
-            this.next_boolean = false
-            let start_year = parseInt(moment(this.recurring_start_date).utc().clone().format('YYYY'))
-            let start_month = parseInt(moment(this.recurring_start_date).utc().clone().format('MM'))
-            let start_day = parseInt(moment(this.recurring_start_date).utc().clone().format('DD'))
-            let start_hour = parseInt(moment(this.recurring_start_time).utc().clone().format('HH'))
-            let local_start_hour = parseInt(moment(this.recurring_start_time).clone().format('HH'))
-            let start_minute = parseInt(moment(this.recurring_start_time).utc().clone().format('mm'))
-            let end_year = parseInt(moment(this.recurring_end_date).utc().clone().format('YYYY'))
-            let end_month = parseInt(moment(this.recurring_end_date).utc().clone().format('MM'))
-            let end_day = parseInt(moment(this.recurring_end_date).utc().clone().format('DD'))
-            let end_hour = parseInt(moment(this.recurring_end_time).utc().clone().format('HH'))
-            let end_minute = parseInt(moment(this.recurring_end_time).utc().clone().format('mm'))
-            let duration = moment.duration(moment(this.recurring_end_time).diff(moment(this.recurring_start_time)))
-            let duration_minutes = duration.asMinutes()
-            let input_frequency = null
-            let local_dates_array = []
-
-            switch(this.selected_frequency[0]){
-              case 0:
-                input_frequency = RRule.YEARLY;
-                break;
-              case 1:
-                input_frequency = RRule.MONTHLY;
-                break;
-              case 2:
-                input_frequency = RRule.WEEKLY;
-                break;
-              case 3:
-                input_frequency = RRule.DAILY;
-                break;
-            }
-
-            if(isNaN(start_year) == false || isNaN(end_year) == false) {
-              // TODO Might be Deprecated -- IF RRule Breaks, this is where it will happen
-              // TODO remove tzid from rule object
-              let date_start = new Date(Date.UTC(start_year, start_month - 1, start_day, start_hour, start_minute))
-              let until = new Date(Date.UTC(end_year, end_month - 1, end_day, end_hour, end_minute))
-              const rule = new RRule({
-                freq: input_frequency,
-                count: this.selected_count,
-                byweekday: this.selected_weekdays,
-                dtstart: date_start,
-                until: until,
-                tzid: Intl.DateTimeFormat().resolvedOptions().timeZone,
-              })
-              let array = rule.all()
-              this.rrule_text = rule.toText()
-
-              array.forEach(date => {
-                let formatted_start_date = moment(date).clone().set({hour: local_start_hour}).format('YYYY-MM-DD HH:mm:ssZ')
-                let formatted_end_date = moment(date).clone().set({hour: local_start_hour}).add(duration_minutes, 'minutes').format('YYYY-MM-DD HH:mm:ssZ')
-                local_dates_array.push({start: formatted_start_date, end: formatted_end_date})
-              })
-            }
-            this.rrule_array = local_dates_array
-            this.selected_count = ''
-            this.selected_weekdays = []
-            this.selected_frequency = []
-            this.recurring_start_date = ''
-            this.recurring_start_time = ''
-            this.recurring_end_date = ''
-            this.recurring_end_time = ''
-            this.recurring_input_boolean = true
-            this.recurring_input_state = 'audit_information'
-            this.hideCollapse('collapse-blackout-notes')
-            this.showCollapse('collapse-information-audit')
-          },
-          setSingle(){
-            this.single_blackout_boolean = !this.single_blackout_boolean
-            this.single_input_boolean = false
-            this.recurring_input_boolean = false
-            this.blackout_date = null
-            this.start_time = null
-            this.end_time = null
-            this.recurring_input_state = ''
-            this.single_input_state = ''
-            this.hideCollapse('collapse-single-event')
-          },
-          setRecurring(){
-            this.recurring_blackout_boolean = !this.recurring_blackout_boolean
-            this.single_input_boolean = false
-            this.recurring_input_boolean = false
-            this.selected_count = ''
-            this.selected_weekdays = []
-            this.selected_frequency = []
-            this.recurring_start_date = null
-            this.recurring_start_time = null
-            this.recurring_end_date = null
-            this.recurring_end_time = null
-            this.recurring_input_state = ''
-            this.single_input_state = ''
-            this.hideCollapse('collapse-recurring-events')
-          },
-          checkRecurringInput(){
-            if(this.selected_frequency.length > 0
-              && this.recurring_start_date !== null && this.recurring_start_time !== null && this.recurring_end_date !== null
-              && this.recurring_end_time !== null){
-              this.recurring_input_boolean = true
-              this.next_boolean = true
-              this.recurring_input_state = 'event_information'
-            }else {
-              this.recurring_input_boolean = false
-            }
-          },
-          checkSingleInput(){
-            if(this.blackout_date !== '' && this.start_time !== '' && this.end_time){
-              this.single_input_boolean = true
-              this.single_input_state = 'event_information'
-            }else {
-              this.single_input_boolean = false
-              this.single_input_state = ''
-            }
-
-          },
-          nextSingleNotes(){
-            this.hideCollapse('collapse-event-selection')
-            this.hideCollapse('collapse-single-event')
-            this.showCollapse('collapse-blackout-notes')
-            this.single_input_state = 'notes'
-          },
-          nextRecurringNotes(){
-            this.hideCollapse('collapse-information-audit')
-            this.showCollapse('collapse-blackout-notes')
-            this.recurring_input_boolean = true
-            this.recurring_input_state = 'notes'
-          },
-        },
-        computed: {
-          ...mapState({
-            showAppointmentBlackoutModal: state => state.showAppointmentBlackoutModal,
-          }),
-          ...mapGetters([
-            'is_recurring_enabled',
-          ]),
-          modal: {
-            get() {
-              return this.showAppointmentBlackoutModal
-            },
-            set(e) {
-              this.toggleAppointmentBlackoutModal(e)
-            }
-          },
-        }
+export default {
+  name: 'AppointmentBlackoutModal',
+  components: { DatePicker },
+  created () {
+    this.user_name = 'BLACKOUT PERIOD'
+    this.user_contact_info = this.$store.state.user.username
+  },
+  mounted () {
+  },
+  data () {
+    return {
+      blackout_date: null,
+      start_time: null,
+      end_time: null,
+      notes: '',
+      user_name: '',
+      user_contact_info: '',
+      selected_frequency: [],
+      selected_weekdays: [],
+      selected_count: '',
+      recurring_start_time: null,
+      recurring_end_time: null,
+      recurring_start_date: null,
+      recurring_end_date: null,
+      recurring_array: '',
+      yearly: RRule.YEARLY,
+      monthly: RRule.MONTHLY,
+      weekly: RRule.WEEKLY,
+      daily: RRule.DAILY,
+      monday: RRule.MO,
+      tuesday: RRule.TU,
+      wednesday: RRule.WE,
+      thursday: RRule.TH,
+      friday: RRule.FR,
+      single_blackout_boolean: true,
+      recurring_blackout_boolean: true,
+      rrule_array: [],
+      rrule_text: '',
+      recurring_input_boolean: false,
+      single_input_boolean: false,
+      next_boolean: false,
+      single_input_state: '',
+      recurring_input_state: ''
     }
+  },
+  methods: {
+    ...mapActions([
+      'getAppointments',
+      'postAppointment'
+    ]),
+    ...mapMutations([
+      'toggleAppointmentBlackoutModal'
+    ]),
+    hideCollapse (div_id) {
+      if (document.getElementById(div_id)) {
+        if (document.getElementById(div_id).classList.contains('show')) {
+          this.$root.$emit('bv::toggle::collapse', div_id)
+        }
+      }
+    },
+    showCollapse (div_id) {
+      if (document.getElementById(div_id)) {
+        if (document.getElementById(div_id).style.display === 'none') {
+          this.$root.$emit('bv::toggle::collapse', div_id)
+        }
+      }
+    },
+    show () {
+      this.showCollapse('collapse-event-selection')
+      this.hideCollapse('collapse-single-event')
+      this.hideCollapse('collapse-information-audit')
+      this.hideCollapse('collapse-blackout-notes')
+      // clear single event information
+      this.start_time = null
+      this.end_time = null
+      this.blackout_date = null
+
+      // clear recurring event information
+      this.recurring_start_date = null
+      this.recurring_end_date = null
+      this.recurring_start_time = null
+      this.recurring_end_time = null
+      this.selected_frequency = []
+      this.selected_weekdays = []
+      this.selected_count = ''
+      this.notes = ''
+    },
+    cancel () {
+      this.recurring_blackout_boolean = true
+      this.single_blackout_boolean = true
+      this.single_input_boolean = false
+      this.recurring_input_boolean = false
+      this.rrule_text = ''
+      this.rrule_array = []
+      this.toggleAppointmentBlackoutModal(false)
+    },
+    submit () {
+      const date = moment(this.blackout_date).clone().format('YYYY-MM-DD')
+      const start = moment(this.start_time).clone().format('HH:mm:ss')
+      const start_date = moment(date + ' ' + start).format('YYYY-MM-DD HH:mm:ssZ')
+      const end = moment(this.end_time).clone().format('HH:mm:ss')
+      const end_date = moment(date + ' ' + end).format('YYYY-MM-DD HH:mm:ssZ')
+      const uuidv4 = require('uuid/v4')
+      const recurring_uuid = uuidv4()
+      if (this.rrule_array.length > 0) {
+        this.rrule_array.forEach(item => {
+          const e = {
+            start_time: item.start,
+            end_time: item.end,
+            citizen_name: this.user_name,
+            contact_information: this.user_contact_info,
+            blackout_flag: 'Y',
+            recurring_uuid: recurring_uuid
+          }
+          if (this.notes) {
+            e.comments = this.notes
+          }
+          this.postAppointment(e)
+          this.getAppointments()
+        })
+      } else if (this.rrule_array.length === 0) {
+        const e = {
+          start_time: start_date,
+          end_time: end_date,
+          citizen_name: this.user_name,
+          contact_information: this.user_contact_info,
+          blackout_flag: 'Y'
+        }
+        if (this.notes) {
+          e.comments = this.notes
+        }
+
+        this.postAppointment(e)
+        this.getAppointments()
+      }
+
+      this.recurring_blackout_boolean = true
+      this.single_blackout_boolean = true
+      this.getAppointments()
+      this.toggleAppointmentBlackoutModal(false)
+      this.rrule_text = ''
+      this.rrule_array = []
+      this.recurring_input_state = ''
+      this.single_input_boolean = ''
+    },
+    formatStartDate (date) {
+      const formatted_start_date = moment(date).format('YYYY-MM-DD HH:mm')
+      return formatted_start_date
+    },
+    formatEndDate (date) {
+      const formatted_end_date = moment(date).format('HH:mm')
+      return formatted_end_date
+    },
+    generateRule () {
+      this.hideCollapse('collapse-event-selection')
+      this.hideCollapse('collapse-recurring-events')
+      this.recurring_blackout_boolean = true
+      this.single_blackout_boolean = true
+      this.next_boolean = false
+      const start_year = parseInt(moment(this.recurring_start_date).utc().clone().format('YYYY'))
+      const start_month = parseInt(moment(this.recurring_start_date).utc().clone().format('MM'))
+      const start_day = parseInt(moment(this.recurring_start_date).utc().clone().format('DD'))
+      const start_hour = parseInt(moment(this.recurring_start_time).utc().clone().format('HH'))
+      const local_start_hour = parseInt(moment(this.recurring_start_time).clone().format('HH'))
+      const start_minute = parseInt(moment(this.recurring_start_time).utc().clone().format('mm'))
+      const end_year = parseInt(moment(this.recurring_end_date).utc().clone().format('YYYY'))
+      const end_month = parseInt(moment(this.recurring_end_date).utc().clone().format('MM'))
+      const end_day = parseInt(moment(this.recurring_end_date).utc().clone().format('DD'))
+      const end_hour = parseInt(moment(this.recurring_end_time).utc().clone().format('HH'))
+      const end_minute = parseInt(moment(this.recurring_end_time).utc().clone().format('mm'))
+      const duration = moment.duration(moment(this.recurring_end_time).diff(moment(this.recurring_start_time)))
+      const duration_minutes = duration.asMinutes()
+      let input_frequency = null
+      const local_dates_array = []
+
+      switch (this.selected_frequency[0]) {
+        case 0:
+          input_frequency = RRule.YEARLY
+          break
+        case 1:
+          input_frequency = RRule.MONTHLY
+          break
+        case 2:
+          input_frequency = RRule.WEEKLY
+          break
+        case 3:
+          input_frequency = RRule.DAILY
+          break
+      }
+
+      if (isNaN(start_year) == false || isNaN(end_year) == false) {
+        // TODO Might be Deprecated -- IF RRule Breaks, this is where it will happen
+        // TODO remove tzid from rule object
+        const date_start = new Date(Date.UTC(start_year, start_month - 1, start_day, start_hour, start_minute))
+        const until = new Date(Date.UTC(end_year, end_month - 1, end_day, end_hour, end_minute))
+        const rule = new RRule({
+          freq: input_frequency,
+          count: this.selected_count,
+          byweekday: this.selected_weekdays,
+          dtstart: date_start,
+          until: until,
+          tzid: Intl.DateTimeFormat().resolvedOptions().timeZone
+        })
+        const array = rule.all()
+        this.rrule_text = rule.toText()
+
+        array.forEach(date => {
+          const formatted_start_date = moment(date).clone().set({ hour: local_start_hour }).format('YYYY-MM-DD HH:mm:ssZ')
+          const formatted_end_date = moment(date).clone().set({ hour: local_start_hour }).add(duration_minutes, 'minutes').format('YYYY-MM-DD HH:mm:ssZ')
+          local_dates_array.push({ start: formatted_start_date, end: formatted_end_date })
+        })
+      }
+      this.rrule_array = local_dates_array
+      this.selected_count = ''
+      this.selected_weekdays = []
+      this.selected_frequency = []
+      this.recurring_start_date = ''
+      this.recurring_start_time = ''
+      this.recurring_end_date = ''
+      this.recurring_end_time = ''
+      this.recurring_input_boolean = true
+      this.recurring_input_state = 'audit_information'
+      this.hideCollapse('collapse-blackout-notes')
+      this.showCollapse('collapse-information-audit')
+    },
+    setSingle () {
+      this.single_blackout_boolean = !this.single_blackout_boolean
+      this.single_input_boolean = false
+      this.recurring_input_boolean = false
+      this.blackout_date = null
+      this.start_time = null
+      this.end_time = null
+      this.recurring_input_state = ''
+      this.single_input_state = ''
+      this.hideCollapse('collapse-single-event')
+    },
+    setRecurring () {
+      this.recurring_blackout_boolean = !this.recurring_blackout_boolean
+      this.single_input_boolean = false
+      this.recurring_input_boolean = false
+      this.selected_count = ''
+      this.selected_weekdays = []
+      this.selected_frequency = []
+      this.recurring_start_date = null
+      this.recurring_start_time = null
+      this.recurring_end_date = null
+      this.recurring_end_time = null
+      this.recurring_input_state = ''
+      this.single_input_state = ''
+      this.hideCollapse('collapse-recurring-events')
+    },
+    checkRecurringInput () {
+      if (this.selected_frequency.length > 0 &&
+              this.recurring_start_date !== null && this.recurring_start_time !== null && this.recurring_end_date !== null &&
+              this.recurring_end_time !== null) {
+        this.recurring_input_boolean = true
+        this.next_boolean = true
+        this.recurring_input_state = 'event_information'
+      } else {
+        this.recurring_input_boolean = false
+      }
+    },
+    checkSingleInput () {
+      if (this.blackout_date !== '' && this.start_time !== '' && this.end_time) {
+        this.single_input_boolean = true
+        this.single_input_state = 'event_information'
+      } else {
+        this.single_input_boolean = false
+        this.single_input_state = ''
+      }
+    },
+    nextSingleNotes () {
+      this.hideCollapse('collapse-event-selection')
+      this.hideCollapse('collapse-single-event')
+      this.showCollapse('collapse-blackout-notes')
+      this.single_input_state = 'notes'
+    },
+    nextRecurringNotes () {
+      this.hideCollapse('collapse-information-audit')
+      this.showCollapse('collapse-blackout-notes')
+      this.recurring_input_boolean = true
+      this.recurring_input_state = 'notes'
+    }
+  },
+  computed: {
+    ...mapState({
+      showAppointmentBlackoutModal: state => state.showAppointmentBlackoutModal
+    }),
+    ...mapGetters([
+      'is_recurring_enabled'
+    ]),
+    modal: {
+      get () {
+        return this.showAppointmentBlackoutModal
+      },
+      set (e) {
+        this.toggleAppointmentBlackoutModal(e)
+      }
+    }
+  }
+}
 </script>
 
 <style scoped>

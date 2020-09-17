@@ -14,24 +14,24 @@
 </template>
 
 <script>
-  import { mapState, mapMutations } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 
-  export default {
-    name: 'Response',
+export default {
+  name: 'Response',
 
-    data() {
-      return {
-        t: true,
-        f: false
-      }
-    },
-
-    computed: {
-      ...mapState(['showResponseModal'])
-    },
-
-    methods: {
-      ...mapMutations(['hideResponseModal'])
+  data () {
+    return {
+      t: true,
+      f: false
     }
+  },
+
+  computed: {
+    ...mapState(['showResponseModal'])
+  },
+
+  methods: {
+    ...mapMutations(['hideResponseModal'])
   }
+}
 </script>

@@ -99,217 +99,191 @@
 </template>
 
 <script>
-  import { mapState, mapMutations, mapGetters, mapActions } from 'vuex'
-  import {
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import {
+  AddExamCounter,
+  DateQuestion,
+  DropdownQuestion,
+  ExamReceivedQuestion,
+  InputQuestion,
+  InputQuestion2,
+  LocationInput,
+  NotesQuestion,
+  OffsiteSelect,
+  SelectOffice,
+  SelectQuestion,
+  TimeQuestion,
+  checkmark
+} from './add-exam-form-components.js'
+import GroupPesticideModal from './form-components/group-pesticide-modal'
+import PesticideFees from './form-components/pesticide-fees'
+
+export default {
+  name: 'AddExamFormController',
+  components: {
+    PesticideFees,
     AddExamCounter,
     checkmark,
     DateQuestion,
     DropdownQuestion,
     ExamReceivedQuestion,
+    GroupPesticideModal,
     InputQuestion,
-    InputQuestion2,
     LocationInput,
+    InputQuestion2,
     NotesQuestion,
     OffsiteSelect,
     SelectOffice,
     SelectQuestion,
-    TimeQuestion,
-  } from './add-exam-form-components.js'
-  import GroupPesticideModal from './form-components/group-pesticide-modal'
-  import PesticideFees from './form-components/pesticide-fees'
-
-  export default {
-    name: "AddExamFormController",
-    components: {
-      PesticideFees,
-      AddExamCounter,
-      checkmark,
-      DateQuestion,
-      DropdownQuestion,
-      ExamReceivedQuestion,
-      GroupPesticideModal,
-      InputQuestion,
-      LocationInput,
-      InputQuestion2,
-      NotesQuestion,
-      OffsiteSelect,
-      SelectOffice,
-      SelectQuestion,
-      TimeQuestion,
+    TimeQuestion
+  },
+  mounted () {
+    this.event_form_validation = false
+    this.getExamTypes()
+    this.getOffices()
+    this.$root.$on('validateform', () => {
+      this.validate()
+    })
+  },
+  data () {
+    return {
+      notes: false,
+      selectOptions: [
+        { text: 'online', value: 'online' },
+        { text: 'paper', value: 'paper' }
+      ]
+    }
+  },
+  computed: {
+    ...mapGetters({
+      steps: 'add_modal_steps',
+      event_id_warning: 'event_id_warning',
+      exam_object: 'exam_object',
+      role_code: 'role_code',
+      is_pesticide_designate: 'is_pesticide_designate',
+      is_ita2_designate: 'is_ita2_designate'
+    }),
+    ...mapState({
+      exam: state => state.capturedExam,
+      event_ids: state => state.event_ids,
+      event_id_warning: state => state.event_id_warning,
+      addExamModal: state => state.addExamModal,
+      addGroupSteps: state => state.addExamModule.addGroupSteps,
+      addChallengerSteps: state => state.addExamModule.addChallengerSteps,
+      addIndividualSteps: state => state.addExamModule.addIndividualSteps,
+      addOtherSteps: state => state.addExamModule.addOtherSteps,
+      tab: state => state.captureITAExamTabSetup,
+      examTypes: state => state.examTypes,
+      user: state => state.user
+    }),
+    ...mapGetters(['addPesticideSteps']),
+    error () {
+      if (this.errors.includes(this.step)) {
+        return true
+      }
+      return false
     },
-    mounted() {
-      this.event_form_validation = false
-      this.getExamTypes()
-      this.getOffices()
-      this.$root.$on('validateform', () => {
-        this.validate()
-      })
+    ind_or_group () {
+      if (this.exam) {
+        return this.exam.ind_or_group
+      }
+      return null
     },
-    data() {
+    errors () {
+      if (this.tab && this.tab.errors) {
+        return this.tab.errors
+      }
+      return []
+    },
+    examTypes () {
+      if (this.$store.state.examTypes) {
+        return this.$store.state.examTypes
+      }
       return {
-        notes: false,
-        selectOptions: [
-          {text: 'online', value: 'online'},
-          {text: 'paper', value: 'paper'}
-        ],
+        exam_type_id: '',
+        exam_type_colour: '',
+        exam_type_name: ''
       }
     },
-    computed: {
-      ...mapGetters({
-        steps: 'add_modal_steps',
-        event_id_warning: 'event_id_warning',
-        exam_object: 'exam_object',
-        role_code: 'role_code',
-        is_pesticide_designate: 'is_pesticide_designate',
-        is_ita2_designate: 'is_ita2_designate',
-      }),
-      ...mapState({
-        exam: state => state.capturedExam,
-        event_ids: state => state.event_ids,
-        event_id_warning: state => state.event_id_warning,
-        addExamModal: state => state.addExamModal,
-        addGroupSteps: state => state.addExamModule.addGroupSteps,
-        addChallengerSteps: state => state.addExamModule.addChallengerSteps,
-        addIndividualSteps: state => state.addExamModule.addIndividualSteps,
-        addOtherSteps: state => state.addExamModule.addOtherSteps,
-        tab: state => state.captureITAExamTabSetup,
-        examTypes: state => state.examTypes,
-        user: state => state.user,
-      }),
-      ...mapGetters(['addPesticideSteps']),
-      error() {
-        if (this.errors.includes(this.step)) {
-          return true
-        }
+    questions () {
+      if (this.steps && this.steps.length > 0) {
+        return this.steps.find(q => q.step == this.step).questions
+      }
+      return []
+    },
+    step () {
+      if (this.tab && this.tab.step) {
+        return this.tab.step
+      }
+      return 1
+    },
+    stepErrors () {
+      const keys = Object.keys(this.validationObj)
+      const checklist = keys.map(key => this.validationObj[key].valid)
+      if (checklist.includes(false)) {
+        return true
+      } else {
         return false
-      },
-      ind_or_group() {
-        if (this.exam) {
-          return this.exam.ind_or_group
+      }
+    },
+    validationObj () {
+      const valid = {}
+      const messages = {}
+      const validateAnswer = (question) => {
+        const key = question.key
+        let answer = this.exam[key]
+        if (key === 'notes') {
+          valid[key] = true
+          messages[key] = ''
+          return
         }
-        return null
-      },
-      errors() {
-        if (this.tab && this.tab.errors) {
-          return this.tab.errors
-        }
-        return []
-      },
-      examTypes() {
-        if (this.$store.state.examTypes) {
-          return this.$store.state.examTypes
-        }
-        return {
-          exam_type_id: '',
-          exam_type_colour: '',
-          exam_type_name: ''
-        }
-      },
-      questions() {
-        if (this.steps && this.steps.length > 0) {
-          return this.steps.find(q => q.step == this.step).questions
-        }
-        return []
-      },
-      step() {
-        if (this.tab && this.tab.step) {
-          return this.tab.step
-        }
-        return 1
-      },
-      stepErrors() {
-        let keys = Object.keys(this.validationObj)
-        let checklist = keys.map(key => this.validationObj[key].valid)
-        if (checklist.includes(false)) {
-          return true
-        } else {
-          return false
-        }
-      },
-      validationObj() {
-        let valid = {}
-        let messages = {}
-        let validateAnswer = (question) => {
-          let key = question.key
-          let answer = this.exam[key]
-          if (key === 'notes') {
-            valid[key] = true
-            messages[key] = ''
-            return
-          }
-          // TODO Turn this on for event ID checks only on group exams. Add && group_exam_indicator to the if block
-          // below as well
-          /*let group_exam_indicator = false
+        // TODO Turn this on for event ID checks only on group exams. Add && group_exam_indicator to the if block
+        // below as well
+        /* let group_exam_indicator = false
           this.examTypes.forEach(exam_type => {
             if (exam_type.exam_type_id === this.exam.exam_type_id && exam_type.group_exam_ind === 1) {
               group_exam_indicator = true
             }
-          })*/
-          if (key === 'event_id' && answer && answer.length >= 4) {
-            if(this.event_id_warning){
-              valid['event_id'] = true
-              messages['event_id'] = "Event ID already in Use"
-              // Should handle next button bug
-              this.tab.stepsValidated = [1, 2]
-              this.setError()
-              return
-            }
-            if(document.activeElement.id === 'event_id') {
-              this.getExamEventIDs(answer)
-            }
-            if(this.event_ids === false) {
-              valid['event_id'] = true
-              messages['event_id'] = ""
-              // Should handle next button bug
-              this.tab.stepsValidated = [1, 2]
-              return
-            }
-            valid['event_id'] = false
-            messages['event_id'] = 'Event ID already in Use'
+          }) */
+        if (key === 'event_id' && answer && answer.length >= 4) {
+          if (this.event_id_warning) {
+            valid.event_id = true
+            messages.event_id = 'Event ID already in Use'
             // Should handle next button bug
-            this.tab.stepsValidated = [1]
+            this.tab.stepsValidated = [1, 2]
+            this.setError()
             return
           }
-          if (key === 'exam_name' && answer && answer.length > 50) {
-            valid['exam_name'] = false
-            messages['exam_name'] = 'Maximum Field Length Exceeded'
+          if (document.activeElement.id === 'event_id') {
+            this.getExamEventIDs(answer)
+          }
+          if (this.event_ids === false) {
+            valid.event_id = true
+            messages.event_id = ''
+            // Should handle next button bug
+            this.tab.stepsValidated = [1, 2]
             return
           }
-          if (key === 'office_id' && answer == null) {
-            valid[key] = false
-            messages[key] = 'Invalid Office'
-            return
-          }
-          if (answer) {
-            answer = answer.toString()
-            if (question.minLength > 0) {
-              if (answer.length >= question.minLength) {
-                if (question.digit) {
-                  answer = parseInt(answer)
-                  if (!isNaN(answer)) {
-                    valid[key] = true
-                    messages[key] = ''
-                    return
-                  }
-                  if (isNaN(answer)) {
-                    valid[key] = false
-                    messages[key] = 'Response must be a NUMBER'
-                    return
-                  }
-                }
-                if (!question.digit) {
-                  valid[key] = true
-                  messages[key] = ''
-                  return
-                }
-              }
-              if (answer.length < question.minLength) {
-                valid[key] = false
-                messages[key] = 'Response is too short'
-                return
-              }
-            }
-            if (question.minLength == 0) {
+          valid.event_id = false
+          messages.event_id = 'Event ID already in Use'
+          // Should handle next button bug
+          this.tab.stepsValidated = [1]
+          return
+        }
+        if (key === 'exam_name' && answer && answer.length > 50) {
+          valid.exam_name = false
+          messages.exam_name = 'Maximum Field Length Exceeded'
+          return
+        }
+        if (key === 'office_id' && answer == null) {
+          valid[key] = false
+          messages[key] = 'Invalid Office'
+          return
+        }
+        if (answer) {
+          answer = answer.toString()
+          if (question.minLength > 0) {
+            if (answer.length >= question.minLength) {
               if (question.digit) {
                 answer = parseInt(answer)
                 if (!isNaN(answer)) {
@@ -329,107 +303,132 @@
                 return
               }
             }
-            valid[key] = false
-            messages[key] = 'Required Field'
-            return
+            if (answer.length < question.minLength) {
+              valid[key] = false
+              messages[key] = 'Response is too short'
+              return
+            }
           }
-          if (question.minLength == 0 && !question.digit) {
-            valid[key] = true
-            messages[key] = ''
-            return
+          if (question.minLength == 0) {
+            if (question.digit) {
+              answer = parseInt(answer)
+              if (!isNaN(answer)) {
+                valid[key] = true
+                messages[key] = ''
+                return
+              }
+              if (isNaN(answer)) {
+                valid[key] = false
+                messages[key] = 'Response must be a NUMBER'
+                return
+              }
+            }
+            if (!question.digit) {
+              valid[key] = true
+              messages[key] = ''
+              return
+            }
           }
           valid[key] = false
           messages[key] = 'Required Field'
           return
         }
-        this.questions.forEach(question => {
-          validateAnswer(question)
+        if (question.minLength == 0 && !question.digit) {
+          valid[key] = true
+          messages[key] = ''
+          return
+        }
+        valid[key] = false
+        messages[key] = 'Required Field'
+      }
+      this.questions.forEach(question => {
+        validateAnswer(question)
+      })
+      const output = {}
+      const validKeys = Object.keys(valid)
+      validKeys.forEach(key => {
+        (output[key] = {
+          message: messages[key],
+          valid: valid[key]
         })
-        let output = {}
-        let validKeys = Object.keys(valid)
-        validKeys.forEach(key => {
-          (output[key] = {
-            message: messages[key],
-            valid: valid[key],
-          })
-        })
-        return output
-      },
+      })
+      return output
+    }
+  },
+  watch: {
+    step (newV, oldV) {
+      this.$nextTick(function () {
+        this.validate()
+      })
     },
-    watch: {
-      step(newV, oldV) {
-        this.$nextTick( function() {
-          this.validate()
-        })
-      },
-      validationObj() {
-        //calling validate() with every change in validationObj() is untested with any workflow except 'pesticide',
-        //and other workflows don't seem to require this additional step, so limiting this call to fire only when
-        //setup === pesticide
-          this.validate()
-          this.$nextTick(function() {
-            this.validate()
-          })
+    validationObj () {
+      // calling validate() with every change in validationObj() is untested with any workflow except 'pesticide',
+      // and other workflows don't seem to require this additional step, so limiting this call to fire only when
+      // setup === pesticide
+      this.validate()
+      this.$nextTick(function () {
+        this.validate()
+      })
+    }
+  },
+  methods: {
+    ...mapMutations([
+      'captureExamDetail',
+      'updateCaptureTab',
+      'setEventWarning'
+    ]),
+    ...mapActions([
+      'getExamTypes',
+      'getExamEventIDs',
+      'getOffices'
+    ]),
+    handleInput (e) {
+      const payload = {
+        key: e.target.name,
+        value: e.target.value
+      }
+      this.captureExamDetail(payload)
+      this.$nextTick(function () {
+        this.validate()
+      })
+    },
+    removeError () {
+      if (this.error) {
+        const i = this.errors.indexOf(this.step)
+        const errors = this.errors
+        errors.splice(i, 1)
+        this.updateCaptureTab({ errors })
       }
     },
-    methods: {
-      ...mapMutations([
-        'captureExamDetail',
-        'updateCaptureTab',
-        'setEventWarning'
-      ]),
-      ...mapActions([
-        'getExamTypes',
-        'getExamEventIDs',
-        'getOffices',
-      ]),
-      handleInput(e) {
-        let payload = {
-          key: e.target.name,
-          value: e.target.value,
+    setError () {
+      if (!this.error) {
+        const errors = this.errors.concat([this.step])
+        this.updateCaptureTab({ errors })
+      }
+    },
+    validate () {
+      if (!this.stepErrors) {
+        this.removeError()
+        if (this.tab.stepsValidated.indexOf(this.step) === -1) {
+          const validated = this.tab.stepsValidated
+          const stepsValidated = validated.concat([this.step])
+          this.updateCaptureTab({ stepsValidated })
         }
-        this.captureExamDetail(payload)
-        this.$nextTick( function() {
-          this.validate()
-        })
-      },
-      removeError() {
-        if (this.error) {
-          let i = this.errors.indexOf(this.step)
-          let errors = this.errors
-          errors.splice(i, 1)
-          this.updateCaptureTab({errors})
-        }
-      },
-      setError() {
+      } else if (this.stepErrors) {
         if (!this.error) {
-          let errors = this.errors.concat([this.step])
-          this.updateCaptureTab({errors})
+          if (this.tab.highestStep > this.step) {
+            this.setError()
+          }
         }
-      },
-      validate() {
-        if (!this.stepErrors) {
-          this.removeError()
-          if (this.tab.stepsValidated.indexOf(this.step)===-1) {
-            let validated = this.tab.stepsValidated
-            let stepsValidated = validated.concat([this.step])
-            this.updateCaptureTab({stepsValidated})
-          }
-        } else if (this.stepErrors) {
-          if (!this.error) {
-            if (this.tab.highestStep > this.step) {
-              this.setError()
-            }
-          }
-          if (this.tab.stepsValidated.indexOf(this.step) != -1) {
-            let stepsValidated = Object.assign([], this.tab.stepsValidated)
-            stepsValidated.splice(this.tab.stepsValidated.indexOf(this.step), 1)
-            this.updateCaptureTab({stepsValidated})
-          }
+        if (this.tab.stepsValidated.indexOf(this.step) != -1) {
+          const stepsValidated = Object.assign([], this.tab.stepsValidated)
+          stepsValidated.splice(this.tab.stepsValidated.indexOf(this.step), 1)
+          this.updateCaptureTab({ stepsValidated })
         }
       }
     }
   }
+}
 </script>
 
 <style scoped>

@@ -32,48 +32,48 @@
 </template>
 
 <script>
-  import { mapState, mapMutations, mapActions } from 'vuex'
-  export default {
-    name: 'Feedback',
-    data() {
-      return {
-        t: true,
-        f: false,
-        showWarning: false
-      }
+import { mapActions, mapMutations, mapState } from 'vuex'
+export default {
+  name: 'Feedback',
+  data () {
+    return {
+      t: true,
+      f: false,
+      showWarning: false
+    }
+  },
+  computed: {
+    ...mapState(['showFeedbackModal', 'feedbackMessage']),
+    writeFeedback: {
+      get () { return this.feedbackMessage },
+      set (value) { this.setFeedbackMessage(value) }
+    }
+  },
+  methods: {
+    ...mapMutations([
+      'toggleFeedbackModal',
+      'setFeedbackMessage',
+      'showHideResponseModal',
+      'toggleFeedbackModal'
+    ]),
+    ...mapActions(['messageFeedback']),
+    toggleModal () {
+      this.toggleFeedbackModal(false)
+      this.showWarning = false
+      this.setFeedbackMessage('')
     },
-    computed: {
-      ...mapState(['showFeedbackModal', 'feedbackMessage']),
-      writeFeedback: {
-        get() { return this.feedbackMessage },
-        set(value) { this.setFeedbackMessage(value) }
-      }
-    },
-    methods: {
-      ...mapMutations([
-        'toggleFeedbackModal',
-        'setFeedbackMessage',
-        'showHideResponseModal',
-        'toggleFeedbackModal'
-      ]),
-      ...mapActions(['messageFeedback']),
-      toggleModal() {
-        this.toggleFeedbackModal(false)
+    submitMessage () {
+      if (this.feedbackMessage.length <= 0) {
+        this.showWarning = true
+      } else {
+        this.messageFeedback()
         this.showWarning = false
-        this.setFeedbackMessage('')
-      },
-      submitMessage() {
-        if (this.feedbackMessage.length <= 0) {
-          this.showWarning = true
-        } else {
-          this.messageFeedback()
-          this.showWarning = false
-          this.toggleFeedbackModal(false)
-          this.showHideResponseModal()
-        }
+        this.toggleFeedbackModal(false)
+        this.showHideResponseModal()
       }
     }
   }
+}
 </script>
 
 <style scoped>

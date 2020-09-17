@@ -462,77 +462,99 @@
 </template>
 
 <script>
-  import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-  import DatePicker from 'vue2-datepicker'
-  import moment from 'moment'
-  import Vue from 'vue'
-  import DeleteExamModal from './delete-exam-modal'
-  const FileDownload = require('js-file-download')
-  import OfficeDrop from './office-drop'
-  import FailureExamAlert from './failure-exam-alert'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import DatePicker from 'vue2-datepicker'
+import moment from 'moment'
+import Vue from 'vue'
+import DeleteExamModal from './delete-exam-modal'
+import OfficeDrop from './office-drop'
+import FailureExamAlert from './failure-exam-alert'
+const FileDownload = require('js-file-download')
 
-  export default {
-    name: "EditExamModal",
-    components: { DatePicker, DeleteExamModal, FailureExamAlert, OfficeDrop },
-    props: ['actionedExam', 'resetExam'],
-    data () {
-      return {
-        examNotReady: false,
-        feesOptions: 'collect',
-        clickedMenu: false,
-        fields: {
-          exam_received_date: null,
-          notes: null,
-          event_id: null,
-          exam_name: null,
-          receipt: null,
-          receipt_sent_ind: null,
-        },
-        lengthError: false,
-        message: '',
-        methodOptions: [
-          { text: 'paper', value: 'paper'},
-          { text: 'online', value: 'online'},
-        ],
-        exam_received: this.actionedExam.exam_received_date !== null ? true : false,
-        office_number: null,
-        officeChoices: [],
-        showMessage: false,
-      }
-    },
-    computed: {
-      ...mapGetters(['exam_object_id', 'role_code', 'is_ita2_designate', 'is_office_manager', "is_pesticide_designate" ]),
-      ...mapState(['editExamFailure',
-                   'editExamSuccess',
-                   'examTypes',
-                   'offices',
-                   'showEditExamModal',
-                   'showDeleteExamModal',
-                   'user', ]),
-      canDelete() {
-        let examCanBeDeleted = false
-
-        //  If an individual pesticide exam, can only delete if a pesticide liaison
-        if (this.examType === 'pest' && this.is_pesticide_designate) {
-          examCanBeDeleted = true
-        }
-
-        //  If not an individual pesticide exam, do the old, standard test.
-        if (this.examType !== 'pest') {
-          examCanBeDeleted = this.is_office_manager || this.role_code === 'GA' || this.is_ita2_designate
-        }
-        return examCanBeDeleted
+export default {
+  name: 'EditExamModal',
+  components: { DatePicker, DeleteExamModal, FailureExamAlert, OfficeDrop },
+  props: ['actionedExam', 'resetExam'],
+  data () {
+    return {
+      examNotReady: false,
+      feesOptions: 'collect',
+      clickedMenu: false,
+      fields: {
+        exam_received_date: null,
+        notes: null,
+        event_id: null,
+        exam_name: null,
+        receipt: null,
+        receipt_sent_ind: null
       },
-      fieldsEdited() {
-        let fieldsEdited = []
-        let data = Object.assign({}, this.fields)
+      lengthError: false,
+      message: '',
+      methodOptions: [
+        { text: 'paper', value: 'paper' },
+        { text: 'online', value: 'online' }
+      ],
+      exam_received: this.actionedExam.exam_received_date !== null,
+      office_number: null,
+      officeChoices: [],
+      showMessage: false
+    }
+  },
+  computed: {
+    ...mapGetters(['exam_object_id', 'role_code', 'is_ita2_designate', 'is_office_manager', 'is_pesticide_designate']),
+    ...mapState(['editExamFailure',
+      'editExamSuccess',
+      'examTypes',
+      'offices',
+      'showEditExamModal',
+      'showDeleteExamModal',
+      'user']),
+    canDelete () {
+      let examCanBeDeleted = false
+
+      //  If an individual pesticide exam, can only delete if a pesticide liaison
+      if (this.examType === 'pest' && this.is_pesticide_designate) {
+        examCanBeDeleted = true
+      }
+
+      //  If not an individual pesticide exam, do the old, standard test.
+      if (this.examType !== 'pest') {
+        examCanBeDeleted = this.is_office_manager || this.role_code === 'GA' || this.is_ita2_designate
+      }
+      return examCanBeDeleted
+    },
+    fieldsEdited () {
+      const fieldsEdited = []
+      const data = Object.assign({}, this.fields)
+      if (data.exam_received_date) {
+        data.exam_received_date = moment(data.exam_received_date).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
+      }
+      if (data.expiry_date) {
+        data.expiry_date = moment(data.expiry_date).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
+      }
+      for (const key in data) {
+        if (data[key] != this.actionedExam[key]) {
+          fieldsEdited.push(key)
+        }
+      }
+      if (fieldsEdited.length === 1 && fieldsEdited.includes('notes')) {
+        if (!data.notes && !this.actionedExam.notes) {
+          return false
+        }
+      }
+      return fieldsEdited
+    },
+    allowSubmit () {
+      if (this.actionedExam) {
+        const fieldsEdited = []
+        const data = Object.assign({}, this.fields)
         if (data.exam_received_date) {
           data.exam_received_date = moment(data.exam_received_date).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
         }
         if (data.expiry_date) {
           data.expiry_date = moment(data.expiry_date).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
         }
-        for (let key in data) {
+        for (const key in data) {
           if (data[key] != this.actionedExam[key]) {
             fieldsEdited.push(key)
           }
@@ -542,326 +564,303 @@
             return false
           }
         }
-        return fieldsEdited
-      },
-      allowSubmit() {
-        if (this.actionedExam) {
-          let fieldsEdited = []
-          let data = Object.assign({}, this.fields)
-          if (data.exam_received_date) {
-            data.exam_received_date = moment(data.exam_received_date).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
-          }
-          if (data.expiry_date) {
-            data.expiry_date = moment(data.expiry_date).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
-          }
-          for (let key in data) {
-            if (data[key] != this.actionedExam[key]) {
-              fieldsEdited.push(key)
-            }
-          }
-          if (fieldsEdited.length === 1 && fieldsEdited.includes('notes')) {
-            if (!data.notes && !this.actionedExam.notes) {
-              return false
-            }
-          }
-          return (fieldsEdited.length > 0)
-        }
-        return false
-      },
-      otherOfficeExam() {
-        if (!this.is_ita2_designate) {
-          return false
-        }
-        if (this.actionedExam && this.actionedExam.office_id != this.user.office_id) {
-          return true
-        }
-        return false
-      },
-      exam() {
-        if (Object.keys(this.actionedExam).length > 0) {
-          this.feesOptions = (this.actionedExam.receipt) ? 'liaison' : 'collect'
-          this.fields.receipt = this.actionedExam.receipt
-          this.fields.receipt_sent_ind = this.actionedExam.receipt_sent_ind
-          return this.actionedExam
-        }
-        return false
-      },
-      examInputStyle() {
-        if (this.examObject && this.examObject.exam_color !== '#FFFFFF') {
-          let { exam_color } = this.examObject
-          return { border: `1px solid ${exam_color}`, boxShadow: `inset 0px 0px 0px 3px ${exam_color}`, }
-        }
-        return ''
-      },
-      examInputText() {
-        if (this.examObject) {
-          return this.examObject.exam_type_name
-        }
-        return ''
-      },
-      examObject() {
-        if (this.fields && this.fields.exam_type_id) {
-          return this.exam_object_id(this.fields.exam_type_id)
-        }
-        return ''
-      },
-      examType() {
-        if (this.exam && this.exam.exam_type) {
-          let { exam_type } = this.exam
-
-          if (exam_type.exam_type_name === 'Monthly Session Exam') {
-            return 'challenger'
-          }
-          if (exam_type.pesticide_exam_ind) {
-            return 'pest'
-          }
-          if (exam_type.group_exam_ind) {
-            return 'group'
-          }
-          if (exam_type.ita_ind) {
-            return 'individual'
-          }
-          return 'other'
-        }
-      },
-      examTypeDropClass() {
-        if (!this.clickedMenu) {
-          return 'dropdown-menu'
-        }
-        if (this.clickedMenu) {
-          return 'dropdown-menu show py-0 my-0 w-100'
-        }
-      },
-      examTypeDropItems() {
-        if (this.examType && this.examTypes) {
-          let type = this.examType
-          if (type === 'challenger' || type === 'pest') {
-            return null
-          }
-          let types = this.examTypes.filter(t => t.exam_type_name !== 'Monthly Session Exam' && !t.pesticide_exam_ind)
-
-          if (type === 'group') {
-            return types.filter(t => t.group_exam_ind)
-          }
-          if (type === 'individual') {
-            return types.filter(t => t.ita_ind && !t.group_exam_ind)
-          }
-          return types.filter(t => !t.ita_ind && !t.group_exam_ind)
-        }
-        return []
-      },
-      examReceivedOptions() {
-        this.exam_received = this.actionedExam.exam_received_date !== null ? true : false;
-        this.fields.exam_received_date = this.actionedExam.exam_received_date
-        return [
-          { value: false, text: 'No' },
-          { value: true, text: 'Yes' },
-        ];
-      },
-      showAllFields() {
-        if (this.role_code === 'GA' || this.is_ita2_designate || this.is_office_manager) {
-          return true
-        }
-        if (this.examType && ['individual', 'other'].includes(this.examType)) {
-          return true
-        }
-        return false
-      },
-      showModal: {
-        get() {
-          return this.showEditExamModal
-        },
-        set(e) {
-          this.examNotReady = false
-          this.toggleEditExamModal(e)
-        }
-      },
+        return (fieldsEdited.length > 0)
+      }
+      return false
     },
-    methods: {
-      ...mapActions(['downloadExam', 'getBookings', 'getExams', 'getOffices', 'putExamInfo',]),
-      ...mapMutations([
-        'setEditExamFailure',
-        'setEditExamSuccess',
-        'setSelectedExam',
-        'setReturnExamInfo',
-        'setReturnDeleteExamInfo',
-        'toggleEditExamModal',
-        'toggleDeleteExamModalVisible'
-      ]),
-      handleDate(date) {
-        Vue.set(
-          this.fields,
-          'exam_received_date',
-          date
-        )
-      },
-      isITAGroupOrSingleExam(ex) {
-        return ex.exam_type.ita_ind ? true : false
-      },
-      checkAndDownloadExam() {
-        this.downloadExam(this.exam)
-          .then((resp) => {
-            let filename = `${this.exam.exam_id}.pdf`
-            FileDownload(resp.data, filename, "application/pdf")
-            this.updatePrintExamReceived('exam-downloaded')
-          })
-          .catch((error) => {
-            console.log('===> edit-exam-form-modal====>error',error)
-            console.error(error)
-            this.examNotReady = true
-            setTimeout(() => { this.examNotReady = false }, 15000)
-          })
-      },
-      checkInputLength(e) {
-        if (e.keyCode == 8 || e.keyCode == 46) {
-          this.removeError()
-          return true
+    otherOfficeExam () {
+      if (!this.is_ita2_designate) {
+        return false
+      }
+      if (this.actionedExam && this.actionedExam.office_id != this.user.office_id) {
+        return true
+      }
+      return false
+    },
+    exam () {
+      if (Object.keys(this.actionedExam).length > 0) {
+        this.feesOptions = (this.actionedExam.receipt) ? 'liaison' : 'collect'
+        this.fields.receipt = this.actionedExam.receipt
+        this.fields.receipt_sent_ind = this.actionedExam.receipt_sent_ind
+        return this.actionedExam
+      }
+      return false
+    },
+    examInputStyle () {
+      if (this.examObject && this.examObject.exam_color !== '#FFFFFF') {
+        const { exam_color } = this.examObject
+        return { border: `1px solid ${exam_color}`, boxShadow: `inset 0px 0px 0px 3px ${exam_color}` }
+      }
+      return ''
+    },
+    examInputText () {
+      if (this.examObject) {
+        return this.examObject.exam_type_name
+      }
+      return ''
+    },
+    examObject () {
+      if (this.fields && this.fields.exam_type_id) {
+        return this.exam_object_id(this.fields.exam_type_id)
+      }
+      return ''
+    },
+    examType () {
+      if (this.exam && this.exam.exam_type) {
+        const { exam_type } = this.exam
+
+        if (exam_type.exam_type_name === 'Monthly Session Exam') {
+          return 'challenger'
         }
-        if (this.fields.exam_name && this.fields.exam_name.length >= 50) {
-          this.lengthError = true
-          e.preventDefault()
-          e.stopPropagation()
-          return false
+        if (exam_type.pesticide_exam_ind) {
+          return 'pest'
         }
-      },
-      deleteExam() {
-        let deleteExamInfo = {}
-        if (this.fields.booking_id) {
-          deleteExamInfo = {
-            booking_id: this.fields.booking_id,
-            exam_id: this.fields.exam_id,
-            exam_name: this.fields.exam_name,
-            examinee_name: this.fields.examinee_name,
-            event_id: this.fields.event_id,
-          }
-        } else {
-          deleteExamInfo = {
-            booking_id: null,
-            exam_id: this.fields.exam_id,
-            exam_name: this.fields.exam_name,
-            examinee_name: this.fields.examinee_name,
-            event_id: this.fields.event_id,
-          }
+        if (exam_type.group_exam_ind) {
+          return 'group'
         }
-        this.toggleDeleteExamModalVisible(true)
-        this.setReturnExamInfo(deleteExamInfo)
-      },
-      handleExamDropClick(e) {
-        this.fields.exam_type_id = e.target.id
-      },
-      handleExamInputClick() {
-        if (!this.clickedMenu) {
-          this.clickedMenu = true
-          return
+        if (exam_type.ita_ind) {
+          return 'individual'
         }
-        this.clickedMenu = false
+        return 'other'
+      }
+    },
+    examTypeDropClass () {
+      if (!this.clickedMenu) {
+        return 'dropdown-menu'
+      }
+      if (this.clickedMenu) {
+        return 'dropdown-menu show py-0 my-0 w-100'
+      }
+    },
+    examTypeDropItems () {
+      if (this.examType && this.examTypes) {
+        const type = this.examType
+        if (type === 'challenger' || type === 'pest') {
+          return null
+        }
+        const types = this.examTypes.filter(t => t.exam_type_name !== 'Monthly Session Exam' && !t.pesticide_exam_ind)
+
+        if (type === 'group') {
+          return types.filter(t => t.group_exam_ind)
+        }
+        if (type === 'individual') {
+          return types.filter(t => t.ita_ind && !t.group_exam_ind)
+        }
+        return types.filter(t => !t.ita_ind && !t.group_exam_ind)
+      }
+      return []
+    },
+    examReceivedOptions () {
+      this.exam_received = this.actionedExam.exam_received_date !== null
+      this.fields.exam_received_date = this.actionedExam.exam_received_date
+      return [
+        { value: false, text: 'No' },
+        { value: true, text: 'Yes' }
+      ]
+    },
+    showAllFields () {
+      if (this.role_code === 'GA' || this.is_ita2_designate || this.is_office_manager) {
+        return true
+      }
+      if (this.examType && ['individual', 'other'].includes(this.examType)) {
+        return true
+      }
+      return false
+    },
+    showModal: {
+      get () {
+        return this.showEditExamModal
       },
-      populateForm() {
-        let exam = this.actionedExam
-        Object.keys(exam).forEach( key => {
-          if (typeof exam[key] === 'string' || typeof exam[key] === 'number') {
-            Vue.set(
-              this.fields,
-              key,
-              exam[key]
-            )
-          }
+      set (e) {
+        this.examNotReady = false
+        this.toggleEditExamModal(e)
+      }
+    }
+  },
+  methods: {
+    ...mapActions(['downloadExam', 'getBookings', 'getExams', 'getOffices', 'putExamInfo']),
+    ...mapMutations([
+      'setEditExamFailure',
+      'setEditExamSuccess',
+      'setSelectedExam',
+      'setReturnExamInfo',
+      'setReturnDeleteExamInfo',
+      'toggleEditExamModal',
+      'toggleDeleteExamModalVisible'
+    ]),
+    handleDate (date) {
+      Vue.set(
+        this.fields,
+        'exam_received_date',
+        date
+      )
+    },
+    isITAGroupOrSingleExam (ex) {
+      return !!ex.exam_type.ita_ind
+    },
+    checkAndDownloadExam () {
+      this.downloadExam(this.exam)
+        .then((resp) => {
+          const filename = `${this.exam.exam_id}.pdf`
+          FileDownload(resp.data, filename, 'application/pdf')
+          this.updatePrintExamReceived('exam-downloaded')
         })
-        if (exam.expiry_date) {
-          this.fields.expiry_date = new moment(exam.expiry_date).format('YYYY-MM-DD')
+        .catch((error) => {
+          console.log('===> edit-exam-form-modal====>error', error)
+          console.error(error)
+          this.examNotReady = true
+          setTimeout(() => { this.examNotReady = false }, 15000)
+        })
+    },
+    checkInputLength (e) {
+      if (e.keyCode == 8 || e.keyCode == 46) {
+        this.removeError()
+        return true
+      }
+      if (this.fields.exam_name && this.fields.exam_name.length >= 50) {
+        this.lengthError = true
+        e.preventDefault()
+        e.stopPropagation()
+        return false
+      }
+    },
+    deleteExam () {
+      let deleteExamInfo = {}
+      if (this.fields.booking_id) {
+        deleteExamInfo = {
+          booking_id: this.fields.booking_id,
+          exam_id: this.fields.exam_id,
+          exam_name: this.fields.exam_name,
+          examinee_name: this.fields.examinee_name,
+          event_id: this.fields.event_id
         }
-        if (exam.exam_received_date && moment().isValid(exam.exam_received_date)) {
-          this.fields.exam_received_date = new moment(exam.exam_received_date).format('YYYY-MM-DD')
-          this.exam_received = true
+      } else {
+        deleteExamInfo = {
+          booking_id: null,
+          exam_id: this.fields.exam_id,
+          exam_name: this.fields.exam_name,
+          examinee_name: this.fields.examinee_name,
+          event_id: this.fields.event_id
         }
-        this.office_number = exam.office.office_number
-      },
-      setOffice(officeNumber) {
-        this.office_number = officeNumber
-        this.fields.office_id = this.offices.find(office => office.office_number == officeNumber).office_id
-      },
-      removeError() {
-        this.lengthError = false
-      },
-      reset() {
-        Object.keys(this.fields).forEach(key => {
+      }
+      this.toggleDeleteExamModalVisible(true)
+      this.setReturnExamInfo(deleteExamInfo)
+    },
+    handleExamDropClick (e) {
+      this.fields.exam_type_id = e.target.id
+    },
+    handleExamInputClick () {
+      if (!this.clickedMenu) {
+        this.clickedMenu = true
+        return
+      }
+      this.clickedMenu = false
+    },
+    populateForm () {
+      const exam = this.actionedExam
+      Object.keys(exam).forEach(key => {
+        if (typeof exam[key] === 'string' || typeof exam[key] === 'number') {
           Vue.set(
             this.fields,
             key,
-            null
+            exam[key]
           )
-        })
-        this.lengthError = false
-        this.clickedMenu = false
-        this.message = null
-        this.office_number = null
-        this.exam_received = false
-        this.search = ''
-        this.searching = false
-        this.showMessage = false
-        this.showSearch = false
-        this.resetExam()
-      },
-      setMessage() {
-        if (!this.allowSubmit) {
-          if (!this.fields.office_id) {
-            this.message = 'Please specify a valid office.'
-          } else {
-            this.message = 'Nothing has changed.  All fields contain their original values.'
-          }
-          this.showMessage = true
         }
-      },
-      submit() {
-        let data = Object.assign({}, this.fields)
-        let putRequest = {
-          exam_id: this.fields.exam_id
+      })
+      if (exam.expiry_date) {
+        this.fields.expiry_date = new moment(exam.expiry_date).format('YYYY-MM-DD')
+      }
+      if (exam.exam_received_date && moment().isValid(exam.exam_received_date)) {
+        this.fields.exam_received_date = new moment(exam.exam_received_date).format('YYYY-MM-DD')
+        this.exam_received = true
+      }
+      this.office_number = exam.office.office_number
+    },
+    setOffice (officeNumber) {
+      this.office_number = officeNumber
+      this.fields.office_id = this.offices.find(office => office.office_number == officeNumber).office_id
+    },
+    removeError () {
+      this.lengthError = false
+    },
+    reset () {
+      Object.keys(this.fields).forEach(key => {
+        Vue.set(
+          this.fields,
+          key,
+          null
+        )
+      })
+      this.lengthError = false
+      this.clickedMenu = false
+      this.message = null
+      this.office_number = null
+      this.exam_received = false
+      this.search = ''
+      this.searching = false
+      this.showMessage = false
+      this.showSearch = false
+      this.resetExam()
+    },
+    setMessage () {
+      if (!this.allowSubmit) {
+        if (!this.fields.office_id) {
+          this.message = 'Please specify a valid office.'
+        } else {
+          this.message = 'Nothing has changed.  All fields contain their original values.'
         }
-        if (data.exam_received_date) {
-          data.exam_received_date = moment(data.exam_received_date).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
-        }
-        if (data.expiry_date) {
-          data.expiry_date = moment(data.expiry_date).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
-        }
-        Object.keys(data).forEach( key => {
-          if (data[key] != this.actionedExam[key]) {
-            putRequest[key] = data[key]
-          }
-        })
-        if (!this.exam_received) {
-          putRequest['exam_received_date'] = null
-        }
-        this.putExamInfo(putRequest).then( () => {
-          this.toggleEditExamModal(false)
-        }).catch( () => {
-          this.setEditExamFailure(10)
-        })
-      },
-      updateExamReceived(e) {
-        let { exam_received_date } = this.fields
-        if(e.type == 'exam-downloaded') {
-          this.exam_received = true
-        }
-        if (e && !exam_received_date) {
-          this.fields.exam_received_date = new moment().format('YYYY-MM-DD')
-          return
-        }
-        if (!e) {
-          this.fields.exam_received_date = null
-        }
-      },
-      updatePrintExamReceived(strExam) {
-        let { exam_received_date } = this.fields
-        if(strExam == 'exam-downloaded') {
-          this.exam_received = true
-        }
-        if (strExam && !exam_received_date) {
-          this.fields.exam_received_date = new moment().format('YYYY-MM-DD')
-          return
-        }
+        this.showMessage = true
       }
     },
+    submit () {
+      const data = Object.assign({}, this.fields)
+      const putRequest = {
+        exam_id: this.fields.exam_id
+      }
+      if (data.exam_received_date) {
+        data.exam_received_date = moment(data.exam_received_date).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
+      }
+      if (data.expiry_date) {
+        data.expiry_date = moment(data.expiry_date).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
+      }
+      Object.keys(data).forEach(key => {
+        if (data[key] != this.actionedExam[key]) {
+          putRequest[key] = data[key]
+        }
+      })
+      if (!this.exam_received) {
+        putRequest.exam_received_date = null
+      }
+      this.putExamInfo(putRequest).then(() => {
+        this.toggleEditExamModal(false)
+      }).catch(() => {
+        this.setEditExamFailure(10)
+      })
+    },
+    updateExamReceived (e) {
+      const { exam_received_date } = this.fields
+      if (e.type == 'exam-downloaded') {
+        this.exam_received = true
+      }
+      if (e && !exam_received_date) {
+        this.fields.exam_received_date = new moment().format('YYYY-MM-DD')
+        return
+      }
+      if (!e) {
+        this.fields.exam_received_date = null
+      }
+    },
+    updatePrintExamReceived (strExam) {
+      const { exam_received_date } = this.fields
+      if (strExam == 'exam-downloaded') {
+        this.exam_received = true
+      }
+      if (strExam && !exam_received_date) {
+        this.fields.exam_received_date = new moment().format('YYYY-MM-DD')
+      }
+    }
   }
+}
 </script>
 
 <style scoped>

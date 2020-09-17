@@ -15,8 +15,8 @@
 </template>
 
 <script>
-  export default {
-    name: "DataSummaryTable",
-    props: ['displayData']
-  }
+export default {
+  name: 'DataSummaryTable',
+  props: ['displayData']
+}
 </script>

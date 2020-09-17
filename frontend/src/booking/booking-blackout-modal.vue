@@ -485,432 +485,429 @@
 </template>
 
 <script>
-    import { mapActions, mapMutations, mapState, mapGetters } from 'vuex'
-    import DatePicker from 'vue2-datepicker'
-    import moment from 'moment'
-    import { RRule } from 'rrule'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import DatePicker from 'vue2-datepicker'
+import moment from 'moment'
+import { RRule } from 'rrule'
 
-    export default {
-      name: "BookingBlackoutModal",
-      components: { DatePicker},
-      created(){
-        this.blackout_name = "BLACKOUT PERIOD"
-        this.user_contact_info = this.$store.state.user.username
-      },
-      data(){
-        return {
-          blackout_date: null,
-          start_time: null,
-          end_time: null,
-          notes: '',
-          blackout_name: '',
-          user_contact_info: '',
-          selected: [],
-          selectedLength: 0,
-          room_id_list: [],
-          room_fields: ['selected', 'title'],
-          single_booking_blackout_boolean: true,
-          recurring_booking_blackout_boolean: true,
-          selected_booking_frequency: [],
-          selected_booking_weekdays: [],
-          selected_booking_count: '',
-          recurring_booking_start_time: null,
-          recurring_booking_end_time: null,
-          recurring_booking_start_date: null,
-          recurring_booking_end_date: null,
-          yearly: RRule.YEARLY,
-          monthly: RRule.MONTHLY,
-          weekly: RRule.WEEKLY,
-          daily: RRule.DAILY,
-          monday: RRule.MO,
-          tuesday: RRule.TU,
-          wednesday: RRule.WE,
-          thursday: RRule.TH,
-          friday: RRule.FR,
-          booking_rrule_array: [],
-          booking_rrule_text: '',
-          single_input_boolean: false,
-          recurring_input_boolean: false,
-          recurring_form_state: '',
-          single_form_state: ''
+export default {
+  name: 'BookingBlackoutModal',
+  components: { DatePicker },
+  created () {
+    this.blackout_name = 'BLACKOUT PERIOD'
+    this.user_contact_info = this.$store.state.user.username
+  },
+  data () {
+    return {
+      blackout_date: null,
+      start_time: null,
+      end_time: null,
+      notes: '',
+      blackout_name: '',
+      user_contact_info: '',
+      selected: [],
+      selectedLength: 0,
+      room_id_list: [],
+      room_fields: ['selected', 'title'],
+      single_booking_blackout_boolean: true,
+      recurring_booking_blackout_boolean: true,
+      selected_booking_frequency: [],
+      selected_booking_weekdays: [],
+      selected_booking_count: '',
+      recurring_booking_start_time: null,
+      recurring_booking_end_time: null,
+      recurring_booking_start_date: null,
+      recurring_booking_end_date: null,
+      yearly: RRule.YEARLY,
+      monthly: RRule.MONTHLY,
+      weekly: RRule.WEEKLY,
+      daily: RRule.DAILY,
+      monday: RRule.MO,
+      tuesday: RRule.TU,
+      wednesday: RRule.WE,
+      thursday: RRule.TH,
+      friday: RRule.FR,
+      booking_rrule_array: [],
+      booking_rrule_text: '',
+      single_input_boolean: false,
+      recurring_input_boolean: false,
+      recurring_form_state: '',
+      single_form_state: ''
+    }
+  },
+  methods: {
+    ...mapActions([
+      'getBookings',
+      'postBooking',
+      'finishBooking'
+    ]),
+    ...mapMutations([
+      'toggleBookingBlackoutModal'
+    ]),
+    hideCollapse (div_id) {
+      if (document.getElementById(div_id)) {
+        if (document.getElementById(div_id).classList.contains('show')) {
+          this.$root.$emit('bv::toggle::collapse', div_id)
         }
-      },
-      methods: {
-        ...mapActions([
-          'getBookings',
-          'postBooking',
-          'finishBooking',
-        ]),
-        ...mapMutations([
-          'toggleBookingBlackoutModal'
-        ]),
-        hideCollapse(div_id){
-          if(document.getElementById(div_id)){
-            if(document.getElementById(div_id).classList.contains('show')){
-              this.$root.$emit('bv::toggle::collapse', div_id)
-            }
+      }
+    },
+    showCollapse (div_id) {
+      if (document.getElementById(div_id)) {
+        if (document.getElementById(div_id).style.display === 'none') {
+          this.$root.$emit('bv::toggle::collapse', div_id)
+        }
+      }
+    },
+    show () {
+      this.showCollapse('collapse-booking-event-selection')
+      this.hideCollapse('collapse-single-booking')
+      // clear single event information
+      this.start_time = null
+      this.end_time = null
+      this.blackout_date = null
+      this.notes = ''
+
+      // clear recurring event information
+      this.recurring_booking_start_date = null
+      this.recurring_booking_start_time = null
+      this.recurring_booking_end_date = null
+      this.recurring_booking_end_time = null
+      this.selected_booking_frequency = []
+      this.selected_booking_weekdays = []
+      this.selected_booking_count = ''
+
+      // clear local states
+      this.single_form_state = ''
+      this.recurring_form_state = ''
+    },
+    cancel () {
+      this.toggleBookingBlackoutModal(false)
+    },
+    onRowSelected (roomResources) {
+      const roomResourceLength = roomResources.length
+      let roomResourceIndex = roomResources.length - 1
+
+      if (roomResourceIndex == -1) {
+        roomResourceIndex = 0
+      }
+
+      if (this.selectedLength <= roomResourceLength) {
+        if (roomResourceLength == 1) {
+          this.selected.push({ id: roomResources[0].id, name: roomResources[0].title })
+          this.selectedLength = this.selected.length
+          this.room_id_list.push(roomResources[0].id)
+        } else if (roomResourceLength > 1) {
+          this.selected.push({ id: roomResources[roomResourceIndex].id, name: roomResources[roomResourceIndex].title })
+          this.selectedLength = this.selected.length
+          this.room_id_list.push(roomResources[roomResourceIndex].id)
+        }
+      } else if (this.selectedLength > roomResourceLength) {
+        const remainingIDs = []
+        roomResources.forEach(function (room) {
+          remainingIDs.push(room.id)
+        })
+        const selectedIDs = []
+        this.selected.forEach(function (room) {
+          selectedIDs.push(room.id)
+        })
+        const difference = selectedIDs.filter(x => !remainingIDs.includes(x))
+        const indexOfDifference = this.selected.findIndex(x => x.id == difference)
+        if (indexOfDifference !== undefined) {
+          this.selected.splice(indexOfDifference, 1)
+        }
+        const indexOfDifferenceRoomList = this.room_id_list.findIndex(x => x.id == difference)
+        if (indexOfDifferenceRoomList !== undefined) {
+          this.room_id_list.splice(indexOfDifferenceRoomList, 1)
+        }
+      }
+    },
+    formatStartDate (date) {
+      const formatted_start_date = moment(date).format('YYYY-MM-DD HH:mm')
+      return formatted_start_date
+    },
+    formatEndDate (date) {
+      const formatted_end_date = moment(date).format('HH:mm')
+      return formatted_end_date
+    },
+    submit (e) {
+      e.preventDefault()
+      const date = moment(this.blackout_date).clone().format('YYYY-MM-DD')
+      const start = moment(this.start_time).clone().format('HH:mm:ss')
+      const start_date = moment(date + ' ' + start).format()
+      const end = moment(this.end_time).clone().format('HH:mm:ss')
+      const end_date = moment(date + ' ' + end).format()
+      const uuidv4 = require('uuid/v4')
+      const recurring_uuid = uuidv4()
+
+      if (this.booking_rrule_array.length === 0) {
+        if (this.room_id_list.length === 1) {
+          const blackout_booking = {}
+          if (this.selected[0].id === '_offsite') {
+            blackout_booking.start_time = start_date
+            blackout_booking.end_time = end_date
+            blackout_booking.booking_name = this.blackout_name
+            blackout_booking.booking_contact_information = this.user_contact_info
+            blackout_booking.blackout_flag = 'Y'
+            blackout_booking.blackout_notes = this.notes
+          } else {
+            blackout_booking.start_time = start_date
+            blackout_booking.end_time = end_date
+            blackout_booking.booking_name = this.blackout_name
+            blackout_booking.booking_contact_information = this.user_contact_info
+            blackout_booking.room_id = this.selected[0].id
+            blackout_booking.blackout_flag = 'Y'
+            blackout_booking.blackout_notes = this.notes
           }
-        },
-        showCollapse(div_id){
-          if(document.getElementById(div_id)){
-            if(document.getElementById(div_id).style.display === 'none'){
-              this.$root.$emit('bv::toggle::collapse', div_id)
-            }
-          }
-        },
-        show(){
-          this.showCollapse('collapse-booking-event-selection')
-          this.hideCollapse('collapse-single-booking')
-          // clear single event information
-          this.start_time = null
-          this.end_time = null
-          this.blackout_date = null
-          this.notes = ''
-
-          // clear recurring event information
-          this.recurring_booking_start_date = null
-          this.recurring_booking_start_time = null
-          this.recurring_booking_end_date = null
-          this.recurring_booking_end_time = null
-          this.selected_booking_frequency = []
-          this.selected_booking_weekdays = []
-          this.selected_booking_count = ''
-
-          // clear local states
-          this.single_form_state = ''
-          this.recurring_form_state = ''
-        },
-        cancel(){
-          this.toggleBookingBlackoutModal(false)
-        },
-        onRowSelected(roomResources){
-
-          let roomResourceLength = roomResources.length
-          let roomResourceIndex = roomResources.length - 1
-
-          if (roomResourceIndex == -1) {
-            roomResourceIndex = 0
-          }
-
-          if(this.selectedLength <= roomResourceLength){
-            if(roomResourceLength == 1){
-              this.selected.push({id: roomResources[0].id, name: roomResources[0].title})
-              this.selectedLength = this.selected.length
-              this.room_id_list.push(roomResources[0].id)
-            }else if(roomResourceLength > 1){
-              this.selected.push({id: roomResources[roomResourceIndex].id, name: roomResources[roomResourceIndex].title})
-              this.selectedLength = this.selected.length
-              this.room_id_list.push(roomResources[roomResourceIndex].id)
-            }
-          }else if(this.selectedLength > roomResourceLength){
-            let remainingIDs = []
-            roomResources.forEach(function(room) {
-              remainingIDs.push(room.id)
-            })
-            let selectedIDs = []
-            this.selected.forEach(function(room) {
-              selectedIDs.push(room.id)
-            })
-            let difference  = selectedIDs.filter(x =>  !remainingIDs.includes(x))
-            let indexOfDifference = this.selected.findIndex(x => x.id == difference)
-            if(indexOfDifference !== undefined){
-              this.selected.splice(indexOfDifference, 1)
-            }
-            let indexOfDifferenceRoomList = this.room_id_list.findIndex(x => x.id == difference)
-            if(indexOfDifferenceRoomList !== undefined){
-              this.room_id_list.splice(indexOfDifferenceRoomList, 1)
-            }
-          }
-        },
-        formatStartDate(date){
-          let formatted_start_date = moment(date).format('YYYY-MM-DD HH:mm')
-          return formatted_start_date
-        },
-        formatEndDate(date){
-          let formatted_end_date = moment(date).format('HH:mm')
-          return formatted_end_date
-        },
-        submit(e){
-          e.preventDefault()
-          let date = moment(this.blackout_date).clone().format('YYYY-MM-DD')
-          let start = moment(this.start_time).clone().format('HH:mm:ss')
-          let start_date = moment(date + " " + start).format()
-          let end = moment(this.end_time).clone().format('HH:mm:ss')
-          let end_date = moment(date + " " + end).format()
-          const uuidv4 = require('uuid/v4')
-          let recurring_uuid = uuidv4()
-
-          if(this.booking_rrule_array.length === 0){
-            if(this.room_id_list.length === 1){
-              let blackout_booking = {}
-              if(this.selected[0].id === '_offsite'){
-                blackout_booking.start_time = start_date
-                blackout_booking.end_time = end_date
-                blackout_booking.booking_name = this.blackout_name
-                blackout_booking.booking_contact_information = this.user_contact_info
-                blackout_booking.blackout_flag = 'Y'
-                blackout_booking.blackout_notes = this.notes
-              }else {
-                blackout_booking.start_time = start_date
-                blackout_booking.end_time = end_date
-                blackout_booking.booking_name = this.blackout_name
-                blackout_booking.booking_contact_information = this.user_contact_info
-                blackout_booking.room_id  = this.selected[0].id
-                blackout_booking.blackout_flag = 'Y'
-                blackout_booking.blackout_notes = this.notes
-              }
-              this.postBooking(blackout_booking).then( () => {
-                this.finishBooking()
-                this.toggleBookingBlackoutModal(false)
-              })
-              this.getBookings
-            }else if(this.room_id_list.length > 1){
-              let self = this
-              this.room_id_list.forEach(function (room) {
-                let blackout_booking = {}
-                if(room == '_offsite'){
-                  blackout_booking.start_time = start_date
-                  blackout_booking.end_time = end_date
-                  blackout_booking.booking_name = self.blackout_name
-                  blackout_booking.booking_contact_information = self.user_contact_info
-                  blackout_booking.blackout_flag = 'Y'
-                  blackout_booking.blackout_notes = self.notes
-                }else {
-                  blackout_booking.start_time = start_date
-                  blackout_booking.end_time = end_date
-                  blackout_booking.booking_name = self.blackout_name
-                  blackout_booking.booking_contact_information = self.user_contact_info
-                  blackout_booking.room_id  = room
-                  blackout_booking.blackout_flag = 'Y'
-                  blackout_booking.blackout_notes = self.notes
-                }
-                self.postBooking(blackout_booking).then( () => {
-                  self.getBookings()
-                })
-              })
-            }
-          }else if(this.booking_rrule_array.length > 0){
-            let booking_array = []
-            let self = this
-            if(this.room_id_list.length === 1){
-              if(this.selected[0].id === '_offsite'){
-                this.booking_rrule_array.forEach(date => {
-                  let booking = {}
-                  booking.start_time = date.start
-                  booking.end_time = date.end
-                  booking.booking_name = self.blackout_name
-                  booking.booking_contact_information = self.user_contact_info
-                  booking.blackout_flag = 'Y'
-                  booking.blackout_notes = self.notes
-                  booking.recurring_uuid = recurring_uuid
-                  booking_array.push(booking)
-                })
-              }else{
-                this.booking_rrule_array.forEach(date => {
-                  let booking = {}
-                  booking.start_time = date.start
-                  booking.end_time = date.end
-                  booking.booking_name = self.blackout_name
-                  booking.booking_contact_information = self.user_contact_info
-                  booking.blackout_flag = 'Y'
-                  booking.blackout_notes = self.notes
-                  booking.room_id = self.selected[0].id
-                  booking.recurring_uuid = recurring_uuid
-                  booking_array.push(booking)
-                })
-              }
-            }else if(this.room_id_list.length > 1){
-              this.room_id_list.forEach(room => {
-                this.booking_rrule_array.forEach(date => {
-                  let booking = {}
-                  booking.room_id = room
-                  booking.start_time = date.start
-                  booking.end_time = date.end
-                  booking.booking_name = self.blackout_name
-                  booking.booking_contact_information = self.user_contact_info
-                  booking.blackout_flag = 'Y'
-                  booking.blackout_notes = self.notes
-                  booking.recurring_uuid = recurring_uuid
-                  if(booking.room_id === '_offsite'){
-                    delete booking.room_id
-                  }
-
-                  booking_array.push(booking)
-                })
-              })
-            }
-            booking_array.forEach(booking => {
-              self.postBooking(booking).then( () => {
-                self.getBookings()
-              })
-            })
+          this.postBooking(blackout_booking).then(() => {
+            this.finishBooking()
             this.toggleBookingBlackoutModal(false)
-          }
-        },
-        generateRule(){
-          this.hideCollapse('collapse-booking-event-selection')
-          this.hideCollapse('collapse-recurring-booking')
-          this.single_booking_blackout_boolean = true
-          this.recurring_booking_blackout_boolean = true
-          // Commented out start/end variables are for testing 5pm pst -> utc conversion bug
-          // Removed these variables from the date_start and until variable declarations
-          let start_year = parseInt(moment(this.recurring_booking_start_date).clone().format('YYYY'))
-          let start_month = parseInt(moment(this.recurring_booking_start_date).clone().format('MM'))
-          let start_day = parseInt(moment(this.recurring_booking_start_date).clone().format('DD'))
-          //let start_hour = parseInt(moment(this.recurring_booking_start_time).utc().clone().format('HH'))
-          let local_start_hour = parseInt(moment(this.recurring_booking_start_time).clone().format('HH'))
-          let start_minute = parseInt(moment(this.recurring_booking_start_time).utc().clone().format('mm'))
-          let end_year = parseInt(moment(this.recurring_booking_end_date).clone().format('YYYY'))
-          let end_month = parseInt(moment(this.recurring_booking_end_date).clone().format('MM'))
-          let end_day = parseInt(moment(this.recurring_booking_end_date).clone().format('DD'))
-          //let end_hour = parseInt(moment(this.recurring_booking_end_time).utc().clone().format('HH'))
-          //let end_minute = parseInt(moment(this.recurring_booking_end_time).utc().clone().format('mm'))
-          let duration = moment.duration(moment(this.recurring_booking_end_time).diff(moment(this.recurring_booking_start_time)))
-          let duration_minutes = duration.asMinutes()
-          let booking_input_frequency = null
-          let local_booking_dates_array = []
-
-          switch(this.selected_booking_frequency[0]){
-            case 0:
-              booking_input_frequency = RRule.YEARLY;
-              break;
-            case 1:
-              booking_input_frequency = RRule.MONTHLY;
-              break;
-            case 2:
-              booking_input_frequency = RRule.WEEKLY;
-              break;
-            case 3:
-              booking_input_frequency = RRule.DAILY;
-              break;
-          }
-
-          if(isNaN(start_year) == false || isNaN(end_year) == false){
-
-            // TODO Might be Deprecated -- IF RRule Breaks, this is where it will happen
-            // Removed hours and minutes from date_start and until
-            let date_start = new Date(Date.UTC(start_year, start_month -1, start_day))
-            let until = new Date(Date.UTC(end_year, end_month -1, end_day))
-
-            const rule = new RRule({
-              freq: booking_input_frequency,
-              count: this.selected_booking_count,
-              byweekday: this.selected_booking_weekdays,
-              dtstart: date_start,
-              until: until,
+          })
+          this.getBookings
+        } else if (this.room_id_list.length > 1) {
+          const self = this
+          this.room_id_list.forEach(function (room) {
+            const blackout_booking = {}
+            if (room == '_offsite') {
+              blackout_booking.start_time = start_date
+              blackout_booking.end_time = end_date
+              blackout_booking.booking_name = self.blackout_name
+              blackout_booking.booking_contact_information = self.user_contact_info
+              blackout_booking.blackout_flag = 'Y'
+              blackout_booking.blackout_notes = self.notes
+            } else {
+              blackout_booking.start_time = start_date
+              blackout_booking.end_time = end_date
+              blackout_booking.booking_name = self.blackout_name
+              blackout_booking.booking_contact_information = self.user_contact_info
+              blackout_booking.room_id = room
+              blackout_booking.blackout_flag = 'Y'
+              blackout_booking.blackout_notes = self.notes
+            }
+            self.postBooking(blackout_booking).then(() => {
+              self.getBookings()
             })
-
-            let array = rule.all()
-            this.booking_rrule_text = rule.toText()
-            array.forEach(date => {
-              // created date_with_offset to fix pst -> utc 5pm bug
-              let date_with_offset = moment(date).clone().set({hour: local_start_hour, minute: start_minute}).add(new Date().getTimezoneOffset(), 'minutes')
-              if(local_start_hour >= 8 && local_start_hour < 15){
-                date_with_offset.add(1, 'day')
+          })
+        }
+      } else if (this.booking_rrule_array.length > 0) {
+        const booking_array = []
+        const self = this
+        if (this.room_id_list.length === 1) {
+          if (this.selected[0].id === '_offsite') {
+            this.booking_rrule_array.forEach(date => {
+              const booking = {}
+              booking.start_time = date.start
+              booking.end_time = date.end
+              booking.booking_name = self.blackout_name
+              booking.booking_contact_information = self.user_contact_info
+              booking.blackout_flag = 'Y'
+              booking.blackout_notes = self.notes
+              booking.recurring_uuid = recurring_uuid
+              booking_array.push(booking)
+            })
+          } else {
+            this.booking_rrule_array.forEach(date => {
+              const booking = {}
+              booking.start_time = date.start
+              booking.end_time = date.end
+              booking.booking_name = self.blackout_name
+              booking.booking_contact_information = self.user_contact_info
+              booking.blackout_flag = 'Y'
+              booking.blackout_notes = self.notes
+              booking.room_id = self.selected[0].id
+              booking.recurring_uuid = recurring_uuid
+              booking_array.push(booking)
+            })
+          }
+        } else if (this.room_id_list.length > 1) {
+          this.room_id_list.forEach(room => {
+            this.booking_rrule_array.forEach(date => {
+              const booking = {}
+              booking.room_id = room
+              booking.start_time = date.start
+              booking.end_time = date.end
+              booking.booking_name = self.blackout_name
+              booking.booking_contact_information = self.user_contact_info
+              booking.blackout_flag = 'Y'
+              booking.blackout_notes = self.notes
+              booking.recurring_uuid = recurring_uuid
+              if (booking.room_id === '_offsite') {
+                delete booking.room_id
               }
-              let formatted_start_date = moment(date_with_offset).clone().set({hour: local_start_hour, minute: start_minute}).format('YYYY-MM-DD HH:mm:ssZ')
-              let formatted_end_date = moment(date_with_offset).clone().set({hour: local_start_hour, minute: start_minute}).add(duration_minutes, 'minutes').format('YYYY-MM-DD HH:mm:ssZ')
-              local_booking_dates_array.push({start: formatted_start_date, end: formatted_end_date})
+
+              booking_array.push(booking)
             })
+          })
+        }
+        booking_array.forEach(booking => {
+          self.postBooking(booking).then(() => {
+            self.getBookings()
+          })
+        })
+        this.toggleBookingBlackoutModal(false)
+      }
+    },
+    generateRule () {
+      this.hideCollapse('collapse-booking-event-selection')
+      this.hideCollapse('collapse-recurring-booking')
+      this.single_booking_blackout_boolean = true
+      this.recurring_booking_blackout_boolean = true
+      // Commented out start/end variables are for testing 5pm pst -> utc conversion bug
+      // Removed these variables from the date_start and until variable declarations
+      const start_year = parseInt(moment(this.recurring_booking_start_date).clone().format('YYYY'))
+      const start_month = parseInt(moment(this.recurring_booking_start_date).clone().format('MM'))
+      const start_day = parseInt(moment(this.recurring_booking_start_date).clone().format('DD'))
+      // let start_hour = parseInt(moment(this.recurring_booking_start_time).utc().clone().format('HH'))
+      const local_start_hour = parseInt(moment(this.recurring_booking_start_time).clone().format('HH'))
+      const start_minute = parseInt(moment(this.recurring_booking_start_time).utc().clone().format('mm'))
+      const end_year = parseInt(moment(this.recurring_booking_end_date).clone().format('YYYY'))
+      const end_month = parseInt(moment(this.recurring_booking_end_date).clone().format('MM'))
+      const end_day = parseInt(moment(this.recurring_booking_end_date).clone().format('DD'))
+      // let end_hour = parseInt(moment(this.recurring_booking_end_time).utc().clone().format('HH'))
+      // let end_minute = parseInt(moment(this.recurring_booking_end_time).utc().clone().format('mm'))
+      const duration = moment.duration(moment(this.recurring_booking_end_time).diff(moment(this.recurring_booking_start_time)))
+      const duration_minutes = duration.asMinutes()
+      let booking_input_frequency = null
+      const local_booking_dates_array = []
+
+      switch (this.selected_booking_frequency[0]) {
+        case 0:
+          booking_input_frequency = RRule.YEARLY
+          break
+        case 1:
+          booking_input_frequency = RRule.MONTHLY
+          break
+        case 2:
+          booking_input_frequency = RRule.WEEKLY
+          break
+        case 3:
+          booking_input_frequency = RRule.DAILY
+          break
+      }
+
+      if (isNaN(start_year) == false || isNaN(end_year) == false) {
+        // TODO Might be Deprecated -- IF RRule Breaks, this is where it will happen
+        // Removed hours and minutes from date_start and until
+        const date_start = new Date(Date.UTC(start_year, start_month - 1, start_day))
+        const until = new Date(Date.UTC(end_year, end_month - 1, end_day))
+
+        const rule = new RRule({
+          freq: booking_input_frequency,
+          count: this.selected_booking_count,
+          byweekday: this.selected_booking_weekdays,
+          dtstart: date_start,
+          until: until
+        })
+
+        const array = rule.all()
+        this.booking_rrule_text = rule.toText()
+        array.forEach(date => {
+          // created date_with_offset to fix pst -> utc 5pm bug
+          const date_with_offset = moment(date).clone().set({ hour: local_start_hour, minute: start_minute }).add(new Date().getTimezoneOffset(), 'minutes')
+          if (local_start_hour >= 8 && local_start_hour < 15) {
+            date_with_offset.add(1, 'day')
           }
-          this.booking_rrule_array = local_booking_dates_array
-          this.selected_booking_count = ''
-          this.selected_booking_frequency = []
-          this.selected_booking_weekdays = []
-          this.recurring_booking_start_date = null
-          this.recurring_booking_start_time = null
-          this.recurring_booking_end_date = null
-          this.recurring_booking_end_time = null
-          this.recurring_form_state = 'audit'
-          this.showCollapse('collapse-information-audit')
-        },
-        setSingle(){
-          this.single_booking_blackout_boolean = !this.single_booking_blackout_boolean
-          this.single_input_boolean = false
-          this.blackout_date = null
-          this.start_time = null
-          this.end_time = null
-          this.recurring_form_state = ''
-          this.single_form_state = ''
-          this.hideCollapse('collapse-single-booking')
-        },
-        setRecurring(){
-          this.recurring_booking_blackout_boolean = !this.recurring_booking_blackout_boolean
-          this.single_input_boolean = false
-          this.selected_booking_count = ''
-          this.selected_booking_frequency = []
-          this.selected_booking_weekdays = []
-          this.recurring_booking_start_date = null
-          this.recurring_booking_start_time = null
-          this.recurring_booking_end_date = null
-          this.recurring_booking_end_time = null
-          this.recurring_form_state = ''
-          this.single_form_state = ''
-          this.hideCollapse('collapse-recurring-booking')
-        },
-        checkSingleInput(){
-          if(this.blackout_date !== null && this.start_time !== null && this.end_time !== null){
-            this.single_input_boolean = true
-            this.single_form_state = 'event_information'
-          }else {
-            this.single_input_boolean = false
-            this.single_form_state = ''
-          }
-        },
-        checkRecurringInput(){
-          if(this.selected_booking_frequency.length > 0 && this.recurring_booking_start_date !== null
-            && this.recurring_booking_start_time !== null && this.recurring_booking_end_date !== null
-            && this.recurring_booking_end_time !== null) {
-            this.recurring_input_boolean = true
-            this.recurring_form_state = 'rule_generated'
-          }else {
-            this.recurring_input_boolean = false
-          }
-        },
-        nextRoomSingleSelection(){
-          this.hideCollapse('collapse-single-booking')
-          this.hideCollapse('collapse-booking-event-selection')
-          this.showCollapse('collapse-room-selection')
-          this.single_form_state = 'room_selection'
-        },
-        nextRoomSelection(){
-          this.hideCollapse('collapse-information-audit')
-          this.showCollapse('collapse-room-selection')
-          this.hideCollapse('collapse-booking-event-selection')
-          this.recurring_form_state = 'room_selection'
-        },
-        nextSingleNotes(){
-          this.hideCollapse('collapse-room-selection')
-          this.showCollapse('collapse-booking-notes')
-          this.single_form_state = 'notes'
-        },
-        nextNotes(){
-          this.hideCollapse('collapse-room-selection')
-          this.showCollapse('collapse-booking-notes')
-          this.recurring_form_state = 'notes'
-        },
+          const formatted_start_date = moment(date_with_offset).clone().set({ hour: local_start_hour, minute: start_minute }).format('YYYY-MM-DD HH:mm:ssZ')
+          const formatted_end_date = moment(date_with_offset).clone().set({ hour: local_start_hour, minute: start_minute }).add(duration_minutes, 'minutes').format('YYYY-MM-DD HH:mm:ssZ')
+          local_booking_dates_array.push({ start: formatted_start_date, end: formatted_end_date })
+        })
+      }
+      this.booking_rrule_array = local_booking_dates_array
+      this.selected_booking_count = ''
+      this.selected_booking_frequency = []
+      this.selected_booking_weekdays = []
+      this.recurring_booking_start_date = null
+      this.recurring_booking_start_time = null
+      this.recurring_booking_end_date = null
+      this.recurring_booking_end_time = null
+      this.recurring_form_state = 'audit'
+      this.showCollapse('collapse-information-audit')
+    },
+    setSingle () {
+      this.single_booking_blackout_boolean = !this.single_booking_blackout_boolean
+      this.single_input_boolean = false
+      this.blackout_date = null
+      this.start_time = null
+      this.end_time = null
+      this.recurring_form_state = ''
+      this.single_form_state = ''
+      this.hideCollapse('collapse-single-booking')
+    },
+    setRecurring () {
+      this.recurring_booking_blackout_boolean = !this.recurring_booking_blackout_boolean
+      this.single_input_boolean = false
+      this.selected_booking_count = ''
+      this.selected_booking_frequency = []
+      this.selected_booking_weekdays = []
+      this.recurring_booking_start_date = null
+      this.recurring_booking_start_time = null
+      this.recurring_booking_end_date = null
+      this.recurring_booking_end_time = null
+      this.recurring_form_state = ''
+      this.single_form_state = ''
+      this.hideCollapse('collapse-recurring-booking')
+    },
+    checkSingleInput () {
+      if (this.blackout_date !== null && this.start_time !== null && this.end_time !== null) {
+        this.single_input_boolean = true
+        this.single_form_state = 'event_information'
+      } else {
+        this.single_input_boolean = false
+        this.single_form_state = ''
+      }
+    },
+    checkRecurringInput () {
+      if (this.selected_booking_frequency.length > 0 && this.recurring_booking_start_date !== null &&
+            this.recurring_booking_start_time !== null && this.recurring_booking_end_date !== null &&
+            this.recurring_booking_end_time !== null) {
+        this.recurring_input_boolean = true
+        this.recurring_form_state = 'rule_generated'
+      } else {
+        this.recurring_input_boolean = false
+      }
+    },
+    nextRoomSingleSelection () {
+      this.hideCollapse('collapse-single-booking')
+      this.hideCollapse('collapse-booking-event-selection')
+      this.showCollapse('collapse-room-selection')
+      this.single_form_state = 'room_selection'
+    },
+    nextRoomSelection () {
+      this.hideCollapse('collapse-information-audit')
+      this.showCollapse('collapse-room-selection')
+      this.hideCollapse('collapse-booking-event-selection')
+      this.recurring_form_state = 'room_selection'
+    },
+    nextSingleNotes () {
+      this.hideCollapse('collapse-room-selection')
+      this.showCollapse('collapse-booking-notes')
+      this.single_form_state = 'notes'
+    },
+    nextNotes () {
+      this.hideCollapse('collapse-room-selection')
+      this.showCollapse('collapse-booking-notes')
+      this.recurring_form_state = 'notes'
+    }
+  },
+  computed: {
+    ...mapState({
+      showBookingBlackoutModal: state => state.showBookingBlackoutModal,
+      rooms: state => state.rooms,
+      roomResources: state => state.roomResources
+    }),
+    ...mapGetters([
+      'is_recurring_enabled'
+    ]),
+    modal: {
+      get () {
+        return this.showBookingBlackoutModal
       },
-      computed: {
-        ...mapState({
-          showBookingBlackoutModal: state => state.showBookingBlackoutModal,
-          rooms: state => state.rooms,
-          roomResources: state => state.roomResources,
-        }),
-        ...mapGetters([
-          'is_recurring_enabled',
-        ]),
-        modal: {
-          get() {
-            return this.showBookingBlackoutModal
-          },
-          set(e) {
-            this.toggleBookingBlackoutModal(e)
-          }
-        },
+      set (e) {
+        this.toggleBookingBlackoutModal(e)
       }
     }
+  }
+}
 </script>
-
 
 <style scoped>
 

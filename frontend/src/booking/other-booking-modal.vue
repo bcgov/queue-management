@@ -419,385 +419,385 @@
 </template>
 
 <script>
-  import { mapActions, mapMutations, mapState, mapGetters } from 'vuex'
-  import moment from 'moment'
-  import { FullCalendar } from 'vue-full-calendar'
-  import 'fullcalendar/dist/fullcalendar.css'
-  import 'fullcalendar-scheduler'
-  import { RRule } from 'rrule'
-  import DatePicker from 'vue2-datepicker'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import moment from 'moment'
+import { FullCalendar } from 'vue-full-calendar'
+import 'fullcalendar/dist/fullcalendar.css'
+import 'fullcalendar-scheduler'
+import { RRule } from 'rrule'
+import DatePicker from 'vue2-datepicker'
 
-  export default {
-    name: "OtherBookingModal",
-    components: { FullCalendar, DatePicker },
-    props: ['editSelection', 'getEvent'],
-    data() {
-      return {
-        confirm: false,
-        contact_information: '',
-        minimized: false,
-        title: '',
-        state: null,
-        message: '',
-        fees: '',
-        feesOptions: [
-          {text: 'No', value: "false"},
-          {text: 'Yes', value: "true"},
-          {text: 'HQ to Invoice', value: "HQFin"}
-        ],
-        added: 0,
-        invoice: null,
-        rate: null,
-        start:'',
-        end:'',
-        other_recurring_start_time: null,
-        other_recurring_end_time: null,
-        other_recurring_start_date: null,
-        other_recurring_end_date: null,
-        other_recurring_display_time: null,
-        other_recurring_display_date: null,
-        other_selected_frequency: [],
-        other_selected_weekdays: [],
-        other_selected_count: '',
-        yearly: RRule.YEARLY,
-        monthly: RRule.MONTHLY,
-        weekly: RRule.WEEKLY,
-        daily: RRule.DAILY,
-        monday: RRule.MO,
-        tuesday: RRule.TU,
-        wednesday: RRule.WE,
-        thursday: RRule.TH,
-        friday: RRule.FR,
-        other_single_event: true,
-        other_recurring_event: true,
-        other_rrule_text: '',
-        other_rrule_array: [],
-        recurring_title: '',
-        recurring_contact_information: '',
-        recurring_fees: '',
-        single_input_boolean: false,
-        recurring_input_boolean: false,
-        recurring_form_state: '',
-        submitting_flag: false,
+export default {
+  name: 'OtherBookingModal',
+  components: { FullCalendar, DatePicker },
+  props: ['editSelection', 'getEvent'],
+  data () {
+    return {
+      confirm: false,
+      contact_information: '',
+      minimized: false,
+      title: '',
+      state: null,
+      message: '',
+      fees: '',
+      feesOptions: [
+        { text: 'No', value: 'false' },
+        { text: 'Yes', value: 'true' },
+        { text: 'HQ to Invoice', value: 'HQFin' }
+      ],
+      added: 0,
+      invoice: null,
+      rate: null,
+      start: '',
+      end: '',
+      other_recurring_start_time: null,
+      other_recurring_end_time: null,
+      other_recurring_start_date: null,
+      other_recurring_end_date: null,
+      other_recurring_display_time: null,
+      other_recurring_display_date: null,
+      other_selected_frequency: [],
+      other_selected_weekdays: [],
+      other_selected_count: '',
+      yearly: RRule.YEARLY,
+      monthly: RRule.MONTHLY,
+      weekly: RRule.WEEKLY,
+      daily: RRule.DAILY,
+      monday: RRule.MO,
+      tuesday: RRule.TU,
+      wednesday: RRule.WE,
+      thursday: RRule.TH,
+      friday: RRule.FR,
+      other_single_event: true,
+      other_recurring_event: true,
+      other_rrule_text: '',
+      other_rrule_array: [],
+      recurring_title: '',
+      recurring_contact_information: '',
+      recurring_fees: '',
+      single_input_boolean: false,
+      recurring_input_boolean: false,
+      recurring_form_state: '',
+      submitting_flag: false
+    }
+  },
+  computed: {
+    ...mapState(
+      {
+        exam: state => state.selectedExam,
+        event: state => state.clickedDate,
+        showModal: state => state.showOtherBookingModal,
+        selectionIndicator: state => state.selectionIndicator
+      }
+    ),
+    ...mapGetters([
+      'is_recurring_enabled'
+    ]),
+    modalVisible: {
+      get () {
+        return this.showModal
+      },
+      set (e) {
+        this.toggleOtherBookingModal(e)
       }
     },
-    computed: {
-      ...mapState(
-        {
-          exam: state => state.selectedExam,
-          event: state => state.clickedDate,
-          showModal: state => state.showOtherBookingModal,
-          selectionIndicator: state => state.selectionIndicator,
-        }
-      ),
-      ...mapGetters([
-        'is_recurring_enabled',
-      ]),
-      modalVisible: {
-        get() {
-          return this.showModal
-        },
-        set(e) {
-          this.toggleOtherBookingModal(e)
-        }
-      },
-      startTime() {
-        if (this.event && this.event.start) {
-          return moment(this.event.start)
-        }
-        return ''
-      },
-      endTime() {
-        if (this.event && this.event.end) {
-          let output = new moment(this.event.end)
-          output.add(this.added, 'hours')
-          return output
-        }
-        return ''
-      },
-      resource() {
-        if (this.event && this.event.resource) {
-          return this.event.resource
-        }
-        return ''
-      },
-      duration() {
-        return this.endTime.diff(this.startTime, 'hours', true)
-      },
-      displayDuration() {
-        let output = this.duration.toFixed(1)
-        return `${output} hrs`
-      },
+    startTime () {
+      if (this.event && this.event.start) {
+        return moment(this.event.start)
+      }
+      return ''
     },
-    methods: {
-      ...mapActions([
-        'postBooking',
-        'finishBooking',
-        'getBookings',
-      ]),
-      ...mapMutations([
-        'toggleOtherBookingModal',
-        'toggleScheduling',
-      ]),
-      hideCollapse(div_id){
-        if(document.getElementById(div_id)){
-          if(document.getElementById(div_id).classList.contains('show')){
-            this.$root.$emit('bv::toggle::collapse', div_id)
-          }
+    endTime () {
+      if (this.event && this.event.end) {
+        const output = new moment(this.event.end)
+        output.add(this.added, 'hours')
+        return output
+      }
+      return ''
+    },
+    resource () {
+      if (this.event && this.event.resource) {
+        return this.event.resource
+      }
+      return ''
+    },
+    duration () {
+      return this.endTime.diff(this.startTime, 'hours', true)
+    },
+    displayDuration () {
+      const output = this.duration.toFixed(1)
+      return `${output} hrs`
+    }
+  },
+  methods: {
+    ...mapActions([
+      'postBooking',
+      'finishBooking',
+      'getBookings'
+    ]),
+    ...mapMutations([
+      'toggleOtherBookingModal',
+      'toggleScheduling'
+    ]),
+    hideCollapse (div_id) {
+      if (document.getElementById(div_id)) {
+        if (document.getElementById(div_id).classList.contains('show')) {
+          this.$root.$emit('bv::toggle::collapse', div_id)
         }
-      },
-      showCollapse(div_id){
-        if(document.getElementById(div_id)){
-          if(document.getElementById(div_id).style.display === 'none'){
-            this.$root.$emit('bv::toggle::collapse', div_id)
-          }
+      }
+    },
+    showCollapse (div_id) {
+      if (document.getElementById(div_id)) {
+        if (document.getElementById(div_id).style.display === 'none') {
+          this.$root.$emit('bv::toggle::collapse', div_id)
         }
-      },
-      cancel() {
-        this.$root.$emit('removeSavedSelection')
-        this.message = ''
-        this.recurring_input_boolean = false
-        this.single_input_boolean = false
-        this.recurring_form_state = ''
-        this.toggleOtherBookingModal(false)
-      },
-      show() {
-        this.showCollapse('collapse-other-booking-event-selection')
-        this.hideCollapse('collapse-single-event')
-        this.other_recurring_start_time = new moment(this.startTime).clone()
-        this.other_recurring_start_date = new moment(this.startTime).clone()
+      }
+    },
+    cancel () {
+      this.$root.$emit('removeSavedSelection')
+      this.message = ''
+      this.recurring_input_boolean = false
+      this.single_input_boolean = false
+      this.recurring_form_state = ''
+      this.toggleOtherBookingModal(false)
+    },
+    show () {
+      this.showCollapse('collapse-other-booking-event-selection')
+      this.hideCollapse('collapse-single-event')
+      this.other_recurring_start_time = new moment(this.startTime).clone()
+      this.other_recurring_start_date = new moment(this.startTime).clone()
 
-        // clear single event fields
-        this.title = ''
-        this.fees = ''
-        this.contact_information = ''
+      // clear single event fields
+      this.title = ''
+      this.fees = ''
+      this.contact_information = ''
 
-        // clear recurring event fields
-        this.other_recurring_end_date = null
-        this.other_recurring_end_time = null
-        this.recurring_title = ''
-        this.recurring_fees = ''
+      // clear recurring event fields
+      this.other_recurring_end_date = null
+      this.other_recurring_end_time = null
+      this.recurring_title = ''
+      this.recurring_fees = ''
+      this.recurring_contact_information = ''
+      this.other_selected_frequency = []
+      this.other_selected_weekdays = []
+      this.other_selected_count = ''
+      this.other_rrule_array = []
+      this.other_rrule_text = ''
+
+      this.message = ''
+      this.added = 0
+      this.state = null
+    },
+    incrementDuration () {
+      if (this.endTime.format('H') == 18) {
+        return
+      }
+      this.added += 0.5
+      if (this.selectionIndicator) {
+        const event = this.getEvent()
+        this.editSelection(event, 0.5)
+      }
+    },
+    decrementDuration () {
+      if (this.duration == 0.5) {
+        return
+      }
+      this.added -= 0.5
+      if (this.selectionIndicator) {
+        const event = this.getEvent()
+        this.editSelection(event, -0.5)
+      }
+    },
+    postEvent (e) {
+      e.preventDefault()
+      this.submitting_flag = true
+      const uuidv4 = require('uuid/v4')
+      const recurring_uuid = uuidv4()
+      const self = this
+      if (this.other_rrule_array.length > 0) {
+        this.other_rrule_array.forEach(date => {
+          const booking = {
+            room_id: self.resource.id,
+            start_time: date.start,
+            end_time: date.end,
+            fees: self.recurring_fees,
+            booking_name: self.recurring_title,
+            booking_contact_information: self.recurring_contact_information,
+            recurring_uuid: recurring_uuid
+          }
+          self.postBooking(booking).then(() => {
+            self.finishBooking()
+            self.getBookings()
+          })
+        })
         this.recurring_contact_information = ''
-        this.other_selected_frequency = []
-        this.other_selected_weekdays = []
-        this.other_selected_count = ''
-        this.other_rrule_array = []
-        this.other_rrule_text = ''
+      }
 
+      if (this.title.length > 0) {
         this.message = ''
-        this.added = 0
         this.state = null
-      },
-      incrementDuration() {
-        if (this.endTime.format('H') == 18) {
-          return
+        const start = new moment(this.startTime).utc()
+        const end = new moment(this.endTime).utc()
+        const booking = {
+          room_id: this.resource.id,
+          start_time: start.format('DD-MMM-YYYY[T]HH:mm:ssZ'),
+          end_time: end.format('DD-MMM-YYYY[T]HH:mm:ssZ'),
+          fees: this.fees,
+          booking_name: this.title,
+          booking_contact_information: this.contact_information
         }
-        this.added += .5
-        if (this.selectionIndicator) {
-          let event = this.getEvent()
-          this.editSelection(event, 0.5)
-        }
-      },
-      decrementDuration() {
-        if (this.duration == .5) {
-          return
-        }
-        this.added -= .5
-        if (this.selectionIndicator) {
-          let event = this.getEvent()
-          this.editSelection(event, -0.5)
-        }
-      },
-      postEvent(e) {
-        e.preventDefault()
-        this.submitting_flag = true
-        const uuidv4 = require('uuid/v4')
-        let recurring_uuid = uuidv4()
-        let self = this
-        if(this.other_rrule_array.length > 0){
-          this.other_rrule_array.forEach(date => {
-            let booking = {
-              room_id: self.resource.id,
-              start_time: date.start,
-              end_time: date.end,
-              fees: self.recurring_fees,
-              booking_name: self.recurring_title,
-              booking_contact_information: self.recurring_contact_information,
-              recurring_uuid: recurring_uuid
-            }
-            self.postBooking(booking).then( () => {
-              self.finishBooking()
-              self.getBookings()
-            })
-          })
-          this.recurring_contact_information = ''
-        }
+        this.postBooking(booking).then(() => {
+          this.finishBooking()
+          this.contact_information = ''
+        })
+      } else {
+        this.message = ' (Required)'
+        this.state = 'invalid'
+      }
+      this.other_single_event = true
+      this.other_recurring_event = true
+      this.recurring_input_boolean = false
+      setTimeout(function () {
+        self.toggleOtherBookingModal(false)
+        self.toggleScheduling(false)
+        self.getBookings()
+        self.submitting_flag = false
+      }, 2000)
+    },
+    setSingle () {
+      this.hideCollapse('collapse-single-event')
+      this.other_single_event = !this.other_single_event
+      this.title = ''
+      this.contact_information = ''
+      this.fees = ''
+      this.recurring_form_state = ''
+    },
+    setRecurring () {
+      this.hideCollapse('collapse-recurring-event')
+      this.other_recurring_event = !this.other_recurring_event
+      this.recurring_title = ''
+      this.recurring_contact_information = ''
+      this.recurring_fees = ''
+      this.other_recurring_end_time = null
+      this.other_recurring_end_date = null
+      this.other_selected_frequency = []
+      this.other_selected_weekdays = []
+      this.other_selected_count = ''
+      this.recurring_form_state = ''
+    },
+    formatStartDate (date) {
+      const formatted_start_date = moment(date).format('YYYY-MM-DD HH:mm')
+      return formatted_start_date
+    },
+    formatEndDate (date) {
+      const formatted_end_date = moment(date).clone().format('HH:mm')
+      return formatted_end_date
+    },
+    generateRule () {
+      this.other_single_event = true
+      this.other_recurring_event = true
+      // Commented out start/end variables are for testing 5pm pst -> utc conversion bug
+      // Removed these variables from the date_start and until variable declarations
+      const start_year = parseInt(moment(this.other_recurring_start_date).utc().clone().format('YYYY'))
+      const start_month = parseInt(moment(this.other_recurring_start_date).utc().clone().format('MM'))
+      const start_day = parseInt(moment(this.other_recurring_start_date).utc().clone().subtract(4, 'hours').format('DD'))
+      // let start_hour = parseInt(moment(this.other_recurring_start_time).utc().clone().format('HH'))
+      const local_start_hour = parseInt(moment(this.other_recurring_start_time).clone().format('HH'))
+      const local_start_minute = parseInt(moment(this.other_recurring_start_time).clone().format('mm'))
+      // let start_minute = parseInt(moment(this.other_recurring_start_time).utc().clone().format('mm'))
+      const end_year = parseInt(moment(this.other_recurring_end_date).utc().clone().format('YYYY'))
+      const end_month = parseInt(moment(this.other_recurring_end_date).utc().clone().format('MM'))
+      const end_day = parseInt(moment(this.other_recurring_end_date).utc().clone().format('DD'))
+      // let end_hour = parseInt(moment(this.other_recurring_end_time).utc().clone().format('HH'))
+      // let end_minute = parseInt(moment(this.other_recurring_end_time).utc().clone().format('mm'))
+      const duration_start = moment(this.other_recurring_start_time).utc()
+      const duration_end = moment(this.other_recurring_end_time).utc()
+      const duration = moment.duration(duration_end.diff(duration_start))
+      const duration_minutes = duration.asMinutes()
+      let input_frequency = null
+      const local_other_dates_array = []
 
-        if (this.title.length > 0) {
-          this.message = ''
-          this.state = null
-          let start = new moment(this.startTime).utc()
-          let end = new moment(this.endTime).utc()
-          let booking = {
-            room_id: this.resource.id,
-            start_time: start.format('DD-MMM-YYYY[T]HH:mm:ssZ'),
-            end_time: end.format('DD-MMM-YYYY[T]HH:mm:ssZ'),
-            fees: this.fees,
-            booking_name: this.title,
-            booking_contact_information: this.contact_information,
-          }
-          this.postBooking(booking).then( () => {
-            this.finishBooking()
-            this.contact_information = ''
-          })
-        } else {
-          this.message = ' (Required)'
-          this.state = 'invalid'
-        }
-        this.other_single_event = true
-        this.other_recurring_event = true
-        this.recurring_input_boolean = false
-        setTimeout(function() {
-          self.toggleOtherBookingModal(false)
-          self.toggleScheduling(false)
-          self.getBookings()
-          self.submitting_flag = false
-        }, 2000)
-      },
-      setSingle(){
-        this.hideCollapse('collapse-single-event')
-        this.other_single_event = !this.other_single_event
-        this.title = ''
-        this.contact_information = ''
-        this.fees = ''
-        this.recurring_form_state = ''
-      },
-      setRecurring(){
-        this.hideCollapse('collapse-recurring-event')
-        this.other_recurring_event = !this.other_recurring_event
-        this.recurring_title = ''
-        this.recurring_contact_information = ''
-        this.recurring_fees = ''
-        this.other_recurring_end_time = null
-        this.other_recurring_end_date = null
-        this.other_selected_frequency = []
-        this.other_selected_weekdays = []
-        this.other_selected_count = ''
-        this.recurring_form_state = ''
-      },
-      formatStartDate(date){
-        let formatted_start_date = moment(date).format('YYYY-MM-DD HH:mm')
-        return formatted_start_date
-      },
-      formatEndDate(date){
-        let formatted_end_date = moment(date).clone().format('HH:mm')
-        return formatted_end_date
-      },
-      generateRule(){
-        this.other_single_event = true
-        this.other_recurring_event = true
-        // Commented out start/end variables are for testing 5pm pst -> utc conversion bug
-        // Removed these variables from the date_start and until variable declarations
-        let start_year = parseInt(moment(this.other_recurring_start_date).utc().clone().format('YYYY'))
-        let start_month = parseInt(moment(this.other_recurring_start_date).utc().clone().format('MM'))
-        let start_day = parseInt(moment(this.other_recurring_start_date).utc().clone().subtract(4, 'hours').format('DD'))
-        //let start_hour = parseInt(moment(this.other_recurring_start_time).utc().clone().format('HH'))
-        let local_start_hour = parseInt(moment(this.other_recurring_start_time).clone().format('HH'))
-        let local_start_minute = parseInt(moment(this.other_recurring_start_time).clone().format('mm'))
-        //let start_minute = parseInt(moment(this.other_recurring_start_time).utc().clone().format('mm'))
-        let end_year = parseInt(moment(this.other_recurring_end_date).utc().clone().format('YYYY'))
-        let end_month = parseInt(moment(this.other_recurring_end_date).utc().clone().format('MM'))
-        let end_day = parseInt(moment(this.other_recurring_end_date).utc().clone().format('DD'))
-        //let end_hour = parseInt(moment(this.other_recurring_end_time).utc().clone().format('HH'))
-        //let end_minute = parseInt(moment(this.other_recurring_end_time).utc().clone().format('mm'))
-        let duration_start = moment(this.other_recurring_start_time).utc()
-        let duration_end = moment(this.other_recurring_end_time).utc()
-        let duration = moment.duration(duration_end.diff(duration_start))
-        let duration_minutes = duration.asMinutes()
-        let input_frequency = null
-        let local_other_dates_array = []
+      switch (this.other_selected_frequency[0]) {
+        case 0:
+          input_frequency = RRule.YEARLY
+          break
+        case 1:
+          input_frequency = RRule.MONTHLY
+          break
+        case 2:
+          input_frequency = RRule.WEEKLY
+          break
+        case 3:
+          input_frequency = RRule.DAILY
+          break
+      }
 
-        switch(this.other_selected_frequency[0]){
-          case 0:
-            input_frequency = RRule.YEARLY;
-            break;
-          case 1:
-            input_frequency = RRule.MONTHLY;
-            break;
-          case 2:
-            input_frequency = RRule.WEEKLY;
-            break;
-          case 3:
-            input_frequency = RRule.DAILY;
-            break;
-        }
+      if (isNaN(start_year) == false || isNaN(end_year) == false) {
+        // TODO Might be Deprecated -- IF RRule Breaks, this is where it will happen
+        const date_start = new Date(Date.UTC(start_year, start_month - 1, start_day))
+        const until = new Date(Date.UTC(end_year, end_month - 1, end_day))
 
-        if(isNaN(start_year) == false || isNaN(end_year) == false){
-          // TODO Might be Deprecated -- IF RRule Breaks, this is where it will happen
-          let date_start = new Date(Date.UTC(start_year, start_month-1, start_day))
-          let until = new Date(Date.UTC(end_year, end_month-1, end_day))
+        const rule = new RRule({
+          freq: input_frequency,
+          count: this.other_selected_count,
+          byweekday: this.other_selected_weekdays,
+          dtstart: date_start,
+          until: until
+        })
 
-          const rule = new RRule({
-            freq: input_frequency,
-            count: this.other_selected_count,
-            byweekday: this.other_selected_weekdays,
-            dtstart: date_start,
-            until: until
-          })
+        const array = rule.all()
+        this.other_rrule_text = rule.toText()
+        // TODO For the night is dark and full of terror
+        const first_event_start_day = moment(this.startTime).clone().set({ hour: local_start_hour, minute: local_start_minute }).add(new Date(this.startTime).getTimezoneOffset(), 'minutes')
+        let num_days = Math.floor(moment.duration(first_event_start_day.diff(moment(new Date()))).asDays())
 
-          let array = rule.all()
-          this.other_rrule_text = rule.toText()
+        array.forEach(date => {
           // TODO For the night is dark and full of terror
-          let first_event_start_day = moment(this.startTime).clone().set({hour: local_start_hour, minute: local_start_minute}).add(new Date(this.startTime).getTimezoneOffset(), 'minutes')
-          let num_days = Math.floor(moment.duration(first_event_start_day.diff(moment(new Date()))).asDays())
-
-          array.forEach(date => {
-            // TODO For the night is dark and full of terror
-            let date_with_offset = moment(date).clone().set({hour: local_start_hour, minute: local_start_minute}).add(new Date(date).getTimezoneOffset(), 'minutes')
-            if(local_start_hour >= 8 && local_start_hour < 16){
-                date_with_offset.add(1, 'd')
-            }
-            let formatted_start_date = moment(date_with_offset).clone().set({hour: local_start_hour, minute: local_start_minute}).format('YYYY-MM-DD HH:mm:ssZ')
-            // TODO For the night is dark and full of terror
-            if(num_days < 0) {
-              num_days = 0
-            }
-            let formatted_end_date = moment(date_with_offset).clone().set({hour: local_start_hour, minute: local_start_minute}).add(duration_minutes, 'minutes').add(num_days, 'd').format('YYYY-MM-DD HH:mm:ssZ')
-            if (new Date(array[0]).getTimezoneOffset() !== new Date(date).getTimezoneOffset()) {
-              formatted_end_date = moment(formatted_end_date).add( new Date().getTimezoneOffset() - new Date(date).getTimezoneOffset(), 'minutes').format('YYYY-MM-DD HH:mm:ssZ')
-            }
-            local_other_dates_array.push({start: formatted_start_date, end: formatted_end_date})
-          })
-        }
-        this.other_rrule_array = local_other_dates_array
-        this.other_selected_count = ''
-        this.other_selected_weekdays = []
-        this.other_selected_frequency = []
-        this.other_recurring_start_date = ''
-        this.other_recurring_start_time = ''
-        this.other_recurring_end_date = ''
-        this.other_recurring_end_time = ''
-        this.showCollapse('collapse-other-event-audit')
-        this.hideCollapse('collapse-other-booking-event-selection')
-        this.hideCollapse('collapse-recurring-event')
-        this.recurring_form_state = 'audit'
-      },
-      checkRecurringInput(){
-        if(this.other_selected_frequency.length > 0 && this.other_recurring_end_date !== null
-          && this.other_recurring_end_time !== null && this.recurring_title !== '' && this.recurring_fees !== ''){
-          this.recurring_input_boolean = true
-          this.recurring_form_state = 'rule_generated'
-        } else {
-          this.recurring_input_boolean = false
-        }
-      },
-      checkSingleInput(){
-        if(this.contact_information !== '' && this.title !== '' && this.fees !== ''){
-          this.single_input_boolean = true
-        }else {
-          this.single_input_boolean = false
-        }
+          const date_with_offset = moment(date).clone().set({ hour: local_start_hour, minute: local_start_minute }).add(new Date(date).getTimezoneOffset(), 'minutes')
+          if (local_start_hour >= 8 && local_start_hour < 16) {
+            date_with_offset.add(1, 'd')
+          }
+          const formatted_start_date = moment(date_with_offset).clone().set({ hour: local_start_hour, minute: local_start_minute }).format('YYYY-MM-DD HH:mm:ssZ')
+          // TODO For the night is dark and full of terror
+          if (num_days < 0) {
+            num_days = 0
+          }
+          let formatted_end_date = moment(date_with_offset).clone().set({ hour: local_start_hour, minute: local_start_minute }).add(duration_minutes, 'minutes').add(num_days, 'd').format('YYYY-MM-DD HH:mm:ssZ')
+          if (new Date(array[0]).getTimezoneOffset() !== new Date(date).getTimezoneOffset()) {
+            formatted_end_date = moment(formatted_end_date).add(new Date().getTimezoneOffset() - new Date(date).getTimezoneOffset(), 'minutes').format('YYYY-MM-DD HH:mm:ssZ')
+          }
+          local_other_dates_array.push({ start: formatted_start_date, end: formatted_end_date })
+        })
+      }
+      this.other_rrule_array = local_other_dates_array
+      this.other_selected_count = ''
+      this.other_selected_weekdays = []
+      this.other_selected_frequency = []
+      this.other_recurring_start_date = ''
+      this.other_recurring_start_time = ''
+      this.other_recurring_end_date = ''
+      this.other_recurring_end_time = ''
+      this.showCollapse('collapse-other-event-audit')
+      this.hideCollapse('collapse-other-booking-event-selection')
+      this.hideCollapse('collapse-recurring-event')
+      this.recurring_form_state = 'audit'
+    },
+    checkRecurringInput () {
+      if (this.other_selected_frequency.length > 0 && this.other_recurring_end_date !== null &&
+          this.other_recurring_end_time !== null && this.recurring_title !== '' && this.recurring_fees !== '') {
+        this.recurring_input_boolean = true
+        this.recurring_form_state = 'rule_generated'
+      } else {
+        this.recurring_input_boolean = false
+      }
+    },
+    checkSingleInput () {
+      if (this.contact_information !== '' && this.title !== '' && this.fees !== '') {
+        this.single_input_boolean = true
+      } else {
+        this.single_input_boolean = false
       }
     }
   }
+}
 </script>

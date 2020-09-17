@@ -17,7 +17,6 @@
       </b-col>
     </b-row>
 
-
     <!-- grey area row 2, main inputs-->
     <b-row no-gutters class="add-candidate-top-row" style="height: 58px">
         <!--Name-->
@@ -43,7 +42,6 @@
               </b-form-group>
             </div>
           </div>
-
 
         </b-col>
 
@@ -238,227 +236,225 @@
 </template>
 
 <script>
-  import { mapGetters, mapMutations, mapState } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 
-
-  export default {
-    name: 'GroupPesticideModal',
-    props: ['error', 'q', 'validationObj', 'handleInput', 'exam'],
-    data() {
-      return {
-        billTo: 'candidate',
-        email: '',
-        fees: 'collect',
-        firstName: '',
-        selectedExamType: null,
-        highlightedTableRow: null,
-        lastName: '',
-        payeeEmail: '',
-        payeeName: '',
-        receipt: '',
-        formFields:['firstName', 'lastName', 'email', 'payeeName', 'payeeEmail','fees', 'billTo', 'receipt'],
-        tableFields: [
-          { key: 'qty', label: 'Qty', thStyle: { width: '4%' } },
-          { key: 'name', thStyle: { width: '32%' } },
-          { key: 'email', thStyle: { width: '23%' } },
-          { key: 'fees', thStyle: { width: '7%' } },
-          { key: 'billTo', label: 'Bill To', thStyle: { width: '10%' } },
-          { key: 'receipt', thStyle: { width: '10%' } },
-          { key: 'sent', thStyle: { width: '6%' } },
-          { key: 'delete', label: 'Delete', thStyle: { width: '8%' } },
-        ]
+export default {
+  name: 'GroupPesticideModal',
+  props: ['error', 'q', 'validationObj', 'handleInput', 'exam'],
+  data () {
+    return {
+      billTo: 'candidate',
+      email: '',
+      fees: 'collect',
+      firstName: '',
+      selectedExamType: null,
+      highlightedTableRow: null,
+      lastName: '',
+      payeeEmail: '',
+      payeeName: '',
+      receipt: '',
+      formFields: ['firstName', 'lastName', 'email', 'payeeName', 'payeeEmail', 'fees', 'billTo', 'receipt'],
+      tableFields: [
+        { key: 'qty', label: 'Qty', thStyle: { width: '4%' } },
+        { key: 'name', thStyle: { width: '32%' } },
+        { key: 'email', thStyle: { width: '23%' } },
+        { key: 'fees', thStyle: { width: '7%' } },
+        { key: 'billTo', label: 'Bill To', thStyle: { width: '10%' } },
+        { key: 'receipt', thStyle: { width: '10%' } },
+        { key: 'sent', thStyle: { width: '6%' } },
+        { key: 'delete', label: 'Delete', thStyle: { width: '8%' } }
+      ]
+    }
+  },
+  mounted () {
+    this.removeListener()
+    document.addEventListener('keydown', this.handleKeyboard)
+  },
+  destroyed () {
+    this.removeListener()
+  },
+  computed: {
+    ...mapState({
+      Candidates: state => state.addExamModule.candidates,
+      pesticideExamTypes: state => state.addExamModule.pesticideExamTypes
+    }),
+    instructionMessage () {
+      if (this.currentlyEditing) {
+        if (this.currentlyEditing === 'exam') {
+          return 'You are currently editing the below highlighted exam'
+        }
+        return 'You are currently editing the below highlighted candidate'
+      }
+      return 'To add a candidate, select an exam above and press enter or Add Button'
+    },
+    candidates: {
+      get () {
+        return this.Candidates
+      },
+      set (value) {
+        if (typeof value === 'object') {
+          if (Array.isArray(value)) {
+            this.$store.commit('setSelectedExams', value)
+            return
+          }
+          const candidatesCopy = [...this.candidates]
+          candidatesCopy.push(value)
+          this.$store.commit('setSelectedExams', candidatesCopy)
+        }
       }
     },
-    mounted() {
-      this.removeListener()
-      document.addEventListener('keydown', this.handleKeyboard)
+    currentlyEditing () {
+      if (this.highlightedTableRow) {
+        if (!('id' in this.highlightedTableRow)) return 'exam'
+        return 'candidate'
+      }
+      return false
     },
-    destroyed() {
-      this.removeListener()
+    examTypes () {
+      console.log(this.pesticideExamTypes)
+      return this.pesticideExamTypes.map(type =>
+        ({
+          text: type.exam_type_name,
+          value: type
+        })
+      )
     },
-    computed: {
-      ...mapState({
-        Candidates: state => state.addExamModule.candidates,
-        pesticideExamTypes: state => state.addExamModule.pesticideExamTypes,
-      }),
-      instructionMessage() {
-        if (this.currentlyEditing) {
-          if (this.currentlyEditing === 'exam') {
-            return 'You are currently editing the below highlighted exam'
-          }
-          return 'You are currently editing the below highlighted candidate'
-        }
-        return 'To add a candidate, select an exam above and press enter or Add Button'
-      },
-      candidates: {
-        get() {
-          return this.Candidates
-        },
-        set(value) {
-          if ( typeof value === 'object' ) {
-            if ( Array.isArray(value) ) {
-              this.$store.commit('setSelectedExams', value)
-              return
-            }
-            let candidatesCopy = [...this.candidates]
-            candidatesCopy.push(value)
-            this.$store.commit('setSelectedExams', candidatesCopy)
-          }
-        }
-      },
-      currentlyEditing() {
-        if (this.highlightedTableRow) {
-          if (!('id' in this.highlightedTableRow)) return 'exam'
-          return 'candidate'
-        }
-        return false
-      },
-      examTypes() {
-        console.log(this.pesticideExamTypes)
-        return this.pesticideExamTypes.map(type =>
-          ({
-            text: type.exam_type_name,
-            value: type,
-          })
-        )
-      },
-      tableData() {
-        let examsObj = {}
-        this.candidates.forEach(candidate => {
-          console.log(candidate)
-          if ( candidate.exam_type_id in examsObj ) {
-            examsObj[candidate.exam_type_id].push(candidate)
-          } else {
-            examsObj[candidate.exam_type_id] = [candidate]
-          }
-        })
-        let output = []
-        console.log(examsObj)
-        for ( let exam_type_id in examsObj ) {
-          let exam = this.pesticideExamTypes.find(pesticideExam => pesticideExam.exam_type_id == exam_type_id)
-          output.push({
-            name: exam.exam_name,
-            ...exam,
-            qty: examsObj[exam_type_id].length,
-          })
-          for ( let candidate of examsObj[exam_type_id] ) {
-            let { firstName, lastName } = candidate
-            candidate.name = `${ firstName || '' }${ lastName ? ' ' : '' }${ lastName || '' }`
-            output.push(candidate)
-          }
-        }
-        this.$store.commit('setCandidateTableData', output)
-        return output
-      },
-    },
-    methods: {
-      addCandidate()  {
-        if (!this.selectedExamType) return
-        let id = Array.isArray(this.candidates) ? this.candidates.length + 1 : 1
-
-        console.log(this.selectedExamType)
-        let newCandidate = {
-          id,
-          exam_type_id: this.selectedExamType.exam_type_id,
-          exam_name: this.selectedExamType.exam_name,
-        }
-        this.formFields.forEach(field => {
-          if (this[field]) {
-            newCandidate[field] = this[field]
-          } else {
-            newCandidate[field] = ''
-          }
-        })
-        this.candidates = newCandidate
-        this.resetForm()
-      },
-      clickSelectItem(item) {
-        this.selectedExamType = item
-      },
-      clickTableRow(examRow) {
-        this.highlightedTableRow = examRow
-        this.formFields.forEach(field => {
-            this[field] = examRow[field]
-        })
-        this.selectedExamType = this.pesticideExamTypes.find(type => type.exam_type_id === examRow.exam_type_id)
-
-      },
-      deleteExam({ id }) {
-        let candidatesCopy = [ ...this.candidates ]
-        let index = candidatesCopy.findIndex(candidate => candidate.id == id)
-        candidatesCopy.splice(index, 1)
-        this.candidates = candidatesCopy
-        this.resetForm()
-      },
-      handleClick() {
-        if ( this.currentlyEditing === 'exam' ) {
-          this.updateExam()
-          return
-        }
-        if ( this.currentlyEditing === 'candidate' ) {
-          this.updateCandidate()
-          return
-        }
-        this.addCandidate()
-      },
-      handleKeyboard(event) {
-        if (event.key !== 'Enter') {
-          return event
+    tableData () {
+      const examsObj = {}
+      this.candidates.forEach(candidate => {
+        console.log(candidate)
+        if (candidate.exam_type_id in examsObj) {
+          examsObj[candidate.exam_type_id].push(candidate)
         } else {
-          this.handleClick()
-          this.$refs['first-name-input'].focus()
+          examsObj[candidate.exam_type_id] = [candidate]
         }
-      },
-      removeListener() {
-        document.removeEventListener('keydown', this.handleKeyboard)
-      },
-      resetForm() {
-        for ( let field of this.formFields ) {
-          this[field] = null
+      })
+      const output = []
+      console.log(examsObj)
+      for (const exam_type_id in examsObj) {
+        const exam = this.pesticideExamTypes.find(pesticideExam => pesticideExam.exam_type_id == exam_type_id)
+        output.push({
+          name: exam.exam_name,
+          ...exam,
+          qty: examsObj[exam_type_id].length
+        })
+        for (const candidate of examsObj[exam_type_id]) {
+          const { firstName, lastName } = candidate
+          candidate.name = `${firstName || ''}${lastName ? ' ' : ''}${lastName || ''}`
+          output.push(candidate)
         }
-        this.fees = 'collect'
-        this.billTo = 'candidate'
-        this.highlightedTableRow = null
-        this.$nextTick(function() {
-          if ( this.$refs.examstable ) {
-            this.$refs.examstable.clearSelected()
-          }
-        })
-      },
-      updateCandidate() {
-        let candidatesCopy = [ ...this.candidates ]
-        let index = candidatesCopy.findIndex(candidate => candidate.id === this.highlightedTableRow.id)
-        let updatedCandidate = { ...this.highlightedTableRow }
-        if (this.selectedExamType) {
-          updatedCandidate.exam_type_id = this.selectedExamType.exam_type_id
-          updatedCandidate.exam_name = this.selectedExamType.exam_name
+      }
+      this.$store.commit('setCandidateTableData', output)
+      return output
+    }
+  },
+  methods: {
+    addCandidate () {
+      if (!this.selectedExamType) return
+      const id = Array.isArray(this.candidates) ? this.candidates.length + 1 : 1
+
+      console.log(this.selectedExamType)
+      const newCandidate = {
+        id,
+        exam_type_id: this.selectedExamType.exam_type_id,
+        exam_name: this.selectedExamType.exam_name
+      }
+      this.formFields.forEach(field => {
+        if (this[field]) {
+          newCandidate[field] = this[field]
+        } else {
+          newCandidate[field] = ''
         }
-        this.formFields.forEach(field => {
-          if ( this[field] ) {
-            updatedCandidate[field] = this[field]
-          } else {
-            updatedCandidate[field] = ''
-          }
-        })
-        candidatesCopy[index] = updatedCandidate
-        this.candidates = candidatesCopy
-        this.resetForm()
-      },
-      updateExam() {
-        let candidatesCopy = [...this.candidates]
-        let oldExam = this.highlightedTableRow
-        let newExam = this.selectedExamType
-        candidatesCopy.forEach(candidate => {
-          if (candidate.exam_type_id === oldExam.exam_type_id) {
-            candidate.exam_type_id = newExam.exam_type_id
-            candidate.exam_name = newExam.exam_name
-          }
-        })
-        this.candidates = candidatesCopy
-        this.resetForm()
-      },
+      })
+      this.candidates = newCandidate
+      this.resetForm()
+    },
+    clickSelectItem (item) {
+      this.selectedExamType = item
+    },
+    clickTableRow (examRow) {
+      this.highlightedTableRow = examRow
+      this.formFields.forEach(field => {
+        this[field] = examRow[field]
+      })
+      this.selectedExamType = this.pesticideExamTypes.find(type => type.exam_type_id === examRow.exam_type_id)
+    },
+    deleteExam ({ id }) {
+      const candidatesCopy = [...this.candidates]
+      const index = candidatesCopy.findIndex(candidate => candidate.id == id)
+      candidatesCopy.splice(index, 1)
+      this.candidates = candidatesCopy
+      this.resetForm()
+    },
+    handleClick () {
+      if (this.currentlyEditing === 'exam') {
+        this.updateExam()
+        return
+      }
+      if (this.currentlyEditing === 'candidate') {
+        this.updateCandidate()
+        return
+      }
+      this.addCandidate()
+    },
+    handleKeyboard (event) {
+      if (event.key !== 'Enter') {
+        return event
+      } else {
+        this.handleClick()
+        this.$refs['first-name-input'].focus()
+      }
+    },
+    removeListener () {
+      document.removeEventListener('keydown', this.handleKeyboard)
+    },
+    resetForm () {
+      for (const field of this.formFields) {
+        this[field] = null
+      }
+      this.fees = 'collect'
+      this.billTo = 'candidate'
+      this.highlightedTableRow = null
+      this.$nextTick(function () {
+        if (this.$refs.examstable) {
+          this.$refs.examstable.clearSelected()
+        }
+      })
+    },
+    updateCandidate () {
+      const candidatesCopy = [...this.candidates]
+      const index = candidatesCopy.findIndex(candidate => candidate.id === this.highlightedTableRow.id)
+      const updatedCandidate = { ...this.highlightedTableRow }
+      if (this.selectedExamType) {
+        updatedCandidate.exam_type_id = this.selectedExamType.exam_type_id
+        updatedCandidate.exam_name = this.selectedExamType.exam_name
+      }
+      this.formFields.forEach(field => {
+        if (this[field]) {
+          updatedCandidate[field] = this[field]
+        } else {
+          updatedCandidate[field] = ''
+        }
+      })
+      candidatesCopy[index] = updatedCandidate
+      this.candidates = candidatesCopy
+      this.resetForm()
+    },
+    updateExam () {
+      const candidatesCopy = [...this.candidates]
+      const oldExam = this.highlightedTableRow
+      const newExam = this.selectedExamType
+      candidatesCopy.forEach(candidate => {
+        if (candidate.exam_type_id === oldExam.exam_type_id) {
+          candidate.exam_type_id = newExam.exam_type_id
+          candidate.exam_name = newExam.exam_name
+        }
+      })
+      this.candidates = candidatesCopy
+      this.resetForm()
     }
   }
+}
 
 </script>
 

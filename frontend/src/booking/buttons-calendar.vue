@@ -38,48 +38,48 @@
 </template>
 
 <script>
-  import { mapMutations, mapState, mapGetters } from 'vuex'
-  import DropdownCalendar from './dropdown-calendar'
+import { mapGetters, mapMutations, mapState } from 'vuex'
+import DropdownCalendar from './dropdown-calendar'
 
-  export default {
-    name: 'ButtonsCalendar',
-    components: { DropdownCalendar },
-    computed: {
-      ...mapState([
-        'scheduling',
-        'rescheduling',
-        'showBookingBlackoutModal',
-      ]),
-      ...mapGetters([
-        'role_code',
-      ])
+export default {
+  name: 'ButtonsCalendar',
+  components: { DropdownCalendar },
+  computed: {
+    ...mapState([
+      'scheduling',
+      'rescheduling',
+      'showBookingBlackoutModal'
+    ]),
+    ...mapGetters([
+      'role_code'
+    ])
+  },
+  methods: {
+    ...mapMutations([
+      'setSelectedExam',
+      'toggleExamInventoryModal',
+      'toggleScheduling',
+      'toggleBookingBlackoutModal'
+    ]),
+    showExamModal () {
+      this.toggleExamInventoryModal(true)
     },
-    methods: {
-      ...mapMutations([
-        'setSelectedExam',
-        'toggleExamInventoryModal',
-        'toggleScheduling',
-        'toggleBookingBlackoutModal',
-      ]),
-      showExamModal() {
-        this.toggleExamInventoryModal(true)
-      },
-      scheduleOtherEvent() {
-        this.setSelectedExam(null)
-        this.toggleScheduling(true)
-      },
-      next() {
-        this.$root.$emit('next')
-      },
-      prev() {
-        this.$root.$emit('prev')
-      },
-      today() {
-        this.$root.$emit('today')
-      },
-      clickBlackout(){
-        this.toggleBookingBlackoutModal(!this.showBookingBlackoutModal)
-      }
+    scheduleOtherEvent () {
+      this.setSelectedExam(null)
+      this.toggleScheduling(true)
+    },
+    next () {
+      this.$root.$emit('next')
+    },
+    prev () {
+      this.$root.$emit('prev')
+    },
+    today () {
+      this.$root.$emit('today')
+    },
+    clickBlackout () {
+      this.toggleBookingBlackoutModal(!this.showBookingBlackoutModal)
     }
   }
+}
 </script>

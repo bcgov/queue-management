@@ -30,37 +30,37 @@
 </template>
 
 <script>
-  import { mapState, mapActions, mapGetters } from 'vuex'
-  export default {
-    name: "Admin",
-    created() {
-      this.loginIframe()
+import { mapActions, mapGetters, mapState } from 'vuex'
+export default {
+  name: 'Admin',
+  created () {
+    this.loginIframe()
+  },
+  computed: {
+    ...mapGetters(['admin_navigation_nonblank']),
+    ...mapState(['iframeLogedIn', 'adminNavigation', 'user']),
+    viewPort () {
+      const h = window.innerHeight - 100
+      const w = window.innerWidth
+      return { h, w }
     },
-    computed: {
-      ...mapGetters(['admin_navigation_nonblank']),
-      ...mapState(['iframeLogedIn', 'adminNavigation', 'user']),
-      viewPort() {
-        let h = window.innerHeight - 100
-        let w = window.innerWidth
-        return { h, w }
-      },
-      frameHeight() {
-        return this.viewPort.h - 80
-      },
-      frameStyle() {
-        return {
-          height: this.frameHeight + 'px',
-        }
-      },
-      url() {
-        //  The default admin edit URL is for GA csr view.
-        return process.env.SOCKET_URL + '/admin/' + this.admin_navigation_nonblank + '/'
+    frameHeight () {
+      return this.viewPort.h - 80
+    },
+    frameStyle () {
+      return {
+        height: this.frameHeight + 'px'
       }
     },
-    methods: {
-      ...mapActions(['loginIframe']),
+    url () {
+      //  The default admin edit URL is for GA csr view.
+      return process.env.SOCKET_URL + '/admin/' + this.admin_navigation_nonblank + '/'
     }
+  },
+  methods: {
+    ...mapActions(['loginIframe'])
   }
+}
 </script>
 
 <style scoped>

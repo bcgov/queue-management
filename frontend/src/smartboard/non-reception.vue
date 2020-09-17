@@ -12,7 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
 
-
 <template>
   <div style="display: flex; height: 75%; width: 100%; justify-content: center">
       <div class="board-noticket-video">
@@ -32,6 +31,3 @@ export default {
   props: ['smartboardData']
 }
 </script>
-
-
-

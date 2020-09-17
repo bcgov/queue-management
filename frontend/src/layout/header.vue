@@ -12,8 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
 
-
-
 <template>
 <div id="header" style="position: fixed; top: 0px; left: 0px; width: 100%; height: 70px; z-index: 1039">
   <b-navbar variant="faded"
@@ -37,7 +35,7 @@ import Login from './../Login'
 export default {
   name: 'Header',
   components: { Login },
-  data() {
+  data () {
     return {
       navbarStyle: {
         boxShadow: '0px 5px 10px 0px rgba(169,169,169,1)',
@@ -50,18 +48,18 @@ export default {
       }
     }
   },
-  created() {
-    let prefix = window.location.host.substring(0,4)
-    switch(prefix) {
-      case "loca":
+  created () {
+    const prefix = window.location.host.substring(0, 4)
+    switch (prefix) {
+      case 'loca':
         this.navbarStyle.backgroundColor = 'grey'
-        break;
-      case "dev-":
+        break
+      case 'dev-':
         this.navbarStyle.backgroundColor = 'green'
-        break;
-      case "test":
+        break
+      case 'test':
         this.navbarStyle.backgroundColor = 'orange'
-        break;
+        break
       default:
         this.navbarStyle.backgroundColor = '#003366'
     }

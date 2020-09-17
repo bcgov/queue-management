@@ -32,47 +32,47 @@
 </template>
 
 <script>
-  import { createNamespacedHelpers } from 'vuex'
-  const { mapActions, mapGetters, mapMutations, mapState } = createNamespacedHelpers('appointmentsModule')
+import { createNamespacedHelpers } from 'vuex'
+const { mapActions, mapGetters, mapMutations, mapState } = createNamespacedHelpers('appointmentsModule')
 
-  export default {
-    name: 'ButtonsAppointments',
-    computed: {
-      ...mapState([ 'showAppointmentBlackoutModal' ]),
-      ...mapGetters(['calendar_setup', 'is_GA', ]),
-      dropdownText() {
-        if (this.calendar_setup.name === 'agendaDay') {
-          return 'Day View'
-        }
-        if (this.calendar_setup.name === 'agendaWeek') {
-          return 'Week View'
-        }
-        return 'Week View'
-      },
-    },
-    methods: {
-      ...mapMutations([
-        'toggleApptBlackoutModal',
-        'toggleAppointmentBlackoutModal', ]),
-      ...mapActions('beginAppointment'),
-      agendaDay() {
-        this.$root.$emit('agendaDay')
-      },
-      agendaWeek() {
-        this.$root.$emit('agendaWeek')
-      },
-      next() {
-        this.$root.$emit('next')
-      },
-      prev() {
-        this.$root.$emit('prev')
-      },
-      today() {
-        this.$root.$emit('today')
-      },
-      clickBlackout(){
-        this.toggleAppointmentBlackoutModal(true)
+export default {
+  name: 'ButtonsAppointments',
+  computed: {
+    ...mapState(['showAppointmentBlackoutModal']),
+    ...mapGetters(['calendar_setup', 'is_GA']),
+    dropdownText () {
+      if (this.calendar_setup.name === 'agendaDay') {
+        return 'Day View'
       }
+      if (this.calendar_setup.name === 'agendaWeek') {
+        return 'Week View'
+      }
+      return 'Week View'
+    }
+  },
+  methods: {
+    ...mapMutations([
+      'toggleApptBlackoutModal',
+      'toggleAppointmentBlackoutModal']),
+    ...mapActions('beginAppointment'),
+    agendaDay () {
+      this.$root.$emit('agendaDay')
+    },
+    agendaWeek () {
+      this.$root.$emit('agendaWeek')
+    },
+    next () {
+      this.$root.$emit('next')
+    },
+    prev () {
+      this.$root.$emit('prev')
+    },
+    today () {
+      this.$root.$emit('today')
+    },
+    clickBlackout () {
+      this.toggleAppointmentBlackoutModal(true)
     }
   }
+}
 </script>

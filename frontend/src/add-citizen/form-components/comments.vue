@@ -28,28 +28,28 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 
-  export default {
-    name: 'Comments',
+export default {
+  name: 'Comments',
 
-    mounted() {
-      this.$root.$on('focuscomments', () => {
-        if (this.$refs && this.$refs.commentsref) {
-          this.$refs.commentsref.focus()
-        }
-      })
-    },
+  mounted () {
+    this.$root.$on('focuscomments', () => {
+      if (this.$refs && this.$refs.commentsref) {
+        this.$refs.commentsref.focus()
+      }
+    })
+  },
 
-    computed: {
-      ...mapGetters(['form_data', 'commentsTooLong']),
+  computed: {
+    ...mapGetters(['form_data', 'commentsTooLong']),
 
-      comments: {
-        get() { return this.form_data.comments },
-        set(value) {
-          this.$store.commit('updateAddModalForm',{type: 'comments', value})
-        }
+    comments: {
+      get () { return this.form_data.comments },
+      set (value) {
+        this.$store.commit('updateAddModalForm', { type: 'comments', value })
       }
     }
   }
+}
 </script>

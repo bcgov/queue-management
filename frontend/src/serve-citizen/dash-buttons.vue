@@ -70,92 +70,92 @@
 </template>
 
 <script>
-  import { mapState, mapMutations, mapGetters, mapActions } from 'vuex'
-  export default {
-    name: "DashButtons",
-    computed: {
-      ...mapGetters([
-        'reception',
-        'citizens_queue'
-      ]),
-      ...mapState([
-        'isLoggedIn',
-        'showAddModal',
-        'citizenInvited',
-        'performingAction',
-        'showAdmin',
-        'showGAScreenModal',
-        'showServiceModal',
-        'showTimeTrackingIcon',
-        'serveNowStyle',
-        'user',
-        'showInviteCitizenSpinner'
-      ]),
-      queueLength() {
-        return this.citizens_queue.length
-      },
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+export default {
+  name: 'DashButtons',
+  computed: {
+    ...mapGetters([
+      'reception',
+      'citizens_queue'
+    ]),
+    ...mapState([
+      'isLoggedIn',
+      'showAddModal',
+      'citizenInvited',
+      'performingAction',
+      'showAdmin',
+      'showGAScreenModal',
+      'showServiceModal',
+      'showTimeTrackingIcon',
+      'serveNowStyle',
+      'user',
+      'showInviteCitizenSpinner'
+    ]),
+    queueLength () {
+      return this.citizens_queue.length
+    }
+  },
+  methods: {
+    ...mapMutations([
+      'setMainAlert',
+      'toggleFeedbackModal',
+      'setAddModalSelectedItem'
+    ]),
+    ...mapActions([
+      'clickInvite',
+      'clickAddCitizen',
+      'clickAdmin',
+      'clickGAScreen',
+      'clickServeNow',
+      'clickBackOffice',
+      'clickQuickServe',
+      'clickQuickBackOffice'
+    ]),
+    addCitizen () {
+      this.clickAddCitizen()
     },
-    methods: {
-      ...mapMutations([
-        'setMainAlert',
-        'toggleFeedbackModal',
-        'setAddModalSelectedItem'
-      ]),
-      ...mapActions([
-        'clickInvite',
-        'clickAddCitizen',
-        'clickAdmin',
-        'clickGAScreen',
-        'clickServeNow',
-        'clickBackOffice',
-        'clickQuickServe',
-        'clickQuickBackOffice',
-      ]),
-      addCitizen() {
+    quickServeCitizen (e) {
+      const service_id = e.target.dataset.id
+      const service_name = e.target.innerText.trim()
+
+      //  If CSR is on reception, and a reception office, bring up add citizen form with defaults.
+      if (this.user.receptionist_ind && this.user.office.sb.sb_type !== 'nocallonsmartboard') {
         this.clickAddCitizen()
-      },
-      quickServeCitizen(e) {
-        let service_id = e.target.dataset.id
-        let service_name = e.target.innerText.trim()
-
-        //  If CSR is on reception, and a reception office, bring up add citizen form with defaults.
-        if(this.user.receptionist_ind && this.user.office.sb.sb_type !== "nocallonsmartboard"){
-          this.clickAddCitizen()
-          this.$store.commit('updateAddModalForm', {type:'service',value:service_id})
-          this.$store.commit('updateAddModalForm', {type:'search',value:service_name})
+        this.$store.commit('updateAddModalForm', { type: 'service', value: service_id })
+        this.$store.commit('updateAddModalForm', { type: 'search', value: service_name })
         //  If CSR NOT on reception or NOT a reception office just serve the citizen.
-        } else {
-          this.setAddModalSelectedItem(service_name)
-          this.$store.commit('updateAddModalForm', {type:'service',value:service_id})
-          this.clickQuickServe()
-        }
-      },
-      quickBackOffice(e) {
-        let service_id = e.target.dataset.id
-        let service_name = e.target.innerText.trim()
+      } else {
+        this.setAddModalSelectedItem(service_name)
+        this.$store.commit('updateAddModalForm', { type: 'service', value: service_id })
+        this.clickQuickServe()
+      }
+    },
+    quickBackOffice (e) {
+      const service_id = e.target.dataset.id
+      const service_name = e.target.innerText.trim()
 
-        if(this.user.receptionist_ind && this.user.office.sb.sb_type !== "nocallonsmartboard"){
-          this.clickBackOffice()
-          this.$store.commit('updateAddModalForm', {type:'service',value:service_id})
-          this.$store.commit('updateAddModalForm', {type:'search',value:service_name})
-        } else {
-          this.setAddModalSelectedItem(service_name)
-          this.$store.commit('updateAddModalForm', {type:'service',value:service_id})
-          this.clickQuickBackOffice()
-        }
-      },
-      invite() {
-        if (this.queueLength === 0) {
-          this.setMainAlert('The are currently no citizens to invite.')
-        } else {
-          this.clickInvite()
-        }
-      },
-      clickFeedback() {
-        this.toggleFeedbackModal(true)
-      },
+      if (this.user.receptionist_ind && this.user.office.sb.sb_type !== 'nocallonsmartboard') {
+        this.clickBackOffice()
+        this.$store.commit('updateAddModalForm', { type: 'service', value: service_id })
+        this.$store.commit('updateAddModalForm', { type: 'search', value: service_name })
+      } else {
+        this.setAddModalSelectedItem(service_name)
+        this.$store.commit('updateAddModalForm', { type: 'service', value: service_id })
+        this.clickQuickBackOffice()
+      }
+    },
+    invite () {
+      if (this.queueLength === 0) {
+        this.setMainAlert('The are currently no citizens to invite.')
+      } else {
+        this.clickInvite()
+      }
+    },
+    clickFeedback () {
+      this.toggleFeedbackModal(true)
     }
   }
+}
 </script>
 
 <style scoped>

@@ -123,294 +123,291 @@
 </template>
 
 <script>
-  import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-  import AddExamFormController from './add-exam-form-controller'
-  import AddExamFormConfirm from './add-exam-form-confirm'
-  import moment from 'moment'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import AddExamFormController from './add-exam-form-controller'
+import AddExamFormConfirm from './add-exam-form-confirm'
+import moment from 'moment'
 
-  export default {
-    name: 'AddExamModal',
-    components: { AddExamFormController, AddExamFormConfirm },
-    data() {
-      return ( {
-        submitMsg: '',
-        unSubmitted: true,
-        status: 'unknown',
-      } )
+export default {
+  name: 'AddExamModal',
+  components: { AddExamFormController, AddExamFormConfirm },
+  data () {
+    return ({
+      submitMsg: '',
+      unSubmitted: true,
+      status: 'unknown'
+    })
+  },
+  computed: {
+    ...mapGetters({
+      steps: 'add_modal_steps',
+      button: 'add_exam_modal_navigation_buttons'
+    }),
+    ...mapState({
+      event_ids: 'event_ids',
+      event_id_warning: 'event_id_warning',
+      exam: 'capturedExam',
+      examTypes: 'examTypes',
+      addExamModal: 'addExamModal',
+      tab: 'captureITAExamTabSetup',
+      user: 'user',
+      module: 'addExamModule',
+      examBcmpJobId: 'examBcmpJobId'
+    }),
+    lastStep () {
+      if (this.addExamModal.setup === 'challenger') {
+        return 3
+      }
+      return 4
     },
-    computed: {
-      ...mapGetters({
-        steps: 'add_modal_steps',
-        button: 'add_exam_modal_navigation_buttons',
-      }),
-      ...mapState({
-        event_ids: 'event_ids',
-        event_id_warning: 'event_id_warning',
-        exam: 'capturedExam',
-        examTypes: 'examTypes',
-        addExamModal: 'addExamModal',
-        tab: 'captureITAExamTabSetup',
-        user: 'user',
-        module: 'addExamModule',
-        examBcmpJobId: 'examBcmpJobId',
-      }),
-      lastStep() {
-        if (this.addExamModal.setup === 'challenger') {
-          return 3
-        }
-        return 4
-      },
-      errors() {
-        console.log(this.exam)
-        if (this.tab.errors) {
-          return this.tab.errors
-        } else {
-          this.submitMsg = ''
-          return []
-        }
-      },
-      modalSize() {
-        if (this.step == 2 && this.setup === 'pesticide' && this.exam.ind_or_group === 'group') {
-          return 'xl'
-        }
-        return 'md'
-      },
-      modalVisible: {
-        get() {
-          return this.addExamModal.visible
-        },
-        set(e) {
-          this.setAddExamModalSetting(e)
-        }
-      },
-      step() {
-        if (this.tab && this.tab.step) {
-          return this.tab.step
-        }
-        return 1
-      },
-      setup() {
-        if (this.addExamModal && this.addExamModal.setup) return this.addExamModal.setup
-        return ''
-      },
-      tabs() {
-        if (this.steps && Array.isArray(this.steps)) {
-          return this.steps.slice(0, this.tab.highestStep)
-        }
-      },
-    },
-    methods: {
-      ...mapActions([ 'clearChallengerBooking', 'clickAddExamSubmit', 'getBookings', 'getExams', ]),
-      ...mapMutations([
-        'captureExamDetail',
-        'resetCaptureForm',
-        'resetAddExamModal',
-        'resetLogAnotherExamModal',
-        'resetCaptureTab',
-        'setAddExamModalSetting',
-        'updateCaptureTab',
-        'setEventWarning',
-      ]),
-      clickBack() {
-        let step = this.step - 1
-        this.updateCaptureTab({ step })
-      },
-      clickCancel() {
-        this.resetModal()
-        this.resetAddExamModal()
-      },
-      clickNext() {
-        if(this.event_id_warning) {
-          this.removeError(2)
-          this.setEventWarning(false)
-        }
-        let step = this.step + 1
-        this.updateCaptureTab({ step })
-        if (step > this.tab.highestStep) {
-          this.updateCaptureTab({ highestStep: step })
-        }
-      },
-      removeError(step) {
-        let i = this.errors.indexOf(step)
-        let errors = this.errors
-        errors.splice(i, 1)
-        this.updateCaptureTab({errors})
-      },
-      clickTab(e) {
-        this.updateCaptureTab({ step: e })
-      },
-      filterKeyPress(e) {
-        if (e.keyCode === 13) {
-          e.preventDefault()
-          return e
-        }
-      },
-      hideModal() {
-        document.removeEventListener('keydown', this.filterKeyPress)
-      },
-      initialize() {
-        document.addEventListener('keydown', this.filterKeyPress)
-        let { setup } = this.addExamModal
-        let reset = () => {
-          this.unSubmitted = true
-          this.submitMsg = ''
-          this.status = 'unknown'
-          this.captureExamDetail({ key: 'exam_method', value: 'paper' })
-        }
-        switch (setup) {
-          case 'challenger':
-            if (this.addExamModal.fromCalendar) {
-              this.captureExamDetail({ key: 'offsite_location', value: this.module.challengerBooking.resource })
-              this.captureExamDetail({ key: 'exam_time', value: this.module.challengerBooking.start })
-              this.captureExamDetail({ key: 'expiry_date', value: this.module.challengerBooking.start })
-              if (this.module.challengerBooking.invigilator) {
-                this.captureExamDetail({ key: 'invigilator', value: this.module.challengerBooking.invigilator })
-              }
-              this.$nextTick(function() { this.$root.$emit('validateform') })
-              this.clearChallengerBooking()
-              return
-            }
-            this.resetModal()
-            this.captureExamDetail({ key: 'on_or_off', value: 'off' })
-            reset()
-            return
-          case 'individual':
-            this.resetModal()
-            let d = new Date()
-            let today = moment(d).format('YYYY-MM-DD')
-            this.captureExamDetail({ key: 'exam_received_date', value: today })
-            let recd = moment().add(90, 'd')
-            this.captureExamDetail({ key: 'expiry_date', value: '' })
-            return
-          case 'group':
-            this.resetModal()
-            return
-          case 'other':
-            this.resetModal()
-            this.captureExamDetail({ key: 'on_or_off', value: 'on' })
-            let exp = moment().add(60, 'd')
-            this.captureExamDetail({ key: 'expiry_date', value: '' })
-            return
-          case 'pesticide':
-            this.resetModal()
-            let expiry = moment().add(60, 'd')
-            this.captureExamDetail({ key: 'expiry_date', value: expiry })
-            return
-          default:
-            this.resetModal()
-            this.hideModal()
-            return
-        }
-      },
-      logAnother() {
-        let { setup } = this.addExamModal
-        this.resetModal()
-        this.unSubmitted = true
+    errors () {
+      console.log(this.exam)
+      if (this.tab.errors) {
+        return this.tab.errors
+      } else {
         this.submitMsg = ''
-        this.status = 'unknown'
-        this.captureExamDetail({ key: 'exam_method', value: 'paper' })
-        this.resetLogAnotherExamModal(setup)
-
-        this.initialize()
-      },
-      resetModal() {
-        this.resetCaptureForm()
-        this.resetCaptureTab()
-        this.unSubmitted = true
-        this.submitMsg = ''
-        this.status = 'unknown'
-        this.captureExamDetail({ key: 'exam_method', value: 'paper' })
-      },
-      setWarning() {
-        this.setEventWarning(true)
-        if (!this.errors.includes(this.step)) {
-          let errors = this.errors.concat([ this.step ])
-          this.updateCaptureTab({ errors })
-        }
-      },
-      submit() {
-        console.log("==> In submit()")
-        let { setup } = this.addExamModal
-        console.log("    --> setup: " + setup.toString())
-        this.unSubmitted = false
-        this.submitMsg = ''
-        if (setup === 'group') {
-          this.clickAddExamSubmit(setup).then(resp => {
-            this.status = resp
-            this.getExams()
-          }).catch(error => {
-            console.log(error)
-            this.status = error
-            this.getExams()
-          })
-        }
-        if (setup === 'challenger') {
-          this.clickAddExamSubmit(setup).then(resp => {
-            this.status = resp
-            this.getExams()
-            this.getBookings()
-          }).catch(error => {
-            this.status = error
-            this.getExams()
-          })
-        }
-        if (setup === 'individual' || setup === 'other' || setup === 'pesticide') {
-          this.clickAddExamSubmit('individual').then(resp => {
-            this.status = resp
-            this.getExams()
-          }, err => {
-            this.status = err
-            console.log(this.status)
-          }).catch(error => {
-            this.status = error
-            console.log(this.status)
-            this.getExams()
-          })
-        }
-      },
-      tabValidate(i) {
-        if (this.validated().indexOf(i) === -1) {
-          return false
-        }
-        return true
-      },
-      tabWarning(i) {
-        if (!Array.isArray(this.errors)) return ''
-        if (this.errors.length > 0) {
-          let list = []
-          this.errors.forEach(error => {
-            if (this.steps.some(step => step.step == error)) {
-              list.push(this.steps.find(step => step.step == error)).questions
-            }
-          })
-          if (list.includes(i)) {
-            return { color: 'red' }
-          }
-          return ''
-        }
-        return ''
-      },
-      tryAgain() {
-        this.unSubmitted = true
-        this.status = 'unknown'
-      },
-      validated() {
-        if (this.tab && this.tab.stepsValidated) {
-          if (Array.isArray(this.tab.stepsValidated)) {
-            return this.tab.stepsValidated
-          }
-          return [ this.tab.stepsValidated ]
-        }
         return []
+      }
+    },
+    modalSize () {
+      if (this.step == 2 && this.setup === 'pesticide' && this.exam.ind_or_group === 'group') {
+        return 'xl'
+      }
+      return 'md'
+    },
+    modalVisible: {
+      get () {
+        return this.addExamModal.visible
       },
-      showErrorMsg() {
-        this.submitMsg = (this.addExamModal.setup=='pesticide' && !this.exam.bcmp_job_id) ? 'Please click on the Request Exam button to generate BCMP Job Id' : 'You have an error on a previous step.  Click on the red tab.'
-
+      set (e) {
+        this.setAddExamModalSetting(e)
+      }
+    },
+    step () {
+      if (this.tab && this.tab.step) {
+        return this.tab.step
+      }
+      return 1
+    },
+    setup () {
+      if (this.addExamModal && this.addExamModal.setup) return this.addExamModal.setup
+      return ''
+    },
+    tabs () {
+      if (this.steps && Array.isArray(this.steps)) {
+        return this.steps.slice(0, this.tab.highestStep)
       }
     }
-  }
-</script>
+  },
+  methods: {
+    ...mapActions(['clearChallengerBooking', 'clickAddExamSubmit', 'getBookings', 'getExams']),
+    ...mapMutations([
+      'captureExamDetail',
+      'resetCaptureForm',
+      'resetAddExamModal',
+      'resetLogAnotherExamModal',
+      'resetCaptureTab',
+      'setAddExamModalSetting',
+      'updateCaptureTab',
+      'setEventWarning'
+    ]),
+    clickBack () {
+      const step = this.step - 1
+      this.updateCaptureTab({ step })
+    },
+    clickCancel () {
+      this.resetModal()
+      this.resetAddExamModal()
+    },
+    clickNext () {
+      if (this.event_id_warning) {
+        this.removeError(2)
+        this.setEventWarning(false)
+      }
+      const step = this.step + 1
+      this.updateCaptureTab({ step })
+      if (step > this.tab.highestStep) {
+        this.updateCaptureTab({ highestStep: step })
+      }
+    },
+    removeError (step) {
+      const i = this.errors.indexOf(step)
+      const errors = this.errors
+      errors.splice(i, 1)
+      this.updateCaptureTab({ errors })
+    },
+    clickTab (e) {
+      this.updateCaptureTab({ step: e })
+    },
+    filterKeyPress (e) {
+      if (e.keyCode === 13) {
+        e.preventDefault()
+        return e
+      }
+    },
+    hideModal () {
+      document.removeEventListener('keydown', this.filterKeyPress)
+    },
+    initialize () {
+      document.addEventListener('keydown', this.filterKeyPress)
+      const { setup } = this.addExamModal
+      const reset = () => {
+        this.unSubmitted = true
+        this.submitMsg = ''
+        this.status = 'unknown'
+        this.captureExamDetail({ key: 'exam_method', value: 'paper' })
+      }
+      switch (setup) {
+        case 'challenger':
+          if (this.addExamModal.fromCalendar) {
+            this.captureExamDetail({ key: 'offsite_location', value: this.module.challengerBooking.resource })
+            this.captureExamDetail({ key: 'exam_time', value: this.module.challengerBooking.start })
+            this.captureExamDetail({ key: 'expiry_date', value: this.module.challengerBooking.start })
+            if (this.module.challengerBooking.invigilator) {
+              this.captureExamDetail({ key: 'invigilator', value: this.module.challengerBooking.invigilator })
+            }
+            this.$nextTick(function () { this.$root.$emit('validateform') })
+            this.clearChallengerBooking()
+            return
+          }
+          this.resetModal()
+          this.captureExamDetail({ key: 'on_or_off', value: 'off' })
+          reset()
+          return
+        case 'individual':
+          this.resetModal()
+          const d = new Date()
+          const today = moment(d).format('YYYY-MM-DD')
+          this.captureExamDetail({ key: 'exam_received_date', value: today })
+          const recd = moment().add(90, 'd')
+          this.captureExamDetail({ key: 'expiry_date', value: '' })
+          return
+        case 'group':
+          this.resetModal()
+          return
+        case 'other':
+          this.resetModal()
+          this.captureExamDetail({ key: 'on_or_off', value: 'on' })
+          const exp = moment().add(60, 'd')
+          this.captureExamDetail({ key: 'expiry_date', value: '' })
+          return
+        case 'pesticide':
+          this.resetModal()
+          const expiry = moment().add(60, 'd')
+          this.captureExamDetail({ key: 'expiry_date', value: expiry })
+          return
+        default:
+          this.resetModal()
+          this.hideModal()
+      }
+    },
+    logAnother () {
+      const { setup } = this.addExamModal
+      this.resetModal()
+      this.unSubmitted = true
+      this.submitMsg = ''
+      this.status = 'unknown'
+      this.captureExamDetail({ key: 'exam_method', value: 'paper' })
+      this.resetLogAnotherExamModal(setup)
 
+      this.initialize()
+    },
+    resetModal () {
+      this.resetCaptureForm()
+      this.resetCaptureTab()
+      this.unSubmitted = true
+      this.submitMsg = ''
+      this.status = 'unknown'
+      this.captureExamDetail({ key: 'exam_method', value: 'paper' })
+    },
+    setWarning () {
+      this.setEventWarning(true)
+      if (!this.errors.includes(this.step)) {
+        const errors = this.errors.concat([this.step])
+        this.updateCaptureTab({ errors })
+      }
+    },
+    submit () {
+      console.log('==> In submit()')
+      const { setup } = this.addExamModal
+      console.log('    --> setup: ' + setup.toString())
+      this.unSubmitted = false
+      this.submitMsg = ''
+      if (setup === 'group') {
+        this.clickAddExamSubmit(setup).then(resp => {
+          this.status = resp
+          this.getExams()
+        }).catch(error => {
+          console.log(error)
+          this.status = error
+          this.getExams()
+        })
+      }
+      if (setup === 'challenger') {
+        this.clickAddExamSubmit(setup).then(resp => {
+          this.status = resp
+          this.getExams()
+          this.getBookings()
+        }).catch(error => {
+          this.status = error
+          this.getExams()
+        })
+      }
+      if (setup === 'individual' || setup === 'other' || setup === 'pesticide') {
+        this.clickAddExamSubmit('individual').then(resp => {
+          this.status = resp
+          this.getExams()
+        }, err => {
+          this.status = err
+          console.log(this.status)
+        }).catch(error => {
+          this.status = error
+          console.log(this.status)
+          this.getExams()
+        })
+      }
+    },
+    tabValidate (i) {
+      if (this.validated().indexOf(i) === -1) {
+        return false
+      }
+      return true
+    },
+    tabWarning (i) {
+      if (!Array.isArray(this.errors)) return ''
+      if (this.errors.length > 0) {
+        const list = []
+        this.errors.forEach(error => {
+          if (this.steps.some(step => step.step == error)) {
+            list.push(this.steps.find(step => step.step == error)).questions
+          }
+        })
+        if (list.includes(i)) {
+          return { color: 'red' }
+        }
+        return ''
+      }
+      return ''
+    },
+    tryAgain () {
+      this.unSubmitted = true
+      this.status = 'unknown'
+    },
+    validated () {
+      if (this.tab && this.tab.stepsValidated) {
+        if (Array.isArray(this.tab.stepsValidated)) {
+          return this.tab.stepsValidated
+        }
+        return [this.tab.stepsValidated]
+      }
+      return []
+    },
+    showErrorMsg () {
+      this.submitMsg = (this.addExamModal.setup == 'pesticide' && !this.exam.bcmp_job_id) ? 'Please click on the Request Exam button to generate BCMP Job Id' : 'You have an error on a previous step.  Click on the red tab.'
+    }
+  }
+}
+</script>
 
 <style>
   .message-text {

@@ -23,79 +23,78 @@
 </template>
 
 <script>
-  import { mapGetters, mapMutations, mapState } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 
-  export default {
-    name: 'Filters',
-    mounted() {
-      this.$root.$on('focusfilter', () => {
-        if (this.$refs && this.$refs.filterref) {
-          this.$refs.filterref.focus()
-        }
-        if (this.categories && this.categories.length > 0) {
-          if (['/booking', '/exams'].includes(this.$route.path)) {
-            this.setDisplayServices("All")
-            let { service_id } = this.categories .find(cat => cat.service_name === 'Exams')
-            this.updateAddModalForm({type: 'category', value: service_id})
-
-          }
-        }
-      })
-    },
-    computed: {
-      ...mapGetters(['categories_options', 'form_data']),
-      ...mapState({
-        addModalSetup: 'addModalSetup',
-        categories: state => state.categories,
-        suspendFilter: state => state.addModalForm.suspendFilter,
-        selectedItem: state => state.addModalForm.selectedItem,
-      }),
-      simplified() {
-        if (this.$route.path !== '/queue') {
-          return true
-        }
-        return false
-      },
-      search: {
-        get() {
-          if (this.suspendFilter) {
-            return this.selectedItem
-          } else if (!this.suspendFilter) {
-            return this.form_data.search
-          }
-        },
-        set(value) {
-          if (this.suspendFilter) {
-            this.updateAddModalForm({type: 'suspendFilter', value: false})
-          } else if (!this.suspendFilter) {
-            this.updateAddModalForm( { type: 'search', value } )
-          }
-        }
-      },
-      category: {
-        get() { return this.form_data.category },
-        set(value) { this.updateAddModalForm({type: 'category', value}) }
+export default {
+  name: 'Filters',
+  mounted () {
+    this.$root.$on('focusfilter', () => {
+      if (this.$refs && this.$refs.filterref) {
+        this.$refs.filterref.focus()
       }
+      if (this.categories && this.categories.length > 0) {
+        if (['/booking', '/exams'].includes(this.$route.path)) {
+          this.setDisplayServices('All')
+          const { service_id } = this.categories.find(cat => cat.service_name === 'Exams')
+          this.updateAddModalForm({ type: 'category', value: service_id })
+        }
+      }
+    })
+  },
+  computed: {
+    ...mapGetters(['categories_options', 'form_data']),
+    ...mapState({
+      addModalSetup: 'addModalSetup',
+      categories: state => state.categories,
+      suspendFilter: state => state.addModalForm.suspendFilter,
+      selectedItem: state => state.addModalForm.selectedItem
+    }),
+    simplified () {
+      if (this.$route.path !== '/queue') {
+        return true
+      }
+      return false
     },
-    watch: {
-      categories(newVal, oldVal) {
-        if (newVal && newVal.length > 0) {
-          if (['/booking', '/exams'].includes(this.$route.path)) {
-            let { service_id } = newVal.find(cat => cat.service_name === 'Exams')
-            this.updateAddModalForm({type: 'category', value: service_id})
-          }
+    search: {
+      get () {
+        if (this.suspendFilter) {
+          return this.selectedItem
+        } else if (!this.suspendFilter) {
+          return this.form_data.search
+        }
+      },
+      set (value) {
+        if (this.suspendFilter) {
+          this.updateAddModalForm({ type: 'suspendFilter', value: false })
+        } else if (!this.suspendFilter) {
+          this.updateAddModalForm({ type: 'search', value })
         }
       }
     },
-    methods: {
-      ...mapMutations(['updateAddModalForm', 'setDisplayServices']),
-      focus() {
-        if (this.$refs && this.$refs.inputref) {
-          this.$refs.inputref.focus()
+    category: {
+      get () { return this.form_data.category },
+      set (value) { this.updateAddModalForm({ type: 'category', value }) }
+    }
+  },
+  watch: {
+    categories (newVal, oldVal) {
+      if (newVal && newVal.length > 0) {
+        if (['/booking', '/exams'].includes(this.$route.path)) {
+          const { service_id } = newVal.find(cat => cat.service_name === 'Exams')
+          this.updateAddModalForm({ type: 'category', value: service_id })
         }
       }
     }
+  },
+  methods: {
+    ...mapMutations(['updateAddModalForm', 'setDisplayServices']),
+    focus () {
+      if (this.$refs && this.$refs.inputref) {
+        this.$refs.inputref.focus()
+      }
+    }
   }
+}
 </script>
 
 <style scoped>

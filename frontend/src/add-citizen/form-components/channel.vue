@@ -19,27 +19,27 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 
-  export default {
-    name: 'Channel',
-    data() {
-      return {
-        t: true,
-        f: false,
-        state: 'invalid'
-      }
-    },
-    computed: {
-      ...mapGetters([ 'channel_options', 'form_data' ]),
-      channel: {
-        get() { return this.form_data.channel },
-        set(value) {
-          this.$store.commit('updateAddModalForm', { type: 'channel', value })
-        }
+export default {
+  name: 'Channel',
+  data () {
+    return {
+      t: true,
+      f: false,
+      state: 'invalid'
+    }
+  },
+  computed: {
+    ...mapGetters(['channel_options', 'form_data']),
+    channel: {
+      get () { return this.form_data.channel },
+      set (value) {
+        this.$store.commit('updateAddModalForm', { type: 'channel', value })
       }
     }
   }
+}
 </script>
 
 <style>

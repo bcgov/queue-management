@@ -1,5 +1,4 @@
 
-
 <template>
   <div id="serve-citizen-table-container">
     <b-row>
@@ -65,19 +64,19 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 
 export default {
   name: 'ServeCitizenTable',
 
-  data() {
+  data () {
     return {
       fields: [
-        {key:'status', label: 'Status', thStyle:'text-align: center;'},
-        {key:'service.parent.service_name', tdClass: 'align-middle', label:'Category', thStyle:'text-align: center;'},
-        {key:'service.service_name', tdClass: 'align-middle', label:'Service', thStyle:'text-align: center;'},
-        {key:'quantity', label:'Quantity', thStyle:'text-align: center;'},
-        {key:'editBut', label:'Change Service', thStyle:'text-align: center;'}
+        { key: 'status', label: 'Status', thStyle: 'text-align: center;' },
+        { key: 'service.parent.service_name', tdClass: 'align-middle', label: 'Category', thStyle: 'text-align: center;' },
+        { key: 'service.service_name', tdClass: 'align-middle', label: 'Service', thStyle: 'text-align: center;' },
+        { key: 'quantity', label: 'Quantity', thStyle: 'text-align: center;' },
+        { key: 'editBut', label: 'Change Service', thStyle: 'text-align: center;' }
       ]
     }
   },
@@ -89,12 +88,12 @@ export default {
       'active_service',
       'active_index'
     ]),
-    showTicketNotice() {
+    showTicketNotice () {
       if (this.$route.path !== '/queue' && !this.serviceModalForm.citizen_id) {
         return true
       }
       return false
-    },
+    }
   },
 
   methods: {
@@ -104,19 +103,19 @@ export default {
     ]),
     ...mapMutations(['editServiceModalForm']),
 
-    formatTime(data) {
-      let time = new Date(data)
+    formatTime (data) {
+      const time = new Date(data)
       return time.toLocaleTimeString()
     },
 
-    setQuantity(value) {
+    setQuantity (value) {
       this.editServiceModalForm({
         type: 'activeQuantity',
         value
       })
     },
 
-    getQuantity() {
+    getQuantity () {
       if (!this.serviceModalForm.activeQuantity) {
         return ''
       } else {

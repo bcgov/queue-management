@@ -15,23 +15,23 @@
 </template>
 
 <script>
-  import { mapMutations } from 'vuex'
-  import ExamInventoryTable from '../exams/exam-inventory-table'
+import { mapMutations } from 'vuex'
+import ExamInventoryTable from '../exams/exam-inventory-table'
 
-  export default {
-    name: "ExamInventoryModal",
-    components: { ExamInventoryTable },
-    methods: {
-      ...mapMutations([
-        'toggleExamInventoryModal',
-        'toggleScheduling',
-      ]),
-      cancel() {
-        this.toggleExamInventoryModal(false)
-        this.toggleScheduling(false)
-      }
+export default {
+  name: 'ExamInventoryModal',
+  components: { ExamInventoryTable },
+  methods: {
+    ...mapMutations([
+      'toggleExamInventoryModal',
+      'toggleScheduling'
+    ]),
+    cancel () {
+      this.toggleExamInventoryModal(false)
+      this.toggleScheduling(false)
     }
   }
+}
 </script>
 
 <style scoped>
@@ -41,4 +41,3 @@
     width: 100%;
   }
 </style>
-

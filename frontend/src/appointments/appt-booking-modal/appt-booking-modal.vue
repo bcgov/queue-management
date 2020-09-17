@@ -165,355 +165,354 @@
 </template>
 
 <script>
-  import moment from 'moment'
-  import { createNamespacedHelpers } from 'vuex'
-  const { mapActions, mapGetters, mapMutations, mapState } = createNamespacedHelpers('appointmentsModule')
+import moment from 'moment'
+import { createNamespacedHelpers } from 'vuex'
+const { mapActions, mapGetters, mapMutations, mapState } = createNamespacedHelpers('appointmentsModule')
 
-  export default {
-    name: 'ApptBookingModal',
-    props: ['clickedTime', 'clickedAppt'],
-    data() {
-      return {
-        baseEnd: null,
-        booking: false,
-        citizen_id: null,
-        citizen_name: null,
-        oldLength: null,
-        comments: null,
-        contact_information: null,
-        fieldsEdited: false,
-        length: 0,
-        selectingService: false,
-        showMessage: false,
-        start: null,
-        validate: false,
-        online_flag: false
+export default {
+  name: 'ApptBookingModal',
+  props: ['clickedTime', 'clickedAppt'],
+  data () {
+    return {
+      baseEnd: null,
+      booking: false,
+      citizen_id: null,
+      citizen_name: null,
+      oldLength: null,
+      comments: null,
+      contact_information: null,
+      fieldsEdited: false,
+      length: 0,
+      selectingService: false,
+      showMessage: false,
+      start: null,
+      validate: false,
+      online_flag: false
+    }
+  },
+  mounted () {
+    if (this.$store.state.services.length === 0) {
+      this.getServices()
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'services',
+      'appointment_events'
+    ]),
+    ...mapState([
+      'showApptBookingModal',
+      'selectedService',
+      'editDeleteSeries',
+      'apptRescheduling',
+      'submitClicked'
+    ]),
+    appointments () {
+      if (this.clickedAppt) {
+        const appointments = Object.assign([], this.appointment_events)
+        const i = this.appointment_events.indexOf(this.clickedAppt)
+        appointments.splice(i, 1)
+        return appointments
       }
     },
-    mounted() {
-      if (this.$store.state.services.length === 0) {
-        this.getServices()
-      }
-    },
-    computed: {
-      ...mapGetters([
-        'services',
-        'appointment_events'
-      ]),
-      ...mapState([
-        'showApptBookingModal',
-        'selectedService',
-        'editDeleteSeries',
-        'apptRescheduling',
-        'submitClicked'
-      ]),
-      appointments() {
-        if (this.clickedAppt) {
-          let appointments = Object.assign([], this.appointment_events)
-          let i = this.appointment_events.indexOf(this.clickedAppt)
-          appointments.splice(i,1)
-          return appointments
-        }
-      },
-      isNotBlackoutFlag(){
-        if(this.clickedAppt){
-          if(this.clickedAppt.blackout_flag){
-            if(this.clickedAppt.blackout_flag == 'Y'){
-              return false
-            }else if(this.clickedAppt.blackout_flag == 'N'){
-              return true
-            }
-          }else {
+    isNotBlackoutFlag () {
+      if (this.clickedAppt) {
+        if (this.clickedAppt.blackout_flag) {
+          if (this.clickedAppt.blackout_flag == 'Y') {
+            return false
+          } else if (this.clickedAppt.blackout_flag == 'N') {
             return true
           }
-        }
-        return true
-      },
-      end() {
-        if (this.clickedTime) {
-          return moment(this.clickedTime.start).clone().add(this.length, 'minutes')
-        }
-        if (this.clickedAppt) {
-          return moment(this.clickedAppt.start).clone().add(this.length, 'minutes')
-        }
-      },
-      timeOptions() {
-        let options = []
-        if (this.clickedTime) {
-          let event = this.clickedTime
-          let time = 60
-          for (let l = 15; l <= time; l += 15) {
-            options.push(l)
-          }
-          return options
-        }
-        if (this.clickedAppt) {
-          let event = this.clickedAppt
-          //let start = moment(event.start).clone()
-          //for (let l of [15, 30, 45, 60]) {
-            // let testEnd = start.clone().add(l, 'minutes')
-            // if (this.appointments.find(appt => moment(appt.start).isBetween(start, testEnd))) {
-            //   break
-            // }
-            //options.push(l)
-          //}
-          let time = 60
-          for (let l = 15; l <= time; l += 15) {
-            options.push(l)
-          }
-
-          return options
-        }
-      },
-      service_name() {
-        this.$store.commit('setDisplayServices', 'Dashboard')
-        let services = this.$store.getters.filtered_services;
-        if (services && services.length > 0) {
-          if (this.selectedService) {
-            return services.find(srv => srv.service_id === this.selectedService).service_name
-          }
-        }
-        return 'Please choose a service'
-      },
-      displayDate() {
-        if (this.start) {
-          return new moment(this.start).clone().format('dddd MMMM Do, YYYY')
-        }
-        return ''
-      },
-      displayStart() {
-        if (this.start) {
-          return new moment(this.start).clone().format('h:mm a')
-        }
-        return ''
-      },
-      modalVisible: {
-        get() { return this.showApptBookingModal },
-        set(e) { this.toggleApptBookingModal(e) }
-      },
-      submitDisabled() {
-        if (this.citizen_name && this.selectedService ) {
-          return false
-        }
-        return true
-      },
-      validated() {
-        let output = {}
-        if (!this.citizen_name) {
-          output.citizen_name = false
-        }
-        if (!this.selectedService) {
-          output.selectedService = false
-        }
-        if (this.validate && Object.keys(output).length > 0) {
-          this.showMessage = true
-          return output
-        }
-        this.showMessage = false
-        return {
-          citizen_name: null,
-          selectedService: null
+        } else {
+          return true
         }
       }
+      return true
     },
-    methods: {
-      ...mapActions([
-        'clearAddModal',
-        'deleteAppointment',
-        'deleteRecurringAppointments',
-        'getAppointments',
-        'getServices',
-        'postAppointment',
-        'putAppointment',
-        'putRecurringAppointment',
-        'resetAddModalForm',
-        'toggleAddModal',
-      ]),
-      ...mapMutations([
-        'setEditedStatus',
-        'setSelectedService',
-        'setRescheduling',
-        'toggleApptBookingModal',
-        'toggleEditDeleteSeries',
-        'toggleSubmitClicked'
-      ]),
-      addService() {
-        this.selectingService = true
-        this.clearMessage()
-        this.toggleApptBookingModal(false)
-        this.toggleAddModal(true)
-        if (this.selectedService) {
-          this.$store.commit('updateAddModalForm', {type:'service', value:this.selectedService})
-          return
-        }
-        this.clearService()
-      },
-      clearEvents() {
-        this.$root.$emit('clear-clicked-time')
-        if (!this.apptRescheduling && !this.selectingService) {
-          this.$root.$emit('clear-clicked-appt')
-        }
-      },
-      clearMessage() {
-        this.validate = false
-        this.showMessage = false
-      },
-      clearService() {
-        this.clearMessage()
-        this.clearAddModal()
-        this.resetAddModalForm()
-      },
-      deleteAppt() {
-        this.$store.commit('toggleServeCitizenSpinner', true)
-        this.deleteAppointment(this.clickedAppt.appointment_id).then( () => {
-          this.cancel()
-          this.$store.commit('toggleServeCitizenSpinner', false)
-        })
-      },
-      deleteRecurringAppts() {
-        this.$store.commit('toggleServeCitizenSpinner', true)
-        this.deleteRecurringAppointments(this.clickedAppt.recurring_uuid).then( () => {
-          this.cancel()
-          this.$store.commit('toggleServeCitizenSpinner', false)
-        })
-      },
-      reschedule() {
-        if (this.clickedTime) {
-          this.$root.$emit('removeTempEvent')
-        }
-        this.$store.commit('toggleEditApptModal', false)
-        this.$store.commit('toggleRescheduling', true)
-        this.$store.commit('toggleApptEditMode', true)
-        this.clearMessage()
-        this.oldLength = this.length
-        this.toggleApptBookingModal(false)
-        this.setRescheduling(true)
-      },
-      cancel() {
-        this.$root.$emit('removeTempEvent')
-        this.$root.$emit('clear-clicked-time')
-        this.$root.$emit('clear-clicked-appt')
-        this.toggleApptBookingModal(false)
-        this.setRescheduling(false)
-      },
-      show() {
-        this.clearMessage()
-        if (this.selectingService) {
-          this.selectingService = false
-          return
-        }
-        if (this.apptRescheduling) {
-          this.$store.commit('toggleRescheduling', false)
-          this.setRescheduling(false)
-          this.start = this.clickedTime.start.clone()
-          this.length = this.clickedTime.end.clone().diff(this.start, 'minutes')
-          if (this.oldLength) {
-            if (this.oldLength < this.length) {
-              this.length = this.oldLength
-            }
-            this.oldLength = null
-          }
-          return
-        }
-        if (this.clickedTime) {
-          this.citizen_name =
-          this.comments = null
-          this.contact_information = null
-          this.length = 15
-          this.start = this.clickedTime.start.clone()
-          this.clearAddModal()
-        }
-        if (this.clickedAppt && this.clickedAppt.end) {
-          this.citizen_name = this.clickedAppt.title
-          this.comments = this.clickedAppt.comments
-          this.contact_information = this.clickedAppt.contact_information
-          this.start = this.clickedAppt.start.clone()
-          this.length = this.clickedAppt.end.clone().diff(this.start, 'minutes')
-          this.online_flag = this.clickedAppt.online_flag
-          let { service_id } = this.clickedAppt
-          this.setSelectedService(service_id)
-          this.$store.commit('updateAddModalForm', {type: 'service', value: service_id})
-        }else {
-          this.citizen_name = ''
-          this.comments = ''
-          this.contact_information = ''
-          this.start = this.clickedTime.start.clone()
-        }
-      },
-      submit() {
-        if (!this.submitClicked) {
-          this.toggleSubmitClicked(true)
-          this.$store.commit('toggleServeCitizenSpinner', true)
-          this.clearMessage()
-          let service_id = this.selectedService
-          let start = moment(this.start).clone()
-          let end = moment(this.end).clone()
-          let e = {
-            start_time: moment.utc(start).format(),
-            end_time: moment.utc(end).format(),
-            service_id,
-            citizen_name: this.citizen_name,
-            contact_information: this.contact_information,
-          }
-          if (this.comments) {
-            e.comments = this.comments
-          }
-          let finish = () => {
-            this.cancel()
-            this.$root.$emit('clear-clicked-appt')
-            this.$root.$emit('clear-clicked-time')
-          }
-          this.$store.commit('toggleRescheduling', false)
-          this.$store.commit('toggleApptEditMode', false)
-          if (this.clickedAppt) {
-            let payload = {
-              id: this.clickedAppt.appointment_id,
-              data: e
-            }
-            if (this.editDeleteSeries === true) {
-              // IFF further fields are added to the appointment model that are intended to be edited,
-              // and they belong to blackouts, and them to the following object below. Ensure that dates are
-              // not included as all events in this series will be under the start/end time of the event
-              // that is clicked in the calendar
-              this.toggleEditDeleteSeries(false)
-              let re_e = {
-                comments: this.comments
-              }
-              let re_payload = {
-                id: this.clickedAppt.appointment_id,
-                data: re_e,
-                recurring_uuid: this.clickedAppt.recurring_uuid
-              }
-              this.putRecurringAppointment(re_payload).then(() => {
-                this.getAppointments().then(() => {
-                  finish()
-                  this.$store.commit('toggleServeCitizenSpinner', false)
-                })
-              })
-            } else {
-              this.putAppointment(payload).then(() => {
-                this.getAppointments().then(() => {
-                  finish()
-                  this.$store.commit('toggleServeCitizenSpinner', false)
-                  setTimeout(()=>{ this.toggleSubmitClicked(false) }, 2000);
-                })
-              })
-            }
-            return
-          }
-          this.postAppointment(e).then(() => {
-            this.getAppointments().then(() => {
-              finish()
-              this.$store.commit('toggleServeCitizenSpinner', false)
-              setTimeout(()=>{ this.toggleSubmitClicked(false) }, 2000);
-            })
-          })
-        }
-      },
+    end () {
+      if (this.clickedTime) {
+        return moment(this.clickedTime.start).clone().add(this.length, 'minutes')
+      }
+      if (this.clickedAppt) {
+        return moment(this.clickedAppt.start).clone().add(this.length, 'minutes')
+      }
     },
-  }
-</script>
+    timeOptions () {
+      const options = []
+      if (this.clickedTime) {
+        const event = this.clickedTime
+        const time = 60
+        for (let l = 15; l <= time; l += 15) {
+          options.push(l)
+        }
+        return options
+      }
+      if (this.clickedAppt) {
+        const event = this.clickedAppt
+        // let start = moment(event.start).clone()
+        // for (let l of [15, 30, 45, 60]) {
+        // let testEnd = start.clone().add(l, 'minutes')
+        // if (this.appointments.find(appt => moment(appt.start).isBetween(start, testEnd))) {
+        //   break
+        // }
+        // options.push(l)
+        // }
+        const time = 60
+        for (let l = 15; l <= time; l += 15) {
+          options.push(l)
+        }
 
+        return options
+      }
+    },
+    service_name () {
+      this.$store.commit('setDisplayServices', 'Dashboard')
+      const services = this.$store.getters.filtered_services
+      if (services && services.length > 0) {
+        if (this.selectedService) {
+          return services.find(srv => srv.service_id === this.selectedService).service_name
+        }
+      }
+      return 'Please choose a service'
+    },
+    displayDate () {
+      if (this.start) {
+        return new moment(this.start).clone().format('dddd MMMM Do, YYYY')
+      }
+      return ''
+    },
+    displayStart () {
+      if (this.start) {
+        return new moment(this.start).clone().format('h:mm a')
+      }
+      return ''
+    },
+    modalVisible: {
+      get () { return this.showApptBookingModal },
+      set (e) { this.toggleApptBookingModal(e) }
+    },
+    submitDisabled () {
+      if (this.citizen_name && this.selectedService) {
+        return false
+      }
+      return true
+    },
+    validated () {
+      const output = {}
+      if (!this.citizen_name) {
+        output.citizen_name = false
+      }
+      if (!this.selectedService) {
+        output.selectedService = false
+      }
+      if (this.validate && Object.keys(output).length > 0) {
+        this.showMessage = true
+        return output
+      }
+      this.showMessage = false
+      return {
+        citizen_name: null,
+        selectedService: null
+      }
+    }
+  },
+  methods: {
+    ...mapActions([
+      'clearAddModal',
+      'deleteAppointment',
+      'deleteRecurringAppointments',
+      'getAppointments',
+      'getServices',
+      'postAppointment',
+      'putAppointment',
+      'putRecurringAppointment',
+      'resetAddModalForm',
+      'toggleAddModal'
+    ]),
+    ...mapMutations([
+      'setEditedStatus',
+      'setSelectedService',
+      'setRescheduling',
+      'toggleApptBookingModal',
+      'toggleEditDeleteSeries',
+      'toggleSubmitClicked'
+    ]),
+    addService () {
+      this.selectingService = true
+      this.clearMessage()
+      this.toggleApptBookingModal(false)
+      this.toggleAddModal(true)
+      if (this.selectedService) {
+        this.$store.commit('updateAddModalForm', { type: 'service', value: this.selectedService })
+        return
+      }
+      this.clearService()
+    },
+    clearEvents () {
+      this.$root.$emit('clear-clicked-time')
+      if (!this.apptRescheduling && !this.selectingService) {
+        this.$root.$emit('clear-clicked-appt')
+      }
+    },
+    clearMessage () {
+      this.validate = false
+      this.showMessage = false
+    },
+    clearService () {
+      this.clearMessage()
+      this.clearAddModal()
+      this.resetAddModalForm()
+    },
+    deleteAppt () {
+      this.$store.commit('toggleServeCitizenSpinner', true)
+      this.deleteAppointment(this.clickedAppt.appointment_id).then(() => {
+        this.cancel()
+        this.$store.commit('toggleServeCitizenSpinner', false)
+      })
+    },
+    deleteRecurringAppts () {
+      this.$store.commit('toggleServeCitizenSpinner', true)
+      this.deleteRecurringAppointments(this.clickedAppt.recurring_uuid).then(() => {
+        this.cancel()
+        this.$store.commit('toggleServeCitizenSpinner', false)
+      })
+    },
+    reschedule () {
+      if (this.clickedTime) {
+        this.$root.$emit('removeTempEvent')
+      }
+      this.$store.commit('toggleEditApptModal', false)
+      this.$store.commit('toggleRescheduling', true)
+      this.$store.commit('toggleApptEditMode', true)
+      this.clearMessage()
+      this.oldLength = this.length
+      this.toggleApptBookingModal(false)
+      this.setRescheduling(true)
+    },
+    cancel () {
+      this.$root.$emit('removeTempEvent')
+      this.$root.$emit('clear-clicked-time')
+      this.$root.$emit('clear-clicked-appt')
+      this.toggleApptBookingModal(false)
+      this.setRescheduling(false)
+    },
+    show () {
+      this.clearMessage()
+      if (this.selectingService) {
+        this.selectingService = false
+        return
+      }
+      if (this.apptRescheduling) {
+        this.$store.commit('toggleRescheduling', false)
+        this.setRescheduling(false)
+        this.start = this.clickedTime.start.clone()
+        this.length = this.clickedTime.end.clone().diff(this.start, 'minutes')
+        if (this.oldLength) {
+          if (this.oldLength < this.length) {
+            this.length = this.oldLength
+          }
+          this.oldLength = null
+        }
+        return
+      }
+      if (this.clickedTime) {
+        this.citizen_name =
+          this.comments = null
+        this.contact_information = null
+        this.length = 15
+        this.start = this.clickedTime.start.clone()
+        this.clearAddModal()
+      }
+      if (this.clickedAppt && this.clickedAppt.end) {
+        this.citizen_name = this.clickedAppt.title
+        this.comments = this.clickedAppt.comments
+        this.contact_information = this.clickedAppt.contact_information
+        this.start = this.clickedAppt.start.clone()
+        this.length = this.clickedAppt.end.clone().diff(this.start, 'minutes')
+        this.online_flag = this.clickedAppt.online_flag
+        const { service_id } = this.clickedAppt
+        this.setSelectedService(service_id)
+        this.$store.commit('updateAddModalForm', { type: 'service', value: service_id })
+      } else {
+        this.citizen_name = ''
+        this.comments = ''
+        this.contact_information = ''
+        this.start = this.clickedTime.start.clone()
+      }
+    },
+    submit () {
+      if (!this.submitClicked) {
+        this.toggleSubmitClicked(true)
+        this.$store.commit('toggleServeCitizenSpinner', true)
+        this.clearMessage()
+        const service_id = this.selectedService
+        const start = moment(this.start).clone()
+        const end = moment(this.end).clone()
+        const e = {
+          start_time: moment.utc(start).format(),
+          end_time: moment.utc(end).format(),
+          service_id,
+          citizen_name: this.citizen_name,
+          contact_information: this.contact_information
+        }
+        if (this.comments) {
+          e.comments = this.comments
+        }
+        const finish = () => {
+          this.cancel()
+          this.$root.$emit('clear-clicked-appt')
+          this.$root.$emit('clear-clicked-time')
+        }
+        this.$store.commit('toggleRescheduling', false)
+        this.$store.commit('toggleApptEditMode', false)
+        if (this.clickedAppt) {
+          const payload = {
+            id: this.clickedAppt.appointment_id,
+            data: e
+          }
+          if (this.editDeleteSeries === true) {
+            // IFF further fields are added to the appointment model that are intended to be edited,
+            // and they belong to blackouts, and them to the following object below. Ensure that dates are
+            // not included as all events in this series will be under the start/end time of the event
+            // that is clicked in the calendar
+            this.toggleEditDeleteSeries(false)
+            const re_e = {
+              comments: this.comments
+            }
+            const re_payload = {
+              id: this.clickedAppt.appointment_id,
+              data: re_e,
+              recurring_uuid: this.clickedAppt.recurring_uuid
+            }
+            this.putRecurringAppointment(re_payload).then(() => {
+              this.getAppointments().then(() => {
+                finish()
+                this.$store.commit('toggleServeCitizenSpinner', false)
+              })
+            })
+          } else {
+            this.putAppointment(payload).then(() => {
+              this.getAppointments().then(() => {
+                finish()
+                this.$store.commit('toggleServeCitizenSpinner', false)
+                setTimeout(() => { this.toggleSubmitClicked(false) }, 2000)
+              })
+            })
+          }
+          return
+        }
+        this.postAppointment(e).then(() => {
+          this.getAppointments().then(() => {
+            finish()
+            this.$store.commit('toggleServeCitizenSpinner', false)
+            setTimeout(() => { this.toggleSubmitClicked(false) }, 2000)
+          })
+        })
+      }
+    }
+  }
+}
+</script>
 
 <style scoped>
   @keyframes spin {
@@ -542,4 +541,3 @@
     -webkit-animation: spin 1s ease-in-out infinite;
 }
 </style>
-

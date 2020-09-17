@@ -31,76 +31,75 @@
 </template>
 
 <script>
-  import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-  import moment from 'moment'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import moment from 'moment'
 
-  export default {
-    name: "SchedulingIndicator",
-    computed: {
-      ...mapGetters(['show_scheduling_indicator']),
-      ...mapState([
-        'editedBooking',
-        'rescheduling',
-        'scheduling',
-        'selectedExam',
-        'showEditBookingModal',
-        'showBookingModal',
-        'showOtherBookingModal',
-        'isAppointmentEditMode',
-      ]),
-      examAssociated() {
-        if (this.selectedExam && Object.keys(this.selectedExam).length > 0) {
-          return true
-        }
-        return false
-      },
-      bookingModalsHidden() {
-        if (!this.showOtherBookingModal && !this.showBookingModal && !this.showEditBookingModal) {
-          return true
-        }
-        return false
-      },
-      expiryDateFormat() {
-        if (this.examAssociated && this.selectedExam.expiry_date) {
-          let d = moment(this.selectedExam.expiry_date)
-          if (d.isValid()) {
-            return d.format('MMM-DD-YYYY')
-          }
-        }
-        return 'not applicable'
+export default {
+  name: 'SchedulingIndicator',
+  computed: {
+    ...mapGetters(['show_scheduling_indicator']),
+    ...mapState([
+      'editedBooking',
+      'rescheduling',
+      'scheduling',
+      'selectedExam',
+      'showEditBookingModal',
+      'showBookingModal',
+      'showOtherBookingModal',
+      'isAppointmentEditMode'
+    ]),
+    examAssociated () {
+      if (this.selectedExam && Object.keys(this.selectedExam).length > 0) {
+        return true
       }
+      return false
     },
-    methods: {
-      ...mapActions(['finishBooking','finishAppointment', ]),
-      ...mapMutations(['toggleEditBookingModal','toggleEditApptModal','toggleRescheduling','toggleApptRescheduleCancel']),
-      cancel() {
+    bookingModalsHidden () {
+      if (!this.showOtherBookingModal && !this.showBookingModal && !this.showEditBookingModal) {
+        return true
+      }
+      return false
+    },
+    expiryDateFormat () {
+      if (this.examAssociated && this.selectedExam.expiry_date) {
+        const d = moment(this.selectedExam.expiry_date)
+        if (d.isValid()) {
+          return d.format('MMM-DD-YYYY')
+        }
+      }
+      return 'not applicable'
+    }
+  },
+  methods: {
+    ...mapActions(['finishBooking', 'finishAppointment']),
+    ...mapMutations(['toggleEditBookingModal', 'toggleEditApptModal', 'toggleRescheduling', 'toggleApptRescheduleCancel']),
+    cancel () {
+      if (this.isAppointmentEditMode) {
+        if (this.rescheduling) {
+          this.toggleEditApptModal(true)
+          this.toggleRescheduling(false)
+          this.toggleApptRescheduleCancel(true)
+          return
+        }
+        this.finishAppointment()
+      } else {
+        if (this.rescheduling) {
+          this.toggleEditBookingModal(true)
+          return
+        }
 
-        if (this.isAppointmentEditMode) {
-          if (this.rescheduling) {
-            this.toggleEditApptModal(true)
-            this.toggleRescheduling(false)
-            this.toggleApptRescheduleCancel(true)
-            return
-          }
-          this.finishAppointment()
-        } else {
-          if (this.rescheduling) {
-            this.toggleEditBookingModal(true)
-            return
-          }
-
-          let pushToExams = false
-          if (this.selectedExam && this.selectedExam.referrer === 'inventory') {
-            pushToExams = true
-          }
-          this.finishBooking()
-          if (pushToExams) {
-            this.$router.push('/exams')
-          }
+        let pushToExams = false
+        if (this.selectedExam && this.selectedExam.referrer === 'inventory') {
+          pushToExams = true
+        }
+        this.finishBooking()
+        if (pushToExams) {
+          this.$router.push('/exams')
         }
       }
     }
   }
+}
 </script>
 
 <style scoped>

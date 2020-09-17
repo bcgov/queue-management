@@ -25,34 +25,34 @@ export const AddExamCounter = Vue.component('add-exam-counter', {
   computed: {
     ...mapState({
       setup: state => state.addExamModal.setup,
-      candidates: state => state.addExamModule.candidates,
+      candidates: state => state.addExamModule.candidates
     }),
-    numberOfStudents() {
+    numberOfStudents () {
       return this.exam.number_of_students
     },
-    currentNumber() {
-      if ( Array.isArray(this.candidates) ) {
+    currentNumber () {
+      if (Array.isArray(this.candidates)) {
         return this.candidates.length
       }
       return 0
-    },
+    }
   },
   methods: {
-    ...mapMutations(['captureExamDetail', 'deleteCapturedExamDetail']),
+    ...mapMutations(['captureExamDetail', 'deleteCapturedExamDetail'])
   },
   watch: {
-    numberOfStudents(newVal) {
-      if ( newVal == this.currentNumber ) {
+    numberOfStudents (newVal) {
+      if (newVal == this.currentNumber) {
         this.$store.commit('captureExamDetail', { key: 'add_exam_counter', value: 1 })
       } else {
-        //this.$store.commit('deleteCapturedExamDetail', 'add_exam_counter')
+        // this.$store.commit('deleteCapturedExamDetail', 'add_exam_counter')
       }
     },
-    currentNumber(newVal) {
-      if ( newVal == this.exam.number_of_students ) {
+    currentNumber (newVal) {
+      if (newVal == this.exam.number_of_students) {
         this.$store.commit('captureExamDetail', { key: 'add_exam_counter', value: 1 })
       } else {
-        //this.$store.commit('deleteCapturedExamDetail', 'add_exam_counter')
+        // this.$store.commit('deleteCapturedExamDetail', 'add_exam_counter')
       }
     }
   },
@@ -77,27 +77,27 @@ export const AddExamCounter = Vue.component('add-exam-counter', {
 })
 
 export const DateQuestion = Vue.component('date-question', {
-  props: ['error', 'exam', 'handleInput', 'q', 'radioChange','today', 'validationObj'],
+  props: ['error', 'exam', 'handleInput', 'q', 'radioChange', 'today', 'validationObj'],
   components: { checkmark, DatePicker },
-  data() {
+  data () {
     return {
       date: null
     }
   },
   computed: {
-    ...mapState(['user', 'addExamModal', 'capturedExam']),
+    ...mapState(['user', 'addExamModal', 'capturedExam'])
   },
-  beforeMount() {
-    if (this.exam.ind_or_group === "group") {
+  beforeMount () {
+    if (this.exam.ind_or_group === 'group') {
       this.exam.expiry_date = null
     }
   },
   methods: {
-    selectDate(e) {
+    selectDate (e) {
       this.handleInput({
         target: {
           name: 'expiry_date',
-          value: e,
+          value: e
         }
       })
     }
@@ -122,18 +122,18 @@ export const DateQuestion = Vue.component('date-question', {
   `
 })
 
-export const DropdownQuestion = Vue.component('dropdown-question',{
+export const DropdownQuestion = Vue.component('dropdown-question', {
   props: ['question', 'exam', 'exam_object', 'examTypes', 'handleInput', 'selected', 'message', 'error'],
   components: { checkmark },
-  data() {
+  data () {
     return {
-      clicked: false,
+      clicked: false
     }
   },
   computed: {
-    ...mapState(['addExamModal', 'capturedExam', 'nonITAExam' ]),
-    dropItems() {
-      let sorter = (a, b) => {
+    ...mapState(['addExamModal', 'capturedExam', 'nonITAExam']),
+    dropItems () {
+      const sorter = (a, b) => {
         var typeA = a.exam_type_name
         var typeB = b.exam_type_name
         if (typeA < typeB) {
@@ -145,48 +145,47 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
         return 0
       }
       if (this.addExamModal.setup === 'individual') {
-        let exams = this.examTypes.filter(type =>
+        const exams = this.examTypes.filter(type =>
           type.ita_ind === 1 &&
           type.group_exam_ind === 0 &&
-          !type.exam_type_name.includes('Monthly'));
-        return exams.sort((a,b) => sorter(a,b))
+          !type.exam_type_name.includes('Monthly'))
+        return exams.sort((a, b) => sorter(a, b))
       }
-      if(this.addExamModal.setup === 'other') {
-        let exams = this.examTypes.filter( type =>
+      if (this.addExamModal.setup === 'other') {
+        const exams = this.examTypes.filter(type =>
           type.ita_ind === 0 &&
           type.group_exam_ind === 0 &&
           type.pesticide_exam_ind === 0 &&
           !type.exam_type_name.includes('Monthly')
-        );
-        return exams.sort((a,b) => sorter(a,b))
+        )
+        return exams.sort((a, b) => sorter(a, b))
       }
       if (this.addExamModal.setup === 'group') {
-
-        let exams = this.examTypes.filter(type =>
-          (type.group_exam_ind === 1 && type.exam_type_name != 'Group Pesticide Exam' && type.exam_type_name !=  'Pesticide Group Exam')
-        );
-        return exams.sort((a,b) => sorter(a,b))
+        const exams = this.examTypes.filter(type =>
+          (type.group_exam_ind === 1 && type.exam_type_name != 'Group Pesticide Exam' && type.exam_type_name != 'Pesticide Group Exam')
+        )
+        return exams.sort((a, b) => sorter(a, b))
       }
       if (this.addExamModal.setup === 'pesticide') {
-        let exams = this.examTypes.filter(type =>
+        const exams = this.examTypes.filter(type =>
           type.pesticide_exam_ind === 1 &&
-          type.group_exam_ind === 0);
-        return exams.sort((a,b) => sorter(a,b))
+          type.group_exam_ind === 0)
+        return exams.sort((a, b) => sorter(a, b))
       }
     },
-    inputText() {
+    inputText () {
       if (this.exam_object && this.exam_object.exam_type_name) {
         return this.exam_object.exam_type_name
       }
       return ''
     },
-    inputStyle() {
+    inputStyle () {
       if (this.exam_object && this.exam_object.exam_type_name) {
-        return {backgroundColor: `${this.exam_object.exam_color}`}
+        return { backgroundColor: `${this.exam_object.exam_color}` }
       }
       return ''
     },
-    dropclass() {
+    dropclass () {
       if (!this.addExamModal.step1MenuOpen) {
         return 'dropdown-menu'
       }
@@ -196,15 +195,15 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
     }
   },
   methods: {
-    ...mapMutations(['setAddExamModalSetting', ]),
-    clickInput() {
+    ...mapMutations(['setAddExamModalSetting']),
+    clickInput () {
       if (!this.addExamModal.step1MenuOpen) {
-        this.setAddExamModalSetting({step1MenuOpen: true})
+        this.setAddExamModalSetting({ step1MenuOpen: true })
         return
       }
-      this.setAddExamModalSetting({step1MenuOpen: false})
+      this.setAddExamModalSetting({ step1MenuOpen: false })
     },
-    preHandleInput(id) {
+    preHandleInput (id) {
       this.handleInput({
         target: {
           name: 'exam_type_id',
@@ -249,9 +248,9 @@ export const DropdownQuestion = Vue.component('dropdown-question',{
 })
 
 export const ExamReceivedQuestion = Vue.component('exam-received-question', {
-  props: ['error', 'q', 'validationObj', 'handleInput', 'exam',],
+  props: ['error', 'q', 'validationObj', 'handleInput', 'exam'],
   components: { checkmark, DatePicker, moment },
-  data() {
+  data () {
     return {
       date: null,
       options: [
@@ -265,18 +264,18 @@ export const ExamReceivedQuestion = Vue.component('exam-received-question', {
     }
   },
   computed: {
-    ...mapState(['addExamModal', 'captureITAExamTabSetup',]),
+    ...mapState(['addExamModal', 'captureITAExamTabSetup']),
     showRadio: {
-      get() {
+      get () {
         return this.captureITAExamTabSetup.showRadio
       },
-      set(e) {
+      set (e) {
         this.captureExamDetail({ key: 'exam_received_date', value: null })
         this.toggleIndividualCaptureTabRadio(e)
       }
     },
-    modalSetup() {
-      if ( this.addExamModal && this.addExamModal.setup ) {
+    modalSetup () {
+      if (this.addExamModal && this.addExamModal.setup) {
         return this.addExamModal.setup
       }
       return ''
@@ -284,8 +283,8 @@ export const ExamReceivedQuestion = Vue.component('exam-received-question', {
   },
   methods: {
     ...mapMutations(['captureExamDetail', 'toggleIndividualCaptureTabRadio']),
-    unsetDate(e) {
-      if ( !e && this.modalSetup === 'individual' ) {
+    unsetDate (e) {
+      if (!e && this.modalSetup === 'individual') {
         this.handleInput({
           target: {
             name: 'exam_received_date',
@@ -294,8 +293,8 @@ export const ExamReceivedQuestion = Vue.component('exam-received-question', {
         })
       }
     },
-    preSetDate() {
-      if ( this.modalSetup === 'other' || this.modalSetup === 'pesticide' ) {
+    preSetDate () {
+      if (this.modalSetup === 'other' || this.modalSetup === 'pesticide') {
         this.handleInput({
           target: {
             name: 'exam_received_date',
@@ -304,7 +303,7 @@ export const ExamReceivedQuestion = Vue.component('exam-received-question', {
         })
       }
     },
-    selectRecdDate(e) {
+    selectRecdDate (e) {
       this.handleInput({
         target: {
           name: 'exam_received_date',
@@ -343,11 +342,10 @@ export const InputQuestion = Vue.component('input-question', {
   props: ['error', 'q', 'validationObj', 'handleInput', 'exam'],
   components: { checkmark },
   computed: {
-    ...mapState({
-      setup: state => state.addExamModal.setup }),
+    ...mapState({ setup: state => state.addExamModal.setup })
   },
   methods: {
-    preHandleInput(e) {
+    preHandleInput (e) {
       this.handleInput(e)
     }
   },
@@ -397,11 +395,11 @@ export const InputQuestion = Vue.component('input-question', {
 export const InputQuestion2 = Vue.component('input-question-2', {
   props: ['error', 'q', 'validationObj', 'handleInput', 'exam'],
   components: { checkmark },
-  data() {
+  data () {
     return {
       options: [
-        {text: 'No', value: false},
-        {text: 'Yes', value: true}
+        { text: 'No', value: false },
+        { text: 'Yes', value: true }
       ]
     }
   },
@@ -410,17 +408,18 @@ export const InputQuestion2 = Vue.component('input-question-2', {
       setup: state => state.addExamModal.setup
     }),
     capture_names: {
-      get() {
+      get () {
         return this.exam.capture_names
-      }, set(value) {
-        this.$store.commit('captureExamDetail', {key: 'capture_names', value})
+      },
+      set (value) {
+        this.$store.commit('captureExamDetail', { key: 'capture_names', value })
       }
     }
   },
   methods: {
-    preHandleInput(e) {
+    preHandleInput (e) {
       this.handleInput(e)
-    },
+    }
   },
   template: `
     <fragment>
@@ -458,15 +457,15 @@ export const LocationInput = Vue.component('location-input-question', {
       setup: state => state.addExamModal.setup,
       capturedExam: state => state.capturedExam,
       booking: state => state.addExamModule.booking,
-      user: state => state.user,
+      user: state => state.user
     }),
-    showBooking() {
+    showBooking () {
       if (this.booking && Object.keys(booking).length > 1) {
         return 'some specifics when possible'
       }
       return 'Not Scheduled'
     },
-    isOffsite() {
+    isOffsite () {
       if (this.capturedExam && this.capturedExam.on_or_off) {
         if (this.capturedExam.on_or_off === 'on') {
           return false
@@ -474,7 +473,7 @@ export const LocationInput = Vue.component('location-input-question', {
         return true
       }
     },
-    invigilator() {
+    invigilator () {
       if (this.exam.invigilator) {
         if (this.exam.invigilator === 'sbc') {
           return {
@@ -490,14 +489,14 @@ export const LocationInput = Vue.component('location-input-question', {
         }
       }
       return {
-        show: false,
+        show: false
       }
     },
-    bookingDetails() {
+    bookingDetails () {
       if (this.exam.exam_time) {
-        let date = moment(this.exam.exam_time).format('ddd MMM Do, YYYY')
-        let time = moment(this.exam.exam_time).format('h:mm a')
-        let room = this.exam.offsite_location.title
+        const date = moment(this.exam.exam_time).format('ddd MMM Do, YYYY')
+        const time = moment(this.exam.exam_time).format('h:mm a')
+        const room = this.exam.offsite_location.title
         return `${date} @ ${time} in ${room}`
       }
       return 'Not Yet Scheduled'
@@ -505,9 +504,9 @@ export const LocationInput = Vue.component('location-input-question', {
   },
   methods: {
     ...mapMutations(['toggleScheduling', 'setAddExamModalSetting', 'setSelectedExam']),
-    launchSchedule() {
-      let { exam_type_id } = this.examTypes.find(t => t.exam_type_name === 'Monthly Session Exam')
-      let exam = {
+    launchSchedule () {
+      const { exam_type_id } = this.examTypes.find(t => t.exam_type_name === 'Monthly Session Exam')
+      const exam = {
         exam_name: this.exam.exam_name,
         examinee_name: 'Monthly Session',
         exam_method: 'tbd',
@@ -515,9 +514,9 @@ export const LocationInput = Vue.component('location-input-question', {
         exam_type: {
           exam_type_name: 'Monthly Session Exam',
           exam_type_id,
-          number_of_hours: 4,
+          number_of_hours: 4
         },
-        number_of_students: 1,
+        number_of_students: 1
       }
       this.toggleScheduling(true)
       exam.referrer = 'scheduling'
@@ -588,13 +587,13 @@ export const NotesQuestion = Vue.component('notes-question', {
   components: { checkmark },
   computed: {
     ...mapState(['captureITAExamTabSetup']),
-    notes() {
+    notes () {
       return this.captureITAExamTabSetup.notes
     }
   },
   methods: {
     ...mapMutations(['updateCaptureTab']),
-    handleClick() {
+    handleClick () {
       this.updateCaptureTab({ notes: true })
     }
   },
@@ -630,12 +629,12 @@ export const OffsiteSelect = Vue.component('offsite-select', {
       addExamModal: 'addExamModal',
       capturedExam: 'capturedExam',
       user: 'user',
-      booking: state => state.addExamModule.booking,
-    }),
+      booking: state => state.addExamModule.booking
+    })
   },
   methods: {
     ...mapMutations(['captureExamDetail']),
-    preHandleInput(e) {
+    preHandleInput (e) {
       this.handleInput(e)
     }
   },
@@ -656,7 +655,7 @@ export const OffsiteSelect = Vue.component('offsite-select', {
       </b-col>
       <checkmark :validated="validationObj[q.key].valid" />
     </b-row>
-  `,
+  `
 })
 
 export const SelectQuestion = Vue.component('select-question', {
@@ -667,17 +666,17 @@ export const SelectQuestion = Vue.component('select-question', {
       addExamModal: state => state.addExamModal,
       capturedExam: 'capturedExam'
     }),
-    ind_or_group() {
+    ind_or_group () {
       if (this.capturedExam.ind_or_group) {
         return this.capturedExam.ind_or_group
       }
       return null
-    },
+    }
   },
   watch: {
-    ind_or_group(newVal, oldVal) {
+    ind_or_group (newVal, oldVal) {
       if (this.addExamModal.setup === 'pesticide' && newVal === 'group') {
-        this.$store.commit('captureExamDetail', {key: 'capture_names', value: false})
+        this.$store.commit('captureExamDetail', { key: 'capture_names', value: false })
       }
     }
   },
@@ -698,50 +697,50 @@ export const SelectQuestion = Vue.component('select-question', {
       </b-col>
       <checkmark :validated="validationObj[q.key].valid"  />
     </b-row>
-  `,
+  `
 })
 
 export const SelectOffice = Vue.component('select-office', {
-  props: ['error', 'q', 'validationObj', 'handleInput', 'exam',],
+  props: ['error', 'q', 'validationObj', 'handleInput', 'exam'],
   components: { checkmark, OfficeDrop },
-  data() {
+  data () {
     return {}
   },
   computed: {
     ...mapGetters(['role_code']),
     ...mapState(['offices', 'user', 'addExamModal']),
-    office_number() {
+    office_number () {
       return this.addExamModal.office_number
     },
-    Error() {
-      if (this.error && this.validationObj['office_id'].message) {
+    Error () {
+      if (this.error && this.validationObj.office_id.message) {
         return true
       }
       return false
     },
-    message() {
-      if (this.error && this.validationObj['office_id'].message) {
-        return this.validationObj['office_id'].message
+    message () {
+      if (this.error && this.validationObj.office_id.message) {
+        return this.validationObj.office_id.message
       }
-      return `(Start typing to search or enter Office #)`
+      return '(Start typing to search or enter Office #)'
     }
   },
   methods: {
     ...mapMutations(['setAddExamModalSetting']),
-    setOffice(office_number) {
+    setOffice (office_number) {
       office_number = parseInt(office_number)
-      this.setAddExamModalSetting({office_number})
+      this.setAddExamModalSetting({ office_number })
       if (this.offices && this.offices.length > 0) {
-        let office = this.offices.find(office => office.office_number == office_number) || null
+        const office = this.offices.find(office => office.office_number == office_number) || null
         if (office) {
-          let { office_id } = office
+          const { office_id } = office
           this.handleInput({
             target: {
               name: 'office_id',
               value: office_id
             }
           })
-          this.$nextTick(function() { this.$root.$emit('validateform') })
+          this.$nextTick(function () { this.$root.$emit('validateform') })
           return
         }
         this.handleInput({
@@ -762,18 +761,18 @@ export const SelectOffice = Vue.component('select-office', {
 })
 
 export const TimeQuestion = Vue.component('time-question', {
-  props: ['error', 'exam', 'handleInput', 'q', 'radioChange','today', 'validationObj'],
+  props: ['error', 'exam', 'handleInput', 'q', 'radioChange', 'today', 'validationObj'],
   components: { checkmark, DatePicker },
-  data() {
+  data () {
     return {
       date: ''
     }
   },
   computed: {
-    ...mapState(['user', 'capturedExam', 'addExamModal']),
+    ...mapState(['user', 'capturedExam', 'addExamModal'])
   },
   methods: {
-    selectTime(e) {
+    selectTime (e) {
       this.handleInput({
         target: {
           name: 'exam_time',
@@ -811,4 +810,3 @@ export const TimeQuestion = Vue.component('time-question', {
     </b-row>
   `
 })
-

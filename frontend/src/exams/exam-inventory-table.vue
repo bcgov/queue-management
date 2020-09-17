@@ -486,1158 +486,1154 @@
 </template>
 
 <script>
-  import moment from 'moment'
-  import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-  import EditExamModal from './edit-exam-form-modal'
-  import EditGroupExamBookingModal from './edit-group-exam-modal'
-  import SelectInvigilatorModal from './select-invigilator-modal'
-  import FailureExamAlert from './failure-exam-alert'
-  import OfficeDrop from './office-drop'
-  import ReturnExamModal from './return-exam-form-modal'
-  import SuccessExamAlert from './success-exam-alert'
-  import DeleteExamModal from './delete-exam-modal'
-  import AddCitizen from '../add-citizen/add-citizen'
-  import zone from 'moment-timezone'
-  import UploadPesticideModal from './upload-pesticide-exam'
+import moment from 'moment'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import EditExamModal from './edit-exam-form-modal'
+import EditGroupExamBookingModal from './edit-group-exam-modal'
+import SelectInvigilatorModal from './select-invigilator-modal'
+import FailureExamAlert from './failure-exam-alert'
+import OfficeDrop from './office-drop'
+import ReturnExamModal from './return-exam-form-modal'
+import SuccessExamAlert from './success-exam-alert'
+import DeleteExamModal from './delete-exam-modal'
+import AddCitizen from '../add-citizen/add-citizen'
+import zone from 'moment-timezone'
+import UploadPesticideModal from './upload-pesticide-exam'
 
-  export default {
-    name: "ExamInventoryTable",
-    components: {
-      UploadPesticideModal,
-      AddCitizen,
-      DeleteExamModal,
-      EditExamModal,
-      EditGroupExamBookingModal,
-      FailureExamAlert,
-      OfficeDrop,
-      ReturnExamModal,
-      SuccessExamAlert,
-      SelectInvigilatorModal
+export default {
+  name: 'ExamInventoryTable',
+  components: {
+    UploadPesticideModal,
+    AddCitizen,
+    DeleteExamModal,
+    EditExamModal,
+    EditGroupExamBookingModal,
+    FailureExamAlert,
+    OfficeDrop,
+    ReturnExamModal,
+    SuccessExamAlert,
+    SelectInvigilatorModal
+  },
+  mounted () {
+    if (this.is_pesticide_designate) {
+      const pestFilterOptions = [
+        { text: 'Awaiting Upload', value: 'awaiting_upload' },
+        { text: 'Awaiting Receipt', value: 'awaiting_receipt' },
+        { text: 'All', value: 'all' }
+      ]
+      this.newQuickActionOptions = this.newQuickActionOptions.concat(pestFilterOptions)
+      this.newQuickActionOptionsNoOEM = this.newQuickActionOptionsNoOEM.concat(pestFilterOptions)
+    } else {
+      const nonpestFilterOptions = [
+        { text: 'All', value: 'all' }
+      ]
+      this.newQuickActionOptions = this.newQuickActionOptions.concat(nonpestFilterOptions)
+      this.newQuickActionOptionsNoOEM = this.newQuickActionOptionsNoOEM.concat(nonpestFilterOptions)
+    }
+    this.getExams().then(() => { this.getBookings() })
+    this.getOffices()
+    this.getInvigilators()
+    this.getSize()
+    this.$nextTick(function () {
+      window.addEventListener('resize', () => { this.getSize() })
+    })
+    this.setFilter({ type: 'office_number', value: 'default' })
+  },
+  data () {
+    return {
+      actionedExam: {},
+      detailsRowSetup: null,
+      searchTerm: null,
+      officeFilterModal: false,
+      page: 1,
+      tableStyle: null,
+      buttonH: 45,
+      qLengthH: 28,
+      totalH: 0,
+      examTypeOptions: [
+        { text: 'Individual', value: 'individual' },
+        { text: 'Group', value: 'group' },
+        { text: 'All', value: 'all' }
+      ],
+      newQuickActionOptions: [
+        { text: 'Ready', value: 'ready' },
+        { text: 'Requires Attention', value: 'require_attention' },
+        { text: 'Office Exam Manager Action Items', value: 'oemai' },
+        { text: 'Expired', value: 'expired' },
+        { text: 'Returned', value: 'returned' }
+      ],
+      newQuickActionOptionsNoOEM: [
+        { text: 'Ready', value: 'ready' },
+        { text: 'Requires Attention', value: 'require_attention' },
+        { text: 'Expired', value: 'expired' },
+        { text: 'Returned', value: 'returned' }
+      ],
+      isLoading: false
+    }
+  },
+  computed: {
+    ...mapGetters(['calendar_events',
+      'exam_inventory',
+      'role_code',
+      'is_ita2_designate',
+      'is_pesticide_designate',
+      'is_office_manager']),
+    ...mapState([
+      'bookings',
+      'calendarSetup',
+      'calendarEvents',
+      'exams',
+      'inventoryFilters',
+      'selectedExamType',
+      'selectedExamTypeFilter',
+      'selectedQuickAction',
+      'selectedQuickActionFilter',
+      'showDeleteExamModal',
+      'showEditExamModal',
+      'showExamInventoryModal',
+      'showReturnExamModalVisible',
+      'offices',
+      'user',
+      'invigilators'
+    ]),
+    ...mapState({
+      showAllPesticide: state => state.addExamModule.showAllPesticideExams,
+      showPesticideModal: state => state.addExamModule.uploadPesticideModalVisible
+    }),
+    availableH () {
+      const h = this.totalH - 240
+      return { height: `${h}px`, border: '1px solid dimgrey' }
     },
-    mounted() {
-      if(this.is_pesticide_designate) {
-        const pestFilterOptions = [
-          {text: 'Awaiting Upload', value: 'awaiting_upload'},
-          {text: 'Awaiting Receipt', value: 'awaiting_receipt'},
-          {text: 'All', value: 'all'},
-        ]
-        this.newQuickActionOptions = this.newQuickActionOptions.concat(pestFilterOptions)
-        this.newQuickActionOptionsNoOEM = this.newQuickActionOptionsNoOEM.concat(pestFilterOptions)
-      } else {
-        const nonpestFilterOptions = [
-          {text: 'All', value: 'all'}
-        ]
-        this.newQuickActionOptions = this.newQuickActionOptions.concat(nonpestFilterOptions)
-        this.newQuickActionOptionsNoOEM = this.newQuickActionOptionsNoOEM.concat(nonpestFilterOptions)
-      }
-      this.getExams().then( () => { this.getBookings() })
-      this.getOffices()
-      this.getInvigilators()
-      this.getSize()
-      this.$nextTick(function() {
-        window.addEventListener('resize', () => { this.getSize() })
-      })
-      this.setFilter({type: 'office_number', value: 'default'})
+    isPesticideOffice () {
+      // TODO - Karim has envisioned creating a pesticide office (an office in offices table like Victoria or
+      // 100 mile house, etc) that isn't a real office but which would hold in-progress pesticide exams
+      // and trigger a different setup of the exam_inventory_table
+      // as this is not implemented yet, this computed value can simply return true or false depending on what
+      // features of the exam_inventory_table you want to see/use/test
+      return true
     },
-    data() {
-      return {
-        actionedExam: {},
-        detailsRowSetup: null,
-        searchTerm: null,
-        officeFilterModal: false,
-        page: 1,
-        tableStyle: null,
-        buttonH: 45,
-        qLengthH: 28,
-        totalH: 0,
-        examTypeOptions: [
-          {text: 'Individual', value: 'individual'},
-          {text: 'Group', value: 'group'},
-          {text: 'All', value: 'all'},
-        ],
-        newQuickActionOptions: [
-          {text: 'Ready', value: 'ready'},
-          {text: 'Requires Attention', value:'require_attention'},
-          {text: 'Office Exam Manager Action Items', value:'oemai'},
-          {text: 'Expired', value: 'expired'},
-          {text: 'Returned', value: 'returned'},
-        ],
-        newQuickActionOptionsNoOEM: [
-          {text: 'Ready', value: 'ready'},
-          {text: 'Requires Attention', value:'require_attention'},
-          {text: 'Expired', value: 'expired'},
-          {text: 'Returned', value: 'returned'},
-        ],
-        isLoading: false,
-      }
-    },
-    computed: {
-      ...mapGetters(['calendar_events',
-                     'exam_inventory',
-                     'role_code',
-                     'is_ita2_designate',
-                     'is_pesticide_designate',
-                     'is_office_manager']),
-      ...mapState([
-        'bookings',
-        'calendarSetup',
-        'calendarEvents',
-        'exams',
-        'inventoryFilters',
-        'selectedExamType',
-        'selectedExamTypeFilter',
-        'selectedQuickAction',
-        'selectedQuickActionFilter',
-        'showDeleteExamModal',
-        'showEditExamModal',
-        'showExamInventoryModal',
-        'showReturnExamModalVisible',
-        'offices',
-        'user',
-        'invigilators',
-      ]),
-      ...mapState({
-        showAllPesticide: state => state.addExamModule.showAllPesticideExams,
-        showPesticideModal: state => state.addExamModule.uploadPesticideModalVisible
-      }),
-      availableH() {
-        let h = this.totalH - 240
-        return { height:`${h}px`, border: '1px solid dimgrey' }
-      },
-      isPesticideOffice() {
-        //TODO - Karim has envisioned creating a pesticide office (an office in offices table like Victoria or
-        //100 mile house, etc) that isn't a real office but which would hold in-progress pesticide exams
-        //and trigger a different setup of the exam_inventory_table
-        //as this is not implemented yet, this computed value can simply return true or false depending on what
-        //features of the exam_inventory_table you want to see/use/test
-        return true
-      },
-      fields() {
-        if (!this.showExamInventoryModal) {
-          let pesticideFields = [
-            { key: 'office', sortable: true, thStyle: 'width: 5%' },
+    fields () {
+      if (!this.showExamInventoryModal) {
+        const pesticideFields = [
+          { key: 'office', sortable: true, thStyle: 'width: 5%' }
 
-          ]
-          let fields = [
-            { key: 'event_id', label: 'Event ID', sortable: false, thStyle: 'width: 6%' },
-            { key: 'exam_type_name', label: 'Exam Type', sortable: true },
-            { key: 'exam_name', label: 'Exam Name', sortable: true, thStyle: 'width: 11%' },
-            { key: 'start_time', label: 'Scheduled Date', sortable: true, thStyle: 'width: 9%' },
-            { key: 'exam_method', label: 'Method', sortable: false, thStyle: 'width: 5%' },
-            { key: 'expiry_date', label: 'Expiry Date', sortable: true, thStyle: 'width: 8%' },
-            { key: 'exam_received', label: 'Received?', sortable: true, thStyle: 'width: 5%' },
-            { key: 'notes', label: 'Notes', sortable: false, thStyle: 'width: 21%' },
-            { key: 'scheduled', label: 'Status', sortable: true, thStyle: 'width: 5%', tdClass: 'text-center'},
-            { key: 'actions', label: 'Actions', sortable: false, thStyle: 'width: 5%' },
-            {
-              key: 'examinee_name',
-              label: 'Candidate Name',
-              sortable: true,
-              thStyle: this.showAllPesticide ? 'width: 7%' : 'width: 12%'
-            },
-          ]
-          if (!this.showAllPesticide) {
-            return fields
+        ]
+        const fields = [
+          { key: 'event_id', label: 'Event ID', sortable: false, thStyle: 'width: 6%' },
+          { key: 'exam_type_name', label: 'Exam Type', sortable: true },
+          { key: 'exam_name', label: 'Exam Name', sortable: true, thStyle: 'width: 11%' },
+          { key: 'start_time', label: 'Scheduled Date', sortable: true, thStyle: 'width: 9%' },
+          { key: 'exam_method', label: 'Method', sortable: false, thStyle: 'width: 5%' },
+          { key: 'expiry_date', label: 'Expiry Date', sortable: true, thStyle: 'width: 8%' },
+          { key: 'exam_received', label: 'Received?', sortable: true, thStyle: 'width: 5%' },
+          { key: 'notes', label: 'Notes', sortable: false, thStyle: 'width: 21%' },
+          { key: 'scheduled', label: 'Status', sortable: true, thStyle: 'width: 5%', tdClass: 'text-center' },
+          { key: 'actions', label: 'Actions', sortable: false, thStyle: 'width: 5%' },
+          {
+            key: 'examinee_name',
+            label: 'Candidate Name',
+            sortable: true,
+            thStyle: this.showAllPesticide ? 'width: 7%' : 'width: 12%'
           }
-          if (this.showAllPesticide) {
-            return fields.concat(pesticideFields)
-          }
+        ]
+        if (!this.showAllPesticide) {
+          return fields
         }
-        if (this.showExamInventoryModal) {
-          return [
-            { key: 'event_id', label: 'Event ID', sortable: false, thStyle: 'width: 6%' },
-            { key: 'exam_type.exam_type_name', label: 'Exam Type', sortable: true},
-            { key: 'exam_name', label: 'Exam Name', sortable: true, thStyle: 'width: 15%' },
-            { key: 'booking.start_time', label: 'Scheduled Date', sortable: true, thStyle: 'width: 9%' },
-            { key: 'exam_method', label: 'Method', sortable: true, thStyle: 'width: 5%' },
-            { key: 'expiry_date', label: 'Expiry Date', sortable: true, thStyle: 'width: 8%' },
-            { key: 'exam_received', label: 'Received?', sortable: true, thStyle: 'width: 5%' },
-            { key: 'examinee_name', label: 'Candidate Name', sortable: true, thStyle: 'width: 20%' },
-            { key: 'notes', label: 'Notes', sortable: false, },
-          ]
-        }
-      },
-      officeFilter() {
-        if (this.inventoryFilters && this.inventoryFilters.office_number) {
-          return this.inventoryFilters.office_number
-        }
-        return ''
-      },
-      officeFilterText() {
         if (this.showAllPesticide) {
-          return 'Exams from All Offices'
+          return fields.concat(pesticideFields)
         }
-        return 'Office # ' + this.officeNumber + ' - ' + this.officeName
-      },
-      officeName() {
-        if (this.offices && this.offices.length > 0) {
-          let office = this.offices.find( office => office.office_number==this.officeNumber)
-          if (office) {
-            return office.office_name
-          }
-          return 'Invalid Office'
-        }
-        if (this.user && this.user.office_id) {
-          return this.user.office.office_name
-        }
-        return ''
-      },
-      officeNumber() {
-        if (this.inventoryFilters && this.inventoryFilters.office_number) {
-          let { office_number } = this.inventoryFilters
-          if (this.inventoryFilters.office_number === 'pesticide_offsite') {
-            let office = (this.offices.find(office => office.office_name == 'Pesticide Offsite'))
-            return office.office_number
-          } else if (office_number !== 'default') {
-            return office_number
-          }
-        }
-        if (this.user && this.user.office_id) {
-          return this.user.office.office_number
-        }
-        return ''
-      },
-      totalRows() {
-        let exams = this.filteredExams() || null
-        if (exams && exams.length > 0) {
-          return exams.length
-        }
-        return 10
-      },
-      userOffice() {
-        if (this.user && this.user.office_id) {
-          return this.user.office.office_number
-        }
-        return ''
-      },
+      }
+      if (this.showExamInventoryModal) {
+        return [
+          { key: 'event_id', label: 'Event ID', sortable: false, thStyle: 'width: 6%' },
+          { key: 'exam_type.exam_type_name', label: 'Exam Type', sortable: true },
+          { key: 'exam_name', label: 'Exam Name', sortable: true, thStyle: 'width: 15%' },
+          { key: 'booking.start_time', label: 'Scheduled Date', sortable: true, thStyle: 'width: 9%' },
+          { key: 'exam_method', label: 'Method', sortable: true, thStyle: 'width: 5%' },
+          { key: 'expiry_date', label: 'Expiry Date', sortable: true, thStyle: 'width: 8%' },
+          { key: 'exam_received', label: 'Received?', sortable: true, thStyle: 'width: 5%' },
+          { key: 'examinee_name', label: 'Candidate Name', sortable: true, thStyle: 'width: 20%' },
+          { key: 'notes', label: 'Notes', sortable: false }
+        ]
+      }
     },
-    methods: {
-      ...mapActions(['getBookings', 'getExams', 'getExamsForOffice', 'getInvigilators', 'getOffices', 'updateExamStatus']),
-      ...mapMutations([
-        'setEditedBooking',
-        'setEditedBookingOriginal',
-        'setEditExamInfo',
-        'setInventoryFilters',
-        'setSelectedExam',
-        'setSelectedExamType',
-        'setSelectedExamTypeFilter',
-        'setSelectedQuickAction',
-        'setSelectedQuickActionFilter',
-        'toggleDeleteExamModal',
-        'toggleEditBookingModal',
-        'toggleEditExamModal',
-        'toggleEditGroupBookingModal',
-        'toggleExamInventoryModal',
-        'toggleSelectInvigilatorModal',
-        'toggleReturnExamModal',
-        'toggleScheduling',
-        'toggleUploadExamModal',
-      ]),
-      addCalendarBooking(item) {
+    officeFilter () {
+      if (this.inventoryFilters && this.inventoryFilters.office_number) {
+        return this.inventoryFilters.office_number
+      }
+      return ''
+    },
+    officeFilterText () {
+      if (this.showAllPesticide) {
+        return 'Exams from All Offices'
+      }
+      return 'Office # ' + this.officeNumber + ' - ' + this.officeName
+    },
+    officeName () {
+      if (this.offices && this.offices.length > 0) {
+        const office = this.offices.find(office => office.office_number == this.officeNumber)
+        if (office) {
+          return office.office_name
+        }
+        return 'Invalid Office'
+      }
+      if (this.user && this.user.office_id) {
+        return this.user.office.office_name
+      }
+      return ''
+    },
+    officeNumber () {
+      if (this.inventoryFilters && this.inventoryFilters.office_number) {
+        const { office_number } = this.inventoryFilters
+        if (this.inventoryFilters.office_number === 'pesticide_offsite') {
+          const office = (this.offices.find(office => office.office_name == 'Pesticide Offsite'))
+          return office.office_number
+        } else if (office_number !== 'default') {
+          return office_number
+        }
+      }
+      if (this.user && this.user.office_id) {
+        return this.user.office.office_number
+      }
+      return ''
+    },
+    totalRows () {
+      const exams = this.filteredExams() || null
+      if (exams && exams.length > 0) {
+        return exams.length
+      }
+      return 10
+    },
+    userOffice () {
+      if (this.user && this.user.office_id) {
+        return this.user.office.office_number
+      }
+      return ''
+    }
+  },
+  methods: {
+    ...mapActions(['getBookings', 'getExams', 'getExamsForOffice', 'getInvigilators', 'getOffices', 'updateExamStatus']),
+    ...mapMutations([
+      'setEditedBooking',
+      'setEditedBookingOriginal',
+      'setEditExamInfo',
+      'setInventoryFilters',
+      'setSelectedExam',
+      'setSelectedExamType',
+      'setSelectedExamTypeFilter',
+      'setSelectedQuickAction',
+      'setSelectedQuickActionFilter',
+      'toggleDeleteExamModal',
+      'toggleEditBookingModal',
+      'toggleEditExamModal',
+      'toggleEditGroupBookingModal',
+      'toggleExamInventoryModal',
+      'toggleSelectInvigilatorModal',
+      'toggleReturnExamModal',
+      'toggleScheduling',
+      'toggleUploadExamModal'
+    ]),
+    addCalendarBooking (item) {
+      this.toggleScheduling(true)
+      item.referrer = 'inventory'
+      this.setSelectedExam(item)
+      this.$router.push('/booking')
+      this.toggleExamInventoryModal(false)
+    },
+    viewAllOfficePesticideExams () {
+      this.$store.dispatch('getAllPesticideExams')
+      this.$store.commit('toggleShowAllPesticideExams', false)
+    },
+    checkChallenger (item) {
+      if (item.event_id && item.booking.invigilator_id && item.number_of_students) {
+        return true
+      }
+      return false
+    },
+    checkInvigilator (item) {
+      let length_of_invigilator_array = null
+      const number_of_invigilators = Math.ceil(item.number_of_students / 24)
+      if (!item.booking) {
+        length_of_invigilator_array = 0
+      } else {
+        length_of_invigilator_array = item.booking.invigilators.length
+      }
+      if (item.exam_type.group_exam_ind === 1 && length_of_invigilator_array == 0) {
+        return false
+      } else if (item.exam_type.group_exam_ind === 1 && length_of_invigilator_array >= number_of_invigilators) {
+        return true
+      } else if (item.exam_type.group_exam_ind === 1 && length_of_invigilator_array < number_of_invigilators) {
+        return false
+      } else if (item.exam_type.group_exam_ind === 0 && item.booking && item.exam_type.exam_type_name !== 'Monthly Session Exam' &&
+          (number_of_invigilators == 1 || item.booking.sbc_staff_invigilated)) {
+        return true
+      } else if (item.exam_type.exam_type_name === 'Monthly Session Exam' &&
+          length_of_invigilator_array >= number_of_invigilators) {
+        return true
+      } else if (item.exam_type.exam_type_name === 'Monthly Session Exam' &&
+          length_of_invigilator_array < number_of_invigilators) {
+        return false
+      }
+      return false
+    },
+    clickModalRow (item) {
+      if (this.showExamInventoryModal) {
         this.toggleScheduling(true)
-        item.referrer = 'inventory'
         this.setSelectedExam(item)
         this.$router.push('/booking')
         this.toggleExamInventoryModal(false)
-      },
-      viewAllOfficePesticideExams() {
-        this.$store.dispatch('getAllPesticideExams')
-        this.$store.commit('toggleShowAllPesticideExams', false)
-      },
-      checkChallenger(item) {
-        if (item.event_id && item.booking.invigilator_id && item.number_of_students) {
+      }
+    },
+    editExamDetails (item) {
+      this.actionedExam = item
+      this.toggleEditExamModal(true)
+    },
+    editGroupBooking (item) {
+      this.actionedExam = item
+      this.toggleEditGroupBookingModal(true)
+    },
+    examReturnedFilter (item) {
+      if (item.exam_returned_date && (this.officeFilter === this.userOffice || this.officeFilter === 'default')) {
+        return true
+      }
+      return false
+    },
+    examReturnedAttention (item) {
+      if (item.exam_returned_date) {
+        return true
+      }
+      return false
+    },
+    filterByGroup (ex) {
+      if (ex.exam_type.exam_type_name === 'Monthly Session Exam' || ex.exam_type.group_exam_ind) {
+        return true
+      }
+      if (ex.number_of_students && parseInt(ex.number_of_students) > 1) {
+        return true
+      }
+      return false
+    },
+    filterByExpiry (ex) {
+      if (moment(ex.expiry_date).isValid()) {
+        if (moment(ex.expiry_date).isBefore(moment(), 'day')) {
           return true
         }
-        return false
-      },
-      checkInvigilator(item) {
-        let length_of_invigilator_array = null
-        let number_of_invigilators = Math.ceil(item.number_of_students / 24)
-        if (!item.booking) {
-          length_of_invigilator_array = 0
-        } else {
-          length_of_invigilator_array = item.booking.invigilators.length
+      }
+      return false
+    },
+    filterByScheduled (ex) {
+      if (this.inventoryFilters.expiryFilter === 'current') {
+        if (ex.booking) {
+          if (moment(ex.booking.start_time).isBefore(moment(), 'day')) {
+            return false
+          }
         }
-        if (item.exam_type.group_exam_ind === 1 && length_of_invigilator_array == 0) {
+      }
+      if (ex.exam_received_date) {
+        if (ex.booking && ((ex.booking.invigilators.length > 0) || ex.booking.sbc_staff_invigilated)) {
+          if (ex.booking.invigilator && ex.booking.invigilator.deleted) {
+            return false
+          }
+          if (ex.exam_type.exam_type_name !== 'Monthly Session Exam') {
+            return true
+          }
+          if (ex.exam_type.exam_type_name === 'Monthly Session Exam') {
+            if (ex.number_of_students && ex.event_id) {
+              return true
+            }
+          }
+        }
+      }
+      return false
+    },
+    checkAllAttention (ex) {
+      if (this.examReturnedAttention(ex)) {
+        return false
+      }
+      if (ex.booking && !ex.exam_received_date) {
+        return true
+      }
+      if (!ex.booking) {
+        return true
+      }
+      if (this.filterByExpiry(ex)) {
+        return true
+      }
+      if (this.filterByGroup(ex)) {
+        if (ex.booking && (this.checkInvigilator(ex))) {
           return false
-        } else if (item.exam_type.group_exam_ind === 1 && length_of_invigilator_array >= number_of_invigilators) {
-          return true
-        } else if (item.exam_type.group_exam_ind === 1 && length_of_invigilator_array < number_of_invigilators) {
-          return false
-        } else if (item.exam_type.group_exam_ind === 0 && item.booking && item.exam_type.exam_type_name !== "Monthly Session Exam" &&
-          (number_of_invigilators == 1 || item.booking.sbc_staff_invigilated)) {
-          return true
-        } else if (item.exam_type.exam_type_name === 'Monthly Session Exam'
-          && length_of_invigilator_array >= number_of_invigilators) {
-          return true
-        } else if (item.exam_type.exam_type_name === 'Monthly Session Exam'
-          && length_of_invigilator_array < number_of_invigilators ) {
-          return false
-        }
-        return false
-      },
-      clickModalRow(item) {
-        if (this.showExamInventoryModal) {
-          this.toggleScheduling(true)
-          this.setSelectedExam(item)
-          this.$router.push('/booking')
-          this.toggleExamInventoryModal(false)
-        }
-      },
-      editExamDetails(item) {
-        this.actionedExam = item
-        this.toggleEditExamModal(true)
-      },
-      editGroupBooking(item) {
-        this.actionedExam = item
-        this.toggleEditGroupBookingModal(true)
-      },
-      examReturnedFilter(item) {
-        if (item.exam_returned_date && (this.officeFilter === this.userOffice || this.officeFilter === 'default')) {
+        } else if (ex.booking && (!this.checkInvigilator(ex))) {
           return true
         }
-        return false
-      },
-      examReturnedAttention(item){
-        if (item.exam_returned_date ){
-          return true
-        }
-        return false
-      },
-      filterByGroup(ex) {
-        if (ex.exam_type.exam_type_name === 'Monthly Session Exam' || ex.exam_type.group_exam_ind) {
-          return true
-        }
-        if (ex.number_of_students && parseInt(ex.number_of_students) > 1) {
-          return true
-        }
-        return false
-      },
-      filterByExpiry(ex){
-        if (moment(ex.expiry_date).isValid()){
-          if (moment(ex.expiry_date).isBefore(moment(), 'day')) {
+      }
+      if (ex.booking) {
+        if (moment(ex.booking.start_time).isValid()) {
+          if (moment(ex.booking.start_time).isBefore(moment(), 'day')) {
             return true
           }
         }
+      }
+      if (ex.exam_type.exam_type_name === 'Monthly Session Exam') {
+        if (!ex.number_of_students || !ex.event_id) {
+          return true
+        }
+      }
+      return false
+    },
+    checkIndividualAttention (ex) {
+      if (this.filterByGroup(ex)) {
         return false
-      },
-      filterByScheduled(ex) {
-        if(this.inventoryFilters.expiryFilter === 'current'){
-          if(ex.booking){
-            if(moment(ex.booking.start_time).isBefore(moment(), 'day')){
-              return false
-            }
+      }
+      if (this.examReturnedAttention(ex)) {
+        return false
+      }
+      if (ex.booking && !ex.exam_received_date) {
+        return true
+      }
+      if (!ex.booking) {
+        return true
+      }
+      if (this.filterByExpiry(ex)) {
+        return true
+      }
+      if (ex.booking) {
+        if (moment(ex.booking.start_time).isValid()) {
+          if (moment(ex.booking.start_time).isBefore(moment(), 'day')) {
+            return true
           }
         }
-        if (ex.exam_received_date) {
-          if (ex.booking && ((ex.booking.invigilators.length > 0) || ex.booking.sbc_staff_invigilated )) {
-            if (ex.booking.invigilator && ex.booking.invigilator.deleted) {
-              return false
-            }
-            if (ex.exam_type.exam_type_name !== 'Monthly Session Exam') {
-              return true
-            }
-            if (ex.exam_type.exam_type_name === 'Monthly Session Exam') {
-              if (ex.number_of_students && ex.event_id) {
-                return true
-              }
-            }
-          }
-        }
+      }
+      return false
+    },
+    checkGroupAttention (ex) {
+      if (this.filterByGroup(ex) && this.examReturnedAttention(ex)) {
         return false
-      },
-      checkAllAttention(ex) {
-        if (this.examReturnedAttention(ex)){
+      }
+      if (this.filterByGroup(ex) && ex.booking && !ex.exam_received_date) {
+        return true
+      }
+      if (this.filterByGroup(ex)) {
+        if (ex.booking && (this.checkInvigilator(ex))) {
           return false
-        }
-        if (ex.booking && !ex.exam_received_date){
+        } else if (ex.booking && (!this.checkInvigilator(ex))) {
           return true
         }
-        if (!ex.booking){
-           return true
+      }
+      if (this.filterByGroup(ex) && ex.booking) {
+        if (moment(ex.booking.start_time).isValid()) {
+          if (moment(ex.booking.start_time).isBefore(moment(), 'day')) {
+            return true
+          }
         }
-        if (this.filterByExpiry(ex)){
-           return true
+      }
+      if (ex.exam_type.exam_type_name === 'Monthly Session Exam') {
+        if (!ex.number_of_students || !ex.event_id) {
+          return true
         }
-        if (this.filterByGroup(ex)){
-           if (ex.booking && (this.checkInvigilator(ex))){
-               return false
-           }   else if(ex.booking && (!this.checkInvigilator(ex))) {
-               return true
-           }
+      }
+      return false
+    },
+    checkOEMAllAttention (ex) {
+      if (this.examReturnedAttention(ex)) {
+        return false
+      }
+      if (ex.is_pesticide && !ex.exam_received_date) {
+        return true
+      }
+      if (this.filterByExpiry(ex)) {
+        return true
+      }
+      if (this.filterByGroup(ex)) {
+        if (!this.checkInvigilator(ex)) {
+          return true
         }
-        if (ex.booking){
-           if (moment(ex.booking.start_time).isValid()){
-              if (moment(ex.booking.start_time).isBefore(moment(), 'day')){
-                return true
+      }
+      if (ex.booking) {
+        if (moment(ex.booking.start_time).isValid()) {
+          if (moment(ex.booking.start_time).isBefore(moment(), 'day')) {
+            return true
+          }
+        }
+      }
+      return false
+    },
+    checkOEMIndividualAttention (ex) {
+      if (this.filterByGroup(ex)) {
+        return false
+      }
+      if (this.examReturnedAttention(ex)) {
+        return false
+      }
+      if (ex.is_pesticide && !ex.exam_received_date) {
+        return true
+      }
+      if (this.filterByExpiry(ex)) {
+        return true
+      }
+      if (ex.booking) {
+        if (moment(ex.booking.start_time).isValid()) {
+          if (moment(ex.booking.start_time).isBefore(moment(), 'day')) {
+            return true
+          }
+        }
+      }
+      return false
+    },
+    checkOEMGroupAttention (ex) {
+      if (this.filterByGroup(ex) && this.examReturnedAttention(ex)) {
+        return false
+      }
+      if (this.filterByGroup(ex) && this.filterByExpiry(ex)) {
+        return true
+      }
+      if (this.filterByGroup(ex) && ex.is_pesticide && !ex.exam_received_date) {
+        return true
+      }
+      if (this.filterByGroup(ex)) {
+        if (ex.booking) {
+          if (moment(ex.booking.start_time).isValid()) {
+            if (moment(ex.booking.start_time).isBefore(moment(), 'day')) {
+              return true
             }
           }
-        }
-        if (ex.exam_type.exam_type_name === 'Monthly Session Exam') {
-           if (!ex.number_of_students || !ex.event_id) {
-              return true
-           }
-        }
-        return false
-      },
-      checkIndividualAttention(ex){
-        if (this.filterByGroup(ex)) {
-           return false
-        }
-        if (this.examReturnedAttention(ex)){
-           return false
-        }
-        if (ex.booking && !ex.exam_received_date){
-           return true
-        }
-        if (!ex.booking){
-           return true
-        }
-        if (this.filterByExpiry(ex)){
-           return true
-        }
-        if (ex.booking){
-           if (moment(ex.booking.start_time).isValid()){
-              if (moment(ex.booking.start_time).isBefore(moment(), 'day')){
-                return true
-            }
+          if (!this.checkInvigilator(ex)) {
+            return true
           }
         }
-        return false
-      },
-      checkGroupAttention(ex){
-        if (this.filterByGroup(ex) && this.examReturnedAttention(ex)){
-           return false
-        }
-        if (this.filterByGroup(ex) && ex.booking && !ex.exam_received_date){
-           return true
-        }
-        if (this.filterByGroup(ex)){
-           if (ex.booking && (this.checkInvigilator(ex))){
-               return false
-           }   else if(ex.booking && (!this.checkInvigilator(ex))) {
-               return true
-           }
-        }
-        if (this.filterByGroup(ex) && ex.booking){
-           if (moment(ex.booking.start_time).isValid()){
-              if (moment(ex.booking.start_time).isBefore(moment(), 'day')){
-                return true
-              }
-           }
-        }
-        if (ex.exam_type.exam_type_name === 'Monthly Session Exam') {
-           if (!ex.number_of_students || !ex.event_id) {
-              return true
-           }
-        }
-        return false
-      },
-      checkOEMAllAttention(ex) {
-        if (this.examReturnedAttention(ex)){
-           return false
-        }
-        if (ex.is_pesticide && !ex.exam_received_date) {
-          return true
-        }
-        if (this.filterByExpiry(ex)){
-           return true
-        }
-        if (this.filterByGroup(ex)){
-           if (!this.checkInvigilator(ex)){
-              return true
-           }
-        }
-        if (ex.booking){
-              if (moment(ex.booking.start_time).isValid()){
-                 if (moment(ex.booking.start_time).isBefore(moment(), 'day')){
-                    return true
-                 }
-              }
-        }
-        return false
-      },
-      checkOEMIndividualAttention(ex){
-        if (this.filterByGroup(ex)) {
-           return false
-        }
-        if (this.examReturnedAttention(ex)){
-           return false
-        }
-        if (ex.is_pesticide && !ex.exam_received_date) {
-          return true
-        }
-        if (this.filterByExpiry(ex)){
-           return true
-        }
-        if (ex.booking){
-           if (moment(ex.booking.start_time).isValid()){
-              if (moment(ex.booking.start_time).isBefore(moment(), 'day')){
-                return true
-            }
-          }
-        }
-        return false
-      },
-      checkOEMGroupAttention(ex){
-        if (this.filterByGroup(ex) && this.examReturnedAttention(ex)){
-           return false
-        }
-        if (this.filterByGroup(ex) && this.filterByExpiry(ex)){
-           return true
-        }
-        if (this.filterByGroup(ex) && ex.is_pesticide && !ex.exam_received_date) {
-          return true
-        }
-        if (this.filterByGroup(ex)){
-           if (ex.booking){
-              if (moment(ex.booking.start_time).isValid()){
-                 if (moment(ex.booking.start_time).isBefore(moment(), 'day')){
-                    return true
-                 }
-              }
-              if (!this.checkInvigilator(ex)){
-                 return true
-              }
-           }
-        }
-        return false
-      },
-      checkExpiryDate(date){
-        if(moment(date).isValid() && moment(date).isBefore(moment(), 'day')){
-          return true
-        }
-        return false
-      },
-      checkStartDate(date){
-        if(moment(date).isValid() && moment(date).isBefore(moment(), 'day')){
-          return true
-        }
-        return false
-      },
-      filteredExams() {
-        let examInventory = this.exam_inventory
-        let office_number = this.inventoryFilters.office_number === 'default' ?
-          this.user.office.office_number : this.inventoryFilters.office_number
-        if (this.inventoryFilters.office_number === 'pesticide_offsite') {
-          office_number = (this.offices.find(office => office.office_name == 'Pesticide Offsite')).office_number
-          this.inventoryFilters.office_number = office_number
-        }
-        let filtered = []
-        if (examInventory.length > 0) {
-
-          if (this.showExamInventoryModal) {
-            filtered = examInventory.filter(ex => moment(ex.expiry_date).isSameOrAfter(moment(), 'day'))
-            let moreFiltered = filtered.filter(ex => !ex.booking)
-            let evenMoreFiltered = moreFiltered.filter(ex => !ex.offsite_location)
-            let { office_id } = this.user
-            return evenMoreFiltered.filter(ex => ex.office_id == office_id)
-          }
-
-          let exams = this.showAllPesticide ? examInventory :
-            examInventory.filter(ex => ex.office.office_number == office_number)
-
-          if(this.inventoryFilters.requireAttentionFilter === 'both'){
-            return exams.filter(ex => this.checkAllAttention(ex))
-          }else if(this.inventoryFilters.requireAttentionFilter === 'individual'){
-            return exams.filter(ex => this.checkIndividualAttention(ex))
-          }else if(this.inventoryFilters.requireAttentionFilter === 'group'){
-            return exams.filter(ex => this.checkGroupAttention(ex))
-          }
-
-          if(this.inventoryFilters.requireOEMAttentionFilter === 'both'){
-            return exams.filter(ex => this.checkOEMAllAttention(ex))
-          } else if(this.inventoryFilters.requireOEMAttentionFilter === 'individual'){
-            return exams.filter(ex => this.checkOEMIndividualAttention(ex))
-          } else if(this.inventoryFilters.requireOEMAttentionFilter === 'group'){
-            return exams.filter(ex => this.checkOEMGroupAttention(ex))
-          }
-
-
-          switch (this.inventoryFilters.expiryFilter) {
-            case 'all':
-              filtered = exams
-              break
-            case 'expired':
-              filtered = exams.filter(ex => moment(ex.expiry_date).isBefore(moment(), 'day'))
-              break
-            case 'current':
-              let step1 = exams.filter(ex => moment(ex.expiry_date).isSameOrAfter(moment(), 'day'))
-              let step2 = exams.filter(ex => !ex.expiry_date)
-              filtered = step1.concat(step2)
-              break
-            default:
-              filtered = exams
-              break
-          }
-          let moreFiltered = []
-          switch (this.inventoryFilters.scheduledFilter) {
-            case 'both':
-              moreFiltered = filtered
-              break
-            case 'unscheduled':
-              moreFiltered = filtered.filter( x => !this.filterByScheduled(x))
-              break
-            case 'scheduled':
-              moreFiltered = filtered.filter( x => this.filterByScheduled(x))
-              break
-            default:
-              moreFiltered = filtered
-              break
-          }
-          let evenMoreFiltered = []
-          switch (this.inventoryFilters.groupFilter) {
-            case 'both':
-              evenMoreFiltered = moreFiltered
-              break
-            case 'individual':
-              evenMoreFiltered = moreFiltered.filter(ex => !this.filterByGroup(ex))
-
-              break
-            case 'group':
-              evenMoreFiltered = moreFiltered.filter(ex => this.filterByGroup(ex))
-              break
-            default:
-              evenMoreFiltered = moreFiltered
-              break
-          }
-          let uploadFiltered = []
-          switch(this.inventoryFilters.uploadFilter) {
-            case 'notuploaded':
-              uploadFiltered = evenMoreFiltered.filter(exam => !exam.upload_received_ind)
-              break
-            default:
-              uploadFiltered = evenMoreFiltered
-          }
-          let receptSentFiltered = []
-          switch(this.inventoryFilters.receptSentFilter) {
-            case 'notsent':
-              receptSentFiltered = uploadFiltered.filter(exam => !exam.receipt_sent_ind)
-              break
-            default:
-              receptSentFiltered = uploadFiltered
-          }
-          let finalFiltered = []
-          switch (this.inventoryFilters.returnedFilter) {
-            case 'both':
-              finalFiltered = receptSentFiltered
-              break
-            case 'returned':
-              finalFiltered = receptSentFiltered.filter(ex => ex.exam_returned_date)
-              break
-            case 'unreturned':
-              finalFiltered = receptSentFiltered.filter(ex => !ex.exam_returned_date)
-              break
-            default:
-              finalFiltered = receptSentFiltered
-              break
-          }
-          return finalFiltered
-        }
-        return []
-      },
-      formatDate(d) {
-        return new moment(d).format('ddd MMM DD, YYYY')
-      },
-      formatTime(d) {
-        let tz = d.office.timezone.timezone_name
-        let time =  new zone.tz(d.start_time, tz).format('2017-MM-DD[T]HH:mm:ss').toString()
-        return new moment(time).format('h:mm a')
-      },
-      getSize() {
-        this.totalH = window.innerHeight - 70 - 36
-        if (!this.showExamInventoryModal) {
-          this.tableStyle = { height: `${this.availableH}px`, width: `${ window.innerWidth - 40 }px` }
-        }
+      }
+      return false
+    },
+    checkExpiryDate (date) {
+      if (moment(date).isValid() && moment(date).isBefore(moment(), 'day')) {
+        return true
+      }
+      return false
+    },
+    checkStartDate (date) {
+      if (moment(date).isValid() && moment(date).isBefore(moment(), 'day')) {
+        return true
+      }
+      return false
+    },
+    filteredExams () {
+      const examInventory = this.exam_inventory
+      let office_number = this.inventoryFilters.office_number === 'default'
+        ? this.user.office.office_number : this.inventoryFilters.office_number
+      if (this.inventoryFilters.office_number === 'pesticide_offsite') {
+        office_number = (this.offices.find(office => office.office_name == 'Pesticide Offsite')).office_number
+        this.inventoryFilters.office_number = office_number
+      }
+      let filtered = []
+      if (examInventory.length > 0) {
         if (this.showExamInventoryModal) {
-          this.tableStyle = { width: 98 + '%' }
+          filtered = examInventory.filter(ex => moment(ex.expiry_date).isSameOrAfter(moment(), 'day'))
+          const moreFiltered = filtered.filter(ex => !ex.booking)
+          const evenMoreFiltered = moreFiltered.filter(ex => !ex.offsite_location)
+          const { office_id } = this.user
+          return evenMoreFiltered.filter(ex => ex.office_id == office_id)
         }
-      },
-      readyDetailsMap(item) {
-        let output = {}
-        if (item.exam_returned_date) {
-          return {
-            Returned: moment(item.exam_returned_date).format('YYYY-MMM-DD'),
-            Disposition: item.exam_returned_tracking_number,
-            Written: item.exam_written_ind ? 'Yes' : 'No',
-          }
+
+        const exams = this.showAllPesticide ? examInventory
+          : examInventory.filter(ex => ex.office.office_number == office_number)
+
+        if (this.inventoryFilters.requireAttentionFilter === 'both') {
+          return exams.filter(ex => this.checkAllAttention(ex))
+        } else if (this.inventoryFilters.requireAttentionFilter === 'individual') {
+          return exams.filter(ex => this.checkIndividualAttention(ex))
+        } else if (this.inventoryFilters.requireAttentionFilter === 'group') {
+          return exams.filter(ex => this.checkGroupAttention(ex))
         }
-        if (item.offsite_location && item.offsite_location !== '_offsite') {
-          output.Location = item.offsite_location
+
+        if (this.inventoryFilters.requireOEMAttentionFilter === 'both') {
+          return exams.filter(ex => this.checkOEMAllAttention(ex))
+        } else if (this.inventoryFilters.requireOEMAttentionFilter === 'individual') {
+          return exams.filter(ex => this.checkOEMIndividualAttention(ex))
+        } else if (this.inventoryFilters.requireOEMAttentionFilter === 'group') {
+          return exams.filter(ex => this.checkOEMGroupAttention(ex))
         }
-        if (item.booking) {
-          if (item.booking.sbc_staff_invigilated) {
-            output.Invigilator = 'SBC Employee'
-          }
-          if (item.booking.invigilators) {
-            let invigilator_name_list = []
-            item.booking.invigilators.forEach(exam_invigilator => {
-              this.invigilators.forEach(office_invigilator => {
-                if (exam_invigilator == office_invigilator.invigilator_id) {
-                  invigilator_name_list.push(office_invigilator.invigilator_name)
-                }
-              })
+
+        switch (this.inventoryFilters.expiryFilter) {
+          case 'all':
+            filtered = exams
+            break
+          case 'expired':
+            filtered = exams.filter(ex => moment(ex.expiry_date).isBefore(moment(), 'day'))
+            break
+          case 'current':
+            const step1 = exams.filter(ex => moment(ex.expiry_date).isSameOrAfter(moment(), 'day'))
+            const step2 = exams.filter(ex => !ex.expiry_date)
+            filtered = step1.concat(step2)
+            break
+          default:
+            filtered = exams
+            break
+        }
+        let moreFiltered = []
+        switch (this.inventoryFilters.scheduledFilter) {
+          case 'both':
+            moreFiltered = filtered
+            break
+          case 'unscheduled':
+            moreFiltered = filtered.filter(x => !this.filterByScheduled(x))
+            break
+          case 'scheduled':
+            moreFiltered = filtered.filter(x => this.filterByScheduled(x))
+            break
+          default:
+            moreFiltered = filtered
+            break
+        }
+        let evenMoreFiltered = []
+        switch (this.inventoryFilters.groupFilter) {
+          case 'both':
+            evenMoreFiltered = moreFiltered
+            break
+          case 'individual':
+            evenMoreFiltered = moreFiltered.filter(ex => !this.filterByGroup(ex))
+
+            break
+          case 'group':
+            evenMoreFiltered = moreFiltered.filter(ex => this.filterByGroup(ex))
+            break
+          default:
+            evenMoreFiltered = moreFiltered
+            break
+        }
+        let uploadFiltered = []
+        switch (this.inventoryFilters.uploadFilter) {
+          case 'notuploaded':
+            uploadFiltered = evenMoreFiltered.filter(exam => !exam.upload_received_ind)
+            break
+          default:
+            uploadFiltered = evenMoreFiltered
+        }
+        let receptSentFiltered = []
+        switch (this.inventoryFilters.receptSentFilter) {
+          case 'notsent':
+            receptSentFiltered = uploadFiltered.filter(exam => !exam.receipt_sent_ind)
+            break
+          default:
+            receptSentFiltered = uploadFiltered
+        }
+        let finalFiltered = []
+        switch (this.inventoryFilters.returnedFilter) {
+          case 'both':
+            finalFiltered = receptSentFiltered
+            break
+          case 'returned':
+            finalFiltered = receptSentFiltered.filter(ex => ex.exam_returned_date)
+            break
+          case 'unreturned':
+            finalFiltered = receptSentFiltered.filter(ex => !ex.exam_returned_date)
+            break
+          default:
+            finalFiltered = receptSentFiltered
+            break
+        }
+        return finalFiltered
+      }
+      return []
+    },
+    formatDate (d) {
+      return new moment(d).format('ddd MMM DD, YYYY')
+    },
+    formatTime (d) {
+      const tz = d.office.timezone.timezone_name
+      const time = new zone.tz(d.start_time, tz).format('2017-MM-DD[T]HH:mm:ss').toString()
+      return new moment(time).format('h:mm a')
+    },
+    getSize () {
+      this.totalH = window.innerHeight - 70 - 36
+      if (!this.showExamInventoryModal) {
+        this.tableStyle = { height: `${this.availableH}px`, width: `${window.innerWidth - 40}px` }
+      }
+      if (this.showExamInventoryModal) {
+        this.tableStyle = { width: 98 + '%' }
+      }
+    },
+    readyDetailsMap (item) {
+      const output = {}
+      if (item.exam_returned_date) {
+        return {
+          Returned: moment(item.exam_returned_date).format('YYYY-MMM-DD'),
+          Disposition: item.exam_returned_tracking_number,
+          Written: item.exam_written_ind ? 'Yes' : 'No'
+        }
+      }
+      if (item.offsite_location && item.offsite_location !== '_offsite') {
+        output.Location = item.offsite_location
+      }
+      if (item.booking) {
+        if (item.booking.sbc_staff_invigilated) {
+          output.Invigilator = 'SBC Employee'
+        }
+        if (item.booking.invigilators) {
+          const invigilator_name_list = []
+          item.booking.invigilators.forEach(exam_invigilator => {
+            this.invigilators.forEach(office_invigilator => {
+              if (exam_invigilator == office_invigilator.invigilator_id) {
+                invigilator_name_list.push(office_invigilator.invigilator_name)
+              }
             })
-            let invigilator_string = ''
-            if (invigilator_name_list.length > 0) {
-              invigilator_name_list.forEach(invigilator => {
-                invigilator_string += invigilator
-                invigilator_string += ', '
-              })
-              invigilator_string = invigilator_string.replace(/,\s*$/, "")
-            }
-            if (invigilator_string.length > 0) {
-              output.Invigilators = invigilator_string
-            }
-          }
-          if (item.booking.room_id) {
-            output.Room = item.booking.room.room_name
-          }
-        }
-        return output
-      },
-      resetActionedExam() {
-        this.actionedExam = {}
-      },
-      resetInvalidOfficeOnHide() {
-        if  (this.officeName === 'Invalid Office') {
-          this.setFilter({type: 'office_number', value: 'default'})
-        }
-      },
-      returnExam(item) {
-        this.actionedExam = item
-        if (item.is_pesticide) {
-          this.toggleUploadExamModal(true)
-        } else {
-          this.toggleReturnExamModal(true)
-        }
-      },
-      setExamTypeFilter(option){
-        this.setSelectedExamType(option.value)
-        this.setSelectedExamTypeFilter(option.text)
-        this.page = 1
-
-        if(option.value === 'individual'){
-          this.setSelectedQuickAction('')
-          this.setSelectedQuickActionFilter('')
-          this.setInventoryFilters({type:'groupFilter', value:'individual'})
-          this.setInventoryFilters({type:'expiryFilter', value:'all'})
-          this.setInventoryFilters({type:'returnedFilter', value:'both'})
-          this.setInventoryFilters({type:'scheduledFilter', value:'both'})
-          this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
-          this.setInventoryFilters({type:'receptSentFilter', value:'default'})
-          this.setInventoryFilters({type:'uploadFilter', value:'default'})
-        }else if (option.value === 'group'){
-          this.setSelectedQuickAction('')
-          this.setSelectedQuickActionFilter('')
-          this.setInventoryFilters({type:'groupFilter', value:'group'})
-          this.setInventoryFilters({type:'expiryFilter', value:'all'})
-          this.setInventoryFilters({type:'returnedFilter', value:'both'})
-          this.setInventoryFilters({type:'scheduledFilter', value:'both'})
-          this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
-          this.setInventoryFilters({type:'receptSentFilter', value:'default'})
-          this.setInventoryFilters({type:'uploadFilter', value:'default'})
-        }else if (option.value === 'all'){
-          this.setSelectedQuickAction('')
-          this.setSelectedQuickActionFilter('')
-          this.setInventoryFilters({type:'expiryFilter', value:'all'})
-          this.setInventoryFilters({type:'returnedFilter', value:'both'})
-          this.setInventoryFilters({type:'scheduledFilter', value:'both'})
-          this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
-          this.setInventoryFilters({type:'receptSentFilter', value:'default'})
-          this.setInventoryFilters({type:'uploadFilter', value:'default'})
-          this.setInventoryFilters({type:'groupFilter', value:'both'})
-        }
-      },
-      setQuickActionFilter(option){
-        this.setSelectedQuickAction(option.value)
-        this.setSelectedQuickActionFilter(option.text)
-        this.page = 1
-
-        if(option.value === 'returned'){
-          this.setInventoryFilters({type:'returnedFilter', value:'returned'})
-          this.setInventoryFilters({type:'expiryFilter', value:'all'})
-          this.setInventoryFilters({type:'scheduledFilter', value:'both'})
-          this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
-          this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
-          this.setInventoryFilters({type:'receptSentFilter', value: 'default'})
-          this.setInventoryFilters({type:'uploadFilter', value: 'default'})
-        }else if(option.value === 'require_attention') {
-          if (this.selectedExamType === 'individual') {
-            this.setInventoryFilters({type: 'returnedFilter', value: 'both'})
-            this.setInventoryFilters({type: 'expiryFilter', value: 'all'})
-            this.setInventoryFilters({type: 'scheduledFilter', value: 'both'})
-            this.setInventoryFilters({type: 'requireAttentionFilter', value: 'individual'})
-            this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
-            this.setInventoryFilters({type:'receptSentFilter', value: 'default'})
-            this.setInventoryFilters({type:'uploadFilter', value: 'default'})
-          } else if (this.selectedExamType === 'group') {
-            this.setInventoryFilters({type: 'returnedFilter', value: 'unreturned'})
-            this.setInventoryFilters({type: 'expiryFilter', value: 'all'})
-            this.setInventoryFilters({type: 'scheduledFilter', value: 'unscheduled'})
-            this.setInventoryFilters({type: 'requireAttentionFilter', value: 'group'})
-            this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
-            this.setInventoryFilters({type:'receptSentFilter', value: 'default'})
-            this.setInventoryFilters({type:'uploadFilter', value: 'default'})
-          } else if (this.selectedExamType === 'all') {
-            this.setInventoryFilters({type: 'requireAttentionFilter', value: 'both'})
-            this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
-            this.setInventoryFilters({type:'receptSentFilter', value: 'default'})
-            this.setInventoryFilters({type:'uploadFilter', value: 'default'})
-            this.setInventoryFilters({type: 'expiryFilter', value: 'all'})
-          }
-        }
-        else if(option.value === 'ready'){
-          this.setInventoryFilters({type:'expiryFilter', value:'current'})
-          this.setInventoryFilters({type:'returnedFilter', value:'unreturned'})
-          this.setInventoryFilters({type:'scheduledFilter', value:'scheduled'})
-          this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
-          this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
-          this.setInventoryFilters({type:'receptSentFilter', value: 'default'})
-          this.setInventoryFilters({type:'uploadFilter', value: 'default'})
-        }else if(option.value === 'expired'){
-          this.setInventoryFilters({type:'expiryFilter', value:'expired'})
-          this.setInventoryFilters({type:'returnedFilter', value:'unreturned'})
-          this.setInventoryFilters({type:'scheduledFilter', value:'both'})
-          this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
-          this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
-          this.setInventoryFilters({type:'receptSentFilter', value:'default'})
-          this.setInventoryFilters({type:'uploadFilter', value:'default'})
-        }else if(option.value === 'oemai'){
-          if(this.selectedExamType === 'individual'){
-            this.setInventoryFilters({type:'returnedFilter', value:'both'})
-            this.setInventoryFilters({type:'expiryFilter', value:'all'})
-            this.setInventoryFilters({type:'scheduledFilter', value:'both'})
-            this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
-            this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'individual'})
-            this.setInventoryFilters({type:'receptSentFilter', value:'default'})
-            this.setInventoryFilters({type:'uploadFilter', value:'default'})
-          }else if(this.selectedExamType === 'group'){
-            this.setInventoryFilters({type:'returnedFilter', value:'both'})
-            this.setInventoryFilters({type:'expiryFilter', value:'all'})
-            this.setInventoryFilters({type:'scheduledFilter', value:'both'})
-            this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
-            this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'group'})
-            this.setInventoryFilters({type:'receptSentFilter', value:'default'})
-            this.setInventoryFilters({type:'uploadFilter', value:'default'})
-          }else if(this.selectedExamType === 'all'){
-            this.setInventoryFilters({type:'returnedFilter', value:'both'})
-            this.setInventoryFilters({type:'expiryFilter', value:'all'})
-            this.setInventoryFilters({type:'scheduledFilter', value:'both'})
-            this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
-            this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'both'})
-            this.setInventoryFilters({type:'receptSentFilter', value:'default'})
-            this.setInventoryFilters({type:'uploadFilter', value:'default'})
-          }
-        } else if(option.value === 'awaiting_upload'){
-          this.isLoading = true;
-          this.setInventoryFilters({type: 'office_number', value: 'pesticide_offsite'})
-          this.updateExamStatus().then(success => {
-            console.log("==> In this.updateExamStatus().then()", success)
-            this.$store.commit('toggleShowAllPesticideExams', false)
-            this.setInventoryFilters({type: 'expiryFilter', value: 'current'})
-            this.setInventoryFilters({type: 'groupFilter', value: 'both'})
-            this.setInventoryFilters({type: 'returnedFilter', value: 'unreturned'})
-            this.setInventoryFilters({type: 'scheduledFilter', value: 'both'})
-            this.setInventoryFilters({type: 'receptSentFilter', value: 'default'})
-            this.setInventoryFilters({type: 'uploadFilter', value: 'notuploaded'})
-            this.isLoading = false;
-          }, err => {
-            console.error(err)
-            this.isLoading = false;
-          }).catch(err => {
-            this.isLoading = false;
           })
-        } else if(option.value === 'awaiting_receipt'){
-
-          // this.$store.commit('toggleShowAllPesticideExams', false)
-          this.viewAllOfficePesticideExams()
-
-          this.setInventoryFilters({type: 'expiryFilter', value: 'current'})
-          this.setInventoryFilters({type:'scheduledFilter', value:'both'})
-          this.setInventoryFilters({type:'returnedFilter', value:'unreturned'})
-          this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
-          this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
-          this.setInventoryFilters({type:'uploadFilter', value: 'default'})
-          this.setInventoryFilters({type:'receptSentFilter', value: 'notsent'})
-        } else if(option.value === 'all'){
-          this.setInventoryFilters({type: 'expiryFilter', value: 'all'})
-          this.setInventoryFilters({type:'scheduledFilter', value:'both'})
-          this.setInventoryFilters({type:'groupFilter', value:'both'})
-          this.setInventoryFilters({type:'returnedFilter', value:'both'})
-          this.setInventoryFilters({type:'requireAttentionFilter', value:'default'})
-          this.setInventoryFilters({type:'requireOEMAttentionFilter', value: 'default'})
-          this.setInventoryFilters({type:'uploadFilter', value: 'default'})
-          this.setInventoryFilters({type:'receptSentFilter', value: 'default'})
-        }
-      },
-      setFilter(e) {
-        this.setInventoryFilters(e)
-
-        if (e.type === "office_number") {
-          this.getExamsForOffice(e.value)
-        }
-      },
-      setOfficeFilter(office_number) {
-        this.setFilter({type:'office_number', value: office_number})
-        this.$store.commit('toggleShowAllPesticideExams', false)
-      },
-      setHomeOffice() {
-        this.setFilter({type: 'office_number', value: 'default'})
-        this.officeFilterModal = false
-        this.$store.commit('toggleShowAllPesticideExams', false)
-      },
-      sortCompare(a, b, key) {
-        if (key === 'scheduled') {
-          let val1, val2
-          if (this.statusIcon(a).rank !== this.statusIcon(b).rank) {
-            val1 = parseInt(this.statusIcon(a).rank)
-            val2 = parseInt(this.statusIcon(b).rank)
+          let invigilator_string = ''
+          if (invigilator_name_list.length > 0) {
+            invigilator_name_list.forEach(invigilator => {
+              invigilator_string += invigilator
+              invigilator_string += ', '
+            })
+            invigilator_string = invigilator_string.replace(/,\s*$/, '')
           }
-          if (this.statusIcon(a).rank === this.statusIcon(b).rank) {
-            val1 = parseInt(a.exam_id)
-            val2 = parseInt(b.exam_id)
+          if (invigilator_string.length > 0) {
+            output.Invigilators = invigilator_string
           }
-          return val1 < val2 ? -1 : val1 > val2 ? 1 : 0
         }
-        if (typeof a[key] === 'number' && typeof b[key] === 'number') {
-          return a[key] < b[key] ? -1 : a[key] > b[key] ? 1 : 0
-        } else {
-          return toString(a[key]).localeCompare(toString(b[key]), undefined, {
-            numeric: true
-          })
+        if (item.booking.room_id) {
+          output.Room = item.booking.room.room_name
         }
-        function toString(value) {
-          if (!value) {
-            return ''
-          } else if (value instanceof Object) {
-            return Object.keys(value)
+      }
+      return output
+    },
+    resetActionedExam () {
+      this.actionedExam = {}
+    },
+    resetInvalidOfficeOnHide () {
+      if (this.officeName === 'Invalid Office') {
+        this.setFilter({ type: 'office_number', value: 'default' })
+      }
+    },
+    returnExam (item) {
+      this.actionedExam = item
+      if (item.is_pesticide) {
+        this.toggleUploadExamModal(true)
+      } else {
+        this.toggleReturnExamModal(true)
+      }
+    },
+    setExamTypeFilter (option) {
+      this.setSelectedExamType(option.value)
+      this.setSelectedExamTypeFilter(option.text)
+      this.page = 1
+
+      if (option.value === 'individual') {
+        this.setSelectedQuickAction('')
+        this.setSelectedQuickActionFilter('')
+        this.setInventoryFilters({ type: 'groupFilter', value: 'individual' })
+        this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
+        this.setInventoryFilters({ type: 'returnedFilter', value: 'both' })
+        this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
+        this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
+        this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
+        this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
+      } else if (option.value === 'group') {
+        this.setSelectedQuickAction('')
+        this.setSelectedQuickActionFilter('')
+        this.setInventoryFilters({ type: 'groupFilter', value: 'group' })
+        this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
+        this.setInventoryFilters({ type: 'returnedFilter', value: 'both' })
+        this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
+        this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
+        this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
+        this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
+      } else if (option.value === 'all') {
+        this.setSelectedQuickAction('')
+        this.setSelectedQuickActionFilter('')
+        this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
+        this.setInventoryFilters({ type: 'returnedFilter', value: 'both' })
+        this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
+        this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
+        this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
+        this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
+        this.setInventoryFilters({ type: 'groupFilter', value: 'both' })
+      }
+    },
+    setQuickActionFilter (option) {
+      this.setSelectedQuickAction(option.value)
+      this.setSelectedQuickActionFilter(option.text)
+      this.page = 1
+
+      if (option.value === 'returned') {
+        this.setInventoryFilters({ type: 'returnedFilter', value: 'returned' })
+        this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
+        this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
+        this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
+        this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'default' })
+        this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
+        this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
+      } else if (option.value === 'require_attention') {
+        if (this.selectedExamType === 'individual') {
+          this.setInventoryFilters({ type: 'returnedFilter', value: 'both' })
+          this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
+          this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
+          this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'individual' })
+          this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'default' })
+          this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
+          this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
+        } else if (this.selectedExamType === 'group') {
+          this.setInventoryFilters({ type: 'returnedFilter', value: 'unreturned' })
+          this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
+          this.setInventoryFilters({ type: 'scheduledFilter', value: 'unscheduled' })
+          this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'group' })
+          this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'default' })
+          this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
+          this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
+        } else if (this.selectedExamType === 'all') {
+          this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'both' })
+          this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'default' })
+          this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
+          this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
+          this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
+        }
+      } else if (option.value === 'ready') {
+        this.setInventoryFilters({ type: 'expiryFilter', value: 'current' })
+        this.setInventoryFilters({ type: 'returnedFilter', value: 'unreturned' })
+        this.setInventoryFilters({ type: 'scheduledFilter', value: 'scheduled' })
+        this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
+        this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'default' })
+        this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
+        this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
+      } else if (option.value === 'expired') {
+        this.setInventoryFilters({ type: 'expiryFilter', value: 'expired' })
+        this.setInventoryFilters({ type: 'returnedFilter', value: 'unreturned' })
+        this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
+        this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
+        this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'default' })
+        this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
+        this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
+      } else if (option.value === 'oemai') {
+        if (this.selectedExamType === 'individual') {
+          this.setInventoryFilters({ type: 'returnedFilter', value: 'both' })
+          this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
+          this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
+          this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
+          this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'individual' })
+          this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
+          this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
+        } else if (this.selectedExamType === 'group') {
+          this.setInventoryFilters({ type: 'returnedFilter', value: 'both' })
+          this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
+          this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
+          this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
+          this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'group' })
+          this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
+          this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
+        } else if (this.selectedExamType === 'all') {
+          this.setInventoryFilters({ type: 'returnedFilter', value: 'both' })
+          this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
+          this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
+          this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
+          this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'both' })
+          this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
+          this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
+        }
+      } else if (option.value === 'awaiting_upload') {
+        this.isLoading = true
+        this.setInventoryFilters({ type: 'office_number', value: 'pesticide_offsite' })
+        this.updateExamStatus().then(success => {
+          console.log('==> In this.updateExamStatus().then()', success)
+          this.$store.commit('toggleShowAllPesticideExams', false)
+          this.setInventoryFilters({ type: 'expiryFilter', value: 'current' })
+          this.setInventoryFilters({ type: 'groupFilter', value: 'both' })
+          this.setInventoryFilters({ type: 'returnedFilter', value: 'unreturned' })
+          this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
+          this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
+          this.setInventoryFilters({ type: 'uploadFilter', value: 'notuploaded' })
+          this.isLoading = false
+        }, err => {
+          console.error(err)
+          this.isLoading = false
+        }).catch(err => {
+          this.isLoading = false
+        })
+      } else if (option.value === 'awaiting_receipt') {
+        // this.$store.commit('toggleShowAllPesticideExams', false)
+        this.viewAllOfficePesticideExams()
+
+        this.setInventoryFilters({ type: 'expiryFilter', value: 'current' })
+        this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
+        this.setInventoryFilters({ type: 'returnedFilter', value: 'unreturned' })
+        this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
+        this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'default' })
+        this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
+        this.setInventoryFilters({ type: 'receptSentFilter', value: 'notsent' })
+      } else if (option.value === 'all') {
+        this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
+        this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
+        this.setInventoryFilters({ type: 'groupFilter', value: 'both' })
+        this.setInventoryFilters({ type: 'returnedFilter', value: 'both' })
+        this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
+        this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'default' })
+        this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
+        this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
+      }
+    },
+    setFilter (e) {
+      this.setInventoryFilters(e)
+
+      if (e.type === 'office_number') {
+        this.getExamsForOffice(e.value)
+      }
+    },
+    setOfficeFilter (office_number) {
+      this.setFilter({ type: 'office_number', value: office_number })
+      this.$store.commit('toggleShowAllPesticideExams', false)
+    },
+    setHomeOffice () {
+      this.setFilter({ type: 'office_number', value: 'default' })
+      this.officeFilterModal = false
+      this.$store.commit('toggleShowAllPesticideExams', false)
+    },
+    sortCompare (a, b, key) {
+      if (key === 'scheduled') {
+        let val1, val2
+        if (this.statusIcon(a).rank !== this.statusIcon(b).rank) {
+          val1 = parseInt(this.statusIcon(a).rank)
+          val2 = parseInt(this.statusIcon(b).rank)
+        }
+        if (this.statusIcon(a).rank === this.statusIcon(b).rank) {
+          val1 = parseInt(a.exam_id)
+          val2 = parseInt(b.exam_id)
+        }
+        return val1 < val2 ? -1 : val1 > val2 ? 1 : 0
+      }
+      if (typeof a[key] === 'number' && typeof b[key] === 'number') {
+        return a[key] < b[key] ? -1 : a[key] > b[key] ? 1 : 0
+      } else {
+        return toString(a[key]).localeCompare(toString(b[key]), undefined, {
+          numeric: true
+        })
+      }
+      function toString (value) {
+        if (!value) {
+          return ''
+        } else if (value instanceof Object) {
+          return Object.keys(value)
             .sort()
             .map(key => toString(value[key]))
             .join(' ')
-          }
-          return String(value)
         }
-      },
-      statusIcon(item) {
-        let number_of_students = item.number_of_students
-        let number_of_invigilators = Math.ceil(number_of_students / 24)
-        let length_of_invigilator_array = null
-        if(!item.booking){
-          length_of_invigilator_array = 0
-        }else{
-          length_of_invigilator_array = item.booking.invigilators.length
-        }
-        let lifeRing = {
-          icon: 'life-ring',
-          rank: 4,
-          style: {fontSize: '1rem', color: 'red'}
-        }
-        let exclamationTriangle = {
-          icon: 'exclamation-triangle',
-          rank: 3,
-          style: {fontSize: '.9rem', color: '#FFC32B'}
-        }
-        let clipboardCheck = {
-          icon: 'clipboard-check',
-          rank: 2,
-          style: {fontSize: '1rem', color: 'green'}
-        }
-        let envelopeOpenText = {
-          icon: 'shipping-fast',
-          rank: 1,
-          style: {fontSize: '1rem', color: '#4e9de0'}
-        }
-        let feePending = {
-          icon: 'dollar-sign',
-          rank: 2,
-          style: {fontSize: '1rem', color: 'green'}
-        }
+        return String(value)
+      }
+    },
+    statusIcon (item) {
+      const number_of_students = item.number_of_students
+      const number_of_invigilators = Math.ceil(number_of_students / 24)
+      let length_of_invigilator_array = null
+      if (!item.booking) {
+        length_of_invigilator_array = 0
+      } else {
+        length_of_invigilator_array = item.booking.invigilators.length
+      }
+      const lifeRing = {
+        icon: 'life-ring',
+        rank: 4,
+        style: { fontSize: '1rem', color: 'red' }
+      }
+      const exclamationTriangle = {
+        icon: 'exclamation-triangle',
+        rank: 3,
+        style: { fontSize: '.9rem', color: '#FFC32B' }
+      }
+      const clipboardCheck = {
+        icon: 'clipboard-check',
+        rank: 2,
+        style: { fontSize: '1rem', color: 'green' }
+      }
+      const envelopeOpenText = {
+        icon: 'shipping-fast',
+        rank: 1,
+        style: { fontSize: '1rem', color: '#4e9de0' }
+      }
+      const feePending = {
+        icon: 'dollar-sign',
+        rank: 2,
+        style: { fontSize: '1rem', color: 'green' }
+      }
 
-        // console.log("============= Start of Tests =======================")
-        // console.log("==> Test 1")
-        // console.log("    --> pesticide:    ", item.is_pesticide ? "True" : "False")
-        // console.log("    --> receive date: ", item.exam_received_date)
-        // console.log("    --> return date:  ", item.exam_returned_date)
-        // console.log("        --> Test: item.is_pesticide && !item.exam_received_date && !item.exam_returned_date -> ",
-        //                 item.is_pesticide && !item.exam_received_date && !item.exam_returned_date ? "True" : "False")
+      // console.log("============= Start of Tests =======================")
+      // console.log("==> Test 1")
+      // console.log("    --> pesticide:    ", item.is_pesticide ? "True" : "False")
+      // console.log("    --> receive date: ", item.exam_received_date)
+      // console.log("    --> return date:  ", item.exam_returned_date)
+      // console.log("        --> Test: item.is_pesticide && !item.exam_received_date && !item.exam_returned_date -> ",
+      //                 item.is_pesticide && !item.exam_received_date && !item.exam_returned_date ? "True" : "False")
 
-        //
-        if (item.is_pesticide && !item.exam_received_date && !item.exam_returned_date) {
-          // console.log("        --> True: returning lifeRing")
-          return lifeRing
-        }
+      //
+      if (item.is_pesticide && !item.exam_received_date && !item.exam_returned_date) {
+        // console.log("        --> True: returning lifeRing")
+        return lifeRing
+      }
 
-        // console.log("==> Test 2")
-        // console.log("    --> return date:  ", item.exam_returned_date)
-        // console.log("        --> Test: item.exam_returned_date -> ", item.exam_returned_date ? "True" : "False")
-        if (item.exam_returned_date) {
-          // console.log("        --> True: returning enveloopeOpenText")
-          return envelopeOpenText
-        }
+      // console.log("==> Test 2")
+      // console.log("    --> return date:  ", item.exam_returned_date)
+      // console.log("        --> Test: item.exam_returned_date -> ", item.exam_returned_date ? "True" : "False")
+      if (item.exam_returned_date) {
+        // console.log("        --> True: returning enveloopeOpenText")
+        return envelopeOpenText
+      }
 
-        // console.log("==> Test 3")
-        // console.log("    --> booking:      ", item.booking)
-        if (item.booking) {
-          // console.log("    --> invig:        ", item.booking.invigilator)
-        }
-        if (item.booking && item.booking.invigilator) {
-          // console.log("    --> invig.delete: ", item.booking.invigilator.deleted)
-        }
-        // console.log("        --> Test: item.booking && item.booking.invigilator && item.booking.invigilator.deleted -> ",
-        //   item.booking && item.booking.invigilator && item.booking.invigilator.deleted ? "True" : "False")
-        if (item.booking && item.booking.invigilator && item.booking.invigilator.deleted) {
-          // console.log("        --> True: returning lifeRing")
-          return lifeRing
-        }
+      // console.log("==> Test 3")
+      // console.log("    --> booking:      ", item.booking)
+      if (item.booking) {
+        // console.log("    --> invig:        ", item.booking.invigilator)
+      }
+      if (item.booking && item.booking.invigilator) {
+        // console.log("    --> invig.delete: ", item.booking.invigilator.deleted)
+      }
+      // console.log("        --> Test: item.booking && item.booking.invigilator && item.booking.invigilator.deleted -> ",
+      //   item.booking && item.booking.invigilator && item.booking.invigilator.deleted ? "True" : "False")
+      if (item.booking && item.booking.invigilator && item.booking.invigilator.deleted) {
+        // console.log("        --> True: returning lifeRing")
+        return lifeRing
+      }
 
-        // console.log("==> Test 4")
-        if (item.exam_type.exam_type_name === 'Monthly Session Exam') {
-          console.log("    --> Monthly Session Exam, name: " + item.exam_name)
-          console.log("    --> item.booking: ", item.booking)
-          if (!item.booking) {
-            // console.log("!item.booking, returning lifeRing")
-            return lifeRing
-          }
-          // console.log("    --> this.checkInvigilator(item): ", this.checkInvigilator(item))
-          console.log("    --> this.checkInvigilator(item): ", this.checkInvigilator(item))
-          if (!this.checkInvigilator(item)) {
-            // console.log('checkInvigilator is false, returning lifeRing')
-            return lifeRing
-          }
-          if (this.filterByExpiry(item)){
-            // console.log("this.filterByExpiry(item) is true, returning lifeRing")
-            return lifeRing
-          }
-          if (item.booking){
-             if (moment(item.booking.start_time).isValid()){
-                if (moment(item.booking.start_time).isBefore(moment(), 'day')){
-                   // console.log("item.booking and start_time valid and start time before today, returning lifeRing")
-                   return lifeRing
-                }
-             }
-          }
-          if(item.number_of_students === null && length_of_invigilator_array > 0){
-            // console.log("item.number_of_students is null and length_of_invigilator_array > 0, returning exclamationTriangle")
-            return exclamationTriangle
-          }
-          if (!item.event_id || !item.number_of_students || !item.exam_received_date) {
-            // console.log("No event_id or no students or no received date, returning exclamationTriangle")
-            return exclamationTriangle
-          }
-          // console.log("No errors found, returning clipboardCheck")
-          return clipboardCheck
-       }
-       if (item.exam_type.group_exam_ind) {
-          if (!item.booking) {
-            return lifeRing
-          }
-          if (item.booking && (!this.checkInvigilator(item))) {
-            return lifeRing
-          }
-          if (this.filterByExpiry(item)){
-           return lifeRing
-          }
-          if (item.booking){
-             if (moment(item.booking.start_time).isValid()){
-                if (moment(item.booking.start_time).isBefore(moment(), 'day')){
-                   return lifeRing
-                }
-             }
-          }
-          if (!item.exam_received_date) {
-            return exclamationTriangle
-          }
-          return clipboardCheck
-        }
-        if (this.filterByExpiry(item)){
-           return lifeRing
-        }
-        if (item.booking){
-           if (moment(item.booking.start_time).isValid()){
-              if (moment(item.booking.start_time).isBefore(moment(), 'day')){
-                 return lifeRing
-              }
-           }
-        }
+      // console.log("==> Test 4")
+      if (item.exam_type.exam_type_name === 'Monthly Session Exam') {
+        console.log('    --> Monthly Session Exam, name: ' + item.exam_name)
+        console.log('    --> item.booking: ', item.booking)
         if (!item.booking) {
-            return exclamationTriangle
+          // console.log("!item.booking, returning lifeRing")
+          return lifeRing
+        }
+        // console.log("    --> this.checkInvigilator(item): ", this.checkInvigilator(item))
+        console.log('    --> this.checkInvigilator(item): ', this.checkInvigilator(item))
+        if (!this.checkInvigilator(item)) {
+          // console.log('checkInvigilator is false, returning lifeRing')
+          return lifeRing
+        }
+        if (this.filterByExpiry(item)) {
+          // console.log("this.filterByExpiry(item) is true, returning lifeRing")
+          return lifeRing
+        }
+        if (item.booking) {
+          if (moment(item.booking.start_time).isValid()) {
+            if (moment(item.booking.start_time).isBefore(moment(), 'day')) {
+              // console.log("item.booking and start_time valid and start time before today, returning lifeRing")
+              return lifeRing
+            }
+          }
+        }
+        if (item.number_of_students === null && length_of_invigilator_array > 0) {
+          // console.log("item.number_of_students is null and length_of_invigilator_array > 0, returning exclamationTriangle")
+          return exclamationTriangle
+        }
+        if (!item.event_id || !item.number_of_students || !item.exam_received_date) {
+          // console.log("No event_id or no students or no received date, returning exclamationTriangle")
+          return exclamationTriangle
+        }
+        // console.log("No errors found, returning clipboardCheck")
+        return clipboardCheck
+      }
+      if (item.exam_type.group_exam_ind) {
+        if (!item.booking) {
+          return lifeRing
+        }
+        if (item.booking && (!this.checkInvigilator(item))) {
+          return lifeRing
+        }
+        if (this.filterByExpiry(item)) {
+          return lifeRing
+        }
+        if (item.booking) {
+          if (moment(item.booking.start_time).isValid()) {
+            if (moment(item.booking.start_time).isBefore(moment(), 'day')) {
+              return lifeRing
+            }
+          }
         }
         if (!item.exam_received_date) {
-            return exclamationTriangle
-        }
-        if (item.is_pesticide && item.exam_received_date && !item.receipt) {
-          return feePending
+          return exclamationTriangle
         }
         return clipboardCheck
-      },
-      stillRequires(item) {
-        let output = []
-        let length_of_invigilator_array = null
-        if(!item.booking){
-          length_of_invigilator_array = 0
-        }else{
-          length_of_invigilator_array = item.booking.invigilators.length
-        }
-        let number_of_invigilators = Math.ceil(item.number_of_students / 24)
-        if (item.exam_returned_date) {
-          return output
-        }
-        if (!item.booking) {
-          output.push('Scheduling and Assignment of Invigilator')
-        }
-
-        if (!item.exam_received_date) {
-          if (item.is_pesticide) {
-            output.push('Print Materials')
-          } else {
-            output.push('Receipt of Materials')
+      }
+      if (this.filterByExpiry(item)) {
+        return lifeRing
+      }
+      if (item.booking) {
+        if (moment(item.booking.start_time).isValid()) {
+          if (moment(item.booking.start_time).isBefore(moment(), 'day')) {
+            return lifeRing
           }
         }
-        if (item.exam_type.exam_type_name === 'Monthly Session Exam') {
-          if (!item.number_of_students) {
-            output.push('Number of Students')
-          }
-          if (!item.event_id) {
-            output.push('Event ID')
-          }
-        }
-        console.log("==> In stillRequires(item), item: ", item)
-        if (item.booking) {
-          if(item.exam_type.group_exam_ind == 1){
-            if(length_of_invigilator_array == 0 && number_of_invigilators == 1){
-              output.push('Assignment of Invigilator')
-            }else if(length_of_invigilator_array == 0 && number_of_invigilators > 1){
-              output.push('Assignment of Invigilators')
-            }else if(length_of_invigilator_array > 0 && length_of_invigilator_array < number_of_invigilators){
-              output.push('Assignment of More Invigilators')
-            }
-          }else if(item.exam_type.group_exam_ind == 0){
-            if(length_of_invigilator_array == 0 && !item.booking.sbc_staff_invigilated){
-              output.push('Assignment of Invigilator')
-            }
-          }
-        }
-        return output
-      },
-      updateCalendarBooking(item) {
-        item.gotoDate = new moment(item.booking.start_time)
-        item.referrer = 'rescheduling'
-        this.setSelectedExam(item)
-        let booking = this.calendarEvents.find(event => event.id == item.booking_id)
-        booking.start = new moment(booking.start)
-        booking.end = new moment(booking.end)
-        this.setEditedBooking(booking)
-        this.setEditedBookingOriginal(booking)
-        this.toggleEditBookingModal(true)
-        this.$router.push('/booking')
-      },
-      openInvigilatorModal(item) {
-        this.setSelectedExam(item)
-        this.toggleSelectInvigilatorModal(true)
-      },
+      }
+      if (!item.booking) {
+        return exclamationTriangle
+      }
+      if (!item.exam_received_date) {
+        return exclamationTriangle
+      }
+      if (item.is_pesticide && item.exam_received_date && !item.receipt) {
+        return feePending
+      }
+      return clipboardCheck
     },
+    stillRequires (item) {
+      const output = []
+      let length_of_invigilator_array = null
+      if (!item.booking) {
+        length_of_invigilator_array = 0
+      } else {
+        length_of_invigilator_array = item.booking.invigilators.length
+      }
+      const number_of_invigilators = Math.ceil(item.number_of_students / 24)
+      if (item.exam_returned_date) {
+        return output
+      }
+      if (!item.booking) {
+        output.push('Scheduling and Assignment of Invigilator')
+      }
+
+      if (!item.exam_received_date) {
+        if (item.is_pesticide) {
+          output.push('Print Materials')
+        } else {
+          output.push('Receipt of Materials')
+        }
+      }
+      if (item.exam_type.exam_type_name === 'Monthly Session Exam') {
+        if (!item.number_of_students) {
+          output.push('Number of Students')
+        }
+        if (!item.event_id) {
+          output.push('Event ID')
+        }
+      }
+      console.log('==> In stillRequires(item), item: ', item)
+      if (item.booking) {
+        if (item.exam_type.group_exam_ind == 1) {
+          if (length_of_invigilator_array == 0 && number_of_invigilators == 1) {
+            output.push('Assignment of Invigilator')
+          } else if (length_of_invigilator_array == 0 && number_of_invigilators > 1) {
+            output.push('Assignment of Invigilators')
+          } else if (length_of_invigilator_array > 0 && length_of_invigilator_array < number_of_invigilators) {
+            output.push('Assignment of More Invigilators')
+          }
+        } else if (item.exam_type.group_exam_ind == 0) {
+          if (length_of_invigilator_array == 0 && !item.booking.sbc_staff_invigilated) {
+            output.push('Assignment of Invigilator')
+          }
+        }
+      }
+      return output
+    },
+    updateCalendarBooking (item) {
+      item.gotoDate = new moment(item.booking.start_time)
+      item.referrer = 'rescheduling'
+      this.setSelectedExam(item)
+      const booking = this.calendarEvents.find(event => event.id == item.booking_id)
+      booking.start = new moment(booking.start)
+      booking.end = new moment(booking.end)
+      this.setEditedBooking(booking)
+      this.setEditedBookingOriginal(booking)
+      this.toggleEditBookingModal(true)
+      this.$router.push('/booking')
+    },
+    openInvigilatorModal (item) {
+      this.setSelectedExam(item)
+      this.toggleSelectInvigilatorModal(true)
+    }
   }
+}
 </script>
 
 <style scoped>

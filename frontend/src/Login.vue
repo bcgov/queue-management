@@ -12,7 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
 
-
 <template>
   <b-col id="login-form">
     <div v-show="!this.$store.state.isLoggedIn">
@@ -66,235 +65,232 @@ limitations under the License.*/
 import _ from 'lodash'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 
-  export default {
-    name: 'Login',
-    created() {
-      this.setupKeycloakCallbacks()
-      _.defer(this.initSessionStorage)
+export default {
+  name: 'Login',
+  created () {
+    this.setupKeycloakCallbacks()
+    _.defer(this.initSessionStorage)
+  },
+  computed: {
+    ...mapState(['user',
+      'csr_states'
+    ]),
+    ...mapGetters(['quick_trans_status',
+      'reception',
+      'receptionist_status',
+      'citizens_queue'
+    ]),
+    counter_selection: {
+      get () {
+        if (this.receptionist_status === true) {
+          return 'receptionist'
+        } else {
+          return this.user.counter_id
+        }
+      },
+      set (value) {
+        if (value === 'receptionist') {
+          this.setReceptionistState(true)
+        } else {
+          this.setCounterStatusState(value)
+          this.setReceptionistState(false)
+        }
+        this.updateCSRCounterTypeState()
+      }
     },
-    computed: {
-      ...mapState(['user',
-                   'csr_states'
-                  ]),
-      ...mapGetters(['quick_trans_status',
-                     'reception',
-                     'receptionist_status',
-                     'citizens_queue',
-                    ]),
-      counter_selection: {
-        get() {
-          if (this.receptionist_status === true) {
-            return 'receptionist'
-          } else {
-            return this.user.counter_id
-          }
-        },
-        set(value) {
-          if(value === 'receptionist'){
-            this.setReceptionistState(true)
-          } else {
-            this.setCounterStatusState(value)
-            this.setReceptionistState(false)
-          }
-          this.updateCSRCounterTypeState()
-        }
-      },
-      break_toggle: {
-        get() {
-            var csr_status = this.user.csr_state.csr_state_name
+    break_toggle: {
+      get () {
+        var csr_status = this.user.csr_state.csr_state_name
 
-            if(csr_status === 'Break'){
-                return false
-            } else {
-                return true
-            }
-        },
-        set(value) {
-            var breakID = this.csr_states['Break']
-            var loginID = this.csr_states['Login']
-            var id;
-            var name;
-
-            if(value){
-                id = loginID
-                name = 'Login'
-            } else {
-                id = breakID
-                name='Break'
-            }
-
-            this.setCSRState(id)
-            this.setUserCSRStateName(name)
-            this.updateCSRState()
-        }
-      },
-      queueLength() {
-        return this.citizens_queue.length
-      },
-      citizenSBType() {
-        if(this.user.office.sb.sb_type !== 'nocallonsmartboard'){
+        if (csr_status === 'Break') {
+          return false
+        } else {
           return true
         }
-        else {
-          return false
-        }
       },
-    },
-    methods: {
-      ...mapActions(['updateCSRCounterTypeState', 'updateCSRCounterTypeState', 'updateCSRState']),
-      ...mapMutations(['setQuickTransactionState', 'setReceptionistState', 'setCSRState', 'setUserCSRStateName', 'setCounterStatusState']),
-      initSessionStorage() {
-        if(sessionStorage.getItem('token')) {
-          let tokenExp = sessionStorage.getItem('tokenExp')
-          let timeUntilExp = Math.round(tokenExp - new Date().getTime() / 1000)
-          if (timeUntilExp > 30) {
-            this.$keycloak.init({
-                responseMode: 'fragment',
-                flow: 'standard',
-                refreshToken: sessionStorage.getItem('refreshToken'),
-                token: sessionStorage.getItem('token'),
-                tokenExp: sessionStorage.getItem('tokenExp')
-            })
-            .success( () => {
+      set (value) {
+        var breakID = this.csr_states.Break
+        var loginID = this.csr_states.Login
+        var id
+        var name
 
-              //Set a timer to auto-refresh the token
+        if (value) {
+          id = loginID
+          name = 'Login'
+        } else {
+          id = breakID
+          name = 'Break'
+        }
+
+        this.setCSRState(id)
+        this.setUserCSRStateName(name)
+        this.updateCSRState()
+      }
+    },
+    queueLength () {
+      return this.citizens_queue.length
+    },
+    citizenSBType () {
+      if (this.user.office.sb.sb_type !== 'nocallonsmartboard') {
+        return true
+      } else {
+        return false
+      }
+    }
+  },
+  methods: {
+    ...mapActions(['updateCSRCounterTypeState', 'updateCSRCounterTypeState', 'updateCSRState']),
+    ...mapMutations(['setQuickTransactionState', 'setReceptionistState', 'setCSRState', 'setUserCSRStateName', 'setCounterStatusState']),
+    initSessionStorage () {
+      if (sessionStorage.getItem('token')) {
+        const tokenExp = sessionStorage.getItem('tokenExp')
+        const timeUntilExp = Math.round(tokenExp - new Date().getTime() / 1000)
+        if (timeUntilExp > 30) {
+          this.$keycloak.init({
+            responseMode: 'fragment',
+            flow: 'standard',
+            refreshToken: sessionStorage.getItem('refreshToken'),
+            token: sessionStorage.getItem('token'),
+            tokenExp: sessionStorage.getItem('tokenExp')
+          })
+            .success(() => {
+              // Set a timer to auto-refresh the token
               setInterval(() => {
-                this.refreshToken(process.env.REFRESH_TOKEN_SECONDS_LEFT);
-                }, 60*1000)
+                this.refreshToken(process.env.REFRESH_TOKEN_SECONDS_LEFT)
+              }, 60 * 1000)
               this.setTokenToSessionStorage()
               this.$store.commit('setBearer', sessionStorage.getItem('token'))
             })
-            .error( () => {
+            .error(() => {
               this.init()
             })
-          } else {
-            this.init()
-          }
-        } else if (!sessionStorage.getItem('token')) {
+        } else {
           this.init()
         }
-      },
-
-      init() {
-        this.$keycloak.init({
-            responseMode: 'fragment',
-            flow: 'standard'
-          }
-        ).success( () => {
-          setInterval(() => {
-            this.refreshToken(process.env.REFRESH_TOKEN_SECONDS_LEFT);
-            }, 60*1000)
-        })
-      },
-
-      setupKeycloakCallbacks(authenticated) {
-
-        this.$keycloak.onAuthSuccess = () => {
-          this.$store.dispatch('logIn', this.$keycloak.token)
-          this.setTokenToSessionStorage()
-          this.$root.$emit('socketConnect')
-        }
-
-        this.$keycloak.onAuthLogout = () => {
-          this.$root.$emit('socketDisconnect')
-          this.$store.commit('setBearer', null)
-          this.$store.commit('logOut')
-        }
-
-        this.$keycloak.onAuthRefreshSuccess = () => {
-          this.setTokenToSessionStorage()
-          this.$store.commit('setBearer', this.$keycloak.token)
-        }
-      },
-
-      setTokenToSessionStorage() {
-        let tokenParsed = this.$keycloak.tokenParsed
-        let token = this.$keycloak.token
-        let refreshToken = this.$keycloak.refreshToken
-        let tokenExpiry = tokenParsed.exp
-
-        if (sessionStorage.getItem('token')) {
-          sessionStorage.removeItem("token")
-          sessionStorage.removeItem("tokenExp")
-          sessionStorage.removeItem("refreshToken")
-        }
-        sessionStorage.setItem("token", token)
-        document.cookie = "oidc-jwt=" + this.$keycloak.token
-        sessionStorage.setItem("tokenExp", tokenExpiry)
-        sessionStorage.setItem("refreshToken", refreshToken)
-      },
-
-      login() {
-        this.$keycloak.login({idpHint: 'idir', scope: 'offline_access'})
-      },
-
-      logoutTokenExpired() {
-        console.log("==> In logoutTokenExpired")
-        this.clearStorage()
-        // this.init()
-        location.href = "/queue"
-      },
-
-      logout() {
-        this.$keycloak.logout()
-        this.clearStorage()
-      },
-
-      clearStorage() {
-        sessionStorage.removeItem("token")
-        sessionStorage.removeItem("tokenExp")
-        sessionStorage.removeItem("refreshToken")
-      },
-
-      setBreakClickEvent(){
-        // Click anywhere on screen to end "Break"
-        document.body.addEventListener('click', this.stopBreak);
-        document.getElementById('break-switch').style.pointerEvents = 'none'; //Prevent double click event
-      },
-
-      stopBreak(){
-        const loginStateID = this.csr_states['Login'];
-        this.setCSRState(loginStateID)
-        this.setUserCSRStateName('Login')
-        this.updateCSRState()
-      },
-
-      refreshToken(minValidity) {
-        let secondsLeft = Math.round(this.$keycloak.tokenParsed.exp + this.$keycloak.timeSkew - new Date().getTime() / 1000)
-        console.log('==> Updating token.  Currently valid for ' + secondsLeft + ' seconds')
-        this.$keycloak.updateToken(minValidity).success(refreshed => {
-          if (refreshed) {
-            console.log("Token refreshed and is below")
-            console.log(this.$keycloak.tokenParsed)
-            console.log("Refresh token is below")
-            console.log(this.$keycloak.refreshTokenParsed)
-          } else {
-            console.log('Token not refreshed')
-          }
-          let secondsLeft = Math.round(this.$keycloak.tokenParsed.exp + this.$keycloak.timeSkew - new Date().getTime() / 1000)
-          console.log('    --> After refresh.  Token now valid for ' + secondsLeft + ' seconds')
-        }).error( (error) => {
-          console.log('Failed to refresh token')
-          console.log(error)
-          let secondsLeft = Math.round(this.$keycloak.tokenParsed.exp + this.$keycloak.timeSkew - new Date().getTime() / 1000)
-          console.log('    --> After refresh.  Token now valid for ' + secondsLeft + ' seconds')
-          if (secondsLeft < 90) {
-            this.logoutTokenExpired()
-          }
-        })
-      },
+      } else if (!sessionStorage.getItem('token')) {
+        this.init()
+      }
     },
-    updated(){
-        var csr_status = this.user.csr_state.csr_state_name
 
-        if(csr_status === 'Break'){
-            this.setBreakClickEvent();
+    init () {
+      this.$keycloak.init({
+        responseMode: 'fragment',
+        flow: 'standard'
+      }
+      ).success(() => {
+        setInterval(() => {
+          this.refreshToken(process.env.REFRESH_TOKEN_SECONDS_LEFT)
+        }, 60 * 1000)
+      })
+    },
+
+    setupKeycloakCallbacks (authenticated) {
+      this.$keycloak.onAuthSuccess = () => {
+        this.$store.dispatch('logIn', this.$keycloak.token)
+        this.setTokenToSessionStorage()
+        this.$root.$emit('socketConnect')
+      }
+
+      this.$keycloak.onAuthLogout = () => {
+        this.$root.$emit('socketDisconnect')
+        this.$store.commit('setBearer', null)
+        this.$store.commit('logOut')
+      }
+
+      this.$keycloak.onAuthRefreshSuccess = () => {
+        this.setTokenToSessionStorage()
+        this.$store.commit('setBearer', this.$keycloak.token)
+      }
+    },
+
+    setTokenToSessionStorage () {
+      const tokenParsed = this.$keycloak.tokenParsed
+      const token = this.$keycloak.token
+      const refreshToken = this.$keycloak.refreshToken
+      const tokenExpiry = tokenParsed.exp
+
+      if (sessionStorage.getItem('token')) {
+        sessionStorage.removeItem('token')
+        sessionStorage.removeItem('tokenExp')
+        sessionStorage.removeItem('refreshToken')
+      }
+      sessionStorage.setItem('token', token)
+      document.cookie = 'oidc-jwt=' + this.$keycloak.token
+      sessionStorage.setItem('tokenExp', tokenExpiry)
+      sessionStorage.setItem('refreshToken', refreshToken)
+    },
+
+    login () {
+      this.$keycloak.login({ idpHint: 'idir', scope: 'offline_access' })
+    },
+
+    logoutTokenExpired () {
+      console.log('==> In logoutTokenExpired')
+      this.clearStorage()
+      // this.init()
+      location.href = '/queue'
+    },
+
+    logout () {
+      this.$keycloak.logout()
+      this.clearStorage()
+    },
+
+    clearStorage () {
+      sessionStorage.removeItem('token')
+      sessionStorage.removeItem('tokenExp')
+      sessionStorage.removeItem('refreshToken')
+    },
+
+    setBreakClickEvent () {
+      // Click anywhere on screen to end "Break"
+      document.body.addEventListener('click', this.stopBreak)
+      document.getElementById('break-switch').style.pointerEvents = 'none' // Prevent double click event
+    },
+
+    stopBreak () {
+      const loginStateID = this.csr_states.Login
+      this.setCSRState(loginStateID)
+      this.setUserCSRStateName('Login')
+      this.updateCSRState()
+    },
+
+    refreshToken (minValidity) {
+      const secondsLeft = Math.round(this.$keycloak.tokenParsed.exp + this.$keycloak.timeSkew - new Date().getTime() / 1000)
+      console.log('==> Updating token.  Currently valid for ' + secondsLeft + ' seconds')
+      this.$keycloak.updateToken(minValidity).success(refreshed => {
+        if (refreshed) {
+          console.log('Token refreshed and is below')
+          console.log(this.$keycloak.tokenParsed)
+          console.log('Refresh token is below')
+          console.log(this.$keycloak.refreshTokenParsed)
         } else {
-          document.body.removeEventListener('click', this.stopBreak)
-          document.getElementById('break-switch').style.pointerEvents = 'all';
+          console.log('Token not refreshed')
         }
-    },
+        const secondsLeft = Math.round(this.$keycloak.tokenParsed.exp + this.$keycloak.timeSkew - new Date().getTime() / 1000)
+        console.log('    --> After refresh.  Token now valid for ' + secondsLeft + ' seconds')
+      }).error((error) => {
+        console.log('Failed to refresh token')
+        console.log(error)
+        const secondsLeft = Math.round(this.$keycloak.tokenParsed.exp + this.$keycloak.timeSkew - new Date().getTime() / 1000)
+        console.log('    --> After refresh.  Token now valid for ' + secondsLeft + ' seconds')
+        if (secondsLeft < 90) {
+          this.logoutTokenExpired()
+        }
+      })
+    }
+  },
+  updated () {
+    var csr_status = this.user.csr_state.csr_state_name
+
+    if (csr_status === 'Break') {
+      this.setBreakClickEvent()
+    } else {
+      document.body.removeEventListener('click', this.stopBreak)
+      document.getElementById('break-switch').style.pointerEvents = 'all'
+    }
   }
+}
 </script>
 
 <style>

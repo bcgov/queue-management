@@ -34,14 +34,14 @@ export default {
   computed: {
     ...mapState(['editExamSuccessCount']),
     countdown: {
-      get() { return this.editExamSuccessCount },
-      set(e) {
+      get () { return this.editExamSuccessCount },
+      set (e) {
         this.setEditExamSuccess(e)
       }
     }
   },
   methods: {
-    ...mapMutations(['setEditExamSuccess']),
+    ...mapMutations(['setEditExamSuccess'])
   }
 }
 </script>

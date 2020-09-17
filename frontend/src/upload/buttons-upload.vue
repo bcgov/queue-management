@@ -8,8 +8,7 @@
 
 <script>
 
-  export default {
-    name: 'ButtonsUpload'
-  }
+export default {
+  name: 'ButtonsUpload'
+}
 </script>
-

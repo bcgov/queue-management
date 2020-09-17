@@ -12,7 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
 
-
 <template>
   <div style="">
     <div class="board-nameticket-video">
@@ -34,15 +33,15 @@ const Axios = axios.create({
   baseURL: process.env.API_URL,
   withCredentials: true,
   headers: {
-    'Accept': 'application/json'
+    Accept: 'application/json'
   }
 })
 
 export default {
   name: 'CallByName',
   props: ['smartboardData', 'networkStatus'],
-  mounted() {
-    this.$root.$on('addToBoard',( data) => { this.updateBoard(data) })
+  mounted () {
+    this.$root.$on('addToBoard', (data) => { this.updateBoard(data) })
     this.initializeBoard()
     this.handleResize()
     window.addEventListener('resize', this.handleResize)
@@ -50,7 +49,7 @@ export default {
 
   components: { Video },
 
-  data() {
+  data () {
     return {
       citizens: '',
       officeType: '',
@@ -59,10 +58,10 @@ export default {
   },
 
   computed: {
-    url() {
+    url () {
       return `/smartboard/?office_number=${this.smartboardData.office_number}`
     },
-    waiting() {
+    waiting () {
       if (this.citizens && this.citizens.length > 0) {
         return this.citizens.filter(c => c.active_period.ps.ps_name === 'Waiting').length
       }
@@ -71,25 +70,21 @@ export default {
   },
 
   methods: {
-    initializeBoard() {
-      Axios.get(this.url).then( resp => {
+    initializeBoard () {
+      Axios.get(this.url).then(resp => {
         this.officeType = resp.data.office_type
         this.citizens = resp.data.citizens
         this.$root.$emit('boardConnect', this.office_id)
       })
     },
-    updateBoard(ticketId) {
-      Axios.get(this.url).then( resp => {
+    updateBoard (ticketId) {
+      Axios.get(this.url).then(resp => {
         this.citizens = resp.data.citizens
       })
     },
-    handleResize(event) {
+    handleResize (event) {
       this.maxVideoHeight = document.documentElement.clientHeight * 0.8
     }
   }
 }
 </script>
-
-
-
-

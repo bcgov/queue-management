@@ -38,83 +38,83 @@
 </template>
 
 <script>
-  import { mapActions, mapMutations, mapState, mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 
-  export default {
-    name: "SelectInvigilatorModal",
-    components: { },
-    mounted() {
-      this.getPesticideOfficeInvigilators()
-      this.getPesticideOffsiteInvigilators()
+export default {
+  name: 'SelectInvigilatorModal',
+  components: { },
+  mounted () {
+    this.getPesticideOfficeInvigilators()
+    this.getPesticideOffsiteInvigilators()
+  },
+  props: [],
+  data () {
+    return {
+      alertMessage: '',
+      fields: ['selected', 'invigilator_name'],
+      invigilators: [],
+      loading: false,
+      selected_invigilator: null
+    }
+  },
+  computed: {
+    ...mapGetters([]),
+    ...mapState({
+      showSelectInvigilatorModal: state => state.showSelectInvigilatorModal,
+      pesticide_invigilators: state => state.pesticide_invigilators,
+      selectedExam: 'selectedExam'
+    }),
+    modal: {
+      get () {
+        return this.showSelectInvigilatorModal
+      },
+      set (e) {
+        this.toggleSelectInvigilatorModal(e)
+
+        if (!e) {
+          this.setSelectedExam(null)
+        }
+      }
+    }
+  },
+  methods: {
+    ...mapActions(['emailInvigilator', 'getPesticideOfficeInvigilators', 'getPesticideOffsiteInvigilators']),
+    ...mapMutations([
+      'setSelectedExam',
+      'toggleSelectInvigilatorModal'
+    ]),
+    clearModal () {
+      this.alertMessage = ''
+      this.loading = false
+      this.$refs.invigilator_table.clearSelected()
+      this.selected_invigilator = null
     },
-    props: [],
-    data () {
-      return {
-        alertMessage: "",
-        fields: ['selected', 'invigilator_name',],
-        invigilators: [],
-        loading: false,
-        selected_invigilator: null
+    closeModal () {
+      this.clearModal()
+      this.toggleSelectInvigilatorModal(false)
+    },
+    rowSelected (item) {
+      if (item.length >= 1) {
+        this.selected_invigilator = item[0]
       }
     },
-    computed: {
-      ...mapGetters([]),
-      ...mapState({
-        showSelectInvigilatorModal: state => state.showSelectInvigilatorModal,
-        pesticide_invigilators: state => state.pesticide_invigilators,
-        selectedExam: 'selectedExam',
-      }),
-      modal: {
-        get() {
-          return this.showSelectInvigilatorModal
-        },
-        set(e) {
-          this.toggleSelectInvigilatorModal(e)
-
-          if (!e) {
-            this.setSelectedExam(null)
-          }
-        }
-      },
-    },
-    methods: {
-      ...mapActions(['emailInvigilator', 'getPesticideOfficeInvigilators', 'getPesticideOffsiteInvigilators']),
-      ...mapMutations([
-        'setSelectedExam',
-        'toggleSelectInvigilatorModal',
-      ]),
-      clearModal() {
-        this.alertMessage = ''
-        this.loading = false
-        this.$refs.invigilator_table.clearSelected()
-        this.selected_invigilator = null
-      },
-      closeModal() {
-        this.clearModal()
-        this.toggleSelectInvigilatorModal(false)
-      },
-      rowSelected(item) {
-        if (item.length >= 1) {
-          this.selected_invigilator = item[0]
-        }
-      },
-      submit() {
-        this.loading = true
-        this.emailInvigilator({
-          'invigilator': this.selected_invigilator,
-          'exam': selectedExam,
-        })
+    submit () {
+      this.loading = true
+      this.emailInvigilator({
+        invigilator: this.selected_invigilator,
+        exam: selectedExam
+      })
         .then(() => {
-          this.toggleSelectInvigilatorModal(false);
+          this.toggleSelectInvigilatorModal(false)
           this.loading = false
         })
         .catch(() => {
-          this.alertMessage = "An error occurred emailing the invigilator"
+          this.alertMessage = 'An error occurred emailing the invigilator'
           this.loading = false
         })
-      },
-    },
+    }
   }
+}
 </script>
 
 <style scoped>

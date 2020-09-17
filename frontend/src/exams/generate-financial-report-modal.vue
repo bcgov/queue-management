@@ -64,71 +64,71 @@
 </template>
 
 <script>
-    import { mapState, mapMutations, mapActions } from 'vuex'
-    import DatePicker from 'vue2-datepicker'
-    import moment from 'moment'
-    const FileDownload = require('js-file-download')
-    export default {
-        name: "FinancialReportModal",
-        components: { DatePicker },
-        data() {
-          return {
-            startDate: '',
-            endDate: '',
-            options: [
-              {text: 'All Exams', value: 'all_exams'},
-              {text: 'All Booking Events', value: 'all_bookings'},
-              {text: 'ITA Individual and Group Exams', value: 'ita'},
-              {text: 'All Non-ITA Exams', value: 'all_non_ita'},
-            ],
-            selectedExamType: '',
-            selectedExamFilter: '',
-          }
-        },
-        methods: {
-          ...mapActions([
-            'getExamsExport',
-            'getExamTypes',
-          ]),
-          ...mapMutations([
-            'toggleGenFinReport',
-          ]),
-          cancel() {
-            this.selectedExamType = ''
-            this.selectedExamFilter = ''
-          },
-          submit() {
-            let form_start_date = moment.utc(this.startDate).format('YYYY-MM-DD')
-            let form_end_date = moment.utc(this.endDate).format('YYYY-MM-DD')
-            let url = '/exams/export/?start_date=' + form_start_date + '&end_date=' + form_end_date + '&exam_type='
-                      + this.selectedExamType
-            let today = moment().format('YYYY-MM-DD_HHMMSS')
-            let filename = 'export-csv-' + today + '.csv'
-            this.getExamsExport(url)
-              .then(resp => {
-                FileDownload(resp.data, filename)
-              })
-            this.startDate = ''
-            this.endDate = ''
-            this.selectedExamType = ''
-            this.selectedExamFilter = ''
-          },
-        },
-        computed: {
-          ...mapState({
-            showGenFinReportModal: state => state.showGenFinReportModal,
-          }),
-          modal: {
-            get() {
-              return this.showGenFinReportModal
-            },
-            set(e) {
-              this.selectedExamFilter = ''
-              this.toggleGenFinReport(e)
-            }
-          },
-        }
+import { mapActions, mapMutations, mapState } from 'vuex'
+import DatePicker from 'vue2-datepicker'
+import moment from 'moment'
+const FileDownload = require('js-file-download')
+export default {
+  name: 'FinancialReportModal',
+  components: { DatePicker },
+  data () {
+    return {
+      startDate: '',
+      endDate: '',
+      options: [
+        { text: 'All Exams', value: 'all_exams' },
+        { text: 'All Booking Events', value: 'all_bookings' },
+        { text: 'ITA Individual and Group Exams', value: 'ita' },
+        { text: 'All Non-ITA Exams', value: 'all_non_ita' }
+      ],
+      selectedExamType: '',
+      selectedExamFilter: ''
     }
+  },
+  methods: {
+    ...mapActions([
+      'getExamsExport',
+      'getExamTypes'
+    ]),
+    ...mapMutations([
+      'toggleGenFinReport'
+    ]),
+    cancel () {
+      this.selectedExamType = ''
+      this.selectedExamFilter = ''
+    },
+    submit () {
+      const form_start_date = moment.utc(this.startDate).format('YYYY-MM-DD')
+      const form_end_date = moment.utc(this.endDate).format('YYYY-MM-DD')
+      const url = '/exams/export/?start_date=' + form_start_date + '&end_date=' + form_end_date + '&exam_type=' +
+                      this.selectedExamType
+      const today = moment().format('YYYY-MM-DD_HHMMSS')
+      const filename = 'export-csv-' + today + '.csv'
+      this.getExamsExport(url)
+        .then(resp => {
+          FileDownload(resp.data, filename)
+        })
+      this.startDate = ''
+      this.endDate = ''
+      this.selectedExamType = ''
+      this.selectedExamFilter = ''
+    }
+  },
+  computed: {
+    ...mapState({
+      showGenFinReportModal: state => state.showGenFinReportModal
+    }),
+    modal: {
+      get () {
+        return this.showGenFinReportModal
+      },
+      set (e) {
+        this.selectedExamFilter = ''
+        this.toggleGenFinReport(e)
+      }
+    }
+  }
+}
 </script>
 
 <style scoped>

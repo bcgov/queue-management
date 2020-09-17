@@ -209,56 +209,56 @@
 </template>
 
 <script>
-  import { mapState, mapGetters } from 'vuex'
-  import moment from 'moment'
+import { mapGetters, mapState } from 'vuex'
+import moment from 'moment'
 
-  export default {
-    name: "AddExamFinalStep",
-    props: ['submitMsg'],
-    computed: {
-      ...mapState({
-        exam: state => state.capturedExam,
-        examTypes: state => state.examTypes,
-        tab: state => state.captureITAExamTabSetup,
-        user: state => state.user,
-        addExamModal: state => state.addExamModal,
-        offices: state => state.offices,
-      }),
-      ...mapGetters(['exam_object', 'is_pesticide_designate', ]),
-      officeName() {
-        if (this.addExamModal.setup === 'group' || this.addExamModal.setup === 'pesticide' && this.exam.office_id ) {
-          let office = this.offices.find(o => o.office_id == this.exam.office_id)
-          return `#${office.office_id} - ${office.office_name}`
-        }
-        return ''
-      },
-      setup() {
-        if (this.addExamModal && this.addExamModal.setup) {
-          return this.addExamModal.setup
-        }
-        return ''
-      },
-      errors() {
-        if (this.tab.errors) {
-          return this.tab.errors
-        } else {
-          this.submitMsg = ''
-          return []
-        }
-      },
-      displayTime() {
-        if (this.exam && this.exam.exam_time) {
-          return new moment(this.exam.exam_time).format('h:mm a')
-        }
-        return ''
-      },
-    },
-    methods: {
-      formatDate(d) {
-        return new moment(d).format('MMM D, YYYY')
+export default {
+  name: 'AddExamFinalStep',
+  props: ['submitMsg'],
+  computed: {
+    ...mapState({
+      exam: state => state.capturedExam,
+      examTypes: state => state.examTypes,
+      tab: state => state.captureITAExamTabSetup,
+      user: state => state.user,
+      addExamModal: state => state.addExamModal,
+      offices: state => state.offices
+    }),
+    ...mapGetters(['exam_object', 'is_pesticide_designate']),
+    officeName () {
+      if (this.addExamModal.setup === 'group' || this.addExamModal.setup === 'pesticide' && this.exam.office_id) {
+        const office = this.offices.find(o => o.office_id == this.exam.office_id)
+        return `#${office.office_id} - ${office.office_name}`
       }
+      return ''
+    },
+    setup () {
+      if (this.addExamModal && this.addExamModal.setup) {
+        return this.addExamModal.setup
+      }
+      return ''
+    },
+    errors () {
+      if (this.tab.errors) {
+        return this.tab.errors
+      } else {
+        this.submitMsg = ''
+        return []
+      }
+    },
+    displayTime () {
+      if (this.exam && this.exam.exam_time) {
+        return new moment(this.exam.exam_time).format('h:mm a')
+      }
+      return ''
+    }
+  },
+  methods: {
+    formatDate (d) {
+      return new moment(d).format('MMM D, YYYY')
     }
   }
+}
 </script>
 
 <style scoped>

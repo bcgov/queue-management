@@ -159,308 +159,306 @@
 </template>
 
 <script>
-  import { mapActions, mapMutations, mapState, mapGetters } from 'vuex'
-  import moment from 'moment'
-  import DataSummaryTable from './../exams/data-summary-table'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import moment from 'moment'
+import DataSummaryTable from './../exams/data-summary-table'
 
-  export default {
-    name: "BookingModal",
-    components: { DataSummaryTable },
-    mounted(){
-      this.getInvigilators()
-      this.$root.$on('showbookingmodal', () => { this.setupModal() })
+export default {
+  name: 'BookingModal',
+  components: { DataSummaryTable },
+  mounted () {
+    this.getInvigilators()
+    this.$root.$on('showbookingmodal', () => { this.setupModal() })
+  },
+  data () {
+    return {
+      notes: '',
+      booking_contact_information: '',
+      invigilator: null,
+      formStep: 1,
+      fields: {
+        invigilator_name: {
+          label: 'Name',
+          thClass: 'd-none'
+        }
+      },
+      savedRef: 'contact_information',
+      selectedOption: null,
+      invigilatorId: null,
+      invigilatorIndividualOptions: [
+        { text: 'ServiceBC Staff', value: 'sbc' },
+        { text: 'Contract Invigilator', value: 'invigilator' }
+      ],
+      invigilatorGroupOptions: [
+        { text: 'ServiceBC Staff', value: 'sbc' },
+        { text: 'Assign Later', value: 'unassigned' },
+        { text: 'Contract Invigilator', value: 'invigilator' }
+      ],
+      minimized: false,
+      pressedSubmit: false
+    }
+  },
+  computed: {
+    ...mapState({
+      exam: 'selectedExam',
+      date: 'clickedDate',
+      showModal: 'showBookingModal',
+      invigilators: 'invigilators',
+      module: 'addExamModule',
+      capturedExam: 'capturedExam'
+    }),
+    ...mapGetters([
+      'invigilator_multi_select'
+    ]),
+    buttonStatus () {
+      if (!this.selectedOption) {
+        return true
+      }
+      if (this.selectedOption === 'invigilator' && !this.invigilatorId && this.formStep == 2) {
+        return true
+      }
+      return false
     },
-    data() {
+    buttonText () {
+      if (this.selectedOption === 'invigilator' && this.formStep == 1) {
+        return 'Continue'
+      }
+      return 'Submit'
+    },
+    displayData () {
+      const mins = this.exam.exam_type.number_of_minutes ? (this.exam.exam_type.number_of_minutes / 60) : 0
+      const length = `${this.exam.exam_type.number_of_hours}.${mins} hrs`
+      const items = [
+        { key: 'Exam:', value: this.exam.exam_name },
+        { key: 'Exam Date:', value: this.date.start.format('dddd MMM D, YYYY') },
+        { key: '', value: this.exam.exam_type.exam_type_name },
+        { key: 'Exam Time:', value: this.date.start.format('h:mm a') },
+        { key: 'Exam Expiry:', value: this.formatExpiry(this.exam.expiry_date) },
+        { key: 'Writer:', value: this.exam.examinee_name },
+        { key: 'Format of Exam:', value: this.exam.exam_method },
+        { key: 'Length of Exam:', value: length },
+        { key: 'ServiceBC to Provide Reader:', value: this.invigilatorRequired ? 'Yes' : 'No' },
+        { key: 'Room:', value: this.date.resource.title }
+      ]
+      if (this.exam.exam_type.exam_type_name === 'Monthly Session Exam') {
+        const i = items.findIndex(x => x.key === 'Exam Expiry:')
+        items[i] = { key: 'Exam Expiry:', value: 'n/a' }
+      }
       return {
-        notes: '',
-        booking_contact_information: '',
-        invigilator: null,
-        formStep: 1,
-        fields: {
-          invigilator_name: {
-            label: 'Name',
-            thClass: 'd-none',
-          },
-        },
-        savedRef: 'contact_information',
-        selectedOption: null,
-        invigilatorId: null,
-        invigilatorIndividualOptions: [
-          {text: 'ServiceBC Staff', value: 'sbc'},
-          {text: 'Contract Invigilator', value: 'invigilator'},
-        ],
-        invigilatorGroupOptions: [
-          {text: 'ServiceBC Staff', value: 'sbc'},
-          {text: 'Assign Later', value: 'unassigned'},
-          {text: 'Contract Invigilator', value: 'invigilator'},
-        ],
-        minimized: false,
-        pressedSubmit: false,
+        title: null,
+        items
       }
     },
-    computed: {
-      ...mapState({
-        exam: 'selectedExam',
-        date: 'clickedDate',
-        showModal: 'showBookingModal',
-        invigilators: 'invigilators',
-        module: 'addExamModule',
-        capturedExam: 'capturedExam',
-      }),
-      ...mapGetters([
-        'invigilator_multi_select'
-      ]),
-      buttonStatus() {
-        if (!this.selectedOption) {
-          return true
-        }
-        if (this.selectedOption === 'invigilator' && !this.invigilatorId && this.formStep == 2) {
-          return true
-        }
+    individualExamInd () {
+      if (this.exam.exam_type.group_exam_ind === 0) {
+        return true
+      } else {
         return false
-      },
-      buttonText() {
-        if (this.selectedOption === 'invigilator' && this.formStep == 1) {
-          return 'Continue'
-        }
-        return 'Submit'
-      },
-      displayData() {
-        let mins = this.exam.exam_type.number_of_minutes ? (this.exam.exam_type.number_of_minutes / 60) : 0
-        let length = `${this.exam.exam_type.number_of_hours}.${mins} hrs`
-        let items = [
-          { key: 'Exam:', value: this.exam.exam_name },
-          { key: 'Exam Date:', value: this.date.start.format('dddd MMM D, YYYY') },
-          { key: '', value: this.exam.exam_type.exam_type_name },
-          { key: 'Exam Time:', value: this.date.start.format('h:mm a') },
-          { key: 'Exam Expiry:', value: this.formatExpiry(this.exam.expiry_date) },
-          { key: 'Writer:', value: this.exam.examinee_name },
-          { key: 'Format of Exam:', value: this.exam.exam_method },
-          { key: 'Length of Exam:', value: length },
-          { key: 'ServiceBC to Provide Reader:', value: this.invigilatorRequired ? 'Yes' : 'No' },
-          { key: 'Room:', value: this.date.resource.title },
-        ]
-        if (this.exam.exam_type.exam_type_name === 'Monthly Session Exam') {
-          let i = items.findIndex(x => x.key === 'Exam Expiry:')
-          items[i] = {key: 'Exam Expiry:', value: 'n/a'}
-        }
-        return {
-          title: null,
-          items
-        }
-      },
-      individualExamInd() {
-        if(this.exam.exam_type.group_exam_ind === 0){
-          return true
-        }else{
-          return false
-        }
-      },
-      invigilatorDetails() {
-        if (this.invigilator) {
-          return this.invigilator
-        }
-        return {
-          invigilator_name: '',
-          contact_phone: '',
-          contact_email: '',
-          invigilator_notes: '',
-        }
-      },
-      challengerExam() {
-        if (this.exam && this.exam.referrer && this.exam.referrer === 'scheduling') {
-          return true
-        }
-        return false
-      },
-      invigilatorRequired() {
-        if (this.exam && this.exam.exam_type) {
-          if (this.exam.exam_type.exam_type_name.includes('SBC Reader')) {
-            return true
-          }
-        }
-        return false
-      },
-      endTime() {
-        if (this.date && this.exam) {
-          let l = parseInt(this.exam.exam_type.number_of_hours)
-          let m = parseInt(this.exam.exam_type.number_of_minutes)
-          return new moment(this.date.start).add(l, 'hours').add(m, 'minutes')
-        }
-      },
+      }
     },
-    methods: {
-      ...mapActions([
-        'finishBooking',
-        'getExams',
-        'getBookings',
-        'getInvigilators',
-        'putRequest',
-        'scheduleExam',
-      ]),
-      ...mapMutations([
-        'captureExamDetail',
-        'setAddExamModalSetting',
-        'saveChallengerBooking',
-        'setClickedDate',
-        'toggleBookingModal',
-      ]),
-      formatExpiry(d) {
-        return new moment(d).format('MMM D, YYYY')
-      },
-      cancel() {
-        this.toggleBookingModal(false)
-        this.setClickedDate(null)
-        this.$root.$emit('removeSavedSelection')
-      },
-      clickOk(e) {
-        e.preventDefault()
-        if (this.selectedOption === 'invigilator' && this.formStep === 1) {
-          this.formStep++
-          return
+    invigilatorDetails () {
+      if (this.invigilator) {
+        return this.invigilator
+      }
+      return {
+        invigilator_name: '',
+        contact_phone: '',
+        contact_email: '',
+        invigilator_notes: ''
+      }
+    },
+    challengerExam () {
+      if (this.exam && this.exam.referrer && this.exam.referrer === 'scheduling') {
+        return true
+      }
+      return false
+    },
+    invigilatorRequired () {
+      if (this.exam && this.exam.exam_type) {
+        if (this.exam.exam_type.exam_type_name.includes('SBC Reader')) {
+          return true
         }
-        if (this.challengerExam) {
-          this.setAddExamModalSetting({ fromCalendar: true })
-          let date = Object.assign( {}, this.date )
-          if (this.invigilator && this.invigilator.invigilator_id) {
-            date.invigilator = this.invigilator
-          }
-          if (this.selectedOption === 'sbc') {
-            date.invigilator = 'sbc'
-          }
-          this.saveChallengerBooking(date)
-          this.cancel()
-          this.setAddExamModalSetting(true)
-          this.$router.push('/exams')
-          return
+      }
+      return false
+    },
+    endTime () {
+      if (this.date && this.exam) {
+        const l = parseInt(this.exam.exam_type.number_of_hours)
+        const m = parseInt(this.exam.exam_type.number_of_minutes)
+        return new moment(this.date.start).add(l, 'hours').add(m, 'minutes')
+      }
+    }
+  },
+  methods: {
+    ...mapActions([
+      'finishBooking',
+      'getExams',
+      'getBookings',
+      'getInvigilators',
+      'putRequest',
+      'scheduleExam'
+    ]),
+    ...mapMutations([
+      'captureExamDetail',
+      'setAddExamModalSetting',
+      'saveChallengerBooking',
+      'setClickedDate',
+      'toggleBookingModal'
+    ]),
+    formatExpiry (d) {
+      return new moment(d).format('MMM D, YYYY')
+    },
+    cancel () {
+      this.toggleBookingModal(false)
+      this.setClickedDate(null)
+      this.$root.$emit('removeSavedSelection')
+    },
+    clickOk (e) {
+      e.preventDefault()
+      if (this.selectedOption === 'invigilator' && this.formStep === 1) {
+        this.formStep++
+        return
+      }
+      if (this.challengerExam) {
+        this.setAddExamModalSetting({ fromCalendar: true })
+        const date = Object.assign({}, this.date)
+        if (this.invigilator && this.invigilator.invigilator_id) {
+          date.invigilator = this.invigilator
         }
-        if (this.selectedOption) {
-          this.submit()
+        if (this.selectedOption === 'sbc') {
+          date.invigilator = 'sbc'
         }
-      },
-      minimize(e) {
-        this.minimized = e
-        if (!e) {
-          let el = this.$refs[this.savedRef]
-          setTimeout(() => { el.focus() }, 50)
-        }
-      },
-      resetModal() {
-        this.formStep = 1
+        this.saveChallengerBooking(date)
+        this.cancel()
+        this.setAddExamModalSetting(true)
+        this.$router.push('/exams')
+        return
+      }
+      if (this.selectedOption) {
+        this.submit()
+      }
+    },
+    minimize (e) {
+      this.minimized = e
+      if (!e) {
+        const el = this.$refs[this.savedRef]
+        setTimeout(() => { el.focus() }, 50)
+      }
+    },
+    resetModal () {
+      this.formStep = 1
+      this.invigilatorId = null
+      this.invigilator = null
+      this.notes = ''
+      this.expiry_date = ''
+    },
+    handleSelect (e) {
+      this.savedRef = null
+      if (e !== 'invigilator') {
         this.invigilatorId = null
         this.invigilator = null
-        this.notes = ''
-        this.expiry_date = ""
+      }
+    },
+    setupModal () {
+      this.resetModal()
+      this.pressedSubmit = false
+      if (this.exam.notes) { this.notes = this.exam.notes.valueOf() }
+      this.$nextTick(function () {
+        if (this.$refs.contact_information) {
+          this.$refs.contact_information.focus()
+        }
+      })
+      if (this.exam.exam_type.exam_type_name.includes('SBC Reader')) {
+        this.selectedOption = 'unassigned'
+        return
+      }
+      if (this.exam.exam_type.exam_type_name === 'Monthly Session Exam') {
+        this.selectedOption = 'unassigned'
+        return
+      }
+      this.selectedOption = 'sbc'
+      if (!this.exam.notes) {
+        this.notes = null
+      }
+    },
+    clickNext () {
+      this.formStep = 2
+      if (!this.invigilatorId && this.clickedRow) {
+        this.clickedRow._rowVariant = ''
+      }
+    },
+    rowClicked (item) {
+      this.clickedRow = item
+      this.invigilatorId = item.value
+      this.invigilator = item
+    },
+    setRef (e) {
+      this.savedRef = e.target.id
+    },
+    submit () {
+      if (this.pressedSubmit == false) {
+        this.pressedSubmit = true
+        const { exam_id } = this.exam
+        let notes = null
+        let putNotes = false
 
-      },
-      handleSelect(e) {
-        this.savedRef = null
-        if (e !== 'invigilator') {
-          this.invigilatorId = null
-          this.invigilator = null
+        if (this.notes && !this.exam.notes) {
+          notes = this.notes
+          putNotes = true
         }
-      },
-      setupModal() {
-        this.resetModal()
-        this.pressedSubmit = false
-        if (this.exam.notes) { this.notes = this.exam.notes.valueOf() }
-        this.$nextTick( function() {
-          if (this.$refs.contact_information) {
-            this.$refs.contact_information.focus()
-          }
-        })
-        if (this.exam.exam_type.exam_type_name.includes('SBC Reader')) {
-          this.selectedOption = 'unassigned'
-          return
+        if (!this.notes && this.exam.notes) {
+          putNotes = true
         }
-        if (this.exam.exam_type.exam_type_name === 'Monthly Session Exam') {
-          this.selectedOption = 'unassigned'
-          return
-        }
-        this.selectedOption = 'sbc'
-        if (!this.exam.notes) {
-          this.notes = null
-          return
-        }
-      },
-      clickNext() {
-        this.formStep = 2
-        if (!this.invigilatorId && this.clickedRow) {
-          this.clickedRow._rowVariant = ''
-        }
-      },
-      rowClicked(item) {
-        this.clickedRow = item
-        this.invigilatorId = item.value
-        this.invigilator = item
-      },
-      setRef(e) {
-        this.savedRef = e.target.id
-      },
-      submit() {
-        if(this.pressedSubmit == false) {
-          this.pressedSubmit = true
-          let {exam_id} = this.exam
-          let notes = null
-          let putNotes = false
-
-          if (this.notes && !this.exam.notes) {
+        if (this.notes && this.exam.notes) {
+          if (this.notes !== this.exam.notes) {
             notes = this.notes
             putNotes = true
           }
-          if (!this.notes && this.exam.notes) {
-            putNotes = true
+        }
+        const start = new moment(this.date.start).utc()
+        const end = new moment(this.endTime).utc()
+        const booking = {
+          room_id: this.date.resource.id,
+          start_time: start.format('DD-MMM-YYYY[T]HH:mm:ssZ'),
+          end_time: end.format('DD-MMM-YYYY[T]HH:mm:ssZ'),
+          fees: 'false',
+          booking_name: this.exam.exam_name,
+          sbc_staff_invigilated: 0,
+          booking_contact_information: this.booking_contact_information
+        }
+        if (this.selectedOption === 'sbc') {
+          booking.sbc_staff_invigilated = 1
+        }
+        if (this.selectedOption === 'invigilator') {
+          booking.invigilator_id = this.invigilatorId
+        }
+        this.scheduleExam(booking).then(() => {
+          const payload = {
+            url: `/exams/${exam_id}/`
           }
-          if (this.notes && this.exam.notes) {
-            if (this.notes !== this.exam.notes) {
-              notes = this.notes
-              putNotes = true
-            }
+          putNotes ? payload.data = { notes } : null
+          let redirect = false
+          if (this.exam.referrer === 'inventory') {
+            redirect = true
           }
-          let start = new moment(this.date.start).utc()
-          let end = new moment(this.endTime).utc()
-          let booking = {
-            room_id: this.date.resource.id,
-            start_time: start.format('DD-MMM-YYYY[T]HH:mm:ssZ'),
-            end_time: end.format('DD-MMM-YYYY[T]HH:mm:ssZ'),
-            fees: 'false',
-            booking_name: this.exam.exam_name,
-            sbc_staff_invigilated: 0,
-            booking_contact_information: this.booking_contact_information
-          }
-          if (this.selectedOption === 'sbc') {
-            booking.sbc_staff_invigilated = 1
-          }
-          if (this.selectedOption === 'invigilator') {
-            booking.invigilator_id = this.invigilatorId
-          }
-          this.scheduleExam(booking).then(() => {
-            let payload = {
-              url: `/exams/${exam_id}/`
-            }
-            putNotes ? payload.data = {notes} : null
-            let redirect = false
-            if (this.exam.referrer === 'inventory') {
-              redirect = true
-            }
-            this.putRequest(payload).then(() => {
-              this.getExams().then(() => {
-                this.getBookings().then(() => {
-                  this.finishBooking()
-                  if (redirect) {
-                    this.$router.push('/exams')
-                  }
-                })
+          this.putRequest(payload).then(() => {
+            this.getExams().then(() => {
+              this.getBookings().then(() => {
+                this.finishBooking()
+                if (redirect) {
+                  this.$router.push('/exams')
+                }
               })
             })
-            this.booking_contact_information = ''
           })
-        } else {
-          console.log('you have pressed submit already!')
-        }
+          this.booking_contact_information = ''
+        })
+      } else {
+        console.log('you have pressed submit already!')
       }
-    },
+    }
   }
+}
 </script>
 
 <style scoped>

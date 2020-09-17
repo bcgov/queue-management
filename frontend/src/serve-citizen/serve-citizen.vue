@@ -160,7 +160,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import ServeCitizenTable from './serve-citizen-table'
 
 export default {
@@ -168,11 +168,11 @@ export default {
   components: {
     ServeCitizenTable
   },
-  mounted() {
-    setInterval( () => { this.flashButton() }, 800)
+  mounted () {
+    setInterval(() => { this.flashButton() }, 800)
     this.toggleTimeTrackingIcon(false)
   },
-  data() {
+  data () {
     return {
       buttonStyle: 'btn-primary serve-btn',
       selected: '',
@@ -183,16 +183,16 @@ export default {
       minimizeWindow: false
     }
   },
-  updated() {
-    if (!this.citizen && this.citizen.ticket_number === "") {
+  updated () {
+    if (!this.citizen && this.citizen.ticket_number === '') {
       this.$store.commit('toggleServeCitizenSpinner', true)
       this.screenAllCitizens(this.$route).then(() => {
         this.$store.commit('toggleServeCitizenSpinner', false)
       })
     }
-    setTimeout( () => {
-      if (!this.citizen && this.citizen.ticket_number === "") {
-        this.setServeModalAlert("An error occurred loading citizen, please try refreshing the page.")
+    setTimeout(() => {
+      if (!this.citizen && this.citizen.ticket_number === '') {
+        this.setServeModalAlert('An error occurred loading citizen, please try refreshing the page.')
       }
     }, 1000)
   },
@@ -210,9 +210,9 @@ export default {
       invited_citizen: 'invited_citizen',
       active_service: 'active_service',
       invited_service_reqs: 'invited_service_reqs',
-      reception: 'reception',
+      reception: 'reception'
     }),
-    appointment() {
+    appointment () {
       if (this.serviceModalForm &&
           this.serviceModalForm.citizen_comments &&
           this.serviceModalForm.citizen_comments.includes('|||')) {
@@ -220,34 +220,34 @@ export default {
       }
       return false
     },
-    alertMessage() {
-      let serveMessageBlank = this.serveModalAlert === "";
-      let commentsMessageBlank = this.commentsAlert === "";
+    alertMessage () {
+      const serveMessageBlank = this.serveModalAlert === ''
+      const commentsMessageBlank = this.commentsAlert === ''
       if (serveMessageBlank && commentsMessageBlank) {
-        return "";
+        return ''
       }
       if (serveMessageBlank && !commentsMessageBlank) {
-        return this.commentsAlert;
+        return this.commentsAlert
       }
       if ((!serveMessageBlank) && commentsMessageBlank) {
-        return this.serveModalAlert;
+        return this.serveModalAlert
       }
-      return this.serveModalAlert + "  " + this.commentsAlert;
+      return this.serveModalAlert + '  ' + this.commentsAlert
     },
-    topSpace() {
-      let top = this.appointment ? 210 : 178;
-      if (this.alertMessage != "") {
-        top = top + 60;
+    topSpace () {
+      let top = this.appointment ? 210 : 178
+      if (this.alertMessage != '') {
+        top = top + 60
       }
-      return top.toString() + "px";
+      return top.toString() + 'px'
     },
-    simplifiedModal() {
+    simplifiedModal () {
       if (this.$route.path !== '/queue') {
         return true
       }
       return false
     },
-    simplifiedTicketStarted() {
+    simplifiedTicketStarted () {
       if (this.$route.path !== '/queue') {
         if (this.serviceModalForm.citizen_id) {
           return true
@@ -255,33 +255,30 @@ export default {
       }
       return false
     },
-    citizen() {
+    citizen () {
       if (!this.invited_citizen) {
-        return {ticket_number: ''}
+        return { ticket_number: '' }
       }
       return this.invited_citizen
     },
-    commentsTooLong() {
-      if ((this.serviceModalForm) && (this.serviceModalForm.citizen_comments))
-        return this.serviceModalForm.citizen_comments.length > 1000;
-      else
-        return false;
+    commentsTooLong () {
+      if ((this.serviceModalForm) && (this.serviceModalForm.citizen_comments)) { return this.serviceModalForm.citizen_comments.length > 1000 } else { return false }
     },
-    commentsAlert() {
-      return this.commentsTooLong ? "You have entered more than the 1,000 characters allowed for comments." : "";
+    commentsAlert () {
+      return this.commentsTooLong ? 'You have entered more than the 1,000 characters allowed for comments.' : ''
     },
     comments: {
-      get() {
+      get () {
         if (this.appointment) {
-          let newVal = this.serviceModalForm.citizen_comments.split('|||')[1].valueOf()
+          const newVal = this.serviceModalForm.citizen_comments.split('|||')[1].valueOf()
           return newVal
         }
         return this.serviceModalForm.citizen_comments
       },
-      set(value) {
+      set (value) {
         if (this.appointment) {
-          let time = this.serviceModalForm.citizen_comments.split('|||')[0]
-          let prependedValue = `${time}|||${value}`
+          const time = this.serviceModalForm.citizen_comments.split('|||')[0]
+          const prependedValue = `${time}|||${value}`
           this.editServiceModalForm({
             type: 'citizen_comments',
             value: prependedValue
@@ -295,34 +292,34 @@ export default {
       }
     },
     accurate_time_ind: {
-      get() {
+      get () {
         return this.serviceModalForm.accurate_time_ind
       },
-      set(value) {
+      set (value) {
         this.editServiceModalForm({
           type: 'accurate_time_ind',
           value
         })
       }
     },
-    channel() {
+    channel () {
       if (!this.active_service) {
-        return {channel_name: '', channel_id: ''}
+        return { channel_name: '', channel_id: '' }
       }
       return this.active_service.channel
     },
     priority_selection: {
-      get() { return this.serviceModalForm.priority },
-      set(value) {
-        this.editServiceModalForm({type:'priority',value})
+      get () { return this.serviceModalForm.priority },
+      set (value) {
+        this.editServiceModalForm({ type: 'priority', value })
       }
     },
     counter_selection: {
-      get() { return this.serviceModalForm.counter },
-      set(value) {
-        this.editServiceModalForm({ type: "counter", value })
+      get () { return this.serviceModalForm.counter },
+      set (value) {
+        this.editServiceModalForm({ type: 'counter', value })
       }
-    },
+    }
   },
 
   methods: {
@@ -335,20 +332,20 @@ export default {
       'clickServiceBeginService',
       'clickServiceFinish',
       'screenAllCitizens',
-      'setServeModalAlert',
+      'setServeModalAlert'
     ]),
     ...mapMutations([
       'editServiceModalForm',
       'toggleFeedbackModal',
       'toggleServiceModal',
       'toggleExamsTrackingIP',
-      'toggleTimeTrackingIcon',///
+      'toggleTimeTrackingIcon'///
     ]),
-    formatTime(data) {
-      let date = new Date(data)
+    formatTime (data) {
+      const date = new Date(data)
       return date.toLocaleTimeString()
     },
-    clickSimplifiedFinish() {
+    clickSimplifiedFinish () {
       if (this.simplifiedTicketStarted) {
         this.toggleExamsTrackingIP(false)
         this.clickServiceFinish()
@@ -358,14 +355,14 @@ export default {
       this.toggleServiceModal(false)
       this.clickAddCitizen()
     },
-    clickContinue() {
+    clickContinue () {
       this.toggleExamsTrackingIP(true)
       this.toggleServiceModal(false)
     },
-    toggleFeedback() {
+    toggleFeedback () {
       this.toggleFeedbackModal(true)
     },
-    toggleMinimize() {
+    toggleMinimize () {
       if (this.$route.path === '/queue' && !this.serviceBegun) {
         this.minimizeWindow = !this.minimizeWindow
         return
@@ -374,19 +371,19 @@ export default {
       this.toggleServiceModal(false)
       this.toggleTimeTrackingIcon(true)
     },
-    flashButton() {
+    flashButton () {
       if (this.serviceBegun === false) {
-        this.buttonStyle == 'btn-primary serve-btn' ?
-          this.buttonStyle = 'btn-highlighted' : this.buttonStyle = 'btn-primary serve-btn'
+        this.buttonStyle == 'btn-primary serve-btn'
+          ? this.buttonStyle = 'btn-highlighted' : this.buttonStyle = 'btn-primary serve-btn'
       }
       if (this.serviceBegun === true) {
         this.buttonStyle = 'btn-primary serve-btn'
       }
     },
-    closeWindow() {
+    closeWindow () {
       this.$store.dispatch('clickServiceModalClose')
     },
-    onDrag({ el, deltaX, deltaY, offsetX, offsetY, clientX, clientY, first, last }) {
+    onDrag ({ el, deltaX, deltaY, offsetX, offsetY, clientX, clientY, first, last }) {
       if (first) {
         this.dragged = true
         return
@@ -399,7 +396,7 @@ export default {
       this.top = (this.top || 0) + deltaY
 
       var serve_modal = document.getElementsByClassName('serve-modal-content')[0]
-      serve_modal.style.transform = "translate("+this.left+"px,"+this.top+"px)"
+      serve_modal.style.transform = 'translate(' + this.left + 'px,' + this.top + 'px)'
     }
   }
 }

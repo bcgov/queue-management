@@ -34,8 +34,8 @@ export default {
   computed: {
     ...mapState(['editExamFailureCount']),
     countdown: {
-      get() { return this.editExamFailureCount },
-      set(e) {
+      get () { return this.editExamFailureCount },
+      set (e) {
         this.setEditExamFailure(e)
       }
     }

@@ -77,121 +77,121 @@
 </template>
 
 <script>
-  import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
-  import moment from 'moment'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import moment from 'moment'
 
-  export default {
-    name: "AddPesticideFinalStep",
-    props: ['submitMsg'],
-    data() {
-      return {
-        headings: {
-          exam_type_name: "Exam Type",
-          fees: "Exam Fees",
-          examinee_name: "Candidate",
-          examinee_phone: "Candidate's Phone",
-          examinee_email: "Candidate's Email",
-          receipt_number: "Receipt Number",
-          payee_name: "Payee Name",
-          payee_email: "Payee Email",
-          payee_phone: "Payee Phone",
-          offsite_location: "Location",
-          exam_time_str: "Exam Date",
-          notes: "Notes"
-        },
-        bcmpJobId: '',
-        isExamReqFailed: false,
-        generatedJobId: '',
-        isGroupExam: false,
-        isRequestExamBtnLoading: false,
+export default {
+  name: 'AddPesticideFinalStep',
+  props: ['submitMsg'],
+  data () {
+    return {
+      headings: {
+        exam_type_name: 'Exam Type',
+        fees: 'Exam Fees',
+        examinee_name: 'Candidate',
+        examinee_phone: "Candidate's Phone",
+        examinee_email: "Candidate's Email",
+        receipt_number: 'Receipt Number',
+        payee_name: 'Payee Name',
+        payee_email: 'Payee Email',
+        payee_phone: 'Payee Phone',
+        offsite_location: 'Location',
+        exam_time_str: 'Exam Date',
+        notes: 'Notes'
+      },
+      bcmpJobId: '',
+      isExamReqFailed: false,
+      generatedJobId: '',
+      isGroupExam: false,
+      isRequestExamBtnLoading: false
+    }
+  },
+  computed: {
+    ...mapState({
+      exam: state => state.capturedExam,
+      examTypes: state => state.examTypes,
+      tab: state => state.captureITAExamTabSetup,
+      user: state => state.user,
+      addExamModal: state => state.addExamModal,
+      offices: state => state.offices,
+      candidateTableData: state => state.addExamModule.candidateTableData,
+      examBcmpJobId: state => state.examBcmpJobId
+    }),
+    displayData () {
+      this.isGroupExam = (this.exam.ind_or_group == 'group')
+      const examObj = this.exam
+      if (this.exam.exam_type_id) {
+        const examType = this.examTypes.find(examType => (examType.exam_type_id == this.exam.exam_type_id))
+        examObj.exam_type_name = (examType) ? examType.exam_type_name : ''
       }
-    },
-    computed: {
-      ...mapState({
-        exam: state => state.capturedExam,
-        examTypes: state => state.examTypes,
-        tab: state => state.captureITAExamTabSetup,
-        user: state => state.user,
-        addExamModal: state => state.addExamModal,
-        offices: state => state.offices,
-        candidateTableData: state => state.addExamModule.candidateTableData,
-        examBcmpJobId: state => state.examBcmpJobId
-      }),
-      displayData() {
-        this.isGroupExam = (this.exam.ind_or_group == "group")
-        let examObj = this.exam
-        if(this.exam.exam_type_id) {
-          const examType = this.examTypes.find(examType => (examType.exam_type_id == this.exam.exam_type_id))
-          examObj.exam_type_name = (examType) ? examType.exam_type_name : ''
-        }
-        if(this.exam.exam_time) {
-          examObj.exam_time_str = `${moment(this.exam.expiry_date).format('YYYY-MMM-DD')} ${moment(this.exam.exam_time).format('hh:mm A')}`;
-        }
-        let keys = Object.keys(examObj)
-        let headings = Object.keys(this.headings)
-        let output = []
-        keys.forEach(key => {
-          if (headings.includes(key)) {
-            if (examObj[key]) {
-              output.push({
-                heading: this.headings[key],
-                text: examObj[key]
-              })
-            }
+      if (this.exam.exam_time) {
+        examObj.exam_time_str = `${moment(this.exam.expiry_date).format('YYYY-MMM-DD')} ${moment(this.exam.exam_time).format('hh:mm A')}`
+      }
+      const keys = Object.keys(examObj)
+      const headings = Object.keys(this.headings)
+      const output = []
+      keys.forEach(key => {
+        if (headings.includes(key)) {
+          if (examObj[key]) {
+            output.push({
+              heading: this.headings[key],
+              text: examObj[key]
+            })
           }
-        })
-        return output
-      },
-      ...mapGetters(['exam_object', 'is_pesticide_designate', ]),
-      officeName() {
-        if (this.addExamModal.setup === 'group' || this.addExamModal.setup === 'pesticide' && this.exam.office_id ) {
-          let office = this.offices.find(o => o.office_id == this.exam.office_id)
-          return `#${office.office_id} - ${office.office_name}`
         }
-        return ''
-      },
-
-      errors() {
-        if (this.tab.errors) {
-          return this.tab.errors
-        } else {
-          this.submitMsg = ''
-          return []
-        }
-      },
-
+      })
+      return output
     },
-    methods: {
-      ...mapActions([
-        'clickPesticideRequestExam',
-      ]),
-      ...mapMutations([
-        'setBCMPJobId',
-      ]),
-      formatDate(d) {
-        return new moment(d).format('MMM D, YYYY')
-      },
+    ...mapGetters(['exam_object', 'is_pesticide_designate']),
+    officeName () {
+      if (this.addExamModal.setup === 'group' || this.addExamModal.setup === 'pesticide' && this.exam.office_id) {
+        const office = this.offices.find(o => o.office_id == this.exam.office_id)
+        return `#${office.office_id} - ${office.office_name}`
+      }
+      return ''
+    },
 
-      requestExam() {
-        this.isRequestExamBtnLoading = true
-        this.clickPesticideRequestExam().then(bcmp_job_id => {
-          console.log("bcmp_job_id: ", bcmp_job_id)
-          this.setBCMPJobId(bcmp_job_id);
-          this.generatedJobId = bcmp_job_id;
-          this.isRequestExamBtnLoading = false
-        }).catch(error => {
-          console.log(error)
-          this.isExamReqFailed = true;
-          this.isRequestExamBtnLoading = false
-        })
-      },
-
-      addBCMPJobId() {
-        console.log(this.bcmpJobId)
-        this.setBCMPJobId(this.bcmpJobId)
+    errors () {
+      if (this.tab.errors) {
+        return this.tab.errors
+      } else {
+        this.submitMsg = ''
+        return []
       }
     }
+
+  },
+  methods: {
+    ...mapActions([
+      'clickPesticideRequestExam'
+    ]),
+    ...mapMutations([
+      'setBCMPJobId'
+    ]),
+    formatDate (d) {
+      return new moment(d).format('MMM D, YYYY')
+    },
+
+    requestExam () {
+      this.isRequestExamBtnLoading = true
+      this.clickPesticideRequestExam().then(bcmp_job_id => {
+        console.log('bcmp_job_id: ', bcmp_job_id)
+        this.setBCMPJobId(bcmp_job_id)
+        this.generatedJobId = bcmp_job_id
+        this.isRequestExamBtnLoading = false
+      }).catch(error => {
+        console.log(error)
+        this.isExamReqFailed = true
+        this.isRequestExamBtnLoading = false
+      })
+    },
+
+    addBCMPJobId () {
+      console.log(this.bcmpJobId)
+      this.setBCMPJobId(this.bcmpJobId)
+    }
   }
+}
 </script>
 
 <style scoped>

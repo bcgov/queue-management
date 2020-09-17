@@ -1,30 +1,35 @@
 <template>
-  <b-modal :visible="showAddModal"
-           v-if="showAddModal"
-           :size="simplified ? 'lg' : 'lg'"
-           hide-header
-           hide-footer
-           no-close-on-backdrop
-           no-close-on-esc
-           body-class="q-modal-body"
-           class="m-0 p-0"
-           @shown="setupForm()">
-    <div class="modal_header div-top-cont"
-         v-dragged="onDrag">
+  <b-modal
+    :visible="showAddModal"
+    v-if="showAddModal"
+    :size="simplified ? 'lg' : 'lg'"
+    hide-header
+    hide-footer
+    no-close-on-backdrop
+    no-close-on-esc
+    body-class="q-modal-body"
+    class="m-0 p-0"
+    @shown="setupForm()"
+  >
+    <div class="modal_header div-top-cont" v-dragged="onDrag">
       <div>
         <h4>{{modalTitle}}</h4>
       </div>
       <div>
-        <button class="btn btn-link"
-                style="margin-left: 20px"
-                @click="toggleMinimize">{{ minimizeWindow ? "Maximize" : "Minimize" }}</button>
+        <button
+          class="btn btn-link"
+          style="margin-left: 20px"
+          @click="toggleMinimize"
+        >{{ minimizeWindow ? "Maximize" : "Minimize" }}</button>
       </div>
     </div>
-    <b-alert :show="dismissCountDown"
-             style="h-align: center"
-             variant="danger"
-             @dismissed="dismissCountDown=0"
-             @dismiss-count-down="countDownChanged">{{this.$store.state.alertMessage}}</b-alert>
+    <b-alert
+      :show="dismissCountDown"
+      style="h-align: center"
+      variant="danger"
+      @dismissed="dismissCountDown=0"
+      @dismiss-count-down="countDownChanged"
+    >{{this.$store.state.alertMessage}}</b-alert>
     <div v-if="!minimizeWindow">
       <div v-if="!this.addModalForm.citizen && !this.addModalForm.setup === 'add_mode'">
         <div class="q-loader2" />
@@ -32,31 +37,42 @@
       <div v-else>
         <AddCitizenForm />
         <b-container class="add-buttons add_citizen_padding">
-          <div v-bind:class="{'button-row-reversed' : citizenButtons, 'button-row' : !citizenButtons }"
-               style="padding-bottom:6px;">
-            <select v-show="reception && !simplified" id="counter-selection-add" class="custom-select" v-model="counter_selection">
-              <option v-for="counter in sortedCounters"
-                    :value="counter.counter_id"
-                    :key="counter.counter_id">
-                {{counter.counter_name}}
-              </option>
+          <div
+            v-bind:class="{'button-row-reversed' : citizenButtons, 'button-row' : !citizenButtons }"
+            style="padding-bottom:6px;"
+          >
+            <select
+              v-show="reception && !simplified"
+              id="counter-selection-add"
+              class="custom-select"
+              v-model="counter_selection"
+            >
+              <option
+                v-for="counter in sortedCounters"
+                :value="counter.counter_id"
+                :key="counter.counter_id"
+              >{{counter.counter_name}}</option>
             </select>
             <div id="select-wrapper">
-              <select id="priority-selection"
-                      v-if="!simplified"
-                      class="custom-select"
-                      v-model="priority_selection">
+              <select
+                id="priority-selection"
+                v-if="!simplified"
+                class="custom-select"
+                v-model="priority_selection"
+              >
                 <option value="1">High Priority</option>
                 <option value="2">Default Priority</option>
                 <option value="3">Low Priority</option>
               </select>
             </div>
             <!--  Cancel button goes here. -->
-            <b-button @click="cancelAction"
-                      :disabled="performingAction"
-                      class="btn-danger"
-                      v-bind:style="marginStyle"
-                      id="add-citizen-cancel">Cancel</b-button>
+            <b-button
+              @click="cancelAction"
+              :disabled="performingAction"
+              class="btn-danger"
+              v-bind:style="marginStyle"
+              id="add-citizen-cancel"
+            >Cancel</b-button>
           </div>
           <div class="button-row">
             <Buttons />
@@ -68,7 +84,8 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+/* eslint-disable */
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import Buttons from './form-components/buttons'
 import AddCitizenForm from './add-citizen-form'
 
@@ -78,12 +95,12 @@ export default {
     AddCitizenForm,
     Buttons
   },
-  mounted() {
+  mounted () {
     this.$root.$on('showAddMessage', () => {
       this.Alert()
     })
   },
-  data() {
+  data () {
     return {
       dismissSecs: 5,
       dismissCountDown: 0,
@@ -100,26 +117,25 @@ export default {
       user: 'user',
       displayServices: 'displayServices',
       citizenButtons: 'citizenButtons',
-      performingAction: 'performingAction',
+      performingAction: 'performingAction'
     }),
-    ...mapGetters(['form_data', 'reception',]),
-    marginStyle() {
+    ...mapGetters(['form_data', 'reception']),
+    marginStyle () {
       let style = ''
       if (this.citizenButtons) {
-        style = {marginRight: '50%'}
-      }
-      else {
-        style = {marginLeft: '50%'}
+        style = { marginRight: '50%' }
+      } else {
+        style = { marginLeft: '50%' }
       }
       return style
     },
-    simplified() {
+    simplified () {
       if (this.$route.path !== '/queue') {
         return true
       }
       return false
     },
-    modalTitle() {
+    modalTitle () {
       if (this.addModalSetup === 'edit_mode') {
         return 'Edit Service'
       }
@@ -129,30 +145,30 @@ export default {
       if (this.simplified) {
         return 'Begin Tracking'
       }
-      if (this.displayServices === "BackOffice") {
-        return "Back Office"
+      if (this.displayServices === 'BackOffice') {
+        return 'Back Office'
       }
       return 'Add Citizen'
     },
 
     counter_selection: {
-      get() {
-        return this.form_data.counter;
+      get () {
+        return this.form_data.counter
       },
-      set(value) {
-        this.updateAddModalForm({ type: "counter", value });
+      set (value) {
+        this.updateAddModalForm({ type: 'counter', value })
       }
     },
     priority_selection: {
-      get() {
+      get () {
         return this.form_data.priority
       },
-      set(value) {
+      set (value) {
         this.updateAddModalForm({ type: 'priority', value })
       }
     },
-    sortedCounters(){
-      var sorted = this.user.office.counters.sort((a,b) => {
+    sortedCounters () {
+      var sorted = this.user.office.counters.sort((a, b) => {
         return a.counter_name > b.counter_name
       })
       return sorted
@@ -161,38 +177,33 @@ export default {
   methods: {
     ...mapActions(['cancelAddCitizensModal', 'cancelAddCitizensModal',
       'clickEditCancel', 'resetAddCitizenModal']),
-    ...mapMutations(['setDefaultChannel', 'toggleAddModal',  'updateAddModalForm']),
-    Alert() {
+    ...mapMutations(['setDefaultChannel', 'toggleAddModal', 'updateAddModalForm']),
+    Alert () {
       this.dismissCountDown = this.dismissSecs
     },
-    cancelAction() {
-      if (this.$route.path == "/exams") {
+    cancelAction () {
+      if (this.$route.path == '/exams') {
         this.cancelAddCitizensModal()
-      }
-      else if (this.$route.path == "/appointments") {
+      } else if (this.$route.path == '/appointments') {
         this.closeAddServiceModal()
-      }
-      else if ((this.addModalSetup == 'reception') || (this.addModalSetup == 'non_reception')) {
+      } else if ((this.addModalSetup == 'reception') || (this.addModalSetup == 'non_reception')) {
         this.cancelAddCitizensModal()
-      }
-      else if (this.addModalSetup == "add_mode") {
+      } else if (this.addModalSetup == 'add_mode') {
         this.clickEditCancel()
-      }
-      else if (this.addModalSetup == "edit_mode") {
+      } else if (this.addModalSetup == 'edit_mode') {
         this.clickEditCancel()
-      }
-      else {
+      } else {
         this.cancelAddCitizensModal()
       }
     },
-    closeAddServiceModal() {
+    closeAddServiceModal () {
       this.resetAddCitizenModal()
       this.$store.commit('appointmentsModule/toggleApptBookingModal', true)
     },
-    countDownChanged(dismissCountDown) {
+    countDownChanged (dismissCountDown) {
       this.dismissCountDown = dismissCountDown
     },
-    onDrag({ el, deltaX, deltaY, offsetX, offsetY, clientX, clientY, first, last }) {
+    onDrag ({ el, deltaX, deltaY, offsetX, offsetY, clientX, clientY, first, last }) {
       if (first) {
         this.dragged = true
         return
@@ -204,10 +215,10 @@ export default {
       this.left = (this.left || 0) + deltaX
       this.top = (this.top || 0) + deltaY
       var add_modal = document.getElementsByClassName('modal-content')[0]
-      add_modal.style.transform = "translate("+this.left+"px,"+this.top+"px)"
+      add_modal.style.transform = 'translate(' + this.left + 'px,' + this.top + 'px)'
     },
-    setupForm() {
-      let setup = this.addModalSetup;
+    setupForm () {
+      const setup = this.addModalSetup
       if (this.simplified) {
         this.$root.$emit('focusfilter')
         return
@@ -222,34 +233,34 @@ export default {
         }
       }
     },
-    toggleMinimize() {
+    toggleMinimize () {
       this.minimizeWindow = !this.minimizeWindow
-    },
+    }
   }
 }
 </script>
 
 <style>
-   @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
   }
-  .q-loader2 {
-    position: absolute;
-    text-align: center;
-    margin: 50px auto auto 300px;
-    width: 50px;
-    height: 50px;
-    border: 10px solid LightGrey;
-    opacity:0.9;
-    border-radius: 50%;
-    border-top-color: DodgerBlue;
-    animation: spin 1s ease-in-out infinite;
-    -webkit-animation: spin 1s ease-in-out infinite;
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.q-loader2 {
+  position: absolute;
+  text-align: center;
+  margin: 50px auto auto 300px;
+  width: 50px;
+  height: 50px;
+  border: 10px solid LightGrey;
+  opacity: 0.9;
+  border-radius: 50%;
+  border-top-color: DodgerBlue;
+  animation: spin 1s ease-in-out infinite;
+  -webkit-animation: spin 1s ease-in-out infinite;
 }
 .modal_header {
   display: flex;

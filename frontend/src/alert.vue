@@ -29,16 +29,15 @@ export default {
   name: 'Alert',
 
   computed: {
-    ...mapState([ 'alertMessage', 'dismissCount' ])
+    ...mapState(['alertMessage', 'dismissCount'])
   },
 
   methods: {
     ...mapMutations(['dismissCountDown']),
 
-    onDismissed() {
+    onDismissed () {
       this.dismissCountDown(0)
     }
   }
 }
 </script>
-
