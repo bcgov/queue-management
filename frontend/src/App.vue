@@ -1,16 +1,18 @@
-/*Copyright 2015 Province of British Columbia Licensed under the Apache License,
+/*
+Copyright 2015 Province of British Columbia Licensed under the Apache License,
 Version 2.0 (the "License"); you may not use this file except in compliance with
 the License. You may obtain a copy of the License at
 http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or
 agreed to in writing, software distributed under the License is distributed on
 an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
 or implied. See the License for the specific language governing permissions and
-limitations under the License.*/
+limitations under the License.
+*/
 
 <template>
   <div id="App">
     <Header />
-    <Socket v-show="1 === 2" />
+    <Socket v-show="false" />
     <div v-if="user.username && isLoggedIn" v-bind:style="style">
       <Alert />
       <ExamAlert />
@@ -25,24 +27,26 @@ limitations under the License.*/
   </div>
 </template>
 
-<script>
-import { mapGetters, mapState } from 'vuex'
-import Alert from './alert'
-import ExamAlert from './exam-alert'
-import FailureExamAlert from './exams/failure-exam-alert'
-import Feedback from './feedback'
-import Footer from './layout/footer'
-import Header from './layout/header'
-import Login from './Login'
-import LoginWarning from './login-warning'
-import Nav from './layout/nav'
-import Response from './response'
-import Socket from './Socket'
-import SuccessExamAlert from './exams/success-exam-alert'
-import AddExamModal from './exams/add-exam-modal'
+<script lang="ts">
 
-export default {
-  name: 'App',
+import { Component, Vue } from 'vue-property-decorator'
+// eslint-disable-next-line sort-imports
+import { Getter, State } from 'vuex-class'
+import AddExamModal from './exams/add-exam-modal.vue'
+import Alert from './alert.vue'
+import ExamAlert from './exam-alert.vue'
+import FailureExamAlert from './exams/failure-exam-alert.vue'
+import Feedback from './feedback.vue'
+import Footer from './layout/footer.vue'
+import Header from './layout/header.vue'
+import Login from './Login.vue'
+import LoginWarning from './login-warning.vue'
+import Nav from './layout/nav.vue'
+import Response from './response.vue'
+import Socket from './Socket.vue'
+import SuccessExamAlert from './exams/success-exam-alert.vue'
+
+@Component({
   components: {
     AddExamModal,
     Alert,
@@ -57,20 +61,49 @@ export default {
     Response,
     Socket,
     SuccessExamAlert
-  },
-  computed: {
-    ...mapGetters(['show_scheduling_indicator']),
-    ...mapState(['isLoggedIn', 'user']),
-    style () {
-      const output = { marginTop: 72 + 'px', width: '100%', overflowX: 'hidden' }
-      if (this.show_scheduling_indicator) {
-        output.marginBottom = 100 + 'px'
-      }
-      if (!this.show_scheduling_indicator) {
-        output.marginBottom = 40 + 'px'
-      }
-      return output
+  }
+  // computed: {
+  //   ...mapGetters([
+  //     'show_scheduling_indicator'
+  //   ]),
+  //   ...mapState(['isLoggedIn', 'user'])
+  // }
+  // methods: {
+  //   ...mapActions('account', ['loadUserInfo', 'getUser']),
+  //   ...mapActions('auth', ['syncWithSessionStorage'])
+  // }
+})
+export default class App extends Vue {
+  // eslint-disable-next-line camelcase
+  // private readonly show_scheduling_indicator!: boolean
+  // private readonly isLoggedIn!: boolean
+  // private readonly user!: any
+
+  @Getter('show_scheduling_indicator') private showSchedulingIndicator!: false;
+  @State('isLoggedIn') private isLoggedIn!: string | undefined
+  @State('user') private user!: string | undefined
+  // updated () {
+  //   console.log('user', this.user)
+  //   console.log('isLoggedIn', this.isLoggedIn)
+  //   console.log('showSchedulingIndicator', this.showSchedulingIndicator)
+  // }
+
+  // mounted () {
+  //   console.log('user', this.user)
+  //   console.log('isLoggedIn', this.isLoggedIn)
+  //   console.log('showSchedulingIndicator', this.showSchedulingIndicator)
+  // }
+
+  get style () {
+    const output: any = { marginTop: 72 + 'px', width: '100%', overflowX: 'hidden' }
+    if (this.showSchedulingIndicator) {
+      output.marginBottom = '100px'
     }
+    if (!this.showSchedulingIndicator) {
+      output.marginBottom = '40px'
+    }
+
+    return output
   }
 }
 </script>

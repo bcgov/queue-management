@@ -1927,7 +1927,7 @@ export const store = new Vuex.Store({
                 activeService[0].periods[activeService[0].periods.length - 1]
               if (
                 ['Invited', 'Being Served'].indexOf(activePeriod.ps.ps_name) >
-                  -1 &&
+                -1 &&
                 activePeriod.csr.username === this.state.user.username
               ) {
                 citizenFound = true

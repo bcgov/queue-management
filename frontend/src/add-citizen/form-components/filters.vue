@@ -2,27 +2,31 @@
   <div>
     <b-form-row no-gutters>
       <b-col :cols="simplified ? 12 : 7">
-          <input ref="filterref"
-                 style="height: 38px; font-size: .8rem;"
-                 class="form-control"
-                 v-model="search"
-                 placeholder="Type service here"
-                 id="simplified_service_input"
-                 ></input>
+        <input
+          ref="filterref"
+          style="height: 38px; font-size: .8rem;"
+          class="form-control"
+          v-model="search"
+          placeholder="Type service here"
+          id="simplified_service_input"
+        />
       </b-col>
       <b-col>
-        <b-select id="add_citizen_catagories_select"
-                  style="height: 38px; font-size: .8rem;"
-                  :options="categories_options"
-                  v-model="category"
-                  size="sm"
-                  placeholder="Filter by category" />
+        <b-select
+          id="add_citizen_catagories_select"
+          style="height: 38px; font-size: .8rem;"
+          :options="categories_options"
+          v-model="category"
+          size="sm"
+          placeholder="Filter by category"
+        />
       </b-col>
     </b-form-row>
   </div>
 </template>
 
 <script>
+/*eslint-disable */
 import { mapGetters, mapMutations, mapState } from 'vuex'
 
 export default {
@@ -98,11 +102,11 @@ export default {
 </script>
 
 <style scoped>
-  b-col {
-    padding: 0px;
-    margin: 0px;
-  }
-  * {
-      border-radius: 0;
-  }
+b-col {
+  padding: 0px;
+  margin: 0px;
+}
+* {
+  border-radius: 0;
+}
 </style>

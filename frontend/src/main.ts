@@ -16,7 +16,7 @@ import Vue from 'vue'
 import 'es6-promise/auto'
 import { store } from './store/'
 import BootstrapVue from 'bootstrap-vue'
-import Router from './router'
+import router from './router'
 import { Plugin } from 'vue-fragment'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
@@ -118,7 +118,7 @@ Vue.config.productionTip = false
 /* eslint-disable no-new */
 
 new Vue({
-  router: Router,
+  router,
   store,
   render: h => h(MainApp)
 }).$mount('#app')

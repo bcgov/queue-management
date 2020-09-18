@@ -37,7 +37,13 @@ module.exports = {
     "sort-imports": "warn",
     camelcase: "warn",
     "vue/valid-template-root": "warn",
-    "indent": ["warn", 2]
+    "indent": ["warn", 2],
+    "eqeqeq": "warn",
+    "handle-callback-err": "warn",
+    "prefer-promise-reject-errors": "warn",
+    "no-unused-vars": "warn",
+    "no-undef": "warn",
+    "new-cap": "warn",
   },
   parserOptions: {
     parser: "@typescript-eslint/parser"
