@@ -6,29 +6,33 @@
     <EditExamModal :actionedExam="actionedExam" :resetExam="resetActionedExam" />
     <ReturnExamModal :actionedExam="actionedExam" :resetExam="resetActionedExam" />
     <EditGroupExamBookingModal :actionedExam="actionedExam" :resetExam="resetActionedExam" />
-    <DeleteExamModal v-if="showDeleteExamModal" :actionedExam="actionedExam" :resetExam="resetActionedExam" />
+    <DeleteExamModal
+      v-if="showDeleteExamModal"
+      :actionedExam="actionedExam"
+      :resetExam="resetActionedExam"
+    />
     <SelectInvigilatorModal />
 
     <!--  Modal that allows user to choose a new office -->
-    <b-modal v-model="officeFilterModal"
-             size="sm"
-             centered
-             hide-backdrop
-             @hide="resetInvalidOfficeOnHide()"
-             hide-header
-             hide-footer>
+    <b-modal
+      v-model="officeFilterModal"
+      size="sm"
+      centered
+      hide-backdrop
+      @hide="resetInvalidOfficeOnHide()"
+      hide-header
+      hide-footer
+    >
       <h5>View Another Office</h5>
       <p>To search, start typing or enter an office #</p>
       <b-form autocomplete="off">
         <b-form-row>
-          <OfficeDrop columnW="8" :office_number="officeNumber" :setOffice="setOfficeFilter"/>
+          <OfficeDrop columnW="8" :office_number="officeNumber" :setOffice="setOfficeFilter" />
         </b-form-row>
       </b-form>
       <div style="display:flex; justify-content: space-between">
-        <b-button class="mr-2 btn-secondary"
-                  @click="setHomeOffice">This Office</b-button>
-        <b-button class="ml-2 btn-primary"
-                  @click="officeFilterModal=false">Ok</b-button>
+        <b-button class="mr-2 btn-secondary" @click="setHomeOffice">This Office</b-button>
+        <b-button class="ml-2 btn-primary" @click="officeFilterModal=false">Ok</b-button>
       </div>
     </b-modal>
 
@@ -36,10 +40,11 @@
     <div style="display: flex; justify-content: space-between" class="q-w100-flex-fs">
       <div>
         <b-form inline class="ml-3">
-
           <!--  The Search label and input box.  -->
           <b-input-group>
-            <b-input-group-prepend><label class="mx-1 pt-3 ml-2 my-auto label-text">Search</label></b-input-group-prepend>
+            <b-input-group-prepend>
+              <label class="mx-1 pt-3 ml-2 my-auto label-text">Search</label>
+            </b-input-group-prepend>
             <b-input size="sm" class="mb-1 mt-3" v-model="searchTerm"></b-input>
           </b-input-group>
 
@@ -48,16 +53,19 @@
             <b-input-group-prepend>
               <label class="mx-1 pt-3 mr-2 my-auto label-text">Filters:</label>
             </b-input-group-prepend>
-            <b-dd v-if="is_pesticide_designate || is_ita2_designate"
-                  split
-                  size="sm"
-                  :variant="officeFilter === userOffice || officeFilter === 'default' ? 'primary' : 'warning'"
-                  class="btn-sm mr-2 mt-2"
-                  :text="officeFilterText"
-                  @click="officeFilterModal=true">
-              <b-dd-item v-if="is_pesticide_designate" @click="viewAllOfficePesticideExams">
-                View All Offices
-              </b-dd-item>
+            <b-dd
+              v-if="is_pesticide_designate || is_ita2_designate"
+              split
+              size="sm"
+              :variant="officeFilter === userOffice || officeFilter === 'default' ? 'primary' : 'warning'"
+              class="btn-sm mr-2 mt-2"
+              :text="officeFilterText"
+              @click="officeFilterModal=true"
+            >
+              <b-dd-item
+                v-if="is_pesticide_designate"
+                @click="viewAllOfficePesticideExams"
+              >View All Offices</b-dd-item>
             </b-dd>
           </b-input-group>
 
@@ -65,41 +73,50 @@
           <b-input-group>
             <!--  The Exam Type filter, initial set up if filter not yet set.  -->
             <b-btn-group v-if="selectedExamTypeFilter === ''">
-              <b-dropdown size="sm"
-                          v-if="!isPesticideOffice"
-                          variant="primary"
-                          text="Exam Type Filters"
-                          v-model="selectedExamTypeFilter"
-                          class="mt-2 mr-2">
-                <b-dropdown-item v-for="option in examTypeOptions"
-                                 @click="setExamTypeFilter(option)" v-bind:key="option.value">
-                  {{ option.text }}
-                </b-dropdown-item>
+              <b-dropdown
+                size="sm"
+                v-if="!isPesticideOffice"
+                variant="primary"
+                text="Exam Type Filters"
+                v-model="selectedExamTypeFilter"
+                class="mt-2 mr-2"
+              >
+                <b-dropdown-item
+                  v-for="option in examTypeOptions"
+                  @click="setExamTypeFilter(option)"
+                  v-bind:key="option.value"
+                >{{ option.text }}</b-dropdown-item>
               </b-dropdown>
-              <b-dropdown size="sm"
-                          v-if="isPesticideOffice"
-                          variant="primary"
-                          text="Exam Type Filters"
-                          v-model="selectedExamTypeFilter"
-                          class="mt-2 mr-2">
-                <b-dropdown-item v-for="option in examTypeOptions"
-                                 @click="setExamTypeFilter(option)" v-bind:key="option.value">
-                  {{ option.text }}
-                </b-dropdown-item>
+              <b-dropdown
+                size="sm"
+                v-if="isPesticideOffice"
+                variant="primary"
+                text="Exam Type Filters"
+                v-model="selectedExamTypeFilter"
+                class="mt-2 mr-2"
+              >
+                <b-dropdown-item
+                  v-for="option in examTypeOptions"
+                  @click="setExamTypeFilter(option)"
+                  v-bind:key="option.value"
+                >{{ option.text }}</b-dropdown-item>
               </b-dropdown>
             </b-btn-group>
 
             <!--  The Exam Type filter, if the filter has previously been set.  -->
             <b-btn-group v-else>
-              <b-dropdown size="sm"
-                          variant="primary"
-                          :text="this.selectedExamTypeFilter"
-                          v-model="selectedExamTypeFilter"
-                          class="mt-2 mr-2">
-                <b-dropdown-item v-for="option in examTypeOptions"
-                                 @click="setExamTypeFilter(option)" v-bind:key="option.value">
-                  {{ option.text }}
-                </b-dropdown-item>
+              <b-dropdown
+                size="sm"
+                variant="primary"
+                :text="this.selectedExamTypeFilter"
+                v-model="selectedExamTypeFilter"
+                class="mt-2 mr-2"
+              >
+                <b-dropdown-item
+                  v-for="option in examTypeOptions"
+                  @click="setExamTypeFilter(option)"
+                  v-bind:key="option.value"
+                >{{ option.text }}</b-dropdown-item>
               </b-dropdown>
             </b-btn-group>
 
@@ -107,25 +124,33 @@
             <template v-if="is_office_manager || role_code === 'GA' ">
               <!--  The Quick Action filter if no filter has been set.  -->
               <b-btn-group v-if="selectedQuickActionFilter === ''">
-                <b-dropdown size="sm"
-                            variant="primary"
-                            text="Quick Action Filters"
-                            v-model="selectedQuickActionFilter"
-                            class="mt-2 mr-2">
-                  <b-dropdown-item v-for="option in newQuickActionOptions"
-                                   @click="setQuickActionFilter(option)" v-bind:key="option.value">
+                <b-dropdown
+                  size="sm"
+                  variant="primary"
+                  text="Quick Action Filters"
+                  v-model="selectedQuickActionFilter"
+                  class="mt-2 mr-2"
+                >
+                  <b-dropdown-item
+                    v-for="option in newQuickActionOptions"
+                    @click="setQuickActionFilter(option)"
+                    v-bind:key="option.value"
+                  >
                     <!--  The various Quick Action options. -->
                     <div style="display: flex; justify-content: space-between;">
                       <div class="mr-3">{{ option.text }}</div>
                       <div v-if="option.text === 'Ready'">
-                        <font-awesome-icon icon='clipboard-check'
-                                           style="fontSize: 1rem; color: green;"/>
+                        <font-awesome-icon
+                          icon="clipboard-check"
+                          style="fontSize: 1rem; color: green;"
+                        />
                       </div>
                       <div v-if="option.text === 'Requires Attention'">
-                        <font-awesome-icon icon='life-ring'
-                                           style="fontSize: 1rem; color: red;"/>
-                        <font-awesome-icon icon='exclamation-triangle'
-                                           style="fontSize: 1rem; color: #FFC32B;"/>
+                        <font-awesome-icon icon="life-ring" style="fontSize: 1rem; color: red;" />
+                        <font-awesome-icon
+                          icon="exclamation-triangle"
+                          style="fontSize: 1rem; color: #FFC32B;"
+                        />
                       </div>
                     </div>
                   </b-dropdown-item>
@@ -134,25 +159,33 @@
 
               <!--  The Quick Action filter if a filter has been previously set.  -->
               <b-btn-group v-else>
-                <b-dropdown size="sm"
-                            variant="primary"
-                            :text="this.selectedQuickActionFilter"
-                            v-model="selectedQuickActionFilter"
-                            class="mt-2 mr-2">
-                  <b-dropdown-item v-for="option in newQuickActionOptions"
-                                   @click="setQuickActionFilter(option)" v-bind:key="option.value">
+                <b-dropdown
+                  size="sm"
+                  variant="primary"
+                  :text="this.selectedQuickActionFilter"
+                  v-model="selectedQuickActionFilter"
+                  class="mt-2 mr-2"
+                >
+                  <b-dropdown-item
+                    v-for="option in newQuickActionOptions"
+                    @click="setQuickActionFilter(option)"
+                    v-bind:key="option.value"
+                  >
                     <!--  The various Quick Action options. -->
                     <div style="display: flex; justify-content: space-between;">
                       <div class="mr-3">{{ option.text }}</div>
                       <div v-if="option.text === 'Ready'">
-                        <font-awesome-icon icon='clipboard-check'
-                                           style="fontSize: 1rem; color: green;"/>
+                        <font-awesome-icon
+                          icon="clipboard-check"
+                          style="fontSize: 1rem; color: green;"
+                        />
                       </div>
                       <div v-if="option.text === 'Requires Attention'">
-                        <font-awesome-icon icon='life-ring'
-                                           style="fontSize: 1rem; color: red;"/>
-                        <font-awesome-icon icon='exclamation-triangle'
-                                           style="fontSize: 1rem; color: #FFC32B;"/>
+                        <font-awesome-icon icon="life-ring" style="fontSize: 1rem; color: red;" />
+                        <font-awesome-icon
+                          icon="exclamation-triangle"
+                          style="fontSize: 1rem; color: #FFC32B;"
+                        />
                       </div>
                     </div>
                   </b-dropdown-item>
@@ -163,48 +196,64 @@
             <!--  The Quick Action filter, if NOT ITA designate or GA.  -->
             <template v-else>
               <b-btn-group v-if="selectedQuickActionFilter === ''">
-                <b-dropdown size="sm"
-                            variant="primary"
-                            text="Quick Action Filters"
-                            v-model="selectedQuickActionFilter"
-                            class="mt-2 mr-2">
-                  <b-dropdown-item v-for="option in newQuickActionOptionsNoOEM"
-                                   @click="setQuickActionFilter(option)" v-bind:key="option.value">
+                <b-dropdown
+                  size="sm"
+                  variant="primary"
+                  text="Quick Action Filters"
+                  v-model="selectedQuickActionFilter"
+                  class="mt-2 mr-2"
+                >
+                  <b-dropdown-item
+                    v-for="option in newQuickActionOptionsNoOEM"
+                    @click="setQuickActionFilter(option)"
+                    v-bind:key="option.value"
+                  >
                     <div style="display: flex; justify-content: space-between;">
                       <div class="mr-3">{{ option.text }}</div>
                       <div v-if="option.text === 'Ready'">
-                        <font-awesome-icon icon='clipboard-check'
-                                           style="fontSize: 1rem; color: green;"/>
+                        <font-awesome-icon
+                          icon="clipboard-check"
+                          style="fontSize: 1rem; color: green;"
+                        />
                       </div>
                       <div v-if="option.text === 'Requires Attention'">
-                        <font-awesome-icon icon='life-ring'
-                                           style="fontSize: 1rem; color: red;"/>
-                        <font-awesome-icon icon='exclamation-triangle'
-                                           style="fontSize: 1rem; color: #FFC32B;"/>
+                        <font-awesome-icon icon="life-ring" style="fontSize: 1rem; color: red;" />
+                        <font-awesome-icon
+                          icon="exclamation-triangle"
+                          style="fontSize: 1rem; color: #FFC32B;"
+                        />
                       </div>
                     </div>
                   </b-dropdown-item>
                 </b-dropdown>
               </b-btn-group>
               <b-btn-group v-else>
-                <b-dropdown size="sm"
-                            variant="primary"
-                            :text="this.selectedQuickActionFilter"
-                            v-model="selectedQuickActionFilter"
-                            class="mt-2 mr-2">
-                  <b-dropdown-item v-for="option in newQuickActionOptionsNoOEM"
-                                   @click="setQuickActionFilter(option)" v-bind:key="option.value">
+                <b-dropdown
+                  size="sm"
+                  variant="primary"
+                  :text="this.selectedQuickActionFilter"
+                  v-model="selectedQuickActionFilter"
+                  class="mt-2 mr-2"
+                >
+                  <b-dropdown-item
+                    v-for="option in newQuickActionOptionsNoOEM"
+                    @click="setQuickActionFilter(option)"
+                    v-bind:key="option.value"
+                  >
                     <div style="display: flex; justify-content: space-between;">
                       <div class="mr-3">{{ option.text }}</div>
                       <div v-if="option.text === 'Ready'">
-                        <font-awesome-icon icon='clipboard-check'
-                                           style="fontSize: 1rem; color: green;"/>
+                        <font-awesome-icon
+                          icon="clipboard-check"
+                          style="fontSize: 1rem; color: green;"
+                        />
                       </div>
                       <div v-if="option.text === 'Requires Attention'">
-                        <font-awesome-icon icon='life-ring'
-                                           style="fontSize: 1rem; color: red;"/>
-                        <font-awesome-icon icon='exclamation-triangle'
-                                           style="fontSize: 1rem; color: #FFC32B;"/>
+                        <font-awesome-icon icon="life-ring" style="fontSize: 1rem; color: red;" />
+                        <font-awesome-icon
+                          icon="exclamation-triangle"
+                          style="fontSize: 1rem; color: #FFC32B;"
+                        />
                       </div>
                     </div>
                   </b-dropdown-item>
@@ -213,103 +262,102 @@
             </template>
           </b-input-group>
           <!--  End of all the Exam Type filter.  -->
-
         </b-form>
       </div>
       <!--  End of all the Exam Type filter division.  -->
 
       <!--  Display pagination options, if too many items for the screen. -->
       <div>
-        <b-pagination :total-rows="totalRows"
-                      :per-page="10"
-                      v-if="filteredExams().length > 10"
-                      v-model="page"
-                      class="mb-0 pt-2 mr-4 mt-1"
-                      style="display: flex; justify-content: flex-end;"/>
+        <b-pagination
+          :total-rows="totalRows"
+          :per-page="10"
+          v-if="filteredExams().length > 10"
+          v-model="page"
+          class="mb-0 pt-2 mr-4 mt-1"
+          style="display: flex; justify-content: flex-end;"
+        />
       </div>
     </div>
     <!--  End of top part of the screen, including filters and pagination.-->
 
     <!--  Display of exams.  -->
     <div :style="tableStyle" class="my-0 mx-3">
-      <b-table :items="filteredExams()"
-               :fields="fields"
-               sort-by="scheduled"
-               :sort-desc="true"
-               head-variant="light"
-               :style="availableH"
-               empty-text="There are no exams that match this filter criteria"
-               small
-               :sort-compare="sortCompare"
-               outlined
-               @row-clicked="clickModalRow"
-               hover
-               show-empty
-               responsive
-               :current-page="page"
-               :per-page="10"
-               :filter="searchTerm"
-               v-if="!isLoading"
-               id="exam_inventory_table">
-
+      <b-table
+        :items="filteredExams()"
+        :fields="fields"
+        sort-by="scheduled"
+        :sort-desc="true"
+        head-variant="light"
+        :style="availableH"
+        empty-text="There are no exams that match this filter criteria"
+        small
+        :sort-compare="sortCompare"
+        outlined
+        @row-clicked="clickModalRow"
+        hover
+        show-empty
+        responsive
+        :current-page="page"
+        :per-page="10"
+        :filter="searchTerm"
+        v-if="!isLoading"
+        id="exam_inventory_table"
+      >
         <!--  Field 1 - Event id??? Don't see it.  -->
         <!--  Field 2 - Exam Type -->
-        <template slot="exam_type_name" slot-scope="row">
-          {{ row.item.exam_type.exam_type_name }}
-        </template>
+        <template slot="exam_type_name" slot-scope="row">{{ row.item.exam_type.exam_type_name }}</template>
 
         <!--  Field 3 - Exam name??? Don't see it.  -->
         <!--  Field 4 - Scheduled Date -->
         <template slot="start_time" slot-scope="row">
-          <span v-if="!row.item.booking">
-            -
-          </span>
-          <span v-else-if="checkStartDate(row.item.booking.start_time)"
-                class="expired">
-            {{ formatDate(row.item.booking.start_time) }}
-          </span>
-          <span v-else>
-            {{ formatDate(row.item.booking.start_time) }}
-          </span>
+          <span v-if="!row.item.booking">-</span>
+          <span
+            v-else-if="checkStartDate(row.item.booking.start_time)"
+            class="expired"
+          >{{ formatDate(row.item.booking.start_time) }}</span>
+          <span v-else>{{ formatDate(row.item.booking.start_time) }}</span>
         </template>
 
         <!--  Field 5 - Exam method??? Don't see it.  -->
         <!--  Field 6 - Expiry Date. -->
         <template slot="expiry_date" slot-scope="row">
-          <span v-if="row.item.exam_type.exam_type_name === 'Monthly Session Exam'
-                      && !checkExpiryDate(row.item.expiry_date)">
-            –
-          </span>
-          <span v-else-if="row.item.exam_type.group_exam_ind && !checkExpiryDate(row.item.expiry_date)">
-            –
-          </span>
-          <span v-else-if="checkExpiryDate(row.item.expiry_date)"
-                class="expired">
-            {{ formatDate(row.item.expiry_date) }}
-          </span>
-          <span v-else>
-            {{ formatDate(row.item.expiry_date) }}
-          </span>
+          <span
+            v-if="row.item.exam_type.exam_type_name === 'Monthly Session Exam'
+                      && !checkExpiryDate(row.item.expiry_date)"
+          >–</span>
+          <span
+            v-else-if="row.item.exam_type.group_exam_ind && !checkExpiryDate(row.item.expiry_date)"
+          >–</span>
+          <span
+            v-else-if="checkExpiryDate(row.item.expiry_date)"
+            class="expired"
+          >{{ formatDate(row.item.expiry_date) }}</span>
+          <span v-else>{{ formatDate(row.item.expiry_date) }}</span>
         </template>
 
         <!--  Field 7 - Exam Received -->
-        <template slot="exam_received" slot-scope="row">
-          {{ row.item.exam_received_date ? 'Yes' : 'No' }}
-        </template>
+        <template
+          slot="exam_received"
+          slot-scope="row"
+        >{{ row.item.exam_received_date ? 'Yes' : 'No' }}</template>
 
         <!--  Field 8 - Candidate name??? Don't see it.  -->
         <!--  Field 9 - Notes??? Don't see it.  -->
         <!--  Field 10 - The Status column/flag -->
         <template slot="scheduled" slot-scope="row">
-          <font-awesome-icon v-if="!row.detailsShowing"
-                             :icon="statusIcon(row.item).icon"
-                             @click.stop="row.toggleDetails()"
-                             class="m-0 p-0 icon-cursor-hover"
-                             :style="statusIcon(row.item).style"/>
-          <b-button v-if="row.detailsShowing"
-                    variant="link"
-                    style="padding: 0px;"
-                    @click.stop="row.toggleDetails()">Hide</b-button>
+          <font-awesome-icon
+            v-if="!row.detailsShowing"
+            :icon="statusIcon(row.item).icon"
+            @click.stop="row.toggleDetails()"
+            class="m-0 p-0 icon-cursor-hover"
+            :style="statusIcon(row.item).style"
+          />
+          <b-button
+            v-if="row.detailsShowing"
+            variant="link"
+            style="padding: 0px;"
+            @click.stop="row.toggleDetails()"
+          >Hide</b-button>
         </template>
 
         <!--  Expanded row - Details and still required. -->
@@ -318,7 +366,10 @@
           <template v-if="stillRequires(row.item).length === 0">
             <div class="details-slot-div">
               <template v-for="(val, key) in readyDetailsMap(row.item)">
-                <div class="ml-3 mt-1" style="flex-grow: 1;" v-bind:key="key"><strong>{{ key }}: </strong> {{ val }} </div>
+                <div class="ml-3 mt-1" style="flex-grow: 1;" v-bind:key="key">
+                  <strong>{{ key }}:</strong>
+                  {{ val }}
+                </div>
               </template>
               <div style="flex-grow: 6"></div>
             </div>
@@ -336,7 +387,10 @@
               <!--  The Details info. -->
               <div style="flex-grow: 1; font-size: 1rem;">Details</div>
               <template v-for="(val, key) in readyDetailsMap(row.item)">
-                <div class="ml-3 mt-1" style="flex-grow: 1;" :key="key"><strong>{{ key }}: </strong> {{ val }} </div>
+                <div class="ml-3 mt-1" style="flex-grow: 1;" :key="key">
+                  <strong>{{ key }}:</strong>
+                  {{ val }}
+                </div>
               </template>
               <div style="flex-grow: 12" />
             </div>
@@ -346,136 +400,161 @@
         <!--  Field 11 - the actions column.-->
         <template slot="actions" slot-scope="row">
           <!--  The various dropdown actions allowed.  -->
-          <b-dropdown variant="link"
-                      no-caret
-                      size="sm"
-                      class="pl-0 ml-0 mr-3"
-                      id="nav-dropdown"
-                      right>
+          <b-dropdown
+            variant="link"
+            no-caret
+            size="sm"
+            class="pl-0 ml-0 mr-3"
+            id="nav-dropdown"
+            right
+          >
             <!--  The down caret to open up the dropdown list.  -->
             <template slot="button-content">
-              <font-awesome-icon icon="caret-down"
-                                 style="padding: -2px; margin: -2px; font-size: 1rem; color: dimgray"/>
+              <font-awesome-icon
+                icon="caret-down"
+                style="padding: -2px; margin: -2px; font-size: 1rem; color: dimgray"
+              />
             </template>
 
             <!--  Various options, if the exam hasn't been returned.  -->
             <template v-if="!row.item.exam_returned_date">
-
               <!--  Options for if you're editing an exam for the office you're in.  -->
               <template v-if="officeFilter == userOffice || officeFilter == 'default'">
-
                 <!--  Options for Monthly Session Exam.  -->
                 <template v-if="row.item.exam_type.exam_type_name === 'Monthly Session Exam' ">
                   <template v-if="row.item.offsite_location">
-                    <b-dropdown-item size="sm"
-                                     v-if="row.item.offsite_location"
-                                     @click="editGroupBooking(row.item)">
-                        {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}
-                    </b-dropdown-item>
+                    <b-dropdown-item
+                      size="sm"
+                      v-if="row.item.offsite_location"
+                      @click="editGroupBooking(row.item)"
+                    >{{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}</b-dropdown-item>
                   </template>
 
                   <template v-if="!row.item.offsite_location || row.item.is_pesticide">
-                    <b-dropdown-item size="sm"
-                                       v-if="row.item.booking && Object.keys(row.item.booking).length > 0"
-                                     @click="updateCalendarBooking(row.item)">
-                        {{ checkInvigilator(row.item) ? 'Update Booking' : 'Edit/Print/Add Invigilator' }}</b-dropdown-item>
-                    <b-dropdown-item size="sm"
-                                     v-if="!row.item.booking || Object.keys(row.item.booking).length === 0"
-                                     @click="addCalendarBooking(row.item)">Schedule Exam</b-dropdown-item>
+                    <b-dropdown-item
+                      size="sm"
+                      v-if="row.item.booking && Object.keys(row.item.booking).length > 0"
+                      @click="updateCalendarBooking(row.item)"
+                    >{{ checkInvigilator(row.item) ? 'Update Booking' : 'Edit/Print/Add Invigilator' }}</b-dropdown-item>
+                    <b-dropdown-item
+                      size="sm"
+                      v-if="!row.item.booking || Object.keys(row.item.booking).length === 0"
+                      @click="addCalendarBooking(row.item)"
+                    >Schedule Exam</b-dropdown-item>
                   </template>
                 </template>
 
                 <!--  Options for group exam ind (???).  -->
                 <template v-else-if="row.item.exam_type.group_exam_ind">
-                  <b-dropdown-item size="sm"
-                                   v-if="row.item.offsite_location || row.item.is_pesticide"
-                                   @click="editGroupBooking(row.item)">
-                    {{ checkInvigilator(row.item) ? 'Update Booking' : 'Edit/Print/Add Invigilator' }}
-                  </b-dropdown-item>
+                  <b-dropdown-item
+                    size="sm"
+                    v-if="row.item.offsite_location || row.item.is_pesticide"
+                    @click="editGroupBooking(row.item)"
+                  >{{ checkInvigilator(row.item) ? 'Update Booking' : 'Edit/Print/Add Invigilator' }}</b-dropdown-item>
                 </template>
 
                 <!--  Options for a pesticide exam -->
                 <template v-else-if="row.item.exam_type.pesticide_exam_ind">
                   <template template v-if="row.item.sbc_managed_ind === 1">
-                    <b-dropdown-item size="sm"
-                                     v-if="row.item.booking && Object.keys(row.item.booking).length > 0"
-                                     @click="updateCalendarBooking(row.item)">
-                      {{ checkInvigilator(row.item) ? 'Update Booking' : 'Edit/Print/Add Invigilator' }}</b-dropdown-item>
-                    <b-dropdown-item size="sm"
-                                     v-if="!row.item.booking || Object.keys(row.item.booking).length === 0"
-                                     @click="addCalendarBooking(row.item)">Schedule Exam</b-dropdown-item>
+                    <b-dropdown-item
+                      size="sm"
+                      v-if="row.item.booking && Object.keys(row.item.booking).length > 0"
+                      @click="updateCalendarBooking(row.item)"
+                    >{{ checkInvigilator(row.item) ? 'Update Booking' : 'Edit/Print/Add Invigilator' }}</b-dropdown-item>
+                    <b-dropdown-item
+                      size="sm"
+                      v-if="!row.item.booking || Object.keys(row.item.booking).length === 0"
+                      @click="addCalendarBooking(row.item)"
+                    >Schedule Exam</b-dropdown-item>
                   </template>
                   <template v-else>
-<!--                    TEMPORARY FIX - AFTER ALL PESTICIDE EXAMS ARE ENTERED IN NEW WORLD-->
-<!--                    <b-dropdown-item size="sm"-->
-<!--                                     @click="openInvigilatorModal(row.item)">Email Invigilator</b-dropdown-item>-->
-                     <b-dropdown-item size="sm"
-                                     v-if="row.item.booking && Object.keys(row.item.booking).length > 0"
-                                     @click="updateCalendarBooking(row.item)">
-                      {{ checkInvigilator(row.item) ? 'Update Booking' : 'Edit/Print/Add Invigilator' }}</b-dropdown-item>
-                     <b-dropdown-item size="sm"
-                                     v-if="!row.item.booking || Object.keys(row.item.booking).length === 0"
-                                     @click="addCalendarBooking(row.item)">Schedule Exam</b-dropdown-item>
+                    <!--                    TEMPORARY FIX - AFTER ALL PESTICIDE EXAMS ARE ENTERED IN NEW WORLD-->
+                    <!--                    <b-dropdown-item size="sm"-->
+                    <!--                                     @click="openInvigilatorModal(row.item)">Email Invigilator</b-dropdown-item>-->
+                    <b-dropdown-item
+                      size="sm"
+                      v-if="row.item.booking && Object.keys(row.item.booking).length > 0"
+                      @click="updateCalendarBooking(row.item)"
+                    >{{ checkInvigilator(row.item) ? 'Update Booking' : 'Edit/Print/Add Invigilator' }}</b-dropdown-item>
+                    <b-dropdown-item
+                      size="sm"
+                      v-if="!row.item.booking || Object.keys(row.item.booking).length === 0"
+                      @click="addCalendarBooking(row.item)"
+                    >Schedule Exam</b-dropdown-item>
                   </template>
                 </template>
 
                 <!--  Options for all other exams.  -->
                 <template v-else>
-                  <template v-if="row.item.offsite_location && row.item.offsite_location === '_offsite'">
-                    <b-dropdown-item size="sm"
-                                     v-if="!row.item.booking || Object.keys(row.item.booking).length === 0"
-                                     @click="editGroupBooking(row.item)">Schedule Exam</b-dropdown-item>
+                  <template
+                    v-if="row.item.offsite_location && row.item.offsite_location === '_offsite'"
+                  >
+                    <b-dropdown-item
+                      size="sm"
+                      v-if="!row.item.booking || Object.keys(row.item.booking).length === 0"
+                      @click="editGroupBooking(row.item)"
+                    >Schedule Exam</b-dropdown-item>
                   </template>
-                  <template v-if="row.item.offsite_location && row.item.offsite_location !== '_offsite'">
-                    <b-dropdown-item size="sm"
-                                     v-if="row.item.offsite_location"
-                                     @click="editGroupBooking(row.item)">
-                      {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}
-                    </b-dropdown-item>
+                  <template
+                    v-if="row.item.offsite_location && row.item.offsite_location !== '_offsite'"
+                  >
+                    <b-dropdown-item
+                      size="sm"
+                      v-if="row.item.offsite_location"
+                      @click="editGroupBooking(row.item)"
+                    >{{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}</b-dropdown-item>
                   </template>
                   <template template v-if="!row.item.offsite_location">
-                    <b-dropdown-item size="sm"
-                                     v-if="row.item.booking && Object.keys(row.item.booking).length > 0"
-                                     @click="updateCalendarBooking(row.item)">
-                      {{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}</b-dropdown-item>
-                    <b-dropdown-item size="sm"
-                                     v-if="!row.item.booking || Object.keys(row.item.booking).length === 0"
-                                     @click="addCalendarBooking(row.item)">Schedule Exam</b-dropdown-item>
+                    <b-dropdown-item
+                      size="sm"
+                      v-if="row.item.booking && Object.keys(row.item.booking).length > 0"
+                      @click="updateCalendarBooking(row.item)"
+                    >{{ checkInvigilator(row.item) ? 'Update Booking' : 'Add Invigilator' }}</b-dropdown-item>
+                    <b-dropdown-item
+                      size="sm"
+                      v-if="!row.item.booking || Object.keys(row.item.booking).length === 0"
+                      @click="addCalendarBooking(row.item)"
+                    >Schedule Exam</b-dropdown-item>
                   </template>
                 </template>
 
-                <b-dropdown-item size="sm"
-                    v-if="!(row.item.exam_type.group_exam_ind && row.item.is_pesticide)"
-                    @click="editExamDetails(row.item)">Edit/Print Exam Details</b-dropdown-item>
-                <b-dropdown-item size="sm"
-                                 @click="returnExam(row.item)">
-                  {{ row.item.is_pesticide ? 'Upload Exam' : 'Return Exam' }}
-                </b-dropdown-item>
+                <b-dropdown-item
+                  size="sm"
+                  v-if="!(row.item.exam_type.group_exam_ind && row.item.is_pesticide)"
+                  @click="editExamDetails(row.item)"
+                >Edit/Print Exam Details</b-dropdown-item>
+                <b-dropdown-item
+                  size="sm"
+                  @click="returnExam(row.item)"
+                >{{ row.item.is_pesticide ? 'Upload Exam' : 'Return Exam' }}</b-dropdown-item>
               </template>
 
               <!--  Options for if you're editing an exam for a different office.  -->
               <template v-if="officeFilter != userOffice && officeFilter != 'default'">
-                <b-dropdown-item size="sm"
-                                 v-if="row.item.offsite_location"
-                                 @click="editGroupBooking(row.item)">Edit Booking</b-dropdown-item>
-                <b-dropdown-item size="sm"
-                                 @click="editExamDetails(row.item)">Edit/Print Exam Details</b-dropdown-item>
-                <b-dropdown-item size="sm" v-if="row.item.is_pesticide"
-                      @click="returnExam(row.item)">Upload Exam
-                </b-dropdown-item>
+                <b-dropdown-item
+                  size="sm"
+                  v-if="row.item.offsite_location"
+                  @click="editGroupBooking(row.item)"
+                >Edit Booking</b-dropdown-item>
+                <b-dropdown-item
+                  size="sm"
+                  @click="editExamDetails(row.item)"
+                >Edit/Print Exam Details</b-dropdown-item>
+                <b-dropdown-item
+                  size="sm"
+                  v-if="row.item.is_pesticide"
+                  @click="returnExam(row.item)"
+                >Upload Exam</b-dropdown-item>
               </template>
             </template>
 
             <!--  If a returned exam, show Edit Return Details option.  -->
             <template v-if="examReturnedFilter(row.item)">
-              <b-dropdown-item size="sm"
-                               @click="returnExam(row.item)">Edit Return Details</b-dropdown-item>
+              <b-dropdown-item size="sm" @click="returnExam(row.item)">Edit Return Details</b-dropdown-item>
             </template>
           </b-dropdown>
         </template>
-        <template slot="office" slot-scope="row">
-         {{ row.item.office.office_name }}
-        </template>
+        <template slot="office" slot-scope="row">{{ row.item.office.office_name }}</template>
       </b-table>
       <div class="text-center" v-if="isLoading">
         <b-spinner variant="primary" label="Loading"></b-spinner>
@@ -496,7 +575,7 @@ import OfficeDrop from './office-drop'
 import ReturnExamModal from './return-exam-form-modal'
 import SuccessExamAlert from './success-exam-alert'
 import DeleteExamModal from './delete-exam-modal'
-import AddCitizen from '../add-citizen/add-citizen'
+import AddCitizen from '../AddCitizen/add-citizen'
 import zone from 'moment-timezone'
 import UploadPesticideModal from './upload-pesticide-exam'
 
@@ -765,13 +844,13 @@ export default {
       } else if (item.exam_type.group_exam_ind === 1 && length_of_invigilator_array < number_of_invigilators) {
         return false
       } else if (item.exam_type.group_exam_ind === 0 && item.booking && item.exam_type.exam_type_name !== 'Monthly Session Exam' &&
-          (number_of_invigilators == 1 || item.booking.sbc_staff_invigilated)) {
+        (number_of_invigilators == 1 || item.booking.sbc_staff_invigilated)) {
         return true
       } else if (item.exam_type.exam_type_name === 'Monthly Session Exam' &&
-          length_of_invigilator_array >= number_of_invigilators) {
+        length_of_invigilator_array >= number_of_invigilators) {
         return true
       } else if (item.exam_type.exam_type_name === 'Monthly Session Exam' &&
-          length_of_invigilator_array < number_of_invigilators) {
+        length_of_invigilator_array < number_of_invigilators) {
         return false
       }
       return false
@@ -1637,66 +1716,67 @@ export default {
 </script>
 
 <style scoped>
-  .open-cal-link {
-    text-decoration: #007bff underline !important;
-    text-underline-position: under !important;
-    font-size: .85rem !important;
-    color: #007bff !important;
-    font-weight: 300 !important;
-  }
-  .expired {
-    color: red;
-  }
-  .view-details-link {
-    text-decoration: #007bff underline !important;
-    text-underline-position: under;
-    font-size: .85rem;
-    color: #007bff !important;
-    font-weight: 300;
-  }
-  .view-details-link:hover {
-    font-weight: 600;
-  }
-  .open-cal-link:hover {
-    font-weight: 600;
-  }
-  .schedule-link {
-    text-decoration: #28a745 underline !important;
-    text-underline-position: under;
-    font-size: .85rem;
-    color: #28a745 !important;
-    font-weight: 300;
-  }
-  .schedule-link:hover {
-    font-weight: 600;
-  }
-  .label-text {
-    font-size: .9rem;
-  }
-  .exam-table-holder {
-    border: 1px solid dimgrey;
-  }
-  .tr-container-div {
-    min-height: 50% !important;
-  }
-  .details-slot-div {
-    display: flex;
-    justify-content: flex-start;
-    justify-items: flex-start;
-    width: 100%;
-    padding-top: 6px;
-    padding-bottom: 6px;
-  }
-  .pagination-class {
-    position: fixed;
-    bottom: 35px;
-    left: 30px;
-  }
-  .icon-cursor-hover {
-    cursor: pointer !important;
-  }
-  .btn:active, .btn.active {
-   background-color: #184368 !important;
-   color: white !important;
-  }
+.open-cal-link {
+  text-decoration: #007bff underline !important;
+  text-underline-position: under !important;
+  font-size: 0.85rem !important;
+  color: #007bff !important;
+  font-weight: 300 !important;
+}
+.expired {
+  color: red;
+}
+.view-details-link {
+  text-decoration: #007bff underline !important;
+  text-underline-position: under;
+  font-size: 0.85rem;
+  color: #007bff !important;
+  font-weight: 300;
+}
+.view-details-link:hover {
+  font-weight: 600;
+}
+.open-cal-link:hover {
+  font-weight: 600;
+}
+.schedule-link {
+  text-decoration: #28a745 underline !important;
+  text-underline-position: under;
+  font-size: 0.85rem;
+  color: #28a745 !important;
+  font-weight: 300;
+}
+.schedule-link:hover {
+  font-weight: 600;
+}
+.label-text {
+  font-size: 0.9rem;
+}
+.exam-table-holder {
+  border: 1px solid dimgrey;
+}
+.tr-container-div {
+  min-height: 50% !important;
+}
+.details-slot-div {
+  display: flex;
+  justify-content: flex-start;
+  justify-items: flex-start;
+  width: 100%;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+.pagination-class {
+  position: fixed;
+  bottom: 35px;
+  left: 30px;
+}
+.icon-cursor-hover {
+  cursor: pointer !important;
+}
+.btn:active,
+.btn.active {
+  background-color: #184368 !important;
+  color: white !important;
+}
 </style>

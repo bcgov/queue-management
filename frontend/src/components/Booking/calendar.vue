@@ -3,35 +3,40 @@
     <div style="display: flex; justify-content: flex-start">
       <div style="padding: 0; margin-top:auto; margin-left: 20px;">
         <b-form inline>
-          <label class="mr-2">Filter Exams
-            <font-awesome-icon icon="filter"
-                               class="m-0 p-0"
-                               style="font-size: 1rem;"/>
+          <label class="mr-2">
+            Filter Exams
+            <font-awesome-icon icon="filter" class="m-0 p-0" style="font-size: 1rem;" />
           </label>
-          <b-form-input v-model="searchTerm"
-                        size="sm"
-                        @input="filter"></b-form-input>
-          <b-button-group horizontal
-                          class="ml-3 mb-2 pt-2"
-                          label="Show Bookings in">
-            <b-button size="sm"
-                      variant="primary"
-                      :pressed="!offsiteVisible"
-                      @click="toggleOffsite(false)">On-site</b-button>
-            <b-button size="sm"
-                      variant="primary"
-                      :pressed="offsiteOnly"
-                      @click="toggleOffsiteOnly('offsite-only')">Off-site</b-button>
-            <b-button size="sm"
-                      variant="primary"
-                      :pressed="offsiteVisible && !offsiteOnly"
-                      @click="toggleOffsiteOnly('both')"><span class="mx-1">Both</span></b-button>
+          <b-form-input v-model="searchTerm" size="sm" @input="filter"></b-form-input>
+          <b-button-group horizontal class="ml-3 mb-2 pt-2" label="Show Bookings in">
+            <b-button
+              size="sm"
+              variant="primary"
+              :pressed="!offsiteVisible"
+              @click="toggleOffsite(false)"
+            >On-site</b-button>
+            <b-button
+              size="sm"
+              variant="primary"
+              :pressed="offsiteOnly"
+              @click="toggleOffsiteOnly('offsite-only')"
+            >Off-site</b-button>
+            <b-button
+              size="sm"
+              variant="primary"
+              :pressed="offsiteVisible && !offsiteOnly"
+              @click="toggleOffsiteOnly('both')"
+            >
+              <span class="mx-1">Both</span>
+            </b-button>
           </b-button-group>
         </b-form>
       </div>
-      <div class="w-50 mt-2 ml-3 pl-3"
-           style="display: flex; justify-content: space-between;"
-           v-if="calView === 'listYear'">
+      <div
+        class="w-50 mt-2 ml-3 pl-3"
+        style="display: flex; justify-content: space-between;"
+        v-if="calView === 'listYear'"
+      >
         <template v-for="col in roomLegendArray">
           <div>
             <b-badge :style="{backgroundColor: `${col.color}`}">
@@ -43,21 +48,24 @@
       </div>
     </div>
     <keep-alive>
-      <full-calendar ref="bookingcal"
-                     key="bookingcal"
-                     id="bookingcal"
-                     class="q-calendar-margins"
-                     @event-selected="eventSelected"
-                     @view-render="viewRender"
-                     @event-created="selectEvent"
-                     @event-render="eventRender"
-                     :events="events"
-                     :config="config">
-      </full-calendar>
+      <full-calendar
+        ref="bookingcal"
+        key="bookingcal"
+        id="bookingcal"
+        class="q-calendar-margins"
+        @event-selected="eventSelected"
+        @view-render="viewRender"
+        @event-created="selectEvent"
+        @event-render="eventRender"
+        :events="events"
+        :config="config"
+      ></full-calendar>
     </keep-alive>
-    <div class="w-50 mt-2 ml-3 pl-3"
-         style="display: flex; justify-content: space-between;"
-         v-if="calView === 'month'">
+    <div
+      class="w-50 mt-2 ml-3 pl-3"
+      style="display: flex; justify-content: space-between;"
+      v-if="calView === 'month'"
+    >
       <template v-for="col in roomLegendArray">
         <div>
           <b-badge :style="{backgroundColor: `${col.color}`}">
@@ -67,12 +75,12 @@
         </div>
       </template>
     </div>
-  <BookingModal />
-  <ExamInventoryModal v-if="showExamInventoryModal" />
-  <OtherBookingModal :editSelection="editSelection" :getEvent="getEvent" />
-  <EditBookingModal :tempEvent="tempEvent" />
-  <BookingBlackoutModal v-if="showBookingBlackoutModal"></BookingBlackoutModal>
-</div>
+    <BookingModal />
+    <ExamInventoryModal v-if="showExamInventoryModal" />
+    <OtherBookingModal :editSelection="editSelection" :getEvent="getEvent" />
+    <EditBookingModal :tempEvent="tempEvent" />
+    <BookingBlackoutModal v-if="showBookingBlackoutModal"></BookingBlackoutModal>
+  </div>
 </template>
 
 <script>
@@ -87,7 +95,7 @@ import moment from 'moment'
 import OtherBookingModal from './other-booking-modal'
 import 'fullcalendar-scheduler'
 import 'fullcalendar/dist/fullcalendar.css'
-import { adjustColor } from '../store/helpers'
+import { adjustColor } from '../../store/helpers'
 import OfficeDropDownFilter from '../exams/office-dropdown-filter'
 
 export default {
@@ -615,26 +623,28 @@ export default {
 </script>
 
 <style scoped>
-  .btn {
-    border: none !important;
-  }
-  .label-text {
-    font-size: .9rem;
-  }
-  .btn {
-    border: none !important;
-    box-shadow: none !important;
-    transition: none !important;
-  }
-  .btn:active, .btn.active {
-    background-color: whitesmoke  !important;
-    color: darkgrey !important;
-  }
-  .exam-table-holder {
-    border: 1px solid dimgrey;
-  }
-  .btn:active, .btn.active {
-    background-color: #184368 !important;
-    color: white !important;
-  }
+.btn {
+  border: none !important;
+}
+.label-text {
+  font-size: 0.9rem;
+}
+.btn {
+  border: none !important;
+  box-shadow: none !important;
+  transition: none !important;
+}
+.btn:active,
+.btn.active {
+  background-color: whitesmoke !important;
+  color: darkgrey !important;
+}
+.exam-table-holder {
+  border: 1px solid dimgrey;
+}
+.btn:active,
+.btn.active {
+  background-color: #184368 !important;
+  color: white !important;
+}
 </style>

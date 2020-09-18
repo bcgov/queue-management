@@ -44,6 +44,12 @@ module.exports = {
     "no-unused-vars": "warn",
     "no-undef": "warn",
     "new-cap": "warn",
+    "vue/return-in-computed-property": "warn",
+    "vue/require-v-for-key": "warn",
+    "vue/no-side-effects-in-computed-properties": "warn",
+    "vue/valid-v-for": "warn",
+    "no-mixed-operators": "warn",
+    "vue/no-parsing-error": "warn"
   },
   parserOptions: {
     parser: "@typescript-eslint/parser"

@@ -32,19 +32,19 @@ limitations under the License.
 import { Component, Vue } from 'vue-property-decorator'
 // eslint-disable-next-line sort-imports
 import { Getter, State } from 'vuex-class'
-import AddExamModal from './exams/add-exam-modal.vue'
+import AddExamModal from './components/exams/add-exam-modal.vue'
 import Alert from './alert.vue'
 import ExamAlert from './exam-alert.vue'
-import FailureExamAlert from './exams/failure-exam-alert.vue'
+import FailureExamAlert from './components/exams/failure-exam-alert.vue'
 import Feedback from './feedback.vue'
-import Footer from './layout/footer.vue'
-import Header from './layout/header.vue'
-import Login from './Login.vue'
+import Footer from './components/Layout/footer.vue'
+import Header from './components/Layout/header.vue'
+import Login from './components/Login/Login.vue'
 import LoginWarning from './login-warning.vue'
-import Nav from './layout/nav.vue'
+import Nav from './components/Layout/nav.vue'
 import Response from './response.vue'
 import Socket from './Socket.vue'
-import SuccessExamAlert from './exams/success-exam-alert.vue'
+import SuccessExamAlert from './components/exams/success-exam-alert.vue'
 
 @Component({
   components: {

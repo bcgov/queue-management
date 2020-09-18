@@ -1,20 +1,21 @@
 <template>
   <fragment>
-    <ApptBookingModal :clickedTime="clickedTime"  :clickedAppt="clickedAppt"/>
-    <AppointmentBlackoutModal/>
+    <ApptBookingModal :clickedTime="clickedTime" :clickedAppt="clickedAppt" />
+    <AppointmentBlackoutModal />
     <CheckInModal :clickedAppt="clickedAppt" />
     <keep-alive>
-      <full-calendar ref="appointments"
-                     key="appointments"
-                     id="appointments"
-                     class="q-calendar-margins"
-                     @event-selected="eventSelected"
-                     @view-render="viewRender"
-                     @event-created="selectEvent"
-                     @event-render="eventRender"
-                     :events="appointment_events"
-                     :config="config">
-      </full-calendar>
+      <full-calendar
+        ref="appointments"
+        key="appointments"
+        id="appointments"
+        class="q-calendar-margins"
+        @event-selected="eventSelected"
+        @view-render="viewRender"
+        @event-created="selectEvent"
+        @event-render="eventRender"
+        :events="appointment_events"
+        :config="config"
+      ></full-calendar>
     </keep-alive>
   </fragment>
 </template>
@@ -28,7 +29,7 @@ import 'fullcalendar/dist/fullcalendar.css'
 import ApptBookingModal from './appt-booking-modal/appt-booking-modal'
 import AppointmentBlackoutModal from './appt-booking-modal/appt-blackout-modal'
 import CheckInModal from './checkin-modal'
-import AddCitizen from '../add-citizen/add-citizen'
+import AddCitizen from '../AddCitizen/add-citizen'
 
 const { mapActions, mapGetters, mapMutations, mapState } = createNamespacedHelpers('appointmentsModule')
 
@@ -258,22 +259,23 @@ export default {
 </script>
 
 <style scoped>
-  .btn {
-    border: none !important;
-  }
-  .label-text {
-    font-size: .9rem;
-  }
-  .btn {
-    border: none !important;
-    box-shadow: none !important;
-    transition: none !important;
-  }
-  .btn:active, .btn.active {
-    background-color: whitesmoke  !important;
-    color: darkgrey !important;
-  }
-  .exam-table-holder {
-    border: 1px solid dimgrey;
-  }
+.btn {
+  border: none !important;
+}
+.label-text {
+  font-size: 0.9rem;
+}
+.btn {
+  border: none !important;
+  box-shadow: none !important;
+  transition: none !important;
+}
+.btn:active,
+.btn.active {
+  background-color: whitesmoke !important;
+  color: darkgrey !important;
+}
+.exam-table-holder {
+  border: 1px solid dimgrey;
+}
 </style>
