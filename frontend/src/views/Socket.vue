@@ -18,7 +18,7 @@ limitations under the License.*/
 
 <script>
 import { mapActions } from 'vuex'
-import config from './../config'
+import config from './../../config'
 
 var io = require('socket.io-client')
 var socket

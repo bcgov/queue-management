@@ -1,10 +1,10 @@
 
-import App from '../App.vue'
+import App from '../views/App.vue'
 import Dash from '@/components/ServeCitizen/dash.vue'
 import ButtonsDash from '@/components/ServeCitizen/dash-buttons'
 import Smartboard from '../smartboard/'
-import ButtonsAdmin from '../buttons-admin'
-import Admin from '../admin'
+import ButtonsAdmin from '../views/buttons-admin'
+import Admin from '../views/admin.vue'
 import Exams from '../components/exams/exams'
 import ButtonsExams from '../components/exams/buttons-exams'
 import Agenda from '../agenda/agenda'

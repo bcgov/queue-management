@@ -6,10 +6,10 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import App from './App.vue'
+// import App from './view/App.vue'
 
 @Component({
-  components: { App }
+  components: {}
 })
 export default class MainApp extends Vue { }
 </script>
