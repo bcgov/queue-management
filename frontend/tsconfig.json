@@ -14,7 +14,9 @@
     "baseUrl": ".",
     "types": [
       "webpack-env",
-      "jest"
+      "jest",
+      "v-dragged",
+      "vue-fragment"
     ],
     "paths": {
       "@/*": [
@@ -26,16 +28,19 @@
       "dom",
       "dom.iterable",
       "scripthost"
-    ]
+    ],
+    "noImplicitAny": false,
+    "allowJs": true,
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.vue",
     "tests/**/*.ts",
-    "tests/**/*.tsx"
+    "tests/**/*.tsx",
+    "index.d.ts",
   ],
   "exclude": [
     "node_modules"
-  ]
+  ],
 }

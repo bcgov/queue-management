@@ -12,9 +12,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. */
 
+/*eslint-disable */
+/*tslint-disable */
 import Vue from 'vue'
 import 'es6-promise/auto'
-import { store } from './store/'
+import store from './store/index.js'
 import BootstrapVue from 'bootstrap-vue'
 import router from './router'
 import { Plugin } from 'vue-fragment'
@@ -64,7 +66,7 @@ require('es6-shim')
 // require('Keycloak')
 require('../static/keycloak.js')
 // import * as Keycloak from "../static/keycloak.js";
-// const Keycloak = window.Keycloak;
+const Keycloak = window && (window as any).Keycloak;
 
 Vue.use(VDragged)
 Vue.use(Plugin)
