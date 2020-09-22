@@ -51,7 +51,11 @@ module.exports = {
     "no-mixed-operators": "warn",
     "vue/no-parsing-error": "warn",
     "vue/no-unused-vars": "warn",
-    "vue/no-use-v-if-with-v-for": "warn"
+    "vue/no-use-v-if-with-v-for": "warn",
+    "no-unused-expressions": "warn",
+    "semi": "warn",
+
+
   },
   parserOptions: {
     parser: "@typescript-eslint/parser"
