@@ -54,6 +54,7 @@ module.exports = {
     "vue/no-use-v-if-with-v-for": "warn",
     "no-unused-expressions": "warn",
     "semi": "warn",
+    "no-case-declarations": "warn"
   },
   parserOptions: {
     parser: "@typescript-eslint/parser"
