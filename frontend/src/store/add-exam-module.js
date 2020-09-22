@@ -2,47 +2,47 @@ import Vue from 'vue'
 import { Axios } from './helpers'
 import axios from 'axios'
 
-//question definition mixins
+// question definition mixins
 const addExamCounterQ = {
   digit: false,
   key: 'add_exam_counter',
   kind: 'add_exam_counter',
-  minLength: 1,
+  minLength: 1
 }
 const dateTimeQ = {
   digit: false,
   key: 'expiry_date',
   kind: 'date',
   minLength: 1,
-  text: 'Date and Time',
+  text: 'Date and Time'
 }
 const eventIdQ = {
   digit: true,
   key: 'event_id',
   kind: 'input',
   minLength: 4,
-  text: 'Event ID',
+  text: 'Event ID'
 }
 const examineeEmailQ = {
   digit: false,
   key: 'examinee_email',
   kind: 'input',
   minLength: 0,
-  text: `Candidate's Email`,
+  text: 'Candidate\'s Email'
 }
 const examineeNameQ = {
   digit: false,
   key: 'examinee_name',
   kind: 'input',
   minLength: 2,
-  text: `Candidate's Name`,
+  text: 'Candidate\'s Name'
 }
 const examineePhoneQ = {
   digit: false,
   key: 'examinee_phone',
   kind: 'input',
   minLength: 0,
-  text: `Candidate's Phone`,
+  text: 'Candidate\'s Phone'
 }
 const examMethodQ = {
   digit: false,
@@ -53,7 +53,7 @@ const examMethodQ = {
     { text: 'paper', value: 'paper', id: 'exam_method' },
     { text: 'online', value: 'online', id: 'exam_method' }
   ],
-  text: 'Exam Method',
+  text: 'Exam Method'
 }
 const examNameQ = {
   digit: false,
@@ -61,7 +61,7 @@ const examNameQ = {
   kind: 'input',
   minLength: 2,
   maxLength: 50,
-  text: 'Exam Name',
+  text: 'Exam Name'
 }
 const examReceivedQ = {
   digit: false,
@@ -69,21 +69,21 @@ const examReceivedQ = {
   kind: 'exam_received',
   minLength: 1,
   text1: 'Was the Exam Package Receieved Today?',
-  text2: 'Date of Receipt of Exam Package',
+  text2: 'Date of Receipt of Exam Package'
 }
 const examTypeQ = {
   digit: false,
   key: 'exam_type_id',
   kind: 'dropdown',
   minLength: 1,
-  text: 'Exam Type ID / Colour',
+  text: 'Exam Type ID / Colour'
 }
 const expiryQ = {
   digit: false,
   key: 'expiry_date',
   kind: 'date',
   minLength: 1,
-  text: 'Exam Expiry Date',
+  text: 'Exam Expiry Date'
 }
 const indOrGroupQ = {
   digit: false,
@@ -94,28 +94,28 @@ const indOrGroupQ = {
     { text: 'Individual', value: 'individual' },
     { text: 'Group', value: 'group' }
   ],
-  text: 'Individual or Group Exam?',
+  text: 'Individual or Group Exam?'
 }
 const notesQ = {
   digit: false,
   key: 'notes',
   kind: 'notes',
   minLength: 0,
-  text: 'Additional Notes (optional)',
+  text: 'Additional Notes (optional)'
 }
 const numberStudentsQ = {
   digit: true,
   key: 'number_of_students',
   kind: 'input',
   minLength: 1,
-  text: 'Number of Students',
+  text: 'Number of Students'
 }
-const officeSelectQ =  {
+const officeSelectQ = {
   digit: true,
   key: 'office_id',
   kind: 'office',
   minLength: 1,
-  text: 'Office',
+  text: 'Office'
 }
 const offsiteQ = {
   digit: false,
@@ -123,7 +123,7 @@ const offsiteQ = {
   kind: 'locationInput',
   minLength: 2,
   text: 'Location',
-  type: 'input',
+  type: 'input'
 }
 const onOrOffQ = {
   digit: false,
@@ -131,31 +131,31 @@ const onOrOffQ = {
   kind: 'offsiteSelect',
   minLength: 1,
   options: [
-    { text: 'Offsite: Exam will be held at an external location', value: 'off', },
-    { text: 'Onsite: Exam will be held at SBC Office', value: 'on', }
+    { text: 'Offsite: Exam will be held at an external location', value: 'off' },
+    { text: 'Onsite: Exam will be held at SBC Office', value: 'on' }
   ],
-  text: 'Exam Location',
+  text: 'Exam Location'
 }
 const payeeEmailQ = {
   digit: false,
   key: 'payee_email',
   kind: 'input',
   minLength: 0,
-  text: `Payee's Email`,
+  text: 'Payee\'s Email'
 }
 const payeeNameQ = {
   digit: false,
   key: 'payee_name',
   kind: 'input',
   minLength: 0,
-  text: `Payee's Name`,
+  text: 'Payee\'s Name'
 }
 const payeePhoneQ = {
   digit: false,
   key: 'payee_phone',
   kind: 'input',
   minLength: 0,
-  text: `Payee's Phone`,
+  text: 'Payee\'s Phone'
 }
 const pesticideFeesQ = {
   digit: false,
@@ -166,14 +166,14 @@ const pesticideFeesQ = {
     { text: 'Collect at Exam Time', value: 'collect' },
     { text: 'Paid with Liasion', value: 'paid' }
   ],
-  text: 'Fees',
+  text: 'Fees'
 }
 const pesticideGroupTypesQ = {
   digit: false,
   key: 'group_exam_types',
   kind: 'group_exam_types',
   minLength: 0,
-  text: 'Number of Candidates',
+  text: 'Number of Candidates'
 }
 // pesticide Exam Type defined in step1 getter since requires state.pesticideExamTypes
 const sbcManagedQ = {
@@ -182,10 +182,10 @@ const sbcManagedQ = {
   kind: 'offsiteSelect',
   minLength: 1,
   options: [
-    { text: 'Non-SBC (Invigilator) Managed Exam', value: 'non-sbc', },
-    { text: 'SBC Managed Exam', value: 'sbc', }
+    { text: 'Non-SBC (Invigilator) Managed Exam', value: 'non-sbc' },
+    { text: 'SBC Managed Exam', value: 'sbc' }
   ],
-  text: 'SBC or Invigilator Managed?',
+  text: 'SBC or Invigilator Managed?'
 }
 const summaryQ = {
   digit: false,
@@ -193,35 +193,35 @@ const summaryQ = {
   kind: null,
   minLength: 0,
   text1: null,
-  text2: null,
+  text2: null
 }
 const timeQ = {
   digit: false,
   key: 'exam_time',
   kind: 'time',
   minLength: 1,
-  text: 'Exam Time',
+  text: 'Exam Time'
 }
 
 export const addExamModule = {
   actions: {
-    clearChallengerBooking({ commit }) {
+    clearChallengerBooking ({ commit }) {
       commit('clearChallengerBooking')
       commit('clearAddExamModalFromCalendarStatus')
     },
-    downloadExam(context, payload) {
-      return new Promise(( resolve, reject ) => {
+    downloadExam (context, payload) {
+      return new Promise((resolve, reject) => {
         const url = `/exams/${payload.exam_id}/download/`
         axios({
           baseURL: process.env.API_URL,
           url: url,
           withCredentials: true,
           headers: {
-            'Accept': 'application/pdf',
-            'Authorization': `Bearer ${context.rootState.bearer}`
+            Accept: 'application/pdf',
+            Authorization: `Bearer ${context.rootState.bearer}`
           },
           method: 'GET',
-          responseType: 'blob', // important
+          responseType: 'blob' // important
         })
           .then(resp => {
             resolve(resp)
@@ -230,15 +230,15 @@ export const addExamModule = {
             console.log(error)
             reject(error)
           })
-      });
+      })
     },
-    getAllPesticideExams({ commit, rootState }) {
+    getAllPesticideExams ({ commit, rootState }) {
       return new Promise((resolve, reject) => {
-        let url = "/exams/"
+        const url = '/exams/'
 
         Axios(rootState.bearer).get(url)
           .then(resp => {
-            let pesticideExams = resp.data.exams.filter(exam => exam.is_pesticide)
+            const pesticideExams = resp.data.exams.filter(exam => exam.is_pesticide)
             commit('setAllPesticideExams', pesticideExams)
             commit('toggleShowAllPesticideExams', true)
             resolve()
@@ -249,14 +249,14 @@ export const addExamModule = {
           })
       })
     },
-    getPesticideExamTypes({ commit, rootState }) {
+    getPesticideExamTypes ({ commit, rootState }) {
       console.log('getPesticideExamTypes')
       return new Promise((resolve, reject) => {
-        let url = "/exam_types/"
+        const url = '/exam_types/'
 
         Axios(rootState.bearer).get(url)
           .then(resp => {
-            let pesticideExams = resp.data.exam_types.filter(exam_type => exam_type.pesticide_exam_ind)
+            const pesticideExams = resp.data.exam_types.filter(exam_type => exam_type.pesticide_exam_ind)
             console.log('pesticideExams', pesticideExams)
             commit('setPesticideExamTypes', pesticideExams)
             resolve()
@@ -267,16 +267,16 @@ export const addExamModule = {
           })
       })
     },
-    submitExam(context, payload) {
+    submitExam (context, payload) {
       console.log(context)
       console.log(payload)
-      return new Promise(( resolve, reject ) => {
+      return new Promise((resolve, reject) => {
         const url = `/exams/${payload.exam.exam_id}/upload/`
 
         Axios(context.rootState.bearer).get(url)
           .then((resp) => {
             console.log(resp)
-            let putUrl = resp.data.url
+            const putUrl = resp.data.url
 
             const config = {
               headers: {
@@ -284,7 +284,7 @@ export const addExamModule = {
               },
               transformRequest: (data, headers) => {
                 // delete Authorization header for file upload requests (credentials are via a presigned link)
-                delete headers.common['Authorization']
+                delete headers.common.Authorization
                 return data
               }
             }
@@ -292,7 +292,7 @@ export const addExamModule = {
             axios.put(putUrl, payload.file, config)
               .then((putResponse) => {
                 console.log(putResponse)
-                let bcmpUrl =  `/exams/${payload.exam.exam_id}/transfer/`
+                const bcmpUrl = `/exams/${payload.exam.exam_id}/transfer/`
 
                 Axios(context.rootState.bearer).post(bcmpUrl)
                   .then((transferResponse) => {
@@ -315,10 +315,10 @@ export const addExamModule = {
     }
   },
   getters: {
-    add_modal_steps(state, getters, rootState) {
-      if ( rootState.addExamModal && rootState.addExamModal.setup ) {
-        let { capturedExam } = rootState
-        switch ( rootState.addExamModal.setup ) {
+    add_modal_steps (state, getters, rootState) {
+      if (rootState.addExamModal && rootState.addExamModal.setup) {
+        const { capturedExam } = rootState
+        switch (rootState.addExamModal.setup) {
           case 'challenger':
             return state.addChallengerSteps
           case 'group':
@@ -334,103 +334,103 @@ export const addExamModule = {
         }
       }
     },
-    addPesticideSteps(state, getters) {
+    addPesticideSteps (state, getters) {
       return [
         ...getters.pesticideStep1,
         ...getters.pesticideStep2,
         ...getters.pesticideStep3,
-        ...getters.pesticideStep4,
+        ...getters.pesticideStep4
       ]
     },
-    pesticideStep1(state, getters, rootState) {
-      let { capturedExam, pesticide_invigilators, pesticide_offsite_invigilators } = rootState
-      let pesticideTypeQ = {
+    pesticideStep1 (state, getters, rootState) {
+      const { capturedExam, pesticide_invigilators, pesticide_offsite_invigilators } = rootState
+      const pesticideTypeQ = {
         key: 'exam_type_id',
         text: 'Type of Pesticide Exam',
         kind: 'select',
         options: state.pesticideExamTypes.map(type => ({ text: type.exam_type_name, value: type.exam_type_id })),
         minLength: 1,
-        digit: false,
+        digit: false
       }
 
-      let step1 = { ...state.pesticideStep1 }
+      const step1 = { ...state.pesticideStep1 }
 
-      if ( capturedExam.ind_or_group === 'individual' ) {
-        if ( step1.questions.findIndex(step => step.key === 'pesticide_type') === -1 ) {
+      if (capturedExam.ind_or_group === 'individual') {
+        if (step1.questions.findIndex(step => step.key === 'pesticide_type') === -1) {
           step1.questions = [...step1.questions, pesticideTypeQ]
         }
       }
-      if ( capturedExam.sbc_managed === 'sbc' ) {
+      if (capturedExam.sbc_managed === 'sbc') {
         step1.questions = [...step1.questions, officeSelectQ]
-        if( capturedExam.ind_or_group === 'group' ) {
+        if (capturedExam.ind_or_group === 'group') {
           step1.questions.push(offsiteQ)
         }
       }
-      if ( capturedExam.sbc_managed === 'non-sbc' ) {
-        let invigilatorQ = {
+      if (capturedExam.sbc_managed === 'non-sbc') {
+        const invigilatorQ = {
           key: 'invigilator_id',
           text: 'Invigilator',
           kind: 'select',
           options: pesticide_offsite_invigilators.map(invigilator => ({ text: invigilator.invigilator_name, value: parseInt(invigilator.invigilator_id) })),
           minLength: 1,
-          digit: true,
+          digit: true
         }
         step1.questions = [...step1.questions, offsiteQ, invigilatorQ]
       }
       return [step1]
     },
-    pesticideStep2(state, getters, rootState) {
-      let { capturedExam } = rootState
+    pesticideStep2 (state, getters, rootState) {
+      const { capturedExam } = rootState
       let step2
 
-      if ( capturedExam.ind_or_group === 'individual' ) {
-        let nameQ = { ...examineeNameQ }
+      if (capturedExam.ind_or_group === 'individual') {
+        const nameQ = { ...examineeNameQ }
         nameQ.minLength = 0
         step2 = { ...state.pesticideStep2_individual }
         step2.questions[0] = nameQ
         if (capturedExam.fees === 'paid') {
           step2.questions[4] = {
             key: 'receipt_number',
-            minLength: 0,
+            minLength: 0
           }
         }
       }
-      if ( capturedExam.ind_or_group === 'group' ) {
+      if (capturedExam.ind_or_group === 'group') {
         step2 = { ...state.pesticideStep2_group }
       }
       return [step2]
     },
-    pesticideStep3(state, getters, rootState) {
-      let { capturedExam } = rootState
+    pesticideStep3 (state, getters, rootState) {
+      const { capturedExam } = rootState
 
-      if ( capturedExam.ind_or_group === 'individual' ) {
-        if ( rootState.captureITAExamTabSetup.capturePayee ) {
-          return [ state.pesticideStep3_payee ]
+      if (capturedExam.ind_or_group === 'individual') {
+        if (rootState.captureITAExamTabSetup.capturePayee) {
+          return [state.pesticideStep3_payee]
         }
       }
-      if ( capturedExam.ind_or_group === 'group' ) {
-        return [ state.pesticideStep3_group ]
+      if (capturedExam.ind_or_group === 'group') {
+        return [state.pesticideStep3_group]
       }
-      return [ state.pesticideStep3 ]
+      return [state.pesticideStep3]
     },
-    pesticideStep4(state, getters, rootState) {
-      let { capturedExam } = rootState
+    pesticideStep4 (state, getters, rootState) {
+      const { capturedExam } = rootState
 
-      let step4 = { ...state.pesticideStep4_summary }
+      const step4 = { ...state.pesticideStep4_summary }
 
-      return [ step4 ]
-    },
+      return [step4]
+    }
   },
   mutations: {
-    clearChallengerBooking(state) {
+    clearChallengerBooking (state) {
       Vue.delete(
         state,
         'challengerBooking'
       )
     },
-    saveChallengerBooking(state, payload) {
+    saveChallengerBooking (state, payload) {
       Object.keys(payload).forEach(key => {
-        if ( payload[key] ) {
+        if (payload[key]) {
           Vue.set(
             state.challengerBooking,
             key,
@@ -444,96 +444,96 @@ export const addExamModule = {
     setSelectedExams: (state, payload) => state.candidates = payload,
     setCandidateTableData: (state, payload) => state.candidateTableData = payload,
     toggleShowAllPesticideExams: (state, payload) => state.showAllPesticideExams = payload,
-    toggleUploadExamModal: (state, payload) => state.uploadPesticideModalVisible = payload,
+    toggleUploadExamModal: (state, payload) => state.uploadPesticideModalVisible = payload
   },
   state: {
     addChallengerSteps: [
       {
         step: 1,
-        title:'Exam Details',
+        title: 'Exam Details',
         questions: [
           examNameQ,
           onOrOffQ,
-          {...eventIdQ, ...{minLength: 0, digit: false}},
-          {...numberStudentsQ, ...{minLength: 0, digit: false}},
+          { ...eventIdQ, ...{ minLength: 0, digit: false } },
+          { ...numberStudentsQ, ...{ minLength: 0, digit: false } }
         ]
       },
       {
         step: 2,
         title: 'Exam Dates',
-        questions: [ dateTimeQ, timeQ, offsiteQ, ]
+        questions: [dateTimeQ, timeQ, offsiteQ]
       },
       {
         step: 3,
-        title:'Summary',
-        questions: [ summaryQ ]
-      },
+        title: 'Summary',
+        questions: [summaryQ]
+      }
     ],
     addGroupSteps: [
       {
         step: 1,
-        title:'Exam Type',
-        questions: [ examTypeQ ]
+        title: 'Exam Type',
+        questions: [examTypeQ]
       },
       {
         step: 2,
         title: 'Basic Info',
-        questions: [ officeSelectQ, eventIdQ, examNameQ, numberStudentsQ, ]
+        questions: [officeSelectQ, eventIdQ, examNameQ, numberStudentsQ]
       },
       {
         step: 3,
         title: 'Date, Time & Format',
-        questions: [ dateTimeQ, timeQ, examMethodQ, offsiteQ, notesQ, ]
+        questions: [dateTimeQ, timeQ, examMethodQ, offsiteQ, notesQ]
       },
       {
         step: 4,
-        title:'Summary',
-        questions: [ summaryQ ]
-      },
+        title: 'Summary',
+        questions: [summaryQ]
+      }
     ],
     addIndividualSteps: [
       {
         step: 1,
-        title:'Exam Type',
-        questions: [ examTypeQ ]
+        title: 'Exam Type',
+        questions: [examTypeQ]
       },
       {
         step: 2,
-        title:'Exam Info',
-        questions: [ eventIdQ, examNameQ, examineeNameQ, examMethodQ ]
+        title: 'Exam Info',
+        questions: [eventIdQ, examNameQ, examineeNameQ, examMethodQ]
       },
       {
         step: 3,
         title: 'Exam Dates',
-        questions: [ examReceivedQ, expiryQ, notesQ ]
+        questions: [examReceivedQ, expiryQ, notesQ]
       },
       {
         step: 4,
-        title:'Summary',
-        questions: [ summaryQ ]
-      },
+        title: 'Summary',
+        questions: [summaryQ]
+      }
     ],
     addOtherSteps: [
       {
         step: 1,
-        title:'Exam Type',
-        questions: [ examTypeQ ]
+        title: 'Exam Type',
+        questions: [examTypeQ]
       },
       {
         step: 2,
-        title:'Exam Info',
-        questions: [ eventIdQ, examNameQ, examineeNameQ, examMethodQ ]
+        title: 'Exam Info',
+        questions: [eventIdQ, examNameQ, examineeNameQ, examMethodQ]
       },
       {
         step: 3,
         title: 'Exam Dates',
-        questions: [ examReceivedQ, expiryQ, onOrOffQ, notesQ ]
+        questions: [examReceivedQ, expiryQ, onOrOffQ, notesQ]
       },
       {
         step: 4,
-        title:'Summary',
-        questions: [ summaryQ ]
-      },
+        title: 'Summary',
+        questions: [summaryQ]
+      }
     ],
     allPesticideExams: null,
     candidates: [],
@@ -544,44 +544,44 @@ export const addExamModule = {
     pesticideGroupStep3: {
       step: 3,
       title: 'Notes',
-      questions: [ notesQ ]
+      questions: [notesQ]
     },
     pesticideStep1: {
       step: 1,
-      title:'Exam Type',
-      questions: [ indOrGroupQ, sbcManagedQ, ]
+      title: 'Exam Type',
+      questions: [indOrGroupQ, sbcManagedQ]
     },
     pesticideStep2_group: {
       step: 2,
       title: 'Candidates',
-      questions: [ numberStudentsQ, pesticideGroupTypesQ, addExamCounterQ ]
+      questions: [numberStudentsQ, pesticideGroupTypesQ, addExamCounterQ]
     },
     pesticideStep2_individual: {
       step: 2,
       title: 'Candidate Info',
-      questions: [ examineeNameQ, examineePhoneQ, examineeEmailQ, pesticideFeesQ, ]
+      questions: [examineeNameQ, examineePhoneQ, examineeEmailQ, pesticideFeesQ]
     },
     pesticideStep3: {
       step: 3,
       title: 'Notes',
-      questions: [ notesQ ]
+      questions: [notesQ]
     },
     pesticideStep3_payee: {
       step: 3,
       title: 'Payee/Notes',
-      questions: [ payeeNameQ, payeeEmailQ, payeePhoneQ, notesQ ]
+      questions: [payeeNameQ, payeeEmailQ, payeePhoneQ, notesQ]
     },
     pesticideStep3_group: {
       step: 3,
       title: 'Date, Time & Format',
-      questions: [ dateTimeQ, timeQ, notesQ ]
+      questions: [dateTimeQ, timeQ, notesQ]
     },
     pesticideStep4_summary: {
       step: 4,
       title: 'Summary',
-      questions: [ summaryQ ]
+      questions: [summaryQ]
     },
     showAllPesticideExams: false,
-    uploadPesticideModalVisible: false,
-  },
+    uploadPesticideModalVisible: false
+  }
 }

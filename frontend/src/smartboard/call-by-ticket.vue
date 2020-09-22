@@ -69,24 +69,24 @@ const Axios = axios.create({
   baseURL: process.env.API_URL,
   withCredentials: true,
   headers: {
-    'Accept': 'application/json'
+    Accept: 'application/json'
   }
 })
 
 export default {
   name: 'CallByTicket',
-  mounted() {
-    this.$root.$on('addToBoard',() => { this.updateBoard() })
+  mounted () {
+    this.$root.$on('addToBoard', () => { this.updateBoard() })
     this.initializeBoard()
   },
   props: ['smartboardData', 'networkStatus'],
   components: { Video },
-  data() {
+  data () {
     return {
       highlighted: [],
       fields: [
-        {key: 'ticket_number', label: 'Now Calling', tdClass:'text-center'},
-        {key: 'overflow', label:'', tdClass: 'd-none', thClass: 'd-none'}
+        { key: 'ticket_number', label: 'Now Calling', tdClass: 'text-center' },
+        { key: 'overflow', label: '', tdClass: 'd-none', thClass: 'd-none' }
       ],
       citizens: '',
       intervals: {},
@@ -96,10 +96,10 @@ export default {
     }
   },
   computed: {
-    items() {
+    items () {
       if (this.showOverflow === true) {
-        let base = this.invited
-        this.overflow.forEach( (c,i) => {
+        const base = this.invited
+        this.overflow.forEach((c, i) => {
           base[i].overflow = c.ticket_number
         })
         return base
@@ -107,75 +107,72 @@ export default {
         return this.invited
       }
     },
-    longlist() {
+    longlist () {
       if (this.invited.length > 6) {
         return true
       }
       return false
     },
-    headclass() {
+    headclass () {
       if (this.longList) {
         return 'sm-boardtable-head'
       }
       return 'lg-boardtable-head'
     },
-    bodyclass() {
+    bodyclass () {
       if (this.longList) {
         return 'sm-boardtable-body pr-3'
       }
       return 'lg-boardtable-body pr-3'
     },
-    url() {
+    url () {
       return `/smartboard/?office_number=${this.smartboardData.office_number}`
     },
-    invited() {
+    invited () {
       if (this.citizens && this.citizens.length > 0) {
-        let citizens = this.citizens.filter(c=>c.active_period.ps.ps_name === 'Invited')
+        const citizens = this.citizens.filter(c => c.active_period.ps.ps_name === 'Invited')
         let invited = null
         if (citizens.length > 8) {
-          this.overflow = citizens.slice(8, (citizens.length-1))
+          this.overflow = citizens.slice(8, (citizens.length - 1))
           this.showOverflow = true
-          invited = citizens.slice(0,8)
+          invited = citizens.slice(0, 8)
         } else {
           this.overflow = []
           this.showOverflow = false
           invited = citizens
         }
         if (invited.length != 0) {
-          let tickets = []
-          invited.forEach(item => tickets.push({ticket_number: item.ticket_number}))
+          const tickets = []
+          invited.forEach(item => tickets.push({ ticket_number: item.ticket_number }))
           return tickets
         }
       }
-      return [{ticket_number:''}]
+      return [{ ticket_number: '' }]
     },
-    waiting() {
+    waiting () {
       if (this.citizens && this.citizens.length > 0) {
-        return this.citizens.filter(c=>c.active_period.ps.ps_name === 'Waiting').length
+        return this.citizens.filter(c => c.active_period.ps.ps_name === 'Waiting').length
       }
       return 0
     },
-    date() {
-      let d = new Date()
+    date () {
+      const d = new Date()
       return d.toLocaleDateString('en-CA', this.options)
-    },
+    }
 
   },
   methods: {
-    initializeBoard() {
-      Axios.get(this.url).then( resp => {
+    initializeBoard () {
+      Axios.get(this.url).then(resp => {
         this.citizens = resp.data.citizens
         this.$root.$emit('boardConnect', this.office_id)
       })
     },
-    updateBoard() {
-      Axios.get(this.url).then( resp => {
+    updateBoard () {
+      Axios.get(this.url).then(resp => {
         this.citizens = resp.data.citizens
       })
     }
   }
 }
 </script>
-
-
-

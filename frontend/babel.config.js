@@ -1,4 +1,4 @@
-module.exports = function(api) {
+module.exports = function (api) {
   if (api.env('test')) {
     return {
       presets: [
@@ -11,7 +11,7 @@ module.exports = function(api) {
               ]
             },
             useBuiltIns: 'usage',
-            corejs: 3,
+            corejs: 3
           }
         ]
       ]
@@ -24,13 +24,13 @@ module.exports = function(api) {
         {
           modules: false,
           targets: {
-            browsers: ['> 1%','last 2 versions', 'not ie <= 10'],
+            browsers: ['> 1%', 'last 2 versions', 'not ie <= 10']
           },
           useBuiltIns: 'usage',
-          corejs: 3,
+          corejs: 3
         }
-      ],
-    ],
-    
+      ]
+    ]
+
   }
 }

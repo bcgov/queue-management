@@ -6,7 +6,7 @@ export const examsModule = {
       office_number: null,
       setup: 'individual',
       step1MenuOpen: false,
-      visible: false,
+      visible: false
     },
     bookings: [],
     calendarEvents: [],
@@ -19,7 +19,7 @@ export const examsModule = {
       showRadio: true,
       status: 'unknown',
       step: 1,
-      stepsValidated: [],
+      stepsValidated: []
     },
     clickedDate: '',
     editedBooking: null,
@@ -58,29 +58,29 @@ export const examsModule = {
     offsiteVisible: true,
     officeFilter: null,
     offices: [],
-    showGenFinReportModal: false,
+    showGenFinReportModal: false
   },
   getters: {
-  
+
   },
   actions: {
-  
+
   },
   mutations: {
-    setExams(state, payload) {
+    setExams (state, payload) {
       state.exams = []
       state.exams = payload
     },
-    setExamTypes(state, payload) {
+    setExamTypes (state, payload) {
       state.examTypes = []
       state.examTypes = payload
     },
-    setInvigilators(state, payload) {
+    setInvigilators (state, payload) {
       state.invigilators = payload
     },
     setGroupExam: (state, payload) => state.groupExam = payload,
     setIndividualExam: (state, payload) => state.individualExam = payload,
-    setAddExamModalSetting(state, payload) {
+    setAddExamModalSetting (state, payload) {
       if (typeof payload === 'boolean') {
         state.addExamModal.visible = payload
         return
@@ -93,10 +93,10 @@ export const examsModule = {
         )
       })
     },
-    toggleGenFinReport(state, payload) {
+    toggleGenFinReport (state, payload) {
       state.showGenFinReportModal = payload
     },
-    captureExamDetail(state, payload) {
+    captureExamDetail (state, payload) {
       if (payload.key === 'exam_type_id') {
         payload.value = Number(payload.value)
       }
@@ -112,10 +112,10 @@ export const examsModule = {
         payload.value
       )
     },
-    resetCaptureForm(state) {
+    resetCaptureForm (state) {
       state.capturedExam = {}
     },
-    resetCaptureTab(state) {
+    resetCaptureTab (state) {
       Object.entries({
         step: 1,
         highestStep: 1,
@@ -132,8 +132,8 @@ export const examsModule = {
         )
       })
     },
-    updateCaptureTab(state, payload) {
-      let keys = Object.keys(payload)
+    updateCaptureTab (state, payload) {
+      const keys = Object.keys(payload)
       keys.forEach(key => {
         Vue.set(
           state.captureITAExamTabSetup,
@@ -142,17 +142,17 @@ export const examsModule = {
         )
       })
     },
-    toggleIndividualCaptureTabRadio(state, payload) {
+    toggleIndividualCaptureTabRadio (state, payload) {
       Vue.set(
         state.captureITAExamTabSetup,
         'showRadio',
         payload
       )
     },
-    setBookings(state, payload) {
+    setBookings (state, payload) {
       state.bookings = payload
     },
-    setRooms(state, payload) {
+    setRooms (state, payload) {
       state.rooms = payload
     },
     toggleBookingModal: (state, payload) => state.showBookingModal = payload,
@@ -161,7 +161,7 @@ export const examsModule = {
     toggleEditExamModal: (state, payload) => state.showEditExamModal = payload,
     toggleReturnExamModal: (state, payload) => state.showReturnExamModal = payload,
     toggleDeleteExamModal: (state, payload) => state.showDeleteExamModal = payload,
-    setSelectedExam(state, payload) {
+    setSelectedExam (state, payload) {
       if (payload === 'clearGoto') {
         delete state.selectedExam.gotoDate
         return
@@ -181,7 +181,7 @@ export const examsModule = {
     setEditExamSuccess: (state, payload) => state.editExamSuccessCount = payload,
     setEditExamFailure: (state, payload) => state.editExamFailureCount = payload,
     toggleEditBookingModal: (state, payload) => state.showEditBookingModal = payload,
-    setEditedBooking(state, payload) {
+    setEditedBooking (state, payload) {
       if (typeof payload === 'object' && payload !== null) {
         state.editedBooking = Object.assign({}, payload)
       }
@@ -198,10 +198,10 @@ export const examsModule = {
     setResources: (state, payload) => state.roomResources = payload,
     setEvents: (state, payload) => state.calendarEvents = payload,
     toggleEditGroupBookingModal: (state, payload) => state.showEditGroupBookingModal = payload,
-    setInventoryFilters(state, payload) {
+    setInventoryFilters (state, payload) {
       state.inventoryFilters[payload.type] = payload.value
     },
-    restoreSavedModal(state, payload) {
+    restoreSavedModal (state, payload) {
       Object.keys(payload.item).forEach(key => {
         Vue.set(
           state[payload.name],
@@ -212,15 +212,15 @@ export const examsModule = {
     },
     toggleOffsiteVisible: (state, payload) => state.offsiteVisible = payload,
     toggleExamsTrackingIP: (state, payload) => state.examsTrackingIP = payload,
-    setSelectedOffice(state, payload) {
+    setSelectedOffice (state, payload) {
       state.selectedOffice = payload
     },
-    setExamEditSuccessCount(state, payload) {
+    setExamEditSuccessCount (state, payload) {
       state.examEditSuccessCount = payload
     },
-    setExamEditFailureCount(state, payload) {
+    setExamEditFailureCount (state, payload) {
       state.examEditFailCount = payload
-    },
-  
+    }
+
   }
 }

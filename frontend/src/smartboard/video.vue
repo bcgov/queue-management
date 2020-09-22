@@ -22,94 +22,89 @@ limitations under the License.*/
 </template>
 
 <script>
-  import axios from 'axios'
-  import 'video.js/dist/video-js.css'
-  import { videoPlayer } from 'vue-video-player'
+import axios from 'axios'
+import 'video.js/dist/video-js.css'
+import { videoPlayer } from 'vue-video-player'
 
-  const Axios = axios.create({
-    baseURL: process.env.API_URL,
-    withCredentials: true,
-    headers: {
-      'Accept': 'application/json'
+const Axios = axios.create({
+  baseURL: process.env.API_URL,
+  withCredentials: true,
+  headers: {
+    Accept: 'application/json'
+  }
+})
+
+const defaultVideoFile = '/static/videos/sbc.mp4'
+const localVideoFile = 'http://localhost/videos/video.mp4'
+
+export default {
+  name: 'Video',
+  components: {
+    videoPlayer
+  },
+  props: ['office_number'],
+  // mounted() {
+  //   this.getOfficeVideoUrl()
+  // },
+  beforeMount () {
+    this.getOfficeVideoUrl()
+  },
+  data () {
+    let videoPath = defaultVideoFile
+    if (this.getParameterByName('localvideo') == '1') {
+      videoPath = localVideoFile
+    } else {
+      videoPath = defaultVideoFile
     }
-  })
 
-  const defaultVideoFile = '/static/videos/sbc.mp4';
-  const localVideoFile = 'http://localhost/videos/video.mp4';
-
-  export default {
-    name: 'Video',
-    components: {
-      videoPlayer
-    },
-    props: ['office_number'],
-    // mounted() {
-    //   this.getOfficeVideoUrl()
-    // },
-    beforeMount() {
-      this.getOfficeVideoUrl()
-    },
-    data() {
-
-      let videoPath = defaultVideoFile;
-      if (this.getParameterByName("localvideo") == "1") {
-        videoPath = localVideoFile;
-      }
-      else {
-        videoPath = defaultVideoFile
-      }
-
-      return {
-        playerOptions: {
-          autoplay: 'true',
-          loop: 'true',
-          controls: false,
-          muted: true,
-          sources: [{
-            type: 'video/mp4',
-            src: videoPath
-          }],
-          fluid: true
-        },
-        playing: false
-      }
-    },
-    methods: {
-      getOfficeVideoUrl() {
-
-        if (this.getParameterByName("localvideo") == 1) {
-          this.playerOptions.sources[0].src = localVideoFile
-        }
-
-        else {
-          let url = '/videofiles/' + this.office_number.toString();
-          Axios.get(url)
-            .then(resp => {
-              this.playerOptions.sources[0].src = resp.data.videourl;
-            })
-            .catch(() => {
-              this.playerOptions.sources[0].src = defaultVideoFile;
-            })
-        }
+    return {
+      playerOptions: {
+        autoplay: 'true',
+        loop: 'true',
+        controls: false,
+        muted: true,
+        sources: [{
+          type: 'video/mp4',
+          src: videoPath
+        }],
+        fluid: true
       },
-      playerStateChanged(playerCurrentState) {
-        if (playerCurrentState && playerCurrentState.playing) {
-          this.playing = true
-        } else if (playerCurrentState && playerCurrentState.error && this.playing) {
-          //This probably means that the video has been updated, try to refresh the page
-          setTimeout(() => { window.location.reload(true);}, 5000);
-        }
-      },
-      getParameterByName(name, url) {
-        url = window.location.href;
-        name = name.replace(/[\[\]]/g, '\\$&');
-        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'), results = regex.exec(url);
-        if (!results) return null;
-        if (!results[2]) return '';
-        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+      playing: false
+    }
+  },
+  methods: {
+    getOfficeVideoUrl () {
+      if (this.getParameterByName('localvideo') == 1) {
+        this.playerOptions.sources[0].src = localVideoFile
+      } else {
+        const url = '/videofiles/' + this.office_number.toString()
+        Axios.get(url)
+          .then(resp => {
+            this.playerOptions.sources[0].src = resp.data.videourl
+          })
+          .catch(() => {
+            this.playerOptions.sources[0].src = defaultVideoFile
+          })
       }
+    },
+    playerStateChanged (playerCurrentState) {
+      if (playerCurrentState && playerCurrentState.playing) {
+        this.playing = true
+      } else if (playerCurrentState && playerCurrentState.error && this.playing) {
+        // This probably means that the video has been updated, try to refresh the page
+        setTimeout(() => { window.location.reload(true) }, 5000)
+      }
+    },
+    getParameterByName (name, url) {
+      url = window.location.href
+      name = name.replace(/[\[\]]/g, '\\$&')
+      var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'); var results = regex.exec(url)
+      if (!results) return null
+      if (!results[2]) return ''
+      return decodeURIComponent(results[2].replace(/\+/g, ' '))
     }
   }
+}
 </script>
 
 <style scoped>

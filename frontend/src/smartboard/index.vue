@@ -42,28 +42,28 @@ const Axios = axios.create({
   baseURL: process.env.API_URL,
   withCredentials: true,
   headers: {
-    'Accept': 'application/json'
+    Accept: 'application/json'
   }
 })
 
 export default {
   name: 'Smartboard',
 
-  created() {
+  created () {
     this.initializeBoard()
   },
 
-  mounted() {
-    setInterval( () => { this.now() }, 1000)
+  mounted () {
+    setInterval(() => { this.now() }, 1000)
 
     var fetchNetworkStatus = () => {
       axios
         .get('http://localhost/health')
         .then(response => {
-          this.networkDown = !response.data.connected;
+          this.networkDown = !response.data.connected
           this.$forceUpdate()
 
-          setTimeout(fetchNetworkStatus, 1000);
+          setTimeout(fetchNetworkStatus, 1000)
         })
     }
     fetchNetworkStatus()
@@ -73,8 +73,8 @@ export default {
 
   components: { CallByName, CallByTicket, BoardSocket, NonReception },
 
-  data() {
-    let tz = this.getParameterByName("tz")
+  data () {
+    let tz = this.getParameterByName('tz')
     if (!tz) {
       tz = Intl.DateTimeFormat().resolvedOptions().timeZone
     }
@@ -83,10 +83,10 @@ export default {
       officetype: '',
       networkDown: false,
       options: {
-        weekday:'long',
-        year:'numeric',
-        month:'long',
-        day:'numeric',
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
         timeZone: tz
       },
       timeOpts: {
@@ -100,32 +100,32 @@ export default {
   },
 
   computed: {
-    url() {
+    url () {
       return `/smartboard/?office_number=${this.office_number}`
     }
   },
 
   methods: {
-    initializeBoard() {
-      this.networkStatus = ""
+    initializeBoard () {
+      this.networkStatus = ''
 
       this.now()
-      Axios.get(this.url).then( resp => {
+      Axios.get(this.url).then(resp => {
         this.officetype = resp.data.office_type
       })
     },
-    now() {
-      let d = new Date()
+    now () {
+      const d = new Date()
       this.date = d.toLocaleDateString('en-CA', this.options)
       this.time = d.toLocaleTimeString('en-CA', this.timeOpts)
     },
-    getParameterByName(name, url) {
-      url = window.location.href;
-      name = name.replace(/[\[\]]/g, '\\$&');
-      var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'), results = regex.exec(url);
-      if (!results) return null;
-      if (!results[2]) return '';
-      return decodeURIComponent(results[2].replace(/\+/g, ' '));
+    getParameterByName (name, url) {
+      url = window.location.href
+      name = name.replace(/[\[\]]/g, '\\$&')
+      var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'); var results = regex.exec(url)
+      if (!results) return null
+      if (!results[2]) return ''
+      return decodeURIComponent(results[2].replace(/\+/g, ' '))
     }
   }
 }
@@ -179,7 +179,7 @@ export default {
     border-color: rgb(7,54,116) transparent transparent transparent;
     width: 64px;
     height: 64px;
-    
+
     -webkit-animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite;
   }
 

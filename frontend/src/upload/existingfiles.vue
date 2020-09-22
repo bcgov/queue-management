@@ -43,39 +43,37 @@
 
 <script>
 
-  import { mapState, mapMutations, mapActions } from 'vuex'
+import { mapActions, mapMutations, mapState } from 'vuex'
 
-  export default {
-    name: 'ExistingFiles',
+export default {
+  name: 'ExistingFiles',
 
-    computed: {
-      ...mapState(['videofiles', 'manifestdata', 'diskspace']),
-      fields() {
-        return [
-          { key: 'name', label: 'Name', thStyle: 'text-align: left'},
-          { key: 'date', label: 'Date', thStyle: 'text-align: left'},
-          { key: 'size', label: 'Size', thStyle: 'text-align: right', tdClass: 'file-size' },
-          { key: 'deleteBut', label:'Delete file', thStyle:'text-align: center;', tdClass: 'delete-file'}
-        ]
-      },
+  computed: {
+    ...mapState(['videofiles', 'manifestdata', 'diskspace']),
+    fields () {
+      return [
+        { key: 'name', label: 'Name', thStyle: 'text-align: left' },
+        { key: 'date', label: 'Date', thStyle: 'text-align: left' },
+        { key: 'size', label: 'Size', thStyle: 'text-align: right', tdClass: 'file-size' },
+        { key: 'deleteBut', label: 'Delete file', thStyle: 'text-align: center;', tdClass: 'delete-file' }
+      ]
+    }
+  },
+  methods: {
+    ...mapMutations(['setMainAlert']),
+    ...mapActions(['clickDeleteFile']),
+    numberWithCommas (x) {
+      if (x) { return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') } else { return '' }
     },
-    methods: {
-      ...mapMutations(['setMainAlert']),
-      ...mapActions(['clickDeleteFile']),
-      numberWithCommas(x) {
-        if (x) { return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
-        else { return ''; }
-      },
-      clickDelete(name) {
-        if (this.manifestdata.includes(name)) {
-          this.setMainAlert('You may not delete file ' + name + '.  It is used in manifest.json.')
-        }
-        else {
-          this.clickDeleteFile({ 'name': name});
-        }
+    clickDelete (name) {
+      if (this.manifestdata.includes(name)) {
+        this.setMainAlert('You may not delete file ' + name + '.  It is used in manifest.json.')
+      } else {
+        this.clickDeleteFile({ name: name })
       }
     }
   }
+}
 
 </script>
 

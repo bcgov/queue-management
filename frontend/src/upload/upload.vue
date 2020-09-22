@@ -60,77 +60,73 @@
 
 <script>
 
-  import { mapActions, mapMutations, mapState } from 'vuex'
-  import ExistingFiles from './existingfiles'
+import { mapActions, mapMutations, mapState } from 'vuex'
+import ExistingFiles from './existingfiles'
 
-  export default {
-    name: 'Upload',
-    components: {ExistingFiles},
-    data() {
-      return {
-        file: '',
-        isLoading: false,
-        newfilename: ''
-      }
-    },
-    mounted() {
-      this.getCurrentFileinfo();
-      this.newfilename = '';
-    },
+export default {
+  name: 'Upload',
+  components: { ExistingFiles },
+  data () {
+    return {
+      file: '',
+      isLoading: false,
+      newfilename: ''
+    }
+  },
+  mounted () {
+    this.getCurrentFileinfo()
+    this.newfilename = ''
+  },
 
-    computed: {
-      ...mapState(['videofiles', 'manifestdata', 'isUploadingFile', 'diskspace']),
-      userdata: {
-        get() {
-          return this.manifestdata;
-        },
-        set(value) {
-          this.$store.commit('setManifestData', value)
-        }
+  computed: {
+    ...mapState(['videofiles', 'manifestdata', 'isUploadingFile', 'diskspace']),
+    userdata: {
+      get () {
+        return this.manifestdata
       },
-      filesCount() {
-        if (this.file) { return 1; }
-        else { return 0; }
-      },
-      fileName() {
-        if (this.file) { return this.file.name; }
-        else { return "No file selected"; }
+      set (value) {
+        this.$store.commit('setManifestData', value)
       }
     },
-    methods: {
-      ...mapActions(['clickUploadFile', 'requestVideoFileInfo']),
-      ...mapMutations(['setMainAlert']),
-      uploadFile() {
-        if (this.filesCount === 0) {
-          this.setMainAlert('Select a file to upload before pressing Upload File')
+    filesCount () {
+      if (this.file) { return 1 } else { return 0 }
+    },
+    fileName () {
+      if (this.file) { return this.file.name } else { return 'No file selected' }
+    }
+  },
+  methods: {
+    ...mapActions(['clickUploadFile', 'requestVideoFileInfo']),
+    ...mapMutations(['setMainAlert']),
+    uploadFile () {
+      if (this.filesCount === 0) {
+        this.setMainAlert('Select a file to upload before pressing Upload File')
+      } else {
+        const file_size = this.file.size / Math.pow(2, 20)
+        const space_left = this.diskspace.freespace
+        if (space_left < file_size) {
+          this.setMainAlert('File too large (' + file_size.toFixed(1) +
+              'Mb) to upload to disk (' + space_left.toFixed(1) + 'Mb free)')
+        } else {
+          const request = { file: this.file, data: this.userdata, newname: this.newfilename }
+          this.isLoading = true
+          this.clickUploadFile(request)
         }
-        else {
-          let file_size = this.file.size / Math.pow(2,20);
-          let space_left = this.diskspace.freespace;
-          if (space_left < file_size) {
-            this.setMainAlert("File too large (" + file_size.toFixed(1)
-              + "Mb) to upload to disk (" + space_left.toFixed(1) + "Mb free)");
-          }
-          else {
-            let request = { "file" : this.file, "data" : this.userdata, "newname": this.newfilename }
-            this.isLoading = true;
-            this.clickUploadFile(request);
-          }
-        }
-      },
-      uploadManifest() {
-        let request = { "data" : this.userdata }
-        this.isLoading = true;
-        this.clickUploadFile(request);
-      },
-      handleFileUpload() {
-        this.file = this.$refs.myfile.files[0];
-      },
-      getCurrentFileinfo() {
-        this.requestVideoFileInfo();
       }
+    },
+    uploadManifest () {
+      const request = { data: this.userdata }
+      this.isLoading = true
+      this.clickUploadFile(request)
+    },
+    handleFileUpload () {
+      this.file = this.$refs.myfile.files[0]
+    },
+    getCurrentFileinfo () {
+      this.requestVideoFileInfo()
     }
   }
+}
 
 </script>
 

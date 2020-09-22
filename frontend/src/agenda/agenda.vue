@@ -106,216 +106,214 @@
 </template>
 
 <script>
-  import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
-  import moment from 'moment'
-  import Vue from 'vue'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import moment from 'moment'
+import Vue from 'vue'
 
-  export default {
-    name: 'Agenda',
-    mounted() {
-      this.initializeAgenda()
-      this.$root.$on('agenda-next', () => { this.next() })
-      this.$root.$on('agenda-prev', () => { this.prev() })
-      this.$root.$on('agenda-today', () => { this.today() })
-      this.weekStart = moment().day(1)
-      this.updateButtonsDate()
-      this.getInvigilators()
-    },
-    destroyed() {
-      this.setCalendarSetup(null)
-    },
-    data() {
-      return {
-        fields: [
-          {key: 'exam.event_id', label: 'Event ID', thStyle: 'width: 8%;font-size:.9rem;'},
-          {key: 'start', label: 'Time', thStyle: 'width: 6%;font-size:.9rem;'},
-          {key: 'length', label:'Duration', thStyle: 'width: 6%;font-size:.9rem;'},
-          {key: 'room', label: 'Location', thStyle: 'width: 8%;font-size:.9rem;'},
-          {key: 'exam.exam_type.exam_type_name', label: 'Exam Type', thStyle:'font-size:.9rem;'},
-          {key: 'exam.exam_method', label: 'Exam Method', thStyle: 'font-size:.9rem;'},
-          {key: 'invigilator', thStyle: 'width: 10%;font-size:.9rem;'},
-          {key: 'shadow_invigilator', thStyle: 'width: 10%;font-size:.9rem;'},
-          {key: 'materials', label: 'Materials?', thStyle: 'width: 6%;font-size:.9rem;'},
-          {key: 'exam.exam_name', label: 'Exam Name', thStyle: 'font-size:.9rem;'},
-          {key: 'writer', label: "Candidate Name", thStyle: 'font-size:.9rem;'},
-          {key: 'exam.notes', label: 'Notes', thStyle: 'font-size:.9rem;'},
-        ],
-        fieldsOther: [
-          {key: 'date', thStyle: 'width: 11%;font-size:.9rem;'},
-          {key: 'start', label: 'Start', thStyle: 'width: 6%;font-size:.9rem;'},
-          {key: 'end', label: 'End', thStyle: 'width: 6%;font-size:.9rem;'},
-          {key: 'room.room_name', label: 'Room', thStyle: 'font-size:.9rem;' },
-          {key: 'title', label: 'Event Title/Booking Party', thStyle: 'font-size:.9rem;' },
-          {key: 'booking_contact_information', thStyle: 'font-size:.9rem;'},
-        ],
-        weekStart: null,
+export default {
+  name: 'Agenda',
+  mounted () {
+    this.initializeAgenda()
+    this.$root.$on('agenda-next', () => { this.next() })
+    this.$root.$on('agenda-prev', () => { this.prev() })
+    this.$root.$on('agenda-today', () => { this.today() })
+    this.weekStart = moment().day(1)
+    this.updateButtonsDate()
+    this.getInvigilators()
+  },
+  destroyed () {
+    this.setCalendarSetup(null)
+  },
+  data () {
+    return {
+      fields: [
+        { key: 'exam.event_id', label: 'Event ID', thStyle: 'width: 8%;font-size:.9rem;' },
+        { key: 'start', label: 'Time', thStyle: 'width: 6%;font-size:.9rem;' },
+        { key: 'length', label: 'Duration', thStyle: 'width: 6%;font-size:.9rem;' },
+        { key: 'room', label: 'Location', thStyle: 'width: 8%;font-size:.9rem;' },
+        { key: 'exam.exam_type.exam_type_name', label: 'Exam Type', thStyle: 'font-size:.9rem;' },
+        { key: 'exam.exam_method', label: 'Exam Method', thStyle: 'font-size:.9rem;' },
+        { key: 'invigilator', thStyle: 'width: 10%;font-size:.9rem;' },
+        { key: 'shadow_invigilator', thStyle: 'width: 10%;font-size:.9rem;' },
+        { key: 'materials', label: 'Materials?', thStyle: 'width: 6%;font-size:.9rem;' },
+        { key: 'exam.exam_name', label: 'Exam Name', thStyle: 'font-size:.9rem;' },
+        { key: 'writer', label: 'Candidate Name', thStyle: 'font-size:.9rem;' },
+        { key: 'exam.notes', label: 'Notes', thStyle: 'font-size:.9rem;' }
+      ],
+      fieldsOther: [
+        { key: 'date', thStyle: 'width: 11%;font-size:.9rem;' },
+        { key: 'start', label: 'Start', thStyle: 'width: 6%;font-size:.9rem;' },
+        { key: 'end', label: 'End', thStyle: 'width: 6%;font-size:.9rem;' },
+        { key: 'room.room_name', label: 'Room', thStyle: 'font-size:.9rem;' },
+        { key: 'title', label: 'Event Title/Booking Party', thStyle: 'font-size:.9rem;' },
+        { key: 'booking_contact_information', thStyle: 'font-size:.9rem;' }
+      ],
+      weekStart: null
+    }
+  },
+  computed: {
+    ...mapState([
+      'calendarEvents',
+      'calendarSetup',
+      'invigilators'
+    ]),
+    ...mapGetters([
+      'invigilator_multi_select',
+      'all_invigilator_options'
+    ]),
+    examDates () {
+      if (this.examEvents && this.examEvents.length > 0) {
+        const dates = this.examEvents.map(ex => ex.start)
+        const output = []
+        for (const date of dates) {
+          const d = moment(date).format('dddd, MMM Do, YYYY').toString()
+          if (!output.includes(d)) {
+            output.push(d)
+          }
+        }
+        return output
       }
     },
-    computed: {
-      ...mapState([
-        'calendarEvents',
-        'calendarSetup',
-        'invigilators',
-      ]),
-      ...mapGetters([
-        'invigilator_multi_select',
-        'all_invigilator_options'
-      ]),
-      examDates() {
-        if (this.examEvents && this.examEvents.length > 0) {
-          let dates = this.examEvents.map(ex => ex.start)
-          let output = []
-          for (let date of dates) {
-            let d = moment(date).format('dddd, MMM Do, YYYY').toString()
-            if (!output.includes(d)) {
-              output.push(d)
-            }
-          }
-          return output
-        }
-      },
-      events() {
-        if (this.calendarEvents.length > 0 && this.weekStart) {
-          let events = this.calendarEvents
-          let weekEnd = this.weekStart.clone().add(4, 'day')
-          return events.filter(e =>
-            moment(e.start).isSameOrAfter(this.weekStart, 'day') &&
+    events () {
+      if (this.calendarEvents.length > 0 && this.weekStart) {
+        const events = this.calendarEvents
+        const weekEnd = this.weekStart.clone().add(4, 'day')
+        return events.filter(e =>
+          moment(e.start).isSameOrAfter(this.weekStart, 'day') &&
             moment(e.start).isSameOrBefore(weekEnd, 'day')
-          ).sort(function(a,b) {
-            let A = moment(a.start).clone()
-            let B = moment(b.start).clone()
-            if ( A.isSame(B)) {
-              return 0
-            }
-            if (A.isBefore(B)) {
-              return -1
-            }
-            return 1
-          })
-        }
-        return []
-      },
-      examEvents() {
-        if (this.events && this.events.length > 0) {
-          return this.events.filter(e => !!e.exam )
-        }
-        return []
-      },
-      teseter() {
-        return this.examEvents
-      },
-      nonExamEvents() {
-        if (this.events && this.events.length > 0) {
-          let nonExams = Object.assign([], this.events.filter(e => !e.exam ))
-          nonExams.forEach(ev => {
-            ev.start = moment(ev.start)
-            ev.end = moment(ev.end)
-          })
-          return nonExams
-        }
-        return []
-      },
-    },
-    methods: {
-      ...mapActions([
-        'initializeAgenda',
-        'getInvigilators',
-      ]),
-      ...mapMutations([
-        'setCalendarSetup',
-      ]),
-      duration({exam}) {
-        let start = moment(exam.booking.start_time).clone()
-        let end = moment(exam.booking.end_time).clone()
-        return `${end.diff(start, 'hours')} hrs`
-      },
-      formatDetail(d) {
-        return moment(d).clone().format('h:mm a')
-      },
-      formatHeader(d) {
-        return moment(d).clone().format('dddd, MMM Do, YYYY')
-      },
-      next() {
-        Vue.set(
-          this,
-          'weekStart',
-          this.weekStart.clone().add(7, 'day')
-        )
-        this.updateButtonsDate()
-      },
-      prev() {
-        Vue.set(
-          this,
-          'weekStart',
-          this.weekStart.clone().subtract(7, 'day')
-        )
-        this.updateButtonsDate()
-
-      },
-      getExamItems(dateString) {
-        return this.examEvents.filter(exam => moment(exam.start).clone().format('dddd, MMM Do, YYYY') === dateString)
-      },
-      showInvigilator({exam}) {
-        let self = this
-        let invigilator_name_list = []
-        exam.booking.invigilators.forEach(function(invigilator) {
-          let i = self.invigilator_multi_select.filter(i => i.value == invigilator)
-          if(i[0] && i[0].name){
-            invigilator_name_list.push(i[0].name)
+        ).sort(function (a, b) {
+          const A = moment(a.start).clone()
+          const B = moment(b.start).clone()
+          if (A.isSame(B)) {
+            return 0
           }
+          if (A.isBefore(B)) {
+            return -1
+          }
+          return 1
         })
-        if (exam.booking.sbc_staff_invigilated) {
-          return ['SBC Employee']
+      }
+      return []
+    },
+    examEvents () {
+      if (this.events && this.events.length > 0) {
+        return this.events.filter(e => !!e.exam)
+      }
+      return []
+    },
+    teseter () {
+      return this.examEvents
+    },
+    nonExamEvents () {
+      if (this.events && this.events.length > 0) {
+        const nonExams = Object.assign([], this.events.filter(e => !e.exam))
+        nonExams.forEach(ev => {
+          ev.start = moment(ev.start)
+          ev.end = moment(ev.end)
+        })
+        return nonExams
+      }
+      return []
+    }
+  },
+  methods: {
+    ...mapActions([
+      'initializeAgenda',
+      'getInvigilators'
+    ]),
+    ...mapMutations([
+      'setCalendarSetup'
+    ]),
+    duration ({ exam }) {
+      const start = moment(exam.booking.start_time).clone()
+      const end = moment(exam.booking.end_time).clone()
+      return `${end.diff(start, 'hours')} hrs`
+    },
+    formatDetail (d) {
+      return moment(d).clone().format('h:mm a')
+    },
+    formatHeader (d) {
+      return moment(d).clone().format('dddd, MMM Do, YYYY')
+    },
+    next () {
+      Vue.set(
+        this,
+        'weekStart',
+        this.weekStart.clone().add(7, 'day')
+      )
+      this.updateButtonsDate()
+    },
+    prev () {
+      Vue.set(
+        this,
+        'weekStart',
+        this.weekStart.clone().subtract(7, 'day')
+      )
+      this.updateButtonsDate()
+    },
+    getExamItems (dateString) {
+      return this.examEvents.filter(exam => moment(exam.start).clone().format('dddd, MMM Do, YYYY') === dateString)
+    },
+    showInvigilator ({ exam }) {
+      const self = this
+      const invigilator_name_list = []
+      exam.booking.invigilators.forEach(function (invigilator) {
+        const i = self.invigilator_multi_select.filter(i => i.value == invigilator)
+        if (i[0] && i[0].name) {
+          invigilator_name_list.push(i[0].name)
         }
-        if (exam.booking.invigilators) {
-          return invigilator_name_list
-        }
+      })
+      if (exam.booking.sbc_staff_invigilated) {
+        return ['SBC Employee']
+      }
+      if (exam.booking.invigilators) {
+        return invigilator_name_list
+      }
+      return false
+    },
+    showShadowInvigilator ({ exam }) {
+      const shadow_invigilator = this.all_invigilator_options.filter(i => i.id == exam.booking.shadow_invigilator_id)
+      if (shadow_invigilator[0] && shadow_invigilator[0].name) {
+        return shadow_invigilator[0].name
+      } else { return false }
+    },
+    showLocation ({ exam }) {
+      if (exam.offsite_location) {
         return false
-      },
-      showShadowInvigilator({exam}){
-        let shadow_invigilator = this.all_invigilator_options.filter(i => i.id == exam.booking.shadow_invigilator_id)
-        if(shadow_invigilator[0] && shadow_invigilator[0].name) {
-          return shadow_invigilator[0].name
-        }else
-          return false
-      },
-      showLocation({exam}) {
-        if (exam.offsite_location) {
-          return false
-        }
-        if (exam.booking && exam.booking.room_id) {
-          return exam.booking.room.room_name
-        }
-      },
-      showWriter({exam}) {
-        if (exam.exam_type.exam_type_name === 'Monthly Session Exam') {
-          return 'Monthly Session'
-        }
-        if (exam.exam_type.group_exam_ind) {
-          return 'Group Exam'
-        }
-        if (exam.examinee_name) {
-          return exam.examinee_name
-        }
-        return 'Other Exam'
-      },
-      today() {
-        Vue.set(
-          this,
-          'weekStart',
-          moment().day(1)
-        )
-        this.updateButtonsDate()
-      },
-      updateButtonsDate() {
-        this.$nextTick(function() {
-          let d = this.weekStart
-          let text = `Week of ${d.clone().format('MMM Do, YYYY')}`
-          this.setCalendarSetup({title: text})
-        })
-      },
+      }
+      if (exam.booking && exam.booking.room_id) {
+        return exam.booking.room.room_name
+      }
+    },
+    showWriter ({ exam }) {
+      if (exam.exam_type.exam_type_name === 'Monthly Session Exam') {
+        return 'Monthly Session'
+      }
+      if (exam.exam_type.group_exam_ind) {
+        return 'Group Exam'
+      }
+      if (exam.examinee_name) {
+        return exam.examinee_name
+      }
+      return 'Other Exam'
+    },
+    today () {
+      Vue.set(
+        this,
+        'weekStart',
+        moment().day(1)
+      )
+      this.updateButtonsDate()
+    },
+    updateButtonsDate () {
+      this.$nextTick(function () {
+        const d = this.weekStart
+        const text = `Week of ${d.clone().format('MMM Do, YYYY')}`
+        this.setCalendarSetup({ title: text })
+      })
     }
   }
+}
 </script>
 
 <style scoped>

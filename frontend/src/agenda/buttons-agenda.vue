@@ -17,18 +17,18 @@
 </template>
 
 <script>
-  export default {
-    name: 'ButtonsAgenda',
-    methods: {
-      next() {
-        this.$root.$emit('agenda-next')
-      },
-      prev() {
-        this.$root.$emit('agenda-prev')
-      },
-      today() {
-        this.$root.$emit('agenda-today')
-      },
+export default {
+  name: 'ButtonsAgenda',
+  methods: {
+    next () {
+      this.$root.$emit('agenda-next')
+    },
+    prev () {
+      this.$root.$emit('agenda-prev')
+    },
+    today () {
+      this.$root.$emit('agenda-today')
     }
   }
+}
 </script>
