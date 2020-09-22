@@ -108,7 +108,7 @@ export default class App extends Vue {
 }
 </script>
 
-<style>
+<style lang="scss">
 .custom-select-sm {
   font-size: 0.8rem !important;
 }
