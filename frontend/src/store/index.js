@@ -3594,3 +3594,5 @@ const makeBookingReqObj = (context, responses) => {
   }
   return booking
 }
+
+export default store

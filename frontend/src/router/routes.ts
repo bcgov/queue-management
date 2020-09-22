@@ -1,21 +1,22 @@
 
+/* tslint-disable */
 import Admin from '../views/admin.vue'
 import App from '../views/App.vue'
 import Dash from '@/components/ServeCitizen/dash.vue'
-import ButtonsDash from '@/components/ServeCitizen/dash-buttons'
-import Smartboard from '../smartboard/'
-import ButtonsAdmin from '../views/buttons-admin'
+import ButtonsDash from '@/components/ServeCitizen/dash-buttons.vue'
+import Smartboard from '../smartboard/index.vue'
+import ButtonsAdmin from '../views/buttons-admin.vue'
 
-import Exams from '../components/exams/exams'
-import ButtonsExams from '../components/exams/buttons-exams'
-import Agenda from '../agenda/agenda'
-import ButtonsAgenda from '../agenda/buttons-agenda'
-import Calendar from '../components/Booking/calendar'
-import ButtonsCalendar from '../components/Booking/buttons-calendar'
+import Exams from '../components/exams/exams.vue'
+import ButtonsExams from '../components/exams/buttons-exams.vue'
+import Agenda from '../agenda/agenda.vue'
+import ButtonsAgenda from '../agenda/buttons-agenda.vue'
+import Calendar from '../components/Booking/calendar.vue'
+import ButtonsCalendar from '../components/Booking/buttons-calendar.vue'
 import Appointments from '../components/Appointments/appointments.vue'
-import ButtonsAppointments from '../components/Appointments/buttons-appointments'
-import Upload from '../upload/upload'
-import ButtonsUpload from '../upload/buttons-upload'
+import ButtonsAppointments from '../components/Appointments/buttons-appointments.vue'
+import Upload from '../upload/upload.vue'
+import ButtonsUpload from '../upload/buttons-upload.vue'
 
 export const routes = [
   {
