@@ -11,7 +11,7 @@ import ButtonsAppointments from '../components/Appointments/buttons-appointments
 import ButtonsCalendar from '../components/Booking/buttons-calendar.vue'
 import ButtonsDash from '@/components/ServeCitizen/dash-buttons.vue'
 import ButtonsExams from '../components/exams/buttons-exams.vue'
-import ButtonsUpload from '../upload/buttons-upload.vue'
+import ButtonsUpload from '@/components/upload/buttons-upload.vue'
 
 import Calendar from '../components/Booking/calendar.vue'
 import Dash from '@/components/ServeCitizen/dash.vue'
