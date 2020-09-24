@@ -70,7 +70,9 @@ module.exports = {
     "no-redeclare": "warn",
     "no-multi-spaces": "warn",
     "no-tabs": "warn",
-    "no-mixed-spaces-and-tabs": "warn"
+    "no-mixed-spaces-and-tabs": "warn",
+    "space-unary-ops": "warn",
+    "keyword-spacing": "wearn"
   },
   parserOptions: {
     parser: "@typescript-eslint/parser"
