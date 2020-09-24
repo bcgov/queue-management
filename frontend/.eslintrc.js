@@ -54,7 +54,23 @@ module.exports = {
     "vue/no-use-v-if-with-v-for": "warn",
     "no-unused-expressions": "warn",
     "semi": "warn",
-    "no-case-declarations": "warn"
+    "no-case-declarations": "warn",
+    "space-in-parens": "warn",
+    "no-throw-literal": "warn",
+    "key-spacing": "warn",
+    "space-infix-ops": "warn",
+    "operator-linebreak": "warn",
+    "eol-last": "warn",
+    "padded-blocks": "warn",
+    "comma-spacing": "warn",
+    "no-trailing-spaces": "warn",
+    "no-multiple-empty-lines": "warn",
+    "brace-style": "warn",
+    "dot-notation": "warn",
+    "no-redeclare": "warn",
+    "no-multi-spaces": "warn",
+    "no-tabs": "warn",
+    "no-mixed-spaces-and-tabs": "warn"
   },
   parserOptions: {
     parser: "@typescript-eslint/parser"
