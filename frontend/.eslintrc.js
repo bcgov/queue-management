@@ -72,7 +72,8 @@ module.exports = {
     "no-tabs": "warn",
     "no-mixed-spaces-and-tabs": "warn",
     "space-unary-ops": "warn",
-    "keyword-spacing": "warn"
+    "keyword-spacing": "warn",
+    "no-return-assign": "warn"
   },
   parserOptions: {
     parser: "@typescript-eslint/parser"
