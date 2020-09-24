@@ -32,7 +32,7 @@ module.exports = {
     "no-debugger": process.env.NODE_ENV === "production" ? "error" : "off",
     // "sort-imports": "error",
     "space-before-function-paren": 1,
-    quotes: [2, "single", { avoidEscape: true }],
+    quotes: ["warn", "single", { avoidEscape: true }],
     "vue/no-unused-components": "warn",
     "sort-imports": "warn",
     camelcase: "warn",
