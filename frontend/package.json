@@ -5,12 +5,7 @@
   "author": "Scott Rumsby <scott.rumsby@gmail.com>",
   "private": true,
   "scripts": {
-    "localhost": "node build/localhost-server.js",
-    "dev": "node build/dev-server.js",
-    "start": "node build/dev-server.js",
     "test": "jest",
-    "build:local": "node build/build-local.js",
-    "build:production": "node build/build-prod.js",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
