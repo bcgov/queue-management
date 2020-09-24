@@ -41,37 +41,40 @@
   </div>
 </template>
 
-<script>
-import { mapGetters, mapState } from 'vuex'
+<script lang="ts">
 
-import Comments from './form-components/comments'
-import Channel from './form-components/channel'
-import Filters from './form-components/filters'
-import Tables from './form-components/tables'
+import { Component, Vue } from 'vue-property-decorator'
+import { Getter, State } from 'vuex-class'
 
-export default {
-  name: 'AddCitizenForm',
+import Channel from './form-components/channel.vue'
+import Comments from './form-components/comments.vue'
+import Filters from './form-components/filters.vue'
+import Tables from './form-components/tables.vue'
+
+@Component({
   components: {
     Comments,
     Channel,
     Filters,
     Tables
-  },
-  computed: {
-    ...mapState({ addModalSetup: 'addModalSetup' }),
-    ...mapGetters({ reception: 'reception' }),
-    simplified () {
-      if (this.$route.path !== '/queue') {
-        return true
-      }
-      return false
-    },
-    simplifiedModal () {
-      if (this.simplified && this.addModalSetup !== 'edit_mode') {
-        return true
-      }
-      return false
+  }
+})
+export default class AddCitizenForm extends Vue {
+  @State('addModalSetup') private addModalSetup!: string | undefined
+  @Getter('reception') private reception!: any;
+
+  get simplified () {
+    if (this.$route.path !== '/queue') {
+      return true
     }
+    return false
+  }
+
+  get simplifiedModal () {
+    if (this.simplified && this.addModalSetup !== 'edit_mode') {
+      return true
+    }
+    return false
   }
 }
 

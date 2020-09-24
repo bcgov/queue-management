@@ -13,12 +13,13 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 
 <template>
-  <videoPlayer class="video-player-box"
-               ref="videoPlayer"
-               :options="playerOptions"
-               :playsinline="true"
-               @statechanged="playerStateChanged($event)">
-  </videoPlayer>
+  <videoPlayer
+    class="video-player-box"
+    ref="videoPlayer"
+    :options="playerOptions"
+    :playsinline="true"
+    @statechanged="playerStateChanged($event)"
+  ></videoPlayer>
 </template>
 
 <script>
@@ -97,6 +98,7 @@ export default {
     },
     getParameterByName (name, url) {
       url = window.location.href
+      // eslint-disable-next-line no-useless-escape
       name = name.replace(/[\[\]]/g, '\\$&')
       var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'); var results = regex.exec(url)
       if (!results) return null
@@ -108,9 +110,7 @@ export default {
 </script>
 
 <style scoped>
-
-  .vjs-loading-spinner {
-    display: none!important;
-  }
-
+.vjs-loading-spinner {
+  display: none !important;
+}
 </style>

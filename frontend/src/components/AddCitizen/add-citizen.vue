@@ -83,161 +83,184 @@
   </b-modal>
 </template>
 
-<script>
+<script lang="ts">
 /* eslint-disable */
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-import Buttons from './form-components/buttons'
-import AddCitizenForm from './add-citizen-form'
+import { Component, Vue } from 'vue-property-decorator'
+import { Getter, State, Action, Mutation } from 'vuex-class'
+import Buttons from './form-components/buttons.vue'
+import AddCitizenForm from './add-citizen-form.vue'
 
-export default {
-  name: 'AddCitizen',
+@Component({
   components: {
     AddCitizenForm,
     Buttons
-  },
+  }
+})
+export default class AddCitizen extends Vue {
+
+  @State('addCitizenModal') private addCitizenModal!: string | undefined
+  @State('addModalForm') private addModalForm!: string | undefined
+  @State('showAddModal') private showAddModal!: string | undefined
+  @State('addModalSetup') private addModalSetup!: string | undefined
+  @State('serviceModalForm') private serviceModalForm!: string | undefined
+  @State('user') private user!: any
+  @State('displayServices') private displayServices!: string | undefined
+  @State('citizenButtons') private citizenButtons!: string | undefined
+  @State('performingAction') private performingAction!: string | undefined
+
+  @Getter('form_data') private form_data!: any;
+  @Getter('reception') private reception!: any;
+
+  @Action('cancelAddCitizensModal') public cancelAddCitizensModal: any
+  @Action('clickEditCancel') public clickEditCancel: any
+  @Action('resetAddCitizenModal') public resetAddCitizenModal: any
+  // @Action('cancelAddCitizensModal') public cancelAddCitizensModal: any
+
+  @Mutation('setDefaultChannel') public setDefaultChannel: any
+  @Mutation('toggleAddModal') public toggleAddModal: any
+  @Mutation('updateAddModalForm') public updateAddModalForm: any
+
+  private dismissSecs: number = 5;
+  private dismissCountDown: number = 0;
+  private minimizeWindow: boolean = false;
+  private dragged: boolean = false
+  private left: number = 0
+  private top: number = 0
+
+  Alert () {
+    this.dismissCountDown = this.dismissSecs
+  }
+
+  get marginStyle () {
+    let style = {}
+    if (this.citizenButtons) {
+      style = { marginRight: '50%' }
+    } else {
+      style = { marginLeft: '50%' }
+    }
+    return style
+  }
+
+  get simplified () {
+    if (this.$route.path !== '/queue') {
+      return true
+    }
+    return false
+  }
+
+  get modalTitle () {
+    if (this.addModalSetup === 'edit_mode') {
+      return 'Edit Service'
+    }
+    if (this.$route.path === '/appointments') {
+      return 'Add a Service'
+    }
+    if (this.simplified) {
+      return 'Begin Tracking'
+    }
+    if (this.displayServices === 'BackOffice') {
+      return 'Back Office'
+    }
+    return 'Add Citizen'
+  }
+
+  get counter_selection () {
+    return this.form_data.counter
+  }
+
+  set counter_selection (value: string) {
+    this.updateAddModalForm({ type: 'counter', value })
+  }
+
+  get priority_selection () {
+
+    return this.form_data.priority
+  }
+
+  set priority_selection (value) {
+    this.updateAddModalForm({ type: 'priority', value })
+  }
+
+
+  get sortedCounters () {
+    // eslint-disable-next-line
+    var sorted = this.user.office.counters.sort((a: { counter_name: number }, b: { counter_name: number }) => {
+      return a.counter_name > b.counter_name
+    })
+    return sorted
+  }
+
+
+  cancelAction () {
+    if (this.$route.path == '/exams') {
+      this.cancelAddCitizensModal()
+    } else if (this.$route.path == '/appointments') {
+      this.closeAddServiceModal()
+    } else if ((this.addModalSetup == 'reception') || (this.addModalSetup == 'non_reception')) {
+      this.cancelAddCitizensModal()
+    } else if (this.addModalSetup == 'add_mode') {
+      this.clickEditCancel()
+    } else if (this.addModalSetup == 'edit_mode') {
+      this.clickEditCancel()
+    } else {
+      this.cancelAddCitizensModal()
+    }
+  }
+
+
+  closeAddServiceModal () {
+    this.resetAddCitizenModal()
+    this.$store.commit('appointmentsModule/toggleApptBookingModal', true)
+  }
+  countDownChanged (dismissCountDown: number) {
+    this.dismissCountDown = dismissCountDown
+  }
+
+
+  onDrag (event: any) {
+    const { el, deltaX, deltaY, offsetX, offsetY, clientX, clientY, first, last } = event
+    if (first) {
+      this.dragged = true
+      return
+    }
+    if (last) {
+      this.dragged = false
+      return
+    }
+    this.left = (this.left || 0) + deltaX
+    this.top = (this.top || 0) + deltaY
+    const add_modal: any = document.getElementsByClassName('modal-content')[0]
+    add_modal.style.transform = 'translate(' + this.left + 'px,' + this.top + 'px)'
+  }
+  setupForm () {
+    const setup = this.addModalSetup
+    if (this.simplified) {
+      this.$root.$emit('focusfilter')
+      return
+    }
+    if (setup === 'add_mode' || setup === 'edit_mode') {
+      this.$root.$emit('focusfilter')
+    } else {
+      if (!this.reception) {
+        this.$root.$emit('focusfilter')
+      } else if (this.reception) {
+        this.$root.$emit('focuscomments')
+      }
+    }
+  }
+
+  toggleMinimize () {
+    this.minimizeWindow = !this.minimizeWindow
+  }
+
+
   mounted () {
     this.$root.$on('showAddMessage', () => {
       this.Alert()
     })
-  },
-  data () {
-    return {
-      dismissSecs: 5,
-      dismissCountDown: 0,
-      minimizeWindow: false
-    }
-  },
-  computed: {
-    ...mapState({
-      addCitizenModal: 'addCitizenModal',
-      addModalForm: 'addModalForm',
-      showAddModal: 'showAddModal',
-      addModalSetup: 'addModalSetup',
-      serviceModalForm: 'serviceModalForm',
-      user: 'user',
-      displayServices: 'displayServices',
-      citizenButtons: 'citizenButtons',
-      performingAction: 'performingAction'
-    }),
-    ...mapGetters(['form_data', 'reception']),
-    marginStyle () {
-      let style = ''
-      if (this.citizenButtons) {
-        style = { marginRight: '50%' }
-      } else {
-        style = { marginLeft: '50%' }
-      }
-      return style
-    },
-    simplified () {
-      if (this.$route.path !== '/queue') {
-        return true
-      }
-      return false
-    },
-    modalTitle () {
-      if (this.addModalSetup === 'edit_mode') {
-        return 'Edit Service'
-      }
-      if (this.$route.path === '/appointments') {
-        return 'Add a Service'
-      }
-      if (this.simplified) {
-        return 'Begin Tracking'
-      }
-      if (this.displayServices === 'BackOffice') {
-        return 'Back Office'
-      }
-      return 'Add Citizen'
-    },
-
-    counter_selection: {
-      get () {
-        return this.form_data.counter
-      },
-      set (value) {
-        this.updateAddModalForm({ type: 'counter', value })
-      }
-    },
-    priority_selection: {
-      get () {
-        return this.form_data.priority
-      },
-      set (value) {
-        this.updateAddModalForm({ type: 'priority', value })
-      }
-    },
-    sortedCounters () {
-      var sorted = this.user.office.counters.sort((a, b) => {
-        return a.counter_name > b.counter_name
-      })
-      return sorted
-    }
-  },
-  methods: {
-    ...mapActions(['cancelAddCitizensModal', 'cancelAddCitizensModal',
-      'clickEditCancel', 'resetAddCitizenModal']),
-    ...mapMutations(['setDefaultChannel', 'toggleAddModal', 'updateAddModalForm']),
-    Alert () {
-      this.dismissCountDown = this.dismissSecs
-    },
-    cancelAction () {
-      if (this.$route.path == '/exams') {
-        this.cancelAddCitizensModal()
-      } else if (this.$route.path == '/appointments') {
-        this.closeAddServiceModal()
-      } else if ((this.addModalSetup == 'reception') || (this.addModalSetup == 'non_reception')) {
-        this.cancelAddCitizensModal()
-      } else if (this.addModalSetup == 'add_mode') {
-        this.clickEditCancel()
-      } else if (this.addModalSetup == 'edit_mode') {
-        this.clickEditCancel()
-      } else {
-        this.cancelAddCitizensModal()
-      }
-    },
-    closeAddServiceModal () {
-      this.resetAddCitizenModal()
-      this.$store.commit('appointmentsModule/toggleApptBookingModal', true)
-    },
-    countDownChanged (dismissCountDown) {
-      this.dismissCountDown = dismissCountDown
-    },
-    onDrag ({ el, deltaX, deltaY, offsetX, offsetY, clientX, clientY, first, last }) {
-      if (first) {
-        this.dragged = true
-        return
-      }
-      if (last) {
-        this.dragged = false
-        return
-      }
-      this.left = (this.left || 0) + deltaX
-      this.top = (this.top || 0) + deltaY
-      var add_modal = document.getElementsByClassName('modal-content')[0]
-      add_modal.style.transform = 'translate(' + this.left + 'px,' + this.top + 'px)'
-    },
-    setupForm () {
-      const setup = this.addModalSetup
-      if (this.simplified) {
-        this.$root.$emit('focusfilter')
-        return
-      }
-      if (setup === 'add_mode' || setup === 'edit_mode') {
-        this.$root.$emit('focusfilter')
-      } else {
-        if (!this.reception) {
-          this.$root.$emit('focusfilter')
-        } else if (this.reception) {
-          this.$root.$emit('focuscomments')
-        }
-      }
-    },
-    toggleMinimize () {
-      this.minimizeWindow = !this.minimizeWindow
-    }
   }
 }
+
 </script>
 
 <style>
