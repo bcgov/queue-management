@@ -87,7 +87,6 @@
 /* eslint-disable */
 import { Component, Vue } from 'vue-property-decorator'
 import { Getter, State, Action, Mutation } from 'vuex-class'
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import Buttons from './form-components/buttons.vue'
 import AddCitizenForm from './add-citizen-form.vue'
 

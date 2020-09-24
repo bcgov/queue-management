@@ -25,80 +25,83 @@
   </div>
 </template>
 
-<script>
-/*eslint-disable */
-import { mapGetters, mapMutations, mapState } from 'vuex'
+<script lang="ts">
 
-export default {
-  name: 'Filters',
+import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Getter, Mutation, State } from 'vuex-class'
+
+@Component({})
+export default class Filters extends Vue {
+  @State('addModalSetup') private addModalSetup!: string | undefined
+  @State('categories') private categories!: any
+  @State('suspendFilter') private suspendFilter!: boolean | undefined
+  @State('selectedItem') private selectedItem!: string | undefined
+
+  @Getter('form_data') private formData!: any;
+  // eslint-disable-next-line camelcase
+  @Getter('categories_options') private categories_options!: any;
+
+  @Mutation('updateAddModalForm') public updateAddModalForm: any
+  @Mutation('setDisplayServices') public setDisplayServices: any
+
+  @Watch('categories')
+  onCategoriesChange (newVal: any, oldVal: any) {
+    if (newVal && newVal.length > 0) {
+      if (['/booking', '/exams'].includes(this.$route.path)) {
+        const { service_id } = newVal.find((cat: any) => cat.service_name === 'Exams')
+        this.updateAddModalForm({ type: 'category', value: service_id })
+      }
+    }
+  }
+
+  get simplified () {
+    if (this.$route.path !== '/queue') {
+      return true
+    }
+    return false
+  }
+
+  get search () {
+    if (this.suspendFilter) {
+      return this.selectedItem
+    } else if (!this.suspendFilter) {
+      return this.formData.search
+    }
+  }
+
+  get category () { return this.formData.category }
+  set category (value) { this.updateAddModalForm({ type: 'category', value }) }
+
+  set search (value) {
+    if (this.suspendFilter) {
+      this.updateAddModalForm({ type: 'suspendFilter', value: false })
+    } else if (!this.suspendFilter) {
+      this.updateAddModalForm({ type: 'search', value })
+    }
+  }
+
+  focus () {
+    if (this.$refs && this.$refs.inputref) {
+      (this.$refs.inputref as any).focus()
+    }
+  }
+
   mounted () {
     this.$root.$on('focusfilter', () => {
       if (this.$refs && this.$refs.filterref) {
-        this.$refs.filterref.focus()
+        (this.$refs.filterref as any).focus()
       }
       if (this.categories && this.categories.length > 0) {
         if (['/booking', '/exams'].includes(this.$route.path)) {
           this.setDisplayServices('All')
-          const { service_id } = this.categories.find(cat => cat.service_name === 'Exams')
+          const { service_id } = this.categories.find((cat: any) => cat.service_name === 'Exams')
           this.updateAddModalForm({ type: 'category', value: service_id })
         }
       }
     })
-  },
-  computed: {
-    ...mapGetters(['categories_options', 'form_data']),
-    ...mapState({
-      addModalSetup: 'addModalSetup',
-      categories: state => state.categories,
-      suspendFilter: state => state.addModalForm.suspendFilter,
-      selectedItem: state => state.addModalForm.selectedItem
-    }),
-    simplified () {
-      if (this.$route.path !== '/queue') {
-        return true
-      }
-      return false
-    },
-    search: {
-      get () {
-        if (this.suspendFilter) {
-          return this.selectedItem
-        } else if (!this.suspendFilter) {
-          return this.form_data.search
-        }
-      },
-      set (value) {
-        if (this.suspendFilter) {
-          this.updateAddModalForm({ type: 'suspendFilter', value: false })
-        } else if (!this.suspendFilter) {
-          this.updateAddModalForm({ type: 'search', value })
-        }
-      }
-    },
-    category: {
-      get () { return this.form_data.category },
-      set (value) { this.updateAddModalForm({ type: 'category', value }) }
-    }
-  },
-  watch: {
-    categories (newVal, oldVal) {
-      if (newVal && newVal.length > 0) {
-        if (['/booking', '/exams'].includes(this.$route.path)) {
-          const { service_id } = newVal.find(cat => cat.service_name === 'Exams')
-          this.updateAddModalForm({ type: 'category', value: service_id })
-        }
-      }
-    }
-  },
-  methods: {
-    ...mapMutations(['updateAddModalForm', 'setDisplayServices']),
-    focus () {
-      if (this.$refs && this.$refs.inputref) {
-        this.$refs.inputref.focus()
-      }
-    }
   }
 }
+
 </script>
 
 <style scoped>

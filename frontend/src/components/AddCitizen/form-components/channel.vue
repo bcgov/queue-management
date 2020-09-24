@@ -5,45 +5,44 @@
         <label class="add_citizen_form_label">Channel:</label>
       </b-col>
       <b-col>
-        <b-select id="add_citizen_channels_select"
-                  :options="channel_options"
-                  v-model="channel"
-                  style="height: 38px; font-size: .8rem;"
-                  size="sm"
-                  label="Channels"
-                  placeholder="Select delivery channel"
-                  />
+        <b-select
+          id="add_citizen_channels_select"
+          :options="channel_options"
+          v-model="channel"
+          style="height: 38px; font-size: .8rem;"
+          size="sm"
+          label="Channels"
+          placeholder="Select delivery channel"
+        />
       </b-col>
     </b-form-row>
   </div>
 </template>
 
-<script>
-import { mapGetters } from 'vuex'
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+import { Getter } from 'vuex-class'
 
-export default {
-  name: 'Channel',
-  data () {
-    return {
-      t: true,
-      f: false,
-      state: 'invalid'
-    }
-  },
-  computed: {
-    ...mapGetters(['channel_options', 'form_data']),
-    channel: {
-      get () { return this.form_data.channel },
-      set (value) {
-        this.$store.commit('updateAddModalForm', { type: 'channel', value })
-      }
-    }
+@Component({})
+export default class Channel extends Vue {
+  @Getter('form_data') private formData!: any;
+  @Getter('channel_options') private channel_options!: any;
+
+  // seems like not using confirm and remove
+  // private t: boolean = true
+  // private f: boolean = false
+  // private state: string = 'invalid'
+
+  get channel () { return this.formData.channel }
+  set channel (value: number) {
+    this.$store.commit('updateAddModalForm', { type: 'channel', value })
   }
 }
+
 </script>
 
 <style>
-  .add_citizen_form {
-    padding-bottom: 2px;
-  }
+.add_citizen_form {
+  padding-bottom: 2px;
+}
 </style>
