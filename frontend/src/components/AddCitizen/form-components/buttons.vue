@@ -102,105 +102,109 @@
   </b-col>
 </template>
 
-<script>
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+<script lang="ts">
+// import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import { Action, Getter, Mutation, State } from 'vuex-class'
+import { Component, Vue } from 'vue-property-decorator'
 
-export default {
-  name: 'Buttons',
-  computed: {
-    ...mapGetters({
-      form_data: 'form_data',
-      reception: 'reception',
-      commentsTooLong: 'commentsTooLong'
-    }),
-    ...mapState({
-      setup: 'addModalSetup',
-      performingAction: 'performingAction',
-      addModalForm: 'addModalForm',
-      citizenButtons: 'citizenButtons'
-    }),
-    simplified () {
-      if (this.$route.path !== '/queue') {
-        return true
-      }
-      return false
+@Component({})
+export default class Buttons extends Vue {
+  @State('addModalSetup') private setup!: any
+  @State('performingAction') private performingAction!: any
+  @State('addModalForm') private addModalForm!: any
+  @State('citizenButtons') private citizenButtons!: any
+
+  @Getter('form_data') private form_data!: any;
+  @Getter('reception') private reception!: any;
+  @Getter('commentsTooLong') private commentsTooLong!: any;
+
+  @Action('applyEdits') public applyEdits: any
+  @Action('cancelAddCitizensModal') public cancelAddCitizensModal: any
+  @Action('clickAddServiceApply') public clickAddServiceApply: any
+  @Action('clickAddToQueue') public clickAddToQueue: any
+  @Action('clickBeginService') public clickBeginService: any
+  @Action('clickEditApply') public clickEditApply: any
+  @Action('clickEditCancel') public clickEditCancel: any
+  @Action('resetAddCitizenModal') public resetAddCitizenModal: any
+
+  @Mutation('toggleAddModal') public toggleAddModal: any
+  @Mutation('toggleExamsTrackingIP') public toggleExamsTrackingIP: any
+
+  get simplified () {
+    if (this.$route.path !== '/queue') {
+      return true
     }
-  },
-  methods: {
-    ...mapMutations(['toggleAddModal', 'toggleExamsTrackingIP']),
-    ...mapActions([
-      'applyEdits',
-      'cancelAddCitizensModal',
-      'clickAddServiceApply',
-      'clickAddToQueue',
-      'clickBeginService',
-      'clickEditApply',
-      'clickEditCancel',
-      'resetAddCitizenModal'
-    ]),
-    addService () {
-      this.$store.commit('appointmentsModule/setSelectedService', this.addModalForm.service)
-      this.closeAddServiceModal()
-    },
-    addServiceApply () {
-      if (this.form_data.service === '') {
-        this.$store.commit('setModalAlert', 'You must select a service')
-        this.$root.$emit('showAddMessage')
-        return null
-      }
-      if (this.form_data.channel === '') {
-        this.$store.commit('setModalAlert', 'You must select a channel')
-        this.$root.$emit('showAddMessage')
-        return null
-      }
-      this.clickAddServiceApply()
-    },
-    addToQueue () {
-      if (this.form_data.service === '') {
-        this.$store.commit('setModalAlert', 'You must select a service')
-        this.$root.$emit('showAddMessage')
-        return null
-      }
-      if (this.form_data.channel === '') {
-        this.$store.commit('setModalAlert', 'You must select a channel')
-        this.$root.$emit('showAddMessage')
-        return null
-      }
-      this.clickAddToQueue()
-    },
-    beginService () {
-      if (this.form_data.service === '') {
-        this.$store.commit('setModalAlert', 'You must select a service')
-        this.$root.$emit('showAddMessage')
-        return null
-      }
-      if (this.form_data.channel === '') {
-        this.$store.commit('setModalAlert', 'You must select a channel')
-        this.$root.$emit('showAddMessage')
-        return null
-      }
-      this.clickBeginService({ simple: false })
-    },
-    beginServiceSimplified () {
-      if (this.form_data.service === '') {
-        this.$store.commit('setModalAlert', 'You must select a service')
-        this.$root.$emit('showAddMessage')
-        return null
-      }
-      if (this.form_data.channel === '') {
-        this.$store.commit('setModalAlert', 'You must select a channel')
-        this.$root.$emit('showAddMessage')
-        return null
-      }
-      this.toggleExamsTrackingIP(true)
-      this.clickBeginService({ simple: true })
-    },
-    closeAddServiceModal () {
-      this.resetAddCitizenModal()
-      this.$store.commit('appointmentsModule/toggleApptBookingModal', true)
+    return false
+  }
+
+  addService () {
+    this.$store.commit('appointmentsModule/setSelectedService', this.addModalForm.service)
+    this.closeAddServiceModal()
+  }
+
+  addServiceApply () {
+    if (this.form_data.service === '') {
+      this.$store.commit('setModalAlert', 'You must select a service')
+      this.$root.$emit('showAddMessage')
+      return null
     }
+    if (this.form_data.channel === '') {
+      this.$store.commit('setModalAlert', 'You must select a channel')
+      this.$root.$emit('showAddMessage')
+      return null
+    }
+    this.clickAddServiceApply()
+  }
+
+  addToQueue () {
+    if (this.form_data.service === '') {
+      this.$store.commit('setModalAlert', 'You must select a service')
+      this.$root.$emit('showAddMessage')
+      return null
+    }
+    if (this.form_data.channel === '') {
+      this.$store.commit('setModalAlert', 'You must select a channel')
+      this.$root.$emit('showAddMessage')
+      return null
+    }
+    this.clickAddToQueue()
+  }
+
+  beginService () {
+    if (this.form_data.service === '') {
+      this.$store.commit('setModalAlert', 'You must select a service')
+      this.$root.$emit('showAddMessage')
+      return null
+    }
+    if (this.form_data.channel === '') {
+      this.$store.commit('setModalAlert', 'You must select a channel')
+      this.$root.$emit('showAddMessage')
+      return null
+    }
+    this.clickBeginService({ simple: false })
+  }
+
+  beginServiceSimplified () {
+    if (this.form_data.service === '') {
+      this.$store.commit('setModalAlert', 'You must select a service')
+      this.$root.$emit('showAddMessage')
+      return null
+    }
+    if (this.form_data.channel === '') {
+      this.$store.commit('setModalAlert', 'You must select a channel')
+      this.$root.$emit('showAddMessage')
+      return null
+    }
+    this.toggleExamsTrackingIP(true)
+    this.clickBeginService({ simple: true })
+  }
+
+  closeAddServiceModal () {
+    this.resetAddCitizenModal()
+    this.$store.commit('appointmentsModule/toggleApptBookingModal', true)
   }
 }
+
 </script>
 
 <style scoped>
