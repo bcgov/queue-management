@@ -1,6 +1,5 @@
 <template>
   <div style="outer-header-style">
-    abcd
     <SchedulingIndicator />
     <div id="main-footer">
       <div id="footer-links">
