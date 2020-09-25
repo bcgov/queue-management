@@ -24,6 +24,7 @@ wheels/
 .installed.cfg
 *.egg
 MANIFEST
+tmp/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -75,6 +76,7 @@ target/
 
 # pyenv
 .python-version
+queue-env/
 
 # celery beat schedule file
 celerybeat-schedule
