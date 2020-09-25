@@ -99,11 +99,10 @@
 </template>
 
 <script lang="ts">
-// /* eslint-disable */
+
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 
-// import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import AddCitizen from '../AddCitizen/add-citizen.vue'
 import ServeCitizen from '../ServeCitizen/serve-citizen.vue'
 
@@ -184,7 +183,9 @@ export default class Nav extends Vue {
 
   get isGAorCSR () {
     if (this.user && this.user.role) {
+      // eslint-disable-next-line camelcase
       const { role_code } = this.user.role
+      // eslint-disable-next-line camelcase
       if (role_code === 'CSR' || role_code === 'GA') {
         return true
       }
