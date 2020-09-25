@@ -1,3 +1,4 @@
+
 /*Copyright 2015 Province of British Columbia
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,25 +36,27 @@ limitations under the License.*/
   </div>
 </template>
 
-<script>
+<script lang="ts">
+/* eslint-disable indent */
+import { Component, Vue } from 'vue-property-decorator'
 import Login from '../Login/Login.vue'
 
-export default {
-  name: 'Header',
-  components: { Login },
-  data () {
-    return {
-      navbarStyle: {
-        boxShadow: '0px 5px 10px 0px rgba(169,169,169,1)',
-        padding: '5px 0px 0px 0px',
-        backgroundColor: '#003366',
-        borderBottom: '2px solid #fcba19',
-        height: '100%',
-        width: '100%',
-        justifyContent: 'space-between'
-      }
-    }
-  },
+@Component({
+  components: {
+    Login
+  }
+})
+export default class Header extends Vue {
+  public navbarStyle: any = {
+    boxShadow: '0px 5px 10px 0px rgba(169,169,169,1)',
+    padding: '5px 0px 0px 0px',
+    backgroundColor: '#003366',
+    borderBottom: '2px solid #fcba19',
+    height: '100%',
+    width: '100%',
+    justifyContent: 'space-between'
+  }
+
   created () {
     const prefix = window.location.host.substring(0, 4)
     switch (prefix) {
@@ -71,6 +74,7 @@ export default {
     }
   }
 }
+
 </script>
 
 <style>

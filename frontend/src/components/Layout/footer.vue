@@ -1,5 +1,6 @@
 <template>
   <div style="outer-header-style">
+    abcd
     <SchedulingIndicator />
     <div id="main-footer">
       <div id="footer-links">
@@ -13,6 +14,7 @@
           <a
             href="http://www2.gov.bc.ca/gov/content/home/accessibility"
             target="_blank"
+            rel="noopener noreferrer"
           >Accessibility</a>
         </div>
         <div class="footer-anchor-item-last">
@@ -37,15 +39,19 @@
   </div>
 </template>
 
-<script>
-import SchedulingIndicator from '../Booking/scheduling-indicator'
-export default {
-  name: 'Footer',
-  components: { SchedulingIndicator },
-  methods: {
-    keycloakLogin () {
-      this.$keycloak.login()
-    }
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+import SchedulingIndicator from '../Booking/scheduling-indicator.vue'
+
+@Component({
+  components: {
+    SchedulingIndicator
+  }
+})
+export default class Footer extends Vue {
+  $keycloak: any
+  keycloakLogin () {
+    this.$keycloak.login()
   }
 }
 </script>
