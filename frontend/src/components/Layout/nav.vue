@@ -136,7 +136,7 @@ export default class Nav extends Vue {
 
   @Mutation('toggleFeedbackModal') public toggleFeedbackModal: any
   @Mutation('toggleServiceModal') public toggleServiceModal: any
-  // check again this functionality
+  // TODO check this value - seems like not using
   // @Mutation('toggleTrackingIcon') public toggleTrackingIcon: any
 
   private flashIcon: boolean = true
@@ -219,7 +219,7 @@ export default class Nav extends Vue {
     return false
   }
 
-  // check functionality - not sure where it is using
+  // TODO check this function - not sure where it is using
   toggleTrackingIcon (bool: boolean) {
     if (!bool) {
       this.showSpacer = false
