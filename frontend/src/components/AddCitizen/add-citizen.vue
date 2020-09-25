@@ -85,10 +85,10 @@
 
 <script lang="ts">
 /* eslint-disable */
+import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
-import { Getter, State, Action, Mutation } from 'vuex-class'
-import Buttons from './form-components/buttons.vue'
 import AddCitizenForm from './add-citizen-form.vue'
+import Buttons from './form-components/buttons.vue'
 
 @Component({
   components: {
@@ -97,7 +97,6 @@ import AddCitizenForm from './add-citizen-form.vue'
   }
 })
 export default class AddCitizen extends Vue {
-
   @State('addCitizenModal') private addCitizenModal!: string | undefined
   @State('addModalForm') private addModalForm!: string | undefined
   @State('showAddModal') private showAddModal!: string | undefined
@@ -173,14 +172,12 @@ export default class AddCitizen extends Vue {
   }
 
   get priority_selection () {
-
     return this.form_data.priority
   }
 
   set priority_selection (value) {
     this.updateAddModalForm({ type: 'priority', value })
   }
-
 
   get sortedCounters () {
     // eslint-disable-next-line
@@ -189,7 +186,6 @@ export default class AddCitizen extends Vue {
     })
     return sorted
   }
-
 
   cancelAction () {
     if (this.$route.path == '/exams') {
@@ -207,15 +203,14 @@ export default class AddCitizen extends Vue {
     }
   }
 
-
   closeAddServiceModal () {
     this.resetAddCitizenModal()
     this.$store.commit('appointmentsModule/toggleApptBookingModal', true)
   }
+
   countDownChanged (dismissCountDown: number) {
     this.dismissCountDown = dismissCountDown
   }
-
 
   onDrag (event: any) {
     const { el, deltaX, deltaY, offsetX, offsetY, clientX, clientY, first, last } = event
@@ -232,6 +227,7 @@ export default class AddCitizen extends Vue {
     const add_modal: any = document.getElementsByClassName('modal-content')[0]
     add_modal.style.transform = 'translate(' + this.left + 'px,' + this.top + 'px)'
   }
+
   setupForm () {
     const setup = this.addModalSetup
     if (this.simplified) {
@@ -252,7 +248,6 @@ export default class AddCitizen extends Vue {
   toggleMinimize () {
     this.minimizeWindow = !this.minimizeWindow
   }
-
 
   mounted () {
     this.$root.$on('showAddMessage', () => {

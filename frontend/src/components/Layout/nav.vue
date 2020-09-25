@@ -98,132 +98,149 @@
   </div>
 </template>
 
-<script>
-/* eslint-disable */
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-import ServeCitizen from '../ServeCitizen/serve-citizen'
-import AddCitizen from '../AddCitizen/add-citizen'
+<script lang="ts">
 
-export default {
-  name: 'Nav',
-  components: { AddCitizen, ServeCitizen },
-  data () {
-    return {
-      flashIcon: true,
-      showSpacer: false
-    }
-  },
-  mounted () {
-    console.log('nav mount')
-  },
-  computed: {
-    ...mapGetters(['showExams', 'showAppointments']),
-    ...mapState([
-      'citizenInvited',
-      'showServiceModal',
-      'calendarSetup',
-      'rescheduling',
-      'scheduling',
-      'serviceModalForm',
-      'serviceBegun',
-      'showGAScreenModal',
-      'showServiceModal',
-      'showTimeTrackingIcon',
-      'showAddModal',
-      'user'
-    ]),
-    showHamburger () {
-      if (this.scheduling || this.rescheduling) {
-        return false
-      }
-      if (this.$route.path === '/queue' && this.citizenInvited) {
-        return false
-      }
-      return true
-    },
-    showIcon () {
-      if (this.$route.path !== '/queue') {
-        if (this.serviceModalForm &&
-          this.serviceModalForm.citizen_id &&
-          !this.showServiceModal &&
-          !this.showAddModal) {
-          return { show: true, style: 'warning' }
-        }
-        return { show: true, style: 'primary' }
-      }
-      return this.showTimeTrackingIcon ? { show: true, style: 'warning' } : { show: false, style: null }
-    },
-    isGAorCSR () {
-      if (this.user && this.user.role) {
-        const { role_code } = this.user.role
-        if (role_code === 'CSR' || role_code === 'GA') {
-          return true
+import { Action, Getter, Mutation, State } from 'vuex-class'
+import { Component, Vue, Watch } from 'vue-property-decorator'
+
+import AddCitizen from '../AddCitizen/add-citizen.vue'
+import ServeCitizen from '../ServeCitizen/serve-citizen.vue'
+
+@Component({
+  components: {
+    AddCitizen,
+    ServeCitizen
+  }
+})
+export default class Nav extends Vue {
+  @State('citizenInvited') private citizenInvited!: any
+  @State('showServiceModal') private showServiceModal!: any
+  @State('calendarSetup') private calendarSetup!: any
+  @State('rescheduling') private rescheduling!: any
+  @State('scheduling') private scheduling!: any
+  @State('serviceModalForm') private serviceModalForm!: any
+  @State('serviceBegun') private serviceBegun!: any
+  @State('showGAScreenModal') private showGAScreenModal!: any
+  // @State('showServiceModal') private showServiceModal!: any
+  @State('showTimeTrackingIcon') private showTimeTrackingIcon!: any
+  @State('showAddModal') private showAddModal!: any
+  @State('user') private user!: any
+
+  @Getter('showExams') private showExams!: any;
+  @Getter('showAppointments') private showAppointments!: any;
+
+  @Action('clickGAScreen') public clickGAScreen: any
+  @Action('clickAddCitizen') public clickAddCitizen: any
+  @Action('clickRefresh') public clickRefresh: any
+
+  @Mutation('toggleFeedbackModal') public toggleFeedbackModal: any
+  @Mutation('toggleServiceModal') public toggleServiceModal: any
+  // TODO check this value - seems like not using
+  // @Mutation('toggleTrackingIcon') public toggleTrackingIcon: any
+
+  private flashIcon: boolean = true
+  private showSpacer: boolean = false
+  toggleTimeTrackingIcon: any
+
+  @Watch('showIcon')
+  onShowIconChange (newV: any, oldV: any) {
+    if (this.$route.path === '/queue' && newV.show && !oldV.show) {
+      this.showSpacer = true
+      let k = 4
+      const flash = () => {
+        this.flashIcon = !this.flashIcon
+        k -= 1
+        if (k > 0) {
+          setTimeout(() => { flash() }, 140)
         }
       }
-      return false
-    },
-    gaPanelStyle () {
-      let classStyle = 'gaScreenUnchecked'
-      if (this.showGAScreenModal) {
-        classStyle = 'gaScreenChecked'
-      }
-      return classStyle
-    },
-    showAdmin () {
-      const roles = ['GA', 'ANALYTICS', 'HELPDESK', 'SUPPORT']
-      if (this.user && this.user.role && this.user.role.role_code) {
-        if (roles.indexOf(this.user.role.role_code) > -1) {
-          return true
-        }
-      }
-      return false
-    },
-    showSupport () {
-      if (this.user && this.user.role && this.user.role.role_code) {
-        if (this.user.role.role_code == 'SUPPORT') {
-          return true
-        }
-      }
-      return false
-    }
-  },
-  watch: {
-    showIcon (newV, oldV) {
-      if (this.$route.path === '/queue' && newV.show && !oldV.show) {
-        this.showSpacer = true
-        let k = 4
-        const flash = () => {
-          this.flashIcon = !this.flashIcon
-          k -= 1
-          if (k > 0) {
-            setTimeout(() => { flash() }, 140)
-          }
-        }
-        flash()
-      }
-    }
-  },
-  methods: {
-    ...mapActions(['clickGAScreen', 'clickAddCitizen', 'clickRefresh']),
-    ...mapMutations(['toggleFeedbackModal', 'toggleServiceModal', 'toggleTrackingIcon']),
-    toggleTrackingIcon (bool) {
-      if (!bool) {
-        this.showSpacer = false
-      }
-      this.toggleTimeTrackingIcon(bool)
-    },
-    clickFeedback () {
-      this.toggleFeedbackModal(true)
-    },
-    clickIcon () {
-      if (this.showIcon) {
-        this.toggleServiceModal(true)
-        return
-      }
-      this.clickAddCitizen()
+      flash()
     }
   }
+
+  get showHamburger () {
+    if (this.scheduling || this.rescheduling) {
+      return false
+    }
+    if (this.$route.path === '/queue' && this.citizenInvited) {
+      return false
+    }
+    return true
+  }
+
+  get showIcon () {
+    if (this.$route.path !== '/queue') {
+      if (this.serviceModalForm &&
+        this.serviceModalForm.citizen_id &&
+        !this.showServiceModal &&
+        !this.showAddModal) {
+        return { show: true, style: 'warning' }
+      }
+      return { show: true, style: 'primary' }
+    }
+    return this.showTimeTrackingIcon ? { show: true, style: 'warning' } : { show: false, style: null }
+  }
+
+  get isGAorCSR () {
+    if (this.user && this.user.role) {
+      // eslint-disable-next-line camelcase
+      const { role_code } = this.user.role
+      // eslint-disable-next-line camelcase
+      if (role_code === 'CSR' || role_code === 'GA') {
+        return true
+      }
+    }
+    return false
+  }
+
+  get gaPanelStyle () {
+    let classStyle = 'gaScreenUnchecked'
+    if (this.showGAScreenModal) {
+      classStyle = 'gaScreenChecked'
+    }
+    return classStyle
+  }
+
+  get showAdmin () {
+    const roles = ['GA', 'ANALYTICS', 'HELPDESK', 'SUPPORT']
+    if (this.user && this.user.role && this.user.role.role_code) {
+      if (roles.indexOf(this.user.role.role_code) > -1) {
+        return true
+      }
+    }
+    return false
+  }
+
+  get showSupport () {
+    if (this.user && this.user.role && this.user.role.role_code) {
+      if (this.user.role.role_code == 'SUPPORT') {
+        return true
+      }
+    }
+    return false
+  }
+
+  // TODO check this function - not sure where it is using
+  toggleTrackingIcon (bool: boolean) {
+    if (!bool) {
+      this.showSpacer = false
+    }
+    this.toggleTimeTrackingIcon(bool)
+  }
+
+  clickFeedback () {
+    this.toggleFeedbackModal(true)
+  }
+
+  clickIcon () {
+    if (this.showIcon) {
+      this.toggleServiceModal(true)
+      return
+    }
+    this.clickAddCitizen()
+  }
 }
+
 </script>
 
 <style scoped>
