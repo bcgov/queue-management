@@ -95,7 +95,6 @@ class BCMPService:
 
         bcmp_exam = {
             "EXAM_SESSION_LOCATION" : office_name,
-            "SESSION_DATE_TIME" : self.__exam_time_format(exam.expiry_date),
             "REGISTRAR_name" : oidc_token_info['preferred_username'],
             "RECIPIENT_EMAIL_ADDRESS" : oidc_token_info['email'],
             "REGISTRAR_phoneNumber" : "",
@@ -131,7 +130,7 @@ class BCMPService:
         
         bcmp_exam = {
             "EXAM_SESSION_LOCATION": office_name,
-            "SESSION_DATE_TIME" : self.__exam_time_format(exam.expiry_date),
+            "SESSION_DATE_TIME" : self.__exam_time_format(exam.booking.start_time),
             "REGISTRAR_name" : oidc_token_info['preferred_username'],
             "RECIPIENT_EMAIL_ADDRESS" : oidc_token_info['email'],
             "REGISTRAR_phoneNumber": "",
