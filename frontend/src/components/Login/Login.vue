@@ -35,14 +35,14 @@ limitations under the License.*/
       </div>
       <div style="margin-right: 22px;margin-top: 9px;">
         <label id="break-switch">
-          <input type="checkbox" v-model="break_toggle" />
+          <input type="checkbox" v-model="breakToggle" />
           <span class="circle1"></span>
           <span class="circle2"></span>
         </label>
         <p class="switch-p">{{user.csr_state_id === csr_states['Break'] ? 'On Break' : 'Active' }}</p>
       </div>
       <div id="select-wrapper" style="padding-right: 20px" v-if="reception">
-        <select id="counter-selection-csr" class="custom-select" v-model="counter_selection">
+        <select id="counter-selection-csr" class="custom-select" v-model="counterSelection">
           <option value="receptionist">Receptionist</option>
           <option
             v-for="counter in user.office.counters"
@@ -97,7 +97,7 @@ export default class Login extends Vue {
   $keycloak: any
   // $keycloak: any
 
-  get counter_selection () {
+  get counterSelection () {
     if (this.receptionist_status === true) {
       return 'receptionist'
     } else {
@@ -105,7 +105,7 @@ export default class Login extends Vue {
     }
   }
 
-  set counter_selection (value) {
+  set counterSelection (value) {
     if (value === 'receptionist') {
       this.setReceptionistState(true)
     } else {
@@ -115,21 +115,21 @@ export default class Login extends Vue {
     this.updateCSRCounterTypeState()
   }
 
-  get break_toggle () {
-    var csr_status = this.user.csr_state.csr_state_name
+  get breakToggle () {
+    const csrStatus = this.user.csr_state.csr_state_name
 
-    if (csr_status === 'Break') {
+    if (csrStatus === 'Break') {
       return false
     } else {
       return true
     }
   }
 
-  set break_toggle (value) {
-    var breakID = this.csr_states.Break
-    var loginID = this.csr_states.Login
-    var id
-    var name
+  set breakToggle (value) {
+    const breakID = this.csr_states.Break
+    const loginID = this.csr_states.Login
+    let id
+    let name
 
     if (value) {
       id = loginID
@@ -304,9 +304,9 @@ export default class Login extends Vue {
   }
 
   updated () {
-    var csr_status = this.user.csr_state.csr_state_name
+    const csrStatus = this.user.csr_state.csr_state_name
 
-    if (csr_status === 'Break') {
+    if (csrStatus === 'Break') {
       this.setBreakClickEvent()
     } else {
       document.body.removeEventListener('click', this.stopBreak)
