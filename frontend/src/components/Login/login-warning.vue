@@ -14,29 +14,32 @@ limitations under the License.*/
 
 <template>
   <div id="LOGIN" v-if="!user.username && isLoggedIn">
-    <b-alert variant="warning"
-             dismissible
-             :show=loginDismissCount
-             style="h-align: center; top: 70px; font-size:1rem; border-radius: 0px; z-index: 1041"
-             @dismissed="onDismissedLogin">
-             {{ loginAlertMessage }}
-    </b-alert>
+    <b-alert
+      variant="warning"
+      dismissible
+      :show="loginDismissCount"
+      style="h-align: center; top: 70px; font-size:1rem; border-radius: 0px; z-index: 1041"
+      @dismissed="onDismissedLogin"
+    >{{ loginAlertMessage }}</b-alert>
   </div>
 </template>
 
-<script>
-import { mapMutations, mapState } from 'vuex'
-export default {
-  name: 'LoginWarning',
-  computed: {
-    ...mapState(['loginAlertMessage', 'loginDismissCount', 'user', 'isLoggedIn'])
-  },
-  methods: {
-    ...mapMutations(['loginDismissCountDown']),
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+import { Mutation, State } from 'vuex-class'
 
-    onDismissedLogin () {
-      this.loginDismissCountDown(999)
-    }
+@Component({})
+export default class LoginWarning extends Vue {
+  @State('loginAlertMessage') private loginAlertMessage!: any
+  @State('loginDismissCount') private loginDismissCount!: boolean
+  @State('user') private user!: any
+  @State('isLoggedIn') private isLoggedIn!: any
+
+  @Mutation('loginDismissCountDown') public loginDismissCountDown: any
+
+  onDismissedLogin () {
+    this.loginDismissCountDown(999)
   }
 }
+
 </script>
