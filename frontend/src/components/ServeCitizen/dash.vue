@@ -61,45 +61,179 @@ limitations under the License.*/
   </div>
 </template>
 
-<script>
-/* eslint-disable */
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-import DashTable from './dash-table'
-import DashHoldTable from './dash-hold-table'
+<script lang="ts">
+// /* eslint-disable */
+import { Action, Getter, Mutation, State } from 'vuex-class'
+import { Component, Vue, Watch } from 'vue-property-decorator'
+
+import DashHoldTable from './dash-hold-table.vue'
+import DashTable from './dash-table.vue'
 import GAScreen from './../ga-screen/ga-screen.vue'
 
-export default {
-  name: 'Dash',
+@Component({
   components: {
     DashTable,
     DashHoldTable,
     GAScreen
-  },
-  mounted () {
-    this.$root.$on('showMessage', () => {
-      this.Alert()
-    })
-    this.totalH = window.innerHeight - 70 - 36
-    this.$nextTick(function () {
-      window.addEventListener('resize', this.getNewHeight)
-    })
-    window.addEventListener('message', this.receiveSize)
-    setTimeout(() => { this.checkServiceReqs() }, 400)
-  },
-  data () {
-    return {
-      totalH: '',
-      buttonH: 45,
-      qLengthH: 28,
-      isDragged: '',
-      offset: 0,
-      last: 0,
-      dismissSecs: 5,
-      iframeHeight: '500px',
-      checkedSessionStorage: false
+  }
+})
+export default class Dash extends Vue {
+  @State('citizenInvited') private citizenInvited!: any
+  @State('dismissCountDown') private dismissCountDown!: any
+  @State('examsTrackingIP') private examsTrackingIP!: any
+  @State('isLoggedIn') private isLoggedIn!: any
+  @State('performingAction') private performingAction!: any
+  @State('serveNowStyle') private serveNowStyle!: any
+  @State('serviceBegun') private serviceBegun!: any
+  @State('serviceModalForm') private serviceModalForm!: any
+  @State('showAddModal') private showAddModal!: any
+  @State('showAdmin') private showAdmin!: any
+  @State('showGAScreenModal') private showGAScreenModal!: any
+  @State('showServiceModal') private showServiceModal!: any
+  @State('showTimeTrackingIcon') private showTimeTrackingIcon!: any
+  @State('toggleShowAdmin') private toggleShowAdmin!: any
+  @State('user') private user!: any
+  @State('userLoadingFail') private userLoadingFail!: any
+
+  @Getter('citizens_queue') private citizens_queue!: any;
+  @Getter('on_hold_queue') private on_hold_queue!: any;
+  @Getter('reception') private reception!: any;
+
+  @Action('clickAddCitizen') public clickAddCitizen: any
+  @Action('clickInvite') public clickInvite: any
+  @Action('clickAdmin') public clickAdmin: any
+  @Action('clickServiceModalClose') public clickServiceModalClose: any
+  @Action('clickCitizenLeft') public clickCitizenLeft: any
+  @Action('clickGAScreen') public clickGAScreen: any
+  @Action('clickServeNow') public clickServeNow: any
+  @Action('clickBackOffice') public clickBackOffice: any
+  @Action('screenAllCitizens') public screenAllCitizens: any
+
+  @Mutation('setMainAlert') public setMainAlert: any
+  @Mutation('toggleServiceModal') public toggleServiceModal: any
+  @Mutation('toggleFeedbackModal') public toggleFeedbackModal: any
+  @Mutation('toggleBegunStatus') public toggleBegunStatus: any
+
+  private totalH: any = '';
+  private buttonH: number = 45;
+  private qLengthH: number = 28;
+  private isDragged: boolean = false;
+  private offset: number = 0;
+  private last: number = 0;
+  private dismissSecs: number = 5;
+  private iframeHeight: string = '500px';
+  private checkedSessionStorage: boolean = false
+
+  get fullHoldH () {
+    return this.totalH - this.qLengthH - this.buttonH - 50
+  }
+
+  get availH () {
+    return this.totalH - (2 * this.qLengthH) - this.buttonH - 16
+  }
+
+  get queueLength () {
+    return this.citizens_queue.length
+  }
+
+  get dashH () {
+    if (!this.isDragged) return this.availH / 2
+    // TODO removed if condtion
+    // if (this.isDragged)
+    return this.availH + this.offset
+  }
+
+  get holdH () {
+    return (this.availH - this.dashH - 40)
+  }
+
+  get csrId () {
+    return this.user.csr_id
+  }
+
+  @Watch('csrId')
+  onCsrIdChange (val: any, oldVal: any) {
+    if (val) {
+      this.checkSessionStorage(val)
     }
-  },
-  beforeRouteLeave (to, from, next) {
+  }
+
+  private checkServiceReqs () {
+    if (this.examsTrackingIP) {
+      if (this.serviceModalForm && this.serviceModalForm.citizen_id) {
+        this.toggleServiceModal(true)
+        this.$store.commit('toggleBegunStatus', true)
+        this.$store.commit('setPerformingAction', false)
+      }
+    }
+  }
+
+  private getNewHeight () {
+    // window.innerHeight - height of header (70) - height of footer (36)
+    this.totalH = window.innerHeight - 70 - 36
+  }
+
+  private onDrag (event: any) {
+    const { deltaY, first, last } = event
+    this.isDragged = true
+    if (first) {
+      this.offset = -this.availH / 2 + this.last
+      return
+    }
+    if (!first && !last) {
+      this.offset += deltaY
+      this.last = (this.availH / 2) + this.offset
+    }
+    if (last) {
+      const offsetRatio: any = this.offset / this.availH
+      const lastRatio: any = this.last / this.availH
+      sessionStorage.setItem(`${this.csrId}offset`, offsetRatio)
+      sessionStorage.setItem(`${this.csrId}last`, lastRatio)
+    }
+  }
+
+  private receiveSize (e: any) {
+    var newHeight = e.data
+
+    if (!Number.isInteger(newHeight)) {
+      return
+    }
+
+    if (newHeight < 450) {
+      newHeight = 500
+    } else {
+      newHeight = newHeight + 50
+    }
+
+    this.iframeHeight = newHeight + 'px'
+  }
+
+  private invite () {
+    if (this.queueLength === 0) {
+      this.setMainAlert('The are currently no citizens to invite.')
+    } else {
+      this.clickInvite()
+    }
+  }
+
+  private clickFeedback () {
+    this.toggleFeedbackModal(true)
+  }
+
+  private checkSessionStorage (csrId: any) {
+    this.checkedSessionStorage = true
+    const offsetRatio: any = sessionStorage.getItem(`${csrId}offset`)
+    if (offsetRatio) {
+      this.isDragged = true
+      const lastRatio: any = sessionStorage.getItem(`${csrId}last`)
+      this.offset = offsetRatio * this.availH
+      this.last = lastRatio * this.availH
+    } else {
+      this.isDragged = false
+    }
+  }
+
+  beforeRouteLeave (to: any, from: any, next: any) {
     if (this.showTimeTrackingIcon) {
       next()
       return
@@ -109,136 +243,21 @@ export default {
       next()
     }
     next()
-  },
-  computed: {
-    ...mapGetters(['citizens_queue', 'on_hold_queue', 'reception']),
-    ...mapState([
-      'citizenInvited',
-      'dismissCountDown',
-      'examsTrackingIP',
-      'isLoggedIn',
-      'performingAction',
-      'serveNowStyle',
-      'serviceBegun',
-      'serviceModalForm',
-      'showAddModal',
-      'showAdmin',
-      'showGAScreenModal',
-      'showServiceModal',
-      'showTimeTrackingIcon',
-      'toggleShowAdmin',
-      'user',
-      'userLoadingFail'
-    ]),
-    fullHoldH () {
-      return this.totalH - this.qLengthH - this.buttonH - 50
-    },
-    availH () {
-      return this.totalH - (2 * this.qLengthH) - this.buttonH - 16
-    },
-    queueLength () {
-      return this.citizens_queue.length
-    },
-    dashH () {
-      if (!this.isDragged) return this.availH / 2
-      if (this.isDragged) return this.availH + this.offset
-    },
-    holdH () {
-      return (this.availH - this.dashH - 40)
-    },
-    csrId () {
-      return this.user.csr_id
-    }
-  },
-  watch: {
-    csrId: function (val, oldVal) {
-      if (val) {
-        this.checkSessionStorage(val)
-      }
-    }
-  },
-  methods: {
-    ...mapMutations(['setMainAlert', 'toggleServiceModal', 'toggleFeedbackModal', 'toggleBegunStatus']),
-    ...mapActions([
-      'clickAddCitizen',
-      'clickInvite',
-      'clickAdmin',
-      'clickServiceModalClose',
-      'clickCitizenLeft',
-      'clickGAScreen',
-      'clickServeNow',
-      'clickBackOffice',
-      'screenAllCitizens'
-    ]),
-    checkServiceReqs () {
-      if (this.examsTrackingIP) {
-        if (this.serviceModalForm && this.serviceModalForm.citizen_id) {
-          this.toggleServiceModal(true)
-          this.$store.commit('toggleBegunStatus', true)
-          this.$store.commit('setPerformingAction', false)
-        }
-      }
-    },
-    getNewHeight () {
-      // window.innerHeight - height of header (70) - height of footer (36)
-      this.totalH = window.innerHeight - 70 - 36
-    },
-    onDrag ({ deltaY, first, last }) {
-      this.isDragged = true
-      if (first) {
-        this.offset = -this.availH / 2 + this.last
-        return
-      }
-      if (!first && !last) {
-        this.offset += deltaY
-        this.last = (this.availH / 2) + this.offset
-      }
-      if (last) {
-        const offsetRatio = this.offset / this.availH
-        const lastRatio = this.last / this.availH
-        sessionStorage.setItem(`${this.csrId}offset`, offsetRatio)
-        sessionStorage.setItem(`${this.csrId}last`, lastRatio)
-      }
-    },
-    receiveSize (e) {
-      var newHeight = e.data
+  }
 
-      if (!Number.isInteger(newHeight)) {
-        return
-      }
-
-      if (newHeight < 450) {
-        newHeight = 500
-      } else {
-        newHeight = newHeight + 50
-      }
-
-      this.iframeHeight = newHeight + 'px'
-    },
-    invite () {
-      if (this.queueLength === 0) {
-        this.setMainAlert('The are currently no citizens to invite.')
-      } else {
-        this.clickInvite()
-      }
-    },
-    clickFeedback () {
-      this.toggleFeedbackModal(true)
-    },
-    checkSessionStorage (csrId) {
-      this.checkedSessionStorage = true
-      const offsetRatio = sessionStorage.getItem(`${csrId}offset`)
-      if (offsetRatio) {
-        this.isDragged = true
-        const lastRatio = sessionStorage.getItem(`${csrId}last`)
-        this.offset = offsetRatio * this.availH
-        this.last = lastRatio * this.availH
-      } else {
-        this.isDragged = false
-      }
-    }
+  mounted () {
+    this.$root.$on('showMessage', () => {
+      // this.Alert()
+    })
+    this.totalH = window.innerHeight - 70 - 36
+    this.$nextTick(function () {
+      window.addEventListener('resize', this.getNewHeight)
+    })
+    window.addEventListener('message', this.receiveSize)
+    setTimeout(() => { this.checkServiceReqs() }, 400)
   }
 }
+
 </script>
 
 <style scoped>
