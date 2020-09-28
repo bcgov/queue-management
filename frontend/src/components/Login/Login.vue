@@ -158,7 +158,7 @@ export default class Login extends Vue {
 
   initSessionStorage () {
     if (sessionStorage.getItem('token')) {
-      const tokenExp = sessionStorage.getItem('tokenExp')
+      const tokenExp: any = sessionStorage.getItem('tokenExp')
       const timeUntilExp = Math.round(tokenExp - new Date().getTime() / 1000)
       if (timeUntilExp > 30) {
         this.$keycloak.init({
@@ -260,7 +260,10 @@ export default class Login extends Vue {
   setBreakClickEvent () {
     // Click anywhere on screen to end "Break"
     document.body.addEventListener('click', this.stopBreak)
-    document.getElementById('break-switch').style.pointerEvents = 'none' // Prevent double click event
+    const breakSwitch = document.getElementById('break-switch')
+    if (breakSwitch !== null) {
+      breakSwitch.style.pointerEvents = 'none' // Prevent double click event
+    }
   }
 
   stopBreak () {
@@ -307,7 +310,12 @@ export default class Login extends Vue {
       this.setBreakClickEvent()
     } else {
       document.body.removeEventListener('click', this.stopBreak)
-      document.getElementById('break-switch').style.pointerEvents = 'all'
+      const breakSwitch = document.getElementById('break-switch')
+      if (breakSwitch !== null) {
+        breakSwitch.style.pointerEvents = 'all'
+      }
+
+      // document.getElementById('break-switch').style.pointerEvents = 'all'
     }
   }
 }
