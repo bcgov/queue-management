@@ -13,14 +13,15 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import logging
-import datetime, pytz
+import pytz
+from datetime import datetime, timedelta
 from flask import g
 from flask_restx import Resource
 from sqlalchemy import exc
 from app.models.bookings import Appointment
 from app.models.theq import CSR
 from app.schemas.bookings import AppointmentSchema
-from qsystem import api, oidc
+from qsystem import api, oidc, appt_limit
 from app.utilities.auth_util import Role, has_any_role
 
 
@@ -34,15 +35,12 @@ class AppointmentList(Resource):
     def get(self):
 
         csr = CSR.find_by_username(g.oidc_token_info['username'])
-              
+        appt_limit_int = int(appt_limit)     
         # today's date and time
-        today = datetime.datetime.now()
-        dt = pytz.utc.localize(today)
-        today_year = dt.year
-        today_month = dt.month
-        first_month = datetime.datetime(today_year, today_month, 1, 0, 0, 0, 0)
-        filter_date = pytz.utc.localize(first_month)
-
+        dt = datetime.now()
+        upper_dt = dt - timedelta(days=appt_limit_int)
+        filter_date = pytz.utc.localize(upper_dt)
+        print("filter_date",filter_date)
         try:
             appointments = Appointment.query.filter_by(office_id=csr.office_id)\
                                             .filter(Appointment.start_time >= filter_date)\

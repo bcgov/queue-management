@@ -54,6 +54,7 @@ print_flag = application.config['PRINT_ENABLE']
 debug_type_error_flag = application.config['PRINT_ENABLE_DEBUG_TYPEERROR']
 socket_flag = application.config['SOCKET_FLAG']
 engine_flag = application.config['ENGINE_FLAG']
+appt_limit = application.config['APPOINTMENT_LIMIT_DAYS']
 
 #   Set up SQL Alchemy, caching, marshmallow
 db = SQLAlchemy(application)
