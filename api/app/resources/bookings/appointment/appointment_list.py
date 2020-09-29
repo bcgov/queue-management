@@ -40,7 +40,7 @@ class AppointmentList(Resource):
         dt = datetime.now()
         upper_dt = dt - timedelta(days=appt_limit_int)
         filter_date = pytz.utc.localize(upper_dt)
-        print("filter_date",filter_date)
+        # print("filter_date",filter_date)
         try:
             appointments = Appointment.query.filter_by(office_id=csr.office_id)\
                                             .filter(Appointment.start_time >= filter_date)\
