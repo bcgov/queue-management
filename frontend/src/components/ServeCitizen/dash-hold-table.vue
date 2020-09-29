@@ -44,7 +44,6 @@ limitations under the License.*/-->
 </template>
 
 <script lang="ts">
-// /* eslint-disable */
 import { Action, Getter, State } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
 
