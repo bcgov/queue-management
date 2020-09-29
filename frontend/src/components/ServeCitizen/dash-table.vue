@@ -47,7 +47,6 @@ limitations under the License.*/
 // /* eslint-disable */
 import { Action, Getter, State, namespace } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
-// import { mapActions, mapGetters, mapState } from 'vuex'
 
 const AppointmentsModule = namespace('appointmentsModule')
 
