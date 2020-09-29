@@ -2137,6 +2137,7 @@ export const store = new Vuex.Store({
       }
 
       let booking = makeBookingReqObj(context, responses)
+      postData.booking = booking
 
       let apiUrl = (isRequestExamReq) ? '/exams/bcmp/' : '/exams/'
 

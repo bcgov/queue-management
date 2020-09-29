@@ -4,6 +4,7 @@ import urllib
 from qsystem import application, my_print
 from app.utilities.document_service import DocumentService
 from datetime import datetime
+import pytz
 
 
 class BCMPService:
@@ -95,7 +96,6 @@ class BCMPService:
 
         bcmp_exam = {
             "EXAM_SESSION_LOCATION" : office_name,
-            "SESSION_DATE_TIME" : self.__exam_time_format(exam.expiry_date),
             "REGISTRAR_name" : oidc_token_info['preferred_username'],
             "RECIPIENT_EMAIL_ADDRESS" : oidc_token_info['email'],
             "REGISTRAR_phoneNumber" : "",
@@ -124,14 +124,17 @@ class BCMPService:
             invigilator_name = invigilator.invigilator_name
 
         office_name = None
+        time_zone = pytz.timezone('America/Vancouver')
         if pesticide_office:
             office_name = pesticide_office.office_name
+            time_zone = pytz.timezone(pesticide_office.timezone.timezone_name)
 
         my_print(exam.expiry_date.strftime("%a %b %d, %Y at %-I:%M %p"))
-        
+        exam_time = exam.booking.start_time.astimezone(tz=time_zone)
+
         bcmp_exam = {
             "EXAM_SESSION_LOCATION": office_name,
-            "SESSION_DATE_TIME" : self.__exam_time_format(exam.expiry_date),
+            "SESSION_DATE_TIME" : self.__exam_time_format(exam_time),
             "REGISTRAR_name" : oidc_token_info['preferred_username'],
             "RECIPIENT_EMAIL_ADDRESS" : oidc_token_info['email'],
             "REGISTRAR_phoneNumber": "",
