@@ -88,11 +88,6 @@ class AvailabilityService():
                                 actual_slot.get('end_time') \
                                 > booked_slot.get('start_time') \
                                 >= actual_slot.get('start_time'):
-                            # print('>>>actual_slot.get(start_time)', actual_slot.get('start_time'))
-                            # print('>>>actual_slot.get(end_time)', actual_slot.get('end_time'))
-                            # print('>>>booked_slot.get(start_time)', booked_slot.get('start_time'))
-                            # print('>>>booked_slot.get(end_time)', booked_slot.get('end_time'))
-                            # print('>>>booked_slot.get(blackout_flag)', booked_slot.get('blackout_flag', False))
                             if booked_slot.get('blackout_flag', False):  # If it's blackout override the no of slots
                                 actual_slot['no_of_slots'] = 0
                             else:

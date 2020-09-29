@@ -355,24 +355,26 @@ def after_cursor_execute(conn, cursor, statement,
     total = time.time() - conn.info['query_start_time'].pop(-1)
 
     if total > query_limit:
-        logger.debug("Long running Query (%s s)" % (total))
+        logger.info("Long running Query (%s s)" % (total))
         output_string = str(parameters)
         if len(output_string) > 90:
             output_string = output_string[:85] + " ...}"
-        logger.debug("Parameters: %s", output_string)
+        logger.info("Parameters: %s", output_string)
         try:
             count = 0
             for line in traceback.format_stack():
-                if  (('opt' in line) or ('api' in line)) \
-                        and ('qsystem' not in line) \
-                        and ((('opt' in line) and ('src' in line)) \
-                             or (('opt' not in line) and ('venv' not in line))):
-                    count = count + 1
-                    output_string = line.strip().split('\n')[0]
+                debug = 'env' in line
+                count = count + 1
+                output_string = line.strip().split('\n')[0]
+                start = output_string.find("/api/")
+                if start == -1:
                     start = output_string.find("/app/")
-                    if start != -1:
-                        output_string = output_string[start:]
+                if start != -1:
+                    output_string = output_string[start:]
+                if debug:
                     logger.debug("--> Line " + str(count) + ": " + output_string)
+                else:
+                    logger.info("--> Line " + str(count) + ": " + output_string)
         except Exception as err:
             print("==> Error:" + str(err))
 
