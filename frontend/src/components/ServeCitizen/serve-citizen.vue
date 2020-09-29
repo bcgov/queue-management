@@ -212,7 +212,6 @@
 // /* eslint-disable */
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
-// import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import ServeCitizenTable from './serve-citizen-table.vue'
 
 @Component({
@@ -250,7 +249,6 @@ export default class ServeCitizen extends Vue {
   @Mutation('toggleExamsTrackingIP') public toggleExamsTrackingIP: any
   @Mutation('toggleTimeTrackingIcon') public toggleTimeTrackingIcon: any
 
-
   private buttonStyle: string = 'btn-primary serve-btn'
   private selected: string = ''
   private f: boolean = false
@@ -262,7 +260,6 @@ export default class ServeCitizen extends Vue {
   private left: number = 0
   private top: number = 0
 
-
   get appointment () {
     if (this.serviceModalForm &&
       this.serviceModalForm.citizen_comments &&
@@ -271,33 +268,37 @@ export default class ServeCitizen extends Vue {
     }
     return false
   }
+
   get alertMessage () {
-    let serveMessageBlank = this.serveModalAlert === "";
-    let commentsMessageBlank = this.commentsAlert === "";
+    const serveMessageBlank = this.serveModalAlert === ''
+    const commentsMessageBlank = this.commentsAlert === ''
     if (serveMessageBlank && commentsMessageBlank) {
-      return "";
+      return ''
     }
     if (serveMessageBlank && !commentsMessageBlank) {
-      return this.commentsAlert;
+      return this.commentsAlert
     }
     if ((!serveMessageBlank) && commentsMessageBlank) {
-      return this.serveModalAlert;
+      return this.serveModalAlert
     }
-    return this.serveModalAlert + "  " + this.commentsAlert;
+    return this.serveModalAlert + '  ' + this.commentsAlert
   }
+
   get topSpace () {
-    let top = this.appointment ? 210 : 178;
-    if (this.alertMessage != "") {
-      top = top + 60;
+    let top = this.appointment ? 210 : 178
+    if (this.alertMessage != '') {
+      top = top + 60
     }
-    return top.toString() + "px";
+    return top.toString() + 'px'
   }
+
   get simplifiedModal () {
     if (this.$route.path !== '/queue') {
       return true
     }
     return false
   }
+
   get simplifiedTicketStarted () {
     if (this.$route.path !== '/queue') {
       if (this.serviceModalForm.citizen_id) {
@@ -306,32 +307,34 @@ export default class ServeCitizen extends Vue {
     }
     return false
   }
+
   get citizen () {
     if (!this.invited_citizen) {
       return { ticket_number: '' }
     }
     return this.invited_citizen
   }
+
   get commentsTooLong () {
-    if ((this.serviceModalForm) && (this.serviceModalForm.citizen_comments))
-      return this.serviceModalForm.citizen_comments.length > 1000;
-    else
-      return false;
+    if ((this.serviceModalForm) && (this.serviceModalForm.citizen_comments)) { return this.serviceModalForm.citizen_comments.length > 1000 } else { return false }
   }
+
   get commentsAlert () {
-    return this.commentsTooLong ? "You have entered more than the 1,000 characters allowed for comments." : "";
+    return this.commentsTooLong ? 'You have entered more than the 1,000 characters allowed for comments.' : ''
   }
+
   get comments () {
     if (this.appointment) {
-      let newVal = this.serviceModalForm.citizen_comments.split('|||')[1].valueOf()
+      const newVal = this.serviceModalForm.citizen_comments.split('|||')[1].valueOf()
       return newVal
     }
     return this.serviceModalForm.citizen_comments
   }
+
   set comments (value) {
     if (this.appointment) {
-      let time = this.serviceModalForm.citizen_comments.split('|||')[0]
-      let prependedValue = `${time}|||${value}`
+      const time = this.serviceModalForm.citizen_comments.split('|||')[0]
+      const prependedValue = `${time}|||${value}`
       this.editServiceModalForm({
         type: 'citizen_comments',
         value: prependedValue
@@ -343,7 +346,6 @@ export default class ServeCitizen extends Vue {
       })
     }
   }
-
 
   get accurate_time_ind () {
     return this.serviceModalForm.accurate_time_ind
@@ -366,21 +368,22 @@ export default class ServeCitizen extends Vue {
   get priority_selection () {
     return this.serviceModalForm.priority
   }
+
   set priority_selection (value) {
     this.editServiceModalForm({ type: 'priority', value })
   }
 
-
-  get counter_selection () { return this.serviceModalForm.counter },
+  get counter_selection () { return this.serviceModalForm.counter }
   set counter_selection (value) {
-    this.editServiceModalForm({ type: "counter", value })
+    this.editServiceModalForm({ type: 'counter', value })
   }
 
-  //methods
+  // methods
   private formatTime (data: any) {
-    let date = new Date(data)
+    const date = new Date(data)
     return date.toLocaleTimeString()
   }
+
   private clickSimplifiedFinish () {
     if (this.simplifiedTicketStarted) {
       this.toggleExamsTrackingIP(false)
@@ -391,13 +394,16 @@ export default class ServeCitizen extends Vue {
     this.toggleServiceModal(false)
     this.clickAddCitizen()
   }
+
   private clickContinue () {
     this.toggleExamsTrackingIP(true)
     this.toggleServiceModal(false)
   }
+
   private toggleFeedback () {
     this.toggleFeedbackModal(true)
   }
+
   private toggleMinimize () {
     if (this.$route.path === '/queue' && !this.serviceBegun) {
       this.minimizeWindow = !this.minimizeWindow
@@ -407,18 +413,21 @@ export default class ServeCitizen extends Vue {
     this.toggleServiceModal(false)
     this.toggleTimeTrackingIcon(true)
   }
+
   private flashButton () {
     if (this.serviceBegun === false) {
-      this.buttonStyle == 'btn-primary serve-btn' ?
-        this.buttonStyle = 'btn-highlighted' : this.buttonStyle = 'btn-primary serve-btn'
+      this.buttonStyle == 'btn-primary serve-btn'
+        ? this.buttonStyle = 'btn-highlighted' : this.buttonStyle = 'btn-primary serve-btn'
     }
     if (this.serviceBegun === true) {
       this.buttonStyle = 'btn-primary serve-btn'
     }
   }
+
   private closeWindow () {
     this.$store.dispatch('clickServiceModalClose')
   }
+
   private onDrag (event: any) {
     const { el, deltaX, deltaY, offsetX, offsetY, clientX, clientY, first, last } = event
     if (first) {
@@ -433,9 +442,8 @@ export default class ServeCitizen extends Vue {
     this.top = (this.top || 0) + deltaY
 
     var serve_modal: any = document.getElementsByClassName('serve-modal-content')[0]
-    serve_modal.style.transform = "translate(" + this.left + "px," + this.top + "px)"
+    serve_modal.style.transform = 'translate(' + this.left + 'px,' + this.top + 'px)'
   }
-
 
   updated () {
     if (!this.citizen && this.citizen.ticket_number === '') {
