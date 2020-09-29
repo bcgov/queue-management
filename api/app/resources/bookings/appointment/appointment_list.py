@@ -42,8 +42,6 @@ class AppointmentList(Resource):
         today_month = dt.month
         first_month = datetime.datetime(today_year, today_month, 1, 0, 0, 0, 0)
         filter_date = pytz.utc.localize(first_month)
-        """ print("first of the month is .... ") """
-        """ print(first_month) """
 
         try:
             appointments = Appointment.query.filter_by(office_id=csr.office_id)\
