@@ -47,8 +47,6 @@ limitations under the License.*/-->
 import { Action, Getter, State } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
 
-// import { mapActions, mapGetters, mapState } from 'vuex'
-
 @Component({})
 export default class DashHoldTable extends Vue {
   @State('citizens') private citizens!: any
