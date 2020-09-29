@@ -13,6 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import logging
+import datetime, pytz
 from flask import g
 from flask_restx import Resource
 from sqlalchemy import exc
@@ -33,9 +34,21 @@ class AppointmentList(Resource):
     def get(self):
 
         csr = CSR.find_by_username(g.oidc_token_info['username'])
+              
+        # today's date and time
+        today = datetime.datetime.now()
+        dt = pytz.utc.localize(today)
+        today_year = dt.year
+        today_month = dt.month
+        first_month = datetime.datetime(today_year, today_month, 1, 0, 0, 0, 0)
+        filter_date = pytz.utc.localize(first_month)
+        """ print("first of the month is .... ") """
+        """ print(first_month) """
 
         try:
-            appointments = Appointment.query.filter_by(office_id=csr.office_id).all()
+            appointments = Appointment.query.filter_by(office_id=csr.office_id)\
+                                            .filter(Appointment.start_time >= filter_date)\
+                                            .all()
             result = self.appointment_schema.dump(appointments)
 
             return {"appointments": result.data,
