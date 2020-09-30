@@ -364,7 +364,7 @@ def after_cursor_execute(conn, cursor, statement,
         try:
             count = 0
             for line in traceback.format_stack():
-                debug = 'env' in line
+                debug = ('env' in line) or ('/lib/' in line)
                 count = count + 1
                 output_string = line.strip().split('\n')[0]
                 start = output_string.find("/api/")
