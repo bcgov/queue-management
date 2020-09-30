@@ -39,10 +39,12 @@ class ExamBcmpPost(Resource):
 
         json_data = request.get_json()
 
-        exam, warning = self.exam_schema.load(json_data)
+        if 'bookdata' in json_data.keys():
+            booking = json_data["bookdata"]
+        else:
+            booking = None
 
-        my_print("json_data: ")
-        my_print(json_data)
+        exam, warning = self.exam_schema.load(json_data)
 
         if warning:
             logging.warning("WARNING: %s", warning)
@@ -69,7 +71,7 @@ class ExamBcmpPost(Resource):
         else:
 
             logging.info("Creating Group pesticide exam")
-            bcmp_response = self.bcmp_service.create_group_exam_bcmp(exam, formatted_data["candidates_list_bcmp"], invigilator, formatted_data["pesticide_office"], g.oidc_token_info)
+            bcmp_response = self.bcmp_service.create_group_exam_bcmp(exam, booking, formatted_data["candidates_list_bcmp"], invigilator, formatted_data["pesticide_office"], g.oidc_token_info)
             
             
         if bcmp_response:
