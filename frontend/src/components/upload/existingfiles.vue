@@ -90,10 +90,6 @@ export default class ExistingFiles extends Vue {
 
 </script>
 
-  export default {
-    name: 'Upload'
-  }
-
 <!--<style scoped>-->
 <style>
 .existing_files_table {
