@@ -161,7 +161,7 @@ export default class Agenda extends Vue {
   get examDates () {
     if (this.examEvents && this.examEvents.length > 0) {
       const dates = this.examEvents.map(ex => ex.start)
-      const output = []
+      const output: any = []
       for (const date of dates) {
         const d = moment(date).format('dddd, MMM Do, YYYY').toString()
         if (!output.includes(d)) {
