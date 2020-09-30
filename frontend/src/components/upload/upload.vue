@@ -79,8 +79,8 @@
 
 <script lang="ts">
 // /* eslint-disable */
-import { Action, Getter, Mutation, State } from 'vuex-class'
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Action, Mutation, State } from 'vuex-class'
+import { Component, Vue } from 'vue-property-decorator'
 // import { mapActions, mapMutations, mapState } from 'vuex'
 import ExistingFiles from './existingfiles.vue'
 
