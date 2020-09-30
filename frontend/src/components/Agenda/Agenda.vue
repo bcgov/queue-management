@@ -176,10 +176,10 @@ export default class Agenda extends Vue {
     if (this.calendarEvents.length > 0 && this.weekStart) {
       const events = this.calendarEvents
       const weekEnd = this.weekStart.clone().add(4, 'day')
-      return events.filter(e =>
+      return events.filter((e:any) =>
         moment(e.start).isSameOrAfter(this.weekStart, 'day') &&
         moment(e.start).isSameOrBefore(weekEnd, 'day')
-      ).sort(function (a, b) {
+      ).sort(function (a: any, b: any) {
         const A = moment(a.start).clone()
         const B = moment(b.start).clone()
         if (A.isSame(B)) {
