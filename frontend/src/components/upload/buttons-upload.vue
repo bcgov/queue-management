@@ -6,9 +6,11 @@
   </fragment>
 </template>
 
-<script>
+<script lang="ts">
 
-export default {
-  name: 'ButtonsUpload'
+import { Component, Vue } from 'vue-property-decorator'
+
+@Component
+export default class ButtonsUpload extends Vue {
 }
 </script>
