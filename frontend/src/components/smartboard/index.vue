@@ -57,14 +57,6 @@ import axios from 'axios'
 import config from '../../../config'
 import Axios from '@/utils/axios'
 
-// const Axios = axios.create({
-//   baseURL: process.env.API_URL,
-//   withCredentials: true,
-//   headers: {
-//     Accept: 'application/json'
-//   }
-// })
-
 @Component({
   components: {
     CallByName,

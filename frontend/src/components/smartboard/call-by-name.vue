@@ -34,14 +34,6 @@ import Axios from '@/utils/axios'
 import Video from './video.vue'
 import config from '../../../config'
 
-// const Axios = axios.create({
-//   baseURL: process.env.API_URL,
-//   withCredentials: true,
-//   headers: {
-//     Accept: 'application/json'
-//   }
-// })
-
 @Component({
   components: {
     Video
