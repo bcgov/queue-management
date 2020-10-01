@@ -23,8 +23,15 @@ from flask import Flask
 
 import config
 from utils.logging import setup_logging
+from flask_mail import Mail
+from flask_mail import Message
+from jinja2 import Environment, FileSystemLoader
+import time
+import jinja2, sys
 
 setup_logging(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'logging.conf'))  # important to do this first
+
+mail = Mail()  # pylint: disable=invalid-name
 
 
 def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
@@ -53,6 +60,8 @@ def register_shellcontext(app):
 def run():
     application = create_app()
     application.app_context().push()
+    mail.init_app(application)
+
     send_reminders(application)
 
 
@@ -82,8 +91,42 @@ def send_reminders(app):
         'Content-Type': 'application/json'
     }
 
-    response = requests.post(reminders_endpoint, data=None, headers=headers)
+    # response = requests.post(reminders_endpoint, data=None, headers=headers)
+    response = requests.get(reminders_endpoint, data=None, headers=headers)
     response.raise_for_status()
+
+    if response:
+        sender = app.config.get('MAIL_FROM_ID')
+        app_url = app.config.get('EMAIL_APPOINTMENT_APP_URL')
+        app_folder = [folder for folder in sys.path if 'api/api' in folder][0]
+        template_path = app_folder.replace('api/api', 'api/api/email_templates')
+        env = Environment(loader=FileSystemLoader(template_path), autoescape=True)
+        template = env.get_template('confirmation_email.html')
+        max_email_per_batch = app.config.get('MAX_EMAIL_PER_BATCH', 30)
+
+        appointments = response.json()
+        email_count = 0
+
+        for appointment in appointments.get('appointments'):
+            try:
+                subject = 'Confirmation – Your appointment on {}'.format(appointment.get('day'))
+                body = template.render(display_name=appointment.get('display_name'),
+                                       location=appointment.get('location'),
+                                       formatted_date=appointment.get('formatted_date'),
+                                       duration=appointment.get('duration'),
+                                       telephone=appointment.get('telephone'),
+                                       url=app_url)
+                msg = Message(subject, sender=sender, recipients=appointment.get('email').split())
+                msg.html = body
+                mail.send(msg)
+                email_count += 1
+            except Exception as e:
+                print(e) #log and continue
+
+            if email_count == max_email_per_batch:
+                time.sleep(60)
+                email_count = 0
+
     app.logger.debug('Ending job>>>')
 
 

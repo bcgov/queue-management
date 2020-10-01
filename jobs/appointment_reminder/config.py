@@ -59,6 +59,20 @@ class _Config(object):  # pylint: disable=too-few-public-methods
     SERVICE_ACCOUNT_SECRET = os.getenv('SERVICE_ACCOUNT_SECRET', None)
     REMINDER_ENDPOINT = os.getenv('REMINDER_ENDPOINT', None)
 
+    # Email variables
+    MAIL_SERVER = os.getenv('MAIL_SERVER', 'apps.smtp.gov.bc.ca')
+    MAIL_PORT = os.getenv('MAIL_PORT', '25')
+    MAIL_USE_TLS = False
+    MAIL_USE_SSL = False
+    MAIL_USERNAME = os.getenv('MAIL_USERNAME', None)
+    MAIL_PASSWORD = os.getenv('MAIL_PASSWORD', None)
+    MAIL_FROM_ID = os.getenv('MAIL_FROM_ID', 'donotreply@gov.bc.ca')
+
+    # Email variables
+    EMAIL_APPOINTMENT_APP_URL = os.getenv('EMAIL_APPOINTMENT_APP_URL', None)
+    MAX_EMAIL_PER_BATCH = os.getenv('MAX_EMAIL_PER_BATCH', 30)
+
+
 
 class DevConfig(_Config):  # pylint: disable=too-few-public-methods
     TESTING = False

@@ -318,7 +318,7 @@ import app.resources.bookings.invigilator.invigilator_list_offsite
 import app.resources.bookings.invigilator.invigilator_put
 import app.resources.bookings.room.room_list
 import app.resources.bookings.exam_type.exam_type_list
-import app.resources.bookings.appointment.appointment_reminder_post
+import app.resources.bookings.appointment.appointment_reminder_get
 
 
 # Hostname for debug purposes

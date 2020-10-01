@@ -12,28 +12,32 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from threading import Thread
-
 from flask import copy_current_request_context, current_app
 from flask_restx import Resource
+from threading import Thread
 
 from app.models.bookings import Appointment
 from app.utilities.auth_util import Role, has_any_role
-from app.utilities.email import get_reminder_email_contents, send_email, is_valid_email
+from app.utilities.email import get_reminder_email_contents, send_email, is_valid_email, formatted_date, get_email, \
+    get_duration
 from qsystem import api, api_call_with_retry, oidc
 
 
-@api.route("/appointment/reminders/", methods=["POST"])
-class AppointmentRemindersPost(Resource):
+@api.route("/appointment/reminders/", methods=["GET"])
+class AppointmentRemindersGet(Resource):
 
     @oidc.accept_token(require_token=True)
     @api_call_with_retry
     @has_any_role(roles=[Role.reminder_job.value])
-    def post(self):
-        """Create appointment reminders."""
+    def get(self):
+        """Return appointment reminders for next day."""
         appointments = Appointment.find_next_day_appointments()
 
-        reminder_count: int = 0
+        # Construct a custom response as teh payload can grow in size.
+        reminders = {
+            'appointments': []
+        }
+
         if appointments:
             for (appointment, office, timezone, user) in appointments:
                 send_reminder = False
@@ -43,13 +47,18 @@ class AppointmentRemindersPost(Resource):
                     send_reminder = True
 
                 if send_reminder:
-                    @copy_current_request_context
-                    def async_email(subject, email, sender, body):
-                        send_email(subject, email, sender, body)
+                    date, day = formatted_date(appointment.start_time, timezone)
 
-                    reminder_count += 1
-                    thread = Thread(target=async_email, args=get_reminder_email_contents(appointment, user, office, timezone))
-                    thread.daemon = True
-                    thread.start()
+                    reminders['appointments'].append(
+                        {
+                            'formatted_date': date,
+                            'day': day,
+                            'email': get_email(user, appointment),
+                            'display_name': appointment.citizen_name,
+                            'location': office.office_name,
+                            'duration': get_duration(appointment.start_time, appointment.end_time),
+                            'telephone': office.telephone
+                        }
+                    )
+        return reminders
 
-        print(f'Sending {reminder_count} reminders')

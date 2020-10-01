@@ -24,7 +24,12 @@
         "OIDC_PROVIDER_TOKEN_URL": "${OIDC_PROVIDER_TOKEN_URL}",
         "REMINDER_ENDPOINT": "${REMINDER_ENDPOINT}",
         "SERVICE_ACCOUNT_ID": "${SERVICE_ACCOUNT_ID}",
-        "SERVICE_ACCOUNT_SECRET": "${SERVICE_ACCOUNT_SECRET}"
+        "SERVICE_ACCOUNT_SECRET": "${SERVICE_ACCOUNT_SECRET}",
+        "MAIL_SERVER": "${MAIL_SERVER}",
+        "MAIL_PORT": "${MAIL_PORT}",
+        "MAIL_FROM_ID": "${MAIL_FROM_ID}",
+        "EMAIL_APPOINTMENT_APP_URL": "${EMAIL_APPOINTMENT_APP_URL}",
+        "MAX_EMAIL_PER_BATCH": "${MAX_EMAIL_PER_BATCH}"
       }
     }
   ],
@@ -78,6 +83,31 @@
       "required": true,
       "generate": "expression",
       "from": "[a-zA-Z0-9]{16}"
+    },
+    {
+      "name": "MAIL_SERVER",
+      "description": "Smtp server",
+      "required": false
+    },
+    {
+      "name": "MAIL_PORT",
+      "description": "Mail port for the smtp server",
+      "required": false
+    },
+    {
+      "name": "MAIL_FROM_ID",
+      "description": "Mail from address to appear on emails",
+      "required": false
+    },
+    {
+      "name": "EMAIL_APPOINTMENT_APP_URL",
+      "description": "Appointment Url to provide in email",
+      "required": true
+    },
+    {
+      "name": "MAX_EMAIL_PER_BATCH",
+      "description": "Maximum emails which can be sent in a minute",
+      "required": false
     }
   ]
 }
