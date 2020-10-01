@@ -14,20 +14,26 @@ limitations under the License.*/
 
 <template>
   <div style="display: flex; height: 75%; width: 100%; justify-content: center">
-      <div class="board-noticket-video">
-        <div class="board-video-div">
-          <Video :office_number="smartboardData.office_number" />
-        </div>
+    <div class="board-noticket-video">
+      <div class="board-video-div">
+        <Video :office_number="smartboardData.office_number" />
       </div>
     </div>
+  </div>
 </template>
 
-<script>
-import Video from './video'
+<script lang="ts">
+// /* eslint-disable */
+import { Component, Prop, Vue } from 'vue-property-decorator'
+import Video from './video.vue'
 
-export default {
-  name: 'NonReception',
-  components: { Video },
-  props: ['smartboardData']
+@Component({
+  components: {
+    Video
+  }
+})
+export default class NonReception extends Vue {
+  @Prop({ default: '' })
+  private smartboardData!: any
 }
 </script>
