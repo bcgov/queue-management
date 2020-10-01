@@ -47,7 +47,6 @@ limitations under the License.*/
 
 <script lang="ts">
 // /* eslint-disable */
-// import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
 import BoardSocket from './board-socket.vue'
@@ -106,26 +105,6 @@ export default class Smartboard extends Vue {
     return `${config.APP_API_URL}/smartboard/?office_number=${this.office_number}`
   }
 
-  created () {
-    this.initializeBoard()
-  }
-
-  mounted () {
-    setInterval(() => { this.now() }, 1000)
-
-    var fetchNetworkStatus = () => {
-      axios
-        .get('http://localhost/health')
-        .then(response => {
-          this.networkDown = !response.data.connected
-          this.$forceUpdate()
-
-          setTimeout(fetchNetworkStatus, 1000)
-        })
-    }
-    fetchNetworkStatus()
-  }
-
   initializeBoard () {
     // TO DO
     // this.networkStatus = ''
@@ -151,6 +130,26 @@ export default class Smartboard extends Vue {
     if (!results) return null
     if (!results[2]) return ''
     return decodeURIComponent(results[2].replace(/\+/g, ' '))
+  }
+
+  created () {
+    this.initializeBoard()
+  }
+
+  mounted () {
+    setInterval(() => { this.now() }, 1000)
+
+    var fetchNetworkStatus = () => {
+      axios
+        .get('http://localhost/health')
+        .then(response => {
+          this.networkDown = !response.data.connected
+          this.$forceUpdate()
+
+          setTimeout(fetchNetworkStatus, 1000)
+        })
+    }
+    fetchNetworkStatus()
   }
 }
 </script>

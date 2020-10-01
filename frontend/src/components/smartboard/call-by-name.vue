@@ -19,72 +19,82 @@ limitations under the License.*/
         <Video :office_number="smartboardData.office_number" />
       </div>
       <div v-if="!networkStatus.networkDown" class="bottom-flex-div">
-        <div class="flex-title"> Currently waiting: {{waiting}}</div>
+        <div class="flex-title">Currently waiting: {{ waiting }}</div>
       </div>
     </div>
   </div>
 </template>
 
-<script>
-import axios from 'axios'
-import Video from './video'
+<script lang="ts">
+// /* eslint-disable */
+import { Component, Prop, Vue } from 'vue-property-decorator'
 
-const Axios = axios.create({
-  baseURL: process.env.API_URL,
-  withCredentials: true,
-  headers: {
-    Accept: 'application/json'
+// import axios from 'axios'
+import Axios from '@/utils/axios'
+import Video from './video.vue'
+import config from '../../../config'
+
+// const Axios = axios.create({
+//   baseURL: process.env.API_URL,
+//   withCredentials: true,
+//   headers: {
+//     Accept: 'application/json'
+//   }
+// })
+
+@Component({
+  components: {
+    Video
   }
 })
+export default class CallByName extends Vue {
+  @Prop({ default: '' })
+  private smartboardData!: any
 
-export default {
-  name: 'CallByName',
-  props: ['smartboardData', 'networkStatus'],
+  @Prop({ default: '' })
+  private networkStatus!: string
+
+  private citizens: any = ''
+  private officeType: string = ''
+  private maxVideoHeight: string | number = ''
+
+  get url () {
+    return `${config.APP_API_URL}/smartboard/?office_number=${this.smartboardData.office_number}`
+  }
+
+  get waiting () {
+    if (this.citizens && this.citizens.length > 0) {
+      return this.citizens.filter(c => c.active_period.ps.ps_name === 'Waiting').length
+    }
+    return 0
+  }
+
+  initializeBoard () {
+    Axios.get(this.url).then(resp => {
+      this.officeType = resp.data.office_type
+      this.citizens = resp.data.citizens
+      // TODO check can't see  this.office_id Declared . so commented
+      // this.$root.$emit('boardConnect', this.office_id)
+    })
+  }
+
+  updateBoard (ticketId) {
+    Axios.get(this.url).then(resp => {
+      this.citizens = resp.data.citizens
+    })
+  }
+
+  // TODO check event param
+  // event
+  handleResize () {
+    this.maxVideoHeight = document.documentElement.clientHeight * 0.8
+  }
+
   mounted () {
     this.$root.$on('addToBoard', (data) => { this.updateBoard(data) })
     this.initializeBoard()
     this.handleResize()
     window.addEventListener('resize', this.handleResize)
-  },
-
-  components: { Video },
-
-  data () {
-    return {
-      citizens: '',
-      officeType: '',
-      maxVideoHeight: ''
-    }
-  },
-
-  computed: {
-    url () {
-      return `/smartboard/?office_number=${this.smartboardData.office_number}`
-    },
-    waiting () {
-      if (this.citizens && this.citizens.length > 0) {
-        return this.citizens.filter(c => c.active_period.ps.ps_name === 'Waiting').length
-      }
-      return 0
-    }
-  },
-
-  methods: {
-    initializeBoard () {
-      Axios.get(this.url).then(resp => {
-        this.officeType = resp.data.office_type
-        this.citizens = resp.data.citizens
-        this.$root.$emit('boardConnect', this.office_id)
-      })
-    },
-    updateBoard (ticketId) {
-      Axios.get(this.url).then(resp => {
-        this.citizens = resp.data.citizens
-      })
-    },
-    handleResize (event) {
-      this.maxVideoHeight = document.documentElement.clientHeight * 0.8
-    }
   }
 }
 </script>

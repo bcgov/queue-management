@@ -13,52 +13,72 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 
 <template>
-<div style="width: 100%; height: 100%;">
-  <div style="display: flex; height: 75%; width: 100%;">
-    <div class="board-nameticket-video">
-      <div class="board-video-div">
-        <Video :office_number="smartboardData.office_number" />
+  <div style="width: 100%; height: 100%">
+    <div style="display: flex; height: 75%; width: 100%">
+      <div class="board-nameticket-video">
+        <div class="board-video-div">
+          <Video :office_number="smartboardData.office_number" />
+        </div>
+      </div>
+      <div class="board-25-table">
+        <div class="board-content-div">
+          <b-table
+            :items="items"
+            :fields="fields"
+            :small="longlist"
+            thead-tr-class="testclass"
+            v-bind:thead-class="headclass"
+            v-bind:tbody-class="bodyclass"
+          >
+            <template slot="ticket_number" slot-scope="data">
+              <div
+                v-if="highlighted.includes(data.value)"
+                class="flashing-ticket"
+              >
+                {{ data.value }}
+              </div>
+              <div v-else>
+                {{ data.value }}
+                {{ (data.item._rowVariant = '') }}
+              </div>
+            </template>
+            <template slot="overflow" slot-scope="data">
+              {{
+                showOverflow === false
+                  ? (data.item._tdClass = 'd-none')
+                  : (data.item._tdClass = '')
+              }}
+              {{
+                showOverflow === false
+                  ? (data.item._thClass = 'd-none')
+                  : (data.item._thClass = '')
+              }}
+              <div
+                v-if="highlighted.includes(data.value)"
+                class="flashing-ticket"
+              >
+                {{ data.value }}
+              </div>
+              <div v-else>
+                {{ data.value }}
+                {{ (data.item._rowVariant = '') }}
+              </div>
+            </template>
+          </b-table>
+          <div v-if="networkStatus.networkDown" class="loading small">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="board-25-table">
-      <div class="board-content-div">
-        <b-table :items="items"
-                 :fields="fields"
-                 :small="longlist"
-                 thead-tr-class="testclass"
-                 v-bind:thead-class="headclass"
-                 v-bind:tbody-class="bodyclass">
-          <template slot="ticket_number" slot-scope="data">
-            <div v-if="highlighted.includes(data.value)" class="flashing-ticket">
-              {{data.value}}
-            </div>
-            <div v-else>
-              {{data.value}}
-              {{data.item._rowVariant=''}}
-            </div>
-          </template>
-          <template slot="overflow" slot-scope="data">
-            {{ this.showOverflow === false ?
-              data.item._tdClass = 'd-none': data.item._tdClass = ''}}
-              {{ this.showOverflow === false ?
-                data.item._thClass = 'd-none': data.item._thClass = ''}}
-            <div v-if="highlighted.includes(data.value)" class="flashing-ticket">
-              {{data.value}}
-            </div>
-            <div v-else>
-              {{data.value}}
-              {{data.item._rowVariant=''}}
-            </div>
-          </template>
-        </b-table>
-        <div v-if="networkStatus.networkDown" class="loading small"><div></div><div></div><div></div><div></div><div></div></div>
-      </div>
+    <div v-if="!networkStatus.networkDown" class="bottom-flex-div">
+      <div class="flex-title">Currently waiting: {{ waiting }}</div>
     </div>
   </div>
-  <div v-if="!networkStatus.networkDown" class="bottom-flex-div">
-      <div class="flex-title"> Currently waiting: {{waiting}}</div>
-    </div>
-</div>
 </template>
 
 <script>
