@@ -2137,6 +2137,9 @@ export const store = new Vuex.Store({
       }
 
       let booking = makeBookingReqObj(context, responses)
+      if ((postData.ind_or_group === 'group') && (postData.is_pesticide === 1)) {
+        postData.bookdata = booking
+      }
 
       let apiUrl = (isRequestExamReq) ? '/exams/bcmp/' : '/exams/'
 
