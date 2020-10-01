@@ -18,21 +18,24 @@ limitations under the License.*/
       <div class="flex-title">{{ date }} {{ time }}</div>
     </div>
     <CallByTicket
-      v-if="officetype==='callbyticket'"
-      :smartboardData="{office_number}"
-      :networkStatus="{networkDown}"
+      v-if="officetype === 'callbyticket'"
+      :smartboardData="{ office_number }"
+      :networkStatus="{ networkDown }"
     ></CallByTicket>
     <CallByName
-      v-else-if="officetype==='callbyname' || officetype==='reception'"
-      :smartboardData="{office_number}"
-      :networkStatus="{networkDown}"
+      v-else-if="officetype === 'callbyname' || officetype === 'reception'"
+      :smartboardData="{ office_number }"
+      :networkStatus="{ networkDown }"
     ></CallByName>
-    <NonReception v-else-if="officetype==='nocallonsmartboard'" :smartboardData="{office_number}"></NonReception>
+    <NonReception
+      v-else-if="officetype === 'nocallonsmartboard'"
+      :smartboardData="{ office_number }"
+    ></NonReception>
 
     <div v-else>Please stand by...</div>
-    <BoardSocket :smartboardData="{office_number}"></BoardSocket>
+    <BoardSocket :smartboardData="{ office_number }"></BoardSocket>
 
-    <div v-if="networkDown==true" id="network-status" class="loading small">
+    <div v-if="networkDown == true" id="network-status" class="loading small">
       <div></div>
       <div></div>
       <div></div>
@@ -42,27 +45,70 @@ limitations under the License.*/
   </div>
 </template>
 
-<script>
-import BoardSocket from './board-socket'
-import CallByTicket from './call-by-ticket'
-import CallByName from './call-by-name'
-import NonReception from './non-reception'
-import axios from 'axios'
+<script lang="ts">
+// /* eslint-disable */
+// import { Action, Getter, Mutation, State } from 'vuex-class'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 
-const Axios = axios.create({
-  baseURL: process.env.API_URL,
-  withCredentials: true,
-  headers: {
-    Accept: 'application/json'
+import BoardSocket from './board-socket.vue'
+import CallByName from './call-by-name.vue'
+import CallByTicket from './call-by-ticket.vue'
+import NonReception from './non-reception.vue'
+import axios from 'axios'
+import config from '../../../config'
+import Axios from '@/utils/axios'
+
+// const Axios = axios.create({
+//   baseURL: process.env.API_URL,
+//   withCredentials: true,
+//   headers: {
+//     Accept: 'application/json'
+//   }
+// })
+
+@Component({
+  components: {
+    CallByName,
+    CallByTicket,
+    BoardSocket,
+    NonReception
   }
 })
+export default class Smartboard extends Vue {
+  @Prop({ default: '' })
+  private office_number!: string
 
-export default {
-  name: 'Smartboard',
+  private tz: any = this.getParameterByName('tz') || Intl.DateTimeFormat().resolvedOptions().timeZone
+  networkStatus: string = ''
+  date: string = ''
+
+  // return {
+  private officetype: string = ''
+  private networkDown: boolean = false
+  private options: any = {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    timeZone: this.tz
+  }
+
+  private timeOpts: any = {
+    hour12: true,
+    hour: 'numeric',
+    minute: '2-digit',
+    timeZone: this.tz
+  }
+
+  private time: any = ''
+
+  get url () {
+    return `${config.APP_API_URL}/smartboard/?office_number=${this.office_number}`
+  }
 
   created () {
     this.initializeBoard()
-  },
+  }
 
   mounted () {
     setInterval(() => { this.now() }, 1000)
@@ -78,68 +124,33 @@ export default {
         })
     }
     fetchNetworkStatus()
-  },
+  }
 
-  props: ['office_number'],
+  initializeBoard () {
+    // TO DO
+    // this.networkStatus = ''
 
-  components: { CallByName, CallByTicket, BoardSocket, NonReception },
+    this.now()
+    Axios.get(this.url).then(resp => {
+      this.officetype = resp.data.office_type
+    })
+  }
 
-  data () {
-    let tz = this.getParameterByName('tz')
-    if (!tz) {
-      tz = Intl.DateTimeFormat().resolvedOptions().timeZone
-    }
+  now () {
+    const d = new Date()
+    this.date = d.toLocaleDateString('en-CA', this.options)
+    this.time = d.toLocaleTimeString('en-CA', this.timeOpts)
+  }
 
-    return {
-      officetype: '',
-      networkDown: false,
-      options: {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        timeZone: tz
-      },
-      timeOpts: {
-        hour12: true,
-        hour: 'numeric',
-        minute: '2-digit',
-        timeZone: tz
-      },
-      time: ''
-    }
-  },
-
-  computed: {
-    url () {
-      return `/smartboard/?office_number=${this.office_number}`
-    }
-  },
-
-  methods: {
-    initializeBoard () {
-      this.networkStatus = ''
-
-      this.now()
-      Axios.get(this.url).then(resp => {
-        this.officetype = resp.data.office_type
-      })
-    },
-    now () {
-      const d = new Date()
-      this.date = d.toLocaleDateString('en-CA', this.options)
-      this.time = d.toLocaleTimeString('en-CA', this.timeOpts)
-    },
-    getParameterByName (name, url) {
-      url = window.location.href
-      // eslint-disable-next-line no-useless-escape
-      name = name.replace(/[\[\]]/g, '\\$&')
-      var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)')
-      var results = regex.exec(url)
-      if (!results) return null
-      if (!results[2]) return ''
-      return decodeURIComponent(results[2].replace(/\+/g, ' '))
-    }
+  getParameterByName (name, url = window.location.href) {
+    url = window.location.href
+    // eslint-disable-next-line no-useless-escape
+    name = name.replace(/[\[\]]/g, '\\$&')
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)')
+    var results = regex.exec(url)
+    if (!results) return null
+    if (!results[2]) return ''
+    return decodeURIComponent(results[2].replace(/\+/g, ' '))
   }
 }
 </script>
