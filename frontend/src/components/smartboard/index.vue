@@ -48,14 +48,13 @@ limitations under the License.*/ -->
 <script lang="ts">
 // /* eslint-disable */
 import { Component, Prop, Vue } from 'vue-property-decorator'
-
+import Axios from '@/utils/axios'
 import BoardSocket from './board-socket.vue'
 import CallByName from './call-by-name.vue'
 import CallByTicket from './call-by-ticket.vue'
 import NonReception from './non-reception.vue'
 import axios from 'axios'
 import config from '../../../config'
-import Axios from '@/utils/axios'
 
 @Component({
   components: {
