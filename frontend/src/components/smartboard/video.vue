@@ -22,35 +22,44 @@ limitations under the License.*/
   ></videoPlayer>
 </template>
 
-<script>
-import axios from 'axios'
+<script lang="ts">
+// /* eslint-disable */
 import 'video.js/dist/video-js.css'
-import { videoPlayer } from 'vue-video-player'
 
-const Axios = axios.create({
-  baseURL: process.env.API_URL,
-  withCredentials: true,
-  headers: {
-    Accept: 'application/json'
-  }
-})
+import { Component, Prop, Vue } from 'vue-property-decorator'
+import Axios from '@/utils/axios'
+
+// import axios from 'axios'
+
+import { videoPlayer } from 'vue-video-player'
 
 const defaultVideoFile = '/static/videos/sbc.mp4'
 const localVideoFile = 'http://localhost/videos/video.mp4'
 
-export default {
-  name: 'Video',
+@Component({
   components: {
     videoPlayer
-  },
-  props: ['office_number'],
-  // mounted() {
-  //   this.getOfficeVideoUrl()
-  // },
-  beforeMount () {
-    this.getOfficeVideoUrl()
-  },
-  data () {
+  }
+})
+export default class Video extends Vue {
+  @Prop({ default: '' })
+  private office_number!: any
+
+  private playerOptions: any = {
+    autoplay: 'true',
+    loop: 'true',
+    controls: false,
+    muted: true,
+    sources: [{
+      type: 'video/mp4',
+      src: this.videoPath
+    }],
+    fluid: true
+  }
+
+  private playing: boolean = false
+
+  get videoPath () {
     let videoPath = defaultVideoFile
     if (this.getParameterByName('localvideo') == '1') {
       videoPath = localVideoFile
@@ -58,53 +67,52 @@ export default {
       videoPath = defaultVideoFile
     }
 
-    return {
-      playerOptions: {
-        autoplay: 'true',
-        loop: 'true',
-        controls: false,
-        muted: true,
-        sources: [{
-          type: 'video/mp4',
-          src: videoPath
-        }],
-        fluid: true
-      },
-      playing: false
-    }
-  },
-  methods: {
-    getOfficeVideoUrl () {
-      if (this.getParameterByName('localvideo') == 1) {
-        this.playerOptions.sources[0].src = localVideoFile
-      } else {
-        const url = '/videofiles/' + this.office_number.toString()
-        Axios.get(url)
-          .then(resp => {
-            this.playerOptions.sources[0].src = resp.data.videourl
-          })
-          .catch(() => {
+    return videoPath
+  }
+
+  getOfficeVideoUrl () {
+    // eslint-disable-next-line eqeqeq
+    if (this.getParameterByName('localvideo') == 1) {
+      this.playerOptions.sources[0].src = localVideoFile
+    } else {
+      const url = '/videofiles/' + this.office_number.toString()
+      Axios.get(url)
+        .then(resp => {
+          if (resp.data.code === 501) {
             this.playerOptions.sources[0].src = defaultVideoFile
-          })
-      }
-    },
-    playerStateChanged (playerCurrentState) {
-      if (playerCurrentState && playerCurrentState.playing) {
-        this.playing = true
-      } else if (playerCurrentState && playerCurrentState.error && this.playing) {
-        // This probably means that the video has been updated, try to refresh the page
-        setTimeout(() => { window.location.reload(true) }, 5000)
-      }
-    },
-    getParameterByName (name, url) {
-      url = window.location.href
-      // eslint-disable-next-line no-useless-escape
-      name = name.replace(/[\[\]]/g, '\\$&')
-      var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'); var results = regex.exec(url)
-      if (!results) return null
-      if (!results[2]) return ''
-      return decodeURIComponent(results[2].replace(/\+/g, ' '))
+          } else {
+            this.playerOptions.sources[0].src = resp.data.videourl
+          }
+        })
+        .catch(() => {
+          this.playerOptions.sources[0].src = defaultVideoFile
+        })
     }
+  }
+
+  playerStateChanged (playerCurrentState) {
+    if (playerCurrentState && playerCurrentState.playing) {
+      this.playing = true
+    } else if (playerCurrentState && playerCurrentState.error && this.playing) {
+      // This probably means that the video has been updated, try to refresh the page
+      setTimeout(() => { window.location.reload(true) }, 5000)
+    }
+  }
+
+  getParameterByName (name, url = window.location.href): any {
+    // eslint-disable-next-line no-useless-escape
+    name = name.replace(/[\[\]]/g, '\\$&')
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'); var results = regex.exec(url)
+    if (!results) return null
+    if (!results[2]) return ''
+    return decodeURIComponent(results[2].replace(/\+/g, ' '))
+  }
+
+  // mounted() {
+  //   this.getOfficeVideoUrl()
+  // },
+  beforeMount () {
+    this.getOfficeVideoUrl()
   }
 }
 </script>
