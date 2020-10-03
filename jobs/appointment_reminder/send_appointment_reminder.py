@@ -102,10 +102,12 @@ def send_reminders(app):
         template_path = app_folder.replace('api/api', 'api/api/email_templates')
         env = Environment(loader=FileSystemLoader(template_path), autoescape=True)
         template = env.get_template('confirmation_email.html')
-        max_email_per_batch = app.config.get('MAX_EMAIL_PER_BATCH', 30)
+        max_email_per_batch = app.config.get('MAX_EMAIL_PER_BATCH')
+        print(f'Maximum email per batch {max_email_per_batch}')
 
         appointments = response.json()
         email_count = 0
+        print('found {} reminders to send!'.format(len(appointments.get('appointments'))))
 
         for appointment in appointments.get('appointments'):
             try:
@@ -123,6 +125,7 @@ def send_reminders(app):
             except Exception as e:
                 print(e) #log and continue
 
+            print('Pausing for a minute')
             if email_count == max_email_per_batch:
                 time.sleep(60)
                 email_count = 0

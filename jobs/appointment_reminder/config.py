@@ -70,7 +70,7 @@ class _Config(object):  # pylint: disable=too-few-public-methods
 
     # Email variables
     EMAIL_APPOINTMENT_APP_URL = os.getenv('EMAIL_APPOINTMENT_APP_URL', None)
-    MAX_EMAIL_PER_BATCH = os.getenv('MAX_EMAIL_PER_BATCH', 30)
+    MAX_EMAIL_PER_BATCH = int(os.getenv('MAX_EMAIL_PER_BATCH', 30))
 
 
 
