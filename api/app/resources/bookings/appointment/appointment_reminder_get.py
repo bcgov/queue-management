@@ -14,7 +14,6 @@ limitations under the License.'''
 
 from flask import copy_current_request_context, current_app
 from flask_restx import Resource
-from threading import Thread
 
 from app.models.bookings import Appointment
 from app.utilities.auth_util import Role, has_any_role
@@ -61,4 +60,3 @@ class AppointmentRemindersGet(Resource):
                         }
                     )
         return reminders
-
