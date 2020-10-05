@@ -136,22 +136,9 @@ import moment from 'moment'
   }
 })
 export default class Calendar extends Vue {
-  // @Ref('bookingcal') public bookingcal!: HTMLElement
-  // @Ref('FullCalendar') public FullCalendar!: HTMLElement
-  // public $refs: any = {
-  //   FullCalendar: FullCalendar
-  // }
   public $refs: any = {
     bookingcal: HTMLElement
   };
-
-  // $refs!: {
-  //   bookingcal: HTMLFormElement
-  // }
-
-  // public $refs: (Vue['$refs'] & {
-  //   FullCalendar: FullCalendar
-  // });
 
   @State('showBookingBlackoutModal') private showBookingBlackoutModal!: any
   @State('calendarEvents') private calendarEvents!: any
