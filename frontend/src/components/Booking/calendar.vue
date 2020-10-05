@@ -101,27 +101,29 @@
 
 <script lang="ts">
 // /* eslint-disable */
+
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue, Watch } from 'vue-property-decorator'
-
-import { FullCalendar } from 'vue-full-calendar'
 // import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 
-import BookingModal from './booking-modal.vue'
 import BookingBlackoutModal from './booking-blackout-modal.vue'
+import BookingModal from './booking-modal.vue'
+
 import DropdownCalendar from './dropdown-calendar.vue'
 import EditBookingModal from './edit-booking-modal.vue'
 import ExamInventoryModal from './exam-inventory-modal.vue'
-import moment from 'moment'
+import { FullCalendar } from 'vue-full-calendar'
+import OfficeDropDownFilter from '../exams/office-dropdown-filter.vue'
 import OtherBookingModal from './other-booking-modal.vue'
+import { adjustColor } from '../../store/helpers'
+
+// eslint-disable-next-line sort-imports
 import 'fullcalendar-scheduler'
 import 'fullcalendar/dist/fullcalendar.css'
-import { adjustColor } from '../../store/helpers'
-import OfficeDropDownFilter from '../exams/office-dropdown-filter.vue'
-// import { mapActions, mapGetters, mapState } from 'vuex'
+
+import moment from 'moment'
 
 @Component({
-
   components: {
     BookingBlackoutModal,
     OfficeDropDownFilter,
