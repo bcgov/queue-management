@@ -1,21 +1,27 @@
 <template>
-  <b-modal v-model="modalVisible"
-           :no-close-on-backdrop="true"
-           :no-enforce-focus="true"
-           :lazy="true"
-           :centered="confirm && !minimized"
-           @shown="show"
-           @cancel="cancel"
-           @ok="submit"
-           :hide-footer="confirm"
-           hide-header
-           :size="confirm && !minimized ? 'sm' : 'md'">
+  <b-modal
+    v-model="modalVisible"
+    :no-close-on-backdrop="true"
+    :no-enforce-focus="true"
+    :lazy="true"
+    :centered="confirm && !minimized"
+    @shown="show"
+    @cancel="cancel"
+    @ok="submit"
+    :hide-footer="confirm"
+    hide-header
+    :size="confirm && !minimized ? 'sm' : 'md'"
+  >
     <div v-if="event && showModal" style="margin: 10px">
-      <div v-if="minimized || !confirm" style="display: flex; justify-content: space-between">
+      <div
+        v-if="minimized || !confirm"
+        style="display: flex; justify-content: space-between"
+      >
         <div><h5>Edit Booking</h5></div>
         <div>
-          <button class="btn btn-link"
-                  @click="minimize">{{ minimized ? "Maximize" : "Minimize" }}</button>
+          <button class="btn btn-link" @click="minimize">
+            {{ minimized ? 'Maximize' : 'Minimize' }}
+          </button>
         </div>
       </div>
       <template v-if="!confirm">
@@ -43,7 +49,10 @@
                   </div>
                   <div class="q-id-grid-col">
                     <div>Duration:</div>
-                    <div>{{ this.event.exam.exam_type.number_of_hours }} hrs {{ this.event.exam.exam_type.number_of_minutes }} min</div>
+                    <div>
+                      {{ this.event.exam.exam_type.number_of_hours }} hrs
+                      {{ this.event.exam.exam_type.number_of_minutes }} min
+                    </div>
                   </div>
                   <div class="q-id-grid-col">
                     <div>Expiry:</div>
@@ -56,21 +65,26 @@
           <b-form-row v-if="!examAssociated">
             <b-col>
               <b-form-group>
-                <label :style="{color: labelColor}">Scheduling Party</label><br>
-                <b-input :state="state"
-                         id="title"
-                         type="text"
-                         @input.native="checkValue"
-                         v-model="title" />
+                <label :style="{ color: labelColor }">Scheduling Party</label
+                ><br />
+                <b-input
+                  :state="state"
+                  id="title"
+                  type="text"
+                  @input.native="checkValue"
+                  v-model="title"
+                />
               </b-form-group>
             </b-col>
             <b-col cols="4">
               <b-form-group>
-                <label>Collect Fees</label><br>
-                <b-select id="fees"
-                          v-model="fees"
-                          @change.native="checkValue"
-                          :options="feesOptions" />
+                <label>Collect Fees</label><br />
+                <b-select
+                  id="fees"
+                  v-model="fees"
+                  @change.native="checkValue"
+                  :options="feesOptions"
+                />
               </b-form-group>
             </b-col>
           </b-form-row>
@@ -78,26 +92,32 @@
             <b-col>
               <b-form-group>
                 <label>Contact Information (Email or Phone Number)</label>
-                 <font-awesome-icon v-if="this.booking_contact_information !== ''"
-                                   icon='check'
-                                   style="fontSize: 1rem; color: green;"/>
-                <b-input autocomplete="off"
-                         id="contact_information"
-                         type="text"
-                         @change.native="checkValue"
-                         v-model="booking_contact_information"/>
+                <font-awesome-icon
+                  v-if="this.booking_contact_information !== ''"
+                  icon="check"
+                  style="fontsize: 1rem; color: green"
+                />
+                <b-input
+                  autocomplete="off"
+                  id="contact_information"
+                  type="text"
+                  @change.native="checkValue"
+                  v-model="booking_contact_information"
+                />
               </b-form-group>
             </b-col>
           </b-form-row>
           <b-form-row>
             <b-col>
               <b-form-group v-if="checkBookingBlackout">
-                <label>Blackout Notes</label><br>
-                <b-form-textarea id="blackout_notes"
-                                 v-model="blackout_notes"
-                                 class="mb-2"
-                                 maxlength="255"
-                                 @change.native="checkValue">
+                <label>Blackout Notes</label><br />
+                <b-form-textarea
+                  id="blackout_notes"
+                  v-model="blackout_notes"
+                  class="mb-2"
+                  maxlength="255"
+                  @change.native="checkValue"
+                >
                 </b-form-textarea>
               </b-form-group>
             </b-col>
@@ -119,48 +139,52 @@
           <b-form-row v-if="!edit_recurring">
             <b-col class="w-100">
               <b-form-group>
-                <label>Start Time</label><br>
-                <b-input type="text"
-                         readonly
-                         :value="displayDates.start" />
+                <label>Start Time</label><br />
+                <b-input type="text" readonly :value="displayDates.start" />
               </b-form-group>
             </b-col>
             <b-col class="w-100">
               <b-form-group>
-                <label>End Time</label><br>
-                <b-input type="text"
-                         readonly
-                         :value="displayDates.end" />
+                <label>End Time</label><br />
+                <b-input type="text" readonly :value="displayDates.end" />
               </b-form-group>
             </b-col>
             <b-col cols="5" v-if="examAssociated">
               <b-form-group>
-                <label>Invigilator</label><br>
-                <b-select v-model="invigilator"
-                          :options="invigilator_dropdown"
-                          id="invigilator"
-                          :value="invigilator"
-                          @change="setInvigilator"/>
+                <label>Invigilator</label><br />
+                <b-select
+                  v-model="invigilator"
+                  :options="invigilator_dropdown"
+                  id="invigilator"
+                  :value="invigilator"
+                  @change="setInvigilator"
+                />
               </b-form-group>
             </b-col>
             <b-col cols="5" v-if="!examAssociated">
               <b-form-group>
-                <label>Duration</label><br>
+                <label>Duration</label><br />
                 <b-button-group>
-                  <b-button @click="decrement" >
-                    <font-awesome-icon icon="minus"
-                                       class="m-0 p-0"
-                                       style="font-size: .8rem; color: white"/>
+                  <b-button @click="decrement">
+                    <font-awesome-icon
+                      icon="minus"
+                      class="m-0 p-0"
+                      style="font-size: 0.8rem; color: white"
+                    />
                   </b-button>
-                  <b-input :value="displayDuration"
-                           readonly
-                           id="duration"
-                           @change.native="checkValue"
-                           style="border-radius: 0px" />
-                  <b-button @click="increment" >
-                    <font-awesome-icon icon="plus"
-                                       class="m-0 p-0"
-                                       style="font-size: .8rem; color: white"/>
+                  <b-input
+                    :value="displayDuration"
+                    readonly
+                    id="duration"
+                    @change.native="checkValue"
+                    style="border-radius: 0px"
+                  />
+                  <b-button @click="increment">
+                    <font-awesome-icon
+                      icon="plus"
+                      class="m-0 p-0"
+                      style="font-size: 0.8rem; color: white"
+                    />
                   </b-button>
                 </b-button-group>
               </b-form-group>
@@ -168,85 +192,100 @@
           </b-form-row>
           <b-form-row>
             <template v-if="this.currentShadowInvigilator != null">
-              <b-row style="display: flex;" class="w-100 ml-0 mb-2">
+              <b-row style="display: flex" class="w-100 ml-0 mb-2">
                 <b-col class="w-50 ml-1 mr-1 pr-1">
-                  <b-button v-if="this.changeState"
-                            v-b-toggle.collapse-1
-                            variant="primary"
-                            @click="setRemove">
+                  <b-button
+                    v-if="this.changeState"
+                    v-b-toggle.collapse-1
+                    variant="primary"
+                    @click="setRemove"
+                  >
                     Change Shadow Invigilator
                   </b-button>
-                  <b-button v-else-if="!this.changeState"
-                            disabled
-                            variant="primary">
+                  <b-button
+                    v-else-if="!this.changeState"
+                    disabled
+                    variant="primary"
+                  >
                     Change Shadow Invigilator
                   </b-button>
                 </b-col>
                 <b-col class="w-50 ml-1 mr-1 pl-1">
-                  <b-button v-if="this.removeState"
-                            v-b-toggle.collapse-2
-                            variant="danger"
-                            @click="setChange">
+                  <b-button
+                    v-if="this.removeState"
+                    v-b-toggle.collapse-2
+                    variant="danger"
+                    @click="setChange"
+                  >
                     Remove Shadow Invigilator
                   </b-button>
-                  <b-button v-else-if="!this.removeState"
-                            disabled
-                            variant="danger">
+                  <b-button
+                    v-else-if="!this.removeState"
+                    disabled
+                    variant="danger"
+                  >
                     Remove Shadow Invigilator
                   </b-button>
                 </b-col>
               </b-row>
             </template>
             <template v-else-if="!this.event.exam.is_pesticide">
-              <b-button v-if="examAssociated"
-                        v-b-toggle.collapse-1
-                        variant="primary"
-                        class="w-100 m-1">
+              <b-button
+                v-if="examAssociated"
+                v-b-toggle.collapse-1
+                variant="primary"
+                class="w-100 m-1"
+              >
                 Add Shadow Invigilator
               </b-button>
             </template>
-            <b-collapse id="collapse-1"
-                        class="mt-2 w-100">
+            <b-collapse id="collapse-1" class="mt-2 w-100">
               <b-form-group class="q-info-display-grid-container">
                 <label>Shadow Invigilators</label>
                 <b-form>
                   <b-row>
                     <b-col cols="7">
-                      <b-table selectable
-                               select-mode="single"
-                               :fields="shadowFields"
-                               :items="shadow_invigilator_options"
-                               @row-selected="rowSelectedShadow"
-                               responsive
-                               selected-variant="success"
-                               style="height: 75px; width: 250px;"
-                               bordered
-                               striped>
-                        <template slot="selected" slot-scope=" { rowSelected } ">
+                      <b-table
+                        selectable
+                        select-mode="single"
+                        :fields="shadowFields"
+                        :items="shadow_invigilator_options"
+                        @row-selected="rowSelectedShadow"
+                        responsive
+                        selected-variant="success"
+                        style="height: 75px; width: 250px"
+                        bordered
+                        striped
+                      >
+                        <template slot="selected" slot-scope="{ rowSelected }">
                           <span v-if="rowSelected">✔</span>
                         </template>
                       </b-table>
                     </b-col>
                     <b-col cols="4">
-                      <b-row>
-                        Shadow Invigilator Limit: 1
-                      </b-row>
-                      <b-row v-if="this.currentShadowInvigilator != null"
-                             class="mb-1">
+                      <b-row> Shadow Invigilator Limit: 1 </b-row>
+                      <b-row
+                        v-if="this.currentShadowInvigilator != null"
+                        class="mb-1"
+                      >
                         Current Invigilator
                       </b-row>
-                      <b-row v-if="this.currentShadowInvigilator != null"
-                             style="justify-content: center;"
-                             class="mb-1">
+                      <b-row
+                        v-if="this.currentShadowInvigilator != null"
+                        style="justify-content: center"
+                        class="mb-1"
+                      >
                         {{ this.currentShadowInvigilatorName }}
                       </b-row>
-                      <b-row style="font-weight: bold;"
-                             class="mb-1">
+                      <b-row style="font-weight: bold" class="mb-1">
                         Selected Invigilators
                       </b-row>
-                      <b-row v-for="select in selectedShadow"
-                             style="justify-content: center;"
-                             class="mb-1">
+                      <b-row
+                        v-for="select in selectedShadow"
+                        style="justify-content: center"
+                        class="mb-1"
+                        :key="select.name"
+                      >
                         {{ select.name }}
                       </b-row>
                     </b-col>
@@ -254,31 +293,39 @@
                 </b-form>
               </b-form-group>
             </b-collapse>
-            <b-collapse id="collapse-2"
-                        class="mt-2 w-100">
+            <b-collapse id="collapse-2" class="mt-2 w-100">
               <b-form-group class="q-info-display-grid-container">
                 <b-row class="ml-1">
-                  <span style="font-weight: bold;">Current Shadow Invigilator: </span>
+                  <span style="font-weight: bold"
+                    >Current Shadow Invigilator:
+                  </span>
                 </b-row>
-                <b-row class="mb-2"
-                       style="justify-content: center;">
-                  <span>{{ this.currentShadowInvigilatorName}}</span>
+                <b-row class="mb-2" style="justify-content: center">
+                  <span>{{ this.currentShadowInvigilatorName }}</span>
                 </b-row>
                 <b-row class="ml-1">
-                  <span style="font-weight: bold;">Would you like to remove this shadow invigilator?</span>
+                  <span style="font-weight: bold"
+                    >Would you like to remove this shadow invigilator?</span
+                  >
                 </b-row>
                 <template>
-                  <b-row style="display: flex; justify-content: center;"
-                         class="w-100 mb-0">
-                    <b-button class="mr-2 mt-1"
-                              variant="danger"
-                              @click="setSelectedShadowNull">
+                  <b-row
+                    style="display: flex; justify-content: center"
+                    class="w-100 mb-0"
+                  >
+                    <b-button
+                      class="mr-2 mt-1"
+                      variant="danger"
+                      @click="setSelectedShadowNull"
+                    >
                       Yes
                     </b-button>
-                    <b-button class="ml-2 mt-1"
-                              variant="primary"
-                              v-b-toggle.collapse-2
-                              @click="setChange">
+                    <b-button
+                      class="ml-2 mt-1"
+                      variant="primary"
+                      v-b-toggle.collapse-2
+                      @click="setChange"
+                    >
                       No
                     </b-button>
                   </b-row>
@@ -289,70 +336,89 @@
           <b-form-row class="mt-0">
             <b-col>
               <b-form-group>
-                <label>Delete Booking?</label><br>
-                <b-btn class="w-100 btn-danger"
-                       @click="confirm = true">Delete Booking</b-btn>
+                <label>Delete Booking?</label><br />
+                <b-btn class="w-100 btn-danger" @click="confirm = true"
+                  >Delete Booking</b-btn
+                >
               </b-form-group>
             </b-col>
             <b-col v-if="!this.edit_recurring">
               <b-form-group>
-                <label>Change Date, Time or Room?</label><br>
-                <b-btn class="w-100 mb-0"
-                       @click="reschedule">
+                <label>Change Date, Time or Room?</label><br />
+                <b-btn class="w-100 mb-0" @click="reschedule">
                   Reschedule Booking
                 </b-btn>
               </b-form-group>
             </b-col>
             <b-col v-else></b-col>
           </b-form-row>
-          <b-collapse id="delete_recurring_collapse"
-                      visible>
+          <b-collapse id="delete_recurring_collapse" visible>
             <b-form-row v-if="this.event.recurring_uuid">
               <b-col class="w-100">
                 <b-form-group>
                   <label>Delete Booking Series?</label>
-                  <b-button class="w-100 btn-danger"
-                            @click="toggleConfirmDeleteRecurringCollapse">
+                  <b-button
+                    class="w-100 btn-danger"
+                    @click="toggleConfirmDeleteRecurringCollapse"
+                  >
                     Delete Booking Series
                   </b-button>
                 </b-form-group>
               </b-col>
               <b-col class="w-100">
                 <label>Edit Entire Series?</label>
-                <b-form-checkbox switch
-                                 size="lg"
-                                 @change="toggleEditRecurring">
-                  <span v-if="this.edit_recurring" style="font-size: 0.75em;">Editing entire series.</span>
-                  <span v-else style="font-size: 0.75em;">Editing single event</span>
+                <b-form-checkbox switch size="lg" @change="toggleEditRecurring">
+                  <span v-if="this.edit_recurring" style="font-size: 0.75em"
+                    >Editing entire series.</span
+                  >
+                  <span v-else style="font-size: 0.75em"
+                    >Editing single event</span
+                  >
                 </b-form-checkbox>
               </b-col>
             </b-form-row>
           </b-collapse>
           <b-collapse id="confirm_delete_recurring_collapse">
             <b-form-row>
-                <b-form-group>
-                  <label>Are you sure you want to delete this booking series?</label><br>
-                  <b-row style="display: flex; justify-content: center; margin-left: 150px;">
-                    <b-button size="sm"
-                              variant="primary"
-                              class="ml-1 mr-1"
-                              @click="toggleDeleteRecurringCollapse">
-                      No
-                    </b-button>
-                    <b-button size="sm"
-                              variant="danger"
-                              class="ml-1 mr-1"
-                              @click="clickYesRecurring">
-                      Yes
-                    </b-button>
-                  </b-row>
-                </b-form-group>
+              <b-form-group>
+                <label
+                  >Are you sure you want to delete this booking series?</label
+                ><br />
+                <b-row
+                  style="
+                    display: flex;
+                    justify-content: center;
+                    margin-left: 150px;
+                  "
+                >
+                  <b-button
+                    size="sm"
+                    variant="primary"
+                    class="ml-1 mr-1"
+                    @click="toggleDeleteRecurringCollapse"
+                  >
+                    No
+                  </b-button>
+                  <b-button
+                    size="sm"
+                    variant="danger"
+                    class="ml-1 mr-1"
+                    @click="clickYesRecurring"
+                  >
+                    Yes
+                  </b-button>
+                </b-row>
+              </b-form-group>
             </b-form-row>
           </b-collapse>
           <b-form-row v-if="message">
             <b-col>
-              <div style="display: flex; justify-content: flex-end; width: 100%;">
-                <span style="color: red; font-weight: 600; font-size: .9rem;">{{ message }}</span>
+              <div
+                style="display: flex; justify-content: flex-end; width: 100%"
+              >
+                <span style="color: red; font-weight: 600; font-size: 0.9rem">{{
+                  message
+                }}</span>
               </div>
             </b-col>
           </b-form-row>
@@ -360,16 +426,12 @@
       </template>
       <template v-if="confirm">
         <template v-if="!minimized">
-          <span>Are you sure you want to delete this booking?<br></span>
-          <div style="display:flex; justify-content: center">
-            <b-button class="mr-2 btn-primary"
-                      @click="confirm = false">
+          <span>Are you sure you want to delete this booking?<br /></span>
+          <div style="display: flex; justify-content: center">
+            <b-button class="mr-2 btn-primary" @click="confirm = false">
               No
             </b-button>
-            <b-button class="ml-2 btn-danger"
-                      @click="clickYes">
-              Yes
-            </b-button>
+            <b-button class="ml-2 btn-danger" @click="clickYes"> Yes </b-button>
           </div>
         </template>
       </template>
@@ -968,7 +1030,7 @@ export default {
 </script>
 
 <style scoped>
-  .table-responsive {
-    line-height: 5px;
-  }
+.table-responsive {
+  line-height: 5px;
+}
 </style>

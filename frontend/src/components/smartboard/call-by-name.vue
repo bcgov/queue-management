@@ -51,7 +51,7 @@ export default class CallByName extends Vue {
   private maxVideoHeight: string | number = ''
 
   get url () {
-    return `${config.APP_API_URL}/smartboard/?office_number=${this.smartboardData.office_number}`
+    return `/smartboard/?office_number=${this.smartboardData.office_number}`
   }
 
   get waiting () {

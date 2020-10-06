@@ -167,7 +167,7 @@ export default class CallByTicket extends Vue {
   }
 
   get url () {
-    return `${config.APP_API_URL}/smartboard/?office_number=${this.smartboardData.office_number}`
+    return `/smartboard/?office_number=${this.smartboardData.office_number}`
   }
 
   get invited () {
