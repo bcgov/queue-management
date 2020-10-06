@@ -93,7 +93,7 @@ export default class Smartboard extends Vue {
   private time: any = ''
 
   get url () {
-    return `${config.APP_API_URL}/smartboard/?office_number=${this.office_number}`
+    return `/smartboard/?office_number=${this.office_number}`
   }
 
   initializeBoard () {
