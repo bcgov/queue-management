@@ -472,6 +472,7 @@
                   class="list-group mb-0"
                   v-for="date in this.booking_rrule_array"
                   style="justify-content: center"
+                  :key="date.start"
                 >
                   <li class="list-group-item">
                     <b>Event:</b> {{ formatStartDate(date.start) }} until
@@ -538,7 +539,11 @@
               <b-row>
                 <label>Selected Room(s)</label>
               </b-row>
-              <b-row v-for="room in selected" style="justify-content: center">
+              <b-row
+                v-for="room in selected"
+                style="justify-content: center"
+                :key="room.name"
+              >
                 {{ room.name }}
               </b-row>
               <b-row
