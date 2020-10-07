@@ -24,20 +24,17 @@
 
 import 'fullcalendar-scheduler'
 import 'fullcalendar/dist/fullcalendar.css'
-import { namespace } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
-
-// import { createNamespacedHelpers } from 'vuex'
-
 import AddCitizen from '../AddCitizen/add-citizen.vue'
+
 import AppointmentBlackoutModal from './appt-booking-modal/appt-blackout-modal.vue'
 import ApptBookingModal from './appt-booking-modal/appt-booking-modal.vue'
-
 import CheckInModal from './checkin-modal.vue'
 
 import { FullCalendar } from 'vue-full-calendar'
 import moment from 'moment'
-// const { mapActions, mapGetters, mapMutations, mapState } = createNamespacedHelpers('appointmentsModule')
+import { namespace } from 'vuex-class'
+
 const appointmentsModule = namespace('appointmentsModule')
 
 @Component({
