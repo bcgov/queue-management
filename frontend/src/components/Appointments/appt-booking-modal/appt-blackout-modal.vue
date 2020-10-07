@@ -499,15 +499,12 @@
 </template>
 
 <script lang="ts">
-
 import { Component, Vue } from 'vue-property-decorator'
 import DatePicker from 'vue2-datepicker'
-// import { createNamespacedHelpers } from 'vuex'
 
 import { RRule } from 'rrule'
 import moment from 'moment'
 
-// const { mapMutations, mapState, mapActions, mapGetters } = createNamespacedHelpers('appointmentsModule')
 import { namespace } from 'vuex-class'
 const appointmentsModule = namespace('appointmentsModule')
 

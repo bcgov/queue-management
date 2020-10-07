@@ -187,14 +187,10 @@
 <script lang="ts">
 
 import { Component, Prop, Vue } from 'vue-property-decorator'
-
 import moment from 'moment'
-
 import { namespace } from 'vuex-class'
-const appointmentsModule = namespace('appointmentsModule')
 
-// import { createNamespacedHelpers } from 'vuex'
-// const { mapActions, mapGetters, mapMutations, mapState } = createNamespacedHelpers('appointmentsModule')
+const appointmentsModule = namespace('appointmentsModule')
 
 @Component
 export default class ApptBookingModal extends Vue {
