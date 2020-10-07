@@ -53,12 +53,9 @@
 </template>
 
 <script lang="ts">
-// /* eslint-disable */
 
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
-// import { createNamespacedHelpers } from 'vuex'
-// const { mapActions, mapGetters, mapMutations, mapState } = createNamespacedHelpers('appointmentsModule')
 
 const appointmentsModule = namespace('appointmentsModule')
 
