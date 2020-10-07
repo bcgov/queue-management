@@ -440,10 +440,10 @@
 </template>
 
 <script lang="ts">
-// /* eslint-disable */
+
 import { Action, Getter, Mutation, State } from 'vuex-class'
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-// import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import { Component, Prop, Vue } from 'vue-property-decorator'
+
 import moment from 'moment'
 
 @Component({})
