@@ -442,6 +442,7 @@
                     class="list-group"
                     v-for="date in this.rrule_array"
                     style="justify-content: center"
+                    :key="date.start"
                   >
                     <li class="list-group-item">
                       <b>Event:</b> {{ formatStartDate(date.start) }} until
