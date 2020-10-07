@@ -3,26 +3,29 @@
     <div>
       <form inline>
         <b-button class="btn-primary" @click="prev">
-          <font-awesome-icon icon="angle-left"
-                             class="m-0 p-0"
-                             style="font-size: 1rem;"/></b-button>
-        <b-button class="btn-primary" @click="next">
-          <font-awesome-icon icon="angle-right"
-                             class="m-0 p-0"
-                             style="font-size: 1rem;"/></b-button>
+          <font-awesome-icon
+            icon="angle-left"
+            class="m-0 p-0"
+            style="font-size: 1rem"
+        /></b-button>
+        <b-button class="btn-primary ml-1" @click="next">
+          <font-awesome-icon
+            icon="angle-right"
+            class="m-0 p-0"
+            style="font-size: 1rem"
+        /></b-button>
         <b-button class="btn-primary mx-2" @click="today">Today</b-button>
         <b-dropdown variant="primary" class="mr-2" :text="dropdownText">
-          <b-dropdown-item @click="agendaWeek">
-            Week View
-          </b-dropdown-item>
-          <b-dropdown-item @click="agendaDay">
-            Day View
-          </b-dropdown-item>
+          <b-dropdown-item @click="agendaWeek"> Week View </b-dropdown-item>
+          <b-dropdown-item @click="agendaDay"> Day View </b-dropdown-item>
         </b-dropdown>
-        <b-button v-if="is_GA"
-                  variant="primary"
-                  class="ml-0"
-                  @click="clickBlackout">Create Blackout</b-button>
+        <b-button
+          v-if="is_GA"
+          variant="primary"
+          class="ml-0"
+          @click="clickBlackout"
+          >Create Blackout</b-button
+        >
       </form>
     </div>
     <div>
@@ -31,48 +34,57 @@
   </fragment>
 </template>
 
-<script>
-import { createNamespacedHelpers } from 'vuex'
-const { mapActions, mapGetters, mapMutations, mapState } = createNamespacedHelpers('appointmentsModule')
+<script lang="ts">
+// /* eslint-disable */
 
-export default {
-  name: 'ButtonsAppointments',
-  computed: {
-    ...mapState(['showAppointmentBlackoutModal']),
-    ...mapGetters(['calendar_setup', 'is_GA']),
-    dropdownText () {
-      if (this.calendar_setup.name === 'agendaDay') {
-        return 'Day View'
-      }
-      if (this.calendar_setup.name === 'agendaWeek') {
-        return 'Week View'
-      }
+import { Component, Vue } from 'vue-property-decorator'
+import { namespace } from 'vuex-class'
+
+const appointmentsModule = namespace('appointmentsModule')
+
+@Component
+export default class ButtonsAppointments extends Vue {
+  @appointmentsModule.State('showAppointmentBlackoutModal') private showAppointmentBlackoutModal!: any
+  @appointmentsModule.Getter('calendar_setup') private calendar_setup!: any;
+  @appointmentsModule.Getter('is_GA') private is_GA!: any;
+
+  @appointmentsModule.Action('beginAppointment') public beginAppointment: any
+
+  @appointmentsModule.Mutation('toggleApptBlackoutModal') public toggleApptBlackoutModal: any
+  @appointmentsModule.Mutation('toggleAppointmentBlackoutModal') public toggleAppointmentBlackoutModal: any
+
+  get dropdownText () {
+    if (this.calendar_setup.name === 'agendaDay') {
+      return 'Day View'
+    }
+    if (this.calendar_setup.name === 'agendaWeek') {
       return 'Week View'
     }
-  },
-  methods: {
-    ...mapMutations([
-      'toggleApptBlackoutModal',
-      'toggleAppointmentBlackoutModal']),
-    ...mapActions('beginAppointment'),
-    agendaDay () {
-      this.$root.$emit('agendaDay')
-    },
-    agendaWeek () {
-      this.$root.$emit('agendaWeek')
-    },
-    next () {
-      this.$root.$emit('next')
-    },
-    prev () {
-      this.$root.$emit('prev')
-    },
-    today () {
-      this.$root.$emit('today')
-    },
-    clickBlackout () {
-      this.toggleAppointmentBlackoutModal(true)
-    }
+    return 'Week View'
+  }
+
+  agendaDay () {
+    this.$root.$emit('agendaDay')
+  }
+
+  agendaWeek () {
+    this.$root.$emit('agendaWeek')
+  }
+
+  next () {
+    this.$root.$emit('next')
+  }
+
+  prev () {
+    this.$root.$emit('prev')
+  }
+
+  today () {
+    this.$root.$emit('today')
+  }
+
+  clickBlackout () {
+    this.toggleAppointmentBlackoutModal(true)
   }
 }
 </script>
