@@ -13,31 +13,32 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 
 <template>
-  <div style="top: 0px; left: 0px;">
-  <b-alert :show="dismissCount"
-           dismissible
-           style="h-align: center; font-size:1rem; border-radius: 0px;"
-           variant="warning"
-           @dismissed="onDismissed">{{ alertMessage  }}</b-alert>
+  <div style="top: 0px; left: 0px">
+    <b-alert
+      :show="dismissCount"
+      dismissible
+      style="h-align: center; font-size: 1rem; border-radius: 0px"
+      variant="warning"
+      @dismissed="onDismissed"
+      >{{ alertMessage }}</b-alert
+    >
   </div>
 </template>
 
-<script>
-import { mapMutations, mapState } from 'vuex'
+<script lang="ts">
 
-export default {
-  name: 'Alert',
+import { Component, Vue } from 'vue-property-decorator'
+import { Mutation, State } from 'vuex-class'
 
-  computed: {
-    ...mapState(['alertMessage', 'dismissCount'])
-  },
+@Component
+export default class Alert extends Vue {
+  @State('alertMessage') private alertMessage!: any
+  @State('dismissCount') private dismissCount!: any
 
-  methods: {
-    ...mapMutations(['dismissCountDown']),
+  @Mutation('dismissCountDown') public dismissCountDown: any
 
-    onDismissed () {
-      this.dismissCountDown(0)
-    }
+  onDismissed () {
+    this.dismissCountDown(0)
   }
 }
 </script>
