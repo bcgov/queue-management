@@ -515,6 +515,7 @@
                 <ul
                   class="list-group mb-0"
                   v-for="date in this.other_rrule_array"
+                  :key="date.start"
                 >
                   <li class="list-group-item">
                     <b>Event:</b> {{ formatStartDate(date.start) }} until
@@ -532,17 +533,18 @@
 
 <script lang="ts">
 // /* eslint-disable */
+import 'fullcalendar-scheduler'
+import 'fullcalendar/dist/fullcalendar.css'
 
 import { Action, Getter, Mutation, State } from 'vuex-class'
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 
 // import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-import moment from 'moment'
-import { FullCalendar } from 'vue-full-calendar'
-import 'fullcalendar/dist/fullcalendar.css'
-import 'fullcalendar-scheduler'
-import { RRule } from 'rrule'
 import DatePicker from 'vue2-datepicker'
+import { FullCalendar } from 'vue-full-calendar'
+import { RRule } from 'rrule'
+
+import moment from 'moment'
 
 @Component({
   components: {
