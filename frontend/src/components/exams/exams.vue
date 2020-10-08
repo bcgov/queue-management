@@ -18,9 +18,8 @@
 </template>
 
 <script lang="ts">
-
+import { Component, Vue } from 'vue-property-decorator'
 import { Getter, Mutation, State } from 'vuex-class'
-import { Component, Vue, Watch } from 'vue-property-decorator'
 
 import ExamInventoryTable from './exam-inventory-table.vue'
 
