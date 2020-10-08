@@ -439,590 +439,632 @@
   </b-modal>
 </template>
 
-<script>
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+<script lang="ts">
+
+import { Action, Getter, Mutation, State } from 'vuex-class'
+import { Component, Prop, Vue } from 'vue-property-decorator'
+
 import moment from 'moment'
 
-export default {
-  name: 'EditBooking',
-  props: ['tempEvent'],
-  data () {
-    return {
-      minimized: false,
-      confirm: false,
-      added: 0,
-      invigilator: null,
-      shadowInvigilator: null,
-      currentShadowInvigilator: null,
-      currentShadowInvigilatorName: '',
-      editedFields: [],
-      fees: '',
-      feesOptions: [
-        { text: 'No', value: 'false' },
-        { text: 'Yes', value: 'true' },
-        { text: 'HQ to Invoice', value: 'HQFin' }
-      ],
-      invoice: null,
-      invoiceOptions: [{ text: 'Custom', value: 'custom' }],
-      labelColor: 'black',
-      message: '',
-      newEnd: null,
-      newStart: null,
-      rate: null,
-      roomRates: [
-        { value: 125, text: '$125 for 1/2 Day' },
-        { value: 250, text: '$250 for Whole Day' }
-      ],
-      state: null,
-      title: '',
-      booking_contact_information: '',
-      rescheduling: false,
-      blackout_notes: '',
-      selectedShadow: [],
-      shadowFields: ['selected', 'name'],
-      changeState: true,
-      removeState: true,
-      removeFlag: false,
-      rescheduleInvigilator: null,
-      rescheduleShadowInvigilator: null,
-      cancel_flag: false,
-      delete_recurring: false,
-      edit_recurring: false
+@Component({})
+export default class EditBooking extends Vue {
+  @Prop({ default: '' })
+  private tempEvent!: any
+
+  @State('editedBooking') private event!: any
+  @State('editedBookingOriginal') private actualEvent!: any
+  @State('clickedDate') private newEvent!: any
+  @State('showEditBookingModal') private showModal!: any
+  @State('invigilators') private invigilators!: any
+  @State('selectedExam') private selectedExam!: any
+  @State('shadowInvigilators') private shadowInvigilators!: any
+  @State('editDeleteSeries') private editDeleteSeries!: any
+
+  @Getter('invigilator_dropdown') private invigilator_dropdown!: any;
+  @Getter('shadow_invigilators') private shadow_invigilators!: any;
+  @Getter('shadow_invigilator_options') private shadow_invigilator_options!: any;
+
+  @Action('getBookings') public getBookings: any
+  @Action('deleteBooking') public deleteBooking: any
+  @Action('deleteRecurringBooking') public deleteRecurringBooking: any
+  @Action('finishBooking') public finishBooking: any
+  @Action('getInvigilators') public getInvigilators: any
+  @Action('postBooking') public postBooking: any
+  @Action('putBooking') public putBooking: any
+  @Action('putRecurringBooking') public putRecurringBooking: any
+  @Action('putInvigilatorShadow') public putInvigilatorShadow: any
+
+  @Mutation('setClickedDate') public setClickedDate: any
+  @Mutation('setEditedBooking') public setEditedBooking: any
+  @Mutation('setSelectedExam') public setSelectedExam: any
+  @Mutation('toggleEditBookingModal') public toggleEditBookingModal: any
+  @Mutation('toggleScheduling') public toggleScheduling: any
+  @Mutation('toggleRescheduling') public toggleRescheduling: any
+  @Mutation('toggleEditDeleteSeries') public toggleEditDeleteSeries: any
+
+  public minimized: any = false
+  public confirm: any = false
+  public added: any = 0
+  public invigilator: any = null
+  public shadowInvigilator: any = null
+  public currentShadowInvigilator: any = null
+  public currentShadowInvigilatorName: any = ''
+  public editedFields: any = []
+  public fees: any = ''
+  public feesOptions: any = [
+    { text: 'No', value: 'false' },
+    { text: 'Yes', value: 'true' },
+    { text: 'HQ to Invoice', value: 'HQFin' }
+  ]
+
+  public invoice: any = null
+  public invoiceOptions: any = [{ text: 'Custom', value: 'custom' }]
+  public labelColor: any = 'black'
+  public message: any = ''
+  public newEnd: any = null
+  public newStart: any = null
+  public rate: any = null
+  public roomRates: any = [
+    { value: 125, text: '$125 for 1/2 Day' },
+    { value: 250, text: '$250 for Whole Day' }
+  ]
+
+  public state: any = null
+  public title: any = ''
+  public booking_contact_information: string = ''
+  public rescheduling: boolean = false
+  public blackout_notes: string = ''
+  public selectedShadow: any = []
+  public shadowFields: any = ['selected', 'name']
+  public changeState: boolean = true
+  public removeState: boolean = true
+  public removeFlag: boolean = false
+  public rescheduleInvigilator: any = null
+  public rescheduleShadowInvigilator: any = null
+  public cancel_flag: boolean = false
+  public delete_recurring: boolean = false
+  public edit_recurring: boolean = false
+
+  get checkBookingBlackout () {
+    if (this.event.blackout_flag === 'Y') {
+      return true
     }
-  },
-  computed: {
-    ...mapGetters([
-      'invigilator_dropdown',
-      'shadow_invigilators',
-      'shadow_invigilator_options'
-    ]),
-    ...mapState(
-      {
-        event: state => state.editedBooking,
-        actualEvent: state => state.editedBookingOriginal,
-        newEvent: state => state.clickedDate,
-        showModal: state => state.showEditBookingModal,
-        invigilators: state => state.invigilators,
-        selectedExam: state => state.selectedExam,
-        shadowInvigilators: state => state.shadowInvigilators,
-        editDeleteSeries: state => state.editDeleteSeries
-      }
-    ),
-    checkBookingBlackout () {
-      if (this.event.blackout_flag === 'Y') {
-        return true
-      }
-      return false
-    },
-    displayDates () {
-      if (this.event.start && this.event.end) {
-        return {
-          end: this.event.end.format('h:mm a'),
-          start: this.event.start.format('h:mm a'),
-          date: this.event.start.format('ddd MMM D, YYYY')
-        }
-      }
-      return { end: '', start: '', date: '' }
-    },
-    displayDuration () {
-      if (this.duration) {
-        const output = this.duration.toFixed(1)
-        return `${output} hrs`
-      }
-    },
-    duration () {
-      if (this.start && this.end) {
-        return this.end.diff(this.start, 'hours', true)
-      }
-      return ''
-    },
-    end () {
-      if (this.examAssociated && this.newEvent) {
-        return new moment(this.newEvent.end)
-      }
-      if (this.examAssociated && !this.newEvent) {
-        return new moment(this.event.end)
-      }
-      if (!this.newEnd && this.event && this.event.end) {
-        return new moment(this.event.end).add(this.added, 'hours')
-      }
-      if (this.newEnd) {
-        return new moment(this.newEnd).add(this.added, 'hours')
-      }
-    },
-    examAssociated () {
-      if (this.event && this.event.exam) {
-        return true
-      }
-      return false
-    },
-    expiryDate () {
-      if (this.examAssociated && this.event.exam) {
-        const d = new moment(this.event.exam.expiry_date)
-        if (d.isValid()) {
-          return d.format('MMM Do, YYYY')
-        }
-      }
-      return 'not applicable'
-    },
-    modalVisible: {
-      get () {
-        return this.showModal
-      },
-      set (e) {
-        this.toggleEditBookingModal(e)
-      }
-    },
-    resource () {
-      if (this.newEvent) {
-        return {
-          name: this.newEvent.resource.title,
-          id: this.newEvent.resource.id
-        }
-      }
-      if (this.event) {
-        if (this.event.room && this.event.room.room_name) {
-          return {
-            name: this.event.room.room_name,
-            id: this.event.room.room_id
-          }
-        }
-      }
-      return ''
-    },
-    start () {
-      if (this.examAssociated && this.newEvent) {
-        return new moment(this.newEvent.start)
-      }
-      if (this.examAssociated && !this.newEvent) {
-        return new moment(this.event.start)
-      }
-      if (!this.newStart && this.event && this.event.start) {
-        return new moment(this.event.start)
-      }
-      if (this.newStart) {
-        return this.newStart
+    return false
+  }
+
+  get displayDates () {
+    if (this.event.start && this.event.end) {
+      return {
+        end: this.event.end.format('h:mm a'),
+        start: this.event.start.format('h:mm a'),
+        date: this.event.start.format('ddd MMM D, YYYY')
       }
     }
-  },
-  methods: {
-    ...mapActions([
-      'getBookings',
-      'deleteBooking',
-      'deleteRecurringBooking',
-      'finishBooking',
-      'getInvigilators',
-      'postBooking',
-      'putBooking',
-      'putRecurringBooking',
-      'putInvigilatorShadow'
-    ]),
-    ...mapMutations([
-      'setClickedDate',
-      'setEditedBooking',
-      'setSelectedExam',
-      'toggleEditBookingModal',
-      'toggleScheduling',
-      'toggleRescheduling',
-      'toggleEditDeleteSeries'
-    ]),
-    cancel () {
-      this.cancel_flag = true
-      let returnRoute = false
-      if (this.selectedExam && this.selectedExam.referrer === 'rescheduling') {
-        returnRoute = true
+    return { end: '', start: '', date: '' }
+  }
+
+  get displayDuration () {
+    if (this.duration) {
+      const output = this.duration.toFixed(1)
+      return `${output} hrs`
+    }
+  }
+
+  get duration () {
+    if (this.start && this.end) {
+      return this.end.diff(this.start, 'hours', true)
+    }
+    return ''
+  }
+
+  get end () {
+    if (this.examAssociated && this.newEvent) {
+      // TOCHECK removed new keyword in moment. not needed
+      // return new moment(this.newEvent.end)
+      return moment(this.newEvent.end)
+    }
+    if (this.examAssociated && !this.newEvent) {
+      // TOCHECK removed new keyword in moment. not needed
+      // return new moment(this.event.end)
+      return moment(this.event.end)
+    }
+    if (!this.newEnd && this.event && this.event.end) {
+      // TOCHECK removed new keyword in moment. not needed
+      // return new moment(this.event.end).add(this.added, 'hours')
+      return moment(this.event.end).add(this.added, 'hours')
+    }
+    if (this.newEnd) {
+      // TOCHECK removed new keyword in moment. not needed
+      // return new moment(this.newEnd).add(this.added, 'hours')
+      return moment(this.newEnd).add(this.added, 'hours')
+    }
+  }
+
+  get examAssociated () {
+    if (this.event && this.event.exam) {
+      return true
+    }
+    return false
+  }
+
+  get expiryDate () {
+    if (this.examAssociated && this.event.exam) {
+      // TOCHECK removed new keyword in moment. not needed
+      // const d = new moment(this.event.exam.expiry_date)
+      const d = moment(this.event.exam.expiry_date)
+      if (d.isValid()) {
+        return d.format('MMM Do, YYYY')
       }
+    }
+    return 'not applicable'
+  }
+
+  get modalVisible () {
+    return this.showModal
+  }
+
+  set modalVisible (e) {
+    this.toggleEditBookingModal(e)
+  }
+
+  get resource () {
+    if (this.newEvent) {
+      return {
+        name: this.newEvent.resource.title,
+        id: this.newEvent.resource.id
+      }
+    }
+    if (this.event) {
+      if (this.event.room && this.event.room.room_name) {
+        return {
+          name: this.event.room.room_name,
+          id: this.event.room.room_id
+        }
+      }
+    }
+    return ''
+  }
+
+  get start () {
+    if (this.examAssociated && this.newEvent) {
+      // TOCHECK removed new keyword in moment. not needed
+      return moment(this.newEvent.start)
+    }
+    if (this.examAssociated && !this.newEvent) {
+      // TOCHECK removed new keyword in moment. not needed
+      return moment(this.event.start)
+    }
+    if (!this.newStart && this.event && this.event.start) {
+      // TOCHECK removed new keyword in moment. not needed
+      return moment(this.event.start)
+    }
+    if (this.newStart) {
+      return this.newStart
+    }
+  }
+
+  // methods
+  cancel () {
+    this.cancel_flag = true
+    let returnRoute = false
+    if (this.selectedExam && this.selectedExam.referrer === 'rescheduling') {
+      returnRoute = true
+    }
+    this.finishBooking()
+    this.resetModal()
+    this.getBookings()
+    if (returnRoute) {
+      this.$router.push('/exams')
+    }
+  }
+
+  checkValue (e) {
+    if (this.labelColor === 'red') {
+      if (e.target.id === 'title' && e.target.value.length > 0) {
+        this.labelColor = 'black'
+        this.message = ''
+      }
+    }
+    if (this.event[e.target.id] !== e.target.value) {
+      if (!this.editedFields.includes(e.target.id)) {
+        this.editedFields.push(e.target.id)
+      }
+    }
+    if (this.event[e.target.id] === e.target.value) {
+      if (this.editedFields.includes(e.target.id)) {
+        const i = this.editedFields.indexOf(e.target.id)
+        this.editedFields.splice(i, 1)
+      }
+    }
+    if (this.message === 'No Changes Made') {
+      if (this.editedFields.length > 0) {
+        this.message = ''
+      }
+    }
+  }
+
+  clickYes (e) {
+    e.preventDefault()
+    const id = this.event.id
+    this.deleteBooking(id).then(() => {
       this.finishBooking()
       this.resetModal()
-      this.getBookings()
-      if (returnRoute) {
-        this.$router.push('/exams')
-      }
-    },
-    checkValue (e) {
-      if (this.labelColor === 'red') {
-        if (e.target.id === 'title' && e.target.value.length > 0) {
-          this.labelColor = 'black'
-          this.message = ''
-        }
-      }
-      if (this.event[e.target.id] !== e.target.value) {
-        if (!this.editedFields.includes(e.target.id)) {
-          this.editedFields.push(e.target.id)
-        }
-      }
-      if (this.event[e.target.id] === e.target.value) {
-        if (this.editedFields.includes(e.target.id)) {
-          const i = this.editedFields.indexOf(e.target.id)
-          this.editedFields.splice(i, 1)
-        }
-      }
-      if (this.message === 'No Changes Made') {
-        if (this.editedFields.length > 0) {
-          this.message = ''
-        }
-      }
-    },
-    clickYes (e) {
-      e.preventDefault()
-      const id = this.event.id
-      this.deleteBooking(id).then(() => {
-        this.finishBooking()
-        this.resetModal()
-      })
-    },
-    clickYesRecurring (e) {
-      const re_id = this.event.recurring_uuid
-      this.deleteRecurringBooking(re_id).then(() => {
-        this.finishBooking()
-        this.resetModal()
-      })
-      this.toggleEditDeleteSeries(false)
-    },
-    decrement () {
-      if (this.duration == 0.5) {
-        return
-      }
-      this.added -= 0.5
-      const params = {
-        end: this.end
-      }
-      if (this.tempEvent) {
-        return
-      }
-      this.$root.$emit('updateEvent', this.actualEvent, params)
-    },
-    increment () {
-      if (this.end.format('H') == 18) {
-        return
-      }
-      this.added += 0.5
-      const params = {
-        end: this.end
-      }
-      if (this.tempEvent) {
-        return
-      }
-      this.$root.$emit('updateEvent', this.actualEvent, params)
-    },
-    minimize () {
-      if (this.minimized) {
-        this.minimized = false
-        this.confirm = false
-      } else {
-        this.minimized = true
-        this.confirm = true
-      }
-    },
-    reschedule () {
-      this.rescheduleInvigilator = this.invigilator
-      this.rescheduleShadowInvigilator = this.currentShadowInvigilator
-      if (this.selectedExam && this.selectedExam.gotoDate) {
-        this.setSelectedExam('clearGoto')
-      }
-      this.toggleRescheduling(true)
-      this.toggleEditBookingModal(false)
-      this.rescheduling = true
-      this.editedFields.push('invigilator')
-      this.editedFields.push('shadow_invigilator')
-    },
-    resetModal () {
-      this.added = null
-      this.newStart = null
-      this.newEnd = null
-      this.editedFields = []
-      this.fee = false
-      this.labelColor = 'black'
-      this.message = null
-      this.state = null
-      this.title = null
+    })
+  }
+
+  clickYesRecurring (e) {
+    const re_id = this.event.recurring_uuid
+    this.deleteRecurringBooking(re_id).then(() => {
+      this.finishBooking()
+      this.resetModal()
+    })
+    this.toggleEditDeleteSeries(false)
+  }
+
+  decrement () {
+    if (this.duration == 0.5) {
+      return
+    }
+    this.added -= 0.5
+    const params: any = {
+      end: this.end
+    }
+    if (this.tempEvent) {
+      return
+    }
+    this.$root.$emit('updateEvent', this.actualEvent, params)
+  }
+
+  increment () {
+    if ((this.end as any).format('H') == 18) {
+      return
+    }
+    this.added += 0.5
+    const params = {
+      end: this.end
+    }
+    if (this.tempEvent) {
+      return
+    }
+    this.$root.$emit('updateEvent', this.actualEvent, params)
+  }
+
+  minimize () {
+    if (this.minimized) {
+      this.minimized = false
       this.confirm = false
-    },
-    setInvigilator (e) {
-      this.message = ''
-      if (this.event.exam && this.event.exam.booking) {
-        if (this.event.exam.booking.invigilator_id !== e) {
-          if (!this.editedFields.includes('invigilator')) {
-            this.editedFields.push('invigilator')
-          }
-        }
-        if (this.event.exam.booking.invigilator_id == e) {
-          if (this.editedFields.includes('invigilator')) {
-            this.editedFields.splice(this.editedFields.indexOf('invigilator'), 1)
-          }
-        }
-      }
-      if (this.invigilator === 'sbc' && !e) {
+    } else {
+      this.minimized = true
+      this.confirm = true
+    }
+  }
+
+  reschedule () {
+    this.rescheduleInvigilator = this.invigilator
+    this.rescheduleShadowInvigilator = this.currentShadowInvigilator
+    if (this.selectedExam && this.selectedExam.gotoDate) {
+      this.setSelectedExam('clearGoto')
+    }
+    this.toggleRescheduling(true)
+    this.toggleEditBookingModal(false)
+    this.rescheduling = true
+    this.editedFields.push('invigilator')
+    this.editedFields.push('shadow_invigilator')
+  }
+
+  resetModal () {
+    this.added = null
+    this.newStart = null
+    this.newEnd = null
+    this.editedFields = []
+    // TODO chnaged fee to fees
+    this.fees = false
+    this.labelColor = 'black'
+    this.message = null
+    this.state = null
+    this.title = null
+    this.confirm = false
+  }
+
+  setInvigilator (e) {
+    this.message = ''
+    if (this.event.exam && this.event.exam.booking) {
+      if (this.event.exam.booking.invigilator_id !== e) {
         if (!this.editedFields.includes('invigilator')) {
           this.editedFields.push('invigilator')
         }
       }
-      this.invigilator = e
-    },
-    show () {
-      if (this.event.recurring_uuid) {
-        this.toggleEditDeleteSeries(true)
+      if (this.event.exam.booking.invigilator_id == e) {
+        if (this.editedFields.includes('invigilator')) {
+          this.editedFields.splice(this.editedFields.indexOf('invigilator'), 1)
+        }
       }
-      this.edit_recurring = false
-      this.changeState = true
-      this.removeState = true
-      if (this.newEvent && this.newEvent.start) {
-        this.newStart = new moment(this.newEvent.start)
-        this.newEnd = new moment(this.newEvent.end)
+    }
+    if (this.invigilator === 'sbc' && !e) {
+      if (!this.editedFields.includes('invigilator')) {
+        this.editedFields.push('invigilator')
       }
-      if (this.event.exam && this.event.exam.booking) {
-        const currentID = this.currentShadowInvigilator = this.event.exam.booking.shadow_invigilator_id || null
-        let currentName = ''
-        this.shadow_invigilators.forEach(function (invigilator) {
-          if (invigilator.id == currentID) {
-            currentName = invigilator.name
-          }
-        })
-        this.currentShadowInvigilatorName = currentName
+    }
+    this.invigilator = e
+  }
+
+  show () {
+    if (this.event.recurring_uuid) {
+      this.toggleEditDeleteSeries(true)
+    }
+    this.edit_recurring = false
+    this.changeState = true
+    this.removeState = true
+    if (this.newEvent && this.newEvent.start) {
+      // TOCHECK removed new keyword in moment. not needed
+      this.newStart = moment(this.newEvent.start)
+      // TOCHECK removed new keyword in moment. not needed
+      this.newEnd = moment(this.newEvent.end)
+    }
+    if (this.event.exam && this.event.exam.booking) {
+      const currentID = this.currentShadowInvigilator = this.event.exam.booking.shadow_invigilator_id || null
+      let currentName = ''
+      this.shadow_invigilators.forEach(function (invigilator) {
+        if (invigilator.id == currentID) {
+          currentName = invigilator.name
+        }
+      })
+      this.currentShadowInvigilatorName = currentName
+      if (!this.editedFields.includes('invigilator')) {
+        if (this.rescheduling) {
+          this.invigilator = null
+        }
+        if (this.event.exam.booking.invigilators.length == 1) {
+          this.invigilator = this.event.exam.booking.invigilators[0] || null
+        }
+      }
+      if (this.event.exam.booking.sbc_staff_invigilated) {
         if (!this.editedFields.includes('invigilator')) {
           if (this.rescheduling) {
             this.invigilator = null
           }
-          if (this.event.exam.booking.invigilators.length == 1) {
-            this.invigilator = this.event.exam.booking.invigilators[0] || null
-          }
-        }
-        if (this.event.exam.booking.sbc_staff_invigilated) {
-          if (!this.editedFields.includes('invigilator')) {
-            if (this.rescheduling) {
-              this.invigilator = null
-            }
-            this.invigilator = 'sbc'
-          }
+          this.invigilator = 'sbc'
         }
       }
-      if (!this.editedFields.includes('title')) {
-        this.title = this.event.title
-      }
-      if (!this.editedFields.includes('fees')) {
-        this.fees = this.event.fees
-      }
-      if (!this.editedFields.includes('booking_contact_information')) {
-        this.booking_contact_information = this.event.booking_contact_information
-      }
-      if (!this.editedFields.includes('blackout_notes')) {
-        this.blackout_notes = this.event.blackout_notes
-      }
-      if (this.rescheduling) {
-        if (this.cancel_flag) {
-          this.invigilator = this.rescheduleInvigilator
-          this.currentShadowInvigilator = this.rescheduleShadowInvigilator
-          this.rescheduleInvigilator = null
-          this.cancel_flag = false
-        } else {
-          this.invigilator = null
-          this.currentShadowInvigilator = null
-          this.currentShadowInvigilatorName = null
-        }
-      }
-      this.rescheduling = false
-      this.cancel_flag = false
-      this.rescheduleInvigilator = null
-    },
-    rowSelectedShadow (shadows, e) {
-      this.message = ''
-      this.selectedShadow = shadows
-      if (this.event.exam && this.event.exam.booking) {
-        if (this.event.exam.booking.shadow_invigilator_id !== e) {
-          if (!this.editedFields.includes('shadow_invigilator')) {
-            this.editedFields.push('shadow_invigilator')
-          }
-        } else if (this.event.exam.booking.shadow_invigilator_id == e) {
-          if (this.editedFields.includes('shadow_invigilator')) {
-            this.editedFields.splice(this.editedFields.indexOf('shadow_invigilator'), 1)
-          }
-        }
-      }
-      if (shadows[0] == null) {
-        this.shadowInvigilator = null
+    }
+    if (!this.editedFields.includes('title')) {
+      this.title = this.event.title
+    }
+    if (!this.editedFields.includes('fees')) {
+      this.fees = this.event.fees
+    }
+    if (!this.editedFields.includes('booking_contact_information')) {
+      this.booking_contact_information = this.event.booking_contact_information
+    }
+    if (!this.editedFields.includes('blackout_notes')) {
+      this.blackout_notes = this.event.blackout_notes
+    }
+    if (this.rescheduling) {
+      if (this.cancel_flag) {
+        this.invigilator = this.rescheduleInvigilator
+        this.currentShadowInvigilator = this.rescheduleShadowInvigilator
+        this.rescheduleInvigilator = null
+        this.cancel_flag = false
       } else {
-        this.shadowInvigilator = shadows[0].id
+        this.invigilator = null
+        this.currentShadowInvigilator = null
+        this.currentShadowInvigilatorName = null
       }
-    },
-    submit () {
-      if (this.title.length === 0) {
-        this.labelColor = 'red'
-        this.state = 'danger'
-        this.message = 'A title is required'
-        return
-      }
-      const changes = {}
-      if (!this.start.isSame(this.event.start)) {
-        if (this.examAssociated) {
-          if (this.start.isAfter(this.event.exam.expiry_date)) {
-            this.message = 'Selected date/time is after the exam\'s expiry date.  Press reschedule to pick a new time.'
-            return
-          }
+    }
+    this.rescheduling = false
+    this.cancel_flag = false
+    this.rescheduleInvigilator = null
+  }
+
+  rowSelectedShadow (shadows, e) {
+    this.message = ''
+    this.selectedShadow = shadows
+    if (this.event.exam && this.event.exam.booking) {
+      if (this.event.exam.booking.shadow_invigilator_id !== e) {
+        if (!this.editedFields.includes('shadow_invigilator')) {
+          this.editedFields.push('shadow_invigilator')
         }
-        if (moment().isAfter(this.start)) {
-          this.message = 'Selected date/time is is in the past. Press Reschedule and pick a new time.'
+      } else if (this.event.exam.booking.shadow_invigilator_id == e) {
+        if (this.editedFields.includes('shadow_invigilator')) {
+          this.editedFields.splice(this.editedFields.indexOf('shadow_invigilator'), 1)
+        }
+      }
+    }
+    if (shadows[0] == null) {
+      this.shadowInvigilator = null
+    } else {
+      this.shadowInvigilator = shadows[0].id
+    }
+  }
+
+  submit () {
+    if (this.title.length === 0) {
+      this.labelColor = 'red'
+      this.state = 'danger'
+      this.message = 'A title is required'
+      return
+    }
+    const changes: any = {}
+    if (!this.start.isSame(this.event.start)) {
+      if (this.examAssociated) {
+        if (this.start.isAfter(this.event.exam.expiry_date)) {
+          this.message = 'Selected date/time is after the exam\'s expiry date.  Press reschedule to pick a new time.'
           return
         }
-        changes.start_time = this.start.utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
       }
-      if (!this.end.isSame(this.event.end)) {
-        changes.end_time = this.end.utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
+      if (moment().isAfter(this.start)) {
+        this.message = 'Selected date/time is is in the past. Press Reschedule and pick a new time.'
+        return
       }
-      if (this.newEvent && !(this.newEvent.resource.id == this.event.resourceId)) {
-        changes.room_id = this.newEvent.resource.id
+      changes.start_time = this.start.utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
+    }
+    if (!(this.end as any).isSame(this.event.end)) {
+      changes.end_time = (this.end as any).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
+    }
+    if (this.newEvent && !(this.newEvent.resource.id == this.event.resourceId)) {
+      changes.room_id = this.newEvent.resource.id
+    }
+    if (this.editedFields.includes('title')) {
+      changes.booking_name = this.title
+    }
+    if (this.editedFields.includes('fees')) {
+      changes.fees = this.fees
+    }
+    if (this.editedFields.includes('invigilator')) {
+      changes.invigilator_id = this.invigilator
+      if (changes.invigilator_id !== 'sbc') {
+        changes.sbc_staff_invigilated = 0
       }
-      if (this.editedFields.includes('title')) {
-        changes.booking_name = this.title
+      if (changes.invigilator_id === 'sbc') {
+        changes.invigilator_id = null
+        changes.sbc_staff_invigilated = 1
       }
-      if (this.editedFields.includes('fees')) {
-        changes.fees = this.fees
+      if (this.rescheduling) {
+        changes.invigilator_id = null
+        changes.sbc_staff_invigilated = 0
+        this.rescheduling = false
       }
-      if (this.editedFields.includes('invigilator')) {
-        changes.invigilator_id = this.invigilator
-        if (changes.invigilator_id !== 'sbc') {
-          changes.sbc_staff_invigilated = 0
-        }
-        if (changes.invigilator_id === 'sbc') {
-          changes.invigilator_id = null
-          changes.sbc_staff_invigilated = 1
-        }
-        if (this.rescheduling) {
-          changes.invigilator_id = null
-          changes.sbc_staff_invigilated = 0
-          this.rescheduling = false
-        }
-      }
-      if (this.editedFields.includes('shadow_invigilator')) {
-        if (this.removeFlag) {
-          changes.shadow_invigilator_id = null
-        } else {
-          changes.shadow_invigilator_id = this.shadowInvigilator
-        }
-        if (this.rescheduleShadowInvigilator !== null) {
-          changes.shadow_invigilator_id = this.shadowInvigilator
-        }
-      }
-      if (this.editedFields.includes('contact_information')) {
-        changes.booking_contact_information = this.booking_contact_information
-      }
-      if (this.editedFields.includes('invigilator_id')) {
-        changes.invigilator_id = this.invigilator
-      }
-      if (this.editedFields.includes('blackout_notes')) {
-        changes.blackout_notes = this.blackout_notes
-      }
-      if (Object.keys(changes).length === 0) {
-        this.message = 'No Changes Made'
+    }
+    if (this.editedFields.includes('shadow_invigilator')) {
+      if (this.removeFlag) {
+        changes.shadow_invigilator_id = null
       } else {
-        const invigilatorPayload = {
-          id: null,
-          params: null
-        }
-        const changePayload = {
-          id: null,
-          params: null
-        }
-        if (this.removeFlag) {
-          invigilatorPayload.id = this.currentShadowInvigilator
-          invigilatorPayload.params = '?add=False&subtract=True'
-        } else if (this.rescheduleShadowInvigilator !== null) {
-          invigilatorPayload.id = this.rescheduleShadowInvigilator
-          invigilatorPayload.params = '?add=False&subtract=True'
-          this.rescheduleShadowInvigilator = null
-        } else if (this.shadowInvigilator && this.currentShadowInvigilator) {
-          invigilatorPayload.id = this.shadowInvigilator
-          invigilatorPayload.params = '?add=True&subtract=False'
-          changePayload.id = this.currentShadowInvigilator
-          changePayload.params = '?add=False&subtract=True'
-        } else if (this.shadowInvigilator && !this.currentShadowInvigilator) {
-          invigilatorPayload.id = this.shadowInvigilator
-          invigilatorPayload.params = '?add=True&subtract=False'
-        }
-        changes.invigilator_id = this.invigilator
-        if (invigilatorPayload.id) {
-          this.putInvigilatorShadow(invigilatorPayload)
-        }
-        if (changePayload.id) {
-          this.putInvigilatorShadow(changePayload)
-        }
-        const payload = {
-          id: this.event.id,
-          changes
-        }
-        if (changes.invigilator_id === 'sbc') {
-          delete changes.invigilator_id
-        }
-        if (!this.edit_recurring) {
-          this.putBooking(payload).then(() => {
-            setTimeout(() => {
-              this.$root.$emit('initialize')
-              this.finishBooking()
-              this.resetModal()
-            }, 250)
-          })
-        } else {
-          // remove start and end times to ensure that recurring events do get moved to the date of
-          // the event that was clicked
-          delete changes.start_time
-          delete changes.end_time
-          payload.recurring_uuid = this.event.recurring_uuid
-          this.putRecurringBooking(payload).then(() => {
-            setTimeout(() => {
-              this.$root.$emit('initialize')
-              this.finishBooking()
-              this.resetModal()
-              this.edit_recurring = false
-            }, 250)
-          })
+        changes.shadow_invigilator_id = this.shadowInvigilator
+      }
+      if (this.rescheduleShadowInvigilator !== null) {
+        changes.shadow_invigilator_id = this.shadowInvigilator
+      }
+    }
+    if (this.editedFields.includes('contact_information')) {
+      changes.booking_contact_information = this.booking_contact_information
+    }
+    if (this.editedFields.includes('invigilator_id')) {
+      changes.invigilator_id = this.invigilator
+    }
+    if (this.editedFields.includes('blackout_notes')) {
+      changes.blackout_notes = this.blackout_notes
+    }
+    if (Object.keys(changes).length === 0) {
+      this.message = 'No Changes Made'
+    } else {
+      const invigilatorPayload: any = {
+        id: null,
+        params: null
+      }
+      const changePayload: any = {
+        id: null,
+        params: null
+      }
+      if (this.removeFlag) {
+        invigilatorPayload.id = this.currentShadowInvigilator
+        invigilatorPayload.params = '?add=False&subtract=True'
+      } else if (this.rescheduleShadowInvigilator !== null) {
+        invigilatorPayload.id = this.rescheduleShadowInvigilator
+        invigilatorPayload.params = '?add=False&subtract=True'
+        this.rescheduleShadowInvigilator = null
+      } else if (this.shadowInvigilator && this.currentShadowInvigilator) {
+        invigilatorPayload.id = this.shadowInvigilator
+        invigilatorPayload.params = '?add=True&subtract=False'
+        changePayload.id = this.currentShadowInvigilator
+        changePayload.params = '?add=False&subtract=True'
+      } else if (this.shadowInvigilator && !this.currentShadowInvigilator) {
+        invigilatorPayload.id = this.shadowInvigilator
+        invigilatorPayload.params = '?add=True&subtract=False'
+      }
+      changes.invigilator_id = this.invigilator
+      if (invigilatorPayload.id) {
+        this.putInvigilatorShadow(invigilatorPayload)
+      }
+      if (changePayload.id) {
+        this.putInvigilatorShadow(changePayload)
+      }
+      const payload: any = {
+        id: this.event.id,
+        changes
+      }
+      if (changes.invigilator_id === 'sbc') {
+        delete changes.invigilator_id
+      }
+      if (!this.edit_recurring) {
+        this.putBooking(payload).then(() => {
+          setTimeout(() => {
+            this.$root.$emit('initialize')
+            this.finishBooking()
+            this.resetModal()
+          }, 250)
+        })
+      } else {
+        // remove start and end times to ensure that recurring events do get moved to the date of
+        // the event that was clicked
+        delete changes.start_time
+        delete changes.end_time
+        payload.recurring_uuid = this.event.recurring_uuid
+        this.putRecurringBooking(payload).then(() => {
+          setTimeout(() => {
+            this.$root.$emit('initialize')
+            this.finishBooking()
+            this.resetModal()
+            this.edit_recurring = false
+          }, 250)
+        })
+      }
+    }
+    this.selectedShadow = []
+    this.shadowInvigilator = null
+    this.removeFlag = false
+  }
+
+  setChange () {
+    this.changeState = !this.changeState
+  }
+
+  setRemove () {
+    this.removeState = !this.removeState
+  }
+
+  setSelectedShadowNull (e) {
+    this.removeFlag = true
+    if (this.event.exam && this.event.exam.booking) {
+      if (this.event.exam.booking.shadow_invigilator_id !== e) {
+        if (!this.editedFields.includes('shadow_invigilator')) {
+          this.editedFields.push('shadow_invigilator')
         }
       }
-      this.selectedShadow = []
-      this.shadowInvigilator = null
-      this.removeFlag = false
-    },
-    setChange () {
-      this.changeState = !this.changeState
-    },
-    setRemove () {
-      this.removeState = !this.removeState
-    },
-    setSelectedShadowNull (e) {
-      this.removeFlag = true
-      if (this.event.exam && this.event.exam.booking) {
-        if (this.event.exam.booking.shadow_invigilator_id !== e) {
-          if (!this.editedFields.includes('shadow_invigilator')) {
-            this.editedFields.push('shadow_invigilator')
-          }
-        }
+    }
+    this.shadowInvigilator = null
+    this.submit()
+  }
+
+  toggleEditRecurring () {
+    this.edit_recurring = !this.edit_recurring
+  }
+
+  toggleConfirmDeleteRecurringCollapse () {
+    const deleteRecurring = document.getElementById('delete_recurring_collapse')
+    const confirmDelete = document.getElementById('confirm_delete_recurring_collapse')
+    if (deleteRecurring) {
+      if (deleteRecurring.classList.contains('show')) {
+        this.$root.$emit('bv::toggle::collapse', 'delete_recurring_collapse')
       }
-      this.shadowInvigilator = null
-      this.submit()
-    },
-    toggleEditRecurring () {
-      this.edit_recurring = !this.edit_recurring
-    },
-    toggleConfirmDeleteRecurringCollapse () {
-      if (document.getElementById('delete_recurring_collapse')) {
-        if (document.getElementById('delete_recurring_collapse').classList.contains('show')) {
-          this.$root.$emit('bv::toggle::collapse', 'delete_recurring_collapse')
-        }
+    }
+    if (confirmDelete) {
+      if (confirmDelete.style.display === 'none') {
+        this.$root.$emit('bv::toggle::collapse', 'confirm_delete_recurring_collapse')
       }
-      if (document.getElementById('confirm_delete_recurring_collapse')) {
-        if (document.getElementById('confirm_delete_recurring_collapse').style.display === 'none') {
-          this.$root.$emit('bv::toggle::collapse', 'confirm_delete_recurring_collapse')
-        }
+    }
+  }
+
+  toggleDeleteRecurringCollapse () {
+    const deleteRecurring = document.getElementById('delete_recurring_collapse')
+    const confirmDelete = document.getElementById('confirm_delete_recurring_collapse')
+    if (deleteRecurring) {
+      if (deleteRecurring.style.display === 'none') {
+        this.$root.$emit('bv::toggle::collapse', 'delete_recurring_collapse')
       }
-    },
-    toggleDeleteRecurringCollapse () {
-      if (document.getElementById('delete_recurring_collapse')) {
-        if (document.getElementById('delete_recurring_collapse').style.display === 'none') {
-          this.$root.$emit('bv::toggle::collapse', 'delete_recurring_collapse')
-        }
-      }
-      if (document.getElementById('confirm_delete_recurring_collapse')) {
-        if (document.getElementById('confirm_delete_recurring_collapse').classList.contains('show')) {
-          this.$root.$emit('bv::toggle::collapse', 'confirm_delete_recurring_collapse')
-        }
+    }
+    if (confirmDelete) {
+      if (confirmDelete.classList.contains('show')) {
+        this.$root.$emit('bv::toggle::collapse', 'confirm_delete_recurring_collapse')
       }
     }
   }

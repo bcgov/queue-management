@@ -3,30 +3,40 @@
     <div style="display: flex; justify-content: flex-start; border-radius: 24">
       <div
         class="m-2 flex-min"
-        style="font-weight:600; font-size:1.2rem"
+        style="font-weight: 600; font-size: 1.2rem"
         v-if="!isAppointmentEditMode"
-      >Now Scheduling |</div>
+      >
+        Now Scheduling |
+      </div>
       <div
         class="m-2 flex-min"
-        style="font-weight:600; font-size:1.2rem"
+        style="font-weight: 600; font-size: 1.2rem"
         v-if="isAppointmentEditMode"
-      >Now ReScheduling |</div>
+      >
+        Now ReScheduling |
+      </div>
       <div
-        style="font-size: 1.1rem;"
+        style="font-size: 1.1rem"
         class="flex-min ml-1 mr-2 mt-2"
         v-if="isAppointmentEditMode"
-      >Appointment</div>
+      >
+        Appointment
+      </div>
       <div
-        style="font-size: 1.1rem;"
+        style="font-size: 1.1rem"
         class="flex-min ml-1 mr-2 mt-2"
         v-if="!isAppointmentEditMode"
-      >{{ examAssociated ? 'Exam Event | ' : 'Non-Exam Event' }}</div>
+      >
+        {{ examAssociated ? 'Exam Event | ' : 'Non-Exam Event' }}
+      </div>
       <div
         class="mr-1 mt-2 flex-min"
         v-if="examAssociated && !isAppointmentEditMode"
         style="font-size: 1.1rem"
       >
-        <span>{{ `Duration: ${selectedExam.exam_type.number_of_hours} HRS | ` }}</span>
+        <span>{{
+          `Duration: ${selectedExam.exam_type.number_of_hours} HRS | `
+        }}</span>
         <br />
       </div>
       <div class="m-2 flex-min" v-if="examAssociated && !isAppointmentEditMode">
@@ -55,72 +65,81 @@
   </div>
 </template>
 
-<script>
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+<script lang="ts">
+
+import { Action, Getter, Mutation, State } from 'vuex-class'
+import { Component, Vue, Watch } from 'vue-property-decorator'
+
+// import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import moment from 'moment'
 
-export default {
-  name: 'SchedulingIndicator',
-  computed: {
-    ...mapGetters(['show_scheduling_indicator']),
-    ...mapState([
-      'editedBooking',
-      'rescheduling',
-      'scheduling',
-      'selectedExam',
-      'showEditBookingModal',
-      'showBookingModal',
-      'showOtherBookingModal',
-      'isAppointmentEditMode'
-    ]),
-    examAssociated () {
-      if (this.selectedExam && Object.keys(this.selectedExam).length > 0) {
-        return true
-      }
-      return false
-    },
-    bookingModalsHidden () {
-      if (!this.showOtherBookingModal && !this.showBookingModal && !this.showEditBookingModal) {
-        return true
-      }
-      return false
-    },
-    expiryDateFormat () {
-      if (this.examAssociated && this.selectedExam.expiry_date) {
-        const d = moment(this.selectedExam.expiry_date)
-        if (d.isValid()) {
-          return d.format('MMM-DD-YYYY')
-        }
-      }
-      return 'not applicable'
-    }
-  },
-  methods: {
-    ...mapActions(['finishBooking', 'finishAppointment']),
-    ...mapMutations(['toggleEditBookingModal', 'toggleEditApptModal', 'toggleRescheduling', 'toggleApptRescheduleCancel']),
-    cancel () {
-      if (this.isAppointmentEditMode) {
-        if (this.rescheduling) {
-          this.toggleEditApptModal(true)
-          this.toggleRescheduling(false)
-          this.toggleApptRescheduleCancel(true)
-          return
-        }
-        this.finishAppointment()
-      } else {
-        if (this.rescheduling) {
-          this.toggleEditBookingModal(true)
-          return
-        }
+@Component
+export default class SchedulingIndicator extends Vue {
+  @State('editedBooking') private editedBooking!: any
+  @State('rescheduling') private rescheduling!: any
+  @State('scheduling') private scheduling!: any
+  @State('selectedExam') private selectedExam!: any
+  @State('showEditBookingModal') private showEditBookingModal!: any
+  @State('showBookingModal') private showBookingModal!: any
+  @State('showOtherBookingModal') private showOtherBookingModal!: any
+  @State('isAppointmentEditMode') private isAppointmentEditMode!: any
 
-        let pushToExams = false
-        if (this.selectedExam && this.selectedExam.referrer === 'inventory') {
-          pushToExams = true
-        }
-        this.finishBooking()
-        if (pushToExams) {
-          this.$router.push('/exams')
-        }
+  @Getter('show_scheduling_indicator') private show_scheduling_indicator!: any;
+
+  @Action('finishBooking') public finishBooking: any
+  @Action('finishAppointment') public finishAppointment: any
+
+  @Mutation('toggleEditBookingModal') public toggleEditBookingModal: any
+  @Mutation('toggleEditApptModal') public toggleEditApptModal: any
+  @Mutation('toggleRescheduling') public toggleRescheduling: any
+  @Mutation('toggleApptRescheduleCancel') public toggleApptRescheduleCancel: any
+
+  get examAssociated () {
+    if (this.selectedExam && Object.keys(this.selectedExam).length > 0) {
+      return true
+    }
+    return false
+  }
+
+  get bookingModalsHidden () {
+    if (!this.showOtherBookingModal && !this.showBookingModal && !this.showEditBookingModal) {
+      return true
+    }
+    return false
+  }
+
+  get expiryDateFormat () {
+    if (this.examAssociated && this.selectedExam.expiry_date) {
+      const d = moment(this.selectedExam.expiry_date)
+      if (d.isValid()) {
+        return d.format('MMM-DD-YYYY')
+      }
+    }
+    return 'not applicable'
+  }
+
+  cancel () {
+    if (this.isAppointmentEditMode) {
+      if (this.rescheduling) {
+        this.toggleEditApptModal(true)
+        this.toggleRescheduling(false)
+        this.toggleApptRescheduleCancel(true)
+        return
+      }
+      this.finishAppointment()
+    } else {
+      if (this.rescheduling) {
+        this.toggleEditBookingModal(true)
+        return
+      }
+
+      let pushToExams = false
+      if (this.selectedExam && this.selectedExam.referrer === 'inventory') {
+        pushToExams = true
+      }
+      this.finishBooking()
+      if (pushToExams) {
+        this.$router.push('/exams')
       }
     }
   }
