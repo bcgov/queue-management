@@ -91,70 +91,71 @@
   </b-modal>
 </template>
 
-<script>
-import { mapActions, mapMutations, mapState } from 'vuex'
+<script lang="ts">
+
+import { Action, Getter, Mutation, State } from 'vuex-class'
+import { Component, Prop, Vue } from 'vue-property-decorator'
+
+// import { mapActions, mapMutations, mapState } from 'vuex'
 import DatePicker from 'vue2-datepicker'
 import moment from 'moment'
 const FileDownload = require('js-file-download')
-export default {
-  name: 'FinancialReportModal',
-  components: { DatePicker },
-  data () {
-    return {
-      startDate: '',
-      endDate: '',
-      options: [
-        { text: 'All Exams', value: 'all_exams' },
-        { text: 'All Booking Events', value: 'all_bookings' },
-        { text: 'ITA Individual and Group Exams', value: 'ita' },
-        { text: 'All Non-ITA Exams', value: 'all_non_ita' }
-      ],
-      selectedExamType: '',
-      selectedExamFilter: ''
-    }
-  },
-  methods: {
-    ...mapActions([
-      'getExamsExport',
-      'getExamTypes'
-    ]),
-    ...mapMutations([
-      'toggleGenFinReport'
-    ]),
-    cancel () {
-      this.selectedExamType = ''
-      this.selectedExamFilter = ''
-    },
-    submit () {
-      const form_start_date = moment.utc(this.startDate).format('YYYY-MM-DD')
-      const form_end_date = moment.utc(this.endDate).format('YYYY-MM-DD')
-      const url = '/exams/export/?start_date=' + form_start_date + '&end_date=' + form_end_date + '&exam_type=' +
-        this.selectedExamType
-      const today = moment().format('YYYY-MM-DD_HHMMSS')
-      const filename = 'export-csv-' + today + '.csv'
-      this.getExamsExport(url)
-        .then(resp => {
-          FileDownload(resp.data, filename)
-        })
-      this.startDate = ''
-      this.endDate = ''
-      this.selectedExamType = ''
-      this.selectedExamFilter = ''
-    }
-  },
-  computed: {
-    ...mapState({
-      showGenFinReportModal: state => state.showGenFinReportModal
-    }),
-    modal: {
-      get () {
-        return this.showGenFinReportModal
-      },
-      set (e) {
-        this.selectedExamFilter = ''
-        this.toggleGenFinReport(e)
-      }
-    }
+
+@Component({
+  components: {
+    DatePicker
+
+  }
+})
+export default class FinancialReportModal extends Vue {
+  @State('showGenFinReportModal') private showGenFinReportModal!: any
+
+  @Action('getExamsExport') public getExamsExport: any
+  @Action('getExamTypes') public getExamTypes: any
+
+  @Mutation('toggleGenFinReport') public toggleGenFinReport: any
+
+  public startDate: any = ''
+  public endDate: any = ''
+  options: any = [
+    { text: 'All Exams', value: 'all_exams' },
+    { text: 'All Booking Events', value: 'all_bookings' },
+    { text: 'ITA Individual and Group Exams', value: 'ita' },
+    { text: 'All Non-ITA Exams', value: 'all_non_ita' }
+  ]
+
+  public selectedExamType: any = ''
+  public selectedExamFilter: any = ''
+
+  get modal () {
+    return this.showGenFinReportModal
+  }
+
+  set modal (e) {
+    this.selectedExamFilter = ''
+    this.toggleGenFinReport(e)
+  }
+
+  cancel () {
+    this.selectedExamType = ''
+    this.selectedExamFilter = ''
+  }
+
+  submit () {
+    const form_start_date = moment.utc(this.startDate).format('YYYY-MM-DD')
+    const form_end_date = moment.utc(this.endDate).format('YYYY-MM-DD')
+    const url = '/exams/export/?start_date=' + form_start_date + '&end_date=' + form_end_date + '&exam_type=' +
+      this.selectedExamType
+    const today = moment().format('YYYY-MM-DD_HHMMSS')
+    const filename = 'export-csv-' + today + '.csv'
+    this.getExamsExport(url)
+      .then(resp => {
+        FileDownload(resp.data, filename)
+      })
+    this.startDate = ''
+    this.endDate = ''
+    this.selectedExamType = ''
+    this.selectedExamFilter = ''
   }
 }
 </script>
