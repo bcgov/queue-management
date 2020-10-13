@@ -63,9 +63,8 @@
 
 <script lang="ts">
 
-import { Action, Getter, Mutation, State } from 'vuex-class'
+import { Action, Getter, State } from 'vuex-class'
 import { Component, Prop, Vue } from 'vue-property-decorator'
-// import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 
 @Component
 export default class OfficeDrop extends Vue {
@@ -92,8 +91,6 @@ export default class OfficeDrop extends Vue {
   @Getter('is_ita2_designate') private is_ita2_designate!: any;
 
   @Action('getOffices') public getOffices: any
-
-  // @Mutation('setEditExamFailure') public setEditExamFailure: any
 
   public clickedMenu: any = false
   public message: any = ''
