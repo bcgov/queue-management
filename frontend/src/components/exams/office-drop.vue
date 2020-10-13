@@ -1,34 +1,42 @@
 <template>
   <fragment>
     <b-col :cols="columnW">
-      <b-table v-show="false"
-               :items="offices"
-               :fields="{key: 'office_name'}"
-               :filter="search"
-               @filtered="getFilteredOffices" />
+      <b-table
+        v-show="false"
+        :items="offices"
+        :fields="{ key: 'office_name' }"
+        :filter="search"
+        @filtered="getFilteredOffices"
+      />
       <b-form autocomplete="off">
         <b-form-group>
-          <label class="my-0">Office
+          <label class="my-0"
+            >Office
             <span v-if="!error"> {{ msg }} </span>
             <span v-if="error" style="color: red"> {{ msg }} </span>
           </label>
           <div>
-            <b-form-input id="office_name"
-                          type="text"
-                          autocomplete="off"
-                          class="less-10-mb"
-                          :value="officeSearch"
-                          @focus.native="officeSearchOnFocus"
-                          @blur.native="officeSearchOnBlur"
-                          @input.native="handleOfficeInput" />
+            <b-form-input
+              id="office_name"
+              type="text"
+              autocomplete="off"
+              class="less-10-mb"
+              :value="officeSearch"
+              @focus.native="officeSearchOnFocus"
+              @blur.native="officeSearchOnBlur"
+              @input.native="handleOfficeInput"
+            />
           </div>
-          <div :class="officeDropClass"
-               style="border: 1px solid grey">
+          <div :class="officeDropClass" style="border: 1px solid grey">
             <template v-for="office in officeChoices">
-              <b-dropdown-item-button v-on:click.prevent="handleOfficeDropClick"
-                                      :name="office.office_name"
-                                      :value="office.office_number"
-                                      :id="office.office_number">{{ office.office_name }}</b-dropdown-item-button>
+              <b-dropdown-item-button
+                v-on:click.prevent="handleOfficeDropClick"
+                :name="office.office_name"
+                :value="office.office_number"
+                :id="office.office_number"
+                :key="office.office_number"
+                >{{ office.office_name }}</b-dropdown-item-button
+              >
             </template>
           </div>
         </b-form-group>
@@ -38,122 +46,152 @@
       <b-form>
         <b-form-group>
           <label class="my-0">Office #</label>
-          <b-form-input id="office_number"
-                        type="number"
-                        class="less-10-mb"
-                        :value="numberSearch"
-                        @focus.native="handleOfficeNumberFocus"
-                        @blur.native="handleOfficeNumberBlur"
-                        @input.native="handleOfficeNumberInput" />
+          <b-form-input
+            id="office_number"
+            type="number"
+            class="less-10-mb"
+            :value="numberSearch"
+            @focus.native="handleOfficeNumberFocus"
+            @blur.native="handleOfficeNumberBlur"
+            @input.native="handleOfficeNumberInput"
+          />
         </b-form-group>
       </b-form>
     </b-col>
   </fragment>
 </template>
 
-<script>
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+<script lang="ts">
 
-export default {
-  name: 'OfficeDrop',
-  props: ['columnW', 'office_number', 'setOffice', 'msg', 'error'],
-  data () {
-    return {
-      clickedMenu: false,
-      message: '',
-      officeChoices: [],
-      showMessage: false,
-      showSearch: false,
-      searching: false,
-      search: '',
-      searchingNumber: false,
-      searchNumber: '',
-      timer: null
+import { Action, Getter, Mutation, State } from 'vuex-class'
+import { Component, Prop, Vue } from 'vue-property-decorator'
+// import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+
+@Component
+export default class OfficeDrop extends Vue {
+  @Prop()
+  private columnW!: any
+
+  @Prop()
+  private office_number!: any
+
+  @Prop()
+  private setOffice!: any
+
+  @Prop()
+  private msg!: any
+
+  @Prop()
+  private error!: any
+
+  @State('offices') private offices!: any
+  @State('capturedExam') private capturedExam!: any
+
+  @Getter('role_code') private role_code!: any;
+  @Getter('is_pesticide_designate') private is_pesticide_designate!: any;
+  @Getter('is_ita2_designate') private is_ita2_designate!: any;
+
+  @Action('getOffices') public getOffices: any
+
+  // @Mutation('setEditExamFailure') public setEditExamFailure: any
+
+  public clickedMenu: any = false
+  public message: any = ''
+  public officeChoices: any = []
+  public showMessage: any = false
+  public showSearch: any = false
+  public searching: any = false
+  public search: any = ''
+  public searchingNumber: any = false
+  public searchNumber: any = ''
+  public timer: any = null
+
+  get office_id () {
+    if (this.capturedExam && this.capturedExam.office_id) {
+      return this.capturedExam.office_id
     }
-  },
-  computed: {
-    ...mapGetters(['role_code', 'is_pesticide_designate', 'is_ita2_designate']),
-    ...mapState(['offices', 'capturedExam']),
-    office_id () {
-      if (this.capturedExam && this.capturedExam.office_id) {
-        return this.capturedExam.office_id
-      }
-    },
-    officeDropClass () {
-      if (!this.showSearch) {
-        return 'dropdown-menu'
-      }
-      if (this.showSearch) {
-        return 'dropdown-menu show py-0 my-0 w-100'
-      }
-    },
-    numberSearch () {
-      if (!this.searchingNumber) {
-        return this.office_number
-      }
-      this.searchNumber
-    },
-    officeSearch () {
-      if (!this.searching && this.office_number && this.offices.length > 0) {
-        return this.offices.find(office => office.office_number == this.office_number).office_name
-      }
-      return this.search
+  }
+
+  get officeDropClass () {
+    if (!this.showSearch) {
+      return 'dropdown-menu'
     }
-  },
-  methods: {
-    ...mapActions(['getOffices']),
-    ...mapMutations([]),
-    getFilteredOffices (offices) {
-      if (offices.length === 0) {
-        this.officeChoices = [{ office_number: null, office_name: 'No Offices found' }]
-        return
-      }
-      this.officeChoices = offices.length >= 4 ? offices.slice(0, 4) : offices
-    },
-    handleOfficeDropClick (e) {
+    if (this.showSearch) {
+      return 'dropdown-menu show py-0 my-0 w-100'
+    }
+  }
+
+  get numberSearch () {
+    if (!this.searchingNumber) {
+      return this.office_number
+    }
+    this.searchNumber
+  }
+
+  get officeSearch () {
+    if (!this.searching && this.office_number && this.offices.length > 0) {
+      return this.offices.find(office => office.office_number == this.office_number).office_name
+    }
+    return this.search
+  }
+
+  getFilteredOffices (offices) {
+    if (offices.length === 0) {
+      this.officeChoices = [{ office_number: null, office_name: 'No Offices found' }]
+      return
+    }
+    this.officeChoices = offices.length >= 4 ? offices.slice(0, 4) : offices
+  }
+
+  handleOfficeDropClick (e) {
+    this.showSearch = false
+    this.search = e.target.name
+    this.setOffice(e.target.value)
+    this.searching = false
+  }
+
+  handleOfficeNumberFocus () {
+    this.searchingNumber = true
+    this.searchNumber = ''
+  }
+
+  handleOfficeNumberBlur () {
+    this.searchingNumber = false
+  }
+
+  handleOfficeInput (e) {
+    this.searching = true
+    this.search = e.target.value
+    if (this.search.length > 1 && this.searching === true) {
+      this.showSearch = true
+    }
+    if (this.search.length <= 1) {
       this.showSearch = false
-      this.search = e.target.name
-      this.setOffice(e.target.value)
-      this.searching = false
-    },
-    handleOfficeNumberFocus () {
-      this.searchingNumber = true
-      this.searchNumber = ''
-    },
-    handleOfficeNumberBlur () {
-      this.searchingNumber = false
-    },
-    handleOfficeInput (e) {
-      this.searching = true
-      this.search = e.target.value
-      if (this.search.length > 1 && this.searching === true) {
-        this.showSearch = true
-      }
-      if (this.search.length <= 1) {
-        this.showSearch = false
-      }
-    },
-    handleOfficeNumberInput (e) {
-      this.searchingNumber = true
-      this.searchNumber = e.target.value
-      if (this.offices.find(office => office.office_number == e.target.value)) {
-        this.setOffice(e.target.value)
-        this.searchingNumber = false
-      }
-    },
-    officeSearchOnBlur () {
-      this.searching = false
-    },
-    officeSearchOnFocus () {
-      this.searching = true
-      this.search = ''
     }
+  }
+
+  handleOfficeNumberInput (e) {
+    this.searchingNumber = true
+    this.searchNumber = e.target.value
+    if (this.offices.find(office => office.office_number == e.target.value)) {
+      this.setOffice(e.target.value)
+      this.searchingNumber = false
+    }
+  }
+
+  officeSearchOnBlur () {
+    this.searching = false
+  }
+
+  officeSearchOnFocus () {
+    this.searching = true
+    this.search = ''
   }
 }
 </script>
 
 <style scoped>
-  .less-10-mb {
-    margin-bottom: -10px !important;
-  }
+.less-10-mb {
+  margin-bottom: -10px !important;
+}
 </style>
