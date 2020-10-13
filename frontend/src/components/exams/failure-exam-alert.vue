@@ -19,29 +19,28 @@ limitations under the License.*/
       dismissible
       v-model="countdown"
       @dismissed="setEditExamFailure(0)"
-       style="h-align: center; font-size:1rem; border-radius: 0px;">
-      Something Went Wrong!  Please submit feedback and tell us about this issue.
+      style="h-align: center; font-size: 1rem; border-radius: 0px"
+    >
+      Something Went Wrong! Please submit feedback and tell us about this issue.
     </b-alert>
   </div>
 </template>
 
-<script>
-import { mapMutations, mapState } from 'vuex'
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+import { Mutation, State } from 'vuex-class'
 
-export default {
-  name: 'FailureExamAlert',
+@Component
+export default class FailureExamAlert extends Vue {
+  @State('editExamFailureCount') private editExamFailureCount!: any
+  @Mutation('setEditExamFailure') public setEditExamFailure: any
 
-  computed: {
-    ...mapState(['editExamFailureCount']),
-    countdown: {
-      get () { return this.editExamFailureCount },
-      set (e) {
-        this.setEditExamFailure(e)
-      }
-    }
-  },
-  methods: {
-    ...mapMutations(['setEditExamFailure'])
+  get countdown () {
+    return this.editExamFailureCount
+  }
+
+  set countdown (e) {
+    this.setEditExamFailure(e)
   }
 }
 </script>

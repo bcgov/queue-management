@@ -562,7 +562,10 @@ const FileDownload = require('js-file-download')
 
 @Component({
   components: {
-    DatePicker, DeleteExamModal, FailureExamAlert, OfficeDrop
+    DatePicker,
+    DeleteExamModal,
+    FailureExamAlert,
+    OfficeDrop
   }
 })
 export default class EditExamModal extends Vue {
