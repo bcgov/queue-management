@@ -16,9 +16,11 @@
                 v-if="officeList.length > 0"
                 :name="office.office_name"
                 :id="office.office_id"
+                :key="office.office_id"
                 >{{ office.office_name }}</b-dd-item
               >
-              <b-dd-item v-if="officeList.length === 0"
+              <!-- JSTOTS added key -->
+              <b-dd-item v-if="officeList.length === 0" :key="office.office_id"
                 >No matching offices</b-dd-item
               >
             </template>
