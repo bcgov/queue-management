@@ -2,7 +2,12 @@
   <v-container>
     <v-row justify="center">
       <v-col cols="12" sm="9">
-        <v-btn color="primary" text class="mb-2" @click="goToAppointments">
+        <v-btn
+          color="primary"
+          text
+          class="mb-2"
+          @click="goToAppointments"
+        >
           <v-icon left class="mr-2">mdi-arrow-left</v-icon>
           My Appointments
         </v-btn>
@@ -20,7 +25,7 @@
             >
               <div class="mb-6">
                 <div class="caption">Name</div>
-                <div class="title font-weight-bold">{{ name }}</div>
+                <div class="title font-weight-bold">{{name}}</div>
               </div>
 
               <v-text-field
@@ -46,7 +51,11 @@
             <v-row>
               <v-col class="d-flex">
                 <v-spacer></v-spacer>
-                <v-btn color="primary" large @click="updateProfile">
+                <v-btn
+                  color="primary"
+                  large
+                  @click="updateProfile"
+                >
                   Update
                 </v-btn>
               </v-col>
@@ -75,53 +84,57 @@ import { mapActions, mapGetters, mapState } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 
 @Component({
-  components: {},
+  components: {
+  },
   computed: {
-    ...mapState('auth', ['currentUserProfile']),
-    ...mapGetters('account', ['username']),
+    ...mapState('auth', [
+      'currentUserProfile'
+    ]),
+    ...mapGetters('account', ['username'])
   },
   methods: {
-    ...mapActions('account', ['updateUserAccount', 'getUser']),
-  },
+    ...mapActions('account', [
+      'updateUserAccount',
+      'getUser'
+    ])
+  }
 })
 export default class AccountSettingsView extends Vue {
   private accountModule = getModule(AccountModule, this.$store)
   private authModule = getModule(AuthModule, this.$store)
   private readonly currentUserProfile!: User
-  private readonly updateUserAccount!: (
-    userBody: UserUpdateBody
-  ) => Promise<any>
+  private readonly updateUserAccount!: (userBody: UserUpdateBody) => Promise<any>
   private readonly getUser!: () => void
   private readonly username!: string
-  private valid: boolean = false
-  private name: string = ''
-  private email: string = ''
-  private phoneNumber: string = ''
-  private enableReminder: boolean = false
+  private valid:boolean = false
+  private name:string = ''
+  private email:string = ''
+  private phoneNumber:string = ''
+  private enableReminder:boolean = false
   private showMsg = {
     isShow: false,
     msgText: '',
-    msgType: 'info',
+    msgType: 'info'
   }
 
   $refs: {
     accountSettingsForm: HTMLFormElement
   }
 
-  private nameRules = [(v) => !!v || 'Name is required']
+  private nameRules = [
+    v => !!v || 'Name is required'
+  ]
 
   private emailRules = [
-    (v) => !!v || 'Email is required',
-    (v) => /.+@.+\..+/.test(v) || 'Email must be valid',
+    v => !!v || 'Email is required',
+    v => /.+@.+\..+/.test(v) || 'Email must be valid'
   ]
 
   private phoneNumberRules = [
-    (v) =>
-      /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(v) ||
-      'Phone number must be valid',
+    v => /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(v) || 'Phone number must be valid'
   ]
 
-  private async beforeMount() {
+  private async beforeMount () {
     if (!this.currentUserProfile.user_id) {
       await this.getUser()
     }
@@ -133,12 +146,12 @@ export default class AccountSettingsView extends Vue {
     }
   }
 
-  private async updateProfile() {
+  private async updateProfile () {
     try {
       const userUpdate: UserUpdateBody = {
         email: this.email,
         telephone: this.phoneNumber,
-        send_reminders: this.enableReminder,
+        send_reminders: this.enableReminder
       }
       const response = await this.updateUserAccount(userUpdate)
       if (response?.user_id) {
@@ -153,12 +166,12 @@ export default class AccountSettingsView extends Vue {
     }
   }
 
-  private goToAppointments() {
+  private goToAppointments () {
     this.$router.push('/booked-appointments')
   }
 }
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/scss/theme.scss';
+@import "@/assets/scss/theme.scss";
 </style>
