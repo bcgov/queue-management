@@ -34,10 +34,6 @@ def send_email(subject, email, sender, html_body):
         # print(f'Invalid email {email}. Skipping send.')
         return
 
-    print('subject : ', subject)
-    # print('sender : ', sender)
-    print('recipients : ', email)
-
     msg = Message(subject, sender=sender, recipients=email.split())
     msg.html = html_body
     mail.send(msg)

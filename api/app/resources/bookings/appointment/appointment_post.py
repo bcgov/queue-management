@@ -27,11 +27,11 @@ from app.schemas.theq import CitizenSchema
 from app.utilities.auth_util import Role, has_any_role
 from app.utilities.auth_util import is_public_user
 from app.utilities.email import get_confirmation_email_contents, send_email, get_blackout_email_contents
+from pprint import pprint
 from app.utilities.snowplow import SnowPlow
 from qsystem import api, api_call_with_retry, db, oidc, my_print
 from app.services import AvailabilityService
 from dateutil.parser import parse
-from pprint import pprint
 
 
 @api.route("/appointments/", methods=["POST"])
@@ -127,6 +127,7 @@ class AppointmentPost(Resource):
                         # Send blackout email
                         @copy_current_request_context
                         def async_email(subject, email, sender, body):
+                            pprint('Sending email for appointment cancellation due to blackout')
                             return send_email(subject, email, sender, body)
 
                         thread = Thread(target=async_email, args=get_blackout_email_contents(appointment, cancelled_appointment, office, timezone, user))
@@ -141,6 +142,7 @@ class AppointmentPost(Resource):
                 # Send confirmation email
                 @copy_current_request_context
                 def async_email(subject, email, sender, body):
+                    pprint('Sending email for appointment confirmation')
                     send_email(subject, email, sender, body)
 
                 thread = Thread(target=async_email, args=get_confirmation_email_contents(appointment, office, office.timezone, user))

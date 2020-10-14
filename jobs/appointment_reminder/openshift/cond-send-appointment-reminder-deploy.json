@@ -10,6 +10,21 @@
   },
   "objects": [
     {
+      "kind": "ConfigMap",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${NAME}-${TAG_NAME}-cron-configuration",
+        "labels": {
+          "app": "send-appointment-reminder-crond-${TAG_NAME}",
+          "app-group": "${APP_GROUP}",
+          "template": "${NAME}-cron-configuration"
+        }
+      },
+      "data": {
+        "crontab": "${CRONTAB}"
+      }
+    },
+    {
       "kind": "DeploymentConfig",
       "apiVersion": "v1",
       "metadata": {
@@ -278,6 +293,13 @@
       "description": "The resources Memory limit (in Mi, Gi, etc) for this build.",
       "required": true,
       "value": "2Gi"
+    },
+    {
+      "name": "CRONTAB",
+      "displayName": "Cron configuration",
+      "description": "Cron configuration for the scheduler.",
+      "required": true,
+      "value": "00 23 * * * default cd /appointment_reminder && ./run.sh\n# An empty line is required at the end of this file for a valid cron file.\n"
     }
   ]
 }
