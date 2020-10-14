@@ -1,6 +1,5 @@
 <template>
   <div>
-    12345
     <b-modal
       v-model="modalVisible"
       @shown="showModal"
