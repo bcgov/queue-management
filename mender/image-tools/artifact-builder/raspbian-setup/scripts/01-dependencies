@@ -6,18 +6,18 @@ set -ex
 # If we're patching images then var and home have moves so bind
 # mount them to the right location
 if [ -e /var.base ] ; then
-	mount --bind /var.base /var
+        mount --bind /var.base /var
 fi
 
 if [ -e /home.base ] ; then
-	mount --bind /home.base /home
+        mount --bind /home.base /home
 fi
 
 apt-get update
-apt-get upgrade -y
+#apt-get upgrade -y
 
 # WARNING: If you want new builds to update the kernel and all new packages
-# enable the following lines. This very much may break your build. Upgrading 
+# enable the following lines. This very much may break your build. Upgrading
 # inside the docker embedded environment has unexpected consequences, test
 # the resultant image before deploying.
 # rpi-update
