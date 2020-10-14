@@ -285,9 +285,8 @@
 
 <script lang="ts">
 
-import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { mapGetters, mapMutations, mapState } from 'vuex'
+import { mapState } from 'vuex'
 
 @Component({
 
