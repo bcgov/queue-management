@@ -19,8 +19,8 @@ mkdir -p /var/log/nginx
 mkdir -p /var/log/supervisor
 
 if id -u pi > /dev/null 2>&1; then
-	deluser --force pi
-	rm -rf /home/pi
+        deluser --force pi
+        rm -rf /home/pi
 fi
 
 # Remove non-english locales
@@ -35,11 +35,15 @@ echo '0  0     * * *   root    reboot' >> /etc/crontab
 cat << END_TEXT > /etc/watchdog.conf
 max-load-1 = 24
 min-memory = 1
-watchdog-device = /dev/watchdog	
+watchdog-device = /dev/watchdog
 watchdog-timeout=15
 END_TEXT
 
 sed -i 's/default.target/multi-user.target/g' /lib/systemd/system/watchdog.service
+
+# Fix for Exterprise WLAN connection
+sed -i 's/nl80211,wext/wext,nl80211/g' /lib/systemd/system/wpa_supplicant@.service
+sed -i 's/nl80211,wext/wext,nl80211/g' /lib/dhcpcd/dhcpcd-hooks/10-wpa_supplicant
 
 # Restore init_resize
 mkdir -p /usr/lib/raspi-config/
