@@ -87,21 +87,27 @@ You will need to resize the ext4 partition.
 Need to increase size of root filesystem of buster-lite
 https://www.codepool.biz/resize-raspbian-image-qemu-windows.html
 
+```
 cp 2020-02-13-raspbian-buster-lite.img raspbian.img
 truncate -s +1G raspbian.img
 fdisk -l raspbian.img
+```
 ** Get partition start sector  and write it down (532480)
+```
 fdisk raspbian.img
---> d ,2 (partion 2 has need deleted)
+--> d, 2 (partion 2 has need deleted)
 --> n, p, 2, 532480, enter for default end
-(Remove the signature?) Yes
+--> (Remove the signature?) Yes
 --> w (write)
 sudo losetup -f and write down output (/dev/loop2)
 sudo losetup -o $((532480*512)) /dev/loop2 raspbian.img
 sudo e2fsck -f /dev/loop2
+```
 fix if errors
+```
 sudo resize2fs /dev/loop2
 sudo losetup -d /dev/loop2
+```
 
 copy it into the `./mender/image-tools` directory.
 
@@ -204,18 +210,22 @@ Next create mender convert settings:
 
 1. Update the mender convert config to your needs: nano configs/mender_convert_config
 
+```
 MENDER_COMPRESS_DISK_IMAGE=none
 MENDER_BOOT_PART_SIZE_MB="256"
 MENDER_DATA_PART_SIZE_MB="1000"
 IMAGE_ROOTFS_SIZE="-1"
-
+```
+2. Set Environment Variable
+```
 export server-url=<your mender server>
-
-And update config by running this script:
+```
+3. Update config by running this script:
+```
 ./scripts/bootstrap-rootfs-overlay-production-server.sh \
     --output-dir ${PWD}/rootfs_overlay_demo \
     --server-url ${server-url}
-
+```
 Next, to generate the **Menderized** image you will need to provide some information to the conversion tool:
 
 1. `raw-disk-image` - the base Image (Built in **Step #1**), which must be copied into the `./mender-convert/input` directory
@@ -237,8 +247,8 @@ This step will produce 3 files:
 * `.ext4` - the filesystem of the Menderized image. This file is used later to produce deployment artifacts **(i.e. store it somewhere safe)**
 * `.img` - the modified OS which can be flashed to an SD card and run directly on the PI. **(i.e. store it somewhere safe)**
 * `.mender` - a deployment artifact, the one produced by this stage will not be used for anything.
-
-#### Example Output
+```
+## Example Output:
 ```
 1/9 Repartitioning raw disk image...
     Detected raw disk image with 2 partition(s).
@@ -280,16 +290,23 @@ This step will produce 3 files:
     Storing data in mender-raspberrypi3-smartboard-base-image-v1.ext4.
     Writing Mender artifact to: /mender-convert/output/mender-raspberrypi3-smartboard-base-image-v1.mender
     Creating Mender Artifact succeeded.
+````
 Conversion complete!
-The Mender disk image you can provision your device storage with is at:         
-    /mender-convert/output/mender-raspberrypi3-smartboard-base-image-v1.sdimg
+
+The Mender disk image you can provision your device storage with is at:
+```
+    /mender-convert/output/ mender-raspberrypi3-smartboard-base-image-v1.sdimg\
+```
 The Mender root file system partition is at:
-    /mender-convert/output/mender-raspberrypi3-smartboard-base-image-v1.ext4
-The Mender Artifact you can upload to your Mender server to deploy to your devices is at:         
+```
+    /mender-convert/output/mender-raspberrypi3-smartboard-base-image-v1.ext4\
+```
+The Mender Artifact you can upload to your Mender server to deploy to your devices is at:
+```
     /mender-convert/output/mender-raspberrypi3-smartboard-base-image-v1.mender
 ```
+## Potential Failure:
 
-#### Potential Failure
 Occasionally this stage will fail. 
 
 Rerun after restarting Docker:

@@ -4,35 +4,52 @@
     <div id="main-footer">
       <div id="footer-links">
         <div class="footer-anchor-item">
-          <a href="http://www2.gov.bc.ca/gov/content/home/disclaimer" target="_blank">Disclaimer</a>
+          <a
+            href="http://www2.gov.bc.ca/gov/content/home/disclaimer"
+            target="_blank"
+            >Disclaimer</a
+          >
         </div>
         <div class="footer-anchor-item">
-          <a href="http://www2.gov.bc.ca/gov/content/home/privacy" target="_blank">Privacy</a>
+          <a
+            href="http://www2.gov.bc.ca/gov/content/home/privacy"
+            target="_blank"
+            >Privacy</a
+          >
         </div>
         <div class="footer-anchor-item">
           <a
             href="http://www2.gov.bc.ca/gov/content/home/accessibility"
             target="_blank"
             rel="noopener noreferrer"
-          >Accessibility</a>
+            >Accessibility</a
+          >
         </div>
         <div class="footer-anchor-item-last">
-          <a href="http://www2.gov.bc.ca/gov/content/home/copyright" target="_blank">Copyright</a>
+          <a
+            href="http://www2.gov.bc.ca/gov/content/home/copyright"
+            target="_blank"
+            >Copyright</a
+          >
         </div>
       </div>
 
-      <div class="p-0" style="display:inline-block; color: white;">
+      <div class="p-0" style="display: inline-block; color: white">
         <div
           v-if="!this.$store.state.isLoggedIn"
           class="footer-anchor-item"
-          style="display:inline-block; color: white;"
+          style="display: inline-block; color: white"
         >
-          <a href="#" @click="keycloakLogin()" id="keycloak-login">Keycloak Login</a>
+          <a href="#" @click="keycloakLogin()" id="keycloak-login"
+            >Keycloak Login</a
+          >
         </div>
         <div
           class="footer-anchor-item-last"
-          style="display:inline-block; color: white; margin-right:15px;"
-        >v1.1.16</div>
+          style="display: inline-block; color: white; margin-right: 15px"
+        >
+          v1.1.18
+        </div>
       </div>
     </div>
   </div>

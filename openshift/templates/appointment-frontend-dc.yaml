@@ -33,17 +33,17 @@ objects:
   - apiVersion: v1
     kind: ConfigMap
     metadata:
-      name: "configuration.json"
+      name: "appointment-configuration.json"
       labels:
         app: "configuration.json"
     data:
         configuration.json: |-
           {
             "KEYCLOAK_CONFIG_URL": "./public/config/kc/keycloak-public.json",
-            "VUE_APP_ROOT_API": "https://theq-public.pathfinder.gov.bc.ca/api/v1",
+            "VUE_APP_ROOT_API": "${VUE_APP_ROOT_API}",
             "hideBCServicesCard": true,
-            "BCEIDRegistrationUrl": "https://www.test.bceid.ca/os/?7521&SkipTo=Basic",
-            "VUE_APP_GOOGLE_STATIC_MAP_API_KEY": "AIzaSyDdUTtNy6pLWILtlqHtcaXsFSprFQ9UroI"
+            "BCEIDRegistrationUrl": "${BCEID_REG_URL}",
+            "VUE_APP_GOOGLE_STATIC_MAP_API_KEY": "${VUE_APP_GOOGLE_STATIC_MAP_API_KEY}"
           }
   - apiVersion: v1
     kind: ConfigMap
@@ -52,14 +52,14 @@ objects:
       labels:
         app: "keycloak-public.json"
     data:
-        configuration.json: |-
+        keycloak-public.json: |-
           {
-            "realm": "",
-            "auth-server-url": "https://sso-dev.pathfinder.gov.bc.ca/auth",
+            "realm": "${KEYCLOAK_REALM}",
+            "auth-server-url": "https://dev.oidc.gov.bc.ca/auth/",
             "ssl-required": "external",
-            "resource": "",
+            "resource": "${KEYCLOAK_RESOURCE}",
             "credentials": {
-              "secret": ""
+              "secret": "${KEYCLOAK_SECRET}"
             },
             "confidential-port": 0
           }
@@ -70,7 +70,7 @@ objects:
         description: "Defines how to deploy the application server"
       name: "${NAME}"
     spec:
-      replicas: 2
+      replicas: 1
       selector:
         name: ${NAME}
       strategy:
@@ -116,7 +116,7 @@ objects:
                 - mountPath: /var/www/html/config/kc
                   name: keycloak
                 - mountPath: /var/www/html/config
-                  name: configuration
+                  name: appointment-configuration
               terminationMessagePath: "/dev/termination-log"
               terminationMessagePolicy: File
               imagePullPolicy: Always
@@ -208,3 +208,26 @@ parameters:
     description: The Location for your image streams (Tools Workspace)
     required: true
     value: servicebc-cfms-tools
+  - name: VUE_APP_ROOT_API
+    description: "The new route to API which will be rate limited"
+    value: https://youropenshifturl.yourdomain/api/v1
+  - name: BCEID_REG_URL
+    description: The BCEID Registration URL.
+    required: true
+    value: https://www.test.bceid.ca/os/?xxxx&SkipTo=Basic
+  - name: VUE_APP_GOOGLE_STATIC_MAP_API_KEY
+    description: API KEY for Google Map
+    required: true
+    value: somekey
+  - name: KEYCLOAK_REALM
+    description: "Keycloak Realm"
+    required: true
+    value: ""
+  - name: KEYCLOAK_RESOURCE
+    description: Keycloak Resource
+    required: true
+    value: ""
+  - name: KEYCLOAK_SECRET
+    description: Keycloak Secret
+    required: true
+    value: ""

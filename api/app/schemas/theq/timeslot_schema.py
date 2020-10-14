@@ -30,3 +30,4 @@ class TimeslotSchema(ma.SQLAlchemySchema):
     end_time = fields.Time()
     day_of_week = fields.List(fields.String)
     no_of_slots = fields.Integer()
+    office = fields.Integer(attribute="office_id")
