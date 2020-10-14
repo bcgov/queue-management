@@ -97,12 +97,21 @@
 import { Action, Getter, Mutation, State, namespace } from 'vuex-class'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
+import { mapActions, mapGetters, mapState } from 'vuex'
+
 // import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import moment from 'moment'
 
-const addExamModule = namespace('addExamModule')
+// const addExamModule = namespace('addExamModule')
 
-@Component
+@Component({
+  computed: {
+    ...mapState({
+      candidateTableData: (state: any) => state.addExamModule.candidateTableData
+    })
+
+  }
+})
 export default class AddPesticideFinalStep extends Vue {
   @Prop({ default: '' })
   private submitMsg!: any
@@ -115,7 +124,7 @@ export default class AddPesticideFinalStep extends Vue {
   @State('offices') private offices!: any
   // @State('offices') private offices!: any
   @State('examBcmpJobId') private examBcmpJobId!: any
-  @addExamModule.State('candidateTableData') private candidateTableData!: any
+  // @State('addExamModule.candidateTableData') private candidateTableData!: any
 
   @Getter('exam_object') private exam_object!: any;
   @Getter('is_pesticide_designate') private is_pesticide_designate!: any;
