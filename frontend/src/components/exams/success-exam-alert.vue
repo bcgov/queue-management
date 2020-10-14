@@ -19,29 +19,27 @@ limitations under the License.*/
       dismissible
       v-model="countdown"
       @dismissed="setEditExamSuccess"
-      style="h-align: center; font-size:1rem; border-radius: 0px;">
+      style="h-align: center; font-size: 1rem; border-radius: 0px"
+    >
       Success!
     </b-alert>
   </div>
 </template>
 
-<script>
-import { mapMutations, mapState } from 'vuex'
+<script lang="ts">
 
-export default {
-  name: 'SuccessExamAlert',
+import { Action, Getter, Mutation, State } from 'vuex-class'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 
-  computed: {
-    ...mapState(['editExamSuccessCount']),
-    countdown: {
-      get () { return this.editExamSuccessCount },
-      set (e) {
-        this.setEditExamSuccess(e)
-      }
-    }
-  },
-  methods: {
-    ...mapMutations(['setEditExamSuccess'])
+@Component
+export default class SuccessExamAlert extends Vue {
+  @State('editExamSuccessCount') private editExamSuccessCount!: any
+
+  @Mutation('setEditExamSuccess') public setEditExamSuccess: any
+
+  get countdown () { return this.editExamSuccessCount }
+  set countdown (e) {
+    this.setEditExamSuccess(e)
   }
 }
 </script>
