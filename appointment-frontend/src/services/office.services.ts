@@ -23,7 +23,8 @@ export default class OfficeService {
     return axios.get(`${ConfigHelper.getAppAPIUrl()}/categories/`)
   }
 
-  public static async getAvailableAppointmentSlots (officeId: number): Promise<AxiosResponse<any>> {
-    return axios.get(`${ConfigHelper.getAppAPIUrl()}/offices/${officeId}/slots/`)
+  public static async getAvailableAppointmentSlots (officeId: number, serviceId: number): Promise<AxiosResponse<any>> {
+    if (officeId === undefined || serviceId === undefined) throw Error('Missing required parameters')
+    return axios.get(`${ConfigHelper.getAppAPIUrl()}/offices/${officeId}/slots/?service_id=${serviceId}`)
   }
 }
