@@ -38,30 +38,14 @@ class PublicUser(Base):
     @classmethod
     def find_by_username(cls, username):
         """Find User records by username."""
-        print('>>>>>>', username)
-        # key = PublicUser.format_string % username
-        # print(key)
-        # if cache.get(key):
-        #     print('>>>>From Cache>>>>>')
-        #     return cache.get(key)
-
         user = cls.query.filter_by(username=username).one_or_none()
-        print('user ', user)
         # cache.set(key, user)
         return user
 
     @classmethod
     def find_by_user_id(cls, user_id):
         """Find User records by user_id."""
-        print('>>>>>>user_id', user_id)
-        # key = PublicUser.format_string % username
-        # print(key)
-        # if cache.get(key):
-        #     print('>>>>From Cache>>>>>')
-        #     return cache.get(key)
-
         user = cls.query.get(user_id)
-        print('user ', user)
         # cache.set(key, user)
         return user
 

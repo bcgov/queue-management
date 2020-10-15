@@ -157,3 +157,5 @@ keys-generated
 /frontend/static/local-keycloak.json
 /frontend/static/dev-keycloak.json
 /frontend/static/dev-public-keycloak.json
+.env-Chris
+.env-Omid

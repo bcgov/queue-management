@@ -4,7 +4,8 @@ import urllib
 from qsystem import application, my_print
 from app.utilities.document_service import DocumentService
 from datetime import datetime
-
+import pytz
+from dateutil import parser
 
 class BCMPService:
     base_url = application.config['BCMP_BASE_URL']
@@ -95,7 +96,6 @@ class BCMPService:
 
         bcmp_exam = {
             "EXAM_SESSION_LOCATION" : office_name,
-            "SESSION_DATE_TIME" : self.__exam_time_format(exam.expiry_date),
             "REGISTRAR_name" : oidc_token_info['preferred_username'],
             "RECIPIENT_EMAIL_ADDRESS" : oidc_token_info['email'],
             "REGISTRAR_phoneNumber" : "",
@@ -116,7 +116,7 @@ class BCMPService:
         response = self.send_request(url, 'POST', bcmp_exam)
         return response
 
-    def create_group_exam_bcmp(self, exam, candiate_list, invigilator, pesticide_office, oidc_token_info):
+    def create_group_exam_bcmp(self, exam, booking, candiate_list, invigilator, pesticide_office, oidc_token_info):
         url = "%s/auth=env_exam;%s/JSON/create:ENV-IPM-EXAM-GROUP" % (self.base_url, self.auth_token)
 
         invigilator_name = None
@@ -124,19 +124,28 @@ class BCMPService:
             invigilator_name = invigilator.invigilator_name
 
         office_name = None
+        time_zone = pytz.timezone('America/Vancouver')
         if pesticide_office:
             office_name = pesticide_office.office_name
+            time_zone = pytz.timezone(pesticide_office.timezone.timezone_name)
 
         my_print(exam.expiry_date.strftime("%a %b %d, %Y at %-I:%M %p"))
-        
+        exam_text = None
+        if booking:
+            exam_utc = parser.parse(booking["start_time"])
+            exam_time = exam_utc.astimezone(tz=time_zone)
+            exam_text = self.__exam_time_format(exam_time)
+
         bcmp_exam = {
             "EXAM_SESSION_LOCATION": office_name,
-            "SESSION_DATE_TIME" : self.__exam_time_format(exam.expiry_date),
             "REGISTRAR_name" : oidc_token_info['preferred_username'],
             "RECIPIENT_EMAIL_ADDRESS" : oidc_token_info['email'],
             "REGISTRAR_phoneNumber": "",
             "students": []
         }
+
+        if exam_text:
+            bcmp_exam["SESSION_DATE_TIME"] = exam_text
 
         for candiate in candiate_list:
             bcmp_exam["students"].append({

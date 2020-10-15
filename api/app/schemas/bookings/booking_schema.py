@@ -12,13 +12,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from marshmallow import fields
+from marshmallow import fields, post_dump
 import toastedmarshmallow
 from app.models.bookings import Booking
 from app.schemas.bookings import RoomSchema, InvigilatorSchema
 from app.schemas.theq import OfficeSchema
 from qsystem import ma
-
 
 class BookingSchema(ma.SQLAlchemySchema):
 
@@ -45,4 +44,32 @@ class BookingSchema(ma.SQLAlchemySchema):
     room = fields.Nested(RoomSchema(exclude=("booking", "office",)))
     office = fields.Nested(OfficeSchema(only=('appointments_enabled_ind', 'exams_enabled_ind', 'office_id',
                                               'office_name', 'office_number', 'timezone')))
-    invigilators = fields.Nested(InvigilatorSchema(), many=True)
+
+    #  NOTE:  The reason for the exclude, rather than just a single include, is because
+    #         an include with a single field didn't seem to work.  When I added a second field, it worked.
+    #         I only want a single field, so had to use an exclude instead.  ?????
+    invigilators = fields.Nested(InvigilatorSchema(exclude=('contact_name', 'contact_email', 'contract_number',
+                                                            'contract_expiry_date', 'invigilator_name',
+                                                            'invigilator_notes', 'shadow_count', 'shadow_flag',
+                                                            'contact_phone', 'deleted', 'office'
+                                                            )), many=True)
+
+    def update_invigilators(self, data):
+        invigilator_data = data.get('invigilators')
+        invigilator_list = []
+        for invigilator in invigilator_data:
+            id = invigilator.get('invigilator_id')
+            invigilator_list.append(id)
+        data['invigilators'] = invigilator_list
+        return data
+
+    @post_dump(pass_many=True)
+    def fix_invigilators(self, data, many, **kwargs):
+        if not many:
+            data = self.update_invigilators(data)
+
+        else:
+            for booking in data:
+                booking = self.update_invigilators(booking)
+
+        return data

@@ -1,3 +1,7 @@
 Flask
 requests
 python-dotenv
+Flask-Mail
+Jinja2
+
+-e git+https://github.com/sumesh-aot/queue-management.git@email_job_fix#egg=api&subdirectory=api
