@@ -1,5 +1,18 @@
+
+/**
+ *
+ * Notes
+ * JSTOTS - javascript to typescript Conversation
+ * Just moved all module from store folder to to modules/* folder
+ * No changes in functionality or any variables
+ * this is just moving
+ * in Future have to extract all functions and export Individually with typs defined
+ * and import in index.ts
+ *
+ */
+
 import Vue from 'vue'
-import { Axios } from './helpers'
+import { Axios } from './../helpers'
 import axios from 'axios'
 
 // question definition mixins

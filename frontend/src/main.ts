@@ -16,7 +16,7 @@ limitations under the License. */
 /*tslint-disable */
 import Vue from 'vue'
 import 'es6-promise/auto'
-import store from './store/index.js'
+import store from './store/index'
 import BootstrapVue from 'bootstrap-vue'
 import router from './router'
 import { Plugin } from 'vue-fragment'

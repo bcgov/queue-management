@@ -1,4 +1,16 @@
-import { Axios } from './helpers'
+
+/**
+ *
+ * Notes
+ * JSTOTS - javascript to typescript Conversation
+ * Just moved all module from store folder to to modules/* folder
+ * No changes in functionality or any variables
+ * this is just moving
+ * in Future have to extract all functions and export Individually with typs defined
+ * and import in index.ts
+ *
+ */
+import { Axios } from './../helpers'
 import moment from 'moment'
 
 export default {
