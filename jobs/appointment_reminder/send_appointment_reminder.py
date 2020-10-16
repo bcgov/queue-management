@@ -123,10 +123,10 @@ def send_reminders(app):
                 mail.send(msg)
                 email_count += 1
             except Exception as e:
-                print(e) #log and continue
+                print(e)  # log and continue
 
-            print('Pausing for a minute')
             if email_count == max_email_per_batch:
+                print('Pausing for a minute')
                 time.sleep(60)
                 email_count = 0
 

@@ -47,3 +47,8 @@ def day_indexes(days):
     for day in days:
         integer_indexes.append(days_mapping[day])
     return integer_indexes
+
+
+def current_pacific_time():
+    """Return current time as in pacific zone."""
+    return dt.datetime.now().astimezone(pytz.timezone('US/Pacific'))
