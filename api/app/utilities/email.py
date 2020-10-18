@@ -17,26 +17,12 @@ from datetime import datetime
 
 import pytz
 from flask import current_app
-from flask_mail import Mail
-from flask_mail import Message
 from jinja2 import Environment, FileSystemLoader
+from .ches_email import send_email, generate_ches_token
 
 from app.models.bookings import Appointment
 
-mail = Mail()  # pylint: disable=invalid-name
 ENV = Environment(loader=FileSystemLoader('.'), autoescape=True)
-
-
-def send_email(subject, email, sender, html_body):
-    """Send the email asynchronously, using the given details."""
-
-    if not email or not is_valid_email(email):
-        # print(f'Invalid email {email}. Skipping send.')
-        return
-
-    msg = Message(subject, sender=sender, recipients=email.split())
-    msg.html = html_body
-    mail.send(msg)
 
 
 def get_cancel_email_contents(appt: Appointment, user, office, timezone):

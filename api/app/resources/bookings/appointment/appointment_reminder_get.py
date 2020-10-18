@@ -12,12 +12,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask import copy_current_request_context, current_app
 from flask_restx import Resource
 
 from app.models.bookings import Appointment
 from app.utilities.auth_util import Role, has_any_role
-from app.utilities.email import get_reminder_email_contents, send_email, is_valid_email, formatted_date, get_email, \
+from app.utilities.email import is_valid_email, formatted_date, get_email, \
     get_duration
 from qsystem import api, api_call_with_retry, oidc
 

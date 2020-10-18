@@ -123,9 +123,9 @@ configure_logging(application)
 # Office.build_cache()
 
 # Init mail service
-from app.utilities.email import mail
-mail.init_app(application)
-application.extensions['mail'].debug = 0
+# from app.utilities.email import mail
+# mail.init_app(application)
+# application.extensions['mail'].debug = 0
 
 
 #  Code to determine all db.engine properties and sub-properties, as necessary.
