@@ -36,5 +36,5 @@ python-jose
 SQLAlchemy-Utc
 # We need to find alternative to toastedmarshmellow. pydantic
 toastedmarshmallow==0.2.6
-Flask-Mail
+# Flask-Mail
 Jinja2

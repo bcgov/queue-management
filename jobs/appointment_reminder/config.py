@@ -60,18 +60,24 @@ class _Config(object):  # pylint: disable=too-few-public-methods
     REMINDER_ENDPOINT = os.getenv('REMINDER_ENDPOINT', None)
 
     # Email variables
-    MAIL_SERVER = os.getenv('MAIL_SERVER', 'apps.smtp.gov.bc.ca')
-    MAIL_PORT = os.getenv('MAIL_PORT', '25')
-    MAIL_USE_TLS = False
-    MAIL_USE_SSL = False
-    MAIL_USERNAME = os.getenv('MAIL_USERNAME', None)
-    MAIL_PASSWORD = os.getenv('MAIL_PASSWORD', None)
+    # MAIL_SERVER = os.getenv('MAIL_SERVER', 'apps.smtp.gov.bc.ca')
+    # MAIL_PORT = os.getenv('MAIL_PORT', '25')
+    # MAIL_USE_TLS = False
+    # MAIL_USE_SSL = False
+    # MAIL_USERNAME = os.getenv('MAIL_USERNAME', None)
+    # MAIL_PASSWORD = os.getenv('MAIL_PASSWORD', None)
     MAIL_FROM_ID = os.getenv('MAIL_FROM_ID', 'donotreply@gov.bc.ca')
 
     # Email variables
     EMAIL_APPOINTMENT_APP_URL = os.getenv('EMAIL_APPOINTMENT_APP_URL', None)
-    MAX_EMAIL_PER_BATCH = int(os.getenv('MAX_EMAIL_PER_BATCH', 30))
 
+    # CHES variables
+    CHES_SSO_TOKEN_URL = os.getenv('CHES_SSO_TOKEN_URL', None)
+    CHES_SSO_CLIENT_ID = os.getenv('CHES_SSO_CLIENT_ID', None)
+    CHES_SSO_CLIENT_SECRET = os.getenv('CHES_SSO_CLIENT_SECRET', None)
+    CHES_POST_EMAIL_ENDPOINT = os.getenv('CHES_POST_EMAIL_ENDPOINT', None)
+
+    MAX_EMAIL_PER_BATCH = int(os.getenv('MAX_EMAIL_PER_BATCH', 30))
 
 
 class DevConfig(_Config):  # pylint: disable=too-few-public-methods

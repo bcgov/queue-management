@@ -184,16 +184,22 @@ class BaseConfig(object):
     #quote_ident("connect_timeout", scope)
 
     # Email variables
-    MAIL_SERVER = os.getenv('MAIL_SERVER', 'apps.smtp.gov.bc.ca')
-    MAIL_PORT = os.getenv('MAIL_PORT', '25')
-    MAIL_USE_TLS = False
-    MAIL_USE_SSL = False
-    MAIL_USERNAME = os.getenv('MAIL_USERNAME', None)
-    MAIL_PASSWORD = os.getenv('MAIL_PASSWORD', None)
+    # MAIL_SERVER = os.getenv('MAIL_SERVER', 'apps.smtp.gov.bc.ca')
+    # MAIL_PORT = os.getenv('MAIL_PORT', '25')
+    # MAIL_USE_TLS = False
+    # MAIL_USE_SSL = False
+    # MAIL_USERNAME = os.getenv('MAIL_USERNAME', None)
+    # MAIL_PASSWORD = os.getenv('MAIL_PASSWORD', None)
     MAIL_FROM_ID = os.getenv('MAIL_FROM_ID', 'donotreply@gov.bc.ca')
 
     # Email variables
     EMAIL_APPOINTMENT_APP_URL = os.getenv('EMAIL_APPOINTMENT_APP_URL', None)
+
+    # CHES variables
+    CHES_SSO_TOKEN_URL = os.getenv('CHES_SSO_TOKEN_URL', None)
+    CHES_SSO_CLIENT_ID = os.getenv('CHES_SSO_CLIENT_ID', None)
+    CHES_SSO_CLIENT_SECRET = os.getenv('CHES_SSO_CLIENT_SECRET', None)
+    CHES_POST_EMAIL_ENDPOINT = os.getenv('CHES_POST_EMAIL_ENDPOINT', None)
 
 
 class LocalConfig(BaseConfig):
