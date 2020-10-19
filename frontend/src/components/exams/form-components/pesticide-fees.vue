@@ -52,7 +52,7 @@
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 
 import { mapState } from 'vuex'
-import { checkmark } from '../add-exam-form-components.js'
+import { checkmark } from '../add-exam-form-components'
 
 @Component({
   components: {

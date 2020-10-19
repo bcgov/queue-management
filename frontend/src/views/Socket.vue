@@ -1,4 +1,4 @@
-/*Copyright 2015 Province of British Columbia
+  <!-- /*  Copyright 2015 Province of British Columbia
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -10,27 +10,29 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-limitations under the License.*/
+limitations under the License. */ -->
 
 <template>
+  <div></div>
   <!-- no template -->
 </template>
 
-<script>
-import { mapActions } from 'vuex'
+<script lang="ts">
+
+import { Component, Vue } from 'vue-property-decorator'
+import { Action } from 'vuex-class'
+
+// import { mapActions } from 'vuex'
 import config from './../../config'
 
 var io = require('socket.io-client')
 var socket
 
-export default {
-  name: 'Socket',
+@Component
+export default class Socket extends Vue {
+  @Action('screenIncomingCitizen') public screenIncomingCitizen: any
 
-  data () {
-    return {
-      reconnectInterval: null
-    }
-  },
+  public reconnectInterval: any = null
 
   mounted () {
     this.$root.$on('socketConnect', () => {
@@ -40,109 +42,105 @@ export default {
     this.$root.$on('socketDisconnect', () => {
       this.close()
     })
-  },
+  }
 
-  methods: {
-    ...mapActions(['screenIncomingCitizen']),
+  connect () {
+    socket = io(config.SOCKET_URL, {
+      timeout: '3000',
+      reconnectionDelayMax: '100',
+      path: '/api/v1/socket.io',
+      transports: ['websocket']
+    })
+    socket.on('connect', () => { this.onConnect() })
+    socket.on('disconnect', () => { this.onDisconnect() })
+    console.log('socket attempting to connect')
+    this.addListeners()
+  }
 
-    connect () {
-      socket = io(config.SOCKET_URL, {
-        timeout: '3000',
-        reconnectionDelayMax: '100',
-        path: '/api/v1/socket.io',
-        transports: ['websocket']
-      })
-      socket.on('connect', () => { this.onConnect() })
-      socket.on('disconnect', () => { this.onDisconnect() })
-      console.log('socket attempting to connect')
-      this.addListeners()
-    },
+  addListeners () {
+    console.log('Begin Add Listener')
+    socket.on('reconnecting', () => { this.onReconnecting() })
+    socket.on('joinRoomSuccess', () => { this.onJoinRoom(true) })
+    socket.on('joinRoomFail', () => { this.onJoinRoom(false) })
+    console.log('Call get csr State IDS')
+    socket.on('get_Csr_State_IDs', () => { this.getCsrStateIDs() })
+    console.log('DO WE SEE THIS MESSAGE BEFORE POP UP')
+    socket.on('update_customer_list', () => { this.onUpdateCustomerList() })
+    socket.on('update_active_citizen', (citizen) => { this.onUpdateActiveCitizen(citizen) })
+    socket.on('csr_update', (data) => { this.onCSRUpdate(data) })
+    socket.on('clear_csr_cache', (data) => { this.onClearCsrCache(data) })
+    socket.on('update_offices_cache', () => { this.onUpdateOfficesCache() })
+  }
 
-    addListeners () {
-      console.log('Begin Add Listener')
-      socket.on('reconnecting', () => { this.onReconnecting() })
-      socket.on('joinRoomSuccess', () => { this.onJoinRoom(true) })
-      socket.on('joinRoomFail', () => { this.onJoinRoom(false) })
-      console.log('Call get csr State IDS')
-      socket.on('get_Csr_State_IDs', () => { this.getCsrStateIDs() })
-      console.log('DO WE SEE THIS MESSAGE BEFORE POP UP')
-      socket.on('update_customer_list', () => { this.onUpdateCustomerList() })
-      socket.on('update_active_citizen', (citizen) => { this.onUpdateActiveCitizen(citizen) })
-      socket.on('csr_update', (data) => { this.onCSRUpdate(data) })
-      socket.on('clear_csr_cache', (data) => { this.onClearCsrCache(data) })
-      socket.on('update_offices_cache', () => { this.onUpdateOfficesCache() })
-    },
+  join () {
+    // console.log('==> In Socket.vue.join, socket.io.engine.id is: ' + socket.io.engine.id.toString())
+    socket.emit('joinRoom', { count: 0 }, () => { console.log('socket emit: "joinRoom"') }
+    )
+  }
 
-    join () {
-      // console.log('==> In Socket.vue.join, socket.io.engine.id is: ' + socket.io.engine.id.toString())
-      socket.emit('joinRoom', { count: 0 }, () => { console.log('socket emit: "joinRoom"') }
-      )
-    },
-
-    onCSRUpdate (data) {
-      console.log('socket received: "csr_update"')
-      if (this.$store.state.user.role.role_code === 'GA') {
-        console.log('--> person is a GA -> calling getCsrs routine')
-        this.$store.dispatch('getCsrs')
-      }
-    },
-
-    onConnect () {
-      console.log('socket connected')
-      clearInterval(this.reconnectInterval)
-      this.join()
-    },
-
-    onDisconnect () {
-      console.log('socket disconnected')
-      // Try to reconnect every second
-      this.reconnectInterval = setInterval(() => {
-        console.log('Reconnecting')
-        socket.open(config.SOCKET_URL)
-      }, 1000)
-    },
-
-    onReconnecting () {
-      console.log('socket reconnecting')
-    },
-
-    onJoinRoom (success) {
-      if (success) {
-        console.log('socket received: "joinRoomSuccess"')
-      } else if (!success) {
-        console.log('socket received: "joinRoomFailed"')
-      }
-    },
-
-    onUpdateActiveCitizen (citizen) {
-      console.log('socket received: "update_active_citizen" ')
-      this.screenIncomingCitizen({ citizen, route: this.$route })
-    },
-
-    onUpdateCustomerList () {
-      console.log('socket received: "updateCustomerList"')
-      this.$store.dispatch('getAllCitizens')
-    },
-
-    onClearCsrCache (data) {
-      console.log('socket received: "clear_csr_cache"')
-      socket.emit('clear_csr_user_id', data.id)
-    },
-
-    getCsrStateIDs () {
-      console.log('socket received: "getCsrStateIDs"')
-      this.$store.dispatch('getCsrStateIDs')
-    },
-
-    onUpdateOfficesCache () {
-      console.log('socket received: "update_offices_cache"')
-      socket.emit('sync_offices_cache')
-    },
-
-    close () {
-      socket.close()
-      console.log('socket session closed')
+  onCSRUpdate (data) {
+    console.log('socket received: "csr_update"')
+    if (this.$store.state.user.role.role_code === 'GA') {
+      console.log('--> person is a GA -> calling getCsrs routine')
+      this.$store.dispatch('getCsrs')
     }
+  }
+
+  onConnect () {
+    console.log('socket connected')
+    clearInterval(this.reconnectInterval)
+    this.join()
+  }
+
+  onDisconnect () {
+    console.log('socket disconnected')
+    // Try to reconnect every second
+    this.reconnectInterval = setInterval(() => {
+      console.log('Reconnecting')
+      socket.open(config.SOCKET_URL)
+    }, 1000)
+  }
+
+  onReconnecting () {
+    console.log('socket reconnecting')
+  }
+
+  onJoinRoom (success) {
+    if (success) {
+      console.log('socket received: "joinRoomSuccess"')
+    } else if (!success) {
+      console.log('socket received: "joinRoomFailed"')
+    }
+  }
+
+  onUpdateActiveCitizen (citizen) {
+    console.log('socket received: "update_active_citizen" ')
+    this.screenIncomingCitizen({ citizen, route: this.$route })
+  }
+
+  onUpdateCustomerList () {
+    console.log('socket received: "updateCustomerList"')
+    this.$store.dispatch('getAllCitizens')
+  }
+
+  onClearCsrCache (data) {
+    console.log('socket received: "clear_csr_cache"')
+    socket.emit('clear_csr_user_id', data.id)
+  }
+
+  getCsrStateIDs () {
+    console.log('socket received: "getCsrStateIDs"')
+    this.$store.dispatch('getCsrStateIDs')
+  }
+
+  onUpdateOfficesCache () {
+    console.log('socket received: "update_offices_cache"')
+    socket.emit('sync_offices_cache')
+  }
+
+  close () {
+    socket.close()
+    console.log('socket session closed')
   }
 }
 </script>

@@ -86,7 +86,7 @@ export default class BoardSocket extends Vue {
     console.log('boardSocket disconnected')
     this.reconnectInterval = setInterval(() => {
       console.log('boardSocket Reconnecting')
-      socket.open(process.env.SOCKET_URL)
+      socket.open(config.SOCKET_URL)
     }, 1000)
   }
 
