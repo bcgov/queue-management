@@ -94,10 +94,10 @@
 </template>
 
 <script lang="ts">
-import { Action, Getter, Mutation, State, namespace } from 'vuex-class'
+import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
-import { mapActions, mapGetters, mapState } from 'vuex'
+import { mapState } from 'vuex'
 
 // import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import moment from 'moment'

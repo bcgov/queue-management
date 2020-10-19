@@ -14,9 +14,11 @@ limitations under the License. */
 
 /*eslint-disable */
 /*tslint-disable */
+import './router/componentHooks' // <-- Needs to be first to work beforeRouteLeave
+
 import Vue from 'vue'
 import 'es6-promise/auto'
-import store from './store/index.js'
+import store from './store/index'
 import BootstrapVue from 'bootstrap-vue'
 import router from './router'
 import { Plugin } from 'vue-fragment'

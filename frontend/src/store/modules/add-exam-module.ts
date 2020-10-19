@@ -1,6 +1,20 @@
+
+/**
+ *
+ * Notes
+ * JSTOTS - javascript to typescript Conversation
+ * Just moved all module from store folder to to modules/* folder
+ * No changes in functionality or any variables
+ * this is just moving
+ * in Future have to extract all functions and export Individually with typs defined
+ * and import in index.ts
+ *
+ */
+
 import Vue from 'vue'
-import { Axios } from './helpers'
+import { Axios } from './../helpers'
 import axios from 'axios'
+import config from './../../../config'
 
 // question definition mixins
 const addExamCounterQ = {
@@ -213,7 +227,7 @@ export const addExamModule = {
       return new Promise((resolve, reject) => {
         const url = `/exams/${payload.exam_id}/download/`
         axios({
-          baseURL: process.env.API_URL,
+          baseURL: config.APP_API_URL,
           url: url,
           withCredentials: true,
           headers: {
