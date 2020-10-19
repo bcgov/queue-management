@@ -185,7 +185,8 @@ objects:
                   value: "${CHES_SSO_CLIENT_SECRET}"
                 - name: CHES_POST_EMAIL_ENDPOINT
                   value: "${CHES_POST_EMAIL_ENDPOINT}"
-
+                - name: CACHE_DEFAULT_TIMEOUT
+                  value: "${CACHE_DEFAULT_TIMEOUT}"
               ports:
                 - containerPort: 8080
               readinessProbe:
@@ -351,3 +352,7 @@ parameters:
   - name: CHES_POST_EMAIL_ENDPOINT
     description: "CHES email send endpoint."
     required: true
+  - name: CACHE_DEFAULT_TIMEOUT
+    description: "Timeout for all caches."
+    required: false
+    value: 300

@@ -127,10 +127,13 @@ class AppointmentPost(Resource):
                         appointment_ids_to_delete.append(cancelled_appointment.appointment_id)
 
                         # Send blackout email
-                        pprint('Sending email for appointment cancellation due to blackout')
-                        send_email(ches_token,
-                                   *get_blackout_email_contents(appointment, cancelled_appointment, office, timezone,
-                                                                user))
+                        try:
+                            pprint('Sending email for appointment cancellation due to blackout')
+                            send_email(ches_token,
+                                       *get_blackout_email_contents(appointment, cancelled_appointment, office, timezone,
+                                                                    user))
+                        except Exception as exc:
+                            pprint('Error on email sending', exc)
 
                 # Delete appointments
                 if len(appointment_ids_to_delete) > 0:
@@ -138,12 +141,14 @@ class AppointmentPost(Resource):
 
             else:
                 # Send confirmation email
-                pprint('Sending email for appointment confirmation')
-                send_email(ches_token, *get_confirmation_email_contents(appointment, office, office.timezone, user))
+                try:
+                    pprint('Sending email for appointment confirmation')
+                    send_email(ches_token, *get_confirmation_email_contents(appointment, office, office.timezone, user))
+                except Exception as exc:
+                    pprint('Error on email sending', exc)
 
             SnowPlow.snowplow_appointment(citizen, csr, appointment, 'appointment_create')
 
-            pprint(appointment)
             result = self.appointment_schema.dump(appointment)
 
             return {"appointment": result.data,

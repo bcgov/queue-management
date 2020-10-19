@@ -57,7 +57,10 @@ class AppointmentDelete(Resource):
             office = Office.find_by_id(appointment.office_id)
 
             # Send blackout email
-            pprint('Sending email for appointment cancellation')
-            send_email(generate_ches_token(), *get_cancel_email_contents(appointment, user, office, office.timezone))
+            try:
+                pprint('Sending email for appointment cancellation')
+                send_email(generate_ches_token(), *get_cancel_email_contents(appointment, user, office, office.timezone))
+            except Exception as exc:
+                pprint('Error on email sending', exc)
 
         return {}, 204
