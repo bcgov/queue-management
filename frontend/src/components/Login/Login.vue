@@ -20,40 +20,62 @@ limitations under the License.*/
         id="login-button"
         style="padding-top: 10px"
         class="btn btn-primary"
-      >Login</b-button>
+        >Login</b-button
+      >
     </div>
 
     <div
       v-show="this.$store.state.isLoggedIn"
-      style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;"
+      style="
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      "
     >
       <div>
         <div
           v-if="!$route.meta.hideCitizenWaiting && citizenSBType"
           class="citizen_waiting"
-        >Citizens Waiting: {{ queueLength }}</div>
+        >
+          Citizens Waiting: {{ queueLength }}
+        </div>
       </div>
-      <div style="margin-right: 22px;margin-top: 9px;">
+      <div style="margin-right: 22px; margin-top: 9px">
         <label id="break-switch">
           <input type="checkbox" v-model="breakToggle" />
           <span class="circle1"></span>
           <span class="circle2"></span>
         </label>
-        <p class="switch-p">{{user.csr_state_id === csr_states['Break'] ? 'On Break' : 'Active' }}</p>
+        <p class="switch-p">
+          {{
+            user.csr_state_id === csr_states['Break'] ? 'On Break' : 'Active'
+          }}
+        </p>
       </div>
       <div id="select-wrapper" style="padding-right: 20px" v-if="reception">
-        <select id="counter-selection-csr" class="custom-select" v-model="counterSelection">
+        <select
+          id="counter-selection-csr"
+          class="custom-select"
+          v-model="counterSelection"
+        >
           <option value="receptionist">Receptionist</option>
           <option
             v-for="counter in user.office.counters"
             :value="counter.counter_id"
             :key="counter.counter_id"
-          >{{counter.counter_name}}</option>
+          >
+            {{ counter.counter_name }}
+          </option>
         </select>
       </div>
       <div style="padding-right: 20px">
-        <label class="navbar-label navbar-user">User: {{ this.$store.state.user.username }}</label>
-        <label class="navbar-label">Office: {{ this.$store.state.user.office.office_name }}</label>
+        <label class="navbar-label navbar-user"
+          >User: {{ this.$store.state.user.username }}</label
+        >
+        <label class="navbar-label"
+          >Office: {{ this.$store.state.user.office.office_name }}</label
+        >
       </div>
       <div style="padding-top: 5px">
         <b-button
@@ -61,7 +83,8 @@ limitations under the License.*/
           @click="logout()"
           id="logout-button"
           class="btn btn-primary"
-        >Logout</b-button>
+          >Logout</b-button
+        >
       </div>
     </div>
   </b-col>
@@ -73,6 +96,7 @@ limitations under the License.*/
 
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
+import config from '../../../config'
 
 import _ from 'lodash'
 
@@ -171,7 +195,7 @@ export default class Login extends Vue {
           .success(() => {
             // Set a timer to auto-refresh the token
             setInterval(() => {
-              this.refreshToken(process.env.REFRESH_TOKEN_SECONDS_LEFT)
+              this.refreshToken(config.REFRESH_TOKEN_SECONDS_LEFT)
             }, 60 * 1000)
             this.setTokenToSessionStorage()
             this.$store.commit('setBearer', sessionStorage.getItem('token'))
@@ -194,7 +218,7 @@ export default class Login extends Vue {
     }
     ).success(() => {
       setInterval(() => {
-        this.refreshToken(process.env.REFRESH_TOKEN_SECONDS_LEFT)
+        this.refreshToken(config.REFRESH_TOKEN_SECONDS_LEFT)
       }, 60 * 1000)
     })
   }

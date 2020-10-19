@@ -14,6 +14,7 @@
 import Vue from 'vue'
 import { Axios } from './../helpers'
 import axios from 'axios'
+import config from './../../../config'
 
 // question definition mixins
 const addExamCounterQ = {
@@ -226,7 +227,7 @@ export const addExamModule = {
       return new Promise((resolve, reject) => {
         const url = `/exams/${payload.exam_id}/download/`
         axios({
-          baseURL: process.env.API_URL,
+          baseURL: config.APP_API_URL,
           url: url,
           withCredentials: true,
           headers: {
