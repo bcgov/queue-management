@@ -333,18 +333,18 @@ export const addExamModule = {
       if (rootState.addExamModal && rootState.addExamModal.setup) {
         const { capturedExam } = rootState
         switch (rootState.addExamModal.setup) {
-          case 'challenger':
-            return state.addChallengerSteps
-          case 'group':
-            return state.addGroupSteps
-          case 'individual':
-            return state.addIndividualSteps
-          case 'pesticide':
-            return getters.addPesticideSteps
-          case 'other':
-            return state.addOtherSteps
-          default:
-            return []
+        case 'challenger':
+          return state.addChallengerSteps
+        case 'group':
+          return state.addGroupSteps
+        case 'individual':
+          return state.addIndividualSteps
+        case 'pesticide':
+          return getters.addPesticideSteps
+        case 'other':
+          return state.addOtherSteps
+        default:
+          return []
         }
       }
     },

@@ -915,18 +915,18 @@ export default class BookingBlackoutModal extends Vue {
     const local_booking_dates_array: any = []
 
     switch (this.selected_booking_frequency[0]) {
-      case 0:
-        booking_input_frequency = RRule.YEARLY
-        break
-      case 1:
-        booking_input_frequency = RRule.MONTHLY
-        break
-      case 2:
-        booking_input_frequency = RRule.WEEKLY
-        break
-      case 3:
-        booking_input_frequency = RRule.DAILY
-        break
+    case 0:
+      booking_input_frequency = RRule.YEARLY
+      break
+    case 1:
+      booking_input_frequency = RRule.MONTHLY
+      break
+    case 2:
+      booking_input_frequency = RRule.WEEKLY
+      break
+    case 3:
+      booking_input_frequency = RRule.DAILY
+      break
     }
 
     if (isNaN(start_year) == false || isNaN(end_year) == false) {

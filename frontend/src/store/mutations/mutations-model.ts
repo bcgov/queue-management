@@ -72,17 +72,17 @@ export const commonMutation: any = {
     const keys = Object.keys(state.addModalForm)
     keys.forEach(key => {
       switch (key) {
-        case 'suspendFilter':
-          Vue.set(state.addModalForm, key, false)
-          break
-        case 'priority':
-          Vue.set(state.addModalForm, key, 2)
-          break
-        case 'counter':
-          Vue.set(state.addModalForm, key, _default_counter_id)
-          break
-        default:
-          Vue.set(state.addModalForm, key, '')
+      case 'suspendFilter':
+        Vue.set(state.addModalForm, key, false)
+        break
+      case 'priority':
+        Vue.set(state.addModalForm, key, 2)
+        break
+      case 'counter':
+        Vue.set(state.addModalForm, key, _default_counter_id)
+        break
+      default:
+        Vue.set(state.addModalForm, key, '')
       }
     })
   },

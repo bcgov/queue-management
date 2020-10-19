@@ -309,47 +309,47 @@ export default class AddExamModal extends Vue {
       this.captureExamDetail({ key: 'exam_method', value: 'paper' })
     }
     switch (setup) {
-      case 'challenger':
-        if (this.addExamModal.fromCalendar) {
-          this.captureExamDetail({ key: 'offsite_location', value: this.module.challengerBooking.resource })
-          this.captureExamDetail({ key: 'exam_time', value: this.module.challengerBooking.start })
-          this.captureExamDetail({ key: 'expiry_date', value: this.module.challengerBooking.start })
-          if (this.module.challengerBooking.invigilator) {
-            this.captureExamDetail({ key: 'invigilator', value: this.module.challengerBooking.invigilator })
-          }
-          this.$nextTick(function () { this.$root.$emit('validateform') })
-          this.clearChallengerBooking()
-          return
+    case 'challenger':
+      if (this.addExamModal.fromCalendar) {
+        this.captureExamDetail({ key: 'offsite_location', value: this.module.challengerBooking.resource })
+        this.captureExamDetail({ key: 'exam_time', value: this.module.challengerBooking.start })
+        this.captureExamDetail({ key: 'expiry_date', value: this.module.challengerBooking.start })
+        if (this.module.challengerBooking.invigilator) {
+          this.captureExamDetail({ key: 'invigilator', value: this.module.challengerBooking.invigilator })
         }
-        this.resetModal()
-        this.captureExamDetail({ key: 'on_or_off', value: 'off' })
-        reset()
+        this.$nextTick(function () { this.$root.$emit('validateform') })
+        this.clearChallengerBooking()
         return
-      case 'individual':
-        this.resetModal()
-        const d = new Date()
-        const today = moment(d).format('YYYY-MM-DD')
-        this.captureExamDetail({ key: 'exam_received_date', value: today })
-        const recd = moment().add(90, 'd')
-        this.captureExamDetail({ key: 'expiry_date', value: '' })
-        return
-      case 'group':
-        this.resetModal()
-        return
-      case 'other':
-        this.resetModal()
-        this.captureExamDetail({ key: 'on_or_off', value: 'on' })
-        const exp = moment().add(60, 'd')
-        this.captureExamDetail({ key: 'expiry_date', value: '' })
-        return
-      case 'pesticide':
-        this.resetModal()
-        const expiry = moment().add(60, 'd')
-        this.captureExamDetail({ key: 'expiry_date', value: expiry })
-        return
-      default:
-        this.resetModal()
-        this.hideModal()
+      }
+      this.resetModal()
+      this.captureExamDetail({ key: 'on_or_off', value: 'off' })
+      reset()
+      return
+    case 'individual':
+      this.resetModal()
+      const d = new Date()
+      const today = moment(d).format('YYYY-MM-DD')
+      this.captureExamDetail({ key: 'exam_received_date', value: today })
+      const recd = moment().add(90, 'd')
+      this.captureExamDetail({ key: 'expiry_date', value: '' })
+      return
+    case 'group':
+      this.resetModal()
+      return
+    case 'other':
+      this.resetModal()
+      this.captureExamDetail({ key: 'on_or_off', value: 'on' })
+      const exp = moment().add(60, 'd')
+      this.captureExamDetail({ key: 'expiry_date', value: '' })
+      return
+    case 'pesticide':
+      this.resetModal()
+      const expiry = moment().add(60, 'd')
+      this.captureExamDetail({ key: 'expiry_date', value: expiry })
+      return
+    default:
+      this.resetModal()
+      this.hideModal()
     }
   }
 

@@ -52,7 +52,6 @@ import DropdownCalendar from './dropdown-calendar.vue'
   }
 })
 export default class ButtonsCalendar extends Vue {
-
   @State('scheduling') private scheduling!: any
   @State('rescheduling') private rescheduling!: any
   @State('showBookingBlackoutModal') private showBookingBlackoutModal!: any
