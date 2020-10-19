@@ -79,9 +79,6 @@ class _Config(object):  # pylint: disable=too-few-public-methods
 
     MAX_EMAIL_PER_BATCH = int(os.getenv('MAX_EMAIL_PER_BATCH', 30))
 
-    # Cache timeout
-    CACHE_DEFAULT_TIMEOUT = int(os.getenv('CACHE_DEFAULT_TIMEOUT', '300'))
-
 
 class DevConfig(_Config):  # pylint: disable=too-few-public-methods
     TESTING = False
