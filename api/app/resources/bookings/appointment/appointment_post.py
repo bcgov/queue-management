@@ -153,7 +153,7 @@ class AppointmentPost(Resource):
             pprint(appointment)
             result = self.appointment_schema.dump(appointment)
 
-            socketio.emit('appointment_create', result.data)
+            socketio.emit('appointment_refresh')
 
             return {"appointment": result.data,
                     "errors": result.errors}, 201

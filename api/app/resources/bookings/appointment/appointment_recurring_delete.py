@@ -39,6 +39,6 @@ class AppointmentRecurringDelete(Resource):
         for appointment in appointments:
             db.session.delete(appointment)
             db.session.commit()
-            socketio.emit('appointment_delete', appointment)
+            socketio.emit('appointment_refresh')
 
         return {}, 204
