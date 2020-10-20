@@ -26,6 +26,7 @@ from app.utilities.email import send_email, get_confirmation_email_contents
 from threading import Thread
 from app.services import AvailabilityService
 from dateutil.parser import parse
+from qsystem import socketio
 
 
 @api.route("/appointments/<int:id>/", methods=["PUT"])
@@ -106,6 +107,8 @@ class AppointmentPut(Resource):
         SnowPlow.snowplow_appointment(None, csr, appointment, schema)
 
         result = self.appointment_schema.dump(appointment)
+
+        socketio.emit('appointment_update', result.data)
 
         return {"appointment": result.data,
                 "errors": result.errors}, 200

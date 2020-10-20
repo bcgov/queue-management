@@ -24,8 +24,7 @@ from app.utilities.auth_util import Role, has_any_role
 from app.utilities.auth_util import is_public_user
 from app.utilities.email import get_cancel_email_contents, send_email
 from app.utilities.snowplow import SnowPlow
-from qsystem import api, db, oidc
-
+from qsystem import api, db, oidc, socketio
 
 @api.route("/appointments/<int:id>/", methods=["DELETE"])
 class AppointmentDelete(Resource):
@@ -49,6 +48,7 @@ class AppointmentDelete(Resource):
                 abort(403)
 
         SnowPlow.snowplow_appointment(None, csr, appointment, 'appointment_delete')
+        socketio.emit('appointment_delete', result.data)
 
         db.session.delete(appointment)
         db.session.commit()
