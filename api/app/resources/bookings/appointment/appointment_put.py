@@ -94,7 +94,7 @@ class AppointmentPut(Resource):
             pprint('Sending email for appointment update')
             send_email(generate_ches_token(), *get_confirmation_email_contents(appointment, office, office.timezone, user))
         except Exception as exc:
-            pprint('Error on email sending', exc)
+            pprint(f'Error on token generation - {exc}')
 
         #   Make Snowplow call.
         schema = 'appointment_update'

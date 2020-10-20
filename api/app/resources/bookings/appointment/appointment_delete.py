@@ -61,6 +61,6 @@ class AppointmentDelete(Resource):
                 pprint('Sending email for appointment cancellation')
                 send_email(generate_ches_token(), *get_cancel_email_contents(appointment, user, office, office.timezone))
             except Exception as exc:
-                pprint('Error on email sending', exc)
+                pprint(f'Error on token generation - {exc}')
 
         return {}, 204
