@@ -33,6 +33,7 @@ from app.services import AvailabilityService
 from dateutil.parser import parse
 from pprint import pprint
 
+from qsystem import socketio
 
 @api.route("/appointments/", methods=["POST"])
 class AppointmentPost(Resource):
@@ -151,6 +152,9 @@ class AppointmentPost(Resource):
 
             pprint(appointment)
             result = self.appointment_schema.dump(appointment)
+
+            pprint('Before socketIO - ADAMTEST')
+            socketio.emit('new_appointment', result.data)
 
             return {"appointment": result.data,
                     "errors": result.errors}, 201

@@ -70,6 +70,8 @@ export default class Socket extends Vue {
     socket.on('csr_update', (data) => { this.onCSRUpdate(data) })
     socket.on('clear_csr_cache', (data) => { this.onClearCsrCache(data) })
     socket.on('update_offices_cache', () => { this.onUpdateOfficesCache() })
+
+    socket.on('new_appointment', (data) => { console.log('NEW APPOINTMENT DATA', { data }) })
   }
 
   join () {
