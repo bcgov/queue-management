@@ -1,8 +1,11 @@
 {
-  "name": "test",
-  "version": "1.0.0",
-  "description": "a test with bootstrap",
+  "name": "theq",
+  "version": "2.0.0",
+  "description": "Theq",
   "author": "Scott Rumsby <scott.rumsby@gmail.com>",
+  "contributors": [
+    "Shabeeb <faiz.shabeeb@aot-technologies.com> (https://github.com/shabeeb-aot)"
+  ],
   "private": true,
   "scripts": {
     "test": "jest",

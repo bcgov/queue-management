@@ -48,7 +48,7 @@
           class="footer-anchor-item-last"
           style="display: inline-block; color: white; margin-right: 15px"
         >
-          v1.1.18
+          v2.0.0
         </div>
       </div>
     </div>
