@@ -48,7 +48,7 @@ class AppointmentDelete(Resource):
                 abort(403)
 
         SnowPlow.snowplow_appointment(None, csr, appointment, 'appointment_delete')
-        socketio.emit('appointment_delete', result.data)
+        socketio.emit('appointment_delete', appointment)
 
         db.session.delete(appointment)
         db.session.commit()

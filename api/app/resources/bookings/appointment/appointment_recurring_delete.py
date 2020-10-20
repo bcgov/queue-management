@@ -17,7 +17,7 @@ from flask_restx import Resource
 from app.models.bookings import Appointment
 from app.schemas.bookings import AppointmentSchema
 from app.models.theq import CSR
-from qsystem import api, db, oidc
+from qsystem import api, db, oidc, socketio
 from app.utilities.auth_util import Role, has_any_role
 
 
@@ -39,5 +39,6 @@ class AppointmentRecurringDelete(Resource):
         for appointment in appointments:
             db.session.delete(appointment)
             db.session.commit()
+            socketio.emit('appointment_delete', appointment)
 
         return {}, 204
