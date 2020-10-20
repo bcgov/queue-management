@@ -153,8 +153,7 @@ class AppointmentPost(Resource):
             pprint(appointment)
             result = self.appointment_schema.dump(appointment)
 
-            pprint('Before socketIO - ADAMTEST')
-            socketio.emit('new_appointment', result.data)
+            socketio.emit('appointment_create', result.data)
 
             return {"appointment": result.data,
                     "errors": result.errors}, 201
