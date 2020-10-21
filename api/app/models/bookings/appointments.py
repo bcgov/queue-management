@@ -16,7 +16,7 @@ from app.models.bookings import Base
 from qsystem import db
 from sqlalchemy_utc import UtcDateTime, utcnow
 from sqlalchemy import func, or_
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from dateutil.parser import parse
 from dateutil import tz
 
@@ -36,7 +36,7 @@ class Appointment(Base):
     recurring_uuid = db.Column(db.String(255), nullable=True)
     online_flag = db.Column(db.Boolean(), nullable=True, default=False)
     is_draft = db.Column(db.Boolean(), nullable=True, default=False)
-    created_at = db.Column(UtcDateTime, nullable=False, default=utcnow())
+    created_at = db.Column(UtcDateTime, nullable=True, default=utcnow())
 
     office = db.relationship("Office")
     service = db.relationship("Service")
@@ -125,15 +125,13 @@ class Appointment(Base):
 
     @classmethod
     def find_expired_drafts(cls):
-        """Find all is_draft appointments created over 1hr ago."""
-        # delete_qry = Appointment.__table__.delete().where(Appointment.appointment_id.in_(appointment_ids))
-        # db.session.execute(delete_qry)
-        # db.session.commit()
+        """Find all is_draft appointments created over expiration cutoff ago."""
+        EXPIRATION_CUTOFF = timedelta(minutes=30)
+        expiry_limit = datetime.utcnow().replace(tzinfo=timezone.utc) - EXPIRATION_CUTOFF
+
         query = db.session.query(Appointment). \
             filter(Appointment.is_draft.is_(True)). \
-            # PROBLEM, NO CREATED DATE
-            # filter(Appointment.cr)
-            # TODO - And created_at time > 1hr
+            filter(Appointment.created_at > expiry_limit)
 
         return query.all()
 

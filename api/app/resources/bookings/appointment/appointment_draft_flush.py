@@ -60,32 +60,15 @@ class AppointmentDraftFlush(Resource):
     # Un-authenticated call as it can happen before user has logged in
     def post(self):
         # TODO - Require authentication with a specific token?
-        # Appointment
         my_print("==> In AppointmentDraftFlush, POST /appointments/draft/flush")
 
-        # appointment = Appointment.query.filter_by(appointment_id=14)\
-        #                                    .first_or_404()
-
-        # non_drafts = Appointment.query\
-        #     .filter_by(is_draft=True)\
-        #     .all()
-
-
-        # # drafts = Appointment.query\
-        # #     .filter_by(is_draft=False)\
-        # #     .all()
-
         drafts = Appointment.find_expired_drafts()
-        appointments = Appointment.query.all()
+        appointments = Appointment.query.filter(Appointment.is_draft.is_(True))
 
         draft_result = self.appointment_schema.dump(drafts)
         appt_result = self.appointment_schema.dump(appointments)
 
-        # How come all above 3 always return empty obj?  Is query wrong?
-        # Is the schema dump part wrong?
-
         my_print('draft_result -- {}'.format(draft_result))
         my_print('appt_result -- {}'.format(appt_result))
 
-        return {"drafts": draft_result.data, "all_appointments": appt_result.data}
-        # return {"non_drafts": result.data, "drafts": drafts, "all_appointments": appt_result.data}
+        return {"drafts": draft_result.data, "drafts_unfiltered": appt_result.data}
