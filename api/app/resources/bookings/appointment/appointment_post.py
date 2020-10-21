@@ -115,7 +115,10 @@ class AppointmentPost(Resource):
             db.session.commit()
 
             # Generate CHES token
-            ches_token = generate_ches_token()
+            try:
+                ches_token = generate_ches_token()
+            except Exception as exc:
+                pprint(f'Error on token generation - {exc}')
 
             # If staff user is creating a blackout event then send email to all of the citizens with appointments for that period
             if is_blackout_appt:
@@ -127,10 +130,13 @@ class AppointmentPost(Resource):
                         appointment_ids_to_delete.append(cancelled_appointment.appointment_id)
 
                         # Send blackout email
-                        pprint('Sending email for appointment cancellation due to blackout')
-                        send_email(ches_token,
-                                   *get_blackout_email_contents(appointment, cancelled_appointment, office, timezone,
-                                                                user))
+                        try:
+                            pprint('Sending email for appointment cancellation due to blackout')
+                            send_email(ches_token,
+                                       *get_blackout_email_contents(appointment, cancelled_appointment, office, timezone,
+                                                                    user))
+                        except Exception as exc:
+                            pprint(f'Error on email sending - {exc}')
 
                 # Delete appointments
                 if len(appointment_ids_to_delete) > 0:
@@ -138,12 +144,14 @@ class AppointmentPost(Resource):
 
             else:
                 # Send confirmation email
-                pprint('Sending email for appointment confirmation')
-                send_email(ches_token, *get_confirmation_email_contents(appointment, office, office.timezone, user))
+                try:
+                    pprint('Sending email for appointment confirmation')
+                    send_email(ches_token, *get_confirmation_email_contents(appointment, office, office.timezone, user))
+                except Exception as exc:
+                    pprint(f'Error on email sending - {exc}')
 
             SnowPlow.snowplow_appointment(citizen, csr, appointment, 'appointment_create')
 
-            pprint(appointment)
             result = self.appointment_schema.dump(appointment)
 
             return {"appointment": result.data,

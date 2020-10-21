@@ -31,8 +31,10 @@ def send_email(token, subject, email, sender, html_body):
         'subject': subject,
         'to': email.split()
     }
-    requests.post(send_email_endpoint, headers={'Content-Type': 'application/json', 'Authorization': f'Bearer {token}'},
-                  data=json.dumps(payload))
+    response = requests.post(send_email_endpoint,
+                             headers={'Content-Type': 'application/json', 'Authorization': f'Bearer {token}'},
+                             data=json.dumps(payload))
+    response.raise_for_status()
 
 
 def generate_ches_token():
@@ -44,6 +46,7 @@ def generate_ches_token():
     token_response = requests.post(ches_token_url,
                                    data=f'client_id={ches_client_id}&client_secret={ches_client_secret}&grant_type=client_credentials',
                                    headers={'Content-Type': 'application/x-www-form-urlencoded'})
+    token_response.raise_for_status()
     return token_response.json().get('access_token')
 
 
