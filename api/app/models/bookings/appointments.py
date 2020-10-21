@@ -35,6 +35,7 @@ class Appointment(Base):
     blackout_flag = db.Column(db.String(1), default='N', nullable=False)
     recurring_uuid = db.Column(db.String(255), nullable=True)
     online_flag = db.Column(db.Boolean(), nullable=True, default=False)
+    is_draft = db.Column(db.Boolean(), nullable=True, default=False)
 
     office = db.relationship("Office")
     service = db.relationship("Service")
