@@ -58,8 +58,10 @@ objects:
         type: Source
         sourceStrategy:
           env:
-            - name: NODE_ENV
-              value: production
+          - name: NODE_ENV
+            value: production
+          - name: VUE_APP_PATH
+            value: /
           from:
             kind: ImageStreamTag
             namespace: openshift
