@@ -201,6 +201,9 @@ class BaseConfig(object):
     CHES_SSO_CLIENT_SECRET = os.getenv('CHES_SSO_CLIENT_SECRET', None)
     CHES_POST_EMAIL_ENDPOINT = os.getenv('CHES_POST_EMAIL_ENDPOINT', None)
 
+    # Cache timeout
+    CACHE_DEFAULT_TIMEOUT = int(os.getenv('CACHE_DEFAULT_TIMEOUT', '300'))
+
 
 class LocalConfig(BaseConfig):
     DEBUG = True
