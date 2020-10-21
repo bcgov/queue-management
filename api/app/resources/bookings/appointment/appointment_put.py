@@ -63,7 +63,7 @@ class AppointmentPut(Resource):
             end_time = parse(json_data.get('end_time'))
             service_id = json_data.get('service_id')
             service = Service.query.get(int(service_id))
-            if not AvailabilityService.has_available_slots(office=office, start_time=start_time, end_time=end_time, service=Service):
+            if not AvailabilityService.has_available_slots(office=office, start_time=start_time, end_time=end_time, service=service):
                 return {"code": "CONFLICT_APPOINTMENT",
                         "message": "Cannot create appointment due to conflict in time"}, 400
 
