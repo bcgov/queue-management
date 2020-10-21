@@ -17,7 +17,7 @@ from flask import request, g, abort, copy_current_request_context
 from flask_restx import Resource
 from qsystem import api, db, oidc
 from app.models.bookings import Appointment
-from app.models.theq import CSR, PublicUser, Citizen, Office
+from app.models.theq import CSR, PublicUser, Citizen, Office, Service
 from app.schemas.bookings import AppointmentSchema
 from app.utilities.snowplow import SnowPlow
 from app.utilities.auth_util import is_public_user
@@ -61,7 +61,9 @@ class AppointmentPut(Resource):
             # Check for race condition
             start_time = parse(json_data.get('start_time'))
             end_time = parse(json_data.get('end_time'))
-            if not AvailabilityService.has_available_slots(office=office, start_time=start_time, end_time=end_time):
+            service_id = json_data.get('service_id')
+            service = Service.query.get(int(service_id))
+            if not AvailabilityService.has_available_slots(office=office, start_time=start_time, end_time=end_time, service=Service):
                 return {"code": "CONFLICT_APPOINTMENT",
                         "message": "Cannot create appointment due to conflict in time"}, 400
 
@@ -78,6 +80,8 @@ class AppointmentPut(Resource):
         if is_public_user_appt:
             citizen = Citizen.find_citizen_by_id(appointment.citizen_id)
             user = PublicUser.find_by_username(g.oidc_token_info['username'])
+            # ARC TODO - Handle case when it's a draft and there is no user_id.
+            # Should just match based on appointment_id and other info.  Can't have proper auth yet.
             if citizen.user_id != user.user_id:
                 abort(403)
 
