@@ -80,8 +80,7 @@ class AppointmentDraftPost(Resource):
         json_data['citizen_name'] = citizen_name
 
         appointment, warning = self.appointment_schema.load(json_data)
-        result = self.appointment_schema.dump(appointment)
-
+        
         if warning:
             logging.warning("WARNING: %s", warning)
             return {"message": warning}, 422
@@ -90,4 +89,5 @@ class AppointmentDraftPost(Resource):
         db.session.commit()
         socketio.emit('appointment_refresh')
 
+        result = self.appointment_schema.dump(appointment)
         return {"appointment": result.data, "warning" : warning}, 201
