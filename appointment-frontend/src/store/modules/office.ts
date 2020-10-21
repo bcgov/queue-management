@@ -115,8 +115,8 @@ export default class OfficeModule extends VuexModule {
   }
 
   @Action({ commit: 'setAvailableAppointmentSlots', rawError: true })
-  public async getAvailableAppointmentSlots (officeId: number) {
-    const response = await OfficeService.getAvailableAppointmentSlots(officeId)
+  public async getAvailableAppointmentSlots (input: {officeId: number, serviceId: number}) {
+    const response = await OfficeService.getAvailableAppointmentSlots(input.officeId, input.serviceId)
     return response?.data || []
   }
 
@@ -150,6 +150,7 @@ export default class OfficeModule extends VuexModule {
 
   @Action({ rawError: true })
   public async createAppointment () {
+    // Don't make changes here, instead make changes to slot where end_time is set
     const userId = this.context.rootState.auth.currentUserProfile?.user_id || null
     const appointmentBody: AppointmentRequestBody = {
       start_time: this.context.state['currentAppointmentSlot'].start_time,

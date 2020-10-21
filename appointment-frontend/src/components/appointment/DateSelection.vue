@@ -70,6 +70,7 @@ import { mapActions, mapMutations, mapState } from 'vuex'
 import { AppointmentSlot } from '@/models/appointment'
 import { Office } from '@/models/office'
 import { OfficeModule } from '@/store/modules'
+import { Service } from '../../models/service'
 import StepperMixin from '@/mixins/StepperMixin.vue'
 import { zonedTimeToUtc } from 'date-fns-tz'
 
@@ -79,7 +80,8 @@ import { zonedTimeToUtc } from 'date-fns-tz'
       'availableAppointmentSlots',
       'currentAppointmentSlot',
       'currentOffice',
-      'currentOfficeTimezone'
+      'currentOfficeTimezone',
+      'currentService'
     ])
   },
   methods: {
@@ -96,8 +98,9 @@ export default class DateSelection extends Mixins(StepperMixin) {
   private readonly currentOffice!: Office
   private readonly currentAppointmentSlot!: AppointmentSlot
   private readonly currentOfficeTimezone!: string
-  private readonly getAvailableAppointmentSlots!: (officeId: number) => Promise<any>
+  private readonly getAvailableAppointmentSlots!: (input: {officeId: number, serviceId: number}) => Promise<any>
   private readonly setCurrentAppointmentSlot!: (slot: AppointmentSlot) => void
+  private readonly currentService!: Service
   // TODO: take timezone from office data from state
   private selectedDate = CommonUtils.getTzFormattedDate(new Date(), this.currentOfficeTimezone)
   private selectedDateTimeSlots = []
@@ -117,7 +120,11 @@ export default class DateSelection extends Mixins(StepperMixin) {
   private async mounted () {
     if (this.isOnCurrentStep) {
       if (this.currentOffice?.office_id) {
-        const availableAppoinments = await this.getAvailableAppointmentSlots(this.currentOffice.office_id)
+        // console.log('before availableAppoinments', this.currentOffice.service_id)
+        const availableAppoinments = await this.getAvailableAppointmentSlots({
+          officeId: this.currentOffice.office_id,
+          serviceId: this.currentService.service_id
+        })
         Object.keys(availableAppoinments).forEach(date => {
           if (availableAppoinments[date]?.length) {
             this.availableDates.push(CommonUtils.getTzFormattedDate(new Date(date), this.currentOfficeTimezone))

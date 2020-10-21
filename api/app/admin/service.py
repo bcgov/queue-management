@@ -39,13 +39,17 @@ class ServiceConfig(Base):
         'deleted',
         'external_service_name',
         'online_link',
-        'online_availability'
+        'online_availability',
+        'timeslot_duration',
+        'is_dlkt'
     ]
     column_labels = {
         'service_desc': 'Description',
         'deleted': 'Deleted',
         'display_dashboard_ind': 'Display Add Citizen/Back Office',
-        'actual_service_ind': 'Category or Service'
+        'actual_service_ind': 'Category or Service',
+        'timeslot_duration': 'Service Duration',
+        'is_dlkt': 'This service uses a DLKT'
     }
     column_searchable_list = ('service_code','service_name',)
     column_sortable_list = [
@@ -60,7 +64,8 @@ class ServiceConfig(Base):
     column_default_sort = 'service_name'
     form_args = {
         'actual_service_ind': {'default': '1'},
-        'display_dashboard_ind': {'default': '1'}
+        'display_dashboard_ind': {'default': '1'},
+        'is_dlkt': {'default': 'NO'}
     }
     form_create_rules = (
         'service_code',
@@ -74,7 +79,9 @@ class ServiceConfig(Base):
         'deleted',
         'external_service_name',
         'online_link',
-        'online_availability'
+        'online_availability',
+        'timeslot_duration',
+        'is_dlkt'
     )
     form_choices = {
         'actual_service_ind': [

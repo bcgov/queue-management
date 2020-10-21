@@ -87,16 +87,11 @@ import { getModule } from 'vuex-module-decorators'
   components: {
   },
   computed: {
-    ...mapState('auth', [
-      'currentUserProfile'
-    ]),
+    ...mapState('auth', ['currentUserProfile']),
     ...mapGetters('account', ['username'])
   },
   methods: {
-    ...mapActions('account', [
-      'updateUserAccount',
-      'getUser'
-    ])
+    ...mapActions('account', ['updateUserAccount', 'getUser'])
   }
 })
 export default class AccountSettingsView extends Vue {
@@ -126,12 +121,14 @@ export default class AccountSettingsView extends Vue {
   ]
 
   private emailRules = [
-    v => !!v || 'Email is required',
-    v => /.+@.+\..+/.test(v) || 'Email must be valid'
+    (v) => !!v || 'Email is required',
+    (v) => /.+@.+\..+/.test(v) || 'Email must be valid'
   ]
 
   private phoneNumberRules = [
-    v => /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(v) || 'Phone number must be valid'
+    (v) =>
+      /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(v) ||
+      'Phone number must be valid'
   ]
 
   private async beforeMount () {

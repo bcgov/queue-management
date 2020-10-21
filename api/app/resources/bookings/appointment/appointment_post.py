@@ -21,7 +21,7 @@ from flask import request, g, current_app
 from flask_restx import Resource
 
 from app.models.bookings import Appointment
-from app.models.theq import CSR, CitizenState, PublicUser, Office
+from app.models.theq import CSR, CitizenState, PublicUser, Office, Service
 from app.schemas.bookings import AppointmentSchema
 from app.schemas.theq import CitizenSchema
 from app.utilities.auth_util import Role, has_any_role
@@ -62,6 +62,7 @@ class AppointmentPost(Resource):
         is_public_user_appointment = is_public_user()
         if is_public_user_appointment:
             office_id = json_data.get('office_id')
+            service_id = json_data.get('service_id')
             user = PublicUser.find_by_username(g.oidc_token_info['username'])
             # Add values for contact info and notes
             json_data['contact_information'] = user.email
@@ -72,6 +73,8 @@ class AppointmentPost(Resource):
             citizen.citizen_name = user.display_name
 
             office = Office.find_by_id(office_id)
+            service = Service.query.get(int(service_id))
+
             # Validate if the same user has other appointments for same day at same office
             appointments = Appointment.find_by_username_and_office_id(office_id=office_id,
                                                                       user_name=g.oidc_token_info['username'],
@@ -83,7 +86,7 @@ class AppointmentPost(Resource):
             # Check for race condition
             start_time = parse(json_data.get('start_time'))
             end_time = parse(json_data.get('end_time'))
-            if not AvailabilityService.has_available_slots(office=office, start_time=start_time, end_time=end_time):
+            if not AvailabilityService.has_available_slots(office=office, start_time=start_time, end_time=end_time, service=service):
                 return {"code": "CONFLICT_APPOINTMENT",
                         "message": "Cannot create appointment due to conflict in time"}, 400
 
