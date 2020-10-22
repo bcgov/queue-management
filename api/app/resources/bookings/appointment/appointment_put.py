@@ -43,6 +43,13 @@ class AppointmentPut(Resource):
         if not json_data:
             return {"message": "No input data received for updating an appointment"}
         is_public_user_appt = is_public_user()
+
+        # TODO - TEST OUT POST+PUT  
+        # Should delete draft appointment, and free up slot, before booking.
+        # Clear up a draft if one was previously created by user reserving this time.
+        if json_data['appointment_draft_id']:
+            Appointment.delete_draft([int(json_data['appointment_draft_id'])])
+
         if is_public_user_appt:
             office_id = json_data.get('office_id')
             office = Office.find_by_id(office_id)

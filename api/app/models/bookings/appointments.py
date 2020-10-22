@@ -15,7 +15,7 @@ limitations under the License.'''
 from app.models.bookings import Base
 from qsystem import db
 from sqlalchemy_utc import UtcDateTime, utcnow
-from sqlalchemy import func, or_
+from sqlalchemy import func, or_, and_
 from datetime import datetime, timedelta, timezone
 from dateutil.parser import parse
 from dateutil import tz
@@ -134,4 +134,17 @@ class Appointment(Base):
             filter(Appointment.created_at > expiry_limit)
 
         return query.all()
+
+    @classmethod
+    def delete_draft(cls, draft_appointment_ids):
+        """Deletes a draft appointment by id."""
+        delete_qry = Appointment.__table__.delete().where(
+            and_(
+                Appointment.appointment_id.in_(draft_appointment_ids),
+                Appointment.is_draft.is_(True)
+            )
+        )
+        db.session.execute(delete_qry)
+        db.session.commit()
+        
 
