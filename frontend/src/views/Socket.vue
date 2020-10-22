@@ -18,19 +18,22 @@ limitations under the License. */ -->
 </template>
 
 <script lang="ts">
-
+import { Action, namespace } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
-import { Action } from 'vuex-class'
 
 // import { mapActions } from 'vuex'
 import config from './../../config'
 
-var io = require('socket.io-client')
-var socket
+const io = require('socket.io-client')
+let socket
+
+const appointmentsModule = namespace('appointmentsModule')
 
 @Component
 export default class Socket extends Vue {
   @Action('screenIncomingCitizen') public screenIncomingCitizen: any
+
+  @appointmentsModule.Action('getAppointments') public getAppointments: any
 
   public reconnectInterval: any = null
 
@@ -71,7 +74,9 @@ export default class Socket extends Vue {
     socket.on('clear_csr_cache', (data) => { this.onClearCsrCache(data) })
     socket.on('update_offices_cache', () => { this.onUpdateOfficesCache() })
 
-    socket.on('appointment_create', (data) => { console.log('NEW APPOINTMENT DATA', { data }) })
+    socket.on('appointment_refresh', () => {
+      this.onUpdateAppointment()
+    })
   }
 
   join () {
@@ -118,6 +123,10 @@ export default class Socket extends Vue {
   onUpdateActiveCitizen (citizen) {
     console.log('socket received: "update_active_citizen" ')
     this.screenIncomingCitizen({ citizen, route: this.$route })
+  }
+
+  onUpdateAppointment () {
+    this.getAppointments()
   }
 
   onUpdateCustomerList () {
