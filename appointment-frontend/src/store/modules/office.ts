@@ -174,7 +174,6 @@ export default class OfficeModule extends VuexModule {
         response = await AppointmentService.updateAppointment(this.context.state['currentAppointment'].appointment_id, appointmentBody)
       }
     } else {
-      console.log('createAppointment else')
       response = await AppointmentService.createAppointment(appointmentBody)
     }
     return response?.data?.appointment || {}
@@ -217,10 +216,14 @@ export default class OfficeModule extends VuexModule {
       is_draft: true
     }
     let response
-    // if (this.context.rootState.isAppointmentEditMode) {
-    //   if (this.context.state['currentAppointment']?.appointment_id) {
-    //     response = await AppointmentService.updateAppointment(this.context.state['currentAppointment'].appointment_id, appointmentBody)
-    //   }
+    // let deleteResponse
+
+    if (this.context.state['currentDraftAppointment']?.appointment_id) {
+    //   // deleteResponse =
+    // await
+      AppointmentService.deleteDraftAppointment(this.context.state['currentDraftAppointment'].appointment_id)
+    }
+
     // } else {
     response = await AppointmentService.createDraftAppointment(appointmentBody)
     // }
