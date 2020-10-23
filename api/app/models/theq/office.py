@@ -148,4 +148,4 @@ class Office(Base):
     def clear_offices_cache(cls):
         """Clear active offices cache."""
         cache.delete(Office.offices_cache_key)
-        Office.get_all_active_offices()
+        # Office.get_all_active_offices()

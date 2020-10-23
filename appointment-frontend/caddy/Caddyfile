@@ -26,6 +26,5 @@ header / {
 	Pragma no-cache
 
 	# Content Security Policy
-	# Content-Security-Policy "default-src 'none';frame-src 'self' *.gov.bc.ca; script-src 'self' 'sha256-Y472vfVa3lEFTEZrbE3DfdOYSmyyUPovFayafYOkX6E=' *.gov.bc.ca https://maps.googleapis.com; style-src 'self' 'unsafe-inline'; font-src 'self' *.gov.bc.ca; img-src 'self' *.gov.bc.ca data:  https://maps.googleapis.com ; connect-src 'self' *.gov.bc.ca; manifest-src 'self'; "
-    Content-Security-Policy "default-src 'none';frame-src 'self' *.gov.bc.ca; script-src 'self' 'sha256-jz1UoDQhFYj7qWX/RHHnCdXPMP5++pxLOljIpiaXsPE=' *.gov.bc.ca https://maps.googleapis.com; style-src 'self' 'unsafe-inline'; font-src 'self' *.gov.bc.ca; img-src 'self' *.gov.bc.ca data:  https://maps.googleapis.com ; connect-src 'self' *.gov.bc.ca; manifest-src 'self'; "
+	Content-Security-Policy "default-src 'none';frame-src 'self' *.gov.bc.ca; script-src 'self' 'sha256-YaRF5VNtISs/hr8ATuoP3elKspUwWe/m1uAve9Sbxuk=' *.gov.bc.ca https://maps.googleapis.com; style-src 'self' 'unsafe-inline'; font-src 'self' *.gov.bc.ca; img-src 'self' *.gov.bc.ca data:  https://maps.googleapis.com ; connect-src 'self' *.gov.bc.ca; manifest-src 'self'; "
 }

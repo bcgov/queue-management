@@ -115,20 +115,20 @@ objects:
                 - name: DATABASE_USERNAME
                   valueFrom:
                     secretKeyRef:
-                      name: "patronitheq"
+                      name: "patroni"
                       key: app-db-username
                 - name: DATABASE_PASSWORD
                   valueFrom:
                     secretKeyRef:
-                      name: "patronitheq"
+                      name: "patroni"
                       key: app-db-password
                 - name: DATABASE_NAME
                   valueFrom:
                     secretKeyRef:
-                      name: "patronitheq"
+                      name: "patroni"
                       key: app-db-name
                 - name: DATABASE_HOST
-                  value: "patroni-mastertheq"
+                  value: "patroni-master"
                 - name: DATABASE_PORT
                   value: "5432"
                 - name: SQLALCHEMY_ECHO
@@ -140,7 +140,7 @@ objects:
                 - name: APP_MODULE
                   value: wsgi
                 - name: ACTIVE_MQ_HOST
-                  value: rabbitmq-cluster
+                  value: rabbitmq
                 - name: ACTIVE_MQ_PORT
                   value: "5672"
                 - name: SLACK_URL
@@ -153,6 +153,10 @@ objects:
                   value: "${THEQ_SNOWPLOW_NAMESPACE}"
                 - name: THEQ_SNOWPLOW_CALLFLAG
                   value: "${THEQ_SNOWPLOW_CALLFLAG}"
+                - name: THEQ_SNOWPLOW_ENV
+                  value: ${THEQ_SNOWPLOW_ENV}
+                - name: THEQ_SNOWPLOW_ROUTE
+                  value: "${THEQ_SNOWPLOW_ROUTE}"
                 - name: THEQ_CLEAR_COMMENTS_FLAG
                   value: "${THEQ_CLEAR_COMMENTS_FLAG}"
                 - name: SECRET_KEY
@@ -171,15 +175,26 @@ objects:
                   value: "${SERVICENOW_PASSWORD}"
                 - name: VIDEO_PATH
                   value: /opt/app-root/src/videos
-                - name: MAIL_PORT
-                  value: 25
                 - name: MAIL_FROM_ID
                   value: donotreply@gov.bc.ca
                 - name: EMAIL_APPOINTMENT_APP_URL
                   value: "${EMAIL_APPOINTMENT_APP_URL}"
                 - name: CORS_ALLOWED_ORIGINS
                   value: "${CORS_ALLOWED_ORIGINS}"
-
+                - name: BACK_OFFICE_DISPLAY
+                  value: "${BACK_OFFICE_DISPLAY}"
+                - name: ROCKET_CHAT_URL
+                  value: "${ROCKET_CHAT_URL}"
+                - name: CHES_SSO_TOKEN_URL
+                  value: "${CHES_SSO_TOKEN_URL}"
+                - name: CHES_SSO_CLIENT_ID
+                  value: "${CHES_SSO_CLIENT_ID}"
+                - name: CHES_SSO_CLIENT_SECRET
+                  value: "${CHES_SSO_CLIENT_SECRET}"
+                - name: CHES_POST_EMAIL_ENDPOINT
+                  value: "${CHES_POST_EMAIL_ENDPOINT}"
+                - name: CACHE_DEFAULT_TIMEOUT
+                  value: "${CACHE_DEFAULT_TIMEOUT}"
               ports:
                 - containerPort: 8080
               readinessProbe:
@@ -308,6 +323,14 @@ parameters:
     description: "Snowplow Namespace"
     required: false
     value: ""
+  - name: THEQ_SNOWPLOW_ENV
+    description: "Snowplow Environment"
+    required: false
+    value: "dev"
+  - name: THEQ_SNOWPLOW_ROUTE
+    description: "Snowplow Route"
+    required: false
+    value: ""
   - name: LOG_ENABLE
     description: "Enable/Disable Logging of Socketio errors"
     required: false
@@ -324,9 +347,6 @@ parameters:
   - name: SERVICENOW_PASSWORD
     description: "The password of the SERVICENOW_USER account"
     required: false
-  - name: MAIL_PORT
-    description: "Mail port for the smtp server"
-    required: false
   - name: MAIL_FROM_ID
     description: "Mail from address to appear on emails"
     required: false
@@ -336,3 +356,25 @@ parameters:
   - name: CORS_ALLOWED_ORIGINS
     description: "Comma separated cors origin for the api."
     required: false
+  - name: BACK_OFFICE_DISPLAY
+    description: "Display Front line services in Back Office Dropdown"
+    required: false
+  - name: ROCKET_CHAT_URL
+    description: "Rocket Chat URL"
+    required: false
+  - name: CHES_SSO_TOKEN_URL
+    description: "CHES token URL."
+    required: true
+  - name: CHES_SSO_CLIENT_ID
+    description: "CHES service client id."
+    required: true
+  - name: CHES_SSO_CLIENT_SECRET
+    description: "CHES Service client secret."
+    required: true
+  - name: CHES_POST_EMAIL_ENDPOINT
+    description: "CHES email send endpoint."
+    required: true
+  - name: CACHE_DEFAULT_TIMEOUT
+    description: "Timeout for all caches."
+    required: false
+    value: 300

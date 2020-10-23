@@ -10,6 +10,21 @@
   },
   "objects": [
     {
+      "kind": "ConfigMap",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${NAME}-${TAG_NAME}-cron-configuration",
+        "labels": {
+          "app": "send-appointment-reminder-crond-${TAG_NAME}",
+          "app-group": "${APP_GROUP}",
+          "template": "${NAME}-cron-configuration"
+        }
+      },
+      "data": {
+        "crontab": "${CRONTAB}"
+      }
+    },
+    {
       "kind": "DeploymentConfig",
       "apiVersion": "v1",
       "metadata": {
@@ -112,15 +127,6 @@
                     }
                   },
                   {
-                    "name": "MAIL_PORT",
-                    "valueFrom": {
-                      "configMapKeyRef": {
-                        "name": "appointment-reminder-${TAG_NAME}-config",
-                        "key": "MAIL_PORT"
-                      }
-                    }
-                  },
-                  {
                     "name": "MAX_EMAIL_PER_BATCH",
                     "valueFrom": {
                       "configMapKeyRef": {
@@ -162,6 +168,42 @@
                       "configMapKeyRef": {
                         "name": "appointment-reminder-${TAG_NAME}-config",
                         "key": "SERVICE_ACCOUNT_SECRET"
+                      }
+                    }
+                  },
+                  {
+                    "name": "CHES_SSO_TOKEN_URL",
+                    "valueFrom": {
+                      "configMapKeyRef": {
+                        "name": "appointment-reminder-${TAG_NAME}-config",
+                        "key": "CHES_SSO_TOKEN_URL"
+                      }
+                    }
+                  },
+                  {
+                    "name": "CHES_SSO_CLIENT_ID",
+                    "valueFrom": {
+                      "configMapKeyRef": {
+                        "name": "appointment-reminder-${TAG_NAME}-config",
+                        "key": "CHES_SSO_CLIENT_ID"
+                      }
+                    }
+                  },
+                  {
+                    "name": "CHES_SSO_CLIENT_SECRET",
+                    "valueFrom": {
+                      "configMapKeyRef": {
+                        "name": "appointment-reminder-${TAG_NAME}-config",
+                        "key": "CHES_SSO_CLIENT_SECRET"
+                      }
+                    }
+                  },
+                  {
+                    "name": "CHES_POST_EMAIL_ENDPOINT",
+                    "valueFrom": {
+                      "configMapKeyRef": {
+                        "name": "appointment-reminder-${TAG_NAME}-config",
+                        "key": "CHES_POST_EMAIL_ENDPOINT"
                       }
                     }
                   }
@@ -278,6 +320,13 @@
       "description": "The resources Memory limit (in Mi, Gi, etc) for this build.",
       "required": true,
       "value": "2Gi"
+    },
+    {
+      "name": "CRONTAB",
+      "displayName": "Cron configuration",
+      "description": "Cron configuration for the scheduler.",
+      "required": true,
+      "value": "00 23 * * * default cd /appointment_reminder && ./run.sh\n# An empty line is required at the end of this file for a valid cron file.\n"
     }
   ]
 }

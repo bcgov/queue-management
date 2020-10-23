@@ -14,30 +14,28 @@ limitations under the License.'''
 
 import logging
 from datetime import datetime
-from threading import Thread
+from pprint import pprint
 
-from flask import copy_current_request_context
-from flask import request, g, current_app
+from dateutil.parser import parse
+from flask import request, g
 from flask_restx import Resource
 
 from app.models.bookings import Appointment
 from app.models.theq import CSR, CitizenState, PublicUser, Office, Service
 from app.schemas.bookings import AppointmentSchema
 from app.schemas.theq import CitizenSchema
+from app.services import AvailabilityService
 from app.utilities.auth_util import Role, has_any_role
 from app.utilities.auth_util import is_public_user
-from app.utilities.email import get_confirmation_email_contents, send_email, get_blackout_email_contents
+from app.utilities.email import get_confirmation_email_contents, send_email, generate_ches_token, \
+    get_blackout_email_contents
 from app.utilities.snowplow import SnowPlow
 from qsystem import api, api_call_with_retry, db, oidc, my_print
-from app.services import AvailabilityService
-from dateutil.parser import parse
-from pprint import pprint
 
 from qsystem import socketio
 
 @api.route("/appointments/", methods=["POST"])
 class AppointmentPost(Resource):
-
     appointment_schema = AppointmentSchema()
     citizen_schema = CitizenSchema()
 
@@ -88,7 +86,8 @@ class AppointmentPost(Resource):
                                                                       start_time=json_data.get('start_time'),
                                                                       timezone=office.timezone.timezone_name)
             if appointments and len(appointments) >= office.max_person_appointment_per_day:
-                return {"code": "MAX_NO_OF_APPOINTMENTS_REACHED", "message": "Maximum number of appointments reached"}, 400
+                return {"code": "MAX_NO_OF_APPOINTMENTS_REACHED",
+                        "message": "Maximum number of appointments reached"}, 400
 
             # Check for race condition
             start_time = parse(json_data.get('start_time'))
@@ -126,6 +125,12 @@ class AppointmentPost(Resource):
             db.session.add(appointment)
             db.session.commit()
 
+            # Generate CHES token
+            try:
+                ches_token = generate_ches_token()
+            except Exception as exc:
+                pprint(f'Error on token generation - {exc}')
+
             # If staff user is creating a blackout event then send email to all of the citizens with appointments for that period
             if is_blackout_appt:
                 appointment_ids_to_delete = []
@@ -136,13 +141,13 @@ class AppointmentPost(Resource):
                         appointment_ids_to_delete.append(cancelled_appointment.appointment_id)
 
                         # Send blackout email
-                        @copy_current_request_context
-                        def async_email(subject, email, sender, body):
-                            return send_email(subject, email, sender, body)
-
-                        thread = Thread(target=async_email, args=get_blackout_email_contents(appointment, cancelled_appointment, office, timezone, user))
-                        thread.daemon = True
-                        thread.start()
+                        try:
+                            pprint('Sending email for appointment cancellation due to blackout')
+                            send_email(ches_token,
+                                       *get_blackout_email_contents(appointment, cancelled_appointment, office, timezone,
+                                                                    user))
+                        except Exception as exc:
+                            pprint(f'Error on email sending - {exc}')
 
                 # Delete appointments
                 if len(appointment_ids_to_delete) > 0:
@@ -150,17 +155,14 @@ class AppointmentPost(Resource):
 
             else:
                 # Send confirmation email
-                @copy_current_request_context
-                def async_email(subject, email, sender, body):
-                    send_email(subject, email, sender, body)
-
-                thread = Thread(target=async_email, args=get_confirmation_email_contents(appointment, office, office.timezone, user))
-                thread.daemon = True
-                thread.start()
+                try:
+                    pprint('Sending email for appointment confirmation')
+                    send_email(ches_token, *get_confirmation_email_contents(appointment, office, office.timezone, user))
+                except Exception as exc:
+                    pprint(f'Error on email sending - {exc}')
 
             SnowPlow.snowplow_appointment(citizen, csr, appointment, 'appointment_create')
 
-            pprint(appointment)
             result = self.appointment_schema.dump(appointment)
 
             socketio.emit('appointment_refresh')

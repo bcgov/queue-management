@@ -41,13 +41,10 @@ class AppointmentDraftFlush(Resource):
 
     appointment_schema = AppointmentSchema(many=True)
     
-    # Un-authenticated call as it can happen before user has logged in
+    # This call is intentionally unauthenticated, as all it does is delete
+    # all drafts older than 30min.  It takes no input params and can be called
+    # as much as we want since it's idempotent (except for current time)
     def post(self):
-        # TODO - Require authentication with a specific token?
-        # TODO - Potentialy move into cron job, call Sumesh to discuss
         my_print("==> In AppointmentDraftFlush, POST /appointments/draft/flush")
-        drafts = Appointment.find_expired_drafts()
-        draft_ids = [appointment.appointment_id for appointment in drafts]
-        my_print('==> Deleting draft appointments with ids: {}'.format(draft_ids))
-        Appointment.delete_appointments(draft_ids)
+        draft_ids = Appointment.delete_expired_drafts()
         return {"deleted_draft_ids": draft_ids}, 200
