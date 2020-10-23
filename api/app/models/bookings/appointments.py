@@ -131,7 +131,7 @@ class Appointment(Base):
 
         query = db.session.query(Appointment). \
             filter(Appointment.is_draft.is_(True)). \
-            filter(Appointment.created_at > expiry_limit)
+            filter(Appointment.created_at < expiry_limit)
 
         return query.all()
 
@@ -146,5 +146,13 @@ class Appointment(Base):
         )
         db.session.execute(delete_qry)
         db.session.commit()
+
+    @classmethod
+    def delete_expired_drafts(cls):
+        """Deletes all expired drafts."""
+        drafts = Appointment.find_expired_drafts()
+        draft_ids = [appointment.appointment_id for appointment in drafts]
+        Appointment.delete_appointments(draft_ids)
+        return draft_ids
         
 

@@ -69,6 +69,8 @@ class AppointmentDraftPost(Resource):
         else:
             citizen_name = 'Draft'
 
+        # Delete all expired drafts before checking availability
+        Appointment.delete_expired_drafts()
 
         # Ensure there's no race condition when submitting a draft
         if not AvailabilityService.has_available_slots(office=office, start_time=start_time, end_time=end_time, service=service):
