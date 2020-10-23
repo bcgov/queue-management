@@ -59,6 +59,7 @@ export default {
             comments: apt.comments,
             color: '#B5E0B8',
             blackout_flag: apt.blackout_flag,
+            is_draft: apt.is_draft,
             recurring_uuid: apt.recurring_uuid,
             online_flag: apt.online_flag
           })

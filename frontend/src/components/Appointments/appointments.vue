@@ -87,6 +87,12 @@ export default class Appointments extends Vue {
         el.css('background-color', '#000000')
         el.css('border-color', '#000000')
         el.css('color', 'white')
+      } else if (evt.is_draft === true) {
+        el.css('font-size', '.9rem')
+        el.css('max-width', '85%')
+        el.css('background-color', 'lightgray')
+        el.css('border-color', 'darkgray')
+        el.css('color', 'black')
       } else {
         el.css('font-size', '.9rem')
         el.css('max-width', '85%')
