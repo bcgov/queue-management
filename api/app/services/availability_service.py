@@ -153,7 +153,7 @@ class AvailabilityService():
                 'start_time': app.start_time.astimezone(pytz.timezone(timezone)).time(),
                 'end_time': app.end_time.astimezone(pytz.timezone(timezone)).time(),
                 'blackout_flag': app.blackout_flag == 'Y',
-                'is_dlkt': app.service.is_dlkt == YesNo.YES
+                'is_dlkt': (app.service.is_dlkt == YesNo.YES) if app.service else False
             })
         return filtered_appointments
 
