@@ -60,6 +60,8 @@ export default class Appointments extends Vue {
   @appointmentsModule.Action('getChannels') public getChannels: any
   @appointmentsModule.Action('getServices') public getServices: any
 
+  @appointmentsModule.Action('postDraftAppointment') public postDraftAppointment: any
+
   @appointmentsModule.Mutation('setCalendarSetup') public setCalendarSetup: any
   @appointmentsModule.Mutation('setEditedStatus') public setEditedStatus: any
   @appointmentsModule.Mutation('toggleApptBookingModal') public toggleApptBookingModal: any
@@ -212,6 +214,7 @@ export default class Appointments extends Vue {
     }
     this.clickedTime = e
     this.setTempEvent(e)
+    console.log('select event')
     this.toggleApptBookingModal(true)
     this.blockEventSelect = false
   }
@@ -229,6 +232,7 @@ export default class Appointments extends Vue {
   }
 
   removeTempEvent () {
+    console.log('removeTempEvent')
     this.$refs.appointments.fireMethod('removeEvents', ['_tempEvent'])
   }
 
@@ -249,6 +253,22 @@ export default class Appointments extends Vue {
       color: 'pink',
       id: '_tempEvent'
     }
+
+    // for draft
+    const data: any = {
+      start_time: moment.utc(start).format(),
+      end_time: moment.utc(end).format()
+      // service_id: 27,
+      // is_draft: true
+    }
+    // this.postDraftAppointment(data)
+    this.postDraftAppointment(data).then(() => {
+      // this.getAppointments().then(() => {
+      //   // finish()
+      //   // this.$store.commit('toggleServeCitizenSpinner', false)
+      //   // setTimeout(() => { this.toggleSubmitClicked(false) }, 2000)
+      // })
+    })
     this.$refs.appointments.fireMethod('renderEvent', e)
   }
 

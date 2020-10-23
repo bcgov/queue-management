@@ -175,6 +175,7 @@ export default {
     postAppointment ({ rootState }, payload) {
       const state = rootState
       payload.office_id = rootState.user.office_id
+      payload.appointment_draft_id = 1
       return new Promise((resolve, reject) => {
         Axios({ state }).post('/appointments/', payload).then(resp => {
           resolve(resp)
@@ -241,7 +242,7 @@ export default {
     putRecurringAppointment ({ dispatch, rootState }, payload) {
       const state = rootState
       const uuid = payload.recurring_uuid
-      console.log('PUT DATA', payload)
+
       return new Promise((resolve, reject) => {
         Axios({ state }).put(`/appointments/recurring/${uuid}`, payload.data).then(resp => {
           dispatch('getAppointments')
@@ -313,7 +314,35 @@ export default {
       if (payload) {
         commit('switchAddModalMode', 'add_mode', { root: true })
       }
+    },
+
+    // toggleApptBookingModalWithDraft ({ commit }, payload) {
+    //   commit('toggleApptBookingModal', payload, { root: true })
+    //   if (payload) {
+    //     // commit('switchAddModalMode', 'add_mode', { root: true })
+    //   }
+    // },
+    postDraftAppointment ({ rootState }, payload) {
+      const state = rootState
+      payload.office_id = rootState.user.office_id
+      return new Promise((resolve, reject) => {
+        Axios({ state }).post('/appointments/draft', payload).then(resp => {
+          resolve(resp)
+        })
+      })
+    },
+    // need to set draft appointment id
+    deleteDraftAppointment ({ dispatch, rootState }, payload) {
+      const state = rootState
+      return new Promise((resolve, reject) => {
+        Axios({ state }).delete(`/appointments/draft/${payload}/`).then(() => {
+          // dispatch('getAppointments').then(() => {
+          //   resolve()
+          // })
+        })
+      })
     }
+
   },
   mutations: {
     setEditedStatus: (state, payload) => state.editing = payload,
