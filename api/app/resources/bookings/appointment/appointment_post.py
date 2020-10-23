@@ -92,7 +92,7 @@ class AppointmentPost(Resource):
             end_time = parse(json_data.get('end_time'))
             if not AvailabilityService.has_available_slots(office=office, start_time=start_time, end_time=end_time, service=service):
                 return {"code": "CONFLICT_APPOINTMENT",
-                        "message": "Cannot create appointment due to conflict in time"}, 400
+                        "message": "Cannot create appointment due to scheduling conflict.  Please pick another time."}, 400
 
         else:
             csr = CSR.find_by_username(g.oidc_token_info['username'])
