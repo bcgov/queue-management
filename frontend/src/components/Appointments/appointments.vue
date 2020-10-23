@@ -61,6 +61,7 @@ export default class Appointments extends Vue {
   @appointmentsModule.Action('getServices') public getServices: any
 
   @appointmentsModule.Action('postDraftAppointment') public postDraftAppointment: any
+  @appointmentsModule.Action('deleteDraftAppointment') public deleteDraftAppointment: any
 
   @appointmentsModule.Mutation('setCalendarSetup') public setCalendarSetup: any
   @appointmentsModule.Mutation('setEditedStatus') public setEditedStatus: any
@@ -232,7 +233,15 @@ export default class Appointments extends Vue {
   }
 
   removeTempEvent () {
-    console.log('removeTempEvent')
+    this.deleteDraftAppointment().then((resp) => {
+
+      // this.getAppointments().then(() => {
+      //   // finish()
+      //   // this.$store.commit('toggleServeCitizenSpinner', false)
+      //   // setTimeout(() => { this.toggleSubmitClicked(false) }, 2000)
+      // })
+    })
+
     this.$refs.appointments.fireMethod('removeEvents', ['_tempEvent'])
   }
 
@@ -257,12 +266,13 @@ export default class Appointments extends Vue {
     // for draft
     const data: any = {
       start_time: moment.utc(start).format(),
-      end_time: moment.utc(end).format()
+      // setting end time aftger 15 min of start to fix over appoinment time
+      end_time: moment(start).clone().add(15, 'minutes')// moment.utc(end).format()
       // service_id: 27,
       // is_draft: true
     }
     // this.postDraftAppointment(data)
-    this.postDraftAppointment(data).then(() => {
+    this.postDraftAppointment(data).then((resp) => {
       // this.getAppointments().then(() => {
       //   // finish()
       //   // this.$store.commit('toggleServeCitizenSpinner', false)
