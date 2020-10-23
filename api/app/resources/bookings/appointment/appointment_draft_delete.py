@@ -31,8 +31,6 @@ class AppointmentDraftDelete(Resource):
 
     appointment_schema = AppointmentSchema()
 
-    @oidc.accept_token(require_token=True)
-    @has_any_role(roles=[Role.internal_user.value, Role.online_appointment_user.value])
     def delete(self, id):
 
         appointment = Appointment.query.filter_by(appointment_id=id)\
