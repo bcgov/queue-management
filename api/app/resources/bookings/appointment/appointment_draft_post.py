@@ -56,7 +56,7 @@ class AppointmentDraftPost(Resource):
         start_time = parse(json_data.get('start_time'))
         end_time = parse(json_data.get('end_time'))
         office = Office.find_by_id(office_id)
-        service = Service.query.get(int(service_id))
+        service = Service.query.get(int(service_id)) if service_id else None
 
         # end_time can be null for CSRs when they click; whereas citizens know end-time.
         if not end_time:
