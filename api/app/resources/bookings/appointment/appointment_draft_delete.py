@@ -36,8 +36,6 @@ class AppointmentDraftDelete(Resource):
         appointment = Appointment.query.filter_by(appointment_id=id)\
                                        .first_or_404()
 
-        csr = None if is_public_user() else CSR.find_by_username(g.oidc_token_info['username'])
-
         socketio.emit('appointment_refresh')
         Appointment.delete_draft([id])
      
