@@ -100,6 +100,15 @@
           >
             Ok
           </v-btn>
+
+          <v-btn
+            large
+            v-if="dialogPopup.isSuccess === false"
+            color="default"
+            @click="goToTime"
+          >
+            Pick another time
+          </v-btn>
           <v-spacer></v-spacer>
         </v-card-actions>
       </v-card>
@@ -220,6 +229,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
       }
       this.isLoading = false
     } catch (error) {
+      console.log('confirmAppointment submit error', { error })
       this.isLoading = false
       this.dialogPopup.showDialog = true
       this.dialogPopup.isSuccess = false
@@ -234,6 +244,11 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
       this.clearSelectedValues()
       this.$router.push('/booked-appointments')
     }
+  }
+
+  private goToTime () {
+    this.dialogPopup.showDialog = false
+    this.gotoStep(3)
   }
 
   private getMapUrl (location) {
