@@ -48,8 +48,6 @@ class AppointmentPost(Resource):
         if not json_data:
             return {"message": "No input data received for creating an appointment"}, 400
 
-
-        # TODO - TEST OUT POST+PUT
         # Should delete draft appointment, and free up slot, before booking.
         # Clear up a draft if one was previously created by user reserving this time.
         if json_data['appointment_draft_id']:

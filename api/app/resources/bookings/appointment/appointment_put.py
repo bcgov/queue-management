@@ -44,7 +44,6 @@ class AppointmentPut(Resource):
             return {"message": "No input data received for updating an appointment"}
         is_public_user_appt = is_public_user()
 
-        # TODO - TEST OUT POST+PUT  
         # Should delete draft appointment, and free up slot, before booking.
         # Clear up a draft if one was previously created by user reserving this time.
         if json_data['appointment_draft_id']:
@@ -87,7 +86,6 @@ class AppointmentPut(Resource):
         if is_public_user_appt:
             citizen = Citizen.find_citizen_by_id(appointment.citizen_id)
             user = PublicUser.find_by_username(g.oidc_token_info['username'])
-            # ARC TODO - Handle case when it's a draft and there is no user_id.
             # Should just match based on appointment_id and other info.  Can't have proper auth yet.
             if citizen.user_id != user.user_id:
                 abort(403)

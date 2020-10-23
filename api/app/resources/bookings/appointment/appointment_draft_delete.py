@@ -40,21 +40,8 @@ class AppointmentDraftDelete(Resource):
 
         csr = None if is_public_user() else CSR.find_by_username(g.oidc_token_info['username'])
 
-        user: PublicUser = PublicUser.find_by_username(g.oidc_token_info['username']) if is_public_user() else None
-        if is_public_user():
-            # Check if it's a public user
-            citizen = Citizen.find_citizen_by_id(appointment.citizen_id)
-            if not citizen or citizen.citizen_id != appointment.citizen_id:
-                abort(403)
-
-        SnowPlow.snowplow_appointment(None, csr, appointment, 'appointment_delete')
         socketio.emit('appointment_refresh')
-
-        # TODO TEST!
         Appointment.delete_draft([id])
-        # db.session.delete(appointment)
-        # db.session.commit()
-
      
         return {}, 204
 
