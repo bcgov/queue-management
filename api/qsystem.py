@@ -61,7 +61,7 @@ db = SQLAlchemy(application)
 db.init_app(application)
 query_limit = application.config['DB_LONG_RUNNING_QUERY']
 
-cache = Cache(config={'CACHE_TYPE': 'simple'})
+cache = Cache(config={'CACHE_TYPE': 'simple', 'CACHE_DEFAULT_TIMEOUT': application.config['CACHE_DEFAULT_TIMEOUT']})
 cache.init_app(application)
 
 ma = Marshmallow(application)
@@ -123,9 +123,9 @@ configure_logging(application)
 # Office.build_cache()
 
 # Init mail service
-from app.utilities.email import mail
-mail.init_app(application)
-application.extensions['mail'].debug = 0
+# from app.utilities.email import mail
+# mail.init_app(application)
+# application.extensions['mail'].debug = 0
 
 
 #  Code to determine all db.engine properties and sub-properties, as necessary.

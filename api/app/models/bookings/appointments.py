@@ -19,6 +19,7 @@ from sqlalchemy import func, or_
 from datetime import datetime, timedelta
 from dateutil.parser import parse
 from dateutil import tz
+from app.utilities.date_util import current_pacific_time
 
 
 class Appointment(Base):
@@ -58,16 +59,15 @@ class Appointment(Base):
         """Find next day appointments."""
         from app.models.theq import Office, PublicUser, Citizen, Timezone
 
-        tomorrow = datetime.now() + timedelta(days=1)
-        tomorrow = tomorrow.astimezone(tz.tzlocal())
+        tomorrow = current_pacific_time() + timedelta(days=1)
         query = db.session.query(Appointment, Office, Timezone, PublicUser). \
             join(Citizen, Citizen.citizen_id == Appointment.citizen_id). \
             join(Office, Office.office_id == Appointment.office_id). \
             join(Timezone, Timezone.timezone_id == Office.timezone_id). \
             outerjoin(PublicUser, PublicUser.user_id == Citizen.user_id). \
             filter(func.date_trunc('day',
-                                   func.timezone(Timezone.timezone_name,Appointment.start_time)) ==
-                   func.date_trunc('day',  tomorrow))
+                                   func.timezone(Timezone.timezone_name, Appointment.start_time)) ==
+                   tomorrow.strftime("%Y-%m-%d 00:00:00"))
 
         return query.all()
 

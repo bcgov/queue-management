@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import logging
-from flask import request, g, abort, copy_current_request_context
+from flask import request, g, abort
 from flask_restx import Resource
 from qsystem import api, db, oidc
 from app.models.bookings import Appointment
@@ -22,8 +22,8 @@ from app.schemas.bookings import AppointmentSchema
 from app.utilities.snowplow import SnowPlow
 from app.utilities.auth_util import is_public_user
 from app.utilities.auth_util import Role, has_any_role
-from app.utilities.email import send_email, get_confirmation_email_contents
-from threading import Thread
+from app.utilities.email import send_email, get_confirmation_email_contents, generate_ches_token
+from pprint import pprint
 from app.services import AvailabilityService
 from dateutil.parser import parse
 
@@ -90,13 +90,11 @@ class AppointmentPut(Resource):
         db.session.commit()
 
         # Send confirmation email
-        @copy_current_request_context
-        def async_email(subject, email, sender, body):
-            send_email(subject, email, sender, body)
-
-        thread = Thread(target=async_email, args=get_confirmation_email_contents(appointment, office, office.timezone, user))
-        thread.daemon = True
-        thread.start()
+        try:
+            pprint('Sending email for appointment update')
+            send_email(generate_ches_token(), *get_confirmation_email_contents(appointment, office, office.timezone, user))
+        except Exception as exc:
+            pprint(f'Error on token generation - {exc}')
 
         #   Make Snowplow call.
         schema = 'appointment_update'
