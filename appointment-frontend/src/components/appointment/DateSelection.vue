@@ -127,22 +127,27 @@ export default class DateSelection extends Mixins(StepperMixin) {
    private async mounted () {
      if (this.isOnCurrentStep) {
        if (this.currentOffice?.office_id) {
-         // console.log('before availableAppoinments', this.currentOffice.service_id)
-         const availableAppoinments = await this.getAvailableAppointmentSlots({
-           officeId: this.currentOffice.office_id,
-           serviceId: this.currentService.service_id
-         })
-         Object.keys(availableAppoinments).forEach(date => {
-           if (availableAppoinments[date]?.length) {
-             this.availableDates.push(CommonUtils.getTzFormattedDate(new Date(date), this.currentOfficeTimezone))
-           }
-         })
+         this.getAvailableService()
        }
        this.selectedDate = CommonUtils.getTzFormattedDate(this.currentAppointmentSlot?.start_time, this.currentOfficeTimezone)
        this.dateClicked()
      }
    }
 
+   private async getAvailableService () {
+     // console.log('before availableAppoinments', this.currentOffice.service_id)
+     const availableAppoinments = await this.getAvailableAppointmentSlots({
+       officeId: this.currentOffice.office_id,
+       serviceId: this.currentService.service_id
+     })
+     console.log('availableAppoinments', availableAppoinments)
+
+     Object.keys(availableAppoinments).forEach(date => {
+       if (availableAppoinments[date]?.length) {
+         this.availableDates.push(CommonUtils.getTzFormattedDate(new Date(date), this.currentOfficeTimezone))
+       }
+     })
+   }
    private getAllowedDates (val) {
      return this.availableDates.find(date => date === val)
    }
@@ -183,6 +188,9 @@ export default class DateSelection extends Mixins(StepperMixin) {
        }
      } catch (error) {
        this.isLoading = false
+
+       this.getAvailableService()
+       this.dateClicked()
        // this.dialogPopup.showDialog = true
        // this.dialogPopup.isSuccess = false
        // this.dialogPopup.title = 'Failed!'

@@ -216,14 +216,20 @@ export default class OfficeModule extends VuexModule {
       is_draft: true
     }
     let response
-    // let deleteResponse
+    let deleteResponse
 
     if (this.context.state['currentDraftAppointment']?.appointment_id) {
     //   // deleteResponse =
-    // await
-      AppointmentService.deleteDraftAppointment(this.context.state['currentDraftAppointment'].appointment_id)
+      try {
+        deleteResponse = await AppointmentService.deleteDraftAppointment(this.context.state['currentDraftAppointment'].appointment_id)
+        if (deleteResponse.data) {
+          this.context.commit('setCurrentDraftAppointment', {})
+        }
+      } catch (error) {
+        console.log('error', error)
+      }
     }
-
+    console.log('after catch')
     // } else {
     response = await AppointmentService.createDraftAppointment(appointmentBody)
     // }
