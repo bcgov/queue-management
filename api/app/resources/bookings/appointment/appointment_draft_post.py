@@ -75,7 +75,7 @@ class AppointmentDraftPost(Resource):
         # Ensure there's no race condition when submitting a draft
         if not AvailabilityService.has_available_slots(office=office, start_time=start_time, end_time=end_time, service=service):
                 return {"code": "CONFLICT_APPOINTMENT",
-                        "message": "Cannot create draft appointment due to conflict in time"}, 400
+                        "message": "Cannot create appointment due to scheduling conflict.  Please pick another time."}, 400
         
         # Set draft specific data
         json_data['is_draft'] = True
