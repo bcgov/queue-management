@@ -23,15 +23,13 @@ from flask import Flask
 
 import config
 from utils.logging import setup_logging
-from flask_mail import Mail
-from flask_mail import Message
 from jinja2 import Environment, FileSystemLoader
 import time
 import jinja2, sys
+from app.utilities.ches_email import send_email, generate_ches_token
+
 
 setup_logging(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'logging.conf'))  # important to do this first
-
-mail = Mail()  # pylint: disable=invalid-name
 
 
 def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
@@ -60,7 +58,6 @@ def register_shellcontext(app):
 def run():
     application = create_app()
     application.app_context().push()
-    mail.init_app(application)
 
     send_reminders(application)
 
@@ -68,6 +65,8 @@ def run():
 def send_reminders(app):
     """Send email reminders for next day appointments."""
     app.logger.debug('<<< Starting job')
+    # CHES token
+    ches_token = generate_ches_token()
 
     # Create a keycloak service account token to call the appointment api
     token_url = app.config.get('OIDC_PROVIDER_TOKEN_URL')  # https://sso-dev.pathfinder.gov.bc.ca/auth/realms/fcf0kpqr/protocol/openid-connect/token
@@ -118,15 +117,14 @@ def send_reminders(app):
                                        duration=appointment.get('duration'),
                                        telephone=appointment.get('telephone'),
                                        url=app_url)
-                msg = Message(subject, sender=sender, recipients=appointment.get('email').split())
-                msg.html = body
-                mail.send(msg)
+                send_email(ches_token, subject, appointment.get('email'), sender, body)
                 email_count += 1
-            except Exception as e:
-                print(e) #log and continue
 
-            print('Pausing for a minute')
+            except Exception as e:
+                print(e)  # log and continue
+
             if email_count == max_email_per_batch:
+                print('Pausing for a minute')
                 time.sleep(60)
                 email_count = 0
 
