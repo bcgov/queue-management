@@ -226,10 +226,10 @@ export default class OfficeModule extends VuexModule {
           this.context.commit('setCurrentDraftAppointment', {})
         }
       } catch (error) {
-        console.log('error', error)
+        // console.log('error', error)
       }
     }
-    console.log('after catch')
+
     // } else {
     response = await AppointmentService.createDraftAppointment(appointmentBody)
     // }
