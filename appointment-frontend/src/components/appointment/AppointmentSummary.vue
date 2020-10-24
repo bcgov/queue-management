@@ -248,7 +248,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
 
   private goToTime () {
     this.dialogPopup.showDialog = false
-    this.gotoStep(3)
+    this.stepBack()
   }
 
   private getMapUrl (location) {
