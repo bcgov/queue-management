@@ -140,7 +140,6 @@ export default class DateSelection extends Mixins(StepperMixin) {
        officeId: this.currentOffice.office_id,
        serviceId: this.currentService.service_id
      })
-     console.log('availableAppoinments', availableAppoinments)
 
      Object.keys(availableAppoinments).forEach(date => {
        if (availableAppoinments[date]?.length) {
