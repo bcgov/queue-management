@@ -229,7 +229,6 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
       }
       this.isLoading = false
     } catch (error) {
-      console.log('confirmAppointment submit error', { error })
       this.isLoading = false
       this.dialogPopup.showDialog = true
       this.dialogPopup.isSuccess = false
