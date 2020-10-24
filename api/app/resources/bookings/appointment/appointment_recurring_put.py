@@ -15,7 +15,7 @@ limitations under the License.'''
 import logging
 from flask import request, g
 from flask_restx import Resource
-from qsystem import api, db, oidc
+from qsystem import api, db, oidc, socketio
 from app.models.bookings import Appointment
 from app.models.theq import CSR
 from app.schemas.bookings import AppointmentSchema
@@ -51,6 +51,7 @@ class AppointmentRecurringPut(Resource):
                 return {"message": warning}, 422
 
             db.session.add(appointment)
+            socketio.emit('appointment_refresh')
             db.session.commit()
 
         result = self.appointment_schema.dump(appointments)

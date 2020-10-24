@@ -12,9 +12,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from threading import Thread
+from pprint import pprint
 
-from flask import abort, g, copy_current_request_context
+from flask import abort, g
 from flask_restx import Resource
 
 from app.models.bookings import Appointment
@@ -22,22 +22,20 @@ from app.models.theq import CSR, PublicUser, Citizen, Office
 from app.schemas.bookings import AppointmentSchema
 from app.utilities.auth_util import Role, has_any_role
 from app.utilities.auth_util import is_public_user
-from app.utilities.email import get_cancel_email_contents, send_email
+from app.utilities.email import get_cancel_email_contents, send_email, generate_ches_token
 from app.utilities.snowplow import SnowPlow
-from qsystem import api, db, oidc
-
+from qsystem import api, db, oidc, socketio
 
 @api.route("/appointments/<int:id>/", methods=["DELETE"])
 class AppointmentDelete(Resource):
-
     appointment_schema = AppointmentSchema()
 
     @oidc.accept_token(require_token=True)
     @has_any_role(roles=[Role.internal_user.value, Role.online_appointment_user.value])
     def delete(self, id):
 
-        appointment = Appointment.query.filter_by(appointment_id=id)\
-                                       .first_or_404()
+        appointment = Appointment.query.filter_by(appointment_id=id) \
+            .first_or_404()
 
         csr = None if is_public_user() else CSR.find_by_username(g.oidc_token_info['username'])
 
@@ -49,6 +47,7 @@ class AppointmentDelete(Resource):
                 abort(403)
 
         SnowPlow.snowplow_appointment(None, csr, appointment, 'appointment_delete')
+        socketio.emit('appointment_refresh')
 
         db.session.delete(appointment)
         db.session.commit()
@@ -58,13 +57,10 @@ class AppointmentDelete(Resource):
             office = Office.find_by_id(appointment.office_id)
 
             # Send blackout email
-            @copy_current_request_context
-            def async_email(subject, email, sender, body):
-                send_email(subject, email, sender, body)
-
-            thread = Thread(target=async_email, args=get_cancel_email_contents(appointment, user, office, office.timezone))
-            thread.daemon = True
-            thread.start()
+            try:
+                pprint('Sending email for appointment cancellation')
+                send_email(generate_ches_token(), *get_cancel_email_contents(appointment, user, office, office.timezone))
+            except Exception as exc:
+                pprint(f'Error on token generation - {exc}')
 
         return {}, 204
-

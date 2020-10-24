@@ -270,6 +270,7 @@ export const commonActions: any = {
             booking.fees = b.fees
             booking.shadow_invigilator_id = b.shadow_invigilator_id
             booking.blackout_flag = b.blackout_flag
+            booking.is_draft = b.is_draft
             booking.blackout_notes = b.blackout_notes
             booking.recurring_uuid = b.recurring_uuid
             calendarEvents.push(booking)

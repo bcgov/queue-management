@@ -60,6 +60,9 @@ export default class Appointments extends Vue {
   @appointmentsModule.Action('getChannels') public getChannels: any
   @appointmentsModule.Action('getServices') public getServices: any
 
+  @appointmentsModule.Action('postDraftAppointment') public postDraftAppointment: any
+  @appointmentsModule.Action('deleteDraftAppointment') public deleteDraftAppointment: any
+
   @appointmentsModule.Mutation('setCalendarSetup') public setCalendarSetup: any
   @appointmentsModule.Mutation('setEditedStatus') public setEditedStatus: any
   @appointmentsModule.Mutation('toggleApptBookingModal') public toggleApptBookingModal: any
@@ -84,6 +87,12 @@ export default class Appointments extends Vue {
         el.css('background-color', '#000000')
         el.css('border-color', '#000000')
         el.css('color', 'white')
+      } else if (evt.is_draft === true) {
+        el.css('font-size', '.9rem')
+        el.css('max-width', '85%')
+        el.css('background-color', 'lightgray')
+        el.css('border-color', 'darkgray')
+        el.css('color', 'black')
       } else {
         el.css('font-size', '.9rem')
         el.css('max-width', '85%')
@@ -212,6 +221,7 @@ export default class Appointments extends Vue {
     }
     this.clickedTime = e
     this.setTempEvent(e)
+    console.log('select event')
     this.toggleApptBookingModal(true)
     this.blockEventSelect = false
   }
@@ -229,6 +239,15 @@ export default class Appointments extends Vue {
   }
 
   removeTempEvent () {
+    this.deleteDraftAppointment().then((resp) => {
+
+      // this.getAppointments().then(() => {
+      //   // finish()
+      //   // this.$store.commit('toggleServeCitizenSpinner', false)
+      //   // setTimeout(() => { this.toggleSubmitClicked(false) }, 2000)
+      // })
+    })
+
     this.$refs.appointments.fireMethod('removeEvents', ['_tempEvent'])
   }
 
@@ -249,6 +268,23 @@ export default class Appointments extends Vue {
       color: 'pink',
       id: '_tempEvent'
     }
+
+    // for draft
+    const data: any = {
+      start_time: moment.utc(start).format(),
+      // setting end time aftger 15 min of start to fix over appoinment time
+      end_time: moment(start).clone().add(15, 'minutes')// moment.utc(end).format()
+      // service_id: 27,
+      // is_draft: true
+    }
+    // this.postDraftAppointment(data)
+    this.postDraftAppointment(data).then((resp) => {
+      // this.getAppointments().then(() => {
+      //   // finish()
+      //   // this.$store.commit('toggleServeCitizenSpinner', false)
+      //   // setTimeout(() => { this.toggleSubmitClicked(false) }, 2000)
+      // })
+    })
     this.$refs.appointments.fireMethod('renderEvent', e)
   }
 

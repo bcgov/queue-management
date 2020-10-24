@@ -25,11 +25,13 @@
         "REMINDER_ENDPOINT": "${REMINDER_ENDPOINT}",
         "SERVICE_ACCOUNT_ID": "${SERVICE_ACCOUNT_ID}",
         "SERVICE_ACCOUNT_SECRET": "${SERVICE_ACCOUNT_SECRET}",
-        "MAIL_SERVER": "${MAIL_SERVER}",
-        "MAIL_PORT": "${MAIL_PORT}",
         "MAIL_FROM_ID": "${MAIL_FROM_ID}",
         "EMAIL_APPOINTMENT_APP_URL": "${EMAIL_APPOINTMENT_APP_URL}",
-        "MAX_EMAIL_PER_BATCH": "${MAX_EMAIL_PER_BATCH}"
+        "MAX_EMAIL_PER_BATCH": "${MAX_EMAIL_PER_BATCH}",
+        "CHES_SSO_TOKEN_URL": "${CHES_SSO_TOKEN_URL}",
+        "CHES_SSO_CLIENT_ID": "${CHES_SSO_CLIENT_ID}",
+        "CHES_SSO_CLIENT_SECRET": "${CHES_SSO_CLIENT_SECRET}",
+        "CHES_POST_EMAIL_ENDPOINT": "${CHES_POST_EMAIL_ENDPOINT}"
       }
     }
   ],
@@ -85,16 +87,6 @@
       "from": "[a-zA-Z0-9]{16}"
     },
     {
-      "name": "MAIL_SERVER",
-      "description": "Smtp server",
-      "required": false
-    },
-    {
-      "name": "MAIL_PORT",
-      "description": "Mail port for the smtp server",
-      "required": false
-    },
-    {
       "name": "MAIL_FROM_ID",
       "description": "Mail from address to appear on emails",
       "required": false
@@ -107,6 +99,26 @@
     {
       "name": "MAX_EMAIL_PER_BATCH",
       "description": "Maximum emails which can be sent in a minute",
+      "required": false
+    },
+    {
+      "name": "CHES_SSO_TOKEN_URL",
+      "description": "CHES token url",
+      "required": false
+    },
+    {
+      "name": "CHES_SSO_CLIENT_ID",
+      "description": "CHES service client id",
+      "required": false
+    },
+    {
+      "name": "CHES_SSO_CLIENT_SECRET",
+      "description": "CHES service client secret",
+      "required": false
+    },
+    {
+      "name": "CHES_POST_EMAIL_ENDPOINT",
+      "description": "CHES email send endpoint",
       "required": false
     }
   ]

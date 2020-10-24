@@ -1,14 +1,30 @@
-# OpenShift Template information
+# OpenShift Deploymetn information
 
-Prerequesite: Keycloak instance running and setup for authentication.
+## Prerequestites
 
-## Deployment Configuration Templates:
+1. Keycloak instance running and setup for authentication.
+Patroni: HA Postgres instance
 
-- We are using Patroni for HA Postgresql database. Please following the following instruction here to install Postgresql. https://github.com/BCDevOps/platform-services/tree/master/apps/pgsql/patroni
+2. Postgres Database
 
-- rabbit-mq-dc.yml - Creates a RabbitMQ Statefull set. Used for to support high availability API interactivity. This syncs the requests between pods.
-- queue-management-api-dc.yml - Creates the queue management API Pods. Please note that this also creates a Config Map that needs to be updated with your Openshift & Keycloak variables.
+* We are using Patroni for HA Postgresql database. Instructions on install can be found here: https://github.com/BCDevOps/platform-services/tree/master/apps/pgsql/patroni
+* Assumption is that patroni service is called: patroni-master
+
+3. Rabbit MQ instance is running
+
+* We are using the following installation: https://github.com/redhat-cop/containers-quickstarts/tree/master/rabbitmq
+* We assume the installation the rabbit service is called: rabbitmq
+* Used for to support high availability API interactivity. This syncs the requests between multiple API pods.
+
+
+## Deployment Configuration
+
+### Installation for basic Queue Management
+
 - queue-management-frontend-dc.yml - Creates the queue management Front End Pods. Please note that this also creates a Config Map that needs to be updated with your Openshift & Keycloak variables.
+- queue-management-api-dc.yml - Creates the queue management API Pods. Please note that this also creates a Config Map that needs to be updated with your Openshift & Keycloak variables.
+
+### Installation for Appointments on Online
 
 ## Build Configuration Templates
 

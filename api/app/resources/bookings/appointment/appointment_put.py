@@ -13,19 +13,20 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import logging
-from flask import request, g, abort, copy_current_request_context
+from flask import request, g, abort
 from flask_restx import Resource
 from qsystem import api, db, oidc
 from app.models.bookings import Appointment
-from app.models.theq import CSR, PublicUser, Citizen, Office
+from app.models.theq import CSR, PublicUser, Citizen, Office, Service
 from app.schemas.bookings import AppointmentSchema
 from app.utilities.snowplow import SnowPlow
 from app.utilities.auth_util import is_public_user
 from app.utilities.auth_util import Role, has_any_role
-from app.utilities.email import send_email, get_confirmation_email_contents
-from threading import Thread
+from app.utilities.email import send_email, get_confirmation_email_contents, generate_ches_token
+from pprint import pprint
 from app.services import AvailabilityService
 from dateutil.parser import parse
+from qsystem import socketio
 
 
 @api.route("/appointments/<int:id>/", methods=["PUT"])
@@ -42,6 +43,12 @@ class AppointmentPut(Resource):
         if not json_data:
             return {"message": "No input data received for updating an appointment"}
         is_public_user_appt = is_public_user()
+
+        # Should delete draft appointment, and free up slot, before booking.
+        # Clear up a draft if one was previously created by user reserving this time.
+        if json_data['appointment_draft_id']:
+            Appointment.delete_draft([int(json_data['appointment_draft_id'])])
+
         if is_public_user_appt:
             office_id = json_data.get('office_id')
             office = Office.find_by_id(office_id)
@@ -60,9 +67,11 @@ class AppointmentPut(Resource):
             # Check for race condition
             start_time = parse(json_data.get('start_time'))
             end_time = parse(json_data.get('end_time'))
-            if not AvailabilityService.has_available_slots(office=office, start_time=start_time, end_time=end_time):
+            service_id = json_data.get('service_id')
+            service = Service.query.get(int(service_id))
+            if not AvailabilityService.has_available_slots(office=office, start_time=start_time, end_time=end_time, service=service):
                 return {"code": "CONFLICT_APPOINTMENT",
-                        "message": "Cannot create appointment due to conflict in time"}, 400
+                        "message": "Cannot create appointment due to scheduling conflict.  Please pick another time."}, 400
 
         else:
             csr = CSR.find_by_username(g.oidc_token_info['username'])
@@ -77,6 +86,7 @@ class AppointmentPut(Resource):
         if is_public_user_appt:
             citizen = Citizen.find_citizen_by_id(appointment.citizen_id)
             user = PublicUser.find_by_username(g.oidc_token_info['username'])
+            # Should just match based on appointment_id and other info.  Can't have proper auth yet.
             if citizen.user_id != user.user_id:
                 abort(403)
 
@@ -90,13 +100,11 @@ class AppointmentPut(Resource):
         db.session.commit()
 
         # Send confirmation email
-        @copy_current_request_context
-        def async_email(subject, email, sender, body):
-            send_email(subject, email, sender, body)
-
-        thread = Thread(target=async_email, args=get_confirmation_email_contents(appointment, office, office.timezone, user))
-        thread.daemon = True
-        thread.start()
+        try:
+            pprint('Sending email for appointment update')
+            send_email(generate_ches_token(), *get_confirmation_email_contents(appointment, office, office.timezone, user))
+        except Exception as exc:
+            pprint(f'Error on token generation - {exc}')
 
         #   Make Snowplow call.
         schema = 'appointment_update'
@@ -106,6 +114,8 @@ class AppointmentPut(Resource):
         SnowPlow.snowplow_appointment(None, csr, appointment, schema)
 
         result = self.appointment_schema.dump(appointment)
+
+        socketio.emit('appointment_refresh')
 
         return {"appointment": result.data,
                 "errors": result.errors}, 200

@@ -81,6 +81,7 @@ class Office(Base):
     telephone = db.Column(db.String(20))
     # disable_online_appointment = db.Column(db.Boolean, default=False)
     online_status = db.Column(Enum(Status))
+    number_of_dlkt = db.Column(db.Integer, nullable=True)
 
     counters = db.relationship("Counter", secondary='office_counter')
     services = db.relationship("Service", secondary='office_service')
@@ -147,4 +148,4 @@ class Office(Base):
     def clear_offices_cache(cls):
         """Clear active offices cache."""
         cache.delete(Office.offices_cache_key)
-        Office.get_all_active_offices()
+        # Office.get_all_active_offices()

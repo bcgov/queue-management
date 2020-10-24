@@ -92,6 +92,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+queue-env/
 
 # Spyder project settings
 .spyderproject
@@ -141,6 +142,7 @@ api/wait-for-it.sh
 /.env-Names
 /.env-Localhost
 /*.sh
+*.private.*
 
 # Secrets generated for Mender
 keys-generated

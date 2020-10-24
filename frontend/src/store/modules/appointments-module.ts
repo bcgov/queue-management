@@ -30,7 +30,9 @@ export default {
     showAppointmentBlackoutModal: false,
     showCheckInModal: false,
     services: [],
-    submitClicked: false
+    submitClicked: false,
+    draftAppointment: {}
+
   },
   getters: {
     service_name: (state, getters, rootState) => {
@@ -57,6 +59,7 @@ export default {
             comments: apt.comments,
             color: '#B5E0B8',
             blackout_flag: apt.blackout_flag,
+            is_draft: apt.is_draft,
             recurring_uuid: apt.recurring_uuid,
             online_flag: apt.online_flag
           })
@@ -175,6 +178,7 @@ export default {
     postAppointment ({ rootState }, payload) {
       const state = rootState
       payload.office_id = rootState.user.office_id
+      payload.appointment_draft_id = 1
       return new Promise((resolve, reject) => {
         Axios({ state }).post('/appointments/', payload).then(resp => {
           resolve(resp)
@@ -241,7 +245,7 @@ export default {
     putRecurringAppointment ({ dispatch, rootState }, payload) {
       const state = rootState
       const uuid = payload.recurring_uuid
-      console.log('PUT DATA', payload)
+
       return new Promise((resolve, reject) => {
         Axios({ state }).put(`/appointments/recurring/${uuid}`, payload.data).then(resp => {
           dispatch('getAppointments')
@@ -313,7 +317,47 @@ export default {
       if (payload) {
         commit('switchAddModalMode', 'add_mode', { root: true })
       }
+    },
+
+    // toggleApptBookingModalWithDraft ({ commit }, payload) {
+    //   commit('toggleApptBookingModal', payload, { root: true })
+    //   if (payload) {
+    //     // commit('switchAddModalMode', 'add_mode', { root: true })
+    //   }
+    // },
+    async postDraftAppointment ({ rootState, commit }, payload) {
+      const state = rootState
+      // console.log('currentState', currentState)
+      // draftAppointments
+      payload.office_id = rootState.user.office_id
+      return new Promise((resolve, reject) => {
+        Axios({ state }).post('/appointments/draft', payload).then(resp => {
+          console.log('resp', resp)
+          commit('setDraftAppointments', resp.data)
+          resolve(resp)
+        })
+      })
+    },
+    // need to set draft appointment id
+    deleteDraftAppointment ({ dispatch, rootState, state, commit }) {
+      // const state = rootState
+      console.log('state', state)
+      console.log('state.draftAppointment', state.draftAppointment)
+      const draftAppointmentId = state.draftAppointment.appointment && state.draftAppointment.appointment.appointment_id
+      console.log('draftAppointmentId', draftAppointmentId)
+      if (draftAppointmentId) {
+        return new Promise((resolve, reject) => {
+          Axios({ state: rootState }).delete(`/appointments/draft/${draftAppointmentId}/`).then((resp) => {
+            commit('setDraftAppointments', {})
+            resolve(resp)
+            // dispatch('getAppointments').then(() => {
+            //   resolve()
+            // })
+          })
+        })
+      }
     }
+
   },
   mutations: {
     setEditedStatus: (state, payload) => state.editing = payload,
@@ -332,6 +376,7 @@ export default {
       state.selectedService = payload
     },
     setRescheduling: (state, payload) => state.apptRescheduling = payload,
-    toggleAppointmentBlackoutModal: (state, payload) => state.showAppointmentBlackoutModal = payload
+    toggleAppointmentBlackoutModal: (state, payload) => state.showAppointmentBlackoutModal = payload,
+    setDraftAppointments: (state, payload) => state.draftAppointment = payload
   }
 }

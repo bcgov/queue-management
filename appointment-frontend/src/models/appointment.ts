@@ -14,6 +14,8 @@ export interface AppointmentRequestBody {
   comments: string
   office_id: number
   user_id: number
+  is_draft?:boolean
+  appointment_draft_id?:number
 }
 
 export interface Appointment {
