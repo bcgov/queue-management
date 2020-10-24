@@ -81,7 +81,7 @@ export default class App extends Vue {
 
   private async initSetup () {
     // eslint-disable-next-line no-console
-    console.log('this.isAuthenticated ', this.isAuthenticated)
+
     if (this.isAuthenticated) {
       await this.loadUserInfo()
       await this.getUser()
