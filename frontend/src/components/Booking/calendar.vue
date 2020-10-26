@@ -348,11 +348,15 @@ export default class Calendar extends Vue {
   }
 
   agendaDay () {
-    this.$refs.bookingcal.fireMethod('changeView', 'agendaDay')
+    if (this.$refs.bookingcal) {
+      this.$refs.bookingcal.fireMethod('changeView', 'agendaDay')
+    }
   }
 
   agendaWeek () {
-    this.$refs.bookingcal.fireMethod('changeView', 'agendaWeek')
+    if (this.$refs.bookingcal) {
+      this.$refs.bookingcal.fireMethod('changeView', 'agendaWeek')
+    }
   }
 
   cancel () {
@@ -462,7 +466,9 @@ export default class Calendar extends Vue {
   }
 
   goToDate (date) {
-    this.$refs.bookingcal.fireMethod('gotoDate', date)
+    if (this.$refs.bookingcal) {
+      this.$refs.bookingcal.fireMethod('gotoDate', date)
+    }
   }
 
   initialize () {
@@ -472,19 +478,27 @@ export default class Calendar extends Vue {
   }
 
   month () {
-    this.$refs.bookingcal.fireMethod('changeView', 'month')
+    if (this.$refs.bookingcal) {
+      this.$refs.bookingcal.fireMethod('changeView', 'month')
+    }
   }
 
   next () {
-    this.$refs.bookingcal.fireMethod('next')
+    if (this.$refs.bookingcal) {
+      this.$refs.bookingcal.fireMethod('next')
+    }
   }
 
   options (option) {
-    this.$refs.bookingcal.fireMethod('option', option.name, option.value)
+    if (this.$refs.bookingcal) {
+      this.$refs.bookingcal.fireMethod('option', option.name, option.value)
+    }
   }
 
   prev () {
-    this.$refs.bookingcal.fireMethod('prev')
+    if (this.$refs.bookingcal) {
+      this.$refs.bookingcal.fireMethod('prev')
+    }
   }
 
   removeSavedSelection () {
@@ -606,7 +620,9 @@ export default class Calendar extends Vue {
   }
 
   today () {
-    this.$refs.bookingcal.fireMethod('today')
+    if (this.$refs.bookingcal) {
+      this.$refs.bookingcal.fireMethod('today')
+    }
   }
 
   toggleOffsiteOnly (mode) {

@@ -1,8 +1,9 @@
 <template>
   <div>
+    <!-- removed shown -->
+    <!-- @shown="showModal" -->
     <b-modal
       v-model="modalVisible"
-      @shown="showModal"
       :no-close-on-backdrop="true"
       hide-header
       size="md"

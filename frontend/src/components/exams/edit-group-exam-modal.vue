@@ -330,7 +330,7 @@
               v-for="current in this.currentInvigilatorList"
               style="justify-content: center"
               class="mb-1"
-              v-bind:key="current"
+              v-bind:key="current.name"
             >
               {{ current.name }}
             </b-row>
@@ -400,7 +400,7 @@
                     v-for="current in this.currentInvigilatorList"
                     style="justify-content: center"
                     class="mb-1"
-                    v-bind:key="current"
+                    v-bind:key="current.name"
                   >
                     {{ current.name }}
                   </b-row>
@@ -411,7 +411,7 @@
                 <b-row
                   v-for="select in selected"
                   style="justify-content: center"
-                  v-bind:key="select"
+                  v-bind:key="select.name"
                 >
                   {{ select.name }}
                 </b-row>
@@ -602,7 +602,7 @@
                         v-for="select in selectedShadow"
                         style="justify-content: center"
                         class="mb-0"
-                        v-bind:key="select"
+                        v-bind:key="select.name"
                       >
                         {{ select.name }}
                       </b-row>
@@ -793,12 +793,12 @@ export default class EditGroupExamBookingModal extends Vue {
 
   get titleText () {
     switch (this.examType) {
-    case 'group':
-      return 'Group'
-    case 'challenger':
-      return 'Monthly Session'
-    default:
-      return 'Other'
+      case 'group':
+        return 'Group'
+      case 'challenger':
+        return 'Monthly Session'
+      default:
+        return 'Other'
     }
   }
 

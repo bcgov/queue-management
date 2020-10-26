@@ -332,7 +332,6 @@ export default {
       payload.office_id = rootState.user.office_id
       return new Promise((resolve, reject) => {
         Axios({ state }).post('/appointments/draft', payload).then(resp => {
-          console.log('resp', resp)
           commit('setDraftAppointments', resp.data)
           resolve(resp)
         })
@@ -341,10 +340,9 @@ export default {
     // need to set draft appointment id
     deleteDraftAppointment ({ dispatch, rootState, state, commit }) {
       // const state = rootState
-      console.log('state', state)
-      console.log('state.draftAppointment', state.draftAppointment)
+
       const draftAppointmentId = state.draftAppointment.appointment && state.draftAppointment.appointment.appointment_id
-      console.log('draftAppointmentId', draftAppointmentId)
+
       if (draftAppointmentId) {
         return new Promise((resolve, reject) => {
           Axios({ state: rootState }).delete(`/appointments/draft/${draftAppointmentId}/`).then((resp) => {
