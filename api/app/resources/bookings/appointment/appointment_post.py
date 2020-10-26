@@ -50,7 +50,7 @@ class AppointmentPost(Resource):
 
         # Should delete draft appointment, and free up slot, before booking.
         # Clear up a draft if one was previously created by user reserving this time.
-        if json_data['appointment_draft_id']:
+        if json_data.get('appointment_draft_id'):
             Appointment.delete_draft([int(json_data['appointment_draft_id'])])
 
         is_blackout_appt = json_data.get('blackout_flag', 'N') == 'Y'
