@@ -10,12 +10,13 @@
         :show="this.alertMessage != ''"
         style="h-align: center"
         variant="warning"
-      >{{this.alertMessage}}</b-alert>
+        >{{ this.alertMessage }}</b-alert
+      >
       <div class="modal_header" v-dragged="onDrag">
         <div>
-          <h4
-            style="font-weight:900; color:#6e6e6e"
-          >{{ simplifiedModal ? 'Exams Time Tracking' : 'Serve Citizen' }}</h4>
+          <h4 style="font-weight: 900; color: #6e6e6e">
+            {{ simplifiedModal ? 'Exams Time Tracking' : 'Serve Citizen' }}
+          </h4>
         </div>
         <div>
           <button class="btn btn-link" @click="toggleFeedback">Feedback</button>
@@ -23,7 +24,9 @@
             class="btn btn-link"
             style="margin-left: 20px"
             @click="toggleMinimize"
-          >{{ minimizeWindow ? "Maximize" : "Minimize" }}</button>
+          >
+            {{ minimizeWindow ? 'Maximize' : 'Minimize' }}
+          </button>
         </div>
       </div>
       <template v-if="!simplifiedModal">
@@ -31,24 +34,24 @@
           <b-row no-gutters class="p-2">
             <b-col col cols="4">
               <div v-if="appointment">
-                <strong>{{citizen.citizen_name}}</strong>
+                <strong>{{ citizen.citizen_name }}</strong>
               </div>
               <div>
                 <h6>
                   Ticket #:
-                  <strong>{{citizen.ticket_number}}</strong>
+                  <strong>{{ citizen.ticket_number }}</strong>
                 </h6>
               </div>
               <div>
                 <h6>
                   Channel:
-                  <strong>{{channel.channel_name}}</strong>
+                  <strong>{{ channel.channel_name }}</strong>
                 </h6>
               </div>
               <div>
                 <h6>
                   Created At:
-                  <strong>{{formatTime(citizen.start_time)}}</strong>
+                  <strong>{{ formatTime(citizen.start_time) }}</strong>
                 </h6>
               </div>
             </b-col>
@@ -71,25 +74,33 @@
         <b-container
           id="serve-top-buttons-container"
           :style="{ top: topSpace }"
-          :class="appointment ? 'serve-top-buttons-container-2' : 'serve-top-buttons-container' "
+          :class="
+            appointment
+              ? 'serve-top-buttons-container-2'
+              : 'serve-top-buttons-container'
+          "
           v-if="!minimizeWindow"
         >
           <div>
             <b-button
               @click="clickServiceBeginService"
               v-if="reception"
-              :disabled="serviceBegun===true || performingAction || commentsTooLong"
+              :disabled="
+                serviceBegun === true || performingAction || commentsTooLong
+              "
               v-bind:class="buttonStyle"
-              style="margin-right:8px; opacity:1"
+              style="margin-right: 8px; opacity: 1"
               id="serve-citizen-begin-service-button"
-            >Begin Service</b-button>
+              >Begin Service</b-button
+            >
             <b-button
               @click="clickReturnToQueue"
               v-if="reception"
               :disabled="performingAction || commentsTooLong"
               class="btn serve-btn"
               id="serve-citizen-return-to-queue-button"
-            >Return to Queue</b-button>
+              >Return to Queue</b-button
+            >
           </div>
           <div>
             <b-button
@@ -98,7 +109,8 @@
               class="btn-danger serve-btn"
               v-if="reception"
               id="serve-citizen-citizen-left-button"
-            >Citizen Left</b-button>
+              >Citizen Left</b-button
+            >
           </div>
         </b-container>
       </template>
@@ -123,13 +135,15 @@
                   v-for="counter in user.office.counters"
                   :value="counter.counter_id"
                   :key="counter.counter_id"
-                >{{counter.counter_name}}</option>
+                >
+                  {{ counter.counter_name }}
+                </option>
               </select>
               <select
                 id="priority-selection"
                 class="custom-select px-1"
                 v-model="priority_selection"
-                style="margin-right:8px;"
+                style="margin-right: 8px"
               >
                 <option value="1">High Priority</option>
                 <option value="2">Default Priority</option>
@@ -138,8 +152,11 @@
               <b-button
                 class="btn-primary serve-btn"
                 @click="clickAddService"
-                :disabled="serviceBegun===false || performingAction || commentsTooLong"
-              >Add Next Service</b-button>
+                :disabled="
+                  serviceBegun === false || performingAction || commentsTooLong
+                "
+                >Add Next Service</b-button
+              >
             </b-col>
             <b-col cols="2" />
           </b-row>
@@ -147,29 +164,37 @@
 
         <div v-if="!minimizeWindow">
           <b-container fluid id="serve-citizen-modal-footer">
-            <div style="display:flex; flex-direction:column; margin-left:10px;">
+            <div
+              style="display: flex; flex-direction: column; margin-left: 10px"
+            >
               <b-form-checkbox
                 v-model="accurate_time_ind"
-                v-if="serviceBegun===true"
+                v-if="serviceBegun === true"
                 value="0"
-                style="color:white; margin:0 0 8px;"
+                style="color: white; margin: 0 0 8px"
                 unchecked-value="1"
               >
-                <span style="font: 400 16px Myriad-Pro;">Inaccurate Time</span>
+                <span style="font: 400 16px Myriad-Pro">Inaccurate Time</span>
               </b-form-checkbox>
               <b-button
                 @click="clickServiceFinish"
-                :disabled="serviceBegun===false || performingAction || commentsTooLong"
+                :disabled="
+                  serviceBegun === false || performingAction || commentsTooLong
+                "
                 class="btn-success serve-btn"
                 id="serve-citizen-finish-button"
-              >Finish</b-button>
+                >Finish</b-button
+              >
             </div>
             <b-button
               @click="clickHold"
-              :disabled="serviceBegun===false || performingAction || commentsTooLong"
+              :disabled="
+                serviceBegun === false || performingAction || commentsTooLong
+              "
               class="btn-warning serve-btn"
               id="serve-citizen-place-on-hold-button"
-            >Place on Hold</b-button>
+              >Place on Hold</b-button
+            >
           </b-container>
         </div>
       </template>
@@ -179,27 +204,37 @@
             <b-col cols="auto">
               <b-button
                 class="btn-primary serve-btn"
-                v-if="!simplifiedModal || (simplifiedModal && simplifiedTicketStarted)"
+                v-if="
+                  !simplifiedModal ||
+                  (simplifiedModal && simplifiedTicketStarted)
+                "
                 @click="clickAddService"
-              >Add Next Service</b-button>
+                >Add Next Service</b-button
+              >
             </b-col>
           </b-row>
           <b-row no-gutters class="mt-3" align-h="end">
             <b-col cols="auto">
               <b-button
                 @click="clickSimplifiedFinish"
-                style="width: 100px;"
+                style="width: 100px"
                 class="serve-btn"
                 :variant="simplifiedTicketStarted ? 'warning' : 'success'"
                 id="serve-citizen-finish-button"
-              >{{ simplifiedTicketStarted ? 'Finish' : 'Begin'}}</b-button>
+                >{{ simplifiedTicketStarted ? 'Finish' : 'Begin' }}</b-button
+              >
               <b-button
                 @click="clickContinue"
-                style="width: 100px;"
+                style="width: 100px"
                 class="serve-btn ml-2"
                 :variant="simplifiedTicketStarted ? 'success' : 'danger'"
                 id="serve-citizen-finish-button"
-              >{{simplifiedModal && !simplifiedTicketStarted ? 'Cancel' : 'Continue'}}</b-button>
+                >{{
+                  simplifiedModal && !simplifiedTicketStarted
+                    ? 'Cancel'
+                    : 'Continue'
+                }}</b-button
+              >
             </b-col>
           </b-row>
         </b-container>
@@ -358,7 +393,7 @@ export default class ServeCitizen extends Vue {
     })
   }
 
-  channel () {
+  get channel () {
     if (!this.active_service) {
       return { channel_name: '', channel_id: '' }
     }
