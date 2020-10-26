@@ -2,33 +2,44 @@
   <b-container
     fluid
     class="add_citizen_form"
-    style="border: 1px solid dimgrey;
-                      margin: 0px;
-                      padding-left: 0px;
-                      padding-right: 0px;
-                      padding-bottom: 5px;"
+    style="
+      border: 1px solid dimgrey;
+      margin: 0px;
+      padding-left: 0px;
+      padding-right: 0px;
+      padding-bottom: 5px;
+    "
   >
     <b-form-row no-gutters class="m-0 add_citizen_table_header">
-      <b-col cols="1" style="text-align: center;" class="m-0 p-0" v-if="showQuickQIcon">To Q</b-col>
-      <b-col cols="2" style="text-align: center;" class="m-0 p-0">Serve</b-col>
-      <b-col cols="4" style="text-align: left;" class="m-0 p-0">Service</b-col>
+      <b-col
+        cols="1"
+        style="text-align: center"
+        class="m-0 p-0"
+        v-if="showQuickQIcon"
+        >To Q</b-col
+      >
+      <b-col cols="2" style="text-align: center" class="m-0 p-0">Serve</b-col>
+      <b-col cols="4" style="text-align: left" class="m-0 p-0">Service</b-col>
       <b-col
         cols="*"
-        style="text-align: left;"
+        style="text-align: left"
         class="m-0 p-0"
         v-if="!simplifiedModal"
-      >&nbsp;&nbsp;&nbsp;&nbsp;Category</b-col>
+        >&nbsp;&nbsp;&nbsp;&nbsp;Category</b-col
+      >
     </b-form-row>
 
     <b-form-row no-gutters>
       <b-col>
         <div
           id="innertable"
-          style="height: 200px;
-                    overflow-y: scroll;
-                    overflow-x: hidden;
-                    margin: 0px;
-                    background-color: #fcfcfc"
+          style="
+            height: 200px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            margin: 0px;
+            background-color: #fcfcfc;
+          "
         >
           <div id="navi">
             <template v-if="showServeCitizenSpinner">
@@ -50,7 +61,10 @@
               <template slot="queueBut" slot-scope="data" v-if="showQuickQIcon">
                 <div @click.once="sendToQueue(data.item)">
                   &nbsp;&nbsp;&nbsp;
-                  <font-awesome-icon icon="share-square" style="fontSize: 1rem; color: blue;" />
+                  <font-awesome-icon
+                    icon="share-square"
+                    style="fontsize: 1rem; color: blue"
+                  />
                 </div>
               </template>
 
@@ -58,24 +72,32 @@
               <template slot="serveBut" slot-scope="data">
                 <div @click.once="serveCustomer(data.item)">
                   &nbsp;&nbsp;&nbsp;
-                  <font-awesome-icon icon="hands-helping" style="fontSize: 1rem; color: green;" />
+                  <font-awesome-icon
+                    icon="hands-helping"
+                    style="fontsize: 1rem; color: green"
+                  />
                 </div>
               </template>
 
               <!--  Service name column. Active variant is for row selected, bind to description.  -->
               <template slot="service_name" slot-scope="data">
                 <div>
-                  <span v-bind:title="data.item.service_desc">{{data.item.service_name}}</span>
+                  <span v-bind:title="data.item.service_desc">{{
+                    data.item.service_name
+                  }}</span>
                   <div style="display: none">
-                    {{ data.item.service_id==form_data.service ?
-                    data.item._rowVariant='active' : data.item._rowVariant='' }}
+                    {{
+                      data.item.service_id == form_data.service
+                        ? (data.item._rowVariant = 'active')
+                        : (data.item._rowVariant = '')
+                    }}
                   </div>
                 </div>
               </template>
 
               <!--  This is for the category, the parent name.  -->
               <template slot="parent.service_name" slot-scope="data">
-                <div>{{data.item.parent.service_name}}</div>
+                <div>{{ data.item.parent.service_name }}</div>
               </template>
             </b-table>
           </div>
