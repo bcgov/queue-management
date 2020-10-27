@@ -36,8 +36,8 @@ class AppointmentDraftDelete(Resource):
         appointment = Appointment.query.filter_by(appointment_id=id)\
                                        .first_or_404()
 
-        socketio.emit('appointment_refresh')
         Appointment.delete_draft([id])
+        socketio.emit('appointment_refresh')
      
         return {}, 204
 

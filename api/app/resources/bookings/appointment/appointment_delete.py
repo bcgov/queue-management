@@ -47,10 +47,10 @@ class AppointmentDelete(Resource):
                 abort(403)
 
         SnowPlow.snowplow_appointment(None, csr, appointment, 'appointment_delete')
-        socketio.emit('appointment_refresh')
 
         db.session.delete(appointment)
         db.session.commit()
+        socketio.emit('appointment_refresh')
 
         # If the appointment is public user's and if staff deletes it send email
         if csr:
