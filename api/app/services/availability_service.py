@@ -107,10 +107,7 @@ class AvailabilityService():
                             if booked_slot.get('blackout_flag', False):  # If it's blackout override the no of slots
                                 actual_slot['no_of_slots'] = 0
                             else:                            
-                                # If user is looking for a DLKT service, only count DLKT slots, 
-                                # and vice-versa
-                                if (service_is_dltk == booked_slot['is_dlkt']):
-                                    actual_slot['no_of_slots'] -= 1
+                                actual_slot['no_of_slots'] -= 1
 
                             
                     if format_time:  # If true send formatted time
