@@ -221,7 +221,6 @@ export default class Appointments extends Vue {
     }
     this.clickedTime = e
     this.setTempEvent(e)
-    console.log('select event')
     this.toggleApptBookingModal(true)
     this.blockEventSelect = false
   }

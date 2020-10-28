@@ -354,6 +354,30 @@ export default {
           })
         })
       }
+    },
+
+    updateAppointments ({ commit, state }, data ) {
+
+      const { appointment, action='create' } = data
+      let output:any = []
+
+      const currentAppointment = state.appointments
+    
+      if (action==='create') {
+        output = [...currentAppointment, appointment]
+      } else if (action==='update') {
+        const  currentApp = currentAppointment.filter(app  => {
+          return app.appointment_id !== appointment.appointment_id
+        })
+        output = [...currentApp, appointment]
+        console.log('output',output)
+      } else if (action==='delete') {
+       const  currentApp = currentAppointment.filter(app  => {
+          return app.appointment_id !== appointment
+      })
+        output = currentApp
+      }
+      commit('setAppointments', output)
     }
 
   },

@@ -33,7 +33,7 @@ const appointmentsModule = namespace('appointmentsModule')
 export default class Socket extends Vue {
   @Action('screenIncomingCitizen') public screenIncomingCitizen: any
 
-  @appointmentsModule.Action('getAppointments') public getAppointments: any
+  @appointmentsModule.Action('updateAppointments') public updateAppointments: any
 
   public reconnectInterval: any = null
 
@@ -74,9 +74,19 @@ export default class Socket extends Vue {
     socket.on('clear_csr_cache', (data) => { this.onClearCsrCache(data) })
     socket.on('update_offices_cache', () => { this.onUpdateOfficesCache() })
 
-    socket.on('appointment_refresh', () => {
-      this.onUpdateAppointment()
+
+    socket.on('appointment_create', (appointment) => {
+      this.onUpdateAppointment(appointment, 'create')
     })
+
+    socket.on('appointment_update', (appointment) => {
+      this.onUpdateAppointment(appointment, 'update')
+    })
+
+    socket.on('appointment_delete', (appointment) => {
+      this.onUpdateAppointment(appointment, 'delete')
+    })
+
   }
 
   join () {
@@ -125,8 +135,9 @@ export default class Socket extends Vue {
     this.screenIncomingCitizen({ citizen, route: this.$route })
   }
 
-  onUpdateAppointment () {
-    this.getAppointments()
+
+  onUpdateAppointment (appointment, action) {
+    this.updateAppointments({ appointment, action })
   }
 
   onUpdateCustomerList () {
