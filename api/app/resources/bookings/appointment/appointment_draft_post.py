@@ -72,10 +72,17 @@ class AppointmentDraftPost(Resource):
         # Delete all expired drafts before checking availability
         Appointment.delete_expired_drafts()
 
+
+        # CSRs are not limited by drafts,  can always see other CSRs drafts
+        # This mitigates two CSRs in office creating at same time for same meeting
         # Ensure there's no race condition when submitting a draft
-        if not AvailabilityService.has_available_slots(office=office, start_time=start_time, end_time=end_time, service=service):
-                return {"code": "CONFLICT_APPOINTMENT",
-                        "message": "Cannot create appointment due to scheduling conflict.  Please pick another time."}, 400
+        if is_public_user() and not AvailabilityService.has_available_slots(
+                                    office=office, 
+                                    start_time=start_time, 
+                                    end_time=end_time, 
+                                    service=service):
+                    return {"code": "CONFLICT_APPOINTMENT",
+                            "message": "Cannot create appointment due to scheduling conflict.  Please pick another time."}, 400
         
         # Set draft specific data
         json_data['is_draft'] = True
