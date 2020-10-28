@@ -115,7 +115,7 @@ class AppointmentPut(Resource):
 
         result = self.appointment_schema.dump(appointment)
 
-        socketio.emit('appointment_refresh')
+        # socketio.emit('appointment_refresh')
 
         return {"appointment": result.data,
                 "errors": result.errors}, 200

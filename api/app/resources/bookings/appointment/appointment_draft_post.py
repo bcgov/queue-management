@@ -89,7 +89,7 @@ class AppointmentDraftPost(Resource):
 
         db.session.add(appointment)
         db.session.commit()
-        socketio.emit('appointment_refresh')
+        # socketio.emit('appointment_refresh')
 
         result = self.appointment_schema.dump(appointment)
         return {"appointment": result.data, "warning" : warning}, 201
