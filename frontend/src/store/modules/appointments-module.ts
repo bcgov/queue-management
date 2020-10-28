@@ -370,7 +370,6 @@ export default {
           return app.appointment_id !== appointment.appointment_id
         })
         output = [...currentApp, appointment]
-        console.log('output',output)
       } else if (action==='delete') {
        const  currentApp = currentAppointment.filter(app  => {
           return app.appointment_id !== appointment
