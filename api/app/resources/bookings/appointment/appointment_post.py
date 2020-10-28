@@ -163,7 +163,9 @@ class AppointmentPost(Resource):
 
             result = self.appointment_schema.dump(appointment)
 
-            # socketio.emit('appointment_refresh')
+            # TODO - Remove 1 of below
+            socketio.emit('appointment_refresh')
+            socketio.emit('appointment_create', result.data)
 
             return {"appointment": result.data,
                     "errors": result.errors}, 201

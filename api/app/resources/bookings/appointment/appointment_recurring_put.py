@@ -53,8 +53,11 @@ class AppointmentRecurringPut(Resource):
             db.session.add(appointment)
             db.session.commit()
 
-        # socketio.emit('appointment_refresh')
+
         result = self.appointment_schema.dump(appointments)
+        # TODO - Delete one of below
+        socketio.emit('appointment_refresh')
+        socketio.emit('appointment_update', result.data)
 
         return {
             "appointments": result.data,
