@@ -41,12 +41,9 @@ class AppointmentDraftPost(Resource):
 
     appointment_schema = AppointmentSchema()
     citizen_schema = CitizenSchema()
-
-    # @oidc.accept_token(require_token=True)
-    # @has_any_role(roles=[Role.internal_user.value, Role.online_appointment_user.value])
-    # @api_call_with_retry
     
-    # Un-authenticated call as it can happen before user has logged in
+    # Un-authenticated call as it can happen before user has logged in    
+    @oidc.accept_token(require_token=False)
     def post(self):
         my_print("==> In AppointmentDraftPost, POST /appointments/draft")
         json_data = request.get_json()
@@ -73,10 +70,15 @@ class AppointmentDraftPost(Resource):
         Appointment.delete_expired_drafts()
 
 
+
+        csr = None
+        if (hasattr(g, 'oidc_token_info')):
+            csr = CSR.find_by_username(g.oidc_token_info['username'])
+
         # CSRs are not limited by drafts,  can always see other CSRs drafts
         # This mitigates two CSRs in office creating at same time for same meeting
         # Ensure there's no race condition when submitting a draft
-        if is_public_user() and not AvailabilityService.has_available_slots(
+        if not csr and not AvailabilityService.has_available_slots(
                                     office=office, 
                                     start_time=start_time, 
                                     end_time=end_time, 
