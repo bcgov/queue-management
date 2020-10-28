@@ -49,8 +49,6 @@ class AppointmentDelete(Resource):
 
         db.session.delete(appointment)
         db.session.commit()
-        # TODO Delete one of below
-        socketio.emit('appointment_refresh')
         socketio.emit('appointment_delete', id)
 
         # Do not log snowplow events or send emails if it's a draft.

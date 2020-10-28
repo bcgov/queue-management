@@ -101,8 +101,6 @@ class AppointmentDraftPost(Resource):
         
         result = self.appointment_schema.dump(appointment)
 
-        # TODO Delete one of below
-        socketio.emit('appointment_refresh')
         socketio.emit('appointment_create', result.data)
 
         return {"appointment": result.data, "warning" : warning}, 201
