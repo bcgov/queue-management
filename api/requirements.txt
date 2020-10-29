@@ -25,7 +25,7 @@ flask-cors
 flask_marshmallow
 flask-socketio
 gunicorn
-marshmallow-sqlalchemy
+marshmallow-sqlalchemy==0.23.1 # 0.24 was breaking
 minio<6
 psycopg2-binary
 pysnow
