@@ -69,12 +69,20 @@ class AvailabilityService():
                         end_time = add_delta_to_time(timeslot_start_time, minutes=appointment_duration,
                                                      timezone=office.timezone.timezone_name)
                         # print(start_time, end_time)
+
+                        # Cannot exceed office timeslot slots.
+                        dlkt_slots = office.number_of_dlkt
+                        if (dlkt_slots > timeslot.no_of_slots):
+                            dlkt_slots = timeslot.no_of_slots
+
+                        # Limit DLKT slots only for DLKT services.
+                        no_of_slots = dlkt_slots if service_is_dltk else timeslot.no_of_slots
+
                         while end_time <= timeslot_end_time:
                             slot = {
                                 'start_time': start_time,
                                 'end_time': end_time,
-                                # Treat 'no_of_slots' as either CSR slots or DLKT slots depending if it's a DLTK service.
-                                'no_of_slots': office.number_of_dlkt if service_is_dltk else timeslot.no_of_slots,
+                                'no_of_slots': no_of_slots,
                             }
                             # Check if today's time is past appointment slot
                             if not (today.date() == day_in_month.date() and today.time() > start_time):
