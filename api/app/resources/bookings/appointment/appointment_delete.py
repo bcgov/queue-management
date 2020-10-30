@@ -46,6 +46,10 @@ class AppointmentDelete(Resource):
             if not citizen or citizen.citizen_id != appointment.citizen_id:
                 abort(403)
 
+        # Must call this prior to deleting from DB, so cannot 
+        # combine with repeated is_draft check below
+        if not appointment.is_draft:
+            SnowPlow.snowplow_appointment(None, csr, appointment, 'appointment_delete')
 
         db.session.delete(appointment)
         db.session.commit()
@@ -53,7 +57,6 @@ class AppointmentDelete(Resource):
 
         # Do not log snowplow events or send emails if it's a draft.
         if not appointment.is_draft:
-            SnowPlow.snowplow_appointment(None, csr, appointment, 'appointment_delete')
 
             # If the appointment is public user's and if staff deletes it send email
             if csr:
