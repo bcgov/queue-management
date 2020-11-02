@@ -167,14 +167,15 @@ export default class OfficeModule extends VuexModule {
       user_id: userId,
       appointment_draft_id: this.context.state['currentDraftAppointment'].appointment_id
     }
-
     let response
     if (this.context.rootState.isAppointmentEditMode) {
       if (this.context.state['currentAppointment']?.appointment_id) {
         response = await AppointmentService.updateAppointment(this.context.state['currentAppointment'].appointment_id, appointmentBody)
+        this.context.commit('setCurrentDraftAppointment', {})
       }
     } else {
       response = await AppointmentService.createAppointment(appointmentBody)
+      this.context.commit('setCurrentDraftAppointment', {})
     }
     return response?.data?.appointment || {}
   }
