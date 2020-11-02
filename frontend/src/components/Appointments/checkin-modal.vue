@@ -9,7 +9,17 @@
     hide-header
     size="sm"
   >
-    <div id="navi">
+
+ <b-form autocomplete="off" v-if="isDraftAppointment">
+      <b-form-row>
+        <b-col>
+          <b-form-group  class="mb-0 mt-2">
+            <label class="mb-0 no-edit">You cannot edit or delete draft appointments.</label>
+          </b-form-group>
+        </b-col>
+      </b-form-row>
+  </b-form>
+    <div id="navi" v-if="!isDraftAppointment">
       <template v-if="this.$store.state.showServeCitizenSpinner">
         <div class="q-loader2"></div>
       </template>
@@ -17,7 +27,7 @@
     <template slot="modal-footer">
       <b-button class="btn-secondary" @click="hide">Close</b-button>
     </template>
-    <b-form autocomplete="off">
+    <b-form autocomplete="off" v-if="!isDraftAppointment">
       <b-form-row>
         <b-col>
           <b-form-group v-if="isNotBlackoutFlag" class="mb-0 mt-2">
@@ -88,6 +98,13 @@ export default class CheckInModal extends Vue {
       } else if (this.clickedAppt.blackout_flag === 'N') {
         return true
       }
+    }
+    return false
+  }
+
+  get isDraftAppointment () {
+    if (this.clickedAppt && this.clickedAppt.is_draft) {
+      return true
     }
     return false
   }
@@ -174,5 +191,9 @@ export default class CheckInModal extends Vue {
   border-top-color: DodgerBlue;
   animation: spin 1s ease-in-out infinite;
   -webkit-animation: spin 1s ease-in-out infinite;
+}
+.no-edit{
+  font-size: 14px;
+  font-weight: 800;
 }
 </style>
