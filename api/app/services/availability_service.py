@@ -71,9 +71,11 @@ class AvailabilityService():
                         # print(start_time, end_time)
 
                         # Cannot exceed office timeslot slots.
-                        dlkt_slots = office.number_of_dlkt
-                        if (dlkt_slots > timeslot.no_of_slots):
+                        dlkt_slots = office.number_of_dlkt  or 0
+                        
+                        if ( dlkt_slots > timeslot.no_of_slots):
                             dlkt_slots = timeslot.no_of_slots
+                        
 
                         # Limit DLKT slots only for DLKT services.
                         no_of_slots = dlkt_slots if service_is_dltk else timeslot.no_of_slots
