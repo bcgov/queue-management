@@ -92,7 +92,6 @@ export default class CheckInModal extends Vue {
   set modalVisible (e) { this.toggleCheckInModal(e) }
 
   get isNotBlackoutFlag () {
-    console.log('this.clickedAppt', this.clickedAppt)
     if (this.clickedAppt && this.clickedAppt.blackout_flag) {
       if (this.clickedAppt.blackout_flag === 'Y') {
         return false
