@@ -377,4 +377,4 @@ parameters:
   - name: CACHE_DEFAULT_TIMEOUT
     description: "Timeout for all caches."
     required: false
-    value: 300
+    value: "300"
