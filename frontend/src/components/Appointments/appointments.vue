@@ -159,8 +159,6 @@ export default class Appointments extends Vue {
     if ((this.apptRescheduling && this.$store.state.rescheduling) || event.id === '_tempEvent') {
       return
     }
-    console.log('==> In eventSelected')
-    console.log(event)
     this.clickedAppt = event
     this.highlightEvent(event)
     this.toggleCheckInModal(true)
