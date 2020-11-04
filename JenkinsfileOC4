@@ -59,6 +59,10 @@ podTemplate(
     ]
 ){
     node(label) {
+        stage('Checkout Source') {
+            echo "checking out source"
+            checkout scm
+        }
 
         stage("Build API..") {
             script: {
