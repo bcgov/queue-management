@@ -72,19 +72,21 @@ class AvailabilityService():
 
                         # Cannot exceed office timeslot slots.
                         dlkt_slots = office.number_of_dlkt  or 0
-                        
+    
                         if ( dlkt_slots > timeslot.no_of_slots):
                             dlkt_slots = timeslot.no_of_slots
                         
 
                         # Limit DLKT slots only for DLKT services.
-                        no_of_slots = dlkt_slots if service_is_dltk else timeslot.no_of_slots
+                        # no_of_slots = dlkt_slots if service_is_dltk else timeslot.no_of_slots
+                        no_of_slots = timeslot.no_of_slots
 
                         while end_time <= timeslot_end_time:
                             slot = {
                                 'start_time': start_time,
                                 'end_time': end_time,
                                 'no_of_slots': no_of_slots,
+                                'no_of_dlkt_slots': dlkt_slots
                             }
                             # Check if today's time is past appointment slot
                             if not (today.date() == day_in_month.date() and today.time() > start_time):
@@ -99,6 +101,8 @@ class AvailabilityService():
 
                 # Check if the slots are already booked
                 for actual_slot in available_slots_per_day[formatted_date]:
+                    booked_slots = 0
+                    booked_dlkt_slots = 0
                     for booked_slot in grouped_appointments.get(formatted_date, []):
                         if booked_slot.get('start_time') \
                                 <= actual_slot.get('start_time') \
@@ -112,14 +116,24 @@ class AvailabilityService():
                             # print('>>>booked_slot.get(start_time)', booked_slot.get('start_time'))
                             # print('>>>booked_slot.get(end_time)', booked_slot.get('end_time'))
                             # print('>>>booked_slot.get(blackout_flag)', booked_slot.get('blackout_flag', False))
-                            
+
 
                             if booked_slot.get('blackout_flag', False):  # If it's blackout override the no of slots
                                 actual_slot['no_of_slots'] = 0
-                            else:                            
-                                actual_slot['no_of_slots'] -= 1
+                            else:
+                                if  booked_slot['is_dlkt']:
+                                    booked_dlkt_slots += 1
+                                else:   
+                                    booked_slots += 1               
+                    
+                    if service_is_dltk:
+                        dlkt_nos = actual_slot['no_of_dlkt_slots'] - booked_dlkt_slots
+                        actual_slot['no_of_slots'] = dlkt_nos if actual_slot['no_of_slots'] - booked_slots >= dlkt_nos else 0
+                    else:
+                       actual_slot['no_of_slots']  =  actual_slot['no_of_slots'] - (booked_slots + booked_dlkt_slots)
 
-                            
+                    del actual_slot['no_of_dlkt_slots'] # no need to expose
+                       
                     if format_time:  # If true send formatted time
                         actual_slot['start_time'] = actual_slot['start_time'].strftime('%H:%M')
                         actual_slot['end_time'] = actual_slot['end_time'].strftime('%H:%M')
