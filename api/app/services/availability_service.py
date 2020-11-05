@@ -128,17 +128,7 @@ class AvailabilityService():
                     
                     if service_is_dltk:
                         dlkt_nos = actual_slot['no_of_dlkt_slots'] - booked_dlkt_slots
-
-                        # If we are out of slots, move on.  Doesn't matter if there are DLKT slots, 
-                        # if there are no time slots, there are no slots available.
-                        if actual_slot['no_of_slots'] <= 0:
-                            pass
-                        # if we have less dlkt slots, use dlkt slots instead.  take the lower value.
-                        elif actual_slot['no_of_slots'] - booked_slots >= dlkt_nos:
-                            actual_slot['no_of_slots'] = dlkt_nos
-                        else:
-                            actual_slot['no_of_slots'] = 0
-
+                        actual_slot['no_of_slots'] = dlkt_nos if actual_slot['no_of_slots'] - booked_slots >= dlkt_nos else 0
                     else:
                        actual_slot['no_of_slots']  =  actual_slot['no_of_slots'] - (booked_slots + booked_dlkt_slots)
 
