@@ -77,20 +77,6 @@ podTemplate(
                 }
             }
         }
-        stage("Build Appt Reminder..") {
-            script: {
-                openshift.withCluster() {
-                    openshift.withProject() {
-
-                        // Find all of the build configurations associated to the application using labels ...
-                        def bc = openshift.selector("bc", "${BUILDS[5]}")
-                        echo "Started builds: ${bc.names()}"
-                        bc.startBuild("--wait").logs("-f")
-                    }
-                    echo "Appt Reminder Build complete ..."
-                }
-            }
-        }
         stage("Build Front End..") {
             script: {
                 openshift.withCluster() {
