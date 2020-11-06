@@ -69,7 +69,8 @@ class AvailabilityService():
                             }
                             # Check if today's time is past appointment slot
                             if not (today.date() == day_in_month.date() and today.time() > start_time):
-                                available_slots_per_day[formatted_date].append(slot)
+                                if slot not in available_slots_per_day[formatted_date]: 
+                                    available_slots_per_day[formatted_date].append(slot)
 
                             start_time = end_time.replace(tzinfo=tz)
                             end_time = add_delta_to_time(end_time, minutes=appointment_duration,
