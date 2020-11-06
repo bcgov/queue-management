@@ -25,17 +25,16 @@ objects:
       secrets.json: |
         {
           "web": {
-            "realm_public_key": "",
-            "issuer": "https://<keycloak server>/auth/realms/<realm>",
-            "auth_uri": "https://<keycloak server>/auth/realms/<realm>/protocol/openid-connect/auth",
-            "client_id": "",
-            "client_secret": "",
+            "realm_public_key": "${REALM_PUBLIC_KEY}",
+            "issuer": "${ISSUER}",
+            "auth_uri": "${AUTH_URI}",
+            "client_id": "${CLIENT_ID}",
+            "client_secret": "${CLIENT_SECRET}",
             "redirect_urls": [
-              ""  
             ],
-            "userinfo_uri": "https://<keycloak server>/auth/realms/<realm>/protocol/openid-connect/userinfo",
-            "token_uri": "https://<keycloak server>/auth/realms/<realm>/protocol/openid-connect/token",
-            "token_introspection_uri": "https://<keycloak server>/auth/realms/<realm>/protocol/openid-connect/token/introspect"  
+            "userinfo_uri": "${USERINFO_URI}",
+            "token_uri": "${TOKEN_URI}",
+            "token_introspection_uri": "${TOKEN_INTROSPECTION_URI}"  
           }
         }
   - apiVersion: v1
@@ -176,7 +175,7 @@ objects:
                 - name: VIDEO_PATH
                   value: /opt/app-root/src/videos
                 - name: MAIL_FROM_ID
-                  value: donotreply@gov.bc.ca
+                  value: "${MAIL_FROM_ID}"
                 - name: EMAIL_APPOINTMENT_APP_URL
                   value: "${EMAIL_APPOINTMENT_APP_URL}"
                 - name: CORS_ALLOWED_ORIGINS
@@ -195,6 +194,46 @@ objects:
                   value: "${CHES_POST_EMAIL_ENDPOINT}"
                 - name: CACHE_DEFAULT_TIMEOUT
                   value: "${CACHE_DEFAULT_TIMEOUT}"
+                - name: SERVICENOW_TENANT
+                  value: "${SERVICENOW_TENANT}"
+                - name: SERVICENOW_TABLE
+                  value: "${SERVICENOW_TABLE}"
+                - name: SERVICENOW_ASSIGN_GROUP
+                  value: "${SERVICENOW_ASSIGN_GROUP}"
+                - name: SQLALCHEMY_POOL_SIZE
+                  value: "${SQLALCHEMY_POOL_SIZE}"
+                - name: SQLALCHEMY_MAX_OVERFLOW
+                  value: "${SQLALCHEMY_MAX_OVERFLOW}"
+                - name: DATABASE_LONG_RUNNING_QUERY
+                  value: "{DATABASE_LONG_RUNNING_QUERY}"
+                - name: LOG_MYAPP_SQLTIME
+                  value: INFO
+                - name: PRINT_ENABLE
+                  value: "${PRINT_ENABLE}"
+                - name: LOG_BASIC
+                  value: WARNING
+                - name: LOG_ROOT
+                  value: WARNING
+                - name: RECURRING_FEATURE_FLAG
+                  value: "${RECURRING_FEATURE_FLAG}"
+                - name: SQLALCHEMY_POOL_PRE_PING
+                  value: "${SQLALCHEMY_POOL_PRE_PING}"
+                - name: MINIO_HOST
+                  value: "${MINIO_HOST}"
+                - name: MINIO_BUCKET
+                  value: "${MINIO_BUCKET}"
+                - name: MINIO_ACCESS_KEY
+                  value: "${MINIO_ACCESS_KEY}"
+                - name: MINIO_SECRET_KEY
+                  value: "${MINIO_SECRET_KEY}" 
+                - name: MINIO_USE_SECURE
+                  value: "${MINIO_USE_SECURE}"
+                - name: BCMP_BASE_URL
+                  value: "${BCMP_BASE_URL}"
+                - name: BCMP_AUTH_TOKEN
+                  value: "${BCMP_AUTH_TOKEN}" 
+                - name: APPOINTMENT_LIMIT_DAYS
+                  value: "${APPOINTMENT_LIMIT_DAYS}"                 
               ports:
                 - containerPort: 8080
               readinessProbe:
@@ -378,3 +417,106 @@ parameters:
     description: "Timeout for all caches."
     required: false
     value: "300"
+  - name: MINIO_HOST
+    description: "MINIO_HOST"
+    required: false
+  - name: MINIO_BUCKET
+    description: "MINIO_BUCKET"
+    required: false
+  - name: MINIO_SECRET_KEY
+    description: "MINIO_SECRET_KEY"
+    required: false
+  - name: MINIO_ACCESS_KEY
+    description: "MINIO_ACCESS_KEY"
+    required: false    
+  - name: BCMP_AUTH_TOKEN
+    description: "BCMP_AUTH_TOKEN"
+    required: true
+    value: ""
+  - name: SERVICENOW_TENANT
+    description: "SERVICENOW_TENANT"
+    required: false
+    value: ""
+  - name: SERVICENOW_TABLE
+    description: "SERVICENOW_TABLE"
+    required: false
+    value: ""
+  - name: SERVICENOW_ASSIGN_GROUP
+    description: "SERVICENOW_ASSIGN_GROUP"
+    required: false
+    value: ""
+  - name: SQLALCHEMY_POOL_SIZE
+    description: "SQLALCHEMY_POOL_SIZE"
+    required: false
+    value: ""
+  - name: SQLALCHEMY_MAX_OVERFLOW
+    description: "SQLALCHEMY_MAX_OVERFLOW"
+    required: false
+    value: ""
+  - name: DATABASE_LONG_RUNNING_QUERY
+    description: "DATABASE_LONG_RUNNING_QUERY"
+    required: false
+    value: ""
+  - name: PRINT_ENABLE
+    description: "PRINT_ENABLE"
+    required: true
+    value: ""
+  - name: RECURRING_FEATURE_FLAG
+    description: "RECURRING_FEATURE_FLAG"
+    required: true
+    value: ""
+  - name: SQLALCHEMY_POOL_PRE_PING
+    description: "SQLALCHEMY_POOL_PRE_PING"
+    required: true
+    value: ""
+  - name: MINIO_USE_SECURE
+    description: "MINIO_USE_SECURE"
+    required: true
+    value: ""
+  - name: BCMP_BASE_URL
+    description: "BCMP_BASE_URL"
+    required: true
+    value: ""
+  - name: REALM_PUBLIC_KEY
+    description: "realm_public_key"
+    required: true
+  - name: AUTH_URI
+    description: "auth_uri"
+    required: true
+    value: ""
+  - name: ISSUER
+    description: "issuer"
+    required: true
+    value: ""
+  - name: CLIENT_ID
+    description: "client_id"
+    required: true
+    value: ""
+  - name: CLIENT_SECRET
+    description: "client_secret"
+    required: true
+    value: ""
+  - name: REDIRECT_URL1
+    description: "redirect_url1"
+    required: true
+    value: ""
+  - name: REDIRECT_URL2
+    description: "redirect_url2"
+    required: true
+    value: ""
+  - name: USERINFO_URI
+    description: "userinfo_uri"
+    required: true
+    value: ""
+  - name: TOKEN_URI
+    description: "token_uri"
+    required: true
+    value: ""
+  - name: TOKEN_INTROSPECTION_URI
+    description: "token_introspection_uri"
+    required: true
+    value: ""
+  - name: APPOINTMENT_LIMIT_DAYS
+    description: "APPOINTMENT_LIMIT_DAYS"
+    required: true
+    value: ""

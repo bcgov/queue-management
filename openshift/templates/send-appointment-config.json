@@ -40,43 +40,37 @@
       "name": "NAME",
       "displayName": "Name",
       "description": "The name assigned to all of the OpenShift resources associated to the server instance.",
-      "required": true,
-      "value": "appointment-reminder"
+      "required": true
     },
     {
       "name": "APP_GROUP",
       "displayName": "App Group",
       "description": "The name assigned to all of the deployments in this project.",
-      "required": true,
-      "value": "queue-management"
+      "required": true
     },
     {
       "name": "TAG_NAME",
       "displayName": "Environment TAG name",
       "description": "The TAG name for this environment, e.g., dev, test, prod",
-      "required": true,
-      "value": "dev"
+      "required": true
     },
     {
       "name": "OIDC_PROVIDER_TOKEN_URL",
       "displayName": "Oidc token url",
       "description": "Oidc token url",
-      "required": true,
-      "value": "https://sso-dev.pathfinder.gov.bc.ca/auth/realms/vtkayq4c/protocol/openid-connect/token"
+      "required": true
     },
     {
       "name": "REMINDER_ENDPOINT",
       "displayName": "Reminder endpoint",
       "description": "Endpoint to invoke to send reminders.",
-      "required": true,
-      "value": "https://dev-theq.pathfinder.gov.bc.ca/api/v1/appointment/reminders/"
+      "required": true
     },
     {
       "name": "SERVICE_ACCOUNT_ID",
       "displayName": "Service account id",
       "description": "Service account id in oidc provider to invoke the job. This service account must have reminder_job role.",
-      "required": true,
-      "value": "appointment-reminder-client"
+      "required": true
     },
     {
       "name": "SERVICE_ACCOUNT_SECRET",
