@@ -361,8 +361,7 @@ export default {
       let output:any = []
 
       const currentAppointment = state.appointments
-      console.log('appointment', appointment)
-      console.log('rootState.user.office_id', rootState.user.office_id)
+
       if (appointment.office_id === rootState.user.office_id) {
         if (action === 'create') {
           output = [...currentAppointment, appointment]
