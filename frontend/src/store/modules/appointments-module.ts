@@ -356,27 +356,29 @@ export default {
       }
     },
 
-    updateAppointments ({ commit, state }, data ) {
-
-      const { appointment, action='create' } = data
+    updateAppointments ({ commit, state, rootState }, data) {
+      const { appointment, action = 'create' } = data
       let output:any = []
 
       const currentAppointment = state.appointments
-    
-      if (action==='create') {
-        output = [...currentAppointment, appointment]
-      } else if (action==='update') {
-        const  currentApp = currentAppointment.filter(app  => {
-          return app.appointment_id !== appointment.appointment_id
-        })
-        output = [...currentApp, appointment]
-      } else if (action==='delete') {
-       const  currentApp = currentAppointment.filter(app  => {
-          return app.appointment_id !== appointment
-      })
-        output = currentApp
+      console.log('appointment', appointment)
+      console.log('rootState.user.office_id', rootState.user.office_id)
+      if (appointment.office_id === rootState.user.office_id) {
+        if (action === 'create') {
+          output = [...currentAppointment, appointment]
+        } else if (action === 'update') {
+          const currentApp = currentAppointment.filter(app => {
+            return app.appointment_id !== appointment.appointment_id
+          })
+          output = [...currentApp, appointment]
+        } else if (action === 'delete') {
+          const currentApp = currentAppointment.filter(app => {
+            return app.appointment_id !== appointment
+          })
+          output = currentApp
+        }
+        commit('setAppointments', output)
       }
-      commit('setAppointments', output)
     }
 
   },
