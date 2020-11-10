@@ -366,10 +366,12 @@ export default {
           output = [...currentAppointment, appointment]
         }
       } else if (action === 'update') {
-        const currentApp = currentAppointment.filter(app => {
-          return app.appointment_id !== appointment.appointment_id
-        })
-        output = [...currentApp, appointment]
+        if (appointment.office_id === rootState.user.office_id) {
+          const currentApp = currentAppointment.filter(app => {
+            return app.appointment_id !== appointment.appointment_id
+          })
+          output = [...currentApp, appointment]
+        }
       } else if (action === 'delete') {
         const currentApp = currentAppointment.filter(app => {
           return app.appointment_id !== appointment
