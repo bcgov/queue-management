@@ -16,6 +16,7 @@ from qsystem import db
 from app.models.theq import Base
 import enum
 from sqlalchemy import Enum
+from app.utilities.yesno import YesNo
 
 
 class Availability(enum.Enum):
@@ -43,6 +44,8 @@ class Service(Base):
     external_service_name = db.Column(db.String(100), nullable=True)
     online_link = db.Column(db.String(200), nullable=True)
     online_availability = db.Column(Enum(Availability))
+    timeslot_duration = db.Column(db.Integer, nullable=True)
+    is_dlkt = db.Column(Enum(YesNo))
 
     offices = db.relationship("Office", secondary='office_service')
     parent = db.relationship("Service", remote_side=[service_id])

@@ -16,9 +16,11 @@ import datetime
 
 import pytz
 from flask_restx import Resource
+from flask import request
 from sqlalchemy import exc
 
 from app.models.theq import Office
+from app.models.theq import Service
 from app.services import AvailabilityService
 from qsystem import api, oidc
 
@@ -42,7 +44,12 @@ class OfficeSlots(Resource):
             # Get all the dates from today until booking is allowed
             days = [today + datetime.timedelta(days=x) for x in range(appointments_days_limit)]
 
-            return AvailabilityService.get_available_slots(office=office, days=days)
+            service = None
+            service_id = request.args.get('service_id')
+            if (service_id):
+                service = Service.query.get(int(service_id))
+
+            return AvailabilityService.get_available_slots(office=office, days=days, service=service)
 
         except exc.SQLAlchemyError as e:
             print(e)

@@ -9,6 +9,13 @@ export default class AppointmentService {
   public static async createAppointment (appointmentBody: AppointmentRequestBody): Promise<AxiosResponse<AppointmentResponse>> {
     return axios.post(`${ConfigHelper.getAppAPIUrl()}/appointments/`, appointmentBody)
   }
+  public static async createDraftAppointment (appointmentBody: AppointmentRequestBody): Promise<AxiosResponse<AppointmentResponse>> {
+    return axios.post(`${ConfigHelper.getAppAPIUrl()}/appointments/draft`, appointmentBody)
+  }
+
+  public static async deleteDraftAppointment (appointmentId: number): Promise<AxiosResponse<any>> {
+    return axios.delete(`${ConfigHelper.getAppAPIUrl()}/appointments/draft/${appointmentId}/`)
+  }
 
   public static async updateAppointment (appointmentId: number, appointmentBody: AppointmentRequestBody): Promise<AxiosResponse<AppointmentResponse>> {
     return axios.put(`${ConfigHelper.getAppAPIUrl()}/appointments/${appointmentId}/`, appointmentBody)

@@ -64,12 +64,14 @@
 </template>
 
 <script lang="ts">
+import { Appointment, AppointmentSlot } from '@/models/appointment'
 import CommonUtils, { timezoneOffset } from '@/utils/common-util'
 import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
 import { mapActions, mapMutations, mapState } from 'vuex'
-import { AppointmentSlot } from '@/models/appointment'
+
 import { Office } from '@/models/office'
 import { OfficeModule } from '@/store/modules'
+import { Service } from '../../models/service'
 import StepperMixin from '@/mixins/StepperMixin.vue'
 import { zonedTimeToUtc } from 'date-fns-tz'
 
@@ -79,15 +81,18 @@ import { zonedTimeToUtc } from 'date-fns-tz'
       'availableAppointmentSlots',
       'currentAppointmentSlot',
       'currentOffice',
-      'currentOfficeTimezone'
+      'currentOfficeTimezone',
+      'currentService'
     ])
   },
   methods: {
     ...mapMutations('office', [
-      'setCurrentAppointmentSlot'
+      'setCurrentAppointmentSlot',
+      'setCurrentDraftAppointment'
     ]),
     ...mapActions('office', [
-      'getAvailableAppointmentSlots'
+      'getAvailableAppointmentSlots',
+      'createDraftAppointment'
     ])
   }
 })
@@ -96,69 +101,101 @@ export default class DateSelection extends Mixins(StepperMixin) {
   private readonly currentOffice!: Office
   private readonly currentAppointmentSlot!: AppointmentSlot
   private readonly currentOfficeTimezone!: string
-  private readonly getAvailableAppointmentSlots!: (officeId: number) => Promise<any>
+  private readonly getAvailableAppointmentSlots!: (input: {officeId: number, serviceId: number}) => Promise<any>
+  private readonly createDraftAppointment!: () => Promise<any>
   private readonly setCurrentAppointmentSlot!: (slot: AppointmentSlot) => void
+   private readonly setCurrentDraftAppointment!: (appointment: Appointment) => void
+  private readonly currentService!: Service
   // TODO: take timezone from office data from state
   private selectedDate = CommonUtils.getTzFormattedDate(new Date(), this.currentOfficeTimezone)
   private selectedDateTimeSlots = []
   private availableDates = []
 
-  private get selectedDateFormatted () {
-    return CommonUtils.getTzFormattedDate(this.selectedDate, this.currentOfficeTimezone, 'MMM dd, yyyy')
-  }
+   private isLoading: boolean = false
 
-  private get selectedTimeSlot () {
-    return (this.currentAppointmentSlot?.start_time && this.currentAppointmentSlot?.end_time)
-      ? `${CommonUtils.getTzFormattedDate(this.currentAppointmentSlot?.start_time, this.currentOfficeTimezone, 'hh:mm aaa')} -
+   private get selectedDateFormatted () {
+     return CommonUtils.getTzFormattedDate(this.selectedDate, this.currentOfficeTimezone, 'MMM dd, yyyy')
+   }
+
+   private get selectedTimeSlot () {
+     return (this.currentAppointmentSlot?.start_time && this.currentAppointmentSlot?.end_time)
+       ? `${CommonUtils.getTzFormattedDate(this.currentAppointmentSlot?.start_time, this.currentOfficeTimezone, 'hh:mm aaa')} -
         ${CommonUtils.getTzFormattedDate(this.currentAppointmentSlot?.end_time, this.currentOfficeTimezone, 'hh:mm aaa')}`
-      : ''
-  }
+       : ''
+   }
 
-  private async mounted () {
-    if (this.isOnCurrentStep) {
-      if (this.currentOffice?.office_id) {
-        const availableAppoinments = await this.getAvailableAppointmentSlots(this.currentOffice.office_id)
-        Object.keys(availableAppoinments).forEach(date => {
-          if (availableAppoinments[date]?.length) {
-            this.availableDates.push(CommonUtils.getTzFormattedDate(new Date(date), this.currentOfficeTimezone))
-          }
-        })
-      }
-      this.selectedDate = CommonUtils.getTzFormattedDate(this.currentAppointmentSlot?.start_time, this.currentOfficeTimezone)
-      this.dateClicked()
-    }
-  }
+   private async mounted () {
+     if (this.isOnCurrentStep) {
+       if (this.currentOffice?.office_id) {
+         this.getAvailableService()
+       }
+       this.selectedDate = CommonUtils.getTzFormattedDate(this.currentAppointmentSlot?.start_time, this.currentOfficeTimezone)
+       this.dateClicked()
+     }
+   }
 
-  private getAllowedDates (val) {
-    return this.availableDates.find(date => date === val)
-  }
+   private async getAvailableService () {
+     // console.log('before availableAppoinments', this.currentOffice.service_id)
+     const availableAppoinments = await this.getAvailableAppointmentSlots({
+       officeId: this.currentOffice.office_id,
+       serviceId: this.currentService.service_id
+     })
 
-  private dateClicked () {
-    this.selectedDateTimeSlots = []
-    const slots = this.availableAppointmentSlots[CommonUtils.getTzFormattedDate(this.selectedDate, this.currentOfficeTimezone, 'MM/dd/yyyy')]
-    slots?.forEach(slot => {
-      this.selectedDateTimeSlots.push({
-        ...slot,
-        startTimeStr: CommonUtils.get12HTimeString(slot.start_time),
-        endTimeStr: CommonUtils.get12HTimeString(slot.end_time)
-      })
-    })
-  }
+     Object.keys(availableAppoinments).forEach(date => {
+       if (availableAppoinments[date]?.length) {
+         this.availableDates.push(CommonUtils.getTzFormattedDate(new Date(date), this.currentOfficeTimezone))
+       }
+     })
+   }
+   private getAllowedDates (val) {
+     return this.availableDates.find(date => date === val)
+   }
 
-  selectTimeSlot (slot) {
-    // Note - For cross browser, we must use specific date string format below
-    // Chrome/FF pass with "2020-05-08 09:00" but Safari fails.
-    // Safari needs format from spec, "2020-05-08T09:00-07:00"
-    // (safari also needs timezone offset)
-    const selectedSlot: AppointmentSlot = {
-      // start_time: new Date(`${this.selectedDate}T${slot.start_time}${timezoneOffset()}`).toISOString(),
-      // end_time: new Date(`${this.selectedDate}T${slot.end_time}${timezoneOffset()}`).toISOString()
-      start_time: zonedTimeToUtc(`${this.selectedDate}T${slot.start_time}`, this.currentOfficeTimezone).toISOString(),
-      end_time: zonedTimeToUtc(`${this.selectedDate}T${slot.end_time}`, this.currentOfficeTimezone).toISOString()
-    }
-    this.setCurrentAppointmentSlot(selectedSlot)
-    this.stepNext()
-  }
+   private dateClicked () {
+     this.selectedDateTimeSlots = []
+     const slots = this.availableAppointmentSlots[CommonUtils.getTzFormattedDate(this.selectedDate, this.currentOfficeTimezone, 'MM/dd/yyyy')]
+     slots?.forEach(slot => {
+       this.selectedDateTimeSlots.push({
+         ...slot,
+         startTimeStr: CommonUtils.get12HTimeString(slot.start_time),
+         endTimeStr: CommonUtils.get12HTimeString(slot.end_time)
+       })
+     })
+   }
+
+   async selectTimeSlot (slot) {
+     // Note - For cross browser, we must use specific date string format below
+     // Chrome/FF pass with "2020-05-08 09:00" but Safari fails.
+     // Safari needs format from spec, "2020-05-08T09:00-07:00"
+     // (safari also needs timezone offset)
+     const selectedSlot: AppointmentSlot = {
+       // start_time: new Date(`${this.selectedDate}T${slot.start_time}${timezoneOffset()}`).toISOString(),
+       // end_time: new Date(`${this.selectedDate}T${slot.end_time}${timezoneOffset()}`).toISOString()
+       start_time: zonedTimeToUtc(`${this.selectedDate}T${slot.start_time}`, this.currentOfficeTimezone).toISOString(),
+       end_time: zonedTimeToUtc(`${this.selectedDate}T${slot.end_time}`, this.currentOfficeTimezone).toISOString()
+     }
+     this.setCurrentAppointmentSlot(selectedSlot)
+     // this.createDraftAppointment()
+     // this.isLoading = true
+     try {
+       const resp = await this.createDraftAppointment()
+       //  if (resp.appointment_id) {
+       if (resp) {
+         this.setCurrentDraftAppointment(resp)
+         this.stepNext()
+         // this.isLoading = false
+       }
+     } catch (error) {
+       this.isLoading = false
+
+       this.getAvailableService()
+       this.dateClicked()
+       // this.dialogPopup.showDialog = true
+       // this.dialogPopup.isSuccess = false
+       // this.dialogPopup.title = 'Failed!'
+       // this.dialogPopup.subTitle = error?.response?.data?.message || 'Unable to book the appointment.'
+     }
+   }
 }
 </script>
 

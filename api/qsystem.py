@@ -289,6 +289,9 @@ import app.resources.bookings.appointment.appointment_availability
 import app.resources.bookings.appointment.appointment_detail
 import app.resources.bookings.appointment.appointment_list
 import app.resources.bookings.appointment.appointment_post
+import app.resources.bookings.appointment.appointment_draft_post
+import app.resources.bookings.appointment.appointment_draft_delete
+import app.resources.bookings.appointment.appointment_draft_flush
 import app.resources.bookings.appointment.appointment_put
 import app.resources.bookings.appointment.appointment_delete
 import app.resources.bookings.appointment.appointment_recurring_delete

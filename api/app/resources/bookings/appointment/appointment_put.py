@@ -17,7 +17,7 @@ from flask import request, g, abort
 from flask_restx import Resource
 from qsystem import api, db, oidc
 from app.models.bookings import Appointment
-from app.models.theq import CSR, PublicUser, Citizen, Office
+from app.models.theq import CSR, PublicUser, Citizen, Office, Service
 from app.schemas.bookings import AppointmentSchema
 from app.utilities.snowplow import SnowPlow
 from app.utilities.auth_util import is_public_user
@@ -26,6 +26,7 @@ from app.utilities.email import send_email, get_confirmation_email_contents, gen
 from pprint import pprint
 from app.services import AvailabilityService
 from dateutil.parser import parse
+from qsystem import socketio
 
 
 @api.route("/appointments/<int:id>/", methods=["PUT"])
@@ -42,6 +43,14 @@ class AppointmentPut(Resource):
         if not json_data:
             return {"message": "No input data received for updating an appointment"}
         is_public_user_appt = is_public_user()
+
+        # Should delete draft appointment, and free up slot, before booking.
+        # Clear up a draft if one was previously created by user reserving this time.
+        if json_data.get('appointment_draft_id'):
+            draft_id_to_delete = int(json_data['appointment_draft_id'])
+            Appointment.delete_draft([draft_id_to_delete])
+            socketio.emit('appointment_delete', draft_id_to_delete)
+
         if is_public_user_appt:
             office_id = json_data.get('office_id')
             office = Office.find_by_id(office_id)
@@ -60,9 +69,11 @@ class AppointmentPut(Resource):
             # Check for race condition
             start_time = parse(json_data.get('start_time'))
             end_time = parse(json_data.get('end_time'))
-            if not AvailabilityService.has_available_slots(office=office, start_time=start_time, end_time=end_time):
+            service_id = json_data.get('service_id')
+            service = Service.query.get(int(service_id))
+            if not AvailabilityService.has_available_slots(office=office, start_time=start_time, end_time=end_time, service=service):
                 return {"code": "CONFLICT_APPOINTMENT",
-                        "message": "Cannot create appointment due to conflict in time"}, 400
+                        "message": "Cannot create appointment due to scheduling conflict.  Please pick another time."}, 400
 
         else:
             csr = CSR.find_by_username(g.oidc_token_info['username'])
@@ -77,6 +88,7 @@ class AppointmentPut(Resource):
         if is_public_user_appt:
             citizen = Citizen.find_citizen_by_id(appointment.citizen_id)
             user = PublicUser.find_by_username(g.oidc_token_info['username'])
+            # Should just match based on appointment_id and other info.  Can't have proper auth yet.
             if citizen.user_id != user.user_id:
                 abort(403)
 
@@ -101,9 +113,13 @@ class AppointmentPut(Resource):
         if "checked_in_time" in json_data:
             schema = 'appointment_checkin'
 
-        SnowPlow.snowplow_appointment(None, csr, appointment, schema)
+        if not appointment.is_draft:
+            SnowPlow.snowplow_appointment(None, csr, appointment, schema)
 
         result = self.appointment_schema.dump(appointment)
+
+        socketio.emit('appointment_update', result.data)
+        
 
         return {"appointment": result.data,
                 "errors": result.errors}, 200

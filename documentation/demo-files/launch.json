@@ -1,0 +1,50 @@
+{
+    // Copy this file to `queue-management/.vscode/launch.json`
+    // Then go to "Run" menu, 
+    "version": "0.2.0",
+    "configurations": [
+        {
+            // This task runs the main API Python Gunicorn process.
+            "name": "api",
+            "type": "python",
+            "request": "launch",
+            // Change the `program` value to a path  of your virtualenv's gunicorn file.
+            // This should be a path to the virtualenv used for project
+            // But instead of  `env/bin/activate`  we put `env/bin/gunicorn`
+            // e.g. when developing locally, I'd do `source queue-env/bin/activate`.
+            "program": "${workspaceFolder}/queue-env/bin/gunicorn",
+            "gevent": true,
+            "cwd": "/Users/adamcoard/dev/queue-management/api/",
+            // High timeout, so gunicorn won't kill process if we hit a debugging breakpoint
+            "args": ["wsgi",
+                "--bind=0.0.0.0:5000",
+                "--access-logfile=-",
+                "--config=/Users/adamcoard/dev/queue-management/api/gunicorn_config.py",
+                "--timeout=9999",
+                "--reload"
+            ],
+        },
+        {
+            // Assumes you already have ran `npm install` in that repo before.
+            "name": "appointment-frontend",
+            "command": "npm run serve",
+            "cwd": "${workspaceFolder}/appointment-frontend",
+            "request": "launch",
+            "type": "node-terminal"
+        },
+        {
+            // Assumes you already have ran `npm install` in that repo before.
+            "name": "frontend",
+            "command": "npm run serve",
+            "cwd": "${workspaceFolder}/frontend",
+            "request": "launch",
+            "type": "node-terminal"
+        },
+    ],
+    "compounds": [
+        {
+          "name": "Run All (api/frontend/apt-frontend)",
+          "configurations": ["api", "frontend", "appointment-frontend"],
+        }
+    ]
+}

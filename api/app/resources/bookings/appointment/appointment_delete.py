@@ -24,8 +24,7 @@ from app.utilities.auth_util import Role, has_any_role
 from app.utilities.auth_util import is_public_user
 from app.utilities.email import get_cancel_email_contents, send_email, generate_ches_token
 from app.utilities.snowplow import SnowPlow
-from qsystem import api, db, oidc
-
+from qsystem import api, db, oidc, socketio
 
 @api.route("/appointments/<int:id>/", methods=["DELETE"])
 class AppointmentDelete(Resource):
@@ -47,20 +46,27 @@ class AppointmentDelete(Resource):
             if not citizen or citizen.citizen_id != appointment.citizen_id:
                 abort(403)
 
-        SnowPlow.snowplow_appointment(None, csr, appointment, 'appointment_delete')
+        # Must call this prior to deleting from DB, so cannot 
+        # combine with repeated is_draft check below
+        if not appointment.is_draft:
+            SnowPlow.snowplow_appointment(None, csr, appointment, 'appointment_delete')
 
         db.session.delete(appointment)
         db.session.commit()
+        socketio.emit('appointment_delete', id)
 
-        # If the appointment is public user's and if staff deletes it send email
-        if csr:
-            office = Office.find_by_id(appointment.office_id)
+        # Do not log snowplow events or send emails if it's a draft.
+        if not appointment.is_draft:
 
-            # Send blackout email
-            try:
-                pprint('Sending email for appointment cancellation')
-                send_email(generate_ches_token(), *get_cancel_email_contents(appointment, user, office, office.timezone))
-            except Exception as exc:
-                pprint(f'Error on token generation - {exc}')
+            # If the appointment is public user's and if staff deletes it send email
+            if csr:
+                office = Office.find_by_id(appointment.office_id)
+
+                # Send blackout email
+                try:
+                    pprint('Sending email for appointment cancellation')
+                    send_email(generate_ches_token(), *get_cancel_email_contents(appointment, user, office, office.timezone))
+                except Exception as exc:
+                    pprint(f'Error on token generation - {exc}')
 
         return {}, 204

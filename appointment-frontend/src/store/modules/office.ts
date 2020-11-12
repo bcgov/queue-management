@@ -23,6 +23,7 @@ export default class OfficeModule extends VuexModule {
   currentService: Service
   currentAppointmentSlot: AppointmentSlot
   currentAppointment: Appointment
+  currentDraftAppointment: Appointment
 
   /**
     Mutations in this Module
@@ -74,6 +75,11 @@ export default class OfficeModule extends VuexModule {
     this.currentAppointment = appointment
   }
 
+  @Mutation
+  public setCurrentDraftAppointment (appointment: Appointment) {
+    this.currentDraftAppointment = appointment
+  }
+
   /**
     Actions in this Module
   **/
@@ -115,8 +121,8 @@ export default class OfficeModule extends VuexModule {
   }
 
   @Action({ commit: 'setAvailableAppointmentSlots', rawError: true })
-  public async getAvailableAppointmentSlots (officeId: number) {
-    const response = await OfficeService.getAvailableAppointmentSlots(officeId)
+  public async getAvailableAppointmentSlots (input: {officeId: number, serviceId: number}) {
+    const response = await OfficeService.getAvailableAppointmentSlots(input.officeId, input.serviceId)
     return response?.data || []
   }
 
@@ -150,6 +156,7 @@ export default class OfficeModule extends VuexModule {
 
   @Action({ rawError: true })
   public async createAppointment () {
+    // Don't make changes here, instead make changes to slot where end_time is set
     const userId = this.context.rootState.auth.currentUserProfile?.user_id || null
     const appointmentBody: AppointmentRequestBody = {
       start_time: this.context.state['currentAppointmentSlot'].start_time,
@@ -157,15 +164,18 @@ export default class OfficeModule extends VuexModule {
       service_id: this.context.state['currentService'].service_id,
       comments: this.context.state['additionalNotes'],
       office_id: this.context.state['currentOffice'].office_id,
-      user_id: userId
+      user_id: userId,
+      appointment_draft_id: this.context.state['currentDraftAppointment'].appointment_id
     }
     let response
     if (this.context.rootState.isAppointmentEditMode) {
       if (this.context.state['currentAppointment']?.appointment_id) {
         response = await AppointmentService.updateAppointment(this.context.state['currentAppointment'].appointment_id, appointmentBody)
+        this.context.commit('setCurrentDraftAppointment', {})
       }
     } else {
       response = await AppointmentService.createAppointment(appointmentBody)
+      this.context.commit('setCurrentDraftAppointment', {})
     }
     return response?.data?.appointment || {}
   }
@@ -191,5 +201,39 @@ export default class OfficeModule extends VuexModule {
     this.context.commit('setCurrentAppointmentSlot', apppointmentSlot)
     this.context.commit('setAdditionalNotes', appointment?.comments)
     this.context.commit('setACurrentAppointment', appointment)
+  }
+
+  @Action({ rawError: true })
+  public async createDraftAppointment () {
+    // Don't make changes here, instead make changes to slot where end_time is set
+    const userId = this.context.rootState.auth.currentUserProfile?.user_id || null
+    const appointmentBody: AppointmentRequestBody = {
+      start_time: this.context.state['currentAppointmentSlot'].start_time,
+      end_time: this.context.state['currentAppointmentSlot'].end_time,
+      service_id: this.context.state['currentService'].service_id,
+      comments: this.context.state['additionalNotes'],
+      office_id: this.context.state['currentOffice'].office_id,
+      user_id: userId,
+      is_draft: true
+    }
+    let response
+    let deleteResponse
+
+    if (this.context.state['currentDraftAppointment']?.appointment_id) {
+    //   // deleteResponse =
+      try {
+        deleteResponse = await AppointmentService.deleteDraftAppointment(this.context.state['currentDraftAppointment'].appointment_id)
+        if (deleteResponse.data) {
+          this.context.commit('setCurrentDraftAppointment', {})
+        }
+      } catch (error) {
+        // console.log('error', error)
+      }
+    }
+
+    // } else {
+    response = await AppointmentService.createDraftAppointment(appointmentBody)
+    // }
+    return response?.data?.appointment || {}
   }
 }

@@ -82,7 +82,8 @@ class OfficeConfig(Base):
                    'appointment_duration',
                    'max_person_appointment_per_day',
                    'civic_address',
-                   'timeslots'
+                   'timeslots',
+                   'number_of_dlkt'
                    ]
 
     form_excluded_columns = ('citizens',
@@ -112,7 +113,8 @@ class OfficeConfig(Base):
                          'civic_address',
                          'telephone',
                          'online_status',
-                         'timeslots'
+                         'timeslots',
+                         'number_of_dlkt'
                          )
 
     form_edit_rules = ('office_name',
@@ -135,7 +137,8 @@ class OfficeConfig(Base):
                        'civic_address',
                        'telephone',
                        'online_status',
-                       'timeslots'
+                       'timeslots',
+                       'number_of_dlkt'
                        )
 
     form_args = {
@@ -253,7 +256,8 @@ class OfficeConfigGA(OfficeConfig):
         'civic_address',
         'telephone',
         'online_status',
-        'timeslots'
+        'timeslots',
+        'number_of_dlkt'
     )
 
     form_excluded_columns = (

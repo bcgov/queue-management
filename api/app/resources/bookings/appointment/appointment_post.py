@@ -21,7 +21,7 @@ from flask import request, g
 from flask_restx import Resource
 
 from app.models.bookings import Appointment
-from app.models.theq import CSR, CitizenState, PublicUser, Office
+from app.models.theq import CSR, CitizenState, PublicUser, Office, Service
 from app.schemas.bookings import AppointmentSchema
 from app.schemas.theq import CitizenSchema
 from app.services import AvailabilityService
@@ -32,6 +32,7 @@ from app.utilities.email import get_confirmation_email_contents, send_email, gen
 from app.utilities.snowplow import SnowPlow
 from qsystem import api, api_call_with_retry, db, oidc, my_print
 
+from qsystem import socketio
 
 @api.route("/appointments/", methods=["POST"])
 class AppointmentPost(Resource):
@@ -47,6 +48,13 @@ class AppointmentPost(Resource):
         if not json_data:
             return {"message": "No input data received for creating an appointment"}, 400
 
+        # Should delete draft appointment, and free up slot, before booking.
+        # Clear up a draft if one was previously created by user reserving this time.
+        if json_data.get('appointment_draft_id'):
+            draft_id_to_delete = int(json_data['appointment_draft_id'])
+            Appointment.delete_draft([draft_id_to_delete])
+            socketio.emit('appointment_delete', draft_id_to_delete)
+
         is_blackout_appt = json_data.get('blackout_flag', 'N') == 'Y'
         csr = None
         user = None
@@ -59,6 +67,7 @@ class AppointmentPost(Resource):
         is_public_user_appointment = is_public_user()
         if is_public_user_appointment:
             office_id = json_data.get('office_id')
+            service_id = json_data.get('service_id')
             user = PublicUser.find_by_username(g.oidc_token_info['username'])
             # Add values for contact info and notes
             json_data['contact_information'] = user.email
@@ -69,6 +78,8 @@ class AppointmentPost(Resource):
             citizen.citizen_name = user.display_name
 
             office = Office.find_by_id(office_id)
+            service = Service.query.get(int(service_id))
+
             # Validate if the same user has other appointments for same day at same office
             appointments = Appointment.find_by_username_and_office_id(office_id=office_id,
                                                                       user_name=g.oidc_token_info['username'],
@@ -81,9 +92,9 @@ class AppointmentPost(Resource):
             # Check for race condition
             start_time = parse(json_data.get('start_time'))
             end_time = parse(json_data.get('end_time'))
-            if not AvailabilityService.has_available_slots(office=office, start_time=start_time, end_time=end_time):
+            if not AvailabilityService.has_available_slots(office=office, start_time=start_time, end_time=end_time, service=service):
                 return {"code": "CONFLICT_APPOINTMENT",
-                        "message": "Cannot create appointment due to conflict in time"}, 400
+                        "message": "Cannot create appointment due to scheduling conflict.  Please pick another time."}, 400
 
         else:
             csr = CSR.find_by_username(g.oidc_token_info['username'])
@@ -153,6 +164,8 @@ class AppointmentPost(Resource):
             SnowPlow.snowplow_appointment(citizen, csr, appointment, 'appointment_create')
 
             result = self.appointment_schema.dump(appointment)
+
+            socketio.emit('appointment_create', result.data)
 
             return {"appointment": result.data,
                     "errors": result.errors}, 201

@@ -14,9 +14,9 @@ limitations under the License.'''
 
 from app.models.bookings import Base
 from qsystem import db
-from sqlalchemy_utc import UtcDateTime
-from sqlalchemy import func, or_
-from datetime import datetime, timedelta
+from sqlalchemy_utc import UtcDateTime, utcnow
+from sqlalchemy import func, or_, and_
+from datetime import datetime, timedelta, timezone
 from dateutil.parser import parse
 from dateutil import tz
 from app.utilities.date_util import current_pacific_time
@@ -36,6 +36,8 @@ class Appointment(Base):
     blackout_flag = db.Column(db.String(1), default='N', nullable=False)
     recurring_uuid = db.Column(db.String(255), nullable=True)
     online_flag = db.Column(db.Boolean(), nullable=True, default=False)
+    is_draft = db.Column(db.Boolean(), nullable=True, default=False)
+    created_at = db.Column(UtcDateTime, nullable=True, default=utcnow())
 
     office = db.relationship("Office")
     service = db.relationship("Service")
@@ -120,4 +122,37 @@ class Appointment(Base):
         delete_qry = Appointment.__table__.delete().where(Appointment.appointment_id.in_(appointment_ids))
         db.session.execute(delete_qry)
         db.session.commit()
+
+    @classmethod
+    def find_expired_drafts(cls):
+        """Find all is_draft appointments created over expiration cutoff ago."""
+        EXPIRATION_CUTOFF = timedelta(minutes=15)
+        expiry_limit = datetime.utcnow().replace(tzinfo=timezone.utc) - EXPIRATION_CUTOFF
+
+        query = db.session.query(Appointment). \
+            filter(Appointment.is_draft.is_(True)). \
+            filter(Appointment.created_at < expiry_limit)
+
+        return query.all()
+
+    @classmethod
+    def delete_draft(cls, draft_appointment_ids):
+        """Deletes a draft appointment by id."""
+        delete_qry = Appointment.__table__.delete().where(
+            and_(
+                Appointment.appointment_id.in_(draft_appointment_ids),
+                Appointment.is_draft.is_(True)
+            )
+        )
+        db.session.execute(delete_qry)
+        db.session.commit()
+
+    @classmethod
+    def delete_expired_drafts(cls):
+        """Deletes all expired drafts."""
+        drafts = Appointment.find_expired_drafts()
+        draft_ids = [appointment.appointment_id for appointment in drafts]
+        Appointment.delete_appointments(draft_ids)
+        return draft_ids
+        
 
