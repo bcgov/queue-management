@@ -209,15 +209,15 @@ objects:
                 - name: LOG_MYAPP_SQLTIME
                   value: INFO
                 - name: PRINT_ENABLE
-                  value: "${PRINT_ENABLE}"
+                  value: "false"
                 - name: LOG_BASIC
                   value: WARNING
                 - name: LOG_ROOT
                   value: WARNING
                 - name: RECURRING_FEATURE_FLAG
-                  value: "${RECURRING_FEATURE_FLAG}"
+                  value: "true"
                 - name: SQLALCHEMY_POOL_PRE_PING
-                  value: "${SQLALCHEMY_POOL_PRE_PING}"
+                  value: "true"
                 - name: MINIO_HOST
                   value: "${MINIO_HOST}"
                 - name: MINIO_BUCKET
