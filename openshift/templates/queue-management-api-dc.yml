@@ -447,11 +447,11 @@ parameters:
   - name: SQLALCHEMY_POOL_SIZE
     description: "SQLALCHEMY_POOL_SIZE"
     required: false
-    value: ""
+    value: "5"
   - name: SQLALCHEMY_MAX_OVERFLOW
     description: "SQLALCHEMY_MAX_OVERFLOW"
     required: false
-    value: ""
+    value: "10"
   - name: DATABASE_LONG_RUNNING_QUERY
     description: "DATABASE_LONG_RUNNING_QUERY"
     required: false
