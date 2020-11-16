@@ -130,8 +130,6 @@ objects:
                   value: "patroni-master"
                 - name: DATABASE_PORT
                   value: "5432"
-                - name: SQLALCHEMY_ECHO
-                  value: "${SQLALCHEMY_ECHO}"
                 - name: APP_CONFIG
                   value: gunicorn_config.py
                 - name: FLASK_CONFIGURATION
@@ -142,36 +140,12 @@ objects:
                   value: rabbitmq
                 - name: ACTIVE_MQ_PORT
                   value: "5672"
-                - name: SLACK_URL
-                  value: "${SLACK_URL}"
-                - name: THEQ_SNOWPLOW_ENDPOINT
-                  value: "${THEQ_SNOWPLOW_ENDPOINT}"
-                - name: THEQ_SNOWPLOW_APPID
-                  value: "${THEQ_SNOWPLOW_APPID}"
-                - name: THEQ_SNOWPLOW_NAMESPACE
-                  value: "${THEQ_SNOWPLOW_NAMESPACE}"
-                - name: THEQ_SNOWPLOW_CALLFLAG
-                  value: "${THEQ_SNOWPLOW_CALLFLAG}"
-                - name: THEQ_SNOWPLOW_ENV
-                  value: ${THEQ_SNOWPLOW_ENV}
-                - name: THEQ_SNOWPLOW_ROUTE
-                  value: "${THEQ_SNOWPLOW_ROUTE}"
-                - name: THEQ_CLEAR_COMMENTS_FLAG
-                  value: "${THEQ_CLEAR_COMMENTS_FLAG}"
                 - name: SECRET_KEY
                   value: "${SECRET_KEY}"
                 - name: SERVER_NAME
                   value: "${API_APPLICATION_DOMAIN}"
-                - name: LOG_ENABLE
-                  value: "${LOG_ENABLE}"
-                - name: THEQ_FEEDBACK
-                  value: "${THEQ_FEEDBACK}"
-                - name: SERVICENOW_INSTANCE
-                  value: "${SERVICENOW_INSTANCE}"
-                - name: SERVICENOW_USER
-                  value: "${SERVICENOW_USER}"
-                - name: SERVICENOW_PASSWORD
-                  value: "${SERVICENOW_PASSWORD}"
+                - name: CACHE_DEFAULT_TIMEOUT
+                  value: "${CACHE_DEFAULT_TIMEOUT}"
                 - name: VIDEO_PATH
                   value: /opt/app-root/src/videos
                 - name: MAIL_FROM_ID
@@ -182,8 +156,14 @@ objects:
                   value: "${CORS_ALLOWED_ORIGINS}"
                 - name: BACK_OFFICE_DISPLAY
                   value: "${BACK_OFFICE_DISPLAY}"
-                - name: ROCKET_CHAT_URL
-                  value: "${ROCKET_CHAT_URL}"
+                - name: THEQ_CLEAR_COMMENTS_FLAG
+                  value: "${THEQ_CLEAR_COMMENTS_FLAG}"
+                - name: THEQ_FEEDBACK
+                  value: "${THEQ_FEEDBACK}"
+                - name: RECURRING_FEATURE_FLAG
+                  value: "true"
+                - name: APPOINTMENT_LIMIT_DAYS
+                  value: "${APPOINTMENT_LIMIT_DAYS}"
                 - name: CHES_SSO_TOKEN_URL
                   value: "${CHES_SSO_TOKEN_URL}"
                 - name: CHES_SSO_CLIENT_ID
@@ -192,32 +172,32 @@ objects:
                   value: "${CHES_SSO_CLIENT_SECRET}"
                 - name: CHES_POST_EMAIL_ENDPOINT
                   value: "${CHES_POST_EMAIL_ENDPOINT}"
-                - name: CACHE_DEFAULT_TIMEOUT
-                  value: "${CACHE_DEFAULT_TIMEOUT}"
+                - name: ROCKET_CHAT_URL
+                  value: "${ROCKET_CHAT_URL}"
+                - name: SLACK_URL
+                  value: "${SLACK_URL}"
+                - name: SERVICENOW_INSTANCE
+                  value: "${SERVICENOW_INSTANCE}"
+                - name: SERVICENOW_USER
+                  value: "${SERVICENOW_USER}"
+                - name: SERVICENOW_PASSWORD
+                  value: "${SERVICENOW_PASSWORD}"
                 - name: SERVICENOW_TENANT
                   value: "${SERVICENOW_TENANT}"
                 - name: SERVICENOW_TABLE
                   value: "${SERVICENOW_TABLE}"
                 - name: SERVICENOW_ASSIGN_GROUP
                   value: "${SERVICENOW_ASSIGN_GROUP}"
+                - name: SQLALCHEMY_POOL_PRE_PING
+                  value: "true"
                 - name: SQLALCHEMY_POOL_SIZE
                   value: "${SQLALCHEMY_POOL_SIZE}"
                 - name: SQLALCHEMY_MAX_OVERFLOW
                   value: "${SQLALCHEMY_MAX_OVERFLOW}"
                 - name: DATABASE_LONG_RUNNING_QUERY
                   value: "${DATABASE_LONG_RUNNING_QUERY}"
-                - name: LOG_MYAPP_SQLTIME
-                  value: INFO
-                - name: PRINT_ENABLE
-                  value: "false"
-                - name: LOG_BASIC
-                  value: WARNING
-                - name: LOG_ROOT
-                  value: WARNING
-                - name: RECURRING_FEATURE_FLAG
-                  value: "true"
-                - name: SQLALCHEMY_POOL_PRE_PING
-                  value: "true"
+                - name: SQLALCHEMY_ECHO
+                  value: "${SQLALCHEMY_ECHO}"                  
                 - name: MINIO_HOST
                   value: "${MINIO_HOST}"
                 - name: MINIO_BUCKET
@@ -232,8 +212,28 @@ objects:
                   value: "${BCMP_BASE_URL}"
                 - name: BCMP_AUTH_TOKEN
                   value: "${BCMP_AUTH_TOKEN}" 
-                - name: APPOINTMENT_LIMIT_DAYS
-                  value: "${APPOINTMENT_LIMIT_DAYS}"
+                - name: THEQ_SNOWPLOW_ENDPOINT
+                  value: "${THEQ_SNOWPLOW_ENDPOINT}"
+                - name: THEQ_SNOWPLOW_APPID
+                  value: "${THEQ_SNOWPLOW_APPID}"
+                - name: THEQ_SNOWPLOW_NAMESPACE
+                  value: "${THEQ_SNOWPLOW_NAMESPACE}"
+                - name: THEQ_SNOWPLOW_CALLFLAG
+                  value: "${THEQ_SNOWPLOW_CALLFLAG}"
+                - name: THEQ_SNOWPLOW_ENV
+                  value: ${THEQ_SNOWPLOW_ENV}
+                - name: THEQ_SNOWPLOW_ROUTE
+                  value: "${THEQ_SNOWPLOW_ROUTE}"
+                - name: LOG_ENABLE
+                  value: "${LOG_ENABLE}"
+                - name: LOG_MYAPP_SQLTIME
+                  value: INFO
+                - name: PRINT_ENABLE
+                  value: "false"
+                - name: LOG_BASIC
+                  value: WARNING
+                - name: LOG_ROOT
+                  value: WARNING
               ports:
                 - containerPort: 8080
               readinessProbe:
@@ -430,7 +430,7 @@ parameters:
     required: false    
   - name: BCMP_AUTH_TOKEN
     description: "BCMP_AUTH_TOKEN"
-    required: true
+    required: false
     value: ""
   - name: SERVICENOW_TENANT
     description: "SERVICENOW_TENANT"
@@ -459,22 +459,22 @@ parameters:
   - name: PRINT_ENABLE
     description: "PRINT_ENABLE"
     required: true
-    value: ""
+    value: "false"
   - name: RECURRING_FEATURE_FLAG
     description: "RECURRING_FEATURE_FLAG"
     required: true
-    value: ""
+    value: "true"
   - name: SQLALCHEMY_POOL_PRE_PING
     description: "SQLALCHEMY_POOL_PRE_PING"
     required: true
-    value: ""
+    value: "true"
   - name: MINIO_USE_SECURE
     description: "MINIO_USE_SECURE"
-    required: true
+    required: false
     value: ""
   - name: BCMP_BASE_URL
     description: "BCMP_BASE_URL"
-    required: true
+    required: false
     value: ""
   - name: REALM_PUBLIC_KEY
     description: "realm_public_key"
