@@ -41,7 +41,7 @@ objects:
           {
             "KEYCLOAK_CONFIG_URL": "./public/config/kc/keycloak-public.json",
             "VUE_APP_ROOT_API": "${VUE_APP_ROOT_API}",
-            "hideBCServicesCard": "${HIDEBCSERVICESCARD}",
+            "hideBCServicesCard": ${HIDEBCSERVICESCARD},
             "BCEIDRegistrationUrl": "${BCEID_REG_URL}",
             "VUE_APP_GOOGLE_STATIC_MAP_API_KEY": "${VUE_APP_GOOGLE_STATIC_MAP_API_KEY}"
           }
@@ -55,7 +55,7 @@ objects:
         keycloak-public.json: |-
           {
             "realm": "${KEYCLOAK_REALM}",
-            "auth-server-url": "https://test.oidc.gov.bc.ca/auth/",
+            "auth-server-url": "${AUTH_SERVER_URL}",
             "ssl-required": "external",
             "resource": "${KEYCLOAK_RESOURCE}",
             "credentials": {
@@ -227,6 +227,10 @@ parameters:
     value: ""
   - name: HIDEBCSERVICESCARD
     description: "HIDEBCSERVICESCARD"
+    required: true
+    value: ""
+  - name: AUTH_SERVER_URL
+    description: "AUTH_SERVER_URL"
     required: true
     value: ""
 

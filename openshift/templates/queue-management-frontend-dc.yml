@@ -25,7 +25,7 @@ objects:
       keycloak.json: |
         {
           "realm": "${REALM}",
-          "auth-server-url": "https://test.oidc.gov.bc.ca/auth/",
+          "auth-server-url": "${AUTH_SERVER_URL}",
           "ssl-required": "external",
           "resource": "${RESOURCE}",
           "public-client": "true",
@@ -175,6 +175,9 @@ parameters:
     required: true
   - name: RESOURCE
     description: keycloak client
+    required: true
+  - name: AUTH_SERVER_URL
+    description: AUTH_SERVER_URL
     required: true
 
 

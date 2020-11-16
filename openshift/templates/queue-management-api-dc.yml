@@ -205,7 +205,7 @@ objects:
                 - name: SQLALCHEMY_MAX_OVERFLOW
                   value: "${SQLALCHEMY_MAX_OVERFLOW}"
                 - name: DATABASE_LONG_RUNNING_QUERY
-                  value: "{DATABASE_LONG_RUNNING_QUERY}"
+                  value: "${DATABASE_LONG_RUNNING_QUERY}"
                 - name: LOG_MYAPP_SQLTIME
                   value: INFO
                 - name: PRINT_ENABLE
@@ -233,7 +233,7 @@ objects:
                 - name: BCMP_AUTH_TOKEN
                   value: "${BCMP_AUTH_TOKEN}" 
                 - name: APPOINTMENT_LIMIT_DAYS
-                  value: "${APPOINTMENT_LIMIT_DAYS}"                 
+                  value: "${APPOINTMENT_LIMIT_DAYS}"
               ports:
                 - containerPort: 8080
               readinessProbe:
@@ -265,11 +265,11 @@ objects:
               imagePullPolicy: Always
               resources:
                 requests:
-                  cpu: 250m
-                  memory: 256Mi
+                  cpu: 400m
+                  memory: 400Mi
                 limits:
-                  cpu: 500m
-                  memory: 512Mi
+                  cpu: '1'
+                  memory: 600Mi
           restartPolicy: Always
           terminationGracePeriodSeconds: 30
           dnsPolicy: ClusterFirst
@@ -320,7 +320,6 @@ parameters:
   - name: FLASK_CONFIGURATION
     description: "The configuration object that should be loaded for this deployment."
     required: true
-    value: development
   - name: SQLALCHEMY_ECHO
     description: ""
     required: true
@@ -456,7 +455,7 @@ parameters:
   - name: DATABASE_LONG_RUNNING_QUERY
     description: "DATABASE_LONG_RUNNING_QUERY"
     required: false
-    value: ""
+    value: "0.5"
   - name: PRINT_ENABLE
     description: "PRINT_ENABLE"
     required: true
@@ -494,14 +493,6 @@ parameters:
     value: ""
   - name: CLIENT_SECRET
     description: "client_secret"
-    required: true
-    value: ""
-  - name: REDIRECT_URL1
-    description: "redirect_url1"
-    required: true
-    value: ""
-  - name: REDIRECT_URL2
-    description: "redirect_url2"
     required: true
     value: ""
   - name: USERINFO_URI
