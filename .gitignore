@@ -132,6 +132,7 @@ sonar-runner/.gradle
 loadlogs
 api/client_secrets/
 frontend/static/keycloak_dev.json
+frontend/public/static/keycloak/
 
 # Docker
 api/Dockerfile
@@ -161,3 +162,4 @@ keys-generated
 /frontend/static/dev-public-keycloak.json
 .env-Chris
 .env-Omid
+
