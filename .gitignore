@@ -111,6 +111,7 @@ queue-env/
 .vscode/
 
 # Project specific include/excludes
+/frontend/public/static/keycloak/
 !frontend/build
 api/client_secrets/secrets.json
 node_modules/
@@ -132,7 +133,7 @@ sonar-runner/.gradle
 loadlogs
 api/client_secrets/
 frontend/static/keycloak_dev.json
-frontend/public/static/keycloak/
+
 
 # Docker
 api/Dockerfile
