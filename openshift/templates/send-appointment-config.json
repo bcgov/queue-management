@@ -4,20 +4,20 @@
   "metadata": {
     "annotations": {
       "description": "Configmap template for the reminder job. This template may not include real value of secrets; you need to manually replace the value in Openshift.",
-      "tags": "${NAME}-${TAG_NAME}"
+      "tags": "${NAMECONFIG}-${TAG_NAME}"
     },
-    "name": "${NAME}-config"
+    "name": "${NAMECONFIG}-config"
   },
   "objects": [
     {
       "kind": "ConfigMap",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${NAME}-${TAG_NAME}-config",
+        "name": "${NAMECONFIG}-${TAG_NAME}-config",
         "labels": {
-          "app": "${NAME}-${TAG_NAME}",
+          "app": "${NAMECONFIG}-${TAG_NAME}",
           "app-group": "${APP_GROUP}",
-          "template": "${NAME}-config"
+          "template": "${NAMECONFIG}-config"
         }
       },
       "data": {
@@ -37,8 +37,8 @@
   ],
   "parameters": [
     {
-      "name": "NAME",
-      "displayName": "Name",
+      "name": "NAMECONFIG",
+      "displayName": "NAMECONFIG",
       "description": "The name assigned to all of the OpenShift resources associated to the server instance.",
       "required": true
     },

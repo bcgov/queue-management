@@ -25,31 +25,6 @@
       }
     },
     {
-      "kind": "ConfigMap",
-      "apiVersion": "v1",
-      "metadata": {
-        "name": "${NAMECONFIG}-${TAG_NAME}-config",
-        "labels": {
-          "app": "${NAMECONFIG}-${TAG_NAME}",
-          "app-group": "${APP_GROUP}",
-          "template": "${NAMECONFIG}-config"
-        }
-      },
-      "data": {
-        "OIDC_PROVIDER_TOKEN_URL": "${OIDC_PROVIDER_TOKEN_URL}",
-        "REMINDER_ENDPOINT": "${REMINDER_ENDPOINT}",
-        "SERVICE_ACCOUNT_ID": "${SERVICE_ACCOUNT_ID}",
-        "SERVICE_ACCOUNT_SECRET": "${SERVICE_ACCOUNT_SECRET}",
-        "MAIL_FROM_ID": "${MAIL_FROM_ID}",
-        "EMAIL_APPOINTMENT_APP_URL": "${EMAIL_APPOINTMENT_APP_URL}",
-        "MAX_EMAIL_PER_BATCH": "${MAX_EMAIL_PER_BATCH}",
-        "CHES_SSO_TOKEN_URL": "${CHES_SSO_TOKEN_URL}",
-        "CHES_SSO_CLIENT_ID": "${CHES_SSO_CLIENT_ID}",
-        "CHES_SSO_CLIENT_SECRET": "${CHES_SSO_CLIENT_SECRET}",
-        "CHES_POST_EMAIL_ENDPOINT": "${CHES_POST_EMAIL_ENDPOINT}"
-      }
-    },
-    {
       "kind": "DeploymentConfig",
       "apiVersion": "v1",
       "metadata": {
@@ -302,7 +277,7 @@
       "displayName": "App Group",
       "description": "The name assigned to all of the deployments in this project.",
       "required": true,
-      "value": ""
+      "value": "queue-management"
     },
     {
       "name": "IMAGE_NAMESPACE",
@@ -352,71 +327,6 @@
       "description": "Cron configuration for the scheduler.",
       "required": true,
       "value": "00 23 * * * default cd /appointment_reminder && ./run.sh\n# An empty line is required at the end of this file for a valid cron file.\n"
-    },
-    {
-      "name": "NAMECONFIG",
-      "displayName": "NAMECONFIG",
-      "description": "The name assigned to all of the OpenShift resources associated to the server instance.",
-      "required": true
-    },
-    {
-      "name": "OIDC_PROVIDER_TOKEN_URL",
-      "displayName": "Oidc token url",
-      "description": "Oidc token url",
-      "required": true
-    },
-    {
-      "name": "REMINDER_ENDPOINT",
-      "displayName": "Reminder endpoint",
-      "description": "Endpoint to invoke to send reminders.",
-      "required": true
-    },
-    {
-      "name": "SERVICE_ACCOUNT_ID",
-      "displayName": "Service account id",
-      "description": "Service account id in oidc provider to invoke the job. This service account must have reminder_job role.",
-      "required": true
-    },
-    {
-      "name": "SERVICE_ACCOUNT_SECRET",
-      "displayName": "Service account secret",
-      "description": "Service account secret obtained from keycloak.",
-      "required": true
-    },
-    {
-      "name": "MAIL_FROM_ID",
-      "description": "Mail from address to appear on emails",
-      "required": false
-    },
-    {
-      "name": "EMAIL_APPOINTMENT_APP_URL",
-      "description": "Appointment Url to provide in email",
-      "required": true
-    },
-    {
-      "name": "MAX_EMAIL_PER_BATCH",
-      "description": "Maximum emails which can be sent in a minute",
-      "required": false
-    },
-    {
-      "name": "CHES_SSO_TOKEN_URL",
-      "description": "CHES token url",
-      "required": false
-    },
-    {
-      "name": "CHES_SSO_CLIENT_ID",
-      "description": "CHES service client id",
-      "required": false
-    },
-    {
-      "name": "CHES_POST_EMAIL_ENDPOINT",
-      "description": "CHES email send endpoint",
-      "required": false
-    },
-    {
-      "name": "CHES_SSO_CLIENT_SECRET",
-      "description": "CHES service client secret",
-      "required": true
     }
   ]
 }
