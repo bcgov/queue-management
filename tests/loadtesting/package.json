@@ -1,0 +1,30 @@
+{
+  "name": "queue-management-loadtesting",
+  "version": "1.0.0",
+  "description": "Load testing of CSRs on the queue-management application.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node functions.js",
+    "get-keycloak-token": "node functions.js --get-keycloak-token",
+    "tests": "npx artillery run csr-http-load-test-appointments.yaml",
+    "tests:all": "source envs.sh && npx artillery  run --output output/report.json -k csr-test-all.yaml",
+    "tests:http": "source envs.sh && npx artillery  run --output output/report-http.json -k csr-http.yaml",
+    "tests:socket": "source envs.sh && npx artillery  run --output output/report-socket.json -k csr-socket.yaml",
+    "python:profile": "sudo ./profile-python.sh --command=record || exit 0",
+    "python:top": "sudo ./profile-python.sh --command=top || exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bcgov/queue-management.git"
+  },
+  "author": "Adam Coard",
+  "homepage": "https://github.com/bcgov/queue-management#readme",
+  "contributors": [
+    "Faiz Shabeeb <faiz.shabeeb@aot-technologies.com> (https://github.com/shabeeb-aot)"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "artillery": "^1.6.1",
+    "node-fetch": "^2.6.1"
+  }
+}
