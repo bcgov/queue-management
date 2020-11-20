@@ -398,10 +398,10 @@ parameters:
     description: "Display Front line services in Back Office Dropdown"
     required: false
   - name: ROCKET_CHAT_URL
-    description: "Rocket Chat URL"
+    description: "Send messages from feedback to Rocket Chat. The Rocketchat Webhook URL"
     required: false
   - name: CHES_SSO_TOKEN_URL
-    description: "CHES token URL."
+    description: "CHES token URL. See https://github.com/bcgov/common-hosted-email-service for more details."
     required: true
   - name: CHES_SSO_CLIENT_ID
     description: "CHES service client id."
@@ -417,97 +417,97 @@ parameters:
     required: false
     value: "300"
   - name: MINIO_HOST
-    description: "MINIO_HOST"
+    description: "MINIO HOST"
     required: false
   - name: MINIO_BUCKET
-    description: "MINIO_BUCKET"
+    description: "MINIO BUCKET"
     required: false
   - name: MINIO_SECRET_KEY
-    description: "MINIO_SECRET_KEY"
+    description: "MINIO SECRET KEY"
     required: false
   - name: MINIO_ACCESS_KEY
-    description: "MINIO_ACCESS_KEY"
-    required: false    
-  - name: BCMP_AUTH_TOKEN
-    description: "BCMP_AUTH_TOKEN"
-    required: false
-    value: ""
-  - name: SERVICENOW_TENANT
-    description: "SERVICENOW_TENANT"
-    required: false
-    value: ""
-  - name: SERVICENOW_TABLE
-    description: "SERVICENOW_TABLE"
-    required: false
-    value: ""
-  - name: SERVICENOW_ASSIGN_GROUP
-    description: "SERVICENOW_ASSIGN_GROUP"
-    required: false
-    value: ""
-  - name: SQLALCHEMY_POOL_SIZE
-    description: "SQLALCHEMY_POOL_SIZE"
-    required: false
-    value: ""
-  - name: SQLALCHEMY_MAX_OVERFLOW
-    description: "SQLALCHEMY_MAX_OVERFLOW"
-    required: false
-    value: ""
-  - name: DATABASE_LONG_RUNNING_QUERY
-    description: "DATABASE_LONG_RUNNING_QUERY"
-    required: false
-    value: ""
-  - name: PRINT_ENABLE
-    description: "PRINT_ENABLE"
-    required: true
-    value: ""
-  - name: RECURRING_FEATURE_FLAG
-    description: "RECURRING_FEATURE_FLAG"
-    required: true
-    value: ""
-  - name: SQLALCHEMY_POOL_PRE_PING
-    description: "SQLALCHEMY_POOL_PRE_PING"
-    required: true
-    value: ""
+    description: "MINIO ACCESS KEY"
+    required: false 
   - name: MINIO_USE_SECURE
-    description: "MINIO_USE_SECURE"
+    description: "Allow for https minio"
     required: false
     value: ""
   - name: BCMP_BASE_URL
-    description: "BCMP_BASE_URL"
+    description: "BC MailPlus/Pesticide application API URL"
+    required: false
+    value: ""   
+  - name: BCMP_AUTH_TOKEN
+    description: "BC MailPlus/Pesticide application auth token"
     required: false
     value: ""
+  - name: SERVICENOW_TENANT
+    description: "Send messages through feedback via Servicenow api settings"
+    required: false
+    value: ""
+  - name: SERVICENOW_TABLE
+    description: "Send messages through feedback via Servicenow api settings"
+    required: false
+    value: ""
+  - name: SERVICENOW_ASSIGN_GROUP
+    description: "Send messages through feedback via Servicenow api settings"
+    required: false
+    value: ""
+  - name: SQLALCHEMY_POOL_SIZE
+    description: "SQL pool settings"
+    required: false
+    value: ""
+  - name: SQLALCHEMY_MAX_OVERFLOW
+    description: "SQL pool settings"
+    required: false
+    value: ""
+  - name: DATABASE_LONG_RUNNING_QUERY
+    description: "Enables displaying warning of long running queries over a time period in seconds"
+    required: false
+    value: ""
+  - name: PRINT_ENABLE
+    description: "Enables additional logging details in console"
+    required: true
+    value: ""
+  - name: RECURRING_FEATURE_FLAG
+    description: "Allows recurring blackout option in application"
+    required: true
+    value: ""
+  - name: SQLALCHEMY_POOL_PRE_PING
+    description: "SQL pool settings"
+    required: true
+    value: ""
   - name: REALM_PUBLIC_KEY
-    description: "realm_public_key"
+    description: "keycloak Realm Public Key"
     required: true
   - name: AUTH_URI
-    description: "auth_uri"
+    description: "Keycloak authentication url"
     required: true
     value: ""
   - name: ISSUER
-    description: "issuer"
+    description: "Keycloak server URL. For ex: https;//mykeycloakserver.com/auth/realms/{realm}"
     required: true
     value: ""
   - name: CLIENT_ID
-    description: "client_id"
+    description: "keycloak client id"
     required: true
     value: ""
   - name: CLIENT_SECRET
-    description: "client_secret"
+    description: "keycloak client secret"
     required: true
     value: ""
   - name: USERINFO_URI
-    description: "userinfo_uri"
+    description: "keycloak userinfo uri"
     required: true
     value: ""
   - name: TOKEN_URI
-    description: "token_uri"
+    description: "Keycloak token_url"
     required: true
     value: ""
   - name: TOKEN_INTROSPECTION_URI
-    description: "token_introspection_uri"
+    description: "keycloak introspection url"
     required: true
     value: ""
   - name: APPOINTMENT_LIMIT_DAYS
-    description: "APPOINTMENT_LIMIT_DAYS"
+    description: "the number of days in advance to book appointment "
     required: true
     value: ""

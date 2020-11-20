@@ -171,13 +171,13 @@ parameters:
     description: The Location for your image streams (Tools Workspace)
     required: true
   - name: REALM
-    description: REALM
+    description: "Keycloak realm"
     required: true
   - name: RESOURCE
-    description: keycloak client
+    description: "keycloak client id"
     required: true
   - name: AUTH_SERVER_URL
-    description: AUTH_SERVER_URL
+    description: "keycloak server URL. Ex:https://yourkeycloakserver.com/auth/"
     required: true
 
 

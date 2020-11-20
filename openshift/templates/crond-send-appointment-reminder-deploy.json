@@ -42,7 +42,6 @@
         "SERVICE_ACCOUNT_SECRET": "${SERVICE_ACCOUNT_SECRET}",
         "MAIL_FROM_ID": "${MAIL_FROM_ID}",
         "EMAIL_APPOINTMENT_APP_URL": "${EMAIL_APPOINTMENT_APP_URL}",
-        "MAIL_PORT": "${MAIL_APPOINTMENT_APP_URL}",
         "MAX_EMAIL_PER_BATCH": "${MAX_EMAIL_PER_BATCH}",
         "CHES_SSO_TOKEN_URL": "${CHES_SSO_TOKEN_URL}",
         "CHES_SSO_CLIENT_ID": "${CHES_SSO_CLIENT_ID}",
@@ -363,19 +362,19 @@
     {
       "name": "OIDC_PROVIDER_TOKEN_URL",
       "displayName": "Oidc token url",
-      "description": "Oidc token url",
+      "description": "Keycloak token url",
       "required": true
     },
     {
       "name": "REMINDER_ENDPOINT",
       "displayName": "Reminder endpoint",
-      "description": "Endpoint to invoke to send reminders.",
+      "description": "Endpoint to invoke to send reminders. for ex:https://queue-api url/api/v1/appointment/reminders",
       "required": true
     },
     {
       "name": "SERVICE_ACCOUNT_ID",
       "displayName": "Service account id",
-      "description": "Service account id in oidc provider to invoke the job. This service account must have reminder_job role.",
+      "description": "Service client id in oidc provider to invoke the job. This service account must have reminder_job role.",
       "required": true
     },
     {
@@ -391,7 +390,7 @@
     },
     {
       "name": "EMAIL_APPOINTMENT_APP_URL",
-      "description": "Appointment Url to provide in email",
+      "description": "Appointment Url to provide in citizen reminder email",
       "required": true
     },
     {
@@ -401,7 +400,7 @@
     },
     {
       "name": "CHES_SSO_TOKEN_URL",
-      "description": "CHES token url",
+      "description": "CHES token url. See https://github.com/bcgov/common-hosted-email-service for more details.",
       "required": false
     },
     {
@@ -413,11 +412,6 @@
       "name": "CHES_POST_EMAIL_ENDPOINT",
       "description": "CHES email send endpoint",
       "required": false
-    },
-    {
-      "name": "MAIL_PORT",
-      "description": "MAIL_PORT",
-      "required": true
     },
     {
       "name": "CHES_SSO_CLIENT_SECRET",

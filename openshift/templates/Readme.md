@@ -23,7 +23,9 @@ Patroni: HA Postgres instance
 
 - queue-management-frontend-dc.yml - Creates the queue management Front End Pods. Please note that this also creates a Config Map that needs to be updated with your Openshift & Keycloak variables.
 - queue-management-api-dc.yml - Creates the queue management API Pods. Please note that this also creates a Config Map that needs to be updated with your Openshift & Keycloak variables.
+- crond-send-appointment-reminder-deploy - creates reminder pods for sending email reminders. Also creates two Config Maps that needs to be updated with authentication details
 
+- appointment-frontend-dc.yaml - creates appointment front end Pods. This also creates a Config Map that needs to be updated with your authentication details.
 ### Installation for Appointments on Online
 
 ## Build Configuration Templates

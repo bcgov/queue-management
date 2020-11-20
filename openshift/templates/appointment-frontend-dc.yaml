@@ -218,7 +218,7 @@ parameters:
     required: true
     value: ""
   - name: KEYCLOAK_RESOURCE
-    description: "Keycloak Resource"
+    description: "Keycloak client id"
     required: true
     value: ""
   - name: KEYCLOAK_SECRET
@@ -226,11 +226,11 @@ parameters:
     required: true
     value: ""
   - name: HIDEBCSERVICESCARD
-    description: "HIDEBCSERVICESCARD"
+    description: "this is to display/hide BCServices card authentication option"
     required: true
     value: ""
   - name: AUTH_SERVER_URL
-    description: "AUTH_SERVER_URL"
+    description: "Keycloak authorization url for ex:https://keycloakserver.com/auth/"
     required: true
     value: ""
 
