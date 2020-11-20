@@ -42,6 +42,7 @@
         "SERVICE_ACCOUNT_SECRET": "${SERVICE_ACCOUNT_SECRET}",
         "MAIL_FROM_ID": "${MAIL_FROM_ID}",
         "EMAIL_APPOINTMENT_APP_URL": "${EMAIL_APPOINTMENT_APP_URL}",
+        "MAIL_PORT": "${MAIL_APPOINTMENT_APP_URL}",
         "MAX_EMAIL_PER_BATCH": "${MAX_EMAIL_PER_BATCH}",
         "CHES_SSO_TOKEN_URL": "${CHES_SSO_TOKEN_URL}",
         "CHES_SSO_CLIENT_ID": "${CHES_SSO_CLIENT_ID}",
@@ -412,6 +413,11 @@
       "name": "CHES_POST_EMAIL_ENDPOINT",
       "description": "CHES email send endpoint",
       "required": false
+    },
+    {
+      "name": "MAIL_PORT",
+      "description": "MAIL_PORT",
+      "required": true
     },
     {
       "name": "CHES_SSO_CLIENT_SECRET",

@@ -323,11 +323,11 @@ parameters:
   - name: SQLALCHEMY_ECHO
     description: ""
     required: true
-    value: "False"
+    value: ""
   - name: API_IMAGE_TAG
     description: "The tag to use when deploying"
     required: true
-    value: "dev"
+    value: ""
   - name: TOOLS_WORKSPACE
     description: "IMAGE STREAM WORKSPACE LOCATION"
     required: true
@@ -348,7 +348,7 @@ parameters:
   - name: THEQ_SNOWPLOW_CALLFLAG
     description: "Send events to Snowplow for Analytics (True or False)"
     required: true
-    value: "False"
+    value: ""
   - name: THEQ_SNOWPLOW_ENDPOINT
     description: "Snowplow URL Endopoint"
     required: false
@@ -364,7 +364,7 @@ parameters:
   - name: THEQ_SNOWPLOW_ENV
     description: "Snowplow Environment"
     required: false
-    value: "dev"
+    value: ""
   - name: THEQ_SNOWPLOW_ROUTE
     description: "Snowplow Route"
     required: false
@@ -447,27 +447,27 @@ parameters:
   - name: SQLALCHEMY_POOL_SIZE
     description: "SQLALCHEMY_POOL_SIZE"
     required: false
-    value: "5"
+    value: ""
   - name: SQLALCHEMY_MAX_OVERFLOW
     description: "SQLALCHEMY_MAX_OVERFLOW"
     required: false
-    value: "10"
+    value: ""
   - name: DATABASE_LONG_RUNNING_QUERY
     description: "DATABASE_LONG_RUNNING_QUERY"
     required: false
-    value: "0.5"
+    value: ""
   - name: PRINT_ENABLE
     description: "PRINT_ENABLE"
     required: true
-    value: "false"
+    value: ""
   - name: RECURRING_FEATURE_FLAG
     description: "RECURRING_FEATURE_FLAG"
     required: true
-    value: "true"
+    value: ""
   - name: SQLALCHEMY_POOL_PRE_PING
     description: "SQLALCHEMY_POOL_PRE_PING"
     required: true
-    value: "true"
+    value: ""
   - name: MINIO_USE_SECURE
     description: "MINIO_USE_SECURE"
     required: false
