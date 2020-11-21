@@ -1,16 +1,19 @@
-// Uses DSL plugins resolution introduced in Gradle 2.1
 plugins {
-  id "java"
-  id "jacoco"
-  id "org.sonarqube" version "2.6.2"
+    id "jacoco"
+    id "java"
+    id "application"
+    id "org.sonarqube" version "3.0"
 }
+
+description = 'Example of SonarQube Scanner for Gradle Usage'
+version = '1.0'
 
 sonarqube {
     properties {
         property "sonar.projectName", "Queue Management"
         property "sonar.projectKey", "org.sonarqube:queue-management"
         property "sonar.projectBaseDir", "../"
-        property "sonar.sources", "./api,./frontend/src"
+        property "sonar.sources", "./api,./frontend/src,./appointment-frontend/src,/jobs/appointment_reminder"
         property "sonar.exclusions", "**/test_*.py"
         property "sonar.verbose", "true"
         property "sourceEncoding", "UTF-8"
@@ -27,21 +30,26 @@ allprojects {
   version = "$baseVersion" + (snapshotVersion ? "-SNAPSHOT" : "")
 }
 
-test {
-  ignoreFailures = true
+// In this section you declare where to find the dependencies of your project
+repositories {
+    // Use jcenter for resolving your dependencies.
+    // You can declare any Maven/Ivy/file repository here.
+    jcenter()
 }
 
 dependencies {
+    // This dependency is found on compile classpath of this component and consumers.
+    compile 'com.google.guava:guava:21.0'
+
+    // Use JUnit test framework
     testCompile 'junit:junit:4.12'
 }
 
-repositories {
-  repositories {
-    maven {
-      url "https://repo1.maven.org/maven2/"
+// Define the main class for the application
+mainClassName = 'App'
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
     }
-    maven {
-      url "https://plugins.gradle.org/m2/"
-    }
-  }
 }
