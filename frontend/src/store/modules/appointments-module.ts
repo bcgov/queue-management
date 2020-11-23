@@ -49,19 +49,21 @@ export default {
       if (state.appointments.length > 0) {
         return state.appointments.map(apt =>
           ({
-            start: apt.start_time,
-            end: apt.end_time,
+            start: new Date(apt.start_time),
+            end: new Date(apt.end_time),
             appointment_id: apt.appointment_id,
             service_id: parseInt(apt.service_id),
             citizen_id: apt.citizen_id,
             title: apt.citizen_name,
+            name: apt.citizen_name,
             contact_information: apt.contact_information,
             comments: apt.comments,
             color: '#B5E0B8',
             blackout_flag: apt.blackout_flag,
             is_draft: apt.is_draft,
             recurring_uuid: apt.recurring_uuid,
-            online_flag: apt.online_flag
+            online_flag: apt.online_flag,
+            timed: true
           })
         )
       }
@@ -360,7 +362,7 @@ export default {
       const { appointment, action = 'create' } = data
 
       const currentAppointment = state.appointments
-      let output:any = currentAppointment
+      let output: any = currentAppointment
       if (action === 'create') {
         if (appointment.office_id === rootState.user.office_id) {
           output = [...currentAppointment, appointment]
