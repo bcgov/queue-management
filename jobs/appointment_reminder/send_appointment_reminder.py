@@ -80,7 +80,6 @@ def send_reminders(app):
     }
 
     token_response = requests.post(token_url, data=data, headers=headers)
-    # print(token_response.json())
     access_token = token_response.json().get('access_token')
 
     # Add this token as bearer token to invoke the reminders endpoint
@@ -127,6 +126,8 @@ def send_reminders(app):
                 print('Pausing for a minute')
                 time.sleep(60)
                 email_count = 0
+                # To handle token expiry, get a new token when the task resumes.
+                ches_token = generate_ches_token()
 
     app.logger.debug('Ending job>>>')
 

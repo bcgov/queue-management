@@ -1,0 +1,118 @@
+config:
+  target: "{{ $processEnvironment.TARGET }}"
+  
+  socketio:
+    path: "/api/v1/socket.io"
+    transports: ["websocket"]
+    extraHeaders:
+      Cookie: "oidc-jwt={{ $processEnvironment.SERVICE_API_KEY }}"
+  http:
+    maxSockets: 3
+
+  phases:
+    - name: Warm up
+      duration: 3
+      arrivalRate: 1
+    - name: Ramp up load (max {{ $processEnvironment.MAX_VIRTUAL_USERS }} users)
+      duration: 30
+      arrivalRate: 1
+      rampTo: 5
+      maxVusers: {{ $processEnvironment.MAX_VIRTUAL_USERS }}
+    - name: Sustained max load. (max {{ $processEnvironment.MAX_VIRTUAL_USERS }} users)
+      duration: 30
+      arrivalRate: 5
+      maxVusers: {{ $processEnvironment.MAX_VIRTUAL_USERS }}   
+  processor: "./functions.js"
+
+scenarios:
+
+  # This must be a separate scenario as it uses a different engine (socketio).
+  - name: "CSR - Websockets"
+    beforeRequest: 'setAuthHeader'
+    engine: "socketio"
+    weight: 75
+    flow:
+      - emit:
+          channel: "connect"
+          data: "ping"
+      - think: 5
+      - emit:
+          channel: "joinRoom"
+          data: "joinRoom"
+      - think: 5
+
+  # Main scenario for CSRs who login, review information, but don't write to DB.
+  - name: "CSR – Login, load data, idle"
+    beforeRequest: 'setAuthHeader'
+    weight: 75
+    flow: &csrLoadData
+      - get:
+          url: "/api/v1/citizens/"
+      - get:
+          url: "/api/v1/appointments/"
+      - get:
+          url: "/api/v1/categories/"
+      - get:
+          url: "/api/v1/channels/"
+      - get:
+          url: "/api/v1/services/?office_id=1"
+      - get:
+          url: "/api/v1/exam_types/"
+      - think: 5
+  
+  # Main scenarios for CSRs who login and create/delete an appointment. 
+  # Copies same flow from idle CSRs above.
+  - name: "CSR – Create and delete appointments"
+    beforeRequest: 'setAuthHeader'
+    weight: 75
+    flow:
+      # Copy the same flow for idle CSRs, and just add more steps
+      - *csrLoadData
+      - post:
+          url: "/api/v1/appointments/draft"
+          json:
+            start_time: "2020-11-05T18:00:00Z"
+            end_time: "2020-11-05T18:15:00Z"
+            office_id: 1
+          capture:
+            json: "$.appointment.appointment_id"
+            as: "draftappointment_Id"
+          strict: false # We don't mind if id can't be captured and the next requests 404s
+      - think: 5
+      - delete:
+          url: "/api/v1/appointments/draft/{{draftappointment_Id}}/"
+      - think: 5
+      - post:
+          # url: "/api/v1/appointments/draft"
+          url: "/api/v1/appointments/"
+          json:
+            start_time: "2020-11-05T18:00:00Z"
+            end_time: "2020-11-05T18:15:00Z"
+            service_id: 11
+            citizen_name: "name from test"
+            contact_information: ""
+            office_id: 1
+            appointment_draft_id: 1
+          capture:
+            json: "$.appointment.appointment_id"
+            as: "appointment_id"
+          strict: false # We don't mind if id can't be captured and the next requests 404s
+      - think: 5
+      - put:
+          url: "/api/v1/appointments/{{appointment_id}}/"
+          json:
+            start_time: "2020-11-05T18:00:00Z"
+            end_time: "2020-11-05T18:15:00Z"
+            service_id: 7
+            citizen_name: "updated name from test"
+            contact_information: ""
+            office_id: 1
+            appointment_draft_id: 1
+          capture:
+            json: "$.appointment.appointment_id"
+            as: "updateappointment_id"
+          strict: false # We don't mind if id can't be captured and the next requests 404s
+      - think: 5
+      - delete:
+          url: "/api/v1/appointments/{{appointment_id}}/"
+      - think: 5

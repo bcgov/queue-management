@@ -1,0 +1,86 @@
+config:
+  target: "{{ $processEnvironment.TARGET }}"
+  http:
+    maxSockets: 3
+  phases:
+     - name: Warm up
+       duration: 3
+       arrivalRate: 1
+     - name: Ramp up load (max {{ $processEnvironment.MAX_VIRTUAL_USERS }} users)
+       duration: 30
+       arrivalRate: 10
+       rampTo: 50
+       maxVusers: {{ $processEnvironment.MAX_VIRTUAL_USERS }}
+     - name: Sustained max load. (max {{ $processEnvironment.MAX_VIRTUAL_USERS }} users)
+       duration: 60
+       arrivalRate: 50
+       maxVusers: {{ $processEnvironment.MAX_VIRTUAL_USERS }}
+  variables:
+  processor: "./functions.js"
+
+scenarios:
+  - name: "(HTTP) CSR – Authenticated api route"
+    beforeRequest: 'setAuthHeader'
+    weight: 75
+    flow:
+      - get:
+          url: "/api/v1/citizens/"
+      - get:
+          url: "/api/v1/appointments/"
+      - get:
+          url: "/api/v1/categories/"
+      - get:
+          url: "/api/v1/channels/"
+      - get:
+          url: "/api/v1/services/?office_id=1"
+      - log: "exam_types running"
+      - get:
+          url: "/api/v1/exam_types/"
+      - log: "creating draft appointmen running"
+      - post:
+          url: "/api/v1/appointments/draft"
+          json:
+            start_time: "2020-11-05T18:00:00Z"
+            end_time: "2020-11-05T18:15:00Z"
+            office_id: 7
+          capture:
+            json: "$.appointment.appointment_id"
+            as: "draftappointment_Id"
+          strict: false # We don't mind if id can't be captured and the next requests 404s
+      - log: "deleting appointment {{draftappointment_Id}} running"
+      - delete:
+          url: "/api/v1/appointments/draft/{{draftappointment_Id}}/"
+      - log: "post appointments appointment running"
+      - post:
+          # url: "/api/v1/appointments/draft"
+          url: "/api/v1/appointments/"
+          json:
+            start_time: "2020-11-05T18:00:00Z"
+            end_time: "2020-11-05T18:15:00Z"
+            service_id: 21
+            citizen_name: "name from test"
+            contact_information: ""
+            office_id: 7
+            appointment_draft_id: 1
+          capture:
+            json: "$.appointment.appointment_id"
+            as: "appointment_id"
+          strict: false # We don't mind if id can't be captured and the next requests 404s
+      - log: "updating appointment {{appointment_id}} running"
+      - put:
+          url: "/api/v1/appointments/{{appointment_id}}/"
+          json:
+            start_time: "2020-11-05T18:00:00Z"
+            end_time: "2020-11-05T18:15:00Z"
+            service_id: 21
+            citizen_name: "updated name from test"
+            contact_information: ""
+            office_id: 7
+            appointment_draft_id: 1
+          capture:
+            json: "$.appointment.appointment_id"
+            as: "updateappointment_id"
+          strict: false # We don't mind if id can't be captured and the next requests 404s
+      - log: "delet appointment {{updateappointment_id}} running"
+      - delete:
+          url: "/api/v1/appointments/{{appointment_id}}/"

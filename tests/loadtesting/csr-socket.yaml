@@ -1,0 +1,43 @@
+config:
+  target: "{{ $processEnvironment.TARGET }}"
+  socketio:
+    path: "/api/v1/socket.io"
+    transports: ["websocket"]
+    extraHeaders:
+      Cookie: "oidc-jwt={{ $processEnvironment.SERVICE_API_KEY }}"
+  http:
+    maxSockets: 3
+
+  phases:
+     - name: Warm up
+       duration: 3
+       arrivalRate: 1
+     - name: Ramp up load (max {{ $processEnvironment.MAX_VIRTUAL_USERS }} users)
+       duration: 30
+       arrivalRate: 10
+       rampTo: 50
+       maxVusers: {{ $processEnvironment.MAX_VIRTUAL_USERS }}
+     - name: Sustained max load. (max {{ $processEnvironment.MAX_VIRTUAL_USERS }} users)
+       duration: 60
+       arrivalRate: 50
+       maxVusers: {{ $processEnvironment.MAX_VIRTUAL_USERS }}
+  variables:
+  processor: "./functions.js"
+
+scenarios:
+  - name: "CSR - Websockets"
+    beforeRequest: 'setAuthHeader'
+    engine: "socketio"
+
+    weight: 75
+    flow:
+      - log: " socket connectiong starting"
+      - emit:
+          channel: "connect"
+          data: "ping"
+      - think: 1
+      - emit:
+          channel: "joinRoom"
+          data: "joinRoom"
+      - log: "joinRoom socket"
+      - think: 1
