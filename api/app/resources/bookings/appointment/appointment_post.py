@@ -30,8 +30,7 @@ from app.utilities.auth_util import is_public_user
 from app.utilities.email import get_confirmation_email_contents, send_email, generate_ches_token, \
     get_blackout_email_contents
 from app.utilities.snowplow import SnowPlow
-from qsystem import api, api_call_with_retry, db, oidc, my_print
-
+from qsystem import api, api_call_with_retry, db, oidc, my_print, application
 from qsystem import socketio
 
 @api.route("/appointments/", methods=["POST"])
@@ -53,7 +52,8 @@ class AppointmentPost(Resource):
         if json_data.get('appointment_draft_id'):
             draft_id_to_delete = int(json_data['appointment_draft_id'])
             Appointment.delete_draft([draft_id_to_delete])
-            socketio.emit('appointment_delete', draft_id_to_delete)
+            if application.config['ENABLE_AUTO_REFRESH']:
+                socketio.emit('appointment_delete', draft_id_to_delete)
 
         is_blackout_appt = json_data.get('blackout_flag', 'N') == 'Y'
         csr = None
@@ -165,7 +165,8 @@ class AppointmentPost(Resource):
 
             result = self.appointment_schema.dump(appointment)
 
-            socketio.emit('appointment_create', result.data)
+            if application.config['ENABLE_AUTO_REFRESH']:
+                socketio.emit('appointment_create', result.data)
 
             return {"appointment": result.data,
                     "errors": result.errors}, 201

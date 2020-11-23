@@ -53,6 +53,8 @@ def get_reminder_email_contents(appt: Appointment, user, office, timezone):
                            formatted_date=date,
                            duration=get_duration(appt.start_time, appt.end_time),
                            telephone=office.telephone,
+                           service_email_paragraph=appt.service.email_paragraph,
+                           office_email_paragraph=appt.office.office_email_paragraph,
                            url=current_app.config.get('EMAIL_APPOINTMENT_APP_URL'))
     return subject, get_email(user, appt), sender, body
 
@@ -86,6 +88,8 @@ def get_confirmation_email_contents(appointment: Appointment, office, timezone, 
                            formatted_date=date,
                            duration=get_duration(appointment.start_time, appointment.end_time),
                            telephone=office.telephone,
+                           service_email_paragraph=appointment.service.email_paragraph,
+                           office_email_paragraph=appointment.office.office_email_paragraph,
                            url=current_app.config.get('EMAIL_APPOINTMENT_APP_URL'))
     return subject, get_email(user, appointment), sender, body
 

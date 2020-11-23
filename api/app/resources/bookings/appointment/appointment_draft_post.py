@@ -29,7 +29,7 @@ from app.utilities.auth_util import is_public_user
 from app.utilities.date_util import add_delta_to_time
 from app.utilities.email import get_confirmation_email_contents, send_email, get_blackout_email_contents
 from app.utilities.snowplow import SnowPlow
-from qsystem import api, api_call_with_retry, db, oidc, my_print
+from qsystem import api, api_call_with_retry, db, oidc, my_print, application
 from app.services import AvailabilityService
 from dateutil.parser import parse
 from pprint import pprint
@@ -101,6 +101,7 @@ class AppointmentDraftPost(Resource):
         
         result = self.appointment_schema.dump(appointment)
 
-        socketio.emit('appointment_create', result.data)
+        if application.config['ENABLE_AUTO_REFRESH']:
+            socketio.emit('appointment_create', result.data)
 
         return {"appointment": result.data, "warning" : warning}, 201

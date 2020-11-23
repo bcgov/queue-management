@@ -23,6 +23,7 @@ from qsystem import db
 from sqlalchemy import and_
 from qsystem import db, cache, socketio
 from pprint import pprint
+from wtforms import TextAreaField
 
 
 def on_form_prefill(counters):
@@ -83,7 +84,8 @@ class OfficeConfig(Base):
                    'max_person_appointment_per_day',
                    'civic_address',
                    'timeslots',
-                   'number_of_dlkt'
+                   'number_of_dlkt',
+                   'office_email_paragraph'
                    ]
 
     form_excluded_columns = ('citizens',
@@ -114,7 +116,8 @@ class OfficeConfig(Base):
                          'telephone',
                          'online_status',
                          'timeslots',
-                         'number_of_dlkt'
+                         'number_of_dlkt',
+                         'office_email_paragraph'
                          )
 
     form_edit_rules = ('office_name',
@@ -138,7 +141,8 @@ class OfficeConfig(Base):
                        'telephone',
                        'online_status',
                        'timeslots',
-                       'number_of_dlkt'
+                       'number_of_dlkt',
+                       'office_email_paragraph'
                        )
 
     form_args = {
@@ -164,7 +168,8 @@ class OfficeConfig(Base):
                      'appointments_enabled_ind': 'Appointments Enabled',
                      'office_appointment_message': 'Online Appointment Message',
                      'appointments_days_limit': 'Appointment Days Limit',
-                     'max_person_appointment_per_day': 'Maximum number of appointments allowed for same person per day'
+                     'max_person_appointment_per_day': 'Maximum number of appointments allowed for same person per day',
+                     'office_email_paragraph': 'Office Email Paragraph'
                      }
 
     column_sortable_list = ['office_name',
@@ -179,6 +184,14 @@ class OfficeConfig(Base):
                             ]
 
     column_default_sort = 'office_name'
+
+    form_widget_args = {
+        'office_email_paragraph': { 'rows': 5, 'maxlength': 2000  }
+    }
+
+    form_overrides = {
+        'office_email_paragraph': TextAreaField
+    }
 
     #     if is_created:
     #         print('==>init_formdata  ===> is_created True')
@@ -257,7 +270,8 @@ class OfficeConfigGA(OfficeConfig):
         'telephone',
         'online_status',
         'timeslots',
-        'number_of_dlkt'
+        'number_of_dlkt',
+        'office_email_paragraph'
     )
 
     form_excluded_columns = (
@@ -279,7 +293,8 @@ class OfficeConfigGA(OfficeConfig):
     form_widget_args = {
         'office_name': {
             'readonly': True
-        }
+        },
+        'office_email_paragraph': { 'rows': 5, 'maxlength': 2000  }
     }
 
 
