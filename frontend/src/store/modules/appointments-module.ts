@@ -58,7 +58,7 @@ export default {
             name: apt.citizen_name,
             contact_information: apt.contact_information,
             comments: apt.comments,
-            color: '#B5E0B8',
+            color: apt.is_draft ? 'grey darken-1' : '#efd469', //  apt.is_draft ? 'rgb(239, 212, 105)' : 'grey darken-1', // '#B5E0B8',
             blackout_flag: apt.blackout_flag,
             is_draft: apt.is_draft,
             recurring_uuid: apt.recurring_uuid,

@@ -1,63 +1,40 @@
 <template>
   <fragment>
-    <div>
-      <v-sheet tile height="54" class="d-flex">
-        <v-btn icon class="ma-2" @click="$refs.calendar.prev()">
-          <v-icon>mdi-chevron-left</v-icon>
-        </v-btn>
-
-        <v-spacer></v-spacer>
-        <v-btn icon class="ma-2" @click="$refs.calendar.next()">
-          <v-icon>mdi-chevron-right</v-icon>
-        </v-btn>
-      </v-sheet>
-      <v-sheet height="600">
-        <!-- {{ events }} -->
-        <keep-alive>
-          <v-calendar
-            ref="calendar"
-            v-model="value"
-            first-time="08:30"
-            interval-minutes="30"
-            :weekdays="weekday"
-            :type="type"
-            :events="appointment_events"
-            :event-overlap-mode="mode"
-            :event-overlap-threshold="30"
-            :event-color="getEventColor"
-            @click:event="eventSelected"
-            @click:more="eventSelected"
-            @change="getEvents"
-            @click:time="selectEvent"
-          ></v-calendar>
-          <!-- @click:event="showEvent"
-            @click:more="viewDay"
-            @click:date="viewDay"
-            @change="updateRange"
-            @click:time="test" -->
-          <!-- @change="getEvents" -->
-        </keep-alive>
-      </v-sheet>
+    <div class="v-application">
+      <div style="width: 100%" class="m-3">
+        <!-- <v-card class="mx-auto" max-width="97%" elevation="5"> -->
+        <v-sheet>
+          <!-- height="600" -->
+          <!-- {{ events }} -->
+          <!-- interval-height="24" -->
+          <keep-alive>
+            <v-calendar
+              ref="calendar"
+              :now="currentDay"
+              color="primary"
+              v-model="value"
+              first-time="08:30"
+              interval-minutes="30"
+              interval-count="17"
+              :weekdays="weekday"
+              :type="type"
+              :events="appointment_events"
+              :event-overlap-mode="mode"
+              :event-overlap-threshold="30"
+              :event-color="getEventColor"
+              @click:event="eventSelected"
+              @click:more="eventSelected"
+              @change="getEvents"
+              @click:time="selectEvent"
+            ></v-calendar>
+          </keep-alive>
+        </v-sheet>
+        <!-- </v-card> -->
+      </div>
     </div>
-
-    <!-- {{ appointment_events }} -->
     <ApptBookingModal :clickedTime="clickedTime" :clickedAppt="clickedAppt" />
     <AppointmentBlackoutModal />
     <CheckInModal :clickedAppt="clickedAppt" />
-    <!-- <keep-alive>
-      <full-calendar
-        ref="appointments"
-        key="appointments"
-        id="appointments"
-        class="q-calendar-margins"
-        @event-selected="eventSelected"
-        @view-render="viewRender"
-        @event-created="selectEvent"
-        @event-render="eventRender"
-        :events="appointment_events"
-        :config="config"
-      ></full-calendar>
-    </keep-alive> -->
   </fragment>
 </template>
 
@@ -126,10 +103,12 @@ export default class Appointments extends Vue {
 
   value: any = ''
   events: any = []
+  currentDay: any = moment().format('YYYY-MM-DD')// new Date()
 
   colors: any = ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1']
   names: any = ['Meeting', 'Holiday', 'PTO', 'Travel', 'Event', 'Birthday', 'Conference', 'Party']
 
+  // to remove
   getEvents ({ start, end }) {
     const events: any = []
 
@@ -155,36 +134,6 @@ export default class Appointments extends Vue {
     }
 
     this.events = events
-    // [
-    //   {
-    //     name: 'Meeting',
-    //     start: new Date('2020-11-18T19:15:00.000Z'),
-    //     end: new Date('2020-11-18T20:15:00.000Z'),
-    //     color: 'green',
-    //     timed: true
-    //   },
-    //   {
-    //     name: 'PTO',
-    //     start: new Date('2020-11-19T17:45:00.000Z'),
-    //     end: new Date('2020-11-19T18:30:00.000Z'),
-    //     color: 'orange',
-    //     timed: true
-    //   },
-    //   {
-    //     name: 'PTO',
-    //     start: new Date('2020-11-19T04:30:00.000Z'),
-    //     end: new Date('2020-11-19T06:00:00.000Z'),
-    //     color: 'green',
-    //     timed: true
-    //   },
-    //   {
-    //     name: 'Travel',
-    //     start: new Date('2020-11-17T11:15:00.000Z'),
-    //     end: new Date('2020-11-17T13:00:00.000Z'),
-    //     color: 'cyan',
-    //     timed: true
-    //   }
-    // ]
   }
 
   getEventColor (event) {
@@ -196,6 +145,7 @@ export default class Appointments extends Vue {
   }
 
   // vuetify calender end
+
   public blockEventSelect: any = false
   public clickedAppt: any = null
   public clickedTime: any = null
@@ -373,8 +323,6 @@ export default class Appointments extends Vue {
 
   today () {
     this.value = ''
-
-    // this.$refs.appointments.fireMethod('today')
   }
 
   removeTempEvent () {
@@ -393,7 +341,7 @@ export default class Appointments extends Vue {
   highlightEvent (event) {
     const e = event
     e.color = 'pink'
-    this.$refs.appointments.fireMethod('updateEvent', e)
+    // this.$refs.appointments.fireMethod('updateEvent', e)
   }
 
   setTempEvent (event) {
