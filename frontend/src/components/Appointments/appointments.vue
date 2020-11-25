@@ -49,7 +49,6 @@ import AppointmentBlackoutModal from './appt-booking-modal/appt-blackout-modal.v
 import ApptBookingModal from './appt-booking-modal/appt-booking-modal.vue'
 import CheckInModal from './checkin-modal.vue'
 
-import { FullCalendar } from 'vue-full-calendar'
 import moment from 'moment'
 import { namespace } from 'vuex-class'
 
@@ -60,8 +59,7 @@ const appointmentsModule = namespace('appointmentsModule')
     AppointmentBlackoutModal,
     AddCitizen,
     CheckInModal,
-    ApptBookingModal,
-    FullCalendar
+    ApptBookingModal
   }
 })
 export default class Appointments extends Vue {
