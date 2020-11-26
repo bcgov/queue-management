@@ -27,6 +27,7 @@
               @change="getEvents"
               @click:time="selectEvent"
             ></v-calendar>
+            <!-- @mouseenter:event="showData" -->
           </keep-alive>
         </v-sheet>
         <!-- </v-card> -->
@@ -51,6 +52,7 @@ import CheckInModal from './checkin-modal.vue'
 
 import moment from 'moment'
 import { namespace } from 'vuex-class'
+import { roundedDownTime } from '@/utils/helpers'
 
 const appointmentsModule = namespace('appointmentsModule')
 
@@ -88,16 +90,16 @@ export default class Appointments extends Vue {
   // vuetify calender
 
   type: any = 'week'
-  types: any = ['month', 'week', 'day', '4day']
+  // types: any = ['month', 'week', 'day', '4day']
   mode: any = 'stack'
-  modes: any = ['stack', 'column']
+  // modes: any = ['stack', 'column']
   weekday: any = [1, 2, 3, 4, 5]
-  weekdays: any = [
-    { text: 'Sun - Sat', value: [0, 1, 2, 3, 4, 5, 6] },
-    { text: 'Mon - Sun', value: [1, 2, 3, 4, 5, 6, 0] },
-    { text: 'Mon - Fri', value: [1, 2, 3, 4, 5] },
-    { text: 'Mon, Wed, Fri', value: [1, 3, 5] }
-  ]
+  // weekdays: any = [
+  //   { text: 'Sun - Sat', value: [0, 1, 2, 3, 4, 5, 6] },
+  //   { text: 'Mon - Sun', value: [1, 2, 3, 4, 5, 6, 0] },
+  //   { text: 'Mon - Fri', value: [1, 2, 3, 4, 5] },
+  //   { text: 'Mon, Wed, Fri', value: [1, 3, 5] }
+  // ]
 
   value: any = ''
   events: any = []
@@ -236,11 +238,8 @@ export default class Appointments extends Vue {
     if ((this.apptRescheduling && this.$store.state.rescheduling) || event.id === '_tempEvent') {
       return
     }
-
-    console.log('event', event)
     let clickedEvent = event
     clickedEvent = { ...clickedEvent, ...{ start: moment(event.start) }, ...{ end: moment(event.end) } }
-    console.log('clickedEvent', clickedEvent)
     this.clickedAppt = clickedEvent
     this.highlightEvent(clickedEvent)
     this.toggleCheckInModal(true)
@@ -285,13 +284,19 @@ export default class Appointments extends Vue {
     }
   }
 
+  // formatting start time
+  formatedStartTime = (date, time) => {
+    const selectedTime = moment(`${date} ${time}`)// event.start.clone()
+    const roundedTime = roundedDownTime(selectedTime) // roundingdown  time to 15 min inteval
+    return moment(`${date} ${roundedTime}`)
+  }
+
   selectEvent (event) {
     this.checkRescheduleCancel()
     this.blockEventSelect = true
     // this.unselect()
-    console.log('event', event)
-    const start = moment(`${event.date} ${event.time}`)// event.start.clone()
-    console.log('start', start)
+
+    const start = this.formatedStartTime(event.date, event.time)// event.start.clone()
     let end
     for (const l of [15, 30, 45, 60]) {
       const testEnd = moment(start).clone().add(l, 'minutes')
@@ -363,7 +368,7 @@ export default class Appointments extends Vue {
       // service_id: 27,
       // is_draft: true
     }
-    console.log('data', data)
+
     // this.postDraftAppointment(data)
     this.postDraftAppointment(data).then((resp) => {
       // this.getAppointments().then(() => {

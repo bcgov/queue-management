@@ -16,7 +16,7 @@
 
 <template>
   <div style>
-    <v-card class="mx-4" max-width="100%" elevation="5">
+    <v-card class="m-4" max-width="100%" elevation="5">
       <div class="dash-button-flex-button-container pb-0 mb-3 mx-4">
         <!-- SLOT FOR EACH VIEW'S BUTTON CONTROLS-->
         <div class="d-flex">
