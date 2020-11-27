@@ -7,28 +7,26 @@
           <!-- height="600" -->
           <!-- {{ events }} -->
           <!-- interval-height="24" -->
-          <keep-alive>
-            <v-calendar
-              ref="calendar"
-              :now="currentDay"
-              color="primary"
-              v-model="value"
-              first-time="08:30"
-              interval-minutes="30"
-              interval-count="17"
-              :weekdays="weekday"
-              :type="type"
-              :events="appointment_events"
-              :event-overlap-mode="mode"
-              :event-overlap-threshold="30"
-              :event-color="getEventColor"
-              @click:event="eventSelected"
-              @click:more="eventSelected"
-              @change="getEvents"
-              @click:time="selectEvent"
-            ></v-calendar>
-            <!-- @mouseenter:event="showData" -->
-          </keep-alive>
+          <v-calendar
+            ref="calendar"
+            :now="currentDay"
+            color="primary"
+            v-model="value"
+            first-time="08:30"
+            interval-minutes="30"
+            interval-count="17"
+            :weekdays="weekday"
+            :type="type"
+            :events="appointment_events"
+            :event-overlap-mode="mode"
+            :event-overlap-threshold="30"
+            :event-color="getEventColor"
+            @click:event="eventSelected"
+            @click:more="eventSelected"
+            @change="getEvents"
+            @click:time="selectEvent"
+          ></v-calendar>
+          <!-- @mouseenter:event="showData" -->
         </v-sheet>
         <!-- </v-card> -->
       </div>
@@ -94,12 +92,6 @@ export default class Appointments extends Vue {
   mode: any = 'stack'
   // modes: any = ['stack', 'column']
   weekday: any = [1, 2, 3, 4, 5]
-  // weekdays: any = [
-  //   { text: 'Sun - Sat', value: [0, 1, 2, 3, 4, 5, 6] },
-  //   { text: 'Mon - Sun', value: [1, 2, 3, 4, 5, 6, 0] },
-  //   { text: 'Mon - Fri', value: [1, 2, 3, 4, 5] },
-  //   { text: 'Mon, Wed, Fri', value: [1, 3, 5] }
-  // ]
 
   value: any = ''
   events: any = []
@@ -110,30 +102,31 @@ export default class Appointments extends Vue {
 
   // to remove
   getEvents ({ start, end }) {
-    const events: any = []
+    return this.appointment_events
+    //   const events: any = []
 
-    const min = new Date(`${start.date}T00:00:00`)
-    const max = new Date(`${end.date}T23:59:59`)
-    const days = (max.getTime() - min.getTime()) / 86400000
-    const eventCount = this.rnd(days, days + 20)
+    //   const min = new Date(`${start.date}T00:00:00`)
+    //   const max = new Date(`${end.date}T23:59:59`)
+    //   const days = (max.getTime() - min.getTime()) / 86400000
+    //   const eventCount = this.rnd(days, days + 20)
 
-    for (let i = 0; i < eventCount; i++) {
-      const allDay = this.rnd(0, 3) === 0
-      const firstTimestamp = this.rnd(min.getTime(), max.getTime())
-      const first = new Date(firstTimestamp - (firstTimestamp % 900000))
-      const secondTimestamp = this.rnd(2, allDay ? 288 : 8) * 900000
-      const second = new Date(first.getTime() + secondTimestamp)
+    //   for (let i = 0; i < eventCount; i++) {
+    //     const allDay = this.rnd(0, 3) === 0
+    //     const firstTimestamp = this.rnd(min.getTime(), max.getTime())
+    //     const first = new Date(firstTimestamp - (firstTimestamp % 900000))
+    //     const secondTimestamp = this.rnd(2, allDay ? 288 : 8) * 900000
+    //     const second = new Date(first.getTime() + secondTimestamp)
 
-      events.push({
-        name: this.names[this.rnd(0, this.names.length - 1)],
-        start: first,
-        end: second,
-        color: this.colors[this.rnd(0, this.colors.length - 1)],
-        timed: !allDay
-      })
-    }
+    //     events.push({
+    //       name: this.names[this.rnd(0, this.names.length - 1)],
+    //       start: first,
+    //       end: second,
+    //       color: this.colors[this.rnd(0, this.colors.length - 1)],
+    //       timed: !allDay
+    //     })
+    //   }
 
-    this.events = events
+    //   this.events = events
   }
 
   getEventColor (event) {
@@ -149,89 +142,83 @@ export default class Appointments extends Vue {
   public blockEventSelect: any = false
   public clickedAppt: any = null
   public clickedTime: any = null
-  public config: any = {
-    selectOverlap: true,
-    columnHeaderFormat: 'ddd/D',
-    selectAllow: () => {
-      return true
-    },
-    defaultView: 'agendaWeek',
-    editable: false,
-    eventRender: (evt, el, view) => {
-      if (evt.blackout_flag === 'Y') {
-        el.css('font-size', '.9rem')
-        el.css('max-width', '100%')
-        el.css('background-color', '#000000')
-        el.css('border-color', '#000000')
-        el.css('color', 'white')
-      } else if (evt.is_draft === true) {
-        el.css('font-size', '.9rem')
-        el.css('max-width', '85%')
-        el.css('background-color', 'lightgray')
-        el.css('border-color', 'darkgray')
-        el.css('color', 'black')
-      } else {
-        el.css('font-size', '.9rem')
-        el.css('max-width', '85%')
-        el.css('background-color', '#EFD469')
-        el.css('border-color', '#EFD469')
-        el.css('color', 'black')
-      }
-    },
-    eventColor: 'pink',
-    eventConstraint: {
-      start: '08:30:00',
-      end: '17:00:00'
-    },
-    fixedWeekCount: false,
-    header: {
-      left: null,
-      center: null,
-      right: null
-    },
-    height: 'auto',
-    maxTime: '17:00:00',
-    minTime: '08:30:00',
-    navLinks: false,
-    schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-    selectConstraint: {
-      start: '08:30:00',
-      end: '17:00:00'
-    },
-    showNonCurrentDates: false,
-    slotDuration: '00:15:00',
-    slotLabelInterval: '00:30:00',
-    slotLabelFormat: 'h:mm',
-    timezone: 'local',
-    unselectCancel: '.modal, .modal-content',
-    views: {
-      agendaDay: {
-        allDaySlot: false
-      },
-      agendaWeek: {
-        allDaySlot: false
-      }
-    },
-    weekends: false
-  }
+  // public config: any = {
+  //   selectOverlap: true,
+  //   columnHeaderFormat: 'ddd/D',
+  //   selectAllow: () => {
+  //     return true
+  //   },
+  //   defaultView: 'agendaWeek',
+  //   editable: false,
+  //   eventRender: (evt, el, view) => {
+  //     if (evt.blackout_flag === 'Y') {
+  //       el.css('font-size', '.9rem')
+  //       el.css('max-width', '100%')
+  //       el.css('background-color', '#000000')
+  //       el.css('border-color', '#000000')
+  //       el.css('color', 'white')
+  //     } else if (evt.is_draft === true) {
+  //       el.css('font-size', '.9rem')
+  //       el.css('max-width', '85%')
+  //       el.css('background-color', 'lightgray')
+  //       el.css('border-color', 'darkgray')
+  //       el.css('color', 'black')
+  //     } else {
+  //       el.css('font-size', '.9rem')
+  //       el.css('max-width', '85%')
+  //       el.css('background-color', '#EFD469')
+  //       el.css('border-color', '#EFD469')
+  //       el.css('color', 'black')
+  //     }
+  //   },
+  //   eventColor: 'pink',
+  //   eventConstraint: {
+  //     start: '08:30:00',
+  //     end: '17:00:00'
+  //   },
+  //   fixedWeekCount: false,
+  //   header: {
+  //     left: null,
+  //     center: null,
+  //     right: null
+  //   },
+  //   height: 'auto',
+  //   maxTime: '17:00:00',
+  //   minTime: '08:30:00',
+  //   navLinks: false,
+  //   schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+  //   selectConstraint: {
+  //     start: '08:30:00',
+  //     end: '17:00:00'
+  //   },
+  //   showNonCurrentDates: false,
+  //   slotDuration: '00:15:00',
+  //   slotLabelInterval: '00:30:00',
+  //   slotLabelFormat: 'h:mm',
+  //   timezone: 'local',
+  //   unselectCancel: '.modal, .modal-content',
+  //   views: {
+  //     agendaDay: {
+  //       allDaySlot: false
+  //     },
+  //     agendaWeek: {
+  //       allDaySlot: false
+  //     }
+  //   },
+  //   weekends: false
+  // }
 
   agendaDay () {
-    // this.$refs.appointments.fireMethod('changeView', 'agendaDay')
     this.type = 'day'
   }
 
   agendaWeek () {
     this.type = 'week'
-    // this.$refs.appointments.fireMethod('changeView', 'agendaWeek')
   }
 
   eventRender (event, el, view) {
     return null
   }
-
-  // events () {
-  //   return null
-  // }
 
   eventSelected ({ nativeEvent, event }) {
     this.checkRescheduleCancel()
@@ -251,13 +238,11 @@ export default class Appointments extends Vue {
   }
 
   month () {
-    // this.$refs.appointments.fireMethod('changeView', 'month')
     this.type = 'month'
   }
 
   next () {
     this.$refs.calendar.next()
-    // this.$refs.appointments.fireMethod('next')
   }
 
   options (option) {
@@ -266,12 +251,11 @@ export default class Appointments extends Vue {
 
   prev () {
     this.$refs.calendar.prev()
-    // this.$refs.appointments.fireMethod('prev')
   }
 
-  renderEvent (event) {
-    this.$refs.appointments.fireMethod('renderEvent', event)
-  }
+  // renderEvent (event) {
+  //   this.$refs.appointments.fireMethod('renderEvent', event)
+  // }
 
   checkRescheduleCancel () {
     if (this.$store.state.apptRescheduleCancel) {
@@ -352,7 +336,7 @@ export default class Appointments extends Vue {
     // const start = moment(event.start).clone()
     const start = moment(event.start).clone()
     const end = moment(event.end).clone()
-    const e = {
+    const e: any = {
       start,
       end,
       title: 'Unconfirmed Booking',
@@ -431,5 +415,10 @@ export default class Appointments extends Vue {
 }
 .exam-table-holder {
   border: 1px solid dimgrey;
+}
+</style>
+<style >
+.v-calendar .v-event-timed-container {
+  margin-right: 20px !important;
 }
 </style>
