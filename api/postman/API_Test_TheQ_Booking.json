@@ -13522,6 +13522,307 @@
 					"response": []
 				},
 				{
+					"name": "Update all events",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a6e113a5-6b36-4216-b7a9-caf82468de48",
+								"exec": [
+									"// Check Response code for request",
+									"pm.test(\"Response code for request is 200\", function(){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"//  Check if response time less than max allowed.",
+									"var response_max = JSON.parse(globals.response_max);",
+									"pm.test(\"Response time less than \" + response_max.toString() + \"ms\", function(){",
+									"    pm.expect(pm.response.responseTime).to.be.below(response_max);",
+									"});",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"// Define the JSON Schema expected in response",
+									"var examSchema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"bookings\": {\"type\": \"object\"},",
+									"        \"errors\": {\"type\": [\"object\", \"string\"]}",
+									"    },",
+									"    \"required\": [\"bookings\", \"errors\"]",
+									"};",
+									"",
+									"//Test to see if response schema is valid",
+									"pm.test(\"Validate Update all events schema\", function(){",
+									"    pm.expect(tv4.validate(jsonData, examSchema)).to.be.true;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "831f76ce-b85b-454f-bc4a-27438659d238",
+								"exec": [
+									"//  Calculate a start date a week from today.",
+									"var later = new Date();",
+									"later.setDate(later.getDate()+7);",
+									"",
+									"//  Print out the recurring booking ID.",
+									"console.log(\"Recurring booking uuid:\");",
+									"console.log(pm.globals.get(\"pm_booking_uuid\"));",
+									"pm_url_uuid = JSON.parse(pm.globals.get(\"pm_booking_uuid\"))",
+									"console.log(pm_url_uuid);",
+									"pm.globals.set(\"pm_url_uuid\", pm_url_uuid);",
+									"     ",
+									"//  Get year, day, month from the later time.",
+									"year = later.getFullYear().toString();",
+									"month = (\"0\" + (later.getMonth() + 1).toString()).slice(-2);",
+									"day = (\"0\" + (later.getDate()).toString()).slice(-2);",
+									"",
+									"//  Format starting and ending time for the booking.",
+									"start_time = year + \"-\" + month + \"-\" + day + \"T21:00:00Z\";",
+									"end_time = year + \"-\" + month + \"-\" + day + \"T23:00:00Z\";",
+									"",
+									"pm.globals.set(\"start_time\", JSON.stringify(start_time));",
+									"pm.globals.set(\"end_time\", JSON.stringify(end_time));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\n  \"booking_name\": \"All recurring pm events #2\",\n  \"booking_contact_information\": \"My_second_favourite_postman@gmail.com\",\n  \"invigilator_id\": []\n}"
+						},
+						"url": {
+							"raw": "{{url}}bookings/recurring/{{pm_url_uuid}}",
+							"host": [
+								"{{url}}bookings"
+							],
+							"path": [
+								"recurring",
+								"{{pm_url_uuid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check first booking update all",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "43f9389a-a31b-4861-ac48-887dfde32783",
+								"exec": [
+									"//  Run basic response tests.",
+									"eval(environment.basic_response_test);",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"eval(environment.booking_schema_check);",
+									"eval(environment.booking_data_check);",
+									"",
+									"//  Get booking data.",
+									"var name = jsonData.booking.booking_name;",
+									"var contact = jsonData.booking.booking_contact_information;",
+									"var name_expect = \"All recurring pm events #2\";",
+									"var contact_expect = \"My_second_favourite_postman@gmail.com\";",
+									"",
+									"//  Make sure data for the first booking hasn't changed.",
+									"pm.test(\"Name should be '\" + name_expect + \"'; it is '\" + name + \"'\", function () {",
+									"    pm.expect(name).to.be.eql(name_expect);",
+									"});",
+									"pm.test(\"Contact should be '\" + contact_expect + \"'; it is '\" + contact + \"'\", function () {",
+									"    pm.expect(contact).to.be.eql(contact_expect);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}bookings/{{booking_id}}/",
+							"host": [
+								"{{url}}bookings"
+							],
+							"path": [
+								"{{booking_id}}",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check second booking update all",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "401248bb-6a4e-4475-a78a-fc45c025a6bf",
+								"exec": [
+									"//  Run basic response tests.",
+									"eval(environment.basic_response_test);",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"eval(environment.booking_schema_check);",
+									"eval(environment.booking_data_check);",
+									"",
+									"//  Get booking data.",
+									"var name = jsonData.booking.booking_name;",
+									"var contact = jsonData.booking.booking_contact_information;",
+									"var name_expect = \"All recurring pm events #2\";",
+									"var contact_expect = \"My_second_favourite_postman@gmail.com\";",
+									"",
+									"//  Make sure data for the first booking hasn't changed.",
+									"pm.test(\"Name should be '\" + name_expect + \"'; it is '\" + name + \"'\", function () {",
+									"    pm.expect(name).to.be.eql(name_expect);",
+									"});",
+									"pm.test(\"Contact should be '\" + contact_expect + \"'; it is '\" + contact + \"'\", function () {",
+									"    pm.expect(contact).to.be.eql(contact_expect);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}bookings/{{second_event_id}}/",
+							"host": [
+								"{{url}}bookings"
+							],
+							"path": [
+								"{{second_event_id}}",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check third booking update all",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0c9a0b09-b7a5-496e-804c-718dc6388cc6",
+								"exec": [
+									"//  Run basic response tests.",
+									"eval(environment.basic_response_test);",
+									"",
+									"// Parse response body",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"//Test to see if response schema is valid",
+									"eval(environment.booking_schema_check);",
+									"eval(environment.booking_data_check);",
+									"",
+									"//  Get booking data.",
+									"var name = jsonData.booking.booking_name;",
+									"var contact = jsonData.booking.booking_contact_information;",
+									"var name_expect = \"All recurring pm events #2\";",
+									"var contact_expect = \"My_second_favourite_postman@gmail.com\";",
+									"",
+									"//  Make sure data for the first booking hasn't changed.",
+									"pm.test(\"Name should be '\" + name_expect + \"'; it is '\" + name + \"'\", function () {",
+									"    pm.expect(name).to.be.eql(name_expect);",
+									"});",
+									"pm.test(\"Contact should be '\" + contact_expect + \"'; it is '\" + contact + \"'\", function () {",
+									"    pm.expect(contact).to.be.eql(contact_expect);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}bookings/{{third_event_id}}/",
+							"host": [
+								"{{url}}bookings"
+							],
+							"path": [
+								"{{third_event_id}}",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Booking Delete End-point",
 					"event": [
 						{
@@ -15483,9 +15784,11 @@
 									"    pm.expect(tv4.validate(firstUser, userSchema)).to.be.true;",
 									"});",
 									"",
-									"//Dynamic variable used for end-point testing later on",
+									"//Dynamic variables used for end-point testing later on",
 									"var user_id = firstUser.user_id;",
+									"var user_phone = firstUser.telephone;",
 									"postman.setEnvironmentVariable(\"user_id\", JSON.stringify(user_id));",
+									"postman.setEnvironmentVariable(\"user_phone\", JSON.stringify(user_phone));",
 									""
 								],
 								"type": "text/javascript"
@@ -15556,11 +15859,21 @@
 									"",
 									"//Test to see if response schema is valid",
 									"eval(environment.appointment_schema_check);",
+									"",
+									"//  Update the comments to include phone number, before data test.",
+									"var comments_old = JSON.parse(pm.globals.get(\"appt_comments\"));",
+									"var user_phone = JSON.parse(postman.getEnvironmentVariable(\"user_phone\"));",
+									"var comments_new = comments_old + '. Phone: ' + user_phone;",
+									"console.log(\"==> Old:   \" + comments_old);",
+									"console.log(\"==> Phone: \" + user_phone);",
+									"console.log(\"==> New:   \" + comments_new);",
+									"pm.globals.set(\"appt_comments\", JSON.stringify(comments_new));",
+									"",
+									"//  Now ready for the data check.",
 									"eval(environment.appointment_data_check);",
 									"",
-									"var appointment_id = jsonData.appointment.appointment_id;",
-									"",
 									"//Dynamic variable used for end-point testing later on",
+									"var appointment_id = jsonData.appointment.appointment_id;",
 									"postman.setEnvironmentVariable(\"appointment_id\", JSON.stringify(appointment_id));",
 									"",
 									""
@@ -15591,7 +15904,7 @@
 									"pm.globals.set(\"public_end_time\", JSON.stringify(end_time));",
 									"pm.globals.set(\"category\", JSON.stringify(\"Exam\"));",
 									"pm.globals.set(\"service_id\", pm.environment.get(\"service_PropTax_id\"));",
-									"pm.globals.set(\"appt_comments\", JSON.stringify(\"Self serve appt. Phone: 7787777777\"));",
+									"pm.globals.set(\"appt_comments\", JSON.stringify(\"My self serve appt.\"));",
 									"pm.globals.set(\"appt_citizen_name\", JSON.stringify(\"cfms-postman-public-user\"));",
 									"pm.globals.set(\"appt_contact_information\", JSON.stringify(\"test@test.com\"));",
 									""
