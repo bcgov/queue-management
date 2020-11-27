@@ -13,6 +13,17 @@
 import { Axios } from './../helpers'
 import moment from 'moment'
 
+const serviceColor = (blackColor, serviceList, serviceId) => {
+  if (blackColor) {
+    return 'grey darken-1 white--text'
+  }
+  const serv = serviceList.find(service => service.service_id === serviceId)
+  if (serv && serv.css_colour && serv.css_colour !== null) {
+    return serv.css_colour
+  }
+  return 'cal-events-default'
+}
+
 export default {
   editing: false,
   namespaced: true,
@@ -45,7 +56,7 @@ export default {
       return 'Please choose a service'
     },
 
-    appointment_events (state) {
+    appointment_events (state, rootState) {
       if (state.appointments.length > 0) {
         return state.appointments.map(apt =>
           ({
@@ -58,12 +69,13 @@ export default {
             name: apt.citizen_name,
             contact_information: apt.contact_information,
             comments: apt.comments,
-            color: apt.is_draft || apt.blackout_flag === 'Y' ? 'grey darken-1' : 'cal-events-default', //  apt.is_draft ? 'rgb(239, 212, 105)' : 'grey darken-1', // '#B5E0B8',
+            color: serviceColor(apt.is_draft || apt.blackout_flag === 'Y', rootState.services, parseInt(apt.service_id)), // apt.is_draft || apt.blackout_flag === 'Y' ? 'grey darken-1 white--text' : 'cal-events-default', //  apt.is_draft ? 'rgb(239, 212, 105)' : 'grey darken-1', // '#B5E0B8',
             blackout_flag: apt.blackout_flag,
             is_draft: apt.is_draft,
             recurring_uuid: apt.recurring_uuid,
             online_flag: apt.online_flag,
             timed: true
+
           })
         )
       }
