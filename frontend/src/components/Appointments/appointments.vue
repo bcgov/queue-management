@@ -22,9 +22,10 @@
             :event-overlap-threshold="30"
             :event-color="getEventColor"
             @click:event="eventSelected"
-            @click:more="eventSelected"
+            @click:more="agendaDay"
             @change="getEvents"
             @click:time="selectEvent"
+            event-text-color=""
           ></v-calendar>
           <!-- @mouseenter:event="showData" -->
         </v-sheet>
@@ -420,5 +421,8 @@ export default class Appointments extends Vue {
 <style >
 .v-calendar .v-event-timed-container {
   margin-right: 20px !important;
+}
+.theme--light.v-calendar-events .v-event-timed {
+  border: none !important;
 }
 </style>
