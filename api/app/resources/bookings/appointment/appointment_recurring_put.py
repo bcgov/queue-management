@@ -15,7 +15,7 @@ limitations under the License.'''
 import logging
 from flask import request, g
 from flask_restx import Resource
-from qsystem import api, db, oidc, socketio
+from qsystem import api, db, oidc, socketio, application
 from app.models.bookings import Appointment
 from app.models.theq import CSR
 from app.schemas.bookings import AppointmentSchema
@@ -56,7 +56,8 @@ class AppointmentRecurringPut(Resource):
 
         result = self.appointment_schema.dump(appointments)
 
-        socketio.emit('appointment_update', result.data)
+        if application.config['ENABLE_AUTO_REFRESH']:
+            socketio.emit('appointment_update', result.data)
 
         return {
             "appointments": result.data,

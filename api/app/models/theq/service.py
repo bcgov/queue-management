@@ -46,6 +46,8 @@ class Service(Base):
     online_availability = db.Column(Enum(Availability))
     timeslot_duration = db.Column(db.Integer, nullable=True)
     is_dlkt = db.Column(Enum(YesNo))
+    email_paragraph = db.Column(db.String(2000), nullable=True)
+    css_colour = db.Column(db.String(50), nullable=True)
 
     offices = db.relationship("Office", secondary='office_service')
     parent = db.relationship("Service", remote_side=[service_id])

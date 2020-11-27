@@ -82,6 +82,7 @@ class Office(Base):
     # disable_online_appointment = db.Column(db.Boolean, default=False)
     online_status = db.Column(Enum(Status))
     number_of_dlkt = db.Column(db.Integer, nullable=True)
+    office_email_paragraph = db.Column(db.String(2000), nullable=True)
 
     counters = db.relationship("Counter", secondary='office_counter')
     services = db.relationship("Service", secondary='office_service')
