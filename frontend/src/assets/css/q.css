@@ -156,4 +156,5 @@ q-link-cursor {
 .cal-events-default{
   background-color: #efd469 !important;
   color: #000 !important;
+  position: initial;
 }

@@ -1,40 +1,63 @@
 <template>
   <fragment>
-    <div class="v-application">
-      <div style="width: 100%" class="m-3">
-        <!-- <v-card class="mx-auto" max-width="97%" elevation="5"> -->
-        <v-sheet>
-          <!-- height="600" -->
-          <!-- {{ events }} -->
-          <!-- interval-height="24" -->
-          <v-calendar
-            ref="calendar"
-            :now="currentDay"
-            color="primary"
-            v-model="value"
-            first-time="08:30"
-            interval-minutes="30"
-            interval-count="17"
-            :weekdays="weekday"
-            :type="type"
-            :events="appointment_events"
-            :event-overlap-mode="mode"
-            :event-overlap-threshold="30"
-            :event-color="getEventColor"
-            @click:event="eventSelected"
-            @click:more="agendaDay"
-            @change="getEvents"
-            @click:time="selectEvent"
-            event-text-color=""
-          ></v-calendar>
-          <!-- @mouseenter:event="showData" -->
-        </v-sheet>
-        <!-- </v-card> -->
+    <v-app>
+      <div class="v-application">
+        <div style="width: 100%" class="m-3">
+          <!-- <v-card class="mx-auto" max-width="97%" elevation="5"> -->
+          <v-sheet>
+            <!-- height="600" -->
+            <!-- {{ events }} -->
+            <!-- interval-height="24" -->
+            <v-calendar
+              ref="calendar"
+              :now="currentDay"
+              color="primary"
+              v-model="value"
+              first-time="08:30"
+              interval-minutes="30"
+              interval-count="17"
+              :weekdays="weekday"
+              :type="type"
+              :events="appointment_events"
+              :event-overlap-mode="mode"
+              :event-overlap-threshold="30"
+              :event-color="getEventColor"
+              @click:event="eventSelected"
+              @click:more="agendaDay"
+              @change="getEvents"
+              @click:time="selectEvent"
+              event-text-color=""
+            >
+              <template v-slot:event="date">
+                <!-- abcd {{ date }}  -->
+
+                <v-tooltip top attach class="mytooltip">
+                  <template v-slot:activator="{ on }">
+                    <div v-on="on">
+                      {{ date.event.title }} {{ date.eventParsed.start.time }} -
+                      {{ date.eventParsed.end.time }}
+                      <!-- day slot {{ date }}  -->
+                    </div>
+                  </template>
+                  <div>
+                    <div>
+                      {{ date.event.title }}
+                      {{ date.eventParsed.start.time }} -
+                      {{ date.eventParsed.end.time }}
+                    </div>
+                  </div>
+                </v-tooltip>
+              </template>
+            </v-calendar>
+            <!-- @mouseenter:event="showData" -->
+          </v-sheet>
+          <!-- </v-card> -->
+        </div>
       </div>
-    </div>
-    <ApptBookingModal :clickedTime="clickedTime" :clickedAppt="clickedAppt" />
-    <AppointmentBlackoutModal />
-    <CheckInModal :clickedAppt="clickedAppt" />
+      <ApptBookingModal :clickedTime="clickedTime" :clickedAppt="clickedAppt" />
+      <AppointmentBlackoutModal />
+      <CheckInModal :clickedAppt="clickedAppt" />
+    </v-app>
   </fragment>
 </template>
 
@@ -424,5 +447,10 @@ export default class Appointments extends Vue {
 }
 .theme--light.v-calendar-events .v-event-timed {
   border: none !important;
+}
+.v-tooltip--attached {
+  display: block;
+  position: fixed;
+  z-index: 100;
 }
 </style>
