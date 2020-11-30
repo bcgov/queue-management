@@ -25,8 +25,7 @@ const serviceColor = (blackColor, serviceList, serviceId) => {
 }
 const serviceName = (serviceList, serviceId) => {
   const serv = serviceList.find(service => service.service_id === serviceId)
-  console.log('serv', serv)
-  if (serv) {
+  if (serv && serv.service_name) {
     return serv.service_name
   }
   return ''
