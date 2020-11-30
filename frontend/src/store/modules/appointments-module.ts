@@ -23,6 +23,14 @@ const serviceColor = (blackColor, serviceList, serviceId) => {
   }
   return 'cal-events-default'
 }
+const serviceName = (serviceList, serviceId) => {
+  const serv = serviceList.find(service => service.service_id === serviceId)
+  console.log('serv', serv)
+  if (serv) {
+    return serv.service_name
+  }
+  return ''
+}
 
 export default {
   editing: false,
@@ -74,7 +82,8 @@ export default {
             is_draft: apt.is_draft,
             recurring_uuid: apt.recurring_uuid,
             online_flag: apt.online_flag,
-            timed: true
+            timed: true,
+            serviceName: serviceName(rootState.services, parseInt(apt.service_id))
 
           })
         )

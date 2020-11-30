@@ -36,7 +36,6 @@
                     <div v-on="on">
                       {{ date.event.title }} {{ date.eventParsed.start.time }} -
                       {{ date.eventParsed.end.time }}
-                      <!-- day slot {{ date }}  -->
                     </div>
                   </template>
                   <div>
@@ -44,6 +43,8 @@
                       {{ date.event.title }}
                       {{ date.eventParsed.start.time }} -
                       {{ date.eventParsed.end.time }}
+                      <div>service Name : {{ date.event.serviceName }}</div>
+                      <div>Notes : {{ date.event.comments }}</div>
                     </div>
                   </div>
                 </v-tooltip>
