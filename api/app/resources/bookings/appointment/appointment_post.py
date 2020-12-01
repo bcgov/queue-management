@@ -52,7 +52,7 @@ class AppointmentPost(Resource):
         if json_data.get('appointment_draft_id'):
             draft_id_to_delete = int(json_data['appointment_draft_id'])
             Appointment.delete_draft([draft_id_to_delete])
-            if application.config['ENABLE_AUTO_REFRESH']:
+            if not application.config['DISABLE_AUTO_REFRESH']:
                 socketio.emit('appointment_delete', draft_id_to_delete)
 
         is_blackout_appt = json_data.get('blackout_flag', 'N') == 'Y'
@@ -165,7 +165,7 @@ class AppointmentPost(Resource):
 
             result = self.appointment_schema.dump(appointment)
 
-            if application.config['ENABLE_AUTO_REFRESH']:
+            if not application.config['DISABLE_AUTO_REFRESH']:
                 socketio.emit('appointment_create', result.data)
 
             return {"appointment": result.data,

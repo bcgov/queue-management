@@ -55,7 +55,7 @@ class AppointmentDelete(Resource):
         db.session.delete(appointment)
         db.session.commit()
 
-        if application.config['ENABLE_AUTO_REFRESH']:
+        if not application.config['DISABLE_AUTO_REFRESH']:
             socketio.emit('appointment_delete', id)
 
         # Do not log snowplow events or send emails if it's a draft.
