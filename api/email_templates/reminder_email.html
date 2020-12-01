@@ -68,13 +68,13 @@
 
                         {% if service_email_paragraph is not none %}
                         <p class="text-content">
-                            <span class="paragraph-intro">Service Message:</span> {{ service_email_paragraph }}
+                            <span class="paragraph-intro">Service Message:</span> {{ service_email_paragraph|safe }}
                         </p>
                         {% endif %}
 
                         {% if office_email_paragraph is not none %}
                         <p class="text-content">
-                            <span class="paragraph-intro">Office Message:</span> {{ office_email_paragraph }}
+                            <span class="paragraph-intro">Office Message:</span> {{ office_email_paragraph|safe }}
                         </p>
                         {% endif %}
 
