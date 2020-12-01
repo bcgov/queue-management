@@ -104,6 +104,10 @@ class ServiceReq(Base):
 
         SnowPlow.snowplow_event(self.citizen_id, csr, snowplow_event, current_sr_number=self.sr_number)
 
+    def remove_from_queue(self):
+        service_req_ids = [int(x.period_id) for x in self.periods]
+        Period.delete_periods(service_req_ids)
+
     def begin_service(self, csr, snowplow_event):
         active_period = self.get_active_period()
         

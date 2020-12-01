@@ -35,3 +35,10 @@ class Period(Base):
 
     def __init__(self, **kwargs):
         super(Period, self).__init__(**kwargs)
+    
+    @classmethod
+    def delete_periods(cls, period_ids: list):
+        """Delete all periods with ids in the list provided."""
+        delete_qry = Period.__table__.delete().where(Period.period_id.in_(period_ids))
+        db.session.execute(delete_qry)
+        db.session.commit()
