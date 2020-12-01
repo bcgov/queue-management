@@ -63,32 +63,26 @@
                             Hello {{ display_name }}
                         </p>
                         <p class="text-content">
-                            You have an appointment with Service BC {{ location }} on {{ formatted_date }} for a total of {{ duration }} minutes. Plan to arrive 5 minutes early.
+                            You have an appointment with Service BC {{ location }}, at {{ civic_address }},  on {{ formatted_date }} for a total of {{ duration }} minutes. Plan to arrive 5 minutes early.
                         </p>
+
+                        {% if service_name is not none %}
+                        <p class="text-content">
+                            Service: {{ service_name }}
+                        </p>
+                        {% endif %}
 
                         {% if service_email_paragraph is not none %}
                         <p class="text-content">
-                            <span class="paragraph-intro">Service Message:</span> {{ service_email_paragraph|safe }}
+                            {{ service_email_paragraph|safe }}
                         </p>
                         {% endif %}
 
                         {% if office_email_paragraph is not none %}
                         <p class="text-content">
-                            <span class="paragraph-intro">Office Message:</span> {{ office_email_paragraph|safe }}
+                            {{ office_email_paragraph|safe }}
                         </p>
                         {% endif %}
-
-                        <p class="text-content">
-                            To ensure we can assist you at your confirmed appointment, you must present two pieces of valid identification documents (ID).
-                            Along with your Primary ID (driver’s licence, passport), please bring ONE of the following valid foundation documents: Canadian Birth Certificate, Canadian Citizenship card, a Permanent Resident card or an immigration document (IM1442).
-                        </p>
-                        <p class="text-content">
-                            If the name displayed on your foundation document does not exactly match the name on your current ID you will need to bring supporting documentation that shows how your name was changed (marriage certificate, legal change of name, for example).
-                            If the required valid ID are not presented at the time of the scheduled appointment, you may be required to reschedule your appointment for a later date.
-                        </p>
-                        <p class="text-content">
-                            All documents must be originals. Photocopies or photographs will not be accepted.
-                        </p>
                         <p class="text-content">
                             If you have any further questions about required documentation, please call us at {{ telephone }}.
                         </p>
@@ -105,6 +99,7 @@
                             Thank you, <br/> <br/>
                             Service BC {{ location }} <br/>
                             {{ telephone }} <br/>
+                            {{ civic_address }} <br/>
                         </p>
                     </td>
                 </tr>

@@ -107,6 +107,9 @@ def get_confirmation_email_contents(appointment: Appointment, office, timezone, 
                            telephone=office.telephone,
                            service_email_paragraph=service_email_paragraph,
                            office_email_paragraph=office_email_paragraph,
+                           # Default to Public online name if available
+                           service_name=appointment.service.external_service_name if appointment.service.external_service_name else appointment.service.service_name,
+                           civic_address=office.civic_address,
                            url=current_app.config.get('EMAIL_APPOINTMENT_APP_URL'))
     return subject, get_email(user, appointment), sender, body
 
