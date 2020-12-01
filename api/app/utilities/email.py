@@ -48,13 +48,22 @@ def get_reminder_email_contents(appt: Appointment, user, office, timezone):
     template = ENV.get_template('email_templates/reminder_email.html')
     date, day = formatted_date(appt.start_time, timezone)
     subject = f'Reminder – Your appointment on {day}'
+
+    service_email_paragraph = appt.service.email_paragraph
+    if service_email_paragraph:
+        service_email_paragraph = service_email_paragraph.replace('\r\n', '<br />')
+
+    office_email_paragraph = appt.office.office_email_paragraph
+    if office_email_paragraph:
+        office_email_paragraph = office_email_paragraph.replace('\r\n', '<br />')
+
     body = template.render(display_name=appt.citizen_name,
                            location=office.office_name,
                            formatted_date=date,
                            duration=get_duration(appt.start_time, appt.end_time),
                            telephone=office.telephone,
-                           service_email_paragraph=appt.service.email_paragraph.replace('\r\n', '<br />'),
-                           office_email_paragraph=appt.office.office_email_paragraph.replace('\r\n', '<br />'),
+                           service_email_paragraph=service_email_paragraph,
+                           office_email_paragraph=office_email_paragraph,
                            url=current_app.config.get('EMAIL_APPOINTMENT_APP_URL'))
     return subject, get_email(user, appt), sender, body
 
@@ -80,6 +89,14 @@ def get_confirmation_email_contents(appointment: Appointment, office, timezone, 
     """Send confirmation email"""
     sender = current_app.config.get('MAIL_FROM_ID')
 
+    service_email_paragraph = appointment.service.email_paragraph
+    if service_email_paragraph:
+        service_email_paragraph = service_email_paragraph.replace('\r\n', '<br />')
+
+    office_email_paragraph = appointment.office.office_email_paragraph
+    if office_email_paragraph:
+        office_email_paragraph = office_email_paragraph.replace('\r\n', '<br />')
+
     template = ENV.get_template('email_templates/confirmation_email.html')
     date, day = formatted_date(appointment.start_time, timezone)
     subject = f'Confirmation – Your appointment on {day}'
@@ -88,8 +105,8 @@ def get_confirmation_email_contents(appointment: Appointment, office, timezone, 
                            formatted_date=date,
                            duration=get_duration(appointment.start_time, appointment.end_time),
                            telephone=office.telephone,
-                           service_email_paragraph=appointment.service.email_paragraph.replace('\r\n', '<br />'),
-                           office_email_paragraph=appointment.office.office_email_paragraph.replace('\r\n', '<br />'),
+                           service_email_paragraph=service_email_paragraph,
+                           office_email_paragraph=office_email_paragraph,
                            url=current_app.config.get('EMAIL_APPOINTMENT_APP_URL'))
     return subject, get_email(user, appointment), sender, body
 
