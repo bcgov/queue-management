@@ -247,6 +247,7 @@ export const commonActions: any = {
           const calendarEvents: any = []
           resp.data.bookings.forEach(b => {
             const booking: any = {}
+
             if (b.room_id) {
               booking.resourceId = b.room_id
               booking.room = b.room
@@ -258,10 +259,12 @@ export const commonActions: any = {
               booking.invigilator = b.invigilator
               booking.invigilator_id = b.invigilator_id
             }
-            booking.start = b.start_time
-            booking.end = b.end_time
+            booking.start = new Date(b.start_time)
+            booking.end = new Date(b.end_time)
             booking.title = b.booking_name
+            booking.name = b.booking_name
             booking.id = b.booking_id
+            booking.category = b.room ? b.room.room_name : ''// 'Boardroom 1'// b.room.room_name
             booking.exam =
               context.state.exams.find(ex => ex.booking_id == b.booking_id) ||
               false
@@ -273,6 +276,8 @@ export const commonActions: any = {
             booking.is_draft = b.is_draft
             booking.blackout_notes = b.blackout_notes
             booking.recurring_uuid = b.recurring_uuid
+            booking.color = b.room && b.room.color ? b.room.color : 'cal-events-default'
+            booking.timed = true
             calendarEvents.push(booking)
           })
           context.commit('setEvents', calendarEvents)

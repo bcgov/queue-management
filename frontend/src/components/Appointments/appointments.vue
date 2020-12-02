@@ -1,3 +1,4 @@
+
 <template>
   <fragment>
     <v-app>
@@ -63,19 +64,24 @@
 </template>
 
 <script lang="ts">
-
+/* eslint-disable sort-imports */
 import 'fullcalendar-scheduler'
 import 'fullcalendar/dist/fullcalendar.css'
+
 import { Component, Vue } from 'vue-property-decorator'
+
 import AddCitizen from '../AddCitizen/add-citizen.vue'
 
 import AppointmentBlackoutModal from './appt-booking-modal/appt-blackout-modal.vue'
+
 import ApptBookingModal from './appt-booking-modal/appt-booking-modal.vue'
+
 import CheckInModal from './checkin-modal.vue'
 
 import moment from 'moment'
+
 import { namespace } from 'vuex-class'
-import { roundedDownTime } from '@/utils/helpers'
+import { formatedStartTime } from '@/utils/helpers'
 
 const appointmentsModule = namespace('appointmentsModule')
 
@@ -294,18 +300,18 @@ export default class Appointments extends Vue {
   }
 
   // formatting start time
-  formatedStartTime = (date, time) => {
-    const selectedTime = moment(`${date} ${time}`)// event.start.clone()
-    const roundedTime = roundedDownTime(selectedTime) // roundingdown  time to 15 min inteval
-    return moment(`${date} ${roundedTime}`)
-  }
+  // formatedStartTime = (date, time) => {
+  //   const selectedTime = moment(`${date} ${time}`)// event.start.clone()
+  //   const roundedTime = roundedDownTime(selectedTime) // roundingdown  time to 15 min inteval
+  //   return moment(`${date} ${roundedTime}`)
+  // }
 
   selectEvent (event) {
     this.checkRescheduleCancel()
     this.blockEventSelect = true
     // this.unselect()
 
-    const start = this.formatedStartTime(event.date, event.time)// event.start.clone()
+    const start = formatedStartTime(event.date, event.time)// event.start.clone()
     let end
     for (const l of [15, 30, 45, 60]) {
       const testEnd = moment(start).clone().add(l, 'minutes')
