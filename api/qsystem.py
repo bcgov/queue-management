@@ -260,6 +260,7 @@ import app.resources.theq.categories
 import app.resources.theq.upload
 import app.resources.theq.channels
 import app.resources.theq.citizen.citizen_add_to_queue
+import app.resources.theq.citizen.citizen_remove_from_queue
 import app.resources.theq.citizen.citizen_begin_service
 import app.resources.theq.citizen.citizen_detail
 import app.resources.theq.citizen.citizen_finish_service

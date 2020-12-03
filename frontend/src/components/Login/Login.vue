@@ -73,9 +73,32 @@ limitations under the License.*/
         <label class="navbar-label navbar-user"
           >User: {{ this.$store.state.user.username }}</label
         >
+
+        <!-- 
+          Plan:
+          1. Add/find API - "get offices" (name, id)
+            http://localhost:5000/api/v1/offices/
+          2. Add/find API - "PUT CSR, change office"
+            2a. on change of datalist, call API
+          3. UI - Add underline over pre-existing office (plain label)
+            3a. If clicked, switch to datalist.
+            3b. Once datalist action is complete, switch back to read only label.
+          
+         -->
         <label class="navbar-label"
           >Office: {{ this.$store.state.user.office.office_name }}</label
         >
+        <!-- <div>
+          <b-form-input id='office-selector-input' 
+                        list="office-selector"
+                        v-model="$store.state.user.office.office_name"
+          ></b-form-input>
+          <datalist id="office-selector">
+            <option v-for="office in this.$store.state.offices" v-bind:key="office.office_id">
+              {{ office.office_name }}
+            </option>
+          </datalist>
+        </div> -->
       </div>
       <div style="padding-top: 5px">
         <b-button
@@ -128,6 +151,7 @@ export default class Login extends Vue {
       return this.user.counter_id
     }
   }
+  
 
   set counterSelection (value) {
     if (value === 'receptionist') {
@@ -424,5 +448,9 @@ input:checked + .circle1 + .circle2 {
   white-space: pre-wrap;
   font-size: 1.25em;
   color: white;
+}
+
+#office-selector-input {
+
 }
 </style>

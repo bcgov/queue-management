@@ -101,6 +101,15 @@
               id="serve-citizen-return-to-queue-button"
               >Return to Queue</b-button
             >
+             <b-button
+              @click="clickUnCheckIn"
+              v-if="reception"
+              :disabled="performingAction || commentsTooLong"
+              class="btn serve-btn"
+              id="serve-citizen-uncheckin-button"
+              style="margin-left: 8px;"
+              >Un-Check In</b-button
+            >
           </div>
           <div>
             <b-button
@@ -275,8 +284,10 @@ export default class ServeCitizen extends Vue {
   @Action('clickReturnToQueue') public clickReturnToQueue: any
   @Action('clickServiceBeginService') public clickServiceBeginService: any
   @Action('clickServiceFinish') public clickServiceFinish: any
+  @Action('clickUnCheckIn') public clickUnCheckIn: any
   @Action('screenAllCitizens') public screenAllCitizens: any
   @Action('setServeModalAlert') public setServeModalAlert: any
+
 
   @Mutation('editServiceModalForm') public editServiceModalForm: any
   @Mutation('toggleFeedbackModal') public toggleFeedbackModal: any
