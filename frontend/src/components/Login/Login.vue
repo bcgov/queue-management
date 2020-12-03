@@ -436,6 +436,8 @@ export default class Login extends Vue {
     .then(() => {
       console.log('Done updateCSROffice() then in Login.vue');
       this.setOfficeSwitcher(false);
+      // Auto-refresh to reload all new data now that office has changed
+      window.location.reload();
     })
   }
 }

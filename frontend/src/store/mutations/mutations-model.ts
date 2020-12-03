@@ -298,7 +298,15 @@ export const commonMutation: any = {
   setBackOfficeList: (state, payload) =>
     (state.user.office.back_office_list = payload),
 
+  // Note: This method is for changing office TYPE, not office itself.
+  // I'm leaving it in as-is as it was written this way.  I've
+  // created a new mutation for changing offices themselves below.
   setOffice: (state, officeType) => (state.officeType = officeType),
+
+  /**
+   * Change the office a CSR is currently assigned to.
+   */
+  changeCSROffice: (state: StateModelIF, payload) => (state.user.office = payload),
 
   setDefaultCounter: (state, defaultCounter) => {
     state.addModalForm.counter = defaultCounter.counter_id
