@@ -107,6 +107,7 @@ export interface StateModelIF {
   showInviteCitizenSpinner: boolean,
   showServiceModal: boolean,
   showTimeTrackingIcon: boolean,
+  showOfficeSwitcher: boolean,
   user: any,
   userLoadingFail: boolean,
   videofiles: any,

@@ -11,6 +11,7 @@
  *
  */
 
+import { StateModelIF } from '@/interfaces'
 import Vue from 'vue'
 let _default_counter_id = null
 
@@ -564,6 +565,8 @@ export const commonMutation: any = {
   },
 
   setOffsiteOnly: (state, payload) => (state.offsiteOnly = payload),
+  
+  setOfficeSwitcher: (state: StateModelIF, payload: boolean) => (state.showOfficeSwitcher = payload),
 
   toggleTimeTrackingIcon: (state, payload) =>
     (state.showTimeTrackingIcon = payload),

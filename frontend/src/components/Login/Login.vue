@@ -70,9 +70,14 @@ limitations under the License.*/
         </select>
       </div>
       <div style="padding-right: 20px">
-        <label class="navbar-label navbar-user"
+        <!-- <label class="navbar-label navbar-user"
+          >User: {{ this.$store.state.user.username }}</label
+        > -->
+
+         <label v-if="!showOfficeSwitcher" class="navbar-label navbar-user"
           >User: {{ this.$store.state.user.username }}</label
         >
+        
 
         <!-- 
           Plan:
@@ -83,23 +88,46 @@ limitations under the License.*/
           3. UI - Add underline over pre-existing office (plain label)
             3a. If clicked, switch to datalist.
             3b. Once datalist action is complete, switch back to read only label.
+
+
+          - Problem: Can't directly bind to office name, as it lets user put iin gibberish
+              -- Have temp var, store that, then post up to server w/ id.
           
          -->
-        <label class="navbar-label"
+        <!-- <label class="navbar-label"
           >Office: {{ this.$store.state.user.office.office_name }}</label
-        >
-        <!-- <div>
-          <b-form-input id='office-selector-input' 
-                        list="office-selector"
-                        v-model="$store.state.user.office.office_name"
-          ></b-form-input>
-          <datalist id="office-selector">
-            <option v-for="office in this.$store.state.offices" v-bind:key="office.office_id">
-              {{ office.office_name }}
-            </option>
-          </datalist>
-        </div> -->
+        > -->
+        
+        <div>
+          <template v-if="!showOfficeSwitcher">
+             <label class="navbar-label">
+               <span @click="setOfficeSwitcher(!showOfficeSwitcher)" 
+                class="clickable">Office: {{ this.$store.state.user.office.office_name }}</span>
+              </label>
+          </template>
+          <template v-else>
+            <b-input-group>
+              <b-form-input id='office-selector-input' 
+                            list="office-selector"
+                            v-model="$store.state.user.office.office_name"
+              ></b-form-input>
+              <b-input-group-append>
+                <b-button @click='changeOffice' variant="primary">Set Office</b-button>
+                <b-button variant="danger" @click='cancelOfficeSwitcher'>Cancel</b-button>
+              </b-input-group-append>
+
+            </b-input-group>
+            <datalist id="office-selector">
+              <option v-for="office in this.$store.state.offices" v-bind:key="office.office_id">
+                {{ office.office_name }}
+              </option>
+            </datalist>
+          </template>
+
+        </div>
+
       </div>
+
       <div style="padding-top: 5px">
         <b-button
           v-show="this.$store.state.isLoggedIn"
@@ -127,6 +155,7 @@ import _ from 'lodash'
 export default class Login extends Vue {
   @State('user') private user!: any
   @State('csr_states') private csr_states!: any
+  @State('showOfficeSwitcher') private showOfficeSwitcher!: boolean
 
   @Getter('quick_trans_status') private quick_trans_status!: any;
   @Getter('reception') private reception!: any;
@@ -141,6 +170,8 @@ export default class Login extends Vue {
   @Mutation('setCSRState') public setCSRState: any
   @Mutation('setUserCSRStateName') public setUserCSRStateName: any
   @Mutation('setCounterStatusState') public setCounterStatusState: any
+  @Mutation('setOfficeSwitcher') public setOfficeSwitcher: any
+
   $keycloak: any
   // $keycloak: any
 
@@ -366,6 +397,15 @@ export default class Login extends Vue {
       // document.getElementById('break-switch').style.pointerEvents = 'all'
     }
   }
+
+  cancelOfficeSwitcher() {
+    this.setOfficeSwitcher(false);
+    // TODO - Need to set input back to default state.
+  }
+
+  changeOffice() {
+    console.log('todo');
+  }
 }
 
 </script>
@@ -451,6 +491,16 @@ input:checked + .circle1 + .circle2 {
 }
 
 #office-selector-input {
-
+  
 }
+
+.clickable {
+  cursor: pointer;
+  transition: 0.1s;
+}
+.clickable:hover {
+  color: #c7ddef;
+  border-bottom: 1px dashed white;
+}
+
 </style>
