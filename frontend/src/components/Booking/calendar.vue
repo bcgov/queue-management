@@ -59,7 +59,7 @@
             v-if="calView === 'listYear'"
           >
             <template v-for="col in roomLegendArray">
-              <div>
+              <div :key="col.title">
                 <b-badge :style="{ backgroundColor: `${col.color}` }">
                   <span :style="{ color: `${col.color}` }">legend</span>
                 </b-badge>
@@ -69,12 +69,6 @@
           </div>
         </div>
         <v-sheet>
-          <!-- height="600" -->
-          <!-- {{ events }} -->
-          <!-- interval-height="24" -->
-          <!-- {{ eventsList }} -->
-          <!-- {{ events }} -->
-          <!-- :start="start" -->
           <v-calendar
             ref="calendar"
             :now="currentDay"
@@ -97,31 +91,15 @@
             @click:time-category="selectEvent"
             event-text-color=""
           ></v-calendar>
-
-          <!-- :categories="categories" -->
         </v-sheet>
 
-        <!-- <keep-alive>
-          <full-calendar
-            ref="bookingcal"
-            key="bookingcal"
-            id="bookingcal"
-            class="q-calendar-margins"
-            @event-selected="eventSelected"
-            @view-render="viewRender"
-            @event-created="selectEvent"
-            @event-render="eventRender"
-            :events="events"
-            :config="config"
-          ></full-calendar>
-        </keep-alive> -->
         <div
           class="w-50 mt-2 ml-3 pl-3"
           style="display: flex; justify-content: space-between"
           v-if="calView === 'month'"
         >
           <template v-for="col in roomLegendArray">
-            <div>
+            <div :key="col.title">
               <b-badge :style="{ backgroundColor: `${col.color}` }">
                 <span :style="{ color: `${col.color}` }">legend</span>
               </b-badge>
@@ -168,6 +146,7 @@ import { formatedStartTime } from '@/utils/helpers'
 import moment from 'moment'
 
 const defaultHoursDuration = 0.5
+const categoryDefaultDays = 7
 
 @Component({
   components: {
@@ -253,7 +232,7 @@ export default class Calendar extends Vue {
   // vuetify calender
 
   type: any = 'category'
-  categoryDays: number = 5
+  categoryDays: number = categoryDefaultDays
   // types: any = ['month', 'week', 'day', '4day']
   mode: any = 'stack'
   // modes: any = ['stack', 'column']
@@ -276,41 +255,11 @@ export default class Calendar extends Vue {
 
   fetchEvents ({ start, end }) {
     return this.events
-    // const events: any = []
-
-    // const min = new Date(`${start.date}T00:00:00`)
-    // const max = new Date(`${end.date}T23:59:59`)
-    // const days = (max.getTime() - min.getTime()) / 86400000
-    // const eventCount = this.rnd(days, days + 20)
-
-    // for (let i = 0; i < eventCount; i++) {
-    //   const allDay = this.rnd(0, 3) === 0
-    //   const firstTimestamp = this.rnd(min.getTime(), max.getTime())
-    //   const first = new Date(firstTimestamp - (firstTimestamp % 900000))
-    //   const secondTimestamp = this.rnd(2, allDay ? 288 : 8) * 900000
-    //   const second = new Date(first.getTime() + secondTimestamp)
-
-    //   events.push({
-    //     name: this.names[this.rnd(0, this.names.length - 1)],
-    //     start: first,
-    //     end: second,
-    //     color: this.colors[this.rnd(0, this.colors.length - 1)],
-    //     timed: !allDay,
-    //     category: 'Tori Walker' // this.categories[this.rnd(0, this.categories.length - 1)]
-    //   })
-    // }
-
-    // this.eventsList = events
-  }
-
-  rnd (a, b) {
-    return Math.floor((b - a + 1) * Math.random()) + a
   }
 
   getEventColor (event) {
     return event.color
   }
-
   // vuetify calender end
 
   // private config: any = {
@@ -442,10 +391,10 @@ export default class Calendar extends Vue {
   }
 
   get calView () {
-    if (this.calendarSetup && this.calendarSetup.viewName) {
-      return this.calendarSetup.viewName
-    }
-    return ''
+    // if (this.calendarSetup && this.calendarSetup.viewName) {
+    //   return this.calendarSetup.viewName
+    // }
+    return this.type
   }
 
   get roomLegendArray () {
@@ -464,7 +413,7 @@ export default class Calendar extends Vue {
 
   agendaWeek () {
     this.type = 'category'
-    this.categoryDays = 5
+    this.categoryDays = categoryDefaultDays
   }
 
   cancel () {
@@ -478,7 +427,9 @@ export default class Calendar extends Vue {
     this.finishBooking()
   }
 
+  // checik both below functions
   getEvent () {
+    console.log('getEvent change code ')
     return this.$refs.bookingcal.fireMethod('clientEvents', '_cal$election')[0]
   }
 
@@ -491,50 +442,50 @@ export default class Calendar extends Vue {
     this.$refs.bookingcal.fireMethod('updateEvent', event)
   }
 
-  eventRender (event, el, view) {
-    el.css('max-width', '85%')
-    if (event.blackout_flag === 'Y') {
-      el.css('font-size', '.9rem')
-      el.css('max-width', '100%')
-      el.css('background-color', '#000000')
-      el.css('border-color', '#000000')
-      el.css('color', 'white')
-    }
-    if (event.exam && view.name === 'listYear') {
-      el.find('td.fc-list-item-title.fc-widget-content').html(
-        `<div style="display: flex; justify-content: center; width: 100%;">
-             <div class="ft-wt-600 mr-1"><b>Exam:</b></div>
-             <div class="ft-wt-400 mr-3">${event.title}</div>
-             <div class="ft-wt-600 mx-1"><b>Event ID:</b></div>
-             <div class="ft-wt-400 mr-3"> ${event.exam.event_id}</div>
-             <div class="ft-wt-600 mx-1"><b>Writer:</b></div>
-             <div class="ft-wt-400 mr-3">${event.exam.examinee_name}</div>
-             <div class="ft-wt-600 mx-1"><b>Received:</b></div>
-             <div class="ft-wt-400 mr-3">${moment(event.exam.exam_received_date).format('MMM Do, YYYY')}</div>
-             <div class="ft-wt-600 mx-1"><b>Expiry:</b></div>
-             <div class="ft-wt-400 mr-3">${moment(event.exam.exam_expiry).format('MMM Do, YYYY')}</div>
-             <div class="ft-wt-600 mx-1"><b>Method:</b></div>
-             <div class="ft-wt-400 mr-3">${event.exam.exam_method}</div>
-             <div class="ft-wt-600 mx-1"><b>Invigilator:</b></div>
-             <div class="ft-wt-400 mr-3">${event.invigilator.invigilator_name}</div>
-           </div>`
-      )
-    }
-    if (!event.exam) {
-      el.find('td.fc-list-item-title.fc-widget-content').html(
-        `<div style="display: flex; justify-content: flex-center; width: 100%;">
-             <div class="ft-wt-400 mr-3">${event.title}</div>
-             <div>Non-Exam / Other Event</div>
-           </div>
-          `
-      )
-    }
-  }
+  // eventRender (event, el, view) {
+  //   el.css('max-width', '85%')
+  //   if (event.blackout_flag === 'Y') {
+  //     el.css('font-size', '.9rem')
+  //     el.css('max-width', '100%')
+  //     el.css('background-color', '#000000')
+  //     el.css('border-color', '#000000')
+  //     el.css('color', 'white')
+  //   }
+  //   if (event.exam && view.name === 'listYear') {
+  //     el.find('td.fc-list-item-title.fc-widget-content').html(
+  //       `<div style="display: flex; justify-content: center; width: 100%;">
+  //            <div class="ft-wt-600 mr-1"><b>Exam:</b></div>
+  //            <div class="ft-wt-400 mr-3">${event.title}</div>
+  //            <div class="ft-wt-600 mx-1"><b>Event ID:</b></div>
+  //            <div class="ft-wt-400 mr-3"> ${event.exam.event_id}</div>
+  //            <div class="ft-wt-600 mx-1"><b>Writer:</b></div>
+  //            <div class="ft-wt-400 mr-3">${event.exam.examinee_name}</div>
+  //            <div class="ft-wt-600 mx-1"><b>Received:</b></div>
+  //            <div class="ft-wt-400 mr-3">${moment(event.exam.exam_received_date).format('MMM Do, YYYY')}</div>
+  //            <div class="ft-wt-600 mx-1"><b>Expiry:</b></div>
+  //            <div class="ft-wt-400 mr-3">${moment(event.exam.exam_expiry).format('MMM Do, YYYY')}</div>
+  //            <div class="ft-wt-600 mx-1"><b>Method:</b></div>
+  //            <div class="ft-wt-400 mr-3">${event.exam.exam_method}</div>
+  //            <div class="ft-wt-600 mx-1"><b>Invigilator:</b></div>
+  //            <div class="ft-wt-400 mr-3">${event.invigilator.invigilator_name}</div>
+  //          </div>`
+  //     )
+  //   }
+  //   if (!event.exam) {
+  //     el.find('td.fc-list-item-title.fc-widget-content').html(
+  //       `<div style="display: flex; justify-content: flex-center; width: 100%;">
+  //            <div class="ft-wt-400 mr-3">${event.title}</div>
+  //            <div>Non-Exam / Other Event</div>
+  //          </div>
+  //         `
+  //     )
+  //   }
+  // }
 
-  eventSelected (eventSelected, jsEvent, view) {
+  eventSelected (selectedEvent, jsEvent, view) {
     // shallow copy to avoid re-rendering start time with moment instance
     // vuetify will accept only date  instance / string / epoch
-    const currentEvent = { ...eventSelected.event }
+    const currentEvent = { ...selectedEvent.event }
     // console.log('event', event)
 
     currentEvent.start = moment(currentEvent.start)
@@ -596,11 +547,7 @@ export default class Calendar extends Vue {
   }
 
   month () {
-    // if (this.$refs.bookingcal) {
-    // this.$refs.bookingcal.fireMethod('changeView', 'month')
-
     this.type = 'month'
-    // }
   }
 
   next () {
@@ -611,9 +558,9 @@ export default class Calendar extends Vue {
   }
 
   options (option) {
-    if (this.$refs.bookingcal) {
-      this.$refs.bookingcal.fireMethod('option', option.name, option.value)
-    }
+    // if (this.$refs.bookingcal) {
+    //   this.$refs.bookingcal.fireMethod('option', option.name, option.value)
+    // }
   }
 
   prev () {
@@ -630,7 +577,7 @@ export default class Calendar extends Vue {
   }
 
   renderEvent (event) {
-    this.$refs.bookingcal.fireMethod('renderEvent', event)
+    // this.$refs.bookingcal.fireMethod('renderEvent', event)
     this.savedSelection = event
     this.setSelectionIndicator(true)
   }
@@ -642,6 +589,7 @@ export default class Calendar extends Vue {
 
     // not allowd if past date
     if (!this.selectAllow(event)) {
+      console.info('cannot book past date')
       return false
     }
     // setting default end time
@@ -750,14 +698,11 @@ export default class Calendar extends Vue {
         this.toggleOtherBookingModal(true)
         selection.title = 'New Event'
         // TOCHECK removed new keyword in moment.not needed
-        // selection.end = new moment(event.end)
         selection.end = moment(event.end)
       }
     }
     // this.renderEvent(selection)
-    // TOCHECK removed new keyword in moment.not needed
-    // event.start = new moment(selection.start)
-    // event.end = new moment(selection.end)
+
     event.start = moment(selection.start)
     event.end = moment(selection.end)
 
@@ -765,9 +710,6 @@ export default class Calendar extends Vue {
   }
 
   today () {
-    // if (this.$refs.bookingcal) {
-    //   this.$refs.bookingcal.fireMethod('today')
-    // }
     this.value = ''
     this.type = 'category'
   }
@@ -775,10 +717,11 @@ export default class Calendar extends Vue {
   toggleOffsiteOnly (mode) {
     if (mode === 'both') {
       if (this.offsiteOnly) {
-        const addRooms = this.roomResources.filter(room => room.id !== '_offsite')
-        addRooms.forEach(room => {
-          this.$refs.bookingcal.fireMethod('addResource', room)
-        })
+        // const addRooms = this.roomResources.filter(room => room.id !== '_offsite')
+        // addRooms.forEach(room => {
+        //   // this.$refs.bookingcal.fireMethod('addResource', room)
+        // })
+
         this.setOffsiteOnly(false)
         return
       }
@@ -787,10 +730,10 @@ export default class Calendar extends Vue {
     }
     const setOffsiteOnly = () => {
       if (!this.offsiteVisible) this.toggleOffsite(true)
-      const removeRooms = this.roomResources.filter(room => room.id !== '_offsite')
-      removeRooms.forEach(room => {
-        this.$refs.bookingcal.fireMethod('removeResource', room.id)
-      })
+      // const removeRooms = this.roomResources.filter(room => room.id !== '_offsite')
+      // removeRooms.forEach(room => {
+      //    this.$refs.bookingcal.fireMethod('removeResource', room.id)
+      // })
       this.toggleOffsiteVisible(true)
       this.setOffsiteOnly(true)
     }
@@ -804,20 +747,20 @@ export default class Calendar extends Vue {
 
   toggleOffsite (bool) {
     this.toggleOffsiteVisible(bool)
-    // if (bool) {
-    //   this.$refs.bookingcal.fireMethod('addResource', {
-    //     id: '_offsite',
-    //     title: 'Offsite',
-    //     eventColor: '#F58B4C'
-    //   })
-    // }
+    if (bool) {
+      // this.$refs.bookingcal.fireMethod('addResource', {
+      //   id: '_offsite',
+      //   title: 'Offsite',
+      //   eventColor: '#F58B4C'
+      // })
+    }
     if (!bool) {
-      // if (this.offsiteOnly) {
-      //   const addRooms = this.roomResources.filter(room => room.id !== '_offsite')
-      //   addRooms.forEach(room => {
-      //     this.$refs.bookingcal.fireMethod('addResource', room)
-      //   })
-      // }
+      if (this.offsiteOnly) {
+        // const addRooms = this.roomResources.filter(room => room.id !== '_offsite')
+        // addRooms.forEach(room => {
+        //   // this.$refs.bookingcal.fireMethod('addResource', room)
+        // })
+      }
       // this.$refs.bookingcal.fireMethod('removeResource', '_offsite')
       this.setOffsiteOnly(false)
     }
@@ -832,32 +775,32 @@ export default class Calendar extends Vue {
     Object.keys(params).forEach(key => {
       event[key] = params[key]
     })
-    this.$refs.bookingcal.fireMethod('updateEvent', event)
+    // this.$refs.bookingcal.fireMethod('updateEvent', event)
   }
 
-  viewRender (view, el) {
-    if (view.name !== 'listYear') {
-      if (view.name === 'agendaDay') {
-        const title = moment(view.intervalStart).format('dddd MMMM D, YYYY')
-        this.setCalendarSetup({ title, viewName: view.name })
-      } else {
-        this.setCalendarSetup({ title: view.title, viewName: view.name })
-      }
-    }
-    if (view.name === 'basicDay') {
-      this.$refs.bookingcal.fireMethod('changeView', 'agendaDay')
-    }
-    if (view.name === 'month') {
-      this.options({ name: 'height', value: window.innerHeight - this.adjustment })
-    }
-    if (view.name === 'agendaDay' || view.name === 'agendaWeek') {
-      this.options({ name: 'height', value: 'auto' })
-    }
-    if (this.selectedExam && this.selectedExam.gotoDate) {
-      this.$refs.bookingcal.fireMethod('changeView', 'agendaDay')
-      this.goToDate(this.selectedExam.gotoDate)
-    }
-  }
+  // viewRender (view, el) {
+  //   if (view.name !== 'listYear') {
+  //     if (view.name === 'agendaDay') {
+  //       const title = moment(view.intervalStart).format('dddd MMMM D, YYYY')
+  //       this.setCalendarSetup({ title, viewName: view.name })
+  //     } else {
+  //       this.setCalendarSetup({ title: view.title, viewName: view.name })
+  //     }
+  //   }
+  //   if (view.name === 'basicDay') {
+  //     this.$refs.bookingcal.fireMethod('changeView', 'agendaDay')
+  //   }
+  //   if (view.name === 'month') {
+  //     this.options({ name: 'height', value: window.innerHeight - this.adjustment })
+  //   }
+  //   if (view.name === 'agendaDay' || view.name === 'agendaWeek') {
+  //     this.options({ name: 'height', value: 'auto' })
+  //   }
+  //   if (this.selectedExam && this.selectedExam.gotoDate) {
+  //     this.$refs.bookingcal.fireMethod('changeView', 'agendaDay')
+  //     this.goToDate(this.selectedExam.gotoDate)
+  //   }
+  // }
 
   mounted () {
     document.addEventListener('keydown', this.filterKeyPress)

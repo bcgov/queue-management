@@ -264,7 +264,7 @@ export const commonActions: any = {
             booking.title = b.booking_name
             booking.name = b.booking_name
             booking.id = b.booking_id
-            booking.category = b.room ? b.room.room_name : ''// 'Boardroom 1'// b.room.room_name
+            booking.category = b.room ? b.room.room_name : 'Offsite'// 'Boardroom 1'// b.room.room_name
             booking.exam =
               context.state.exams.find(ex => ex.booking_id == b.booking_id) ||
               false
@@ -396,8 +396,8 @@ export const commonActions: any = {
         .get(url)
         .then(resp => {
           context.commit('setExams', resp.data.exams)
-          console.log('==> getExams(context), exams are:')
-          console.log(resp.data.exams)
+          // console.log('==> getExams(context), exams are:')
+          // console.log(resp.data.exams)
           resolve(resp)
         })
         .catch(error => {
