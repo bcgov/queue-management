@@ -40,7 +40,7 @@ class AppointmentRecurringDelete(Resource):
             db.session.delete(appointment)
             db.session.commit()
 
-        if application.config['ENABLE_AUTO_REFRESH']:
+        if not application.config['DISABLE_AUTO_REFRESH']:
             socketio.emit('appointment_delete', id)
 
 

@@ -49,7 +49,7 @@ class AppointmentPut(Resource):
         if json_data.get('appointment_draft_id'):
             draft_id_to_delete = int(json_data['appointment_draft_id'])
             Appointment.delete_draft([draft_id_to_delete])
-            if application.config['ENABLE_AUTO_REFRESH']:
+            if not application.config['DISABLE_AUTO_REFRESH']:
                 socketio.emit('appointment_delete', draft_id_to_delete)
 
         if is_public_user_appt:
@@ -119,7 +119,7 @@ class AppointmentPut(Resource):
 
         result = self.appointment_schema.dump(appointment)
 
-        if application.config['ENABLE_AUTO_REFRESH']:
+        if not application.config['DISABLE_AUTO_REFRESH']:
             socketio.emit('appointment_update', result.data)
         
 
