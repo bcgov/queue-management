@@ -821,6 +821,7 @@ export default class Calendar extends Vue {
     this.$root.$on('toggleOffsite', (bool) => { this.toggleOffsite(bool) })
     this.$root.$on('unselect', () => { this.unselect() })
     this.$root.$on('updateEvent', (event, params) => { this.updateEvent(event, params) })
+    this.toggleOffsite(false) // initial show only onsite rooms
     if (this.scheduling || this.rescheduling) {
       this.toggleOffsite(false)
     }
