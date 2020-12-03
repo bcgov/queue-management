@@ -44,12 +44,16 @@ class Services(Resource):
         try:
             edit_csr = self.csr_schema.load(json_data, instance=edit_csr, partial=True).data
         except ValidationError as err:
-            return {'message': err.messages}, 422
+            return {'message': err.messages}, 422    
 
         db.session.add(edit_csr)
         db.session.commit()
+    
+        # Purge CSR cache, otherwise lazy loaded relationships 
+        # like Office will be out of date.
+        CSR.update_user_cache(id)
 
-        result = self.csr_schema.dump(edit_csr)
+        result = self.csr_schema.dump(edit_csr)        
         socketio.emit('csr_update', \
                       { "csr_id": edit_csr.csr_id, \
                         "receptionist_ind" : edit_csr.receptionist_ind }, \

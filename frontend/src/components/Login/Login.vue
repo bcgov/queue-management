@@ -167,6 +167,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import config from '../../../config'
 
 import _ from 'lodash'
+import { Office } from '../../../../appointment-frontend/src/models/office'
 
 @Component({
   components: {
@@ -185,6 +186,7 @@ export default class Login extends Vue {
 
   @Action('updateCSRCounterTypeState') public updateCSRCounterTypeState: any
   @Action('updateCSRState') public updateCSRState: any
+  @Action('updateCSROffice') public updateCSROffice: any
 
   @Mutation('setQuickTransactionState') public setQuickTransactionState: any
   @Mutation('setReceptionistState') public setReceptionistState: any
@@ -429,8 +431,12 @@ export default class Login extends Vue {
     // TODO - Need to set input back to default state.
   }
 
-  changeOffice(newOffice) {
-    console.log('todo', { newOffice });
+  changeOffice(newOffice: Office) {
+    this.updateCSROffice(newOffice)
+    .then(() => {
+      console.log('Done updateCSROffice() then in Login.vue');
+      this.setOfficeSwitcher(false);
+    })
   }
 }
 
