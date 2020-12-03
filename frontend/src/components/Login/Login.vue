@@ -85,10 +85,10 @@ limitations under the License.*/
             3b. Once datalist action is complete, switch back to read only label.
           
          -->
-        <!-- <label class="navbar-label"
+        <label class="navbar-label"
           >Office: {{ this.$store.state.user.office.office_name }}</label
-        > -->
-        <div>
+        >
+        <!-- <div>
           <b-form-input id='office-selector-input' 
                         list="office-selector"
                         v-model="$store.state.user.office.office_name"
@@ -98,7 +98,7 @@ limitations under the License.*/
               {{ office.office_name }}
             </option>
           </datalist>
-        </div>
+        </div> -->
       </div>
       <div style="padding-top: 5px">
         <b-button
