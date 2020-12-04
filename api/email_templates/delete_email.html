@@ -57,8 +57,14 @@
                         <p class="text-content">
                             Hello {{ display_name }}
                         </p>
+                        {% if service_name is not none %}
                         <p class="text-content">
-                            Your appointment with Service BC {{ location }} on {{ formatted_date }} has been cancelled.
+                            Service: {{ service_name }}
+                        </p>
+                        {% endif %}
+
+                        <p class="text-content">
+                            Your appointment with Service BC {{ location }} on {{ formatted_date }} has been cancelled due to circumstances beyond our control.  For further information please call {{ telelphone }}.
                         </p>
 
                         <p class="text-content">
@@ -73,6 +79,7 @@
                         <p class="text-content">
                             Thank you, <br/> <br/>
                             Service BC {{ location }} <br/>
+                            {{ civic_address }} <br/>
                             {{ telephone }} <br/>
                         </p>
                     </td>

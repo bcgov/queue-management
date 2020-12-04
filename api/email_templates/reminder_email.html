@@ -62,29 +62,31 @@
                         <p class="text-content">
                             Hello {{ display_name }}
                         </p>
+                        {% if service_name is not none %}
                         <p class="text-content">
-                            You have an appointment with Service BC {{ location }} on {{ formatted_date }} for a total of {{ duration }} minutes.
-                        </p>
-
-                        {% if service_email_paragraph is not none %}
-                        <p class="text-content">
-                            <span class="paragraph-intro">Service Message:</span> {{ service_email_paragraph|safe }}
+                            Service: {{ service_name }}
                         </p>
                         {% endif %}
+                        <p class="text-content">
+                            REMINDER: You have an appointment with Service BC {{ location }} on {{ formatted_date }} for a total of {{ duration }} minutes. We're looking forward to seeing you.
+                        </p>
+
 
                         {% if office_email_paragraph is not none %}
                         <p class="text-content">
-                            <span class="paragraph-intro">Office Message:</span> {{ office_email_paragraph|safe }}
+                            {{ office_email_paragraph|safe }}
+                        </p>
+                        {% if service_email_paragraph is not none %}
+                        <p class="text-content">
+                            {{ service_email_paragraph|safe }}
                         </p>
                         {% endif %}
 
                         <p class="text-content">
-                            Here are a few reminders:
-                            <ul>
-                                <li>Plan to arrive 5 minutes early</li>
-                                <li>Please bring all relevant documents and identification</li>
-                            </ul>
+                            If you have any further questions, please call us at {{ telephone }}
                         </p>
+
+   
                         <p class="text-content">
                             To change or cancel your appointment, please visit Service BC Book an Appointment and sign in.
                         </p>
@@ -97,6 +99,7 @@
                         <p class="text-content">
                             Thank you, <br/> <br/>
                             Service BC {{ location }} <br/>
+                            {{ civic_address }} <br/>
                             {{ telephone }} <br/>
                         </p>
                     </td>

@@ -62,15 +62,21 @@
                         <p class="text-content">
                             Hello {{ display_name }}
                         </p>
-                        <p class="text-content">
-                            You have an appointment with Service BC {{ location }}, at {{ civic_address }},  on {{ formatted_date }} for a total of {{ duration }} minutes. Plan to arrive 5 minutes early.
-                        </p>
-
                         {% if service_name is not none %}
                         <p class="text-content">
                             Service: {{ service_name }}
                         </p>
                         {% endif %}
+
+
+                        <p class="text-content">
+                            Thank you for Booking an appointment with Service BC.
+                        </p>
+
+                        <p class="text-content">
+                            You have an appointment with Service BC {{ location }}, at {{ civic_address }},  on {{ formatted_date }} for a total of {{ duration }} minutes. We're looking forward to seeing you.
+                        </p>
+
                         
                         {% if office_email_paragraph is not none %}
                         <p class="text-content">
@@ -82,7 +88,6 @@
                         </p>
                         {% endif %}
 
-                        {% endif %}
                         <p class="text-content">
                             If you have any further questions about required documentation, please call us at {{ telephone }}.
                         </p>
@@ -98,8 +103,8 @@
                         <p class="text-content">
                             Thank you, <br/> <br/>
                             Service BC {{ location }} <br/>
-                            {{ telephone }} <br/>
                             {{ civic_address }} <br/>
+                            {{ telephone }} <br/>
                         </p>
                     </td>
                 </tr>

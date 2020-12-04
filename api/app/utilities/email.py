@@ -37,6 +37,8 @@ def get_cancel_email_contents(appt: Appointment, user, office, timezone):
                            formatted_date=date,
                            duration=get_duration(appt.start_time, appt.end_time),
                            telephone=office.telephone,
+                           service_name=appt.service.external_service_name if appt.service.external_service_name else appt.service.service_name,
+                           civic_address=office.civic_address,
                            url=current_app.config.get('EMAIL_APPOINTMENT_APP_URL'))
     return subject, get_email(user, appt), sender, body
 
@@ -64,6 +66,8 @@ def get_reminder_email_contents(appt: Appointment, user, office, timezone):
                            telephone=office.telephone,
                            service_email_paragraph=service_email_paragraph,
                            office_email_paragraph=office_email_paragraph,
+                           service_name=appt.service.external_service_name if appt.service.external_service_name else appt.service.service_name,
+                           civic_address=office.civic_address,
                            url=current_app.config.get('EMAIL_APPOINTMENT_APP_URL'))
     return subject, get_email(user, appt), sender, body
 
@@ -81,6 +85,7 @@ def get_blackout_email_contents(blackout_appt: Appointment, cancelled_appointmen
                            duration=get_duration(cancelled_appointment.start_time, cancelled_appointment.end_time),
                            telephone=office.telephone,
                            url=current_app.config.get('EMAIL_APPOINTMENT_APP_URL'),
+                           civic_address=office.civic_address,
                            blackout_notes=blackout_appt.comments)
     return subject, get_email(user, cancelled_appointment), sender, body
 
