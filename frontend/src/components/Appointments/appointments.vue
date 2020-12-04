@@ -6,13 +6,11 @@
         <div style="width: 100%" class="m-3">
           <!-- <v-card class="mx-auto" max-width="97%" elevation="5"> -->
           <v-sheet>
-            <!-- height="600" -->
-            <!-- {{ events }} -->
             <!-- interval-height="24" -->
             <v-calendar
               ref="calendar"
-              :now="currentDay"
               color="primary"
+              :now="currentDay"
               v-model="value"
               first-time="08:30"
               interval-minutes="30"
@@ -45,7 +43,7 @@
                       {{ date.eventParsed.start.time }} -
                       {{ date.eventParsed.end.time }}
                       <div>service Name : {{ date.event.serviceName }}</div>
-                      <div>Notes : {{ date.event.comments }}</div>
+                      <div class="notes">Notes : {{ date.event.comments }}</div>
                     </div>
                   </div>
                 </v-tooltip>
@@ -128,36 +126,9 @@ export default class Appointments extends Vue {
   events: any = []
   currentDay: any = moment().format('YYYY-MM-DD')// new Date()
 
-  colors: any = ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1']
-  names: any = ['Meeting', 'Holiday', 'PTO', 'Travel', 'Event', 'Birthday', 'Conference', 'Party']
-
   // to remove
   getEvents ({ start, end }) {
     return this.appointment_events
-    //   const events: any = []
-
-    //   const min = new Date(`${start.date}T00:00:00`)
-    //   const max = new Date(`${end.date}T23:59:59`)
-    //   const days = (max.getTime() - min.getTime()) / 86400000
-    //   const eventCount = this.rnd(days, days + 20)
-
-    //   for (let i = 0; i < eventCount; i++) {
-    //     const allDay = this.rnd(0, 3) === 0
-    //     const firstTimestamp = this.rnd(min.getTime(), max.getTime())
-    //     const first = new Date(firstTimestamp - (firstTimestamp % 900000))
-    //     const secondTimestamp = this.rnd(2, allDay ? 288 : 8) * 900000
-    //     const second = new Date(first.getTime() + secondTimestamp)
-
-    //     events.push({
-    //       name: this.names[this.rnd(0, this.names.length - 1)],
-    //       start: first,
-    //       end: second,
-    //       color: this.colors[this.rnd(0, this.colors.length - 1)],
-    //       timed: !allDay
-    //     })
-    //   }
-
-    //   this.events = events
   }
 
   getEventColor (event) {
@@ -241,10 +212,12 @@ export default class Appointments extends Vue {
 
   agendaDay () {
     this.type = 'day'
+    this.calendarSetup()
   }
 
   agendaWeek () {
     this.type = 'week'
+    this.calendarSetup()
   }
 
   eventRender (event, el, view) {
@@ -266,14 +239,17 @@ export default class Appointments extends Vue {
 
   goToDate (date) {
     this.$refs.appointments.fireMethod('gotoDate', date)
+    this.calendarSetup()
   }
 
   month () {
     this.type = 'month'
+    this.calendarSetup()
   }
 
   next () {
     this.$refs.calendar.next()
+    this.calendarSetup()
   }
 
   options (option) {
@@ -282,6 +258,7 @@ export default class Appointments extends Vue {
 
   prev () {
     this.$refs.calendar.prev()
+    this.calendarSetup()
   }
 
   // renderEvent (event) {
@@ -399,12 +376,19 @@ export default class Appointments extends Vue {
     this.$refs.appointments.fireMethod('unselect')
   }
 
-  viewRender (view, el) {
-    let { title, name } = view
-    title = `The Q Appointments: ${title}`
-    if (view.name === 'agendaDay') {
-      title = moment(view.intervalStart).format('dddd MMMM D, YYYY')
-    }
+  // viewRender (view, el) {
+  //   let { title, name } = view
+  //   title = `The Q Appointments: ${title}`
+  //   if (view.name === 'agendaDay') {
+  //     title = moment(view.intervalStart).format('dddd MMMM D, YYYY')
+  //   }
+  //   this.setCalendarSetup({ title, name })
+  // }
+
+  calendarSetup () {
+    const title = `Appointments: ${this.$refs.calendar.title}`
+    const name = this.type
+
     this.setCalendarSetup({ title, name })
   }
 
@@ -412,6 +396,7 @@ export default class Appointments extends Vue {
     this.getAppointments()
     this.getServices()
     this.getChannels()
+    this.calendarSetup()
     this.$root.$on('clear-clicked-appt', () => { this.clearClickedAppt() })
     this.$root.$on('clear-clicked-time', () => { this.clearClickedTime() })
     this.$root.$on('agendaDay', () => { this.agendaDay() })
@@ -459,5 +444,8 @@ export default class Appointments extends Vue {
   display: block;
   position: fixed;
   z-index: 100;
+}
+.notes {
+  white-space: pre-wrap;
 }
 </style>

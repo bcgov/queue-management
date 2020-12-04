@@ -55,10 +55,10 @@ export default class ButtonsAppointments extends Vue {
   @appointmentsModule.Mutation('toggleAppointmentBlackoutModal') public toggleAppointmentBlackoutModal: any
 
   get dropdownText () {
-    if (this.calendar_setup.name === 'agendaDay') {
+    if (this.calendar_setup.name === 'day') {
       return 'Day View'
     }
-    if (this.calendar_setup.name === 'agendaWeek') {
+    if (this.calendar_setup.name === 'week') {
       return 'Week View'
     }
     return 'Week View'
