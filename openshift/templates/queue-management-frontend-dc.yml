@@ -24,12 +24,13 @@ objects:
     data:
       keycloak.json: |
         {
-          "realm": "${REALM}",
-          "auth-server-url": "${AUTH_SERVER_URL}",
+          "realm": "<realm>",
+          "auth-server-url": "https://<keycloak server>/auth",
           "ssl-required": "external",
-          "resource": "${RESOURCE}",
-          "public-client": "true",
-          "confidential-port": 0
+          "resource": "<keycloak client>",
+          "credentials": {
+            "secret": "<keycloak client secret>"
+          }
         }
   - apiVersion: v1
     kind: Service
@@ -170,16 +171,3 @@ parameters:
   - name: TOOLS_WORKSPACE
     description: The Location for your image streams (Tools Workspace)
     required: true
-  - name: REALM
-    description: "Keycloak realm"
-    required: true
-  - name: RESOURCE
-    description: "keycloak client id"
-    required: true
-  - name: AUTH_SERVER_URL
-    description: "keycloak server URL. Ex:https://yourkeycloakserver.com/auth/"
-    required: true
-
-
-
-

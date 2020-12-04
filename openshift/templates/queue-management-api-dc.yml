@@ -25,16 +25,17 @@ objects:
       secrets.json: |
         {
           "web": {
-            "realm_public_key": "${REALM_PUBLIC_KEY}",
-            "issuer": "${ISSUER}",
-            "auth_uri": "${AUTH_URI}",
-            "client_id": "${CLIENT_ID}",
-            "client_secret": "${CLIENT_SECRET}",
+            "realm_public_key": "",
+            "issuer": "https://<keycloak server>/auth/realms/<realm>",
+            "auth_uri": "https://<keycloak server>/auth/realms/<realm>/protocol/openid-connect/auth",
+            "client_id": "",
+            "client_secret": "",
             "redirect_urls": [
+              ""  
             ],
-            "userinfo_uri": "${USERINFO_URI}",
-            "token_uri": "${TOKEN_URI}",
-            "token_introspection_uri": "${TOKEN_INTROSPECTION_URI}"  
+            "userinfo_uri": "https://<keycloak server>/auth/realms/<realm>/protocol/openid-connect/userinfo",
+            "token_uri": "https://<keycloak server>/auth/realms/<realm>/protocol/openid-connect/token",
+            "token_introspection_uri": "https://<keycloak server>/auth/realms/<realm>/protocol/openid-connect/token/introspect"  
           }
         }
   - apiVersion: v1
@@ -130,6 +131,8 @@ objects:
                   value: "patroni-master"
                 - name: DATABASE_PORT
                   value: "5432"
+                - name: SQLALCHEMY_ECHO
+                  value: "${SQLALCHEMY_ECHO}"
                 - name: APP_CONFIG
                   value: gunicorn_config.py
                 - name: FLASK_CONFIGURATION
@@ -140,78 +143,8 @@ objects:
                   value: rabbitmq
                 - name: ACTIVE_MQ_PORT
                   value: "5672"
-                - name: SECRET_KEY
-                  value: "${SECRET_KEY}"
-                - name: SERVER_NAME
-                  value: "${API_APPLICATION_DOMAIN}"
-                - name: CACHE_DEFAULT_TIMEOUT
-                  value: "${CACHE_DEFAULT_TIMEOUT}"
-                - name: VIDEO_PATH
-                  value: /opt/app-root/src/videos
-                - name: MAIL_FROM_ID
-                  value: "${MAIL_FROM_ID}"
-                - name: EMAIL_APPOINTMENT_APP_URL
-                  value: "${EMAIL_APPOINTMENT_APP_URL}"
-                - name: CORS_ALLOWED_ORIGINS
-                  value: "${CORS_ALLOWED_ORIGINS}"
-                - name: BACK_OFFICE_DISPLAY
-                  value: "${BACK_OFFICE_DISPLAY}"
-                - name: THEQ_CLEAR_COMMENTS_FLAG
-                  value: "${THEQ_CLEAR_COMMENTS_FLAG}"
-                - name: THEQ_FEEDBACK
-                  value: "${THEQ_FEEDBACK}"
-                - name: RECURRING_FEATURE_FLAG
-                  value: "true"
-                - name: APPOINTMENT_LIMIT_DAYS
-                  value: "${APPOINTMENT_LIMIT_DAYS}"
-                - name: CHES_SSO_TOKEN_URL
-                  value: "${CHES_SSO_TOKEN_URL}"
-                - name: CHES_SSO_CLIENT_ID
-                  value: "${CHES_SSO_CLIENT_ID}"
-                - name: CHES_SSO_CLIENT_SECRET
-                  value: "${CHES_SSO_CLIENT_SECRET}"
-                - name: CHES_POST_EMAIL_ENDPOINT
-                  value: "${CHES_POST_EMAIL_ENDPOINT}"
-                - name: ROCKET_CHAT_URL
-                  value: "${ROCKET_CHAT_URL}"
                 - name: SLACK_URL
                   value: "${SLACK_URL}"
-                - name: SERVICENOW_INSTANCE
-                  value: "${SERVICENOW_INSTANCE}"
-                - name: SERVICENOW_USER
-                  value: "${SERVICENOW_USER}"
-                - name: SERVICENOW_PASSWORD
-                  value: "${SERVICENOW_PASSWORD}"
-                - name: SERVICENOW_TENANT
-                  value: "${SERVICENOW_TENANT}"
-                - name: SERVICENOW_TABLE
-                  value: "${SERVICENOW_TABLE}"
-                - name: SERVICENOW_ASSIGN_GROUP
-                  value: "${SERVICENOW_ASSIGN_GROUP}"
-                - name: SQLALCHEMY_POOL_PRE_PING
-                  value: "true"
-                - name: SQLALCHEMY_POOL_SIZE
-                  value: "${SQLALCHEMY_POOL_SIZE}"
-                - name: SQLALCHEMY_MAX_OVERFLOW
-                  value: "${SQLALCHEMY_MAX_OVERFLOW}"
-                - name: DATABASE_LONG_RUNNING_QUERY
-                  value: "${DATABASE_LONG_RUNNING_QUERY}"
-                - name: SQLALCHEMY_ECHO
-                  value: "${SQLALCHEMY_ECHO}"                  
-                - name: MINIO_HOST
-                  value: "${MINIO_HOST}"
-                - name: MINIO_BUCKET
-                  value: "${MINIO_BUCKET}"
-                - name: MINIO_ACCESS_KEY
-                  value: "${MINIO_ACCESS_KEY}"
-                - name: MINIO_SECRET_KEY
-                  value: "${MINIO_SECRET_KEY}" 
-                - name: MINIO_USE_SECURE
-                  value: "${MINIO_USE_SECURE}"
-                - name: BCMP_BASE_URL
-                  value: "${BCMP_BASE_URL}"
-                - name: BCMP_AUTH_TOKEN
-                  value: "${BCMP_AUTH_TOKEN}" 
                 - name: THEQ_SNOWPLOW_ENDPOINT
                   value: "${THEQ_SNOWPLOW_ENDPOINT}"
                 - name: THEQ_SNOWPLOW_APPID
@@ -224,16 +157,44 @@ objects:
                   value: ${THEQ_SNOWPLOW_ENV}
                 - name: THEQ_SNOWPLOW_ROUTE
                   value: "${THEQ_SNOWPLOW_ROUTE}"
+                - name: THEQ_CLEAR_COMMENTS_FLAG
+                  value: "${THEQ_CLEAR_COMMENTS_FLAG}"
+                - name: SECRET_KEY
+                  value: "${SECRET_KEY}"
+                - name: SERVER_NAME
+                  value: "${API_APPLICATION_DOMAIN}"
                 - name: LOG_ENABLE
                   value: "${LOG_ENABLE}"
-                - name: LOG_MYAPP_SQLTIME
-                  value: INFO
-                - name: PRINT_ENABLE
-                  value: "false"
-                - name: LOG_BASIC
-                  value: WARNING
-                - name: LOG_ROOT
-                  value: WARNING
+                - name: THEQ_FEEDBACK
+                  value: "${THEQ_FEEDBACK}"
+                - name: SERVICENOW_INSTANCE
+                  value: "${SERVICENOW_INSTANCE}"
+                - name: SERVICENOW_USER
+                  value: "${SERVICENOW_USER}"
+                - name: SERVICENOW_PASSWORD
+                  value: "${SERVICENOW_PASSWORD}"
+                - name: VIDEO_PATH
+                  value: /opt/app-root/src/videos
+                - name: MAIL_FROM_ID
+                  value: donotreply@gov.bc.ca
+                - name: EMAIL_APPOINTMENT_APP_URL
+                  value: "${EMAIL_APPOINTMENT_APP_URL}"
+                - name: CORS_ALLOWED_ORIGINS
+                  value: "${CORS_ALLOWED_ORIGINS}"
+                - name: BACK_OFFICE_DISPLAY
+                  value: "${BACK_OFFICE_DISPLAY}"
+                - name: ROCKET_CHAT_URL
+                  value: "${ROCKET_CHAT_URL}"
+                - name: CHES_SSO_TOKEN_URL
+                  value: "${CHES_SSO_TOKEN_URL}"
+                - name: CHES_SSO_CLIENT_ID
+                  value: "${CHES_SSO_CLIENT_ID}"
+                - name: CHES_SSO_CLIENT_SECRET
+                  value: "${CHES_SSO_CLIENT_SECRET}"
+                - name: CHES_POST_EMAIL_ENDPOINT
+                  value: "${CHES_POST_EMAIL_ENDPOINT}"
+                - name: CACHE_DEFAULT_TIMEOUT
+                  value: "${CACHE_DEFAULT_TIMEOUT}"
               ports:
                 - containerPort: 8080
               readinessProbe:
@@ -265,11 +226,11 @@ objects:
               imagePullPolicy: Always
               resources:
                 requests:
-                  cpu: 400m
-                  memory: 400Mi
+                  cpu: 250m
+                  memory: 256Mi
                 limits:
-                  cpu: '1'
-                  memory: 600Mi
+                  cpu: 500m
+                  memory: 512Mi
           restartPolicy: Always
           terminationGracePeriodSeconds: 30
           dnsPolicy: ClusterFirst
@@ -320,14 +281,15 @@ parameters:
   - name: FLASK_CONFIGURATION
     description: "The configuration object that should be loaded for this deployment."
     required: true
+    value: development
   - name: SQLALCHEMY_ECHO
     description: ""
     required: true
-    value: ""
+    value: "False"
   - name: API_IMAGE_TAG
     description: "The tag to use when deploying"
     required: true
-    value: ""
+    value: "dev"
   - name: TOOLS_WORKSPACE
     description: "IMAGE STREAM WORKSPACE LOCATION"
     required: true
@@ -348,7 +310,7 @@ parameters:
   - name: THEQ_SNOWPLOW_CALLFLAG
     description: "Send events to Snowplow for Analytics (True or False)"
     required: true
-    value: ""
+    value: "False"
   - name: THEQ_SNOWPLOW_ENDPOINT
     description: "Snowplow URL Endopoint"
     required: false
@@ -364,7 +326,7 @@ parameters:
   - name: THEQ_SNOWPLOW_ENV
     description: "Snowplow Environment"
     required: false
-    value: ""
+    value: "dev"
   - name: THEQ_SNOWPLOW_ROUTE
     description: "Snowplow Route"
     required: false
@@ -398,10 +360,10 @@ parameters:
     description: "Display Front line services in Back Office Dropdown"
     required: false
   - name: ROCKET_CHAT_URL
-    description: "Send messages from feedback to Rocket Chat. The Rocketchat Webhook URL"
+    description: "Rocket Chat URL"
     required: false
   - name: CHES_SSO_TOKEN_URL
-    description: "CHES token URL. See https://github.com/bcgov/common-hosted-email-service for more details."
+    description: "CHES token URL."
     required: true
   - name: CHES_SSO_CLIENT_ID
     description: "CHES service client id."
@@ -415,99 +377,4 @@ parameters:
   - name: CACHE_DEFAULT_TIMEOUT
     description: "Timeout for all caches."
     required: false
-    value: "300"
-  - name: MINIO_HOST
-    description: "MINIO HOST"
-    required: false
-  - name: MINIO_BUCKET
-    description: "MINIO BUCKET"
-    required: false
-  - name: MINIO_SECRET_KEY
-    description: "MINIO SECRET KEY"
-    required: false
-  - name: MINIO_ACCESS_KEY
-    description: "MINIO ACCESS KEY"
-    required: false 
-  - name: MINIO_USE_SECURE
-    description: "Allow for https minio"
-    required: false
-    value: ""
-  - name: BCMP_BASE_URL
-    description: "BC MailPlus/Pesticide application API URL"
-    required: false
-    value: ""   
-  - name: BCMP_AUTH_TOKEN
-    description: "BC MailPlus/Pesticide application auth token"
-    required: false
-    value: ""
-  - name: SERVICENOW_TENANT
-    description: "Send messages through feedback via Servicenow api settings"
-    required: false
-    value: ""
-  - name: SERVICENOW_TABLE
-    description: "Send messages through feedback via Servicenow api settings"
-    required: false
-    value: ""
-  - name: SERVICENOW_ASSIGN_GROUP
-    description: "Send messages through feedback via Servicenow api settings"
-    required: false
-    value: ""
-  - name: SQLALCHEMY_POOL_SIZE
-    description: "SQL pool settings"
-    required: false
-    value: ""
-  - name: SQLALCHEMY_MAX_OVERFLOW
-    description: "SQL pool settings"
-    required: false
-    value: ""
-  - name: DATABASE_LONG_RUNNING_QUERY
-    description: "Enables displaying warning of long running queries over a time period in seconds"
-    required: false
-    value: ""
-  - name: PRINT_ENABLE
-    description: "Enables additional logging details in console"
-    required: true
-    value: ""
-  - name: RECURRING_FEATURE_FLAG
-    description: "Allows recurring blackout option in application"
-    required: true
-    value: ""
-  - name: SQLALCHEMY_POOL_PRE_PING
-    description: "SQL pool settings"
-    required: true
-    value: ""
-  - name: REALM_PUBLIC_KEY
-    description: "keycloak Realm Public Key"
-    required: true
-  - name: AUTH_URI
-    description: "Keycloak authentication url"
-    required: true
-    value: ""
-  - name: ISSUER
-    description: "Keycloak server URL. For ex: https;//mykeycloakserver.com/auth/realms/{realm}"
-    required: true
-    value: ""
-  - name: CLIENT_ID
-    description: "keycloak client id"
-    required: true
-    value: ""
-  - name: CLIENT_SECRET
-    description: "keycloak client secret"
-    required: true
-    value: ""
-  - name: USERINFO_URI
-    description: "keycloak userinfo uri"
-    required: true
-    value: ""
-  - name: TOKEN_URI
-    description: "Keycloak token_url"
-    required: true
-    value: ""
-  - name: TOKEN_INTROSPECTION_URI
-    description: "keycloak introspection url"
-    required: true
-    value: ""
-  - name: APPOINTMENT_LIMIT_DAYS
-    description: "the number of days in advance to book appointment "
-    required: true
-    value: ""
+    value: 300

@@ -57,13 +57,10 @@ class BookingSchema(ma.SQLAlchemySchema):
     def update_invigilators(self, data):
         invigilator_data = data.get('invigilators')
         invigilator_list = []
-        #  NOTE: The not none test put in by Chris to fix an error
-        #        PUT /bookings/recurring/uuid call
-        if invigilator_data is not None:
-            for invigilator in invigilator_data:
-                id = invigilator.get('invigilator_id')
-                invigilator_list.append(id)
-            data['invigilators'] = invigilator_list
+        for invigilator in invigilator_data:
+            id = invigilator.get('invigilator_id')
+            invigilator_list.append(id)
+        data['invigilators'] = invigilator_list
         return data
 
     @post_dump(pass_many=True)
