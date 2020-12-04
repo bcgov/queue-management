@@ -6,4 +6,4 @@ Jinja2
 pytz
 
 
--e git+https://github.com/bcgov/queue-management.git@master#egg=api&subdirectory=api
+-e git+https://github.com/bcgov/queue-management.git@master#egg=queue_api&subdirectory=api
