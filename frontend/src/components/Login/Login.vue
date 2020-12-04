@@ -167,7 +167,6 @@ import { Component, Vue } from 'vue-property-decorator'
 import config from '../../../config'
 
 import _ from 'lodash'
-import { Office } from '../../../../appointment-frontend/src/models/office'
 
 @Component({
   components: {
@@ -431,7 +430,7 @@ export default class Login extends Vue {
     // TODO - Need to set input back to default state.
   }
 
-  changeOffice(newOffice: Office) {
+  changeOffice(newOffice) {
     this.updateCSROffice(newOffice)
     .then(() => {
       console.log('Done updateCSROffice() then in Login.vue');
