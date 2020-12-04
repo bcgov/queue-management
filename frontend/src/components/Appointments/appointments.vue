@@ -64,8 +64,6 @@
 
 <script lang="ts">
 /* eslint-disable sort-imports */
-import 'fullcalendar-scheduler'
-import 'fullcalendar/dist/fullcalendar.css'
 
 import { Component, Vue } from 'vue-property-decorator'
 

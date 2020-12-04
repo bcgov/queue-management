@@ -136,15 +136,11 @@ import BookingModal from './booking-modal.vue'
 import DropdownCalendar from './dropdown-calendar.vue'
 import EditBookingModal from './edit-booking-modal.vue'
 import ExamInventoryModal from './exam-inventory-modal.vue'
-import { FullCalendar } from 'vue-full-calendar'
 import OfficeDropDownFilter from '../exams/office-dropdown-filter.vue'
 import OtherBookingModal from './other-booking-modal.vue'
 import { adjustColor } from '../../store/helpers'
 import filterCards from './filterCards.vue'
 
-// eslint-disable-next-line sort-imports
-import 'fullcalendar-scheduler'
-import 'fullcalendar/dist/fullcalendar.css'
 import { formatedStartTime } from '@/utils/helpers'
 import moment from 'moment'
 
@@ -159,7 +155,6 @@ const categoryDefaultDays = 7
     DropdownCalendar,
     EditBookingModal,
     ExamInventoryModal,
-    FullCalendar,
     OtherBookingModal,
     filterCards
   }
