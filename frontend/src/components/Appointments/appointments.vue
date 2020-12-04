@@ -26,6 +26,7 @@
               @change="getEvents"
               @click:time="selectEvent"
               event-text-color=""
+              @click:date="switchView"
             >
               <template v-slot:event="date">
                 <!-- abcd {{ date }}  -->
@@ -137,6 +138,15 @@ export default class Appointments extends Vue {
 
   rnd (a, b) {
     return Math.floor((b - a + 1) * Math.random()) + a
+  }
+
+  switchView ({ date }) {
+    this.value = date
+    if (this.type === 'day') {
+      this.type = 'week'
+    } else {
+      this.type = 'day'
+    }
   }
 
   // vuetify calender end
