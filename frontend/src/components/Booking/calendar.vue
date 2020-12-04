@@ -69,7 +69,9 @@
           </div>
         </div>
         <v-sheet>
+          <filterCards :events="events" v-if="listView" />
           <v-calendar
+            v-else
             ref="calendar"
             :now="currentDay"
             color="primary"
@@ -138,6 +140,7 @@ import { FullCalendar } from 'vue-full-calendar'
 import OfficeDropDownFilter from '../exams/office-dropdown-filter.vue'
 import OtherBookingModal from './other-booking-modal.vue'
 import { adjustColor } from '../../store/helpers'
+import filterCards from './filterCards.vue'
 
 // eslint-disable-next-line sort-imports
 import 'fullcalendar-scheduler'
@@ -157,7 +160,8 @@ const categoryDefaultDays = 7
     EditBookingModal,
     ExamInventoryModal,
     FullCalendar,
-    OtherBookingModal
+    OtherBookingModal,
+    filterCards
   }
 })
 export default class Calendar extends Vue {
@@ -237,7 +241,7 @@ export default class Calendar extends Vue {
   mode: any = 'stack'
   // modes: any = ['stack', 'column']
   weekday: any = [1, 2, 3, 4, 5]
-  start: any = '2020-11-30'
+  start: any = moment().format('YYYY-MM-DD')
   // weekdays: any = [
   //   { text: 'Sun - Sat', value: [0, 1, 2, 3, 4, 5, 6] },
   //   { text: 'Mon - Sun', value: [1, 2, 3, 4, 5, 6, 0] },
@@ -249,8 +253,6 @@ export default class Calendar extends Vue {
   eventsList: any = []
   currentDay: any = moment().format('YYYY-MM-DD')// new Date()
 
-  colors: any = ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1']
-  names: any = ['Meeting', 'Holiday', 'PTO', 'Travel', 'Event', 'Birthday', 'Conference', 'Party']
   categories: any = this.roomResources // [] // 'Boardroom 1'
 
   fetchEvents ({ start, end }) {
@@ -260,6 +262,7 @@ export default class Calendar extends Vue {
   getEventColor (event) {
     return event.color
   }
+
   // vuetify calender end
 
   // private config: any = {

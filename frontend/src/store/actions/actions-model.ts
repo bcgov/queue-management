@@ -18,6 +18,12 @@ import { makeBookingReqObj } from '../helpers/makeBookingReqObj'
 import moment from 'moment'
 
 const DEFAULT_COUNTER_NAME = 'Counter'
+const getEventColor = (isBlackout, room) => {
+  if (isBlackout && isBlackout === 'Y') {
+    return 'grey darken-1 white--text'
+  }
+  return room && room.color ? room.color : 'cal-events-default'
+}
 
 let flashInt
 
@@ -276,7 +282,7 @@ export const commonActions: any = {
             booking.is_draft = b.is_draft
             booking.blackout_notes = b.blackout_notes
             booking.recurring_uuid = b.recurring_uuid
-            booking.color = b.room && b.room.color ? b.room.color : 'cal-events-default'
+            booking.color = getEventColor(b.blackout_flag, b.room)
             booking.timed = true
             calendarEvents.push(booking)
           })
@@ -1436,18 +1442,18 @@ export const commonActions: any = {
     context.commit('setPerformingAction', true)
 
     Axios(context)
-    .post(`/citizens/${citizen_id}/remove_from_queue/`, {})
-    .then((res) => {
-      console.log('clickUnCheckIn response', { res })
-      context.commit('toggleInvitedStatus', false)
-      context.commit('setPerformingAction', false)
-      context.commit('toggleServiceModal', false)
-      context.commit('resetServiceModal')
-      context.dispatch('flashServeNow', 'stop')
-    })
-    .catch(() => {
-      context.commit('setPerformingAction', false)
-    })
+      .post(`/citizens/${citizen_id}/remove_from_queue/`, {})
+      .then((res) => {
+        console.log('clickUnCheckIn response', { res })
+        context.commit('toggleInvitedStatus', false)
+        context.commit('setPerformingAction', false)
+        context.commit('toggleServiceModal', false)
+        context.commit('resetServiceModal')
+        context.dispatch('flashServeNow', 'stop')
+      })
+      .catch(() => {
+        context.commit('setPerformingAction', false)
+      })
   },
 
   clickRowHoldQueue (context, citizen_id) {
