@@ -70,36 +70,58 @@ limitations under the License.*/
         </select>
       </div>
       <div style="padding-right: 20px">
-        <label class="navbar-label navbar-user"
+         <label v-if="!showOfficeSwitcher" class="navbar-label navbar-user"
           >User: {{ this.$store.state.user.username }}</label
         >
-
-        <!-- 
-          Plan:
-          1. Add/find API - "get offices" (name, id)
-            http://localhost:5000/api/v1/offices/
-          2. Add/find API - "PUT CSR, change office"
-            2a. on change of datalist, call API
-          3. UI - Add underline over pre-existing office (plain label)
-            3a. If clicked, switch to datalist.
-            3b. Once datalist action is complete, switch back to read only label.
-          
-         -->
-        <label class="navbar-label"
+        
+        <label v-if='!canSwitchOffices' class="navbar-label"
           >Office: {{ this.$store.state.user.office.office_name }}</label
         >
-        <!-- <div>
-          <b-form-input id='office-selector-input' 
-                        list="office-selector"
-                        v-model="$store.state.user.office.office_name"
-          ></b-form-input>
-          <datalist id="office-selector">
-            <option v-for="office in this.$store.state.offices" v-bind:key="office.office_id">
-              {{ office.office_name }}
-            </option>
-          </datalist>
-        </div> -->
+        
+        <div v-else>
+          <template v-if="!showOfficeSwitcher">
+             <label class="navbar-label">
+               <span @click="setOfficeSwitcher(!showOfficeSwitcher)" 
+                class="clickable">Office: {{ this.$store.state.user.office.office_name }}</span>
+              </label>
+          </template>
+          <template v-else>
+            <!-- <b-input-group>
+              <b-form-input id='office-selector-input' 
+                            list="office-selector"
+                            v-model="$store.state.user.office.office_name"
+              ></b-form-input>
+              <b-input-group-append>
+                <b-button @click='changeOffice' variant="primary">Set Office</b-button>
+                <b-button variant="danger" @click='cancelOfficeSwitcher'>Cancel</b-button>
+              </b-input-group-append>
+
+            </b-input-group>
+            <datalist id="office-selector">
+              <option v-for="office in this.$store.state.offices" v-bind:key="office.office_id">
+                {{ office.office_name }}
+              </option>
+            </datalist> -->
+
+
+            <vue-bootstrap-typeahead 
+              v-model="officeQuery"
+              :data="this.$store.state.offices"
+              :serializer="x => x.office_name"
+              placeholder="Enter an office"
+              @hit="changeOffice"
+            >
+              <template slot="append">
+                <b-button variant="danger" @click='cancelOfficeSwitcher'>Cancel</b-button>
+              </template>
+            </vue-bootstrap-typeahead>
+
+          </template>
+
+        </div>
+
       </div>
+
       <div style="padding-top: 5px">
         <b-button
           v-show="this.$store.state.isLoggedIn"
@@ -117,16 +139,26 @@ limitations under the License.*/
 
 // import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 
+import VueBootstrapTypeahead from 'vue-bootstrap-typeahead'
+
+
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
 import config from '../../../config'
 
 import _ from 'lodash'
 
-@Component({})
+
+@Component({
+  components: {
+    VueBootstrapTypeahead
+  }
+})
 export default class Login extends Vue {
   @State('user') private user!: any
   @State('csr_states') private csr_states!: any
+  @State('showOfficeSwitcher') private showOfficeSwitcher!: boolean
+  @Getter('role_code') private role_code!: any;
 
   @Getter('quick_trans_status') private quick_trans_status!: any;
   @Getter('reception') private reception!: any;
@@ -135,14 +167,22 @@ export default class Login extends Vue {
 
   @Action('updateCSRCounterTypeState') public updateCSRCounterTypeState: any
   @Action('updateCSRState') public updateCSRState: any
+  @Action('updateCSROffice') public updateCSROffice: any
 
   @Mutation('setQuickTransactionState') public setQuickTransactionState: any
   @Mutation('setReceptionistState') public setReceptionistState: any
   @Mutation('setCSRState') public setCSRState: any
   @Mutation('setUserCSRStateName') public setUserCSRStateName: any
   @Mutation('setCounterStatusState') public setCounterStatusState: any
+  @Mutation('setOfficeSwitcher') public setOfficeSwitcher: any
+
   $keycloak: any
+  officeQuery = '';
   // $keycloak: any
+
+  get officeNames(): string {
+    return this.$store.state.offices.map(office => office.office_name);
+  }
 
   get counterSelection () {
     if (this.receptionist_status === true) {
@@ -150,6 +190,11 @@ export default class Login extends Vue {
     } else {
       return this.user.counter_id
     }
+  }
+
+  
+  get canSwitchOffices () {
+    return ['SUPPORT', 'GA'].includes(this.role_code);
   }
   
 
@@ -366,6 +411,21 @@ export default class Login extends Vue {
       // document.getElementById('break-switch').style.pointerEvents = 'all'
     }
   }
+
+  cancelOfficeSwitcher() {
+    this.setOfficeSwitcher(false);
+    // TODO - Need to set input back to default state.
+  }
+
+  changeOffice(newOffice) {
+    this.updateCSROffice(newOffice)
+    .then(() => {
+      console.log('Done updateCSROffice() then in Login.vue');
+      this.setOfficeSwitcher(false);
+      // Auto-refresh to reload all new data now that office has changed
+      window.location.reload();
+    })
+  }
 }
 
 </script>
@@ -450,7 +510,13 @@ input:checked + .circle1 + .circle2 {
   color: white;
 }
 
-#office-selector-input {
-
+.clickable {
+  cursor: pointer;
+  transition: 0.1s;
 }
+.clickable:hover {
+  color: #c7ddef;
+  border-bottom: 1px dashed white;
+}
+
 </style>

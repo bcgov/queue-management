@@ -2421,6 +2421,17 @@ export const commonActions: any = {
     })
   },
 
+  updateCSROffice (context, newOffice) {
+    const csr_id = context.state.user.csr_id
+    const { office_id } = newOffice;
+    return Axios(context).put(`/csrs/${csr_id}/`, { office_id })
+    .then(() => {
+      console.log('Axios complete. commiting changeCSROffice w/', { newOffice });
+      context.commit('changeCSROffice', newOffice)
+    })
+    
+  },
+
   restoreSavedModalAction ({ commit }, payload) {
     commit('restoreSavedModal', payload)
   }

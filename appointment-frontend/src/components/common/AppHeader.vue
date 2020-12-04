@@ -15,6 +15,16 @@
 
     <v-spacer></v-spacer>
 
+    <v-btn
+      href="https://www2.gov.bc.ca/gov/content/home/get-help-with-government-services"
+      target="_blank"
+      outlined
+      alt='Help - opens in new window'
+      class='mx-3'>
+      <v-icon small class="mr-2">mdi-open-in-new</v-icon>
+      Help
+    </v-btn>
+
     <template v-if="!isAuthenticated">
       <div class='d-flex'>
         <v-btn
