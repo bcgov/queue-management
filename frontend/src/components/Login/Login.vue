@@ -70,35 +70,15 @@ limitations under the License.*/
         </select>
       </div>
       <div style="padding-right: 20px">
-        <!-- <label class="navbar-label navbar-user"
-          >User: {{ this.$store.state.user.username }}</label
-        > -->
-
          <label v-if="!showOfficeSwitcher" class="navbar-label navbar-user"
           >User: {{ this.$store.state.user.username }}</label
         >
         
-
-        <!-- 
-          Plan:
-          1. Add/find API - "get offices" (name, id)
-            http://localhost:5000/api/v1/offices/
-          2. Add/find API - "PUT CSR, change office"
-            2a. on change of datalist, call API
-          3. UI - Add underline over pre-existing office (plain label)
-            3a. If clicked, switch to datalist.
-            3b. Once datalist action is complete, switch back to read only label.
-
-
-          - Problem: Can't directly bind to office name, as it lets user put iin gibberish
-              -- Have temp var, store that, then post up to server w/ id.
-          
-         -->
-        <!-- <label class="navbar-label"
+        <label v-if='!canSwitchOffices' class="navbar-label"
           >Office: {{ this.$store.state.user.office.office_name }}</label
-        > -->
+        >
         
-        <div>
+        <div v-else>
           <template v-if="!showOfficeSwitcher">
              <label class="navbar-label">
                <span @click="setOfficeSwitcher(!showOfficeSwitcher)" 
@@ -168,6 +148,7 @@ import config from '../../../config'
 
 import _ from 'lodash'
 
+
 @Component({
   components: {
     VueBootstrapTypeahead
@@ -177,6 +158,7 @@ export default class Login extends Vue {
   @State('user') private user!: any
   @State('csr_states') private csr_states!: any
   @State('showOfficeSwitcher') private showOfficeSwitcher!: boolean
+  @Getter('role_code') private role_code!: any;
 
   @Getter('quick_trans_status') private quick_trans_status!: any;
   @Getter('reception') private reception!: any;
@@ -208,6 +190,11 @@ export default class Login extends Vue {
     } else {
       return this.user.counter_id
     }
+  }
+
+  
+  get canSwitchOffices () {
+    return ['SUPPORT', 'GA'].includes(this.role_code);
   }
   
 
@@ -521,10 +508,6 @@ input:checked + .circle1 + .circle2 {
   white-space: pre-wrap;
   font-size: 1.25em;
   color: white;
-}
-
-#office-selector-input {
-  
 }
 
 .clickable {
