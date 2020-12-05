@@ -534,6 +534,10 @@ export default class EditBooking extends Vue {
 
   get displayDates () {
     if (this.event.start && this.event.end) {
+      // change to moment time
+      this.event.end = !moment.isMoment(this.event.end) ? moment(this.event.end) : this.event.end
+      this.event.start = !moment.isMoment(this.event.start) ? moment(this.event.start) : this.event.start
+
       return {
         end: this.event.end.format('h:mm a'),
         start: this.event.start.format('h:mm a'),

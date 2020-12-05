@@ -372,6 +372,7 @@ export default class Calendar extends Vue {
     if (this.searchTerm) {
       return this.filtered_calendar_events(this.searchTerm)
     }
+
     if (!this.offsiteVisible) {
       return this.calendarEvents.filter(ev => ev.resourceId !== '_offsite')
     }
@@ -427,7 +428,6 @@ export default class Calendar extends Vue {
 
   // checik both below functions
   getEvent () {
-    console.log('getEvent change code ')
     return this.$refs.bookingcal.fireMethod('clientEvents', '_cal$election')[0]
   }
 
@@ -637,6 +637,9 @@ export default class Calendar extends Vue {
 
         return
       }
+      // change to moment time
+      booking.end = !moment.isMoment(booking.end) ? moment(booking.end) : booking.end
+      booking.start = !moment.isMoment(booking.start) ? moment(booking.start) : booking.start
       const i = booking.start.clone()
       const f = booking.end.clone()
       // TOCHECK removed new keyword in moment. not needed
@@ -666,6 +669,7 @@ export default class Calendar extends Vue {
       }
       event.end = tempEvent.end
       this.tempEvent = true
+
       // this.renderEvent(tempEvent)
 
       this.toggleEditBookingModal(true)
