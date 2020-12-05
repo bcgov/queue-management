@@ -108,6 +108,15 @@ def send_reminders(app):
         print('found {} reminders to send!'.format(len(appointments.get('appointments'))))
 
         for appointment in appointments.get('appointments'):
+
+            service_email_paragraph = appointment.service.email_paragraph
+            if service_email_paragraph:
+                service_email_paragraph = service_email_paragraph.replace('\r\n', '<br />')
+
+            office_email_paragraph = appointment.office.office_email_paragraph
+            if office_email_paragraph:
+                office_email_paragraph = office_email_paragraph.replace('\r\n', '<br />')
+
             try:
                 subject = 'Confirmation – Your appointment on {}'.format(appointment.get('day'))
                 body = template.render(display_name=appointment.get('display_name'),
@@ -115,6 +124,8 @@ def send_reminders(app):
                                        formatted_date=appointment.get('formatted_date'),
                                        duration=appointment.get('duration'),
                                        telephone=appointment.get('telephone'),
+                                       service_name=appointment.service.external_service_name if appointment.service.external_service_name else appointment.service.service_name,
+                                       civic_address=appointment.office.civic_address,
                                        url=app_url)
                 send_email(ches_token, subject, appointment.get('email'), sender, body)
                 email_count += 1
