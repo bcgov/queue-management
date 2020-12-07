@@ -79,7 +79,6 @@
             first-time="08:30"
             interval-minutes="30"
             interval-count="17"
-            :weekdays="weekday"
             :type="type"
             category-show-all
             :category-days="categoryDays"
@@ -227,7 +226,6 @@ export default class Calendar extends Vue {
       }
     }
   }
-
   // vuetify calender
 
   type: any = 'category'
@@ -345,13 +343,18 @@ export default class Calendar extends Vue {
 
   //  TOCONFIRM created method for selectAllow to fix context issue
   selectAllow (info) {
+    console.log('info', info)
     if (info.resourceId === '_offsite') {
+      return false
+    }
+    if (info.weekday === 6 || info.weekday === 0) {
       return false
     }
     const today = moment()
     if (info.start.isBefore(today)) {
       return false
     }
+
     if (this.scheduling || this.rescheduling) {
       return true
     }
@@ -411,6 +414,7 @@ export default class Calendar extends Vue {
   }
 
   agendaWeek () {
+    // this.type = 'category'
     this.type = 'category'
     this.categoryDays = categoryDefaultDays
   }
@@ -531,11 +535,12 @@ export default class Calendar extends Vue {
   }
 
   goToDate (date) {
-    console.log('date', date)
-    // update to date
-    // if (this.$refs.bookingcal) {
-    //   this.$refs.bookingcal.fireMethod('gotoDate', date)
-    // }
+    if (date) {
+      this.listView = false
+      this.type = 'category'
+      this.categoryDays = 1
+      this.value = new Date(date)
+    }
   }
 
   initialize () {
@@ -811,6 +816,7 @@ export default class Calendar extends Vue {
     this.getInvigilators()
     this.initialize()
     this.$root.$on('agendaDay', () => { this.agendaDay() })
+
     this.$root.$on('agendaWeek', () => { this.agendaWeek() })
     this.$root.$on('cancel', () => { this.cancel() })
     this.$root.$on('initialize', () => { this.initialize() })
@@ -823,6 +829,7 @@ export default class Calendar extends Vue {
     this.$root.$on('toggleOffsite', (bool) => { this.toggleOffsite(bool) })
     this.$root.$on('unselect', () => { this.unselect() })
     this.$root.$on('updateEvent', (event, params) => { this.updateEvent(event, params) })
+    this.$root.$on('goToDate', (date) => { this.goToDate(date) })
     this.toggleOffsite(false) // initial show only onsite rooms
     if (this.scheduling || this.rescheduling) {
       this.toggleOffsite(false)

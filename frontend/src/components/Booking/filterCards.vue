@@ -9,7 +9,11 @@
           <table class="fc-list-table" v-else>
             <tbody>
               <template v-for="(eventDetails, date) in getEvents">
-                <tr class="fc-list-heading" :key="eventDetails.id">
+                <tr
+                  class="fc-list-heading"
+                  :key="eventDetails.id"
+                  @click="showDayView(eventDetails[0] && eventDetails[0].start)"
+                >
                   <td class="fc-widget-header" colspan="3">
                     <a class="fc-list-heading-main">
                       {{ moment(date).format('MMMM DD, YYYY') }}</a
@@ -142,6 +146,10 @@ export default class FilterCards extends Vue {
     return `background-color: ${color}`
   }
 
+  showDayView (date) {
+    this.$root.$emit('goToDate', date)
+  }
+
   moment (date) {
     return moment(date)
   }
@@ -150,19 +158,21 @@ export default class FilterCards extends Vue {
 
 <style scoped>
 .fc-list-table {
-  /* width: 100%; */
+  width: 100%;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  table-layout: fixed;
+  /* table-layout: fixed; */
   border-collapse: collapse;
   border-spacing: 0;
   font-size: 1em;
 }
 .fc-list-heading {
   border-bottom-width: 1px;
+  font-weight: bold;
 }
 .fc-list-heading td {
   background: #eee;
+  padding: 10px;
 }
 .fc-list-item-marker,
 .fc-list-item-time {
@@ -170,5 +180,11 @@ export default class FilterCards extends Vue {
 }
 .fc-list-table tr {
   width: 100%;
+}
+.fc-view-container {
+  border: 1px solid;
+}
+.fc-view-container td {
+  padding: 10px;
 }
 </style>
