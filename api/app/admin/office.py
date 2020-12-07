@@ -85,7 +85,8 @@ class OfficeConfig(Base):
                    'civic_address',
                    'timeslots',
                    'number_of_dlkt',
-                   'office_email_paragraph'
+                   'office_email_paragraph',
+                   'external_map_link'
                    ]
 
     form_excluded_columns = ('citizens',
@@ -117,7 +118,8 @@ class OfficeConfig(Base):
                          'online_status',
                          'timeslots',
                          'number_of_dlkt',
-                         'office_email_paragraph'
+                         'office_email_paragraph',
+                         'external_map_link'
                          )
 
     form_edit_rules = ('office_name',
@@ -142,7 +144,8 @@ class OfficeConfig(Base):
                        'online_status',
                        'timeslots',
                        'number_of_dlkt',
-                       'office_email_paragraph'
+                       'office_email_paragraph',
+                       'external_map_link'
                        )
 
     form_args = {
@@ -271,7 +274,8 @@ class OfficeConfigGA(OfficeConfig):
         'online_status',
         'timeslots',
         'number_of_dlkt',
-        'office_email_paragraph'
+        'office_email_paragraph',
+        'external_map_link'
     )
 
     form_excluded_columns = (

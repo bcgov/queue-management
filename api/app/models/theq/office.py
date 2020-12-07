@@ -83,6 +83,7 @@ class Office(Base):
     online_status = db.Column(Enum(Status))
     number_of_dlkt = db.Column(db.Integer, nullable=True)
     office_email_paragraph = db.Column(db.String(2000), nullable=True)
+    external_map_link = db.Column(db.String(500), nullable=True)
 
     counters = db.relationship("Counter", secondary='office_counter')
     services = db.relationship("Service", secondary='office_service')
