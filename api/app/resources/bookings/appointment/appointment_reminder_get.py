@@ -47,6 +47,16 @@ class AppointmentRemindersGet(Resource):
                 if send_reminder:
                     date, day = formatted_date(appointment.start_time, timezone)
 
+                    office_email_paragraph = appointment.office.office_email_paragraph
+                    if office_email_paragraph:
+                        office_email_paragraph = office_email_paragraph.replace('\r\n', '<br />')
+
+                    service_email_paragraph = appointment.service.email_paragraph
+                    if service_email_paragraph:
+                        service_email_paragraph = service_email_paragraph.replace('\r\n', '<br />')
+
+                    service_name = appointment.service.external_service_name if appointment.service.external_service_name else appointment.service.service_name
+
                     reminders['appointments'].append(
                         {
                             'formatted_date': date,
@@ -55,7 +65,11 @@ class AppointmentRemindersGet(Resource):
                             'display_name': appointment.citizen_name,
                             'location': office.office_name,
                             'duration': get_duration(appointment.start_time, appointment.end_time),
-                            'telephone': office.telephone
+                            'telephone': office.telephone,
+                            'service_email_paragraph': service_email_paragraph,
+                            'office_email_paragraph': office_email_paragraph,
+                            'service_name': service_name,
+                            'civic_address': appointment.office.civic_address
                         }
                     )
         return reminders
