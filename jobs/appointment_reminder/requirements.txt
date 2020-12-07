@@ -6,4 +6,4 @@ Jinja2
 pytz
 
 
--e git+https://github.com/acoard-aot/queue-management.git@master#egg=queue_api&subdirectory=api
+-e git+https://github.com/acoard-aot/queue-management.git@feature/vuety-calendar#egg=queue_api&subdirectory=api
