@@ -10,7 +10,7 @@
  * and import in index.ts
  *
  */
-import { Axios } from './../helpers'
+import { Axios, searchNestedObject } from './../helpers'
 import moment from 'moment'
 
 const serviceColor = (blackColor, serviceList, serviceId) => {
@@ -119,6 +119,15 @@ export default {
         return true
       }
       return false
+    },
+
+    filtered_appointment_events: (state, getters) => search => {
+      return getters.appointment_events.filter(event => {
+        console.log('event', event)
+        console.log('search', search)
+        return searchNestedObject(event, search)
+      }
+      )
     }
   },
   actions: {
