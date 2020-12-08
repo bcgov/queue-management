@@ -533,21 +533,16 @@
 
 <script lang="ts">
 
-import 'fullcalendar-scheduler'
-import 'fullcalendar/dist/fullcalendar.css'
-
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
 import DatePicker from 'vue2-datepicker'
-import { FullCalendar } from 'vue-full-calendar'
 import { RRule } from 'rrule'
 
 import moment from 'moment'
 
 @Component({
   components: {
-    FullCalendar,
     DatePicker
   }
 })
@@ -858,18 +853,18 @@ export default class OtherBookingModal extends Vue {
     const local_other_dates_array: any = []
 
     switch (this.other_selected_frequency[0]) {
-    case 0:
-      input_frequency = RRule.YEARLY
-      break
-    case 1:
-      input_frequency = RRule.MONTHLY
-      break
-    case 2:
-      input_frequency = RRule.WEEKLY
-      break
-    case 3:
-      input_frequency = RRule.DAILY
-      break
+      case 0:
+        input_frequency = RRule.YEARLY
+        break
+      case 1:
+        input_frequency = RRule.MONTHLY
+        break
+      case 2:
+        input_frequency = RRule.WEEKLY
+        break
+      case 3:
+        input_frequency = RRule.DAILY
+        break
     }
 
     if (isNaN(start_year) == false || isNaN(end_year) == false) {

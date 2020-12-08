@@ -702,18 +702,18 @@ export default class AppointmentBlackoutModal extends Vue {
     const local_dates_array: any = []
 
     switch (this.selected_frequency[0]) {
-    case 0:
-      input_frequency = RRule.YEARLY
-      break
-    case 1:
-      input_frequency = RRule.MONTHLY
-      break
-    case 2:
-      input_frequency = RRule.WEEKLY
-      break
-    case 3:
-      input_frequency = RRule.DAILY
-      break
+      case 0:
+        input_frequency = RRule.YEARLY
+        break
+      case 1:
+        input_frequency = RRule.MONTHLY
+        break
+      case 2:
+        input_frequency = RRule.WEEKLY
+        break
+      case 3:
+        input_frequency = RRule.DAILY
+        break
     }
 
     if (isNaN(start_year) == false || isNaN(end_year) == false) {

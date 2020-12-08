@@ -49,7 +49,7 @@
           style="display: inline-block; color: white; margin-right: 15px"
         >
           v2.0.1
-          <!-- {{ version.projectVersion }} ({{ version.gitCommit }}) -->
+          <!-- {{ version.projectVersion }} ({{ version.gitCommit }}) --
         </div>
       </div>
     </div>

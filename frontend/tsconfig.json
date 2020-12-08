@@ -16,7 +16,8 @@
       "webpack-env",
       "jest",
       "v-dragged",
-      "vue-fragment"
+      "vue-fragment",
+      "vuetify"
     ],
     "paths": {
       "@/*": [
