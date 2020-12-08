@@ -39,16 +39,18 @@ export const message = 'Canonical Version: ${trimmed} - ${buildTime} (v${project
 /** If true, other values should be present. */
 export const success = ${success};
 `
+    console.log('Updating version.GENERATED.ts')
+    fs.writeFileSync(__dirname + '/version.GENERATED.ts', content, { encoding: 'utf8' }
+    )
   } else {
-    content = `//DO NOT DELETE OR APP WILL FAIL TO COMPILE! Generated from version.js
-// SOMETHING HAS GONE WRONG AND VERSION WAS NOT GENERATED SUCCESSFULLY
-export const success = ${success};
-export const message = 'Version error. Unable to generate version.'`
+      console.log('Unable to create new version.GENERATED.ts.  Likely missing git in OpenShift node s2i image.')
+      // We're using s2i node images currently in OpenShift
+      // The problem is that htese images do not have git, so they can't check the git version!
+      // The long-term solution would be to move to a Dockerfile build for the `frontend`, 
+      // away from s2i.  With Dockerfile, we can install git, and anything else necessary.
+      // For now, this will only run locally and users have to remember to commit the file.
+      // If the file can be generated on OpenShfit directly, we can gitignore the file and delete
+      // it from the repo, as it'll always be generated pre-build.
   }
 
-  fs.writeFileSync(
-    __dirname + '/version.GENERATED.ts',
-    content,
-    { encoding: 'utf8' }
-  )
 })
