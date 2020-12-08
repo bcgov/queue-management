@@ -133,6 +133,7 @@ sonar-runner/.gradle
 loadlogs
 api/client_secrets/
 frontend/static/keycloak_dev.json
+version.GENERATED.ts
 
 
 # Docker

@@ -18,6 +18,7 @@ export interface Office {
   timeslots: TimeSlots[]
   timezone: TimeZone
   online_status: string
+  external_map_link: string
 }
 
 export interface Offices {
