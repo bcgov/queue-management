@@ -12,7 +12,7 @@
 >
   <div v-if="isEmailMissing">Please <router-link to="account-settings">configure your email address</router-link> to receive notifications</div>
   <div v-if="isReminderFlagMissing">Please <router-link to="account-settings">subscribe to email reminders</router-link> to receive appointment reminders</div>
-  <div v-if="isPhoneMissing">Please <router-link to="account-settings">add your phone number</router-link> to receive notifications and ensure we can contact you.</div>
+  <div v-if="isPhoneMissing">Please <router-link to="account-settings">add your phone number</router-link> to ensure we can contact you.</div>
 </v-alert>
 </template>
 
