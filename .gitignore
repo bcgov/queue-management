@@ -111,6 +111,7 @@ queue-env/
 .vscode/
 
 # Project specific include/excludes
+/frontend/public/static/keycloak/
 !frontend/build
 api/client_secrets/secrets.json
 node_modules/
@@ -133,6 +134,7 @@ loadlogs
 api/client_secrets/
 frontend/static/keycloak_dev.json
 version.GENERATED.ts
+
 
 # Docker
 api/Dockerfile
@@ -162,3 +164,4 @@ keys-generated
 /frontend/static/dev-public-keycloak.json
 .env-Chris
 .env-Omid
+
