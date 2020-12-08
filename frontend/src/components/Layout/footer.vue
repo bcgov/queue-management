@@ -48,8 +48,8 @@
           class="footer-anchor-item-last"
           style="display: inline-block; color: white; margin-right: 15px"
         >
-          <!-- v2.0.1 ({{ version }}) -->
-          {{ version.projectVersion }} ({{ version.gitCommit }})
+          v2.0.1
+          <!-- {{ version.projectVersion }} ({{ version.gitCommit }}) -->
         </div>
       </div>
     </div>
@@ -59,7 +59,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import SchedulingIndicator from '../Booking/scheduling-indicator.vue'
-import * as version from '../../version.GENERATED'
+// import * as version from '../../version.GENERATED'
 
 @Component({
   components: {
@@ -71,14 +71,6 @@ export default class Footer extends Vue {
   keycloakLogin () {
     this.$keycloak.login()
   }
-
-  mounted () {
-    version.success
-      ? console.log('%c' + version.message, 'font-size: 20px;')
-      : console.error(version.message)
-  }
-
-  version = version;
 }
 </script>
 

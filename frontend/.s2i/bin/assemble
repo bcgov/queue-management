@@ -1,25 +1,7 @@
 #!/bin/bash
 echo "Before assembling"
-echo "Pwd - "
-pwd
-echo "ls -- "
-ls
 
-
-# maybe cd into opt instead?
-echo "Cding into /opt/app-root"
-cd /opt/app-root
-
-echo "New pwd?"
-pwd
-
-GIT=$(git rev-parse --short HEAD)
-echo "Git rev parse: " $GIT 
-
-npm run update-version # would this work maybe?
-echo "After assembliing"
-
-# /usr/libexec/s2i/assemble
+/usr/libexec/s2i/assemble
 # Todo - can delete below
 # We just need to run the default s2i assemble script as this is a standard build process
 # rc=$?
