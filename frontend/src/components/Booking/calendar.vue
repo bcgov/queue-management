@@ -90,6 +90,7 @@
             @click:more="eventSelected"
             @change="fetchEvents"
             @click:time-category="selectEvent"
+            @click:date="switchView"
             event-text-color=""
           ></v-calendar>
         </v-sheet>
@@ -256,94 +257,20 @@ export default class Calendar extends Vue {
     return event.color
   }
 
+  switchView ({ date }) {
+    this.value = date
+    this.type = 'category'
+    if (this.categoryDays === 1) {
+      this.categoryDays = categoryDefaultDays
+    } else {
+      this.categoryDays = 1
+    }
+  }
+
   // vuetify calender end
-
-  // private config: any = {
-  //   columnHeaderFormat: 'ddd/D',
-  //   defaultView: 'agendaWeek',
-  //   editable: false,
-  //   eventConstraint: {
-  //     start: '08:00:00',
-  //     end: '18:00:00'
-  //   },
-  //   scheduling: this.scheduling,
-  //   fixedWeekCount: false,
-  //   header: {
-  //     left: null,
-  //     center: null,
-  //     right: null
-  //   },
-  //   height: 'auto',
-  //   maxTime: '18:00:00',
-  //   minTime: '08:00:00',
-  //   navLinks: true,
-  //   resources: (setResources) => {
-  //     this.getRooms().then(resources => {
-  //       console.log('resources', resources)
-  //       setResources(resources)
-  //       this.$nextTick(function () {
-  //         if (this.offsiteOnly) {
-  //           this.toggleOffsiteOnly('setup')
-  //           return
-  //         }
-  //         if (this.offsiteVisible) {
-  //           this.toggleOffsiteOnly('both')
-  //           return
-  //         }
-  //         if (!this.offsiteVisible) {
-  //           this.toggleOffsite(false)
-  //         }
-  //       })
-  //     })
-  //   },
-  //   schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-  //   selectAllow: (info) => {
-  //     // moved to below method
-  //     return this.selectAllow(info)
-
-  //     // if (info.resourceId === '_offsite') {
-  //     //   return false
-  //     // }
-  //     // const today = moment()
-  //     // if (info.start.isBefore(today)) {
-  //     //   return false
-  //     // }
-  //     // if (this.scheduling || this.rescheduling) {
-  //     //   return true
-  //     // }
-  //     // return false
-  //   },
-  //   selectConstraint: {
-  //     start: '08:00:00',
-  //     end: '18:00:00'
-  //   },
-  //   setResources: null,
-  //   showNonCurrentDates: false,
-  //   timezone: 'local',
-  //   unselectCancel: '.modal, .modal-content',
-  //   views: {
-  //     agendaDay: {
-  //       allDaySlot: false,
-  //       groupByResource: true
-  //     },
-  //     agendaWeek: {
-  //       allDaySlot: false,
-  //       groupByDateAndResource: true
-  //     },
-  //     list: {
-  //       listDayAltFormat: false
-  //     },
-  //     month: {
-  //       allDaySlot: false,
-  //       groupByResource: false
-  //     }
-  //   },
-  //   weekends: false
-  // }
 
   //  TOCONFIRM created method for selectAllow to fix context issue
   selectAllow (info) {
-    console.log('info', info)
     if (info.resourceId === '_offsite') {
       return false
     }
@@ -411,12 +338,14 @@ export default class Calendar extends Vue {
   agendaDay () {
     this.type = 'category'
     this.categoryDays = 1
+    this.viewRender()
   }
 
   agendaWeek () {
     // this.type = 'category'
     this.type = 'category'
     this.categoryDays = categoryDefaultDays
+    this.viewRender()
   }
 
   cancel () {
@@ -540,6 +469,7 @@ export default class Calendar extends Vue {
       this.type = 'category'
       this.categoryDays = 1
       this.value = new Date(date)
+      this.viewRender()
     }
   }
 
@@ -551,12 +481,14 @@ export default class Calendar extends Vue {
 
   month () {
     this.type = 'month'
+    this.viewRender()
   }
 
   next () {
     if (this.$refs.calendar) {
       // this.$refs.bookingcal.fireMethod('next')
       this.$refs.calendar.next()
+      this.viewRender()
     }
   }
 
@@ -570,6 +502,7 @@ export default class Calendar extends Vue {
     if (this.$refs.calendar) {
       // this.$refs.bookingcal.fireMethod('prev')
       this.$refs.calendar.prev()
+      this.viewRender()
     }
   }
 
@@ -719,6 +652,7 @@ export default class Calendar extends Vue {
   today () {
     this.value = ''
     this.type = 'category'
+    this.viewRender()
   }
 
   toggleOffsiteOnly (mode) {
@@ -785,6 +719,22 @@ export default class Calendar extends Vue {
     // this.$refs.bookingcal.fireMethod('updateEvent', event)
   }
 
+  viewRender () {
+    // const title = this.$refs.calendar.title
+    let viewName = 'week'
+
+    if (this.type === 'category') {
+      if (this.categoryDays === 1) {
+        viewName = 'agendaDay'
+      } else {
+        viewName = 'week'
+      }
+    } else {
+      viewName = 'month'
+    }
+    this.setCalendarSetup({ title: this.$refs.calendar.title, viewName, titleRef: this.$refs.calendar })
+  }
+
   // viewRender (view, el) {
   //   if (view.name !== 'listYear') {
   //     if (view.name === 'agendaDay') {
@@ -816,7 +766,7 @@ export default class Calendar extends Vue {
     this.getInvigilators()
     this.initialize()
     this.$root.$on('agendaDay', () => { this.agendaDay() })
-
+    this.viewRender()
     this.$root.$on('agendaWeek', () => { this.agendaWeek() })
     this.$root.$on('cancel', () => { this.cancel() })
     this.$root.$on('initialize', () => { this.initialize() })

@@ -91,15 +91,17 @@ export default {
     },
     calendar_setup (state) {
       if ((state.calendarSetup || {}).name) {
-        const { title, name } = state.calendarSetup
+        const { title, name, titleRef } = state.calendarSetup
         return {
           name,
-          title
+          title,
+          titleRef
         }
       }
       return {
         name: 'agendaWeek',
-        title: 'Appointments'
+        title: 'Appointments',
+        titleRef: null
       }
     },
     services (state, getters, rootState) {
@@ -417,8 +419,8 @@ export default {
     setEditedStatus: (state, payload) => state.editing = payload,
     setAppointments: (state, payload) => state.appointments = payload,
     setCalendarSetup: (state, payload) => {
-      const { title, name } = payload
-      state.calendarSetup = { title, name }
+      const { title, name, titleRef } = payload
+      state.calendarSetup = { title, name, titleRef }
     },
     toggleApptBookingModal: (state, payload) => state.showApptBookingModal = payload,
     toggleCheckInClicked: (state, payload) => state.checkInClicked = payload,

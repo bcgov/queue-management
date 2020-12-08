@@ -30,7 +30,10 @@
         </form>
       </div>
       <div>
-        <span class="q-inline-title">{{ calendar_setup.title }}</span>
+        <span class="q-inline-title">
+          {{ calendar_setup.title }}
+          {{ calendar_setup.titleRef && calendar_setup.titleRef.title }}
+        </span>
       </div>
     </div>
   </fragment>

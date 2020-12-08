@@ -42,14 +42,22 @@
       <router-view name="buttons"></router-view>
       <!-- </div> -->
       <div
-        v-if="
-          calendarSetup &&
-          (this.$route.path === '/booking' || this.$route.path === '/agenda')
-        "
+        v-if="calendarSetup && this.$route.path === '/booking'"
         style="flex-grow: 8"
         class="q-inline-title"
       >
-        {{ calendarSetup.title }}
+        {{
+          calendarSetup.titleRef.title
+            ? calendarSetup.titleRef.title
+            : calendarSetup.title
+        }}
+      </div>
+      <div
+        v-if="calendarSetup && this.$route.path === '/agenda'"
+        style="flex-grow: 8"
+        class="q-inline-title"
+      >
+        {{ calendarSetup.titleRef.title }}
       </div>
       <div />
       <div v-if="showHamburger">

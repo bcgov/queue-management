@@ -66,7 +66,9 @@
                       {{ date.eventParsed.start.time }} -
                       {{ date.eventParsed.end.time }}
                       <div>service Name : {{ date.event.serviceName }}</div>
-                      <div class="notes">Notes : {{ date.event.comments }}</div>
+                      <div class="notes" v-if="date.event.comments !== ''">
+                        Notes : {{ date.event.comments }}
+                      </div>
                     </div>
                   </div>
                 </v-tooltip>
@@ -152,7 +154,6 @@ export default class Appointments extends Vue {
   currentDay: any = moment().format('YYYY-MM-DD')// new Date()
 
   get events () {
-    console.log('this.searchTerm', this.searchTerm)
     if (this.searchTerm) {
       return this.filtered_appointment_events(this.searchTerm)
     }
@@ -268,15 +269,9 @@ export default class Appointments extends Vue {
       this.listView = true
     } else {
       this.listView = false
+      this.calendarSetup()
     }
   }
-
-  // formatting start time
-  // formatedStartTime = (date, time) => {
-  //   const selectedTime = moment(`${date} ${time}`)// event.start.clone()
-  //   const roundedTime = roundedDownTime(selectedTime) // roundingdown  time to 15 min inteval
-  //   return moment(`${date} ${roundedTime}`)
-  // }
 
   selectEvent (event) {
     this.checkRescheduleCancel()
@@ -313,6 +308,7 @@ export default class Appointments extends Vue {
 
   today () {
     this.value = ''
+    this.calendarSetup()
   }
 
   removeTempEvent () {
@@ -364,7 +360,6 @@ export default class Appointments extends Vue {
       //   // setTimeout(() => { this.toggleSubmitClicked(false) }, 2000)
       // })
     })
-    // this.$refs.appointments.fireMethod('renderEvent', e)
   }
 
   unselect () {
@@ -381,17 +376,16 @@ export default class Appointments extends Vue {
   // }
 
   calendarSetup () {
-    const title = `Appointments: ${this.$refs.calendar.title}`
+    const title = 'Appointments:'
     const name = this.type
-
-    this.setCalendarSetup({ title, name })
+    this.setCalendarSetup({ title, name, titleRef: this.$refs.calendar })
   }
 
   mounted () {
     this.getAppointments()
     this.getServices()
     this.getChannels()
-    this.calendarSetup()
+
     this.$root.$on('clear-clicked-appt', () => { this.clearClickedAppt() })
     this.$root.$on('clear-clicked-time', () => { this.clearClickedTime() })
     this.$root.$on('agendaDay', () => { this.agendaDay() })
@@ -403,6 +397,7 @@ export default class Appointments extends Vue {
     this.$root.$on('today', () => { this.today() })
     this.$root.$on('removeTempEvent', () => { this.removeTempEvent() })
     this.$root.$on('goToDate', (date) => { this.goToDate(date) })
+    this.calendarSetup()
   }
 }
 

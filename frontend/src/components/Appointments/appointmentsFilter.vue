@@ -39,68 +39,30 @@
                   <td class="fc-list-item-title fc-widget-content">
                     <div
                       style="display: flex; justify-content: left; width: 100%"
-                      v-if="event.exam"
                     >
-                      <div class="ft-wt-600 mr-1"><b>Exam:</b></div>
+                      <div class="ft-wt-600 mr-1"><b>Name:</b></div>
 
-                      <div class="ft-wt-400 mr-3">{{ event.title }}</div>
+                      <div class="ft-wt-400 mr-3">{{ event.name }}</div>
 
-                      <div class="ft-wt-600 mx-1"><b>Event ID:</b></div>
-
-                      <div class="ft-wt-400 mr-3">
-                        {{ event.exam.event_id }}
-                      </div>
-
-                      <div class="ft-wt-600 mx-1"><b>Writer:</b></div>
+                      <div class="ft-wt-600 mx-1"><b>service Name:</b></div>
 
                       <div class="ft-wt-400 mr-3">
-                        {{ event.exam.examinee_name }}
+                        {{ event.serviceName }}
                       </div>
 
-                      <div class="ft-wt-600 mx-1"><b>Received:</b></div>
-
-                      <div class="ft-wt-400 mr-3">
-                        {{
-                          moment(event.exam.exam_received_date).format(
-                            'MMM Do, YYYY'
-                          )
-                        }}
+                      <div
+                        class="ft-wt-600 mx-1"
+                        v-if="event.comments !== null"
+                      >
+                        <b>Notes:</b>
                       </div>
 
-                      <div class="ft-wt-600 mx-1"><b>Expiry:</b></div>
-
-                      <div class="ft-wt-400 mr-3">
-                        {{
-                          moment(event.exam.exam_expiry).format('MMM Do, YYYY')
-                        }}
+                      <div
+                        class="ft-wt-400 mr-3"
+                        v-if="event.comments !== null"
+                      >
+                        {{ event.comments }}
                       </div>
-
-                      <div class="ft-wt-600 mx-1"><b>Method:</b></div>
-
-                      <div class="ft-wt-400 mr-3">
-                        {{ event.exam.exam_method }}
-                      </div>
-
-                      <div class="ft-wt-600 mx-1"><b>Invigilator:</b></div>
-
-                      <div class="ft-wt-400 mr-3">
-                        {{
-                          event.exam.invigilator &&
-                          event.exam.invigilator.invigilator_name
-                        }}
-                      </div>
-                    </div>
-
-                    <div
-                      style="
-                        display: flex;
-                        justify-content: flex-center;
-                        width: 100%;
-                      "
-                      v-else
-                    >
-                      <div class="ft-wt-400 mr-3">{{ event.title }}</div>
-                      <div>Non-Exam / Other Event</div>
                     </div>
                   </td>
                 </tr>
