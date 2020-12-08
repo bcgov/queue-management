@@ -67,7 +67,7 @@
                       {{ date.eventParsed.start.time }} -
                       {{ date.eventParsed.end.time }}
                       <div>service Name : {{ date.event.serviceName }}</div>
-                      <div class="notes" v-if="date.event.comments !== ''">
+                      <div class="notes" v-if="date.event.comments !== null">
                         Notes : {{ date.event.comments }}
                       </div>
                     </div>

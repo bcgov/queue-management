@@ -14,6 +14,7 @@ limitations under the License. */
 
 /*eslint-disable */
 /*tslint-disable */
+import 'babel-polyfill'
 import './router/componentHooks' // <-- Needs to be first to work beforeRouteLeave
 
 import Vue from 'vue'
