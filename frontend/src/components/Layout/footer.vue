@@ -59,8 +59,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import SchedulingIndicator from '../Booking/scheduling-indicator.vue'
-import * as version from '../../version.GENERATED';
-
+import * as version from '../../version.GENERATED'
 
 @Component({
   components: {
@@ -73,10 +72,10 @@ export default class Footer extends Vue {
     this.$keycloak.login()
   }
 
-  mounted() {
+  mounted () {
     version.success
-            ? console.log('%c' + version.message, 'font-size: 20px;')
-            : console.error(version.message);
+      ? console.log('%c' + version.message, 'font-size: 20px;')
+      : console.error(version.message)
   }
 
   version = version;
