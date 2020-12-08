@@ -252,7 +252,8 @@ class OfficeConfigGA(OfficeConfig):
     #  Change what GA sees on the Office List view.
     column_labels = {
         'quick_list': 'Quick List',
-        'back_office_list': 'Back Office List'
+        'back_office_list': 'Back Office List',
+        'soonest_appointment': 'Soonest Appointment (minutes)'
     }
 
     column_list = [
