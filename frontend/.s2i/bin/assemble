@@ -1,7 +1,12 @@
 #!/bin/bash
 echo "Before assembling"
+GIT=$(git rev-parse --short HEAD)
+echo "Git rev parse: " $GIT 
 
-/usr/libexec/s2i/assemble
+npm run update-version # would this work maybe?
+echo "After assembliing"
+
+# /usr/libexec/s2i/assemble
 # Todo - can delete below
 # We just need to run the default s2i assemble script as this is a standard build process
 # rc=$?
