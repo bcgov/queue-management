@@ -1,6 +1,18 @@
 #!/bin/bash
 echo "Before assembling"
-cd /tmp/src/
+echo "Pwd - "
+pwd
+echo "ls -- "
+ls
+
+
+# maybe cd into opt instead?
+echo "Cding into /opt/app-root"
+cd /opt/app-root
+
+echo "New pwd?"
+pwd
+
 GIT=$(git rev-parse --short HEAD)
 echo "Git rev parse: " $GIT 
 
