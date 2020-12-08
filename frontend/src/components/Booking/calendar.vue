@@ -822,4 +822,9 @@ export default class Calendar extends Vue {
   background-color: #184368 !important;
   color: white !important;
 }
+
+tr.fc-list-item {
+  border-top: 1px solid gray;
+  border-bottom: 1px solid gray;
+}
 </style>

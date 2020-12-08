@@ -441,4 +441,8 @@ export default class Appointments extends Vue {
 .notes {
   white-space: pre-wrap;
 }
+tr.fc-list-item {
+  border-top: 1px solid gray;
+  border-bottom: 1px solid gray;
+}
 </style>
