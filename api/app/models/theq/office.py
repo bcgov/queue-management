@@ -84,6 +84,7 @@ class Office(Base):
     number_of_dlkt = db.Column(db.Integer, nullable=True)
     office_email_paragraph = db.Column(db.String(2000), nullable=True)
     external_map_link = db.Column(db.String(500), nullable=True)
+    soonest_appointment = db.Column(db.Integer, default=0)
 
     counters = db.relationship("Counter", secondary='office_counter')
     services = db.relationship("Service", secondary='office_service')
