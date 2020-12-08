@@ -30,11 +30,25 @@
               <v-col cols="12" md="6" align-self="stretch" align="center" class="loc-map">
 <!--                <v-img v-if="location.civic_address" :src='getMapUrl(location)' :alt="location.civic_address || 'No address'" class='static-map'>-->
 <!--                </v-img>-->
-               <v-img v-if="location.civic_address" :src="require('@/assets/img/officemaps/' + (location.office_number ? location.office_number.toString() + '.png' : '999.png'))"
-                :alt="location.civic_address || 'No address'" class='static-map'>
-               </v-img>
+                <template v-if='location.external_map_link'>
+                  <a class='link-w-icon mt-6' v-bind:href='location.external_map_link' target="_blank" rel="noopener noreferrer" :alt='`Open link for ${ location.civic_address}`'>
+                    <v-img v-if="location.civic_address" :src="require('@/assets/img/officemaps/' + (location.office_number ? location.office_number.toString() + '.png' : '999.png'))" :alt="location.civic_address || 'No address'" class='static-map'>
+                    </v-img>
+                  </a>
+                </template>
+                <template v-else>
+                  <v-img v-if="location.civic_address" :src="require('@/assets/img/officemaps/' + (location.office_number ? location.office_number.toString() + '.png' : '999.png'))" :alt="location.civic_address || 'No address'" class='static-map'>
+                    </v-img>
+                </template>
                 <div class="text-center mt-2 body-2" v-if="location.civic_address">
-                  {{location.civic_address}}
+                  <template v-if='location.external_map_link'>
+                    <a class='link-w-icon mt-6' v-bind:href='location.external_map_link' target="_blank" rel="noopener noreferrer" :alt='`Open link for ${ location.civic_address}`'>
+                      <v-icon small class="mr-2">mdi-open-in-new</v-icon>
+                      {{location.civic_address}}
+                    </a>
+                  </template>
+                  <template v-else>{{location.civic_address}}</template>
+
                 </div>
                 <div class="text-center mt-2 body-2 green--text font-weight-bold" v-if='location.latitude && location.longitude && hasCoordinates'>
                   {{ getDistance(location.latitude, location.longitude) }}
