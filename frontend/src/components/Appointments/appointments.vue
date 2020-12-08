@@ -34,6 +34,7 @@
               color="primary"
               :now="currentDay"
               v-model="value"
+              interval-height="40"
               first-time="08:30"
               interval-minutes="30"
               interval-count="17"
@@ -55,7 +56,7 @@
 
                 <v-tooltip top attach class="mytooltip">
                   <template v-slot:activator="{ on }">
-                    <div v-on="on">
+                    <div v-on="on" class="ml-2">
                       {{ date.event.title }} {{ date.eventParsed.start.time }} -
                       {{ date.eventParsed.end.time }}
                     </div>
@@ -181,6 +182,7 @@ export default class Appointments extends Vue {
     } else {
       this.type = 'day'
     }
+    this.calendarSetup()
   }
 
   // vuetify calender end
@@ -428,9 +430,9 @@ export default class Appointments extends Vue {
 .v-calendar .v-event-timed-container {
   margin-right: 20px !important;
 }
-.theme--light.v-calendar-events .v-event-timed {
+/* .theme--light.v-calendar-events .v-event-timed {
   border: none !important;
-}
+} */
 .v-tooltip--attached {
   display: block;
   position: fixed;

@@ -78,6 +78,7 @@
             v-model="value"
             first-time="08:30"
             interval-minutes="30"
+            interval-height="40"
             interval-count="17"
             :type="type"
             category-show-all
@@ -265,6 +266,7 @@ export default class Calendar extends Vue {
     } else {
       this.categoryDays = 1
     }
+    this.viewRender()
   }
 
   // vuetify calender end
