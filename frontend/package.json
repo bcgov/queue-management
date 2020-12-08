@@ -1,6 +1,6 @@
 {
   "name": "theq",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Theq",
   "author": "Scott Rumsby <scott.rumsby@gmail.com>",
   "contributors": [
@@ -9,6 +9,9 @@
   "private": true,
   "scripts": {
     "test": "jest",
+    "update-version": "node src/version.js",
+    "prebuild": "npm run update-version",
+    "preserve": "npm run update-version",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
