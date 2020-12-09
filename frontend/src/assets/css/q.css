@@ -164,3 +164,9 @@ q-link-cursor {
   overflow-y: hidden;
   height: 100vh;
 }
+
+
+.v-calendar-daily__body {
+  /* IE 11 fix */
+  -ms-flex: none !important;
+}
