@@ -67,9 +67,9 @@
           right
           id="nav-dropdown"
         >
-          <template slot="button-content">
+          <span slot="button-content">
             <font-awesome-icon icon="bars" style="font-size: 1.18rem" />
-          </template>
+          </span>
           <div :style="{ width: 200 + 'px' }" id="nav-dropdown-buttons">
             <b-dropdown-item to="/queue" id="the_q">The Q</b-dropdown-item>
             <b-dropdown-item to="/booking" v-if="showExams" id="room_bookings"
@@ -90,7 +90,7 @@
               id="office_agenda"
               >Office Agenda</b-dropdown-item
             >
-            <template v-if="user.role && user.role.role_code == 'GA'">
+            <span v-if="user.role && user.role.role_code == 'GA'">
               <b-dropdown-item @click="clickGAScreen" :class="gaPanelStyle">
                 <font-awesome-icon
                   v-if="showGAScreenModal"
@@ -104,7 +104,7 @@
                 <span style="font-weight: 400">Show GA Panel</span>
               </b-dropdown-item>
               <b-dropdown-divider />
-            </template>
+            </span>
             <b-dropdown-item v-if="showAdmin" to="/admin"
               >Administration</b-dropdown-item
             >
@@ -294,9 +294,9 @@ export default class Nav extends Vue {
   padding: 10px;
   margin: 10px;
 }
-.add-flex-grow {
+/* .add-flex-grow {
   flex-grow: 1;
-}
+} */
 .gaScreenChecked {
   padding-left: 0em;
 }
