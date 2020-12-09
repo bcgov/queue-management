@@ -377,8 +377,13 @@ export default class Appointments extends Vue {
   // }
 
   calendarSetup () {
-    const title = 'Appointments:'
+    let title = 'Appointments:'
     const name = this.type
+    // This happens when user has typed in search field and selected a result
+    // It effectively looks like Day View, but we lose the calendar ref.
+    if (name === 'day' && this.$refs.calendar === undefined ) {
+      title = 'Search Results'
+    }
     this.setCalendarSetup({ title, name, titleRef: this.$refs.calendar })
   }
 
