@@ -58,14 +58,12 @@
             style="display: flex; justify-content: space-between"
             v-if="calView === 'listYear'"
           >
-            <template v-for="col in roomLegendArray">
-              <div :key="col.title">
+            <div v-for="col in roomLegendArray" :key="col.title">
                 <b-badge :style="{ backgroundColor: `${col.color}` }">
                   <span :style="{ color: `${col.color}` }">legend</span>
                 </b-badge>
                 <span>{{ col.title }}</span>
               </div>
-            </template>
           </div>
         </div>
         <v-sheet>
