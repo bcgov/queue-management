@@ -209,11 +209,11 @@ objects:
               imagePullPolicy: Always
               resources:
                 requests:
-                  cpu: 1000m
+                  cpu: '1'
                   memory: 512Mi
                 limits:
-                  cpu: 1000m
-                  memory: 1024Mi
+                  cpu: '1'
+                  memory: 1Gi
           restartPolicy: Always
           terminationGracePeriodSeconds: 30
           dnsPolicy: ClusterFirst
@@ -266,7 +266,6 @@ parameters:
     required: true
   - description: The hostname mapped to the Mender-Gateway-API route
     name: API_GATEWAY_ROUTE_HOSTNAME
-    value: mender.pathfinder.gov.bc.ca
     required: true
   - description: The port the api-gateway is using
     name: API_GATEWAY_MAPPED_PORT

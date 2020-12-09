@@ -228,11 +228,26 @@ node(label) {
                 returnStdout: true
             ).trim()
 
+            PUBLICID = sh (
+                script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^public_user_id/{print $2}\'',
+                returnStdout: true
+            ).trim()
+
+            PUBLICPW = sh (
+                script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^public_user_password/{print $2}\'',
+                returnStdout: true
+            ).trim()
+
+            PUBLICURL = sh (
+                script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^public_url/{print $2}\'',
+                returnStdout: true
+            ).trim()
+
             NODE_OPTIONS='--max_old_space_size=2048'
 
             sh (
                 returnStdout: true,
-                script: "./node_modules/newman/bin/newman.js run API_Test_TheQ_Booking.json -e postman_env.json --global-var 'userid=${USERID}' --global-var 'password=${PASSWORD}' --global-var 'userid_nonqtxn=${USERID_NONQTXN}' --global-var 'password_nonqtxn=${PASSWORD_NONQTXN}' --global-var 'client_secret=${CLIENT_SECRET}' --global-var 'url=${API_URL}' --global-var 'auth_url=${AUTH_URL}' --global-var 'clientid=${CLIENTID}' --global-var 'realm=${REALM}'"
+                script: "./node_modules/newman/bin/newman.js run API_Test_TheQ_Booking.json -e postman_env.json --global-var 'userid=${USERID}' --global-var 'password=${PASSWORD}' --global-var 'userid_nonqtxn=${USERID_NONQTXN}' --global-var 'password_nonqtxn=${PASSWORD_NONQTXN}' --global-var 'client_secret=${CLIENT_SECRET}' --global-var 'url=${API_URL}' --global-var 'auth_url=${AUTH_URL}' --global-var 'clientid=${CLIENTID}' --global-var 'realm=${REALM}' --global-var 'public_user_id=${PUBLICID}' --global-var 'public_user_password=${PUBLICPW}' --global-var 'public_url=${PUBLICURL}'"
             )
         }
     }

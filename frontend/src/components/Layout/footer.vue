@@ -48,8 +48,7 @@
           class="footer-anchor-item-last"
           style="display: inline-block; color: white; margin-right: 15px"
         >
-          v2.0.1
-          <!-- {{ version.projectVersion }} ({{ version.gitCommit }}) -->
+          v2.0.3
         </div>
       </div>
     </div>

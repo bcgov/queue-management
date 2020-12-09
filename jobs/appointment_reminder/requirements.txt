@@ -6,5 +6,5 @@ Jinja2
 pytz
 
 
-
+# TODO: Can this be an env variable? Or can it be relative?
 -e git+https://github.com/bcgov/queue-management.git@master#egg=api&subdirectory=api
