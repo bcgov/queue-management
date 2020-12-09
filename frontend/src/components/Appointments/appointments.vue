@@ -432,11 +432,6 @@ export default class Appointments extends Vue {
 /* .theme--light.v-calendar-events .v-event-timed {
   border: none !important;
 } */
-.v-tooltip--attached {
-  display: block;
-  position: fixed;
-  z-index: 100;
-}
 .notes {
   white-space: pre-wrap;
 }
