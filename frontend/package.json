@@ -1,6 +1,6 @@
 {
   "name": "theq",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Theq",
   "author": "Scott Rumsby <scott.rumsby@gmail.com>",
   "contributors": [
@@ -9,6 +9,9 @@
   "private": true,
   "scripts": {
     "test": "jest",
+    "update-version": "node src/version.js",
+    "prebuild": "npm run update-version",
+    "preserve": "npm run update-version",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
@@ -42,6 +45,7 @@
     "uuid": "3.3.3",
     "v-dragged": "0.0.5",
     "vue": "2.6.10",
+    "vue-bootstrap-typeahead": "^0.2.6",
     "vue-class-component": "^7.2.3",
     "vue-fragment": "1.5.0",
     "vue-full-calendar": "2.7.0",

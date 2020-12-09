@@ -23,6 +23,7 @@ from qsystem import db
 from sqlalchemy import and_
 from qsystem import db, cache, socketio
 from pprint import pprint
+from wtforms import TextAreaField
 
 
 def on_form_prefill(counters):
@@ -50,10 +51,10 @@ class OfficeConfig(Base):
     can_delete = False
     form_create_rules = ('office_name', 'office_number', 'sb', 'services', 'deleted', 'exams_enabled_ind',
                          'appointments_enabled_ind', 'timezone', 'latitude', 'longitude', 'office_appointment_message',
-                         'appointments_days_limit', 'appointment_duration', 'max_person_appointment_per_day', 'civic_address', 'telephone', 'online_status')
+                         'appointments_days_limit', 'appointment_duration', 'soonest_appointment', 'max_person_appointment_per_day', 'civic_address', 'telephone', 'online_status')
     form_edit_rules = ('office_name', 'office_number', 'sb', 'services', 'deleted', 'exams_enabled_ind',
                        'appointments_enabled_ind', 'timezone', 'latitude', 'longitude', 'office_appointment_message',
-                         'appointments_days_limit', 'appointment_duration', 'max_person_appointment_per_day', 'civic_address', 'telephone', 'online_status')
+                         'appointments_days_limit', 'appointment_duration', 'soonest_appointment', 'max_person_appointment_per_day', 'civic_address', 'telephone', 'online_status')
     form_choices = {
         'exams_enabled_ind': [
             ("0", 'No - Exams are not enabled for this office'), \
@@ -83,7 +84,9 @@ class OfficeConfig(Base):
                    'max_person_appointment_per_day',
                    'civic_address',
                    'timeslots',
-                   'number_of_dlkt'
+                   'number_of_dlkt',
+                   'office_email_paragraph',
+                   'external_map_link'
                    ]
 
     form_excluded_columns = ('citizens',
@@ -109,12 +112,15 @@ class OfficeConfig(Base):
                          'office_appointment_message',
                          'appointments_days_limit',
                          'appointment_duration',
+                         'soonest_appointment',
                          'max_person_appointment_per_day',
                          'civic_address',
                          'telephone',
                          'online_status',
                          'timeslots',
-                         'number_of_dlkt'
+                         'number_of_dlkt',
+                         'office_email_paragraph',
+                         'external_map_link'
                          )
 
     form_edit_rules = ('office_name',
@@ -133,12 +139,15 @@ class OfficeConfig(Base):
                        'office_appointment_message',
                        'appointments_days_limit',
                        'appointment_duration',
+                       'soonest_appointment',
                        'max_person_appointment_per_day',
                        'civic_address',
                        'telephone',
                        'online_status',
                        'timeslots',
-                       'number_of_dlkt'
+                       'number_of_dlkt',
+                       'office_email_paragraph',
+                       'external_map_link'
                        )
 
     form_args = {
@@ -164,7 +173,9 @@ class OfficeConfig(Base):
                      'appointments_enabled_ind': 'Appointments Enabled',
                      'office_appointment_message': 'Online Appointment Message',
                      'appointments_days_limit': 'Appointment Days Limit',
-                     'max_person_appointment_per_day': 'Maximum number of appointments allowed for same person per day'
+                     'max_person_appointment_per_day': 'Maximum number of appointments allowed for same person per day',
+                     'office_email_paragraph': 'Office Email Paragraph',
+                     'soonest_appointment': 'Soonest Appointment (minutes)'
                      }
 
     column_sortable_list = ['office_name',
@@ -179,6 +190,14 @@ class OfficeConfig(Base):
                             ]
 
     column_default_sort = 'office_name'
+
+    form_widget_args = {
+        'office_email_paragraph': { 'rows': 5, 'maxlength': 2000  }
+    }
+
+    form_overrides = {
+        'office_email_paragraph': TextAreaField
+    }
 
     #     if is_created:
     #         print('==>init_formdata  ===> is_created True')
@@ -233,7 +252,8 @@ class OfficeConfigGA(OfficeConfig):
     #  Change what GA sees on the Office List view.
     column_labels = {
         'quick_list': 'Quick List',
-        'back_office_list': 'Back Office List'
+        'back_office_list': 'Back Office List',
+        'soonest_appointment': 'Soonest Appointment (minutes)'
     }
 
     column_list = [
@@ -252,12 +272,15 @@ class OfficeConfigGA(OfficeConfig):
         'office_appointment_message',
         'appointments_days_limit',
         'appointment_duration',
+        'soonest_appointment',
         'max_person_appointment_per_day',
         'civic_address',
         'telephone',
         'online_status',
         'timeslots',
-        'number_of_dlkt'
+        'number_of_dlkt',
+        'office_email_paragraph',
+        'external_map_link'
     )
 
     form_excluded_columns = (
@@ -279,7 +302,8 @@ class OfficeConfigGA(OfficeConfig):
     form_widget_args = {
         'office_name': {
             'readonly': True
-        }
+        },
+        'office_email_paragraph': { 'rows': 5, 'maxlength': 2000  }
     }
 
 

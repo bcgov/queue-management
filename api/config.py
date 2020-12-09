@@ -204,6 +204,9 @@ class BaseConfig(object):
     # Cache timeout
     CACHE_DEFAULT_TIMEOUT = int(os.getenv('CACHE_DEFAULT_TIMEOUT', '300'))
 
+    # Auto-refresh application configuration
+    DISABLE_AUTO_REFRESH = (os.getenv("DISABLE_AUTO_REFRESH","FALSE")).upper() == "TRUE"
+
 
 class LocalConfig(BaseConfig):
     DEBUG = True

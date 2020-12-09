@@ -41,5 +41,6 @@ class ServiceSchema(ma.SQLAlchemySchema):
     external_service_name = fields.Str(dump_only=True)
     online_link = fields.Str(dump_only=True)
     online_availability = fields.Str(dump_only=True)
-    # timeslot_duration = fields.Time(dump_only=True)
     timeslot_duration = fields.Int(dump_only=True)
+    email_paragraph = fields.Str(dump_only=True)
+    css_colour = fields.Str(dump_only=True)

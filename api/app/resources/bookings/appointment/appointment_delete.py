@@ -24,6 +24,7 @@ from app.utilities.auth_util import Role, has_any_role
 from app.utilities.auth_util import is_public_user
 from app.utilities.email import get_cancel_email_contents, send_email, generate_ches_token
 from app.utilities.snowplow import SnowPlow
+from qsystem import application
 from qsystem import api, db, oidc, socketio
 
 @api.route("/appointments/<int:id>/", methods=["DELETE"])
@@ -53,7 +54,9 @@ class AppointmentDelete(Resource):
 
         db.session.delete(appointment)
         db.session.commit()
-        socketio.emit('appointment_delete', id)
+
+        if not application.config['DISABLE_AUTO_REFRESH']:
+            socketio.emit('appointment_delete', id)
 
         # Do not log snowplow events or send emails if it's a draft.
         if not appointment.is_draft:

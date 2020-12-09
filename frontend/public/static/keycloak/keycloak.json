@@ -1,0 +1,10 @@
+{
+  "realm": "vtkayq4c",
+  "auth-server-url": "https://dev.oidc.gov.bc.ca/auth",
+  "ssl-required": "external",
+  "resource": "online-appointment-web",
+  "credentials": {
+      "secret": "c2c468d4-38b8-4518-a6f1-d9d5e39913eb"
+  },
+  "confidential-port": 0
+}

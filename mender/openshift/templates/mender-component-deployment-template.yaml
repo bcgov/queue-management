@@ -54,13 +54,13 @@ objects:
                 - name: USERADM_MONGO_USERNAME
                   valueFrom:
                     secretKeyRef:
-                      name: mender-mongodb
-                      key: database-user
+                      name: mender-mongodb-secret
+                      key: mongodb-username
                 - name: USERADM_MONGO_PASSWORD
                   valueFrom:
                     secretKeyRef:
-                      name: mender-mongodb
-                      key: database-password
+                      name: mender-mongodb-secret
+                      key: mongodb-password
                 - name: DEFAULT_USER
                   valueFrom:
                     secretKeyRef:
@@ -108,13 +108,13 @@ objects:
                 - name: USERADM_MONGO_USERNAME
                   valueFrom:
                     secretKeyRef:
-                      name: mender-mongodb
-                      key: database-user
+                      name: mender-mongodb-secret
+                      key: mongodb-username
                 - name: USERADM_MONGO_PASSWORD
                   valueFrom:
                     secretKeyRef:
-                      name: mender-mongodb
-                      key: database-password
+                      name: mender-mongodb-secret
+                      key: mongodb-password
               readinessProbe:
                 failureThreshold: 3
                 initialDelaySeconds: 3
@@ -239,13 +239,13 @@ objects:
                 - name: DEVICEAUTH_MONGO_USERNAME
                   valueFrom:
                     secretKeyRef:
-                      name: mender-mongodb
-                      key: database-user
+                      name: mender-mongodb-secret
+                      key: mongodb-username
                 - name: DEVICEAUTH_MONGO_PASSWORD
                   valueFrom:
                     secretKeyRef:
-                      name: mender-mongodb
-                      key: database-password
+                      name: mender-mongodb-secret
+                      key: mongodb-password
               volumeMounts:
                 - name: mender-device-auth-key-secret-volume
                   mountPath: "/etc/deviceauth/rsa/"
@@ -370,13 +370,13 @@ objects:
                 - name: INVENTORY_MONGO_USERNAME
                   valueFrom:
                     secretKeyRef:
-                      name: mender-mongodb
-                      key: database-user
+                      name: mender-mongodb-secret
+                      key: mongodb-username
                 - name: INVENTORY_MONGO_PASSWORD
                   valueFrom:
                     secretKeyRef:
-                      name: mender-mongodb
-                      key: database-password
+                      name: mender-mongodb-secret
+                      key: mongodb-password
               readinessProbe:
                 failureThreshold: 3
                 initialDelaySeconds: 3
@@ -487,12 +487,12 @@ objects:
                 - name: DEPLOYMENTS_AWS_AUTH_KEY
                   valueFrom:
                     secretKeyRef:
-                      key: accesskey
+                      key: minioAccessKey
                       name: minio
                 - name: DEPLOYMENTS_AWS_AUTH_SECRET
                   valueFrom:
                     secretKeyRef:
-                      key: secretkey
+                      key: minioSecretKey
                       name: minio
                 - name: DEPLOYMENTS_AWS_URI
                   value: https://${MINIO_ROUTE_HOSTNAME}
@@ -501,13 +501,13 @@ objects:
                 - name: DEPLOYMENTS_MONGO_USERNAME
                   valueFrom:
                     secretKeyRef:
-                      name: mender-mongodb
-                      key: database-user
+                      name: mender-mongodb-secret
+                      key: mongodb-username
                 - name: DEPLOYMENTS_MONGO_PASSWORD
                   valueFrom:
                     secretKeyRef:
-                      name: mender-mongodb
-                      key: database-password
+                      name: mender-mongodb-secret
+                      key: mongodb-password
               readinessProbe:
                 failureThreshold: 3
                 initialDelaySeconds: 3
@@ -560,6 +560,7 @@ objects:
               kind: ImageStreamTag
               namespace: "${TOOLS_WORKSPACE}"
               name: mender-deployments-stream:${IMAGESTREAM_TAG}
+
   # Minio Route, needed for communication with Minio
   - apiVersion: v1
     kind: Route
@@ -571,14 +572,15 @@ objects:
     spec:
       host: ${MINIO_ROUTE_HOSTNAME}
       port:
-        targetPort: http
+        targetPort: 9000-tcp
       to:
         kind: Service
         name: minio
       tls:
         termination: edge
         insecureEdgeTerminationPolicy: Redirect
-   # Secrets
+
+  # Secrets
   # mender-useradm RSA key
   - apiVersion: v1
     kind: Secret
@@ -633,6 +635,7 @@ parameters:
   - description: The hostname mapped to the Minio storage route.
     name: MINIO_ROUTE_HOSTNAME
     required: true
+    value: s3mender.pathfinder.gov.bc.ca
   - description: The mender-useradm private key.
     name: USERADM_KEY
     required: true

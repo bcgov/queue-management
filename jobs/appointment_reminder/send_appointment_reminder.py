@@ -115,6 +115,10 @@ def send_reminders(app):
                                        formatted_date=appointment.get('formatted_date'),
                                        duration=appointment.get('duration'),
                                        telephone=appointment.get('telephone'),
+                                       service_name=appointment.get('service_name'),
+                                       civic_address=appointment.get('civic_address'),
+                                       service_email_paragraph=appointment.get('service_email_paragraph'),
+                                       office_email_paragraph=appointment.get('office_email_paragraph'),
                                        url=app_url)
                 send_email(ches_token, subject, appointment.get('email'), sender, body)
                 email_count += 1

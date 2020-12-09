@@ -17,7 +17,7 @@ from flask_restx import Resource
 from app.models.bookings import Appointment
 from app.schemas.bookings import AppointmentSchema
 from app.models.theq import CSR
-from qsystem import api, db, oidc, socketio
+from qsystem import api, db, oidc, socketio, application
 from app.utilities.auth_util import Role, has_any_role
 
 
@@ -40,7 +40,8 @@ class AppointmentRecurringDelete(Resource):
             db.session.delete(appointment)
             db.session.commit()
 
-        socketio.emit('appointment_delete', id)
+        if not application.config['DISABLE_AUTO_REFRESH']:
+            socketio.emit('appointment_delete', id)
 
 
         return {}, 204

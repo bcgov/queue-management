@@ -1,0 +1,50 @@
+kind: Template
+apiVersion: v1
+metadata:
+  name: send-appointment-reminder
+  annotations:
+    description: 'Scheduled Task to send appointment reminders'
+    tags: cronjob
+objects:
+  -
+    kind: CronJob
+    apiVersion: batch/v1beta1
+    metadata:
+      name: send-appointment-reminder
+    spec:
+      successfulJobsHistoryLimit: 5
+      failedJobsHistoryLimit: 5
+      schedule: '0 16 * * *'
+      suspend: false
+      jobTemplate:
+        spec:
+          template:
+            spec:
+              containers:
+                -
+                  name: send-appointment-reminder
+                  image: 'docker-registry.default.svc:5000/servicebc-cfms-tools/send-appointment-reminder:${ENV_TAG}'
+                  imagePullPolicy: Always
+                  args:
+                    - /bin/sh
+                    - '-c'
+                    - 'cd /opt/app-root/src; ./run.sh'
+                  envFrom:
+                    - configMapRef:
+                        name: appointment-reminder-${TAG_NAME}-config
+
+              restartPolicy: Never
+              concurrencyPolicy: Forbid
+parameters:
+  -
+    name: ENV_TAG
+    displayName: ENV_TAG
+    description: "The name assigned to all of the OpenShift resources associated to the\nserver instance."
+    required: true
+    value: latest
+  -
+    name: TAG_NAME
+    displayName: 'Environment TAG name'
+    description: 'The TAG name for this environment, e.g., dev, test, prod'
+    required: true
+    value: dev

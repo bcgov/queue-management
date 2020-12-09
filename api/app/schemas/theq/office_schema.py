@@ -52,5 +52,7 @@ class OfficeSchema(ma.SQLAlchemySchema):
     office_appointment_message = fields.Str()
     civic_address = fields.Str()
     online_status = fields.Str()
+    external_map_link = fields.Str()
+
 
 

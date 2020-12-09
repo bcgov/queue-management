@@ -55,16 +55,16 @@
                 <tr>
                     <td>
                         <p class="text-content">
-                            Hello {{ display_name }}
+                            Hello {{ display_name }},
                         </p>
                         <p class="text-content">
-                            Your appointment with Service BC {{ location }} on {{ formatted_date }} has been cancelled due to following reason.
+                            Your appointment with Service BC {{ location }} on {{ formatted_date }} has been cancelled due to circumstances beyond our control.  We apologize for the inconvenience.
                         </p>
                         <p class="text-content">
                             {{ blackout_notes }}
                         </p>
                         <p class="text-content">
-                            To re-book your appointment, please visit Service BC Book an Appointment and sign in.
+                            To rebook your appointment, please visit Service BC Book an Appointment and sign in.
                         </p>
                         <div style="margin-top: 45px;">
                             <!--[if mso]> <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{ url }}" style="height:30px; v-text-anchor:middle; width:400px;" arcsize="10%" stroke="f" fillcolor="#003366" alias="CTA1">Book an Appointment with Service BC<w:anchorlock/> <center> <![endif]-->
@@ -75,6 +75,7 @@
                         <p class="text-content">
                             Thank you, <br/> <br/>
                             Service BC {{ location }} <br/>
+                            {{ civic_address }} <br/>
                             {{ telephone }} <br/>
                         </p>
                     </td>

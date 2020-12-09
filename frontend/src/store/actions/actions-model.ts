@@ -1426,6 +1426,25 @@ export const commonActions: any = {
       })
   },
 
+  clickUnCheckIn (context) {
+    const { citizen_id } = context.getters.invited_citizen
+    context.commit('setPerformingAction', true)
+
+    Axios(context)
+    .post(`/citizens/${citizen_id}/remove_from_queue/`, {})
+    .then((res) => {
+      console.log('clickUnCheckIn response', { res })
+      context.commit('toggleInvitedStatus', false)
+      context.commit('setPerformingAction', false)
+      context.commit('toggleServiceModal', false)
+      context.commit('resetServiceModal')
+      context.dispatch('flashServeNow', 'stop')
+    })
+    .catch(() => {
+      context.commit('setPerformingAction', false)
+    })
+  },
+
   clickRowHoldQueue (context, citizen_id) {
     context.commit('toggleServeCitizenSpinner', true)
     context.commit('setPerformingAction', true)
@@ -2389,6 +2408,17 @@ export const commonActions: any = {
     Axios(context).put(`/csrs/${csr_id}/`, {
       csr_state_id: context.state.user.csr_state_id
     })
+  },
+
+  updateCSROffice (context, newOffice) {
+    const csr_id = context.state.user.csr_id
+    const { office_id } = newOffice;
+    return Axios(context).put(`/csrs/${csr_id}/`, { office_id })
+    .then(() => {
+      console.log('Axios complete. commiting changeCSROffice w/', { newOffice });
+      context.commit('changeCSROffice', newOffice)
+    })
+    
   },
 
   restoreSavedModalAction ({ commit }, payload) {

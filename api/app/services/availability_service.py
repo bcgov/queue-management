@@ -50,6 +50,9 @@ class AvailabilityService():
             # today's date and time
             today = datetime.datetime.now().astimezone(tz)
 
+            # soonest a citizen can book an appointment
+            soonest_appointment_date = today + datetime.timedelta(minutes = office.soonest_appointment or 0)
+
             # Find all appointments between the dates
             appointments = Appointment.find_appointment_availability(office_id=office.office_id, first_date=today,
                                                                      last_date=days[-1],
@@ -89,7 +92,8 @@ class AvailabilityService():
                                 'no_of_dlkt_slots': dlkt_slots
                             }
                             # Check if today's time is past appointment slot
-                            if not (today.date() == day_in_month.date() and today.time() > start_time):
+                            # Arc - also check if in office.soonest_appointment
+                            if not (today.date() == day_in_month.date() and soonest_appointment_date.time() > start_time):
                                 if slot not in available_slots_per_day[formatted_date]: 
                                     available_slots_per_day[formatted_date].append(slot)
 
@@ -125,16 +129,11 @@ class AvailabilityService():
                                 if  booked_slot['is_dlkt']:
                                     booked_dlkt_slots += 1
                                 else:   
-                                    booked_slots += 1   
-                                    
+                                    booked_slots += 1               
+                    
                     if service_is_dltk:
                         dlkt_nos = actual_slot['no_of_dlkt_slots'] - booked_dlkt_slots
-                        if actual_slot['no_of_slots'] <= (booked_slots + booked_dlkt_slots):
-                            actual_slot['no_of_slots'] = 0
-                        elif actual_slot['no_of_slots'] - booked_slots >= dlkt_nos:
-                            actual_slot['no_of_slots'] = dlkt_nos
-                        else: 
-                            actual_slot['no_of_slots'] = dlkt_nos - (actual_slot['no_of_slots'] - booked_slots) 
+                        actual_slot['no_of_slots'] = dlkt_nos if actual_slot['no_of_slots'] - booked_slots >= dlkt_nos else 0
                     else:
                        actual_slot['no_of_slots']  =  actual_slot['no_of_slots'] - (booked_slots + booked_dlkt_slots)
 

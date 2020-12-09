@@ -30,6 +30,11 @@
             font-family: Verdana, Arial, sans-serif;
             font-size: 16px;
         }
+
+        span.paragraph-intro {
+            font-style: itailc;
+            text-decoration: underline;
+        }
     </style>
     <meta name="referrer" content="origin-when-cross-origin"/>
     <link rel="icon" sizes="16x16" type="image/png" href="assets/favicon_16.png"/>
@@ -55,22 +60,34 @@
                 <tr>
                     <td>
                         <p class="text-content">
-                            Hello {{ display_name }}
+                            Hello {{ display_name }},
                         </p>
+                        {% if service_name is not none %}
                         <p class="text-content">
-                            You have an appointment with Service BC {{ location }} on {{ formatted_date }} for a total of {{ duration }} minutes. Plan to arrive 5 minutes early.
+                            Service: {{ service_name }}
                         </p>
+                        {% endif %}
+
                         <p class="text-content">
-                            To ensure we can assist you at your confirmed appointment, you must present two pieces of valid identification documents (ID).
-                            Along with your Primary ID (driver’s licence, passport), please bring ONE of the following valid foundation documents: Canadian Birth Certificate, Canadian Citizenship card, a Permanent Resident card or an immigration document (IM1442).
+                            Thank you for booking an appointment with Service BC.
                         </p>
+
                         <p class="text-content">
-                            If the name displayed on your foundation document does not exactly match the name on your current ID you will need to bring supporting documentation that shows how your name was changed (marriage certificate, legal change of name, for example).
-                            If the required valid ID are not presented at the time of the scheduled appointment, you may be required to reschedule your appointment for a later date.
+                            You have an appointment with Service BC {{ location }} on {{ formatted_date }} for a total of {{ duration }} minutes. We're looking forward to seeing you.
                         </p>
+
+                        
+                        {% if office_email_paragraph is not none %}
                         <p class="text-content">
-                            All documents must be originals. Photocopies or photographs will not be accepted.
+                            {{ office_email_paragraph|safe }}
                         </p>
+                        {% endif %}
+                        {% if service_email_paragraph is not none %}
+                        <p class="text-content">
+                            {{ service_email_paragraph|safe }}
+                        </p>
+                        {% endif %}
+
                         <p class="text-content">
                             If you have any further questions about required documentation, please call us at {{ telephone }}.
                         </p>
@@ -86,6 +103,7 @@
                         <p class="text-content">
                             Thank you, <br/> <br/>
                             Service BC {{ location }} <br/>
+                            {{ civic_address }} <br/>
                             {{ telephone }} <br/>
                         </p>
                     </td>

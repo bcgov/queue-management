@@ -85,7 +85,7 @@ objects:
                   memory: 256Mi
                 limits:
                   cpu: 500m
-                  memory: 2Gi
+                  memory: 512Mi
           restartPolicy: Always
           terminationGracePeriodSeconds: 30
           dnsPolicy: ClusterFirst
@@ -282,9 +282,9 @@ objects:
             - name: mender-elasticsearch
               env:
                 - name: ES_JAVA_OPTS
-                  value: '-Xms512m -Xmx512m'
+                    value: '-Xms512m -Xmx512m'
                 - name: transport.host
-                  value: 0.0.0.0
+                    value: 0.0.0.0
                 - name: discovery.type
                   value: single-node
                 - name: xpack.security.enabled
@@ -315,10 +315,10 @@ objects:
               resources:
                 requests:
                   cpu: 200m
-                  memory: 3Gi
+                  memory: 256Mi
                 limits:
                   cpu: 500m
-                  memory: 4Gi
+                  memory: 512Mi
           restartPolicy: Always
           terminationGracePeriodSeconds: 30
           dnsPolicy: ClusterFirst
