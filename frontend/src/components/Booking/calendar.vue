@@ -568,7 +568,9 @@ export default class Calendar extends Vue {
           resourceId: event.resource.id,
           id: '_cal$election'
         }
-        // this.renderEvent(tempEvent)
+        // Verify below `renderEvent()` is working in OCP3
+        // When re-scheduling, is proper date shown?
+        this.renderEvent(tempEvent)
         this.toggleEditBookingModal(true)
 
         return
