@@ -10,8 +10,26 @@
  * and import in index.ts
  *
  */
-import { Axios } from './../helpers'
+import { Axios, searchNestedObject } from './../helpers'
 import moment from 'moment'
+
+const serviceColor = (blackColor, serviceList, serviceId) => {
+  if (blackColor) {
+    return 'grey darken-1 white--text'
+  }
+  const serv = serviceList.find(service => service.service_id === serviceId)
+  if (serv && serv.css_colour && serv.css_colour !== null) {
+    return serv.css_colour
+  }
+  return 'cal-events-default'
+}
+const serviceName = (serviceList, serviceId) => {
+  const serv = serviceList.find(service => service.service_id === serviceId)
+  if (serv && serv.service_name) {
+    return serv.service_name
+  }
+  return ''
+}
 
 export default {
   editing: false,
@@ -45,23 +63,27 @@ export default {
       return 'Please choose a service'
     },
 
-    appointment_events (state) {
+    appointment_events (state, rootState) {
       if (state.appointments.length > 0) {
         return state.appointments.map(apt =>
           ({
-            start: apt.start_time,
-            end: apt.end_time,
+            start: new Date(apt.start_time),
+            end: new Date(apt.end_time),
             appointment_id: apt.appointment_id,
             service_id: parseInt(apt.service_id),
             citizen_id: apt.citizen_id,
             title: apt.citizen_name,
+            name: apt.citizen_name,
             contact_information: apt.contact_information,
             comments: apt.comments,
-            color: '#B5E0B8',
+            color: serviceColor(apt.is_draft || apt.blackout_flag === 'Y', rootState.services, parseInt(apt.service_id)), // apt.is_draft || apt.blackout_flag === 'Y' ? 'grey darken-1 white--text' : 'cal-events-default', //  apt.is_draft ? 'rgb(239, 212, 105)' : 'grey darken-1', // '#B5E0B8',
             blackout_flag: apt.blackout_flag,
             is_draft: apt.is_draft,
             recurring_uuid: apt.recurring_uuid,
-            online_flag: apt.online_flag
+            online_flag: apt.online_flag,
+            timed: true,
+            serviceName: serviceName(rootState.services, parseInt(apt.service_id))
+
           })
         )
       }
@@ -69,15 +91,17 @@ export default {
     },
     calendar_setup (state) {
       if ((state.calendarSetup || {}).name) {
-        const { title, name } = state.calendarSetup
+        const { title, name, titleRef } = state.calendarSetup
         return {
           name,
-          title
+          title,
+          titleRef
         }
       }
       return {
         name: 'agendaWeek',
-        title: 'Appointments'
+        title: 'Appointments',
+        titleRef: null
       }
     },
     services (state, getters, rootState) {
@@ -97,6 +121,15 @@ export default {
         return true
       }
       return false
+    },
+
+    filtered_appointment_events: (state, getters) => search => {
+      return getters.appointment_events.filter(event => {
+        console.log('event', event)
+        console.log('search', search)
+        return searchNestedObject(event, search)
+      }
+      )
     }
   },
   actions: {
@@ -360,7 +393,7 @@ export default {
       const { appointment, action = 'create' } = data
 
       const currentAppointment = state.appointments
-      let output:any = currentAppointment
+      let output: any = currentAppointment
       if (action === 'create') {
         if (appointment.office_id === rootState.user.office_id) {
           output = [...currentAppointment, appointment]
@@ -386,8 +419,8 @@ export default {
     setEditedStatus: (state, payload) => state.editing = payload,
     setAppointments: (state, payload) => state.appointments = payload,
     setCalendarSetup: (state, payload) => {
-      const { title, name } = payload
-      state.calendarSetup = { title, name }
+      const { title, name, titleRef } = payload
+      state.calendarSetup = { title, name, titleRef }
     },
     toggleApptBookingModal: (state, payload) => state.showApptBookingModal = payload,
     toggleCheckInClicked: (state, payload) => state.checkInClicked = payload,

@@ -152,3 +152,15 @@ q-link-cursor {
     -webkit-transform: rotate(360deg);
   }
 }
+
+.cal-events-default{
+  background-color: #efd469 !important;
+  color: #000 !important;
+  position: initial;
+}
+
+.modal-open {
+  overflow: hidden;
+  overflow-y: hidden;
+  height: 100vh;
+}
