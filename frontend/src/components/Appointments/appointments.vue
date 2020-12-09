@@ -50,11 +50,10 @@
               @click:time="selectEvent"
               event-text-color=""
               @click:date="switchView"
+              id="appointment-calendar"
             >
               <template v-slot:event="date">
-                <!-- abcd {{ date }}  -->
-
-                <v-tooltip top attach class="mytooltip">
+                <v-tooltip bottom class="mytooltip" v-bind:fixed="false" v-bind:nudge-top="150">
                   <template v-slot:activator="{ on }">
                     <div v-on="on" class="ml-2">
                       {{ date.event.title }} {{ date.eventParsed.start.time }} -
@@ -66,9 +65,9 @@
                       {{ date.event.title }}
                       {{ date.eventParsed.start.time }} -
                       {{ date.eventParsed.end.time }}
-                      <div>service Name : {{ date.event.serviceName }}</div>
+                      <div>Service Name: {{ date.event.serviceName }}</div>
                       <div class="notes" v-if="date.event.comments !== null">
-                        Notes : {{ date.event.comments }}
+                        Notes: {{ date.event.comments }}
                       </div>
                     </div>
                   </div>
