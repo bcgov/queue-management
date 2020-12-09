@@ -18,6 +18,7 @@
     "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
+    "@babel/polyfill": "^7.12.1",
     "@babel/runtime-corejs3": "7.4.3",
     "@fortawesome/fontawesome-free": "5.8.1",
     "@fortawesome/fontawesome-svg-core": "1.2.17",
@@ -123,11 +124,18 @@
     "node": ">= 4.0.0",
     "npm": ">= 3.0.0"
   },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not ie <= 8"
-  ],
+  "browserslist": {
+    "production": [
+      "ie >= 11",
+      "> 1%",
+      "last 2 versions"
+    ],
+    "development": [
+      "ie >= 11",
+      "> 1%",
+      "last 2 versions"
+    ]
+  },
   "jest": {
     "verbose": true,
     "testURL": "https://dev-theq.pathfinder.gov.bc.ca/"

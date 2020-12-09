@@ -16,6 +16,7 @@ limitations under the License. */
 /*tslint-disable */
 import 'babel-polyfill'
 import './router/componentHooks' // <-- Needs to be first to work beforeRouteLeave
+import "core-js/stable";
 
 import Vue from 'vue'
 import vuetify from './plugins/vuetify';
