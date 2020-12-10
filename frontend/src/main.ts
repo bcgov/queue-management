@@ -14,9 +14,9 @@ limitations under the License. */
 
 /*eslint-disable */
 /*tslint-disable */
-import 'babel-polyfill'
+import 'babel-polyfill' // For IE11 compat
 import './router/componentHooks' // <-- Needs to be first to work beforeRouteLeave
-import "core-js/stable";
+import "core-js/stable"; // For IE11 compat
 
 import Vue from 'vue'
 import vuetify from './plugins/vuetify';
