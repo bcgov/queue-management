@@ -18,11 +18,22 @@
                   style="font-size: 1rem"
                 />
               </label>
-              <b-form-input
+              <!-- <b-form-input
                 v-model="searchTerm"
                 size="sm"
                 @input="filter"
-              ></b-form-input>
+              ></b-form-input> -->
+              <b-input-group>
+                <b-form-input
+                  v-model="searchTerm"
+                  size="sm"
+                  @input="filter"
+                ></b-form-input>
+                <b-input-group-append v-if='searchTerm.length'>
+                  <b-button size='sm' variant="danger" @click='clearSearch'>Clear</b-button>
+                </b-input-group-append>
+              </b-input-group>
+
               <b-button-group
                 horizontal
                 class="ml-3 mb-2 pt-2"
@@ -344,6 +355,12 @@ export default class Calendar extends Vue {
     this.type = 'category'
     this.categoryDays = categoryDefaultDays
     this.viewRender()
+  }
+
+
+  clearSearch() {
+    this.searchTerm = '';
+    this.filter(false);
   }
 
   cancel () {
