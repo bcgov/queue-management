@@ -11,18 +11,23 @@
           >
             <b-form inline>
               <label class="mr-2">
-                Filter Appointments
+                Filter Appointments!
                 <font-awesome-icon
                   icon="filter"
                   class="m-0 p-0"
                   style="font-size: 1rem"
                 />
               </label>
-              <b-form-input
-                v-model="searchTerm"
-                size="sm"
-                @input="filter"
-              ></b-form-input>
+                <b-input-group>
+                  <b-form-input
+                    v-model="searchTerm"
+                    size="sm"
+                    @input="filter"
+                  ></b-form-input>
+                  <b-input-group-append v-if='searchTerm.length'>
+                    <b-button size='sm' variant="danger" @click='clearSearch'>Clear</b-button>
+                  </b-input-group-append>
+                </b-input-group>
             </b-form>
           </div>
           <v-sheet>
@@ -159,6 +164,11 @@ export default class Appointments extends Vue {
     }
 
     return this.appointment_events
+  }
+
+  clearSearch() {
+    this.searchTerm = '';
+    this.filter(false);
   }
 
   // to remove
@@ -383,6 +393,11 @@ export default class Appointments extends Vue {
     // It effectively looks like Day View, but we lose the calendar ref.
     if (name === 'day' && this.$refs.calendar === undefined ) {
       title = 'Search Results'
+    }
+
+    // This happens when clearing a search result w/o selecting
+    if (name === 'week' && this.$refs.calendar === undefined ) {
+      return this.setCalendarSetup({ title, name, titleRef: this.calendar_setup.titleRef })
     }
     this.setCalendarSetup({ title, name, titleRef: this.$refs.calendar })
   }

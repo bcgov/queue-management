@@ -125,8 +125,8 @@ export default {
 
     filtered_appointment_events: (state, getters) => search => {
       return getters.appointment_events.filter(event => {
-        console.log('event', event)
-        console.log('search', search)
+        // console.log('event', event)
+        // console.log('search', search)
         return searchNestedObject(event, search)
       }
       )
