@@ -61,11 +61,25 @@
       </div>
       <div />
       <div v-if="showHamburger">
+        <!-- 
+          ARC:
+          - Changing 'right' to 'left' helps a bit, but doesn't fix underlying issue
+          - Reverting this file to bcgov/master doesn't fix
+          -- Implies it's CSS changes elsewhere.
+
+          Reference, original commit, before this phase of AOT work:
+          4507769312d99090908f3009d42a0b0bd07fc36b
+          https://github.com/bcgov/queue-management/tree/4507769312d99090908f3009d42a0b0bd07fc36b
+          
+          boundary="window" helps with IE11 compat, otherwise we get horizontal scrolling
+          This DOES cause a "flash" as the component is rendered.
+         -->
         <b-dropdown
           variant="outline-primary"
           class="pl-0 ml-0 mr-3"
           right
           id="nav-dropdown"
+          boundary='window'
         >
           <span slot="button-content">
             <font-awesome-icon icon="bars" style="font-size: 1.18rem" />

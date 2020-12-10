@@ -160,13 +160,41 @@ q-link-cursor {
 }
 
 .modal-open {
-  overflow: hidden;
-  overflow-y: hidden;
-  height: 100vh;
+  /* overflow: hidden; */
+  /* height: 100vh; */
+  /* overflow-y: hidden; */
 }
 
 
 .v-calendar-daily__body {
   /* IE 11 fix */
   -ms-flex: none !important;
+}
+
+/* 
+  To reduce jank in IE11 and Windows, 
+  we remove scrollbars when modals are open.
+  This stops all "double scrollbar" issues.
+*/
+.modal {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.modal::-webkit-scrollbar {
+  display: none; /* Safari, Chrome, Edge */
+}
+
+/* Internet Explorer 10+ */
+/* Firefox */
+html.modal-open, body.modal-open {
+  -ms-overflow-style: none;  
+  scrollbar-width: none;  
+}
+html.modal-open::-webkit-scrollbar, body.modal-open::-webkit-scrollbar {
+  display: none; /* Safari, Chrome, Edge */
+}
+
+.v-calendar-daily__scroll-area {
+  -ms-overflow-style: auto;
 }
