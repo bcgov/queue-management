@@ -6,14 +6,14 @@ const roundedUp = (time, inteval = 15) => Math.ceil(moment(time).minute() / inte
 
 const roundedDownTime = (time, inteval = 15) => {
     const roundedMinut = roundedDown(time, inteval)
-    return `${moment(time).hour()}:${roundedMinut}`
+    return { hour: moment(time).hour(), minute: roundedMinut }
 }
 
 const formatedStartTime = (date, time) => {
     const selectedTime = moment(`${date} ${time}`)// event.start.clone()
-    const roundedTime = roundedDownTime(selectedTime) // roundingdown  time to 15 min inteval
+    const { hour, minute } = roundedDownTime(selectedTime) // roundingdown  time to 15 min inteval
+    const roundTime = moment(date).set({ hour, minute })
 
-    const roundTime = moment(`${date} ${roundedTime}`)
     return roundTime
 }
 
