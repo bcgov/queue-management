@@ -9,7 +9,7 @@
             style="padding: 0; margin-top: auto; margin-left: 20px"
             class="mb-2"
           >
-            <b-form inline>
+            <b-form inline @submit.stop.prevent>
               <label class="mr-2">
                 Filter Appointments!
                 <font-awesome-icon
