@@ -1,39 +1,114 @@
+
 <template>
   <fragment>
-    <ApptBookingModal :clickedTime="clickedTime" :clickedAppt="clickedAppt" />
-    <AppointmentBlackoutModal />
-    <CheckInModal :clickedAppt="clickedAppt" />
-    <keep-alive>
-      <full-calendar
-        ref="appointments"
-        key="appointments"
-        id="appointments"
-        class="q-calendar-margins"
-        @event-selected="eventSelected"
-        @view-render="viewRender"
-        @event-created="selectEvent"
-        @event-render="eventRender"
-        :events="appointment_events"
-        :config="config"
-      ></full-calendar>
-    </keep-alive>
+    <v-app>
+      <div class="v-application">
+        <div style="width: 100%" class="m-3">
+          <!-- <v-card class="mx-auto" max-width="97%" elevation="5"> -->
+          <div
+            style="padding: 0; margin-top: auto; margin-left: 20px"
+            class="mb-2"
+          >
+            <b-form inline @submit.stop.prevent>
+              <label class="mr-2">
+                Filter Appointments!
+                <font-awesome-icon
+                  icon="filter"
+                  class="m-0 p-0"
+                  style="font-size: 1rem"
+                />
+              </label>
+                <b-input-group>
+                  <b-form-input
+                    v-model="searchTerm"
+                    size="sm"
+                    @input="filter"
+                  ></b-form-input>
+                  <b-input-group-append v-if='searchTerm.length'>
+                    <b-button size='sm' variant="danger" @click='clearSearch'>Clear</b-button>
+                  </b-input-group-append>
+                </b-input-group>
+            </b-form>
+          </div>
+          <v-sheet>
+            <AppointmentsFilter :events="events" v-if="listView" />
+            <!-- interval-height="24" -->
+            <v-calendar
+              v-else
+              ref="calendar"
+              color="primary"
+              :now="currentDay"
+              v-model="value"
+              interval-height="40"
+              first-time="08:30"
+              interval-minutes="30"
+              interval-count="17"
+              :weekdays="weekday"
+              :type="type"
+              :events="events"
+              :event-overlap-mode="mode"
+              :event-overlap-threshold="30"
+              :event-color="getEventColor"
+              @click:event="eventSelected"
+              @click:more="agendaDay"
+              @change="getEvents"
+              @click:time="selectEvent"
+              event-text-color=""
+              @click:date="switchView"
+              id="appointment-calendar"
+            >
+              <template v-slot:event="date">
+                <v-tooltip bottom class="mytooltip" v-bind:fixed="false" v-bind:nudge-top="150">
+                  <template v-slot:activator="{ on }">
+                    <div v-on="on" class="ml-2">
+                      {{ date.event.title }} {{ date.eventParsed.start.time }} -
+                      {{ date.eventParsed.end.time }}
+                    </div>
+                  </template>
+                  <div>
+                    <div>
+                      {{ date.event.title }}
+                      {{ date.eventParsed.start.time }} -
+                      {{ date.eventParsed.end.time }}
+                      <div>Service Name: {{ date.event.serviceName }}</div>
+                      <div class="notes" v-if="date.event.comments !== null">
+                        Notes: {{ date.event.comments }}
+                      </div>
+                    </div>
+                  </div>
+                </v-tooltip>
+              </template>
+            </v-calendar>
+            <!-- @mouseenter:event="showData" -->
+          </v-sheet>
+          <!-- </v-card> -->
+        </div>
+      </div>
+      <ApptBookingModal :clickedTime="clickedTime" :clickedAppt="clickedAppt" />
+      <AppointmentBlackoutModal />
+      <CheckInModal :clickedAppt="clickedAppt" />
+    </v-app>
   </fragment>
 </template>
 
 <script lang="ts">
+/* eslint-disable sort-imports */
 
-import 'fullcalendar-scheduler'
-import 'fullcalendar/dist/fullcalendar.css'
 import { Component, Vue } from 'vue-property-decorator'
+
 import AddCitizen from '../AddCitizen/add-citizen.vue'
 
 import AppointmentBlackoutModal from './appt-booking-modal/appt-blackout-modal.vue'
-import ApptBookingModal from './appt-booking-modal/appt-booking-modal.vue'
-import CheckInModal from './checkin-modal.vue'
 
-import { FullCalendar } from 'vue-full-calendar'
+import ApptBookingModal from './appt-booking-modal/appt-booking-modal.vue'
+
+import CheckInModal from './checkin-modal.vue'
+import AppointmentsFilter from './appointmentsFilter.vue'
+
 import moment from 'moment'
+
 import { namespace } from 'vuex-class'
+import { formatedStartTime } from '@/utils/helpers'
 
 const appointmentsModule = namespace('appointmentsModule')
 
@@ -43,7 +118,7 @@ const appointmentsModule = namespace('appointmentsModule')
     AddCitizen,
     CheckInModal,
     ApptBookingModal,
-    FullCalendar
+    AppointmentsFilter
   }
 })
 export default class Appointments extends Vue {
@@ -55,6 +130,7 @@ export default class Appointments extends Vue {
 
   @appointmentsModule.Getter('calendar_setup') private calendar_setup!: any;
   @appointmentsModule.Getter('appointment_events') private appointment_events!: any;
+  @appointmentsModule.Getter('filtered_appointment_events') private filtered_appointment_events!: any;
 
   @appointmentsModule.Action('getAppointments') public getAppointments: any
   @appointmentsModule.Action('getChannels') public getChannels: any
@@ -69,111 +145,110 @@ export default class Appointments extends Vue {
   @appointmentsModule.Mutation('toggleCheckInModal') public toggleCheckInModal: any
   @appointmentsModule.Mutation('setRescheduling') public setRescheduling: any
 
+  // vuetify calender
+  listView: any = false
+  searchTerm: string = ''
+  type: any = 'week'
+  // types: any = ['month', 'week', 'day', '4day']
+  mode: any = 'stack'
+  // modes: any = ['stack', 'column']
+  weekday: any = [1, 2, 3, 4, 5]
+
+  value: any = ''
+  // events: any = []
+  currentDay: any = moment().format('YYYY-MM-DD')// new Date()
+
+  get events () {
+    if (this.searchTerm) {
+      return this.filtered_appointment_events(this.searchTerm)
+    }
+
+    return this.appointment_events
+  }
+
+  clearSearch() {
+    this.searchTerm = '';
+    this.filter(false);
+  }
+
+  // to remove
+  getEvents ({ start, end }) {
+    return this.appointment_events
+  }
+
+  getEventColor (event) {
+    return event.color
+  }
+
+  rnd (a, b) {
+    return Math.floor((b - a + 1) * Math.random()) + a
+  }
+
+  switchView ({ date }) {
+    this.value = date
+    if (this.type === 'day') {
+      this.type = 'week'
+    } else {
+      this.type = 'day'
+    }
+    this.calendarSetup()
+  }
+
+  // vuetify calender end
+
   public blockEventSelect: any = false
   public clickedAppt: any = null
   public clickedTime: any = null
-  public config: any = {
-    selectOverlap: true,
-    columnHeaderFormat: 'ddd/D',
-    selectAllow: () => {
-      return true
-    },
-    defaultView: 'agendaWeek',
-    editable: false,
-    eventRender: (evt, el, view) => {
-      if (evt.blackout_flag === 'Y') {
-        el.css('font-size', '.9rem')
-        el.css('max-width', '100%')
-        el.css('background-color', '#000000')
-        el.css('border-color', '#000000')
-        el.css('color', 'white')
-      } else if (evt.is_draft === true) {
-        el.css('font-size', '.9rem')
-        el.css('max-width', '85%')
-        el.css('background-color', 'lightgray')
-        el.css('border-color', 'darkgray')
-        el.css('color', 'black')
-      } else {
-        el.css('font-size', '.9rem')
-        el.css('max-width', '85%')
-        el.css('background-color', '#EFD469')
-        el.css('border-color', '#EFD469')
-        el.css('color', 'black')
-      }
-    },
-    eventColor: 'pink',
-    eventConstraint: {
-      start: '08:30:00',
-      end: '17:00:00'
-    },
-    fixedWeekCount: false,
-    header: {
-      left: null,
-      center: null,
-      right: null
-    },
-    height: 'auto',
-    maxTime: '17:00:00',
-    minTime: '08:30:00',
-    navLinks: false,
-    schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-    selectConstraint: {
-      start: '08:30:00',
-      end: '17:00:00'
-    },
-    showNonCurrentDates: false,
-    slotDuration: '00:15:00',
-    slotLabelInterval: '00:30:00',
-    slotLabelFormat: 'h:mm',
-    timezone: 'local',
-    unselectCancel: '.modal, .modal-content',
-    views: {
-      agendaDay: {
-        allDaySlot: false
-      },
-      agendaWeek: {
-        allDaySlot: false
-      }
-    },
-    weekends: false
-  }
 
   agendaDay () {
-    this.$refs.appointments.fireMethod('changeView', 'agendaDay')
+    this.type = 'day'
+    this.calendarSetup()
   }
 
   agendaWeek () {
-    this.$refs.appointments.fireMethod('changeView', 'agendaWeek')
+    this.type = 'week'
+    this.calendarSetup()
   }
 
   eventRender (event, el, view) {
     return null
   }
 
-  events () {
-    return null
-  }
-
-  eventSelected (event) {
+  eventSelected ({ nativeEvent, event }) {
     this.checkRescheduleCancel()
     if ((this.apptRescheduling && this.$store.state.rescheduling) || event.id === '_tempEvent') {
       return
     }
-    this.clickedAppt = event
-    this.highlightEvent(event)
+    let clickedEvent = event
+    clickedEvent = { ...clickedEvent, ...{ start: moment(event.start) }, ...{ end: moment(event.end) } }
+    this.clickedAppt = clickedEvent
+    this.highlightEvent(clickedEvent)
     this.toggleCheckInModal(true)
+    nativeEvent.stopPropagation()
   }
 
+  // goToDate (date) {
+  //   this.$refs.appointments.fireMethod('gotoDate', date)
+  //   this.calendarSetup()
+  // }
   goToDate (date) {
-    this.$refs.appointments.fireMethod('gotoDate', date)
+    if (date) {
+      this.listView = false
+      this.type = 'day'
+      // this.categoryDays = 1
+      this.value = new Date(date)
+    }
+    this.calendarSetup()
   }
 
   month () {
-    this.$refs.appointments.fireMethod('changeView', 'month')
+    this.type = 'month'
+    this.calendarSetup()
   }
 
   next () {
-    this.$refs.appointments.fireMethod('next')
+    this.$refs.calendar.next()
+    this.calendarSetup()
   }
 
   options (option) {
@@ -181,12 +256,13 @@ export default class Appointments extends Vue {
   }
 
   prev () {
-    this.$refs.appointments.fireMethod('prev')
+    this.$refs.calendar.prev()
+    this.calendarSetup()
   }
 
-  renderEvent (event) {
-    this.$refs.appointments.fireMethod('renderEvent', event)
-  }
+  // renderEvent (event) {
+  //   this.$refs.appointments.fireMethod('renderEvent', event)
+  // }
 
   checkRescheduleCancel () {
     if (this.$store.state.apptRescheduleCancel) {
@@ -199,11 +275,21 @@ export default class Appointments extends Vue {
     }
   }
 
+  filter (event) {
+    if (event) {
+      this.listView = true
+    } else {
+      this.listView = false
+      this.calendarSetup()
+    }
+  }
+
   selectEvent (event) {
     this.checkRescheduleCancel()
     this.blockEventSelect = true
-    this.unselect()
-    const start = event.start.clone()
+    // this.unselect()
+
+    const start = formatedStartTime(event.date, event.time)// event.start.clone()
     let end
     for (const l of [15, 30, 45, 60]) {
       const testEnd = moment(start).clone().add(l, 'minutes')
@@ -232,7 +318,8 @@ export default class Appointments extends Vue {
   }
 
   today () {
-    this.$refs.appointments.fireMethod('today')
+    this.value = ''
+    this.calendarSetup()
   }
 
   removeTempEvent () {
@@ -245,20 +332,21 @@ export default class Appointments extends Vue {
       // })
     })
 
-    this.$refs.appointments.fireMethod('removeEvents', ['_tempEvent'])
+    // this.$refs.appointments.fireMethod('removeEvents', ['_tempEvent'])
   }
 
   highlightEvent (event) {
     const e = event
     e.color = 'pink'
-    this.$refs.appointments.fireMethod('updateEvent', e)
+    // this.$refs.appointments.fireMethod('updateEvent', e)
   }
 
   setTempEvent (event) {
     this.removeTempEvent()
+    // const start = moment(event.start).clone()
     const start = moment(event.start).clone()
     const end = moment(event.end).clone()
-    const e = {
+    const e: any = {
       start,
       end,
       title: 'Unconfirmed Booking',
@@ -274,6 +362,7 @@ export default class Appointments extends Vue {
       // service_id: 27,
       // is_draft: true
     }
+
     // this.postDraftAppointment(data)
     this.postDraftAppointment(data).then((resp) => {
       // this.getAppointments().then(() => {
@@ -282,26 +371,42 @@ export default class Appointments extends Vue {
       //   // setTimeout(() => { this.toggleSubmitClicked(false) }, 2000)
       // })
     })
-    this.$refs.appointments.fireMethod('renderEvent', e)
   }
 
   unselect () {
     this.$refs.appointments.fireMethod('unselect')
   }
 
-  viewRender (view, el) {
-    let { title, name } = view
-    title = `The Q Appointments: ${title}`
-    if (view.name === 'agendaDay') {
-      title = moment(view.intervalStart).format('dddd MMMM D, YYYY')
+  // viewRender (view, el) {
+  //   let { title, name } = view
+  //   title = `The Q Appointments: ${title}`
+  //   if (view.name === 'agendaDay') {
+  //     title = moment(view.intervalStart).format('dddd MMMM D, YYYY')
+  //   }
+  //   this.setCalendarSetup({ title, name })
+  // }
+
+  calendarSetup () {
+    let title = 'Appointments:'
+    const name = this.type
+    // This happens when user has typed in search field and selected a result
+    // It effectively looks like Day View, but we lose the calendar ref.
+    if (name === 'day' && this.$refs.calendar === undefined ) {
+      title = 'Search Results'
     }
-    this.setCalendarSetup({ title, name })
+
+    // This happens when clearing a search result w/o selecting
+    if (name === 'week' && this.$refs.calendar === undefined ) {
+      return this.setCalendarSetup({ title, name, titleRef: this.calendar_setup.titleRef })
+    }
+    this.setCalendarSetup({ title, name, titleRef: this.$refs.calendar })
   }
 
   mounted () {
     this.getAppointments()
     this.getServices()
     this.getChannels()
+
     this.$root.$on('clear-clicked-appt', () => { this.clearClickedAppt() })
     this.$root.$on('clear-clicked-time', () => { this.clearClickedTime() })
     this.$root.$on('agendaDay', () => { this.agendaDay() })
@@ -312,6 +417,8 @@ export default class Appointments extends Vue {
     this.$root.$on('prev', () => { this.prev() })
     this.$root.$on('today', () => { this.today() })
     this.$root.$on('removeTempEvent', () => { this.removeTempEvent() })
+    this.$root.$on('goToDate', (date) => { this.goToDate(date) })
+    this.calendarSetup()
   }
 }
 
@@ -336,5 +443,20 @@ export default class Appointments extends Vue {
 }
 .exam-table-holder {
   border: 1px solid dimgrey;
+}
+</style>
+<style >
+.v-calendar .v-event-timed-container {
+  margin-right: 20px !important;
+}
+/* .theme--light.v-calendar-events .v-event-timed {
+  border: none !important;
+} */
+.notes {
+  white-space: pre-wrap;
+}
+tr.fc-list-item {
+  border-top: 1px solid gray;
+  border-bottom: 1px solid gray;
 }
 </style>

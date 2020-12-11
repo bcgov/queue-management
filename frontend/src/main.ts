@@ -14,9 +14,13 @@ limitations under the License. */
 
 /*eslint-disable */
 /*tslint-disable */
+import 'babel-polyfill' // For IE11 compat
 import './router/componentHooks' // <-- Needs to be first to work beforeRouteLeave
+import "core-js/stable"; // For IE11 compat
 
 import Vue from 'vue'
+import vuetify from './plugins/vuetify';
+
 import 'es6-promise/auto'
 import store from './store/index'
 import BootstrapVue from 'bootstrap-vue'
@@ -121,8 +125,10 @@ Vue.config.productionTip = false
 // });
 /* eslint-disable no-new */
 
+
 new Vue({
   router,
   store,
+  vuetify,
   render: h => h(MainApp)
 }).$mount('#app')

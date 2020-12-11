@@ -130,7 +130,6 @@ class AvailabilityService():
                                     booked_dlkt_slots += 1
                                 else:   
                                     booked_slots += 1   
-                                    
                     if service_is_dltk:
                         dlkt_nos = actual_slot['no_of_dlkt_slots'] - booked_dlkt_slots
                         if actual_slot['no_of_slots'] <= (booked_slots + booked_dlkt_slots):

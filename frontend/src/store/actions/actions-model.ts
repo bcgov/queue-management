@@ -18,6 +18,12 @@ import { makeBookingReqObj } from '../helpers/makeBookingReqObj'
 import moment from 'moment'
 
 const DEFAULT_COUNTER_NAME = 'Counter'
+const getEventColor = (isBlackout, room) => {
+  if (isBlackout && isBlackout === 'Y') {
+    return 'grey darken-1 white--text'
+  }
+  return room && room.color ? room.color : 'cal-events-default'
+}
 
 let flashInt
 
@@ -247,6 +253,7 @@ export const commonActions: any = {
           const calendarEvents: any = []
           resp.data.bookings.forEach(b => {
             const booking: any = {}
+
             if (b.room_id) {
               booking.resourceId = b.room_id
               booking.room = b.room
@@ -258,10 +265,12 @@ export const commonActions: any = {
               booking.invigilator = b.invigilator
               booking.invigilator_id = b.invigilator_id
             }
-            booking.start = b.start_time
-            booking.end = b.end_time
+            booking.start = new Date(b.start_time)
+            booking.end = new Date(b.end_time)
             booking.title = b.booking_name
+            booking.name = b.booking_name
             booking.id = b.booking_id
+            booking.category = b.room ? b.room.room_name : 'Offsite'// 'Boardroom 1'// b.room.room_name
             booking.exam =
               context.state.exams.find(ex => ex.booking_id == b.booking_id) ||
               false
@@ -273,6 +282,8 @@ export const commonActions: any = {
             booking.is_draft = b.is_draft
             booking.blackout_notes = b.blackout_notes
             booking.recurring_uuid = b.recurring_uuid
+            booking.color = getEventColor(b.blackout_flag, b.room)
+            booking.timed = true
             calendarEvents.push(booking)
           })
           context.commit('setEvents', calendarEvents)
@@ -391,8 +402,8 @@ export const commonActions: any = {
         .get(url)
         .then(resp => {
           context.commit('setExams', resp.data.exams)
-          console.log('==> getExams(context), exams are:')
-          console.log(resp.data.exams)
+          // console.log('==> getExams(context), exams are:')
+          // console.log(resp.data.exams)
           resolve(resp)
         })
         .catch(error => {
@@ -1431,18 +1442,18 @@ export const commonActions: any = {
     context.commit('setPerformingAction', true)
 
     Axios(context)
-    .post(`/citizens/${citizen_id}/remove_from_queue/`, {})
-    .then((res) => {
-      console.log('clickUnCheckIn response', { res })
-      context.commit('toggleInvitedStatus', false)
-      context.commit('setPerformingAction', false)
-      context.commit('toggleServiceModal', false)
-      context.commit('resetServiceModal')
-      context.dispatch('flashServeNow', 'stop')
-    })
-    .catch(() => {
-      context.commit('setPerformingAction', false)
-    })
+      .post(`/citizens/${citizen_id}/remove_from_queue/`, {})
+      .then((res) => {
+        console.log('clickUnCheckIn response', { res })
+        context.commit('toggleInvitedStatus', false)
+        context.commit('setPerformingAction', false)
+        context.commit('toggleServiceModal', false)
+        context.commit('resetServiceModal')
+        context.dispatch('flashServeNow', 'stop')
+      })
+      .catch(() => {
+        context.commit('setPerformingAction', false)
+      })
   },
 
   clickRowHoldQueue (context, citizen_id) {

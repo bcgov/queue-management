@@ -69,6 +69,9 @@ export default class Header extends Vue {
       case 'test':
         this.navbarStyle.backgroundColor = 'orange'
         break
+      case '192.':
+        this.navbarStyle.backgroundColor = 'grey'
+        break
       default:
         this.navbarStyle.backgroundColor = '#003366'
     }

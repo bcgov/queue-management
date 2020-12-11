@@ -434,6 +434,7 @@ export default class ApptBookingModal extends Vue {
       this.selectingService = false
       return
     }
+    console.log('this.clickedTime', this.clickedTime)
     if (this.apptRescheduling) {
       this.$store.commit('toggleRescheduling', false)
       this.setRescheduling(false)
@@ -534,6 +535,7 @@ export default class ApptBookingModal extends Vue {
         }
         return
       }
+      console.log('e', e)
       this.postAppointment(e).then(() => {
         this.getAppointments().then(() => {
           finish()

@@ -7,7 +7,8 @@ module.exports = function (api) {
           {
             targets: {
               browsers: [
-                'last 10 Chrome versions'
+                'last 10 Chrome versions',
+                'ie >= 11'
               ]
             },
             useBuiltIns: 'usage',
@@ -24,7 +25,7 @@ module.exports = function (api) {
         {
           modules: false,
           targets: {
-            browsers: ['> 1%', 'last 2 versions', 'not ie <= 10']
+            browsers: ['> 1%', 'last 2 versions', 'not ie <= 10', 'IE 11']
           },
           useBuiltIns: 'usage',
           corejs: 3

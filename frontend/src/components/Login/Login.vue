@@ -425,6 +425,15 @@ export default class Login extends Vue {
       // Auto-refresh to reload all new data now that office has changed
       window.location.reload();
     })
+    .catch((err) => {
+      let message = 'Something went wrong'
+      if (err && err.response && err.response.data && err.response.data.message) {
+        message = err.response.data.message
+      }
+      alert('Unable to change offices: ' + message)
+      console.error('Unable to change offices: ' + message, { err })
+      this.setOfficeSwitcher(false);
+    })
   }
 }
 

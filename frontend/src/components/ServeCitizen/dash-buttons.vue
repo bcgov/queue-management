@@ -23,29 +23,51 @@
       <b-button
         class="btn-primary mr-1"
         @click="invite"
-        :disabled="citizenInvited || showTimeTrackingIcon || performingAction || showAdmin"
+        :disabled="
+          citizenInvited ||
+          showTimeTrackingIcon ||
+          performingAction ||
+          showAdmin
+        "
         v-if="reception"
         id="invite-citizen-button"
-      >Invite</b-button>
+        >Invite</b-button
+      >
       <b-button
         v-bind:class="serveNowStyle"
         @click="clickServeNow"
-        :disabled="citizenInvited===false"
+        :disabled="citizenInvited === false"
         id="serve-citizen-button"
-      >Serve Now</b-button>
+        >Serve Now</b-button
+      >
     </div>
     <div>
       <b-button-group>
         <b-button
-          class="btn-primary"
+          class="btn-primary ml-2"
           @click="addCitizen"
-          :disabled="citizenInvited || showTimeTrackingIcon || performingAction || showAdmin"
+          :disabled="
+            citizenInvited ||
+            showTimeTrackingIcon ||
+            performingAction ||
+            showAdmin
+          "
           id="add-citizen-button"
-        >Add Citizen</b-button>
+          >Add Citizen</b-button
+        >
         <b-dropdown
           v-if="user.office.quick_list.length > 0"
-          :variant="citizenInvited===true || performingAction || showAdmin ? '' : 'primary'"
-          :disabled="citizenInvited || showTimeTrackingIcon || performingAction || showAdmin"
+          :variant="
+            citizenInvited === true || performingAction || showAdmin
+              ? ''
+              : 'primary'
+          "
+          :disabled="
+            citizenInvited ||
+            showTimeTrackingIcon ||
+            performingAction ||
+            showAdmin
+          "
           right
         >
           <b-dropdown-item
@@ -53,7 +75,8 @@
             :data-id="item.service_id"
             :key="item.service_id"
             @click="quickServeCitizen"
-          >{{item.service_name}}</b-dropdown-item>
+            >{{ item.service_name }}</b-dropdown-item
+          >
         </b-dropdown>
       </b-button-group>
 
@@ -61,13 +84,28 @@
         <b-button
           class="btn-primary ml-2"
           @click="clickBackOffice"
-          :disabled="citizenInvited || showTimeTrackingIcon || performingAction || showAdmin"
+          :disabled="
+            citizenInvited ||
+            showTimeTrackingIcon ||
+            performingAction ||
+            showAdmin
+          "
           id="add-citizen-button"
-        >Back Office</b-button>
+          >Back Office</b-button
+        >
         <b-dropdown
           v-if="user.office.back_office_list.length > 0"
-          :variant="citizenInvited===true || performingAction || showAdmin ? '' : 'primary'"
-          :disabled="citizenInvited || showTimeTrackingIcon || performingAction || showAdmin"
+          :variant="
+            citizenInvited === true || performingAction || showAdmin
+              ? ''
+              : 'primary'
+          "
+          :disabled="
+            citizenInvited ||
+            showTimeTrackingIcon ||
+            performingAction ||
+            showAdmin
+          "
           right
         >
           <b-dropdown-item
@@ -75,7 +113,8 @@
             :data-id="item.service_id"
             :key="item.service_id"
             @click="quickBackOffice"
-          >{{item.service_name}}</b-dropdown-item>
+            >{{ item.service_name }}</b-dropdown-item
+          >
         </b-dropdown>
       </b-button-group>
     </div>
