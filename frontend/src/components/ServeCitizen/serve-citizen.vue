@@ -101,15 +101,15 @@
               id="serve-citizen-return-to-queue-button"
               >Return to Queue</b-button
             >
-             <!-- <b-button
+             <b-button
               @click="clickUnCheckIn"
               v-if="reception"
               :disabled="performingAction || commentsTooLong"
               class="btn serve-btn"
               id="serve-citizen-uncheckin-button"
               style="margin-left: 8px;"
-              >Un-Check In</b-button
-            > -->
+              >Return to Calendar</b-button
+            >
           </div>
           <div>
             <b-button
