@@ -30,6 +30,7 @@ limitations under the License.*/
       :fields="fields"
       outlined
       class="p-0 m-0 w-100"
+      sort-by='start_time'
     >
       <template slot="edit" slot-scope="data">
         <button
@@ -90,6 +91,7 @@ export default class AgendaScreen extends Vue {
   
   items = [];
   clickedTime: any = null;
+  interval: any = null;
 
   private fields: any = [
     {
@@ -132,31 +134,25 @@ export default class AgendaScreen extends Vue {
     // this.getCsrs()
   }
 
-  updateList() {
-    this.items = this.computed_appointments();
+  async updateList() {
+    this.items = await this.computed_appointments();
   }
 
-  computed_appointments() {
+  async computed_appointments() {
     // Note This does not FETCH most recent appointments!
     const now = new Date();
     const pastCutoff = moment(new Date()).subtract('1', 'week');
     const futureCutoff = moment(new Date()).add('4', 'hour');
     
-    const filteredDates = this.$store.state.appointmentsModule.appointments
-    // .sort((a, b) => {
-    //   return a.start_time - b.start_time;
-    // })
-    .filter(appt => {     
+    // const filteredDates = this.$store.state.appointmentsModule.appointments
+    const allAppointments = await this.getAppointments()
+    const filteredDates = allAppointments.filter(appt => {     
       
       // Already checked in, hide from agenda
-      // Todo - verify
       if (appt.checked_in_time) {
         return false;
       }
-
-      // const m = moment;
       // if ( (moment(appt.start_time) <= futureCutoff ) && ( moment(appt.end_time) >= pastCutoff  ) ) {
-      // if ( (moment(appt.start_time)  futureCutoff ) ) {
       // TODO - Need to check against futureTime too
       if ( ( moment(appt.end_time) >= pastCutoff  )) {
         return true;
@@ -165,12 +161,7 @@ export default class AgendaScreen extends Vue {
       return false;
     })
 
-    // return this.$store.state.appointmentsModule.appointments.map(appt => {
     return filteredDates.map(appt => {
-
-      //  Was working, now is throwing error, look into later
-      // Problem - Have to go to Appointments page first
-      // Solution > need to trigger store update somehow? dispatch proper event?
       const service = this.$store.state.services
         .find(x => x.service_id === appt.service_id)
       
@@ -181,8 +172,6 @@ export default class AgendaScreen extends Vue {
         citizen_name: appt.citizen_name,
         service_name,
         contact_info: appt.contact_information,
-
-        // check_in: { appointment_id: appt.appointment_id }
         check_in: { appt },
         edit: { appt }
       }
@@ -190,7 +179,14 @@ export default class AgendaScreen extends Vue {
   }
 
   mounted () {
-    // Only render list when we have  both serviecs and appointments
+    this.fetch();
+    // TODO - Can re-enable interval for updating?
+    // this.interval = setInterval(this.fetch, 30 * 1000)
+  }
+
+  fetch() {
+    console.log('Agenda fetch...');
+    // Only render list when we have both serviecs and appointments
     Promise.all([this.$store.dispatch('getServices'), this.getAppointments()])
     .then(() => {
       this.updateList();
@@ -198,34 +194,25 @@ export default class AgendaScreen extends Vue {
   }
 
   beforeDestroy () {
-    // clearInterval(this.interval)
+    clearInterval(this.interval)
   }
 
   edit( appt ) {
     console.log('edit', appt)
 
-    // this.clickedAppt = appt;
-  // this.citizen_name = this.clickedAppt.title
-  //     this.comments = this.clickedAppt.comments
-  //     this.contact_information = this.clickedAppt.contact_information
-  //     this.start = this.clickedAppt.start.clone()
-  //     this.length = this.clickedAppt.end.clone().diff(this.start, 'minutes')
-  //     this.online_flag = this.clickedAppt.online_flag
-  //     const { service_id } = this.clickedAppt
     const tempEvent = {
       title: appt.citizen_name,
       contact_information: appt.contact_information,
       online_flag: appt.online_flag,
       service_id: appt.service_id,
-      // comments: 'test test test',
       comments: appt.comments,
       start: moment(appt.start_time),
-      end: moment(appt.end_time)
+      end: moment(appt.end_time),
+      appointment_id: appt.appointment_id
     }
 
     this.clickedAppt = tempEvent
-    console.log('clickedAppt?',{ clickedAppt: this.clickedAppt, tempEvent, appt })
-
+    // console.log('clickedAppt?',{ clickedAppt: this.clickedAppt, tempEvent, appt })
     // Clicked Time is working, other one isn't.  Painful!
     this.clickedTime =  {
       start: moment(appt.start_time),

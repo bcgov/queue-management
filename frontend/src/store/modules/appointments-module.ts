@@ -170,7 +170,7 @@ export default {
             output = appts.filter(ap => !ap.checked_in_time)
           }
           commit('setAppointments', output)
-          resolve()
+          resolve( output )
         })
       })
     },
