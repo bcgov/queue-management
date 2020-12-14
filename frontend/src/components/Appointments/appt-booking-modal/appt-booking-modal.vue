@@ -411,6 +411,15 @@ export default class ApptBookingModal extends Vue {
     if (this.clickedTime) {
       this.$root.$emit('removeTempEvent')
     }
+
+    // need to navigate to appointments
+    this.$router.push('/appointments')
+    // Problem - if -rescheduling from Agenda in the queue, it loses appointment data
+    // same data in clickedAppt
+    // But it keeps clickedTime?
+    // Idea - need to et "clickedAppt" as state.
+
+
     this.$store.commit('toggleEditApptModal', false)
     this.$store.commit('toggleRescheduling', true)
     this.$store.commit('toggleApptEditMode', true)
@@ -434,8 +443,9 @@ export default class ApptBookingModal extends Vue {
       this.selectingService = false
       return
     }
-    console.log('this.clickedTime', this.clickedTime)
+    console.log('ARC - this.clickedTime', this.clickedTime)
     if (this.apptRescheduling) {
+      console.log('ARC - is apptRescheduling')
       this.$store.commit('toggleRescheduling', false)
       this.setRescheduling(false)
       this.start = this.clickedTime.start.clone()
@@ -446,9 +456,28 @@ export default class ApptBookingModal extends Vue {
         }
         this.oldLength = null
       }
+
+      // ARC - Potentially need to set citizen_name etc here
+      if (this.clickedAppt && this.clickedAppt.end) {
+        this.loadModalData();
+        // console.log('ARC SETTING RESCHEDULED ITEM DATA');
+        // this.citizen_name = this.clickedAppt.title
+        // this.comments = this.clickedAppt.comments
+        // this.contact_information = this.clickedAppt.contact_information
+        // this.start = this.clickedAppt.start.clone()
+        // this.length = this.clickedAppt.end.clone().diff(this.start, 'minutes')
+        // this.online_flag = this.clickedAppt.online_flag
+        // const { service_id } = this.clickedAppt
+        // this.setSelectedService(service_id)
+        // this.$store.commit('updateAddModalForm', { type: 'service', value: service_id })
+      }
+      
       return
     }
+    // ARC TODO - Replaced with below, thinking this might be mistakenly fiiring?
     if (this.clickedTime) {
+    // if (this.clickedTime && !(this.clickedAppt && this.clickedAppt.end) ) {
+      console.log('ARC - clickedTime set, nulling out information')
       this.citizen_name =
         this.comments = null
       this.contact_information = null
@@ -457,21 +486,25 @@ export default class ApptBookingModal extends Vue {
       this.clearAddModal()
     }
     if (this.clickedAppt && this.clickedAppt.end) {
-      this.citizen_name = this.clickedAppt.title
-      this.comments = this.clickedAppt.comments
-      this.contact_information = this.clickedAppt.contact_information
-      this.start = this.clickedAppt.start.clone()
-      this.length = this.clickedAppt.end.clone().diff(this.start, 'minutes')
-      this.online_flag = this.clickedAppt.online_flag
-      const { service_id } = this.clickedAppt
-      this.setSelectedService(service_id)
-      this.$store.commit('updateAddModalForm', { type: 'service', value: service_id })
+      this.loadModalData();
     } else {
       this.citizen_name = ''
       this.comments = ''
       this.contact_information = ''
       this.start = this.clickedTime.start.clone()
     }
+  }
+
+  loadModalData() {
+    this.citizen_name = this.clickedAppt.title
+    this.comments = this.clickedAppt.comments
+    this.contact_information = this.clickedAppt.contact_information
+    this.start = this.clickedAppt.start.clone()
+    this.length = this.clickedAppt.end.clone().diff(this.start, 'minutes')
+    this.online_flag = this.clickedAppt.online_flag
+    const { service_id } = this.clickedAppt
+    this.setSelectedService(service_id)
+    this.$store.commit('updateAddModalForm', { type: 'service', value: service_id })
   }
 
   submit () {
@@ -525,6 +558,7 @@ export default class ApptBookingModal extends Vue {
             })
           })
         } else {
+          debugger;
           this.putAppointment(payload).then(() => {
             this.getAppointments().then(() => {
               finish()

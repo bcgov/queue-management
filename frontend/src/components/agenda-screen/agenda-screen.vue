@@ -146,7 +146,7 @@ export default class AgendaScreen extends Vue {
     const allAppointments = await this.getAppointments()
     const filteredDates = allAppointments.filter(appt => {     
       // Already checked in, hide from agenda
-      if (appt.checked_in_time) {
+      if (appt.checked_in_time || appt.is_draft) {
         return false;
       }
 

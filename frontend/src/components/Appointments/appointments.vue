@@ -145,6 +145,9 @@ export default class Appointments extends Vue {
   @appointmentsModule.Mutation('toggleCheckInModal') public toggleCheckInModal: any
   @appointmentsModule.Mutation('setRescheduling') public setRescheduling: any
 
+  @appointmentsModule.State('clickedAppt') public clickedAppt: any
+  @appointmentsModule.Mutation('setAgendaClickedAppt') public setAgendaClickedAppt: any
+
   // vuetify calender
   listView: any = false
   searchTerm: string = ''
@@ -197,7 +200,7 @@ export default class Appointments extends Vue {
   // vuetify calender end
 
   public blockEventSelect: any = false
-  public clickedAppt: any = null
+  // public clickedAppt: any = null
   public clickedTime: any = null
 
   agendaDay () {
@@ -221,7 +224,8 @@ export default class Appointments extends Vue {
     }
     let clickedEvent = event
     clickedEvent = { ...clickedEvent, ...{ start: moment(event.start) }, ...{ end: moment(event.end) } }
-    this.clickedAppt = clickedEvent
+    // this.clickedAppt = clickedEvent
+    this.setAgendaClickedAppt(clickedEvent)
     this.highlightEvent(clickedEvent)
     this.toggleCheckInModal(true)
     nativeEvent.stopPropagation()
@@ -310,7 +314,8 @@ export default class Appointments extends Vue {
   }
 
   clearClickedAppt () {
-    this.clickedAppt = null
+    // this.clickedAppt = null
+    this.setAgendaClickedAppt(null)
   }
 
   clearClickedTime () {
