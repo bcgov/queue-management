@@ -280,6 +280,9 @@ export const commonMutation: any = {
   toggleGAScreenModal: (state, payload) =>
     (state.showGAScreenModal = payload),
 
+  toggleAgendaScreenModal: (state, payload) =>
+    (state.showAgendaScreenModal = payload),
+
   setReceptionistState: (state, payload) => {
     state.user.receptionist_ind = payload
   },

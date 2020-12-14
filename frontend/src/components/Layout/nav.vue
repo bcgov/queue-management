@@ -104,7 +104,7 @@
               id="office_agenda"
               >Office Agenda</b-dropdown-item
             >
-            <span v-if="user.role && user.role.role_code == 'GA'">
+            <!-- <span v-if="user.role && user.role.role_code == 'GA'"> -->
               <b-dropdown-item @click="clickGAScreen" :class="gaPanelStyle">
                 <font-awesome-icon
                   v-if="showGAScreenModal"
@@ -118,7 +118,24 @@
                 <span style="font-weight: 400">Show GA Panel</span>
               </b-dropdown-item>
               <b-dropdown-divider />
-            </span>
+            <!-- </span> -->
+            <!-- 
+              TODO - Change class from `gaPanelStyle` to `agendaPanelStyle`
+             -->
+            <b-dropdown-item @click='clickAgendaScreen' :class='agendaPanelStyle'>
+              <font-awesome-icon
+                  v-if="showAgendaScreenModal"
+                  icon="check"
+                  class="m-0 p-0"
+                  style="
+                    padding-left: 0.25em !important;
+                    padding-top: 2px !important;
+                  "
+                />
+              <span>Show Day Agenda</span>
+            </b-dropdown-item>
+            <b-dropdown-divider />
+            
             <b-dropdown-item v-if="showAdmin" to="/admin"
               >Administration</b-dropdown-item
             >
@@ -175,6 +192,8 @@ export default class Nav extends Vue {
   @State('serviceModalForm') private serviceModalForm!: any
   @State('serviceBegun') private serviceBegun!: any
   @State('showGAScreenModal') private showGAScreenModal!: any
+
+  @State('showAgendaScreenModal') private showAgendaScreenModal!: any
   // @State('showServiceModal') private showServiceModal!: any
   @State('showTimeTrackingIcon') private showTimeTrackingIcon!: any
   @State('showAddModal') private showAddModal!: any
@@ -184,6 +203,9 @@ export default class Nav extends Vue {
   @Getter('showAppointments') private showAppointments!: any;
 
   @Action('clickGAScreen') public clickGAScreen: any
+  @Action('clickAgendaScreen') public clickAgendaScreen: any
+
+  
   @Action('clickAddCitizen') public clickAddCitizen: any
   @Action('clickRefresh') public clickRefresh: any
 
@@ -245,6 +267,14 @@ export default class Nav extends Vue {
       }
     }
     return false
+  }
+
+  get agendaPanelStyle () {
+    let classStyle = 'gaScreenUnchecked'
+    if (this.showAgendaScreenModal) {
+      classStyle = 'gaScreenChecked'
+    }
+    return classStyle
   }
 
   get gaPanelStyle () {

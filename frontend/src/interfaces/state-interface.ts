@@ -98,6 +98,7 @@ export interface StateModelIF {
   showExamInventoryModal: boolean,
   showFeedbackModal: boolean,
   showGAScreenModal: boolean,
+  showAgendaScreenModal: boolean,
   showGenFinReportModal: boolean,
   showOtherBookingModal: boolean,
   showResponseModal: boolean,

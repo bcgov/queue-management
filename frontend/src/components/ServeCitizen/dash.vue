@@ -54,6 +54,9 @@ limitations under the License.*/
       <div v-if="showGAScreenModal" style="margin-left: 1em; padding-top: 1em; width: 75%">
         <GAScreen />
       </div>
+      <div v-if="showAgendaScreenModal" style="margin-left: 1em; padding-top: 1em; width: 75%">
+        <AgendaScreen />
+      </div>
     </div>
   </div>
   <div v-else-if="isLoggedIn && !userLoadingFail">
@@ -69,12 +72,14 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import DashHoldTable from './dash-hold-table.vue'
 import DashTable from './dash-table.vue'
 import GAScreen from './../ga-screen/ga-screen.vue'
+import AgendaScreen from './../agenda-screen/agenda-screen.vue'
 
 @Component({
   components: {
     DashTable,
     DashHoldTable,
-    GAScreen
+    GAScreen,
+    AgendaScreen
   }
 })
 export default class Dash extends Vue {
@@ -89,6 +94,7 @@ export default class Dash extends Vue {
   @State('showAddModal') private showAddModal!: any
   @State('showAdmin') private showAdmin!: any
   @State('showGAScreenModal') private showGAScreenModal!: any
+  @State('showAgendaScreenModal') private showAgendaScreenModal!: any
   @State('showServiceModal') private showServiceModal!: any
   @State('showTimeTrackingIcon') private showTimeTrackingIcon!: any
   @State('toggleShowAdmin') private toggleShowAdmin!: any

@@ -15,6 +15,7 @@
 
 import { Axios, searchNestedObject } from './../helpers'
 import { makeBookingReqObj } from '../helpers/makeBookingReqObj'
+import AppointmentsModule from '../modules/appointments-module';
 import moment from 'moment'
 
 const DEFAULT_COUNTER_NAME = 'Counter'
@@ -1268,9 +1269,43 @@ export const commonActions: any = {
   },
 
   clickGAScreen (context) {
+    // Close Agenda panel if open
+    // context.commit('toggleGAScreenModal', false)
+    // if (context.state.showAgendaScreenModal){
+    //   context.commit('TODO', false)
+    // }
+
     context.dispatch('getCsrs').then(() => {
       context.commit('toggleGAScreenModal', !context.state.showGAScreenModal)
     })
+  },
+
+  clickAgendaScreen (context) {
+    console.log('clickAgendaScreen clicked');
+    // Close GA panel if open?
+    // if (context.state.showGAScreenModal) {
+    //   context.commit('closeGAScreenModal')
+    // }
+
+    // TODO -Need to fetch any data?
+    // context.dispatch('getAppointments')
+    // appointmentsModule?
+    
+    // AppointmentsModule.actions.getAppointments();
+    // AppointmentsModule.con
+
+
+    // Naive, won't work, needs to disaptch  to root context?
+    // context.dispatch('appointments/getAppointments', { root: true }).then((res) => {
+    //   console.log('context.dispatch(getAppointments)', res);
+    // })
+
+
+    // frontend/src/store/modules/appointments-module.ts
+
+
+    context.commit('toggleAgendaScreenModal', !context.state.showAgendaScreenModal)
+    // showAgendaScreenModal
   },
 
   clickHold (context) {

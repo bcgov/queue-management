@@ -157,6 +157,7 @@ export const stateModel: StateModelIF = {
   showExamInventoryModal: false,
   showFeedbackModal: false,
   showGAScreenModal: false,
+  showAgendaScreenModal: false,
   showGenFinReportModal: false,
   showOtherBookingModal: false,
   showResponseModal: false,
