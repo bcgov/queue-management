@@ -54,13 +54,8 @@ limitations under the License.*/
   </div>
 </template>
 <script lang="ts">
-// /* eslint-disable */
 import { Action, Getter, Mutation, State, namespace } from 'vuex-class'
 import { Component, Vue, Watch } from 'vue-property-decorator'
-// import CheckInModal from '../Appointments/checkin-modal';
-// import CheckInModal from '../Appointments/checkin-modal'
-// import CheckInModal from '@/components/Appoint'
-
 import CheckInModal from '@/components/Appointments/checkin-modal.vue'
 import ApptBookingModal from '../Appointments/appt-booking-modal/appt-booking-modal.vue'
 import { formatedStartTime } from '@/utils/helpers'
@@ -195,7 +190,6 @@ export default class AgendaScreen extends Vue {
   }
 
   edit( appt ) {
-    // console.log('edit', appt)
     const tempEvent = {
       title: appt.citizen_name,
       contact_information: appt.contact_information,
@@ -207,13 +201,7 @@ export default class AgendaScreen extends Vue {
       appointment_id: appt.appointment_id
     }
 
-    // this.clickedAppt = tempEvent
     this.setAgendaClickedAppt(tempEvent)
-
-    console.log('edit, this.clickedAppt', {
-      thisClickedAppt: this.clickedAppt,
-      tempEvent
-    })
 
     this.clickedTime =  {
       start: moment(appt.start_time),
@@ -224,10 +212,7 @@ export default class AgendaScreen extends Vue {
 
   checkIn( appt ) {
     console.log('checkIn', appt)
-    
-    // TODO - handle clickedAppt
-    // this.clickedAppt = appt;
-
+    this.setAgendaClickedAppt(appt);
     this.toggleCheckInModal(true);
   }
 }
