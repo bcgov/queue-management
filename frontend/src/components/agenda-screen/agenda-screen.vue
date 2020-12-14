@@ -88,7 +88,7 @@ export default class AgendaScreen extends Vue {
   @appointmentsModule.Mutation('toggleApptBookingModal') public toggleApptBookingModal: any
 
   
-  
+  public clickedAppt: any = null;
   items = [];
   clickedTime: any = null;
   interval: any = null;
@@ -124,27 +124,19 @@ export default class AgendaScreen extends Vue {
     }
   ]
 
-
-  public clickedAppt: any = null;
-  // private time_now: any = 'Sometime'
-  // private timer: any = null
-  // interval: any
-
-  public fetch_csrs () {
-    // this.getCsrs()
-  }
-
   async updateList() {
     this.items = await this.computed_appointments();
   }
 
+  // Note ths method does not FETCH most recent appointments!
+  // Call fetch() to update underlying data
   async computed_appointments() {
-    // Note This does not FETCH most recent appointments!
     const now = new Date();
-    const pastCutoff = moment(new Date()).subtract('1', 'week');
+
+    // Changing between 1 week / 1 day seems to work tho.  Just can't go lower than 1 day?
+    const pastCutoff = moment(new Date()).subtract('1', 'hour');
     const futureCutoff = moment(new Date()).add('4', 'hour');
     
-    // const filteredDates = this.$store.state.appointmentsModule.appointments
     const allAppointments = await this.getAppointments()
     const filteredDates = allAppointments.filter(appt => {     
       
@@ -152,9 +144,8 @@ export default class AgendaScreen extends Vue {
       if (appt.checked_in_time) {
         return false;
       }
-      // if ( (moment(appt.start_time) <= futureCutoff ) && ( moment(appt.end_time) >= pastCutoff  ) ) {
-      // TODO - Need to check against futureTime too
-      if ( ( moment(appt.end_time) >= pastCutoff  )) {
+
+      if ( ( moment(appt.end_time) >= pastCutoff  ) &&  ( moment(appt.start_time) <= futureCutoff  ) ) {
         return true;
       }
   
@@ -168,6 +159,7 @@ export default class AgendaScreen extends Vue {
       const service_name = service ? service.service_name : 'N/A';
       
       return {
+        // TODO - Remove date once we have restricted to just  today
         start_time: moment(appt.start_time).format("HH:mm (L)"),
         citizen_name: appt.citizen_name,
         service_name,
@@ -198,8 +190,7 @@ export default class AgendaScreen extends Vue {
   }
 
   edit( appt ) {
-    console.log('edit', appt)
-
+    // console.log('edit', appt)
     const tempEvent = {
       title: appt.citizen_name,
       contact_information: appt.contact_information,
@@ -212,16 +203,11 @@ export default class AgendaScreen extends Vue {
     }
 
     this.clickedAppt = tempEvent
-    // console.log('clickedAppt?',{ clickedAppt: this.clickedAppt, tempEvent, appt })
-    // Clicked Time is working, other one isn't.  Painful!
     this.clickedTime =  {
       start: moment(appt.start_time),
       end: moment(appt.end_time)
     }
-
-
     this.toggleApptBookingModal(true);
-    
   }
 
   checkIn( appt ) {
