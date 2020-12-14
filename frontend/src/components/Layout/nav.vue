@@ -104,7 +104,7 @@
               id="office_agenda"
               >Office Agenda</b-dropdown-item
             >
-            <!-- <span v-if="user.role && user.role.role_code == 'GA'"> -->
+            <span v-if="user.role && (user.role.role_code == 'GA' || user.role.role_code == 'SUPPORT')">
               <b-dropdown-item @click="clickGAScreen" :class="gaPanelStyle">
                 <font-awesome-icon
                   v-if="showGAScreenModal"
@@ -118,7 +118,7 @@
                 <span style="font-weight: 400">Show GA Panel</span>
               </b-dropdown-item>
               <b-dropdown-divider />
-            <!-- </span> -->
+            </span>
             <!-- 
               TODO - Change class from `gaPanelStyle` to `agendaPanelStyle`
              -->
