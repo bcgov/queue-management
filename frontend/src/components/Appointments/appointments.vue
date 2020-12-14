@@ -148,6 +148,9 @@ export default class Appointments extends Vue {
   @appointmentsModule.State('clickedAppt') public clickedAppt: any
   @appointmentsModule.Mutation('setAgendaClickedAppt') public setAgendaClickedAppt: any
 
+  @appointmentsModule.State('clickedTime') public clickedTime: any
+  @appointmentsModule.Mutation('setAgendaClickedTime') public setAgendaClickedTime: any
+
   // vuetify calender
   listView: any = false
   searchTerm: string = ''
@@ -200,8 +203,6 @@ export default class Appointments extends Vue {
   // vuetify calender end
 
   public blockEventSelect: any = false
-  // public clickedAppt: any = null
-  public clickedTime: any = null
 
   agendaDay () {
     this.type = 'day'
@@ -307,19 +308,19 @@ export default class Appointments extends Vue {
       end,
       title: event.title
     }
-    this.clickedTime = e
+    // this.clickedTime = e
+    this.setAgendaClickedTime(e)
     this.setTempEvent(e)
     this.toggleApptBookingModal(true)
     this.blockEventSelect = false
   }
 
   clearClickedAppt () {
-    // this.clickedAppt = null
     this.setAgendaClickedAppt(null)
   }
 
   clearClickedTime () {
-    this.clickedTime = null
+    this.setAgendaClickedTime(null);
   }
 
   today () {

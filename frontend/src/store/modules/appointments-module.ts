@@ -42,6 +42,8 @@ export default {
       name: null
     },
     checkInClicked: false,
+    clickedAppt: null,
+    clickedTime: null,
     editDeleteSeries: false,
     selectedService: null,
     showApptBookingModal: false,
@@ -433,6 +435,8 @@ export default {
     },
     setRescheduling: (state, payload) => state.apptRescheduling = payload,
     toggleAppointmentBlackoutModal: (state, payload) => state.showAppointmentBlackoutModal = payload,
-    setDraftAppointments: (state, payload) => state.draftAppointment = payload
+    setDraftAppointments: (state, payload) => state.draftAppointment = payload,
+    setAgendaClickedAppt: (state, payload) => state.clickedAppt = payload,
+    setAgendaClickedTime: (state, payload) => state.clickedTime = payload
   }
 }
