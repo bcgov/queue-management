@@ -48,8 +48,8 @@ limitations under the License.*/
         </button>
       </template>
     </b-table>
-    <CheckInModal :clickedAppt="clickedAppt" />
     <ApptBookingModal :clickedTime="clickedTime" :clickedAppt="clickedAppt" />
+    <!-- <CheckInModal :clickedAppt="clickedAppt" /> -->
   </div>
 </template>
 <script lang="ts">
@@ -57,7 +57,10 @@ limitations under the License.*/
 import { Action, Getter, Mutation, State, namespace } from 'vuex-class'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 // import CheckInModal from '../Appointments/checkin-modal';
-import CheckInModal from '../Appointments/checkin-modal'
+// import CheckInModal from '../Appointments/checkin-modal'
+// import CheckInModal from '@/components/appoinitments/add-exam-modal.vue'
+
+// import CheckInModal from '@/components/Appointments/checkin-modal'
 import ApptBookingModal from '../Appointments/appt-booking-modal/appt-booking-modal.vue'
 import { formatedStartTime } from '@/utils/helpers'
 
@@ -68,7 +71,7 @@ const appointmentsModule = namespace('appointmentsModule')
 
 @Component({
   components: { 
-    CheckInModal,
+    // CheckInModal,
     ApptBookingModal
   }
 })
@@ -201,15 +204,34 @@ export default class AgendaScreen extends Vue {
   edit( appt ) {
     console.log('edit', appt)
 
-    this.clickedAppt = appt;
+    // this.clickedAppt = appt;
+  // this.citizen_name = this.clickedAppt.title
+  //     this.comments = this.clickedAppt.comments
+  //     this.contact_information = this.clickedAppt.contact_information
+  //     this.start = this.clickedAppt.start.clone()
+  //     this.length = this.clickedAppt.end.clone().diff(this.start, 'minutes')
+  //     this.online_flag = this.clickedAppt.online_flag
+  //     const { service_id } = this.clickedAppt
+    const tempEvent = {
+      title: appt.citizen_name,
+      contact_information: appt.contact_information,
+      online_flag: appt.online_flag,
+      service_id: appt.service_id,
+      // comments: 'test test test',
+      comments: appt.comments,
+      start: moment(appt.start_time),
+      end: moment(appt.end_time)
+    }
 
-    // const start = formatedStartTime(appt.start_time, event.time)// event.start.clone()
+    this.clickedAppt = tempEvent
+    console.log('clickedAppt?',{ clickedAppt: this.clickedAppt, tempEvent, appt })
+
+    // Clicked Time is working, other one isn't.  Painful!
     this.clickedTime =  {
       start: moment(appt.start_time),
       end: moment(appt.end_time)
     }
 
-    // set clickedAppt and even clickedTime?
 
     this.toggleApptBookingModal(true);
     
