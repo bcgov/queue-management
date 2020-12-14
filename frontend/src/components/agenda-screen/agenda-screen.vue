@@ -23,9 +23,6 @@ limitations under the License.*/
       </div>
       <div></div>
     </div>
-    <!--<div>-->
-    <!--The time is now: {{time_now}}-->
-    <!--</div>-->
     <b-table
       small
       head-variant="light"
@@ -34,61 +31,62 @@ limitations under the License.*/
       outlined
       class="p-0 m-0 w-100"
     >
-      <template slot="edit" slot-scope="data" v-if="data.value">
+      <template slot="edit" slot-scope="data">
         <button
-          @click.stop="edit(data.value.id)"
+          @click.stop="edit(data.value.appt)"
           class="ga-close btn btn-secondary btn-sm"
         >
-          {{ data.value.label }}
-          <!-- data.value.label here -->
+          Edit
         </button>
       </template>
-      <template slot="check_in" slot-scope="data" v-if="data.value">
+      <template slot="check_in" slot-scope="data">
         <button
-          @click.stop="checkIn(data.value.id)"
-          class="ga-close btn btn-secondary btn-sm"
+          @click.stop="checkIn(data.value.appt)"
+          class="ga-close btn btn-success btn-sm"
         >
-          {{ data.value.label }}
-          <!-- data.value.label here -->
+          Check In
         </button>
       </template>
     </b-table>
+    <CheckInModal :clickedAppt="clickedAppt" />
+    <ApptBookingModal :clickedTime="clickedTime" :clickedAppt="clickedAppt" />
   </div>
 </template>
 <script lang="ts">
 // /* eslint-disable */
 import { Action, Getter, Mutation, State, namespace } from 'vuex-class'
 import { Component, Vue, Watch } from 'vue-property-decorator'
+// import CheckInModal from '../Appointments/checkin-modal';
+import CheckInModal from '../Appointments/checkin-modal'
+import ApptBookingModal from '../Appointments/appt-booking-modal/appt-booking-modal.vue'
+import { formatedStartTime } from '@/utils/helpers'
+
+
 
 import moment from 'moment'
-// import {
-//   mapActions, mapGetters, mapState
-// }
-//   from 'vuex'
-
 const appointmentsModule = namespace('appointmentsModule')
 
-@Component({})
+@Component({
+  components: { 
+    CheckInModal,
+    ApptBookingModal
+  }
+})
 export default class AgendaScreen extends Vue {
   @State('showGAScreenModal') private showGAScreenModal!: any
-  // @State('csrs') private csrs!: any
-  // @State('citizens') private citizens!: any
-  // @State('csr_states') private csr_states!: any
-
-  // @State()
-
   @Getter('citizens_queue') private citizens_queue!: any;
   @Getter('on_hold_queue') private on_hold_queue!: any;
   @Getter('reception') private reception!: any;
-
   @Action('closeGAScreenModal') public closeGAScreenModal: any
-  // @Action('getCsrs') public getCsrs: any
-  // @Action('finishServiceFromGA') public finishServiceFromGA: any
 
   @appointmentsModule.Action('getAppointments') public getAppointments: any
+  @appointmentsModule.Mutation('toggleCheckInModal') public toggleCheckInModal: any
+  @appointmentsModule.Mutation('toggleApptBookingModal') public toggleApptBookingModal: any
+
+  
   
   items = [];
-
+  clickedTime: any = null;
 
   private fields: any = [
     {
@@ -121,6 +119,8 @@ export default class AgendaScreen extends Vue {
     }
   ]
 
+
+  public clickedAppt: any = null;
   // private time_now: any = 'Sometime'
   // private timer: any = null
   // interval: any
@@ -143,17 +143,23 @@ export default class AgendaScreen extends Vue {
     // .sort((a, b) => {
     //   return a.start_time - b.start_time;
     // })
-    .filter(appt => {      
-      const m = moment;
+    .filter(appt => {     
+      
+      // Already checked in, hide from agenda
+      // Todo - verify
+      if (appt.checked_in_time) {
+        return false;
+      }
+
+      // const m = moment;
       // if ( (moment(appt.start_time) <= futureCutoff ) && ( moment(appt.end_time) >= pastCutoff  ) ) {
       // if ( (moment(appt.start_time)  futureCutoff ) ) {
       // TODO - Need to check against futureTime too
       if ( ( moment(appt.end_time) >= pastCutoff  )) {
         return true;
       }
-      
+  
       return false;
-      // return true;
     })
 
     // return this.$store.state.appointmentsModule.appointments.map(appt => {
@@ -162,16 +168,20 @@ export default class AgendaScreen extends Vue {
       //  Was working, now is throwing error, look into later
       // Problem - Have to go to Appointments page first
       // Solution > need to trigger store update somehow? dispatch proper event?
-      const service_name = this.$store.state.services
-        .find(x => x.service_id === appt.service_id).service_name
+      const service = this.$store.state.services
+        .find(x => x.service_id === appt.service_id)
+      
+      const service_name = service ? service.service_name : 'N/A';
       
       return {
         start_time: moment(appt.start_time).format("HH:mm (L)"),
         citizen_name: appt.citizen_name,
-        // service_name: 'todo?',
-        // service_name: this.getServiceNameById(appt.service_id),
         service_name,
-        contact_info: appt.contact_information
+        contact_info: appt.contact_information,
+
+        // check_in: { appointment_id: appt.appointment_id }
+        check_in: { appt },
+        edit: { appt }
       }
     })
   }
@@ -186,6 +196,29 @@ export default class AgendaScreen extends Vue {
 
   beforeDestroy () {
     // clearInterval(this.interval)
+  }
+
+  edit( appt ) {
+    console.log('edit', appt)
+
+    this.clickedAppt = appt;
+
+    // const start = formatedStartTime(appt.start_time, event.time)// event.start.clone()
+    this.clickedTime =  {
+      start: moment(appt.start_time),
+      end: moment(appt.end_time)
+    }
+
+    // set clickedAppt and even clickedTime?
+
+    this.toggleApptBookingModal(true);
+    
+  }
+
+  checkIn( appt ) {
+    console.log('checkIn', appt)
+    this.clickedAppt = appt;
+    this.toggleCheckInModal(true);
   }
 }
 
