@@ -50,7 +50,7 @@ limitations under the License.*/
       </template>
     </b-table>
     <ApptBookingModal :clickedTime="clickedTime" :clickedAppt="clickedAppt" />
-    <!-- <CheckInModal :clickedAppt="clickedAppt" /> -->
+    <CheckInModal :clickedAppt="clickedAppt" />
   </div>
 </template>
 <script lang="ts">
@@ -59,9 +59,9 @@ import { Action, Getter, Mutation, State, namespace } from 'vuex-class'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 // import CheckInModal from '../Appointments/checkin-modal';
 // import CheckInModal from '../Appointments/checkin-modal'
-// import CheckInModal from '@/components/appoinitments/add-exam-modal.vue'
+// import CheckInModal from '@/components/Appoint'
 
-// import CheckInModal from '@/components/Appointments/checkin-modal'
+import CheckInModal from '@/components/Appointments/checkin-modal.vue'
 import ApptBookingModal from '../Appointments/appt-booking-modal/appt-booking-modal.vue'
 import { formatedStartTime } from '@/utils/helpers'
 
@@ -72,7 +72,7 @@ const appointmentsModule = namespace('appointmentsModule')
 
 @Component({
   components: { 
-    // CheckInModal,
+    CheckInModal,
     ApptBookingModal
   }
 })
@@ -83,12 +83,18 @@ export default class AgendaScreen extends Vue {
   @Getter('reception') private reception!: any;
   @Action('closeGAScreenModal') public closeGAScreenModal: any
 
+  // @State('clickedAppt') private clickedAppt!: any
+  @appointmentsModule.State('clickedAppt') public clickedAppt: any
+  @appointmentsModule.Mutation('setAgendaClickedAppt') public setAgendaClickedAppt: any
+
+
   @appointmentsModule.Action('getAppointments') public getAppointments: any
   @appointmentsModule.Mutation('toggleCheckInModal') public toggleCheckInModal: any
   @appointmentsModule.Mutation('toggleApptBookingModal') public toggleApptBookingModal: any
 
   
-  public clickedAppt: any = null;
+  // public clickedAppt: any = null;
+  
   items = [];
   clickedTime: any = null;
   interval: any = null;
@@ -96,7 +102,7 @@ export default class AgendaScreen extends Vue {
   private fields: any = [
     {
       key: 'start_time',
-      label: 'Start Time',
+      label: 'Time',
       sortable: true
     },
     {
@@ -139,19 +145,19 @@ export default class AgendaScreen extends Vue {
     
     const allAppointments = await this.getAppointments()
     const filteredDates = allAppointments.filter(appt => {     
-      
       // Already checked in, hide from agenda
       if (appt.checked_in_time) {
         return false;
       }
 
+      // Agenda only shows appointments in near past or future.
       if ( ( moment(appt.end_time) >= pastCutoff  ) &&  ( moment(appt.start_time) <= futureCutoff  ) ) {
         return true;
       }
-  
       return false;
     })
 
+    // Format object for agenda table.
     return filteredDates.map(appt => {
       const service = this.$store.state.services
         .find(x => x.service_id === appt.service_id)
@@ -159,8 +165,7 @@ export default class AgendaScreen extends Vue {
       const service_name = service ? service.service_name : 'N/A';
       
       return {
-        // TODO - Remove date once we have restricted to just  today
-        start_time: moment(appt.start_time).format("HH:mm (L)"),
+        start_time: `${moment(appt.start_time).format("LT")} to ${moment(appt.end_time).format("LT")}`,
         citizen_name: appt.citizen_name,
         service_name,
         contact_info: appt.contact_information,
@@ -202,7 +207,14 @@ export default class AgendaScreen extends Vue {
       appointment_id: appt.appointment_id
     }
 
-    this.clickedAppt = tempEvent
+    // this.clickedAppt = tempEvent
+    this.setAgendaClickedAppt(tempEvent)
+
+    console.log('edit, this.clickedAppt', {
+      thisClickedAppt: this.clickedAppt,
+      tempEvent
+    })
+
     this.clickedTime =  {
       start: moment(appt.start_time),
       end: moment(appt.end_time)
@@ -212,7 +224,10 @@ export default class AgendaScreen extends Vue {
 
   checkIn( appt ) {
     console.log('checkIn', appt)
-    this.clickedAppt = appt;
+    
+    // TODO - handle clickedAppt
+    // this.clickedAppt = appt;
+
     this.toggleCheckInModal(true);
   }
 }
