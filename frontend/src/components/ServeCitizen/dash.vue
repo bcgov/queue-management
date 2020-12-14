@@ -51,11 +51,9 @@ limitations under the License.*/
           </div>
         </template>
       </div>
-      <div v-if="showGAScreenModal" style="margin-left: 1em; padding-top: 1em; width: 75%">
-        <GAScreen />
-      </div>
-      <div v-if="showAgendaScreenModal" style="margin-left: 1em; padding-top: 1em; width: 75%">
-        <AgendaScreen />
+      <div v-if="showGAScreenModal || showAgendaScreenModal" style="margin-left: 1em; padding-top: 1em; width: 75%">
+        <GAScreen v-if="showGAScreenModal" style='margin-bottom: 2rem'  />
+        <AgendaScreen v-if="showAgendaScreenModal" />
       </div>
     </div>
   </div>
