@@ -23,7 +23,9 @@ flask-caching
 Flask-Compress
 flask-cors
 flask_marshmallow
+# flask-socketIO 5 is incompatible with our versions
 Flask-SocketIO==4.3.1
+python-socketio==4.6.0
 gunicorn
 marshmallow-sqlalchemy==0.23.1 # 0.24 was breaking
 minio<6
