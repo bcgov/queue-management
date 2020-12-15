@@ -1484,7 +1484,7 @@ export const commonActions: any = {
         context.commit('setPerformingAction', false)
         context.commit('toggleServiceModal', false)
         context.commit('resetServiceModal')
-        context.dispatch('flashServeNow', 'stop')
+        context.dispatch('appointmentsModule/getAppointments')
       })
       .catch(() => {
         context.commit('setPerformingAction', false)
