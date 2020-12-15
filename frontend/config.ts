@@ -4,6 +4,19 @@ const config = {
     SOCKET_URL: process.env.VUE_APP_SOCKET_URL || '',
     REFRESH_TOKEN_SECONDS_LEFT: process.env.VUE_APP_REFRESH_TOKEN_SECONDS_LEFT || '180',
     BASE_URL: process.env.BASE_URL || '',
+    DISABLE_AGENDA_PANEL: handleBooleanString(process.env.DISABLE_AGENDA_PANEL),
+    proc: process.env
+}
+
+// localhost and OpenShfit can return strings/envs, so we handle both
+// eg handles true and "true"
+function handleBooleanString(input: string | Boolean): Boolean {
+    if (!input) return false;
+    if (typeof input === 'boolean') return input;
+    if (typeof input === 'string') {
+        return input.toLowerCase() === 'true';
+    }
+    return false;
 }
 
 export default { ...config }
