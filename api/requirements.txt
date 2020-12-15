@@ -7,7 +7,7 @@ flask-restx
 SQLAlchemy
 snowplow-tracker
 Flask
-Flask-Admin
+Flask-Admin=1.5.6
 Flask-Cache
 Flask-Login
 Flask-Migrate
@@ -20,9 +20,9 @@ certifi
 eventlet
 filelock
 flask-caching
-Flask-Compress
+Flask-Compress=1.5.0
 flask-cors
-flask_marshmallow
+flask_marshmallow=0.13.0
 # flask-socketIO 5 is incompatible with our versions
 Flask-SocketIO==4.3.1
 python-socketio==4.6.0
