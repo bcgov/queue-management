@@ -32,13 +32,18 @@ limitations under the License.*/
       class="p-0 m-0 w-100"
       sort-by='start_time'
     >
-      <template slot="edit" slot-scope="data">
+      <!-- <template slot="edit" slot-scope="data">
         <button
           @click.stop="edit(data.value.appt)"
           class="ga-close btn btn-secondary btn-sm"
         >
           Edit
         </button>
+      </template> -->
+      <template slot="comments" slot-scope="data">
+        <div class="truncate"  v-b-tooltip.hover :title="data.value"> 
+          {{ data.value }}
+        </div>
       </template>
       <template slot="check_in" slot-scope="data">
         <button
@@ -116,9 +121,13 @@ export default class AgendaScreen extends Vue {
       sortable: true
     },
     {
-      key: 'edit',
-      label: 'Edit'
+      key: 'comments',
+      label: 'Comments'
     },
+    // {
+    //   key: 'edit',
+    //   label: 'Edit'
+    // },
     {
       key: 'check_in',
       label: 'Check In'
@@ -160,12 +169,14 @@ export default class AgendaScreen extends Vue {
       const service_name = service ? service.service_name : 'N/A';
       
       return {
-        start_time: `${moment(appt.start_time).format("LT")} to ${moment(appt.end_time).format("LT")}`,
+        // start_time: `${moment(appt.start_time).format("LT")} to ${moment(appt.end_time).format("LT")}`,
+        start_time: moment(appt.start_time).format("LT"),
         citizen_name: appt.citizen_name,
         service_name,
         contact_info: appt.contact_information,
-        check_in: { appt },
-        edit: { appt }
+        comments: appt.comments,
+        check_in: { appt }
+        // edit: { appt }
       }
     })
   }
@@ -225,5 +236,12 @@ td {
 }
 .ga-close {
   font-size: 13px;
+}
+.truncate {
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
 }
 </style>
