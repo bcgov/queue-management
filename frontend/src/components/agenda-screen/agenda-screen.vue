@@ -103,17 +103,13 @@ export default class AgendaScreen extends Vue {
   @Getter('reception') private reception!: any;
   @Action('closeGAScreenModal') public closeGAScreenModal: any
 
-  // @State('clickedAppt') private clickedAppt!: any
   @appointmentsModule.State('clickedAppt') public clickedAppt: any
+  @appointmentsModule.State('appointments') public appointments: any
   @appointmentsModule.Mutation('setAgendaClickedAppt') public setAgendaClickedAppt: any
   @appointmentsModule.Mutation('setAgendaClickedTime') public setAgendaClickedTime: any
-
-  @appointmentsModule.Action('getAppointments') public getAppointments: any
   @appointmentsModule.Mutation('toggleCheckInModal') public toggleCheckInModal: any
   @appointmentsModule.Mutation('toggleApptBookingModal') public toggleApptBookingModal: any
-
-  
-  // public clickedAppt: any = null;
+  @appointmentsModule.Action('getAppointments') public getAppointments: any
   
   items = [];
   clickedTime: any = null;
@@ -155,6 +151,11 @@ export default class AgendaScreen extends Vue {
     }
   ]
 
+  @Watch('appointments')
+  onAppointmentChange(x) {
+    this.updateList();
+  }
+  
   async updateList() {
     this.items = await this.computed_appointments();
   }
@@ -168,7 +169,7 @@ export default class AgendaScreen extends Vue {
     const pastCutoff = moment(new Date()).subtract('1', 'hour');
     const futureCutoff = moment(new Date()).add('4', 'hour');
     
-    const allAppointments = await this.getAppointments()
+    const allAppointments = this.appointments
     const filteredDates = allAppointments.filter(appt => {     
       // Already checked in, hide from agenda
       if (appt.checked_in_time || appt.is_draft) {
@@ -203,12 +204,9 @@ export default class AgendaScreen extends Vue {
 
   mounted () {
     this.fetch();
-    // TODO - Can re-enable interval for updating?
-    // this.interval = setInterval(this.fetch, 30 * 1000)
   }
 
   fetch() {
-    console.log('Agenda fetch...');
     // Only render list when we have both serviecs and appointments
     Promise.all([this.$store.dispatch('getServices'), this.getAppointments()])
     .then(() => {
@@ -242,7 +240,6 @@ export default class AgendaScreen extends Vue {
   }
 
   checkIn( appt ) {
-    console.log('checkIn', appt)
     const tempEvent = {
       title: appt.citizen_name,
       contact_information: appt.contact_information,
@@ -262,8 +259,6 @@ export default class AgendaScreen extends Vue {
       end: moment(appt.end_time)
     }
     this.setAgendaClickedTime(this.clickedTime);
-    
-    
     this.toggleCheckInModal(true);
   }
 
