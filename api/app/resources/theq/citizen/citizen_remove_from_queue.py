@@ -56,11 +56,12 @@ class CitizenRemoveFromQueue(Resource):
 
         # This "un-check-in"s the appointment, returning it to calendar and removing from the queue.
         appointment.checked_in_time = None
-        db.session.commit()
 
-        # ARC - Is below necessary? Think not.  Causes issue when re-checking in a removed one.
-        # It DOES remove from queue, but stops it from being re-added?
-        # active_service_request.remove_from_queue()
+        # Delete all "periods", FKs on service req
+        active_service_request.remove_from_queue()
+        # Delete the service req. 
+        db.session.delete(active_service_request)
+        db.session.commit()
 
         # appointment, warning = self.appointment_schema.load(json_data, instance=appointment, partial=True)
         # if warning:
