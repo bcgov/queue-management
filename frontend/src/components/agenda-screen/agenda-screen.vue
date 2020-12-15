@@ -23,6 +23,26 @@ limitations under the License.*/
       </div>
       <div></div>
     </div>
+    <b-form inline @submit.stop.prevent>
+              <label class="mr-2">
+                Filter Appointments
+                <font-awesome-icon
+                  icon="filter"
+                  class="m-0 p-0"
+                  style="font-size: 1rem"
+                />
+              </label>
+                <b-input-group>
+                  <b-form-input
+                    v-model="searchTerm"
+                    size="sm"
+                    @input="filter"
+                  ></b-form-input>
+                  <b-input-group-append v-if='searchTerm.length'>
+                    <b-button size='sm' variant="danger" @click='clearSearch'>Clear</b-button>
+                  </b-input-group-append>
+                </b-input-group>
+            </b-form>
     <b-table
       small
       head-variant="light"
@@ -98,6 +118,7 @@ export default class AgendaScreen extends Vue {
   items = [];
   clickedTime: any = null;
   interval: any = null;
+  searchTerm: string = '';
 
   private fields: any = [
     {
@@ -224,6 +245,27 @@ export default class AgendaScreen extends Vue {
     console.log('checkIn', appt)
     this.setAgendaClickedAppt(appt);
     this.toggleCheckInModal(true);
+  }
+
+  APPOINTMENT_FILTER_FIELDS = ['start_time', 'citizen_name', 'service_name', 'contact_info', 'comments']
+
+  async filter() {
+    const appointments = await this.computed_appointments()
+    const search = this.searchTerm.toLowerCase()
+    this.items = appointments.filter(appt => {
+      let hasMatch = false;
+      this.APPOINTMENT_FILTER_FIELDS.forEach(field => {        
+        if (appt[field].toLowerCase().includes(search)) {
+          hasMatch = true;
+        }
+      })
+      return hasMatch;
+    }) 
+  }
+
+  async clearSearch() {
+    this.searchTerm = '';
+    this.items = await this.computed_appointments();
   }
 }
 
