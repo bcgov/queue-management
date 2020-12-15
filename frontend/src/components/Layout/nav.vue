@@ -119,7 +119,7 @@
               </b-dropdown-item>
               <b-dropdown-divider />
             </span>
-            <b-dropdown-item v-if='!disableAgendaPanel' @click='clickAgendaScreen' :class='agendaPanelStyle'>
+            <b-dropdown-item v-if='enableAgendaPanel' @click='clickAgendaScreen' :class='agendaPanelStyle'>
               <font-awesome-icon
                   v-if="showAgendaScreenModal"
                   icon="check"
@@ -130,8 +130,8 @@
                   "
                 />
               <span>Show Day Agenda</span>
+              <b-dropdown-divider />
             </b-dropdown-item>
-            <b-dropdown-divider />
             
             <b-dropdown-item v-if="showAdmin" to="/admin"
               >Administration</b-dropdown-item
@@ -215,7 +215,13 @@ export default class Nav extends Vue {
   private flashIcon: boolean = true
   private showSpacer: boolean = false
   toggleTimeTrackingIcon: any
-  disableAgendaPanel = config.DISABLE_AGENDA_PANEL
+
+  get enableAgendaPanel() : boolean {
+    if (this.user && this.user.office) {
+      return this.user.office.appointments_enabled_ind
+    }
+    return false;
+  }
 
   @Watch('showIcon')
   onShowIconChange (newV: any, oldV: any) {

@@ -103,7 +103,7 @@
             >
              <b-button
               @click="clickUnCheckIn"
-              v-if="reception"
+              v-if="appointmentsEnabled && appointment"
               :disabled="performingAction || commentsTooLong"
               class="btn serve-btn"
               id="serve-citizen-uncheckin-button"
@@ -313,6 +313,13 @@ export default class ServeCitizen extends Vue {
       return true
     }
     return false
+  }
+
+  get appointmentsEnabled() {
+    if (this.user && this.user.office) {
+      return this.user.office.appointments_enabled_ind
+    }
+    return false;
   }
 
   get alertMessage () {
