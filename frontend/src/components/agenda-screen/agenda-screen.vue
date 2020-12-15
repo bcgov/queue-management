@@ -257,13 +257,12 @@ export default class AgendaScreen extends Vue {
       citizen_id: appt.citizen_id
     }
     this.setAgendaClickedAppt(tempEvent)
-    // this.clickedTime =  {
-    //   start: moment(appt.start_time),
-    //   end: moment(appt.end_time)
-    // }
-    // this.setAgendaClickedTime(this.clickedTime);
+    this.clickedTime =  {
+      start: moment(appt.start_time),
+      end: moment(appt.end_time)
+    }
+    this.setAgendaClickedTime(this.clickedTime);
     
-    // this.setAgendaClickedAppt(appt);
     
     this.toggleCheckInModal(true);
   }
