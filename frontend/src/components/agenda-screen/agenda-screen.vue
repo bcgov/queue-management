@@ -106,7 +106,7 @@ export default class AgendaScreen extends Vue {
   // @State('clickedAppt') private clickedAppt!: any
   @appointmentsModule.State('clickedAppt') public clickedAppt: any
   @appointmentsModule.Mutation('setAgendaClickedAppt') public setAgendaClickedAppt: any
-
+  @appointmentsModule.Mutation('setAgendaClickedTime') public setAgendaClickedTime: any
 
   @appointmentsModule.Action('getAppointments') public getAppointments: any
   @appointmentsModule.Mutation('toggleCheckInModal') public toggleCheckInModal: any
@@ -243,7 +243,28 @@ export default class AgendaScreen extends Vue {
 
   checkIn( appt ) {
     console.log('checkIn', appt)
-    this.setAgendaClickedAppt(appt);
+    const tempEvent = {
+      title: appt.citizen_name,
+      contact_information: appt.contact_information,
+      online_flag: appt.online_flag,
+      service_id: appt.service_id,
+      comments: appt.comments,
+      start: moment(appt.start_time),
+      end: moment(appt.end_time),
+      appointment_id: appt.appointment_id,
+      recurring_uuid: null,
+      blackout_flag: 'N',
+      citizen_id: appt.citizen_id
+    }
+    this.setAgendaClickedAppt(tempEvent)
+    // this.clickedTime =  {
+    //   start: moment(appt.start_time),
+    //   end: moment(appt.end_time)
+    // }
+    // this.setAgendaClickedTime(this.clickedTime);
+    
+    // this.setAgendaClickedAppt(appt);
+    
     this.toggleCheckInModal(true);
   }
 
