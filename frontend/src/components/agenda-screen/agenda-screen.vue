@@ -19,7 +19,7 @@ limitations under the License.*/
     >
       <div></div>
       <div>
-        <h5>Day Agenda View</h5>
+        <h5 class='mb-4'>Day Agenda View</h5>
       </div>
       <div></div>
     </div>
