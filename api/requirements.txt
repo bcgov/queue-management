@@ -23,7 +23,7 @@ flask-caching
 Flask-Compress
 flask-cors
 flask_marshmallow
-flask-socketio
+Flask-SocketIO==4.3.1
 gunicorn
 marshmallow-sqlalchemy==0.23.1 # 0.24 was breaking
 minio<6
