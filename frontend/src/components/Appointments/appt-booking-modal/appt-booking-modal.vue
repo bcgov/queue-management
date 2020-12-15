@@ -547,7 +547,6 @@ export default class ApptBookingModal extends Vue {
             })
           })
         } else {
-          debugger;
           this.putAppointment(payload).then(() => {
             this.getAppointments().then(() => {
               finish()
