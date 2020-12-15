@@ -119,10 +119,7 @@
               </b-dropdown-item>
               <b-dropdown-divider />
             </span>
-            <!-- 
-              TODO - Change class from `gaPanelStyle` to `agendaPanelStyle`
-             -->
-            <b-dropdown-item @click='clickAgendaScreen' :class='agendaPanelStyle'>
+            <b-dropdown-item v-if='!disableAgendaPanel' @click='clickAgendaScreen' :class='agendaPanelStyle'>
               <font-awesome-icon
                   v-if="showAgendaScreenModal"
                   icon="check"
@@ -176,6 +173,7 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 
 import AddCitizen from '../AddCitizen/add-citizen.vue'
 import ServeCitizen from '../ServeCitizen/serve-citizen.vue'
+import config from '../../../config'
 
 @Component({
   components: {
@@ -217,6 +215,7 @@ export default class Nav extends Vue {
   private flashIcon: boolean = true
   private showSpacer: boolean = false
   toggleTimeTrackingIcon: any
+  disableAgendaPanel = config.DISABLE_AGENDA_PANEL
 
   @Watch('showIcon')
   onShowIconChange (newV: any, oldV: any) {
