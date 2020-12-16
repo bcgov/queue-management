@@ -16,6 +16,17 @@
 
 <template>
   <div style>
+    <b-alert
+      :show="showIEWarning"
+      style="h-align: center"
+      variant="danger"
+      dismissible
+      fade
+    >
+      You are using Internet Explorer, and may have a degraded experience. To increase performance and access all features please use a modern browser, like 
+      <a href='https://www.google.com/intl/en_ca/chrome/' target='_blank' rel='noreferer'>Chrome</a> or
+      <a href='https://www.microsoft.com/en-us/edge' target='_blank' rel='noreferer'>Microsoft Edge</a>
+    </b-alert>
     <!-- <v-card class="m-4" max-width="100%" elevation="5"> -->
     <div class="dash-button-flex-button-container pb-0 mb-3 mx-4">
       <!-- SLOT FOR EACH VIEW'S BUTTON CONTROLS-->
@@ -119,7 +130,7 @@
               </b-dropdown-item>
               <b-dropdown-divider />
             </span>
-            <b-dropdown-item v-if='enableAgendaPanel' @click='clickAgendaScreen' :class='agendaPanelStyle'>
+            <b-dropdown-item v-if='appointmentsEnabled' @click='clickAgendaScreen' :class='agendaPanelStyle'>
               <font-awesome-icon
                   v-if="showAgendaScreenModal"
                   icon="check"
@@ -215,10 +226,16 @@ export default class Nav extends Vue {
   private flashIcon: boolean = true
   private showSpacer: boolean = false
   toggleTimeTrackingIcon: any
+  showIEWarning: boolean = config.IS_INTERNET_EXPLORER;
 
-  get enableAgendaPanel() : boolean {
+  mounted() {
+    // We don't want to re-evaluate this every time appointmentsEnabled is re-evaluated
+    this.showIEWarning = this.showIEWarning && this.appointmentsEnabled
+  }
+
+  get appointmentsEnabled() : boolean {
     if (this.user && this.user.office) {
-      return this.user.office.appointments_enabled_ind
+      return !!(this.user.office.appointments_enabled_ind)
     }
     return false;
   }
