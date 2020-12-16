@@ -352,7 +352,12 @@ export default class Login extends Vue {
 
   setBreakClickEvent () {
     // Click anywhere on screen to end "Break"
-    document.body.addEventListener('click', this.stopBreak)
+    console.log('setBreakClickEventA')
+    // Prevent double-click on IE11  by delaying listener
+    // As it's pure DOM, no need to worry about $nextTick
+    setTimeout(() => {
+      document.body.addEventListener('click', this.stopBreak)
+    }, 100)
     const breakSwitch = document.getElementById('break-switch')
     if (breakSwitch !== null) {
       breakSwitch.style.pointerEvents = 'none' // Prevent double click event
