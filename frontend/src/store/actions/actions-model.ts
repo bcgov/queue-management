@@ -259,9 +259,10 @@ export const commonActions: any = {
               booking.resourceId = b.room_id
               booking.room = b.room
 
+              // With Vuetify calendar, if the bookings aren't deleted
+              // the room calenar will be created.  This hides it
+              // entirely from the frontend UI.
               if (booking.room && booking.room.deleted) {
-                console.log('ARC1- Skipping booking for deleted room', { booking })
-                debugger;
                 return;
               }
             }
@@ -291,16 +292,9 @@ export const commonActions: any = {
             booking.recurring_uuid = b.recurring_uuid
             booking.color = getEventColor(b.blackout_flag, b.room)
             booking.timed = true
-            if (booking && booking.room && booking.room.deleted) {
-              debugger;
-              console.log('ARC2- Skipping booking for deleted room', { booking })
-              return;
-            }
             calendarEvents.push(booking)
           })
           
-          console.log('ARC3 - setEvents', { calendarEvents })
-          debugger;
           context.commit('setEvents', calendarEvents)
           resolve()
         })
