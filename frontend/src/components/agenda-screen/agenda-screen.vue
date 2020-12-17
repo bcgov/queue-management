@@ -69,8 +69,15 @@ limitations under the License.*/
         <button
           @click.stop="checkIn(data.value.appt)"
           class="ga-close btn btn-success btn-sm"
+          v-if="!loadingButtons[data.value.appt.appointment_id]"
         >
           Check-In
+        </button>
+        <button
+          class="ga-close btn btn-success btn-sm"
+          v-else
+        >
+          <b-spinner small variant="light" label="Spinning"></b-spinner>
         </button>
       </template>
     </b-table>
@@ -105,11 +112,14 @@ export default class AgendaScreen extends Vue {
 
   @appointmentsModule.State('clickedAppt') public clickedAppt: any
   @appointmentsModule.State('appointments') public appointments: any
+  @appointmentsModule.State('checkInClicked') private checkInClicked!: any
   @appointmentsModule.Mutation('setAgendaClickedAppt') public setAgendaClickedAppt: any
   @appointmentsModule.Mutation('setAgendaClickedTime') public setAgendaClickedTime: any
   @appointmentsModule.Mutation('toggleCheckInModal') public toggleCheckInModal: any
   @appointmentsModule.Mutation('toggleApptBookingModal') public toggleApptBookingModal: any
+  @appointmentsModule.Mutation('toggleCheckInClicked') public toggleCheckInClicked: any
   @appointmentsModule.Action('getAppointments') public getAppointments: any
+  @appointmentsModule.Action('postCheckIn') public postCheckIn: any
   
   items = [];
   clickedTime: any = null;
@@ -243,6 +253,9 @@ export default class AgendaScreen extends Vue {
     this.toggleApptBookingModal(true);
   }
 
+  // A map of appointment_ids with true/false to show the loading spinner
+  private loadingButtons = {}
+  
   checkIn( appt ) {
     const tempEvent = {
       title: appt.citizen_name,
@@ -263,9 +276,20 @@ export default class AgendaScreen extends Vue {
       end: moment(appt.end_time)
     }
     this.setAgendaClickedTime(this.clickedTime);
-    this.toggleCheckInModal(true);
-  }
+    // this.toggleCheckInModal(true);
 
+    this.loadingButtons[appt.appointment_id] = true;
+    this.postCheckIn(this.clickedAppt).then(response => {
+      this.$root.$emit('clear-clicked-appt')
+      this.$root.$emit('clear-clicked-time')
+      this.loadingButtons[appt.appointment_id] = false;
+    }).catch(() => {
+      this.loadingButtons[appt.appointment_id] = false;
+    }).finally(() => {
+      this.loadingButtons[appt.appointment_id] = false;
+    });
+  }
+  
   APPOINTMENT_FILTER_FIELDS = ['start_time', 'citizen_name', 'service_name', 'contact_info', 'comments']
 
   async filter() {
