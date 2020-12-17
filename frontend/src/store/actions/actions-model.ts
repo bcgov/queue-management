@@ -1487,7 +1487,6 @@ export const commonActions: any = {
     Axios(context)
       .post(`/citizens/${citizen_id}/remove_from_queue/`, {})
       .then((res) => {
-        console.log('clickUnCheckIn response', { res })
         context.commit('toggleInvitedStatus', false)
         context.commit('setPerformingAction', false)
         context.commit('toggleServiceModal', false)
