@@ -11,7 +11,7 @@
           >
             <b-form inline @submit.stop.prevent>
               <label class="mr-2">
-                Filter Appointments!
+                Filter Appointments
                 <font-awesome-icon
                   icon="filter"
                   class="m-0 p-0"
