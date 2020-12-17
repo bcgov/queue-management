@@ -112,6 +112,10 @@ import { formatedStartTime } from '@/utils/helpers'
 
 const appointmentsModule = namespace('appointmentsModule')
 
+// For MOMENT, not the calendar
+const SATURDAY = 6;
+const SUNDAY = 1;
+
 @Component({
   components: {
     AppointmentBlackoutModal,
@@ -251,8 +255,12 @@ export default class Appointments extends Vue {
     this.calendarSetup()
   }
 
+
+  // If  working on  localhost and you get "TypeError: Cannot read property 'next' of undefined"
+  // Just restart `npm run serve`, as it glitches out.
   next () {
-    this.$refs.calendar.next()
+    const daysToMove = this.getDaysToMove('next');
+    this.$refs.calendar.move(daysToMove)
     this.calendarSetup()
   }
 
@@ -261,8 +269,37 @@ export default class Appointments extends Vue {
   }
 
   prev () {
-    this.$refs.calendar.prev()
+    const daysToMove = this.getDaysToMove('prev')
+    this.$refs.calendar.move(daysToMove)
     this.calendarSetup()
+  }
+
+  /**
+   * This function helps skipping weekends on day views
+   * Returns the # of days to move to skip the weekend
+   * used with `this.$refs.calendar.move()`
+   */
+  getDaysToMove(direction: 'next' | 'prev'): number {
+    // Do not handle week/month views.
+    if (this.type  !== 'day') {
+      return 1;
+    }
+    const viewedDate = this.$refs.calendar.value;
+    const dayOfWeek = moment(viewedDate).day()
+    let daysToMove = 1;
+    if (direction === 'next') {    
+      if ((dayOfWeek + 1) === SATURDAY ) {
+        daysToMove = 3;
+      }
+    } else if (direction === 'prev') {
+      daysToMove = -1;
+      if ((dayOfWeek) === SUNDAY ) {
+        // Value must be negative for prev
+        daysToMove = -3;
+      }
+    }
+    // console.log(`getDaysToMove("${direction}")`, { viewedDate, dayOfWeek, daysToMove })
+    return daysToMove
   }
 
   // renderEvent (event) {
