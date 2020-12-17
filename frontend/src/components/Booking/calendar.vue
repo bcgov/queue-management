@@ -318,7 +318,7 @@ export default class Calendar extends Vue {
     if (this.offsiteOnly) {
       return this.calendarEvents.filter(ev => ev.resourceId === '_offsite')
     }
-    return this.calendarEvents.filter(x => x.room.deleted !== null);
+    return this.calendarEvents.filter(x => !x.room.deleted);
   }
 
   get adjustment () {
