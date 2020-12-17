@@ -36,7 +36,7 @@ class CsrList(Resource):
         try:
             csr = CSR.find_by_username(g.oidc_token_info['username'])
 
-            if csr.role.role_code != "GA":
+            if csr.role.role_code not in ["GA", "SUPPORT"]:
                 return {'message': 'You do not have permission to view this end-point'}, 403
 
             csrs = CSR.query.filter_by(office_id=csr.office_id)
