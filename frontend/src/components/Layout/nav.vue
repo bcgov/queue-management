@@ -24,8 +24,7 @@
       fade
     >
       You are using Internet Explorer, and may have a degraded experience. To increase performance and access all features please use a modern browser, like 
-      <a href='https://www.google.com/intl/en_ca/chrome/' target='_blank' rel='noreferer'>Chrome</a> or
-      <a href='https://www.microsoft.com/en-us/edge' target='_blank' rel='noreferer'>Microsoft Edge</a>
+      Chrome or Microsoft Edge
     </b-alert>
     <!-- <v-card class="m-4" max-width="100%" elevation="5"> -->
     <div class="dash-button-flex-button-container pb-0 mb-3 mx-4">
