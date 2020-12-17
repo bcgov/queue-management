@@ -15,7 +15,7 @@ limitations under the License.'''
 import logging
 from flask import g
 from flask_restx import Resource
-from qsystem import api, api_call_with_retry, db, oidc, socketio, my_print
+from qsystem import api, api_call_with_retry, db, oidc, socketio, my_print, application
 from app.models.theq import Citizen, CSR
 from app.models.theq import SRState
 from app.models.bookings import Appointment
@@ -69,6 +69,9 @@ class CitizenRemoveFromQueue(Resource):
         #     return {"message": warning}, 422
 
         result = self.appointment_schema.dump(appointment)
+
+        if not application.config['DISABLE_AUTO_REFRESH']:
+            socketio.emit('appointment_create', result.data)
 
         return {"appointment": result.data,
                 "errors": result.errors}, 200
