@@ -70,7 +70,7 @@ limitations under the License.*/
           @click.stop="checkIn(data.value.appt)"
           class="ga-close btn btn-success btn-sm"
         >
-          Check In
+          Check-In
         </button>
       </template>
     </b-table>
@@ -120,7 +120,8 @@ export default class AgendaScreen extends Vue {
     {
       key: 'start_time',
       label: 'Time',
-      sortable: true
+      sortable: true,
+      formatter: (value) => { return moment(value).format("LT") }
     },
     {
       key: 'citizen_name',
@@ -132,11 +133,11 @@ export default class AgendaScreen extends Vue {
       label: 'Service',
       sortable: true
     },
-    {
-      key: 'contact_info',
-      label: 'Contact Info',
-      sortable: true
-    },
+    // {
+    //   key: 'contact_info',
+    //   label: 'Contact Info',
+    //   sortable: true
+    // },
     {
       key: 'comments',
       label: 'Comments'
@@ -147,7 +148,7 @@ export default class AgendaScreen extends Vue {
     // },
     {
       key: 'check_in',
-      label: 'Check In'
+      label: 'Check-In'
     }
   ]
 
@@ -176,8 +177,10 @@ export default class AgendaScreen extends Vue {
         return false;
       }
 
+      // ARC ALSO MAKE COMMEENTS  BIGGER
+
       // Agenda only shows appointments in near past or future.
-      if ( ( moment(appt.end_time) >= pastCutoff  ) &&  ( moment(appt.start_time) <= futureCutoff  ) ) {
+      if ( ( moment(appt.start_time) >= pastCutoff  ) &&  ( moment(appt.start_time) <= futureCutoff  ) ) {
         return true;
       }
       return false;
@@ -191,7 +194,8 @@ export default class AgendaScreen extends Vue {
       const service_name = service ? service.service_name : 'N/A';
       
       return {
-        start_time: `${moment(appt.start_time).format("LT")}`,
+        // start_time: `${moment(appt.start_time).format("LT")}`,
+        start_time: appt.start_time,
         citizen_name: appt.citizen_name,
         service_name,
         contact_info: appt.contact_information,
@@ -270,7 +274,7 @@ export default class AgendaScreen extends Vue {
     this.items = appointments.filter(appt => {
       let hasMatch = false;
       this.APPOINTMENT_FILTER_FIELDS.forEach(field => {        
-        if (appt[field].toLowerCase().includes(search)) {
+        if (appt[field] && appt[field].toLowerCase && appt[field].toLowerCase().includes(search)) {
           hasMatch = true;
         }
       })
@@ -298,6 +302,6 @@ td {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 150px;
+    max-width: 225px;
 }
 </style>
