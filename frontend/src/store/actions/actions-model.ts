@@ -259,7 +259,7 @@ export const commonActions: any = {
               booking.resourceId = b.room_id
               booking.room = b.room
 
-              if (booking.room && booking.room.deleted){
+              if (booking.room && booking.room.deleted) {
                 console.log('ARC1- Skipping booking for deleted room', { booking })
                 debugger;
                 return;
@@ -291,12 +291,12 @@ export const commonActions: any = {
             booking.recurring_uuid = b.recurring_uuid
             booking.color = getEventColor(b.blackout_flag, b.room)
             booking.timed = true
-            calendarEvents.push(booking)
-            if (booking && booking.room && booking.room.deleted){
+            if (booking && booking.room && booking.room.deleted) {
               debugger;
               console.log('ARC2- Skipping booking for deleted room', { booking })
               return;
             }
+            calendarEvents.push(booking)
           })
           
           console.log('ARC3 - setEvents', { calendarEvents })
