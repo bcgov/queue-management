@@ -191,7 +191,7 @@ export default class AgendaScreen extends Vue {
       const service_name = service ? service.service_name : 'N/A';
       
       return {
-        start_time: `${moment(appt.start_time).format("LT")} to ${moment(appt.end_time).format("LT")}`,
+        start_time: `${moment(appt.start_time).format("LT")}`,
         citizen_name: appt.citizen_name,
         service_name,
         contact_info: appt.contact_information,
