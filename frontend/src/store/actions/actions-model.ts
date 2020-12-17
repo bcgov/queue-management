@@ -258,6 +258,11 @@ export const commonActions: any = {
             if (b.room_id) {
               booking.resourceId = b.room_id
               booking.room = b.room
+
+              if (booking.room && booking.room.deleted){
+                console.log('Skipping booking for deleted room', { booking })
+                return;
+              }
             }
             if (!b.room_id) {
               booking.resourceId = '_offsite'
