@@ -318,7 +318,7 @@ export default class Calendar extends Vue {
     if (this.offsiteOnly) {
       return this.calendarEvents.filter(ev => ev.resourceId === '_offsite')
     }
-    return this.calendarEvents
+    return this.calendarEvents.filter(x => x.room.deleted !== null);
   }
 
   get adjustment () {
@@ -502,6 +502,8 @@ export default class Calendar extends Vue {
   next () {
     if (this.$refs.calendar) {
       // this.$refs.bookingcal.fireMethod('next')
+
+      // ARC TODOO- if "next" is weekend, skip to next weekday
       this.$refs.calendar.next()
       this.viewRender()
     }
