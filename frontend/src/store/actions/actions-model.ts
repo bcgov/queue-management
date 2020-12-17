@@ -260,7 +260,8 @@ export const commonActions: any = {
               booking.room = b.room
 
               if (booking.room && booking.room.deleted){
-                console.log('Skipping booking for deleted room', { booking })
+                console.log('ARC1- Skipping booking for deleted room', { booking })
+                debugger;
                 return;
               }
             }
@@ -291,7 +292,15 @@ export const commonActions: any = {
             booking.color = getEventColor(b.blackout_flag, b.room)
             booking.timed = true
             calendarEvents.push(booking)
+            if (booking && booking.room && booking.room.deleted){
+              debugger;
+              console.log('ARC2- Skipping booking for deleted room', { booking })
+              return;
+            }
           })
+          
+          console.log('ARC3 - setEvents', { calendarEvents })
+          debugger;
           context.commit('setEvents', calendarEvents)
           resolve()
         })
