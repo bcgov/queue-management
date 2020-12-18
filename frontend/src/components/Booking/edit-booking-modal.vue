@@ -891,7 +891,9 @@ export default class EditBooking extends Vue {
     const changes: any = {}
     if (!this.start.isSame(this.event.start)) {
       if (this.examAssociated) {
-        if (this.start.isAfter(this.event.exam.expiry_date)) {
+        //  fix for INC0042620
+        const exp_date = moment(this.event.exam.expiry_date).add(1,'days')
+        if (this.start.isAfter(exp_date)) {
           this.message = 'Selected date/time is after the exam\'s expiry date.  Press reschedule to pick a new time.'
           return
         }

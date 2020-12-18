@@ -19,7 +19,7 @@
           variant="primary"
           class="ml-2"
           size="md"
-          @click="submit"
+          @click="deleteApptWarning"
         >
           Submit</b-button
         >
@@ -67,6 +67,7 @@
       </div>
     </template>
     <span style="font-size: 1.75rem">Schedule Appointment Blackout</span><br />
+    <span style="color:red">WARNING: APPOINTMENTS WILL BE CANCELLED DURING BLACKOUT PERIOD</span><br />
     <b-form>
       <b-collapse id="collapse-event-selection">
         <b-card>
@@ -500,6 +501,36 @@
         </b-card>
       </b-collapse>
     </b-form>
+    <v-dialog
+      v-model="confirmDialog"
+      max-width="800"
+    >
+      <v-card>
+        <v-card-title class="headline">
+          {{ this.headline_text }}
+        </v-card-title>
+        <v-card-text>
+          Are you sure you want to create the Blackout?
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="red darken-1"
+            text
+            @click="confirmBlackout(false)"
+          >
+            No
+          </v-btn>
+          <v-btn
+            color="red darken-1"
+            text
+            @click="confirmBlackout(true)"
+          >
+            Yes
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </b-modal>
 </template>
 
@@ -560,6 +591,8 @@ export default class AppointmentBlackoutModal extends Vue {
   public next_boolean: any = false
   public single_input_state: any = ''
   public recurring_input_state: any = ''
+  public headline_text: any = ''
+  private confirmDialog: boolean = false
 
   get modal () {
     return this.showAppointmentBlackoutModal
@@ -617,6 +650,22 @@ export default class AppointmentBlackoutModal extends Vue {
     this.rrule_text = ''
     this.rrule_array = []
     this.toggleAppointmentBlackoutModal(false)
+  }
+
+  private async confirmBlackout (isAgree: boolean) {
+    if (isAgree) {
+      this.submit()
+      this.confirmDialog = false
+    } else {
+      this.confirmDialog = false
+    }
+  }
+
+  deleteApptWarning () {
+    // INC0056259 - Popup Warning message before committing Blackouts
+    this.headline_text = "APPOINTMENTS WILL BE CANCELLED DURING BLACKOUT PERIOD"
+    this.confirmDialog=true; 
+    this.toggleAppointmentBlackoutModal(false);
   }
 
   submit () {
@@ -680,6 +729,7 @@ export default class AppointmentBlackoutModal extends Vue {
   }
 
   generateRule () {
+    console.log('====>CALL GENERATE RULE')
     this.hideCollapse('collapse-event-selection')
     this.hideCollapse('collapse-recurring-events')
     this.recurring_blackout_boolean = true
@@ -732,9 +782,27 @@ export default class AppointmentBlackoutModal extends Vue {
       const array = rule.all()
       this.rrule_text = rule.toText()
 
+      console.log('local_start_hour',local_start_hour)
+      console.log('start_hour',start_hour)
+      
       array.forEach(date => {
-        const formatted_start_date = moment(date).clone().set({ hour: local_start_hour }).format('YYYY-MM-DD HH:mm:ssZ')
-        const formatted_end_date = moment(date).clone().set({ hour: local_start_hour }).add(duration_minutes, 'minutes').format('YYYY-MM-DD HH:mm:ssZ')
+        // INC0048019 - fix UTC error by creating new date field and if local time is 4pm PACIFIC (16:00) or later then add 1 day to series   ozamani 12/17/2020
+        const adj_date = moment(date)
+        console.log('date value - adj_date')
+        console.log(adj_date)
+         if (local_start_hour >= 16 && start_hour == 0) {
+          adj_date.add(1, 'day')
+          console.log('Add 1 date')
+          console.log(adj_date)
+        }
+        const formatted_start_date = moment(adj_date).clone().set({ hour: local_start_hour }).format('YYYY-MM-DD HH:mm:ssZ')
+        const formatted_end_date = moment(adj_date).clone().set({ hour: local_start_hour }).add(duration_minutes, 'minutes').format('YYYY-MM-DD HH:mm:ssZ')
+        // const formatted_start_date = moment(date).clone().set({ hour: local_start_hour }).format('YYYY-MM-DD HH:mm:ssZ')
+        // const formatted_end_date = moment(date).clone().set({ hour: local_start_hour }).add(duration_minutes, 'minutes').format('YYYY-MM-DD HH:mm:ssZ')
+        console.log('date value - formatted_start_date')
+        console.log(formatted_start_date)
+        console.log('date value - formatted_end_date')
+        console.log(formatted_end_date)
         local_dates_array.push({ start: formatted_start_date, end: formatted_end_date })
       })
     }
