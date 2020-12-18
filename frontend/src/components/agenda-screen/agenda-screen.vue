@@ -215,6 +215,9 @@ export default class AgendaScreen extends Vue {
 
   mounted () {
     this.fetch();
+    // Update list every  15min.
+    const fifteenMin = 1000 * 60 * 15
+    this.interval = setInterval(() => { this.fetch() },  fifteenMin)
   }
 
   fetch() {
