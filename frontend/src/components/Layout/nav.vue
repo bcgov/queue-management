@@ -219,6 +219,7 @@ export default class Nav extends Vue {
       }
     }
   }
+
   showIEWarning: boolean = config.IS_INTERNET_EXPLORER;
 
   mounted() {
