@@ -106,7 +106,7 @@ limitations under the License.*/
 
             <vue-bootstrap-typeahead 
               v-model="officeQuery"
-              :data="this.$store.state.offices"
+              :data="this.offices"
               :serializer="x => x.office_name"
               placeholder="Enter an office"
               @hit="changeOffice"
@@ -158,8 +158,9 @@ export default class Login extends Vue {
   @State('user') private user!: any
   @State('csr_states') private csr_states!: any
   @State('showOfficeSwitcher') private showOfficeSwitcher!: boolean
-  @Getter('role_code') private role_code!: any;
+  @State('offices') private offices!: any
 
+  @Getter('role_code') private role_code!: any;
   @Getter('quick_trans_status') private quick_trans_status!: any;
   @Getter('reception') private reception!: any;
   @Getter('receptionist_status') private receptionist_status!: any;
@@ -168,6 +169,7 @@ export default class Login extends Vue {
   @Action('updateCSRCounterTypeState') public updateCSRCounterTypeState: any
   @Action('updateCSRState') public updateCSRState: any
   @Action('updateCSROffice') public updateCSROffice: any
+  @Action('getOffices') public getOffices: any
 
   @Mutation('setQuickTransactionState') public setQuickTransactionState: any
   @Mutation('setReceptionistState') public setReceptionistState: any
@@ -180,9 +182,9 @@ export default class Login extends Vue {
   officeQuery = '';
   // $keycloak: any
 
-  get officeNames(): string {
-    return this.$store.state.offices.map(office => office.office_name);
-  }
+  // get officeNames(): string {
+  //   return this.$store.state.offices.map(office => office.office_name);
+  // }
 
   get counterSelection () {
     if (this.receptionist_status === true) {
@@ -399,6 +401,8 @@ export default class Login extends Vue {
   created () {
     this.setupKeycloakCallbacks()
     _.defer(this.initSessionStorage)
+    // use 'force' to avoid race condition, as user may not be set yet
+    this.getOffices('force')
   }
 
   updated () {
