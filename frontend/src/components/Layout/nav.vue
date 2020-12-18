@@ -76,7 +76,7 @@
           class="pl-0 ml-0 mr-3"
           right
           id="nav-dropdown"
-          boundary='window'
+          :popper-opts="dropdownPopperOpts"
         >
           <span slot="button-content">
             <font-awesome-icon icon="bars" style="font-size: 1.18rem" />
@@ -212,6 +212,13 @@ export default class Nav extends Vue {
   private flashIcon: boolean = true
   private showSpacer: boolean = false
   toggleTimeTrackingIcon: any
+    dropdownPopperOpts = {
+    modifiers: {
+      computeStyle: {
+        gpuAcceleration: false
+      }
+    }
+  }
   showIEWarning: boolean = config.IS_INTERNET_EXPLORER;
 
   mounted() {
