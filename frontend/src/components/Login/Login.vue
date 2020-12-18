@@ -86,24 +86,6 @@ limitations under the License.*/
               </label>
           </template>
           <template v-else>
-            <!-- <b-input-group>
-              <b-form-input id='office-selector-input' 
-                            list="office-selector"
-                            v-model="$store.state.user.office.office_name"
-              ></b-form-input>
-              <b-input-group-append>
-                <b-button @click='changeOffice' variant="primary">Set Office</b-button>
-                <b-button variant="danger" @click='cancelOfficeSwitcher'>Cancel</b-button>
-              </b-input-group-append>
-
-            </b-input-group>
-            <datalist id="office-selector">
-              <option v-for="office in this.$store.state.offices" v-bind:key="office.office_id">
-                {{ office.office_name }}
-              </option>
-            </datalist> -->
-
-
             <vue-bootstrap-typeahead 
               v-model="officeQuery"
               :data="this.offices"
@@ -115,13 +97,9 @@ limitations under the License.*/
                 <b-button variant="danger" @click='cancelOfficeSwitcher'>Cancel</b-button>
               </template>
             </vue-bootstrap-typeahead>
-
           </template>
-
         </div>
-
       </div>
-
       <div style="padding-top: 5px">
         <b-button
           v-show="this.$store.state.isLoggedIn"
@@ -136,16 +114,10 @@ limitations under the License.*/
 </template>
 
 <script lang="ts">
-
-// import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-
 import VueBootstrapTypeahead from 'vue-bootstrap-typeahead'
-
-
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
 import config from '../../../config'
-
 import _ from 'lodash'
 
 
@@ -180,11 +152,6 @@ export default class Login extends Vue {
 
   $keycloak: any
   officeQuery = '';
-  // $keycloak: any
-
-  // get officeNames(): string {
-  //   return this.$store.state.offices.map(office => office.office_name);
-  // }
 
   get counterSelection () {
     if (this.receptionist_status === true) {
@@ -423,7 +390,6 @@ export default class Login extends Vue {
 
   cancelOfficeSwitcher() {
     this.setOfficeSwitcher(false);
-    // TODO - Need to set input back to default state.
   }
 
   changeOffice(newOffice) {
