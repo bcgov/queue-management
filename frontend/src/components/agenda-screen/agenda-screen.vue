@@ -186,9 +186,6 @@ export default class AgendaScreen extends Vue {
       if (appt.checked_in_time || appt.is_draft || appt.blackout_flag === 'Y') {
         return false;
       }
-
-      // ARC ALSO MAKE COMMEENTS  BIGGER
-
       // Agenda only shows appointments in near past or future.
       if ( ( moment(appt.start_time) >= pastCutoff  ) &&  ( moment(appt.start_time) <= futureCutoff  ) ) {
         return true;
@@ -255,7 +252,7 @@ export default class AgendaScreen extends Vue {
 
   // A map of appointment_ids with true/false to show the loading spinner
   private loadingButtons = {}
-  
+
   checkIn( appt ) {
     const tempEvent = {
       title: appt.citizen_name,

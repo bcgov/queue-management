@@ -411,14 +411,7 @@ export default class ApptBookingModal extends Vue {
     if (this.clickedTime) {
       this.$root.$emit('removeTempEvent')
     }
-
-    // need to navigate to appointments
     this.$router.push('/appointments')
-    // Problem - if -rescheduling from Agenda in the queue, it loses appointment data
-    // same data in clickedAppt
-    // But it keeps clickedTime?
-    // Idea - need to et "clickedAppt" as state.
-
 
     this.$store.commit('toggleEditApptModal', false)
     this.$store.commit('toggleRescheduling', true)
