@@ -639,4 +639,8 @@ strong {
 #serve-citizen-return-to-queue-button:hover {
   background: #e8e8e8;
 }
+
+button:disabled {
+  cursor: not-allowed !important;
+}
 </style>
