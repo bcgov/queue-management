@@ -321,7 +321,6 @@ export default class Login extends Vue {
 
   setBreakClickEvent () {
     // Click anywhere on screen to end "Break"
-    console.log('setBreakClickEventA')
     // Prevent double-click on IE11  by delaying listener
     // As it's pure DOM, no need to worry about $nextTick
     setTimeout(() => {
