@@ -67,7 +67,6 @@
       </div>
     </template>
     <span style="font-size: 1.75rem">Schedule Appointment Blackout</span><br />
-    <span style="color:red">WARNING: APPOINTMENTS WILL BE CANCELLED DURING BLACKOUT PERIOD</span><br />
     <b-form>
       <b-collapse id="collapse-event-selection">
         <b-card>
@@ -503,14 +502,14 @@
     </b-form>
     <v-dialog
       v-model="confirmDialog"
-      max-width="800"
+      max-width="400"
     >
       <v-card>
         <v-card-title class="headline">
-          {{ this.headline_text }}
+         Warning
         </v-card-title>
         <v-card-text>
-          Are you sure you want to create the Blackout?
+          {{ this.warning_text }}
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -551,6 +550,7 @@ const appointmentsModule = namespace('appointmentsModule')
 })
 export default class AppointmentBlackoutModal extends Vue {
   @appointmentsModule.State('showAppointmentBlackoutModal') private showAppointmentBlackoutModal!: any
+  @appointmentsModule.State('appointments') private myappointments!: any
 
   @appointmentsModule.Getter('is_recurring_enabled') private is_recurring_enabled!: any;
 
@@ -585,13 +585,14 @@ export default class AppointmentBlackoutModal extends Vue {
   public single_blackout_boolean: any = true
   public recurring_blackout_boolean: any = true
   public rrule_array: any = []
+  public filtered_appt: any = []
   public rrule_text: any = ''
   public recurring_input_boolean: any = false
   public single_input_boolean: any = false
   public next_boolean: any = false
   public single_input_state: any = ''
   public recurring_input_state: any = ''
-  public headline_text: any = ''
+  public warning_text: any = ''
   private confirmDialog: boolean = false
 
   get modal () {
@@ -663,9 +664,61 @@ export default class AppointmentBlackoutModal extends Vue {
 
   deleteApptWarning () {
     // INC0056259 - Popup Warning message before committing Blackouts
-    this.headline_text = "APPOINTMENTS WILL BE CANCELLED DURING BLACKOUT PERIOD"
-    this.confirmDialog=true; 
-    this.toggleAppointmentBlackoutModal(false);
+    let appt_overlap: any = 0
+    const date = moment(this.blackout_date).clone().format('YYYY-MM-DD')
+    const start = moment(this.start_time).clone().format('HH:mm:ss')
+    const start_date = moment(date + ' ' + start).format('YYYY-MM-DD HH:mm:ssZ')
+    const end = moment(this.end_time).clone().format('HH:mm:ss')
+    const end_date = moment(date + ' ' + end).format('YYYY-MM-DD HH:mm:ssZ')
+    const uuidv4 = require('uuid/v4')
+    const recurring_uuid = uuidv4()
+    if (this.rrule_array.length > 0) {
+      this.rrule_array.forEach(item => {
+        const e: any = {
+          start_time: item.start,
+          end_time: item.end,
+          citizen_name: this.user_name,
+          contact_information: this.user_contact_info,
+          blackout_flag: 'Y',
+          recurring_uuid: recurring_uuid
+        }
+        if (this.notes) {
+          e.comments = this.notes
+        }
+        this.filtered_appt = this.myappointments.filter(appt => appt.blackout_flag === 'N' && 
+                                                              moment(appt.start_time).format('YYYY-MM-DD HH:mm:ssZ')  >= e.start_time &&
+                                                              moment(appt.end_time).format('YYYY-MM-DD HH:mm:ssZ') <= e.end_time)
+        appt_overlap = appt_overlap + this.filtered_appt.length
+      })
+      if (appt_overlap > 0) {
+        this.warning_text = "There is " + appt_overlap + " appointment(s) that will be cancelled due to Blackout. Are you sure you want to create the Blackout?"
+        this.confirmDialog=true;
+        this.toggleAppointmentBlackoutModal(false); 
+      } else {
+        this.submit()
+      }
+    } else if (this.rrule_array.length === 0) {
+      const e: any = {
+        start_time: start_date,
+        end_time: end_date,
+        citizen_name: this.user_name,
+        contact_information: this.user_contact_info,
+        blackout_flag: 'Y'
+      }
+      if (this.notes) {
+        e.comments = this.notes
+      }
+      this.filtered_appt = this.myappointments.filter(appt => appt.blackout_flag === 'N' && 
+                                                              moment(appt.start_time).format('YYYY-MM-DD HH:mm:ssZ')  >= e.start_time &&
+                                                              moment(appt.end_time).format('YYYY-MM-DD HH:mm:ssZ') <= e.end_time)
+      if (this.filtered_appt.length > 0) {
+        this.warning_text = "There is " + this.filtered_appt.length + " appointment(s) that will be cancelled due to Blackout. Are you sure you want to create the Blackout?"
+        this.confirmDialog=true;
+        this.toggleAppointmentBlackoutModal(false); 
+      } else {
+        this.submit()
+      }
+    }
   }
 
   submit () {
@@ -729,7 +782,6 @@ export default class AppointmentBlackoutModal extends Vue {
   }
 
   generateRule () {
-    console.log('====>CALL GENERATE RULE')
     this.hideCollapse('collapse-event-selection')
     this.hideCollapse('collapse-recurring-events')
     this.recurring_blackout_boolean = true
@@ -769,8 +821,10 @@ export default class AppointmentBlackoutModal extends Vue {
     if (isNaN(start_year) == false || isNaN(end_year) == false) {
       // TODO Might be Deprecated -- IF RRule Breaks, this is where it will happen
       // TODO remove tzid from rule object
+      // INC0048019 - fix UTC error by creating new date field and if local start time is 4pm PACIFIC (16:00) or later then add 1 day to series   ozamani 12/17/2020
       const date_start = new Date(Date.UTC(start_year, start_month - 1, start_day, start_hour, start_minute))
       const until = new Date(Date.UTC(end_year, end_month - 1, end_day, end_hour, end_minute))
+      
       const rule = new RRule({
         freq: input_frequency,
         count: this.selected_count,
@@ -781,28 +835,15 @@ export default class AppointmentBlackoutModal extends Vue {
       })
       const array = rule.all()
       this.rrule_text = rule.toText()
-
-      console.log('local_start_hour',local_start_hour)
-      console.log('start_hour',start_hour)
       
       array.forEach(date => {
-        // INC0048019 - fix UTC error by creating new date field and if local time is 4pm PACIFIC (16:00) or later then add 1 day to series   ozamani 12/17/2020
+         // INC0048019 - fix UTC error by creating new date field and if local time is 4pm PACIFIC (16:00) or later then add 1 day to series   ozamani 12/17/2020
         const adj_date = moment(date)
-        console.log('date value - adj_date')
-        console.log(adj_date)
          if (local_start_hour >= 16 && start_hour == 0) {
           adj_date.add(1, 'day')
-          console.log('Add 1 date')
-          console.log(adj_date)
         }
         const formatted_start_date = moment(adj_date).clone().set({ hour: local_start_hour }).format('YYYY-MM-DD HH:mm:ssZ')
         const formatted_end_date = moment(adj_date).clone().set({ hour: local_start_hour }).add(duration_minutes, 'minutes').format('YYYY-MM-DD HH:mm:ssZ')
-        // const formatted_start_date = moment(date).clone().set({ hour: local_start_hour }).format('YYYY-MM-DD HH:mm:ssZ')
-        // const formatted_end_date = moment(date).clone().set({ hour: local_start_hour }).add(duration_minutes, 'minutes').format('YYYY-MM-DD HH:mm:ssZ')
-        console.log('date value - formatted_start_date')
-        console.log(formatted_start_date)
-        console.log('date value - formatted_end_date')
-        console.log(formatted_end_date)
         local_dates_array.push({ start: formatted_start_date, end: formatted_end_date })
       })
     }

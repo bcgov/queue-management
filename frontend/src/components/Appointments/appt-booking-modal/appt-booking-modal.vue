@@ -100,6 +100,14 @@
               >Reschedule</b-button
             >
           </b-form-group>
+          <b-form-group v-if="isNotBlackoutFlag && !allow_reschedule" class="mb-0 mt-2">
+            <label class="mb-0">Change Date/Time</label><br />
+            <span id="disabled-wrapper">
+            <b-button disabled @click="reschedule" class="btn-secondary w-100"
+              >Reschedule</b-button>
+            </span>
+          </b-form-group>
+          <b-tooltip target="disabled-wrapper">Appointments in the past can't be rescheduled - please create new appointment</b-tooltip>
         </b-col>
         <!--  Column to delete blackout period or series (if a clicked appointment?) -->
         <b-col v-if="clickedAppt">
@@ -435,7 +443,6 @@ export default class ApptBookingModal extends Vue {
       this.selectingService = false
       return
     }
-    console.log('this.clickedTime', this.clickedTime)
     if (this.apptRescheduling) {
       this.$store.commit('toggleRescheduling', false)
       this.setRescheduling(false)
@@ -541,7 +548,6 @@ export default class ApptBookingModal extends Vue {
         }
         return
       }
-      console.log('e', e)
       this.postAppointment(e).then(() => {
         this.getAppointments().then(() => {
           finish()
