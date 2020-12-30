@@ -586,6 +586,8 @@ export default class AppointmentBlackoutModal extends Vue {
   public recurring_blackout_boolean: any = true
   public rrule_array: any = []
   public filtered_appt: any = []
+  public filtered_appt_start: any = []
+  public filtered_appt_end: any = []
   public rrule_text: any = ''
   public recurring_input_boolean: any = false
   public single_input_boolean: any = false
@@ -594,6 +596,7 @@ export default class AppointmentBlackoutModal extends Vue {
   public recurring_input_state: any = ''
   public warning_text: any = ''
   private confirmDialog: boolean = false
+  public appt_overlap: any = 0
 
   get modal () {
     return this.showAppointmentBlackoutModal
@@ -659,12 +662,32 @@ export default class AppointmentBlackoutModal extends Vue {
       this.confirmDialog = false
     } else {
       this.confirmDialog = false
+      this.rrule_text = ''
+      this.rrule_array = []
+      this.recurring_input_state = ''
+      this.single_input_boolean = ''
     }
+  }
+
+  private async countApptWarning (e) {
+    this.filtered_appt = this.myappointments.filter(appt => appt.blackout_flag === 'N' && 
+                                                    moment(appt.start_time).format('YYYY-MM-DD HH:mm:ssZ') >= e.start_time &&
+                                                    moment(appt.end_time).format('YYYY-MM-DD HH:mm:ssZ') <= e.end_time)
+    
+    this.filtered_appt_start = this.myappointments.filter(appt => appt.blackout_flag === 'N' && 
+                                                          moment(appt.start_time).format('YYYY-MM-DD HH:mm:ssZ') < e.start_time &&
+                                                          moment(appt.end_time).format('YYYY-MM-DD HH:mm:ssZ') > e.start_time)
+    
+    this.filtered_appt_end = this.myappointments.filter(appt => appt.blackout_flag === 'N' && 
+                                                        moment(appt.start_time).format('YYYY-MM-DD HH:mm:ssZ') < e.end_time &&
+                                                        moment(appt.end_time).format('YYYY-MM-DD HH:mm:ssZ') > e.end_time)
+    
+    this.appt_overlap = this.appt_overlap + this.filtered_appt.length + this.filtered_appt_start.length + this.filtered_appt_end.length
   }
 
   deleteApptWarning () {
     // INC0056259 - Popup Warning message before committing Blackouts
-    let appt_overlap: any = 0
+    this.appt_overlap = 0
     const date = moment(this.blackout_date).clone().format('YYYY-MM-DD')
     const start = moment(this.start_time).clone().format('HH:mm:ss')
     const start_date = moment(date + ' ' + start).format('YYYY-MM-DD HH:mm:ssZ')
@@ -685,18 +708,8 @@ export default class AppointmentBlackoutModal extends Vue {
         if (this.notes) {
           e.comments = this.notes
         }
-        this.filtered_appt = this.myappointments.filter(appt => appt.blackout_flag === 'N' && 
-                                                              moment(appt.start_time).format('YYYY-MM-DD HH:mm:ssZ')  >= e.start_time &&
-                                                              moment(appt.end_time).format('YYYY-MM-DD HH:mm:ssZ') <= e.end_time)
-        appt_overlap = appt_overlap + this.filtered_appt.length
+        this.countApptWarning(e)
       })
-      if (appt_overlap > 0) {
-        this.warning_text = "There is " + appt_overlap + " appointment(s) that will be cancelled due to Blackout. Are you sure you want to create the Blackout?"
-        this.confirmDialog=true;
-        this.toggleAppointmentBlackoutModal(false); 
-      } else {
-        this.submit()
-      }
     } else if (this.rrule_array.length === 0) {
       const e: any = {
         start_time: start_date,
@@ -708,16 +721,14 @@ export default class AppointmentBlackoutModal extends Vue {
       if (this.notes) {
         e.comments = this.notes
       }
-      this.filtered_appt = this.myappointments.filter(appt => appt.blackout_flag === 'N' && 
-                                                              moment(appt.start_time).format('YYYY-MM-DD HH:mm:ssZ')  >= e.start_time &&
-                                                              moment(appt.end_time).format('YYYY-MM-DD HH:mm:ssZ') <= e.end_time)
-      if (this.filtered_appt.length > 0) {
-        this.warning_text = "There is " + this.filtered_appt.length + " appointment(s) that will be cancelled due to Blackout. Are you sure you want to create the Blackout?"
-        this.confirmDialog=true;
-        this.toggleAppointmentBlackoutModal(false); 
-      } else {
-        this.submit()
-      }
+      this.countApptWarning(e)
+    }
+    if (this.appt_overlap > 0) {
+      this.warning_text = "There is " + this.appt_overlap + " appointment(s) that will be cancelled due to Blackout. Are you sure you want to create the Blackout?"
+      this.confirmDialog=true;
+      this.toggleAppointmentBlackoutModal(false);
+    } else {
+      this.submit()
     }
   }
 
