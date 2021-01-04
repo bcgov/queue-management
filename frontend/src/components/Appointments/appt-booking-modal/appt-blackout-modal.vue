@@ -812,6 +812,7 @@ export default class AppointmentBlackoutModal extends Vue {
     const duration = moment.duration(moment(this.recurring_end_time).diff(moment(this.recurring_start_time)))
     const duration_minutes = duration.asMinutes()
     let input_frequency: any = null
+    let end_adj_day: any = null
     const local_dates_array: any = []
 
     switch (this.selected_frequency[0]) {
@@ -832,10 +833,15 @@ export default class AppointmentBlackoutModal extends Vue {
     if (isNaN(start_year) == false || isNaN(end_year) == false) {
       // TODO Might be Deprecated -- IF RRule Breaks, this is where it will happen
       // TODO remove tzid from rule object
-      // INC0048019 - fix UTC error by creating new date field and if local start time is 4pm PACIFIC (16:00) or later then add 1 day to series   ozamani 12/17/2020
+      // INC0048019 - fix UTC error by creating new end day and if end_hour is 4pm PACIFIC (16:00) or later then add 1 day to end of series   ozamani 12/17/2020
+      if (start_hour > 15 && end_hour < 8) {
+        end_adj_day = end_day + 1
+      } else {
+        end_adj_day = end_day
+      }
       const date_start = new Date(Date.UTC(start_year, start_month - 1, start_day, start_hour, start_minute))
-      const until = new Date(Date.UTC(end_year, end_month - 1, end_day, end_hour, end_minute))
-      
+      const until = new Date(Date.UTC(end_year, end_month - 1, end_adj_day, end_hour, end_minute))
+
       const rule = new RRule({
         freq: input_frequency,
         count: this.selected_count,
@@ -846,7 +852,6 @@ export default class AppointmentBlackoutModal extends Vue {
       })
       const array = rule.all()
       this.rrule_text = rule.toText()
-      
       array.forEach(date => {
          // INC0048019 - fix UTC error by creating new date field and if local time is 4pm PACIFIC (16:00) or later then add 1 day to series   ozamani 12/17/2020
         const adj_date = moment(date)
