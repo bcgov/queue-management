@@ -52,14 +52,6 @@ limitations under the License.*/
       class="p-0 m-0 w-100"
       sort-by='start_time'
     >
-      <!-- <template slot="edit" slot-scope="data">
-        <button
-          @click.stop="edit(data.value.appt)"
-          class="ga-close btn btn-secondary btn-sm"
-        >
-          Edit
-        </button>
-      </template> -->
       <template slot="comments" slot-scope="data">
         <div class="truncate"  v-b-tooltip.hover :title="data.value"> 
           {{ data.value }}
@@ -67,7 +59,7 @@ limitations under the License.*/
       </template>
       <template slot="check_in" slot-scope="data">
         <button
-          @click.stop="checkIn(data.value.appt)"
+          @click.stop="handleClickCheckIn(data.value.appt)"
           class="ga-close btn btn-success btn-sm"
           v-if="!loadingButtons[data.value.appt.appointment_id]"
         >
@@ -253,9 +245,27 @@ export default class AgendaScreen extends Vue {
     this.toggleApptBookingModal(true);
   }
 
+  handleClickCheckIn(  appt ) {
+  
+    // Copied this check over from check-in  modal
+    // Essentially, we do not want to  allow the user to check in a user if  another user
+    // is actively being served but minimized. They must instead be put on hold by CSR.
+    if (this.cannotCheckIn) {
+      this.$store.commit('setMainAlert', 'Already have appointment in progress.  Please close ticket then check-in citizen')
+    } else {
+      this.checkIn(appt);
+    }
+  }
+
+  /**
+   * If the Serve Citizen Modal has a citizen served, we cannot begin serving another.
+   */
+  get cannotCheckIn(): boolean {
+    return !!this.$store.state.serviceModalForm.citizen_id
+  }
+
   // A map of appointment_ids with true/false to show the loading spinner
   private loadingButtons = {}
-
   checkIn( appt ) {
     const tempEvent = {
       title: appt.citizen_name,

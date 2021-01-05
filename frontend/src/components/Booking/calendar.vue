@@ -357,7 +357,15 @@ export default class Calendar extends Vue {
     if (this.offsiteOnly) {
       return this.calendarEvents.filter(ev => ev.resourceId === '_offsite')
     }
-    return this.calendarEvents.filter(x => !x.room.deleted);
+    return this.calendarEvents.filter(x => {
+      // Remove events that belong to deleted rooms
+      // "roomless" events can stay,i.e. when scheduling an un-scheduled appointment.
+      if ( x.room ) {
+        return !x.room.deleted
+      }
+      return true;
+    });
+
   }
 
   get adjustment () {
