@@ -11,7 +11,7 @@
           >
             <b-form inline @submit.stop.prevent>
               <label class="mr-2">
-                Filter Appointments!
+                Filter Appointments
                 <font-awesome-icon
                   icon="filter"
                   class="m-0 p-0"
@@ -112,6 +112,10 @@ import { formatedStartTime } from '@/utils/helpers'
 
 const appointmentsModule = namespace('appointmentsModule')
 
+// For MOMENT, not the calendar
+const SATURDAY = 6;
+const SUNDAY = 1;
+
 @Component({
   components: {
     AppointmentBlackoutModal,
@@ -144,6 +148,12 @@ export default class Appointments extends Vue {
   @appointmentsModule.Mutation('toggleApptBookingModal') public toggleApptBookingModal: any
   @appointmentsModule.Mutation('toggleCheckInModal') public toggleCheckInModal: any
   @appointmentsModule.Mutation('setRescheduling') public setRescheduling: any
+
+  @appointmentsModule.State('clickedAppt') public clickedAppt: any
+  @appointmentsModule.Mutation('setAgendaClickedAppt') public setAgendaClickedAppt: any
+
+  @appointmentsModule.State('clickedTime') public clickedTime: any
+  @appointmentsModule.Mutation('setAgendaClickedTime') public setAgendaClickedTime: any
 
   // vuetify calender
   listView: any = false
@@ -197,8 +207,6 @@ export default class Appointments extends Vue {
   // vuetify calender end
 
   public blockEventSelect: any = false
-  public clickedAppt: any = null
-  public clickedTime: any = null
 
   agendaDay () {
     this.type = 'day'
@@ -221,7 +229,8 @@ export default class Appointments extends Vue {
     }
     let clickedEvent = event
     clickedEvent = { ...clickedEvent, ...{ start: moment(event.start) }, ...{ end: moment(event.end) } }
-    this.clickedAppt = clickedEvent
+    // this.clickedAppt = clickedEvent
+    this.setAgendaClickedAppt(clickedEvent)
     this.highlightEvent(clickedEvent)
     this.toggleCheckInModal(true)
     nativeEvent.stopPropagation()
@@ -246,8 +255,12 @@ export default class Appointments extends Vue {
     this.calendarSetup()
   }
 
+
+  // If  working on  localhost and you get "TypeError: Cannot read property 'next' of undefined"
+  // Just restart `npm run serve`, as it glitches out.
   next () {
-    this.$refs.calendar.next()
+    const daysToMove = this.getDaysToMove('next');
+    this.$refs.calendar.move(daysToMove)
     this.calendarSetup()
   }
 
@@ -256,8 +269,37 @@ export default class Appointments extends Vue {
   }
 
   prev () {
-    this.$refs.calendar.prev()
+    const daysToMove = this.getDaysToMove('prev')
+    this.$refs.calendar.move(daysToMove)
     this.calendarSetup()
+  }
+
+  /**
+   * This function helps skipping weekends on day views
+   * Returns the # of days to move to skip the weekend
+   * used with `this.$refs.calendar.move()`
+   */
+  getDaysToMove(direction: 'next' | 'prev'): number {
+    // Do not handle week/month views.
+    if (this.type  !== 'day') {
+      return 1;
+    }
+    const viewedDate = this.$refs.calendar.value;
+    const dayOfWeek = moment(viewedDate).day()
+    let daysToMove = 1;
+    if (direction === 'next') {    
+      if ((dayOfWeek + 1) === SATURDAY ) {
+        daysToMove = 3;
+      }
+    } else if (direction === 'prev') {
+      daysToMove = -1;
+      if ((dayOfWeek) === SUNDAY ) {
+        // Value must be negative for prev
+        daysToMove = -3;
+      }
+    }
+    // console.log(`getDaysToMove("${direction}")`, { viewedDate, dayOfWeek, daysToMove })
+    return daysToMove
   }
 
   // renderEvent (event) {
@@ -303,18 +345,19 @@ export default class Appointments extends Vue {
       end,
       title: event.title
     }
-    this.clickedTime = e
+    // this.clickedTime = e
+    this.setAgendaClickedTime(e)
     this.setTempEvent(e)
     this.toggleApptBookingModal(true)
     this.blockEventSelect = false
   }
 
   clearClickedAppt () {
-    this.clickedAppt = null
+    this.setAgendaClickedAppt(null)
   }
 
   clearClickedTime () {
-    this.clickedTime = null
+    this.setAgendaClickedTime(null);
   }
 
   today () {

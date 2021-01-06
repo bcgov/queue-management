@@ -101,15 +101,15 @@
               id="serve-citizen-return-to-queue-button"
               >Return to Queue</b-button
             >
-             <!-- <b-button
+             <b-button
               @click="clickUnCheckIn"
-              v-if="reception"
+              v-if="appointmentsEnabled && appointment"
               :disabled="performingAction || commentsTooLong"
               class="btn serve-btn"
               id="serve-citizen-uncheckin-button"
               style="margin-left: 8px;"
-              >Un-Check In</b-button
-            > -->
+              >Return to Calendar</b-button
+            >
           </div>
           <div>
             <b-button
@@ -313,6 +313,13 @@ export default class ServeCitizen extends Vue {
       return true
     }
     return false
+  }
+
+  get appointmentsEnabled() {
+    if (this.user && this.user.office) {
+      return this.user.office.appointments_enabled_ind
+    }
+    return false;
   }
 
   get alertMessage () {
@@ -631,5 +638,9 @@ strong {
 }
 #serve-citizen-return-to-queue-button:hover {
   background: #e8e8e8;
+}
+
+button:disabled {
+  cursor: not-allowed !important;
 }
 </style>

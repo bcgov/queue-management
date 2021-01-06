@@ -37,6 +37,7 @@
               ></v-text-field>
 
               <v-text-field
+                :maxlength="maxChars"
                 v-model="phoneNumber"
                 label="Phone"
                 outlined
@@ -102,6 +103,7 @@ export default class AccountSettingsView extends Vue {
   private readonly getUser!: () => void
   private readonly username!: string
   private valid:boolean = false
+  private maxChars = 20
   private name:string = ''
   private email:string = ''
   private phoneNumber:string = ''
