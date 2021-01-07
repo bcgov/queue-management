@@ -154,6 +154,7 @@ import moment from 'moment'
 
 const defaultHoursDuration = 0.5
 const categoryDefaultDays = 7
+const WEEKEND_STRINGS = ['SAT', 'SUN']
 
 @Component({
   components: {
@@ -257,6 +258,44 @@ export default class Calendar extends Vue {
 
   categories: any = this.roomResources // [] // 'Boardroom 1'
 
+  updated () {
+    this.disableSatSun();
+  }
+
+  /**
+   * The V-Calendar library unfortunately does not support hiding Sat/Sunday when on "Category" view
+   * And we are using "Category" view to show multiple rooms per day.
+   * As such, our workaround solution is to manually add 
+   * a class to the appropriate elements.
+   * 
+   * Called on every `updated()` CD.
+   */
+  disableSatSun() {
+    console.log('ARC - disableSatSun called')
+    const headerElements: NodeListOf<HTMLElement> = document.querySelectorAll('.v-calendar-daily_head-weekday')
+    const columnElements: NodeListOf<HTMLElement> = document.querySelectorAll('.v-calendar-category__columns')
+    const numberElements: NodeListOf<HTMLElement> = document.querySelectorAll('.v-calendar-daily_head-day-label')
+    // Define function inside because we don't need to pollute the main body
+    // with heper function used in one place.
+    // function disableCalendarElement(el: HTMLElement) {
+    function disableCalendarElement(el: HTMLElement) {
+      return el.classList.add('disable-sat-sun')
+    }
+    headerElements.forEach((el: HTMLElement, index) => {
+      // For some strange reason, IE11 gets an illegal \u200e typesetting characters, 
+      // like hidden whitespace. Doesn't happen on any other browser.
+      const elText = el.textContent!.replace('\u200e', '').toUpperCase();
+      if (WEEKEND_STRINGS.includes(elText)) {
+        disableCalendarElement(el)
+        // There are 2 columnElements per headerElement, we only care about second one.
+        // For example, if Sat is index 1, we want to update index 8 of columnElements.
+        disableCalendarElement(columnElements[index + headerElements.length])
+        disableCalendarElement(numberElements[index])
+      }
+    })
+  }
+
+
   fetchEvents ({ start, end }) {
     return this.events
   }
@@ -318,7 +357,15 @@ export default class Calendar extends Vue {
     if (this.offsiteOnly) {
       return this.calendarEvents.filter(ev => ev.resourceId === '_offsite')
     }
-    return this.calendarEvents
+    return this.calendarEvents.filter(x => {
+      // Remove events that belong to deleted rooms
+      // "roomless" events can stay,i.e. when scheduling an un-scheduled appointment.
+      if ( x.room ) {
+        return !x.room.deleted
+      }
+      return true;
+    });
+
   }
 
   get adjustment () {

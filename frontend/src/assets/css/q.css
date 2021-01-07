@@ -198,3 +198,8 @@ html.modal-open::-webkit-scrollbar, body.modal-open::-webkit-scrollbar {
 .v-calendar-daily__scroll-area {
   -ms-overflow-style: auto;
 }
+
+.disable-sat-sun {
+  background-color: #f2f2f2;
+  cursor: not-allowed;
+}

@@ -120,7 +120,12 @@ class AppointmentPut(Resource):
         result = self.appointment_schema.dump(appointment)
 
         if not application.config['DISABLE_AUTO_REFRESH']:
-            socketio.emit('appointment_update', result.data)
+            # Treat checked_in_time as a delete, as we filter those from frontend
+            # this happens when checking in an appointment
+            if "checked_in_time" in json_data:
+                socketio.emit('appointment_delete', id)
+            else:
+                socketio.emit('appointment_update', result.data)
         
 
         return {"appointment": result.data,

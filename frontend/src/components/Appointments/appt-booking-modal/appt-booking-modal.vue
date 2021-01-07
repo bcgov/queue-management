@@ -411,6 +411,8 @@ export default class ApptBookingModal extends Vue {
     if (this.clickedTime) {
       this.$root.$emit('removeTempEvent')
     }
+    this.$router.push('/appointments')
+
     this.$store.commit('toggleEditApptModal', false)
     this.$store.commit('toggleRescheduling', true)
     this.$store.commit('toggleApptEditMode', true)
@@ -434,7 +436,6 @@ export default class ApptBookingModal extends Vue {
       this.selectingService = false
       return
     }
-    console.log('this.clickedTime', this.clickedTime)
     if (this.apptRescheduling) {
       this.$store.commit('toggleRescheduling', false)
       this.setRescheduling(false)
@@ -446,6 +447,20 @@ export default class ApptBookingModal extends Vue {
         }
         this.oldLength = null
       }
+
+
+      // Handles case when re-schedulng from the Agenda panel on The Queue
+      if (this.clickedAppt && this.clickedAppt.end) {
+        this.citizen_name = this.clickedAppt.title
+        this.comments = this.clickedAppt.comments
+        this.contact_information = this.clickedAppt.contact_information
+        this.length = this.clickedAppt.end.clone().diff(this.clickedAppt.start, 'minutes')
+        this.online_flag = this.clickedAppt.online_flag
+        const { service_id } = this.clickedAppt
+        this.setSelectedService(service_id)
+        this.$store.commit('updateAddModalForm', { type: 'service', value: service_id })
+      }
+      
       return
     }
     if (this.clickedTime) {

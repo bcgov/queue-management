@@ -158,7 +158,7 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
   private selectedService: Service = null
   private selectedServiceType = typeof this.selectedService
   private additionalOptions = ''
-  private maxChars = 255
+  private maxChars = 220
   private charsLeft = this.maxChars
   private textCharsPrefix = 'Additional information? (Optional - '
   private textCharsSuffix = ' characters left)'
