@@ -174,9 +174,13 @@ export default class UploadPesticideModal extends Vue {
   public status: any = 'unwritten'
   public destroyed: any = this.actionedExam.exam_destroyed_date !== null
   public submitted: any = false
-  public statusOptions: any = [
+  public exam_printed: any = this.actionedExam.exam_received_date !== null
+  public statusOptions: any = this.exam_printed ? [
     { value: 'unwritten', text: 'Unwritten' },
     { value: 'written', text: 'Written' },
+    { value: 'noshow', text: 'No Show' }
+  ] : [
+    { value: 'unwritten', text: 'Unwritten' },
     { value: 'noshow', text: 'No Show' }
   ]
 
