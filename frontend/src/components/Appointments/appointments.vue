@@ -280,26 +280,30 @@ export default class Appointments extends Vue {
    * used with `this.$refs.calendar.move()`
    */
   getDaysToMove(direction: 'next' | 'prev'): number {
-    // Do not handle week/month views.
     if (this.type  !== 'day') {
-      return 1;
-    }
-    const viewedDate = this.$refs.calendar.value;
-    const dayOfWeek = moment(viewedDate).day()
-    let daysToMove = 1;
-    if (direction === 'next') {    
-      if ((dayOfWeek + 1) === SATURDAY ) {
-        daysToMove = 3;
+      // Just move one week forward/back, simple.
+      return direction === 'next' ? 1 : -1
+    } else {
+      // For days, we have to handle jumping of weekends.
+      const viewedDate = this.$refs.calendar.value;
+      const dayOfWeek = moment(viewedDate).day()
+      let daysToMove = 1;
+      if (direction === 'next') {    
+        if ((dayOfWeek + 1) === SATURDAY ) {
+          daysToMove = 3;
+        }
+      } else if (direction === 'prev') {
+        daysToMove = -1;
+        if ((dayOfWeek) === SUNDAY ) {
+          // Value must be negative for prev
+          daysToMove = -3;
+        }
       }
-    } else if (direction === 'prev') {
-      daysToMove = -1;
-      if ((dayOfWeek) === SUNDAY ) {
-        // Value must be negative for prev
-        daysToMove = -3;
-      }
+      // console.log(`getDaysToMove("${direction}")`, { viewedDate, dayOfWeek, daysToMove })
+      return daysToMove
     }
-    // console.log(`getDaysToMove("${direction}")`, { viewedDate, dayOfWeek, daysToMove })
-    return daysToMove
+    // console.error('Unable to properly calculate ')
+    // return 1;
   }
 
   // renderEvent (event) {
