@@ -73,6 +73,8 @@ limitations under the License.*/
         </button>
       </template>
     </b-table>
+    <ApptBookingModal :clickedTime="clickedTime" :clickedAppt="clickedAppt" />
+    <CheckInModal :clickedAppt="clickedAppt" />
   </div>
 </template>
 <script lang="ts">
