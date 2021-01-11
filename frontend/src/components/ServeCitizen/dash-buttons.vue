@@ -105,7 +105,8 @@
             citizenInvited ||
             showTimeTrackingIcon ||
             performingAction ||
-            showAdmin
+            showAdmin ||
+            showAgendaScreenModal
           "
           right
         >
