@@ -175,7 +175,8 @@ class OfficeConfig(Base):
                      'appointments_days_limit': 'Appointment Days Limit',
                      'max_person_appointment_per_day': 'Maximum number of appointments allowed for same person per day',
                      'office_email_paragraph': 'Office Email Paragraph',
-                     'soonest_appointment': 'Soonest Appointment (minutes)'
+                     'soonest_appointment': 'Soonest Appointment (minutes)',
+                     'appointment_duration': 'Default Appointment Duration'
                      }
 
     column_sortable_list = ['office_name',
@@ -253,7 +254,8 @@ class OfficeConfigGA(OfficeConfig):
     column_labels = {
         'quick_list': 'Quick List',
         'back_office_list': 'Back Office List',
-        'soonest_appointment': 'Soonest Appointment (minutes)'
+        'soonest_appointment': 'Soonest Appointment (minutes)',
+        'appointment_duration': 'Default Appointment Duration'
     }
 
     column_list = [

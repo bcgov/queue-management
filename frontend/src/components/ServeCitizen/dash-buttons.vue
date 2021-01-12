@@ -88,7 +88,8 @@
             citizenInvited ||
             showTimeTrackingIcon ||
             performingAction ||
-            showAdmin
+            showAdmin ||
+            showAgendaScreenModal
           "
           id="add-citizen-button"
           >Back Office</b-button
@@ -104,7 +105,8 @@
             citizenInvited ||
             showTimeTrackingIcon ||
             performingAction ||
-            showAdmin
+            showAdmin ||
+            showAgendaScreenModal
           "
           right
         >
@@ -140,6 +142,7 @@ export default class DashButtons extends Vue {
   @State('serveNowStyle') private serveNowStyle!: any
   @State('user') private user!: any
   @State('showInviteCitizenSpinner') private showInviteCitizenSpinner!: any
+  @State('showAgendaScreenModal') private showAgendaScreenModal!: any
 
   @Getter('reception') private reception!: any;
   @Getter('citizens_queue') private citizens_queue!: any;

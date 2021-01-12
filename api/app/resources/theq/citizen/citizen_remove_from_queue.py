@@ -15,7 +15,7 @@ limitations under the License.'''
 import logging
 from flask import g
 from flask_restx import Resource
-from qsystem import api, api_call_with_retry, db, oidc, socketio, my_print
+from qsystem import api, api_call_with_retry, db, oidc, socketio, my_print, application
 from app.models.theq import Citizen, CSR
 from app.models.theq import SRState
 from app.models.bookings import Appointment
@@ -56,18 +56,24 @@ class CitizenRemoveFromQueue(Resource):
 
         # This "un-check-in"s the appointment, returning it to calendar and removing from the queue.
         appointment.checked_in_time = None
-        db.session.commit()
 
-        # ARC - Is below necessary? Think not.  Causes issue when re-checking in a removed one.
-        # It DOES remove from queue, but stops it from being re-added?
-        # active_service_request.remove_from_queue()
+        # Delete all "periods", FKs on service req
+        active_service_request.remove_from_queue()
+        # Delete the service req. 
+        db.session.delete(active_service_request)
+        db.session.commit()
 
         # appointment, warning = self.appointment_schema.load(json_data, instance=appointment, partial=True)
         # if warning:
         #     logging.warning("WARNING: %s", warning)
         #     return {"message": warning}, 422
 
+        socketio.emit('update_customer_list', {}, room=csr.office_id)
+        socketio.emit('citizen_invited', {}, room='sb-%s' % csr.office.office_number)
         result = self.appointment_schema.dump(appointment)
+
+        if not application.config['DISABLE_AUTO_REFRESH']:
+            socketio.emit('appointment_create', result.data)
 
         return {"appointment": result.data,
                 "errors": result.errors}, 200

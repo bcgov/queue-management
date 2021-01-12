@@ -31,7 +31,9 @@ export default class GeocoderService {
       echo: true,
       interpolation: 'adaptive',
       addressString: address,
-      autoComplete: true
+      autoComplete: true,
+      matchPrecisionNot: 'street'
+
     }
 
     const response = await axios.get(ADDRESS_URL, { params })

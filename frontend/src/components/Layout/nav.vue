@@ -16,6 +16,16 @@
 
 <template>
   <div style>
+    <b-alert
+      :show="showIEWarning"
+      style="h-align: center"
+      variant="danger"
+      dismissible
+      fade
+    >
+      You are using Internet Explorer, and may have a degraded experience. To increase performance and access all features please use a modern browser, like 
+      Chrome or Microsoft Edge
+    </b-alert>
     <!-- <v-card class="m-4" max-width="100%" elevation="5"> -->
     <div class="dash-button-flex-button-container pb-0 mb-3 mx-4">
       <!-- SLOT FOR EACH VIEW'S BUTTON CONTROLS-->
@@ -61,25 +71,12 @@
       </div>
       <div />
       <div v-if="showHamburger">
-        <!-- 
-          ARC:
-          - Changing 'right' to 'left' helps a bit, but doesn't fix underlying issue
-          - Reverting this file to bcgov/master doesn't fix
-          -- Implies it's CSS changes elsewhere.
-
-          Reference, original commit, before this phase of AOT work:
-          4507769312d99090908f3009d42a0b0bd07fc36b
-          https://github.com/bcgov/queue-management/tree/4507769312d99090908f3009d42a0b0bd07fc36b
-          
-          boundary="window" helps with IE11 compat, otherwise we get horizontal scrolling
-          This DOES cause a "flash" as the component is rendered.
-         -->
         <b-dropdown
           variant="outline-primary"
           class="pl-0 ml-0 mr-3"
           right
           id="nav-dropdown"
-          boundary='window'
+          :popper-opts="dropdownPopperOpts"
         >
           <span slot="button-content">
             <font-awesome-icon icon="bars" style="font-size: 1.18rem" />
@@ -104,7 +101,7 @@
               id="office_agenda"
               >Office Agenda</b-dropdown-item
             >
-            <span v-if="user.role && user.role.role_code == 'GA'">
+            <span v-if="user.role && (user.role.role_code == 'GA' || user.role.role_code == 'SUPPORT')">
               <b-dropdown-item @click="clickGAScreen" :class="gaPanelStyle">
                 <font-awesome-icon
                   v-if="showGAScreenModal"
@@ -119,6 +116,20 @@
               </b-dropdown-item>
               <b-dropdown-divider />
             </span>
+            <b-dropdown-item v-if='appointmentsEnabled' @click='clickAgendaScreen' :class='agendaPanelStyle'>
+              <font-awesome-icon
+                  v-if="showAgendaScreenModal"
+                  icon="check"
+                  class="m-0 p-0"
+                  style="
+                    padding-left: 0.25em !important;
+                    padding-top: 2px !important;
+                  "
+                />
+              <span>Show Day Agenda</span>
+              <b-dropdown-divider />
+            </b-dropdown-item>
+            
             <b-dropdown-item v-if="showAdmin" to="/admin"
               >Administration</b-dropdown-item
             >
@@ -159,6 +170,7 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 
 import AddCitizen from '../AddCitizen/add-citizen.vue'
 import ServeCitizen from '../ServeCitizen/serve-citizen.vue'
+import config from '../../../config'
 
 @Component({
   components: {
@@ -175,6 +187,8 @@ export default class Nav extends Vue {
   @State('serviceModalForm') private serviceModalForm!: any
   @State('serviceBegun') private serviceBegun!: any
   @State('showGAScreenModal') private showGAScreenModal!: any
+
+  @State('showAgendaScreenModal') private showAgendaScreenModal!: any
   // @State('showServiceModal') private showServiceModal!: any
   @State('showTimeTrackingIcon') private showTimeTrackingIcon!: any
   @State('showAddModal') private showAddModal!: any
@@ -184,6 +198,9 @@ export default class Nav extends Vue {
   @Getter('showAppointments') private showAppointments!: any;
 
   @Action('clickGAScreen') public clickGAScreen: any
+  @Action('clickAgendaScreen') public clickAgendaScreen: any
+
+  
   @Action('clickAddCitizen') public clickAddCitizen: any
   @Action('clickRefresh') public clickRefresh: any
 
@@ -195,6 +212,27 @@ export default class Nav extends Vue {
   private flashIcon: boolean = true
   private showSpacer: boolean = false
   toggleTimeTrackingIcon: any
+    dropdownPopperOpts = {
+    modifiers: {
+      computeStyle: {
+        gpuAcceleration: false
+      }
+    }
+  }
+
+  showIEWarning: boolean = config.IS_INTERNET_EXPLORER;
+
+  mounted() {
+    // We don't want to re-evaluate this every time appointmentsEnabled is re-evaluated
+    this.showIEWarning = this.showIEWarning && this.appointmentsEnabled
+  }
+
+  get appointmentsEnabled() : boolean {
+    if (this.user && this.user.office) {
+      return !!(this.user.office.appointments_enabled_ind)
+    }
+    return false;
+  }
 
   @Watch('showIcon')
   onShowIconChange (newV: any, oldV: any) {
@@ -245,6 +283,14 @@ export default class Nav extends Vue {
       }
     }
     return false
+  }
+
+  get agendaPanelStyle () {
+    let classStyle = 'gaScreenUnchecked'
+    if (this.showAgendaScreenModal) {
+      classStyle = 'gaScreenChecked'
+    }
+    return classStyle
   }
 
   get gaPanelStyle () {

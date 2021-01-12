@@ -10,7 +10,7 @@
     @click:append="fetchLocation"
     v-model="model"
     :search-input.sync="search"
-    cache-items
+    no-filter
     :items="results"
     item-text="name"
     item-value="coords"

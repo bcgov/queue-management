@@ -15,6 +15,7 @@
 
 import { Axios, searchNestedObject } from './../helpers'
 import { makeBookingReqObj } from '../helpers/makeBookingReqObj'
+import AppointmentsModule from '../modules/appointments-module';
 import moment from 'moment'
 
 const DEFAULT_COUNTER_NAME = 'Counter'
@@ -257,6 +258,13 @@ export const commonActions: any = {
             if (b.room_id) {
               booking.resourceId = b.room_id
               booking.room = b.room
+
+              // With Vuetify calendar, if the bookings aren't deleted
+              // the room calenar will be created.  This hides it
+              // entirely from the frontend UI.
+              if (booking.room && booking.room.deleted) {
+                return;
+              }
             }
             if (!b.room_id) {
               booking.resourceId = '_offsite'
@@ -286,6 +294,7 @@ export const commonActions: any = {
             booking.timed = true
             calendarEvents.push(booking)
           })
+          
           context.commit('setEvents', calendarEvents)
           resolve()
         })
@@ -1273,6 +1282,10 @@ export const commonActions: any = {
     })
   },
 
+  clickAgendaScreen (context) {
+    context.commit('toggleAgendaScreenModal', !context.state.showAgendaScreenModal)
+  },
+
   clickHold (context) {
     const { citizen_id } = context.state.serviceModalForm
     context.commit('setPerformingAction', true)
@@ -1444,12 +1457,11 @@ export const commonActions: any = {
     Axios(context)
       .post(`/citizens/${citizen_id}/remove_from_queue/`, {})
       .then((res) => {
-        console.log('clickUnCheckIn response', { res })
         context.commit('toggleInvitedStatus', false)
         context.commit('setPerformingAction', false)
         context.commit('toggleServiceModal', false)
         context.commit('resetServiceModal')
-        context.dispatch('flashServeNow', 'stop')
+        context.dispatch('appointmentsModule/getAppointments')
       })
       .catch(() => {
         context.commit('setPerformingAction', false)
