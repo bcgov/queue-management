@@ -94,12 +94,20 @@
           </b-form-group>
         </b-col>
         <b-col>
-          <b-form-group v-if="isNotBlackoutFlag" class="mb-0 mt-2">
+          <b-form-group v-if="isNotBlackoutFlag && allow_reschedule" class="mb-0 mt-2">
             <label class="mb-0">Change Date/Time</label><br />
             <b-button @click="reschedule" class="btn-secondary w-100"
               >Reschedule</b-button
             >
           </b-form-group>
+          <b-form-group v-if="isNotBlackoutFlag && !allow_reschedule" class="mb-0 mt-2">
+            <label class="mb-0">Change Date/Time</label><br />
+            <span id="disabled-wrapper">
+            <b-button disabled @click="reschedule" class="btn-secondary w-100"
+              >Reschedule</b-button>
+            </span>
+          </b-form-group>
+          <b-tooltip target="disabled-wrapper">Appointments in the past can't be rescheduled - please create new appointment</b-tooltip>
         </b-col>
         <!--  Column to delete blackout period or series (if a clicked appointment?) -->
         <b-col v-if="clickedAppt">
@@ -241,6 +249,7 @@ export default class ApptBookingModal extends Vue {
   public start: any = null
   public validate: boolean = false
   public online_flag: boolean = false
+  public allow_reschedule : boolean = false
 
   get appointments () {
     if (this.clickedAppt) {
@@ -472,6 +481,11 @@ export default class ApptBookingModal extends Vue {
       this.clearAddModal()
     }
     if (this.clickedAppt && this.clickedAppt.end) {
+      // Incident INC0040389  - Appointments in Past can only be deleted not rescheduled
+      this.allow_reschedule = true
+      if (this.clickedAppt.start < moment.now()) {
+          this.allow_reschedule = false
+      } 
       this.citizen_name = this.clickedAppt.title
       this.comments = this.clickedAppt.comments
       this.contact_information = this.clickedAppt.contact_information
@@ -550,7 +564,6 @@ export default class ApptBookingModal extends Vue {
         }
         return
       }
-      console.log('e', e)
       this.postAppointment(e).then(() => {
         this.getAppointments().then(() => {
           finish()

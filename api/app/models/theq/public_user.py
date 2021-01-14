@@ -15,6 +15,9 @@ limitations under the License.'''
 from app.models.theq import Base, Citizen
 from qsystem import cache, db
 from app.models.bookings.appointments import Appointment
+from datetime import datetime
+from pytz import timezone
+import pytz
 
 
 class PublicUser(Base):
@@ -52,12 +55,14 @@ class PublicUser(Base):
     @classmethod
     def find_appointments_by_username(cls, username: str):
         """Find all appointments for the user."""
+        today  = datetime.now(timezone('UTC'))
+
         query = db.session.query(Appointment) \
             .join(Citizen) \
             .join(PublicUser) \
             .filter(PublicUser.username == username, Citizen.user_id == PublicUser.user_id, Appointment.citizen_id == Citizen.citizen_id) \
-            .filter(Appointment.checked_in_time.is_(None))
-
+            .filter(Appointment.checked_in_time.is_(None)) \
+            .filter(Appointment.start_time > today )
         return query.all()
 
     @classmethod
