@@ -1,6 +1,6 @@
 <template>
   <fragment>
-    <div class="d-flex">
+    <div class="d-flex butttons-appointments">
       <div>
         <form inline>
           <b-button class="btn-primary" @click="prev">
@@ -92,3 +92,8 @@ export default class ButtonsAppointments extends Vue {
   }
 }
 </script>
+<style scoped>
+.butttons-appointments {
+  margin-right: auto;
+}
+</style>
