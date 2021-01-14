@@ -89,7 +89,8 @@ class KeyCloakService {
         timeSkew: 0,
         token,
         refreshToken: ConfigHelper.getFromSession(SessionStorageKeys.KeyCloakRefreshToken) || undefined,
-        idToken: ConfigHelper.getFromSession(SessionStorageKeys.KeyCloakIdToken) || undefined
+        idToken: ConfigHelper.getFromSession(SessionStorageKeys.KeyCloakIdToken) || undefined,
+        pkceMethod: 'S256'
       }
       // Here we clear session storage, and add a flag in to prevent the app from
       // putting tokens back in from returning async calls  (see #2341)
@@ -97,20 +98,20 @@ class KeyCloakService {
       // ConfigHelper.addToSession(SessionStorageKeys.PreventStorageSync, true)
       return new Promise((resolve, reject) => {
         this.kc && this.kc.init(kcOptions)
-          .success(authenticated => {
+          .then(authenticated => {
             if (!authenticated) {
               resolve()
             }
             redirectUrl = redirectUrl || `${window.location.origin}${process.env.VUE_APP_PATH}`
             this.kc && this.kc.logout({ redirectUri: redirectUrl })
-              .success(() => {
+              .then(() => {
                 resolve()
               })
-              .error(error => {
+              .catch(error => {
                 reject(error)
               })
           })
-          .error(error => {
+          .catch(error => {
             reject(error)
           })
       })
@@ -134,12 +135,12 @@ class KeyCloakService {
     }
     let tokenExpiresIn = this.kc.tokenParsed.exp - Math.ceil(new Date().getTime() / 1000) + this.kc.timeSkew + 100
     this.kc && this.kc.updateToken(tokenExpiresIn)
-      .success(refreshed => {
+      .then(refreshed => {
         if (refreshed) {
           this.initSession()
         }
       })
-      .error(() => {
+      .catch(() => {
         this.cleanupSession()
       })
   }

@@ -36,7 +36,7 @@ class TokenServices {
     return new Promise((resolve, reject) => {
       this.kc = Keycloak(ConfigHelper.getKeycloakConfigUrl())
       this.kc.init(kcOptions)
-        .success(authenticated => {
+        .then(authenticated => {
           // eslint-disable-next-line no-console
           console.info('[TokenServices] is User Authenticated?: Syncing ' + authenticated)
           if (this.kc && authenticated) {
@@ -48,7 +48,7 @@ class TokenServices {
             this.clearSession()
           }
         })
-        .error(error => {
+        .catch(error => {
           reject(new Error('Could not Initialize KC' + error))
         })
     })
@@ -65,7 +65,7 @@ class TokenServices {
     return new Promise((resolve, reject) => {
       if (this.kc) {
         this.kc.updateToken(-1)
-          .success(refreshed => {
+          .then(refreshed => {
             if (refreshed) {
               // eslint-disable-next-line no-console
               console.log('[TokenServices] One time Token Refreshed ')
@@ -73,7 +73,7 @@ class TokenServices {
               resolve()
             }
           })
-          .error(() => {
+          .catch(() => {
             reject(new Error('Could not refresh Token'))
           })
       } else {
@@ -111,7 +111,7 @@ class TokenServices {
       // eslint-disable-next-line no-console
       console.log('[TokenServices] Refreshing Token Attempt: %s ', ++this.counter)
       this.kc!.updateToken(-1)
-        .success(refreshed => {
+        .then(refreshed => {
           if (refreshed) {
             // eslint-disable-next-line no-console
             console.log('Token successfully refreshed')
@@ -119,7 +119,7 @@ class TokenServices {
             this.scheduleRefreshToken(refreshEarlyTimeinMilliseconds)
           }
         })
-        .error(() => {
+        .catch(() => {
           clearTimeout(this.timerId)
         })
     }, refreshInMilliSeconds)
