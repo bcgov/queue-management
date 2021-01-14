@@ -6,7 +6,7 @@
     hide-footer
     @hidden="reset"
     @shown="populateForm"
-    size="md"
+    :size="(examType === 'pest') ? 'lg' : 'md'"
   >
     <FailureExamAlert class="m-0 p-0" />
     <div v-if="exam">

@@ -19,7 +19,7 @@
           variant="primary"
           class="ml-2"
           size="md"
-          @click="submit"
+          @click="deleteApptWarning"
         >
           Submit</b-button
         >
@@ -500,6 +500,36 @@
         </b-card>
       </b-collapse>
     </b-form>
+    <v-dialog
+      v-model="confirmDialog"
+      max-width="400"
+    >
+      <v-card>
+        <v-card-title class="headline">
+         Warning
+        </v-card-title>
+        <v-card-text>
+          {{ this.warning_text }}
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="red darken-1"
+            text
+            @click="confirmBlackout(false)"
+          >
+            No
+          </v-btn>
+          <v-btn
+            color="red darken-1"
+            text
+            @click="confirmBlackout(true)"
+          >
+            Yes
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </b-modal>
 </template>
 
@@ -520,6 +550,7 @@ const appointmentsModule = namespace('appointmentsModule')
 })
 export default class AppointmentBlackoutModal extends Vue {
   @appointmentsModule.State('showAppointmentBlackoutModal') private showAppointmentBlackoutModal!: any
+  @appointmentsModule.State('appointments') private myappointments!: any
 
   @appointmentsModule.Getter('is_recurring_enabled') private is_recurring_enabled!: any;
 
@@ -554,12 +585,18 @@ export default class AppointmentBlackoutModal extends Vue {
   public single_blackout_boolean: any = true
   public recurring_blackout_boolean: any = true
   public rrule_array: any = []
+  public filtered_appt: any = []
+  public filtered_appt_start: any = []
+  public filtered_appt_end: any = []
   public rrule_text: any = ''
   public recurring_input_boolean: any = false
   public single_input_boolean: any = false
   public next_boolean: any = false
   public single_input_state: any = ''
   public recurring_input_state: any = ''
+  public warning_text: any = ''
+  private confirmDialog: boolean = false
+  public appt_overlap: any = 0
 
   get modal () {
     return this.showAppointmentBlackoutModal
@@ -617,6 +654,82 @@ export default class AppointmentBlackoutModal extends Vue {
     this.rrule_text = ''
     this.rrule_array = []
     this.toggleAppointmentBlackoutModal(false)
+  }
+
+  private async confirmBlackout (isAgree: boolean) {
+    if (isAgree) {
+      this.submit()
+      this.confirmDialog = false
+    } else {
+      this.confirmDialog = false
+      this.rrule_text = ''
+      this.rrule_array = []
+      this.recurring_input_state = ''
+      this.single_input_boolean = ''
+    }
+  }
+
+  private async countApptWarning (e) {
+    this.filtered_appt = this.myappointments.filter(appt => appt.blackout_flag === 'N' && 
+                                                    moment(appt.start_time).format('YYYY-MM-DD HH:mm:ssZ') >= e.start_time &&
+                                                    moment(appt.end_time).format('YYYY-MM-DD HH:mm:ssZ') <= e.end_time)
+    
+    this.filtered_appt_start = this.myappointments.filter(appt => appt.blackout_flag === 'N' && 
+                                                          moment(appt.start_time).format('YYYY-MM-DD HH:mm:ssZ') < e.start_time &&
+                                                          moment(appt.end_time).format('YYYY-MM-DD HH:mm:ssZ') > e.start_time)
+    
+    this.filtered_appt_end = this.myappointments.filter(appt => appt.blackout_flag === 'N' && 
+                                                        moment(appt.start_time).format('YYYY-MM-DD HH:mm:ssZ') < e.end_time &&
+                                                        moment(appt.end_time).format('YYYY-MM-DD HH:mm:ssZ') > e.end_time)
+    
+    this.appt_overlap = this.appt_overlap + this.filtered_appt.length + this.filtered_appt_start.length + this.filtered_appt_end.length
+  }
+
+  deleteApptWarning () {
+    // INC0056259 - Popup Warning message before committing Blackouts
+    this.appt_overlap = 0
+    const date = moment(this.blackout_date).clone().format('YYYY-MM-DD')
+    const start = moment(this.start_time).clone().format('HH:mm:ss')
+    const start_date = moment(date + ' ' + start).format('YYYY-MM-DD HH:mm:ssZ')
+    const end = moment(this.end_time).clone().format('HH:mm:ss')
+    const end_date = moment(date + ' ' + end).format('YYYY-MM-DD HH:mm:ssZ')
+    const uuidv4 = require('uuid/v4')
+    const recurring_uuid = uuidv4()
+    if (this.rrule_array.length > 0) {
+      this.rrule_array.forEach(item => {
+        const e: any = {
+          start_time: item.start,
+          end_time: item.end,
+          citizen_name: this.user_name,
+          contact_information: this.user_contact_info,
+          blackout_flag: 'Y',
+          recurring_uuid: recurring_uuid
+        }
+        if (this.notes) {
+          e.comments = this.notes
+        }
+        this.countApptWarning(e)
+      })
+    } else if (this.rrule_array.length === 0) {
+      const e: any = {
+        start_time: start_date,
+        end_time: end_date,
+        citizen_name: this.user_name,
+        contact_information: this.user_contact_info,
+        blackout_flag: 'Y'
+      }
+      if (this.notes) {
+        e.comments = this.notes
+      }
+      this.countApptWarning(e)
+    }
+    if (this.appt_overlap > 0) {
+      this.warning_text = "There is " + this.appt_overlap + " appointment(s) that will be cancelled due to Blackout. Are you sure you want to create the Blackout?"
+      this.confirmDialog=true;
+      this.toggleAppointmentBlackoutModal(false);
+    } else {
+      this.submit()
+    }
   }
 
   submit () {
@@ -699,6 +812,7 @@ export default class AppointmentBlackoutModal extends Vue {
     const duration = moment.duration(moment(this.recurring_end_time).diff(moment(this.recurring_start_time)))
     const duration_minutes = duration.asMinutes()
     let input_frequency: any = null
+    let end_adj_day: any = null
     const local_dates_array: any = []
 
     switch (this.selected_frequency[0]) {
@@ -719,8 +833,15 @@ export default class AppointmentBlackoutModal extends Vue {
     if (isNaN(start_year) == false || isNaN(end_year) == false) {
       // TODO Might be Deprecated -- IF RRule Breaks, this is where it will happen
       // TODO remove tzid from rule object
+      // INC0048019 - fix UTC error by creating new end day and if end_hour is 4pm PACIFIC (16:00) or later then add 1 day to end of series   ozamani 12/17/2020
+      if (start_hour > 15 && end_hour < 8) {
+        end_adj_day = end_day + 1
+      } else {
+        end_adj_day = end_day
+      }
       const date_start = new Date(Date.UTC(start_year, start_month - 1, start_day, start_hour, start_minute))
-      const until = new Date(Date.UTC(end_year, end_month - 1, end_day, end_hour, end_minute))
+      const until = new Date(Date.UTC(end_year, end_month - 1, end_adj_day, end_hour, end_minute))
+
       const rule = new RRule({
         freq: input_frequency,
         count: this.selected_count,
@@ -731,10 +852,14 @@ export default class AppointmentBlackoutModal extends Vue {
       })
       const array = rule.all()
       this.rrule_text = rule.toText()
-
       array.forEach(date => {
-        const formatted_start_date = moment(date).clone().set({ hour: local_start_hour }).format('YYYY-MM-DD HH:mm:ssZ')
-        const formatted_end_date = moment(date).clone().set({ hour: local_start_hour }).add(duration_minutes, 'minutes').format('YYYY-MM-DD HH:mm:ssZ')
+         // INC0048019 - fix UTC error by creating new date field and if local time is 4pm PACIFIC (16:00) or later then add 1 day to series   ozamani 12/17/2020
+        const adj_date = moment(date)
+         if (local_start_hour >= 16 && start_hour == 0) {
+          adj_date.add(1, 'day')
+        }
+        const formatted_start_date = moment(adj_date).clone().set({ hour: local_start_hour }).format('YYYY-MM-DD HH:mm:ssZ')
+        const formatted_end_date = moment(adj_date).clone().set({ hour: local_start_hour }).add(duration_minutes, 'minutes').format('YYYY-MM-DD HH:mm:ssZ')
         local_dates_array.push({ start: formatted_start_date, end: formatted_end_date })
       })
     }
