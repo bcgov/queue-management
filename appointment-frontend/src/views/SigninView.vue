@@ -37,8 +37,8 @@ export default class SigninView extends Vue {
 
   private async mounted () {
     // Initialize keycloak session
-    const kcInit = await this.initKeycloak(this.idpHint)
-    kcInit.success(async (authenticated: boolean) => {
+    const kcInit = this.initKeycloak(this.idpHint)
+    kcInit.then(async (authenticated: boolean) => {
       if (authenticated) {
         // Set values to session storage
         KeyCloakService.initSession()
@@ -59,7 +59,7 @@ export default class SigninView extends Vue {
         }
       }
     })
-      .error(() => {
+      .catch(() => {
         if (this.redirectUrlLoginFail) {
           window.location.assign(decodeURIComponent(this.redirectUrlLoginFail))
         }
