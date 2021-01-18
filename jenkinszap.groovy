@@ -261,7 +261,7 @@ podTemplate(
         stage('ZAP Security Scan') {          
             def retVal = sh (
                 returnStatus: true, 
-                script: "/zap/zap-baseline.py -r index.html -t https://https://dev-qms.apps.silver.devops.gov.bc.ca/"
+                script: "/zap/zap-baseline.py -r index.html -t https://dev-qms.apps.silver.devops.gov.bc.ca/"
             )
             publishHTML([
                 allowMissing: false, 
