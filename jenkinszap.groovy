@@ -28,6 +28,7 @@ def API_IMAGE_HASH = ""
 def FRONTEND_IMAGE_HASH = ""
 def APPOINTMENT_IMAGE_HASH = ""
 def REMINDER_IMAGE_HASH = ""
+def owaspPodLabel = "jenkins-agent-zap"
 
 String getNameSpace() {
     def NAMESPACE = sh (
@@ -72,44 +73,6 @@ podTemplate(
          stage('Checkout Source') {
             echo "checking out source"
             checkout scm
-        }
-       stage('SonarQube Analysis') {
-            echo ">>> Performing static analysis <<<"
-            SONAR_ROUTE_NAME = 'sonarqube'
-            SONAR_ROUTE_NAMESPACE = sh (
-                script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^namespace/{print $2}\'',
-                returnStdout: true
-            ).trim()
-            SONAR_PROJECT_NAME = 'Queue Management'
-            SONAR_PROJECT_KEY = 'queue-management'
-            SONAR_PROJECT_BASE_DIR = sh (
-                    script: "pwd",
-                    returnStdout: true
-            ).trim()
-            SONAR_SOURCES = 'api,frontend,appointment-frontend,jobs'
-            SONARQUBE_PWD = sh (
-                script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^sonarqube_key/{print $2}\'',
-                returnStdout: true
-            ).trim()
-
-            SONARQUBE_URL = sh (
-                script: 'oc get routes -o wide --no-headers | awk \'/sonarqube/{ print match($0,/edge/) ?  "https://"$2 : "http://"$2 }\'',
-                returnStdout: true
-            ).trim()
-
-            dir('sonar-runner') {
-                sh (
-                    returnStdout: true,
-                    script: "./gradlew sonarqube --stacktrace --info \
-                        -Dsonar.verbose=true \
-                        -Dsonar.login=${SONARQUBE_PWD} \
-                        -Dsonar.host.url=${SONARQUBE_URL} \
-                        -Dsonar.projectName='${SONAR_PROJECT_NAME}' \
-                        -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-                        -Dsonar.projectBaseDir=${SONAR_PROJECT_BASE_DIR} \
-                        -Dsonar.sources=${SONAR_SOURCES}"
-                )
-            }
         }
         parallel Build_Staff_FE_NPM: {
             stage("Build Front End NPM..") {
@@ -277,6 +240,48 @@ podTemplate(
         }
     }
 }
+podTemplate(
+    label: owaspPodLabel, 
+    name: owaspPodLabel, 
+    serviceAccount: 'jenkins', 
+    cloud: 'openshift', 
+    containers: [ containerTemplate(
+        name: 'jenkins-agent-zap',
+        image: 'image-registry.openshift-image-registry.svc:5000/5c0dde-tools/jenkins-agent-zap:latest',
+        resourceRequestCpu: '500m',
+        resourceLimitCpu: '1000m',
+        resourceRequestMemory: '3Gi',
+        resourceLimitMemory: '4Gi',
+        workingDir: '/home/jenkins',
+        command: '',
+        args: '${computer.jnlpmac} ${computer.name}'
+    )]
+) {
+    node(owaspPodLabel) {
+        stage('ZAP Security Scan') {          
+            def retVal = sh (
+                returnStatus: true, 
+                script: "/zap/zap-baseline.py -r index.html -t https://https://dev-qms.apps.silver.devops.gov.bc.ca/"
+            )
+            publishHTML([
+                allowMissing: false, 
+                alwaysLinkToLastBuild: false, 
+                keepAll: true, 
+                reportDir: '/zap/wrk', 
+                reportFiles: 'index.html', 
+                reportName: 'OWASPReport', 
+            ])
+            echo "Return value is: ${retVal}"
+
+            script {
+                if (retVal != 0) {
+                    echo "MARKING BUILD AS UNSTABLE"
+                    currentBuild.result = 'UNSTABLE'
+                }
+            }
+        }
+    }
+  }
 node {
     stage("Deploy to test") {
         input "Deploy to test?"
