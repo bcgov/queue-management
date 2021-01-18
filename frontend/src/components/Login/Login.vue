@@ -163,7 +163,8 @@ export default class Login extends Vue {
 
   
   get canSwitchOffices () {
-    return ['SUPPORT', 'GA'].includes(this.role_code);
+    // allow all users to switch offices
+    return true
   }
   
 
