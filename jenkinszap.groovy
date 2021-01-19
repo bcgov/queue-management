@@ -259,7 +259,7 @@ podTemplate(
 ) {
     node(owaspPodLabel) {
         zap_scan_frontend:{
-            stage('ZAP Security Scan') {          
+            stage('ZAP Security Scan frontend') {          
                 def retVal = sh (
                     returnStatus: true, 
                     script: "/zap/zap-baseline.py -r index.html -t https://dev-qms.apps.silver.devops.gov.bc.ca/"
@@ -270,7 +270,7 @@ podTemplate(
                     keepAll: true, 
                     reportDir: '/zap/wrk', 
                     reportFiles: 'index.html', 
-                    reportName: 'OWASPReport', 
+                    reportName: 'OWASPReport_frontend', 
                 ])
                 echo "Return value is: ${retVal}"
 
