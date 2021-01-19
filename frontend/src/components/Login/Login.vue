@@ -73,12 +73,7 @@ limitations under the License.*/
          <label v-if="!showOfficeSwitcher" class="navbar-label navbar-user"
           >User: {{ this.$store.state.user.username }}</label
         >
-        
-        <label v-if='!canSwitchOffices' class="navbar-label"
-          >Office: {{ this.$store.state.user.office.office_name }}</label
-        >
-        
-        <div v-else>
+        <div>
           <template v-if="!showOfficeSwitcher">
              <label class="navbar-label">
                <span @click="setOfficeSwitcher(!showOfficeSwitcher)" 
