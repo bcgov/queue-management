@@ -31,14 +31,6 @@ podTemplate(
                     reportFiles: 'index1.html', 
                     reportName: 'OWASPReportfrontend', 
                 ])
-                echo "Return value is: ${retVal}"
-
-                script {
-                    if (retVal != 0) {
-                        echo "MARKING BUILD AS UNSTABLE"
-                        currentBuild.result = 'UNSTABLE'
-                    }
-                }
         }
         zap_scan_appointment:{
             stage('ZAP Security Scan') {          
