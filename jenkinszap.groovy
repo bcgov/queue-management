@@ -270,7 +270,7 @@ podTemplate(
                     keepAll: true, 
                     reportDir: '/zap/wrk', 
                     reportFiles: 'index.html', 
-                    reportName: 'OWASPReport_frontend', 
+                    reportName: 'OWASPReportfrontend', 
                 ])
                 echo "Return value is: ${retVal}"
 
