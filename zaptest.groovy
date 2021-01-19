@@ -21,14 +21,14 @@ podTemplate(
             stage('ZAP Security Scan frontend') {          
                 def retVal = sh (
                     returnStatus: true, 
-                    script: "/zap/zap-baseline.py -x index.xml -t https://dev-qms.apps.silver.devops.gov.bc.ca/"
+                    script: "/zap/zap-baseline.py -x result.xml -t https://dev-qms.apps.silver.devops.gov.bc.ca/"
                 )
                 publishHTML([
                     allowMissing: false, 
                     alwaysLinkToLastBuild: false, 
                     keepAll: true, 
                     reportDir: '/zap/wrk', 
-                    reportFiles: 'index.xml', 
+                    reportFiles: 'result.xml', 
                     reportName: 'OWASPReportfrontend', 
                 ])
         }
