@@ -258,7 +258,7 @@ podTemplate(
     )]
 ) {
     node(owaspPodLabel) {
-        parallel zap_scan_frontend:{
+        zap_scan_frontend:{
             stage('ZAP Security Scan') {          
                 def retVal = sh (
                     returnStatus: true, 
@@ -281,7 +281,7 @@ podTemplate(
                     }
                 }
         }
-    }, zap_scan_appointment:{
+        zap_scan_appointment:{
             stage('ZAP Security Scan') {          
                 def retVal = sh (
                     returnStatus: true, 
