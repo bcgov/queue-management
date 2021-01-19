@@ -399,8 +399,7 @@ podTemplate(
                     }
                 }
         }
-    }
-  }, zap_scan_appointment:{
+    }, zap_scan_appointment:{
             stage('ZAP Security Scan') {          
                 def retVal = sh (
                     returnStatus: true, 
