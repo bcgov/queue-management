@@ -258,27 +258,51 @@ podTemplate(
     )]
 ) {
     node(owaspPodLabel) {
-        stage('ZAP Security Scan') {          
-            def retVal = sh (
-                returnStatus: true, 
-                script: "/zap/zap-baseline.py -r index.html -t https://dev-qms.apps.silver.devops.gov.bc.ca/"
-            )
-            publishHTML([
-                allowMissing: false, 
-                alwaysLinkToLastBuild: false, 
-                keepAll: true, 
-                reportDir: '/zap/wrk', 
-                reportFiles: 'index.html', 
-                reportName: 'OWASPReport', 
-            ])
-            echo "Return value is: ${retVal}"
+        parallel zap_scan_frontend:{
+            stage('ZAP Security Scan') {          
+                def retVal = sh (
+                    returnStatus: true, 
+                    script: "/zap/zap-baseline.py -r index.html -t https://dev-qms.apps.silver.devops.gov.bc.ca/"
+                )
+                publishHTML([
+                    allowMissing: false, 
+                    alwaysLinkToLastBuild: false, 
+                    keepAll: true, 
+                    reportDir: '/zap/wrk', 
+                    reportFiles: 'index.html', 
+                    reportName: 'OWASPReport', 
+                ])
+                echo "Return value is: ${retVal}"
 
-            script {
-                if (retVal != 0) {
-                    echo "MARKING BUILD AS UNSTABLE"
-                    currentBuild.result = 'UNSTABLE'
+                script {
+                    if (retVal != 0) {
+                        echo "MARKING BUILD AS UNSTABLE"
+                        currentBuild.result = 'UNSTABLE'
+                    }
                 }
-            }
+        }
+    }, zap_scan_appointment:{
+            stage('ZAP Security Scan') {          
+                def retVal = sh (
+                    returnStatus: true, 
+                    script: "/zap/zap-baseline.py -r index.html -t https://dev-appointments.apps.silver.devops.gov.bc.ca/appointment/"
+                )
+                publishHTML([
+                    allowMissing: false, 
+                    alwaysLinkToLastBuild: false, 
+                    keepAll: true, 
+                    reportDir: '/zap/wrk', 
+                    reportFiles: 'index.html', 
+                    reportName: 'OWASPReport', 
+                ])
+                echo "Return value is: ${retVal}"
+
+                script {
+                    if (retVal != 0) {
+                        echo "MARKING BUILD AS UNSTABLE"
+                        currentBuild.result = 'UNSTABLE'
+                    }
+                }
         }
     }
   }
