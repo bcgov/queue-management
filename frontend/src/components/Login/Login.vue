@@ -155,14 +155,7 @@ export default class Login extends Vue {
       return this.user.counter_id
     }
   }
-
   
-  get canSwitchOffices () {
-    // allow all users to switch offices
-    return true
-  }
-  
-
   set counterSelection (value) {
     if (value === 'receptionist') {
       this.setReceptionistState(true)
