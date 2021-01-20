@@ -34,7 +34,7 @@ podTemplate(
         }
        }
     }}
-    def owaspPodLabel = "jenkins-agent-zap1"
+def owaspPodLabel = "jenkins-agent-zap1"
 podTemplate(
     label: owaspPodLabel, 
     name: owaspPodLabel, 
