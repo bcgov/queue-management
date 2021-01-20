@@ -21,18 +21,19 @@ podTemplate(
             stage('ZAP Security Scan frontend') {          
                 def retVal = sh (
                     returnStatus: true, 
-                    script: "/zap/zap-baseline.py -r index.html -t https://dev-qms.apps.silver.devops.gov.bc.ca/"
+                    script: "/zap/zap-baseline.py -r index1.html -t https://dev-qms.apps.silver.devops.gov.bc.ca/"
                 )
                 publishHTML([
                     allowMissing: false, 
                     alwaysLinkToLastBuild: false, 
                     keepAll: true, 
                     reportDir: '/zap/wrk', 
-                    reportFiles: 'index.html', 
+                    reportFiles: 'index1.html', 
                     reportName: 'OWASPReportfrontend', 
                 ])
         }
        }
+    }
         zap_scan_appointment:{
             stage('ZAP Security Scan') {          
                 def retVal = sh (
@@ -57,4 +58,4 @@ podTemplate(
                 }
         }
     }
-  }}
+  }
