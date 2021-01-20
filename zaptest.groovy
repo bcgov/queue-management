@@ -34,10 +34,10 @@ podTemplate(
         }
        }
     }}
-def owaspPodLabel = "jenkins-agent-zap1"
+def owaspPodLabel1 = "jenkins-agent-zap1"
 podTemplate(
-    label: owaspPodLabel, 
-    name: owaspPodLabel, 
+    label: owaspPodLabel1, 
+    name: owaspPodLabel1, 
     serviceAccount: 'jenkins', 
     cloud: 'openshift', 
     containers: [ containerTemplate(
