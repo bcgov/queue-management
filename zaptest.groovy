@@ -46,7 +46,7 @@ podTemplate(
                     alwaysLinkToLastBuild: true, 
                     keepAll: true, 
                     reportDir: '/zap/wrk', 
-                    reportFiles: 'docFiles.join(',')', 
+                    reportFiles: 'index1.html,index.html', 
                     reportName: 'OWASPReportappointment', 
                 ])
                 echo "Return value is: ${retVal}"
