@@ -23,14 +23,6 @@ podTemplate(
                     returnStatus: true, 
                     script: "/zap/zap-baseline.py -r index1.html -t https://dev-qms.apps.silver.devops.gov.bc.ca/"
                 )
-                publishHTML([
-                    allowMissing: false, 
-                    alwaysLinkToLastBuild: false, 
-                    keepAll: true, 
-                    reportDir: '/zap/wrk', 
-                    reportFiles: 'index1.html', 
-                    reportName: 'OWASPReportfrontend', 
-                ])
         }
        }
     }
