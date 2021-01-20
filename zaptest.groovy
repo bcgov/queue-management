@@ -51,7 +51,7 @@ podTemplate(
         command: '',
         args: '${computer.jnlpmac} ${computer.name}'
     )]
-)
+) {
     node(owaspPodLabel) {
         zap_scan_appointment:{
             stage('ZAP Security Scan') {          
@@ -77,4 +77,4 @@ podTemplate(
                 }
         }
     }
-  }
+  }}
