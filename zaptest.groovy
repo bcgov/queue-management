@@ -57,14 +57,14 @@ podTemplate(
             stage('ZAP Security Scan') {          
                 def retVal = sh (
                     returnStatus: true, 
-                    script: "/zap/zap-baseline.py -w report_md -t https://dev-qmsappointments.apps.silver.devops.gov.bc.ca/appointment/",
+                    script: "/zap/zap-baseline.py -r index.html -t https://dev-qmsappointments.apps.silver.devops.gov.bc.ca/appointment/",
                 )
                 publishHTML([
                     allowMissing: false, 
                     alwaysLinkToLastBuild: true, 
                     keepAll: true, 
                     reportDir: '/zap/wrk', 
-                    reportFiles: 'report_md', 
+                    reportFiles: 'index.html', 
                     reportName: 'OWASPReportappointment', 
                 ])
                 echo "Return value is: ${retVal}"
