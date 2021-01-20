@@ -34,14 +34,14 @@ podTemplate(
         }
        }
     }}
-    def owaspPodLabel = "jenkins-agent-zap"
+    def owaspPodLabel = "jenkins-agent-zap1"
 podTemplate(
     label: owaspPodLabel, 
     name: owaspPodLabel, 
     serviceAccount: 'jenkins', 
     cloud: 'openshift', 
     containers: [ containerTemplate(
-        name: 'jenkins-agent-zap',
+        name: 'jenkins-agent-zap1',
         image: 'image-registry.openshift-image-registry.svc:5000/5c0dde-tools/jenkins-agent-zap:latest',
         resourceRequestCpu: '500m',
         resourceLimitCpu: '1000m',
