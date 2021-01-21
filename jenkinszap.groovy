@@ -258,42 +258,25 @@ podTemplate(
     )]
 ) {
     node(owaspPodLabel) {
-        zap_scan_frontend:{
-            stage('ZAP Security Scan frontend') {          
-                def retVal = sh (
-                    returnStatus: true, 
-                    script: "/zap/zap-baseline.py -r index.html -t https://dev-qms.apps.silver.devops.gov.bc.ca/"
-                )
-                publishHTML([
-                    allowMissing: false, 
-                    alwaysLinkToLastBuild: false, 
-                    keepAll: true, 
-                    reportDir: '/zap/wrk', 
-                    reportFiles: 'index.html', 
-                    reportName: 'OWASPReportfrontend', 
-                ])
-                echo "Return value is: ${retVal}"
-
-                script {
-                    if (retVal != 0) {
-                        echo "MARKING BUILD AS UNSTABLE"
-                        currentBuild.result = 'UNSTABLE'
-                    }
-                }
+        stage('ZAP Security Scan') {          
+            def retVal = sh (
+                returnStatus: true, 
+                script: "/zap/zap-baseline.py -r index1.html -t https://dev-qms.apps.silver.devops.gov.bc.ca/"
+            )
         }
-        zap_scan_appointment:{
-            stage('ZAP Security Scan') {          
+        stage('ZAP Security Scan') {          
                 def retVal = sh (
                     returnStatus: true, 
-                    script: "/zap/zap-baseline.py -r index.html -t https://dev-qmsappointments.apps.silver.devops.gov.bc.ca/appointment/"
+                    script: "/zap/zap-baseline.py -r index2.html -t https://dev-qmsappointments.apps.silver.devops.gov.bc.ca/appointment/",
                 )
+                sh 'echo "<html><head></head><body><a href=index1.html>Staff Front Report</a><br><a href=index2.html>Appointment Front End Report</a></body></html>" > /zap/wrk/index.html'
                 publishHTML([
                     allowMissing: false, 
-                    alwaysLinkToLastBuild: false, 
+                    alwaysLinkToLastBuild: true, 
                     keepAll: true, 
                     reportDir: '/zap/wrk', 
                     reportFiles: 'index.html', 
-                    reportName: 'OWASPReportappointment', 
+                    reportName: 'OWASPReport', 
                 ])
                 echo "Return value is: ${retVal}"
 
