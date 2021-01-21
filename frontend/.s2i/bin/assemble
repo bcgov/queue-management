@@ -1,11 +1,6 @@
 #!/bin/bash
 echo "Before assembling"
 
-
-
-npm config set registry https://artifacts.developer.gov.bc.ca/artifactory/api/npm/npm-remote/
-curl -u $AF_USERID:$AF_PASSWD https://artifacts.developer.gov.bc.ca/artifactory/api/npm/auth >> ~/.npmrc
-
 /usr/libexec/s2i/assemble
 
 # Todo - can delete below
