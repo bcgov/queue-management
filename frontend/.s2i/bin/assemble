@@ -1,11 +1,12 @@
 #!/bin/bash
 echo "Before assembling"
 
-/usr/libexec/s2i/assemble
+
 
 npm config set registry https://artifacts.developer.gov.bc.ca/artifactory/api/npm/npm-remote/
 curl -u $AF_USERID:$AF_PASSWD https://artifacts.developer.gov.bc.ca/artifactory/api/npm/auth >> ~/.npmrc
 
+/usr/libexec/s2i/assemble
 
 # Todo - can delete below
 # We just need to run the default s2i assemble script as this is a standard build process
