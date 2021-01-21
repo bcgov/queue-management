@@ -1,6 +1,6 @@
 {
   "name": "sbcappointmentbooking",
-  "version": "0.1.0",
+  "version": "2.1.2",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -10,15 +10,15 @@
   },
   "dependencies": {
     "@mdi/font": "^4.5.95",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "core-js": "^3.4.3",
     "css-loader": "^5.0.0",
     "date-fns": "^2.12.0",
     "date-fns-tz": "^1.0.10",
     "date-time-format-timezone": "^1.0.22",
-    "keycloak-js": "^6.0.0",
+    "keycloak-js": "^9.0.3",
     "regenerator-runtime": "^0.13.3",
-    "sbc-common-components": "2.0.29",
+    "sbc-common-components": "^2.4.9",
     "vue": "^2.6.10",
     "vue-class-component": "^7.0.2",
     "vue-i18n": "^8.17.0",
