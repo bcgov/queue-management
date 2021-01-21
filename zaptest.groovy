@@ -25,8 +25,6 @@ podTemplate(
                 )
         }
        }
-    }
-    node(owaspPodLabel) {
         zap_scan_appointment:{
             stage('ZAP Security Scan') {          
                 def retVal = sh (
