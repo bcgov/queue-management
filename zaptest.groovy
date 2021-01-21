@@ -15,8 +15,8 @@ podTemplate(
         command: '',
         args: '${computer.jnlpmac} ${computer.name}'
     )]
-) {
     node(owaspPodLabel) {
+) {
         zap_scan_frontend:{
             stage('ZAP Security Scan frontend') {          
                 def retVal = sh (
@@ -31,15 +31,14 @@ podTemplate(
                     returnStatus: true, 
                     script: "/zap/zap-baseline.py -r index.html -t https://dev-qmsappointments.apps.silver.devops.gov.bc.ca/appointment/",
                 )
-            }}
-            publishHTML([
-                allowMissing: false, 
-                alwaysLinkToLastBuild: true, 
-                keepAll: true, 
-                reportDir: '/zap/wrk', 
-                reportFiles: 'htmlFiles.join(',')', 
-                reportName: 'OWASPReportappointment', 
-            ])
+                publishHTML([
+                    allowMissing: false, 
+                    alwaysLinkToLastBuild: true, 
+                    keepAll: true, 
+                    reportDir: '/zap/wrk', 
+                    reportFiles: 'index1.html', 
+                    reportName: 'OWASPReportappointment', 
+                ])
                 echo "Return value is: ${retVal}"
 
                 script {
@@ -50,3 +49,4 @@ podTemplate(
                 }
         }
     }
+  }}
