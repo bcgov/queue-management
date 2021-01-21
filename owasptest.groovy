@@ -35,8 +35,8 @@ podTemplate(
                 def retVal = sh (
                     returnStatus: true, 
                     script: "/zap/zap-baseline.py -r index2.html -t https://dev-qmsappointments.apps.silver.devops.gov.bc.ca/appointment/",
-                    echo "<html><head></head><body><a href=index1.html>Staff Front Report</a><br><a href=index2.html>Appoint Front End Report</a></body></html>" > index.html,
                 )
+                sh "echo "<html><head></head><body><a href=index1.html>Staff Front Report</a><br><a href=index2.html>Appoint Front End Report</a></body></html>" > index.html"
                 publishHTML([
                     allowMissing: false, 
                     alwaysLinkToLastBuild: true, 
