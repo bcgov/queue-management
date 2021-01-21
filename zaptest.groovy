@@ -31,14 +31,15 @@ podTemplate(
                     returnStatus: true, 
                     script: "/zap/zap-baseline.py -r index.html -t https://dev-qmsappointments.apps.silver.devops.gov.bc.ca/appointment/",
                 )
-                publishHTML([
-                    allowMissing: false, 
-                    alwaysLinkToLastBuild: true, 
-                    keepAll: true, 
-                    reportDir: '/zap/wrk', 
-                    reportFiles: 'index1.html', 
-                    reportName: 'OWASPReportappointment', 
-                ])
+            }}
+            publishHTML([
+                allowMissing: false, 
+                alwaysLinkToLastBuild: true, 
+                keepAll: true, 
+                reportDir: '/zap/wrk', 
+                reportFiles: 'index1.html', 
+                reportName: 'OWASPReportappointment', 
+            ])
                 echo "Return value is: ${retVal}"
 
                 script {
@@ -49,4 +50,3 @@ podTemplate(
                 }
         }
     }
-  }}
