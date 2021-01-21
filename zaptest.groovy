@@ -15,8 +15,8 @@ podTemplate(
         command: '',
         args: '${computer.jnlpmac} ${computer.name}'
     )]
-    node(owaspPodLabel) {
 ) {
+    node(owaspPodLabel) {
         zap_scan_frontend:{
             stage('ZAP Security Scan frontend') {          
                 def retVal = sh (
