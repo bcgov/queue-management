@@ -58,9 +58,7 @@ objects:
             "auth-server-url": "${AUTH_SERVER_URL}",
             "ssl-required": "external",
             "resource": "${KEYCLOAK_RESOURCE}",
-            "credentials": {
-              "secret": "${KEYCLOAK_SECRET}"
-            },
+            "public-client": "true",
             "confidential-port": 0
           }
   - apiVersion: v1
