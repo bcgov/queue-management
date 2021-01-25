@@ -209,8 +209,6 @@ export default class LocationsList extends Mixins(StepperMixin) {
   }
 
   private sortOfficesByDistance (locationList) {
-    // eslint-disable-next-line no-console
-    console.log('sortOfficesByDistance location', locationList)
     // If we have no distance, we can't sort
     if (!this.hasCoordinates()) {
       return locationList
@@ -247,8 +245,6 @@ export default class LocationsList extends Mixins(StepperMixin) {
   }
 
   private async onGeoSelect (input) {
-    // eslint-disable-next-line no-console
-    console.log('onGeoSelect location', input)
     this.locationListData = this.sortOfficesByDistance(this.locationListData)
     this.$forceUpdate()
   }
