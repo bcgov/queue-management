@@ -215,10 +215,6 @@ export const commonActions: any = {
   },
 
   flashServeNow (context, payload) {
-    // ARC TODO - Deploy this to DEV, and see why it's happening in dev only 
-    // and not local (even *after* cloning dev DB locally!)
-    console.log('flashServeNow', { payload })
-    // console.trace();
     const flash = () => {
       if (!context.state.showServiceModal) {
         if (context.state.serveNowStyle === 'btn-primary') {
@@ -1465,8 +1461,6 @@ export const commonActions: any = {
         context.commit('setPerformingAction', false)
         context.commit('toggleServiceModal', false)
         context.commit('resetServiceModal')
-        // TODO - Verify below works in DEV
-        // Remove this line, then commit.
         context.dispatch('flashServeNow', 'stop')
         context.dispatch('appointmentsModule/getAppointments')
       })
@@ -2312,8 +2306,6 @@ export const commonActions: any = {
   },
 
   screenIncomingCitizen (context, payload) {
-    // Called in Socket.vue onUpdateActiveCitizen
-    // TODO - Deploy this to dev and compare output from local.
     console.log('screenIncomingCitizen start', { payload })
     const { addNextService } = context.state
     const { csr_id } = context.state.user

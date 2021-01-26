@@ -141,15 +141,26 @@ class ServiceRequestsList(Resource):
             # It's only important that the number carries over _around_ midnight
             offset_start_time = citizen.start_time - timedelta(hours=6)
 
-            service_count = ServiceReq.query \
+            service_reqs = ServiceReq.query \
                     .join(ServiceReq.citizen, aliased=True) \
                     .filter(Citizen.start_time >= offset_start_time.strftime("%Y-%m-%d")) \
                     .filter_by(office_id=csr.office_id) \
                     .join(ServiceReq.service, aliased=True) \
                     .filter_by(prefix=service.prefix) \
-                    .count()
+                    .all()
 
-            citizen.ticket_number = service.prefix + str(service_count)
+            service_count = len(service_reqs)
+            # keep incrementing ticket number until we find a unique ticket
+            # avoids duplicates when items in middle are removed and 
+            # array length is less than highest ticket number
+            offset = 0
+            active_ticket_numbers = [x.citizen.ticket_number for x in service_reqs]
+            new_ticket_number = service.prefix + str(service_count + offset)
+            while new_ticket_number in active_ticket_numbers:
+                offset += 1
+                new_ticket_number = service.prefix + str(service_count + offset)
+
+            citizen.ticket_number = new_ticket_number
         else:
             period_state_being_served = PeriodState.get_state_by_name("Being Served")
 
