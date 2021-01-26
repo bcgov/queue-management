@@ -94,7 +94,7 @@ objects:
         rollingParams:
           updatePeriodSeconds: 1
           intervalSeconds: 1
-          timeoutSeconds: 60
+          timeoutSeconds: 120
           maxSurge: 2
           maxUnavailable: 1
         resources: {}
