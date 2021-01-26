@@ -73,12 +73,7 @@ limitations under the License.*/
          <label v-if="!showOfficeSwitcher" class="navbar-label navbar-user"
           >User: {{ this.$store.state.user.username }}</label
         >
-        
-        <label v-if='!canSwitchOffices' class="navbar-label"
-          >Office: {{ this.$store.state.user.office.office_name }}</label
-        >
-        
-        <div v-else>
+        <div>
           <template v-if="!showOfficeSwitcher">
              <label class="navbar-label">
                <span @click="setOfficeSwitcher(!showOfficeSwitcher)" 
@@ -160,13 +155,7 @@ export default class Login extends Vue {
       return this.user.counter_id
     }
   }
-
   
-  get canSwitchOffices () {
-    return ['SUPPORT', 'GA'].includes(this.role_code);
-  }
-  
-
   set counterSelection (value) {
     if (value === 'receptionist') {
       this.setReceptionistState(true)
