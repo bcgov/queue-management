@@ -216,11 +216,7 @@ export default class AppointmentBookingView extends Vue {
   }
 
   private async fetchCurrentLocation () {
-    const geo = await this.getCurrentLocation()
-    locationBus.$emit(locationBusEvents.ClosestLocationEvent, {
-      latitude: (geo as any).latitude,
-      longitude: (geo as any).longitude
-    })
+    locationBus.$emit(locationBusEvents.ClosestLocationEvent)
   }
 }
 </script>
