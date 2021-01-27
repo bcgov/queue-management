@@ -1,0 +1,22 @@
+#!/bin/bash
+echo "Before assembling"
+
+
+# configure npm to use artifactory
+mkdir /opt/app-root/src/.pip
+touch /opt/app-root/src/.pip/pip.conf
+echo "[global]" >> ~/.pip/pip.conf
+echo "index-url = https://$AF_USERID:$AF_PASSWD@artifacts.developer.gov.bc.ca/artifactory/api/pypi/pypi-remote/simple" >> ~/.pip/pip.conf
+cat ~/.pip/pip.conf
+
+
+/usr/libexec/s2i/assemble
+# Todo - can delete below
+# We just need to run the default s2i assemble script as this is a standard build process
+# rc=$?
+
+# if [ $rc -eq 0 ]; then
+#     npm run build:production
+#     rc=$?
+# fi
+# exit $rc
