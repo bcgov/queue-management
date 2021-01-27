@@ -45,8 +45,13 @@
 
               <v-switch
                 inset
-                v-model="enableReminder"
+                v-model="enableEmailReminder"
                 label="Send me appointment reminders via email"
+              ></v-switch>
+              <v-switch
+                inset
+                v-model="enableSmsReminder"
+                label="Send me appointment reminders via SMS"
               ></v-switch>
             </v-form>
             <v-row>
@@ -107,7 +112,8 @@ export default class AccountSettingsView extends Vue {
   private name:string = ''
   private email:string = ''
   private phoneNumber:string = ''
-  private enableReminder:boolean = false
+  private enableEmailReminder:boolean = false
+  private enableSmsReminder:boolean = false
   private showMsg = {
     isShow: false,
     msgText: '',
@@ -141,7 +147,8 @@ export default class AccountSettingsView extends Vue {
       this.name = this.username || ' '
       this.email = this.currentUserProfile.email
       this.phoneNumber = this.currentUserProfile.telephone
-      this.enableReminder = this.currentUserProfile.send_reminders
+      this.enableEmailReminder = this.currentUserProfile.send_email_reminders
+      this.enableSmsReminder = this.currentUserProfile.send_sms_reminders
     }
   }
 
@@ -150,7 +157,8 @@ export default class AccountSettingsView extends Vue {
       const userUpdate: UserUpdateBody = {
         email: this.email,
         telephone: this.phoneNumber,
-        send_reminders: this.enableReminder
+        send_email_reminders: this.enableEmailReminder,
+        send_sms_reminders: this.enableSmsReminder
       }
       const response = await this.updateUserAccount(userUpdate)
       if (response?.user_id) {

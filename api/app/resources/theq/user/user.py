@@ -65,7 +65,8 @@ class PublicUser(Resource):
             user: PublicUserModel = PublicUserModel.find_by_username(user_info.get('username'))
             user.email = json_data.get('email')
             user.telephone = json_data.get('telephone')
-            user.send_reminders = json_data.get('send_reminders')
+            user.send_email_reminders = json_data.get('send_email_reminders')
+            user.send_sms_reminders = json_data.get('send_sms_reminders')
             db.session.add(user)
             db.session.commit()
 

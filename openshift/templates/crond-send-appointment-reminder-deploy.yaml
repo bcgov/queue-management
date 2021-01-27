@@ -36,6 +36,11 @@ objects:
       CHES_SSO_CLIENT_ID: '${CHES_SSO_CLIENT_ID}'
       CHES_SSO_CLIENT_SECRET: '${CHES_SSO_CLIENT_SECRET}'
       CHES_POST_EMAIL_ENDPOINT: '${CHES_POST_EMAIL_ENDPOINT}'
+      SMS_USE_GC_NOTIFY: '${SMS_USE_GC_NOTIFY}'
+      GC_NOTIFY_API_KEY: '${GC_NOTIFY_API_KEY}'
+      GC_NOTIFY_API_BASE_URL: '${GC_NOTIFY_API_BASE_URL}'
+      GC_NOTIFY_SMS_TEMPLATE_ID: '${GC_NOTIFY_SMS_TEMPLATE_ID}'
+
   - kind: DeploymentConfig
     apiVersion: v1
     metadata:
@@ -149,6 +154,27 @@ objects:
                     configMapKeyRef:
                       name: 'appointment-reminder-${TAG_NAME}-config'
                       key: CHES_POST_EMAIL_ENDPOINT
+                - name: SMS_USE_GC_NOTIFY
+                  valueFrom:
+                    configMapKeyRef:
+                      name: 'appointment-reminder-${TAG_NAME}-config'
+                      key: SMS_USE_GC_NOTIFY
+                - name: GC_NOTIFY_API_BASE_URL
+                  valueFrom:
+                    configMapKeyRef:
+                      name: 'appointment-reminder-${TAG_NAME}-config'
+                      key: GC_NOTIFY_API_BASE_URL
+                - name: GC_NOTIFY_API_KEY
+                  valueFrom:
+                    configMapKeyRef:
+                      name: 'appointment-reminder-${TAG_NAME}-config'
+                      key: GC_NOTIFY_API_KEY
+                - name: GC_NOTIFY_SMS_TEMPLATE_ID
+                  valueFrom:
+                    configMapKeyRef:
+                      name: 'appointment-reminder-${TAG_NAME}-config'
+                      key: GC_NOTIFY_SMS_TEMPLATE_ID
+
               resources:
                 requests:
                   cpu: '${CPU_REQUEST}'
@@ -285,4 +311,16 @@ parameters:
     required: false
   - name: CHES_SSO_CLIENT_SECRET
     description: CHES service client secret
+    required: true
+  - name: SMS_USE_GC_NOTIFY
+    description: Flag to identify if GC Notify to be used for SMS.
+    required: true
+  - name: GC_NOTIFY_API_KEY
+    description: GC Notify API Key
+    required: true
+  - name: GC_NOTIFY_API_BASE_URL
+    description: GC Notify API Base URL
+    required: true
+  - name: GC_NOTIFY_SMS_TEMPLATE_ID
+    description: GC Notify SMS Template ID
     required: true

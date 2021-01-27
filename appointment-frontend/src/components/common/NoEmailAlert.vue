@@ -1,7 +1,7 @@
 <template>
   <v-alert
     v-if="!hideAlert"
-    v-model="showEmailAlert"
+    v-model="showAlert"
     border="left"
     type="warning"
     close-text="Close Alert"
@@ -10,9 +10,10 @@
     dense
     dismissible
 >
-  <div v-if="isEmailMissing">Please <router-link to="account-settings">configure your email address</router-link> to receive notifications</div>
-  <div v-if="isReminderFlagMissing">Please <router-link to="account-settings">subscribe to email reminders</router-link> to receive appointment reminders</div>
+  <div v-if="isEmailMissing">Please <router-link to="account-settings">configure your email address</router-link> to receive notifications.</div>
+  <div v-if="isReminderFlagMissing">Please <router-link to="account-settings">subscribe to email reminders</router-link> to receive appointment reminders.</div>
   <div v-if="isPhoneMissing">Please <router-link to="account-settings">add your phone number</router-link> to ensure we can contact you.</div>
+  <div v-if="isSmsReminderFlagMissing">Please <router-link to="account-settings">subscribe to sms reminders </router-link> to receive appointment reminders.</div>
 </v-alert>
 </template>
 
@@ -33,22 +34,25 @@ export default class NoEmailAlert extends Vue {
   private hideAlert!: boolean
 
   private readonly currentUserProfile!: User
-  private showEmailAlert: boolean = false
+  private showAlert: boolean = false
 
   private isEmailMissing:boolean = false
   private isPhoneMissing:boolean = false
   private isReminderFlagMissing:boolean = false
+  private isSmsReminderFlagMissing:boolean = false
 
   private mounted () {
-    this.showEmailAlert = !this.currentUserProfile?.email || !this.currentUserProfile?.send_reminders || !this.currentUserProfile?.telephone
+    this.showAlert = !this.currentUserProfile?.email || !this.currentUserProfile?.send_email_reminders || !this.currentUserProfile?.telephone || !this.currentUserProfile?.send_sms_reminders
 
     if (!this.currentUserProfile?.email) {
       this.isEmailMissing = true
-    } else if (!this.currentUserProfile?.send_reminders) {
+    } else if (!this.currentUserProfile?.send_email_reminders) {
       this.isReminderFlagMissing = true
     }
     if (!this.currentUserProfile?.telephone) {
       this.isPhoneMissing = true
+    } else if (!this.currentUserProfile?.send_sms_reminders) {
+      this.isSmsReminderFlagMissing = true
     }
   }
 }

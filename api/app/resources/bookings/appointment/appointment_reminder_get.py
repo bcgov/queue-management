@@ -21,13 +21,13 @@ from app.utilities.email import is_valid_email, formatted_date, get_email, \
 from qsystem import api, api_call_with_retry, oidc
 
 
-@api.route("/appointment/reminders/", methods=["GET"])
+@api.route("/appointment/reminders/<string:reminder_type>/", methods=["GET"])
 class AppointmentRemindersGet(Resource):
 
     @oidc.accept_token(require_token=True)
     @api_call_with_retry
     @has_any_role(roles=[Role.reminder_job.value])
-    def get(self):
+    def get(self, reminder_type: str = 'email'):
         """Return appointment reminders for next day."""
         appointments = Appointment.find_next_day_appointments()
 
@@ -39,9 +39,12 @@ class AppointmentRemindersGet(Resource):
         if appointments:
             for (appointment, office, timezone, user) in appointments:
                 send_reminder = False
-                if user and user.send_reminders:
-                    send_reminder = True
-                elif not user and is_valid_email(appointment.contact_information):
+                if reminder_type == 'email':
+                    if user and user.send_email_reminders:
+                        send_reminder = True
+                    elif not user and is_valid_email(appointment.contact_information):
+                        send_reminder = True
+                elif reminder_type == 'sms' and user and user.send_sms_reminders:
                     send_reminder = True
 
                 if send_reminder:
@@ -69,7 +72,8 @@ class AppointmentRemindersGet(Resource):
                             'service_email_paragraph': service_email_paragraph,
                             'office_email_paragraph': office_email_paragraph,
                             'service_name': service_name,
-                            'civic_address': appointment.office.civic_address
+                            'civic_address': appointment.office.civic_address,
+                            'user_telephone': user.telephone,
                         }
                     )
         return reminders

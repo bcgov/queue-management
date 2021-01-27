@@ -79,6 +79,13 @@ class _Config(object):  # pylint: disable=too-few-public-methods
 
     MAX_EMAIL_PER_BATCH = int(os.getenv('MAX_EMAIL_PER_BATCH', 30))
 
+    # SMS variables
+    SMS_USE_GC_NOTIFY = os.getenv('SMS_USE_GC_NOTIFY', 'true').lower() == 'true'
+    # GC Notify
+    GC_NOTIFY_API_KEY = os.getenv('GC_NOTIFY_API_KEY')
+    GC_NOTIFY_API_BASE_URL = os.getenv('GC_NOTIFY_API_BASE_URL')
+    GC_NOTIFY_SMS_TEMPLATE_ID = os.getenv('GC_NOTIFY_SMS_TEMPLATE_ID')
+
 
 class DevConfig(_Config):  # pylint: disable=too-few-public-methods
     TESTING = False
