@@ -1,13 +1,11 @@
 <template>
   <v-autocomplete
-    append-icon="mdi-map-marker-radius"
     type="text"
     name="address"
-    label="Address"
+    label="Start Typing Your City Here...."
     outlined
     hide-details
     dense
-    @click:append="fetchLocation"
     v-model="model"
     :search-input.sync="search"
     no-filter
@@ -17,13 +15,29 @@
     v-on:change='onAddressSelection'
     return-object
     :loading='isLoading'
-  ></v-autocomplete>
+    color="blue darken-2"
+  >
+    <template v-slot:append>
+      <v-btn
+        text
+        icon
+        @click="fetchLocation"
+      >
+        <v-icon
+          color="blue darken-2"
+          >
+          mdi-map-marker-radius
+        </v-icon>
+      </v-btn>
+    </template>
+  </v-autocomplete>
 </template>
 
 <script lang="ts">
 /* eslint-disable no-console */
 import { Component, Mixins, Prop, Vue, Watch } from 'vue-property-decorator'
 import { GeolocatorSuccess, LatLng } from '@/models/geo'
+import { locationBus, locationBusEvents } from '@/events/locationBus'
 import { mapActions, mapState } from 'vuex'
 import { GeoModule } from '@/store/modules'
 import GeocoderService from '@/services/geocoder.services'
@@ -45,6 +59,11 @@ export default class GeocoderInput extends Vue {
   private search = null;
   private debouncedSearch: (value: string, oldValue: string) => void
   private readonly getCurrentLocation!: () => Promise<GeolocatorSuccess>
+  private async created () {
+    locationBus.$on(locationBusEvents.ClosestLocationEvent, () =>
+      this.fetchLocation()
+    )
+  }
 
   constructor () {
     super()
