@@ -49,7 +49,26 @@
             <v-spacer></v-spacer>
           </v-card-title>
           <v-divider class="mx-4"></v-divider>
-          <p v-if="bookingStep.subTitle" class="step-desc mt-2">{{bookingStep.subTitle}}</p>
+          <p v-if="bookingStep.subTitle" class="step-desc mt-2">{{bookingStep.subTitle}}
+          </p>
+          <p v-if="bookingStep.beforeIconText|| bookingStep.afterIconText" class="step-desc mt-2">
+            {{bookingStep.beforeIconText}}
+            <v-btn
+                class="ma-2"
+                text
+                icon
+                color="red lighten-2"
+                @click="fetchCurrentLocation()"
+            >
+              <v-icon v-if="bookingStep.icon"
+                    large
+                    color="blue darken-2"
+                  >
+                {{bookingStep.icon}}
+              </v-icon>
+            </v-btn>
+            {{bookingStep.afterIconText}}
+          </p>
           <component
             :is="bookingStep.component"
             v-bind="getPropsForStep(bookingStep)"
@@ -67,9 +86,11 @@
 <script lang="ts">
 import { AppointmentSummary, DateSelection, LocationsList, LoginToConfirm, ServiceSelection } from '@/components/appointment'
 import { Component, Vue } from 'vue-property-decorator'
+import { GeolocatorSuccess, LatLng } from '@/models/geo'
+import { locationBus, locationBusEvents } from '@/events/locationBus'
+import { mapActions, mapGetters } from 'vuex'
 import { AuthModule } from '@/store/modules'
 import StepperMixin from '@/mixins/StepperMixin.vue'
-import { mapGetters } from 'vuex'
 
 @Component({
   components: {
@@ -81,18 +102,28 @@ import { mapGetters } from 'vuex'
   },
   computed: {
     ...mapGetters('auth', ['isAuthenticated'])
+  },
+  methods: {
+    ...mapActions('geo', [
+      'getCurrentLocation'
+    ])
   }
 })
+
 export default class AppointmentBookingView extends Vue {
   private readonly isAuthenticated!: boolean
   private stepCounter = 1
   private updateViewCounter = 0
+  private readonly getCurrentLocation!: () => Promise<GeolocatorSuccess>
   private bookingSteppers = [
     {
       step: 1,
-      label: 'Select Location',
-      title: 'Location Selection',
-      subTitle: `To book an appointment, please find your nearest BC Service Location`,
+      label: 'Location Selection',
+      title: 'Book an Appointment',
+      subTitle: '',
+      icon: 'mdi-map-marker-radius',
+      beforeIconText: `Click the`,
+      afterIconText: `to find your closest Service BC Centre`,
       code: 'location',
       component: LocationsList,
       componentProps: {}
@@ -182,6 +213,10 @@ export default class AppointmentBookingView extends Vue {
 
   private isOnCurrentStep (step) {
     return !!(step.step === this.stepCounter)
+  }
+
+  private async fetchCurrentLocation () {
+    locationBus.$emit(locationBusEvents.ClosestLocationEvent)
   }
 }
 </script>

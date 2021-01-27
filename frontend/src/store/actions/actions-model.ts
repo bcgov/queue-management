@@ -1461,6 +1461,7 @@ export const commonActions: any = {
         context.commit('setPerformingAction', false)
         context.commit('toggleServiceModal', false)
         context.commit('resetServiceModal')
+        context.dispatch('flashServeNow', 'stop')
         context.dispatch('appointmentsModule/getAppointments')
       })
       .catch(() => {
@@ -2305,6 +2306,7 @@ export const commonActions: any = {
   },
 
   screenIncomingCitizen (context, payload) {
+    console.log('screenIncomingCitizen start', { payload })
     const { addNextService } = context.state
     const { csr_id } = context.state.user
     const { citizen, route } = payload
@@ -2330,6 +2332,7 @@ export const commonActions: any = {
                 context.commit('toggleBegunStatus', false)
                 context.commit('toggleInvitedStatus', true)
                 context.commit('setServeNowAction', true)
+                console.log('screenIncomingCitizen is starting flashServeNow')
                 context.dispatch('flashServeNow', 'start')
 
                 if (!addNextService && checkPath()) {

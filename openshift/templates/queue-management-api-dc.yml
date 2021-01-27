@@ -94,7 +94,7 @@ objects:
         rollingParams:
           updatePeriodSeconds: 1
           intervalSeconds: 1
-          timeoutSeconds: 60
+          timeoutSeconds: 120
           maxSurge: 2
           maxUnavailable: 1
         resources: {}
@@ -237,21 +237,27 @@ objects:
               ports:
                 - containerPort: 8080
               readinessProbe:
-                failureThreshold: 3
-                initialDelaySeconds: 3
+                httpGet:
+                  path: /api/v1/healthz/
+                  port: 8080
+                  scheme: HTTP
+                initialDelaySeconds: 30
+                timeoutSeconds: 5
                 periodSeconds: 10
                 successThreshold: 1
-                tcpSocket:
-                  port: 8080
-                timeoutSeconds: 3
+                failureThreshold: 3
+              terminationMessagePath: /dev/termination-log
+              name: queue-management-api
               livenessProbe:
-                failureThreshold: 3
-                initialDelaySeconds: 3
+                httpGet:
+                  path: /api/v1/readyz/
+                  port: 8080
+                  scheme: HTTP
+                initialDelaySeconds: 30
+                timeoutSeconds: 5
                 periodSeconds: 10
                 successThreshold: 1
-                tcpSocket:
-                  port: 8080
-                timeoutSeconds: 3
+                failureThreshold: 3
               volumeMounts:
                 - mountPath: /opt/app-root/src/client_secrets
                   name: oidc-secrets-o6ya6

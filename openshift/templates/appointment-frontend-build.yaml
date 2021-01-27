@@ -54,6 +54,10 @@ objects:
           uri: "${SOURCE_REPOSITORY_URL}"
           ref: "${SOURCE_REPOSITORY_REF}"
         contextDir: appointment-frontend
+        secrets:
+          - secret:
+              name: npm-config
+            destinationDir: /tmp/npmrc/
       strategy:
         type: Source
         sourceStrategy:
@@ -62,6 +66,8 @@ objects:
             value: production
           - name: VUE_APP_PATH
             value: /
+          - name: NPM_CONFIG_USERCONFIG
+            value: /tmp/npmrc/.npmrc
           from:
             kind: ImageStreamTag
             namespace: openshift

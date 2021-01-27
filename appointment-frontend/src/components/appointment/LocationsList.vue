@@ -9,7 +9,7 @@
     </v-row>
     <v-row justify="center">
       <v-col cols="12" class="location-sorted-msg">
-        <p class="text-center mb-0">Locations sorted by nearest to you
+        <p class="text-center mb-0">Locations sorted by closest to you
           <!-- <br><br>
           Coords: {{ this.currentCoordinates() }} -->
         </p>
@@ -27,6 +27,66 @@
           class="mx-auto location-card">
           <v-card-text>
             <v-row class="d-flex" justify="space-around">
+              <v-col cols="12" md="6" align-self="stretch">
+                <h4 class="mb-3 location-name">
+                  {{location.office_name}}
+                  <span class="body-1 ml-2" v-if="location.distance">
+                    {{location.distance}}Km
+                  </span>
+                </h4>
+                <v-row>
+                  <v-col col="12" md="6">
+                    <v-btn
+                      block
+                      color="primary"
+                      class="pl-5 mt-0 mt-md-2"
+                      large
+                      @click="selectLocation(location)"
+                    >
+                      Select Location
+                      <v-icon right small class="ml-1">mdi-arrow-right</v-icon>
+                    </v-btn>
+                  </v-col>
+                  <v-col col="12" md="6">
+                    <v-btn
+                        block
+                        color="primary"
+                        outlined
+                        class='mt-0 mt-md-2 float-right'
+                        large
+                        @click="showLocationServices(location)"
+                      >
+                        View Location Services
+                    </v-btn>
+                  </v-col>
+                </v-row>
+                <v-alert
+                  dense
+                  :text=(!location.appointments_enabled_ind)
+                  border="left"
+                  :type="(!location.appointments_enabled_ind) ? 'error' : 'info'"
+                  class="subtitle-2 font-weight-bold mb-4"
+                  v-if="location.office_appointment_message"
+                >
+                  {{location.office_appointment_message}}
+                </v-alert>
+                <v-alert
+                  :type="(!$vuetify.breakpoint.xs) ? 'info' : undefined"
+                  text
+                  color="blue-grey darken-4"
+                  :icon="(!$vuetify.breakpoint.xs) ? 'mdi-clock' : false"
+                >
+                  <v-row no-gutters v-for="(timeslot, index) in location.timeslots" :key="index">
+                    <v-col cols="6" md="5" class="px-5 nobr">{{timeslot.day_str}}</v-col>
+                    <v-col cols="6" md="7">
+                      <span v-if="!(timeslot.start_time_str && timeslot.end_time_str)" class="hours-closed">Closed</span>
+                      <span v-else>
+                        {{`${timeslot.start_time_str}` }} - {{ `${timeslot.end_time_str}`}}
+                      </span>
+                    </v-col>
+                  </v-row>
+                </v-alert>
+              </v-col>
               <v-col cols="12" md="6" align-self="stretch" align="center" class="loc-map">
 <!--                <v-img v-if="location.civic_address" :src='getMapUrl(location)' :alt="location.civic_address || 'No address'" class='static-map'>-->
 <!--                </v-img>-->
@@ -54,64 +114,8 @@
                   {{ getDistance(location.latitude, location.longitude) }}
                 </div>
               </v-col>
-              <v-col cols="12" md="6" align-self="stretch">
-                <h4 class="mb-3 location-name">
-                  {{location.office_name}}
-                  <span class="body-1 ml-2" v-if="location.distance">
-                    {{location.distance}}Km
-                  </span>
-                </h4>
-                <v-alert
-                  dense
-                  :text=(!location.appointments_enabled_ind)
-                  border="left"
-                  :type="(!location.appointments_enabled_ind) ? 'error' : 'info'"
-                  class="subtitle-2 font-weight-bold"
-                  v-if="location.office_appointment_message"
-                >
-                  {{location.office_appointment_message}}
-                </v-alert>
-                <v-alert
-                  :type="(!$vuetify.breakpoint.xs) ? 'info' : undefined"
-                  text
-                  color="blue-grey darken-4"
-                  :icon="(!$vuetify.breakpoint.xs) ? 'mdi-clock' : false"
-                  class="mb-0"
-                >
-                  <v-row no-gutters v-for="(timeslot, index) in location.timeslots" :key="index">
-                    <v-col cols="6" md="5" class="px-5 nobr">{{timeslot.day_str}}</v-col>
-                    <v-col cols="6" md="7">
-                      <span v-if="!(timeslot.start_time_str && timeslot.end_time_str)" class="hours-closed">Closed</span>
-                      <span v-else>
-                        {{`${timeslot.start_time_str}` }} - {{ `${timeslot.end_time_str}`}}
-                      </span>
-                    </v-col>
-                  </v-row>
-                </v-alert>
-              </v-col>
             </v-row>
           </v-card-text>
-          <v-card-actions>
-            <v-btn
-              color="primary"
-              outlined
-              class='mt-0 mt-md-2'
-              large
-              @click="showLocationServices(location)"
-            >
-              View {{(!$vuetify.breakpoint.xs) ? 'Location' : ''}} Services
-            </v-btn>
-            <v-spacer></v-spacer>
-            <v-btn
-              color="primary"
-              class="pl-5 mt-0 mt-md-2"
-              large
-              @click="selectLocation(location)"
-            >
-              Select {{(!$vuetify.breakpoint.xs) ? 'Location' : ''}}
-              <v-icon right small class="ml-1">mdi-arrow-right</v-icon>
-            </v-btn>
-          </v-card-actions>
         </v-card>
       </v-col>
     </v-row>

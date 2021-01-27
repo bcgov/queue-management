@@ -73,8 +73,6 @@ limitations under the License.*/
         </button>
       </template>
     </b-table>
-    <ApptBookingModal :clickedTime="clickedTime" :clickedAppt="clickedAppt" />
-    <CheckInModal :clickedAppt="clickedAppt" />
   </div>
 </template>
 <script lang="ts">
@@ -112,6 +110,7 @@ export default class AgendaScreen extends Vue {
   @appointmentsModule.Mutation('toggleCheckInClicked') public toggleCheckInClicked: any
   @appointmentsModule.Action('getAppointments') public getAppointments: any
   @appointmentsModule.Action('postCheckIn') public postCheckIn: any
+  @appointmentsModule.Action('getServices') public getServices: any
   
   items = [];
   clickedTime: any = null;
@@ -213,8 +212,15 @@ export default class AgendaScreen extends Vue {
   }
 
   fetch() {
-    // Only render list when we have both serviecs and appointments
-    Promise.all([this.$store.dispatch('getServices'), this.getAppointments()])
+    // Fetch all data before rendering list
+    Promise.all([
+      this.getAppointments(), 
+      this.$store.dispatch('getServices'), // Needed to display services names to users
+      this.getServices() // REQUIRED, even if it looks like a duplicate of above
+      // We have to get services twice, once for each module/store.
+      // If this.getServices() is missing, a sneaky bug will appear when unchecking and re-checking in
+      // causing them to disappear due to missing rootState in appointments-module.
+    ])
     .then(() => {
       this.updateList();
     }) 
