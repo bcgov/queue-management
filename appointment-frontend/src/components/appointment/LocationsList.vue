@@ -132,7 +132,6 @@
 <script lang="ts">
 import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
 import { GeoModule, OfficeModule } from '@/store/modules'
-import { locationBus, locationBusEvents } from '@/events/locationBus'
 import { mapActions, mapMutations, mapState } from 'vuex'
 import ConfigHelper from '@/utils/config-helper'
 import GeocoderInput from './GeocoderInput.vue'
@@ -195,11 +194,6 @@ export default class LocationsList extends Mixins(StepperMixin) {
     locationServiceListPopup: ServiceListPopup
   }
 
-  private async created () {
-    locationBus.$on(locationBusEvents.ClosestLocationEvent, (data: any) =>
-      this.onGeoSelect(data)
-    )
-  }
   private async mounted () {
     if (this.isOnCurrentStep) {
       this.locationListData = await this.getOffices()

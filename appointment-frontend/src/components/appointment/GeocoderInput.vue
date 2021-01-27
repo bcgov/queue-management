@@ -37,6 +37,7 @@
 /* eslint-disable no-console */
 import { Component, Mixins, Prop, Vue, Watch } from 'vue-property-decorator'
 import { GeolocatorSuccess, LatLng } from '@/models/geo'
+import { locationBus, locationBusEvents } from '@/events/locationBus'
 import { mapActions, mapState } from 'vuex'
 import { GeoModule } from '@/store/modules'
 import GeocoderService from '@/services/geocoder.services'
@@ -58,6 +59,11 @@ export default class GeocoderInput extends Vue {
   private search = null;
   private debouncedSearch: (value: string, oldValue: string) => void
   private readonly getCurrentLocation!: () => Promise<GeolocatorSuccess>
+  private async created () {
+    locationBus.$on(locationBusEvents.ClosestLocationEvent, () =>
+      this.fetchLocation()
+    )
+  }
 
   constructor () {
     super()
