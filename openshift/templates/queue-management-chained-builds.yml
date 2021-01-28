@@ -20,7 +20,19 @@ parameters:
   - name: SOURCE_REPOSITORY_REF
     displayName: Git Reference
     description: Set this to a branch name, tag or other ref of your repository if you are not using the default branch.
+  - name: NPM_SECRET
+    value: ''
+  - name: BUILD_NAMESPACE
+    value: ''
 objects:
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      name: npm-config
+      namespace: "${BUILD_NAMESPACE}"
+    type: Opaque 
+    data: 
+      .npmrc: "${NPM_SECRET}"
   - apiVersion: v1
     kind: ConfigMap
     metadata:
@@ -116,12 +128,18 @@ objects:
           uri: "${SOURCE_REPOSITORY_URL}"
           ref: "${SOURCE_REPOSITORY_REF}"
         contextDir: frontend
+        secrets:
+          - secret:
+              name: npm-config
+            destinationDir: /tmp/npmrc/
       strategy:
         type: Source
         sourceStrategy:
           env:
             - name: NODE_ENV
               value: development
+            - name: NPM_CONFIG_USERCONFIG
+              value: /tmp/npmrc/.npmrc         
           from:
             kind: ImageStreamTag
             namespace: openshift

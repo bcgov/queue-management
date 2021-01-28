@@ -2,6 +2,7 @@
 echo "Before assembling"
 
 /usr/libexec/s2i/assemble
+
 # Todo - can delete below
 # We just need to run the default s2i assemble script as this is a standard build process
 # rc=$?

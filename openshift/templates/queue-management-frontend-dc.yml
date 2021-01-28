@@ -73,7 +73,7 @@ objects:
           intervalSeconds: 1
           timeoutSeconds: 60
           maxSurge: 2
-          maxUnavailable: 1
+          maxUnavailable: 0
         resources: {}
         activeDeadlineSeconds: 3600
       template:

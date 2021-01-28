@@ -58,9 +58,7 @@ objects:
             "auth-server-url": "${AUTH_SERVER_URL}",
             "ssl-required": "external",
             "resource": "${KEYCLOAK_RESOURCE}",
-            "credentials": {
-              "secret": "${KEYCLOAK_SECRET}"
-            },
+            "public-client": "true",
             "confidential-port": 0
           }
   - apiVersion: v1
@@ -80,7 +78,7 @@ objects:
           intervalSeconds: 1
           timeoutSeconds: 60
           maxSurge: 2
-          maxUnavailable: 1
+          maxUnavailable: 0
         resources: {}
         activeDeadlineSeconds: 3600
       template:
