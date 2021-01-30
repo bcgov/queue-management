@@ -54,6 +54,7 @@
           <p v-if="bookingStep.beforeIconText|| bookingStep.afterIconText" class="step-desc mt-2">
             {{bookingStep.beforeIconText}}
             <v-btn
+                v-if="bookingStep.step == 1"
                 class="ma-2"
                 text
                 icon
@@ -67,6 +68,14 @@
                 {{bookingStep.icon}}
               </v-icon>
             </v-btn>
+            <span v-else>
+              <v-icon v-if="bookingStep.icon"
+                    large
+                    color="blue darken-2"
+                  >
+                {{bookingStep.icon}}
+              </v-icon>
+            </span>
             {{bookingStep.afterIconText}}
           </p>
           <component
@@ -141,7 +150,9 @@ export default class AppointmentBookingView extends Vue {
       step: 3,
       label: 'Select Date',
       title: 'Select a Date',
-      subTitle: `What day would you like to have the appointment?`,
+      icon: 'mdi-chevron-right',
+      beforeIconText: `Available days are highlighted in the calendar, use the`,
+      afterIconText: `arrow to go to the next month`,
       code: 'date',
       component: DateSelection,
       componentProps: {}

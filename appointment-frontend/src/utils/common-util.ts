@@ -2,7 +2,7 @@
  * Place to put all the custom utility methods
  */
 import { format, parseISO } from 'date-fns'
-import { utcToZonedTime } from 'date-fns-tz'
+import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz'
 
 export enum Days {
   Monday = 1, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday
@@ -68,11 +68,38 @@ export default class CommonUtils {
     } while (index <= (Object.keys(Days).length / 2))
     return returnArray
   }
-
+  static convertDateToAnotherTimeZone (date, timezone) {
+    const dateString = date.toLocaleString('en-US', {
+      timeZone: timezone
+    })
+    return new Date(dateString)
+  }
+  static getOffsetBetweenTimezonesForDate (date, timezone1, timezone2) {
+    const timezone1Date = CommonUtils.convertDateToAnotherTimeZone(date, timezone1)
+    const timezone2Date = CommonUtils.convertDateToAnotherTimeZone(date, timezone2)
+    return timezone1Date.getTime() - timezone2Date.getTime()
+  }
   static getTzFormattedDate (date: string | Date, timezone = 'America/Vancouver', dateFormat = 'yyyy-MM-dd') {
+    if (Intl.DateTimeFormat().resolvedOptions().timeZone === timezone) {
+      return format(utcToZonedTime(date || new Date(), timezone), dateFormat)
+    } else {
+      if ((CommonUtils.getOffsetBetweenTimezonesForDate(date, Intl.DateTimeFormat().resolvedOptions().timeZone, timezone) / 60 / 1000 / 60) < 0) {
+        return format(utcToZonedTime(date || new Date(), timezone), dateFormat)
+      } else if ((CommonUtils.getOffsetBetweenTimezonesForDate(date, Intl.DateTimeFormat().resolvedOptions().timeZone, timezone) / 60 / 1000 / 60) > 0) {
+        return format(zonedTimeToUtc(date || new Date(), timezone), dateFormat)
+      }
+    }
+  }
+  static getUTCToTimeZoneTime (date: string | Date, timezone = 'America/Vancouver', dateFormat = 'yyyy-MM-dd') {
     return format(utcToZonedTime(date || new Date(), timezone), dateFormat)
   }
-
+  static changeDateFormat (date) {
+    var pattern = /(\d{4})-(\d{2})-(\d{2})/
+    if (!date || !date.match(pattern)) {
+      return null
+    }
+    return date.replace(pattern, '$2/$3/$1')
+  }
   static getTzDate (date, timezone = 'America/Vancouver') {
     return utcToZonedTime(date || new Date(), timezone)
   }
