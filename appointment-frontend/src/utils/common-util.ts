@@ -83,10 +83,14 @@ export default class CommonUtils {
     if (Intl.DateTimeFormat().resolvedOptions().timeZone === timezone) {
       return format(utcToZonedTime(date || new Date(), timezone), dateFormat)
     } else {
+      // eslint-disable-next-line no-console
+      console.log(CommonUtils.getOffsetBetweenTimezonesForDate(date, Intl.DateTimeFormat().resolvedOptions().timeZone, timezone) / 60 / 1000 / 60)
       if ((CommonUtils.getOffsetBetweenTimezonesForDate(date, Intl.DateTimeFormat().resolvedOptions().timeZone, timezone) / 60 / 1000 / 60) < 0) {
         return format(utcToZonedTime(date || new Date(), timezone), dateFormat)
       } else if ((CommonUtils.getOffsetBetweenTimezonesForDate(date, Intl.DateTimeFormat().resolvedOptions().timeZone, timezone) / 60 / 1000 / 60) > 0) {
         return format(zonedTimeToUtc(date || new Date(), timezone), dateFormat)
+      } else {
+        return CommonUtils.getUTCToTimeZoneTime(date, timezone, dateFormat)
       }
     }
   }
