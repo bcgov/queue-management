@@ -141,3 +141,20 @@ input:-webkit-autofill:active {
 .v-card__text, .v-card__title {
   word-break: break-word !important; 
 }
+
+#appointment-datepicker button.v-btn.v-btn--flat.v-btn--icon.v-btn--round.theme--light.v-size--default {
+  position: relative;
+  top: 120px;
+  background-color: #003366 !important;
+}
+
+#appointment-datepicker .v-btn> .v-btn__content> i.v-icon.notranslate.mdi.mdi-chevron-right.theme--light{
+  color: rgb(255, 255, 255) !important;
+  position: absolute;
+  z-index: 1;
+}
+#appointment-datepicker .v-btn> .v-btn__content> i.v-icon.notranslate.mdi.mdi-chevron-left.theme--light {
+  color: rgb(255, 255, 255) !important;
+  position: absolute;
+  z-index: 1;
+}
