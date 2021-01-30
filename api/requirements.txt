@@ -34,3 +34,4 @@ SQLAlchemy-Utc==0.11.0
 # We need to find alternative to toastedmarshmellow. pydantic
 toastedmarshmallow==0.2.6
 Jinja2==2.11.2
+alembic==1.5.2
