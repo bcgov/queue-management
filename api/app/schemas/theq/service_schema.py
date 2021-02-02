@@ -44,3 +44,4 @@ class ServiceSchema(ma.SQLAlchemySchema):
     timeslot_duration = fields.Int(dump_only=True)
     email_paragraph = fields.Str(dump_only=True)
     css_colour = fields.Str(dump_only=True)
+    is_dlkt = fields.Boolean()
