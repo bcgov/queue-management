@@ -1,4 +1,14 @@
 <template>
+<v-container>
+  <v-alert
+      id="nav-alert"
+      icon="mdi-alert"
+      elevation=8
+      v-if="!userBrowser.is_allowed"
+    >
+    <div class="alert-title">Browser Upgrade Recommended</div>
+    You are using an unsupported browser, and may have a degraded experience. To increase performance and access all features please use a modern browser.
+  </v-alert>
   <v-stepper
     v-model="stepCounter"
     alt-labels
@@ -90,6 +100,7 @@
       </v-stepper-content>
     </v-stepper-items>
   </v-stepper>
+</v-container>
 </template>
 
 <script lang="ts">
@@ -99,6 +110,7 @@ import { GeolocatorSuccess, LatLng } from '@/models/geo'
 import { locationBus, locationBusEvents } from '@/events/locationBus'
 import { mapActions, mapGetters } from 'vuex'
 import { AuthModule } from '@/store/modules'
+import CommonUtils from '@/utils/common-util'
 import StepperMixin from '@/mixins/StepperMixin.vue'
 
 @Component({
@@ -121,6 +133,12 @@ import StepperMixin from '@/mixins/StepperMixin.vue'
 
 export default class AppointmentBookingView extends Vue {
   private readonly isAuthenticated!: boolean
+  private userBrowser = {
+    is_allowed: true,
+    current_browser: '',
+    current_version: '',
+    allowed_browsers: ''
+  }
   private stepCounter = 1
   private updateViewCounter = 0
   private readonly getCurrentLocation!: () => Promise<GeolocatorSuccess>
@@ -213,6 +231,7 @@ export default class AppointmentBookingView extends Vue {
       this.bookingSteppers[this.bookingSteppers.length - 1].step = this.bookingSteppers.length
     }
     this.stepCounter = this.$store.state.stepperCurrentStep
+    this.userBrowser = CommonUtils.isAllowedBrowsers()
   }
 
   private getPropsForStep (step): Record<string, any> {
