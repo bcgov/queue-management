@@ -264,7 +264,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
 
   private async confirmAppointment () {
     this.isLoading = true
-    if (this.currentService['is_dlkt']) {
+    if (this.currentService['is_dlkt'] && (!this.$store.state.isAppointmentEditMode)) {
       await this.checkActiveDLKTService()
     }
     if (!this.anyActiveDLKT) {
