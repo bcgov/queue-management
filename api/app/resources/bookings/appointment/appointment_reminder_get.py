@@ -19,6 +19,7 @@ from app.utilities.auth_util import Role, has_any_role
 from app.utilities.email import is_valid_email, formatted_date, get_email, \
     get_duration
 from qsystem import api, api_call_with_retry, oidc
+from app.utilities.sms import is_valid_phone, format_sms_date
 
 
 @api.route("/appointment/reminders/<string:reminder_type>/", methods=["GET"])
@@ -44,11 +45,19 @@ class AppointmentRemindersGet(Resource):
                         send_reminder = True
                     elif not user and is_valid_email(appointment.contact_information):
                         send_reminder = True
-                elif reminder_type == 'sms' and user and user.send_sms_reminders:
-                    send_reminder = True
+                elif reminder_type == 'sms':
+                    if user and user.send_sms_reminders:
+                        send_reminder = True
+                        user_telephone = user.telephone
+                    elif not user and is_valid_phone(appointment.contact_information):
+                        send_reminder = True
+                        user_telephone = appointment.contact_information
 
                 if send_reminder:
-                    date, day = formatted_date(appointment.start_time, timezone)
+                    if reminder_type == 'email':
+                        date, day = formatted_date(appointment.start_time, timezone)
+                    else:
+                        date, day = format_sms_date(appointment.start_time, timezone), None
 
                     office_email_paragraph = appointment.office.office_email_paragraph
                     if office_email_paragraph:
@@ -58,7 +67,8 @@ class AppointmentRemindersGet(Resource):
                     if service_email_paragraph:
                         service_email_paragraph = service_email_paragraph.replace('\r\n', '<br />')
 
-                    service_name = appointment.service.external_service_name if appointment.service.external_service_name else appointment.service.service_name
+                    service_name = appointment.service.external_service_name \
+                        if appointment.service.external_service_name else appointment.service.service_name
 
                     reminders['appointments'].append(
                         {
@@ -73,7 +83,7 @@ class AppointmentRemindersGet(Resource):
                             'office_email_paragraph': office_email_paragraph,
                             'service_name': service_name,
                             'civic_address': appointment.office.civic_address,
-                            'user_telephone': user.telephone,
+                            'user_telephone': user_telephone,
                         }
                     )
         return reminders

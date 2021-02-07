@@ -20,7 +20,20 @@ import requests
 def get_reminders(app, reminder_type: str = 'email'):
     """Return reminders for next day."""
     # Create a keycloak service account token to call the appointment api
-    print('HERERERERERE')
+    access_token = get_access_token(app)
+
+    # Add this token as bearer token to invoke the reminders endpoint
+    reminders_endpoint = app.config.get('REMINDER_ENDPOINT') + f'{reminder_type}/'
+    headers = {
+        'Authorization': f'Bearer {access_token}',
+        'Content-Type': 'application/json'
+    }
+    response = requests.get(reminders_endpoint, data=None, headers=headers)
+    response.raise_for_status()
+    return response
+
+
+def get_access_token(app):
     token_url = app.config.get('OIDC_PROVIDER_TOKEN_URL')
     basic_auth_encoded = base64.b64encode(
         bytes(app.config.get('SERVICE_ACCOUNT_ID') + ':' + app.config.get('SERVICE_ACCOUNT_SECRET'), 'utf-8')).decode(
@@ -30,20 +43,6 @@ def get_reminders(app, reminder_type: str = 'email'):
         'Authorization': f'Basic {basic_auth_encoded}',
         'Content-Type': 'application/x-www-form-urlencoded'
     }
-    print('HERERERERERE 2', token_url, data, headers)
     token_response = requests.post(token_url, data=data, headers=headers)
     access_token = token_response.json().get('access_token')
-    print('access_token', access_token)
-
-    # Add this token as bearer token to invoke the reminders endpoint
-    reminders_endpoint = app.config.get('REMINDER_ENDPOINT') + f'{reminder_type}/'
-    headers = {
-        'Authorization': f'Bearer {access_token}',
-        'Content-Type': 'application/json'
-    }
-    print(reminders_endpoint, headers)
-    response = requests.get(reminders_endpoint, data=None, headers=headers)
-    print('00000s00s00s0s0s00s0s',response)
-    print(response.json())
-    response.raise_for_status()
-    return response
+    return access_token

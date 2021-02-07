@@ -15,13 +15,14 @@
 
 This module is being invoked from a job and it sends SMS reminders to customers.
 """
+import json
 import os
 
+import requests
 from flask import Flask
 
 import config
-from sms_service import get_sms_service
-from utils.appointment import get_reminders
+from utils.appointment import get_reminders, get_access_token
 from utils.logging import setup_logging
 
 setup_logging(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'logging.conf'))  # important to do this first
@@ -63,7 +64,28 @@ def send_reminders(app):
 
     reminders = get_reminders(app=app, reminder_type='sms')
     if reminders:
-        get_sms_service(app).send(app=app, reminders=reminders.json())
+        appointments = reminders.json()
+        notifications_endpoint = app.config.get('NOTIFICATIONS_ENDPOINT')
+        token: str = get_access_token(app)
+        notifications = []
+        for appointment in appointments.get('appointments'):
+            notifications.append({
+                'user_telephone': appointment.get('user_telephone'),
+                'display_name': appointment.get('display_name'),
+                'location': appointment.get('location'),
+                'formatted_date': appointment.get('formatted_date'),
+                'office_telephone': appointment.get('telephone')
+            })
+
+        if notifications:
+            try:
+                response = requests.post(notifications_endpoint,
+                                         headers={'Content-Type': 'application/json',
+                                                  'Authorization': f'Bearer {token}'},
+                                         data=json.dumps(notifications))
+                print(response)
+            except Exception as e:
+                print(e)  # log and continue
 
     app.logger.debug('Ending job>>>')
 

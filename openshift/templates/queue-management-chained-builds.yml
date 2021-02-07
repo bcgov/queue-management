@@ -74,6 +74,14 @@ objects:
         description: "Keeps track of changes in the application image"
       labels:
         app: queue-management-frontend
+  - kind: ImageStream
+    apiVersion: v1
+    metadata:
+      name: notifications-api
+      annotations:
+        description: "Keeps track of changes in the application image"
+      labels:
+        app: notifications-api
   - kind: BuildConfig
     apiVersion: v1
     metadata:
@@ -199,6 +207,42 @@ objects:
       nodeSelector:
       successfulBuildsHistoryLimit: 10
       failedBuildsHistoryLimit: 10
+  - kind: BuildConfig
+    apiVersion: v1
+    metadata:
+      name: notifications-api
+      labels:
+        app: notifications-api
+    spec:
+      triggers:
+        - type: ImageChange
+          imageChange: {}
+        - type: ConfigChange
+      runPolicy: Serial
+      source:
+        type: Git
+        git:
+          uri: "${SOURCE_REPOSITORY_URL}"
+          ref: "${SOURCE_REPOSITORY_REF}"
+        contextDir: notifications-api
+      strategy:
+        type: Source
+        sourceStrategy:
+          from:
+            kind: ImageStreamTag
+            namespace: openshift
+            name: python:latest
+      output:
+        to:
+          kind: ImageStreamTag
+          name: notifications-api:latest
+      resources: {}
+      postCommit: {}
+      nodeSelector:
+      successfulBuildsHistoryLimit: 10
+      failedBuildsHistoryLimit: 10
+    status:
+      lastVersion: 0
   - kind: BuildConfig
     apiVersion: v1
     metadata:

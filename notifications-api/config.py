@@ -50,37 +50,26 @@ class _Config(object):  # pylint: disable=too-few-public-methods
     """Base class configuration that should set reasonable defaults for all the other configurations. """
     PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
-    SECRET_KEY = 'a_secret'
+    # JWT_OIDC Settings
+    # SMS variables
+    SMS_USE_GC_NOTIFY = os.getenv('SMS_USE_GC_NOTIFY', 'true').lower() == 'true'
+    # GC Notify
+    GC_NOTIFY_API_KEY = os.getenv('GC_NOTIFY_API_KEY')
+    GC_NOTIFY_API_BASE_URL = os.getenv('GC_NOTIFY_API_BASE_URL')
+    GC_NOTIFY_SMS_TEMPLATE_ID = os.getenv('GC_NOTIFY_SMS_TEMPLATE_ID')
+    SMS_APPOINTMENT_APP_URL = os.getenv('SMS_APPOINTMENT_APP_URL')
+    APPOINTMENT_APP_URL = os.getenv('APPOINTMENT_APP_URL')
+
+    #   Set up OIDC variables.
+    SECRET_KEY = os.getenv('SECRET_KEY')
+    OIDC_OPENID_REALM = os.getenv('OIDC_OPENID_REALM', 'nest')
+    OIDC_CLIENT_SECRETS = os.getenv('OIDC_SECRETS_FILE', 'client_secrets/secrets.json')
+    OIDC_USER_INFO_ENABLED = True
+    OIDC_SCOPES = ['openid', 'email', 'profile']
+    OIDC_RESOURCE_CHECK_AUD = False
+
     TESTING = False
     DEBUG = True
-
-    OIDC_PROVIDER_TOKEN_URL = os.getenv('OIDC_PROVIDER_TOKEN_URL', None)
-    SERVICE_ACCOUNT_ID = os.getenv('SERVICE_ACCOUNT_ID', None)
-    SERVICE_ACCOUNT_SECRET = os.getenv('SERVICE_ACCOUNT_SECRET', None)
-    REMINDER_ENDPOINT = os.getenv('REMINDER_ENDPOINT', None)
-
-    # Email variables
-    # MAIL_SERVER = os.getenv('MAIL_SERVER', 'apps.smtp.gov.bc.ca')
-    # MAIL_PORT = os.getenv('MAIL_PORT', '25')
-    # MAIL_USE_TLS = False
-    # MAIL_USE_SSL = False
-    # MAIL_USERNAME = os.getenv('MAIL_USERNAME', None)
-    # MAIL_PASSWORD = os.getenv('MAIL_PASSWORD', None)
-    MAIL_FROM_ID = os.getenv('MAIL_FROM_ID', 'donotreply@gov.bc.ca')
-
-    # Email variables
-    EMAIL_APPOINTMENT_APP_URL = os.getenv('EMAIL_APPOINTMENT_APP_URL', None)
-
-    # CHES variables
-    CHES_SSO_TOKEN_URL = os.getenv('CHES_SSO_TOKEN_URL', None)
-    CHES_SSO_CLIENT_ID = os.getenv('CHES_SSO_CLIENT_ID', None)
-    CHES_SSO_CLIENT_SECRET = os.getenv('CHES_SSO_CLIENT_SECRET', None)
-    CHES_POST_EMAIL_ENDPOINT = os.getenv('CHES_POST_EMAIL_ENDPOINT', None)
-
-    MAX_EMAIL_PER_BATCH = int(os.getenv('MAX_EMAIL_PER_BATCH', 30))
-
-    # SMS variables
-    NOTIFICATIONS_ENDPOINT = os.getenv('NOTIFICATIONS_ENDPOINT')
 
 
 class DevConfig(_Config):  # pylint: disable=too-few-public-methods
@@ -90,6 +79,7 @@ class DevConfig(_Config):  # pylint: disable=too-few-public-methods
 
 class TestConfig(_Config):  # pylint: disable=too-few-public-methods
     """In support of testing only used by the py.test suite."""
+
     DEBUG = True
     TESTING = True
 
