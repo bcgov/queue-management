@@ -509,8 +509,8 @@ export default class ApptBookingModal extends Vue {
       this.$store.commit('toggleServeCitizenSpinner', true)
       this.clearMessage()
       const service_id = this.selectedService
-      const start = moment(this.start).clone()
-      const end = moment(this.end).clone()
+      const start = moment(moment.tz(this.start.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).format()).clone()
+      const end = moment(moment.tz(this.end.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).format()).clone()
       const e: any = {
         start_time: moment.utc(start).format(),
         end_time: moment.utc(end).format(),
