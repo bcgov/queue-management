@@ -32,6 +32,8 @@ from app.utilities.email import get_confirmation_email_contents, send_email, gen
 from app.utilities.snowplow import SnowPlow
 from qsystem import api, api_call_with_retry, db, oidc, my_print, application
 from qsystem import socketio
+from app.utilities.sms import send_sms
+
 
 @api.route("/appointments/", methods=["POST"])
 class AppointmentPost(Resource):
@@ -154,12 +156,14 @@ class AppointmentPost(Resource):
                     Appointment.delete_appointments(appointment_ids_to_delete)
 
             else:
-                # Send confirmation email
+                # Send confirmation email and sms
                 try:
-                    pprint('Sending email for appointment confirmation')
+                    pprint('Sending sms and emails for appointment confirmation')
                     send_email(ches_token, *get_confirmation_email_contents(appointment, office, office.timezone, user))
+                    send_sms(appointment, office, office.timezone, user,
+                             request.headers['Authorization'].replace('Bearer ', ''))
                 except Exception as exc:
-                    pprint(f'Error on email sending - {exc}')
+                    pprint(f'Error on sms or email sending - {exc}')
 
             SnowPlow.snowplow_appointment(citizen, csr, appointment, 'appointment_create')
 
