@@ -27,7 +27,7 @@ export const makeBookingReqObj = (context, responses) => {
     const datetime = date + 'T' + time
     let start
     if (booking_timezone_name != timezone_name) {
-        start = new tZone.tz(datetime, booking_timezone_name)
+        start = tZone.tz(datetime, booking_timezone_name)
     } else {
         // JSTOTS TOCHECK removed new from moment. no need to use new with moment
         start = moment(datetime).local()
