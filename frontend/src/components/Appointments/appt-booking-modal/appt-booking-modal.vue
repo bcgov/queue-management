@@ -503,8 +503,8 @@ export default class ApptBookingModal extends Vue {
     }
   }
 
-  submit () {
-    if (!this.submitClicked) {
+  submit () { 
+    if (!this.submitClicked && this.end) {
       this.toggleSubmitClicked(true)
       this.$store.commit('toggleServeCitizenSpinner', true)
       this.clearMessage()
