@@ -21,6 +21,8 @@ parameters:
     displayName: Git Reference
     description: Set this to a branch name, tag or other ref of your repository if you are not using the default branch.
   - name: NPM_SECRET
+    displayName: Artifactory build secret
+    description: This is the base64 converted string of registry,email,username/password ,always-auth of artifactory creds
     value: ''
   - name: BUILD_NAMESPACE
     value: ''
@@ -137,7 +139,7 @@ objects:
         sourceStrategy:
           env:
             - name: NODE_ENV
-              value: development
+              value: production
             - name: NPM_CONFIG_USERCONFIG
               value: /tmp/npmrc/.npmrc         
           from:
@@ -216,7 +218,7 @@ objects:
       strategy:
         type: JenkinsPipeline
         jenkinsPipelineStrategy:
-          jenkinsfilePath: Jenkinsfile
+          jenkinsfilePath: Jenkinsfile.groovy
       output: {}
       resources: {}
       postCommit: {}
