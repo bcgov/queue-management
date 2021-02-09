@@ -13,12 +13,13 @@
   <div v-if="isEmailMissing">Please <router-link to="account-settings">configure your email address</router-link> to receive notifications.</div>
   <div v-if="isReminderFlagMissing">Please <router-link to="account-settings">subscribe to email reminders</router-link> to receive appointment reminders.</div>
   <div v-if="isPhoneMissing">Please <router-link to="account-settings">add your phone number</router-link> to ensure we can contact you.</div>
-  <div v-if="isSmsReminderFlagMissing">Please <router-link to="account-settings">subscribe to sms reminders </router-link> to receive appointment reminders.</div>
+  <div v-if="isSmsReminderFlagMissing">Please <router-link to="account-settings">subscribe to sms text message reminders </router-link> to receive appointment reminders.</div>
 </v-alert>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import ConfigHelper from '@/utils/config-helper'
 import { User } from '@/models/user'
 import { mapState } from 'vuex'
 
@@ -49,10 +50,13 @@ export default class NoEmailAlert extends Vue {
     } else if (!this.currentUserProfile?.send_email_reminders) {
       this.isReminderFlagMissing = true
     }
-    if (!this.currentUserProfile?.telephone) {
-      this.isPhoneMissing = true
-    } else if (!this.currentUserProfile?.send_sms_reminders) {
-      this.isSmsReminderFlagMissing = true
+
+    if (ConfigHelper.isEmsEnabled()) {
+      if (!this.currentUserProfile?.telephone) {
+        this.isPhoneMissing = true
+      } else if (!this.currentUserProfile?.send_sms_reminders) {
+        this.isSmsReminderFlagMissing = true
+      }
     }
   }
 }

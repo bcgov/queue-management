@@ -14,15 +14,15 @@ limitations under the License.'''
 
 import re
 from datetime import datetime
+from pprint import pprint
 
+import json
 import pytz
+import requests
 from flask import current_app
-from jinja2 import Environment, FileSystemLoader
-from .ches_email import send_email, generate_ches_token
 
 from app.models.bookings import Appointment
 from app.models.theq import Office, PublicUser
-import requests, json
 
 
 def send_sms(appointment: Appointment, office: Office, timezone, user: PublicUser, token: str):
@@ -30,15 +30,19 @@ def send_sms(appointment: Appointment, office: Office, timezone, user: PublicUse
     telephone: str = get_user_telephone(user, appointment)
     if telephone:
         notifications_endpoint = current_app.config.get('NOTIFICATIONS_ENDPOINT')
-        response = requests.post(notifications_endpoint,
-                                 headers={'Content-Type': 'application/json', 'Authorization': f'Bearer {token}'},
-                                 data=json.dumps([{
-                                     'user_telephone': telephone,
-                                     'display_name': user.display_name,
-                                     'location': office.office_name,
-                                     'formatted_date': format_sms_date(appointment.start_time, timezone),
-                                     'office_telephone': office.telephone
-                                 }]))
+        try:
+            display_name: str = user.display_name if user else ''  # For CSR appointment user is None
+            requests.post(notifications_endpoint,
+                          headers={'Content-Type': 'application/json', 'Authorization': f'Bearer {token}'},
+                          data=json.dumps([{
+                              'user_telephone': telephone,
+                              'display_name': display_name,
+                              'location': office.office_name,
+                              'formatted_date': format_sms_date(appointment.start_time, timezone),
+                              'office_telephone': office.telephone
+                          }]))
+        except Exception as exc:
+            pprint(f'Error on sms sending - {exc}')
 
 
 def is_valid_phone(phone_number: str):
@@ -57,9 +61,8 @@ def format_sms_date(dt: datetime, timezone):
 
 
 def get_user_telephone(user, appointment):
-    phone = None
     if user:
-        phone = user.telephone
-    elif is_valid_phone(appointment.contact_information):
-        phone = appointment.contact_information
+        phone = user.telephone if user.send_sms_reminders else None
+    else:
+        phone = appointment.contact_information if is_valid_phone(appointment.contact_information) else None
     return phone

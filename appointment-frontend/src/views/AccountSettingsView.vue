@@ -48,10 +48,10 @@
                 v-model="enableEmailReminder"
                 label="Send me appointment reminders via email"
               ></v-switch>
-              <v-switch
+              <v-switch v-if="isSmsEnabled"
                 inset
                 v-model="enableSmsReminder"
-                label="Send me appointment reminders via SMS"
+                label="Send me appointment reminders via SMS text message"
               ></v-switch>
             </v-form>
             <v-row>
@@ -87,6 +87,7 @@ import { AccountModule, AuthModule } from '@/store/modules'
 import { Component, Vue } from 'vue-property-decorator'
 import { User, UserUpdateBody } from '@/models/user'
 import { mapActions, mapGetters, mapState } from 'vuex'
+import ConfigHelper from '@/utils/config-helper'
 import { getModule } from 'vuex-module-decorators'
 
 @Component({
@@ -175,6 +176,10 @@ export default class AccountSettingsView extends Vue {
 
   private goToAppointments () {
     this.$router.push('/booked-appointments')
+  }
+
+  private get isSmsEnabled (): boolean {
+    return ConfigHelper.isEmsEnabled()
   }
 }
 </script>

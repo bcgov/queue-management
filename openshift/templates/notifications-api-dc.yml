@@ -265,4 +265,4 @@ parameters:
   - name: SMS_REMINDER_TEMPLATE
     description: "SMS Template text"
     required: true
-    value: "REMINDER: Hi {first_name}, you have an appointment with Service BC {location} on {date_time}. To cancel or change, visit {app_url} or call {office_telephone}"
+    value: "REMINDER: You have an appointment with Service BC {location} on {date_time}. To cancel or change, visit {app_url} or call {office_telephone}"
