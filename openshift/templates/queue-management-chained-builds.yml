@@ -200,7 +200,7 @@ objects:
       postCommit: {}
       nodeSelector:
       successfulBuildsHistoryLimit: 10
-      failedBuildsHistoryLimit: 10
+      failedBuildsHistoryLimit: 2
   - kind: BuildConfig
     apiVersion: v1
     metadata:
