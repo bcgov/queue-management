@@ -157,6 +157,9 @@ class BaseConfig(object):
     else:
         SQLALCHEMY_ECHO=False
 
+    SOCKETIO_PING_TIMEOUT = int(os.getenv('SOCKETIO_PING_TIMEOUT', 5))
+    SOCKETIO_PING_INTERVAL = int(os.getenv('SOCKETIO_PING_INTERVAL', 25))
+    
     THEQ_FEEDBACK = (os.getenv('THEQ_FEEDBACK','')).upper().replace(" ","").split(",")
     SLACK_URL = os.getenv('SLACK_URL', '')
     ROCKET_CHAT_URL = os.getenv('ROCKET_CHAT_URL')
