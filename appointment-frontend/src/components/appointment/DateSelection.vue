@@ -6,6 +6,7 @@
         md="6"
       >
         <v-date-picker
+          id="appointment-datepicker"
           v-model="selectedDate"
           show-current
           light
@@ -15,7 +16,7 @@
           color="success"
           header-color="primary"
           full-width
-          @click:date="dateClicked"
+          @click:date="dateClicked('true')"
         ></v-date-picker>
       </v-col>
       <v-col
@@ -68,12 +69,12 @@ import { Appointment, AppointmentSlot } from '@/models/appointment'
 import CommonUtils, { timezoneOffset } from '@/utils/common-util'
 import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
 import { mapActions, mapMutations, mapState } from 'vuex'
-
+import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz'
 import { Office } from '@/models/office'
 import { OfficeModule } from '@/store/modules'
 import { Service } from '../../models/service'
 import StepperMixin from '@/mixins/StepperMixin.vue'
-import { zonedTimeToUtc } from 'date-fns-tz'
+import { format } from 'date-fns'
 
 @Component({
   computed: {
@@ -107,20 +108,26 @@ export default class DateSelection extends Mixins(StepperMixin) {
    private readonly setCurrentDraftAppointment!: (appointment: Appointment) => void
   private readonly currentService!: Service
   // TODO: take timezone from office data from state
-  private selectedDate = CommonUtils.getTzFormattedDate(new Date(), this.currentOfficeTimezone)
+  private selectedDate = ''
+  private selectedDateObj = ''
   private selectedDateTimeSlots = []
   private availableDates = []
+  private isUserClicked = 'false'
 
    private isLoading: boolean = false
 
    private get selectedDateFormatted () {
-     return CommonUtils.getTzFormattedDate(this.selectedDate, this.currentOfficeTimezone, 'MMM dd, yyyy')
+     if (this.isUserClicked === 'true') {
+       return CommonUtils.getTzFormattedDate(new Date(CommonUtils.changeDateFormat(this.selectedDate)), Intl.DateTimeFormat().resolvedOptions().timeZone, 'MMM dd, yyyy')
+     } else if (this.selectedDateObj) {
+       return CommonUtils.getTzFormattedDate(new Date(this.selectedDateObj), Intl.DateTimeFormat().resolvedOptions().timeZone, 'MMM dd, yyyy')
+     }
    }
 
    private get selectedTimeSlot () {
      return (this.currentAppointmentSlot?.start_time && this.currentAppointmentSlot?.end_time)
-       ? `${CommonUtils.getTzFormattedDate(this.currentAppointmentSlot?.start_time, this.currentOfficeTimezone, 'hh:mm aaa')} -
-        ${CommonUtils.getTzFormattedDate(this.currentAppointmentSlot?.end_time, this.currentOfficeTimezone, 'hh:mm aaa')}`
+       ? `${CommonUtils.getUTCToTimeZoneTime(this.currentAppointmentSlot?.start_time, this.currentOfficeTimezone, 'hh:mm aaa')} -
+        ${CommonUtils.getUTCToTimeZoneTime(this.currentAppointmentSlot?.end_time, this.currentOfficeTimezone, 'hh:mm aaa')}`
        : ''
    }
 
@@ -129,21 +136,23 @@ export default class DateSelection extends Mixins(StepperMixin) {
        if (this.currentOffice?.office_id) {
          this.getAvailableService()
        }
-       this.selectedDate = CommonUtils.getTzFormattedDate(this.currentAppointmentSlot?.start_time, this.currentOfficeTimezone)
        this.dateClicked()
      }
    }
 
    private async getAvailableService () {
-     // console.log('before availableAppoinments', this.currentOffice.service_id)
      const availableAppoinments = await this.getAvailableAppointmentSlots({
        officeId: this.currentOffice.office_id,
        serviceId: this.currentService.service_id
      })
-
      Object.keys(availableAppoinments).forEach(date => {
        if (availableAppoinments[date]?.length) {
          this.availableDates.push(CommonUtils.getTzFormattedDate(new Date(date), this.currentOfficeTimezone))
+         if (!this.selectedDate) {
+           this.selectedDate = CommonUtils.getTzFormattedDate(new Date(date), this.currentOfficeTimezone)
+           this.selectedDateObj = date
+           this.dateClicked()
+         }
        }
      })
    }
@@ -151,9 +160,17 @@ export default class DateSelection extends Mixins(StepperMixin) {
      return this.availableDates.find(date => date === val)
    }
 
-   private dateClicked () {
+   private dateClicked (userClicked = 'false') {
      this.selectedDateTimeSlots = []
-     const slots = this.availableAppointmentSlots[CommonUtils.getTzFormattedDate(this.selectedDate, this.currentOfficeTimezone, 'MM/dd/yyyy')]
+     let slots = []
+     if (this.selectedDate) {
+       if (userClicked === 'true') {
+         this.isUserClicked = 'true'
+         slots = this.availableAppointmentSlots[CommonUtils.getTzFormattedDate(new Date(CommonUtils.changeDateFormat(this.selectedDate)), this.currentOfficeTimezone, 'MM/dd/yyyy')]
+       } else {
+         slots = this.availableAppointmentSlots[CommonUtils.getTzFormattedDate(new Date(this.selectedDateObj), this.currentOfficeTimezone, 'MM/dd/yyyy')]
+       }
+     }
      slots?.forEach(slot => {
        this.selectedDateTimeSlots.push({
          ...slot,
@@ -171,8 +188,8 @@ export default class DateSelection extends Mixins(StepperMixin) {
      const selectedSlot: AppointmentSlot = {
        // start_time: new Date(`${this.selectedDate}T${slot.start_time}${timezoneOffset()}`).toISOString(),
        // end_time: new Date(`${this.selectedDate}T${slot.end_time}${timezoneOffset()}`).toISOString()
-       start_time: zonedTimeToUtc(`${this.selectedDate}T${slot.start_time}`, this.currentOfficeTimezone).toISOString(),
-       end_time: zonedTimeToUtc(`${this.selectedDate}T${slot.end_time}`, this.currentOfficeTimezone).toISOString()
+       start_time: zonedTimeToUtc(new Date(`${this.selectedDate}T${slot.start_time}`), this.currentOfficeTimezone).toISOString(),
+       end_time: zonedTimeToUtc(new Date(`${this.selectedDate}T${slot.end_time}`), this.currentOfficeTimezone).toISOString()
      }
      this.setCurrentAppointmentSlot(selectedSlot)
      // this.createDraftAppointment()
@@ -201,4 +218,5 @@ export default class DateSelection extends Mixins(StepperMixin) {
 
 <style lang="scss" scoped>
 @import "@/assets/scss/theme.scss";
+@import "@/assets/scss/overrides.scss";
 </style>

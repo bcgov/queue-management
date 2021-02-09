@@ -141,3 +141,50 @@ input:-webkit-autofill:active {
 .v-card__text, .v-card__title {
   word-break: break-word !important; 
 }
+
+#appointment-datepicker button.v-btn.v-btn--flat.v-btn--icon.v-btn--round.theme--light.v-size--default {
+  position: relative;
+  top: 120px;
+  background-color: #003366 !important;
+}
+
+#appointment-datepicker .v-btn> .v-btn__content> i.v-icon.notranslate.mdi.mdi-chevron-right.theme--light{
+  color: rgb(255, 255, 255) !important;
+  position: absolute;
+  z-index: 1;
+}
+#appointment-datepicker .v-btn> .v-btn__content> i.v-icon.notranslate.mdi.mdi-chevron-left.theme--light {
+  color: rgb(255, 255, 255) !important;
+  position: absolute;
+  z-index: 1;
+}
+#nav-alert  {
+  border: 1px solid transparent;
+  border-radius: 4px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f9f1c6;
+  border-color: #faebcc;
+  color: #6c4a00;
+}
+#nav-alert :before {
+  float: left;
+  font-size: larger;
+  font-style: normal;
+  line-height: 1;
+  margin-right: 10px;
+  position: relative;
+  top: 3px;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+}
+#nav-alert .v-alert__content {
+  font-size: 13px !important;
+}
+#nav-alert .v-alert__content > .alert-title{
+  font-size: 16px !important;
+  font-weight: bold;
+  -left: 35px;
+
+}

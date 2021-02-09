@@ -60,6 +60,11 @@ appt_limit = application.config['APPOINTMENT_LIMIT_DAYS']
 db = SQLAlchemy(application)
 db.init_app(application)
 query_limit = application.config['DB_LONG_RUNNING_QUERY']
+ping_timeout_seconds = application.config['SOCKETIO_PING_TIMEOUT']
+ping_interval_seconds = application.config['SOCKETIO_PING_INTERVAL']
+print("==> socketIO Engine options")
+print("    --> ping_timeout_seconds:    " + str(ping_timeout_seconds))
+print("    --> ping_interval_seconds:   " + str(ping_interval_seconds))
 
 cache = Cache(config={'CACHE_TYPE': 'simple', 'CACHE_DEFAULT_TIMEOUT': application.config['CACHE_DEFAULT_TIMEOUT']})
 cache.init_app(application)
@@ -67,7 +72,7 @@ cache.init_app(application)
 ma = Marshmallow(application)
 
 #   Set up socket io and rabbit mq.
-socketio = SocketIO(logger=socket_flag, engineio_logger=engine_flag,ping_timeout=6,ping_interval=3,
+socketio = SocketIO(logger=socket_flag, engineio_logger=engine_flag,ping_timeout=ping_timeout_seconds,ping_interval=ping_interval_seconds,
                     cors_allowed_origins=application.config['CORS_ALLOWED_ORIGINS'])
 
 if application.config['ACTIVE_MQ_URL'] is not None:

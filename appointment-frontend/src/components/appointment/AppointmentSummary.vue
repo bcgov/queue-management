@@ -108,11 +108,20 @@
 
           <v-btn
             large
-            v-if="dialogPopup.isSuccess === false"
+            v-if="(dialogPopup.isSuccess === false) && (!anyActiveDLKT)"
             color="default"
             @click="goToTime"
           >
             Pick another time
+          </v-btn>
+
+          <v-btn
+            large
+            v-if="(dialogPopup.isSuccess === false) && (anyActiveDLKT)"
+            color="default"
+            @click="goToMyAppointments"
+          >
+            My Appointments
           </v-btn>
           <v-spacer></v-spacer>
         </v-card-actions>
@@ -124,9 +133,9 @@
 
 <script lang="ts">
 import { Appointment, AppointmentSlot } from '@/models/appointment'
+import { AppointmentModule, AuthModule } from '@/store/modules'
 import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
 import { mapActions, mapGetters, mapState } from 'vuex'
-import { AuthModule } from '@/store/modules'
 import CommonUtils from '@/utils/common-util'
 import ConfigHelper from '@/utils/config-helper'
 import GeocoderService from '@/services/geocoder.services'
@@ -153,7 +162,11 @@ import { getModule } from 'vuex-module-decorators'
   methods: {
     ...mapActions('office', [
       'createAppointment',
-      'clearSelectedValues'
+      'clearSelectedValues',
+      'deleteDraftAppointment'
+    ]),
+    ...mapActions('appointment', [
+      'getAppointmentList'
     ])
   },
   components: {
@@ -162,6 +175,7 @@ import { getModule } from 'vuex-module-decorators'
   }
 })
 export default class AppointmentSummary extends Mixins(StepperMixin) {
+  private appointmentModule = getModule(AppointmentModule, this.$store)
   private authModule = getModule(AuthModule, this.$store)
   private mapConfigurations = ConfigHelper.getMapConfigurations()
   private readonly currentOffice!: Office
@@ -169,18 +183,27 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   private readonly currentAppointmentSlot!: AppointmentSlot
   private readonly currentOfficeTimezone!: string
   private readonly createAppointment!: () => Appointment
+  private readonly deleteDraftAppointment!: () => Appointment
   private readonly clearSelectedValues!: () => void
   private readonly isAuthenticated!: boolean
   private showTermsOfServiceModal: boolean = false
   private termsOfServiceConsent: boolean = false
   private isLoading: boolean = false
+  private anyActiveDLKT: boolean = false
+  private myappointmentList: Appointment[] = []
+  private readonly getAppointmentList!: () => Promise<Appointment[]>
   private dialogPopup = {
     showDialog: false,
     isSuccess: false,
     title: '',
     subTitle: ''
   }
-
+  // private async beforeMount () {
+  //   await this.fetchUserAppointments()
+  // }
+  private async created () {
+    await this.fetchUserAppointments()
+  }
   private get appointmentDisplayData () {
     return {
       serviceForAppointment: this.currentService?.external_service_name,
@@ -219,27 +242,56 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
     if (!date) {
       return ''
     }
-    return CommonUtils.getTzFormattedDate(date, this.currentOfficeTimezone, formatStr)
+    return CommonUtils.getUTCToTimeZoneTime(date, this.currentOfficeTimezone, formatStr)
+  }
+
+  private async fetchUserAppointments () {
+    this.myappointmentList = await this.getAppointmentList()
+  }
+
+  private async checkActiveDLKTService () {
+    await this.fetchUserAppointments()
+    Object.keys(this.myappointmentList).forEach(app => {
+      if (this.myappointmentList[app]?.service['is_dlkt']) {
+        if (new Date(this.myappointmentList[app]['start_time']) >= new Date()) {
+          this.anyActiveDLKT = true
+        } else {
+          this.anyActiveDLKT = false
+        }
+      }
+    })
   }
 
   private async confirmAppointment () {
     this.isLoading = true
-    try {
-      const resp = await this.createAppointment()
-      if (resp.appointment_id) {
-        this.dialogPopup.showDialog = true
-        this.dialogPopup.isSuccess = true
-        this.dialogPopup.title = 'Success! Your appointment has been booked.'
-        this.dialogPopup.subTitle = `Please review your booking in the details below.
+    if (this.currentService['is_dlkt'] && (!this.$store.state.isAppointmentEditMode)) {
+      await this.checkActiveDLKTService()
+    }
+    if (!this.anyActiveDLKT) {
+      try {
+        const resp = await this.createAppointment()
+        if (resp.appointment_id) {
+          this.dialogPopup.showDialog = true
+          this.dialogPopup.isSuccess = true
+          this.dialogPopup.title = 'Success! Your appointment has been booked.'
+          this.dialogPopup.subTitle = `Please review your booking in the details below.
             If you need to cancel or reschedule your appointment, please contact Service BC`
+        }
+        this.isLoading = false
+      } catch (error) {
+        this.isLoading = false
+        this.dialogPopup.showDialog = true
+        this.dialogPopup.isSuccess = false
+        this.dialogPopup.title = 'Failed!'
+        this.dialogPopup.subTitle = error?.response?.data?.message || 'Unable to book the appointment.'
       }
-      this.isLoading = false
-    } catch (error) {
+    } else {
+      const resp = await this.deleteDraftAppointment()
       this.isLoading = false
       this.dialogPopup.showDialog = true
       this.dialogPopup.isSuccess = false
       this.dialogPopup.title = 'Failed!'
-      this.dialogPopup.subTitle = error?.response?.data?.message || 'Unable to book the appointment.'
+      this.dialogPopup.subTitle = 'You already have one appointment scheduled for Knowledge Test, to reschedule please visit My Appointments. This booking cannot be completed..'
     }
   }
 
@@ -254,6 +306,11 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   private goToTime () {
     this.dialogPopup.showDialog = false
     this.stepBack()
+  }
+
+  private goToMyAppointments () {
+    this.dialogPopup.showDialog = false
+    this.$router.push('/booked-appointments')
   }
 
   private getMapUrl (location) {

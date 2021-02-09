@@ -184,6 +184,10 @@ export default class AgendaScreen extends Vue {
       return false;
     })
 
+    if (this.$store.state.services.length === 0) {
+      //  INC0074865 - Services not loaded on initial entry - call appointments to fetch services when serviceList length is 0
+      this.getAppointments()  
+    }
     // Format object for agenda table.
     return filteredDates.map(appt => {
       const service = this.$store.state.services

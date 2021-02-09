@@ -37,9 +37,9 @@ export default class AppointmentModule extends VuexModule {
         appointment.office = officeList.find(office => (office.office_id === appointment.office))
         appointment.service = serviceList.find(service => (service.service_id === appointment.service))
         const timezone = appointment.office?.timezone?.timezone_name
-        appointment.appointmentDate = CommonUtils.getTzFormattedDate(appointment.start_time, timezone, 'MMM dd, yyyy')
-        appointment.appointmentStartTime = CommonUtils.getTzFormattedDate(appointment.start_time, timezone, 'hh:mmaaaa')
-        appointment.appointmentEndTime = CommonUtils.getTzFormattedDate(appointment.end_time, timezone, 'hh:mmaaaa')
+        appointment.appointmentDate = CommonUtils.getUTCToTimeZoneTime(appointment.start_time, timezone, 'MMM dd, yyyy')
+        appointment.appointmentStartTime = CommonUtils.getUTCToTimeZoneTime(appointment.start_time, timezone, 'hh:mmaaaa')
+        appointment.appointmentEndTime = CommonUtils.getUTCToTimeZoneTime(appointment.end_time, timezone, 'hh:mmaaaa')
         return appointment
       })
     }
