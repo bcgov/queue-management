@@ -43,3 +43,6 @@ class AppointmentSchema(ma.SQLAlchemySchema):
     is_draft = fields.Boolean(allow_none=True)
     office = fields.Int(attribute="office_id")
     service = fields.Int(attribute="service_id")
+    # office = fields.Nested(OfficeSchema())
+    # service = fields.Nested(ServiceSchema())
+
