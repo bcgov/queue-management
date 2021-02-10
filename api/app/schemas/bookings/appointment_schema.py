@@ -41,8 +41,8 @@ class AppointmentSchema(ma.SQLAlchemySchema):
     recurring_uuid = fields.String(allow_none=True)
     online_flag = fields.Boolean(allow_none=True)
     is_draft = fields.Boolean(allow_none=True)
-    office = fields.Int(attribute="office_id")
-    service = fields.Int(attribute="service_id")
-    # office = fields.Nested(OfficeSchema())
-    # service = fields.Nested(ServiceSchema())
+    # office = fields.Int(attribute="office_id")
+    # service = fields.Int(attribute="service_id")
+    office = fields.Nested(OfficeSchema())
+    service = fields.Nested(ServiceSchema())
 
