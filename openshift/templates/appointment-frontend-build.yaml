@@ -14,7 +14,7 @@ parameters:
     description: The URL of the repository with your application source code.
     # TODO - Revert value here when merged into mrain branch.
     # value: https://github.com/bcgov/queue-management.git
-    value: https://github.com/bcgov/queue-management.git
+    value: https://github.com/saravanpa-aot/queue-management.git
   - name: SOURCE_REPOSITORY_REF
     displayName: Git Reference
     description: Set this to a branch name, tag or other ref of your repository if you are not using the default branch.

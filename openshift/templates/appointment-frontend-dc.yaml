@@ -111,9 +111,9 @@ objects:
                   port: 2015
                 timeoutSeconds: 3
               volumeMounts:
-                - mountPath: /var/www/html/config/kc
+                - mountPath: /app/config/kc
                   name: keycloak
-                - mountPath: /var/www/html/config
+                - mountPath: /app/config
                   name: appointment-configuration
               terminationMessagePath: "/dev/termination-log"
               terminationMessagePolicy: File
@@ -203,32 +203,35 @@ parameters:
   - name: TOOLS_WORKSPACE
     description: The Location for your image streams (Tools Workspace)
     required: true
+    value: 78c88a-tools
   - name: VUE_APP_ROOT_API
     description: "The new route to API which will be rate limited"
   - name: BCEID_REG_URL
     description: The BCEID Registration URL.
     required: true
+    value: foo
   - name: VUE_APP_GOOGLE_STATIC_MAP_API_KEY
     description: API KEY for Google Map
     required: true
+    value: ds
   - name: KEYCLOAK_REALM
     description: "Keycloak Realm"
     required: true
-    value: ""
+    value: "dd"
   - name: KEYCLOAK_RESOURCE
     description: "Keycloak client id"
     required: true
-    value: ""
+    value: "d"
   - name: KEYCLOAK_SECRET
     description: "Keycloak Secret"
     required: true
-    value: ""
+    value: "d"
   - name: HIDEBCSERVICESCARD
     description: "this is to display/hide BCServices card authentication option"
     required: true
-    value: ""
+    value: "d"
   - name: AUTH_SERVER_URL
     description: "Keycloak authorization url for ex:https://keycloakserver.com/auth/"
     required: true
-    value: ""
+    value: "d"
 
