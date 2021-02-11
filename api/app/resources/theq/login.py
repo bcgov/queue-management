@@ -15,9 +15,9 @@ limitations under the License.'''
 from flask import abort, redirect, request, url_for
 from flask_login import login_user, logout_user
 from flask_restx import Resource
-from jose import jwt
 from app.models.theq import CSR
-from qsystem import api, application, oidc
+from qsystem import api, application
+from app.auth.auth import decode_token
 
 
 @api.route("/login/", methods=["GET"])
@@ -29,10 +29,9 @@ class Login(Resource):
         if cookie is None:
             return abort(401, self.auth_string)
 
-        if not oidc.validate_token(cookie):
+        claims = decode_token(cookie)
+        if not claims:
             return abort(401, self.auth_string)
-
-        claims = jwt.get_unverified_claims(cookie)
 
         if claims["preferred_username"]:
             csr = CSR.find_by_username(claims["preferred_username"])
