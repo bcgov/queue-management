@@ -21,7 +21,8 @@ from app.models.bookings import Exam
 from app.schemas.bookings import ExamSchema
 from app.models.theq import CSR
 from app.utilities.bcmp_service import BCMPService
-from qsystem import api, oidc, db, my_print
+from qsystem import api, db, my_print
+from app.auth.auth import jwt
 
 
 @api.route("/exams/bcmp_status/", methods=["POST"])
@@ -29,9 +30,9 @@ class ExamList(Resource):
     bcmp_service = BCMPService()
     exam_schema = ExamSchema()
 
-    @oidc.accept_token(require_token=True)
+    @jwt.requires_auth
     def post(self):
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
+        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
 
         try:
             exams = Exam.query.filter_by(upload_received_ind=0).filter(Exam.bcmp_job_id.isnot(None))

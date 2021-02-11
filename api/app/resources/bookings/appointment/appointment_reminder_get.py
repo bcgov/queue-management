@@ -18,15 +18,15 @@ from app.models.bookings import Appointment
 from app.utilities.auth_util import Role, has_any_role
 from app.utilities.email import is_valid_email, formatted_date, get_email, \
     get_duration
-from qsystem import api, api_call_with_retry, oidc
+from qsystem import api, api_call_with_retry
+from app.auth.auth import jwt
 
 
 @api.route("/appointment/reminders/", methods=["GET"])
 class AppointmentRemindersGet(Resource):
 
-    @oidc.accept_token(require_token=True)
     @api_call_with_retry
-    @has_any_role(roles=[Role.reminder_job.value])
+    @jwt.has_one_of_roles([Role.reminder_job.value])
     def get(self):
         """Return appointment reminders for next day."""
         appointments = Appointment.find_next_day_appointments()

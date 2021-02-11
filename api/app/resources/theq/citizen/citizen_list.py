@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from flask import request, g
 from flask_restx import Resource
-from qsystem import api, api_call_with_retry, db, oidc, socketio, time_print, get_key
+from qsystem import api, api_call_with_retry, db, socketio, time_print, get_key
 from app.models.theq import Citizen, CSR, CitizenState
 from marshmallow import ValidationError
 from app.schemas.theq import CitizenSchema
@@ -22,6 +22,8 @@ from sqlalchemy import exc
 from datetime import datetime
 from app.utilities.snowplow import SnowPlow
 from app.utilities.auth_util import Role, has_any_role, has_role
+from app.auth.auth import jwt
+
 
 @api.route("/citizens/", methods=['GET', 'POST'])
 class CitizenList(Resource):
@@ -29,14 +31,14 @@ class CitizenList(Resource):
     citizen_schema = CitizenSchema()
     citizens_schema = CitizenSchema(many=True)
 
-    @oidc.accept_token(require_token=True)
+    @jwt.requires_auth
     def get(self):
         try:
-            user = g.oidc_token_info['username']
-            has_role([Role.internal_user.value], g.oidc_token_info['realm_access']['roles'], user, "CitizenList GET /citizens/")
-            csr = CSR.find_by_username(g.oidc_token_info['username'])
+            user = g.jwt_oidc_token_info['username']
+            has_role([Role.internal_user.value], g.jwt_oidc_token_info['realm_access']['roles'], user, "CitizenList GET /citizens/")
+            csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
             if not csr:
-                raise Exception('no user found with username: `{}`'.format(g.oidc_token_info['username']))
+                raise Exception('no user found with username: `{}`'.format(g.jwt_oidc_token_info['username']))
             citizens = Citizen.query.filter_by(office_id=csr.office_id, cs_id=active_id) \
                 .order_by(Citizen.priority) \
                 .join(Citizen.service_reqs).all()
@@ -48,20 +50,19 @@ class CitizenList(Resource):
             print(e)
             return {'message': 'API is down'}, 500
 
-    @oidc.accept_token(require_token=True)
-    @has_any_role(roles=[Role.internal_user.value])
+    @jwt.has_one_of_roles([Role.internal_user.value])
     @api_call_with_retry
     def post(self):
 
-        user = g.oidc_token_info['username']
-        has_role([Role.internal_user.value], g.oidc_token_info['realm_access']['roles'], user,
+        user = g.jwt_oidc_token_info['username']
+        has_role([Role.internal_user.value], g.jwt_oidc_token_info['realm_access']['roles'], user,
                  "CitizenList POST /citizens/")
 
         json_data = request.get_json()
 
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
+        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
         if not csr:
-            raise Exception('no user found with username: `{}`'.format(g.oidc_token_info['username']))
+            raise Exception('no user found with username: `{}`'.format(g.jwt_oidc_token_info['username']))
 
         try:
             citizen = self.citizen_schema.load(json_data).data

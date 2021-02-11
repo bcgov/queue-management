@@ -16,12 +16,13 @@ from datetime import datetime
 from flask import request, g
 from flask_restx import Resource
 from marshmallow import ValidationError
-from qsystem import api, api_call_with_retry, db, oidc, socketio
+from qsystem import api, api_call_with_retry, db, socketio
 from app.models.theq import CSR, Period, PeriodState, ServiceReq, SRState
 from app.schemas.theq import CitizenSchema, ServiceReqSchema
 from app.models.theq.citizen import Citizen
 from app.utilities.snowplow import SnowPlow
 from app.utilities.auth_util import Role, has_any_role
+from app.auth.auth import jwt
 
 
 @api.route("/service_requests/<int:id>/", methods=["PUT"])
@@ -31,8 +32,7 @@ class ServiceRequestsDetail(Resource):
     service_requests_schema = ServiceReqSchema(many=True)
     service_request_schema = ServiceReqSchema()
 
-    @oidc.accept_token(require_token=True)
-    @has_any_role(roles=[Role.internal_user.value])
+    @jwt.has_one_of_roles([Role.internal_user.value])
     @api_call_with_retry
     def put(self, id):
         json_data = request.get_json()
@@ -40,7 +40,7 @@ class ServiceRequestsDetail(Resource):
         if not json_data:
             return {'message': 'No input data received for updating citizen'}, 400
 
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
+        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
 
         service_request = ServiceReq.query.filter_by(sr_id=id) \
                 .join(ServiceReq.citizen, aliased=True).first_or_404()
@@ -71,11 +71,10 @@ class ServiceRequestActivate(Resource):
     service_requests_schema = ServiceReqSchema(many=True)
     service_request_schema = ServiceReqSchema()
 
-    @oidc.accept_token(require_token=True)
-    @has_any_role(roles=[Role.internal_user.value])
+    @jwt.has_one_of_roles([Role.internal_user.value])
     @api_call_with_retry
     def post(self, id):
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
+        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
 
         service_request = ServiceReq.query.filter_by(sr_id=id) \
             .join(ServiceReq.citizen, aliased=True) \

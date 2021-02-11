@@ -19,17 +19,18 @@ from sqlalchemy import exc
 from app.models.theq import CSR
 from app.models.bookings import Exam
 from app.utilities.bcmp_service import BCMPService
-from qsystem import api, db, oidc
+from qsystem import api, db
+from app.auth.auth import jwt
 
 
 @api.route("/exams/<int:exam_id>/email_invigilator/", methods=["POST"])
 class ExamEmailInvigilator(Resource):
     bcmp_service = BCMPService()
 
-    @oidc.accept_token(require_token=True)
+    @jwt.requires_auth
     def post(self, exam_id):
 
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
+        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
 
         try:
             exam = Exam.query.filter_by(exam_id=exam_id).first()

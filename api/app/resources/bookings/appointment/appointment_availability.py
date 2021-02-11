@@ -22,13 +22,14 @@ from sqlalchemy import exc
 from app.models.theq import Office
 from app.models.theq import Service
 from app.services import AvailabilityService
-from qsystem import api, oidc
+from qsystem import api
+from app.auth.auth import jwt
 
 
 @api.route("/offices/<int:office_id>/slots/", methods=["GET"])
 class OfficeSlots(Resource):
 
-    @oidc.accept_token(require_token=False)
+    @jwt.requires_auth
     def get(self, office_id: int):
         try:
             office = Office.find_by_id(office_id)

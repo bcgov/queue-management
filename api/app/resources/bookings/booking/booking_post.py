@@ -19,8 +19,9 @@ from app.models.bookings import Room
 from app.schemas.bookings import BookingSchema
 from app.models.bookings import Invigilator
 from app.models.theq import CSR
-from qsystem import api, api_call_with_retry, db, oidc
+from qsystem import api, api_call_with_retry, db
 from app.utilities.auth_util import Role, has_any_role
+from app.auth.auth import jwt
 
 
 @api.route("/bookings/", methods=["POST"])
@@ -28,12 +29,11 @@ class BookingPost(Resource):
 
     booking_schema = BookingSchema()
 
-    @oidc.accept_token(require_token=True)
-    @has_any_role(roles=[Role.internal_user.value])
+    @jwt.has_one_of_roles([Role.internal_user.value])
     @api_call_with_retry
     def post(self):
 
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
+        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
 
         json_data = request.get_json()
         i_id = json_data.get('invigilator_id')

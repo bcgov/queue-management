@@ -21,7 +21,7 @@ from flask import request, g, current_app
 from flask_restx import Resource
 from app.models.bookings import Appointment
 from app.schemas.bookings import AppointmentSchema
-from qsystem import api, api_call_with_retry, db, oidc, my_print
+from qsystem import api, api_call_with_retry, db, my_print
 
 from qsystem import socketio
 
@@ -35,6 +35,7 @@ from qsystem import socketio
 #   "mode": "cors",
 #   "credentials": "include"
 # });
+
 
 @api.route("/appointments/draft/flush", methods=["POST"])
 class AppointmentDraftFlush(Resource):

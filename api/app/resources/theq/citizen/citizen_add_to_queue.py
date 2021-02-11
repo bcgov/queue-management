@@ -14,12 +14,13 @@ limitations under the License.'''
 
 from flask import g
 from flask_restx import Resource
-from qsystem import api, api_call_with_retry, db, oidc, socketio, my_print
+from qsystem import api, api_call_with_retry, db, socketio, my_print
 from app.models.theq import Citizen, CSR
 from app.models.theq import SRState
 from app.schemas.theq import CitizenSchema
 from app.utilities.snowplow import SnowPlow
 from app.utilities.auth_util import Role, has_any_role
+from app.auth.auth import jwt
 
 
 @api.route("/citizens/<int:id>/add_to_queue/", methods=["POST"])
@@ -27,11 +28,10 @@ class CitizenAddToQueue(Resource):
 
     citizen_schema = CitizenSchema()
 
-    @oidc.accept_token(require_token=True)
-    @has_any_role(roles=[Role.internal_user.value])
+    @jwt.has_one_of_roles([Role.internal_user.value])
     @api_call_with_retry
     def post(self, id):
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
+        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
         citizen = Citizen.query.filter_by(citizen_id=id).first()
         active_service_request = citizen.get_active_service_request()
 

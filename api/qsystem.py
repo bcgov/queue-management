@@ -87,8 +87,9 @@ if application.config['CORS_ALLOWED_ORIGINS'] is not None:
 
 api = Api(application, prefix='/api/v1', doc='/api/v1/')
 
-from flask_oidc import OpenIDConnect
-oidc = OpenIDConnect(application)
+# from flask_oidc import OpenIDConnect
+# oidc = OpenIDConnect(application)
+
 
 #  Set up Flask Admin.
 from app import admin
@@ -388,7 +389,22 @@ def after_cursor_execute(conn, cursor, statement,
         except Exception as err:
             print("==> Error:" + str(err))
 
+
 @application.after_request
 def apply_header(response):
     response.headers["X-Node-Hostname"] = hostname
     return response
+
+
+def setup_jwt_manager(app, jwt_manager):
+    """Use flask app to configure the JWTManager to work for a particular Realm."""
+    def get_roles(a_dict):
+        return a_dict['realm_access']['roles']  # pragma: no cover
+
+    app.config['JWT_ROLE_CALLBACK'] = get_roles
+
+    jwt_manager.init_app(app)
+
+from app.auth.auth import jwt
+
+setup_jwt_manager(application, jwt)

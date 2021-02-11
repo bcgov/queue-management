@@ -16,7 +16,7 @@ from functools import cmp_to_key
 from flask import request
 from flask import g
 from flask_restx import Resource
-from qsystem import api, oidc
+from qsystem import api
 from qsystem import db
 from app.models.theq import Service
 from app.models.theq import Office
@@ -25,6 +25,7 @@ from sqlalchemy import exc
 from app.schemas.theq import ServiceSchema, OfficeSchema
 from sqlalchemy.orm import noload, joinedload
 from app.utilities.auth_util import Role, has_any_role
+from app.auth.auth import jwt
 
 
 @api.route("/services/refresh/", methods=["GET"])
@@ -33,12 +34,11 @@ class Refresh(Resource):
     Refresh the quick lists to the 5 most frequently used items.
     Returns the resulting office object with updated lists indicated.
     """
-    @oidc.accept_token(require_token=True)
-    @has_any_role(roles=[Role.internal_user.value])
+    @jwt.has_one_of_roles([Role.internal_user.value])
     def get(self):
         if request.args.get('office_id'):
             office_id = int(request.args.get('office_id'))
-            csr = CSR.find_by_username(g.oidc_token_info['username'])
+            csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
             
             if csr.role.role_code == "GA":
             
@@ -135,7 +135,6 @@ class Services(Resource):
             else:
                 return 1
 
-    @oidc.accept_token(require_token=False)
     def get(self):
         if request.args.get('office_id'):
             try:

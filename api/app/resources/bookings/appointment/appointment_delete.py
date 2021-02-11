@@ -25,22 +25,23 @@ from app.utilities.auth_util import is_public_user
 from app.utilities.email import get_cancel_email_contents, send_email, generate_ches_token
 from app.utilities.snowplow import SnowPlow
 from qsystem import application
-from qsystem import api, db, oidc, socketio
+from qsystem import api, db, socketio
+from app.auth.auth import jwt
+
 
 @api.route("/appointments/<int:id>/", methods=["DELETE"])
 class AppointmentDelete(Resource):
     appointment_schema = AppointmentSchema()
 
-    @oidc.accept_token(require_token=True)
-    @has_any_role(roles=[Role.internal_user.value, Role.online_appointment_user.value])
+    @jwt.has_one_of_roles([Role.internal_user.value, Role.online_appointment_user.value])
     def delete(self, id):
 
         appointment = Appointment.query.filter_by(appointment_id=id) \
             .first_or_404()
 
-        csr = None if is_public_user() else CSR.find_by_username(g.oidc_token_info['username'])
+        csr = None if is_public_user() else CSR.find_by_username(g.jwt_oidc_token_info['username'])
 
-        user: PublicUser = PublicUser.find_by_username(g.oidc_token_info['username']) if is_public_user() else None
+        user: PublicUser = PublicUser.find_by_username(g.jwt_oidc_token_info['username']) if is_public_user() else None
         if is_public_user():
             # Check if it's a public user
             citizen = Citizen.find_citizen_by_id(appointment.citizen_id)

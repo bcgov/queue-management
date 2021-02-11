@@ -15,7 +15,8 @@ limitations under the License.'''
 import logging
 from flask import request, g, abort
 from flask_restx import Resource
-from qsystem import api, db, oidc
+from qsystem import api, db
+from app.auth.auth import jwt
 from app.models.bookings import Appointment
 from app.models.theq import CSR, PublicUser, Citizen, Office, Service
 from app.schemas.bookings import AppointmentSchema
@@ -33,8 +34,7 @@ from qsystem import socketio, application
 class AppointmentPut(Resource):
     appointment_schema = AppointmentSchema()
 
-    @oidc.accept_token(require_token=True)
-    @has_any_role(roles=[Role.internal_user.value, Role.online_appointment_user.value])
+    @jwt.has_one_of_roles([Role.internal_user.value, Role.online_appointment_user.value])
     def put(self, id):
         json_data = request.get_json()
         csr = None
@@ -59,7 +59,7 @@ class AppointmentPut(Resource):
             # citizen = Citizen.find_citizen_by_username(g.oidc_token_info['username'], office_id)
             # Validate if the same user has other appointments for same day at same office
             appointments = Appointment.find_by_username_and_office_id(office_id=office_id,
-                                                                      user_name=g.oidc_token_info['username'],
+                                                                      user_name=g.jwt_oidc_token_info['username'],
                                                                       start_time=json_data.get('start_time'),
                                                                       timezone=office.timezone.timezone_name,
                                                                       appointment_id=id)
@@ -77,7 +77,7 @@ class AppointmentPut(Resource):
                         "message": "Cannot create appointment due to scheduling conflict.  Please pick another time."}, 400
 
         else:
-            csr = CSR.find_by_username(g.oidc_token_info['username'])
+            csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
             office_id = csr.office_id
             office = Office.find_by_id(office_id)
 
@@ -88,7 +88,7 @@ class AppointmentPut(Resource):
         # If appointment is not made by same user, throw error
         if is_public_user_appt:
             citizen = Citizen.find_citizen_by_id(appointment.citizen_id)
-            user = PublicUser.find_by_username(g.oidc_token_info['username'])
+            user = PublicUser.find_by_username(g.jwt_oidc_token_info['username'])
             # Should just match based on appointment_id and other info.  Can't have proper auth yet.
             if citizen.user_id != user.user_id:
                 abort(403)

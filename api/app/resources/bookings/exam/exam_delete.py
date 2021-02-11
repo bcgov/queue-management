@@ -18,8 +18,9 @@ from flask_restx import Resource
 from app.models.bookings import Exam
 from app.models.theq import CSR
 from app.schemas.bookings import ExamSchema
-from qsystem import api, db, oidc
+from qsystem import api, db
 from app.utilities.auth_util import Role, has_any_role
+from app.auth.auth import jwt
 
 
 @api.route("/exams/<int:id>/", methods=["DELETE"])
@@ -27,11 +28,10 @@ class ExamDelete(Resource):
 
     exam_schema = ExamSchema()
 
-    @oidc.accept_token(require_token=True)
-    @has_any_role(roles=[Role.internal_user.value])
+    @jwt.has_one_of_roles([Role.internal_user.value])
     def delete(self, id):
 
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
+        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
 
         exam = Exam.query.filter_by(exam_id=id).first_or_404()
 

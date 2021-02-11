@@ -21,8 +21,9 @@ from sqlalchemy import exc
 from app.models.bookings import Appointment
 from app.models.theq import CSR
 from app.schemas.bookings import AppointmentSchema
-from qsystem import api, oidc, appt_limit
-from app.utilities.auth_util import Role, has_any_role
+from qsystem import api, appt_limit
+from app.utilities.auth_util import Role
+from app.auth.auth import jwt
 
 
 @api.route("/appointments/", methods=["GET"])
@@ -30,11 +31,10 @@ class AppointmentList(Resource):
 
     appointment_schema = AppointmentSchema(many=True)
 
-    @oidc.accept_token(require_token=True)
-    @has_any_role(roles=[Role.internal_user.value])
+    @jwt.has_one_of_roles([Role.internal_user.value])
     def get(self):
 
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
+        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
         appt_limit_int = int(appt_limit)     
         # today's date and time
         dt = datetime.now()

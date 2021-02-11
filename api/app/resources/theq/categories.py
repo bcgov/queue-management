@@ -14,7 +14,7 @@ limitations under the License.'''
 
 
 from flask_restx import Resource
-from qsystem import api, oidc
+from qsystem import api
 from app.models.theq import Service
 from sqlalchemy import exc
 from app.schemas.theq import ServiceSchema
@@ -25,7 +25,6 @@ class Categories(Resource):
 
     categories_schema = ServiceSchema(many=True)
 
-    @oidc.accept_token(require_token=False)
     def get(self):
         try:
             services = Service.query.filter_by(actual_service_ind=0).order_by(Service.service_name).all()

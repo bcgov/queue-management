@@ -210,6 +210,14 @@ class BaseConfig(object):
     # Auto-refresh application configuration
     DISABLE_AUTO_REFRESH = (os.getenv("DISABLE_AUTO_REFRESH","FALSE")).upper() == "TRUE"
 
+    # JWT_OIDC Settings
+    JWT_OIDC_WELL_KNOWN_CONFIG = os.getenv('JWT_OIDC_WELL_KNOWN_CONFIG')
+    JWT_OIDC_ALGORITHMS = os.getenv('JWT_OIDC_ALGORITHMS')
+    JWT_OIDC_AUDIENCE = os.getenv('JWT_OIDC_AUDIENCE')
+    JWT_OIDC_CLIENT_SECRET = os.getenv('JWT_OIDC_CLIENT_SECRET')
+    JWT_OIDC_CACHING_ENABLED = os.getenv('JWT_OIDC_CACHING_ENABLED',False)
+    JWT_OIDC_JWKS_CACHE_TIMEOUT = int(os.getenv('JWT_OIDC_JWKS_CACHE_TIMEOUT', 300))
+
 
 class LocalConfig(BaseConfig):
     DEBUG = True
@@ -262,7 +270,6 @@ class DevelopmentConfig(BaseConfig):
     # # Only allowed 1 origin, but need to work for
     # # queue-frontend and appointment-frontend
     # CORS_ALLOWED_ORIGINS = ["https://dev-theq.pathfinder.gov.bc.ca/"]
-
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
     BCMP_BASE_URL = os.getenv('BCMP_BASE_URL')
@@ -274,7 +281,6 @@ class TestConfig(BaseConfig):
     REDIS_DEBUG = True
     TESTING = False
     ENV = 'test'
-
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
     BCMP_BASE_URL = os.getenv('BCMP_BASE_URL')
@@ -286,7 +292,6 @@ class ProductionConfig(BaseConfig):
     REDIS_DEBUG = True
     TESTING = False
     ENV = 'production'
-
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
     BCMP_BASE_URL = os.getenv('BCMP_BASE_URL')

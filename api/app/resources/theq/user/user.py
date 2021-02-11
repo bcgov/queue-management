@@ -18,19 +18,19 @@ from sqlalchemy import exc
 
 from app.models.theq import PublicUser as PublicUserModel
 from app.schemas.theq import UserSchema
-from qsystem import api, db, oidc
+from qsystem import api, db
 from app.utilities.auth_util import Role, has_any_role
+from app.auth.auth import jwt
 
 
 @api.route("/users/", methods=['POST'])
 class PublicUsers(Resource):
     user_schema = UserSchema(many=False)
 
-    @oidc.accept_token(require_token=True)
-    @has_any_role(roles=[Role.online_appointment_user.value])
+    @jwt.has_one_of_roles([Role.online_appointment_user.value])
     def post(self):
         try:
-            user_info = g.oidc_token_info
+            user_info = g.jwt_oidc_token_info
             user: PublicUserModel = PublicUserModel.find_by_username(user_info.get('username'))
             if not user:
                 user = PublicUserModel()
@@ -56,12 +56,11 @@ class PublicUsers(Resource):
 class PublicUser(Resource):
     user_schema = UserSchema(many=False)
 
-    @oidc.accept_token(require_token=True)
-    @has_any_role(roles=[Role.online_appointment_user.value])
+    @jwt.has_one_of_roles([Role.online_appointment_user.value])
     def put(self, user_id: int):
         try:
             json_data = request.get_json()
-            user_info = g.oidc_token_info
+            user_info = g.jwt_oidc_token_info
             user: PublicUserModel = PublicUserModel.find_by_username(user_info.get('username'))
             user.email = json_data.get('email')
             user.telephone = json_data.get('telephone')
@@ -81,11 +80,10 @@ class PublicUser(Resource):
 class CurrentUser(Resource):
     user_schema = UserSchema(many=False)
 
-    @oidc.accept_token(require_token=True)
-    @has_any_role(roles=[Role.online_appointment_user.value])
+    @jwt.has_one_of_roles([Role.online_appointment_user.value])
     def get(self):
         try:
-            user_info = g.oidc_token_info
+            user_info = g.jwt_oidc_token_info
             user: PublicUserModel = PublicUserModel.find_by_username(user_info.get('username'))
 
             result = self.user_schema.dump(user)
