@@ -47,8 +47,7 @@ class AppointmentDraftPost(Resource):
 
         # end_time can be null for CSRs when they click; whereas citizens know end-time.
         if not end_time:
-            end_time = add_delta_to_time(start_time, minutes=office.appointment_duration,
-                                         timezone=office.timezone.timezone_name)
+            end_time = add_delta_to_time(start_time, minutes=office.appointment_duration, timezone=office.timezone.timezone_name)
 
         # Unauthenticated requests from citizens won't have name, so we set a fallback
         if (hasattr(g, 'jwt_oidc_token_info') and hasattr(g.jwt_oidc_token_info, 'username')):
@@ -68,12 +67,12 @@ class AppointmentDraftPost(Resource):
         # This mitigates two CSRs in office creating at same time for same meeting
         # Ensure there's no race condition when submitting a draft
         if not csr and not AvailabilityService.has_available_slots(
-                office=office,
-                start_time=start_time,
-                end_time=end_time,
-                service=service):
-            return {"code": "CONFLICT_APPOINTMENT",
-                    "message": "Cannot create appointment due to scheduling conflict.  Please pick another time."}, 400
+                                    office=office,
+                                    start_time=start_time,
+                                    end_time=end_time,
+                                    service=service):
+                                return {"code": "CONFLICT_APPOINTMENT",
+                                        "message": "Cannot create appointment due to scheduling conflict.  Please pick another time."}, 400
 
         # Set draft specific data
         json_data['is_draft'] = True
