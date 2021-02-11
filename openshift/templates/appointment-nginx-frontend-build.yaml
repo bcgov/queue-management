@@ -35,12 +35,11 @@ objects:
         git:
           ref: ${GIT_REF}
           uri: ${GIT_REPO_URL}
-        dockerfile: |
-          ./Dockerfile
         type: Git
       strategy:
         type: Docker
         dockerStrategy:
+          "dockerfilePath": "${DOCKER_FILE_PATH}"
           pullSecret:
             name: docker-creds
 
@@ -96,3 +95,8 @@ parameters:
     name: MEMORY_REQUEST
     required: true
     value: 2Gi
+  - description: The path and file of the docker file defining the build.
+    displayName: DockferFile
+    name: DOCKER_FILE_PATH
+    required: true
+    value: Dockerfile
