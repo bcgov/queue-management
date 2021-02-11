@@ -224,6 +224,8 @@ objects:
                   value: ${THEQ_SNOWPLOW_ENV}
                 - name: THEQ_SNOWPLOW_ROUTE
                   value: "${THEQ_SNOWPLOW_ROUTE}"
+                - name: NOTIFICATIONS_ENDPOINT
+                  value: "${NOTIFICATIONS_ENDPOINT}"
                 - name: LOG_ENABLE
                   value: "${LOG_ENABLE}"
                 - name: LOG_MYAPP_SQLTIME
@@ -515,5 +517,9 @@ parameters:
     value: ""
   - name: APPOINTMENT_LIMIT_DAYS
     description: "the number of days in advance to book appointment "
+    required: true
+    value: ""
+  - name: NOTIFICATIONS_ENDPOINT
+    description: "Notifications endpoint"
     required: true
     value: ""

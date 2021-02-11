@@ -6,7 +6,7 @@ This is to allow Reminders a day prior to the appointment for citizens
 Run the script in tools namespace
 
 `
-oc process -f crond-send-appointment-reminder-build.json |oc create -f -
+oc process -f crond-send-appointment-reminder-build.yaml |oc create -f -
 `
 
 ## Create config map for cron details in workspace:
@@ -15,14 +15,16 @@ name: send-appointment-reminder-crond-${imagetag}-cron-configuration
 Key: crontab
 Data: 
 
-00 23 * * * default cd /appointment_reminder && ./run.sh
+`00 23 * * * default cd /appointment_reminder && ./run_email_reminders.sh`
+
+`00 23 * * * default cd /appointment_reminder && ./run_sms_reminders.sh`
 # An empty line is required at the end of this file for a valid cron file.
 
 
 ## Create a deployment in workspace
 
 ### DEV
-`oc process -f cond-send-appointment-reminder-deploy.json --p IMAGE_NAMESPACE=servicebc-cfms-tools -p TAG_NAME=dev | oc create -f -`
+`oc process -f cond-send-appointment-reminder-deploy.yaml --p IMAGE_NAMESPACE=servicebc-cfms-tools -p TAG_NAME=dev | oc create -f -`
 
 ## Tag the image for Dev
 Run the script in tools namespace
@@ -31,4 +33,5 @@ Run the script in tools namespace
 
 ## Execute job manually
 
-in cron pod Terminal, ./run.sh
+in cron pod Terminal, ./run_email_reminders.sh
+in cron pod Terminal, ./run_sms_reminders.sh

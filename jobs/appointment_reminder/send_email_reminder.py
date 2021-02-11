@@ -17,17 +17,15 @@ This module is being invoked from a job and it cleans up the stale records
 """
 import os
 
-import base64
-import requests
+import sys
+import time
+from app.utilities.ches_email import send_email, generate_ches_token
 from flask import Flask
+from jinja2 import Environment, FileSystemLoader
 
 import config
+from utils.appointment import get_reminders
 from utils.logging import setup_logging
-from jinja2 import Environment, FileSystemLoader
-import time
-import jinja2, sys
-from app.utilities.ches_email import send_email, generate_ches_token
-
 
 setup_logging(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'logging.conf'))  # important to do this first
 
@@ -68,32 +66,9 @@ def send_reminders(app):
     # CHES token
     ches_token = generate_ches_token()
 
-    # Create a keycloak service account token to call the appointment api
-    token_url = app.config.get('OIDC_PROVIDER_TOKEN_URL')  # https://sso-dev.pathfinder.gov.bc.ca/auth/realms/fcf0kpqr/protocol/openid-connect/token
-    basic_auth_encoded = base64.b64encode(
-        bytes(app.config.get('SERVICE_ACCOUNT_ID') + ':' + app.config.get('SERVICE_ACCOUNT_SECRET'), 'utf-8')).decode(
-        'utf-8')
-    data = 'grant_type=client_credentials'
-    headers = {
-        'Authorization': f'Basic {basic_auth_encoded}',
-        'Content-Type': 'application/x-www-form-urlencoded'
-    }
+    reminders = get_reminders(app=app)
 
-    token_response = requests.post(token_url, data=data, headers=headers)
-    access_token = token_response.json().get('access_token')
-
-    # Add this token as bearer token to invoke the reminders endpoint
-    reminders_endpoint = app.config.get('REMINDER_ENDPOINT')
-    headers = {
-        'Authorization': f'Bearer {access_token}',
-        'Content-Type': 'application/json'
-    }
-
-    # response = requests.post(reminders_endpoint, data=None, headers=headers)
-    response = requests.get(reminders_endpoint, data=None, headers=headers)
-    response.raise_for_status()
-
-    if response:
+    if reminders:
         sender = app.config.get('MAIL_FROM_ID')
         app_url = app.config.get('EMAIL_APPOINTMENT_APP_URL')
         app_folder = [folder for folder in sys.path if 'api/api' in folder][0]
@@ -103,7 +78,7 @@ def send_reminders(app):
         max_email_per_batch = app.config.get('MAX_EMAIL_PER_BATCH')
         print(f'Maximum email per batch {max_email_per_batch}')
 
-        appointments = response.json()
+        appointments = reminders.json()
         email_count = 0
         print('found {} reminders to send!'.format(len(appointments.get('appointments'))))
 

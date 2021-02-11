@@ -36,6 +36,8 @@ objects:
       CHES_SSO_CLIENT_ID: '${CHES_SSO_CLIENT_ID}'
       CHES_SSO_CLIENT_SECRET: '${CHES_SSO_CLIENT_SECRET}'
       CHES_POST_EMAIL_ENDPOINT: '${CHES_POST_EMAIL_ENDPOINT}'
+      NOTIFICATIONS_ENDPOINT: '${NOTIFICATIONS_ENDPOINT}'
+
   - kind: DeploymentConfig
     apiVersion: v1
     metadata:
@@ -149,6 +151,12 @@ objects:
                     configMapKeyRef:
                       name: 'appointment-reminder-${TAG_NAME}-config'
                       key: CHES_POST_EMAIL_ENDPOINT
+                - name: NOTIFICATIONS_ENDPOINT
+                  valueFrom:
+                    configMapKeyRef:
+                      name: 'appointment-reminder-${TAG_NAME}-config'
+                      key: NOTIFICATIONS_ENDPOINT
+
               resources:
                 requests:
                   cpu: '${CPU_REQUEST}'
@@ -286,3 +294,6 @@ parameters:
   - name: CHES_SSO_CLIENT_SECRET
     description: CHES service client secret
     required: true
+  - name: NOTIFICATIONS_ENDPOINT
+    description: Notifications endpoint
+    required: false

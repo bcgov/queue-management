@@ -1,0 +1,268 @@
+apiVersion: v1
+kind: Template
+labels:
+  template: notifications-api
+  app.kubernetes.io/part-of: TheQ
+metadata:
+  name: notifications-api
+objects:
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: notifications-oidc-secrets
+      labels:
+        app: "${API_NAME}"
+    data:
+      secrets.json: |
+        {
+          "web": {
+            "realm_public_key": "${REALM_PUBLIC_KEY}",
+            "issuer": "${ISSUER}",
+            "auth_uri": "${AUTH_URI}",
+            "client_id": "${CLIENT_ID}",
+            "client_secret": "${CLIENT_SECRET}",
+            "redirect_urls": [
+            ],
+            "userinfo_uri": "${USERINFO_URI}",
+            "token_uri": "${TOKEN_URI}",
+            "token_introspection_uri": "${TOKEN_INTROSPECTION_URI}"  
+          }
+        }
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      annotations:
+        description: "Exposes and load balances the api pods"
+      name: "${API_NAME}"
+      labels:
+        app: "${API_NAME}"
+    spec:
+      ports:
+        - name: web
+          port: 8080
+          targetPort: 8080
+      selector:
+        app: "${API_NAME}"
+  - apiVersion: v1
+    kind: Route
+    metadata:
+      name: "${API_NAME}"
+    spec:
+      host: "${API_APPLICATION_DOMAIN}"
+      path: /api
+      to:
+        kind: Service
+        name: "${API_NAME}"
+      tls:
+        insecureEdgeTerminationPolicy: Redirect
+        termination: edge
+  - apiVersion: v1
+    kind: DeploymentConfig
+    metadata:
+      annotations:
+        description: "Defines how to deploy the application server"
+        template.alpha.openshift.io/wait-for-ready: "true"
+      name: "${API_NAME}"
+    spec:
+      replicas: 2
+      selector:
+        name: ${API_NAME}
+      strategy:
+        type: Rolling
+        rollingParams:
+          updatePeriodSeconds: 1
+          intervalSeconds: 1
+          timeoutSeconds: 120
+          maxSurge: 2
+          maxUnavailable: 1
+        resources: {}
+        activeDeadlineSeconds: 3600
+      template:
+        metadata:
+          labels:
+            app: "${API_NAME}"
+            name: "${API_NAME}"
+        spec:
+          containers:
+            - name: "${API_NAME}"
+              image: " "
+              env:
+                - name: APP_CONFIG
+                  value: gunicorn_config.py
+                - name: FLASK_ENV
+                  value: "${FLASK_ENV}"
+                - name: APP_MODULE
+                  value: wsgi
+                - name: SECRET_KEY
+                  value: "${SECRET_KEY}"
+                - name: SERVER_NAME
+                  value: "${API_APPLICATION_DOMAIN}"
+                - name: CACHE_DEFAULT_TIMEOUT
+                  value: "${CACHE_DEFAULT_TIMEOUT}"
+                - name: SMS_USE_GC_NOTIFY
+                  value: "true"
+                - name: GC_NOTIFY_API_KEY
+                  value: "${GC_NOTIFY_API_KEY}"
+                - name: GC_NOTIFY_API_BASE_URL
+                  value: "${GC_NOTIFY_API_BASE_URL}"
+                - name: GC_NOTIFY_SMS_TEMPLATE_ID
+                  value: "${GC_NOTIFY_SMS_TEMPLATE_ID}"
+                - name: SMS_APPOINTMENT_APP_URL
+                  value: "${SMS_APPOINTMENT_APP_URL}"
+                - name: APPOINTMENT_APP_URL
+                  value: "${APPOINTMENT_APP_URL}"
+                - name: PRINT_ENABLE
+                  value: "false"
+                - name: LOG_BASIC
+                  value: WARNING
+                - name: LOG_ROOT
+                  value: WARNING
+                - name: SMS_REMINDER_TEMPLATE
+                  value: "${SMS_REMINDER_TEMPLATE}"
+              ports:
+                - containerPort: 8080
+              readinessProbe:
+                httpGet:
+                  path: /api/v1/healthz
+                  port: 8080
+                  scheme: HTTP
+                initialDelaySeconds: 30
+                timeoutSeconds: 5
+                periodSeconds: 10
+                successThreshold: 1
+                failureThreshold: 3
+              terminationMessagePath: /dev/termination-log
+              name: notifications-api
+              livenessProbe:
+                httpGet:
+                  path: /api/v1/readyz
+                  port: 8080
+                  scheme: HTTP
+                initialDelaySeconds: 30
+                timeoutSeconds: 5
+                periodSeconds: 10
+                successThreshold: 1
+                failureThreshold: 3
+              volumeMounts:
+                - mountPath: /opt/app-root/src/client_secrets
+                  name: oidc-secrets-o6ya6
+                  readOnly: true
+              terminationMessagePath: "/dev/termination-log"
+              terminationMessagePolicy: File
+              imagePullPolicy: Always
+              resources:
+                requests:
+                  cpu: 400m
+                  memory: 400Mi
+                limits:
+                  cpu: '1'
+                  memory: 600Mi
+          restartPolicy: Always
+          terminationGracePeriodSeconds: 30
+          dnsPolicy: ClusterFirst
+          securityContext: {}
+          schedulerName: default-scheduler
+          volumes:
+            - configMap:
+                defaultMode: 420
+                name: oidc-secrets
+              name: oidc-secrets-o6ya6
+          affinity:
+            podAntiAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchExpressions:
+                      - key: name
+                        operator: In
+                        values:
+                          - "${API_NAME}"
+                  topologyKey: kubernetes.io/hostname
+      triggers:
+        - type: ConfigChange
+        - type: ImageChange
+          imageChangeParams:
+            automatic: true
+            containerNames:
+              - "${API_NAME}"
+            from:
+              kind: ImageStreamTag
+              namespace: "${TOOLS_WORKSPACE}"
+              name: "${API_NAME}:${API_IMAGE_TAG}"
+parameters:
+  - name: API_NAME
+    displayName: Name
+    description: "Name of the flask application"
+    required: true
+    value: "notifications-api"
+  - name: API_APPLICATION_DOMAIN
+    description: "The exposed hostname that will route to the Flask service"
+    required: true
+    value: "dev-theq-notifications.apps.silver.devops.gov.bc.ca"
+  - name: FLASK_ENV
+    description: "The configuration object that should be loaded for this deployment."
+    required: true
+    value: "production"
+  - name: API_IMAGE_TAG
+    description: "The tag to use when deploying"
+    required: true
+  - name: TOOLS_WORKSPACE
+    description: "IMAGE STREAM WORKSPACE LOCATION"
+    required: true
+    value: "df1ee0-tools"
+  - name: SECRET_KEY
+    description: "Key required for Flask"
+    required: true
+    generate: expression
+    from: "[a-zA-Z0-9]{16}"
+  - name: REALM_PUBLIC_KEY
+    description: "keycloak Realm Public Key"
+    required: true
+  - name: AUTH_URI
+    description: "Keycloak authentication url"
+    required: true
+    value: "https://dev.oidc.gov.bc.ca/auth/realms/vtkayq4c/protocol/openid-connect/auth"
+  - name: ISSUER
+    description: "Keycloak server URL. For ex: https;//mykeycloakserver.com/auth/realms/{realm}"
+    required: true
+  - name: CLIENT_ID
+    description: "keycloak client id"
+    required: true
+    value: "notifications-api"
+  - name: CLIENT_SECRET
+    description: "keycloak client secret"
+    required: true
+  - name: USERINFO_URI
+    description: "keycloak userinfo uri"
+    required: true
+  - name: TOKEN_URI
+    description: "Keycloak token_url"
+    required: true
+  - name: TOKEN_INTROSPECTION_URI
+    description: "keycloak introspection url"
+    required: true
+  - name: SMS_USE_GC_NOTIFY
+    description: "Flag to use GC Notify"
+    required: true
+    value: "true"
+  - name: GC_NOTIFY_API_KEY
+    description: "GC Notify API Key"
+    required: true
+  - name: GC_NOTIFY_API_BASE_URL
+    description: "GC Notify API Base URL"
+    required: true
+    value: "https://api.notification.canada.ca/"
+  - name: GC_NOTIFY_SMS_TEMPLATE_ID
+    description: "GC Notify SM Template ID"
+    required: true
+  - name: APPOINTMENT_APP_URL
+    description: "Appointment App URL"
+    required: true
+    value: "http://tinyurl.com/o9g8bxey"
+  - name: SMS_APPOINTMENT_APP_URL
+    description: "Appointment Url to provide in sms"
+    required: true
+    value: "http://tinyurl.com/o9g8bxey"
+  - name: SMS_REMINDER_TEMPLATE
+    description: "SMS Template text"
+    required: true
+    value: "REMINDER: You have an appointment with Service BC {location} on {date_time}. To cancel or change, visit {app_url} or call {office_telephone}"
