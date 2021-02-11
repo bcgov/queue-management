@@ -14,8 +14,8 @@ objects:
     spec:
       ports:
         - name: web
-          port: 2015
-          targetPort: 2015
+          port: 8080
+          targetPort: 8080
       selector:
         app: "${NAME}"
   - apiVersion: v1
@@ -90,17 +90,15 @@ objects:
           containers:
             - name: "${NAME}"
               image: " "
-              args:
-                - "/tmp/scripts/run"
               ports:
-                - containerPort: 2015
+                - containerPort: 8080
               readinessProbe:
                 failureThreshold: 3
                 initialDelaySeconds: 3
                 periodSeconds: 10
                 successThreshold: 1
                 tcpSocket:
-                  port: 2015
+                  port: 8080
                 timeoutSeconds: 3
               livenessProbe:
                 failureThreshold: 3
@@ -108,7 +106,7 @@ objects:
                 periodSeconds: 10
                 successThreshold: 1
                 tcpSocket:
-                  port: 2015
+                  port: 8080
                 timeoutSeconds: 3
               volumeMounts:
                 - mountPath: /app/config/kc
@@ -186,7 +184,7 @@ parameters:
     displayName: Name
     description: The suffix for all created objects
     required: false
-    value: appointment-frontend
+    value: appointment
   - name: APPLICATION_DOMAIN
     description: "The exposed hostname that will route to the Vue application"
   - name: API_NAME
@@ -203,7 +201,7 @@ parameters:
   - name: TOOLS_WORKSPACE
     description: The Location for your image streams (Tools Workspace)
     required: true
-    value: 78c88a-tools
+    value: 6e0e49-tools
   - name: VUE_APP_ROOT_API
     description: "The new route to API which will be rate limited"
   - name: BCEID_REG_URL
