@@ -21,6 +21,8 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.exceptions import AuthError
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
+from app.auth.auth import jwt
+
 
 def my_print(my_data):
     if print_flag:
@@ -86,9 +88,6 @@ if application.config['CORS_ALLOWED_ORIGINS'] is not None:
     CORS(application, supports_credentials=True, origins=application.config['CORS_ALLOWED_ORIGINS'])
 
 api = Api(application, prefix='/api/v1', doc='/api/v1/')
-
-# from flask_oidc import OpenIDConnect
-# oidc = OpenIDConnect(application)
 
 
 #  Set up Flask Admin.
@@ -405,6 +404,5 @@ def setup_jwt_manager(app, jwt_manager):
 
     jwt_manager.init_app(app)
 
-from app.auth.auth import jwt
 
 setup_jwt_manager(application, jwt)
