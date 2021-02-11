@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "7ad95288-5bae-4ef8-8c99-7382485f960e",
-		"name": "API_Test_TheQ_Booking",
+		"_postman_id": "0b45a7be-46ca-46f3-abab-3e058b7b4d58",
+		"name": "API_Test_TheQ_Booking Copy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -14,7 +14,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "0d2d115b-dfdf-4a72-a80f-a34d8274b1e6",
 								"exec": [
 									""
 								],
@@ -24,7 +23,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "6eab3d7b-ba4b-4412-ae5b-db8b2619c330",
 								"exec": [
 									"//  See if the use-prefix global has been set.  Use default if not.",
 									"let usePrefix = '';",
@@ -107,7 +105,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "2a23421f-4e99-4416-8665-e9f0e93bcace",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"auth_first\", jsonData.data);"
@@ -144,7 +141,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "8bdf2fce-7785-4b2c-8fbe-a43504937364",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"auth_script\", jsonData.data);"
@@ -181,7 +177,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "a036dbab-20af-4c1a-8849-4f670ebe04ee",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"auth_token_script\", jsonData.data);"
@@ -218,7 +213,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "208cb673-d016-4a35-adde-e292aed35991",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"auth_refresh_script\", jsonData.data);"
@@ -255,7 +249,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "f40d93e2-bbc9-4629-a998-25cfe1becd26",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"basic_response_test\", jsonData.data);"
@@ -292,7 +285,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "fade9aa3-7d7d-47c4-9a21-5415e23c1230",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"complex_response_test\", jsonData.data);"
@@ -329,7 +321,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "9d714326-8b47-433f-9379-aefc155606b8",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"create_response_test\", jsonData.data);"
@@ -366,7 +357,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "525ed496-ce04-48a2-a32a-702987bd0066",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"citizen_response_test\", jsonData.data);"
@@ -403,7 +393,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "8d32f095-7304-4478-bf14-4b4b16e5e947",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"service_schema_check\", jsonData.data);"
@@ -440,7 +429,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "ae3a5e72-38d4-47c1-8149-fd115702e4e0",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"service_request_test\", jsonData.data);"
@@ -477,7 +465,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "58696875-dbec-4436-acb4-ce906134645f",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"one_service_request_test\", jsonData.data);"
@@ -514,7 +501,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "3ece0e41-1205-4515-8f84-5dda5838bde7",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"get_active_citizens_test\", jsonData.data);"
@@ -551,7 +537,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "a3f5b33f-feca-4d98-8f9c-2e2c54988188",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"csr_schema_check\", jsonData.data);"
@@ -588,7 +573,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "4e798405-dcd7-4022-b8ea-eaf59e93fdde",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"onecsr_schema_check\", jsonData.data);"
@@ -625,7 +609,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "2ac49a25-bf25-47c4-a3d6-461fdd38eeec",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"manycsrs_schema_check\", jsonData.data);"
@@ -662,7 +645,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "73d09615-9319-4bbb-b581-9952dfa0e877",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"office_schema_check\", jsonData.data);"
@@ -699,7 +681,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "e88fcc30-d980-43d9-89e7-ad364d74ff69",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"all_office_schema_check\", jsonData.data);"
@@ -736,7 +717,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "ec8819b8-98ba-4594-b348-00b2283d4aef",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"video_schema_check\", jsonData.data);"
@@ -768,8 +748,7 @@
 					"response": []
 				}
 			],
-			"description": "This folder performs basic authentication features.",
-			"protocolProfileBehavior": {}
+			"description": "This folder performs basic authentication features."
 		},
 		{
 			"name": "Check app health",
@@ -780,7 +759,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "90d49a32-643e-4465-b9af-e248b94a3e62",
 								"exec": [
 									"//  Get the maximum response time allowed.",
 									"max_load_time = JSON.parse(globals.max_load_time);",
@@ -819,7 +797,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "3575f97d-90af-4d35-8a50-e04c092b8d9e",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);"
@@ -854,7 +831,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "8d6c5a75-3b2e-4a03-9f79-c52d42c5b95b",
 								"exec": [
 									"//  Get the maximum load time allowed.",
 									"max_load_time = JSON.parse(postman.getEnvironmentVariable(\"max_load_time\"));",
@@ -905,7 +881,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "b042f78f-18d5-4b47-b723-f8b0466aaa48",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);"
@@ -940,7 +915,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "b7674b85-3605-480f-8520-3075a5c44e18",
 								"exec": [
 									"//  Perform the standard tests.",
 									"eval(environment.basic_response_test);",
@@ -963,7 +937,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "7f20e393-0407-43db-85fb-be4208a50b2a",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);"
@@ -993,8 +966,7 @@
 					"response": []
 				}
 			],
-			"description": "Checks the application health by calling the healthz and readyz endpoints",
-			"protocolProfileBehavior": {}
+			"description": "Checks the application health by calling the healthz and readyz endpoints"
 		},
 		{
 			"name": "Check user login",
@@ -1005,7 +977,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "3d845e8f-10ee-4ec5-bdc1-f044e06d8be1",
 								"exec": [
 									"//  Do the basic checks.",
 									"eval(environment.basic_response_test);",
@@ -1084,7 +1055,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "4769f696-8c11-4aba-8d4b-12c3b9942b40",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_first);",
@@ -1096,7 +1066,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "11f16c32-b305-4f6c-bc6c-879f0e3c1917",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -1158,8 +1127,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Check channels",
@@ -1170,7 +1138,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "b8530989-d6b7-4947-a8e1-c97ac4e8bc53",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_first);",
@@ -1182,7 +1149,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "c4859312-ea3a-42b5-9293-5331b5cbd006",
 								"exec": [
 									"//  Run basic tests.",
 									"eval(environment.basic_response_test);",
@@ -1260,8 +1226,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Check counters",
@@ -1272,7 +1237,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "dd4a4190-8857-4e87-ac32-f5f070399b36",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_first);",
@@ -1284,7 +1248,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "dc916d1e-7a0b-44c4-b91d-f165bfa39c59",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -1397,8 +1360,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Check categories",
@@ -1409,7 +1371,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "73b74d5a-91fa-45b2-976b-9525dbf93a3f",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_first);",
@@ -1421,7 +1382,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "5c836c81-c08e-437c-bd4a-7ff9389c316a",
 								"exec": [
 									"//  Run basic tests.",
 									"eval(environment.basic_response_test);",
@@ -1501,8 +1461,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Check services",
@@ -1513,7 +1472,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "b9ae7b27-43e5-43a1-8ec4-04d7dff910f6",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_first);",
@@ -1525,7 +1483,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "1167ebe9-9abb-40aa-b503-bc4daa51aaf7",
 								"exec": [
 									"//  Run basic tests.",
 									"eval(environment.basic_response_test);",
@@ -1623,7 +1580,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "46a6328a-d793-4941-b302-efbe1ad7f66c",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_first);",
@@ -1635,7 +1591,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "a7f048e1-6676-4a07-ad06-0cb973821c83",
 								"exec": [
 									"//  Run basic tests.",
 									"eval(environment.basic_response_test);",
@@ -1677,8 +1632,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Check smartboard",
@@ -1689,7 +1643,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "8a3b7b11-9060-4e12-97ae-5ff6f966d674",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_first);",
@@ -1701,7 +1654,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "a3324cbd-37ce-44ad-85e9-7c20ff59cf7e",
 								"exec": [
 									"//  Run basic tests.",
 									"eval(environment.basic_response_test);",
@@ -1781,8 +1733,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Check videofiles",
@@ -1793,7 +1744,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "6267135c-8287-4dd1-809a-730ee5bfe630",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_first);",
@@ -1805,7 +1755,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "6de00546-c3db-4d91-b6d5-191c95fe24f0",
 								"exec": [
 									"//  Run basic tests.",
 									"eval(environment.basic_response_test);",
@@ -1846,7 +1795,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "60d2fba3-aed3-417a-a3aa-3ceb022b4e79",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_first);",
@@ -1858,7 +1806,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "21ce2651-192d-47ec-b408-59310b7007df",
 								"exec": [
 									"//  Run basic tests.",
 									"eval(environment.basic_response_test);",
@@ -1899,8 +1846,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Check CSRs and States",
@@ -1911,7 +1857,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "a1bb3b95-03e9-428e-aae9-c349fbac8a41",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_first);",
@@ -1923,7 +1868,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "9fca29f1-b12c-449a-b3e0-40d8cb90e535",
 								"exec": [
 									"//  Run basic tests.",
 									"eval(environment.basic_response_test);",
@@ -1964,7 +1908,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "4cec126e-8bce-42d5-9fd6-b56d92f0efb7",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_first);",
@@ -1976,7 +1919,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "871caace-05b8-483a-91ff-efecfbccb1b1",
 								"exec": [
 									"//  Run basic tests.",
 									"eval(environment.basic_response_test);",
@@ -2033,7 +1975,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "771c3ded-afa4-4440-b2d0-05d8ea7fda52",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_first);",
@@ -2045,7 +1986,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "34112a77-642f-4b72-84d1-e74ce8dd11e3",
 								"exec": [
 									"//  Run basic tests.",
 									"eval(environment.basic_response_test);",
@@ -2102,7 +2042,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "ea9151b8-1605-4500-9302-3491ed602a38",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_first);",
@@ -2114,7 +2053,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "e6ae6129-3053-4d00-b1b3-9d4edc0a0261",
 								"exec": [
 									"//  Run basic tests.",
 									"eval(environment.basic_response_test);",
@@ -2174,8 +2112,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Clear queue for tests",
@@ -2186,7 +2123,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "4278d4a3-758b-4d47-acfc-aebca7f68e9e",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_first);",
@@ -2198,7 +2134,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "db36091a-738c-4853-8fbb-d130c265addf",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -2279,7 +2214,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "25c8cccc-dafe-4b5c-a4dd-6967525132a2",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -2291,7 +2225,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "4aef770c-ab2a-4f9e-a3dd-8b2976732b57",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -2362,7 +2295,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "3cc2a280-c643-46fa-aa93-1143be40bc3e",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -2374,7 +2306,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "dcfe06a4-b175-4d6e-80fe-51c218fde47b",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -2449,7 +2380,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "da614ab4-f08a-440d-b70f-2eddbcf52d88",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -2461,7 +2391,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "3fca865a-2003-4fec-9933-d813149f86a7",
 								"exec": [
 									"//  Run create tests.",
 									"eval(environment.create_response_test);",
@@ -2524,7 +2453,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "57bc59ab-51e1-471b-b8dd-64e9d8cb72fe",
 								"exec": [
 									"//  Perform the standard tests.",
 									"eval(environment.basic_response_test);",
@@ -2548,7 +2476,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "3d95df1b-551d-46e0-9ded-7f1ff1d1dbbc",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);"
@@ -2577,8 +2504,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Check citizen through queue (QT1)",
@@ -2589,7 +2515,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "f209b1c6-edb4-425d-9799-ff91d007f635",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_first);",
@@ -2601,7 +2526,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "4cb0a21e-2e53-499a-85a9-1191d10c36db",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -2666,7 +2590,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "9ce04908-8b0f-43df-bc90-03b80d66ed9d",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -2678,7 +2601,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "b32f31bf-050c-479e-bfdb-cbfe9fbf6a5e",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.create_response_test);",
@@ -2755,7 +2677,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "454f6927-0083-4f41-a00f-93c51c012ffb",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);"
@@ -2766,7 +2687,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "bb886009-3fba-4314-b034-bed96eb7d77e",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -2850,7 +2770,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "d40ef720-b129-4221-a62b-6eb1d48eefdf",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -2862,7 +2781,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "80ba0f58-110b-429e-80fb-bcec53a68d38",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.create_response_test);",
@@ -2927,7 +2845,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "e85de250-7178-4e48-aa73-7791f6bd4124",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -2939,7 +2856,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "39acab07-6401-46a7-ae8e-8cdea9a33b4e",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -3040,7 +2956,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "27f522b2-cebc-4ca9-bd94-938ea0ef13f4",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -3052,7 +2967,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "6520284b-4b98-44e4-802d-eda1450e9820",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -3170,7 +3084,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "9c73cb57-43c2-45f3-a40f-e46e5ecf4cca",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -3182,7 +3095,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "330d6c84-2b54-43b4-94ca-521a70f3c7d0",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -3300,7 +3212,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "34cdf686-9d5d-48a0-b912-912455f5608d",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -3312,7 +3223,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "f6d8c828-987c-4e47-b453-e64322dc35f4",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -3430,7 +3340,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "46dd299e-967d-4368-add0-1426fd1a78ab",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -3442,7 +3351,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "ce2b3b46-2bf9-4252-ac1d-20b931f1eb86",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.create_response_test);",
@@ -3491,7 +3399,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "c57ebcc6-bfa1-4436-a1f8-a9aef5e36250",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -3503,7 +3410,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "433e7a95-1663-47f2-b258-ac710bba8b9e",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -3569,7 +3475,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "bfcef6f5-2004-4012-ae55-953305223c30",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -3581,7 +3486,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "edabc9a1-7710-4935-ac63-45ff2c35ad85",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -3686,8 +3590,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Check citizen begin-hold-finish (QT2)",
@@ -3698,7 +3601,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "39996fe0-ff98-480c-9836-fb938b523a65",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_first);",
@@ -3710,7 +3612,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "5831f0be-f971-4684-83e9-be3a6d184ae1",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -3775,7 +3676,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "eac26a23-3858-4186-9e37-e2286a530c59",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -3787,7 +3687,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "11f28e0a-cdfb-4875-967b-54f863204366",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.create_response_test);",
@@ -3866,7 +3765,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "b43f60b9-6e48-4a27-b379-1e09742f43be",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -3888,7 +3786,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "9b02c3f5-3288-42a4-af0d-ca03983d796c",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -3972,7 +3869,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "6a925a1f-6680-4c3f-b952-c71c830fe284",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -3984,7 +3880,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "e5a08dd4-1468-4bdc-a606-2daf96ff8d93",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.create_response_test);",
@@ -4033,7 +3928,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "23c6aeb4-d4fe-496c-9ec3-fe1a582b43cf",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -4045,7 +3939,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "f236a844-515d-4367-8b36-bd4bd1d70ca5",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -4146,7 +4039,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "b47523db-ad63-4588-a92a-27a7fa557f4d",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -4158,7 +4050,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "57fcf633-f967-4690-9eb8-bd1550727d90",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -4276,7 +4167,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "af4907be-d7d8-4c76-bee9-0b51dc4b85da",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -4288,7 +4178,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "f5adb138-e99e-4f8a-8d03-4579637f93fb",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -4406,7 +4295,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "cfe328f9-42cd-48f5-83f8-b68fcee4ba19",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -4418,7 +4306,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "2285c8ed-1174-41b3-99c2-b617c6c94497",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -4522,7 +4409,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "9812f9f4-9f3d-4593-b1ce-ab56c56de5ae",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -4534,7 +4420,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "6a6db1cf-9e98-4e11-93d1-ec31b0d57627",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -4652,7 +4537,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "612a8631-69ae-46d9-8664-bcb90a42dc47",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -4664,7 +4548,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "206c834c-dc06-4545-bd0d-65bb24f823b0",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -4772,8 +4655,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Check citizen leave after create (QT3)",
@@ -4784,7 +4666,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "83aa6cd9-740a-44f0-aec6-d451ebb1937d",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_first);",
@@ -4796,7 +4677,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "83154f73-1131-4edd-9d15-a560f29d0892",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -4861,7 +4741,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "e2f42430-f884-4dc0-ac6b-feea2766c5a4",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -4873,7 +4752,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "916d41ec-d178-4759-9f54-797ffbefe67d",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.create_response_test);",
@@ -4951,7 +4829,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "9adf14db-64d8-43ed-b3cd-a4923f392fc2",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -4963,7 +4840,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "699fa33f-f1c2-4b67-bee9-49c18cd115fe",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -5061,8 +4937,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Check citizen leave after waiting (QT4)",
@@ -5073,7 +4948,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "1164e38c-bd12-476f-a468-6df6be81c23c",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_first);",
@@ -5085,7 +4959,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "f6072d3e-e7b4-490b-aa53-d5f0c3ceeddc",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -5150,7 +5023,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "4e43d1a1-fd49-4d25-bf52-7fa673696306",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -5162,7 +5034,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "f1695274-7e59-4d87-a19c-efe83e4a1662",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.create_response_test);",
@@ -5240,7 +5111,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "dad91e4d-2f4e-4f95-bfcf-a4f1c1b0ce75",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -5262,7 +5132,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "0f965763-5e56-4495-909b-296b0b2571c6",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -5346,7 +5215,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "5b7ba7f1-ec85-4678-ad1a-a8c454024b96",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -5358,7 +5226,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "983c7cf6-5dfb-412d-b0e8-c5de0337f77b",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.create_response_test);",
@@ -5407,7 +5274,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "21bccdfb-0f91-4972-b318-26baaacf9fb4",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -5419,7 +5285,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "807b7bc0-f004-4ef6-8106-9c61b002929f",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -5520,7 +5385,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "d2bc38bf-637a-4d3f-a521-a33f62b28f0d",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -5532,7 +5396,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "f858bb75-abb4-4bf7-a12e-8c6c17f629a4",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -5650,7 +5513,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "d1309e6e-a8df-43b7-9035-8fb3250b5cd2",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -5662,7 +5524,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "c0b0d076-a946-4668-a6df-af608aca694a",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -5773,7 +5634,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "5fd8db7a-8c99-4428-b70a-070900e43ab1",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_first);",
@@ -5785,7 +5645,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "eb4e767f-1642-4652-b6a1-fd39b5609f55",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -5844,8 +5703,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Check update service information (QT5)",
@@ -5856,7 +5714,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "9706acc6-36ef-4236-9e83-8592ef7026bf",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_first);",
@@ -5868,7 +5725,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "c2ad6107-67a3-4fd4-b92c-afc85892e588",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -5933,7 +5789,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "935251ab-fdd1-4661-85ca-c405ad5c40d6",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -5945,7 +5800,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "af56b9d1-cc31-4d27-a628-3e9a41e64c5d",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.create_response_test);",
@@ -6023,7 +5877,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "497d28f8-31ab-47c8-b149-8f1db61cdd89",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -6045,7 +5898,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "610b8dce-5e3d-461a-9436-d306e5a3affa",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -6129,7 +5981,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "a308cb8e-54e2-4f0a-8140-8712122a5825",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -6141,7 +5992,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "8ee33792-62ed-4966-a945-28906778eed9",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.create_response_test);",
@@ -6190,7 +6040,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "6d9b928a-6cba-4f56-be71-55cd7e829baf",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -6202,7 +6051,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "51fd1599-4228-4384-803f-91126da67c70",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -6307,7 +6155,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "1a908925-ce65-4076-803b-2d3517903e13",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -6319,7 +6166,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "c0b5e304-54b2-4149-b713-8a07888370fd",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -6437,7 +6283,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "df054d68-a3bc-48e8-adbc-bef05114bbfb",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -6449,7 +6294,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "4fac3ea6-3d15-417f-8097-8bd5af7e675a",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.basic_response_test);",
@@ -6512,7 +6356,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "b3643530-b3ce-46c1-b4ab-70f2d6f8668a",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -6524,7 +6367,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "ca9c6fdf-2432-484e-9919-0bfe5cf76530",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.basic_response_test);",
@@ -6587,7 +6429,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "3396da61-4e70-46d3-9a4c-ba3059d26c03",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -6599,7 +6440,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "cecfe6a6-e2c0-4671-af2b-76f8400300f7",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -6704,8 +6544,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Check pick qtxn customer (QT6)",
@@ -6716,7 +6555,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "4e848b03-0d95-4ef1-8da9-4030890ad948",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_first);",
@@ -6728,7 +6566,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "7374d1f6-8c56-45d9-b5e6-70141cc94f82",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -6791,7 +6628,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "7489c8fd-3e52-4769-8e1d-f864aeb73c95",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -6803,7 +6639,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "e2a90fce-7386-4ccf-b3a5-3b1cddb72a17",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.create_response_test);",
@@ -6881,7 +6716,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "2e477ada-521a-4bbf-b84c-d5ab036dc4bb",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -6893,7 +6727,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "aa7dcc6f-f15b-43e9-9441-354956eaaf28",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -6977,7 +6810,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "f8458271-de02-4e0f-ac7b-61320eddf02d",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -6989,7 +6821,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "0db4b500-d4cd-45d6-a4b6-65fc79d0e95e",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.create_response_test);",
@@ -7038,7 +6869,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "aafe1e76-b85d-4705-8a30-79413dc76336",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -7050,7 +6880,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "ed3416f4-ff8b-4fdb-87fc-fce766a4de7a",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -7151,7 +6980,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "4cbdfed8-f9d1-443e-a45a-da41ea8f3df1",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -7163,7 +6991,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "8583f97b-21f2-4854-95bf-0a545a3205e1",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -7281,7 +7108,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "9688684f-e482-43f2-8f6b-eaf6f438038e",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -7293,7 +7119,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "3496c50f-6de6-499b-a689-82b6771cddc5",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.create_response_test);",
@@ -7371,7 +7196,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "8986eef4-207e-40ea-8b23-cfa1ca4379cb",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -7394,7 +7218,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "747b06bd-abc8-4435-b97a-b5ee3a073a5d",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -7478,7 +7301,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "99008457-dd82-49c8-9df5-bbd442672790",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -7490,7 +7312,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "247ab371-4b49-4c9b-815d-452fad8415ac",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.create_response_test);",
@@ -7539,7 +7360,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "9972b962-dad4-4c91-8e82-b537f4bf7a92",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -7551,7 +7371,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "8fa7d09e-878b-47b4-a95e-12c60c548065",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -7652,7 +7471,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "46a6f342-fea7-4b2c-b258-cb7fd1a5b209",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -7664,7 +7482,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "14074aa4-3034-43b7-bd74-be3f82e8bec2",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -7782,7 +7599,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "d3867b1c-d52f-4b32-9169-6c7f3e4af258",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -7794,7 +7610,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "ee60f82c-0b58-4605-a7f1-8281f0e00885",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -7857,7 +7672,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "df0e0702-df42-4087-8389-c60c9f2717be",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -7872,7 +7686,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "be9a91fc-9cbc-44e2-a723-8e10d22243de",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -7929,7 +7742,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "e4788893-cb15-46ba-870c-9cfcc946f7da",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -7941,7 +7753,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "d8f01fd5-ab21-4524-a4e9-7bf2e939b4e5",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -8062,7 +7873,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "6e2c763b-1cdf-483b-976b-a56ec98de91f",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -8074,7 +7884,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "241103ec-0715-4e13-8df3-2e3b5b5480ef",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -8192,7 +8001,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "53387d0d-5ac5-448a-a8e3-2f31847267a8",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -8204,7 +8012,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "47ed5274-748f-49ee-ac1c-81ccbb973983",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -8315,7 +8122,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "d0be4749-a54b-4194-94b3-88bc67503d2c",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -8327,7 +8133,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "f0c36d5e-237c-46ab-be35-b5bed4663190",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -8448,7 +8253,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "f750fa30-8a4d-47e8-b4b3-00ae63911919",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -8460,7 +8264,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "f553c49f-4f8f-4748-898a-209553870f31",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -8565,8 +8368,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Check pick non-qtxn customer (QT7)",
@@ -8577,7 +8379,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "25c90ea7-d6a5-4c94-965d-efba64fe17b8",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_first);",
@@ -8589,7 +8390,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "fcf5cac5-d6ec-4c74-9afa-00e00130fd1e",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -8652,7 +8452,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "aae2b587-f7da-4cae-8bc7-53b6e3e10a21",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -8664,7 +8463,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "d51492a5-6eb0-4591-9650-290bccd5a1cb",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.create_response_test);",
@@ -8742,7 +8540,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "78ab3278-dbd8-4d99-9a59-7990fd760455",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -8754,7 +8551,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "cdf36118-b460-4bad-8c43-430ea4a8b0aa",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -8838,7 +8634,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "67670e60-f310-448d-b417-201651dc3cb6",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -8850,7 +8645,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "bc3159c8-120a-46a0-8518-486c0bb4f5ca",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.create_response_test);",
@@ -8899,7 +8693,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "037e8e82-228a-4783-a567-37bbae8824e6",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -8911,7 +8704,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "7709a507-2f50-4706-b7d9-29beaec0ccb8",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -9012,7 +8804,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "55775b52-71fb-4714-91ab-4781a94073b7",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_first);",
@@ -9024,7 +8815,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "0bcb7e0f-ffab-4779-8f6a-37ff1ff354f0",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -9142,7 +8932,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "60dfa878-c701-43d1-bf89-5230dd247915",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -9154,7 +8943,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "da7c40bd-ba94-4930-9981-74370304ca06",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.create_response_test);",
@@ -9232,7 +9020,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "ac1fd806-57b7-494d-b869-fc29f2326a19",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -9244,7 +9031,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "5a051810-08fd-4297-9e9b-4880e864dd5b",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -9328,7 +9114,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "cdef3804-311c-4657-9516-797dba573754",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -9340,7 +9125,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "54900b18-b828-4d68-88e9-e39eb7bad421",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.create_response_test);",
@@ -9389,7 +9173,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "11148693-33bf-4188-9cf2-e0c3d455a3c7",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -9401,7 +9184,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "ea28f464-c9ca-49a5-bb5e-ed1cf1286960",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -9502,7 +9284,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "9d011d2f-d3dc-4672-94aa-61f45f2e6aa9",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -9514,7 +9295,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "9f173618-9058-4d13-b0e6-01370a0c6522",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -9632,7 +9412,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "5b255f52-98a0-4107-b740-99c8c6972ee9",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -9644,7 +9423,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "24187b14-aabf-483f-885c-5847e4a8b0f6",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -9707,7 +9485,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "b87744be-b5e9-4982-b7b6-c9b6772ebe89",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -9723,7 +9500,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "76aab341-ff70-4cb7-a3d3-aa59e22ec55e",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -9780,7 +9556,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "f8576dc7-5d04-4ed1-8f48-e18ba50bde0b",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -9792,7 +9567,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "076cbd20-7531-4f5b-9018-54f23710287c",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -9913,7 +9687,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "ff838e17-469a-4edb-bc88-464509b90215",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -9925,7 +9698,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "6274b810-4d4b-45ee-b15c-8174ef95b068",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -10043,7 +9815,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "022ce6cf-eb9e-4e3a-93f5-60fa97ba1fc5",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -10055,7 +9826,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "3e241404-2615-402d-ab9c-49e813941924",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -10166,7 +9936,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "86c2a388-8c6f-410e-8683-76baf13fbac1",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -10178,7 +9947,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "35936d60-190f-42d4-94ee-a6b6bdda0d73",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -10299,7 +10067,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "f7f2c4ad-1a35-4355-bd84-066964f7b723",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_script);",
@@ -10311,7 +10078,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "f6e0fde1-92cb-45c7-8639-c5f957b65236",
 								"exec": [
 									"//  Run complex tests.",
 									"eval(environment.complex_response_test);",
@@ -10416,8 +10182,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Setup Booking",
@@ -10428,7 +10193,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "43dc786b-5b54-409d-a5ba-3c1d6c78adc4",
 								"exec": [
 									"//  See if the use-prefix global has been set.  Use default if not.",
 									"let usePrefix = '';",
@@ -10492,7 +10256,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "3a0b82a4-1171-45c1-b130-2ee3796a99f2",
 								"exec": [
 									""
 								],
@@ -10528,7 +10291,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "0ec7f7f5-f16d-43d4-b7c2-c0df6a615614",
 								"exec": [
 									"// Parse response body",
 									"var jsonData = JSON.parse(responseBody);",
@@ -10610,7 +10372,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "7b36ee4f-f539-42f8-8af0-da599d7758bf",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"auth_first\", jsonData.data);"
@@ -10647,7 +10408,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "3beff663-e160-4eda-bc56-4f3852314711",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"basic_response_test\", jsonData.data);"
@@ -10684,7 +10444,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "ff27c839-a2c1-4ee7-a8c7-4497f0f820b0",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"init_exam_type_data\", jsonData.data);"
@@ -10721,7 +10480,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "a8654e06-a1f9-4834-9439-838ee501c0e8",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"create_random_functions\", jsonData.data);"
@@ -10758,7 +10516,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "36518a81-7886-44a4-a407-2797cc22f12a",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"room_schema_check\", jsonData.data);"
@@ -10795,7 +10552,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "df2f7b88-6f84-40bc-8a1c-a9d03dda0bcd",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"exam_schema_check\", jsonData.data);"
@@ -10832,7 +10588,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "4ffa23b0-0259-44b7-9401-7a894d26d30b",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"exam_data_check\", jsonData.data);"
@@ -10869,7 +10624,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "2ab0a55f-22da-4574-9cdd-90bc01c57da6",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"exam_schema_list_check\", jsonData.data);"
@@ -10906,7 +10660,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "15204f24-c65d-404b-bc20-588711aed456",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"booking_schema_check\", jsonData.data);"
@@ -10943,7 +10696,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "135f3ce1-acac-4eac-b384-0e81af2bf4d7",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"booking_data_check\", jsonData.data);"
@@ -10980,7 +10732,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "b01ce657-9c4b-43ce-a84f-19f3330b13a3",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"booking_list_schema_check\", jsonData.data);"
@@ -11017,7 +10768,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "a44a0a62-10ca-4c55-8ed9-73a56f04b5dc",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"invigilator_schema_check\", jsonData.data);"
@@ -11054,7 +10804,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "141a4f44-18a4-4a60-b9c0-b2a7bfa53e49",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"invig_one_schema_check\", jsonData.data);"
@@ -11091,7 +10840,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "3f2f18eb-b1be-4e6a-a10c-bf75461b0334",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"appointment_schema_check\", jsonData.data);"
@@ -11105,7 +10853,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "// Define the JSON Schema expected in response\nvar appointmentSchema = {\n    \"type\": \"object\", \n    \"properties\": {\n        \"appointment\": {\n            \"type\": \"object\",\n            \"properties\": {\n                \"appointment_id\": {\"type\": \"number\"},\n                \"checked_in_time\": {\"type\": [\"string\", \"null\"]},\n                \"citizen_name\": {\"type\": \"string\"},\n                \"comments\": {\"type\": \"string\"},\n                \"contact_information\": {\"type\": [\"string\", \"null\"]},\n                \"end_time\": {\"type\": \"string\"},\n                \"office\": {\"type\": \"number\"},\n                \"office_id\": {\"type\": \"number\"},\n                \"service_id\": {\"type\": [\"null\", \"number\"]},\n                \"start_time\": {\"type\": \"string\"},\n                \"blackout_flag\": {\"type\": \"string\"},\n                \"citizen_id\": {\"type\": \"number\"},\n                \"online_flag\": {\"type\": \"boolean\"},\n                \"recurring_uuid\": {\"type\": [\"null\", \"string\"]},\n                \"service\": {\"type\": [\"null\", \"number\"]}\n            },\n            \"required\": [\"appointment_id\", \"checked_in_time\", \"citizen_name\", \"comments\",\n                         \"contact_information\", \"end_time\", \"office\", \"office_id\", \"service_id\",\n                         \"start_time\", \"blackout_flag\", \"citizen_id\", \"online_flag\",\n                         \"recurring_uuid\", \"service\"],\n        },\n        \"errors\": {\"type\": [\"object\", \"string\"]}\n    },\n    \"required\": [\"appointment\", \"errors\"],\n};\n\n//Test to see if response schema is valid\npm.test(\"Validate Response Appointments Schema\", function(){\n    pm.expect(tv4.validate(jsonData, appointmentSchema)).to.be.true;\n});\n"
+							"raw": "// Define the JSON Schema expected in response\nvar appointmentSchema = {\n    \"type\": \"object\", \n    \"properties\": {\n        \"appointment\": {\n            \"type\": \"object\",\n            \"properties\": {\n                \"appointment_id\": {\"type\": \"number\"},\n                \"checked_in_time\": {\"type\": [\"string\", \"null\"]},\n                \"citizen_name\": {\"type\": \"string\"},\n                \"comments\": {\"type\": \"string\"},\n                \"contact_information\": {\"type\": [\"string\", \"null\"]},\n                \"end_time\": {\"type\": \"string\"},\n                \"office\": {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"appointments_enabled_ind\": {\"type\": \"number\"},\n                            \"exams_enabled_ind\": {\"type\": \"number\"},\n                            \"office_id\": {\"type\": \"number\"},\n                            \"office_name\": {\"type\": \"string\"},\n                            \"office_number\": {\"type\": \"number\"},\n                            \"timezone\": {\n                                \"type\": \"object\",\n                                \"properties\": {\n                                    \"timezone_id\": {\"type\": \"number\"},\n                                    \"timezone_name\": {\"type\": \"string\"}\n                                },\n                                \"required\": [\"timezone_id\", \"timezone_name\"]\n                            },\n                        },\n                        \"required\": [\"appointments_enabled_ind\", \"exams_enabled_ind\", \"office_id\", \"office_name\", \"office_number\", \"timezone\"]\n                    },\n                \"office_id\": {\"type\": \"number\"},\n                \"service_id\": {\"type\": [\"null\", \"number\"]},\n                \"start_time\": {\"type\": \"string\"},\n                \"blackout_flag\": {\"type\": \"string\"},\n                \"citizen_id\": {\"type\": \"number\"},\n                \"online_flag\": {\"type\": \"boolean\"},\n                \"recurring_uuid\": {\"type\": [\"null\", \"string\"]},\n                \"services\": {\n                    \"type\": \"object\",\n                    \"properties\": {\n                        \"deleted\": {\"type\": [\"null\", \"string\"]},\n                        \"display_dashboard_ind\": {\"type\": \"number\"},\n                        \"timeslot_duration\": {\"type\": [\"null\", \"number\"]},\n                        \"parent\": {\n                            \"type\": \"object\",\n                            \"properties\": {\n                                \"service_name\": {\"type\": \"string\"}\n                            },\n                            \"required\": [\"service_name\"]\n                        },\n                        \"service_name\": {\"type\": \"string\"},\n                        \"service_code\": {\"type\": \"string\"},\n                        \"actual_service_ind\": {\"type\": \"number\"},\n                        \"online_link\": {\"type\": [\"null\", \"string\"]},\n                        \"service_desc\": {\"type\": \"string\"},\n                        \"service_id\": {\"type\": \"number\"},\n                        \"parent_id\": {\"type\": \"number\"},\n                        \"prefix\": {\"type\": \"string\"},\n                        \"online_availability\": {\"type\": [\"null\", \"string\"]},\n                        \"external_service_name\": {\"type\": [\"null\", \"string\"]}\n                    },\n                    \"required\": [\"deleted\", \"display_dashboard_ind\", \"timeslot_duration\", \"parent\",\n                                \"service_name\", \"service_code\", \"actual_service_ind\", \"online_link\",\n                                \"service_desc\", \"service_id\", \"parent_id\", \"prefix\", \"online_availability\",\n                                \"external_service_name\"]\n                }\n            },\n            \"required\": [\"appointment_id\", \"checked_in_time\", \"citizen_name\", \"comments\",\n                         \"contact_information\", \"end_time\", \"office\", \"office_id\", \"service_id\",\n                         \"start_time\", \"blackout_flag\", \"citizen_id\", \"online_flag\",\n                         \"recurring_uuid\", \"service\"],\n        },\n        \"errors\": {\"type\": [\"object\", \"string\"]}\n    },\n    \"required\": [\"appointment\", \"errors\"],\n};\n\n//Test to see if response schema is valid\npm.test(\"Validate Response Appointments Schema\", function(){\n    pm.expect(tv4.validate(jsonData, appointmentSchema)).to.be.true;\n});\n"
 						},
 						"url": {
 							"raw": "https://postman-echo.com/post",
@@ -11128,7 +10876,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "550896ab-245f-404d-87b8-dfe7432d2b06",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"appointment_data_check\", jsonData.data);"
@@ -11165,7 +10912,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "e84c5bae-ba24-47f4-8b21-2c0ddb99d69d",
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"pm.environment.set(\"appointment_list_schema_check\", jsonData.data);"
@@ -11179,7 +10925,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "// Define the JSON Schema expected in response\nvar appointmentSchema = {\n    \"type\": \"object\", \n    \"properties\": {\n        \"appointments\": {\n            \"type\": \"array\",\n            \"items\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"appointment_id\": {\"type\": \"number\"},\n                    \"checked_in_time\": {\"type\": [\"string\", \"null\"]},\n                    \"citizen_name\": {\"type\": \"string\"},\n                    \"comments\": {\"type\": [\"null\", \"string\"]},\n                    \"contact_information\": {\"type\": [\"null\", \"string\"]},\n                    \"end_time\": {\"type\": \"string\"},\n                    \"office\": {\"type\": \"number\"},\n                    \"office_id\": {\"type\": \"number\"},\n                    \"service_id\": {\"type\": [\"null\", \"number\"]},\n                    \"start_time\": {\"type\": \"string\"},\n                    \"blackout_flag\": {\"type\": \"string\"},\n                    \"citizen_id\": {\"type\": \"number\"},\n                    \"online_flag\": {\"type\": \"boolean\"},\n                    \"recurring_uuid\": {\"type\": [\"null\", \"string\"]},\n                    \"service\": {\"type\": [\"null\", \"number\"]}\n                },\n                \"required\": [\"appointment_id\", \"checked_in_time\", \"citizen_name\", \"comments\",\n                             \"contact_information\", \"end_time\", \"office\", \"office_id\",\n                             \"service_id\", \"start_time\", \"blackout_flag\", \"citizen_id\",\n                             \"online_flag\", \"recurring_uuid\", \"service\"]\n            }\n        },\n        \"errors\": {\"type\": [\"object\", \"string\"]}\n    },\n    \"required\": [\"appointments\"],\n};\n\n//Test to see if response schema is valid\npm.test(\"Validate Response Appointment List Schema\", function(){\n    pm.expect(tv4.validate(jsonData, appointmentSchema)).to.be.true;\n});\n"
+							"raw": "// Define the JSON Schema expected in response\nvar appointmentSchema = {\n    \"type\": \"object\", \n    \"properties\": {\n        \"appointments\": {\n            \"type\": \"array\",\n            \"items\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"appointment_id\": {\"type\": \"number\"},\n                    \"checked_in_time\": {\"type\": [\"string\", \"null\"]},\n                    \"citizen_name\": {\"type\": \"string\"},\n                    \"comments\": {\"type\": [\"null\", \"string\"]},\n                    \"contact_information\": {\"type\": [\"null\", \"string\"]},\n                    \"end_time\": {\"type\": \"string\"},\n                    \"office\": {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"appointments_enabled_ind\": {\"type\": \"number\"},\n                            \"exams_enabled_ind\": {\"type\": \"number\"},\n                            \"office_id\": {\"type\": \"number\"},\n                            \"office_name\": {\"type\": \"string\"},\n                            \"office_number\": {\"type\": \"number\"},\n                            \"timezone\": {\n                                \"type\": \"object\",\n                                \"properties\": {\n                                    \"timezone_id\": {\"type\": \"number\"},\n                                    \"timezone_name\": {\"type\": \"string\"}\n                                },\n                                \"required\": [\"timezone_id\", \"timezone_name\"]\n                            },\n                        },\n                        \"required\": [\"appointments_enabled_ind\", \"exams_enabled_ind\", \"office_id\", \"office_name\", \"office_number\", \"timezone\"]\n                    },\n                    \"office_id\": {\"type\": \"number\"},\n                    \"service_id\": {\"type\": [\"null\", \"number\"]},\n                    \"start_time\": {\"type\": \"string\"},\n                    \"blackout_flag\": {\"type\": \"string\"},\n                    \"citizen_id\": {\"type\": \"number\"},\n                    \"online_flag\": {\"type\": \"boolean\"},\n                    \"recurring_uuid\": {\"type\": [\"null\", \"string\"]},\n                    \"services\": {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"deleted\": {\"type\": [\"null\", \"string\"]},\n                            \"display_dashboard_ind\": {\"type\": \"number\"},\n                            \"timeslot_duration\": {\"type\": [\"null\", \"number\"]},\n                            \"parent\": {\n                                \"type\": \"object\",\n                                \"properties\": {\n                                    \"service_name\": {\"type\": \"string\"}\n                                },\n                                \"required\": [\"service_name\"]\n                            },\n                            \"service_name\": {\"type\": \"string\"},\n                            \"service_code\": {\"type\": \"string\"},\n                            \"actual_service_ind\": {\"type\": \"number\"},\n                            \"online_link\": {\"type\": [\"null\", \"string\"]},\n                            \"service_desc\": {\"type\": \"string\"},\n                            \"service_id\": {\"type\": \"number\"},\n                            \"parent_id\": {\"type\": \"number\"},\n                            \"prefix\": {\"type\": \"string\"},\n                            \"online_availability\": {\"type\": [\"null\", \"string\"]},\n                            \"external_service_name\": {\"type\": [\"null\", \"string\"]}\n                        },\n                        \"required\": [\"deleted\", \"display_dashboard_ind\", \"timeslot_duration\", \"parent\",\n                                    \"service_name\", \"service_code\", \"actual_service_ind\", \"online_link\",\n                                    \"service_desc\", \"service_id\", \"parent_id\", \"prefix\", \"online_availability\",\n                                    \"external_service_name\"]\n                    },\n                        },\n                        \"required\": [\"appointment_id\", \"checked_in_time\", \"citizen_name\", \"comments\",\n                                    \"contact_information\", \"end_time\", \"office\", \"office_id\",\n                                    \"service_id\", \"start_time\", \"blackout_flag\", \"citizen_id\",\n                                    \"online_flag\", \"recurring_uuid\", \"service\"]\n                    }\n                },\n        \"errors\": {\"type\": [\"object\", \"string\"]}\n    },\n    \"required\": [\"appointments\"],\n};\n\n//Test to see if response schema is valid\npm.test(\"Validate Response Appointment List Schema\", function(){\n    pm.expect(tv4.validate(jsonData, appointmentSchema)).to.be.true;\n});\n"
 						},
 						"url": {
 							"raw": "https://postman-echo.com/post",
@@ -11202,7 +10948,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "89c7d612-3c89-4e46-87fc-67f255879c7e",
 								"exec": [
 									"//  Ensure the client is logged in.",
 									"eval(environment.auth_first);",
@@ -11214,7 +10959,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "b7003dd2-fc91-4b99-8ede-720ded280c3f",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -11275,7 +11019,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "f7bfdfab-78fa-4f4f-bfb3-d320c7b6bfc4",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -11301,7 +11044,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "99ab6118-5233-49fa-b361-ff859c96fa33",
 								"exec": [
 									""
 								],
@@ -11340,7 +11082,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "96426fda-b9ba-4c4f-9ae0-d1dd491b6274",
 								"exec": [
 									""
 								],
@@ -11350,7 +11091,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "2bd3945d-0601-4f72-9a57-69e9c4138eb6",
 								"exec": [
 									"//  Run basic tests.",
 									"eval(environment.basic_response_test);",
@@ -11435,8 +11175,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Check app health",
@@ -11447,7 +11186,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "d3142cde-9ff6-4c26-abda-6d236ad862e0",
 								"exec": [
 									"//  Set health response time variable.",
 									"max_response_time = 1500;",
@@ -11484,7 +11222,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "8d5caec5-972d-43a1-8af2-466bfcd3a4ef",
 								"exec": [
 									""
 								],
@@ -11518,7 +11255,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "b2ed292c-2b11-46d2-9bb6-82f52de67817",
 								"exec": [
 									"//  Get the maximum response time allowed.",
 									"max_load_time = JSON.parse(globals.max_load_time);",
@@ -11569,7 +11305,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "d1fbe469-da91-4802-9d45-63daa046ffe9",
 								"exec": [
 									""
 								],
@@ -11603,7 +11338,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "708c2683-2e84-4fe3-b576-bee89d91ec44",
 								"exec": [
 									"//  Perform the standard tests.",
 									"eval(environment.basic_response_test);",
@@ -11626,7 +11360,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "bd00c3c8-ea83-4605-9cfc-8318494494ed",
 								"exec": [
 									""
 								],
@@ -11655,8 +11388,7 @@
 					"response": []
 				}
 			],
-			"description": "Checks the application health by calling the healthz and readyz endpoints",
-			"protocolProfileBehavior": {}
+			"description": "Checks the application health by calling the healthz and readyz endpoints"
 		},
 		{
 			"name": "Get Exam Types",
@@ -11667,7 +11399,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "c567e2c5-7183-4c9b-b893-7bf4e29dbce2",
 								"exec": [
 									"// Define the JSON Schema expected in response",
 									"var examTypeSchema = {",
@@ -11752,8 +11483,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Exams",
@@ -11764,7 +11494,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "8720db02-8865-4948-ad83-564e1808cbaa",
 								"exec": [
 									"//  Get exam type data and functions.",
 									"exam_array = JSON.parse(postman.getEnvironmentVariable(\"exam_array_data\"));",
@@ -11819,7 +11548,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "d2f478ec-8930-4aa9-b756-7c0a3d9f1ca1",
 								"exec": [
 									"//  Get the max response time allowed.",
 									"var response_max = JSON.parse(globals.response_max);",
@@ -11887,7 +11615,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "f8da37b4-9bc8-4182-9996-69d1d111ab41",
 								"exec": [
 									"//  Get the max response time allowed.",
 									"var response_max = JSON.parse(globals.response_max);",
@@ -11938,7 +11665,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "31bea5f7-c532-4ea3-867c-8de0e0f032bd",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -11985,7 +11711,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "0625b7bb-6742-4f6d-8a34-ee79650c1867",
 								"exec": [
 									"//  Update the next event ID.",
 									"var eventNumber = JSON.parse(postman.getEnvironmentVariable(\"event_number\"));",
@@ -12006,7 +11731,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "bbf1dc2a-75df-4db5-9df1-1504d2dfaa3e",
 								"exec": [
 									"//  Get the max response time allowed.",
 									"var response_max = JSON.parse(globals.response_max);",
@@ -12069,7 +11793,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "289d198b-cdad-47e7-9582-e2b84847d900",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -12088,7 +11811,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "e88a563e-4482-4e7a-8547-90152f8cf5a2",
 								"exec": [
 									""
 								],
@@ -12128,7 +11850,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "539fde72-7cd5-4714-9a93-571f2ebefd01",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -12163,7 +11884,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "c72407f8-c71d-44c7-8a91-2e3e7442b43b",
 								"exec": [
 									"//  Put the event ID in the right format.\r",
 									"var event_number = JSON.parse(postman.getEnvironmentVariable(\"update_id\"))\r",
@@ -12206,7 +11926,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "bce0558d-8974-46b5-b386-75d3f4172c96",
 								"exec": [
 									"//  Get the max response time allowed.",
 									"var response_max = JSON.parse(globals.response_max);",
@@ -12255,8 +11974,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Exams Export",
@@ -12267,7 +11985,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "e778e74f-bc51-4366-aa65-49d58e4c62ec",
 								"exec": [
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 200\", function(){",
@@ -12284,7 +12001,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "9ce9b15c-029b-4b02-a9d2-657752b5e9b0",
 								"exec": [
 									"//  Calculate a start date four weeks prior to today.",
 									"var start = new Date();",
@@ -12348,8 +12064,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Bookings",
@@ -12360,7 +12075,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "05001c1d-2d22-4e00-993b-e3a684a80aad",
 								"exec": [
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 201\", function(){",
@@ -12391,7 +12105,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "cc5b1e95-7cf4-43af-88f0-03a949c0eb2d",
 								"exec": [
 									"//  Calculate a start date a week from today.",
 									"var later = new Date();",
@@ -12460,7 +12173,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "9c0b6897-9113-4fb4-bf19-8fc47795366e",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -12509,7 +12221,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "62439fb5-5eae-417d-b0f5-8994f04ef126",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -12556,7 +12267,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "7e1616e1-f3c7-4a86-8109-cbec0b8f0a31",
 								"exec": [
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 200\", function(){",
@@ -12583,7 +12293,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "8d2d7494-a99f-41b4-b1ca-38809e853ee1",
 								"exec": [
 									"//  Calculate a start date a week from today.",
 									"var later = new Date();",
@@ -12652,7 +12361,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "c1cc3c56-730e-4ca5-b694-4f3ffecbb956",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -12701,7 +12409,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "97aa56bf-91bb-4732-8dea-1205b86dc6d0",
 								"exec": [
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 204\", function(){",
@@ -12749,8 +12456,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Booking Recurring",
@@ -12761,7 +12467,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "3957eeba-3a57-4e85-8e98-fe15c7f63731",
 								"exec": [
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 201\", function(){",
@@ -12792,7 +12497,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "0bad8355-1e1d-4fa6-ad71-7a6ffafecc0c",
 								"exec": [
 									"//  Calculate a start date a week from today.",
 									"var later = new Date();",
@@ -12862,7 +12566,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "1ada031e-73c1-4608-817d-d81bf8bae704",
 								"exec": [
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 201\", function(){",
@@ -12893,7 +12596,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "d73a5cdb-61ce-4367-97a2-1dfa9038fea1",
 								"exec": [
 									"//  Calculate a start date a week from today.",
 									"var later = new Date();",
@@ -12959,7 +12661,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "8b7a9e34-1fb6-4f29-8fa3-ef33e671f738",
 								"exec": [
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 201\", function(){",
@@ -12990,7 +12691,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "894eb656-bdea-4904-8517-fb63d2a4d56f",
 								"exec": [
 									"//  Calculate a start date a week from today.",
 									"var later = new Date();",
@@ -13056,7 +12756,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "70ee7f1d-64a8-4713-8af8-db2a15a82dc7",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -13119,7 +12818,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "c8c56b42-4c92-4e7d-980d-bc1e69996677",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -13182,7 +12880,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "9676193b-3c6b-4991-82b0-28d5ba20239d",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -13245,7 +12942,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "adfda9a4-fd29-4c77-90b4-d7d0ef381ce7",
 								"exec": [
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 200\", function(){",
@@ -13272,7 +12968,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "93666295-cc74-485b-85c9-bc78926a8a79",
 								"exec": [
 									"//  Calculate a start date a week from today.",
 									"var later = new Date();",
@@ -13338,7 +13033,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "120ce07a-0c3f-4952-9436-b7164926c338",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -13401,7 +13095,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "76eb6fa8-b069-498f-8184-138863c9fb06",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -13464,7 +13157,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "35e7b030-029c-42e4-8b68-9534a8fe5e65",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -13527,7 +13219,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "a6e113a5-6b36-4216-b7a9-caf82468de48",
 								"exec": [
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 200\", function(){",
@@ -13566,7 +13257,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "831f76ce-b85b-454f-bc4a-27438659d238",
 								"exec": [
 									"//  Calculate a start date a week from today.",
 									"var later = new Date();",
@@ -13639,7 +13329,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "43f9389a-a31b-4861-ac48-887dfde32783",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -13702,7 +13391,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "401248bb-6a4e-4475-a78a-fc45c025a6bf",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -13765,7 +13453,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "0c9a0b09-b7a5-496e-804c-718dc6388cc6",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -13828,7 +13515,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "5a42eaa3-2071-45ba-a568-624b5ebef990",
 								"exec": [
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 204\", function(){",
@@ -13876,8 +13562,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Invigilators checks",
@@ -13888,7 +13573,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "2ed705c7-a16b-483a-960b-a84f524b45fe",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -13955,7 +13639,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "ee03b9b1-2a8a-42e7-9337-f70c3bfb06b4",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -14001,7 +13684,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "acc274b3-4a46-4f33-8799-2e13b2b9a586",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -14083,7 +13765,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "d026a2d9-2398-47b9-af15-40de10b7266e",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -14159,8 +13840,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Rooms",
@@ -14171,7 +13851,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "45b9c1ec-1e98-4ccf-8c03-ac5633ea561e",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -14210,8 +13889,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "CSRS",
@@ -14222,7 +13900,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "54d062a7-5ca1-42e8-bff9-816a4e5469a8",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -14238,7 +13915,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "5664d39e-415c-4348-ae73-b3f76b463f23",
 								"exec": [
 									""
 								],
@@ -14272,8 +13948,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Offices",
@@ -14284,7 +13959,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "852c4c94-480b-4ebe-98ea-30fcc19fd2b5",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -14329,7 +14003,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "db1f1aef-0aa7-4339-a83b-919869a6b6ff",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -14369,8 +14042,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Appointments",
@@ -14381,7 +14053,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "3ab223cb-ebce-4238-84d2-e5620f35f1e0",
 								"exec": [
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 201\", function(){",
@@ -14412,7 +14083,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "51f9bef2-588c-42f6-a437-52d9599af5ba",
 								"exec": [
 									"//  Calculate a start date a week from today.",
 									"var later = new Date();",
@@ -14482,7 +14152,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "54955211-4cd3-48be-9042-2e67369a5138",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -14531,7 +14200,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "a8895c9a-b5e0-4bed-a711-cbade6d47f56",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -14578,7 +14246,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "00562e49-932b-4b36-9d81-180f1c1daa84",
 								"exec": [
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 200\", function(){",
@@ -14605,7 +14272,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "7a5187ce-ed81-42f5-8dde-5986d9ca641b",
 								"exec": [
 									"//  Calculate a start date a week from today.",
 									"var later = new Date();",
@@ -14671,7 +14337,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "7b3eb6a3-3378-4d46-9093-4405571df5d8",
 								"exec": [
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 204\", function(){",
@@ -14719,8 +14384,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Appointments Recurring",
@@ -14731,7 +14395,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "3e4b2ae4-a6a1-4ba9-ac24-f37a582456a0",
 								"exec": [
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 201\", function(){",
@@ -14762,7 +14425,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "9cf23b0f-cc63-4628-9b54-cfe495cf13d4",
 								"exec": [
 									"//  Calculate a start date a week from today.",
 									"var later = new Date();",
@@ -14832,7 +14494,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "42bbd911-7bc3-4013-b2cf-ed835bb60017",
 								"exec": [
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 201\", function(){",
@@ -14863,7 +14524,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "d65d7724-ccf3-44da-b900-d38df1fccec9",
 								"exec": [
 									"//  Calculate a start date a week from today.",
 									"var later = new Date();",
@@ -14928,7 +14588,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "dc207f1e-a0af-4ba5-a0cd-c73f2b307b35",
 								"exec": [
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 201\", function(){",
@@ -14959,7 +14618,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "a953f3a9-3113-48c6-9514-37430e299d0d",
 								"exec": [
 									"//  Calculate a start date a week from today.",
 									"var later = new Date();",
@@ -15024,7 +14682,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "b6e87181-0a95-408d-8744-a801e81ba00a",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -15073,7 +14730,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "f1e5795b-89fc-4416-8cb8-09687c70d005",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -15122,7 +14778,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "cef5adf5-7912-4166-9327-2ee5602d2f20",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -15171,7 +14826,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "4eb94879-3fec-4f6e-83c3-b3b23b593390",
 								"exec": [
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 200\", function(){",
@@ -15198,7 +14852,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "0363535d-8332-48ef-b71a-8a2dbe4d91e9",
 								"exec": [
 									"//  Calculate a start date a week from today.",
 									"var later = new Date();",
@@ -15268,7 +14921,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "06caf238-7a86-4b38-9d32-eeec08e05350",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -15317,7 +14969,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "4dbacbaa-5adb-46dc-9cfc-12c03825e5f4",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -15336,7 +14987,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "ab7b7714-5e70-411e-b374-335281846843",
 								"exec": [
 									"//  Reset variables back to their first and third appt values.\r",
 									"pm.globals.set(\"appt_citizen_name\", JSON.stringify(\"BLACKOUT PERIOD\"));\r",
@@ -15380,7 +15030,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "2ed7e0a4-88cb-4a7f-8ec3-b82e057b3d07",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -15429,7 +15078,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "64ae762f-7099-422d-ab87-595ce6fcf1f4",
 								"exec": [
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 200\", function(){",
@@ -15467,7 +15115,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "4568c8ac-17f4-458e-bb20-6b050244455b",
 								"exec": [
 									"//  Calculate a start date a week from today.",
 									"var later = new Date();",
@@ -15529,7 +15176,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "dce46fbd-139c-4632-96ed-5a4ebd35e3fb",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -15578,7 +15224,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "de36ec54-f328-47d4-9afc-e5c9889c895b",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -15627,7 +15272,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "4160d563-0c6e-4a67-ab99-2dc852c7298b",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -15676,7 +15320,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "4797aee6-d397-49d5-ba9a-656a7e4aeb8a",
 								"exec": [
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 204\", function(){",
@@ -15724,8 +15367,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Public User Appointments",
@@ -15736,7 +15378,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "2910f8f4-6543-4bba-81cd-0b70ceae8e5a",
 								"exec": [
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 200\", function(){",
@@ -15841,7 +15482,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "e929c2a2-9f3d-4db0-bfa1-8ad2bdef8657",
 								"exec": [
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 201\", function(){",
@@ -15884,7 +15524,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "9e58a533-d920-4371-b1d1-178533374222",
 								"exec": [
 									"//  Calculate a start date a week from today.",
 									"var later = new Date();",
@@ -15955,7 +15594,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "7b0f5e9e-f67e-4702-83cd-ac95ea79aff2",
 								"exec": [
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 200\", function(){",
@@ -16050,7 +15688,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "b0703780-da8c-48f5-9c29-b7664122adee",
 								"exec": [
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 200\", function(){",
@@ -16149,7 +15786,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "c76dc7d7-893e-4f31-a2ae-d6b2c8d3ecef",
 								"exec": [
 									"//  Run basic response tests.",
 									"eval(environment.basic_response_test);",
@@ -16197,7 +15833,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "a85e25b0-844d-439b-b07a-97c93bfe041c",
 								"exec": [
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 204\", function(){",
@@ -16250,7 +15885,6 @@
 				{
 					"listen": "prerequest",
 					"script": {
-						"id": "9b5f43b7-9b42-45b9-93e0-c6048a3a9ef8",
 						"type": "text/javascript",
 						"exec": [
 							"auth_url = globals.auth_url;",
@@ -16292,16 +15926,13 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "eeb1107c-a0d6-4314-b4a6-122aa0d25655",
 						"type": "text/javascript",
 						"exec": [
 							""
 						]
 					}
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }
