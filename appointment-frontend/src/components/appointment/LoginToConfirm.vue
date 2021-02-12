@@ -52,7 +52,7 @@
         </v-col>
       </v-row>
       <v-row class="text-center bcsc-btn">
-        <v-col><h3 class="create-bceid">I do not have a BC Services Card or BCeID</h3></v-col>
+        <v-col class="create-bceid">I do not have a BC Services Card or BCeID</v-col>
       </v-row>
       <v-row class="align-row-1 bcsc-btn">
         <v-col>
@@ -147,7 +147,7 @@ export default class LoginToConfirm extends Mixins(StepperMixin) {
   }
 }
 .create-bceid {
-  font-weight:400;
+  color: rgba(0,0,0,.87);
 }
 .align-row-1{
   text-align: center!important;
@@ -167,11 +167,6 @@ export default class LoginToConfirm extends Mixins(StepperMixin) {
     text-align: left!important;
     margin-left: 0;
     margin-right: 0;
-  }
-}
-@media (max-width: 1224px){
-  .create-bceid {
-    font-size: 1.25rem;
   }
 }
 </style>
