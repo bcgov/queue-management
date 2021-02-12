@@ -29,7 +29,6 @@ from app.auth.auth import jwt
 @api.route("/offices/<int:office_id>/slots/", methods=["GET"])
 class OfficeSlots(Resource):
 
-    @jwt.requires_auth
     def get(self, office_id: int):
         try:
             office = Office.find_by_id(office_id)
