@@ -79,6 +79,9 @@ class _Config(object):  # pylint: disable=too-few-public-methods
 
     MAX_EMAIL_PER_BATCH = int(os.getenv('MAX_EMAIL_PER_BATCH', 30))
 
+    # SMS variables
+    NOTIFICATIONS_ENDPOINT = os.getenv('NOTIFICATIONS_ENDPOINT')
+
 
 class DevConfig(_Config):  # pylint: disable=too-few-public-methods
     TESTING = False

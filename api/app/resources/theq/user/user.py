@@ -12,15 +12,19 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+from typing import List
+
 from flask import g, request
 from flask_restx import Resource
 from sqlalchemy import exc
 
+from app.auth.auth import jwt
+from app.models.bookings.appointments import Appointment as AppointmentModel
 from app.models.theq import PublicUser as PublicUserModel
 from app.schemas.theq import UserSchema
+from app.utilities.auth_util import Role
+from app.utilities.sms import send_sms
 from qsystem import api, db
-from app.utilities.auth_util import Role, has_any_role
-from app.auth.auth import jwt
 
 
 @api.route("/users/", methods=['POST'])
@@ -62,11 +66,22 @@ class PublicUser(Resource):
             json_data = request.get_json()
             user_info = g.jwt_oidc_token_info
             user: PublicUserModel = PublicUserModel.find_by_username(user_info.get('username'))
+            current_sms_reminder: bool = user.send_sms_reminders
             user.email = json_data.get('email')
             user.telephone = json_data.get('telephone')
-            user.send_reminders = json_data.get('send_reminders')
+            user.send_email_reminders = json_data.get('send_email_reminders')
+            user.send_sms_reminders = json_data.get('send_sms_reminders')
             db.session.add(user)
             db.session.commit()
+
+            # If the user is opting in for SMS reminders, send reminders for all the appointments.
+            if not current_sms_reminder and user.send_email_reminders:
+                appointments: List[AppointmentModel] = PublicUserModel.find_appointments_by_username(
+                    g.oidc_token_info['username'])
+                for appointment in appointments:
+                    office = appointment.office
+                    send_sms(appointment, office, office.timezone, user,
+                             request.headers['Authorization'].replace('Bearer ', ''))
 
             result = self.user_schema.dump(user)
             return result, 200
@@ -92,5 +107,3 @@ class CurrentUser(Resource):
         except exc.SQLAlchemyError as e:
             print(e)
             return {'message': 'API is down'}, 500
-
-

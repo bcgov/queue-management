@@ -28,7 +28,8 @@ class PublicUser(Base):
     display_name = db.Column(db.String(200))
     email = db.Column(db.String(200))
     telephone = db.Column(db.String(20))
-    send_reminders = db.Column(db.Boolean())
+    send_email_reminders = db.Column(db.Boolean())
+    send_sms_reminders = db.Column(db.Boolean())
 
     # format_string = 'public_user_%s'
 

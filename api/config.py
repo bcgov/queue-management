@@ -214,6 +214,9 @@ class BaseConfig(object):
     JWT_OIDC_CACHING_ENABLED = os.getenv('JWT_OIDC_CACHING_ENABLED', False)
     JWT_OIDC_JWKS_CACHE_TIMEOUT = int(os.getenv('JWT_OIDC_JWKS_CACHE_TIMEOUT', 300))
 
+    # Notifications endpoint configuration
+    NOTIFICATIONS_ENDPOINT = os.getenv('NOTIFICATIONS_ENDPOINT')
+
 
 class LocalConfig(BaseConfig):
     DEBUG = True

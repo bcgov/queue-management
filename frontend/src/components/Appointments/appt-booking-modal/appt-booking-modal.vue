@@ -8,6 +8,7 @@
     no-close-on-backdrop
     no-close-on-esc
     hide-header
+    class="appt-modal"
   >
     <div id="navi">
       <template v-if="this.$store.state.showServeCitizenSpinner">
@@ -57,10 +58,12 @@
         </b-col>
         <b-col cols="6">
           <b-form-group class="mb-0 mt-2">
-            <label class="mb-0">Contact Info</label><br />
+            <label class="mb-0">Send Confirmation</label><br />
             <b-form-input
               v-if="isNotBlackoutFlag"
               v-model="contact_information"
+              class="contact"
+              placeholder="By email or SMS Text"
             />
             <b-form-input v-else v-model="contact_information" readonly />
           </b-form-group>
@@ -469,7 +472,7 @@ export default class ApptBookingModal extends Vue {
         this.setSelectedService(service_id)
         this.$store.commit('updateAddModalForm', { type: 'service', value: service_id })
       }
-      
+
       return
     }
     if (this.clickedTime) {
@@ -485,7 +488,7 @@ export default class ApptBookingModal extends Vue {
       this.allow_reschedule = true
       if (this.clickedAppt.start < moment.now()) {
           this.allow_reschedule = false
-      } 
+      }
       this.citizen_name = this.clickedAppt.title
       this.comments = this.clickedAppt.comments
       this.contact_information = this.clickedAppt.contact_information
@@ -503,14 +506,14 @@ export default class ApptBookingModal extends Vue {
     }
   }
 
-  submit () {
-    if (!this.submitClicked) {
+  submit () { 
+    if (!this.submitClicked && this.end) {
       this.toggleSubmitClicked(true)
       this.$store.commit('toggleServeCitizenSpinner', true)
       this.clearMessage()
       const service_id = this.selectedService
-      const start = moment(this.start).clone()
-      const end = moment(this.end).clone()
+      const start = moment(moment.tz(this.start.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).format()).clone()
+      const end = moment(moment.tz(this.end.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).format()).clone()
       const e: any = {
         start_time: moment.utc(start).format(),
         end_time: moment.utc(end).format(),
@@ -608,4 +611,6 @@ export default class ApptBookingModal extends Vue {
   animation: spin 1s ease-in-out infinite;
   -webkit-animation: spin 1s ease-in-out infinite;
 }
+
+
 </style>

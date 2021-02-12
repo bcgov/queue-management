@@ -1,4 +1,4 @@
-
+/* eslint-disable */
 /**
  *
  * Notes
@@ -69,8 +69,8 @@ export default {
       if (state.appointments.length > 0) {
         return state.appointments.map(apt =>
           ({
-            start: new Date(apt.start_time),
-            end: new Date(apt.end_time),
+            start: new Date(new Date(apt.start_time).toLocaleString('en-US', { timeZone: apt.office.timezone.timezone_name })),
+            end: new Date(new Date(apt.end_time).toLocaleString('en-US', { timeZone: apt.office.timezone.timezone_name })),
             appointment_id: apt.appointment_id,
             service_id: parseInt(apt.service_id),
             citizen_id: apt.citizen_id,
@@ -127,8 +127,6 @@ export default {
 
     filtered_appointment_events: (state, getters) => search => {
       return getters.appointment_events.filter(event => {
-        // console.log('event', event)
-        // console.log('search', search)
         return searchNestedObject(event, search)
       }
       )
@@ -172,7 +170,7 @@ export default {
             output = appts.filter(ap => !ap.checked_in_time)
           }
           commit('setAppointments', output)
-          resolve( output )
+          resolve(output)
         })
       })
     },
@@ -362,7 +360,6 @@ export default {
     // },
     async postDraftAppointment ({ rootState, commit }, payload) {
       const state = rootState
-      // console.log('currentState', currentState)
       // draftAppointments
       payload.office_id = rootState.user.office_id
       return new Promise((resolve, reject) => {
