@@ -1,4 +1,4 @@
-FROM docker-remote.artifacts.developer.gov.bc.ca/node:10 as build-stage
+FROM node:10 as build-stage
 ENV NODE_ENV=prod
 ENV VUE_APP_PATH=/
 WORKDIR /app
@@ -7,7 +7,7 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-FROM docker-remote.artifacts.developer.gov.bc.ca/nginx:1.18.0 as production-stage
+FROM nginx:1.18.0 as production-stage
 COPY nginx.conf /etc/nginx/nginx.conf
 RUN mkdir /app
 COPY --from=build-stage /app/dist /app
