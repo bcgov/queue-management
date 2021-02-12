@@ -21,7 +21,6 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.exceptions import AuthError
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
-from app.auth.auth import jwt
 
 
 def my_print(my_data):
@@ -395,8 +394,10 @@ def apply_header(response):
     return response
 
 
-def setup_jwt_manager(app, jwt_manager):
+def setup_jwt_manager(app):
     """Use flask app to configure the JWTManager to work for a particular Realm."""
+    from app.auth.auth import jwt as jwt_manager
+
     def get_roles(a_dict):
         return a_dict['realm_access']['roles']  # pragma: no cover
 
@@ -405,4 +406,4 @@ def setup_jwt_manager(app, jwt_manager):
     jwt_manager.init_app(app)
 
 
-setup_jwt_manager(application, jwt)
+setup_jwt_manager(application)

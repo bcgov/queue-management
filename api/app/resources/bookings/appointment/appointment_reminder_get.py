@@ -20,7 +20,6 @@ from app.utilities.email import is_valid_email, formatted_date, get_email, \
     get_duration
 from qsystem import api, api_call_with_retry
 from app.auth.auth import jwt
-from qsystem import api, api_call_with_retry, oidc
 from app.utilities.sms import is_valid_phone, format_sms_date
 
 
