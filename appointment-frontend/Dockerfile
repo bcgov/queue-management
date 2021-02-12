@@ -8,9 +8,7 @@ COPY . .
 RUN npm run build
 
 FROM docker-remote.artifacts.developer.gov.bc.ca/nginx:1.18.0 as production-stage
-RUN echo "hello1"
 COPY nginx.conf /etc/nginx/nginx.conf
-RUN echo "hello2"
 RUN mkdir /app
 COPY --from=build-stage /app/dist /app
 EXPOSE 8080:8080
