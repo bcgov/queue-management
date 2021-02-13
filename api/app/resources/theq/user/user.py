@@ -77,7 +77,7 @@ class PublicUser(Resource):
             # If the user is opting in for SMS reminders, send reminders for all the appointments.
             if not current_sms_reminder and user.send_email_reminders:
                 appointments: List[AppointmentModel] = PublicUserModel.find_appointments_by_username(
-                    g.oidc_token_info['username'])
+                    g.jwt_oidc_token_info['username'])
                 for appointment in appointments:
                     office = appointment.office
                     send_sms(appointment, office, office.timezone, user,
