@@ -214,6 +214,15 @@ objects:
                   value: WARNING
                 - name: LOG_ROOT
                   value: WARNING
+                - name: JWT_OIDC_WELL_KNOWN_CONFIG
+                  value: "${JWT_OIDC_WELL_KNOWN_CONFIG}"
+                - name: JWT_OIDC_ALGORITHMS
+                  value: "${JWT_OIDC_ALGORITHMS}"
+                - name: JWT_OIDC_AUDIENCE
+                  value: "${JWT_OIDC_AUDIENCE}"
+                - name: JWT_OIDC_CLIENT_SECRET
+                  value: "${JWT_OIDC_CLIENT_SECRET}"
+
               ports:
                 - containerPort: 8080
               readinessProbe:

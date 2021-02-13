@@ -50,7 +50,6 @@ class _Config(object):  # pylint: disable=too-few-public-methods
     """Base class configuration that should set reasonable defaults for all the other configurations. """
     PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
-    # JWT_OIDC Settings
     # SMS variables
     SMS_USE_GC_NOTIFY = os.getenv('SMS_USE_GC_NOTIFY', 'true').lower() == 'true'
     # GC Notify
@@ -62,11 +61,14 @@ class _Config(object):  # pylint: disable=too-few-public-methods
 
     #   Set up OIDC variables.
     SECRET_KEY = os.getenv('SECRET_KEY')
-    OIDC_OPENID_REALM = os.getenv('OIDC_OPENID_REALM', 'nest')
-    OIDC_CLIENT_SECRETS = os.getenv('OIDC_SECRETS_FILE', 'client_secrets/secrets.json')
-    OIDC_USER_INFO_ENABLED = True
-    OIDC_SCOPES = ['openid', 'email', 'profile']
-    OIDC_RESOURCE_CHECK_AUD = False
+
+    # JWT_OIDC Settings
+    JWT_OIDC_WELL_KNOWN_CONFIG = os.getenv('JWT_OIDC_WELL_KNOWN_CONFIG')
+    JWT_OIDC_ALGORITHMS = os.getenv('JWT_OIDC_ALGORITHMS', 'RS256')
+    JWT_OIDC_AUDIENCE = os.getenv('JWT_OIDC_AUDIENCE')
+    JWT_OIDC_CLIENT_SECRET = os.getenv('JWT_OIDC_CLIENT_SECRET', '')
+    JWT_OIDC_CACHING_ENABLED = os.getenv('JWT_OIDC_CACHING_ENABLED', True)
+    JWT_OIDC_JWKS_CACHE_TIMEOUT = int(os.getenv('JWT_OIDC_JWKS_CACHE_TIMEOUT', 300))
 
     TESTING = False
     DEBUG = True
