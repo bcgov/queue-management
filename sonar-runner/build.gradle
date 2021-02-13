@@ -13,7 +13,7 @@ sonarqube {
         property "sonar.projectName", "Queue Management"
         property "sonar.projectKey", "org.sonarqube:queue-management"
         property "sonar.projectBaseDir", "../"
-        property "sonar.sources", "./api,./frontend/src,./appointment-frontend/src,/jobs/appointment_reminder"
+        property "sonar.sources", "./api,./frontend/src,./appointment-frontend/src,./jobs/appointment_reminder,./notifications-api"
         property "sonar.exclusions", "**/test_*.py"
         property "sonar.verbose", "true"
         property "sourceEncoding", "UTF-8"
