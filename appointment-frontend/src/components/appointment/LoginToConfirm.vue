@@ -2,7 +2,7 @@
   <v-card-text>
     <v-col justify="center">
       <v-row class="align-row-1 bcsc-btn" v-if="!hideBCServicesCard">
-        <v-col>
+        <v-col class="fill-width">
           <v-btn
             min-width="150"
             large
@@ -17,7 +17,7 @@
             <span>About the BC Services Card</span>
           </a>
         </v-col>
-        <v-col class="align-row-2">
+        <v-col class="align-row-2 fill-width">
           <v-img
             class="login-logo"
             :src="($vuetify.breakpoint.xs) ? require('@/assets/img/bcsc_logo_sm.jpg') : require('@/assets/img/bcsc_logo.jpg')"
@@ -27,7 +27,7 @@
         </v-col>
       </v-row>
       <v-row class="align-row-1 bcsc-btn">
-        <v-col>
+        <v-col class="fill-width">
           <v-btn
           min-width="150"
           large
@@ -42,7 +42,7 @@
           <span>About the BCeID</span>
         </a>
         </v-col>
-        <v-col class="align-row-2">
+        <v-col class="align-row-2 fill-width">
         <v-img
             class="login-logo"
             :src="($vuetify.breakpoint.xs) ? require('@/assets/img/bceid_logo_sm.jpg') : require('@/assets/img/bceid_logo.jpg')"
@@ -55,7 +55,7 @@
         <v-col class="create-bceid">I do not have a BC Services Card or BCeID</v-col>
       </v-row>
       <v-row class="align-row-1 bcsc-btn">
-        <v-col>
+        <v-col class="fill-width">
           <v-btn :href="BCEIDRegistrationURL"
           min-width="150"
           large
@@ -74,7 +74,7 @@
           <span>Privacy Statement</span>
         </a>
         </v-col>
-        <v-col class="align-row-2">
+        <v-col class="align-row-2 fill-width">
         <v-img
             class="login-logo"
             :src="($vuetify.breakpoint.xs) ? require('@/assets/img/bceid_logo_sm.jpg') : require('@/assets/img/bceid_logo.jpg')"
@@ -159,6 +159,9 @@ export default class LoginToConfirm extends Mixins(StepperMixin) {
 .login-logo{
   display: inline-flex;
 }
+.fill-width{
+  min-width: 100%;
+}
 @media (min-width: 400px) {
   .align-row-1{
   text-align: right!important;
@@ -167,6 +170,9 @@ export default class LoginToConfirm extends Mixins(StepperMixin) {
     text-align: left!important;
     margin-left: 0;
     margin-right: 0;
+  }
+  .fill-width{
+    min-width: unset;
   }
 }
 </style>
