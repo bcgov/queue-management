@@ -75,7 +75,7 @@ class PublicUser(Resource):
             db.session.commit()
 
             # If the user is opting in for SMS reminders, send reminders for all the appointments.
-            if not current_sms_reminder and user.send_email_reminders:
+            if not current_sms_reminder and user.send_sms_reminders:
                 appointments: List[AppointmentModel] = PublicUserModel.find_appointments_by_username(
                     g.jwt_oidc_token_info['username'])
                 for appointment in appointments:
