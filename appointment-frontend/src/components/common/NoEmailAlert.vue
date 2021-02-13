@@ -43,7 +43,10 @@ export default class NoEmailAlert extends Vue {
   private isSmsReminderFlagMissing:boolean = false
 
   private mounted () {
-    this.showAlert = !this.currentUserProfile?.email || !this.currentUserProfile?.send_email_reminders || !this.currentUserProfile?.telephone || !this.currentUserProfile?.send_sms_reminders
+    this.showAlert = !this.currentUserProfile?.email || !this.currentUserProfile?.send_email_reminders
+    if (ConfigHelper.isEmsEnabled()) {
+      this.showAlert = this.showAlert || !this.currentUserProfile?.telephone || !this.currentUserProfile?.send_sms_reminders
+    }
 
     if (!this.currentUserProfile?.email) {
       this.isEmailMissing = true
