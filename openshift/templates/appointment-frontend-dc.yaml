@@ -227,7 +227,7 @@ parameters:
   - name: HIDEBCSERVICESCARD
     description: "this is to display/hide BCServices card authentication option"
     required: true
-    value: false
+    value: "false"
   - name: AUTH_SERVER_URL
     description: "Keycloak authorization url for ex:https://keycloakserver.com/auth/"
     required: true
