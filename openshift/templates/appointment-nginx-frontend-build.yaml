@@ -4,6 +4,10 @@ metadata:
   labels:
     app: ${NAME}
   name: ${NAME}-build
+  annotations:
+    description: ""
+    tags: appointment,python
+    iconClass: icon-python
 objects:
   - apiVersion: v1
     kind: ImageStream
@@ -42,7 +46,10 @@ objects:
           "dockerfilePath": "${DOCKER_FILE_PATH}"
           pullSecret:
             name: docker-creds
-
+      postCommit: { }
+      nodeSelector:
+      successfulBuildsHistoryLimit: 10
+      failedBuildsHistoryLimit: 2
       triggers:
         - type: ConfigChange
 parameters:
@@ -52,7 +59,7 @@ parameters:
     displayName: Name
     name: NAME
     required: true
-    value: appointment
+    value: appointment-frontend
   - description: |
       The URL to your GIT repo, don't use the this default unless
       your just experimenting.
@@ -84,7 +91,7 @@ parameters:
     displayName: Resources Memory Limit
     name: MEMORY_LIMIT
     required: true
-    value: 2Gi
+    value: 4Gi
   - description: The resources CPU request (in cores) for this build.
     displayName: Resources CPU Request
     name: CPU_REQUEST
@@ -94,7 +101,7 @@ parameters:
     displayName: Resources Memory Request
     name: MEMORY_REQUEST
     required: true
-    value: 2Gi
+    value: 4Gi
   - description: The path and file of the docker file defining the build.
     displayName: DockferFile
     name: DOCKER_FILE_PATH
