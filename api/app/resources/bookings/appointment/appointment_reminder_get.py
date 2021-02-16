@@ -40,6 +40,7 @@ class AppointmentRemindersGet(Resource):
         if appointments:
             for (appointment, office, timezone, user) in appointments:
                 send_reminder = False
+                user_telephone = None
                 if reminder_type == 'email':
                     if user and user.send_email_reminders:
                         send_reminder = True
