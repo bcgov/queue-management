@@ -27,12 +27,13 @@ class UserSchema(ma.SQLAlchemySchema):
         load_instance = True
 
     telephone = fields.String()
-    send_reminders = fields.Boolean()
+    send_email_reminders = fields.Boolean()
     email = fields.String()
     display_name = fields.String()
     last_name = fields.String()
     username = fields.String()
     user_id = fields.Int(dump_only=True)
+    send_sms_reminders = fields.Boolean()
 
     # appointment_id = fields.Int(dump_only=True)
     # office_id = fields.Int()

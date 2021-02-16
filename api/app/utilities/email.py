@@ -136,4 +136,8 @@ def get_duration(start_time: datetime, end_time: datetime):
 
 
 def get_email(user, appointment):
-    return user.email if user else appointment.contact_information
+    if user:
+        contact_email = user.email if user.send_email_reminders else None
+    else:
+        contact_email = appointment.contact_information
+    return contact_email

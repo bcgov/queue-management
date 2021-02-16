@@ -43,7 +43,8 @@ objects:
             "VUE_APP_ROOT_API": "${VUE_APP_ROOT_API}",
             "hideBCServicesCard": ${HIDEBCSERVICESCARD},
             "BCEIDRegistrationUrl": "${BCEID_REG_URL}",
-            "VUE_APP_GOOGLE_STATIC_MAP_API_KEY": "${VUE_APP_GOOGLE_STATIC_MAP_API_KEY}"
+            "VUE_APP_GOOGLE_STATIC_MAP_API_KEY": "${VUE_APP_GOOGLE_STATIC_MAP_API_KEY}",
+            "disableSms": ${DISABLE_SMS}
           }
   - apiVersion: v1
     kind: ConfigMap
@@ -231,4 +232,8 @@ parameters:
     description: "Keycloak authorization url for ex:https://keycloakserver.com/auth/"
     required: true
     value: ""
+  - name: DISABLE_SMS
+    description: "Flag to decide if SMS is disabled"
+    required: true
+    value: true
 

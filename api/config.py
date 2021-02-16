@@ -210,6 +210,9 @@ class BaseConfig(object):
     # Auto-refresh application configuration
     DISABLE_AUTO_REFRESH = (os.getenv("DISABLE_AUTO_REFRESH","FALSE")).upper() == "TRUE"
 
+    # Notifications endpoint configuration
+    NOTIFICATIONS_ENDPOINT = os.getenv('NOTIFICATIONS_ENDPOINT')
+
 
 class LocalConfig(BaseConfig):
     DEBUG = True

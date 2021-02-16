@@ -113,8 +113,8 @@ import { formatedStartTime } from '@/utils/helpers'
 const appointmentsModule = namespace('appointmentsModule')
 
 // For MOMENT, not the calendar
-const SATURDAY = 6;
-const SUNDAY = 1;
+const SATURDAY = 6
+const SUNDAY = 1
 
 @Component({
   components: {
@@ -132,9 +132,9 @@ export default class Appointments extends Vue {
 
   @appointmentsModule.State('apptRescheduling') private apptRescheduling!: any
 
-  @appointmentsModule.Getter('calendar_setup') private calendar_setup!: any;
-  @appointmentsModule.Getter('appointment_events') private appointment_events!: any;
-  @appointmentsModule.Getter('filtered_appointment_events') private filtered_appointment_events!: any;
+  @appointmentsModule.Getter('calendar_setup') private calendar_setup!: any
+  @appointmentsModule.Getter('appointment_events') private appointment_events!: any
+  @appointmentsModule.Getter('filtered_appointment_events') private filtered_appointment_events!: any
 
   @appointmentsModule.Action('getAppointments') public getAppointments: any
   @appointmentsModule.Action('getChannels') public getChannels: any
@@ -177,8 +177,8 @@ export default class Appointments extends Vue {
   }
 
   clearSearch() {
-    this.searchTerm = '';
-    this.filter(false);
+    this.searchTerm = ''
+    this.filter(false)
   }
 
   // to remove
@@ -259,7 +259,7 @@ export default class Appointments extends Vue {
   // If  working on  localhost and you get "TypeError: Cannot read property 'next' of undefined"
   // Just restart `npm run serve`, as it glitches out.
   next () {
-    const daysToMove = this.getDaysToMove('next');
+    const daysToMove = this.getDaysToMove('next')
     this.$refs.calendar.move(daysToMove)
     this.calendarSetup()
   }
@@ -285,25 +285,25 @@ export default class Appointments extends Vue {
       return direction === 'next' ? 1 : -1
     } else {
       // For days, we have to handle jumping of weekends.
-      const viewedDate = this.$refs.calendar.value;
+      const viewedDate = this.$refs.calendar.value
       const dayOfWeek = moment(viewedDate).day()
-      let daysToMove = 1;
+      let daysToMove = 1
       if (direction === 'next') {    
         if ((dayOfWeek + 1) === SATURDAY ) {
-          daysToMove = 3;
+          daysToMove = 3
         }
       } else if (direction === 'prev') {
-        daysToMove = -1;
+        daysToMove = -1
         if ((dayOfWeek) === SUNDAY ) {
           // Value must be negative for prev
-          daysToMove = -3;
+          daysToMove = -3
         }
       }
       // console.log(`getDaysToMove("${direction}")`, { viewedDate, dayOfWeek, daysToMove })
       return daysToMove
     }
     // console.error('Unable to properly calculate ')
-    // return 1;
+    // return 1
   }
 
   // renderEvent (event) {
@@ -334,7 +334,6 @@ export default class Appointments extends Vue {
     this.checkRescheduleCancel()
     this.blockEventSelect = true
     // this.unselect()
-
     const start = formatedStartTime(event.date, event.time)// event.start.clone()
     let end
     for (const l of [15, 30, 45, 60]) {
@@ -361,7 +360,7 @@ export default class Appointments extends Vue {
   }
 
   clearClickedTime () {
-    this.setAgendaClickedTime(null);
+    this.setAgendaClickedTime(null)
   }
 
   today () {
@@ -390,9 +389,8 @@ export default class Appointments extends Vue {
 
   setTempEvent (event) {
     this.removeTempEvent()
-    // const start = moment(event.start).clone()
-    const start = moment(event.start).clone()
-    const end = moment(event.end).clone()
+    const start = moment(moment.tz(event.start.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).format()).clone()
+    const end = moment(moment.tz(event.end.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).format()).clone()
     const e: any = {
       start,
       end,

@@ -1399,7 +1399,7 @@ export default class ExamInventoryTable extends Vue {
 
   formatTime (d) {
     const tz = d.office.timezone.timezone_name
-    const time = new zone.tz(d.start_time, tz).format('2017-MM-DD[T]HH:mm:ss').toString()
+    const time = zone.tz(d.start_time, tz).format('2017-MM-DD[T]HH:mm:ss').toString()
 
     // JSTOTS TOCHECK removed new from moment. no need to use new with moment
     return moment(time).format('h:mm a')
