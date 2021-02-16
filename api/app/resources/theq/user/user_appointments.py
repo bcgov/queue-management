@@ -18,21 +18,21 @@ from sqlalchemy import exc
 
 from app.models.theq import PublicUser
 from app.schemas.bookings import AppointmentSchema
-from qsystem import api, oidc
+from qsystem import api
 from app.utilities.auth_util import Role, has_any_role
+from app.auth.auth import jwt
 
 
 @api.route("/users/appointments/", methods=["GET"])
 class UserAppointments(Resource):
     appointments_schema = AppointmentSchema(many=True)
 
-    @oidc.accept_token(require_token=True)
-    @has_any_role(roles=[Role.online_appointment_user.value])
+    @jwt.has_one_of_roles([Role.online_appointment_user.value])
     def get(self):
 
         # Get all appointments for the citizen
         try:
-            appointments = PublicUser.find_appointments_by_username(g.oidc_token_info['username'])
+            appointments = PublicUser.find_appointments_by_username(g.jwt_oidc_token_info['username'])
 
             result = self.appointments_schema.dump(appointments)
             return {'appointments': result.data}

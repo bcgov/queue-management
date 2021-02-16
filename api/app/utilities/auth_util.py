@@ -27,9 +27,9 @@ class Role(Enum):
 
 def is_public_user() -> bool:
     """Return if the user is a public user or not."""
-    return Role.internal_user.value not in g.oidc_token_info['realm_access'][
+    return Role.internal_user.value not in g.jwt_oidc_token_info['realm_access'][
         'roles'] and Role.online_appointment_user.value in \
-           g.oidc_token_info['realm_access']['roles']
+           g.jwt_oidc_token_info['realm_access']['roles']
 
 
 # def is_job() -> bool:
@@ -43,7 +43,7 @@ def has_any_role(roles: list):
     def decorated(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
-            token_roles = g.oidc_token_info['realm_access']['roles']
+            token_roles = g.jwt_oidc_token_info['realm_access']['roles']
             if any(role in token_roles for role in roles):
                 return f(*args, **kwargs)
             abort(403)

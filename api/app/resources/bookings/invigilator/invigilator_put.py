@@ -13,10 +13,11 @@ import logging
 from flask import request, jsonify
 from flask_restx import Resource
 from sqlalchemy import exc
-from qsystem import api, db, oidc
+from qsystem import api, db
 from app.models.bookings import Invigilator
 from app.schemas.bookings import InvigilatorSchema
 from app.utilities.auth_util import Role, has_any_role
+from app.auth.auth import jwt
 
 
 @api.route("/invigilator/<int:id>/", methods=["PUT"])
@@ -24,8 +25,7 @@ class InvigilatorPut(Resource):
 
     invigilator_schema = InvigilatorSchema()
 
-    @oidc.accept_token(require_token=True)
-    @has_any_role(roles=[Role.internal_user.value])
+    @jwt.has_one_of_roles([Role.internal_user.value])
     def put(self, id):
 
         try:

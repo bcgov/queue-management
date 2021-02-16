@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from flask import request
 from flask_restx import Resource
-from qsystem import application, api, oidc
+from qsystem import application, api
 import json
 import urllib.request
 import urllib.parse
@@ -23,6 +23,7 @@ import pysnow
 import requests
 import json
 from app.utilities.auth_util import Role, has_any_role
+from app.auth.auth import jwt
 
 
 @api.route("/feedback/", methods=['POST'])
@@ -33,8 +34,7 @@ class Feedback(Resource):
     flag_service_now = "SERVICENOW" in feedback_destinations
     flag_rocket_chat = "ROCKETCHAT" in feedback_destinations
 
-    @oidc.accept_token(require_token=True)
-    @has_any_role(roles=[Role.internal_user.value])
+    @jwt.has_one_of_roles([Role.internal_user.value])
     def post(self):
         json_data = request.get_json()
         if not json_data:

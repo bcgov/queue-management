@@ -18,24 +18,23 @@ from flask import g, request
 from flask_restx import Resource
 from sqlalchemy import exc
 
+from app.auth.auth import jwt
 from app.models.bookings.appointments import Appointment as AppointmentModel
 from app.models.theq import PublicUser as PublicUserModel
 from app.schemas.theq import UserSchema
-
-from app.utilities.auth_util import Role, has_any_role
+from app.utilities.auth_util import Role
 from app.utilities.sms import send_sms
-from qsystem import api, db, oidc
+from qsystem import api, db
 
 
 @api.route("/users/", methods=['POST'])
 class PublicUsers(Resource):
     user_schema = UserSchema(many=False)
 
-    @oidc.accept_token(require_token=True)
-    @has_any_role(roles=[Role.online_appointment_user.value])
+    @jwt.has_one_of_roles([Role.online_appointment_user.value])
     def post(self):
         try:
-            user_info = g.oidc_token_info
+            user_info = g.jwt_oidc_token_info
             user: PublicUserModel = PublicUserModel.find_by_username(user_info.get('username'))
             if not user:
                 user = PublicUserModel()
@@ -61,12 +60,11 @@ class PublicUsers(Resource):
 class PublicUser(Resource):
     user_schema = UserSchema(many=False)
 
-    @oidc.accept_token(require_token=True)
-    @has_any_role(roles=[Role.online_appointment_user.value])
+    @jwt.has_one_of_roles([Role.online_appointment_user.value])
     def put(self, user_id: int):
         try:
             json_data = request.get_json()
-            user_info = g.oidc_token_info
+            user_info = g.jwt_oidc_token_info
             user: PublicUserModel = PublicUserModel.find_by_username(user_info.get('username'))
             current_sms_reminder: bool = user.send_sms_reminders
             user.email = json_data.get('email')
@@ -79,7 +77,7 @@ class PublicUser(Resource):
             # If the user is opting in for SMS reminders, send reminders for all the appointments.
             if not current_sms_reminder and user.send_sms_reminders:
                 appointments: List[AppointmentModel] = PublicUserModel.find_appointments_by_username(
-                    g.oidc_token_info['username'])
+                    g.jwt_oidc_token_info['username'])
                 for appointment in appointments:
                     office = appointment.office
                     send_sms(appointment, office, office.timezone, user,
@@ -97,11 +95,10 @@ class PublicUser(Resource):
 class CurrentUser(Resource):
     user_schema = UserSchema(many=False)
 
-    @oidc.accept_token(require_token=True)
-    @has_any_role(roles=[Role.online_appointment_user.value])
+    @jwt.has_one_of_roles([Role.online_appointment_user.value])
     def get(self):
         try:
-            user_info = g.oidc_token_info
+            user_info = g.jwt_oidc_token_info
             user: PublicUserModel = PublicUserModel.find_by_username(user_info.get('username'))
 
             result = self.user_schema.dump(user)

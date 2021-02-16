@@ -19,7 +19,8 @@ from sqlalchemy import exc
 from app.models.bookings import Invigilator
 from app.models.theq import CSR, Office
 from app.schemas.bookings import InvigilatorSchema
-from qsystem import api, oidc
+from qsystem import api
+from app.auth.auth import jwt
 
 
 @api.route("/invigilators/offsite/", methods=["GET"])
@@ -27,10 +28,10 @@ class InvigilatorListOffsiteGet(Resource):
 
     invigilator_schema = InvigilatorSchema(many=True)
 
-    @oidc.accept_token(require_token=True)
+    @jwt.requires_auth
     def get(self):
 
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
+        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
 
         pesticide_office = Office.query.filter_by(office_name="Pesticide Offsite").first()
 

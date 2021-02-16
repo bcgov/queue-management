@@ -14,14 +14,10 @@
 """The report Microservice.This module is the API for the Legal Entity system."""
 
 import os
-
 from flask import Flask
 
 import config  # pylint: disable=import-error
-from flask import Flask, url_for
 from api.resources import API
-from flask_oidc import OpenIDConnect
-from api.auth.auth import oidc
 
 
 def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
@@ -29,7 +25,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
     app = Flask(__name__)
     app.config.from_object(config.CONFIGURATION[run_mode])  # pylint: disable=no-member
     API.init_app(app)
-    oidc.init_app(app)
+    setup_jwt_manager(app)
 
     @app.after_request
     def add_version(response):  # pylint:  disable=unused-variable
@@ -40,6 +36,18 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
     register_shellcontext(app)
 
     return app
+
+
+def setup_jwt_manager(app):
+    """Use flask app to configure the JWTManager to work for a particular Realm."""
+    from api.auth.auth import jwt as jwt_manager
+
+    def get_roles(a_dict):
+        return a_dict['realm_access']['roles']  # pragma: no cover
+
+    app.config['JWT_ROLE_CALLBACK'] = get_roles
+
+    jwt_manager.init_app(app)
 
 
 def register_shellcontext(app):

@@ -14,19 +14,19 @@ limitations under the License.'''
 
 
 from flask_restx import Resource
-from qsystem import api, oidc, application
+from qsystem import api, application
 from flask import request
 import os
 from os.path import isfile, join
 from shutil import copy2
 from app.utilities.auth_util import Role, has_any_role
+from app.auth.auth import jwt
 
 
 @api.route("/upload/", methods=["POST"])
 class Categories(Resource):
 
-    @oidc.accept_token(require_token=True)
-    @has_any_role(roles=[Role.internal_user.value])
+    @jwt.has_one_of_roles([Role.internal_user.value])
     def post(self):
 
         #  Get the path name where to put the file, form where manifest, new file name are

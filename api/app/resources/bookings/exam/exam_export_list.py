@@ -20,12 +20,13 @@ from app.models.bookings import Exam, Booking, Invigilator, Room, ExamType
 from app.models.theq import CSR, Office, Timezone
 from app.schemas.bookings import ExamSchema
 from app.schemas.theq import OfficeSchema, TimezoneSchema
-from qsystem import api, oidc, my_print
+from qsystem import api, my_print
 from datetime import datetime, timedelta, timezone
 import pytz
 import csv
 import io
 from app.utilities.auth_util import Role, has_any_role
+from app.auth.auth import jwt
 
 
 @api.route("/exams/export/", methods=["GET"])
@@ -35,13 +36,12 @@ class ExamList(Resource):
     office_schema = OfficeSchema(many=True)
     timezone_schema = TimezoneSchema(many=True)
 
-    @oidc.accept_token(require_token=True)
-    @has_any_role(roles=[Role.internal_user.value])
+    @jwt.has_one_of_roles([Role.internal_user.value])
     def get(self):
 
         try:
 
-            csr = CSR.find_by_username(g.oidc_token_info['username'])
+            csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
             is_designate = csr.finance_designate
 
             start_param = request.args.get("start_date")

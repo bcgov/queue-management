@@ -34,10 +34,6 @@ class BaseConfig(object):
 
     #   Set up OIDC variables.
     SECRET_KEY = os.getenv('SECRET_KEY')
-    OIDC_OPENID_REALM = os.getenv('OIDC_OPENID_REALM','nest')
-    OIDC_CLIENT_SECRETS = os.getenv('OIDC_SECRETS_FILE','client_secrets/secrets.json')
-    OIDC_USER_INFO_ENABLED = True
-    OIDC_SCOPES = ['openid', 'email', 'profile']
 
     #  Set up session and communication variables.
     REMEMBER_COOKIE_DURATION = 86400
@@ -210,6 +206,14 @@ class BaseConfig(object):
     # Auto-refresh application configuration
     DISABLE_AUTO_REFRESH = (os.getenv("DISABLE_AUTO_REFRESH","FALSE")).upper() == "TRUE"
 
+    # JWT_OIDC Settings
+    JWT_OIDC_WELL_KNOWN_CONFIG = os.getenv('JWT_OIDC_WELL_KNOWN_CONFIG')
+    JWT_OIDC_ALGORITHMS = os.getenv('JWT_OIDC_ALGORITHMS', 'RS256')
+    JWT_OIDC_AUDIENCE = os.getenv('JWT_OIDC_AUDIENCE')
+    JWT_OIDC_CLIENT_SECRET = os.getenv('JWT_OIDC_CLIENT_SECRET', '')
+    JWT_OIDC_CACHING_ENABLED = os.getenv('JWT_OIDC_CACHING_ENABLED', True)
+    JWT_OIDC_JWKS_CACHE_TIMEOUT = int(os.getenv('JWT_OIDC_JWKS_CACHE_TIMEOUT', 300))
+
     # Notifications endpoint configuration
     NOTIFICATIONS_ENDPOINT = os.getenv('NOTIFICATIONS_ENDPOINT')
 
@@ -265,7 +269,6 @@ class DevelopmentConfig(BaseConfig):
     # # Only allowed 1 origin, but need to work for
     # # queue-frontend and appointment-frontend
     # CORS_ALLOWED_ORIGINS = ["https://dev-theq.pathfinder.gov.bc.ca/"]
-
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
     BCMP_BASE_URL = os.getenv('BCMP_BASE_URL')
@@ -277,7 +280,6 @@ class TestConfig(BaseConfig):
     REDIS_DEBUG = True
     TESTING = False
     ENV = 'test'
-
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
     BCMP_BASE_URL = os.getenv('BCMP_BASE_URL')
@@ -289,7 +291,6 @@ class ProductionConfig(BaseConfig):
     REDIS_DEBUG = True
     TESTING = False
     ENV = 'production'
-
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
     BCMP_BASE_URL = os.getenv('BCMP_BASE_URL')

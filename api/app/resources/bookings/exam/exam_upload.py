@@ -19,15 +19,16 @@ from sqlalchemy import exc
 from app.models.theq import CSR
 from app.models.bookings import Exam
 from app.utilities.document_service import DocumentService
-from qsystem import api, application, oidc
+from qsystem import api, application
+from app.auth.auth import jwt
 
 
 @api.route("/exams/<int:exam_id>/upload/", methods=["GET"])
 class ExamStatus(Resource):
 
-    @oidc.accept_token(require_token=True)
+    @jwt.requires_auth
     def get(self, exam_id):
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
+        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
 
         try:
             exam = Exam.query.filter_by(exam_id=exam_id).first()

@@ -16,28 +16,6 @@ objects:
         requests:
           storage: 128Mi
   - apiVersion: v1
-    kind: ConfigMap
-    metadata:
-      name: oidc-secrets
-      labels:
-        app: "${API_NAME}"
-    data:
-      secrets.json: |
-        {
-          "web": {
-            "realm_public_key": "${REALM_PUBLIC_KEY}",
-            "issuer": "${ISSUER}",
-            "auth_uri": "${AUTH_URI}",
-            "client_id": "${CLIENT_ID}",
-            "client_secret": "${CLIENT_SECRET}",
-            "redirect_urls": [
-            ],
-            "userinfo_uri": "${USERINFO_URI}",
-            "token_uri": "${TOKEN_URI}",
-            "token_introspection_uri": "${TOKEN_INTROSPECTION_URI}"  
-          }
-        }
-  - apiVersion: v1
     kind: Service
     metadata:
       annotations:
@@ -236,6 +214,15 @@ objects:
                   value: WARNING
                 - name: LOG_ROOT
                   value: WARNING
+                - name: JWT_OIDC_WELL_KNOWN_CONFIG
+                  value: "${JWT_OIDC_WELL_KNOWN_CONFIG}"
+                - name: JWT_OIDC_ALGORITHMS
+                  value: "${JWT_OIDC_ALGORITHMS}"
+                - name: JWT_OIDC_AUDIENCE
+                  value: "${JWT_OIDC_AUDIENCE}"
+                - name: JWT_OIDC_CLIENT_SECRET
+                  value: "${JWT_OIDC_CLIENT_SECRET}"
+
               ports:
                 - containerPort: 8080
               readinessProbe:
@@ -261,9 +248,6 @@ objects:
                 successThreshold: 1
                 failureThreshold: 3
               volumeMounts:
-                - mountPath: /opt/app-root/src/client_secrets
-                  name: oidc-secrets-o6ya6
-                  readOnly: true
                 - mountPath: /opt/app-root/src/lock
                   name: lockdir
                 - mountPath: /opt/app-root/src/videos
@@ -284,10 +268,6 @@ objects:
           securityContext: {}
           schedulerName: default-scheduler
           volumes:
-            - configMap:
-                defaultMode: 420
-                name: oidc-secrets
-              name: oidc-secrets-o6ya6
             - name: lockdir
               persistentVolumeClaim:
                 claimName: lockdir
@@ -484,39 +464,24 @@ parameters:
     description: "SQL pool settings"
     required: true
     value: ""
-  - name: REALM_PUBLIC_KEY
-    description: "keycloak Realm Public Key"
-    required: true
-  - name: AUTH_URI
-    description: "Keycloak authentication url"
-    required: true
-    value: ""
-  - name: ISSUER
-    description: "Keycloak server URL. For ex: https;//mykeycloakserver.com/auth/realms/{realm}"
-    required: true
-    value: ""
-  - name: CLIENT_ID
-    description: "keycloak client id"
-    required: true
-    value: ""
-  - name: CLIENT_SECRET
-    description: "keycloak client secret"
-    required: true
-    value: ""
-  - name: USERINFO_URI
-    description: "keycloak userinfo uri"
-    required: true
-    value: ""
-  - name: TOKEN_URI
-    description: "Keycloak token_url"
-    required: true
-    value: ""
-  - name: TOKEN_INTROSPECTION_URI
-    description: "keycloak introspection url"
-    required: true
-    value: ""
   - name: APPOINTMENT_LIMIT_DAYS
     description: "the number of days in advance to book appointment "
+    required: true
+    value: ""
+  - name: JWT_OIDC_WELL_KNOWN_CONFIG
+    description: "Well known config URL for the keycloak realm "
+    required: true
+    value: ""
+  - name: JWT_OIDC_ALGORITHMS
+    description: "OIDC Algorithm"
+    required: false
+    value: "RS256"
+  - name: JWT_OIDC_AUDIENCE
+    description: "OIDC Audience"
+    required: true
+    value: ""
+  - name: JWT_OIDC_CLIENT_SECRET
+    description: "OIDC Client secret"
     required: true
     value: ""
   - name: NOTIFICATIONS_ENDPOINT

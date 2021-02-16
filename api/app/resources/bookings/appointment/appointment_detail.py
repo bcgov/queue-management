@@ -19,8 +19,9 @@ from flask_restx import Resource
 from app.models.bookings import Appointment
 from app.models.theq import CSR
 from app.schemas.bookings import AppointmentSchema
-from qsystem import api, oidc
+from qsystem import api
 from app.utilities.auth_util import Role, has_any_role
+from app.auth.auth import jwt
 
 
 @api.route("/appointments/<int:id>/", methods=["GET"])
@@ -28,11 +29,10 @@ class AppointmentDetail(Resource):
 
     appointment_schema = AppointmentSchema()
 
-    @oidc.accept_token(require_token=True)
-    @has_any_role(roles=[Role.internal_user.value])
+    @jwt.has_one_of_roles([Role.internal_user.value])
     def get(self, id):
 
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
+        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
 
         try:
             appointment = Appointment.query.filter_by(appointment_id=id)\
