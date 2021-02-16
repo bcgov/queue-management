@@ -1,0 +1,240 @@
+apiVersion: v1
+kind: Template
+labels:
+  template: appointment-frontend
+metadata:
+  name: appointment-frontend
+objects:
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      name: "${NAME}"
+      labels:
+        app: "${NAME}"
+    spec:
+      ports:
+        - name: web
+          port: 8080
+          targetPort: 8080
+      selector:
+        app: "${NAME}"
+  - apiVersion: v1
+    kind: Route
+    metadata:
+      name: "${NAME}"
+    spec:
+      host: "${APPLICATION_DOMAIN}"
+      to:
+        kind: Service
+        name: "${NAME}"
+      tls:
+        insecureEdgeTerminationPolicy: Redirect
+        termination: edge
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: "appointment-configuration.json"
+      labels:
+        app: "configuration.json"
+    data:
+        configuration.json: |-
+          {
+            "KEYCLOAK_CONFIG_URL": "./public/config/kc/keycloak-public.json",
+            "VUE_APP_ROOT_API": "${VUE_APP_ROOT_API}",
+            "hideBCServicesCard": ${HIDEBCSERVICESCARD},
+            "BCEIDRegistrationUrl": "${BCEID_REG_URL}",
+            "VUE_APP_GOOGLE_STATIC_MAP_API_KEY": "${VUE_APP_GOOGLE_STATIC_MAP_API_KEY}",
+            "disableSms": ${DISABLE_SMS}
+          }
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: "keycloak-public.json"
+      labels:
+        app: "keycloak-public.json"
+    data:
+        keycloak-public.json: |-
+          {
+            "realm": "${KEYCLOAK_REALM}",
+            "auth-server-url": "${AUTH_SERVER_URL}",
+            "ssl-required": "external",
+            "resource": "${KEYCLOAK_RESOURCE}",
+            "public-client": "true",
+            "confidential-port": 0
+          }
+  - apiVersion: v1
+    kind: DeploymentConfig
+    metadata:
+      annotations:
+        description: "Defines how to deploy the application server"
+      name: "${NAME}"
+    spec:
+      replicas: 1
+      selector:
+        name: ${NAME}
+      strategy:
+        type: Rolling
+        rollingParams:
+          updatePeriodSeconds: 1
+          intervalSeconds: 1
+          timeoutSeconds: 60
+          maxSurge: 2
+          maxUnavailable: 0
+        resources: {}
+        activeDeadlineSeconds: 3600
+      template:
+        metadata:
+          labels:
+            app: "${NAME}"
+            name: "${NAME}"
+        spec:
+          containers:
+            - name: "${NAME}"
+              image: " "
+              ports:
+                - containerPort: 8080
+              readinessProbe:
+                failureThreshold: 3
+                initialDelaySeconds: 3
+                periodSeconds: 10
+                successThreshold: 1
+                tcpSocket:
+                  port: 8080
+                timeoutSeconds: 3
+              livenessProbe:
+                failureThreshold: 3
+                initialDelaySeconds: 3
+                periodSeconds: 10
+                successThreshold: 1
+                tcpSocket:
+                  port: 8080
+                timeoutSeconds: 3
+              volumeMounts:
+                - mountPath: /app/config/kc
+                  name: keycloak
+                - mountPath: /app/config
+                  name: appointment-configuration
+              terminationMessagePath: "/dev/termination-log"
+              terminationMessagePolicy: File
+              imagePullPolicy: Always
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 256Mi
+                limits:
+                  cpu: 100m
+                  memory: 512Mi
+          restartPolicy: Always
+          terminationGracePeriodSeconds: 30
+          dnsPolicy: ClusterFirst
+          securityContext: {}
+          schedulerName: default-scheduler
+          volumes:
+            - configMap:
+                defaultMode: 420
+                name: keycloak-public.json
+              name: keycloak
+            - configMap:
+                defaultMode: 420
+                name: appointment-configuration.json
+              name: appointment-configuration
+          affinity:
+            podAntiAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchExpressions:
+                      - key: name
+                        operator: In
+                        values:
+                          - "${NAME}"
+                  topologyKey: kubernetes.io/hostname
+      triggers:
+        - type: ConfigChange
+        - type: ImageChange
+          imageChangeParams:
+            automatic: true
+            containerNames:
+              - "${NAME}"
+            from:
+              kind: ImageStreamTag
+              namespace: ${TOOLS_WORKSPACE}
+              name: "${NAME}:${IMAGE_TAG}"
+  - apiVersion: v1
+    kind: Route
+    metadata:
+      name: "${API_NAME}-rate-limited"
+      annotations:
+        # https://docs.openshift.com/container-platform/3.11/architecture/networking/routes.html
+        # https://github.com/openshift/router/blob/master/images/router/haproxy/conf/haproxy-config.template
+        # To deviate from default HAProxy values, enable below commented out line
+        # Values must be enclosed ins trings for HAproxy annotations
+        haproxy.router.openshift.io/rate-limit-connections: 'true'
+        # Below line allows 20 HTTP requests per IP per 30 sceonds.  (Interval is always 30 seconds.)
+        # haproxy.router.openshift.io/rate-limit-connections.rate-http: '20'
+    spec:
+      host: "${RATE_LIMITED_API_HOSTNAME}"
+      path: /api
+      to:
+        kind: Service
+        name: "${API_NAME}"
+      tls:
+        insecureEdgeTerminationPolicy: Redirect
+        termination: edge
+parameters:
+  - name: NAME
+    displayName: Name
+    description: The suffix for all created objects
+    required: false
+    value: appointment-nginx-frontend
+  - name: APPLICATION_DOMAIN
+    description: "The exposed hostname that will route to the Vue application"
+  - name: API_NAME
+    displayName: API Name
+    description: The name of the API that this uses as a backend (to create a rate limited route).
+    required: false
+    value: queue-management-api
+  - name: RATE_LIMITED_API_HOSTNAME
+    description: "The new route to API which will be rate limited"
+  - name: IMAGE_TAG
+    description: "The image tag to pull for the deployment."
+    required: true
+    value: latest
+  - name: TOOLS_WORKSPACE
+    description: The Location for your image streams (Tools Workspace)
+    required: true
+  - name: VUE_APP_ROOT_API
+    description: "The new route to API which will be rate limited"
+    value: ""
+  - name: BCEID_REG_URL
+    description: The BCEID Registration URL.
+    required: true
+    value: ""
+  - name: VUE_APP_GOOGLE_STATIC_MAP_API_KEY
+    description: API KEY for Google Map
+    required: true
+    value: ""
+  - name: KEYCLOAK_REALM
+    description: "Keycloak Realm"
+    required: true
+    value: ""
+  - name: KEYCLOAK_RESOURCE
+    description: "Keycloak client id"
+    required: true
+    value: ""
+  - name: KEYCLOAK_SECRET
+    description: "Keycloak Secret"
+    required: true
+  - name: HIDEBCSERVICESCARD
+    description: "this is to display/hide BCServices card authentication option"
+    required: true
+    value: ""
+  - name: AUTH_SERVER_URL
+    description: "Keycloak authorization url for ex:https://keycloakserver.com/auth/"
+    required: true
+    value: ""
+  - name: DISABLE_SMS
+    description: "Flag to decide if SMS is disabled"
+    required: true
+    value: "true"
+    
+
