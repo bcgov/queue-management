@@ -12,26 +12,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask import request
+from flask import g, request
 from flask_socketio import emit, join_room
 
-from app.auth.auth import decode_token
+from app.auth.auth import jwt
 from app.models.theq import CSR, Office
 from qsystem import socketio, my_print
 
 
 @socketio.on('joinRoom')
+@jwt.requires_auth_cookie
 def on_join(message):
-    cookie = request.cookies.get("oidc-jwt", None)
-    if cookie is None:
-        emit('joinRoomFail', {"sucess": False})
-        return
-
-    claims = decode_token(cookie)
-    if not claims:
-        print("Cookie failed validation")
-        emit('joinRoomFail', {"sucess": False})
-        return
+    claims = g.jwt_oidc_token_info
 
     if claims["preferred_username"]:
         my_print("==> In Python, @socketio.on('joinRoom'): claims['preferred_username'] is: " + str(
