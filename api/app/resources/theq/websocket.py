@@ -14,10 +14,11 @@ limitations under the License.'''
 
 from flask import request
 from flask_socketio import emit, join_room
-from jose import jwt
+
+from app.auth.auth import decode_token
 from app.models.theq import CSR, Office
-from qsystem import oidc, socketio, my_print
-import json
+from qsystem import socketio, my_print
+
 
 @socketio.on('joinRoom')
 def on_join(message):
@@ -26,15 +27,15 @@ def on_join(message):
         emit('joinRoomFail', {"sucess": False})
         return
 
-    if not oidc.validate_token(cookie):
+    claims = decode_token(cookie)
+    if not claims:
         print("Cookie failed validation")
         emit('joinRoomFail', {"sucess": False})
         return
 
-    claims = jwt.get_unverified_claims(cookie)
-
     if claims["preferred_username"]:
-        my_print("==> In Python, @socketio.on('joinRoom'): claims['preferred_username'] is: " + str(claims["preferred_username"]))
+        my_print("==> In Python, @socketio.on('joinRoom'): claims['preferred_username'] is: " + str(
+            claims["preferred_username"]))
         csr = CSR.find_by_username(claims["preferred_username"])
         if csr:
             join_room(csr.office_id)
@@ -49,6 +50,7 @@ def on_join(message):
         print("No preferred_username on request")
         emit('joinRoomFail', {"success": False})
 
+
 @socketio.on('joinSmartboardRoom')
 def on_join_smartboard(message):
     try:
@@ -58,7 +60,8 @@ def on_join_smartboard(message):
         my_print("Joining room: %s" % room)
 
         join_room(room)
-        print("==> In websocket.py, Smartboard joinroom, Office id: " + str(office_id) + "; request sid: " + str(request.sid))
+        print("==> In websocket.py, Smartboard joinroom, Office id: " + str(office_id) + "; request sid: " + str(
+            request.sid))
         emit('joinSmartboardRoomSuccess')
     except KeyError as e:
         print(e)
@@ -67,6 +70,7 @@ def on_join_smartboard(message):
     except ValueError as e:
         print(e)
         emit('joinSmartboardRoomFail', {"sucess": False, "message": "office_id must be an integer"})
+
 
 @socketio.on('clear_csr_user_id')
 def clear_csr_user_id(csr_id):

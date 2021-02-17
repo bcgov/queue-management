@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 from flask_restx import Resource
-from qsystem import api, oidc, application
+from qsystem import api, application
 from flask import request, g
 import shutil
 
@@ -21,6 +21,7 @@ import os
 from os.path import isfile, join
 from datetime import datetime
 from app.utilities.auth_util import Role, has_any_role
+from app.auth.auth import jwt
 
 
 def read_file(entry):
@@ -72,8 +73,7 @@ def get_url(office_number, manifest_data):
 @api.route("/videofiles/", methods=["GET"])
 class VideoFiles(Resource):
 
-    @oidc.accept_token(require_token=True)
-    @has_any_role(roles=[Role.internal_user.value])
+    @jwt.has_one_of_roles([Role.internal_user.value])
     def get(self):
 
         video_path = application.config['VIDEO_PATH']
@@ -168,8 +168,7 @@ class VideoFileSelf(Resource):
 @api.route("/videofiles/", methods=["DELETE"])
 class VideoFiles(Resource):
 
-    @oidc.accept_token(require_token=True)
-    @has_any_role(roles=[Role.internal_user.value])
+    @jwt.has_one_of_roles([Role.internal_user.value])
     def delete(self):
 
         json_data = request.get_json()

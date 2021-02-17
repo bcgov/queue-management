@@ -15,7 +15,7 @@ limitations under the License.'''
 import logging
 from flask import g
 from flask_restx import Resource
-from qsystem import api, api_call_with_retry, db, oidc, socketio, my_print, application
+from qsystem import api, api_call_with_retry, db, socketio, my_print, application
 from app.models.theq import Citizen, CSR
 from app.models.theq import SRState
 from app.models.bookings import Appointment
@@ -23,6 +23,7 @@ from app.schemas.bookings import AppointmentSchema
 from app.schemas.theq import CitizenSchema
 from app.utilities.snowplow import SnowPlow
 from app.utilities.auth_util import Role, has_any_role
+from app.auth.auth import jwt
 
 # To remove from queue and restore to calendar
 # - Setting `checked_in_time` to null > restores it in calendar
@@ -35,12 +36,10 @@ class CitizenRemoveFromQueue(Resource):
     citizen_schema = CitizenSchema()
     appointment_schema = AppointmentSchema()
 
-
-    @oidc.accept_token(require_token=True)
-    @has_any_role(roles=[Role.internal_user.value])
+    @jwt.has_one_of_roles([Role.internal_user.value])
     @api_call_with_retry
     def post(self, id):
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
+        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
         citizen = Citizen.query.filter_by(citizen_id=id).first()
         active_service_request = citizen.get_active_service_request()
 

@@ -22,6 +22,7 @@ from app.exceptions import AuthError
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 
+
 def my_print(my_data):
     if print_flag:
         if type(my_data) is str:
@@ -87,8 +88,6 @@ if application.config['CORS_ALLOWED_ORIGINS'] is not None:
 
 api = Api(application, prefix='/api/v1', doc='/api/v1/')
 
-from flask_oidc import OpenIDConnect
-oidc = OpenIDConnect(application)
 
 #  Set up Flask Admin.
 from app import admin
@@ -388,7 +387,23 @@ def after_cursor_execute(conn, cursor, statement,
         except Exception as err:
             print("==> Error:" + str(err))
 
+
 @application.after_request
 def apply_header(response):
     response.headers["X-Node-Hostname"] = hostname
     return response
+
+
+def setup_jwt_manager(app):
+    """Use flask app to configure the JWTManager to work for a particular Realm."""
+    from app.auth.auth import jwt as jwt_manager
+
+    def get_roles(a_dict):
+        return a_dict['realm_access']['roles']  # pragma: no cover
+
+    app.config['JWT_ROLE_CALLBACK'] = get_roles
+
+    jwt_manager.init_app(app)
+
+
+setup_jwt_manager(application)

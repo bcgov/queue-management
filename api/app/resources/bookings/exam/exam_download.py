@@ -22,17 +22,18 @@ from sqlalchemy import exc
 from app.models.theq import CSR
 from app.models.bookings import Exam
 from app.utilities.bcmp_service import BCMPService
-from qsystem import api, oidc, my_print
+from qsystem import api, my_print
+from app.auth.auth import jwt
 
 
 @api.route("/exams/<int:exam_id>/download/", methods=["GET"])
 class ExamStatus(Resource):
     bcmp_service = BCMPService()
 
-    @oidc.accept_token(require_token=True)
+    @jwt.requires_auth
     def get(self, exam_id):
 
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
+        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
 
         try:
             exam = Exam.query.filter_by(exam_id=exam_id).first()

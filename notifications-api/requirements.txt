@@ -1,15 +1,13 @@
 Flask
 requests
 python-dotenv
-# Flask-Mail
 Jinja2
 pytz
 notifications-python-client
-
 Flask-Caching
 Werkzeug
 aniso8601
 attrs
 flask-restx
 gunicorn
-flask-oidc==1.4.0
+flask-jwt-oidc==0.2.0

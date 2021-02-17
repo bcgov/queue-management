@@ -7,28 +7,6 @@ metadata:
   name: notifications-api
 objects:
   - apiVersion: v1
-    kind: ConfigMap
-    metadata:
-      name: notifications-oidc-secrets
-      labels:
-        app: "${API_NAME}"
-    data:
-      secrets.json: |
-        {
-          "web": {
-            "realm_public_key": "${REALM_PUBLIC_KEY}",
-            "issuer": "${ISSUER}",
-            "auth_uri": "${AUTH_URI}",
-            "client_id": "${CLIENT_ID}",
-            "client_secret": "${CLIENT_SECRET}",
-            "redirect_urls": [
-            ],
-            "userinfo_uri": "${USERINFO_URI}",
-            "token_uri": "${TOKEN_URI}",
-            "token_introspection_uri": "${TOKEN_INTROSPECTION_URI}"  
-          }
-        }
-  - apiVersion: v1
     kind: Service
     metadata:
       annotations:
@@ -119,6 +97,15 @@ objects:
                   value: WARNING
                 - name: SMS_REMINDER_TEMPLATE
                   value: "${SMS_REMINDER_TEMPLATE}"
+                - name: JWT_OIDC_WELL_KNOWN_CONFIG
+                  value: "${JWT_OIDC_WELL_KNOWN_CONFIG}"
+                - name: JWT_OIDC_ALGORITHMS
+                  value: "${JWT_OIDC_ALGORITHMS}"
+                - name: JWT_OIDC_AUDIENCE
+                  value: "${JWT_OIDC_AUDIENCE}"
+                - name: JWT_OIDC_CLIENT_SECRET
+                  value: "${JWT_OIDC_CLIENT_SECRET}"
+
               ports:
                 - containerPort: 8080
               readinessProbe:
@@ -143,10 +130,6 @@ objects:
                 periodSeconds: 10
                 successThreshold: 1
                 failureThreshold: 3
-              volumeMounts:
-                - mountPath: /opt/app-root/src/client_secrets
-                  name: oidc-secrets-o6ya6
-                  readOnly: true
               terminationMessagePath: "/dev/termination-log"
               terminationMessagePolicy: File
               imagePullPolicy: Always
@@ -162,11 +145,6 @@ objects:
           dnsPolicy: ClusterFirst
           securityContext: {}
           schedulerName: default-scheduler
-          volumes:
-            - configMap:
-                defaultMode: 420
-                name: oidc-secrets
-              name: oidc-secrets-o6ya6
           affinity:
             podAntiAffinity:
               requiredDuringSchedulingIgnoredDuringExecution:
@@ -214,32 +192,6 @@ parameters:
     required: true
     generate: expression
     from: "[a-zA-Z0-9]{16}"
-  - name: REALM_PUBLIC_KEY
-    description: "keycloak Realm Public Key"
-    required: true
-  - name: AUTH_URI
-    description: "Keycloak authentication url"
-    required: true
-    value: "https://dev.oidc.gov.bc.ca/auth/realms/vtkayq4c/protocol/openid-connect/auth"
-  - name: ISSUER
-    description: "Keycloak server URL. For ex: https;//mykeycloakserver.com/auth/realms/{realm}"
-    required: true
-  - name: CLIENT_ID
-    description: "keycloak client id"
-    required: true
-    value: "notifications-api"
-  - name: CLIENT_SECRET
-    description: "keycloak client secret"
-    required: true
-  - name: USERINFO_URI
-    description: "keycloak userinfo uri"
-    required: true
-  - name: TOKEN_URI
-    description: "Keycloak token_url"
-    required: true
-  - name: TOKEN_INTROSPECTION_URI
-    description: "keycloak introspection url"
-    required: true
   - name: SMS_USE_GC_NOTIFY
     description: "Flag to use GC Notify"
     required: true
@@ -266,3 +218,19 @@ parameters:
     description: "SMS Template text"
     required: true
     value: "REMINDER: You have an appointment with Service BC {location} on {date_time}. To cancel or change, visit {app_url} or call {office_telephone}"
+  - name: JWT_OIDC_WELL_KNOWN_CONFIG
+    description: "Well known config URL for the keycloak realm "
+    required: true
+    value: ""
+  - name: JWT_OIDC_ALGORITHMS
+    description: "OIDC Algorithm"
+    required: false
+    value: "RS256"
+  - name: JWT_OIDC_AUDIENCE
+    description: "OIDC Audience"
+    required: true
+    value: "notifications-api"
+  - name: JWT_OIDC_CLIENT_SECRET
+    description: "OIDC Client secret"
+    required: false
+    value: ""

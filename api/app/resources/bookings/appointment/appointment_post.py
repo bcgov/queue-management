@@ -30,8 +30,9 @@ from app.utilities.auth_util import is_public_user
 from app.utilities.email import get_confirmation_email_contents, send_email, generate_ches_token, \
     get_blackout_email_contents
 from app.utilities.snowplow import SnowPlow
-from qsystem import api, api_call_with_retry, db, oidc, my_print, application
+from qsystem import api, api_call_with_retry, db, my_print, application
 from qsystem import socketio
+from app.auth.auth import jwt
 from app.utilities.sms import send_sms
 
 
@@ -40,9 +41,8 @@ class AppointmentPost(Resource):
     appointment_schema = AppointmentSchema()
     citizen_schema = CitizenSchema()
 
-    @oidc.accept_token(require_token=True)
     @api_call_with_retry
-    @has_any_role(roles=[Role.internal_user.value, Role.online_appointment_user.value])
+    @jwt.has_one_of_roles([Role.internal_user.value, Role.online_appointment_user.value])
     def post(self):
         my_print("==> In AppointmentPost, POST /appointments/")
         json_data = request.get_json()
@@ -70,7 +70,7 @@ class AppointmentPost(Resource):
         if is_public_user_appointment:
             office_id = json_data.get('office_id')
             service_id = json_data.get('service_id')
-            user = PublicUser.find_by_username(g.oidc_token_info['username'])
+            user = PublicUser.find_by_username(g.jwt_oidc_token_info['username'])
             # Add values for contact info and notes
             json_data['contact_information'] = user.email
             telephone = f'. Phone: {user.telephone}' if user.telephone else ''
@@ -84,7 +84,7 @@ class AppointmentPost(Resource):
 
             # Validate if the same user has other appointments for same day at same office
             appointments = Appointment.find_by_username_and_office_id(office_id=office_id,
-                                                                      user_name=g.oidc_token_info['username'],
+                                                                      user_name=g.jwt_oidc_token_info['username'],
                                                                       start_time=json_data.get('start_time'),
                                                                       timezone=office.timezone.timezone_name)
             if appointments and len(appointments) >= office.max_person_appointment_per_day:
@@ -99,7 +99,7 @@ class AppointmentPost(Resource):
                         "message": "Cannot create appointment due to scheduling conflict.  Please pick another time."}, 400
 
         else:
-            csr = CSR.find_by_username(g.oidc_token_info['username'])
+            csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
             office_id = csr.office_id
             office = Office.find_by_id(office_id)
 

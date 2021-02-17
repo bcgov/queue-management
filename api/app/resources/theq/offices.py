@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from flask import g
 from flask_restx import Resource
-from qsystem import api, db, oidc
+from qsystem import api, db
 from sqlalchemy import exc
 from app.models.theq import CSR, Office
 
@@ -22,7 +22,6 @@ from app.models.theq import CSR, Office
 @api.route("/offices/", methods=["GET"])
 class OfficeList(Resource):
 
-    @oidc.accept_token(require_token=False)
     def get(self):
         try:
 

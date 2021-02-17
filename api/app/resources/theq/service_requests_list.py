@@ -15,13 +15,14 @@ limitations under the License.'''
 from flask import request, g
 from flask_restx import Resource
 from datetime import datetime, timedelta
-from qsystem import api, api_call_with_retry, db, oidc, socketio
+from qsystem import api, api_call_with_retry, db, socketio
 from app.models.theq import Citizen, CitizenState, CSR, Period, PeriodState, Service, ServiceReq, SRState
 from app.schemas.theq import CitizenSchema, ServiceReqSchema
 from marshmallow import ValidationError
 from app.utilities.snowplow import SnowPlow
 import json
 from app.utilities.auth_util import Role, has_any_role
+from app.auth.auth import jwt
 
 
 def get_service_request(self, json_data, csr):
@@ -81,8 +82,7 @@ class ServiceRequestsList(Resource):
     citizen_schema = CitizenSchema()
     service_request_schema = ServiceReqSchema()
 
-    @oidc.accept_token(require_token=True)
-    @has_any_role(roles=[Role.internal_user.value])
+    @jwt.has_one_of_roles([Role.internal_user.value])
     @api_call_with_retry
     def post(self):
         try:
@@ -90,7 +90,7 @@ class ServiceRequestsList(Resource):
         except Exception as error:
             return {"message": str(error)}, 401
 
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
+        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
         service_request, message, code = get_service_request(self, json_data, csr)
         if (service_request is None):
             return {"message": message}, code

@@ -20,10 +20,12 @@ from flask_restx import Resource
 from app.models.theq import CSR, Office
 from app.models.bookings import ExamType, Invigilator
 from app.schemas.bookings import ExamSchema, CandidateSchema
-from qsystem import api, api_call_with_retry, db, oidc, my_print
+from qsystem import api, api_call_with_retry, db, my_print
 from app.utilities.bcmp_service import BCMPService
 
 from app.resources.bookings.exam.exam_post import ExamPost
+from app.auth.auth import jwt
+
 
 @api.route("/exams/bcmp/", methods=["POST"])
 class ExamBcmpPost(Resource):
@@ -31,11 +33,11 @@ class ExamBcmpPost(Resource):
     exam_schema = ExamSchema()
     bcmp_service = BCMPService()
 
-    @oidc.accept_token(require_token=True)
+    @jwt.requires_auth
     @api_call_with_retry
     def post(self):
 
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
+        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
 
         json_data = request.get_json()
 
@@ -66,12 +68,12 @@ class ExamBcmpPost(Resource):
             exam_fees = json_data["fees"]
             
             logging.info("Creating individual pesticide exam")
-            bcmp_response = self.bcmp_service.create_individual_exam(exam, exam_fees, invigilator, formatted_data["pesticide_office"], g.oidc_token_info)
+            bcmp_response = self.bcmp_service.create_individual_exam(exam, exam_fees, invigilator, formatted_data["pesticide_office"], g.jwt_oidc_token_info)
 
         else:
 
             logging.info("Creating Group pesticide exam")
-            bcmp_response = self.bcmp_service.create_group_exam_bcmp(exam, booking, formatted_data["candidates_list_bcmp"], invigilator, formatted_data["pesticide_office"], g.oidc_token_info)
+            bcmp_response = self.bcmp_service.create_group_exam_bcmp(exam, booking, formatted_data["candidates_list_bcmp"], invigilator, formatted_data["pesticide_office"], g.jwt_oidc_token_info)
             
             
         if bcmp_response:

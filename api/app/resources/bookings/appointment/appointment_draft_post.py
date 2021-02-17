@@ -13,41 +13,31 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import logging
-from datetime import datetime
-from threading import Thread
 
-from flask import copy_current_request_context
-from flask import request, g, current_app
+from dateutil.parser import parse
+from flask import request, g
 from flask_restx import Resource
 
 from app.models.bookings import Appointment
-from app.models.theq import CSR, CitizenState, PublicUser, Office, Service
+from app.models.theq import CSR, PublicUser, Office, Service
 from app.schemas.bookings import AppointmentSchema
 from app.schemas.theq import CitizenSchema
-from app.utilities.auth_util import Role, has_any_role
-from app.utilities.auth_util import is_public_user
-from app.utilities.date_util import add_delta_to_time
-from app.utilities.email import get_confirmation_email_contents, send_email, get_blackout_email_contents
-from app.utilities.snowplow import SnowPlow
-from qsystem import api, api_call_with_retry, db, oidc, my_print, application
 from app.services import AvailabilityService
-from dateutil.parser import parse
-from pprint import pprint
-
+from app.utilities.date_util import add_delta_to_time
+from qsystem import api, db, my_print, application
 from qsystem import socketio
+
 
 @api.route("/appointments/draft", methods=["POST"])
 class AppointmentDraftPost(Resource):
-
     appointment_schema = AppointmentSchema()
     citizen_schema = CitizenSchema()
-    
+
     # Un-authenticated call as it can happen before user has logged in    
-    @oidc.accept_token(require_token=False)
     def post(self):
         my_print("==> In AppointmentDraftPost, POST /appointments/draft")
         json_data = request.get_json()
-        
+
         office_id = json_data.get('office_id')
         service_id = json_data.get('service_id')
         start_time = parse(json_data.get('start_time'))
@@ -60,8 +50,8 @@ class AppointmentDraftPost(Resource):
             end_time = add_delta_to_time(start_time, minutes=office.appointment_duration, timezone=office.timezone.timezone_name)
 
         # Unauthenticated requests from citizens won't have name, so we set a fallback
-        if (hasattr(g, 'oidc_token_info') and hasattr(g.oidc_token_info, 'username')):
-            user = PublicUser.find_by_username(g.oidc_token_info['username'])
+        if (hasattr(g, 'jwt_oidc_token_info') and hasattr(g.jwt_oidc_token_info, 'username')):
+            user = PublicUser.find_by_username(g.jwt_oidc_token_info['username'])
             citizen_name = user.display_name
         else:
             citizen_name = 'Draft'
@@ -69,39 +59,37 @@ class AppointmentDraftPost(Resource):
         # Delete all expired drafts before checking availability
         Appointment.delete_expired_drafts()
 
-
-
         csr = None
-        if (hasattr(g, 'oidc_token_info')):
-            csr = CSR.find_by_username(g.oidc_token_info['username'])
+        if (hasattr(g, 'jwt_oidc_token_info')):
+            csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
 
         # CSRs are not limited by drafts,  can always see other CSRs drafts
         # This mitigates two CSRs in office creating at same time for same meeting
         # Ensure there's no race condition when submitting a draft
         if not csr and not AvailabilityService.has_available_slots(
-                                    office=office, 
-                                    start_time=start_time, 
-                                    end_time=end_time, 
+                                    office=office,
+                                    start_time=start_time,
+                                    end_time=end_time,
                                     service=service):
-                    return {"code": "CONFLICT_APPOINTMENT",
-                            "message": "Cannot create appointment due to scheduling conflict.  Please pick another time."}, 400
-        
+                                return {"code": "CONFLICT_APPOINTMENT",
+                                        "message": "Cannot create appointment due to scheduling conflict.  Please pick another time."}, 400
+
         # Set draft specific data
         json_data['is_draft'] = True
         json_data['citizen_name'] = citizen_name
 
         appointment, warning = self.appointment_schema.load(json_data)
-        
+
         if warning:
             logging.warning("WARNING: %s", warning)
             return {"message": warning}, 422
 
         db.session.add(appointment)
         db.session.commit()
-        
+
         result = self.appointment_schema.dump(appointment)
 
         if not application.config['DISABLE_AUTO_REFRESH']:
             socketio.emit('appointment_create', result.data)
 
-        return {"appointment": result.data, "warning" : warning}, 201
+        return {"appointment": result.data, "warning": warning}, 201

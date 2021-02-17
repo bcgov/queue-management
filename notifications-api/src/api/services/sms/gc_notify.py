@@ -16,8 +16,6 @@
 This module is being invoked from a job and it sends SMS reminders to customers.
 """
 import os
-from typing import Dict
-
 from notifications_python_client import NotificationsAPIClient
 
 from . import SmsBaseService
@@ -35,7 +33,7 @@ class GCNotify(SmsBaseService):
 
         notifications_client = NotificationsAPIClient(api_key=api_key, base_url=gc_notify_url)
         sms_requests = sms_payload if type(sms_payload) == list else [sms_payload]
-        print('notifications_client ', notifications_client, sms_requests)
+
         for sms_request in sms_requests:
             try:
                 if sms_request.get('user_telephone'):
@@ -46,7 +44,7 @@ class GCNotify(SmsBaseService):
                         app_url=app_url,
                         office_telephone=sms_request.get('office_telephone')
                     )
-                    print(sms_text)
+
                     response = notifications_client.send_sms_notification(
                         phone_number=sms_request.get('user_telephone'),
                         template_id=gc_template_id,
