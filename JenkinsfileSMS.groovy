@@ -523,7 +523,7 @@ node {
             script: {
                 openshift.withCluster() {
                     openshift.withProject() {
-                        echo "Tagging ${BUILDS[1]} for deployment to ${TAG_NAMES[1]} ..."
+                        echo "Tagging ${BUILDS[1]} for deployment to ${TAG_NAMES[2]} ..."
 
                         // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
                         // Tag the images for deployment based on the image's hash
