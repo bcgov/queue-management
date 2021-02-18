@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import logging
-from flask import g
+from flask import g, request
 from flask_restx import Resource
 from sqlalchemy import exc
 from app.models.bookings import Room
@@ -24,22 +24,23 @@ from app.utilities.auth_util import Role, has_any_role
 from app.auth.auth import jwt
 
 
-@api.route("/rooms/", methods=["GET"])
-class RoomList(Resource):
+@api.route("/rooms-office/", methods=["GET"])
+class RoomOfficeList(Resource):
 
     rooms_schema = RoomSchema(many=True)
 
     @jwt.has_one_of_roles([Role.internal_user.value])
     def get(self):
-        
         import logging
-        logging.info('{}============eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee=======>>')
-        csr = CSR.find_by_username(g.oidc_token_info['username'])
-
+        import logging
+        logging.info('{}==============555555555555555555555=====>>'.format(request.args.get('office_id')))
+        office_id = request.args.get('office_id')
         try:
-            rooms = Room.query.filter_by(office_id=csr.office_id)\
+            rooms = Room.query.filter_by(office_id=office_id)\
                               .filter(Room.deleted.is_(None))
+            logging.info('{}==============@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@=====>>'.format(rooms))
             result = self.rooms_schema.dump(rooms)
+            logging.info('{}==============!!!!!!!!!!!!!!!!!!1=====>>'.format(result))
             return {'rooms': result.data,
                     'errors': result.errors}, 200
 

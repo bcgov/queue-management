@@ -610,7 +610,7 @@
 </template>
 
 <script lang="ts">
-// /* eslint-disable */
+/* eslint-disable */
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 
@@ -780,6 +780,8 @@ export default class BookingBlackoutModal extends Vue {
     const start_date = moment(date + ' ' + start).format()
     const end = moment(this.end_time).clone().format('HH:mm:ss')
     const end_date = moment(date + ' ' + end).format()
+    const start_date_office = moment.tz(date + ' ' + start, this.$store.state.user.office.timezone.timezone_name).format()
+    const end_date_office = moment.tz(date + ' ' + end, this.$store.state.user.office.timezone.timezone_name).format()
     const uuidv4 = require('uuid/v4')
     const recurring_uuid = uuidv4()
 
@@ -787,15 +789,15 @@ export default class BookingBlackoutModal extends Vue {
       if (this.room_id_list.length === 1) {
         const blackout_booking: any = {}
         if (this.selected[0].id === '_offsite') {
-          blackout_booking.start_time = start_date
-          blackout_booking.end_time = end_date
+          blackout_booking.start_time = start_date_office
+          blackout_booking.end_time = end_date_office
           blackout_booking.booking_name = this.blackout_name
           blackout_booking.booking_contact_information = this.user_contact_info
           blackout_booking.blackout_flag = 'Y'
           blackout_booking.blackout_notes = this.notes
         } else {
-          blackout_booking.start_time = start_date
-          blackout_booking.end_time = end_date
+          blackout_booking.start_time = start_date_office
+          blackout_booking.end_time = end_date_office
           blackout_booking.booking_name = this.blackout_name
           blackout_booking.booking_contact_information = this.user_contact_info
           blackout_booking.room_id = this.selected[0].id
@@ -812,15 +814,15 @@ export default class BookingBlackoutModal extends Vue {
         this.room_id_list.forEach(function (room) {
           const blackout_booking: any = {}
           if (room == '_offsite') {
-            blackout_booking.start_time = start_date
-            blackout_booking.end_time = end_date
+            blackout_booking.start_time = start_date_office
+            blackout_booking.end_time = end_date_office
             blackout_booking.booking_name = self.blackout_name
             blackout_booking.booking_contact_information = self.user_contact_info
             blackout_booking.blackout_flag = 'Y'
             blackout_booking.blackout_notes = self.notes
           } else {
-            blackout_booking.start_time = start_date
-            blackout_booking.end_time = end_date
+            blackout_booking.start_time = start_date_office
+            blackout_booking.end_time = end_date_office
             blackout_booking.booking_name = self.blackout_name
             blackout_booking.booking_contact_information = self.user_contact_info
             blackout_booking.room_id = room
@@ -838,9 +840,13 @@ export default class BookingBlackoutModal extends Vue {
       if (this.room_id_list.length === 1) {
         if (this.selected[0].id === '_offsite') {
           this.booking_rrule_array.forEach(date => {
+            let st = moment(date.start).clone()
+            let ed = moment(date.end).clone()
+            const startOffice = moment.tz(st.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
+            const endOffice = moment.tz(ed.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
             const booking: any = {}
-            booking.start_time = date.start
-            booking.end_time = date.end
+            booking.start_time = startOffice
+            booking.end_time = endOffice
             booking.booking_name = self.blackout_name
             booking.booking_contact_information = self.user_contact_info
             booking.blackout_flag = 'Y'
@@ -851,8 +857,12 @@ export default class BookingBlackoutModal extends Vue {
         } else {
           this.booking_rrule_array.forEach(date => {
             const booking: any = {}
-            booking.start_time = date.start
-            booking.end_time = date.end
+            let st = moment(date.start).clone()
+            let ed = moment(date.end).clone()
+            const startOffice = moment.tz(st.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
+            const endOffice = moment.tz(ed.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
+            booking.start_time = startOffice
+            booking.end_time = endOffice
             booking.booking_name = self.blackout_name
             booking.booking_contact_information = self.user_contact_info
             booking.blackout_flag = 'Y'
@@ -866,9 +876,13 @@ export default class BookingBlackoutModal extends Vue {
         this.room_id_list.forEach(room => {
           this.booking_rrule_array.forEach(date => {
             const booking: any = {}
+            let st = moment(date.start).clone()
+            let ed = moment(date.end).clone()
+            const startOffice = moment.tz(st.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
+            const endOffice = moment.tz(ed.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
             booking.room_id = room
-            booking.start_time = date.start
-            booking.end_time = date.end
+            booking.start_time = startOffice
+            booking.end_time = endOffice
             booking.booking_name = self.blackout_name
             booking.booking_contact_information = self.user_contact_info
             booking.blackout_flag = 'Y'
@@ -877,7 +891,6 @@ export default class BookingBlackoutModal extends Vue {
             if (booking.room_id === '_offsite') {
               delete booking.room_id
             }
-
             booking_array.push(booking)
           })
         })
@@ -889,6 +902,7 @@ export default class BookingBlackoutModal extends Vue {
       })
       this.toggleBookingBlackoutModal(false)
     }
+    this.toggleBookingBlackoutModal(false)
   }
 
   generateRule () {

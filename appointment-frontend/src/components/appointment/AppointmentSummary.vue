@@ -252,8 +252,11 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   private async checkActiveDLKTService () {
     await this.fetchUserAppointments()
     Object.keys(this.myappointmentList).forEach(app => {
-      if (this.myappointmentList[app]?.service['is_dlkt']) {
-        if (new Date(this.myappointmentList[app]['start_time']) >= new Date()) {
+      // eslint-disable-next-line no-console
+      console.log(app, this.myappointmentList[app])
+      if (this.myappointmentList[app]?.service?.is_dlkt) {
+        if (new Date(this.myappointmentList[app]?.start_time) >= new Date()) {
+          alert('0000')
           this.anyActiveDLKT = true
         } else {
           this.anyActiveDLKT = false
@@ -265,6 +268,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   private async confirmAppointment () {
     this.isLoading = true
     if (this.currentService['is_dlkt'] && (!this.$store.state.isAppointmentEditMode)) {
+      alert(this.currentService?.is_dlkt)
       await this.checkActiveDLKTService()
     }
     if (!this.anyActiveDLKT) {

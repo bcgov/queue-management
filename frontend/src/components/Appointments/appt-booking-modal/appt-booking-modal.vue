@@ -32,8 +32,11 @@
         <b-button @click="cancel()">Cancel</b-button>
       </div>
     </template>
-    <span v-if="this.editDeleteSeries" style="font-size: 1.75rem"
+    <span v-if="this.editDeleteSeries && !stat_flag" style="font-size: 1.75rem"
       >Book Service Appointment Series</span
+    > 
+    <span v-if="this.editDeleteSeries && stat_flag" style="font-size: 1.75rem"
+      >Recurring STAT</span
     >
     <span
       v-if="!this.editDeleteSeries && online_flag"
@@ -46,7 +49,7 @@
       >Book Service Appointment</span
     ><br />
 
-    <b-form autocomplete="off">
+    <b-form autocomplete="off" v-if="!stat_flag">
       <!--  Citizen Name and Contact Info row -->
       <b-form-row>
         <b-col cols="6">
@@ -187,6 +190,88 @@
       </b-form-row>
       <!--  End of the Notes row. -->
     </b-form>
+    <b-form autocomplete="off" v-if="stat_flag">
+      HERE
+      {{citizen_name}}
+      <!--  Citizen Name and Contact Info row -->
+      <b-form-row>
+        <b-col cols="6">
+          <b-form-group class="mb-0 mt-2">
+            <label class="mb-0">Citizen Name</label><br />
+            <b-form-input v-model="citizen_name" readonly />
+          </b-form-group>
+        </b-col>
+        <b-col cols="6">
+          <b-form-group class="mb-0 mt-2">
+            <label class="mb-0">Contact Info</label><br />
+            <b-form-input v-model="contact_information" readonly />
+          </b-form-group>
+        </b-col>
+      </b-form-row>
+      <!--  End of Citizen Name and Contact Info row -->
+
+      <!--  The Time and Date row. -->
+      <b-form-row>
+        <b-col cols="4">
+          <b-form-group class="mb-0 mt-2">
+            <label class="mb-0">Time</label><br />
+            <b-form-input :value="displayStart" disabled />
+          </b-form-group>
+        </b-col>
+        <b-col cols="8">
+          <b-form-group class="mb-0 mt-2">
+            <label class="mb-0">Date</label><br />
+            <b-form-input :value="displayDate" disabled />
+          </b-form-group>
+        </b-col>
+      </b-form-row>
+      <!--  End of the Time and Date row. -->
+
+      <!--  The Date/Time row -->
+      <b-form-row>
+        <!--  Column to delete blackout period or series (if a clicked appointment?) -->
+        <b-col v-if="clickedAppt">
+          <b-form-group class="mb-0 mt-2">
+            <label class="mb-0"
+              >Remove STAT</label
+            >
+            <br />
+            <b-row>
+              <v-col>
+                <b-button
+                  @click="deleteAppt"
+                  class="btn-danger w-100"
+                >
+                  Delete Stat
+                </b-button>
+              </v-col>
+            </b-row>
+            <b-row>
+              <v-col>
+                <b-button
+                    @click="deleteRecurringAppts"
+                    class="btn-danger w-100"
+                  >
+                    Delete Stat Series from this Office
+                  </b-button>
+              </v-col>
+            </b-row>
+            <b-row>
+              <v-col>
+                <b-button
+                    @click="deleteRecurringStatAppts"
+                    class="btn-danger w-100"
+                  >
+                    Delete All Stat Series
+                  </b-button>
+              </v-col>
+            </b-row>
+          </b-form-group>
+        </b-col>
+      </b-form-row>
+      <!--  End of the Date/Time row -->
+
+    </b-form>
     <div class="d-flex flex-row-reverse mt-2 mb-0">
       <div v-if="showMessage" style="color: red" class="mb-0">
         Please complete all required fields.
@@ -223,6 +308,7 @@ export default class ApptBookingModal extends Vue {
   @appointmentsModule.Action('clearAddModal') public clearAddModal: any
   @appointmentsModule.Action('deleteAppointment') public deleteAppointment: any
   @appointmentsModule.Action('deleteRecurringAppointments') public deleteRecurringAppointments: any
+  @appointmentsModule.Action('deleteRecurringStatAppointments') public deleteRecurringStatAppointments: any
   @appointmentsModule.Action('getAppointments') public getAppointments: any
   @appointmentsModule.Action('getServices') public getServices: any
   @appointmentsModule.Action('postAppointment') public postAppointment: any
@@ -253,6 +339,8 @@ export default class ApptBookingModal extends Vue {
   public validate: boolean = false
   public online_flag: boolean = false
   public allow_reschedule : boolean = false
+  public stat_flag: boolean = false
+
 
   get appointments () {
     if (this.clickedAppt) {
@@ -419,6 +507,14 @@ export default class ApptBookingModal extends Vue {
     })
   }
 
+  deleteRecurringStatAppts () {
+    this.$store.commit('toggleServeCitizenSpinner', true)
+    this.deleteRecurringStatAppointments(this.clickedAppt.recurring_uuid).then(() => {
+      this.cancel()
+      this.$store.commit('toggleServeCitizenSpinner', false)
+    })
+  }
+
   reschedule () {
     if (this.clickedTime) {
       this.$root.$emit('removeTempEvent')
@@ -468,6 +564,8 @@ export default class ApptBookingModal extends Vue {
         this.contact_information = this.clickedAppt.contact_information
         this.length = this.clickedAppt.end.clone().diff(this.clickedAppt.start, 'minutes')
         this.online_flag = this.clickedAppt.online_flag
+        console.log(this.clickedAppt, '++++app')
+        this.stat_flag = this.clickedAppt.stat_flag
         const { service_id } = this.clickedAppt
         this.setSelectedService(service_id)
         this.$store.commit('updateAddModalForm', { type: 'service', value: service_id })
@@ -495,6 +593,8 @@ export default class ApptBookingModal extends Vue {
       this.start = this.clickedAppt.start.clone()
       this.length = this.clickedAppt.end.clone().diff(this.start, 'minutes')
       this.online_flag = this.clickedAppt.online_flag
+      console.log(this.clickedAppt, '++++app---2')
+      this.stat_flag = this.clickedAppt.stat_flag
       const { service_id } = this.clickedAppt
       this.setSelectedService(service_id)
       this.$store.commit('updateAddModalForm', { type: 'service', value: service_id })

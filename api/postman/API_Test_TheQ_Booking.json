@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "116f308e-5717-4a7e-9523-4a0237dad6cd",
+		"_postman_id": "0b45a7be-46ca-46f3-abab-3e058b7b4d58",
 		"name": "API_Test_TheQ_Booking Copy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -16004,7 +16004,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "82228417-bbbc-4295-8a26-f4805fa82a83",
 								"exec": [
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 200\", function(){",

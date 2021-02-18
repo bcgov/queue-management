@@ -28,7 +28,7 @@ from app.utilities.auth_util import Role, has_any_role
 from app.auth.auth import jwt
 
 
-@api.route("/services/refresh/", methods=["GET"])
+@api.route("/services/refresh/", methods=["GET"]) 
 class Refresh(Resource):
     """
     Refresh the quick lists to the 5 most frequently used items.

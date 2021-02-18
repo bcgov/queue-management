@@ -80,14 +80,22 @@ export default class CommonUtils {
     return timezone1Date.getTime() - timezone2Date.getTime()
   }
   static getTzFormattedDate (date: string | Date, timezone = 'America/Vancouver', dateFormat = 'yyyy-MM-dd') {
+    // eslint-disable-next-line no-console
+    console.log(date, '==zonedtoutc==>', zonedTimeToUtc(date || new Date(), timezone), dateFormat, format(zonedTimeToUtc(date || new Date(), timezone), dateFormat))
+    // eslint-disable-next-line no-console
+    console.log(date, '==utctozoned==>', utcToZonedTime(date || new Date(), timezone), format(utcToZonedTime(date || new Date(), timezone), dateFormat))
+    // eslint-disable-next-line no-console
+    console.log(CommonUtils.getOffsetBetweenTimezonesForDate(date, Intl.DateTimeFormat().resolvedOptions().timeZone, timezone) / 60 / 1000 / 60)
     if (Intl.DateTimeFormat().resolvedOptions().timeZone === timezone) {
       return format(utcToZonedTime(date || new Date(), timezone), dateFormat)
     } else {
       // eslint-disable-next-line no-console
-      console.log(CommonUtils.getOffsetBetweenTimezonesForDate(date, Intl.DateTimeFormat().resolvedOptions().timeZone, timezone) / 60 / 1000 / 60)
+      // console.log(CommonUtils.getOffsetBetweenTimezonesForDate(date, Intl.DateTimeFormat().resolvedOptions().timeZone, timezone) / 60 / 1000 / 60)
       if ((CommonUtils.getOffsetBetweenTimezonesForDate(date, Intl.DateTimeFormat().resolvedOptions().timeZone, timezone) / 60 / 1000 / 60) < 0) {
         return format(utcToZonedTime(date || new Date(), timezone), dateFormat)
       } else if ((CommonUtils.getOffsetBetweenTimezonesForDate(date, Intl.DateTimeFormat().resolvedOptions().timeZone, timezone) / 60 / 1000 / 60) > 0) {
+        // eslint-disable-next-line no-console
+        // console.log(CommonUtils.getOffsetBetweenTimezonesForDate(date, Intl.DateTimeFormat().resolvedOptions().timeZone, timezone) / 60 / 1000 / 60)
         return format(zonedTimeToUtc(date || new Date(), timezone), dateFormat)
       } else {
         return CommonUtils.getUTCToTimeZoneTime(date, timezone, dateFormat)
