@@ -211,7 +211,7 @@ podTemplate(
                     }
                 }
             }
-        }, Depoy_notifications_api: {
+        }, Depoy_notifications_api_Dev: {
             stage("Deploy notifications api pod") {
                 script: {
                     openshift.withCluster() {
@@ -439,7 +439,7 @@ node {
                 }
             }
         }
-    }, Depoy_notifications_api: {
+    }, Depoy_notifications_api_Test: {
         stage("Deploy notifications api pod") {
             script: {
                 openshift.withCluster() {
@@ -518,8 +518,32 @@ node {
                 }
             }
         }
-    }, Deploy_Staff_FE_Prod: {
+    }, Deploy_Staff_FE_NGINX_Prod: {
         stage("Deploy Frontend - Prod") {
+            script: {
+                openshift.withCluster() {
+                    openshift.withProject() {
+                        echo "Tagging ${BUILDS[1]} for deployment to ${TAG_NAMES[1]} ..."
+
+                        // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
+                        // Tag the images for deployment based on the image's hash
+                        echo "FRONTEND_IMAGE_HASH: ${FRONTEND_IMAGE_HASH}"
+                        openshift.tag("${BUILDS[1]}@${FRONTEND_IMAGE_HASH}", "${BUILDS[1]}:${TAG_NAMES[2]}")
+                    }
+
+                    def NAME_SPACE = getNameSpace()
+                    openshift.withProject("${NAME_SPACE}-${DEP_ENV_NAMES[2]}") {
+                        dc = openshift.selector('dc', "${BUILDS[1]}")
+                        // Wait for the deployment to complete.
+                        // This will wait until the desired replicas are all available
+                        dc.rollout().status()
+                    }
+                    echo "Front End Deployment Complete."
+                }
+            }
+        }
+    }, Deploy_Appointment_NGINX_Prod: {
+        stage("Deploy Appointment - Prod") {
             script: {
                 openshift.withCluster() {
                     openshift.withProject() {
@@ -527,8 +551,8 @@ node {
 
                         // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
                         // Tag the images for deployment based on the image's hash
-                        echo "FRONTEND_IMAGE_HASH: ${FRONTEND_IMAGE_HASH}"
-                        openshift.tag("${BUILDS[2]}@${FRONTEND_IMAGE_HASH}", "${BUILDS[2]}:${TAG_NAMES[2]}")
+                        echo "APPOINTMENT_IMAGE_HASH: ${APPOINTMENT_IMAGE_HASH}"
+                        openshift.tag("${BUILDS[2]}@${APPOINTMENT_IMAGE_HASH}", "${BUILDS[2]}:${TAG_NAMES[2]}")
                     }
 
                     def NAME_SPACE = getNameSpace()
@@ -542,8 +566,8 @@ node {
                 }
             }
         }
-    }, Deploy_Appointment_Prod: {
-        stage("Deploy Appointment - Prod") {
+    }, Depoy_notifications_api_Prod: {
+        stage("Deploy notifications api pod - PROD") {
             script: {
                 openshift.withCluster() {
                     openshift.withProject() {
@@ -551,32 +575,8 @@ node {
 
                         // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
                         // Tag the images for deployment based on the image's hash
-                        echo "APPOINTMENT_IMAGE_HASH: ${APPOINTMENT_IMAGE_HASH}"
-                        openshift.tag("${BUILDS[4]}@${APPOINTMENT_IMAGE_HASH}", "${BUILDS[4]}:${TAG_NAMES[2]}")
-                    }
-
-                    def NAME_SPACE = getNameSpace()
-                    openshift.withProject("${NAME_SPACE}-${DEP_ENV_NAMES[2]}") {
-                        dc = openshift.selector('dc', "${BUILDS[4]}")
-                        // Wait for the deployment to complete.
-                        // This will wait until the desired replicas are all available
-                        dc.rollout().status()
-                    }
-                    echo "Front End Deployment Complete."
-                }
-            }
-        }
-    }, Depoy_notifications_api: {
-        stage("Deploy notifications api pod - PROD") {
-            script: {
-                openshift.withCluster() {
-                    openshift.withProject() {
-                        echo "Tagging ${BUILDS[6]} for deployment to ${TAG_NAMES[2]} ..."
-
-                        // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
-                        // Tag the images for deployment based on the image's hash
                         echo "NOTIFICATION_IMAGE_HASH: ${NOTIFICATION_IMAGE_HASH}"
-                        openshift.tag("${BUILDS[6]}@${NOTIFICATION_IMAGE_HASH}", "${BUILDS[6]}:${TAG_NAMES[2]}")
+                        openshift.tag("${BUILDS[4]}@${NOTIFICATION_IMAGE_HASH}", "${BUILDS[4]}:${TAG_NAMES[2]}")
                     }
                 }
             }
@@ -586,12 +586,12 @@ node {
             script: {
                 openshift.withCluster() {
                     openshift.withProject() {
-                        echo "Tagging ${BUILDS[5]} for deployment to ${TAG_NAMES[2]} ..."
+                        echo "Tagging ${BUILDS[3]} for deployment to ${TAG_NAMES[2]} ..."
 
                         // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
                         // Tag the images for deployment based on the image's hash
                         echo "REMINDER_IMAGE_HASH: ${REMINDER_IMAGE_HASH}"
-                        openshift.tag("${BUILDS[5]}@${REMINDER_IMAGE_HASH}", "${BUILDS[5]}:${TAG_NAMES[2]}")
+                        openshift.tag("${BUILDS[3]}@${REMINDER_IMAGE_HASH}", "${BUILDS[3]}:${TAG_NAMES[2]}")
                     }
                     echo "Appt Reminders Deployment Complete."
                 }
