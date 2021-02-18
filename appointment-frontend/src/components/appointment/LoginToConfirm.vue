@@ -1,8 +1,34 @@
 <template>
-  <v-card-text :class="{'login-selection-mobile': $vuetify.breakpoint.xs}">
-    <v-row justify="center">
-      <v-col cols="12" sm="5" class="text-center">
-        <v-btn
+  <v-card-text>
+    <v-col justify="center">
+      <v-row class="align-row-1 bcsc-btn" v-if="!hideBCServicesCard">
+        <v-col class="fill-width">
+          <v-btn
+            min-width="150"
+            large
+            color="primary"
+            @click="login(idpHint.BCSC)"
+          >
+            BC Services Card
+          </v-btn>
+          <a class="link-w-icon mt-6" href="https://www2.gov.bc.ca/gov/content/governments/government-id/bc-services-card"
+            target="_blank" rel="noopener noreferrer">
+            <v-icon small class="mr-2">mdi-open-in-new</v-icon>
+            <span>About the BC Services Card</span>
+          </a>
+        </v-col>
+        <v-col class="align-row-2 fill-width">
+          <v-img
+            class="login-logo"
+            :src="($vuetify.breakpoint.xs) ? require('@/assets/img/bcsc_logo_sm.jpg') : require('@/assets/img/bcsc_logo.jpg')"
+            max-width="132"
+            contain
+          ></v-img>
+        </v-col>
+      </v-row>
+      <v-row class="align-row-1 bcsc-btn">
+        <v-col class="fill-width">
+          <v-btn
           min-width="150"
           large
           color="primary"
@@ -15,9 +41,24 @@
           <v-icon small class="mr-2">mdi-open-in-new</v-icon>
           <span>About the BCeID</span>
         </a>
-        <v-btn :href="BCEIDRegistrationURL"
+        </v-col>
+        <v-col class="align-row-2 fill-width">
+        <v-img
+            class="login-logo"
+            :src="($vuetify.breakpoint.xs) ? require('@/assets/img/bceid_logo_sm.jpg') : require('@/assets/img/bceid_logo.jpg')"
+            max-width="132"
+            contain
+          ></v-img>
+        </v-col>
+      </v-row>
+      <v-row class="text-center bcsc-btn">
+        <v-col class="create-bceid">I do not have a BC Services Card or BCeID</v-col>
+      </v-row>
+      <v-row class="align-row-1 bcsc-btn">
+        <v-col class="fill-width">
+          <v-btn :href="BCEIDRegistrationURL"
           min-width="150"
-          large class="create-bceid"
+          large
           color="primary"
         >
         Create BCeID
@@ -32,23 +73,17 @@
           <v-icon small class="mr-2">mdi-open-in-new</v-icon>
           <span>Privacy Statement</span>
         </a>
-      </v-col>
-      <v-col cols="12" sm="5" class="text-center bcsc-btn" v-if="!hideBCServicesCard">
-        <v-btn
-          min-width="150"
-          large
-          color="primary"
-          @click="login(idpHint.BCSC)"
-        >
-          BC Services Card
-        </v-btn>
-        <a class="link-w-icon mt-6" href="https://www2.gov.bc.ca/gov/content/governments/government-id/bc-services-card"
-          target="_blank" rel="noopener noreferrer">
-          <v-icon small class="mr-2">mdi-open-in-new</v-icon>
-          <span>About the BC Services Card</span>
-        </a>
-      </v-col>
-    </v-row>
+        </v-col>
+        <v-col class="align-row-2 fill-width">
+        <v-img
+            class="login-logo"
+            :src="($vuetify.breakpoint.xs) ? require('@/assets/img/bceid_logo_sm.jpg') : require('@/assets/img/bceid_logo.jpg')"
+            max-width="132"
+            contain
+          ></v-img>
+        </v-col>
+      </v-row>
+    </v-col>
   </v-card-text>
 </template>
 
@@ -112,6 +147,32 @@ export default class LoginToConfirm extends Mixins(StepperMixin) {
   }
 }
 .create-bceid {
-  margin-top: 15px
+  color: rgba(0,0,0,.87);
+}
+.align-row-1{
+  text-align: center!important;
+}
+.align-row-2{
+  text-align: center!important;
+  display: table;
+}
+.login-logo{
+  display: inline-flex;
+}
+.fill-width{
+  min-width: 100%;
+}
+@media (min-width: 400px) {
+  .align-row-1{
+  text-align: right!important;
+  }
+  .align-row-2{
+    text-align: left!important;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .fill-width{
+    min-width: unset;
+  }
 }
 </style>

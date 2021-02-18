@@ -7,7 +7,7 @@
             <h3>Login</h3>
           </v-card-title>
           <v-divider class="mx-4"></v-divider>
-          <p class="text-center mt-2">Please login using one of the following</p>
+          <p class="text-center mt-2 login-msg">Please login using one of the following</p>
           <LoginToConfirm></LoginToConfirm>
         </v-card>
       </v-col>
@@ -32,4 +32,7 @@ export default class LoginSelectorView extends Vue {
 
 <style lang="scss" scoped>
 @import "@/assets/scss/theme.scss";
+.login-msg{
+  margin: 0;
+}
 </style>
