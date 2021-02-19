@@ -477,8 +477,6 @@ export default class Appointments extends Vue {
     this.$root.$on('goToDate', (date) => { this.goToDate(date) })
     this.calendarSetup()
 
-    // this.max = this.$parent.rrule_array.length
-    // this.value = this.$parent.api_count
     showFlagBus.$on(ShowFlagBusEvents.ShowFlagEvent, (flag: boolean) =>{
       this.show_loading = flag
     }
