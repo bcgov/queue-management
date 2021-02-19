@@ -17,6 +17,25 @@
               <v-label>Location</v-label>
               <p>{{appointmentDisplayData.locationName}}, <small v-if="appointmentDisplayData.locationAddress">{{appointmentDisplayData.locationAddress}}</small></p>
             </v-col>
+            <v-col cols="3"></v-col>
+            <v-col cols="12" md="6" class="text-center">
+              <div>
+                <v-switch v-if="currentUserProfile && currentUserProfile.telephone && !currentUserProfile.send_sms_reminders"
+                  inset
+                  v-model="isSendSmsReminders"
+                  label="Send me appointment reminders via SMS text message"
+                ></v-switch>
+                <p class="sms-info">Standard messaging and data rates may apply</p>
+              </div>
+              <div>
+                <v-switch v-if="currentUserProfile && currentUserProfile.email && !currentUserProfile.send_email_reminders"
+                    inset
+                    v-model="isSendEmailReminders"
+                    label="Send me appointment reminders via email"
+                  ></v-switch>
+              </div>
+            </v-col>
+            <v-col cols="3"></v-col>
             <v-col cols="12">
               <div class="d-flex justify-center">
                 <v-checkbox
@@ -135,6 +154,7 @@
 import { Appointment, AppointmentSlot } from '@/models/appointment'
 import { AppointmentModule, AuthModule } from '@/store/modules'
 import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
+import { User, UserUpdateBody } from '@/models/user'
 import { mapActions, mapGetters, mapState } from 'vuex'
 import CommonUtils from '@/utils/common-util'
 import ConfigHelper from '@/utils/config-helper'
@@ -144,7 +164,6 @@ import { Office } from '@/models/office'
 import { Service } from '@/models/service'
 import StepperMixin from '@/mixins/StepperMixin.vue'
 import TermsOfServicePopup from './TermsOfServicePopup.vue'
-import { User } from '@/models/user'
 import { getModule } from 'vuex-module-decorators'
 
 @Component({
@@ -155,6 +174,7 @@ import { getModule } from 'vuex-module-decorators'
       'currentAppointmentSlot',
       'currentOfficeTimezone'
     ]),
+    ...mapState('auth', ['currentUserProfile']),
     ...mapGetters('auth', [
       'isAuthenticated'
     ])
@@ -167,7 +187,8 @@ import { getModule } from 'vuex-module-decorators'
     ]),
     ...mapActions('appointment', [
       'getAppointmentList'
-    ])
+    ]),
+    ...mapActions('account', ['updateUserAccount'])
   },
   components: {
     TermsOfServicePopup,
@@ -198,11 +219,15 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
     title: '',
     subTitle: ''
   }
-  // private async beforeMount () {
-  //   await this.fetchUserAppointments()
-  // }
-  private async created () {
-    await this.fetchUserAppointments()
+  private isSendSmsReminders:boolean = false
+  private isSendEmailReminders:boolean = false
+  private readonly currentUserProfile!: User
+  private readonly updateUserAccount!: (userBody: UserUpdateBody) => Promise<any>
+
+  private async mounted () {
+    if (this.isAuthenticated) {
+      await this.fetchUserAppointments()
+    }
   }
   private get appointmentDisplayData () {
     return {
@@ -266,6 +291,24 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
     this.isLoading = true
     if (this.currentService['is_dlkt'] && (!this.$store.state.isAppointmentEditMode)) {
       await this.checkActiveDLKTService()
+    }
+    // Save user profile if there is a change
+    if (this.isSendSmsReminders || this.isSendEmailReminders) {
+      let enableEmailReminder = this.currentUserProfile.send_email_reminders
+      let enableSmsReminder = this.currentUserProfile.send_sms_reminders
+      if (this.isSendSmsReminders) {
+        enableSmsReminder = true
+      }
+      if (this.isSendEmailReminders) {
+        enableEmailReminder = true
+      }
+      const userUpdate: UserUpdateBody = {
+        email: this.currentUserProfile.email,
+        telephone: this.currentUserProfile.telephone,
+        send_email_reminders: enableEmailReminder,
+        send_sms_reminders: enableSmsReminder
+      }
+      const response = await this.updateUserAccount(userUpdate)
     }
     if (!this.anyActiveDLKT) {
       try {
@@ -346,5 +389,11 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
       margin-bottom: 0;
     }
   }
+}
+.sms-info {
+  font-style: italic;
+  font-size: small;
+  text-align: left;
+  margin-left: 10%;
 }
 </style>
