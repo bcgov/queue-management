@@ -12,26 +12,21 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask import abort, redirect, request, url_for
+from flask import abort, redirect, request, url_for, g
 from flask_login import login_user, logout_user
 from flask_restx import Resource
 from app.models.theq import CSR
 from qsystem import api, application
-from app.auth.auth import decode_token
+from app.auth.auth import jwt
 
 
 @api.route("/login/", methods=["GET"])
 class Login(Resource):
     auth_string = 'Unable to authenticate request. You must be signed in prior to authenticated to the admin pages'
 
+    @jwt.requires_auth_cookie
     def get(self):
-        cookie = request.cookies.get("oidc-jwt", None)
-        if cookie is None:
-            return abort(401, self.auth_string)
-
-        claims = decode_token(cookie)
-        if not claims:
-            return abort(401, self.auth_string)
+        claims = g.jwt_oidc_token_info
 
         if claims["preferred_username"]:
             csr = CSR.find_by_username(claims["preferred_username"])

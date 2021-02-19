@@ -78,7 +78,7 @@ export default class ConfigHelper {
     return this.mapConfiguration
   }
 
-  static isEmsEnabled() {
+  static isEmsEnabled () {
     let smsEnabled:boolean = true
     if (this.getValue('disableSms') === true) {
       smsEnabled = false
