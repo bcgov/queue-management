@@ -465,7 +465,6 @@ export default class BookingModal extends Vue {
   }
 
   submit () {
-    console.log('bokking modal submit===========>>')
     if (this.pressedSubmit == false) {
       this.pressedSubmit = true
       const { exam_id } = this.exam

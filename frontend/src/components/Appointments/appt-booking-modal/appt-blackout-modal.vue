@@ -191,7 +191,7 @@
                   lang="en"
                   format="h:mm a"
                   autocomplete="off"
-                  :editable="false"
+                  :editable="true"
                   placeholder="Select Start Time"
                   class="w-100"
                   type="time"
@@ -221,7 +221,7 @@
                   lang="en"
                   format="h:mm a"
                   autocomplete="off"
-                  :editable="false"
+                  :editable="true"
                   placeholder="Select End Time"
                   class="w-100"
                   type="time"
@@ -273,7 +273,7 @@
                   lang="en"
                   format="h:mm a"
                   autocomplete="off"
-                  :editable="false"
+                  :editable="true"
                   placeholder="Select Start Time"
                   class="w-100"
                   type="time"
@@ -303,7 +303,7 @@
                   lang="en"
                   format="h:mm a"
                   autocomplete="off"
-                  :editable="false"
+                  :editable="true"
                   placeholder="Select End Time"
                   class="w-100"
                   type="time"
@@ -450,7 +450,7 @@
           </b-form-row>
           <b-form-row>
               <b-form-group>
-                <label>STAT Date/s:</label>{{stat_dates}}
+                <label>STAT Date/s:</label>
                 <div
                   v-for="(input, index) in stat_dates"
                   :key="`stat_dates-${index}`"
@@ -513,6 +513,26 @@
                     </b-button>
                   </b-col>
                 </b-form-row>
+                <b-form-row v-if="(show_stat_next) && ((stat_dates.length === (index+1)))">
+                  <!-- only add to current office -->
+                  <b-col>
+                    <b-form-checkbox-group
+                        v-model="only_this_office"
+                        @input="checkRecurringInput"
+                      >
+                        <b-form-checkbox :value="true">Only this Office</b-form-checkbox>
+                    </b-form-checkbox-group>
+                  </b-col>
+                  <b-col>
+                    <b-form-checkbox-group
+                      v-if="only_this_office.length"
+                        v-model="only_appointments"
+                        @input="checkRecurringInput"
+                      >
+                        <b-form-checkbox :value="true">Only appointment</b-form-checkbox>
+                    </b-form-checkbox-group>
+                  </b-col>
+                </b-form-row>
               </div>    
               </b-form-group>
           </b-form-row>
@@ -523,7 +543,7 @@
           <b-card-body>
             <b-form-row class="mb-2">
               <label stlye="font-weight: bold;" class="danger"
-              >Cannot blackout more that 365days at Once.
+              >Cannot blackout more that 1 year at Once.
               </label
               >
             </b-form-row>
@@ -619,14 +639,10 @@
               v-if="this.recurring_input_boolean"
               stlye="font-weight: bold;"
             >
-              Step 3 (optional): Event Notes. <br /><em
-                >This will be included in cancellation email.</em
-              >
+              Step 3 (optional): Event Notes. <br />
             </label>
             <label v-if="this.single_input_boolean" stlye="font-weight: bold;">
-              Step 2 (optional): Event Notes. <br /><em
-                >This will be included in cancellation email.</em
-              >
+              Step 2 (optional): Event Notes. <br />
             </label>
             <font-awesome-icon
               v-if="this.notes !== ''"
@@ -763,12 +779,13 @@ export default class AppointmentBlackoutModal extends Vue {
   private confirmDialog: boolean = false
   public appt_overlap: any = 0
   public api_count: any = 0
-  public show_loading: boolean = false
   public show_next: boolean = true
   public stat_dates: any = [{note:""}]
   public show_stat_next: boolean = false
   public is_stat: boolean = false
   public stat_submit: boolean = false
+  public only_this_office: any = []
+  public only_appointments: any =[]
 
   get modal () {
     return this.showAppointmentBlackoutModal
@@ -832,7 +849,7 @@ export default class AppointmentBlackoutModal extends Vue {
     this.recurring_input_boolean = false
     this.rrule_text = ''
     this.rrule_array = []
-    this.stat_dates = [{}]
+    this.stat_dates = [{note:""}]
     this.toggleAppointmentBlackoutModal(false)
     this.show_stat_next = false
     this.is_stat = false
@@ -907,7 +924,7 @@ export default class AppointmentBlackoutModal extends Vue {
       this.countApptWarning(e)
     }
     if (this.appt_overlap > 0) {
-      this.warning_text = "There is " + this.appt_overlap + " appointment(s) that will be cancelled due to Blackout. Are you sure you want to create the Blackout?"
+      this.warning_text = "There is " + this.appt_overlap + " appointment(s) which is overlapping with this Blackout. Are you sure you want to create the Blackout?"
       this.confirmDialog=true;
       this.toggleAppointmentBlackoutModal(false);
     } else {
@@ -925,6 +942,7 @@ export default class AppointmentBlackoutModal extends Vue {
       await this.delay(3000)
       showFlagBus.$emit(ShowFlagBusEvents.ShowFlagEvent, false)
       this.getAppointments()
+      this.getBookings()
       this.setApiTotalCount(0)
     } else {
       apiProgressBus.$emit(APIProgressBusEvents.APIProgressEvent, axiosArray.length)
@@ -936,6 +954,7 @@ export default class AppointmentBlackoutModal extends Vue {
     this.setApiTotalCount(0)
     this.setApiTotalCount(this.rrule_array.length)
     showFlagBus.$emit(ShowFlagBusEvents.ShowFlagEvent, true)
+    // this is the number of api in a group- for bulk api call
     const limit = 50
     const date = moment(this.blackout_date).clone().format('YYYY-MM-DD')
     const start = moment(this.start_time).clone().format('HH:mm:ss')
@@ -943,7 +962,7 @@ export default class AppointmentBlackoutModal extends Vue {
     const end = moment(this.end_time).clone().format('HH:mm:ss')
     // const end_date = moment(date + ' ' + end).format('YYYY-MM-DD HH:mm:ssZ')
     const start_date = moment.tz(date + ' ' + start, this.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
-    const end_date = moment.tz(date + ' ' + start, this.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
+    const end_date = moment.tz(date + ' ' + end, this.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
     const uuidv4 = require('uuid/v4')
     const recurring_uuid = uuidv4()
     let axiosArray = []
@@ -951,9 +970,13 @@ export default class AppointmentBlackoutModal extends Vue {
     if (this.rrule_array.length > 0) {
        this.rrule_array.forEach(item => {
         rrule_ind += 1
+        const startDateR = moment(item.start).clone().format('YYYY-MM-DD')
+        const startTimeR = moment(item.start).clone().format('HH:mm:ss')
+        const endDateR = moment(item.end).clone().format('YYYY-MM-DD')
+        const endTimeR = moment(item.end).clone().format('HH:mm:ss')
         const e: any = {
-          start_time: item.start,
-          end_time: item.end,
+          start_time: moment.tz(startDateR + ' ' + startTimeR, this.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
+          end_time: moment.tz(endDateR + ' ' + endTimeR, this.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
           citizen_name: this.user_name,
           contact_information: this.user_contact_info,
           blackout_flag: 'Y',
@@ -1022,6 +1045,7 @@ export default class AppointmentBlackoutModal extends Vue {
     this.recurring_blackout_boolean = true
     this.single_blackout_boolean = true
     this.next_boolean = false
+    //365 DAYS VALIDATION
     const a = moment(this.recurring_start_date)
     const b = moment(this.recurring_end_date)
     const diffDays = b.diff(a, 'days')
@@ -1121,6 +1145,10 @@ export default class AppointmentBlackoutModal extends Vue {
     this.end_time = null
     this.recurring_input_state = ''
     this.single_input_state = ''
+    
+    this.stat_dates = [{note:""}]
+    this.stat_submit = false
+    this.show_stat_next = false
     this.hideCollapse('collapse-single-event')
     this.hideCollapse('collapse-recurring-stat')
   }
@@ -1138,11 +1166,37 @@ export default class AppointmentBlackoutModal extends Vue {
     this.recurring_end_time = null
     this.recurring_input_state = ''
     this.single_input_state = ''
+
+    this.stat_dates = [{note:""}]
+    this.stat_submit = false
+    this.show_stat_next = false
+
     this.hideCollapse('collapse-recurring-events')
     this.hideCollapse('collapse-recurring-stat')
   }
 
   setSTAT () {
+    this.recurring_blackout_boolean = !this.recurring_blackout_boolean
+    this.single_input_boolean = false
+    this.recurring_input_boolean = false
+    this.selected_count = ''
+    this.selected_weekdays = []
+    this.selected_frequency = []
+    this.recurring_start_date = null
+    this.recurring_start_time = null
+    this.recurring_end_date = null
+    this.recurring_end_time = null
+    this.recurring_input_state = ''
+    this.single_input_state = ''
+
+    this.single_blackout_boolean = !this.single_blackout_boolean
+    this.single_input_boolean = false
+    this.recurring_input_boolean = false
+    this.blackout_date = null
+    this.start_time = null
+    this.end_time = null
+    this.recurring_input_state = ''
+    this.single_input_state = ''
     this.hideCollapse('collapse-single-event')
     this.hideCollapse('collapse-recurring-events')
   }
@@ -1156,6 +1210,9 @@ export default class AppointmentBlackoutModal extends Vue {
       this.recurring_input_state = 'event_information'
     } else {
       this.recurring_input_boolean = false
+    }
+    if (this.only_this_office.length === 0){
+      this. only_appointments = []
     }
   }
 
@@ -1242,61 +1299,113 @@ export default class AppointmentBlackoutModal extends Vue {
     const getOfficeRooms =  this.getOfficeRooms
     const postBooking = this.postBooking
     this.rrule_array = this.stat_dates
+    const self = this
     if (this.rrule_array.length > 0) {
       const limit = 10
-      this.rrule_array.forEach(item => { 
-        rrule_ind += 1
-        const date = moment(item.value).clone().format('YYYY-MM-DD')
-        const start = moment(item.value).clone().format('HH:mm:ss')
-        const end =  moment(item.value).add(59, 'minutes').add(23, 'hours').add(59, 'seconds').clone().format('HH:mm:ss')
-        
-        // stat for appointments
-        all_offices.forEach(async function(office) {
-            const e: any = {
-                start_time: moment.tz(date+' '+start, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
-                end_time: moment.tz(date+' '+end, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
-                citizen_name: stat_user_name+'_'+office.office_name,
-                contact_information: user_contact_info,
-                stat_flag: true,
-                office_id: office.office_id,
-                recurring_uuid: recurring_uuid,
-                comments : item.note
-              }
-              await axiosArray.push(await createStatAxioObject(e))
+      this.rrule_array.forEach(async function (item) { 
+        if (item.value) {
+          rrule_ind += 1
+          const date = moment(item.value).clone().format('YYYY-MM-DD')
+          const start = moment(item.value).clone().format('HH:mm:ss')
+          const end =  moment(item.value).add(59, 'minutes').add(23, 'hours').add(59, 'seconds').clone().format('HH:mm:ss')
+          //only for this off and appointments or both           
+          if (self.only_this_office.length == 1){
+            if (self.only_this_office[0]){
+              //for this office -appointment
+              const e: any = {
+                  start_time: moment.tz(date+' '+start, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
+                  end_time: moment.tz(date+' '+end, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
+                  citizen_name: stat_user_name+'_'+self.$store.state.user.office.office_name,
+                  contact_information: user_contact_info,
+                  stat_flag: true,
+                  office_id: self.$store.state.user.office.office_id,
+                  recurring_uuid: recurring_uuid,
+                  comments : item.note
+                }
+                await axiosArray.push(await createStatAxioObject(e))
 
-            // stat for rooms
-            const office_room = await getOfficeRooms({'office_id': office.office_id})
-            office_room.forEach(function (room) {
-              const blackout_booking: any = {}
-              if (room.id == '_offsite') {
-                blackout_booking.start_time = moment.tz(date+' '+start, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
-                blackout_booking.end_time = moment.tz(date+' '+end, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
-                blackout_booking.booking_name = stat_user_name+'_'+office.office_name,
-                blackout_booking.booking_contact_information = user_contact_info,
-                blackout_booking.stat_flag = true,
-                blackout_booking.blackout_notes = item.note,
-                blackout_booking.office_id = office.office_id,
-                blackout_booking.recurring_uuid = recurring_uuid
-              } else {
-                blackout_booking.start_time = moment.tz(date+' '+start, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
-                blackout_booking.end_time = moment.tz(date+' '+end, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
-                blackout_booking.booking_name = stat_user_name+'_'+office.office_name,
-                blackout_booking.booking_contact_information = user_contact_info,
-                blackout_booking.room_id = room.id
-                blackout_booking.stat_flag = true,
-                blackout_booking.blackout_notes = item.note,
-                blackout_booking.office_id = office.office_id,
-                blackout_booking.recurring_uuid = recurring_uuid
+              // stat for rooms
+              if (self.only_appointments.length === 0) {
+                const office_room = await getOfficeRooms({'office_id': self.$store.state.user.office.office_id})
+                office_room.forEach(function (room) {
+                  const blackout_booking: any = {}
+                  if (room.id == '_offsite') {
+                    blackout_booking.start_time = moment.tz(date+' '+start, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
+                    blackout_booking.end_time = moment.tz(date+' '+end, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
+                    blackout_booking.booking_name = stat_user_name+'_'+self.$store.state.user.office.office_name,
+                    blackout_booking.booking_contact_information = user_contact_info,
+                    blackout_booking.stat_flag = true,
+                    blackout_booking.blackout_notes = item.note,
+                    blackout_booking.office_id = self.$store.state.user.office.office_id,
+                    blackout_booking.recurring_uuid = recurring_uuid
+                  } else {
+                    blackout_booking.start_time = moment.tz(date+' '+start, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
+                    blackout_booking.end_time = moment.tz(date+' '+end, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
+                    blackout_booking.booking_name = stat_user_name+'_'+self.$store.state.user.office.office_name,
+                    blackout_booking.booking_contact_information = user_contact_info,
+                    blackout_booking.room_id = room.id
+                    blackout_booking.stat_flag = true,
+                    blackout_booking.blackout_notes = item.note,
+                    blackout_booking.office_id = self.$store.state.user.office.office_id,
+                    blackout_booking.recurring_uuid = recurring_uuid
+                  }
+                  axiosArray.push(postBooking(blackout_booking))
+                  // this.postBooking(blackout_booking)
+                  // .then(() => {
+                  //   this.getBookings()
+                  // })
+                })
               }
-              axiosArray.push(postBooking(blackout_booking))
-              // this.postBooking(blackout_booking)
-              // .then(() => {
-              //   this.getBookings()
-              // })
-            })
-            
-          //   //bulk call
-            
+            }
+          } 
+          else if (self.only_this_office.length == 0) {
+              // stat for appointments
+              all_offices.forEach(async function(office) {
+                  const e: any = {
+                      start_time: moment.tz(date+' '+start, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
+                      end_time: moment.tz(date+' '+end, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
+                      citizen_name: stat_user_name+'_'+office.office_name,
+                      contact_information: user_contact_info,
+                      stat_flag: true,
+                      office_id: office.office_id,
+                      recurring_uuid: recurring_uuid,
+                      comments : item.note
+                    }
+                    await axiosArray.push(await createStatAxioObject(e))
+
+                  // stat for rooms
+                  const office_room = await getOfficeRooms({'office_id': office.office_id})
+                  office_room.forEach(function (room) {
+                    const blackout_booking: any = {}
+                    if (room.id == '_offsite') {
+                      blackout_booking.start_time = moment.tz(date+' '+start, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
+                      blackout_booking.end_time = moment.tz(date+' '+end, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
+                      blackout_booking.booking_name = stat_user_name+'_'+office.office_name,
+                      blackout_booking.booking_contact_information = user_contact_info,
+                      blackout_booking.stat_flag = true,
+                      blackout_booking.blackout_notes = item.note,
+                      blackout_booking.office_id = office.office_id,
+                      blackout_booking.recurring_uuid = recurring_uuid
+                    } else {
+                      blackout_booking.start_time = moment.tz(date+' '+start, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
+                      blackout_booking.end_time = moment.tz(date+' '+end, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
+                      blackout_booking.booking_name = stat_user_name+'_'+office.office_name,
+                      blackout_booking.booking_contact_information = user_contact_info,
+                      blackout_booking.room_id = room.id
+                      blackout_booking.stat_flag = true,
+                      blackout_booking.blackout_notes = item.note,
+                      blackout_booking.office_id = office.office_id,
+                      blackout_booking.recurring_uuid = recurring_uuid
+                    }
+                    axiosArray.push(postBooking(blackout_booking))
+                    // this.postBooking(blackout_booking)
+                    // .then(() => {
+                    //   this.getBookings()
+                    // })
+                  })
+                })
+            }
+            //bulk call
             if ((axiosArray.length == limit)) {
                 bulkApiCall(axiosArray)
                 axiosArray = []
@@ -1305,7 +1414,8 @@ export default class AppointmentBlackoutModal extends Vue {
               bulkApiCall(axiosArray, true)
               axiosArray = []
             } 
-          }) 
+
+        }
       })
 
   }

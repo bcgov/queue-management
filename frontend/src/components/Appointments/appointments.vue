@@ -180,12 +180,11 @@ export default class Appointments extends Vue {
   value: any = ''
   // events: any = []
   currentDay: any = moment().format('YYYY-MM-DD')// new Date()
-
+  
   get events () {
     if (this.searchTerm) {
       return this.filtered_appointment_events(this.searchTerm)
     }
-    console.log(this.appointment_events, "++888888++this.appointment_events")
     return this.appointment_events
   }
 
@@ -196,7 +195,6 @@ export default class Appointments extends Vue {
 
   // to remove
   getEvents ({ start, end }) {
-    console.log(this.appointment_events, "++++this.appointment_events")
     return this.appointment_events
   }
 
@@ -479,17 +477,14 @@ export default class Appointments extends Vue {
     this.$root.$on('goToDate', (date) => { this.goToDate(date) })
     this.calendarSetup()
 
-    console.log(this.$parent, '++++++++++++', this.$refs)
     // this.max = this.$parent.rrule_array.length
     // this.value = this.$parent.api_count
     showFlagBus.$on(ShowFlagBusEvents.ShowFlagEvent, (flag: boolean) =>{
       this.show_loading = flag
-      console.log('inside bus --->>> show modal', this.show_loading)
     }
         
       )
 
-  console.log(this.appointment_events,'++++++++++++++++++++++++appoint events')
 
   }
 }

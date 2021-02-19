@@ -308,7 +308,7 @@ export default {
     putAppointment ({ dispatch, rootState }, payload) {
       const state = rootState
       const { id } = payload
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve, reject) => { 
         Axios({ state }).put(`/appointments/${id}/`, payload.data).then(resp => {
           dispatch('getAppointments')
           resolve()

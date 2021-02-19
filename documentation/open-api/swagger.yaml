@@ -280,22 +280,6 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Room"
-
-  /rooms-office/${office_id}:
-    get:
-      tags:
-        - RoomOffice
-      summary: Get all rooms of a office by id
-      operationId: getRoomsById
-      parameters:
-        - office_id: office id
-      responses:
-        '200':
-          description: The office rooms
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Room"
                 
   /appointments/:
     get:

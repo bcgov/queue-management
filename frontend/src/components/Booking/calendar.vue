@@ -127,6 +127,7 @@
         <BookingBlackoutModal
           v-if="showBookingBlackoutModal"
         ></BookingBlackoutModal>
+        <LoadingModal v-if="show_loading" />
       </div>
     </div>
   </v-app>
@@ -140,6 +141,8 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 
 import BookingBlackoutModal from './booking-blackout-modal.vue'
 import BookingModal from './booking-modal.vue'
+import LoadingModal from './loading.vue'
+
 
 import DropdownCalendar from './dropdown-calendar.vue'
 import EditBookingModal from './edit-booking-modal.vue'
@@ -148,6 +151,7 @@ import OfficeDropDownFilter from '../exams/office-dropdown-filter.vue'
 import OtherBookingModal from './other-booking-modal.vue'
 import { adjustColor } from '../../store/helpers'
 import filterCards from './filterCards.vue'
+import { showBookingFlagBus, ShowBookingFlagBusEvents } from '../../events/showBookingFlagBus'
 
 import { formatedStartTime } from '@/utils/helpers'
 import moment from 'moment'
@@ -166,7 +170,8 @@ const WEEKEND_STRINGS = ['SAT', 'SUN']
     EditBookingModal,
     ExamInventoryModal,
     OtherBookingModal,
-    filterCards
+    filterCards,
+    LoadingModal
   }
 })
 export default class Calendar extends Vue {
@@ -258,6 +263,7 @@ export default class Calendar extends Vue {
   currentDay: any = moment().format('YYYY-MM-DD')// new Date()
 
   categories: any = [] // [] // 'Boardroom 1'
+  show_loading: boolean = false
 
   updated () {
     this.disableSatSun();
@@ -348,7 +354,6 @@ export default class Calendar extends Vue {
   public scheduling1: any = false
 
   get events () {
-    console.log(this.calendarEvents,'+++++++++++calender events')
     if (this.searchTerm) {
       return this.filtered_calendar_events(this.searchTerm)
     }
@@ -531,7 +536,6 @@ export default class Calendar extends Vue {
 
   goToDate (date) {
     if (date) {
-      console.log(date, new Date(date), '+++++++++++++++++++++++')
       this.listView = false
       this.type = 'category'
       this.categoryDays = 1
@@ -586,7 +590,6 @@ export default class Calendar extends Vue {
   }
 
   selectEvent (event) {
-    console.log(event,'+++++++++++++++++++++++++++++++++++++++++++###############################', this.$store.state.user.office.timezone.timezone_name)
     // setting format date time for events
     // const date = moment.tz(event.date, this.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD')
     // const time = moment.tz(event.time, this.$store.state.user.office.timezone.timezone_name).format('HH:mm:ssZ')
@@ -632,7 +635,6 @@ export default class Calendar extends Vue {
         // const endTime = moment.tz(event.start, this.$store.state.user.office.timezone.timezone_name).add(number_of_hours, 'h')
         //   .add(number_of_minutes, 'm')
         event.end = endTime
-        console.log(event, '++++++++++++++++++!!!!!!!!!!!!!!!!++++++++++_)')
         this.setClickedDate(event)
         // TOCHECK removed new keyword in moment. not needed
         //  start: new moment(event.start),
@@ -881,24 +883,20 @@ export default class Calendar extends Vue {
 
   async getCategoryList (flag) {
     this.categories = []
-    console.log(flag,'+++++++++++++++++++++++++++++++++++>flag')
     await this.getRooms()
     this.roomResources.forEach(each => {
           if (each.title) {
             if (flag == false) {
               if (each.id !== '_offsite'){
-                console.log('hereeeeeeeeeeeeeeee---1', each)
                    this.categories.push(each.title)
               }
             }
             else if (flag === 'offsite-only') {
               if (each.id === '_offsite'){
-                console.log('hereeeeeeeeeeeeeeee---2', each)
                    this.categories.push(each.title)
               }
             } else if (flag === 'both')
              {
-               console.log('hereeeeeeeeeeeeeeee---3', each)
               this.categories.push(each.title)
             }
           }
@@ -909,6 +907,12 @@ export default class Calendar extends Vue {
     this.setCalendarSetup(null)
     this.toggleScheduling(false)
     document.removeEventListener('keydown', this.filterKeyPress)
+  }
+
+  created () {
+    showBookingFlagBus.$on(ShowBookingFlagBusEvents.ShowBookingFlagEvent, (flag: boolean) =>{
+      this.show_loading = flag
+    })
   }
 }
 

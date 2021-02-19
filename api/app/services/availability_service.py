@@ -178,11 +178,10 @@ class AvailabilityService():
             formatted_date = app.start_time.astimezone(pytz.timezone(timezone)).strftime('%m/%d/%Y')
             if not filtered_appointments.get(formatted_date, None):
                 filtered_appointments[formatted_date] = []
-            # print('app.blackout_flag', app.blackout_flag)
             filtered_appointments[formatted_date].append({
                 'start_time': app.start_time.astimezone(pytz.timezone(timezone)).time(),
                 'end_time': app.end_time.astimezone(pytz.timezone(timezone)).time(),
-                'blackout_flag': app.blackout_flag == 'Y',
+                'blackout_flag': app.blackout_flag == 'Y' or app.stat_flag,
                 'is_dlkt': (app.service.is_dlkt == YesNo.YES) if app.service else False
             })
         return filtered_appointments

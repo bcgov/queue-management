@@ -61,9 +61,16 @@
       <b-form-row v-if="checkRecurringStatStatus">
         <b-col>
           <b-form-group class="mb-0 mt-2">
-            <label class="mb-0">Edit or Cancel Recurring STAT Series?</label><br />
+            <label v-if="is_Support" class="mb-0">Edit or Cancel Recurring STAT Series?</label>
+            <label v-else class="mb-0">View STAT?</label>
+            <br />
             <b-button class="w-100 btn-secondary" @click="editStatSeries">
-              Edit Recurring STAT Series
+              <span v-if="is_Support" >
+                Edit Recurring STAT Series
+              </span>
+              <span v-else>
+                View STAT
+              </span>
             </b-button>
           </b-form-group>
         </b-col>
@@ -87,6 +94,8 @@ export default class CheckInModal extends Vue {
   @appointmentsModule.State('showCheckInModal') private showCheckInModal!: any
   @appointmentsModule.State('showServeCitizenSpinner') private showServeCitizenSpinner!: any
   @appointmentsModule.State('checkInClicked') private checkInClicked!: any
+
+  @appointmentsModule.Getter('is_Support') private is_Support!: any;
 
   @appointmentsModule.Action('getAppointments') public getAppointments: any
   @appointmentsModule.Action('postCheckIn') public postCheckIn: any

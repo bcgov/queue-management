@@ -19,14 +19,20 @@
       <div class="d-flex flex-row-reverse">
         <b-button
           class="disabled btn-primary ml-2"
-          v-if="submitDisabled"
+          v-if="(submitDisabled) && (!submitStat)"
           @click="validate = true"
-          >Submit</b-button
+          >Submit1</b-button
         >
         <b-button
           class="btn-primary ml-2"
           @click="submit"
-          v-if="!submitDisabled"
+          v-if="(!submitDisabled) && (!submitDisabled)"
+          >Submit</b-button
+        >
+        <b-button
+          class="btn-primary ml-2"
+          @click="submitSingleStat"
+          v-if="(submitStat) && (is_Support)"
           >Submit</b-button
         >
         <b-button @click="cancel()">Cancel</b-button>
@@ -191,8 +197,6 @@
       <!--  End of the Notes row. -->
     </b-form>
     <b-form autocomplete="off" v-if="stat_flag">
-      HERE
-      {{citizen_name}}
       <!--  Citizen Name and Contact Info row -->
       <b-form-row>
         <b-col cols="6">
@@ -224,11 +228,20 @@
             <b-form-input :value="displayDate" disabled />
           </b-form-group>
         </b-col>
+      </b-form-row> 
+      <b-form-row>
+        <b-col >
+          <b-form-group class="mb-0 mt-2">
+            <label class="mb-0">Note</label><br />
+            <b-form-input v-if="is_Support" v-model="comments" />
+            <b-form-input v-else :value="comments" disabled/>
+          </b-form-group>
+        </b-col>
       </b-form-row>
       <!--  End of the Time and Date row. -->
 
       <!--  The Date/Time row -->
-      <b-form-row>
+      <b-form-row v-if="is_Support">
         <!--  Column to delete blackout period or series (if a clicked appointment?) -->
         <b-col v-if="clickedAppt">
           <b-form-group class="mb-0 mt-2">
@@ -242,7 +255,7 @@
                   @click="deleteAppt"
                   class="btn-danger w-100"
                 >
-                  Delete Stat
+                  Delete STAT
                 </b-button>
               </v-col>
             </b-row>
@@ -252,7 +265,7 @@
                     @click="deleteRecurringAppts"
                     class="btn-danger w-100"
                   >
-                    Delete Stat Series from this Office
+                    Delete STAT Series from this Office
                   </b-button>
               </v-col>
             </b-row>
@@ -262,7 +275,7 @@
                     @click="deleteRecurringStatAppts"
                     class="btn-danger w-100"
                   >
-                    Delete All Stat Series
+                    Delete All STAT Series
                   </b-button>
               </v-col>
             </b-row>
@@ -281,10 +294,10 @@
 </template>
 
 <script lang="ts">
-
+ /* eslint-disable */
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import moment from 'moment'
-import { namespace } from 'vuex-class'
+import { Action, namespace } from 'vuex-class'
 
 const appointmentsModule = namespace('appointmentsModule')
 
@@ -304,6 +317,8 @@ export default class ApptBookingModal extends Vue {
 
   @appointmentsModule.Getter('services') private services!: any
   @appointmentsModule.Getter('appointment_events') private appointment_events!: any
+  @appointmentsModule.Getter('is_Support') private is_Support!: any;
+
 
   @appointmentsModule.Action('clearAddModal') public clearAddModal: any
   @appointmentsModule.Action('deleteAppointment') public deleteAppointment: any
@@ -323,6 +338,10 @@ export default class ApptBookingModal extends Vue {
   @appointmentsModule.Mutation('toggleApptBookingModal') public toggleApptBookingModal: any
   @appointmentsModule.Mutation('toggleEditDeleteSeries') public toggleEditDeleteSeries: any
   @appointmentsModule.Mutation('toggleSubmitClicked') public toggleSubmitClicked: any
+  @Action('deleteRecurringStatBooking') public deleteRecurringStatBooking: any
+  @Action('deleteRecurringBooking') public deleteRecurringBooking: any
+  @Action('finishBooking') public finishBooking: any
+  
 
   public baseEnd: any = null
   public booking: boolean = false
@@ -339,7 +358,8 @@ export default class ApptBookingModal extends Vue {
   public validate: boolean = false
   public online_flag: boolean = false
   public allow_reschedule : boolean = false
-  public stat_flag: boolean = false
+  public stat_flag: boolean = false 
+  public stat_single_edit: boolean = false
 
 
   get appointments () {
@@ -442,6 +462,13 @@ export default class ApptBookingModal extends Vue {
     return true
   }
 
+  get submitStat () {
+    if (this.stat_flag) {
+      return true
+    }
+    return false
+  }
+
   get validated () {
     const output: any = {}
     if (!this.citizen_name) {
@@ -502,6 +529,9 @@ export default class ApptBookingModal extends Vue {
   deleteRecurringAppts () {
     this.$store.commit('toggleServeCitizenSpinner', true)
     this.deleteRecurringAppointments(this.clickedAppt.recurring_uuid).then(() => {
+      this.deleteRecurringStatBooking(this.clickedAppt.recurring_uuid).then(() => {
+        this.finishBooking()
+      })
       this.cancel()
       this.$store.commit('toggleServeCitizenSpinner', false)
     })
@@ -510,6 +540,9 @@ export default class ApptBookingModal extends Vue {
   deleteRecurringStatAppts () {
     this.$store.commit('toggleServeCitizenSpinner', true)
     this.deleteRecurringStatAppointments(this.clickedAppt.recurring_uuid).then(() => {
+      this.deleteRecurringBooking(this.clickedAppt.recurring_uuid).then(() => {
+        this.finishBooking()
+      })
       this.cancel()
       this.$store.commit('toggleServeCitizenSpinner', false)
     })
@@ -564,7 +597,6 @@ export default class ApptBookingModal extends Vue {
         this.contact_information = this.clickedAppt.contact_information
         this.length = this.clickedAppt.end.clone().diff(this.clickedAppt.start, 'minutes')
         this.online_flag = this.clickedAppt.online_flag
-        console.log(this.clickedAppt, '++++app')
         this.stat_flag = this.clickedAppt.stat_flag
         const { service_id } = this.clickedAppt
         this.setSelectedService(service_id)
@@ -593,7 +625,6 @@ export default class ApptBookingModal extends Vue {
       this.start = this.clickedAppt.start.clone()
       this.length = this.clickedAppt.end.clone().diff(this.start, 'minutes')
       this.online_flag = this.clickedAppt.online_flag
-      console.log(this.clickedAppt, '++++app---2')
       this.stat_flag = this.clickedAppt.stat_flag
       const { service_id } = this.clickedAppt
       this.setSelectedService(service_id)
@@ -636,35 +667,51 @@ export default class ApptBookingModal extends Vue {
           id: this.clickedAppt.appointment_id,
           data: e
         }
-        if (this.editDeleteSeries === true) {
-          // IFF further fields are added to the appointment model that are intended to be edited,
-          // and they belong to blackouts, and them to the following object below. Ensure that dates are
-          // not included as all events in this series will be under the start/end time of the event
-          // that is clicked in the calendar
-          this.toggleEditDeleteSeries(false)
-          const re_e: any = {
-            comments: this.comments
-          }
-          const re_payload = {
-            id: this.clickedAppt.appointment_id,
-            data: re_e,
-            recurring_uuid: this.clickedAppt.recurring_uuid
-          }
-          this.putRecurringAppointment(re_payload).then(() => {
-            this.getAppointments().then(() => {
-              finish()
-              this.$store.commit('toggleServeCitizenSpinner', false)
+        if (!this.stat_single_edit) {
+          if (this.editDeleteSeries === true) {
+            // IFF further fields are added to the appointment model that are intended to be edited,
+            // and they belong to blackouts, and them to the following object below. Ensure that dates are
+            // not included as all events in this series will be under the start/end time of the event
+            // that is clicked in the calendar
+            this.toggleEditDeleteSeries(false)
+            const re_e: any = {
+              comments: this.comments
+            }
+            const re_payload = {
+              id: this.clickedAppt.appointment_id,
+              data: re_e,
+              recurring_uuid: this.clickedAppt.recurring_uuid
+            }
+            this.putRecurringAppointment(re_payload).then(() => {
+              this.getAppointments().then(() => {
+                finish()
+                this.$store.commit('toggleServeCitizenSpinner', false)
+              })
             })
-          })
-        } else {
-          this.putAppointment(payload).then(() => {
-            this.getAppointments().then(() => {
-              finish()
-              this.$store.commit('toggleServeCitizenSpinner', false)
-              setTimeout(() => { this.toggleSubmitClicked(false) }, 2000)
+          } else {
+            this.putAppointment(payload).then(() => {
+              this.getAppointments().then(() => {
+                finish()
+                this.$store.commit('toggleServeCitizenSpinner', false)
+                setTimeout(() => { this.toggleSubmitClicked(false) }, 2000)
+              })
             })
-          })
-        }
+          }
+        }  
+        if (this.stat_single_edit) {
+            const stat_payload = {
+                id: this.clickedAppt.appointment_id,
+                data: {comments: this.comments}
+            }
+          this.putAppointment(stat_payload).then(() => {
+              this.getAppointments().then(() => {
+                finish()
+                this.$store.commit('toggleServeCitizenSpinner', false)
+                this.stat_single_edit= true
+                setTimeout(() => { this.toggleSubmitClicked(false) }, 2000)
+              })
+            })
+        } 
         return
       }
       this.postAppointment(e).then(() => {
@@ -675,6 +722,12 @@ export default class ApptBookingModal extends Vue {
         })
       })
     }
+  }
+
+  submitSingleStat (){
+    this.stat_single_edit= true
+    this.submit()
+
   }
 
   mounted () {

@@ -23,6 +23,8 @@ from app.auth.auth import jwt
 
 @api.route("/appointments/all-stat/<string:id>", methods=["DELETE"])
 class AppointmentRecurringDelete(Resource):
+    #for stat- to avoid multiple api call
+    #delete STAT from all office
 
     appointment_schema = AppointmentSchema()
 

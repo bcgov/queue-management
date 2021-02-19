@@ -149,6 +149,19 @@ export const commonActions: any = {
     })
   },
 
+  deleteRecurringStatBooking (context, id) {
+    return new Promise((resolve, reject) => {
+      Axios(context)
+        .delete(`/bookings/recurring/current-office/${id}`)
+        .then(resp => {
+          resolve(resp.data)
+        })
+        .catch(error => {
+          reject(error)
+        })
+    })
+  },
+
   deleteExam (context, id) {
     return new Promise((resolve, reject) => {
       Axios(context)
@@ -633,7 +646,7 @@ export const commonActions: any = {
   getOfficeRooms (context, data) {
     return new Promise((resolve, reject) => {
     Axios(context)
-      .get(`/rooms-office/?office_id=${data['office_id']}`)
+      .get(`/rooms/?office_id=${data['office_id']}`)
       .then(resp => {
         let resources: any = []
           if (resp.data.rooms.length > 0) {
