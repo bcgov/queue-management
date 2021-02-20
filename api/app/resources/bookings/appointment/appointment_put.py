@@ -105,7 +105,7 @@ class AppointmentPut(Resource):
         # Send confirmation email
         try:
             pprint('Sending email for appointment update')
-            send_email(generate_ches_token(), *get_confirmation_email_contents(appointment, office, office.timezone, user))
+            send_email(None, *get_confirmation_email_contents(appointment, office, office.timezone, user))
         except Exception as exc:
             pprint(f'Error on token generation - {exc}')
 

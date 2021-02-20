@@ -12,43 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Auth."""
-from typing import Dict
 
 from flask_jwt_oidc import JwtManager
-from flask_jwt_oidc.exceptions import AuthError
-from jose import jwt as jwt_parser
+
 
 jwt = JwtManager()
-
-
-def decode_token(token: str) -> Dict:
-    """Validate the token"""
-    try:
-        unverified_header = jwt_parser.get_unverified_header(token)
-    except jwt_parser.JWTError as jerr:
-        raise AuthError({'code': 'invalid_header',
-                         'description':
-                             'Invalid header. '
-                             'Use an RS256 signed JWT Access Token'}, 401) from jerr
-
-    rsa_key = jwt.get_rsa_key(jwt.get_jwks(), unverified_header['kid'])
-
-    if not rsa_key:
-        raise AuthError({'code': 'invalid_header',
-                         'description': 'Unable to find jwks key referenced in token'}, 401)
-
-    try:
-        payload = jwt_parser.decode(
-            token,
-            rsa_key,
-            algorithms=jwt.algorithms,
-            audience=jwt.audience,
-            issuer=jwt.issuer
-        )
-    except Exception as exc:
-        raise AuthError({'code': 'invalid_header',
-                         'description':
-                             'Unable to parse authentication'
-                             ' token.'}, 401) from exc
-
-    return payload
