@@ -1149,6 +1149,8 @@ export default class AppointmentBlackoutModal extends Vue {
     this.stat_dates = [{note:""}]
     this.stat_submit = false
     this.show_stat_next = false
+    this.show_next = true
+
     this.hideCollapse('collapse-single-event')
     this.hideCollapse('collapse-recurring-stat')
   }
@@ -1170,6 +1172,7 @@ export default class AppointmentBlackoutModal extends Vue {
     this.stat_dates = [{note:""}]
     this.stat_submit = false
     this.show_stat_next = false
+    this.show_next = true
 
     this.hideCollapse('collapse-recurring-events')
     this.hideCollapse('collapse-recurring-stat')
@@ -1197,6 +1200,8 @@ export default class AppointmentBlackoutModal extends Vue {
     this.end_time = null
     this.recurring_input_state = ''
     this.single_input_state = ''
+    this.show_next = true
+
     this.hideCollapse('collapse-single-event')
     this.hideCollapse('collapse-recurring-events')
   }
