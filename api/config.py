@@ -32,6 +32,9 @@ class BaseConfig(object):
     SOCKET_STRING = os.getenv('LOG_SOCKETIO', 'WARNING')
     ENGINE_STRING = os.getenv('LOG_ENGINEIO', 'WARNING')
 
+    #   Set up OIDC variables.
+    SECRET_KEY = os.getenv('SECRET_KEY')
+    
     # #   Set up OIDC variables.
     # SECRET_KEY = os.getenv('SECRET_KEY')
     # OIDC_OPENID_REALM = os.getenv('OIDC_OPENID_REALM','nest')
