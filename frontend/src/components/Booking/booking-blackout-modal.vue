@@ -106,7 +106,7 @@
         >
           Next
         </b-button>
-        <b-button 
+        <b-button
           v-else-if="(this.show_stat_next)"
           variant="primary"
           class="w-100 ml-2"
@@ -325,9 +325,9 @@
                   </b-col>
                   <b-col cols="1">
                     <!--   Remove Icon-->
-                    <b-button 
-                    variant="outline-danger" 
-                    pill 
+                    <b-button
+                    variant="outline-danger"
+                    pill
                     size="sm"
                     v-show="stat_dates.length > 1"
                     @click="removeField(index, stat_dates)"
@@ -340,9 +340,9 @@
                   </b-col>
                   <b-col cols="1">
                     <!--   Add Icon-->
-                    <b-button 
-                    variant="outline-primary" 
-                    pill 
+                    <b-button
+                    variant="outline-primary"
+                    pill
                     size="sm"
                     v-show="(stat_dates.length === (index+1))"
                      @click="addField(input, stat_dates)"
@@ -374,7 +374,7 @@
                     </b-form-checkbox-group>
                   </b-col>
                 </b-form-row>
-              </div>    
+              </div>
               </b-form-group>
           </b-form-row>
         </b-card>
@@ -609,7 +609,6 @@
                 v-b-toggle.recurring-dates-collapse
               >
                 View Recurring Dates ({{ this.booking_rrule_array.length }})
-                
               </b-button>
             </b-col>
           </b-form-row>
@@ -991,7 +990,7 @@ export default class BookingBlackoutModal extends Vue {
     const start_date_office = moment.tz(date + ' ' + start, this.$store.state.user.office.timezone.timezone_name).format()
     const end_date_office = moment.tz(date + ' ' + end, this.$store.state.user.office.timezone.timezone_name).format()
     const uuidv4 = require('uuid/v4')
-    let axiosArray = []
+    let axiosArray: any = []
     const recurring_uuid = uuidv4()
     if (this.booking_rrule_array.length === 0) {
       if (this.room_id_list.length === 1) {
@@ -1405,7 +1404,7 @@ export default class BookingBlackoutModal extends Vue {
     // const end_date = moment.tz(date + ' ' + start, this.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
     const uuidv4 = require('uuid/v4')
     const recurring_uuid = uuidv4()
-    let axiosArray = []
+    let axiosArray: any = []
     let rrule_ind = 0
     const all_offices = await this.getOffices()
     const stat_user_name = this.stat_user_name

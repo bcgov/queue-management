@@ -40,7 +40,7 @@
     </template>
     <span v-if="this.editDeleteSeries && !stat_flag" style="font-size: 1.75rem"
       >Book Service Appointment Series</span
-    > 
+    >
     <span v-if="this.editDeleteSeries && stat_flag" style="font-size: 1.75rem"
       >Recurring STAT</span
     >
@@ -228,7 +228,7 @@
             <b-form-input :value="displayDate" disabled />
           </b-form-group>
         </b-col>
-      </b-form-row> 
+      </b-form-row>
       <b-form-row>
         <b-col >
           <b-form-group class="mb-0 mt-2">
@@ -294,7 +294,7 @@
 </template>
 
 <script lang="ts">
- /* eslint-disable */
+/* eslint-disable */
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import moment from 'moment'
 import { Action, namespace } from 'vuex-class'

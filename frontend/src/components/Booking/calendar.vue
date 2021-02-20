@@ -155,7 +155,6 @@ import { showBookingFlagBus, ShowBookingFlagBusEvents } from '../../events/showB
 
 import { formatedStartTime } from '@/utils/helpers'
 import moment from 'moment'
-import { compareAsc } from 'date-fns'
 
 const defaultHoursDuration = 0.5
 const categoryDefaultDays = 7

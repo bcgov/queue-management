@@ -5,7 +5,7 @@
   no-close-on-esc
   hide-header
   hide-footer
-  centered 
+  centered
   >
   <div>
     <div class="ml-3 my-3 no-exam-notice">
@@ -20,8 +20,8 @@
 </template>
 
 <script lang="ts">
-import { apiProgressBus, APIProgressBusEvents } from '../../../events/progressBus'
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { APIProgressBusEvents, apiProgressBus } from '../../../events/progressBus'
+import { Component, Vue } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
 const appointmentsModule = namespace('appointmentsModule')
 @Component
@@ -32,11 +32,11 @@ export default class ApptBookingModal extends Vue {
   private value: number = 50;
   private flag: boolean = true;
 
-  created() { 
+  created () {
     this.max = this.getApiTotalCount
-    apiProgressBus.$on(APIProgressBusEvents.APIProgressEvent, (count: number) => { 
-       this.value = this.value + count
-       })
+    apiProgressBus.$on(APIProgressBusEvents.APIProgressEvent, (count: number) => {
+      this.value = this.value + count
+    })
   }
 }
 </script>
