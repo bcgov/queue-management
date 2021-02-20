@@ -44,6 +44,7 @@ class Booking(Base):
     blackout_flag = db.Column(db.String(1), default='N', nullable=False)
     blackout_notes = db.Column(db.String(255), nullable=True)
     recurring_uuid = db.Column(db.String(255), nullable=True)
+    stat_flag = db.Column(db.Boolean, default=False, nullable=False)
 
     room = db.relationship("Room")
     invigilators = db.relationship("Invigilator", secondary=booking_invigilators)

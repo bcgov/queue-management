@@ -46,6 +46,7 @@ class AppointmentPost(Resource):
     def post(self):
         my_print("==> In AppointmentPost, POST /appointments/")
         json_data = request.get_json()
+        
         if not json_data:
             return {"message": "No input data received for creating an appointment"}, 400
 
@@ -56,7 +57,11 @@ class AppointmentPost(Resource):
             Appointment.delete_draft([draft_id_to_delete])
             if not application.config['DISABLE_AUTO_REFRESH']:
                 socketio.emit('appointment_delete', draft_id_to_delete)
-
+        #for stat
+        if (json_data.get('stat_office_id', False)):
+            json_data['office_id'] = json_data.get('stat_office_id')
+        
+        # remove below code, once code is tested - new req --> Stop blackouts from cancelling items (offices will call and cancel people individually if we have to close)
         is_blackout_appt = json_data.get('blackout_flag', 'N') == 'Y'
         csr = None
         user = None
@@ -64,7 +69,7 @@ class AppointmentPost(Resource):
 
         #  Create a citizen for later use.
         citizen = self.citizen_schema.load({}).data
-
+        
         # Check if the appointment is created by public user. Can't depend on the IDP as BCeID is used by other users as well
         is_public_user_appointment = is_public_user()
         if is_public_user_appointment:
@@ -98,6 +103,12 @@ class AppointmentPost(Resource):
                 return {"code": "CONFLICT_APPOINTMENT",
                         "message": "Cannot create appointment due to scheduling conflict.  Please pick another time."}, 400
 
+        elif (json_data.get('stat_flag', False)):
+            #for stat
+            csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
+            office_id = json_data.get('office_id', csr.office_id)
+            office = Office.find_by_id(office_id)
+
         else:
             csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
             office_id = csr.office_id
@@ -109,11 +120,11 @@ class AppointmentPost(Resource):
         citizen.cs_id = citizen_state.cs_id
         citizen.start_time = datetime.now()
         citizen.service_count = 1
-
         db.session.add(citizen)
         db.session.commit()
 
         appointment, warning = self.appointment_schema.load(json_data)
+        
         if is_public_user_appointment:
             appointment.citizen_name = user.display_name
             appointment.online_flag = True
@@ -126,38 +137,41 @@ class AppointmentPost(Resource):
             appointment.citizen_id = citizen.citizen_id
             db.session.add(appointment)
             db.session.commit()
-
             # Generate CHES token
             try:
                 ches_token = generate_ches_token()
             except Exception as exc:
                 pprint(f'Error on token generation - {exc}')
 
-            # If staff user is creating a blackout event then send email to all of the citizens with appointments for that period
+            #below feature inside if is no longer needed - new reqmt -> Stop blackouts from cancelling items (offices will call and cancel people individually if we have to close)
+            # once tested remove below if statement and adjust Indentation of code inside else statement.
             if is_blackout_appt:
-                appointment_ids_to_delete = []
-                appointments_for_the_day = Appointment.get_appointment_conflicts(office_id, json_data.get('start_time'),
-                                                                                 json_data.get('end_time'))
-                for (cancelled_appointment, office, timezone, user) in appointments_for_the_day:
-                    if cancelled_appointment.appointment_id != appointment.appointment_id and not cancelled_appointment.checked_in_time:
-                        appointment_ids_to_delete.append(cancelled_appointment.appointment_id)
+                # If staff user is creating a blackout event then send email to all of the citizens with appointments for that period
+                # appointment_ids_to_delete = []
+                # appointments_for_the_day = Appointment.get_appointment_conflicts(office_id, json_data.get('start_time'),
+                #                                                                  json_data.get('end_time'))
+                # for (cancelled_appointment, office, timezone, user) in appointments_for_the_day:
+                #     if cancelled_appointment.appointment_id != appointment.appointment_id and not cancelled_appointment.checked_in_time:
+                #         appointment_ids_to_delete.append(cancelled_appointment.appointment_id)
 
-                        # Send blackout email
-                        try:
-                            pprint('Sending email for appointment cancellation due to blackout')
-                            send_email(ches_token,
-                                       *get_blackout_email_contents(appointment, cancelled_appointment, office, timezone,
-                                                                    user))
-                        except Exception as exc:
-                            pprint(f'Error on email sending - {exc}')
+                #         # Send blackout email
+                #         try:
+                #             pprint('Sending email for appointment cancellation due to blackout')
+                #             send_email(ches_token,
+                #                        *get_blackout_email_contents(appointment, cancelled_appointment, office, timezone,
+                #                                                     user))
+                #         except Exception as exc:
+                #             pprint(f'Error on email sending - {exc}')
 
-                # Delete appointments
-                if len(appointment_ids_to_delete) > 0:
-                    Appointment.delete_appointments(appointment_ids_to_delete)
+                # # Delete appointments
+                # if len(appointment_ids_to_delete) > 0:
+                #     Appointment.delete_appointments(appointment_ids_to_delete)
+                pass
 
             else:
                 # Send confirmation email and sms
                 try:
+                    ches_token = generate_ches_token()
                     pprint('Sending sms and emails for appointment confirmation')
                     send_email(ches_token, *get_confirmation_email_contents(appointment, office, office.timezone, user))
                     send_sms(appointment, office, office.timezone, user,

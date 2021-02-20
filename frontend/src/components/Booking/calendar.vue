@@ -91,6 +91,7 @@
             interval-count="17"
             :type="type"
             category-show-all
+            :categories="categories"
             :category-days="categoryDays"
             :events="events"
             :event-overlap-mode="mode"
@@ -104,7 +105,6 @@
             event-text-color=""
           ></v-calendar>
         </v-sheet>
-
         <div
           class="w-50 mt-2 ml-3 pl-3"
           style="display: flex; justify-content: space-between"
@@ -127,19 +127,22 @@
         <BookingBlackoutModal
           v-if="showBookingBlackoutModal"
         ></BookingBlackoutModal>
+        <LoadingModal v-if="show_loading" />
       </div>
     </div>
   </v-app>
 </template>
 
 <script lang="ts">
-// /* eslint-disable */
+/* eslint-disable */
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 // import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 
 import BookingBlackoutModal from './booking-blackout-modal.vue'
 import BookingModal from './booking-modal.vue'
+import LoadingModal from './loading.vue'
+
 
 import DropdownCalendar from './dropdown-calendar.vue'
 import EditBookingModal from './edit-booking-modal.vue'
@@ -148,9 +151,11 @@ import OfficeDropDownFilter from '../exams/office-dropdown-filter.vue'
 import OtherBookingModal from './other-booking-modal.vue'
 import { adjustColor } from '../../store/helpers'
 import filterCards from './filterCards.vue'
+import { showBookingFlagBus, ShowBookingFlagBusEvents } from '../../events/showBookingFlagBus'
 
 import { formatedStartTime } from '@/utils/helpers'
 import moment from 'moment'
+import { compareAsc } from 'date-fns'
 
 const defaultHoursDuration = 0.5
 const categoryDefaultDays = 7
@@ -165,7 +170,8 @@ const WEEKEND_STRINGS = ['SAT', 'SUN']
     EditBookingModal,
     ExamInventoryModal,
     OtherBookingModal,
-    filterCards
+    filterCards,
+    LoadingModal
   }
 })
 export default class Calendar extends Vue {
@@ -256,7 +262,8 @@ export default class Calendar extends Vue {
   eventsList: any = []
   currentDay: any = moment().format('YYYY-MM-DD')// new Date()
 
-  categories: any = this.roomResources // [] // 'Boardroom 1'
+  categories: any = [] // [] // 'Boardroom 1'
+  show_loading: boolean = false
 
   updated () {
     this.disableSatSun();
@@ -480,15 +487,17 @@ export default class Calendar extends Vue {
     // vuetify will accept only date  instance / string / epoch
     const currentEvent = { ...selectedEvent.event }
     // console.log('event', event)
-
     currentEvent.start = moment(currentEvent.start)
     currentEvent.end = moment(currentEvent.end)
+    // currentEvent.start = moment.tz(currentEvent.start, this.$store.state.user.office.timezone.timezone_name)
+    // currentEvent.end = moment.tz(currentEvent.start, this.$store.state.user.office.timezone.timezone_name)
 
     if (this.scheduling || this.rescheduling || currentEvent.resourceId === '_offsite') {
       return
     }
     if (this.type !== 'category') {
       this.goToDate(currentEvent.start)
+      // this.goToDate(moment.tz(currentEvent.start, this.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'))
       this.agendaDay()
       this.searchTerm = ''
     }
@@ -582,6 +591,9 @@ export default class Calendar extends Vue {
 
   selectEvent (event) {
     // setting format date time for events
+    // const date = moment.tz(event.date, this.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD')
+    // const time = moment.tz(event.time, this.$store.state.user.office.timezone.timezone_name).format('HH:mm:ssZ')
+    //  const start = formatedStartTime(date, time)// event.start.clone()
     const start = formatedStartTime(event.date, event.time)// event.start.clone()
     event.start = start
 
@@ -592,6 +604,7 @@ export default class Calendar extends Vue {
     }
     // setting default end time
     event.end = moment(event.start).add(defaultHoursDuration, 'h')
+    // event.end = moment.tz(event.start, this.$store.state.user.office.timezone.timezone_name).add(defaultHoursDuration, 'h')
 
     const resourceDetails = this.roomResources.find(cat => {
       return cat.title === event.category
@@ -603,6 +616,7 @@ export default class Calendar extends Vue {
     if (this.type === 'month') {
       // overrides the default behavior (sets event=all day event on the day) to a view change instead
       this.goToDate(event.start.local())
+      // this.goToDate(moment.tz(event.start, this.$store.state.user.office.timezone.timezone_name))
       this.agendaDay()
       return
     }
@@ -618,6 +632,8 @@ export default class Calendar extends Vue {
         // const endTime = new moment(event.start).add(number_of_hours, 'h')
         const endTime = moment(event.start).add(number_of_hours, 'h')
           .add(number_of_minutes, 'm')
+        // const endTime = moment.tz(event.start, this.$store.state.user.office.timezone.timezone_name).add(number_of_hours, 'h')
+        //   .add(number_of_minutes, 'm')
         event.end = endTime
         this.setClickedDate(event)
         // TOCHECK removed new keyword in moment. not needed
@@ -626,6 +642,8 @@ export default class Calendar extends Vue {
         const tempEvent = {
           start: moment(event.start),
           end: moment(event.end),
+          // start: moment.tz(event.start, this.$store.state.user.office.timezone.timezone_name),
+          // end: moment.tz(event.end, this.$store.state.user.office.timezone.timezone_name),
           title: '(NEW TIME) ' + booking.title,
           borderColor: event.resource.eventColor,
           backgroundColor: 'white',
@@ -642,6 +660,9 @@ export default class Calendar extends Vue {
       // change to moment time
       booking.end = !moment.isMoment(booking.end) ? moment(booking.end) : booking.end
       booking.start = !moment.isMoment(booking.start) ? moment(booking.start) : booking.start
+      // booking.end = !moment.isMoment(booking.end) ? moment.tz(booking.end, this.$store.state.user.office.timezone.timezone_name) : booking.end
+      // booking.start = !moment.isMoment(booking.start) ? moment.tz(booking.start, this.$store.state.user.office.timezone.timezone_name) : booking.start
+      
       const i = booking.start.clone()
       const f = booking.end.clone()
       // TOCHECK removed new keyword in moment. not needed
@@ -653,7 +674,8 @@ export default class Calendar extends Vue {
       const tempEvent: any = {
         // TOCHECK removed new keyword in moment. not needed
         // start: new moment(event.start),
-        start: moment(event.start),
+        start: moment(event.start), 
+        // start: moment.tz(event.start, this.$store.state.user.office.timezone.timezone_name),
         title: '(NEW TIME) ' + booking.title,
         borderColor: event.resource.eventColor,
         backgroundColor: 'white',
@@ -664,6 +686,7 @@ export default class Calendar extends Vue {
         // TOCHECK removed new keyword in moment. not needed
         // tempEvent.end = new moment(event.start).add(duration, 'h')
         tempEvent.end = moment(event.start).add(duration, 'h')
+        // tempEvent.end = moment.tz(event.start, this.$store.state.user.office.timezone.timezone_name).add(duration, 'h')
       } else {
         // TOCHECK removed new keyword in moment. not needed
         // tempEvent.end = new moment(event.end)
@@ -682,6 +705,7 @@ export default class Calendar extends Vue {
       // TOCHECK removed new keyword in moment. not needed
       // start: new moment(event.start),
       start: moment(event.start),
+      // start: moment.tz(event.start, this.$store.state.user.office.timezone.timezone_name),
       resourceId: event.resource.id,
       id: '_cal$election'
     }
@@ -693,6 +717,9 @@ export default class Calendar extends Vue {
         // selection.end = new moment(event.start).add(this.selectedExam.exam_type.number_of_hours, 'h')
         selection.end = moment(event.start).add(this.selectedExam.exam_type.number_of_hours, 'h')
           .add(this.selectedExam.exam_type.number_of_minutes, 'm')
+        // selection.end = moment.tz(event.start, this.$store.state.user.office.timezone.timezone_name)
+        //   .add(this.selectedExam.exam_type.number_of_hours, 'h')
+        //   .add(this.selectedExam.exam_type.number_of_minutes, 'm')
         selection.title = this.selectedExam.exam_name
         this.removeSavedSelection()
         this.toggleBookingModal(true)
@@ -709,6 +736,8 @@ export default class Calendar extends Vue {
 
     event.start = moment(selection.start)
     event.end = moment(selection.end)
+    // event.start = moment.tz(selection.start, this.$store.state.user.office.timezone.timezone_name)
+    // event.end = moment.tz(selection.end, this.$store.state.user.office.timezone.timezone_name)
 
     this.setClickedDate(event)
   }
@@ -720,6 +749,7 @@ export default class Calendar extends Vue {
   }
 
   toggleOffsiteOnly (mode) {
+    this.getCategoryList(mode)
     if (mode === 'both') {
       if (this.offsiteOnly) {
         // const addRooms = this.roomResources.filter(room => room.id !== '_offsite')
@@ -769,6 +799,7 @@ export default class Calendar extends Vue {
       // this.$refs.bookingcal.fireMethod('removeResource', '_offsite')
       this.setOffsiteOnly(false)
     }
+    this.getCategoryList(bool)
   }
 
   unselect () {
@@ -850,10 +881,38 @@ export default class Calendar extends Vue {
     }
   }
 
+  async getCategoryList (flag) {
+    this.categories = []
+    await this.getRooms()
+    this.roomResources.forEach(each => {
+          if (each.title) {
+            if (flag == false) {
+              if (each.id !== '_offsite'){
+                   this.categories.push(each.title)
+              }
+            }
+            else if (flag === 'offsite-only') {
+              if (each.id === '_offsite'){
+                   this.categories.push(each.title)
+              }
+            } else if (flag === 'both')
+             {
+              this.categories.push(each.title)
+            }
+          }
+        });
+  }
+
   destroyed () {
     this.setCalendarSetup(null)
     this.toggleScheduling(false)
     document.removeEventListener('keydown', this.filterKeyPress)
+  }
+
+  created () {
+    showBookingFlagBus.$on(ShowBookingFlagBusEvents.ShowBookingFlagEvent, (flag: boolean) =>{
+      this.show_loading = flag
+    })
   }
 }
 

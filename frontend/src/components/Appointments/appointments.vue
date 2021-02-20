@@ -61,8 +61,14 @@
                 <v-tooltip bottom class="mytooltip" v-bind:fixed="false" v-bind:nudge-top="150">
                   <template v-slot:activator="{ on }">
                     <div v-on="on" class="ml-2">
-                      {{ date.event.title }} {{ date.eventParsed.start.time }} -
-                      {{ date.eventParsed.end.time }}
+                      <span v-if="date.eventParsed.input.stat_flag && date.eventParsed.input.comments">
+                        {{ date.eventParsed.input.comments }} {{ date.eventParsed.start.time }} -
+                        {{ date.eventParsed.end.time }} 
+                      </span>
+                      <span v-else>
+                        {{ date.event.title }} {{ date.eventParsed.start.time }} -
+                        {{ date.eventParsed.end.time }} 
+                      </span>
                     </div>
                   </template>
                   <div>
@@ -87,12 +93,14 @@
       <ApptBookingModal :clickedTime="clickedTime" :clickedAppt="clickedAppt" />
       <AppointmentBlackoutModal />
       <CheckInModal :clickedAppt="clickedAppt" />
+      <LoadingModal v-if="show_loading" />
     </v-app>
   </fragment>
 </template>
 
 <script lang="ts">
-/* eslint-disable sort-imports */
+ /* eslint-disable */
+// /* eslint-disable sort-imports */
 
 import { Component, Vue } from 'vue-property-decorator'
 
@@ -102,6 +110,8 @@ import AppointmentBlackoutModal from './appt-booking-modal/appt-blackout-modal.v
 
 import ApptBookingModal from './appt-booking-modal/appt-booking-modal.vue'
 
+import LoadingModal from './appt-booking-modal/loading.vue'
+
 import CheckInModal from './checkin-modal.vue'
 import AppointmentsFilter from './appointmentsFilter.vue'
 
@@ -109,6 +119,7 @@ import moment from 'moment'
 
 import { namespace } from 'vuex-class'
 import { formatedStartTime } from '@/utils/helpers'
+import { showFlagBus, ShowFlagBusEvents } from '../../events/showFlagBus'
 
 const appointmentsModule = namespace('appointmentsModule')
 
@@ -122,7 +133,8 @@ const SUNDAY = 1
     AddCitizen,
     CheckInModal,
     ApptBookingModal,
-    AppointmentsFilter
+    AppointmentsFilter,
+    LoadingModal
   }
 })
 export default class Appointments extends Vue {
@@ -155,6 +167,7 @@ export default class Appointments extends Vue {
   @appointmentsModule.State('clickedTime') public clickedTime: any
   @appointmentsModule.Mutation('setAgendaClickedTime') public setAgendaClickedTime: any
 
+  show_loading = false
   // vuetify calender
   listView: any = false
   searchTerm: string = ''
@@ -167,12 +180,11 @@ export default class Appointments extends Vue {
   value: any = ''
   // events: any = []
   currentDay: any = moment().format('YYYY-MM-DD')// new Date()
-
+  
   get events () {
     if (this.searchTerm) {
       return this.filtered_appointment_events(this.searchTerm)
     }
-
     return this.appointment_events
   }
 
@@ -464,6 +476,14 @@ export default class Appointments extends Vue {
     this.$root.$on('removeTempEvent', () => { this.removeTempEvent() })
     this.$root.$on('goToDate', (date) => { this.goToDate(date) })
     this.calendarSetup()
+
+    showFlagBus.$on(ShowFlagBusEvents.ShowFlagEvent, (flag: boolean) =>{
+      this.show_loading = flag
+    }
+        
+      )
+
+
   }
 }
 

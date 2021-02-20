@@ -38,6 +38,7 @@ class Appointment(Base):
     online_flag = db.Column(db.Boolean(), nullable=True, default=False)
     is_draft = db.Column(db.Boolean(), nullable=True, default=False)
     created_at = db.Column(UtcDateTime, nullable=True, default=utcnow())
+    stat_flag = db.Column(db.Boolean, default=False, nullable=False)
 
     office = db.relationship("Office")
     service = db.relationship("Service")
