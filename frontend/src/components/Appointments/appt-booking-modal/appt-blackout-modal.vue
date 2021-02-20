@@ -484,9 +484,9 @@
                   </b-col>
                   <b-col cols="1">
                     <!--   Remove Icon-->
-                    <b-button 
-                    variant="outline-danger" 
-                    pill 
+                    <b-button
+                    variant="outline-danger"
+                    pill
                     size="sm"
                     v-show="stat_dates.length > 1"
                     @click="removeField(index, stat_dates)"
@@ -499,9 +499,9 @@
                   </b-col>
                   <b-col cols="1">
                     <!--   Add Icon-->
-                    <b-button 
-                    variant="outline-primary" 
-                    pill 
+                    <b-button
+                    variant="outline-primary"
+                    pill
                     size="sm"
                     v-show="(stat_dates.length === (index+1))"
                      @click="addField(input, stat_dates)"
@@ -533,7 +533,7 @@
                     </b-form-checkbox-group>
                   </b-col>
                 </b-form-row>
-              </div>    
+              </div>
               </b-form-group>
           </b-form-row>
         </b-card>
@@ -965,7 +965,7 @@ export default class AppointmentBlackoutModal extends Vue {
     const end_date = moment.tz(date + ' ' + end, this.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
     const uuidv4 = require('uuid/v4')
     const recurring_uuid = uuidv4()
-    let axiosArray = []
+    let axiosArray: any = []
     let rrule_ind = 0
     if (this.rrule_array.length > 0) {
        this.rrule_array.forEach(item => {
@@ -1286,7 +1286,7 @@ export default class AppointmentBlackoutModal extends Vue {
     // const end_date = moment.tz(date + ' ' + start, this.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
     const uuidv4 = require('uuid/v4')
     const recurring_uuid = uuidv4()
-    let axiosArray = []
+    let axiosArray: any = []
     let rrule_ind = 0
     const all_offices = await this.getOffices()
     const stat_user_name = this.stat_user_name

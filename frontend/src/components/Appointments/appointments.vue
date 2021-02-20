@@ -63,11 +63,11 @@
                     <div v-on="on" class="ml-2">
                       <span v-if="date.eventParsed.input.stat_flag && date.eventParsed.input.comments">
                         {{ date.eventParsed.input.comments }} {{ date.eventParsed.start.time }} -
-                        {{ date.eventParsed.end.time }} 
+                        {{ date.eventParsed.end.time }}
                       </span>
                       <span v-else>
                         {{ date.event.title }} {{ date.eventParsed.start.time }} -
-                        {{ date.eventParsed.end.time }} 
+                        {{ date.eventParsed.end.time }}
                       </span>
                     </div>
                   </template>
@@ -99,7 +99,7 @@
 </template>
 
 <script lang="ts">
- /* eslint-disable */
+/* eslint-disable */
 // /* eslint-disable sort-imports */
 
 import { Component, Vue } from 'vue-property-decorator'

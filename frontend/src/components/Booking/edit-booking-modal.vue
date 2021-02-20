@@ -522,7 +522,6 @@
                     </b-button>
                   </b-row>
                 </template>
-                
               </b-form-group>
             </b-collapse>
           </b-form-row>
