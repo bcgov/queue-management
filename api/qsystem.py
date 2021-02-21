@@ -20,6 +20,7 @@ from functools import wraps
 from sqlalchemy.exc import SQLAlchemyError
 from app.exceptions import AuthError
 from flask_jwt_oidc.exceptions import AuthError as JwtAuthError
+from jose.exceptions import JOSEError
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 
@@ -358,6 +359,12 @@ def handle_auth_error(ex):
 @api.errorhandler(JwtAuthError)
 def handle_jwt_auth_error(error):
     return error.error, error.status_code
+
+
+@application.errorhandler(JOSEError)
+@api.errorhandler(JOSEError)
+def handle_jose_jwt_error(error):
+    return {}, 401
 
 
 @event.listens_for(Engine, "before_cursor_execute")
