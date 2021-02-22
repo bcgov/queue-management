@@ -3,5 +3,6 @@
   "VUE_APP_ROOT_API": "http://localhost:5000/api/v1",
   "hideBCServicesCard": false,
   "BCEIDRegistrationUrl": "https://www.test.bceid.ca/os/?7521&SkipTo=Basic",
-  "VUE_APP_GOOGLE_STATIC_MAP_API_KEY": "AIzaSyDdUTtNy6pLWILtlqHtcaXsFSprFQ9UroI"
+  "VUE_APP_GOOGLE_STATIC_MAP_API_KEY": "AIzaSyDdUTtNy6pLWILtlqHtcaXsFSprFQ9UroI",
+  "VUE_APP_FEEDBACK_API": "http://localhost:5001/api/v1"
 }

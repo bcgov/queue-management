@@ -6,6 +6,6 @@ const axios = addAxiosInterceptors(Axios.create())
 
 export default class FeedbackService {
   public static async submitFeedback (feedbackBody: FeedbackRequestObject): Promise<AxiosResponse<any>> {
-    return axios.post('http://localhost:5001/api/v1/feedback', feedbackBody)
+    return axios.post(`${ConfigHelper.getFeedbackURL()}/feedback`, feedbackBody)
   }
 }

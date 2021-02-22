@@ -21,13 +21,13 @@
               </v-col>
             </v-col>
             <div>
-              <div class="feedback_area" v-show="showFeedbackArea && !$vuetify.breakpoint.xs">
-                <v-card-text class="align_center">
+              <div class="feedback_area" v-show="!$vuetify.breakpoint.xs">
+                <v-card-text class="align_center" v-show="viewFeebackArea()">
                   <v-form ref="fb-form" v-model="valid">
                     <v-row class="clickable close_btn" v-on:click="toggleFeedback()"><span class="mdi mdi-close"/></v-row>
                     <v-col class="feedback_header"><h3>{{feedbackHeader}}</h3></v-col>
-                    <v-col v-show="!responseRequired">
-                      <v-col justify="center">
+                    <v-col v-show="!showResponsePage || !responseRequired">
+                      <v-col>
                         <v-textarea
                             :maxlength="3000"
                             :label=" +(3000-feedbackMessage.length) + ' characters left'"
@@ -44,12 +44,12 @@
                     <v-col class="feedback_caption response_required">Would you like a response from us?</v-col>
                     <v-row justify="center">
                         <!-- <v-col><input type="radio" v-model="feedbackModel.responseRequired" v-bind:value="yes"><span class="feedback_caption">Yes</span></v-col> -->
-                        <v-radio-group class="no_margin" v-model="responseRequired" row>
+                        <v-radio-group class="no_margin" v-model="responseRequired" row :disabled="feedbackMessage.length === 0">
                           <v-radio  label="Yes" v-bind:value="yes"></v-radio>
-                          <v-radio  label="No" v-bind:value="no" ></v-radio>
+                          <v-radio  label="No" v-bind:value="no" @click="showResponsePage = false" ></v-radio>
                         </v-radio-group>
                     </v-row>
-                    <v-col v-if="responseRequired">
+                    <v-col v-if="showResponsePage && responseRequired">
                       <!-- <v-col class="align_center"><input type="text" class="feedback_text" aria-label="name" label="Name"  v-model="name"></v-col> -->
                       <v-row justify="center" class="align_center"><v-col cols="8"><v-text-field v-model="name" label="Name" outlined dense :rules="nameRules" required></v-text-field></v-col></v-row>
                       <v-row justify="center" class="align_center"><v-col cols="8"><v-text-field v-model="email"  label="Email" outlined dense :rules="emailRules" required></v-text-field></v-col></v-row>
@@ -62,15 +62,46 @@
                         </v-row>
                       <!-- <v-col><input type="radio" v-model="consent" v-bind:value="yes"><span class="feedback_caption">I Consent</span></v-col> -->
                     </v-col>
-                    <v-col class="submit_row">
-                      <v-btn @click="postFeedback"
+                    <v-row class="justify-space-around">
+                      <v-btn v-show="!responseRequired && !showResponsePage" @click="postFeedback"
                               color="primary"
                               width="15em"
                               :disabled="!valid"
                       >Submit</v-btn>
-                    </v-col>
+                      <v-btn v-show="responseRequired && !showResponsePage" @click="toggleResponsePage"
+                              color="primary"
+                              width="15em"
+                      >Next</v-btn>
+                      <v-btn v-show="showResponsePage" @click="toggleResponsePage"
+                              color="primary"
+                              width="7em"
+                      >Back</v-btn>
+                      <v-btn v-show="showResponsePage" @click="postFeedback"
+                              color="primary"
+                              width="7em"
+                              :disabled="!valid"
+                      >Submit</v-btn>
+                    </v-row>
                   </v-form>
                 </v-card-text>
+                <div v-show="submitComplete || submitInProgress" class="response_content">
+                  <v-col class="align-self-center" v-show="submitComplete">
+                    <v-col class="text-center">Thank you!</v-col>
+                    <v-col><v-btn @click="toggleFeedback"
+                              color="primary"
+                              width="15em"
+                      >Close</v-btn>
+                    </v-col>
+                  </v-col>
+                  <v-col class="align-self-center" v-show="submitInProgress">
+                    <v-col class="text-center">Submitting feedback</v-col>
+                    <v-col>
+                      <v-progress-linear
+                        indeterminate
+                      ></v-progress-linear>
+                    </v-col>
+                  </v-col>
+                </div>
               </div>
             </div>
         </v-row>
@@ -81,14 +112,16 @@
                           Your Feedback
                 </div>
         </div>
-        <v-card-text class="align_center" v-show="showFeedbackArea">
+        <v-form ref="fb-form" v-model="valid">
+        <v-card-text class="align_center" v-show="viewFeebackArea()">
             <v-row class="clickable close_btn" v-on:click="toggleFeedback()"><span class="mdi mdi-close"/></v-row>
             <v-col class="feedback_header"><h3>{{feedbackHeader}}</h3></v-col>
-            <v-col v-show="!responseRequired">
+            <v-col v-show="!showResponsePage || !responseRequired">
               <v-col justify="center">
                 <v-textarea
                     :maxlength="3000"
                     :label=" +(3000-feedbackMessage.length) + ' characters left'"
+                    :rules="messageRules"
                     class="mt-3"
                     outlined
                     name="feedback-message"
@@ -99,15 +132,15 @@
             </v-col>
             <v-col class="feedback_caption response_required">Would you like a response from us?</v-col>
             <v-row justify="center">
-                <v-radio-group class="no_margin" v-model="responseRequired" row>
+                <v-radio-group class="no_margin" v-model="responseRequired" row :disabled="feedbackMessage.length === 0">
                   <v-radio  label="Yes" v-bind:value="yes"></v-radio>
-                  <v-radio  label="No" v-bind:value="no" ></v-radio>
+                  <v-radio  label="No" v-bind:value="no" @click="showResponsePage = false"></v-radio>
                 </v-radio-group>
             </v-row>
-            <v-col v-if="responseRequired">
-              <v-row justify="center" class="align_center"><v-col cols="8"><v-text-field v-model="name" label="Name" outlined dense required></v-text-field></v-col></v-row>
-              <v-row justify="center" class="align_center"><v-col cols="8"><v-text-field v-model="email" label="Email" outlined dense required></v-text-field></v-col></v-row>
-              <v-row justify="center" class="align_center"><v-col cols="8"><v-text-field v-model="phone" label="Phone" outlined dense></v-text-field></v-col></v-row>
+            <v-col v-if="showResponsePage && responseRequired">
+              <v-row justify="center" class="align_center"><v-col cols="8"><v-text-field v-model="name" :rules="nameRules" label="Name" outlined dense required></v-text-field></v-col></v-row>
+              <v-row justify="center" class="align_center"><v-col cols="8"><v-text-field v-model="email" :rules="emailRules" label="Email" outlined dense required></v-text-field></v-col></v-row>
+              <v-row justify="center" class="align_center"><v-col cols="8"><v-text-field v-model="phone" :rules="phoneRules" label="Phone" outlined dense></v-text-field></v-col></v-row>
               <v-row justify="center" class="consent_xs"><v-col cols="10">{{consentMessage}}</v-col></v-row>
               <v-row justify="center consent_radio_btn">
                 <v-radio-group class="no_margin" v-model="consent" row>
@@ -115,13 +148,28 @@
                 </v-radio-group>
               </v-row>
             </v-col>
-            <v-col class="submit_row">
-              <v-btn @click="submit()"
+            <v-row class="justify-space-around">
+              <v-btn v-show="!responseRequired && !showResponsePage" @click="postFeedback"
                       color="primary"
                       width="15em"
+                      :disabled="!valid"
               >Submit</v-btn>
-            </v-col>
+              <v-btn v-show="responseRequired && !showResponsePage" @click="toggleResponsePage"
+                      color="primary"
+                      width="15em"
+              >Next</v-btn>
+              <v-btn v-show="showResponsePage" @click="toggleResponsePage"
+                      color="primary"
+                      width="7em"
+              >Back</v-btn>
+              <v-btn v-show="showResponsePage" @click="postFeedback"
+                      color="primary"
+                      width="7em"
+                      :disabled="!valid"
+              >Submit</v-btn>
+            </v-row>
           </v-card-text>
+        </v-form>
           <v-card-text class="fill-height" v-show="showMobileFeedbackPanel">
             <v-col class="fill-height" >
               <v-row>
@@ -133,6 +181,24 @@
               <v-row class="icon_container_xs" justify="center"><v-icon v-on:click="showFeedBack('suggestion')" class="icon_fb_xs">mdi-lightbulb</v-icon></v-row>
             </v-col>
           </v-card-text>
+          <div v-show="submitComplete || submitInProgress" class="response_content max_height">
+                  <v-col class="align-self-center" v-show="submitComplete">
+                    <v-col class="text-center">Thank you!</v-col>
+                    <v-row justify="center"><v-btn @click="toggleFeedback"
+                              color="primary"
+                              width="15em"
+                              :disabled="!valid"
+                      >Close</v-btn></v-row>
+                  </v-col>
+                  <v-col class="align-self-center" v-show="submitInProgress">
+                    <v-col class="text-center">Submitting feedback</v-col>
+                    <v-col>
+                      <v-progress-linear
+                        indeterminate
+                      ></v-progress-linear>
+                    </v-col>
+                  </v-col>
+                </div>
       </v-col>
   </v-col>
 </template>
@@ -182,11 +248,17 @@ import { th } from 'date-fns/locale'
       message: '',
       consent: false,
       responseRequired: false,
-      showMobileFeedbackPanel: false
+      showMobileFeedbackPanel: false,
+      submitComplete: false,
+      submitInProgress: false,
+      showResponsePage: false
     }
   }
 })
 export default class Feedback extends Vue {
+  private submitComplete: boolean
+  private submitInProgress: boolean
+  private showResponsePage: boolean
   private feedbackMessage: string = ''
   private feedbackHeader: string = ''
   private feedbackType: string = ''
@@ -201,15 +273,23 @@ export default class Feedback extends Vue {
   private feedbackResponse: FeedbackResponseObject
   private responseRequired: boolean
   private showMobileFeedbackPanel: boolean = false
-  private readonly submitFeedback!: (feedbackRequest: FeedbackRequestObject) => FeedbackResponseObject
+  private readonly submitFeedback!: (feedbackRequest: FeedbackRequestObject) => any
   private maxLengthCaption: string = (3000 - this.feedbackMessage.length) + ' characters left'
   private consentMessage: string = 'The information on this form is collected under the authority of Sections 26(c) and 27(1)(c) of the Freedom of Information and Protection of Privacy Act to help us assess and respond to your enquiry. Questions about the collection of information can be directed to government’s Privacy Office.'
   private toggleFeedback () {
     this.showFeedbackArea = !this.showFeedbackArea
+    this.submitComplete = false
+    this.submitInProgress = false
     this.feedbackType = ''
     this.responseRequired = false
+    this.clearFields()
+  }
+  private toggleResponsePage () {
+    this.showResponsePage = !this.showResponsePage
   }
   private showFeedBack (feedbackType: string) {
+    this.submitInProgress = false
+    this.submitInProgress = false
     this.feedbackType = feedbackType
     this.responseRequired = false
     if (feedbackType === 'compliment') {
@@ -237,6 +317,7 @@ export default class Feedback extends Vue {
   }
 
   private async postFeedback () {
+    this.submitInProgress = true
     this.initModel()
     this.feedbackRequest.variables.engagement.value = this.feedbackType
     this.feedbackRequest.variables.citizen_comments.value = this.feedbackMessage
@@ -246,13 +327,26 @@ export default class Feedback extends Vue {
     this.feedbackRequest.variables.service_date.value = '2021-02-17'
     this.feedbackRequest.variables.submit_date_time.value = '2021-02-17'
     const resp = await this.submitFeedback(this.feedbackRequest)
-    if (resp) {
-      this.feedbackMessage = 'Re' + resp
-      this.toggleFeedback()
+    if (resp.data.response_code) {
+      this.submitInProgress = false
+      this.submitComplete = true
+      this.clearFields()
     }
   }
 
   private clearFields () {
+    this.feedbackMessage = ''
+    this.name = ''
+    this.email = ''
+    this.phone = ''
+  }
+
+  private viewFeebackArea () {
+    if (this.showFeedbackArea && !this.submitComplete && !this.submitInProgress) {
+      return true
+    } else {
+      return false
+    }
   }
 
   private initModel () {
@@ -430,7 +524,7 @@ $mandatory_star:#ff0000;
 .feedback_view_mobile{
   position: fixed;
   z-index: 5;
-  top: 45%;
+  top: 40%;
   left: 5%;
 }
 .feedback_view_mobile.feedback_view_expanded_xs{
@@ -446,5 +540,24 @@ $mandatory_star:#ff0000;
 .icon_container_xs .v-icon.v-icon {
   font-size: 80px;
   color: $background_selected;
+}
+.response_content{
+  display: flex;
+  min-height: 300px;
+  padding: 20px;
+}
+
+.response_content .col{
+  padding: 10px;
+}
+
+.feedback_view_expanded_xs .col{
+  padding: 5px;
+}
+.max_height{
+  min-height: 100%;
+}
+.padding-10{
+  padding: 10px;
 }
 </style>
