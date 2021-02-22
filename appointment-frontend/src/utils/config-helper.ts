@@ -85,4 +85,7 @@ export default class ConfigHelper {
     }
     return smsEnabled
   }
+  static getFeedbackURL () {
+    return ConfigHelper.getValue('VUE_APP_FEEDBACK_API')
+  }
 }
