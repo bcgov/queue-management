@@ -18,6 +18,7 @@ from flask_socketio import emit, join_room
 from app.auth.auth import jwt
 from app.models.theq import CSR, Office
 from qsystem import socketio, my_print
+from flask_jwt_oidc.exceptions import AuthError
 
 
 @socketio.on('joinRoom')
@@ -72,3 +73,9 @@ def clear_csr_user_id(csr_id):
 @socketio.on('sync_offices_cache')
 def sync_offices_cache():
     Office.clear_offices_cache()
+
+
+@socketio.on_error()
+def error_handler(e):
+    # Passing the execution as it would be an auth error with invalid token.
+    print('Socket error ', e)
