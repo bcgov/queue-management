@@ -19,6 +19,8 @@ from flask_socketio import SocketIO
 from functools import wraps
 from sqlalchemy.exc import SQLAlchemyError
 from app.exceptions import AuthError
+from flask_jwt_oidc.exceptions import AuthError as JwtAuthError
+from jose.exceptions import JOSEError
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 
@@ -350,6 +352,18 @@ def error_handler(e):
 @application.errorhandler(AuthError)
 @api.errorhandler(AuthError)
 def handle_auth_error(ex):
+    return {}, 401
+
+
+@application.errorhandler(JwtAuthError)
+@api.errorhandler(JwtAuthError)
+def handle_jwt_auth_error(error):
+    return error.error, error.status_code
+
+
+@application.errorhandler(JOSEError)
+@api.errorhandler(JOSEError)
+def handle_jose_jwt_error(error):
     return {}, 401
 
 

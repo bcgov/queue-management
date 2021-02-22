@@ -23,6 +23,9 @@ def send_email(token, subject, email, sender, html_body):
     """Send the email asynchronously, using the given details."""
     if not email or not is_valid_email(email):
         return
+    if not token:
+        token = generate_ches_token()
+
     send_email_endpoint = current_app.config.get('CHES_POST_EMAIL_ENDPOINT')
     payload = {
         'bodyType': 'html',
