@@ -6,6 +6,7 @@ import CommonUtils from '@/utils/common-util'
 import { Office } from '@/models/office'
 import OfficeService from '@/services/office.services'
 import { Service } from '@/models/service'
+import { Snowplow } from '@/models/global'
 import { ServiceAvailability } from '@/utils'
 
 @Module({
@@ -24,6 +25,7 @@ export default class OfficeModule extends VuexModule {
   currentAppointmentSlot: AppointmentSlot
   currentAppointment: Appointment
   currentDraftAppointment: Appointment
+  currentSnowPlow: Snowplow
 
   /**
     Mutations in this Module
@@ -235,5 +237,15 @@ export default class OfficeModule extends VuexModule {
     response = await AppointmentService.createDraftAppointment(appointmentBody)
     // }
     return response?.data?.appointment || {}
+  }
+
+  @Action({ rawError: true })
+  public callSnowplow (snowplow: Snowplow): void {
+    console.log('snowplow.appointment_step',snowplow.appointment_step)
+    console.log('snowplow.status',snowplow.status)
+    console.log('snowplow.logged_in',snowplow.logged_in)
+    console.log('snowplow.client_id',snowplow.client_id)
+    console.log('snowplow.location',snowplow.location)
+    console.log('snowplow.service',snowplow.service)
   }
 }

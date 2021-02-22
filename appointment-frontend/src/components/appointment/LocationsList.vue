@@ -132,7 +132,7 @@
 <script lang="ts">
 import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
 import { GeoModule, OfficeModule } from '@/store/modules'
-import { mapActions, mapMutations, mapState } from 'vuex'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import ConfigHelper from '@/utils/config-helper'
 import GeocoderInput from './GeocoderInput.vue'
 import GeocoderService from '@/services/geocoder.services'
@@ -140,6 +140,7 @@ import { Office } from '@/models/office'
 import { Service } from '@/models/service'
 import ServiceListPopup from './ServiceListPopup.vue'
 import StepperMixin from '@/mixins/StepperMixin.vue'
+import { User } from '@/models/user'
 import { getModule } from 'vuex-module-decorators'
 
 @Component({
@@ -149,7 +150,14 @@ import { getModule } from 'vuex-module-decorators'
   },
   computed: {
     ...mapState('office', [
-      'currentOffice'
+      'currentOffice',
+      'currentSnowPlow'
+    ]),
+    ...mapState('auth', [
+      'currentUserProfile'
+    ]),
+    ...mapGetters('auth', [
+      'isAuthenticated'
     ])
   },
   methods: {
@@ -161,7 +169,8 @@ import { getModule } from 'vuex-module-decorators'
       'getOffices',
       'getServiceByOffice',
       'getAvailableAppointmentSlots',
-      'getCategories'
+      'getCategories',
+      'callSnowplow'
     ]),
     ...mapState('geo', [
       'currentCoordinates'
@@ -178,7 +187,9 @@ export default class LocationsList extends Mixins(StepperMixin) {
   private readonly getCategories!: () => Promise<any>
   private readonly setCurrentOffice!: (office: Office) => void
   private readonly setCurrentService!: (service: Service) => void
+  private readonly currentUserProfile!: User
   private readonly currentOffice!: Office
+  private readonly isAuthenticated!: boolean
   // private readonly coords!: () => any;
   private readonly currentCoordinates!: () => any;
 
@@ -199,6 +210,14 @@ export default class LocationsList extends Mixins(StepperMixin) {
       this.locationListData = await this.getOffices()
       this.locationListData = this.locationListData.filter(location => location.online_status !== 'Status.HIDE')
       this.locationListData = this.sortOfficesByDistance(this.locationListData)
+      // eslint-disable-next-line no-console
+      console.log('LOCATIONS LIST MOUNTED===>')
+      // eslint-disable-next-line no-console
+      console.log('LOCATIONS LIST this.authenticated===>', this.isAuthenticated)
+      // this.currentUSerProfile. username, display_name, userId (Client_ID)
+      // eslint-disable-next-line no-console
+      console.log('LOCATIONS LIST this.currentUserProfile===>', this.currentUserProfile?.user_id)
+      this.currentSnowPlow
     }
   }
 

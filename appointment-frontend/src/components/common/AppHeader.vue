@@ -79,10 +79,31 @@ export default class AppHeader extends Vue {
   register () {
     this.$router.push('/login')
   }
+  callsnowplow () {
+    // eslint-disable-next-line no-console
+    console.log('CALL FROM APPHEADER LOGIN/REGISTER===>')
+    // eslint-disable-next-line no-console
+    console.log('LOGIN TO CONFIRM  this.authenticated===>', this.isAuthenticated)
+    // eslint-disable-next-line no-console
+    console.log('LOGIN TO CONFIRM this.currentUserProfile===>')
+    // console.log('LOGIN TO CONFIRM this.currentUserProfile===>', this.currentUserProfile)
+    // eslint-disable-next-line no-console
+    console.log('LOGIN TO CONFIRM  this.currentAppointment===>')
+    // console.log('LOGIN TO CONFIRM  this.currentAppointment===>', this.currentAppointment)
+    // eslint-disable-next-line no-console
+    console.log('LOGIN TO CONFIRM  this.currentOffice?.office_name===>')
+    // console.log('LOGIN TO CONFIRM  this.currentOffice?.office_name===>', this.currentOffice?.office_name)
+    // eslint-disable-next-line no-console
+    console.log('LOGIN TO CONFIRM  this.currentService?.external_service_name===>')
+    // console.log('LOGIN TO CONFIRM  this.currentService?.external_service_name===>', this.currentService?.external_service_name)
+  }
   private goTo (page) {
     switch (page) {
       case 'register':
+        this.callsnowplow()
+        break
       case 'login': this.$router.push('/login')
+        this.callsnowplow()
         break
       case 'home': this.$router.push('/')
         break

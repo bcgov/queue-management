@@ -108,10 +108,14 @@ import { AppointmentSummary, DateSelection, LocationsList, LoginToConfirm, Servi
 import { Component, Vue } from 'vue-property-decorator'
 import { GeolocatorSuccess, LatLng } from '@/models/geo'
 import { locationBus, locationBusEvents } from '@/events/locationBus'
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
+import { Appointment } from '@/models/appointment'
 import { AuthModule } from '@/store/modules'
 import CommonUtils from '@/utils/common-util'
+import { Office } from '@/models/office'
+import { Service } from '@/models/service'
 import StepperMixin from '@/mixins/StepperMixin.vue'
+import { User } from '@/models/user'
 
 @Component({
   components: {
@@ -122,17 +126,30 @@ import StepperMixin from '@/mixins/StepperMixin.vue'
     LocationsList
   },
   computed: {
+    ...mapState('office', [
+      'currentOffice',
+      'currentService'
+    ]),
+    ...mapState('auth', [
+      'currentUserProfile'
+    ]),
     ...mapGetters('auth', ['isAuthenticated'])
   },
   methods: {
     ...mapActions('geo', [
-      'getCurrentLocation'
+      'getCurrentLocation',
+      'appointment'
     ])
   }
 })
 
 export default class AppointmentBookingView extends Vue {
   private readonly isAuthenticated!: boolean
+  private readonly currentUserProfile!: User
+  private readonly currentOffice!: Office
+  private readonly currentService!: Service
+  private readonly currentAppointment!: Appointment
+
   private userBrowser = {
     is_allowed: true,
     current_browser: '',
@@ -140,6 +157,7 @@ export default class AppointmentBookingView extends Vue {
     allowed_browsers: ''
   }
   private stepCounter = 1
+  private stepName = ''
   private updateViewCounter = 0
   private readonly getCurrentLocation!: () => Promise<GeolocatorSuccess>
   private bookingSteppers = [
@@ -207,20 +225,127 @@ export default class AppointmentBookingView extends Vue {
   }
 
   private stepNext () {
+    // eslint-disable-next-line no-console
+    console.log('=====  STEPNEXT  ===== this.updateViewcounter', this.updateViewCounter)
+    // eslint-disable-next-line no-console
+    console.log('=====  STEPNEXT  ===== this.stepCounter', this.stepCounter)
     this.updateViewCounter++
     if (this.stepCounter < this.bookingSteppers.length) {
       this.stepCounter++
     } else {
       this.stepCounter = 1
     }
+    this.callsnowplow(this.stepCounter)
   }
 
   private stepBack () {
+    // eslint-disable-next-line no-console
+    console.log('=====  STEPBACK  ===== this.stepCounter', this.stepCounter)
     if (this.stepCounter !== 1) {
       this.stepCounter--
     }
+    this.callsnowplow(this.stepCounter)
   }
-
+  private callsnowplow (myint) {
+    // eslint-disable-next-line no-console
+    console.log('MYINT', myint)
+    switch (myint) {
+      case 1:
+        this.stepName = 'LOCATIONS LIST'
+        // eslint-disable-next-line no-console
+        console.log('LOCATIONS LIST MOUNTED===>', this.stepName)
+        // eslint-disable-next-line no-console
+        console.log('LOCATIONS LIST --- LOGINTOCONFIRM  this.authenticated===>', this.isAuthenticated)
+        // eslint-disable-next-line no-console
+        console.log('LOCATIONS LIST --- this.currentUserProfile===>', this.currentUserProfile.display_name)
+        // eslint-disable-next-line no-console
+        console.log('LOCATIONS LIST --- client_id===>', this.currentUserProfile.user_id)
+        // eslint-disable-next-line no-console
+        console.log('LOCATIONS LIST  this.currentAppointment===>', this.currentAppointment)
+        // eslint-disable-next-line no-console
+        console.log('LOCATIONS LIST ---this.currentOffice?.office_name===>', this.currentOffice?.office_name)
+        break
+      case 2:
+        this.stepName = 'Service Selection'
+        // eslint-disable-next-line no-console
+        console.log('SERVICE SELECTION MOUNTED===>', this.stepName)
+        // eslint-disable-next-line no-console
+        console.log('SERVICE SELECTION this.authenticated===>', this.isAuthenticated)
+        // eslint-disable-next-line no-console
+        console.log('SERVICE SELECTION this.currentUserProfile===>', this.currentUserProfile.display_name)
+        // eslint-disable-next-line no-console
+        console.log('SERVICE SELECTION--- client_id===>', this.currentUserProfile.user_id)
+        // eslint-disable-next-line no-console
+        console.log('SERVICE SELECTION  this.currentAppointment===>', this.currentAppointment)
+        // eslint-disable-next-line no-console
+        console.log('SERVICE SELECTION this.currentOffice?.office_name===>', this.currentOffice?.office_name)
+        break
+      case 3:
+        this.stepName = 'Date Selection'
+        // eslint-disable-next-line no-console
+        console.log('DATE SELECTION MOUNTED===>', this.stepName)
+        // eslint-disable-next-line no-console
+        console.log('DATE SELECTION  this.authenticated===>', this.isAuthenticated)
+        // eslint-disable-next-line no-console
+        console.log('DATE SELECTION  this.currentUserProfile===>', this.currentUserProfile.display_name)
+        // eslint-disable-next-line no-console
+        console.log('DATE SELECTION--- client_id===>', this.currentUserProfile.user_id)
+        // eslint-disable-next-line no-console
+        console.log('DATE SELECTION  this.currentAppointment===>', this.currentAppointment)
+        // eslint-disable-next-line no-console
+        console.log('DATE SELECTION  this.currentOffice?.office_name===>', this.currentOffice?.office_name)
+        // eslint-disable-next-line no-console
+        console.log('DATE SELECTION  this.currentService===>', this.currentService.external_service_name)
+        break
+      case 4:
+        if (this.isAuthenticated) {
+          this.stepName = 'Appointment Summary'
+        } else {
+          this.stepName = 'Login to Confirm'
+          // call window.snowplow
+          // eslint-disable-next-line no-console
+          console.log('what step are we on STEPNAME    4   ===>', this.stepName)
+          // eslint-disable-next-line no-console
+          console.log('CHECKSTEPNAME  this.authenticated===>', this.isAuthenticated)
+          // eslint-disable-next-line no-console
+          console.log('CHECKSTEPNAME this.currentUserProfile===>', this.currentUserProfile.display_name)
+          // eslint-disable-next-line no-console
+          console.log('CHECKSTEPNAME --- client_id===>', this.currentUserProfile.user_id)
+          // eslint-disable-next-line no-console
+          console.log('CHECKSTEPNAME this.currentAppointment===>', this.currentAppointment)
+          // eslint-disable-next-line no-console
+          console.log('CHECKSTEPNAME  this.currentOffice?.office_name===>', this.currentOffice?.office_name)
+          // eslint-disable-next-line no-console
+          console.log('CHECKSTEPNAME  this.currentService===>', this.currentService.external_service_name)
+        }
+        break
+      case 5:
+        if (this.isAuthenticated) {
+          this.stepName = 'Appointment Summary'
+        } else {
+          this.stepName = 'Login to Confirm'
+        }
+        // eslint-disable-next-line no-console
+        console.log('what step are we on STEPNAME   5     ===>', this.stepName)
+        // eslint-disable-next-line no-console
+        console.log('CHECKSTEPNAME  this.authenticated===>', this.isAuthenticated)
+        // eslint-disable-next-line no-console
+        console.log('CHECKSTEPNAME this.currentUserProfile===>', this.currentUserProfile.display_name)
+        // eslint-disable-next-line no-console
+        console.log('CHECKSTEPNAME --- client_id===>', this.currentUserProfile.user_id)
+        // eslint-disable-next-line no-console
+        console.log('CHECKSTEPNAME this.currentAppointment===>', this.currentAppointment)
+        // eslint-disable-next-line no-console
+        console.log('CHECKSTEPNAME  this.currentOffice?.office_name===>', this.currentOffice?.office_name)
+        // eslint-disable-next-line no-console
+        console.log('CHECKSTEPNAME  this.currentService===>', this.currentService.external_service_name)
+        break
+      default:
+        this.stepName = 'INVALID STEP'
+        // eslint-disable-next-line no-console
+        console.log('MYINT IS NOT 1 to 5')
+    }
+  }
   private async updated () {
     this.$store.commit('setStepperCurrentStep', this.stepCounter)
   }

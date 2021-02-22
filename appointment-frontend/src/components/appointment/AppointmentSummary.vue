@@ -155,6 +155,9 @@ import { getModule } from 'vuex-module-decorators'
       'currentAppointmentSlot',
       'currentOfficeTimezone'
     ]),
+    ...mapState('auth', [
+      'currentUserProfile'
+    ]),
     ...mapGetters('auth', [
       'isAuthenticated'
     ])
@@ -180,6 +183,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   private mapConfigurations = ConfigHelper.getMapConfigurations()
   private readonly currentOffice!: Office
   private readonly currentService!: Service
+  private readonly currentUserProfile!: User
   private readonly currentAppointmentSlot!: AppointmentSlot
   private readonly currentOfficeTimezone!: string
   private readonly createAppointment!: () => Appointment
@@ -201,6 +205,27 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   // private async beforeMount () {
   //   await this.fetchUserAppointments()
   // }
+  private async mounted () {
+    if (this.isOnCurrentStep) {
+      // eslint-disable-next-line no-console
+      console.log('APPOINTMENT SUMMARY MOUNTED===> this.appointmentDisplayData.serviceForAppointment', this.appointmentDisplayData.serviceForAppointment)
+      // eslint-disable-next-line no-console
+      console.log('what step are we on STEPNAME===>')
+      // eslint-disable-next-line no-console
+      console.log('CHECKSTEPNAME  this.authenticated===>', this.isAuthenticated)
+      // eslint-disable-next-line no-console
+      console.log('CHECKSTEPNAME this.currentUserProfile===>', this.currentUserProfile.display_name)
+      // eslint-disable-next-line no-console
+      console.log('CHECKSTEPNAME --- client_id===>', this.currentUserProfile.user_id)
+      // eslint-disable-next-line no-console
+      console.log('CHECKSTEPNAME this.currentAppointment===>', this.currentAppointment)
+      // eslint-disable-next-line no-console
+      console.log('CHECKSTEPNAME  this.currentOffice?.office_name===>', this.currentOffice?.office_name)
+      // eslint-disable-next-line no-console
+      console.log('CHECKSTEPNAME  this.currentService===>', this.currentService.external_service_name)
+    }
+  }
+
   private async created () {
     await this.fetchUserAppointments()
   }
@@ -271,6 +296,20 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
       try {
         const resp = await this.createAppointment()
         if (resp.appointment_id) {
+          // eslint-disable-next-line no-console
+          console.log('APPOINTMENT CONFIRMED===>')
+          // eslint-disable-next-line no-console
+          console.log('APPOINTMENT CONFIRMED this.authenticated===>', this.isAuthenticated)
+          // eslint-disable-next-line no-console
+          console.log('APPOINTMENT CONFIRMED  this.currentUserProfile===>', this.currentUserProfile.display_name)
+          // eslint-disable-next-line no-console
+          console.log('APPOINTMENT CONFIRMED --- client_id===>', this.currentUserProfile.user_id)
+          // eslint-disable-next-line no-console
+          console.log('APPOINTMENT CONFIRMED  this.currentAppointment===>', resp.appointment_id)
+          // eslint-disable-next-line no-console
+          console.log('APPOINTMENT CONFIRMED this.currentOffice?.office_name===>', this.currentOffice?.office_name)
+          // eslint-disable-next-line no-console
+          console.log('APPOINTMENT CONFIRMED  this.currentService===>', this.currentService.external_service_name)
           this.dialogPopup.showDialog = true
           this.dialogPopup.isSuccess = true
           this.dialogPopup.title = 'Success! Your appointment has been booked.'
