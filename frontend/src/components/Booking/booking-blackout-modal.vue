@@ -412,11 +412,10 @@
                   id="recurring_blackout_start_time"
                   :time-picker-options="{
                     start: '8:00',
-                    step: '00:30',
                     end: '17:30',
                   }"
                   lang="en"
-                  format="h:mm a"
+                  format="HH:MM:SS"
                   autocomplete="off"
                   placeholder="Select Start Time"
                   class="w-100"
@@ -439,11 +438,10 @@
                   id="recurring_blackout_end_time"
                   :time-picker-options="{
                     start: '8:30',
-                    step: '00:30',
                     end: '18:00',
                   }"
                   lang="en"
-                  format="h:mm a"
+                  format="HH:MM:SS"
                   autocomplette="off"
                   placeholder="Select End Time"
                   class="w-100"
