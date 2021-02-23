@@ -256,9 +256,7 @@ export default class AgendaScreen extends Vue {
     this.toggleApptBookingModal(true);
   }
 
-  handleClickCheckIn(  appt ) {
-    console.log('hreeeeee-----------', appt)
-  
+  handleClickCheckIn(  appt ) {  
     // Copied this check over from check-in  modal
     // Essentially, we do not want to  allow the user to check in a user if  another user
     // is actively being served but minimized. They must instead be put on hold by CSR.
@@ -279,7 +277,6 @@ export default class AgendaScreen extends Vue {
   // A map of appointment_ids with true/false to show the loading spinner
   private loadingButtons = {}
   checkIn( appt ) {
-    console.log(appt.start_time,'++++++', moment(appt.start_time))
     const my_val = {
       title: appt.citizen_name,
       contact_information: appt.contact_information,
@@ -295,8 +292,6 @@ export default class AgendaScreen extends Vue {
       //for invite fix
       start_time: appt.start_time
     }
-    console.log(this.clickedAppt,'______beforee____________________>')
-    console.log(my_val,'******************************((((((((((((((((((((((((((')
     this.setAgendaClickedAppt(my_val)
     this.clickedTime =  {
       start: moment(appt.start_time),
@@ -306,7 +301,6 @@ export default class AgendaScreen extends Vue {
     // this.toggleCheckInModal(true);
 
     this.loadingButtons[appt.appointment_id] = true;
-    console.log(this.clickedAppt,'___________afterr_______________>')
     this.postCheckIn(this.clickedAppt).then(response => {
       this.$root.$emit('clear-clicked-appt')
       this.$root.$emit('clear-clicked-time')

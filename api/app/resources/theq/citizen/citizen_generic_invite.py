@@ -143,13 +143,10 @@ class CitizenGenericInvite(Resource):
                 counter_id = int(csr.counter_id)
 
             citizen = find_citizen(counter_id,active_citizen_state, csr, waiting_period_state)
-            import logging
-            logging.info("DATETIME {}:==@@@@{}++++++{}++++++++++>Key : {}===>AFTER CALL TO find_citizen:".format( counter_id,active_citizen_state, csr, waiting_period_state,citizen) )
 
             # If no matching citizen with the same counter type, get next one
             if citizen is None:
                 citizen = find_citizen2(active_citizen_state, csr, waiting_period_state)
-                logging.info("DATETIME {}:==@@@@{}@@@@@@@@@@@@@@@@@@@@@@>Key : {}===>AFTER CALL TO find_citizen:".format( datetime.now(), key,citizen) )
 
             if citizen is None:
                 return {"message": "There is no citizen to invite"}, 400

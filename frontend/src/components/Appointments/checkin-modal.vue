@@ -143,7 +143,6 @@ export default class CheckInModal extends Vue {
   }
 
   checkIn () {
-    console.log('+++++++++>>>>>>>>>>>>>checkin')
     if (this.$store.state.serviceModalForm.citizen_id) {
       this.hide()
       this.$store.commit('setMainAlert', 'Already have appointment in progress.  Please close ticket then check-in citizen')
@@ -151,7 +150,6 @@ export default class CheckInModal extends Vue {
       if (!this.checkInClicked) {
         this.toggleCheckInClicked(true)
         this.$store.commit('toggleServeCitizenSpinner', true)
-        console.log(this.clickedAppt,'++++++++++++++++++++++++++++++++this.clickedAppt')
         this.postCheckIn(this.clickedAppt).then(response => {
           this.$root.$emit('clear-clicked-appt')
           this.$root.$emit('clear-clicked-time')

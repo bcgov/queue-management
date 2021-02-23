@@ -59,8 +59,6 @@ class CitizenDetail(Resource):
         csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
         citizen = Citizen.query.filter_by(citizen_id=id).first()
         my_print("==> PUT /citizens/" + str(citizen.citizen_id) + '/, Ticket: ' + str(citizen.ticket_number))
-        import logging
-        logging.info('{}---------8888---->>>>>>>>>>>>>>>>>>>>>'.format(json_data))
 
         try:
             citizen = self.citizen_schema.load(json_data, instance=citizen, partial=True).data

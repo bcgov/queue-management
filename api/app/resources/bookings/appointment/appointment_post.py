@@ -63,8 +63,6 @@ class AppointmentPost(Resource):
         
         #get start date:
         start_time_ct = json_data.get('start_time', datetime.now())
-        logging.info('{}+++++++++++++++{}+'.format(start_time_ct, json_data))
-
         
         # remove below code, once code is tested - new req --> Stop blackouts from cancelling items (offices will call and cancel people individually if we have to close)
         is_blackout_appt = json_data.get('blackout_flag', 'N') == 'Y'
