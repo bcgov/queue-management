@@ -267,11 +267,10 @@
                   id="recurring_blackout_start_time"
                   :time-picker-options="{
                     start: '8:00',
-                    step: '00:30',
                     end: '16:30',
                   }"
                   lang="en"
-                  format="h:mm a"
+                  format="HH:MM:SS"
                   autocomplete="off"
                   :editable="true"
                   placeholder="Select Start Time"
@@ -297,11 +296,10 @@
                   id="recurring_blackout_end_time"
                   :time-picker-options="{
                     start: '8:30',
-                    step: '00:30',
                     end: '17:00',
                   }"
                   lang="en"
-                  format="h:mm a"
+                  format="HH:MM:SS"
                   autocomplete="off"
                   :editable="true"
                   placeholder="Select End Time"
@@ -471,7 +469,7 @@
                       </DatePicker>
                   </b-col>
                   <b-col cols="6">
-                    <b-form-input v-model="input.note" placeholder="Note"/>
+                    <b-form-input maxlength="255" v-model="input.note" placeholder="Note"/>
                   </b-col>
                 </b-form-row>
                 <b-form-row>
@@ -1332,7 +1330,7 @@ export default class AppointmentBlackoutModal extends Vue {
               // stat for rooms
               if (self.only_appointments.length === 0) {
                 const office_room = await getOfficeRooms({'office_id': self.$store.state.user.office.office_id})
-                office_room.forEach(function (room) {
+                await office_room.forEach(function (room) {
                   const blackout_booking: any = {}
                   if (room.id == '_offsite') {
                     blackout_booking.start_time = moment.tz(date+' '+start, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
@@ -1365,7 +1363,7 @@ export default class AppointmentBlackoutModal extends Vue {
           } 
           else if (self.only_this_office.length == 0) {
               // stat for appointments
-              all_offices.forEach(async function(office) {
+              await all_offices.forEach(async function(office) {
                   const e: any = {
                       start_time: moment.tz(date+' '+start, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
                       end_time: moment.tz(date+' '+end, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
@@ -1380,7 +1378,7 @@ export default class AppointmentBlackoutModal extends Vue {
 
                   // stat for rooms
                   const office_room = await getOfficeRooms({'office_id': office.office_id})
-                  office_room.forEach(function (room) {
+                  await office_room.forEach(function (room) {
                     const blackout_booking: any = {}
                     if (room.id == '_offsite') {
                       blackout_booking.start_time = moment.tz(date+' '+start, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
@@ -1442,6 +1440,13 @@ export default class AppointmentBlackoutModal extends Vue {
   this.hideCollapse('collapse-information-audit')
   this.show_stat_next = false
   this.stat_submit = false
+  
+  this.stat_dates = [{note:""}]
+  this.show_next = true
+  this.only_this_office = []
+  this.only_appointments = []
+
+
 }
 }
 </script>

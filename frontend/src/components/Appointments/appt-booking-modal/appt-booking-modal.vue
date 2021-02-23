@@ -21,7 +21,7 @@
           class="disabled btn-primary ml-2"
           v-if="(submitDisabled) && (!submitStat)"
           @click="validate = true"
-          >Submit1</b-button
+          >Submit</b-button
         >
         <b-button
           class="btn-primary ml-2"
@@ -52,9 +52,8 @@
     <span
       v-if="!this.editDeleteSeries && !online_flag"
       style="font-size: 1.75rem"
-      >Book Service Appointment</span
-    ><br />
-
+      >Book Service Appointment</span>
+      <br />
     <b-form autocomplete="off" v-if="!stat_flag">
       <!--  Citizen Name and Contact Info row -->
       <b-form-row>
@@ -233,7 +232,7 @@
         <b-col >
           <b-form-group class="mb-0 mt-2">
             <label class="mb-0">Note</label><br />
-            <b-form-input v-if="is_Support" v-model="comments" />
+            <b-form-input v-if="is_Support" v-model="comments" maxlength="255"/>
             <b-form-input v-else :value="comments" disabled/>
           </b-form-group>
         </b-col>
