@@ -268,9 +268,11 @@
                   :time-picker-options="{
                     start: '8:00',
                     end: '16:30',
+                    step:'00:01',
+                    format: 'hh:mm a'
                   }"
                   lang="en"
-                  format="HH:MM:SS"
+                  format="hh:mm a"
                   autocomplete="off"
                   :editable="true"
                   placeholder="Select Start Time"
@@ -297,9 +299,11 @@
                   :time-picker-options="{
                     start: '8:30',
                     end: '17:00',
+                    step:'00:01',
+                    format: 'hh:mm a'
                   }"
                   lang="en"
-                  format="HH:MM:SS"
+                  format="hh:mm a"
                   autocomplete="off"
                   :editable="true"
                   placeholder="Select End Time"
