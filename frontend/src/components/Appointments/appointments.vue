@@ -90,7 +90,7 @@
           <!-- </v-card> -->
         </div>
       </div>
-      <ApptBookingModal :clickedTime="clickedTime" :clickedAppt="clickedAppt" />
+      <ApptBookingModal v-if="!is_stat" :clickedTime="clickedTime" :clickedAppt="clickedAppt" />
       <AppointmentBlackoutModal />
       <CheckInModal :clickedAppt="clickedAppt" />
       <LoadingModal v-if="show_loading" />
@@ -180,6 +180,8 @@ export default class Appointments extends Vue {
   value: any = ''
   // events: any = []
   currentDay: any = moment().format('YYYY-MM-DD')// new Date()
+
+  is_stat: boolean = false
   
   get events () {
     if (this.searchTerm) {
@@ -343,6 +345,14 @@ export default class Appointments extends Vue {
   }
 
   selectEvent (event) {
+    this.is_stat = false
+    this.getAppointments().then((each) => {
+      const bb = each.find(element => ((moment(event.date).format('YYYY-MM-DD') === moment(element.start_time).format('YYYY-MM-DD')) && (element.stat_flag)));
+      console.log(bb)
+      if (bb) {
+        this.is_stat = true
+      }
+    })
     this.checkRescheduleCancel()
     this.blockEventSelect = true
     // this.unselect()

@@ -312,7 +312,7 @@
                       </DatePicker>
                   </b-col>
                   <b-col cols="6">
-                    <b-form-input v-model="input.note" placeholder="Note"/>
+                    <b-form-input maxlength="255" v-model="input.note" placeholder="Note"/>
                   </b-col>
                 </b-form-row>
                 <b-form-row>

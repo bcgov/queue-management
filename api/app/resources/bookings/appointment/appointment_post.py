@@ -142,33 +142,10 @@ class AppointmentPost(Resource):
                 ches_token = generate_ches_token()
             except Exception as exc:
                 pprint(f'Error on token generation - {exc}')
+            
+            is_stat = (json_data.get('stat_flag', False))
 
-            #below feature inside if is no longer needed - new reqmt -> Stop blackouts from cancelling items (offices will call and cancel people individually if we have to close)
-            # once tested remove below if statement and adjust Indentation of code inside else statement.
-            if is_blackout_appt:
-                # If staff user is creating a blackout event then send email to all of the citizens with appointments for that period
-                # appointment_ids_to_delete = []
-                # appointments_for_the_day = Appointment.get_appointment_conflicts(office_id, json_data.get('start_time'),
-                #                                                                  json_data.get('end_time'))
-                # for (cancelled_appointment, office, timezone, user) in appointments_for_the_day:
-                #     if cancelled_appointment.appointment_id != appointment.appointment_id and not cancelled_appointment.checked_in_time:
-                #         appointment_ids_to_delete.append(cancelled_appointment.appointment_id)
-
-                #         # Send blackout email
-                #         try:
-                #             pprint('Sending email for appointment cancellation due to blackout')
-                #             send_email(ches_token,
-                #                        *get_blackout_email_contents(appointment, cancelled_appointment, office, timezone,
-                #                                                     user))
-                #         except Exception as exc:
-                #             pprint(f'Error on email sending - {exc}')
-
-                # # Delete appointments
-                # if len(appointment_ids_to_delete) > 0:
-                #     Appointment.delete_appointments(appointment_ids_to_delete)
-                pass
-
-            else:
+            if ((not is_stat) and (not is_blackout_appt)):
                 # Send confirmation email and sms
                 try:
                     ches_token = generate_ches_token()
