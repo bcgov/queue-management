@@ -61,6 +61,11 @@ class AppointmentPost(Resource):
         if (json_data.get('stat_office_id', False)):
             json_data['office_id'] = json_data.get('stat_office_id')
         
+        #get start date:
+        start_time_ct = json_data.get('start_time', datetime.now())
+        logging.info('{}+++++++++++++++{}+'.format(start_time_ct, json_data))
+
+        
         # remove below code, once code is tested - new req --> Stop blackouts from cancelling items (offices will call and cancel people individually if we have to close)
         is_blackout_appt = json_data.get('blackout_flag', 'N') == 'Y'
         csr = None
@@ -118,7 +123,7 @@ class AppointmentPost(Resource):
         citizen.qt_xn_citizen_ind = 0
         citizen_state = CitizenState.query.filter_by(cs_state_name="Appointment booked").first()
         citizen.cs_id = citizen_state.cs_id
-        citizen.start_time = datetime.now()
+        citizen.start_time = start_time_ct
         citizen.service_count = 1
         db.session.add(citizen)
         db.session.commit()

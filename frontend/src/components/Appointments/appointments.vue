@@ -343,6 +343,13 @@ export default class Appointments extends Vue {
   }
 
   selectEvent (event) {
+    this.is_stat = false
+    this.getAppointments().then((each) => {
+      const bb = each.find(element => ((moment(event.date).format('YYYY-MM-DD') === moment(element.start_time).format('YYYY-MM-DD')) && (element.stat_flag)));
+      if (bb) {
+        this.is_stat = true
+      }
+    })
     this.checkRescheduleCancel()
     this.blockEventSelect = true
     // this.unselect()
@@ -414,8 +421,8 @@ export default class Appointments extends Vue {
     // for draft
     const data: any = {
       start_time: moment.utc(start).format(),
-      // setting end time aftger 15 min of start to fix over appoinment time
-      end_time: moment(start).clone().add(15, 'minutes')// moment.utc(end).format()
+      // setting end time aftger 15 min of start to fix over appoinment time      
+      end_time: moment(start).clone().add(15, 'minutes').utc().format()// moment.utc(end).format()
       // service_id: 27,
       // is_draft: true
     }

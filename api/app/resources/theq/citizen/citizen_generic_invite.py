@@ -54,7 +54,7 @@ def find_citizen(counter_id, active_citizen_state, csr, waiting_period_state):
         .join(ServiceReq.periods) \
         .filter_by(ps_id=waiting_period_state.ps_id) \
         .filter(Period.time_end.is_(None)) \
-        .order_by(Citizen.priority, Citizen.citizen_id) \
+        .order_by(Citizen.priority, Citizen.start_time) \
         .first()
     return citizen
 
@@ -143,12 +143,13 @@ class CitizenGenericInvite(Resource):
                 counter_id = int(csr.counter_id)
 
             citizen = find_citizen(counter_id,active_citizen_state, csr, waiting_period_state)
-            #print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_citizen:", citizen)
+            import logging
+            logging.info("DATETIME {}:==@@@@{}++++++{}++++++++++>Key : {}===>AFTER CALL TO find_citizen:".format( counter_id,active_citizen_state, csr, waiting_period_state,citizen) )
 
             # If no matching citizen with the same counter type, get next one
             if citizen is None:
                 citizen = find_citizen2(active_citizen_state, csr, waiting_period_state)
-                #print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_citizen2:", citizen)
+                logging.info("DATETIME {}:==@@@@{}@@@@@@@@@@@@@@@@@@@@@@>Key : {}===>AFTER CALL TO find_citizen:".format( datetime.now(), key,citizen) )
 
             if citizen is None:
                 return {"message": "There is no citizen to invite"}, 400

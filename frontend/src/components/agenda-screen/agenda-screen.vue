@@ -76,6 +76,7 @@ limitations under the License.*/
   </div>
 </template>
 <script lang="ts">
+ /* eslint-disable */
 import { Action, Getter, Mutation, State, namespace } from 'vuex-class'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import CheckInModal from '@/components/Appointments/checkin-modal.vue'
@@ -256,6 +257,7 @@ export default class AgendaScreen extends Vue {
   }
 
   handleClickCheckIn(  appt ) {
+    console.log('hreeeeee-----------', appt)
   
     // Copied this check over from check-in  modal
     // Essentially, we do not want to  allow the user to check in a user if  another user
@@ -277,7 +279,8 @@ export default class AgendaScreen extends Vue {
   // A map of appointment_ids with true/false to show the loading spinner
   private loadingButtons = {}
   checkIn( appt ) {
-    const tempEvent = {
+    console.log(appt.start_time,'++++++', moment(appt.start_time))
+    const my_val = {
       title: appt.citizen_name,
       contact_information: appt.contact_information,
       online_flag: appt.online_flag,
@@ -288,9 +291,13 @@ export default class AgendaScreen extends Vue {
       appointment_id: appt.appointment_id,
       recurring_uuid: null,
       blackout_flag: 'N',
-      citizen_id: appt.citizen_id
+      citizen_id: appt.citizen_id,
+      //for invite fix
+      start_time: appt.start_time
     }
-    this.setAgendaClickedAppt(tempEvent)
+    console.log(this.clickedAppt,'______beforee____________________>')
+    console.log(my_val,'******************************((((((((((((((((((((((((((')
+    this.setAgendaClickedAppt(my_val)
     this.clickedTime =  {
       start: moment(appt.start_time),
       end: moment(appt.end_time)
@@ -299,6 +306,7 @@ export default class AgendaScreen extends Vue {
     // this.toggleCheckInModal(true);
 
     this.loadingButtons[appt.appointment_id] = true;
+    console.log(this.clickedAppt,'___________afterr_______________>')
     this.postCheckIn(this.clickedAppt).then(response => {
       this.$root.$emit('clear-clicked-appt')
       this.$root.$emit('clear-clicked-time')
