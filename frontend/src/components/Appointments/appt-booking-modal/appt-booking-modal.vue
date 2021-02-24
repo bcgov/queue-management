@@ -338,7 +338,7 @@ export default class ApptBookingModal extends Vue {
   @appointmentsModule.Mutation('toggleEditDeleteSeries') public toggleEditDeleteSeries: any
   @appointmentsModule.Mutation('toggleSubmitClicked') public toggleSubmitClicked: any
   @Action('deleteRecurringStatBooking') public deleteRecurringStatBooking: any
-  @Action('deleteRecurringBooking') public deleteRecurringBooking: any
+  @Action('deleteRecurringStatAllOfficeBooking') public deleteRecurringStatAllOfficeBooking: any
   @Action('finishBooking') public finishBooking: any
   
 
@@ -539,7 +539,7 @@ export default class ApptBookingModal extends Vue {
   deleteRecurringStatAppts () {
     this.$store.commit('toggleServeCitizenSpinner', true)
     this.deleteRecurringStatAppointments(this.clickedAppt.recurring_uuid).then(() => {
-      this.deleteRecurringBooking(this.clickedAppt.recurring_uuid).then(() => {
+      this.deleteRecurringStatAllOfficeBooking(this.clickedAppt.recurring_uuid).then(() => {
         this.finishBooking()
       })
       this.cancel()
