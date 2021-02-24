@@ -736,7 +736,7 @@ export default class AppointmentBlackoutModal extends Vue {
   @appointmentsModule.Mutation('toggleAppointmentBlackoutModal') public toggleAppointmentBlackoutModal: any
   @appointmentsModule.Mutation('setApiTotalCount') public setApiTotalCount: any
 
-  @Action('postBooking') public postBooking: any
+  @Action('postBookingStat') public postBookingStat: any
   @Action('getOffices') public getOffices: any
   @Action('getBookings') public getBookings: any
   @Action('getOfficeRooms') public getOfficeRooms: any
@@ -1295,7 +1295,7 @@ export default class AppointmentBlackoutModal extends Vue {
     const recurring_uuid = uuidv4()
     let axiosArray: any = []
     let rrule_ind = 0
-    const all_offices = await this.getOffices()
+    const all_offices = await this.getOffices('force')
     const stat_user_name = this.stat_user_name
     const user_contact_info = this.user_contact_info
     // const notes = this.notes
@@ -1304,7 +1304,6 @@ export default class AppointmentBlackoutModal extends Vue {
     const stat_dates = this.stat_dates
     const bulkApiCall = this.bulkApiCall
     const getOfficeRooms =  this.getOfficeRooms
-    const postBooking = this.postBooking
     this.rrule_array = this.stat_dates
     const self = this
     if (this.rrule_array.length > 0) {
@@ -1345,6 +1344,7 @@ export default class AppointmentBlackoutModal extends Vue {
                     blackout_booking.blackout_notes = item.note,
                     blackout_booking.office_id = self.$store.state.user.office.office_id,
                     blackout_booking.recurring_uuid = recurring_uuid
+                    blackout_booking.for_stat = true
                   } else {
                     blackout_booking.start_time = moment.tz(date+' '+start, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
                     blackout_booking.end_time = moment.tz(date+' '+end, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
@@ -1355,8 +1355,9 @@ export default class AppointmentBlackoutModal extends Vue {
                     blackout_booking.blackout_notes = item.note,
                     blackout_booking.office_id = self.$store.state.user.office.office_id,
                     blackout_booking.recurring_uuid = recurring_uuid
+                    blackout_booking.for_stat = true
                   }
-                  axiosArray.push(postBooking(blackout_booking))
+                  axiosArray.push(self.postBookingStat(blackout_booking))
                   // this.postBooking(blackout_booking)
                   // .then(() => {
                   //   this.getBookings()
@@ -1393,6 +1394,7 @@ export default class AppointmentBlackoutModal extends Vue {
                       blackout_booking.blackout_notes = item.note,
                       blackout_booking.office_id = office.office_id,
                       blackout_booking.recurring_uuid = recurring_uuid
+                      blackout_booking.for_stat = true
                     } else {
                       blackout_booking.start_time = moment.tz(date+' '+start, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
                       blackout_booking.end_time = moment.tz(date+' '+end, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
@@ -1403,8 +1405,9 @@ export default class AppointmentBlackoutModal extends Vue {
                       blackout_booking.blackout_notes = item.note,
                       blackout_booking.office_id = office.office_id,
                       blackout_booking.recurring_uuid = recurring_uuid
+                      blackout_booking.for_stat = true
                     }
-                    axiosArray.push(postBooking(blackout_booking))
+                    axiosArray.push(self.postBookingStat(blackout_booking))
                     // this.postBooking(blackout_booking)
                     // .then(() => {
                     //   this.getBookings()

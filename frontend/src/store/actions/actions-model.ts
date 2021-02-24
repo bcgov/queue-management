@@ -162,6 +162,19 @@ export const commonActions: any = {
     })
   },
 
+  deleteRecurringStatAllOfficeBooking (context, id) {
+    return new Promise((resolve, reject) => {
+      Axios(context)
+        .delete(`/bookings/recurring/stat/${id}`)
+        .then(resp => {
+          resolve(resp.data)
+        })
+        .catch(error => {
+          reject(error)
+        })
+    })
+  },
+
   deleteExam (context, id) {
     return new Promise((resolve, reject) => {
       Axios(context)
@@ -1875,6 +1888,10 @@ export const commonActions: any = {
           reject(error)
         })
     })
+  },
+
+  postBookingStat (context, payload) {
+    return Axios(context).post('/bookings/', payload)
   },
 
   finishBooking (context) {
