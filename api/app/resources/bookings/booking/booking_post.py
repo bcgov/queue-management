@@ -26,7 +26,6 @@ from app.auth.auth import jwt
 
 @api.route("/bookings/", methods=["POST"])
 class BookingPost(Resource):
-
     booking_schema = BookingSchema()
 
     @jwt.has_one_of_roles([Role.internal_user.value])
@@ -42,7 +41,6 @@ class BookingPost(Resource):
             return {"message": "No input data received for creating a booking"}, 400
 
         booking, warning = self.booking_schema.load(json_data)
-
         if warning:
             logging.warning("WARNING: %s", warning)
             return {"message": warning}, 422
@@ -50,7 +48,7 @@ class BookingPost(Resource):
         if booking.office_id is None:
             booking.office_id = csr.office_id
 
-        if booking.office_id == csr.office_id or csr.ita2_designate == 1:
+        if booking.office_id == csr.office_id or csr.ita2_designate == 1 or json_data.get('for_stat', False):
 
             if i_id is None:
 

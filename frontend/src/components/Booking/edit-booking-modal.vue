@@ -197,7 +197,7 @@
                     size="sm"
                     variant="danger"
                     class="ml-1 mr-1"
-                    @click="clickYesRecurring"
+                    @click="clickYesStatAllOfficeRecurring"
                   >
                     Yes
                   </b-button>
@@ -663,6 +663,7 @@ export default class EditBooking extends Vue {
   @Action('deleteBooking') public deleteBooking: any
   @Action('deleteRecurringBooking') public deleteRecurringBooking: any
   @Action('deleteRecurringStatBooking') public deleteRecurringStatBooking: any
+  @Action('deleteRecurringStatAllOfficeBooking') public deleteRecurringStatAllOfficeBooking: any
   @Action('finishBooking') public finishBooking: any
   @Action('getInvigilators') public getInvigilators: any
   @Action('postBooking') public postBooking: any
@@ -902,11 +903,9 @@ export default class EditBooking extends Vue {
   clickYesRecurring (e) {
     const re_id = this.event.recurring_uuid
     this.deleteRecurringBooking(re_id).then(() => {
-       this.deleteRecurringStatAppointments(re_id).then(() => {
-        this.$root.$emit('removeTempEvent')
-        this.$root.$emit('clear-clicked-time')
-        this.$root.$emit('clear-clicked-appt')
-       })
+      this.$root.$emit('removeTempEvent')
+      this.$root.$emit('clear-clicked-time')
+      this.$root.$emit('clear-clicked-appt')
       this.finishBooking()
       this.resetModal()
     })
@@ -917,6 +916,20 @@ export default class EditBooking extends Vue {
     const re_id = this.event.recurring_uuid
     this.deleteRecurringStatBooking(re_id).then(() => {
       this.deleteRecurringAppointments(re_id).then(() => {
+        this.$root.$emit('removeTempEvent')
+        this.$root.$emit('clear-clicked-time')
+        this.$root.$emit('clear-clicked-appt')
+      })
+      this.finishBooking()
+      this.resetModal()
+    })
+    this.toggleEditDeleteSeries(false)
+  }
+
+  clickYesStatAllOfficeRecurring (e) {
+    const re_id = this.event.recurring_uuid
+    this.deleteRecurringStatAllOfficeBooking(re_id).then(() => {
+      this.deleteRecurringStatAppointments(re_id).then(() => {
         this.$root.$emit('removeTempEvent')
         this.$root.$emit('clear-clicked-time')
         this.$root.$emit('clear-clicked-appt')

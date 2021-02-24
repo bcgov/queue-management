@@ -311,7 +311,7 @@ import app.resources.bookings.booking.booking_post
 import app.resources.bookings.booking.booking_put
 import app.resources.bookings.booking.booking_recurring_delete
 import app.resources.bookings.booking.booking_recurring_put
-import app.resources.bookings.booking.booking_recurring_currentoffice_delete
+import app.resources.bookings.booking.booking_recurring_stat_delete
 import app.resources.bookings.exam.exam_bcmp
 import app.resources.bookings.exam.exam_bulk_status
 import app.resources.bookings.exam.exam_delete
