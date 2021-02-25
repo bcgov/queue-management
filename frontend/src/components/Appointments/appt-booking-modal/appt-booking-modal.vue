@@ -568,6 +568,7 @@ export default class ApptBookingModal extends Vue {
     this.$root.$emit('clear-clicked-appt')
     this.toggleApptBookingModal(false)
     this.setRescheduling(false)
+    this.stat_flag = false
   }
 
   show () {
