@@ -52,9 +52,11 @@
 </template>
 
 <script lang="ts">
-import { AccountModule, AuthModule } from '@/store/modules'
+import { AccountModule, AuthModule, OfficeModule } from '@/store/modules'
 import { Component, Vue } from 'vue-property-decorator'
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
+import { Office } from '@/models/office'
+import { Service } from '@/models/service'
 import SignedUser from './SignedUser.vue'
 
 @Component({
@@ -62,12 +64,25 @@ import SignedUser from './SignedUser.vue'
     SignedUser
   },
   computed: {
+    ...mapState('office', [
+      'currentOffice',
+      'currentService',
+      'currentSnowPlow'
+    ]),
     ...mapGetters('auth', ['isAuthenticated']),
     ...mapGetters('account', ['username'])
+  },
+  methods: {
+    ...mapActions('office', [
+      'callSnowplow'
+    ])
   }
 })
 export default class AppHeader extends Vue {
   private readonly isAuthenticated!: boolean
+  private readonly currentOffice!: Office
+  private readonly currentService!: Service
+  private readonly callSnowplow!: (mySP: any) => any
   private readonly username!: string
 
   async mounted () {
@@ -80,9 +95,14 @@ export default class AppHeader extends Vue {
     this.$router.push('/login')
   }
   private goTo (page) {
+    const mySP = { step: 'Login to Account', loggedIn: this.isAuthenticated, apptID: '', clientID: '', loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name }
     switch (page) {
       case 'register':
-      case 'login': this.$router.push('/login')
+        this.callSnowplow(mySP)
+        break
+      case 'login':
+        this.callSnowplow(mySP)
+        this.$router.push('/login')
         break
       case 'home': this.$router.push('/')
         break

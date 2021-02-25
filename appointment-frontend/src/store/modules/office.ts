@@ -24,6 +24,7 @@ export default class OfficeModule extends VuexModule {
   currentAppointmentSlot: AppointmentSlot
   currentAppointment: Appointment
   currentDraftAppointment: Appointment
+  spStatus: string
 
   /**
     Mutations in this Module
@@ -80,6 +81,10 @@ export default class OfficeModule extends VuexModule {
     this.currentDraftAppointment = appointment
   }
 
+  @Mutation
+  public setSPStatus (status: string) {
+    this.spStatus = status
+  }
   /**
     Actions in this Module
   **/
@@ -235,5 +240,41 @@ export default class OfficeModule extends VuexModule {
     response = await AppointmentService.createDraftAppointment(appointmentBody)
     // }
     return response?.data?.appointment || {}
+  }
+
+  @Action({ rawError: true })
+  public callSnowplow (mySP: any): void {
+    if (!mySP.loggedIn) {
+      mySP.clientID = null
+    }
+    /* (window as any).snowplow('trackSelfDescribingEvent', {
+      schema: 'iglu:ca.bc.gov.cfmspoc/appointment_step/jsonschema/1-0-0',
+      data: {
+        appointment_step: mySP.step,
+        status: this.context.state['spStatus'],
+        logged_in: mySP.loggedIn,
+        appointment_id: mySP.apptID,
+        client_id: mySP.clientID,
+        location: mySP.loc,
+        service: mySP.serv
+      }
+    }
+    ) */
+    // eslint-disable-next-line no-console
+    // console.log('CALLING callSnowplow')
+    // eslint-disable-next-line no-console
+    console.log('snowplow.appointment_step', mySP.step)
+    // eslint-disable-next-line no-console
+    // console.log('snowplow.status', this.context.state['spStatus'])
+    // eslint-disable-next-line no-console
+    // console.log('snowplow.logged_in', mySP.loggedIn)
+    // eslint-disable-next-line no-console
+    // console.log('snowplow.appointment_id', mySP.apptID)
+    // eslint-disable-next-line no-console
+    // console.log('snowplow.client_id', mySP.clientID)
+    // eslint-disable-next-line no-console
+    // console.log('snowplow.location', mySP.loc)
+    // eslint-disable-next-line no-console
+    // console.log('snowplow.service', mySP.serv)
   }
 }

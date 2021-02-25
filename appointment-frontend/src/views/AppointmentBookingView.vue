@@ -108,10 +108,14 @@ import { AppointmentSummary, DateSelection, LocationsList, LoginToConfirm, Servi
 import { Component, Vue } from 'vue-property-decorator'
 import { GeolocatorSuccess, LatLng } from '@/models/geo'
 import { locationBus, locationBusEvents } from '@/events/locationBus'
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
+import { Appointment } from '@/models/appointment'
 import { AuthModule } from '@/store/modules'
 import CommonUtils from '@/utils/common-util'
+import { Office } from '@/models/office'
+import { Service } from '@/models/service'
 import StepperMixin from '@/mixins/StepperMixin.vue'
+import { User } from '@/models/user'
 
 @Component({
   components: {
@@ -122,17 +126,32 @@ import StepperMixin from '@/mixins/StepperMixin.vue'
     LocationsList
   },
   computed: {
+    ...mapState('office', [
+      'currentOffice',
+      'currentService'
+    ]),
+    ...mapState('auth', [
+      'currentUserProfile'
+    ]),
     ...mapGetters('auth', ['isAuthenticated'])
   },
   methods: {
     ...mapActions('geo', [
-      'getCurrentLocation'
+      'getCurrentLocation',
+      'appointment'
+    ]),
+    ...mapActions('office', [
+      'callSnowplow'
     ])
   }
 })
 
 export default class AppointmentBookingView extends Vue {
   private readonly isAuthenticated!: boolean
+   private readonly currentUserProfile!: User
+  private readonly currentOffice!: Office
+  private readonly currentService!: Service
+  private readonly currentAppointment!: Appointment
   private userBrowser = {
     is_allowed: true,
     current_browser: '',
@@ -142,6 +161,7 @@ export default class AppointmentBookingView extends Vue {
   private stepCounter = 1
   private updateViewCounter = 0
   private readonly getCurrentLocation!: () => Promise<GeolocatorSuccess>
+  private readonly callSnowplow!: (mySP: any) => any
   private bookingSteppers = [
     {
       step: 1,
@@ -213,12 +233,14 @@ export default class AppointmentBookingView extends Vue {
     } else {
       this.stepCounter = 1
     }
+    this.makesnowplow(this.stepCounter)
   }
 
   private stepBack () {
     if (this.stepCounter !== 1) {
       this.stepCounter--
     }
+    this.makesnowplow(this.stepCounter)
   }
 
   private async updated () {
@@ -247,6 +269,35 @@ export default class AppointmentBookingView extends Vue {
 
   private async fetchCurrentLocation () {
     locationBus.$emit(locationBusEvents.ClosestLocationEvent)
+  }
+  private makesnowplow (theStep) {
+    let mySP = {}
+    // eslint-disable-next-line no-console
+    console.log('theStep', theStep)
+    switch (theStep) {
+      case 1:
+        break
+      case 2:
+        mySP = { step: 'Service Selection', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: null }
+        this.callSnowplow(mySP)
+        break
+      case 3:
+        mySP = { step: 'Date Selection', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService.external_service_name }
+        this.callSnowplow(mySP)
+        break
+      case 4:
+        if (!this.isAuthenticated) {
+          mySP = { step: 'Login to Confirm', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService.external_service_name }
+          this.callSnowplow(mySP)
+        }
+        break
+      case 5:
+        /* mySP = { step: 'Appointment Summary', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService.external_service_name }
+        this.callSnowplow(mySP) */
+        break
+      default:
+        break
+    }
   }
 }
 </script>

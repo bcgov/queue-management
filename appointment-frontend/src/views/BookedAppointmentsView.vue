@@ -122,26 +122,32 @@
 <script lang="ts">
 import { AppointmentModule, OfficeModule } from '@/store/modules'
 import { Component, Vue } from 'vue-property-decorator'
+import { mapActions, mapMutations } from 'vuex'
 import { Appointment } from '@/models/appointment'
 import ConfigHelper from '@/utils/config-helper'
 import GeocoderService from '@/services/geocoder.services'
 import { NoEmailAlert } from '@/components/common'
 import { User } from '@/models/user'
 import { getModule } from 'vuex-module-decorators'
-import { mapActions } from 'vuex'
 
 @Component({
   components: {
     NoEmailAlert
   },
   methods: {
+    ...mapMutations('office', [
+      'setCurrentOffice',
+      'setCurrentService',
+      'setSPStatus'
+    ]),
     ...mapActions('appointment', [
       'getAppointmentList',
       'deleteAppointment'
     ]),
     ...mapActions('office', [
       'setAppointmentValues',
-      'clearSelectedValues'
+      'clearSelectedValues',
+      'callSnowplow'
     ])
   }
 })
@@ -152,13 +158,15 @@ export default class Home extends Vue {
   private confirmDialog: boolean = false
   private appointmentList: Appointment[] = []
   private selectedAppointment: Appointment = null
-
+  private readonly callSnowplow!: (mySP: any) => any
   private readonly getAppointmentList!: () => Promise<Appointment[]>
   private readonly deleteAppointment!: (appointmentId: number) => Promise<any>
   private readonly setAppointmentValues!: (appointment: Appointment) => void
   private readonly clearSelectedValues!: () => void
+  private readonly setSPStatus!: (status: string) => void
 
   private async beforeMount () {
+    this.setSPStatus('update')
     this.fetchAppointments()
   }
 
@@ -195,6 +203,10 @@ export default class Home extends Vue {
   }
 
   private changeAppointment (appointment) {
+    // eslint-disable-next-line no-console
+    console.log('changeAppointment clicked - appointment', appointment)
+    const mySP = { step: 'Change Appointment', loggedIn: true, apptID: appointment.appointment_id, clientID: appointment.citizen_id, loc: appointment.office.office_name, serv: appointment.service.external_service_name }
+    this.callSnowplow(mySP)
     this.setAppointmentValues(appointment)
     this.$store.commit('setStepperCurrentStep', 3)
     this.$store.commit('setAppointmentEditMode', true)
@@ -202,6 +214,10 @@ export default class Home extends Vue {
   }
 
   private cancelAppointment (appointment) {
+    // eslint-disable-next-line no-console
+    console.log('cancelAppointment clicked - appointment', appointment)
+    const mySP = { step: 'Cancel Appointment', loggedIn: true, apptID: appointment.appointment_id, clientID: appointment.citizen_id, loc: appointment.office.office_name, serv: appointment.service.external_service_name }
+    this.callSnowplow(mySP)
     this.confirmDialog = true
     this.selectedAppointment = appointment
   }
