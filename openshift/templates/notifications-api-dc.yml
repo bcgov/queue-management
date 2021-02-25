@@ -175,7 +175,7 @@ parameters:
   - name: API_APPLICATION_DOMAIN
     description: "The exposed hostname that will route to the Flask service"
     required: true
-    value: "dev-theq-notifications.apps.silver.devops.gov.bc.ca"
+    value: ""
   - name: FLASK_ENV
     description: "The configuration object that should be loaded for this deployment."
     required: true
@@ -186,7 +186,7 @@ parameters:
   - name: TOOLS_WORKSPACE
     description: "IMAGE STREAM WORKSPACE LOCATION"
     required: true
-    value: "df1ee0-tools"
+    value: ""
   - name: SECRET_KEY
     description: "Key required for Flask"
     required: true
