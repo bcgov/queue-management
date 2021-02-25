@@ -60,9 +60,9 @@ import {
   faWindowMaximize,
   faWindowRestore
 } from '@fortawesome/free-solid-svg-icons'
-import 'buefy/dist/buefy.css'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import VDragged from 'v-dragged'
+import 'buefy/dist/buefy.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import './assets/css/q.css'

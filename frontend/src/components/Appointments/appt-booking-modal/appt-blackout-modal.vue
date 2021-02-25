@@ -131,7 +131,8 @@
         </b-card>
       </b-collapse>
       <b-collapse id="collapse-single-event">
-        <b-card class="mt-2 mb-2">
+        <v-card class="mt-2 mb-2">
+          <v-container>
           <b-form-row style="justify-content: center">
             <h4>Single Event</h4>
           </b-form-row>
@@ -233,7 +234,8 @@
               </b-form-group>
             </b-col>
           </b-form-row>
-        </b-card>
+          </v-container>
+        </v-card>
       </b-collapse>
       <b-collapse id="collapse-recurring-events">
         <b-card class="mt-2">
@@ -269,6 +271,8 @@
                       class="w-100"
                       icon="clock"
                       editable
+                      :min-time="minTime"
+                      :max-time="maxTime"
                       hour-format="12"
                       locale="en-US"
                       placeholder="Select Start Time"
@@ -277,6 +281,8 @@
                       @clear="checkRecurringInput"
                       >
                   </b-timepicker>
+                  <br/>
+                  <span class="danger" v-if="reccuring_start_time_msg">{{reccuring_start_time_msg}}</span>
                 <!-- <DatePicker
                   v-model="recurring_start_time"
                   id="recurring_blackout_start_time"
@@ -315,6 +321,8 @@
                       class="w-100"
                       icon="clock"
                       editable
+                      :min-time="minTime"
+                      :max-time="maxTime"
                       hour-format="12"
                       locale="en-US"
                       placeholder="Select End Time"
@@ -323,6 +331,8 @@
                       @clear="checkRecurringInput"
                       >
                   </b-timepicker>
+                  <br/>
+                  <span class="danger" v-if="reccuring_end_time_msg">{{reccuring_end_time_msg}}</span>
                 <!-- <DatePicker
                   v-model="recurring_end_time"
                   id="recurring_blackout_end_time"
@@ -463,7 +473,8 @@
         </b-card>
       </b-collapse>
       <b-collapse id="collapse-recurring-stat">
-        <b-card class="mt-2">
+        <v-card class="mt-2">
+          <v-container>
           <b-form-row style="justify-content: center">
             <h4>Recurring STAT</h4>
           </b-form-row>
@@ -486,7 +497,6 @@
                 <div
                   v-for="(input, index) in stat_dates"
                   :key="`stat_dates-${index}`"
-                  class="input wrapper flex items-center"
                 >
                 <b-form-row>
                   <b-col cols="6">
@@ -496,6 +506,7 @@
                         type="date"
                         lang="en"
                         class="w-100"
+                        :inline="true"
                         @change="checkStatInput"
                         @input="checkStatInput"
                         @clear="checkStatInput"
@@ -568,7 +579,8 @@
               </div>
               </b-form-group>
           </b-form-row>
-        </b-card>
+          </v-container>
+        </v-card>
       </b-collapse>
       <b-collapse id="date-limit">
         <b-card class="mb-2">
@@ -661,7 +673,7 @@
         </b-card>
       </b-collapse>
       <b-collapse id="collapse-blackout-notes">
-        <b-card class="mt=2">
+        <v-card class="mt=2">
           <b-form-row style="justify-content: center">
             <h4 v-if="this.single_input_boolean">Single Event</h4>
             <h4 v-if="this.recurring_input_boolean">Recurring Event</h4>
@@ -694,7 +706,7 @@
             >
             </b-textarea>
           </b-form-row>
-        </b-card>
+        </v-card>
       </b-collapse>
     </b-form>
     <v-dialog
@@ -819,6 +831,10 @@ export default class AppointmentBlackoutModal extends Vue {
   public stat_submit: boolean = false
   public only_this_office: any = []
   public only_appointments: any = []
+  public minTime: any = this.getMinTime()
+  public maxTime: any = this.getMaxTime()
+  public reccuring_start_time_msg: any =''
+  public reccuring_end_time_msg: any =''
   
 
   get modal () {
@@ -837,7 +853,18 @@ export default class AppointmentBlackoutModal extends Vue {
       }
     }
   }
-
+  getMinTime () {
+    const min = new Date()
+    min.setHours(8)
+    min.setMinutes(0)
+    return min
+  }
+  getMaxTime () {
+    const max = new Date()
+    max.setHours(17)
+    max.setMinutes(0)
+    return max
+  }
   showCollapse (div_id) {
     const elementDivId = document.getElementById(div_id)
     if (elementDivId) {
@@ -1241,6 +1268,53 @@ export default class AppointmentBlackoutModal extends Vue {
   }
 
   checkRecurringInput () {
+    this.reccuring_start_time_msg = ''
+    this.reccuring_end_time_msg = ''
+    if (this.recurring_start_time) {
+      if ((new Date(this.recurring_start_time).getHours() <= 8) || (new Date(this.recurring_start_time).getHours() >= 17)){
+        if ((new Date(this.recurring_start_time).getHours() === 8)) {
+          if ((new Date(this.recurring_start_time).getMinutes() < 30)) {
+              this.reccuring_start_time_msg = "Time not allowed"
+              this.recurring_start_time = null
+          } else {
+            this.reccuring_start_time_msg = ''
+          }
+        } else if (new Date(this.recurring_start_time).getHours() === 17) {
+          if ((new Date(this.recurring_start_time).getMinutes() > 0)) {
+              this.recurring_start_time = null
+              this.reccuring_start_time_msg = "Time not allowed"
+          } else {
+            this.reccuring_start_time_msg = ''
+          }
+        } else {
+          this.reccuring_start_time_msg = "Time not allowed"
+          this.recurring_start_time = null
+        }
+      }
+    }
+    if (this.recurring_end_time) {
+      if ((new Date(this.recurring_end_time).getHours() <= 8) || (new Date(this.recurring_end_time).getHours() >= 17)){
+        if ((new Date(this.recurring_end_time).getHours() === 8)) {
+          if ((new Date(this.recurring_end_time).getMinutes() < 30)) {
+              this.reccuring_end_time_msg = "Time not allowed"
+              this.recurring_end_time = null
+          } else {
+            this.reccuring_end_time_msg = ''
+          }
+        } else if (new Date(this.recurring_end_time).getHours() === 17) {
+          if ((new Date(this.recurring_end_time).getMinutes() > 0)) {
+              this.reccuring_end_time_msg = "Time not allowed"
+              this.recurring_end_time = null
+          } else {
+            this.reccuring_end_time_msg = ''
+          }
+        } else {
+          this.reccuring_end_time_msg = "Time not allowed"
+          this.recurring_end_time = null
+        }
+      }
+    }
+
     if (this.selected_frequency.length > 0 &&
       this.recurring_start_date !== null && this.recurring_start_time !== null && this.recurring_end_date !== null &&
       this.recurring_end_time !== null) {
@@ -1498,5 +1572,8 @@ export default class AppointmentBlackoutModal extends Vue {
 }
 #appointment_stat_date > input.mx-input { 
   height: 38px !important;
+}
+.danger {
+  color: red !important;
 }
 </style>
