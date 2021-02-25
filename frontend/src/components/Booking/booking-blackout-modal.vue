@@ -165,7 +165,8 @@
         </b-card>
       </b-collapse>
       <b-collapse id="collapse-single-booking" class="mt-2 mb-2">
-        <b-card>
+        <v-card>
+          <v-container>
           <b-form-row style="justify-content: center">
             <h4>Single Event</h4>
           </b-form-row>
@@ -269,10 +270,12 @@
               </b-form-group>
             </b-col>
           </b-form-row>
-        </b-card>
+          </v-container>
+        </v-card>
       </b-collapse>
       <b-collapse id="collapse-recurring-stat">
-        <b-card class="mt-2">
+        <v-card class="mt-2">
+          <v-container>
           <b-form-row style="justify-content: center">
             <h4>Recurring STAT</h4>
           </b-form-row>
@@ -295,7 +298,6 @@
                 <div
                   v-for="(input, index) in stat_dates"
                   :key="`stat_dates-${index}`"
-                  class="input wrapper flex items-center"
                 >
                 <b-form-row>
                   <b-col cols="6">
@@ -377,7 +379,8 @@
               </div>
               </b-form-group>
           </b-form-row>
-        </b-card>
+          </v-container>
+        </v-card>
       </b-collapse>
       <b-collapse id="collapse-recurring-booking" class="mt-2">
         <b-card class="mb-2">
@@ -407,7 +410,26 @@
                   icon="check"
                   style="fontsize: 1rem; color: green"
                 />
-                <DatePicker
+                <b-timepicker
+                      v-model="recurring_booking_start_time"
+                      :value="recurring_booking_start_time"
+                      id="recurring_blackout_start_time"
+                      class="w-100"
+                      icon="clock"
+                      editable
+                      :min-time="minTime"
+                      :max-time="maxTime"
+                      hour-format="12"
+                      locale="en-US"
+                      placeholder="Select Start Time"
+                      @input="checkRecurringInput"
+                      @clear="checkRecurringInput"
+                      @change="checkRecurringInput"
+                      >
+                  </b-timepicker>
+                  <br/>
+                  <span class="danger" v-if="reccuring_start_time_msg">{{reccuring_start_time_msg}}</span>
+                <!-- <DatePicker
                   v-model="recurring_booking_start_time"
                   id="recurring_blackout_start_time"
                   :time-picker-options="{
@@ -426,7 +448,7 @@
                   @input="checkRecurringInput"
                   @clear="checkRecurringInput"
                 >
-                </DatePicker>
+                </DatePicker> -->
               </b-col>
               <b-col cols="6">
                 <label>Blackout End Time</label>
@@ -435,7 +457,26 @@
                   icon="check"
                   style="fontsize: 1rem; color: green"
                 />
-                <DatePicker
+                <b-timepicker
+                      v-model="recurring_booking_end_time"
+                      :value="recurring_booking_end_time"
+                      id="recurring_blackout_end_time"
+                      class="w-100"
+                      icon="clock"
+                      editable
+                      :min-time="minTime"
+                      :max-time="maxTime"
+                      hour-format="12"
+                      locale="en-US"
+                      placeholder="Select End Time"
+                      @input="checkRecurringInput"
+                      @clear="checkRecurringInput"
+                      @change="checkRecurringInput"
+                      >
+                  </b-timepicker>
+                  <br/>
+                  <span class="danger" v-if="reccuring_end_time_msg">{{reccuring_end_time_msg}}</span>
+                <!-- <DatePicker
                   v-model="recurring_booking_end_time"
                   id="recurring_blackout_end_time"
                   :time-picker-options="{
@@ -454,7 +495,7 @@
                   @input="checkRecurringInput"
                   @clear="checkRecurringInput"
                 >
-                </DatePicker>
+                </DatePicker> -->
               </b-col>
             </b-form-row>
             <b-form-row class="mb-2">
@@ -869,6 +910,10 @@ export default class BookingBlackoutModal extends Vue {
   public show_next: boolean = true
   public only_this_office: any = []
   public only_bookings: any =[]
+  public minTime: any = this.getMinTime()
+  public maxTime: any = this.getMaxTime()
+  public reccuring_start_time_msg: any =''
+  public reccuring_end_time_msg: any =''
 
   get modal () {
     return this.showBookingBlackoutModal
@@ -895,8 +940,20 @@ export default class BookingBlackoutModal extends Vue {
       }
     }
   }
-
   
+  getMinTime () {
+    const min = new Date()
+    min.setHours(8)
+    min.setMinutes(0)
+    return min
+  }
+  getMaxTime () {
+    const max = new Date()
+    max.setHours(17)
+    max.setMinutes(0)
+    return max
+  }
+
   show () {
     this.showCollapse('collapse-booking-event-selection')
     this.hideCollapse('collapse-single-booking')
@@ -1296,6 +1353,54 @@ export default class BookingBlackoutModal extends Vue {
   }
 
   checkRecurringInput () {
+    
+    this.reccuring_start_time_msg = ''
+    this.reccuring_end_time_msg = ''
+    if (this.recurring_booking_start_time) {
+      if ((new Date(this.recurring_booking_start_time).getHours() <= 8) || (new Date(this.recurring_booking_start_time).getHours() >= 17)){
+        if ((new Date(this.recurring_booking_start_time).getHours() === 8)) {
+          if ((new Date(this.recurring_booking_start_time).getMinutes() < 30)) {
+              this.reccuring_start_time_msg = "Time not allowed"
+              this.recurring_booking_start_time = null
+          } else {
+            this.reccuring_start_time_msg = ''
+          }
+        } else if (new Date(this.recurring_booking_start_time).getHours() === 17) {
+          if ((new Date(this.recurring_booking_start_time).getMinutes() > 0)) {
+              this.recurring_booking_start_time = null
+              this.reccuring_start_time_msg = "Time not allowed"
+          } else {
+            this.reccuring_start_time_msg = ''
+          }
+        } else {
+          this.reccuring_start_time_msg = "Time not allowed"
+          this.recurring_booking_start_time = null
+        }
+      }
+    }
+    if (this.recurring_booking_end_time) {
+      if ((new Date(this.recurring_booking_end_time).getHours() <= 8) || (new Date(this.recurring_booking_end_time).getHours() >= 17)){
+        if ((new Date(this.recurring_booking_end_time).getHours() === 8)) {
+          if ((new Date(this.recurring_booking_end_time).getMinutes() < 30)) {
+              this.reccuring_end_time_msg = "Time not allowed"
+              this.recurring_booking_end_time = null
+          } else {
+            this.reccuring_end_time_msg = ''
+          }
+        } else if (new Date(this.recurring_booking_end_time).getHours() === 17) {
+          if ((new Date(this.recurring_booking_end_time).getMinutes() > 0)) {
+              this.reccuring_end_time_msg = "Time not allowed"
+              this.recurring_booking_end_time = null
+          } else {
+            this.reccuring_end_time_msg = ''
+          }
+        } else {
+          this.reccuring_end_time_msg = "Time not allowed"
+          this.recurring_booking_end_time = null
+        }
+      }
+    }
+
     if (this.selected_booking_frequency.length > 0 && this.recurring_booking_start_date !== null &&
       this.recurring_booking_start_time !== null && this.recurring_booking_end_date !== null &&
       this.recurring_booking_end_time !== null) {
@@ -1576,4 +1681,7 @@ export default class BookingBlackoutModal extends Vue {
 </script>
 
 <style scoped>
+.danger {
+  color: red !important;
+}
 </style>
