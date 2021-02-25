@@ -262,7 +262,22 @@
                   icon="check"
                   style="fontsize: 1rem; color: green"
                 />
-                <DatePicker
+                  <b-timepicker
+                      v-model="recurring_start_time"
+                      :value="recurring_start_time"
+                      id="recurring_blackout_start_time"
+                      class="w-100"
+                      icon="clock"
+                      editable
+                      hour-format="12"
+                      locale="en-US"
+                      placeholder="Select Start Time"
+                      @change="checkRecurringInput"
+                      @input="checkRecurringInput"
+                      @clear="checkRecurringInput"
+                      >
+                  </b-timepicker>
+                <!-- <DatePicker
                   v-model="recurring_start_time"
                   id="recurring_blackout_start_time"
                   :time-picker-options="{
@@ -282,7 +297,7 @@
                   @input="checkRecurringInput"
                   @clear="checkRecurringInput"
                 >
-                </DatePicker>
+                </DatePicker> -->
               </b-form-group>
             </b-col>
             <b-col cols="6">
@@ -293,7 +308,22 @@
                   icon="check"
                   style="fontsize: 1rem; color: green"
                 />
-                <DatePicker
+                  <b-timepicker
+                      v-model="recurring_end_time"
+                      :value="recurring_end_time"
+                      id="recurring_blackout_end_time"
+                      class="w-100"
+                      icon="clock"
+                      editable
+                      hour-format="12"
+                      locale="en-US"
+                      placeholder="Select End Time"
+                      @change="checkRecurringInput"
+                      @input="checkRecurringInput"
+                      @clear="checkRecurringInput"
+                      >
+                  </b-timepicker>
+                <!-- <DatePicker
                   v-model="recurring_end_time"
                   id="recurring_blackout_end_time"
                   :time-picker-options="{
@@ -313,7 +343,7 @@
                   @input="checkRecurringInput"
                   @clear="checkRecurringInput"
                 >
-                </DatePicker>
+                </DatePicker> -->
               </b-form-group>
             </b-col>
           </b-form-row>
@@ -707,7 +737,6 @@ import { Action, State } from 'vuex-class'
 import { apiProgressBus, APIProgressBusEvents } from '../../../events/progressBus'
 import { showFlagBus, ShowFlagBusEvents } from '../../../events/showFlagBus'
 import DatePicker from 'vue2-datepicker'
-
 import { RRule } from 'rrule'
 import moment from 'moment'
 
@@ -719,7 +748,9 @@ const appointmentsModule = namespace('appointmentsModule')
     DatePicker
   }
 })
+
 export default class AppointmentBlackoutModal extends Vue {
+  
   @State('roomResources') private roomResources!: any
   @appointmentsModule.State('showAppointmentBlackoutModal') private showAppointmentBlackoutModal!: any
   @appointmentsModule.State('appointments') private myappointments!: any
@@ -787,7 +818,8 @@ export default class AppointmentBlackoutModal extends Vue {
   public is_stat: boolean = false
   public stat_submit: boolean = false
   public only_this_office: any = []
-  public only_appointments: any =[]
+  public only_appointments: any = []
+  
 
   get modal () {
     return this.showAppointmentBlackoutModal
@@ -1128,9 +1160,9 @@ export default class AppointmentBlackoutModal extends Vue {
     this.selected_weekdays = []
     this.selected_frequency = []
     this.recurring_start_date = ''
-    this.recurring_start_time = ''
+    this.recurring_start_time = null
     this.recurring_end_date = ''
-    this.recurring_end_time = ''
+    this.recurring_end_time = null
     this.recurring_input_boolean = true
     this.recurring_input_state = 'audit_information'
     this.hideCollapse('collapse-blackout-notes')

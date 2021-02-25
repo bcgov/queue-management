@@ -407,7 +407,21 @@
                   icon="check"
                   style="fontsize: 1rem; color: green"
                 />
-                <DatePicker
+                <b-timepicker
+                      v-model="recurring_booking_start_time"
+                      :value="recurring_booking_start_time"
+                      id="recurring_blackout_start_time"
+                      class="w-100"
+                      icon="clock"
+                      editable
+                      hour-format="12"
+                      locale="en-US"
+                      placeholder="Select Start Time"
+                      @input="checkRecurringInput"
+                      @clear="checkRecurringInput"
+                      >
+                  </b-timepicker>
+                <!-- <DatePicker
                   v-model="recurring_booking_start_time"
                   id="recurring_blackout_start_time"
                   :time-picker-options="{
@@ -426,7 +440,7 @@
                   @input="checkRecurringInput"
                   @clear="checkRecurringInput"
                 >
-                </DatePicker>
+                </DatePicker> -->
               </b-col>
               <b-col cols="6">
                 <label>Blackout End Time</label>
@@ -435,7 +449,21 @@
                   icon="check"
                   style="fontsize: 1rem; color: green"
                 />
-                <DatePicker
+                <b-timepicker
+                      v-model="recurring_booking_end_time"
+                      :value="recurring_booking_end_time"
+                      id="recurring_blackout_end_time"
+                      class="w-100"
+                      icon="clock"
+                      editable
+                      hour-format="12"
+                      locale="en-US"
+                      placeholder="Select End Time"
+                      @input="checkRecurringInput"
+                      @clear="checkRecurringInput"
+                      >
+                  </b-timepicker>
+                <!-- <DatePicker
                   v-model="recurring_booking_end_time"
                   id="recurring_blackout_end_time"
                   :time-picker-options="{
@@ -454,7 +482,7 @@
                   @input="checkRecurringInput"
                   @clear="checkRecurringInput"
                 >
-                </DatePicker>
+                </DatePicker> -->
               </b-col>
             </b-form-row>
             <b-form-row class="mb-2">
