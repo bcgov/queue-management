@@ -23,7 +23,7 @@
             <div>
               <div class="feedback_area" v-show="!$vuetify.breakpoint.xs">
                 <v-card-text class="align_center" v-show="viewFeebackArea()">
-                  <v-form ref="fb-form" v-model="valid">
+                  <v-form ref="form" v-model="valid">
                     <v-row class="clickable close_btn" v-on:click="toggleFeedback()"><span class="mdi mdi-close"/></v-row>
                     <v-col class="feedback_header"><h3>{{feedbackHeader}}</h3></v-col>
                     <v-col v-show="!showResponsePage || !responseRequired">
@@ -52,7 +52,7 @@
                     <v-col v-if="showResponsePage && responseRequired">
                       <!-- <v-col class="align_center"><input type="text" class="feedback_text" aria-label="name" label="Name"  v-model="name"></v-col> -->
                       <v-row justify="center" class="align_center"><v-col cols="8"><v-text-field v-model="name" label="Name" outlined dense :rules="nameRules" required></v-text-field></v-col></v-row>
-                      <v-row justify="center" class="align_center"><v-col cols="8"><v-text-field v-model="email"  label="Email" outlined dense :rules="emailRules" required></v-text-field></v-col></v-row>
+                      <v-row justify="center" class="align_center"><v-col cols="8"><v-text-field v-model="email"  label="Email" outlined dense :rules="emailRules"></v-text-field></v-col></v-row>
                       <v-row justify="center" class="align_center"><v-col cols="8"><v-text-field v-model="phone"  label="Phone" outlined dense></v-text-field></v-col></v-row>
                       <v-row class="consent">{{consentMessage}}</v-row>
                       <v-row justify="center">
@@ -112,12 +112,12 @@
                           Your Feedback
                 </div>
         </div>
-        <v-form ref="fb-form" v-model="valid">
+        <v-form ref="form" v-model="valid">
         <v-card-text class="align_center" v-show="viewFeebackArea()">
             <v-row class="clickable close_btn" v-on:click="toggleFeedback()"><span class="mdi mdi-close"/></v-row>
             <v-col class="feedback_header"><h3>{{feedbackHeader}}</h3></v-col>
             <v-col v-show="!showResponsePage || !responseRequired">
-              <v-col justify="center">
+              <v-col>
                 <v-textarea
                     :maxlength="3000"
                     :label=" +(3000-feedbackMessage.length) + ' characters left'"
@@ -173,7 +173,7 @@
           <v-card-text class="fill-height" v-show="showMobileFeedbackPanel">
             <v-col class="fill-height" >
               <v-row>
-                <v-col class="align_center"><h3>Your Feedback</h3></v-col>
+                <v-col class="align_center margin-left-20"><h3>Your Feedback</h3></v-col>
                 <v-icon v-on:click="toggleMobileFeedbackPanel()" dense>mdi-close</v-icon>
               </v-row>
               <v-row class="icon_container_xs" justify="center"><v-icon v-on:click="showFeedBack('compliment')" class="icon_fb_xs">mdi-emoticon-happy</v-icon></v-row>
@@ -187,7 +187,6 @@
                     <v-row justify="center"><v-btn @click="toggleFeedback"
                               color="primary"
                               width="15em"
-                              :disabled="!valid"
                       >Close</v-btn></v-row>
                   </v-col>
                   <v-col class="align-self-center" v-show="submitInProgress">
@@ -207,6 +206,7 @@ import { AppointmentModule, AuthModule } from '@/store/modules'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { FeedbackRequestObject, FeedbackResponseObject } from '@/models/feedback'
 import { mapActions, mapState } from 'vuex'
+import ConfigHelper from '@/utils/config-helper'
 import { User } from '@/models/user'
 import { getModule } from 'vuex-module-decorators'
 import { th } from 'date-fns/locale'
@@ -232,10 +232,15 @@ import { th } from 'date-fns/locale'
         v => !!v || 'name is required'
       ],
       emailRules: [
-        v => !!v || 'email is required'
+        v => !!v || 'E-mail or Phone no is required',
+        v => /.+@.+\..+/.test(v) || 'E-mail must be valid'
       ],
       consentRules: [
         v => !!v || 'consent is required'
+      ],
+      phoneRules: [
+        v => !!v || 'E-mail or Phone no is required',
+        v => /^\d{10}$/.test(v) || 'Phone must be valid'
       ],
       feedbackType: '',
       feedbackMessage: '',
@@ -256,6 +261,8 @@ import { th } from 'date-fns/locale'
   }
 })
 export default class Feedback extends Vue {
+  private feedbackServiceChannel: string = ConfigHelper.getFeedbackServiceChannel()
+  private formEntryTime: number
   private submitComplete: boolean
   private submitInProgress: boolean
   private showResponsePage: boolean
@@ -269,12 +276,11 @@ export default class Feedback extends Vue {
   private authModule = getModule(AuthModule, this.$store)
   private showFeedbackArea = false
   private consent: boolean
-  private feedbackRequest: FeedbackRequestObject = { variables: { engagement: {}, citizen_comments: {}, service_channel: {}, response: {}, citizen_name: {}, citizen_contact: {}, entity_key: {}, service_date: {}, submit_date_time: {} } }
+  private feedbackRequest: FeedbackRequestObject = { variables: { engagement: {}, citizen_comments: {}, service_channel: {}, response: {}, citizen_name: {}, citizen_contact: {}, citizen_email: {}, entity_key: {}, service_date: {}, submit_date_time: {} } }
   private feedbackResponse: FeedbackResponseObject
   private responseRequired: boolean
   private showMobileFeedbackPanel: boolean = false
   private readonly submitFeedback!: (feedbackRequest: FeedbackRequestObject) => any
-  private maxLengthCaption: string = (3000 - this.feedbackMessage.length) + ' characters left'
   private consentMessage: string = 'The information on this form is collected under the authority of Sections 26(c) and 27(1)(c) of the Freedom of Information and Protection of Privacy Act to help us assess and respond to your enquiry. Questions about the collection of information can be directed to government’s Privacy Office.'
   private toggleFeedback () {
     this.showFeedbackArea = !this.showFeedbackArea
@@ -288,6 +294,7 @@ export default class Feedback extends Vue {
     this.showResponsePage = !this.showResponsePage
   }
   private showFeedBack (feedbackType: string) {
+    this.formEntryTime = new Date().getTime()
     this.submitInProgress = false
     this.submitInProgress = false
     this.feedbackType = feedbackType
@@ -317,15 +324,20 @@ export default class Feedback extends Vue {
   }
 
   private async postFeedback () {
+    let formSubmitTime = new Date().getTime() - this.formEntryTime
+    if (formSubmitTime < 500) {
+      return
+    }
     this.submitInProgress = true
     this.initModel()
     this.feedbackRequest.variables.engagement.value = this.feedbackType
-    this.feedbackRequest.variables.citizen_comments.value = this.feedbackMessage
+    this.feedbackRequest.variables.citizen_comments.value = this.feedbackMessage + formSubmitTime
     this.feedbackRequest.variables.response.value = this.responseRequired ? 'true' : 'false'
     this.feedbackRequest.variables.citizen_name.value = this.name === '' ? 'None' : this.name
     this.feedbackRequest.variables.citizen_contact.value = this.phone === '' ? 'None' : this.phone
-    this.feedbackRequest.variables.service_date.value = '2021-02-17'
-    this.feedbackRequest.variables.submit_date_time.value = '2021-02-17'
+    this.feedbackRequest.variables.citizen_email.value = this.email === '' ? 'None' : this.email
+    this.feedbackRequest.variables.service_date.value = this.getCurrentDateinFormat()
+    this.feedbackRequest.variables.submit_date_time.value = this.getCurrentDateinFormat()
     const resp = await this.submitFeedback(this.feedbackRequest)
     if (resp.data.response_code) {
       this.submitInProgress = false
@@ -353,13 +365,28 @@ export default class Feedback extends Vue {
     this.feedbackRequest.variables.engagement.type = 'String'
     this.feedbackRequest.variables.citizen_comments.type = 'String'
     this.feedbackRequest.variables.service_channel.type = 'String'
-    this.feedbackRequest.variables.service_channel.value = 'online'
+    this.feedbackRequest.variables.service_channel.value = this.feedbackServiceChannel
     this.feedbackRequest.variables.response.type = 'Boolean'
     this.feedbackRequest.variables.citizen_name.type = 'String'
     this.feedbackRequest.variables.citizen_contact.type = 'String'
+    this.feedbackRequest.variables.citizen_email.type = 'String'
     this.feedbackRequest.variables.entity_key.type = 'String'
     this.feedbackRequest.variables.entity_key.value = 'CCII'
     this.feedbackRequest.variables.service_date.type = 'String'
+  }
+
+  private getCurrentDateinFormat () {
+    let currentDate = new Date()
+    let day = currentDate.getDate().toString().length === 1 ? '0' + currentDate.getDate().toString() : currentDate.getDate().toString()
+    let month = currentDate.getMonth().toString().length === 1 ? '0' + currentDate.getMonth().toString() : currentDate.getMonth().toString()
+    return currentDate.getFullYear() + '-' + month + '-' + day
+  }
+  private phoneEmail (value) {
+    if (this.phone !== '' && this.email !== '') {
+      return true
+    } else {
+      return 'Email or Phone no is required'
+    }
   }
 }
 </script>
@@ -370,7 +397,8 @@ $icons_unselected:#313132;
 $icons_selected:$background_unselected;
 $background_selected:#003366;
 $fb_border_color:#d0cece;
-$feedback_strip_color:#002664;
+$background_selected:#003366;
+$feedback_strip_color:$background_selected;
 $caption_medium:0.9rem;
 $caption_small:0.7rem;
 $mandatory_star:#ff0000;
@@ -559,5 +587,8 @@ $mandatory_star:#ff0000;
 }
 .padding-10{
   padding: 10px;
+}
+.margin-left-20{
+  margin-left: 20px;
 }
 </style>

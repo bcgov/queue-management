@@ -19,6 +19,7 @@ export interface FeedbackRequestItem {
   response: FeedbackRequestKV,
   citizen_name: FeedbackRequestKV,
   citizen_contact: FeedbackRequestKV,
+  citizen_email: FeedbackRequestKV,
   entity_key: FeedbackRequestKV,
   service_date:FeedbackRequestKV,
   submit_date_time:FeedbackRequestKV
