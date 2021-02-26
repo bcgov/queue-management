@@ -277,7 +277,7 @@ export default class AgendaScreen extends Vue {
   // A map of appointment_ids with true/false to show the loading spinner
   private loadingButtons = {}
   checkIn( appt ) {
-    const my_val = {
+    const tempEvent  = {
       title: appt.citizen_name,
       contact_information: appt.contact_information,
       online_flag: appt.online_flag,
@@ -292,7 +292,7 @@ export default class AgendaScreen extends Vue {
       //for invite fix
       start_time: appt.start_time
     }
-    this.setAgendaClickedAppt(my_val)
+    this.setAgendaClickedAppt(tempEvent)
     this.clickedTime =  {
       start: moment(appt.start_time),
       end: moment(appt.end_time)
