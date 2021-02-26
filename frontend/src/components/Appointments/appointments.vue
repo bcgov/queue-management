@@ -274,7 +274,9 @@ export default class Appointments extends Vue {
   // Just restart `npm run serve`, as it glitches out.
   next () {
     const daysToMove = this.getDaysToMove('next')
-    this.$refs.calendar.move(daysToMove)
+    if (this.$refs.calendar) {
+      this.$refs.calendar.move(daysToMove)
+    }
     this.calendarSetup()
   }
 
@@ -284,7 +286,9 @@ export default class Appointments extends Vue {
 
   prev () {
     const daysToMove = this.getDaysToMove('prev')
-    this.$refs.calendar.move(daysToMove)
+    if (this.$refs.calendar) {
+      this.$refs.calendar.move(daysToMove)
+    }
     this.calendarSetup()
   }
 
