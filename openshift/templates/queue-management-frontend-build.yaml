@@ -59,7 +59,7 @@ parameters:
     displayName: Name
     name: NAME
     required: true
-    value: queue-management-nginx-frontend
+    value: queue-management-frontend
   - description: |
       The URL to your GIT repo, don't use the this default unless
       your just experimenting.

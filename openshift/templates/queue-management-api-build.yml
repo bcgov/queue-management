@@ -42,22 +42,28 @@ objects:
             - name: AF_USERID
               valueFrom:
                 secretKeyRef:
-                  name: default-5c0dde-crmcak
+                  name: "${ARTIFACTORY_CREDS}"
                   key: username
             - name: AF_PASSWD
               valueFrom:
                 secretKeyRef:
-                  name: default-5c0dde-crmcak
+                  name: "${ARTIFACTORY_CREDS}"
                   key: password
       output:
         to:
           kind: ImageStreamTag
           name: queue-management-api:latest
-      resources: {}
+      resources:
+        limits:
+          cpu: '1'
+          memory: 4Gi
+        requests:
+          cpu: 500m
+          memory: 2Gi      
       postCommit: {}
       nodeSelector:
-      successfulBuildsHistoryLimit: 10
-      failedBuildsHistoryLimit: 10
+      successfulBuildsHistoryLimit: 5
+      failedBuildsHistoryLimit: 5
     
     status:
       lastVersion: 0
@@ -70,3 +76,6 @@ parameters:
     displayName: Git Reference
     description: Set this to a branch name, tag or other ref of your repository if you are not using the default branch.
     value: master
+  - name: ARTIFACTORY_CREDS
+    displayName: Artifactory Credentials
+    description: the credentails required for artifactory pull
