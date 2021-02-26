@@ -423,7 +423,7 @@ export default class Appointments extends Vue {
     // for draft
     const data: any = {
       start_time: moment.utc(start).format(),
-      // setting end time aftger 15 min of start to fix over appoinment time
+      // setting end time aftger 15 min of start to fix over appoinment time      
       end_time: moment(start).clone().add(15, 'minutes')// moment.utc(end).format()
       // service_id: 27,
       // is_draft: true
