@@ -217,7 +217,25 @@
                   icon="check"
                   style="fontsize: 1rem; color: green"
                 />
-                <DatePicker
+                <b-timepicker
+                      v-model="start_time"
+                      :value="start_time"
+                      id="appointment_blackout_start_time"
+                      class="w-100"
+                      icon="clock"
+                      editable
+                      hour-format="12"
+                      locale="en-US"
+                      placeholder="Select Start Time"
+                      @input="checkSingleInput"
+                      @clear="checkSingleInput"
+                      @change="checkSingleInput"
+                      >
+                  </b-timepicker>
+                  <br/>
+                  <span class="danger" v-if="start_time_msg">{{start_time_msg}}</span>
+
+                <!-- <DatePicker
                   v-model="start_time"
                   id="appointment_blackout_start_time"
                   :time-picker-options="{
@@ -236,7 +254,7 @@
                   @change="checkSingleInput"
                   @clear="checkSingleInput"
                 >
-                </DatePicker>
+                </DatePicker> -->
               </b-form-group>
             </b-col>
             <b-col cols="6">
@@ -247,7 +265,24 @@
                   icon="check"
                   style="fontsize: 1rem; color: green"
                 />
-                <DatePicker
+                <b-timepicker
+                      v-model="end_time"
+                      :value="end_time"
+                      id="appointment_blackout_end_time"
+                      class="w-100"
+                      icon="clock"
+                      editable
+                      hour-format="12"
+                      locale="en-US"
+                      placeholder="Select End Time"
+                      @input="checkSingleInput"
+                      @clear="checkSingleInput"
+                      @change="checkSingleInput"
+                      >
+                  </b-timepicker>
+                  <br/>
+                  <span class="danger" v-if="end_time_msg">{{end_time_msg}}</span>
+                <!-- <DatePicker
                   v-model="end_time"
                   id="appointment_blackout_end_time"
                   :time-picker-options="{
@@ -266,7 +301,7 @@
                   @change="checkSingleInput"
                   @clear="checkSingleInput"
                 >
-                </DatePicker>
+                </DatePicker> -->
               </b-form-group>
             </b-col>
           </b-form-row>
@@ -417,8 +452,6 @@
                       class="w-100"
                       icon="clock"
                       editable
-                      :min-time="minTime"
-                      :max-time="maxTime"
                       hour-format="12"
                       locale="en-US"
                       placeholder="Select Start Time"
@@ -464,8 +497,6 @@
                       class="w-100"
                       icon="clock"
                       editable
-                      :min-time="minTime"
-                      :max-time="maxTime"
                       hour-format="12"
                       locale="en-US"
                       placeholder="Select End Time"
@@ -910,10 +941,10 @@ export default class BookingBlackoutModal extends Vue {
   public show_next: boolean = true
   public only_this_office: any = []
   public only_bookings: any =[]
-  public minTime: any = this.getMinTime()
-  public maxTime: any = this.getMaxTime()
-  public reccuring_start_time_msg: any =''
-  public reccuring_end_time_msg: any =''
+  public reccuring_start_time_msg: any = ''
+  public reccuring_end_time_msg: any = ''
+  public start_time_msg: any = ''
+  public end_time_msg: any = ''
 
   get modal () {
     return this.showBookingBlackoutModal
@@ -940,20 +971,6 @@ export default class BookingBlackoutModal extends Vue {
       }
     }
   }
-  
-  getMinTime () {
-    const min = new Date()
-    min.setHours(8)
-    min.setMinutes(0)
-    return min
-  }
-  getMaxTime () {
-    const max = new Date()
-    max.setHours(17)
-    max.setMinutes(0)
-    return max
-  }
-
   show () {
     this.showCollapse('collapse-booking-event-selection')
     this.hideCollapse('collapse-single-booking')
@@ -1191,6 +1208,67 @@ export default class BookingBlackoutModal extends Vue {
   }
 
   generateRule () {
+    let validate_flag =false
+    this.reccuring_start_time_msg = ''
+    this.reccuring_end_time_msg = ''
+    if (this.recurring_booking_start_time) {
+      if ((new Date(this.recurring_booking_start_time).getHours() <= 8) || (new Date(this.recurring_booking_start_time).getHours() >= 17)){
+        if ((new Date(this.recurring_booking_start_time).getHours() === 8)) {
+          if ((new Date(this.recurring_booking_start_time).getMinutes() < 30)) {
+              this.reccuring_start_time_msg = "Time not allowed"
+              this.recurring_booking_start_time = null
+              validate_flag = true
+          } else {
+            this.reccuring_start_time_msg = ''
+            validate_flag = false
+          }
+        } else if (new Date(this.recurring_booking_start_time).getHours() === 17) {
+          if ((new Date(this.recurring_booking_start_time).getMinutes() > 0)) {
+              this.recurring_booking_start_time = null
+              this.reccuring_start_time_msg = "Time not allowed"
+              validate_flag = true
+          } else {
+            this.reccuring_start_time_msg = ''
+            validate_flag = false
+          }
+        } else {
+          this.reccuring_start_time_msg = "Time not allowed"
+          this.recurring_booking_start_time = null
+          validate_flag = true
+        }
+      }
+    }
+    if (this.recurring_booking_end_time) {
+      if ((new Date(this.recurring_booking_end_time).getHours() <= 8) || (new Date(this.recurring_booking_end_time).getHours() >= 17)){
+        if ((new Date(this.recurring_booking_end_time).getHours() === 8)) {
+          if ((new Date(this.recurring_booking_end_time).getMinutes() < 30)) {
+              this.reccuring_end_time_msg = "Time not allowed"
+              this.recurring_booking_end_time = null
+              validate_flag = true
+          } else {
+            this.reccuring_end_time_msg = ''
+            validate_flag = false
+          }
+        } else if (new Date(this.recurring_booking_end_time).getHours() === 17) {
+          if ((new Date(this.recurring_booking_end_time).getMinutes() > 0)) {
+              this.reccuring_end_time_msg = "Time not allowed"
+              this.recurring_booking_end_time = null
+              validate_flag = true
+          } else {
+            this.reccuring_end_time_msg = ''
+            validate_flag = false
+          }
+        } else {
+          this.reccuring_end_time_msg = "Time not allowed"
+          this.recurring_booking_end_time = null
+          validate_flag = true
+        }
+      }
+    }
+    if (validate_flag) {
+      this.recurring_form_state = ''
+      return false
+    }
     this.hideCollapse('collapse-booking-event-selection')
     this.hideCollapse('collapse-recurring-booking')
     this.single_booking_blackout_boolean = true
@@ -1353,54 +1431,8 @@ export default class BookingBlackoutModal extends Vue {
   }
 
   checkRecurringInput () {
-    
     this.reccuring_start_time_msg = ''
     this.reccuring_end_time_msg = ''
-    if (this.recurring_booking_start_time) {
-      if ((new Date(this.recurring_booking_start_time).getHours() <= 8) || (new Date(this.recurring_booking_start_time).getHours() >= 17)){
-        if ((new Date(this.recurring_booking_start_time).getHours() === 8)) {
-          if ((new Date(this.recurring_booking_start_time).getMinutes() < 30)) {
-              this.reccuring_start_time_msg = "Time not allowed"
-              this.recurring_booking_start_time = null
-          } else {
-            this.reccuring_start_time_msg = ''
-          }
-        } else if (new Date(this.recurring_booking_start_time).getHours() === 17) {
-          if ((new Date(this.recurring_booking_start_time).getMinutes() > 0)) {
-              this.recurring_booking_start_time = null
-              this.reccuring_start_time_msg = "Time not allowed"
-          } else {
-            this.reccuring_start_time_msg = ''
-          }
-        } else {
-          this.reccuring_start_time_msg = "Time not allowed"
-          this.recurring_booking_start_time = null
-        }
-      }
-    }
-    if (this.recurring_booking_end_time) {
-      if ((new Date(this.recurring_booking_end_time).getHours() <= 8) || (new Date(this.recurring_booking_end_time).getHours() >= 17)){
-        if ((new Date(this.recurring_booking_end_time).getHours() === 8)) {
-          if ((new Date(this.recurring_booking_end_time).getMinutes() < 30)) {
-              this.reccuring_end_time_msg = "Time not allowed"
-              this.recurring_booking_end_time = null
-          } else {
-            this.reccuring_end_time_msg = ''
-          }
-        } else if (new Date(this.recurring_booking_end_time).getHours() === 17) {
-          if ((new Date(this.recurring_booking_end_time).getMinutes() > 0)) {
-              this.reccuring_end_time_msg = "Time not allowed"
-              this.recurring_booking_end_time = null
-          } else {
-            this.reccuring_end_time_msg = ''
-          }
-        } else {
-          this.reccuring_end_time_msg = "Time not allowed"
-          this.recurring_booking_end_time = null
-        }
-      }
-    }
-
     if (this.selected_booking_frequency.length > 0 && this.recurring_booking_start_date !== null &&
       this.recurring_booking_start_time !== null && this.recurring_booking_end_date !== null &&
       this.recurring_booking_end_time !== null) {
@@ -1415,6 +1447,67 @@ export default class BookingBlackoutModal extends Vue {
   }
 
   nextRoomSingleSelection () {
+    let validate_flag =false
+    this.start_time_msg = ''
+    this.end_time_msg = ''
+    if (this.start_time) {
+      if ((new Date(this.start_time).getHours() <= 8) || (new Date(this.start_time).getHours() >= 17)){
+        if ((new Date(this.start_time).getHours() === 8)) {
+          if ((new Date(this.start_time).getMinutes() < 30)) {
+              this.start_time_msg = "Time not allowed"
+              this.start_time = null
+              validate_flag = true
+          } else {
+            this.start_time_msg = ''
+            validate_flag = false
+          }
+        } else if (new Date(this.start_time).getHours() === 17) {
+          if ((new Date(this.start_time).getMinutes() > 0)) {
+              this.start_time = null
+              this.start_time_msg = "Time not allowed"
+              validate_flag = true
+          } else {
+            this.start_time_msg = ''
+            validate_flag = false
+          }
+        } else {
+          this.start_time_msg = "Time not allowed"
+          this.start_time = null
+          validate_flag = true
+        }
+      }
+    }
+    if (this.end_time) {
+      if ((new Date(this.end_time).getHours() <= 8) || (new Date(this.end_time).getHours() >= 17)){
+        if ((new Date(this.end_time).getHours() === 8)) {
+          if ((new Date(this.end_time).getMinutes() < 30)) {
+              this.end_time_msg = "Time not allowed"
+              this.end_time = null
+              validate_flag = true
+          } else {
+            this.end_time_msg = ''
+            validate_flag = false
+          }
+        } else if (new Date(this.end_time).getHours() === 17) {
+          if ((new Date(this.end_time).getMinutes() > 0)) {
+              this.end_time_msg = "Time not allowed"
+              this.end_time = null
+              validate_flag = true
+          } else {
+            this.end_time_msg = ''
+            validate_flag = false
+          }
+        } else {
+          this.end_time_msg = "Time not allowed"
+          this.end_time = null
+          validate_flag = true
+        }
+      }
+    }
+    if (validate_flag) {
+      this.single_form_state = ''
+      return false
+    }
     this.hideCollapse('collapse-single-booking')
     this.hideCollapse('collapse-booking-event-selection')
     this.showCollapse('collapse-room-selection')

@@ -181,7 +181,24 @@
                   icon="check"
                   style="fontsize: 1rem; color: green"
                 />
-                <DatePicker
+                <b-timepicker
+                    v-model="start_time"
+                    :value="start_time"
+                    id="appointment_blackout_start_time"
+                    class="w-100"
+                    icon="clock"
+                    editable
+                    hour-format="12"
+                    locale="en-US"
+                    placeholder="Select Start Time"
+                    @change="checkSingleInput"
+                    @input="checkSingleInput"
+                    @clear="checkSingleInput"
+                    >
+                </b-timepicker>
+                <br/>
+                <span class="danger" v-if="start_time_msg">{{start_time_msg}}</span>
+                <!-- <DatePicker
                   v-model="start_time"
                   id="appointment_blackout_start_time"
                   :time-picker-options="{
@@ -200,7 +217,7 @@
                   @input="checkSingleInput"
                   @clear="checkSingleInput"
                 >
-                </DatePicker>
+                </DatePicker> -->
               </b-form-group>
             </b-col>
             <b-col cols="6">
@@ -211,7 +228,24 @@
                   icon="check"
                   style="fontsize: 1rem; color: green"
                 />
-                <DatePicker
+                  <b-timepicker
+                      v-model="end_time"
+                      :value="end_time"
+                      id="appointment_blackout_end_time"
+                      class="w-100"
+                      icon="clock"
+                      editable
+                      hour-format="12"
+                      locale="en-US"
+                      placeholder="Select End Time"
+                      @change="checkSingleInput"
+                      @input="checkSingleInput"
+                      @clear="checkSingleInput"
+                      >
+                  </b-timepicker>
+                <br/>
+                <span class="danger" v-if="end_time_msg">{{end_time_msg}}</span>
+                <!-- <DatePicker
                   v-model="end_time"
                   id="appointment_blackout_end_time"
                   :time-picker-options="{
@@ -230,7 +264,7 @@
                   @input="checkSingleInput"
                   @clear="checkSingleInput"
                 >
-                </DatePicker>
+                </DatePicker> -->
               </b-form-group>
             </b-col>
           </b-form-row>
@@ -271,8 +305,6 @@
                       class="w-100"
                       icon="clock"
                       editable
-                      :min-time="minTime"
-                      :max-time="maxTime"
                       hour-format="12"
                       locale="en-US"
                       placeholder="Select Start Time"
@@ -321,8 +353,6 @@
                       class="w-100"
                       icon="clock"
                       editable
-                      :min-time="minTime"
-                      :max-time="maxTime"
                       hour-format="12"
                       locale="en-US"
                       placeholder="Select End Time"
@@ -674,6 +704,7 @@
       </b-collapse>
       <b-collapse id="collapse-blackout-notes">
         <v-card class="mt=2">
+          <v-container>
           <b-form-row style="justify-content: center">
             <h4 v-if="this.single_input_boolean">Single Event</h4>
             <h4 v-if="this.recurring_input_boolean">Recurring Event</h4>
@@ -706,6 +737,7 @@
             >
             </b-textarea>
           </b-form-row>
+          </v-container>
         </v-card>
       </b-collapse>
     </b-form>
@@ -831,10 +863,10 @@ export default class AppointmentBlackoutModal extends Vue {
   public stat_submit: boolean = false
   public only_this_office: any = []
   public only_appointments: any = []
-  public minTime: any = this.getMinTime()
-  public maxTime: any = this.getMaxTime()
   public reccuring_start_time_msg: any =''
   public reccuring_end_time_msg: any =''
+  public start_time_msg: any =''
+  public end_time_msg: any =''
   
 
   get modal () {
@@ -852,18 +884,6 @@ export default class AppointmentBlackoutModal extends Vue {
         this.$root.$emit('bv::toggle::collapse', div_id)
       }
     }
-  }
-  getMinTime () {
-    const min = new Date()
-    min.setHours(8)
-    min.setMinutes(0)
-    return min
-  }
-  getMaxTime () {
-    const max = new Date()
-    max.setHours(17)
-    max.setMinutes(0)
-    return max
   }
   showCollapse (div_id) {
     const elementDivId = document.getElementById(div_id)
@@ -931,18 +951,17 @@ export default class AppointmentBlackoutModal extends Vue {
   }
 
   private async countApptWarning (e) {
-    this.filtered_appt = this.myappointments.filter(appt => appt.blackout_flag === 'N' && 
+    this.filtered_appt = this.myappointments.filter(appt => appt.blackout_flag === 'N' && (!appt.stat_flag) &&
                                                     moment(appt.start_time).format('YYYY-MM-DD HH:mm:ssZ') >= e.start_time &&
                                                     moment(appt.end_time).format('YYYY-MM-DD HH:mm:ssZ') <= e.end_time)
     
-    this.filtered_appt_start = this.myappointments.filter(appt => appt.blackout_flag === 'N' && 
+    this.filtered_appt_start = this.myappointments.filter(appt => appt.blackout_flag === 'N' && (!appt.stat_flag) &&
                                                           moment(appt.start_time).format('YYYY-MM-DD HH:mm:ssZ') < e.start_time &&
                                                           moment(appt.end_time).format('YYYY-MM-DD HH:mm:ssZ') > e.start_time)
     
-    this.filtered_appt_end = this.myappointments.filter(appt => appt.blackout_flag === 'N' && 
+    this.filtered_appt_end = this.myappointments.filter(appt => appt.blackout_flag === 'N' && (!appt.stat_flag) &&
                                                         moment(appt.start_time).format('YYYY-MM-DD HH:mm:ssZ') < e.end_time &&
                                                         moment(appt.end_time).format('YYYY-MM-DD HH:mm:ssZ') > e.end_time)
-    
     this.appt_overlap = this.appt_overlap + this.filtered_appt.length + this.filtered_appt_start.length + this.filtered_appt_end.length
   }
 
@@ -1101,8 +1120,64 @@ export default class AppointmentBlackoutModal extends Vue {
   }
 
   generateRule () {
+    let validate_flag = false
+    if (this.recurring_start_time) {
+      if ((new Date(this.recurring_start_time).getHours() <= 8) || (new Date(this.recurring_start_time).getHours() >= 17)){
+        if ((new Date(this.recurring_start_time).getHours() === 8)) {
+          if ((new Date(this.recurring_start_time).getMinutes() < 30)) {
+              this.reccuring_start_time_msg = "Time not allowed"
+              this.recurring_start_time = null
+              validate_flag = true
+          } else {
+            this.reccuring_start_time_msg = ''
+          }
+        } else if (new Date(this.recurring_start_time).getHours() === 17) {
+          if ((new Date(this.recurring_start_time).getMinutes() > 0)) {
+              this.reccuring_start_time_msg = "Time not allowed"
+              this.recurring_start_time = null
+              validate_flag = true
+          } else {
+            this.reccuring_start_time_msg = ''
+          }
+        } else {
+          this.reccuring_start_time_msg = "Time not allowed"
+          this.recurring_start_time = null
+          validate_flag = true
+        }
+      }
+    }
+    if (this.recurring_end_time) {
+      if ((new Date(this.recurring_end_time).getHours() <= 8) || (new Date(this.recurring_end_time).getHours() >= 17)){
+        if ((new Date(this.recurring_end_time).getHours() === 8)) {
+          if ((new Date(this.recurring_end_time).getMinutes() < 30)) {
+              this.reccuring_end_time_msg = "Time not allowed"
+              this.recurring_end_time = null
+              validate_flag = true
+          } else {
+            this.reccuring_end_time_msg = ''
+          }
+        } else if (new Date(this.recurring_end_time).getHours() === 17) {
+          if ((new Date(this.recurring_end_time).getMinutes() > 0)) {
+              this.reccuring_end_time_msg = "Time not allowed"
+              this.recurring_end_time = null
+              validate_flag = true
+          } else {
+            this.reccuring_end_time_msg = ''
+          }
+        } else {
+          this.reccuring_end_time_msg = "Time not allowed"
+          this.recurring_end_time = null
+          validate_flag = true
+        }
+      }
+    }
+    if (validate_flag) {
+      this.recurring_input_state = ''
+      return false
+    }
     this.hideCollapse('collapse-event-selection')
     this.hideCollapse('collapse-recurring-events')
+
     this.recurring_blackout_boolean = true
     this.single_blackout_boolean = true
     this.next_boolean = false
@@ -1270,50 +1345,6 @@ export default class AppointmentBlackoutModal extends Vue {
   checkRecurringInput () {
     this.reccuring_start_time_msg = ''
     this.reccuring_end_time_msg = ''
-    if (this.recurring_start_time) {
-      if ((new Date(this.recurring_start_time).getHours() <= 8) || (new Date(this.recurring_start_time).getHours() >= 17)){
-        if ((new Date(this.recurring_start_time).getHours() === 8)) {
-          if ((new Date(this.recurring_start_time).getMinutes() < 30)) {
-              this.reccuring_start_time_msg = "Time not allowed"
-              this.recurring_start_time = null
-          } else {
-            this.reccuring_start_time_msg = ''
-          }
-        } else if (new Date(this.recurring_start_time).getHours() === 17) {
-          if ((new Date(this.recurring_start_time).getMinutes() > 0)) {
-              this.recurring_start_time = null
-              this.reccuring_start_time_msg = "Time not allowed"
-          } else {
-            this.reccuring_start_time_msg = ''
-          }
-        } else {
-          this.reccuring_start_time_msg = "Time not allowed"
-          this.recurring_start_time = null
-        }
-      }
-    }
-    if (this.recurring_end_time) {
-      if ((new Date(this.recurring_end_time).getHours() <= 8) || (new Date(this.recurring_end_time).getHours() >= 17)){
-        if ((new Date(this.recurring_end_time).getHours() === 8)) {
-          if ((new Date(this.recurring_end_time).getMinutes() < 30)) {
-              this.reccuring_end_time_msg = "Time not allowed"
-              this.recurring_end_time = null
-          } else {
-            this.reccuring_end_time_msg = ''
-          }
-        } else if (new Date(this.recurring_end_time).getHours() === 17) {
-          if ((new Date(this.recurring_end_time).getMinutes() > 0)) {
-              this.reccuring_end_time_msg = "Time not allowed"
-              this.recurring_end_time = null
-          } else {
-            this.reccuring_end_time_msg = ''
-          }
-        } else {
-          this.reccuring_end_time_msg = "Time not allowed"
-          this.recurring_end_time = null
-        }
-      }
-    }
 
     if (this.selected_frequency.length > 0 &&
       this.recurring_start_date !== null && this.recurring_start_time !== null && this.recurring_end_date !== null &&
@@ -1331,8 +1362,14 @@ export default class AppointmentBlackoutModal extends Vue {
 
   checkSingleInput () {
     if (this.blackout_date !== '' && this.start_time !== '' && this.end_time) {
-      this.single_input_boolean = true
-      this.single_input_state = 'event_information'
+      if (this.blackout_date && this.start_time && this.end_time) {
+         this.single_input_boolean = true
+          this.single_input_state = 'event_information'
+      } else {
+        this.single_input_boolean = false
+        this.single_input_state = ''
+      }
+     
     } else {
       this.single_input_boolean = false
       this.single_input_state = ''
@@ -1347,6 +1384,64 @@ export default class AppointmentBlackoutModal extends Vue {
   }
 
   nextSingleNotes () {
+    this.start_time_msg = ''
+    this.end_time_msg = ''
+    let validate_flag = false
+    if (this.start_time) {
+      if ((new Date(this.start_time).getHours() <= 8) || (new Date(this.start_time).getHours() >= 17)){
+        if ((new Date(this.start_time).getHours() === 8)) {
+          if ((new Date(this.start_time).getMinutes() < 30)) {
+              this.start_time_msg = "Time not allowed"
+              this.start_time = null
+              validate_flag = true
+          } else {
+            this.start_time_msg = ''
+          }
+        } else if (new Date(this.start_time).getHours() === 17) {
+          if ((new Date(this.start_time).getMinutes() > 0)) {
+              this.start_time = "Time not allowed"
+              this.start_time = null
+              validate_flag = true
+          } else {
+            this.start_time_msg = ''
+          }
+        } else {
+          this.start_time_msg = "Time not allowed"
+          this.start_time = null
+          validate_flag = true
+        }
+      }
+    }
+    if (this.end_time) {
+      if ((new Date(this.end_time).getHours() <= 8) || (new Date(this.end_time).getHours() >= 17)){
+        if ((new Date(this.end_time).getHours() === 8)) {
+          if ((new Date(this.end_time).getMinutes() < 30)) {
+              this.end_time_msg = "Time not allowed"
+              this.end_time = null
+              validate_flag = true
+          } else {
+            this.end_time_msg = ''
+          }
+        } else if (new Date(this.end_time).getHours() === 17) {
+          if ((new Date(this.end_time).getMinutes() > 0)) {
+              this.end_time_msg = "Time not allowed"
+              this.end_time = null
+              validate_flag = true
+          } else {
+            this.end_time_msg = ''
+          }
+        } else {
+          this.end_time_msg = "Time not allowed"
+          this.end_time = null
+          validate_flag = true
+        }
+      }
+    }
+    if (validate_flag) {
+      this.single_input_state = ''
+      return false
+    }
+
     this.hideCollapse('collapse-event-selection')
     this.hideCollapse('collapse-single-event')
     this.showCollapse('collapse-blackout-notes')

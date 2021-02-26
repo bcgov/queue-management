@@ -348,7 +348,6 @@ export default class Appointments extends Vue {
     this.is_stat = false
     this.getAppointments().then((each) => {
       const bb = each.find(element => ((moment(event.date).format('YYYY-MM-DD') === moment(element.start_time).format('YYYY-MM-DD')) && (element.stat_flag)));
-      console.log(bb)
       if (bb) {
         this.is_stat = true
       }
