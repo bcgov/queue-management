@@ -321,6 +321,7 @@ export default class Appointments extends Vue {
       // console.log(`getDaysToMove("${direction}")`, { viewedDate, dayOfWeek, daysToMove })
       return daysToMove
       }
+      return 1
     }
     // console.error('Unable to properly calculate ')
     // return 1
