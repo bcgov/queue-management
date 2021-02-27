@@ -826,7 +826,9 @@ export default class Calendar extends Vue {
     } else {
       viewName = 'month'
     }
-    this.setCalendarSetup({ title: this.$refs.calendar.title, viewName, titleRef: this.$refs.calendar })
+    if (this.$refs.calendar) {
+        this.setCalendarSetup({ title: this.$refs.calendar.title, viewName, titleRef: this.$refs.calendar })
+    }
   }
 
   // viewRender (view, el) {

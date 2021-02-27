@@ -302,6 +302,7 @@ export default class Appointments extends Vue {
       // Just move one week forward/back, simple.
       return direction === 'next' ? 1 : -1
     } else {
+      if (this.$refs.calendar) {
       // For days, we have to handle jumping of weekends.
       const viewedDate = this.$refs.calendar.value
       const dayOfWeek = moment(viewedDate).day()
@@ -319,6 +320,7 @@ export default class Appointments extends Vue {
       }
       // console.log(`getDaysToMove("${direction}")`, { viewedDate, dayOfWeek, daysToMove })
       return daysToMove
+      }
     }
     // console.error('Unable to properly calculate ')
     // return 1
