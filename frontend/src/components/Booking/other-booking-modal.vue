@@ -532,7 +532,7 @@
 </template>
 
 <script lang="ts">
-
+/* eslint-disable */
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
@@ -540,6 +540,7 @@ import DatePicker from 'vue2-datepicker'
 import { RRule } from 'rrule'
 
 import moment from 'moment'
+import EditExamModal from '../exams/edit-exam-form-modal.vue'
 
 @Component({
   components: {
@@ -744,15 +745,20 @@ export default class OtherBookingModal extends Vue {
     const self = this
     if (this.other_rrule_array.length > 0) {
       this.other_rrule_array.forEach(date => {
+        let st = moment(date.start).clone()
+        let ed = moment(date.end).clone()
+        const startOffice = moment.tz(st.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
+        const endOffice = moment.tz(ed.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
         const booking = {
           room_id: self.resource.id,
-          start_time: date.start,
-          end_time: date.end,
+          start_time:startOffice,
+          end_time: endOffice,
           fees: self.recurring_fees,
           booking_name: self.recurring_title,
           booking_contact_information: self.recurring_contact_information,
           recurring_uuid: recurring_uuid
         }
+        // moment.tz(this.startTime.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).utc()
         self.postBooking(booking).then(() => {
           self.finishBooking()
           self.getBookings()
@@ -765,9 +771,16 @@ export default class OtherBookingModal extends Vue {
       this.message = ''
       this.state = null
       // JSTOTS TOCHECK removed new from moment. no need to use new with moment
-      const start = moment(this.startTime).utc()
+      let start = moment(this.startTime).utc()
+     if (this.startTime) {
+       start = moment.tz(this.startTime.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).utc()
+     }
+      
       // JSTOTS TOCHECK removed new from moment. no need to use new with moment
-      const end = moment(this.endTime).utc()
+      let end = moment(this.endTime).utc()
+      if (this.endTime) {
+        end = moment.tz(this.endTime.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).utc()
+      }
       const booking = {
         room_id: this.resource.id,
         start_time: start.format('DD-MMM-YYYY[T]HH:mm:ssZ'),
@@ -833,20 +846,38 @@ export default class OtherBookingModal extends Vue {
     this.other_recurring_event = true
     // Commented out start/end variables are for testing 5pm pst -> utc conversion bug
     // Removed these variables from the date_start and until variable declarations
-    const start_year = parseInt(moment(this.other_recurring_start_date).utc().clone().format('YYYY'))
-    const start_month = parseInt(moment(this.other_recurring_start_date).utc().clone().format('MM'))
-    const start_day = parseInt(moment(this.other_recurring_start_date).utc().clone().subtract(4, 'hours').format('DD'))
+    const other_recurring_start_date = moment.tz(this.other_recurring_start_date.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
+    const start_year = parseInt(moment(other_recurring_start_date).utc().clone().format('YYYY'))
+    const start_month = parseInt(moment(other_recurring_start_date).utc().clone().format('MM'))
+    const start_day = parseInt(moment(other_recurring_start_date).utc().clone().subtract(4, 'hours').format('DD'))
+    // const start_year = parseInt(moment(this.other_recurring_start_date).utc().clone().format('YYYY'))
+    // const start_month = parseInt(moment(this.other_recurring_start_date).utc().clone().format('MM'))
+    // const start_day = parseInt(moment(this.other_recurring_start_date).utc().clone().subtract(4, 'hours').format('DD'))
     // let start_hour = parseInt(moment(this.other_recurring_start_time).utc().clone().format('HH'))
-    const local_start_hour = parseInt(moment(this.other_recurring_start_time).clone().format('HH'))
-    const local_start_minute = parseInt(moment(this.other_recurring_start_time).clone().format('mm'))
+    const other_recurring_start_time = moment.tz(this.other_recurring_start_time.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
+    const local_start_hour = parseInt(moment(other_recurring_start_time).clone().format('HH'))
+    const local_start_minute = parseInt(moment(other_recurring_start_time).clone().format('mm'))
+    // const local_start_hour = parseInt(moment(this.other_recurring_start_time).clone().format('HH'))
+    // const local_start_minute = parseInt(moment(this.other_recurring_start_time).clone().format('mm'))
     // let start_minute = parseInt(moment(this.other_recurring_start_time).utc().clone().format('mm'))
-    const end_year = parseInt(moment(this.other_recurring_end_date).utc().clone().format('YYYY'))
-    const end_month = parseInt(moment(this.other_recurring_end_date).utc().clone().format('MM'))
-    const end_day = parseInt(moment(this.other_recurring_end_date).utc().clone().format('DD'))
+    const other_recurring_end_date_obj = moment(this.other_recurring_end_date).clone()
+    const other_recurring_end_date = moment.tz(other_recurring_end_date_obj.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
+    const end_year = parseInt(moment(other_recurring_end_date).utc().clone().format('YYYY'))
+    const end_month = parseInt(moment(other_recurring_end_date).utc().clone().format('MM'))
+    const end_day = parseInt(moment(other_recurring_end_date).utc().clone().format('DD'))
+    // const end_year = parseInt(moment(this.other_recurring_end_date).utc().clone().format('YYYY'))
+    // const end_month = parseInt(moment(this.other_recurring_end_date).utc().clone().format('MM'))
+    // const end_day = parseInt(moment(this.other_recurring_end_date).utc().clone().format('DD'))
+    const other_recurring_end_time_obj = moment(this.other_recurring_end_time).clone()
+    const other_recurring_end_time = moment.tz(other_recurring_end_time_obj.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
     // let end_hour = parseInt(moment(this.other_recurring_end_time).utc().clone().format('HH'))
     // let end_minute = parseInt(moment(this.other_recurring_end_time).utc().clone().format('mm'))
-    const duration_start = moment(this.other_recurring_start_time).utc()
-    const duration_end = moment(this.other_recurring_end_time).utc()
+
+    const duration_start = moment(other_recurring_start_time).utc()
+    const duration_end = moment(other_recurring_end_time).utc()
+    // const duration_start = moment(this.other_recurring_start_time).utc()
+    // const duration_end = moment(this.other_recurring_end_time).utc()
+
     const duration = moment.duration(duration_end.diff(duration_start))
     const duration_minutes = duration.asMinutes()
     let input_frequency: any = null
@@ -871,7 +902,6 @@ export default class OtherBookingModal extends Vue {
       // TODO Might be Deprecated -- IF RRule Breaks, this is where it will happen
       const date_start = new Date(Date.UTC(start_year, start_month - 1, start_day))
       const until = new Date(Date.UTC(end_year, end_month - 1, end_day))
-
       const rule = new RRule({
         freq: input_frequency,
         count: this.other_selected_count,

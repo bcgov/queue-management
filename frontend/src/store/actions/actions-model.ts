@@ -1,4 +1,4 @@
-
+/* eslint-disable */
 /**
  *
  * Notes
@@ -19,8 +19,8 @@ import AppointmentsModule from '../modules/appointments-module';
 import moment from 'moment'
 
 const DEFAULT_COUNTER_NAME = 'Counter'
-const getEventColor = (isBlackout, room) => {
-  if (isBlackout && isBlackout === 'Y') {
+const getEventColor = (isBlackout, room, isStat) => {
+  if (isBlackout && isBlackout === 'Y' || isStat) {
     return 'grey darken-1 white--text'
   }
   return room && room.color ? room.color : 'cal-events-default'
@@ -140,6 +140,32 @@ export const commonActions: any = {
     return new Promise((resolve, reject) => {
       Axios(context)
         .delete(`/bookings/recurring/${id}`)
+        .then(resp => {
+          resolve(resp.data)
+        })
+        .catch(error => {
+          reject(error)
+        })
+    })
+  },
+
+  deleteRecurringStatBooking (context, id) {
+    return new Promise((resolve, reject) => {
+      Axios(context)
+        .delete(`/bookings/recurring/current-office/${id}`)
+        .then(resp => {
+          resolve(resp.data)
+        })
+        .catch(error => {
+          reject(error)
+        })
+    })
+  },
+
+  deleteRecurringStatAllOfficeBooking (context, id) {
+    return new Promise((resolve, reject) => {
+      Axios(context)
+        .delete(`/bookings/recurring/stat/${id}`)
         .then(resp => {
           resolve(resp.data)
         })
@@ -273,10 +299,13 @@ export const commonActions: any = {
               booking.invigilator = b.invigilator
               booking.invigilator_id = b.invigilator_id
             }
-            booking.start = new Date(b.start_time)
-            booking.end = new Date(b.end_time)
-            booking.title = b.booking_name
-            booking.name = b.booking_name
+            booking.start = new Date(new Date(b.start_time).toLocaleString('en-US', { timeZone: b.office.timezone.timezone_name }))
+            booking.end = new Date(new Date(b.end_time).toLocaleString('en-US', { timeZone: b.office.timezone.timezone_name }))
+            if ( b.stat_flag && b.blackout_notes) {
+              booking.name = b.blackout_notes
+            } else {
+              booking.name = b.booking_name
+            }
             booking.id = b.booking_id
             booking.category = b.room ? b.room.room_name : 'Offsite'// 'Boardroom 1'// b.room.room_name
             booking.exam =
@@ -290,8 +319,9 @@ export const commonActions: any = {
             booking.is_draft = b.is_draft
             booking.blackout_notes = b.blackout_notes
             booking.recurring_uuid = b.recurring_uuid
-            booking.color = getEventColor(b.blackout_flag, b.room)
+            booking.color = getEventColor(b.blackout_flag, b.room, b.stat_flag)
             booking.timed = true
+            booking.stat_flag = b.stat_flag
             calendarEvents.push(booking)
           })
           
@@ -624,6 +654,32 @@ export const commonActions: any = {
           reject(error)
         })
     })
+  },
+
+  getOfficeRooms (context, data) {
+    return new Promise((resolve, reject) => {
+    Axios(context)
+      .get(`/rooms/?office_id=${data['office_id']}`)
+      .then(resp => {
+        let resources: any = []
+          if (resp.data.rooms.length > 0) {
+            resources = resp.data.rooms.map(room => ({
+              id: room.room_id,
+              title: room.room_name,
+              eventColor: room.color
+            }))
+          }
+          resources.push({
+            id: '_offsite',
+            title: 'Offsite',
+            eventColor: '#F58B4C'
+          })
+          resolve(resources)
+      })
+      .catch(error => {
+        reject(error)
+      })
+      })
   },
 
   getServices (context) {
@@ -1832,6 +1888,10 @@ export const commonActions: any = {
           reject(error)
         })
     })
+  },
+
+  postBookingStat (context, payload) {
+    return Axios(context).post('/bookings/', payload)
   },
 
   finishBooking (context) {

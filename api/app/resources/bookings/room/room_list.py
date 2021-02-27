@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import logging
-from flask import g
+from flask import g, request
 from flask_restx import Resource
 from sqlalchemy import exc
 from app.models.bookings import Room
@@ -34,8 +34,9 @@ class RoomList(Resource):
 
         csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
 
+        office_id = request.args.get('office_id', csr.office_id)
         try:
-            rooms = Room.query.filter_by(office_id=csr.office_id)\
+            rooms = Room.query.filter_by(office_id=office_id)\
                               .filter(Room.deleted.is_(None))
             result = self.rooms_schema.dump(rooms)
             return {'rooms': result.data,

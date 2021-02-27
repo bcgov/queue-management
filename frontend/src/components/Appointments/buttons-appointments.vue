@@ -21,7 +21,6 @@
             <b-dropdown-item @click="agendaDay"> Day View </b-dropdown-item>
           </b-dropdown>
           <b-button
-            v-if="is_GA"
             variant="primary"
             class="ml-0"
             @click="clickBlackout"
@@ -50,7 +49,8 @@ const appointmentsModule = namespace('appointmentsModule')
 export default class ButtonsAppointments extends Vue {
   @appointmentsModule.State('showAppointmentBlackoutModal') private showAppointmentBlackoutModal!: any
   @appointmentsModule.Getter('calendar_setup') private calendar_setup!: any;
-  @appointmentsModule.Getter('is_GA') private is_GA!: any;
+  // @appointmentsModule.Getter('is_GA') private is_GA!: any;
+  @appointmentsModule.Getter('is_Support') private is_Support!: any;
 
   @appointmentsModule.Action('beginAppointment') public beginAppointment: any
 

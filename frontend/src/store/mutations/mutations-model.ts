@@ -1,4 +1,4 @@
-
+/* eslint-disable */
 /**
  *
  * Notes
@@ -589,5 +589,5 @@ export const commonMutation: any = {
   setBCMPJobId: (state, payload) => {
     state.capturedExam.bcmp_job_id = payload
     state.examBcmpJobId = payload
-  }
+  },
 }

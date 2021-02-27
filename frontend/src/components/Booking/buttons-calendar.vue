@@ -29,7 +29,6 @@
         </b-dropdown-item>
       </b-dropdown>
       <b-button
-        v-if="role_code === 'GA'"
         variant="primary"
         @click="clickBlackout"
       >
@@ -56,7 +55,7 @@ export default class ButtonsCalendar extends Vue {
   @State('rescheduling') private rescheduling!: any
   @State('showBookingBlackoutModal') private showBookingBlackoutModal!: any
 
-  @Getter('role_code') private role_code!: any;
+  // @Getter('role_code') private role_code!: any;
 
   @Mutation('setSelectedExam') public setSelectedExam: any
   @Mutation('toggleExamInventoryModal') public toggleExamInventoryModal: any
