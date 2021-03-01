@@ -1,0 +1,192 @@
+apiVersion: v1
+kind: Template
+labels:
+  template: feedback-api
+  app.kubernetes.io/part-of: TheQ
+metadata:
+  name: feedback-api
+objects:
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      annotations:
+        description: "Exposes and load balances the api pods"
+      name: "${API_NAME}"
+      labels:
+        app: "${API_NAME}"
+    spec:
+      ports:
+        - name: web
+          port: 8080
+          targetPort: 8080
+      selector:
+        app: "${API_NAME}"
+  - apiVersion: v1
+    kind: Route
+    metadata:
+      name: "${API_NAME}"
+    spec:
+      host: "${API_APPLICATION_DOMAIN}"
+      path: /api
+      to:
+        kind: Service
+        name: "${API_NAME}"
+      tls:
+        insecureEdgeTerminationPolicy: Redirect
+        termination: edge
+  - apiVersion: v1
+    kind: DeploymentConfig
+    metadata:
+      annotations:
+        description: "Defines how to deploy the application server"
+        template.alpha.openshift.io/wait-for-ready: "true"
+      name: "${API_NAME}"
+    spec:
+      replicas: 2
+      selector:
+        name: ${API_NAME}
+      strategy:
+        type: Rolling
+        rollingParams:
+          updatePeriodSeconds: 1
+          intervalSeconds: 1
+          timeoutSeconds: 120
+          maxSurge: 2
+          maxUnavailable: 1
+        resources: {}
+        activeDeadlineSeconds: 3600
+      template:
+        metadata:
+          labels:
+            app: "${API_NAME}"
+            name: "${API_NAME}"
+        spec:
+          containers:
+            - name: "${API_NAME}"
+              image: " "
+              env:
+                - name: APP_CONFIG
+                  value: gunicorn_config.py
+                - name: FLASK_ENV
+                  value: "${FLASK_ENV}"
+                - name: APP_MODULE
+                  value: wsgi
+                - name: SECRET_KEY
+                  value: "${SECRET_KEY}"
+                - name: SERVER_NAME
+                  value: "${API_APPLICATION_DOMAIN}"
+                - name: CACHE_DEFAULT_TIMEOUT
+                  value: "${CACHE_DEFAULT_TIMEOUT}"
+                - name: FEEDBACK_AUTH_URL
+                  value: "${FEEDBACK_AUTH_URL}"
+                - name: FEEDBACK_CAMUNDA_URL
+                  value: "${FEEDBACK_CAMUNDA_URL}"
+                - name: FEEDBACK_AUTH_CLIENT_ID
+                  value: "${FEEDBACK_AUTH_CLIENT_ID}"
+                - name: FEEDBACK_AUTH_CLIENT_SECRET
+                  value: "${FEEDBACK_AUTH_CLIENT_SECRET}"
+                - name: PRINT_ENABLE
+                  value: "false"
+                - name: LOG_BASIC
+                  value: WARNING
+                - name: LOG_ROOT
+                  value: WARNING
+
+              ports:
+                - containerPort: 8080
+              readinessProbe:
+                httpGet:
+                  path: /api/v1/healthz
+                  port: 8080
+                  scheme: HTTP
+                initialDelaySeconds: 30
+                timeoutSeconds: 5
+                periodSeconds: 10
+                successThreshold: 1
+                failureThreshold: 3
+              terminationMessagePath: /dev/termination-log
+              name: feedback-api
+              livenessProbe:
+                httpGet:
+                  path: /api/v1/readyz
+                  port: 8080
+                  scheme: HTTP
+                initialDelaySeconds: 30
+                timeoutSeconds: 5
+                periodSeconds: 10
+                successThreshold: 1
+                failureThreshold: 3
+              terminationMessagePath: "/dev/termination-log"
+              terminationMessagePolicy: File
+              imagePullPolicy: Always
+              resources:
+                requests:
+                  cpu: 400m
+                  memory: 400Mi
+                limits:
+                  cpu: '1'
+                  memory: 600Mi
+          restartPolicy: Always
+          terminationGracePeriodSeconds: 30
+          dnsPolicy: ClusterFirst
+          securityContext: {}
+          schedulerName: default-scheduler
+          affinity:
+            podAntiAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchExpressions:
+                      - key: name
+                        operator: In
+                        values:
+                          - "${API_NAME}"
+                  topologyKey: kubernetes.io/hostname
+      triggers:
+        - type: ConfigChange
+        - type: ImageChange
+          imageChangeParams:
+            automatic: true
+            containerNames:
+              - "${API_NAME}"
+            from:
+              kind: ImageStreamTag
+              namespace: "${TOOLS_WORKSPACE}"
+              name: "${API_NAME}:${API_IMAGE_TAG}"
+parameters:
+  - name: API_NAME
+    displayName: Name
+    description: "Name of the flask application"
+    required: true
+    value: "feedback-api"
+  - name: API_APPLICATION_DOMAIN
+    description: "The exposed hostname that will route to the Flask service"
+    required: true
+    value: ""
+  - name: FLASK_ENV
+    description: "The configuration object that should be loaded for this deployment."
+    required: true
+    value: "development"
+  - name: API_IMAGE_TAG
+    description: "The tag to use when deploying"
+    required: true
+  - name: TOOLS_WORKSPACE
+    description: "IMAGE STREAM WORKSPACE LOCATION"
+    required: true
+    value: ""
+  - name: SECRET_KEY
+    description: "Key required for Flask"
+    required: true
+    generate: expression
+    from: "[a-zA-Z0-9]{16}"
+  - name: FEEDBACK_AUTH_URL
+    description: "Keycloak auth URL for feedback"
+    required: true
+  - name: FEEDBACK_CAMUNDA_URL
+    description: "Camunda API URL"
+    required: true
+  - name: FEEDBACK_AUTH_CLIENT_ID
+    description: "Keycloak client id"
+    required: true
+  - name: FEEDBACK_AUTH_CLIENT_SECRET
+    description: "Keycloak client secret"
+    required: true
