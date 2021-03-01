@@ -329,7 +329,7 @@ export default class Feedback extends Vue {
     this.submitInProgress = true
     this.initModel()
     this.feedbackRequest.variables.engagement.value = this.feedbackType
-    this.feedbackRequest.variables.citizen_comments.value = this.feedbackMessage + formSubmitTime
+    this.feedbackRequest.variables.citizen_comments.value = this.feedbackMessage
     this.feedbackRequest.variables.response.value = this.responseRequired ? 'true' : 'false'
     this.feedbackRequest.variables.citizen_name.value = this.citizenName === '' ? 'None' : this.citizenName
     this.feedbackRequest.variables.citizen_contact.value = this.phone === '' ? 'None' : this.phone
