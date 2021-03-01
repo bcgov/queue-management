@@ -163,15 +163,13 @@ import { getModule } from 'vuex-module-decorators'
   methods: {
     ...mapMutations('office', [
       'setCurrentOffice',
-      'setCurrentService',
-      'setSPStatus'
+      'setCurrentService'
     ]),
     ...mapActions('office', [
       'getOffices',
       'getServiceByOffice',
       'getAvailableAppointmentSlots',
-      'getCategories',
-      'callSnowplow'
+      'getCategories'
     ]),
     ...mapState('geo', [
       'currentCoordinates'
@@ -186,15 +184,11 @@ export default class LocationsList extends Mixins(StepperMixin) {
   private readonly getServiceByOffice!: (officeId: number) => Promise<Service[]>
   private readonly getAvailableAppointmentSlots!: (officeId: number) => Promise<any>
   private readonly getCategories!: () => Promise<any>
-  // private readonly callSnowplow!: (appointmentStep: string, status: string, loggedIn: boolean, clientId: any, location: string, service:string) => any
-  private readonly callSnowplow!: (mySP: any) => any
   private readonly setCurrentOffice!: (office: Office) => void
   private readonly setCurrentService!: (service: Service) => void
-  private readonly setSPStatus!: (status: string) => void
   private readonly currentUserProfile!: User
   private readonly currentOffice!: Office
   private readonly isAuthenticated!: boolean
-  private readonly spStatus!: string
   // private readonly coords!: () => any;
   private readonly currentCoordinates!: () => any;
 
@@ -215,11 +209,6 @@ export default class LocationsList extends Mixins(StepperMixin) {
       this.locationListData = await this.getOffices()
       this.locationListData = this.locationListData.filter(location => location.online_status !== 'Status.HIDE')
       this.locationListData = this.sortOfficesByDistance(this.locationListData)
-      this.setSPStatus('new')
-      // eslint-disable-next-line no-console
-      console.log('LOCATIONSLIST MOUNTED - this.spStatus', this.spStatus)
-      const mySP = { step: 'Locations List', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: null, serv: null }
-      this.callSnowplow(mySP)
     }
   }
 

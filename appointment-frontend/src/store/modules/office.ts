@@ -265,16 +265,16 @@ export default class OfficeModule extends VuexModule {
     // eslint-disable-next-line no-console
     console.log('snowplow.appointment_step', mySP.step)
     // eslint-disable-next-line no-console
-    // console.log('snowplow.status', this.context.state['spStatus'])
+    console.log('snowplow.status', this.context.state['spStatus'])
     // eslint-disable-next-line no-console
-    // console.log('snowplow.logged_in', mySP.loggedIn)
+    console.log('snowplow.logged_in', mySP.loggedIn)
     // eslint-disable-next-line no-console
-    // console.log('snowplow.appointment_id', mySP.apptID)
+    console.log('snowplow.appointment_id', mySP.apptID)
     // eslint-disable-next-line no-console
-    // console.log('snowplow.client_id', mySP.clientID)
+    console.log('snowplow.client_id', mySP.clientID)
     // eslint-disable-next-line no-console
-    // console.log('snowplow.location', mySP.loc)
+    console.log('snowplow.location', mySP.loc)
     // eslint-disable-next-line no-console
-    // console.log('snowplow.service', mySP.serv)
+    console.log('snowplow.service', mySP.serv)
   }
 }

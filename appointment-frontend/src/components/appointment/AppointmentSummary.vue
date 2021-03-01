@@ -227,12 +227,6 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   private readonly updateUserAccount!: (userBody: UserUpdateBody) => Promise<any>
 
   private async mounted () {
-    if (this.isOnCurrentStep) {
-      // eslint-disable-next-line no-console
-      console.log('APPOINTMENT SUMMARY MOUNTED- this.appointmentDisplayData', this.appointmentDisplayData)
-      const mySP = { step: 'Appointment Summary', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService.external_service_name }
-      this.callSnowplow(mySP)
-    }
     if (this.isAuthenticated) {
       await this.fetchUserAppointments()
     }

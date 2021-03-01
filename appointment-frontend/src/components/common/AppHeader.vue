@@ -84,6 +84,8 @@ export default class AppHeader extends Vue {
   private readonly currentService!: Service
   private readonly callSnowplow!: (mySP: any) => any
   private readonly username!: string
+  private curService: string
+  private curOffice: string
 
   async mounted () {
   }
@@ -95,12 +97,30 @@ export default class AppHeader extends Vue {
     this.$router.push('/login')
   }
   private goTo (page) {
-    const mySP = { step: 'Login to Account', loggedIn: this.isAuthenticated, apptID: '', clientID: '', loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name }
+    // snowplow call needs null value not undefined, and depending on where we click login button, one of these values might be undefined.
+    // eslint-disable-next-line no-console
+    console.log('APP HEADER called - this.currentOffice?.office_name', this.currentOffice)
+    // eslint-disable-next-line no-console
+    console.log('APP HEADER called - this.currentService?.external_service_name', this.currentService)
+    if (this.currentOffice?.office_name === undefined) {
+      this.curOffice = null
+    } else {
+      this.curOffice = this.currentOffice?.office_name
+    }
+    if (this.currentService?.external_service_name === undefined) {
+      this.curService = null
+    } else {
+      this.curService = this.currentService?.external_service_name
+    }
+
+    let mySP = {}
     switch (page) {
       case 'register':
+        mySP = { step: 'Register', loggedIn: this.isAuthenticated, apptID: null, clientID: null, loc: this.curOffice, serv: this.curService }
         this.callSnowplow(mySP)
         break
       case 'login':
+        mySP = { step: 'Login to Account', loggedIn: this.isAuthenticated, apptID: null, clientID: null, loc: this.curOffice, serv: this.curService }
         this.callSnowplow(mySP)
         this.$router.push('/login')
         break

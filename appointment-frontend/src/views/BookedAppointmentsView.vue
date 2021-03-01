@@ -122,7 +122,7 @@
 <script lang="ts">
 import { AppointmentModule, OfficeModule } from '@/store/modules'
 import { Component, Vue } from 'vue-property-decorator'
-import { mapActions, mapMutations } from 'vuex'
+import { mapActions, mapMutations, mapState } from 'vuex'
 import { Appointment } from '@/models/appointment'
 import ConfigHelper from '@/utils/config-helper'
 import GeocoderService from '@/services/geocoder.services'
@@ -133,6 +133,11 @@ import { getModule } from 'vuex-module-decorators'
 @Component({
   components: {
     NoEmailAlert
+  },
+  computed: {
+    ...mapState('auth', [
+      'currentUserProfile'
+    ])
   },
   methods: {
     ...mapMutations('office', [
@@ -164,6 +169,7 @@ export default class Home extends Vue {
   private readonly setAppointmentValues!: (appointment: Appointment) => void
   private readonly clearSelectedValues!: () => void
   private readonly setSPStatus!: (status: string) => void
+  private readonly currentUserProfile!: User
 
   private async beforeMount () {
     this.setSPStatus('update')
@@ -205,7 +211,7 @@ export default class Home extends Vue {
   private changeAppointment (appointment) {
     // eslint-disable-next-line no-console
     console.log('changeAppointment clicked - appointment', appointment)
-    const mySP = { step: 'Change Appointment', loggedIn: true, apptID: appointment.appointment_id, clientID: appointment.citizen_id, loc: appointment.office.office_name, serv: appointment.service.external_service_name }
+    const mySP = { step: 'Change Appointment', loggedIn: true, apptID: appointment.appointment_id, clientID: this.currentUserProfile?.user_id, loc: appointment.office.office_name, serv: appointment.service.external_service_name }
     this.callSnowplow(mySP)
     this.setAppointmentValues(appointment)
     this.$store.commit('setStepperCurrentStep', 3)
@@ -216,7 +222,7 @@ export default class Home extends Vue {
   private cancelAppointment (appointment) {
     // eslint-disable-next-line no-console
     console.log('cancelAppointment clicked - appointment', appointment)
-    const mySP = { step: 'Cancel Appointment', loggedIn: true, apptID: appointment.appointment_id, clientID: appointment.citizen_id, loc: appointment.office.office_name, serv: appointment.service.external_service_name }
+    const mySP = { step: 'Cancel Appointment', loggedIn: true, apptID: appointment.appointment_id, clientID: this.currentUserProfile?.user_id, loc: appointment.office.office_name, serv: appointment.service.external_service_name }
     this.callSnowplow(mySP)
     this.confirmDialog = true
     this.selectedAppointment = appointment
