@@ -85,6 +85,8 @@ objects:
                   value: "${FEEDBACK_AUTH_CLIENT_ID}"
                 - name: FEEDBACK_AUTH_CLIENT_SECRET
                   value: "${FEEDBACK_AUTH_CLIENT_SECRET}"
+                - name: CORS_ALLOWED_ORIGINS
+                  value: "${CORS_ALLOWED_ORIGINS}"
                 - name: PRINT_ENABLE
                   value: "false"
                 - name: LOG_BASIC
@@ -186,6 +188,9 @@ parameters:
     required: true
   - name: FEEDBACK_AUTH_CLIENT_ID
     description: "Keycloak client id"
+    required: true
+  - name: CORS_ALLOWED_ORIGINS
+    description: "CORS allowed origins"
     required: true
   - name: FEEDBACK_AUTH_CLIENT_SECRET
     description: "Keycloak client secret"
