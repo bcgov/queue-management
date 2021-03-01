@@ -6,6 +6,7 @@ import CommonUtils from '@/utils/common-util'
 import { Office } from '@/models/office'
 import OfficeService from '@/services/office.services'
 import { Service } from '@/models/service'
+import { Snowplow } from '@/models/global'
 import { ServiceAvailability } from '@/utils'
 
 @Module({

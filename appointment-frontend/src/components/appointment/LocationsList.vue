@@ -150,8 +150,7 @@ import { getModule } from 'vuex-module-decorators'
   },
   computed: {
     ...mapState('office', [
-      'currentOffice',
-      'spStatus'
+      'currentOffice'
     ]),
     ...mapState('auth', [
       'currentUserProfile'
@@ -169,7 +168,8 @@ import { getModule } from 'vuex-module-decorators'
       'getOffices',
       'getServiceByOffice',
       'getAvailableAppointmentSlots',
-      'getCategories'
+      'getCategories',
+      'callSnowplow'
     ]),
     ...mapState('geo', [
       'currentCoordinates'

@@ -164,6 +164,7 @@ export default class AppointmentBookingView extends Vue {
     allowed_browsers: ''
   }
   private stepCounter = 1
+  private stepName = ''
   private updateViewCounter = 0
   private readonly getCurrentLocation!: () => Promise<GeolocatorSuccess>
   private readonly callSnowplow!: (mySP: any) => any
@@ -246,7 +247,7 @@ export default class AppointmentBookingView extends Vue {
       this.stepCounter--
     }
   }
-
+  
   private async updated () {
     this.$store.commit('setStepperCurrentStep', this.stepCounter)
     // eslint-disable-next-line no-console
