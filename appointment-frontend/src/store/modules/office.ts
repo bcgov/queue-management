@@ -25,6 +25,7 @@ export default class OfficeModule extends VuexModule {
   currentAppointment: Appointment
   currentDraftAppointment: Appointment
   spStatus: string
+  spLastStep: number = 0
 
   /**
     Mutations in this Module
@@ -247,7 +248,7 @@ export default class OfficeModule extends VuexModule {
     if (!mySP.loggedIn) {
       mySP.clientID = null
     }
-    /* (window as any).snowplow('trackSelfDescribingEvent', {
+    (window as any).snowplow('trackSelfDescribingEvent', {
       schema: 'iglu:ca.bc.gov.cfmspoc/appointment_step/jsonschema/1-0-0',
       data: {
         appointment_step: mySP.step,
@@ -259,9 +260,7 @@ export default class OfficeModule extends VuexModule {
         service: mySP.serv
       }
     }
-    ) */
-    // eslint-disable-next-line no-console
-    // console.log('CALLING callSnowplow')
+    )
     // eslint-disable-next-line no-console
     console.log('snowplow.appointment_step', mySP.step)
     // eslint-disable-next-line no-console

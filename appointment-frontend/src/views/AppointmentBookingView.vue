@@ -250,8 +250,13 @@ export default class AppointmentBookingView extends Vue {
   private async updated () {
     this.$store.commit('setStepperCurrentStep', this.stepCounter)
     // eslint-disable-next-line no-console
+    console.log('APPOINTMENT BOOKING VIEW updated called - this.$store.state.spLastStep', this.$store.state.spLastStep)
+    // eslint-disable-next-line no-console
     console.log('APPOINTMENT BOOKING VIEW updated called - this.stepCounter', this.stepCounter)
-    this.makesnowplow(this.stepCounter)
+    if (this.stepCounter !== this.$store.state.spLastStep) {
+      this.makesnowplow(this.stepCounter)
+      this.$store.state.spLastStep = this.stepCounter
+    }
   }
 
   private async mounted () {
