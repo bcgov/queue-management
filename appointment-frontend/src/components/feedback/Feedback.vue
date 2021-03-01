@@ -340,13 +340,15 @@ export default class Feedback extends Vue {
     if (resp.status) {
       if (resp.status === 200 && resp.data.response_code === 200) {
         this.submitMessage = 'Thank you!'
+        this.submitInProgress = false
+        this.submitComplete = true
+        this.clearFields()
       } else {
-        this.submitMessage = 'Feedback submission failed. Please try after sometime'
+        this.submitMessage = 'Feedback submission failed.'
+        this.submitInProgress = false
+        this.submitComplete = true
+        this.clearFields()
       }
-      this.submitMessage = 'Feedback submission failed. Please try after sometime'
-      this.submitInProgress = false
-      this.submitComplete = true
-      this.clearFields()
     }
   }
 
