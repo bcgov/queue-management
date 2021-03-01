@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Template
 labels:
-  template: queue-management-nginx-frontend
+  template: queue-management-frontend
 metadata:
-  name: queue-management-nginx-frontend
+  name: queue-management-frontend
 objects:
   - apiVersion: v1
     kind: PersistentVolumeClaim
@@ -157,7 +157,7 @@ parameters:
     displayName: Name
     description: The suffix for all created objects
     required: false
-    value: queue-management-nginx-frontend
+    value: queue-management-frontend
   - name: APPLICATION_DOMAIN
     description: "The exposed hostname that will route to the Vue application"
     value: ""
