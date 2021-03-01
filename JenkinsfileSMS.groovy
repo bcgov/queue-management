@@ -21,7 +21,7 @@
 
 def WAIT_TIMEOUT = 20
 def TAG_NAMES = ['dev', 'test', 'prod']
-def BUILDS = ['queue-management-api','queue-management-nginx-frontend','appointment-nginx-frontend','send-appointment-reminder-crond','notifications-api']
+def BUILDS = ['queue-management-api','queue-management-nginx-frontend','appointment-nginx-frontend','send-appointment-reminder-crond','notifications-api','feedback-api']
 def DEP_ENV_NAMES = ['dev', 'test', 'prod']
 def label = "mypod-${UUID.randomUUID().toString()}"
 def API_IMAGE_HASH = ""
@@ -29,6 +29,7 @@ def FRONTEND_IMAGE_HASH = ""
 def APPOINTMENT_IMAGE_HASH = ""
 def REMINDER_IMAGE_HASH = ""
 def NOTIFICATION_IMAGE_HASH = ""
+def FEEDBACK_IMAGE_HASH = ""
 
 String getNameSpace() {
     def NAMESPACE = sh (
@@ -169,7 +170,18 @@ podTemplate(
                     }
                 }
             }
-        }
+        }, Build_feedback_api: {
+            stage("Build feedback api") {
+                script: {
+                    openshift.withCluster() {
+                        openshift.withProject() {
+                            openshift.selector("bc", "${BUILDS[5]}").startBuild("--wait")
+                        }
+                        echo "notification api complete ..."
+                    }
+                }
+            }
+        }        
         parallel Depoy_API_Dev: {
             stage("Deploy API to Dev") {
                 script: {
@@ -223,6 +235,22 @@ podTemplate(
                             NOTIFICATION_IMAGE_HASH = getImageTagHash("${BUILDS[4]}")
                             echo "NOTIFICATION_IMAGE_HASH: ${NOTIFICATION_IMAGE_HASH}"
                             openshift.tag("${BUILDS[4]}@${NOTIFICATION_IMAGE_HASH}", "${BUILDS[4]}:${TAG_NAMES[0]}")
+                        }
+                    }
+                }
+            }
+        }, Depoy_feedback_api_Dev: {
+            stage("Deploy feedback api pod") {
+                script: {
+                    openshift.withCluster() {
+                        openshift.withProject() {
+                            echo "Tagging ${BUILDS[5]} for deployment to ${TAG_NAMES[0]} ..."
+
+                            // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
+                            // Tag the images for deployment based on the image's hash
+                            NOTIFICATION_IMAGE_HASH = getImageTagHash("${BUILDS[5]}")
+                            echo "NOTIFICATION_IMAGE_HASH: ${NOTIFICATION_IMAGE_HASH}"
+                            openshift.tag("${BUILDS[5]}@${NOTIFICATION_IMAGE_HASH}", "${BUILDS[5]}:${TAG_NAMES[0]}")
                         }
                     }
                 }
@@ -454,6 +482,21 @@ node {
                 }
             }
         }
+    }, Depoy_feedback_api_Test: {
+        stage("Deploy feedback api pod") {
+            script: {
+                openshift.withCluster() {
+                    openshift.withProject() {
+                        echo "Tagging ${BUILDS[5]} for deployment to ${TAG_NAMES[1]} ..."
+
+                        // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
+                        // Tag the images for deployment based on the image's hash
+                        echo "NOTIFICATION_IMAGE_HASH: ${NOTIFICATION_IMAGE_HASH}"
+                        openshift.tag("${BUILDS[5]}@${NOTIFICATION_IMAGE_HASH}", "${BUILDS[5]}:${TAG_NAMES[1]}")
+                    }
+                }
+            }
+        }        
     }, Deploy_Cron_Email_Test: {
         stage("Deploy Appt Reminder - test") {
             script: {
@@ -488,6 +531,7 @@ node {
                     openshift.tag("${BUILDS[2]}:prod", "${BUILDS[2]}:stable")
                     openshift.tag("${BUILDS[3]}:prod", "${BUILDS[3]}:stable")
                     openshift.tag("${BUILDS[4]}:prod", "${BUILDS[4]}:stable")
+                    openshift.tag("${BUILDS[5]}:prod", "${BUILDS[5]}:stable")
                 }
             }
         }
@@ -581,6 +625,21 @@ node {
                 }
             }
         }
+    }, Depoy_feedback_api_Prod: {
+        stage("Deploy feedback api pod - PROD") {
+            script: {
+                openshift.withCluster() {
+                    openshift.withProject() {
+                        echo "Tagging ${BUILDS[5]} for deployment to ${TAG_NAMES[2]} ..."
+
+                        // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
+                        // Tag the images for deployment based on the image's hash
+                        echo "NOTIFICATION_IMAGE_HASH: ${NOTIFICATION_IMAGE_HASH}"
+                        openshift.tag("${BUILDS[5]}@${NOTIFICATION_IMAGE_HASH}", "${BUILDS[5]}:${TAG_NAMES[2]}")
+                    }
+                }
+            }
+        }        
     }, Deploy_Cron_Email_Prod: {
         stage("Deploy Appt Reminders - Prod") {
             script: {
