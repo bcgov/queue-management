@@ -292,6 +292,7 @@ import app.resources.theq.websocket
 import app.resources.theq.user.user
 import app.resources.theq.user.user_appointments
 
+import app.resources.bookings.appointment.all_recurring_stat_delete
 import app.resources.bookings.appointment.appointment_availability
 import app.resources.bookings.appointment.appointment_detail
 import app.resources.bookings.appointment.appointment_list
@@ -310,6 +311,7 @@ import app.resources.bookings.booking.booking_post
 import app.resources.bookings.booking.booking_put
 import app.resources.bookings.booking.booking_recurring_delete
 import app.resources.bookings.booking.booking_recurring_put
+import app.resources.bookings.booking.booking_recurring_stat_delete
 import app.resources.bookings.exam.exam_bcmp
 import app.resources.bookings.exam.exam_bulk_status
 import app.resources.bookings.exam.exam_delete

@@ -1,4 +1,4 @@
-
+/* eslint-disable */
 /**
  *
  * Notes
@@ -192,5 +192,8 @@ export const stateModel: StateModelIF = {
     receptionist_ind: null
   },
   userLoadingFail: false,
-  videofiles: []
+  videofiles: [],
+  
+  apiCallTotal: 0
+  
 }

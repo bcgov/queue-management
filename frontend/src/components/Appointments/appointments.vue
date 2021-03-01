@@ -61,8 +61,14 @@
                 <v-tooltip bottom class="mytooltip" v-bind:fixed="false" v-bind:nudge-top="150">
                   <template v-slot:activator="{ on }">
                     <div v-on="on" class="ml-2">
-                      {{ date.event.title }} {{ date.eventParsed.start.time }} -
-                      {{ date.eventParsed.end.time }}
+                      <span v-if="date.eventParsed.input.stat_flag && date.eventParsed.input.comments">
+                        {{ date.eventParsed.input.comments }} {{ date.eventParsed.start.time }} -
+                        {{ date.eventParsed.end.time }}
+                      </span>
+                      <span v-else>
+                        {{ date.event.title }} {{ date.eventParsed.start.time }} -
+                        {{ date.eventParsed.end.time }}
+                      </span>
                     </div>
                   </template>
                   <div>
@@ -84,15 +90,17 @@
           <!-- </v-card> -->
         </div>
       </div>
-      <ApptBookingModal :clickedTime="clickedTime" :clickedAppt="clickedAppt" />
+      <ApptBookingModal v-if="!is_stat" :clickedTime="clickedTime" :clickedAppt="clickedAppt" />
       <AppointmentBlackoutModal />
       <CheckInModal :clickedAppt="clickedAppt" />
+      <LoadingModal v-if="show_loading" />
     </v-app>
   </fragment>
 </template>
 
 <script lang="ts">
-/* eslint-disable sort-imports */
+/* eslint-disable */
+// /* eslint-disable sort-imports */
 
 import { Component, Vue } from 'vue-property-decorator'
 
@@ -102,6 +110,8 @@ import AppointmentBlackoutModal from './appt-booking-modal/appt-blackout-modal.v
 
 import ApptBookingModal from './appt-booking-modal/appt-booking-modal.vue'
 
+import LoadingModal from './appt-booking-modal/loading.vue'
+
 import CheckInModal from './checkin-modal.vue'
 import AppointmentsFilter from './appointmentsFilter.vue'
 
@@ -109,6 +119,7 @@ import moment from 'moment'
 
 import { namespace } from 'vuex-class'
 import { formatedStartTime } from '@/utils/helpers'
+import { showFlagBus, ShowFlagBusEvents } from '../../events/showFlagBus'
 
 const appointmentsModule = namespace('appointmentsModule')
 
@@ -122,7 +133,8 @@ const SUNDAY = 1
     AddCitizen,
     CheckInModal,
     ApptBookingModal,
-    AppointmentsFilter
+    AppointmentsFilter,
+    LoadingModal
   }
 })
 export default class Appointments extends Vue {
@@ -155,6 +167,7 @@ export default class Appointments extends Vue {
   @appointmentsModule.State('clickedTime') public clickedTime: any
   @appointmentsModule.Mutation('setAgendaClickedTime') public setAgendaClickedTime: any
 
+  show_loading = false
   // vuetify calender
   listView: any = false
   searchTerm: string = ''
@@ -168,11 +181,12 @@ export default class Appointments extends Vue {
   // events: any = []
   currentDay: any = moment().format('YYYY-MM-DD')// new Date()
 
+  is_stat: boolean = false
+  
   get events () {
     if (this.searchTerm) {
       return this.filtered_appointment_events(this.searchTerm)
     }
-
     return this.appointment_events
   }
 
@@ -260,7 +274,9 @@ export default class Appointments extends Vue {
   // Just restart `npm run serve`, as it glitches out.
   next () {
     const daysToMove = this.getDaysToMove('next')
-    this.$refs.calendar.move(daysToMove)
+    if (this.$refs.calendar) {
+      this.$refs.calendar.move(daysToMove)
+    }
     this.calendarSetup()
   }
 
@@ -270,7 +286,9 @@ export default class Appointments extends Vue {
 
   prev () {
     const daysToMove = this.getDaysToMove('prev')
-    this.$refs.calendar.move(daysToMove)
+    if (this.$refs.calendar) {
+      this.$refs.calendar.move(daysToMove)
+    }
     this.calendarSetup()
   }
 
@@ -284,6 +302,7 @@ export default class Appointments extends Vue {
       // Just move one week forward/back, simple.
       return direction === 'next' ? 1 : -1
     } else {
+      if (this.$refs.calendar) {
       // For days, we have to handle jumping of weekends.
       const viewedDate = this.$refs.calendar.value
       const dayOfWeek = moment(viewedDate).day()
@@ -301,6 +320,8 @@ export default class Appointments extends Vue {
       }
       // console.log(`getDaysToMove("${direction}")`, { viewedDate, dayOfWeek, daysToMove })
       return daysToMove
+      }
+      return 1
     }
     // console.error('Unable to properly calculate ')
     // return 1
@@ -331,6 +352,13 @@ export default class Appointments extends Vue {
   }
 
   selectEvent (event) {
+    this.is_stat = false
+    this.getAppointments().then((each) => {
+      const bb = each.find(element => ((moment(event.date).format('YYYY-MM-DD') === moment(element.start_time).format('YYYY-MM-DD')) && (element.stat_flag)));
+      if (bb) {
+        this.is_stat = true
+      }
+    })
     this.checkRescheduleCancel()
     this.blockEventSelect = true
     // this.unselect()
@@ -402,7 +430,7 @@ export default class Appointments extends Vue {
     // for draft
     const data: any = {
       start_time: moment.utc(start).format(),
-      // setting end time aftger 15 min of start to fix over appoinment time
+      // setting end time aftger 15 min of start to fix over appoinment time      
       end_time: moment(start).clone().add(15, 'minutes')// moment.utc(end).format()
       // service_id: 27,
       // is_draft: true
@@ -464,6 +492,14 @@ export default class Appointments extends Vue {
     this.$root.$on('removeTempEvent', () => { this.removeTempEvent() })
     this.$root.$on('goToDate', (date) => { this.goToDate(date) })
     this.calendarSetup()
+
+    showFlagBus.$on(ShowFlagBusEvents.ShowFlagEvent, (flag: boolean) =>{
+      this.show_loading = flag
+    }
+        
+      )
+
+
   }
 }
 

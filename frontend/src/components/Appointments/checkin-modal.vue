@@ -30,7 +30,7 @@
     <b-form autocomplete="off" v-if="!isDraftAppointment">
       <b-form-row>
         <b-col>
-          <b-form-group v-if="isNotBlackoutFlag" class="mb-0 mt-2">
+          <b-form-group v-if="(isNotBlackoutFlag) && (!checkRecurringStatStatus)" class="mb-0 mt-2">
             <label class="mb-0">Citizen Has Arrived?</label><br />
             <b-button class="w-100 btn-success" @click="checkIn">
               Check-In
@@ -38,7 +38,7 @@
           </b-form-group>
         </b-col>
       </b-form-row>
-      <b-form-row>
+      <b-form-row v-if="!checkRecurringStatStatus">
         <b-col>
           <b-form-group class="mb-0 mt-2">
             <label class="mb-0">Edit or Cancel Appointment?</label><br />
@@ -54,6 +54,23 @@
             <label class="mb-0">Edit or Cancel Recurring Series?</label><br />
             <b-button class="w-100 btn-secondary" @click="editSeries">
               Edit Recurring Series
+            </b-button>
+          </b-form-group>
+        </b-col>
+      </b-form-row>
+      <b-form-row v-if="checkRecurringStatStatus">
+        <b-col>
+          <b-form-group class="mb-0 mt-2">
+            <label v-if="is_Support" class="mb-0">Edit or Cancel Recurring STAT Series?</label>
+            <label v-else class="mb-0">View STAT?</label>
+            <br />
+            <b-button class="w-100 btn-secondary" @click="editStatSeries">
+              <span v-if="is_Support" >
+                Edit Recurring STAT Series
+              </span>
+              <span v-else>
+                View STAT
+              </span>
             </b-button>
           </b-form-group>
         </b-col>
@@ -77,6 +94,8 @@ export default class CheckInModal extends Vue {
   @appointmentsModule.State('showCheckInModal') private showCheckInModal!: any
   @appointmentsModule.State('showServeCitizenSpinner') private showServeCitizenSpinner!: any
   @appointmentsModule.State('checkInClicked') private checkInClicked!: any
+
+  @appointmentsModule.Getter('is_Support') private is_Support!: any;
 
   @appointmentsModule.Action('getAppointments') public getAppointments: any
   @appointmentsModule.Action('postCheckIn') public postCheckIn: any
@@ -110,10 +129,17 @@ export default class CheckInModal extends Vue {
   }
 
   get checkRecurringStatus () {
-    if (this.clickedAppt && this.clickedAppt.recurring_uuid === null) {
+    if (this.clickedAppt && (this.clickedAppt.recurring_uuid === null || this.clickedAppt.stat_flag)) {
       return false
     }
     return true
+  }
+
+  get checkRecurringStatStatus () {
+    if (this.clickedAppt && this.clickedAppt.stat_flag) {
+      return true
+    }
+    return false
   }
 
   checkIn () {
@@ -158,6 +184,13 @@ export default class CheckInModal extends Vue {
   }
 
   editSeries () {
+    this.toggleApptBookingModal(true)
+    this.toggleCheckInModal(false)
+    this.toggleEditDeleteSeries(true)
+    this.getAppointments()
+  }
+
+  editStatSeries () {
     this.toggleApptBookingModal(true)
     this.toggleCheckInModal(false)
     this.toggleEditDeleteSeries(true)

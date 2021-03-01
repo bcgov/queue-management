@@ -17,7 +17,11 @@
         v-if="minimized || !confirm"
         style="display: flex; justify-content: space-between"
       >
-        <div><h5>Edit Booking</h5></div>
+        <div v-if="!stat_flag"><h5>Edit Booking</h5></div>
+        <div v-else>
+            <h5 v-if="is_Support">Edit STAT</h5>
+            <h5 v-else>View STAT</h5>
+          </div>
         <div>
           <button class="btn btn-link" @click="minimize">
             {{ minimized ? 'Maximize' : 'Minimize' }}
@@ -25,7 +29,195 @@
         </div>
       </div>
       <template v-if="!confirm">
-        <b-form autocomplete="off">
+        <b-form autocomplete="off" v-if="stat_flag">
+          <b-form-row>
+            <b-col>
+              <b-form-group>
+                <label>Contact Information (Email or Phone Number)</label>
+                <font-awesome-icon
+                  v-if="this.booking_contact_information !== ''"
+                  icon="check"
+                  style="fontsize: 1rem; color: green"
+                />
+                <b-input
+                  autocomplete="off"
+                  id="contact_information"
+                  type="text"
+                  readonly
+                  v-model="booking_contact_information"
+                />
+              </b-form-group>
+            </b-col>
+          </b-form-row>
+          <b-form-row>
+            <b-col>
+              <b-form-group>
+                <label>STAT Notes</label><br />
+                <b-input v-if="is_Support"
+                  id="blackout_notes"
+                  v-model="blackout_notes"
+                  class="mb-2"
+                  maxlength="255"
+                >
+                </b-input>
+                <b-input v-else
+                  id="blackout_notes"
+                  :value="blackout_notes"
+                  readonly
+                  class="mb-2"
+                  maxlength="255"
+                >
+                </b-input>
+              </b-form-group>
+            </b-col>
+          </b-form-row>
+          <b-form-row>
+            <b-col cols="6">
+              <b-form-group>
+                <label>Room</label>
+                <b-input readonly :value="resource.name" />
+              </b-form-group>
+            </b-col>
+            <b-col cols="6">
+              <b-form-group>
+                <label>Date</label>
+                <b-input readonly :value="displayDates.date" />
+              </b-form-group>
+            </b-col>
+          </b-form-row>
+          <b-form-row v-if="!edit_recurring">
+            <b-col class="w-100">
+              <b-form-group>
+                <label>Start Time</label><br />
+                <b-input type="text" readonly :value="displayDates.start" />
+              </b-form-group>
+            </b-col>
+            <b-col class="w-100">
+              <b-form-group>
+                <label>End Time</label><br />
+                <b-input type="text" readonly :value="displayDates.end" />
+              </b-form-group>
+            </b-col>
+          </b-form-row>
+          <b-form-row class="mt-0" v-if="is_Support">
+            <b-col>
+              <b-form-group>
+                <label>Delete STAT?</label><br />
+                <b-btn class="w-100 btn-danger" @click="confirm = true"
+                  >Delete this STAT</b-btn
+                >
+              </b-form-group>
+            </b-col>
+          </b-form-row>
+          <b-collapse id="delete_recurring_stat_collapse" visible  v-if="is_Support">
+            <b-form-row v-if="this.event.recurring_uuid">
+              <b-col class="w-100">
+                <b-form-group>
+                  <label>Delete All STAT Series?</label>
+                  <b-button
+                    class="w-100 btn-danger"
+                    @click="toggleConfirmStatDeleteRecurringCollapse"
+                  >
+                    Delete All STAT Series
+                  </b-button>
+                </b-form-group>
+              </b-col>
+            </b-form-row>
+          </b-collapse>
+          <b-collapse id="delete_recurring_stat_curroff_collapse" visible  v-if="is_Support">
+            <b-form-row v-if="this.event.recurring_uuid">
+              <b-col class="w-100">
+                <b-form-group>
+                  <label>Delete All STAT Series from this Office?</label>
+                  <b-button
+                    class="w-100 btn-danger"
+                    @click="toggleConfirmStatCurrOffDeleteRecurringCollapse"
+                  >
+                    Delete All STAT Series from this Office
+                  </b-button>
+                </b-form-group>
+              </b-col>
+            </b-form-row>
+          </b-collapse>
+          <b-collapse id="confirm_delete_recurring_stat_curroff_collapse"  v-if="is_Support">
+            <b-form-row>
+              <b-form-group>
+                <label
+                  >Are you sure you want to delete this STAT series from this Office?</label
+                ><br />
+                <b-row
+                  style="
+                    display: flex;
+                    justify-content: center;
+                    margin-left: 150px;
+                  "
+                >
+                  <b-button
+                    size="sm"
+                    variant="primary"
+                    class="ml-1 mr-1"
+                    @click="toggleStatCurrOffDeleteRecurringCollapse"
+                  >
+                    No
+                  </b-button>
+                  <b-button
+                    size="sm"
+                    variant="danger"
+                    class="ml-1 mr-1"
+                    @click="clickYesStatRecurring"
+                  >
+                    Yes
+                  </b-button>
+                </b-row>
+              </b-form-group>
+            </b-form-row>
+          </b-collapse>
+          <b-collapse id="confirm_delete_recurring_stat_collapse"  v-if="is_Support">
+            <b-form-row>
+              <b-form-group>
+                <label
+                  >Are you sure you want to delete this STAT series?</label
+                ><br />
+                <b-row
+                  style="
+                    display: flex;
+                    justify-content: center;
+                    margin-left: 150px;
+                  "
+                >
+                  <b-button
+                    size="sm"
+                    variant="primary"
+                    class="ml-1 mr-1"
+                    @click="toggleStatDeleteRecurringCollapse"
+                  >
+                    No
+                  </b-button>
+                  <b-button
+                    size="sm"
+                    variant="danger"
+                    class="ml-1 mr-1"
+                    @click="clickYesStatAllOfficeRecurring"
+                  >
+                    Yes
+                  </b-button>
+                </b-row>
+              </b-form-group>
+            </b-form-row>
+          </b-collapse>
+          <b-form-row v-if="message">
+            <b-col>
+              <div
+                style="display: flex; justify-content: flex-end; width: 100%"
+              >
+                <span style="color: red; font-weight: 600; font-size: 0.9rem">{{
+                  message
+                }}</span>
+              </div>
+            </b-col>
+          </b-form-row>
+        </b-form>
+        <b-form autocomplete="off" v-else>
           <b-form-row v-if="examAssociated">
             <b-col class="mb-2">
               <div class="q-info-display-grid-container">
@@ -424,6 +616,7 @@
           </b-form-row>
         </b-form>
       </template>
+
       <template v-if="confirm">
         <template v-if="!minimized">
           <span>Are you sure you want to delete this booking?<br /></span>
@@ -440,11 +633,13 @@
 </template>
 
 <script lang="ts">
-
-import { Action, Getter, Mutation, State } from 'vuex-class'
+/* eslint-disable */
+import { Action, Getter, Mutation, State, namespace } from 'vuex-class'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
 import moment from 'moment'
+const appointmentsModule = namespace('appointmentsModule')
+
 
 @Component({})
 export default class EditBooking extends Vue {
@@ -467,6 +662,8 @@ export default class EditBooking extends Vue {
   @Action('getBookings') public getBookings: any
   @Action('deleteBooking') public deleteBooking: any
   @Action('deleteRecurringBooking') public deleteRecurringBooking: any
+  @Action('deleteRecurringStatBooking') public deleteRecurringStatBooking: any
+  @Action('deleteRecurringStatAllOfficeBooking') public deleteRecurringStatAllOfficeBooking: any
   @Action('finishBooking') public finishBooking: any
   @Action('getInvigilators') public getInvigilators: any
   @Action('postBooking') public postBooking: any
@@ -481,6 +678,11 @@ export default class EditBooking extends Vue {
   @Mutation('toggleScheduling') public toggleScheduling: any
   @Mutation('toggleRescheduling') public toggleRescheduling: any
   @Mutation('toggleEditDeleteSeries') public toggleEditDeleteSeries: any
+
+  
+  @appointmentsModule.Action('deleteRecurringAppointments') public deleteRecurringAppointments: any
+  @appointmentsModule.Action('deleteRecurringStatAppointments') public deleteRecurringStatAppointments: any
+  @appointmentsModule.Getter('is_Support') private is_Support!: any;
 
   public minimized: any = false
   public confirm: any = false
@@ -524,6 +726,8 @@ export default class EditBooking extends Vue {
   public cancel_flag: boolean = false
   public delete_recurring: boolean = false
   public edit_recurring: boolean = false
+  public stat_flag: boolean = false
+
 
   get checkBookingBlackout () {
     if (this.event.blackout_flag === 'Y') {
@@ -699,6 +903,37 @@ export default class EditBooking extends Vue {
   clickYesRecurring (e) {
     const re_id = this.event.recurring_uuid
     this.deleteRecurringBooking(re_id).then(() => {
+      this.$root.$emit('removeTempEvent')
+      this.$root.$emit('clear-clicked-time')
+      this.$root.$emit('clear-clicked-appt')
+      this.finishBooking()
+      this.resetModal()
+    })
+    this.toggleEditDeleteSeries(false)
+  }
+
+  clickYesStatRecurring (e) {
+    const re_id = this.event.recurring_uuid
+    this.deleteRecurringStatBooking(re_id).then(() => {
+      this.deleteRecurringAppointments(re_id).then(() => {
+        this.$root.$emit('removeTempEvent')
+        this.$root.$emit('clear-clicked-time')
+        this.$root.$emit('clear-clicked-appt')
+      })
+      this.finishBooking()
+      this.resetModal()
+    })
+    this.toggleEditDeleteSeries(false)
+  }
+
+  clickYesStatAllOfficeRecurring (e) {
+    const re_id = this.event.recurring_uuid
+    this.deleteRecurringStatAllOfficeBooking(re_id).then(() => {
+      this.deleteRecurringStatAppointments(re_id).then(() => {
+        this.$root.$emit('removeTempEvent')
+        this.$root.$emit('clear-clicked-time')
+        this.$root.$emit('clear-clicked-appt')
+      })
       this.finishBooking()
       this.resetModal()
     })
@@ -840,6 +1075,10 @@ export default class EditBooking extends Vue {
     if (!this.editedFields.includes('booking_contact_information')) {
       this.booking_contact_information = this.event.booking_contact_information
     }
+    if (!this.editedFields.includes('stat_flag')) {
+      this.stat_flag = this.event.stat_flag
+    }
+
     if (!this.editedFields.includes('blackout_notes')) {
       this.blackout_notes = this.event.blackout_notes
     }
@@ -882,143 +1121,165 @@ export default class EditBooking extends Vue {
   }
 
   submit () {
-    if (this.title.length === 0) {
-      this.labelColor = 'red'
-      this.state = 'danger'
-      this.message = 'A title is required'
-      return
-    }
-    const changes: any = {}
-    if (!this.start.isSame(this.event.start)) {
-      if (this.examAssociated) {
-        //  fix for INC0042620
-        const exp_date = moment(this.event.exam.expiry_date).add(1,'days')
-        if (this.start.isAfter(exp_date)) {
-          this.message = 'Selected date/time is after the exam\'s expiry date.  Press reschedule to pick a new time.'
+      if (this.title) {
+        if (this.title.length === 0) {
+          this.labelColor = 'red'
+          this.state = 'danger'
+          this.message = 'A title is required'
           return
         }
       }
-      if (moment().isAfter(this.start)) {
-        this.message = 'Selected date/time is is in the past. Press Reschedule and pick a new time.'
-        return
+      const changes: any = {}
+      if (!this.start.isSame(this.event.start)) {
+        if (this.examAssociated) {
+          //  fix for INC0042620
+          const exp_date = moment(this.event.exam.expiry_date).add(1,'days')
+          if (this.start.isAfter(exp_date)) {
+            this.message = 'Selected date/time is after the exam\'s expiry date.  Press reschedule to pick a new time.'
+            return
+          }
+        }
+        if (moment().isAfter(this.start)) {
+          this.message = 'Selected date/time is is in the past. Press Reschedule and pick a new time.'
+          return
+        }
+        changes.start_time = this.start.utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
       }
-      changes.start_time = this.start.utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
-    }
-    if (!(this.end as any).isSame(this.event.end)) {
-      changes.end_time = (this.end as any).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
-    }
-    if (this.newEvent && !(this.newEvent.resource.id == this.event.resourceId)) {
-      changes.room_id = this.newEvent.resource.id
-    }
-    if (this.editedFields.includes('title')) {
-      changes.booking_name = this.title
-    }
-    if (this.editedFields.includes('fees')) {
-      changes.fees = this.fees
-    }
-    if (this.editedFields.includes('invigilator')) {
-      changes.invigilator_id = this.invigilator
-      if (changes.invigilator_id !== 'sbc') {
-        changes.sbc_staff_invigilated = 0
+      if (!(this.end as any).isSame(this.event.end)) {
+        changes.end_time = (this.end as any).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
       }
-      if (changes.invigilator_id === 'sbc') {
-        changes.invigilator_id = null
-        changes.sbc_staff_invigilated = 1
+      if (this.newEvent && !(this.newEvent.resource.id == this.event.resourceId)) {
+        changes.room_id = this.newEvent.resource.id
       }
-      if (this.rescheduling) {
-        changes.invigilator_id = null
-        changes.sbc_staff_invigilated = 0
-        this.rescheduling = false
+      if (this.editedFields.includes('title')) {
+        changes.booking_name = this.title
       }
-    }
-    if (this.editedFields.includes('shadow_invigilator')) {
-      if (this.removeFlag) {
-        changes.shadow_invigilator_id = null
+      if (this.editedFields.includes('fees')) {
+        changes.fees = this.fees
+      }
+      if (this.editedFields.includes('invigilator')) {
+        changes.invigilator_id = this.invigilator
+        if (changes.invigilator_id !== 'sbc') {
+          changes.sbc_staff_invigilated = 0
+        }
+        if (changes.invigilator_id === 'sbc') {
+          changes.invigilator_id = null
+          changes.sbc_staff_invigilated = 1
+        }
+        if (this.rescheduling) {
+          changes.invigilator_id = null
+          changes.sbc_staff_invigilated = 0
+          this.rescheduling = false
+        }
+      }
+      if (this.editedFields.includes('shadow_invigilator')) {
+        if (this.removeFlag) {
+          changes.shadow_invigilator_id = null
+        } else {
+          changes.shadow_invigilator_id = this.shadowInvigilator
+        }
+        if (this.rescheduleShadowInvigilator !== null) {
+          changes.shadow_invigilator_id = this.shadowInvigilator
+        }
+      }
+      if (this.editedFields.includes('contact_information')) {
+        changes.booking_contact_information = this.booking_contact_information
+      }
+      
+      if (!this.editedFields.includes('stat_flag')) {
+        changes.stat_flag = this.stat_flag
+      }
+      if (this.editedFields.includes('invigilator_id')) {
+        changes.invigilator_id = this.invigilator
+      }
+      if (this.editedFields.includes('blackout_notes')) {
+        changes.blackout_notes = this.blackout_notes
+      }
+      if (Object.keys(changes).length === 0) {
+        this.message = 'No Changes Made'
       } else {
-        changes.shadow_invigilator_id = this.shadowInvigilator
+        const invigilatorPayload: any = {
+          id: null,
+          params: null
+        }
+        const changePayload: any = {
+          id: null,
+          params: null
+        }
+        if (this.removeFlag) {
+          invigilatorPayload.id = this.currentShadowInvigilator
+          invigilatorPayload.params = '?add=False&subtract=True'
+        } else if (this.rescheduleShadowInvigilator !== null) {
+          invigilatorPayload.id = this.rescheduleShadowInvigilator
+          invigilatorPayload.params = '?add=False&subtract=True'
+          this.rescheduleShadowInvigilator = null
+        } else if (this.shadowInvigilator && this.currentShadowInvigilator) {
+          invigilatorPayload.id = this.shadowInvigilator
+          invigilatorPayload.params = '?add=True&subtract=False'
+          changePayload.id = this.currentShadowInvigilator
+          changePayload.params = '?add=False&subtract=True'
+        } else if (this.shadowInvigilator && !this.currentShadowInvigilator) {
+          invigilatorPayload.id = this.shadowInvigilator
+          invigilatorPayload.params = '?add=True&subtract=False'
+        }
+        changes.invigilator_id = this.invigilator
+        if (invigilatorPayload.id) {
+          this.putInvigilatorShadow(invigilatorPayload)
+        }
+        if (changePayload.id) {
+          this.putInvigilatorShadow(changePayload)
+        }
+        const payload: any = {
+          id: this.event.id,
+          changes
+        }
+        if (changes.invigilator_id === 'sbc') {
+          delete changes.invigilator_id
+        }
+        if (!this.stat_flag) { 
+          if (!this.edit_recurring) {
+            this.putBooking(payload).then(() => {
+              setTimeout(() => {
+                this.$root.$emit('initialize')
+                this.finishBooking()
+                this.resetModal()
+              }, 250)
+            })
+          } else {
+            // remove start and end times to ensure that recurring events do get moved to the date of
+            // the event that was clicked
+            delete changes.start_time
+            delete changes.end_time
+            payload.recurring_uuid = this.event.recurring_uuid
+            this.putRecurringBooking(payload).then(() => {
+              setTimeout(() => {
+                this.$root.$emit('initialize')
+                this.finishBooking()
+                this.resetModal()
+                this.edit_recurring = false
+              }, 250)
+            })
+          }
+        } else {
+          if (this.is_Support){
+            const stat_payload: any = {
+              id: this.event.id,
+              changes : { blackout_notes: this.blackout_notes}
+            }
+            this.putBooking(stat_payload).then(() => {
+                setTimeout(() => {
+                  this.$root.$emit('initialize')
+                  this.finishBooking()
+                  this.resetModal()
+                }, 250)
+              })
+          }
+        }
       }
-      if (this.rescheduleShadowInvigilator !== null) {
-        changes.shadow_invigilator_id = this.shadowInvigilator
-      }
+      this.selectedShadow = []
+      this.shadowInvigilator = null
+      this.removeFlag = false
     }
-    if (this.editedFields.includes('contact_information')) {
-      changes.booking_contact_information = this.booking_contact_information
-    }
-    if (this.editedFields.includes('invigilator_id')) {
-      changes.invigilator_id = this.invigilator
-    }
-    if (this.editedFields.includes('blackout_notes')) {
-      changes.blackout_notes = this.blackout_notes
-    }
-    if (Object.keys(changes).length === 0) {
-      this.message = 'No Changes Made'
-    } else {
-      const invigilatorPayload: any = {
-        id: null,
-        params: null
-      }
-      const changePayload: any = {
-        id: null,
-        params: null
-      }
-      if (this.removeFlag) {
-        invigilatorPayload.id = this.currentShadowInvigilator
-        invigilatorPayload.params = '?add=False&subtract=True'
-      } else if (this.rescheduleShadowInvigilator !== null) {
-        invigilatorPayload.id = this.rescheduleShadowInvigilator
-        invigilatorPayload.params = '?add=False&subtract=True'
-        this.rescheduleShadowInvigilator = null
-      } else if (this.shadowInvigilator && this.currentShadowInvigilator) {
-        invigilatorPayload.id = this.shadowInvigilator
-        invigilatorPayload.params = '?add=True&subtract=False'
-        changePayload.id = this.currentShadowInvigilator
-        changePayload.params = '?add=False&subtract=True'
-      } else if (this.shadowInvigilator && !this.currentShadowInvigilator) {
-        invigilatorPayload.id = this.shadowInvigilator
-        invigilatorPayload.params = '?add=True&subtract=False'
-      }
-      changes.invigilator_id = this.invigilator
-      if (invigilatorPayload.id) {
-        this.putInvigilatorShadow(invigilatorPayload)
-      }
-      if (changePayload.id) {
-        this.putInvigilatorShadow(changePayload)
-      }
-      const payload: any = {
-        id: this.event.id,
-        changes
-      }
-      if (changes.invigilator_id === 'sbc') {
-        delete changes.invigilator_id
-      }
-      if (!this.edit_recurring) {
-        this.putBooking(payload).then(() => {
-          setTimeout(() => {
-            this.$root.$emit('initialize')
-            this.finishBooking()
-            this.resetModal()
-          }, 250)
-        })
-      } else {
-        // remove start and end times to ensure that recurring events do get moved to the date of
-        // the event that was clicked
-        delete changes.start_time
-        delete changes.end_time
-        payload.recurring_uuid = this.event.recurring_uuid
-        this.putRecurringBooking(payload).then(() => {
-          setTimeout(() => {
-            this.$root.$emit('initialize')
-            this.finishBooking()
-            this.resetModal()
-            this.edit_recurring = false
-          }, 250)
-        })
-      }
-    }
-    this.selectedShadow = []
-    this.shadowInvigilator = null
-    this.removeFlag = false
-  }
 
   setChange () {
     this.changeState = !this.changeState
@@ -1056,6 +1317,66 @@ export default class EditBooking extends Vue {
     if (confirmDelete) {
       if (confirmDelete.style.display === 'none') {
         this.$root.$emit('bv::toggle::collapse', 'confirm_delete_recurring_collapse')
+      }
+    }
+  }
+
+  toggleConfirmStatDeleteRecurringCollapse () {
+    const deleteRecurring = document.getElementById('delete_recurring_stat_collapse')
+    const confirmDelete = document.getElementById('confirm_delete_recurring_stat_collapse')
+    if (deleteRecurring) {
+      if (deleteRecurring.classList.contains('show')) {
+        this.$root.$emit('bv::toggle::collapse', 'delete_recurring_stat_collapse')
+      }
+    }
+    if (confirmDelete) {
+      if (confirmDelete.style.display === 'none') {
+        this.$root.$emit('bv::toggle::collapse', 'confirm_delete_recurring_stat_collapse')
+      }
+    }
+  }
+
+  toggleConfirmStatCurrOffDeleteRecurringCollapse () {
+    const deleteRecurring = document.getElementById('delete_recurring_stat_curroff_collapse')
+    const confirmDelete = document.getElementById('confirm_delete_recurring_stat_curroff_collapse')
+    if (deleteRecurring) {
+      if (deleteRecurring.classList.contains('show')) {
+        this.$root.$emit('bv::toggle::collapse', 'delete_recurring_stat_curroff_collapse')
+      }
+    }
+    if (confirmDelete) {
+      if (confirmDelete.style.display === 'none') {
+        this.$root.$emit('bv::toggle::collapse', 'confirm_delete_recurring_stat_curroff_collapse')
+      }
+    }
+  }
+
+  toggleStatDeleteRecurringCollapse () {
+    const deleteRecurring = document.getElementById('delete_recurring_stat_collapse')
+    const confirmDelete = document.getElementById('confirm_delete_recurring_stat_collapse')
+    if (deleteRecurring) {
+      if (deleteRecurring.style.display === 'none') {
+        this.$root.$emit('bv::toggle::collapse', 'delete_recurring_stat_collapse')
+      }
+    }
+    if (confirmDelete) {
+      if (confirmDelete.classList.contains('show')) {
+        this.$root.$emit('bv::toggle::collapse', 'confirm_delete_recurring_stat_collapse')
+      }
+    }
+  }
+
+  toggleStatCurrOffDeleteRecurringCollapse () {
+    const deleteRecurring = document.getElementById('delete_recurring_stat_curroff_collapse')
+    const confirmDelete = document.getElementById('confirm_delete_recurring_stat_curroff_collapse')
+    if (deleteRecurring) {
+      if (deleteRecurring.style.display === 'none') {
+        this.$root.$emit('bv::toggle::collapse', 'delete_recurring_stat_curroff_collapse')
+      }
+    }
+    if (confirmDelete) {
+      if (confirmDelete.classList.contains('show')) {
+        this.$root.$emit('bv::toggle::collapse', 'confirm_delete_recurring_stat_curroff_collapse')
       }
     }
   }
