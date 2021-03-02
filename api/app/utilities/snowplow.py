@@ -108,7 +108,7 @@ class SnowPlow():
     def snowplow_appointment(citizen_obj, csr, appointment, schema):
 
         #  Make sure you want to track calls.
-        if SnowPlow.call_snowplow_flag and appointment.blackout_flag == 'N':
+        if SnowPlow.call_snowplow_flag and appointment.blackout_flag == 'N' and not appointment.stat_flag:
 
             #  If no citizen object, get citizen information.
             if citizen_obj is None:

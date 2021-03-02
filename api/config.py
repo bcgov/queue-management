@@ -34,6 +34,13 @@ class BaseConfig(object):
 
     #   Set up OIDC variables.
     SECRET_KEY = os.getenv('SECRET_KEY')
+    
+    # #   Set up OIDC variables.
+    # SECRET_KEY = os.getenv('SECRET_KEY')
+    # OIDC_OPENID_REALM = os.getenv('OIDC_OPENID_REALM','nest')
+    # OIDC_CLIENT_SECRETS = os.getenv('OIDC_SECRETS_FILE','client_secrets/secrets.json')
+    # OIDC_USER_INFO_ENABLED = True
+    # OIDC_SCOPES = ['openid', 'email', 'profile']
 
     #  Set up session and communication variables.
     REMEMBER_COOKIE_DURATION = 86400

@@ -112,4 +112,5 @@ export interface StateModelIF {
   user: any,
   userLoadingFail: boolean,
   videofiles: any,
+  apiCallTotal: number
 }

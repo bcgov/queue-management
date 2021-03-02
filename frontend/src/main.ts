@@ -20,7 +20,7 @@ import "core-js/stable"; // For IE11 compat
 
 import Vue from 'vue'
 import vuetify from './plugins/vuetify';
-
+import Buefy from 'buefy';
 import 'es6-promise/auto'
 import store from './store/index'
 import BootstrapVue from 'bootstrap-vue'
@@ -62,7 +62,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import VDragged from 'v-dragged'
-
+import 'buefy/dist/buefy.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import './assets/css/q.css'
@@ -73,7 +73,7 @@ require('es6-shim')
 require('../static/keycloak.js')
 // import * as Keycloak from "../static/keycloak.js";
 const Keycloak = window && (window as any).Keycloak;
-
+Vue.use(Buefy)
 Vue.use(VDragged)
 Vue.use(Plugin)
 library.add(
@@ -111,7 +111,6 @@ library.add(
 )
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(BootstrapVue)
-
 var keycloak = Keycloak(process.env.KEYCLOAK_JSON_URL)
 Vue.prototype.$keycloak = keycloak
 Vue.config.productionTip = false

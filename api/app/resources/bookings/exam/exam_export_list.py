@@ -97,7 +97,7 @@ class ExamList(Resource):
             out.writerow(['Office Name', 'Exam Type', 'Exam ID', 'Exam Name', 'Examinee Name', 'Event ID', 'Room Name',
                           'Invigilator Name(s)', 'Shadow Invigilator Name', 'SBC Invigilator', 'Start Time', 'End Time', 'Booking ID', 'Booking Name',
                           'Number Of Students', 'Exam Received', 'Exam Written', 'Exam Returned', 'Notes',
-                          'Collect Fees'])
+                          'Collect Fees', 'Number of Hours', 'Number of Minutes', 'Duration (h)'])
 
             keys = [
                 "office_name",
@@ -119,7 +119,10 @@ class ExamList(Resource):
                 "exam_written_ind",
                 "exam_returned_date",
                 "notes",
-                "fees"
+                "fees",
+                "number_of_hours",
+                "number_of_minutes",
+                "duration"
             ]
 
             exam_keys = [
@@ -145,6 +148,11 @@ class ExamList(Resource):
 
             for exam in exams:
                 row = []
+                start = exam.booking.start_time
+                end = exam.booking.end_time
+                diff = end - start
+                hours, remainder = divmod(diff.seconds, 3600)
+                minutes, seconds = divmod(remainder, 60)
                 if exam.booking.shadow_invigilator_id:
                     shadow_invigilator_id = exam.booking.shadow_invigilator_id
                 else:
@@ -179,6 +187,12 @@ class ExamList(Resource):
                             row.append(getattr(exam, key))
                         elif key == "fees":
                             row.append("")
+                        elif key == "number_of_hours":
+                            row.append(hours)
+                        elif key == "number_of_minutes":
+                            row.append(minutes)
+                        elif key == "duration":
+                            row.append((60*hours + minutes)/60)
 
                     out.writerow(row)
 
