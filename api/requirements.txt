@@ -20,7 +20,7 @@ Flask-Caching
 Flask-Compress
 Flask-Cors
 flask-marshmallow
-Flask-SocketIO
+Flask-SocketIO==4.3.2
 gunicorn
 marshmallow-sqlalchemy
 marshmallow
@@ -32,7 +32,5 @@ pytz
 python-dotenv
 python-jose
 SQLAlchemy-Utc
-# We need to find alternative to toastedmarshmellow. pydantic
-# toastedmarshmallow==0.2.6
 Jinja2
-alembic
+alembic==1.5.2

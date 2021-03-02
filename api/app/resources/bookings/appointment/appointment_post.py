@@ -153,7 +153,6 @@ class AppointmentPost(Resource):
                 # Send confirmation email and sms
                 try:
                     ches_token = generate_ches_token()
-                    pprint('Sending sms and emails for appointment confirmation')
                     send_email(ches_token, *get_confirmation_email_contents(appointment, office, office.timezone, user))
                     send_sms(appointment, office, office.timezone, user,
                              request.headers['Authorization'].replace('Bearer ', ''))
@@ -167,7 +166,6 @@ class AppointmentPost(Resource):
             if not application.config['DISABLE_AUTO_REFRESH']:
                 socketio.emit('appointment_create', result)
 
-            print(self.appointment_schema.validate(appointment))
             return {"appointment": result,
                     "errors": {}}, 201
 

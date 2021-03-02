@@ -145,7 +145,7 @@ class Services(Resource):
                 result = self.service_schema.dump(filtered_services)
                 
                 return {'services': result,
-                        'errors': []}
+                        'errors': {}}
 
             except exc.SQLAlchemyError as e:
                 print(e)
