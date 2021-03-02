@@ -1,7 +1,9 @@
 import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
+import { FeedbackRequestObject, FeedbackResponseObject } from '@/models/feedback'
 import { Appointment } from '@/models/appointment'
 import AppointmentService from '@/services/appointment.services'
 import CommonUtils from '@/utils/common-util'
+import FeedbackService from '@/services/feedback.service'
 import OfficeService from '@/services/office.services'
 
 @Module({
@@ -55,6 +57,12 @@ export default class AppointmentModule extends VuexModule {
   @Action({ rawError: true })
   public async deleteAppointment (appointmentId: number) {
     const response = await AppointmentService.deleteAppointment(appointmentId)
+    return response || {}
+  }
+
+  @Action({ rawError: true })
+  public async submitFeedback (feedbackRequest: FeedbackRequestObject) {
+    const response = await FeedbackService.submitFeedback(feedbackRequest)
     return response || {}
   }
 }
