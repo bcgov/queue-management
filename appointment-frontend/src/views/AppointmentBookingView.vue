@@ -247,7 +247,6 @@ export default class AppointmentBookingView extends Vue {
       this.stepCounter--
     }
   }
-  
   private async updated () {
     this.$store.commit('setStepperCurrentStep', this.stepCounter)
     // eslint-disable-next-line no-console
