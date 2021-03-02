@@ -12,10 +12,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-import toastedmarshmallow
 from marshmallow import fields
 from app.models.theq import ServiceReq
-from app.schemas.theq import ChannelSchema, PeriodStateSchema, SRStateSchema, ServiceSchema, PeriodSchema
+from app.schemas.theq import ChannelSchema, SRStateSchema, ServiceSchema, PeriodSchema
 from qsystem import ma
 
 
@@ -25,7 +24,6 @@ class ServiceReqSchema(ma.SQLAlchemySchema):
         model = ServiceReq
         include_relationships = True
         load_instance = True
-        jit = toastedmarshmallow.Jit
 
     sr_id = fields.Int()
     citizen_id = fields.Int()
@@ -33,7 +31,7 @@ class ServiceReqSchema(ma.SQLAlchemySchema):
     service_id = fields.Int()
     quantity = fields.Int()
     sr_number = fields.Int()
-    periods = fields.Nested(PeriodSchema(exclude=('request_periods', 'reception_csr_ind', 'sr', 'sr_id', 'state_periods',)), many=True)
+    periods = fields.Nested(PeriodSchema(exclude=('reception_csr_ind', 'sr', 'sr_id',)), many=True)
     sr_state = fields.Nested(SRStateSchema(exclude=('sr_state_id', 'sr_state_desc',)))
     service = fields.Nested(ServiceSchema(exclude=('actual_service_ind', 'deleted', 'display_dashboard_ind', 'prefix',
                                                    'service_code', 'service_desc', 'service_id',)))

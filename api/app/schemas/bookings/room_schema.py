@@ -13,7 +13,6 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 from marshmallow import fields
-import toastedmarshmallow
 from app.models.bookings import Room
 from app.schemas.theq import OfficeSchema
 from qsystem import ma
@@ -25,7 +24,6 @@ class RoomSchema(ma.SQLAlchemySchema):
         model = Room
         include_relationships = True
         load_instance = True
-        jit = toastedmarshmallow.Jit
         #exclude = ("booking",)
 
     capacity = fields.Int()

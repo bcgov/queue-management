@@ -46,7 +46,8 @@ class ExamPost(Resource):
 
         json_data = request.get_json()
 
-        exam, warning = self.exam_schema.load(json_data)
+        exam = self.exam_schema.load(json_data)
+        warning = self.exam_schema.validate(json_data)
 
         my_print("json_data: ")
         my_print(json_data)
@@ -71,8 +72,8 @@ class ExamPost(Resource):
 
         result = self.exam_schema.dump(exam)
 
-        return {"exam": result.data,
-                "errors": result.errors}, 201
+        return {"exam": result,
+                "errors": self.exam_schema.validate(exam)}, 201
 
 
 

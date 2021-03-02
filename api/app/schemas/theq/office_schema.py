@@ -12,7 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-import toastedmarshmallow
 from marshmallow import fields
 from app.models.theq import Office
 from app.schemas.theq import SmartBoardSchema, CounterSchema, ServiceSchema, TimezoneSchema, TimeslotSchema
@@ -25,7 +24,6 @@ class OfficeSchema(ma.SQLAlchemySchema):
         model = Office
         include_relationships = True
         load_instance = True
-        jit = toastedmarshmallow.Jit
         # exclude = ('citizens', 'csrs', 'deleted', 'exams', 'rooms', 'services',)
 
     office_id = fields.Int()

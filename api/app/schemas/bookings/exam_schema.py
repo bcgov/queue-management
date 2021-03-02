@@ -13,11 +13,11 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 from marshmallow import fields
-import toastedmarshmallow
 from app.models.bookings import Exam
 from app.schemas.bookings import BookingSchema, ExamTypeSchema, InvigilatorSchema
 from app.schemas.theq import OfficeSchema
 from qsystem import ma
+from marshmallow import EXCLUDE
 
 
 class CandidateSchema(ma.SQLAlchemySchema):
@@ -38,7 +38,7 @@ class ExamSchema(ma.SQLAlchemySchema):
         model = Exam
         include_relationships = True
         load_instance = True
-        jit = toastedmarshmallow.Jit
+        unknown = EXCLUDE
 
     booking_id = fields.Int(allow_none=True)
     deleted_date = fields.Str(allow_none=True)

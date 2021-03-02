@@ -39,8 +39,8 @@ class InvigilatorList(Resource):
                                             .filter(Invigilator.deleted.is_(None))
 
             result = self.invigilator_schema.dump(invigilators)
-            return {'invigilators': result.data,
-                    'errors': result.errors}, 200
+            return {'invigilators': result,
+                    'errors': self.invigilator_schema.validate(invigilators)}, 200
 
         except exc.SQLAlchemyError as error:
             logging.error(error, exc_info=True)

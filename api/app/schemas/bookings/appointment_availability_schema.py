@@ -13,7 +13,6 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 from marshmallow import fields
-import toastedmarshmallow
 from app.models.bookings import Appointment
 from app.schemas.theq import OfficeSchema
 from qsystem import ma
@@ -25,7 +24,6 @@ class AppointmentAvailabilitySchema(ma.SQLAlchemySchema):
         model = Appointment
         include_relationships = True
         load_instance = True
-        jit = toastedmarshmallow.Jit
 
     appointment_id = fields.Int(dump_only=True)
     office_id = fields.Int()

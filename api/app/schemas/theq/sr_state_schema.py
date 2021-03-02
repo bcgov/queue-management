@@ -12,7 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-import toastedmarshmallow
 from marshmallow import fields
 from app.models.theq import SRState
 from qsystem import ma
@@ -24,7 +23,6 @@ class SRStateSchema(ma.SQLAlchemySchema):
         model = SRState
         include_relationships = True
         load_instance = True
-        jit = toastedmarshmallow.Jit
 
     sr_state_id = fields.Int()
     sr_code = fields.Str()

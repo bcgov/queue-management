@@ -12,7 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-import toastedmarshmallow
 from marshmallow import fields
 from app.models.theq import Timezone
 from qsystem import ma
@@ -24,7 +23,6 @@ class TimezoneSchema(ma.SQLAlchemySchema):
         model = Timezone
         include_relationships = True
         load_instance = True
-        jit = toastedmarshmallow.Jit
 
     timezone_id = fields.Int()
     timezone_name = fields.Str()

@@ -13,10 +13,10 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 from marshmallow import fields
-import toastedmarshmallow
 from app.models.bookings import Appointment
 from app.schemas.theq import OfficeSchema, ServiceSchema
 from qsystem import ma
+from marshmallow import EXCLUDE
 
 
 class AppointmentSchema(ma.SQLAlchemySchema):
@@ -25,7 +25,7 @@ class AppointmentSchema(ma.SQLAlchemySchema):
         model = Appointment
         include_relationships = True
         load_instance = True
-        jit = toastedmarshmallow.Jit
+        unknown = EXCLUDE
 
     appointment_id = fields.Int(dump_only=True)
     office_id = fields.Int()
@@ -43,6 +43,8 @@ class AppointmentSchema(ma.SQLAlchemySchema):
     is_draft = fields.Boolean(allow_none=True)
     # office = fields.Int(attribute="office_id")
     # service = fields.Int(attribute="service_id")
+    # office = fields.Nested(OfficeSchema(exclude=('sb', 'counters', 'quick_list', 'back_office_list', 'timeslots')))
+    # service = fields.Nested(ServiceSchema())
     office = fields.Nested(OfficeSchema())
     service = fields.Nested(ServiceSchema())
 

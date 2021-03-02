@@ -46,7 +46,8 @@ class ExamBcmpPost(Resource):
         else:
             booking = None
 
-        exam, warning = self.exam_schema.load(json_data)
+        exam = self.exam_schema.load(json_data)
+        warning = self.exam_schema.validate(json_data)
 
         if warning:
             logging.warning("WARNING: %s", warning)

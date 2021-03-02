@@ -13,11 +13,12 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 from marshmallow import fields, post_dump
-import toastedmarshmallow
 from app.models.bookings import Booking
 from app.schemas.bookings import RoomSchema, InvigilatorSchema
 from app.schemas.theq import OfficeSchema
 from qsystem import ma
+from marshmallow import EXCLUDE
+
 
 class BookingSchema(ma.SQLAlchemySchema):
 
@@ -25,7 +26,7 @@ class BookingSchema(ma.SQLAlchemySchema):
         model = Booking
         include_relationships = True
         load_instance = True
-        jit = toastedmarshmallow.Jit
+        unknown = EXCLUDE
 
     booking_id = fields.Int(dump_only=True)
     booking_name = fields.Str()
@@ -41,14 +42,14 @@ class BookingSchema(ma.SQLAlchemySchema):
     blackout_notes = fields.Str(allow_none=True)
     recurring_uuid = fields.Str(allow_none=True)
 
-    room = fields.Nested(RoomSchema(exclude=("booking", "office",)))
+    room = fields.Nested(RoomSchema(exclude=("office",)))
     office = fields.Nested(OfficeSchema(only=('appointments_enabled_ind', 'exams_enabled_ind', 'office_id',
                                               'office_name', 'office_number', 'timezone')))
 
     #  NOTE:  The reason for the exclude, rather than just a single include, is because
     #         an include with a single field didn't seem to work.  When I added a second field, it worked.
     #         I only want a single field, so had to use an exclude instead.  ?????
-    invigilators = fields.Nested(InvigilatorSchema(exclude=('contact_name', 'contact_email', 'contract_number',
+    invigilators = fields.Nested(InvigilatorSchema(exclude=( 'contact_email', 'contract_number',
                                                             'contract_expiry_date', 'invigilator_name',
                                                             'invigilator_notes', 'shadow_count', 'shadow_flag',
                                                             'contact_phone', 'deleted', 'office'

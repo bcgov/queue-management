@@ -14,7 +14,6 @@ limitations under the License.'''
 
 from marshmallow import fields
 from qsystem import ma
-import toastedmarshmallow
 from app.models.bookings import Invigilator
 from app.schemas.theq import OfficeSchema
 
@@ -26,7 +25,6 @@ class InvigilatorSchema(ma.SQLAlchemySchema):
         #exclude = ("invigilators",)
         include_relationships = True
         load_instance = True
-        jit = toastedmarshmallow.Jit
 
     contact_phone = fields.Str()
     contact_email = fields.Str()

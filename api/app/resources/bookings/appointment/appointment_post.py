@@ -63,7 +63,7 @@ class AppointmentPost(Resource):
         office = None
 
         #  Create a citizen for later use.
-        citizen = self.citizen_schema.load({}).data
+        citizen = self.citizen_schema.load({})
 
         # Check if the appointment is created by public user. Can't depend on the IDP as BCeID is used by other users as well
         is_public_user_appointment = is_public_user()
@@ -113,7 +113,8 @@ class AppointmentPost(Resource):
         db.session.add(citizen)
         db.session.commit()
 
-        appointment, warning = self.appointment_schema.load(json_data)
+        appointment = self.appointment_schema.load(json_data)
+        warning = self.appointment_schema.validate(json_data)
         if is_public_user_appointment:
             appointment.citizen_name = user.display_name
             appointment.online_flag = True
@@ -170,10 +171,11 @@ class AppointmentPost(Resource):
             result = self.appointment_schema.dump(appointment)
 
             if not application.config['DISABLE_AUTO_REFRESH']:
-                socketio.emit('appointment_create', result.data)
+                socketio.emit('appointment_create', result)
 
-            return {"appointment": result.data,
-                    "errors": result.errors}, 201
+            print(self.appointment_schema.validate(appointment))
+            return {"appointment": result,
+                    "errors": {}}, 201
 
         else:
             return {"The Appointment Office ID and CSR Office ID do not match!"}, 403

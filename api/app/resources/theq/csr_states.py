@@ -25,7 +25,7 @@ from app.auth.auth import jwt
 @api.route("/csr_states/", methods=["GET"])
 class CsrStateList(Resource):
 
-    csr_state_schema = CSRStateSchema(many=True, exclude=('csrs'))
+    csr_state_schema = CSRStateSchema(many=True)
 
     @jwt.requires_auth
     def get(self):
@@ -35,8 +35,8 @@ class CsrStateList(Resource):
             states = CSRState.query.all()
             result = self.csr_state_schema.dump(states)
 
-            return {'csr_states': result.data,
-                    'errors': result.errors}
+            return {'csr_states': result,
+                    'errors': self.csr_state_schema.validate(states)}
 
         except exc.SQLAlchemyError as e:
             print(e)
