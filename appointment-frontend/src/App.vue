@@ -2,6 +2,7 @@
   <v-app id="app">
     <div class="app-body" :class="{'app-mobile': $vuetify.breakpoint.xs}">
       <app-header :key="$store.state.refreshKey"></app-header>
+      <feedback v-if="isFeedbackEnabled"></feedback>
       <main class="main-block container">
         <v-btn
           color="secondary"
@@ -28,6 +29,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { mapActions, mapGetters } from 'vuex'
 import CommonUtils from './utils/common-util'
 import ConfigHelper from '@/utils/config-helper'
+import { Feedback } from './components/feedback'
 import { KCUserProfile } from '@/models/KCUserProfile'
 import KeyCloakService from '@/services/keycloak.services'
 import { SessionStorageKeys } from '@/utils'
@@ -38,7 +40,8 @@ import { getModule } from 'vuex-module-decorators'
 @Component({
   components: {
     AppHeader,
-    AppFooter
+    AppFooter,
+    Feedback
   },
   computed: {
     ...mapGetters('auth', [
@@ -59,6 +62,7 @@ export default class App extends Vue {
   private readonly isAuthenticated!: boolean
   private tokenService = new TokenService()
   private isScrolled = false
+  private isFeedbackEnabled: boolean = ConfigHelper.isFeedbackEnabled()
 
   private async beforeMount () {
     await KeyCloakService.setKeycloakConfigUrl(`${process.env.VUE_APP_PATH}config/kc/keycloak-public.json`)
