@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "116f308e-5717-4a7e-9523-4a0237dad6cd",
+		"_postman_id": "0b45a7be-46ca-46f3-abab-3e058b7b4d58",
 		"name": "API_Test_TheQ_Booking Copy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -15721,6 +15721,7 @@
 									"});",
 									"",
 									"var firstUser = jsonData[0];",
+									"console.log(firstUser)",
 									"",
 									"var userSchema = {",
 									"    \"type\": \"object\",",
@@ -15795,7 +15796,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "96c8f655-a7e7-4ff7-9316-72267b90248c",
 								"exec": [
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 201\", function(){",
@@ -15810,7 +15810,6 @@
 									"",
 									"// Parse response body",
 									"var jsonData = JSON.parse(responseBody);",
-									"console.log(\"jsonData\" + JSON.stringify(jsonData))",
 									"",
 									"//Test to see if response schema is valid",
 									"eval(environment.appointment_schema_check);",
@@ -15839,7 +15838,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "ef209a89-d288-4e48-b555-61f8440331fb",
 								"exec": [
 									"//  Calculate a start date a week from today.",
 									"var later = new Date();",
@@ -16006,7 +16004,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "82228417-bbbc-4295-8a26-f4805fa82a83",
 								"exec": [
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 200\", function(){",
