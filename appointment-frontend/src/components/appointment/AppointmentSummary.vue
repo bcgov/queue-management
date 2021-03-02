@@ -224,7 +224,6 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   }
   private isSendSmsReminders:boolean = false
   private isSendEmailReminders:boolean = false
-  private readonly currentUserProfile!: User
   private readonly updateUserAccount!: (userBody: UserUpdateBody) => Promise<any>
 
   private async mounted () {
