@@ -40,6 +40,7 @@ import {
   faClipboardCheck,
   faClock,
   faDollarSign,
+  faEdit,
   faEraser,
   faExclamation,
   faExclamationTriangle,
@@ -107,7 +108,8 @@ library.add(
   faUserAlt,
   faUserCircle,
   faWindowMaximize,
-  faWindowRestore
+  faWindowRestore,
+  faEdit,
 )
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(BootstrapVue)
