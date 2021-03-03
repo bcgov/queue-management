@@ -369,11 +369,16 @@
 /* eslint-disable */
 import { Action, namespace } from 'vuex-class'
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import DatePicker from 'vue2-datepicker'
 import moment from 'moment'
 
 const appointmentsModule = namespace('appointmentsModule')
 
-@Component
+@Component({
+  components: {
+    DatePicker
+  }
+})
 export default class ApptBookingModal extends Vue {
   @Prop({ default: '' })
   private clickedTime!: any
