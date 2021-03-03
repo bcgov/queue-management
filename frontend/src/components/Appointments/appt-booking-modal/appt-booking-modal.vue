@@ -708,10 +708,12 @@ export default class ApptBookingModal extends Vue {
 
   show () {
     this.length = 15
-    this.start = null
-    this.appt_time = null
-    this.appt_date = null
-    this.curr_date = null
+    if (!this.selectedServiceObj) {
+      this.start = null
+      this.appt_time = null
+      this.appt_date = null
+      this.curr_date = null
+    }
     this.clearMessage()
     if (this.selectingService) {
       this.selectingService = false
