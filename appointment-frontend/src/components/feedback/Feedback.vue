@@ -384,7 +384,7 @@ export default class Feedback extends Vue {
   private getCurrentDateinFormat () {
     let currentDate = new Date()
     let day = currentDate.getDate().toString().length === 1 ? '0' + currentDate.getDate().toString() : currentDate.getDate().toString()
-    let month = currentDate.getMonth().toString().length === 1 ? '0' + currentDate.getMonth().toString() : currentDate.getMonth().toString()
+    let month = currentDate.getMonth().toString().length === 1 ? '0' + (currentDate.getMonth() + 1).toString() : (currentDate.getMonth() + 1).toString()
     return currentDate.getFullYear() + '-' + month + '-' + day
   }
   private phoneEmail (value) {
