@@ -199,35 +199,41 @@ export class DateQuestion extends Vue {
   },
   template: `
   <b-row no-gutters>
-    <b-col class="dropdown">
-    <h5 v-if="addExamModal.setup === 'group' ">Add Group Exam</h5>
-    <h5 v-if="addExamModal.setup === 'individual' ">Add Individual ITA Exam</h5>
-    <h5 v-if="addExamModal.setup === 'other' ">Add Non-ITA Exam</h5>
-    <h5 v-if="addExamModal.setup === 'pesticide' ">Add Pesticide Exam</h5>
-    <label>Exam Type</label><br>
-      <div @click="clickInput" id="exam_type_dropdown">
-        <b-input read-only
-                 autocomplete="off"
-                 :value="inputText"
-                 placeholder="click here to see options"
-                 :style="inputStyle" />
-      </div>
-      <div :class="dropclass"
-           style="border: 1px solid grey"
-           @click="clickInput">
-        <template v-for="type in dropItems">
-          <b-dd-header v-if="type.header"
-                       :style="{backgroundColor: type.exam_color}"
-                       :class="type.class">{{ type.exam_type_name }}</b-dd-header>
-          <b-dd-item v-else :style="{backgroundColor: type.exam_color}"
-                     @click="preHandleInput(type.exam_type_id)"
-                     :name="type.exam_type_id"
-                     autocomplete="off"
-                     :id="type.exam_type_id"
-                     :class="type.class">{{ type.exam_type_name }}</b-dd-item>
-        </template>
-      </div>
-    </b-col>
+    <b-row>
+      <b-col class="dropdown">
+        <h5 v-if="addExamModal.setup === 'group' ">Add Group Exam</h5>
+        <h5 v-if="addExamModal.setup === 'individual' ">Add Individual ITA Exam</h5>
+        <h5 v-if="addExamModal.setup === 'other' ">Add Non-ITA Exam</h5>
+        <h5 v-if="addExamModal.setup === 'pesticide' ">Add Pesticide Exam</h5>
+      </b-col>
+      <b-col>
+        <label>Exam Type</label><br>
+        <div @click="clickInput" id="exam_type_dropdown">
+          <b-input read-only
+                  autocomplete="off"
+                  :value="inputText"
+                  placeholder="click here to see options"
+                  :style="inputStyle" />
+        </div>
+      </b-col>
+    </b-row
+  <b-row>
+    <div :class="dropclass"
+          style="border: 1px solid grey"
+          @click="clickInput">
+      <template v-for="type in dropItems">
+        <b-dd-header v-if="type.header"
+                      :style="{backgroundColor: type.exam_color}"
+                      :class="type.class">{{ type.exam_type_name }}</b-dd-header>
+        <b-dd-item v-else :style="{backgroundColor: type.exam_color}"
+                    @click="preHandleInput(type.exam_type_id)"
+                    :name="type.exam_type_id"
+                    autocomplete="off"
+                    :id="type.exam_type_id"
+                    :class="type.class">{{ type.exam_type_name }}</b-dd-item>
+      </template>
+    </div>
+    </b-row>
   </b-row>
 `
 })
@@ -326,7 +332,7 @@ export class DropdownQuestion extends Vue {
       return 'dropdown-menu'
     }
     if (this.addExamModal.step1MenuOpen) {
-      return 'dropdown-menu dropdown-menu-right show py-0 my-0 w-100'
+      return 'dropdownmenu dropdown-menu-right show py-0 my-0 w-100'
     }
   }
 
