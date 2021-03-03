@@ -203,3 +203,10 @@ html.modal-open::-webkit-scrollbar, body.modal-open::-webkit-scrollbar {
   background-color: #f2f2f2;
   cursor: not-allowed;
 }
+#appointment-calendar .v-calendar-daily__interval-text {
+  font-size: 12px !important;
+}
+#appointment-calendar .v-event-timed-container {
+  margin-right: 1px !important;
+  margin-left: 40px !important;
+}
