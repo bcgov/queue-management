@@ -74,7 +74,7 @@ import SignedUser from './SignedUser.vue'
   },
   methods: {
     ...mapActions('office', [
-      'callSnowplow'
+      'callSnowplowClick'
     ])
   }
 })
@@ -82,7 +82,7 @@ export default class AppHeader extends Vue {
   private readonly isAuthenticated!: boolean
   private readonly currentOffice!: Office
   private readonly currentService!: Service
-  private readonly callSnowplow!: (mySP: any) => any
+  private readonly callSnowplowClick!: (mySP: any) => any
   private readonly username!: string
   private curService: string
   private curOffice: string
@@ -97,31 +97,32 @@ export default class AppHeader extends Vue {
     this.$router.push('/login')
   }
   private goTo (page) {
-    // snowplow call needs null value not undefined, and depending on where we click login button, one of these values might be undefined.
-    // eslint-disable-next-line no-console
-    console.log('APP HEADER called - this.currentOffice?.office_name', this.currentOffice)
-    // eslint-disable-next-line no-console
-    console.log('APP HEADER called - this.currentService?.external_service_name', this.currentService)
-    if (this.currentOffice?.office_name === undefined) {
-      this.curOffice = null
-    } else {
-      this.curOffice = this.currentOffice?.office_name
+    let currStep = ''
+    switch (this.$store.state.spLastStep) {
+      case 1:
+        currStep = 'Locations List'
+        break
+      case 2:
+        currStep = 'Service Selection'
+        break
+      case 3:
+        currStep = 'Date Selection'
+        break
+      case 4:
+        currStep = 'Login to Confirm'
+        break
+      default:
+        break
     }
-    if (this.currentService?.external_service_name === undefined) {
-      this.curService = null
-    } else {
-      this.curService = this.currentService?.external_service_name
-    }
-
     let mySP = {}
     switch (page) {
       case 'register':
-        mySP = { step: 'Register', loggedIn: this.isAuthenticated, apptID: null, clientID: null, loc: this.curOffice, serv: this.curService }
-        this.callSnowplow(mySP)
+        mySP = { label: 'Register', step: currStep, loc: null, serv: null, url: 'https://appointments.servicebc.gov.bc.ca/login' }
+        this.callSnowplowClick(mySP)
         break
       case 'login':
-        mySP = { step: 'Login to Account', loggedIn: this.isAuthenticated, apptID: null, clientID: null, loc: this.curOffice, serv: this.curService }
-        this.callSnowplow(mySP)
+        mySP = { label: 'Login', step: currStep, loc: null, serv: null, url: 'https://appointments.servicebc.gov.bc.ca/login' }
+        this.callSnowplowClick(mySP)
         this.$router.push('/login')
         break
       case 'home': this.$router.push('/')

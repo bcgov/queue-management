@@ -143,7 +143,8 @@ import StepperMixin from '@/mixins/StepperMixin.vue'
       'setAdditionalNotes'
     ]),
     ...mapActions('office', [
-      'getServiceByOffice'
+      'getServiceByOffice',
+      'callSnowplowClick'
     ])
   }
 })
@@ -155,6 +156,7 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
   private readonly setCurrentService!: (service: Service) => void
   private readonly setAdditionalNotes!: (notes: string) => void
   private readonly getServiceByOffice!: (officeId: number) => Promise<Service[]>
+  private readonly callSnowplowClick!: (mySP: any) => any
   private selectedService: Service = null
   private selectedServiceType = typeof this.selectedService
   private additionalOptions = ''
@@ -233,6 +235,8 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
   }
 
   private goToServiceLink (url) {
+    const mySP = { label: 'Online Option', step: 'Service Selection', loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name, url: url }
+    this.callSnowplowClick(mySP)
     window.open(url, '_blank')
   }
 

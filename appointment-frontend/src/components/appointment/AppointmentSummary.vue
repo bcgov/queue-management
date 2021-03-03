@@ -316,7 +316,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
       try {
         const resp = await this.createAppointment()
         if (resp.appointment_id) {
-          const mySP = { step: 'Appointment Confirmed', loggedIn: this.isAuthenticated, apptID: resp.appointment_id, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService.external_service_name }
+          const mySP = { step: 'Appointment Confirmed', loggedIn: this.isAuthenticated, apptID: resp.appointment_id, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name }
           this.callSnowplow(mySP)
           // eslint-disable-next-line no-console
           console.log('APPOINTMENT CONFIRMED===>')
@@ -331,7 +331,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
           // eslint-disable-next-line no-console
           console.log('APPOINTMENT CONFIRMED this.currentOffice?.office_name===>', this.currentOffice?.office_name)
           // eslint-disable-next-line no-console
-          console.log('APPOINTMENT CONFIRMED  this.currentService===>', this.currentService.external_service_name)
+          console.log('APPOINTMENT CONFIRMED  this.currentService===>', this.currentService?.external_service_name)
           this.dialogPopup.showDialog = true
           this.dialogPopup.isSuccess = true
           this.dialogPopup.title = 'Success! Your appointment has been booked.'

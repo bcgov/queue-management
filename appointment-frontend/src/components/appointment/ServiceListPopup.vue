@@ -83,15 +83,22 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import { mapActions, mapState } from 'vuex'
 import { Office } from '@/models/office'
 import { Service } from '@/models/service'
 import { ServiceAvailability } from '@/utils/constants'
-import { mapState } from 'vuex'
 
 @Component({
   computed: {
     ...mapState('office', [
+      'currentOffice',
+      'currentService',
       'categoryList'
+    ])
+  },
+  methods: {
+    ...mapActions('office', [
+      'callSnowplowClick'
     ])
   }
 })
@@ -100,9 +107,12 @@ export default class ServiceListPopup extends Vue {
   private categorySearchInput:string = ''
   private filteredServiceList: Service[] = []
   private readonly categoryList!: Service[]
+  private readonly currentOffice!: Office
+  private readonly currentService!: Service
   private isFiltered: boolean = false
   private isModelOpen: boolean = false
   private ServiceAvailability = ServiceAvailability
+  private readonly callSnowplowClick!: (mySP: any) => any
 
   @Prop({ default: false })
   private locationServicesModal!: boolean
@@ -153,6 +163,8 @@ export default class ServiceListPopup extends Vue {
   }
 
   private goToServiceLink (url) {
+    const mySP = { label: 'Online Option', step: 'Service List Popup', loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name, url: url }
+    this.callSnowplowClick(mySP)
     window.open(url, '_blank')
   }
 }

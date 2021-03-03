@@ -244,6 +244,34 @@ export default class OfficeModule extends VuexModule {
   }
 
   @Action({ rawError: true })
+  public callSnowplowClick (mySP: any): void {
+    if (!mySP.url) {
+      mySP.url = null
+    }
+    (window as any).snowplow('trackSelfDescribingEvent', {
+      schema: 'iglu:ca.bc.gov.cfmspoc/appointment_click/jsonschema/1-0-0',
+      data: {
+        label: mySP.label,
+        step: mySP.step,
+        location: mySP.loc,
+        service: mySP.serv,
+        url: mySP.url
+      }
+    }
+    )
+    // eslint-disable-next-line no-console
+    console.log('snowplow.label', mySP.label)
+    // eslint-disable-next-line no-console
+    console.log('snowplow.appointment_step', mySP.step)
+    // eslint-disable-next-line no-console
+    console.log('snowplow.location', mySP.loc)
+    // eslint-disable-next-line no-console
+    console.log('snowplow.service', mySP.serv)
+    // eslint-disable-next-line no-console
+    console.log('snowplow.url', mySP.url)
+  }
+
+  @Action({ rawError: true })
   public callSnowplow (mySP: any): void {
     if (!mySP.loggedIn) {
       mySP.clientID = null

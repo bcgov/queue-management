@@ -300,20 +300,20 @@ export default class AppointmentBookingView extends Vue {
         this.callSnowplow(mySP)
         break
       case 3:
-        mySP = { step: 'Date Selection', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService.external_service_name }
+        mySP = { step: 'Date Selection', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name }
         this.callSnowplow(mySP)
         break
       case 4:
         if (this.isAuthenticated) {
-          mySP = { step: 'Appointment Summary', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService.external_service_name }
+          mySP = { step: 'Appointment Summary', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name }
           this.callSnowplow(mySP)
         } else {
-          mySP = { step: 'Login to Confirm', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService.external_service_name }
+          mySP = { step: 'Login to Confirm', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name }
           this.callSnowplow(mySP)
         }
         break
       case 5:
-        mySP = { step: 'Appointment Confirmed FROM APPOINMENT BOOKING VIEW', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService.external_service_name }
+        mySP = { step: 'Appointment Confirmed FROM APPOINMENT BOOKING VIEW', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name }
         this.callSnowplow(mySP)
         break
       default:
