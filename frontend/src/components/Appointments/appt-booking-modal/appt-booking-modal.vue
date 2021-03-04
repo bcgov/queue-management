@@ -136,8 +136,10 @@
               type="time"
             >
             </DatePicker> --> 
+            <label v-if="allow_time_edit" class="mb-0">Select Time</label><br />
             <b-timepicker
                 v-if="allow_time_edit"
+                id="app_timepicker_id"
                 v-model="start"
                 :value="start"
                 class="w-100"
@@ -145,7 +147,6 @@
                 editable
                 hour-format="12"
                 locale="en-US"
-                placeholder="Select Time"
                 @change="setStartDateTime(true)"
                 @input="setStartDateTime(true)"
                 >
@@ -156,6 +157,7 @@
         </b-col>
         <b-col cols="8">
           <b-form-group class="mb-0 mt-2">
+            <label v-if="allow_date_edit" class="mb-0">Select Date</label><br />
             <DatePicker
               v-if="allow_date_edit"
               v-model="start"
