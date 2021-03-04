@@ -324,7 +324,7 @@ export const commonActions: any = {
             booking.stat_flag = b.stat_flag
             calendarEvents.push(booking)
           })
-          
+
           context.commit('setEvents', calendarEvents)
           resolve()
         })
@@ -2099,9 +2099,9 @@ export const commonActions: any = {
     }
 
     responses.receipt = responses.receipt_number
-    responses.payee_ind = context.state.captureITAExamTabSetup.capturePayee
+    responses.payee_ind = context.state.captureITAExamTabSetup.capturePayee ? 1 : 0
     responses.receipt_sent_ind =
-      context.state.captureITAExamTabSetup.payeeSentReceipt
+      context.state.captureITAExamTabSetup.payeeSentReceipt ? 1 : 0
     responses.sbc_managed_ind = responses.sbc_managed === 'sbc' ? 1 : 0
 
     const postData = { ...responses, ...defaultValues }
@@ -2504,7 +2504,7 @@ export const commonActions: any = {
       console.log('Axios complete. commiting changeCSROffice w/', { newOffice });
       context.commit('changeCSROffice', newOffice)
     })
-    
+
   },
 
   restoreSavedModalAction ({ commit }, payload) {
