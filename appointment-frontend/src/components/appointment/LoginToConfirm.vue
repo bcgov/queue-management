@@ -144,6 +144,10 @@ export default class LoginToConfirm extends Mixins(StepperMixin) {
       : `Please login using one of the following`
   }
 
+  private callsp () {
+    (window as any).snowplow('trackPageView')
+  }
+
   private login (idpHint) {
     let thelabel = ''
     if (idpHint === 'bcsc') {
@@ -151,19 +155,33 @@ export default class LoginToConfirm extends Mixins(StepperMixin) {
     } else {
       thelabel = 'Login: BCeID'
     }
-    const mySP = { label: thelabel, step: this.currStep, loc: null, serv: null, url: null }
+    let myurl = 'https://appointments.servicebc.gov.bc.ca/signin/' + idpHint
+    // eslint-disable-next-line no-console
+    // console.log('LOGIN CLICK === process.env.BASE_URL', ${process.env.BASE_URL})
+    // eslint-disable-next-line no-console
+    console.log('LOGIN CLICK === myurl', myurl)
+    const mySP = { label: thelabel, step: this.currStep, loc: null, serv: null, url: myurl }
     this.callSnowplowClick(mySP)
+    // eslint-disable-next-line no-console
+    console.log('Login To Confirm  login //signin/idpHint trackPageView')
     this.$router.push(`/signin/${idpHint}`)
+    this.callsp()
   }
   private createBCEID (url) {
     const mySP = { label: 'Create: BCeID', step: this.currStep, loc: null, serv: null, url: url }
     this.callSnowplowClick(mySP)
+    // eslint-disable-next-line no-console
+    console.log('Login To Confirm  createBCEID url trackPageView')
     this.$router.push(url)
+    this.callsp()
   }
   private clickHyperlink (url, thelabel) {
+    // eslint-disable-next-line no-console
+    console.log('Login To Confirm  clickHyperlink url trackPageView')
     const mySP = { label: thelabel, step: this.currStep, loc: null, serv: null, url: url }
     this.callSnowplowClick(mySP)
     this.$router.push(url)
+    this.callsp()
   }
 
   private get hideBCServicesCard (): boolean {

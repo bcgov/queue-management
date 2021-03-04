@@ -356,11 +356,17 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
     }
   }
 
+  private callsp () {
+    (window as any).snowplow('trackPageView')
+  }
   private clickOk () {
     this.dialogPopup.showDialog = false
     if (this.dialogPopup.isSuccess) {
+      // eslint-disable-next-line no-console
+      console.log('Appointment Summary  clickOk /booked-appointments trackPageView')
       this.clearSelectedValues()
       this.$router.push('/booked-appointments')
+      this.callsp()
     }
   }
 
@@ -370,8 +376,11 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   }
 
   private goToMyAppointments () {
+    // eslint-disable-next-line no-console
+    console.log('Appointment Summary  goToMyAppointments /booked-appointments trackPageView')
     this.dialogPopup.showDialog = false
     this.$router.push('/booked-appointments')
+    this.callsp()
   }
 
   private getMapUrl (location) {

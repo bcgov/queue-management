@@ -68,7 +68,7 @@
                   </div>
                 </td>
                 <td>
-                  <div v-if="item.online_link" class="service-link" @click="goToServiceLink(item.online_link)">
+                  <div v-if="item.online_link" class="service-link" @click="goToServiceLink(item.external_service_name, item.online_link)">
                     Online Option <v-icon small>mdi-open-in-new</v-icon>
                   </div>
                 </td>
@@ -162,8 +162,8 @@ export default class ServiceListPopup extends Vue {
     }
   }
 
-  private goToServiceLink (url) {
-    const mySP = { label: 'Online Option', step: 'Service List Popup', loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name, url: url }
+  private goToServiceLink (sn, url) {
+    const mySP = { label: 'Online Option', step: 'Service List Popup', loc: this.selectedLocationName, serv: sn, url: url }
     this.callSnowplowClick(mySP)
     window.open(url, '_blank')
   }

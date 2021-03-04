@@ -199,29 +199,38 @@ export default class Home extends Vue {
     return appointment?.service?.external_service_name || ''
   }
 
+  private callsp () {
+    (window as any).snowplow('trackPageView')
+  }
+
   private goToAccountSettings () {
+    // eslint-disable-next-line no-console
+    console.log('BookedAppointmentsView goToAccountSettings /account-settings trackPageView')
     this.$router.push('/account-settings')
+    this.callsp()
   }
 
   private bookNewAppointment () {
+    // eslint-disable-next-line no-console
+    console.log('BookedAppointmentsView bookNewAppointment /appointment trackPageView')
     this.clearSelectedValues()
     this.$router.push('/appointment')
+    this.callsp()
   }
 
   private changeAppointment (appointment) {
     // eslint-disable-next-line no-console
-    console.log('changeAppointment clicked - appointment', appointment)
+    console.log('BookedAppointmentsView changeAppointment /appointment trackPageView')
     const mySP = { step: 'Change Appointment', loggedIn: true, apptID: appointment.appointment_id, clientID: this.currentUserProfile?.user_id, loc: appointment.office.office_name, serv: appointment.service.external_service_name }
     this.callSnowplow(mySP)
     this.setAppointmentValues(appointment)
     this.$store.commit('setStepperCurrentStep', 3)
     this.$store.commit('setAppointmentEditMode', true)
     this.$router.push('/appointment')
+    this.callsp()
   }
 
   private cancelAppointment (appointment) {
-    // eslint-disable-next-line no-console
-    console.log('cancelAppointment clicked - appointment', appointment)
     const mySP = { step: 'Cancel Appointment', loggedIn: true, apptID: appointment.appointment_id, clientID: this.currentUserProfile?.user_id, loc: appointment.office.office_name, serv: appointment.service.external_service_name }
     this.callSnowplow(mySP)
     this.confirmDialog = true

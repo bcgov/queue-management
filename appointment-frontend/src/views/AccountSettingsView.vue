@@ -174,8 +174,15 @@ export default class AccountSettingsView extends Vue {
     }
   }
 
+  private callsp () {
+    (window as any).snowplow('trackPageView')
+  }
+
   private goToAppointments () {
+    // eslint-disable-next-line no-console
+    console.log('AccountSettingsView goToAppointments /booked-appointments trackPageView')
     this.$router.push('/booked-appointments')
+    this.callsp()
   }
 
   private get isSmsEnabled (): boolean {

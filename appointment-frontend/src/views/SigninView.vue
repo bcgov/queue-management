@@ -35,6 +35,10 @@ export default class SigninView extends Vue {
   private readonly postCreateUser!: () => void
   private readonly isAuthenticated!: boolean
 
+  private callsp () {
+    (window as any).snowplow('trackPageView')
+  }
+
   private async mounted () {
     // Initialize keycloak session
     const kcInit = this.initKeycloak(this.idpHint)
@@ -53,8 +57,11 @@ export default class SigninView extends Vue {
 
         if (this.isAuthenticated) {
           this.$root.$emit('signin-complete', () => {
+            // eslint-disable-next-line no-console
+            console.log('SigninView mounted /appointment trackPageView')
             // perform redirection here
             this.$router.push('/appointment')
+            this.callsp()
           })
         }
       }

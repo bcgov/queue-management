@@ -28,7 +28,7 @@
                 class="service-selection-options"
               >
                 <div>{{ data.item.external_service_name }}</div>
-                <div v-if="data.item.online_link" class="service-link" :class="{'service-link-mobile': $vuetify.breakpoint.xs}" @click="goToServiceLink(data.item.online_link)">
+                <div v-if="data.item.online_link" class="service-link" :class="{'service-link-mobile': $vuetify.breakpoint.xs}" @click="goToServiceLink(data.item.external_service_name, data.item.online_link)">
                   Online Option <v-icon small>mdi-open-in-new</v-icon>
                 </div>
               </div>
@@ -234,8 +234,8 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
     return (value?.online_availability === ServiceAvailability.DISABLE)
   }
 
-  private goToServiceLink (url) {
-    const mySP = { label: 'Online Option', step: 'Service Selection', loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name, url: url }
+  private goToServiceLink (sn, url) {
+    const mySP = { label: 'Online Option', step: 'Service Selection', loc: this.currentOffice?.office_name, serv: sn, url: url }
     this.callSnowplowClick(mySP)
     window.open(url, '_blank')
   }

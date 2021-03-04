@@ -16,11 +16,10 @@
     <v-spacer></v-spacer>
 
     <v-btn
-      href="https://www2.gov.bc.ca/gov/content/home/get-help-with-government-services"
-      target="_blank"
       outlined
       alt='Help - opens in new window'
-      class='mx-3'>
+      class='mx-3'
+      @click="goTo('help')">
       <v-icon small class="mr-2">mdi-open-in-new</v-icon>
       Help
     </v-btn>
@@ -90,11 +89,21 @@ export default class AppHeader extends Vue {
   async mounted () {
   }
 
+  private callsp () {
+    (window as any).snowplow('trackPageView')
+  }
+
   login () {
+    // eslint-disable-next-line no-console
+    console.log('AppHeader login /login trackPageView')
     this.$router.push('/login')
+    this.callsp()
   }
   register () {
+    // eslint-disable-next-line no-console
+    console.log('AppHeader register /login trackPageView')
     this.$router.push('/login')
+    this.callsp()
   }
   private goTo (page) {
     let currStep = ''
@@ -119,13 +128,27 @@ export default class AppHeader extends Vue {
       case 'register':
         mySP = { label: 'Register', step: currStep, loc: null, serv: null, url: 'https://appointments.servicebc.gov.bc.ca/login' }
         this.callSnowplowClick(mySP)
+        this.$router.push('/login')
+        this.callsp()
         break
       case 'login':
+        // eslint-disable-next-line no-console
+        console.log('AppHeader goTo /login trackPageView')
         mySP = { label: 'Login', step: currStep, loc: null, serv: null, url: 'https://appointments.servicebc.gov.bc.ca/login' }
         this.callSnowplowClick(mySP)
         this.$router.push('/login')
+        this.callsp()
         break
-      case 'home': this.$router.push('/')
+      case 'home':
+        // eslint-disable-next-line no-console
+        console.log('AppHeader goTo / trackPageView')
+        this.$router.push('/')
+        this.callsp()
+        break
+      case 'help':
+        mySP = { label: 'Help', step: currStep, loc: null, serv: null, url: 'https://www2.gov.bc.ca/gov/content/home/get-help-with-government-services' }
+        this.callSnowplowClick(mySP)
+        window.open('https://www2.gov.bc.ca/gov/content/home/get-help-with-government-services', '_blank')
         break
     }
   }
