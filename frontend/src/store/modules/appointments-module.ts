@@ -51,7 +51,8 @@ export default {
     showCheckInModal: false,
     services: [],
     submitClicked: false,
-    draftAppointment: {}
+    draftAppointment: {},
+    toggleAppCalenderView: false,
 
   },
   getters: {
@@ -481,6 +482,7 @@ export default {
     setAgendaClickedTime: (state, payload) => state.clickedTime = payload,
     setApiTotalCount: (state, payload) => {
       state.apiCallTotal = payload
-    }
+    },
+    setToggleAppCalenderView: (state, payload) => state.toggleAppCalenderView = payload,
   }
 }

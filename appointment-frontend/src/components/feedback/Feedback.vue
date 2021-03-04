@@ -28,16 +28,21 @@
                     <v-col class="feedback_header"><h3>{{feedbackHeader}}</h3></v-col>
                     <v-textarea v-show="!showResponsePage || !responseRequired"
                         :maxlength="3000"
-                        :label=" +(3000-feedbackMessage.length) + ' characters left'"
+                        :label="'* Feedback'"
                         :rules="messageRules"
                         class="mt-3"
                         outlined
                         name="feedback-message"
                         height="100"
                         v-model="feedbackMessage"
+                        counter="3000"
                         required
-                    ></v-textarea>
-                    <v-col class="feedback_caption response_required">Would you like a response from us?</v-col>
+                    >
+                      <template v-slot:label>
+                        <div><span class="mandatory">*</span> Feedback</div>
+                      </template>
+                    </v-textarea>
+                    <v-col class="feedback_caption response_required"><span class="mandatory">*</span> Would you like a response from us?</v-col>
                     <v-row justify="center">
                         <!-- <v-col><input type="radio" v-model="feedbackModel.responseRequired" v-bind:value="yes"><span class="feedback_caption">Yes</span></v-col> -->
                         <v-radio-group class="no_margin" v-model="responseRequired" row :disabled="feedbackMessage.length === 0">
@@ -46,13 +51,21 @@
                         </v-radio-group>
                     </v-row>
                     <v-col v-show="showResponsePage && responseRequired">
-                      <v-text-field name="citizen-name" label="Name" v-model="citizenName" outlined dense :rules="nameRules" required></v-text-field>
+                      <v-text-field name="citizen-name" v-model="citizenName" outlined dense :rules="nameRules" required>
+                        <template v-slot:label>
+                          <div><span class="mandatory">*</span> Name</div>
+                        </template>
+                      </v-text-field>
                       <v-text-field v-model="email"  label="Email" outlined dense :rules="emailRules" @blur="validateRules" @input="validateRules"></v-text-field>
                       <v-text-field v-model="phone"  label="Phone" outlined dense :rules="phoneRules" @blur="validateRules" @input="validateRules"></v-text-field>
                       <v-row class="consent">{{consentMessage}}</v-row>
                       <v-row justify="center">
-                        <v-radio-group class="no_margin" v-model="consent" :rules="consentRules" required row>
-                          <v-radio  label="I Consent" v-bind:value="yes"></v-radio>
+                        <v-radio-group class="no_margin" v-model="consent" required row>
+                          <v-radio v-bind:value="yes" :rules="consentRules">
+                            <template v-slot:label>
+                              <div><span class="mandatory">*</span> I Consent</div>
+                            </template>
+                          </v-radio>
                         </v-radio-group>
                       </v-row>
                     </v-col>
@@ -114,17 +127,22 @@
               <v-col>
                 <v-textarea
                     :maxlength="3000"
-                    :label=" +(3000-feedbackMessage.length) + ' characters left'"
+                    :label="'Feedback'"
                     :rules="messageRules"
                     class="mt-3"
                     outlined
                     name="feedback-message"
                     height="100"
+                    counter="3000"
                     v-model="feedbackMessage"
-                ></v-textarea>
+                >
+                  <template v-slot:label>
+                    <div><span class="mandatory">*</span> Feedback</div>
+                  </template>
+                </v-textarea>
               </v-col>
             </v-col>
-            <v-col class="feedback_caption response_required">Would you like a response from us?</v-col>
+            <v-col class="feedback_caption response_required"><span class="mandatory">*</span> Would you like a response from us?</v-col>
             <v-row justify="center">
                 <v-radio-group class="no_margin" v-model="responseRequired" row :disabled="feedbackMessage.length === 0">
                   <v-radio  label="Yes" v-bind:value="yes"></v-radio>
@@ -132,13 +150,21 @@
                 </v-radio-group>
             </v-row>
             <v-col v-if="showResponsePage && responseRequired">
-              <v-text-field v-model="citizenName" :rules="nameRules" label="Name" outlined dense required></v-text-field>
+              <v-text-field v-model="citizenName" :rules="nameRules" label="Name" outlined dense required>
+                <template v-slot:label>
+                  <div><span class="mandatory">*</span> Name</div>
+                </template>
+              </v-text-field>
               <v-text-field v-model="email" :rules="emailRules" label="Email" outlined dense @blur="validateRules" @input="validateRules"></v-text-field>
               <v-text-field v-model="phone" :rules="phoneRules" label="Phone" outlined dense @blur="validateRules" @input="validateRules"></v-text-field>
               <v-row justify="center" class="consent_xs"><v-col cols="10">{{consentMessage}}</v-col></v-row>
-              <v-row justify="center consent_radio_btn">
+              <v-row justify="center">
                 <v-radio-group class="no_margin" v-model="consent" row>
-                  <v-radio  label="I Consent" v-bind:value="yes"></v-radio>
+                  <v-radio  label="I Consent" v-bind:value="yes">
+                    <template v-slot:label>
+                      <div><span class="mandatory">*</span> I Consent</div>
+                    </template>
+                  </v-radio>
                 </v-radio-group>
               </v-row>
             </v-col>
@@ -236,20 +262,8 @@ import { th } from 'date-fns/locale'
         v => !!v || 'E-mail or Phone no is required',
         v => /^\d{10}$/.test(v) || 'Phone must be valid'
       ],
-      feedbackType: '',
-      feedbackMessage: '',
-      email: '',
-      phone: '',
-      feedbackHeader: '',
       yes: true,
-      no: false,
-      message: '',
-      consent: false,
-      responseRequired: false,
-      showMobileFeedbackPanel: false,
-      submitComplete: false,
-      submitInProgress: false,
-      showResponsePage: false
+      no: false
     }
   }
 })
@@ -260,9 +274,9 @@ export default class Feedback extends Vue {
   private submitMessage: string = ''
   private feedbackServiceChannel: string = ConfigHelper.getFeedbackServiceChannel()
   private formEntryTime: number
-  private submitComplete: boolean
-  private submitInProgress: boolean
-  private showResponsePage: boolean
+  private submitComplete: boolean = false
+  private submitInProgress: boolean = false
+  private showResponsePage: boolean = false
   private feedbackMessage: string = ''
   private feedbackHeader: string = ''
   private feedbackType: string = ''
@@ -272,10 +286,10 @@ export default class Feedback extends Vue {
   private appointmentModule = getModule(AppointmentModule, this.$store)
   private authModule = getModule(AuthModule, this.$store)
   private showFeedbackArea = false
-  private consent: boolean
+  private consent: boolean = false
   private feedbackRequest: FeedbackRequestObject = { variables: { engagement: {}, citizen_comments: {}, service_channel: {}, response: {}, citizen_name: {}, citizen_contact: {}, citizen_email: {}, entity_key: {}, service_date: {}, submit_date_time: {} } }
   private feedbackResponse: FeedbackResponseObject
-  private responseRequired: boolean
+  private responseRequired: boolean = false
   private showMobileFeedbackPanel: boolean = false
   private readonly submitFeedback!: (feedbackRequest: FeedbackRequestObject) => any
   private consentMessage: string = 'The information on this form is collected under the authority of Sections 26(c) and 27(1)(c) of the Freedom of Information and Protection of Privacy Act to help us assess and respond to your enquiry. Questions about the collection of information can be directed to government’s Privacy Office.'
@@ -387,6 +401,7 @@ export default class Feedback extends Vue {
     let month = currentDate.getMonth().toString().length === 1 ? '0' + (currentDate.getMonth() + 1).toString() : (currentDate.getMonth() + 1).toString()
     return currentDate.getFullYear() + '-' + month + '-' + day
   }
+
   private phoneEmail (value) {
     if (this.phone !== '' && this.email !== '') {
       return true
@@ -404,8 +419,7 @@ export default class Feedback extends Vue {
         this.phoneRules = [true]
       }
       if (phoneCondition) {
-        let formatResponse = /^\d{10}$/.test(this.phone) ? true : 'Phone must be valid'
-        this.phoneRules = [formatResponse]
+        this.phoneRules = [true]
         this.emailRules = [true]
       }
     } else {
@@ -421,10 +435,6 @@ export default class Feedback extends Vue {
     } else {
       return true
     }
-  }
-
-  private showExpandedView () {
-    return this.showResponsePage && this.responseRequired
   }
 }
 

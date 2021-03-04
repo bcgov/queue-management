@@ -39,10 +39,10 @@
               color="primary"
               :now="currentDay"
               v-model="value"
-              interval-height="40"
+              interval-height="20"
               first-time="08:30"
-              interval-minutes="30"
-              interval-count="17"
+              interval-minutes="15"
+              interval-count="34"
               :weekdays="weekday"
               :type="type"
               :events="events"
@@ -56,6 +56,8 @@
               event-text-color=""
               @click:date="switchView"
               id="appointment-calendar"
+              :interval-style = "intervalStyle"
+              :show-interval-label="showIntervalLabel"
             >
               <template v-slot:event="date">
                 <v-tooltip bottom class="mytooltip" v-bind:fixed="false" v-bind:nudge-top="150">
@@ -101,7 +103,6 @@
 <script lang="ts">
 /* eslint-disable */
 // /* eslint-disable sort-imports */
-
 import { Component, Vue } from 'vue-property-decorator'
 
 import AddCitizen from '../AddCitizen/add-citizen.vue'
@@ -166,6 +167,7 @@ export default class Appointments extends Vue {
 
   @appointmentsModule.State('clickedTime') public clickedTime: any
   @appointmentsModule.Mutation('setAgendaClickedTime') public setAgendaClickedTime: any
+  @appointmentsModule.Mutation('setToggleAppCalenderView') public setToggleAppCalenderView: any
 
   show_loading = false
   // vuetify calender
@@ -182,7 +184,10 @@ export default class Appointments extends Vue {
   currentDay: any = moment().format('YYYY-MM-DD')// new Date()
 
   is_stat: boolean = false
-  
+  _keyListenerNewApp: any = null
+  _keyListenerWeek: any = null
+  _keyListenerDay: any = null
+
   get events () {
     if (this.searchTerm) {
       return this.filtered_appointment_events(this.searchTerm)
@@ -211,8 +216,10 @@ export default class Appointments extends Vue {
   switchView ({ date }) {
     this.value = date
     if (this.type === 'day') {
+      this.setToggleAppCalenderView(false)
       this.type = 'week'
     } else {
+      this.setToggleAppCalenderView(true)
       this.type = 'day'
     }
     this.calendarSetup()
@@ -418,7 +425,10 @@ export default class Appointments extends Vue {
   setTempEvent (event) {
     this.removeTempEvent()
     const start = moment(moment.tz(event.start.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).format()).clone()
-    const end = moment(moment.tz(event.end.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).format()).clone()
+    let end = moment(moment.tz(event.start.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).format()).clone()
+    if (event.end) {
+      end = moment(moment.tz(event.end.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).format()).clone()
+    } 
     const e: any = {
       start,
       end,
@@ -496,15 +506,55 @@ export default class Appointments extends Vue {
     showFlagBus.$on(ShowFlagBusEvents.ShowFlagEvent, (flag: boolean) =>{
       this.show_loading = flag
     }
-        
-      )
-
-
+    )
+     this._keyListenerNewApp = function(e) {
+            if (e.key === "A" && (e.ctrlKey || e.metaKey)) {
+                e.preventDefault();
+                this.setAgendaClickedTime(null)
+                this.setAgendaClickedAppt(null)
+                this.toggleApptBookingModal(true)
+            }
+        };
+       this._keyListenerWeek = function(e) {
+            if (e.key === "M" && (e.ctrlKey || e.metaKey)) {
+                e.preventDefault();
+                this.$root.$emit('agendaWeek')
+                 this.setToggleAppCalenderView(false)
+            }
+        };
+       this._keyListenerDay = function(e) {
+            if (e.key === "D" && (e.ctrlKey || e.metaKey)) {
+                e.preventDefault();
+                this.$root.$emit('agendaDay')
+                 this.setToggleAppCalenderView(true)
+            }
+        };
+        document.addEventListener('keydown', this._keyListenerNewApp.bind(this));
+        document.addEventListener('keydown', this._keyListenerWeek.bind(this));
+        document.addEventListener('keydown', this._keyListenerDay.bind(this));
   }
-}
+  beforeDestroy() {
+      document.removeEventListener('keydown', this._keyListenerNewApp);
+      document.removeEventListener('keydown', this._keyListenerWeek);
+      document.removeEventListener('keydown', this._keyListenerDay);
+  }
+  intervalStyle (interval) {
+    if (interval.minute == '0' || interval.minute == '30')  {
+      interval['background-color'] = "#ebebeb"
+    }
+    return interval
+  }
+  showIntervalLabel(interval) {
+    if (interval.minute == '0' || interval.minute == '30')  {
+      if (interval.minute == '30' && interval.hour == '8') {
+        return 
+        }
+        return interval
+    }
+  }
+} 
 
 </script>
-
 <style scoped>
 .btn {
   border: none !important;
@@ -524,11 +574,6 @@ export default class Appointments extends Vue {
 }
 .exam-table-holder {
   border: 1px solid dimgrey;
-}
-</style>
-<style >
-.v-calendar .v-event-timed-container {
-  margin-right: 20px !important;
 }
 /* .theme--light.v-calendar-events .v-event-timed {
   border: none !important;
