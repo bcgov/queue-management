@@ -1678,7 +1678,7 @@ export const commonActions: any = {
     messageParts.push(`Message: ${context.state.feedbackMessage}`)
 
     const feedbackObject = {
-      feedback_message: messageParts.join('\n')
+      feedback_message: messageParts.join('\r\n')
     }
 
     const url = '/feedback/'
