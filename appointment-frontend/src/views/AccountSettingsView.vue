@@ -56,10 +56,10 @@
             </v-form>
             <v-row>
               <v-col class="d-flex">
-                <v-spacer></v-spacer>
                 <v-btn
                   color="primary"
                   large
+                  :disabled="(email === emailCopy) && (phoneNumber === phoneNumberCopy)"
                   @click="updateProfile"
                 >
                   Update
@@ -112,7 +112,9 @@ export default class AccountSettingsView extends Vue {
   private maxChars = 20
   private name:string = ''
   private email:string = ''
+  private emailCopy:string = ''
   private phoneNumber:string = ''
+  private phoneNumberCopy:string = ''
   private enableEmailReminder:boolean = false
   private enableSmsReminder:boolean = false
   private showMsg = {
@@ -150,6 +152,8 @@ export default class AccountSettingsView extends Vue {
       this.phoneNumber = this.currentUserProfile.telephone
       this.enableEmailReminder = this.currentUserProfile.send_email_reminders
       this.enableSmsReminder = this.currentUserProfile.send_sms_reminders
+      this.emailCopy = this.email
+      this.phoneNumberCopy = this.phoneNumber
     }
   }
 
