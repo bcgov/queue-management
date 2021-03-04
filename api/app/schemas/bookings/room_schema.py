@@ -16,6 +16,7 @@ from marshmallow import fields
 from app.models.bookings import Room
 from app.schemas.theq import OfficeSchema
 from qsystem import ma
+from marshmallow import EXCLUDE
 
 
 class RoomSchema(ma.SQLAlchemySchema):
@@ -25,6 +26,7 @@ class RoomSchema(ma.SQLAlchemySchema):
         include_relationships = True
         load_instance = True
         #exclude = ("booking",)
+        unknown = EXCLUDE
 
     capacity = fields.Int()
     color = fields.Str()

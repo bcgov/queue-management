@@ -15,6 +15,7 @@ limitations under the License.'''
 from marshmallow import fields
 from app.models.theq import Counter
 from qsystem import ma
+from marshmallow import EXCLUDE
 
 
 class CounterSchema(ma.SQLAlchemySchema):
@@ -23,6 +24,7 @@ class CounterSchema(ma.SQLAlchemySchema):
         model = Counter
         include_relationships = True
         load_instance = True
+        unknown = EXCLUDE
 
     counter_id = fields.Int()
     counter_name = fields.Str()

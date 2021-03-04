@@ -16,6 +16,7 @@ from app.models.theq import CSR
 from app.schemas.theq import CSRStateSchema, OfficeSchema, RoleSchema
 from qsystem import ma
 from marshmallow import fields, post_dump
+from marshmallow import EXCLUDE
 
 
 class CSRSchema(ma.SQLAlchemySchema):
@@ -25,6 +26,7 @@ class CSRSchema(ma.SQLAlchemySchema):
         include_relationships = True
         load_instance = True
         # exclude = ('periods',)
+        unknown = EXCLUDE
 
     csr_id = fields.Int()
     username = fields.Str()

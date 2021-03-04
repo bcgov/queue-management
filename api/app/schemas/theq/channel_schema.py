@@ -15,6 +15,7 @@ limitations under the License.'''
 from marshmallow import fields
 from app.models.theq import Channel
 from qsystem import ma
+from marshmallow import EXCLUDE
 
 
 class ChannelSchema(ma.SQLAlchemySchema):
@@ -23,6 +24,7 @@ class ChannelSchema(ma.SQLAlchemySchema):
         model = Channel
         include_relationships = True
         load_instance = True
+        unknown = EXCLUDE
 
     channel_id = fields.Int(dump_only=True)
     channel_name = fields.Str()

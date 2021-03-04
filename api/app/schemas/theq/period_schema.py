@@ -16,6 +16,7 @@ from marshmallow import fields
 from app.models.theq import Period
 from app.schemas.theq import PeriodStateSchema, ChannelSchema, CSRSchema
 from qsystem import ma
+from marshmallow import EXCLUDE
 
 
 class PeriodSchema(ma.SQLAlchemySchema):
@@ -24,6 +25,7 @@ class PeriodSchema(ma.SQLAlchemySchema):
         model = Period
         include_relationships = True
         load_instance = True
+        unknown = EXCLUDE
 
     period_id = fields.Int()
     sr_id = fields.Int()

@@ -16,6 +16,7 @@ from marshmallow import fields
 from app.models.theq import PublicUser
 from app.schemas.theq import ServiceReqSchema, CitizenStateSchema, OfficeSchema
 from qsystem import ma
+from marshmallow import EXCLUDE
 
 
 class UserSchema(ma.SQLAlchemySchema):
@@ -24,6 +25,7 @@ class UserSchema(ma.SQLAlchemySchema):
         model = PublicUser
         include_relationships = True
         load_instance = True
+        unknown = EXCLUDE
 
     telephone = fields.String()
     send_email_reminders = fields.Boolean()

@@ -15,6 +15,7 @@ limitations under the License.'''
 from marshmallow import fields
 from app.models.theq import CitizenState
 from qsystem import ma
+from marshmallow import EXCLUDE
 
 
 class CitizenStateSchema(ma.SQLAlchemySchema):
@@ -23,6 +24,7 @@ class CitizenStateSchema(ma.SQLAlchemySchema):
         model = CitizenState
         include_relationships = True
         load_instance = True
+        unknown = EXCLUDE
 
     cs_id = fields.Int()
     cs_state_name = fields.Str()

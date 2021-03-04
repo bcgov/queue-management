@@ -15,6 +15,7 @@ limitations under the License.'''
 from marshmallow import fields
 from app.models.bookings import ExamType
 from qsystem import ma
+from marshmallow import EXCLUDE
 
 
 class ExamTypeSchema(ma.SQLAlchemySchema):
@@ -24,6 +25,7 @@ class ExamTypeSchema(ma.SQLAlchemySchema):
         include_relationships = True
         load_instance = True
         # exclude = ("exam",)
+        unknown = EXCLUDE
 
     exam_type_id = fields.Int(dump_only=True)
     exam_type_name = fields.Str()

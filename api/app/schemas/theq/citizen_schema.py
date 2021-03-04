@@ -16,6 +16,7 @@ from marshmallow import fields
 from app.models.theq import Citizen
 from app.schemas.theq import ServiceReqSchema, CitizenStateSchema, OfficeSchema
 from qsystem import ma
+from marshmallow import EXCLUDE
 
 
 class CitizenSchema(ma.SQLAlchemySchema):
@@ -24,6 +25,7 @@ class CitizenSchema(ma.SQLAlchemySchema):
         model = Citizen
         include_relationships = True
         load_instance = True
+        unknown = EXCLUDE
 
     citizen_id = fields.Int(dump_only=True)
     citizen_name = fields.Str()

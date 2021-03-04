@@ -16,6 +16,7 @@ from marshmallow import fields
 from app.models.theq import ServiceReq
 from app.schemas.theq import ChannelSchema, SRStateSchema, ServiceSchema, PeriodSchema
 from qsystem import ma
+from marshmallow import EXCLUDE
 
 
 class ServiceReqSchema(ma.SQLAlchemySchema):
@@ -24,6 +25,7 @@ class ServiceReqSchema(ma.SQLAlchemySchema):
         model = ServiceReq
         include_relationships = True
         load_instance = True
+        unknown = EXCLUDE
 
     sr_id = fields.Int()
     citizen_id = fields.Int()

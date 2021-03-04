@@ -15,6 +15,7 @@ limitations under the License.'''
 from marshmallow import fields
 from app.models.theq import SmartBoard
 from qsystem import ma
+from marshmallow import EXCLUDE
 
 
 class SmartBoardSchema(ma.SQLAlchemySchema):
@@ -23,6 +24,7 @@ class SmartBoardSchema(ma.SQLAlchemySchema):
         model = SmartBoard
         include_relationships = True
         load_instance = True
+        unknown = EXCLUDE
 
     sb_id = fields.Int()
     sb_type = fields.Str()
