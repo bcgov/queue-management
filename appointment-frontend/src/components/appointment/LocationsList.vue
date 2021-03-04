@@ -169,7 +169,7 @@ import { getModule } from 'vuex-module-decorators'
       'getServiceByOffice',
       'getAvailableAppointmentSlots',
       'getCategories',
-      'callSnowplow'
+      'callSnowplowClick'
     ]),
     ...mapState('geo', [
       'currentCoordinates'
@@ -186,6 +186,7 @@ export default class LocationsList extends Mixins(StepperMixin) {
   private readonly getCategories!: () => Promise<any>
   private readonly setCurrentOffice!: (office: Office) => void
   private readonly setCurrentService!: (service: Service) => void
+  private readonly callSnowplowClick!: (mySP: any) => any
   private readonly currentUserProfile!: User
   private readonly currentOffice!: Office
   private readonly isAuthenticated!: boolean
@@ -277,6 +278,8 @@ export default class LocationsList extends Mixins(StepperMixin) {
     await this.getCategories()
     this.selectedLocationName = location.office_name
     this.$refs.locationServiceListPopup.open()
+    const mySP = { label: 'View Location Services', step: 'Locations List', loc: location.office_name, serv: null, url: null }
+    this.callSnowplowClick(mySP)
   }
 
   private getCoordinates (location) {
