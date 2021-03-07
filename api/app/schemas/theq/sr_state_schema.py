@@ -15,16 +15,14 @@ limitations under the License.'''
 from marshmallow import fields
 from app.models.theq import SRState
 from qsystem import ma
-from marshmallow import EXCLUDE
+from app.schemas import BaseSchema
 
 
-class SRStateSchema(ma.SQLAlchemySchema):
+class SRStateSchema(BaseSchema):
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = SRState
         include_relationships = True
-        load_instance = True
-        unknown = EXCLUDE
 
     sr_state_id = fields.Int()
     sr_code = fields.Str()

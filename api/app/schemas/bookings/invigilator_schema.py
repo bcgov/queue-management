@@ -16,17 +16,15 @@ from marshmallow import fields
 from qsystem import ma
 from app.models.bookings import Invigilator
 from app.schemas.theq import OfficeSchema
-from marshmallow import EXCLUDE
+from app.schemas import BaseSchema
 
 
-class InvigilatorSchema(ma.SQLAlchemySchema):
+class InvigilatorSchema(BaseSchema):
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = Invigilator
         #exclude = ("invigilators",)
         include_relationships = True
-        load_instance = True
-        unknown = EXCLUDE
 
     contact_phone = fields.Str()
     contact_email = fields.Str()

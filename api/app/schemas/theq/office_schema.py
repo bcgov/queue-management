@@ -16,17 +16,15 @@ from marshmallow import fields
 from app.models.theq import Office
 from app.schemas.theq import SmartBoardSchema, CounterSchema, ServiceSchema, TimezoneSchema, TimeslotSchema
 from qsystem import ma
-from marshmallow import EXCLUDE
+from app.schemas import BaseSchema
 
 
-class OfficeSchema(ma.SQLAlchemySchema):
+class OfficeSchema(BaseSchema):
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = Office
         include_relationships = True
-        load_instance = True
         # exclude = ('citizens', 'csrs', 'deleted', 'exams', 'rooms', 'services',)
-        unknown = EXCLUDE
 
     office_id = fields.Int()
     office_name = fields.Str()

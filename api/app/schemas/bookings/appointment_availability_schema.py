@@ -16,16 +16,14 @@ from marshmallow import fields
 from app.models.bookings import Appointment
 from app.schemas.theq import OfficeSchema
 from qsystem import ma
-from marshmallow import EXCLUDE
+from app.schemas import BaseSchema
 
 
-class AppointmentAvailabilitySchema(ma.SQLAlchemySchema):
+class AppointmentAvailabilitySchema(BaseSchema):
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = Appointment
         include_relationships = True
-        load_instance = True
-        unknown = EXCLUDE
 
     appointment_id = fields.Int(dump_only=True)
     office_id = fields.Int()

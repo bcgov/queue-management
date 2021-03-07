@@ -12,21 +12,19 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from app.models.theq import CSR
-from app.schemas.theq import CSRStateSchema, OfficeSchema, RoleSchema
-from qsystem import ma
 from marshmallow import fields, post_dump
-from marshmallow import EXCLUDE
+
+from app.models.theq import CSR
+from app.schemas import BaseSchema
+from app.schemas.theq import CSRStateSchema, OfficeSchema, RoleSchema
 
 
-class CSRSchema(ma.SQLAlchemySchema):
+class CSRSchema(BaseSchema):
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = CSR
         include_relationships = True
-        load_instance = True
         # exclude = ('periods',)
-        unknown = EXCLUDE
 
     csr_id = fields.Int()
     username = fields.Str()

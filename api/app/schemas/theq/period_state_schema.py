@@ -15,16 +15,14 @@ limitations under the License.'''
 from marshmallow import fields
 from app.models.theq import PeriodState
 from qsystem import ma
-from marshmallow import EXCLUDE
+from app.schemas import BaseSchema
 
 
-class PeriodStateSchema(ma.SQLAlchemySchema):
+class PeriodStateSchema(BaseSchema):
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = PeriodState
         include_relationships = True
-        load_instance = True
-        unknown = EXCLUDE
 
     ps_id = fields.Int()
     ps_name = fields.Str()

@@ -12,19 +12,19 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-import logging
 import copy
-import json
+
+import logging
 from flask import request, g
 from flask_restx import Resource
-from app.models.theq import CSR, Office
-from flask_restx import Resource
-from app.models.bookings import ExamType, Invigilator
-from app.schemas.bookings import ExamSchema, CandidateSchema
-from qsystem import api, api_call_with_retry, db, my_print
-from app.utilities.auth_util import Role, has_any_role
-from app.utilities.bcmp_service import BCMPService
+
 from app.auth.auth import jwt
+from app.models.bookings import ExamType
+from app.models.theq import CSR, Office
+from app.schemas.bookings import ExamSchema
+from app.utilities.auth_util import Role
+from app.utilities.bcmp_service import BCMPService
+from qsystem import api, api_call_with_retry, db, my_print
 
 
 @api.route("/exams/", methods=["POST"])

@@ -15,16 +15,14 @@ limitations under the License.'''
 from marshmallow import fields
 from app.models.theq import Permission
 from qsystem import ma
-from marshmallow import EXCLUDE
+from app.schemas import BaseSchema
 
 
-class PermissionSchema(ma.SQLAlchemySchema):
+class PermissionSchema(BaseSchema):
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = Permission
         include_relationships = True
-        load_instance = True
-        unknown = EXCLUDE
 
     permission_id = fields.Int()
     permission_code = fields.Str()

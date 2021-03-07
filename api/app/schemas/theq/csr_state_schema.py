@@ -15,16 +15,14 @@ limitations under the License.'''
 from marshmallow import fields
 from app.models.theq import CSRState
 from qsystem import ma
-from marshmallow import EXCLUDE
+from app.schemas import BaseSchema
 
 
-class CSRStateSchema(ma.SQLAlchemySchema):
+class CSRStateSchema(BaseSchema):
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = CSRState
         include_relationships = True
-        load_instance = True
-        unknown = EXCLUDE
 
     csr_state_id = fields.Int()
     csr_state_name = fields.Str()

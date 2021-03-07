@@ -15,16 +15,14 @@ limitations under the License.'''
 from marshmallow import fields
 from app.models.theq import MetaData
 from qsystem import ma
-from marshmallow import EXCLUDE
+from app.schemas import BaseSchema
 
 
-class MetaDataSchema(ma.SQLAlchemySchema):
+class MetaDataSchema(BaseSchema):
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = MetaData
         include_relationships = True
-        load_instance = True
-        unknown = EXCLUDE
 
     metadata_id = fields.Int()
     meta_text = fields.Str()

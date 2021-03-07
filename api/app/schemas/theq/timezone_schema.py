@@ -15,16 +15,14 @@ limitations under the License.'''
 from marshmallow import fields
 from app.models.theq import Timezone
 from qsystem import ma
-from marshmallow import EXCLUDE
+from app.schemas import BaseSchema
 
 
-class TimezoneSchema(ma.SQLAlchemySchema):
+class TimezoneSchema(BaseSchema):
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = Timezone
         include_relationships = True
-        load_instance = True
-        unknown = EXCLUDE
 
     timezone_id = fields.Int()
     timezone_name = fields.Str()

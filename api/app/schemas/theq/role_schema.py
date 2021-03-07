@@ -15,16 +15,14 @@ limitations under the License.'''
 from marshmallow import fields
 from app.models.theq import Role
 from qsystem import ma
-from marshmallow import EXCLUDE
+from app.schemas import BaseSchema
 
 
-class RoleSchema(ma.SQLAlchemySchema):
+class RoleSchema(BaseSchema):
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = Role
         include_relationships = True
-        load_instance = True
-        unknown = EXCLUDE
 
     role_id = fields.Int()
     role_code = fields.Str()

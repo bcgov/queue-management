@@ -12,15 +12,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from marshmallow import fields, post_dump
+from marshmallow import EXCLUDE
+from marshmallow import fields, post_dump, pre_load
+
 from app.models.bookings import Booking
+from app.schemas import BaseSchema
 from app.schemas.bookings import RoomSchema, InvigilatorSchema
 from app.schemas.theq import OfficeSchema
-from qsystem import ma
-from marshmallow import EXCLUDE
 
 
-class BookingSchema(ma.SQLAlchemySchema):
+class BookingSchema(BaseSchema):
 
     class Meta:
         model = Booking
@@ -78,3 +79,10 @@ class BookingSchema(ma.SQLAlchemySchema):
                 booking = self.update_invigilators(booking)
 
         return data
+
+    @pre_load
+    def convert_bool_to_int(self, in_data, **kwargs):
+        if type(in_data) == dict and 'sbc_staff_invigilated' in in_data and type(
+                in_data['sbc_staff_invigilated']) == bool:
+            in_data['sbc_staff_invigilated'] = 1 if in_data['sbc_staff_invigilated'] else 0
+        return in_data

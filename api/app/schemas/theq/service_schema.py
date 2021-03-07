@@ -15,18 +15,16 @@ limitations under the License.'''
 from marshmallow import fields
 from app.models.theq import Service
 from qsystem import ma
-from marshmallow import EXCLUDE
+from app.schemas import BaseSchema
 
 
-class ServiceSchema(ma.SQLAlchemySchema):
+class ServiceSchema(BaseSchema):
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = Service
         include_relationships = True
-        load_instance = True
         include_fk = True
         #exclude = ('offices',)
-        unknown = EXCLUDE
 
     service_id = fields.Int(dump_only=True)
     service_code = fields.Str(dump_only=True)

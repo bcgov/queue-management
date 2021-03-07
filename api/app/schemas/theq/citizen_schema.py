@@ -13,19 +13,18 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 from marshmallow import fields
+
 from app.models.theq import Citizen
-from app.schemas.theq import ServiceReqSchema, CitizenStateSchema, OfficeSchema
-from qsystem import ma
-from marshmallow import EXCLUDE
+from app.schemas import BaseSchema
+from app.schemas.theq import ServiceReqSchema, CitizenStateSchema
 
 
-class CitizenSchema(ma.SQLAlchemySchema):
+class CitizenSchema(BaseSchema):
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = Citizen
         include_relationships = True
-        load_instance = True
-        unknown = EXCLUDE
+        datetimeformat = '%Y-%m-%dT%H:%M:%S+00:00'
 
     citizen_id = fields.Int(dump_only=True)
     citizen_name = fields.Str()
@@ -40,3 +39,4 @@ class CitizenSchema(ma.SQLAlchemySchema):
     cs = fields.Nested(CitizenStateSchema(exclude=('cs_state_desc', 'cs_id')))
     priority = fields.Int()
     user_id = fields.Int()
+

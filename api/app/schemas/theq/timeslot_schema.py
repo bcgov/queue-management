@@ -15,16 +15,14 @@ limitations under the License.'''
 from marshmallow import fields
 from app.models.theq import TimeSlot
 from qsystem import ma
-from marshmallow import EXCLUDE
+from app.schemas import BaseSchema
 
 
-class TimeslotSchema(ma.SQLAlchemySchema):
-    class Meta:
+class TimeslotSchema(BaseSchema):
+    class Meta(BaseSchema.Meta):
         model = TimeSlot
         include_relationships = True
-        load_instance = True
         # exclude = ('offices','time_slot_id')
-        unknown = EXCLUDE
 
     start_time = fields.Time()
     end_time = fields.Time()
