@@ -24,7 +24,7 @@ class CitizenSchema(BaseSchema):
     class Meta(BaseSchema.Meta):
         model = Citizen
         include_relationships = True
-        datetimeformat = '%Y-%m-%dT%H:%M:%S+00:00'
+        datetimeformat = '%Y-%m-%dT%H:%M:%SZ'
 
     citizen_id = fields.Int(dump_only=True)
     citizen_name = fields.Str()
