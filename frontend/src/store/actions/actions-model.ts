@@ -1654,8 +1654,8 @@ export const commonActions: any = {
 
   messageFeedback (context) {
     const messageParts: any = []
-    messageParts.push(`Username: ${context.state.user.username}\n`)
-    messageParts.push(`Office: ${context.state.user.office.office_name}\n`)
+    messageParts.push(`Username: ${context.state.user.username}`)
+    messageParts.push(`Office: ${context.state.user.office.office_name}`)
 
     const activeCitizen = context.state.serviceModalForm.service_citizen
 
@@ -1667,15 +1667,15 @@ export const commonActions: any = {
         p => p.time_end === null
       )[0]
 
-      messageParts.push(`Ticket Number: ${activeCitizen.ticket_number}\n`)
-      messageParts.push(`Citizen ID: ${activeCitizen.citizen_id}\n`)
-      messageParts.push(`Active SR ID: ${activeService.sr_id}\n`)
-      messageParts.push(`Active Period ID: ${activePeriod.period_id}\n`)
+      messageParts.push(`Ticket Number: ${activeCitizen.ticket_number}`)
+      messageParts.push(`Citizen ID: ${activeCitizen.citizen_id}`)
+      messageParts.push(`Active SR ID: ${activeService.sr_id}`)
+      messageParts.push(`Active Period ID: ${activePeriod.period_id}`)
     } else {
-      messageParts.push('Ticket Number: not available \n')
+      messageParts.push('Ticket Number: not available')
     }
     messageParts.push('')
-    messageParts.push(`Message: ${context.state.feedbackMessage.replace(/\n/g, '<br>\n')}\n`)
+    messageParts.push(`Message: ${context.state.feedbackMessage}`)
 
     const feedbackObject = {
       feedback_message: messageParts.join('\n')
