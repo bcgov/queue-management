@@ -65,14 +65,14 @@ class Feedback(Resource):
 
     @staticmethod
     def send_to_teams(feedback_message):
-        print('CALLING send_to_teams')
+        
         url = application.config['TEAMS_URL']
 
         if url is None:
             return {"message": "TEAMS_URL is not set"}, 400
 
         feedback_message = feedback_message.replace('\n', '<br />')
-        print('CALLING send_to_teams  feedback_msg' + feedback_message)
+
         feedback_json_data = {
             "text": feedback_message
         }

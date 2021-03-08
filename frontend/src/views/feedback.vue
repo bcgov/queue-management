@@ -26,7 +26,7 @@
         v-model="writeFeedback"
         class="mb-2 mt-1"
         placeholder="Please explain..."
-        style="font-size: 0.9rem; white-space: pre;"
+        style="font-size: 0.9rem;"
       >
       </b-textarea>
       <div id="feedback-modal-buttons">
