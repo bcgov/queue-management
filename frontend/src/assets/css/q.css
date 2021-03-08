@@ -203,3 +203,46 @@ html.modal-open::-webkit-scrollbar, body.modal-open::-webkit-scrollbar {
   background-color: #f2f2f2;
   cursor: not-allowed;
 }
+#appointment-calendar .v-calendar-daily__interval-text {
+  font-size: 12px !important;
+}
+#appointment-calendar .v-event-timed-container {
+  margin-right: 1px !important;
+  margin-left: 40px !important;
+}
+
+/* .dropdown.dropdown-menu-animation.is-active.is-mobile-modal {
+  border: 4px solid #ffffff;
+  border-radius: 8px;
+  border-color:  #ffffff;
+  outline: 0 none;
+  box-shadow: 0 0 0 -0.8rem  #b6d4f4;
+} */
+
+.dropdown.dropdown-menu-animation.is-active.is-mobile-modal {
+  border: 4px solid #f2f4f6;
+  border-radius: 8px;
+  border-color: #90d3fc;
+  outline: 0 none;
+  box-shadow: 0 0 0 -0.8rem rgb(138 203 245);
+}
+
+input.mx-input {
+  height: 40px;
+}
+
+input.mx-input:focus, input.mx-input:hover {
+  border-radius: 8px;
+  border-color: #ffffff;
+  outline: 0 none;
+  box-shadow: 0 0 5px #b6d4f4;
+  padding: 3px 0px 3px 3px;
+  margin: 5px 1px 3px 0px;
+  border: 4px solid #9cc7f4;
+  background-color: white;
+}
+input#appointment_blackout_start_time, input#recurring_blackout_start_time, 
+input#appointment_blackout_end_time, input#recurring_blackout_end_time,
+input#app_timepicker_id {
+  padding-left: 10px;
+}
