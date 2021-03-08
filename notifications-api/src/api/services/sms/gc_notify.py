@@ -16,6 +16,7 @@
 This module is being invoked from a job and it sends SMS reminders to customers.
 """
 import os
+
 from notifications_python_client import NotificationsAPIClient
 
 from . import SmsBaseService
@@ -29,7 +30,6 @@ class GCNotify(SmsBaseService):
         api_key = os.getenv('GC_NOTIFY_API_KEY')
         gc_notify_url = os.getenv('GC_NOTIFY_API_BASE_URL')
         gc_template_id = os.getenv('GC_NOTIFY_SMS_TEMPLATE_ID')
-        app_url = os.getenv('APPOINTMENT_APP_URL')
 
         notifications_client = NotificationsAPIClient(api_key=api_key, base_url=gc_notify_url)
         sms_requests = sms_payload if type(sms_payload) == list else [sms_payload]
@@ -37,13 +37,7 @@ class GCNotify(SmsBaseService):
         for sms_request in sms_requests:
             try:
                 if sms_request.get('user_telephone'):
-                    sms_text = os.getenv('SMS_REMINDER_TEMPLATE').format(
-                        first_name=sms_request.get('display_name'),
-                        location=sms_request.get('location'),
-                        date_time=sms_request.get('formatted_date'),
-                        app_url=app_url,
-                        office_telephone=sms_request.get('office_telephone')
-                    )
+                    sms_text = self._construct_sms_text(sms_request)
 
                     response = notifications_client.send_sms_notification(
                         phone_number=sms_request.get('user_telephone'),
@@ -55,3 +49,24 @@ class GCNotify(SmsBaseService):
 
             except Exception as e:
                 print(e)  # log and continue
+                raise e
+
+    @classmethod
+    def _construct_sms_text(cls, sms_request: dict) -> str:
+        """Construct SMS text."""
+        message_type: str = sms_request.get('type', 'REMINDER')
+        template: str = None
+        app_url: str = os.getenv('APPOINTMENT_APP_URL')
+        if message_type == 'REMINDER':
+            template = os.getenv('SMS_REMINDER_TEMPLATE')
+        elif message_type == 'CHECKIN_CONFIRMATION':
+            template = os.getenv('SMS_CHECKIN_CONFIRMATION_TEMPLATE')
+        elif message_type == 'CUSTOM':
+            sms_text = sms_request.get('message')
+
+        if template:
+            sms_text = template.format(
+                app_url=app_url,
+                **sms_request
+            )
+        return sms_text

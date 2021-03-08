@@ -97,6 +97,8 @@ objects:
                   value: WARNING
                 - name: SMS_REMINDER_TEMPLATE
                   value: "${SMS_REMINDER_TEMPLATE}"
+                - name: SMS_CHECKIN_CONFIRMATION_TEMPLATE
+                  value: "${SMS_CHECKIN_CONFIRMATION_TEMPLATE}"
                 - name: JWT_OIDC_WELL_KNOWN_CONFIG
                   value: "${JWT_OIDC_WELL_KNOWN_CONFIG}"
                 - name: JWT_OIDC_ALGORITHMS
@@ -217,7 +219,11 @@ parameters:
   - name: SMS_REMINDER_TEMPLATE
     description: "SMS Template text"
     required: true
-    value: "REMINDER: You have an appointment with Service BC {location} on {date_time}. To cancel or change, visit {app_url} or call {office_telephone}"
+    value: "REMINDER: Hi {display_name}, you have an appointment with Service BC {location} on {formatted_date}. To cancel or change, visit {app_url} or call {office_telephone}"
+  - name: SMS_CHECKIN_CONFIRMATION_TEMPLATE
+    description: "SMS Template for checkin confirmation"
+    required: true
+    value: "Thank you for saving your spot in line with Service BC! We will be with you shortly. To see your place in line, follow this link, you are ticket {ticket_number}: {url}"
   - name: JWT_OIDC_WELL_KNOWN_CONFIG
     description: "Well known config URL for the keycloak realm "
     required: true
