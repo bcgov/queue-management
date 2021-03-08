@@ -85,23 +85,136 @@
           <b-form-group class="mb-0 mt-2">
             <label class="mb-0">Time</label><br />
             <b-form-input :value="displayStart" disabled />
+            <b-button
+                variant="primary"
+                class="mr-3"
+                @click="editAppointTime"
+              >
+                <font-awesome-icon
+                  icon="edit"
+                  class="p0"
+                />
+              </b-button>
           </b-form-group>
         </b-col>
         <b-col cols="8">
           <b-form-group class="mb-0 mt-2">
             <label class="mb-0">Date</label><br />
             <b-form-input :value="displayDate" disabled />
+            <b-button
+                variant="primary"
+                class="mr-3"
+                @click="editAppointDate"
+              >
+                <font-awesome-icon
+                  icon="edit"
+                  class="p0"
+                />
+              </b-button>
           </b-form-group>
         </b-col>
       </b-form-row>
       <!--  End of the Time and Date row. -->
-
-      <!--  The Date/Time row -->
+       <!--  The Time and Date edit row. -->
+      <b-form-row>
+        <b-col cols="4">
+          <b-form-group class="mb-0 mt-2">
+            <!-- <DatePicker
+              v-if="allow_time_edit"
+              v-model="start"
+              :time-picker-options="{
+                start: '8:30',
+                step: '00:30',
+                end: '17:00',
+              }"
+              lang="en"
+              format="h:mm a"
+              autocomplete="off"
+              :editable="true"
+              placeholder="Select Time"
+              class="w-100"
+              type="time"
+            >
+            </DatePicker> --> 
+            <label v-if="allow_time_edit" class="mb-0">Select Time</label><br />
+            <b-timepicker
+                v-if="allow_time_edit"
+                id="app_timepicker_id"
+                v-model="start"
+                :value="start"
+                class="w-100"
+                icon="clock"
+                editable
+                hour-format="12"
+                locale="en-US"
+                @change="setStartDateTime(true)"
+                @input="setStartDateTime(true)"
+                >
+            </b-timepicker>
+            <!-- <br/> -->
+            <!-- <span class="danger" v-if="reccuring_start_time_msg">{{reccuring_start_time_msg}}</span> -->
+          </b-form-group>
+        </b-col>
+        <b-col cols="8">
+          <b-form-group class="mb-0 mt-2">
+            <label v-if="allow_date_edit" class="mb-0">Select Date</label><br />
+            <DatePicker
+              v-if="allow_date_edit"
+              v-model="start"
+              type="date"
+              lang="en"
+              class="w-100"
+              @change="setStartDateTime(false)"
+              @input="setStartDateTime(false)"
+            >
+            </DatePicker>
+          </b-form-group>
+        </b-col>
+      </b-form-row>
+      <!--  End of the Time and Date edit row. -->
+      <!--  Service selected by the citizen row -->
+      <b-form-row>
+        <b-col>
+          <b-form-group v-if="isNotBlackoutFlag" class="mb-0 mt-2">
+            <label class="mb-0">Service Required by Citizen</label><br />
+            <div style="width: 100%; display: flex">
+              <b-input-group>
+                <b-input-group-prepend>
+                  <b-button-group>
+                    <b-button
+                      variant="primary"
+                      class="px-0"
+                      style="width: 52px"
+                      @click="addService"
+                      >{{ selectedService ? 'Edit' : 'Set' }}</b-button
+                    >
+                    <b-button
+                      variant="secondary"
+                      v-if="selectedService"
+                      class="px-0"
+                      style="width: 52px; border-radius: 0px"
+                      @click="clearService"
+                      >Clear</b-button
+                    >
+                  </b-button-group>
+                </b-input-group-prepend>
+                <b-form-input
+                  disabled
+                  :state="validated.selectedService"
+                  :value="service_name"
+                />
+              </b-input-group>
+            </div>
+          </b-form-group>
+        </b-col>
+      </b-form-row>
+      <!--  End of service selected by the citizen row -->
+            <!--  The Date/Time row -->
       <b-form-row>
         <b-col>
           <b-form-group v-if="isNotBlackoutFlag" class="mb-0 mt-2">
             <label class="mb-0">Length</label><br />
-            <b-select v-model="length" :options="timeOptions" />
+            <b-select v-model="length" :options="lengthOptions" />
           </b-form-group>
         </b-col>
         <b-col>
@@ -145,44 +258,6 @@
         </b-col>
       </b-form-row>
       <!--  End of the Date/Time row -->
-
-      <!--  Service selected by the citizen row -->
-      <b-form-row>
-        <b-col>
-          <b-form-group v-if="isNotBlackoutFlag" class="mb-0 mt-2">
-            <label class="mb-0">Service Required by Citizen</label><br />
-            <div style="width: 100%; display: flex">
-              <b-input-group>
-                <b-input-group-prepend>
-                  <b-button-group>
-                    <b-button
-                      variant="primary"
-                      class="px-0"
-                      style="width: 52px"
-                      @click="addService"
-                      >{{ selectedService ? 'Edit' : 'Set' }}</b-button
-                    >
-                    <b-button
-                      variant="secondary"
-                      v-if="selectedService"
-                      class="px-0"
-                      style="width: 52px; border-radius: 0px"
-                      @click="clearService"
-                      >Clear</b-button
-                    >
-                  </b-button-group>
-                </b-input-group-prepend>
-                <b-form-input
-                  disabled
-                  :state="validated.selectedService"
-                  :value="service_name"
-                />
-              </b-input-group>
-            </div>
-          </b-form-group>
-        </b-col>
-      </b-form-row>
-      <!--  End of service selected by the citizen row -->
 
       <!--  The Notes row. -->
       <b-form-row>
@@ -294,13 +369,18 @@
 
 <script lang="ts">
 /* eslint-disable */
-import { Component, Prop, Vue } from 'vue-property-decorator'
-import moment from 'moment'
 import { Action, namespace } from 'vuex-class'
+import { Component, Prop, Vue } from 'vue-property-decorator'
+import DatePicker from 'vue2-datepicker'
+import moment from 'moment'
 
 const appointmentsModule = namespace('appointmentsModule')
 
-@Component
+@Component({
+  components: {
+    DatePicker
+  }
+})
 export default class ApptBookingModal extends Vue {
   @Prop({ default: '' })
   private clickedTime!: any
@@ -359,6 +439,13 @@ export default class ApptBookingModal extends Vue {
   public allow_reschedule : boolean = false
   public stat_flag: boolean = false 
   public stat_single_edit: boolean = false
+  public allow_time_edit: boolean = false
+  public allow_date_edit: boolean = false
+  public selectedServiceObj: any =  null
+  public lengthOptions: any = []
+  public appt_time: any = null
+  public appt_date: any = null
+  public curr_date: any = null
 
 
   get appointments () {
@@ -386,6 +473,9 @@ export default class ApptBookingModal extends Vue {
   }
 
   get end () {
+    if (this.start) {
+        return moment(this.start).clone().add(this.length, 'minutes')
+    }
     if (this.clickedTime) {
       return moment(this.clickedTime.start).clone().add(this.length, 'minutes')
     }
@@ -394,15 +484,17 @@ export default class ApptBookingModal extends Vue {
     }
   }
 
-  get timeOptions () {
-    const options: any = []
+  timeOptions () {
     if (this.clickedTime) {
       const event = this.clickedTime
       const time = 60
       for (let l = 15; l <= time; l += 15) {
-        options.push(l)
+        if (!this.lengthOptions.includes(l)) {
+          this.lengthOptions.push(l)
+        }
       }
-      return options
+      this.lengthOptions.push(75)
+      return this.lengthOptions
     }
     if (this.clickedAppt) {
       const event = this.clickedAppt
@@ -416,11 +508,29 @@ export default class ApptBookingModal extends Vue {
       // }
       const time = 60
       for (let l = 15; l <= time; l += 15) {
-        options.push(l)
+        if (!this.lengthOptions.includes(l)) {
+          this.lengthOptions.push(l)
+        }
       }
-
-      return options
+      this.lengthOptions.push(75)
+      return this.lengthOptions
     }
+    const timeDefault = 60
+    if (this.selectedServiceObj) {
+      this.length = 15
+      if (this.selectedServiceObj.timeslot_duration) {
+          this.length = this.selectedServiceObj.timeslot_duration
+      }
+    } else {
+      this.length = 15
+    }
+    for (let l = 15; l <= timeDefault; l += 15) {
+      if (!this.lengthOptions.includes(l)) {
+          this.lengthOptions.push(l)
+        }
+    }
+    this.lengthOptions.push(75)
+    return this.lengthOptions
   }
 
   get service_name () {
@@ -428,9 +538,20 @@ export default class ApptBookingModal extends Vue {
     const services = this.$store.getters.filtered_services
     if (services && services.length > 0) {
       if (this.selectedService) {
-        return services.find(srv => srv.service_id === this.selectedService).service_name
+        this.selectedServiceObj = services.find(srv => srv.service_id === this.selectedService)
+        this.length = 15
+        if (this.selectedServiceObj.timeslot_duration) {
+          if (!this.lengthOptions.includes(this.selectedServiceObj.timeslot_duration)) {
+              this.lengthOptions.push(this.selectedServiceObj.timeslot_duration)
+          }
+          this.length = this.selectedServiceObj.timeslot_duration
+        }
+        this.length = this.length
+        return this.selectedServiceObj.service_name
       }
     }
+    this.lengthOptions = []
+    this.timeOptions()
     return 'Please choose a service'
   }
 
@@ -445,12 +566,18 @@ export default class ApptBookingModal extends Vue {
   get displayStart () {
     if (this.start) {
       // JSTOTS TOCHECK removed new from mopment. no need to use new with moment
-      return moment(this.start).clone().format('h:mm a')
+      if (moment.isMoment(this.start)) {
+        return this.start.clone().format('h:mm a')
+      } else {
+        return moment(this.start).clone().format('h:mm a')
+      }
     }
     return ''
   }
 
-  get modalVisible () { return this.showApptBookingModal }
+  get modalVisible () {
+     return this.showApptBookingModal  
+  }
 
   set modalVisible (e) { this.toggleApptBookingModal(e) }
 
@@ -523,6 +650,7 @@ export default class ApptBookingModal extends Vue {
       this.cancel()
       this.$store.commit('toggleServeCitizenSpinner', false)
     })
+    this.stat_flag = false
   }
 
   deleteRecurringAppts () {
@@ -534,6 +662,7 @@ export default class ApptBookingModal extends Vue {
       this.cancel()
       this.$store.commit('toggleServeCitizenSpinner', false)
     })
+    this.stat_flag = false
   }
 
   deleteRecurringStatAppts () {
@@ -545,6 +674,7 @@ export default class ApptBookingModal extends Vue {
       this.cancel()
       this.$store.commit('toggleServeCitizenSpinner', false)
     })
+    this.stat_flag = false
   }
 
   reschedule () {
@@ -568,10 +698,24 @@ export default class ApptBookingModal extends Vue {
     this.$root.$emit('clear-clicked-appt')
     this.toggleApptBookingModal(false)
     this.setRescheduling(false)
+    this.allow_time_edit = false
+    this.allow_date_edit = false
     this.stat_flag = false
+    this.start = null
+    this.appt_time = null
+    this.appt_date = null
+    this.selectedServiceObj = null
+    this.setSelectedService(null)
   }
 
   show () {
+    this.length = 15
+    if (!this.selectedServiceObj) {
+      this.start = null
+      this.appt_time = null
+      this.appt_date = null
+      this.curr_date = null
+    }
     this.clearMessage()
     if (this.selectingService) {
       this.selectingService = false
@@ -580,7 +724,9 @@ export default class ApptBookingModal extends Vue {
     if (this.apptRescheduling) {
       this.$store.commit('toggleRescheduling', false)
       this.setRescheduling(false)
-      this.start = this.clickedTime.start.clone()
+      // this.start = this.clickedTime.start.clone()
+      this.start = new Date(this.clickedTime.start.format())
+      this.curr_date = new Date(this.clickedTime.start.format())
       this.length = this.clickedTime.end.clone().diff(this.start, 'minutes')
       if (this.oldLength) {
         if (this.oldLength < this.length) {
@@ -610,7 +756,10 @@ export default class ApptBookingModal extends Vue {
         this.comments = null
       this.contact_information = null
       this.length = 15
-      this.start = this.clickedTime.start.clone()
+      this.start = new Date(this.clickedTime.start.format())
+      this.curr_date = new Date(this.clickedTime.start.format())
+      // this.start = this.clickedTime.start.clone()
+       
       this.clearAddModal()
     }
     if (this.clickedAppt && this.clickedAppt.end) {
@@ -622,7 +771,9 @@ export default class ApptBookingModal extends Vue {
       this.citizen_name = this.clickedAppt.title
       this.comments = this.clickedAppt.comments
       this.contact_information = this.clickedAppt.contact_information
-      this.start = this.clickedAppt.start.clone()
+      // this.start = this.clickedAppt.start.clone()
+      this.start = new Date(this.clickedAppt.start.format())
+      this.curr_date = new Date(this.clickedAppt.start.format())
       this.length = this.clickedAppt.end.clone().diff(this.start, 'minutes')
       this.online_flag = this.clickedAppt.online_flag
       this.stat_flag = this.clickedAppt.stat_flag
@@ -633,8 +784,24 @@ export default class ApptBookingModal extends Vue {
       this.citizen_name = ''
       this.comments = ''
       this.contact_information = ''
-      this.start = this.clickedTime.start.clone()
+      this.start = null
+      this.curr_date = null
+      //todo, remove if consditon
+      // this.start = this.clickedTime.start.clone()
+      if (this.clickedTime) {
+      this.start = new Date(this.clickedTime.start.format())
+      this.curr_date = new Date(this.clickedTime.start.format())
+      }
+      // if (this.clickedTime) {
+      //   this.start = this.clickedTime.start.clone()
+      // }
     }
+    var now = new Date();
+    if (this.start > now) {
+        this.allow_reschedule = true
+      }else {
+        this.allow_reschedule = false
+      }
   }
 
   submit () { 
@@ -643,8 +810,15 @@ export default class ApptBookingModal extends Vue {
       this.$store.commit('toggleServeCitizenSpinner', true)
       this.clearMessage()
       const service_id = this.selectedService
+      const startDateObj = this.start
+      if (!moment.isMoment(this.start)) {
+        this.start = moment(this.start)
+      }
+      
       const start = moment(moment.tz(this.start.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).format()).clone()
       const end = moment(moment.tz(this.end.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).format()).clone()
+      
+      this.start = startDateObj
       const e: any = {
         start_time: moment.utc(start).format(),
         end_time: moment.utc(end).format(),
@@ -722,17 +896,66 @@ export default class ApptBookingModal extends Vue {
         })
       })
     }
+    this.stat_flag = false
   }
 
   submitSingleStat (){
-    this.stat_single_edit= true
+    this.stat_single_edit = true
     this.submit()
+    this.stat_flag = false
+  }
 
+  editAppointTime () {
+    this.allow_time_edit = !this.allow_time_edit
+  }
+
+  editAppointDate () {
+    this.allow_date_edit = !this.allow_date_edit
   }
 
   mounted () {
     if (this.$store.state.services.length === 0) {
       this.getServices()
+    }
+    this.timeOptions()
+    var now = new Date();
+    if (this.start > now) {
+        this.allow_reschedule = true
+    } else {
+      this.allow_reschedule = false
+    }
+  }
+
+  setStartDateTime(is_time) {
+    const startDateObj = moment(this.start)
+    const currDateObj = moment(this.curr_date)
+    if (is_time) {
+      this.appt_time = startDateObj.format('HH:mm:ss')
+      if (this.clickedTime || this.clickedAppt) {
+        if ( this.curr_date) {
+          if (this.appt_time && !this.appt_date) {
+              this.start = new Date(currDateObj.format('YYYY-MM-DD')+' '+this.appt_time)
+          }
+        }
+      }
+    } else {
+      this.appt_date = startDateObj.format('YYYY-MM-DD')
+      if (this.clickedTime || this.clickedAppt) {
+        if ( this.curr_date) {
+          if (!this.appt_time && this.appt_date) {
+              this.start = new Date(this.appt_date+' '+currDateObj.format('HH:mm:ss'))
+          }
+        }
+      }
+    }
+    if (this.appt_time && this.appt_date) {
+        this.start = new Date(this.appt_date+' '+this.appt_time)
+    }
+    var now = new Date();
+    if (this.start > now) {
+        this.allow_reschedule = true
+    }else {
+      this.allow_reschedule = false
     }
   }
 }
