@@ -20,7 +20,7 @@ Flask-Caching
 Flask-Compress
 Flask-Cors
 flask-marshmallow
-Flask-SocketIO==4.3.2
+Flask-SocketIO==5.0.0
 gunicorn
 marshmallow-sqlalchemy
 marshmallow
