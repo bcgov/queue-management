@@ -42,8 +42,8 @@ class BookingDetail(Resource):
                 abort(404)
 
             result = self.booking_schema.dump(booking)
-            return {"booking": result.data,
-                    "errors": result.errors}, 200
+            return {"booking": result,
+                    "errors": self.booking_schema.validate(booking)}, 200
 
         except exc.SQLAlchemyError as error:
             logging.error(error, exc_info=True)

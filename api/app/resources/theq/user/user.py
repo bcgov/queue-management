@@ -48,7 +48,7 @@ class PublicUsers(Resource):
             db.session.add(user)
             db.session.commit()
 
-            result = self.user_schema.dump(user)
+            result = [self.user_schema.dump(user)]
             return result, 200
 
         except exc.SQLAlchemyError as e:
@@ -83,7 +83,7 @@ class PublicUser(Resource):
                     send_sms(appointment, office, office.timezone, user,
                              request.headers['Authorization'].replace('Bearer ', ''))
 
-            result = self.user_schema.dump(user)
+            result = [self.user_schema.dump(user)]
             return result, 200
 
         except exc.SQLAlchemyError as e:
@@ -101,7 +101,7 @@ class CurrentUser(Resource):
             user_info = g.jwt_oidc_token_info
             user: PublicUserModel = PublicUserModel.find_by_username(user_info.get('username'))
 
-            result = self.user_schema.dump(user)
+            result = [self.user_schema.dump(user)]
             return result, 200
 
         except exc.SQLAlchemyError as e:

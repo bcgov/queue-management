@@ -14,19 +14,17 @@ limitations under the License.'''
 
 from marshmallow import fields
 from qsystem import ma
-import toastedmarshmallow
 from app.models.bookings import Invigilator
 from app.schemas.theq import OfficeSchema
+from app.schemas import BaseSchema
 
 
-class InvigilatorSchema(ma.SQLAlchemySchema):
+class InvigilatorSchema(BaseSchema):
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = Invigilator
         #exclude = ("invigilators",)
         include_relationships = True
-        load_instance = True
-        jit = toastedmarshmallow.Jit
 
     contact_phone = fields.Str()
     contact_email = fields.Str()

@@ -41,8 +41,8 @@ class ExamDetail(Resource):
                 return {"The Exam Office ID and CSR Office ID do not match!"}, 403
 
             result = self.exam_schema.dump(exam)
-            return {'exam': result.data,
-                    'errors': result.errors}, 200
+            return {'exam': result,
+                    'errors': self.exam_schema.validate(exam)}, 200
 
         except exc.SQLAlchemyError as error:
             logging.error(error, exc_info=True)
