@@ -213,7 +213,7 @@
       <b-form-row>
         <b-col>
           <b-form-group v-if="isNotBlackoutFlag" class="mb-0 mt-2">
-            <label class="mb-0">Length</label><br /> {{this.length}} {{selectLength}}
+            <label class="mb-0">Length</label><br />
             <b-select v-model="selectLength" :options="lengthOptions" @input="serviceTime"/>
           </b-form-group>
         </b-col>
