@@ -2485,7 +2485,7 @@ export const commonActions: any = {
     const csr_id = context.state.user.csr_id
     Axios(context).put(`/csrs/${csr_id}/`, {
       counter_id: context.state.user.counter_id,
-      receptionist_ind: context.state.user.receptionist_ind
+      receptionist_ind: context.state.user.receptionist_ind ? 1 : 0
     })
   },
 
