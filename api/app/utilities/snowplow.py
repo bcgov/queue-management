@@ -186,7 +186,7 @@ class SnowPlow():
                 counter_name = csr.counter.counter_name
 
         #   Get the counter type.  Receptioninst is separate case.
-        if office['office_type'] != "reception":
+        if office.data['office_type'] != "reception":
             counter_name = "Counter"
 
         #   Get the role of the agent, convert to correct case
