@@ -213,8 +213,8 @@
       <b-form-row>
         <b-col>
           <b-form-group v-if="isNotBlackoutFlag" class="mb-0 mt-2">
-            <label class="mb-0">Length</label><br />
-            <b-select v-model="length" :options="lengthOptions" />
+            <label class="mb-0">Length</label><br /> {{this.length}} {{selectLength}}
+            <b-select v-model="selectLength" :options="lengthOptions" @input="serviceTime"/>
           </b-form-group>
         </b-col>
         <b-col>
@@ -446,6 +446,7 @@ export default class ApptBookingModal extends Vue {
   public appt_time: any = null
   public appt_date: any = null
   public curr_date: any = null
+  public selectLength: any = ""
 
 
   get appointments () {
@@ -484,6 +485,9 @@ export default class ApptBookingModal extends Vue {
     }
   }
 
+  serviceTime () {
+    this.length = this.selectLength
+  }
   timeOptions () {
     if (this.clickedTime) {
       const event = this.clickedTime
@@ -517,12 +521,12 @@ export default class ApptBookingModal extends Vue {
     }
     const timeDefault = 60
     if (this.selectedServiceObj) {
-      this.length = 15
+      this.selectLength = 15
       if (this.selectedServiceObj.timeslot_duration) {
-          this.length = this.selectedServiceObj.timeslot_duration
+          this.selectLength = this.selectedServiceObj.timeslot_duration
       }
     } else {
-      this.length = 15
+      this.selectLength = 15
     }
     for (let l = 15; l <= timeDefault; l += 15) {
       if (!this.lengthOptions.includes(l)) {
@@ -539,14 +543,14 @@ export default class ApptBookingModal extends Vue {
     if (services && services.length > 0) {
       if (this.selectedService) {
         this.selectedServiceObj = services.find(srv => srv.service_id === this.selectedService)
-        this.length = 15
+        this.selectLength = 15
         if (this.selectedServiceObj.timeslot_duration) {
           if (!this.lengthOptions.includes(this.selectedServiceObj.timeslot_duration)) {
               this.lengthOptions.push(this.selectedServiceObj.timeslot_duration)
           }
-          this.length = this.selectedServiceObj.timeslot_duration
+          this.selectLength = this.selectedServiceObj.timeslot_duration
         }
-        this.length = this.length
+        this.selectLength = this.selectLength
         return this.selectedServiceObj.service_name
       }
     }
@@ -709,7 +713,7 @@ export default class ApptBookingModal extends Vue {
   }
 
   show () {
-    this.length = 15
+    this.selectLength = 15
     if (!this.selectedServiceObj) {
       this.start = null
       this.appt_time = null
