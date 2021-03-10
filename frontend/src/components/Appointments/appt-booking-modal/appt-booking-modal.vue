@@ -710,8 +710,7 @@ export default class ApptBookingModal extends Vue {
     this.appt_date = null
     this.selectedServiceObj = null
     this.setSelectedService(null)
-    this.selectedServiceObj = null
-    this.timeOptions()
+    // this.timeOptions()
   }
 
   show () {
