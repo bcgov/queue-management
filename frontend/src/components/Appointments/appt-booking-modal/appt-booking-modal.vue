@@ -487,7 +487,6 @@ export default class ApptBookingModal extends Vue {
 
   serviceTime () {
     this.length = this.selectLength
-    console.log(this.selectLength, this.length,'+++++++++++++++++')
   }
   timeOptions () {
     if (this.clickedTime) {
