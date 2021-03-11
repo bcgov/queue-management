@@ -59,7 +59,7 @@ class Services(Resource):
             return {'message': 'CSR has an open ticket and cannot be edited.'}, 403
 
         try:
-            edit_csr = self.csr_schema.load(json_data, instance=edit_csr, partial=True).data
+            edit_csr = self.csr_schema.load(json_data, instance=edit_csr, partial=True)
         except ValidationError as err:
             return {'message': err.messages}, 422    
 
@@ -79,5 +79,5 @@ class Services(Resource):
         # Purge cache of old CSR record so the new one can be fetched by the next request for it.
         CSR.delete_user_cache(g.jwt_oidc_token_info['username'])
 
-        return {'csr': result.data,
-                'errors': result.errors}, 200
+        return {'csr': result,
+                'errors': self.csr_schema.validate(edit_csr)}, 200

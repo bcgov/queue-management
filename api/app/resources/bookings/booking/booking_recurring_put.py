@@ -44,7 +44,8 @@ class BookingRecurringPut(Resource):
 
         for booking in bookings:
 
-            booking, warning = self.booking_schema.load(json_data, instance=booking, partial=True)
+            booking = self.booking_schema.load(json_data, instance=booking, partial=True)
+            warning = self.booking_schema.validate(json_data)
 
             if warning:
                 logging.warning('WARNING: %s', warning)
@@ -56,6 +57,6 @@ class BookingRecurringPut(Resource):
         result = self.booking_schema.dump(bookings)
 
         return {
-            "bookings": result.data,
-            "errors": result.errors
+            "bookings": result,
+            "errors": self.booking_schema.validate(bookings)
         }, 200

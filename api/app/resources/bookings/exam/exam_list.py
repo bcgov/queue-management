@@ -69,8 +69,8 @@ class ExamList(Resource):
 
             result = self.exam_schema.dump(exams)
 
-            return {'exams': result.data,
-                    'errors': result.errors}, 200
+            return {'exams': result,
+                    'errors': self.exam_schema.validate(exams)}, 200
 
         except exc.SQLAlchemyError as error:
             logging.error(error, exc_info=True)
