@@ -124,8 +124,6 @@ export default class DateSelection extends Mixins(StepperMixin) {
    }
 
    private get selectedTimeSlot () {
-     // eslint-disable-next-line no-console
-     console.log(this.currentAppointmentSlot?.start_time, CommonUtils.getUTCToTimeZoneTime(this.currentAppointmentSlot?.start_time, this.currentOfficeTimezone, 'hh:mm aaa'))
      return (this.currentAppointmentSlot?.start_time && this.currentAppointmentSlot?.end_time)
        ? `${CommonUtils.getUTCToTimeZoneTime(this.currentAppointmentSlot?.start_time, this.currentOfficeTimezone, 'hh:mm aaa')} -
         ${CommonUtils.getUTCToTimeZoneTime(this.currentAppointmentSlot?.end_time, this.currentOfficeTimezone, 'hh:mm aaa')}`
@@ -173,8 +171,6 @@ export default class DateSelection extends Mixins(StepperMixin) {
        }
      }
      slots?.forEach(slot => {
-       // eslint-disable-next-line no-console
-       console.log(slot.start_time, CommonUtils.get12HTimeString(slot.start_time))
        this.selectedDateTimeSlots.push({
          ...slot,
          startTimeStr: CommonUtils.get12HTimeString(slot.start_time),
@@ -189,19 +185,9 @@ export default class DateSelection extends Mixins(StepperMixin) {
      // Safari needs format from spec, "2020-05-08T09:00-07:00"
      // (safari also needs timezone offset)
      let st = zonedTimeToUtc(new Date(`${this.selectedDate} ${slot.start_time}`.replace(/-/g, '/')), this.currentOfficeTimezone).toISOString()
-     // eslint-disable-next-line no-console
-     console.log('date+time`>>>>>>>>', `${this.selectedDate} ${slot.start_time}`.replace(/-/g, '/'))
-     // eslint-disable-next-line no-console
-     console.log(new Date(`${this.selectedDate} ${slot.start_time}`.replace(/-/g, '/')), '^^^^^^^^^^^^^^^^^^^^^^^^^')
-     // eslint-disable-next-line no-console
-     console.log(zonedTimeToUtc(new Date(`${this.selectedDate} ${slot.start_time}`.replace(/-/g, '/')), this.currentOfficeTimezone), zonedTimeToUtc(new Date(`${this.selectedDate} ${slot.start_time}`.replace(/-/g, '/')), ''))
-     // eslint-disable-next-line no-console
-     console.log(st, this.currentOfficeTimezone, '#########')
      let et = zonedTimeToUtc(new Date(`${this.selectedDate} ${slot.end_time}`.replace(/-/g, '/')), this.currentOfficeTimezone).toISOString()
      st = st.replace('.000Z', '+00').replace('T', ' ')
      et = et.replace('.000Z', '+00').replace('T', ' ')
-     // eslint-disable-next-line no-console
-     console.log(st, et, '************************')
      const selectedSlot: AppointmentSlot = {
        // start_time: new Date(`${this.selectedDate}T${slot.start_time}${timezoneOffset()}`).toISOString(),
        // end_time: new Date(`${this.selectedDate}T${slot.end_time}${timezoneOffset()}`).toISOString()
@@ -210,10 +196,6 @@ export default class DateSelection extends Mixins(StepperMixin) {
        start_time: st,
        end_time: et
      }
-     // eslint-disable-next-line no-console
-     console.log(selectedSlot, '+++++++', `${this.selectedDate}T${slot.start_time}`, this.selectedDate + ' ' + slot.start_time)
-     // eslint-disable-next-line no-console
-     console.log(typeof selectedSlot.start_time)
      this.setCurrentAppointmentSlot(selectedSlot)
      // this.createDraftAppointment()
      // this.isLoading = true
