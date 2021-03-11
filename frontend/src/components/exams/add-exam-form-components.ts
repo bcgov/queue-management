@@ -204,7 +204,7 @@ export class DateQuestion extends Vue {
         <h5 v-if="addExamModal.setup === 'group' ">Add Group Exam</h5>
         <h5 v-if="addExamModal.setup === 'individual' ">Add Individual ITA Exam</h5>
         <h5 v-if="addExamModal.setup === 'other' ">Add Non-ITA Exam</h5>
-        <h5 v-if="addExamModal.setup === 'pesticide' ">Add Pesticide Exam</h5>
+        <h5 v-if="addExamModal.setup === 'pesticide' ">Add Environment Exam</h5>
       </b-col>
       <b-col>
         <label>Exam Type</label><br>

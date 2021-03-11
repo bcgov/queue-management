@@ -59,7 +59,7 @@
           <b-alert variant="success" show>
             Job Id generated from BCMP: {{ examBcmpJobId }} <br /><br />
             <strong
-              >Click on the "Submit" button to finish adding the pesticide
+              >Click on the "Submit" button to finish adding the Environment
               exam</strong
             >
           </b-alert>
@@ -72,7 +72,7 @@
             enter the generated job id in the input below, then
             <br />
             <strong
-              >Click on the "Submit" button to finish adding the pesticide
+              >Click on the "Submit" button to finish adding the Environment
               exam</strong
             >
           </b-alert>
