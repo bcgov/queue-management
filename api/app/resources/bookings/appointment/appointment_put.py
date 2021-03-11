@@ -93,7 +93,8 @@ class AppointmentPut(Resource):
             if citizen.user_id != user.user_id:
                 abort(403)
 
-        appointment, warning = self.appointment_schema.load(json_data, instance=appointment, partial=True)
+        appointment = self.appointment_schema.load(json_data, instance=appointment, partial=True)
+        warning = self.appointment_schema.validate(json_data)
 
         if warning:
             logging.warning("WARNING: %s", warning)
@@ -104,7 +105,6 @@ class AppointmentPut(Resource):
 
         # Send confirmation email
         try:
-            pprint('Sending email for appointment update')
             send_email(None, *get_confirmation_email_contents(appointment, office, office.timezone, user))
         except Exception as exc:
             pprint(f'Error on token generation - {exc}')
@@ -125,8 +125,8 @@ class AppointmentPut(Resource):
             if "checked_in_time" in json_data:
                 socketio.emit('appointment_delete', id)
             else:
-                socketio.emit('appointment_update', result.data)
+                socketio.emit('appointment_update', result)
         
 
-        return {"appointment": result.data,
-                "errors": result.errors}, 200
+        return {"appointment": result,
+                "errors": self.appointment_schema.validate(appointment)}, 200

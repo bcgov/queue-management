@@ -775,16 +775,17 @@ export default class OtherBookingModal extends Vue {
      if (this.startTime) {
        start = moment.tz(this.startTime.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).utc()
      }
-      
+
       // JSTOTS TOCHECK removed new from moment. no need to use new with moment
       let end = moment(this.endTime).utc()
       if (this.endTime) {
         end = moment.tz(this.endTime.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).utc()
       }
+
       const booking = {
         room_id: this.resource.id,
-        start_time: start.format('DD-MMM-YYYY[T]HH:mm:ssZ'),
-        end_time: end.format('DD-MMM-YYYY[T]HH:mm:ssZ'),
+        start_time: start.format('YYYY-MM-DD[T]HH:mm:ssZ'),
+        end_time: end.format('YYYY-MM-DD[T]HH:mm:ssZ'),
         fees: this.fees,
         booking_name: this.title,
         booking_contact_information: this.contact_information

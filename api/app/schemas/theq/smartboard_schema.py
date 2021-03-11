@@ -12,19 +12,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-import toastedmarshmallow
 from marshmallow import fields
 from app.models.theq import SmartBoard
 from qsystem import ma
+from app.schemas import BaseSchema
 
 
-class SmartBoardSchema(ma.SQLAlchemySchema):
+class SmartBoardSchema(BaseSchema):
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = SmartBoard
         include_relationships = True
-        load_instance = True
-        jit = toastedmarshmallow.Jit
 
     sb_id = fields.Int()
     sb_type = fields.Str()

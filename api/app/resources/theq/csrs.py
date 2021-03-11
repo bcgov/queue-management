@@ -29,7 +29,7 @@ from app.auth.auth import jwt
 @api.route("/csrs/", methods=["GET"])
 class CsrList(Resource):
 
-    csr_schema = CSRSchema(many=True, exclude=('office', 'periods',))
+    csr_schema = CSRSchema(many=True, exclude=('office',))
 
     @jwt.has_one_of_roles([Role.internal_user.value])
     def get(self):
@@ -43,8 +43,8 @@ class CsrList(Resource):
             filtered_csrs = [c for c in csrs if c.deleted is None]
             result = self.csr_schema.dump(filtered_csrs)
 
-            return {'csrs': result.data,
-                    'errors': result.errors}
+            return {'csrs': result,
+                    'errors': self.csr_schema.validate(filtered_csrs)}
 
         except exc.SQLAlchemyError as e:
             print(e)
@@ -168,12 +168,12 @@ class CsrSelf(Resource):
             result = self.csr_schema.dump(csr)
             active_citizens = self.citizen_schema.dump(active_citizens)
 
-            return {'csr': result.data,
+            return {'csr': result,
                     'attention_needed': attention_needed,
-                    'active_citizens': active_citizens.data,
+                    'active_citizens': active_citizens,
                     'back_office_display': self.back_office_display,
                     'recurring_feature_flag': self.recurring_feature_flag,
-                    'errors': result.errors}
+                    'errors': self.csr_schema.validate(csr)}
 
         except exc.SQLAlchemyError as e:
             print(e)

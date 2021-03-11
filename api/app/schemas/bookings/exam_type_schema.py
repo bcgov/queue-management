@@ -13,19 +13,15 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 from marshmallow import fields
-import toastedmarshmallow
 from app.models.bookings import ExamType
-from qsystem import ma
+from app.schemas import BaseSchema
 
 
-class ExamTypeSchema(ma.SQLAlchemySchema):
+class ExamTypeSchema(BaseSchema):
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = ExamType
         include_relationships = True
-        load_instance = True
-        jit = toastedmarshmallow.Jit
-        # exclude = ("exam",)
 
     exam_type_id = fields.Int(dump_only=True)
     exam_type_name = fields.Str()

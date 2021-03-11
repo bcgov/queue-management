@@ -33,8 +33,8 @@ class ExamTypeList(Resource):
         try:
             exam_types = ExamType.query.order_by(asc(ExamType.exam_type_name))
             result = self.exam_type_schema.dump(exam_types)
-            return {'exam_types': result.data,
-                    'errors': result.errors }, 200
+            return {'exam_types': result,
+                    'errors': self.exam_type_schema.validate(exam_types)}, 200
 
         except exc.SQLAlchemyError as error:
             logging.error(error, exc_info=True)

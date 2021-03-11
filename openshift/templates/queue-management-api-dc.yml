@@ -152,8 +152,8 @@ objects:
                   value: "${CHES_POST_EMAIL_ENDPOINT}"
                 - name: ROCKET_CHAT_URL
                   value: "${ROCKET_CHAT_URL}"
-                - name: SLACK_URL
-                  value: "${SLACK_URL}"
+                - name: TEAMS_URL
+                  value: "${TEAMS_URL}"
                 - name: SERVICENOW_INSTANCE
                   value: "${SERVICENOW_INSTANCE}"
                 - name: SERVICENOW_USER
@@ -325,8 +325,8 @@ parameters:
     required: true
     generate: expression
     from: "[a-zA-Z0-9]{16}"
-  - name: SLACK_URL
-    description: "Slack API URL"
+  - name: TEAMS_URL
+    description: "Teams API URL"
     required: false
     value: ""
   - name: THEQ_CLEAR_COMMENTS_FLAG
@@ -362,7 +362,7 @@ parameters:
     required: false
     value: "false"
   - name: THEQ_FEEDBACK
-    description: "Where feedback should go (eg. 'Slack, Service Now')"
+    description: "Where feedback should go (eg. 'Teams, Service Now')"
     required: false
   - name: SERVICENOW_INSTANCE
     description: "The name of your organizations Service Now instance"

@@ -24,7 +24,7 @@ from sqlalchemy import exc
 @api.route("/smartboard/", methods=["GET"])
 class Smartboard(Resource):
 
-    period_schema = PeriodSchema(exclude=('csr', 'csr_id', 'reception_csr_ind', 'request_periods', 'sr', 'sr_id',))
+    period_schema = PeriodSchema(exclude=('csr', 'csr_id', 'reception_csr_ind', 'sr', 'sr_id',))
 
     def get(self):
         try:
@@ -58,7 +58,7 @@ class Smartboard(Resource):
 
                   citizens_waiting.append({
                       "ticket_number": c.ticket_number,
-                      "active_period": period.data
+                      "active_period": period
                   })
 
                 else:
