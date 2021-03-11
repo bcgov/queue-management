@@ -33,7 +33,7 @@ class EmailChesNotify(EmailBaseService):
         ches_payload = {
             'bodyType': email_payload.get('bodyType'),
             'body': email_payload.get('body'),
-            'from': os.getenv('EMAIL_FROM_ID'),
+            'from': os.getenv('CHES_EMAIL_FROM_ID'),
             'subject': email_payload.get('subject'),
             'to': email_payload.get('to')
         }
