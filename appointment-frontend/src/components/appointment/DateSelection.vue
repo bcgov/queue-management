@@ -188,16 +188,16 @@ export default class DateSelection extends Mixins(StepperMixin) {
      // Chrome/FF pass with "2020-05-08 09:00" but Safari fails.
      // Safari needs format from spec, "2020-05-08T09:00-07:00"
      // (safari also needs timezone offset)
-     let st = zonedTimeToUtc(new Date(`${this.selectedDate}T${slot.start_time}`), this.currentOfficeTimezone).toISOString()
+     let st = zonedTimeToUtc(new Date(`${this.selectedDate} ${slot.start_time}`), this.currentOfficeTimezone).toISOString()
      // eslint-disable-next-line no-console
-     console.log('date+time`>>>>>>>>', `${this.selectedDate}T${slot.start_time}`)
+     console.log('date+time`>>>>>>>>', `${this.selectedDate} ${slot.start_time}`)
      // eslint-disable-next-line no-console
-     console.log(new Date(`${this.selectedDate}T${slot.start_time}`), '^^^^^^^^^^^^^^^^^^^^^^^^^')
+     console.log(new Date(`${this.selectedDate} ${slot.start_time}`), '^^^^^^^^^^^^^^^^^^^^^^^^^')
      // eslint-disable-next-line no-console
-     console.log(zonedTimeToUtc(new Date(`${this.selectedDate}T${slot.start_time}`), this.currentOfficeTimezone), zonedTimeToUtc(new Date(`${this.selectedDate}T${slot.start_time}`), ''))
+     console.log(zonedTimeToUtc(new Date(`${this.selectedDate} ${slot.start_time}`), this.currentOfficeTimezone), zonedTimeToUtc(new Date(`${this.selectedDate} ${slot.start_time}`), ''))
      // eslint-disable-next-line no-console
      console.log(st, this.currentOfficeTimezone, '#########')
-     let et = zonedTimeToUtc(new Date(`${this.selectedDate}T${slot.end_time}`), this.currentOfficeTimezone).toISOString()
+     let et = zonedTimeToUtc(new Date(`${this.selectedDate} ${slot.end_time}`), this.currentOfficeTimezone).toISOString()
      st = st.replace('.000Z', '+00').replace('T', ' ')
      et = et.replace('.000Z', '+00').replace('T', ' ')
      // eslint-disable-next-line no-console
