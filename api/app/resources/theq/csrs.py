@@ -165,9 +165,7 @@ class CsrSelf(Resource):
                         if attention_needed:
                             group.append(exam)
 
-            print('csr ', csr)
             result = self.csr_schema.dump(csr)
-            print('result ', result)
             active_citizens = self.citizen_schema.dump(active_citizens)
 
             return {'csr': result,
