@@ -190,10 +190,16 @@ export default class DateSelection extends Mixins(StepperMixin) {
      // (safari also needs timezone offset)
      let st = zonedTimeToUtc(new Date(`${this.selectedDate}T${slot.start_time}`), this.currentOfficeTimezone).toISOString()
      // eslint-disable-next-line no-console
-     console.log(st, this.currentOfficeTimezone, '#########', zonedTimeToUtc(new Date(`${this.selectedDate}T${slot.start_time}`), this.currentOfficeTimezone))
+     console.log('date+time`>>>>>>>>', `${this.selectedDate}T${slot.start_time}`)
+     // eslint-disable-next-line no-console
+     console.log(new Date(`${this.selectedDate}T${slot.start_time}`), '^^^^^^^^^^^^^^^^^^^^^^^^^')
+     // eslint-disable-next-line no-console
+     console.log(zonedTimeToUtc(new Date(`${this.selectedDate}T${slot.start_time}`), this.currentOfficeTimezone), zonedTimeToUtc(new Date(`${this.selectedDate}T${slot.start_time}`), ''))
+     // eslint-disable-next-line no-console
+     console.log(st, this.currentOfficeTimezone, '#########')
      let et = zonedTimeToUtc(new Date(`${this.selectedDate}T${slot.end_time}`), this.currentOfficeTimezone).toISOString()
      st = st.replace('.000Z', '+00').replace('T', ' ')
-     et = st.replace('.000Z', '+00').replace('T', ' ')
+     et = et.replace('.000Z', '+00').replace('T', ' ')
      // eslint-disable-next-line no-console
      console.log(st, et, '************************')
      const selectedSlot: AppointmentSlot = {
