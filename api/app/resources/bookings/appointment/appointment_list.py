@@ -47,8 +47,8 @@ class AppointmentList(Resource):
                                             .all()
             result = self.appointment_schema.dump(appointments)
 
-            return {"appointments": result.data,
-                    "errors": result.errors}, 200
+            return {"appointments": result,
+                    "errors": {"errors": self.appointment_schema.validate(appointments)}}, 200
 
         except exc.SQLAlchemyError as error:
             logging.error(error, exc_info=True)

@@ -144,8 +144,8 @@ class Services(Resource):
                 filtered_services = [s for s in services if s.deleted is None]
                 result = self.service_schema.dump(filtered_services)
                 
-                return {'services': result.data,
-                        'errors': result.errors}
+                return {'services': result,
+                        'errors': {}}
 
             except exc.SQLAlchemyError as e:
                 print(e)
@@ -157,8 +157,8 @@ class Services(Resource):
             try:
                 services = Service.query.filter_by(actual_service_ind=1).all()
                 result = self.services_schema.dump(services)
-                return {'services': result.data,
-                        'errors': result.errors}
+                return {'services': result,
+                        'errors': {}}
 
             except exc.SQLAlchemyError as e:
                 print(e)

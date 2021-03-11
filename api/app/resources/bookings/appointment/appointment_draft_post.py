@@ -78,7 +78,8 @@ class AppointmentDraftPost(Resource):
         json_data['is_draft'] = True
         json_data['citizen_name'] = citizen_name
 
-        appointment, warning = self.appointment_schema.load(json_data)
+        warning = self.appointment_schema.validate(json_data)
+        appointment = self.appointment_schema.load(json_data)
 
         if warning:
             logging.warning("WARNING: %s", warning)
@@ -90,6 +91,6 @@ class AppointmentDraftPost(Resource):
         result = self.appointment_schema.dump(appointment)
 
         if not application.config['DISABLE_AUTO_REFRESH']:
-            socketio.emit('appointment_create', result.data)
+            socketio.emit('appointment_create', result)
 
-        return {"appointment": result.data, "warning": warning}, 201
+        return {"appointment": result, "warning": warning}, 201

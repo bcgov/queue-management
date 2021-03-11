@@ -41,8 +41,8 @@ class BookingList(Resource):
         try:
             bookings = Booking.query.filter_by(office_id=office_filter).all()
             result = self.booking_schema.dump(bookings)
-            return {'bookings': result.data,
-                    'errors': result.errors}, 200
+            return {'bookings': result,
+                    'errors': self.booking_schema.validate(bookings)}, 200
 
         except exc.SQLAlchemyError as error:
             logging.error(error, exc_info=True)
