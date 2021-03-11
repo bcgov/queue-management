@@ -189,7 +189,9 @@ export default class DateSelection extends Mixins(StepperMixin) {
      // Safari needs format from spec, "2020-05-08T09:00-07:00"
      // (safari also needs timezone offset)
      let st = zonedTimeToUtc(new Date(`${this.selectedDate}T${slot.start_time}`), this.currentOfficeTimezone).toISOString()
-     let et = zonedTimeToUtc(new Date(`${this.selectedDate}T${slot.end_time}`), this.currentOfficeTimezone).toISOString().replace(':000Z', '+00').replace('T', ' ')
+     // eslint-disable-next-line no-console
+     console.log(st, this.currentOfficeTimezone, '#########', zonedTimeToUtc(new Date(`${this.selectedDate}T${slot.start_time}`), this.currentOfficeTimezone))
+     let et = zonedTimeToUtc(new Date(`${this.selectedDate}T${slot.end_time}`), this.currentOfficeTimezone).toISOString()
      st = st.replace('.000Z', '+00').replace('T', ' ')
      et = st.replace('.000Z', '+00').replace('T', ' ')
      // eslint-disable-next-line no-console
