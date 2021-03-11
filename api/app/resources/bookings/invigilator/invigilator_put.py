@@ -63,7 +63,8 @@ class InvigilatorPut(Resource):
             data['shadow_count'] = invigilator_shadow_count
             data['shadow_flag'] = invigilator_shadow_flag
 
-            invigilator, warning = self.invigilator_schema.load(data, instance=invigilator, partial=True)
+            invigilator = self.invigilator_schema.load(data, instance=invigilator, partial=True)
+            warning = self.invigilator_schema.validate(data)
 
             if warning:
                 logging.warning("WARNING: %s", warning)
@@ -74,8 +75,8 @@ class InvigilatorPut(Resource):
 
             result = self.invigilator_schema.dump(invigilator)
 
-            return {"invigilator": result.data,
-                    "errors": result.errors}, 200
+            return {"invigilator": result,
+                    "errors": self.invigilator_schema.validate(invigilator)}, 200
 
         except exc.SQLAlchemyError as error:
             logging.error(error, exc_info=True)

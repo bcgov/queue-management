@@ -33,7 +33,7 @@ def get_service_request(self, json_data, csr):
         return (None, "No input data received for creating service request", 400)
 
     try:
-        service_request = self.service_request_schema.load(json_data['service_request']).data
+        service_request = self.service_request_schema.load(json_data['service_request'])
 
     except ValidationError as err:
         print("==> ValidationError in POST /service_requests/")
@@ -186,11 +186,11 @@ class ServiceRequestsList(Resource):
             SnowPlow.snowplow_event(citizen.citizen_id, csr, "additionalservice", current_sr_number=service_request.sr_number)
 
         citizen_result = self.citizen_schema.dump(citizen)
-        socketio.emit('update_active_citizen', citizen_result.data, room=csr.office_id)
+        socketio.emit('update_active_citizen', citizen_result, room=csr.office_id)
         result = self.service_request_schema.dump(service_request)
 
-        return {'service_request': result.data,
-                'errors': result.errors}, 201
+        return {'service_request': result,
+                'errors': self.service_request_schema.validate(service_request)}, 201
 
 try:
     citizen_state = CitizenState.query.filter_by(cs_state_name="Active").first()

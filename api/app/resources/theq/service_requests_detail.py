@@ -46,7 +46,7 @@ class ServiceRequestsDetail(Resource):
                 .join(ServiceReq.citizen, aliased=True).first_or_404()
 
         try:
-            service_request = self.service_request_schema.load(json_data, instance=service_request, partial=True).data
+            service_request = self.service_request_schema.load(json_data, instance=service_request, partial=True)
 
         except ValidationError as err:
             return {'message': err.messages}, 422
@@ -58,10 +58,10 @@ class ServiceRequestsDetail(Resource):
 
         result = self.service_request_schema.dump(service_request)
         citizen_result = self.citizen_schema.dump(service_request.citizen)
-        socketio.emit('update_active_citizen', citizen_result.data, room=csr.office_id)
+        socketio.emit('update_active_citizen', citizen_result, room=csr.office_id)
 
-        return {'service_request': result.data,
-                'errors': result.errors}, 200
+        return {'service_request': result,
+                'errors': self.service_request_schema.validate(service_request)}, 200
 
 
 @api.route("/service_requests/<int:id>/activate/", methods=["POST"])
@@ -115,8 +115,8 @@ class ServiceRequestActivate(Resource):
         SnowPlow.snowplow_event(service_request.citizen.citizen_id, csr, "restartservice", current_sr_number=service_request.sr_number)
 
         citizen_result = self.citizen_schema.dump(service_request.citizen)
-        socketio.emit('update_active_citizen', citizen_result.data, room=csr.office_id)
+        socketio.emit('update_active_citizen', citizen_result, room=csr.office_id)
         result = self.service_request_schema.dump(service_request)
 
-        return {'service_request': result.data,
-                'errors': result.errors}, 200
+        return {'service_request': result,
+                'errors': self.service_request_schema.validate(service_request)}, 200
