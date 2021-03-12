@@ -62,11 +62,11 @@ class Refresh(Resource):
                     Citizen.office_id == office_id,
                 )
                 if is_back_office:
-                    results = results.filter(
+                    results = results.filter(and_(Service.deleted.is_(None)), \
                         Service.display_dashboard_ind == 0,
                     )
                 else:
-                    results = results.filter(
+                    results = results.filter(and_(Service.deleted.is_(None)), \
                         Service.display_dashboard_ind == 1,
                     )
                 results = results.order_by(
