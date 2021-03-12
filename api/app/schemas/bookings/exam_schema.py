@@ -46,7 +46,7 @@ class ExamSchema(BaseSchema):
     exam_method = fields.Str()
     exam_name = fields.Str()
     exam_received = fields.Int()
-    exam_received_date = fields.DateTime(allow_none=True, datetimeformat='%Y-%m-%d')
+    exam_received_date = fields.DateTime(allow_none=True, datetimeformat='%Y-%m-%dT%H:%M:%SZ')
     exam_type_id = fields.Int()
     examinee_name = fields.Str(allow_none=True)
     examinee_phone = fields.Str(allow_none=True)
