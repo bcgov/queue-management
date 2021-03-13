@@ -1772,7 +1772,6 @@ export default class BookingBlackoutModal extends Vue {
   }
 }
 </script>
-
 <style scoped>
 .danger {
   color: red !important;
