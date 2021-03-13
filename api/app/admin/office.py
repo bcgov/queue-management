@@ -51,10 +51,12 @@ class OfficeConfig(Base):
     can_delete = False
     form_create_rules = ('office_name', 'office_number', 'sb', 'services', 'deleted', 'exams_enabled_ind',
                          'appointments_enabled_ind', 'timezone', 'latitude', 'longitude', 'office_appointment_message',
-                         'appointments_days_limit', 'appointment_duration', 'soonest_appointment', 'max_person_appointment_per_day', 'civic_address', 'telephone', 'online_status')
+                         'appointments_days_limit', 'appointment_duration', 'soonest_appointment', 'max_person_appointment_per_day',\
+                          'civic_address', 'telephone', 'online_status', 'check_in_notification', 'check_in_reminder_msg', 'automatic_reminder_at')
     form_edit_rules = ('office_name', 'office_number', 'sb', 'services', 'deleted', 'exams_enabled_ind',
                        'appointments_enabled_ind', 'timezone', 'latitude', 'longitude', 'office_appointment_message',
-                         'appointments_days_limit', 'appointment_duration', 'soonest_appointment', 'max_person_appointment_per_day', 'civic_address', 'telephone', 'online_status')
+                         'appointments_days_limit', 'appointment_duration', 'soonest_appointment', 'max_person_appointment_per_day',\
+                          'civic_address', 'telephone', 'online_status', 'check_in_notification', 'check_in_reminder_msg', 'automatic_reminder_at')
     form_choices = {
         'exams_enabled_ind': [
             ("0", 'No - Exams are not enabled for this office'), \
@@ -63,7 +65,16 @@ class OfficeConfig(Base):
         'appointments_enabled_ind': [
             ("0", 'No - Appointments are not enabled for this office'), \
             ("1", 'Yes - Appointments are enabled for this office')
-        ]
+        ],
+        'check_in_notification': [
+            ("0", 'Off - Disabale Notifications'), \
+            ("1", 'On - Enable Notifications')
+        ],
+        'automatic_reminder_at': [
+            ("1", '1 - First in Line'), \
+            ("2", '2 - Second in Line'),\
+            ("3", '3 - Third in Line')
+        ],
     }
     column_labels = {'sb': 'Smartboard', 'timezone.timezone_name': 'Timezone Name'}
     column_searchable_list = ('office_name',)
@@ -86,7 +97,10 @@ class OfficeConfig(Base):
                    'timeslots',
                    'number_of_dlkt',
                    'office_email_paragraph',
-                   'external_map_link'
+                   'external_map_link',
+                   'check_in_notification',
+                   'check_in_reminder_msg',
+                   'automatic_reminder_at'
                    ]
 
     form_excluded_columns = ('citizens',
@@ -120,7 +134,10 @@ class OfficeConfig(Base):
                          'timeslots',
                          'number_of_dlkt',
                          'office_email_paragraph',
-                         'external_map_link'
+                         'external_map_link',
+                         'check_in_notification',
+                         'check_in_reminder_msg',
+                         'automatic_reminder_at'
                          )
 
     form_edit_rules = ('office_name',
@@ -147,7 +164,10 @@ class OfficeConfig(Base):
                        'timeslots',
                        'number_of_dlkt',
                        'office_email_paragraph',
-                       'external_map_link'
+                       'external_map_link',
+                       'check_in_notification',
+                       'check_in_reminder_msg',
+                       'automatic_reminder_at'
                        )
 
     form_args = {
@@ -176,7 +196,10 @@ class OfficeConfig(Base):
                      'max_person_appointment_per_day': 'Maximum number of appointments allowed for same person per day',
                      'office_email_paragraph': 'Office Email Paragraph',
                      'soonest_appointment': 'Soonest Appointment (minutes)',
-                     'appointment_duration': 'Default Appointment Duration'
+                     'appointment_duration': 'Default Appointment Duration',
+                     'check_in_notification': 'Check-In Notifications',
+                     'check_in_reminder_msg': 'Check-In Notification Reminder Message',
+                     'automatic_reminder_at': 'Check-In Notification Automatically Send Message When Ticket is X in Line'
                      }
 
     column_sortable_list = ['office_name',
@@ -282,7 +305,10 @@ class OfficeConfigGA(OfficeConfig):
         'timeslots',
         'number_of_dlkt',
         'office_email_paragraph',
-        'external_map_link'
+        'external_map_link',
+        'check_in_notification',
+        'check_in_reminder_msg',
+        'automatic_reminder_at'
     )
 
     form_excluded_columns = (

@@ -901,7 +901,7 @@ export const commonActions: any = {
   clickAddToQueue (context) {
     const { citizen_id } = context.getters.form_data.citizen
     context.commit('setPerformingAction', true)
-
+    console.log('hereeeeeeeeeeeeeee==============>>',citizen_id)
     context
       .dispatch('putCitizen')
       .then(() => {
@@ -2238,6 +2238,9 @@ export const commonActions: any = {
     let citizen_id
     let priority
     let counter
+    let notification_phone
+    let notification_email
+    let walkin_unique_id
 
     if (context.state.serviceModalForm.citizen_id) {
       const {
@@ -2248,6 +2251,9 @@ export const commonActions: any = {
       priority = context.state.serviceModalForm.priority
       citizen_id = context.state.serviceModalForm.citizen_id
       const prevCitizen = context.getters.invited_citizen
+      notification_phone = context.state.serviceModalForm.notification_phone
+      notification_email = context.state.serviceModalForm.notification_email
+      walkin_unique_id =  context.state.serviceModalForm.walkin_unique_id
 
       if (!context.state.showAddModal) {
         if (citizen_comments !== prevCitizen.citizen_comments) {
@@ -2265,6 +2271,15 @@ export const commonActions: any = {
         ) {
           data.accurate_time_ind = accurate_time_ind
         }
+        if (notification_phone !== prevCitizen.notification_phone) {
+          data.notification_phone = notification_phone
+        }
+        if (notification_email !== prevCitizen.notification_email) {
+          data.notification_email = notification_email
+        }
+        if (walkin_unique_id !== prevCitizen.walkin_unique_id) {
+          data.walkin_unique_id = walkin_unique_id
+        }
       }
     } else {
       const { form_data } = context.getters
@@ -2272,6 +2287,9 @@ export const commonActions: any = {
       data.counter_id = form_data.counter
       data.priority = form_data.priority
       data.citizen_comments = form_data.comments
+      data.notification_phone = form_data.notification_phone
+      data.notification_email = form_data.notification_email
+      data.walkin_unique_id = form_data.walkin_unique_id
     }
 
     if (Object.keys(data).length === 0) {
@@ -2279,12 +2297,27 @@ export const commonActions: any = {
         resolve(' ')
       })
     }
-
     return new Promise((resolve, reject) => {
       const url = `/citizens/${citizen_id}/`
 
       Axios(context)
         .put(url, data)
+        .then(
+          resp => {
+            resolve(resp)
+          },
+          error => {
+            reject(error)
+          }
+        )
+    })
+  },
+
+  sentNotificationReminder (context, payload) {
+    return new Promise((resolve, reject) => {
+      const url = `/citizens/${payload['citizen_id']}/`
+      Axios(context)
+        .put(url, payload)
         .then(
           resp => {
             resolve(resp)

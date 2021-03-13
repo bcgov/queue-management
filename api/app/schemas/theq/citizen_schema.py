@@ -40,3 +40,14 @@ class CitizenSchema(ma.SQLAlchemySchema):
     cs = fields.Nested(CitizenStateSchema(exclude=('cs_state_desc', 'cs_id', 'citizens', 'state_citizens')))
     priority = fields.Int()
     user_id = fields.Int()
+
+    # for walk-in
+    notification_sent_time = fields.DateTime()
+    notification_phone = fields.Str()
+    notification_email = fields.Str()
+    # reminder_flag
+    # 0 - reminder not sent - grey icon
+    # 1 - first reminder sent - blue icon
+    # 2 - second reminder sent - red icon
+    reminder_flag = fields.Int()
+    walkin_unique_id = fields.Str()

@@ -12,15 +12,19 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask import g
+from datetime import datetime
+from flask import g, request
+from pprint import pprint
 from flask_restx import Resource
 from qsystem import api, api_call_with_retry, db, socketio, my_print
-from app.models.theq import Citizen, CSR
+from app.models.theq import Citizen, CSR, Office
 from app.models.theq import SRState
 from app.schemas.theq import CitizenSchema
 from app.utilities.snowplow import SnowPlow
 from app.utilities.auth_util import Role, has_any_role
 from app.auth.auth import jwt
+from app.utilities.email import get_walkin_spot_confirmation_email_contents, send_email, generate_ches_token
+from app.utilities.sms import send_walkin_spot_confirmation_sms
 
 
 @api.route("/citizens/<int:id>/add_to_queue/", methods=["POST"])
@@ -56,6 +60,39 @@ class CitizenAddToQueue(Resource):
 
         pending_service_state = SRState.get_state_by_name("Pending")
         active_service_request.sr_state_id = pending_service_state.sr_state_id
+        # send walkin spot confirmation
+        try:
+            if citizen.notification_phone or citizen.notification_email:
+                # TODO: code/function call to send first sms/email confirmation
+                update_table = False
+                try:
+                    # TODO: Preapre tiny url and replace below url
+                    url = "http://localhost:8081/queue"
+                    # email
+                    email_sent = False
+                    if citizen.notification_email:
+                        ches_token = generate_ches_token()
+                        officeObj = Office.find_by_id(citizen.office_id)
+                        pprint('Sending email for walk in spot confirmations')
+                        email_sent = get_walkin_spot_confirmation_email_contents(citizen, url, officeObj)
+                    # SMS  
+                    sms_sent = False
+                    if citizen.notification_phone:
+                        sms_sent = send_walkin_spot_confirmation_sms(citizen, url, request.headers['Authorization'].replace('Bearer ', ''))
+                    if email_sent:
+                        # status = send_email(ches_token, *email_sent)
+                        update_table = True
+                    if sms_sent:
+                        update_table = True
+                except Exception as exc:
+                    pprint(f'Error on token generation - {exc}')
+                    update_table = False
+                if update_table:
+                    citizen.reminder_flag = 0
+                    citizen.notification_sent_time = datetime.utcnow()
+        except Exception as err:
+            logging.error('{}'.format(str(err)))
+            pprint(err)
 
         db.session.add(citizen)
         db.session.commit()

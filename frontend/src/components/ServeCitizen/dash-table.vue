@@ -39,18 +39,71 @@ limitations under the License.*/
         </template>
         <template v-else>{{ parseComments(row.item) }}</template>
       </template>
+       <template slot="reminder_flag" slot-scope="row">
+        <b-button 
+          v-if="(row.item.reminder_flag == 0) && (row.item.notification_phone || row.item.notification_email)"
+          @click="sentReminder(row.item.citizen_id, 'first')"
+          variant="secondary"
+          >
+          <font-awesome-icon
+            icon="phone"
+          />
+        </b-button>
+        <b-button 
+          v-if="row.item.reminder_flag == 1 && (row.item.notification_phone || row.item.notification_email)"
+          variant="primary"
+          @click="sentReminder(row.item.citizen_id, 'second')"
+          >
+          <font-awesome-icon
+            icon="phone"
+          />
+        </b-button>
+        <b-button 
+          disabled
+          v-if="row.item.reminder_flag == 2 && (row.item.notification_phone || row.item.notification_email)"
+          variant="danger"
+          >
+          <font-awesome-icon
+            icon="phone"
+            disabled
+          />
+        </b-button>
+      </template>
+      <template slot="notification_phone" slot-scope="row">
+        <b-row v-if="row.item.notification_phone">
+          {{row.item.notification_phone}}
+        </b-row>
+        <b-row v-if="row.item.notification_email">
+          {{row.item.notification_email}}
+        </b-row>
+      </template>
+      <template slot="notification_sent_time" slot-scope="row">
+         <b-button 
+          disabled
+          v-if="row.item.notification_sent_time"
+          variant="info"
+          >
+          <font-awesome-icon
+            icon="clock"
+            disabled
+          />
+        </b-button>
+        <span v-if="row.item.notification_sent_time">{{timeFormat(row.item.notification_sent_time)}} </span>
+      </template>
     </b-table>
   </div>
 </template>
 
 <script lang="ts">
-// /* eslint-disable */
+/* eslint-disable */
 import { Action, Getter, State, namespace } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
 
+import moment from 'moment'
+
 const AppointmentsModule = namespace('appointmentsModule')
 
-@Component({})
+@Component
 export default class DashTable extends Vue {
   @State('citizenInvited') private citizenInvited!: any
   @State('serviceModalForm') private serviceModalForm!: any
@@ -66,6 +119,7 @@ export default class DashTable extends Vue {
 
   @Action('clickDashTableRow') public clickDashTableRow: any
   @Action('postInvite') public postInvite: any
+  @Action('sentNotificationReminder') public sentNotificationReminder: any
 
   private t: boolean = true
   private f: boolean = false
@@ -74,9 +128,12 @@ export default class DashTable extends Vue {
     { key: 'start_time', label: 'Time', sortable: true, thStyle: 'width: 10%' },
     { key: 'ticket_number', label: 'Ticket', sortable: false, thStyle: 'width: 6%' },
     { key: 'csr', label: 'Served By', sortable: false, thStyle: 'width: 10%' },
-    { key: 'category', label: 'Category', sortable: false, thStyle: 'width: 17%' },
-    { key: 'service', label: 'Service', sortable: false, thStyle: 'width: 17%' },
-    { key: 'citizen_comments', label: 'Comments', sortable: false, thStyle: 'width: 17%' }
+    { key: 'category', label: 'Category', sortable: false, thStyle: 'width: 10%' },
+    { key: 'service', label: 'Service', sortable: false, thStyle: 'width: 10%' },
+    { key: 'citizen_comments', label: 'Comments', sortable: false, thStyle: 'width: 10%' },
+    { key: 'reminder_flag', label: 'Action', sortable: false, thStyle: 'width: 8%' },
+    { key: 'notification_phone', label: 'Notification', sortable: false, thStyle: 'width: 25%' },
+    { key: 'notification_sent_time', label: 'Time Sent', sortable: false, thStyle: 'width: 20%' }
   ]
 
   get citizens () {
@@ -181,5 +238,34 @@ export default class DashTable extends Vue {
   private showPriority (priority: any) {
     return priority === 1 ? 'High' : priority === 2 ? 'Default' : priority === 3 ? 'Low' : null
   }
+
+  public timeFormat (value: any) {
+    return moment.utc(value).local().format('hh:mm A')
+  }
+
+  private sentReminder (citizen_id: any, count: any) {
+    let payload = {}
+    if (count === 'first') {
+      payload = {
+        'citizen_id' : citizen_id,
+        'is_first_reminder' : true,
+        'is_second_reminder' : false
+      }
+    }
+    if (count === 'second') {
+      payload = {
+        'citizen_id' : citizen_id,
+        'is_first_reminder' : false,
+        'is_second_reminder' : true
+      }
+    }
+    this.sentNotificationReminder(payload).then(resp => {
+        this.citizens_queue
+      }).catch(error => {
+        console.log(error)
+        this.citizens_queue
+      })
+  } 
+
 }
 </script>

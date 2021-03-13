@@ -101,6 +101,12 @@ class Office(Base):
     exams = db.relationship("Exam")
     rooms = db.relationship('Room')
 
+    # for walk-in notifications
+    check_in_notification = db.Column(db.Integer)
+    check_in_reminder_msg = db.Column(db.Text)
+    automatic_reminder_at = db.Column(db.Integer)
+    
+
     format_string = 'office_%s'
     offices_cache_key: str = 'active_offices'
 

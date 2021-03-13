@@ -54,5 +54,10 @@ class OfficeSchema(ma.SQLAlchemySchema):
     online_status = fields.Str()
     external_map_link = fields.Str()
 
+    # for walk-in notifications
+    check_in_notification = fields.Int()
+    check_in_reminder_msg = fields.Str()
+    automatic_reminder_at = fields.Int()
+
 
 
