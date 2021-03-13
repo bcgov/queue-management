@@ -20,6 +20,10 @@ import Smartboard from '@/components/smartboard/index.vue'
 
 import Upload from '@/components/upload/upload.vue'
 
+// communda task list component // service-flow
+import Tasklist from '@/views/TaskList.vue'
+import ButtonTasklist from '@/components/TaskList/ButtonTasklist.vue'
+
 export const routes = [
   {
     path: '/',
@@ -79,6 +83,14 @@ export const routes = [
         components: {
           default: Upload,
           buttons: ButtonsUpload
+        },
+        meta: { hideCitizenWaiting: false }
+      },
+      {
+        path: 'service-flow',
+        components: {
+          default: Tasklist,
+          buttons: ButtonTasklist
         },
         meta: { hideCitizenWaiting: false }
       }
