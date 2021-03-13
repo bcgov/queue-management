@@ -555,9 +555,10 @@ export default class ApptBookingModal extends Vue {
             if (this.clickedAppt.start && this.clickedAppt.end ) {
               this.selectLength = this.clickedAppt.end.diff(this.clickedAppt.start, 'minutes')
             }
-          } else {
-            this.selectLength = 15
-          }
+          } 
+          // else {
+          //   this.selectLength = 15
+          // }
           if (this.selectedServiceObj.timeslot_duration) {
             if (this.clickedAppt && !this.is_first_edit) {
               if (this.clickedAppt.start && this.clickedAppt.end ) {
