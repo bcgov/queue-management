@@ -27,6 +27,9 @@ import BootstrapVue from 'bootstrap-vue'
 import router from './router'
 import { Plugin } from 'vue-fragment'
 import { library } from '@fortawesome/fontawesome-svg-core'
+import ConfigHelper from '@/utils/config-helper'
+
+
 import {
   faAngleLeft,
   faAngleRight,
@@ -126,6 +129,7 @@ Vue.config.productionTip = false
 // });
 /* eslint-disable no-new */
 
+ConfigHelper.fetchConfig()
 
 new Vue({
   router,
@@ -133,3 +137,4 @@ new Vue({
   vuetify,
   render: h => h(MainApp)
 }).$mount('#app')
+
