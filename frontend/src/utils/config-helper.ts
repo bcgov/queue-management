@@ -12,8 +12,6 @@ export default class ConfigHelper {
     if (this.config === '') {
       const response = await Axios.get(url)
       this.config = response.data
-      console.log('response', response)
-      console.log('this.config', this.config)
     }
   }
 
@@ -22,14 +20,10 @@ export default class ConfigHelper {
     if (this.config === '') {
        this.fetchConfig()
     }
-    console.log("this.config[key]", this.config[key])
-    console.log("this.config", this.config)
-
     return this.config[key] || false
   }
 
   static isServiceFLowEnabled () {
-    console.log("this.getValue('SERVICEFLOW_ENABLED')", this.getValue('SERVICEFLOW_ENABLED'))
     return this.getValue('SERVICEFLOW_ENABLED') || false
   }
 
