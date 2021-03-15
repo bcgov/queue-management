@@ -60,13 +60,15 @@ class Refresh(Resource):
                     Service
                 ).filter(
                     Citizen.office_id == office_id,
+                ).filter(
+                    Service.deleted.is_(None)
                 )
                 if is_back_office:
-                    results = results.filter(and_(Service.deleted.is_(None)), \
+                    results = results.filter(
                         Service.display_dashboard_ind == 0,
                     )
                 else:
-                    results = results.filter(and_(Service.deleted.is_(None)), \
+                    results = results.filter(
                         Service.display_dashboard_ind == 1,
                     )
                 results = results.order_by(
