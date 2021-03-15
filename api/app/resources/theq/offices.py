@@ -27,8 +27,8 @@ class OfficeList(Resource):
 
             result = Office.get_all_active_offices()
 
-            return {'offices': result.data,
-                    'errors': result.errors}
+            return {'offices': result,
+                    'errors': {}}
 
         except exc.SQLAlchemyError as e:
             print(e)

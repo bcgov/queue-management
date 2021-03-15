@@ -44,7 +44,8 @@ class ExamPut(Resource):
         if not (exam.office_id == csr.office_id or csr.ita2_designate == 1):
             return {"The Exam Office ID and CSR Office ID do not match!"}, 403
 
-        exam, warning = self.exam_schema.load(json_data, instance=exam, partial=True)
+        exam = self.exam_schema.load(json_data, instance=exam, partial=True)
+        warning = self.exam_schema.validate(json_data)
 
         if warning:
             logging.warning("WARNING: %s", warning)
@@ -55,5 +56,5 @@ class ExamPut(Resource):
 
         result = self.exam_schema.dump(exam)
 
-        return {"exam": result.data,
-                "errors": result.errors}, 201
+        return {"exam": result,
+                "errors": self.exam_schema.validate(exam)}, 201

@@ -12,19 +12,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-import toastedmarshmallow
 from marshmallow import fields
 from app.models.theq import CitizenState
 from qsystem import ma
+from app.schemas import BaseSchema
 
 
-class CitizenStateSchema(ma.SQLAlchemySchema):
+class CitizenStateSchema(BaseSchema):
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = CitizenState
         include_relationships = True
-        load_instance = True
-        jit = toastedmarshmallow.Jit
 
     cs_id = fields.Int()
     cs_state_name = fields.Str()

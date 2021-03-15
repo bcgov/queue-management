@@ -12,19 +12,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-import toastedmarshmallow
 from marshmallow import fields
 from app.models.theq import Counter
 from qsystem import ma
+from app.schemas import BaseSchema
 
 
-class CounterSchema(ma.SQLAlchemySchema):
+class CounterSchema(BaseSchema):
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = Counter
         include_relationships = True
-        load_instance = True
-        jit = toastedmarshmallow.Jit
 
     counter_id = fields.Int()
     counter_name = fields.Str()

@@ -40,8 +40,8 @@ class CitizenDetail(Resource):
                 citizen_ticket = str(citizen.ticket_number)
             my_print("==> GET /citizens/" + str(citizen.citizen_id) + '/, Ticket: ' + citizen_ticket)
             result = self.citizen_schema.dump(citizen)
-            return {'citizen': result.data,
-                    'errors': result.errors}
+            return {'citizen': result,
+                    'errors': self.citizen_schema.validate(citizen)}
 
         except exc.SQLAlchemyError as e:
             print(e)
@@ -63,7 +63,8 @@ class CitizenDetail(Resource):
         my_print("==> PUT /citizens/" + str(citizen.citizen_id) + '/, Ticket: ' + str(citizen.ticket_number))
         if not ((json_data.get('is_first_reminder', False) or json_data.get('is_second_reminder', False))):
             try:
-                citizen = self.citizen_schema.load(json_data, instance=citizen, partial=True).data
+                # citizen = self.citizen_schema.load(json_data, instance=citizen, partial=True).data
+                citizen = self.citizen_schema.load(json_data, instance=citizen, partial=True)
             except ValidationError as err:
                 return {'message': err.messages}, 422
         else:
@@ -101,6 +102,11 @@ class CitizenDetail(Resource):
             except ValidationError as err:
                 return {'message': err.messages}, 422
 
+        # try:
+        #     citizen = self.citizen_schema.load(json_data, instance=citizen, partial=True)
+
+        # except ValidationError as err:
+        #     return {'message': err.messages}, 422
 
         db.session.add(citizen)
         db.session.commit()
@@ -111,10 +117,11 @@ class CitizenDetail(Resource):
 
         result = self.citizen_schema.dump(citizen)
         citizen = Citizen.query.filter_by(citizen_id=citizen.citizen_id).first()
-        socketio.emit('update_active_citizen', result.data, room=csr.office_id)
+        # socketio.emit('update_active_citizen', result.data, room=csr.office_id)
+        socketio.emit('update_active_citizen', result, room=csr.office_id)
 
-        return {'citizen': result.data,
-                'errors': result.errors}, 200
+        return {'citizen': result,
+                'errors': self.citizen_schema.validate(citizen)}, 200
 
 try:
     counter = Counter.query.filter(Counter.counter_name=="Counter")[0]

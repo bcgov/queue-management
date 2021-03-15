@@ -32,8 +32,8 @@ class ChannelList(Resource):
         try:
             channels = Channel.query.all()
             result = self.channels_schema.dump(channels)
-            return {'channels': result.data,
-                    'errors': result.errors}, 200
+            return {'channels': result,
+                    'errors': self.channels_schema.validate(channels)}, 200
 
         except exc.SQLAlchemyError as e:
             print (e)

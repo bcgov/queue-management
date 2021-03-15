@@ -29,8 +29,8 @@ class Categories(Resource):
         try:
             services = Service.query.filter_by(actual_service_ind=0).order_by(Service.service_name).all()
             result = self.categories_schema.dump(services)
-            return {'categories': result.data,
-                    'errors': result.errors}, 200
+            return {'categories': result,
+                    'errors': self.categories_schema.validate(services)}, 200
 
         except exc.SQLAlchemyError as e:
             print(e)

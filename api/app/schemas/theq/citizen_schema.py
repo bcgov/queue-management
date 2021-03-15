@@ -12,20 +12,19 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-import toastedmarshmallow
 from marshmallow import fields
+
 from app.models.theq import Citizen
-from app.schemas.theq import ServiceReqSchema, CitizenStateSchema, OfficeSchema
-from qsystem import ma
+from app.schemas import BaseSchema
+from app.schemas.theq import ServiceReqSchema, CitizenStateSchema
 
 
-class CitizenSchema(ma.SQLAlchemySchema):
+class CitizenSchema(BaseSchema):
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = Citizen
         include_relationships = True
-        load_instance = True
-        jit = toastedmarshmallow.Jit
+        datetimeformat = '%Y-%m-%dT%H:%M:%SZ'
 
     citizen_id = fields.Int(dump_only=True)
     citizen_name = fields.Str()
@@ -37,7 +36,7 @@ class CitizenSchema(ma.SQLAlchemySchema):
     start_time = fields.DateTime()
     accurate_time_ind = fields.Int()
     service_reqs = fields.Nested(ServiceReqSchema(exclude=('citizen',)), many=True)
-    cs = fields.Nested(CitizenStateSchema(exclude=('cs_state_desc', 'cs_id', 'citizens', 'state_citizens')))
+    cs = fields.Nested(CitizenStateSchema(exclude=('cs_state_desc', 'cs_id')))
     priority = fields.Int()
     user_id = fields.Int()
 

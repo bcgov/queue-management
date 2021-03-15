@@ -74,7 +74,6 @@ import { Office } from '@/models/office'
 import { OfficeModule } from '@/store/modules'
 import { Service } from '../../models/service'
 import StepperMixin from '@/mixins/StepperMixin.vue'
-import { format } from 'date-fns'
 
 @Component({
   computed: {
@@ -189,11 +188,17 @@ export default class DateSelection extends Mixins(StepperMixin) {
      // Chrome/FF pass with "2020-05-08 09:00" but Safari fails.
      // Safari needs format from spec, "2020-05-08T09:00-07:00"
      // (safari also needs timezone offset)
+     let st = zonedTimeToUtc(new Date(`${this.selectedDate} ${slot.start_time}`.replace(/-/g, '/')), this.currentOfficeTimezone).toISOString()
+     let et = zonedTimeToUtc(new Date(`${this.selectedDate} ${slot.end_time}`.replace(/-/g, '/')), this.currentOfficeTimezone).toISOString()
+     st = st.replace('.000Z', '+00').replace('T', ' ')
+     et = et.replace('.000Z', '+00').replace('T', ' ')
      const selectedSlot: AppointmentSlot = {
        // start_time: new Date(`${this.selectedDate}T${slot.start_time}${timezoneOffset()}`).toISOString(),
        // end_time: new Date(`${this.selectedDate}T${slot.end_time}${timezoneOffset()}`).toISOString()
-       start_time: zonedTimeToUtc(new Date(`${this.selectedDate}T${slot.start_time}`), this.currentOfficeTimezone).toISOString(),
-       end_time: zonedTimeToUtc(new Date(`${this.selectedDate}T${slot.end_time}`), this.currentOfficeTimezone).toISOString()
+       //  start_time: zonedTimeToUtc(new Date(`${this.selectedDate}T${slot.start_time}`), this.currentOfficeTimezone).toISOString(),
+       //  end_time: zonedTimeToUtc(new Date(`${this.selectedDate}T${slot.end_time}`), this.currentOfficeTimezone).toISOString()
+       start_time: st,
+       end_time: et
      }
      // eslint-disable-next-line no-console
      console.log(selectedSlot)
