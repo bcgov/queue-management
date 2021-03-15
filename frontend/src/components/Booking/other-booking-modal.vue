@@ -828,7 +828,6 @@ export default class OtherBookingModal extends Vue {
         self.postBooking(booking).then(() => {
           sent_flag = sent_flag + 1
           apiProgressBus.$emit(APIProgressBusEvents.APIProgressEvent, sent_flag)
-          console.log('111111111111', sent_flag)
           if (sent_flag === this.other_rrule_array.length) {
               self.finishBooking()
               self.getBookings()
@@ -882,7 +881,6 @@ export default class OtherBookingModal extends Vue {
       self.getBookings()
       self.submitting_flag = false
     }, 2000)
-    console.log(sent_flag, this.other_rrule_array.length)
   }
 
   setSingle () {
@@ -922,7 +920,6 @@ export default class OtherBookingModal extends Vue {
     let validate_flag =false
     this.start_time_msg = ''
     this.end_time_msg = ''
-    console.log(this.other_recurring_start_time, new Date(this.other_recurring_start_time).getHours());
     
     if (this.other_recurring_start_time) {
       if ((new Date(this.other_recurring_start_time).getHours() <= 8) || (new Date(this.other_recurring_start_time).getHours() >= 17)){
@@ -988,7 +985,6 @@ export default class OtherBookingModal extends Vue {
     const a = moment(this.other_recurring_start_date)
     const b = moment(this.other_recurring_end_date)
     const diffDays = b.diff(a, 'days')
-    console.log(a.format(), b.format(), diffDays, '++++++++++diddddd', diffDays > 364)
    
     if (diffDays > 364) {
       this.other_recurring_start_date = null
@@ -1005,7 +1001,6 @@ export default class OtherBookingModal extends Vue {
     const start_year = parseInt(moment(other_recurring_start_date).utc().clone().format('YYYY'))
     const start_month = parseInt(moment(other_recurring_start_date).utc().clone().format('MM'))
     const start_day = parseInt(moment(other_recurring_start_date).utc().clone().subtract(4, 'hours').format('DD'))
-    console.log(other_recurring_start_date.format(), start_year,start_month,start_day,'++++++++++++++++>>start')
     // const start_year = parseInt(moment(this.other_recurring_start_date).utc().clone().format('YYYY'))
     // const start_month = parseInt(moment(this.other_recurring_start_date).utc().clone().format('MM'))
     // const start_day = parseInt(moment(this.other_recurring_start_date).utc().clone().subtract(4, 'hours').format('DD'))
@@ -1025,7 +1020,6 @@ export default class OtherBookingModal extends Vue {
     const new_end_year = parseInt(moment(other_recurring_end_date).utc().clone().add(1, 'day').format('YYYY'))
     const new_end_month = parseInt(moment(other_recurring_end_date).utc().clone().add(1, 'day').format('MM'))
     const new_end_day = parseInt(moment(other_recurring_end_date).utc().clone().add(1, 'day').format('DD'))
-    console.log(other_recurring_end_date.format(), end_year,end_month,end_day,'+++++++++++end')
     // const end_year = parseInt(moment(this.other_recurring_end_date).utc().clone().format('YYYY'))
     // const end_month = parseInt(moment(this.other_recurring_end_date).utc().clone().format('MM'))
     // const end_day = parseInt(moment(this.other_recurring_end_date).utc().clone().format('DD'))
@@ -1040,8 +1034,6 @@ export default class OtherBookingModal extends Vue {
     const duration_end = moment(other_recurring_end_time).utc()
     // const duration_start = moment(this.other_recurring_start_time).utc()
     // const duration_end = moment(this.other_recurring_end_time).utc()
-    console.log('duration_start==>>', duration_start.format(), other_recurring_start_time.format())
-    console.log('duration_end==>>', duration_end.format(), other_recurring_end_time.format())
 
     const duration = moment.duration(duration_end.diff(duration_start))
     const duration_minutes = duration.asMinutes()
@@ -1067,7 +1059,6 @@ export default class OtherBookingModal extends Vue {
       // TODO Might be Deprecated -- IF RRule Breaks, this is where it will happen
       // const date_start = new Date(Date.UTC(start_year, start_month - 1, start_day))
       // const until = new Date(Date.UTC(end_year, end_month - 1, end_day))
-      // console.log(date_start, until, '+++++++++++++++')
       const date_start = new Date(start_year+'/'+start_month+'/'+start_day)
       let until = new Date(end_year+'/'+end_month+'/'+end_day)
       if (other_recurring_end_date.isDST()) {
@@ -1092,7 +1083,6 @@ export default class OtherBookingModal extends Vue {
       //     if (local_start_hour >= 8 && local_start_hour < 16) {
       //       date_with_offset.add(1, 'd')
       //     }
-      //     console.log(date_with_offset.format(),'+++++++++!!!!!!!!!!!!!!!!!!!!++++++date_with_offset', date,'-____________________date')
       //     const formatted_start_date = moment(date).clone().set({ hour: local_start_hour, minute: local_start_minute }).format('YYYY-MM-DD HH:mm:ssZ')
       //     // TODO For the night is dark and full of terror
       //     // if (num_days == 0) {
@@ -1101,15 +1091,11 @@ export default class OtherBookingModal extends Vue {
       //     if (num_days < 0) {
       //       num_days = 0
       //     }
-      //     console.log(local_start_hour, local_start_minute, duration_minutes, num_days)
-      //     console.log(moment(date).clone().set({ hour: local_start_hour, minute: local_start_minute }).add(duration_minutes, 'minutes').add(num_days, 'd').format('YYYY-MM-DD HH:mm:ssZ'))
       //     const formatted_end_date = moment(date).clone().set({ hour: local_end_hour, minute: local_end_minute }).format('YYYY-MM-DD HH:mm:ssZ')
       //     // let formatted_end_date = moment(date_with_offset).clone().set({ hour: local_start_hour, minute: local_start_minute }).add(duration_minutes, 'minutes').add(num_days, 'd').format('YYYY-MM-DD HH:mm:ssZ')
-      //     // console.log(new Date(array[0]).getTimezoneOffset(),  new Date(date).getTimezoneOffset(),  (new Date(array[0]).getTimezoneOffset() !== new Date(date).getTimezoneOffset()))
       //     // if (new Date(array[0]).getTimezoneOffset() !== new Date(date).getTimezoneOffset()) {
       //     //   formatted_end_date = moment(formatted_end_date).add(new Date().getTimezoneOffset() - new Date(date).getTimezoneOffset(), 'minutes').format('YYYY-MM-DD HH:mm:ssZ')
       //     // }
-      //     console.log("start:  ", formatted_start_date, 'end:  ', formatted_end_date)
       //     local_other_dates_array.push({ start: formatted_start_date, end: formatted_end_date })
       // })
 
