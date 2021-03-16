@@ -1123,15 +1123,15 @@ export default class OtherBookingModal extends Vue {
     this.recurring_form_state = 'audit'
   }
 
-   getDates(startDate: any, stopDate: any) {
-      var dateArray = new Array();
-      var currentDate = startDate;
-      while (moment(stopDate).diff(currentDate, 'days') >= 0) {
-        dateArray.push(new Date (currentDate));
-        currentDate = currentDate.add(1, 'day')
-      }
-      return dateArray;
-  }
+  //  getDates(startDate: any, stopDate: any) {
+  //     var dateArray = new Array();
+  //     var currentDate = startDate;
+  //     while (moment(stopDate).diff(currentDate, 'days') >= 0) {
+  //       dateArray.push(new Date (currentDate));
+  //       currentDate = currentDate.add(1, 'day')
+  //     }
+  //     return dateArray;
+  // }
 
   checkRecurringInput () {
     if (this.other_selected_frequency.length > 0 && this.other_recurring_end_date !== null &&
