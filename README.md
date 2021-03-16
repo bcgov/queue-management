@@ -78,7 +78,7 @@ Basic Administration Panels to add, update and delete:
 
 Feedback
 
-- Sends to Slack and / or Service Now and / or Rocket Chat
+- Sends to Teams and / or Service Now and / or Rocket Chat
 
 Analytics
 
@@ -125,7 +125,7 @@ The openshift templates are used for build configs and deployment configs
 
 Additional Enviornment Variables for API pods are used:
 
-SLACK_URL - to integrate feedback to Slack
+TEAMS_URL - to integrate feedback to Teams
 THEQ_SNOWPLOW_ENDPOINT - where snowplow events are sent
 THEQ_SNOWPLOW_APPID - Application ID for snowplow
 THEQ_SNOWPLOW_NAMESPACE - Snowplow events namespace

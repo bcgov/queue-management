@@ -12,19 +12,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-import toastedmarshmallow
 from marshmallow import fields
 from app.models.theq import Role
 from qsystem import ma
+from app.schemas import BaseSchema
 
 
-class RoleSchema(ma.SQLAlchemySchema):
+class RoleSchema(BaseSchema):
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = Role
         include_relationships = True
-        load_instance = True
-        jit = toastedmarshmallow.Jit
 
     role_id = fields.Int()
     role_code = fields.Str()
