@@ -21,8 +21,10 @@ def get_email_service():
     from .email_ches_notify import EmailChesNotify
 
     _instance: EmailBaseService = None
-    if os.getenv('EMAIL_USE_GC_NOTIFY', 'false').lower() == 'true':
+    if os.getenv('EMAIL_PROVIDER') == 'GC_NOTIFY':
         _instance = EmailGCNotify()
-    else:
+    elif os.getenv('EMAIL_PROVIDER') == 'CHES':
         _instance = EmailChesNotify()
+    else:
+        _instance = EmailGCNotify()
     return _instance
