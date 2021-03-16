@@ -62,8 +62,8 @@ class BookingSchema(ma.SQLAlchemySchema):
         #        PUT /bookings/recurring/uuid call
         if invigilator_data is not None:
             for invigilator in invigilator_data:
-                id = invigilator.get('invigilator_id')
-                invigilator_list.append(id)
+                invig_id = invigilator.get('invigilator_id')
+                invigilator_list.append(invig_id)
             data['invigilators'] = invigilator_list
         return data
 

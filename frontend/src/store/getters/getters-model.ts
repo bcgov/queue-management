@@ -16,7 +16,7 @@ import { searchNestedObject } from '../helpers'
 export const commonGetters: any = {
 
   admin_navigation_nonblank (state) {
-    if (state.adminNavigation != '') {
+    if (state.adminNavigation !== '') {
       return state.adminNavigation
     } else {
       //  Default navigation is to the GA Edit CSR screen.
@@ -26,14 +26,14 @@ export const commonGetters: any = {
       if (
         state.user &&
         state.user.role &&
-        state.user.role.role_code == 'SUPPORT'
+        state.user.role.role_code === 'SUPPORT'
       ) {
         nav = 'csr'
       }
       if (
         state.user &&
         state.user.role &&
-        state.user.role.role_code == 'ANALYTICS'
+        state.user.role.role_code === 'ANALYTICS'
       ) {
         nav = 'service'
       }
@@ -59,7 +59,7 @@ export const commonGetters: any = {
         shadow_count: i.shadow_count
       })
     })
-    return invigilators.filter(i => i.shadow_count == 2)
+    return invigilators.filter(i => i.shadow_count === 2)
   },
 
   shadow_invigilator_options (state) {
@@ -103,7 +103,7 @@ export const commonGetters: any = {
         shadow_count: i.shadow_count
       })
     })
-    return invigilators.filter(i => i.shadow_count == 2)
+    return invigilators.filter(i => i.shadow_count === 2)
   },
 
   show_scheduling_indicator: state => {
@@ -140,13 +140,13 @@ export const commonGetters: any = {
   },
 
   exam_object_id: (state, getters) => examId => {
-    return state.examTypes.find(type => type.exam_type_id == examId)
+    return state.examTypes.find(type => type.exam_type_id === examId)
   },
 
   exam_object (state) {
     if (state.capturedExam && state.capturedExam.exam_type_id) {
       return state.examTypes.find(
-        type => type.exam_type_id == state.capturedExam.exam_type_id
+        type => type.exam_type_id === state.capturedExam.exam_type_id
       )
     }
     return {
@@ -250,7 +250,7 @@ export const commonGetters: any = {
       return 0
     }
     return service_citizen.service_reqs.findIndex(sr =>
-      sr.periods.some(p => p.time_end == null)
+      sr.periods.some(p => p.time_end === null)
     )
   },
 
@@ -264,7 +264,7 @@ export const commonGetters: any = {
       return null
     }
     return service_citizen.service_reqs.filter(sr =>
-      sr.periods.some(p => p.time_end == null)
+      sr.periods.some(p => p.time_end === null)
     )[0]
   },
 
@@ -306,7 +306,7 @@ export const commonGetters: any = {
 
     const isCitizenOnHold = function (c) {
       const test = c.service_reqs.filter(sr =>
-        sr.periods.some(p => p.time_end == null && p.ps.ps_name === 'On hold')
+        sr.periods.some(p => p.time_end === null && p.ps.ps_name === 'On hold')
       )
       if (test.length > 0) {
         return true
@@ -326,7 +326,7 @@ export const commonGetters: any = {
 
     const isCitizenQueued = function (c) {
       const test = c.service_reqs.filter(sr =>
-        sr.periods.some(p => p.time_end == null && p.ps.ps_name === 'Waiting')
+        sr.periods.some(p => p.time_end === null && p.ps.ps_name === 'Waiting')
       )
       if (test.length > 0) {
         return true
@@ -408,9 +408,9 @@ export const commonGetters: any = {
   },
 
   receptionist_status (state) {
-    if (state.user.receptionist_ind == 1) {
+    if (state.user.receptionist_ind === 1) {
       return true
-    } else if (state.user.receptionist_ind == 0) {
+    } else if (state.user.receptionist_ind === 0) {
       return false
     } else {
       console.error('receptionist status: ', state.user.receptionist_ind)

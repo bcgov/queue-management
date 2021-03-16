@@ -154,10 +154,10 @@ export default class AddPesticideFinalStep extends Vue {
   public isRequestExamBtnLoading: boolean = false
 
   get displayData () {
-    this.isGroupExam = (this.exam.ind_or_group == 'group')
+    this.isGroupExam = (this.exam.ind_or_group === 'group')
     const examObj = this.exam
     if (this.exam.exam_type_id) {
-      const examType = this.examTypes.find(examType => (examType.exam_type_id == this.exam.exam_type_id))
+      const examType = this.examTypes.find(examType => (examType.exam_type_id === this.exam.exam_type_id))
       examObj.exam_type_name = (examType) ? examType.exam_type_name : ''
     }
     if (this.exam.exam_time) {
@@ -181,7 +181,7 @@ export default class AddPesticideFinalStep extends Vue {
 
   get officeName () {
     if (this.addExamModal.setup === 'group' || this.addExamModal.setup === 'pesticide' && this.exam.office_id) {
-      const office = this.offices.find(o => o.office_id == this.exam.office_id)
+      const office = this.offices.find(o => o.office_id === this.exam.office_id)
       return `#${office.office_id} - ${office.office_name}`
     }
     return ''

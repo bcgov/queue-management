@@ -23,7 +23,6 @@ class InvigilatorSchema(ma.SQLAlchemySchema):
 
     class Meta:
         model = Invigilator
-        #exclude = ("invigilators",)
         include_relationships = True
         load_instance = True
         jit = toastedmarshmallow.Jit

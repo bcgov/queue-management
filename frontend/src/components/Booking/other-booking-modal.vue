@@ -131,7 +131,7 @@
                 <font-awesome-icon
                   v-if="this.title !== ''"
                   icon="check"
-                  style="fontsize: 1rem; color: green"
+                  style="font-size: 1rem; color: green"
                 />
                 <b-input
                   :state="state"
@@ -146,7 +146,7 @@
                 <font-awesome-icon
                   v-if="this.contact_information !== ''"
                   icon="check"
-                  style="fontsize: 1rem; color: green"
+                  style="font-size: 1rem; color: green"
                 />
                 <b-input
                   :state="state"
@@ -163,7 +163,7 @@
                     <font-awesome-icon
                       v-if="this.fees !== ''"
                       icon="check"
-                      style="fontsize: 1rem; color: green"
+                      style="font-size: 1rem; color: green"
                     />
                     <b-select
                       v-model="fees"
@@ -247,7 +247,7 @@
               <font-awesome-icon
                 v-if="this.recurring_title !== ''"
                 icon="check"
-                style="fontsize: 1rem; color: green"
+                style="font-size: 1rem; color: green"
               />
               <b-input
                 type="text"
@@ -262,7 +262,7 @@
               <font-awesome-icon
                 v-if="this.recurring_contact_information !== ''"
                 icon="check"
-                style="fontsize: 1rem; color: green"
+                style="font-size: 1rem; color: green"
               />
               <b-input
                 type="text"
@@ -279,7 +279,7 @@
               <font-awesome-icon
                 v-if="this.recurring_fees !== ''"
                 icon="check"
-                style="fontsize: 1rem; color: green"
+                style="font-size: 1rem; color: green"
               />
               <b-select
                 v-model="recurring_fees"
@@ -302,7 +302,7 @@
                   this.other_recurring_display_time !== null
                 "
                 icon="check"
-                style="fontsize: 1rem; color: green"
+                style="font-size: 1rem; color: green"
               />
               <DatePicker
                 v-model="other_recurring_start_time"
@@ -329,7 +329,7 @@
               <font-awesome-icon
                 v-if="this.other_recurring_end_time !== null"
                 icon="check"
-                style="fontsize: 1rem; color: green"
+                style="font-size: 1rem; color: green"
               />
               <DatePicker
                 v-model="other_recurring_end_time"
@@ -361,7 +361,7 @@
                   this.other_recurring_display_date !== null
                 "
                 icon="check"
-                style="fontsize: 1rem; color: green"
+                style="font-size: 1rem; color: green"
               />
               <DatePicker
                 v-model="other_recurring_start_date"
@@ -381,7 +381,7 @@
               <font-awesome-icon
                 v-if="this.other_recurring_end_date !== null"
                 icon="check"
-                style="fontsize: 1rem; color: green"
+                style="font-size: 1rem; color: green"
               />
               <DatePicker
                 v-model="other_recurring_end_date"
@@ -402,12 +402,12 @@
               <font-awesome-icon
                 v-if="this.other_selected_frequency.length === 1"
                 icon="check"
-                style="fontsize: 1rem; color: green"
+                style="font-size: 1rem; color: green"
               />
               <font-awesome-icon
                 v-if="this.other_selected_frequency.length > 1"
                 icon="exclamation-triangle"
-                style="fontsize: 1rem; color: #ffc32b"
+                style="font-size: 1rem; color: #ffc32b"
               />
               <label v-if="this.other_selected_frequency.length > 1"
                 >Select one frequency</label
@@ -417,8 +417,6 @@
                 v-model="other_selected_frequency"
                 @input="checkRecurringInput"
               >
-                <!--                <b-form-checkbox :value="yearly">Yearly</b-form-checkbox>-->
-                <!--                <b-form-checkbox :value="monthly">Monthly</b-form-checkbox>-->
                 <b-form-checkbox :value="weekly">Weekly</b-form-checkbox>
                 <b-form-checkbox :value="daily">Daily</b-form-checkbox>
               </b-form-checkbox-group>
@@ -430,7 +428,7 @@
               <font-awesome-icon
                 v-if="this.other_selected_weekdays.length >= 1"
                 icon="check"
-                style="fontsize: 1rem; color: green"
+                style="font-size: 1rem; color: green"
               />
               <b-form-checkbox-group
                 id="weekday-checkboxes"
@@ -454,7 +452,7 @@
             <font-awesome-icon
               v-if="this.other_selected_count !== ''"
               icon="check"
-              style="fontsize: 1rem; color: green"
+              style="font-size: 1rem; color: green"
               class="ml-1"
             />
           </b-form-row>
@@ -518,7 +516,7 @@
                   :key="date.start"
                 >
                   <li class="list-group-item">
-                    <b>Event:</b> {{ formatStartDate(date.start) }} until
+                    <strong>Event:</strong> {{ formatStartDate(date.start) }} until
                     {{ formatEndDate(date.end) }}
                   </li>
                 </ul>
@@ -716,7 +714,7 @@ export default class OtherBookingModal extends Vue {
   }
 
   incrementDuration () {
-    if ((this.endTime as any).format('H') == 18) {
+    if ((this.endTime as any).format('H') === 18) {
       return
     }
     this.added += 0.5
@@ -727,7 +725,7 @@ export default class OtherBookingModal extends Vue {
   }
 
   decrementDuration () {
-    if (this.duration == 0.5) {
+    if (this.duration === 0.5) {
       return
     }
     this.added -= 0.5
@@ -898,7 +896,7 @@ export default class OtherBookingModal extends Vue {
         break
     }
 
-    if (isNaN(start_year) == false || isNaN(end_year) == false) {
+    if (isNaN(start_year) === false || isNaN(end_year) === false) {
       // TODO Might be Deprecated -- IF RRule Breaks, this is where it will happen
       const date_start = new Date(Date.UTC(start_year, start_month - 1, start_day))
       const until = new Date(Date.UTC(end_year, end_month - 1, end_day))

@@ -42,7 +42,7 @@
         </b-form-group>
       </b-form>
     </b-col>
-    <b-col :cols="columnW == 8 ? 4 : 2">
+    <b-col :cols="columnW === 8 ? 4 : 2">
       <b-form>
         <b-form-group>
           <label class="my-0">Office #</label>
@@ -122,12 +122,12 @@ export default class OfficeDrop extends Vue {
     if (!this.searchingNumber) {
       return this.office_number
     }
-    this.searchNumber
+    this.searchNumber // What does this do??
   }
 
   get officeSearch () {
     if (!this.searching && this.office_number && this.offices.length > 0) {
-      return this.offices.find(office => office.office_number == this.office_number).office_name
+      return this.offices.find(office => office.office_number === this.office_number).office_name
     }
     return this.search
   }
@@ -170,7 +170,7 @@ export default class OfficeDrop extends Vue {
   handleOfficeNumberInput (e) {
     this.searchingNumber = true
     this.searchNumber = e.target.value
-    if (this.offices.find(office => office.office_number == e.target.value)) {
+    if (this.offices.find(office => office.office_number === e.target.value)) {
       this.setOffice(e.target.value)
       this.searchingNumber = false
     }

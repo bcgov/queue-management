@@ -26,7 +26,6 @@ class CSRSchema(ma.SQLAlchemySchema):
         include_relationships = True
         load_instance = True
         jit = toastedmarshmallow.Jit
-        # exclude = ('periods',)
 
     csr_id = fields.Int()
     username = fields.Str()

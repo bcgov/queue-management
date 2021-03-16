@@ -7,6 +7,7 @@
           <a
             href="http://www2.gov.bc.ca/gov/content/home/disclaimer"
             target="_blank"
+            rel="noopener noreferrer"
             >Disclaimer</a
           >
         </div>
@@ -14,6 +15,7 @@
           <a
             href="http://www2.gov.bc.ca/gov/content/home/privacy"
             target="_blank"
+            rel="noopener noreferrer"
             >Privacy</a
           >
         </div>
@@ -29,6 +31,7 @@
           <a
             href="http://www2.gov.bc.ca/gov/content/home/copyright"
             target="_blank"
+            rel="noopener noreferrer"
             >Copyright</a
           >
         </div>

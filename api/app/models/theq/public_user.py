@@ -31,8 +31,6 @@ class PublicUser(Base):
     send_email_reminders = db.Column(db.Boolean())
     send_sms_reminders = db.Column(db.Boolean())
 
-    # format_string = 'public_user_%s'
-
     def __repr__(self):
         return '<Public User Name:(name={self.display_name!r})>'.format(self=self)
 

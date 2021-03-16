@@ -50,10 +50,9 @@
 
 <script lang="ts">
 
-import { Action, Getter, Mutation, State } from 'vuex-class'
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Action, Getter, State } from 'vuex-class'
+import { Component, Vue } from 'vue-property-decorator'
 
-// import { mapActions, mapGetters, mapState } from 'vuex'
 @Component
 export default class ButtonsAdmin extends Vue {
   @State('user') private user!: any
@@ -108,6 +107,3 @@ export default class ButtonsAdmin extends Vue {
   }
 }
 </script>
-
-<style scoped>
-</style>

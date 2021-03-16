@@ -655,7 +655,7 @@ export default class EditExamModal extends Vue {
       data.expiry_date = moment(data.expiry_date).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
     }
     for (const key in data) {
-      if (data[key] != this.actionedExam[key]) {
+      if (data[key] !== this.actionedExam[key]) {
         fieldsEdited.push(key)
       }
     }
@@ -678,7 +678,7 @@ export default class EditExamModal extends Vue {
         data.expiry_date = moment(data.expiry_date).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
       }
       for (const key in data) {
-        if (data[key] != this.actionedExam[key]) {
+        if (data[key] !== this.actionedExam[key]) {
           fieldsEdited.push(key)
         }
       }
@@ -696,7 +696,7 @@ export default class EditExamModal extends Vue {
     if (!this.is_ita2_designate) {
       return false
     }
-    if (this.actionedExam && this.actionedExam.office_id != this.user.office_id) {
+    if (this.actionedExam && this.actionedExam.office_id !== this.user.office_id) {
       return true
     }
     return false
@@ -838,7 +838,7 @@ export default class EditExamModal extends Vue {
   }
 
   checkInputLength (e) {
-    if (e.keyCode == 8 || e.keyCode == 46) {
+    if (e.keyCode === 8 || e.keyCode === 46) {
       this.removeError()
       return true
     }
@@ -901,7 +901,6 @@ export default class EditExamModal extends Vue {
       this.fields.expiry_date = moment(exam.expiry_date).format('YYYY-MM-DD')
     }
     // JSTOTS TOCHECK  changed usage of isValid. existing code is commented
-    // if (exam.exam_received_date && moment().isValid(exam.exam_received_date)) {
     if (exam.exam_received_date && moment(exam.exam_received_date).isValid()) {
       // JSTOTS INFO removed new from moment. no need to use new with moment
       this.fields.exam_received_date = moment(exam.exam_received_date).format('YYYY-MM-DD')
@@ -912,7 +911,7 @@ export default class EditExamModal extends Vue {
 
   setOffice (officeNumber) {
     this.office_number = officeNumber
-    this.fields.office_id = this.offices.find(office => office.office_number == officeNumber).office_id
+    this.fields.office_id = this.offices.find(office => office.office_number === officeNumber).office_id
   }
 
   removeError () {
@@ -962,7 +961,7 @@ export default class EditExamModal extends Vue {
       data.expiry_date = moment(data.expiry_date).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
     }
     Object.keys(data).forEach(key => {
-      if (data[key] != this.actionedExam[key]) {
+      if (data[key] !== this.actionedExam[key]) {
         putRequest[key] = data[key]
       }
     })
@@ -978,7 +977,7 @@ export default class EditExamModal extends Vue {
 
   updateExamReceived (e) {
     const { exam_received_date } = this.fields
-    if (e.type == 'exam-downloaded') {
+    if (e.type === 'exam-downloaded') {
       this.exam_received = true
     }
     if (e && !exam_received_date) {
@@ -993,7 +992,7 @@ export default class EditExamModal extends Vue {
 
   updatePrintExamReceived (strExam) {
     const { exam_received_date } = this.fields
-    if (strExam == 'exam-downloaded') {
+    if (strExam === 'exam-downloaded') {
       this.exam_received = true
     }
     if (strExam && !exam_received_date) {
@@ -1013,9 +1012,6 @@ export default class EditExamModal extends Vue {
 }
 .id-grid-1st-col {
   margin-left: auto;
-  margin-right: 20px;
-}
-.id-grid-1st-col {
   grid-column: 1 / span 2;
   margin-right: 20px;
 }

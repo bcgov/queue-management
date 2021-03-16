@@ -10,8 +10,6 @@
     <v-row justify="center">
       <v-col cols="12" class="location-sorted-msg">
         <p class="text-center mb-0">Locations sorted by closest to you
-          <!-- <br><br>
-          Coords: {{ this.currentCoordinates() }} -->
         </p>
       </v-col>
       <v-col
@@ -88,8 +86,6 @@
                 </v-alert>
               </v-col>
               <v-col cols="12" md="6" align-self="stretch" align="center" class="loc-map">
-<!--                <v-img v-if="location.civic_address" :src='getMapUrl(location)' :alt="location.civic_address || 'No address'" class='static-map'>-->
-<!--                </v-img>-->
                 <template v-if='location.external_map_link'>
                   <a class='link-w-icon mt-6' v-bind:href='location.external_map_link' target="_blank" rel="noopener noreferrer" :alt='`Open link for ${ location.civic_address}`'>
                     <v-img v-if="location.civic_address" :src="require('@/assets/img/officemaps/' + (location.office_number ? location.office_number.toString() + '.png' : '999.png'))" :alt="location.civic_address || 'No address'" class='static-map'>
@@ -179,7 +175,6 @@ export default class LocationsList extends Mixins(StepperMixin) {
   private readonly setCurrentOffice!: (office: Office) => void
   private readonly setCurrentService!: (service: Service) => void
   private readonly currentOffice!: Office
-  // private readonly coords!: () => any;
   private readonly currentCoordinates!: () => any;
 
   private selectedRadius = null
@@ -258,7 +253,6 @@ export default class LocationsList extends Mixins(StepperMixin) {
   }
 
   private hasCoordinates (): boolean {
-    // return !!this.$store.state.geo.currentCoordinates
     return !!this.currentCoordinates()
   }
 

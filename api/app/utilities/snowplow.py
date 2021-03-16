@@ -34,6 +34,9 @@ class SnowPlow():
     call_snowplow_flag = (os.getenv("THEQ_SNOWPLOW_CALLFLAG", "False")).upper() == "TRUE"
     if (not sp_endpoint.strip()) or (not sp_appid.strip()) or (not sp_namespace.strip()):
         call_snowplow_flag = False
+    iglu_header = 'iglu:ca.bc.gov.cfmspoc/'
+    json1_footer = '/jsonschema/1-0-0'
+    json2_footer = '/jsonschema/2-0-0'
 
     @staticmethod
     def add_citizen(new_citizen, csr):
@@ -48,7 +51,7 @@ class SnowPlow():
             agent = SnowPlow.get_csr(csr, office)
 
             # the addcitizen event has no parameters of its own so we pass an empty array "{}"
-            addcitizen = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/addcitizen/jsonschema/1-0-0', {})
+            addcitizen = SelfDescribingJson( iglu_header + 'addcitizen' + json1_footer, {})
 
             # make the call
             SnowPlow.make_tracking_call(addcitizen, citizen, office, agent)
@@ -90,16 +93,16 @@ class SnowPlow():
                 snowplow_event = SnowPlow.get_finish(quantity, citizen_obj.accurate_time_ind, schema)
 
             elif schema == "hold":
-                snowplow_event = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/hold/jsonschema/1-0-0',
+                snowplow_event = SelfDescribingJson(iglu_header + 'hold' + json1_footer,
                                                 {"time": 0})
 
             elif schema[:5] == "left/":
-                snowplow_event = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/customerleft/jsonschema/2-0-0',
+                snowplow_event = SelfDescribingJson(iglu_header + 'customerleft' + json2_footer,
                                                     {"leave_status": schema[5:]})
 
             #  Most Snowplow events don't have parameters, so don't have to be built.
             else:
-                snowplow_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/' + schema + '/jsonschema/' + schema_version, {})
+                snowplow_event = SelfDescribingJson( iglu_header + schema + '/jsonschema/' + schema_version, {})
 
             #  Make the call.
             SnowPlow.make_tracking_call(snowplow_event, citizen, office, agent)
@@ -153,7 +156,7 @@ class SnowPlow():
             citizen_type = citizen_obj.counter.counter_name
 
         # Set up the citizen context.
-        citizen = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/citizen/jsonschema/4-0-0',
+        citizen = SelfDescribingJson(iglu_header + 'citizen/jsonschema/4-0-0',
                                       {"client_id": citizen_obj.citizen_id, "service_count": svc_number,
                                        "counter_type": citizen_type})
 
@@ -170,7 +173,7 @@ class SnowPlow():
             office_type = "reception"
 
         #  Set up the office context.
-        office = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/office/jsonschema/1-0-0',
+        office = SelfDescribingJson(iglu_header + 'office' + json1_footer,
                                      {"office_id": office_num, "office_type": office_type})
 
         return office
@@ -202,7 +205,7 @@ class SnowPlow():
                 role_name = "Helpdesk"
 
         #  Set up the CSR context.
-        agent = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/agent/jsonschema/3-0-2',
+        agent = SelfDescribingJson(iglu_header + 'agent/jsonschema/3-0-2',
                                    {"agent_id": csr_id,
                                     "role": role_name,
                                     "counter_type": counter_name})
@@ -239,7 +242,7 @@ class SnowPlow():
             snowplow_channel = "sms"
 
         # for chooseservices, we build a JSON array and pass it
-        chooseservice = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/chooseservice/jsonschema/3-0-0',
+        chooseservice = SelfDescribingJson(iglu_header + 'chooseservice/jsonschema/3-0-0',
                                            {"channel": snowplow_channel,
                                             "program_id": svc_code,
                                             "parent_id": pgm_code,
@@ -253,10 +256,10 @@ class SnowPlow():
         inaccurate_flag = (accurate_time != 1) and (schema == "finish")
         if schema == "finish":
 
-            finishservice = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/finish/jsonschema/2-0-0',
+            finishservice = SelfDescribingJson(iglu_header + 'finish' + json2_footer,
                                                {"inaccurate_time": inaccurate_flag, "quantity": svc_quantity})
         else:
-            finishservice = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/finishstopped/jsonschema/1-0-0',
+            finishservice = SelfDescribingJson(iglu_header + 'finishstopped' + json1_footer,
                                                {"quantity": svc_quantity})
 
         return finishservice
@@ -267,7 +270,7 @@ class SnowPlow():
         #   Take action depending on the schema.
         if schema == "appointment_checkin":
 
-            appointment = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/' + schema + '/jsonschema/1-0-0',
+            appointment = SelfDescribingJson(iglu_header + schema + json1_footer,
                                              {"appointment_id": appointment.appointment_id})
 
         else:
@@ -278,7 +281,7 @@ class SnowPlow():
 
             if schema == "appointment_create":
 
-                appointment = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/' + schema +'/jsonschema/1-0-0',
+                appointment = SelfDescribingJson(iglu_header + schema +json1_footer,
                                                  {"appointment_id": appointment.appointment_id,
                                                   "appointment_start_timestamp": utcstart,
                                                   "appointment_end_timestamp": utcend,
@@ -287,7 +290,7 @@ class SnowPlow():
                                                   "program_name": appointment.service.parent.service_name,
                                                   "transaction_name": appointment.service.service_name})
             if schema == "appointment_update":
-                appointment = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/' + schema +'/jsonschema/1-0-0',
+                appointment = SelfDescribingJson(iglu_header + schema +json1_footer,
                                                  {"appointment_id": appointment.appointment_id,
                                                   "appointment_start_timestamp": utcstart,
                                                   "appointment_end_timestamp": utcend,
@@ -298,7 +301,7 @@ class SnowPlow():
                                                   "transaction_name": appointment.service.service_name})
 
             if schema == "appointment_delete":
-                appointment = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/appointment_update/jsonschema/1-0-0',
+                appointment = SelfDescribingJson(iglu_header + 'appointment_update' + json1_footer,
                                                  {"appointment_id": appointment.appointment_id,
                                                   "appointment_start_timestamp": utcstart,
                                                   "appointment_end_timestamp": utcend,
@@ -345,7 +348,4 @@ if SnowPlow.call_snowplow_flag:
     formatter = logging.Formatter('[%(asctime)s.] %(message)s')
 
     #  All OK.  Set up logging options
-    # log_stream_handler = logging.StreamHandler()
-    # log_stream_handler.setFormatter(formatter)
     module_logger = logging.getLogger("snowplow-logger")
-    # module_logger.addHandler(log_stream_handler)

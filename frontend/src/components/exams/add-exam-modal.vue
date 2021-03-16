@@ -44,7 +44,7 @@
           </div>
         </div>
         <div
-          v-else-if="step == lastStep"
+          v-else-if="step === lastStep"
           style="display: flex; justify-content: space-between; width: 100%"
         >
           <div style="display: inline">
@@ -59,7 +59,7 @@
             <b-button
               v-if="
                 errors.length > 0 ||
-                (addExamModal.setup == 'pesticide' && !examBcmpJobId)
+                (addExamModal.setup === 'pesticide' && !examBcmpJobId)
               "
               @click="showErrorMsg"
               class="btn-primary disabled"
@@ -92,7 +92,7 @@
       <b-nav-item
         v-for="i in tabs"
         :key="'tab ' + i.title"
-        :active="tabs[step - 1].title == i.title"
+        :active="tabs[step - 1].title === i.title"
         @click="clickTab(i.step)"
       >
         <span :style="tabWarning(i)"
@@ -108,7 +108,7 @@
     </b-nav>
     <template v-if="unSubmitted">
       <AddExamFormController v-if="step <= lastStep - 1" />
-      <AddExamFormConfirm v-if="step == lastStep" :submitMsg="submitMsg" />
+      <AddExamFormConfirm v-if="step === lastStep" :submitMsg="submitMsg" />
     </template>
     <template v-if="!unSubmitted">
       <div
@@ -161,9 +161,7 @@
 // /* eslint-disable */
 
 import { Action, Getter, Mutation, State } from 'vuex-class'
-import { Component, Vue, Watch } from 'vue-property-decorator'
-
-// import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import { Component, Vue } from 'vue-property-decorator'
 import AddExamFormController from './add-exam-form-controller.vue'
 import AddExamFormConfirm from './add-exam-form-confirm.vue'
 import moment from 'moment'
@@ -224,7 +222,7 @@ export default class AddExamModal extends Vue {
   }
 
   get modalSize () {
-    if (this.step == 2 && this.setup === 'pesticide' && this.exam.ind_or_group === 'group') {
+    if (this.step === 2 && this.setup === 'pesticide' && this.exam.ind_or_group === 'group') {
       return 'xl'
     }
     return 'md'
@@ -436,8 +434,8 @@ export default class AddExamModal extends Vue {
     if (this.errors.length > 0) {
       const list: any = []
       this.errors.forEach(error => {
-        if (this.steps.some(step => step.step == error)) {
-          list.push(this.steps.find(step => step.step == error)).questions
+        if (this.steps.some(step => step.step === error)) {
+          list.push(this.steps.find(step => step.step === error)).questions
         }
       })
       if (list.includes(i)) {
@@ -464,7 +462,7 @@ export default class AddExamModal extends Vue {
   }
 
   showErrorMsg () {
-    this.submitMsg = (this.addExamModal.setup == 'pesticide' && !this.exam.bcmp_job_id) ? 'Please click on the Request Exam button to generate BCMP Job Id' : 'You have an error on a previous step.  Click on the red tab.'
+    this.submitMsg = (this.addExamModal.setup === 'pesticide' && !this.exam.bcmp_job_id) ? 'Please click on the Request Exam button to generate BCMP Job Id' : 'You have an error on a previous step.  Click on the red tab.'
   }
 }
 </script>

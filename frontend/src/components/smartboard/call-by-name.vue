@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 -->
 <template>
-  <div style="">
+  <div>
     <div class="board-nameticket-video">
       <div class="board-video-div">
         <Video :office_number="smartboardData.office_number" />
@@ -26,13 +26,9 @@ limitations under the License.*/
 </template>
 
 <script lang="ts">
-// /* eslint-disable */
 import { Component, Prop, Vue } from 'vue-property-decorator'
-
-// import axios from 'axios'
 import Axios from '@/utils/axios'
 import Video from './video.vue'
-import config from '../../../config'
 
 @Component({
   components: {
@@ -66,7 +62,6 @@ export default class CallByName extends Vue {
       this.officeType = resp.data.office_type
       this.citizens = resp.data.citizens
       // TODO check can't see  this.office_id Declared . so commented
-      // this.$root.$emit('boardConnect', this.office_id)
       // so change to below line to get office id
       this.$root.$emit('boardConnect', { office_id: this.smartboardData && this.smartboardData.office_number })
     })
@@ -79,7 +74,6 @@ export default class CallByName extends Vue {
   }
 
   // TODO check event param
-  // event
   handleResize () {
     this.maxVideoHeight = document.documentElement.clientHeight * 0.8
   }

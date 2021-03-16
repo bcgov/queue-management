@@ -149,8 +149,8 @@ describe('Serve Citizens', () => {
       const OK2 = 'Second citizen was Counter Transaction'
       let message1 = ''
       let message2 = ''
-      if (value_qtxn == value_first) { message1 = OK1 } else { message1 = 'First citizen was not Quick Transaction' }
-      if (value_counter == value_second) { message2 = OK2 } else { message2 = 'Second citizen was not Counter Transaction' }
+      if (value_qtxn === value_first) { message1 = OK1 } else { message1 = 'First citizen was not Quick Transaction' }
+      if (value_counter === value_second) { message2 = OK2 } else { message2 = 'Second citizen was not Counter Transaction' }
       expect(message1).toBe(OK1)
       expect(message2).toBe(OK2)
     },
@@ -173,7 +173,7 @@ describe('Serve Citizens', () => {
       //  Make sure 1st citizen from invite was QTxn, 2nd was Counter.
       const OK = 'Citizen was Quick Transaction'
       let message = ''
-      if (value_qtxn == value_citizen) { message = OK } else { message = 'Citizen was not Quick Transaction' }
+      if (value_qtxn === value_citizen) { message = OK } else { message = 'Citizen was not Quick Transaction' }
       expect(message).toBe(OK)
     },
     maxTestCaseTime
@@ -209,9 +209,9 @@ describe('Serve Citizens', () => {
       let MsgHigh = ''
       let MsgNormal = ''
       let MsgLow = ''
-      if (priorityValueHigh == 1) { MsgHigh = OkHigh } else { MsgHigh = 'First citizen was not High Priority' }
-      if (priorityValueNormal == 2) { MsgNormal = OkNormal } else { MsgNormal = 'Second citizen was not Normal Priority' }
-      if (priorityValueLow == 3) { MsgLow = OkLow } else { MsgLow = 'Third citizen was not Low Priority' }
+      if (priorityValueHigh === 1) { MsgHigh = OkHigh } else { MsgHigh = 'First citizen was not High Priority' }
+      if (priorityValueNormal === 2) { MsgNormal = OkNormal } else { MsgNormal = 'Second citizen was not Normal Priority' }
+      if (priorityValueLow === 3) { MsgLow = OkLow } else { MsgLow = 'Third citizen was not Low Priority' }
       expect(MsgHigh).toBe(OkHigh)
       expect(MsgNormal).toBe(OkNormal)
       expect(MsgLow).toBe(OkLow)

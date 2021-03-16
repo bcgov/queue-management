@@ -11,11 +11,8 @@
  *
  */
 
-// import { ActionIF } from '@/interfaces/action-interface'
-
-import { Axios, searchNestedObject } from './../helpers'
+import { Axios } from './../helpers'
 import { makeBookingReqObj } from '../helpers/makeBookingReqObj'
-import AppointmentsModule from '../modules/appointments-module';
 import moment from 'moment'
 
 const DEFAULT_COUNTER_NAME = 'Counter'
@@ -309,7 +306,7 @@ export const commonActions: any = {
             booking.id = b.booking_id
             booking.category = b.room ? b.room.room_name : 'Offsite'// 'Boardroom 1'// b.room.room_name
             booking.exam =
-              context.state.exams.find(ex => ex.booking_id == b.booking_id) ||
+              context.state.exams.find(ex => ex.booking_id === b.booking_id) ||
               false
             booking.booking_contact_information =
               b.booking_contact_information
@@ -2260,7 +2257,7 @@ export const commonActions: any = {
           data.priority = priority
         }
         if (
-          accurate_time_ind != null &&
+          accurate_time_ind !== null &&
           accurate_time_ind !== prevCitizen.accurate_time_ind
         ) {
           data.accurate_time_ind = accurate_time_ind
@@ -2302,7 +2299,7 @@ export const commonActions: any = {
     const { sr_id } = compareService
 
     const data: any = {}
-    if (activeQuantity != compareService.quantity) {
+    if (activeQuantity !== compareService.quantity) {
       data.quantity = activeQuantity
     }
 
@@ -2320,10 +2317,10 @@ export const commonActions: any = {
     const setup = context.state.addModalSetup
     const { form_data } = context.getters
     if (setup === 'add_mode' || setup === 'edit_mode') {
-      if (form_data.channel != compareService.channel_id) {
+      if (form_data.channel !== compareService.channel_id) {
         data.channel_id = form_data.channel
       }
-      if (form_data.service != compareService.service_id) {
+      if (form_data.service !== compareService.service_id) {
         data.service_id = form_data.service
       }
     }

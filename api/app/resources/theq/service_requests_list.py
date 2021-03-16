@@ -27,9 +27,12 @@ from app.auth.auth import jwt
 
 def get_service_request(self, json_data, csr):
 
+    CSR_header = "    --> CSR:       "
+    JSON_header = "    --> json_data: "
+
     if not json_data:
         print("==> No json_data in POST /service_requests/")
-        print("    --> CSR:       " + csr.username)
+        print(CSR_header + csr.username)
         return (None, "No input data received for creating service request", 400)
 
     try:
@@ -37,21 +40,21 @@ def get_service_request(self, json_data, csr):
 
     except ValidationError as err:
         print("==> ValidationError in POST /service_requests/")
-        print("    --> CSR:       " + csr.username)
+        print(CSR_header + csr.username)
         print(err)
         return (None, err.messages, 422)
     except KeyError as err:
         print("==> No service_request parameter in POST /service_requests/")
-        print("    --> CSR:       " + csr.username)
-        print("    --> json_data: " + json.dumps(json_data))
+        print(CSR_header + csr.username)
+        print(JSON_header + json.dumps(json_data))
         print(err)
         return (None, str(err), 422)
 
     #  If service request is null, an error.
     if service_request is None:
         print("==> service_request is None in POST /service_requests/, error in schema.load")
-        print("    --> CSR:       " + csr.username)
-        print("    --> json_data: " + json.dumps(json_data['service_request']))
+        print(CSR_header + csr.username)
+        print(JSON_header + json.dumps(json_data['service_request']))
         return (None, "Service request is none trying to create service request", 400)
 
     #  All OK.  Return the service request.
@@ -64,13 +67,13 @@ def get_service(service_request, json_data, csr):
         service = Service.query.get(service_request.service_id)
     except:
         print("==> An exception getting service info")
-        print("    --> CSR:       " + csr.username)
-        print("    --> json_data: " + json.dumps(json_data['service_request']))
+        print(CSR_header + csr.username)
+        print(JSON_header + json.dumps(json_data['service_request']))
         return (None, ("Could not find service for service_id: " + str(service_request.service_id)), 400)
 
     if service.parent_id is None:
         print("==> CSR has selected a category, rather than a service.  This should not be possible")
-        print("    --> CSR:       " + csr.username)
+        print(CSR_header + csr.username)
         print("    --> Service:   " + service.service_name)
         return (None, "CSR has selected a category, rather than a service. Should not be possible", 400)
 
@@ -103,8 +106,8 @@ class ServiceRequestsList(Resource):
             citizen = Citizen.query.get(service_request.citizen_id)
         except:
             print("==> An exception getting citizen info")
-            print("    --> CSR:       " + csr.username)
-            print("    --> json_data: " + json.dumps(json_data['service_request']))
+            print(CSR_header + csr.username)
+            print(JSON_header + json.dumps(json_data['service_request']))
 
         if citizen is None:
             return {"message": "No matching citizen found for citizen_id"}, 400

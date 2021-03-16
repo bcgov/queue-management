@@ -66,18 +66,17 @@ limitations under the License.*/
 // /* eslint-disable */
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue, Watch } from 'vue-property-decorator'
-
+import AgendaScreen from './../agenda-screen/agenda-screen.vue'
 import DashHoldTable from './dash-hold-table.vue'
 import DashTable from './dash-table.vue'
 import GAScreen from './../ga-screen/ga-screen.vue'
-import AgendaScreen from './../agenda-screen/agenda-screen.vue'
 
 @Component({
   components: {
-    DashTable,
+    AgendaScreen,
     DashHoldTable,
-    GAScreen,
-    AgendaScreen
+    DashTable,
+    GAScreen
   }
 })
 export default class Dash extends Vue {

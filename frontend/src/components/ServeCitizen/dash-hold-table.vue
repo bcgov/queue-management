@@ -128,7 +128,7 @@ export default class DashHoldTable extends Vue {
 
   private showCounter (value: any) {
     for (let i = 0; i < this.user.office.counters.length; i++) {
-      if (this.user.office.counters[i].counter_id == value) {
+      if (this.user.office.counters[i].counter_id === value) {
         return this.user.office.counters[i].counter_name
       }
     }
@@ -161,7 +161,7 @@ export default class DashHoldTable extends Vue {
 
   private showPriority (priority: any) {
     // eslint-disable-next-line eqeqeq
-    return priority == 1 ? 'High' : priority == 2 ? 'Default' : priority == 3 ? 'Low' : null
+    return priority === 1 ? 'High' : priority === 2 ? 'Default' : priority === 3 ? 'Low' : null
   }
 }
 

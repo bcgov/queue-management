@@ -120,10 +120,10 @@ export default class CommonUtils {
     }
     if (M[1] === 'Chrome') {
       tem = ua.match(/\bOPR|Edge\/(\d+)/)
-      if (tem != null) { return { name: 'Opera', version: tem[1] } }
+      if (tem !== null) { return { name: 'Opera', version: tem[1] } }
     }
     M = M[2] ? [M[1], M[2]] : [navigator.appName, navigator.appVersion, '-?']
-    if ((tem = ua.match(/version\/(\d+)/i)) != null) { M.splice(1, 1, tem[1]) }
+    if ((tem = ua.match(/version\/(\d+)/i)) !== null) { M.splice(1, 1, tem[1]) }
     return {
       name: M[0],
       version: M[1]
@@ -203,7 +203,7 @@ export function debounce (func, wait, immediate) {
     timeout = setTimeout(later, wait)
     if (callNow) func.apply(context, args)
   }
-};
+}
 
 // https://stackoverflow.com/a/50069453
 // returns e.g. "-7:00" and can be appended to end of date string

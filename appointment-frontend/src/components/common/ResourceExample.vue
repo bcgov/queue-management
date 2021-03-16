@@ -17,6 +17,3 @@ export default class ResourceExample extends Vue {
   private message!: string
 }
 </script>
-
-<style lang="scss" scoped>
-</style>

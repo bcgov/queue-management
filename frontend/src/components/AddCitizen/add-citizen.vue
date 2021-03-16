@@ -25,7 +25,7 @@
     </div>
     <b-alert
       :show="dismissCountDown"
-      style="h-align: center"
+      style="justify: center"
       variant="danger"
       @dismissed="dismissCountDown=0"
       @dismiss-count-down="countDownChanged"
@@ -125,6 +125,7 @@ export default class AddCitizen extends Vue {
   private dragged: boolean = false
   private left: number = 0
   private top: number = 0
+  $route: any
 
   Alert () {
     this.dismissCountDown = this.dismissSecs
@@ -188,15 +189,15 @@ export default class AddCitizen extends Vue {
   }
 
   cancelAction () {
-    if (this.$route.path == '/exams') {
+    if (this.$route.path === '/exams') {
       this.cancelAddCitizensModal()
-    } else if (this.$route.path == '/appointments') {
+    } else if (this.$route.path === '/appointments') {
       this.closeAddServiceModal()
-    } else if ((this.addModalSetup == 'reception') || (this.addModalSetup == 'non_reception')) {
+    } else if ((this.addModalSetup === 'reception') || (this.addModalSetup === 'non_reception')) {
       this.cancelAddCitizensModal()
-    } else if (this.addModalSetup == 'add_mode') {
+    } else if (this.addModalSetup === 'add_mode') {
       this.clickEditCancel()
-    } else if (this.addModalSetup == 'edit_mode') {
+    } else if (this.addModalSetup === 'edit_mode') {
       this.clickEditCancel()
     } else {
       this.cancelAddCitizensModal()

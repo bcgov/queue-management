@@ -34,6 +34,7 @@ class Categories(Resource):
         end = fullpath.find("/app/")
         uploadpath = fullpath[:end] + "/videos" # /api/static/videos/
         form = request.form.to_dict()
+        msg_header = "    --> Message: "
 
         #  Make the directory if it doesn't already exist.
         try:
@@ -41,7 +42,7 @@ class Categories(Resource):
                 os.mkdir(uploadpath)
         except Exception as error:
             print("==> Error trying to create directory: " + uploadpath)
-            print("    --> Message: " + str(error))
+            print(msg_header + str(error))
 
         #   Save uploaded video file
         for file in request.files.getlist("file"):
@@ -59,7 +60,7 @@ class Categories(Resource):
                 file.save(destination)
             except Exception as error:
                 print("==> Error trying to save file: " + filename)
-                print("    --> Message: " + str(error))
+                print(msg_header + str(error))
 
         #  Get and save the updated manifest.
         data = form.get("manifest")
@@ -70,4 +71,4 @@ class Categories(Resource):
                 myfile.write(data)
         except Exception as error:
             print("==> Error trying to update file: " + output_file)
-            print("    --> Message: " + str(error))
+            print(msg_header + str(error))

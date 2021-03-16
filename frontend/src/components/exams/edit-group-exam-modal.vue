@@ -217,7 +217,7 @@
         <template>
           <b-button
             v-if="
-              this.currentInvigilatorList.length == 0 &&
+              this.currentInvigilatorList.length === 0 &&
               this.groupInvigilatorBoolean
             "
             v-b-toggle.collapse-invigilators
@@ -418,8 +418,8 @@
                 <b-row
                   style="justify-content: center"
                   v-if="
-                    this.currentInvigilatorList.length == 0 &&
-                    this.selected.length == 0
+                    this.currentInvigilatorList.length === 0 &&
+                    this.selected.length === 0
                   "
                   class="mt-2"
                 >
@@ -449,7 +449,7 @@
                 <b-row
                   style="justify-content: center"
                   v-else-if="
-                    selected.length == 0 &&
+                    selected.length === 0 &&
                     this.currentInvigilatorList.length <
                       Math.ceil(actionedExam.number_of_students / 24)
                   "
@@ -499,7 +499,7 @@
         <!-- Start of Shadow Invigilator -->
         <b-form-group>
           <b-form-row>
-            <template v-if="this.currentShadowInvigilator != null">
+            <template v-if="this.currentShadowInvigilator !== null">
               <b-row style="display: flex" class="w-100 ml-0 mb-2">
                 <b-col class="w-50 ml-0 mr-0 pr-1">
                   <b-button
@@ -583,13 +583,13 @@
                     <b-col cols="4">
                       <b-row> Shadow Invigilator Limit: 1 </b-row>
                       <b-row
-                        v-if="this.currentShadowInvigilator != null"
+                        v-if="this.currentShadowInvigilator !== null"
                         class="mb-1"
                       >
                         Current Invigilator
                       </b-row>
                       <b-row
-                        v-if="this.currentShadowInvigilator != null"
+                        v-if="this.currentShadowInvigilator !== null"
                         style="justify-content: center"
                         class="mb-1"
                       >
@@ -692,15 +692,12 @@
 </template>
 
 <script lang="ts">
-// /* eslint-disable */
 
 import { Action, Getter, Mutation, State } from 'vuex-class'
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-// import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import { Component, Prop, Vue } from 'vue-property-decorator'
+import DatePicker from 'vue2-datepicker'
 import moment from 'moment'
 import zone from 'moment-timezone'
-import DatePicker from 'vue2-datepicker'
-// import Vue from 'vue'
 const FileDownload = require('js-file-download')
 
 @Component({
@@ -726,7 +723,6 @@ export default class EditGroupExamBookingModal extends Vue {
   @Getter('invigilator_dropdown') private invigilator_dropdown!: any;
   @Getter('is_ita2_designate') private is_ita2_designate!: any;
   @Getter('invigilator_multi_select') private invigilator_multi_select!: any;
-  // @Getter('is_ita2_designate') private is_ita2_designate!: any;
   @Getter('shadow_invigilator_options') private shadow_invigilator_options!: any;
   @Getter('shadow_invigilators') private shadow_invigilators!: any;
 
@@ -793,12 +789,12 @@ export default class EditGroupExamBookingModal extends Vue {
 
   get titleText () {
     switch (this.examType) {
-      case 'group':
-        return 'Group'
-      case 'challenger':
-        return 'Monthly Session'
-      default:
-        return 'Other'
+    case 'group':
+      return 'Group'
+    case 'challenger':
+      return 'Monthly Session'
+    default:
+      return 'Other'
     }
   }
 
@@ -835,7 +831,7 @@ export default class EditGroupExamBookingModal extends Vue {
   }
 
   get invigilatorList () {
-    const invigilators = (this.actionedExam.office && this.actionedExam.office.office_name == 'Pesticide Offsite') ? this.pesticide_offsite_invigilators : this.pesticide_invigilators
+    const invigilators = (this.actionedExam.office && this.actionedExam.office.office_name === 'Pesticide Offsite') ? this.pesticide_offsite_invigilators : this.pesticide_invigilators
     return invigilators.map(invigilator => ({ text: invigilator.invigilator_name, value: parseInt(invigilator.invigilator_id) }))
   }
 
@@ -849,7 +845,7 @@ export default class EditGroupExamBookingModal extends Vue {
   }
 
   get fieldDisabled () {
-    if ((this.role_code !== 'GA' && !this.is_ita2_designate) && this.examType != 'other') {
+    if ((this.role_code !== 'GA' && !this.is_ita2_designate) && this.examType !== 'other') {
       return true
     }
     return false
@@ -1019,7 +1015,7 @@ export default class EditGroupExamBookingModal extends Vue {
         }
         return
       }
-      if (value == '') {
+      if (value === '') {
         if (this.itemCopy.booking.sbc_staff_invigilated) {
           if (!this.editedFields.includes(name)) {
             this.editedFields.push(name)
@@ -1052,7 +1048,7 @@ export default class EditGroupExamBookingModal extends Vue {
       this[e.target.name] = e.target.value
       return
     }
-    if (value == this.itemCopy.booking[name]) {
+    if (value === this.itemCopy.booking[name]) {
       if (this.editedFields.includes(e.target.name)) {
         const i = this.editedFields.indexOf(e.target.name)
         this.editedFields.splice(i, 1)
@@ -1177,7 +1173,7 @@ export default class EditGroupExamBookingModal extends Vue {
         delete bookingChanges.invigilator_id
       }
 
-      if (this.removeFlag == true) {
+      if (this.removeFlag === true) {
         putRequests.push({ url: `/invigilator/${this.currentShadowInvigilator}/?add=False&subtract=True` })
         this.removeFlag = false
       } else if (this.shadowInvigilator && this.currentShadowInvigilator) {
@@ -1215,7 +1211,7 @@ export default class EditGroupExamBookingModal extends Vue {
     // Ensure that if a user isn't removing either invigilator or shadow invigilator, and submitting a shadow
     // Invigilator, that the submission doesn't remove invigilators from the booking
     if (!this.removeFlag && !this.removeCurrentInvigilatorFlag && bookingChanges.shadow_invigilator_id && bookingChanges.invigilator_id) {
-      if (bookingChanges.invigilator_id.length == 0) {
+      if (bookingChanges.invigilator_id.length === 0) {
         delete bookingChanges.invigilator_id
       }
     }
@@ -1251,7 +1247,7 @@ export default class EditGroupExamBookingModal extends Vue {
     this.removeFlag = false
     if (this.actionedExam.booking && this.actionedExam.booking.invigilators && !this.actionedExam.is_pesticide && !this.actionedExam.sbc_managed_ind) {
       this.actionedExam.booking.invigilators.forEach(function (invigilator) {
-        const indexOfInvigilator = self.invigilators.findIndex(x => x.invigilator_id == invigilator)
+        const indexOfInvigilator = self.invigilators.findIndex(x => x.invigilator_id === invigilator)
         const index_invigilator_id = self.invigilators[indexOfInvigilator].invigilator_id
         const index_invigilator_name = self.invigilators[indexOfInvigilator].invigilator_name
         const invigilator_json = { name: index_invigilator_name, value: index_invigilator_id }
@@ -1273,7 +1269,7 @@ export default class EditGroupExamBookingModal extends Vue {
       const currentID = this.currentShadowInvigilator = this.actionedExam.booking.shadow_invigilator_id || null
       let currentName = ''
       this.shadow_invigilators.forEach(function (invigilator) {
-        if (invigilator.id == currentID) {
+        if (invigilator.id === currentID) {
           currentName = invigilator.name
         }
       })
@@ -1321,13 +1317,13 @@ export default class EditGroupExamBookingModal extends Vue {
         if (!this.editedFields.includes('shadow_invigilator')) {
           this.editedFields.push('shadow_invigilator')
         }
-      } else if (this.actionedExam.booking.shadow_invigilator_id == e) {
+      } else if (this.actionedExam.booking.shadow_invigilator_id === e) {
         if (this.editedFields.includes('shadow_invigilator')) {
           this.editedFields.splice(this.editedFields.indexOf('shadow_invigilator'), 1)
         }
       }
     }
-    if (shadows[0] == null) {
+    if (shadows[0] === null) {
       this.shadowInvigilator = null
     } else {
       this.shadowInvigilator = shadows[0].id
@@ -1421,7 +1417,7 @@ export default class EditGroupExamBookingModal extends Vue {
   updateExamReceived (e) {
     const { exam_received_date } = this.fields
     this.editedFields.push('exam_received')
-    if (e.type == 'exam-downloaded') {
+    if (e.type === 'exam-downloaded') {
       this.exam_received = true
     }
     if (e && !exam_received_date) {
@@ -1436,7 +1432,7 @@ export default class EditGroupExamBookingModal extends Vue {
 
   updatePrintExamReceived (strExam) {
     const { exam_received_date } = this.fields
-    if (strExam == 'exam-downloaded') {
+    if (strExam === 'exam-downloaded') {
       this.exam_received = true
     }
     if (strExam && !exam_received_date) {
@@ -1481,9 +1477,6 @@ export default class EditGroupExamBookingModal extends Vue {
 <style scoped>
 .id-grid-1st-col {
   margin-left: auto;
-  margin-right: 20px;
-}
-.id-grid-1st-col {
   grid-column: 1 / span 2;
   margin-right: 20px;
 }

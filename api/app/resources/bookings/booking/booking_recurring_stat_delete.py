@@ -34,7 +34,6 @@ class BookingRecurringDelete(Resource):
     def delete(self, id):
 
         today = datetime.today()
-        string_today = today.strftime('%Y-%m-%d')
 
         print("==> In the python DELETE /bookings/recurring/<id> endpoint")
 
@@ -66,7 +65,6 @@ class BookingRecurringDelete(Resource):
     def delete(self, id):
 
         today = datetime.today()
-        string_today = today.strftime('%Y-%m-%d')
 
         print("==> In the python DELETE /bookings/recurring/<id> endpoint")
 

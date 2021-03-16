@@ -276,7 +276,7 @@ export default {
       payload.snowplow_addcitizen = true
       return new Promise((resolve, reject) => {
         Axios({ state }).put(`/appointments/${payload.appointment_id}/`, data).then(() => {
-          if (state.officeType != 'nocallonsmartboard') {
+          if (state.officeType !== 'nocallonsmartboard') {
             dispatch('sendToQueue', payload)
             setTimeout(() => { commit('toggleCheckInClicked', false) }, 2000)
             resolve()

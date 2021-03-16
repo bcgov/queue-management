@@ -28,10 +28,8 @@ class CSR(Base):
     receptionist_ind = db.Column(db.Integer, nullable=False)
     deleted = db.Column(db.DateTime, nullable=True)
     csr_state_id = db.Column(db.Integer, db.ForeignKey('csrstate.csr_state_id'), nullable=False)
-    # ita_designate = db.Column(db.Integer, default=0, nullable=False)
     pesticide_designate = db.Column(db.Integer, default=0, nullable=False)
     finance_designate = db.Column(db.Integer, default=0, nullable=False)
-    # liaison_designate = db.Column(db.Integer, default=0, nullable=False)
     office_manager = db.Column(db.Integer, default=0, nullable=False)
     ita2_designate = db.Column(db.Integer, default=0, nullable=False)
 

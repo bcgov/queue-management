@@ -118,22 +118,14 @@ class CitizenGenericInvite(Resource):
     def post(self):
         #print("==> In Python /citizens/invitetest")
         y = 0
-        #for x in range(0, 25):
-        key = "DR->" + get_key()
-        #print("")
         y = y + 1
-        #print("DATETIME:", datetime.now(), "starting loop:", y, "==>Key : ", key)
         csr = csr_find_by_user()
-        #print("DATETIME:", datetime.now(), "==>Key : ", key,"===>AFTER CALL TO csr_find_by_user:", csr)
         lock = FileLock("lock/invite_citizen_{}.lock".format(csr.office_id))
         with lock:
 
-            #active_citizen_state = find_active()
             active_citizen_state = citizen_state
-            #print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_Active:", active_citizen_state)
 
             waiting_period_state = find_wait()
-            #print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_wait:", waiting_period_state)
             citizen = None
             json_data = request.get_json()
 

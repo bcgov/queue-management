@@ -64,7 +64,7 @@
           <p v-if="bookingStep.beforeIconText|| bookingStep.afterIconText" class="step-desc mt-2">
             {{bookingStep.beforeIconText}}
             <v-btn
-                v-if="bookingStep.step == 1"
+                v-if="bookingStep.step === 1"
                 class="ma-2"
                 text
                 icon

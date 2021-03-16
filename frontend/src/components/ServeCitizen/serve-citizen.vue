@@ -7,8 +7,8 @@
         </template>
       </div>
       <b-alert
-        :show="this.alertMessage != ''"
-        style="h-align: center"
+        :show="this.alertMessage !== ''"
+        style="justify: center"
         variant="warning"
         >{{ this.alertMessage }}</b-alert
       >
@@ -133,7 +133,7 @@
         >
           <b-row no-gutters>
             <b-col cols="7" />
-            <b-col cols="auto" style="align: right">
+            <b-col cols="auto" style="text-align: right">
               <select
                 id="counter-selection-serve"
                 v-show="reception && !simplifiedModal"
@@ -183,7 +183,7 @@
                 style="color: white; margin: 0 0 8px"
                 unchecked-value="1"
               >
-                <span style="font: 400 16px Myriad-Pro">Inaccurate Time</span>
+                <span style="font: 400 16px Myriad-Pro, sans-serif">Inaccurate Time</span>
               </b-form-checkbox>
               <b-button
                 @click="clickServiceFinish"
@@ -288,7 +288,6 @@ export default class ServeCitizen extends Vue {
   @Action('screenAllCitizens') public screenAllCitizens: any
   @Action('setServeModalAlert') public setServeModalAlert: any
 
-
   @Mutation('editServiceModalForm') public editServiceModalForm: any
   @Mutation('toggleFeedbackModal') public toggleFeedbackModal: any
   @Mutation('toggleServiceModal') public toggleServiceModal: any
@@ -305,6 +304,7 @@ export default class ServeCitizen extends Vue {
   private dragged: boolean = false
   private left: number = 0
   private top: number = 0
+  $route: any
 
   get appointment () {
     if (this.serviceModalForm &&
@@ -315,11 +315,11 @@ export default class ServeCitizen extends Vue {
     return false
   }
 
-  get appointmentsEnabled() {
+  get appointmentsEnabled () {
     if (this.user && this.user.office) {
       return this.user.office.appointments_enabled_ind
     }
-    return false;
+    return false
   }
 
   get alertMessage () {
@@ -339,7 +339,7 @@ export default class ServeCitizen extends Vue {
 
   get topSpace () {
     let top = this.appointment ? 210 : 178
-    if (this.alertMessage != '') {
+    if (this.alertMessage !== '') {
       top = top + 60
     }
     return top.toString() + 'px'
@@ -469,7 +469,7 @@ export default class ServeCitizen extends Vue {
 
   private flashButton () {
     if (this.serviceBegun === false) {
-      this.buttonStyle == 'btn-primary serve-btn'
+      this.buttonStyle === 'btn-primary serve-btn'
         ? this.buttonStyle = 'btn-highlighted' : this.buttonStyle = 'btn-primary serve-btn'
     }
     if (this.serviceBegun === true) {
@@ -482,7 +482,7 @@ export default class ServeCitizen extends Vue {
   }
 
   private onDrag (event: any) {
-    const { el, deltaX, deltaY, offsetX, offsetY, clientX, clientY, first, last } = event
+    const { deltaX, deltaY, first, last } = event
     if (first) {
       this.dragged = true
       return

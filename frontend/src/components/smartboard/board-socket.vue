@@ -12,13 +12,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
 
-<template></template>
-
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import config from '../../../config'
-
-const io = require('socket.io-client')
+import io from 'socket.io-client'
 let socket
 
 @Component({})

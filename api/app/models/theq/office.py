@@ -28,38 +28,40 @@ class Status(enum.Enum):
 
 class Office(Base):
 
+    office_id = 'office.office_id'
+    service_id = 'service.service_id'
     office_service = db.Table(
         'office_service',
         db.Column('office_id', db.Integer,
-                db.ForeignKey('office.office_id', ondelete="CASCADE"), primary_key=True),
+                db.ForeignKey(office_id, ondelete="CASCADE"), primary_key=True),
         db.Column('service_id', db.Integer,
-                db.ForeignKey('service.service_id', ondelete="CASCADE"), primary_key=True))
+                db.ForeignKey(service_id, ondelete="CASCADE"), primary_key=True))
 
     office_quick_list = db.Table(
         'office_quick_list',
         db.Column('office_id', db.Integer,
-                db.ForeignKey('office.office_id', ondelete="CASCADE"), primary_key=True),
+                db.ForeignKey(office_id, ondelete="CASCADE"), primary_key=True),
         db.Column('service_id', db.Integer,
-                db.ForeignKey('service.service_id', ondelete="CASCADE"), primary_key=True))
+                db.ForeignKey(service_id, ondelete="CASCADE"), primary_key=True))
 
     office_back_office_list = db.Table(
         'office_back_office_list',
         db.Column('office_id', db.Integer,
-                db.ForeignKey('office.office_id', ondelete="CASCADE"), primary_key=True),
+                db.ForeignKey(office_id, ondelete="CASCADE"), primary_key=True),
         db.Column('service_id', db.Integer,
-                db.ForeignKey('service.service_id', ondelete="CASCADE"), primary_key=True))
+                db.ForeignKey(service_id, ondelete="CASCADE"), primary_key=True))
 
     office_counter= db.Table(
         'office_counter',
         db.Column('office_id', db.Integer,
-                db.ForeignKey('office.office_id', ondelete="CASCADE"), primary_key=True),
+                db.ForeignKey(office_id, ondelete="CASCADE"), primary_key=True),
         db.Column('counter_id', db.Integer,
                 db.ForeignKey('counter.counter_id', ondelete="CASCADE"), primary_key=True))
 
     office_timeslot = db.Table(
         'office_timeslot',
         db.Column('office_id', db.Integer,
-                  db.ForeignKey('office.office_id', ondelete="CASCADE"), primary_key=True),
+                  db.ForeignKey(office_id, ondelete="CASCADE"), primary_key=True),
         db.Column('time_slot_id', db.Integer,
                   db.ForeignKey('timeslot.time_slot_id', ondelete="CASCADE"), primary_key=True))
 
@@ -79,7 +81,6 @@ class Office(Base):
     max_person_appointment_per_day = db.Column(db.Integer, default=1)
     civic_address = db.Column(db.String(200))
     telephone = db.Column(db.String(20))
-    # disable_online_appointment = db.Column(db.Boolean, default=False)
     online_status = db.Column(Enum(Status))
     number_of_dlkt = db.Column(db.Integer, nullable=True)
     office_email_paragraph = db.Column(db.String(2000), nullable=True)
@@ -92,7 +93,6 @@ class Office(Base):
     back_office_list = db.relationship("Service", secondary='office_back_office_list')
     csrs = db.relationship('CSR')
     citizens = db.relationship('Citizen', backref='office_citizens')
-    #timeslots = db.relationship('TimeSlot', secondary='office_timeslot')
     timeslots = db.relationship('TimeSlot')
 
     sb = db.relationship('SmartBoard')
@@ -132,7 +132,7 @@ class Office(Base):
                 office.timezone
                 cache.set(key, office)
         except Exception as e:
-            print('Error on building cache')
+            print("Error on building cache: {0}".format(e))
 
     @classmethod
     def get_all_active_offices(cls):
@@ -151,4 +151,3 @@ class Office(Base):
     def clear_offices_cache(cls):
         """Clear active offices cache."""
         cache.delete(Office.offices_cache_key)
-        # Office.get_all_active_offices()

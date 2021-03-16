@@ -82,20 +82,9 @@ limitations under the License.*/
 </template>
 
 <script lang="ts">
-// /* eslint-disable */
 import { Component, Prop, Vue } from 'vue-property-decorator'
-
 import Axios from '@/utils/axios'
 import Video from './video.vue'
-import config from '../../../config'
-
-// const Axios = axios.create({
-//   baseURL: process.env.API_URL,
-//   withCredentials: true,
-//   headers: {
-//     Accept: 'application/json'
-//   }
-// })
 
 @Component({
   components: {
@@ -183,7 +172,7 @@ export default class CallByTicket extends Vue {
         this.showOverflow = false
         invited = citizens
       }
-      if (invited.length != 0) {
+      if (invited.length !== 0) {
         const tickets: any = []
         invited.forEach(item => tickets.push({ ticket_number: item.ticket_number }))
         return tickets

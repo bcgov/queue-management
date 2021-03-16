@@ -24,16 +24,16 @@ export default class DropdownCalendar extends Vue {
   get view () {
     if (this.calendarSetup) {
       switch (this.calendarSetup.viewName) {
-        case 'agendaDay':
-          return 'Single Day'
-        case 'week':
-          return 'Weekly Planner'
-        case 'month':
-          return 'Monthly Planner'
-        case 'listYear':
-          return 'Search Results'
-        default:
-          return 'Weekly Planner'
+      case 'agendaDay':
+        return 'Single Day'
+      case 'week':
+        return 'Weekly Planner'
+      case 'month':
+        return 'Monthly Planner'
+      case 'listYear':
+        return 'Search Results'
+      default:
+        return 'Weekly Planner'
       }
     }
     return 'Weekly Schedule'

@@ -22,7 +22,7 @@ class Permission(Base):
     permission_code = db.Column(db.String(100), nullable=False)
     permission_desc = db.Column(db.String(1000), nullable=False)
 
-    def __repr__(self, permission_code):
+    def __repr__(self):
         return '<Permission Code:(name={self.permission_code!r})>'.format(self=self)
 
     def __init__(self, **kwargs):

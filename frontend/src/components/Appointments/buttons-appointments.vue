@@ -6,10 +6,6 @@
           <b-button class="btn-primary mx-2" @click="today">Today</b-button>
           <b-button class="btn-primary mx-2" v-if="toggleAppCalenderView" @click="agendaWeek">Week View</b-button>
           <b-button class="btn-primary mx-2" v-if="!toggleAppCalenderView" @click="agendaDay"> Day View</b-button>
-          <!-- <b-dropdown variant="primary" class="mr-2" :text="dropdownText">
-            <b-dropdown-item @click="agendaWeek"> Week View </b-dropdown-item>
-            <b-dropdown-item @click="agendaDay"> Day View </b-dropdown-item>
-          </b-dropdown> -->
           <b-button
             variant="primary"
             class="ml-0 mx-2"
@@ -72,7 +68,6 @@ const appointmentsModule = namespace('appointmentsModule')
 export default class ButtonsAppointments extends Vue {
   @appointmentsModule.State('showAppointmentBlackoutModal') private showAppointmentBlackoutModal!: any
   @appointmentsModule.Getter('calendar_setup') private calendar_setup!: any;
-  // @appointmentsModule.Getter('is_GA') private is_GA!: any;
   @appointmentsModule.Getter('is_Support') private is_Support!: any;
 
   @appointmentsModule.Action('beginAppointment') public beginAppointment: any

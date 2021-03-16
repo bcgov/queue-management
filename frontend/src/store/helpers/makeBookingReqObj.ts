@@ -16,7 +16,7 @@ export const makeBookingReqObj = (context, responses) => {
         booking_office = context.state.user.office
     } else {
         booking_office = context.state.offices.find(
-            office => office.office_id == responses.office_id
+            office => office.office_id === responses.office_id
         )
     }
     const booking_timezone_name: any = booking_office.timezone.timezone_name
@@ -26,14 +26,14 @@ export const makeBookingReqObj = (context, responses) => {
     const time = moment(responses.exam_time).format('HH:mm:ss')
     const datetime = date + 'T' + time
     let start
-    if (booking_timezone_name != timezone_name) {
+    if (booking_timezone_name !== timezone_name) {
         start = tZone.tz(datetime, booking_timezone_name)
     } else {
         // JSTOTS TOCHECK removed new from moment. no need to use new with moment
         start = moment(datetime).local()
     }
     const length = context.state.examTypes.find(
-        (ex: any) => ex.exam_type_id == responses.exam_type_id
+        (ex: any) => ex.exam_type_id === responses.exam_type_id
     ).number_of_hours
     const end = start.clone().add(length, 'hours')
     const booking: any = {

@@ -39,22 +39,24 @@ class CSRConfig(Base):
         return current_user.role.role_code != 'GA'
 
     can_delete = False
+    office_name = 'office.office_name'
+    role_desc = 'role.role_desc'
 
-    column_list = ['username', 'office.office_name', 'office_manager', 'pesticide_designate', 'finance_designate',
-                   'ita2_designate', 'role.role_desc', 'deleted']
+    column_list = ['username', office_name, 'office_manager', 'pesticide_designate', 'finance_designate',
+                   'ita2_designate', role_desc, 'deleted']
     column_labels = {
         'username': 'Username',
-        'office.office_name': 'Office',
+        office_name: 'Office',
         'office_manager': 'Office Exam Manager',
         'pesticide_designate': 'Pesticide Client Liaison/Program Specialist',
         'finance_designate': 'Financial Reporting Designate',
         'ita2_designate': 'ITA Liaison/Program Specialist',
-        'role.role_desc': 'Role',
+        role_desc: 'Role',
         'deleted': 'Deleted'
     }
     column_searchable_list = ('username',)
-    column_sortable_list = ('username', 'office.office_name', 'office_manager', 'pesticide_designate',
-                            'finance_designate', 'ita2_designate', 'role.role_desc', 'deleted')
+    column_sortable_list = ('username', office_name, 'office_manager', 'pesticide_designate',
+                            'finance_designate', 'ita2_designate', role_desc, 'deleted')
     column_default_sort = 'username'
     form_args = {
         'csr_state': {'default': 'Logout'},
@@ -91,8 +93,8 @@ class CSRConfig(Base):
 
     def validate_model(self):
 
-        id = get_mdict_item_or_list(request.args, 'id')
-        if id is None:
+        identifier = get_mdict_item_or_list(request.args, 'id')
+        if identifier is None:
             return False
 
         #  Get Invited and Being Served states, to see if CSR has any open tickets.
@@ -224,7 +226,6 @@ def check_uservalues(updated_csr):
     if update_data:
         db.session.add(updated_csr)
         db.session.commit()
-    return
 
 
 def request_redirect(self, return_url, model, request_parameter):

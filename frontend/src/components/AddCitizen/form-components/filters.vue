@@ -43,6 +43,7 @@ export default class Filters extends Vue {
 
   @Mutation('updateAddModalForm') public updateAddModalForm: any
   @Mutation('setDisplayServices') public setDisplayServices: any
+  $route: any
 
   @Watch('categories')
   onCategoriesChange (newVal: any, oldVal: any) {
@@ -105,7 +106,7 @@ export default class Filters extends Vue {
 </script>
 
 <style scoped>
-b-col {
+.b-col {
   padding: 0px;
   margin: 0px;
 }

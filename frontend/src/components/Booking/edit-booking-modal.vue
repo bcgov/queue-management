@@ -37,7 +37,7 @@
                 <font-awesome-icon
                   v-if="this.booking_contact_information !== ''"
                   icon="check"
-                  style="fontsize: 1rem; color: green"
+                  style="font-size: 1rem; color: green"
                 />
                 <b-input
                   autocomplete="off"
@@ -287,7 +287,7 @@
                 <font-awesome-icon
                   v-if="this.booking_contact_information !== ''"
                   icon="check"
-                  style="fontsize: 1rem; color: green"
+                  style="font-size: 1rem; color: green"
                 />
                 <b-input
                   autocomplete="off"
@@ -383,7 +383,7 @@
             </b-col>
           </b-form-row>
           <b-form-row>
-            <template v-if="this.currentShadowInvigilator != null">
+            <template v-if="this.currentShadowInvigilator !== null">
               <b-row style="display: flex" class="w-100 ml-0 mb-2">
                 <b-col class="w-50 ml-1 mr-1 pr-1">
                   <b-button
@@ -457,13 +457,13 @@
                     <b-col cols="4">
                       <b-row> Shadow Invigilator Limit: 1 </b-row>
                       <b-row
-                        v-if="this.currentShadowInvigilator != null"
+                        v-if="this.currentShadowInvigilator !== null"
                         class="mb-1"
                       >
                         Current Invigilator
                       </b-row>
                       <b-row
-                        v-if="this.currentShadowInvigilator != null"
+                        v-if="this.currentShadowInvigilator !== null"
                         style="justify-content: center"
                         class="mb-1"
                       >
@@ -941,7 +941,7 @@ export default class EditBooking extends Vue {
   }
 
   decrement () {
-    if (this.duration == 0.5) {
+    if (this.duration === 0.5) {
       return
     }
     this.added -= 0.5
@@ -955,7 +955,7 @@ export default class EditBooking extends Vue {
   }
 
   increment () {
-    if ((this.end as any).format('H') == 18) {
+    if ((this.end as any).format('H') === 18) {
       return
     }
     this.added += 0.5
@@ -1013,7 +1013,7 @@ export default class EditBooking extends Vue {
           this.editedFields.push('invigilator')
         }
       }
-      if (this.event.exam.booking.invigilator_id == e) {
+      if (this.event.exam.booking.invigilator_id === e) {
         if (this.editedFields.includes('invigilator')) {
           this.editedFields.splice(this.editedFields.indexOf('invigilator'), 1)
         }
@@ -1044,7 +1044,7 @@ export default class EditBooking extends Vue {
       const currentID = this.currentShadowInvigilator = this.event.exam.booking.shadow_invigilator_id || null
       let currentName = ''
       this.shadow_invigilators.forEach(function (invigilator) {
-        if (invigilator.id == currentID) {
+        if (invigilator.id === currentID) {
           currentName = invigilator.name
         }
       })
@@ -1053,7 +1053,7 @@ export default class EditBooking extends Vue {
         if (this.rescheduling) {
           this.invigilator = null
         }
-        if (this.event.exam.booking.invigilators.length == 1) {
+        if (this.event.exam.booking.invigilators.length === 1) {
           this.invigilator = this.event.exam.booking.invigilators[0] || null
         }
       }
@@ -1107,13 +1107,13 @@ export default class EditBooking extends Vue {
         if (!this.editedFields.includes('shadow_invigilator')) {
           this.editedFields.push('shadow_invigilator')
         }
-      } else if (this.event.exam.booking.shadow_invigilator_id == e) {
+      } else if (this.event.exam.booking.shadow_invigilator_id === e) {
         if (this.editedFields.includes('shadow_invigilator')) {
           this.editedFields.splice(this.editedFields.indexOf('shadow_invigilator'), 1)
         }
       }
     }
-    if (shadows[0] == null) {
+    if (shadows[0] === null) {
       this.shadowInvigilator = null
     } else {
       this.shadowInvigilator = shadows[0].id
@@ -1148,7 +1148,7 @@ export default class EditBooking extends Vue {
       if (!(this.end as any).isSame(this.event.end)) {
         changes.end_time = (this.end as any).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
       }
-      if (this.newEvent && !(this.newEvent.resource.id == this.event.resourceId)) {
+      if (this.newEvent && !(this.newEvent.resource.id === this.event.resourceId)) {
         changes.room_id = this.newEvent.resource.id
       }
       if (this.editedFields.includes('title')) {

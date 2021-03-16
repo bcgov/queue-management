@@ -35,7 +35,7 @@ limitations under the License.*/ -->
     <div v-else>Please stand by...</div>
     <BoardSocket :smartboardData="{ office_number }"></BoardSocket>
 
-    <div v-if="networkDown == true" id="network-status" class="loading small">
+    <div v-if="networkDown === true" id="network-status" class="loading small">
       <div></div>
       <div></div>
       <div></div>
@@ -46,7 +46,6 @@ limitations under the License.*/ -->
 </template>
 
 <script lang="ts">
-// /* eslint-disable */
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import Axios from '@/utils/axios'
 import BoardSocket from './board-socket.vue'
@@ -54,7 +53,6 @@ import CallByName from './call-by-name.vue'
 import CallByTicket from './call-by-ticket.vue'
 import NonReception from './non-reception.vue'
 import axios from 'axios'
-import config from '../../../config'
 
 @Component({
   components: {
@@ -169,12 +167,6 @@ export default class Smartboard extends Vue {
   height: 12%;
   width: 100%;
 }
-.flex-title {
-  font-size: 7.2rem;
-  color: darkblue;
-  text-shadow: -1px 0 steelblue, 0 1px steelblue, 1px 0 steelblue,
-    0 -1px steelblue;
-}
 .lg-boardtable-head {
   font-size: 2.3rem;
   text-align: center;
@@ -221,6 +213,12 @@ export default class Smartboard extends Vue {
   padding-left: 1%;
   padding-right: 1%;
   vertical-align: top;
+}
+.flex-title {
+  font-size: 7.2rem;
+  color: darkblue;
+  text-shadow: -1px 0 steelblue, 0 1px steelblue, 1px 0 steelblue,
+    0 -1px steelblue;
 }
 .flex-title {
   font-size: 4rem;

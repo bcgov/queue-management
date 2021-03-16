@@ -5,9 +5,9 @@
         There are no exams scheduled for the week currently in view.
         <br />Use the Arrow Buttons above to view a
         different week or click
-        <b
+        <strong
           class="mx-1"
-        >"This Week"</b> to instantly view the current week.
+        >"This Week"</strong> to instantly view the current week.
       </div>
       <template v-for="(date, i) in examDates">
         <b-container fluid style="background-color: white" v-bind:key="{i}">
@@ -48,16 +48,19 @@
 
                 <template slot="invigilator" slot-scope="row">
                   <span
-                    v-if="showInvigilator(row.item).length == 0"
+                    v-if="showInvigilator(row.item).length === 0"
                     class="no-way-jose"
                   >NOT ASSIGNED</span>
                   <span
-                    v-if="showInvigilator(row.item).length > 0"
-                    v-for="invigilator in showInvigilator(row.item)"
-                    :style="row.item.exam.booking.invigilators ? null : {color: '#ff9f17'}"
-                  >
-                    {{ invigilator }}
-                    <br />
+                    v-if="showInvigilator(row.item).length > 0">
+                    <span
+                      v-for="invigilator in showInvigilator(row.item)"
+                      v-bind:key="invigilator"
+                      :style="row.item.exam.booking.invigilators ? null : {color: '#ff9f17'}"
+                    >
+                      {{ invigilator }}
+                      <br />
+                    </span>
                   </span>
                 </template>
 
@@ -112,7 +115,7 @@
 <script lang="ts">
 // /* eslint-disable */
 import { Action, Getter, Mutation, State } from 'vuex-class'
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 
 // import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import moment from 'moment'
@@ -259,7 +262,7 @@ export default class Agenda extends Vue {
     const self = this
     const invigilator_name_list: any = []
     exam.booking.invigilators.forEach(function (invigilator: any) {
-      const i = self.invigilator_multi_select.filter((i: any) => i.value == invigilator)
+      const i = self.invigilator_multi_select.filter((i: any) => i.value === invigilator)
       if (i[0] && i[0].name) {
         invigilator_name_list.push(i[0].name)
       }
@@ -275,7 +278,7 @@ export default class Agenda extends Vue {
 
   private showShadowInvigilator (data: any) {
     const { exam } = data
-    const shadow_invigilator = this.all_invigilator_options.filter((i: any) => i.id == exam.booking.shadow_invigilator_id)
+    const shadow_invigilator = this.all_invigilator_options.filter((i: any) => i.id === exam.booking.shadow_invigilator_id)
     if (shadow_invigilator[0] && shadow_invigilator[0].name) {
       return shadow_invigilator[0].name
     } else { return false }

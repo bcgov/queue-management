@@ -119,23 +119,6 @@
       <b-form-row>
         <b-col cols="4">
           <b-form-group class="mb-0 mt-2">
-            <!-- <DatePicker
-              v-if="allow_time_edit"
-              v-model="start"
-              :time-picker-options="{
-                start: '8:30',
-                step: '00:30',
-                end: '17:00',
-              }"
-              lang="en"
-              format="h:mm a"
-              autocomplete="off"
-              :editable="true"
-              placeholder="Select Time"
-              class="w-100"
-              type="time"
-            >
-            </DatePicker> --> 
             <label v-if="allow_time_edit" class="mb-0">Select Time</label><br />
             <b-timepicker
                 v-if="allow_time_edit"
@@ -151,8 +134,6 @@
                 @input="setStartDateTime(true)"
                 >
             </b-timepicker>
-            <!-- <br/> -->
-            <!-- <span class="danger" v-if="reccuring_start_time_msg">{{reccuring_start_time_msg}}</span> -->
           </b-form-group>
         </b-col>
         <b-col cols="8">
@@ -446,6 +427,7 @@ export default class ApptBookingModal extends Vue {
   public appt_time: any = null
   public appt_date: any = null
   public curr_date: any = null
+  $router: any
 
 
   get appointments () {
@@ -460,9 +442,9 @@ export default class ApptBookingModal extends Vue {
   get isNotBlackoutFlag () {
     if (this.clickedAppt) {
       if (this.clickedAppt.blackout_flag) {
-        if (this.clickedAppt.blackout_flag == 'Y') {
+        if (this.clickedAppt.blackout_flag === 'Y') {
           return false
-        } else if (this.clickedAppt.blackout_flag == 'N') {
+        } else if (this.clickedAppt.blackout_flag === 'N') {
           return true
         }
       } else {
@@ -498,14 +480,6 @@ export default class ApptBookingModal extends Vue {
     }
     if (this.clickedAppt) {
       const event = this.clickedAppt
-      // let start = moment(event.start).clone()
-      // for (let l of [15, 30, 45, 60]) {
-      // let testEnd = start.clone().add(l, 'minutes')
-      // if (this.appointments.find(appt => moment(appt.start).isBetween(start, testEnd))) {
-      //   break
-      // }
-      // options.push(l)
-      // }
       const time = 60
       for (let l = 15; l <= time; l += 15) {
         if (!this.lengthOptions.includes(l)) {
@@ -724,7 +698,6 @@ export default class ApptBookingModal extends Vue {
     if (this.apptRescheduling) {
       this.$store.commit('toggleRescheduling', false)
       this.setRescheduling(false)
-      // this.start = this.clickedTime.start.clone()
       this.start = new Date(this.clickedTime.start.format())
       this.curr_date = new Date(this.clickedTime.start.format())
       this.length = this.clickedTime.end.clone().diff(this.start, 'minutes')
@@ -758,7 +731,6 @@ export default class ApptBookingModal extends Vue {
       this.length = 15
       this.start = new Date(this.clickedTime.start.format())
       this.curr_date = new Date(this.clickedTime.start.format())
-      // this.start = this.clickedTime.start.clone()
        
       this.clearAddModal()
     }
@@ -771,7 +743,6 @@ export default class ApptBookingModal extends Vue {
       this.citizen_name = this.clickedAppt.title
       this.comments = this.clickedAppt.comments
       this.contact_information = this.clickedAppt.contact_information
-      // this.start = this.clickedAppt.start.clone()
       this.start = new Date(this.clickedAppt.start.format())
       this.curr_date = new Date(this.clickedAppt.start.format())
       this.length = this.clickedAppt.end.clone().diff(this.start, 'minutes')
@@ -787,14 +758,10 @@ export default class ApptBookingModal extends Vue {
       this.start = null
       this.curr_date = null
       //todo, remove if consditon
-      // this.start = this.clickedTime.start.clone()
       if (this.clickedTime) {
       this.start = new Date(this.clickedTime.start.format())
       this.curr_date = new Date(this.clickedTime.start.format())
       }
-      // if (this.clickedTime) {
-      //   this.start = this.clickedTime.start.clone()
-      // }
     }
     var now = new Date();
     if (this.start > now) {
@@ -987,6 +954,5 @@ export default class ApptBookingModal extends Vue {
   animation: spin 1s ease-in-out infinite;
   -webkit-animation: spin 1s ease-in-out infinite;
 }
-
 
 </style>

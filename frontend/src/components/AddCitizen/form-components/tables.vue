@@ -63,7 +63,7 @@
                   &nbsp;&nbsp;&nbsp;
                   <font-awesome-icon
                     icon="share-square"
-                    style="fontsize: 1rem; color: blue"
+                    style="font-size: 1rem; color: blue"
                   />
                 </div>
               </template>
@@ -74,7 +74,7 @@
                   &nbsp;&nbsp;&nbsp;
                   <font-awesome-icon
                     icon="hands-helping"
-                    style="fontsize: 1rem; color: green"
+                    style="font-size: 1rem; color: green"
                   />
                 </div>
               </template>
@@ -87,7 +87,7 @@
                   }}</span>
                   <div style="display: none">
                     {{
-                      data.item.service_id == form_data.service
+                      data.item.service_id === form_data.service
                         ? (data.item._rowVariant = 'active')
                         : (data.item._rowVariant = '')
                     }}
@@ -142,10 +142,11 @@ export default class Tables extends Vue {
   private f: boolean = false
   private t: boolean = true
   private actionToExecute: string = 'NOTHING'
+  $route: any
 
   get showQuickQIcon () {
     return this.reception && this.receptionist_status &&
-      this.addModalSetup == 'reception' && this.$route.path == '/queue'
+      this.addModalSetup === 'reception' && this.$route.path === '/queue'
   }
 
   get simplified () {
@@ -163,7 +164,7 @@ export default class Tables extends Vue {
   }
 
   get simplifiedTicketStarted () {
-    if (this.$route.path == '/queue') {
+    if (this.$route.path === '/queue') {
       if (this.serviceModalForm.citizen_id) {
         return true
       }
@@ -205,13 +206,13 @@ export default class Tables extends Vue {
   }
 
   rowClicked (item: any, index: any) {
-    if (this.performingAction == false) {
+    if (this.performingAction === false) {
       const id = item.service_id
       this.setAddModalSelectedItem(item.service_name)
       this.$store.commit('updateAddModalForm', { type: 'service', value: id })
-      if (this.actionToExecute == 'sendToQueue') {
+      if (this.actionToExecute === 'sendToQueue') {
         this.clickAddToQueue()
-      } else if (this.actionToExecute == 'serveCustomer') {
+      } else if (this.actionToExecute === 'serveCustomer') {
         this.serveCustomerAction() // item
       } else {
         console.log('unknown action: ', this.actionToExecute)
@@ -231,21 +232,21 @@ export default class Tables extends Vue {
 
   serveCustomerAction () {
     //  NOTE!!     When actionToTake is serveCustomer then we execute this code
-    if (this.$route.path == '/exams') {
+    if (this.$route.path === '/exams') {
       this.toggleExamsTrackingIP(true)
       this.clickBeginService({ simple: true })
-    } else if (this.$route.path == '/appointments') {
+    } else if (this.$route.path === '/appointments') {
       this.$store.commit('appointmentsModule/setSelectedService', this.addModalForm.service)
       this.closeAddServiceModal()
-    } else if (this.$route.path == '/booking') {
+    } else if (this.$route.path === '/booking') {
       this.toggleExamsTrackingIP(true)
       this.clickBeginService({ simple: true })
-    } else if ((!this.simplifiedTicketStarted) && (this.addModalSetup == 'reception' || this.addModalSetup == 'non_reception')) {
+    } else if ((!this.simplifiedTicketStarted) && (this.addModalSetup === 'reception' || this.addModalSetup === 'non_reception')) {
       this.clickBeginService({ simple: false })
     } else if (this.simplifiedTicketStarted) {
-      if (this.addModalSetup == 'add_mode') {
+      if (this.addModalSetup === 'add_mode') {
         this.clickAddServiceApply()
-      } else if (this.addModalSetup == 'edit_mode') {
+      } else if (this.addModalSetup === 'edit_mode') {
         this.clickEditApply()
       } else {
         console.log('==> No service selected.')

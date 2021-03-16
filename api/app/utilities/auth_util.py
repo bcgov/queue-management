@@ -31,12 +31,6 @@ def is_public_user() -> bool:
         'roles'] and Role.online_appointment_user.value in \
            g.jwt_oidc_token_info['realm_access']['roles']
 
-
-# def is_job() -> bool:
-#     """Return if the user is a reminder job."""
-#     return Role.reminder_job.value in g.oidc_token_info['realm_access']['roles']
-#
-
 def has_any_role(roles: list):
     """Check if the user has any role listed in roles."""
 

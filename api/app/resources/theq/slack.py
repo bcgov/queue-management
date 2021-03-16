@@ -41,7 +41,7 @@ class Slack(Resource):
         try:
             slack_message = json_data['slack_message']
         except KeyError as err:
-            return {"message": "Must provide message to send to slack"}, 422
+            return {"message": "Must provide message to send to slack. " + str(err)}, 422
 
         print(slack_message)
 

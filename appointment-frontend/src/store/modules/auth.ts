@@ -3,7 +3,6 @@ import ConfigHelper from '@/utils/config-helper'
 import { SessionStorageKeys } from '@/utils/constants'
 import { User } from '@/models/user'
 import UserService from '@/services/user.services'
-import { store } from '@/store'
 
 @Module({
   name: 'auth',

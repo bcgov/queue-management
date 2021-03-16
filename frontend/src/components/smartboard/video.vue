@@ -61,7 +61,7 @@ export default class Video extends Vue {
 
   get videoPath () {
     let videoPath = defaultVideoFile
-    if (this.getParameterByName('localvideo') == '1') {
+    if (this.getParameterByName('localvideo') === '1') {
       videoPath = localVideoFile
     } else {
       videoPath = defaultVideoFile
@@ -72,7 +72,7 @@ export default class Video extends Vue {
 
   getOfficeVideoUrl () {
     // eslint-disable-next-line eqeqeq
-    if (this.getParameterByName('localvideo') == 1) {
+    if (this.getParameterByName('localvideo') === 1) {
       this.playerOptions.sources[0].src = localVideoFile
     } else {
       const url = '/videofiles/' + this.office_number.toString()

@@ -106,6 +106,7 @@ export default class CheckInModal extends Vue {
   @appointmentsModule.Mutation('toggleCheckInClicked') public toggleCheckInClicked: any
 
   public showcheckInSpinner: boolean = false
+  $router: any
 
   get modalVisible () { return this.showCheckInModal }
   set modalVisible (e) { this.toggleCheckInModal(e) }
@@ -154,7 +155,7 @@ export default class CheckInModal extends Vue {
           this.$root.$emit('clear-clicked-appt')
           this.$root.$emit('clear-clicked-time')
           this.hide()
-          if (this.$store.state.officeType == 'nocallonsmartboard') {
+          if (this.$store.state.officeType === 'nocallonsmartboard') {
             this.$router.push('/queue')
           }
 

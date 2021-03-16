@@ -24,7 +24,6 @@ class TimeslotSchema(ma.SQLAlchemySchema):
         include_relationships = True
         load_instance = True
         jit = toastedmarshmallow.Jit
-        # exclude = ('offices','time_slot_id')
 
     start_time = fields.Time()
     end_time = fields.Time()

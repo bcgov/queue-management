@@ -1,7 +1,6 @@
 <template>
   <div>
     <!-- removed shown -->
-    <!-- @shown="showModal" -->
     <b-modal
       v-model="modalVisible"
       :no-close-on-backdrop="true"
@@ -105,16 +104,6 @@
           </b-form-row>
 
           <!--  Delete the notes field.  Can no longer edit notes when uploading. -->
-          <!--
-        <b-form-row class="mt-2">
-          <b-col>
-            <b-form-group class="mb-0">
-              <label class="mb-0">Notes</label><br>
-              <b-textarea v-model="examNotes"/>
-            </b-form-group>
-          </b-col>
-        </b-form-row>
-        -->
           <b-alert class="mt-2" :show="uploadFailed" variant="danger">
             File upload failed, please try again.
           </b-alert>
@@ -128,20 +117,13 @@
 </template>
 
 <script lang="ts">
-// /* eslint-disable */
-
-import { Action, Getter, Mutation, State, namespace } from 'vuex-class'
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
+import { Action, Mutation, namespace } from 'vuex-class'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mapState } from 'vuex'
-// import { mapActions, mapMutations, mapState } from 'vuex'
-
-const addExamModule = namespace('addExamModule')
 
 @Component({
 
   computed: {
-    // ...mapGetters('auth', ['isAuthenticated'])
-
     ...mapState({
       showModal: (state: any) => state.addExamModule.uploadPesticideModalVisible
     })
@@ -155,11 +137,6 @@ export default class UploadPesticideModal extends Vue {
   private resetExam!: any
 
   private readonly showModal!: any
-  // @State('addExamModule.uploadPesticideModalVisible') private showModal
-
-  //   ...mapState ({
-  //   showModal: state => state.addExamModule.uploadPesticideModalVisible
-  // }),
 
   @Action('putExamInfo') public putExamInfo: any
   @Action('getExams') public getExams: any
@@ -254,9 +231,6 @@ export default class UploadPesticideModal extends Vue {
   updateExam (putData) {
     this.putExamInfo(putData)
       .then(() => {
-        // setTimeout(()=> {
-        //   this.resetModal()
-        // }, 3000)
       })
       .catch((error) => {
         console.error(error)

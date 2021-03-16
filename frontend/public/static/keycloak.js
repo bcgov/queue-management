@@ -108,7 +108,7 @@
                     kc.flow = initOptions.flow;
                 }
 
-                if (initOptions.timeSkew != null) {
+                if (initOptions.timeSkew !== null) {
                     kc.timeSkew = initOptions.timeSkew;
                 }
 
@@ -261,7 +261,7 @@
             callbackStorage.add(callbackState);
 
             var baseUrl;
-            if (options && options.action == 'register') {
+            if (options && options.action === 'register') {
                 baseUrl = kc.endpoints.register();
             } else {
                 baseUrl = kc.endpoints.authorize();
@@ -269,7 +269,7 @@
 
             var scope;
             if (options && options.scope) {
-                if (options.scope.indexOf("openid") != -1) {
+                if (options.scope.indexOf("openid") !== -1) {
                     scope = options.scope;
                 } else {
                     scope = "openid " + options.scope;
@@ -379,8 +379,8 @@
             var promise = createPromise(false);
 
             req.onreadystatechange = function () {
-                if (req.readyState == 4) {
-                    if (req.status == 200) {
+                if (req.readyState === 4) {
+                    if (req.status === 200) {
                         kc.profile = JSON.parse(req.responseText);
                         promise.setSuccess(kc.profile);
                     } else {
@@ -404,8 +404,8 @@
             var promise = createPromise(false);
 
             req.onreadystatechange = function () {
-                if (req.readyState == 4) {
-                    if (req.status == 200) {
+                if (req.readyState === 4) {
+                    if (req.status === 200) {
                         kc.userInfo = JSON.parse(req.responseText);
                         promise.setSuccess(kc.userInfo);
                     } else {
@@ -420,11 +420,11 @@
         }
 
         kc.isTokenExpired = function(minValidity) {
-            if (!kc.tokenParsed || (!kc.refreshToken && kc.flow != 'implicit' )) {
+            if (!kc.tokenParsed || (!kc.refreshToken && kc.flow !== 'implicit' )) {
                 throw 'Not authenticated';
             }
 
-            if (kc.timeSkew == null) {
+            if (kc.timeSkew === null) {
                 console.info('[KEYCLOAK] Unable to determine if token is expired as timeskew is not set');
                 return true;
             }
@@ -448,7 +448,7 @@
 
             var exec = function() {
                 var refreshToken = false;
-                if (minValidity == -1) {
+                if (minValidity === -1) {
                     refreshToken = true;
                     console.info('[KEYCLOAK] Refreshing token: forced refresh');
                 } else if (!kc.tokenParsed || kc.isTokenExpired(minValidity)) {
@@ -464,7 +464,7 @@
 
                     refreshQueue.push(promise);
 
-                    if (refreshQueue.length == 1) {
+                    if (refreshQueue.length === 1) {
                         var req = new XMLHttpRequest();
                         req.open('POST', url, true);
                         req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
@@ -479,8 +479,8 @@
                         var timeLocal = new Date().getTime();
 
                         req.onreadystatechange = function () {
-                            if (req.readyState == 4) {
-                                if (req.status == 200) {
+                            if (req.readyState === 4) {
+                                if (req.status === 200) {
                                     console.info('[KEYCLOAK] Token refreshed');
 
                                     timeLocal = (timeLocal + new Date().getTime()) / 2;
@@ -490,18 +490,18 @@
                                     setToken(tokenResponse['access_token'], tokenResponse['refresh_token'], tokenResponse['id_token'], timeLocal);
 
                                     kc.onAuthRefreshSuccess && kc.onAuthRefreshSuccess();
-                                    for (var p = refreshQueue.pop(); p != null; p = refreshQueue.pop()) {
+                                    for (var p = refreshQueue.pop(); p !== null; p = refreshQueue.pop()) {
                                         p.setSuccess(true);
                                     }
                                 } else {
                                     console.warn('[KEYCLOAK] Failed to refresh token');
 
-                                    if (req.status == 400) {
+                                    if (req.status === 400) {
                                         kc.clearToken();
                                     }
 
                                     kc.onAuthRefreshError && kc.onAuthRefreshError();
-                                    for (var p = refreshQueue.pop(); p != null; p = refreshQueue.pop()) {
+                                    for (var p = refreshQueue.pop(); p !== null; p = refreshQueue.pop()) {
                                         p.setError(true);
                                     }
                                 }
@@ -539,7 +539,7 @@
 
         function getRealmUrl() {
             if (typeof kc.authServerUrl !== 'undefined') {
-                if (kc.authServerUrl.charAt(kc.authServerUrl.length - 1) == '/') {
+                if (kc.authServerUrl.charAt(kc.authServerUrl.length - 1) === '/') {
                     return kc.authServerUrl + 'realms/' + encodeURIComponent(kc.realm);
                 } else {
                     return kc.authServerUrl + '/realms/' + encodeURIComponent(kc.realm);
@@ -565,7 +565,7 @@
             var timeLocal = new Date().getTime();
 
             if (error) {
-                if (prompt != 'none') {
+                if (prompt !== 'none') {
                     var errorData = { error: error, error_description: oauth.error_description };
                     kc.onAuthError && kc.onAuthError(errorData);
                     promise && promise.setError(errorData);
@@ -573,11 +573,11 @@
                     promise && promise.setSuccess();
                 }
                 return;
-            } else if ((kc.flow != 'standard') && (oauth.access_token || oauth.id_token)) {
+            } else if ((kc.flow !== 'standard') && (oauth.access_token || oauth.id_token)) {
                 authSuccess(oauth.access_token, null, oauth.id_token, true);
             }
 
-            if ((kc.flow != 'implicit') && code) {
+            if ((kc.flow !== 'implicit') && code) {
                 var params = 'code=' + code + '&grant_type=authorization_code';
                 var url = kc.endpoints.token();
 
@@ -596,8 +596,8 @@
                 req.withCredentials = true;
 
                 req.onreadystatechange = function() {
-                    if (req.readyState == 4) {
-                        if (req.status == 200) {
+                    if (req.readyState === 4) {
+                        if (req.status === 200) {
 
                             var tokenResponse = JSON.parse(req.responseText);
                             authSuccess(tokenResponse['access_token'], tokenResponse['refresh_token'], tokenResponse['id_token'], kc.flow === 'standard');
@@ -617,9 +617,9 @@
 
                 setToken(accessToken, refreshToken, idToken, timeLocal);
 
-                if (useNonce && ((kc.tokenParsed && kc.tokenParsed.nonce != oauth.storedNonce) ||
-                    (kc.refreshTokenParsed && kc.refreshTokenParsed.nonce != oauth.storedNonce) ||
-                    (kc.idTokenParsed && kc.idTokenParsed.nonce != oauth.storedNonce))) {
+                if (useNonce && ((kc.tokenParsed && kc.tokenParsed.nonce !== oauth.storedNonce) ||
+                    (kc.refreshTokenParsed && kc.refreshTokenParsed.nonce !== oauth.storedNonce) ||
+                    (kc.idTokenParsed && kc.idTokenParsed.nonce !== oauth.storedNonce))) {
 
                     console.info('[KEYCLOAK] Invalid nonce, clearing token');
                     kc.clearToken();
@@ -710,8 +710,8 @@
                 req.setRequestHeader('Accept', 'application/json');
 
                 req.onreadystatechange = function () {
-                    if (req.readyState == 4) {
-                        if (req.status == 200 || fileLoaded(req)) {
+                    if (req.readyState === 4) {
+                        if (req.status === 200 || fileLoaded(req)) {
                             var config = JSON.parse(req.responseText);
 
                             kc.authServerUrl = config['auth-server-url'];
@@ -757,7 +757,7 @@
                 } else {
                     if (typeof oidcProvider === 'string') {
                         var oidcProviderConfigUrl;
-                        if (oidcProvider.charAt(oidcProvider.length - 1) == '/') {
+                        if (oidcProvider.charAt(oidcProvider.length - 1) === '/') {
                             oidcProviderConfigUrl = oidcProvider + '.well-known/openid-configuration';
                         } else {
                             oidcProviderConfigUrl = oidcProvider + '/.well-known/openid-configuration';
@@ -767,8 +767,8 @@
                         req.setRequestHeader('Accept', 'application/json');
 
                         req.onreadystatechange = function () {
-                            if (req.readyState == 4) {
-                                if (req.status == 200 || fileLoaded(req)) {
+                            if (req.readyState === 4) {
+                                if (req.status === 200 || fileLoaded(req)) {
                                     var oidcProviderConfig = JSON.parse(req.responseText);
                                     setupOidcEndoints(oidcProviderConfig);
                                     promise.setSuccess();
@@ -790,7 +790,7 @@
         }
 
         function fileLoaded(xhr) {
-            return xhr.status == 0 && xhr.responseText && xhr.responseURL.startsWith('file:');
+            return xhr.status === 0 && xhr.responseText && xhr.responseURL.startsWith('file:');
         }
 
         function setToken(token, refreshToken, idToken, timeLocal) {
@@ -828,7 +828,7 @@
                     kc.timeSkew = Math.floor(timeLocal / 1000) - kc.tokenParsed.iat;
                 }
 
-                if (kc.timeSkew != null) {
+                if (kc.timeSkew !== null) {
                     console.info('[KEYCLOAK] Estimated time difference between browser and server is ' + kc.timeSkew + ' seconds');
 
                     if (kc.onTokenExpired) {
@@ -1099,12 +1099,11 @@
                     return;
                 }
 
-                if (!(event.data == 'unchanged' || event.data == 'changed' || event.data == 'error')) {
+                if (!(event.data === 'unchanged' || event.data === 'changed' || event.data === 'error')) {
                     return;
                 }
 
-
-                if (event.data != 'unchanged') {
+                if (event.data !== 'unchanged') {
                     kc.clearToken();
                 }
 
@@ -1112,10 +1111,10 @@
 
                 for (var i = callbacks.length - 1; i >= 0; --i) {
                     var promise = callbacks[i];
-                    if (event.data == 'error') {
+                    if (event.data === 'error') {
                         promise.setError();
                     } else {
-                        promise.setSuccess(event.data == 'unchanged');
+                        promise.setSuccess(event.data === 'unchanged');
                     }
                 }
             };
@@ -1146,7 +1145,7 @@
                 var msg = kc.clientId + ' ' + (kc.sessionId ? kc.sessionId : '');
                 loginIframe.callbackList.push(promise);
                 var origin = loginIframe.iframeOrigin;
-                if (loginIframe.callbackList.length == 1) {
+                if (loginIframe.callbackList.length === 1) {
                     loginIframe.iframe.contentWindow.postMessage(msg, origin);
                 }
             } else {
@@ -1157,7 +1156,7 @@
         }
 
         function loadAdapter(type) {
-            if (!type || type == 'default') {
+            if (!type || type === 'default') {
                 return {
                     login: function(options) {
                         window.location.replace(kc.createLoginUrl(options));
@@ -1185,7 +1184,7 @@
                     },
 
                     redirectUri: function(options, encodeHash) {
-                        if (arguments.length == 1) {
+                        if (arguments.length === 1) {
                             encodeHash = true;
                         }
 
@@ -1200,7 +1199,7 @@
                 };
             }
 
-            if (type == 'cordova') {
+            if (type === 'cordova') {
                 loginIframe.enable = false;
                 var cordovaOpenWindowWrapper = function(loginUrl, target, options) {
                     if (window.cordova && window.cordova.InAppBrowser) {
@@ -1232,7 +1231,7 @@
                 var createCordovaOptions = function (userOptions) {
                     var cordovaOptions = shallowCloneCordovaOptions(userOptions);
                     cordovaOptions.location = 'no';
-                    if (userOptions && userOptions.prompt == 'none') {
+                    if (userOptions && userOptions.prompt === 'none') {
                         cordovaOptions.hidden = 'yes';
                     }                    
                     return formatCordovaOptions(cordovaOptions);
@@ -1254,7 +1253,7 @@
                         };
 
                         ref.addEventListener('loadstart', function(event) {
-                            if (event.url.indexOf('http://localhost') == 0) {
+                            if (event.url.indexOf('http://localhost') === 0) {
                                 var callback = parseCallback(event.url);
                                 processCallback(callback, promise);
                                 closeBrowser();
@@ -1264,7 +1263,7 @@
 
                         ref.addEventListener('loaderror', function(event) {
                             if (!completed) {
-                                if (event.url.indexOf('http://localhost') == 0) {
+                                if (event.url.indexOf('http://localhost') === 0) {
                                     var callback = parseCallback(event.url);
                                     processCallback(callback, promise);
                                     closeBrowser();
@@ -1296,13 +1295,13 @@
                         var error;
 
                         ref.addEventListener('loadstart', function(event) {
-                            if (event.url.indexOf('http://localhost') == 0) {
+                            if (event.url.indexOf('http://localhost') === 0) {
                                 ref.close();
                             }
                         });
 
                         ref.addEventListener('loaderror', function(event) {
-                            if (event.url.indexOf('http://localhost') == 0) {
+                            if (event.url.indexOf('http://localhost') === 0) {
                                 ref.close();
                             } else {
                                 error = true;
@@ -1327,7 +1326,7 @@
                         var cordovaOptions = createCordovaOptions(options);
                         var ref = cordovaOpenWindowWrapper(registerUrl, '_blank', cordovaOptions);
                         ref.addEventListener('loadstart', function(event) {
-                            if (event.url.indexOf('http://localhost') == 0) {
+                            if (event.url.indexOf('http://localhost') === 0) {
                                 ref.close();
                             }
                         });
@@ -1338,7 +1337,7 @@
                         if (typeof accountUrl !== 'undefined') {
                             var ref = cordovaOpenWindowWrapper(accountUrl, '_blank', 'location=no');
                             ref.addEventListener('loadstart', function(event) {
-                                if (event.url.indexOf('http://localhost') == 0) {
+                                if (event.url.indexOf('http://localhost') === 0) {
                                     ref.close();
                                 }
                             });
@@ -1353,7 +1352,7 @@
                 }
             }
 
-            if (type == 'cordova-native') {
+            if (type === 'cordova-native') {
                 loginIframe.enable = false;
 
                 return {
@@ -1439,7 +1438,7 @@
                 var time = new Date().getTime();
                 for (var i = 0; i < localStorage.length; i++)  {
                     var key = localStorage.key(i);
-                    if (key && key.indexOf('kc-callback-') == 0) {
+                    if (key && key.indexOf('kc-callback-') === 0) {
                         var value = localStorage.getItem(key);
                         if (value) {
                             try {
@@ -1518,10 +1517,10 @@
                 var ca = document.cookie.split(';');
                 for (var i = 0; i < ca.length; i++) {
                     var c = ca[i];
-                    while (c.charAt(0) == ' ') {
+                    while (c.charAt(0) === ' ') {
                         c = c.substring(1);
                     }
-                    if (c.indexOf(name) == 0) {
+                    if (c.indexOf(name) === 0) {
                         return c.substring(name.length, c.length);
                     }
                 }

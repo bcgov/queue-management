@@ -156,7 +156,7 @@
                 <font-awesome-icon
                   v-if="this.blackout_date !== null"
                   icon="check"
-                  style="fontsize: 1rem; color: green"
+                  style="font-size: 1rem; color: green"
                 />
                 <DatePicker
                   v-model="blackout_date"
@@ -179,7 +179,7 @@
                 <font-awesome-icon
                   v-if="this.start_time !== null"
                   icon="check"
-                  style="fontsize: 1rem; color: green"
+                  style="font-size: 1rem; color: green"
                 />
                 <b-timepicker
                     v-model="start_time"
@@ -197,26 +197,6 @@
                 </b-timepicker>
                 <br/>
                 <span class="danger" v-if="start_time_msg">{{start_time_msg}}</span>
-                <!-- <DatePicker
-                  v-model="start_time"
-                  id="appointment_blackout_start_time"
-                  :time-picker-options="{
-                    start: '8:00',
-                    step: '00:30',
-                    end: '16:30',
-                  }"
-                  lang="en"
-                  format="h:mm a"
-                  autocomplete="off"
-                  :editable="true"
-                  placeholder="Select Start Time"
-                  class="w-100"
-                  type="time"
-                  @change="checkSingleInput"
-                  @input="checkSingleInput"
-                  @clear="checkSingleInput"
-                >
-                </DatePicker> -->
               </b-form-group>
             </b-col>
             <b-col cols="6">
@@ -225,7 +205,7 @@
                 <font-awesome-icon
                   v-if="this.end_time !== null"
                   icon="check"
-                  style="fontsize: 1rem; color: green"
+                  style="font-size: 1rem; color: green"
                 />
                   <b-timepicker
                       v-model="end_time"
@@ -243,26 +223,6 @@
                   </b-timepicker>
                 <br/>
                 <span class="danger" v-if="end_time_msg">{{end_time_msg}}</span>
-                <!-- <DatePicker
-                  v-model="end_time"
-                  id="appointment_blackout_end_time"
-                  :time-picker-options="{
-                    start: '8:30',
-                    step: '00:30',
-                    end: '17:00',
-                  }"
-                  lang="en"
-                  format="h:mm a"
-                  autocomplete="off"
-                  :editable="true"
-                  placeholder="Select End Time"
-                  class="w-100"
-                  type="time"
-                  @change="checkSingleInput"
-                  @input="checkSingleInput"
-                  @clear="checkSingleInput"
-                >
-                </DatePicker> -->
               </b-form-group>
             </b-col>
           </b-form-row>
@@ -294,7 +254,7 @@
                 <font-awesome-icon
                   v-if="this.recurring_start_time !== null"
                   icon="check"
-                  style="fontsize: 1rem; color: green"
+                  style="font-size: 1rem; color: green"
                 />
                   <b-timepicker
                       v-model="recurring_start_time"
@@ -312,27 +272,6 @@
                   </b-timepicker>
                   <br/>
                   <span class="danger" v-if="reccuring_start_time_msg">{{reccuring_start_time_msg}}</span>
-                <!-- <DatePicker
-                  v-model="recurring_start_time"
-                  id="recurring_blackout_start_time"
-                  :time-picker-options="{
-                    start: '8:00',
-                    end: '16:30',
-                    step:'00:01',
-                    format: 'hh:mm a'
-                  }"
-                  lang="en"
-                  format="hh:mm a"
-                  autocomplete="off"
-                  :editable="true"
-                  placeholder="Select Start Time"
-                  class="w-100"
-                  type="time"
-                  @change="checkRecurringInput"
-                  @input="checkRecurringInput"
-                  @clear="checkRecurringInput"
-                >
-                </DatePicker> -->
               </b-form-group>
             </b-col>
             <b-col cols="6">
@@ -341,7 +280,7 @@
                 <font-awesome-icon
                   v-if="this.recurring_end_time !== null"
                   icon="check"
-                  style="fontsize: 1rem; color: green"
+                  style="font-size: 1rem; color: green"
                 />
                   <b-timepicker
                       v-model="recurring_end_time"
@@ -359,27 +298,6 @@
                   </b-timepicker>
                   <br/>
                   <span class="danger" v-if="reccuring_end_time_msg">{{reccuring_end_time_msg}}</span>
-                <!-- <DatePicker
-                  v-model="recurring_end_time"
-                  id="recurring_blackout_end_time"
-                  :time-picker-options="{
-                    start: '8:30',
-                    end: '17:00',
-                    step:'00:01',
-                    format: 'hh:mm a'
-                  }"
-                  lang="en"
-                  format="hh:mm a"
-                  autocomplete="off"
-                  :editable="true"
-                  placeholder="Select End Time"
-                  class="w-100"
-                  type="time"
-                  @change="checkRecurringInput"
-                  @input="checkRecurringInput"
-                  @clear="checkRecurringInput"
-                >
-                </DatePicker> -->
               </b-form-group>
             </b-col>
           </b-form-row>
@@ -390,7 +308,7 @@
                 <font-awesome-icon
                   v-if="this.recurring_start_date !== null"
                   icon="check"
-                  style="fontsize: 1rem; color: green"
+                  style="font-size: 1rem; color: green"
                 />
                 <DatePicker
                   id="recurring_start_date"
@@ -411,7 +329,7 @@
                 <font-awesome-icon
                   v-if="this.recurring_end_date !== null"
                   icon="check"
-                  style="fontsize: 1rem; color: green"
+                  style="font-size: 1rem; color: green"
                 />
                 <DatePicker
                   id="recurring_end_date"
@@ -433,20 +351,18 @@
               <font-awesome-icon
                 v-if="this.selected_frequency.length === 1"
                 icon="check"
-                style="fontsize: 1rem; color: green"
+                style="font-size: 1rem; color: green"
               />
               <font-awesome-icon
                 v-if="this.selected_frequency.length > 1"
                 icon="exclamation-triangle"
-                style="fontsize: 1rem; color: #ffc32b"
+                style="font-size: 1rem; color: #ffc32b"
               />
               <b-form-checkbox-group
                 id="frequency-checkboxes"
                 v-model="selected_frequency"
                 @input="checkRecurringInput"
               >
-                <!--                <b-form-checkbox :value="yearly">Yearly</b-form-checkbox>-->
-                <!--                <b-form-checkbox :value="monthly">Monthly</b-form-checkbox>-->
                 <b-form-checkbox :value="weekly">Weekly</b-form-checkbox>
                 <b-form-checkbox :value="daily">Daily</b-form-checkbox>
               </b-form-checkbox-group>
@@ -457,7 +373,7 @@
             <font-awesome-icon
               v-if="this.selected_weekdays.length >= 1"
               icon="check"
-              style="fontsize: 1rem; color: green"
+              style="font-size: 1rem; color: green"
             />
             <b-form-checkbox-group
               id="weekday-checkboxes"
@@ -482,7 +398,7 @@
               <font-awesome-icon
                 v-if="this.selected_count !== ''"
                 icon="check"
-                style="fontsize: 1rem; color: green"
+                style="font-size: 1rem; color: green"
                 class="ml-1"
               />
             </b-form-row>
@@ -548,7 +464,7 @@
                     <font-awesome-icon
                       v-if="input.value"
                       icon="check"
-                      style="fontsize: 1rem; color: green"
+                      style="font-size: 1rem; color: green"
                     />
                   </b-col>
                   <b-col cols="1">
@@ -562,7 +478,7 @@
                     >
                       <font-awesome-icon
                           icon="eraser"
-                          style="fontsize: 1rem; color: red"
+                          style="font-size: 1rem; color: red"
                         />
                     </b-button>
                   </b-col>
@@ -577,7 +493,7 @@
                     >
                       <font-awesome-icon
                           icon="plus"
-                          style="fontsize: 1rem; color: blue"
+                          style="font-size: 1rem; color: blue"
                         />
                     </b-button>
                   </b-col>
@@ -678,7 +594,7 @@
                     :key="date.start"
                   >
                     <li class="list-group-item">
-                      <b>Event:</b> {{ formatStartDate(date.start) }} until
+                      <strong>Event:</strong> {{ formatStartDate(date.start) }} until
                     </li>
                   </ul>
                 </div><div style="height: 75px; overflow-y: scroll; margin: 0px" v-else>
@@ -689,7 +605,7 @@
                     :key="index"
                   >
                     <li class="list-group-item">
-                      <b>STAT:</b> {{ formatDate(value.value) }} whole Day for all office.
+                      <strong>STAT:</strong> {{ formatDate(value.value) }} whole Day for all office.
                     </li>
                   </ul>
                 </div>
@@ -718,7 +634,7 @@
             <font-awesome-icon
               v-if="this.notes !== ''"
               icon="check"
-              style="fontsize: 1rem; color: green"
+              style="font-size: 1rem; color: green"
             />
           </b-form-row>
           <b-form-row>
@@ -1034,9 +950,7 @@ export default class AppointmentBlackoutModal extends Vue {
     const limit = 50
     const date = moment(this.blackout_date).clone().format('YYYY-MM-DD')
     const start = moment(this.start_time).clone().format('HH:mm:ss')
-    // const start_date = moment(date + ' ' + start).format('YYYY-MM-DD HH:mm:ssZ')
     const end = moment(this.end_time).clone().format('HH:mm:ss')
-    // const end_date = moment(date + ' ' + end).format('YYYY-MM-DD HH:mm:ssZ')
     const start_date = moment.tz(date + ' ' + start, this.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
     const end_date = moment.tz(date + ' ' + end, this.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
     const uuidv4 = require('uuid/v4')
@@ -1061,14 +975,11 @@ export default class AppointmentBlackoutModal extends Vue {
         if (this.notes) {
           e.comments = this.notes
         }
-        // this.postAppointment(e)
         axiosArray.push(this.createAxioObject(e))
-        // this.getAppointments()
-        if ((axiosArray.length == limit)) {
+        if ((axiosArray.length === limit)) {
             this.bulkApiCall(axiosArray)
             axiosArray = []
-            // this.api_count = this.api_count + limit
-        } else if (rrule_ind == this.rrule_array.length) {
+        } else if (rrule_ind === this.rrule_array.length) {
           this.bulkApiCall(axiosArray, true)
           axiosArray = [] 
         }        
@@ -1220,7 +1131,7 @@ export default class AppointmentBlackoutModal extends Vue {
         break
     }
 
-    if (isNaN(start_year) == false || isNaN(end_year) == false) {
+    if (isNaN(start_year) === false || isNaN(end_year) === false) {
       // TODO Might be Deprecated -- IF RRule Breaks, this is where it will happen
       // TODO remove tzid from rule object
       // INC0048019 - fix UTC error by creating new end day and if end_hour is 4pm PACIFIC (16:00) or later then add 1 day to end of series   ozamani 12/17/2020
@@ -1245,7 +1156,7 @@ export default class AppointmentBlackoutModal extends Vue {
       array.forEach(date => {
          // INC0048019 - fix UTC error by creating new date field and if local time is 4pm PACIFIC (16:00) or later then add 1 day to series   ozamani 12/17/2020
         const adj_date = moment(date)
-         if (local_start_hour >= 16 && start_hour == 0) {
+         if (local_start_hour >= 16 && start_hour === 0) {
           adj_date.add(1, 'day')
         }
         const formatted_start_date = moment(adj_date).clone().set({ hour: local_start_hour }).format('YYYY-MM-DD HH:mm:ssZ')
@@ -1486,8 +1397,6 @@ export default class AppointmentBlackoutModal extends Vue {
     this.setApiTotalCount(0)
     this.setApiTotalCount(this.rrule_array.length)
     showFlagBus.$emit(ShowFlagBusEvents.ShowFlagEvent, true)
-    // const start_date = moment.tz(date + ' ' + start, this.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
-    // const end_date = moment.tz(date + ' ' + start, this.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
     const uuidv4 = require('uuid/v4')
     const recurring_uuid = uuidv4()
     let axiosArray: any = []
@@ -1495,7 +1404,6 @@ export default class AppointmentBlackoutModal extends Vue {
     const all_offices = await this.getOffices('force')
     const stat_user_name = this.stat_user_name
     const user_contact_info = this.user_contact_info
-    // const notes = this.notes
     const createStatAxioObject = this.createStatAxioObject
     const rrule_array = this.rrule_array
     const stat_dates = this.stat_dates
@@ -1512,7 +1420,7 @@ export default class AppointmentBlackoutModal extends Vue {
           const start = moment(item.value).clone().format('HH:mm:ss')
           const end =  moment(item.value).add(59, 'minutes').add(23, 'hours').add(59, 'seconds').clone().format('HH:mm:ss')
           //only for this off and appointments or both           
-          if (self.only_this_office.length == 1){
+          if (self.only_this_office.length === 1){
             if (self.only_this_office[0]){
               //for this office -appointment
               const e: any = {
@@ -1532,7 +1440,7 @@ export default class AppointmentBlackoutModal extends Vue {
                 const office_room = await getOfficeRooms({'office_id': self.$store.state.user.office.office_id})
                 await office_room.forEach(function (room) {
                   const blackout_booking: any = {}
-                  if (room.id == '_offsite') {
+                  if (room.id === '_offsite') {
                     blackout_booking.start_time = moment.tz(date+' '+start, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
                     blackout_booking.end_time = moment.tz(date+' '+end, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
                     blackout_booking.booking_name = stat_user_name+'_'+self.$store.state.user.office.office_name,
@@ -1555,15 +1463,11 @@ export default class AppointmentBlackoutModal extends Vue {
                     blackout_booking.for_stat = true
                   }
                   axiosArray.push(self.postBookingStat(blackout_booking))
-                  // this.postBooking(blackout_booking)
-                  // .then(() => {
-                  //   this.getBookings()
-                  // })
                 })
               }
             }
           } 
-          else if (self.only_this_office.length == 0) {
+          else if (self.only_this_office.length === 0) {
               // stat for appointments
               await all_offices.forEach(async function(office) {
                   const e: any = {
@@ -1582,7 +1486,7 @@ export default class AppointmentBlackoutModal extends Vue {
                   const office_room = await getOfficeRooms({'office_id': office.office_id})
                   await office_room.forEach(function (room) {
                     const blackout_booking: any = {}
-                    if (room.id == '_offsite') {
+                    if (room.id === '_offsite') {
                       blackout_booking.start_time = moment.tz(date+' '+start, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
                       blackout_booking.end_time = moment.tz(date+' '+end, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
                       blackout_booking.booking_name = stat_user_name+'_'+office.office_name,
@@ -1605,19 +1509,14 @@ export default class AppointmentBlackoutModal extends Vue {
                       blackout_booking.for_stat = true
                     }
                     axiosArray.push(self.postBookingStat(blackout_booking))
-                    // this.postBooking(blackout_booking)
-                    // .then(() => {
-                    //   this.getBookings()
-                    // })
                   })
                 })
             }
             //bulk call
-            if ((axiosArray.length == limit)) {
+            if ((axiosArray.length === limit)) {
                 bulkApiCall(axiosArray)
                 axiosArray = []
-                // this.api_count = this.api_count + limit
-            } else if (rrule_ind == rrule_array.length) {
+            } else if (rrule_ind === rrule_array.length) {
               bulkApiCall(axiosArray, true)
               axiosArray = []
             } 
@@ -1649,8 +1548,6 @@ export default class AppointmentBlackoutModal extends Vue {
   this.show_next = true
   this.only_this_office = []
   this.only_appointments = []
-
-
 }
 }
 </script>

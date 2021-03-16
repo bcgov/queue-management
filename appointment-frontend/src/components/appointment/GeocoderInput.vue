@@ -105,6 +105,3 @@ export default class GeocoderInput extends Vue {
   }
 }
 </script>
-
-<style lang="scss" scope>
-</style>

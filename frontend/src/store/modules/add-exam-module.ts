@@ -1,4 +1,3 @@
-
 /**
  *
  * Notes
@@ -11,8 +10,8 @@
  *
  */
 
-import Vue from 'vue'
 import { Axios } from './../helpers'
+import Vue from 'vue'
 import axios from 'axios'
 import config from './../../../config'
 
@@ -331,7 +330,6 @@ export const addExamModule = {
   getters: {
     add_modal_steps (state, getters, rootState) {
       if (rootState.addExamModal && rootState.addExamModal.setup) {
-        const { capturedExam } = rootState
         switch (rootState.addExamModal.setup) {
         case 'challenger':
           return state.addChallengerSteps
@@ -357,7 +355,7 @@ export const addExamModule = {
       ]
     },
     pesticideStep1 (state, getters, rootState) {
-      const { capturedExam, pesticide_invigilators, pesticide_offsite_invigilators } = rootState
+      const { capturedExam, pesticide_offsite_invigilators } = rootState
       const pesticideTypeQ = {
         key: 'exam_type_id',
         text: 'Type of Pesticide Exam',
@@ -428,10 +426,7 @@ export const addExamModule = {
       return [state.pesticideStep3]
     },
     pesticideStep4 (state, getters, rootState) {
-      const { capturedExam } = rootState
-
       const step4 = { ...state.pesticideStep4_summary }
-
       return [step4]
     }
   },

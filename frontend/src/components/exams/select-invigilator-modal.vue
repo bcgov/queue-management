@@ -8,8 +8,8 @@
     size="md"
   >
     <b-alert
-      :show="this.alertMessage != ''"
-      style="h-align: center"
+      :show="this.alertMessage !== ''"
+      style="justify: center"
       variant="danger"
       >{{ this.alertMessage }}</b-alert
     >
@@ -113,7 +113,6 @@ export default class SelectInvigilatorModal extends Vue {
     this.emailInvigilator({
       invigilator: this.selected_invigilator,
       // JSTOTS confirm changed  selectedExam to this.selectedExam
-      // exam: selectedExam
       exam: this.selectedExam
     })
       .then(() => {
@@ -127,6 +126,3 @@ export default class SelectInvigilatorModal extends Vue {
   }
 }
 </script>
-
-<style scoped>
-</style>

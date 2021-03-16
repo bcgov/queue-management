@@ -34,22 +34,8 @@
               </div>
             </template>
           </v-combobox>
-          <!-- <v-btn
-            v-if="selectedService && selectedService.online_link"
-            text
-            link
-            color="primary"
-            target="_blank"
-            :href="selectedService.online_link"
-          >
-            Click here for more options
-            <v-icon small class="ml-1">mdi-open-in-new</v-icon>
-          </v-btn> -->
         </v-col>
       </v-row>
-<!--      <v-row>-->
-<!--        {{myMessage}}-->
-<!--      </v-row>-->
       <v-row justify="center">
         <v-col cols="12" sm="6">
           <v-textarea
@@ -67,13 +53,6 @@
       <template v-if="selectedService && !keyPressed">
         <p class="text-center mb-6">Do you want to book an appointment with <strong>{{currentOffice.office_name}}</strong> for <strong>{{selectedService.external_service_name}}</strong> service?</p>
         <div class="d-flex justify-center mb-6">
-          <!-- <v-btn
-            large
-            outlined
-            color="primary"
-            class="mr-3"
-            @click="otherBookingOptionModel = true"
-          >No, Book With Another Option</v-btn> -->
           <v-btn
             large
             @click="proceedBooking"
@@ -85,7 +64,7 @@
         </div>
         <p class="text-center body-2">
           Information is collected under the authority of
-          <a href="http://www.bclaws.ca/civix/document/id/complete/statreg/96165_03#d2e3154" target="_blank">Sections 26(c)</a>
+          <a href="http://www.bclaws.ca/civix/document/id/complete/statreg/96165_03#d2e3154" target="_blank" rel="noopener noreferrer">Sections 26(c)</a>
           of the Freedom of Information and Protection of Privacy Act to help us assess and respond to your enquiry. Questions about the collection of information can be directed to the Director, Provincial Operations, PO BOX 9412 STN PROV GOVT, Victoria, BC, V8W 9V1, 1 800 663-7867.
         </p>
       </template>
@@ -179,7 +158,6 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
   }
 
   private serviceSelection (value) {
-    // this.mylog('-> serviceSelection')
     this.keyPressed = false
     this.setCurrentService(value)
   }
@@ -189,7 +167,6 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
   }
 
   private setKeyPressed (e) {
-    // this.mylog('-> setKeyPressed')
     if (e.key !== 'Enter') {
       this.keyPressed = true
     }

@@ -12,19 +12,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. */ -->
 
-<template>
-  <div></div>
-  <!-- no template -->
-</template>
-
 <script lang="ts">
 import { Action, namespace } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
-
-// import { mapActions } from 'vuex'
 import config from './../../config'
-
-const io = require('socket.io-client')
+import io from 'socket.io-client'
 let socket
 
 const appointmentsModule = namespace('appointmentsModule')
@@ -36,12 +28,12 @@ export default class Socket extends Vue {
   @appointmentsModule.Action('updateAppointments') public updateAppointments: any
 
   public reconnectInterval: any = null
+  $route: any
 
   mounted () {
     this.$root.$on('socketConnect', () => {
       this.connect()
     })
-
     this.$root.$on('socketDisconnect', () => {
       this.close()
     })
@@ -73,20 +65,15 @@ export default class Socket extends Vue {
     socket.on('csr_update', (data) => { this.onCSRUpdate(data) })
     socket.on('clear_csr_cache', (data) => { this.onClearCsrCache(data) })
     socket.on('update_offices_cache', () => { this.onUpdateOfficesCache() })
-
-
     socket.on('appointment_create', (appointment) => {
       this.onUpdateAppointment(appointment, 'create')
     })
-
     socket.on('appointment_update', (appointment) => {
       this.onUpdateAppointment(appointment, 'update')
     })
-
     socket.on('appointment_delete', (appointment) => {
       this.onUpdateAppointment(appointment, 'delete')
     })
-
   }
 
   join () {
@@ -134,7 +121,6 @@ export default class Socket extends Vue {
     console.log('socket received: "update_active_citizen" ')
     this.screenIncomingCitizen({ citizen, route: this.$route })
   }
-
 
   onUpdateAppointment (appointment, action) {
     this.updateAppointments({ appointment, action })

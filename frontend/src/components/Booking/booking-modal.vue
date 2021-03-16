@@ -25,7 +25,7 @@
                 <font-awesome-icon
                   v-if="this.booking_contact_information !== ''"
                   icon="check"
-                  style="fontsize: 1rem; color: green"
+                  style="font-size: 1rem; color: green"
                 />
                 <br />
                 <input
@@ -141,7 +141,7 @@
                     <div class="table-pointer">{{ row.item.name }}</div>
                     <div style="display: none">
                       {{
-                        row.item.value == invigilatorId
+                        row.item.value === invigilatorId
                           ? (row.item._rowVariant = 'info')
                           : (row.item._rowVariant = '')
                       }}
@@ -278,14 +278,14 @@ export default class BookingModal extends Vue {
     if (!this.selectedOption) {
       return true
     }
-    if (this.selectedOption === 'invigilator' && !this.invigilatorId && this.formStep == 2) {
+    if (this.selectedOption === 'invigilator' && !this.invigilatorId && this.formStep === 2) {
       return true
     }
     return false
   }
 
   get buttonText () {
-    if (this.selectedOption === 'invigilator' && this.formStep == 1) {
+    if (this.selectedOption === 'invigilator' && this.formStep === 1) {
       return 'Continue'
     }
     return 'Submit'
@@ -465,7 +465,7 @@ export default class BookingModal extends Vue {
   }
 
   submit () {
-    if (this.pressedSubmit == false) {
+    if (this.pressedSubmit === false) {
       this.pressedSubmit = true
       const { exam_id } = this.exam
       let notes = null

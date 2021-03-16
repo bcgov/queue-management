@@ -20,7 +20,7 @@ body, html {
 
 body {
     color: #494949;
-    font-family: Myriad-Pro, Calibri, Arial, "sans serif";
+    font-family: Myriad-Pro, Calibri, Arial, sans-serif;
     font-size: 13px;
 }
 
@@ -429,8 +429,6 @@ h3.panel-title {
 #pageIntro {
     margin-bottom: 20px;
 }
-
-.gov-login-options .row {}
 
 .gov-login-option {
     text-align: center;

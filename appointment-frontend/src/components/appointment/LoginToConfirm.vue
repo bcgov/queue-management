@@ -63,11 +63,6 @@
         >
         Create BCeID
         </v-btn>
-        <!--a class="link-w-icon mt-3" :href="BCEIDRegistrationURL"
-          target="_self" rel="noopener noreferrer">
-          <v-icon small class="mr-2">mdi-open-in-new</v-icon>
-          <span>Don't have a BCeID? Click Here</span>
-        </a-->
         <a class="link-w-icon mt-3" href="https://www2.gov.bc.ca/gov/content/home/privacy"
           target="_blank" rel="noopener noreferrer">
           <v-icon small class="mr-2">mdi-open-in-new</v-icon>
@@ -116,7 +111,6 @@ export default class LoginToConfirm extends Mixins(StepperMixin) {
 
   private login (idpHint) {
     this.$router.push(`/signin/${idpHint}`)
-    // this.stepNext()
   }
 
   private get hideBCServicesCard (): boolean {
@@ -124,7 +118,6 @@ export default class LoginToConfirm extends Mixins(StepperMixin) {
   }
 
   private get BCEIDRegistrationURL (): string {
-    // return 'https://www.test.bceid.ca/os/?7521&SkipTo=Basic'
     return ConfigHelper.getValue('BCEIDRegistrationUrl')
   }
 }

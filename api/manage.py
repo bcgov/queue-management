@@ -27,7 +27,6 @@ class Bootstrap(Command):
         theq.CSR.query.delete()
         theq.CSRState.query.delete()
         bookings.Booking.query.delete()
-        # theq.OfficeService.query.delete()   #  This needs to be updated.
         bookings.ExamType.query.delete()
         bookings.Room.query.delete()
         bookings.Invigilator.query.delete()
@@ -35,16 +34,12 @@ class Bootstrap(Command):
         theq.Office.query.delete()
         theq.SmartBoard.query.delete()
         theq.Counter.query.delete()
-        # theq.RolePermission.query.delete()  #  No data in this table yet. (table also not defined in models.theq)
         theq.Role.query.delete()
-        # theq.Permission.query.delete()      #  No data in this table yet. (table also not defined in models.theq)
         theq.Service.query.filter_by(actual_service_ind=1).delete()
         theq.Service.query.delete()
         theq.Channel.query.delete()
         bookings.Booking.query.delete()
         theq.Timezone.query.delete()
-
-        # db.session.commit()
 
         print("Starting to bootstrap data")
         #-- Channels --------------------------------------------------------

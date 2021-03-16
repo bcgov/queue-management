@@ -173,17 +173,17 @@
                       <div v-if="option.text === 'Ready'">
                         <font-awesome-icon
                           icon="clipboard-check"
-                          style="fontsize: 1rem; color: green"
+                          style="font-size: 1rem; color: green"
                         />
                       </div>
                       <div v-if="option.text === 'Requires Attention'">
                         <font-awesome-icon
                           icon="life-ring"
-                          style="fontsize: 1rem; color: red"
+                          style="font-size: 1rem; color: red"
                         />
                         <font-awesome-icon
                           icon="exclamation-triangle"
-                          style="fontsize: 1rem; color: #ffc32b"
+                          style="font-size: 1rem; color: #ffc32b"
                         />
                       </div>
                     </div>
@@ -211,17 +211,17 @@
                       <div v-if="option.text === 'Ready'">
                         <font-awesome-icon
                           icon="clipboard-check"
-                          style="fontsize: 1rem; color: green"
+                          style="font-size: 1rem; color: green"
                         />
                       </div>
                       <div v-if="option.text === 'Requires Attention'">
                         <font-awesome-icon
                           icon="life-ring"
-                          style="fontsize: 1rem; color: red"
+                          style="font-size: 1rem; color: red"
                         />
                         <font-awesome-icon
                           icon="exclamation-triangle"
-                          style="fontsize: 1rem; color: #ffc32b"
+                          style="font-size: 1rem; color: #ffc32b"
                         />
                       </div>
                     </div>
@@ -250,17 +250,17 @@
                       <div v-if="option.text === 'Ready'">
                         <font-awesome-icon
                           icon="clipboard-check"
-                          style="fontsize: 1rem; color: green"
+                          style="font-size: 1rem; color: green"
                         />
                       </div>
                       <div v-if="option.text === 'Requires Attention'">
                         <font-awesome-icon
                           icon="life-ring"
-                          style="fontsize: 1rem; color: red"
+                          style="font-size: 1rem; color: red"
                         />
                         <font-awesome-icon
                           icon="exclamation-triangle"
-                          style="fontsize: 1rem; color: #ffc32b"
+                          style="font-size: 1rem; color: #ffc32b"
                         />
                       </div>
                     </div>
@@ -285,17 +285,17 @@
                       <div v-if="option.text === 'Ready'">
                         <font-awesome-icon
                           icon="clipboard-check"
-                          style="fontsize: 1rem; color: green"
+                          style="font-size: 1rem; color: green"
                         />
                       </div>
                       <div v-if="option.text === 'Requires Attention'">
                         <font-awesome-icon
                           icon="life-ring"
-                          style="fontsize: 1rem; color: red"
+                          style="font-size: 1rem; color: red"
                         />
                         <font-awesome-icon
                           icon="exclamation-triangle"
-                          style="fontsize: 1rem; color: #ffc32b"
+                          style="font-size: 1rem; color: #ffc32b"
                         />
                       </div>
                     </div>
@@ -483,7 +483,7 @@
             <template v-if="!row.item.exam_returned_date">
               <!--  Options for if you're editing an exam for the office you're in.  -->
               <template
-                v-if="officeFilter == userOffice || officeFilter == 'default'"
+                v-if="officeFilter === userOffice || officeFilter === 'default'"
               >
                 <!--  Options for Monthly Session Exam.  -->
                 <template
@@ -573,9 +573,7 @@
                     >
                   </template>
                   <template v-else>
-                    <!--                    TEMPORARY FIX - AFTER ALL PESTICIDE EXAMS ARE ENTERED IN NEW WORLD-->
-                    <!--                    <b-dropdown-item size="sm"-->
-                    <!--                                     @click="openInvigilatorModal(row.item)">Email Invigilator</b-dropdown-item>-->
+                    <!-- TEMPORARY FIX - AFTER ALL PESTICIDE EXAMS ARE ENTERED IN NEW WORLD -->
                     <b-dropdown-item
                       size="sm"
                       v-if="
@@ -679,7 +677,7 @@
 
               <!--  Options for if you're editing an exam for a different office.  -->
               <template
-                v-if="officeFilter != userOffice && officeFilter != 'default'"
+                v-if="officeFilter !== userOffice && officeFilter !== 'default'"
               >
                 <b-dropdown-item
                   size="sm"
@@ -722,21 +720,20 @@
 <script lang="ts">
 
 import { Action, Getter, Mutation, State } from 'vuex-class'
-import { Component, Prop, Vue } from 'vue-property-decorator'
-
-import moment from 'moment'
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import { Component, Vue } from 'vue-property-decorator'
+import AddCitizen from '../AddCitizen/add-citizen.vue'
+import DeleteExamModal from './delete-exam-modal.vue'
 import EditExamModal from './edit-exam-form-modal.vue'
 import EditGroupExamBookingModal from './edit-group-exam-modal.vue'
-import SelectInvigilatorModal from './select-invigilator-modal.vue'
 import FailureExamAlert from './failure-exam-alert.vue'
 import OfficeDrop from './office-drop.vue'
 import ReturnExamModal from './return-exam-form-modal.vue'
+import SelectInvigilatorModal from './select-invigilator-modal.vue'
 import SuccessExamAlert from './success-exam-alert.vue'
-import DeleteExamModal from './delete-exam-modal.vue'
-import AddCitizen from '../AddCitizen/add-citizen.vue'
-import zone from 'moment-timezone'
 import UploadPesticideModal from './upload-pesticide-exam.vue'
+import mapState from 'vuex'
+import moment from 'moment'
+import zone from 'moment-timezone'
 
 @Component({
   components: {
@@ -780,11 +777,6 @@ export default class ExamInventoryTable extends Vue {
   private readonly showAllPesticide!: any
 
   private readonly showPesticideModal!: any
-
-  //   ...mapState ({
-  //   showAllPesticide: state => state.addExamModule.showAllPesticideExams,
-  //   showPesticideModal: state => state.addExamModule.uploadPesticideModalVisible
-  // }),
 
   @Getter('calendar_events') private calendar_events!: any;
   @Getter('exam_inventory') private exam_inventory!: any;
@@ -850,6 +842,7 @@ export default class ExamInventoryTable extends Vue {
   ]
 
   public isLoading: boolean = false
+  $router: any
 
   get availableH () {
     const h = this.totalH - 240
@@ -927,7 +920,7 @@ export default class ExamInventoryTable extends Vue {
 
   get officeName () {
     if (this.offices && this.offices.length > 0) {
-      const office = this.offices.find(office => office.office_number == this.officeNumber)
+      const office = this.offices.find(office => office.office_number === this.officeNumber)
       if (office) {
         return office.office_name
       }
@@ -943,7 +936,7 @@ export default class ExamInventoryTable extends Vue {
     if (this.inventoryFilters && this.inventoryFilters.office_number) {
       const { office_number } = this.inventoryFilters
       if (this.inventoryFilters.office_number === 'pesticide_offsite') {
-        const office = (this.offices.find(office => office.office_name == 'Pesticide Offsite'))
+        const office = (this.offices.find(office => office.office_name === 'Pesticide Offsite'))
         return office.office_number
       } else if (office_number !== 'default') {
         return office_number
@@ -998,14 +991,14 @@ export default class ExamInventoryTable extends Vue {
     } else {
       length_of_invigilator_array = item.booking.invigilators.length
     }
-    if (item.exam_type.group_exam_ind === 1 && length_of_invigilator_array == 0) {
+    if (item.exam_type.group_exam_ind === 1 && length_of_invigilator_array === 0) {
       return false
     } else if (item.exam_type.group_exam_ind === 1 && length_of_invigilator_array >= number_of_invigilators) {
       return true
     } else if (item.exam_type.group_exam_ind === 1 && length_of_invigilator_array < number_of_invigilators) {
       return false
     } else if (item.exam_type.group_exam_ind === 0 && item.booking && item.exam_type.exam_type_name !== 'Monthly Session Exam' &&
-      (number_of_invigilators == 1 || item.booking.sbc_staff_invigilated)) {
+      (number_of_invigilators === 1 || item.booking.sbc_staff_invigilated)) {
       return true
     } else if (item.exam_type.exam_type_name === 'Monthly Session Exam' &&
       length_of_invigilator_array >= number_of_invigilators) {
@@ -1277,7 +1270,7 @@ export default class ExamInventoryTable extends Vue {
     let office_number = this.inventoryFilters.office_number === 'default'
       ? this.user.office.office_number : this.inventoryFilters.office_number
     if (this.inventoryFilters.office_number === 'pesticide_offsite') {
-      office_number = (this.offices.find(office => office.office_name == 'Pesticide Offsite')).office_number
+      office_number = (this.offices.find(office => office.office_name === 'Pesticide Offsite')).office_number
       this.inventoryFilters.office_number = office_number
     }
     let filtered = []
@@ -1287,11 +1280,11 @@ export default class ExamInventoryTable extends Vue {
         const moreFiltered: any = filtered.filter((ex: any) => !ex.booking)
         const evenMoreFiltered = moreFiltered.filter(ex => !ex.offsite_location)
         const { office_id } = this.user
-        return evenMoreFiltered.filter(ex => ex.office_id == office_id)
+        return evenMoreFiltered.filter(ex => ex.office_id === office_id)
       }
 
       const exams = this.showAllPesticide ? examInventory
-        : examInventory.filter((ex: any) => ex.office.office_number == office_number)
+        : examInventory.filter((ex: any) => ex.office.office_number === office_number)
 
       if (this.inventoryFilters.requireAttentionFilter === 'both') {
         return exams.filter(ex => this.checkAllAttention(ex))
@@ -1310,82 +1303,81 @@ export default class ExamInventoryTable extends Vue {
       }
 
       switch (this.inventoryFilters.expiryFilter) {
-        case 'all':
-          filtered = exams
-          break
-        case 'expired':
-          filtered = exams.filter(ex => moment(ex.expiry_date).isBefore(moment(), 'day'))
-          break
-        case 'current':
-          const step1 = exams.filter(ex => moment(ex.expiry_date).isSameOrAfter(moment(), 'day'))
-          const step2 = exams.filter(ex => !ex.expiry_date)
-          filtered = step1.concat(step2)
-          break
-        default:
-          filtered = exams
-          break
+      case 'all':
+        filtered = exams
+        break
+      case 'expired':
+        filtered = exams.filter(ex => moment(ex.expiry_date).isBefore(moment(), 'day'))
+        break
+      case 'current':
+        const step1 = exams.filter(ex => moment(ex.expiry_date).isSameOrAfter(moment(), 'day'))
+        const step2 = exams.filter(ex => !ex.expiry_date)
+        filtered = step1.concat(step2)
+        break
+      default:
+        filtered = exams
+        break
       }
       let moreFiltered = []
       switch (this.inventoryFilters.scheduledFilter) {
-        case 'both':
-          moreFiltered = filtered
-          break
-        case 'unscheduled':
-          moreFiltered = filtered.filter(x => !this.filterByScheduled(x))
-          break
-        case 'scheduled':
-          moreFiltered = filtered.filter(x => this.filterByScheduled(x))
-          break
-        default:
-          moreFiltered = filtered
-          break
+      case 'both':
+        moreFiltered = filtered
+        break
+      case 'unscheduled':
+        moreFiltered = filtered.filter(x => !this.filterByScheduled(x))
+        break
+      case 'scheduled':
+        moreFiltered = filtered.filter(x => this.filterByScheduled(x))
+        break
+      default:
+        moreFiltered = filtered
+        break
       }
       let evenMoreFiltered: any = []
       switch (this.inventoryFilters.groupFilter) {
-        case 'both':
-          evenMoreFiltered = moreFiltered
-          break
-        case 'individual':
-          evenMoreFiltered = moreFiltered.filter(ex => !this.filterByGroup(ex))
-
-          break
-        case 'group':
-          evenMoreFiltered = moreFiltered.filter(ex => this.filterByGroup(ex))
-          break
-        default:
-          evenMoreFiltered = moreFiltered
-          break
+      case 'both':
+        evenMoreFiltered = moreFiltered
+        break
+      case 'individual':
+        evenMoreFiltered = moreFiltered.filter(ex => !this.filterByGroup(ex))
+        break
+      case 'group':
+        evenMoreFiltered = moreFiltered.filter(ex => this.filterByGroup(ex))
+        break
+      default:
+        evenMoreFiltered = moreFiltered
+        break
       }
       let uploadFiltered = []
       switch (this.inventoryFilters.uploadFilter) {
-        case 'notuploaded':
-          uploadFiltered = evenMoreFiltered.filter((exam: any) => !exam.upload_received_ind)
-          break
-        default:
-          uploadFiltered = evenMoreFiltered
+      case 'notuploaded':
+        uploadFiltered = evenMoreFiltered.filter((exam: any) => !exam.upload_received_ind)
+        break
+      default:
+        uploadFiltered = evenMoreFiltered
       }
       let receptSentFiltered: any = []
       switch (this.inventoryFilters.receptSentFilter) {
-        case 'notsent':
-          receptSentFiltered = uploadFiltered.filter((exam: any) => !exam.receipt_sent_ind)
-          break
-        default:
-          receptSentFiltered = uploadFiltered
+      case 'notsent':
+        receptSentFiltered = uploadFiltered.filter((exam: any) => !exam.receipt_sent_ind)
+        break
+      default:
+        receptSentFiltered = uploadFiltered
       }
       let finalFiltered = []
       switch (this.inventoryFilters.returnedFilter) {
-        case 'both':
-          finalFiltered = receptSentFiltered
-          break
-        case 'returned':
-          finalFiltered = receptSentFiltered.filter((ex: any) => ex.exam_returned_date)
-          break
-        case 'unreturned':
-          finalFiltered = receptSentFiltered.filter(ex => !ex.exam_returned_date)
-          break
-        default:
-          finalFiltered = receptSentFiltered
-          break
+      case 'both':
+        finalFiltered = receptSentFiltered
+        break
+      case 'returned':
+        finalFiltered = receptSentFiltered.filter((ex: any) => ex.exam_returned_date)
+        break
+      case 'unreturned':
+        finalFiltered = receptSentFiltered.filter(ex => !ex.exam_returned_date)
+        break
+      default:
+        finalFiltered = receptSentFiltered
+        break
       }
       return finalFiltered
     }
@@ -1435,7 +1427,7 @@ export default class ExamInventoryTable extends Vue {
         const invigilator_name_list: any = []
         item.booking.invigilators.forEach(exam_invigilator => {
           this.invigilators.forEach(office_invigilator => {
-            if (exam_invigilator == office_invigilator.invigilator_id) {
+            if (exam_invigilator === office_invigilator.invigilator_id) {
               invigilator_name_list.push(office_invigilator.invigilator_name)
             }
           })
@@ -1615,7 +1607,6 @@ export default class ExamInventoryTable extends Vue {
         this.isLoading = false
       })
     } else if (option.value === 'awaiting_receipt') {
-      // this.$store.commit('toggleShowAllPesticideExams', false)
       this.viewAllOfficePesticideExams()
 
       this.setInventoryFilters({ type: 'expiryFilter', value: 'current' })
@@ -1691,7 +1682,6 @@ export default class ExamInventoryTable extends Vue {
 
   statusIcon (item: any) {
     const number_of_students: any = item.number_of_students
-    const number_of_invigilators: any = Math.ceil(number_of_students / 24)
     let length_of_invigilator_array: any = null
     if (!item.booking) {
       length_of_invigilator_array = 0
@@ -1701,101 +1691,71 @@ export default class ExamInventoryTable extends Vue {
     const lifeRing: any = {
       icon: 'life-ring',
       rank: 4,
-      style: { fontSize: '1rem', color: 'red' }
+      style: { font-size: '1rem', color: 'red' }
     }
     const exclamationTriangle: any = {
       icon: 'exclamation-triangle',
       rank: 3,
-      style: { fontSize: '.9rem', color: '#FFC32B' }
+      style: { font-size: '.9rem', color: '#FFC32B' }
     }
     const clipboardCheck: any = {
       icon: 'clipboard-check',
       rank: 2,
-      style: { fontSize: '1rem', color: 'green' }
+      style: { font-size: '1rem', color: 'green' }
     }
     const envelopeOpenText: any = {
       icon: 'shipping-fast',
       rank: 1,
-      style: { fontSize: '1rem', color: '#4e9de0' }
+      style: { font-size: '1rem', color: '#4e9de0' }
     }
     const feePending: any = {
       icon: 'dollar-sign',
       rank: 2,
-      style: { fontSize: '1rem', color: 'green' }
+      style: { font-size: '1rem', color: 'green' }
     }
 
-    // console.log("============= Start of Tests =======================")
-    // console.log("==> Test 1")
-    // console.log("    --> pesticide:    ", item.is_pesticide ? "True" : "False")
-    // console.log("    --> receive date: ", item.exam_received_date)
-    // console.log("    --> return date:  ", item.exam_returned_date)
-    // console.log("        --> Test: item.is_pesticide && !item.exam_received_date && !item.exam_returned_date -> ",
-    //                 item.is_pesticide && !item.exam_received_date && !item.exam_returned_date ? "True" : "False")
-
-    //
     if (item.is_pesticide && !item.exam_received_date && !item.exam_returned_date) {
-      // console.log("        --> True: returning lifeRing")
       return lifeRing
     }
 
-    // console.log("==> Test 2")
-    // console.log("    --> return date:  ", item.exam_returned_date)
-    // console.log("        --> Test: item.exam_returned_date -> ", item.exam_returned_date ? "True" : "False")
     if (item.exam_returned_date) {
-      // console.log("        --> True: returning enveloopeOpenText")
       return envelopeOpenText
     }
 
-    // console.log("==> Test 3")
-    // console.log("    --> booking:      ", item.booking)
     if (item.booking) {
-      // console.log("    --> invig:        ", item.booking.invigilator)
     }
     if (item.booking && item.booking.invigilator) {
-      // console.log("    --> invig.delete: ", item.booking.invigilator.deleted)
     }
-    // console.log("        --> Test: item.booking && item.booking.invigilator && item.booking.invigilator.deleted -> ",
-    //   item.booking && item.booking.invigilator && item.booking.invigilator.deleted ? "True" : "False")
     if (item.booking && item.booking.invigilator && item.booking.invigilator.deleted) {
-      // console.log("        --> True: returning lifeRing")
       return lifeRing
     }
 
-    // console.log("==> Test 4")
     if (item.exam_type.exam_type_name === 'Monthly Session Exam') {
       console.log('    --> Monthly Session Exam, name: ' + item.exam_name)
       console.log('    --> item.booking: ', item.booking)
       if (!item.booking) {
-        // console.log("!item.booking, returning lifeRing")
         return lifeRing
       }
-      // console.log("    --> this.checkInvigilator(item): ", this.checkInvigilator(item))
       console.log('    --> this.checkInvigilator(item): ', this.checkInvigilator(item))
       if (!this.checkInvigilator(item)) {
-        // console.log('checkInvigilator is false, returning lifeRing')
         return lifeRing
       }
       if (this.filterByExpiry(item)) {
-        // console.log("this.filterByExpiry(item) is true, returning lifeRing")
         return lifeRing
       }
       if (item.booking) {
         if (moment(item.booking.start_time).isValid()) {
           if (moment(item.booking.start_time).isBefore(moment(), 'day')) {
-            // console.log("item.booking and start_time valid and start time before today, returning lifeRing")
             return lifeRing
           }
         }
       }
       if (item.number_of_students === null && length_of_invigilator_array > 0) {
-        // console.log("item.number_of_students is null and length_of_invigilator_array > 0, returning exclamationTriangle")
         return exclamationTriangle
       }
       if (!item.event_id || !item.number_of_students || !item.exam_received_date) {
-        // console.log("No event_id or no students or no received date, returning exclamationTriangle")
         return exclamationTriangle
       }
-      // console.log("No errors found, returning clipboardCheck")
       return clipboardCheck
     }
     if (item.exam_type.group_exam_ind) {
@@ -1875,16 +1835,16 @@ export default class ExamInventoryTable extends Vue {
     }
     console.log('==> In stillRequires(item), item: ', item)
     if (item.booking) {
-      if (item.exam_type.group_exam_ind == 1) {
-        if (length_of_invigilator_array == 0 && number_of_invigilators == 1) {
+      if (item.exam_type.group_exam_ind === 1) {
+        if (length_of_invigilator_array === 0 && number_of_invigilators === 1) {
           output.push('Assignment of Invigilator')
-        } else if (length_of_invigilator_array == 0 && number_of_invigilators > 1) {
+        } else if (length_of_invigilator_array === 0 && number_of_invigilators > 1) {
           output.push('Assignment of Invigilators')
         } else if (length_of_invigilator_array > 0 && length_of_invigilator_array < number_of_invigilators) {
           output.push('Assignment of More Invigilators')
         }
-      } else if (item.exam_type.group_exam_ind == 0) {
-        if (length_of_invigilator_array == 0 && !item.booking.sbc_staff_invigilated) {
+      } else if (item.exam_type.group_exam_ind === 0) {
+        if (length_of_invigilator_array === 0 && !item.booking.sbc_staff_invigilated) {
           output.push('Assignment of Invigilator')
         }
       }
@@ -1897,14 +1857,10 @@ export default class ExamInventoryTable extends Vue {
     item.gotoDate = moment(item.booking.start_time)
     item.referrer = 'rescheduling'
     this.setSelectedExam(item)
-    const booking = this.calendarEvents.find(event => event.id == item.booking_id)
+    const booking = this.calendarEvents.find(event => event.id === item.booking_id)
 
     // not needed to change to moment
     // JSTOTS TOCHECK removed new from moment. no need to use new with moment
-    // booking.start = moment(booking.start)
-    // booking.start = moment(booking.start)
-    // JSTOTS TOCHECK removed new from moment. no need to use new with moment
-    // booking.end = moment(booking.end)
     this.setEditedBooking(booking)
     this.setEditedBookingOriginal(booking)
     this.toggleEditBookingModal(true)

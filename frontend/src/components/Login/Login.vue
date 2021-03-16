@@ -76,12 +76,12 @@ limitations under the License.*/
         <div>
           <template v-if="!showOfficeSwitcher">
              <label class="navbar-label">
-               <span @click="setOfficeSwitcher(!showOfficeSwitcher)" 
+               <span @click="setOfficeSwitcher(!showOfficeSwitcher)"
                 class="clickable">Office: {{ this.$store.state.user.office.office_name }}</span>
               </label>
           </template>
           <template v-else>
-            <vue-bootstrap-typeahead 
+            <vue-bootstrap-typeahead
               v-model="officeQuery"
               :data="this.offices"
               :serializer="x => x.office_name"
@@ -109,12 +109,11 @@ limitations under the License.*/
 </template>
 
 <script lang="ts">
-import VueBootstrapTypeahead from 'vue-bootstrap-typeahead'
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
 import config from '../../../config'
+import VueBootstrapTypeahead from 'vue-bootstrap-typeahead'
 import _ from 'lodash'
-
 
 @Component({
   components: {
@@ -155,7 +154,7 @@ export default class Login extends Vue {
       return this.user.counter_id
     }
   }
-  
+
   set counterSelection (value) {
     if (value === 'receptionist') {
       this.setReceptionistState(true)
@@ -376,27 +375,27 @@ export default class Login extends Vue {
     }
   }
 
-  cancelOfficeSwitcher() {
-    this.setOfficeSwitcher(false);
+  cancelOfficeSwitcher () {
+    this.setOfficeSwitcher(false)
   }
 
-  changeOffice(newOffice) {
+  changeOffice (newOffice) {
     this.updateCSROffice(newOffice)
-    .then(() => {
-      console.log('Done updateCSROffice() then in Login.vue');
-      this.setOfficeSwitcher(false);
-      // Auto-refresh to reload all new data now that office has changed
-      window.location.reload();
-    })
-    .catch((err) => {
-      let message = 'Something went wrong'
-      if (err && err.response && err.response.data && err.response.data.message) {
-        message = err.response.data.message
-      }
-      alert('Unable to change offices: ' + message)
-      console.error('Unable to change offices: ' + message, { err })
-      this.setOfficeSwitcher(false);
-    })
+      .then(() => {
+        console.log('Done updateCSROffice() then in Login.vue')
+        this.setOfficeSwitcher(false)
+        // Auto-refresh to reload all new data now that office has changed
+        window.location.reload()
+      })
+      .catch((err) => {
+        let message = 'Something went wrong'
+        if (err && err.response && err.response.data && err.response.data.message) {
+          message = err.response.data.message
+        }
+        alert('Unable to change offices: ' + message)
+        console.error('Unable to change offices: ' + message, { err })
+        this.setOfficeSwitcher(false)
+      })
   }
 }
 

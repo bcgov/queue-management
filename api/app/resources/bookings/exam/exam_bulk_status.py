@@ -32,7 +32,6 @@ class ExamList(Resource):
 
     @jwt.requires_auth
     def post(self):
-        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
 
         try:
             exams = Exam.query.filter_by(upload_received_ind=0).filter(Exam.bcmp_job_id.isnot(None))

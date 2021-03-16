@@ -1,6 +1,6 @@
 <template>
   <div fluid class="container-fluid">
-    <div class="fc-view-container" style="">
+    <div class="fc-view-container">
       <div class="fc-view fc-listYear-view fc-list-view fc-widget-content">
         <div class="fc-scroller" style="overflow: hidden auto; height: auto">
           <div v-if="events.length === 0" class="my-5 mx-3">
@@ -40,11 +40,11 @@
                     <div
                       style="display: flex; justify-content: left; width: 100%"
                     >
-                      <div class="ft-wt-600 mr-1"><b>Name:</b></div>
+                      <div class="ft-wt-600 mr-1"><strong>Name:</strong></div>
 
                       <div class="ft-wt-400 mr-3">{{ event.name }}</div>
 
-                      <div class="ft-wt-600 mx-1"><b>service Name:</b></div>
+                      <div class="ft-wt-600 mx-1"><strong>service Name:</strong></div>
 
                       <div class="ft-wt-400 mr-3">
                         {{ event.serviceName }}
@@ -54,7 +54,7 @@
                         class="ft-wt-600 mx-1"
                         v-if="event.comments !== null"
                       >
-                        <b>Notes:</b>
+                        <strong>Notes:</strong>
                       </div>
 
                       <div

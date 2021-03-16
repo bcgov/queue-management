@@ -26,7 +26,6 @@ class OfficeSchema(ma.SQLAlchemySchema):
         include_relationships = True
         load_instance = True
         jit = toastedmarshmallow.Jit
-        # exclude = ('citizens', 'csrs', 'deleted', 'exams', 'rooms', 'services',)
 
     office_id = fields.Int()
     office_name = fields.Str()

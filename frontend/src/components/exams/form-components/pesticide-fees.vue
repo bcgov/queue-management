@@ -50,9 +50,8 @@
 <script lang="ts">
 
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-
-import { mapState } from 'vuex'
 import { checkmark } from '../add-exam-form-components'
+import mapState from 'vuex'
 
 @Component({
   components: {

@@ -270,7 +270,7 @@ export default class AddExamFinalStep extends Vue {
 
   get officeName () {
     if (this.addExamModal.setup === 'group' || this.addExamModal.setup === 'pesticide' && this.exam.office_id) {
-      const office = this.offices.find(o => o.office_id == this.exam.office_id)
+      const office = this.offices.find(o => o.office_id === this.exam.office_id)
       return `#${office.office_id} - ${office.office_name}`
     }
     return ''

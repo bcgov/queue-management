@@ -400,7 +400,7 @@ export default class GroupPesticideModal extends Vue {
     const output: any = []
     console.log(examsObj)
     for (const exam_type_id in examsObj) {
-      const exam = this.pesticideExamTypes.find(pesticideExam => pesticideExam.exam_type_id == exam_type_id)
+      const exam = this.pesticideExamTypes.find(pesticideExam => pesticideExam.exam_type_id === exam_type_id)
       output.push({
         name: exam.exam_name,
         ...exam,
@@ -451,7 +451,7 @@ export default class GroupPesticideModal extends Vue {
 
   deleteExam ({ id }) {
     const candidatesCopy = [...this.candidates]
-    const index = candidatesCopy.findIndex(candidate => candidate.id == id)
+    const index = candidatesCopy.findIndex(candidate => candidate.id === id)
     candidatesCopy.splice(index, 1)
     this.candidates = candidatesCopy
     this.resetForm()

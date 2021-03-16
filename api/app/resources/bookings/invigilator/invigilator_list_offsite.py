@@ -31,8 +31,6 @@ class InvigilatorListOffsiteGet(Resource):
     @jwt.requires_auth
     def get(self):
 
-        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
-
         pesticide_office = Office.query.filter_by(office_name="Pesticide Offsite").first()
 
         try:

@@ -26,7 +26,6 @@ class RoomSchema(ma.SQLAlchemySchema):
         include_relationships = True
         load_instance = True
         jit = toastedmarshmallow.Jit
-        #exclude = ("booking",)
 
     capacity = fields.Int()
     color = fields.Str()

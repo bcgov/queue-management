@@ -43,7 +43,7 @@ class Feedback(Resource):
         try:
             feedback_message = json_data['feedback_message']
         except KeyError as err:
-            return {"message": "Must provide message to send as feedback"}, 422
+            return {"message": "Must provide message to send as feedback. " + str(err)}, 422
 
         slack_result = None
         service_now_result = None

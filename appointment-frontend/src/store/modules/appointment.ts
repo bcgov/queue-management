@@ -1,5 +1,5 @@
 import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
-import { FeedbackRequestObject, FeedbackResponseObject } from '@/models/feedback'
+import { FeedbackRequestObject } from '@/models/feedback'
 import { Appointment } from '@/models/appointment'
 import AppointmentService from '@/services/appointment.services'
 import CommonUtils from '@/utils/common-util'

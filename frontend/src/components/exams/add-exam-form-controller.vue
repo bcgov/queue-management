@@ -40,7 +40,7 @@
       />
       <LocationInput
         v-if="q.kind === 'locationInput'"
-        v-show="addExamModal.setup != 'other' || q.key != 'event_id'"
+        v-show="addExamModal.setup !== 'other' || q.key !== 'event_id'"
         :error="error"
         :q="q"
         :validationObj="validationObj"
@@ -280,7 +280,7 @@ export default class AddExamFormController extends Vue {
 
   get questions () {
     if (this.steps && this.steps.length > 0) {
-      return this.steps.find(q => q.step == this.step).questions
+      return this.steps.find(q => q.step === this.step).questions
     }
     return []
   }
@@ -351,7 +351,7 @@ export default class AddExamFormController extends Vue {
         messages.exam_name = 'Maximum Field Length Exceeded'
         return
       }
-      if (key === 'office_id' && answer == null) {
+      if (key === 'office_id' && answer === null) {
         valid[key] = false
         messages[key] = 'Invalid Office'
         return
@@ -385,7 +385,7 @@ export default class AddExamFormController extends Vue {
             return
           }
         }
-        if (question.minLength == 0) {
+        if (question.minLength === 0) {
           if (question.digit) {
             answer = parseInt(answer)
             if (!isNaN(answer)) {
@@ -409,7 +409,7 @@ export default class AddExamFormController extends Vue {
         messages[key] = 'Required Field'
         return
       }
-      if (question.minLength == 0 && !question.digit) {
+      if (question.minLength === 0 && !question.digit) {
         valid[key] = true
         messages[key] = ''
         return
@@ -472,7 +472,7 @@ export default class AddExamFormController extends Vue {
           this.setError()
         }
       }
-      if (this.tab.stepsValidated.indexOf(this.step) != -1) {
+      if (this.tab.stepsValidated.indexOf(this.step) !== -1) {
         const stepsValidated = Object.assign([], this.tab.stepsValidated)
         stepsValidated.splice(this.tab.stepsValidated.indexOf(this.step), 1)
         this.updateCaptureTab({ stepsValidated })

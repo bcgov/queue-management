@@ -23,6 +23,7 @@ from .ches_email import send_email, generate_ches_token
 from app.models.bookings import Appointment
 
 ENV = Environment(loader=FileSystemLoader('.'), autoescape=True)
+line_break = '<br />'
 
 
 def get_cancel_email_contents(appt: Appointment, user, office, timezone):
@@ -53,11 +54,11 @@ def get_reminder_email_contents(appt: Appointment, user, office, timezone):
 
     service_email_paragraph = appt.service.email_paragraph
     if service_email_paragraph:
-        service_email_paragraph = service_email_paragraph.replace('\r\n', '<br />')
+        service_email_paragraph = service_email_paragraph.replace('\r\n', line_break)
 
     office_email_paragraph = appt.office.office_email_paragraph
     if office_email_paragraph:
-        office_email_paragraph = office_email_paragraph.replace('\r\n', '<br />')
+        office_email_paragraph = office_email_paragraph.replace('\r\n', line_break)
 
     body = template.render(display_name=appt.citizen_name,
                            location=office.office_name,
@@ -96,11 +97,11 @@ def get_confirmation_email_contents(appointment: Appointment, office, timezone, 
 
     service_email_paragraph = appointment.service.email_paragraph
     if service_email_paragraph:
-        service_email_paragraph = service_email_paragraph.replace('\r\n', '<br />')
+        service_email_paragraph = service_email_paragraph.replace('\r\n', line_break)
 
     office_email_paragraph = appointment.office.office_email_paragraph
     if office_email_paragraph:
-        office_email_paragraph = office_email_paragraph.replace('\r\n', '<br />')
+        office_email_paragraph = office_email_paragraph.replace('\r\n', line_break)
 
     template = ENV.get_template('email_templates/confirmation_email.html')
     date, day = formatted_date(appointment.start_time, timezone)

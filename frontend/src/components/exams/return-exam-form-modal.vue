@@ -178,7 +178,7 @@ export default class ReturnExamModal extends Vue {
       const fields = ['exam_returned_tracking_number', 'exam_written_ind', 'notes', 'exam_returned_date']
       let result = false
       fields.forEach(field => {
-        if (this[field] != this.exam[field]) {
+        if (this[field] !== this.exam[field]) {
           result = true
         }
       })
@@ -215,7 +215,7 @@ export default class ReturnExamModal extends Vue {
   }
 
   handleActionInput (e) {
-    if (e.keyCode == 8 || e.keyCode == 46) {
+    if (e.keyCode === 8 || e.keyCode === 46) {
       this.removeError()
       return true
     }

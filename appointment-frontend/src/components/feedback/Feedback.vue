@@ -44,7 +44,6 @@
                     </v-textarea>
                     <v-col class="feedback_caption response_required"><span class="mandatory">*</span> Would you like a response from us?</v-col>
                     <v-row justify="center">
-                        <!-- <v-col><input type="radio" v-model="feedbackModel.responseRequired" v-bind:value="yes"><span class="feedback_caption">Yes</span></v-col> -->
                         <v-radio-group class="no_margin" v-model="responseRequired" row :disabled="feedbackMessage.length === 0">
                           <v-radio  label="Yes" v-bind:value="yes"></v-radio>
                           <v-radio  label="No" v-bind:value="no" @click="showResponsePage = false" ></v-radio>

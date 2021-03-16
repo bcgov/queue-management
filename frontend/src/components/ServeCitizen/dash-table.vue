@@ -24,7 +24,6 @@ limitations under the License.*/
       @row-clicked="rowClicked"
       class="p-0 m-0"
     >
-      <!--id="client-waiting-table"-->
       <template slot="counter_id" slot-scope="row">{{ showCounter(row.item.counter_id) }}</template>
       <template slot="start_time" slot-scope="row">{{ formatTime(row.item.start_time) }}</template>
       <template slot="csr" slot-scope="row">{{ showCSR(row.item.citizen_id) }}</template>
@@ -147,7 +146,7 @@ export default class DashTable extends Vue {
 
   private showCounter (value: any) {
     for (let i = 0; i < this.user.office.counters.length; i++) {
-      if (this.user.office.counters[i].counter_id == value) {
+      if (this.user.office.counters[i].counter_id === value) {
         return this.user.office.counters[i].counter_name
       }
     }

@@ -124,23 +124,6 @@ logger.setLevel(logging.DEBUG)
 #   Configure all logging except basic logging
 configure_logging(application)
 
-# # Build application cache
-# from app.models.theq.office import Office
-# Office.build_cache()
-
-# Init mail service
-# from app.utilities.email import mail
-# mail.init_app(application)
-# application.extensions['mail'].debug = 0
-
-
-#  Code to determine all db.engine properties and sub-properties, as necessary.
-if False:
-    print("==> All DB Engine options")
-    for attr in dir(db._engine_options.keys):
-        print("    --> db._engine_options.keys." + attr + " = " + str(getattr(db._engine_options.keys, attr)))
-        # print("db.engine.%s = %s") % (attr, getattr(db.engine, attr))
-
 #  See whether options took.
 if print_flag:
      print("==> DB Engine options")

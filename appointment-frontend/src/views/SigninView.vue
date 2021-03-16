@@ -71,6 +71,3 @@ export default class SigninView extends Vue {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-</style>
