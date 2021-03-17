@@ -201,12 +201,6 @@ class BaseConfig(object):
     # Email variables
     EMAIL_APPOINTMENT_APP_URL = os.getenv('EMAIL_APPOINTMENT_APP_URL', None)
 
-    # CHES variables
-    CHES_SSO_TOKEN_URL = os.getenv('CHES_SSO_TOKEN_URL', None)
-    CHES_SSO_CLIENT_ID = os.getenv('CHES_SSO_CLIENT_ID', None)
-    CHES_SSO_CLIENT_SECRET = os.getenv('CHES_SSO_CLIENT_SECRET', None)
-    CHES_POST_EMAIL_ENDPOINT = os.getenv('CHES_POST_EMAIL_ENDPOINT', None)
-
     # Cache timeout
     CACHE_DEFAULT_TIMEOUT = int(os.getenv('CACHE_DEFAULT_TIMEOUT', '300'))
 
@@ -223,6 +217,7 @@ class BaseConfig(object):
 
     # Notifications endpoint configuration
     NOTIFICATIONS_ENDPOINT = os.getenv('NOTIFICATIONS_ENDPOINT')
+    NOTIFICATIONS_EMAIL_ENDPOINT = os.getenv('NOTIFICATIONS_EMAIL_ENDPOINT')
 
 
 class LocalConfig(BaseConfig):
