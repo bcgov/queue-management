@@ -190,7 +190,6 @@
                     editable
                     hour-format="12"
                     locale="en-US"
-                    placeholder="Select Start Time"
                     @change="checkSingleInput"
                     @input="checkSingleInput"
                     @clear="checkSingleInput"
@@ -237,7 +236,6 @@
                       editable
                       hour-format="12"
                       locale="en-US"
-                      placeholder="Select End Time"
                       @change="checkSingleInput"
                       @input="checkSingleInput"
                       @clear="checkSingleInput"
@@ -307,7 +305,6 @@
                       editable
                       hour-format="12"
                       locale="en-US"
-                      placeholder="Select Start Time"
                       @change="checkRecurringInput"
                       @input="checkRecurringInput"
                       @clear="checkRecurringInput"
@@ -355,7 +352,6 @@
                       editable
                       hour-format="12"
                       locale="en-US"
-                      placeholder="Select End Time"
                       @change="checkRecurringInput"
                       @input="checkRecurringInput"
                       @clear="checkRecurringInput"
