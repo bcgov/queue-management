@@ -40,7 +40,9 @@ class BookingPost(Resource):
         if not json_data:
             return {"message": "No input data received for creating a booking"}, 400
 
-        booking, warning = self.booking_schema.load(json_data)
+        booking = self.booking_schema.load(json_data)
+        warning = self.booking_schema.validate(json_data)
+
         if warning:
             logging.warning("WARNING: %s", warning)
             return {"message": warning}, 422
@@ -75,7 +77,7 @@ class BookingPost(Resource):
 
             result = self.booking_schema.dump(booking)
 
-            return {"booking": result.data,
-                    "errors": result.errors}, 201
+            return {"booking": result,
+                    "errors": self.booking_schema.validate(booking)}, 201
         else:
             return {"The Booking Office ID and CSR Office ID do not match!"}, 403

@@ -13,19 +13,17 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 from marshmallow import fields
-import toastedmarshmallow
 from app.models.bookings import Appointment
 from app.schemas.theq import OfficeSchema, ServiceSchema
 from qsystem import ma
+from app.schemas import BaseSchema
 
 
-class AppointmentSchema(ma.SQLAlchemySchema):
+class AppointmentSchema(BaseSchema):
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = Appointment
         include_relationships = True
-        load_instance = True
-        jit = toastedmarshmallow.Jit
 
     appointment_id = fields.Int(dump_only=True)
     office_id = fields.Int()
@@ -42,6 +40,6 @@ class AppointmentSchema(ma.SQLAlchemySchema):
     online_flag = fields.Boolean(allow_none=True)
     is_draft = fields.Boolean(allow_none=True)
     stat_flag = fields.Boolean(allow_none=True)
-    office = fields.Nested(OfficeSchema())
+    office = fields.Nested(OfficeSchema(exclude=('sb', 'counters', 'quick_list', 'back_office_list', 'timeslots')))
     service = fields.Nested(ServiceSchema())
 

@@ -12,20 +12,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-import toastedmarshmallow
-from marshmallow import fields
+from marshmallow import fields, post_dump
+
 from app.models.theq import CSR
+from app.schemas import BaseSchema
 from app.schemas.theq import CSRStateSchema, OfficeSchema, RoleSchema
-from qsystem import ma
 
 
-class CSRSchema(ma.SQLAlchemySchema):
+class CSRSchema(BaseSchema):
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = CSR
         include_relationships = True
-        load_instance = True
-        jit = toastedmarshmallow.Jit
 
     csr_id = fields.Int()
     username = fields.Str()
@@ -35,12 +33,21 @@ class CSRSchema(ma.SQLAlchemySchema):
     deleted = fields.DateTime()
     csr_state_id = fields.Int()
     counter_id = fields.Int()
-    counter = fields.Int(attribute="counter_id")
-    csr_state = fields.Nested(CSRStateSchema(exclude=('csrs',)))
+    csr_state = fields.Nested(CSRStateSchema())
     office = fields.Nested(OfficeSchema())
-    role = fields.Nested(RoleSchema(exclude=('roles',)))
+    role = fields.Nested(RoleSchema())
     office_manager = fields.Int()
     pesticide_designate = fields.Int()
     qt_xn_csr_ind = fields.Int()
     finance_designate = fields.Int()
     ita2_designate = fields.Int()
+
+    @post_dump(pass_many=True)
+    def add_counter_id(self, data, many, **kwargs):
+        if not many:
+            data['counter'] = data['counter_id']
+
+        else:
+            for csr in data:
+                csr['counter'] = csr['counter_id']
+        return data

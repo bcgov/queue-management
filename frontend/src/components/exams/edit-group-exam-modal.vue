@@ -1196,7 +1196,7 @@ export default class EditGroupExamBookingModal extends Vue {
       examChanges.invigilator_id = this.invigilator_id
     }
     if (edits.includes('exam_received')) {
-      examChanges.exam_received_date = this.fields.exam_received_date
+      examChanges.exam_received_date = this.fields.exam_received_date + 'T00:00:00Z'
     }
     if (edits.includes('event_id')) {
       examChanges.event_id = this.eventId

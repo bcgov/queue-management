@@ -260,7 +260,7 @@ export default {
         flag = payload['flag']
       })
       return flag
-    }, 
+    },
     postCheckIn ({ commit, dispatch, rootState }, payload) {
       const state = rootState
       const data = {
@@ -312,7 +312,7 @@ export default {
     putAppointment ({ dispatch, rootState }, payload) {
       const state = rootState
       const { id } = payload
-      return new Promise((resolve, reject) => { 
+      return new Promise((resolve, reject) => {
         Axios({ state }).put(`/appointments/${id}/`, payload.data).then(resp => {
           dispatch('getAppointments')
           resolve()
@@ -344,7 +344,7 @@ export default {
         priority: 1,
         citizen_comments: `${start}|||${payload.comments}`,
         citizen_name: payload.title,
-        start_time: payload.start_time,
+        start_time: payload.start_time.replace('+00:00', 'Z'),
         snowplow_addcitizen: payload.snowplow_addcitizen
       }
 

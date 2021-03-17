@@ -133,7 +133,6 @@ class TimeslotConfig(Base):
 
     def on_model_change(self, form, model, is_created):
         """Invoked on model change."""
-        pprint('Emitting update_offices_cache')
         socketio.emit('update_offices_cache')
 
 

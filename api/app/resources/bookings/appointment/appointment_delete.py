@@ -61,7 +61,6 @@ class AppointmentDelete(Resource):
 
             # Send blackout email
             try:
-                pprint('Sending email for appointment cancellation')
                 send_email(None, *get_cancel_email_contents(appointment, user, office, office.timezone))
             except Exception as exc:
                 pprint(f'Error on token generation - {exc}')

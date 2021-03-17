@@ -12,18 +12,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-import toastedmarshmallow
 from marshmallow import fields
 from app.models.theq import TimeSlot
 from qsystem import ma
+from app.schemas import BaseSchema
 
 
-class TimeslotSchema(ma.SQLAlchemySchema):
-    class Meta:
+class TimeslotSchema(BaseSchema):
+    class Meta(BaseSchema.Meta):
         model = TimeSlot
         include_relationships = True
-        load_instance = True
-        jit = toastedmarshmallow.Jit
 
     start_time = fields.Time()
     end_time = fields.Time()

@@ -12,20 +12,22 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from marshmallow import fields, post_dump
-import toastedmarshmallow
+from marshmallow import EXCLUDE
+from marshmallow import fields, post_dump, pre_load
+
 from app.models.bookings import Booking
+from app.schemas import BaseSchema
 from app.schemas.bookings import RoomSchema, InvigilatorSchema
 from app.schemas.theq import OfficeSchema
-from qsystem import ma
 
-class BookingSchema(ma.SQLAlchemySchema):
+
+class BookingSchema(BaseSchema):
 
     class Meta:
         model = Booking
         include_relationships = True
         load_instance = True
-        jit = toastedmarshmallow.Jit
+        unknown = EXCLUDE
 
     booking_id = fields.Int(dump_only=True)
     booking_name = fields.Str()
@@ -42,14 +44,14 @@ class BookingSchema(ma.SQLAlchemySchema):
     recurring_uuid = fields.Str(allow_none=True)
     stat_flag = fields.Boolean(allow_none=True)
 
-    room = fields.Nested(RoomSchema(exclude=("booking", "office",)))
+    room = fields.Nested(RoomSchema(exclude=("office",)))
     office = fields.Nested(OfficeSchema(only=('appointments_enabled_ind', 'exams_enabled_ind', 'office_id',
                                               'office_name', 'office_number', 'timezone')))
 
     #  NOTE:  The reason for the exclude, rather than just a single include, is because
     #         an include with a single field didn't seem to work.  When I added a second field, it worked.
     #         I only want a single field, so had to use an exclude instead.  ?????
-    invigilators = fields.Nested(InvigilatorSchema(exclude=('contact_name', 'contact_email', 'contract_number',
+    invigilators = fields.Nested(InvigilatorSchema(exclude=( 'contact_email', 'contract_number',
                                                             'contract_expiry_date', 'invigilator_name',
                                                             'invigilator_notes', 'shadow_count', 'shadow_flag',
                                                             'contact_phone', 'deleted', 'office'
@@ -77,3 +79,10 @@ class BookingSchema(ma.SQLAlchemySchema):
                 booking = self.update_invigilators(booking)
 
         return data
+
+    @pre_load
+    def convert_bool_to_int(self, in_data, **kwargs):
+        if type(in_data) == dict and 'sbc_staff_invigilated' in in_data and type(
+                in_data['sbc_staff_invigilated']) == bool:
+            in_data['sbc_staff_invigilated'] = 1 if in_data['sbc_staff_invigilated'] else 0
+        return in_data

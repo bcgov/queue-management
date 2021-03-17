@@ -30,7 +30,7 @@ from app.auth.auth import jwt
 class Feedback(Resource):
 
     feedback_destinations = application.config['THEQ_FEEDBACK']
-    flag_slack = "SLACK" in feedback_destinations
+    flag_teams = "TEAMS" in feedback_destinations
     flag_service_now = "SERVICENOW" in feedback_destinations
     flag_rocket_chat = "ROCKETCHAT" in feedback_destinations
 
@@ -45,12 +45,12 @@ class Feedback(Resource):
         except KeyError as err:
             return {"message": "Must provide message to send as feedback. " + str(err)}, 422
 
-        slack_result = None
+        teams_result = None
         service_now_result = None
         rocket_chat_result = None
 
-        if self.flag_slack:
-            slack_result = Feedback.send_to_slack(feedback_message)
+        if self.flag_teams:
+            teams_result = Feedback.send_to_teams(feedback_message)
 
         if self.flag_service_now:
             service_now_result = Feedback.send_to_service_now(feedback_message)
@@ -58,18 +58,20 @@ class Feedback(Resource):
         if self.flag_rocket_chat:
             rocket_chat_result = Feedback.send_to_rocket_chat(feedback_message)
 
-        #  Calculate return message as combination of slack and service now results.
-        result = Feedback.combine_results("Slack: ", slack_result, "Service Now: ", service_now_result)
+        #  Calculate return message as combination of teams and service now results.
+        result = Feedback.combine_results("Teams: ", teams_result, "Service Now: ", service_now_result)
         result = Feedback.combine_results("", result, "Rocket Chat: ", rocket_chat_result)
         return result
 
     @staticmethod
-    def send_to_slack(feedback_message):
-
-        url = application.config['SLACK_URL']
+    def send_to_teams(feedback_message):
+        
+        url = application.config['TEAMS_URL']
 
         if url is None:
-            return {"message": "SLACK_URL is not set"}, 400
+            return {"message": "TEAMS_URL is not set"}, 400
+
+        feedback_message = feedback_message.replace('\n', '<br />')
 
         feedback_json_data = {
             "text": feedback_message
@@ -88,7 +90,7 @@ class Feedback(Resource):
 
     @staticmethod
     def send_to_service_now(params):
-
+        
         instance = application.config['SERVICENOW_INSTANCE']
         user = application.config['SERVICENOW_USER']
         password = application.config['SERVICENOW_PASSWORD']
@@ -156,7 +158,7 @@ class Feedback(Resource):
 
     @staticmethod
     def send_to_rocket_chat(feedback_message):
-
+        
         url = application.config['ROCKET_CHAT_URL']
 
         if url is None:

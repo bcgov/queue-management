@@ -44,7 +44,8 @@ class AppointmentRecurringPut(Resource):
 
         for appointment in appointments:
 
-            appointment, warning = self.appointment_schema.load(json_data, instance=appointment, partial=True)
+            appointment = self.appointment_schema.load(json_data, instance=appointment, partial=True)
+            warning = self.appointment_schema.validate(json_data)
 
             if warning:
                 logging.warning('WARNING: %s', warning)
@@ -56,9 +57,9 @@ class AppointmentRecurringPut(Resource):
         result = self.appointment_schema.dump(appointments)
 
         if not application.config['DISABLE_AUTO_REFRESH']:
-            socketio.emit('appointment_update', result.data)
+            socketio.emit('appointment_update', result)
 
         return {
-            "appointments": result.data,
-            "errors": result.errors
+            "appointments": result,
+            "errors": self.appointment_schema.validate(appointments)
         }, 200

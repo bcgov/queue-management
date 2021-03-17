@@ -67,8 +67,8 @@ class CitizenRemoveFromQueue(Resource):
         result = self.appointment_schema.dump(appointment)
 
         if not application.config['DISABLE_AUTO_REFRESH']:
-            socketio.emit('appointment_create', result.data)
+            socketio.emit('appointment_create', result)
 
-        return {"appointment": result.data,
-                "errors": result.errors}, 200
+        return {"appointment": result,
+                "errors": self.appointment_schema.validate(appointment)}, 200
 

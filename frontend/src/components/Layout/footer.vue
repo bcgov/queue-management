@@ -51,7 +51,7 @@
           class="footer-anchor-item-last"
           style="display: inline-block; color: white; margin-right: 15px"
         >
-          v2.1.6
+          v2.1.7
         </div>
       </div>
     </div>

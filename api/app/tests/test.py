@@ -26,7 +26,7 @@ class QSystemTestCase(unittest.TestCase):
 
             json_data = {'service_id': 12, 'citizen_id': '', 'quantity': 3, 'channel_id': 2}
             
-            service_request = service_request_schema.load(json_data).data
+            service_request = service_request_schema.load(json_data)
 
             # Confirm a marshmallow bug, returns a dict when invalid data passed in.
             assert type(service_request) is dict
