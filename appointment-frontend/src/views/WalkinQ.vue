@@ -30,46 +30,59 @@
     <v-col>
       <v-card
         class="pa-md-4 mx-lg-auto"
-        :color="amI(Q.walkin_unique_id)"
+        :color="myColor(Q)"
       >
         <v-card-text
           align="center"
           justify="center"
-          :color="amI(Q.walkin_unique_id)"
+          :color="myColor(Q)"
           >
-          {{ Q.ticket_number }}
+          {{ Q.ticket_number }} {{ Q.citizen_id}}
         </v-card-text>
       </v-card>
     </v-col>
     <v-col>
       <v-card
         class="pa-md-4 mx-lg-auto"
-        :color="amI(Q.walkin_unique_id)"
+        :color="myColor(Q)"
       >
         <v-card-text
           align="center"
           justify="center">
-         {{ Q.start_time}}
+         {{ Q.start_time}}  {{ Q.citizen_name}}
         </v-card-text>
       </v-card>
     </v-col>
     <v-col>
       <v-card
         class="pa-md-4 mx-lg-auto"
-        :color="amI(Q.walkin_unique_id)"
+        :color="myColor(Q)"
       >
         <v-card-text
-          v-if="!amI(Q.walkin_unique_id)"
+          v-if="((Q.service_begin_seconds) && !amI(Q.walkin_unique_id))"
           align="center"
           justify="center">
-          <span v-if="isBooked(Q.citizen_comments)">
-            Booked Appointment </span>
+          <span>{{ toHHMMSS(Q.service_begin_seconds) }}</span>
+        </v-card-text>
+        <v-card-text
+          v-else-if="!amI(Q.walkin_unique_id)"
+          align="center"
+          justify="center">
+          <span v-if="isBooked(Q.citizen_comments) || Q.cs.cs_state_name == 'Appointment booked'">
+            <!-- booked not served -->
+            Booked Appointment {{Q.cs.cs_state_name}} {{Q.citizen_comments}}
+            </span>
+         <span v-else-if="(!(isBooked(Q.citizen_comments)) && !(Q.cs.cs_state_name == 'Appointment booked'))">
+            <!-- walk not served -->
+            Not Served {{Q.cs.cs_state_name}} {{Q.citizen_comments}}
+          </span>
           <span v-else>
-            {{ Q.start_time}}
+            <!-- walk not served -->
+            ariyathilla {{Q.cs.cs_state_name}} {{Q.citizen_comments}}
           </span>
         </v-card-text>
         <v-card-text
-          v-else
+           v-else-if="amI(Q.walkin_unique_id)"
           align="center"
           justify="center">
           <v-btn
@@ -147,6 +160,23 @@ export default class WalkinQ extends Vue {
     return null
   }
 
+  private myColor (Q: any) {
+    let color = null
+    if (Q.walkin_unique_id) {
+      color = this.amI(Q.walkin_unique_id)
+    }
+    if (!color) {
+      if ((this.isBooked(Q.citizen_comments)) || (Q.cs.cs_state_name === 'Appointment booked')) {
+        // grey
+        color = '#A9A9A9'
+      } else if (!(this.isBooked(Q.citizen_comments)) && (Q.cs.cs_state_name === 'Active')) {
+        // green
+        color = '#32CD32'
+      }
+    }
+    return color
+  }
+
   private isBooked (comment: string) {
     if (comment) {
       if (comment.includes('|||')) {
@@ -155,6 +185,47 @@ export default class WalkinQ extends Vue {
     }
     return false
   }
+
+  private toHHMMSS (secs: any) {
+    var secNum = parseInt(secs, 10)
+    var hours = Math.floor(secNum / 3600)
+    var minutes = Math.floor(secNum / 60) % 60
+    var seconds = secNum % 60
+
+    return [hours, minutes, seconds]
+      .map(v => v < 10 ? '0' + v : v)
+      .filter((v, i) => v !== '00' || i > 0)
+      .join(':')
+  }
+
+  // private getTotalTime (seReq: any) {
+  //   // eslint-disable-next-line no-console
+  //   // console.log(service_begin_seconds)
+  //   let totalEstimateSec: number = 0
+  //   // // eslint-disable-next-line no-console
+  //   // console.log('seReq>>', seReq)
+
+  //   for (const element of seReq) {
+  //     // eslint-disable-next-line no-console
+  //     console.log(element)
+  //     if (element.periods) {
+  //       if (element.periods[element.periods.length - 1]) {
+  //         // eslint-disable-next-line no-console
+  //         console.log(element.periods[element.periods.length - 1], '+++++++++++++!11111')
+  //         // eslint-disable-next-line no-console
+  //         console.log(element.periods[element.periods.length - 1]?.ps.ps_name, '++++!!!!!!!!!!!!!!!+++++++++!11111', (element.periods[element.periods.length - 1]?.ps.ps_name === 'Being Served'))
+  //         if (element.periods[element.periods.length - 1]?.ps.ps_name === 'Being Served') {
+  //           const now = moment()
+  //           const then = moment(element.periods[element.periods.length - 1]?.time_start + '+00:00')
+  //           let totalEstimateSec = now.diff(then, 'seconds')
+  //           // eslint-disable-next-line no-console
+  //           console.log(this.toHHMMSS(totalEstimateSec), '&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
+  //         }
+  //       }
+  //     }
+  //   }
+  //   return this.toHHMMSS(totalEstimateSec)
+  // }
 }
 </script>
 

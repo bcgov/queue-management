@@ -42,7 +42,7 @@
               interval-height="20"
               first-time="08:30"
               interval-minutes="15"
-              interval-count="34"
+              interval-count="100"
               :weekdays="weekday"
               :type="type"
               :events="events"

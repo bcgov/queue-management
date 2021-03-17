@@ -77,7 +77,7 @@ class CitizenLeft(Resource):
 
             for p in service_request.periods:
                 if p.time_end is None:
-                    p.time_end = datetime.now()
+                    p.time_end = datetime.utcnow()
 
             #  Make snowplow calls to finish any stopped services
             if service_request.sr_id != active_sr:
@@ -89,7 +89,8 @@ class CitizenLeft(Resource):
         citizen.cs = CitizenState.query.filter_by(cs_state_name='Left before receiving services').first()
         if self.clear_comments_flag:
             citizen.citizen_comments = None
-
+        import logging
+        logging.info('{}##############{}'.format(citizen.start_time.date(), datetime.now().date()))
         if citizen.start_time.date() != datetime.now().date():
             citizen.accurate_time_ind = 0
 
