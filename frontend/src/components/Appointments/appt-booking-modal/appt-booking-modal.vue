@@ -447,6 +447,7 @@ export default class ApptBookingModal extends Vue {
   public appt_date: any = null
   public curr_date: any = null
   public selectLength: any = ""
+  public is_first_edit: boolean = false
 
 
   get appointments () {
@@ -526,7 +527,14 @@ export default class ApptBookingModal extends Vue {
           this.selectLength = this.selectedServiceObj.timeslot_duration
       }
     } else {
-      this.selectLength = 15
+      if (this.clickedAppt) {
+        if (this.clickedAppt.start && this.clickedAppt.end ) {
+          this.length = this.clickedAppt.end.diff(this.clickedAppt.start, 'minutes')
+          this.selectLength = this.clickedAppt.end.diff(this.clickedAppt.start, 'minutes')
+        }
+      } else {
+        this.selectLength = 15
+      }
     }
     for (let l = 15; l <= timeDefault; l += 15) {
       if (!this.lengthOptions.includes(l)) {
@@ -540,20 +548,37 @@ export default class ApptBookingModal extends Vue {
   get service_name () {
     this.$store.commit('setDisplayServices', 'Dashboard')
     const services = this.$store.getters.filtered_services
-    if (services && services.length > 0) {
-      if (this.selectedService) {
-        this.selectedServiceObj = services.find(srv => srv.service_id === this.selectedService)
-        this.selectLength = 15
-        if (this.selectedServiceObj.timeslot_duration) {
-          if (!this.lengthOptions.includes(this.selectedServiceObj.timeslot_duration)) {
-              this.lengthOptions.push(this.selectedServiceObj.timeslot_duration)
+      if (services && services.length > 0) {
+        if (this.selectedService) {
+          this.selectedServiceObj = services.find(srv => srv.service_id === this.selectedService)
+          if (this.clickedAppt && !this.is_first_edit) {
+            if (this.clickedAppt.start && this.clickedAppt.end ) {
+              this.selectLength = this.clickedAppt.end.diff(this.clickedAppt.start, 'minutes')
+            }
+          } 
+          // else {
+          //   this.selectLength = 15
+          // }
+          if (this.selectedServiceObj.timeslot_duration) {
+            if (this.clickedAppt && !this.is_first_edit) {
+              if (this.clickedAppt.start && this.clickedAppt.end ) {
+              const serviceMin =this.clickedAppt.end.diff(this.clickedAppt.start, 'minutes')
+              if (!this.lengthOptions.includes(serviceMin)) {
+                this.lengthOptions.push(serviceMin)
+              }
+              this.selectLength = serviceMin
+              }
+            } else {
+            if (!this.lengthOptions.includes(this.selectedServiceObj.timeslot_duration)) {
+                this.lengthOptions.push(this.selectedServiceObj.timeslot_duration)
+              }
+              this.selectLength = this.selectedServiceObj.timeslot_duration
+            }
           }
-          this.selectLength = this.selectedServiceObj.timeslot_duration
+          this.selectLength = this.selectLength
+          return this.selectedServiceObj.service_name
         }
-        this.selectLength = this.selectLength
-        return this.selectedServiceObj.service_name
       }
-    }
     this.lengthOptions = []
     this.timeOptions()
     return 'Please choose a service'
@@ -620,6 +645,7 @@ export default class ApptBookingModal extends Vue {
 
   addService () {
     this.selectingService = true
+    this.is_first_edit = true
     this.clearMessage()
     this.toggleApptBookingModal(false)
     this.toggleAddModal(true)
@@ -710,6 +736,7 @@ export default class ApptBookingModal extends Vue {
     this.appt_date = null
     this.selectedServiceObj = null
     this.setSelectedService(null)
+    this.is_first_edit = false
     // this.timeOptions()
   }
 
@@ -740,7 +767,6 @@ export default class ApptBookingModal extends Vue {
         this.oldLength = null
       }
 
-
       // Handles case when re-schedulng from the Agenda panel on The Queue
       if (this.clickedAppt && this.clickedAppt.end) {
         this.citizen_name = this.clickedAppt.title
@@ -769,6 +795,10 @@ export default class ApptBookingModal extends Vue {
     }
     if (this.clickedAppt && this.clickedAppt.end) {
       // Incident INC0040389  - Appointments in Past can only be deleted not rescheduled
+      if (this.clickedAppt.start && this.clickedAppt.end ) {
+        this.length = this.clickedAppt.end.diff(this.clickedAppt.start, 'minutes')
+        this.selectLength = this.clickedAppt.end.diff(this.clickedAppt.start, 'minutes')
+      }
       this.allow_reschedule = true
       if (this.clickedAppt.start < moment.now()) {
           this.allow_reschedule = false
@@ -779,7 +809,7 @@ export default class ApptBookingModal extends Vue {
       // this.start = this.clickedAppt.start.clone()
       this.start = new Date(this.clickedAppt.start.format())
       this.curr_date = new Date(this.clickedAppt.start.format())
-      this.length = this.clickedAppt.end.clone().diff(this.start, 'minutes')
+      // this.length = this.clickedAppt.end.clone().diff(this.start, 'minutes')
       this.online_flag = this.clickedAppt.online_flag
       this.stat_flag = this.clickedAppt.stat_flag
       const { service_id } = this.clickedAppt
@@ -807,6 +837,7 @@ export default class ApptBookingModal extends Vue {
       }else {
         this.allow_reschedule = false
       }
+      this.selectLength = this.selectLength
   }
 
   submit () { 
@@ -902,6 +933,7 @@ export default class ApptBookingModal extends Vue {
       })
     }
     this.stat_flag = false
+    this.is_first_edit = false
   }
 
   submitSingleStat (){
