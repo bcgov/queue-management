@@ -47,6 +47,6 @@ def read(filepath):
 REQUIREMENTS = read_requirements('requirements.txt')
 
 setup(
-    name="notifications_api",
+    name="api",
     packages=find_packages()
 )
