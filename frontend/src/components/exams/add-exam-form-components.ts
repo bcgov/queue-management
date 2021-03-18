@@ -1,9 +1,9 @@
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { Getter, Mutation, State } from 'vuex-class'
+import { mapState } from 'vuex'
 import DatePicker from 'vue2-datepicker'
-import mapState from 'vuex'
-import moment from 'moment'
 import OfficeDrop from './office-drop.vue'
+import moment from 'moment'
 
 // checkmark
 @Component({

@@ -171,43 +171,43 @@
 </template>
 
 <script lang="ts">
-import { Action, Getter, Mutation, State } from "vuex-class";
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Action, Getter, Mutation, State } from 'vuex-class'
+import { Component, Vue, Watch } from 'vue-property-decorator';
 
-import AddCitizen from "../AddCitizen/add-citizen.vue";
-import ServeCitizen from "../ServeCitizen/serve-citizen.vue";
-import config from "../../../config";
+import AddCitizen from '../AddCitizen/add-citizen.vue';
+import ServeCitizen from '../ServeCitizen/serve-citizen.vue';
+import config from '../../../config';
 
 @Component({
   components: {
     AddCitizen,
-    ServeCitizen,
-  },
+    ServeCitizen
+  }
 })
 export default class Nav extends Vue {
-  @State("citizenInvited") private citizenInvited!: any;
-  @State("showServiceModal") private showServiceModal!: any;
-  @State("calendarSetup") private calendarSetup!: any;
-  @State("rescheduling") private rescheduling!: any;
-  @State("scheduling") private scheduling!: any;
-  @State("serviceModalForm") private serviceModalForm!: any;
-  @State("serviceBegun") private serviceBegun!: any;
-  @State("showGAScreenModal") private showGAScreenModal!: any;
-  @State("showAgendaScreenModal") private showAgendaScreenModal!: any;
-  @State("showTimeTrackingIcon") private showTimeTrackingIcon!: any;
-  @State("showAddModal") private showAddModal!: any;
-  @State("user") private user!: any;
+  @State('citizenInvited') private citizenInvited!: any;
+  @State('showServiceModal') private showServiceModal!: any;
+  @State('calendarSetup') private calendarSetup!: any;
+  @State('rescheduling') private rescheduling!: any;
+  @State('scheduling') private scheduling!: any;
+  @State('serviceModalForm') private serviceModalForm!: any;
+  @State('serviceBegun') private serviceBegun!: any;
+  @State('showGAScreenModal') private showGAScreenModal!: any;
+  @State('showAgendaScreenModal') private showAgendaScreenModal!: any;
+  @State('showTimeTrackingIcon') private showTimeTrackingIcon!: any;
+  @State('showAddModal') private showAddModal!: any;
+  @State('user') private user!: any;
 
-  @Getter("showExams") private showExams!: any;
-  @Getter("showAppointments") private showAppointments!: any;
+  @Getter('showExams') private showExams!: any;
+  @Getter('showAppointments') private showAppointments!: any;
 
-  @Action("clickGAScreen") public clickGAScreen: any;
-  @Action("clickAgendaScreen") public clickAgendaScreen: any;
-  @Action("clickAddCitizen") public clickAddCitizen: any;
-  @Action("clickRefresh") public clickRefresh: any;
+  @Action('clickGAScreen') public clickGAScreen: any;
+  @Action('clickAgendaScreen') public clickAgendaScreen: any;
+  @Action('clickAddCitizen') public clickAddCitizen: any;
+  @Action('clickRefresh') public clickRefresh: any;
 
-  @Mutation("toggleFeedbackModal") public toggleFeedbackModal: any;
-  @Mutation("toggleServiceModal") public toggleServiceModal: any;
+  @Mutation('toggleFeedbackModal') public toggleFeedbackModal: any;
+  @Mutation('toggleServiceModal') public toggleServiceModal: any;
 
   private flashIcon: boolean = true;
   private showSpacer: boolean = false;
@@ -215,9 +215,9 @@ export default class Nav extends Vue {
   dropdownPopperOpts = {
     modifiers: {
       computeStyle: {
-        gpuAcceleration: false,
-      },
-    },
+        gpuAcceleration: false
+      }
+    }
   };
 
   showIEWarning: boolean = config.IS_INTERNET_EXPLORER;
@@ -225,126 +225,126 @@ export default class Nav extends Vue {
 
   mounted () {
     // We don't want to re-evaluate this every time appointmentsEnabled is re-evaluated
-    this.showIEWarning = this.showIEWarning && this.appointmentsEnabled;
+    this.showIEWarning = this.showIEWarning && this.appointmentsEnabled
   }
 
   get appointmentsEnabled (): boolean {
     if (this.user && this.user.office) {
-      return !!this.user.office.appointments_enabled_ind;
+      return !!this.user.office.appointments_enabled_ind
     }
-    return false;
+    return false
   }
 
-  @Watch("showIcon")
-  onShowIconChange(newV: any, oldV: any) {
-    if (this.$route.path === "/queue" && newV.show && !oldV.show) {
-      this.showSpacer = true;
-      let k = 4;
+  @Watch('showIcon')
+  onShowIconChange (newV: any, oldV: any) {
+    if (this.$route.path === '/queue' && newV.show && !oldV.show) {
+      this.showSpacer = true
+      let k = 4
       const flash = () => {
-        this.flashIcon = !this.flashIcon;
-        k -= 1;
+        this.flashIcon = !this.flashIcon
+        k -= 1
         if (k > 0) {
           setTimeout(() => {
-            flash();
-          }, 140);
+            flash()
+          }, 140)
         }
-      };
-      flash();
+      }
+      flash()
     }
   }
 
-  get showHamburger() {
+  get showHamburger () {
     if (this.scheduling || this.rescheduling) {
-      return false;
+      return false
     }
-    if (this.$route.path === "/queue" && this.citizenInvited) {
-      return false;
+    if (this.$route.path === '/queue' && this.citizenInvited) {
+      return false
     }
-    return true;
+    return true
   }
 
-  get showIcon() {
-    if (this.$route.path !== "/queue") {
+  get showIcon () {
+    if (this.$route.path !== '/queue') {
       if (
         this.serviceModalForm &&
         this.serviceModalForm.citizen_id &&
         !this.showServiceModal &&
         !this.showAddModal
       ) {
-        return { show: true, style: "warning" };
+        return { show: true, style: 'warning' }
       }
-      return { show: true, style: "primary" };
+      return { show: true, style: 'primary' }
     }
     return this.showTimeTrackingIcon
-      ? { show: true, style: "warning" }
-      : { show: false, style: null };
+      ? { show: true, style: 'warning' }
+      : { show: false, style: null }
   }
 
-  get isGAorCSR() {
+  get isGAorCSR () {
     if (this.user && this.user.role) {
       // eslint-disable-next-line camelcase
-      const { role_code } = this.user.role;
+      const { role_code } = this.user.role
       // eslint-disable-next-line camelcase
-      if (role_code === "CSR" || role_code === "GA") {
-        return true;
+      if (role_code === 'CSR' || role_code === 'GA') {
+        return true
       }
     }
-    return false;
+    return false
   }
 
-  get agendaPanelStyle() {
-    let classStyle = "gaScreenUnchecked";
+  get agendaPanelStyle () {
+    let classStyle = 'gaScreenUnchecked'
     if (this.showAgendaScreenModal) {
-      classStyle = "gaScreenChecked";
+      classStyle = 'gaScreenChecked'
     }
-    return classStyle;
+    return classStyle
   }
 
-  get gaPanelStyle() {
-    let classStyle = "gaScreenUnchecked";
+  get gaPanelStyle () {
+    let classStyle = 'gaScreenUnchecked'
     if (this.showGAScreenModal) {
-      classStyle = "gaScreenChecked";
+      classStyle = 'gaScreenChecked'
     }
-    return classStyle;
+    return classStyle
   }
 
-  get showAdmin() {
-    const roles = ["GA", "ANALYTICS", "HELPDESK", "SUPPORT"];
+  get showAdmin () {
+    const roles = ['GA', 'ANALYTICS', 'HELPDESK', 'SUPPORT']
     if (this.user && this.user.role && this.user.role.role_code) {
       if (roles.indexOf(this.user.role.role_code) > -1) {
-        return true;
+        return true
       }
     }
-    return false;
+    return false
   }
 
   get showSupport () {
     if (this.user && this.user.role && this.user.role.role_code) {
-      if (this.user.role.role_code === "SUPPORT") {
-        return true;
+      if (this.user.role.role_code === 'SUPPORT') {
+        return true
       }
     }
-    return false;
+    return false
   }
 
   // TODO check this function - not sure where it is using
-  toggleTrackingIcon(bool: boolean) {
+  toggleTrackingIcon (bool: boolean) {
     if (!bool) {
-      this.showSpacer = false;
+      this.showSpacer = false
     }
-    this.toggleTimeTrackingIcon(bool);
+    this.toggleTimeTrackingIcon(bool)
   }
 
-  clickFeedback() {
-    this.toggleFeedbackModal(true);
+  clickFeedback () {
+    this.toggleFeedbackModal(true)
   }
 
-  clickIcon() {
+  clickIcon () {
     if (this.showIcon) {
-      this.toggleServiceModal(true);
-      return;
+      this.toggleServiceModal(true)
+      return
     }
-    this.clickAddCitizen();
+    this.clickAddCitizen()
   }
 }
 </script>

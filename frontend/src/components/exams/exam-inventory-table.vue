@@ -721,6 +721,7 @@
 
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
+import { mapState } from 'vuex'
 import AddCitizen from '../AddCitizen/add-citizen.vue'
 import DeleteExamModal from './delete-exam-modal.vue'
 import EditExamModal from './edit-exam-form-modal.vue'
@@ -731,7 +732,6 @@ import ReturnExamModal from './return-exam-form-modal.vue'
 import SelectInvigilatorModal from './select-invigilator-modal.vue'
 import SuccessExamAlert from './success-exam-alert.vue'
 import UploadPesticideModal from './upload-pesticide-exam.vue'
-import mapState from 'vuex'
 import moment from 'moment'
 import zone from 'moment-timezone'
 
@@ -1691,27 +1691,27 @@ export default class ExamInventoryTable extends Vue {
     const lifeRing: any = {
       icon: 'life-ring',
       rank: 4,
-      style: { font-size: '1rem', color: 'red' }
+      style: { fontSize: '1rem', color: 'red' }
     }
     const exclamationTriangle: any = {
       icon: 'exclamation-triangle',
       rank: 3,
-      style: { font-size: '.9rem', color: '#FFC32B' }
+      style: { fontSize: '.9rem', color: '#FFC32B' }
     }
     const clipboardCheck: any = {
       icon: 'clipboard-check',
       rank: 2,
-      style: { font-size: '1rem', color: 'green' }
+      style: { fontSize: '1rem', color: 'green' }
     }
     const envelopeOpenText: any = {
       icon: 'shipping-fast',
       rank: 1,
-      style: { font-size: '1rem', color: '#4e9de0' }
+      style: { fontSize: '1rem', color: '#4e9de0' }
     }
     const feePending: any = {
       icon: 'dollar-sign',
       rank: 2,
-      style: { font-size: '1rem', color: 'green' }
+      style: { fontSize: '1rem', color: 'green' }
     }
 
     if (item.is_pesticide && !item.exam_received_date && !item.exam_returned_date) {
