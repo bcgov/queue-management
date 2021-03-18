@@ -1061,12 +1061,13 @@ export default class OtherBookingModal extends Vue {
       // const until = new Date(Date.UTC(end_year, end_month - 1, end_day))
       const date_start = new Date(start_year+'/'+start_month+'/'+start_day)
       let until = new Date(end_year+'/'+end_month+'/'+end_day)
-      if (other_recurring_end_date.isDST()) {
-        until = new Date(new_end_year+'/'+new_end_month+'/'+new_end_day)
-      } 
+      // if (other_recurring_end_date.isDST()) {
+      //   until = new Date(new_end_year+'/'+new_end_month+'/'+new_end_day)
+      // } 
       const rule = new RRule({
         freq: input_frequency,
         count: this.other_selected_count,
+        byweekday: this.other_selected_weekdays,
         dtstart: date_start,
         until: until
       })
@@ -1077,36 +1078,36 @@ export default class OtherBookingModal extends Vue {
       // JSTOTS added typr for this.startTime
       const first_event_start_day: any = moment(this.startTime).clone().set({ hour: local_start_hour, minute: local_start_minute }).add(new Date((this.startTime as any)).getTimezoneOffset(), 'minutes')
       let num_days = Math.floor(moment.duration(first_event_start_day.diff(moment(new Date()))).asDays())
-      // array.forEach(date => {
-      //     // TODO For the night is dark and full of terror
-      //     const date_with_offset = moment(date).clone().set({ hour: local_start_hour, minute: local_start_minute }).add(new Date(date).getTimezoneOffset(), 'minutes')
-      //     if (local_start_hour >= 8 && local_start_hour < 16) {
-      //       date_with_offset.add(1, 'd')
-      //     }
-      //     const formatted_start_date = moment(date).clone().set({ hour: local_start_hour, minute: local_start_minute }).format('YYYY-MM-DD HH:mm:ssZ')
-      //     // TODO For the night is dark and full of terror
-      //     // if (num_days == 0) {
-      //     //   num_days = 1
-      //     // }
-      //     if (num_days < 0) {
-      //       num_days = 0
-      //     }
-      //     const formatted_end_date = moment(date).clone().set({ hour: local_end_hour, minute: local_end_minute }).format('YYYY-MM-DD HH:mm:ssZ')
-      //     // let formatted_end_date = moment(date_with_offset).clone().set({ hour: local_start_hour, minute: local_start_minute }).add(duration_minutes, 'minutes').add(num_days, 'd').format('YYYY-MM-DD HH:mm:ssZ')
-      //     // if (new Date(array[0]).getTimezoneOffset() !== new Date(date).getTimezoneOffset()) {
-      //     //   formatted_end_date = moment(formatted_end_date).add(new Date().getTimezoneOffset() - new Date(date).getTimezoneOffset(), 'minutes').format('YYYY-MM-DD HH:mm:ssZ')
-      //     // }
-      //     local_other_dates_array.push({ start: formatted_start_date, end: formatted_end_date })
-      // })
-
-      //non exam reocurring fix
-      const date_array = this.getDates(this.other_recurring_start_date, this.other_recurring_end_date)
-      date_array.forEach(date => {
-         const formatted_start_date = moment(date).clone().set({ hour: local_start_hour, minute: local_start_minute }).format('YYYY-MM-DD HH:mm:ssZ')
-         const formatted_end_date = moment(date).clone().set({ hour: local_end_hour, minute: local_end_minute }).format('YYYY-MM-DD HH:mm:ssZ')
-
-         local_other_dates_array.push({ start: formatted_start_date, end: formatted_end_date })
+      array.forEach(date => {
+          // TODO For the night is dark and full of terror
+          const date_with_offset = moment(date).clone().set({ hour: local_start_hour, minute: local_start_minute }).add(new Date(date).getTimezoneOffset(), 'minutes')
+          if (local_start_hour >= 8 && local_start_hour < 16) {
+            date_with_offset.add(1, 'd')
+          }
+          const formatted_start_date = moment(date).clone().set({ hour: local_start_hour, minute: local_start_minute }).format('YYYY-MM-DD HH:mm:ssZ')
+          // TODO For the night is dark and full of terror
+          // if (num_days == 0) {
+          //   num_days = 1
+          // }
+          if (num_days < 0) {
+            num_days = 0
+          }
+          const formatted_end_date = moment(date).clone().set({ hour: local_end_hour, minute: local_end_minute }).format('YYYY-MM-DD HH:mm:ssZ')
+          // let formatted_end_date = moment(date_with_offset).clone().set({ hour: local_start_hour, minute: local_start_minute }).add(duration_minutes, 'minutes').add(num_days, 'd').format('YYYY-MM-DD HH:mm:ssZ')
+          // if (new Date(array[0]).getTimezoneOffset() !== new Date(date).getTimezoneOffset()) {
+          //   formatted_end_date = moment(formatted_end_date).add(new Date().getTimezoneOffset() - new Date(date).getTimezoneOffset(), 'minutes').format('YYYY-MM-DD HH:mm:ssZ')
+          // }
+          local_other_dates_array.push({ start: formatted_start_date, end: formatted_end_date })
       })
+
+      // //non exam reocurring fix
+      // const date_array = this.getDates(this.other_recurring_start_date, this.other_recurring_end_date)
+      // date_array.forEach(date => {
+      //    const formatted_start_date = moment(date).clone().set({ hour: local_start_hour, minute: local_start_minute }).format('YYYY-MM-DD HH:mm:ssZ')
+      //    const formatted_end_date = moment(date).clone().set({ hour: local_end_hour, minute: local_end_minute }).format('YYYY-MM-DD HH:mm:ssZ')
+
+      //    local_other_dates_array.push({ start: formatted_start_date, end: formatted_end_date })
+      // })
     }
     this.other_rrule_array = local_other_dates_array
     this.other_selected_count = ''
@@ -1122,15 +1123,15 @@ export default class OtherBookingModal extends Vue {
     this.recurring_form_state = 'audit'
   }
 
-   getDates(startDate: any, stopDate: any) {
-      var dateArray = new Array();
-      var currentDate = startDate;
-      while (moment(stopDate).diff(currentDate, 'days') >= 0) {
-        dateArray.push(new Date (currentDate));
-        currentDate = currentDate.add(1, 'day')
-      }
-      return dateArray;
-  }
+  //  getDates(startDate: any, stopDate: any) {
+  //     var dateArray = new Array();
+  //     var currentDate = startDate;
+  //     while (moment(stopDate).diff(currentDate, 'days') >= 0) {
+  //       dateArray.push(new Date (currentDate));
+  //       currentDate = currentDate.add(1, 'day')
+  //     }
+  //     return dateArray;
+  // }
 
   checkRecurringInput () {
     if (this.other_selected_frequency.length > 0 && this.other_recurring_end_date !== null &&
