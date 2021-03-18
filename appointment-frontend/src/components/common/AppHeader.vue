@@ -57,6 +57,7 @@ import { mapActions, mapGetters, mapState } from 'vuex'
 import { Office } from '@/models/office'
 import { Service } from '@/models/service'
 import SignedUser from './SignedUser.vue'
+import { User } from '@/models/user'
 
 @Component({
   components: {
@@ -68,8 +69,15 @@ import SignedUser from './SignedUser.vue'
       'currentService',
       'currentSnowPlow'
     ]),
-    ...mapGetters('auth', ['isAuthenticated']),
-    ...mapGetters('account', ['username'])
+    ...mapState('auth', [
+      'currentUserProfile'
+    ]),
+    ...mapGetters('auth', [
+      'isAuthenticated'
+    ]),
+    ...mapGetters('account', [
+      'username'
+    ])
   },
   methods: {
     ...mapActions('office', [
@@ -81,6 +89,7 @@ export default class AppHeader extends Vue {
   private readonly isAuthenticated!: boolean
   private readonly currentOffice!: Office
   private readonly currentService!: Service
+  private readonly currentUserProfile!: User
   private readonly callSnowplowClick!: (mySP: any) => any
   private readonly username!: string
   private curService: string
@@ -107,18 +116,23 @@ export default class AppHeader extends Vue {
   }
   private goTo (page) {
     let currStep = ''
+    let theloc = null
+    let theserv = null
     switch (this.$store.state.spLastStep) {
       case 1:
-        currStep = 'Locations List'
+        currStep = 'Location Selection'
         break
       case 2:
-        currStep = 'Service Selection'
+        currStep = 'Select Service'
+        theloc = this.currentOffice?.office_name
         break
       case 3:
-        currStep = 'Date Selection'
+        currStep = 'Select Date'
+        theloc = this.currentOffice?.office_name
+        theserv = this.currentService?.external_service_name
         break
       case 4:
-        currStep = 'Login to Confirm'
+        currStep = 'Login to Confirm Appointment'
         break
       default:
         break
@@ -126,27 +140,31 @@ export default class AppHeader extends Vue {
     let mySP = {}
     switch (page) {
       case 'register':
-        mySP = { label: 'Register', step: currStep, loc: null, serv: null, url: 'https://appointments.servicebc.gov.bc.ca/login' }
+        // eslint-disable-next-line no-console
+        console.log('AppHeader goTo register /login trackPageView')
+        mySP = { label: 'Register', step: currStep, loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: theloc, serv: theserv, url: 'https://appointments.servicebc.gov.bc.ca/login' }
         this.callSnowplowClick(mySP)
         this.$router.push('/login')
         this.callsp()
         break
       case 'login':
         // eslint-disable-next-line no-console
-        console.log('AppHeader goTo /login trackPageView')
-        mySP = { label: 'Login', step: currStep, loc: null, serv: null, url: 'https://appointments.servicebc.gov.bc.ca/login' }
+        console.log('AppHeader goTo login  /login current office ', this.currentOffice)
+        // eslint-disable-next-line no-console
+        console.log('AppHeader goTo login  /login current service', this.currentService)
+        mySP = { label: 'Login', step: currStep, loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: theloc, serv: theserv, url: 'https://appointments.servicebc.gov.bc.ca/login' }
         this.callSnowplowClick(mySP)
         this.$router.push('/login')
         this.callsp()
         break
       case 'home':
         // eslint-disable-next-line no-console
-        console.log('AppHeader goTo / trackPageView')
+        console.log('AppHeader goTo Home / trackPageView')
         this.$router.push('/')
         this.callsp()
         break
       case 'help':
-        mySP = { label: 'Help', step: currStep, loc: null, serv: null, url: 'https://www2.gov.bc.ca/gov/content/home/get-help-with-government-services' }
+        mySP = { label: 'Help', step: currStep, loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: theloc, serv: theserv, url: 'https://www2.gov.bc.ca/gov/content/home/get-help-with-government-services' }
         this.callSnowplowClick(mySP)
         window.open('https://www2.gov.bc.ca/gov/content/home/get-help-with-government-services', '_blank')
         break

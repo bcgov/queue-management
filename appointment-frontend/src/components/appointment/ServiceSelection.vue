@@ -122,11 +122,12 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
-import { mapActions, mapMutations, mapState } from 'vuex'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { Office } from '@/models/office'
 import { Service } from '@/models/service'
 import { ServiceAvailability } from '@/utils/constants'
 import StepperMixin from '@/mixins/StepperMixin.vue'
+import { User } from '@/models/user'
 
 @Component({
   computed: {
@@ -135,6 +136,12 @@ import StepperMixin from '@/mixins/StepperMixin.vue'
       'currentService',
       'additionalNotes',
       'serviceList'
+    ]),
+    ...mapState('auth', [
+      'currentUserProfile'
+    ]),
+    ...mapGetters('auth', [
+      'isAuthenticated'
     ])
   },
   methods: {
@@ -150,8 +157,10 @@ import StepperMixin from '@/mixins/StepperMixin.vue'
 })
 export default class ServiceSelection extends Mixins(StepperMixin) {
   private readonly serviceList!: Service[]
+  private readonly currentUserProfile!: User
   private readonly currentOffice!: Office
   private readonly currentService!: Service
+  private readonly isAuthenticated!: boolean
   private readonly additionalNotes!: string
   private readonly setCurrentService!: (service: Service) => void
   private readonly setAdditionalNotes!: (notes: string) => void
@@ -235,7 +244,7 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
   }
 
   private goToServiceLink (sn, url) {
-    const mySP = { label: 'Online Option', step: 'Service Selection', loc: this.currentOffice?.office_name, serv: sn, url: url }
+    const mySP = { label: 'Online Option', step: 'Select Service', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: sn, url: url }
     this.callSnowplowClick(mySP)
     window.open(url, '_blank')
   }

@@ -292,15 +292,15 @@ export default class AppointmentBookingView extends Vue {
         this.setSPStatus('new')
         // eslint-disable-next-line no-console
         // console.log('LOCATIONS LIST called - this.spStatus')
-        mySP = { step: 'Locations List', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: null, serv: null }
+        mySP = { step: 'Location Selection', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: null, serv: null }
         this.callSnowplow(mySP)
         break
       case 2:
-        mySP = { step: 'Service Selection', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: null }
+        mySP = { step: 'Select Service', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: null }
         this.callSnowplow(mySP)
         break
       case 3:
-        mySP = { step: 'Date Selection', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name }
+        mySP = { step: 'Select Date', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name }
         this.callSnowplow(mySP)
         break
       case 4:
@@ -308,12 +308,12 @@ export default class AppointmentBookingView extends Vue {
           mySP = { step: 'Appointment Summary', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name }
           this.callSnowplow(mySP)
         } else {
-          mySP = { step: 'Login to Confirm', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name }
+          mySP = { step: 'Login to Confirm Appointment', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name }
           this.callSnowplow(mySP)
         }
         break
       case 5:
-        mySP = { step: 'Appointment Confirmed FROM APPOINMENT BOOKING VIEW', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name }
+        mySP = { step: 'Appointment Confirmed', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name }
         this.callSnowplow(mySP)
         break
       default:

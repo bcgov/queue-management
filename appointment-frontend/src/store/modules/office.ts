@@ -245,6 +245,9 @@ export default class OfficeModule extends VuexModule {
 
   @Action({ rawError: true })
   public callSnowplowClick (mySP: any): void {
+    if (!mySP.loggedIn) {
+      mySP.clientID = null
+    }
     if (!mySP.url) {
       mySP.url = null
     }
@@ -252,7 +255,10 @@ export default class OfficeModule extends VuexModule {
       schema: 'iglu:ca.bc.gov.cfmspoc/appointment_click/jsonschema/1-0-0',
       data: {
         label: mySP.label,
-        step: mySP.step,
+        appointment_step: mySP.step,
+        logged_in: mySP.loggedIn,
+        appointment_id: mySP.apptID,
+        client_id: mySP.clientID,
         location: mySP.loc,
         service: mySP.serv,
         url: mySP.url
@@ -263,6 +269,12 @@ export default class OfficeModule extends VuexModule {
     console.log('snowplow.label', mySP.label)
     // eslint-disable-next-line no-console
     console.log('snowplow.appointment_step', mySP.step)
+    // eslint-disable-next-line no-console
+    console.log('snowplow.logged_in', mySP.loggedIn)
+    // eslint-disable-next-line no-console
+    console.log('snowplow.appointment_id', mySP.apptID)
+    // eslint-disable-next-line no-console
+    console.log('snowplow.client_id', mySP.clientID)
     // eslint-disable-next-line no-console
     console.log('snowplow.location', mySP.loc)
     // eslint-disable-next-line no-console

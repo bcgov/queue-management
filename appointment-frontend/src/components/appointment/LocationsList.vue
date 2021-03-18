@@ -278,7 +278,7 @@ export default class LocationsList extends Mixins(StepperMixin) {
     await this.getCategories()
     this.selectedLocationName = location.office_name
     this.$refs.locationServiceListPopup.open()
-    const mySP = { label: 'View Location Services', step: 'Locations List', loc: location.office_name, serv: null, url: null }
+    const mySP = { label: 'View Location Services', step: 'Location Selection', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: location.office_name, serv: null, url: null }
     this.callSnowplowClick(mySP)
   }
 

@@ -83,10 +83,11 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 import { Office } from '@/models/office'
 import { Service } from '@/models/service'
 import { ServiceAvailability } from '@/utils/constants'
+import { User } from '@/models/user'
 
 @Component({
   computed: {
@@ -94,6 +95,9 @@ import { ServiceAvailability } from '@/utils/constants'
       'currentOffice',
       'currentService',
       'categoryList'
+    ]),
+    ...mapGetters('auth', [
+      'isAuthenticated'
     ])
   },
   methods: {
@@ -109,6 +113,8 @@ export default class ServiceListPopup extends Vue {
   private readonly categoryList!: Service[]
   private readonly currentOffice!: Office
   private readonly currentService!: Service
+  private readonly currentUserProfile!: User
+  private readonly isAuthenticated!: boolean
   private isFiltered: boolean = false
   private isModelOpen: boolean = false
   private ServiceAvailability = ServiceAvailability
@@ -163,7 +169,7 @@ export default class ServiceListPopup extends Vue {
   }
 
   private goToServiceLink (sn, url) {
-    const mySP = { label: 'Online Option', step: 'Service List Popup', loc: this.selectedLocationName, serv: sn, url: url }
+    const mySP = { label: 'Online Option', step: 'Location Selection', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.selectedLocationName, serv: sn, url: url }
     this.callSnowplowClick(mySP)
     window.open(url, '_blank')
   }

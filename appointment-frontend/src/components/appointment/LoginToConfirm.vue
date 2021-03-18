@@ -122,16 +122,16 @@ export default class LoginToConfirm extends Mixins(StepperMixin) {
     console.log('LOGIN TO CONFIRM VIEW - this.$store.state.spLastStep', this.$store.state.spLastStep)
     switch (this.$store.state.spLastStep) {
       case 1:
-        this.currStep = 'Locations List'
+        this.currStep = 'Location Selection'
         break
       case 2:
-        this.currStep = 'Service Selection'
+        this.currStep = 'Select Service'
         break
       case 3:
-        this.currStep = 'Date Selection'
+        this.currStep = 'Select Date'
         break
       case 4:
-        this.currStep = 'Login to Confirm'
+        this.currStep = 'Login to Confirm Appointmente'
         break
       default:
         break
@@ -160,7 +160,7 @@ export default class LoginToConfirm extends Mixins(StepperMixin) {
     // console.log('LOGIN CLICK === process.env.BASE_URL', ${process.env.BASE_URL})
     // eslint-disable-next-line no-console
     console.log('LOGIN CLICK === myurl', myurl)
-    const mySP = { label: thelabel, step: this.currStep, loc: null, serv: null, url: myurl }
+    const mySP = { label: thelabel, step: this.currStep, loggedIn: false, apptID: null, clientID: this.currentUserProfile?.user_id, loc: null, serv: null, url: myurl }
     this.callSnowplowClick(mySP)
     // eslint-disable-next-line no-console
     console.log('Login To Confirm  login //signin/idpHint trackPageView')
@@ -168,7 +168,7 @@ export default class LoginToConfirm extends Mixins(StepperMixin) {
     this.callsp()
   }
   private createBCEID (url) {
-    const mySP = { label: 'Create: BCeID', step: this.currStep, loc: null, serv: null, url: url }
+    const mySP = { label: 'Create: BCeID', step: this.currStep, loggedIn: false, apptID: null, clientID: this.currentUserProfile?.user_id, loc: null, serv: null, url: url }
     this.callSnowplowClick(mySP)
     // eslint-disable-next-line no-console
     console.log('Login To Confirm  createBCEID url trackPageView')
@@ -178,7 +178,7 @@ export default class LoginToConfirm extends Mixins(StepperMixin) {
   private clickHyperlink (url, thelabel) {
     // eslint-disable-next-line no-console
     console.log('Login To Confirm  clickHyperlink url trackPageView')
-    const mySP = { label: thelabel, step: this.currStep, loc: null, serv: null, url: url }
+    const mySP = { label: thelabel, step: this.currStep, loggedIn: false, apptID: null, clientID: this.currentUserProfile?.user_id, loc: null, serv: null, url: url }
     this.callSnowplowClick(mySP)
     this.$router.push(url)
     this.callsp()
