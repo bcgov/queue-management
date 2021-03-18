@@ -10,4 +10,4 @@ aniso8601
 attrs
 flask-restx
 gunicorn
-flask-jwt-oidc==0.2.0
+flask-jwt-oidc

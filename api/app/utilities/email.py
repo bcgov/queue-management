@@ -18,7 +18,7 @@ from datetime import datetime
 import pytz
 from flask import current_app
 from jinja2 import Environment, FileSystemLoader
-from .ches_email import send_email, generate_ches_token
+from .notification_email import send_email
 
 from app.models.bookings import Appointment
 

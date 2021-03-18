@@ -23,10 +23,8 @@ def send_email(token, subject, email, sender, html_body):
     """Send the email asynchronously, using the given details."""
     if not email or not is_valid_email(email):
         return
-    if not token:
-        token = generate_ches_token()
 
-    send_email_endpoint = current_app.config.get('CHES_POST_EMAIL_ENDPOINT')
+    send_email_endpoint = current_app.config.get('NOTIFICATIONS_EMAIL_ENDPOINT')
     payload = {
         'bodyType': 'html',
         'body': html_body,
@@ -38,19 +36,6 @@ def send_email(token, subject, email, sender, html_body):
                              headers={'Content-Type': 'application/json', 'Authorization': f'Bearer {token}'},
                              data=json.dumps(payload))
     response.raise_for_status()
-
-
-def generate_ches_token():
-    """Generate and return access token for accessing CHES services."""
-    ches_token_url = current_app.config.get('CHES_SSO_TOKEN_URL')
-    ches_client_id = current_app.config.get('CHES_SSO_CLIENT_ID')
-    ches_client_secret = current_app.config.get('CHES_SSO_CLIENT_SECRET')
-
-    token_response = requests.post(ches_token_url,
-                                   data=f'client_id={ches_client_id}&client_secret={ches_client_secret}&grant_type=client_credentials',
-                                   headers={'Content-Type': 'application/x-www-form-urlencoded'})
-    token_response.raise_for_status()
-    return token_response.json().get('access_token')
 
 
 def is_valid_email(email: str):

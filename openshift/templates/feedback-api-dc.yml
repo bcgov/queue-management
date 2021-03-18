@@ -87,6 +87,16 @@ objects:
                   value: "${FEEDBACK_AUTH_CLIENT_SECRET}"
                 - name: CORS_ALLOWED_ORIGINS
                   value: "${CORS_ALLOWED_ORIGINS}"
+                - name: APP_AUTH_URL
+                  value: "${APP_AUTH_URL}"
+                - name: APP_AUTH_CLIENT_ID
+                  value: "${APP_AUTH_CLIENT_ID}"
+                - name: APP_AUTH_CLIENT_SECRET
+                  value: "${APP_AUTH_CLIENT_SECRET}"
+                - name: NOTIFICATION_EMAIL_URL
+                  value: "${NOTIFICATION_EMAIL_URL}"
+                - name: NOTIFICATION_EMAIL_TO
+                  value: "${NOTIFICATION_EMAIL_TO}"
                 - name: PRINT_ENABLE
                   value: "false"
                 - name: LOG_BASIC
@@ -191,6 +201,21 @@ parameters:
     required: true
   - name: CORS_ALLOWED_ORIGINS
     description: "CORS allowed origins"
+    required: true
+  - name: APP_AUTH_URL
+    description: "Application auth URL"
+    required: true
+  - name: APP_AUTH_CLIENT_ID
+    description: "Application auth client id"
+    required: true
+  - name: APP_AUTH_CLIENT_SECRET
+    description: "Application auth client secret"
+    required: true
+  - name: NOTIFICATION_EMAIL_URL
+    description: "Notification email endpoint"
+    required: true
+  - name: NOTIFICATION_EMAIL_TO
+    description: "Email receipient to receive Camunda payload on failover"
     required: true
   - name: FEEDBACK_AUTH_CLIENT_SECRET
     description: "Keycloak client secret"

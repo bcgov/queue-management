@@ -19,7 +19,8 @@ import os
 
 import sys
 import time
-from app.utilities.ches_email import send_email, generate_ches_token
+from app.utilities.notification_email import send_email
+from utils.appointment import get_reminders, get_access_token
 from flask import Flask
 from jinja2 import Environment, FileSystemLoader
 
@@ -63,14 +64,14 @@ def run():
 def send_reminders(app):
     """Send email reminders for next day appointments."""
     app.logger.debug('<<< Starting job')
-    # CHES token
-    ches_token = generate_ches_token()
+    # ACCESS token
+    access_token = get_access_token()
 
     reminders = get_reminders(app=app)
 
     if reminders:
         sender = app.config.get('MAIL_FROM_ID')
-        app_url = app.config.get('EMAIL_APPOINTMENT_APP_URL')
+        app_url = app.config.get('NOTIFICATIONS_EMAIL_ENDPOINT')
         app_folder = [folder for folder in sys.path if 'api/api' in folder][0]
         template_path = app_folder.replace('api/api', 'api/api/email_templates')
         env = Environment(loader=FileSystemLoader(template_path), autoescape=True)
@@ -95,7 +96,7 @@ def send_reminders(app):
                                        service_email_paragraph=appointment.get('service_email_paragraph'),
                                        office_email_paragraph=appointment.get('office_email_paragraph'),
                                        url=app_url)
-                send_email(ches_token, subject, appointment.get('email'), sender, body)
+                send_email(access_token, subject, appointment.get('email'), sender, body)
                 email_count += 1
 
             except Exception as e:
@@ -106,7 +107,7 @@ def send_reminders(app):
                 time.sleep(60)
                 email_count = 0
                 # To handle token expiry, get a new token when the task resumes.
-                ches_token = generate_ches_token()
+                access_token = get_access_token()
 
     app.logger.debug('Ending job>>>')
 
