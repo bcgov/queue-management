@@ -106,7 +106,7 @@ Additional API Environment Variables of note, which you can add to the .env file
 Additional features that can be turned on by environment variables (see the .env file for details)
 
 1. Integration with Snowplow Analytics
-1. Integration with Slack
+1. Integration with Teams
 1. Integration with Rocket Chat
 1. Integration with Service Now
 

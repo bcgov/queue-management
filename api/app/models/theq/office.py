@@ -142,7 +142,6 @@ class Office(Base):
         active_offices = cache.get(Office.offices_cache_key)
         if not active_offices:
             office_schema = OfficeSchema(many=True)
-            print(f'Cache {Office.offices_cache_key} not present, fetching from DB.')
             active_offices = office_schema.dump(Office.query.filter(Office.deleted.is_(None)))
             cache.set(Office.offices_cache_key, active_offices)
         return active_offices

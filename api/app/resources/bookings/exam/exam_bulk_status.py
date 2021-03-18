@@ -52,7 +52,7 @@ class ExamList(Resource):
                 exams_tobe_updated = Exam.query.filter(Exam.bcmp_job_id.in_(job_ids))
 
                 for exam in exams_tobe_updated:
-                    exam_upd, warn = self.exam_schema.load({'upload_received_ind': 1}, instance=exam, partial=True)
+                    exam_upd = self.exam_schema.load({'upload_received_ind': 1}, instance=exam, partial=True)
                     db.session.add(exam_upd)
 
                 try:

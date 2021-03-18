@@ -12,19 +12,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-import toastedmarshmallow
 from marshmallow import fields
 from app.models.theq import CSRState
 from qsystem import ma
+from app.schemas import BaseSchema
 
 
-class CSRStateSchema(ma.SQLAlchemySchema):
+class CSRStateSchema(BaseSchema):
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = CSRState
         include_relationships = True
-        load_instance = True
-        jit = toastedmarshmallow.Jit
 
     csr_state_id = fields.Int()
     csr_state_name = fields.Str()

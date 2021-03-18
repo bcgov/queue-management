@@ -12,20 +12,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-import toastedmarshmallow
 from marshmallow import fields
 from app.models.theq import Period
 from app.schemas.theq import PeriodStateSchema, ChannelSchema, CSRSchema
-from qsystem import ma
+from app.schemas import BaseSchema
 
 
-class PeriodSchema(ma.SQLAlchemySchema):
+class PeriodSchema(BaseSchema):
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = Period
         include_relationships = True
-        load_instance = True
-        jit = toastedmarshmallow.Jit
 
     period_id = fields.Int()
     sr_id = fields.Int()
@@ -37,5 +34,5 @@ class PeriodSchema(ma.SQLAlchemySchema):
     ps = fields.Nested(PeriodStateSchema(exclude=('ps_id', 'ps_desc', 'ps_number',)))
     sr = fields.Nested("ServiceReqSchema", exclude=('periods',))
     csr = fields.Nested(CSRSchema(exclude=('csr_id', 'csr_state', 'csr_state_id', 'deleted', 'office', 'office_id',
-                                           'periods', 'receptionist_ind', 'role', 'role_id', 'finance_designate',
-                                           'office_manager', 'ita2_designate', 'pesticide_designate', 'counter')))
+                                           'receptionist_ind', 'role', 'role_id', 'finance_designate',
+                                           'office_manager', 'ita2_designate', 'pesticide_designate',)))

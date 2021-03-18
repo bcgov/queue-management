@@ -39,8 +39,8 @@ class RoomList(Resource):
             rooms = Room.query.filter_by(office_id=office_id)\
                               .filter(Room.deleted.is_(None))
             result = self.rooms_schema.dump(rooms)
-            return {'rooms': result.data,
-                    'errors': result.errors}, 200
+            return {'rooms': result,
+                    'errors': self.rooms_schema.validate(rooms)}, 200
 
         except exc.SQLAlchemyError as error:
             logging.error(error, exc_info=True)
