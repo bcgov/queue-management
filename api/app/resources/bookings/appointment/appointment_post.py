@@ -27,7 +27,7 @@ from app.schemas.theq import CitizenSchema
 from app.services import AvailabilityService
 from app.utilities.auth_util import Role, has_any_role
 from app.utilities.auth_util import is_public_user
-from app.utilities.email import get_confirmation_email_contents, send_email, generate_ches_token, \
+from app.utilities.email import get_confirmation_email_contents, send_email, \
     get_blackout_email_contents
 from app.utilities.snowplow import SnowPlow
 from qsystem import api, api_call_with_retry, db, my_print, application
@@ -141,19 +141,13 @@ class AppointmentPost(Resource):
             appointment.citizen_id = citizen.citizen_id
             db.session.add(appointment)
             db.session.commit()
-            # Generate CHES token
-            try:
-                ches_token = generate_ches_token()
-            except Exception as exc:
-                pprint(f'Error on token generation - {exc}')
             
             is_stat = (json_data.get('stat_flag', False))
 
             if ((not is_stat) and (not is_blackout_appt)):
                 # Send confirmation email and sms
                 try:
-                    ches_token = generate_ches_token()
-                    send_email(ches_token, *get_confirmation_email_contents(appointment, office, office.timezone, user))
+                    send_email(request.headers['Authorization'].replace('Bearer ', ''), *get_confirmation_email_contents(appointment, office, office.timezone, user))
                     send_sms(appointment, office, office.timezone, user,
                              request.headers['Authorization'].replace('Bearer ', ''))
                 except Exception as exc:
