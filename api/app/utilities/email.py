@@ -91,12 +91,8 @@ def get_confirmation_email_contents(appointment: Appointment, office, timezone, 
     sender = current_app.config.get('MAIL_FROM_ID')
 
     service_email_paragraph = appointment.service.email_paragraph
-    if service_email_paragraph:
-        service_email_paragraph = service_email_paragraph.replace('\r\n', '<br />')
 
     office_email_paragraph = appointment.office.office_email_paragraph
-    if office_email_paragraph:
-        office_email_paragraph = office_email_paragraph.replace('\r\n', '<br />')
 
     template = ENV.get_template('email_templates/confirmation_email.html')
     date, day = formatted_date(appointment.start_time, timezone)
