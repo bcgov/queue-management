@@ -39,7 +39,7 @@ limitations under the License.*/
         </template>
         <template v-else>{{ parseComments(row.item) }}</template>
       </template>
-       <template slot="reminder_flag" slot-scope="row">
+       <template slot="reminder_flag" slot-scope="row"> {{row.item.reminder_flag}} {{row.item.notification_phone}}{{row.item.notification_email}}
         <b-button 
           v-if="(row.item.reminder_flag == 0) && (row.item.notification_phone || row.item.notification_email)"
           @click="sentReminder(row.item.citizen_id, 'first')"

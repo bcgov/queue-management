@@ -16,7 +16,7 @@ from datetime import datetime
 from flask import g, request
 from pprint import pprint
 from flask_restx import Resource
-from qsystem import api, api_call_with_retry, db, socketio, my_print
+from qsystem import api, api_call_with_retry, db, socketio, my_print, application
 from app.models.theq import Citizen, CSR, Office
 from app.models.theq import SRState
 from app.schemas.theq import CitizenSchema
@@ -62,25 +62,33 @@ class CitizenAddToQueue(Resource):
         active_service_request.sr_state_id = pending_service_state.sr_state_id
         # send walkin spot confirmation
         try:
-            if citizen.notification_phone or citizen.notification_email:
+            if (citizen.notification_phone or citizen.notification_email) and not (citizen.reminder_flag) and not (citizen.notification_sent_time):
                 # TODO: code/function call to send first sms/email confirmation
                 update_table = False
                 try:
+                    appointment_portal_url = application.config.get('APPOINTMENT_PORTAL_URL', '')
+                    print(appointment_portal_url,'+++++++++++++++++++++++appointment_portal_url')
                     # TODO: Preapre tiny url and replace below url
-                    url = "http://localhost:8081/queue"
+                    url = ''
+                    if appointment_portal_url and citizen.walkin_unique_id:
+                        if appointment_portal_url.endswith('/'):
+                            appointment_portal_url = appointment_portal_url[:-1]
+                        url = "{}/{}/{}".format(appointment_portal_url, 'walk-in-Q', citizen.walkin_unique_id)
+                    print('url============>>>>>>>>>{}'.format(url))
                     # email
                     email_sent = False
                     if citizen.notification_email:
                         ches_token = generate_ches_token()
                         officeObj = Office.find_by_id(citizen.office_id)
-                        pprint('Sending email for walk in spot confirmations')
+                        print('Sending email for walk in spot confirmations to {}'.format(citizen.notification_email))
                         email_sent = get_walkin_spot_confirmation_email_contents(citizen, url, officeObj)
                     # SMS  
                     sms_sent = False
                     if citizen.notification_phone:
+                        print('sending sms'.format(citizen.notification_phone))
                         sms_sent = send_walkin_spot_confirmation_sms(citizen, url, request.headers['Authorization'].replace('Bearer ', ''))
                     if email_sent:
-                        # status = send_email(ches_token, *email_sent)
+                        status = send_email(ches_token, *email_sent)
                         update_table = True
                     if sms_sent:
                         update_table = True

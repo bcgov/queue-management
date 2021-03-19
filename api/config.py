@@ -211,7 +211,7 @@ class BaseConfig(object):
 
     # Auto-refresh application configuration
     DISABLE_AUTO_REFRESH = (os.getenv("DISABLE_AUTO_REFRESH","FALSE")).upper() == "TRUE"
-
+    
     # JWT_OIDC Settings
     JWT_OIDC_WELL_KNOWN_CONFIG = os.getenv('JWT_OIDC_WELL_KNOWN_CONFIG')
     JWT_OIDC_ALGORITHMS = os.getenv('JWT_OIDC_ALGORITHMS', 'RS256')
@@ -223,7 +223,12 @@ class BaseConfig(object):
     # Notifications endpoint configuration
     NOTIFICATIONS_ENDPOINT = os.getenv('NOTIFICATIONS_ENDPOINT')
 
+    # show estimate time to users accessing the walkin url
+    SHOW_ESTIMATE_TIME_WALKIN = os.getenv('SHOW_ESTIMATE_TIME_WALKIN', False)
+    # get appointment portal URL
+    APPOINTMENT_PORTAL_URL = os.getenv('APPOINTMENT_PORTAL_URL', '')
 
+    
 class LocalConfig(BaseConfig):
     DEBUG = True
     TESTING = False

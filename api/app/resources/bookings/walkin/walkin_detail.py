@@ -16,11 +16,11 @@ from pprint import pprint
 from datetime import datetime, timedelta
 from flask import request, g
 from flask_restx import Resource
-from qsystem import api, api_call_with_retry, db, socketio, my_print
+from qsystem import api, api_call_with_retry, db, socketio, my_print, application
 from app.models.theq import Citizen, CSR, Counter, Office, CitizenState, ServiceReq
 from app.models.bookings import Appointment
 from marshmallow import ValidationError
-from app.schemas.theq import CitizenSchema
+from app.schemas.theq import CitizenSchema, OfficeSchema
 from app.schemas.bookings import AppointmentSchema
 from sqlalchemy import exc
 from app.utilities.snowplow import SnowPlow
@@ -35,6 +35,7 @@ class WalkinDetail(Resource):
     citizen_schema = CitizenSchema()
     citizens_schema = CitizenSchema(many=True)
     appointment_schema = AppointmentSchema(many=True)
+    office_schema = OfficeSchema()
 
     def get(self, id):
         try:
@@ -42,6 +43,26 @@ class WalkinDetail(Resource):
                                             .filter(CitizenState.cs_state_name == 'Active')\
                                             .order_by(Citizen.citizen_id.desc()).first()
             if citizen:
+                booked_not_checkin = []
+                serving_app = []
+                booked_check_app = []
+                walkin_app = []
+                res_list = []
+                my_office = Office.query.filter_by(office_id=citizen.office_id).first()
+                my_office_data = self.office_schema.dump(my_office)
+                local_timezone = False 
+                if my_office_data:
+                    my_time_zone = my_office_data['timezone']['timezone_name']
+                    local_timezone = pytz.timezone(my_time_zone)
+                my_result = self.citizen_schema.dump(citizen)
+                am_on_hold = False
+                citizen_service_reqs = my_result.get('service_reqs', [])
+                for j in citizen_service_reqs:
+                    my_served_period = sorted(j['periods'], key= lambda x:x['period_id'], reverse=True)[0]
+                    if my_served_period:
+                        if (my_served_period['ps']['ps_name'] == 'On hold'):
+                            am_on_hold = True
+                show_estimate = application.config.get('SHOW_ESTIMATE_TIME_WALKIN', False)
                 time_now = datetime.utcnow()
                 past_hour = datetime.utcnow() - timedelta(hours=1)
                 future_hour = datetime.utcnow() + timedelta(hours=4)
@@ -51,101 +72,82 @@ class WalkinDetail(Resource):
                                                 .filter(CitizenState.cs_state_name == 'Active')\
                                                 .order_by(Citizen.priority) \
                                                 .join(Citizen.service_reqs).all()
-                # all_citizen_in_q_result = self.citizens_schema.dump(citizens)
-                                            # .filter((Appointment.checked_in_time == None)\
-                                            # | (Appointment.is_draft != False)\
-                                            # | (Appointment.blackout_flag != 'Y'))\
-                                            # .order_by(Appointment.start_time)\
+                result = self.citizens_schema.dump(all_citizen_in_q)
                 local_past = pytz.utc.localize(past_hour)
                 local_future = pytz.utc.localize(future_hour)
+                # getting agenda panel app
                 appointments = Appointment.query.filter_by(office_id=citizen.office_id)\
                                             .filter(Appointment.start_time <= local_future)\
                                             .filter(Appointment.start_time >= local_past)\
-                                            .filter((Appointment.checked_in_time == None)\
-                                            | (Appointment.is_draft != False)\
-                                            | (Appointment.blackout_flag != 'Y'))\
+                                            .filter(Appointment.checked_in_time == None)\
                                             .order_by(Appointment.start_time)\
                                             .all()
-
-                # get_all_booked = Citizen.query.filter_by(office_id=citizen.office_id)\
-                #                             .filter(Citizen.start_time <= future_hour)\
-                #                             .filter(Citizen.start_time >= past_hour)\
-                #                             .filter(Citizen.counter_id == None)\
-                #                             .join(CitizenState)\
-                #                             .filter((CitizenState.cs_state_name == 'Active')\
-                #                             | (CitizenState.cs_state_name == 'Appointment booked'))\
-                #                             .join(Appointment)\
-                #                              .filter((Appointment.checked_in_time == None)\
-                #                             | (Appointment.is_draft != False)\
-                #                             | (Appointment.blackout_flag != 'Y'))\
-                #                             .order_by(Appointment.start_time)\
-                #                             .order_by(Citizen.start_time)\
-                #                             .all()
-
-                # TODO: ALL COMMENTED THINGS BELOW
-                # result = self.citizens_schema.dump(all_appointment)
-                # END
-                import logging
-                result_in_Q = self.citizens_schema.dump(all_citizen_in_q)
-                # logging.info('{}++####result in q----->>>>'.format(result_in_Q))
-                # result_in_Book = self.citizens_schema.dump(get_all_booked)
                 result_in_Book = self.appointment_schema.dump(appointments)
-                logging.info('{}+@@@@@resilt in book--->>>>>'.format(result_in_Book))
-                result = result_in_Q + result_in_Book
-                # res_list = result_in_Book
-                # logging.info('{}+!!!!!!!!!!!!res'.format(result))
-                res_list = []
+                # processing agenda panel appointmnets:
+                # .filter(Appointment.is_draft != False)\
+                # .filter(Appointment.blackout_flag != 'Y')\
+                for app in result_in_Book:
+                    if not (app.get('is_draft', True)) and (app.get('blackout_flag', 'N') == 'N')  and not (app.get('stat_flag', True)):
+                        data_dict = {}
+                        data_dict['flag'] = 'agenda_panel'
+                        data_dict['start_time'] = app.get('start_time',  '')
+                        if data_dict['start_time'] and local_timezone:
+                            utc_datetime = datetime.strptime(data_dict['start_time'], '%Y-%m-%dT%H:%M:%S%z')
+                            local_datetime = utc_datetime.replace(tzinfo=pytz.utc)
+                            local_datetime = local_datetime.astimezone(local_timezone)
+                            data_dict['start_time'] = local_datetime.strftime("%m/%d/%Y, %H:%M:%S")
+                        booked_not_checkin.append(data_dict)
                 for each in result:
+                    data_dict = {}
                     if bool(each.get('service_reqs', False)):
                         for i in each['service_reqs']:
                             served_period = sorted(i['periods'], key= lambda x:x['period_id'], reverse=True)[0]
                             if served_period:
                                 if served_period['ps']['ps_name'] == 'Being Served':
-                                    each['service_begin_seconds'] = (datetime.utcnow()-datetime.strptime(served_period['time_start'], '%Y-%m-%dT%H:%M:%S.%f')).total_seconds()
-                                    shall_append = True
+                                    data_dict['flag'] = 'serving_app'
+                                    data_dict['ticket_number'] = each.get('ticket_number', '')
+                                    data_dict['walkin_unique_id'] = each.get('walkin_unique_id', '')
+                                    data_dict['service_begin_seconds'] = (datetime.utcnow()-datetime.strptime(served_period['time_start'], '%Y-%m-%dT%H:%M:%S.%f')).total_seconds()
+                                    serving_app.append(data_dict)
+                                    data_dict = {}
                                     break
-                                    res_list.append(each)
-                                if (not (served_period['time_end']) and (served_period['ps']['ps_name'] == 'Waiting')):
-                                    res_list.append(each)
-                                    break
-                return {'citizen': result_in_Book}, 200
+                                if (not (served_period['time_end']) and (served_period['ps']['ps_name'] in ('Waiting', 'Invited'))):
+                                    not_booked_flag = False
+                                    data_dict = {}
+                                    data_dict['ticket_number'] = each.get('ticket_number', '')
+                                    data_dict['walkin_unique_id'] = each.get('walkin_unique_id', '') 
+                                    if (each.get('citizen_comments', '')):
+                                        if '|||' in each['citizen_comments']:
+                                            data_dict['flag'] = 'booked_app'
+                                            booked_check_app.append(data_dict)
+                                            data_dict = {}
+                                            break
+                                        else:
+                                            not_booked_flag = True
+                                    else:
+                                        not_booked_flag = True
+                                    if not_booked_flag and each.get('cs', False):
+                                        if each['cs'].get('cs_state_name', '') == 'Active':
+                                            each_time_obj = datetime.strptime(each['start_time'], '%Y-%m-%dT%H:%M:%SZ')
+                                            if am_on_hold:
+                                                data_dict['flag'] = 'walkin_app'
+                                                walkin_app.append(data_dict)
+                                                data_dict = {}
+                                                break
+                                            else:
+                                                if each_time_obj <= citizen.start_time:
+                                                    data_dict['flag'] = 'walkin_app'
+                                                    walkin_app.append(data_dict)
+                                                    data_dict = {}
+                                                    break
+                res_list = tuple(serving_app+booked_check_app+booked_not_checkin+walkin_app)
+                return {'citizen': res_list, 'show_estimate': show_estimate}, 200
             return {}
         except exc.SQLAlchemyError as e:
             print(e)
             return {'message': 'API is down'}, 500
 
-# get_all_walkin = Citizen.query.filter_by(office_id=citizen.office_id)\
-#                                 .filter(Citizen.start_time <= citizen.start_time)\
-#                                 .filter(Citizen.start_time > citizen.start_time - timedelta(1))\
-#                                 .join(CitizenState)\
-#                                 .filter((CitizenState.cs_state_name == 'Active')\
-#                                 | (CitizenState.cs_state_name == 'Appointment booked'))\
-#                                 .order_by(Citizen.start_time)\
-#                                 .all()
-# get_all_walkin = Citizen.query.filter_by(office_id=citizen.office_id)\
-#                                 .filter(Citizen.start_time <= future_hour)\
-#                                 .filter(Citizen.start_time >= past_hour)\
-#                                 .filter(Citizen.counter_id == None)\
-#                                 .join(CitizenState)\
-#                                 .filter((CitizenState.cs_state_name == 'Active')\
-#                                 | (CitizenState.cs_state_name == 'Appointment booked'))\
-#                                 .order_by(Citizen.start_time)\
-#                                 .all()
-# get_all_booked = Citizen.query.filter_by(office_id=citizen.office_id)\
-#                                 .filter(Citizen.start_time <= citizen.start_time + timedelta(hours=3))\
-#                                 .filter(Citizen.start_time >= citizen.start_time - timedelta(hours=1))\
-#                                 .filter(Citizen.counter_id != None)\
-#                                 .join(CitizenState)\
-#                                 .filter((CitizenState.cs_state_name == 'Active')\
-#                                 | (CitizenState.cs_state_name == 'Appointment booked'))\
-#                                 .order_by(Citizen.start_time)\
-#                                 .all()
-# all_appointment =  get_all_booked + get_all_walkin
-# get_all_walkin = Citizen.query.filter_by(office_id=citizen.office_id)\
-#                                 .filter(Citizen.start_time >= citizen.start_time)\
-#                                 .filter(Citizen.start_time <= time_now)\
-#                                 .filter(Citizen.counter_id != None)\
-#                                 .join(CitizenState)\
-#                                 .filter(CitizenState.cs_state_name == 'Active')\
-#                                 .order_by(Citizen.start_time.desc())\
-#                                 .all()
+            
+                                            # .filter((Appointment.checked_in_time )\
+                                            #  (Appointment.is_draft != False)\
+                                            # | (Appointment.blackout_flag != 'Y'))\

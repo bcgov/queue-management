@@ -94,6 +94,8 @@ class CitizenLeft(Resource):
         if citizen.start_time.date() != datetime.now().date():
             citizen.accurate_time_ind = 0
 
+        # remove walkin unique id when, citizen leave
+        citizen.walkin_unique_id = None
         my_print("    ++> Time before updating citizen database: " + str(datetime.now()))
         db.session.add(citizen)
         my_print("    ++> Time before database commit: " + str(datetime.now()))

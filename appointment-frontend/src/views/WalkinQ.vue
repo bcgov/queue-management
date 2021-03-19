@@ -21,42 +21,52 @@
   <v-row>
     <v-col> </v-col>
     <v-col align="center"
+      v-if="(showEstimate === 'True')"
       justify="center">Est. time</v-col>
     <v-col align="center"
       justify="center">Tot. time</v-col>
   </v-row>
   <v-row v-for="Q in theWalkinQ"
         :key="Q.citizen_id">
+    <!--ticket number column start -->
     <v-col>
       <v-card
         class="pa-md-4 mx-lg-auto"
-        :color="myColor(Q)"
+        :color="Q.flag === 'serving_app' ? '' : myColor(Q)"
+        :class="Q.flag === 'serving_app' ? 'card-animation-serving' : ''"
       >
         <v-card-text
           align="center"
           justify="center"
           :color="myColor(Q)"
           >
-          {{ Q.ticket_number }} {{ Q.citizen_id}}
+          <span v-if="Q.flag === 'agenda_panel'">{{ getAppTime(Q) }} </span>
+          <span v-else>{{ Q.ticket_number }}</span>
         </v-card-text>
       </v-card>
     </v-col>
-    <v-col>
+    <!--ticket number column end -->
+    <!-- estimate time column start -->
+    <v-col v-if="(showEstimate === 'True')">
       <v-card
         class="pa-md-4 mx-lg-auto"
-        :color="myColor(Q)"
+        :color="Q.flag === 'serving_app' ? '' : myColor(Q)"
+        :class="Q.flag === 'serving_app' ? 'card-animation-serving' : ''"
       >
         <v-card-text
           align="center"
           justify="center">
-         {{ Q.start_time}}  {{ Q.citizen_name}}
+          <!-- estimate time show -->
         </v-card-text>
       </v-card>
     </v-col>
+    <!-- estimate time column end -->
+    <!--total time column start -->
     <v-col>
       <v-card
         class="pa-md-4 mx-lg-auto"
-        :color="myColor(Q)"
+        :color="Q.flag === 'serving_app' ? '' : myColor(Q)"
+        :class="Q.flag === 'serving_app' ? 'card-animation-serving' : ''"
       >
         <v-card-text
           v-if="((Q.service_begin_seconds) && !amI(Q.walkin_unique_id))"
@@ -68,18 +78,9 @@
           v-else-if="!amI(Q.walkin_unique_id)"
           align="center"
           justify="center">
-          <span v-if="isBooked(Q.citizen_comments) || Q.cs.cs_state_name == 'Appointment booked'">
-            <!-- booked not served -->
-            Booked Appointment {{Q.cs.cs_state_name}} {{Q.citizen_comments}}
-            </span>
-         <span v-else-if="(!(isBooked(Q.citizen_comments)) && !(Q.cs.cs_state_name == 'Appointment booked'))">
-            <!-- walk not served -->
-            Not Served {{Q.cs.cs_state_name}} {{Q.citizen_comments}}
-          </span>
-          <span v-else>
-            <!-- walk not served -->
-            ariyathilla {{Q.cs.cs_state_name}} {{Q.citizen_comments}}
-          </span>
+          <span v-if="Q.flag === 'booked_app'">Booked Appointment</span>
+          <span v-if="Q.flag === 'agenda_panel'">Booked Appointment</span>
+          <span v-if="Q.flag === 'walkin_app'">Not Served</span>
         </v-card-text>
         <v-card-text
            v-else-if="amI(Q.walkin_unique_id)"
@@ -97,11 +98,16 @@
             </v-icon>
             Me
           </v-btn>
+          <v-btn text  v-if="Q.flag === 'serving_app'">
+          <span>{{ toHHMMSS(Q.service_begin_seconds) }}</span>
+          </v-btn>
          </v-card-text>
       </v-card>
     </v-col>
+    <!--total time column end -->
   </v-row>
 </v-container>
+<p v-if="lastRefresh"><b>Page last updated at: {{ lastRefresh }}</b></p>
 </v-container>
 </template>
 
@@ -111,6 +117,7 @@ import CommonUtils from '@/utils/common-util'
 import { WalkinModule } from '@/store/modules'
 import { getModule } from 'vuex-module-decorators'
 import { mapActions } from 'vuex'
+import { th } from 'date-fns/locale'
 
 @Component({
   methods: {
@@ -127,6 +134,8 @@ export default class WalkinQ extends Vue {
   private WalkinModule = getModule(WalkinModule, this.$store)
 
   private theWalkinQ: any = {}
+  private showEstimate: any = ''
+  private lastRefresh: any = ''
   private userBrowser = {
     is_allowed: true,
     current_browser: '',
@@ -136,19 +145,36 @@ export default class WalkinQ extends Vue {
 
   mounted () {
     this.userBrowser = CommonUtils.isAllowedBrowsers()
+    window.setInterval(() => {
+      this.getAllQ()
+      this.lastRefresh = new Date().toLocaleTimeString()
+    }, 60000)
   }
 
-  private async created () {
-    // eslint-disable-next-line no-console
-    console.log(this.uniqueId, '++++++++++++++i creadtedddddddd+++++222')
+  private created () {
+    this.getAllQ()
+  }
+
+  private async getAllQ () {
     const resp = await this.getAllWalkin(this.uniqueId)
     // eslint-disable-next-line no-console
-    console.log(resp, '++++++++++++', resp?.status)
+    console.log(resp?.data, (resp?.data), Object.keys(resp?.data).length === 0)
     if (resp?.status === 200) {
       this.theWalkinQ = resp?.data?.citizen
-      // eslint-disable-next-line no-console
-      console.log(resp)
+      this.showEstimate = resp?.data?.citizen
+      if ((!resp?.data) || (Object.keys(resp?.data).length <= 0)) {
+        this.$router.push('/no-content/not-in-Q')
+      }
+    } else {
+      this.$router.push('/no-content/not-in-Q')
     }
+  }
+
+  private getAppTime (Q) {
+    if (Q.start_time) {
+      return new Date(Q.start_time).toLocaleTimeString()
+    }
+    return Q.start_time
   }
 
   private amI (ID: string) {
@@ -166,24 +192,18 @@ export default class WalkinQ extends Vue {
       color = this.amI(Q.walkin_unique_id)
     }
     if (!color) {
-      if ((this.isBooked(Q.citizen_comments)) || (Q.cs.cs_state_name === 'Appointment booked')) {
-        // grey
-        color = '#A9A9A9'
-      } else if (!(this.isBooked(Q.citizen_comments)) && (Q.cs.cs_state_name === 'Active')) {
-        // green
-        color = '#32CD32'
+      if (Q.flag === 'walkin_app') {
+        // not served- white
+        color = 'white'
+      } else if (Q.flag === 'booked_app') {
+        // booked checkin- green
+        color = '#98FB98'
+      } else if (Q.flag === 'agenda_panel') {
+        // grey-in agenda panel
+        color = '#d3d3d3'
       }
     }
     return color
-  }
-
-  private isBooked (comment: string) {
-    if (comment) {
-      if (comment.includes('|||')) {
-        return true
-      }
-    }
-    return false
   }
 
   private toHHMMSS (secs: any) {
@@ -197,38 +217,20 @@ export default class WalkinQ extends Vue {
       .filter((v, i) => v !== '00' || i > 0)
       .join(':')
   }
-
-  // private getTotalTime (seReq: any) {
-  //   // eslint-disable-next-line no-console
-  //   // console.log(service_begin_seconds)
-  //   let totalEstimateSec: number = 0
-  //   // // eslint-disable-next-line no-console
-  //   // console.log('seReq>>', seReq)
-
-  //   for (const element of seReq) {
-  //     // eslint-disable-next-line no-console
-  //     console.log(element)
-  //     if (element.periods) {
-  //       if (element.periods[element.periods.length - 1]) {
-  //         // eslint-disable-next-line no-console
-  //         console.log(element.periods[element.periods.length - 1], '+++++++++++++!11111')
-  //         // eslint-disable-next-line no-console
-  //         console.log(element.periods[element.periods.length - 1]?.ps.ps_name, '++++!!!!!!!!!!!!!!!+++++++++!11111', (element.periods[element.periods.length - 1]?.ps.ps_name === 'Being Served'))
-  //         if (element.periods[element.periods.length - 1]?.ps.ps_name === 'Being Served') {
-  //           const now = moment()
-  //           const then = moment(element.periods[element.periods.length - 1]?.time_start + '+00:00')
-  //           let totalEstimateSec = now.diff(then, 'seconds')
-  //           // eslint-disable-next-line no-console
-  //           console.log(this.toHHMMSS(totalEstimateSec), '&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
-  //         }
-  //       }
-  //     }
-  //   }
-  //   return this.toHHMMSS(totalEstimateSec)
-  // }
 }
 </script>
 
 <style lang="scss" scoped>
 @import "@/assets/scss/theme.scss";
+.card-animation-serving  {
+  background-color:#4BC7CF;
+  animation-name: serving_now;
+  animation-duration: 1s;
+  animation-iteration-count:infinite;
+}
+
+@keyframes serving_now {
+  from {background-color: #4BC7CF;}
+  to {background-color: white;}
+}
 </style>
