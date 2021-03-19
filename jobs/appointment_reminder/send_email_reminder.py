@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""The Update Payment Job.
+"""The Send email reminders job.
 
 This module is being invoked from a job and it cleans up the stale records
 """
@@ -65,7 +65,7 @@ def send_reminders(app):
     """Send email reminders for next day appointments."""
     app.logger.debug('<<< Starting job')
     # ACCESS token
-    access_token = get_access_token()
+    access_token = get_access_token(app)
 
     reminders = get_reminders(app=app)
 
