@@ -71,6 +71,7 @@ class OfficeConfig(Base):
             ("1", 'On - Enable Notifications')
         ],
         'automatic_reminder_at': [
+            ("0", 'Off - Disable Feature'), \
             ("1", '1 - First in Line'), \
             ("2", '2 - Second in Line'),\
             ("3", '3 - Third in Line')

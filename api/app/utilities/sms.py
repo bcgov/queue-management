@@ -71,11 +71,8 @@ def get_user_telephone(user, appointment):
 def send_walkin_spot_confirmation_sms(citizen: Citizen, url, token: str):
     """Send walkin spot confirmation email"""
     telephone: str = citizen.notification_phone
-    import logging
-    logging.info("{}$$$$$$$".format(telephone))
     if telephone:
         notifications_endpoint = current_app.config.get('NOTIFICATIONS_ENDPOINT')
-        logging.info("{}$@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@2$$$$$$".format(notifications_endpoint))
         try:
             requests.post(notifications_endpoint,
                           headers={'Content-Type': 'application/json', 'Authorization': f'Bearer {token}'},
@@ -95,11 +92,8 @@ def send_walkin_spot_confirmation_sms(citizen: Citizen, url, token: str):
 def send_walkin_reminder_sms(citizen: Citizen, office: Office, token: str):
     """Send walkin spot confirmation email"""
     telephone: str = citizen.notification_phone
-    import logging
-    logging.info("{}$$$$$$$".format(telephone))
     if telephone:
         notifications_endpoint = current_app.config.get('NOTIFICATIONS_ENDPOINT')
-        logging.info("{}$@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@2$$$$$$".format(notifications_endpoint))
         try:
             requests.post(notifications_endpoint,
                           headers={'Content-Type': 'application/json', 'Authorization': f'Bearer {token}'},

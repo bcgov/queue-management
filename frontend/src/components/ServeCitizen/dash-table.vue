@@ -39,7 +39,7 @@ limitations under the License.*/
         </template>
         <template v-else>{{ parseComments(row.item) }}</template>
       </template>
-       <template slot="reminder_flag" slot-scope="row"> {{row.item.reminder_flag}} {{row.item.notification_phone}}{{row.item.notification_email}}
+       <template slot="reminder_flag" slot-scope="row">
         <b-button 
           v-if="(row.item.reminder_flag == 0) && (row.item.notification_phone || row.item.notification_email)"
           @click="sentReminder(row.item.citizen_id, 'first')"
@@ -259,12 +259,7 @@ export default class DashTable extends Vue {
         'is_second_reminder' : true
       }
     }
-    this.sentNotificationReminder(payload).then(resp => {
-        this.citizens_queue
-      }).catch(error => {
-        console.log(error)
-        this.citizens_queue
-      })
+    this.sentNotificationReminder(payload)
   } 
 
 }

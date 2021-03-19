@@ -901,7 +901,6 @@ export const commonActions: any = {
   clickAddToQueue (context) {
     const { citizen_id } = context.getters.form_data.citizen
     context.commit('setPerformingAction', true)
-    console.log('hereeeeeeeeeeeeeee==============>>',citizen_id)
     context
       .dispatch('putCitizen')
       .then(() => {
@@ -1247,6 +1246,14 @@ export const commonActions: any = {
     context.commit('setPerformingAction', true)
 
     context.dispatch('postCitizenLeft', citizen_id).finally(() => {
+      // send reminder for nth citizen in line
+      context
+      .dispatch('sendWalkinLineReminder', {
+        citizen_id: citizen_id
+      })
+      .then(() => {
+        context.dispatch('getAllCitizens')
+      })
       context.commit('setPerformingAction', false)
     })
     context.commit('toggleServiceModal', false)
@@ -1573,6 +1580,14 @@ export const commonActions: any = {
               .dispatch('postBeginService', citizen_id)
               .then(() => {
                 context.commit('toggleBegunStatus', true)
+                // send reminder for nth citizen in line
+                context
+                .dispatch('sendWalkinLineReminder', {
+                  citizen_id: citizen_id
+                })
+                .then(() => {
+                  context.dispatch('getAllCitizens')
+                })
               })
               .finally(() => {
                 context.commit('setPerformingAction', false)
@@ -2542,5 +2557,21 @@ export const commonActions: any = {
 
   restoreSavedModalAction ({ commit }, payload) {
     commit('restoreSavedModal', payload)
-  }
+  },
+
+  sendWalkinLineReminder (context, payload) {
+    return new Promise((resolve, reject) => {
+      Axios(context)
+        .post(`/send-reminder/line-walkin/`, {'previous_citizen_id':payload.citizen_id})
+        .then(
+          resp => {
+            console.log('send reminder')
+            resolve(resp)
+          },
+          error => {
+            reject(error)
+          }
+        )
+      })
+  },
 }
