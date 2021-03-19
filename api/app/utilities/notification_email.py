@@ -26,7 +26,7 @@ def send_email(token, subject, email, sender, html_body):
 
     send_email_endpoint = current_app.config.get('NOTIFICATIONS_EMAIL_ENDPOINT')
     payload = {
-        'bodyType': 'html',
+        'bodyType': 'text',
         'body': html_body,
         'from': sender,
         'subject': subject,

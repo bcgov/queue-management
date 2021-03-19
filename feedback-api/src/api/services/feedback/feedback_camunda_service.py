@@ -17,6 +17,7 @@ This module consists of API that calls Camunda BPM to save citizen feedback comm
 """
 import os, requests, json
 from typing import Dict
+from jinja2 import Environment, FileSystemLoader
 from .feedback_base_service import FeedbackBaseService
 from flask import jsonify
 
@@ -46,6 +47,26 @@ class FeedbackCamundaService(FeedbackBaseService):
                 raise Exception('Camunda API Failure')
             return feedback_response.status_code
         except Exception as e:
+            feedback_type = payload['variables']['engagement']['value']
+            feedback_message = payload['variables']['citizen_comments']['value']
+            response_required = payload['variables']['response']['value']
+            citizen_name = payload['variables']['citizen_name']['value']
+            citizen_contact = payload['variables']['citizen_contact']['value']
+            citizen_email = payload['variables']['citizen_email']['value']
+            service_date = payload['variables']['service_date']['value']
+            submit_date_time = payload['variables']['submit_date_time']['value']
+
+            ENV = Environment(loader=FileSystemLoader('.'), autoescape=True)
+            template = ENV.get_template('camunda_email_template.template')
+            body = template.render(feedback_type =feedback_type,
+                           feedback_message =feedback_message,
+                           response_required =response_required,
+                           citizen_name =citizen_name,
+                           citizen_contact =citizen_contact,
+                           citizen_email =citizen_email,
+                           service_date =service_date,
+                           submit_date_time =submit_date_time)
+
             application_auth_url = os.getenv('APP_AUTH_URL')
             application_client_id = os.getenv('APP_AUTH_CLIENT_ID')
             application_client_secret = os.getenv('APP_AUTH_CLIENT_SECRET')
@@ -56,7 +77,7 @@ class FeedbackCamundaService(FeedbackBaseService):
                 "client_secret":application_client_secret}
             email_payload = {
                 'bodyType': 'text',
-                'body': json.dumps(payload),
+                'body': body,
                 'subject': 'Citizen Feedback - Camunda API failure',
                 'to': email_to
             }
