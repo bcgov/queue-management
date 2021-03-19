@@ -128,26 +128,11 @@ objects:
                     configMapKeyRef:
                       name: 'appointment-reminder-${TAG_NAME}-config'
                       key: SERVICE_ACCOUNT_SECRET
-                - name: CHES_SSO_TOKEN_URL
+                - name: NOTIFICATIONS_EMAIL_ENDPOINT
                   valueFrom:
                     configMapKeyRef:
                       name: 'appointment-reminder-${TAG_NAME}-config'
-                      key: CHES_SSO_TOKEN_URL
-                - name: CHES_SSO_CLIENT_ID
-                  valueFrom:
-                    configMapKeyRef:
-                      name: 'appointment-reminder-${TAG_NAME}-config'
-                      key: CHES_SSO_CLIENT_ID
-                - name: CHES_SSO_CLIENT_SECRET
-                  valueFrom:
-                    configMapKeyRef:
-                      name: 'appointment-reminder-${TAG_NAME}-config'
-                      key: CHES_SSO_CLIENT_SECRET
-                - name: CHES_POST_EMAIL_ENDPOINT
-                  valueFrom:
-                    configMapKeyRef:
-                      name: 'appointment-reminder-${TAG_NAME}-config'
-                      key: CHES_POST_EMAIL_ENDPOINT
+                      key: NOTIFICATIONS_EMAIL_ENDPOINT
                 - name: NOTIFICATIONS_ENDPOINT
                   valueFrom:
                     configMapKeyRef:
