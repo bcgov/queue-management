@@ -71,7 +71,7 @@ def send_reminders(app):
 
     if reminders:
         sender = app.config.get('MAIL_FROM_ID')
-        app_url = app.config.get('NOTIFICATIONS_EMAIL_ENDPOINT')
+        app_url = app.config.get('EMAIL_APPOINTMENT_APP_URL')
         app_folder = [folder for folder in sys.path if 'api/api' in folder][0]
         template_path = app_folder.replace('api/api', 'api/api/email_templates')
         env = Environment(loader=FileSystemLoader(template_path), autoescape=True)
