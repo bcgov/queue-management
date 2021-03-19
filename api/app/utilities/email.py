@@ -52,12 +52,8 @@ def get_reminder_email_contents(appt: Appointment, user, office, timezone):
     subject = f'Reminder – Your appointment on {day}'
 
     service_email_paragraph = appt.service.email_paragraph
-    if service_email_paragraph:
-        service_email_paragraph = service_email_paragraph.replace('\r\n', '<br />')
 
     office_email_paragraph = appt.office.office_email_paragraph
-    if office_email_paragraph:
-        office_email_paragraph = office_email_paragraph.replace('\r\n', '<br />')
 
     body = template.render(display_name=appt.citizen_name,
                            location=office.office_name,
