@@ -71,17 +71,11 @@ class _Config(object):  # pylint: disable=too-few-public-methods
     # Email variables
     EMAIL_APPOINTMENT_APP_URL = os.getenv('EMAIL_APPOINTMENT_APP_URL', None)
 
-    # CHES variables
-    CHES_SSO_TOKEN_URL = os.getenv('CHES_SSO_TOKEN_URL', None)
-    CHES_SSO_CLIENT_ID = os.getenv('CHES_SSO_CLIENT_ID', None)
-    CHES_SSO_CLIENT_SECRET = os.getenv('CHES_SSO_CLIENT_SECRET', None)
-    CHES_POST_EMAIL_ENDPOINT = os.getenv('CHES_POST_EMAIL_ENDPOINT', None)
-
     MAX_EMAIL_PER_BATCH = int(os.getenv('MAX_EMAIL_PER_BATCH', 30))
 
     # SMS variables
     NOTIFICATIONS_ENDPOINT = os.getenv('NOTIFICATIONS_ENDPOINT')
-
+    NOTIFICATIONS_EMAIL_ENDPOINT = os.getenv('NOTIFICATIONS_EMAIL_ENDPOINT')
 
 class DevConfig(_Config):  # pylint: disable=too-few-public-methods
     TESTING = False

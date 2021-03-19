@@ -18,7 +18,7 @@ from datetime import datetime
 import pytz
 from flask import current_app
 from jinja2 import Environment, FileSystemLoader
-from .ches_email import send_email, generate_ches_token
+from .notification_email import send_email
 
 from app.models.bookings import Appointment
 from app.models.theq import Citizen, Office
@@ -53,12 +53,8 @@ def get_reminder_email_contents(appt: Appointment, user, office, timezone):
     subject = f'Reminder – Your appointment on {day}'
 
     service_email_paragraph = appt.service.email_paragraph
-    if service_email_paragraph:
-        service_email_paragraph = service_email_paragraph.replace('\r\n', '<br />')
 
     office_email_paragraph = appt.office.office_email_paragraph
-    if office_email_paragraph:
-        office_email_paragraph = office_email_paragraph.replace('\r\n', '<br />')
 
     body = template.render(display_name=appt.citizen_name,
                            location=office.office_name,
@@ -96,12 +92,8 @@ def get_confirmation_email_contents(appointment: Appointment, office, timezone, 
     sender = current_app.config.get('MAIL_FROM_ID')
 
     service_email_paragraph = appointment.service.email_paragraph
-    if service_email_paragraph:
-        service_email_paragraph = service_email_paragraph.replace('\r\n', '<br />')
 
     office_email_paragraph = appointment.office.office_email_paragraph
-    if office_email_paragraph:
-        office_email_paragraph = office_email_paragraph.replace('\r\n', '<br />')
 
     template = ENV.get_template('email_templates/confirmation_email.html')
     date, day = formatted_date(appointment.start_time, timezone)

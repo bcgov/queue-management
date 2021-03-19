@@ -175,11 +175,13 @@ class OfficeConfig(Base):
         'quick_list': {
             'query_factory': lambda: db.session.query(Service) \
                                                .filter(and_(Service.parent_id.isnot(None)), \
+                                                       and_(Service.deleted.is_(None)), \
                                                             Service.display_dashboard_ind == 1)
         },
         'back_office_list': {
             'query_factory': lambda: db.session.query(Service) \
                                                .filter(and_(Service.parent_id.isnot(None)), \
+                                                       and_(Service.deleted.is_(None)), \
                                                             Service.display_dashboard_ind == 0)
         },
         'appointments_days_limit': {'default': '30'},
