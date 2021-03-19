@@ -101,8 +101,8 @@ objects:
                   value: "${SMS_CHECKIN_CONFIRMATION_TEMPLATE}"
                 - name: JWT_OIDC_WELL_KNOWN_CONFIG
                   value: "${JWT_OIDC_WELL_KNOWN_CONFIG}"    
-                - name: EMAIL_USE_GC_NOTIFY
-                  value: "${EMAIL_USE_GC_NOTIFY}"
+                - name: EMAIL_PROVIDER
+                  value: "${EMAIL_PROVIDER}"
                 - name: CHES_POST_EMAIL_ENDPOINT
                   value: "${CHES_POST_EMAIL_ENDPOINT}"
                 - name: CHES_EMAIL_FROM_ID
@@ -236,8 +236,8 @@ parameters:
     description: "SMS Template for checkin confirmation"
     required: true
     value: "Thank you for saving your spot in line with Service BC! We will be with you shortly. To see your place in line, follow this link, you are ticket {ticket_number}: {url}"
-  - name: EMAIL_USE_GC_NOTIFY
-    description: "Flag which enables use of GC Notify for emails. If this is set to false, then CHES API is used to send emails"
+  - name: EMAIL_PROVIDER
+    description: "Defines the provider of email. For GC Notify use GC_NOTIFY and for ches use CHES"
     required: true
   - name: CHES_POST_EMAIL_ENDPOINT
     description: "Endpoint for CHES email API"

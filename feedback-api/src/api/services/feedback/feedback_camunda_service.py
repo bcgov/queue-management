@@ -41,6 +41,9 @@ class FeedbackCamundaService(FeedbackBaseService):
             feedback_response = requests.post(camunda_service_endpoint,
                                 headers=headers,
                                 data=json.dumps(payload), timeout=5.0)
+            response_code = feedback_response.status_code
+            if (response_code != 200 and response_code != 201 and response_code != 202) :
+                raise Exception('Camunda API Failure')
             return feedback_response.status_code
         except Exception as e:
             application_auth_url = os.getenv('APP_AUTH_URL')
@@ -64,5 +67,6 @@ class FeedbackCamundaService(FeedbackBaseService):
                                 headers=email_headers,
                                 data=json.dumps(email_payload))
             print(email_response)
-            print(e)  # log and continue
+            print(e)
+            return email_response.status_code
         
