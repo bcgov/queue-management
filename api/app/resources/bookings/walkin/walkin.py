@@ -26,7 +26,7 @@ from sqlalchemy import exc
 from app.utilities.snowplow import SnowPlow
 from app.utilities.auth_util import Role, has_any_role
 from app.auth.auth import jwt
-from app.utilities.email import send_email, generate_ches_token, get_walkin_reminder_email_contents
+from app.utilities.email import send_email, get_walkin_reminder_email_contents
 from app.utilities.sms import send_walkin_reminder_sms
 
 @api.route("/citizen/all-walkin/<string:id>/", methods=["GET"])
@@ -296,7 +296,6 @@ class SendLineReminderWalkin(Resource):
     def send_email_reminder(self, citizen, officeObj):
         if (citizen.notification_email):
             # code/function call to send first email notification,
-            ches_token = generate_ches_token()
             email_sent = False
             validate_check = True
             if citizen.reminder_flag:
@@ -305,7 +304,7 @@ class SendLineReminderWalkin(Resource):
             if validate_check:
                 email_sent = get_walkin_reminder_email_contents(citizen, officeObj)
                 if email_sent:
-                    status = send_email(ches_token, *email_sent)
+                    status = send_email(request.headers['Authorization'].replace('Bearer ', ''), *email_sent)
                     flag_value = 1
                     if citizen.reminder_flag == 1:
                         flag_value = 2

@@ -95,11 +95,12 @@ def send_walkin_reminder_sms(citizen: Citizen, office: Office, token: str):
     if telephone:
         notifications_endpoint = current_app.config.get('NOTIFICATIONS_ENDPOINT')
         try:
+            msg = "We’re ready! Please come inside and speak to a Service BC Representative"
             requests.post(notifications_endpoint,
                           headers={'Content-Type': 'application/json', 'Authorization': f'Bearer {token}'},
                           data=json.dumps([{
                               'user_telephone': telephone,
-                              'message': office.check_in_reminder_msg, #TODO:  if this is empty?
+                              'message': office.check_in_reminder_msg if office.check_in_reminder_msg else msg,
                               "type": "CUSTOM"
                           }]))
             return True

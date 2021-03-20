@@ -1,78 +1,9 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Walk-In Reminder</title>
-    <style>
-        /* Global Resets */
-        body, table, div, a, p {
-            font-family: Verdana, Arial, sans-serif;
-        }
+Hello {% if display_name is not none %} {{ display_name }} {% endif %},
 
-        body {
-            margin: 0;
-            padding: 0;
-        }
+{{reminder_msg}}
 
-        table {
-            border-collapse: collapse;
-        }
 
-        img {
-            border: none;
-        }
-
-        p.text-content {
-            margin-top: 25px;
-            margin-bottom: 0;
-            line-height: 24px;
-            font-family: Verdana, Arial, sans-serif;
-            font-size: 16px;
-        }
-    </style>
-    <meta name="referrer" content="origin-when-cross-origin"/>
-    <link rel="icon" sizes="16x16" type="image/png" href="assets/favicon_16.png"/>
-    <link rel="icon" sizes="32x32" type="image/png" href="assets/favicon_32.png"/>
-    <link rel="icon" sizes="any" type="image/svg+xml" href="assets/favicon.svg"/>
-    <title>chat.pathfinder.gov.bc.ca</title>
-    <meta name="application-name" content="sbc online appointment">
-    <meta name="apple-mobile-web-app-title" content="sbc online appointment">
-    <meta http-equiv="content-language" content="">
-    <meta name="language" content="">
-    <meta name="robots" content="INDEX,FOLLOW">
-    <meta name="msvalidate.01" content="">
-    <meta name="google-site-verification" content="">
-    <meta property="fb:app_id" content="">
-    <base href="/">
-</head>
-<body>
-<table style="width: 100%;" cellspacing="0" cellpadding="0">
-    <tr>
-        <td style="padding-left: 20px; padding-right: 20px;">
-            <table style="max-width: 640px; margin: 0 auto; border: 0; border-collapse: collapse; border-radius: 6px; background-color: #ffffff;"
-                   cellspacing="0" cellpadding="0">
-                <tr>
-                    <td>
-                        <p class="text-content">
-                            Hello {% if display_name is not none %} {{ display_name }} {% endif %},
-                        </p>
-
-                        <p class="text-content">
-                            {{reminder_msg}}
-                        </p>
-                        
-                        <p class="text-content">
-                            Thank you, <br/> <br/>
-                            Service BC {{ location }} <br/>
-                            {{ civic_address }} <br/>
-                            {{ telephone }} <br/>
-                        </p>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-</table>
-</body>
-</html>
+Thank you,
+Service BC {{ location }}
+{{ civic_address }}
+{{ telephone }}

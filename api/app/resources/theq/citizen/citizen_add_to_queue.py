@@ -23,7 +23,7 @@ from app.schemas.theq import CitizenSchema
 from app.utilities.snowplow import SnowPlow
 from app.utilities.auth_util import Role, has_any_role
 from app.auth.auth import jwt
-from app.utilities.email import get_walkin_spot_confirmation_email_contents, send_email, generate_ches_token
+from app.utilities.email import get_walkin_spot_confirmation_email_contents, send_email
 from app.utilities.sms import send_walkin_spot_confirmation_sms
 
 
@@ -78,7 +78,6 @@ class CitizenAddToQueue(Resource):
                     # email
                     email_sent = False
                     if citizen.notification_email:
-                        ches_token = generate_ches_token()
                         officeObj = Office.find_by_id(citizen.office_id)
                         print('Sending email for walk in spot confirmations to {}'.format(citizen.notification_email))
                         email_sent = get_walkin_spot_confirmation_email_contents(citizen, url, officeObj)
@@ -88,7 +87,7 @@ class CitizenAddToQueue(Resource):
                         print('sending sms'.format(citizen.notification_phone))
                         sms_sent = send_walkin_spot_confirmation_sms(citizen, url, request.headers['Authorization'].replace('Bearer ', ''))
                     if email_sent:
-                        status = send_email(ches_token, *email_sent)
+                        status = send_email(request.headers['Authorization'].replace('Bearer ', ''), *email_sent)
                         update_table = True
                     if sms_sent:
                         update_table = True

@@ -162,11 +162,12 @@ def get_walkin_reminder_email_contents(citizen: Citizen, office: Office):
 
     template = ENV.get_template('email_templates/walkin_reminder.html')
     subject = f'Walk-In Reminder'
+    msg = "We’re ready! Please come inside and speak to a Service BC Representative"
     body = template.render(display_name=citizen.citizen_name,
                            location=office.office_name,
                            telephone=office.telephone,
                            civic_address=office.civic_address,
-                           reminder_msg=office.check_in_reminder_msg,
+                           reminder_msg=office.check_in_reminder_msg if office.check_in_reminder_msg else msg,
     )
     citizen = Citizen.query.filter_by(citizen_id=citizen.citizen_id).first()
     if is_valid_email(citizen.notification_email):

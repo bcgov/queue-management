@@ -23,7 +23,7 @@ from sqlalchemy import exc
 from app.utilities.snowplow import SnowPlow
 from app.utilities.auth_util import Role, has_any_role
 from app.auth.auth import jwt
-from app.utilities.email import send_email, generate_ches_token, get_walkin_reminder_email_contents
+from app.utilities.email import send_email, get_walkin_reminder_email_contents
 from app.utilities.sms import send_walkin_reminder_sms
 
 @api.route("/citizens/<int:id>/", methods=["GET", "PUT"])
@@ -85,11 +85,10 @@ class CitizenDetail(Resource):
                             citizen.notification_sent_time = datetime.utcnow()
                 if (citizen.notification_email):
                     # code/function call to send first email notification,
-                    ches_token = generate_ches_token()
                     email_sent = False
                     email_sent = get_walkin_reminder_email_contents(citizen, officeObj)
                     if email_sent:
-                        status = send_email(ches_token, *email_sent)
+                        status = send_email(request.headers['Authorization'].replace('Bearer ', ''), *email_sent)
                     if (json_data.get('is_first_reminder', False)):
                         if email_sent:
                             citizen.reminder_flag = 1
