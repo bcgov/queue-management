@@ -242,12 +242,7 @@ export default class DashHoldTable extends Vue {
         'is_second_reminder' : true
       }
     }
-    this.sentNotificationReminder(payload).then(resp => {
-        this.citizens_queue
-      }).catch(error => {
-        console.log(error)
-        this.citizens_queue
-      })
+    this.sentNotificationReminder(payload)
   } 
 }
 

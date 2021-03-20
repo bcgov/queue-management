@@ -78,7 +78,6 @@ export default class NotificationFields extends Vue {
         } else {
           this.notificationEmailValidation = false
         }
-        console.log(serchfind)
     } else {
       this.notificationEmailValidation = null
     }

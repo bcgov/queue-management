@@ -63,7 +63,6 @@ class CitizenDetail(Resource):
         my_print("==> PUT /citizens/" + str(citizen.citizen_id) + '/, Ticket: ' + str(citizen.ticket_number))
         if not ((json_data.get('is_first_reminder', False) or json_data.get('is_second_reminder', False))):
             try:
-                # citizen = self.citizen_schema.load(json_data, instance=citizen, partial=True).data
                 citizen = self.citizen_schema.load(json_data, instance=citizen, partial=True)
             except ValidationError as err:
                 return {'message': err.messages}, 422
@@ -100,12 +99,6 @@ class CitizenDetail(Resource):
                     
             except ValidationError as err:
                 return {'message': err.messages}, 422
-
-        # try:
-        #     citizen = self.citizen_schema.load(json_data, instance=citizen, partial=True)
-
-        # except ValidationError as err:
-        #     return {'message': err.messages}, 422
 
         db.session.add(citizen)
         db.session.commit()

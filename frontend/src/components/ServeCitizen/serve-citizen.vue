@@ -83,7 +83,7 @@
         >
           <div>
             <b-button
-              @click="ServiceBeginService"
+              @click="clickServiceBeginService"
               v-if="reception"
               :disabled="
                 serviceBegun === true || performingAction || commentsTooLong
@@ -276,7 +276,6 @@ export default class ServeCitizen extends Vue {
   @Getter('active_service') private active_service!: any;
   @Getter('invited_service_reqs') private invited_service_reqs!: any;
   @Getter('reception') private reception!: any;
-  @Getter('citizens_queue') private citizens_queue!: any;
 
   @Action('clickAddCitizen') public clickAddCitizen: any
   @Action('clickAddService') public clickAddService: any
@@ -516,10 +515,6 @@ export default class ServeCitizen extends Vue {
   mounted () {
     setInterval(() => { this.flashButton() }, 800)
     this.toggleTimeTrackingIcon(false)
-  }
-
-  ServiceBeginService () {
-    const res = this.clickServiceBeginService()
   }
 }
 

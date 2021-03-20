@@ -124,8 +124,6 @@ export default class DateSelection extends Mixins(StepperMixin) {
    }
 
    private get selectedTimeSlot () {
-     // eslint-disable-next-line no-console
-     console.log(this.currentAppointmentSlot?.start_time, CommonUtils.getUTCToTimeZoneTime(this.currentAppointmentSlot?.start_time, this.currentOfficeTimezone, 'hh:mm aaa'))
      return (this.currentAppointmentSlot?.start_time && this.currentAppointmentSlot?.end_time)
        ? `${CommonUtils.getUTCToTimeZoneTime(this.currentAppointmentSlot?.start_time, this.currentOfficeTimezone, 'hh:mm aaa')} -
         ${CommonUtils.getUTCToTimeZoneTime(this.currentAppointmentSlot?.end_time, this.currentOfficeTimezone, 'hh:mm aaa')}`
@@ -173,8 +171,6 @@ export default class DateSelection extends Mixins(StepperMixin) {
        }
      }
      slots?.forEach(slot => {
-       // eslint-disable-next-line no-console
-       console.log(slot.start_time, CommonUtils.get12HTimeString(slot.start_time))
        this.selectedDateTimeSlots.push({
          ...slot,
          startTimeStr: CommonUtils.get12HTimeString(slot.start_time),
@@ -200,8 +196,6 @@ export default class DateSelection extends Mixins(StepperMixin) {
        start_time: st,
        end_time: et
      }
-     // eslint-disable-next-line no-console
-     console.log(selectedSlot)
      this.setCurrentAppointmentSlot(selectedSlot)
      // this.createDraftAppointment()
      // this.isLoading = true

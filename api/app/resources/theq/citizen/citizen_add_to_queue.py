@@ -63,28 +63,24 @@ class CitizenAddToQueue(Resource):
         # send walkin spot confirmation
         try:
             if (citizen.notification_phone or citizen.notification_email) and not (citizen.reminder_flag) and not (citizen.notification_sent_time):
-                # TODO: code/function call to send first sms/email confirmation
                 update_table = False
                 try:
                     appointment_portal_url = application.config.get('APPOINTMENT_PORTAL_URL', '')
-                    print(appointment_portal_url,'+++++++++++++++++++++++appointment_portal_url')
-                    # TODO: Preapre tiny url and replace below url
+                    # Dynamic URL creations
                     url = ''
                     if appointment_portal_url and citizen.walkin_unique_id:
                         if appointment_portal_url.endswith('/'):
                             appointment_portal_url = appointment_portal_url[:-1]
                         url = "{}/{}/{}".format(appointment_portal_url, 'walk-in-Q', citizen.walkin_unique_id)
-                    print('url============>>>>>>>>>{}'.format(url))
                     # email
                     email_sent = False
                     if citizen.notification_email:
                         officeObj = Office.find_by_id(citizen.office_id)
-                        print('Sending email for walk in spot confirmations to {}'.format(citizen.notification_email))
+                        print('Sending email for walk in spot confirmations to')
                         email_sent = get_walkin_spot_confirmation_email_contents(citizen, url, officeObj)
                     # SMS  
                     sms_sent = False
                     if citizen.notification_phone:
-                        print('sending sms'.format(citizen.notification_phone))
                         sms_sent = send_walkin_spot_confirmation_sms(citizen, url, request.headers['Authorization'].replace('Bearer ', ''))
                     if email_sent:
                         status = send_email(request.headers['Authorization'].replace('Bearer ', ''), *email_sent)

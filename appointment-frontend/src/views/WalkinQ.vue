@@ -157,11 +157,9 @@ export default class WalkinQ extends Vue {
 
   private async getAllQ () {
     const resp = await this.getAllWalkin(this.uniqueId)
-    // eslint-disable-next-line no-console
-    console.log(resp?.data, (resp?.data), Object.keys(resp?.data).length === 0)
     if (resp?.status === 200) {
       this.theWalkinQ = resp?.data?.citizen
-      this.showEstimate = resp?.data?.citizen
+      this.showEstimate = resp?.data?.show_estimate
       if ((!resp?.data) || (Object.keys(resp?.data).length <= 0)) {
         this.$router.push('/no-content/not-in-Q')
       }
@@ -223,14 +221,14 @@ export default class WalkinQ extends Vue {
 <style lang="scss" scoped>
 @import "@/assets/scss/theme.scss";
 .card-animation-serving  {
-  background-color:#4BC7CF;
+  background-color: #C9A0DC;
   animation-name: serving_now;
   animation-duration: 1s;
   animation-iteration-count:infinite;
 }
 
 @keyframes serving_now {
-  from {background-color: #4BC7CF;}
+  from {background-color: #C9A0DC;}
   to {background-color: white;}
 }
 </style>

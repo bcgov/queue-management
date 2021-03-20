@@ -220,13 +220,11 @@ export default class Tables extends Vue {
   }
 
   sendToQueue () {
-    console.log('send to q )))))))))))))))')
     this.$store.commit('toggleServeCitizenSpinner', true)
     this.actionToExecute = 'sendToQueue'
   }
 
   serveCustomer () {
-    console.log('send to serveCustomer)))))))))))')
     this.$store.commit('toggleServeCitizenSpinner', true)
     this.actionToExecute = 'serveCustomer'
   }

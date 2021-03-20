@@ -56,6 +56,3 @@ class OfficeSchema(BaseSchema):
     check_in_notification = fields.Int()
     check_in_reminder_msg = fields.Str()
     automatic_reminder_at = fields.Int()
-
-
-

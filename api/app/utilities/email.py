@@ -137,7 +137,7 @@ def get_email(user, appointment):
 
 
 def get_walkin_spot_confirmation_email_contents(citizen: Citizen, url, office: Office):
-    """Send cancellation email"""
+    """Send walk in confirmation email"""
     sender = current_app.config.get('MAIL_FROM_ID')
 
     template = ENV.get_template('email_templates/walkin_spot_confirmation.html')

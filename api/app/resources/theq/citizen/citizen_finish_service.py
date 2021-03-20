@@ -44,8 +44,6 @@ class CitizenFinishService(Resource):
             return {"message": "Citizen has no active service requests"}
 
         #  If citizen here overnight, or inaccurate time flag set, update accurate time flag.
-        import logging
-        logging.info('{}++++++++++++++++++{}'.format(citizen.start_time.date(), datetime.now().date()))
         if citizen.start_time.date() != datetime.now().date() or inaccurate == 'true':
             citizen.accurate_time_ind = 0
 

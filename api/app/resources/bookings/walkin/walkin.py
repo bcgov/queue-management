@@ -209,14 +209,12 @@ class SendLineReminderWalkin(Resource):
                 
                 # sorting-maintaing the order group 
                 res_list = tuple(booked_check_app + walkin_app)
-                print('+++++++++++++>>>>>>>>>>>>>>>>', res_list)
                 # get the nth object in checkedin and walkin list
                 # bool checks for both False and 0
                 nth_app = False
                 if nth_line:
                     if len(res_list) >= int(nth_line) and (int(nth_line) > 0):
                         nth_app = res_list[int(nth_line)-1]
-                        print('+++++++++++++>>>>>>>>>>>', nth_app)
                         if nth_app['citizen_id']:
                             citizen = Citizen.query.filter_by(citizen_id=nth_app['citizen_id']).first()
                             officeObj = Office.find_by_id(citizen.office_id)
@@ -239,7 +237,6 @@ class SendLineReminderWalkin(Resource):
         nth_line = False
         if my_office_data:
             nth_line = my_office_data.get('automatic_reminder_at', False)
-            print(nth_line, '++++++++++++++++++++++++++++++++++')
         return nth_line
 
     def process_all_citizen_in_q(self, result, citizen):
