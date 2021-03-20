@@ -31,9 +31,6 @@ pytest
 pytz
 python-dotenv
 python-jose
-# SQLAlchemy-Utc
+SQLAlchemy-Utc
 Jinja2
 alembic==1.5.2
-
-SQLAlchemy==1.3.23
-SQLAlchemy-Utc==0.11.0
