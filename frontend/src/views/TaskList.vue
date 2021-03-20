@@ -9,7 +9,9 @@
       :formIOResourceId = "configs.FORM_IO_RESOURCE_ID"
       :formIOReviewerId = "configs.FORM_IO_REVIEWER_ID"
       :formIOReviewer = "configs.FORM_IO_REVIEWER"
-       v-if="isServiceFLowEnabled"
+      :formsflowaiUrl="configs.FORM_FLOW_URL"
+      :formsflowaiApiUrl="configs.FORM_FLOW_API_URL"
+      v-if="isServiceFLowEnabled"
     />
     <div class="no-content" v-else>You shouldnot be here !!!</div>
   </div>
