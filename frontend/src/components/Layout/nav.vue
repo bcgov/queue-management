@@ -101,6 +101,9 @@
               id="office_agenda"
               >Office Agenda</b-dropdown-item
             >
+            <b-dropdown-item to="/service-flow"  id="service_flow" v-if="isServiceFLowEnabled"
+              >Service Flow</b-dropdown-item
+            >
             <span v-if="user.role && (user.role.role_code == 'GA' || user.role.role_code == 'SUPPORT')">
               <b-dropdown-item @click="clickGAScreen" :class="gaPanelStyle">
                 <font-awesome-icon
@@ -171,6 +174,7 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import AddCitizen from '../AddCitizen/add-citizen.vue'
 import ServeCitizen from '../ServeCitizen/serve-citizen.vue'
 import config from '../../../config'
+import configMap from '../../utils/config-helper'
 
 @Component({
   components: {
@@ -208,6 +212,8 @@ export default class Nav extends Vue {
   @Mutation('toggleServiceModal') public toggleServiceModal: any
   // TODO check this value - seems like not using
   // @Mutation('toggleTrackingIcon') public toggleTrackingIcon: any
+  // to check service for enable
+  public isServiceFLowEnabled = configMap.isServiceFLowEnabled()
 
   private flashIcon: boolean = true
   private showSpacer: boolean = false
