@@ -242,7 +242,7 @@ export default class Dash extends Vue {
       next()
       return
     }
-    if (to.path === '/exams' || to.path === '/booking' || to.path === '/service-flow') {
+    if (to.path === '/exams' || to.path === '/booking') {
       this.clickAddCitizen()
       next()
     }
