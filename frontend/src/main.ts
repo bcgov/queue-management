@@ -24,9 +24,13 @@ import Buefy from 'buefy';
 import 'es6-promise/auto'
 import store from './store/index'
 import BootstrapVue from 'bootstrap-vue'
+// import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import router from './router'
 import { Plugin } from 'vue-fragment'
 import { library } from '@fortawesome/fontawesome-svg-core'
+import ConfigHelper from '@/utils/config-helper'
+
+
 import {
   faAngleLeft,
   faAngleRight,
@@ -77,6 +81,7 @@ const Keycloak = window && (window as any).Keycloak;
 Vue.use(Buefy)
 Vue.use(VDragged)
 Vue.use(Plugin)
+
 library.add(
   faAngleLeft,
   faAngleRight,
@@ -113,6 +118,8 @@ library.add(
 )
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(BootstrapVue)
+// Vue.use(IconsPlugin)
+
 var keycloak = Keycloak(process.env.KEYCLOAK_JSON_URL)
 Vue.prototype.$keycloak = keycloak
 Vue.config.productionTip = false
@@ -126,6 +133,7 @@ Vue.config.productionTip = false
 // });
 /* eslint-disable no-new */
 
+ConfigHelper.fetchConfig()
 
 new Vue({
   router,
@@ -133,3 +141,4 @@ new Vue({
   vuetify,
   render: h => h(MainApp)
 }).$mount('#app')
+
