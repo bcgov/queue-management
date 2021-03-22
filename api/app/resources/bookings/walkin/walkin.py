@@ -55,7 +55,7 @@ class WalkinDetail(Resource):
                 # result= all citizen in q
                 result = self.get_all_citizen_in_q(citizen)
                 # process result
-                serving_app, booked_check_app, walkin_app = self.process_all_citizen_in_q(result, citizen, am_on_hold)
+                serving_app, booked_check_app, walkin_app = self.process_all_citizen_in_q(result, citizen, am_on_hold, local_timezone)
 
                 # get all app from agenda panel
                 result_in_book = self.get_all_app_from_agenda_panel(citizen)
@@ -100,7 +100,7 @@ class WalkinDetail(Resource):
         result = self.citizens_schema.dump(all_citizen_in_q)
         return result
 
-    def process_all_citizen_in_q(self, result, citizen, am_on_hold):
+    def process_all_citizen_in_q(self, result, citizen, am_on_hold, local_timezone):
         serving_app = []
         booked_check_app = []
         walkin_app = []
@@ -136,17 +136,22 @@ class WalkinDetail(Resource):
                             if not_booked_flag and each.get('cs', False):
                                 if each['cs'].get('cs_state_name', '') == 'Active':
                                     each_time_obj = datetime.strptime(each['start_time'], '%Y-%m-%dT%H:%M:%SZ')
-                                    citizen_start_obj = datetime.strptime(citizen.start_time.strftime('%Y-%m-%dT%H:%M:%SZ'), '%Y-%m-%dT%H:%M:%SZ')
-                                    utc=pytz.UTC
-                                    datetime_start = utc.localize(each_time_obj).replace(tzinfo=utc)
-                                    datetime_end = utc.localize(citizen.start_time).replace(tzinfo=utc)
+                                    # citizen_start_obj = datetime.strptime(citizen.start_time.strftime('%Y-%m-%dT%H:%M:%SZ'), '%Y-%m-%dT%H:%M:%SZ')
+                                    # start
+                                    local_datetime_start = each_time_obj.replace(tzinfo=pytz.utc).astimezone(local_timezone)
+                                    #end
+                                    local_datetime_end = citizen.start_time.replace(tzinfo=pytz.utc).astimezone(local_timezone)
+                                    print(each_time_obj.tzinfo, citizen.start_time.tzinfo,'++++++++++++<<<<<<<<<', local_datetime_start.tzinfo, local_datetime_end.tzinfo)
+                                    
+                                    print(each_time_obj, citizen.start_time,'++++++++++++<<<<<<<<<', local_datetime_start, local_datetime_end)
+                                    
                                     if am_on_hold:
                                         data_dict['flag'] = 'walkin_app'
                                         walkin_app.append(data_dict)
                                         data_dict = {}
                                         break
                                     else:
-                                        if each_time_obj <= citizen_start_obj:
+                                        if local_datetime_start <= local_datetime_end:
                                             data_dict['flag'] = 'walkin_app'
                                             walkin_app.append(data_dict)
                                             data_dict = {}
