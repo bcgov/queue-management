@@ -136,6 +136,7 @@ class WalkinDetail(Resource):
                             if not_booked_flag and each.get('cs', False):
                                 if each['cs'].get('cs_state_name', '') == 'Active':
                                     each_time_obj = datetime.strptime(each['start_time'], '%Y-%m-%dT%H:%M:%SZ')
+                                    citizen_start_obj = datetime.strptime(citizen.start_time.strftime('%Y-%m-%dT%H:%M:%SZ'), '%Y-%m-%dT%H:%M:%SZ')
                                     utc=pytz.UTC
                                     datetime_start = utc.localize(each_time_obj).replace(tzinfo=utc)
                                     datetime_end = utc.localize(citizen.start_time).replace(tzinfo=utc)
@@ -145,7 +146,7 @@ class WalkinDetail(Resource):
                                         data_dict = {}
                                         break
                                     else:
-                                        if datetime_start <= datetime_end:
+                                        if each_time_obj <= citizen_start_obj:
                                             data_dict['flag'] = 'walkin_app'
                                             walkin_app.append(data_dict)
                                             data_dict = {}
