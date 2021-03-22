@@ -19,19 +19,14 @@ module.exports = function (api) {
     }
   }
   return {
-    presets: [
+    'presets': [
       [
-        '@babel/preset-env',
+        '@vue/app',
         {
-          modules: false,
-          targets: {
-            browsers: ['> 1%', 'last 2 versions', 'not ie <= 10', 'IE 11']
-          },
-          useBuiltIns: 'usage',
-          corejs: 3
+          'useBuiltIns': 'entry'
         }
       ]
-    ]
-
+    ],
+    'compact': true
   }
 }

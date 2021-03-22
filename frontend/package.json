@@ -13,7 +13,7 @@
     "prebuild": "npm run update-version",
     "preserve": "npm run update-version",
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "vue-cli-service build --mode production",
     "lint": "vue-cli-service lint",
     "test:unit": "vue-cli-service test:unit"
   },
