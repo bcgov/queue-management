@@ -11,18 +11,20 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
-
+from pprint import pprint
+from datetime import datetime
 from flask import request, g
 from flask_restx import Resource
 from qsystem import api, api_call_with_retry, db, socketio, my_print
-from app.models.theq import Citizen, CSR, Counter
+from app.models.theq import Citizen, CSR, Counter, Office
 from marshmallow import ValidationError
 from app.schemas.theq import CitizenSchema
 from sqlalchemy import exc
 from app.utilities.snowplow import SnowPlow
 from app.utilities.auth_util import Role, has_any_role
 from app.auth.auth import jwt
-
+from app.utilities.email import send_email, get_walkin_reminder_email_contents
+from app.utilities.sms import send_walkin_reminder_sms
 
 @api.route("/citizens/<int:id>/", methods=["GET", "PUT"])
 class CitizenDetail(Resource):
@@ -59,12 +61,44 @@ class CitizenDetail(Resource):
         csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
         citizen = Citizen.query.filter_by(citizen_id=id).first()
         my_print("==> PUT /citizens/" + str(citizen.citizen_id) + '/, Ticket: ' + str(citizen.ticket_number))
-
-        try:
-            citizen = self.citizen_schema.load(json_data, instance=citizen, partial=True)
-
-        except ValidationError as err:
-            return {'message': err.messages}, 422
+        if not ((json_data.get('is_first_reminder', False) or json_data.get('is_second_reminder', False))):
+            try:
+                citizen = self.citizen_schema.load(json_data, instance=citizen, partial=True)
+            except ValidationError as err:
+                return {'message': err.messages}, 422
+        else:
+            try:
+                data_values = {}
+                officeObj = Office.find_by_id(citizen.office_id)
+                if (citizen.notification_phone):
+                    sms_sent = False
+                    # code/function call to send sms notification,
+                    sms_sent = send_walkin_reminder_sms(citizen, officeObj, request.headers['Authorization'].replace('Bearer ', ''))
+                    if (json_data.get('is_first_reminder', False)):
+                        if (sms_sent):
+                            citizen.reminder_flag = 1
+                            citizen.notification_sent_time = datetime.utcnow()
+                    if (json_data.get('is_second_reminder', False)):
+                        if (sms_sent):
+                            citizen.reminder_flag = 2
+                            citizen.notification_sent_time = datetime.utcnow()
+                if (citizen.notification_email):
+                    # code/function call to send first email notification,
+                    email_sent = False
+                    email_sent = get_walkin_reminder_email_contents(citizen, officeObj)
+                    if email_sent:
+                        status = send_email(request.headers['Authorization'].replace('Bearer ', ''), *email_sent)
+                    if (json_data.get('is_first_reminder', False)):
+                        if email_sent:
+                            citizen.reminder_flag = 1
+                            citizen.notification_sent_time = datetime.utcnow()
+                    if (json_data.get('is_second_reminder', False)):
+                        if email_sent:
+                            citizen.reminder_flag = 2
+                            citizen.notification_sent_time = datetime.utcnow()
+                    
+            except ValidationError as err:
+                return {'message': err.messages}, 422
 
         db.session.add(citizen)
         db.session.commit()
@@ -74,6 +108,8 @@ class CitizenDetail(Resource):
             SnowPlow.add_citizen(citizen, csr)
 
         result = self.citizen_schema.dump(citizen)
+        citizen = Citizen.query.filter_by(citizen_id=citizen.citizen_id).first()
+        # socketio.emit('update_active_citizen', result.data, room=csr.office_id)
         socketio.emit('update_active_citizen', result, room=csr.office_id)
 
         return {'citizen': result,
