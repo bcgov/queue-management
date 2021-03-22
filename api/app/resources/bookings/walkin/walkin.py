@@ -140,11 +140,7 @@ class WalkinDetail(Resource):
                                     # start
                                     local_datetime_start = each_time_obj.replace(tzinfo=pytz.utc).astimezone(local_timezone)
                                     #end
-                                    local_datetime_end = citizen.start_time.replace(tzinfo=pytz.utc).astimezone(local_timezone)
-                                    print(each_time_obj.tzinfo, citizen.start_time.tzinfo,'++++++++++++<<<<<<<<<', local_datetime_start.tzinfo, local_datetime_end.tzinfo)
-                                    
-                                    print(each_time_obj, citizen.start_time,'++++++++++++<<<<<<<<<', local_datetime_start, local_datetime_end)
-                                    
+                                    local_datetime_end = citizen.start_time.replace(tzinfo=pytz.utc).astimezone(local_timezone)                                    
                                     if am_on_hold:
                                         data_dict['flag'] = 'walkin_app'
                                         walkin_app.append(data_dict)
