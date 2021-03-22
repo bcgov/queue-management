@@ -24,6 +24,7 @@ from sqlalchemy import and_
 from qsystem import db, cache, socketio
 from pprint import pprint
 from wtforms import TextAreaField
+from app.models.theq import CSR
 
 
 def on_form_prefill(counters):
@@ -272,6 +273,13 @@ class OfficeConfig(Base):
     #     print("    --> model.counters  last line, what is value")
     #     pprint(model.counters.counter_id)
     #     pprint(model.counters.counter_name)
+    
+    def on_model_change(self, form, model, is_created):
+        csr = CSR.find_by_username(current_user.username)
+        socketio.emit('clear_csr_cache', { "id": csr.csr_id})
+        socketio.emit('csr_update',
+                        {"csr_id": csr.csr_id, "receptionist_ind": csr.receptionist_ind},
+                        room=csr.office_id)
 
 
 class OfficeConfigGA(OfficeConfig):

@@ -47,6 +47,7 @@ class Citizen(Base):
     notification_sent_time = db.Column(db.DateTime, nullable=True)
     reminder_flag = db.Column(db.Integer, nullable=True)
     walkin_unique_id = db.Column(db.String(500), nullable=True)
+    automatic_reminder_flag = db.Column(db.Integer, nullable=True)
 
 
     def __repr__(self):

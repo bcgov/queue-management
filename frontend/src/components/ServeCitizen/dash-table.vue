@@ -39,7 +39,7 @@ limitations under the License.*/
         </template>
         <template v-else>{{ parseComments(row.item) }}</template>
       </template>
-       <template slot="reminder_flag" slot-scope="row">
+       <template slot="reminder_flag" slot-scope="row" v-if="isNotificationEnabled === 1">
         <b-button 
           v-if="(row.item.reminder_flag == 0) && (row.item.notification_phone || row.item.notification_email)"
           @click="sentReminder(row.item.citizen_id, 'first')"
@@ -69,7 +69,7 @@ limitations under the License.*/
           />
         </b-button>
       </template>
-      <template slot="notification_phone" slot-scope="row">
+      <template slot="notification_phone" slot-scope="row" v-if="isNotificationEnabled === 1">
         <b-row v-if="row.item.notification_phone">
           {{row.item.notification_phone}}
         </b-row>
@@ -77,7 +77,7 @@ limitations under the License.*/
           {{row.item.notification_email}}
         </b-row>
       </template>
-      <template slot="notification_sent_time" slot-scope="row">
+      <template slot="notification_sent_time" slot-scope="row" v-if="isNotificationEnabled === 1">
          <b-button 
           disabled
           v-if="row.item.notification_sent_time"
@@ -121,9 +121,12 @@ export default class DashTable extends Vue {
   @Action('postInvite') public postInvite: any
   @Action('sentNotificationReminder') public sentNotificationReminder: any
 
+
   private t: boolean = true
   private f: boolean = false
-  private fields: any = [
+  public isNotificationEnabled: number = 0
+
+  private fields_with_notification: any = [
     { key: 'citizen_id', thClass: 'd-none', tdClass: 'd-none' },
     { key: 'start_time', label: 'Time', sortable: true, thStyle: 'width: 10%' },
     { key: 'ticket_number', label: 'Ticket', sortable: false, thStyle: 'width: 6%' },
@@ -136,11 +139,29 @@ export default class DashTable extends Vue {
     { key: 'notification_sent_time', label: 'Time Sent', sortable: false, thStyle: 'width: 20%' }
   ]
 
+  private fields_without_notification: any = [
+    { key: 'citizen_id', thClass: 'd-none', tdClass: 'd-none' },
+    { key: 'start_time', label: 'Time', sortable: true, thStyle: 'width: 10%' },
+    { key: 'ticket_number', label: 'Ticket', sortable: false, thStyle: 'width: 6%' },
+    { key: 'csr', label: 'Served By', sortable: false, thStyle: 'width: 10%' },
+    { key: 'category', label: 'Category', sortable: false, thStyle: 'width: 10%' },
+    { key: 'service', label: 'Service', sortable: false, thStyle: 'width: 10%' },
+    { key: 'citizen_comments', label: 'Comments', sortable: false, thStyle: 'width: 10%' }
+  ]
+
+  private fields: any = this.fields_without_notification
+
   get citizens () {
     return this.citizens_queue
   }
 
   get getFields () {
+    if (this.isNotificationEnabled === 1) {
+      this.fields = this.fields_with_notification
+    } else {
+      this.fields = this.fields_without_notification
+    }
+    console.log(this.fields, this.isNotificationEnabled)
     if (this.reception) {
       const temp = this.fields
       temp.unshift({ key: 'counter_id', label: 'Counter', sortable: false, thStyle: 'width: 8%' })
@@ -260,7 +281,11 @@ export default class DashTable extends Vue {
       }
     }
     this.sentNotificationReminder(payload)
-  } 
+  }
+
+  private mounted () {
+    this.isNotificationEnabled = this.$store.state.user.office.check_in_notification
+  }
 
 }
 </script>

@@ -217,13 +217,16 @@ class SendLineReminderWalkin(Resource):
                         nth_app = res_list[int(nth_line)-1]
                         if nth_app['citizen_id']:
                             citizen = Citizen.query.filter_by(citizen_id=nth_app['citizen_id']).first()
-                            officeObj = Office.find_by_id(citizen.office_id)
-                            if citizen.notification_phone:
-                                citizen = self.send_sms_reminder(citizen, officeObj)
-                            if citizen.notification_email:
-                                citizen = self.send_email_reminder(citizen, officeObj)
-                            db.session.add(citizen)
-                            db.session.commit()
+                            if (not (citizen.automatic_reminder_flag) or (citizen.automatic_reminder_flag == 0)):
+                                officeObj = Office.find_by_id(citizen.office_id)
+                                if citizen.notification_phone:
+                                    citizen = self.send_sms_reminder(citizen, officeObj)
+                                    citizen.automatic_reminder_flag = 1
+                                if citizen.notification_email:
+                                    citizen = self.send_email_reminder(citizen, officeObj)
+                                    citizen.automatic_reminder_flag = 1
+                                db.session.add(citizen)
+                                db.session.commit()
 
                 result = self.citizen_schema.dump(previous_citizen)
             return {'citizen': result,

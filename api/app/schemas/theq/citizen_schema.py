@@ -50,3 +50,6 @@ class CitizenSchema(BaseSchema):
     # 2 - second reminder sent - red icon
     reminder_flag = fields.Int()
     walkin_unique_id = fields.Str()
+    # 0/null-automatic reminder not send
+    # 1-automatic reminder sent once
+    automatic_reminder_flag = fields.Int()
