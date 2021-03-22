@@ -60,6 +60,8 @@ class Refresh(Resource):
                     Service
                 ).filter(
                     Citizen.office_id == office_id,
+                ).filter(
+                    Service.deleted.is_(None)
                 )
                 if is_back_office:
                     results = results.filter(
