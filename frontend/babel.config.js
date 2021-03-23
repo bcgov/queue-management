@@ -21,6 +21,17 @@ module.exports = function (api) {
   return {
     'presets': [
       [
+        '@babel/preset-env',
+        {
+          modules: false,
+          targets: {
+            browsers: ['> 1%', 'last 2 versions', 'not ie <= 10', 'IE 11']
+          },
+          useBuiltIns: 'usage',
+          corejs: 3
+        }
+      ],
+      [
         '@vue/app',
         {
           'useBuiltIns': 'entry'
