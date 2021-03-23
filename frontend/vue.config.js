@@ -10,7 +10,7 @@ module.exports = {
     }
   },
   // publicPath: process.env.VUE_APP_PATH,
-  // runtimeCompiler: true,
+  runtimeCompiler: true,
 
   // Necessary for IE11 compat
   transpileDependencies: ['vuetify'],
