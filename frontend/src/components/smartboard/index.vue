@@ -14,27 +14,36 @@ limitations under the License.*/ -->
 
 <template>
   <div class="main-container">
-    <div class="top-flex-div">
-      <div class="flex-title">{{ date }} {{ time }}</div>
-    </div>
-    <CallByTicket
-      v-if="officetype === 'callbyticket'"
-      :smartboardData="{ office_number }"
-      :networkStatus="{ networkDown }"
-    ></CallByTicket>
-    <CallByName
-      v-else-if="officetype === 'callbyname' || officetype === 'reception'"
-      :smartboardData="{ office_number }"
-      :networkStatus="{ networkDown }"
-    ></CallByName>
-    <NonReception
-      v-else-if="officetype === 'nocallonsmartboard'"
-      :smartboardData="{ office_number }"
-    ></NonReception>
+    <v-row>
+      <v-col cols="10">
+        <div class="top-flex-div">
+          <div class="flex-title">{{ date }} {{ time }}</div>
+        </div>
+        <CallByTicket
+          v-if="officetype === 'callbyticket'"
+          :smartboardData="{ office_number }"
+          :networkStatus="{ networkDown }"
+        ></CallByTicket>
+        <CallByName
+          v-else-if="officetype === 'callbyname' || officetype === 'reception'"
+          :smartboardData="{ office_number }"
+          :networkStatus="{ networkDown }"
+        ></CallByName>
+        <NonReception
+          v-else-if="officetype === 'nocallonsmartboard'"
+          :smartboardData="{ office_number }"
+        ></NonReception>
 
-    <div v-else>Please stand by...</div>
-    <BoardSocket :smartboardData="{ office_number }"></BoardSocket>
-
+        <div v-else>Please stand by...</div>
+        <BoardSocket :smartboardData="{ office_number }"></BoardSocket>
+      </v-col>
+      <v-col cols="2">
+        <RightMenu v-if="officetype === 'callbyname' || officetype === 'reception'"
+          :smartboardData="{ office_number }"
+          :networkStatus="{ networkDown }"
+        ></RightMenu>
+      </v-col>
+    </v-row>
     <div v-if="networkDown == true" id="network-status" class="loading small">
       <div></div>
       <div></div>
@@ -53,6 +62,7 @@ import BoardSocket from './board-socket.vue'
 import CallByName from './call-by-name.vue'
 import CallByTicket from './call-by-ticket.vue'
 import NonReception from './non-reception.vue'
+import RightMenu from './right-menu.vue'
 import axios from 'axios'
 import config from '../../../config'
 
@@ -61,7 +71,8 @@ import config from '../../../config'
     CallByName,
     CallByTicket,
     BoardSocket,
-    NonReception
+    NonReception,
+    RightMenu
   }
 })
 export default class Smartboard extends Vue {
@@ -223,9 +234,9 @@ export default class Smartboard extends Vue {
   vertical-align: top;
 }
 .flex-title {
-  font-size: 4rem;
-  color: midnightblue;
-  margin-top: -4px;
+    font-size: 4rem;
+    color: midnightblue;
+    margin-top: -4px;
 }
 .video-js {
   background-color: white;
@@ -268,6 +279,36 @@ export default class Smartboard extends Vue {
 .loading.small div {
   width: 32px;
   height: 32px;
+}
+
+.flex-title-waiting {
+  color: midnightblue;
+  margin-top: 16px;
+  margin-left: -176px;
+  font-size: 2.3rem;
+}
+
+.margin-left-container{
+  margin-top: 16px;
+  margin-left: -176px;
+}
+
+.flex-title-upcomming{
+  color: midnightblue;
+  margin-top: 16px;
+  margin-left: -176px;
+  font-size: 1.48rem;
+}
+
+.marquee-container {
+  background-color: midnightblue;
+  margin-top: 36px;
+  height: 70px;
+}
+
+.marquee-text {
+  color: white;
+  font-size: 2.8rem;
 }
 
 .loading div:nth-child(1) {

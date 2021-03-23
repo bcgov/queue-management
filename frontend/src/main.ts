@@ -32,6 +32,7 @@ import {
   faAngleRight,
   faBars,
   faCalendar,
+  faCalendarAlt,
   faCaretDown,
   faCaretLeft,
   faCaretRight,
@@ -59,6 +60,7 @@ import {
   faUserAlt,
   faUserCheck,
   faUserCircle,
+  faWalking,
   faWindowMaximize,
   faWindowRestore
 } from '@fortawesome/free-solid-svg-icons'
@@ -112,6 +114,8 @@ library.add(
   faWindowRestore,
   faEdit,
   faPhone,
+  faCalendarAlt,
+  faWalking
 )
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(BootstrapVue)

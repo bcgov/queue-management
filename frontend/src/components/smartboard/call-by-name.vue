@@ -18,9 +18,12 @@ limitations under the License.*/
       <div class="board-video-div">
         <Video :office_number="smartboardData.office_number" />
       </div>
-      <div v-if="!networkStatus.networkDown" class="bottom-flex-div">
+      <!-- <div v-if="!networkStatus.networkDown" class="bottom-flex-div">
         <div class="flex-title">Currently waiting: {{ waiting }}</div>
-      </div>
+      </div> -->
+    </div>
+    <div class="board-nameticket-video">
+      <MarqueeText/>
     </div>
   </div>
 </template>
@@ -32,11 +35,13 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 // import axios from 'axios'
 import Axios from '@/utils/axios'
 import Video from './video.vue'
+import MarqueeText from './marquee-text.vue'
 import config from '../../../config'
 
 @Component({
   components: {
-    Video
+    Video,
+    MarqueeText
   }
 })
 export default class CallByName extends Vue {
