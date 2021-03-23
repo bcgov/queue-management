@@ -179,7 +179,7 @@ class WalkinDetail(Resource):
                 data_dict['start_time'] = app.get('start_time',  '')
                 if data_dict['start_time'] and local_timezone:
                     if (len(data_dict['start_time']) >= 3):
-                        if ':' in data_dict['start_time'][:-3]:
+                        if ':' in data_dict['start_time'][-3]:
                             data_dict['start_time'] = '{}{}'.format(data_dict['start_time'][:-3], data_dict['start_time'][-2:])
                     utc_datetime = datetime.strptime(data_dict['start_time'], '%Y-%m-%dT%H:%M:%S%z')
                     local_datetime = utc_datetime.replace(tzinfo=pytz.utc)
