@@ -13,7 +13,7 @@
     "prebuild": "npm run update-version",
     "preserve": "npm run update-version",
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "vue-cli-service build --mode production",
     "lint": "vue-cli-service lint",
     "test:unit": "vue-cli-service test:unit"
   },
@@ -42,7 +42,7 @@
     "moment-timezone": "^0.5.32",
     "popper.js": "1.15.0",
     "rrule": "2.6.2",
-    "socket.io-client": "3.1.2",
+    "socket.io-client": "2.2.0",
     "uuid": "3.3.3",
     "v-dragged": "0.0.5",
     "vue": "2.6.10",
