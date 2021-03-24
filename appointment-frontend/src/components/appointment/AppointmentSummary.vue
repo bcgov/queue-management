@@ -318,20 +318,6 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
         if (resp.appointment_id) {
           const mySP = { step: 'Appointment Confirmed', loggedIn: this.isAuthenticated, apptID: resp.appointment_id, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name }
           this.callSnowplow(mySP)
-          // eslint-disable-next-line no-console
-          console.log('APPOINTMENT CONFIRMED===>')
-          // eslint-disable-next-line no-console
-          console.log('APPOINTMENT CONFIRMED this.authenticated===>', this.isAuthenticated)
-          // eslint-disable-next-line no-console
-          console.log('APPOINTMENT CONFIRMED  this.currentUserProfile===>', this.currentUserProfile.display_name)
-          // eslint-disable-next-line no-console
-          console.log('APPOINTMENT CONFIRMED --- client_id===>', this.currentUserProfile.user_id)
-          // eslint-disable-next-line no-console
-          console.log('APPOINTMENT CONFIRMED  this.currentAppointment===>', resp.appointment_id)
-          // eslint-disable-next-line no-console
-          console.log('APPOINTMENT CONFIRMED this.currentOffice?.office_name===>', this.currentOffice?.office_name)
-          // eslint-disable-next-line no-console
-          console.log('APPOINTMENT CONFIRMED  this.currentService===>', this.currentService?.external_service_name)
           this.dialogPopup.showDialog = true
           this.dialogPopup.isSuccess = true
           this.dialogPopup.title = 'Success! Your appointment has been booked.'
@@ -362,8 +348,6 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   private clickOk () {
     this.dialogPopup.showDialog = false
     if (this.dialogPopup.isSuccess) {
-      // eslint-disable-next-line no-console
-      console.log('Appointment Summary  clickOk /booked-appointments trackPageView')
       this.clearSelectedValues()
       this.$router.push('/booked-appointments')
       this.callsp()
@@ -376,8 +360,6 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   }
 
   private goToMyAppointments () {
-    // eslint-disable-next-line no-console
-    console.log('Appointment Summary  goToMyAppointments /booked-appointments trackPageView')
     this.dialogPopup.showDialog = false
     this.$router.push('/booked-appointments')
     this.callsp()

@@ -62,20 +62,14 @@ export default class SignedUser extends Vue {
   private goTo (page) {
     switch (page) {
       case 'appointments':
-        // eslint-disable-next-line no-console
-        console.log('SignedUser goTo /booked-appointments trackPageView')
         this.$router.push('/booked-appointments')
         this.callsp()
         break
       case 'account':
-        // eslint-disable-next-line no-console
-        console.log('SignedUser goTo /account-settings trackPageView')
         this.$router.push('/account-settings')
         this.callsp()
         break
       case 'logout':
-        // eslint-disable-next-line no-console
-        console.log('SignedUser goTo /signout trackPageView')
         this.$router.push('/signout')
         this.callsp()
         break

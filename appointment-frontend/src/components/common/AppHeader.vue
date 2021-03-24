@@ -103,14 +103,10 @@ export default class AppHeader extends Vue {
   }
 
   login () {
-    // eslint-disable-next-line no-console
-    console.log('AppHeader login /login trackPageView')
     this.$router.push('/login')
     this.callsp()
   }
   register () {
-    // eslint-disable-next-line no-console
-    console.log('AppHeader register /login trackPageView')
     this.$router.push('/login')
     this.callsp()
   }
@@ -140,26 +136,18 @@ export default class AppHeader extends Vue {
     let mySP = {}
     switch (page) {
       case 'register':
-        // eslint-disable-next-line no-console
-        console.log('AppHeader goTo register /login trackPageView')
         mySP = { label: 'Register', step: currStep, loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: theloc, serv: theserv, url: 'https://appointments.servicebc.gov.bc.ca/login' }
         this.callSnowplowClick(mySP)
         this.$router.push('/login')
         this.callsp()
         break
       case 'login':
-        // eslint-disable-next-line no-console
-        console.log('AppHeader goTo login  /login current office ', this.currentOffice)
-        // eslint-disable-next-line no-console
-        console.log('AppHeader goTo login  /login current service', this.currentService)
         mySP = { label: 'Login', step: currStep, loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: theloc, serv: theserv, url: 'https://appointments.servicebc.gov.bc.ca/login' }
         this.callSnowplowClick(mySP)
         this.$router.push('/login')
         this.callsp()
         break
       case 'home':
-        // eslint-disable-next-line no-console
-        console.log('AppHeader goTo Home / trackPageView')
         this.$router.push('/')
         this.callsp()
         break

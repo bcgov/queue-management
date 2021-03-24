@@ -249,10 +249,6 @@ export default class AppointmentBookingView extends Vue {
   }
   private async updated () {
     this.$store.commit('setStepperCurrentStep', this.stepCounter)
-    // eslint-disable-next-line no-console
-    console.log('APPOINTMENT BOOKING VIEW updated called - this.$store.state.spLastStep', this.$store.state.spLastStep)
-    // eslint-disable-next-line no-console
-    console.log('APPOINTMENT BOOKING VIEW updated called - this.stepCounter', this.stepCounter)
     if (this.stepCounter !== this.$store.state.spLastStep) {
       this.makesnowplow(this.stepCounter)
       this.$store.state.spLastStep = this.stepCounter
@@ -285,13 +281,9 @@ export default class AppointmentBookingView extends Vue {
 
   private makesnowplow (theStep) {
     let mySP = {}
-    // eslint-disable-next-line no-console
-    // console.log('theStep', theStep)
     switch (theStep) {
       case 1:
         this.setSPStatus('new')
-        // eslint-disable-next-line no-console
-        // console.log('LOCATIONS LIST called - this.spStatus')
         mySP = { step: 'Location Selection', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: null, serv: null }
         this.callSnowplow(mySP)
         break

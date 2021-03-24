@@ -57,8 +57,6 @@ export default class SigninView extends Vue {
 
         if (this.isAuthenticated) {
           this.$root.$emit('signin-complete', () => {
-            // eslint-disable-next-line no-console
-            console.log('SigninView mounted /appointment trackPageView')
             // perform redirection here
             this.$router.push('/appointment')
             this.callsp()
