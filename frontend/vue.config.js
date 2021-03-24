@@ -1,7 +1,7 @@
 var path = require('path')
 module.exports = {
   configureWebpack: {
-    devtool: process.env.NODE_ENV === 'production' ? false : 'source-map',
+    devtool: 'source-map',
     resolve: {
       alias: {
         vue: path.resolve('./node_modules/vue'),

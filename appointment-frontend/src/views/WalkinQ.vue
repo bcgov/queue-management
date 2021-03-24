@@ -23,8 +23,8 @@
     <v-col align="center"
       v-if="(showEstimate === 'True')"
       justify="center">Est. time</v-col>
-    <v-col align="center"
-      justify="center">Tot. time</v-col>
+    <!-- <v-col align="center"
+      justify="center">Tot. time</v-col> -->
   </v-row>
   <v-row v-for="Q in theWalkinQ"
         :key="Q.citizen_id">
@@ -32,8 +32,7 @@
     <v-col>
       <v-card
         class="pa-md-4 mx-lg-auto"
-        :color="Q.flag === 'serving_app' ? '' : myColor(Q)"
-        :class="Q.flag === 'serving_app' ? 'card-animation-serving' : ''"
+        :color="myColor(Q)"
       >
         <v-card-text
           align="center"
@@ -50,8 +49,7 @@
     <v-col v-if="(showEstimate === 'True')">
       <v-card
         class="pa-md-4 mx-lg-auto"
-        :color="Q.flag === 'serving_app' ? '' : myColor(Q)"
-        :class="Q.flag === 'serving_app' ? 'card-animation-serving' : ''"
+        :color="myColor(Q)"
       >
         <v-card-text
           align="center"
@@ -65,8 +63,7 @@
     <v-col>
       <v-card
         class="pa-md-4 mx-lg-auto"
-        :color="Q.flag === 'serving_app' ? '' : myColor(Q)"
-        :class="Q.flag === 'serving_app' ? 'card-animation-serving' : ''"
+        :color="myColor(Q)"
       >
         <v-card-text
           v-if="((Q.service_begin_seconds) && !amI(Q.walkin_unique_id))"
@@ -80,7 +77,7 @@
           justify="center">
           <span v-if="Q.flag === 'booked_app'">Booked Appointment</span>
           <span v-if="Q.flag === 'agenda_panel'">Booked Appointment</span>
-          <span v-if="Q.flag === 'walkin_app'">Not Served</span>
+          <span v-if="Q.flag === 'walkin_app'">Waiting for Service</span>
         </v-card-text>
         <v-card-text
            v-else-if="amI(Q.walkin_unique_id)"
@@ -98,9 +95,9 @@
             </v-icon>
             Me
           </v-btn>
-          <v-btn text  v-if="Q.flag === 'serving_app'">
+          <!-- <v-btn text  v-if="Q.flag === 'serving_app'">
           <span>{{ toHHMMSS(Q.service_begin_seconds) }}</span>
-          </v-btn>
+          </v-btn> -->
          </v-card-text>
       </v-card>
     </v-col>
@@ -191,7 +188,7 @@ export default class WalkinQ extends Vue {
     }
     if (!color) {
       if (Q.flag === 'walkin_app') {
-        // not served- white
+        // Waiting for Service- white
         color = 'white'
       } else if (Q.flag === 'booked_app') {
         // booked checkin- green
@@ -219,16 +216,16 @@ export default class WalkinQ extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/scss/theme.scss";
-.card-animation-serving  {
-  background-color: #C9A0DC;
-  animation-name: serving_now;
-  animation-duration: 1s;
-  animation-iteration-count:infinite;
-}
+// @import "@/assets/scss/theme.scss";
+// .card-animation-serving  {
+//   background-color: #C9A0DC;
+//   animation-name: serving_now;
+//   animation-duration: 1s;
+//   animation-iteration-count:infinite;
+// }
 
-@keyframes serving_now {
-  from {background-color: #C9A0DC;}
-  to {background-color: white;}
-}
+// @keyframes serving_now {
+//   from {background-color: #C9A0DC;}
+//   to {background-color: white;}
+// }
 </style>
