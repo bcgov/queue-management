@@ -114,10 +114,8 @@ class WalkinDetail(Resource):
                             data_dict['flag'] = 'serving_app'
                             data_dict['ticket_number'] = each.get('ticket_number', '')
                             data_dict['walkin_unique_id'] = each.get('walkin_unique_id', '')
-
-                            print(datetime.utcnow(),'==', served_period['time_start'], '====', datetime.utcnow()-datetime.strptime(served_period['time_start'], '%Y-%m-%dT%H:%M:%S.%f'))
-                            print( type(datetime.utcnow()-datetime.strptime(served_period['time_start'], '%Y-%m-%dT%H:%M:%S.%f')), (datetime.utcnow()-datetime.strptime(served_period['time_start'], '%Y-%m-%dT%H:%M:%S.%f')).seconds)
-                            
+                            print(datetime.utcnow(),'+++++++++++>>>>>>>datetime.utcnow()')
+                            print(served_period['time_start'],'++++++>>>>>>>>>served_period[time_start')
                             # data_dict['service_begin_seconds'] = (datetime.utcnow()-datetime.strptime(served_period['time_start'], '%Y-%m-%dT%H:%M:%S.%f')).total_seconds()
                             data_dict['service_begin_seconds'] = (datetime.utcnow()-datetime.strptime(served_period['time_start'], '%Y-%m-%dT%H:%M:%S.%f')).seconds
                             serving_app.append(data_dict)
