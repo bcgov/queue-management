@@ -11,7 +11,6 @@ class BCMPService:
     base_url = application.config['BCMP_BASE_URL']
     auth_token = application.config['BCMP_AUTH_TOKEN']
     bcmp_user = application.config["BCMP_USER"]
-    bcmp_pw = application.config["BCMP_PW"]
 
     def __init__(self):
         return
@@ -47,7 +46,7 @@ class BCMPService:
             return False
 
     def check_exam_status(self, exam):
-        url = "%s/auth=%s;%s/JSON/status" % (self.base_url, self.bcmp_user, self.bcmp_pw)
+        url = "%s/auth=%s;%s/JSON/status" % (self.base_url, self.bcmp_user, self.auth_token)
         my_print("  ==> check_exam_status   url: %s" % url)
         data = {
             "jobs": [
@@ -65,7 +64,7 @@ class BCMPService:
         return False
 
     def bulk_check_exam_status(self, exams):
-        url = "%s/auth=%s;%s/JSON/status" % (self.base_url, self.bcmp_user, self.bcmp_pw)
+        url = "%s/auth=%s;%s/JSON/status" % (self.base_url, self.bcmp_user, self.auth_token)
         my_print("  ==> bulk_check_exam_status    url: %s" % url)
         data = {
             "jobs": []
@@ -82,8 +81,8 @@ class BCMPService:
     def create_individual_exam(self, exam, exam_fees, invigilator, pesticide_office, oidc_token_info):
         my_print("  ==> create_individual_exam self base_url: %s" % self.base_url)
         my_print("  ==> create_individual_exam self bcmp_user: %s" % self.bcmp_user)
-        my_print("  ==> create_individual_exam self bcmp_pw: %s" % self.bcmp_pw)
-        url = "%s/auth=%s;%s/JSON/create:BCMD-EXAM" % (self.base_url, self.bcmp_user, self.bcmp_pw)
+        my_print("  ==> create_individual_exam self auth_token: %s" % self.auth_token)
+        url = "%s/auth=%s;%s/JSON/create:BCMD-EXAM" % (self.base_url, self.bcmp_user, self.auth_token)
         my_print("  ==> create_individual_exam  url: %s" % url)
 
         office_name = None
@@ -125,7 +124,7 @@ class BCMPService:
         return response
 
     def create_group_exam_bcmp(self, exam, booking, candiate_list, invigilator, pesticide_office, oidc_token_info):
-        url = "%s/auth=%s;%s/JSON/create:BCMD-EXAM-GROUP" % (self.base_url, self.bcmp_user, self.bcmp_pw)
+        url = "%s/auth=%s;%s/JSON/create:BCMD-EXAM-GROUP" % (self.base_url, self.bcmp_user, self.auth_token)
         my_print("  ==> create_group_exam_bcmp    url: %s" % url)
         invigilator_name = None
         if invigilator:
@@ -177,7 +176,7 @@ class BCMPService:
         return response
 
     def create_group_exam(self, exam):
-        url = "%s/auth=%s;%s/JSON/create:BCMD-EXAM" % (self.base_url, self.bcmp_user, self.bcmp_pw)
+        url = "%s/auth=%s;%s/JSON/create:BCMD-EXAM" % (self.base_url, self.bcmp_user, self.auth_token)
         my_print("  ==> create_group_exam    url: %s" % url)
 
         bcmp_exam = {
@@ -191,7 +190,7 @@ class BCMPService:
         return response
 
     def send_exam_to_bcmp(self, exam):
-        url = "%s/auth=%s;%s/JSON/create:BCMD-EXAM-API-ACTION" % (self.base_url, self.bcmp_user, self.bcmp_pw)
+        url = "%s/auth=%s;%s/JSON/create:BCMD-EXAM-API-ACTION" % (self.base_url, self.bcmp_user, self.auth_token)
         my_print("  ==> send_exam_to_bcmp    url: %s" % url)
 
         client = DocumentService(
@@ -217,7 +216,7 @@ class BCMPService:
         return response
 
     def email_exam_invigilator(self, exam, invigilator_name, invigilator_email, invigilator_phone):
-        url = "%s/auth=%s;%s/JSON/create:BCMD-EXAM-API-ACTION" % (self.base_url, self.bcmp_user, self.bcmp_pw)
+        url = "%s/auth=%s;%s/JSON/create:BCMD-EXAM-API-ACTION" % (self.base_url, self.bcmp_user, self.auth_token)
         my_print("  ==> email_exam_invigilator    url: %s" % url)
 
         json_data = {
