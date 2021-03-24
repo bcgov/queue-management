@@ -1,7 +1,7 @@
 var path = require('path')
 module.exports = {
   configureWebpack: {
-    devtool: 'source-map',
+    devtool: process.env.NODE_ENV === 'production' ? false : 'source-map',
     resolve: {
       alias: {
         vue: path.resolve('./node_modules/vue'),
@@ -11,7 +11,8 @@ module.exports = {
   },
   // publicPath: process.env.VUE_APP_PATH,
   runtimeCompiler: true,
-  
+
   // Necessary for IE11 compat
-  transpileDependencies: ['vuetify']
+  transpileDependencies: ['vuetify'],
+
 }
