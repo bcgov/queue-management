@@ -61,12 +61,8 @@ class AppointmentRemindersGet(Resource):
                         date, day = format_sms_date(appointment.start_time, timezone), None
 
                     office_email_paragraph = appointment.office.office_email_paragraph
-                    if office_email_paragraph:
-                        office_email_paragraph = office_email_paragraph.replace('\r\n', '<br />')
 
                     service_email_paragraph = appointment.service.email_paragraph
-                    if service_email_paragraph:
-                        service_email_paragraph = service_email_paragraph.replace('\r\n', '<br />')
 
                     service_name = appointment.service.external_service_name \
                         if appointment.service.external_service_name else appointment.service.service_name

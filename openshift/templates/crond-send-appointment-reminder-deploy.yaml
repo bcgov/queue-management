@@ -32,10 +32,7 @@ objects:
       MAIL_FROM_ID: '${MAIL_FROM_ID}'
       EMAIL_APPOINTMENT_APP_URL: '${EMAIL_APPOINTMENT_APP_URL}'
       MAX_EMAIL_PER_BATCH: '${MAX_EMAIL_PER_BATCH}'
-      CHES_SSO_TOKEN_URL: '${CHES_SSO_TOKEN_URL}'
-      CHES_SSO_CLIENT_ID: '${CHES_SSO_CLIENT_ID}'
-      CHES_SSO_CLIENT_SECRET: '${CHES_SSO_CLIENT_SECRET}'
-      CHES_POST_EMAIL_ENDPOINT: '${CHES_POST_EMAIL_ENDPOINT}'
+      NOTIFICATIONS_EMAIL_ENDPOINT: '${NOTIFICATIONS_EMAIL_ENDPOINT}'
       NOTIFICATIONS_ENDPOINT: '${NOTIFICATIONS_ENDPOINT}'
 
   - kind: DeploymentConfig
@@ -131,26 +128,11 @@ objects:
                     configMapKeyRef:
                       name: 'appointment-reminder-${TAG_NAME}-config'
                       key: SERVICE_ACCOUNT_SECRET
-                - name: CHES_SSO_TOKEN_URL
+                - name: NOTIFICATIONS_EMAIL_ENDPOINT
                   valueFrom:
                     configMapKeyRef:
                       name: 'appointment-reminder-${TAG_NAME}-config'
-                      key: CHES_SSO_TOKEN_URL
-                - name: CHES_SSO_CLIENT_ID
-                  valueFrom:
-                    configMapKeyRef:
-                      name: 'appointment-reminder-${TAG_NAME}-config'
-                      key: CHES_SSO_CLIENT_ID
-                - name: CHES_SSO_CLIENT_SECRET
-                  valueFrom:
-                    configMapKeyRef:
-                      name: 'appointment-reminder-${TAG_NAME}-config'
-                      key: CHES_SSO_CLIENT_SECRET
-                - name: CHES_POST_EMAIL_ENDPOINT
-                  valueFrom:
-                    configMapKeyRef:
-                      name: 'appointment-reminder-${TAG_NAME}-config'
-                      key: CHES_POST_EMAIL_ENDPOINT
+                      key: NOTIFICATIONS_EMAIL_ENDPOINT
                 - name: NOTIFICATIONS_ENDPOINT
                   valueFrom:
                     configMapKeyRef:

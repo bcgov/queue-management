@@ -27,7 +27,7 @@ from flask_restx import Api
 from .meta import api as META_API
 from .ops import api as OPS_API
 from .notifications import api as NOTIFICATIONS_API
-
+from .email import api as EMAIL_API
 
 # This will add the Authorize button to the swagger docs
 # TODO oauth2 & openid may not yet be supported by restplus <- check on this
@@ -50,3 +50,4 @@ API = Api(
 API.add_namespace(OPS_API, path='')
 API.add_namespace(META_API, path='')
 API.add_namespace(NOTIFICATIONS_API, path='/notifications')
+API.add_namespace(EMAIL_API, path='/notifications')

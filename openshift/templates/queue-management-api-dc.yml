@@ -142,14 +142,8 @@ objects:
                   value: "true"
                 - name: APPOINTMENT_LIMIT_DAYS
                   value: "${APPOINTMENT_LIMIT_DAYS}"
-                - name: CHES_SSO_TOKEN_URL
-                  value: "${CHES_SSO_TOKEN_URL}"
-                - name: CHES_SSO_CLIENT_ID
-                  value: "${CHES_SSO_CLIENT_ID}"
-                - name: CHES_SSO_CLIENT_SECRET
-                  value: "${CHES_SSO_CLIENT_SECRET}"
-                - name: CHES_POST_EMAIL_ENDPOINT
-                  value: "${CHES_POST_EMAIL_ENDPOINT}"
+                - name: NOTIFICATIONS_EMAIL_ENDPOINT
+                  value: "${NOTIFICATIONS_EMAIL_ENDPOINT}"
                 - name: ROCKET_CHAT_URL
                   value: "${ROCKET_CHAT_URL}"
                 - name: TEAMS_URL
@@ -388,17 +382,8 @@ parameters:
   - name: ROCKET_CHAT_URL
     description: "Send messages from feedback to Rocket Chat. The Rocketchat Webhook URL"
     required: false
-  - name: CHES_SSO_TOKEN_URL
-    description: "CHES token URL. See https://github.com/bcgov/common-hosted-email-service for more details."
-    required: true
-  - name: CHES_SSO_CLIENT_ID
-    description: "CHES service client id."
-    required: true
-  - name: CHES_SSO_CLIENT_SECRET
-    description: "CHES Service client secret."
-    required: true
-  - name: CHES_POST_EMAIL_ENDPOINT
-    description: "CHES email send endpoint."
+  - name: NOTIFICATIONS_EMAIL_ENDPOINT
+    description: "Notifications email send endpoint."
     required: true
   - name: CACHE_DEFAULT_TIMEOUT
     description: "Timeout for all caches."
