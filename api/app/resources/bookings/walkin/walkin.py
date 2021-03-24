@@ -55,7 +55,8 @@ class WalkinDetail(Resource):
                 # result= all citizen in q
                 result = self.get_all_citizen_in_q(citizen)
                 # process result
-                serving_app, booked_check_app, walkin_app = self.process_all_citizen_in_q(result, citizen, am_on_hold, local_timezone)
+                # serving_app, booked_check_app, walkin_app = self.process_all_citizen_in_q(result, citizen, am_on_hold, local_timezone)
+                booked_check_app, walkin_app = self.process_all_citizen_in_q(result, citizen, am_on_hold, local_timezone)
 
                 # get all app from agenda panel
                 result_in_book = self.get_all_app_from_agenda_panel(citizen)
@@ -63,7 +64,9 @@ class WalkinDetail(Resource):
                 booked_not_checkin = self.process_agenda_panel(result_in_book, local_timezone)
                 
                 # sorting-maintaing the order group 
-                res_list = tuple(serving_app + booked_check_app + booked_not_checkin + walkin_app)
+                # res_list = tuple(serving_app + booked_check_app + booked_not_checkin + walkin_app)
+                # serving people dont want see
+                res_list = tuple(booked_check_app + booked_not_checkin + walkin_app)
 
                 return {'citizen': res_list, 'show_estimate': show_estimate}, 200
             return {}
@@ -101,7 +104,7 @@ class WalkinDetail(Resource):
         return result
 
     def process_all_citizen_in_q(self, result, citizen, am_on_hold, local_timezone):
-        serving_app = []
+        # serving_app = []
         booked_check_app = []
         walkin_app = []
         for each in result:
@@ -110,15 +113,15 @@ class WalkinDetail(Resource):
                 for i in each['service_reqs']:
                     served_period = sorted(i['periods'], key= lambda x:x['period_id'], reverse=True)[0]
                     if served_period:
-                        if served_period['ps']['ps_name'] == 'Being Served':
-                            data_dict['flag'] = 'serving_app'
-                            data_dict['ticket_number'] = each.get('ticket_number', '')
-                            data_dict['walkin_unique_id'] = each.get('walkin_unique_id', '')
-                            data_dict['service_begin_seconds'] = (datetime.utcnow()-datetime.strptime(served_period['time_start'].replace('+00:00', ''), '%Y-%m-%dT%H:%M:%S.%f')).total_seconds()
-                            # data_dict['service_begin_seconds'] = (datetime.utcnow()-datetime.strptime(served_period['time_start'].replace('+00:00', ''), '%Y-%m-%dT%H:%M:%S.%f')).seconds
-                            serving_app.append(data_dict)
-                            data_dict = {}
-                            break
+                        # if served_period['ps']['ps_name'] == 'Being Served':
+                        #     data_dict['flag'] = 'serving_app'
+                        #     data_dict['ticket_number'] = each.get('ticket_number', '')
+                        #     data_dict['walkin_unique_id'] = each.get('walkin_unique_id', '')
+                        #     data_dict['service_begin_seconds'] = (datetime.utcnow()-datetime.strptime(served_period['time_start'].replace('+00:00', ''), '%Y-%m-%dT%H:%M:%S.%f')).total_seconds()
+                        #     # data_dict['service_begin_seconds'] = (datetime.utcnow()-datetime.strptime(served_period['time_start'].replace('+00:00', ''), '%Y-%m-%dT%H:%M:%S.%f')).seconds
+                        #     serving_app.append(data_dict)
+                        #     data_dict = {}
+                        #     break
                         if (not (served_period['time_end']) and (served_period['ps']['ps_name'] in ('Waiting', 'Invited'))):
                             not_booked_flag = False
                             data_dict = {}
@@ -153,12 +156,15 @@ class WalkinDetail(Resource):
                                             walkin_app.append(data_dict)
                                             data_dict = {}
                                             break
-        return serving_app, booked_check_app, walkin_app
+        # return serving_app, booked_check_app, walkin_app
+        return booked_check_app, walkin_app
     
     def get_all_app_from_agenda_panel(self, citizen):
         time_now = datetime.utcnow()
-        past_hour = datetime.utcnow() - timedelta(hours=1)
-        future_hour = datetime.utcnow() + timedelta(hours=4)
+        # past_hour = datetime.utcnow() - timedelta(hours=1)
+        past_hour = datetime.utcnow() - timedelta(minutes=15)
+        # future_hour = datetime.utcnow() + timedelta(hours=4)
+        future_hour = datetime.utcnow() + timedelta(minutes=15)
         local_past = pytz.utc.localize(past_hour)
         local_future = pytz.utc.localize(future_hour)
         # getting agenda panel app
