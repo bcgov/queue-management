@@ -17,6 +17,7 @@
     "date-fns-tz": "^1.0.10",
     "date-time-format-timezone": "^1.0.22",
     "keycloak-js": "^9.0.3",
+    "moment": "^2.29.1",
     "regenerator-runtime": "^0.13.3",
     "sbc-common-components": "^2.4.9",
     "vue": "^2.6.10",

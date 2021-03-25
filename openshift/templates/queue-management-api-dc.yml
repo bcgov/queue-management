@@ -216,6 +216,10 @@ objects:
                   value: "${JWT_OIDC_AUDIENCE}"
                 - name: JWT_OIDC_CLIENT_SECRET
                   value: "${JWT_OIDC_CLIENT_SECRET}"
+                - name: SHOW_ESTIMATE_TIME_WALKIN
+                  value: "${SHOW_ESTIMATE_TIME_WALKIN}"
+                - name: APPOINTMENT_PORTAL_URL
+                  value: "${APPOINTMENT_PORTAL_URL}"
 
               ports:
                 - containerPort: 8080
@@ -471,5 +475,13 @@ parameters:
     value: ""
   - name: NOTIFICATIONS_ENDPOINT
     description: "Notifications endpoint"
+    required: true
+    value: ""
+  - name: SHOW_ESTIMATE_TIME_WALKIN
+    description: "show estimate time in walkin Q list send to the citizen via sms or email"
+    required: true
+    value: ""
+  - name: APPOINTMENT_PORTAL_URL
+    description: "appointment portal url to generate dynamic walkin url "
     required: true
     value: ""
