@@ -226,6 +226,7 @@ import { AppointmentModule, AuthModule } from '@/store/modules'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { FeedbackRequestObject, FeedbackResponseObject } from '@/models/feedback'
 import { mapActions, mapState } from 'vuex'
+import CommonUtils from '@/utils/common-util'
 import ConfigHelper from '@/utils/config-helper'
 import { User } from '@/models/user'
 import { getModule } from 'vuex-module-decorators'
@@ -293,6 +294,7 @@ export default class Feedback extends Vue {
   private showMobileFeedbackPanel: boolean = false
   private readonly submitFeedback!: (feedbackRequest: FeedbackRequestObject) => any
   private consentMessage: string = 'The information on this form is collected under the authority of Sections 26(c) and 27(1)(c) of the Freedom of Information and Protection of Privacy Act to help us assess and respond to your enquiry. Questions about the collection of information can be directed to government’s Privacy Office.'
+  private bookingStepInfo = ['None', 'Location Selection', 'Select Service', 'Select Date', 'Login', 'Appointment Summary']
   private toggleFeedback () {
     this.showFeedbackArea = !this.showFeedbackArea
     this.submitComplete = false
@@ -343,7 +345,10 @@ export default class Feedback extends Vue {
     this.submitInProgress = true
     this.initModel()
     this.feedbackRequest.variables.engagement.value = this.feedbackType
-    this.feedbackRequest.variables.citizen_comments.value = this.feedbackMessage
+    let appointmentLocation = this.$store.state.appointmentLocation
+    let appointmentStep = this.$store.state.stepperCurrentStep
+    this.feedbackMessage = 'Feedback Message: ' + this.feedbackMessage + '. Step: ' + this.bookingStepInfo[appointmentStep] + ' ' + CommonUtils.getUserAgent()
+    this.feedbackRequest.variables.citizen_comments.value = appointmentLocation ? this.feedbackMessage + '. Location: ' + appointmentLocation : this.feedbackMessage
     this.feedbackRequest.variables.response.value = this.responseRequired ? 'true' : 'false'
     this.feedbackRequest.variables.citizen_name.value = this.citizenName === '' ? 'None' : this.citizenName
     this.feedbackRequest.variables.citizen_contact.value = this.phone === '' ? 'None' : this.phone
