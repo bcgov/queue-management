@@ -347,8 +347,9 @@ export default class Feedback extends Vue {
     this.feedbackRequest.variables.engagement.value = this.feedbackType
     let appointmentLocation = this.$store.state.appointmentLocation
     let appointmentStep = this.$store.state.stepperCurrentStep
-    this.feedbackMessage = 'Feedback Message: ' + this.feedbackMessage + '. Step: ' + this.bookingStepInfo[appointmentStep] + ' ' + CommonUtils.getUserAgent()
-    this.feedbackRequest.variables.citizen_comments.value = appointmentLocation ? this.feedbackMessage + '. Location: ' + appointmentLocation : this.feedbackMessage
+    this.feedbackMessage = 'Feedback Message: ' + this.feedbackMessage + '. Step: ' + this.bookingStepInfo[appointmentStep] + ' '
+    this.feedbackMessage = appointmentLocation ? this.feedbackMessage + 'Location: ' + appointmentLocation : this.feedbackMessage
+    this.feedbackRequest.variables.citizen_comments.value = this.feedbackMessage + ' ' + CommonUtils.getUserAgent()
     this.feedbackRequest.variables.response.value = this.responseRequired ? 'true' : 'false'
     this.feedbackRequest.variables.citizen_name.value = this.citizenName === '' ? 'None' : this.citizenName
     this.feedbackRequest.variables.citizen_contact.value = this.phone === '' ? 'None' : this.phone
