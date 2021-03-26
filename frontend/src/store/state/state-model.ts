@@ -29,7 +29,10 @@ export const stateModel: StateModelIF = {
     suspendFilter: false,
     selectedItem: '',
     priority: 2,
-    counter: null
+    counter: null,
+    notification_phone: '',
+    notification_email: '',
+    walkin_unique_id: '',
   },
   addModalSetup: null,
   addNextService: false,

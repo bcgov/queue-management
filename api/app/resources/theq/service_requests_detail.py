@@ -102,7 +102,7 @@ class ServiceRequestActivate(Resource):
             csr_id=csr.csr_id,
             reception_csr_ind=csr.receptionist_ind,
             ps_id=period_state_being_served.ps_id,
-            time_start=datetime.now()
+            time_start=datetime.utcnow()
         )
 
         db.session.add(new_period)

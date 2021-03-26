@@ -1,4 +1,4 @@
-import { AccountModule, AppointmentModule, AuthModule, GeoModule, OfficeModule } from './modules'
+import { AccountModule, AppointmentModule, AuthModule, GeoModule, OfficeModule, WalkinModule } from './modules'
 // Libraries
 import Vuex, { Store } from 'vuex'
 import Vue from 'vue'
@@ -59,7 +59,8 @@ export const store: Store<any> = new Vuex.Store<any>({
     account: AccountModule,
     geo: GeoModule,
     office: OfficeModule,
-    appointment: AppointmentModule
+    appointment: AppointmentModule,
+    walkin: WalkinModule
   },
   plugins: [vuexLocal.plugin]
 })

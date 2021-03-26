@@ -209,7 +209,7 @@ CSRGAModelView = CSRConfigGA(CSR, db.session, endpoint='csrga')
 def check_uservalues(updated_csr):
 
     #  Assume data does not need to be updated
-    update_data = False;
+    update_data = False
 
     #  See if spaces at start or end of user name.
     if updated_csr.username != updated_csr.username.strip():
