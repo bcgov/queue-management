@@ -54,8 +54,8 @@
         </v-btn>
       </div>
     </template>
-    <template v-if="!isWalkin">
-      <SignedUser :username="username"></SignedUser>
+    <template v-else>
+      <SignedUser v-if="(!isWalkin)" :username="username"></SignedUser>
     </template>
   </v-app-bar>
 </template>
