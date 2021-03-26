@@ -144,7 +144,6 @@ export default class RightMenu extends Vue {
   }
 
   get waiting () {
-    console.log(this.citizens.length, this.citizens)
     if (this.citizens && this.citizens.length > 0) {
       return this.citizens.filter(c => c.active_period.ps.ps_name === 'Waiting').length
     }

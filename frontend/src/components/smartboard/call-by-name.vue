@@ -64,7 +64,6 @@ export default class CallByName extends Vue {
   }
 
   initializeBoard () {
-    console.log('+++++++++>>urll', this.url)
     Axios.get(this.url).then(resp => {
       this.officeType = resp.data.office_type
       this.citizens = resp.data.citizens
