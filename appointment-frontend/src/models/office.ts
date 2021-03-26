@@ -22,6 +22,11 @@ export interface Office {
   check_in_notification: number,
   check_in_reminder_msg: Text,
   automatic_reminder_at: number,
+  currently_waiting: number,
+  digital_signage_message: number,
+  digital_signage_message_1: Text,
+  digital_signage_message_2: Text,
+  digital_signage_message_3: Text,
 }
 
 export interface Offices {

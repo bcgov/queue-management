@@ -15,7 +15,7 @@ limitations under the License.*/ -->
 <template>
   <div class="main-container">
     <v-row>
-      <v-col cols="10">
+      <v-col :cols="isRightMenuEnabled ? 10 : 12">
         <div class="top-flex-div">
           <div class="flex-title">{{ date }} {{ time }}</div>
         </div>
@@ -37,12 +37,20 @@ limitations under the License.*/ -->
         <div v-else>Please stand by...</div>
         <BoardSocket :smartboardData="{ office_number }"></BoardSocket>
       </v-col>
-      <v-col cols="2">
-        <RightMenu v-if="officetype === 'callbyname' || officetype === 'reception'"
+      <v-col :cols="isRightMenuEnabled ? 2 : ''"  v-if="((officetype === 'callbyname' || officetype === 'reception') && isRightMenuEnabled)">
+        <RightMenu
           :smartboardData="{ office_number }"
           :networkStatus="{ networkDown }"
+          :isRightMenuEnabled="{isRightMenuEnabled}"
         ></RightMenu>
       </v-col>
+    </v-row>
+    <v-row :class="isRightMenuEnabled ? 'board-marquee-text': 'marquee-msg-container-full'" v-if="((officetype === 'callbyname' || officetype === 'reception') && isMessageEnabled)">
+      <MarqueeText
+        :smartboardData="{ office_number }"
+        :networkStatus="{ networkDown }"
+        :office="{office}"
+      />
     </v-row>
     <div v-if="networkDown == true" id="network-status" class="loading small">
       <div></div>
@@ -64,6 +72,7 @@ import CallByTicket from './call-by-ticket.vue'
 import NonReception from './non-reception.vue'
 import RightMenu from './right-menu.vue'
 import axios from 'axios'
+import MarqueeText from './marquee-text.vue'
 import config from '../../../config'
 
 @Component({
@@ -72,7 +81,8 @@ import config from '../../../config'
     CallByTicket,
     BoardSocket,
     NonReception,
-    RightMenu
+    RightMenu,
+    MarqueeText
   }
 })
 export default class Smartboard extends Vue {
@@ -102,6 +112,11 @@ export default class Smartboard extends Vue {
   }
 
   private time: any = ''
+  
+  private isMessageEnabled: boolean = false
+  private isRightMenuEnabled: boolean = false
+  private office: any = {}
+
 
   get url () {
     return `/smartboard/?office_number=${this.office_number}`
@@ -152,6 +167,32 @@ export default class Smartboard extends Vue {
         })
     }
     fetchNetworkStatus()
+
+    this.getOffice()
+    window.setInterval(() => {
+      this.getOffice()
+    }, 350000)
+  }
+
+  
+
+  private getOffice () {
+    this.isMessageEnabled = false
+    this.isRightMenuEnabled = false
+    const url = '/smardboard/side-menu/'+this.office_number
+    Axios.get(url).then(resp => {
+      if (resp.data) {
+        this.office = resp.data.office
+        if (this.office) {
+          if(this.office.digital_signage_message == 1) {
+            this.isMessageEnabled = true
+          }
+          if(this.office.currently_waiting == 1) {
+            this.isRightMenuEnabled = true
+          }
+        }
+        }
+    })
   }
 }
 </script>
@@ -165,6 +206,7 @@ export default class Smartboard extends Vue {
   width: 100%;
   margin: 0px;
   text-align: center;
+  /* overflow-y: auto; */
 }
 .top-flex-div {
   height: 11%;
@@ -281,12 +323,12 @@ export default class Smartboard extends Vue {
   height: 32px;
 }
 
-.flex-title-waiting {
+/* .flex-title-waiting {
   color: midnightblue;
   margin-top: 16px;
-  margin-left: -176px;
+  margin-left: -41px;
   font-size: 2.3rem;
-}
+} */
 
 .margin-left-container{
   margin-top: 16px;
@@ -299,16 +341,43 @@ export default class Smartboard extends Vue {
   margin-left: -176px;
   font-size: 1.48rem;
 }
+.flex-title-waiting{
+  color: midnightblue;
+  margin-top: 16px;
+  margin-left: -176px;
+  font-size:2.3rem;
+}
 
 .marquee-container {
-  background-color: midnightblue;
-  margin-top: 36px;
-  height: 70px;
+    background-color: midnightblue;
+    margin-top: -119px;
+    height: 70px;
+    margin-left: 178px;
+    margin-right: -183px;
 }
 
 .marquee-text {
   color: white;
   font-size: 2.8rem;
+}
+
+.container-height-menu {
+  height: 380px !important;
+}
+
+.margin-push-left {
+  margin-left: -164px;
+}
+
+.board-marquee-text{
+    width: 61%;
+    margin-left: 255px;
+}
+
+.marquee-msg-container-full {
+    margin-top: 121px;
+    padding-left: 33px;
+    padding-right: 394px;
 }
 
 .loading div:nth-child(1) {
