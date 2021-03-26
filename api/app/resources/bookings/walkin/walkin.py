@@ -288,6 +288,7 @@ class SendLineReminderWalkin(Resource):
                             not_booked_flag = False
                             data_dict = {}
                             data_dict['citizen_id'] = each.get('citizen_id', False)
+                            data_dict['service_name'] = i['service']['parent']['service_name']
                             if (each.get('citizen_comments', '')):
                                 if '|||' in each['citizen_comments']:
                                     data_dict['flag'] = 'booked_app'
@@ -346,7 +347,7 @@ class SendLineReminderWalkin(Resource):
                     citizen.notification_sent_time = datetime.utcnow()
         return citizen
 
-@api.route("/smardboard/Q-details/<string:id>", methods=["GET"])
+@api.route("/smardboard/Q-details/waiting/<string:id>", methods=["GET"])
 class SmartBoradQDetails(Resource):
     citizen_schema = CitizenSchema()
     office_schema = OfficeSchema()
@@ -363,23 +364,48 @@ class SmartBoradQDetails(Resource):
                 return {'message': 'office_number could not be found.'}, 400
 
             res_list = []
-            # office time zone
-            local_timezone = self.walkinObj.get_my_office_timezone(office = office)
-            
-            # result= all citizen in q
-            result = self.walkinObj.get_all_citizen_in_q(office = office)
-            # process result
-            booked_check_app, walkin_app = self.processObj.process_all_citizen_in_q(result)
+            if (office.currently_waiting == 1):                
+                # result= all citizen in q
+                result = self.walkinObj.get_all_citizen_in_q(office = office)
+                # process result
+                booked_check_app, walkin_app = self.processObj.process_all_citizen_in_q(result)
+                
+                # sorting-maintaing the order group 
+                res_list = tuple(booked_check_app + walkin_app)
 
-            # get all app from agenda panel
-            result_in_book = self.walkinObj.get_all_app_from_agenda_panel(office = office)
-            # processing agenda panel appointmnets:
-            booked_not_checkin = self.walkinObj.process_agenda_panel(result_in_book, local_timezone)
-            
-            # sorting-maintaing the order group 
-            res_list = tuple(booked_check_app + walkin_app)
+            return {'citizen_in_q': res_list}, 200
+            return {}
+        except exc.SQLAlchemyError as e:
+            print(e)
+            return {'message': 'API is down'}, 500
 
-            return {'citizen_in_q': res_list, 'booked_not_checkin': booked_not_checkin}, 200
+@api.route("/smardboard/Q-details/upcoming/<string:id>", methods=["GET"])
+class SmartBoradQDetails(Resource):
+    citizen_schema = CitizenSchema()
+    office_schema = OfficeSchema()
+    walkinObj = WalkinDetail()
+    processObj = SendLineReminderWalkin()
+
+    @api_call_with_retry
+    def get(self, id):
+        try:
+            # get office details from url id
+            office = Office.query.filter_by(office_number=id).first()
+
+            if not office:
+                return {'message': 'office_number could not be found.'}, 400
+
+            booked_not_checkin = []
+            if (office.currently_waiting == 1):
+                # office time zone
+                local_timezone = self.walkinObj.get_my_office_timezone(office = office)
+
+                # get all app from agenda panel
+                result_in_book = self.walkinObj.get_all_app_from_agenda_panel(office = office)
+                # processing agenda panel appointmnets:
+                booked_not_checkin = self.walkinObj.process_agenda_panel(result_in_book, local_timezone)
+                
+            return {'booked_not_checkin': booked_not_checkin}, 200
             return {}
         except exc.SQLAlchemyError as e:
             print(e)

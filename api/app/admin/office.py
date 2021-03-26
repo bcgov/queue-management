@@ -312,6 +312,7 @@ class OfficeConfig(Base):
         socketio.emit('csr_update',
                         {"csr_id": csr.csr_id, "receptionist_ind": csr.receptionist_ind},
                         room=csr.office_id)
+        socketio.emit('digital_signage_msg_update')
 
 
 class OfficeConfigGA(OfficeConfig):

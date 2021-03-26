@@ -92,7 +92,7 @@ export default class MarqueeText extends Vue {
   }
 
   mounted () {
-    this.$root.$on('addToBoard', (data) => { this.updateBoard(data) })
+    this.$root.$on('onDigitalSignageMsgUpdate', (data) => { this.updateBoard(data) })
     this.initializeBoard()
     this.handleResize()
     window.addEventListener('resize', this.handleResize)

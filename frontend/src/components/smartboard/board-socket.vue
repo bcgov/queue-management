@@ -72,6 +72,10 @@ export default class BoardSocket extends Vue {
       'citizen_invited',
       () => { this.onUpdateBoard() }
     )
+    socket.on(
+      'digital_signage_msg_update',
+      () => { this.onDigitalSignageMsgUpdate() }
+    )
   }
 
   // LISTENER METHODS
@@ -106,6 +110,11 @@ export default class BoardSocket extends Vue {
   onUpdateBoard () {
     this.$root.$emit('addToBoard')
     console.log('socket received: "onUpdateBoard"')
+  }
+
+  onDigitalSignageMsgUpdate () {
+    this.$root.$emit('onDigitalSignageMsgUpdate')
+    console.log('socket received: "onDigitalSignageMsgUpdate"')
   }
 
   created () {

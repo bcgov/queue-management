@@ -154,6 +154,7 @@ export default class Smartboard extends Vue {
   }
 
   mounted () {
+    this.$root.$on('onDigitalSignageMsgUpdate', () => { this.onDigitalSignageMsgUpdate() })
     setInterval(() => { this.now() }, 1000)
 
     var fetchNetworkStatus = () => {
@@ -174,7 +175,9 @@ export default class Smartboard extends Vue {
     }, 350000)
   }
 
-  
+  private onDigitalSignageMsgUpdate () {
+    this.getOffice()
+  }
 
   private getOffice () {
     this.isMessageEnabled = false
@@ -361,8 +364,11 @@ export default class Smartboard extends Vue {
   font-size: 2.8rem;
 }
 
-.container-height-menu {
+.container-height-menu-half {
   height: 380px !important;
+}
+.container-height-menu-full {
+  height: 760px !important;
 }
 
 .margin-push-left {

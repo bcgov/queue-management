@@ -14,11 +14,11 @@ limitations under the License.*/
 -->
 <template>
   <div v-if="isRightMenuEnabled">
-    <div v-if="(!networkStatus.networkDown && citizenInQ)" class="bottom-flex-div">
+    <div v-if="(!networkStatus.networkDown && (citizenInQ))" class="bottom-flex-div">
       <div class="flex-title-waiting">Currently waiting: {{ waiting }}</div>
     </div>
       <marquee direction="up"  width="100%" height="100%" class="margin-push-left" scrollamount="1">
-      <b-container class="container-height-menu">
+      <b-container :class="waitingClass">
           <div>
             <b-row  v-for="(each, index) in citizenInQ" :key="each.start_time">
               <b-col>
@@ -76,11 +76,11 @@ limitations under the License.*/
         </div>
       </b-container>
       </marquee>
-      <div v-if="(!networkStatus.networkDown && bookedNotcheckIn)" class="bottom-flex-div">
+      <div v-if="(!networkStatus.networkDown && (bookedNotcheckIn.length > 0))" class="bottom-flex-div">
         <div class="flex-title-upcomming"> Upcoming Appointments:</div>
       </div>
       <marquee direction="up"  width="100%" height="100%" class="margin-push-left" scrollamount="1">
-      <b-container class="container-height-menu">
+      <b-container class="container-height-menu-half">
         <div>
           <b-row v-for="each in bookedNotcheckIn" :key="each.start_time">
             <b-col>
@@ -144,10 +144,21 @@ export default class RightMenu extends Vue {
   }
 
   get waiting () {
+    console.log(this.citizens.length, this.citizens)
     if (this.citizens && this.citizens.length > 0) {
       return this.citizens.filter(c => c.active_period.ps.ps_name === 'Waiting').length
     }
     return 0
+  }
+
+  get waitingClass () {
+    if ((this.citizenInQ.length > 0) && (this.bookedNotcheckIn.length > 0)) {
+      return 'container-height-menu-half'
+    } else if ((this.citizenInQ.length > 0) && (this.bookedNotcheckIn.length == 0)) {
+      return 'container-height-menu-full'
+    } else {
+      return 'container-height-menu-half'
+    }
   }
 
   initializeBoard () {
@@ -165,13 +176,28 @@ export default class RightMenu extends Vue {
     Axios.get(this.url).then(resp => {
       this.citizens = resp.data.citizens
     })
+    this.getAllData()
   }
 
   getAllData () {
-    const url = '/smardboard/Q-details/'+this.smartboardData.office_number
+    this.getCurrentlyWaiting()
+    this.getUpcomming()
+  }
+
+  getCurrentlyWaiting () {
+    const url = '/smardboard/Q-details/waiting/'+this.smartboardData.office_number
     Axios.get(url).then(resp => {
       if (resp.data) {
         this.citizenInQ = resp.data.citizen_in_q
+        this.citizenInQ = this.citizenInQ.filter(c => c.service_name !== 'Back Office')
+      }
+    })
+  }
+
+  getUpcomming () {
+    const url = '/smardboard/Q-details/upcoming/'+this.smartboardData.office_number
+    Axios.get(url).then(resp => {
+      if (resp.data) {
         this.bookedNotcheckIn = resp.data.booked_not_checkin
       }
     })
@@ -189,7 +215,7 @@ export default class RightMenu extends Vue {
     this.handleResize()
     window.addEventListener('resize', this.handleResize)
     window.setInterval(() => {
-      this.getAllData()
+      this.getUpcomming()
     }, 60000)
   }
 
