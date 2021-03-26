@@ -209,7 +209,7 @@ export default class Smartboard extends Vue {
   width: 100%;
   margin: 0px;
   text-align: center;
-  /* overflow-y: auto; */
+  overflow-y: auto;
 }
 .top-flex-div {
   height: 11%;
