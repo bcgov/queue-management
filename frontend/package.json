@@ -15,7 +15,11 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --mode production",
     "lint": "vue-cli-service lint",
-    "test:unit": "vue-cli-service test:unit"
+    "test:unit": "vue-cli-service test:unit",
+    "preinstall": "npx npm-force-resolutions"
+  },
+  "resolutions": {
+    "yargs-parser": "15.0.1"
   },
   "dependencies": {
     "@babel/polyfill": "^7.12.1",
@@ -28,8 +32,8 @@
     "@vue/babel-preset-app": "3.6.0",
     "axios": "^0.21.1",
     "babel-polyfill": "^6.26.0",
-    "bootstrap": "4.3.1",
-    "bootstrap-vue": "2.0.0-rc.16",
+    "bootstrap": "^4.6.0",
+    "bootstrap-vue": "^2.21.2",
     "buefy": "^0.9.4",
     "camunda-formio-tasklist-vue": "git+https://github.com/shabeeb-aot/camunda-formio-tasklist-vue.git",
     "core-js": "3.0.1",
@@ -53,7 +57,7 @@
     "vue-property-decorator": "^8.4.2",
     "vue-router": "3.0.3",
     "vue-video-player": "5.0.2",
-    "vue2-datepicker": "2.11.0",
+    "vue2-datepicker": "^3.9.0",
     "vuetify": "^2.3.17",
     "vuex": "3.1.0",
     "vuex-class": "^0.3.2",
