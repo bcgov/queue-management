@@ -223,9 +223,9 @@ export class DateQuestion extends Vue {
           @click="clickInput">
       <template v-for="type in dropItems">
         <b-dd-header v-if="type.header"
-                      :style="{backgroundColor: type.exam_color}"
+                      :style="{backgroundColor: type.exam_color, listStyleType: 'none'}"
                       :class="type.class">{{ type.exam_type_name }}</b-dd-header>
-        <b-dd-item v-else :style="{backgroundColor: type.exam_color}"
+        <b-dd-item v-else :style="{backgroundColor: type.exam_color, listStyleType: 'none'}"
                     @click="preHandleInput(type.exam_type_id)"
                     :name="type.exam_type_id"
                     autocomplete="off"

@@ -102,7 +102,7 @@
               >Office Agenda</b-dropdown-item
             >
             <span v-if="user.role && (user.role.role_code == 'GA' || user.role.role_code == 'SUPPORT')">
-              <b-dropdown-item @click="clickGAScreen" :class="gaPanelStyle">
+              <b-dropdown-item @click="clickGAScreen">
                 <font-awesome-icon
                   v-if="showGAScreenModal"
                   icon="check"
@@ -116,7 +116,7 @@
               </b-dropdown-item>
               <b-dropdown-divider />
             </span>
-            <b-dropdown-item v-if='appointmentsEnabled' @click='clickAgendaScreen' :class='agendaPanelStyle'>
+            <b-dropdown-item v-if='appointmentsEnabled' @click='clickAgendaScreen'>
               <font-awesome-icon
                   v-if="showAgendaScreenModal"
                   icon="check"
