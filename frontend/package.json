@@ -31,6 +31,7 @@
     "bootstrap": "4.3.1",
     "bootstrap-vue": "2.0.0-rc.16",
     "buefy": "^0.9.4",
+    "camunda-formio-tasklist-vue": "git+https://github.com/shabeeb-aot/camunda-formio-tasklist-vue.git",
     "core-js": "3.0.1",
     "es6-promise": "4.2.6",
     "es6-shim": "0.35.5",
