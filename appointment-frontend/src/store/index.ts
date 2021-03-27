@@ -28,7 +28,9 @@ export const store: Store<any> = new Vuex.Store<any>({
     loading: true,
     refreshKey: 0,
     stepperCurrentStep: 1,
-    isAppointmentEditMode: false
+    isAppointmentEditMode: false,
+    appointmentLocation: undefined,
+    nonStepperLocation: undefined
   },
   getters: {
     loading: (state) => state.loading
@@ -47,6 +49,12 @@ export const store: Store<any> = new Vuex.Store<any>({
     },
     setAppointmentEditMode (state, isEdit) {
       state.isAppointmentEditMode = isEdit
+    },
+    setAppointmentLocation (state, location) {
+      state.appointmentLocation = location
+    },
+    setNonStepperLocation (state, location) {
+      state.nonStepperLocation = location
     },
     RESTORE_MUTATION: vuexLocal.RESTORE_MUTATION
   },
