@@ -188,6 +188,51 @@ export default class CommonUtils {
     // returning true if version is IE and greater than 11
     return (version && version < 11)
   }
+
+  static getUserAgent (): string {
+    const userAgent: string = window.navigator.userAgent
+    const osBeginIndex = userAgent.indexOf('(')
+    const osEndIndex = userAgent.indexOf(')')
+    const os = '[' + userAgent.substring(osBeginIndex + 1, osEndIndex) + ']'
+    let browser = ''
+    let version = ''
+    let lowercaseUserAgent: string = userAgent.toLowerCase()
+    if (lowercaseUserAgent.indexOf('opera') !== -1) {
+      browser = 'Opera'
+      const versionIndex = lowercaseUserAgent.indexOf('opera/')
+      const versionString = lowercaseUserAgent.substring(versionIndex + 6)
+      const versionarray = versionString.split(' ')
+      version = 'v' + versionarray[0]
+    } else if (lowercaseUserAgent.indexOf('edg') !== -1) {
+      browser = 'Edge'
+      const versionIndex = lowercaseUserAgent.indexOf('edg/')
+      const versionString = lowercaseUserAgent.substring(versionIndex + 4)
+      const versionarray = versionString.split(' ')
+      version = 'v' + versionarray[0]
+    } else if (lowercaseUserAgent.indexOf('chrome') !== -1) {
+      browser = 'Chrome'
+      const versionIndex = lowercaseUserAgent.indexOf('chrome/')
+      const versionString = lowercaseUserAgent.substring(versionIndex + 7)
+      const versionarray = versionString.split(' ')
+      version = 'v' + versionarray[0]
+    } else if (lowercaseUserAgent.indexOf('firefox') !== -1) {
+      browser = 'Firefox'
+      const versionIndex = lowercaseUserAgent.indexOf('firefox/')
+      const versionString = lowercaseUserAgent.substring(versionIndex + 8)
+      const versionarray = versionString.split(' ')
+      version = 'v' + versionarray[0]
+    } else if (lowercaseUserAgent.indexOf('safari') !== -1) {
+      browser = 'Safari'
+      const versionIndex = lowercaseUserAgent.indexOf('safari/')
+      const versionString = lowercaseUserAgent.substring(versionIndex + 7)
+      const versionarray = versionString.split(' ')
+      version = 'v' + versionarray[0]
+    } else {
+      browser = 'Unknown'
+      version = 'Not Applicable'
+    }
+    return 'OS: ' + os + ' Browser: ' + browser + ' ' + version
+  }
 }
 
 export function debounce (func, wait, immediate) {
