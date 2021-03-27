@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue ,Watch } from 'vue-property-decorator'
 import CamundaTasklist from 'camunda-formio-tasklist-vue/src/components/tasklist.vue'
 import { State } from 'vuex-class'
 import configMap from '../utils/config-helper'
@@ -29,6 +29,7 @@ import configMap from '../utils/config-helper'
 })
 export default class TaskList extends Vue {
   @State('user') private user!: any
+  @State('bearer') private bearer!: any
   public token:any = sessionStorage.getItem('token')
   public  configs = configMap.getconfig()
   public isServiceFLowEnabled = configMap.isServiceFLowEnabled()
@@ -36,6 +37,12 @@ export default class TaskList extends Vue {
     this.token = sessionStorage.getItem('token')
     this.isServiceFLowEnabled = configMap.isServiceFLowEnabled()
   }
+
+  @Watch('bearer')
+  onbearerChange () {
+    this.token = sessionStorage.getItem('token')
+  }
+
 }
 </script>
 
