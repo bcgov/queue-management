@@ -209,7 +209,7 @@ export default class Smartboard extends Vue {
   width: 100%;
   margin: 0px;
   text-align: center;
-  /* overflow-y: auto; */
+  overflow-y: auto;
 }
 .top-flex-div {
   height: 11%;
@@ -357,6 +357,42 @@ export default class Smartboard extends Vue {
     height: 70px;
     margin-left: 178px;
     margin-right: -183px;
+    /* margin-left: -73px;
+    margin-right: 66px; */
+}
+.no-waiting-upcomming {
+  background-color: #191970;
+  margin-top: 1px;
+  height: 70px;
+  margin-left: -73px;
+  margin-right: 468px;
+  position: fixed;
+}
+
+.with-waiting-no-upcoming {
+  background-color: midnightblue;
+  margin-top: -119px;
+  height: 70px;
+  margin-left: -73px;
+  margin-right: 469px;
+  position: fixed;
+}
+.with-waiting-no-upcoming{
+  background-color: midnightblue;
+  margin-top: -119px;
+  height: 70px;
+  margin-left: -91px;
+  margin-right: 422px;
+  position: fixed;
+}
+
+.only-marquee-text {
+    background-color: midnightblue;
+    margin-top: -208px;
+    height: 70px;
+    margin-left: 177px;
+    margin-right: 212px;
+    position: fixed;
 }
 
 .marquee-text {
