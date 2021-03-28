@@ -348,13 +348,13 @@
       >
         <!--  Field 1 - Event id??? Don't see it.  -->
         <!--  Field 2 - Exam Type -->
-        <template slot="exam_type_name" slot-scope="row">{{
+        <template #cell(exam_type_name)="row">{{
           row.item.exam_type.exam_type_name
         }}</template>
 
         <!--  Field 3 - Exam name??? Don't see it.  -->
         <!--  Field 4 - Scheduled Date -->
-        <template slot="start_time" slot-scope="row">
+        <template #cell(start_time)="row">
           <span v-if="!row.item.booking">-</span>
           <span
             v-else-if="checkStartDate(row.item.booking.start_time)"
@@ -366,7 +366,7 @@
 
         <!--  Field 5 - Exam method??? Don't see it.  -->
         <!--  Field 6 - Expiry Date. -->
-        <template slot="expiry_date" slot-scope="row">
+        <template #cell(expiry_date)="row">
           <span
             v-if="
               row.item.exam_type.exam_type_name === 'Monthly Session Exam' &&
@@ -390,14 +390,14 @@
         </template>
 
         <!--  Field 7 - Exam Received -->
-        <template slot="exam_received" slot-scope="row">{{
+        <template #cell(exam_received)="row">{{
           row.item.exam_received_date ? 'Yes' : 'No'
         }}</template>
 
         <!--  Field 8 - Candidate name??? Don't see it.  -->
         <!--  Field 9 - Notes??? Don't see it.  -->
         <!--  Field 10 - The Status column/flag -->
-        <template slot="scheduled" slot-scope="row">
+        <template #cell(scheduled)="row">
           <font-awesome-icon
             v-if="!row.detailsShowing"
             :icon="statusIcon(row.item).icon"
@@ -415,7 +415,7 @@
         </template>
 
         <!--  Expanded row - Details and still required. -->
-        <template slot="row-details" slot-scope="row">
+        <template #cell(row-details)="row">
           <!--  If no items to be done, display some (debugging?) info. -->
           <template v-if="stillRequires(row.item).length === 0">
             <div class="details-slot-div">
@@ -456,7 +456,7 @@
         </template>
 
         <!--  Field 11 - the actions column.-->
-        <template slot="actions" slot-scope="row">
+        <template #cell(actions)="row">
           <!--  The various dropdown actions allowed.  -->
           <b-dropdown
             variant="link"
@@ -707,7 +707,7 @@
             </template>
           </b-dropdown>
         </template>
-        <template slot="office" slot-scope="row">{{
+        <template #cell(office)="row">{{
           row.item.office.office_name
         }}</template>
       </b-table>
