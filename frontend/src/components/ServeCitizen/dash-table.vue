@@ -25,13 +25,13 @@ limitations under the License.*/
       class="p-0 m-0"
     >
       <!--id="client-waiting-table"-->
-      <template slot="counter_id" slot-scope="row">{{ showCounter(row.item.counter_id) }}</template>
-      <template slot="start_time" slot-scope="row">{{ formatTime(row.item.start_time) }}</template>
-      <template slot="csr" slot-scope="row">{{ showCSR(row.item.citizen_id) }}</template>
-      <template slot="category" slot-scope="row">{{ showCategory(row.item.citizen_id) }}</template>
-      <template slot="service" slot-scope="row">{{ showService(row.item.citizen_id) }}</template>
-      <template slot="priority" slot-scope="row">{{ showPriority(row.item.priority) }}</template>
-      <template slot="citizen_comments" slot-scope="row">
+      <template #cell(counter_id)="row">{{ showCounter(row.item.counter_id) }}</template>
+      <template #cell(start_time)="row">{{ formatTime(row.item.start_time) }}</template>
+      <template #cell(csr)="row">{{ showCSR(row.item.citizen_id) }}</template>
+      <template #cell(category)="row">{{ showCategory(row.item.citizen_id) }}</template>
+      <template #cell(service)="row">{{ showService(row.item.citizen_id) }}</template>
+      <template #cell(priority)="row">{{ showPriority(row.item.priority) }}</template>
+      <template #cell(citizen_comments)="row">
         <template v-if="row.item.citizen_name">
           <span style="color: teal">{{ parseComments(row.item).appt }}</span>
           <br />

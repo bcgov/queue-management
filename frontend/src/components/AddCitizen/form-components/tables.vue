@@ -80,7 +80,7 @@
               </template>
 
               <!--  Service name column. Active variant is for row selected, bind to description.  -->
-              <template slot="service_name" slot-scope="data">
+              <template #cell(service_name)="data">
                 <div>
                   <span v-bind:title="data.item.service_desc">{{
                     data.item.service_name
@@ -96,7 +96,7 @@
               </template>
 
               <!--  This is for the category, the parent name.  -->
-              <template slot="parent.service_name" slot-scope="data">
+              <template #cell(parent)="data">
                 <div>{{ data.item.parent.service_name }}</div>
               </template>
             </b-table>

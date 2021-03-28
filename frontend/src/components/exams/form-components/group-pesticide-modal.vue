@@ -171,13 +171,13 @@
             </tr>
           </template>
 
-          <template slot="qty" slot-scope="row" v-if="row.item.qty">
+          <template #cell(qty)="row" v-if="row.item.qty">
             <span style="font-size: 16px; margin-left: 5px">
               {{ row.item.qty }}
             </span>
           </template>
 
-          <template slot="name" slot-scope="row">
+          <template #cell(name)="row">
             <div
               v-if="row.item.qty"
               style="
@@ -227,7 +227,7 @@
             </div>
           </template>
 
-          <template slot="billTo" slot-scope="row">
+          <template #cell(billTo)="row">
             <template v-if="row.item.billTo === 'payee'">
               <div
                 style="color: blue; cursor: pointer"
@@ -241,14 +241,13 @@
             </template>
           </template>
 
-          <template slot="row-details" slot-scope="row">
+          <template #cell(row-details)="row">
             Payee Name: {{ row.item.payeeName }} | Payee Email:
             {{ row.item.payeeEmail }}
           </template>
 
           <template
-            slot="sent"
-            slot-scope="row"
+            #cell(slot)="row"
             v-if="row.item.fees === 'paid'"
           >
             <div class="text-center">
@@ -262,7 +261,7 @@
             </div>
           </template>
 
-          <template slot="delete" slot-scope="row">
+          <template #cell(delete)="row">
             <div
               v-if="row.item.id"
               style="width: 100%; display: flex; justify-content: center"
