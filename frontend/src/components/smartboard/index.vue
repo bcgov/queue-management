@@ -362,13 +362,15 @@ export default class Smartboard extends Vue {
 }
 
 .marquee-ds {
-    position: absolute;
-    left: 50px;
-    width: calc(100% - 100px);
-    height: 70px;
-    background-color: rgb(25, 25, 112);
-    padding: 5px;
-    text-align: center;
+  position: absolute;
+  /* left: 50px;
+  width: calc(100% - 100px); */
+  left: 183px;
+  width: calc(100% - 219px);
+  height: 70px;
+  background-color: rgb(25, 25, 112);
+  padding: 5px;
+  text-align: center;
 }
 
 .marquee-text {
@@ -380,7 +382,11 @@ export default class Smartboard extends Vue {
   height: 380px !important;
 }
 .container-height-menu-full {
-  height: 760px !important;
+  height: 580px !important;
+}
+.container-height-menu-half-bottom{
+  position: fixed;
+  height: 200px !important;
 }
 
 .margin-push-left {
