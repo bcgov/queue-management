@@ -49,6 +49,7 @@ import {
   faHandsHelping,
   faLifeRing,
   faMinus,
+  faPhone,
   faPlus,
   faShareSquare,
   faShippingFast,
@@ -114,6 +115,7 @@ library.add(
   faWindowMaximize,
   faWindowRestore,
   faEdit,
+  faPhone,
 )
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(BootstrapVue)

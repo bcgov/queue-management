@@ -34,6 +34,10 @@ export default class NoContentView extends Vue {
         this.msgHeading = 'Not Available!'
         this.msgBody = 'Sorry, This application is not available in this browser. Please use any modern browsers like Google Chrome, Safari, Mozilla Firefox etc.'
         break
+      case 'not-in-Q':
+        this.msgHeading = 'Data not Available!'
+        this.msgBody = `Sorry, Your Details are not available in the system. Seems like you are not in the Queue anymore.`
+        break
       default:
         this.msgHeading = ''
         this.msgBody = ''
