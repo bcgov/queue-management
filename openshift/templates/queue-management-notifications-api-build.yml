@@ -45,8 +45,8 @@ objects:
       resources: {}
       postCommit: {}
       nodeSelector:
-      successfulBuildsHistoryLimit: 10
-      failedBuildsHistoryLimit: 10
+      successfulBuildsHistoryLimit: 5
+      failedBuildsHistoryLimit: 2
     status:
       lastVersion: 0
 parameters:
