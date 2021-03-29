@@ -45,13 +45,6 @@ limitations under the License.*/ -->
         ></RightMenu>
       </v-col>
     </v-row>
-    <v-row :class="isRightMenuEnabled ? 'board-marquee-text': 'marquee-msg-container-full'" v-if="((officetype === 'callbyname' || officetype === 'reception') && isMessageEnabled)">
-      <MarqueeText
-        :smartboardData="{ office_number }"
-        :networkStatus="{ networkDown }"
-        :office="{office}"
-      />
-    </v-row>
     <div v-if="networkDown == true" id="network-status" class="loading small">
       <div></div>
       <div></div>
@@ -59,6 +52,13 @@ limitations under the License.*/ -->
       <div></div>
       <div></div>
     </div>
+    <v-row class="marquee-msg-container-full" v-if="((officetype === 'callbyname' || officetype === 'reception') && isMessageEnabled)">
+      <MarqueeText
+        :smartboardData="{ office_number }"
+        :networkStatus="{ networkDown }"
+        :office="{office}"
+      />
+    </v-row>
   </div>
 </template>
 
@@ -357,42 +357,16 @@ export default class Smartboard extends Vue {
     height: 70px;
     margin-left: 178px;
     margin-right: -183px;
-    /* margin-left: -73px;
-    margin-right: 66px; */
 }
-.no-waiting-upcomming {
-  background-color: #191970;
-  margin-top: 1px;
-  height: 70px;
-  margin-left: -73px;
-  margin-right: 468px;
-  position: fixed;
-}
-
-.with-waiting-no-upcoming {
-  background-color: midnightblue;
-  margin-top: -119px;
-  height: 70px;
-  margin-left: -73px;
-  margin-right: 469px;
-  position: fixed;
-}
-.with-waiting-no-upcoming{
-  background-color: midnightblue;
-  margin-top: -119px;
-  height: 70px;
-  margin-left: -91px;
-  margin-right: 422px;
-  position: fixed;
-}
-
-.only-marquee-text {
-    background-color: midnightblue;
-    margin-top: -208px;
+/
+.marquee-ds {
+    position: absolute;
+    left: 50px;
+    width: calc(100% - 100px);
     height: 70px;
-    margin-left: 177px;
-    margin-right: 212px;
-    position: fixed;
+    background-color: midnightblue;
+    padding: 5px;
+    text-align: center;
 }
 
 .marquee-text {
@@ -410,12 +384,6 @@ export default class Smartboard extends Vue {
 .margin-push-left {
   margin-left: -164px;
 }
-
-.board-marquee-text{
-    width: 61%;
-    margin-left: 255px;
-}
-
 .marquee-msg-container-full {
     margin-top: 121px;
     padding-left: 33px;
