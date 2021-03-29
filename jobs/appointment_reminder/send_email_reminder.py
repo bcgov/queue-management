@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""The Update Payment Job.
+"""The Send email reminders job.
 
 This module is being invoked from a job and it cleans up the stale records
 """
@@ -19,7 +19,8 @@ import os
 
 import sys
 import time
-from app.utilities.ches_email import send_email, generate_ches_token
+from app.utilities.notification_email import send_email
+from utils.appointment import get_reminders, get_access_token
 from flask import Flask
 from jinja2 import Environment, FileSystemLoader
 
@@ -63,8 +64,8 @@ def run():
 def send_reminders(app):
     """Send email reminders for next day appointments."""
     app.logger.debug('<<< Starting job')
-    # CHES token
-    ches_token = generate_ches_token()
+    # ACCESS token
+    access_token = get_access_token(app)
 
     reminders = get_reminders(app=app)
 
@@ -95,7 +96,7 @@ def send_reminders(app):
                                        service_email_paragraph=appointment.get('service_email_paragraph'),
                                        office_email_paragraph=appointment.get('office_email_paragraph'),
                                        url=app_url)
-                send_email(ches_token, subject, appointment.get('email'), sender, body)
+                send_email(access_token, subject, appointment.get('email'), sender, body)
                 email_count += 1
 
             except Exception as e:
@@ -106,7 +107,7 @@ def send_reminders(app):
                 time.sleep(60)
                 email_count = 0
                 # To handle token expiry, get a new token when the task resumes.
-                ches_token = generate_ches_token()
+                access_token = get_access_token()
 
     app.logger.debug('Ending job>>>')
 

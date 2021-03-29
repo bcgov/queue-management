@@ -200,18 +200,12 @@ class BaseConfig(object):
     # Email variables
     EMAIL_APPOINTMENT_APP_URL = os.getenv('EMAIL_APPOINTMENT_APP_URL', None)
 
-    # CHES variables
-    CHES_SSO_TOKEN_URL = os.getenv('CHES_SSO_TOKEN_URL', None)
-    CHES_SSO_CLIENT_ID = os.getenv('CHES_SSO_CLIENT_ID', None)
-    CHES_SSO_CLIENT_SECRET = os.getenv('CHES_SSO_CLIENT_SECRET', None)
-    CHES_POST_EMAIL_ENDPOINT = os.getenv('CHES_POST_EMAIL_ENDPOINT', None)
-
     # Cache timeout
     CACHE_DEFAULT_TIMEOUT = int(os.getenv('CACHE_DEFAULT_TIMEOUT', '300'))
 
     # Auto-refresh application configuration
     DISABLE_AUTO_REFRESH = (os.getenv("DISABLE_AUTO_REFRESH","FALSE")).upper() == "TRUE"
-
+    
     # JWT_OIDC Settings
     JWT_OIDC_WELL_KNOWN_CONFIG = os.getenv('JWT_OIDC_WELL_KNOWN_CONFIG')
     JWT_OIDC_ALGORITHMS = os.getenv('JWT_OIDC_ALGORITHMS', 'RS256')
@@ -222,8 +216,14 @@ class BaseConfig(object):
 
     # Notifications endpoint configuration
     NOTIFICATIONS_ENDPOINT = os.getenv('NOTIFICATIONS_ENDPOINT')
+    NOTIFICATIONS_EMAIL_ENDPOINT = os.getenv('NOTIFICATIONS_EMAIL_ENDPOINT')
 
+    # show estimate time to users accessing the walkin url
+    SHOW_ESTIMATE_TIME_WALKIN = os.getenv('SHOW_ESTIMATE_TIME_WALKIN', False)
+    # get appointment portal URL
+    APPOINTMENT_PORTAL_URL = os.getenv('APPOINTMENT_PORTAL_URL', '')
 
+    
 class LocalConfig(BaseConfig):
     DEBUG = True
     TESTING = False

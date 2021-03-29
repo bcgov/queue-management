@@ -159,6 +159,7 @@ export default class Home extends Vue {
   private readonly clearSelectedValues!: () => void
 
   private async beforeMount () {
+    this.$store.commit('setNonStepperLocation', 'My Appointments')
     this.fetchAppointments()
   }
 

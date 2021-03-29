@@ -19,7 +19,7 @@ module.exports = function (api) {
     }
   }
   return {
-    presets: [
+    'presets': [
       [
         '@babel/preset-env',
         {
@@ -30,8 +30,14 @@ module.exports = function (api) {
           useBuiltIns: 'usage',
           corejs: 3
         }
+      ],
+      [
+        '@vue/app',
+        {
+          'useBuiltIns': 'entry'
+        }
       ]
-    ]
-
+    ],
+    'compact': true
   }
 }

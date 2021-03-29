@@ -97,8 +97,22 @@ objects:
                   value: WARNING
                 - name: SMS_REMINDER_TEMPLATE
                   value: "${SMS_REMINDER_TEMPLATE}"
+                - name: SMS_CHECKIN_CONFIRMATION_TEMPLATE
+                  value: "${SMS_CHECKIN_CONFIRMATION_TEMPLATE}"
                 - name: JWT_OIDC_WELL_KNOWN_CONFIG
-                  value: "${JWT_OIDC_WELL_KNOWN_CONFIG}"
+                  value: "${JWT_OIDC_WELL_KNOWN_CONFIG}"    
+                - name: EMAIL_PROVIDER
+                  value: "${EMAIL_PROVIDER}"
+                - name: CHES_POST_EMAIL_ENDPOINT
+                  value: "${CHES_POST_EMAIL_ENDPOINT}"
+                - name: CHES_EMAIL_FROM_ID
+                  value: "${CHES_EMAIL_FROM_ID}"
+                - name: CHES_SSO_CLIENT_ID
+                  value: "${CHES_SSO_CLIENT_ID}"
+                - name: CHES_SSO_CLIENT_SECRET
+                  value: "${CHES_SSO_CLIENT_SECRET}"
+                - name: CHES_SSO_TOKEN_URL
+                  value: "${CHES_SSO_TOKEN_URL}"
                 - name: JWT_OIDC_ALGORITHMS
                   value: "${JWT_OIDC_ALGORITHMS}"
                 - name: JWT_OIDC_AUDIENCE
@@ -217,7 +231,29 @@ parameters:
   - name: SMS_REMINDER_TEMPLATE
     description: "SMS Template text"
     required: true
-    value: "REMINDER: You have an appointment with Service BC {location} on {date_time}. To cancel or change, visit {app_url} or call {office_telephone}"
+    value: "REMINDER: Hi {display_name}, you have an appointment with Service BC {location} on {formatted_date}. To cancel or change, visit {app_url} or call {office_telephone}"
+  - name: SMS_CHECKIN_CONFIRMATION_TEMPLATE
+    description: "SMS Template for checkin confirmation"
+    required: true
+    value: "Thank you for saving your spot in line with Service BC! We will be with you shortly. To see your place in line, follow this link, you are ticket {ticket_number}: {url}"
+  - name: EMAIL_PROVIDER
+    description: "Defines the provider of email. For GC Notify use GC_NOTIFY and for ches use CHES"
+    required: true
+  - name: CHES_POST_EMAIL_ENDPOINT
+    description: "Endpoint for CHES email API"
+    required: true
+  - name: CHES_EMAIL_FROM_ID
+    description: "Email from address for CHES implementation"
+    required: true
+  - name: CHES_SSO_CLIENT_ID
+    description: "CHES keycloak client id"
+    required: true
+  - name: CHES_SSO_CLIENT_SECRET
+    description: "CHES keycloak client secret"
+    required: true
+  - name: CHES_SSO_TOKEN_URL
+    description: "CHES keycloak endpoint"
+    required: true
   - name: JWT_OIDC_WELL_KNOWN_CONFIG
     description: "Well known config URL for the keycloak realm "
     required: true

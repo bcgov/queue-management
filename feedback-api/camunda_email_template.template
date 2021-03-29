@@ -1,0 +1,18 @@
+
+#Citizen feedback submitted
+
+Feedback Type: {{ feedback_type }}
+
+Feedback Message: {{ feedback_message }}
+
+Respose requested : {{ response_required }}
+
+Citizen Name: {{ citizen_name }}
+
+Citizen Contact: {{ citizen_contact }}
+
+Citizen Email: {{ citizen_email }}
+
+Submit Date: {{ submit_date_time }}
+
+Service Date: {{ service_date }}
