@@ -80,7 +80,7 @@ limitations under the License.*/
         <div class="flex-title-upcomming"> Upcoming Appointments:</div>
       </div>
       <marquee direction="up"  width="100%" height="100%" class="margin-push-left" scrollamount="4" behavior="scroll" >
-      <b-container class="container-height-menu-half">
+      <b-container class="container-height-menu-half-bottom">
         <div>
           <b-row v-for="each in bookedNotcheckIn" :key="each.start_time">
             <b-col>
