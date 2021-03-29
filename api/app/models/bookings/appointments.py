@@ -20,9 +20,15 @@ from datetime import datetime, timedelta, timezone
 from dateutil.parser import parse
 from dateutil import tz
 from app.utilities.date_util import current_pacific_time
+from sqlalchemy.ext.declarative import declared_attr
+from flask import g
 
 
 class Appointment(Base):
+    __versioned__ = {
+        'exclude': []
+    }
+
     appointment_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     office_id = db.Column(db.Integer, db.ForeignKey("office.office_id"), nullable=False)
     service_id = db.Column(db.Integer, db.ForeignKey("service.service_id"), nullable=True)
@@ -39,6 +45,7 @@ class Appointment(Base):
     is_draft = db.Column(db.Boolean(), nullable=True, default=False)
     created_at = db.Column(UtcDateTime, nullable=True, default=utcnow())
     stat_flag = db.Column(db.Boolean, default=False, nullable=False)
+    updated_at = db.Column(UtcDateTime, default=utcnow())
 
     office = db.relationship("Office")
     service = db.relationship("Service")
@@ -48,6 +55,19 @@ class Appointment(Base):
 
     def __init__(self, **kwargs):
         super(Appointment, self).__init__(**kwargs)
+
+    @declared_attr
+    def updated_by(cls):  # pylint:disable=no-self-argument, # noqa: N805
+        """Return updated by."""
+        return db.Column('updated_by', db.String(), nullable=True, default=cls._get_user_name)
+
+    @staticmethod
+    def _get_user_name(**kwargs):
+        """Return current user display name."""
+        _name: str = None
+        if g and 'jwt_oidc_token_info' in g:
+            _name = g.jwt_oidc_token_info.get('display_name')
+        return _name
 
     @classmethod
     def find_appointment_availability(cls, office_id: int, timezone:str, first_date: datetime, last_date: datetime):
