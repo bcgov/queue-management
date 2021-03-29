@@ -1,4 +1,4 @@
-import { AccountModule, AppointmentModule, AuthModule, GeoModule, OfficeModule } from './modules'
+import { AccountModule, AppointmentModule, AuthModule, GeoModule, OfficeModule, WalkinModule } from './modules'
 // Libraries
 import Vuex, { Store } from 'vuex'
 import Vue from 'vue'
@@ -28,7 +28,9 @@ export const store: Store<any> = new Vuex.Store<any>({
     loading: true,
     refreshKey: 0,
     stepperCurrentStep: 1,
-    isAppointmentEditMode: false
+    isAppointmentEditMode: false,
+    appointmentLocation: undefined,
+    nonStepperLocation: undefined
   },
   getters: {
     loading: (state) => state.loading
@@ -48,6 +50,12 @@ export const store: Store<any> = new Vuex.Store<any>({
     setAppointmentEditMode (state, isEdit) {
       state.isAppointmentEditMode = isEdit
     },
+    setAppointmentLocation (state, location) {
+      state.appointmentLocation = location
+    },
+    setNonStepperLocation (state, location) {
+      state.nonStepperLocation = location
+    },
     RESTORE_MUTATION: vuexLocal.RESTORE_MUTATION
   },
   actions: {
@@ -59,7 +67,8 @@ export const store: Store<any> = new Vuex.Store<any>({
     account: AccountModule,
     geo: GeoModule,
     office: OfficeModule,
-    appointment: AppointmentModule
+    appointment: AppointmentModule,
+    walkin: WalkinModule
   },
   plugins: [vuexLocal.plugin]
 })

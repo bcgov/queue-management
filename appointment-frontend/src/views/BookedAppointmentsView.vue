@@ -173,6 +173,7 @@ export default class Home extends Vue {
 
   private async beforeMount () {
     this.setSPStatus('update')
+    this.$store.commit('setNonStepperLocation', 'My Appointments')
     this.fetchAppointments()
   }
 

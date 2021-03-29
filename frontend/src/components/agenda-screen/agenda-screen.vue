@@ -53,7 +53,7 @@ limitations under the License.*/
       sort-by='start_time'
     >
       <template slot="comments" slot-scope="data">
-        <div class="truncate"  v-b-tooltip.hover :title="data.value"> 
+        <div class="truncate"  v-b-tooltip.hover :title="data.value">
           {{ data.value }}
         </div>
       </template>

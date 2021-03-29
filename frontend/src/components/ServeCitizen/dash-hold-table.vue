@@ -39,13 +39,67 @@ limitations under the License.*/-->
         </template>
         <template v-else>{{ parseComments(row.item) }}</template>
       </template>
+      <template slot="reminder_flag" slot-scope="row" v-if="isNotificationEnabled === 1">
+        <b-button 
+          v-if="(row.item.reminder_flag == 0) && (row.item.notification_phone || row.item.notification_email)"
+          @click="sentReminder(row.item.citizen_id, 'first')"
+          variant="secondary"
+          >
+          <font-awesome-icon
+            icon="phone"
+          />
+        </b-button>
+        <b-button 
+          v-if="row.item.reminder_flag == 1 && (row.item.notification_phone || row.item.notification_email)"
+          variant="primary"
+          @click="sentReminder(row.item.citizen_id, 'second')"
+          >
+          <font-awesome-icon
+            icon="phone"
+          />
+        </b-button>
+        <b-button 
+          disabled
+          v-if="row.item.reminder_flag == 2 && (row.item.notification_phone || row.item.notification_email)"
+          variant="danger"
+          >
+          <font-awesome-icon
+            icon="phone"
+            disabled
+          />
+        </b-button>
+      </template>
+      <template slot="notification_phone" slot-scope="row" v-if="isNotificationEnabled === 1">
+        <b-row v-if="row.item.notification_phone">
+          {{row.item.notification_phone}}
+        </b-row>
+        <b-row v-if="row.item.notification_email">
+          {{row.item.notification_email}}
+        </b-row>
+      </template>
+      <template slot="notification_sent_time" slot-scope="row" v-if="isNotificationEnabled === 1">
+         <b-button 
+          disabled
+          v-if="row.item.notification_sent_time"
+          variant="info"
+          >
+          <font-awesome-icon
+            disabled
+            icon="clock"
+          />
+        </b-button>
+        <span v-if="row.item.notification_sent_time">{{timeFormat(row.item.notification_sent_time)}} </span>
+      </template>
     </b-table>
   </div>
 </template>
 
 <script lang="ts">
+/* eslint-disable */
 import { Action, Getter, State } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
+
+import moment from 'moment'
 
 @Component({})
 export default class DashHoldTable extends Vue {
@@ -63,20 +117,43 @@ export default class DashHoldTable extends Vue {
   @Getter('reception') private reception!: any;
 
   @Action('clickRowHoldQueue') public clickRowHoldQueue: any
+  @Action('sentNotificationReminder') public sentNotificationReminder: any
 
   private t: boolean = true
   private f: boolean = false
-  private fields: any = [
+  public isNotificationEnabled: number = 0
+
+  private fields_with_notification: any = [
     { key: 'citizen_id', thClass: 'd-none', tdClass: 'd-none' },
     { key: 'start_time', label: 'Time', sortable: true, thStyle: 'width: 10%' },
     { key: 'ticket_number', label: 'Ticket', sortable: false, thStyle: 'width: 6%' },
     { key: 'csr', label: 'Served By', sortable: false, thStyle: 'width: 10%' },
     { key: 'category', label: 'Category', sortable: false, thStyle: 'width: 17%' },
     { key: 'service', label: 'Service', sortable: false, thStyle: 'width: 17%' },
-    { key: 'citizen_comments', label: 'Comments', sortable: false, thStyle: 'width: 17%' }
+    { key: 'citizen_comments', label: 'Comments', sortable: false, thStyle: 'width: 10%' },
+    { key: 'reminder_flag', label: 'Action', sortable: false, thStyle: 'width: 4%' },
+    { key: 'notification_phone', label: 'Notification', sortable: false, thStyle: 'width: 20%' },
+    { key: 'notification_sent_time', label: 'Time Sent', sortable: false, thStyle: 'width: 20%' }
+  ]
+  private fields_without_notification: any = [
+    { key: 'citizen_id', thClass: 'd-none', tdClass: 'd-none' },
+    { key: 'start_time', label: 'Time', sortable: true, thStyle: 'width: 10%' },
+    { key: 'ticket_number', label: 'Ticket', sortable: false, thStyle: 'width: 6%' },
+    { key: 'csr', label: 'Served By', sortable: false, thStyle: 'width: 10%' },
+    { key: 'category', label: 'Category', sortable: false, thStyle: 'width: 17%' },
+    { key: 'service', label: 'Service', sortable: false, thStyle: 'width: 17%' },
+    { key: 'citizen_comments', label: 'Comments', sortable: false, thStyle: 'width: 10%' }
   ]
 
+  private fields: any = this.fields_without_notification
+
+
   get getFields () {
+    if (this.isNotificationEnabled === 1) {
+      this.fields = this.fields_with_notification
+    } else {
+      this.fields = this.fields_without_notification
+    }
     if (this.reception) {
       const temp = this.fields
       temp.unshift({ key: 'counter_id', label: 'Counter', sortable: false, thStyle: 'width: 8%' })
@@ -162,6 +239,33 @@ export default class DashHoldTable extends Vue {
   private showPriority (priority: any) {
     // eslint-disable-next-line eqeqeq
     return priority == 1 ? 'High' : priority == 2 ? 'Default' : priority == 3 ? 'Low' : null
+  }
+
+  public timeFormat (value: any) {
+    return moment.utc(value).local().format('hh:mm A')
+  }
+
+  private sentReminder (citizen_id: any, count: any) {
+    let payload = {}
+    if (count === 'first') {
+      payload = {
+        'citizen_id' : citizen_id,
+        'is_first_reminder' : true,
+        'is_second_reminder' : false
+      }
+    }
+    if (count === 'second') {
+      payload = {
+        'citizen_id' : citizen_id,
+        'is_first_reminder' : false,
+        'is_second_reminder' : true
+      }
+    }
+    this.sentNotificationReminder(payload)
+  }
+
+  private mounted () {
+    this.isNotificationEnabled = this.$store.state.user.office.check_in_notification
   }
 }
 
