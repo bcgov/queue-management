@@ -171,8 +171,8 @@
             </tr>
           </template>
 
-          <template #cell(qty)="row" v-if="row.item.qty">
-            <span style="font-size: 16px; margin-left: 5px">
+          <template #cell(qty)="row">
+            <span v-if="row.item.qty" style="font-size: 16px; margin-left: 5px">
               {{ row.item.qty }}
             </span>
           </template>
@@ -248,9 +248,8 @@
 
           <template
             #cell(slot)="row"
-            v-if="row.item.fees === 'paid'"
           >
-            <div class="text-center">
+            <div v-if="row.item.fees === 'paid'" class="text-center">
               <b-form-checkbox
                 sm
                 class="m-0 p-0"
