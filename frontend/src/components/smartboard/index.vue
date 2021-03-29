@@ -15,7 +15,7 @@ limitations under the License.*/ -->
 <template>
   <div class="main-container">
     <v-row>
-      <v-col :cols="isRightMenuEnabled ? 10 : 12">
+      <v-col :cols="((isRightMenuEnabled) && (officetype === 'callbyname' || officetype === 'reception')) ? 10 : 12">
         <div class="top-flex-div">
           <div class="flex-title">{{ date }} {{ time }}</div>
         </div>
@@ -28,10 +28,14 @@ limitations under the License.*/ -->
           v-else-if="officetype === 'callbyname' || officetype === 'reception'"
           :smartboardData="{ office_number }"
           :networkStatus="{ networkDown }"
+          :office="{office}"
+          :isMessageEnabled="{isMessageEnabled}"
         ></CallByName>
         <NonReception
           v-else-if="officetype === 'nocallonsmartboard'"
           :smartboardData="{ office_number }"
+          :office="{office}"
+          :isMessageEnabled="{isMessageEnabled}"
         ></NonReception>
 
         <div v-else>Please stand by...</div>
@@ -39,6 +43,7 @@ limitations under the License.*/ -->
       </v-col>
       <v-col :cols="isRightMenuEnabled ? 2 : ''"  v-if="((officetype === 'callbyname' || officetype === 'reception') && isRightMenuEnabled)">
         <RightMenu
+          v-if="(officetype === 'callbyname' || officetype === 'reception')"
           :smartboardData="{ office_number }"
           :networkStatus="{ networkDown }"
           :isRightMenuEnabled="{isRightMenuEnabled}"
@@ -52,13 +57,13 @@ limitations under the License.*/ -->
       <div></div>
       <div></div>
     </div>
-    <v-row class="marquee-msg-container-full" v-if="((officetype === 'callbyname' || officetype === 'reception') && isMessageEnabled)">
+    <!-- <v-row class="marquee-msg-container-full" v-if="(isMessageEnabled)">
       <MarqueeText
         :smartboardData="{ office_number }"
         :networkStatus="{ networkDown }"
         :office="{office}"
       />
-    </v-row>
+    </v-row> -->
   </div>
 </template>
 
@@ -72,7 +77,6 @@ import CallByTicket from './call-by-ticket.vue'
 import NonReception from './non-reception.vue'
 import RightMenu from './right-menu.vue'
 import axios from 'axios'
-import MarqueeText from './marquee-text.vue'
 import config from '../../../config'
 
 @Component({
@@ -81,8 +85,7 @@ import config from '../../../config'
     CallByTicket,
     BoardSocket,
     NonReception,
-    RightMenu,
-    MarqueeText
+    RightMenu
   }
 })
 export default class Smartboard extends Vue {
@@ -338,6 +341,10 @@ export default class Smartboard extends Vue {
   margin-left: -176px;
 }
 
+.text-font-sz {
+  font-size: 1rem;
+}
+
 .flex-title-upcomming{
   color: midnightblue;
   margin-top: 16px;
@@ -362,14 +369,14 @@ export default class Smartboard extends Vue {
 }
 
 .marquee-ds {
-  position: absolute;
+  /* position: absolute; */
   /* left: 50px;
   width: calc(100% - 100px); */
-  left: 183px;
-  width: calc(100% - 219px);
+  /* left: 183px;
+  width: calc(100% - 219px); */
   height: 70px;
   background-color: rgb(25, 25, 112);
-  padding: 5px;
+  /* padding: 5px; */
   text-align: center;
 }
 
@@ -379,18 +386,17 @@ export default class Smartboard extends Vue {
 }
 
 .container-height-menu-half {
-  height: 380px !important;
+  height: 400px !important;
 }
 .container-height-menu-full {
-  height: 580px !important;
+  height: 900px !important;
 }
 .container-height-menu-half-bottom{
-  position: fixed;
-  height: 200px !important;
+  height: 50% !important;
 }
 
 .margin-push-left {
-  margin-left: -164px;
+  margin-left: -60% !important;
 }
 
 .marquee-msg-container-full {

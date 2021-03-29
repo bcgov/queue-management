@@ -26,6 +26,7 @@ limitations under the License.*/
                 <b-button 
                   v-if="each.flag=='booked_app'"
                   variant="success"
+                  size="lg"
                   >
                   <font-awesome-icon
                     icon="calendar-alt"
@@ -36,6 +37,7 @@ limitations under the License.*/
                 <b-button 
                   v-if="((each.flag=='walkin_app')  && (isNew(each)))"
                   variant="info"
+                  size="lg"
                   >
                   <font-awesome-icon
                     animation="cylon"
@@ -48,6 +50,7 @@ limitations under the License.*/
                 <b-button 
                   v-if="((each.flag=='walkin_app') && !(isNew(each)))"
                   variant="info"
+                  size="lg"
                   >
                   <font-awesome-icon
                     animation="cylon"
@@ -59,6 +62,7 @@ limitations under the License.*/
               <b-col>
                 <b-card bg-variant="success" text-variant="white"  v-if="each.flag=='booked_app'">
                   <b-card-text
+                    class="text-font-sz"
                     align="center"
                     justify="center">
                     {{index+1}}
@@ -79,13 +83,14 @@ limitations under the License.*/
       <div v-if="(!networkStatus.networkDown && (bookedNotcheckIn.length > 0))" class="bottom-flex-div">
         <div class="flex-title-upcomming"> Upcoming Appointments:</div>
       </div>
-      <marquee direction="up"  width="100%" height="100%" class="margin-push-left" scrollamount="4" behavior="scroll" >
+      <marquee direction="up"  width="100%" height="100%" class="margin-push-left" scrollamount="3" behavior="smooth" >
       <b-container class="container-height-menu-half-bottom">
         <div>
           <b-row v-for="each in bookedNotcheckIn" :key="each.start_time">
             <b-col>
               <b-button 
                 variant="secondary"
+                size="lg"
                 >
                 <font-awesome-icon
                   icon="calendar-alt"
@@ -95,7 +100,7 @@ limitations under the License.*/
             </b-col>
             <b-col>
               <b-card bg-variant="dark" text-variant="white">
-                <b-card-text>
+                <b-card-text class="text-font-sz">
                   <b>{{getAppTime(each)}}</b>
                 </b-card-text>
               </b-card>
@@ -224,7 +229,7 @@ export default class RightMenu extends Vue {
 
   private getAppTime (Q) {
     if (Q.start_time) {
-      return new Date(Q.start_time).toLocaleTimeString()
+      return new Date(Q.start_time).toLocaleTimeString().replace(/:\d{2}\s/,' ');
     }
     return Q.start_time
   }

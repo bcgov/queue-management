@@ -63,3 +63,4 @@ class OfficeSchema(BaseSchema):
     digital_signage_message_1 = fields.Str()
     digital_signage_message_2 = fields.Str()
     digital_signage_message_3 = fields.Str()
+    show_currently_waiting_bottom = fields.Int()

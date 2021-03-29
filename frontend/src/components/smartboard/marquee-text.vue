@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 -->
 <template>
-  <div class="marquee-container" v-if="isMessageEnabled">
+  <div class="marquee-container1" v-if="isMessageEnabled">
     <marquee width="100%" direction="left" height="100px" class="marquee-text marquee-ds">
       <span v-if="msg_1">{{msg_1}}
         &nbsp;	&nbsp;	&nbsp; &nbsp;
@@ -54,7 +54,7 @@ export default class MarqueeText extends Vue {
   @Prop({ default: '' })
   private networkStatus!: string
 
-  @Prop({ default: [] })
+  @Prop({ default: {} })
   private office!: any
 
   private citizens: any = ''
@@ -109,6 +109,7 @@ export default class MarqueeText extends Vue {
   }
 
   created () {
+    this.office = this.office.office
     if (this.office.office) {
       if(this.office.office.digital_signage_message == 1) {
         this.isMessageEnabled = true

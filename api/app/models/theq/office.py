@@ -111,6 +111,7 @@ class Office(Base):
     digital_signage_message_1 = db.Column(db.Text)
     digital_signage_message_2 = db.Column(db.Text)
     digital_signage_message_3 = db.Column(db.Text)
+    show_currently_waiting_bottom = db.Column(db.Integer)
     
 
     format_string = 'office_%s'
