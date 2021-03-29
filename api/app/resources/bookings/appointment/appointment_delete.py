@@ -59,11 +59,11 @@ class AppointmentDelete(Resource):
 
             office = Office.find_by_id(appointment.office_id)
 
-                # Send blackout email
-                try:
-                    send_email(request.headers['Authorization'].replace('Bearer ', ''), *get_cancel_email_contents(appointment, user, office, office.timezone))
-                except Exception as exc:
-                    pprint(f'Error on token generation - {exc}')
+            # Send blackout email
+            try:
+                send_email(request.headers['Authorization'].replace('Bearer ', ''), *get_cancel_email_contents(appointment, user, office, office.timezone))
+            except Exception as exc:
+                pprint(f'Error on token generation - {exc}')
 
         db.session.delete(appointment)
         db.session.commit()
