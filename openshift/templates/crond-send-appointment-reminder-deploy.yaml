@@ -37,6 +37,7 @@ objects:
       CHES_SSO_CLIENT_SECRET: '${CHES_SSO_CLIENT_SECRET}'
       CHES_POST_EMAIL_ENDPOINT: '${CHES_POST_EMAIL_ENDPOINT}'
       NOTIFICATIONS_ENDPOINT: '${NOTIFICATIONS_ENDPOINT}'
+      SERVICE_ACCOUNT_SECRET: '${SERVICE_ACCOUNT_SECRET}'
 
   - kind: DeploymentConfig
     apiVersion: v1
@@ -297,3 +298,9 @@ parameters:
   - name: NOTIFICATIONS_ENDPOINT
     description: Notifications endpoint
     required: false
+  - name: SERVICE_ACCOUNT_SECRET
+    description: 
+    required: true
+  - name: MAX_EMAIL_PER_BATCH
+    description: 
+    required: ture

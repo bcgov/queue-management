@@ -53,7 +53,13 @@ objects:
           timeoutSeconds: 120
           maxSurge: 2
           maxUnavailable: 1
-        resources: {}
+        resources:
+           limits:
+             cpu: 100m
+             memory: 200Mi
+           requests:
+             cpu: 50m
+             memory: 100Mi
         activeDeadlineSeconds: 3600
       template:
         metadata:

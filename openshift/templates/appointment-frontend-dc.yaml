@@ -44,7 +44,10 @@ objects:
             "hideBCServicesCard": ${HIDEBCSERVICESCARD},
             "BCEIDRegistrationUrl": "${BCEID_REG_URL}",
             "VUE_APP_GOOGLE_STATIC_MAP_API_KEY": "${VUE_APP_GOOGLE_STATIC_MAP_API_KEY}",
-            "disableSms": ${DISABLE_SMS}
+            "disableSms": ${DISABLE_SMS},
+            "VUE_APP_FEEDBACK_API": ${VUE_APP_FEEDBACK_API},
+            "FEEDBACK_SERVICE_CHANNEL": ${FEEDBACK_SERVICE_CHANNEL},
+            "FEEDBACK_ENABLED": ${FEEDBACK_ENABLED}
           }
   - apiVersion: v1
     kind: ConfigMap
@@ -80,7 +83,13 @@ objects:
           timeoutSeconds: 60
           maxSurge: 2
           maxUnavailable: 0
-        resources: {}
+        resources:
+          limits:
+            cpu: 100m
+            memory: 512Mi
+          requests:
+            cpu: 50m
+            memory: 256Mi
         activeDeadlineSeconds: 3600
       template:
         metadata:
@@ -185,7 +194,7 @@ parameters:
     displayName: Name
     description: The suffix for all created objects
     required: false
-    value: appointment-nginx-frontend
+    value: appointment-frontend
   - name: APPLICATION_DOMAIN
     description: "The exposed hostname that will route to the Vue application"
   - name: API_NAME
@@ -233,5 +242,16 @@ parameters:
     description: "Flag to decide if SMS is disabled"
     required: true
     value: "true"
-    
+  - name: VUE_APP_FEEDBACK_API
+    description: "API details for the feedback channel"
+    required: true
+    value: ""
+  - name: FEEDBACK_SERVICE_CHANNEL
+    description: "channel name for feedback"
+    required: true
+    value: ""
+  - name: FEEDBACK_ENABLE
+    description: "Flag to decide if Feedback is enabled"
+    required: true
+    value: ""
 

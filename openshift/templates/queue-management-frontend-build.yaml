@@ -48,7 +48,7 @@ objects:
             name: artifactory-creds
       postCommit: { }
       nodeSelector:
-      successfulBuildsHistoryLimit: 10
+      successfulBuildsHistoryLimit: 5
       failedBuildsHistoryLimit: 2
       triggers:
         - type: ConfigChange

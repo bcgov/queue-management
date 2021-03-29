@@ -48,7 +48,7 @@ objects:
             name: artifactory-creds
       postCommit: { }
       nodeSelector:
-      successfulBuildsHistoryLimit: 10
+      successfulBuildsHistoryLimit: 5
       failedBuildsHistoryLimit: 2
       triggers:
         - type: ConfigChange
@@ -59,7 +59,7 @@ parameters:
     displayName: Name
     name: NAME
     required: true
-    value: appointment-nginx-frontend
+    value: appointment-frontend
   - description: |
       The URL to your GIT repo, don't use the this default unless
       your just experimenting.

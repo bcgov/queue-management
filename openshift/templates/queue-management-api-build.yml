@@ -63,7 +63,7 @@ objects:
       postCommit: {}
       nodeSelector:
       successfulBuildsHistoryLimit: 5
-      failedBuildsHistoryLimit: 5
+      failedBuildsHistoryLimit: 2
     
     status:
       lastVersion: 0

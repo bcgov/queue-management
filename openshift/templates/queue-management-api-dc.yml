@@ -13,7 +13,12 @@ objects:
       accessModes:
         - ReadWriteMany
       resources:
+        limits:
+          cpu: '1'
+          memory: 600Mi
         requests:
+          cpu: 400m
+          memory: 400Mi
           storage: 128Mi
   - apiVersion: v1
     kind: Service
@@ -152,8 +157,6 @@ objects:
                   value: "${CHES_POST_EMAIL_ENDPOINT}"
                 - name: ROCKET_CHAT_URL
                   value: "${ROCKET_CHAT_URL}"
-                - name: SLACK_URL
-                  value: "${SLACK_URL}"
                 - name: SERVICENOW_INSTANCE
                   value: "${SERVICENOW_INSTANCE}"
                 - name: SERVICENOW_USER
@@ -222,6 +225,14 @@ objects:
                   value: "${JWT_OIDC_AUDIENCE}"
                 - name: JWT_OIDC_CLIENT_SECRET
                   value: "${JWT_OIDC_CLIENT_SECRET}"
+                - name: SOCKETIO_PING_TIMEOUT
+                  value: "10"
+                - name: SOCKETIO_PING_INTERVAL
+                  value: "5"
+                - name: SHOW_ESTIMATE_TIME_WALKIN
+                  value: "${SHOW_ESTIMATE_TIME_WALKIN}"
+                - name: APPOINTMENT_PORTAL_URL
+                  value: "${SHOW_ESTIMATE_TIME_WALKIN}"                               
 
               ports:
                 - containerPort: 8080
@@ -482,9 +493,18 @@ parameters:
     value: ""
   - name: JWT_OIDC_CLIENT_SECRET
     description: "OIDC Client secret"
-    required: true
+    required: false
     value: ""
   - name: NOTIFICATIONS_ENDPOINT
     description: "Notifications endpoint"
     required: true
     value: ""
+  - name: SHOW_ESTIMATE_TIME_WALKIN
+    description: ""
+    required: true
+    value: ""
+  - name: APPOINTMENT_PORTAL_URL
+    description: ""
+    required: true
+    value: ""
+

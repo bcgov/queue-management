@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Template
 labels:
-  template: queue-management-frontend
+  template: queue-management-nginx-frontend
 metadata:
-  name: queue-management-frontend
+  name: queue-management-nginx-frontend
 objects:
   - apiVersion: v1
     kind: PersistentVolumeClaim
@@ -74,7 +74,13 @@ objects:
           timeoutSeconds: 60
           maxSurge: 2
           maxUnavailable: 0
-        resources: {}
+        resources:
+            limits:
+              cpu: 100m
+              memory: 512Mi
+            requests:
+              cpu: 50m
+              memory: 256Mi
         activeDeadlineSeconds: 3600
       template:
         metadata:
@@ -164,7 +170,7 @@ parameters:
   - name: IMAGE_TAG
     description: The image tag to pull for the deployment.
     required: true
-    value: ""
+    value: dev
   - name: TOOLS_WORKSPACE
     description: The Location for your image streams (Tools Workspace)
     required: true
@@ -177,7 +183,6 @@ parameters:
   - name: AUTH_SERVER_URL
     description: "keycloak server URL. Ex:https://yourkeycloakserver.com/auth/"
     required: true
-
 
 
 
