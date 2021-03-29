@@ -9,6 +9,7 @@ export default class AppointmentService {
   public static async createAppointment (appointmentBody: AppointmentRequestBody): Promise<AxiosResponse<AppointmentResponse>> {
     return axios.post(`${ConfigHelper.getAppAPIUrl()}/appointments/`, appointmentBody)
   }
+
   public static async createDraftAppointment (appointmentBody: AppointmentRequestBody): Promise<AxiosResponse<AppointmentResponse>> {
     return axios.post(`${ConfigHelper.getAppAPIUrl()}/appointments/draft`, appointmentBody)
   }

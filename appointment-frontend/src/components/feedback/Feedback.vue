@@ -223,13 +223,11 @@
 </template>
 <script lang="ts">
 import { AppointmentModule, AuthModule } from '@/store/modules'
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import { FeedbackRequestObject, FeedbackResponseObject } from '@/models/feedback'
 import { mapActions, mapState } from 'vuex'
 import ConfigHelper from '@/utils/config-helper'
-import { User } from '@/models/user'
 import { getModule } from 'vuex-module-decorators'
-import { th } from 'date-fns/locale'
 
 @Component({
   computed: {
@@ -301,9 +299,11 @@ export default class Feedback extends Vue {
     this.responseRequired = false
     this.clearFields()
   }
+
   private toggleResponsePage () {
     this.showResponsePage = !this.showResponsePage
   }
+
   private showFeedBack (feedbackType: string) {
     this.formEntryTime = new Date().getTime()
     this.submitInProgress = false
@@ -323,6 +323,7 @@ export default class Feedback extends Vue {
     this.showFeedbackArea = true
     this.showMobileFeedbackPanel = false
   }
+
   private getFeedbackViewStyle () {
     if (this.showFeedbackArea && this.responseRequired) {
       return 'feedback_response_expanded'
@@ -331,12 +332,13 @@ export default class Feedback extends Vue {
       return 'feedback_container_expanded'
     }
   }
+
   private toggleMobileFeedbackPanel () {
     this.showMobileFeedbackPanel = !this.showMobileFeedbackPanel
   }
 
   private async postFeedback () {
-    let formSubmitTime = new Date().getTime() - this.formEntryTime
+    const formSubmitTime = new Date().getTime() - this.formEntryTime
     if (formSubmitTime < 500) {
       return
     }
@@ -396,9 +398,9 @@ export default class Feedback extends Vue {
   }
 
   private getCurrentDateinFormat () {
-    let currentDate = new Date()
-    let day = currentDate.getDate().toString().length === 1 ? '0' + currentDate.getDate().toString() : currentDate.getDate().toString()
-    let month = currentDate.getMonth().toString().length === 1 ? '0' + (currentDate.getMonth() + 1).toString() : (currentDate.getMonth() + 1).toString()
+    const currentDate = new Date()
+    const day = currentDate.getDate().toString().length === 1 ? '0' + currentDate.getDate().toString() : currentDate.getDate().toString()
+    const month = currentDate.getMonth().toString().length === 1 ? '0' + (currentDate.getMonth() + 1).toString() : (currentDate.getMonth() + 1).toString()
     return currentDate.getFullYear() + '-' + month + '-' + day
   }
 
@@ -409,12 +411,13 @@ export default class Feedback extends Vue {
       return 'Email or Phone no is required'
     }
   }
+
   private validateRules () {
-    let phoneCondition = this.phone !== undefined && this.phone !== ''
-    let emailCondition = this.email !== undefined && this.email !== ''
+    const phoneCondition = this.phone !== undefined && this.phone !== ''
+    const emailCondition = this.email !== undefined && this.email !== ''
     if (emailCondition || phoneCondition) {
       if (emailCondition) {
-        let formatResponse = /.+@.+\..+/.test(this.email) ? true : 'Email must be valid'
+        const formatResponse = /.+@.+\..+/.test(this.email) ? true : 'Email must be valid'
         this.emailRules = [formatResponse]
         this.phoneRules = [true]
       }
@@ -427,6 +430,7 @@ export default class Feedback extends Vue {
       this.phoneRules = ['Email or Phone is required']
     }
   }
+
   private validateSubmit () {
     if (this.responseRequired) {
       return !(this.valid && this.consent)
@@ -639,5 +643,13 @@ $mandatory_star:#ff0000;
 }
 .margin-left-20{
   margin-left: 20px;
+}
+
+.feedback_area .row{
+  margin: 0;
+}
+
+.feedback_area h3{
+  font-size: 1.3rem;
 }
 </style>

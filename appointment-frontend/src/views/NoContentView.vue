@@ -32,7 +32,7 @@ export default class NoContentView extends Vue {
         break
       case 'unavailable':
         this.msgHeading = 'Not Available!'
-        this.msgBody = `Sorry, This application is not available in this browser. Please use any modern browsers like Google Chrome, Safari, Mozilla Firefox etc.`
+        this.msgBody = 'Sorry, This application is not available in this browser. Please use any modern browsers like Google Chrome, Safari, Mozilla Firefox etc.'
         break
       default:
         this.msgHeading = ''

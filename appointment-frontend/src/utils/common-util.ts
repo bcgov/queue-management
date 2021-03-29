@@ -34,7 +34,7 @@ export default class CommonUtils {
    * Time slots formatted in a way it should need to display in the UI
    ***/
   static getFormattedTimeslots (timeslots) {
-    let timeslotArray = []
+    const timeslotArray = []
     // this loop will get the minimum start time and maximum end time of a timeslot
     timeslots.forEach(timeslot => {
       timeslot.day_of_week.forEach(day => {
@@ -54,7 +54,7 @@ export default class CommonUtils {
       })
     })
     let index = 1
-    let returnArray = []
+    const returnArray = []
     // this loop will map the time with the Days enum
     do {
       const timeslot = timeslotArray[index]
@@ -68,17 +68,20 @@ export default class CommonUtils {
     } while (index <= (Object.keys(Days).length / 2))
     return returnArray
   }
+
   static convertDateToAnotherTimeZone (date, timezone) {
     const dateString = date.toLocaleString('en-US', {
       timeZone: timezone
     })
     return new Date(dateString)
   }
+
   static getOffsetBetweenTimezonesForDate (date, timezone1, timezone2) {
     const timezone1Date = CommonUtils.convertDateToAnotherTimeZone(date, timezone1)
     const timezone2Date = CommonUtils.convertDateToAnotherTimeZone(date, timezone2)
     return timezone1Date.getTime() - timezone2Date.getTime()
   }
+
   static getTzFormattedDate (date: string | Date, timezone = 'America/Vancouver', dateFormat = 'yyyy-MM-dd') {
     if (Intl.DateTimeFormat().resolvedOptions().timeZone === timezone) {
       return format(utcToZonedTime(date || new Date(), timezone), dateFormat)
@@ -92,16 +95,19 @@ export default class CommonUtils {
       }
     }
   }
+
   static getUTCToTimeZoneTime (date: string | Date, timezone = 'America/Vancouver', dateFormat = 'yyyy-MM-dd') {
     return format(utcToZonedTime(date || new Date(), timezone), dateFormat)
   }
+
   static changeDateFormat (date) {
-    var pattern = /(\d{4})-(\d{2})-(\d{2})/
+    const pattern = /(\d{4})-(\d{2})-(\d{2})/
     if (!date || !date.match(pattern)) {
       return null
     }
     return date.replace(pattern, '$2/$3/$1')
   }
+
   static getTzDate (date, timezone = 'America/Vancouver') {
     return utcToZonedTime(date || new Date(), timezone)
   }
@@ -111,7 +117,7 @@ export default class CommonUtils {
   }
 
   static getBrowser () {
-    let ua = navigator.userAgent
+    const ua = navigator.userAgent
     let tem = []
     let M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || []
     if (/trident/i.test(M[1])) {
@@ -131,14 +137,14 @@ export default class CommonUtils {
   }
 
   static isAllowedBrowsers () {
-    let allowedBrowerNLowestVersion = { 'Chrome': [24], 'Firefox': [29], 'Safari': [10], 'Opera': [15] }
+    const allowedBrowerNLowestVersion = { 'Chrome': [24], 'Firefox': [29], 'Safari': [10], 'Opera': [15] }
     if (allowedBrowerNLowestVersion.hasOwnProperty(CommonUtils.getBrowser()['name'])) {
       if (CommonUtils.getBrowser()['version'] >= allowedBrowerNLowestVersion[CommonUtils.getBrowser()['name']]) {
         return {
           'is_allowed': true,
           'current_browser': CommonUtils.getBrowser()['name'],
           'current_version': CommonUtils.getBrowser()['version'],
-          'allowed_browsers': `Chrome, Firefox, Safari, Edge`
+          'allowed_browsers': 'Chrome, Firefox, Safari, Edge'
         }
       }
     }
@@ -146,7 +152,7 @@ export default class CommonUtils {
       'is_allowed': false,
       'current_browser': CommonUtils.getBrowser()['name'],
       'current_version': CommonUtils.getBrowser()['version'],
-      'allowed_browsers': `Chrome >= 24, Firefox >= 29, Safari >= 10, Opera >= 15`
+      'allowed_browsers': 'Chrome >= 24, Firefox >= 29, Safari >= 10, Opera >= 15'
     }
   }
   // static isIE () {
@@ -162,7 +168,7 @@ export default class CommonUtils {
   // }
 
   static isAllowedIEVersion () {
-    let ua = window.navigator.userAgent
+    const ua = window.navigator.userAgent
     // IE 9
     // ua = 'Mozilla/5.0 (compatible; MSIE 9.0; InfoChannel RNSafeBrowser/v.1.1.0G)'
 
@@ -173,16 +179,16 @@ export default class CommonUtils {
     // ua = 'Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko'
 
     let version = 0
-    let msie = ua.indexOf('MSIE ')
+    const msie = ua.indexOf('MSIE ')
     if (msie > 0) {
       // IE 10 or older => return version number
       version = parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10)
     }
 
-    let trident = ua.indexOf('Trident/')
+    const trident = ua.indexOf('Trident/')
     if (!version && trident > 0) {
       // IE 11 => return version number
-      var rv = ua.indexOf('rv:')
+      const rv = ua.indexOf('rv:')
       version = parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10)
     }
     // returning true if version is IE and greater than 11
@@ -191,14 +197,14 @@ export default class CommonUtils {
 }
 
 export function debounce (func, wait, immediate) {
-  var timeout
+  let timeout
   return function () {
-    var context = this; var args = arguments
-    var later = function () {
+    const context = this; const args = arguments
+    const later = function () {
       timeout = null
       if (!immediate) func.apply(context, args)
     }
-    var callNow = immediate && !timeout
+    const callNow = immediate && !timeout
     clearTimeout(timeout)
     timeout = setTimeout(later, wait)
     if (callNow) func.apply(context, args)
@@ -210,10 +216,10 @@ export function debounce (func, wait, immediate) {
 // appending timezone string is important for Safari which otherwise
 // defaults to UTC
 export function timezoneOffset () {
-  let date = new Date()
-  let timezoneOffset = date.getTimezoneOffset()
-  let hours = ('00' + Math.floor(Math.abs(timezoneOffset / 60))).slice(-2)
-  let minutes = ('00' + Math.abs(timezoneOffset % 60)).slice(-2)
-  let string = (timezoneOffset >= 0 ? '-' : '+') + hours + ':' + minutes
+  const date = new Date()
+  const timezoneOffset = date.getTimezoneOffset()
+  const hours = ('00' + Math.floor(Math.abs(timezoneOffset / 60))).slice(-2)
+  const minutes = ('00' + Math.abs(timezoneOffset % 60)).slice(-2)
+  const string = (timezoneOffset >= 0 ? '-' : '+') + hours + ':' + minutes
   return string
 }
