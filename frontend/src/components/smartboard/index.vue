@@ -45,13 +45,6 @@ limitations under the License.*/ -->
         ></RightMenu>
       </v-col>
     </v-row>
-    <v-row :class="isRightMenuEnabled ? 'board-marquee-text': 'marquee-msg-container-full'" v-if="((officetype === 'callbyname' || officetype === 'reception') && isMessageEnabled)">
-      <MarqueeText
-        :smartboardData="{ office_number }"
-        :networkStatus="{ networkDown }"
-        :office="{office}"
-      />
-    </v-row>
     <div v-if="networkDown == true" id="network-status" class="loading small">
       <div></div>
       <div></div>
@@ -59,6 +52,13 @@ limitations under the License.*/ -->
       <div></div>
       <div></div>
     </div>
+    <v-row class="marquee-msg-container-full" v-if="((officetype === 'callbyname' || officetype === 'reception') && isMessageEnabled)">
+      <MarqueeText
+        :smartboardData="{ office_number }"
+        :networkStatus="{ networkDown }"
+        :office="{office}"
+      />
+    </v-row>
   </div>
 </template>
 
@@ -209,7 +209,7 @@ export default class Smartboard extends Vue {
   width: 100%;
   margin: 0px;
   text-align: center;
-  /* overflow-y: auto; */
+  overflow-y: auto;
 }
 .top-flex-div {
   height: 11%;
@@ -358,6 +358,16 @@ export default class Smartboard extends Vue {
     margin-left: 178px;
     margin-right: -183px;
 }
+/
+.marquee-ds {
+    position: absolute;
+    left: 50px;
+    width: calc(100% - 100px);
+    height: 70px;
+    background-color: midnightblue;
+    padding: 5px;
+    text-align: center;
+}
 
 .marquee-text {
   color: white;
@@ -374,12 +384,6 @@ export default class Smartboard extends Vue {
 .margin-push-left {
   margin-left: -164px;
 }
-
-.board-marquee-text{
-    width: 61%;
-    margin-left: 255px;
-}
-
 .marquee-msg-container-full {
     margin-top: 121px;
     padding-left: 33px;
