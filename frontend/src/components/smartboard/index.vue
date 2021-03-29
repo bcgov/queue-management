@@ -352,19 +352,21 @@ export default class Smartboard extends Vue {
 }
 
 .marquee-container {
-    background-color: midnightblue;
+    background-color: rgb(25, 25, 112);
     margin-top: -119px;
     height: 70px;
     margin-left: 178px;
     margin-right: -183px;
+    /* margin-left: -73px;
+    margin-right: 66px; */
 }
-/
+
 .marquee-ds {
     position: absolute;
     left: 50px;
     width: calc(100% - 100px);
     height: 70px;
-    background-color: midnightblue;
+    background-color: rgb(25, 25, 112);
     padding: 5px;
     text-align: center;
 }
@@ -384,6 +386,7 @@ export default class Smartboard extends Vue {
 .margin-push-left {
   margin-left: -164px;
 }
+
 .marquee-msg-container-full {
     margin-top: 121px;
     padding-left: 33px;
