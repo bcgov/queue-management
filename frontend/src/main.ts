@@ -70,6 +70,10 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import './assets/css/q.css'
 import './assets/css/bc-gov-style.css'
 import MainApp from './MainApp.vue'
+
+import ConfigHelper from '@/utils/config-helper'
+
+
 require('es6-shim')
 // require('Keycloak')
 require('../static/keycloak.js')
@@ -128,6 +132,7 @@ Vue.config.productionTip = false
 // });
 /* eslint-disable no-new */
 
+ConfigHelper.fetchConfig()
 
 new Vue({
   router,

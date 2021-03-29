@@ -47,7 +47,7 @@ export default class SigninView extends Vue {
         await this.postCreateUser()
         // eslint-disable-next-line no-console
         console.info('[SignIn.vue]Logged in User.Starting refreshTimer')
-        let tokenService = new TokenService()
+        const tokenService = new TokenService()
         await tokenService.init()
         tokenService.scheduleRefreshTimer()
 

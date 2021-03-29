@@ -88,8 +88,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
-import { AuthModule } from '@/store/modules'
+import { Component, Mixins, Prop } from 'vue-property-decorator'
 import ConfigHelper from '@/utils/config-helper'
 import { IdpHint } from '@/utils/constants'
 import StepperMixin from '@/mixins/StepperMixin.vue'
@@ -110,8 +109,8 @@ export default class LoginToConfirm extends Mixins(StepperMixin) {
 
   private get description () {
     return (this.isStepperView)
-      ? `To complete your appointment booking, please login using one of the following`
-      : `Please login using one of the following`
+      ? 'To complete your appointment booking, please login using one of the following'
+      : 'Please login using one of the following'
   }
 
   private login (idpHint) {

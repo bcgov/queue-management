@@ -768,7 +768,7 @@
                 striped
                 @row-selected="onRowSelected"
               >
-                <template slot="selected" slot-scope="{ rowSelected }">
+                <template #cell(selected)="{ rowSelected }">
                   <template v-if="rowSelected">
                     <span aria-hidden="true">&check;</span>
                     <span class="sr-only" Selected></span>
