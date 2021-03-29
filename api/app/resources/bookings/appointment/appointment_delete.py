@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from pprint import pprint
 
-from flask import abort, g
+from flask import request, abort, g
 from flask_restx import Resource
 
 from app.models.bookings import Appointment
@@ -22,7 +22,7 @@ from app.models.theq import CSR, PublicUser, Citizen, Office
 from app.schemas.bookings import AppointmentSchema
 from app.utilities.auth_util import Role, has_any_role
 from app.utilities.auth_util import is_public_user
-from app.utilities.email import get_cancel_email_contents, send_email, generate_ches_token
+from app.utilities.email import get_cancel_email_contents, send_email
 from app.utilities.snowplow import SnowPlow
 from qsystem import application
 from qsystem import api, db, socketio
@@ -59,11 +59,11 @@ class AppointmentDelete(Resource):
 
             office = Office.find_by_id(appointment.office_id)
 
-            # Send blackout email
-            try:
-                send_email(None, *get_cancel_email_contents(appointment, user, office, office.timezone))
-            except Exception as exc:
-                pprint(f'Error on token generation - {exc}')
+                # Send blackout email
+                try:
+                    send_email(request.headers['Authorization'].replace('Bearer ', ''), *get_cancel_email_contents(appointment, user, office, office.timezone))
+                except Exception as exc:
+                    pprint(f'Error on token generation - {exc}')
 
         db.session.delete(appointment)
         db.session.commit()

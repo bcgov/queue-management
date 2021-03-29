@@ -194,6 +194,7 @@ export default class LocationsList extends Mixins(StepperMixin) {
       this.locationListData = await this.getOffices()
       this.locationListData = this.locationListData.filter(location => location.online_status !== 'Status.HIDE')
       this.locationListData = this.sortOfficesByDistance(this.locationListData)
+      this.$store.commit('setAppointmentLocation', undefined)
     }
   }
 
@@ -272,6 +273,7 @@ export default class LocationsList extends Mixins(StepperMixin) {
 
   private async selectLocation (location) {
     if (this.currentOffice?.office_id !== location?.office_id) {
+      this.$store.commit('setAppointmentLocation', location.office_name)
       this.setCurrentOffice(location)
       this.setCurrentService(undefined)
     }

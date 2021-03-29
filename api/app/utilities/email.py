@@ -18,9 +18,10 @@ from datetime import datetime
 import pytz
 from flask import current_app
 from jinja2 import Environment, FileSystemLoader
-from .ches_email import send_email, generate_ches_token
+from .notification_email import send_email
 
 from app.models.bookings import Appointment
+from app.models.theq import Citizen, Office
 
 ENV = Environment(loader=FileSystemLoader('.'), autoescape=True)
 line_break = '<br />'
@@ -53,12 +54,8 @@ def get_reminder_email_contents(appt: Appointment, user, office, timezone):
     subject = f'Reminder – Your appointment on {day}'
 
     service_email_paragraph = appt.service.email_paragraph
-    if service_email_paragraph:
-        service_email_paragraph = service_email_paragraph.replace('\r\n', line_break)
 
     office_email_paragraph = appt.office.office_email_paragraph
-    if office_email_paragraph:
-        office_email_paragraph = office_email_paragraph.replace('\r\n', line_break)
 
     body = template.render(display_name=appt.citizen_name,
                            location=office.office_name,
@@ -96,12 +93,8 @@ def get_confirmation_email_contents(appointment: Appointment, office, timezone, 
     sender = current_app.config.get('MAIL_FROM_ID')
 
     service_email_paragraph = appointment.service.email_paragraph
-    if service_email_paragraph:
-        service_email_paragraph = service_email_paragraph.replace('\r\n', line_break)
 
     office_email_paragraph = appointment.office.office_email_paragraph
-    if office_email_paragraph:
-        office_email_paragraph = office_email_paragraph.replace('\r\n', line_break)
 
     template = ENV.get_template('email_templates/confirmation_email.html')
     date, day = formatted_date(appointment.start_time, timezone)
@@ -142,3 +135,43 @@ def get_email(user, appointment):
     else:
         contact_email = appointment.contact_information
     return contact_email
+
+
+def get_walkin_spot_confirmation_email_contents(citizen: Citizen, url, office: Office):
+    """Send walk in confirmation email"""
+    sender = current_app.config.get('MAIL_FROM_ID')
+
+    template = ENV.get_template('email_templates/walkin_spot_confirmation.html')
+    subject = f'Your spot is saved'
+    body = template.render(display_name=citizen.citizen_name,
+                           location=office.office_name,
+                           telephone=office.telephone,
+                           civic_address=office.civic_address,
+                           url=url,
+                           ticket_numer=citizen.ticket_number
+    )
+    citizen = Citizen.query.filter_by(citizen_id=citizen.citizen_id).first()
+    if is_valid_email(citizen.notification_email):
+        return subject, citizen.notification_email, sender, body
+    else:
+        return False
+
+
+def get_walkin_reminder_email_contents(citizen: Citizen, office: Office):
+    """Send walk in reminder email"""
+    sender = current_app.config.get('MAIL_FROM_ID')
+
+    template = ENV.get_template('email_templates/walkin_reminder.html')
+    subject = f'Walk-In Reminder'
+    msg = "We’re ready! Please come inside and speak to a Service BC Representative"
+    body = template.render(display_name=citizen.citizen_name,
+                           location=office.office_name,
+                           telephone=office.telephone,
+                           civic_address=office.civic_address,
+                           reminder_msg=office.check_in_reminder_msg if office.check_in_reminder_msg else msg,
+    )
+    citizen = Citizen.query.filter_by(citizen_id=citizen.citizen_id).first()
+    if is_valid_email(citizen.notification_email):
+        return subject, citizen.notification_email, sender, body
+    else:
+        return False

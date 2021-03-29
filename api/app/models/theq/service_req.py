@@ -69,7 +69,7 @@ class ServiceReq(Base):
                 else:
                     snowplow_event = "invitefromhold"
 
-        active_period.time_end = datetime.now()
+        active_period.time_end = datetime.utcnow()
         # db.session.add(active_period)
 
         period_state_invite = PeriodState.get_state_by_name("Invited")
@@ -79,7 +79,7 @@ class ServiceReq(Base):
             csr_id=csr.csr_id,
             reception_csr_ind=csr.receptionist_ind,
             ps_id=period_state_invite.ps_id,
-            time_start=datetime.now()
+            time_start=datetime.utcnow()
         )
 
         self.periods.append(new_period)
@@ -89,7 +89,7 @@ class ServiceReq(Base):
     def add_to_queue(self, csr, snowplow_event):
 
         active_period = self.get_active_period()
-        active_period.time_end = datetime.now()
+        active_period.time_end = datetime.utcnow()
         #db.session.add(active_period)
 
         period_state_waiting = PeriodState.get_state_by_name("Waiting")
@@ -99,7 +99,7 @@ class ServiceReq(Base):
             csr_id=csr.csr_id,
             reception_csr_ind=csr.receptionist_ind,
             ps_id=period_state_waiting.ps_id,
-            time_start=datetime.now()
+            time_start=datetime.utcnow()
         )
         self.periods.append(new_period)
 
@@ -115,7 +115,7 @@ class ServiceReq(Base):
         if active_period.ps.ps_name in [being_served]:
             raise TypeError("You cannot begin serving a citizen that is already being served")
 
-        active_period.time_end = datetime.now()
+        active_period.time_end = datetime.utcnow()
         # db.session.add(active_period)
 
         period_state_being_served = PeriodState.get_state_by_name(being_served)
@@ -125,7 +125,7 @@ class ServiceReq(Base):
             csr_id=csr.csr_id,
             reception_csr_ind=csr.receptionist_ind,
             ps_id=period_state_being_served.ps_id,
-            time_start=datetime.now()
+            time_start=datetime.utcnow()
         )
 
         self.periods.append(new_period)
@@ -137,7 +137,7 @@ class ServiceReq(Base):
 
     def place_on_hold(self, csr):
         active_period = self.get_active_period()
-        active_period.time_end = datetime.now()
+        active_period.time_end = datetime.utcnow()
         # db.session.add(active_period)
 
         period_state_on_hold = PeriodState.get_state_by_name("On hold")
@@ -147,7 +147,7 @@ class ServiceReq(Base):
             csr_id=csr.csr_id,
             reception_csr_ind=csr.receptionist_ind,
             ps_id=period_state_on_hold.ps_id,
-            time_start=datetime.now()
+            time_start=datetime.utcnow()
         )
 
         self.periods.append(new_period)
@@ -156,7 +156,7 @@ class ServiceReq(Base):
 
     def finish_service(self, csr, clear_comments=True):
         active_period = self.get_active_period()
-        active_period.time_end = datetime.now()
+        active_period.time_end = datetime.utcnow()
         if clear_comments:
             self.citizen.citizen_comments = None
         # db.session.add(active_period)
