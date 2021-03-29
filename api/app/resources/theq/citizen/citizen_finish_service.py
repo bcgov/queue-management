@@ -59,6 +59,9 @@ class CitizenFinishService(Resource):
         pending_service_state = SRState.get_state_by_name("Complete")
         active_service_request.sr_state_id = pending_service_state.sr_state_id
 
+        # remove walkin unique id when service is finished
+        citizen.walkin_unique_id = None
+
         db.session.add(citizen)
         db.session.commit()
 
