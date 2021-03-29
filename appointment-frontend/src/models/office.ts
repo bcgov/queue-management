@@ -27,6 +27,7 @@ export interface Office {
   digital_signage_message_1: Text,
   digital_signage_message_2: Text,
   digital_signage_message_3: Text,
+  show_currently_waiting_bottom: number,
 }
 
 export interface Offices {
