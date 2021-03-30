@@ -70,6 +70,7 @@ limitations under the License.*/
                 </b-card>
                 <b-card bg-variant="info" text-variant="white" v-else>
                   <b-card-text
+                    class="text-font-sz"
                     align="center"
                     justify="center">
                     {{index+1}}
