@@ -430,7 +430,7 @@ export default class ApptBookingModal extends Vue {
   public comments: any = null
   public contact_information: any = null
   public fieldsEdited: boolean = false
-  public length: any = 0
+  public length: any = 15
   public selectingService: boolean = false
   public showMessage: boolean = false
   public start: any = null
