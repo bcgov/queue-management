@@ -14,7 +14,7 @@
           <a class="link-w-icon mt-6" href="https://www2.gov.bc.ca/gov/content/governments/government-id/bc-services-card/log-in-with-card"
             target="_blank" rel="noopener noreferrer">
             <v-icon small class="mr-2">mdi-open-in-new</v-icon>
-            <span>About the BC Services Card</span>
+            <span>About the mobile BC Services Card app</span>
           </a>
         </v-col>
         <v-col class="align-row-2 fill-width">
@@ -61,7 +61,7 @@
           large
           color="primary"
         >
-        Basic Create BCeID Username
+        Create Basic BCeID Username
         </v-btn>
         <!--a class="link-w-icon mt-3" :href="BCEIDRegistrationURL"
           target="_self" rel="noopener noreferrer">
