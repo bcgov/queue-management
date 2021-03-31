@@ -151,7 +151,7 @@ export default {
 
     deleteAppointment ({ dispatch, rootState }, payload) {
       const state = rootState
-      return new Promise((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         Axios({ state }).delete(`/appointments/${payload}/`).then(() => {
           dispatch('getAppointments').then(() => {
             resolve()
@@ -162,7 +162,7 @@ export default {
 
     deleteRecurringAppointments ({ dispatch, rootState }, payload) {
       const state = rootState
-      return new Promise((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         Axios({ state }).delete(`/appointments/recurring/${payload}`).then(() => {
           dispatch('getAppointments').then(() => {
             resolve()
@@ -173,7 +173,7 @@ export default {
 
     deleteRecurringStatAppointments ({ dispatch, rootState }, payload) {
       const state = rootState
-      return new Promise((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         Axios({ state }).delete(`/appointments/all-stat/${payload}`).then(() => {
           dispatch('getAppointments').then(() => {
             resolve()
@@ -274,7 +274,7 @@ export default {
         payload.start_time = data.checked_in_time
       }
       payload.snowplow_addcitizen = true
-      return new Promise((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         Axios({ state }).put(`/appointments/${payload.appointment_id}/`, data).then(() => {
           if (state.officeType != 'nocallonsmartboard') {
             dispatch('sendToQueue', payload)
@@ -312,7 +312,7 @@ export default {
     putAppointment ({ dispatch, rootState }, payload) {
       const state = rootState
       const { id } = payload
-      return new Promise((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         Axios({ state }).put(`/appointments/${id}/`, payload.data).then(resp => {
           dispatch('getAppointments')
           resolve()
@@ -324,7 +324,7 @@ export default {
       const state = rootState
       const uuid = payload.recurring_uuid
 
-      return new Promise((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         Axios({ state }).put(`/appointments/recurring/${uuid}`, payload.data).then(resp => {
           dispatch('getAppointments')
           resolve()

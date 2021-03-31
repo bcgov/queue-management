@@ -155,6 +155,7 @@ export default class DateSelection extends Mixins(StepperMixin) {
        }
      })
    }
+
    private getAllowedDates (val) {
      return this.availableDates.find(date => date === val)
    }
