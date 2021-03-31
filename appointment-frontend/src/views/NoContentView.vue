@@ -36,7 +36,7 @@ export default class NoContentView extends Vue {
         break
       case 'not-in-Q':
         this.msgHeading = 'Data not Available!'
-        this.msgBody = `Sorry, Your Details are not available in the system. Seems like you are not in the Queue anymore.`
+        this.msgBody = 'Sorry, Your Details are not available in the system. Seems like you are not in the Queue anymore.'
         break
       default:
         this.msgHeading = ''
