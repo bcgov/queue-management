@@ -74,7 +74,10 @@ module.exports = {
     "space-unary-ops": "warn",
     "keyword-spacing": "warn",
     "no-return-assign": "warn",
-    "no-shadow-restricted-names": "warn"
+    "no-shadow-restricted-names": "warn",
+	"multiline-ternary": "off",
+	"array-callback-return": "off",
+	"node/handle-callback-err": "off"
   },
   parserOptions: {
     parser: "@typescript-eslint/parser"

@@ -273,8 +273,8 @@ export class DropdownQuestion extends Vue {
 
   get dropItems () {
     const sorter = (a, b) => {
-      var typeA = a.exam_type_name
-      var typeB = b.exam_type_name
+      const typeA = a.exam_type_name
+      const typeB = b.exam_type_name
       if (typeA < typeB) {
         return -1
       }
