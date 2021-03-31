@@ -1,5 +1,6 @@
 
 <template>
+  <fragment>
     <v-app>
       <div class="v-application">
         <div style="width: 100%" class="m-3">
@@ -96,6 +97,7 @@
       <CheckInModal :clickedAppt="clickedAppt" />
       <LoadingModal v-if="show_loading" />
     </v-app>
+  </fragment>
 </template>
 
 <script lang="ts">
