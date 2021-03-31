@@ -380,7 +380,8 @@ const appointmentsModule = namespace('appointmentsModule')
 
 @Component({
   components: {
-    DatePicker
+    DatePicker,
+    VueTimepicker
   }
 })
 export default class ApptBookingModal extends Vue {
@@ -480,7 +481,7 @@ export default class ApptBookingModal extends Vue {
 
   get end () {
     if (this.start) {
-        const start = this.convertTimePickerValue(this.start)
+        const start = this.start.hh ? this.convertTimePickerValue(this.start) : this.start
         return moment(start).clone().add(this.length, 'minutes')
     }
     if (this.clickedTime) {
@@ -594,7 +595,7 @@ export default class ApptBookingModal extends Vue {
   get displayDate () {
     if (this.start) {
       // JSTOTS TOCHECK removed new from mopment. no need to use new with moment
-      const start = this.convertTimePickerValue(this.start)
+      const start = this.start.hh ? this.convertTimePickerValue(this.start) : this.start
       return moment(start).clone().format('dddd MMMM Do, YYYY')
     }
     return ''
@@ -603,7 +604,7 @@ export default class ApptBookingModal extends Vue {
   get displayStart () {
     if (this.start) {
       // JSTOTS TOCHECK removed new from mopment. no need to use new with moment
-      const start = this.convertTimePickerValue(this.start)
+      const start = this.start.hh ? this.convertTimePickerValue(this.start) : this.start
       return moment(this.start).clone().format('h:mm a')
     }
     return ''
@@ -848,16 +849,17 @@ export default class ApptBookingModal extends Vue {
   submit () {
     if (!this.submitClicked && this.end) {
       // CSR TIME VALIDATION
+      const start_time = this.start.hh ? this.convertTimePickerValue(this.start) : this.start
       let validate_flag = false
-      if (this.start) {
-        if ((new Date(this.start).getHours() <= 8) || (new Date(this.start).getHours() >= 17)){
-          if ((new Date(this.start).getHours() === 8)) {
-            if ((new Date(this.start).getMinutes() < 30)) {
+      if (start_time) {
+        if ((new Date(start_time).getHours() <= 8) || (new Date(start_time).getHours() >= 17)){
+          if ((new Date(start_time).getHours() === 8)) {
+            if ((new Date(start_time).getMinutes() < 30)) {
                 this.time_msg = "Selected length/time is not within the office time"
                 validate_flag = true
             } 
-          } else if (new Date(this.start).getHours() === 17) {
-            if ((new Date(this.start).getMinutes() > 0)) {
+          } else if (new Date(start_time).getHours() === 17) {
+            if ((new Date(start_time).getMinutes() > 0)) {
                 this.time_msg = "Selected length/time is not within the office time"
                 validate_flag = true
             } 
@@ -895,9 +897,9 @@ export default class ApptBookingModal extends Vue {
       this.$store.commit('toggleServeCitizenSpinner', true)
       this.clearMessage()
       const service_id = this.selectedService
-      const startDateObj = this.start
-      if (!moment.isMoment(this.start)) {
-        this.start = moment(this.start)
+      const startDateObj = start_time
+      if (!moment.isMoment(start_time)) {
+        this.start = moment(start_time)
       }
       
       const start = moment(moment.tz(this.start.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).format()).clone()
@@ -1023,8 +1025,8 @@ export default class ApptBookingModal extends Vue {
 
   setStartDateTime(is_time) {
     this.time_msg = ''
-    const start_time = this.convertTimePickerValue(this.start)
-    const startDateObj = moment(this.start)
+    const start_time = this.start.hh ? this.convertTimePickerValue(this.start) : this.start
+    const startDateObj = moment(start_time)
     const currDateObj = moment(this.curr_date)
     if (is_time) {
       this.appt_time = startDateObj.format('HH:mm:ss')
