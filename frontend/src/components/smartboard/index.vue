@@ -14,27 +14,42 @@ limitations under the License.*/ -->
 
 <template>
   <div class="main-container">
-    <div class="top-flex-div">
-      <div class="flex-title">{{ date }} {{ time }}</div>
-    </div>
-    <CallByTicket
-      v-if="officetype === 'callbyticket'"
-      :smartboardData="{ office_number }"
-      :networkStatus="{ networkDown }"
-    ></CallByTicket>
-    <CallByName
-      v-else-if="officetype === 'callbyname' || officetype === 'reception'"
-      :smartboardData="{ office_number }"
-      :networkStatus="{ networkDown }"
-    ></CallByName>
-    <NonReception
-      v-else-if="officetype === 'nocallonsmartboard'"
-      :smartboardData="{ office_number }"
-    ></NonReception>
+    <v-row>
+      <v-col :cols="((isRightMenuEnabled) && (officetype === 'callbyname' || officetype === 'reception')) ? 10 : 12">
+        <div class="top-flex-div">
+          <div class="flex-title">{{ date }} {{ time }}</div>
+        </div>
+        <CallByTicket
+          v-if="officetype === 'callbyticket'"
+          :smartboardData="{ office_number }"
+          :networkStatus="{ networkDown }"
+        ></CallByTicket>
+        <CallByName
+          v-else-if="officetype === 'callbyname' || officetype === 'reception'"
+          :smartboardData="{ office_number }"
+          :networkStatus="{ networkDown }"
+          :office="{office}"
+          :isMessageEnabled="{isMessageEnabled}"
+        ></CallByName>
+        <NonReception
+          v-else-if="officetype === 'nocallonsmartboard'"
+          :smartboardData="{ office_number }"
+          :office="{office}"
+          :isMessageEnabled="{isMessageEnabled}"
+        ></NonReception>
 
-    <div v-else>Please stand by...</div>
-    <BoardSocket :smartboardData="{ office_number }"></BoardSocket>
-
+        <div v-else>Please stand by...</div>
+        <BoardSocket :smartboardData="{ office_number }"></BoardSocket>
+      </v-col>
+      <v-col :cols="isRightMenuEnabled ? 2 : ''"  v-if="((officetype === 'callbyname' || officetype === 'reception') && isRightMenuEnabled)">
+        <RightMenu
+          v-if="(officetype === 'callbyname' || officetype === 'reception')"
+          :smartboardData="{ office_number }"
+          :networkStatus="{ networkDown }"
+          :isRightMenuEnabled="{isRightMenuEnabled}"
+        ></RightMenu>
+      </v-col>
+    </v-row>
     <div v-if="networkDown == true" id="network-status" class="loading small">
       <div></div>
       <div></div>
@@ -42,6 +57,13 @@ limitations under the License.*/ -->
       <div></div>
       <div></div>
     </div>
+    <!-- <v-row class="marquee-msg-container-full" v-if="(isMessageEnabled)">
+      <MarqueeText
+        :smartboardData="{ office_number }"
+        :networkStatus="{ networkDown }"
+        :office="{office}"
+      />
+    </v-row> -->
   </div>
 </template>
 
@@ -53,6 +75,7 @@ import BoardSocket from './board-socket.vue'
 import CallByName from './call-by-name.vue'
 import CallByTicket from './call-by-ticket.vue'
 import NonReception from './non-reception.vue'
+import RightMenu from './right-menu.vue'
 import axios from 'axios'
 import config from '../../../config'
 
@@ -61,7 +84,8 @@ import config from '../../../config'
     CallByName,
     CallByTicket,
     BoardSocket,
-    NonReception
+    NonReception,
+    RightMenu
   }
 })
 export default class Smartboard extends Vue {
@@ -91,6 +115,11 @@ export default class Smartboard extends Vue {
   }
 
   private time: any = ''
+  
+  private isMessageEnabled: boolean = false
+  private isRightMenuEnabled: boolean = false
+  private office: any = {}
+
 
   get url () {
     return `/smartboard/?office_number=${this.office_number}`
@@ -128,6 +157,7 @@ export default class Smartboard extends Vue {
   }
 
   mounted () {
+    this.$root.$on('onDigitalSignageMsgUpdate', () => { this.onDigitalSignageMsgUpdate() })
     setInterval(() => { this.now() }, 1000)
 
     var fetchNetworkStatus = () => {
@@ -141,6 +171,34 @@ export default class Smartboard extends Vue {
         })
     }
     fetchNetworkStatus()
+
+    this.getOffice()
+    window.setInterval(() => {
+      this.getOffice()
+    }, 350000)
+  }
+
+  private onDigitalSignageMsgUpdate () {
+    this.getOffice()
+  }
+
+  private getOffice () {
+    this.isMessageEnabled = false
+    this.isRightMenuEnabled = false
+    const url = '/smardboard/side-menu/'+this.office_number
+    Axios.get(url).then(resp => {
+      if (resp.data) {
+        this.office = resp.data.office
+        if (this.office) {
+          if(this.office.digital_signage_message == 1) {
+            this.isMessageEnabled = true
+          }
+          if(this.office.currently_waiting == 1) {
+            this.isRightMenuEnabled = true
+          }
+        }
+        }
+    })
   }
 }
 </script>
@@ -154,6 +212,7 @@ export default class Smartboard extends Vue {
   width: 100%;
   margin: 0px;
   text-align: center;
+  /* overflow-y: auto; */
 }
 .top-flex-div {
   height: 11%;
@@ -223,9 +282,9 @@ export default class Smartboard extends Vue {
   vertical-align: top;
 }
 .flex-title {
-  font-size: 4rem;
-  color: midnightblue;
-  margin-top: -4px;
+    font-size: 4rem;
+    color: midnightblue;
+    margin-top: -4px;
 }
 .video-js {
   background-color: white;
@@ -268,6 +327,82 @@ export default class Smartboard extends Vue {
 .loading.small div {
   width: 32px;
   height: 32px;
+}
+
+/* .flex-title-waiting {
+  color: midnightblue;
+  margin-top: 16px;
+  margin-left: -41px;
+  font-size: 2.3rem;
+} */
+
+.margin-left-container{
+  margin-top: 16px;
+  margin-left: -176px;
+}
+
+.text-font-sz {
+  font-size: 1rem;
+}
+
+.flex-title-upcomming{
+  color: midnightblue;
+  margin-top: 16px;
+  margin-left: -176px;
+  font-size: 1.48rem;
+}
+.flex-title-waiting{
+  color: midnightblue;
+  margin-top: 16px;
+  margin-left: -176px;
+  font-size:2.3rem;
+}
+
+.marquee-container {
+    background-color: rgb(25, 25, 112);
+    margin-top: -119px;
+    height: 70px;
+    margin-left: 178px;
+    margin-right: -183px;
+    /* margin-left: -73px;
+    margin-right: 66px; */
+}
+
+.marquee-ds {
+  /* position: absolute; */
+  /* left: 50px;
+  width: calc(100% - 100px); */
+  /* left: 183px;
+  width: calc(100% - 219px); */
+  height: 70px;
+  background-color: rgb(25, 25, 112);
+  /* padding: 5px; */
+  text-align: center;
+}
+
+.marquee-text {
+  color: white;
+  font-size: 2.8rem;
+}
+
+.container-height-menu-half {
+  height: 400px !important;
+}
+.container-height-menu-full {
+  height: 900px !important;
+}
+.container-height-menu-half-bottom{
+  height: 50% !important;
+}
+
+.margin-push-left {
+  margin-left: -60% !important;
+}
+
+.marquee-msg-container-full {
+    margin-top: 121px;
+    padding-left: 33px;
+    padding-right: 394px;
 }
 
 .loading div:nth-child(1) {
