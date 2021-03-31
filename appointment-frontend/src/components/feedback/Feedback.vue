@@ -613,8 +613,8 @@ $mandatory_star:#ff0000;
 .feedback_view_mobile{
   position: fixed;
   z-index: 5;
-  top: 40%;
   left: 5%;
+  bottom: 8.5%;
 }
 .feedback_view_mobile.feedback_view_expanded_xs{
   width: 100%;
