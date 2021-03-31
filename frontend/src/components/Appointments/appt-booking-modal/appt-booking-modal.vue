@@ -151,8 +151,8 @@
                 @input="setStartDateTime(true)"
                 >
             </b-timepicker>
-            <!-- <br/> -->
-            <!-- <span class="danger" v-if="reccuring_start_time_msg">{{reccuring_start_time_msg}}</span> -->
+            <br/>
+            <span class="danger" v-if="time_msg">{{time_msg}}</span>
           </b-form-group>
         </b-col>
         <b-col cols="8">
@@ -430,7 +430,7 @@ export default class ApptBookingModal extends Vue {
   public comments: any = null
   public contact_information: any = null
   public fieldsEdited: boolean = false
-  public length: any = 0
+  public length: any = 15
   public selectingService: boolean = false
   public showMessage: boolean = false
   public start: any = null
@@ -448,6 +448,8 @@ export default class ApptBookingModal extends Vue {
   public curr_date: any = null
   public selectLength: any = ""
   public is_first_edit: boolean = false
+  public time_msg: any = ''
+  public shallDisable: boolean = false
 
 
   get appointments () {
@@ -488,6 +490,8 @@ export default class ApptBookingModal extends Vue {
 
   serviceTime () {
     this.length = this.selectLength
+    this.time_msg = ''
+    this.shallDisable = false
   }
   timeOptions () {
     if (this.clickedTime) {
@@ -611,7 +615,7 @@ export default class ApptBookingModal extends Vue {
   set modalVisible (e) { this.toggleApptBookingModal(e) }
 
   get submitDisabled () {
-    if (this.citizen_name && this.selectedService) {
+    if (this.citizen_name && this.selectedService && (!this.shallDisable)) {
       return false
     }
     return true
@@ -840,8 +844,52 @@ export default class ApptBookingModal extends Vue {
       this.selectLength = this.selectLength
   }
 
-  submit () { 
+  submit () {
     if (!this.submitClicked && this.end) {
+      // CSR TIME VALIDATION
+      let validate_flag = false
+      if (this.start) {
+        if ((new Date(this.start).getHours() <= 8) || (new Date(this.start).getHours() >= 17)){
+          if ((new Date(this.start).getHours() === 8)) {
+            if ((new Date(this.start).getMinutes() < 30)) {
+                this.time_msg = "Selected length/time is not within the office time"
+                validate_flag = true
+            } 
+          } else if (new Date(this.start).getHours() === 17) {
+            if ((new Date(this.start).getMinutes() > 0)) {
+                this.time_msg = "Selected length/time is not within the office time"
+                validate_flag = true
+            } 
+          } else {
+            this.time_msg = "Selected length/time is not within the office time"
+            validate_flag = true
+          }
+        }
+      }
+      if (this.end) {
+        if ((new Date(this.end.format()).getHours() <= 8) || (new Date(this.end.format()).getHours() >= 17)){
+          if ((new Date(this.end.format()).getHours() === 8)) {
+            if ((new Date(this.end.format()).getMinutes() < 30)) {
+                this.time_msg = "Selected length/time is not within the office time"
+                validate_flag = true
+            } 
+          } else if (new Date(this.end.format()).getHours() === 17) {
+            if ((new Date(this.end.format()).getMinutes() > 0)) {
+                this.time_msg = "Selected length/time is not within the office time"
+                validate_flag = true
+            }
+          } else {
+            this.time_msg = "Selected length/time is not within the office time"
+            validate_flag = true
+          }
+        }
+      }
+      if (validate_flag) {
+        this.shallDisable = true
+        return false
+      }
+      this.time_msg = ''
+    // END
       this.toggleSubmitClicked(true)
       this.$store.commit('toggleServeCitizenSpinner', true)
       this.clearMessage()
@@ -964,6 +1012,7 @@ export default class ApptBookingModal extends Vue {
   }
 
   setStartDateTime(is_time) {
+    this.time_msg = ''
     const startDateObj = moment(this.start)
     const currDateObj = moment(this.curr_date)
     if (is_time) {
@@ -994,6 +1043,7 @@ export default class ApptBookingModal extends Vue {
     }else {
       this.allow_reschedule = false
     }
+    this.shallDisable = false
   }
 }
 </script>
@@ -1025,5 +1075,7 @@ export default class ApptBookingModal extends Vue {
   -webkit-animation: spin 1s ease-in-out infinite;
 }
 
-
+.danger {
+  color: red !important;
+}
 </style>
