@@ -1,13 +1,13 @@
 <template>
-  <fragment>
+  <b-row>
     <b-col :cols="columnW">
-      <b-table
+      <!-- <b-table
         v-show="false"
         :items="offices"
         :fields="[{ key: 'office_name' }]"
         :filter="search"
         @filtered="getFilteredOffices"
-      />
+      /> -->
       <b-form autocomplete="off">
         <b-form-group>
           <label class="my-0"
@@ -58,7 +58,7 @@
         </b-form-group>
       </b-form>
     </b-col>
-  </fragment>
+  </b-row>
 </template>
 
 <script lang="ts">
