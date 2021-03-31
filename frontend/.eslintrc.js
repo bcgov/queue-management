@@ -75,9 +75,10 @@ module.exports = {
     "keyword-spacing": "warn",
     "no-return-assign": "warn",
     "no-shadow-restricted-names": "warn",
-	"multiline-ternary": "off",
-	"array-callback-return": "off",
-	"node/handle-callback-err": "off"
+    "multiline-ternary": "off",
+    "array-callback-return": "off",
+    "node/handle-callback-err": "off",
+    "prefer-regex-literals": "off"
   },
   parserOptions: {
     parser: "@typescript-eslint/parser"

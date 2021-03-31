@@ -1058,10 +1058,12 @@ export default class BookingBlackoutModal extends Vue {
     // this is the number of api in a group- for bulk api call
     const limit = 50
     let rrule_ind = 0
+    const start_time = this.convertTimePickerValue(this.start_time)
+    const end_time = this.convertTimePickerValue(this.end_time)
     const date = moment(this.blackout_date).clone().format('YYYY-MM-DD')
-    const start = moment(this.start_time).clone().format('HH:mm:ss')
+    const start = moment(start_time).clone().format('HH:mm:ss')
     const start_date = moment(date + ' ' + start).format()
-    const end = moment(this.end_time).clone().format('HH:mm:ss')
+    const end = moment(end_time).clone().format('HH:mm:ss')
     const end_date = moment(date + ' ' + end).format()
     const start_date_office = moment.tz(date + ' ' + start, this.$store.state.user.office.timezone.timezone_name).format()
     const end_date_office = moment.tz(date + ' ' + end, this.$store.state.user.office.timezone.timezone_name).format()
@@ -1452,10 +1454,13 @@ export default class BookingBlackoutModal extends Vue {
     let validate_flag =false
     this.start_time_msg = ''
     this.end_time_msg = ''
-    if (this.start_time) {
-      if ((new Date(this.start_time).getHours() <= 8) || (new Date(this.start_time).getHours() >= 17)){
-        if ((new Date(this.start_time).getHours() === 8)) {
-          if ((new Date(this.start_time).getMinutes() < 30)) {
+    const start_time = this.convertTimePickerValue(this.start_time)
+    const end_time = this.convertTimePickerValue(this.end_time)
+
+    if (start_time) {
+      if ((new Date(start_time).getHours() <= 8) || (new Date(start_time).getHours() >= 17)){
+        if ((new Date(start_time).getHours() === 8)) {
+          if ((new Date(start_time).getMinutes() < 30)) {
               this.start_time_msg = "Time not allowed"
               this.start_time = null
               validate_flag = true
@@ -1463,8 +1468,8 @@ export default class BookingBlackoutModal extends Vue {
             this.start_time_msg = ''
             validate_flag = false
           }
-        } else if (new Date(this.start_time).getHours() === 17) {
-          if ((new Date(this.start_time).getMinutes() > 0)) {
+        } else if (new Date(start_time).getHours() === 17) {
+          if ((new Date(start_time).getMinutes() > 0)) {
               this.start_time = null
               this.start_time_msg = "Time not allowed"
               validate_flag = true
@@ -1479,10 +1484,10 @@ export default class BookingBlackoutModal extends Vue {
         }
       }
     }
-    if (this.end_time) {
-      if ((new Date(this.end_time).getHours() <= 8) || (new Date(this.end_time).getHours() >= 17)){
-        if ((new Date(this.end_time).getHours() === 8)) {
-          if ((new Date(this.end_time).getMinutes() < 30)) {
+    if (end_time) {
+      if ((new Date(end_time).getHours() <= 8) || (new Date(end_time).getHours() >= 17)){
+        if ((new Date(end_time).getHours() === 8)) {
+          if ((new Date(end_time).getMinutes() < 30)) {
               this.end_time_msg = "Time not allowed"
               this.end_time = null
               validate_flag = true
@@ -1490,8 +1495,8 @@ export default class BookingBlackoutModal extends Vue {
             this.end_time_msg = ''
             validate_flag = false
           }
-        } else if (new Date(this.end_time).getHours() === 17) {
-          if ((new Date(this.end_time).getMinutes() > 0)) {
+        } else if (new Date(end_time).getHours() === 17) {
+          if ((new Date(end_time).getMinutes() > 0)) {
               this.end_time_msg = "Time not allowed"
               this.end_time = null
               validate_flag = true
@@ -1774,8 +1779,11 @@ export default class BookingBlackoutModal extends Vue {
   }
 
   convertTimePickerValue(model:any){
+    const hh = model ? model.hh : '00'
+    const mm = model ? model.mm : '00'
+    const aa = model ? model.A : 'AM'
     const currentDate = new Date()
-    const fullformat = moment(model.hh + ':' + model.mm + ' ' + model.A ,'hh:mm A').format('HH:mm:ss')
+    const fullformat = moment(hh + ':' + mm + ' ' + aa ,'hh:mm A').format('HH:mm:ss')
     const day = currentDate.getDate().toString().length === 1 ? '0' + currentDate.getDate().toString() : currentDate.getDate().toString()
     const month = currentDate.getMonth().toString().length === 1 ? '0' + (currentDate.getMonth() + 1).toString() : (currentDate.getMonth() + 1).toString()
     const year = currentDate.getFullYear()

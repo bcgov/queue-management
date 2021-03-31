@@ -137,20 +137,19 @@
             >
             </DatePicker> --> 
             <label v-if="allow_time_edit" class="mb-0">Select Time</label><br />
-            <b-timepicker
+            <vue-timepicker
                 v-if="allow_time_edit"
                 id="app_timepicker_id"
                 v-model="start"
-                :value="start"
                 class="w-100"
                 icon="clock"
                 editable
-                hour-format="12"
+                format="hh:mm A"
                 locale="en-US"
                 @change="setStartDateTime(true)"
                 @input="setStartDateTime(true)"
-                >
-            </b-timepicker>
+                manual-input>
+            </vue-timepicker>
             <br/>
             <span class="danger" v-if="time_msg">{{time_msg}}</span>
           </b-form-group>
@@ -372,7 +371,10 @@
 import { Action, namespace } from 'vuex-class'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import DatePicker from 'vue2-datepicker'
+import VueTimepicker from 'vue2-timepicker'
 import moment from 'moment'
+import 'vue2-datepicker/index.css'
+import 'vue2-timepicker/dist/VueTimepicker.css'
 
 const appointmentsModule = namespace('appointmentsModule')
 
@@ -478,7 +480,8 @@ export default class ApptBookingModal extends Vue {
 
   get end () {
     if (this.start) {
-        return moment(this.start).clone().add(this.length, 'minutes')
+        const start = this.convertTimePickerValue(this.start)
+        return moment(start).clone().add(this.length, 'minutes')
     }
     if (this.clickedTime) {
       return moment(this.clickedTime.start).clone().add(this.length, 'minutes')
@@ -591,7 +594,8 @@ export default class ApptBookingModal extends Vue {
   get displayDate () {
     if (this.start) {
       // JSTOTS TOCHECK removed new from mopment. no need to use new with moment
-      return moment(this.start).clone().format('dddd MMMM Do, YYYY')
+      const start = this.convertTimePickerValue(this.start)
+      return moment(start).clone().format('dddd MMMM Do, YYYY')
     }
     return ''
   }
@@ -599,11 +603,8 @@ export default class ApptBookingModal extends Vue {
   get displayStart () {
     if (this.start) {
       // JSTOTS TOCHECK removed new from mopment. no need to use new with moment
-      if (moment.isMoment(this.start)) {
-        return this.start.clone().format('h:mm a')
-      } else {
-        return moment(this.start).clone().format('h:mm a')
-      }
+      const start = this.convertTimePickerValue(this.start)
+      return moment(this.start).clone().format('h:mm a')
     }
     return ''
   }
@@ -1011,8 +1012,18 @@ export default class ApptBookingModal extends Vue {
     }
   }
 
+  convertTimePickerValue(model:any){
+    const currentDate = new Date()
+    const fullformat = moment(model.hh + ':' + model.mm + ' ' + model.A ,'hh:mm A').format('HH:mm:ss')
+    const day = currentDate.getDate().toString().length === 1 ? '0' + currentDate.getDate().toString() : currentDate.getDate().toString()
+    const month = currentDate.getMonth().toString().length === 1 ? '0' + (currentDate.getMonth() + 1).toString() : (currentDate.getMonth() + 1).toString()
+    const year = currentDate.getFullYear()
+    return new Date(year + '-' + month + '-' + day + ' ' + fullformat)
+  }
+
   setStartDateTime(is_time) {
     this.time_msg = ''
+    const start_time = this.convertTimePickerValue(this.start)
     const startDateObj = moment(this.start)
     const currDateObj = moment(this.curr_date)
     if (is_time) {
