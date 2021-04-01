@@ -1,5 +1,5 @@
 <template>
-  <fragment>
+  <div>
     <b-row class="my-0 p-0 margin-1st-row">
       <b-col cols="12" class="my-0 p-0 pl-2">
         Enter Exam Types and Candidates
@@ -278,7 +278,7 @@
         </b-table>
       </b-col>
     </b-row>
-  </fragment>
+  </div>
 </template>
 
 <script lang="ts">

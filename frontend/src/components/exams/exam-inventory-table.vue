@@ -1,5 +1,5 @@
 <template>
-  <fragment>
+  <div>
     <template v-if="showPesticideModal">
       <UploadPesticideModal
         :actionedExam="actionedExam"
@@ -716,7 +716,7 @@
       </div>
     </div>
     <!--  End of exam display.  -->
-  </fragment>
+  </div>
 </template>
 
 <script lang="ts">
