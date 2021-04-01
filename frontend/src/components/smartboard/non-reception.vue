@@ -13,13 +13,12 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 -->
 <template>
-  <div style="display: flex; height: 75%; width: 100%; justify-content: center">
-    <div class="board-noticket-video">
+  <div style="">
+    <div class="board-nameticket-video">
       <div class="board-video-div">
         <Video :office_number="smartboardData.office_number" />
       </div>
-      <br/>
-      <br/>
+      <br/><br/>
       <MarqueeText
         v-if="isMessageEnabled.isMessageEnabled"
         :smartboardData="{ office_number }"
