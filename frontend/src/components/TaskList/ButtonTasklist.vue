@@ -1,9 +1,9 @@
 <template>
-  <fragment>
+  <div>
     <div>
       <span class="q-inline-title">Service Flow</span>
     </div>
-  </fragment>
+  </div>
 </template>
 
 <script lang="ts">

@@ -964,11 +964,13 @@ export default class AppointmentBlackoutModal extends Vue {
   deleteApptWarning () {
     // INC0056259 - Popup Warning message before committing Blackouts
     this.appt_overlap = 0
-    const start_time = this.convertTimePickerValue(this.start_time)
+    const start_time = (this.start_time && this.start_time.hh) ? this.convertTimePickerValue(this.start_time) : this.start_time
+    const end_time = (this.end_time && this.end_time.hh) ? this.convertTimePickerValue(this.end_time) : this.end_time
+
     const date = moment(this.blackout_date).clone().format('YYYY-MM-DD')
     const start = moment(start_time).clone().format('HH:mm:ss')
     const start_date = moment(date + ' ' + start).format('YYYY-MM-DD HH:mm:ssZ')
-    const end = moment(this.end_time).clone().format('HH:mm:ss')
+    const end = moment(end_time).clone().format('HH:mm:ss')
     const end_date = moment(date + ' ' + end).format('YYYY-MM-DD HH:mm:ssZ')
     const uuidv4 = require('uuid').v4
     const recurring_uuid = uuidv4()
@@ -1028,7 +1030,8 @@ export default class AppointmentBlackoutModal extends Vue {
   }
 
   async submit () {
-    const start_time = this.convertTimePickerValue(this.start_time)
+    const start_time = (this.start_time && this.start_time.hh) ? this.convertTimePickerValue(this.start_time) : this.start_time
+    const end_time = (this.end_time && this.end_time.hh) ? this.convertTimePickerValue(this.end_time) : this.end_time
     this.setApiTotalCount(0)
     this.setApiTotalCount(this.rrule_array.length)
     showFlagBus.$emit(ShowFlagBusEvents.ShowFlagEvent, true)
@@ -1037,7 +1040,7 @@ export default class AppointmentBlackoutModal extends Vue {
     const date = moment(this.blackout_date).clone().format('YYYY-MM-DD')
     const start = moment(start_time).clone().format('HH:mm:ss')
     // const start_date = moment(date + ' ' + start).format('YYYY-MM-DD HH:mm:ssZ')
-    const end = moment(this.end_time).clone().format('HH:mm:ss')
+    const end = moment(end_time).clone().format('HH:mm:ss')
     // const end_date = moment(date + ' ' + end).format('YYYY-MM-DD HH:mm:ssZ')
     const start_date = moment.tz(date + ' ' + start, this.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
     const end_date = moment.tz(date + ' ' + end, this.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
@@ -1119,8 +1122,8 @@ export default class AppointmentBlackoutModal extends Vue {
 
   generateRule () {
     let validate_flag = false
-    const recurring_start_time = this.convertTimePickerValue(this.recurring_start_time)
-    const recurring_end_time = this.convertTimePickerValue(this.recurring_end_time)
+    const recurring_start_time = (this.recurring_start_time && this.recurring_start_time.hh) ? this.convertTimePickerValue(this.recurring_start_time) : this.recurring_start_time
+    const recurring_end_time = (this.recurring_end_time && this.recurring_end_time.hh) ? this.convertTimePickerValue(this.recurring_end_time) : this.recurring_end_time
 
     if (recurring_start_time) {
       if ((new Date(recurring_start_time).getHours() <= 8) || (new Date(recurring_start_time).getHours() >= 17)){
@@ -1385,8 +1388,8 @@ export default class AppointmentBlackoutModal extends Vue {
   }
 
   nextSingleNotes () {
-    const start_time = this.convertTimePickerValue(this.start_time)
-    const end_time = this.convertTimePickerValue(this.end_time)
+    const start_time = (this.start_time && this.start_time.hh) ? this.convertTimePickerValue(this.start_time) : this.start_time
+    const end_time = (this.end_time && this.end_time.hh) ? this.convertTimePickerValue(this.end_time) : this.end_time
 
     this.start_time_msg = ''
     this.end_time_msg = ''
