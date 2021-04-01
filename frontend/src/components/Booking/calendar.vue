@@ -706,7 +706,7 @@ export default class Calendar extends Vue {
       // start: new moment(event.start),
       start: moment(event.start),
       // start: moment.tz(event.start, this.$store.state.user.office.timezone.timezone_name),
-      resourceId: event.resource.id,
+      resourceId: (event && event.resource ) ? event.resource.id : undefined,
       id: '_cal$election'
     }
 
