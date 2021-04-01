@@ -401,7 +401,7 @@
           <font-awesome-icon
             v-if="!row.detailsShowing"
             :icon="statusIcon(row.item).icon"
-            @click.stop="row.toggleDetails()"
+            @click="row.toggleDetails"
             class="m-0 p-0 icon-cursor-hover"
             :style="statusIcon(row.item).style"
           />
@@ -409,13 +409,13 @@
             v-if="row.detailsShowing"
             variant="link"
             style="padding: 0px"
-            @click.stop="row.toggleDetails()"
+            @click="row.toggleDetails"
             >Hide</b-button
           >
         </template>
 
         <!--  Expanded row - Details and still required. -->
-        <template #cell(row-details)="row">
+        <template #row-details="row">
           <!--  If no items to be done, display some (debugging?) info. -->
           <template v-if="stillRequires(row.item).length === 0">
             <div class="details-slot-div">
