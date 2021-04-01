@@ -286,7 +286,7 @@ export default class Feedback extends Vue {
   private authModule = getModule(AuthModule, this.$store)
   private showFeedbackArea = false
   private consent: boolean = false
-  private feedbackRequest: FeedbackRequestObject = { variables: { engagement: {}, citizen_comments: {}, service_channel: {}, response: {}, citizen_name: {}, citizen_contact: {}, citizen_email: {}, entity_key: {}, service_date: {}, submit_date_time: {} } }
+  private feedbackRequest: FeedbackRequestObject = { variables: { engagement: {}, citizen_comments: {}, service_channel: {}, response: {}, citizen_name: {}, citizen_contact: {}, citizen_email: {}, entity_key: {}, service_date: {}, submit_date_time: {}, entered_by: {} } }
   private feedbackResponse: FeedbackResponseObject
   private responseRequired: boolean = false
   private showMobileFeedbackPanel: boolean = false
@@ -396,6 +396,8 @@ export default class Feedback extends Vue {
     this.feedbackRequest.variables.citizen_comments.type = 'String'
     this.feedbackRequest.variables.service_channel.type = 'String'
     this.feedbackRequest.variables.service_channel.value = this.feedbackServiceChannel
+    this.feedbackRequest.variables.entered_by.type = 'String'
+    this.feedbackRequest.variables.entered_by.value = this.feedbackServiceChannel
     this.feedbackRequest.variables.response.type = 'Boolean'
     this.feedbackRequest.variables.citizen_name.type = 'String'
     this.feedbackRequest.variables.citizen_contact.type = 'String'
