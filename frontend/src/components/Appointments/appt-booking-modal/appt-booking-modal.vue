@@ -483,7 +483,7 @@ export default class ApptBookingModal extends Vue {
 
   get end () {
     if (this.app_start_time && this.app_start_date) {
-        const start = this.app_start_time.hh ? this.convertTimePickerValue(this.app_start_time) : this.app_start_time
+        const start = this.app_start_time ? this.convertTimePickerValue(this.app_start_time) : this.app_start_time
         return moment(start).clone().add(this.length, 'minutes')
     }
     if (this.clickedTime) {
@@ -566,9 +566,6 @@ export default class ApptBookingModal extends Vue {
               this.selectLength = this.clickedAppt.end.diff(this.clickedAppt.start, 'minutes')
             }
           } 
-          // else {
-          //   this.selectLength = 15
-          // }
           if (this.selectedServiceObj.timeslot_duration) {
             if (this.clickedAppt && !this.is_first_edit) {
               if (this.clickedAppt.start && this.clickedAppt.end ) {
@@ -591,6 +588,7 @@ export default class ApptBookingModal extends Vue {
       }
     this.lengthOptions = []
     this.timeOptions()
+    this.length = this.selectLength
     return 'Please choose a service'
   }
 
@@ -613,7 +611,7 @@ export default class ApptBookingModal extends Vue {
   get displayStart () {
     if (this.app_start_time) {
       // JSTOTS TOCHECK removed new from mopment. no need to use new with moment
-      const start = this.app_start_time.hh ? this.convertTimePickerValue(this.app_start_time) : this.app_start_time
+      const start = this.app_start_time ? this.convertTimePickerValue(this.app_start_time) : this.app_start_time
       return moment(start).clone().format('h:mm a')
     }
     if (this.clickedTime) {
@@ -894,9 +892,10 @@ export default class ApptBookingModal extends Vue {
   }
 
   submit () {
+    this.length = this.selectLength
     if (!this.submitClicked && this.end) {
       // CSR TIME VALIDATION
-      const start_time = this.app_start_time.hh ? this.convertTimePickerValue(this.app_start_time) : this.app_start_time
+      const start_time = this.app_start_time ? this.convertTimePickerValue(this.app_start_time) : this.app_start_time
       this.start = start_time
       let validate_flag = false
       if (start_time) {
@@ -1062,18 +1061,19 @@ export default class ApptBookingModal extends Vue {
   }
 
   convertTimePickerValue(model:any){
-    const currentDate = this.app_start_date
-    const fullformat = moment(model.hh + ':' + model.mm + ' ' + model.A ,'hh:mm A').format('HH:mm:ss')
-    const day = currentDate.getDate().toString().length === 1 ? '0' + currentDate.getDate().toString() : currentDate.getDate().toString()
-    const month = currentDate.getMonth().toString().length === 1 ? '0' + (currentDate.getMonth() + 1).toString() : (currentDate.getMonth() + 1).toString()
-    const year = currentDate.getFullYear()
-    return new Date(year + '-' + month + '-' + day + ' ' + fullformat)
+    if (this.app_start_date && this.app_start_time) {
+      const currentDate = this.app_start_date
+      const fullformat = moment(model.hh + ':' + model.mm + ' ' + model.A ,'hh:mm A').format('HH:mm:ss')
+      const day = currentDate.getDate().toString().length === 1 ? '0' + currentDate.getDate().toString() : currentDate.getDate().toString()
+      const month = currentDate.getMonth().toString().length === 1 ? '0' + (currentDate.getMonth() + 1).toString() : (currentDate.getMonth() + 1).toString()
+      const year = currentDate.getFullYear()
+      return new Date(year + '-' + month + '-' + day + ' ' + fullformat)
+    }   
   }
-
   setStartDateTime(is_time) {
     this.start = new Date(moment(this.app_start_date).format('YYYY/MM/DD')+' '+this.app_start_time)
     this.time_msg = ''
-    const start_time = this.app_start_time.hh ? this.convertTimePickerValue(this.app_start_time) : this.app_start_time
+    const start_time = this.app_start_time ? this.convertTimePickerValue(this.app_start_time) : this.app_start_time
     const startDateObj = moment(start_time)
     const currDateObj = moment(this.curr_date)
     if (is_time) {
@@ -1091,8 +1091,8 @@ export default class ApptBookingModal extends Vue {
       if (this.clickedTime || this.clickedAppt) {
         if ( this.curr_date) {
           if (!this.appt_time && this.appt_date) {
-              this.start = new Date(this.appt_date+' '+currDateObj.format('HH:mm:ss'))
-              this.app_start_time = new Date(this.appt_date+' '+currDateObj.format('HH:mm:ss'))
+            this.start = new Date(this.appt_date+' '+currDateObj.format('HH:mm:ss'))
+            this.app_start_time = new Date(this.appt_date+' '+currDateObj.format('HH:mm:ss'))
           }
         }
       }
