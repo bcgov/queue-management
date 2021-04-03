@@ -52,12 +52,12 @@ limitations under the License.*/
       class="p-0 m-0 w-100"
       sort-by='start_time'
     >
-      <template slot="comments" slot-scope="data">
+      <template #cell(comments)="data">
         <div class="truncate"  v-b-tooltip.hover :title="data.value"> 
           {{ data.value }}
         </div>
       </template>
-      <template slot="check_in" slot-scope="data">
+      <template #cell(check_in)="data">
         <button
           @click.stop="handleClickCheckIn(data.value.appt)"
           class="ga-close btn btn-success btn-sm"

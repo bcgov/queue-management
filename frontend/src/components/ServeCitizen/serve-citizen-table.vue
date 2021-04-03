@@ -14,13 +14,13 @@
           bordered
           style="text-align: center"
         >
-          <template slot="status" slot-scope="row">
+          <template #cell(status)="row">
             <div v-if="row.item.periods.some(p=>p.time_end===null)===true">
               <div style="font-weight: 900;">Active</div>
             </div>
             <div v-if="row.item.periods.some(p=>p.time_end===null)===false">Inactive</div>
           </template>
-          <template slot="quantity" slot-scope="row">
+          <template #cell(quantity)="row">
             <div v-if="row.item.periods.some(p=>p.time_end===null)===true">
               <div style="margin: auto;">
                 <b-input
@@ -35,7 +35,7 @@
               v-if="row.item.periods.some(p=>p.time_end===null)===false"
             >{{ invited_service_reqs[row.index].quantity }}</div>
           </template>
-          <template slot="service.service_name" slot-scope="row">
+          <template #cell(service)="row">
             {{ row.item.service.service_name }}
             <div style="display: none">
               {{
@@ -44,7 +44,7 @@
               }}
             </div>
           </template>
-          <template slot="editBut" slot-scope="row">
+          <template #cell(editBut)="row">
             <div v-if="row.item.periods.some(p => p.time_end === null) === true">
               <b-button size="sm" @click="clickEdit" variant="link">edit</b-button>
             </div>

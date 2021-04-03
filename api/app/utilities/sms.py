@@ -22,7 +22,7 @@ import requests
 from flask import current_app
 
 from app.models.bookings import Appointment
-from app.models.theq import Office, PublicUser
+from app.models.theq import Office, PublicUser, Citizen
 
 
 def send_sms(appointment: Appointment, office: Office, timezone, user: PublicUser, token: str):
@@ -66,3 +66,45 @@ def get_user_telephone(user, appointment):
     else:
         phone = appointment.contact_information if is_valid_phone(appointment.contact_information) else None
     return phone
+
+
+def send_walkin_spot_confirmation_sms(citizen: Citizen, url, token: str):
+    """Send walkin spot confirmation email"""
+    telephone: str = citizen.notification_phone
+    if telephone:
+        notifications_endpoint = current_app.config.get('NOTIFICATIONS_ENDPOINT')
+        try:
+            requests.post(notifications_endpoint,
+                          headers={'Content-Type': 'application/json', 'Authorization': f'Bearer {token}'},
+                          data=json.dumps([{
+                              'user_telephone': telephone,
+                              'url': url,
+                              'ticket_number': citizen.ticket_number,
+                              "type": "CHECKIN_CONFIRMATION"
+                        }]))
+            return True
+        except Exception as exc:
+            pprint(f'Error on sms sending - {exc}')
+            return False
+    return False
+
+
+def send_walkin_reminder_sms(citizen: Citizen, office: Office, token: str):
+    """Send walkin spot confirmation email"""
+    telephone: str = citizen.notification_phone
+    if telephone:
+        notifications_endpoint = current_app.config.get('NOTIFICATIONS_ENDPOINT')
+        try:
+            msg = "We’re ready! Please come inside and speak to a Service BC Representative"
+            requests.post(notifications_endpoint,
+                          headers={'Content-Type': 'application/json', 'Authorization': f'Bearer {token}'},
+                          data=json.dumps([{
+                              'user_telephone': telephone,
+                              'message': office.check_in_reminder_msg if office.check_in_reminder_msg else msg,
+                              "type": "CUSTOM"
+                          }]))
+            return True
+        except Exception as exc:
+            pprint(f'Error on sms sending - {exc}')
+            return False
+    return False

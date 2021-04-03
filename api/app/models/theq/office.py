@@ -101,6 +101,19 @@ class Office(Base):
     exams = db.relationship("Exam")
     rooms = db.relationship('Room')
 
+    # for walk-in notifications
+    check_in_notification = db.Column(db.Integer)
+    check_in_reminder_msg = db.Column(db.Text)
+    automatic_reminder_at = db.Column(db.Integer)
+    # for Digital Signage
+    currently_waiting = db.Column(db.Integer)
+    digital_signage_message = db.Column(db.Integer)
+    digital_signage_message_1 = db.Column(db.Text)
+    digital_signage_message_2 = db.Column(db.Text)
+    digital_signage_message_3 = db.Column(db.Text)
+    show_currently_waiting_bottom = db.Column(db.Integer)
+    
+
     format_string = 'office_%s'
     offices_cache_key: str = 'active_offices'
 

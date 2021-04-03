@@ -32,6 +32,7 @@ import {
   faAngleRight,
   faBars,
   faCalendar,
+  faCalendarAlt,
   faCaretDown,
   faCaretLeft,
   faCaretRight,
@@ -49,6 +50,7 @@ import {
   faHandsHelping,
   faLifeRing,
   faMinus,
+  faPhone,
   faPlus,
   faShareSquare,
   faShippingFast,
@@ -58,6 +60,7 @@ import {
   faUserAlt,
   faUserCheck,
   faUserCircle,
+  faWalking,
   faWindowMaximize,
   faWindowRestore
 } from '@fortawesome/free-solid-svg-icons'
@@ -69,6 +72,10 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import './assets/css/q.css'
 import './assets/css/bc-gov-style.css'
 import MainApp from './MainApp.vue'
+
+import ConfigHelper from '@/utils/config-helper'
+
+
 require('es6-shim')
 // require('Keycloak')
 require('../static/keycloak.js')
@@ -110,6 +117,9 @@ library.add(
   faWindowMaximize,
   faWindowRestore,
   faEdit,
+  faPhone,
+  faCalendarAlt,
+  faWalking
 )
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(BootstrapVue)
@@ -126,6 +136,7 @@ Vue.config.productionTip = false
 // });
 /* eslint-disable no-new */
 
+ConfigHelper.fetchConfig()
 
 new Vue({
   router,

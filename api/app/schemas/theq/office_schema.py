@@ -52,5 +52,15 @@ class OfficeSchema(BaseSchema):
     online_status = fields.Str()
     external_map_link = fields.Str()
 
+    # for walk-in notifications
+    check_in_notification = fields.Int()
+    check_in_reminder_msg = fields.Str()
+    automatic_reminder_at = fields.Int()
 
-
+    # for Digital Signage
+    currently_waiting = fields.Int()
+    digital_signage_message = fields.Int()
+    digital_signage_message_1 = fields.Str()
+    digital_signage_message_2 = fields.Str()
+    digital_signage_message_3 = fields.Str()
+    show_currently_waiting_bottom = fields.Int()

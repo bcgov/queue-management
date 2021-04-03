@@ -40,3 +40,19 @@ class CitizenSchema(BaseSchema):
     priority = fields.Int()
     user_id = fields.Int()
 
+    # for walk-in
+    notification_sent_time = fields.DateTime()
+    notification_phone = fields.Str()
+    notification_email = fields.Str()
+    # reminder_flag
+    # 0 - reminder not sent - grey icon
+    # 1 - first reminder sent - blue icon
+    # 2 - second reminder sent - red icon
+    reminder_flag = fields.Int()
+    walkin_unique_id = fields.Str()
+    # 0/null-automatic reminder not send
+    # 1-automatic reminder sent once
+    automatic_reminder_flag = fields.Int()
+
+    # Digital signange
+    created_at = fields.DateTime()

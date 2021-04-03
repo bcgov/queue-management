@@ -67,7 +67,7 @@ class CitizenList(Resource):
         try:
             citizen = self.citizen_schema.load(json_data)
             citizen.office_id = csr.office_id
-            citizen.start_time = datetime.now()
+            citizen.start_time = datetime.utcnow()
 
         except ValidationError as err:
             print(err)

@@ -55,14 +55,14 @@ class TokenServices {
   }
 
   scheduleRefreshTimer (refreshEarlyTime = 0) {
-    let refreshEarlyTimeinMilliseconds = Math.max(this.REFRESH_ATTEMPT_INTERVAL, refreshEarlyTime) * 1000
+    const refreshEarlyTimeinMilliseconds = Math.max(this.REFRESH_ATTEMPT_INTERVAL, refreshEarlyTime) * 1000
     this.scheduleRefreshToken(refreshEarlyTimeinMilliseconds)
   }
 
   refreshToken () {
     // eslint-disable-next-line no-console
     console.log('[TokenServices] One time Token Refreshing ')
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       if (this.kc) {
         this.kc.updateToken(-1)
           .then(refreshed => {
@@ -104,7 +104,7 @@ class TokenServices {
     if (expiresIn < 0) {
       throw new Error('Refresh Token Expired. No more token refreshes')
     }
-    let refreshInMilliSeconds = (expiresIn * 1000) - refreshEarlyTimeinMilliseconds // in milliseconds
+    const refreshInMilliSeconds = (expiresIn * 1000) - refreshEarlyTimeinMilliseconds // in milliseconds
     // eslint-disable-next-line no-console
     console.info('[TokenServices] Token Refresh Scheduled in %s Seconds', (refreshInMilliSeconds / 1000))
     this.timerId = setTimeout(() => {

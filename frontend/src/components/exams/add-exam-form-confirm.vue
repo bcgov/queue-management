@@ -1,11 +1,11 @@
 <template>
-  <fragment>
+  <div>
     <AddPesticideFinalStep
       :submitMsg="submitMsg"
       v-if="modalSetup === 'pesticide'"
     />
     <AddExamFinalStep :submitMsg="submitMsg" v-else />
-  </fragment>
+  </div>
 </template>
 
 <script lang="ts">

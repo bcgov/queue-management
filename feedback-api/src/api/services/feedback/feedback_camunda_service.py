@@ -41,7 +41,7 @@ class FeedbackCamundaService(FeedbackBaseService):
             headers = {'Content-Type': 'application/json', 'Authorization': f'Bearer {access_token}'}
             feedback_response = requests.post(camunda_service_endpoint,
                                 headers=headers,
-                                data=json.dumps(payload), timeout=5.0)
+                                data=json.dumps(payload), timeout=10.0)
             response_code = feedback_response.status_code
             if (response_code != 200 and response_code != 201 and response_code != 202) :
                 raise Exception('Camunda API Failure')

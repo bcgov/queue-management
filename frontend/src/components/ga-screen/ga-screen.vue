@@ -47,8 +47,8 @@ limitations under the License.*/
       outlined
       class="p-0 m-0 w-100"
     >
-      <template slot="end_service" slot-scope="data" v-if="data.value">
-        <button
+      <template #cell(end_service)="data">
+        <button v-if="data.value"
           @click.stop="clickEnd(data.value.id)"
           class="ga-close btn btn-secondary btn-sm"
         >

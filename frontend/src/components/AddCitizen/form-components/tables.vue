@@ -58,7 +58,7 @@
               class="add_citizen_categories_table"
             >
               <!--  This is for the quick send to queue column  -->
-              <template slot="queueBut" slot-scope="data" v-if="showQuickQIcon">
+              <template #cell(queueBut)="data" v-if="showQuickQIcon">
                 <div @click.once="sendToQueue(data.item)">
                   &nbsp;&nbsp;&nbsp;
                   <font-awesome-icon
@@ -69,7 +69,7 @@
               </template>
 
               <!--  This is for the quick serve column  -->
-              <template slot="serveBut" slot-scope="data">
+              <template #cell(serveBut)="data">
                 <div @click.once="serveCustomer(data.item)">
                   &nbsp;&nbsp;&nbsp;
                   <font-awesome-icon
@@ -80,7 +80,7 @@
               </template>
 
               <!--  Service name column. Active variant is for row selected, bind to description.  -->
-              <template slot="service_name" slot-scope="data">
+              <template #cell(service_name)="data">
                 <div>
                   <span v-bind:title="data.item.service_desc">{{
                     data.item.service_name
@@ -96,7 +96,7 @@
               </template>
 
               <!--  This is for the category, the parent name.  -->
-              <template slot="parent.service_name" slot-scope="data">
+              <template #cell(parent)="data">
                 <div>{{ data.item.parent.service_name }}</div>
               </template>
             </b-table>
@@ -238,6 +238,10 @@ export default class Tables extends Vue {
       this.$store.commit('appointmentsModule/setSelectedService', this.addModalForm.service)
       this.closeAddServiceModal()
     } else if (this.$route.path == '/booking') {
+      this.toggleExamsTrackingIP(true)
+      this.clickBeginService({ simple: true })
+    } else if (this.$route.path == '/service-flow') {
+      // remove continue button in service flow
       this.toggleExamsTrackingIP(true)
       this.clickBeginService({ simple: true })
     } else if ((!this.simplifiedTicketStarted) && (this.addModalSetup == 'reception' || this.addModalSetup == 'non_reception')) {
