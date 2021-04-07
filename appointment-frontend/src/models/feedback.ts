@@ -22,7 +22,8 @@ export interface FeedbackRequestItem {
   citizen_email: FeedbackRequestKV,
   entity_key: FeedbackRequestKV,
   service_date:FeedbackRequestKV,
-  submit_date_time:FeedbackRequestKV
+  submit_date_time:FeedbackRequestKV,
+  entered_by: FeedbackRequestKV
 }
 
 export interface FeedbackResponseObject{

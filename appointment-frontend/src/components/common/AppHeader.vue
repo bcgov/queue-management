@@ -87,9 +87,11 @@ export default class AppHeader extends Vue {
   login () {
     this.$router.push('/login')
   }
+
   register () {
     this.$router.push('/login')
   }
+
   private goTo (page) {
     switch (page) {
       case 'register':
