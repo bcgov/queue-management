@@ -21,7 +21,7 @@
       />
       <InputQuestion
         v-if="q.kind === 'input'"
-        v-show="addExamModal.setup !== 'other' || q.key !== 'event_id'"
+        v-show="addExamModal.setup !== 'other' || q.key !== 'event_id' || q.key === 'event_id'"
         :error="error"
         :q="q"
         :validationObj="validationObj"
