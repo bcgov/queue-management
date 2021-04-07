@@ -449,7 +449,7 @@
                         bordered
                         striped
                       >
-                        <template slot="selected" slot-scope="{ rowSelected }">
+                        <template #cell(selected)="{ rowSelected }">
                           <span v-if="rowSelected">✔</span>
                         </template>
                       </b-table>

@@ -1,5 +1,5 @@
 <template>
-  <fragment>
+  <b-container>
     <div class="full-div">
       <div>
         <form inline>
@@ -12,6 +12,18 @@
             @click="clickBlackout"
             >Create Blackout</b-button
           >
+          <b-button
+      variant="primary"
+      class="ml-0 mx-2 fl-right"
+      @click="clickNewApp"
+      >
+      <font-awesome-icon
+        icon="plus"
+        class="m-0 p-0"
+        style="font-size: 1rem"
+    />
+      New Appointment
+    </b-button>
         </form>
       </div>
       <div class="align-center">
@@ -36,19 +48,7 @@
           /></b-button>
       </div>
     </div>
-    <b-button
-      variant="primary"
-      class="ml-0 mx-2"
-      @click="clickNewApp"
-      >
-      <font-awesome-icon
-        icon="plus"
-        class="m-0 p-0"
-        style="font-size: 1rem"
-    />
-      New Appointment
-    </b-button>
-  </fragment>
+  </b-container>
 </template>
 
 <script lang="ts">
@@ -142,5 +142,8 @@ export default class ButtonsAppointments extends Vue {
 }
 .align-center-arrow { 
   padding-left: 48%;
+}
+.fl-right{
+  float: right;
 }
 </style>

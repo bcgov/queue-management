@@ -304,21 +304,20 @@
                 icon="check"
                 style="font-size: 1rem; color: green"
               />
-                <b-timepicker
+                <vue-timepicker
                   v-model="other_recurring_start_time"
                   id="other-recurring-start-time"
-                  :value="other_recurring_start_time"
                   class="w-100"
                   icon="clock"
                   editable
-                  hour-format="12"
+                  format="hh:mm A"
                   locale="en-US"
                   placeholder="Select Start Time"
                   @input="checkRecurringInput"
                   @change="checkRecurringInput"
                   @clear="checkRecurringInput"
-                  >
-              </b-timepicker>
+                  manual-input>
+              </vue-timepicker>
                 <br/>
                 <span class="danger" v-if="start_time_msg">{{start_time_msg}}</span>
               <!-- <DatePicker
@@ -348,21 +347,21 @@
                 icon="check"
                 style="font-size: 1rem; color: green"
               />
-              <b-timepicker
+              <vue-timepicker
                 v-model="other_recurring_end_time"
                 id="other-recurring-end-time"
                 :value="other_recurring_end_time"
                 class="w-100"
                 icon="clock"
                 editable
-                hour-format="12"
+                format="hh:mm A"
                 locale="en-US"
                 placeholder="Select End Time"
                 @input="checkRecurringInput"
                 @change="checkRecurringInput"
                 @clear="checkRecurringInput"
-                >
-              </b-timepicker>
+                manual-input>
+              </vue-timepicker>
               <br/>
               <span class="danger" v-if="end_time_msg">{{end_time_msg}}</span>
               <!-- <DatePicker
@@ -581,6 +580,7 @@ import { Action, Getter, Mutation, State, namespace } from 'vuex-class'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
 import DatePicker from 'vue2-datepicker'
+import VueTimepicker from 'vue2-timepicker'
 import { RRule } from 'rrule'
 
 import moment from 'moment'
@@ -588,13 +588,16 @@ import EditExamModal from '../exams/edit-exam-form-modal.vue'
 
 import { apiProgressBus, APIProgressBusEvents } from '../../events/progressBus'
 import { showBookingFlagBus, ShowBookingFlagBusEvents } from '../../events/showBookingFlagBus'
+import 'vue2-datepicker/index.css'
+import 'vue2-timepicker/dist/VueTimepicker.css'
 
 
 const appointmentsModule = namespace('appointmentsModule')
 
 @Component({
   components: {
-    DatePicker
+    DatePicker,
+    VueTimepicker
   }
 })
 export default class OtherBookingModal extends Vue {
@@ -802,7 +805,7 @@ export default class OtherBookingModal extends Vue {
     this.setApiTotalCount(0)
     this.setApiTotalCount(this.other_rrule_array.length)
     this.submitting_flag = true
-    const uuidv4 = require('uuid/v4')
+    const uuidv4 = require('uuid').v4
     const recurring_uuid = uuidv4()
     const self = this
     let sent_flag: number = 0
@@ -918,11 +921,13 @@ export default class OtherBookingModal extends Vue {
     let validate_flag =false
     this.start_time_msg = ''
     this.end_time_msg = ''
-    
-    if (this.other_recurring_start_time) {
-      if ((new Date(this.other_recurring_start_time).getHours() <= 8) || (new Date(this.other_recurring_start_time).getHours() >= 17)){
-        if ((new Date(this.other_recurring_start_time).getHours() === 8)) {
-          if ((new Date(this.other_recurring_start_time).getMinutes() < 30)) {
+    const recurring_start_time_obj = this.convertTimePickerValue(this.other_recurring_start_time)
+    const recurring_end_time_obj = this.convertTimePickerValue(this.other_recurring_end_time)
+
+    if (recurring_start_time_obj) {
+      if ((new Date(recurring_start_time_obj).getHours() <= 8) || (new Date(recurring_start_time_obj).getHours() >= 17)){
+        if ((new Date(recurring_start_time_obj).getHours() === 8)) {
+          if ((new Date(recurring_start_time_obj).getMinutes() < 30)) {
               this.start_time_msg = "Time not allowed"
               this.other_recurring_start_time = null
               validate_flag = true
@@ -930,8 +935,8 @@ export default class OtherBookingModal extends Vue {
             this.start_time_msg = ''
             validate_flag = false
           }
-        } else if (new Date(this.other_recurring_start_time).getHours() === 17) {
-          if ((new Date(this.other_recurring_start_time).getMinutes() > 0)) {
+        } else if (new Date(recurring_start_time_obj).getHours() === 17) {
+          if ((new Date(recurring_start_time_obj).getMinutes() > 0)) {
               this.other_recurring_start_time = null
               this.start_time_msg = "Time not allowed"
               validate_flag = true
@@ -946,10 +951,10 @@ export default class OtherBookingModal extends Vue {
         }
       }
     }
-    if (this.other_recurring_end_time) {
-      if ((new Date(this.other_recurring_end_time).getHours() <= 8) || (new Date(this.other_recurring_end_time).getHours() >= 17)){
-        if ((new Date(this.other_recurring_end_time).getHours() === 8)) {
-          if ((new Date(this.other_recurring_end_time).getMinutes() < 30)) {
+    if (recurring_end_time_obj) {
+      if ((new Date(recurring_end_time_obj).getHours() <= 8) || (new Date(recurring_end_time_obj).getHours() >= 17)){
+        if ((new Date(recurring_end_time_obj).getHours() === 8)) {
+          if ((new Date(recurring_end_time_obj).getMinutes() < 30)) {
               this.end_time_msg = "Time not allowed"
               this.other_recurring_end_time = null
               validate_flag = true
@@ -957,8 +962,8 @@ export default class OtherBookingModal extends Vue {
             this.end_time_msg = ''
             validate_flag = false
           }
-        } else if (new Date(this.other_recurring_end_time).getHours() === 17) {
-          if ((new Date(this.other_recurring_end_time).getMinutes() > 0)) {
+        } else if (new Date(recurring_end_time_obj).getHours() === 17) {
+          if ((new Date(recurring_end_time_obj).getMinutes() > 0)) {
               this.end_time_msg = "Time not allowed"
               this.other_recurring_end_time = null
               validate_flag = true
@@ -1003,7 +1008,7 @@ export default class OtherBookingModal extends Vue {
     // const start_month = parseInt(moment(this.other_recurring_start_date).utc().clone().format('MM'))
     // const start_day = parseInt(moment(this.other_recurring_start_date).utc().clone().subtract(4, 'hours').format('DD'))
     // let start_hour = parseInt(moment(this.other_recurring_start_time).utc().clone().format('HH'))
-    const other_recurring_start_time = moment.tz(moment(this.other_recurring_start_time).format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
+    const other_recurring_start_time = moment.tz(moment(recurring_start_time_obj).format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
     const local_start_hour = parseInt(moment(other_recurring_start_time).clone().format('HH'))
     const local_start_minute = parseInt(moment(other_recurring_start_time).clone().format('mm'))
    
@@ -1021,7 +1026,7 @@ export default class OtherBookingModal extends Vue {
     // const end_year = parseInt(moment(this.other_recurring_end_date).utc().clone().format('YYYY'))
     // const end_month = parseInt(moment(this.other_recurring_end_date).utc().clone().format('MM'))
     // const end_day = parseInt(moment(this.other_recurring_end_date).utc().clone().format('DD'))
-    const other_recurring_end_time_obj = moment(this.other_recurring_end_time).clone()
+    const other_recurring_end_time_obj = moment(recurring_end_time_obj).clone()
     const other_recurring_end_time = moment.tz(other_recurring_end_time_obj.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
     const local_end_hour = parseInt(moment(other_recurring_end_time).clone().format('HH'))
     const local_end_minute = parseInt(moment(other_recurring_end_time).clone().format('mm'))
@@ -1147,6 +1152,15 @@ export default class OtherBookingModal extends Vue {
     } else {
       this.single_input_boolean = false
     }
+  }
+
+  convertTimePickerValue(model:any){
+    const currentDate = new Date()
+    const fullformat = moment(model.hh + ':' + model.mm + ' ' + model.A ,'hh:mm A').format('HH:mm:ss')
+    const day = currentDate.getDate().toString().length === 1 ? '0' + currentDate.getDate().toString() : currentDate.getDate().toString()
+    const month = currentDate.getMonth().toString().length === 1 ? '0' + (currentDate.getMonth() + 1).toString() : (currentDate.getMonth() + 1).toString()
+    const year = currentDate.getFullYear()
+    return new Date(year + '-' + month + '-' + day + ' ' + fullformat)
   }
 }
 </script>

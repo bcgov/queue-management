@@ -9,10 +9,21 @@ module.exports = {
     '@vue/typescript'
   ],
   rules: {
-    'no-console': 'error',
+	strict: 'off',
+    'no-console': 'warn',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'sort-imports': 'error',
-    'space-before-function-paren': 1
+    'space-before-function-paren': 1,
+	'prefer-const': 'warn',
+	'dot-notation': 'off',
+	'no-unused-vars': 'off',
+	'quote-props': 'off',
+	'prefer-rest-params': 'off',
+	'dot-notation': 'off',
+	'no-prototype-builtins': 'off',
+	'import/export': 'off',
+	'lines-between-class-members': 'warn',
+	'prefer-const': 'off'
   },
   parserOptions: {
     parser: '@typescript-eslint/parser'

@@ -1,5 +1,5 @@
 <template>
-  <fragment>
+  <div>
     <b-row class="my-0 p-0 margin-1st-row">
       <b-col cols="12" class="my-0 p-0 pl-2">
         Enter Exam Types and Candidates
@@ -171,13 +171,13 @@
             </tr>
           </template>
 
-          <template slot="qty" slot-scope="row" v-if="row.item.qty">
-            <span style="font-size: 16px; margin-left: 5px">
+          <template #cell(qty)="row">
+            <span v-if="row.item.qty" style="font-size: 16px; margin-left: 5px">
               {{ row.item.qty }}
             </span>
           </template>
 
-          <template slot="name" slot-scope="row">
+          <template #cell(name)="row">
             <div
               v-if="row.item.qty"
               style="
@@ -227,7 +227,7 @@
             </div>
           </template>
 
-          <template slot="billTo" slot-scope="row">
+          <template #cell(billTo)="row">
             <template v-if="row.item.billTo === 'payee'">
               <div
                 style="color: blue; cursor: pointer"
@@ -241,17 +241,15 @@
             </template>
           </template>
 
-          <template slot="row-details" slot-scope="row">
+          <template #cell(row-details)="row">
             Payee Name: {{ row.item.payeeName }} | Payee Email:
             {{ row.item.payeeEmail }}
           </template>
 
           <template
-            slot="sent"
-            slot-scope="row"
-            v-if="row.item.fees === 'paid'"
+            #cell(slot)="row"
           >
-            <div class="text-center">
+            <div v-if="row.item.fees === 'paid'" class="text-center">
               <b-form-checkbox
                 sm
                 class="m-0 p-0"
@@ -262,7 +260,7 @@
             </div>
           </template>
 
-          <template slot="delete" slot-scope="row">
+          <template #cell(delete)="row">
             <div
               v-if="row.item.id"
               style="width: 100%; display: flex; justify-content: center"
@@ -280,7 +278,7 @@
         </b-table>
       </b-col>
     </b-row>
-  </fragment>
+  </div>
 </template>
 
 <script lang="ts">

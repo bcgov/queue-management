@@ -13,58 +13,59 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 -->
 <template>
-  <div>
-    <div class="board-nameticket-video">
-      <div class="board-video-div">
-        <Video :office_number="smartboardData.office_number" />
-      </div>
-      <div v-if="((!networkStatus.networkDown) && (office.office.show_currently_waiting_bottom === 1))" class="bottom-flex-div">
-        <div class="flex-title">Currently waiting: {{ waiting }}</div>
-      </div>
-      <span v-else>
-        <br/><br/>
+  <div class="marquee-container1" v-if="isMessageEnabled">
+    <marquee width="100%" direction="left" height="100px" class="marquee-text marquee-ds">
+      <span v-if="msg_1">{{msg_1}}
+        &nbsp;	&nbsp;	&nbsp; &nbsp;
+        |
+        &nbsp;	&nbsp;	&nbsp; &nbsp;
+        </span>
+      <span v-if="msg_2">{{msg_2}}
+      &nbsp;	&nbsp;	&nbsp;	&nbsp;
+      |
+      &nbsp;	&nbsp;	&nbsp; &nbsp;
       </span>
-      <MarqueeText
-      v-if="isMessageEnabled.isMessageEnabled"
-        :smartboardData="{ office_number }"
-        :networkStatus="{ networkDown }"
-        :office="{office}"
-      />
-    </div>
+      <span v-if="msg_3">{{msg_3}}
+      &nbsp;	&nbsp; 	&nbsp;	&nbsp;
+      </span>
+    </marquee>
   </div>
 </template>
 
 <script lang="ts">
+// /* eslint-disable */
 import { Component, Prop, Vue } from 'vue-property-decorator'
+
+// import axios from 'axios'
 import Axios from '@/utils/axios'
 import Video from './video.vue'
-import config from '../../../config'
-import MarqueeText from './marquee-text.vue'
 
 @Component({
   components: {
-    Video,
-    MarqueeText
+    Video
   }
 })
-export default class CallByName extends Vue {
+export default class MarqueeText extends Vue {
   @Prop({ default: '' })
   private smartboardData!: any
+
+  @Prop({ default: '' }) office_number!: string
 
   @Prop({ default: '' })
   private networkStatus!: string
 
-  @Prop({ default: [] })
+  @Prop({ default: {} })
   private office!: any
-
-  @Prop({ default: false })
-  private isMessageEnabled!: boolean
 
   private citizens: any = ''
   private officeType: string = ''
   private maxVideoHeight: string | number = ''
-  private office_number: string = this.smartboardData.office_number
-  private networkDown: boolean = false
+  private msg:string = 'This is a sample scrolling text that has scrolls texts to left.'
+
+  private msg_1: string = ''
+  private msg_2: string = ''
+  private msg_3: string = ''
+  private isMessageEnabled: boolean = false
 
   get url () {
     return `/smartboard/?office_number=${this.smartboardData.office_number}`
@@ -82,6 +83,7 @@ export default class CallByName extends Vue {
       this.officeType = resp.data.office_type
       this.citizens = resp.data.citizens
       // TODO check can't see  this.office_id Declared . so commented
+      // this.$root.$emit('boardConnect', this.office_id)
       // so change to below line to get office id
       this.$root.$emit('boardConnect', { office_id: this.smartboardData && this.smartboardData.office_number })
     })
@@ -94,15 +96,34 @@ export default class CallByName extends Vue {
   }
 
   // TODO check event param
+  // event
   handleResize () {
     this.maxVideoHeight = document.documentElement.clientHeight * 0.8
   }
 
   mounted () {
-    this.$root.$on('addToBoard', (data) => { this.updateBoard(data) })
+    this.$root.$on('onDigitalSignageMsgUpdate', (data) => { this.updateBoard(data) })
     this.initializeBoard()
     this.handleResize()
     window.addEventListener('resize', this.handleResize)
+  }
+
+  created () {
+    this.office = this.office.office
+    if (this.office.office) {
+      if(this.office.office.digital_signage_message == 1) {
+        this.isMessageEnabled = true
+        if(this.office.office.digital_signage_message_1) {
+          this.msg_1 = this.office.office.digital_signage_message_1
+        }
+        if(this.office.office.digital_signage_message_2) {
+          this.msg_2 = this.office.office.digital_signage_message_2
+        }
+        if(this.office.office.digital_signage_message_3) {
+          this.msg_3 = this.office.office.digital_signage_message_3
+        }
+      }
+    }
   }
 }
 </script>

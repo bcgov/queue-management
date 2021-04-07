@@ -30,23 +30,22 @@
                 hover
               >
                 <template
-                  slot="start"
-                  slot-scope="row"
+                  #cell(start)="row"
                 >{{ formatDetail(row.item.exam.booking.start_time) }}</template>
 
-                <template slot="length" slot-scope="row">{{ duration(row.item) }}</template>
+                <template #cell(length)="row">{{ duration(row.item) }}</template>
 
-                <template slot="row-details" slot-scope="row">
+                <template #cell(row-details)="row">
                   <span class="ml-2 mr-3" style="font-size: .9rem;">Location Details:</span>
                   {{ row.item.exam.offsite_location ? row.item.exam.offsite_location : null }}
                 </template>
 
-                <template slot="materials" slot-scope="row">
+                <template #cell(materials)="row">
                   <span v-if="row.item.exam.exam_received_date" class="good-2-go">YES</span>
                   <span v-if="!row.item.exam.exam_received_date" class="no-way-jose">NO</span>
                 </template>
 
-                <template slot="invigilator" slot-scope="row">
+                <template #cell(invigilator)="row">
                   <span
                     v-if="showInvigilator(row.item).length === 0"
                     class="no-way-jose"
@@ -64,14 +63,14 @@
                   </span>
                 </template>
 
-                <template slot="shadow_invigilator" slot-scope="row">
+                <template #cell(shadow_invigilator)="row">
                   <span v-if="!showShadowInvigilator(row.item)">-</span>
                   <span
                     v-else-if="showShadowInvigilator(row.item)"
                   >{{ showShadowInvigilator(row.item) }}</span>
                 </template>
 
-                <template slot="room" slot-scope="row">
+                <template #cell(room)="row">
                   <span v-if="showLocation(row.item)">{{ showLocation(row.item) }}</span>
                   <span
                     v-if="!showLocation(row.item)"
@@ -80,7 +79,7 @@
                   >{{ row.detailsShowing ? 'Hide' : 'Show' }}</span>
                 </template>
 
-                <template slot="writer" slot-scope="row">{{ showWriter(row.item) }}</template>
+                <template #cell(writer)="row">{{ showWriter(row.item) }}</template>
               </b-table>
             </b-col>
           </b-form-row>
@@ -97,13 +96,12 @@
         <b-form-row class="p-0" style="background-color: white">
           <b-col class="p-0 inner-col-table-style">
             <b-table :items="nonExamEvents" small fixed hover :fields="fieldsOther">
-              <template slot="date" slot-scope="row">{{ row.item.start.format('ddd MMM Do, YYYY') }}</template>
-              <template slot="start" slot-scope="row">{{ row.item.start.format('h:mm a') }}</template>
+              <template #cell(date)="row">{{ row.item.start.format('ddd MMM Do, YYYY') }}</template>
+              <template #cell(start)="row">{{ row.item.start.format('h:mm a') }}</template>
               <template
-                slot="booking_contact_information"
-                slot-scope="row"
+                #cell(booking_contact_information)="row"
               >{{ row.item.booking_contact_information ? row.item.booking_contact_information : '–' }}</template>
-              <template slot="end" slot-scope="row">{{ row.item.end.format('h:mm a') }}</template>
+              <template #cell(end)="row">{{ row.item.end.format('h:mm a') }}</template>
             </b-table>
           </b-col>
         </b-form-row>

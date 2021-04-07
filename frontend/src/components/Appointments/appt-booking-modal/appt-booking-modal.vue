@@ -120,20 +120,21 @@
         <b-col cols="4">
           <b-form-group class="mb-0 mt-2">
             <label v-if="allow_time_edit" class="mb-0">Select Time</label><br />
-            <b-timepicker
+            <vue-timepicker
                 v-if="allow_time_edit"
                 id="app_timepicker_id"
-                v-model="start"
-                :value="start"
+                v-model="app_start_time"
                 class="w-100"
                 icon="clock"
                 editable
-                hour-format="12"
+                format="hh:mm A"
                 locale="en-US"
                 @change="setStartDateTime(true)"
                 @input="setStartDateTime(true)"
-                >
-            </b-timepicker>
+                manual-input>
+            </vue-timepicker>
+            <br/>
+            <span class="danger" v-if="time_msg">{{time_msg}}</span>
           </b-form-group>
         </b-col>
         <b-col cols="8">
@@ -141,7 +142,7 @@
             <label v-if="allow_date_edit" class="mb-0">Select Date</label><br />
             <DatePicker
               v-if="allow_date_edit"
-              v-model="start"
+              v-model="app_start_date"
               type="date"
               lang="en"
               class="w-100"
@@ -279,7 +280,7 @@
         </b-col>
         <b-col cols="8">
           <b-form-group class="mb-0 mt-2">
-            <label class="mb-0">Date</label><br />
+            <label class="mb-0">Date</label><br />ee
             <b-form-input :value="displayDate" disabled />
           </b-form-group>
         </b-col>
@@ -353,13 +354,17 @@
 import { Action, namespace } from 'vuex-class'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import DatePicker from 'vue2-datepicker'
+import VueTimepicker from 'vue2-timepicker'
 import moment from 'moment'
+import 'vue2-datepicker/index.css'
+import 'vue2-timepicker/dist/VueTimepicker.css'
 
 const appointmentsModule = namespace('appointmentsModule')
 
 @Component({
   components: {
-    DatePicker
+    DatePicker,
+    VueTimepicker
   }
 })
 export default class ApptBookingModal extends Vue {
@@ -411,7 +416,7 @@ export default class ApptBookingModal extends Vue {
   public comments: any = null
   public contact_information: any = null
   public fieldsEdited: boolean = false
-  public length: any = 0
+  public length: any = 15
   public selectingService: boolean = false
   public showMessage: boolean = false
   public start: any = null
@@ -430,6 +435,10 @@ export default class ApptBookingModal extends Vue {
   $router: any
   public selectLength: any = ""
   public is_first_edit: boolean = false
+  public time_msg: any = ''
+  public shallDisable: boolean = false
+  public app_start_time: any = null
+  public app_start_date: any = null
 
 
   get appointments () {
@@ -457,8 +466,9 @@ export default class ApptBookingModal extends Vue {
   }
 
   get end () {
-    if (this.start) {
-        return moment(this.start).clone().add(this.length, 'minutes')
+    if (this.app_start_time && this.app_start_date) {
+        const start = this.app_start_time ? this.convertTimePickerValue(this.app_start_time) : this.app_start_time
+        return moment(start).clone().add(this.length, 'minutes')
     }
     if (this.clickedTime) {
       return moment(this.clickedTime.start).clone().add(this.length, 'minutes')
@@ -470,6 +480,8 @@ export default class ApptBookingModal extends Vue {
 
   serviceTime () {
     this.length = this.selectLength
+    this.time_msg = ''
+    this.shallDisable = false
   }
   timeOptions () {
     if (this.clickedTime) {
@@ -530,9 +542,6 @@ export default class ApptBookingModal extends Vue {
               this.selectLength = this.clickedAppt.end.diff(this.clickedAppt.start, 'minutes')
             }
           } 
-          // else {
-          //   this.selectLength = 15
-          // }
           if (this.selectedServiceObj.timeslot_duration) {
             if (this.clickedAppt && !this.is_first_edit) {
               if (this.clickedAppt.start && this.clickedAppt.end ) {
@@ -555,25 +564,39 @@ export default class ApptBookingModal extends Vue {
       }
     this.lengthOptions = []
     this.timeOptions()
+    this.length = this.selectLength
     return 'Please choose a service'
   }
 
   get displayDate () {
-    if (this.start) {
+    if (this.app_start_date) {
       // JSTOTS TOCHECK removed new from mopment. no need to use new with moment
-      return moment(this.start).clone().format('dddd MMMM Do, YYYY')
+      return moment(this.app_start_date).clone().format('dddd MMMM Do, YYYY')
+    }
+    if (this.clickedTime) {
+      // JSTOTS TOCHECK removed new from mopment. no need to use new with moment
+      return moment(this.clickedTime.start).clone().format('dddd MMMM Do, YYYY')
+    }
+    if (this.clickedAppt) {
+      // JSTOTS TOCHECK removed new from mopment. no need to use new with moment
+      return moment(this.clickedAppt.start).clone().format('dddd MMMM Do, YYYY')
     }
     return ''
   }
 
   get displayStart () {
-    if (this.start) {
+    if (this.app_start_time) {
       // JSTOTS TOCHECK removed new from mopment. no need to use new with moment
-      if (moment.isMoment(this.start)) {
-        return this.start.clone().format('h:mm a')
-      } else {
-        return moment(this.start).clone().format('h:mm a')
-      }
+      const start = this.app_start_time ? this.convertTimePickerValue(this.app_start_time) : this.app_start_time
+      return moment(start).clone().format('h:mm a')
+    }
+    if (this.clickedTime) {
+      // JSTOTS TOCHECK removed new from mopment. no need to use new with moment
+      return moment(this.clickedTime.start).clone().format('h:mm a')
+    }
+    if (this.clickedAppt) {
+      // JSTOTS TOCHECK removed new from mopment. no need to use new with moment
+      return moment(this.clickedAppt.start).clone().format('h:mm a')
     }
     return ''
   }
@@ -585,7 +608,7 @@ export default class ApptBookingModal extends Vue {
   set modalVisible (e) { this.toggleApptBookingModal(e) }
 
   get submitDisabled () {
-    if (this.citizen_name && this.selectedService) {
+    if (this.citizen_name && this.selectedService && (!this.shallDisable)) {
       return false
     }
     return true
@@ -712,6 +735,8 @@ export default class ApptBookingModal extends Vue {
     this.setSelectedService(null)
     this.is_first_edit = false
     // this.timeOptions()
+    this.app_start_time = null
+    this.app_start_date = null
   }
 
   show () {
@@ -721,6 +746,8 @@ export default class ApptBookingModal extends Vue {
       this.appt_time = null
       this.appt_date = null
       this.curr_date = null
+      this.app_start_time = null
+      this.app_start_date = null
     }
     this.clearMessage()
     if (this.selectingService) {
@@ -731,6 +758,12 @@ export default class ApptBookingModal extends Vue {
       this.$store.commit('toggleRescheduling', false)
       this.setRescheduling(false)
       this.start = new Date(this.clickedTime.start.format())
+      this.app_start_date = new Date(this.clickedTime.start.format('YYYY/MM/DD'))
+      this.app_start_time = {
+        'hh': this.clickedTime.start.format('hh'),
+        'mm': this.clickedTime.start.format('mm'),
+        'A': this.clickedTime.start.format('A')
+      }
       this.curr_date = new Date(this.clickedTime.start.format())
       this.length = this.clickedTime.end.clone().diff(this.start, 'minutes')
       if (this.oldLength) {
@@ -757,10 +790,16 @@ export default class ApptBookingModal extends Vue {
     }
     if (this.clickedTime) {
       this.citizen_name =
-        this.comments = null
+      this.comments = null
       this.contact_information = null
       this.length = 15
       this.start = new Date(this.clickedTime.start.format())
+      this.app_start_date = new Date(this.clickedTime.start.format('YYYY/MM/DD'))
+      this.app_start_time = {
+        'hh': this.clickedTime.start.format('hh'),
+        'mm': this.clickedTime.start.format('mm'),
+        'A': this.clickedTime.start.format('A')
+      }
       this.curr_date = new Date(this.clickedTime.start.format())
        
       this.clearAddModal()
@@ -779,6 +818,12 @@ export default class ApptBookingModal extends Vue {
       this.comments = this.clickedAppt.comments
       this.contact_information = this.clickedAppt.contact_information
       this.start = new Date(this.clickedAppt.start.format())
+      this.app_start_date = new Date(this.clickedAppt.start.format('YYYY/MM/DD'))
+      this.app_start_time = {
+        'hh': this.clickedAppt.start.format('hh'),
+        'mm': this.clickedAppt.start.format('mm'),
+        'A': this.clickedAppt.start.format('A')
+      }
       this.curr_date = new Date(this.clickedAppt.start.format())
       // this.length = this.clickedAppt.end.clone().diff(this.start, 'minutes')
       this.online_flag = this.clickedAppt.online_flag
@@ -791,10 +836,18 @@ export default class ApptBookingModal extends Vue {
       this.comments = ''
       this.contact_information = ''
       this.start = null
+      this.app_start_date = null
+      this.app_start_time = null
       this.curr_date = null
       //todo, remove if consditon
       if (this.clickedTime) {
       this.start = new Date(this.clickedTime.start.format())
+      this.app_start_date = new Date(this.clickedTime.start.format('YYYY/MM/DD'))
+      this.app_start_time = {
+        'hh': this.clickedTime.start.format('hh'),
+        'mm': this.clickedTime.start.format('mm'),
+        'A': this.clickedTime.start.format('A')
+      }
       this.curr_date = new Date(this.clickedTime.start.format())
       }
     }
@@ -807,17 +860,63 @@ export default class ApptBookingModal extends Vue {
       this.selectLength = this.selectLength
   }
 
-  submit () { 
+  submit () {
+    this.length = this.selectLength
     if (!this.submitClicked && this.end) {
+      // CSR TIME VALIDATION
+      const start_time = this.app_start_time ? this.convertTimePickerValue(this.app_start_time) : this.app_start_time
+      this.start = start_time
+      let validate_flag = false
+      if (start_time) {
+        if ((new Date(start_time).getHours() <= 8) || (new Date(start_time).getHours() >= 17)){
+          if ((new Date(start_time).getHours() === 8)) {
+            if ((new Date(start_time).getMinutes() < 30)) {
+                this.time_msg = "Selected length/time is not within the office time"
+                validate_flag = true
+            } 
+          } else if (new Date(start_time).getHours() === 17) {
+            if ((new Date(start_time).getMinutes() > 0)) {
+                this.time_msg = "Selected length/time is not within the office time"
+                validate_flag = true
+            } 
+          } else {
+            this.time_msg = "Selected length/time is not within the office time"
+            validate_flag = true
+          }
+        }
+      }
+      if (this.end) {
+        if ((new Date(this.end.format()).getHours() <= 8) || (new Date(this.end.format()).getHours() >= 17)){
+          if ((new Date(this.end.format()).getHours() === 8)) {
+            if ((new Date(this.end.format()).getMinutes() < 30)) {
+                this.time_msg = "Selected length/time is not within the office time"
+                validate_flag = true
+            } 
+          } else if (new Date(this.end.format()).getHours() === 17) {
+            if ((new Date(this.end.format()).getMinutes() > 0)) {
+                this.time_msg = "Selected length/time is not within the office time"
+                validate_flag = true
+            }
+          } else {
+            this.time_msg = "Selected length/time is not within the office time"
+            validate_flag = true
+          }
+        }
+      }
+      if (validate_flag) {
+        this.shallDisable = true
+        return false
+      }
+      this.time_msg = ''
+    // END
       this.toggleSubmitClicked(true)
       this.$store.commit('toggleServeCitizenSpinner', true)
       this.clearMessage()
       const service_id = this.selectedService
-      const startDateObj = this.start
-      if (!moment.isMoment(this.start)) {
-        this.start = moment(this.start)
+      const startDateObj = start_time
+      if (!moment.isMoment(start_time)) {
+        this.start = moment(start_time)
       }
-      
       const start = moment(moment.tz(this.start.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).format()).clone()
       const end = moment(moment.tz(this.end.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).format()).clone()
       
@@ -930,8 +1029,21 @@ export default class ApptBookingModal extends Vue {
     }
   }
 
+  convertTimePickerValue(model:any){
+    if (this.app_start_date && this.app_start_time) {
+      const currentDate = this.app_start_date
+      const fullformat = moment(model.hh + ':' + model.mm + ' ' + model.A ,'hh:mm A').format('HH:mm:ss')
+      const day = currentDate.getDate().toString().length === 1 ? '0' + currentDate.getDate().toString() : currentDate.getDate().toString()
+      const month = currentDate.getMonth().toString().length === 1 ? '0' + (currentDate.getMonth() + 1).toString() : (currentDate.getMonth() + 1).toString()
+      const year = currentDate.getFullYear()
+      return new Date(year + '-' + month + '-' + day + ' ' + fullformat)
+    }   
+  }
   setStartDateTime(is_time) {
-    const startDateObj = moment(this.start)
+    this.start = new Date(moment(this.app_start_date).format('YYYY/MM/DD')+' '+this.app_start_time)
+    this.time_msg = ''
+    const start_time = this.app_start_time ? this.convertTimePickerValue(this.app_start_time) : this.app_start_time
+    const startDateObj = moment(start_time)
     const currDateObj = moment(this.curr_date)
     if (is_time) {
       this.appt_time = startDateObj.format('HH:mm:ss')
@@ -939,6 +1051,7 @@ export default class ApptBookingModal extends Vue {
         if ( this.curr_date) {
           if (this.appt_time && !this.appt_date) {
               this.start = new Date(currDateObj.format('YYYY-MM-DD')+' '+this.appt_time)
+              this.app_start_date = new Date(currDateObj.format('YYYY-MM-DD')+' '+this.appt_time)
           }
         }
       }
@@ -947,7 +1060,8 @@ export default class ApptBookingModal extends Vue {
       if (this.clickedTime || this.clickedAppt) {
         if ( this.curr_date) {
           if (!this.appt_time && this.appt_date) {
-              this.start = new Date(this.appt_date+' '+currDateObj.format('HH:mm:ss'))
+            this.start = new Date(this.appt_date+' '+currDateObj.format('HH:mm:ss'))
+            this.app_start_time = new Date(this.appt_date+' '+currDateObj.format('HH:mm:ss'))
           }
         }
       }
@@ -961,6 +1075,7 @@ export default class ApptBookingModal extends Vue {
     }else {
       this.allow_reschedule = false
     }
+    this.shallDisable = false
   }
 }
 </script>
@@ -992,4 +1107,7 @@ export default class ApptBookingModal extends Vue {
   -webkit-animation: spin 1s ease-in-out infinite;
 }
 
+.danger {
+  color: red !important;
+}
 </style>

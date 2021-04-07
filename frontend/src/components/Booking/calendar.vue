@@ -519,9 +519,8 @@ export default class Calendar extends Vue {
     }
     // setting default end time
     event.end = moment(event.start).add(defaultHoursDuration, 'h')
-
     const resourceDetails = this.roomResources.find(cat => {
-      return cat.title === event.category
+      return cat.title === event.category.categoryName
     })
     if (resourceDetails) { event.resource = resourceDetails }
 
@@ -599,7 +598,7 @@ export default class Calendar extends Vue {
     const selection: any = {
       // TOCHECK removed new keyword in moment. not needed
       start: moment(event.start),
-      resourceId: event.resource.id,
+      resourceId: (event && event.resource ) ? event.resource.id : undefined,
       id: '_cal$election'
     }
 

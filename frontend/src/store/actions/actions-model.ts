@@ -186,7 +186,7 @@ export const commonActions: any = {
   },
 
   putRequest (context, payload) {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       Axios(context)
         .put(payload.url, payload.data)
         .then(() => {
@@ -269,7 +269,7 @@ export const commonActions: any = {
   },
 
   getBookings (context) {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       Axios(context)
         .get('/bookings/')
         .then(resp => {
@@ -333,7 +333,7 @@ export const commonActions: any = {
 
   getAllCitizens (context) {
     const url = '/citizens/'
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       Axios(context)
         .get(url)
         .then(resp => {
@@ -1657,7 +1657,7 @@ export const commonActions: any = {
   },
 
   initializeAgenda (context) {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       context.dispatch('getExams').then(() => {
         context.dispatch('getBookings').then(() => resolve())
       })
@@ -1839,7 +1839,7 @@ export const commonActions: any = {
   },
 
   scheduleExam (context, payload) {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       context.dispatch('postBooking', payload).then(booking_id => {
         context.dispatch('putExam', booking_id).then(() => {
           resolve()
@@ -1873,7 +1873,7 @@ export const commonActions: any = {
   putExamInfo (context, payload) {
     const id = payload.exam_id.valueOf()
     delete payload.exam_id
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       const url = `/exams/${id}/`
       Axios(context)
         .put(url, payload)
@@ -1981,7 +1981,7 @@ export const commonActions: any = {
     }
     const postData = { ...responses, ...defaultValues }
 
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       Axios(context)
         .post('/exams/', postData)
         .then(examResp => {
@@ -2029,7 +2029,7 @@ export const commonActions: any = {
     }
     const postData = { ...responses, ...defaultValues }
 
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       Axios(context)
         .post('/exams/', postData)
         .then(examResp => {
@@ -2205,7 +2205,7 @@ export const commonActions: any = {
     console.log(responses)
     const postData = { ...responses }
 
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       Axios(context)
         .post('/exams/request', postData)
         .then(examResp => {

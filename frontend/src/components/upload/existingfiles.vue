@@ -22,12 +22,12 @@
     >
 
       <!--  This is the file name -->
-      <template slot="name" slot-scope="row">
+      <template #cell(name)="row">
         {{ row.item.name }}
       </template>
 
       <!--  This is the delete button -->
-      <template slot="deleteBut" slot-scope="row">
+      <template #cell(deleteBut)="row">
         <div>
           <b-button size="sm" @click="clickDelete(row.item.name)" variant="link"
             >Delete

@@ -119,7 +119,7 @@
       </div>
     </template>
     <span style="font-size: 1.75rem">Schedule Booking Blackout</span><br />
-    <b-form>
+    <b-form class="blackout_form">
       <b-collapse id="collapse-booking-event-selection">
         <b-card>
           <b-form-row class="mb-2">
@@ -217,21 +217,19 @@
                   icon="check"
                   style="font-size: 1rem; color: green"
                 />
-                <b-timepicker
+                <vue-timepicker
                       v-model="start_time"
-                      :value="start_time"
                       id="appointment_blackout_start_time"
-                      class="w-100"
                       icon="clock"
                       editable
-                      hour-format="12"
+                      format="hh:mm A"
                       locale="en-US"
                       placeholder="Select Start Time"
                       @input="checkSingleInput"
                       @clear="checkSingleInput"
                       @change="checkSingleInput"
-                      >
-                  </b-timepicker>
+                      manual-input>
+                  </vue-timepicker>
                   <br/>
                   <span class="danger" v-if="start_time_msg">{{start_time_msg}}</span>
               </b-form-group>
@@ -244,21 +242,20 @@
                   icon="check"
                   style="font-size: 1rem; color: green"
                 />
-                <b-timepicker
+                <vue-timepicker
                       v-model="end_time"
-                      :value="end_time"
                       id="appointment_blackout_end_time"
                       class="w-100"
                       icon="clock"
                       editable
-                      hour-format="12"
+                      format="hh:mm A"
                       locale="en-US"
                       placeholder="Select End Time"
                       @input="checkSingleInput"
                       @clear="checkSingleInput"
                       @change="checkSingleInput"
-                      >
-                  </b-timepicker>
+                      manual-input>
+                  </vue-timepicker>
                   <br/>
                   <span class="danger" v-if="end_time_msg">{{end_time_msg}}</span>
               </b-form-group>
@@ -404,21 +401,20 @@
                   icon="check"
                   style="font-size: 1rem; color: green"
                 />
-                <b-timepicker
+                <vue-timepicker
                       v-model="recurring_booking_start_time"
-                      :value="recurring_booking_start_time"
                       id="recurring_blackout_start_time"
                       class="w-100"
                       icon="clock"
                       editable
-                      hour-format="12"
+                      format="hh:mm A"
                       locale="en-US"
                       placeholder="Select Start Time"
                       @input="checkRecurringInput"
                       @clear="checkRecurringInput"
                       @change="checkRecurringInput"
-                      >
-                  </b-timepicker>
+                      manual-input>
+                  </vue-timepicker>
                   <br/>
                   <span class="danger" v-if="reccuring_start_time_msg">{{reccuring_start_time_msg}}</span>
               </b-col>
@@ -429,21 +425,20 @@
                   icon="check"
                   style="font-size: 1rem; color: green"
                 />
-                <b-timepicker
+                <vue-timepicker
                       v-model="recurring_booking_end_time"
-                      :value="recurring_booking_end_time"
                       id="recurring_blackout_end_time"
                       class="w-100"
                       icon="clock"
                       editable
-                      hour-format="12"
+                      format="hh:mm A"
                       locale="en-US"
                       placeholder="Select End Time"
                       @input="checkRecurringInput"
                       @clear="checkRecurringInput"
                       @change="checkRecurringInput"
-                      >
-                  </b-timepicker>
+                      manual-input>
+                  </vue-timepicker>
                   <br/>
                   <span class="danger" v-if="reccuring_end_time_msg">{{reccuring_end_time_msg}}</span>
               </b-col>
@@ -685,7 +680,7 @@
                 striped
                 @row-selected="onRowSelected"
               >
-                <template slot="selected" slot-scope="{ rowSelected }">
+                <template #cell(selected)="{ rowSelected }">
                   <template v-if="rowSelected">
                     <span aria-hidden="true">&check;</span>
                     <span class="sr-only" Selected></span>
@@ -778,6 +773,9 @@ import { Component, Vue } from 'vue-property-decorator'
 import { apiProgressBus, APIProgressBusEvents } from '../../events/progressBus'
 import { showBookingFlagBus, ShowBookingFlagBusEvents } from '../../events/showBookingFlagBus'
 import DatePicker from 'vue2-datepicker'
+import VueTimepicker from 'vue2-timepicker'
+import 'vue2-datepicker/index.css'
+import 'vue2-timepicker/dist/VueTimepicker.css'
 import moment from 'moment'
 import { RRule } from 'rrule'
 
@@ -786,7 +784,8 @@ const appointmentsModule = namespace('appointmentsModule')
 
 @Component({
   components: {
-    DatePicker
+    DatePicker,
+    VueTimepicker
   }
 })
 export default class BookingBlackoutModal extends Vue {
@@ -973,14 +972,16 @@ export default class BookingBlackoutModal extends Vue {
     // this is the number of api in a group- for bulk api call
     const limit = 50
     let rrule_ind = 0
+    const start_time = this.convertTimePickerValue(this.start_time)
+    const end_time = this.convertTimePickerValue(this.end_time)
     const date = moment(this.blackout_date).clone().format('YYYY-MM-DD')
-    const start = moment(this.start_time).clone().format('HH:mm:ss')
+    const start = moment(start_time).clone().format('HH:mm:ss')
     const start_date = moment(date + ' ' + start).format()
-    const end = moment(this.end_time).clone().format('HH:mm:ss')
+    const end = moment(end_time).clone().format('HH:mm:ss')
     const end_date = moment(date + ' ' + end).format()
     const start_date_office = moment.tz(date + ' ' + start, this.$store.state.user.office.timezone.timezone_name).format()
     const end_date_office = moment.tz(date + ' ' + end, this.$store.state.user.office.timezone.timezone_name).format()
-    const uuidv4 = require('uuid/v4')
+    const uuidv4 = require('uuid').v4
     let axiosArray: any = []
     const recurring_uuid = uuidv4()
     if (this.booking_rrule_array.length === 0) {
@@ -1119,10 +1120,13 @@ export default class BookingBlackoutModal extends Vue {
     let validate_flag =false
     this.reccuring_start_time_msg = ''
     this.reccuring_end_time_msg = ''
-    if (this.recurring_booking_start_time) {
-      if ((new Date(this.recurring_booking_start_time).getHours() <= 8) || (new Date(this.recurring_booking_start_time).getHours() >= 17)){
-        if ((new Date(this.recurring_booking_start_time).getHours() === 8)) {
-          if ((new Date(this.recurring_booking_start_time).getMinutes() < 30)) {
+    let recurring_booking_start_time = this.convertTimePickerValue(this.recurring_booking_start_time)
+    let recurring_booking_end_time = this.convertTimePickerValue(this.recurring_booking_end_time)
+
+    if (recurring_booking_start_time) {
+      if ((new Date(recurring_booking_start_time).getHours() <= 8) || (new Date(recurring_booking_start_time).getHours() >= 17)){
+        if ((new Date(recurring_booking_start_time).getHours() === 8)) {
+          if ((new Date(recurring_booking_start_time).getMinutes() < 30)) {
               this.reccuring_start_time_msg = "Time not allowed"
               this.recurring_booking_start_time = null
               validate_flag = true
@@ -1130,8 +1134,8 @@ export default class BookingBlackoutModal extends Vue {
             this.reccuring_start_time_msg = ''
             validate_flag = false
           }
-        } else if (new Date(this.recurring_booking_start_time).getHours() === 17) {
-          if ((new Date(this.recurring_booking_start_time).getMinutes() > 0)) {
+        } else if (new Date(recurring_booking_start_time).getHours() === 17) {
+          if ((new Date(recurring_booking_start_time).getMinutes() > 0)) {
               this.recurring_booking_start_time = null
               this.reccuring_start_time_msg = "Time not allowed"
               validate_flag = true
@@ -1146,10 +1150,10 @@ export default class BookingBlackoutModal extends Vue {
         }
       }
     }
-    if (this.recurring_booking_end_time) {
-      if ((new Date(this.recurring_booking_end_time).getHours() <= 8) || (new Date(this.recurring_booking_end_time).getHours() >= 17)){
-        if ((new Date(this.recurring_booking_end_time).getHours() === 8)) {
-          if ((new Date(this.recurring_booking_end_time).getMinutes() < 30)) {
+    if (recurring_booking_end_time) {
+      if ((new Date(recurring_booking_end_time).getHours() <= 8) || (new Date(recurring_booking_end_time).getHours() >= 17)){
+        if ((new Date(recurring_booking_end_time).getHours() === 8)) {
+          if ((new Date(recurring_booking_end_time).getMinutes() < 30)) {
               this.reccuring_end_time_msg = "Time not allowed"
               this.recurring_booking_end_time = null
               validate_flag = true
@@ -1157,8 +1161,8 @@ export default class BookingBlackoutModal extends Vue {
             this.reccuring_end_time_msg = ''
             validate_flag = false
           }
-        } else if (new Date(this.recurring_booking_end_time).getHours() === 17) {
-          if ((new Date(this.recurring_booking_end_time).getMinutes() > 0)) {
+        } else if (new Date(recurring_booking_end_time).getHours() === 17) {
+          if ((new Date(recurring_booking_end_time).getMinutes() > 0)) {
               this.reccuring_end_time_msg = "Time not allowed"
               this.recurring_booking_end_time = null
               validate_flag = true
@@ -1197,12 +1201,12 @@ export default class BookingBlackoutModal extends Vue {
     const start_year = parseInt(moment(this.recurring_booking_start_date).clone().format('YYYY'))
     const start_month = parseInt(moment(this.recurring_booking_start_date).clone().format('MM'))
     const start_day = parseInt(moment(this.recurring_booking_start_date).clone().format('DD'))
-    const local_start_hour = parseInt(moment(this.recurring_booking_start_time).clone().format('HH'))
-    const start_minute = parseInt(moment(this.recurring_booking_start_time).utc().clone().format('mm'))
+    const local_start_hour = parseInt(moment(recurring_booking_start_time).clone().format('HH'))
+    const start_minute = parseInt(moment(recurring_booking_start_time).utc().clone().format('mm'))
     const end_year = parseInt(moment(this.recurring_booking_end_date).clone().format('YYYY'))
     const end_month = parseInt(moment(this.recurring_booking_end_date).clone().format('MM'))
     const end_day = parseInt(moment(this.recurring_booking_end_date).clone().format('DD'))
-    const duration = moment.duration(moment(this.recurring_booking_end_time).diff(moment(this.recurring_booking_start_time)))
+    const duration = moment.duration(moment(recurring_booking_end_time).diff(moment(recurring_booking_start_time)))
     const duration_minutes = duration.asMinutes()
     let booking_input_frequency: any = null
     const local_booking_dates_array: any = []
@@ -1355,10 +1359,13 @@ export default class BookingBlackoutModal extends Vue {
     let validate_flag =false
     this.start_time_msg = ''
     this.end_time_msg = ''
-    if (this.start_time) {
-      if ((new Date(this.start_time).getHours() <= 8) || (new Date(this.start_time).getHours() >= 17)){
-        if ((new Date(this.start_time).getHours() === 8)) {
-          if ((new Date(this.start_time).getMinutes() < 30)) {
+    const start_time = this.convertTimePickerValue(this.start_time)
+    const end_time = this.convertTimePickerValue(this.end_time)
+
+    if (start_time) {
+      if ((new Date(start_time).getHours() <= 8) || (new Date(start_time).getHours() >= 17)){
+        if ((new Date(start_time).getHours() === 8)) {
+          if ((new Date(start_time).getMinutes() < 30)) {
               this.start_time_msg = "Time not allowed"
               this.start_time = null
               validate_flag = true
@@ -1366,8 +1373,8 @@ export default class BookingBlackoutModal extends Vue {
             this.start_time_msg = ''
             validate_flag = false
           }
-        } else if (new Date(this.start_time).getHours() === 17) {
-          if ((new Date(this.start_time).getMinutes() > 0)) {
+        } else if (new Date(start_time).getHours() === 17) {
+          if ((new Date(start_time).getMinutes() > 0)) {
               this.start_time = null
               this.start_time_msg = "Time not allowed"
               validate_flag = true
@@ -1382,10 +1389,10 @@ export default class BookingBlackoutModal extends Vue {
         }
       }
     }
-    if (this.end_time) {
-      if ((new Date(this.end_time).getHours() <= 8) || (new Date(this.end_time).getHours() >= 17)){
-        if ((new Date(this.end_time).getHours() === 8)) {
-          if ((new Date(this.end_time).getMinutes() < 30)) {
+    if (end_time) {
+      if ((new Date(end_time).getHours() <= 8) || (new Date(end_time).getHours() >= 17)){
+        if ((new Date(end_time).getHours() === 8)) {
+          if ((new Date(end_time).getMinutes() < 30)) {
               this.end_time_msg = "Time not allowed"
               this.end_time = null
               validate_flag = true
@@ -1393,8 +1400,8 @@ export default class BookingBlackoutModal extends Vue {
             this.end_time_msg = ''
             validate_flag = false
           }
-        } else if (new Date(this.end_time).getHours() === 17) {
-          if ((new Date(this.end_time).getMinutes() > 0)) {
+        } else if (new Date(end_time).getHours() === 17) {
+          if ((new Date(end_time).getMinutes() > 0)) {
               this.end_time_msg = "Time not allowed"
               this.end_time = null
               validate_flag = true
@@ -1497,7 +1504,7 @@ export default class BookingBlackoutModal extends Vue {
     this.setApiTotalCount(0)
     this.setApiTotalCount(this.booking_rrule_array.length)
     showBookingFlagBus.$emit(ShowBookingFlagBusEvents.ShowBookingFlagEvent, true)
-    const uuidv4 = require('uuid/v4')
+    const uuidv4 = require('uuid').v4
     const recurring_uuid = uuidv4()
     let axiosArray: any = []
     let rrule_ind = 0
@@ -1655,10 +1662,26 @@ export default class BookingBlackoutModal extends Vue {
     const formatted_date = moment(value).format('DD MMM, YYYY')
     return formatted_date
   }
+
+  convertTimePickerValue(model:any){
+    const hh = model ? model.hh : '00'
+    const mm = model ? model.mm : '00'
+    const aa = model ? model.A : 'AM'
+    const currentDate = new Date()
+    const fullformat = moment(hh + ':' + mm + ' ' + aa ,'hh:mm A').format('HH:mm:ss')
+    const day = currentDate.getDate().toString().length === 1 ? '0' + currentDate.getDate().toString() : currentDate.getDate().toString()
+    const month = currentDate.getMonth().toString().length === 1 ? '0' + (currentDate.getMonth() + 1).toString() : (currentDate.getMonth() + 1).toString()
+    const year = currentDate.getFullYear()
+    return new Date(year + '-' + month + '-' + day + ' ' + fullformat)
+  }
 }
 </script>
 <style scoped>
 .danger {
   color: red !important;
+}
+.vue__time-picker input.display-time{
+  width: 213px;
+  height: 40px;
 }
 </style>

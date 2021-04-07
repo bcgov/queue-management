@@ -45,7 +45,7 @@ class WalkinDetail(Resource):
             if citizen:
                 res_list = []
                 # office time zone
-                local_timezone = self.get_my_office_timezone(citizen)
+                local_timezone = self.get_my_office_timezone(citizen = citizen)
 
                 # am i on hold
                 am_on_hold = self.am_i_on_hold(citizen)
@@ -53,13 +53,13 @@ class WalkinDetail(Resource):
                 show_estimate = application.config.get('SHOW_ESTIMATE_TIME_WALKIN', False)
                 
                 # result= all citizen in q
-                result = self.get_all_citizen_in_q(citizen)
+                result = self.get_all_citizen_in_q(citizen = citizen)
                 # process result
                 # serving_app, booked_check_app, walkin_app = self.process_all_citizen_in_q(result, citizen, am_on_hold, local_timezone)
                 booked_check_app, walkin_app = self.process_all_citizen_in_q(result, citizen, am_on_hold, local_timezone)
 
                 # get all app from agenda panel
-                result_in_book = self.get_all_app_from_agenda_panel(citizen)
+                result_in_book = self.get_all_app_from_agenda_panel(citizen=citizen)
                 # processing agenda panel appointmnets:
                 booked_not_checkin = self.process_agenda_panel(result_in_book, local_timezone)
                 
@@ -74,13 +74,19 @@ class WalkinDetail(Resource):
             print(e)
             return {'message': 'API is down'}, 500
 
-    def get_my_office_timezone(self, citizen):
-        my_office = Office.query.filter_by(office_id=citizen.office_id).first()
-        my_office_data = self.office_schema.dump(my_office)
+    def get_my_office_timezone(self, citizen=False, office=False):
+        office_id = False
         local_timezone = False 
-        if my_office_data:
-            my_time_zone = my_office_data['timezone']['timezone_name']
-            local_timezone = pytz.timezone(my_time_zone)
+        if citizen:
+            office_id = citizen.office_id
+        if office:
+            office_id = office.office_id
+        if office_id:
+            my_office = Office.query.filter_by(office_id=office_id).first()
+            my_office_data = self.office_schema.dump(my_office)
+            if my_office_data:
+                my_time_zone = my_office_data['timezone']['timezone_name']
+                local_timezone = pytz.timezone(my_time_zone)
         return local_timezone
     
     def am_i_on_hold(self, citizen):
@@ -94,13 +100,20 @@ class WalkinDetail(Resource):
                     am_on_hold = True
         return am_on_hold
     
-    def get_all_citizen_in_q(self, citizen):     
-        all_citizen_in_q = Citizen.query.filter_by(office_id=citizen.office_id) \
-                                        .join(CitizenState)\
-                                        .filter(CitizenState.cs_state_name == 'Active')\
-                                        .order_by(Citizen.priority) \
-                                        .join(Citizen.service_reqs).all()
-        result = self.citizens_schema.dump(all_citizen_in_q)
+    def get_all_citizen_in_q(self, citizen=False, office=False):
+        office_id = False
+        result = []
+        if citizen:
+            office_id = citizen.office_id
+        if office:
+            office_id = office.office_id
+        if office_id:  
+            all_citizen_in_q = Citizen.query.filter_by(office_id=office_id) \
+                                            .join(CitizenState)\
+                                            .filter(CitizenState.cs_state_name == 'Active')\
+                                            .order_by(Citizen.priority) \
+                                            .join(Citizen.service_reqs).all()
+            result = self.citizens_schema.dump(all_citizen_in_q)
         return result
 
     def process_all_citizen_in_q(self, result, citizen, am_on_hold, local_timezone):
@@ -159,22 +172,27 @@ class WalkinDetail(Resource):
         # return serving_app, booked_check_app, walkin_app
         return booked_check_app, walkin_app
     
-    def get_all_app_from_agenda_panel(self, citizen):
-        time_now = datetime.utcnow()
-        # past_hour = datetime.utcnow() - timedelta(hours=1)
-        past_hour = datetime.utcnow() - timedelta(minutes=15)
-        # future_hour = datetime.utcnow() + timedelta(hours=4)
-        future_hour = datetime.utcnow() + timedelta(minutes=15)
-        local_past = pytz.utc.localize(past_hour)
-        local_future = pytz.utc.localize(future_hour)
-        # getting agenda panel app
-        appointments = Appointment.query.filter_by(office_id=citizen.office_id)\
-                                    .filter(Appointment.start_time <= local_future)\
-                                    .filter(Appointment.start_time >= local_past)\
-                                    .filter(Appointment.checked_in_time == None)\
-                                    .order_by(Appointment.start_time)\
-                                    .all()
-        result_in_book = self.appointment_schema.dump(appointments)
+    def get_all_app_from_agenda_panel(self,  citizen=False, office=False):
+        office_id = False
+        result_in_book = []
+        if citizen:
+            office_id = citizen.office_id
+        if office:
+            office_id = office.office_id
+        if office_id:  
+            time_now = datetime.utcnow()
+            past_hour = datetime.utcnow() - timedelta(minutes=15)
+            future_hour = datetime.utcnow() + timedelta(minutes=15)
+            local_past = pytz.utc.localize(past_hour)
+            local_future = pytz.utc.localize(future_hour)
+            # getting agenda panel app
+            appointments = Appointment.query.filter_by(office_id=office_id)\
+                                        .filter(Appointment.start_time <= local_future)\
+                                        .filter(Appointment.start_time >= local_past)\
+                                        .filter(Appointment.checked_in_time == None)\
+                                        .order_by(Appointment.start_time)\
+                                        .all()
+            result_in_book = self.appointment_schema.dump(appointments)
         return result_in_book
 
     def process_agenda_panel(self, result_in_book, local_timezone):
@@ -217,10 +235,10 @@ class SendLineReminderWalkin(Resource):
                 res_list = []
                 
                 # result= all citizen in q
-                result = self.walkinObj.get_all_citizen_in_q(previous_citizen)
+                result = self.walkinObj.get_all_citizen_in_q(citizen = previous_citizen)
                 # process result
                 # am_on_true= means get all citizen in Q
-                booked_check_app, walkin_app = self.process_all_citizen_in_q(result, previous_citizen)
+                booked_check_app, walkin_app = self.process_all_citizen_in_q(result)
                 
                 # sorting-maintaing the order group 
                 res_list = tuple(booked_check_app + walkin_app)
@@ -257,7 +275,7 @@ class SendLineReminderWalkin(Resource):
             nth_line = my_office_data.get('automatic_reminder_at', False)
         return nth_line
 
-    def process_all_citizen_in_q(self, result, citizen):
+    def process_all_citizen_in_q(self, result):
         booked_check_app = []
         walkin_app = []
         for each in result:
@@ -270,6 +288,7 @@ class SendLineReminderWalkin(Resource):
                             not_booked_flag = False
                             data_dict = {}
                             data_dict['citizen_id'] = each.get('citizen_id', False)
+                            data_dict['service_name'] = i['service']['parent']['service_name']
                             if (each.get('citizen_comments', '')):
                                 if '|||' in each['citizen_comments']:
                                     data_dict['flag'] = 'booked_app'
@@ -283,6 +302,7 @@ class SendLineReminderWalkin(Resource):
                             if not_booked_flag and each.get('cs', False):
                                 if each['cs'].get('cs_state_name', '') == 'Active':
                                     data_dict['flag'] = 'walkin_app'
+                                    data_dict['created_at'] = each.get('created_at', '')
                                     walkin_app.append(data_dict)
                                     data_dict = {}
                                     break
@@ -326,3 +346,67 @@ class SendLineReminderWalkin(Resource):
                     citizen.reminder_flag = flag_value
                     citizen.notification_sent_time = datetime.utcnow()
         return citizen
+
+@api.route("/smardboard/Q-details/waiting/<string:id>", methods=["GET"])
+class SmartBoradQDetails(Resource):
+    citizen_schema = CitizenSchema()
+    office_schema = OfficeSchema()
+    walkinObj = WalkinDetail()
+    processObj = SendLineReminderWalkin()
+
+    @api_call_with_retry
+    def get(self, id):
+        try:
+            # get office details from url id
+            office = Office.query.filter_by(office_number=id).first()
+
+            if not office:
+                return {'message': 'office_number could not be found.'}, 400
+
+            res_list = []
+            if (office.currently_waiting == 1):                
+                # result= all citizen in q
+                result = self.walkinObj.get_all_citizen_in_q(office = office)
+                # process result
+                booked_check_app, walkin_app = self.processObj.process_all_citizen_in_q(result)
+                
+                # sorting-maintaing the order group 
+                res_list = tuple(booked_check_app + walkin_app)
+
+            return {'citizen_in_q': res_list}, 200
+            return {}
+        except exc.SQLAlchemyError as e:
+            print(e)
+            return {'message': 'API is down'}, 500
+
+@api.route("/smardboard/Q-details/upcoming/<string:id>", methods=["GET"])
+class SmartBoradQDetails(Resource):
+    citizen_schema = CitizenSchema()
+    office_schema = OfficeSchema()
+    walkinObj = WalkinDetail()
+    processObj = SendLineReminderWalkin()
+
+    @api_call_with_retry
+    def get(self, id):
+        try:
+            # get office details from url id
+            office = Office.query.filter_by(office_number=id).first()
+
+            if not office:
+                return {'message': 'office_number could not be found.'}, 400
+
+            booked_not_checkin = []
+            if (office.currently_waiting == 1):
+                # office time zone
+                local_timezone = self.walkinObj.get_my_office_timezone(office = office)
+
+                # get all app from agenda panel
+                result_in_book = self.walkinObj.get_all_app_from_agenda_panel(office = office)
+                # processing agenda panel appointmnets:
+                booked_not_checkin = self.walkinObj.process_agenda_panel(result_in_book, local_timezone)
+                
+            return {'booked_not_checkin': booked_not_checkin}, 200
+            return {}
+        except exc.SQLAlchemyError as e:
+            print(e)
+            return {'message': 'API is down'}, 500

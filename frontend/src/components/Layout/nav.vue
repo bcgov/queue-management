@@ -99,14 +99,11 @@
               id="office_agenda"
               >Office Agenda</b-dropdown-item
             >
-            <span
-              v-if="
-                user.role &&
-                (user.role.role_code === 'GA' ||
-                  user.role.role_code === 'SUPPORT')
-              "
+            <b-dropdown-item to="/service-flow"  id="service_flow" v-if="isServiceFLowEnabled"
+              >Service Flow</b-dropdown-item
             >
-              <b-dropdown-item @click="clickGAScreen" :class="gaPanelStyle">
+            <span v-if="user.role && (user.role.role_code == 'GA' || user.role.role_code == 'SUPPORT')">
+              <b-dropdown-item @click="clickGAScreen">
                 <font-awesome-icon
                   v-if="showGAScreenModal"
                   icon="check"
@@ -120,11 +117,7 @@
               </b-dropdown-item>
               <b-dropdown-divider />
             </span>
-            <b-dropdown-item
-              v-if="appointmentsEnabled"
-              @click="clickAgendaScreen"
-              :class="agendaPanelStyle"
-            >
+            <b-dropdown-item v-if='appointmentsEnabled' @click='clickAgendaScreen'>
               <font-awesome-icon
                 v-if="showAgendaScreenModal"
                 icon="check"
@@ -174,9 +167,10 @@
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue, Watch } from 'vue-property-decorator';
 
-import AddCitizen from '../AddCitizen/add-citizen.vue';
-import ServeCitizen from '../ServeCitizen/serve-citizen.vue';
-import config from '../../../config';
+import AddCitizen from '../AddCitizen/add-citizen.vue'
+import ServeCitizen from '../ServeCitizen/serve-citizen.vue'
+import config from '../../../config'
+import configMap from '../../utils/config-helper'
 
 @Component({
   components: {
@@ -208,11 +202,12 @@ export default class Nav extends Vue {
 
   @Mutation('toggleFeedbackModal') public toggleFeedbackModal: any;
   @Mutation('toggleServiceModal') public toggleServiceModal: any;
+  public isServiceFLowEnabled = configMap.isServiceFLowEnabled()
 
-  private flashIcon: boolean = true;
-  private showSpacer: boolean = false;
-  toggleTimeTrackingIcon: any;
-  dropdownPopperOpts = {
+  private flashIcon: boolean = true
+  private showSpacer: boolean = false
+  toggleTimeTrackingIcon: any
+    dropdownPopperOpts = {
     modifiers: {
       computeStyle: {
         gpuAcceleration: false

@@ -222,14 +222,12 @@
 </template>
 <script lang="ts">
 import { AppointmentModule, AuthModule } from '@/store/modules'
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import { FeedbackRequestObject, FeedbackResponseObject } from '@/models/feedback'
 import { mapActions, mapState } from 'vuex'
 import CommonUtils from '@/utils/common-util'
 import ConfigHelper from '@/utils/config-helper'
-import { User } from '@/models/user'
 import { getModule } from 'vuex-module-decorators'
-import { th } from 'date-fns/locale'
 
 @Component({
   computed: {
@@ -287,7 +285,7 @@ export default class Feedback extends Vue {
   private authModule = getModule(AuthModule, this.$store)
   private showFeedbackArea = false
   private consent: boolean = false
-  private feedbackRequest: FeedbackRequestObject = { variables: { engagement: {}, citizen_comments: {}, service_channel: {}, response: {}, citizen_name: {}, citizen_contact: {}, citizen_email: {}, entity_key: {}, service_date: {}, submit_date_time: {} } }
+  private feedbackRequest: FeedbackRequestObject = { variables: { engagement: {}, citizen_comments: {}, service_channel: {}, response: {}, citizen_name: {}, citizen_contact: {}, citizen_email: {}, entity_key: {}, service_date: {}, submit_date_time: {}, entered_by: {} } }
   private feedbackResponse: FeedbackResponseObject
   private responseRequired: boolean = false
   private showMobileFeedbackPanel: boolean = false
@@ -302,9 +300,11 @@ export default class Feedback extends Vue {
     this.responseRequired = false
     this.clearFields()
   }
+
   private toggleResponsePage () {
     this.showResponsePage = !this.showResponsePage
   }
+
   private showFeedBack (feedbackType: string) {
     this.formEntryTime = new Date().getTime()
     this.submitInProgress = false
@@ -324,6 +324,7 @@ export default class Feedback extends Vue {
     this.showFeedbackArea = true
     this.showMobileFeedbackPanel = false
   }
+
   private getFeedbackViewStyle () {
     if (this.showFeedbackArea && this.responseRequired) {
       return 'feedback_response_expanded'
@@ -332,12 +333,13 @@ export default class Feedback extends Vue {
       return 'feedback_container_expanded'
     }
   }
+
   private toggleMobileFeedbackPanel () {
     this.showMobileFeedbackPanel = !this.showMobileFeedbackPanel
   }
 
   private async postFeedback () {
-    let formSubmitTime = new Date().getTime() - this.formEntryTime
+    const formSubmitTime = new Date().getTime() - this.formEntryTime
     if (formSubmitTime < 500) {
       return
     }
@@ -393,6 +395,8 @@ export default class Feedback extends Vue {
     this.feedbackRequest.variables.citizen_comments.type = 'String'
     this.feedbackRequest.variables.service_channel.type = 'String'
     this.feedbackRequest.variables.service_channel.value = this.feedbackServiceChannel
+    this.feedbackRequest.variables.entered_by.type = 'String'
+    this.feedbackRequest.variables.entered_by.value = this.feedbackServiceChannel
     this.feedbackRequest.variables.response.type = 'Boolean'
     this.feedbackRequest.variables.citizen_name.type = 'String'
     this.feedbackRequest.variables.citizen_contact.type = 'String'
@@ -403,9 +407,9 @@ export default class Feedback extends Vue {
   }
 
   private getCurrentDateinFormat () {
-    let currentDate = new Date()
-    let day = currentDate.getDate().toString().length === 1 ? '0' + currentDate.getDate().toString() : currentDate.getDate().toString()
-    let month = currentDate.getMonth().toString().length === 1 ? '0' + (currentDate.getMonth() + 1).toString() : (currentDate.getMonth() + 1).toString()
+    const currentDate = new Date()
+    const day = currentDate.getDate().toString().length === 1 ? '0' + currentDate.getDate().toString() : currentDate.getDate().toString()
+    const month = currentDate.getMonth().toString().length === 1 ? '0' + (currentDate.getMonth() + 1).toString() : (currentDate.getMonth() + 1).toString()
     return currentDate.getFullYear() + '-' + month + '-' + day
   }
 
@@ -416,12 +420,13 @@ export default class Feedback extends Vue {
       return 'Email or Phone no is required'
     }
   }
+
   private validateRules () {
-    let phoneCondition = this.phone !== undefined && this.phone !== ''
-    let emailCondition = this.email !== undefined && this.email !== ''
+    const phoneCondition = this.phone !== undefined && this.phone !== ''
+    const emailCondition = this.email !== undefined && this.email !== ''
     if (emailCondition || phoneCondition) {
       if (emailCondition) {
-        let formatResponse = /.+@.+\..+/.test(this.email) ? true : 'Email must be valid'
+        const formatResponse = /.+@.+\..+/.test(this.email) ? true : 'Email must be valid'
         this.emailRules = [formatResponse]
         this.phoneRules = [true]
       }
@@ -434,6 +439,7 @@ export default class Feedback extends Vue {
       this.phoneRules = ['Email or Phone is required']
     }
   }
+
   private validateSubmit () {
     if (this.responseRequired) {
       return !(this.valid && this.consent)
@@ -608,8 +614,8 @@ $mandatory_star:#ff0000;
 .feedback_view_mobile{
   position: fixed;
   z-index: 5;
-  top: 40%;
   left: 5%;
+  bottom: 8.5%;
 }
 .feedback_view_mobile.feedback_view_expanded_xs{
   width: 100%;
@@ -646,5 +652,13 @@ $mandatory_star:#ff0000;
 }
 .margin-left-20{
   margin-left: 20px;
+}
+
+.feedback_area .row{
+  margin: 0;
+}
+
+.feedback_area h3{
+  font-size: 1.3rem;
 }
 </style>

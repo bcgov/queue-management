@@ -219,6 +219,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
     title: '',
     subTitle: ''
   }
+
   private isSendSmsReminders:boolean = false
   private isSendEmailReminders:boolean = false
   private readonly currentUserProfile!: User
@@ -229,6 +230,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
       await this.fetchUserAppointments()
     }
   }
+
   private get appointmentDisplayData () {
     return {
       serviceForAppointment: this.currentService?.external_service_name,
@@ -243,9 +245,9 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   }
 
   private get appointmentDateTime () {
-    let date = this.dateTimeFormatted(this.currentAppointmentSlot?.start_time, 'MMM dd, yyyy')
-    let start = this.dateTimeFormatted(this.currentAppointmentSlot?.start_time, 'hh:mmaaaa')
-    let end = this.dateTimeFormatted(this.currentAppointmentSlot?.end_time, 'hh:mmaaaa')
+    const date = this.dateTimeFormatted(this.currentAppointmentSlot?.start_time, 'MMM dd, yyyy')
+    const start = this.dateTimeFormatted(this.currentAppointmentSlot?.start_time, 'hh:mmaaaa')
+    const end = this.dateTimeFormatted(this.currentAppointmentSlot?.end_time, 'hh:mmaaaa')
     return `${date} ${start} - ${end}`
   }
 

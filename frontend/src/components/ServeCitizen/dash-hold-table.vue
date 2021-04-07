@@ -25,13 +25,13 @@ limitations under the License.*/-->
       @row-clicked="rowClicked"
       class="p-0 m-0"
     >
-      <template slot="counter_id" slot-scope="data">{{ showCounter(data.item.counter_id) }}</template>
-      <template slot="start_time" slot-scope="data">{{ formatTime(data.item.start_time) }}</template>
-      <template slot="csr" slot-scope="data">{{ showCSR(data.item.citizen_id) }}</template>
-      <template slot="category" slot-scope="data">{{ showCategory(data.item.citizen_id) }}</template>
-      <template slot="service" slot-scope="data">{{ showService(data.item.citizen_id) }}</template>
-      <template slot="priority" slot-scope="data">{{ showPriority(data.item.priority) }}</template>
-      <template slot="citizen_comments" slot-scope="row">
+      <template #cell(counter_id)="data">{{ showCounter(data.item.counter_id) }}</template>
+      <template #cell(start_time)="data">{{ formatTime(data.item.start_time) }}</template>
+      <template #cell(csr)="data">{{ showCSR(data.item.citizen_id) }}</template>
+      <template #cell(category)="data">{{ showCategory(data.item.citizen_id) }}</template>
+      <template #cell(service)="data">{{ showService(data.item.citizen_id) }}</template>
+      <template #cell(priority)="data">{{ showPriority(data.item.priority) }}</template>
+      <template #cell(citizen_comments)="row">
         <template v-if="row.item.citizen_name">
           <span style="color: teal">{{ parseComments(row.item).appt }}</span>
           <br />

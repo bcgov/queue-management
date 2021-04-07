@@ -53,11 +53,15 @@ class OfficeConfig(Base):
     form_create_rules = ('office_name', 'office_number', 'sb', 'services', 'deleted', 'exams_enabled_ind',
                          'appointments_enabled_ind', 'timezone', 'latitude', 'longitude', 'office_appointment_message',
                          'appointments_days_limit', 'appointment_duration', 'soonest_appointment', 'max_person_appointment_per_day',\
-                          'civic_address', 'telephone', 'online_status', 'check_in_notification', 'check_in_reminder_msg', 'automatic_reminder_at')
+                         'civic_address', 'telephone', 'online_status', 'check_in_notification', 'check_in_reminder_msg',\
+                         'automatic_reminder_at', 'currently_waiting', 'digital_signage_message', 'digital_signage_message_1',\
+                         'digital_signage_message_2', 'digital_signage_message_3', 'show_currently_waiting_bottom' )
     form_edit_rules = ('office_name', 'office_number', 'sb', 'services', 'deleted', 'exams_enabled_ind',
                        'appointments_enabled_ind', 'timezone', 'latitude', 'longitude', 'office_appointment_message',
                          'appointments_days_limit', 'appointment_duration', 'soonest_appointment', 'max_person_appointment_per_day',\
-                          'civic_address', 'telephone', 'online_status', 'check_in_notification', 'check_in_reminder_msg', 'automatic_reminder_at')
+                         'civic_address', 'telephone', 'online_status', 'check_in_notification', 'check_in_reminder_msg', \
+                         'automatic_reminder_at', 'currently_waiting', 'digital_signage_message', 'digital_signage_message_1',\
+                         'digital_signage_message_2', 'digital_signage_message_3', 'show_currently_waiting_bottom' )
     form_choices = {
         'exams_enabled_ind': [
             ("0", 'No - Exams are not enabled for this office'), \
@@ -76,6 +80,18 @@ class OfficeConfig(Base):
             ("1", '1 - First in Line'), \
             ("2", '2 - Second in Line'),\
             ("3", '3 - Third in Line')
+        ],
+        'currently_waiting': [
+            ("0", 'Off - Disabale Currently Waiting in SmartBoard'), \
+            ("1", 'On - Enable Currently Waiting in SmartBoard')
+        ],
+        'digital_signage_message': [
+            ("0", 'Off - Disabale Messages in SmartBoard'), \
+            ("1", 'On - Enable Messages in SmartBoard')
+        ],
+        'show_currently_waiting_bottom': [
+            ("0", 'Off - Hide Currently Waiting at bottom in SmartBoard'), \
+            ("1", 'On - Show Currently Waiting  from bottom in SmartBoard')
         ],
     }
     timezone_name = 'timezone.timezone_name'
@@ -103,7 +119,13 @@ class OfficeConfig(Base):
                    'external_map_link',
                    'check_in_notification',
                    'check_in_reminder_msg',
-                   'automatic_reminder_at'
+                   'automatic_reminder_at',
+                    'currently_waiting',
+                    'digital_signage_message',
+                    'digital_signage_message_1',
+                    'digital_signage_message_2',
+                    'digital_signage_message_3',
+                    'show_currently_waiting_bottom',
                    ]
 
     form_excluded_columns = ('citizens',
@@ -141,6 +163,12 @@ class OfficeConfig(Base):
                          'check_in_notification',
                          'check_in_reminder_msg',
                          'automatic_reminder_at'
+                         'currently_waiting',
+                         'digital_signage_message',
+                         'digital_signage_message_1',
+                         'digital_signage_message_2',
+                         'digital_signage_message_3',
+                         'show_currently_waiting_bottom',
                          )
 
     form_edit_rules = ('office_name',
@@ -170,7 +198,13 @@ class OfficeConfig(Base):
                        'external_map_link',
                        'check_in_notification',
                        'check_in_reminder_msg',
-                       'automatic_reminder_at'
+                       'automatic_reminder_at',
+                       'currently_waiting',
+                       'digital_signage_message',
+                       'digital_signage_message_1',
+                       'digital_signage_message_2',
+                       'digital_signage_message_3',
+                       'show_currently_waiting_bottom',
                        )
 
     form_args = {
@@ -204,7 +238,13 @@ class OfficeConfig(Base):
                      'appointment_duration': 'Default Appointment Duration',
                      'check_in_notification': 'Check-In Notifications',
                      'check_in_reminder_msg': 'Check-In Notification Reminder Message',
-                     'automatic_reminder_at': 'Check-In Notification Automatically Send Message When Ticket is X in Line'
+                     'automatic_reminder_at': 'Check-In Notification Automatically Send Message When Ticket is X in Line',
+                     'currently_waiting': 'Currently Waiting in SmartBoard',
+                     'digital_signage_message': 'Digital Signage Message in SmartBoard',
+                     'digital_signage_message_1': 'Digital Signage Message 1',
+                     'digital_signage_message_2': 'Digital Signage Message 2',
+                     'digital_signage_message_3': 'Digital Signage Message 3',
+                     'show_currently_waiting_bottom': 'Show Currently Waiting at Bottom in SmartBoard'
                      }
 
     column_sortable_list = ['office_name',
@@ -234,6 +274,7 @@ class OfficeConfig(Base):
         socketio.emit('csr_update',
                         {"csr_id": csr.csr_id, "receptionist_ind": csr.receptionist_ind},
                         room=csr.office_id)
+        socketio.emit('digital_signage_msg_update')
 
 
 class OfficeConfigGA(OfficeConfig):
@@ -274,6 +315,12 @@ class OfficeConfigGA(OfficeConfig):
         'check_in_notification',
         'check_in_reminder_msg',
         'automatic_reminder_at'
+        'currently_waiting',
+        'digital_signage_message',
+        'digital_signage_message_1',
+        'digital_signage_message_2',
+        'digital_signage_message_3',
+        'show_currently_waiting_bottom'
     )
 
     form_excluded_columns = (

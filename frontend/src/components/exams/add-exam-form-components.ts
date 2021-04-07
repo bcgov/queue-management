@@ -38,7 +38,7 @@ export class checkmark extends Vue {
 
   },
   template: `
-  <fragment>
+  <div>
     <b-row no-gutters class="mx-2">
       <b-col cols="2">
         <b-form-group>
@@ -53,7 +53,7 @@ export class checkmark extends Vue {
         <span style="color: red">Number of selected exams does not equal the number of candidates</span>
       </b-col>
     </b-row>
-  </fragment>
+  </div>
 `
 })
 export class AddExamCounter extends Vue {
@@ -212,9 +212,9 @@ export class DateQuestion extends Vue {
           @click="clickInput">
       <template v-for="type in dropItems">
         <b-dd-header v-if="type.header"
-                      :style="{backgroundColor: type.exam_color}"
+                      :style="{backgroundColor: type.exam_color, listStyleType: 'none'}"
                       :class="type.class">{{ type.exam_type_name }}</b-dd-header>
-        <b-dd-item v-else :style="{backgroundColor: type.exam_color}"
+        <b-dd-item v-else :style="{backgroundColor: type.exam_color, listStyleType: 'none'}"
                     @click="preHandleInput(type.exam_type_id)"
                     :name="type.exam_type_id"
                     autocomplete="off"
@@ -261,8 +261,8 @@ export class DropdownQuestion extends Vue {
 
   get dropItems () {
     const sorter = (a, b) => {
-      var typeA = a.exam_type_name
-      var typeB = b.exam_type_name
+      const typeA = a.exam_type_name
+      const typeB = b.exam_type_name
       if (typeA < typeB) {
         return -1
       }
@@ -467,7 +467,7 @@ export class ExamReceivedQuestion extends Vue {
 
   },
   template: `
-  <fragment v-if="q.key === 'exam_name' && setup === 'challenger'">
+  <div v-if="q.key === 'exam_name' && setup === 'challenger'">
     <b-row no-gutters>
       <b-col cols="11"><h5>Adding a Monthly Session Exam</h5></b-col>
     </b-row>
@@ -487,8 +487,8 @@ export class ExamReceivedQuestion extends Vue {
       </b-col>
     <checkmark :validated="validationObj[q.key].valid"  />
   </b-row>
-  </fragment>
-  <fragment v-else>
+  </div>
+  <div v-else>
     <b-row no-gutters>
       <b-col cols="11">
         <b-form-group>
@@ -505,7 +505,7 @@ export class ExamReceivedQuestion extends Vue {
       </b-col>
       <checkmark v-if="setup !=='challenger' " :validated="validationObj[q.key].valid"  />
     </b-row>
-  </fragment>
+  </div>
 `
 })
 export class InputQuestion extends Vue {
@@ -542,7 +542,7 @@ export class InputQuestion extends Vue {
     })
   },
   template: `
-    <fragment>
+    <div>
       <b-row no-gutters>
         <b-col cols="3">
           <label>{{q.text}}
@@ -564,7 +564,7 @@ export class InputQuestion extends Vue {
 
         <checkmark :validated="validationObj[q.key].valid" />
       </b-row>
-    </fragment>
+    </div>
   `
 })
 
@@ -619,7 +619,7 @@ export class InputQuestion2 extends Vue {
 
   },
   template: `
-    <fragment>
+    <div>
       <template v-if="capturedExam.on_or_off === 'off' || setup === 'pesticide' || setup === 'group' ">
         <b-row no-gutters>
           <b-col cols="11">
@@ -671,7 +671,7 @@ export class InputQuestion2 extends Vue {
           </b-col>
         </b-row>
       </template>
-      </fragment>
+      </div>
   `
 })
 

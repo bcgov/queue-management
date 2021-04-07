@@ -1,5 +1,5 @@
 <template>
-  <fragment>
+  <div>
     <div style="position: relative" class="q-upload-margins">
       <div v-if="this.isUploadingFile">
         <div class="q-loader"></div>
@@ -74,7 +74,7 @@
         <br /><br />
       </div>
     </div>
-  </fragment>
+  </div>
 </template>
 
 <script lang="ts">
