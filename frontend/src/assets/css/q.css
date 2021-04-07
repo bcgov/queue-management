@@ -246,3 +246,12 @@ input#appointment_blackout_end_time, input#recurring_blackout_end_time,
 input#app_timepicker_id {
   padding-left: 10px;
 }
+
+.vue__time-picker{
+  width: 200px;
+}
+
+.vue__time-picker input.display-time{
+  width: 213px;
+  height: 40px;
+}

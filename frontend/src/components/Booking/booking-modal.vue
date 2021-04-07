@@ -137,7 +137,7 @@
                   class="mr-3 mt-1 mb-0 pr-3 pl-3"
                   small
                 >
-                  <template slot="invigilator_name" slot-scope="row">
+                  <template #cell(invigilator_name)="row">
                     <div class="table-pointer">{{ row.item.name }}</div>
                     <div style="display: none">
                       {{

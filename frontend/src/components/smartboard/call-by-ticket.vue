@@ -30,7 +30,7 @@ limitations under the License.*/
             v-bind:thead-class="headclass"
             v-bind:tbody-class="bodyclass"
           >
-            <template slot="ticket_number" slot-scope="data">
+            <template #cell(ticket_number)="data">
               <div
                 v-if="highlighted.includes(data.value)"
                 class="flashing-ticket"
@@ -42,7 +42,7 @@ limitations under the License.*/
                 {{ (data.item._rowVariant = '') }}
               </div>
             </template>
-            <template slot="overflow" slot-scope="data">
+            <template #cell(overflow)="data">
               {{
                 showOverflow === false
                   ? (data.item._tdClass = 'd-none')
