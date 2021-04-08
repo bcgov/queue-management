@@ -1,17 +1,17 @@
 """appointment_version
 
-Revision ID: 638fb4b2f2d5
-Revises: 13f777964cf9
-Create Date: 2021-03-29 14:51:16.826384
+Revision ID: 4b4bac23d407
+Revises: 4bf82b73bbb3
+Create Date: 2021-04-08 09:14:48.824146
 
 """
-from alembic import op
 import sqlalchemy as sa
 import sqlalchemy_utc
+from alembic import op
 
 # revision identifiers, used by Alembic.
-revision = '638fb4b2f2d5'
-down_revision = '13f777964cf9'
+revision = '4b4bac23d407'
+down_revision = '4bf82b73bbb3'
 branch_labels = None
 depends_on = None
 
