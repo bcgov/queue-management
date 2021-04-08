@@ -55,7 +55,7 @@ export default class NotificationFields extends Vue {
 
   setwalkinUniqueId () {
     if ((this.formData.notification_phone) || (this.formData.notification_email)) { 
-      const uuidv4 = require('uuid/v4')
+      const uuidv4 = require('uuid').v4
       this.$store.commit('updateAddModalForm', { type: 'walkin_unique_id', value: uuidv4() })
     }
   }

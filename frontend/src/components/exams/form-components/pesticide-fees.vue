@@ -1,5 +1,5 @@
 <template>
-  <fragment>
+  <div>
     <b-row no-gutters>
       <b-col :cols="exam[q.key] === 'collect' ? 11 : 6">
         <b-form-group>
@@ -44,7 +44,7 @@
         </b-form-group>
       </b-col>
     </b-row>
-  </fragment>
+  </div>
 </template>
 
 <script lang="ts">

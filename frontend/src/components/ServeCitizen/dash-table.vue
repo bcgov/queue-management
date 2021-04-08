@@ -25,13 +25,13 @@ limitations under the License.*/
       class="p-0 m-0"
     >
       <!--id="client-waiting-table"-->
-      <template slot="counter_id" slot-scope="row">{{ showCounter(row.item.counter_id) }}</template>
-      <template slot="start_time" slot-scope="row">{{ formatTime(row.item.start_time) }}</template>
-      <template slot="csr" slot-scope="row">{{ showCSR(row.item.citizen_id) }}</template>
-      <template slot="category" slot-scope="row">{{ showCategory(row.item.citizen_id) }}</template>
-      <template slot="service" slot-scope="row">{{ showService(row.item.citizen_id) }}</template>
-      <template slot="priority" slot-scope="row">{{ showPriority(row.item.priority) }}</template>
-      <template slot="citizen_comments" slot-scope="row">
+      <template #cell(counter_id)="row">{{ showCounter(row.item.counter_id) }}</template>
+      <template #cell(start_time)="row">{{ formatTime(row.item.start_time) }}</template>
+      <template #cell(csr)="row">{{ showCSR(row.item.citizen_id) }}</template>
+      <template #cell(category)="row">{{ showCategory(row.item.citizen_id) }}</template>
+      <template #cell(service)="row">{{ showService(row.item.citizen_id) }}</template>
+      <template #cell(priority)="row">{{ showPriority(row.item.priority) }}</template>
+      <template #cell(citizen_comments)="row">
         <template v-if="row.item.citizen_name">
           <span style="color: teal">{{ parseComments(row.item).appt }}</span>
           <br />
@@ -39,9 +39,9 @@ limitations under the License.*/
         </template>
         <template v-else>{{ parseComments(row.item) }}</template>
       </template>
-       <template slot="reminder_flag" slot-scope="row" v-if="isNotificationEnabled === 1">
+       <template #cell(reminder_flag)="row">
         <b-button 
-          v-if="(row.item.reminder_flag == 0) && (row.item.notification_phone || row.item.notification_email)"
+          v-if="((row.item.reminder_flag == 0) && (row.item.notification_phone || row.item.notification_email) && (isNotificationEnabled === 1))"
           @click="sentReminder(row.item.citizen_id, 'first')"
           variant="secondary"
           >
@@ -50,7 +50,7 @@ limitations under the License.*/
           />
         </b-button>
         <b-button 
-          v-if="row.item.reminder_flag == 1 && (row.item.notification_phone || row.item.notification_email)"
+          v-if="(row.item.reminder_flag == 1 && (row.item.notification_phone || row.item.notification_email)  && (isNotificationEnabled === 1))"
           variant="primary"
           @click="sentReminder(row.item.citizen_id, 'second')"
           >
@@ -60,7 +60,7 @@ limitations under the License.*/
         </b-button>
         <b-button 
           disabled
-          v-if="row.item.reminder_flag == 2 && (row.item.notification_phone || row.item.notification_email)"
+          v-if="(row.item.reminder_flag == 2 && (row.item.notification_phone || row.item.notification_email) && (isNotificationEnabled === 1))"
           variant="danger"
           >
           <font-awesome-icon
@@ -69,18 +69,18 @@ limitations under the License.*/
           />
         </b-button>
       </template>
-      <template slot="notification_phone" slot-scope="row" v-if="isNotificationEnabled === 1">
-        <b-row v-if="row.item.notification_phone">
+      <template #cell(notification_phone)="row">
+        <b-row v-if="((row.item.notification_phone) && (isNotificationEnabled === 1))">
           {{row.item.notification_phone}}
         </b-row>
-        <b-row v-if="row.item.notification_email">
+        <b-row v-if="((row.item.notification_email) && (isNotificationEnabled === 1))">
           {{row.item.notification_email}}
         </b-row>
       </template>
-      <template slot="notification_sent_time" slot-scope="row" v-if="isNotificationEnabled === 1">
+      <template #cell(notification_sent_time)="row">
          <b-button 
           disabled
-          v-if="row.item.notification_sent_time"
+          v-if="((row.item.notification_sent_time) && (isNotificationEnabled === 1))"
           variant="info"
           >
           <font-awesome-icon
@@ -88,7 +88,7 @@ limitations under the License.*/
             disabled
           />
         </b-button>
-        <span v-if="row.item.notification_sent_time">{{timeFormat(row.item.notification_sent_time)}} </span>
+        <span v-if="((row.item.notification_sent_time) && (isNotificationEnabled === 1))">{{timeFormat(row.item.notification_sent_time)}} </span>
       </template>
     </b-table>
   </div>
