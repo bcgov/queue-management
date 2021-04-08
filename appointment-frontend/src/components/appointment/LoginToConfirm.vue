@@ -1,26 +1,27 @@
 <template>
   <v-card-text>
-    <v-col justify="center">
+    <v-col justify="center" class="pt-0">
       <v-row class="align-row-1 bcsc-btn" v-if="!hideBCServicesCard">
         <v-col class="fill-width">
           <v-btn
-            min-width="150"
+            width="220"
             large
             color="primary"
             @click="login(idpHint.BCSC)"
           >
-            BC Services Card
+            Mobile BC Services Card App
           </v-btn>
-          <a class="link-w-icon mt-6" @click="clickHyperlink('https://www2.gov.bc.ca/gov/content/governments/government-id/bc-services-card','Info: About the BC Services Card')"
+          <a class="link-w-icon mt-6" @click="clickHyperlink('https://www2.gov.bc.ca/gov/content/governments/government-id/bc-services-card/log-in-with-card','Info: About the BC Services Card')"
             target="_blank" rel="noopener noreferrer" >
             <v-icon small class="mr-2">mdi-open-in-new</v-icon>
-            <span>About the BC Services Card</span>
+            <span>About the mobile BC Services Card app</span>
           </a>
         </v-col>
-        <v-col class="align-row-2 fill-width">
+        <v-col class="align-row-2 fill-width" v-if="!($vuetify.breakpoint.xs)">
           <v-img
+            v-if="!($vuetify.breakpoint.xs)"
             class="login-logo"
-            :src="($vuetify.breakpoint.xs) ? require('@/assets/img/bcsc_logo_sm.jpg') : require('@/assets/img/bcsc_logo.jpg')"
+            :src="require('@/assets/img/bcsc_logo.jpg')"
             max-width="132"
             contain
           ></v-img>
@@ -29,12 +30,12 @@
       <v-row class="align-row-1 bcsc-btn">
         <v-col class="fill-width">
           <v-btn
-          min-width="150"
+          width="220"
           large
           color="primary"
           @click="login(idpHint.BCEID)"
         >
-          BCeID
+        Basic BCeID Username
         </v-btn>
         <a class="link-w-icon mt-6"
           target="_blank" rel="noopener noreferrer" @click="clickHyperlink('https://www.bceid.ca/','Info: About the BCeID')">
@@ -42,17 +43,18 @@
           <span>About the BCeID</span>
         </a>
         </v-col>
-        <v-col class="align-row-2 fill-width">
+        <v-col class="align-row-2 fill-width" v-if="!($vuetify.breakpoint.xs)">
         <v-img
+            v-if="!($vuetify.breakpoint.xs)"
             class="login-logo"
-            :src="($vuetify.breakpoint.xs) ? require('@/assets/img/bceid_logo_sm.jpg') : require('@/assets/img/bceid_logo.jpg')"
+            :src="require('@/assets/img/bceid_logo.jpg')"
             max-width="132"
             contain
           ></v-img>
         </v-col>
       </v-row>
       <v-row class="text-center bcsc-btn">
-        <v-col class="create-bceid">I do not have a BC Services Card or BCeID</v-col>
+        <v-col class="create-bceid"> <h3>I do not have a BC Services Card or BCeID</h3></v-col>
       </v-row>
       <v-row class="align-row-1 bcsc-btn">
         <v-col class="fill-width">
@@ -62,7 +64,7 @@
           color="primary"
           @click="createBCEID(BCEIDRegistrationURL)"
         >
-        Create BCeID
+        Create Basic BCeID Username
         </v-btn>
         <!--a class="link-w-icon mt-3" :href="BCEIDRegistrationURL"
           target="_self" rel="noopener noreferrer">
@@ -75,10 +77,11 @@
           <span>Privacy Statement</span>
         </a>
         </v-col>
-        <v-col class="align-row-2 fill-width">
+        <v-col class="align-row-2 fill-width" v-if="!($vuetify.breakpoint.xs)">
         <v-img
+            v-if="!($vuetify.breakpoint.xs)"
             class="login-logo"
-            :src="($vuetify.breakpoint.xs) ? require('@/assets/img/bceid_logo_sm.jpg') : require('@/assets/img/bceid_logo.jpg')"
+            :src="require('@/assets/img/bceid_logo.jpg')"
             max-width="132"
             contain
           ></v-img>
@@ -138,8 +141,8 @@ export default class LoginToConfirm extends Mixins(StepperMixin) {
 
   private get description () {
     return (this.isStepperView)
-      ? `To complete your appointment booking, please login using one of the following`
-      : `Please login using one of the following`
+      ? 'To complete your appointment booking, please login using one of the following'
+      : 'Please login using one of the following'
   }
 
   private callsp () {

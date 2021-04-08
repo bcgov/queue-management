@@ -1,6 +1,5 @@
 import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
-import { AppointmentRequestBody, AppointmentSlot } from '@/models/appointment'
-import { Appointment } from './../../models/appointment'
+import { Appointment, AppointmentRequestBody, AppointmentSlot } from '@/models/appointment'
 import AppointmentService from '@/services/appointment.services'
 import CommonUtils from '@/utils/common-util'
 import { Office } from '@/models/office'
@@ -118,8 +117,8 @@ export default class OfficeModule extends VuexModule {
       // Sort alphabetically on displayed external_service_name
       services = services.sort((a, b) => {
         // If external_service_name is null, sort it to last of list.
-        let aName = a.external_service_name || 'zzz'
-        let bName = b.external_service_name || 'zzz'
+        const aName = a.external_service_name || 'zzz'
+        const bName = b.external_service_name || 'zzz'
         return aName.localeCompare(bName)
       })
     }

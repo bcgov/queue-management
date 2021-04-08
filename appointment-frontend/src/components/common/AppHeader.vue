@@ -117,10 +117,12 @@ export default class AppHeader extends Vue {
     this.$router.push('/login')
     this.callsp()
   }
+
   register () {
     this.$router.push('/login')
     this.callsp()
   }
+
   private goTo (page) {
     let currStep = ''
     let theloc = null

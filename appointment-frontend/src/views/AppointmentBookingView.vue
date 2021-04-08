@@ -163,6 +163,7 @@ export default class AppointmentBookingView extends Vue {
     current_version: '',
     allowed_browsers: ''
   }
+
   private stepCounter = 1
   private stepName = ''
   private updateViewCounter = 0
@@ -176,8 +177,8 @@ export default class AppointmentBookingView extends Vue {
       title: 'Book an Appointment',
       subTitle: '',
       icon: 'mdi-map-marker-radius',
-      beforeIconText: `Click the`,
-      afterIconText: `to find your closest Service BC Centre`,
+      beforeIconText: 'Click the',
+      afterIconText: 'to find your closest Service BC Centre',
       code: 'location',
       component: LocationsList,
       componentProps: {}
@@ -186,7 +187,7 @@ export default class AppointmentBookingView extends Vue {
       step: 2,
       label: 'Select Service',
       title: 'Service Selection',
-      subTitle: `Please select the service you'd like to receive`,
+      subTitle: 'Please select the service you\'d like to receive',
       code: 'service',
       component: ServiceSelection,
       componentProps: {}
@@ -196,8 +197,8 @@ export default class AppointmentBookingView extends Vue {
       label: 'Select Date',
       title: 'Select a Date',
       icon: 'mdi-chevron-right',
-      beforeIconText: `Available days are highlighted in the calendar, use the`,
-      afterIconText: `arrow to go to the next month`,
+      beforeIconText: 'Available days are highlighted in the calendar, use the',
+      afterIconText: 'arrow to go to the next month',
       code: 'date',
       component: DateSelection,
       componentProps: {}
@@ -206,7 +207,7 @@ export default class AppointmentBookingView extends Vue {
       step: 4,
       label: 'Login to Confirm Appointment',
       title: 'Login',
-      subTitle: `To complete your appointment booking, please login using one of the following`,
+      subTitle: 'To complete your appointment booking, please login using one of the following',
       code: 'login',
       component: LoginToConfirm,
       componentProps: {

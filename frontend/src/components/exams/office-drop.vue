@@ -1,13 +1,13 @@
 <template>
-  <fragment>
+  <b-row>
     <b-col :cols="columnW">
-      <b-table
+      <!-- <b-table
         v-show="false"
         :items="offices"
-        :fields="{ key: 'office_name' }"
+        :fields="[{ key: 'office_name' }]"
         :filter="search"
         @filtered="getFilteredOffices"
-      />
+      /> -->
       <b-form autocomplete="off">
         <b-form-group>
           <label class="my-0"
@@ -58,7 +58,7 @@
         </b-form-group>
       </b-form>
     </b-col>
-  </fragment>
+  </b-row>
 </template>
 
 <script lang="ts">
@@ -133,11 +133,7 @@ export default class OfficeDrop extends Vue {
   }
 
   getFilteredOffices (offices) {
-    if (offices.length === 0) {
-      this.officeChoices = [{ office_number: null, office_name: 'No Offices found' }]
-      return
-    }
-    this.officeChoices = offices.length >= 4 ? offices.slice(0, 4) : offices
+    
   }
 
   handleOfficeDropClick (e) {
@@ -161,6 +157,47 @@ export default class OfficeDrop extends Vue {
     this.search = e.target.value
     if (this.search.length > 1 && this.searching === true) {
       this.showSearch = true
+
+      this.officeChoices = this.offices.filter(item => {
+        const telephone =  item['telephone'] === undefined || item['telephone'] === null ? '' : item['telephone']
+        const office_appointment_message =  item['office_appointment_message'] === undefined || item['office_appointment_message'] === null ? '' : item['office_appointment_message']
+        const civic_address =  item['civic_address'] === undefined || item['civic_address'] === null ? '' : item['civic_address']
+        const office_name =  item['office_name'] === undefined || item['office_name'] === null ? '' : item['office_name']
+        const longitude =  item['longitude'] === undefined || item['longitude'] === null ? '' : item['longitude'] + ''
+        const latitude =  item['latitude'] === undefined || item['latitude'] === null ? '' : item['latitude'] + ''
+
+        let searchResult = telephone.toLowerCase().indexOf(this.search.toLowerCase()) > -1
+        if (searchResult) {
+          return true
+        }
+        searchResult = office_appointment_message.toLowerCase().indexOf(this.search.toLowerCase()) > -1
+        if (searchResult) {
+          return true
+        }
+        searchResult = civic_address.toLowerCase().indexOf(this.search.toLowerCase()) > -1
+        if (searchResult) {
+          return true
+        }
+        searchResult = office_name.toLowerCase().indexOf(this.search.toLowerCase()) > -1
+        if (searchResult) {
+          return true
+        }
+
+        searchResult = longitude.indexOf(this.search) > -1
+        if (searchResult) {
+          return true
+        }
+        searchResult = latitude.indexOf(this.search) > -1
+        if (searchResult) {
+          return true
+        }
+      })
+
+      if (this.officeChoices.length === 0) {
+        this.officeChoices = [{ office_number: null, office_name: 'No Offices found' }]
+      } else{
+        this.officeChoices = this.officeChoices.length >= 4 ? this.officeChoices.slice(0, 4) : this.officeChoices
+      }
     }
     if (this.search.length <= 1) {
       this.showSearch = false

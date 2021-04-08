@@ -15,11 +15,11 @@ limitations under the License.'''
 from flask import request
 from flask_restx import Resource
 from qsystem import api
-from app.models.theq import Citizen, CitizenState, ServiceReq, SRState
+from app.models.theq import Citizen, CitizenState, ServiceReq, SRState, Office
 from app.models.theq import Office
 from app.schemas.theq.period_schema import PeriodSchema
+from app.schemas.theq import OfficeSchema
 from sqlalchemy import exc
-
 
 @api.route("/smartboard/", methods=["GET"])
 class Smartboard(Resource):
@@ -81,3 +81,19 @@ class Smartboard(Resource):
             print(e)
             return {'message': 'office_number must be an integer.'}, 400
 
+
+@api.route("/smardboard/side-menu/<string:id>", methods=["GET"])
+class SmartBoradQMenu(Resource):
+    office_schema = OfficeSchema()
+
+    def get(self, id):
+        try:
+            # get office details from url id
+            office = Office.query.filter_by(office_number=id).first()
+            if not office:
+                return {'message': 'office_number could not be found.'}, 400
+            else:
+                return {'office': self.office_schema.dump(office)}, 200
+        except exc.SQLAlchemyError as e:
+            print(e)
+            return {'message': 'API is down'}, 500
