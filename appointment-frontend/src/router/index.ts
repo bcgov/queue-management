@@ -27,7 +27,8 @@ router.beforeEach(async (to, from, next) => {
     return next()
   }
   const isOnlineAppointmentUser = (ConfigHelper.getFromSession(SessionStorageKeys.KeyCloakToken))
-    ? await keycloakServices.isRolesAvailable([Role.OnlineAppointmentUser]) : true
+    ? await keycloakServices.isRolesAvailable([Role.OnlineAppointmentUser])
+    : true
   if (!isOnlineAppointmentUser && !(to.name === 'no-content')) {
     return next('/no-content/unauthorized')
   }

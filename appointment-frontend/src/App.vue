@@ -4,17 +4,6 @@
       <app-header :key="$store.state.refreshKey"></app-header>
       <feedback v-if="(isFeedbackEnabled && (!isWalkin))"></feedback>
       <main class="main-block container">
-        <v-btn
-          v-if="(!isWalkin)"
-          color="secondary"
-          fixed
-          bottom
-          right
-          fab
-          @click="scrollTo"
-        >
-          <v-icon color="black">{{(isScrolled) ? 'mdi-chevron-double-up' : 'mdi-chevron-double-down'}}</v-icon>
-        </v-btn>
         <router-view />
       </main>
       <app-footer id="footer"></app-footer>
@@ -108,15 +97,6 @@ export default class App extends Vue {
 
   private destroyed () {
     this.$root.$off('signin-complete')
-  }
-
-  private scrollTo () {
-    if (this.isScrolled) {
-      this.$vuetify.goTo(0)
-    } else {
-      this.$vuetify.goTo('#footer')
-    }
-    this.isScrolled = !this.isScrolled
   }
 }
 </script>

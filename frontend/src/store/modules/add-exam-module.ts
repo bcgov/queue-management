@@ -247,7 +247,7 @@ export const addExamModule = {
       })
     },
     getAllPesticideExams ({ commit, rootState }) {
-      return new Promise((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         const url = '/exams/'
 
         Axios(rootState.bearer).get(url)
@@ -265,7 +265,7 @@ export const addExamModule = {
     },
     getPesticideExamTypes ({ commit, rootState }) {
       console.log('getPesticideExamTypes')
-      return new Promise((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         const url = '/exam_types/'
 
         Axios(rootState.bearer).get(url)

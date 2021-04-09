@@ -53,3 +53,6 @@ class CitizenSchema(BaseSchema):
     # 0/null-automatic reminder not send
     # 1-automatic reminder sent once
     automatic_reminder_flag = fields.Int()
+
+    # Digital signange
+    created_at = fields.DateTime()

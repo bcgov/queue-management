@@ -13,11 +13,18 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 -->
 <template>
-  <div style="display: flex; height: 75%; width: 100%; justify-content: center">
-    <div class="board-noticket-video">
+  <div style="">
+    <div class="board-nameticket-video">
       <div class="board-video-div">
         <Video :office_number="smartboardData.office_number" />
       </div>
+      <br/><br/>
+      <MarqueeText
+        v-if="isMessageEnabled.isMessageEnabled"
+        :smartboardData="{ office_number }"
+        :networkStatus="{ networkDown }"
+        :office="{office}"
+      />
     </div>
   </div>
 </template>
@@ -26,14 +33,35 @@ limitations under the License.*/
 // /* eslint-disable */
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import Video from './video.vue'
+import MarqueeText from './marquee-text.vue'
 
 @Component({
   components: {
-    Video
+    Video,
+    MarqueeText
   }
 })
 export default class NonReception extends Vue {
-  @Prop({ default: '' })
+  @Prop({ default: {} })
   private smartboardData!: any
+
+  @Prop({ default: {} })
+  private networkStatus!: any
+
+  @Prop({ default: {} })
+  private office!: any
+
+  @Prop({ default: {} })
+  private isMessageEnabled!: any
+
+  
+  private office_number: string = this.smartboardData.office_number
+  private networkDown: boolean = false
+
+  created () {
+    this.office = this.office.office
+    this.isMessageEnabled = this.isMessageEnabled.isMessageEnabled
+    this.networkStatus = this.networkStatus.networkStatus
+  }
 }
 </script>

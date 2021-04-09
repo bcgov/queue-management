@@ -203,10 +203,10 @@ export default class WalkinQ extends Vue {
   }
 
   private toHHMMSS (secs: any) {
-    var secNum = parseInt(secs, 10)
-    var hours = Math.floor(secNum / 3600)
-    var minutes = Math.floor(secNum / 60) % 60
-    var seconds = secNum % 60
+    const secNum = parseInt(secs, 10)
+    const hours = Math.floor(secNum / 3600)
+    const minutes = Math.floor(secNum / 60) % 60
+    const seconds = secNum % 60
 
     return [hours, minutes, seconds]
       .map(v => v < 10 ? '0' + v : v)
