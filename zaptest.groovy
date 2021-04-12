@@ -1,14 +1,4 @@
 def owaspPodLabel = "jenkins-agent-zap"
-// Get an image's hash tag
-String getImageTagHash(String imageName, String tag = "") {
-
-  if(!tag?.trim()) {
-    tag = "latest"
-  }
-
-  def istag = openshift.raw("get istag ${imageName}:${tag} -o template --template='{{.image.dockerImageReference}}'")
-  return istag.out.tokenize('@')[1].trim()
-}
 podTemplate(
     label: owaspPodLabel, 
     name: owaspPodLabel, 
@@ -29,7 +19,7 @@ podTemplate(
     node(owaspPodLabel) {
         stage('ZAP Security Scan') {
 				STAFFURL = sh (
-					script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^zap_url_staff/{print $2}\'',
+					script: "oc describe configmap jenkin-config | awk  -F  "=" \'/^zap_url_staff/{print $2}\'",
 					returnStdout: true
 				).trim()
 				def retVal = sh (
