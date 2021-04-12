@@ -51,7 +51,7 @@ podTemplate(
         stage('ZAP Security Scan') {
 				def retVal = sh (
 					returnStatus: true, 
-					script: "/zap/zap-baseline.py -r index1.html -t $STAFFURL",
+					script: "/zap/zap-baseline.py -r index1.html -t ${STAFFURL}",
           )
         }
         stage('ZAP Security Scan') {          
