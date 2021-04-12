@@ -1,5 +1,4 @@
 def owaspPodLabel = "jenkins-agent-zap"
-echo ${q_url}
 String getNameSpace() {
     def NAMESPACE = sh (
         script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^namespace/{print $2}\'',
@@ -25,7 +24,7 @@ podTemplate(
     cloud: 'openshift', 
     containers: [ containerTemplate(
         name: 'jenkins-agent-zap',
-        image: 'image-registry.openshift-image-registry.svc:5000/5c0dde-tools/jenkins-agent-zap:latest',
+        image: 'image-registry.openshift-image-registry.svc:5000/df1ee0-tools/jenkins-agent-zap:latest',
         resourceRequestCpu: '500m',
         resourceLimitCpu: '1000m',
         resourceRequestMemory: '3Gi',
