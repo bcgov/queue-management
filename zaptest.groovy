@@ -34,7 +34,6 @@ podTemplate(
 					).trim()
 					return NameSpace
 					echo ${NameSpace}
-				}
 				def retVal = sh (
 					returnStatus: true, 
 					script: "/zap/zap-baseline.py -r index1.html -t $NameSpace",
