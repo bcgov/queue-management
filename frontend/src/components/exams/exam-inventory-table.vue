@@ -721,7 +721,6 @@
 
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
-import { mapState } from 'vuex'
 import AddCitizen from '../AddCitizen/add-citizen.vue'
 import DeleteExamModal from './delete-exam-modal.vue'
 import EditExamModal from './edit-exam-form-modal.vue'
@@ -732,6 +731,7 @@ import ReturnExamModal from './return-exam-form-modal.vue'
 import SelectInvigilatorModal from './select-invigilator-modal.vue'
 import SuccessExamAlert from './success-exam-alert.vue'
 import UploadPesticideModal from './upload-pesticide-exam.vue'
+import { mapState } from 'vuex'
 import moment from 'moment'
 import zone from 'moment-timezone'
 
@@ -1722,10 +1722,6 @@ export default class ExamInventoryTable extends Vue {
       return envelopeOpenText
     }
 
-    if (item.booking) {
-    }
-    if (item.booking && item.booking.invigilator) {
-    }
     if (item.booking && item.booking.invigilator && item.booking.invigilator.deleted) {
       return lifeRing
     }
