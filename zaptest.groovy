@@ -1,4 +1,35 @@
 def owaspPodLabel = "jenkins-agent-zap"
+def STAFFURL = ""
+podTemplate(
+    label: label, 
+    name: 'jenkins-agent-nodejs', 
+    serviceAccount: 'jenkins', 
+    cloud: 'openshift', 
+    containers: [
+        containerTemplate(
+            name: 'jnlp',
+            image: 'registry.redhat.io/openshift3/jenkins-agent-nodejs-12-rhel7',
+            resourceRequestCpu: '500m',
+            resourceLimitCpu: '1000m',
+            resourceRequestMemory: '3Gi',
+            resourceLimitMemory: '4Gi',
+            workingDir: '/tmp',
+            command: '',
+            args: '${computer.jnlpmac} ${computer.name}'
+        )
+    ]
+){
+    node(label) {
+
+         stage('get url') {
+		        STAFFURL = sh (
+                    script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^zap_url_staff/{print $2}\'',
+                    returnStdout: true
+                ).trim()
+
+        }
+	}
+}
 podTemplate(
     label: owaspPodLabel, 
     name: owaspPodLabel, 
@@ -18,10 +49,6 @@ podTemplate(
 ) {
     node(owaspPodLabel) {
         stage('ZAP Security Scan') {
-                STAFFURL = sh (
-                    script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^zap_url_staff/{print $2}\'',
-                    returnStdout: true
-                ).trim()
 				def retVal = sh (
 					returnStatus: true, 
 					script: "/zap/zap-baseline.py -r index1.html -t $STAFFURL",
