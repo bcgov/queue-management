@@ -6,13 +6,6 @@ String getNameSpace() {
     ).trim()
     return NAMESPACE
 }
-String getSTAFFURL() {
-    def STAFFURL = sh (
-        script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^zap_url_staff/{print $2}\'',
-        returnStdout: true
-    ).trim()
-    return STAFFURL
-}
 // Get an image's hash tag
 String getImageTagHash(String imageName, String tag = "") {
 
@@ -41,11 +34,15 @@ podTemplate(
     )]
 ) {
     node(owaspPodLabel) {
-        stage('ZAP Security Scan') {          
-            def retVal = sh (
-                returnStatus: true, 
-                script: "/zap/zap-baseline.py -r index1.html -t $STAFFURL",
-            )
+        stage('ZAP Security Scan') {
+         	STAFFURL = sh (
+        script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^zap_url_staff/{print $2}\'',
+        returnStdout: true
+        ).trim()	
+        def retVal = sh (
+            returnStatus: true, 
+            script: "/zap/zap-baseline.py -r index1.html -t $STAFFURL",
+          )
         }
         stage('ZAP Security Scan') {          
                 def retVal = sh (
