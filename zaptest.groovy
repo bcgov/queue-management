@@ -1,7 +1,7 @@
 def owaspPodLabel = "jenkins-agent-zap"
 String getNameSpace() {
     def NAMESPACE = sh (
-        script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^zap_url_staff/{print $2}\'',
+        script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^namespace/{print $2}\'',
         returnStdout: true
     ).trim()
     return NAMESPACE
