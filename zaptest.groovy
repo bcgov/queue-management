@@ -1,11 +1,4 @@
 def owaspPodLabel = "jenkins-agent-zap"
-String getNameSpace() {
-    def NAMESPACE = sh (
-        script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^namespace/{print $2}\'',
-        returnStdout: true
-    ).trim()
-    return NAMESPACE
-}
 // Get an image's hash tag
 String getImageTagHash(String imageName, String tag = "") {
 
@@ -37,7 +30,7 @@ podTemplate(
         stage('ZAP Security Scan') {
 				def retVal = sh (
 					returnStatus: true, 
-					script: "/zap/zap-baseline.py -r index1.html -t ${NAMESPACE}",
+					script: "/zap/zap-baseline.py -r index1.html -t $NAMESPACE",
           )
         }
         stage('ZAP Security Scan') {          
