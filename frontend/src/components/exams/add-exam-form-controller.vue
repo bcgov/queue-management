@@ -19,9 +19,10 @@
         :error="error"
         :handleInput="handleInput"
       />
+      <!-- InputQuestion logic below:   obsolete code from before if there are issues we will need to reinstate -->
+      <!-- v-show="addExamModal.setup !== 'other' || q.key !== 'event_id' || q.key === 'event_id'" -->
       <InputQuestion
         v-if="q.kind === 'input'"
-        v-show="addExamModal.setup !== 'other' || q.key !== 'event_id'"
         :error="error"
         :q="q"
         :validationObj="validationObj"

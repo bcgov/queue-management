@@ -852,14 +852,14 @@ export default class AppointmentBlackoutModal extends Vue {
   private async confirmBlackout (isAgree: boolean) {
     if (isAgree) {
       this.submit()
-      this.confirmDialog = false
     } else {
-      this.confirmDialog = false
       this.rrule_text = ''
       this.rrule_array = []
       this.recurring_input_state = ''
       this.single_input_boolean = ''
     }
+    this.confirmDialog = false
+    this.toggleAppointmentBlackoutModal(false);
   }
 
   private async countApptWarning (e) {
@@ -921,7 +921,6 @@ export default class AppointmentBlackoutModal extends Vue {
     if (this.appt_overlap > 0) {
       this.warning_text = "There is " + this.appt_overlap + " appointment(s) which is overlapping with this Blackout. Are you sure you want to create the Blackout?"
       this.confirmDialog=true;
-      this.toggleAppointmentBlackoutModal(false);
     } else {
       this.submit()
     }
