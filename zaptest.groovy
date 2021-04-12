@@ -1,25 +1,6 @@
 def owaspPodLabel = "jenkins-agent-zap"
 def STAFFURL = ""
-podTemplate(
-    label: geturl, 
-    name: 'geturl', 
-    serviceAccount: 'jenkins', 
-    cloud: 'openshift', 
-    containers: [
-        containerTemplate(
-            name: 'jnlp',
-            image: 'registry.redhat.io/openshift3/jenkins-agent-nodejs-12-rhel7',
-            resourceRequestCpu: '500m',
-            resourceLimitCpu: '1000m',
-            resourceRequestMemory: '3Gi',
-            resourceLimitMemory: '4Gi',
-            workingDir: '/tmp',
-            command: '',
-            args: '${computer.jnlpmac} ${computer.name}'
-        )
-    ]
-){
-    node(label) {
+node() {
 
          stage('get url') {
 		        STAFFURL = sh (
@@ -29,7 +10,6 @@ podTemplate(
 
         }
 	}
-}
 podTemplate(
     label: owaspPodLabel, 
     name: owaspPodLabel, 
