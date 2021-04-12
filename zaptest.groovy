@@ -6,7 +6,7 @@ String getNameSpace() {
     ).trim()
     return NAMESPACE
 }
-String getNameSpace() {
+String getSTAFFURL() {
     def STAFFURL = sh (
         script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^zap_url_staff/{print $2}\'',
         returnStdout: true
