@@ -19,7 +19,7 @@ podTemplate(
         )
     ]
 ){
-    node(geturl) {
+    node(label) {
 
          stage('get url') {
 		        STAFFURL = sh (
