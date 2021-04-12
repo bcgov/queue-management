@@ -1,4 +1,5 @@
 def owaspPodLabel = "jenkins-agent-zap"
+echo $q_url
 String getNameSpace() {
     def NAMESPACE = sh (
         script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^namespace/{print $2}\'',
