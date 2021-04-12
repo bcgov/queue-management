@@ -38,13 +38,13 @@ podTemplate(
         stage('ZAP Security Scan') {          
             def retVal = sh (
                 returnStatus: true, 
-                script: "$zap_with_url_staff",
+                script: "/zap/zap-baseline.py -r index1.html -t $zap_url_staff",
             )
         }
         stage('ZAP Security Scan') {          
                 def retVal = sh (
                     returnStatus: true, 
-                    script: "$zap_with_url",
+                    script: "/zap/zap-baseline.py -r index2.html -t $zap_url_appntmnt",
                 )
                 sh 'echo "<html><head></head><body><a href=index1.html>Staff Front Report</a><br><a href=index2.html>Appointment Front End Report</a></body></html>" > /zap/wrk/index.html'
                 publishHTML([
