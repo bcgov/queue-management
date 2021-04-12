@@ -1,4 +1,11 @@
 def owaspPodLabel = "jenkins-agent-zap"
+String getNameSpace() {
+    def NAMESPACE = sh (
+        script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^namespace/{print $2}\'',
+        returnStdout: true
+    ).trim()
+    return NAMESPACE
+}
 // Get an image's hash tag
 String getImageTagHash(String imageName, String tag = "") {
 
