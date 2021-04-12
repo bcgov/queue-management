@@ -18,10 +18,10 @@ podTemplate(
 ) {
     node(owaspPodLabel) {
         stage('ZAP Security Scan') {
-				STAFFURL = sh (
-					script: "oc describe configmap jenkin-config | awk  -F  "=" \'/^zap_url_staff/{print $2}\'",
-					returnStdout: true
-				).trim()
+                STAFFURL = sh (
+                    script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^zap_url_staff/{print $2}\'',
+                    returnStdout: true
+                ).trim()
 				def retVal = sh (
 					returnStatus: true, 
 					script: "/zap/zap-baseline.py -r index1.html -t $STAFFURL",
