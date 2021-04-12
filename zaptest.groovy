@@ -29,7 +29,7 @@ podTemplate(
     node(owaspPodLabel) {
         stage('ZAP Security Scan') {
 				def NameSpace = sh (
-					script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^zap_url_staff/{print $2}\'',
+					script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^namespace/{print $2}\'',
 					returnStdout: true
 					).trim()
 					return NameSpace
