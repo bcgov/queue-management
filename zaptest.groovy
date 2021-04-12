@@ -10,6 +10,37 @@ String getImageTagHash(String imageName, String tag = "") {
   return istag.out.tokenize('@')[1].trim()
 }
 podTemplate(
+    label: label, 
+    name: 'jenkins-agent-nodejs', 
+    serviceAccount: 'jenkins', 
+    cloud: 'openshift', 
+    containers: [
+        containerTemplate(
+            name: 'jnlp',
+            image: 'registry.redhat.io/openshift3/jenkins-agent-nodejs-12-rhel7',
+            resourceRequestCpu: '500m',
+            resourceLimitCpu: '1000m',
+            resourceRequestMemory: '3Gi',
+            resourceLimitMemory: '4Gi',
+            workingDir: '/tmp',
+            command: '',
+            args: '${computer.jnlpmac} ${computer.name}'
+        )
+    ]
+){
+    node(label) {
+
+         stage('read secret') {
+            echo "checking out source"
+			STAFFURL = sh (
+				script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^zap_url_staff/{print $2}\'',
+				returnStdout: true
+			).trim()
+			echo $STAFFURL
+        }
+	}
+}
+podTemplate(
     label: owaspPodLabel, 
     name: owaspPodLabel, 
     serviceAccount: 'jenkins', 
@@ -28,7 +59,7 @@ podTemplate(
 ) {
     node(owaspPodLabel) {
         stage('ZAP Security Scan') {
-				def STAFFURL = sh (
+				STAFFURL = sh (
 						script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^zap_url_staff/{print $2}\'',
 						returnStdout: true
 					).trim()
